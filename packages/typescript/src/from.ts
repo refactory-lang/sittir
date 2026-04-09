@@ -2497,7 +2497,7 @@ export function abstractClassDeclarationFrom(input: RuntimeNodeOf<AbstractClassD
       name: input.fields?.name,
       typeParameters: input.fields?.type_parameters,
       classHeritage: input.fields?.class_heritage,
-    } as any);
+    });
   }
   const obj = input as AbstractClassDeclarationFromInput;
   return abstract_class_declaration_({
@@ -2518,8 +2518,7 @@ export function abstractMethodSignatureFrom(input: RuntimeNodeOf<AbstractMethodS
       typeParameters: input.fields?.type_parameters,
       accessibilityModifier: input.fields?.accessibility_modifier,
       overrideModifier: input.fields?.override_modifier,
-      children: (input as any).children,
-    } as any);
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as AbstractMethodSignatureFromInput;
   return abstract_method_signature_({
@@ -2533,8 +2532,8 @@ export function abstractMethodSignatureFrom(input: RuntimeNodeOf<AbstractMethodS
 export function addingTypeAnnotationFrom(input: RuntimeNodeOf<AddingTypeAnnotation> | AddingTypeAnnotationFromInput) {
   if (isNodeData<'adding_type_annotation'>(input)) {
     return adding_type_annotation_({
-      children: (input as any).children,
-    } as any);
+      children: input.children[0]!,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as AddingTypeAnnotationFromInput;
   return adding_type_annotation_({
@@ -2548,7 +2547,7 @@ export function ambientDeclarationFrom(input: RuntimeNodeOf<AmbientDeclaration> 
       declaration: input.fields?.declaration,
       typeAnnotation: input.fields?.type_annotation,
       semicolon: input.fields?.semicolon,
-    } as any);
+    });
   }
   const obj = input as AmbientDeclarationFromInput;
   return ambient_declaration_({
@@ -2561,8 +2560,8 @@ export function ambientDeclarationFrom(input: RuntimeNodeOf<AmbientDeclaration> 
 export function arguments_From(input: RuntimeNodeOf<Arguments> | ArgumentsFromInput) {
   if (isNodeData<'arguments'>(input)) {
     return arguments_({
-      children: (input as any).children,
-    } as any);
+      children: input.children,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as ArgumentsFromInput;
   return arguments_({
@@ -2573,8 +2572,8 @@ export function arguments_From(input: RuntimeNodeOf<Arguments> | ArgumentsFromIn
 export function arrayFrom(input: RuntimeNodeOf<Array> | ArrayFromInput) {
   if (isNodeData<'array'>(input)) {
     return array_({
-      children: (input as any).children,
-    } as any);
+      children: input.children,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as ArrayFromInput;
   return array_({
@@ -2585,8 +2584,8 @@ export function arrayFrom(input: RuntimeNodeOf<Array> | ArrayFromInput) {
 export function arrayPatternFrom(input: RuntimeNodeOf<ArrayPattern> | ArrayPatternFromInput) {
   if (isNodeData<'array_pattern'>(input)) {
     return array_pattern_({
-      children: (input as any).children,
-    } as any);
+      children: input.children,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as ArrayPatternFromInput;
   return array_pattern_({
@@ -2598,7 +2597,7 @@ export function arrayTypeFrom(input: RuntimeNodeOf<ArrayType> | ArrayTypeFromInp
   if (isNodeData<'array_type'>(input)) {
     return array_type_({
       primaryType: input.fields?.primary_type,
-    } as any);
+    });
   }
   const obj = input as ArrayTypeFromInput;
   return array_type_({
@@ -2614,7 +2613,7 @@ export function arrowFunctionFrom(input: RuntimeNodeOf<ArrowFunction> | ArrowFun
       parameters: input.fields?.parameters,
       returnType: input.fields?.return_type,
       typeParameters: input.fields?.type_parameters,
-    } as any);
+    });
   }
   const obj = input as ArrowFunctionFromInput;
   return arrow_function_({
@@ -2629,7 +2628,7 @@ export function asExpressionFrom(input: RuntimeNodeOf<AsExpression> | AsExpressi
     return as_expression_({
       expression: input.fields?.expression,
       typeAnnotation: input.fields?.type_annotation,
-    } as any);
+    });
   }
   const obj = input as AsExpressionFromInput;
   return as_expression_({
@@ -2641,8 +2640,8 @@ export function asExpressionFrom(input: RuntimeNodeOf<AsExpression> | AsExpressi
 export function assertsFrom(input: RuntimeNodeOf<Asserts> | AssertsFromInput) {
   if (isNodeData<'asserts'>(input)) {
     return asserts_({
-      children: (input as any).children,
-    } as any);
+      children: input.children[0]!,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as AssertsFromInput;
   return asserts_({
@@ -2654,7 +2653,7 @@ export function assertsAnnotationFrom(input: RuntimeNodeOf<AssertsAnnotation> | 
   if (isNodeData<'asserts_annotation'>(input)) {
     return asserts_annotation_({
       asserts: input.fields?.asserts,
-    } as any);
+    });
   }
   const obj = input as AssertsAnnotationFromInput;
   return asserts_annotation_({
@@ -2667,7 +2666,7 @@ export function assignmentExpressionFrom(input: RuntimeNodeOf<AssignmentExpressi
     return assignment_expression_({
       left: input.fields?.left,
       right: input.fields?.right,
-    } as any);
+    });
   }
   const obj = input as AssignmentExpressionFromInput;
   return assignment_expression_({
@@ -2681,7 +2680,7 @@ export function assignmentPatternFrom(input: RuntimeNodeOf<AssignmentPattern> | 
     return assignment_pattern_({
       left: input.fields?.left,
       right: input.fields?.right,
-    } as any);
+    });
   }
   const obj = input as AssignmentPatternFromInput;
   return assignment_pattern_({
@@ -2696,7 +2695,7 @@ export function augmentedAssignmentExpressionFrom(input: RuntimeNodeOf<Augmented
       left: input.fields?.left,
       operator: input.fields?.operator,
       right: input.fields?.right,
-    } as any);
+    });
   }
   const obj = input as AugmentedAssignmentExpressionFromInput;
   return augmented_assignment_expression_({
@@ -2710,7 +2709,7 @@ export function awaitExpressionFrom(input: RuntimeNodeOf<AwaitExpression> | Awai
   if (isNodeData<'await_expression'>(input)) {
     return await_expression_({
       expression: input.fields?.expression,
-    } as any);
+    });
   }
   const obj = input as AwaitExpressionFromInput;
   return await_expression_({
@@ -2724,7 +2723,7 @@ export function binaryExpressionFrom(input: RuntimeNodeOf<BinaryExpression> | Bi
       left: input.fields?.left,
       operator: input.fields?.operator,
       right: input.fields?.right,
-    } as any);
+    });
   }
   const obj = input as BinaryExpressionFromInput;
   return binary_expression_({
@@ -2738,7 +2737,7 @@ export function breakStatementFrom(input: RuntimeNodeOf<BreakStatement> | BreakS
   if (isNodeData<'break_statement'>(input)) {
     return break_statement_({
       label: input.fields?.label,
-    } as any);
+    });
   }
   const obj = input as BreakStatementFromInput;
   return break_statement_({
@@ -2752,7 +2751,7 @@ export function callExpressionFrom(input: RuntimeNodeOf<CallExpression> | CallEx
       arguments: input.fields?.arguments,
       function: input.fields?.function,
       typeArguments: input.fields?.type_arguments,
-    } as any);
+    });
   }
   const obj = input as CallExpressionFromInput;
   return call_expression_({
@@ -2768,7 +2767,7 @@ export function callSignatureFrom(input: RuntimeNodeOf<CallSignature> | CallSign
       parameters: input.fields?.parameters,
       returnType: input.fields?.return_type,
       typeParameters: input.fields?.type_parameters,
-    } as any);
+    });
   }
   const obj = input as CallSignatureFromInput;
   return call_signature_({
@@ -2782,7 +2781,7 @@ export function catchClauseFrom(input: RuntimeNodeOf<CatchClause> | CatchClauseF
       body: input.fields?.body,
       parameter: input.fields?.parameter,
       type: input.fields?.type,
-    } as any);
+    });
   }
   const obj = input as CatchClauseFromInput;
   return catch_clause_({
@@ -2800,7 +2799,7 @@ export function class_From(input: RuntimeNodeOf<Class> | ClassFromInput) {
       name: input.fields?.name,
       typeParameters: input.fields?.type_parameters,
       classHeritage: input.fields?.class_heritage,
-    } as any);
+    });
   }
   const obj = input as ClassFromInput;
   return class_({
@@ -2816,8 +2815,8 @@ export function classBodyFrom(input: RuntimeNodeOf<ClassBody> | ClassBodyFromInp
   if (isNodeData<'class_body'>(input)) {
     return class_body_({
       decorator: input.fields?.decorator,
-      children: (input as any).children,
-    } as any);
+      children: input.children,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as ClassBodyFromInput;
   return class_body_({
@@ -2835,7 +2834,7 @@ export function classDeclarationFrom(input: RuntimeNodeOf<ClassDeclaration> | Cl
       typeParameters: input.fields?.type_parameters,
       classHeritage: input.fields?.class_heritage,
       automaticSemicolon: input.fields?.automatic_semicolon,
-    } as any);
+    });
   }
   const obj = input as ClassDeclarationFromInput;
   return class_declaration_({
@@ -2853,7 +2852,7 @@ export function classHeritageFrom(input: RuntimeNodeOf<ClassHeritage> | ClassHer
     return class_heritage_({
       extendsClause: input.fields?.extends_clause,
       implementsClause: input.fields?.implements_clause,
-    } as any);
+    });
   }
   const obj = input as ClassHeritageFromInput;
   return class_heritage_({
@@ -2866,7 +2865,7 @@ export function classStaticBlockFrom(input: RuntimeNodeOf<ClassStaticBlock> | Cl
   if (isNodeData<'class_static_block'>(input)) {
     return class_static_block_({
       body: input.fields?.body,
-    } as any);
+    });
   }
   const obj = input as ClassStaticBlockFromInput;
   return class_static_block_({
@@ -2878,7 +2877,7 @@ export function computedPropertyNameFrom(input: RuntimeNodeOf<ComputedPropertyNa
   if (isNodeData<'computed_property_name'>(input)) {
     return computed_property_name_({
       expression: input.fields?.expression,
-    } as any);
+    });
   }
   const obj = input as ComputedPropertyNameFromInput;
   return computed_property_name_({
@@ -2893,7 +2892,7 @@ export function conditionalTypeFrom(input: RuntimeNodeOf<ConditionalType> | Cond
       consequence: input.fields?.consequence,
       left: input.fields?.left,
       right: input.fields?.right,
-    } as any);
+    });
   }
   const obj = input as ConditionalTypeFromInput;
   return conditional_type_({
@@ -2907,8 +2906,8 @@ export function conditionalTypeFrom(input: RuntimeNodeOf<ConditionalType> | Cond
 export function constraintFrom(input: RuntimeNodeOf<Constraint> | ConstraintFromInput) {
   if (isNodeData<'constraint'>(input)) {
     return constraint_({
-      children: (input as any).children,
-    } as any);
+      children: input.children[0]!,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as ConstraintFromInput;
   return constraint_({
@@ -2922,7 +2921,7 @@ export function constructSignatureFrom(input: RuntimeNodeOf<ConstructSignature> 
       parameters: input.fields?.parameters,
       type: input.fields?.type,
       typeParameters: input.fields?.type_parameters,
-    } as any);
+    });
   }
   const obj = input as ConstructSignatureFromInput;
   return construct_signature_({
@@ -2938,7 +2937,7 @@ export function constructorTypeFrom(input: RuntimeNodeOf<ConstructorType> | Cons
       parameters: input.fields?.parameters,
       type: input.fields?.type,
       typeParameters: input.fields?.type_parameters,
-    } as any);
+    });
   }
   const obj = input as ConstructorTypeFromInput;
   return constructor_type_({
@@ -2952,7 +2951,7 @@ export function continueStatementFrom(input: RuntimeNodeOf<ContinueStatement> | 
   if (isNodeData<'continue_statement'>(input)) {
     return continue_statement_({
       label: input.fields?.label,
-    } as any);
+    });
   }
   const obj = input as ContinueStatementFromInput;
   return continue_statement_({
@@ -2963,8 +2962,8 @@ export function continueStatementFrom(input: RuntimeNodeOf<ContinueStatement> | 
 export function decoratorFrom(input: RuntimeNodeOf<Decorator> | DecoratorFromInput) {
   if (isNodeData<'decorator'>(input)) {
     return decorator_({
-      children: (input as any).children,
-    } as any);
+      children: input.children[0]!,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as DecoratorFromInput;
   return decorator_({
@@ -2975,8 +2974,8 @@ export function decoratorFrom(input: RuntimeNodeOf<Decorator> | DecoratorFromInp
 export function defaultTypeFrom(input: RuntimeNodeOf<DefaultType> | DefaultTypeFromInput) {
   if (isNodeData<'default_type'>(input)) {
     return default_type_({
-      children: (input as any).children,
-    } as any);
+      children: input.children[0]!,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as DefaultTypeFromInput;
   return default_type_({
@@ -2989,7 +2988,7 @@ export function doStatementFrom(input: RuntimeNodeOf<DoStatement> | DoStatementF
     return do_statement_({
       body: input.fields?.body,
       condition: input.fields?.condition,
-    } as any);
+    });
   }
   const obj = input as DoStatementFromInput;
   return do_statement_({
@@ -3002,7 +3001,7 @@ export function elseClauseFrom(input: RuntimeNodeOf<ElseClause> | ElseClauseFrom
   if (isNodeData<'else_clause'>(input)) {
     return else_clause_({
       statement: input.fields?.statement,
-    } as any);
+    });
   }
   const obj = input as ElseClauseFromInput;
   return else_clause_({
@@ -3015,7 +3014,7 @@ export function enumAssignmentFrom(input: RuntimeNodeOf<EnumAssignment> | EnumAs
     return enum_assignment_({
       name: input.fields?.name,
       value: input.fields?.value,
-    } as any);
+    });
   }
   const obj = input as EnumAssignmentFromInput;
   return enum_assignment_({
@@ -3030,7 +3029,7 @@ export function enumBodyFrom(input: RuntimeNodeOf<EnumBody> | EnumBodyFromInput)
       name: input.fields?.name,
       opening: input.fields?.opening,
       members: input.fields?.members,
-    } as any);
+    });
   }
   const obj = input as EnumBodyFromInput;
   return enum_body_({
@@ -3045,7 +3044,7 @@ export function enumDeclarationFrom(input: RuntimeNodeOf<EnumDeclaration> | Enum
     return enum_declaration_({
       body: input.fields?.body,
       name: input.fields?.name,
-    } as any);
+    });
   }
   const obj = input as EnumDeclarationFromInput;
   return enum_declaration_({
@@ -3057,8 +3056,8 @@ export function enumDeclarationFrom(input: RuntimeNodeOf<EnumDeclaration> | Enum
 export function exportClauseFrom(input: RuntimeNodeOf<ExportClause> | ExportClauseFromInput) {
   if (isNodeData<'export_clause'>(input)) {
     return export_clause_({
-      children: (input as any).children,
-    } as any);
+      children: input.children,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as ExportClauseFromInput;
   return export_clause_({
@@ -3071,7 +3070,7 @@ export function exportSpecifierFrom(input: RuntimeNodeOf<ExportSpecifier> | Expo
     return export_specifier_({
       alias: input.fields?.alias,
       name: input.fields?.name,
-    } as any);
+    });
   }
   const obj = input as ExportSpecifierFromInput;
   return export_specifier_({
@@ -3087,8 +3086,7 @@ export function exportStatementFrom(input: RuntimeNodeOf<ExportStatement> | Expo
       decorator: input.fields?.decorator,
       source: input.fields?.source,
       value: input.fields?.value,
-      children: (input as any).children,
-    } as any);
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as ExportStatementFromInput;
   return export_statement_({
@@ -3103,8 +3101,8 @@ export function exportStatementFrom(input: RuntimeNodeOf<ExportStatement> | Expo
 export function expressionStatementFrom(input: RuntimeNodeOf<ExpressionStatement> | ExpressionStatementFromInput) {
   if (isNodeData<'expression_statement'>(input)) {
     return expression_statement_({
-      children: (input as any).children,
-    } as any);
+      children: input.children[0]!,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as ExpressionStatementFromInput;
   return expression_statement_({
@@ -3117,7 +3115,7 @@ export function extendsClauseFrom(input: RuntimeNodeOf<ExtendsClause> | ExtendsC
     return extends_clause_({
       typeArguments: input.fields?.type_arguments,
       value: input.fields?.value,
-    } as any);
+    });
   }
   const obj = input as ExtendsClauseFromInput;
   return extends_clause_({
@@ -3130,7 +3128,7 @@ export function extendsTypeClauseFrom(input: RuntimeNodeOf<ExtendsTypeClause> | 
   if (isNodeData<'extends_type_clause'>(input)) {
     return extends_type_clause_({
       type: input.fields?.type,
-    } as any);
+    });
   }
   const obj = input as ExtendsTypeClauseFromInput;
   return extends_type_clause_({
@@ -3142,7 +3140,7 @@ export function finallyClauseFrom(input: RuntimeNodeOf<FinallyClause> | FinallyC
   if (isNodeData<'finally_clause'>(input)) {
     return finally_clause_({
       body: input.fields?.body,
-    } as any);
+    });
   }
   const obj = input as FinallyClauseFromInput;
   return finally_clause_({
@@ -3154,7 +3152,7 @@ export function flowMaybeTypeFrom(input: RuntimeNodeOf<FlowMaybeType> | FlowMayb
   if (isNodeData<'flow_maybe_type'>(input)) {
     return flow_maybe_type_({
       primaryType: input.fields?.primary_type,
-    } as any);
+    });
   }
   const obj = input as FlowMaybeTypeFromInput;
   return flow_maybe_type_({
@@ -3171,7 +3169,7 @@ export function forInStatementFrom(input: RuntimeNodeOf<ForInStatement> | ForInS
       operator: input.fields?.operator,
       right: input.fields?.right,
       value: input.fields?.value,
-    } as any);
+    });
   }
   const obj = input as ForInStatementFromInput;
   return for_in_statement_({
@@ -3191,7 +3189,7 @@ export function forStatementFrom(input: RuntimeNodeOf<ForStatement> | ForStateme
       condition: input.fields?.condition,
       increment: input.fields?.increment,
       initializer: input.fields?.initializer,
-    } as any);
+    });
   }
   const obj = input as ForStatementFromInput;
   return for_statement_({
@@ -3205,8 +3203,8 @@ export function forStatementFrom(input: RuntimeNodeOf<ForStatement> | ForStateme
 export function formalParametersFrom(input: RuntimeNodeOf<FormalParameters> | FormalParametersFromInput) {
   if (isNodeData<'formal_parameters'>(input)) {
     return formal_parameters_({
-      children: (input as any).children,
-    } as any);
+      children: input.children,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as FormalParametersFromInput;
   return formal_parameters_({
@@ -3222,7 +3220,7 @@ export function functionDeclarationFrom(input: RuntimeNodeOf<FunctionDeclaration
       parameters: input.fields?.parameters,
       returnType: input.fields?.return_type,
       typeParameters: input.fields?.type_parameters,
-    } as any);
+    });
   }
   const obj = input as FunctionDeclarationFromInput;
   return function_declaration_({
@@ -3240,7 +3238,7 @@ export function functionExpressionFrom(input: RuntimeNodeOf<FunctionExpression> 
       parameters: input.fields?.parameters,
       returnType: input.fields?.return_type,
       typeParameters: input.fields?.type_parameters,
-    } as any);
+    });
   }
   const obj = input as FunctionExpressionFromInput;
   return function_expression_({
@@ -3257,7 +3255,7 @@ export function functionSignatureFrom(input: RuntimeNodeOf<FunctionSignature> | 
       parameters: input.fields?.parameters,
       returnType: input.fields?.return_type,
       typeParameters: input.fields?.type_parameters,
-    } as any);
+    });
   }
   const obj = input as FunctionSignatureFromInput;
   return function_signature_({
@@ -3272,7 +3270,7 @@ export function functionTypeFrom(input: RuntimeNodeOf<FunctionType> | FunctionTy
       parameters: input.fields?.parameters,
       returnType: input.fields?.return_type,
       typeParameters: input.fields?.type_parameters,
-    } as any);
+    });
   }
   const obj = input as FunctionTypeFromInput;
   return function_type_({
@@ -3290,7 +3288,7 @@ export function generatorFunctionFrom(input: RuntimeNodeOf<GeneratorFunction> | 
       parameters: input.fields?.parameters,
       returnType: input.fields?.return_type,
       typeParameters: input.fields?.type_parameters,
-    } as any);
+    });
   }
   const obj = input as GeneratorFunctionFromInput;
   return generator_function_({
@@ -3308,7 +3306,7 @@ export function generatorFunctionDeclarationFrom(input: RuntimeNodeOf<GeneratorF
       parameters: input.fields?.parameters,
       returnType: input.fields?.return_type,
       typeParameters: input.fields?.type_parameters,
-    } as any);
+    });
   }
   const obj = input as GeneratorFunctionDeclarationFromInput;
   return generator_function_declaration_({
@@ -3323,7 +3321,7 @@ export function genericTypeFrom(input: RuntimeNodeOf<GenericType> | GenericTypeF
     return generic_type_({
       name: input.fields?.name,
       typeArguments: input.fields?.type_arguments,
-    } as any);
+    });
   }
   const obj = input as GenericTypeFromInput;
   return generic_type_({
@@ -3338,7 +3336,7 @@ export function ifStatementFrom(input: RuntimeNodeOf<IfStatement> | IfStatementF
       alternative: input.fields?.alternative,
       condition: input.fields?.condition,
       consequence: input.fields?.consequence,
-    } as any);
+    });
   }
   const obj = input as IfStatementFromInput;
   return if_statement_({
@@ -3351,8 +3349,8 @@ export function ifStatementFrom(input: RuntimeNodeOf<IfStatement> | IfStatementF
 export function implementsClauseFrom(input: RuntimeNodeOf<ImplementsClause> | ImplementsClauseFromInput) {
   if (isNodeData<'implements_clause'>(input)) {
     return implements_clause_({
-      children: (input as any).children,
-    } as any);
+      children: input.children,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as ImplementsClauseFromInput;
   return implements_clause_({
@@ -3366,7 +3364,7 @@ export function importAliasFrom(input: RuntimeNodeOf<ImportAlias> | ImportAliasF
       name: input.fields?.name,
       value: input.fields?.value,
       semicolon: input.fields?.semicolon,
-    } as any);
+    });
   }
   const obj = input as ImportAliasFromInput;
   return import_alias_({
@@ -3380,7 +3378,7 @@ export function importAttributeFrom(input: RuntimeNodeOf<ImportAttribute> | Impo
   if (isNodeData<'import_attribute'>(input)) {
     return import_attribute_({
       object: input.fields?.object,
-    } as any);
+    });
   }
   const obj = input as ImportAttributeFromInput;
   return import_attribute_({
@@ -3393,7 +3391,7 @@ export function importClauseFrom(input: RuntimeNodeOf<ImportClause> | ImportClau
     return import_clause_({
       defaultImport: input.fields?.default_import,
       namedImports: input.fields?.named_imports,
-    } as any);
+    });
   }
   const obj = input as ImportClauseFromInput;
   return import_clause_({
@@ -3407,7 +3405,7 @@ export function importRequireClauseFrom(input: RuntimeNodeOf<ImportRequireClause
     return import_require_clause_({
       source: input.fields?.source,
       identifier: input.fields?.identifier,
-    } as any);
+    });
   }
   const obj = input as ImportRequireClauseFromInput;
   return import_require_clause_({
@@ -3421,7 +3419,7 @@ export function importSpecifierFrom(input: RuntimeNodeOf<ImportSpecifier> | Impo
     return import_specifier_({
       alias: input.fields?.alias,
       name: input.fields?.name,
-    } as any);
+    });
   }
   const obj = input as ImportSpecifierFromInput;
   return import_specifier_({
@@ -3438,7 +3436,7 @@ export function importStatementFrom(input: RuntimeNodeOf<ImportStatement> | Impo
       fromClause: input.fields?.from_clause,
       importAttribute: input.fields?.import_attribute,
       semicolon: input.fields?.semicolon,
-    } as any);
+    });
   }
   const obj = input as ImportStatementFromInput;
   return import_statement_({
@@ -3458,7 +3456,7 @@ export function indexSignatureFrom(input: RuntimeNodeOf<IndexSignature> | IndexS
       sign: input.fields?.sign,
       type: input.fields?.type,
       mappedTypeClause: input.fields?.mapped_type_clause,
-    } as any);
+    });
   }
   const obj = input as IndexSignatureFromInput;
   return index_signature_({
@@ -3474,7 +3472,7 @@ export function indexTypeQueryFrom(input: RuntimeNodeOf<IndexTypeQuery> | IndexT
   if (isNodeData<'index_type_query'>(input)) {
     return index_type_query_({
       primaryType: input.fields?.primary_type,
-    } as any);
+    });
   }
   const obj = input as IndexTypeQueryFromInput;
   return index_type_query_({
@@ -3487,7 +3485,7 @@ export function inferTypeFrom(input: RuntimeNodeOf<InferType> | InferTypeFromInp
     return infer_type_({
       typeIdentifier: input.fields?.type_identifier,
       constraint: input.fields?.constraint,
-    } as any);
+    });
   }
   const obj = input as InferTypeFromInput;
   return infer_type_({
@@ -3502,7 +3500,7 @@ export function instantiationExpressionFrom(input: RuntimeNodeOf<InstantiationEx
       function: input.fields?.function,
       typeArguments: input.fields?.type_arguments,
       expression: input.fields?.expression,
-    } as any);
+    });
   }
   const obj = input as InstantiationExpressionFromInput;
   return instantiation_expression_({
@@ -3515,8 +3513,8 @@ export function instantiationExpressionFrom(input: RuntimeNodeOf<InstantiationEx
 export function interfaceBodyFrom(input: RuntimeNodeOf<InterfaceBody> | InterfaceBodyFromInput) {
   if (isNodeData<'interface_body'>(input)) {
     return interface_body_({
-      children: (input as any).children,
-    } as any);
+      children: input.children,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as InterfaceBodyFromInput;
   return interface_body_({
@@ -3531,7 +3529,7 @@ export function interfaceDeclarationFrom(input: RuntimeNodeOf<InterfaceDeclarati
       name: input.fields?.name,
       typeParameters: input.fields?.type_parameters,
       extendsTypeClause: input.fields?.extends_type_clause,
-    } as any);
+    });
   }
   const obj = input as InterfaceDeclarationFromInput;
   return interface_declaration_({
@@ -3547,7 +3545,7 @@ export function internalModuleFrom(input: RuntimeNodeOf<InternalModule> | Intern
     return internal_module_({
       body: input.fields?.body,
       name: input.fields?.name,
-    } as any);
+    });
   }
   const obj = input as InternalModuleFromInput;
   return internal_module_({
@@ -3561,7 +3559,7 @@ export function intersectionTypeFrom(input: RuntimeNodeOf<IntersectionType> | In
     return intersection_type_({
       left: input.fields?.left,
       right: input.fields?.right,
-    } as any);
+    });
   }
   const obj = input as IntersectionTypeFromInput;
   return intersection_type_({
@@ -3575,7 +3573,7 @@ export function labeledStatementFrom(input: RuntimeNodeOf<LabeledStatement> | La
     return labeled_statement_({
       body: input.fields?.body,
       label: input.fields?.label,
-    } as any);
+    });
   }
   const obj = input as LabeledStatementFromInput;
   return labeled_statement_({
@@ -3590,7 +3588,7 @@ export function lexicalDeclarationFrom(input: RuntimeNodeOf<LexicalDeclaration> 
       kind: input.fields?.kind,
       declarators: input.fields?.declarators,
       semicolon: input.fields?.semicolon,
-    } as any);
+    });
   }
   const obj = input as LexicalDeclarationFromInput;
   return lexical_declaration_({
@@ -3603,8 +3601,8 @@ export function lexicalDeclarationFrom(input: RuntimeNodeOf<LexicalDeclaration> 
 export function literalTypeFrom(input: RuntimeNodeOf<LiteralType> | LiteralTypeFromInput) {
   if (isNodeData<'literal_type'>(input)) {
     return literal_type_({
-      children: (input as any).children,
-    } as any);
+      children: input.children[0]!,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as LiteralTypeFromInput;
   return literal_type_({
@@ -3617,7 +3615,7 @@ export function lookupTypeFrom(input: RuntimeNodeOf<LookupType> | LookupTypeFrom
     return lookup_type_({
       primaryType: input.fields?.primary_type,
       indexType: input.fields?.index_type,
-    } as any);
+    });
   }
   const obj = input as LookupTypeFromInput;
   return lookup_type_({
@@ -3632,7 +3630,7 @@ export function mappedTypeClauseFrom(input: RuntimeNodeOf<MappedTypeClause> | Ma
       alias: input.fields?.alias,
       name: input.fields?.name,
       type: input.fields?.type,
-    } as any);
+    });
   }
   const obj = input as MappedTypeClauseFromInput;
   return mapped_type_clause_({
@@ -3648,7 +3646,7 @@ export function memberExpressionFrom(input: RuntimeNodeOf<MemberExpression> | Me
       object: input.fields?.object,
       optionalChain: input.fields?.optional_chain,
       property: input.fields?.property,
-    } as any);
+    });
   }
   const obj = input as MemberExpressionFromInput;
   return member_expression_({
@@ -3668,8 +3666,7 @@ export function methodDefinitionFrom(input: RuntimeNodeOf<MethodDefinition> | Me
       typeParameters: input.fields?.type_parameters,
       accessibilityModifier: input.fields?.accessibility_modifier,
       overrideModifier: input.fields?.override_modifier,
-      children: (input as any).children,
-    } as any);
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as MethodDefinitionFromInput;
   return method_definition_({
@@ -3690,8 +3687,7 @@ export function methodSignatureFrom(input: RuntimeNodeOf<MethodSignature> | Meth
       typeParameters: input.fields?.type_parameters,
       accessibilityModifier: input.fields?.accessibility_modifier,
       overrideModifier: input.fields?.override_modifier,
-      children: (input as any).children,
-    } as any);
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as MethodSignatureFromInput;
   return method_signature_({
@@ -3707,7 +3703,7 @@ export function moduleFrom(input: RuntimeNodeOf<Module> | ModuleFromInput) {
     return module_({
       body: input.fields?.body,
       name: input.fields?.name,
-    } as any);
+    });
   }
   const obj = input as ModuleFromInput;
   return module_({
@@ -3719,8 +3715,8 @@ export function moduleFrom(input: RuntimeNodeOf<Module> | ModuleFromInput) {
 export function namedImportsFrom(input: RuntimeNodeOf<NamedImports> | NamedImportsFromInput) {
   if (isNodeData<'named_imports'>(input)) {
     return named_imports_({
-      children: (input as any).children,
-    } as any);
+      children: input.children,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as NamedImportsFromInput;
   return named_imports_({
@@ -3731,8 +3727,8 @@ export function namedImportsFrom(input: RuntimeNodeOf<NamedImports> | NamedImpor
 export function namespaceExportFrom(input: RuntimeNodeOf<NamespaceExport> | NamespaceExportFromInput) {
   if (isNodeData<'namespace_export'>(input)) {
     return namespace_export_({
-      children: (input as any).children,
-    } as any);
+      children: input.children[0]!,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as NamespaceExportFromInput;
   return namespace_export_({
@@ -3744,7 +3740,7 @@ export function namespaceImportFrom(input: RuntimeNodeOf<NamespaceImport> | Name
   if (isNodeData<'namespace_import'>(input)) {
     return namespace_import_({
       identifier: input.fields?.identifier,
-    } as any);
+    });
   }
   const obj = input as NamespaceImportFromInput;
   return namespace_import_({
@@ -3757,7 +3753,7 @@ export function nestedIdentifierFrom(input: RuntimeNodeOf<NestedIdentifier> | Ne
     return nested_identifier_({
       object: input.fields?.object,
       property: input.fields?.property,
-    } as any);
+    });
   }
   const obj = input as NestedIdentifierFromInput;
   return nested_identifier_({
@@ -3771,7 +3767,7 @@ export function nestedTypeIdentifierFrom(input: RuntimeNodeOf<NestedTypeIdentifi
     return nested_type_identifier_({
       module: input.fields?.module,
       name: input.fields?.name,
-    } as any);
+    });
   }
   const obj = input as NestedTypeIdentifierFromInput;
   return nested_type_identifier_({
@@ -3786,7 +3782,7 @@ export function newExpressionFrom(input: RuntimeNodeOf<NewExpression> | NewExpre
       arguments: input.fields?.arguments,
       constructor: input.fields?.constructor,
       typeArguments: input.fields?.type_arguments,
-    } as any);
+    });
   }
   const obj = input as NewExpressionFromInput;
   return new_expression_({
@@ -3800,7 +3796,7 @@ export function nonNullExpressionFrom(input: RuntimeNodeOf<NonNullExpression> | 
   if (isNodeData<'non_null_expression'>(input)) {
     return non_null_expression_({
       expression: input.fields?.expression,
-    } as any);
+    });
   }
   const obj = input as NonNullExpressionFromInput;
   return non_null_expression_({
@@ -3811,8 +3807,8 @@ export function nonNullExpressionFrom(input: RuntimeNodeOf<NonNullExpression> | 
 export function objectFrom(input: RuntimeNodeOf<Object> | ObjectFromInput) {
   if (isNodeData<'object'>(input)) {
     return object_({
-      children: (input as any).children,
-    } as any);
+      children: input.children,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as ObjectFromInput;
   return object_({
@@ -3825,7 +3821,7 @@ export function objectAssignmentPatternFrom(input: RuntimeNodeOf<ObjectAssignmen
     return object_assignment_pattern_({
       left: input.fields?.left,
       right: input.fields?.right,
-    } as any);
+    });
   }
   const obj = input as ObjectAssignmentPatternFromInput;
   return object_assignment_pattern_({
@@ -3837,8 +3833,8 @@ export function objectAssignmentPatternFrom(input: RuntimeNodeOf<ObjectAssignmen
 export function objectPatternFrom(input: RuntimeNodeOf<ObjectPattern> | ObjectPatternFromInput) {
   if (isNodeData<'object_pattern'>(input)) {
     return object_pattern_({
-      children: (input as any).children,
-    } as any);
+      children: input.children,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as ObjectPatternFromInput;
   return object_pattern_({
@@ -3852,7 +3848,7 @@ export function objectTypeFrom(input: RuntimeNodeOf<ObjectType> | ObjectTypeFrom
       opening: input.fields?.opening,
       members: input.fields?.members,
       closing: input.fields?.closing,
-    } as any);
+    });
   }
   const obj = input as ObjectTypeFromInput;
   return object_type_({
@@ -3865,8 +3861,8 @@ export function objectTypeFrom(input: RuntimeNodeOf<ObjectType> | ObjectTypeFrom
 export function omittingTypeAnnotationFrom(input: RuntimeNodeOf<OmittingTypeAnnotation> | OmittingTypeAnnotationFromInput) {
   if (isNodeData<'omitting_type_annotation'>(input)) {
     return omitting_type_annotation_({
-      children: (input as any).children,
-    } as any);
+      children: input.children[0]!,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as OmittingTypeAnnotationFromInput;
   return omitting_type_annotation_({
@@ -3877,8 +3873,8 @@ export function omittingTypeAnnotationFrom(input: RuntimeNodeOf<OmittingTypeAnno
 export function optingTypeAnnotationFrom(input: RuntimeNodeOf<OptingTypeAnnotation> | OptingTypeAnnotationFromInput) {
   if (isNodeData<'opting_type_annotation'>(input)) {
     return opting_type_annotation_({
-      children: (input as any).children,
-    } as any);
+      children: input.children[0]!,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as OptingTypeAnnotationFromInput;
   return opting_type_annotation_({
@@ -3896,7 +3892,7 @@ export function optionalParameterFrom(input: RuntimeNodeOf<OptionalParameter> | 
       value: input.fields?.value,
       parameterName: input.fields?.parameter_name,
       initializer: input.fields?.initializer,
-    } as any);
+    });
   }
   const obj = input as OptionalParameterFromInput;
   return optional_parameter_({
@@ -3912,8 +3908,8 @@ export function optionalParameterFrom(input: RuntimeNodeOf<OptionalParameter> | 
 export function optionalTypeFrom(input: RuntimeNodeOf<OptionalType> | OptionalTypeFromInput) {
   if (isNodeData<'optional_type'>(input)) {
     return optional_type_({
-      children: (input as any).children,
-    } as any);
+      children: input.children[0]!,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as OptionalTypeFromInput;
   return optional_type_({
@@ -3926,7 +3922,7 @@ export function pairFrom(input: RuntimeNodeOf<Pair> | PairFromInput) {
     return pair_({
       key: input.fields?.key,
       value: input.fields?.value,
-    } as any);
+    });
   }
   const obj = input as PairFromInput;
   return pair_({
@@ -3940,7 +3936,7 @@ export function pairPatternFrom(input: RuntimeNodeOf<PairPattern> | PairPatternF
     return pair_pattern_({
       key: input.fields?.key,
       value: input.fields?.value,
-    } as any);
+    });
   }
   const obj = input as PairPatternFromInput;
   return pair_pattern_({
@@ -3953,8 +3949,8 @@ export function parenthesizedExpressionFrom(input: RuntimeNodeOf<ParenthesizedEx
   if (isNodeData<'parenthesized_expression'>(input)) {
     return parenthesized_expression_({
       type: input.fields?.type,
-      children: (input as any).children,
-    } as any);
+      children: input.children[0]!,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as ParenthesizedExpressionFromInput;
   return parenthesized_expression_({
@@ -3966,8 +3962,8 @@ export function parenthesizedExpressionFrom(input: RuntimeNodeOf<ParenthesizedEx
 export function parenthesizedTypeFrom(input: RuntimeNodeOf<ParenthesizedType> | ParenthesizedTypeFromInput) {
   if (isNodeData<'parenthesized_type'>(input)) {
     return parenthesized_type_({
-      children: (input as any).children,
-    } as any);
+      children: input.children[0]!,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as ParenthesizedTypeFromInput;
   return parenthesized_type_({
@@ -3980,7 +3976,7 @@ export function programFrom(input: RuntimeNodeOf<Program> | ProgramFromInput) {
     return program_({
       hashBangLine: input.fields?.hash_bang_line,
       statements: input.fields?.statements,
-    } as any);
+    });
   }
   const obj = input as ProgramFromInput;
   return program_({
@@ -3996,7 +3992,7 @@ export function propertySignatureFrom(input: RuntimeNodeOf<PropertySignature> | 
       type: input.fields?.type,
       accessibilityModifier: input.fields?.accessibility_modifier,
       overrideModifier: input.fields?.override_modifier,
-    } as any);
+    });
   }
   const obj = input as PropertySignatureFromInput;
   return property_signature_({
@@ -4017,7 +4013,7 @@ export function publicFieldDefinitionFrom(input: RuntimeNodeOf<PublicFieldDefini
       accessibilityModifier: input.fields?.accessibility_modifier,
       overrideModifier: input.fields?.override_modifier,
       initializer: input.fields?.initializer,
-    } as any);
+    });
   }
   const obj = input as PublicFieldDefinitionFromInput;
   return public_field_definition_({
@@ -4034,8 +4030,8 @@ export function publicFieldDefinitionFrom(input: RuntimeNodeOf<PublicFieldDefini
 export function readonlyTypeFrom(input: RuntimeNodeOf<ReadonlyType> | ReadonlyTypeFromInput) {
   if (isNodeData<'readonly_type'>(input)) {
     return readonly_type_({
-      children: (input as any).children,
-    } as any);
+      children: input.children[0]!,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as ReadonlyTypeFromInput;
   return readonly_type_({
@@ -4048,7 +4044,7 @@ export function regexFrom(input: RuntimeNodeOf<Regex> | RegexFromInput) {
     return regex_({
       flags: input.fields?.flags,
       pattern: input.fields?.pattern,
-    } as any);
+    });
   }
   const obj = input as RegexFromInput;
   return regex_({
@@ -4067,7 +4063,7 @@ export function requiredParameterFrom(input: RuntimeNodeOf<RequiredParameter> | 
       value: input.fields?.value,
       parameterName: input.fields?.parameter_name,
       initializer: input.fields?.initializer,
-    } as any);
+    });
   }
   const obj = input as RequiredParameterFromInput;
   return required_parameter_({
@@ -4083,8 +4079,8 @@ export function requiredParameterFrom(input: RuntimeNodeOf<RequiredParameter> | 
 export function restPatternFrom(input: RuntimeNodeOf<RestPattern> | RestPatternFromInput) {
   if (isNodeData<'rest_pattern'>(input)) {
     return rest_pattern_({
-      children: (input as any).children,
-    } as any);
+      children: input.children[0]!,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as RestPatternFromInput;
   return rest_pattern_({
@@ -4095,8 +4091,8 @@ export function restPatternFrom(input: RuntimeNodeOf<RestPattern> | RestPatternF
 export function restTypeFrom(input: RuntimeNodeOf<RestType> | RestTypeFromInput) {
   if (isNodeData<'rest_type'>(input)) {
     return rest_type_({
-      children: (input as any).children,
-    } as any);
+      children: input.children[0]!,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as RestTypeFromInput;
   return rest_type_({
@@ -4107,8 +4103,8 @@ export function restTypeFrom(input: RuntimeNodeOf<RestType> | RestTypeFromInput)
 export function returnStatementFrom(input: RuntimeNodeOf<ReturnStatement> | ReturnStatementFromInput) {
   if (isNodeData<'return_statement'>(input)) {
     return return_statement_({
-      children: (input as any).children,
-    } as any);
+      children: input.children?.[0],
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as ReturnStatementFromInput;
   return return_statement_({
@@ -4121,7 +4117,7 @@ export function satisfiesExpressionFrom(input: RuntimeNodeOf<SatisfiesExpression
     return satisfies_expression_({
       expression: input.fields?.expression,
       typeAnnotation: input.fields?.type_annotation,
-    } as any);
+    });
   }
   const obj = input as SatisfiesExpressionFromInput;
   return satisfies_expression_({
@@ -4133,8 +4129,8 @@ export function satisfiesExpressionFrom(input: RuntimeNodeOf<SatisfiesExpression
 export function sequenceExpressionFrom(input: RuntimeNodeOf<SequenceExpression> | SequenceExpressionFromInput) {
   if (isNodeData<'sequence_expression'>(input)) {
     return sequence_expression_({
-      children: (input as any).children,
-    } as any);
+      children: input.children,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as SequenceExpressionFromInput;
   return sequence_expression_({
@@ -4146,7 +4142,7 @@ export function spreadElementFrom(input: RuntimeNodeOf<SpreadElement> | SpreadEl
   if (isNodeData<'spread_element'>(input)) {
     return spread_element_({
       expression: input.fields?.expression,
-    } as any);
+    });
   }
   const obj = input as SpreadElementFromInput;
   return spread_element_({
@@ -4159,7 +4155,7 @@ export function statementBlockFrom(input: RuntimeNodeOf<StatementBlock> | Statem
     return statement_block_({
       statements: input.fields?.statements,
       automaticSemicolon: input.fields?.automatic_semicolon,
-    } as any);
+    });
   }
   const obj = input as StatementBlockFromInput;
   return statement_block_({
@@ -4171,8 +4167,8 @@ export function statementBlockFrom(input: RuntimeNodeOf<StatementBlock> | Statem
 export function stringFrom(input: RuntimeNodeOf<String> | StringFromInput) {
   if (isNodeData<'string'>(input)) {
     return string_({
-      children: (input as any).children,
-    } as any);
+      children: input.children,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as StringFromInput;
   return string_({
@@ -4186,7 +4182,7 @@ export function subscriptExpressionFrom(input: RuntimeNodeOf<SubscriptExpression
       index: input.fields?.index,
       object: input.fields?.object,
       optionalChain: input.fields?.optional_chain,
-    } as any);
+    });
   }
   const obj = input as SubscriptExpressionFromInput;
   return subscript_expression_({
@@ -4199,8 +4195,8 @@ export function subscriptExpressionFrom(input: RuntimeNodeOf<SubscriptExpression
 export function switchBodyFrom(input: RuntimeNodeOf<SwitchBody> | SwitchBodyFromInput) {
   if (isNodeData<'switch_body'>(input)) {
     return switch_body_({
-      children: (input as any).children,
-    } as any);
+      children: input.children,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as SwitchBodyFromInput;
   return switch_body_({
@@ -4213,7 +4209,7 @@ export function switchCaseFrom(input: RuntimeNodeOf<SwitchCase> | SwitchCaseFrom
     return switch_case_({
       body: input.fields?.body,
       value: input.fields?.value,
-    } as any);
+    });
   }
   const obj = input as SwitchCaseFromInput;
   return switch_case_({
@@ -4226,7 +4222,7 @@ export function switchDefaultFrom(input: RuntimeNodeOf<SwitchDefault> | SwitchDe
   if (isNodeData<'switch_default'>(input)) {
     return switch_default_({
       body: input.fields?.body,
-    } as any);
+    });
   }
   const obj = input as SwitchDefaultFromInput;
   return switch_default_({
@@ -4239,7 +4235,7 @@ export function switchStatementFrom(input: RuntimeNodeOf<SwitchStatement> | Swit
     return switch_statement_({
       body: input.fields?.body,
       value: input.fields?.value,
-    } as any);
+    });
   }
   const obj = input as SwitchStatementFromInput;
   return switch_statement_({
@@ -4251,8 +4247,8 @@ export function switchStatementFrom(input: RuntimeNodeOf<SwitchStatement> | Swit
 export function templateLiteralTypeFrom(input: RuntimeNodeOf<TemplateLiteralType> | TemplateLiteralTypeFromInput) {
   if (isNodeData<'template_literal_type'>(input)) {
     return template_literal_type_({
-      children: (input as any).children,
-    } as any);
+      children: input.children,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as TemplateLiteralTypeFromInput;
   return template_literal_type_({
@@ -4263,8 +4259,8 @@ export function templateLiteralTypeFrom(input: RuntimeNodeOf<TemplateLiteralType
 export function templateStringFrom(input: RuntimeNodeOf<TemplateString> | TemplateStringFromInput) {
   if (isNodeData<'template_string'>(input)) {
     return template_string_({
-      children: (input as any).children,
-    } as any);
+      children: input.children,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as TemplateStringFromInput;
   return template_string_({
@@ -4275,8 +4271,8 @@ export function templateStringFrom(input: RuntimeNodeOf<TemplateString> | Templa
 export function templateSubstitutionFrom(input: RuntimeNodeOf<TemplateSubstitution> | TemplateSubstitutionFromInput) {
   if (isNodeData<'template_substitution'>(input)) {
     return template_substitution_({
-      children: (input as any).children,
-    } as any);
+      children: input.children[0]!,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as TemplateSubstitutionFromInput;
   return template_substitution_({
@@ -4287,8 +4283,8 @@ export function templateSubstitutionFrom(input: RuntimeNodeOf<TemplateSubstituti
 export function templateTypeFrom(input: RuntimeNodeOf<TemplateType> | TemplateTypeFromInput) {
   if (isNodeData<'template_type'>(input)) {
     return template_type_({
-      children: (input as any).children,
-    } as any);
+      children: input.children[0]!,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as TemplateTypeFromInput;
   return template_type_({
@@ -4302,7 +4298,7 @@ export function ternaryExpressionFrom(input: RuntimeNodeOf<TernaryExpression> | 
       alternative: input.fields?.alternative,
       condition: input.fields?.condition,
       consequence: input.fields?.consequence,
-    } as any);
+    });
   }
   const obj = input as TernaryExpressionFromInput;
   return ternary_expression_({
@@ -4315,8 +4311,8 @@ export function ternaryExpressionFrom(input: RuntimeNodeOf<TernaryExpression> | 
 export function throwStatementFrom(input: RuntimeNodeOf<ThrowStatement> | ThrowStatementFromInput) {
   if (isNodeData<'throw_statement'>(input)) {
     return throw_statement_({
-      children: (input as any).children,
-    } as any);
+      children: input.children[0]!,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as ThrowStatementFromInput;
   return throw_statement_({
@@ -4330,7 +4326,7 @@ export function tryStatementFrom(input: RuntimeNodeOf<TryStatement> | TryStateme
       body: input.fields?.body,
       finalizer: input.fields?.finalizer,
       handler: input.fields?.handler,
-    } as any);
+    });
   }
   const obj = input as TryStatementFromInput;
   return try_statement_({
@@ -4343,8 +4339,8 @@ export function tryStatementFrom(input: RuntimeNodeOf<TryStatement> | TryStateme
 export function tupleTypeFrom(input: RuntimeNodeOf<TupleType> | TupleTypeFromInput) {
   if (isNodeData<'tuple_type'>(input)) {
     return tuple_type_({
-      children: (input as any).children,
-    } as any);
+      children: input.children,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as TupleTypeFromInput;
   return tuple_type_({
@@ -4358,7 +4354,7 @@ export function typeAliasDeclarationFrom(input: RuntimeNodeOf<TypeAliasDeclarati
       name: input.fields?.name,
       typeParameters: input.fields?.type_parameters,
       value: input.fields?.value,
-    } as any);
+    });
   }
   const obj = input as TypeAliasDeclarationFromInput;
   return type_alias_declaration_({
@@ -4371,8 +4367,8 @@ export function typeAliasDeclarationFrom(input: RuntimeNodeOf<TypeAliasDeclarati
 export function typeAnnotationFrom(input: RuntimeNodeOf<TypeAnnotation> | TypeAnnotationFromInput) {
   if (isNodeData<'type_annotation'>(input)) {
     return type_annotation_({
-      children: (input as any).children,
-    } as any);
+      children: input.children[0]!,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as TypeAnnotationFromInput;
   return type_annotation_({
@@ -4383,8 +4379,8 @@ export function typeAnnotationFrom(input: RuntimeNodeOf<TypeAnnotation> | TypeAn
 export function typeArgumentsFrom(input: RuntimeNodeOf<TypeArguments> | TypeArgumentsFromInput) {
   if (isNodeData<'type_arguments'>(input)) {
     return type_arguments_({
-      children: (input as any).children,
-    } as any);
+      children: input.children,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as TypeArgumentsFromInput;
   return type_arguments_({
@@ -4397,7 +4393,7 @@ export function typeAssertionFrom(input: RuntimeNodeOf<TypeAssertion> | TypeAsse
     return type_assertion_({
       typeArguments: input.fields?.type_arguments,
       expression: input.fields?.expression,
-    } as any);
+    });
   }
   const obj = input as TypeAssertionFromInput;
   return type_assertion_({
@@ -4412,7 +4408,7 @@ export function typeParameterFrom(input: RuntimeNodeOf<TypeParameter> | TypePara
       constraint: input.fields?.constraint,
       name: input.fields?.name,
       value: input.fields?.value,
-    } as any);
+    });
   }
   const obj = input as TypeParameterFromInput;
   return type_parameter_({
@@ -4425,8 +4421,8 @@ export function typeParameterFrom(input: RuntimeNodeOf<TypeParameter> | TypePara
 export function typeParametersFrom(input: RuntimeNodeOf<TypeParameters> | TypeParametersFromInput) {
   if (isNodeData<'type_parameters'>(input)) {
     return type_parameters_({
-      children: (input as any).children,
-    } as any);
+      children: input.children,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as TypeParametersFromInput;
   return type_parameters_({
@@ -4439,7 +4435,7 @@ export function typePredicateFrom(input: RuntimeNodeOf<TypePredicate> | TypePred
     return type_predicate_({
       name: input.fields?.name,
       type: input.fields?.type,
-    } as any);
+    });
   }
   const obj = input as TypePredicateFromInput;
   return type_predicate_({
@@ -4452,7 +4448,7 @@ export function typePredicateAnnotationFrom(input: RuntimeNodeOf<TypePredicateAn
   if (isNodeData<'type_predicate_annotation'>(input)) {
     return type_predicate_annotation_({
       typePredicate: input.fields?.type_predicate,
-    } as any);
+    });
   }
   const obj = input as TypePredicateAnnotationFromInput;
   return type_predicate_annotation_({
@@ -4463,8 +4459,8 @@ export function typePredicateAnnotationFrom(input: RuntimeNodeOf<TypePredicateAn
 export function typeQueryFrom(input: RuntimeNodeOf<TypeQuery> | TypeQueryFromInput) {
   if (isNodeData<'type_query'>(input)) {
     return type_query_({
-      children: (input as any).children,
-    } as any);
+      children: input.children[0]!,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as TypeQueryFromInput;
   return type_query_({
@@ -4477,7 +4473,7 @@ export function unaryExpressionFrom(input: RuntimeNodeOf<UnaryExpression> | Unar
     return unary_expression_({
       argument: input.fields?.argument,
       operator: input.fields?.operator,
-    } as any);
+    });
   }
   const obj = input as UnaryExpressionFromInput;
   return unary_expression_({
@@ -4491,7 +4487,7 @@ export function unionTypeFrom(input: RuntimeNodeOf<UnionType> | UnionTypeFromInp
     return union_type_({
       left: input.fields?.left,
       right: input.fields?.right,
-    } as any);
+    });
   }
   const obj = input as UnionTypeFromInput;
   return union_type_({
@@ -4505,7 +4501,7 @@ export function updateExpressionFrom(input: RuntimeNodeOf<UpdateExpression> | Up
     return update_expression_({
       argument: input.fields?.argument,
       operator: input.fields?.operator,
-    } as any);
+    });
   }
   const obj = input as UpdateExpressionFromInput;
   return update_expression_({
@@ -4519,7 +4515,7 @@ export function variableDeclarationFrom(input: RuntimeNodeOf<VariableDeclaration
     return variable_declaration_({
       declarators: input.fields?.declarators,
       semicolon: input.fields?.semicolon,
-    } as any);
+    });
   }
   const obj = input as VariableDeclarationFromInput;
   return variable_declaration_({
@@ -4534,7 +4530,7 @@ export function variableDeclaratorFrom(input: RuntimeNodeOf<VariableDeclarator> 
       name: input.fields?.name,
       type: input.fields?.type,
       value: input.fields?.value,
-    } as any);
+    });
   }
   const obj = input as VariableDeclaratorFromInput;
   return variable_declarator_({
@@ -4549,7 +4545,7 @@ export function whileStatementFrom(input: RuntimeNodeOf<WhileStatement> | WhileS
     return while_statement_({
       body: input.fields?.body,
       condition: input.fields?.condition,
-    } as any);
+    });
   }
   const obj = input as WhileStatementFromInput;
   return while_statement_({
@@ -4563,7 +4559,7 @@ export function withStatementFrom(input: RuntimeNodeOf<WithStatement> | WithStat
     return with_statement_({
       body: input.fields?.body,
       object: input.fields?.object,
-    } as any);
+    });
   }
   const obj = input as WithStatementFromInput;
   return with_statement_({
@@ -4576,7 +4572,7 @@ export function yieldExpressionFrom(input: RuntimeNodeOf<YieldExpression> | Yiel
   if (isNodeData<'yield_expression'>(input)) {
     return yield_expression_({
       expression: input.fields?.expression,
-    } as any);
+    });
   }
   const obj = input as YieldExpressionFromInput;
   return yield_expression_({

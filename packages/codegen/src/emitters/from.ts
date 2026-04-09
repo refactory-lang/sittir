@@ -774,9 +774,24 @@ function emitFromFunction(
 		out.line(`${camel}: input.fields?.${f.name},`);
 	}
 	if (node.children != null) {
+		// Check if children are fully covered by fields (if so, the interface has no children prop)
+		const fieldCoveredKinds = new Set<string>();
+		if (node.modelType === 'branch') {
+			for (const f of fields) for (const k of f.kinds) fieldCoveredKinds.add(k.kind);
+		}
 		const slotNames = childSlotNames(node.children, ctx);
 		if (!isTupleChildren(node.children)) {
-			out.line(`${slotNames[0]!}: (input as any).children,`);
+			const slot = Array.isArray(node.children) ? node.children[0]! : node.children;
+			const allCovered = node.modelType === 'branch' && slot.kinds.every(k => fieldCoveredKinds.has(k.kind));
+			if (!allCovered) {
+				if (slot.multiple) {
+					out.line(`${slotNames[0]!}: input.children,`);
+				} else if (slot.required) {
+					out.line(`${slotNames[0]!}: input.children[0]!,`);
+				} else {
+					out.line(`${slotNames[0]!}: input.children?.[0],`);
+				}
+			}
 		}
 	}
 	out.dedent();

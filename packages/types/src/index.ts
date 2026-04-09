@@ -401,8 +401,8 @@ type ChildSlotsOf<T> = Omit<T, 'type' | 'fields' | 'text'>;
  * are always arrays (`children: Path[]`). This bridges the gap.
  */
 type RuntimeChildSlots<T> = {
-	[K in keyof ChildSlotsOf<T>]: ChildSlotsOf<T>[K] extends readonly (infer _E)[]
-		? ChildSlotsOf<T>[K]                           // already an array → keep
+	[K in keyof ChildSlotsOf<T>]: NonNullable<ChildSlotsOf<T>[K]> extends readonly (infer _E)[]
+		? ChildSlotsOf<T>[K]                           // already an array → keep (preserves optionality)
 		: readonly (NonNullable<ChildSlotsOf<T>[K]>)[]; // singular → wrap in array
 };
 

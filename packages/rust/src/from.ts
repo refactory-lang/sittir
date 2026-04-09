@@ -2714,7 +2714,7 @@ export function abstractTypeFrom(input: RuntimeNodeOf<AbstractType> | AbstractTy
     return abstract_type_({
       trait: input.fields?.trait,
       typeParameters: input.fields?.type_parameters,
-    } as any);
+    });
   }
   const obj = input as AbstractTypeFromInput;
   return abstract_type_({
@@ -2726,8 +2726,8 @@ export function abstractTypeFrom(input: RuntimeNodeOf<AbstractType> | AbstractTy
 export function arguments_From(input: RuntimeNodeOf<Arguments> | ArgumentsFromInput) {
   if (isNodeData<'arguments'>(input)) {
     return arguments_({
-      children: (input as any).children,
-    } as any);
+      children: input.children,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as ArgumentsFromInput;
   return arguments_({
@@ -2741,7 +2741,7 @@ export function arrayExpressionFrom(input: RuntimeNodeOf<ArrayExpression> | Arra
       length: input.fields?.length,
       attributes: input.fields?.attributes,
       elements: input.fields?.elements,
-    } as any);
+    });
   }
   const obj = input as ArrayExpressionFromInput;
   return array_expression_({
@@ -2756,7 +2756,7 @@ export function arrayTypeFrom(input: RuntimeNodeOf<ArrayType> | ArrayTypeFromInp
     return array_type_({
       element: input.fields?.element,
       length: input.fields?.length,
-    } as any);
+    });
   }
   const obj = input as ArrayTypeFromInput;
   return array_type_({
@@ -2770,7 +2770,7 @@ export function assignmentExpressionFrom(input: RuntimeNodeOf<AssignmentExpressi
     return assignment_expression_({
       left: input.fields?.left,
       right: input.fields?.right,
-    } as any);
+    });
   }
   const obj = input as AssignmentExpressionFromInput;
   return assignment_expression_({
@@ -2786,7 +2786,7 @@ export function associatedTypeFrom(input: RuntimeNodeOf<AssociatedType> | Associ
       name: input.fields?.name,
       typeParameters: input.fields?.type_parameters,
       whereClause: input.fields?.where_clause,
-    } as any);
+    });
   }
   const obj = input as AssociatedTypeFromInput;
   return associated_type_({
@@ -2801,7 +2801,7 @@ export function asyncBlockFrom(input: RuntimeNodeOf<AsyncBlock> | AsyncBlockFrom
   if (isNodeData<'async_block'>(input)) {
     return async_block_({
       block: input.fields?.block,
-    } as any);
+    });
   }
   const obj = input as AsyncBlockFromInput;
   return async_block_({
@@ -2814,8 +2814,8 @@ export function attributeFrom(input: RuntimeNodeOf<Attribute> | AttributeFromInp
     return attribute_({
       arguments: input.fields?.arguments,
       value: input.fields?.value,
-      children: (input as any).children,
-    } as any);
+      children: input.children[0]!,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as AttributeFromInput;
   return attribute_({
@@ -2829,7 +2829,7 @@ export function attributeItemFrom(input: RuntimeNodeOf<AttributeItem> | Attribut
   if (isNodeData<'attribute_item'>(input)) {
     return attribute_item_({
       attribute: input.fields?.attribute,
-    } as any);
+    });
   }
   const obj = input as AttributeItemFromInput;
   return attribute_item_({
@@ -2840,8 +2840,8 @@ export function attributeItemFrom(input: RuntimeNodeOf<AttributeItem> | Attribut
 export function awaitExpressionFrom(input: RuntimeNodeOf<AwaitExpression> | AwaitExpressionFromInput) {
   if (isNodeData<'await_expression'>(input)) {
     return await_expression_({
-      children: (input as any).children,
-    } as any);
+      children: input.children[0]!,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as AwaitExpressionFromInput;
   return await_expression_({
@@ -2852,8 +2852,8 @@ export function awaitExpressionFrom(input: RuntimeNodeOf<AwaitExpression> | Awai
 export function baseFieldInitializerFrom(input: RuntimeNodeOf<BaseFieldInitializer> | BaseFieldInitializerFromInput) {
   if (isNodeData<'base_field_initializer'>(input)) {
     return base_field_initializer_({
-      children: (input as any).children,
-    } as any);
+      children: input.children[0]!,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as BaseFieldInitializerFromInput;
   return base_field_initializer_({
@@ -2867,7 +2867,7 @@ export function binaryExpressionFrom(input: RuntimeNodeOf<BinaryExpression> | Bi
       left: input.fields?.left,
       operator: input.fields?.operator,
       right: input.fields?.right,
-    } as any);
+    });
   }
   const obj = input as BinaryExpressionFromInput;
   return binary_expression_({
@@ -2881,8 +2881,8 @@ export function blockFrom(input: RuntimeNodeOf<Block> | BlockFromInput) {
   if (isNodeData<'block'>(input)) {
     return block_({
       label: input.fields?.label,
-      children: (input as any).children,
-    } as any);
+      children: input.children,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as BlockFromInput;
   return block_({
@@ -2897,7 +2897,7 @@ export function blockCommentFrom(input: RuntimeNodeOf<BlockComment> | BlockComme
       doc: input.fields?.doc,
       inner: input.fields?.inner,
       outer: input.fields?.outer,
-    } as any);
+    });
   }
   const obj = input as BlockCommentFromInput;
   return block_comment_({
@@ -2912,7 +2912,7 @@ export function boundedTypeFrom(input: RuntimeNodeOf<BoundedType> | BoundedTypeF
     return bounded_type_({
       left: input.fields?.left,
       right: input.fields?.right,
-    } as any);
+    });
   }
   const obj = input as BoundedTypeFromInput;
   return bounded_type_({
@@ -2924,8 +2924,8 @@ export function boundedTypeFrom(input: RuntimeNodeOf<BoundedType> | BoundedTypeF
 export function bracketedTypeFrom(input: RuntimeNodeOf<BracketedType> | BracketedTypeFromInput) {
   if (isNodeData<'bracketed_type'>(input)) {
     return bracketed_type_({
-      children: (input as any).children,
-    } as any);
+      children: input.children[0]!,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as BracketedTypeFromInput;
   return bracketed_type_({
@@ -2938,7 +2938,7 @@ export function breakExpressionFrom(input: RuntimeNodeOf<BreakExpression> | Brea
     return break_expression_({
       label: input.fields?.label,
       expression: input.fields?.expression,
-    } as any);
+    });
   }
   const obj = input as BreakExpressionFromInput;
   return break_expression_({
@@ -2952,7 +2952,7 @@ export function callExpressionFrom(input: RuntimeNodeOf<CallExpression> | CallEx
     return call_expression_({
       arguments: input.fields?.arguments,
       function: input.fields?.function,
-    } as any);
+    });
   }
   const obj = input as CallExpressionFromInput;
   return call_expression_({
@@ -2966,7 +2966,7 @@ export function capturedPatternFrom(input: RuntimeNodeOf<CapturedPattern> | Capt
     return captured_pattern_({
       identifier: input.fields?.identifier,
       pattern: input.fields?.pattern,
-    } as any);
+    });
   }
   const obj = input as CapturedPatternFromInput;
   return captured_pattern_({
@@ -2984,7 +2984,7 @@ export function closureExpressionFrom(input: RuntimeNodeOf<ClosureExpression> | 
       async: input.fields?.async,
       move: input.fields?.move,
       static: input.fields?.static,
-    } as any);
+    });
   }
   const obj = input as ClosureExpressionFromInput;
   return closure_expression_({
@@ -3000,8 +3000,8 @@ export function closureExpressionFrom(input: RuntimeNodeOf<ClosureExpression> | 
 export function closureParametersFrom(input: RuntimeNodeOf<ClosureParameters> | ClosureParametersFromInput) {
   if (isNodeData<'closure_parameters'>(input)) {
     return closure_parameters_({
-      children: (input as any).children,
-    } as any);
+      children: input.children,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as ClosureParametersFromInput;
   return closure_parameters_({
@@ -3015,7 +3015,7 @@ export function compoundAssignmentExprFrom(input: RuntimeNodeOf<CompoundAssignme
       left: input.fields?.left,
       operator: input.fields?.operator,
       right: input.fields?.right,
-    } as any);
+    });
   }
   const obj = input as CompoundAssignmentExprFromInput;
   return compound_assignment_expr_({
@@ -3029,7 +3029,7 @@ export function constBlockFrom(input: RuntimeNodeOf<ConstBlock> | ConstBlockFrom
   if (isNodeData<'const_block'>(input)) {
     return const_block_({
       body: input.fields?.body,
-    } as any);
+    });
   }
   const obj = input as ConstBlockFromInput;
   return const_block_({
@@ -3044,7 +3044,7 @@ export function constItemFrom(input: RuntimeNodeOf<ConstItem> | ConstItemFromInp
       type: input.fields?.type,
       value: input.fields?.value,
       visibilityModifier: input.fields?.visibility_modifier,
-    } as any);
+    });
   }
   const obj = input as ConstItemFromInput;
   return const_item_({
@@ -3061,7 +3061,7 @@ export function constParameterFrom(input: RuntimeNodeOf<ConstParameter> | ConstP
       name: input.fields?.name,
       type: input.fields?.type,
       value: input.fields?.value,
-    } as any);
+    });
   }
   const obj = input as ConstParameterFromInput;
   return const_parameter_({
@@ -3075,7 +3075,7 @@ export function continueExpressionFrom(input: RuntimeNodeOf<ContinueExpression> 
   if (isNodeData<'continue_expression'>(input)) {
     return continue_expression_({
       label: input.fields?.label,
-    } as any);
+    });
   }
   const obj = input as ContinueExpressionFromInput;
   return continue_expression_({
@@ -3086,8 +3086,8 @@ export function continueExpressionFrom(input: RuntimeNodeOf<ContinueExpression> 
 export function declarationListFrom(input: RuntimeNodeOf<DeclarationList> | DeclarationListFromInput) {
   if (isNodeData<'declaration_list'>(input)) {
     return declaration_list_({
-      children: (input as any).children,
-    } as any);
+      children: input.children,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as DeclarationListFromInput;
   return declaration_list_({
@@ -3099,7 +3099,7 @@ export function dynamicTypeFrom(input: RuntimeNodeOf<DynamicType> | DynamicTypeF
   if (isNodeData<'dynamic_type'>(input)) {
     return dynamic_type_({
       trait: input.fields?.trait,
-    } as any);
+    });
   }
   const obj = input as DynamicTypeFromInput;
   return dynamic_type_({
@@ -3110,8 +3110,8 @@ export function dynamicTypeFrom(input: RuntimeNodeOf<DynamicType> | DynamicTypeF
 export function elseClauseFrom(input: RuntimeNodeOf<ElseClause> | ElseClauseFromInput) {
   if (isNodeData<'else_clause'>(input)) {
     return else_clause_({
-      children: (input as any).children,
-    } as any);
+      children: input.children[0]!,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as ElseClauseFromInput;
   return else_clause_({
@@ -3127,7 +3127,7 @@ export function enumItemFrom(input: RuntimeNodeOf<EnumItem> | EnumItemFromInput)
       typeParameters: input.fields?.type_parameters,
       visibilityModifier: input.fields?.visibility_modifier,
       whereClause: input.fields?.where_clause,
-    } as any);
+    });
   }
   const obj = input as EnumItemFromInput;
   return enum_item_({
@@ -3146,7 +3146,7 @@ export function enumVariantFrom(input: RuntimeNodeOf<EnumVariant> | EnumVariantF
       name: input.fields?.name,
       value: input.fields?.value,
       visibilityModifier: input.fields?.visibility_modifier,
-    } as any);
+    });
   }
   const obj = input as EnumVariantFromInput;
   return enum_variant_({
@@ -3160,8 +3160,8 @@ export function enumVariantFrom(input: RuntimeNodeOf<EnumVariant> | EnumVariantF
 export function enumVariantListFrom(input: RuntimeNodeOf<EnumVariantList> | EnumVariantListFromInput) {
   if (isNodeData<'enum_variant_list'>(input)) {
     return enum_variant_list_({
-      children: (input as any).children,
-    } as any);
+      children: input.children,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as EnumVariantListFromInput;
   return enum_variant_list_({
@@ -3172,8 +3172,8 @@ export function enumVariantListFrom(input: RuntimeNodeOf<EnumVariantList> | Enum
 export function expressionStatementFrom(input: RuntimeNodeOf<ExpressionStatement> | ExpressionStatementFromInput) {
   if (isNodeData<'expression_statement'>(input)) {
     return expression_statement_({
-      children: (input as any).children,
-    } as any);
+      children: input.children[0]!,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as ExpressionStatementFromInput;
   return expression_statement_({
@@ -3188,7 +3188,7 @@ export function externCrateDeclarationFrom(input: RuntimeNodeOf<ExternCrateDecla
       name: input.fields?.name,
       visibilityModifier: input.fields?.visibility_modifier,
       crate: input.fields?.crate,
-    } as any);
+    });
   }
   const obj = input as ExternCrateDeclarationFromInput;
   return extern_crate_declaration_({
@@ -3203,7 +3203,7 @@ export function externModifierFrom(input: RuntimeNodeOf<ExternModifier> | Extern
   if (isNodeData<'extern_modifier'>(input)) {
     return extern_modifier_({
       stringLiteral: input.fields?.string_literal,
-    } as any);
+    });
   }
   const obj = input as ExternModifierFromInput;
   return extern_modifier_({
@@ -3217,7 +3217,7 @@ export function fieldDeclarationFrom(input: RuntimeNodeOf<FieldDeclaration> | Fi
       name: input.fields?.name,
       type: input.fields?.type,
       visibilityModifier: input.fields?.visibility_modifier,
-    } as any);
+    });
   }
   const obj = input as FieldDeclarationFromInput;
   return field_declaration_({
@@ -3230,8 +3230,8 @@ export function fieldDeclarationFrom(input: RuntimeNodeOf<FieldDeclaration> | Fi
 export function fieldDeclarationListFrom(input: RuntimeNodeOf<FieldDeclarationList> | FieldDeclarationListFromInput) {
   if (isNodeData<'field_declaration_list'>(input)) {
     return field_declaration_list_({
-      children: (input as any).children,
-    } as any);
+      children: input.children,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as FieldDeclarationListFromInput;
   return field_declaration_list_({
@@ -3244,7 +3244,7 @@ export function fieldExpressionFrom(input: RuntimeNodeOf<FieldExpression> | Fiel
     return field_expression_({
       field: input.fields?.field,
       value: input.fields?.value,
-    } as any);
+    });
   }
   const obj = input as FieldExpressionFromInput;
   return field_expression_({
@@ -3258,8 +3258,8 @@ export function fieldInitializerFrom(input: RuntimeNodeOf<FieldInitializer> | Fi
     return field_initializer_({
       field: input.fields?.field,
       value: input.fields?.value,
-      children: (input as any).children,
-    } as any);
+      children: input.children,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as FieldInitializerFromInput;
   return field_initializer_({
@@ -3272,8 +3272,8 @@ export function fieldInitializerFrom(input: RuntimeNodeOf<FieldInitializer> | Fi
 export function fieldInitializerListFrom(input: RuntimeNodeOf<FieldInitializerList> | FieldInitializerListFromInput) {
   if (isNodeData<'field_initializer_list'>(input)) {
     return field_initializer_list_({
-      children: (input as any).children,
-    } as any);
+      children: input.children,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as FieldInitializerListFromInput;
   return field_initializer_list_({
@@ -3287,7 +3287,7 @@ export function fieldPatternFrom(input: RuntimeNodeOf<FieldPattern> | FieldPatte
       name: input.fields?.name,
       pattern: input.fields?.pattern,
       mutableSpecifier: input.fields?.mutable_specifier,
-    } as any);
+    });
   }
   const obj = input as FieldPatternFromInput;
   return field_pattern_({
@@ -3304,7 +3304,7 @@ export function forExpressionFrom(input: RuntimeNodeOf<ForExpression> | ForExpre
       pattern: input.fields?.pattern,
       value: input.fields?.value,
       label: input.fields?.label,
-    } as any);
+    });
   }
   const obj = input as ForExpressionFromInput;
   return for_expression_({
@@ -3318,8 +3318,8 @@ export function forExpressionFrom(input: RuntimeNodeOf<ForExpression> | ForExpre
 export function forLifetimesFrom(input: RuntimeNodeOf<ForLifetimes> | ForLifetimesFromInput) {
   if (isNodeData<'for_lifetimes'>(input)) {
     return for_lifetimes_({
-      children: (input as any).children,
-    } as any);
+      children: input.children,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as ForLifetimesFromInput;
   return for_lifetimes_({
@@ -3333,7 +3333,7 @@ export function foreignModItemFrom(input: RuntimeNodeOf<ForeignModItem> | Foreig
       body: input.fields?.body,
       visibilityModifier: input.fields?.visibility_modifier,
       externModifier: input.fields?.extern_modifier,
-    } as any);
+    });
   }
   const obj = input as ForeignModItemFromInput;
   return foreign_mod_item_({
@@ -3354,7 +3354,7 @@ export function functionItemFrom(input: RuntimeNodeOf<FunctionItem> | FunctionIt
       visibilityModifier: input.fields?.visibility_modifier,
       functionModifiers: input.fields?.function_modifiers,
       whereClause: input.fields?.where_clause,
-    } as any);
+    });
   }
   const obj = input as FunctionItemFromInput;
   return function_item_({
@@ -3376,8 +3376,8 @@ export function functionModifiersFrom(input: RuntimeNodeOf<FunctionModifiers> | 
       default: input.fields?.default,
       const: input.fields?.const,
       unsafe: input.fields?.unsafe,
-      children: (input as any).children,
-    } as any);
+      children: input.children,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as FunctionModifiersFromInput;
   return function_modifiers_({
@@ -3399,7 +3399,7 @@ export function functionSignatureItemFrom(input: RuntimeNodeOf<FunctionSignature
       visibilityModifier: input.fields?.visibility_modifier,
       functionModifiers: input.fields?.function_modifiers,
       whereClause: input.fields?.where_clause,
-    } as any);
+    });
   }
   const obj = input as FunctionSignatureItemFromInput;
   return function_signature_item_({
@@ -3421,7 +3421,7 @@ export function functionTypeFrom(input: RuntimeNodeOf<FunctionType> | FunctionTy
       trait: input.fields?.trait,
       forLifetimes: input.fields?.for_lifetimes,
       functionModifiers: input.fields?.function_modifiers,
-    } as any);
+    });
   }
   const obj = input as FunctionTypeFromInput;
   return function_type_({
@@ -3437,7 +3437,7 @@ export function genBlockFrom(input: RuntimeNodeOf<GenBlock> | GenBlockFromInput)
   if (isNodeData<'gen_block'>(input)) {
     return gen_block_({
       block: input.fields?.block,
-    } as any);
+    });
   }
   const obj = input as GenBlockFromInput;
   return gen_block_({
@@ -3450,7 +3450,7 @@ export function genericFunctionFrom(input: RuntimeNodeOf<GenericFunction> | Gene
     return generic_function_({
       function: input.fields?.function,
       typeArguments: input.fields?.type_arguments,
-    } as any);
+    });
   }
   const obj = input as GenericFunctionFromInput;
   return generic_function_({
@@ -3463,8 +3463,8 @@ export function genericPatternFrom(input: RuntimeNodeOf<GenericPattern> | Generi
   if (isNodeData<'generic_pattern'>(input)) {
     return generic_pattern_({
       typeArguments: input.fields?.type_arguments,
-      children: (input as any).children,
-    } as any);
+      children: input.children[0]!,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as GenericPatternFromInput;
   return generic_pattern_({
@@ -3478,7 +3478,7 @@ export function genericTypeFrom(input: RuntimeNodeOf<GenericType> | GenericTypeF
     return generic_type_({
       type: input.fields?.type,
       typeArguments: input.fields?.type_arguments,
-    } as any);
+    });
   }
   const obj = input as GenericTypeFromInput;
   return generic_type_({
@@ -3492,7 +3492,7 @@ export function genericTypeWithTurbofishFrom(input: RuntimeNodeOf<GenericTypeWit
     return generic_type_with_turbofish_({
       type: input.fields?.type,
       typeArguments: input.fields?.type_arguments,
-    } as any);
+    });
   }
   const obj = input as GenericTypeWithTurbofishFromInput;
   return generic_type_with_turbofish_({
@@ -3506,7 +3506,7 @@ export function higherRankedTraitBoundFrom(input: RuntimeNodeOf<HigherRankedTrai
     return higher_ranked_trait_bound_({
       type: input.fields?.type,
       typeParameters: input.fields?.type_parameters,
-    } as any);
+    });
   }
   const obj = input as HigherRankedTraitBoundFromInput;
   return higher_ranked_trait_bound_({
@@ -3521,7 +3521,7 @@ export function ifExpressionFrom(input: RuntimeNodeOf<IfExpression> | IfExpressi
       alternative: input.fields?.alternative,
       condition: input.fields?.condition,
       consequence: input.fields?.consequence,
-    } as any);
+    });
   }
   const obj = input as IfExpressionFromInput;
   return if_expression_({
@@ -3539,7 +3539,7 @@ export function implItemFrom(input: RuntimeNodeOf<ImplItem> | ImplItemFromInput)
       type: input.fields?.type,
       typeParameters: input.fields?.type_parameters,
       whereClause: input.fields?.where_clause,
-    } as any);
+    });
   }
   const obj = input as ImplItemFromInput;
   return impl_item_({
@@ -3556,7 +3556,7 @@ export function indexExpressionFrom(input: RuntimeNodeOf<IndexExpression> | Inde
     return index_expression_({
       object: input.fields?.object,
       index: input.fields?.index,
-    } as any);
+    });
   }
   const obj = input as IndexExpressionFromInput;
   return index_expression_({
@@ -3569,7 +3569,7 @@ export function innerAttributeItemFrom(input: RuntimeNodeOf<InnerAttributeItem> 
   if (isNodeData<'inner_attribute_item'>(input)) {
     return inner_attribute_item_({
       attribute: input.fields?.attribute,
-    } as any);
+    });
   }
   const obj = input as InnerAttributeItemFromInput;
   return inner_attribute_item_({
@@ -3581,7 +3581,7 @@ export function labelFrom(input: RuntimeNodeOf<Label> | LabelFromInput) {
   if (isNodeData<'label'>(input)) {
     return label_({
       identifier: input.fields?.identifier,
-    } as any);
+    });
   }
   const obj = input as LabelFromInput;
   return label_({
@@ -3592,8 +3592,8 @@ export function labelFrom(input: RuntimeNodeOf<Label> | LabelFromInput) {
 export function letChainFrom(input: RuntimeNodeOf<LetChain> | LetChainFromInput) {
   if (isNodeData<'let_chain'>(input)) {
     return let_chain_({
-      children: (input as any).children,
-    } as any);
+      children: input.children,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as LetChainFromInput;
   return let_chain_({
@@ -3606,7 +3606,7 @@ export function letConditionFrom(input: RuntimeNodeOf<LetCondition> | LetConditi
     return let_condition_({
       pattern: input.fields?.pattern,
       value: input.fields?.value,
-    } as any);
+    });
   }
   const obj = input as LetConditionFromInput;
   return let_condition_({
@@ -3623,7 +3623,7 @@ export function letDeclarationFrom(input: RuntimeNodeOf<LetDeclaration> | LetDec
       type: input.fields?.type,
       value: input.fields?.value,
       mutableSpecifier: input.fields?.mutable_specifier,
-    } as any);
+    });
   }
   const obj = input as LetDeclarationFromInput;
   return let_declaration_({
@@ -3639,7 +3639,7 @@ export function lifetimeFrom(input: RuntimeNodeOf<Lifetime> | LifetimeFromInput)
   if (isNodeData<'lifetime'>(input)) {
     return lifetime_({
       identifier: input.fields?.identifier,
-    } as any);
+    });
   }
   const obj = input as LifetimeFromInput;
   return lifetime_({
@@ -3652,7 +3652,7 @@ export function lifetimeParameterFrom(input: RuntimeNodeOf<LifetimeParameter> | 
     return lifetime_parameter_({
       bounds: input.fields?.bounds,
       name: input.fields?.name,
-    } as any);
+    });
   }
   const obj = input as LifetimeParameterFromInput;
   return lifetime_parameter_({
@@ -3667,7 +3667,7 @@ export function lineCommentFrom(input: RuntimeNodeOf<LineComment> | LineCommentF
       doc: input.fields?.doc,
       inner: input.fields?.inner,
       outer: input.fields?.outer,
-    } as any);
+    });
   }
   const obj = input as LineCommentFromInput;
   return line_comment_({
@@ -3682,7 +3682,7 @@ export function loopExpressionFrom(input: RuntimeNodeOf<LoopExpression> | LoopEx
     return loop_expression_({
       body: input.fields?.body,
       label: input.fields?.label,
-    } as any);
+    });
   }
   const obj = input as LoopExpressionFromInput;
   return loop_expression_({
@@ -3696,7 +3696,7 @@ export function macroDefinitionFrom(input: RuntimeNodeOf<MacroDefinition> | Macr
     return macro_definition_({
       name: input.fields?.name,
       rules: input.fields?.rules,
-    } as any);
+    });
   }
   const obj = input as MacroDefinitionFromInput;
   return macro_definition_({
@@ -3710,7 +3710,7 @@ export function macroInvocationFrom(input: RuntimeNodeOf<MacroInvocation> | Macr
     return macro_invocation_({
       macro: input.fields?.macro,
       tokenTree: input.fields?.token_tree,
-    } as any);
+    });
   }
   const obj = input as MacroInvocationFromInput;
   return macro_invocation_({
@@ -3724,7 +3724,7 @@ export function macroRuleFrom(input: RuntimeNodeOf<MacroRule> | MacroRuleFromInp
     return macro_rule_({
       left: input.fields?.left,
       right: input.fields?.right,
-    } as any);
+    });
   }
   const obj = input as MacroRuleFromInput;
   return macro_rule_({
@@ -3738,8 +3738,8 @@ export function matchArmFrom(input: RuntimeNodeOf<MatchArm> | MatchArmFromInput)
     return match_arm_({
       pattern: input.fields?.pattern,
       value: input.fields?.value,
-      children: (input as any).children,
-    } as any);
+      children: input.children,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as MatchArmFromInput;
   return match_arm_({
@@ -3752,8 +3752,8 @@ export function matchArmFrom(input: RuntimeNodeOf<MatchArm> | MatchArmFromInput)
 export function matchBlockFrom(input: RuntimeNodeOf<MatchBlock> | MatchBlockFromInput) {
   if (isNodeData<'match_block'>(input)) {
     return match_block_({
-      children: (input as any).children,
-    } as any);
+      children: input.children,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as MatchBlockFromInput;
   return match_block_({
@@ -3766,7 +3766,7 @@ export function matchExpressionFrom(input: RuntimeNodeOf<MatchExpression> | Matc
     return match_expression_({
       body: input.fields?.body,
       value: input.fields?.value,
-    } as any);
+    });
   }
   const obj = input as MatchExpressionFromInput;
   return match_expression_({
@@ -3779,8 +3779,8 @@ export function matchPatternFrom(input: RuntimeNodeOf<MatchPattern> | MatchPatte
   if (isNodeData<'match_pattern'>(input)) {
     return match_pattern_({
       condition: input.fields?.condition,
-      children: (input as any).children,
-    } as any);
+      children: input.children[0]!,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as MatchPatternFromInput;
   return match_pattern_({
@@ -3795,7 +3795,7 @@ export function modItemFrom(input: RuntimeNodeOf<ModItem> | ModItemFromInput) {
       body: input.fields?.body,
       name: input.fields?.name,
       visibilityModifier: input.fields?.visibility_modifier,
-    } as any);
+    });
   }
   const obj = input as ModItemFromInput;
   return mod_item_({
@@ -3810,7 +3810,7 @@ export function mutPatternFrom(input: RuntimeNodeOf<MutPattern> | MutPatternFrom
     return mut_pattern_({
       mutableSpecifier: input.fields?.mutable_specifier,
       pattern: input.fields?.pattern,
-    } as any);
+    });
   }
   const obj = input as MutPatternFromInput;
   return mut_pattern_({
@@ -3824,7 +3824,7 @@ export function negativeLiteralFrom(input: RuntimeNodeOf<NegativeLiteral> | Nega
     return negative_literal_({
       operator: input.fields?.operator,
       value: input.fields?.value,
-    } as any);
+    });
   }
   const obj = input as NegativeLiteralFromInput;
   return negative_literal_({
@@ -3838,7 +3838,7 @@ export function orPatternFrom(input: RuntimeNodeOf<OrPattern> | OrPatternFromInp
     return or_pattern_({
       left: input.fields?.left,
       right: input.fields?.right,
-    } as any);
+    });
   }
   const obj = input as OrPatternFromInput;
   return or_pattern_({
@@ -3854,7 +3854,7 @@ export function orderedFieldDeclarationListFrom(input: RuntimeNodeOf<OrderedFiel
       attributes: input.fields?.attributes,
       visibilityModifier: input.fields?.visibility_modifier,
       declarations: input.fields?.declarations,
-    } as any);
+    });
   }
   const obj = input as OrderedFieldDeclarationListFromInput;
   return ordered_field_declaration_list_({
@@ -3871,7 +3871,7 @@ export function parameterFrom(input: RuntimeNodeOf<Parameter> | ParameterFromInp
       pattern: input.fields?.pattern,
       type: input.fields?.type,
       mutableSpecifier: input.fields?.mutable_specifier,
-    } as any);
+    });
   }
   const obj = input as ParameterFromInput;
   return parameter_({
@@ -3884,8 +3884,8 @@ export function parameterFrom(input: RuntimeNodeOf<Parameter> | ParameterFromInp
 export function parametersFrom(input: RuntimeNodeOf<Parameters> | ParametersFromInput) {
   if (isNodeData<'parameters'>(input)) {
     return parameters_({
-      children: (input as any).children,
-    } as any);
+      children: input.children,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as ParametersFromInput;
   return parameters_({
@@ -3896,8 +3896,8 @@ export function parametersFrom(input: RuntimeNodeOf<Parameters> | ParametersFrom
 export function parenthesizedExpressionFrom(input: RuntimeNodeOf<ParenthesizedExpression> | ParenthesizedExpressionFromInput) {
   if (isNodeData<'parenthesized_expression'>(input)) {
     return parenthesized_expression_({
-      children: (input as any).children,
-    } as any);
+      children: input.children[0]!,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as ParenthesizedExpressionFromInput;
   return parenthesized_expression_({
@@ -3910,7 +3910,7 @@ export function pointerTypeFrom(input: RuntimeNodeOf<PointerType> | PointerTypeF
     return pointer_type_({
       type: input.fields?.type,
       mutableSpecifier: input.fields?.mutable_specifier,
-    } as any);
+    });
   }
   const obj = input as PointerTypeFromInput;
   return pointer_type_({
@@ -3924,7 +3924,7 @@ export function qualifiedTypeFrom(input: RuntimeNodeOf<QualifiedType> | Qualifie
     return qualified_type_({
       alias: input.fields?.alias,
       type: input.fields?.type,
-    } as any);
+    });
   }
   const obj = input as QualifiedTypeFromInput;
   return qualified_type_({
@@ -3939,7 +3939,7 @@ export function rangeExpressionFrom(input: RuntimeNodeOf<RangeExpression> | Rang
       start: input.fields?.start,
       operator: input.fields?.operator,
       end: input.fields?.end,
-    } as any);
+    });
   }
   const obj = input as RangeExpressionFromInput;
   return range_expression_({
@@ -3954,7 +3954,7 @@ export function rangePatternFrom(input: RuntimeNodeOf<RangePattern> | RangePatte
     return range_pattern_({
       left: input.fields?.left,
       right: input.fields?.right,
-    } as any);
+    });
   }
   const obj = input as RangePatternFromInput;
   return range_pattern_({
@@ -3969,7 +3969,7 @@ export function rawStringLiteralFrom(input: RuntimeNodeOf<RawStringLiteral> | Ra
       rawStringLiteralStart: input.fields?.raw_string_literal_start,
       stringContent: input.fields?.string_content,
       rawStringLiteralEnd: input.fields?.raw_string_literal_end,
-    } as any);
+    });
   }
   const obj = input as RawStringLiteralFromInput;
   return raw_string_literal_({
@@ -3982,8 +3982,8 @@ export function rawStringLiteralFrom(input: RuntimeNodeOf<RawStringLiteral> | Ra
 export function refPatternFrom(input: RuntimeNodeOf<RefPattern> | RefPatternFromInput) {
   if (isNodeData<'ref_pattern'>(input)) {
     return ref_pattern_({
-      children: (input as any).children,
-    } as any);
+      children: input.children[0]!,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as RefPatternFromInput;
   return ref_pattern_({
@@ -3996,7 +3996,7 @@ export function referenceExpressionFrom(input: RuntimeNodeOf<ReferenceExpression
     return reference_expression_({
       value: input.fields?.value,
       mutableSpecifier: input.fields?.mutable_specifier,
-    } as any);
+    });
   }
   const obj = input as ReferenceExpressionFromInput;
   return reference_expression_({
@@ -4010,7 +4010,7 @@ export function referencePatternFrom(input: RuntimeNodeOf<ReferencePattern> | Re
     return reference_pattern_({
       mutableSpecifier: input.fields?.mutable_specifier,
       pattern: input.fields?.pattern,
-    } as any);
+    });
   }
   const obj = input as ReferencePatternFromInput;
   return reference_pattern_({
@@ -4025,7 +4025,7 @@ export function referenceTypeFrom(input: RuntimeNodeOf<ReferenceType> | Referenc
       type: input.fields?.type,
       lifetime: input.fields?.lifetime,
       mutableSpecifier: input.fields?.mutable_specifier,
-    } as any);
+    });
   }
   const obj = input as ReferenceTypeFromInput;
   return reference_type_({
@@ -4038,8 +4038,8 @@ export function referenceTypeFrom(input: RuntimeNodeOf<ReferenceType> | Referenc
 export function removedTraitBoundFrom(input: RuntimeNodeOf<RemovedTraitBound> | RemovedTraitBoundFromInput) {
   if (isNodeData<'removed_trait_bound'>(input)) {
     return removed_trait_bound_({
-      children: (input as any).children,
-    } as any);
+      children: input.children[0]!,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as RemovedTraitBoundFromInput;
   return removed_trait_bound_({
@@ -4050,8 +4050,8 @@ export function removedTraitBoundFrom(input: RuntimeNodeOf<RemovedTraitBound> | 
 export function returnExpressionFrom(input: RuntimeNodeOf<ReturnExpression> | ReturnExpressionFromInput) {
   if (isNodeData<'return_expression'>(input)) {
     return return_expression_({
-      children: (input as any).children,
-    } as any);
+      children: input.children?.[0],
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as ReturnExpressionFromInput;
   return return_expression_({
@@ -4064,7 +4064,7 @@ export function scopedIdentifierFrom(input: RuntimeNodeOf<ScopedIdentifier> | Sc
     return scoped_identifier_({
       name: input.fields?.name,
       path: input.fields?.path,
-    } as any);
+    });
   }
   const obj = input as ScopedIdentifierFromInput;
   return scoped_identifier_({
@@ -4078,7 +4078,7 @@ export function scopedTypeIdentifierFrom(input: RuntimeNodeOf<ScopedTypeIdentifi
     return scoped_type_identifier_({
       name: input.fields?.name,
       path: input.fields?.path,
-    } as any);
+    });
   }
   const obj = input as ScopedTypeIdentifierFromInput;
   return scoped_type_identifier_({
@@ -4092,7 +4092,7 @@ export function scopedUseListFrom(input: RuntimeNodeOf<ScopedUseList> | ScopedUs
     return scoped_use_list_({
       list: input.fields?.list,
       path: input.fields?.path,
-    } as any);
+    });
   }
   const obj = input as ScopedUseListFromInput;
   return scoped_use_list_({
@@ -4107,7 +4107,7 @@ export function selfParameterFrom(input: RuntimeNodeOf<SelfParameter> | SelfPara
       lifetime: input.fields?.lifetime,
       mutableSpecifier: input.fields?.mutable_specifier,
       self: input.fields?.self,
-    } as any);
+    });
   }
   const obj = input as SelfParameterFromInput;
   return self_parameter_({
@@ -4122,7 +4122,7 @@ export function shorthandFieldInitializerFrom(input: RuntimeNodeOf<ShorthandFiel
     return shorthand_field_initializer_({
       attributes: input.fields?.attributes,
       identifier: input.fields?.identifier,
-    } as any);
+    });
   }
   const obj = input as ShorthandFieldInitializerFromInput;
   return shorthand_field_initializer_({
@@ -4134,8 +4134,8 @@ export function shorthandFieldInitializerFrom(input: RuntimeNodeOf<ShorthandFiel
 export function slicePatternFrom(input: RuntimeNodeOf<SlicePattern> | SlicePatternFromInput) {
   if (isNodeData<'slice_pattern'>(input)) {
     return slice_pattern_({
-      children: (input as any).children,
-    } as any);
+      children: input.children,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as SlicePatternFromInput;
   return slice_pattern_({
@@ -4148,7 +4148,7 @@ export function sourceFileFrom(input: RuntimeNodeOf<SourceFile> | SourceFileFrom
     return source_file_({
       shebang: input.fields?.shebang,
       statements: input.fields?.statements,
-    } as any);
+    });
   }
   const obj = input as SourceFileFromInput;
   return source_file_({
@@ -4165,7 +4165,7 @@ export function staticItemFrom(input: RuntimeNodeOf<StaticItem> | StaticItemFrom
       value: input.fields?.value,
       visibilityModifier: input.fields?.visibility_modifier,
       mutableSpecifier: input.fields?.mutable_specifier,
-    } as any);
+    });
   }
   const obj = input as StaticItemFromInput;
   return static_item_({
@@ -4180,8 +4180,8 @@ export function staticItemFrom(input: RuntimeNodeOf<StaticItem> | StaticItemFrom
 export function stringLiteralFrom(input: RuntimeNodeOf<StringLiteral> | StringLiteralFromInput) {
   if (isNodeData<'string_literal'>(input)) {
     return string_literal_({
-      children: (input as any).children,
-    } as any);
+      children: input.children,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as StringLiteralFromInput;
   return string_literal_({
@@ -4194,7 +4194,7 @@ export function structExpressionFrom(input: RuntimeNodeOf<StructExpression> | St
     return struct_expression_({
       body: input.fields?.body,
       name: input.fields?.name,
-    } as any);
+    });
   }
   const obj = input as StructExpressionFromInput;
   return struct_expression_({
@@ -4211,7 +4211,7 @@ export function structItemFrom(input: RuntimeNodeOf<StructItem> | StructItemFrom
       typeParameters: input.fields?.type_parameters,
       visibilityModifier: input.fields?.visibility_modifier,
       whereClause: input.fields?.where_clause,
-    } as any);
+    });
   }
   const obj = input as StructItemFromInput;
   return struct_item_({
@@ -4227,8 +4227,8 @@ export function structPatternFrom(input: RuntimeNodeOf<StructPattern> | StructPa
   if (isNodeData<'struct_pattern'>(input)) {
     return struct_pattern_({
       type: input.fields?.type,
-      children: (input as any).children,
-    } as any);
+      children: input.children,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as StructPatternFromInput;
   return struct_pattern_({
@@ -4242,7 +4242,7 @@ export function tokenBindingPatternFrom(input: RuntimeNodeOf<TokenBindingPattern
     return token_binding_pattern_({
       name: input.fields?.name,
       type: input.fields?.type,
-    } as any);
+    });
   }
   const obj = input as TokenBindingPatternFromInput;
   return token_binding_pattern_({
@@ -4254,8 +4254,8 @@ export function tokenBindingPatternFrom(input: RuntimeNodeOf<TokenBindingPattern
 export function tokenRepetitionFrom(input: RuntimeNodeOf<TokenRepetition> | TokenRepetitionFromInput) {
   if (isNodeData<'token_repetition'>(input)) {
     return token_repetition_({
-      children: (input as any).children,
-    } as any);
+      children: input.children,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as TokenRepetitionFromInput;
   return token_repetition_({
@@ -4266,8 +4266,8 @@ export function tokenRepetitionFrom(input: RuntimeNodeOf<TokenRepetition> | Toke
 export function tokenRepetitionPatternFrom(input: RuntimeNodeOf<TokenRepetitionPattern> | TokenRepetitionPatternFromInput) {
   if (isNodeData<'token_repetition_pattern'>(input)) {
     return token_repetition_pattern_({
-      children: (input as any).children,
-    } as any);
+      children: input.children,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as TokenRepetitionPatternFromInput;
   return token_repetition_pattern_({
@@ -4278,8 +4278,8 @@ export function tokenRepetitionPatternFrom(input: RuntimeNodeOf<TokenRepetitionP
 export function tokenTreeFrom(input: RuntimeNodeOf<TokenTree> | TokenTreeFromInput) {
   if (isNodeData<'token_tree'>(input)) {
     return token_tree_({
-      children: (input as any).children,
-    } as any);
+      children: input.children,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as TokenTreeFromInput;
   return token_tree_({
@@ -4290,8 +4290,8 @@ export function tokenTreeFrom(input: RuntimeNodeOf<TokenTree> | TokenTreeFromInp
 export function tokenTreePatternFrom(input: RuntimeNodeOf<TokenTreePattern> | TokenTreePatternFromInput) {
   if (isNodeData<'token_tree_pattern'>(input)) {
     return token_tree_pattern_({
-      children: (input as any).children,
-    } as any);
+      children: input.children,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as TokenTreePatternFromInput;
   return token_tree_pattern_({
@@ -4302,8 +4302,8 @@ export function tokenTreePatternFrom(input: RuntimeNodeOf<TokenTreePattern> | To
 export function traitBoundsFrom(input: RuntimeNodeOf<TraitBounds> | TraitBoundsFromInput) {
   if (isNodeData<'trait_bounds'>(input)) {
     return trait_bounds_({
-      children: (input as any).children,
-    } as any);
+      children: input.children,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as TraitBoundsFromInput;
   return trait_bounds_({
@@ -4320,7 +4320,7 @@ export function traitItemFrom(input: RuntimeNodeOf<TraitItem> | TraitItemFromInp
       typeParameters: input.fields?.type_parameters,
       visibilityModifier: input.fields?.visibility_modifier,
       whereClause: input.fields?.where_clause,
-    } as any);
+    });
   }
   const obj = input as TraitItemFromInput;
   return trait_item_({
@@ -4337,7 +4337,7 @@ export function tryBlockFrom(input: RuntimeNodeOf<TryBlock> | TryBlockFromInput)
   if (isNodeData<'try_block'>(input)) {
     return try_block_({
       block: input.fields?.block,
-    } as any);
+    });
   }
   const obj = input as TryBlockFromInput;
   return try_block_({
@@ -4350,7 +4350,7 @@ export function tryExpressionFrom(input: RuntimeNodeOf<TryExpression> | TryExpre
     return try_expression_({
       value: input.fields?.value,
       operator: input.fields?.operator,
-    } as any);
+    });
   }
   const obj = input as TryExpressionFromInput;
   return try_expression_({
@@ -4366,7 +4366,7 @@ export function tupleExpressionFrom(input: RuntimeNodeOf<TupleExpression> | Tupl
       first: input.fields?.first,
       rest: input.fields?.rest,
       trailing: input.fields?.trailing,
-    } as any);
+    });
   }
   const obj = input as TupleExpressionFromInput;
   return tuple_expression_({
@@ -4380,8 +4380,8 @@ export function tupleExpressionFrom(input: RuntimeNodeOf<TupleExpression> | Tupl
 export function tuplePatternFrom(input: RuntimeNodeOf<TuplePattern> | TuplePatternFromInput) {
   if (isNodeData<'tuple_pattern'>(input)) {
     return tuple_pattern_({
-      children: (input as any).children,
-    } as any);
+      children: input.children,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as TuplePatternFromInput;
   return tuple_pattern_({
@@ -4393,8 +4393,8 @@ export function tupleStructPatternFrom(input: RuntimeNodeOf<TupleStructPattern> 
   if (isNodeData<'tuple_struct_pattern'>(input)) {
     return tuple_struct_pattern_({
       type: input.fields?.type,
-      children: (input as any).children,
-    } as any);
+      children: input.children,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as TupleStructPatternFromInput;
   return tuple_struct_pattern_({
@@ -4406,8 +4406,8 @@ export function tupleStructPatternFrom(input: RuntimeNodeOf<TupleStructPattern> 
 export function tupleTypeFrom(input: RuntimeNodeOf<TupleType> | TupleTypeFromInput) {
   if (isNodeData<'tuple_type'>(input)) {
     return tuple_type_({
-      children: (input as any).children,
-    } as any);
+      children: input.children,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as TupleTypeFromInput;
   return tuple_type_({
@@ -4418,8 +4418,8 @@ export function tupleTypeFrom(input: RuntimeNodeOf<TupleType> | TupleTypeFromInp
 export function typeArgumentsFrom(input: RuntimeNodeOf<TypeArguments> | TypeArgumentsFromInput) {
   if (isNodeData<'type_arguments'>(input)) {
     return type_arguments_({
-      children: (input as any).children,
-    } as any);
+      children: input.children,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as TypeArgumentsFromInput;
   return type_arguments_({
@@ -4433,7 +4433,7 @@ export function typeBindingFrom(input: RuntimeNodeOf<TypeBinding> | TypeBindingF
       name: input.fields?.name,
       type: input.fields?.type,
       typeArguments: input.fields?.type_arguments,
-    } as any);
+    });
   }
   const obj = input as TypeBindingFromInput;
   return type_binding_({
@@ -4448,7 +4448,7 @@ export function typeCastExpressionFrom(input: RuntimeNodeOf<TypeCastExpression> 
     return type_cast_expression_({
       type: input.fields?.type,
       value: input.fields?.value,
-    } as any);
+    });
   }
   const obj = input as TypeCastExpressionFromInput;
   return type_cast_expression_({
@@ -4466,7 +4466,7 @@ export function typeItemFrom(input: RuntimeNodeOf<TypeItem> | TypeItemFromInput)
       visibilityModifier: input.fields?.visibility_modifier,
       whereClause: input.fields?.where_clause,
       trailingWhereClause: input.fields?.trailing_where_clause,
-    } as any);
+    });
   }
   const obj = input as TypeItemFromInput;
   return type_item_({
@@ -4485,7 +4485,7 @@ export function typeParameterFrom(input: RuntimeNodeOf<TypeParameter> | TypePara
       bounds: input.fields?.bounds,
       defaultType: input.fields?.default_type,
       name: input.fields?.name,
-    } as any);
+    });
   }
   const obj = input as TypeParameterFromInput;
   return type_parameter_({
@@ -4498,8 +4498,8 @@ export function typeParameterFrom(input: RuntimeNodeOf<TypeParameter> | TypePara
 export function typeParametersFrom(input: RuntimeNodeOf<TypeParameters> | TypeParametersFromInput) {
   if (isNodeData<'type_parameters'>(input)) {
     return type_parameters_({
-      children: (input as any).children,
-    } as any);
+      children: input.children,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as TypeParametersFromInput;
   return type_parameters_({
@@ -4512,7 +4512,7 @@ export function unaryExpressionFrom(input: RuntimeNodeOf<UnaryExpression> | Unar
     return unary_expression_({
       operator: input.fields?.operator,
       operand: input.fields?.operand,
-    } as any);
+    });
   }
   const obj = input as UnaryExpressionFromInput;
   return unary_expression_({
@@ -4529,7 +4529,7 @@ export function unionItemFrom(input: RuntimeNodeOf<UnionItem> | UnionItemFromInp
       typeParameters: input.fields?.type_parameters,
       visibilityModifier: input.fields?.visibility_modifier,
       whereClause: input.fields?.where_clause,
-    } as any);
+    });
   }
   const obj = input as UnionItemFromInput;
   return union_item_({
@@ -4545,7 +4545,7 @@ export function unsafeBlockFrom(input: RuntimeNodeOf<UnsafeBlock> | UnsafeBlockF
   if (isNodeData<'unsafe_block'>(input)) {
     return unsafe_block_({
       block: input.fields?.block,
-    } as any);
+    });
   }
   const obj = input as UnsafeBlockFromInput;
   return unsafe_block_({
@@ -4558,7 +4558,7 @@ export function useAsClauseFrom(input: RuntimeNodeOf<UseAsClause> | UseAsClauseF
     return use_as_clause_({
       alias: input.fields?.alias,
       path: input.fields?.path,
-    } as any);
+    });
   }
   const obj = input as UseAsClauseFromInput;
   return use_as_clause_({
@@ -4570,8 +4570,8 @@ export function useAsClauseFrom(input: RuntimeNodeOf<UseAsClause> | UseAsClauseF
 export function useBoundsFrom(input: RuntimeNodeOf<UseBounds> | UseBoundsFromInput) {
   if (isNodeData<'use_bounds'>(input)) {
     return use_bounds_({
-      children: (input as any).children,
-    } as any);
+      children: input.children,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as UseBoundsFromInput;
   return use_bounds_({
@@ -4584,7 +4584,7 @@ export function useDeclarationFrom(input: RuntimeNodeOf<UseDeclaration> | UseDec
     return use_declaration_({
       argument: input.fields?.argument,
       visibilityModifier: input.fields?.visibility_modifier,
-    } as any);
+    });
   }
   const obj = input as UseDeclarationFromInput;
   return use_declaration_({
@@ -4596,8 +4596,8 @@ export function useDeclarationFrom(input: RuntimeNodeOf<UseDeclaration> | UseDec
 export function useListFrom(input: RuntimeNodeOf<UseList> | UseListFromInput) {
   if (isNodeData<'use_list'>(input)) {
     return use_list_({
-      children: (input as any).children,
-    } as any);
+      children: input.children,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as UseListFromInput;
   return use_list_({
@@ -4609,8 +4609,7 @@ export function useWildcardFrom(input: RuntimeNodeOf<UseWildcard> | UseWildcardF
   if (isNodeData<'use_wildcard'>(input)) {
     return use_wildcard_({
       path: input.fields?.path,
-      children: (input as any).children,
-    } as any);
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as UseWildcardFromInput;
   return use_wildcard_({
@@ -4624,7 +4623,7 @@ export function variadicParameterFrom(input: RuntimeNodeOf<VariadicParameter> | 
     return variadic_parameter_({
       pattern: input.fields?.pattern,
       mutableSpecifier: input.fields?.mutable_specifier,
-    } as any);
+    });
   }
   const obj = input as VariadicParameterFromInput;
   return variadic_parameter_({
@@ -4638,8 +4637,8 @@ export function visibilityModifierFrom(input: RuntimeNodeOf<VisibilityModifier> 
     return visibility_modifier_({
       pub: input.fields?.pub,
       in: input.fields?.in,
-      children: (input as any).children,
-    } as any);
+      children: input.children?.[0],
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as VisibilityModifierFromInput;
   return visibility_modifier_({
@@ -4652,8 +4651,8 @@ export function visibilityModifierFrom(input: RuntimeNodeOf<VisibilityModifier> 
 export function whereClauseFrom(input: RuntimeNodeOf<WhereClause> | WhereClauseFromInput) {
   if (isNodeData<'where_clause'>(input)) {
     return where_clause_({
-      children: (input as any).children,
-    } as any);
+      children: input.children,
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as WhereClauseFromInput;
   return where_clause_({
@@ -4666,7 +4665,7 @@ export function wherePredicateFrom(input: RuntimeNodeOf<WherePredicate> | WhereP
     return where_predicate_({
       bounds: input.fields?.bounds,
       left: input.fields?.left,
-    } as any);
+    });
   }
   const obj = input as WherePredicateFromInput;
   return where_predicate_({
@@ -4681,7 +4680,7 @@ export function whileExpressionFrom(input: RuntimeNodeOf<WhileExpression> | Whil
       body: input.fields?.body,
       condition: input.fields?.condition,
       label: input.fields?.label,
-    } as any);
+    });
   }
   const obj = input as WhileExpressionFromInput;
   return while_expression_({
@@ -4694,8 +4693,8 @@ export function whileExpressionFrom(input: RuntimeNodeOf<WhileExpression> | Whil
 export function yieldExpressionFrom(input: RuntimeNodeOf<YieldExpression> | YieldExpressionFromInput) {
   if (isNodeData<'yield_expression'>(input)) {
     return yield_expression_({
-      children: (input as any).children,
-    } as any);
+      children: input.children?.[0],
+    });
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as YieldExpressionFromInput;
   return yield_expression_({

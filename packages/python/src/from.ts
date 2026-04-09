@@ -1680,7 +1680,7 @@ export function aliasedImportFrom(input: RuntimeNodeOf<AliasedImport> | AliasedI
 export function argumentListFrom(input: RuntimeNodeOf<ArgumentList> | ArgumentListFromInput) {
   if (isNodeData<'argument_list'>(input)) {
     return argument_list_({
-      children: (input as any).children,
+      children: input.children,
     } as any);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as ArgumentListFromInput;
@@ -1706,7 +1706,7 @@ export function asPatternFrom(input: RuntimeNodeOf<AsPattern> | AsPatternFromInp
 export function assertStatementFrom(input: RuntimeNodeOf<AssertStatement> | AssertStatementFromInput) {
   if (isNodeData<'assert_statement'>(input)) {
     return assert_statement_({
-      children: (input as any).children,
+      children: input.children,
     } as any);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as AssertStatementFromInput;
@@ -1793,7 +1793,7 @@ export function blockFrom(input: RuntimeNodeOf<Block> | BlockFromInput) {
   if (isNodeData<'block'>(input)) {
     return block_({
       alternative: input.fields?.alternative,
-      children: (input as any).children,
+      children: input.children,
     } as any);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as BlockFromInput;
@@ -1838,7 +1838,7 @@ export function caseClauseFrom(input: RuntimeNodeOf<CaseClause> | CaseClauseFrom
     return case_clause_({
       consequence: input.fields?.consequence,
       guard: input.fields?.guard,
-      children: (input as any).children,
+      children: input.children,
     } as any);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as CaseClauseFromInput;
@@ -1852,7 +1852,7 @@ export function caseClauseFrom(input: RuntimeNodeOf<CaseClause> | CaseClauseFrom
 export function casePatternFrom(input: RuntimeNodeOf<CasePattern> | CasePatternFromInput) {
   if (isNodeData<'case_pattern'>(input)) {
     return case_pattern_({
-      children: (input as any).children,
+      children: input.children[0]!,
     } as any);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as CasePatternFromInput;
@@ -1938,7 +1938,7 @@ export function complexPatternFrom(input: RuntimeNodeOf<ComplexPattern> | Comple
 export function concatenatedStringFrom(input: RuntimeNodeOf<ConcatenatedString> | ConcatenatedStringFromInput) {
   if (isNodeData<'concatenated_string'>(input)) {
     return concatenated_string_({
-      children: (input as any).children,
+      children: input.children,
     } as any);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as ConcatenatedStringFromInput;
@@ -1981,7 +1981,7 @@ export function decoratedDefinitionFrom(input: RuntimeNodeOf<DecoratedDefinition
   if (isNodeData<'decorated_definition'>(input)) {
     return decorated_definition_({
       definition: input.fields?.definition,
-      children: (input as any).children,
+      children: input.children,
     } as any);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as DecoratedDefinitionFromInput;
@@ -2022,7 +2022,7 @@ export function defaultParameterFrom(input: RuntimeNodeOf<DefaultParameter> | De
 export function deleteStatementFrom(input: RuntimeNodeOf<DeleteStatement> | DeleteStatementFromInput) {
   if (isNodeData<'delete_statement'>(input)) {
     return delete_statement_({
-      children: (input as any).children,
+      children: input.children[0]!,
     } as any);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as DeleteStatementFromInput;
@@ -2034,7 +2034,7 @@ export function deleteStatementFrom(input: RuntimeNodeOf<DeleteStatement> | Dele
 export function dictPatternFrom(input: RuntimeNodeOf<DictPattern> | DictPatternFromInput) {
   if (isNodeData<'dict_pattern'>(input)) {
     return dict_pattern_({
-      children: (input as any).children,
+      children: input.children,
     } as any);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as DictPatternFromInput;
@@ -2046,7 +2046,7 @@ export function dictPatternFrom(input: RuntimeNodeOf<DictPattern> | DictPatternF
 export function dictionaryFrom(input: RuntimeNodeOf<Dictionary> | DictionaryFromInput) {
   if (isNodeData<'dictionary'>(input)) {
     return dictionary_({
-      children: (input as any).children,
+      children: input.children,
     } as any);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as DictionaryFromInput;
@@ -2059,7 +2059,7 @@ export function dictionaryComprehensionFrom(input: RuntimeNodeOf<DictionaryCompr
   if (isNodeData<'dictionary_comprehension'>(input)) {
     return dictionary_comprehension_({
       body: input.fields?.body,
-      children: (input as any).children,
+      children: input.children[0]!,
     } as any);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as DictionaryComprehensionFromInput;
@@ -2084,7 +2084,7 @@ export function dictionarySplatFrom(input: RuntimeNodeOf<DictionarySplat> | Dict
 export function dictionarySplatPatternFrom(input: RuntimeNodeOf<DictionarySplatPattern> | DictionarySplatPatternFromInput) {
   if (isNodeData<'dictionary_splat_pattern'>(input)) {
     return dictionary_splat_pattern_({
-      children: (input as any).children,
+      children: input.children[0]!,
     } as any);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as DictionarySplatPatternFromInput;
@@ -2096,7 +2096,7 @@ export function dictionarySplatPatternFrom(input: RuntimeNodeOf<DictionarySplatP
 export function dottedNameFrom(input: RuntimeNodeOf<DottedName> | DottedNameFromInput) {
   if (isNodeData<'dotted_name'>(input)) {
     return dotted_name_({
-      children: (input as any).children,
+      children: input.children,
     } as any);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as DottedNameFromInput;
@@ -2136,7 +2136,7 @@ export function exceptClauseFrom(input: RuntimeNodeOf<ExceptClause> | ExceptClau
     return except_clause_({
       alias: input.fields?.alias,
       value: input.fields?.value,
-      children: (input as any).children,
+      children: input.children[0]!,
     } as any);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as ExceptClauseFromInput;
@@ -2151,7 +2151,7 @@ export function execStatementFrom(input: RuntimeNodeOf<ExecStatement> | ExecStat
   if (isNodeData<'exec_statement'>(input)) {
     return exec_statement_({
       code: input.fields?.code,
-      children: (input as any).children,
+      children: input.children,
     } as any);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as ExecStatementFromInput;
@@ -2164,7 +2164,7 @@ export function execStatementFrom(input: RuntimeNodeOf<ExecStatement> | ExecStat
 export function expressionListFrom(input: RuntimeNodeOf<ExpressionList> | ExpressionListFromInput) {
   if (isNodeData<'expression_list'>(input)) {
     return expression_list_({
-      children: (input as any).children,
+      children: input.children,
     } as any);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as ExpressionListFromInput;
@@ -2176,7 +2176,7 @@ export function expressionListFrom(input: RuntimeNodeOf<ExpressionList> | Expres
 export function expressionStatementFrom(input: RuntimeNodeOf<ExpressionStatement> | ExpressionStatementFromInput) {
   if (isNodeData<'expression_statement'>(input)) {
     return expression_statement_({
-      children: (input as any).children,
+      children: input.children,
     } as any);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as ExpressionStatementFromInput;
@@ -2189,7 +2189,6 @@ export function finallyClauseFrom(input: RuntimeNodeOf<FinallyClause> | FinallyC
   if (isNodeData<'finally_clause'>(input)) {
     return finally_clause_({
       block: input.fields?.block,
-      children: (input as any).children,
     } as any);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as FinallyClauseFromInput;
@@ -2250,7 +2249,7 @@ export function formatExpressionFrom(input: RuntimeNodeOf<FormatExpression> | Fo
 export function formatSpecifierFrom(input: RuntimeNodeOf<FormatSpecifier> | FormatSpecifierFromInput) {
   if (isNodeData<'format_specifier'>(input)) {
     return format_specifier_({
-      children: (input as any).children,
+      children: input.children,
     } as any);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as FormatSpecifierFromInput;
@@ -2295,7 +2294,7 @@ export function generatorExpressionFrom(input: RuntimeNodeOf<GeneratorExpression
   if (isNodeData<'generator_expression'>(input)) {
     return generator_expression_({
       body: input.fields?.body,
-      children: (input as any).children,
+      children: input.children[0]!,
     } as any);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as GeneratorExpressionFromInput;
@@ -2322,7 +2321,7 @@ export function genericTypeFrom(input: RuntimeNodeOf<GenericType> | GenericTypeF
 export function globalStatementFrom(input: RuntimeNodeOf<GlobalStatement> | GlobalStatementFromInput) {
   if (isNodeData<'global_statement'>(input)) {
     return global_statement_({
-      children: (input as any).children,
+      children: input.children,
     } as any);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as GlobalStatementFromInput;
@@ -2448,7 +2447,7 @@ export function lambdaFrom(input: RuntimeNodeOf<Lambda> | LambdaFromInput) {
 export function lambdaParametersFrom(input: RuntimeNodeOf<LambdaParameters> | LambdaParametersFromInput) {
   if (isNodeData<'lambda_parameters'>(input)) {
     return lambda_parameters_({
-      children: (input as any).children,
+      children: input.children,
     } as any);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as LambdaParametersFromInput;
@@ -2460,7 +2459,7 @@ export function lambdaParametersFrom(input: RuntimeNodeOf<LambdaParameters> | La
 export function listFrom(input: RuntimeNodeOf<List> | ListFromInput) {
   if (isNodeData<'list'>(input)) {
     return list_({
-      children: (input as any).children,
+      children: input.children,
     } as any);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as ListFromInput;
@@ -2473,7 +2472,7 @@ export function listComprehensionFrom(input: RuntimeNodeOf<ListComprehension> | 
   if (isNodeData<'list_comprehension'>(input)) {
     return list_comprehension_({
       body: input.fields?.body,
-      children: (input as any).children,
+      children: input.children[0]!,
     } as any);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as ListComprehensionFromInput;
@@ -2486,7 +2485,7 @@ export function listComprehensionFrom(input: RuntimeNodeOf<ListComprehension> | 
 export function listPatternFrom(input: RuntimeNodeOf<ListPattern> | ListPatternFromInput) {
   if (isNodeData<'list_pattern'>(input)) {
     return list_pattern_({
-      children: (input as any).children,
+      children: input.children,
     } as any);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as ListPatternFromInput;
@@ -2510,7 +2509,7 @@ export function listSplatFrom(input: RuntimeNodeOf<ListSplat> | ListSplatFromInp
 export function listSplatPatternFrom(input: RuntimeNodeOf<ListSplatPattern> | ListSplatPatternFromInput) {
   if (isNodeData<'list_splat_pattern'>(input)) {
     return list_splat_pattern_({
-      children: (input as any).children,
+      children: input.children[0]!,
     } as any);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as ListSplatPatternFromInput;
@@ -2550,7 +2549,7 @@ export function memberTypeFrom(input: RuntimeNodeOf<MemberType> | MemberTypeFrom
 export function moduleFrom(input: RuntimeNodeOf<Module> | ModuleFromInput) {
   if (isNodeData<'module'>(input)) {
     return module_({
-      children: (input as any).children,
+      children: input.children,
     } as any);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as ModuleFromInput;
@@ -2576,7 +2575,7 @@ export function namedExpressionFrom(input: RuntimeNodeOf<NamedExpression> | Name
 export function nonlocalStatementFrom(input: RuntimeNodeOf<NonlocalStatement> | NonlocalStatementFromInput) {
   if (isNodeData<'nonlocal_statement'>(input)) {
     return nonlocal_statement_({
-      children: (input as any).children,
+      children: input.children,
     } as any);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as NonlocalStatementFromInput;
@@ -2614,7 +2613,7 @@ export function pairFrom(input: RuntimeNodeOf<Pair> | PairFromInput) {
 export function parametersFrom(input: RuntimeNodeOf<Parameters> | ParametersFromInput) {
   if (isNodeData<'parameters'>(input)) {
     return parameters_({
-      children: (input as any).children,
+      children: input.children,
     } as any);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as ParametersFromInput;
@@ -2626,7 +2625,7 @@ export function parametersFrom(input: RuntimeNodeOf<Parameters> | ParametersFrom
 export function parenthesizedExpressionFrom(input: RuntimeNodeOf<ParenthesizedExpression> | ParenthesizedExpressionFromInput) {
   if (isNodeData<'parenthesized_expression'>(input)) {
     return parenthesized_expression_({
-      children: (input as any).children,
+      children: input.children[0]!,
     } as any);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as ParenthesizedExpressionFromInput;
@@ -2638,7 +2637,7 @@ export function parenthesizedExpressionFrom(input: RuntimeNodeOf<ParenthesizedEx
 export function parenthesizedListSplatFrom(input: RuntimeNodeOf<ParenthesizedListSplat> | ParenthesizedListSplatFromInput) {
   if (isNodeData<'parenthesized_list_splat'>(input)) {
     return parenthesized_list_splat_({
-      children: (input as any).children,
+      children: input.children[0]!,
     } as any);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as ParenthesizedListSplatFromInput;
@@ -2650,7 +2649,7 @@ export function parenthesizedListSplatFrom(input: RuntimeNodeOf<ParenthesizedLis
 export function patternListFrom(input: RuntimeNodeOf<PatternList> | PatternListFromInput) {
   if (isNodeData<'pattern_list'>(input)) {
     return pattern_list_({
-      children: (input as any).children,
+      children: input.children,
     } as any);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as PatternListFromInput;
@@ -2677,7 +2676,7 @@ export function raiseStatementFrom(input: RuntimeNodeOf<RaiseStatement> | RaiseS
   if (isNodeData<'raise_statement'>(input)) {
     return raise_statement_({
       cause: input.fields?.cause,
-      children: (input as any).children,
+      children: input.children?.[0],
     } as any);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as RaiseStatementFromInput;
@@ -2704,7 +2703,7 @@ export function relativeImportFrom(input: RuntimeNodeOf<RelativeImport> | Relati
 export function returnStatementFrom(input: RuntimeNodeOf<ReturnStatement> | ReturnStatementFromInput) {
   if (isNodeData<'return_statement'>(input)) {
     return return_statement_({
-      children: (input as any).children,
+      children: input.children?.[0],
     } as any);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as ReturnStatementFromInput;
@@ -2716,7 +2715,7 @@ export function returnStatementFrom(input: RuntimeNodeOf<ReturnStatement> | Retu
 export function setFrom(input: RuntimeNodeOf<Set> | SetFromInput) {
   if (isNodeData<'set'>(input)) {
     return set_({
-      children: (input as any).children,
+      children: input.children,
     } as any);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as SetFromInput;
@@ -2729,7 +2728,7 @@ export function setComprehensionFrom(input: RuntimeNodeOf<SetComprehension> | Se
   if (isNodeData<'set_comprehension'>(input)) {
     return set_comprehension_({
       body: input.fields?.body,
-      children: (input as any).children,
+      children: input.children[0]!,
     } as any);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as SetComprehensionFromInput;
@@ -2798,7 +2797,7 @@ export function stringFrom(input: RuntimeNodeOf<String> | StringFromInput) {
 export function stringContentFrom(input: RuntimeNodeOf<StringContent> | StringContentFromInput) {
   if (isNodeData<'string_content'>(input)) {
     return string_content_({
-      children: (input as any).children,
+      children: input.children,
     } as any);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as StringContentFromInput;
@@ -2842,7 +2841,7 @@ export function tryStatementFrom(input: RuntimeNodeOf<TryStatement> | TryStateme
 export function tupleFrom(input: RuntimeNodeOf<Tuple> | TupleFromInput) {
   if (isNodeData<'tuple'>(input)) {
     return tuple_({
-      children: (input as any).children,
+      children: input.children,
     } as any);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as TupleFromInput;
@@ -2854,7 +2853,7 @@ export function tupleFrom(input: RuntimeNodeOf<Tuple> | TupleFromInput) {
 export function tuplePatternFrom(input: RuntimeNodeOf<TuplePattern> | TuplePatternFromInput) {
   if (isNodeData<'tuple_pattern'>(input)) {
     return tuple_pattern_({
-      children: (input as any).children,
+      children: input.children,
     } as any);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as TuplePatternFromInput;
@@ -2866,7 +2865,7 @@ export function tuplePatternFrom(input: RuntimeNodeOf<TuplePattern> | TuplePatte
 export function type_From(input: RuntimeNodeOf<Type> | TypeFromInput) {
   if (isNodeData<'type'>(input)) {
     return type_({
-      children: (input as any).children,
+      children: input.children[0]!,
     } as any);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as TypeFromInput;
@@ -2892,7 +2891,7 @@ export function typeAliasStatementFrom(input: RuntimeNodeOf<TypeAliasStatement> 
 export function typeParameterFrom(input: RuntimeNodeOf<TypeParameter> | TypeParameterFromInput) {
   if (isNodeData<'type_parameter'>(input)) {
     return type_parameter_({
-      children: (input as any).children,
+      children: input.children,
     } as any);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as TypeParameterFromInput;
@@ -2921,7 +2920,7 @@ export function typedParameterFrom(input: RuntimeNodeOf<TypedParameter> | TypedP
   if (isNodeData<'typed_parameter'>(input)) {
     return typed_parameter_({
       type: input.fields?.type,
-      children: (input as any).children,
+      children: input.children[0]!,
     } as any);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as TypedParameterFromInput;
@@ -2948,7 +2947,7 @@ export function unaryOperatorFrom(input: RuntimeNodeOf<UnaryOperator> | UnaryOpe
 export function unionPatternFrom(input: RuntimeNodeOf<UnionPattern> | UnionPatternFromInput) {
   if (isNodeData<'union_pattern'>(input)) {
     return union_pattern_({
-      children: (input as any).children,
+      children: input.children,
     } as any);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as UnionPatternFromInput;
@@ -2990,7 +2989,7 @@ export function whileStatementFrom(input: RuntimeNodeOf<WhileStatement> | WhileS
 export function withClauseFrom(input: RuntimeNodeOf<WithClause> | WithClauseFromInput) {
   if (isNodeData<'with_clause'>(input)) {
     return with_clause_({
-      children: (input as any).children,
+      children: input.children,
     } as any);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as WithClauseFromInput;
@@ -3028,7 +3027,7 @@ export function withStatementFrom(input: RuntimeNodeOf<WithStatement> | WithStat
 export function yield_From(input: RuntimeNodeOf<Yield> | YieldFromInput) {
   if (isNodeData<'yield'>(input)) {
     return yield_({
-      children: (input as any).children,
+      children: input.children?.[0],
     } as any);
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as YieldFromInput;
