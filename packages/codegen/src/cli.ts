@@ -146,14 +146,8 @@ if (cliArgs.roundtrip) {
 	const rtResult = await validateRoundTrip(config.grammar, result.templatesYaml);
 	console.log(formatRoundTripReport(rtResult));
 
-	// Factory round-trip
-	const allNodes = [...(result as any).nodeModel ? [] : []];
-	// Get nodes from the generate result
-	const { buildGrammarModel } = await import('./grammar-model.ts');
-	const { newModel } = buildGrammarModel(config.grammar);
-	const frtResult = await validateFactoryRoundTrip(
-		config.grammar, result.templatesYaml, [...newModel.models.values()],
-	);
+	// Factory round-trip (corpus-derived NodeData → render → parse)
+	const frtResult = await validateFactoryRoundTrip(config.grammar, result.templatesYaml);
 	console.log(formatFactoryRoundTripReport(frtResult));
 
 	const totalFail = rtResult.fail + frtResult.fail;
