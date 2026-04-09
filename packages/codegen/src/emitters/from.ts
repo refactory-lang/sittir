@@ -644,20 +644,21 @@ function emitHiddenSeqFieldResolver(
 	out.indent();
 
 	for (const field of seqFields) {
-		const camel = field.propertyName ?? toFieldName(field.name);
+		const configKey = field.propertyName ?? toFieldName(field.name);
+		const inputKey = field.name;
 		const fieldProj = projectKinds(field.kinds, ctx);
 		const resolverCall = getResolverExpression(fieldProj, leafSet, branchNodeSet, supertypeSet, keywordKinds, resolverRegistry, supertypeResolverNames);
 
 		if (field.multiple) {
 			if (field.required) {
-				out.line(`${camel}: obj.${camel} !== undefined ? resolveField(obj.${camel}, ${resolverCall}) : [],`);
+				out.line(`${configKey}: obj.${inputKey} !== undefined ? resolveField(obj.${inputKey}, ${resolverCall}) : [],`);
 			} else {
-				out.line(`${camel}: obj.${camel} !== undefined ? resolveField(obj.${camel}, ${resolverCall}) : undefined,`);
+				out.line(`${configKey}: obj.${inputKey} !== undefined ? resolveField(obj.${inputKey}, ${resolverCall}) : undefined,`);
 			}
 		} else if (field.required) {
-			out.line(`${camel}: resolveField(obj.${camel}, ${resolverCall}),`);
+			out.line(`${configKey}: resolveField(obj.${inputKey}, ${resolverCall}),`);
 		} else {
-			out.line(`${camel}: obj.${camel} !== undefined ? resolveField(obj.${camel}, ${resolverCall}) : undefined,`);
+			out.line(`${configKey}: obj.${inputKey} !== undefined ? resolveField(obj.${inputKey}, ${resolverCall}) : undefined,`);
 		}
 	}
 
@@ -761,9 +762,9 @@ function emitFromFunction(
 	// --- Path 2: FromInput → resolve ---
 	const hasChildren = node.children != null;
 	if (hasChildren) {
-		out.line('const obj: any = Array.isArray(input) ? { children: input } : input;');
+		out.line(`const obj = (Array.isArray(input) ? { children: input } : input) as ${typeName}FromInput;`);
 	} else {
-		out.line('const obj: any = input;');
+		out.line(`const obj = input as ${typeName}FromInput;`);
 	}
 
 	// Build the config object with resolved fields
@@ -784,22 +785,23 @@ function emitFromFunction(
 
 	// Emit remaining fields not covered by shared groups
 	for (const field of fields) {
-		const camel = field.propertyName ?? toFieldName(field.name);
-		if (sharedFieldSet.has(camel)) continue; // Handled by spread
+		const configKey = field.propertyName ?? toFieldName(field.name); // camelCase for ConfigOf
+		const inputKey = field.name; // snake_case for FromInputOf
+		if (sharedFieldSet.has(configKey)) continue; // Handled by spread
 
 		const fieldProj = projectKinds(field.kinds, ctx);
 		const resolverCall = getResolverExpression(fieldProj, leafSet, branchNodeSet, supertypeSet, keywordKinds, resolverRegistry, supertypeResolverNames);
 
 		if (field.multiple) {
 			if (field.required) {
-				out.line(`${camel}: obj.${camel} !== undefined ? resolveField(obj.${camel}, ${resolverCall}) : [],`);
+				out.line(`${configKey}: obj.${inputKey} !== undefined ? resolveField(obj.${inputKey}, ${resolverCall}) : [],`);
 			} else {
-				out.line(`${camel}: obj.${camel} !== undefined ? resolveField(obj.${camel}, ${resolverCall}) : undefined,`);
+				out.line(`${configKey}: obj.${inputKey} !== undefined ? resolveField(obj.${inputKey}, ${resolverCall}) : undefined,`);
 			}
 		} else if (field.required) {
-			out.line(`${camel}: resolveField(obj.${camel}, ${resolverCall}),`);
+			out.line(`${configKey}: resolveField(obj.${inputKey}, ${resolverCall}),`);
 		} else {
-			out.line(`${camel}: obj.${camel} !== undefined ? resolveField(obj.${camel}, ${resolverCall}) : undefined,`);
+			out.line(`${configKey}: obj.${inputKey} !== undefined ? resolveField(obj.${inputKey}, ${resolverCall}) : undefined,`);
 		}
 	}
 
@@ -868,7 +870,7 @@ function getResolverExpression(
 	}
 
 	if (resolved.branchTypes.length === 1 && resolved.leafTypes.length === 0 && resolved.supertypes.length === 0 && resolved.anonTokens.length === 0) {
-		return `(v: any) => (typeof v === 'object' && v !== null ? _resolveByKind('${resolved.branchTypes[0]!}', v) : v)`;
+		return `(v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('${resolved.branchTypes[0]!}', v) : v)`;
 	}
 
 	// Single supertype — delegate to its resolver

@@ -1165,10 +1165,10 @@ export function aliasedImportFrom(input: RuntimeNodeOf<AliasedImport> | AliasedI
       name: input.fields?.name,
     } as any);
   }
-  const obj: any = input;
+  const obj = input as AliasedImportFromInput;
   return aliased_import_({
     alias: resolveField(obj.alias, _resolveNamedExpressionLhs),
-    name: resolveField(obj.name, (v: any) => (typeof v === 'object' && v !== null ? _resolveByKind('dotted_name', v) : v)),
+    name: resolveField(obj.name, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('dotted_name', v) : v)),
   } as any);
 }
 
@@ -1178,7 +1178,7 @@ export function argumentListFrom(input: RuntimeNodeOf<ArgumentList> | ArgumentLi
       children: (input as any).children,
     } as any);
   }
-  const obj: any = Array.isArray(input) ? { children: input } : input;
+  const obj = (Array.isArray(input) ? { children: input } : input) as ArgumentListFromInput;
   return argument_list_({
     children: obj['children'] !== undefined ? resolveField(obj['children'], _r1pqs0ui) : undefined,
   } as any);
@@ -1191,7 +1191,7 @@ export function asPatternFrom(input: RuntimeNodeOf<AsPattern> | AsPatternFromInp
       expression: input.fields?.expression,
     } as any);
   }
-  const obj: any = input;
+  const obj = input as AsPatternFromInput;
   return as_pattern_({
     alias: obj.alias !== undefined ? resolveField(obj.alias, _resolveComprehensionClauses2) : undefined,
     expression: resolveField(obj.expression, _r1mkpyke),
@@ -1204,7 +1204,7 @@ export function assertStatementFrom(input: RuntimeNodeOf<AssertStatement> | Asse
       children: (input as any).children,
     } as any);
   }
-  const obj: any = Array.isArray(input) ? { children: input } : input;
+  const obj = (Array.isArray(input) ? { children: input } : input) as AssertStatementFromInput;
   return assert_statement_({
     children: obj['children'] !== undefined ? resolveField(obj['children'], _resolveExpression) : [],
   } as any);
@@ -1218,11 +1218,11 @@ export function assignmentFrom(input: RuntimeNodeOf<Assignment> | AssignmentFrom
       type: input.fields?.type,
     } as any);
   }
-  const obj: any = input;
+  const obj = input as AssignmentFromInput;
   return assignment_({
     left: resolveField(obj.left, _resolveLeftHandSide2),
     right: obj.right !== undefined ? resolveField(obj.right, _resolveRightHandSide2) : undefined,
-    type: obj.type !== undefined ? resolveField(obj.type, (v: any) => (typeof v === 'object' && v !== null ? _resolveByKind('type', v) : v)) : undefined,
+    type: obj.type !== undefined ? resolveField(obj.type, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('type', v) : v)) : undefined,
   } as any);
 }
 
@@ -1233,7 +1233,7 @@ export function attributeFrom(input: RuntimeNodeOf<Attribute> | AttributeFromInp
       object: input.fields?.object,
     } as any);
   }
-  const obj: any = input;
+  const obj = input as AttributeFromInput;
   return attribute_({
     attribute: resolveField(obj.attribute, _resolveNamedExpressionLhs),
     object: resolveField(obj.object, _resolvePrimaryExpression),
@@ -1248,7 +1248,7 @@ export function augmentedAssignmentFrom(input: RuntimeNodeOf<AugmentedAssignment
       right: input.fields?.right,
     } as any);
   }
-  const obj: any = input;
+  const obj = input as AugmentedAssignmentFromInput;
   return augmented_assignment_({
     left: resolveField(obj.left, _resolveLeftHandSide2),
     operator: resolveField(obj.operator, _resolveComprehensionClauses3),
@@ -1262,9 +1262,9 @@ export function await_From(input: RuntimeNodeOf<Await> | AwaitFromInput) {
       primaryExpression: input.fields?.primary_expression,
     } as any);
   }
-  const obj: any = input;
+  const obj = input as AwaitFromInput;
   return await_({
-    primaryExpression: resolveField(obj.primaryExpression, _resolvePrimaryExpression),
+    primaryExpression: resolveField(obj.primary_expression, _resolvePrimaryExpression),
   } as any);
 }
 
@@ -1276,7 +1276,7 @@ export function binaryOperatorFrom(input: RuntimeNodeOf<BinaryOperator> | Binary
       right: input.fields?.right,
     } as any);
   }
-  const obj: any = input;
+  const obj = input as BinaryOperatorFromInput;
   return binary_operator_({
     left: resolveField(obj.left, _resolvePrimaryExpression),
     operator: resolveField(obj.operator, _resolveComprehensionClauses4),
@@ -1291,9 +1291,9 @@ export function blockFrom(input: RuntimeNodeOf<Block> | BlockFromInput) {
       children: (input as any).children,
     } as any);
   }
-  const obj: any = Array.isArray(input) ? { children: input } : input;
+  const obj = (Array.isArray(input) ? { children: input } : input) as BlockFromInput;
   return block_({
-    alternative: obj.alternative !== undefined ? resolveField(obj.alternative, (v: any) => (typeof v === 'object' && v !== null ? _resolveByKind('case_clause', v) : v)) : undefined,
+    alternative: obj.alternative !== undefined ? resolveField(obj.alternative, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('case_clause', v) : v)) : undefined,
     children: obj['children'] !== undefined ? resolveField(obj['children'], _resolveComprehensionClauses5) : undefined,
   } as any);
 }
@@ -1306,7 +1306,7 @@ export function booleanOperatorFrom(input: RuntimeNodeOf<BooleanOperator> | Bool
       right: input.fields?.right,
     } as any);
   }
-  const obj: any = input;
+  const obj = input as BooleanOperatorFromInput;
   return boolean_operator_({
     left: resolveField(obj.left, _resolveExpression),
     operator: resolveField(obj.operator, _resolveComprehensionClauses6),
@@ -1321,7 +1321,7 @@ export function callFrom(input: RuntimeNodeOf<Call> | CallFromInput) {
       function: input.fields?.function,
     } as any);
   }
-  const obj: any = input;
+  const obj = input as CallFromInput;
   return call_({
     arguments: resolveField(obj.arguments, _r1wv67cy),
     function: resolveField(obj.function, _resolvePrimaryExpression),
@@ -1336,11 +1336,11 @@ export function caseClauseFrom(input: RuntimeNodeOf<CaseClause> | CaseClauseFrom
       children: (input as any).children,
     } as any);
   }
-  const obj: any = Array.isArray(input) ? { children: input } : input;
+  const obj = (Array.isArray(input) ? { children: input } : input) as CaseClauseFromInput;
   return case_clause_({
     consequence: resolveField(obj.consequence, _resolveSuite2),
-    guard: obj.guard !== undefined ? resolveField(obj.guard, (v: any) => (typeof v === 'object' && v !== null ? _resolveByKind('if_clause', v) : v)) : undefined,
-    children: obj['children'] !== undefined ? resolveField(obj['children'], (v: any) => (typeof v === 'object' && v !== null ? _resolveByKind('case_pattern', v) : v)) : [],
+    guard: obj.guard !== undefined ? resolveField(obj.guard, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('if_clause', v) : v)) : undefined,
+    children: obj['children'] !== undefined ? resolveField(obj['children'], (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('case_pattern', v) : v)) : [],
   } as any);
 }
 
@@ -1350,7 +1350,7 @@ export function casePatternFrom(input: RuntimeNodeOf<CasePattern> | CasePatternF
       children: (input as any).children,
     } as any);
   }
-  const obj: any = Array.isArray(input) ? { children: input } : input;
+  const obj = (Array.isArray(input) ? { children: input } : input) as CasePatternFromInput;
   return case_pattern_({
     children: obj['children'] !== undefined ? resolveField(obj['children'], _r17obc8i) : undefined,
   } as any);
@@ -1362,7 +1362,7 @@ export function chevronFrom(input: RuntimeNodeOf<Chevron> | ChevronFromInput) {
       expression: input.fields?.expression,
     } as any);
   }
-  const obj: any = input;
+  const obj = input as ChevronFromInput;
   return chevron_({
     expression: resolveField(obj.expression, _resolveExpression),
   } as any);
@@ -1377,12 +1377,12 @@ export function classDefinitionFrom(input: RuntimeNodeOf<ClassDefinition> | Clas
       typeParameters: input.fields?.type_parameters,
     } as any);
   }
-  const obj: any = input;
+  const obj = input as ClassDefinitionFromInput;
   return class_definition_({
     body: resolveField(obj.body, _resolveSuite2),
     name: resolveField(obj.name, _resolveNamedExpressionLhs),
-    superclasses: obj.superclasses !== undefined ? resolveField(obj.superclasses, (v: any) => (typeof v === 'object' && v !== null ? _resolveByKind('argument_list', v) : v)) : undefined,
-    typeParameters: obj.typeParameters !== undefined ? resolveField(obj.typeParameters, (v: any) => (typeof v === 'object' && v !== null ? _resolveByKind('type_parameter', v) : v)) : undefined,
+    superclasses: obj.superclasses !== undefined ? resolveField(obj.superclasses, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('argument_list', v) : v)) : undefined,
+    typeParameters: obj.type_parameters !== undefined ? resolveField(obj.type_parameters, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('type_parameter', v) : v)) : undefined,
   } as any);
 }
 
@@ -1393,10 +1393,10 @@ export function classPatternFrom(input: RuntimeNodeOf<ClassPattern> | ClassPatte
       arguments: input.fields?.arguments,
     } as any);
   }
-  const obj: any = input;
+  const obj = input as ClassPatternFromInput;
   return class_pattern_({
-    dottedName: resolveField(obj.dottedName, (v: any) => (typeof v === 'object' && v !== null ? _resolveByKind('dotted_name', v) : v)),
-    arguments: obj.arguments !== undefined ? resolveField(obj.arguments, (v: any) => (typeof v === 'object' && v !== null ? _resolveByKind('case_pattern', v) : v)) : undefined,
+    dottedName: resolveField(obj.dotted_name, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('dotted_name', v) : v)),
+    arguments: obj.arguments !== undefined ? resolveField(obj.arguments, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('case_pattern', v) : v)) : undefined,
   } as any);
 }
 
@@ -1408,7 +1408,7 @@ export function comparisonOperatorFrom(input: RuntimeNodeOf<ComparisonOperator> 
       comparators: input.fields?.comparators,
     } as any);
   }
-  const obj: any = input;
+  const obj = input as ComparisonOperatorFromInput;
   return comparison_operator_({
     operators: obj.operators !== undefined ? resolveField(obj.operators, _resolveComprehensionClauses7) : [],
     left: resolveField(obj.left, _resolvePrimaryExpression),
@@ -1423,7 +1423,7 @@ export function complexPatternFrom(input: RuntimeNodeOf<ComplexPattern> | Comple
       imaginary: input.fields?.imaginary,
     } as any);
   }
-  const obj: any = input;
+  const obj = input as ComplexPatternFromInput;
   return complex_pattern_({
     real: resolveField(obj.real, _resolveSimplePattern2),
     imaginary: resolveField(obj.imaginary, _resolveSimplePattern2),
@@ -1436,9 +1436,9 @@ export function concatenatedStringFrom(input: RuntimeNodeOf<ConcatenatedString> 
       children: (input as any).children,
     } as any);
   }
-  const obj: any = Array.isArray(input) ? { children: input } : input;
+  const obj = (Array.isArray(input) ? { children: input } : input) as ConcatenatedStringFromInput;
   return concatenated_string_({
-    children: obj['children'] !== undefined ? resolveField(obj['children'], (v: any) => (typeof v === 'object' && v !== null ? _resolveByKind('string', v) : v)) : [],
+    children: obj['children'] !== undefined ? resolveField(obj['children'], (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('string', v) : v)) : [],
   } as any);
 }
 
@@ -1450,7 +1450,7 @@ export function conditionalExpressionFrom(input: RuntimeNodeOf<ConditionalExpres
       alternative: input.fields?.alternative,
     } as any);
   }
-  const obj: any = input;
+  const obj = input as ConditionalExpressionFromInput;
   return conditional_expression_({
     body: resolveField(obj.body, _resolveExpression),
     condition: resolveField(obj.condition, _resolveExpression),
@@ -1465,10 +1465,10 @@ export function constrainedTypeFrom(input: RuntimeNodeOf<ConstrainedType> | Cons
       constraint: input.fields?.constraint,
     } as any);
   }
-  const obj: any = input;
+  const obj = input as ConstrainedTypeFromInput;
   return constrained_type_({
-    baseType: resolveField(obj.baseType, (v: any) => (typeof v === 'object' && v !== null ? _resolveByKind('type', v) : v)),
-    constraint: resolveField(obj.constraint, (v: any) => (typeof v === 'object' && v !== null ? _resolveByKind('type', v) : v)),
+    baseType: resolveField(obj.base_type, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('type', v) : v)),
+    constraint: resolveField(obj.constraint, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('type', v) : v)),
   } as any);
 }
 
@@ -1479,10 +1479,10 @@ export function decoratedDefinitionFrom(input: RuntimeNodeOf<DecoratedDefinition
       children: (input as any).children,
     } as any);
   }
-  const obj: any = Array.isArray(input) ? { children: input } : input;
+  const obj = (Array.isArray(input) ? { children: input } : input) as DecoratedDefinitionFromInput;
   return decorated_definition_({
     definition: resolveField(obj.definition, _resolveCompoundStatement2),
-    children: obj['children'] !== undefined ? resolveField(obj['children'], (v: any) => (typeof v === 'object' && v !== null ? _resolveByKind('decorator', v) : v)) : [],
+    children: obj['children'] !== undefined ? resolveField(obj['children'], (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('decorator', v) : v)) : [],
   } as any);
 }
 
@@ -1493,7 +1493,7 @@ export function decoratorFrom(input: RuntimeNodeOf<Decorator> | DecoratorFromInp
       newline: input.fields?.newline,
     } as any);
   }
-  const obj: any = input;
+  const obj = input as DecoratorFromInput;
   return decorator_({
     expression: resolveField(obj.expression, _resolveExpression),
     newline: resolveField(obj.newline, _resolveComprehensionClauses2),
@@ -1507,7 +1507,7 @@ export function defaultParameterFrom(input: RuntimeNodeOf<DefaultParameter> | De
       value: input.fields?.value,
     } as any);
   }
-  const obj: any = input;
+  const obj = input as DefaultParameterFromInput;
   return default_parameter_({
     name: resolveField(obj.name, _resolvePattern2),
     value: resolveField(obj.value, _resolveExpression),
@@ -1520,7 +1520,7 @@ export function deleteStatementFrom(input: RuntimeNodeOf<DeleteStatement> | Dele
       children: (input as any).children,
     } as any);
   }
-  const obj: any = Array.isArray(input) ? { children: input } : input;
+  const obj = (Array.isArray(input) ? { children: input } : input) as DeleteStatementFromInput;
   return delete_statement_({
     children: obj['children'] !== undefined ? resolveField(obj['children'], _resolveExpressions2) : undefined,
   } as any);
@@ -1532,9 +1532,9 @@ export function dictPatternFrom(input: RuntimeNodeOf<DictPattern> | DictPatternF
       children: (input as any).children,
     } as any);
   }
-  const obj: any = Array.isArray(input) ? { children: input } : input;
+  const obj = (Array.isArray(input) ? { children: input } : input) as DictPatternFromInput;
   return dict_pattern_({
-    children: obj['children'] !== undefined ? resolveField(obj['children'], (v: any) => (typeof v === 'object' && v !== null ? _resolveByKind('splat_pattern', v) : v)) : undefined,
+    children: obj['children'] !== undefined ? resolveField(obj['children'], (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('splat_pattern', v) : v)) : undefined,
   } as any);
 }
 
@@ -1544,7 +1544,7 @@ export function dictionaryFrom(input: RuntimeNodeOf<Dictionary> | DictionaryFrom
       children: (input as any).children,
     } as any);
   }
-  const obj: any = Array.isArray(input) ? { children: input } : input;
+  const obj = (Array.isArray(input) ? { children: input } : input) as DictionaryFromInput;
   return dictionary_({
     children: obj['children'] !== undefined ? resolveField(obj['children'], _r34sltf) : undefined,
   } as any);
@@ -1557,9 +1557,9 @@ export function dictionaryComprehensionFrom(input: RuntimeNodeOf<DictionaryCompr
       children: (input as any).children,
     } as any);
   }
-  const obj: any = Array.isArray(input) ? { children: input } : input;
+  const obj = (Array.isArray(input) ? { children: input } : input) as DictionaryComprehensionFromInput;
   return dictionary_comprehension_({
-    body: resolveField(obj.body, (v: any) => (typeof v === 'object' && v !== null ? _resolveByKind('pair', v) : v)),
+    body: resolveField(obj.body, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('pair', v) : v)),
     children: obj['children'] !== undefined ? resolveField(obj['children'], _ryqidua) : undefined,
   } as any);
 }
@@ -1570,7 +1570,7 @@ export function dictionarySplatFrom(input: RuntimeNodeOf<DictionarySplat> | Dict
       expression: input.fields?.expression,
     } as any);
   }
-  const obj: any = input;
+  const obj = input as DictionarySplatFromInput;
   return dictionary_splat_({
     expression: resolveField(obj.expression, _resolveExpression),
   } as any);
@@ -1582,7 +1582,7 @@ export function dictionarySplatPatternFrom(input: RuntimeNodeOf<DictionarySplatP
       children: (input as any).children,
     } as any);
   }
-  const obj: any = Array.isArray(input) ? { children: input } : input;
+  const obj = (Array.isArray(input) ? { children: input } : input) as DictionarySplatPatternFromInput;
   return dictionary_splat_pattern_({
     children: obj['children'] !== undefined ? resolveField(obj['children'], _resolvePattern3) : undefined,
   } as any);
@@ -1594,7 +1594,7 @@ export function dottedNameFrom(input: RuntimeNodeOf<DottedName> | DottedNameFrom
       children: (input as any).children,
     } as any);
   }
-  const obj: any = Array.isArray(input) ? { children: input } : input;
+  const obj = (Array.isArray(input) ? { children: input } : input) as DottedNameFromInput;
   return dotted_name_({
     children: obj['children'] !== undefined ? resolveField(obj['children'], _resolveNamedExpressionLhs) : [],
   } as any);
@@ -1607,7 +1607,7 @@ export function elifClauseFrom(input: RuntimeNodeOf<ElifClause> | ElifClauseFrom
       consequence: input.fields?.consequence,
     } as any);
   }
-  const obj: any = input;
+  const obj = input as ElifClauseFromInput;
   return elif_clause_({
     condition: resolveField(obj.condition, _resolveExpression),
     consequence: resolveField(obj.consequence, _resolveSuite2),
@@ -1620,7 +1620,7 @@ export function elseClauseFrom(input: RuntimeNodeOf<ElseClause> | ElseClauseFrom
       body: input.fields?.body,
     } as any);
   }
-  const obj: any = input;
+  const obj = input as ElseClauseFromInput;
   return else_clause_({
     body: resolveField(obj.body, _resolveSuite2),
   } as any);
@@ -1634,7 +1634,7 @@ export function exceptClauseFrom(input: RuntimeNodeOf<ExceptClause> | ExceptClau
       children: (input as any).children,
     } as any);
   }
-  const obj: any = Array.isArray(input) ? { children: input } : input;
+  const obj = (Array.isArray(input) ? { children: input } : input) as ExceptClauseFromInput;
   return except_clause_({
     alias: obj.alias !== undefined ? resolveField(obj.alias, _resolveExpression) : undefined,
     value: obj.value !== undefined ? resolveField(obj.value, _resolveExpression) : undefined,
@@ -1649,7 +1649,7 @@ export function execStatementFrom(input: RuntimeNodeOf<ExecStatement> | ExecStat
       children: (input as any).children,
     } as any);
   }
-  const obj: any = Array.isArray(input) ? { children: input } : input;
+  const obj = (Array.isArray(input) ? { children: input } : input) as ExecStatementFromInput;
   return exec_statement_({
     code: resolveField(obj.code, _resolvePrimaryExpression2),
     children: obj['children'] !== undefined ? resolveField(obj['children'], _resolveExpression) : undefined,
@@ -1662,7 +1662,7 @@ export function expressionListFrom(input: RuntimeNodeOf<ExpressionList> | Expres
       children: (input as any).children,
     } as any);
   }
-  const obj: any = Array.isArray(input) ? { children: input } : input;
+  const obj = (Array.isArray(input) ? { children: input } : input) as ExpressionListFromInput;
   return expression_list_({
     children: obj['children'] !== undefined ? resolveField(obj['children'], _resolveExpression) : [],
   } as any);
@@ -1674,7 +1674,7 @@ export function expressionStatementFrom(input: RuntimeNodeOf<ExpressionStatement
       children: (input as any).children,
     } as any);
   }
-  const obj: any = Array.isArray(input) ? { children: input } : input;
+  const obj = (Array.isArray(input) ? { children: input } : input) as ExpressionStatementFromInput;
   return expression_statement_({
     children: obj['children'] !== undefined ? resolveField(obj['children'], _resolveRightHandSide3) : [],
   } as any);
@@ -1687,7 +1687,7 @@ export function finallyClauseFrom(input: RuntimeNodeOf<FinallyClause> | FinallyC
       children: (input as any).children,
     } as any);
   }
-  const obj: any = Array.isArray(input) ? { children: input } : input;
+  const obj = (Array.isArray(input) ? { children: input } : input) as FinallyClauseFromInput;
   return finally_clause_({
     block: resolveField(obj.block, _resolveSuite),
     children: obj['children'] !== undefined ? resolveField(obj['children'], _resolveSuite) : undefined,
@@ -1701,7 +1701,7 @@ export function forInClauseFrom(input: RuntimeNodeOf<ForInClause> | ForInClauseF
       right: input.fields?.right,
     } as any);
   }
-  const obj: any = input;
+  const obj = input as ForInClauseFromInput;
   return for_in_clause_({
     left: resolveField(obj.left, _resolveLeftHandSide2),
     right: obj.right !== undefined ? resolveField(obj.right, _resolveComprehensionClauses8) : [],
@@ -1717,9 +1717,9 @@ export function forStatementFrom(input: RuntimeNodeOf<ForStatement> | ForStateme
       right: input.fields?.right,
     } as any);
   }
-  const obj: any = input;
+  const obj = input as ForStatementFromInput;
   return for_statement_({
-    alternative: obj.alternative !== undefined ? resolveField(obj.alternative, (v: any) => (typeof v === 'object' && v !== null ? _resolveByKind('else_clause', v) : v)) : undefined,
+    alternative: obj.alternative !== undefined ? resolveField(obj.alternative, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('else_clause', v) : v)) : undefined,
     body: resolveField(obj.body, _resolveSuite2),
     left: resolveField(obj.left, _resolveLeftHandSide2),
     right: resolveField(obj.right, _resolveExpressions3),
@@ -1734,11 +1734,11 @@ export function formatExpressionFrom(input: RuntimeNodeOf<FormatExpression> | Fo
       typeConversion: input.fields?.type_conversion,
     } as any);
   }
-  const obj: any = input;
+  const obj = input as FormatExpressionFromInput;
   return format_expression_({
     expression: resolveField(obj.expression, _resolveFExpression2),
-    formatSpecifier: obj.formatSpecifier !== undefined ? resolveField(obj.formatSpecifier, (v: any) => (typeof v === 'object' && v !== null ? _resolveByKind('format_specifier', v) : v)) : undefined,
-    typeConversion: obj.typeConversion !== undefined ? resolveField(obj.typeConversion, (v: unknown) => (typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean' ? type_conversion_('' + v) : v)) : undefined,
+    formatSpecifier: obj.format_specifier !== undefined ? resolveField(obj.format_specifier, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('format_specifier', v) : v)) : undefined,
+    typeConversion: obj.type_conversion !== undefined ? resolveField(obj.type_conversion, (v: unknown) => (typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean' ? type_conversion_('' + v) : v)) : undefined,
   } as any);
 }
 
@@ -1748,9 +1748,9 @@ export function formatSpecifierFrom(input: RuntimeNodeOf<FormatSpecifier> | Form
       children: (input as any).children,
     } as any);
   }
-  const obj: any = Array.isArray(input) ? { children: input } : input;
+  const obj = (Array.isArray(input) ? { children: input } : input) as FormatSpecifierFromInput;
   return format_specifier_({
-    children: obj['children'] !== undefined ? resolveField(obj['children'], (v: any) => (typeof v === 'object' && v !== null ? _resolveByKind('format_expression', v) : v)) : undefined,
+    children: obj['children'] !== undefined ? resolveField(obj['children'], (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('format_expression', v) : v)) : undefined,
   } as any);
 }
 
@@ -1764,13 +1764,13 @@ export function functionDefinitionFrom(input: RuntimeNodeOf<FunctionDefinition> 
       typeParameters: input.fields?.type_parameters,
     } as any);
   }
-  const obj: any = input;
+  const obj = input as FunctionDefinitionFromInput;
   return function_definition_({
     body: resolveField(obj.body, _resolveSuite2),
     name: resolveField(obj.name, _resolveNamedExpressionLhs),
-    parameters: resolveField(obj.parameters, (v: any) => (typeof v === 'object' && v !== null ? _resolveByKind('parameters', v) : v)),
-    returnType: obj.returnType !== undefined ? resolveField(obj.returnType, (v: any) => (typeof v === 'object' && v !== null ? _resolveByKind('type', v) : v)) : undefined,
-    typeParameters: obj.typeParameters !== undefined ? resolveField(obj.typeParameters, (v: any) => (typeof v === 'object' && v !== null ? _resolveByKind('type_parameter', v) : v)) : undefined,
+    parameters: resolveField(obj.parameters, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('parameters', v) : v)),
+    returnType: obj.return_type !== undefined ? resolveField(obj.return_type, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('type', v) : v)) : undefined,
+    typeParameters: obj.type_parameters !== undefined ? resolveField(obj.type_parameters, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('type_parameter', v) : v)) : undefined,
   } as any);
 }
 
@@ -1780,7 +1780,7 @@ export function futureImportStatementFrom(input: RuntimeNodeOf<FutureImportState
       name: input.fields?.name,
     } as any);
   }
-  const obj: any = input;
+  const obj = input as FutureImportStatementFromInput;
   return future_import_statement_({
     ..._resolveImportListFields(obj),
   } as any);
@@ -1793,7 +1793,7 @@ export function generatorExpressionFrom(input: RuntimeNodeOf<GeneratorExpression
       children: (input as any).children,
     } as any);
   }
-  const obj: any = Array.isArray(input) ? { children: input } : input;
+  const obj = (Array.isArray(input) ? { children: input } : input) as GeneratorExpressionFromInput;
   return generator_expression_({
     body: resolveField(obj.body, _resolveExpression),
     children: obj['children'] !== undefined ? resolveField(obj['children'], _ryqidua) : undefined,
@@ -1807,10 +1807,10 @@ export function genericTypeFrom(input: RuntimeNodeOf<GenericType> | GenericTypeF
       typeParameter: input.fields?.type_parameter,
     } as any);
   }
-  const obj: any = input;
+  const obj = input as GenericTypeFromInput;
   return generic_type_({
     identifier: resolveField(obj.identifier, _resolveNamedExpressionLhs),
-    typeParameter: resolveField(obj.typeParameter, (v: any) => (typeof v === 'object' && v !== null ? _resolveByKind('type_parameter', v) : v)),
+    typeParameter: resolveField(obj.type_parameter, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('type_parameter', v) : v)),
   } as any);
 }
 
@@ -1820,7 +1820,7 @@ export function globalStatementFrom(input: RuntimeNodeOf<GlobalStatement> | Glob
       children: (input as any).children,
     } as any);
   }
-  const obj: any = Array.isArray(input) ? { children: input } : input;
+  const obj = (Array.isArray(input) ? { children: input } : input) as GlobalStatementFromInput;
   return global_statement_({
     children: obj['children'] !== undefined ? resolveField(obj['children'], _resolveNamedExpressionLhs) : [],
   } as any);
@@ -1832,7 +1832,7 @@ export function ifClauseFrom(input: RuntimeNodeOf<IfClause> | IfClauseFromInput)
       expression: input.fields?.expression,
     } as any);
   }
-  const obj: any = input;
+  const obj = input as IfClauseFromInput;
   return if_clause_({
     expression: resolveField(obj.expression, _resolveExpression),
   } as any);
@@ -1846,7 +1846,7 @@ export function ifStatementFrom(input: RuntimeNodeOf<IfStatement> | IfStatementF
       consequence: input.fields?.consequence,
     } as any);
   }
-  const obj: any = input;
+  const obj = input as IfStatementFromInput;
   return if_statement_({
     alternative: obj.alternative !== undefined ? resolveField(obj.alternative, _rn6vv1r) : undefined,
     condition: resolveField(obj.condition, _resolveExpression),
@@ -1862,11 +1862,11 @@ export function importFromStatementFrom(input: RuntimeNodeOf<ImportFromStatement
       wildcardImport: input.fields?.wildcard_import,
     } as any);
   }
-  const obj: any = input;
+  const obj = input as ImportFromStatementFromInput;
   return import_from_statement_({
     ..._resolveImportListFields(obj),
-    moduleName: resolveField(obj.moduleName, _r2jsk94),
-    wildcardImport: resolveField(obj.wildcardImport, (v: unknown) => (typeof v === 'string' && v === '*' ? wildcard_import_() : v)),
+    moduleName: resolveField(obj.module_name, _r2jsk94),
+    wildcardImport: resolveField(obj.wildcard_import, (v: unknown) => (typeof v === 'string' && v === '*' ? wildcard_import_() : v)),
   } as any);
 }
 
@@ -1876,7 +1876,7 @@ export function importStatementFrom(input: RuntimeNodeOf<ImportStatement> | Impo
       name: input.fields?.name,
     } as any);
   }
-  const obj: any = input;
+  const obj = input as ImportStatementFromInput;
   return import_statement_({
     ..._resolveImportListFields(obj),
   } as any);
@@ -1890,11 +1890,11 @@ export function interpolationFrom(input: RuntimeNodeOf<Interpolation> | Interpol
       typeConversion: input.fields?.type_conversion,
     } as any);
   }
-  const obj: any = input;
+  const obj = input as InterpolationFromInput;
   return interpolation_({
     expression: resolveField(obj.expression, _resolveFExpression3),
-    formatSpecifier: obj.formatSpecifier !== undefined ? resolveField(obj.formatSpecifier, (v: any) => (typeof v === 'object' && v !== null ? _resolveByKind('format_specifier', v) : v)) : undefined,
-    typeConversion: obj.typeConversion !== undefined ? resolveField(obj.typeConversion, (v: unknown) => (typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean' ? type_conversion_('' + v) : v)) : undefined,
+    formatSpecifier: obj.format_specifier !== undefined ? resolveField(obj.format_specifier, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('format_specifier', v) : v)) : undefined,
+    typeConversion: obj.type_conversion !== undefined ? resolveField(obj.type_conversion, (v: unknown) => (typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean' ? type_conversion_('' + v) : v)) : undefined,
   } as any);
 }
 
@@ -1905,7 +1905,7 @@ export function keywordArgumentFrom(input: RuntimeNodeOf<KeywordArgument> | Keyw
       value: input.fields?.value,
     } as any);
   }
-  const obj: any = input;
+  const obj = input as KeywordArgumentFromInput;
   return keyword_argument_({
     name: resolveField(obj.name, _resolveNamedExpressionLhs),
     value: resolveField(obj.value, _resolveExpression),
@@ -1919,10 +1919,10 @@ export function keywordPatternFrom(input: RuntimeNodeOf<KeywordPattern> | Keywor
       simplePattern: input.fields?.simple_pattern,
     } as any);
   }
-  const obj: any = input;
+  const obj = input as KeywordPatternFromInput;
   return keyword_pattern_({
     identifier: resolveField(obj.identifier, _rfpc4ja),
-    simplePattern: resolveField(obj.simplePattern, _resolveSimplePattern3),
+    simplePattern: resolveField(obj.simple_pattern, _resolveSimplePattern3),
   } as any);
 }
 
@@ -1933,10 +1933,10 @@ export function lambdaFrom(input: RuntimeNodeOf<Lambda> | LambdaFromInput) {
       parameters: input.fields?.parameters,
     } as any);
   }
-  const obj: any = input;
+  const obj = input as LambdaFromInput;
   return lambda_({
     body: resolveField(obj.body, _resolveExpression),
-    parameters: obj.parameters !== undefined ? resolveField(obj.parameters, (v: any) => (typeof v === 'object' && v !== null ? _resolveByKind('lambda_parameters', v) : v)) : undefined,
+    parameters: obj.parameters !== undefined ? resolveField(obj.parameters, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('lambda_parameters', v) : v)) : undefined,
   } as any);
 }
 
@@ -1946,7 +1946,7 @@ export function lambdaParametersFrom(input: RuntimeNodeOf<LambdaParameters> | La
       children: (input as any).children,
     } as any);
   }
-  const obj: any = Array.isArray(input) ? { children: input } : input;
+  const obj = (Array.isArray(input) ? { children: input } : input) as LambdaParametersFromInput;
   return lambda_parameters_({
     children: obj['children'] !== undefined ? resolveField(obj['children'], _resolveParameter) : [],
   } as any);
@@ -1958,7 +1958,7 @@ export function listFrom(input: RuntimeNodeOf<List> | ListFromInput) {
       children: (input as any).children,
     } as any);
   }
-  const obj: any = Array.isArray(input) ? { children: input } : input;
+  const obj = (Array.isArray(input) ? { children: input } : input) as ListFromInput;
   return list_({
     children: obj['children'] !== undefined ? resolveField(obj['children'], _rr83r9g) : undefined,
   } as any);
@@ -1971,7 +1971,7 @@ export function listComprehensionFrom(input: RuntimeNodeOf<ListComprehension> | 
       children: (input as any).children,
     } as any);
   }
-  const obj: any = Array.isArray(input) ? { children: input } : input;
+  const obj = (Array.isArray(input) ? { children: input } : input) as ListComprehensionFromInput;
   return list_comprehension_({
     body: resolveField(obj.body, _resolveExpression),
     children: obj['children'] !== undefined ? resolveField(obj['children'], _ryqidua) : undefined,
@@ -1984,7 +1984,7 @@ export function listPatternFrom(input: RuntimeNodeOf<ListPattern> | ListPatternF
       children: (input as any).children,
     } as any);
   }
-  const obj: any = Array.isArray(input) ? { children: input } : input;
+  const obj = (Array.isArray(input) ? { children: input } : input) as ListPatternFromInput;
   return list_pattern_({
     children: obj['children'] !== undefined ? resolveField(obj['children'], _rflltaz) : undefined,
   } as any);
@@ -1996,7 +1996,7 @@ export function listSplatFrom(input: RuntimeNodeOf<ListSplat> | ListSplatFromInp
       expression: input.fields?.expression,
     } as any);
   }
-  const obj: any = input;
+  const obj = input as ListSplatFromInput;
   return list_splat_({
     expression: resolveField(obj.expression, _resolvePattern4),
   } as any);
@@ -2008,7 +2008,7 @@ export function listSplatPatternFrom(input: RuntimeNodeOf<ListSplatPattern> | Li
       children: (input as any).children,
     } as any);
   }
-  const obj: any = Array.isArray(input) ? { children: input } : input;
+  const obj = (Array.isArray(input) ? { children: input } : input) as ListSplatPatternFromInput;
   return list_splat_pattern_({
     children: obj['children'] !== undefined ? resolveField(obj['children'], _resolvePattern3) : undefined,
   } as any);
@@ -2021,7 +2021,7 @@ export function matchStatementFrom(input: RuntimeNodeOf<MatchStatement> | MatchS
       subject: input.fields?.subject,
     } as any);
   }
-  const obj: any = input;
+  const obj = input as MatchStatementFromInput;
   return match_statement_({
     body: resolveField(obj.body, _resolveSuite),
     subject: obj.subject !== undefined ? resolveField(obj.subject, _resolveExpression) : [],
@@ -2035,9 +2035,9 @@ export function memberTypeFrom(input: RuntimeNodeOf<MemberType> | MemberTypeFrom
       identifier: input.fields?.identifier,
     } as any);
   }
-  const obj: any = input;
+  const obj = input as MemberTypeFromInput;
   return member_type_({
-    baseType: resolveField(obj.baseType, (v: any) => (typeof v === 'object' && v !== null ? _resolveByKind('type', v) : v)),
+    baseType: resolveField(obj.base_type, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('type', v) : v)),
     identifier: resolveField(obj.identifier, _resolveNamedExpressionLhs),
   } as any);
 }
@@ -2048,7 +2048,7 @@ export function moduleFrom(input: RuntimeNodeOf<Module> | ModuleFromInput) {
       children: (input as any).children,
     } as any);
   }
-  const obj: any = Array.isArray(input) ? { children: input } : input;
+  const obj = (Array.isArray(input) ? { children: input } : input) as ModuleFromInput;
   return module_({
     children: obj['children'] !== undefined ? resolveField(obj['children'], _resolveComprehensionClauses5) : undefined,
   } as any);
@@ -2061,7 +2061,7 @@ export function namedExpressionFrom(input: RuntimeNodeOf<NamedExpression> | Name
       value: input.fields?.value,
     } as any);
   }
-  const obj: any = input;
+  const obj = input as NamedExpressionFromInput;
   return named_expression_({
     name: resolveField(obj.name, _resolveNamedExpressionLhs2),
     value: resolveField(obj.value, _resolveExpression),
@@ -2074,7 +2074,7 @@ export function nonlocalStatementFrom(input: RuntimeNodeOf<NonlocalStatement> | 
       children: (input as any).children,
     } as any);
   }
-  const obj: any = Array.isArray(input) ? { children: input } : input;
+  const obj = (Array.isArray(input) ? { children: input } : input) as NonlocalStatementFromInput;
   return nonlocal_statement_({
     children: obj['children'] !== undefined ? resolveField(obj['children'], _resolveNamedExpressionLhs) : [],
   } as any);
@@ -2086,7 +2086,7 @@ export function notOperatorFrom(input: RuntimeNodeOf<NotOperator> | NotOperatorF
       argument: input.fields?.argument,
     } as any);
   }
-  const obj: any = input;
+  const obj = input as NotOperatorFromInput;
   return not_operator_({
     argument: resolveField(obj.argument, _resolveExpression),
   } as any);
@@ -2099,7 +2099,7 @@ export function pairFrom(input: RuntimeNodeOf<Pair> | PairFromInput) {
       value: input.fields?.value,
     } as any);
   }
-  const obj: any = input;
+  const obj = input as PairFromInput;
   return pair_({
     key: resolveField(obj.key, _resolveExpression),
     value: resolveField(obj.value, _resolveExpression),
@@ -2112,7 +2112,7 @@ export function parametersFrom(input: RuntimeNodeOf<Parameters> | ParametersFrom
       children: (input as any).children,
     } as any);
   }
-  const obj: any = Array.isArray(input) ? { children: input } : input;
+  const obj = (Array.isArray(input) ? { children: input } : input) as ParametersFromInput;
   return parameters_({
     children: obj['children'] !== undefined ? resolveField(obj['children'], _resolveParameter) : undefined,
   } as any);
@@ -2124,7 +2124,7 @@ export function parenthesizedExpressionFrom(input: RuntimeNodeOf<ParenthesizedEx
       children: (input as any).children,
     } as any);
   }
-  const obj: any = Array.isArray(input) ? { children: input } : input;
+  const obj = (Array.isArray(input) ? { children: input } : input) as ParenthesizedExpressionFromInput;
   return parenthesized_expression_({
     children: obj['children'] !== undefined ? resolveField(obj['children'], _resolveFExpression4) : undefined,
   } as any);
@@ -2136,7 +2136,7 @@ export function parenthesizedListSplatFrom(input: RuntimeNodeOf<ParenthesizedLis
       children: (input as any).children,
     } as any);
   }
-  const obj: any = Array.isArray(input) ? { children: input } : input;
+  const obj = (Array.isArray(input) ? { children: input } : input) as ParenthesizedListSplatFromInput;
   return parenthesized_list_splat_({
     children: obj['children'] !== undefined ? resolveField(obj['children'], _resolvePrimaryExpression3) : undefined,
   } as any);
@@ -2148,7 +2148,7 @@ export function patternListFrom(input: RuntimeNodeOf<PatternList> | PatternListF
       children: (input as any).children,
     } as any);
   }
-  const obj: any = Array.isArray(input) ? { children: input } : input;
+  const obj = (Array.isArray(input) ? { children: input } : input) as PatternListFromInput;
   return pattern_list_({
     children: obj['children'] !== undefined ? resolveField(obj['children'], _resolvePattern) : [],
   } as any);
@@ -2161,10 +2161,10 @@ export function printStatementFrom(input: RuntimeNodeOf<PrintStatement> | PrintS
       chevron: input.fields?.chevron,
     } as any);
   }
-  const obj: any = input;
+  const obj = input as PrintStatementFromInput;
   return print_statement_({
     argument: obj.argument !== undefined ? resolveField(obj.argument, _resolveExpression) : undefined,
-    chevron: obj.chevron !== undefined ? resolveField(obj.chevron, (v: any) => (typeof v === 'object' && v !== null ? _resolveByKind('chevron', v) : v)) : undefined,
+    chevron: obj.chevron !== undefined ? resolveField(obj.chevron, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('chevron', v) : v)) : undefined,
   } as any);
 }
 
@@ -2175,7 +2175,7 @@ export function raiseStatementFrom(input: RuntimeNodeOf<RaiseStatement> | RaiseS
       children: (input as any).children,
     } as any);
   }
-  const obj: any = Array.isArray(input) ? { children: input } : input;
+  const obj = (Array.isArray(input) ? { children: input } : input) as RaiseStatementFromInput;
   return raise_statement_({
     cause: obj.cause !== undefined ? resolveField(obj.cause, _resolveExpression) : undefined,
     children: obj['children'] !== undefined ? resolveField(obj['children'], _resolveExpressions3) : undefined,
@@ -2189,10 +2189,10 @@ export function relativeImportFrom(input: RuntimeNodeOf<RelativeImport> | Relati
       dottedName: input.fields?.dotted_name,
     } as any);
   }
-  const obj: any = input;
+  const obj = input as RelativeImportFromInput;
   return relative_import_({
-    importPrefix: resolveField(obj.importPrefix, (v: unknown) => (typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean' ? import_prefix_('' + v) : v)),
-    dottedName: obj.dottedName !== undefined ? resolveField(obj.dottedName, (v: any) => (typeof v === 'object' && v !== null ? _resolveByKind('dotted_name', v) : v)) : undefined,
+    importPrefix: resolveField(obj.import_prefix, (v: unknown) => (typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean' ? import_prefix_('' + v) : v)),
+    dottedName: obj.dotted_name !== undefined ? resolveField(obj.dotted_name, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('dotted_name', v) : v)) : undefined,
   } as any);
 }
 
@@ -2202,7 +2202,7 @@ export function returnStatementFrom(input: RuntimeNodeOf<ReturnStatement> | Retu
       children: (input as any).children,
     } as any);
   }
-  const obj: any = Array.isArray(input) ? { children: input } : input;
+  const obj = (Array.isArray(input) ? { children: input } : input) as ReturnStatementFromInput;
   return return_statement_({
     children: obj['children'] !== undefined ? resolveField(obj['children'], _resolveExpressions2) : undefined,
   } as any);
@@ -2214,7 +2214,7 @@ export function setFrom(input: RuntimeNodeOf<Set> | SetFromInput) {
       children: (input as any).children,
     } as any);
   }
-  const obj: any = Array.isArray(input) ? { children: input } : input;
+  const obj = (Array.isArray(input) ? { children: input } : input) as SetFromInput;
   return set_({
     children: obj['children'] !== undefined ? resolveField(obj['children'], _rr83r9g) : [],
   } as any);
@@ -2227,7 +2227,7 @@ export function setComprehensionFrom(input: RuntimeNodeOf<SetComprehension> | Se
       children: (input as any).children,
     } as any);
   }
-  const obj: any = Array.isArray(input) ? { children: input } : input;
+  const obj = (Array.isArray(input) ? { children: input } : input) as SetComprehensionFromInput;
   return set_comprehension_({
     body: resolveField(obj.body, _resolveExpression),
     children: obj['children'] !== undefined ? resolveField(obj['children'], _ryqidua) : undefined,
@@ -2242,7 +2242,7 @@ export function sliceFrom(input: RuntimeNodeOf<Slice> | SliceFromInput) {
       step: input.fields?.step,
     } as any);
   }
-  const obj: any = input;
+  const obj = input as SliceFromInput;
   return slice_({
     start: obj.start !== undefined ? resolveField(obj.start, _resolveExpression) : undefined,
     stop: obj.stop !== undefined ? resolveField(obj.stop, _resolveExpression) : undefined,
@@ -2256,7 +2256,7 @@ export function splatPatternFrom(input: RuntimeNodeOf<SplatPattern> | SplatPatte
       identifier: input.fields?.identifier,
     } as any);
   }
-  const obj: any = input;
+  const obj = input as SplatPatternFromInput;
   return splat_pattern_({
     identifier: obj.identifier !== undefined ? resolveField(obj.identifier, _resolveNamedExpressionLhs) : undefined,
   } as any);
@@ -2268,7 +2268,7 @@ export function splatTypeFrom(input: RuntimeNodeOf<SplatType> | SplatTypeFromInp
       identifier: input.fields?.identifier,
     } as any);
   }
-  const obj: any = input;
+  const obj = input as SplatTypeFromInput;
   return splat_type_({
     identifier: resolveField(obj.identifier, _resolveNamedExpressionLhs),
   } as any);
@@ -2282,11 +2282,11 @@ export function stringFrom(input: RuntimeNodeOf<String> | StringFromInput) {
       stringEnd: input.fields?.string_end,
     } as any);
   }
-  const obj: any = input;
+  const obj = input as StringFromInput;
   return string_({
-    stringStart: resolveField(obj.stringStart, (v: unknown) => (typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean' ? string_start_('' + v) : v)),
+    stringStart: resolveField(obj.string_start, (v: unknown) => (typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean' ? string_start_('' + v) : v)),
     content: obj.content !== undefined ? resolveField(obj.content, _r14l28kn) : undefined,
-    stringEnd: resolveField(obj.stringEnd, (v: unknown) => (typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean' ? string_end_('' + v) : v)),
+    stringEnd: resolveField(obj.string_end, (v: unknown) => (typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean' ? string_end_('' + v) : v)),
   } as any);
 }
 
@@ -2296,7 +2296,7 @@ export function stringContentFrom(input: RuntimeNodeOf<StringContent> | StringCo
       children: (input as any).children,
     } as any);
   }
-  const obj: any = Array.isArray(input) ? { children: input } : input;
+  const obj = (Array.isArray(input) ? { children: input } : input) as StringContentFromInput;
   return string_content_({
     children: obj['children'] !== undefined ? resolveField(obj['children'], _r1qu323z) : [],
   } as any);
@@ -2309,7 +2309,7 @@ export function subscriptFrom(input: RuntimeNodeOf<Subscript> | SubscriptFromInp
       value: input.fields?.value,
     } as any);
   }
-  const obj: any = input;
+  const obj = input as SubscriptFromInput;
   return subscript_({
     subscript: obj.subscript !== undefined ? resolveField(obj.subscript, _r1apoc2a) : [],
     value: resolveField(obj.value, _resolvePrimaryExpression),
@@ -2325,12 +2325,12 @@ export function tryStatementFrom(input: RuntimeNodeOf<TryStatement> | TryStateme
       finallyClause: input.fields?.finally_clause,
     } as any);
   }
-  const obj: any = input;
+  const obj = input as TryStatementFromInput;
   return try_statement_({
     body: resolveField(obj.body, _resolveSuite2),
-    exceptClauses: obj.exceptClauses !== undefined ? resolveField(obj.exceptClauses, (v: any) => (typeof v === 'object' && v !== null ? _resolveByKind('except_clause', v) : v)) : undefined,
-    elseClause: obj.elseClause !== undefined ? resolveField(obj.elseClause, (v: any) => (typeof v === 'object' && v !== null ? _resolveByKind('else_clause', v) : v)) : undefined,
-    finallyClause: obj.finallyClause !== undefined ? resolveField(obj.finallyClause, (v: any) => (typeof v === 'object' && v !== null ? _resolveByKind('finally_clause', v) : v)) : undefined,
+    exceptClauses: obj.except_clauses !== undefined ? resolveField(obj.except_clauses, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('except_clause', v) : v)) : undefined,
+    elseClause: obj.else_clause !== undefined ? resolveField(obj.else_clause, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('else_clause', v) : v)) : undefined,
+    finallyClause: obj.finally_clause !== undefined ? resolveField(obj.finally_clause, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('finally_clause', v) : v)) : undefined,
   } as any);
 }
 
@@ -2340,7 +2340,7 @@ export function tupleFrom(input: RuntimeNodeOf<Tuple> | TupleFromInput) {
       children: (input as any).children,
     } as any);
   }
-  const obj: any = Array.isArray(input) ? { children: input } : input;
+  const obj = (Array.isArray(input) ? { children: input } : input) as TupleFromInput;
   return tuple_({
     children: obj['children'] !== undefined ? resolveField(obj['children'], _rr83r9g) : undefined,
   } as any);
@@ -2352,7 +2352,7 @@ export function tuplePatternFrom(input: RuntimeNodeOf<TuplePattern> | TuplePatte
       children: (input as any).children,
     } as any);
   }
-  const obj: any = Array.isArray(input) ? { children: input } : input;
+  const obj = (Array.isArray(input) ? { children: input } : input) as TuplePatternFromInput;
   return tuple_pattern_({
     children: obj['children'] !== undefined ? resolveField(obj['children'], _rflltaz) : undefined,
   } as any);
@@ -2364,7 +2364,7 @@ export function type_From(input: RuntimeNodeOf<Type> | TypeFromInput) {
       children: (input as any).children,
     } as any);
   }
-  const obj: any = Array.isArray(input) ? { children: input } : input;
+  const obj = (Array.isArray(input) ? { children: input } : input) as TypeFromInput;
   return type_({
     children: obj['children'] !== undefined ? resolveField(obj['children'], _r1f2r8fn) : undefined,
   } as any);
@@ -2377,10 +2377,10 @@ export function typeAliasStatementFrom(input: RuntimeNodeOf<TypeAliasStatement> 
       right: input.fields?.right,
     } as any);
   }
-  const obj: any = input;
+  const obj = input as TypeAliasStatementFromInput;
   return type_alias_statement_({
-    left: resolveField(obj.left, (v: any) => (typeof v === 'object' && v !== null ? _resolveByKind('type', v) : v)),
-    right: resolveField(obj.right, (v: any) => (typeof v === 'object' && v !== null ? _resolveByKind('type', v) : v)),
+    left: resolveField(obj.left, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('type', v) : v)),
+    right: resolveField(obj.right, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('type', v) : v)),
   } as any);
 }
 
@@ -2390,9 +2390,9 @@ export function typeParameterFrom(input: RuntimeNodeOf<TypeParameter> | TypePara
       children: (input as any).children,
     } as any);
   }
-  const obj: any = Array.isArray(input) ? { children: input } : input;
+  const obj = (Array.isArray(input) ? { children: input } : input) as TypeParameterFromInput;
   return type_parameter_({
-    children: obj['children'] !== undefined ? resolveField(obj['children'], (v: any) => (typeof v === 'object' && v !== null ? _resolveByKind('type', v) : v)) : [],
+    children: obj['children'] !== undefined ? resolveField(obj['children'], (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('type', v) : v)) : [],
   } as any);
 }
 
@@ -2404,10 +2404,10 @@ export function typedDefaultParameterFrom(input: RuntimeNodeOf<TypedDefaultParam
       value: input.fields?.value,
     } as any);
   }
-  const obj: any = input;
+  const obj = input as TypedDefaultParameterFromInput;
   return typed_default_parameter_({
     name: resolveField(obj.name, _resolveNamedExpressionLhs),
-    type: resolveField(obj.type, (v: any) => (typeof v === 'object' && v !== null ? _resolveByKind('type', v) : v)),
+    type: resolveField(obj.type, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('type', v) : v)),
     value: resolveField(obj.value, _resolveExpression),
   } as any);
 }
@@ -2419,9 +2419,9 @@ export function typedParameterFrom(input: RuntimeNodeOf<TypedParameter> | TypedP
       children: (input as any).children,
     } as any);
   }
-  const obj: any = Array.isArray(input) ? { children: input } : input;
+  const obj = (Array.isArray(input) ? { children: input } : input) as TypedParameterFromInput;
   return typed_parameter_({
-    type: resolveField(obj.type, (v: any) => (typeof v === 'object' && v !== null ? _resolveByKind('type', v) : v)),
+    type: resolveField(obj.type, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('type', v) : v)),
     children: obj['children'] !== undefined ? resolveField(obj['children'], _resolveParameter2) : undefined,
   } as any);
 }
@@ -2433,7 +2433,7 @@ export function unaryOperatorFrom(input: RuntimeNodeOf<UnaryOperator> | UnaryOpe
       operator: input.fields?.operator,
     } as any);
   }
-  const obj: any = input;
+  const obj = input as UnaryOperatorFromInput;
   return unary_operator_({
     argument: resolveField(obj.argument, _resolvePrimaryExpression),
     operator: resolveField(obj.operator, _resolveComprehensionClauses9),
@@ -2446,7 +2446,7 @@ export function unionPatternFrom(input: RuntimeNodeOf<UnionPattern> | UnionPatte
       children: (input as any).children,
     } as any);
   }
-  const obj: any = Array.isArray(input) ? { children: input } : input;
+  const obj = (Array.isArray(input) ? { children: input } : input) as UnionPatternFromInput;
   return union_pattern_({
     children: obj['children'] !== undefined ? resolveField(obj['children'], _resolveSimplePattern) : undefined,
   } as any);
@@ -2459,10 +2459,10 @@ export function unionTypeFrom(input: RuntimeNodeOf<UnionType> | UnionTypeFromInp
       right: input.fields?.right,
     } as any);
   }
-  const obj: any = input;
+  const obj = input as UnionTypeFromInput;
   return union_type_({
-    left: resolveField(obj.left, (v: any) => (typeof v === 'object' && v !== null ? _resolveByKind('type', v) : v)),
-    right: resolveField(obj.right, (v: any) => (typeof v === 'object' && v !== null ? _resolveByKind('type', v) : v)),
+    left: resolveField(obj.left, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('type', v) : v)),
+    right: resolveField(obj.right, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('type', v) : v)),
   } as any);
 }
 
@@ -2474,9 +2474,9 @@ export function whileStatementFrom(input: RuntimeNodeOf<WhileStatement> | WhileS
       condition: input.fields?.condition,
     } as any);
   }
-  const obj: any = input;
+  const obj = input as WhileStatementFromInput;
   return while_statement_({
-    alternative: obj.alternative !== undefined ? resolveField(obj.alternative, (v: any) => (typeof v === 'object' && v !== null ? _resolveByKind('else_clause', v) : v)) : undefined,
+    alternative: obj.alternative !== undefined ? resolveField(obj.alternative, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('else_clause', v) : v)) : undefined,
     body: resolveField(obj.body, _resolveSuite2),
     condition: resolveField(obj.condition, _resolveExpression),
   } as any);
@@ -2488,9 +2488,9 @@ export function withClauseFrom(input: RuntimeNodeOf<WithClause> | WithClauseFrom
       children: (input as any).children,
     } as any);
   }
-  const obj: any = Array.isArray(input) ? { children: input } : input;
+  const obj = (Array.isArray(input) ? { children: input } : input) as WithClauseFromInput;
   return with_clause_({
-    children: obj['children'] !== undefined ? resolveField(obj['children'], (v: any) => (typeof v === 'object' && v !== null ? _resolveByKind('with_item', v) : v)) : [],
+    children: obj['children'] !== undefined ? resolveField(obj['children'], (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('with_item', v) : v)) : [],
   } as any);
 }
 
@@ -2500,7 +2500,7 @@ export function withItemFrom(input: RuntimeNodeOf<WithItem> | WithItemFromInput)
       value: input.fields?.value,
     } as any);
   }
-  const obj: any = input;
+  const obj = input as WithItemFromInput;
   return with_item_({
     value: resolveField(obj.value, _resolveExpression),
   } as any);
@@ -2513,10 +2513,10 @@ export function withStatementFrom(input: RuntimeNodeOf<WithStatement> | WithStat
       withClause: input.fields?.with_clause,
     } as any);
   }
-  const obj: any = input;
+  const obj = input as WithStatementFromInput;
   return with_statement_({
     body: resolveField(obj.body, _resolveSuite2),
-    withClause: resolveField(obj.withClause, (v: any) => (typeof v === 'object' && v !== null ? _resolveByKind('with_clause', v) : v)),
+    withClause: resolveField(obj.with_clause, (v: unknown) => (typeof v === 'object' && v !== null ? _resolveByKind('with_clause', v) : v)),
   } as any);
 }
 
@@ -2526,7 +2526,7 @@ export function yield_From(input: RuntimeNodeOf<Yield> | YieldFromInput) {
       children: (input as any).children,
     } as any);
   }
-  const obj: any = Array.isArray(input) ? { children: input } : input;
+  const obj = (Array.isArray(input) ? { children: input } : input) as YieldFromInput;
   return yield_({
     children: obj['children'] !== undefined ? resolveField(obj['children'], _resolveExpressions3) : undefined,
   } as any);
