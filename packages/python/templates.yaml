@@ -6,15 +6,15 @@ expandoChar: null
 metadata:
   grammarSha: ""
 rules:
-  aliased_import: $NAME as $ALIAS
+  aliased_import: $NAMEas $ALIAS
   argument_list:
     template: ($$$CHILDREN)
     joinBy: ","
-  as_pattern: $EXPRESSION as $ALIAS
+  as_pattern: $EXPRESSIONas $ALIAS
   assert_statement:
     template: assert $$$CHILDREN
     joinBy: ","
-  assignment: $LEFT = $RIGHT $TYPE
+  assignment: $LEFT=$RIGHT $TYPE
   attribute: $OBJECT.$ATTRIBUTE
   augmented_assignment: $LEFT $OPERATOR $RIGHT
   await: await $PRIMARY_EXPRESSION
@@ -26,7 +26,7 @@ rules:
     template: "case $$$CHILDREN $GUARD: $CONSEQUENCE"
     joinBy: ","
   case_pattern: $CHILDREN
-  chevron: ">> $EXPRESSION"
+  chevron: ">>$EXPRESSION"
   class_definition: "class $NAME $TYPE_PARAMETERS $SUPERCLASSES: $BODY"
   class_pattern: $DOTTED_NAME($$$ARGUMENTS $$$CHILDREN)
   comparison_operator: $LEFT $$$OPERATORS $$$COMPARATORS
@@ -35,8 +35,8 @@ rules:
   conditional_expression: $BODY if $CONDITION else $ALTERNATIVE
   constrained_type: "$BASE_TYPE: $CONSTRAINT"
   decorated_definition: $$$CHILDREN $DEFINITION
-  decorator: "@ $EXPRESSION $NEWLINE"
-  default_parameter: $NAME = $VALUE
+  decorator: "@$EXPRESSION $NEWLINE"
+  default_parameter: $NAME=$VALUE
   delete_statement: del $$$CHILDREN
   dict_pattern:
     template: "{$$$CHILDREN}"
@@ -45,8 +45,8 @@ rules:
     template: "{$$$CHILDREN}"
     joinBy: ","
   dictionary_comprehension: "{$BODY $CHILDREN}"
-  dictionary_splat: "** $EXPRESSION"
-  dictionary_splat_pattern: "** $CHILDREN"
+  dictionary_splat: "**$EXPRESSION"
+  dictionary_splat_pattern: "**$CHILDREN"
   dotted_name: $$$CHILDREN
   elif_clause: "elif $CONDITION: $CONSEQUENCE"
   else_clause: "else: $BODY"
@@ -64,8 +64,8 @@ rules:
     template: $$$CHILDREN
     joinBy: ","
   finally_clause: "finally: $BLOCK"
-  for_in_clause: for $LEFT in $$$RIGHT
-  for_statement: "for $LEFT in $RIGHT: $BODY $ALTERNATIVE"
+  for_in_clause: for $LEFTin $$$RIGHT
+  for_statement: "for $LEFTin $RIGHT: $BODY $ALTERNATIVE"
   format_expression: $EXPRESSION $FORMAT_SPECIFIER $TYPE_CONVERSION
   format_specifier: ": $$$CHILDREN"
   function_definition:
@@ -82,8 +82,8 @@ rules:
   import_from_statement: from $MODULE_NAME import $WILDCARD_IMPORT $$$NAME
   import_statement: import $$$NAME
   interpolation: "{$EXPRESSION $TYPE_CONVERSION $FORMAT_SPECIFIER}"
-  keyword_argument: $NAME = $VALUE
-  keyword_pattern: $IDENTIFIER = $SIMPLE_PATTERN
+  keyword_argument: $NAME=$VALUE
+  keyword_pattern: $IDENTIFIER=$SIMPLE_PATTERN
   lambda: "lambda $PARAMETERS: $BODY"
   lambda_parameters: $$$CHILDREN
   list: "[] $$$CHILDREN"
@@ -96,7 +96,7 @@ rules:
     joinBy: ","
   member_type: $BASE_TYPE.$IDENTIFIER
   module: $$$CHILDREN
-  named_expression: $NAME := $VALUE
+  named_expression: $NAME:=$VALUE
   nonlocal_statement:
     template: nonlocal $$$CHILDREN
     joinBy: ","
@@ -132,11 +132,11 @@ rules:
   tuple: () $$$CHILDREN
   tuple_pattern: () $$$CHILDREN
   type: $CHILDREN
-  type_alias_statement: type $LEFT = $RIGHT
+  type_alias_statement: type $LEFT=$RIGHT
   type_parameter:
     template: "[$$$CHILDREN]"
     joinBy: ","
-  typed_default_parameter: "$NAME: $TYPE = $VALUE"
+  typed_default_parameter: "$NAME: $TYPE=$VALUE"
   typed_parameter: "$CHILDREN: $TYPE"
   unary_operator: $OPERATOR $ARGUMENT
   union_pattern: $$$CHILDREN

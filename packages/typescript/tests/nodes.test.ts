@@ -1003,6 +1003,11 @@ describe('export_statement', () => {
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node));
   });
+  it('renders with optional fields', () => {
+    const node = ir.exportStatement({ declaration: ir.identifier('test_declaration') as any, decorator: [], source: ir.string() as any, value: ir.identifier('test_value') as any, children: ir.identifier('test_children') as any });
+    const source = render(node);
+    expect(source.length).toBeGreaterThan(0);
+  });
 });
 
 describe('expression_statement', () => {

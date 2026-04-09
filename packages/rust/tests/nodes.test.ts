@@ -482,7 +482,7 @@ describe('closure_expression', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.closureExpression({ body: ir.identifier('test_body') as any, parameters: ir.closureParameters() as any, returnType: ir.typeIdentifier('TestReturn_type') as any });
+    const node = ir.closureExpression({ body: ir.identifier('test_body') as any, parameters: ir.closureParameters() as any, returnType: ir.typeIdentifier('TestReturn_type') as any, async: 'async' as any, move: 'move' as any, static: 'static' as any });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -1124,6 +1124,11 @@ describe('function_modifiers', () => {
     const node = ir.functionModifiers();
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node));
+  });
+  it('renders with optional fields', () => {
+    const node = ir.functionModifiers({ async: 'async' as any, default: 'default' as any, const: 'const' as any, unsafe: 'unsafe' as any, children: [] });
+    const source = render(node);
+    expect(source.length).toBeGreaterThan(0);
   });
 });
 
@@ -3192,7 +3197,7 @@ describe('visibility_modifier', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.visibilityModifier({ children: ir.identifier('test_children') as any });
+    const node = ir.visibilityModifier({ pub: 'pub' as any, in: 'in' as any, children: ir.identifier('test_children') as any });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });

@@ -18,6 +18,10 @@ import { buildProjectionContext, projectKinds } from './kind-projections.ts';
 import { applyOverrides, type OverrideFieldInfo } from '../enriched-grammar.ts';
 import type { RulesConfig, TemplateRule } from '@sittir/types';
 import { tokenName } from '../token-names.ts';
+import { buildTokenAttachmentMap, isAttachedByMap, type TokenAttachmentMap } from '../token-attachment.ts';
+
+/** Module-level attachment map — set once per emitTemplatesYaml call. */
+let _attachmentMap: TokenAttachmentMap = new Map();
 
 // ---------------------------------------------------------------------------
 // Public API
@@ -35,7 +39,9 @@ export interface EmitRulesYamlConfig {
  */
 export function emitTemplatesYaml(config: EmitRulesYamlConfig): string {
 	const { grammar, nodes, grammarSha, treeSitterVersion } = config;
-	const grammarRules = loadGrammar(grammar).rules;
+	const grammarObj = loadGrammar(grammar);
+	const grammarRules = grammarObj.rules;
+	_attachmentMap = buildTokenAttachmentMap(grammarObj);
 
 	const extensions = grammarExtensions(grammar);
 	const rulesConfig: RulesConfig = {
@@ -772,37 +778,9 @@ function findRecursiveSeps(rule: GrammarRule, selfName: string, seps: Set<string
 	}
 }
 
+/** Grammar-derived attachment check. Uses the module-level _attachmentMap. */
 function isAttached(prev: string, next: string): boolean {
-	// Opening delimiters attach to following content
-	if (next === '(' || next === '[' || next === '<' || next === '{') return true;
-	// After opening delimiter — no space before content
-	if (prev === '(' || prev === '[' || prev === '<' || prev === '{') return true;
-	// Closing delimiters attach to preceding content
-	if (next === ')' || next === ']' || next === '>' || next === '}') return true;
-	// Pipe delimiters (closure parameters |...|)
-	if (prev === '|' || next === '|') return true;
-	// Quotes attach to adjacent content (wrapping)
-	if (prev === '"' || prev === "'" || prev === '`') return true;
-	if (next === '"' || next === "'" || next === '`') return true;
-	// Colon/semicolon attach to preceding content (no space before)
-	if (next === ':' || next === ';') return true;
-	// NOTE: after colon, we want a space (x: T, not x:T) — so prev === ':' is NOT attached
-	// Reference/dereference — attach to following (no space between & and type)
-	if (prev === '&') return true;
-	// Dereference * — attach to following
-	if (prev === '*') return true;
-	// Dot accessor
-	if (prev === '.' || next === '.') return true;
-	// Double colon
-	if (prev === '::' || next === '::') return true;
-	// Question mark (try operator) attaches to preceding
-	if (next === '?') return true;
-	// Arrow operators attach
-	if (prev === '->' || next === '->') return true;
-	if (prev === '=>' || next === '=>') return true;
-	// $ variable after delimiter
-	if (prev.endsWith('(') || prev.endsWith('[') || prev.endsWith('<') || prev.endsWith('{')) return true;
-	return false;
+	return isAttachedByMap(prev, next, _attachmentMap);
 }
 
 // ---------------------------------------------------------------------------
