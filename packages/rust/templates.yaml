@@ -79,7 +79,7 @@ rules:
     template: $LABEL_CLAUSE for $PATTERN in $VALUE $BODY
     label_clause: "$LABEL :"
   for_lifetimes:
-    template: for<$$$CHILDREN ,>
+    template: for<$$$CHILDREN>
     joinBy: ","
   foreign_mod_item: $VISIBILITY_MODIFIER $EXTERN_MODIFIER ; $BODY
   function_item:
@@ -116,7 +116,7 @@ rules:
   loop_expression:
     template: $LABEL_CLAUSE loop $BODY
     label_clause: "$LABEL :"
-  macro_definition: macro_rules! $NAME($$$RULES ; $$$CHILDREN) ;
+  macro_definition: macro_rules! $NAME($$$RULES $$$CHILDREN) ;
   macro_invocation: $MACRO ! $TOKEN_TREE
   macro_rule: $LEFT => $RIGHT
   match_arm: $$$CHILDREN $PATTERN => $VALUE ,
@@ -195,11 +195,11 @@ rules:
       parens: (
       brackets: "["
       braces: "{"
-  trait_bounds: ": $$$CHILDREN +"
+  trait_bounds: ": $$$CHILDREN"
   trait_item: $VISIBILITY_MODIFIER trait $NAME $TYPE_PARAMETERS $BOUNDS $WHERE_CLAUSE $BODY
   try_block: try $BLOCK
   try_expression: $VALUE $OPERATOR
-  tuple_expression: ($$$ATTRIBUTES $FIRST , $$$REST , $TRAILING)
+  tuple_expression: ($$$ATTRIBUTES $FIRST , $$$REST $TRAILING)
   tuple_pattern:
     template: ($$$CHILDREN)
     joinBy: ","
@@ -207,10 +207,10 @@ rules:
     template: $TYPE($$$CHILDREN)
     joinBy: ","
   tuple_type:
-    template: ($$$CHILDREN ,)
+    template: ($$$CHILDREN)
     joinBy: ","
   type_arguments:
-    template: <$$$CHILDREN ,>
+    template: <$$$CHILDREN>
     joinBy: ","
   type_binding: $NAME $TYPE_ARGUMENTS = $TYPE
   type_cast_expression: $VALUE as $TYPE
@@ -219,7 +219,7 @@ rules:
     template: $NAME $BOUNDS $DEFAULT_TYPE_CLAUSE
     default_type_clause: = $DEFAULT_TYPE
   type_parameters:
-    template: <$$$CHILDREN ,>
+    template: <$$$CHILDREN>
     joinBy: ","
   unary_expression: $OPERATOR $OPERAND
   union_item: $VISIBILITY_MODIFIER union $NAME $TYPE_PARAMETERS $WHERE_CLAUSE $BODY

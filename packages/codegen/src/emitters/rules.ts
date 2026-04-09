@@ -446,6 +446,8 @@ function ruleToTemplate(
 
 		case 'STRING': {
 			if (optional) return [];
+			// Inside REPEAT, suppress separator/delimiter strings — joinBy handles them
+			if (inRepeat) return [];
 			return [rule.value];
 		}
 
@@ -502,6 +504,11 @@ function ruleToTemplate(
 				const nonBlank = rule.members.filter(m => m.type !== 'BLANK');
 				if (nonBlank.length === 1) {
 					const inner = nonBlank[0]!;
+
+					// Suppress optional bare STRING tokens (trailing commas, optional keywords).
+					// These are separators/delimiters that don't contribute to the template.
+					if (inner.type === 'STRING') return [];
+
 					const clauseResult = tryClause(inner, seen, fieldRequired, fieldMultiple, gr, clauses, immediate);
 					if (clauseResult) return clauseResult;
 				}

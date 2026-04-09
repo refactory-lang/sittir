@@ -69,9 +69,9 @@ rules:
     - export = $DECLARATION
     - export as namespace $DECLARATION
   expression_statement: $$$CHILDREN
-  extends_clause: extends $$$VALUE $$$TYPE_ARGUMENTS , $$$CHILDREN
+  extends_clause: extends $$$VALUE $$$TYPE_ARGUMENTS $$$CHILDREN
   extends_type_clause:
-    template: extends $$$TYPE ,
+    template: extends $$$TYPE
     joinBy: ","
   finally_clause: finally $BODY
   flow_maybe_type: "? $PRIMARY_TYPE"
@@ -87,7 +87,7 @@ rules:
   generic_type: $NAME $TYPE_ARGUMENTS
   if_statement: if $CONDITION $CONSEQUENCE $ALTERNATIVE
   implements_clause:
-    template: implements $$$CHILDREN ,
+    template: implements $$$CHILDREN
     joinBy: ","
   import_alias: import $NAME = $VALUE $SEMICOLON
   import_attribute: with $OBJECT
@@ -108,7 +108,7 @@ rules:
   internal_module: namespace $NAME $BODY
   intersection_type: $LEFT & $RIGHT
   labeled_statement: "$LABEL : $BODY"
-  lexical_declaration: $KIND $$$DECLARATORS , $$$CHILDREN $SEMICOLON
+  lexical_declaration: $KIND $$$DECLARATORS $$$CHILDREN $SEMICOLON
   literal_type: $CHILDREN
   lookup_type: $PRIMARY_TYPE[$INDEX_TYPE]
   mapped_type_clause:
@@ -154,7 +154,7 @@ rules:
   return_statement: return $$$CHILDREN
   satisfies_expression: $EXPRESSION satisfies $TYPE_ANNOTATION
   sequence_expression:
-    template: $$$CHILDREN ,
+    template: $$$CHILDREN
     joinBy: ","
   spread_element: ... $EXPRESSION
   statement_block: "{$$$STATEMENTS} $AUTOMATIC_SEMICOLON"
@@ -181,12 +181,12 @@ rules:
   type_alias_declaration: type $NAME $TYPE_PARAMETERS = $VALUE
   type_annotation: ": $CHILDREN"
   type_arguments:
-    template: <$$$CHILDREN ,>
+    template: <$$$CHILDREN>
     joinBy: ","
   type_assertion: $TYPE_ARGUMENTS $EXPRESSION
   type_parameter: $NAME $CONSTRAINT $VALUE
   type_parameters:
-    template: <$$$CHILDREN ,>
+    template: <$$$CHILDREN>
     joinBy: ","
   type_predicate: $NAME is $TYPE
   type_predicate_annotation: ": $TYPE_PREDICATE"
@@ -196,7 +196,7 @@ rules:
   update_expression:
     - $ARGUMENT $OPERATOR
     - $OPERATOR $ARGUMENT
-  variable_declaration: var $$$DECLARATORS , $$$CHILDREN $SEMICOLON
+  variable_declaration: var $$$DECLARATORS $$$CHILDREN $SEMICOLON
   variable_declarator:
     - $NAME $TYPE $VALUE
     - $NAME ! $TYPE
