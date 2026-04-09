@@ -14,133 +14,63 @@ Generating rust IR...
   v 2/2 variant subtypes
 
 Running round-trip validation...
-  x 28/149 round-trip (2 skipped, 119 errors)
+  x 91/149 round-trip (2 skipped, 56 errors)
     x Async function [try_expression]: re-parse error: "?"
-    x Await expression [await_expression]: re-parse error: "futures.await"
-    x Async closure [closure_expression]: re-parse error: "async || ()"
-    x Async move async move closure [closure_expression]: re-parse error: "async move || async move {}"
-    x Gen Block [yield_expression]: re-parse error: "yield yield"
-    x Function declarations [return_expression]: re-parse error: "return return"
-    x Functions with abstract return types [abstract_type]: re-parse error: "impl B"
-    x Impl with lifetimes first [abstract_type]: re-parse error: "impl 'a + Clone"
+    x Await expression [try_expression]: re-parse error: "?"
+    x Function declarations [array_expression]: re-parse error: "[ ; 1 2]"
+    x Impl with lifetimes first [bounded_type]: re-parse error: "'a+"
     x Functions with precise capture syntax [bounded_type]: re-parse error: "use<'_, T>+"
     x Functions with empty precise capture syntax [bounded_type]: re-parse error: "use<>+"
-    x Extern function declarations [string_literal]: re-parse error: ""C""
-    x Use declarations [scoped_identifier]: re-parse error: "phrases::japanese"
-    x Variable bindings [string_literal]: re-parse error: """"
-    x Let-else Statements [struct_pattern]: re-parse error: "Foo::Bar{texts,values}"
+    x Let-else Statements [try_expression]: re-parse error: "?"
     x Structs [struct_item]: re-parse error: "struct Proton"
-    x Unions [array_type]: re-parse error: "[__uint8_t ; 16usize]"
-    x Enums [generic_type]: re-parse error: "Vec <Tree<T>>"
-    x Generic functions [generic_type]: re-parse error: "Into <Text>"
-    x Functions with destructured parameters [slice_pattern]: re-parse error: "[x,y]"
-    x Functions with custom types for self [generic_type]: re-parse error: "Box <Self>"
-    x Static items [pointer_type]: re-parse error: "*const mut ::c_char"
-    x Type aliases [generic_type]: re-parse error: "Vec <T>"
-    x Type alias where clauses [generic_type]: re-parse error: "Box <T>"
-    x Attributes [token_tree]: re-parse error: "(Debug)"
-    x Inner attributes [token_tree]: re-parse error: "(target_os "macos")"
-    x Key-Value Attribute Expressions [token_tree]: re-parse error: "("foo-doc.md")"
-    x Attribute macros [call_expression]: re-parse error: "foo (#[attr(=> arbitrary tokens <=)] x, y)"
-    x Derive macro helper attributes [scoped_identifier]: re-parse error: "thiserror::Error"
-    x Attributes and Expressions [call_expression]: re-parse error: "bar (x,
- #[cfg(foo = "bar")]
- y)"
-    x Inherent Impls [generic_type]: re-parse error: "Machine <{State::Init}>"
+    x Functions with destructured parameters [reference_pattern]: re-parse error: "&"
+    x Type aliases [bounded_type]: re-parse error: "+"
+    x Attributes [struct_item]: re-parse error: "struct Baz"
+    x Attributes and Expressions [array_expression]: re-parse error: "[#[hello] ; 2 7 8]"
     x Trait impls [impl_item]: re-parse error: "impl <'a> iter::Iterator Self::Iter<'a> {
 }"
     x Disable automatically derived trait impls [impl_item]: re-parse error: "impl Send Foo {}"
     x Impl dyn with parentheses [impl_item]: re-parse error: "impl Trait dyn (::std::any::Any) + Send { }"
     x Trait impl signature [impl_item]: re-parse error: "impl <K: Debug + Ord> Debug OccupiedError<K>"
-    x Impls with default functions [call_expression]: re-parse error: "default.bar ()"
-    x Trait declarations [scoped_type_identifier]: re-parse error: "fmt::Debug"
-    x Trait declarations with optional type parameters [scoped_type_identifier]: re-parse error: "Self::Output"
+    x Impls with default functions [block]: re-parse error: "{// Make 'default' still works as an identifier default.bar();}"
     x Unsized types in trait bounds [removed_trait_bound]: re-parse error: "??"
     x Trait bounds in type arguments in trait [impl_item]: re-parse error: "impl <T: AstDeref<Target: HasNodeId>> HasNodeId T {}"
-    x Macro invocations inside trait declarations [token_tree]: kind not found in re-parsed tree
-    x Associated Types [scoped_type_identifier]: re-parse error: "fmt::Display"
     x Associated Type Definitions [impl_item]: re-parse error: "impl Trait T {
  type Associated = T where 'static: 'static;
 }"
-    x Generic Associated Types [generic_type]: re-parse error: "Future <Output = D>"
-    x Higher-ranked types [higher_ranked_trait_bound]: re-parse error: "for <'a> AddAssign<&'a usize>"
-    x Visibility modifiers [scoped_identifier]: re-parse error: "crate::d"
-    x Function parameter names that match built-in type names [pointer_type]: re-parse error: "*const c_char"
-    x Where clauses [reference_type]: re-parse error: "& mut F"
+    x Generic Associated Types [impl_item]: re-parse error: "impl Database Foo {
+ type F<'a, D> = DatabaseFuture<'a, D>;
+}"
+    x Higher-ranked types [bounded_type]: re-parse error: "'b+"
+    x Where clauses [impl_item]: re-parse error: "impl <'a, T: 'a + Item> Iterator Iter<'a, T> where Self: 'a {
+}"
     x Crate visibility [struct_item]: re-parse error: "crate struct Foo (crate crate::Bar)"
-    x Reserved keywords in path [scoped_type_identifier]: re-parse error: "default::B"
-    x Array Constraint in Where Clause [array_type]: re-parse error: "[u8 ; 32]"
     x Const generics with default [struct_item]: re-parse error: "pub struct Loaf <T: Sized, const N: usize = 1> ([T; N])"
-    x Raw identifiers [field_expression]: re-parse error: "(r#abc as r#Def).r#ghi"
+    x Raw identifiers [parenthesized_expression]: re-parse error: "(()"
     x Unary operator expressions [unary_expression]: re-parse error: "-"
-    x Reference expressions [reference_expression]: re-parse error: "&raw const a"
     x Try expressions [try_expression]: re-parse error: "?"
-    x Binary operator expressions [binary_expression]: re-parse error: "a * b"
     x Grouped expressions [parenthesized_expression]: re-parse error: "(()"
-    x Range expressions [range_expression]: re-parse error: ".."
-    x Assignment expressions [assignment_expression]: re-parse error: "x=y"
-    x Compound assignment expressions [compound_assignment_expr]: re-parse error: "x += 1"
-    x Type cast expressions [type_cast_expression]: re-parse error: "1000 as u8"
-    x Call expressions [call_expression]: re-parse error: "foo ()"
+    x Range expressions [parenthesized_expression]: re-parse error: "(()"
+    x Type cast expressions [unary_expression]: re-parse error: "-"
     x Array expressions [array_expression]: re-parse error: "[ ; ]"
     x Tuple expressions [tuple_expression]: re-parse error: "( , )"
-    x Struct expressions [struct_expression]: re-parse error: "NothingInMe {}"
-    x Struct expressions with update initializers [struct_expression]: re-parse error: "User {name, ..current_user()}"
-    x If expressions [binary_expression]: re-parse error: "n == 1"
-    x Basic if let expressions [let_chain]: re-parse error: "let Some(a) = b && c && d && let Some(e) = f"
-    x If let expressions [let_condition]: re-parse error: "let ("Bacon", b)=dish"
-    x While let expressions [let_condition]: re-parse error: "let ("Bacon", b)=dish"
-    x Match expressions [string_literal]: re-parse error: ""one""
+    x Match expressions [or_pattern]: re-parse error: "|"
     x While expressions [unary_expression]: re-parse error: "!"
-    x Loop expressions [break_expression]: re-parse error: "break 'outer"
-    x For expressions [call_expression]: re-parse error: "bar (e)"
-    x Field expressions [field_expression]: re-parse error: "mystruct.myfield"
-    x Method call expressions [call_expression]: re-parse error: "mystruct.foo ()"
-    x Index expressions [index_expression]: re-parse error: "[]"
-    x Scoped functions [call_expression]: re-parse error: "a::b ()"
-    x Scoped functions with fully qualified syntax [call_expression]: re-parse error: "<Dog as Animal>::eat (d)"
-    x Scoped functions with macros as types [call_expression]: re-parse error: "<Token![]>::foo ()"
-    x Scoped identifier with nested super [call_expression]: re-parse error: "super::super::foo ()"
-    x Generic functions [call_expression]: re-parse error: "std::sizeof::<u32> ()"
-    x Closures [call_expression]: re-parse error: "a.map (|(b, c)| b.push(c))"
-    x Closures with typed parameteres [call_expression]: re-parse error: "a.map (|b: usize| b.push(c))"
-    x Generators [closure_expression]: re-parse error: "move || {
- while i <= n {
- yield i;
- i += 1;
- }
- return;
-}"
-    x Unsafe blocks [call_expression]: re-parse error: "foo ()"
-    x Inline const or Const blocks as expression [binary_expression]: re-parse error: "1 + 3"
-    x String literals [string_literal]: re-parse error: """"
-    x Raw string literals [raw_string_literal]: re-parse error: "abc"
-    x Raw byte string literals [raw_string_literal]: re-parse error: "abc"
-    x Raw C string literals [raw_string_literal]: re-parse error: "abc"
-    x Macro invocation - no arguments [token_tree]: re-parse error: "()"
-    x Macro invocation - arbitrary tokens [token_tree]: re-parse error: "(a)"
-    x Macro invocation with comments [token_tree]: re-parse error: "{// one /* two */}"
-    x Macro definition [macro_rule]: re-parse error: "()=>(
- println!("Hello!");
- )"
-    x Tuple struct patterns [tuple_struct_pattern]: re-parse error: "Some(x)"
-    x Reference patterns [tuple_struct_pattern]: re-parse error: "A(ref x)"
-    x Struct patterns [struct_pattern]: re-parse error: "Person{name,age}"
-    x Ignored patterns [tuple_pattern]: re-parse error: "(a,..)"
+    x Index expressions [index_expression]: kind not found in re-parsed tree
+    x Closures [mut_pattern]: re-parse error: "mut"
+    x Inline const or Const blocks as expression [unary_expression]: re-parse error: "*"
+    x Raw string literals [raw_string_literal]: kind not found in re-parsed tree
+    x Raw byte string literals [raw_string_literal]: kind not found in re-parsed tree
+    x Raw C string literals [raw_string_literal]: kind not found in re-parsed tree
+    x Reference patterns [ref_pattern]: re-parse error: "ref ref"
+    x Struct patterns [tuple_expression]: re-parse error: "( , )"
     x Captured patterns [or_pattern]: re-parse error: "|"
-    x Or patterns [let_condition]: re-parse error: "let A(x) | B(x)=expr"
-    x Inline const or Const blocks as pattern [call_expression]: re-parse error: "3.pow (3)"
-    x Pattern with turbofish [generic_pattern]: re-parse error: "None::<T>"
-    x Tuple types [tuple_type]: re-parse error: "(i32,String)"
-    x Reference types [reference_type]: re-parse error: "& B"
+    x Or patterns [or_pattern]: re-parse error: "|"
     x Raw pointer types [pointer_type]: re-parse error: "*const mut B"
-    x Generic types [generic_type]: re-parse error: "B <C>"
-    x Scoped types [scoped_type_identifier]: re-parse error: "B::C"
-    x Array types [array_type]: re-parse error: "[B ; 4]"
-    x Function types [function_type]: re-parse error: "(i32)"
+    x Function types [function_type]: kind not found in re-parsed tree
     x Unsafe and extern function types [function_type]: re-parse error: "extern "C" (*mut c_void)"
-    x Trait objects [generic_type]: re-parse error: "Box <Something + 'a>"
-    x Type cast expressions with generics [type_cast_expression]: re-parse error: "a as B<C>"
+    x Trait objects [bounded_type]: re-parse error: "'a+"
+    x Type cast expressions with generics [pointer_type]: re-parse error: "*const mut E<<F as E>::G>"
     x anon:function_modifiers.async: re-parsed tree missing kind
     x anon:negative_literal.operator: re-parsed tree missing kind
     x anon:range_expression.operator: re-parsed tree missing kind
@@ -212,7 +142,7 @@ Running round-trip validation...
     ! generic_pattern: from() diverges: children: 1 vs 0
     ! for_lifetimes: from() diverges: children: 6 vs 0
 
-138 round-trip failure(s) — see above.
+75 round-trip failure(s) — see above.
 
 Done! Generated:
   templates.yaml, grammar.ts, types.ts, factories.ts, utils.ts, from.ts, consts.ts, index.ts

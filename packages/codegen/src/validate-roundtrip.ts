@@ -15,6 +15,7 @@ import { parse as parseYaml } from 'yaml';
 import { readNode, buildRoutingMap, createRenderer } from '@sittir/core';
 import type { AnyTreeNode, RulesConfig } from '@sittir/types';
 import { loadOverrides } from './overrides.ts';
+import { loadRawEntries } from './grammar-reader.ts';
 
 const require = createRequire(import.meta.url);
 
@@ -185,31 +186,60 @@ function findFirst(node: TSNode, kind: string): TSNode | null {
 }
 
 /**
- * Nodes that can't stand alone as valid source — they need parent context.
- * For these, we skip the re-parse check and only verify render doesn't error.
+ * Supertype-based reparse wrapping — replaces manual FRAGMENT_ONLY_KINDS.
  */
-const FRAGMENT_ONLY_KINDS = new Set([
-	// Rust — sub-statement fragments
-	'parameters', 'closure_parameters', 'type_parameters', 'arguments',
-	'declaration_list', 'enum_variant_list', 'field_declaration_list',
-	'ordered_field_declaration_list', 'match_block', 'use_list',
-	'visibility_modifier', 'function_modifiers', 'extern_modifier',
-	'label', 'lifetime', 'lifetime_parameter', 'parameter', 'self_parameter',
-	'type_parameter', 'const_parameter', 'variadic_parameter',
-	'field_declaration', 'enum_variant', 'match_arm', 'match_pattern',
-	'attribute', 'attribute_item', 'inner_attribute_item',
-	'where_clause', 'where_predicate', 'trait_bounds',
-	'field_initializer', 'field_initializer_list', 'field_pattern',
-	'else_clause', 'for_lifetimes', 'use_as_clause', 'use_bounds',
-	// TypeScript — sub-statement fragments
-	'formal_parameters', 'type_parameters', 'class_body', 'statement_block',
-	'object_type', 'enum_body', 'extends_clause', 'implements_clause',
-	'import_clause', 'export_clause', 'decorator',
-	// Python — sub-statement fragments
-	'parameters', 'argument_list', 'block', 'type_parameter',
-	'decorator', 'elif_clause', 'else_clause', 'except_clause',
-	'finally_clause', 'with_clause',
-]);
+function buildKindToSupertypes(rawEntries: { type: string; named: boolean; subtypes?: { type: string }[] }[]): Map<string, string[]> {
+	const result = new Map<string, string[]>();
+	for (const entry of rawEntries) {
+		if (!entry.subtypes) continue;
+		for (const sub of entry.subtypes) {
+			const existing = result.get(sub.type) ?? [];
+			existing.push(entry.type);
+			result.set(sub.type, existing);
+		}
+	}
+	return result;
+}
+
+const REPARSE_WRAPPERS: Record<string, Record<string, (r: string) => string>> = {
+	rust: {
+		'_expression': r => `fn _f() { let _ = ${r}; }`,
+		'_type': r => `type _X = ${r};`,
+		'_pattern': r => `fn _f() { let ${r} = (); }`,
+		'_declaration_statement': r => r,
+		'_literal': r => `fn _f() { let _ = ${r}; }`,
+		'_literal_pattern': r => `fn _f() { let ${r} = (); }`,
+	},
+	typescript: {
+		'_expression': r => `let _ = ${r};`,
+		'_type': r => `type _X = ${r};`,
+		'_pattern': r => `let ${r} = null;`,
+		'_declaration': r => r,
+		'_statement': r => r,
+	},
+	python: {
+		'_expression': r => `_ = ${r}`,
+		'_type': r => `_: ${r} = None`,
+		'_pattern': r => `match _:\n  case ${r}: pass`,
+		'_simple_statement': r => r,
+		'_compound_statement': r => r,
+	},
+};
+
+function wrapForReparse(
+	rendered: string, kind: string, grammar: string,
+	kindToSupertypes: Map<string, string[]>,
+): string | null {
+	const supertypes = kindToSupertypes.get(kind);
+	if (!supertypes || supertypes.length === 0) return null;
+	const wrappers = REPARSE_WRAPPERS[grammar];
+	if (!wrappers) return null;
+	for (const st of supertypes) {
+		const wrapper = wrappers[st];
+		if (wrapper) return wrapper(rendered);
+	}
+	return null;
+}
 
 /**
  * Collect all unique node kinds in a tree.
@@ -247,6 +277,7 @@ export async function validateRoundTrip(
 	const routing = buildRoutingMap(overrides);
 	const { render } = createRenderer(config);
 	const ruleKinds = new Set(Object.keys(config.rules));
+	const kindToSupertypes = buildKindToSupertypes(loadRawEntries(grammar));
 
 	const entries = loadCorpusEntries(grammar);
 	const errors: { name: string; message: string }[] = [];
@@ -285,11 +316,12 @@ export async function validateRoundTrip(
 				try {
 					const rendered = render(data);
 
-					// Fragment-only kinds: just verify render succeeds, skip re-parse
-					if (FRAGMENT_ONLY_KINDS.has(kind)) continue;
+					// Wrap for reparse using supertype context
+					const wrapped = wrapForReparse(rendered, kind, grammar, kindToSupertypes);
+					if (wrapped === null) continue; // no supertype → skip reparse
 
 					// Re-parse
-					const tree2 = parser.parse(rendered) as TSTree;
+					const tree2 = parser.parse(wrapped) as TSTree;
 					if (tree2.rootNode.hasError) {
 						errors.push({ name: `${entry.name} [${kind}]`, message: `re-parse error: "${rendered.slice(0, 80)}"` });
 						entryOk = false;
