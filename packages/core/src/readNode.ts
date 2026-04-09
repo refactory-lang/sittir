@@ -5,10 +5,15 @@
  * delimiters, keywords). Every entry carries `nodeId` for O(1) drill-in via
  * `tree.nodeById()`.
  *
- * When a `FieldPromotionMap` is provided, unnamed children whose kind matches
- * an override entry are promoted to `fields` under the override's field name.
- * This replaces the need for assign.ts — overrides.json drives field
- * promotion directly.
+ * When a `RoutingMap` is provided, children whose kind matches an override
+ * entry are promoted to `fields` under the override's field name — both
+ * named and anonymous tokens. Two routing paths:
+ *
+ * 1. **Unambiguous** (~95%): direct kind → field lookup. Covers all kinds
+ *    that appear in exactly one slot, including anonymous tokens.
+ * 2. **Ambiguous** (~5%): position-based consumption for kinds that appear
+ *    in multiple slots (e.g. `_expression` in `start` + `end`). Only named
+ *    children reach this path — anonymous tokens are always unambiguous.
  *
  * No recursion — lazy getters in wrap.ts call readNode again when needed.
  */
@@ -33,6 +38,7 @@ export interface OverrideFieldSpec {
 	types: readonly { type: string; named: boolean }[];
 	multiple: boolean;
 	required: boolean;
+	position: number;
 }
 
 /**
@@ -49,7 +55,7 @@ export interface NodeOverrides {
 export type OverridesConfig = Record<string, NodeOverrides>;
 
 // ---------------------------------------------------------------------------
-// Precomputed field promotion map
+// Precomputed routing maps
 // ---------------------------------------------------------------------------
 
 interface FieldPromotion {
@@ -57,30 +63,75 @@ interface FieldPromotion {
 	multiple: boolean;
 }
 
-/**
- * Precomputed lookup: nodeKind → (childKind → FieldPromotion).
- * Built once from OverridesConfig, used by every readNode call.
- */
-export type FieldPromotionMap = ReadonlyMap<string, ReadonlyMap<string, FieldPromotion>>;
+interface NodeRoutingMaps {
+	/** Kind → field for kinds that appear in exactly one slot. */
+	unambiguous: ReadonlyMap<string, FieldPromotion>;
+	/** Kinds that appear in multiple slots — need position-based routing. */
+	ambiguousKinds: ReadonlySet<string>;
+	/** Position-ordered slots for ambiguous kinds: [fieldName, spec]. */
+	ambiguousSlots: readonly [string, OverrideFieldSpec][];
+}
 
 /**
- * Build a FieldPromotionMap from an OverridesConfig.
- * Call once at startup; pass the result to readNode.
+ * Precomputed routing: nodeKind → NodeRoutingMaps.
+ * Built once from OverridesConfig, used by every readNode call.
  */
-export function buildFieldPromotionMap(overrides: OverridesConfig): FieldPromotionMap {
-	const outer = new Map<string, Map<string, FieldPromotion>>();
-	for (const [nodeKind, nodeSpec] of Object.entries(overrides)) {
-		const inner = new Map<string, FieldPromotion>();
-		for (const [fieldName, fieldSpec] of Object.entries(nodeSpec.fields)) {
-			const promotion: FieldPromotion = { fieldName, multiple: fieldSpec.multiple };
-			for (const t of fieldSpec.types) {
-				inner.set(t.type, promotion);
+export type RoutingMap = ReadonlyMap<string, NodeRoutingMaps>;
+
+/** @deprecated Use RoutingMap instead */
+export type FieldPromotionMap = RoutingMap;
+
+function buildNodeRoutingMaps(nodeOverrides: NodeOverrides): NodeRoutingMaps {
+	const unambiguous = new Map<string, FieldPromotion>();
+	const ambiguousKinds = new Set<string>();
+	const ambiguousSlots: [string, OverrideFieldSpec][] = [];
+
+	// First pass: detect which kinds appear in multiple slots
+	const kindToSlots = new Map<string, string[]>();
+	for (const [fieldName, spec] of Object.entries(nodeOverrides.fields)) {
+		for (const t of spec.types) {
+			const existing = kindToSlots.get(t.type) ?? [];
+			existing.push(fieldName);
+			kindToSlots.set(t.type, existing);
+		}
+	}
+
+	for (const [kind, slots] of kindToSlots) {
+		if (slots.length > 1) ambiguousKinds.add(kind);
+	}
+
+	// Second pass: build maps
+	for (const [fieldName, spec] of Object.entries(nodeOverrides.fields)) {
+		const hasAmbiguous = spec.types.some(t => ambiguousKinds.has(t.type));
+		if (hasAmbiguous) {
+			ambiguousSlots.push([fieldName, spec]);
+		} else {
+			for (const t of spec.types) {
+				unambiguous.set(t.type, { fieldName, multiple: spec.multiple });
 			}
 		}
-		if (inner.size > 0) outer.set(nodeKind, inner);
 	}
-	return outer;
+
+	ambiguousSlots.sort(([, a], [, b]) => a.position - b.position);
+	return { unambiguous, ambiguousKinds, ambiguousSlots };
 }
+
+/**
+ * Build a RoutingMap from an OverridesConfig.
+ * Call once at startup; pass the result to readNode.
+ */
+export function buildRoutingMap(overrides: OverridesConfig): RoutingMap {
+	const map = new Map<string, NodeRoutingMaps>();
+	for (const [nodeKind, nodeSpec] of Object.entries(overrides)) {
+		if (Object.keys(nodeSpec.fields).length > 0) {
+			map.set(nodeKind, buildNodeRoutingMaps(nodeSpec));
+		}
+	}
+	return map;
+}
+
+/** @deprecated Use buildRoutingMap instead */
+export const buildFieldPromotionMap = buildRoutingMap;
 
 /**
  * Read a single tree node one level deep.
@@ -88,19 +139,20 @@ export function buildFieldPromotionMap(overrides: OverridesConfig): FieldPromoti
  * - Returns ALL children (named + anonymous)
  * - Every child carries `nodeId` for lazy drill-in
  * - No recursion — wrap.ts provides lazy getters
- * - When `promotions` is provided, promotes unnamed children to fields
+ * - When `routing` is provided, promotes children to fields via overrides
  *
  * @param tree - The tree handle for node lookup
  * @param nodeId - If provided, read this node; otherwise read the root
- * @param promotions - Precomputed field promotion map (from buildFieldPromotionMap)
+ * @param routing - Precomputed routing map (from buildRoutingMap)
  */
-export function readNode(tree: TreeHandle, nodeId?: number, promotions?: FieldPromotionMap): AnyNodeData {
+export function readNode(tree: TreeHandle, nodeId?: number, routing?: RoutingMap): AnyNodeData {
 	const node = nodeId != null ? tree.nodeById(nodeId) : tree.rootNode;
 
 	const fields: Record<string, AnyNodeData | AnyNodeData[]> = {};
 	const children: AnyNodeData[] = [];
 
-	const kindToField = promotions?.get(node.type);
+	const maps = routing?.get(node.type);
+	const pendingAmbiguous: AnyNodeData[] = [];
 
 	const allChildren = node.children();
 	for (let i = 0; i < allChildren.length; i++) {
@@ -117,16 +169,46 @@ export function readNode(tree: TreeHandle, nodeId?: number, promotions?: FieldPr
 		const fname = (node as any).fieldNameForChild?.(i) as string | null | undefined;
 		if (fname) {
 			fields[fname] = entry;
-		} else if (child.isNamed() && kindToField?.has(child.type)) {
-			const { fieldName, multiple } = kindToField.get(child.type)!;
+		} else if (maps?.unambiguous.has(child.type)) {
+			// Direct kind lookup — covers ~95% including anonymous tokens
+			const { fieldName, multiple } = maps.unambiguous.get(child.type)!;
 			if (multiple) {
-				if (!fields[fieldName]) fields[fieldName] = [];
-				(fields[fieldName] as AnyNodeData[]).push(entry);
+				const arr = (fields[fieldName] ?? []) as AnyNodeData[];
+				arr.push(entry);
+				fields[fieldName] = arr;
 			} else {
 				fields[fieldName] = entry;
 			}
+		} else if (maps?.ambiguousKinds.has(child.type)) {
+			pendingAmbiguous.push(entry);
 		} else {
 			children.push(entry);
+		}
+	}
+
+	// Position-based consumption for ambiguous kinds only.
+	// Only named children reach here — anonymous tokens are always unambiguous.
+	if (pendingAmbiguous.length > 0 && maps) {
+		let slotIdx = 0;
+		for (const entry of pendingAmbiguous) {
+			let placed = false;
+			for (let s = slotIdx; s < maps.ambiguousSlots.length; s++) {
+				const [fieldName, spec] = maps.ambiguousSlots[s]!;
+				if (spec.types.some(t => t.type === entry.type)) {
+					if (spec.multiple) {
+						const arr = (fields[fieldName] ?? []) as AnyNodeData[];
+						arr.push(entry);
+						fields[fieldName] = arr;
+					} else {
+						fields[fieldName] = entry;
+						slotIdx = s + 1;
+					}
+					placed = true;
+					break;
+				}
+				slotIdx = s + 1;
+			}
+			if (!placed) children.push(entry);
 		}
 	}
 
