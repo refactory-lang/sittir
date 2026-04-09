@@ -128,10 +128,12 @@ function render(node: AnyNodeData, ctx: InternalRenderContext): string {
 			return renderValue(value as AnyNodeData | string | number, ctx);
 		}
 
-		// 3. $$$CHILDREN — unconsumed remainder
+		// 3. $$$CHILDREN — unconsumed named children (anonymous tokens are template-structural)
 		if ((pfx.length === 3 || pfx === `${prefix}${prefix}${prefix}`) && fieldKey === 'children') {
 			if (!node.children) return '';
-			const remaining = node.children.filter((_, i) => !consumed.has(i));
+			const remaining = node.children.filter((c, i) =>
+				!consumed.has(i) && (c as AnyNodeData).named !== false
+			);
 			const sep = resolveJoinBy(ruleObj, name);
 			return remaining.map(c => renderValue(c as AnyNodeData | string | number, ctx)).join(sep);
 		}

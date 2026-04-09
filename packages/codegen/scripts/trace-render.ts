@@ -1,5 +1,5 @@
 #!/usr/bin/env npx tsx
-import { createRenderer } from '../../core/src/render.ts';
+import { createRenderer, readNode, buildRoutingMap } from '../../core/src/render.ts';
 import { readFileSync } from 'fs';
 import { parse as parseYaml } from 'yaml';
 import type { AnyNodeData, RulesConfig } from '@sittir/types';
