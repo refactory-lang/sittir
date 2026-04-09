@@ -61,7 +61,7 @@ export const _BRANCH_FIELDS: Record<string, string[]> = {
   'enum_body': ["name","opening","members"],
   'enum_declaration': ["body","name"],
   'export_specifier': ["alias","name"],
-  'export_statement': ["declaration","decorator","source","value","semicolonInner"],
+  'export_statement': ["declaration","decorator","source","value"],
   'extends_clause': ["typeArguments","value"],
   'extends_type_clause': ["type"],
   'finally_clause': ["body"],

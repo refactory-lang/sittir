@@ -21,7 +21,7 @@ rules:
     template: "[$$$CHILDREN]"
     joinBy: ","
   array_type: $PRIMARY_TYPE[]
-  arrow_function: $PARAMETER $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE => $BODY
+  arrow_function: $PARAMETER $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE=>$BODY
   as_expression: $EXPRESSION as const $TYPE_ANNOTATION
   asserts: asserts $CHILDREN
   asserts_annotation: ": $ASSERTS"
@@ -45,10 +45,10 @@ rules:
     - $EXTENDS_CLAUSE
   class_static_block: static $BODY
   computed_property_name: "[$EXPRESSION]"
-  conditional_type: "$LEFT extends $RIGHT ? $CONSEQUENCE : $ALTERNATIVE"
+  conditional_type: "$LEFT extends $RIGHT? $CONSEQUENCE: $ALTERNATIVE"
   constraint: extends $CHILDREN
   construct_signature: new $TYPE_PARAMETERS $PARAMETERS $TYPE
-  constructor_type: new $TYPE_PARAMETERS $PARAMETERS => $TYPE
+  constructor_type: new $TYPE_PARAMETERS $PARAMETERS=>$TYPE
   continue_statement: continue $LABEL
   decorator: "@ $CHILDREN"
   default_type: = $CHILDREN
@@ -64,7 +64,7 @@ rules:
     template: $NAME $ALIAS_CLAUSE
     alias_clause: as $ALIAS
   export_statement:
-    - export * from $SOURCE $DECLARATION $$$DECORATOR $VALUE
+    - export *from $SOURCE $DECLARATION $$$DECORATOR $VALUE
     - export type $DECLARATION $SOURCE
     - export = $DECLARATION
     - export as namespace $DECLARATION
@@ -81,9 +81,9 @@ rules:
   function_declaration: function $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $BODY
   function_expression: function $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $BODY
   function_signature: function $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE
-  function_type: $TYPE_PARAMETERS $PARAMETERS => $RETURN_TYPE
-  generator_function: function * $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $BODY
-  generator_function_declaration: function * $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $BODY
+  function_type: $TYPE_PARAMETERS $PARAMETERS=>$RETURN_TYPE
+  generator_function: function *$NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $BODY
+  generator_function_declaration: function *$NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $BODY
   generic_type: $NAME $TYPE_ARGUMENTS
   if_statement: if $CONDITION $CONSEQUENCE $ALTERNATIVE
   implements_clause:
@@ -96,7 +96,7 @@ rules:
   import_specifier: $NAME $ALIAS
   import_statement: import $IMPORT_CLAUSE $FROM_CLAUSE $SOURCE $IMPORT_ATTRIBUTE $SEMICOLON
   index_signature:
-    template: "$SIGN_CLAUSE[$NAME : $INDEX_TYPE $MAPPED_TYPE_CLAUSE] $TYPE"
+    template: "$SIGN_CLAUSE[$NAME: $INDEX_TYPE $MAPPED_TYPE_CLAUSE] $TYPE"
     sign_clause: $SIGN readonly
   index_type_query: keyof $PRIMARY_TYPE
   infer_type:
@@ -106,8 +106,8 @@ rules:
   interface_body: $$$CHILDREN
   interface_declaration: interface $NAME $TYPE_PARAMETERS $EXTENDS_TYPE_CLAUSE $BODY
   internal_module: namespace $NAME $BODY
-  intersection_type: $LEFT & $RIGHT
-  labeled_statement: "$LABEL : $BODY"
+  intersection_type: $LEFT &$RIGHT
+  labeled_statement: "$LABEL: $BODY"
   lexical_declaration: $KIND $$$DECLARATORS $$$CHILDREN $SEMICOLON
   literal_type: $CHILDREN
   lookup_type: $PRIMARY_TYPE[$INDEX_TYPE]
@@ -121,8 +121,8 @@ rules:
   named_imports:
     template: "{$$$CHILDREN}"
     joinBy: ","
-  namespace_export: "* as $$$CHILDREN"
-  namespace_import: "* as $IDENTIFIER"
+  namespace_export: "*as $$$CHILDREN"
+  namespace_import: "*as $IDENTIFIER"
   nested_identifier: $OBJECT.$PROPERTY
   nested_type_identifier: $MODULE.$NAME
   new_expression: new $CONSTRUCTOR $TYPE_ARGUMENTS $ARGUMENTS
@@ -137,10 +137,10 @@ rules:
   object_type: "{$OPENING $$$CHILDREN $$$MEMBERS} $CLOSING"
   omitting_type_annotation: "-?: $CHILDREN"
   opting_type_annotation: "?: $CHILDREN"
-  optional_parameter: $PARAMETER_NAME ? $TYPE $VALUE $$$DECORATOR $NAME $PATTERN $INITIALIZER
-  optional_type: $CHILDREN ?
-  pair: "$KEY : $VALUE"
-  pair_pattern: "$KEY : $VALUE"
+  optional_parameter: $PARAMETER_NAME? $TYPE $VALUE $$$DECORATOR $NAME $PATTERN $INITIALIZER
+  optional_type: $CHILDREN?
+  pair: "$KEY: $VALUE"
+  pair_pattern: "$KEY: $VALUE"
   parenthesized_expression: ($CHILDREN $TYPE)
   parenthesized_type: ($CHILDREN)
   program: $HASH_BANG_LINE $$$STATEMENTS
@@ -167,14 +167,14 @@ rules:
       single: "'"
   subscript_expression: $OBJECT $OPTIONAL_CHAIN[$INDEX]
   switch_body: "{$$$CHILDREN}"
-  switch_case: "case $VALUE : $$$BODY"
-  switch_default: "default : $$$BODY"
+  switch_case: "case $VALUE: $$$BODY"
+  switch_default: "default: $$$BODY"
   switch_statement: switch $VALUE $BODY
   template_literal_type: "`$$$CHILDREN`"
   template_string: "`$$$CHILDREN`"
   template_substitution: ${} $$$CHILDREN
   template_type: ${$CHILDREN}
-  ternary_expression: "$CONDITION ? $CONSEQUENCE : $ALTERNATIVE"
+  ternary_expression: "$CONDITION? $CONSEQUENCE: $ALTERNATIVE"
   throw_statement: throw $$$CHILDREN
   try_statement: try $BODY $HANDLER $FINALIZER
   tuple_type: "[$$$CHILDREN]"
@@ -192,7 +192,7 @@ rules:
   type_predicate_annotation: ": $TYPE_PREDICATE"
   type_query: typeof $CHILDREN
   unary_expression: $OPERATOR $ARGUMENT
-  union_type: $LEFT | $RIGHT
+  union_type: $LEFT|$RIGHT
   update_expression:
     - $ARGUMENT $OPERATOR
     - $OPERATOR $ARGUMENT
@@ -202,4 +202,4 @@ rules:
     - $NAME ! $TYPE
   while_statement: while $CONDITION $BODY
   with_statement: with $OBJECT $BODY
-  yield_expression: yield * $EXPRESSION
+  yield_expression: yield *$EXPRESSION

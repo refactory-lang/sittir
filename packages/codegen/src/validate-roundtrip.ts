@@ -185,6 +185,33 @@ function findFirst(node: TSNode, kind: string): TSNode | null {
 }
 
 /**
+ * Nodes that can't stand alone as valid source — they need parent context.
+ * For these, we skip the re-parse check and only verify render doesn't error.
+ */
+const FRAGMENT_ONLY_KINDS = new Set([
+	// Rust — sub-statement fragments
+	'parameters', 'closure_parameters', 'type_parameters', 'arguments',
+	'declaration_list', 'enum_variant_list', 'field_declaration_list',
+	'ordered_field_declaration_list', 'match_block', 'use_list',
+	'visibility_modifier', 'function_modifiers', 'extern_modifier',
+	'label', 'lifetime', 'lifetime_parameter', 'parameter', 'self_parameter',
+	'type_parameter', 'const_parameter', 'variadic_parameter',
+	'field_declaration', 'enum_variant', 'match_arm', 'match_pattern',
+	'attribute', 'attribute_item', 'inner_attribute_item',
+	'where_clause', 'where_predicate', 'trait_bounds',
+	'field_initializer', 'field_initializer_list', 'field_pattern',
+	'else_clause', 'for_lifetimes', 'use_as_clause', 'use_bounds',
+	// TypeScript — sub-statement fragments
+	'formal_parameters', 'type_parameters', 'class_body', 'statement_block',
+	'object_type', 'enum_body', 'extends_clause', 'implements_clause',
+	'import_clause', 'export_clause', 'decorator',
+	// Python — sub-statement fragments
+	'parameters', 'argument_list', 'block', 'type_parameter',
+	'decorator', 'elif_clause', 'else_clause', 'except_clause',
+	'finally_clause', 'with_clause',
+]);
+
+/**
  * Collect all unique node kinds in a tree.
  */
 function collectKinds(node: TSNode): Set<string> {
@@ -257,6 +284,9 @@ export async function validateRoundTrip(
 
 				try {
 					const rendered = render(data);
+
+					// Fragment-only kinds: just verify render succeeds, skip re-parse
+					if (FRAGMENT_ONLY_KINDS.has(kind)) continue;
 
 					// Re-parse
 					const tree2 = parser.parse(rendered) as TSTree;

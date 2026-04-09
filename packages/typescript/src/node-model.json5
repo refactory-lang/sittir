@@ -1054,15 +1054,6 @@
         kinds: {},
         position: 3,
       },
-      {
-        name: "semicolon_inner",
-        required: false,
-        multiple: false,
-        kinds: {},
-        position: 2,
-        override: true,
-        overrideAnonymous: false,
-      },
     ],
     children: {
       required: false,

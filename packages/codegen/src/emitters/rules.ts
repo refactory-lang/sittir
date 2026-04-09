@@ -779,13 +779,27 @@ function isAttached(prev: string, next: string): boolean {
 	if (prev === '(' || prev === '[' || prev === '<' || prev === '{') return true;
 	// Closing delimiters attach to preceding content
 	if (next === ')' || next === ']' || next === '>' || next === '}') return true;
+	// Pipe delimiters (closure parameters |...|)
+	if (prev === '|' || next === '|') return true;
 	// Quotes attach to adjacent content (wrapping)
 	if (prev === '"' || prev === "'" || prev === '`') return true;
 	if (next === '"' || next === "'" || next === '`') return true;
+	// Colon/semicolon attach to preceding content (no space before)
+	if (next === ':' || next === ';') return true;
+	// NOTE: after colon, we want a space (x: T, not x:T) — so prev === ':' is NOT attached
+	// Reference/dereference — attach to following (no space between & and type)
+	if (prev === '&') return true;
+	// Dereference * — attach to following
+	if (prev === '*') return true;
 	// Dot accessor
 	if (prev === '.' || next === '.') return true;
 	// Double colon
 	if (prev === '::' || next === '::') return true;
+	// Question mark (try operator) attaches to preceding
+	if (next === '?') return true;
+	// Arrow operators attach
+	if (prev === '->' || next === '->') return true;
+	if (prev === '=>' || next === '=>') return true;
 	// $ variable after delimiter
 	if (prev.endsWith('(') || prev.endsWith('[') || prev.endsWith('<') || prev.endsWith('{')) return true;
 	return false;

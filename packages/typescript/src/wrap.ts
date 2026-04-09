@@ -643,14 +643,12 @@ export function wrapExportSpecifier(data: AnyNodeData, tree: TreeHandle): unknow
 
 export function wrapExportStatement(data: AnyNodeData, tree: TreeHandle): unknown {
   promoteFirst(data, 'declaration');
-  promoteFirstAnon(data, 'semicolon_inner');
   promoteNamed(data, 'source', ["string"]);
   return {
     ...data,
     get decorator() { return drillInAll(data.fields?.['decorator'], tree); },
     get value() { return drillIn(data.fields?.['value'], tree); },
     get declaration() { return drillIn(data.fields?.['declaration'], tree); },
-    get semicolonInner() { return drillIn(data.fields?.['semicolon_inner'], tree); },
     get source() { return drillIn(data.fields?.['source'], tree); },
     get child() { return drillIn(data.children?.[0], tree); },
   };

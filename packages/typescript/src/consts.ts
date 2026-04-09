@@ -508,7 +508,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'decorator', required: false, multiple: true },
     { name: 'source', required: false, multiple: false },
     { name: 'value', required: false, multiple: false },
-    { name: 'semicolonInner', required: false, multiple: false },
   ],
   'expression_statement': [
   ],

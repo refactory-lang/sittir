@@ -1041,7 +1041,6 @@ export function export_statement_(
     decorator: config?.decorator,
     source: config?.source,
     value: config?.value,
-    semicolon_inner: config?.semicolonInner,
   };
   const children = config?.children ? [config?.children] : [];
   return {
@@ -1053,7 +1052,6 @@ export function export_statement_(
     decorator(...decorator: (Decorator)[]) { return decorator.length ? export_statement_({ ...config, decorator: decorator }) : fields.decorator; },
     source(source?: String) { return source !== undefined ? export_statement_({ ...config, source: source }) : fields.source; },
     value(value?: Expression) { return value !== undefined ? export_statement_({ ...config, value: value }) : fields.value; },
-    semicolonInner(semicolonInner?: string) { return semicolonInner !== undefined ? export_statement_({ ...config, semicolonInner: semicolonInner }) : fields.semicolon_inner; },
     child(child?: ExportClause | Expression | Identifier | NamespaceExport) { return child !== undefined ? export_statement_({ ...config, children: child }) : config?.children; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
