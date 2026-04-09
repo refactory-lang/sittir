@@ -96,6 +96,35 @@ function extractAllVars(rule: TemplateRule): Set<string> {
 	return vars;
 }
 
+/** Get all template strings from a rule (including variant templates and clause templates). */
+function getTemplateStrings(rule: TemplateRule): string[] {
+	if (typeof rule === 'string') return [rule];
+	if (Array.isArray(rule)) return rule;
+	const obj = rule as TemplateRuleObject;
+	const result: string[] = [];
+	if (obj.template) {
+		if (Array.isArray(obj.template)) result.push(...obj.template);
+		else result.push(obj.template);
+	}
+	if (obj.variants) result.push(...Object.values(obj.variants));
+	for (const [key, val] of Object.entries(obj)) {
+		if (key.endsWith('_clause') && typeof val === 'string') result.push(val);
+	}
+	return result;
+}
+
+/** Check if a grammar rule tree contains a STRING node with the given value. */
+function ruleContainsString(rule: import('./grammar.ts').GrammarRule, value: string): boolean {
+	if (rule.type === 'STRING') return rule.value === value;
+	if (rule.type === 'SEQ' || rule.type === 'CHOICE') return rule.members.some(m => ruleContainsString(m, value));
+	if (rule.type === 'REPEAT' || rule.type === 'REPEAT1') return ruleContainsString(rule.content, value);
+	if (rule.type === 'FIELD') return ruleContainsString(rule.content, value);
+	if (rule.type === 'PREC' || rule.type === 'PREC_LEFT' || rule.type === 'PREC_RIGHT' || rule.type === 'PREC_DYNAMIC') return ruleContainsString(rule.content, value);
+	if (rule.type === 'TOKEN' || rule.type === 'IMMEDIATE_TOKEN') return ruleContainsString(rule.content, value);
+	if (rule.type === 'ALIAS') return ruleContainsString(rule.content, value);
+	return false;
+}
+
 /** Extract clause keys from a rule object. */
 function getClauses(rule: TemplateRule): Map<string, string> {
 	const clauses = new Map<string, string>();
@@ -214,7 +243,47 @@ export function validateTemplates(grammar: string, templatesYaml: string): Valid
 			}
 		}
 
-		// Variant completeness (check 8 — variant subtypes)
+		// joinBy validation
+		if (typeof rule === 'object' && !Array.isArray(rule)) {
+			const obj = rule as TemplateRuleObject;
+			if (obj.joinBy && typeof obj.joinBy === 'string') {
+				// joinBy applies to $$$ variables — check at least one exists
+				const hasMulti = [...allVars].some(v => {
+					// Check if any template string has $$$ prefix for this var
+					const templates = getTemplateStrings(rule);
+					return templates.some(t => t.includes(`$$$${v.toUpperCase()}`));
+				});
+				if (!hasMulti) {
+					errors.push({ check: 'template-structure', kind, message: `joinBy defined but no $$$ variable in template` });
+					structOk = false;
+				}
+			}
+		}
+
+		// Duplicate single variable check
+		const templateStrings = getTemplateStrings(rule);
+		for (const tmpl of templateStrings) {
+			const singles: string[] = [];
+			let m: RegExpExecArray | null;
+			const re = /(\$\$\$|\$\$|\$_|\$)([A-Z][A-Z0-9_]*)/g;
+			while ((m = re.exec(tmpl)) !== null) {
+				const prefix = m[1]!;
+				if (prefix === '$' && prefix.length === 1) { // single $ only
+					singles.push(m[2]!.toLowerCase());
+				}
+			}
+			const seen = new Set<string>();
+			for (const s of singles) {
+				if (seen.has(s)) {
+					errors.push({ check: 'template-structure', kind, message: `duplicate single variable $${s.toUpperCase()} in template` });
+					structOk = false;
+					break;
+				}
+				seen.add(s);
+			}
+		}
+
+		// Variant subtypes (check 8)
 		if (typeof rule === 'object' && !Array.isArray(rule)) {
 			const obj = rule as TemplateRuleObject;
 			if (obj.variants) {
@@ -233,6 +302,17 @@ export function validateTemplates(grammar: string, templatesYaml: string): Valid
 						if (!(name in obj.detect)) {
 							errors.push({ check: 'variant-subtypes', kind, message: `variant '${name}' has no detect entry` });
 							variantOk = false;
+						}
+					}
+
+					// Detect token exists in grammar
+					const grammarRule = grammarRules.rules[kind];
+					if (grammarRule) {
+						for (const [subtype, token] of Object.entries(obj.detect)) {
+							if (!ruleContainsString(grammarRule, token)) {
+								errors.push({ check: 'variant-subtypes', kind, message: `detect token '${token}' for subtype '${subtype}' not found in grammar rule` });
+								variantOk = false;
+							}
 						}
 					}
 				} else {
