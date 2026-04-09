@@ -79,21 +79,6 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 	lines.push('// Field resolution');
 	lines.push('// ---------------------------------------------------------------------------');
 	lines.push('');
-	lines.push('/**');
-	lines.push(' * Resolve a field value for .from() input.');
-	lines.push(' * Passes through NodeData, delegates scalars and objects to the resolver.');
-	lines.push(' * Arrays are mapped element-wise, returning T[].');
-	lines.push(' */');
-	lines.push('export function resolveField<T>(value: readonly unknown[], resolver: (input: unknown) => T): T[];');
-	lines.push('export function resolveField<T>(value: unknown, resolver: (input: unknown) => T): T;');
-	lines.push('export function resolveField<T>(value: unknown, resolver: (input: unknown) => T): T | T[] {');
-	lines.push('  if (value == null) return value as T;');
-	lines.push('  if (isNodeData(value)) return value as T;');
-	lines.push('  if (Array.isArray(value)) return value.map(v => resolveField(v, resolver));');
-	lines.push('  return resolver(value);');
-	lines.push('}');
-	lines.push('');
-
 	// Grammar-typed type guards
 	lines.push('// ---------------------------------------------------------------------------');
 	lines.push('// Grammar-typed type guards');
@@ -123,18 +108,6 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 	lines.push('  kind: K,');
 	lines.push('): v is { kind: K } & FromInputMap[K] {');
 	lines.push("  return 'kind' in v && (v as Record<string, unknown>).kind === kind;");
-	lines.push('}');
-	lines.push('');
-
-	// resolveFieldAs
-	lines.push('/**');
-	lines.push(' * Resolve a field value and narrow the result to `KindMap[K]`.');
-	lines.push(' */');
-	lines.push('export function resolveFieldAs<K extends keyof KindMap>(');
-	lines.push('  value: unknown,');
-	lines.push('  resolver: (input: unknown) => KindMap[K],');
-	lines.push('): KindMap[K] {');
-	lines.push('  return resolveField(value, resolver) as KindMap[K];');
 	lines.push('}');
 	lines.push('');
 

@@ -262,10 +262,10 @@ export type Hydrate<T> =
 		: T extends { fields: FieldModel[]; children?: ChildrenModel }
 			? Readonly<Omit<T, 'fields' | 'children'> & {
 				fields: Hydrate<FieldModel>[];
-				children?: HydratedChildrenModel;
+				children?: Hydrate<ChildModel> | Hydrate<ChildModel>[];
 			}>
 			: T extends { children: ChildrenModel }
-				? Readonly<Omit<T, 'children'> & { children: HydratedChildrenModel }>
+				? Readonly<Omit<T, 'children'> & { children: Hydrate<ChildModel> | Hydrate<ChildModel>[] }>
 				: Readonly<T>;
 
 export type HydratedChildrenModel = Hydrate<ChildModel> | Hydrate<ChildModel>[];

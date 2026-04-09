@@ -10,7 +10,7 @@
  */
 
 import type { HydratedNodeModel } from '../node-model.ts';
-import { eachChildSlot } from '../node-model.ts';
+import { isTupleChildren, eachChildSlot } from '../node-model.ts';
 import { collectRequiredTokens } from '../grammar-reader.ts';
 import { toFieldName, toIrKey, toFactoryName } from '../naming.ts';
 import { type StructuralNode, structuralNodes, fieldsOf, leafKindsOf, keywordKindsOf, leafValuesOf, childSlotNames } from './utils.ts';
@@ -182,8 +182,28 @@ interface DummyCtx {
  * Generate minimal factory arguments for a node kind.
  * Provides all required fields and children as a declarative config object.
  */
+function isChildrenOnlyNode(node: StructuralNode, dc: DummyCtx): boolean {
+	return fieldsOf(node).length === 0 && node.children != null && !isTupleChildren(node.children);
+}
+
 function minimalArgs(node: StructuralNode, dc: DummyCtx): string {
 	const requiredFields = fieldsOf(node).filter(f => f.required);
+
+	// Children-only: emit values directly as rest args
+	if (isChildrenOnlyNode(node, dc) && requiredFields.length === 0) {
+		const slot = Array.isArray(node.children!) ? node.children![0]! : node.children!;
+		if (!slot.required) return '';
+		const proj = projectKinds(slot.kinds, dc.ctx);
+		if (proj.collapsedTypes.length === 0) return '';
+		const val = dummyValue({ name: 'children', kinds: slot.kinds, multiple: slot.multiple }, dc);
+		if (slot.multiple) {
+			// For multiple children, strip the [] wrapper and emit elements as rest args
+			const inner = val.replace(/^\[/, '').replace(/\]$/, '').trim();
+			return inner || '';
+		}
+		return val;
+	}
+
 	const requiredChildren: { name: string; kinds: readonly HydratedNodeModel[]; multiple: boolean }[] = [];
 
 	if (node.children != null) {
@@ -231,15 +251,29 @@ function fullArgs(node: StructuralNode, dc: DummyCtx): string {
 			allChildren.push({ name: slotNames[i]!, kinds: slot.kinds, multiple: slot.multiple, required: slot.required });
 		});
 	}
-	// Skip children whose names overlap with field property names (override-promoted fields)
+
+	// Children-only: emit values directly as rest args
+	if (isChildrenOnlyNode(node, dc) && allFields.length === 0 && allChildren.length > 0) {
+		const slot = allChildren[0]!;
+		const val = dummyValue({ name: slot.name, kinds: slot.kinds, multiple: slot.multiple }, dc);
+		if (slot.multiple) {
+			const inner = val.replace(/^\[/, '').replace(/\]$/, '').trim();
+			return inner || '';
+		}
+		return val;
+	}
+
+	// Skip children whose names overlap with field property names OR whose kinds are covered by fields
 	const fieldKeys = new Set(allFields.map(f => f.propertyName ?? toFieldName(f.name)));
-	const optionalChildren = allChildren.filter(c => !c.required && !fieldKeys.has(c.name));
+	const fullFieldCoveredKinds = new Set<string>();
+	for (const f of allFields) for (const k of f.kinds) fullFieldCoveredKinds.add(k.kind);
+	const optionalChildren = allChildren.filter(c => !c.required && !fieldKeys.has(c.name) && !c.kinds.every((k: { kind: string }) => fullFieldCoveredKinds.has(k.kind)));
 
 	if (optionalFields.length === 0 && optionalChildren.length === 0) return '';
 
 	const entries = [
 		...allFields.map(f => ({ key: f.propertyName ?? toFieldName(f.name), field: f })),
-		...allChildren.filter(c => !fieldKeys.has(c.name)).map(c => ({ key: c.name, field: c })),
+		...allChildren.filter(c => !fieldKeys.has(c.name) && !c.kinds.every((k: { kind: string }) => fullFieldCoveredKinds.has(k.kind))).map(c => ({ key: c.name, field: c })),
 	];
 
 	const parts = entries.map(({ key, field }) => `${key}: ${dummyValue(field, dc)}`);

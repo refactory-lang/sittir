@@ -49,62 +49,93 @@ export function emitFactory(config: {
 		});
 	}
 
-	const hasRequiredFields = fieldsOf(node).some(f => f.required) || (hasChildren && childHasRequired(node.children!, skipSlots));
-
-	const opt = hasRequiredFields ? '' : '?';
-	lines.push(`export function ${internalName}(`);
-	lines.push(`  config${opt}: ConfigOf<${typeName}>,`);
-	lines.push(`) {`);
-
-	// Build fields object — raw names, values from camelCase config
 	const fields = fieldsOf(node);
 	const hasFields = fields.length > 0;
-	if (hasFields) {
-		lines.push(`  const fields = {`);
-		for (const f of fields) {
-			const camel = f.propertyName ?? toFieldName(f.name);
-			lines.push(`    ${f.name}: config${opt}.${camel},`);
+	const hasRequiredFields = fields.some(f => f.required) || (hasChildren && childHasRequired(node.children!, skipSlots));
+
+	// Detect children-only nodes: no fields, single non-skipped child slot
+	const isChildrenOnly = !hasFields && hasChildren && !isTupleChildren(node.children!) && !skipSlots.has(0);
+	let childrenOnlySlot: { slot: HydratedFieldModel; name: string; slotType: string } | undefined;
+	if (isChildrenOnly) {
+		const slot = Array.isArray(node.children!) ? node.children![0]! : node.children!;
+		const name = childSlotNames(node.children!, ctx)[0]!;
+		const slotProj = projectKinds(slot.kinds, ctx);
+		const slotType = slotProj.collapsedTypes.join(' | ');
+		// Only use rest-params if children kinds are NOT fully covered by fields
+		const fieldCoveredKinds = new Set<string>();
+		for (const f of fields) for (const k of f.kinds) fieldCoveredKinds.add(k.kind);
+		const allCovered = slot.kinds.every((k: { kind: string }) => fieldCoveredKinds.has(k.kind));
+		if (!allCovered && slotType) {
+			childrenOnlySlot = { slot, name, slotType };
 		}
-		lines.push(`  };`);
 	}
 
-	// Build children array from child slots in config
-	if (hasChildren) {
+	if (childrenOnlySlot) {
+		// Children-only: rest params for multiple, direct param for single
+		const { slot, slotType } = childrenOnlySlot;
+		if (slot.multiple) {
+			// Rest param becomes the children array directly
+			lines.push(`export function ${internalName}(`);
+			lines.push(`  ...children: (${slotType})[]`);
+			lines.push(`) {`);
+		} else {
+			const opt = slot.required ? '' : '?';
+			lines.push(`export function ${internalName}(`);
+			lines.push(`  child${opt}: ${slotType},`);
+			lines.push(`) {`);
+			lines.push(`  const children = child ? [child] : [];`);
+		}
+	} else {
+		const opt = hasRequiredFields ? '' : '?';
+		lines.push(`export function ${internalName}(`);
+		lines.push(`  config${opt}: ConfigOf<${typeName}>,`);
+		lines.push(`) {`);
 
-		const slotNames = childSlotNames(node.children!, ctx);
-		const isTuple = isTupleChildren(node.children!);
-		if (!isTuple) {
-			// Check if children kinds are fully covered by fields
-			const fieldCoveredKinds = new Set<string>();
-			for (const f of fieldsOf(node)) for (const k of f.kinds) fieldCoveredKinds.add(k.kind);
-			const slot = Array.isArray(node.children!) ? node.children![0]! : node.children!;
-			const allCovered = slot.kinds.every((k: { kind: string }) => fieldCoveredKinds.has(k.kind));
+		// Build fields object — raw names, values from camelCase config
+		if (hasFields) {
+			lines.push(`  const fields = {`);
+			for (const f of fields) {
+				const camel = f.propertyName ?? toFieldName(f.name);
+				lines.push(`    ${f.name}: config${opt}.${camel},`);
+			}
+			lines.push(`  };`);
+		}
 
-			if (allCovered) {
-				lines.push(`  const children: unknown[] = [];`);
-			} else if (!skipSlots.has(0)) {
-				const name = slotNames[0]!;
-				if (slot.multiple) {
-					lines.push(`  const children = config${opt}.${name} ?? [];`);
+		// Build children array from child slots in config
+		if (hasChildren) {
+			const slotNames = childSlotNames(node.children!, ctx);
+			const isTuple = isTupleChildren(node.children!);
+			if (!isTuple) {
+				const fieldCoveredKinds = new Set<string>();
+				for (const f of fields) for (const k of f.kinds) fieldCoveredKinds.add(k.kind);
+				const slot = Array.isArray(node.children!) ? node.children![0]! : node.children!;
+				const allCovered = slot.kinds.every((k: { kind: string }) => fieldCoveredKinds.has(k.kind));
+
+				if (allCovered) {
+					lines.push(`  const children: unknown[] = [];`);
+				} else if (!skipSlots.has(0)) {
+					const name = slotNames[0]!;
+					if (slot.multiple) {
+						lines.push(`  const children = config${opt}.${name} ?? [];`);
+					} else {
+						lines.push(`  const children = config${opt}.${name} ? [config${opt}.${name}] : [];`);
+					}
 				} else {
-					lines.push(`  const children = config${opt}.${name} ? [config${opt}.${name}] : [];`);
+					lines.push(`  const children: unknown[] = [];`);
 				}
 			} else {
-				lines.push(`  const children: unknown[] = [];`);
+				const childExprs: string[] = [];
+				eachChildSlot(node.children!, (slot, i) => {
+					if (skipSlots.has(i)) return;
+					const name = slotNames[i]!;
+					if (slot.multiple) {
+						childExprs.push(`...(config${opt}.${name} ?? [])`);
+					} else {
+						childExprs.push(`...(config${opt}.${name} ? [config${opt}.${name}] : [])`);
+					}
+				});
+				lines.push(`  const children = [${childExprs.join(', ')}];`);
 			}
-		} else {
-			// Multiple child slots — merge into one array
-			const childExprs: string[] = [];
-			eachChildSlot(node.children!, (slot, i) => {
-				if (skipSlots.has(i)) return;
-				const name = slotNames[i]!;
-				if (slot.multiple) {
-					childExprs.push(`...(config${opt}.${name} ?? [])`);
-				} else {
-					childExprs.push(`...(config${opt}.${name} ? [config${opt}.${name}] : [])`);
-				}
-			});
-			lines.push(`  const children = [${childExprs.join(', ')}];`);
 		}
 	}
 
@@ -148,7 +179,15 @@ export function emitFactory(config: {
 			if (slot.kinds.every(k => factoryFieldCoveredKinds.has(k.kind))) return; // covered by fields
 			const slotProj = projectKinds(slot.kinds, ctx);
 			const slotType = slotProj.collapsedTypes.join(' | ');
-			if (name === 'children') {
+			if (childrenOnlySlot) {
+				// Children-only node — setter re-calls with rest/direct params
+				if (childrenOnlySlot.slot.multiple) {
+					lines.push(`    getChildren() { return children; },`);
+					lines.push(`    setChildren(...children: (${slotType})[]) { return ${internalName}(...children); },`);
+				} else {
+					lines.push(`    child(c?: ${slotType}) { return c !== undefined ? ${internalName}(c) : children[0]; },`);
+				}
+			} else if (name === 'children') {
 				// Single children slot — use child/getChildren/setChildren to avoid name collision
 				if (slot.multiple) {
 					lines.push(`    getChildren() { return children; },`);

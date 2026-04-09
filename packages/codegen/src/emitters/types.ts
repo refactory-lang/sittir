@@ -15,7 +15,8 @@
 import type { HydratedNodeModel, HydratedFieldModel } from '../node-model.ts';
 import { isTupleChildren, eachChildSlot } from '../node-model.ts';
 import { toTypeName, toFieldName, toGrammarTypeName } from '../naming.ts';
-import { structuralNodes, fieldsOf, leafKindsOf, supertypeEntriesOf, hiddenEntriesOf, childSlotNames } from './utils.ts';
+import { structuralNodes, fieldsOf, leafKindsOf, leafValuesOf, keywordKindsOf, supertypeEntriesOf, hiddenEntriesOf, childSlotNames } from './utils.ts';
+import { extractLeafPattern } from '../grammar-reader.ts';
 import { buildProjectionContext, projectKinds, type ProjectionContext, type KindProjection } from './kind-projections.ts';
 import type { GrammarRule } from '../grammar.ts';
 import { loadGrammar } from '../grammar.ts';
@@ -71,7 +72,41 @@ export function emitTypes(config: EmitTypesConfig): string {
 		for (const entry of scalarEntries) lines.push(entry);
 	}
 	lines.push('};');
-	// NodeFromInput removed — FromInput types now use FromInputOf<T> (interface-derived)
+	lines.push('');
+
+	// LeafStringMap — narrowed string types for leaf kinds
+	// Values → literal unions, keyword tokens → literal, patterns → template literals where feasible
+	const leafValueMap = leafValuesOf(config.nodes);
+	const keywordKinds = keywordKindsOf(config.nodes);
+	const stringEntries: string[] = [];
+	for (const kind of leafKinds) {
+		const keyword = keywordKinds.get(kind);
+		if (keyword) {
+			// Single keyword value
+			stringEntries.push(`  ${kind}: ${JSON.stringify(keyword)};`);
+			continue;
+		}
+		const values = leafValueMap.get(kind);
+		if (values && values.length > 0) {
+			// Finite set of values → literal union
+			const literals = values.map(v => JSON.stringify(v)).join(' | ');
+			stringEntries.push(`  ${kind}: ${literals};`);
+			continue;
+		}
+		// Pattern-based: try to extract a useful template literal prefix
+		const pattern = extractLeafPattern(grammar, kind);
+		if (pattern) {
+			const templateLiteral = patternToTemplateLiteral(pattern);
+			if (templateLiteral) {
+				stringEntries.push(`  ${kind}: ${templateLiteral};`);
+			}
+		}
+		// No constraint → omitted, falls back to `string`
+	}
+	lines.push('/** Narrowed string types for leaf kinds used by FromInputOf. */');
+	lines.push('export type LeafStringMap = {');
+	for (const entry of stringEntries) lines.push(entry);
+	lines.push('};');
 	lines.push('');
 
 	// -----------------------------------------------------------------------
@@ -157,8 +192,36 @@ export function emitTypes(config: EmitTypesConfig): string {
 	lines.push('');
 
 	lines.push('// FromInput types — derived from concrete interfaces, with scalar widenings');
+	// For children-only nodes (no fields, single child slot), FromInput is the child element type
+	// so the from function can use rest params: `...children: TFromInput[]`
+	const structNodeMap = new Map(structNodes.map(n => [n.kind, n]));
 	for (const kind of nodeKinds) {
-		lines.push(`export type ${toTypeName(kind)}FromInput = FromInputOf<${toTypeName(kind)}, LeafScalarMap>;`);
+		const sNode = structNodeMap.get(kind);
+		const sFields = sNode ? fieldsOf(sNode) : [];
+		const isChildrenOnly = sNode && sFields.length === 0 && sNode.children != null && !isTupleChildren(sNode.children);
+		if (isChildrenOnly) {
+			const slot = Array.isArray(sNode.children!) ? sNode.children![0]! : sNode.children!;
+			const slotProj = projectKinds(slot.kinds, ctx);
+			if (slotProj.collapsedTypes.length > 0) {
+				// Element type: each child type + its FromInput variant (widened for .from())
+				const childTypes: string[] = [];
+				for (const t of slotProj.collapsedTypes) {
+					const tn = toTypeName(t);
+					childTypes.push(tn);
+					// Add widened variant: leaves accept strings/scalars, branches accept FromInput
+					if (leafSet.has(t)) {
+						childTypes.push('string');
+					} else if (structNodeMap.has(t)) {
+						childTypes.push(`${tn}FromInput`);
+					}
+					// Supertypes are already expanded into their concrete types
+				}
+				const deduped = [...new Set(childTypes)];
+				lines.push(`export type ${toTypeName(kind)}FromInput = ${deduped.join(' | ')};`);
+				continue;
+			}
+		}
+		lines.push(`export type ${toTypeName(kind)}FromInput = FromInputOf<${toTypeName(kind)}, LeafScalarMap, LeafStringMap>;`);
 	}
 	lines.push('');
 
@@ -317,6 +380,32 @@ function fieldTypeExpr(proj: KindProjection, leafSet: Set<string>): string {
 
 function escapeString(s: string): string {
 	return s.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+}
+
+/**
+ * Convert a leaf regex pattern to a TypeScript template literal type where feasible.
+ * Returns the template literal string (e.g. `` `$${string}` ``) or undefined.
+ *
+ * Handles patterns with:
+ * - Fixed prefixes (e.g. `\$` → `$`)
+ * - Fixed suffixes (e.g. quotes)
+ * - Simple character classes followed by wildcards
+ */
+function patternToTemplateLiteral(pattern: string): string | undefined {
+	// Pattern: $[identifier] → `$${string}`
+	if (/^\\\$/.test(pattern)) return '`$${string}`';
+
+	// Pattern: starts with a quote char → char/string literal
+	// e.g. b?'...' → `'${string}'` | `b'${string}'`
+	if (/^b\?'/.test(pattern)) return "`'${string}'` | `b'${string}'`";
+	if (/^'/.test(pattern)) return "`'${string}'`";
+	if (/^"/.test(pattern)) return '`"${string}"`';
+
+	// Pattern: #!... (shebang)
+	if (/^#!/.test(pattern)) return '`#!${string}`';
+
+	// Too complex or no clear prefix
+	return undefined;
 }
 
 function emitConcreteInterface(

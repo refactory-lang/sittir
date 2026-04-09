@@ -444,24 +444,25 @@ export type TreeNodeOf<T> = T extends { readonly type: infer K extends string }
 	: never;
 
 /**
- * FromInputOf<T, Scalars, Depth> — widened input type derived from a concrete node interface.
+ * FromInputOf<T, Scalars, Strings, Depth> — widened input type derived from a concrete node interface.
  * Accepts NodeData passthroughs, strings for leaves, objects for branches.
  * Required fields stay required; optional fields stay optional.
  *
  * @param Scalars - Map of leaf kind → scalar type (e.g. `{ integer_literal: number }`)
+ * @param Strings - Map of leaf kind → narrowed string type (e.g. `{ boolean_literal: "true" | "false" }`)
  * @param Depth - Internal recursion counter — stops expanding at depth 3
  */
-export type FromInputOf<T, Scalars = {}, Depth extends number[] = []> = Simplify<
+export type FromInputOf<T, Scalars = {}, Strings = {}, Depth extends number[] = []> = Simplify<
 	Depth['length'] extends 3 ? T
 	: {
 		readonly [K in keyof FieldsOf<T> as K extends RequiredKeys<FieldsOf<T>> ? K : never]:
-			WidenValue<FieldsOf<T>[K], Scalars, [...Depth, 0]>;
+			WidenValue<FieldsOf<T>[K], Scalars, Strings, [...Depth, 0]>;
 	} & {
 		readonly [K in keyof FieldsOf<T> as K extends RequiredKeys<FieldsOf<T>> ? never : K]?:
-			WidenValue<FieldsOf<T>[K], Scalars, [...Depth, 0]>;
+			WidenValue<FieldsOf<T>[K], Scalars, Strings, [...Depth, 0]>;
 	} & {
 		readonly [K in keyof ChildSlotsOf<T>]?:
-			WidenChildSlot<ChildSlotsOf<T>[K], Scalars, [...Depth, 0]>;
+			WidenChildSlot<ChildSlotsOf<T>[K], Scalars, Strings, [...Depth, 0]>;
 	}>;
 
 /** Keys of T that are required (not optional). */
@@ -476,32 +477,34 @@ type IsSingleType<T> = [T] extends [{ readonly type: infer K }]
 /**
  * Widen a value type for FromInput.
  * - Arrays: accept `Element[] | Element`
- * - Leaf nodes: accept `T | string` + scalar widenings from Scalars map
+ * - Leaf nodes: accept `T | narrowed-string | scalar`
  * - Single branch: accept `T | FromInputOf<T>` (bare fields, no kind needed)
  * - Multi-branch union: each member needs `{ kind: K } & FromInputOf<U>`
  * - Other: pass through unchanged (string literal unions, etc.)
+ *
+ * @param Strings - Maps leaf kind → narrowed string type. Falls back to `string` for unmapped kinds.
  */
-type WidenValue<T, Scalars = {}, Depth extends number[] = []> =
+type WidenValue<T, Scalars = {}, Strings = {}, Depth extends number[] = []> =
 	Depth['length'] extends 3 ? T
-	: T extends readonly (infer E)[] ? (WidenValue<E, Scalars, Depth>)[] | WidenValue<E, Scalars, Depth>
+	: T extends readonly (infer E)[] ? (WidenValue<E, Scalars, Strings, Depth>)[] | WidenValue<E, Scalars, Strings, Depth>
 	: T extends { readonly type: infer K extends string; readonly text: string }
-		// Leaf: accept node, string, or matching scalar
-		? T | string | (K extends keyof Scalars ? Scalars[K] : never)
+		// Leaf: accept node + narrowed string (or fallback to string) + matching scalar
+		? T | (K extends keyof Strings ? Strings[K] : string) | (K extends keyof Scalars ? Scalars[K] : never)
 	: T extends { readonly type: string }
 		// Branch: check if T is a union of multiple branch types
 		? IsSingleType<T> extends true
 			// Single branch → accept bare fields (no { kind } needed)
-			? T | FromInputOf<T, Scalars, Depth>
+			? T | FromInputOf<T, Scalars, Strings, Depth>
 			// Multi branch → each member needs { kind } for discrimination
 			: T extends infer U
 				? U extends { readonly type: infer K extends string }
-					? U | ({ kind: K } & FromInputOf<U, Scalars, Depth>)
+					? U | ({ kind: K } & FromInputOf<U, Scalars, Strings, Depth>)
 					: never
 				: never
 	: T;
 
 /** Widen a child slot type for FromInput (applies WidenValue to arrays and single values). */
-type WidenChildSlot<T, Scalars = {}, Depth extends number[] = []> =
+type WidenChildSlot<T, Scalars = {}, Strings = {}, Depth extends number[] = []> =
 	T extends readonly (infer E)[]
-		? WidenValue<E, Scalars, Depth>[] | WidenValue<E, Scalars, Depth>
-		: WidenValue<T, Scalars, Depth>;
+		? WidenValue<E, Scalars, Strings, Depth>[] | WidenValue<E, Scalars, Strings, Depth>
+		: WidenValue<T, Scalars, Strings, Depth>;

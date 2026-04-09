@@ -51,20 +51,6 @@ export function hasKind(v: object): v is { kind: string } & Record<string, unkno
 // Field resolution
 // ---------------------------------------------------------------------------
 
-/**
- * Resolve a field value for .from() input.
- * Passes through NodeData, delegates scalars and objects to the resolver.
- * Arrays are mapped element-wise, returning T[].
- */
-export function resolveField<T>(value: readonly unknown[], resolver: (input: unknown) => T): T[];
-export function resolveField<T>(value: unknown, resolver: (input: unknown) => T): T;
-export function resolveField<T>(value: unknown, resolver: (input: unknown) => T): T | T[] {
-  if (value == null) return value as T;
-  if (isNodeData(value)) return value as T;
-  if (Array.isArray(value)) return value.map(v => resolveField(v, resolver));
-  return resolver(value);
-}
-
 // ---------------------------------------------------------------------------
 // Grammar-typed type guards
 // ---------------------------------------------------------------------------
@@ -89,14 +75,4 @@ export function hasKindOf<K extends keyof FromInputMap>(
   kind: K,
 ): v is { kind: K } & FromInputMap[K] {
   return 'kind' in v && (v as Record<string, unknown>).kind === kind;
-}
-
-/**
- * Resolve a field value and narrow the result to `KindMap[K]`.
- */
-export function resolveFieldAs<K extends keyof KindMap>(
-  value: unknown,
-  resolver: (input: unknown) => KindMap[K],
-): KindMap[K] {
-  return resolveField(value, resolver) as KindMap[K];
 }

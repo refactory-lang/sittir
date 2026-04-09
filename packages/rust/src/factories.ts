@@ -89,15 +89,14 @@ export function abstract_type_(
 
 
 export function arguments_(
-  config?: ConfigOf<Arguments>,
+  ...children: (AttributeItem | Expression)[]
 ) {
-  const children = config?.children ?? [];
   return {
     type: 'arguments' as const,
     named: true as const,
     children,
     getChildren() { return children; },
-    setChildren(...children: (AttributeItem | Expression)[]) { return arguments_({ ...config, children }); },
+    setChildren(...children: (AttributeItem | Expression)[]) { return arguments_(...children); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -275,14 +274,14 @@ export function attribute_item_(
 
 
 export function await_expression_(
-  config: ConfigOf<AwaitExpression>,
+  child: Expression,
 ) {
-  const children = config.children ? [config.children] : [];
+  const children = child ? [child] : [];
   return {
     type: 'await_expression' as const,
     named: true as const,
     children,
-    child(child?: Expression) { return child !== undefined ? await_expression_({ ...config, children: child }) : config?.children; },
+    child(c?: Expression) { return c !== undefined ? await_expression_(c) : children[0]; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -294,14 +293,14 @@ export function await_expression_(
 
 
 export function base_field_initializer_(
-  config: ConfigOf<BaseFieldInitializer>,
+  child: Expression,
 ) {
-  const children = config.children ? [config.children] : [];
+  const children = child ? [child] : [];
   return {
     type: 'base_field_initializer' as const,
     named: true as const,
     children,
-    child(child?: Expression) { return child !== undefined ? base_field_initializer_({ ...config, children: child }) : config?.children; },
+    child(c?: Expression) { return c !== undefined ? base_field_initializer_(c) : children[0]; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -411,14 +410,14 @@ export function bounded_type_(
 
 
 export function bracketed_type_(
-  config: ConfigOf<BracketedType>,
+  child: QualifiedType | Type,
 ) {
-  const children = config.children ? [config.children] : [];
+  const children = child ? [child] : [];
   return {
     type: 'bracketed_type' as const,
     named: true as const,
     children,
-    child(child?: QualifiedType | Type) { return child !== undefined ? bracketed_type_({ ...config, children: child }) : config?.children; },
+    child(c?: QualifiedType | Type) { return c !== undefined ? bracketed_type_(c) : children[0]; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -530,15 +529,14 @@ export function closure_expression_(
 
 
 export function closure_parameters_(
-  config?: ConfigOf<ClosureParameters>,
+  ...children: (Parameter | Pattern)[]
 ) {
-  const children = config?.children ?? [];
   return {
     type: 'closure_parameters' as const,
     named: true as const,
     children,
     getChildren() { return children; },
-    setChildren(...children: (Parameter | Pattern)[]) { return closure_parameters_({ ...config, children }); },
+    setChildren(...children: (Parameter | Pattern)[]) { return closure_parameters_(...children); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -669,15 +667,14 @@ export function continue_expression_(
 
 
 export function declaration_list_(
-  config?: ConfigOf<DeclarationList>,
+  ...children: (DeclarationStatement)[]
 ) {
-  const children = config?.children ?? [];
   return {
     type: 'declaration_list' as const,
     named: true as const,
     children,
     getChildren() { return children; },
-    setChildren(...children: (DeclarationStatement)[]) { return declaration_list_({ ...config, children }); },
+    setChildren(...children: (DeclarationStatement)[]) { return declaration_list_(...children); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -710,14 +707,14 @@ export function dynamic_type_(
 
 
 export function else_clause_(
-  config: ConfigOf<ElseClause>,
+  child: Block | IfExpression,
 ) {
-  const children = config.children ? [config.children] : [];
+  const children = child ? [child] : [];
   return {
     type: 'else_clause' as const,
     named: true as const,
     children,
-    child(child?: Block | IfExpression) { return child !== undefined ? else_clause_({ ...config, children: child }) : config?.children; },
+    child(c?: Block | IfExpression) { return c !== undefined ? else_clause_(c) : children[0]; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -785,15 +782,14 @@ export function enum_variant_(
 
 
 export function enum_variant_list_(
-  config?: ConfigOf<EnumVariantList>,
+  ...children: (AttributeItem | EnumVariant)[]
 ) {
-  const children = config?.children ?? [];
   return {
     type: 'enum_variant_list' as const,
     named: true as const,
     children,
     getChildren() { return children; },
-    setChildren(...children: (AttributeItem | EnumVariant)[]) { return enum_variant_list_({ ...config, children }); },
+    setChildren(...children: (AttributeItem | EnumVariant)[]) { return enum_variant_list_(...children); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -805,14 +801,14 @@ export function enum_variant_list_(
 
 
 export function expression_statement_(
-  config: ConfigOf<ExpressionStatement>,
+  child: Expression | ExpressionEndingWithBlock,
 ) {
-  const children = config.children ? [config.children] : [];
+  const children = child ? [child] : [];
   return {
     type: 'expression_statement' as const,
     named: true as const,
     children,
-    child(child?: Expression | ExpressionEndingWithBlock) { return child !== undefined ? expression_statement_({ ...config, children: child }) : config?.children; },
+    child(c?: Expression | ExpressionEndingWithBlock) { return c !== undefined ? expression_statement_(c) : children[0]; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -897,15 +893,14 @@ export function field_declaration_(
 
 
 export function field_declaration_list_(
-  config?: ConfigOf<FieldDeclarationList>,
+  ...children: (AttributeItem | FieldDeclaration)[]
 ) {
-  const children = config?.children ?? [];
   return {
     type: 'field_declaration_list' as const,
     named: true as const,
     children,
     getChildren() { return children; },
-    setChildren(...children: (AttributeItem | FieldDeclaration)[]) { return field_declaration_list_({ ...config, children }); },
+    setChildren(...children: (AttributeItem | FieldDeclaration)[]) { return field_declaration_list_(...children); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -967,15 +962,14 @@ export function field_initializer_(
 
 
 export function field_initializer_list_(
-  config?: ConfigOf<FieldInitializerList>,
+  ...children: (BaseFieldInitializer | FieldInitializer | ShorthandFieldInitializer)[]
 ) {
-  const children = config?.children ?? [];
   return {
     type: 'field_initializer_list' as const,
     named: true as const,
     children,
     getChildren() { return children; },
-    setChildren(...children: (BaseFieldInitializer | FieldInitializer | ShorthandFieldInitializer)[]) { return field_initializer_list_({ ...config, children }); },
+    setChildren(...children: (BaseFieldInitializer | FieldInitializer | ShorthandFieldInitializer)[]) { return field_initializer_list_(...children); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1039,15 +1033,14 @@ export function for_expression_(
 
 
 export function for_lifetimes_(
-  config: ConfigOf<ForLifetimes>,
+  ...children: (Lifetime)[]
 ) {
-  const children = config.children ?? [];
   return {
     type: 'for_lifetimes' as const,
     named: true as const,
     children,
     getChildren() { return children; },
-    setChildren(...children: (Lifetime)[]) { return for_lifetimes_({ ...config, children }); },
+    setChildren(...children: (Lifetime)[]) { return for_lifetimes_(...children); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1468,15 +1461,14 @@ export function label_(
 
 
 export function let_chain_(
-  config: ConfigOf<LetChain>,
+  ...children: (Expression | LetCondition)[]
 ) {
-  const children = config.children ?? [];
   return {
     type: 'let_chain' as const,
     named: true as const,
     children,
     getChildren() { return children; },
-    setChildren(...children: (Expression | LetCondition)[]) { return let_chain_({ ...config, children }); },
+    setChildren(...children: (Expression | LetCondition)[]) { return let_chain_(...children); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1728,15 +1720,14 @@ export function match_arm_(
 
 
 export function match_block_(
-  config?: ConfigOf<MatchBlock>,
+  ...children: (MatchArm)[]
 ) {
-  const children = config?.children ?? [];
   return {
     type: 'match_block' as const,
     named: true as const,
     children,
     getChildren() { return children; },
-    setChildren(...children: (MatchArm)[]) { return match_block_({ ...config, children }); },
+    setChildren(...children: (MatchArm)[]) { return match_block_(...children); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1941,15 +1932,14 @@ export function parameter_(
 
 
 export function parameters_(
-  config?: ConfigOf<Parameters>,
+  ...children: (AttributeItem | Parameter | SelfParameter | Type | VariadicParameter)[]
 ) {
-  const children = config?.children ?? [];
   return {
     type: 'parameters' as const,
     named: true as const,
     children,
     getChildren() { return children; },
-    setChildren(...children: (AttributeItem | Parameter | SelfParameter | Type | VariadicParameter)[]) { return parameters_({ ...config, children }); },
+    setChildren(...children: (AttributeItem | Parameter | SelfParameter | Type | VariadicParameter)[]) { return parameters_(...children); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1961,14 +1951,14 @@ export function parameters_(
 
 
 export function parenthesized_expression_(
-  config: ConfigOf<ParenthesizedExpression>,
+  child: Expression,
 ) {
-  const children = config.children ? [config.children] : [];
+  const children = child ? [child] : [];
   return {
     type: 'parenthesized_expression' as const,
     named: true as const,
     children,
-    child(child?: Expression) { return child !== undefined ? parenthesized_expression_({ ...config, children: child }) : config?.children; },
+    child(c?: Expression) { return c !== undefined ? parenthesized_expression_(c) : children[0]; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2099,14 +2089,14 @@ export function raw_string_literal_(
 
 
 export function ref_pattern_(
-  config: ConfigOf<RefPattern>,
+  child: Pattern,
 ) {
-  const children = config.children ? [config.children] : [];
+  const children = child ? [child] : [];
   return {
     type: 'ref_pattern' as const,
     named: true as const,
     children,
-    child(child?: Pattern) { return child !== undefined ? ref_pattern_({ ...config, children: child }) : config?.children; },
+    child(c?: Pattern) { return c !== undefined ? ref_pattern_(c) : children[0]; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2189,14 +2179,14 @@ export function reference_type_(
 
 
 export function removed_trait_bound_(
-  config: ConfigOf<RemovedTraitBound>,
+  child: Type,
 ) {
-  const children = config.children ? [config.children] : [];
+  const children = child ? [child] : [];
   return {
     type: 'removed_trait_bound' as const,
     named: true as const,
     children,
-    child(child?: Type) { return child !== undefined ? removed_trait_bound_({ ...config, children: child }) : config?.children; },
+    child(c?: Type) { return c !== undefined ? removed_trait_bound_(c) : children[0]; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2208,14 +2198,14 @@ export function removed_trait_bound_(
 
 
 export function return_expression_(
-  config?: ConfigOf<ReturnExpression>,
+  child?: Expression,
 ) {
-  const children = config?.children ? [config?.children] : [];
+  const children = child ? [child] : [];
   return {
     type: 'return_expression' as const,
     named: true as const,
     children,
-    child(child?: Expression) { return child !== undefined ? return_expression_({ ...config, children: child }) : config?.children; },
+    child(c?: Expression) { return c !== undefined ? return_expression_(c) : children[0]; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2344,15 +2334,14 @@ export function shorthand_field_initializer_(
 
 
 export function slice_pattern_(
-  config?: ConfigOf<SlicePattern>,
+  ...children: (Pattern)[]
 ) {
-  const children = config?.children ?? [];
   return {
     type: 'slice_pattern' as const,
     named: true as const,
     children,
     getChildren() { return children; },
-    setChildren(...children: (Pattern)[]) { return slice_pattern_({ ...config, children }); },
+    setChildren(...children: (Pattern)[]) { return slice_pattern_(...children); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2416,15 +2405,14 @@ export function static_item_(
 
 
 export function string_literal_(
-  config?: ConfigOf<StringLiteral>,
+  ...children: (EscapeSequence | StringContent)[]
 ) {
-  const children = config?.children ?? [];
   return {
     type: 'string_literal' as const,
     named: true as const,
     children,
     getChildren() { return children; },
-    setChildren(...children: (EscapeSequence | StringContent)[]) { return string_literal_({ ...config, children }); },
+    setChildren(...children: (EscapeSequence | StringContent)[]) { return string_literal_(...children); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2536,15 +2524,14 @@ export function token_binding_pattern_(
 
 
 export function token_repetition_(
-  config?: ConfigOf<TokenRepetition>,
+  ...children: (Crate | Identifier | Literal | Metavariable | MutableSpecifier | PrimitiveType | Self | Super | TokenRepetition | TokenTree)[]
 ) {
-  const children = config?.children ?? [];
   return {
     type: 'token_repetition' as const,
     named: true as const,
     children,
     getChildren() { return children; },
-    setChildren(...children: (Crate | Identifier | Literal | Metavariable | MutableSpecifier | PrimitiveType | Self | Super | TokenRepetition | TokenTree)[]) { return token_repetition_({ ...config, children }); },
+    setChildren(...children: (Crate | Identifier | Literal | Metavariable | MutableSpecifier | PrimitiveType | Self | Super | TokenRepetition | TokenTree)[]) { return token_repetition_(...children); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2556,15 +2543,14 @@ export function token_repetition_(
 
 
 export function token_repetition_pattern_(
-  config?: ConfigOf<TokenRepetitionPattern>,
+  ...children: (Crate | Identifier | Literal | Metavariable | MutableSpecifier | PrimitiveType | Self | Super | TokenBindingPattern | TokenRepetitionPattern | TokenTreePattern)[]
 ) {
-  const children = config?.children ?? [];
   return {
     type: 'token_repetition_pattern' as const,
     named: true as const,
     children,
     getChildren() { return children; },
-    setChildren(...children: (Crate | Identifier | Literal | Metavariable | MutableSpecifier | PrimitiveType | Self | Super | TokenBindingPattern | TokenRepetitionPattern | TokenTreePattern)[]) { return token_repetition_pattern_({ ...config, children }); },
+    setChildren(...children: (Crate | Identifier | Literal | Metavariable | MutableSpecifier | PrimitiveType | Self | Super | TokenBindingPattern | TokenRepetitionPattern | TokenTreePattern)[]) { return token_repetition_pattern_(...children); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2576,15 +2562,14 @@ export function token_repetition_pattern_(
 
 
 export function token_tree_(
-  config?: ConfigOf<TokenTree>,
+  ...children: (Crate | Identifier | Literal | Metavariable | MutableSpecifier | PrimitiveType | Self | Super | TokenRepetition | TokenTree)[]
 ) {
-  const children = config?.children ?? [];
   return {
     type: 'token_tree' as const,
     named: true as const,
     children,
     getChildren() { return children; },
-    setChildren(...children: (Crate | Identifier | Literal | Metavariable | MutableSpecifier | PrimitiveType | Self | Super | TokenRepetition | TokenTree)[]) { return token_tree_({ ...config, children }); },
+    setChildren(...children: (Crate | Identifier | Literal | Metavariable | MutableSpecifier | PrimitiveType | Self | Super | TokenRepetition | TokenTree)[]) { return token_tree_(...children); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2596,15 +2581,14 @@ export function token_tree_(
 
 
 export function token_tree_pattern_(
-  config?: ConfigOf<TokenTreePattern>,
+  ...children: (Crate | Identifier | Literal | Metavariable | MutableSpecifier | PrimitiveType | Self | Super | TokenBindingPattern | TokenRepetitionPattern | TokenTreePattern)[]
 ) {
-  const children = config?.children ?? [];
   return {
     type: 'token_tree_pattern' as const,
     named: true as const,
     children,
     getChildren() { return children; },
-    setChildren(...children: (Crate | Identifier | Literal | Metavariable | MutableSpecifier | PrimitiveType | Self | Super | TokenBindingPattern | TokenRepetitionPattern | TokenTreePattern)[]) { return token_tree_pattern_({ ...config, children }); },
+    setChildren(...children: (Crate | Identifier | Literal | Metavariable | MutableSpecifier | PrimitiveType | Self | Super | TokenBindingPattern | TokenRepetitionPattern | TokenTreePattern)[]) { return token_tree_pattern_(...children); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2616,15 +2600,14 @@ export function token_tree_pattern_(
 
 
 export function trait_bounds_(
-  config: ConfigOf<TraitBounds>,
+  ...children: (HigherRankedTraitBound | Lifetime | Type)[]
 ) {
-  const children = config.children ?? [];
   return {
     type: 'trait_bounds' as const,
     named: true as const,
     children,
     getChildren() { return children; },
-    setChildren(...children: (HigherRankedTraitBound | Lifetime | Type)[]) { return trait_bounds_({ ...config, children }); },
+    setChildren(...children: (HigherRankedTraitBound | Lifetime | Type)[]) { return trait_bounds_(...children); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2738,15 +2721,14 @@ export function tuple_expression_(
 
 
 export function tuple_pattern_(
-  config?: ConfigOf<TuplePattern>,
+  ...children: (ClosureExpression | Pattern)[]
 ) {
-  const children = config?.children ?? [];
   return {
     type: 'tuple_pattern' as const,
     named: true as const,
     children,
     getChildren() { return children; },
-    setChildren(...children: (ClosureExpression | Pattern)[]) { return tuple_pattern_({ ...config, children }); },
+    setChildren(...children: (ClosureExpression | Pattern)[]) { return tuple_pattern_(...children); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2783,15 +2765,14 @@ export function tuple_struct_pattern_(
 
 
 export function tuple_type_(
-  config: ConfigOf<TupleType>,
+  ...children: (Type)[]
 ) {
-  const children = config.children ?? [];
   return {
     type: 'tuple_type' as const,
     named: true as const,
     children,
     getChildren() { return children; },
-    setChildren(...children: (Type)[]) { return tuple_type_({ ...config, children }); },
+    setChildren(...children: (Type)[]) { return tuple_type_(...children); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2803,15 +2784,14 @@ export function tuple_type_(
 
 
 export function type_arguments_(
-  config: ConfigOf<TypeArguments>,
+  ...children: (Block | Lifetime | Literal | TraitBounds | Type | TypeBinding)[]
 ) {
-  const children = config.children ?? [];
   return {
     type: 'type_arguments' as const,
     named: true as const,
     children,
     getChildren() { return children; },
-    setChildren(...children: (Block | Lifetime | Literal | TraitBounds | Type | TypeBinding)[]) { return type_arguments_({ ...config, children }); },
+    setChildren(...children: (Block | Lifetime | Literal | TraitBounds | Type | TypeBinding)[]) { return type_arguments_(...children); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2927,15 +2907,14 @@ export function type_parameter_(
 
 
 export function type_parameters_(
-  config: ConfigOf<TypeParameters>,
+  ...children: (AttributeItem | ConstParameter | LifetimeParameter | Metavariable | TypeParameter)[]
 ) {
-  const children = config.children ?? [];
   return {
     type: 'type_parameters' as const,
     named: true as const,
     children,
     getChildren() { return children; },
-    setChildren(...children: (AttributeItem | ConstParameter | LifetimeParameter | Metavariable | TypeParameter)[]) { return type_parameters_({ ...config, children }); },
+    setChildren(...children: (AttributeItem | ConstParameter | LifetimeParameter | Metavariable | TypeParameter)[]) { return type_parameters_(...children); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -3043,15 +3022,14 @@ export function use_as_clause_(
 
 
 export function use_bounds_(
-  config?: ConfigOf<UseBounds>,
+  ...children: (Lifetime | TypeIdentifier)[]
 ) {
-  const children = config?.children ?? [];
   return {
     type: 'use_bounds' as const,
     named: true as const,
     children,
     getChildren() { return children; },
-    setChildren(...children: (Lifetime | TypeIdentifier)[]) { return use_bounds_({ ...config, children }); },
+    setChildren(...children: (Lifetime | TypeIdentifier)[]) { return use_bounds_(...children); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -3086,15 +3064,14 @@ export function use_declaration_(
 
 
 export function use_list_(
-  config?: ConfigOf<UseList>,
+  ...children: (UseClause)[]
 ) {
-  const children = config?.children ?? [];
   return {
     type: 'use_list' as const,
     named: true as const,
     children,
     getChildren() { return children; },
-    setChildren(...children: (UseClause)[]) { return use_list_({ ...config, children }); },
+    setChildren(...children: (UseClause)[]) { return use_list_(...children); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -3178,15 +3155,14 @@ export function visibility_modifier_(
 
 
 export function where_clause_(
-  config?: ConfigOf<WhereClause>,
+  ...children: (WherePredicate)[]
 ) {
-  const children = config?.children ?? [];
   return {
     type: 'where_clause' as const,
     named: true as const,
     children,
     getChildren() { return children; },
-    setChildren(...children: (WherePredicate)[]) { return where_clause_({ ...config, children }); },
+    setChildren(...children: (WherePredicate)[]) { return where_clause_(...children); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -3246,14 +3222,14 @@ export function while_expression_(
 
 
 export function yield_expression_(
-  config?: ConfigOf<YieldExpression>,
+  child?: Expression,
 ) {
-  const children = config?.children ? [config?.children] : [];
+  const children = child ? [child] : [];
   return {
     type: 'yield_expression' as const,
     named: true as const,
     children,
-    child(child?: Expression) { return child !== undefined ? yield_expression_({ ...config, children: child }) : config?.children; },
+    child(c?: Expression) { return c !== undefined ? yield_expression_(c) : children[0]; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);

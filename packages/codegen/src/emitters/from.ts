@@ -355,7 +355,7 @@ export function emitFrom(config: EmitFromConfig): string {
 	out.line(`import type { ${allTypeImports.join(', ')} } from './types.js';`);
 	out.line("import type { KindMap, FromInputMap } from './types.js';");
 	out.line("import type { RuntimeNodeOf } from '@sittir/types';");
-	out.line("import { isNodeData, hasKind, resolveField } from './utils.js';");
+	out.line("import { isNodeData, hasKind } from './utils.js';");
 	out.line();
 
 	// Import factory functions
@@ -524,7 +524,9 @@ function emitLeafDispatch(
 			parts.push(`values: ${JSON.stringify(entry.values)}`);
 		}
 		if (entry.pattern) {
-			parts.push(`pattern: /^${entry.pattern}$/${entry.patternFlags ?? ''}`);
+			// Escape literal newlines/CR so they don't break JS regex literal syntax
+			const escaped = entry.pattern.replace(/\n/g, '\\n').replace(/\r/g, '\\r');
+			parts.push(`pattern: /^${escaped}$/${entry.patternFlags ?? ''}`);
 		}
 		parts.push(`factory: ${entry.isKeyword ? `() => ${entry.factory}()` : entry.factory}`);
 		out.line(`'${entry.kind}': { ${parts.join(', ')} },`);
@@ -593,6 +595,8 @@ function emitResolverFunction(
 	out.line(`function ${name}(v: unknown) {`);
 	out.indent();
 
+	// Undefined passthrough (optional fields)
+	out.line('if (v === undefined) return undefined;');
 	// NodeData passthrough
 	out.line('if (isNodeData(v)) return v;');
 
@@ -796,17 +800,16 @@ function emitHiddenSeqFieldResolver(
 		const resolverCall = getResolverExpression(fieldProj, leafSet, branchNodeSet, supertypeSet, keywordKinds, resolverRegistry, supertypeResolverNames);
 
 		if (field.multiple) {
-			// Coerce to array so resolveField returns T[] (array overload)
 			const toArr = `(Array.isArray(obj.${inputKey}) ? obj.${inputKey} : [obj.${inputKey}]) as unknown[]`;
 			if (field.required) {
-				out.line(`${configKey}: obj.${inputKey} !== undefined ? resolveField(${toArr}, ${resolverCall}) : [],`);
+				out.line(`${configKey}: obj.${inputKey} !== undefined ? (${toArr}).map(${resolverCall}) : [],`);
 			} else {
-				out.line(`${configKey}: obj.${inputKey} !== undefined ? resolveField(${toArr}, ${resolverCall}) : undefined,`);
+				out.line(`${configKey}: obj.${inputKey} !== undefined ? (${toArr}).map(${resolverCall}) : undefined,`);
 			}
 		} else if (field.required) {
-			out.line(`${configKey}: resolveField(obj.${inputKey}, ${resolverCall}),`);
+			out.line(`${configKey}: ${resolverCall}(obj.${inputKey}),`);
 		} else {
-			out.line(`${configKey}: obj.${inputKey} !== undefined ? resolveField(obj.${inputKey}, ${resolverCall}) : undefined,`);
+			out.line(`${configKey}: ${resolverCall}(obj.${inputKey}),`);
 		}
 	}
 
@@ -883,127 +886,165 @@ function emitFromFunction(
 	const fields = fieldsOf(node);
 
 	const exportName = `${camelFactoryName}From`;
-
-	out.line(`export function ${exportName}(input: RuntimeNodeOf<${typeName}> | ${typeName}FromInput) {`);
-	out.indent();
-
-	// --- Path 1: NodeData → reconstruct via factory ---
-	out.line(`if (isNodeData<'${node.kind}'>(input)) {`);
-	out.indent();
-	out.line(`return ${factoryName}({`);
-	out.indent();
-	for (const f of fields) {
-		const camel = f.propertyName ?? toFieldName(f.name);
-		out.line(`${camel}: input.fields?.${f.name},`);
-	}
-	if (node.children != null) {
-		// Check if children are fully covered by fields (if so, the interface has no children prop)
-		const fieldCoveredKinds = new Set<string>();
-		if (node.modelType === 'branch') {
-			for (const f of fields) for (const k of f.kinds) fieldCoveredKinds.add(k.kind);
-		}
-		const slotNames = childSlotNames(node.children, ctx);
-		if (!isTupleChildren(node.children)) {
-			const slot = Array.isArray(node.children) ? node.children[0]! : node.children;
-			const allCovered = node.modelType === 'branch' && slot.kinds.every((k: { kind: string }) => fieldCoveredKinds.has(k.kind));
-			if (!allCovered) {
-				if (slot.multiple) {
-					out.line(`${slotNames[0]!}: input.children,`);
-				} else if (slot.required) {
-					out.line(`${slotNames[0]!}: input.children[0]!,`);
-				} else {
-					out.line(`${slotNames[0]!}: input.children?.[0],`);
-				}
-			}
-		}
-	}
-	out.dedent();
-	out.line(`});`);
-	out.dedent();
-	out.line('}');
-
-	// --- Path 2: FromInput → resolve ---
 	const hasChildren = node.children != null;
-	if (hasChildren) {
-		out.line(`const obj = (Array.isArray(input) ? { children: input } : input) as ${typeName}FromInput;`);
-	} else {
-		out.line(`const obj = input as ${typeName}FromInput;`);
-	}
 
-	// Build the config object with resolved fields
-	// Collect fields covered by shared hidden SEQ resolvers
-	const groups = sharedFieldGroups.get(node.kind) ?? [];
-	const sharedFieldSet = new Set<string>();
-	for (const g of groups) {
-		for (const f of g.fieldNames) sharedFieldSet.add(f);
-	}
-
-	out.line(`return ${factoryName}({`);
-	out.indent();
-
-	// Spread shared hidden SEQ field groups
-	for (const g of groups) {
-		out.line(`...${g.funcName}(obj),`);
-	}
-
-	// Emit remaining fields not covered by shared groups
-	for (const field of fields) {
-		const configKey = field.propertyName ?? toFieldName(field.name); // camelCase for ConfigOf
-		const inputKey = field.name; // snake_case for FromInputOf
-		if (sharedFieldSet.has(configKey)) continue; // Handled by spread
-
-		const fieldProj = projectKinds(field.kinds, ctx);
-		const resolverCall = getResolverExpression(fieldProj, leafSet, branchNodeSet, supertypeSet, keywordKinds, resolverRegistry, supertypeResolverNames);
-
-		if (field.multiple) {
-			// Coerce to array so resolveField returns T[] (array overload)
-			const toArr = `(Array.isArray(obj.${inputKey}) ? obj.${inputKey} : [obj.${inputKey}]) as unknown[]`;
-			if (field.required) {
-				out.line(`${configKey}: obj.${inputKey} !== undefined ? resolveField(${toArr}, ${resolverCall}) : [],`);
-			} else {
-				out.line(`${configKey}: obj.${inputKey} !== undefined ? resolveField(${toArr}, ${resolverCall}) : undefined,`);
-			}
-		} else if (field.required) {
-			out.line(`${configKey}: resolveField(obj.${inputKey}, ${resolverCall}),`);
-		} else {
-			out.line(`${configKey}: obj.${inputKey} !== undefined ? resolveField(obj.${inputKey}, ${resolverCall}) : undefined,`);
+	// Detect children-only: no fields, single non-tuple child slot with projectable types
+	const isChildrenOnly = fields.length === 0 && hasChildren && !isTupleChildren(node.children!);
+	let childrenOnlyInfo: { slot: { kinds: readonly { kind: string }[]; multiple: boolean; required: boolean }; slotName: string; resolver: string } | undefined;
+	if (isChildrenOnly) {
+		const slot = Array.isArray(node.children!) ? node.children![0]! : node.children!;
+		const slotName = childSlotNames(node.children!, ctx)[0]!;
+		const slotProj = projectKinds(slot.kinds, ctx);
+		if (slotProj.collapsedTypes.length > 0) {
+			const resolver = getResolverExpression(slotProj, leafSet, branchNodeSet, supertypeSet, keywordKinds, resolverRegistry, supertypeResolverNames);
+			childrenOnlyInfo = { slot, slotName, resolver };
 		}
 	}
 
-	// Child slots
-	if (hasChildren) {
-		const fieldKeys = new Set(fields.map(f => f.propertyName ?? toFieldName(f.name)));
-		const fromFieldCoveredKinds = new Set<string>();
-		for (const f of fields) for (const k of f.kinds) fromFieldCoveredKinds.add(k.kind);
-		const slotNames = childSlotNames(node.children!, ctx);
-		eachChildSlot(node.children!, (slot, i) => {
-			const propName = slotNames[i]!;
-			if (fieldKeys.has(propName)) return;
-			if (slot.kinds.every(k => fromFieldCoveredKinds.has(k.kind))) return; // covered by fields
-			const slotProj = projectKinds(slot.kinds, ctx);
-			if (slotProj.collapsedTypes.length === 0) return;
-			const slotResolver = getResolverExpression(slotProj, leafSet, branchNodeSet, supertypeSet, keywordKinds, resolverRegistry, supertypeResolverNames);
+	if (childrenOnlyInfo) {
+		// Children-only from function — rest params for multiple, direct param for single
+		const { slot, resolver } = childrenOnlyInfo;
+		if (slot.multiple) {
+			out.line(`export function ${exportName}(input: RuntimeNodeOf<${typeName}>): ReturnType<typeof ${factoryName}>;`);
+			out.line(`export function ${exportName}(...children: ${typeName}FromInput[]): ReturnType<typeof ${factoryName}>;`);
+			out.line(`export function ${exportName}(...args: unknown[]) {`);
+			out.indent();
+			out.line(`if (args.length === 1 && isNodeData(args[0]) && args[0].type === '${node.kind}') {`);
+			out.indent();
+			out.line(`return ${factoryName}(...(args[0] as any).children);`);
+			out.dedent();
+			out.line('}');
+			out.line(`return ${factoryName}(...(args as unknown[]).map(${resolver}) as any[]);`);
+		} else {
+			out.line(`export function ${exportName}(input: RuntimeNodeOf<${typeName}>): ReturnType<typeof ${factoryName}>;`);
+			out.line(`export function ${exportName}(child${slot.required ? '' : '?'}: ${typeName}FromInput): ReturnType<typeof ${factoryName}>;`);
+			out.line(`export function ${exportName}(arg?: unknown) {`);
+			out.indent();
+			out.line(`if (isNodeData(arg) && arg.type === '${node.kind}') {`);
+			out.indent();
+			out.line(`return ${factoryName}((arg as any).children?.[0]);`);
+			out.dedent();
+			out.line('}');
+			out.line(`return ${factoryName}(${resolver}(arg) as any);`);
+		}
+		out.dedent();
+		out.line('}');
+	} else {
+		// Standard from function — config object
+		out.line(`export function ${exportName}(input: RuntimeNodeOf<${typeName}> | ${typeName}FromInput) {`);
+		out.indent();
 
-			if (slot.multiple) {
-				const toArr = `(Array.isArray(obj.${propName}) ? obj.${propName} : [obj.${propName}]) as unknown[]`;
-				if (slot.required) {
-					out.line(`${propName}: obj.${propName} !== undefined ? resolveField(${toArr}, ${slotResolver}) : [],`);
-				} else {
-					out.line(`${propName}: obj.${propName} !== undefined ? resolveField(${toArr}, ${slotResolver}) : undefined,`);
-				}
-			} else if (slot.required) {
-				out.line(`${propName}: resolveField(obj.${propName}, ${slotResolver}),`);
-			} else {
-				out.line(`${propName}: obj.${propName} !== undefined ? resolveField(obj.${propName}, ${slotResolver}) : undefined,`);
+		// --- Path 1: NodeData → reconstruct via factory ---
+		out.line(`if (isNodeData<'${node.kind}'>(input)) {`);
+		out.indent();
+		out.line(`return ${factoryName}({`);
+		out.indent();
+		for (const f of fields) {
+			const camel = f.propertyName ?? toFieldName(f.name);
+			out.line(`${camel}: input.fields?.${f.name},`);
+		}
+		if (hasChildren) {
+			const fieldCoveredKinds = new Set<string>();
+			if (node.modelType === 'branch') {
+				for (const f of fields) for (const k of f.kinds) fieldCoveredKinds.add(k.kind);
 			}
-		});
-	}
+			const slotNames = childSlotNames(node.children!, ctx);
+			if (!isTupleChildren(node.children!)) {
+				const slot = Array.isArray(node.children!) ? node.children![0]! : node.children!;
+				const allCovered = node.modelType === 'branch' && slot.kinds.every((k: { kind: string }) => fieldCoveredKinds.has(k.kind));
+				if (!allCovered) {
+					if (slot.multiple) {
+						out.line(`${slotNames[0]!}: input.children,`);
+					} else if (slot.required) {
+						out.line(`${slotNames[0]!}: input.children[0]!,`);
+					} else {
+						out.line(`${slotNames[0]!}: input.children?.[0],`);
+					}
+				}
+			}
+		}
+		out.dedent();
+		out.line(`});`);
+		out.dedent();
+		out.line('}');
 
-	out.dedent();
-	// as any: anonymous override fields may return NodeData where config expects string
-	out.line(`});`);
-	out.dedent();
-	out.line('}');
+		// --- Path 2: FromInput → resolve ---
+		if (hasChildren) {
+			out.line(`const obj = (Array.isArray(input) ? { children: input } : input) as ${typeName}FromInput;`);
+		} else {
+			out.line(`const obj = input as ${typeName}FromInput;`);
+		}
+
+		// Build the config object with resolved fields
+		const groups = sharedFieldGroups.get(node.kind) ?? [];
+		const sharedFieldSet = new Set<string>();
+		for (const g of groups) {
+			for (const f of g.fieldNames) sharedFieldSet.add(f);
+		}
+
+		out.line(`return ${factoryName}({`);
+		out.indent();
+
+		for (const g of groups) {
+			out.line(`...${g.funcName}(obj),`);
+		}
+
+		for (const field of fields) {
+			const configKey = field.propertyName ?? toFieldName(field.name);
+			const inputKey = field.name;
+			if (sharedFieldSet.has(configKey)) continue;
+
+			const fieldProj = projectKinds(field.kinds, ctx);
+			const resolverCall = getResolverExpression(fieldProj, leafSet, branchNodeSet, supertypeSet, keywordKinds, resolverRegistry, supertypeResolverNames);
+
+			if (field.multiple) {
+				const toArr = `(Array.isArray(obj.${inputKey}) ? obj.${inputKey} : [obj.${inputKey}]) as unknown[]`;
+				if (field.required) {
+					out.line(`${configKey}: obj.${inputKey} !== undefined ? (${toArr}).map(${resolverCall}) : [],`);
+				} else {
+					out.line(`${configKey}: obj.${inputKey} !== undefined ? (${toArr}).map(${resolverCall}) : undefined,`);
+				}
+			} else if (field.required) {
+				out.line(`${configKey}: ${resolverCall}(obj.${inputKey}),`);
+			} else {
+				out.line(`${configKey}: ${resolverCall}(obj.${inputKey}),`);
+			}
+		}
+
+		// Child slots
+		if (hasChildren) {
+			const fieldKeys = new Set(fields.map(f => f.propertyName ?? toFieldName(f.name)));
+			const fromFieldCoveredKinds = new Set<string>();
+			for (const f of fields) for (const k of f.kinds) fromFieldCoveredKinds.add(k.kind);
+			const slotNames = childSlotNames(node.children!, ctx);
+			eachChildSlot(node.children!, (slot, i) => {
+				const propName = slotNames[i]!;
+				if (fieldKeys.has(propName)) return;
+				if (slot.kinds.every(k => fromFieldCoveredKinds.has(k.kind))) return;
+				const slotProj = projectKinds(slot.kinds, ctx);
+				if (slotProj.collapsedTypes.length === 0) return;
+				const slotResolver = getResolverExpression(slotProj, leafSet, branchNodeSet, supertypeSet, keywordKinds, resolverRegistry, supertypeResolverNames);
+
+				if (slot.multiple) {
+					const toArr = `(Array.isArray(obj.${propName}) ? obj.${propName} : [obj.${propName}]) as unknown[]`;
+					if (slot.required) {
+						out.line(`${propName}: obj.${propName} !== undefined ? (${toArr}).map(${slotResolver}) : [],`);
+					} else {
+						out.line(`${propName}: obj.${propName} !== undefined ? (${toArr}).map(${slotResolver}) : undefined,`);
+					}
+				} else if (slot.required) {
+					out.line(`${propName}: ${slotResolver}(obj.${propName}),`);
+				} else {
+					out.line(`${propName}: ${slotResolver}(obj.${propName}),`);
+				}
+			});
+		}
+
+		out.dedent();
+		out.line(`});`);
+		out.dedent();
+		out.line('}');
+	}
 }
 
 // ---------------------------------------------------------------------------
@@ -1077,6 +1118,11 @@ function collectReferencedFactories(
 		for (const k of concreteKinds) {
 			if (leafSet.has(k)) refs.add(toRawFactoryName(k));
 		}
+	}
+
+	// All leaf kinds are referenced by _leafRegistry
+	for (const k of leafSet) {
+		refs.add(toRawFactoryName(k));
 	}
 
 	return refs;

@@ -72,15 +72,14 @@ export function aliased_import_(
 
 
 export function argument_list_(
-  config?: ConfigOf<ArgumentList>,
+  ...children: (DictionarySplat | Expression | KeywordArgument | ListSplat | ParenthesizedExpression)[]
 ) {
-  const children = config?.children ?? [];
   return {
     type: 'argument_list' as const,
     named: true as const,
     children,
     getChildren() { return children; },
-    setChildren(...children: (DictionarySplat | Expression | KeywordArgument | ListSplat | ParenthesizedExpression)[]) { return argument_list_({ ...config, children }); },
+    setChildren(...children: (DictionarySplat | Expression | KeywordArgument | ListSplat | ParenthesizedExpression)[]) { return argument_list_(...children); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -115,15 +114,14 @@ export function as_pattern_(
 
 
 export function assert_statement_(
-  config: ConfigOf<AssertStatement>,
+  ...children: (Expression)[]
 ) {
-  const children = config.children ?? [];
   return {
     type: 'assert_statement' as const,
     named: true as const,
     children,
     getChildren() { return children; },
-    setChildren(...children: (Expression)[]) { return assert_statement_({ ...config, children }); },
+    setChildren(...children: (Expression)[]) { return assert_statement_(...children); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -354,14 +352,14 @@ export function case_clause_(
 
 
 export function case_pattern_(
-  config: ConfigOf<CasePattern>,
+  child: AsPattern | KeywordPattern | SimplePattern,
 ) {
-  const children = config.children ? [config.children] : [];
+  const children = child ? [child] : [];
   return {
     type: 'case_pattern' as const,
     named: true as const,
     children,
-    child(child?: AsPattern | KeywordPattern | SimplePattern) { return child !== undefined ? case_pattern_({ ...config, children: child }) : config?.children; },
+    child(c?: AsPattern | KeywordPattern | SimplePattern) { return c !== undefined ? case_pattern_(c) : children[0]; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -492,15 +490,14 @@ export function complex_pattern_(
 
 
 export function concatenated_string_(
-  config: ConfigOf<ConcatenatedString>,
+  ...children: (String)[]
 ) {
-  const children = config.children ?? [];
   return {
     type: 'concatenated_string' as const,
     named: true as const,
     children,
     getChildren() { return children; },
-    setChildren(...children: (String)[]) { return concatenated_string_({ ...config, children }); },
+    setChildren(...children: (String)[]) { return concatenated_string_(...children); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -631,14 +628,14 @@ export function default_parameter_(
 
 
 export function delete_statement_(
-  config: ConfigOf<DeleteStatement>,
+  child: Expression | ExpressionList,
 ) {
-  const children = config.children ? [config.children] : [];
+  const children = child ? [child] : [];
   return {
     type: 'delete_statement' as const,
     named: true as const,
     children,
-    child(child?: Expression | ExpressionList) { return child !== undefined ? delete_statement_({ ...config, children: child }) : config?.children; },
+    child(c?: Expression | ExpressionList) { return c !== undefined ? delete_statement_(c) : children[0]; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -650,15 +647,14 @@ export function delete_statement_(
 
 
 export function dict_pattern_(
-  config?: ConfigOf<DictPattern>,
+  ...children: (SplatPattern)[]
 ) {
-  const children = config?.children ?? [];
   return {
     type: 'dict_pattern' as const,
     named: true as const,
     children,
     getChildren() { return children; },
-    setChildren(...children: (SplatPattern)[]) { return dict_pattern_({ ...config, children }); },
+    setChildren(...children: (SplatPattern)[]) { return dict_pattern_(...children); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -670,15 +666,14 @@ export function dict_pattern_(
 
 
 export function dictionary_(
-  config?: ConfigOf<Dictionary>,
+  ...children: (DictionarySplat | Pair)[]
 ) {
-  const children = config?.children ?? [];
   return {
     type: 'dictionary' as const,
     named: true as const,
     children,
     getChildren() { return children; },
-    setChildren(...children: (DictionarySplat | Pair)[]) { return dictionary_({ ...config, children }); },
+    setChildren(...children: (DictionarySplat | Pair)[]) { return dictionary_(...children); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -735,14 +730,14 @@ export function dictionary_splat_(
 
 
 export function dictionary_splat_pattern_(
-  config: ConfigOf<DictionarySplatPattern>,
+  child: Attribute | Identifier | Subscript,
 ) {
-  const children = config.children ? [config.children] : [];
+  const children = child ? [child] : [];
   return {
     type: 'dictionary_splat_pattern' as const,
     named: true as const,
     children,
-    child(child?: Attribute | Identifier | Subscript) { return child !== undefined ? dictionary_splat_pattern_({ ...config, children: child }) : config?.children; },
+    child(c?: Attribute | Identifier | Subscript) { return c !== undefined ? dictionary_splat_pattern_(c) : children[0]; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -754,15 +749,14 @@ export function dictionary_splat_pattern_(
 
 
 export function dotted_name_(
-  config: ConfigOf<DottedName>,
+  ...children: (Identifier)[]
 ) {
-  const children = config.children ?? [];
   return {
     type: 'dotted_name' as const,
     named: true as const,
     children,
     getChildren() { return children; },
-    setChildren(...children: (Identifier)[]) { return dotted_name_({ ...config, children }); },
+    setChildren(...children: (Identifier)[]) { return dotted_name_(...children); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -869,15 +863,14 @@ export function exec_statement_(
 
 
 export function expression_list_(
-  config: ConfigOf<ExpressionList>,
+  ...children: (Expression)[]
 ) {
-  const children = config.children ?? [];
   return {
     type: 'expression_list' as const,
     named: true as const,
     children,
     getChildren() { return children; },
-    setChildren(...children: (Expression)[]) { return expression_list_({ ...config, children }); },
+    setChildren(...children: (Expression)[]) { return expression_list_(...children); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -889,15 +882,14 @@ export function expression_list_(
 
 
 export function expression_statement_(
-  config: ConfigOf<ExpressionStatement>,
+  ...children: (Assignment | AugmentedAssignment | Expression | Yield)[]
 ) {
-  const children = config.children ?? [];
   return {
     type: 'expression_statement' as const,
     named: true as const,
     children,
     getChildren() { return children; },
-    setChildren(...children: (Assignment | AugmentedAssignment | Expression | Yield)[]) { return expression_statement_({ ...config, children }); },
+    setChildren(...children: (Assignment | AugmentedAssignment | Expression | Yield)[]) { return expression_statement_(...children); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1007,15 +999,14 @@ export function format_expression_(
 
 
 export function format_specifier_(
-  config?: ConfigOf<FormatSpecifier>,
+  ...children: (FormatExpression)[]
 ) {
-  const children = config?.children ?? [];
   return {
     type: 'format_specifier' as const,
     named: true as const,
     children,
     getChildren() { return children; },
-    setChildren(...children: (FormatExpression)[]) { return format_specifier_({ ...config, children }); },
+    setChildren(...children: (FormatExpression)[]) { return format_specifier_(...children); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1124,15 +1115,14 @@ export function generic_type_(
 
 
 export function global_statement_(
-  config: ConfigOf<GlobalStatement>,
+  ...children: (Identifier)[]
 ) {
-  const children = config.children ?? [];
   return {
     type: 'global_statement' as const,
     named: true as const,
     children,
     getChildren() { return children; },
-    setChildren(...children: (Identifier)[]) { return global_statement_({ ...config, children }); },
+    setChildren(...children: (Identifier)[]) { return global_statement_(...children); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1330,15 +1320,14 @@ export function lambda_(
 
 
 export function lambda_parameters_(
-  config: ConfigOf<LambdaParameters>,
+  ...children: (Parameter)[]
 ) {
-  const children = config.children ?? [];
   return {
     type: 'lambda_parameters' as const,
     named: true as const,
     children,
     getChildren() { return children; },
-    setChildren(...children: (Parameter)[]) { return lambda_parameters_({ ...config, children }); },
+    setChildren(...children: (Parameter)[]) { return lambda_parameters_(...children); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1350,15 +1339,14 @@ export function lambda_parameters_(
 
 
 export function list_(
-  config?: ConfigOf<List>,
+  ...children: (Expression | ListSplat | ParenthesizedListSplat | Yield)[]
 ) {
-  const children = config?.children ?? [];
   return {
     type: 'list' as const,
     named: true as const,
     children,
     getChildren() { return children; },
-    setChildren(...children: (Expression | ListSplat | ParenthesizedListSplat | Yield)[]) { return list_({ ...config, children }); },
+    setChildren(...children: (Expression | ListSplat | ParenthesizedListSplat | Yield)[]) { return list_(...children); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1394,15 +1382,14 @@ export function list_comprehension_(
 
 
 export function list_pattern_(
-  config?: ConfigOf<ListPattern>,
+  ...children: (CasePattern | Pattern)[]
 ) {
-  const children = config?.children ?? [];
   return {
     type: 'list_pattern' as const,
     named: true as const,
     children,
     getChildren() { return children; },
-    setChildren(...children: (CasePattern | Pattern)[]) { return list_pattern_({ ...config, children }); },
+    setChildren(...children: (CasePattern | Pattern)[]) { return list_pattern_(...children); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1435,14 +1422,14 @@ export function list_splat_(
 
 
 export function list_splat_pattern_(
-  config: ConfigOf<ListSplatPattern>,
+  child: Attribute | Identifier | Subscript,
 ) {
-  const children = config.children ? [config.children] : [];
+  const children = child ? [child] : [];
   return {
     type: 'list_splat_pattern' as const,
     named: true as const,
     children,
-    child(child?: Attribute | Identifier | Subscript) { return child !== undefined ? list_splat_pattern_({ ...config, children: child }) : config?.children; },
+    child(c?: Attribute | Identifier | Subscript) { return c !== undefined ? list_splat_pattern_(c) : children[0]; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1500,15 +1487,14 @@ export function member_type_(
 
 
 export function module_(
-  config?: ConfigOf<Module>,
+  ...children: (CompoundStatement | SimpleStatement)[]
 ) {
-  const children = config?.children ?? [];
   return {
     type: 'module' as const,
     named: true as const,
     children,
     getChildren() { return children; },
-    setChildren(...children: (CompoundStatement | SimpleStatement)[]) { return module_({ ...config, children }); },
+    setChildren(...children: (CompoundStatement | SimpleStatement)[]) { return module_(...children); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1543,15 +1529,14 @@ export function named_expression_(
 
 
 export function nonlocal_statement_(
-  config: ConfigOf<NonlocalStatement>,
+  ...children: (Identifier)[]
 ) {
-  const children = config.children ?? [];
   return {
     type: 'nonlocal_statement' as const,
     named: true as const,
     children,
     getChildren() { return children; },
-    setChildren(...children: (Identifier)[]) { return nonlocal_statement_({ ...config, children }); },
+    setChildren(...children: (Identifier)[]) { return nonlocal_statement_(...children); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1607,15 +1592,14 @@ export function pair_(
 
 
 export function parameters_(
-  config?: ConfigOf<Parameters>,
+  ...children: (Parameter)[]
 ) {
-  const children = config?.children ?? [];
   return {
     type: 'parameters' as const,
     named: true as const,
     children,
     getChildren() { return children; },
-    setChildren(...children: (Parameter)[]) { return parameters_({ ...config, children }); },
+    setChildren(...children: (Parameter)[]) { return parameters_(...children); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1627,14 +1611,14 @@ export function parameters_(
 
 
 export function parenthesized_expression_(
-  config: ConfigOf<ParenthesizedExpression>,
+  child: Expression | ListSplat | ParenthesizedExpression | Yield,
 ) {
-  const children = config.children ? [config.children] : [];
+  const children = child ? [child] : [];
   return {
     type: 'parenthesized_expression' as const,
     named: true as const,
     children,
-    child(child?: Expression | ListSplat | ParenthesizedExpression | Yield) { return child !== undefined ? parenthesized_expression_({ ...config, children: child }) : config?.children; },
+    child(c?: Expression | ListSplat | ParenthesizedExpression | Yield) { return c !== undefined ? parenthesized_expression_(c) : children[0]; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1646,14 +1630,14 @@ export function parenthesized_expression_(
 
 
 export function parenthesized_list_splat_(
-  config: ConfigOf<ParenthesizedListSplat>,
+  child: ListSplat | ParenthesizedExpression,
 ) {
-  const children = config.children ? [config.children] : [];
+  const children = child ? [child] : [];
   return {
     type: 'parenthesized_list_splat' as const,
     named: true as const,
     children,
-    child(child?: ListSplat | ParenthesizedExpression) { return child !== undefined ? parenthesized_list_splat_({ ...config, children: child }) : config?.children; },
+    child(c?: ListSplat | ParenthesizedExpression) { return c !== undefined ? parenthesized_list_splat_(c) : children[0]; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1665,15 +1649,14 @@ export function parenthesized_list_splat_(
 
 
 export function pattern_list_(
-  config: ConfigOf<PatternList>,
+  ...children: (Pattern)[]
 ) {
-  const children = config.children ?? [];
   return {
     type: 'pattern_list' as const,
     named: true as const,
     children,
     getChildren() { return children; },
-    setChildren(...children: (Pattern)[]) { return pattern_list_({ ...config, children }); },
+    setChildren(...children: (Pattern)[]) { return pattern_list_(...children); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1755,14 +1738,14 @@ export function relative_import_(
 
 
 export function return_statement_(
-  config?: ConfigOf<ReturnStatement>,
+  child?: Expression | ExpressionList,
 ) {
-  const children = config?.children ? [config?.children] : [];
+  const children = child ? [child] : [];
   return {
     type: 'return_statement' as const,
     named: true as const,
     children,
-    child(child?: Expression | ExpressionList) { return child !== undefined ? return_statement_({ ...config, children: child }) : config?.children; },
+    child(c?: Expression | ExpressionList) { return c !== undefined ? return_statement_(c) : children[0]; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1774,15 +1757,14 @@ export function return_statement_(
 
 
 export function set_(
-  config: ConfigOf<Set>,
+  ...children: (Expression | ListSplat | ParenthesizedListSplat | Yield)[]
 ) {
-  const children = config.children ?? [];
   return {
     type: 'set' as const,
     named: true as const,
     children,
     getChildren() { return children; },
-    setChildren(...children: (Expression | ListSplat | ParenthesizedListSplat | Yield)[]) { return set_({ ...config, children }); },
+    setChildren(...children: (Expression | ListSplat | ParenthesizedListSplat | Yield)[]) { return set_(...children); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1910,15 +1892,14 @@ export function string_(
 
 
 export function string_content_(
-  config: ConfigOf<StringContent>,
+  ...children: (EscapeInterpolation | EscapeSequence)[]
 ) {
-  const children = config.children ?? [];
   return {
     type: 'string_content' as const,
     named: true as const,
     children,
     getChildren() { return children; },
-    setChildren(...children: (EscapeInterpolation | EscapeSequence)[]) { return string_content_({ ...config, children }); },
+    setChildren(...children: (EscapeInterpolation | EscapeSequence)[]) { return string_content_(...children); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1980,15 +1961,14 @@ export function try_statement_(
 
 
 export function tuple_(
-  config?: ConfigOf<Tuple>,
+  ...children: (Expression | ListSplat | ParenthesizedListSplat | Yield)[]
 ) {
-  const children = config?.children ?? [];
   return {
     type: 'tuple' as const,
     named: true as const,
     children,
     getChildren() { return children; },
-    setChildren(...children: (Expression | ListSplat | ParenthesizedListSplat | Yield)[]) { return tuple_({ ...config, children }); },
+    setChildren(...children: (Expression | ListSplat | ParenthesizedListSplat | Yield)[]) { return tuple_(...children); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2000,15 +1980,14 @@ export function tuple_(
 
 
 export function tuple_pattern_(
-  config?: ConfigOf<TuplePattern>,
+  ...children: (CasePattern | Pattern)[]
 ) {
-  const children = config?.children ?? [];
   return {
     type: 'tuple_pattern' as const,
     named: true as const,
     children,
     getChildren() { return children; },
-    setChildren(...children: (CasePattern | Pattern)[]) { return tuple_pattern_({ ...config, children }); },
+    setChildren(...children: (CasePattern | Pattern)[]) { return tuple_pattern_(...children); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2020,14 +1999,14 @@ export function tuple_pattern_(
 
 
 export function type_(
-  config: ConfigOf<Type>,
+  child: ConstrainedType | Expression | GenericType | MemberType | SplatType | UnionType,
 ) {
-  const children = config.children ? [config.children] : [];
+  const children = child ? [child] : [];
   return {
     type: 'type' as const,
     named: true as const,
     children,
-    child(child?: ConstrainedType | Expression | GenericType | MemberType | SplatType | UnionType) { return child !== undefined ? type_({ ...config, children: child }) : config?.children; },
+    child(c?: ConstrainedType | Expression | GenericType | MemberType | SplatType | UnionType) { return c !== undefined ? type_(c) : children[0]; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2062,15 +2041,14 @@ export function type_alias_statement_(
 
 
 export function type_parameter_(
-  config: ConfigOf<TypeParameter>,
+  ...children: (Type)[]
 ) {
-  const children = config.children ?? [];
   return {
     type: 'type_parameter' as const,
     named: true as const,
     children,
     getChildren() { return children; },
-    setChildren(...children: (Type)[]) { return type_parameter_({ ...config, children }); },
+    setChildren(...children: (Type)[]) { return type_parameter_(...children); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2154,15 +2132,14 @@ export function unary_operator_(
 
 
 export function union_pattern_(
-  config?: ConfigOf<UnionPattern>,
+  ...children: (SimplePattern)[]
 ) {
-  const children = config?.children ?? [];
   return {
     type: 'union_pattern' as const,
     named: true as const,
     children,
     getChildren() { return children; },
-    setChildren(...children: (SimplePattern)[]) { return union_pattern_({ ...config, children }); },
+    setChildren(...children: (SimplePattern)[]) { return union_pattern_(...children); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2222,15 +2199,14 @@ export function while_statement_(
 
 
 export function with_clause_(
-  config: ConfigOf<WithClause>,
+  ...children: (WithItem)[]
 ) {
-  const children = config.children ?? [];
   return {
     type: 'with_clause' as const,
     named: true as const,
     children,
     getChildren() { return children; },
-    setChildren(...children: (WithItem)[]) { return with_clause_({ ...config, children }); },
+    setChildren(...children: (WithItem)[]) { return with_clause_(...children); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2286,14 +2262,14 @@ export function with_statement_(
 
 
 export function yield_(
-  config?: ConfigOf<Yield>,
+  child?: Expression | ExpressionList | Expressions,
 ) {
-  const children = config?.children ? [config?.children] : [];
+  const children = child ? [child] : [];
   return {
     type: 'yield' as const,
     named: true as const,
     children,
-    child(child?: Expression | ExpressionList | Expressions) { return child !== undefined ? yield_({ ...config, children: child }) : config?.children; },
+    child(c?: Expression | ExpressionList | Expressions) { return c !== undefined ? yield_(c) : children[0]; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
