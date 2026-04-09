@@ -32,6 +32,17 @@ function buildRenderContext(config: RulesConfig): InternalRenderContext {
 }
 
 // ---------------------------------------------------------------------------
+// Structural tokens — anonymous tokens that templates already provide
+// ---------------------------------------------------------------------------
+
+/** Wrapping delimiters and punctuation that are template-structural. */
+const STRUCTURAL_TOKENS = new Set([
+	'(', ')', '[', ']', '{', '}', '<', '>',
+	';', ':', '::', '.', '..', '...', '..=',
+	'"', "'", '`',
+]);
+
+// ---------------------------------------------------------------------------
 // Template resolution
 // ---------------------------------------------------------------------------
 
@@ -128,13 +139,25 @@ function render(node: AnyNodeData, ctx: InternalRenderContext): string {
 			return renderValue(value as AnyNodeData | string | number, ctx);
 		}
 
-		// 3. $$$CHILDREN — unconsumed named children (anonymous tokens are template-structural)
+		// 3. $$$CHILDREN — unconsumed children, filtering structural anonymous tokens
+		// Anonymous tokens that are joinBy separators or wrapping delimiters are
+		// template-structural — they're already expressed by the template text
+		// and joinBy config. Operator tokens (&&, ||, etc.) are preserved.
 		if ((pfx.length === 3 || pfx === `${prefix}${prefix}${prefix}`) && fieldKey === 'children') {
 			if (!node.children) return '';
-			const remaining = node.children.filter((c, i) =>
-				!consumed.has(i) && (c as AnyNodeData).named !== false
-			);
 			const sep = resolveJoinBy(ruleObj, name);
+			const remaining = node.children.filter((c, i) => {
+				if (consumed.has(i)) return false;
+				const child = c as AnyNodeData;
+				if (child.named !== false) return true;
+				// Keep anonymous tokens that aren't structural
+				const text = child.text ?? '';
+				// Filter joinBy separator tokens
+				if (text === sep || text === sep.trim()) return false;
+				// Filter wrapping delimiters (template already provides them)
+				if (STRUCTURAL_TOKENS.has(text)) return false;
+				return true;
+			});
 			return remaining.map(c => renderValue(c as AnyNodeData | string | number, ctx)).join(sep);
 		}
 
