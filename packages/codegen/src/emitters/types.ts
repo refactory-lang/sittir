@@ -333,18 +333,17 @@ function emitConcreteInterface(
 	lines.push(`export interface ${typeName} {`);
 	lines.push(`  readonly type: '${node.kind}';`);
 
-	// Fields block — use raw grammar field names to match factory config keys
+	// Fields block — raw snake_case grammar field names (matching runtime)
 	if (hasFields) {
 		lines.push('  readonly fields: {');
 		for (const f of fields) {
 			const proj = projectKinds(f.kinds, ctx);
 			const typeExpr = fieldTypeExpr(proj, leafSet);
 			const opt = f.required ? '' : '?';
-			const key = f.propertyName ?? toFieldName(f.name);
 			if (f.multiple) {
-				lines.push(`    readonly ${key}${opt}: readonly (${typeExpr})[];`);
+				lines.push(`    readonly ${f.name}${opt}: readonly (${typeExpr})[];`);
 			} else {
-				lines.push(`    readonly ${key}${opt}: ${typeExpr};`);
+				lines.push(`    readonly ${f.name}${opt}: ${typeExpr};`);
 			}
 		}
 		lines.push('  };');
@@ -352,7 +351,7 @@ function emitConcreteInterface(
 
 	// Hoisted child slots (skip slots already covered by override fields)
 	if (hasChildren) {
-		const fieldKeys = new Set(fields.map(f => f.propertyName ?? toFieldName(f.name)));
+		const fieldKeys = new Set(fields.map(f => f.name));
 		const slotNames = childSlotNames(node.children!, ctx);
 		eachChildSlot(node.children!, (slot, i) => {
 			const name = slotNames[i]!;
@@ -511,7 +510,7 @@ function emitVariantConfigType(
 	const typeName = toTypeName(kind);
 	const fields = node.modelType === 'branch' ? node.fields : [];
 
-	// Map raw field names to property names used in the interface
+	// Map raw field names to ConfigOf property names (CamelCase, since ConfigOf uses CamelCase keys)
 	const rawToProp = new Map<string, string>();
 	for (const f of fields) {
 		rawToProp.set(f.name, f.propertyName ?? toFieldName(f.name));

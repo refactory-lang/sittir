@@ -18,7 +18,6 @@
 
 import type {
 	CamelCase,
-	SnakeCasedProperties,
 	SimplifyDeep,
 } from 'type-fest';
 
@@ -323,7 +322,8 @@ export type FluentSetters<
 	[P in keyof Omit<Fields, Excluded> & string as SetterKey<P>]:
 		NonNullable<Omit<Fields, Excluded>[P]> extends readonly (infer E)[]
 			? (...value: E[] | [E[]]) => Self
-			: (value: NonNullable<Omit<Fields, Excluded>[P]>) => Self;
+			: (value?: NonNullable<Omit<Fields, Excluded>[P]>) =>
+				Omit<Fields, Excluded>[P] | Self;
 };
 
 /**
@@ -343,11 +343,11 @@ export type FluentNode<
 	NodeMethods<N['type']>;
 
 // ---------------------------------------------------------------------------
-// FluentNodeOf<T> — concrete interface + fluent surface
+// RuntimeNodeOf<T> — concrete interface to runtime node transformation
 // ---------------------------------------------------------------------------
 
 /**
- * FluentNodeOf<T> — the runtime shape produced by factory/from functions.
+ * RuntimeNodeOf<T> — the runtime shape produced by factory/from functions.
  *
  * Transforms the concrete interface to match what factories actually produce:
  * - `type` discriminant from T
@@ -359,17 +359,31 @@ export type FluentNode<
  *
  * @example
  * ```ts
- * type FnNode = FluentNodeOf<FunctionItem>;
+ * type FnNode = RuntimeNodeOf<FunctionItem>;
  * // = { type: 'function_item', named: true, fields: { name: ..., body: ... },
  * //     name(v?): ..., body(v?): ..., render(): string, ... }
  * ```
  */
-export type FluentNodeOf<T extends { readonly type: string }> = {
+/**
+ * RuntimeNodeOf<T> — the runtime shape. Since the concrete interface now uses
+ * snake_case field names (matching runtime), this is nearly identity:
+ * just adds `named: true` and converts singular children to arrays.
+ */
+export type RuntimeNodeOf<T> = T extends { readonly type: infer K extends string }
+? Simplify<{
 	readonly type: T['type'];
 	readonly named: true;
-} & (FieldsOf<T> extends Record<string, never> ? {} : { readonly fields: SnakeCasedProperties<FieldsOf<T>> })
+} & (FieldsOf<T> extends Record<string, never> ? {} : { readonly fields: FieldsOf<T> })
   & RuntimeChildSlots<T>
-  & NodeMethods<T['type']>;
+  & NodeMethods<T['type']>> : never;
+
+/**
+ * FluentNodeOf<T> — RuntimeNodeOf + fluent setters (camelCase setter names
+ * derived from snake_case field names via SetterKey/CamelCase).
+ */
+export type FluentNodeOf<T> = T extends { readonly type: string }
+? RuntimeNodeOf<T> & FluentSetters<FieldsOf<T>, never, RuntimeNodeOf<T>> : never;
+
 
 // ---------------------------------------------------------------------------
 // Concrete interface transformations
@@ -393,10 +407,14 @@ type RuntimeChildSlots<T> = {
 };
 
 /**
- * ConfigOf<T> — factory input shape derived from a concrete node interface.
- * Hoists fields to top level and removes `type`. Preserves required/optional.
+ * ConfigOf<T> — factory input shape. CamelCase keys at top level for ergonomics,
+ * field values are the raw interface types (already snake_case internally).
+ * No recursion needed — you pass runtime nodes as field values.
  */
-export type ConfigOf<T> = Simplify<FieldsOf<T> & ChildSlotsOf<T>>;
+export type ConfigOf<T> = Simplify<
+	{ [K in keyof FieldsOf<T> as CamelCase<K & string>]: FieldsOf<T>[K] }
+	& ChildSlotsOf<T>
+>;
 
 /**
  * TreeNodeOf<T> — parsed tree node derived from a concrete node interface.

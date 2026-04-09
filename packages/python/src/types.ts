@@ -281,7 +281,7 @@ export interface AugmentedAssignment {
 export interface Await {
   readonly type: 'await';
   readonly fields: {
-    readonly primaryExpression: PrimaryExpression;
+    readonly primary_expression: PrimaryExpression;
   };
 }
 export interface BinaryOperator {
@@ -338,13 +338,13 @@ export interface ClassDefinition {
     readonly body: Block;
     readonly name: Identifier;
     readonly superclasses?: ArgumentList;
-    readonly typeParameters?: TypeParameter;
+    readonly type_parameters?: TypeParameter;
   };
 }
 export interface ClassPattern {
   readonly type: 'class_pattern';
   readonly fields: {
-    readonly dottedName: DottedName;
+    readonly dotted_name: DottedName;
     readonly arguments?: readonly (CasePattern)[];
   };
 }
@@ -378,7 +378,7 @@ export interface ConditionalExpression {
 export interface ConstrainedType {
   readonly type: 'constrained_type';
   readonly fields: {
-    readonly baseType: Type;
+    readonly base_type: Type;
     readonly constraint: Type;
   };
 }
@@ -499,8 +499,8 @@ export interface FormatExpression {
   readonly type: 'format_expression';
   readonly fields: {
     readonly expression: Expression | ExpressionList | PatternList | Yield;
-    readonly formatSpecifier?: FormatSpecifier;
-    readonly typeConversion?: TypeConversion;
+    readonly format_specifier?: FormatSpecifier;
+    readonly type_conversion?: TypeConversion;
   };
 }
 export interface FormatSpecifier {
@@ -513,8 +513,8 @@ export interface FunctionDefinition {
     readonly body: Block;
     readonly name: Identifier;
     readonly parameters: Parameters;
-    readonly returnType?: Type;
-    readonly typeParameters?: TypeParameter;
+    readonly return_type?: Type;
+    readonly type_parameters?: TypeParameter;
   };
 }
 export interface FutureImportStatement {
@@ -534,7 +534,7 @@ export interface GenericType {
   readonly type: 'generic_type';
   readonly fields: {
     readonly identifier: Identifier;
-    readonly typeParameter: TypeParameter;
+    readonly type_parameter: TypeParameter;
   };
 }
 export interface GlobalStatement {
@@ -558,9 +558,9 @@ export interface IfStatement {
 export interface ImportFromStatement {
   readonly type: 'import_from_statement';
   readonly fields: {
-    readonly moduleName: DottedName | RelativeImport;
+    readonly module_name: DottedName | RelativeImport;
     readonly name?: readonly (AliasedImport | DottedName)[];
-    readonly wildcardImport: WildcardImport;
+    readonly wildcard_import: WildcardImport;
   };
 }
 export interface ImportStatement {
@@ -573,8 +573,8 @@ export interface Interpolation {
   readonly type: 'interpolation';
   readonly fields: {
     readonly expression: Expression | ExpressionList | FExpression | PatternList | Yield;
-    readonly formatSpecifier?: FormatSpecifier;
-    readonly typeConversion?: TypeConversion;
+    readonly format_specifier?: FormatSpecifier;
+    readonly type_conversion?: TypeConversion;
   };
 }
 export interface KeywordArgument {
@@ -588,7 +588,7 @@ export interface KeywordPattern {
   readonly type: 'keyword_pattern';
   readonly fields: {
     readonly identifier: Identifier | SimplePattern;
-    readonly simplePattern: SimplePattern;
+    readonly simple_pattern: SimplePattern;
   };
 }
 export interface Lambda {
@@ -637,7 +637,7 @@ export interface MatchStatement {
 export interface MemberType {
   readonly type: 'member_type';
   readonly fields: {
-    readonly baseType: Type;
+    readonly base_type: Type;
     readonly identifier: Identifier;
   };
 }
@@ -702,8 +702,8 @@ export interface RaiseStatement {
 export interface RelativeImport {
   readonly type: 'relative_import';
   readonly fields: {
-    readonly importPrefix: ImportPrefix;
-    readonly dottedName?: DottedName;
+    readonly import_prefix: ImportPrefix;
+    readonly dotted_name?: DottedName;
   };
 }
 export interface ReturnStatement {
@@ -744,9 +744,9 @@ export interface SplatType {
 export interface String {
   readonly type: 'string';
   readonly fields: {
-    readonly stringStart: StringStart;
+    readonly string_start: StringStart;
     readonly content?: readonly (Interpolation | StringContent)[];
-    readonly stringEnd: StringEnd;
+    readonly string_end: StringEnd;
   };
 }
 export interface StringContent {
@@ -764,9 +764,9 @@ export interface TryStatement {
   readonly type: 'try_statement';
   readonly fields: {
     readonly body: Block;
-    readonly exceptClauses?: readonly (ExceptClause)[];
-    readonly elseClause?: ElseClause;
-    readonly finallyClause?: FinallyClause;
+    readonly except_clauses?: readonly (ExceptClause)[];
+    readonly else_clause?: ElseClause;
+    readonly finally_clause?: FinallyClause;
   };
 }
 export interface Tuple {
@@ -847,7 +847,7 @@ export interface WithStatement {
   readonly type: 'with_statement';
   readonly fields: {
     readonly body: Block;
-    readonly withClause: WithClause;
+    readonly with_clause: WithClause;
   };
 }
 export interface Yield {
