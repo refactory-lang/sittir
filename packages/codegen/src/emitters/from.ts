@@ -52,14 +52,66 @@ function resolverKey(r: ResolvedFieldTypes): string {
 	return `L:${[...r.leafTypes].sort().join(',')};B:${[...r.branchTypes].sort().join(',')};S:${[...r.supertypes].sort().join(',')};A:${[...r.anonTokens].sort().join(',')}`;
 }
 
-/** Create a short deterministic name from a key for the generated function. */
-function resolverName(key: string): string {
-	// Simple hash — djb2
+/** Create a short deterministic name from a key for the generated function (fallback). */
+function resolverNameHash(key: string): string {
 	let hash = 5381;
 	for (let i = 0; i < key.length; i++) {
 		hash = ((hash << 5) + hash + key.charCodeAt(i)) | 0;
 	}
 	return `_r${(hash >>> 0).toString(36)}`;
+}
+
+/**
+ * Derive a readable resolver name from its type-set.
+ *
+ * Priority:
+ * 1. Find a supertype/hidden rule whose concrete types are a superset → use its name
+ * 2. If all types are from a single supertype → use that supertype name with suffix
+ * 3. Fall back to hash
+ */
+function deriveResolverName(
+	resolved: ResolvedFieldTypes,
+	expandedSupertypes: ReadonlyMap<string, Set<string>>,
+	usedNames: Set<string>,
+): string {
+	const allConcreteTypes = new Set([...resolved.leafTypes, ...resolved.branchTypes]);
+
+	// Try to find the smallest supertype that covers all concrete types
+	let bestMatch: { name: string; size: number } | null = null;
+	for (const [stKind, concreteKinds] of expandedSupertypes) {
+		// Check if this supertype covers all our types
+		let coversAll = true;
+		for (const t of allConcreteTypes) {
+			if (!concreteKinds.has(t)) { coversAll = false; break; }
+		}
+		if (coversAll && (!bestMatch || concreteKinds.size < bestMatch.size)) {
+			bestMatch = { name: stKind, size: concreteKinds.size };
+		}
+	}
+
+	if (bestMatch) {
+		const baseName = `_resolve${toTypeName(bestMatch.name)}`;
+		// Exact match → use base name (may already exist from Phase 1)
+		if (bestMatch.size === allConcreteTypes.size && !usedNames.has(baseName)) {
+			return baseName;
+		}
+		// Subset → add disambiguating suffix
+		let candidate = baseName;
+		let suffix = 2;
+		while (usedNames.has(candidate)) {
+			candidate = `${baseName}${suffix++}`;
+		}
+		return candidate;
+	}
+
+	// No supertype match — fall back to hash with collision avoidance
+	const key = `L:${[...resolved.leafTypes].sort().join(',')};B:${[...resolved.branchTypes].sort().join(',')}`;
+	let candidate = resolverNameHash(key);
+	let suffix = 2;
+	while (usedNames.has(candidate)) {
+		candidate = `${resolverNameHash(key)}${suffix++}`;
+	}
+	return candidate;
 }
 
 /**
@@ -218,6 +270,11 @@ export function emitFrom(config: EmitFromConfig): string {
 	}
 
 	// --- Phase 2: Collect remaining unique resolver signatures from fields ---
+	// Track used names to avoid duplicates
+	const usedResolverNames = new Set<string>(
+		[...resolverRegistry.values()].map(r => r.name)
+	);
+
 	function getOrCreateResolver(proj: KindProjection): { name: string; resolved: ResolvedFieldTypes; key: string } {
 		const resolved = resolveFieldTypes(proj, leafSet, branchNodeSet, supertypeSet);
 		const key = resolverKey(resolved);
@@ -226,7 +283,9 @@ export function emitFrom(config: EmitFromConfig): string {
 			const totalNonAnon = resolved.leafTypes.length + resolved.branchTypes.length + resolved.supertypes.length;
 			const isSimple = totalNonAnon === 1 && resolved.anonTokens.length === 0;
 			if (!isSimple) {
-				resolverRegistry.set(key, { name: resolverName(key), resolved });
+				const name = deriveResolverName(resolved, ctx.expandedSupertypes, usedResolverNames);
+				usedResolverNames.add(name);
+				resolverRegistry.set(key, { name, resolved });
 			}
 		}
 
@@ -331,6 +390,13 @@ export function emitFrom(config: EmitFromConfig): string {
 
 	// --- Collect referenced resolver names ---
 	const referencedResolvers = new Set<string>();
+
+	// Supertype resolvers are referenced by name from getResolverExpression
+	// (single-supertype fields delegate to them) — always include them
+	for (const name of supertypeResolverNames.values()) {
+		referencedResolvers.add(name);
+	}
+
 	for (const node of nodes) {
 		const fields = fieldsOf(node);
 		for (const field of fields) {
@@ -815,7 +881,7 @@ function getResolverExpression(
 	}
 
 	// Shouldn't happen — complex cases always get a named resolver
-	return resolverName(key);
+	return resolverNameHash(key);
 }
 
 // ---------------------------------------------------------------------------
