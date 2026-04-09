@@ -303,12 +303,6 @@
         "multiple": false,
         "required": false,
         "position": 1
-      },
-      "semicolon_inner": {
-        "types": [],
-        "multiple": false,
-        "required": false,
-        "position": 2
       }
     }
   },

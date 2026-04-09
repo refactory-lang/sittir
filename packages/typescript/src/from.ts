@@ -2447,7 +2447,6 @@ export function exportStatementFrom(input: ExportStatement | ExportStatementFrom
       decorator: input.fields?.['decorator'],
       source: input.fields?.['source'],
       value: input.fields?.['value'],
-      semicolonInner: input.fields?.['semicolon_inner'],
       children: (input as { children?: unknown }).children,
     } as ExportStatementConfig) as unknown as ExportStatement;
   }
@@ -2457,7 +2456,6 @@ export function exportStatementFrom(input: ExportStatement | ExportStatementFrom
     declaration: obj['declaration'] !== undefined ? resolveField(obj['declaration'], _r1i4ii9p) : undefined,
     decorator: obj['decorator'] !== undefined ? resolveField(obj['decorator'], (v: unknown) => (typeof v === 'object' && v !== null ? decoratorFrom(v) : v)) : undefined,
     value: obj['value'] !== undefined ? resolveField(obj['value'], _resolveExpression) : undefined,
-    semicolonInner: obj['semicolonInner'] !== undefined ? resolveField(obj['semicolonInner'], _rd4g2sg) : undefined,
     children: obj['children'] !== undefined ? resolveField(obj['children'], _r15z1pjf) : undefined,
   } as ExportStatementConfig) as unknown as ExportStatement;
 }

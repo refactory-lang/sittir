@@ -11,6 +11,7 @@
 
 import { loadRawEntries, type RawNodeEntry } from './grammar-reader.ts';
 import { loadOverrides, type OverridesConfig } from './overrides.ts';
+import { loadGrammar } from './grammar.ts';
 import { parse as parseYaml } from 'yaml';
 import type { RulesConfig, TemplateRule, TemplateRuleObject } from '@sittir/types';
 
@@ -117,12 +118,15 @@ export function validateTemplates(grammar: string, templatesYaml: string): Valid
 	const config = parseYaml(templatesYaml) as RulesConfig;
 	const rawEntries = loadRawEntries(grammar);
 	const overrides = loadOverrides(grammar);
+	const grammarRules = loadGrammar(grammar);
 
 	// Build lookup maps
 	const nodeTypeMap = new Map<string, RawNodeEntry>();
 	for (const entry of rawEntries) {
 		if (entry.named) nodeTypeMap.set(entry.type, entry);
 	}
+	// Grammar rule names (includes hidden rules not in node-types.json)
+	const grammarRuleNames = new Set(Object.keys(grammarRules.rules));
 
 	const errors: ValidationError[] = [];
 	const warnings: ValidationWarning[] = [];
@@ -275,11 +279,16 @@ export function validateTemplates(grammar: string, templatesYaml: string): Valid
 			}
 
 			// Type existence (named types only)
+			// Accept if type is: (1) in children directly, (2) a named entry in node-types.json,
+			// or (3) a grammar rule name (covers hidden rules like _statement not in node-types.json)
 			for (const t of spec.types) {
 				if (t.named && nodeChildren) {
 					const childTypes = nodeChildren.types ?? [];
-					if (!childTypes.some((c: { type: string }) => c.type === t.type)) {
-						warnings.push({ check: 'override-consistency', kind, message: `override type '${t.type}' not in node-types.json children` });
+					const inChildren = childTypes.some((c: { type: string }) => c.type === t.type);
+					const inNodeTypes = nodeTypeMap.has(t.type);
+					const inGrammar = grammarRuleNames.has(t.type);
+					if (!inChildren && !inNodeTypes && !inGrammar) {
+						warnings.push({ check: 'override-consistency', kind, message: `override type '${t.type}' not found in grammar` });
 					}
 				}
 			}
