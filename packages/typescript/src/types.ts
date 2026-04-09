@@ -611,7 +611,6 @@ export interface ExportStatement {
     readonly source?: String;
     readonly value?: Expression;
   };
-  readonly children?: ExportClause | Expression | Identifier | NamespaceExport;
 }
 export interface ExpressionStatement {
   readonly type: 'expression_statement';

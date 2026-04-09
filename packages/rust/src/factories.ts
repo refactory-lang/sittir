@@ -3111,14 +3111,13 @@ export function use_wildcard_(
   const fields = {
     path: config?.path,
   };
-  const children = config?.children ? [config?.children] : [];
+  const children: unknown[] = [];
   return {
     type: 'use_wildcard' as const,
     named: true as const,
     fields,
     children,
     path(path?: Path) { return path !== undefined ? use_wildcard_({ ...config, path: path }) : fields.path; },
-    child(child?: Path) { return child !== undefined ? use_wildcard_({ ...config, children: child }) : config?.children; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);

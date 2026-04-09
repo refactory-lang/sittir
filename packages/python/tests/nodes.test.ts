@@ -812,22 +812,22 @@ describe('expression_statement', () => {
 
 describe('finally_clause', () => {
   it('factory produces NodeData with kind', () => {
-    const node = ir.finallyClause({ block: ir.block() as any, children: ir.block() as any });
+    const node = ir.finallyClause({ block: ir.block() as any });
     expect(node.type).toBe('finally_clause');
   });
   it('renders to non-empty string', () => {
-    const node = ir.finallyClause({ block: ir.block() as any, children: ir.block() as any });
+    const node = ir.finallyClause({ block: ir.block() as any });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
   it('contains required tokens', () => {
-    const node = ir.finallyClause({ block: ir.block() as any, children: ir.block() as any });
+    const node = ir.finallyClause({ block: ir.block() as any });
     const source = render(node);
     expect(source).toContain('finally');
     expect(source).toContain(':');
   });
   it('node.render() works', () => {
-    const node = ir.finallyClause({ block: ir.block() as any, children: ir.block() as any });
+    const node = ir.finallyClause({ block: ir.block() as any });
     expect(typeof node.render).toBe('function');
     expect(node.render()).toBe(render(node));
   });
@@ -1918,7 +1918,7 @@ describe('try_statement', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.tryStatement({ body: ir.block() as any, exceptClauses: [], elseClause: ir.elseClause({ body: ir.block() as any }) as any, finallyClause: ir.finallyClause({ block: ir.block() as any, children: ir.block() as any }) as any });
+    const node = ir.tryStatement({ body: ir.block() as any, exceptClauses: [], elseClause: ir.elseClause({ body: ir.block() as any }) as any, finallyClause: ir.finallyClause({ block: ir.block() as any }) as any });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });

@@ -477,7 +477,6 @@ export interface FinallyClause {
   readonly fields: {
     readonly block: Block;
   };
-  readonly children: Block;
 }
 export interface ForInClause {
   readonly type: 'for_in_clause';

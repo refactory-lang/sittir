@@ -197,11 +197,15 @@ function minimalArgs(node: StructuralNode, dc: DummyCtx): string {
 		});
 	}
 
-	// Skip children whose names overlap with field property names (override-promoted fields)
+	// Skip children whose names overlap with field property names OR whose kinds are covered by fields
 	const fieldKeys = new Set(requiredFields.map(f => f.propertyName ?? toFieldName(f.name)));
+	const testFieldCoveredKinds = new Set<string>();
+	for (const f of requiredFields) for (const k of f.kinds) testFieldCoveredKinds.add(k.kind);
 	const allRequired = [
 		...requiredFields.map(f => ({ key: f.propertyName ?? toFieldName(f.name), field: f })),
-		...requiredChildren.filter(c => !fieldKeys.has(c.name)).map(c => ({ key: c.name, field: c })),
+		...requiredChildren
+			.filter(c => !fieldKeys.has(c.name) && !c.kinds.every((k: { kind: string }) => testFieldCoveredKinds.has(k.kind)))
+			.map(c => ({ key: c.name, field: c })),
 	];
 
 	if (allRequired.length === 0) return '';

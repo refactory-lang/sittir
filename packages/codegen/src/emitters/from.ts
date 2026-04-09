@@ -131,10 +131,15 @@ function resolverReturnType(resolved: ResolvedFieldTypes, supertypeKind?: string
 		const cleanName = kind.replace(/^_/, '');
 		members.push(toTypeName(cleanName));
 	}
-	for (const token of resolved.anonTokens) {
-		members.push(`'${escapeString(token)}'`);
+	// Include anonymous tokens only when the resolver handles ONLY anon tokens
+	// (no leaf/branch/supertype). Mixed resolvers return node types — string
+	// literals would widen the union incompatibly.
+	if (members.length === 0) {
+		for (const token of resolved.anonTokens) {
+			members.push(`'${escapeString(token)}'`);
+		}
 	}
-	if (members.length === 0) return 'unknown';
+	if (members.length === 0) return 'string'; // empty types = text-only field
 	return members.join(' | ');
 }
 
@@ -795,7 +800,7 @@ function emitFromFunction(
 		}
 	}
 	out.dedent();
-	out.line(`} as any);`);
+	out.line(`});`);
 	out.dedent();
 	out.line('}');
 
@@ -850,10 +855,13 @@ function emitFromFunction(
 	// Child slots
 	if (hasChildren) {
 		const fieldKeys = new Set(fields.map(f => f.propertyName ?? toFieldName(f.name)));
+		const fromFieldCoveredKinds = new Set<string>();
+		for (const f of fields) for (const k of f.kinds) fromFieldCoveredKinds.add(k.kind);
 		const slotNames = childSlotNames(node.children!, ctx);
 		eachChildSlot(node.children!, (slot, i) => {
 			const propName = slotNames[i]!;
 			if (fieldKeys.has(propName)) return;
+			if (slot.kinds.every(k => fromFieldCoveredKinds.has(k.kind))) return; // covered by fields
 			const slotProj = projectKinds(slot.kinds, ctx);
 			if (slotProj.collapsedTypes.length === 0) return;
 			const slotResolver = getResolverExpression(slotProj, leafSet, branchNodeSet, supertypeSet, keywordKinds, resolverRegistry, supertypeResolverNames);
@@ -875,7 +883,7 @@ function emitFromFunction(
 
 	out.dedent();
 	// as any: anonymous override fields may return NodeData where config expects string
-	out.line(`} as any);`);
+	out.line(`});`);
 	out.dedent();
 	out.line('}');
 }

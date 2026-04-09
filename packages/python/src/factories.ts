@@ -914,14 +914,13 @@ export function finally_clause_(
   const fields = {
     block: config.block,
   };
-  const children = config.children ? [config.children] : [];
+  const children: unknown[] = [];
   return {
     type: 'finally_clause' as const,
     named: true as const,
     fields,
     children,
     block(block?: Block) { return block !== undefined ? finally_clause_({ ...config, block: block }) : fields.block; },
-    child(child?: Block) { return child !== undefined ? finally_clause_({ ...config, children: child }) : config?.children; },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);

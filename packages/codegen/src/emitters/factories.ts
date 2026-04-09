@@ -74,10 +74,16 @@ export function emitFactory(config: {
 		const slotNames = childSlotNames(node.children!, ctx);
 		const isTuple = isTupleChildren(node.children!);
 		if (!isTuple) {
-			if (!skipSlots.has(0)) {
-				// Single child slot — direct assignment, no spread
+			// Check if children kinds are fully covered by fields
+			const fieldCoveredKinds = new Set<string>();
+			for (const f of fieldsOf(node)) for (const k of f.kinds) fieldCoveredKinds.add(k.kind);
+			const slot = Array.isArray(node.children!) ? node.children![0]! : node.children!;
+			const allCovered = slot.kinds.every((k: { kind: string }) => fieldCoveredKinds.has(k.kind));
+
+			if (allCovered) {
+				lines.push(`  const children: unknown[] = [];`);
+			} else if (!skipSlots.has(0)) {
 				const name = slotNames[0]!;
-				const slot = Array.isArray(node.children!) ? node.children![0]! : node.children!;
 				if (slot.multiple) {
 					lines.push(`  const children = config${opt}.${name} ?? [];`);
 				} else {
@@ -133,10 +139,13 @@ export function emitFactory(config: {
 			return camel === 'type' ? 'typeField' : camel;
 		}));
 		const slotNames = childSlotNames(node.children!, ctx);
+		const factoryFieldCoveredKinds = new Set<string>();
+		for (const f of fieldsOf(node)) for (const k of f.kinds) factoryFieldCoveredKinds.add(k.kind);
 		eachChildSlot(node.children!, (slot, i) => {
 			const name = slotNames[i]!;
 			if (fieldMethodNames.has(name)) return; // already emitted as field getter
 			if (skipSlots.has(i)) return; // hidden rule without a model — no type to emit
+			if (slot.kinds.every(k => factoryFieldCoveredKinds.has(k.kind))) return; // covered by fields
 			const slotProj = projectKinds(slot.kinds, ctx);
 			const slotType = slotProj.collapsedTypes.join(' | ');
 			if (name === 'children') {

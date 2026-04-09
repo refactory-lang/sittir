@@ -352,10 +352,14 @@ function emitConcreteInterface(
 	// Hoisted child slots (skip slots already covered by override fields)
 	if (hasChildren) {
 		const fieldKeys = new Set(fields.map(f => f.name));
+		const fieldCoveredKinds = new Set<string>();
+		for (const f of fields) for (const k of f.kinds) fieldCoveredKinds.add(k.kind);
 		const slotNames = childSlotNames(node.children!, ctx);
 		eachChildSlot(node.children!, (slot, i) => {
 			const name = slotNames[i]!;
 			if (fieldKeys.has(name)) return; // already emitted as field
+			// Skip if all children kinds are covered by fields (override promoted)
+			if (slot.kinds.every(k => fieldCoveredKinds.has(k.kind))) return;
 			const slotProj = projectKinds(slot.kinds, ctx);
 			const slotType = slotProj.collapsedTypes.join(' | ');
 			if (slotType === '') return; // skip empty projections

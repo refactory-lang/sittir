@@ -1201,7 +1201,6 @@ export interface UseWildcard {
   readonly fields: {
     readonly path?: Path;
   };
-  readonly children?: Path;
 }
 export interface VariadicParameter {
   readonly type: 'variadic_parameter';
