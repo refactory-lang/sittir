@@ -8,6 +8,7 @@
  */
 
 import { mkdirSync, writeFileSync } from 'node:fs';
+import { validateTemplates, formatValidationReport } from './validate-templates.ts';
 import { join, dirname } from 'node:path';
 import { generate } from './index.ts';
 import type { CodegenConfig } from './index.ts';
@@ -123,6 +124,15 @@ writeFile(join(outDir, 'type-test.ts'), result.typeTests);
 
 // Write vitest config
 writeFile(join(dirname(outDir), 'vitest.config.ts'), result.config);
+
+// --- Post-generation validation ---
+const validation = validateTemplates(config.grammar, result.templatesYaml);
+console.log('');
+console.log(formatValidationReport(validation));
+
+if (validation.errors.length > 0) {
+	console.error(`\n${validation.errors.length} validation error(s) — see above.`);
+}
 
 console.log(`
 Done! Generated:
