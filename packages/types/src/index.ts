@@ -342,6 +342,26 @@ export type FluentNode<
 	NodeMethods<N['type']>;
 
 // ---------------------------------------------------------------------------
+// FluentNodeOf<T> — concrete interface + fluent surface
+// ---------------------------------------------------------------------------
+
+/**
+ * FluentNodeOf<T> — adds fluent getters/setters and render/edit methods
+ * to a concrete node interface. Derived entirely from T.
+ *
+ * For branch nodes (have `fields`): setters derived from FieldsOf<T>.
+ * For all nodes: render(), toEdit(), replace() methods.
+ *
+ * @example
+ * ```ts
+ * type FnNode = FluentNodeOf<FunctionItem>;
+ * // = FunctionItem & { name(v?): ..., body(v?): ..., render(): string, ... }
+ * ```
+ */
+export type FluentNodeOf<T extends { readonly type: string }> =
+	T & FluentSetters<FieldsOf<T>, never, T & FluentSetters<FieldsOf<T>> & NodeMethods<T['type']>> & NodeMethods<T['type']>;
+
+// ---------------------------------------------------------------------------
 // Concrete interface transformations
 // ---------------------------------------------------------------------------
 
@@ -355,7 +375,7 @@ type ChildSlotsOf<T> = Omit<T, 'type' | 'fields' | 'text'>;
  * ConfigOf<T> — factory input shape derived from a concrete node interface.
  * Hoists fields to top level and removes `type`. Preserves required/optional.
  */
-export type ConfigOf<T> = FieldsOf<T> & ChildSlotsOf<T>;
+export type ConfigOf<T> = Simplify<FieldsOf<T> & ChildSlotsOf<T>>;
 
 /**
  * TreeNodeOf<T> — parsed tree node derived from a concrete node interface.
@@ -392,7 +412,7 @@ export type TreeNodeOf<T> = T extends { readonly type: infer K extends string }
  * @param Scalars - Map of leaf kind → scalar type (e.g. `{ integer_literal: number }`)
  * @param Depth - Internal recursion counter — stops expanding at depth 3
  */
-export type FromInputOf<T, Scalars = {}, Depth extends number[] = []> =
+export type FromInputOf<T, Scalars = {}, Depth extends number[] = []> = Simplify<
 	Depth['length'] extends 3 ? T
 	: {
 		readonly [K in keyof FieldsOf<T> as K extends RequiredKeys<FieldsOf<T>> ? K : never]:
@@ -403,7 +423,7 @@ export type FromInputOf<T, Scalars = {}, Depth extends number[] = []> =
 	} & {
 		readonly [K in keyof ChildSlotsOf<T>]?:
 			WidenChildSlot<ChildSlotsOf<T>[K], Scalars, [...Depth, 0]>;
-	};
+	}>;
 
 /** Keys of T that are required (not optional). */
 type RequiredKeys<T> = { [K in keyof T]-?: {} extends Pick<T, K> ? never : K }[keyof T];
@@ -446,4 +466,3 @@ type WidenChildSlot<T, Scalars = {}, Depth extends number[] = []> =
 	T extends readonly (infer E)[]
 		? WidenValue<E, Scalars, Depth>[] | WidenValue<E, Scalars, Depth>
 		: WidenValue<T, Scalars, Depth>;
-
