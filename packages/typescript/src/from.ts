@@ -2453,7 +2453,7 @@ function _resolveTypeIdentifier19(v: unknown) {
 /** Shared field resolver for hidden rule `_from_clause` (used by 2 nodes). */
 function _resolveFromClauseFields(
   obj: Record<string, unknown>,
-): Record<string, unknown> {
+): { source?: KindMap['string'] } {
   return {
     source: obj.source !== undefined ? resolveField(obj.source, _resolveModuleExportName3) : undefined,
   };
@@ -2462,7 +2462,7 @@ function _resolveFromClauseFields(
 /** Shared field resolver for hidden rule `_call_signature` (used by 10 nodes). */
 function _resolveCallSignatureFields(
   obj: Record<string, unknown>,
-): Record<string, unknown> {
+): { parameters: KindMap['formal_parameters']; returnType?: KindMap['asserts_annotation'] | KindMap['type_annotation'] | KindMap['type_predicate_annotation']; typeParameters?: KindMap['type_parameters'] } {
   return {
     parameters: resolveField(obj.parameters, _r1400tna),
     returnType: obj.return_type !== undefined ? resolveField(obj.return_type, _r15nsthd) : undefined,
@@ -2473,7 +2473,7 @@ function _resolveCallSignatureFields(
 /** Shared field resolver for hidden rule `_initializer` (used by 5 nodes). */
 function _resolveInitializerFields(
   obj: Record<string, unknown>,
-): Record<string, unknown> {
+): { value: Expression } {
   return {
     value: resolveField(obj.value, _resolveTypeIdentifier6),
   };
@@ -2482,7 +2482,7 @@ function _resolveInitializerFields(
 /** Shared field resolver for hidden rule `_parameter_name` (used by 2 nodes). */
 function _resolveParameterNameFields(
   obj: Record<string, unknown>,
-): Record<string, unknown> {
+): { decorator?: (KindMap['decorator'])[]; pattern?: KindMap['this'] | Pattern } {
   return {
     decorator: obj.decorator !== undefined ? resolveField((Array.isArray(obj.decorator) ? obj.decorator : [obj.decorator]) as unknown[], _r1fl8679) : undefined,
     pattern: obj.pattern !== undefined ? resolveField(obj.pattern, _resolvePrimaryExpression4) : undefined,
@@ -2538,7 +2538,7 @@ export function addingTypeAnnotationFrom(input: RuntimeNodeOf<AddingTypeAnnotati
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as AddingTypeAnnotationFromInput;
   return adding_type_annotation_({
-    children: obj.children !== undefined ? resolveField(obj.children, _resolveTypeIdentifier4) : undefined,
+    children: resolveField(obj.children, _resolveTypeIdentifier4),
   } as any);
 }
 
@@ -2646,7 +2646,7 @@ export function assertsFrom(input: RuntimeNodeOf<Asserts> | AssertsFromInput) {
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as AssertsFromInput;
   return asserts_({
-    children: obj.children !== undefined ? resolveField(obj.children, _rc0mhwb) : undefined,
+    children: resolveField(obj.children, _rc0mhwb),
   } as any);
 }
 
@@ -2912,7 +2912,7 @@ export function constraintFrom(input: RuntimeNodeOf<Constraint> | ConstraintFrom
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as ConstraintFromInput;
   return constraint_({
-    children: obj.children !== undefined ? resolveField(obj.children, _resolveTypeIdentifier4) : undefined,
+    children: resolveField(obj.children, _resolveTypeIdentifier4),
   } as any);
 }
 
@@ -2968,7 +2968,7 @@ export function decoratorFrom(input: RuntimeNodeOf<Decorator> | DecoratorFromInp
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as DecoratorFromInput;
   return decorator_({
-    children: obj.children !== undefined ? resolveField(obj.children, _resolvePrimaryExpression2) : undefined,
+    children: resolveField(obj.children, _resolvePrimaryExpression2),
   } as any);
 }
 
@@ -2980,7 +2980,7 @@ export function defaultTypeFrom(input: RuntimeNodeOf<DefaultType> | DefaultTypeF
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as DefaultTypeFromInput;
   return default_type_({
-    children: obj.children !== undefined ? resolveField(obj.children, _resolveTypeIdentifier4) : undefined,
+    children: resolveField(obj.children, _resolveTypeIdentifier4),
   } as any);
 }
 
@@ -3108,7 +3108,7 @@ export function expressionStatementFrom(input: RuntimeNodeOf<ExpressionStatement
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as ExpressionStatementFromInput;
   return expression_statement_({
-    children: obj.children !== undefined ? resolveField(obj.children, _resolveExpressions2) : undefined,
+    children: resolveField(obj.children, _resolveExpressions2),
   } as any);
 }
 
@@ -3608,7 +3608,7 @@ export function literalTypeFrom(input: RuntimeNodeOf<LiteralType> | LiteralTypeF
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as LiteralTypeFromInput;
   return literal_type_({
-    children: obj.children !== undefined ? resolveField(obj.children, _resolveExpression2) : undefined,
+    children: resolveField(obj.children, _resolveExpression2),
   } as any);
 }
 
@@ -3736,7 +3736,7 @@ export function namespaceExportFrom(input: RuntimeNodeOf<NamespaceExport> | Name
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as NamespaceExportFromInput;
   return namespace_export_({
-    children: obj.children !== undefined ? resolveField(obj.children, _resolveModuleExportName) : undefined,
+    children: resolveField(obj.children, _resolveModuleExportName),
   } as any);
 }
 
@@ -3870,7 +3870,7 @@ export function omittingTypeAnnotationFrom(input: RuntimeNodeOf<OmittingTypeAnno
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as OmittingTypeAnnotationFromInput;
   return omitting_type_annotation_({
-    children: obj.children !== undefined ? resolveField(obj.children, _resolveTypeIdentifier4) : undefined,
+    children: resolveField(obj.children, _resolveTypeIdentifier4),
   } as any);
 }
 
@@ -3882,7 +3882,7 @@ export function optingTypeAnnotationFrom(input: RuntimeNodeOf<OptingTypeAnnotati
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as OptingTypeAnnotationFromInput;
   return opting_type_annotation_({
-    children: obj.children !== undefined ? resolveField(obj.children, _resolveTypeIdentifier4) : undefined,
+    children: resolveField(obj.children, _resolveTypeIdentifier4),
   } as any);
 }
 
@@ -3917,7 +3917,7 @@ export function optionalTypeFrom(input: RuntimeNodeOf<OptionalType> | OptionalTy
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as OptionalTypeFromInput;
   return optional_type_({
-    children: obj.children !== undefined ? resolveField(obj.children, _resolveTypeIdentifier4) : undefined,
+    children: resolveField(obj.children, _resolveTypeIdentifier4),
   } as any);
 }
 
@@ -3959,7 +3959,7 @@ export function parenthesizedExpressionFrom(input: RuntimeNodeOf<ParenthesizedEx
   const obj = (Array.isArray(input) ? { children: input } : input) as ParenthesizedExpressionFromInput;
   return parenthesized_expression_({
     type: obj.type !== undefined ? resolveField(obj.type, _r1s2j1z2) : undefined,
-    children: obj.children !== undefined ? resolveField(obj.children, _resolveExpressions4) : undefined,
+    children: resolveField(obj.children, _resolveExpressions4),
   } as any);
 }
 
@@ -3971,7 +3971,7 @@ export function parenthesizedTypeFrom(input: RuntimeNodeOf<ParenthesizedType> | 
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as ParenthesizedTypeFromInput;
   return parenthesized_type_({
-    children: obj.children !== undefined ? resolveField(obj.children, _resolveTypeIdentifier4) : undefined,
+    children: resolveField(obj.children, _resolveTypeIdentifier4),
   } as any);
 }
 
@@ -4039,7 +4039,7 @@ export function readonlyTypeFrom(input: RuntimeNodeOf<ReadonlyType> | ReadonlyTy
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as ReadonlyTypeFromInput;
   return readonly_type_({
-    children: obj.children !== undefined ? resolveField(obj.children, _resolveTypeIdentifier4) : undefined,
+    children: resolveField(obj.children, _resolveTypeIdentifier4),
   } as any);
 }
 
@@ -4088,7 +4088,7 @@ export function restPatternFrom(input: RuntimeNodeOf<RestPattern> | RestPatternF
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as RestPatternFromInput;
   return rest_pattern_({
-    children: obj.children !== undefined ? resolveField(obj.children, _resolveLhsExpression) : undefined,
+    children: resolveField(obj.children, _resolveLhsExpression),
   } as any);
 }
 
@@ -4100,7 +4100,7 @@ export function restTypeFrom(input: RuntimeNodeOf<RestType> | RestTypeFromInput)
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as RestTypeFromInput;
   return rest_type_({
-    children: obj.children !== undefined ? resolveField(obj.children, _resolveTypeIdentifier4) : undefined,
+    children: resolveField(obj.children, _resolveTypeIdentifier4),
   } as any);
 }
 
@@ -4280,7 +4280,7 @@ export function templateSubstitutionFrom(input: RuntimeNodeOf<TemplateSubstituti
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as TemplateSubstitutionFromInput;
   return template_substitution_({
-    children: obj.children !== undefined ? resolveField(obj.children, _resolveExpressions2) : undefined,
+    children: resolveField(obj.children, _resolveExpressions2),
   } as any);
 }
 
@@ -4292,7 +4292,7 @@ export function templateTypeFrom(input: RuntimeNodeOf<TemplateType> | TemplateTy
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as TemplateTypeFromInput;
   return template_type_({
-    children: obj.children !== undefined ? resolveField(obj.children, _resolveType2) : undefined,
+    children: resolveField(obj.children, _resolveType2),
   } as any);
 }
 
@@ -4320,7 +4320,7 @@ export function throwStatementFrom(input: RuntimeNodeOf<ThrowStatement> | ThrowS
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as ThrowStatementFromInput;
   return throw_statement_({
-    children: obj.children !== undefined ? resolveField(obj.children, _resolveExpressions2) : undefined,
+    children: resolveField(obj.children, _resolveExpressions2),
   } as any);
 }
 
@@ -4376,7 +4376,7 @@ export function typeAnnotationFrom(input: RuntimeNodeOf<TypeAnnotation> | TypeAn
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as TypeAnnotationFromInput;
   return type_annotation_({
-    children: obj.children !== undefined ? resolveField(obj.children, _resolveTypeIdentifier4) : undefined,
+    children: resolveField(obj.children, _resolveTypeIdentifier4),
   } as any);
 }
 
@@ -4468,7 +4468,7 @@ export function typeQueryFrom(input: RuntimeNodeOf<TypeQuery> | TypeQueryFromInp
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as TypeQueryFromInput;
   return type_query_({
-    children: obj.children !== undefined ? resolveField(obj.children, _resolveExpression3) : undefined,
+    children: resolveField(obj.children, _resolveExpression3),
   } as any);
 }
 

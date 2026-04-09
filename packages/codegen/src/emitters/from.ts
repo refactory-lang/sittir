@@ -335,10 +335,15 @@ export function emitFrom(config: EmitFromConfig): string {
 	// Type-only imports — collect supertype union names used as resolver return types
 	const baseTypeImports = nodes.map(n => toTypeName(n.kind)).sort();
 	const configTypeImports = nodes.map(n => toTypeName(n.kind) + 'Config').sort();
+	// Collect ALL supertype union names used in resolver return types
 	const supertypeUnionImports = new Set<string>();
-	for (const [, { supertypeKind }] of resolverRegistry) {
+	for (const [, { supertypeKind, resolved }] of resolverRegistry) {
 		if (supertypeKind) {
 			supertypeUnionImports.add(toTypeName(supertypeKind.replace(/^_/, '')));
+		}
+		// Also add supertypes referenced in the return type
+		for (const st of resolved.supertypes) {
+			supertypeUnionImports.add(toTypeName(st.replace(/^_/, '')));
 		}
 	}
 	const allTypeImports = [...new Set([...baseTypeImports, ...configTypeImports, ...supertypeUnionImports])].sort();
@@ -636,12 +641,27 @@ function emitHiddenSeqFieldResolver(
 	const seqFields = allFields.filter(f => seqFieldNames.has(f.propertyName ?? toFieldName(f.name)));
 	if (seqFields.length === 0) return;
 
+	// Build typed return type from the SEQ fields
+	const returnTypeMembers: string[] = [];
+	for (const field of seqFields) {
+		const configKey = field.propertyName ?? toFieldName(field.name);
+		const fieldProj = projectKinds(field.kinds, ctx);
+		const retType = resolverReturnType(resolveFieldTypes(fieldProj, leafSet, branchNodeSet, supertypeSet));
+		const opt = field.required ? '' : '?';
+		if (field.multiple) {
+			returnTypeMembers.push(`${configKey}${opt}: (${retType})[]`);
+		} else {
+			returnTypeMembers.push(`${configKey}${opt}: ${retType}`);
+		}
+	}
+	const returnType = `{ ${returnTypeMembers.join('; ')} }`;
+
 	out.line(`/** Shared field resolver for hidden rule \`${info.ruleName}\` (used by ${info.parents.length} nodes). */`);
 	out.line(`function ${funcName}(`);
 	out.indent();
 	out.line('obj: Record<string, unknown>,');
 	out.dedent();
-	out.line('): Record<string, unknown> {');
+	out.line(`): ${returnType} {`);
 	out.indent();
 	out.line('return {');
 	out.indent();
@@ -830,6 +850,8 @@ function emitFromFunction(
 				} else {
 					out.line(`${propName}: obj.${propName} !== undefined ? resolveField(${toArr}, ${slotResolver}) : undefined,`);
 				}
+			} else if (slot.required) {
+				out.line(`${propName}: resolveField(obj.${propName}, ${slotResolver}),`);
 			} else {
 				out.line(`${propName}: obj.${propName} !== undefined ? resolveField(obj.${propName}, ${slotResolver}) : undefined,`);
 			}
@@ -837,6 +859,7 @@ function emitFromFunction(
 	}
 
 	out.dedent();
+	// as any: anonymous override fields may return NodeData where config expects string
 	out.line(`} as any);`);
 	out.dedent();
 	out.line('}');

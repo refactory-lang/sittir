@@ -2821,7 +2821,7 @@ export function attributeFrom(input: RuntimeNodeOf<Attribute> | AttributeFromInp
   return attribute_({
     arguments: obj.arguments !== undefined ? resolveField(obj.arguments, _r7sp4eq) : undefined,
     value: obj.value !== undefined ? resolveField(obj.value, _resolveTypeIdentifier2) : undefined,
-    children: obj.children !== undefined ? resolveField(obj.children, _resolvePath2) : undefined,
+    children: resolveField(obj.children, _resolvePath2),
   } as any);
 }
 
@@ -2845,7 +2845,7 @@ export function awaitExpressionFrom(input: RuntimeNodeOf<AwaitExpression> | Awai
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as AwaitExpressionFromInput;
   return await_expression_({
-    children: obj.children !== undefined ? resolveField(obj.children, _resolveTypeIdentifier2) : undefined,
+    children: resolveField(obj.children, _resolveTypeIdentifier2),
   } as any);
 }
 
@@ -2857,7 +2857,7 @@ export function baseFieldInitializerFrom(input: RuntimeNodeOf<BaseFieldInitializ
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as BaseFieldInitializerFromInput;
   return base_field_initializer_({
-    children: obj.children !== undefined ? resolveField(obj.children, _resolveTypeIdentifier2) : undefined,
+    children: resolveField(obj.children, _resolveTypeIdentifier2),
   } as any);
 }
 
@@ -2929,7 +2929,7 @@ export function bracketedTypeFrom(input: RuntimeNodeOf<BracketedType> | Brackete
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as BracketedTypeFromInput;
   return bracketed_type_({
-    children: obj.children !== undefined ? resolveField(obj.children, _raoo9kn) : undefined,
+    children: resolveField(obj.children, _raoo9kn),
   } as any);
 }
 
@@ -3115,7 +3115,7 @@ export function elseClauseFrom(input: RuntimeNodeOf<ElseClause> | ElseClauseFrom
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as ElseClauseFromInput;
   return else_clause_({
-    children: obj.children !== undefined ? resolveField(obj.children, _resolveExpressionEndingWithBlock4) : undefined,
+    children: resolveField(obj.children, _resolveExpressionEndingWithBlock4),
   } as any);
 }
 
@@ -3177,7 +3177,7 @@ export function expressionStatementFrom(input: RuntimeNodeOf<ExpressionStatement
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as ExpressionStatementFromInput;
   return expression_statement_({
-    children: obj.children !== undefined ? resolveField(obj.children, _resolveTypeIdentifier12) : undefined,
+    children: resolveField(obj.children, _resolveTypeIdentifier12),
   } as any);
 }
 
@@ -3469,7 +3469,7 @@ export function genericPatternFrom(input: RuntimeNodeOf<GenericPattern> | Generi
   const obj = (Array.isArray(input) ? { children: input } : input) as GenericPatternFromInput;
   return generic_pattern_({
     typeArguments: resolveField(obj.type_arguments, _r1uqebll),
-    children: obj.children !== undefined ? resolveField(obj.children, _resolvePath5) : undefined,
+    children: resolveField(obj.children, _resolvePath5),
   } as any);
 }
 
@@ -3785,7 +3785,7 @@ export function matchPatternFrom(input: RuntimeNodeOf<MatchPattern> | MatchPatte
   const obj = (Array.isArray(input) ? { children: input } : input) as MatchPatternFromInput;
   return match_pattern_({
     condition: obj.condition !== undefined ? resolveField(obj.condition, _resolveCondition2) : undefined,
-    children: obj.children !== undefined ? resolveField(obj.children, _resolveTypeIdentifier6) : undefined,
+    children: resolveField(obj.children, _resolveTypeIdentifier6),
   } as any);
 }
 
@@ -3901,7 +3901,7 @@ export function parenthesizedExpressionFrom(input: RuntimeNodeOf<ParenthesizedEx
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as ParenthesizedExpressionFromInput;
   return parenthesized_expression_({
-    children: obj.children !== undefined ? resolveField(obj.children, _resolveTypeIdentifier2) : undefined,
+    children: resolveField(obj.children, _resolveTypeIdentifier2),
   } as any);
 }
 
@@ -3987,7 +3987,7 @@ export function refPatternFrom(input: RuntimeNodeOf<RefPattern> | RefPatternFrom
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as RefPatternFromInput;
   return ref_pattern_({
-    children: obj.children !== undefined ? resolveField(obj.children, _resolveTypeIdentifier6) : undefined,
+    children: resolveField(obj.children, _resolveTypeIdentifier6),
   } as any);
 }
 
@@ -4043,7 +4043,7 @@ export function removedTraitBoundFrom(input: RuntimeNodeOf<RemovedTraitBound> | 
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as RemovedTraitBoundFromInput;
   return removed_trait_bound_({
-    children: obj.children !== undefined ? resolveField(obj.children, _resolveTypeIdentifier3) : undefined,
+    children: resolveField(obj.children, _resolveTypeIdentifier3),
   } as any);
 }
 
