@@ -159,8 +159,12 @@ rules:
   spread_element: ... $EXPRESSION
   statement_block: "{$$$STATEMENTS} $AUTOMATIC_SEMICOLON"
   string:
-    - '" $$$CHILDREN "'
-    - "' $$$CHILDREN '"
+    variants:
+      double: '" $$$CHILDREN "'
+      single: "' $$$CHILDREN '"
+    detect:
+      double: '"'
+      single: "'"
   subscript_expression: $OBJECT $OPTIONAL_CHAIN[$INDEX]
   switch_body: "{$$$CHILDREN}"
   switch_case: "case $VALUE : $$$BODY"

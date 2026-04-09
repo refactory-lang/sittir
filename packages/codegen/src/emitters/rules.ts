@@ -17,6 +17,7 @@ import { type StructuralNode, structuralNodes, fieldsOf } from './utils.ts';
 import { buildProjectionContext, projectKinds } from './kind-projections.ts';
 import { applyOverrides, type OverrideFieldInfo } from '../enriched-grammar.ts';
 import type { RulesConfig, TemplateRule } from '@sittir/types';
+import { tokenName } from '../token-names.ts';
 
 // ---------------------------------------------------------------------------
 // Public API
@@ -178,7 +179,30 @@ function topLevelChoice(rule: GrammarRule): GrammarRule[] | null {
 	return r.members.length > 1 ? r.members : null;
 }
 
-/** Walk each variant branch and produce a template array. */
+/** Extract $VARIABLE names from a template string. */
+function extractVariables(template: string): Set<string> {
+	const vars = new Set<string>();
+	const re = /(\$\$\$|\$\$|\$_|\$)([A-Z][A-Z0-9_]*)/g;
+	let m: RegExpExecArray | null;
+	while ((m = re.exec(template)) !== null) {
+		vars.add(m[2]!);
+	}
+	return vars;
+}
+
+/** Extract STRING nodes from a grammar rule (first level of anonymous tokens). */
+function extractStringTokens(rule: GrammarRule): string[] {
+	const tokens: string[] = [];
+	function walk(r: GrammarRule) {
+		if (r.type === 'STRING') tokens.push(r.value);
+		else if (r.type === 'SEQ') for (const m of r.members) walk(m);
+		else if (r.type === 'PREC' || r.type === 'PREC_LEFT' || r.type === 'PREC_RIGHT' || r.type === 'PREC_DYNAMIC') walk(r.content);
+	}
+	walk(rule);
+	return tokens;
+}
+
+/** Walk each variant branch and produce a template array or variant subtypes. */
 function emitVariantTemplates(
 	branches: GrammarRule[],
 	nodeFields: ReturnType<typeof fieldsOf>,
@@ -227,6 +251,21 @@ function emitVariantTemplates(
 		return ruleObj as unknown as TemplateRule;
 	}
 
+	// --- Variant subtype detection ---
+	// Check if all branches share the same $VARIABLES but differ only in anonymous tokens.
+	// If so, emit named variants + detect instead of string[].
+	const variantSubtypes = detectVariantSubtypes(unique, branches);
+	if (variantSubtypes) {
+		const joinBy = buildJoinBy(fieldMultiple, fieldSeparators, node);
+		const ruleObj: Record<string, unknown> = {
+			variants: variantSubtypes.variants,
+			detect: variantSubtypes.detect,
+		};
+		for (const c of allClauses) ruleObj[c.name] = c.template;
+		if (joinBy !== undefined) ruleObj['joinBy'] = joinBy;
+		return ruleObj as unknown as TemplateRule;
+	}
+
 	// Multi-variant: return string[] or TemplateRuleObject with template: string[]
 	const joinBy = buildJoinBy(fieldMultiple, fieldSeparators, node);
 	if (allClauses.length === 0 && joinBy === undefined) {
@@ -236,6 +275,49 @@ function emitVariantTemplates(
 	for (const c of allClauses) ruleObj[c.name] = c.template;
 	if (joinBy !== undefined) ruleObj['joinBy'] = joinBy;
 	return ruleObj as unknown as TemplateRule;
+}
+
+/**
+ * Detect if variant branches are "subtype variants" — same fields, different tokens.
+ * Returns named variants + detect map, or null if not applicable.
+ */
+function detectVariantSubtypes(
+	templates: string[],
+	branches: GrammarRule[],
+): { variants: Record<string, string>; detect: Record<string, string> } | null {
+	if (templates.length < 2 || templates.length !== branches.length) return null;
+
+	// Check all templates have the same set of $VARIABLES
+	const varSets = templates.map(extractVariables);
+	const firstVars = [...varSets[0]!].sort().join(',');
+	for (let i = 1; i < varSets.length; i++) {
+		if ([...varSets[i]!].sort().join(',') !== firstVars) return null;
+	}
+
+	// Find a discriminating anonymous token for each branch.
+	// Extract tokens from each grammar branch and find unique ones.
+	const branchTokens = branches.map(extractStringTokens);
+	const allTokenSets = branchTokens.map(ts => new Set(ts));
+
+	const variants: Record<string, string> = {};
+	const detect: Record<string, string> = {};
+
+	for (let i = 0; i < branches.length; i++) {
+		// Find a token unique to this branch (not in any other branch)
+		const myTokens = branchTokens[i]!;
+		let discriminator: string | null = null;
+		for (const tok of myTokens) {
+			const unique = allTokenSets.every((s, j) => j === i || !s.has(tok));
+			if (unique) { discriminator = tok; break; }
+		}
+		if (!discriminator) return null; // Can't find unique discriminator
+
+		const name = tokenName(discriminator);
+		variants[name] = templates[i]!;
+		detect[name] = discriminator;
+	}
+
+	return { variants, detect };
 }
 
 /** Append missing fields the walker didn't reach. */

@@ -178,13 +178,23 @@ rules:
   token_repetition: $() + $$$CHILDREN
   token_repetition_pattern: $() + $$$CHILDREN
   token_tree:
-    - () $$$CHILDREN
-    - "[] $$$CHILDREN"
-    - "{} $$$CHILDREN"
+    variants:
+      parens: () $$$CHILDREN
+      brackets: "[] $$$CHILDREN"
+      braces: "{} $$$CHILDREN"
+    detect:
+      parens: (
+      brackets: "["
+      braces: "{"
   token_tree_pattern:
-    - () $$$CHILDREN
-    - "[] $$$CHILDREN"
-    - "{} $$$CHILDREN"
+    variants:
+      parens: () $$$CHILDREN
+      brackets: "[] $$$CHILDREN"
+      braces: "{} $$$CHILDREN"
+    detect:
+      parens: (
+      brackets: "["
+      braces: "{"
   trait_bounds: ": $$$CHILDREN +"
   trait_item: $VISIBILITY_MODIFIER trait $NAME $TYPE_PARAMETERS $BOUNDS $WHERE_CLAUSE $BODY
   try_block: try $BLOCK

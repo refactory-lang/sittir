@@ -18,6 +18,8 @@
  */
 export interface AnyNodeData {
 	type: string;
+	/** Variant subtype name — set by factory, absent on readNode output. */
+	variant?: string;
 	fields?: Record<string, unknown>;
 	children?: readonly unknown[];
 	text?: string;
@@ -58,7 +60,12 @@ export type TemplateRule =
 	| TemplateRuleObject;
 
 export interface TemplateRuleObject {
-	template: string | string[];
+	/** Standard template — mutually exclusive with `variants`. */
+	template?: string | string[];
+	/** Named subtype templates — mutually exclusive with `template`. */
+	variants?: Record<string, string>;
+	/** Discriminator tokens for detecting variant from anonymous children. */
+	detect?: Record<string, string>;
 	joinBy?: string;
 	[clauseKey: `${string}_clause`]: string;
 }

@@ -1,7 +1,7 @@
 // @generated-header: false (hand-written core — preserved across regeneration)
 import * as fs from 'node:fs';
 import { parse as parseYaml } from 'yaml';
-import type { AnyNodeData, Edit, ByteRange, RulesConfig, TemplateRule } from './types.ts';
+import type { AnyNodeData, Edit, ByteRange, RulesConfig, TemplateRule, TemplateRuleObject } from './types.ts';
 
 export type { RulesConfig };
 
@@ -32,6 +32,50 @@ function buildRenderContext(config: RulesConfig): InternalRenderContext {
 }
 
 // ---------------------------------------------------------------------------
+// Template resolution
+// ---------------------------------------------------------------------------
+
+/**
+ * Resolve the template string for a node, handling all TemplateRule forms:
+ * - string: return directly
+ * - string[]: pick best variant by field presence (existing heuristic)
+ * - object with `variants`: detect subtype from node.variant or anonymous tokens
+ * - object with `template`: standard object form, may be string or string[]
+ */
+function resolveTemplate(rule: TemplateRule, node: AnyNodeData, varPattern: RegExp): string {
+	if (typeof rule === 'string') return rule;
+	if (Array.isArray(rule)) return pickTemplate(rule, node, varPattern) ?? rule[0]!;
+
+	const obj = rule as TemplateRuleObject;
+
+	if (obj.variants) {
+		// 1. Explicit variant field (set by factory)
+		if (node.variant && obj.variants[node.variant]) {
+			return obj.variants[node.variant]!;
+		}
+		// 2. Detect from anonymous tokens in children
+		if (obj.detect && node.children) {
+			for (const child of node.children) {
+				const c = child as AnyNodeData;
+				if (c.named === false) {
+					for (const [subtype, token] of Object.entries(obj.detect)) {
+						if (c.text === token) return obj.variants[subtype]!;
+					}
+				}
+			}
+		}
+		// 3. Fallback: first variant
+		return Object.values(obj.variants)[0]!;
+	}
+
+	// Standard template (string or string[])
+	const tmpl = obj.template;
+	if (!tmpl) throw new Error(`Rule for '${node.type}' has neither template nor variants`);
+	if (Array.isArray(tmpl)) return pickTemplate(tmpl, node, varPattern) ?? tmpl[0]!;
+	return tmpl;
+}
+
+// ---------------------------------------------------------------------------
 // Render engine
 // ---------------------------------------------------------------------------
 
@@ -46,20 +90,15 @@ function render(node: AnyNodeData, ctx: InternalRenderContext): string {
 	if (!rule) throw new Error(`No render rule for '${node.type}'`);
 
 	const isObject = typeof rule !== 'string' && !Array.isArray(rule);
-	const rawTemplate = isObject ? (rule as { template: string | string[] }).template
-		: rule;
 	const ruleObj = isObject ? rule as unknown as Record<string, unknown> : undefined;
 
 	const { varPattern, prefix } = ctx;
 
-	// Variant templates: try each and pick the first where all variables resolve
-	const templates = Array.isArray(rawTemplate) ? rawTemplate : [rawTemplate];
-	const template = templates.length === 1
-		? templates[0]!
-		: pickTemplate(templates, node, varPattern) ?? templates[0]!;
+	// Resolve template — handles simple, string[], and variant subtypes
+	const rawTemplate = resolveTemplate(rule, node, varPattern);
 
 	// Trim trailing newline from YAML | block scalar
-	const tmpl = template.endsWith('\n') ? template.slice(0, -1) : template;
+	const tmpl = rawTemplate.endsWith('\n') ? rawTemplate.slice(0, -1) : rawTemplate;
 
 	// Consumption model: track which children indices have been used.
 	// $$$CHILDREN renders only the unconsumed remainder.
