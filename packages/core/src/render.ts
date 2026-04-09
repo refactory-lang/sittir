@@ -141,19 +141,20 @@ function render(node: AnyNodeData, ctx: InternalRenderContext): string {
 			return remaining.map(c => renderValue(c as AnyNodeData | string | number, ctx)).join(sep);
 		}
 
-		// 4. Named child by kind — consume first unconsumed match
+		// 4. Named child by kind — consume first unconsumed named match
 		if (node.children && Array.isArray(node.children)) {
 			const idx = node.children.findIndex((c: any, i: number) =>
-				!consumed.has(i) && c?.type === fieldKey
+				!consumed.has(i) && c?.type === fieldKey && (c as AnyNodeData).named !== false
 			);
 			if (idx >= 0) {
 				consumed.add(idx);
 				const child = node.children[idx];
 				if (pfx.length === 3 || pfx === `${prefix}${prefix}${prefix}`) {
-					// $$$ on a single matched child — collect all unconsumed of this type
+					// $$$ on a single matched child — collect all unconsumed named of this type
 					const items: unknown[] = [child];
 					for (let i = idx + 1; i < node.children.length; i++) {
-						if (!consumed.has(i) && (node.children[i] as any)?.type === fieldKey) {
+						const c = node.children[i] as AnyNodeData;
+						if (!consumed.has(i) && c?.type === fieldKey && c.named !== false) {
 							consumed.add(i);
 							items.push(node.children[i]);
 						}
@@ -165,12 +166,13 @@ function render(node: AnyNodeData, ctx: InternalRenderContext): string {
 			}
 		}
 
-		// 5. $CHILDREN (single) — first unconsumed child
+		// 5. $CHILDREN (single) — first unconsumed named child
 		if (fieldKey === 'children' && node.children) {
 			for (let i = 0; i < node.children.length; i++) {
-				if (!consumed.has(i)) {
+				const c = node.children[i] as AnyNodeData;
+				if (!consumed.has(i) && c.named !== false) {
 					consumed.add(i);
-					return renderValue(node.children[i] as AnyNodeData | string | number, ctx);
+					return renderValue(c as AnyNodeData | string | number, ctx);
 				}
 			}
 		}
