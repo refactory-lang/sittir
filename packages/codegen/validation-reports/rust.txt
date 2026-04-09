@@ -31,25 +31,42 @@ Running round-trip validation...
     x Let-else Statements [struct_pattern]: re-parse error: "Foo::Bar{texts,values}"
     x Structs [struct_item]: re-parse error: "struct Proton"
     ... and 104 more
-  x 62/135 factory round-trip (2 skipped, 71 errors)
+  x 62/135 factory round-trip (7 skipped, 66 errors)
     x try_expression: re-parse error: "?"
-    x await_expression: Node 'undefined' has no 'fields' or 'children' — did you mean to set 'text' for 
-    x expression_statement: Node 'undefined' has no 'fields' or 'children' — did you mean to set 'text' for 
+    x await_expression: re-parse error: ".await"
+    x expression_statement: kind not found in re-parse (rendered: ";")
     x call_expression: re-parse error: "futures.await?.function ()"
     x field_expression: re-parse error: "futures.await?.function"
     x closure_expression: re-parse error: "async || ()"
-    x yield_expression: Node 'undefined' has no 'fields' or 'children' — did you mean to set 'text' for 
-    x return_expression: Node 'undefined' has no 'fields' or 'children' — did you mean to set 'text' for 
+    x yield_expression: re-parse error: "yield"
+    x return_expression: re-parse error: "return"
     x binary_expression: re-parse error: "x + y"
     x reference_type: re-parse error: "& str"
-    x token_tree: re-parse error: "("Got: {}" slice)"
-    x string_literal: re-parse error: "" Got: {} ""
+    x macro_invocation: re-parse error: "println!"
+    x token_tree: re-parse error: "()"
+    x string_literal: re-parse error: "" ""
     x array_type: re-parse error: "[u32 ; 2]"
     x array_expression: re-parse error: "[ ; ]"
-    x tuple_type: re-parse error: "(u32,u16)"
-    ... and 56 more
+    ... and 51 more
+  x 92/135 from() correctness (0 undefined, 43 divergent, 0 skipped)
+    ! parameters: from() diverges: children: 2 vs 0
+    ! block: from() diverges: children: 2 vs 0
+    ! await_expression: from() diverges: children: 1 vs 0
+    ! expression_statement: from() diverges: children: 1 vs 0
+    ! arguments: from() diverges: children: 2 vs 0
+    ! closure_parameters: from() diverges: children: 2 vs 0
+    ! yield_expression: from() diverges: children: 1 vs 0
+    ! declaration_list: from() diverges: children: 2 vs 0
+    ! return_expression: from() diverges: children: 1 vs 0
+    ! token_tree: from() diverges: children: 5 vs 0
+    ! string_literal: from() diverges: children: 3 vs 0
+    ! tuple_type: from() diverges: children: 5 vs 0
+    ! type_arguments: from() diverges: children: 5 vs 0
+    ! attribute: from() diverges: children: 1 vs 0
+    ! type_parameters: from() diverges: children: 3 vs 0
+    ... and 28 more
 
-190 round-trip failure(s) — see above.
+185 round-trip failure(s) — see above.
 
 Done! Generated:
   templates.yaml, grammar.ts, types.ts, factories.ts, utils.ts, from.ts, consts.ts, index.ts

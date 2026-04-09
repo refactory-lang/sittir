@@ -11,6 +11,7 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 import { validateTemplates, formatValidationReport } from './validate-templates.ts';
 import { validateRoundTrip, formatRoundTripReport } from './validate-roundtrip.ts';
 import { validateFactoryRoundTrip, formatFactoryRoundTripReport } from './validate-factory-roundtrip.ts';
+import { validateFrom, formatFromReport } from './validate-from.ts';
 import { join, dirname } from 'node:path';
 import { generate } from './index.ts';
 import type { CodegenConfig } from './index.ts';
@@ -146,9 +147,13 @@ if (cliArgs.roundtrip) {
 	const rtResult = await validateRoundTrip(config.grammar, result.templatesYaml);
 	console.log(formatRoundTripReport(rtResult));
 
-	// Factory round-trip (corpus-derived NodeData → render → parse)
+	// Factory round-trip (corpus → readNode → factory() → render → re-parse)
 	const frtResult = await validateFactoryRoundTrip(config.grammar, result.templatesYaml);
 	console.log(formatFactoryRoundTripReport(frtResult));
+
+	// from() correctness (structural comparison: from() vs factory())
+	const fromResult = await validateFrom(config.grammar, result.templatesYaml);
+	console.log(formatFromReport(fromResult));
 
 	const totalFail = rtResult.fail + frtResult.fail;
 	if (totalFail > 0) {

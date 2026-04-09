@@ -26,6 +26,7 @@ Generating typescript IR...
 Running round-trip validation...
   v 0/4 round-trip (4 skipped, 0 errors)
   v 0/0 factory round-trip (0 skipped, 0 errors)
+  v 0/0 from() correctness (0 undefined, 0 divergent, 0 skipped)
 
 Done! Generated:
   templates.yaml, grammar.ts, types.ts, factories.ts, utils.ts, from.ts, consts.ts, index.ts

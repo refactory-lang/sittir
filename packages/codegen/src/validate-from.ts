@@ -1,28 +1,26 @@
 /**
- * Factory round-trip validation — corpus → parse → readNode → factory() → render → re-parse.
+ * from() correctness validation — structural comparison of from() vs factory output.
  *
- * Uses direct factory calls (via _factoryMap) to isolate the template
- * quality signal from from() resolver bugs:
- * 1. Parse corpus source with tree-sitter
- * 2. readNode to get NodeData
- * 3. Call the factory directly with readNode fields (no from() resolver)
- * 4. Render the factory-produced node
- * 5. Re-parse and verify the kind exists
+ * Tests that from() resolvers produce correct NodeData by comparing
+ * from(readNodeData) against factory(readNodeFields). Detects:
+ * - undefined nodes (from() resolver failed to resolve a child)
+ * - structural divergence (different fields or children)
+ *
+ * No tree-sitter re-parsing needed — pure structural comparison.
  */
 
 import { createRequire } from 'node:module';
 import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { parse as parseYaml } from 'yaml';
-import { readNode, buildRoutingMap, createRenderer } from '@sittir/core';
+import { readNode, buildRoutingMap } from '@sittir/core';
 import type { AnyNodeData, AnyTreeNode, RulesConfig } from '@sittir/types';
 import { loadOverrides } from './overrides.ts';
-import { join as pathJoin } from 'node:path';
 
 const require = createRequire(import.meta.url);
 
 // ---------------------------------------------------------------------------
-// Tree-sitter types
+// Tree-sitter adapter (shared with other validators)
 // ---------------------------------------------------------------------------
 
 interface TSNode {
@@ -101,46 +99,7 @@ function parseCorpus(content: string): CorpusEntry[] {
 }
 
 // ---------------------------------------------------------------------------
-// Strip runtime metadata to simulate factory output
-// ---------------------------------------------------------------------------
-
-/**
- * Strip span, nodeId, and set named:true on all nodes recursively.
- * This simulates what a factory-built NodeData looks like — no runtime
- * metadata from tree-sitter, all children are named NodeData objects.
- */
-function stripToFactory(data: AnyNodeData): AnyNodeData {
-	const result: AnyNodeData = { type: data.type, named: true };
-
-	if (data.text !== undefined) result.text = data.text;
-	if (data.variant !== undefined) result.variant = data.variant;
-
-	if (data.fields) {
-		const fields: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(data.fields)) {
-			if (Array.isArray(value)) {
-				fields[key] = value.map(v => typeof v === 'object' && v !== null ? stripToFactory(v as AnyNodeData) : v);
-			} else if (typeof value === 'object' && value !== null) {
-				fields[key] = stripToFactory(value as AnyNodeData);
-			} else {
-				fields[key] = value;
-			}
-		}
-		result.fields = fields;
-	}
-
-	if (data.children) {
-		// Factory nodes only have named children — filter anonymous
-		result.children = (data.children as AnyNodeData[])
-			.filter(c => c.named !== false)
-			.map(c => typeof c === 'object' && c !== null ? stripToFactory(c as AnyNodeData) : c);
-	}
-
-	return result;
-}
-
-// ---------------------------------------------------------------------------
-// WASM paths & fixtures
+// WASM & module paths
 // ---------------------------------------------------------------------------
 
 const WASM_PATHS: Record<string, string> = {
@@ -149,7 +108,12 @@ const WASM_PATHS: Record<string, string> = {
 	python: 'tree-sitter-python/tree-sitter-python.wasm',
 };
 
-/** Relative path from codegen/src to language package factories.ts */
+const FROM_MODULE_PATHS: Record<string, string> = {
+	rust: '../../rust/src/from.ts',
+	typescript: '../../typescript/src/from.ts',
+	python: '../../python/src/from.ts',
+};
+
 const FACTORY_MODULE_PATHS: Record<string, string> = {
 	rust: '../../rust/src/factories.ts',
 	typescript: '../../typescript/src/factories.ts',
@@ -168,45 +132,83 @@ function loadCorpusEntries(grammar: string): CorpusEntry[] {
 }
 
 // ---------------------------------------------------------------------------
-// Fragment kinds (same as readNode round-trip)
+// Structural analysis
 // ---------------------------------------------------------------------------
 
-const FRAGMENT_ONLY_KINDS = new Set([
-	'parameters', 'closure_parameters', 'type_parameters', 'arguments',
-	'declaration_list', 'enum_variant_list', 'field_declaration_list',
-	'ordered_field_declaration_list', 'match_block', 'use_list',
-	'visibility_modifier', 'function_modifiers', 'extern_modifier',
-	'label', 'lifetime', 'lifetime_parameter', 'parameter', 'self_parameter',
-	'type_parameter', 'const_parameter', 'variadic_parameter',
-	'field_declaration', 'enum_variant', 'match_arm', 'match_pattern',
-	'attribute', 'attribute_item', 'inner_attribute_item',
-	'where_clause', 'where_predicate', 'trait_bounds',
-	'field_initializer', 'field_initializer_list', 'field_pattern',
-	'else_clause', 'for_lifetimes', 'use_as_clause', 'use_bounds',
-	'formal_parameters', 'class_body', 'statement_block',
-	'object_type', 'enum_body', 'extends_clause', 'implements_clause',
-	'import_clause', 'export_clause', 'decorator',
-	'argument_list', 'block',
-	'elif_clause', 'except_clause', 'finally_clause', 'with_clause',
-]);
+/** Find paths to nodes with type 'undefined' in a NodeData tree. */
+function findUndefined(node: AnyNodeData, path = ''): string[] {
+	const results: string[] = [];
+	if (node.type === 'undefined') results.push(path || 'root');
+
+	if (node.fields) {
+		for (const [key, value] of Object.entries(node.fields)) {
+			if (Array.isArray(value)) {
+				value.forEach((v, i) => {
+					if (typeof v === 'object' && v !== null && 'type' in v) {
+						results.push(...findUndefined(v as AnyNodeData, `${path}.${key}[${i}]`));
+					}
+				});
+			} else if (typeof value === 'object' && value !== null && 'type' in value) {
+				results.push(...findUndefined(value as AnyNodeData, `${path}.${key}`));
+			}
+		}
+	}
+
+	if (node.children) {
+		(node.children as AnyNodeData[]).forEach((c, i) => {
+			if (typeof c === 'object' && c !== null) {
+				results.push(...findUndefined(c, `${path}.children[${i}]`));
+			}
+		});
+	}
+
+	return results;
+}
+
+/** Shallow structural diff: compare type, field keys, children length. */
+function structuralDiff(a: AnyNodeData, b: AnyNodeData): string[] {
+	const diffs: string[] = [];
+	if (a.type !== b.type) diffs.push(`type: ${a.type} vs ${b.type}`);
+
+	const aKeys = Object.keys(a.fields ?? {}).sort();
+	const bKeys = Object.keys(b.fields ?? {}).sort();
+	const missingInB = aKeys.filter(k => !bKeys.includes(k));
+	const missingInA = bKeys.filter(k => !aKeys.includes(k));
+	if (missingInB.length) diffs.push(`from() has extra fields: ${missingInB.join(', ')}`);
+	if (missingInA.length) diffs.push(`factory has extra fields: ${missingInA.join(', ')}`);
+
+	const aLen = (a.children ?? []).length;
+	const bLen = (b.children ?? []).length;
+	if (aLen !== bLen) diffs.push(`children: ${aLen} vs ${bLen}`);
+
+	return diffs;
+}
 
 // ---------------------------------------------------------------------------
 // Validation
 // ---------------------------------------------------------------------------
 
-export interface FactoryRoundTripResult {
+export interface FromValidationError {
+	kind: string;
+	severity: 'error' | 'warning';
+	message: string;
+}
+
+export interface FromValidationResult {
 	grammar: string;
 	total: number;
 	pass: number;
 	fail: number;
 	skip: number;
-	errors: { kind: string; message: string }[];
+	undefinedCount: number;
+	divergentCount: number;
+	errors: FromValidationError[];
 }
 
-export async function validateFactoryRoundTrip(
+export async function validateFrom(
 	grammar: string,
 	templatesYaml: string,
-): Promise<FactoryRoundTripResult> {
+): Promise<FromValidationResult> {
 	const mod = await import('web-tree-sitter') as any;
 	const ParserClass = mod.Parser ?? mod.default?.Parser ?? mod.default;
 	const LanguageClass = mod.Language ?? mod.default?.Language;
@@ -220,98 +222,100 @@ export async function validateFactoryRoundTrip(
 	const config = parseYaml(templatesYaml) as RulesConfig;
 	const overrides = loadOverrides(grammar);
 	const routing = buildRoutingMap(overrides);
-	const ruleKinds = new Set(Object.keys(config.rules));
-	const { render } = createRenderer(config);
 
-	// Dynamically import the generated _factoryMap for this grammar
-	const factoryModulePath = FACTORY_MODULE_PATHS[grammar];
+	// Import from() and factory maps
+	let fromMap: Record<string, (input: object) => unknown> = {};
 	let factoryMap: Record<string, (config?: any) => unknown> = {};
-	if (factoryModulePath) {
-		try {
-			const factoryModule = await import(new URL(factoryModulePath, import.meta.url).pathname);
-			factoryMap = factoryModule._factoryMap ?? {};
-		} catch {
-			// If factory module can't be loaded, fall back to strip
-		}
-	}
+	try {
+		const fromModule = await import(new URL(FROM_MODULE_PATHS[grammar]!, import.meta.url).pathname);
+		fromMap = fromModule._fromMap ?? {};
+	} catch { /* from module unavailable */ }
+	try {
+		const factoryModule = await import(new URL(FACTORY_MODULE_PATHS[grammar]!, import.meta.url).pathname);
+		factoryMap = factoryModule._factoryMap ?? {};
+	} catch { /* factory module unavailable */ }
 
 	const entries = loadCorpusEntries(grammar);
-	const errors: { kind: string; message: string }[] = [];
-	const testedKinds = new Set<string>(); // one test per kind
+	const errors: FromValidationError[] = [];
+	const testedKinds = new Set<string>();
 	let pass = 0;
 	let skip = 0;
 	let total = 0;
+	let undefinedCount = 0;
+	let divergentCount = 0;
 
 	for (const entry of entries) {
 		const tree1 = parser.parse(entry.source) as TSTree;
 		if (tree1.rootNode.hasError) continue;
 
-		const kinds = collectKinds(tree1.rootNode);
-		for (const kind of kinds) {
-			if (!ruleKinds.has(kind)) continue;
-			if (testedKinds.has(kind)) continue; // one test per kind
+		for (const kind of collectKinds(tree1.rootNode)) {
+			if (!(kind in fromMap) || !(kind in factoryMap)) continue;
+			if (testedKinds.has(kind)) continue;
 			testedKinds.add(kind);
 			total++;
 
 			const node1 = findFirst(tree1.rootNode, kind);
 			if (!node1) continue;
 
-			// readNode → direct factory call → render → re-parse
 			const handle = treeHandle(tree1);
 			const readData = readNode(handle, node1.id, routing);
 
-			// Direct factory call with readNode fields — no from() resolver
-			const factory = factoryMap[kind];
-			let factoryData: AnyNodeData;
-			if (factory) {
-				try {
-					factoryData = factory(readData.fields ?? {}) as AnyNodeData;
-				} catch {
-					// Factory may fail on raw readNode fields — fall back to strip
-					factoryData = stripToFactory(readData);
-				}
-			} else {
-				factoryData = stripToFactory(readData);
-			}
-
 			try {
-				const rendered = render(factoryData);
-				if (!rendered.trim()) { skip++; continue; }
-
-				if (FRAGMENT_ONLY_KINDS.has(kind)) {
-					pass++; // can't re-parse standalone, just verify render succeeds
+				const fromResult = fromMap[kind]!(readData) as AnyNodeData;
+				let factoryResult: AnyNodeData;
+				try {
+					factoryResult = factoryMap[kind]!(readData.fields ?? {}) as AnyNodeData;
+				} catch {
+					skip++;
 					continue;
 				}
 
-				const tree2 = parser.parse(rendered) as TSTree;
-				if (tree2.rootNode.hasError) {
-					errors.push({ kind, message: `re-parse error: "${rendered.slice(0, 60)}"` });
+				// Check for undefined nodes in from() output
+				const undefinedNodes = findUndefined(fromResult);
+				if (undefinedNodes.length > 0) {
+					undefinedCount++;
+					errors.push({
+						kind,
+						severity: 'error',
+						message: `from() produces undefined nodes at: ${undefinedNodes.slice(0, 3).join(', ')}`,
+					});
 					continue;
 				}
 
-				const node2 = findFirst(tree2.rootNode, kind);
-				if (!node2) {
-					errors.push({ kind, message: `kind not found in re-parse (rendered: "${rendered.slice(0, 60)}")` });
+				// Structural comparison
+				const diffs = structuralDiff(fromResult, factoryResult);
+				if (diffs.length > 0) {
+					divergentCount++;
+					errors.push({
+						kind,
+						severity: 'warning',
+						message: `from() diverges: ${diffs.slice(0, 3).join('; ')}`,
+					});
 					continue;
 				}
 
 				pass++;
 			} catch (e) {
-				errors.push({ kind, message: `${(e as Error).message.slice(0, 80)}` });
+				errors.push({
+					kind,
+					severity: 'error',
+					message: `from() throws: ${(e as Error).message.slice(0, 80)}`,
+				});
 			}
 		}
 	}
 
-	return { grammar, total, pass, fail: total - pass - skip, skip, errors };
+	return { grammar, total, pass, fail: total - pass - skip, skip, undefinedCount, divergentCount, errors };
 }
 
-export function formatFactoryRoundTripReport(result: FactoryRoundTripResult): string {
+export function formatFromReport(result: FromValidationResult): string {
 	const lines: string[] = [];
 	const icon = result.fail === 0 ? 'v' : 'x';
-	lines.push(`  ${icon} ${result.pass}/${result.total} factory round-trip (${result.skip} skipped, ${result.errors.length} errors)`);
+	lines.push(`  ${icon} ${result.pass}/${result.total} from() correctness (${result.undefinedCount} undefined, ${result.divergentCount} divergent, ${result.skip} skipped)`);
 	if (result.errors.length > 0) {
 		for (const e of result.errors.slice(0, 15)) {
-			lines.push(`    x ${e.kind}: ${e.message}`);
+			const prefix = e.severity === 'error' ? 'x' : '!';
+			lines.push(`    ${prefix} ${e.kind}: ${e.message}`);
 		}
 		if (result.errors.length > 15) lines.push(`    ... and ${result.errors.length - 15} more`);
 	}

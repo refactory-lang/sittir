@@ -337,6 +337,16 @@ export function emitFactories(config: EmitFactoriesConfig): string {
 
 	lines.push('');
 
+	// _factoryMap — kind → factory function for dynamic access
+	lines.push('/** @internal Map of kind string to factory function. */');
+	lines.push('export const _factoryMap: Record<string, (config?: any) => unknown> = {');
+	for (const node of nodes) {
+		const factoryName = toRawFactoryName(node.kind);
+		lines.push(`  '${node.kind}': ${factoryName},`);
+	}
+	lines.push('};');
+	lines.push('');
+
 	return lines.join('\n');
 }
 

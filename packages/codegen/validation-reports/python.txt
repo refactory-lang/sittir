@@ -47,25 +47,42 @@ Running round-trip validation...
     x Assignments [module]: re-parse error: "a = 1 a, b = 1, 2 a, *c = 1, 2, 3 a, = 1, 2 a[b] = c = d a, *b.c = d"
     x Assignments with type annotations [assignment]: re-parse error: "tail_leaves=[] List[Leaf]"
     ... and 86 more
-  x 40/99 factory round-trip (0 skipped, 59 errors)
+  x 35/99 factory round-trip (12 skipped, 52 errors)
     x slice: re-parse error: ":"
     x await: kind not found in re-parse (rendered: "await")
-    x return_statement: Node 'undefined' has no 'fields' or 'children' — did you mean to set 'text' for 
-    x typed_parameter: Node 'undefined' has no 'fields' or 'children' — did you mean to set 'text' for 
-    x type: Node 'undefined' has no 'fields' or 'children' — did you mean to set 'text' for 
+    x typed_parameter: re-parse error: ": str"
     x comparison_operator: re-parse error: "in"
+    x assert_statement: re-parse error: "assert"
     x keyword_argument: kind not found in re-parse (rendered: "f=g")
     x dictionary_splat: re-parse error: "**"
     x default_parameter: kind not found in re-parse (rendered: "printer=print")
-    x list_splat_pattern: Node 'undefined' has no 'fields' or 'children' — did you mean to set 'text' for 
-    x dictionary_splat_pattern: Node 'undefined' has no 'fields' or 'children' — did you mean to set 'text' for 
-    x string_content: re-parse error: "\" \""
+    x list_splat_pattern: re-parse error: "*"
+    x dictionary_splat_pattern: re-parse error: "**"
+    x string: re-parse error: "print \"'%s' has %i characters\" % (public_function(), len(p"
     x pair: re-parse error: ""__builtins__": None"
-    x pattern_list: kind not found in re-parse (rendered: "a,b ,")
-    x expression_list: kind not found in re-parse (rendered: "1,2 ,")
-    ... and 44 more
+    x pattern_list: re-parse error: ","
+    x expression_list: re-parse error: ","
+    x generic_type: kind not found in re-parse (rendered: "List")
+    ... and 37 more
+  x 55/99 from() correctness (0 undefined, 44 divergent, 0 skipped)
+    ! module: from() diverges: children: 1 vs 0
+    ! expression_statement: from() diverges: children: 1 vs 0
+    ! argument_list: from() diverges: children: 5 vs 0
+    ! return_statement: from() diverges: children: 1 vs 0
+    ! parameters: from() diverges: children: 3 vs 0
+    ! typed_parameter: from() diverges: children: 1 vs 0
+    ! type: from() diverges: children: 1 vs 0
+    ! block: from() diverges: children: 1 vs 0
+    ! assert_statement: from() diverges: children: 2 vs 0
+    ! list_splat_pattern: from() diverges: children: 1 vs 0
+    ! dictionary_splat_pattern: from() diverges: children: 1 vs 0
+    ! string_content: from() diverges: children: 2 vs 0
+    ! dictionary: from() diverges: children: 3 vs 0
+    ! tuple: from() diverges: children: 2 vs 0
+    ! pattern_list: from() diverges: children: 3 vs 0
+    ... and 29 more
 
-160 round-trip failure(s) — see above.
+153 round-trip failure(s) — see above.
 
 Done! Generated:
   templates.yaml, grammar.ts, types.ts, factories.ts, utils.ts, from.ts, consts.ts, index.ts
