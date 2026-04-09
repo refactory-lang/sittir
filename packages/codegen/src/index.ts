@@ -75,7 +75,7 @@ export interface GeneratedFiles {
 	index: string;
 	/** tests — single test file for all node kinds */
 	tests: string;
-	/** type-test — compile-time assertions that *Fields ≡ NodeFields<K> */
+	/** type-test — compile-time assertions that *Config ≡ NodeConfig<K> */
 	typeTests: string;
 	/** vitest.config.ts source */
 	config: string;
