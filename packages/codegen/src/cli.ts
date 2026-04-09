@@ -10,6 +10,7 @@
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { validateTemplates, formatValidationReport } from './validate-templates.ts';
 import { validateRoundTrip, formatRoundTripReport } from './validate-roundtrip.ts';
+import { validateFactoryRoundTrip, formatFactoryRoundTripReport } from './validate-factory-roundtrip.ts';
 import { join, dirname } from 'node:path';
 import { generate } from './index.ts';
 import type { CodegenConfig } from './index.ts';
@@ -144,8 +145,20 @@ if (cliArgs.roundtrip) {
 	console.log('\nRunning round-trip validation...');
 	const rtResult = await validateRoundTrip(config.grammar, result.templatesYaml);
 	console.log(formatRoundTripReport(rtResult));
-	if (rtResult.fail > 0) {
-		console.error(`\n${rtResult.fail} round-trip failure(s) — see above.`);
+
+	// Factory round-trip
+	const allNodes = [...(result as any).nodeModel ? [] : []];
+	// Get nodes from the generate result
+	const { buildGrammarModel } = await import('./grammar-model.ts');
+	const { newModel } = buildGrammarModel(config.grammar);
+	const frtResult = await validateFactoryRoundTrip(
+		config.grammar, result.templatesYaml, [...newModel.models.values()],
+	);
+	console.log(formatFactoryRoundTripReport(frtResult));
+
+	const totalFail = rtResult.fail + frtResult.fail;
+	if (totalFail > 0) {
+		console.error(`\n${totalFail} round-trip failure(s) — see above.`);
 	}
 }
 
