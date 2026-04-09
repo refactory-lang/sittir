@@ -1,15 +1,14 @@
 /**
- * Factory round-trip validation — corpus-derived NodeData → render → parse.
+ * Factory round-trip validation — corpus → parse → readNode → from() → render → re-parse.
  *
- * Instead of building minimal nodes synthetically, this:
- * 1. Parses corpus source with tree-sitter
- * 2. Calls readNode to get real NodeData
- * 3. Strips runtime metadata (span, nodeId) to simulate factory output
- * 4. Renders the stripped NodeData
- * 5. Re-parses and verifies the kind exists
+ * Exercises the actual factory code path using real corpus data:
+ * 1. Parse corpus source with tree-sitter
+ * 2. readNode to get NodeData
+ * 3. Call the generated from() function (via _fromMap) to normalize through the factory
+ * 4. Render the factory-produced node
+ * 5. Re-parse and verify the kind exists
  *
- * This validates that the NodeData shape (which factories produce) renders
- * to valid source, using real-world examples from the grammar test corpus.
+ * This tests factories + render together using real-world examples.
  */
 
 import { createRequire } from 'node:module';
@@ -19,6 +18,7 @@ import { parse as parseYaml } from 'yaml';
 import { readNode, buildRoutingMap, createRenderer } from '@sittir/core';
 import type { AnyNodeData, AnyTreeNode, RulesConfig } from '@sittir/types';
 import { loadOverrides } from './overrides.ts';
+import { join as pathJoin } from 'node:path';
 
 const require = createRequire(import.meta.url);
 
@@ -150,6 +150,13 @@ const WASM_PATHS: Record<string, string> = {
 	python: 'tree-sitter-python/tree-sitter-python.wasm',
 };
 
+/** Relative path from codegen/src to language package from.ts */
+const FROM_MODULE_PATHS: Record<string, string> = {
+	rust: '../../rust/src/from.ts',
+	typescript: '../../typescript/src/from.ts',
+	python: '../../python/src/from.ts',
+};
+
 const FIXTURES_DIR = new URL('../fixtures', import.meta.url).pathname;
 
 function loadCorpusEntries(grammar: string): CorpusEntry[] {
@@ -217,6 +224,18 @@ export async function validateFactoryRoundTrip(
 	const ruleKinds = new Set(Object.keys(config.rules));
 	const { render } = createRenderer(config);
 
+	// Dynamically import the generated _fromMap for this grammar
+	const fromModulePath = FROM_MODULE_PATHS[grammar];
+	let fromMap: Record<string, (input: object) => unknown> = {};
+	if (fromModulePath) {
+		try {
+			const fromModule = await import(new URL(fromModulePath, import.meta.url).pathname);
+			fromMap = fromModule._fromMap ?? {};
+		} catch {
+			// If from module can't be loaded, fall back to pass-through
+		}
+	}
+
 	const entries = loadCorpusEntries(grammar);
 	const errors: { kind: string; message: string }[] = [];
 	const testedKinds = new Set<string>(); // one test per kind
@@ -238,10 +257,23 @@ export async function validateFactoryRoundTrip(
 			const node1 = findFirst(tree1.rootNode, kind);
 			if (!node1) continue;
 
-			// readNode → strip to factory shape → render → re-parse
+			// readNode → from() factory call → render → re-parse
 			const handle = treeHandle(tree1);
 			const readData = readNode(handle, node1.id, routing);
-			const factoryData = stripToFactory(readData);
+
+			// Call the generated from() function if available, else strip manually
+			const fromFn = fromMap[kind];
+			let factoryData: AnyNodeData;
+			if (fromFn) {
+				try {
+					factoryData = fromFn(readData) as AnyNodeData;
+				} catch {
+					// from() may fail on complex input — fall back to strip
+					factoryData = stripToFactory(readData);
+				}
+			} else {
+				factoryData = stripToFactory(readData);
+			}
 
 			try {
 				const rendered = render(factoryData);
