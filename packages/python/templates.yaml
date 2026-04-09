@@ -19,7 +19,7 @@ rules:
   augmented_assignment: $LEFT $OPERATOR $RIGHT
   await: await $PRIMARY_EXPRESSION
   binary_operator: $LEFT $OPERATOR $RIGHT
-  block: $$$ALTERNATIVE $$$CHILDREN
+  block: $$$CHILDREN $$$ALTERNATIVE
   boolean_operator: $LEFT $OPERATOR $RIGHT
   call: $FUNCTION $ARGUMENTS
   case_clause:

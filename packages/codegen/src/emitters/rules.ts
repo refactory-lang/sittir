@@ -479,9 +479,16 @@ function ruleToTemplate(
 				if (childSlot.slotName === 'children') seen.add('children');
 				return [childSlot.multiple ? `$$$${childSlot.varName}` : `$${childSlot.varName}`];
 			}
-			// Hidden rules that couldn't be inlined and aren't in childSlotMap
-			// are token-like (e.g. _semicolon) — they don't produce CST children
-			if (rule.name.startsWith('_')) return [];
+			// Hidden rules that couldn't be inlined and aren't in childSlotMap:
+			// If inside a REPEAT, they likely resolve to child types → emit $$$CHILDREN.
+			// Otherwise they're token-like (e.g. _semicolon) — no output.
+			if (rule.name.startsWith('_')) {
+				if (inRepeat && !seen.has('children')) {
+					seen.add('children');
+					return ['$$$CHILDREN'];
+				}
+				return [];
+			}
 			// Unknown named symbol — generic children
 			if (seen.has('children')) return [];
 			seen.add('children');
@@ -722,11 +729,15 @@ function buildJoinBy(
 
 /** Check if two template parts should be attached (no space between). */
 function isAttached(prev: string, next: string): boolean {
-	// Opening delimiters attach to preceding content
+	// Opening delimiters attach to following content
 	if (next === '(' || next === '[' || next === '<' || next === '{') return true;
-	// Closing delimiters attach to preceding content
+	// After opening delimiter — no space before content
 	if (prev === '(' || prev === '[' || prev === '<' || prev === '{') return true;
+	// Closing delimiters attach to preceding content
 	if (next === ')' || next === ']' || next === '>' || next === '}') return true;
+	// Quotes attach to adjacent content (wrapping)
+	if (prev === '"' || prev === "'" || prev === '`') return true;
+	if (next === '"' || next === "'" || next === '`') return true;
 	// Dot accessor
 	if (prev === '.' || next === '.') return true;
 	// Double colon

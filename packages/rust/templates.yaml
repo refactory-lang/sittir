@@ -102,7 +102,7 @@ rules:
   impl_item: impl $TYPE_PARAMETERS $TRAIT $TYPE $WHERE_CLAUSE $BODY
   index_expression: $OBJECT[$INDEX]
   inner_attribute_item: "# ![$ATTRIBUTE]"
-  label: "' $IDENTIFIER"
+  label: "'$IDENTIFIER"
   let_chain: $$$CHILDREN
   let_condition: let $PATTERN = $VALUE
   let_declaration:
@@ -110,7 +110,7 @@ rules:
     type_clause: ": $TYPE"
     value_clause: = $VALUE
     alternative_clause: else $ALTERNATIVE
-  lifetime: "' $IDENTIFIER"
+  lifetime: "'$IDENTIFIER"
   lifetime_parameter: $NAME $BOUNDS
   line_comment: // $OUTER $INNER $DOC
   loop_expression:
@@ -168,29 +168,29 @@ rules:
   static_item:
     template: "$VISIBILITY_MODIFIER static $MUTABLE_SPECIFIER $NAME : $TYPE $VALUE_CLAUSE ;"
     value_clause: = $VALUE
-  string_literal: '" $$$CHILDREN "'
+  string_literal: '"$$$CHILDREN"'
   struct_expression: $NAME $BODY
   struct_item: $VISIBILITY_MODIFIER struct $NAME $TYPE_PARAMETERS $WHERE_CLAUSE $BODY
   struct_pattern:
     template: $TYPE{$$$CHILDREN}
     joinBy: ","
   token_binding_pattern: "$NAME : $TYPE"
-  token_repetition: $() + $$$CHILDREN
-  token_repetition_pattern: $() + $$$CHILDREN
+  token_repetition: $($$$CHILDREN) +
+  token_repetition_pattern: $($$$CHILDREN) +
   token_tree:
     variants:
-      parens: () $$$CHILDREN
-      brackets: "[] $$$CHILDREN"
-      braces: "{} $$$CHILDREN"
+      parens: ($$$CHILDREN)
+      brackets: "[$$$CHILDREN]"
+      braces: "{$$$CHILDREN}"
     detect:
       parens: (
       brackets: "["
       braces: "{"
   token_tree_pattern:
     variants:
-      parens: () $$$CHILDREN
-      brackets: "[] $$$CHILDREN"
-      braces: "{} $$$CHILDREN"
+      parens: ($$$CHILDREN)
+      brackets: "[$$$CHILDREN]"
+      braces: "{$$$CHILDREN}"
     detect:
       parens: (
       brackets: "["
@@ -229,7 +229,7 @@ rules:
     template: use<$$$CHILDREN>
     joinBy: ","
   use_declaration: $VISIBILITY_MODIFIER use $ARGUMENT ;
-  use_list: "{} $$$CHILDREN"
+  use_list: "{$$$CHILDREN}"
   use_wildcard: "* $PATH"
   variadic_parameter:
     template: $MUTABLE_SPECIFIER $PATTERN_CLAUSE ...
