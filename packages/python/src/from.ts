@@ -1236,6 +1236,15 @@ function _r12do1e6(v: unknown) {
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
 
+/** Shared field resolver for hidden rule `_import_list` (used by 3 nodes). */
+function _resolveImportListFields(
+  obj: Record<string, unknown>,
+): Record<string, unknown> {
+  return {
+    name: obj['name'] !== undefined ? resolveField(obj['name'], _r144bmot) : [],
+  };
+}
+
 export function aliasedImportFrom(input: AliasedImport | AliasedImportFromInput | object): AliasedImport {
   if (isNodeData(input)) {
     return aliased_import_({
@@ -1860,7 +1869,7 @@ export function futureImportStatementFrom(input: FutureImportStatement | FutureI
   }
   const obj = input as Record<string, unknown>;
   return future_import_statement_({
-    name: obj['name'] !== undefined ? resolveField(obj['name'], _r144bmot) : [],
+    ..._resolveImportListFields(obj),
   } as FutureImportStatementConfig) as unknown as FutureImportStatement;
 }
 
@@ -1942,8 +1951,8 @@ export function importFromStatementFrom(input: ImportFromStatement | ImportFromS
   }
   const obj = input as Record<string, unknown>;
   return import_from_statement_({
+    ..._resolveImportListFields(obj),
     moduleName: resolveField(obj['moduleName'], _rrq3952),
-    name: obj['name'] !== undefined ? resolveField(obj['name'], _r144bmot) : undefined,
     wildcardImport: resolveField(obj['wildcardImport'], (v: unknown) => (typeof v === 'string' && v === '*' ? wildcard_import_() : v)),
   } as ImportFromStatementConfig) as unknown as ImportFromStatement;
 }
@@ -1956,7 +1965,7 @@ export function importStatementFrom(input: ImportStatement | ImportStatementFrom
   }
   const obj = input as Record<string, unknown>;
   return import_statement_({
-    name: obj['name'] !== undefined ? resolveField(obj['name'], _r144bmot) : [],
+    ..._resolveImportListFields(obj),
   } as ImportStatementConfig) as unknown as ImportStatement;
 }
 

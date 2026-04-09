@@ -1810,6 +1810,45 @@ function _r12dn8sc(v: unknown) {
   throw new Error(`Cannot resolve .from() value: got ${typeof v}`);
 }
 
+/** Shared field resolver for hidden rule `_from_clause` (used by 2 nodes). */
+function _resolveFromClauseFields(
+  obj: Record<string, unknown>,
+): Record<string, unknown> {
+  return {
+    source: obj['source'] !== undefined ? resolveField(obj['source'], (v: unknown) => (typeof v === 'object' && v !== null ? stringFrom(v) : v)) : undefined,
+  };
+}
+
+/** Shared field resolver for hidden rule `_call_signature` (used by 10 nodes). */
+function _resolveCallSignatureFields(
+  obj: Record<string, unknown>,
+): Record<string, unknown> {
+  return {
+    parameters: resolveField(obj['parameters'], (v: unknown) => (typeof v === 'object' && v !== null ? formalParametersFrom(v) : v)),
+    returnType: obj['returnType'] !== undefined ? resolveField(obj['returnType'], _r1k9ajy7) : undefined,
+    typeParameters: obj['typeParameters'] !== undefined ? resolveField(obj['typeParameters'], (v: unknown) => (typeof v === 'object' && v !== null ? typeParametersFrom(v) : v)) : undefined,
+  };
+}
+
+/** Shared field resolver for hidden rule `_initializer` (used by 5 nodes). */
+function _resolveInitializerFields(
+  obj: Record<string, unknown>,
+): Record<string, unknown> {
+  return {
+    value: resolveField(obj['value'], _resolveExpression),
+  };
+}
+
+/** Shared field resolver for hidden rule `_parameter_name` (used by 2 nodes). */
+function _resolveParameterNameFields(
+  obj: Record<string, unknown>,
+): Record<string, unknown> {
+  return {
+    decorator: obj['decorator'] !== undefined ? resolveField(obj['decorator'], (v: unknown) => (typeof v === 'object' && v !== null ? decoratorFrom(v) : v)) : undefined,
+    pattern: obj['pattern'] !== undefined ? resolveField(obj['pattern'], _rdqiv86) : undefined,
+  };
+}
+
 export function abstractClassDeclarationFrom(input: AbstractClassDeclaration | AbstractClassDeclarationFromInput | object): AbstractClassDeclaration {
   if (isNodeData(input)) {
     return abstract_class_declaration_({
@@ -1844,10 +1883,8 @@ export function abstractMethodSignatureFrom(input: AbstractMethodSignature | Abs
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   return abstract_method_signature_({
+    ..._resolveCallSignatureFields(obj),
     name: resolveField(obj['name'], _r1vtw8vp),
-    parameters: resolveField(obj['parameters'], (v: unknown) => (typeof v === 'object' && v !== null ? formalParametersFrom(v) : v)),
-    returnType: obj['returnType'] !== undefined ? resolveField(obj['returnType'], _r1k9ajy7) : undefined,
-    typeParameters: obj['typeParameters'] !== undefined ? resolveField(obj['typeParameters'], (v: unknown) => (typeof v === 'object' && v !== null ? typeParametersFrom(v) : v)) : undefined,
     accessibilityModifier: obj['accessibilityModifier'] !== undefined ? resolveField(obj['accessibilityModifier'], (v: unknown) => (typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean' ? accessibility_modifier_('' + v) : v)) : undefined,
     overrideModifier: obj['overrideModifier'] !== undefined ? resolveField(obj['overrideModifier'], (v: unknown) => (typeof v === 'string' && v === 'override' ? override_modifier_() : v)) : undefined,
   } as AbstractMethodSignatureConfig) as unknown as AbstractMethodSignature;
@@ -1941,11 +1978,9 @@ export function arrowFunctionFrom(input: ArrowFunction | ArrowFunctionFromInput 
   }
   const obj = input as Record<string, unknown>;
   return arrow_function_({
+    ..._resolveCallSignatureFields(obj),
     body: resolveField(obj['body'], _rd6os7j),
     parameter: obj['parameter'] !== undefined ? resolveField(obj['parameter'], _resolveImportIdentifier) : undefined,
-    parameters: obj['parameters'] !== undefined ? resolveField(obj['parameters'], (v: unknown) => (typeof v === 'object' && v !== null ? formalParametersFrom(v) : v)) : undefined,
-    returnType: obj['returnType'] !== undefined ? resolveField(obj['returnType'], _r1k9ajy7) : undefined,
-    typeParameters: obj['typeParameters'] !== undefined ? resolveField(obj['typeParameters'], (v: unknown) => (typeof v === 'object' && v !== null ? typeParametersFrom(v) : v)) : undefined,
   } as ArrowFunctionConfig) as unknown as ArrowFunction;
 }
 
@@ -2097,9 +2132,7 @@ export function callSignatureFrom(input: CallSignature | CallSignatureFromInput 
   }
   const obj = input as Record<string, unknown>;
   return call_signature_({
-    parameters: resolveField(obj['parameters'], (v: unknown) => (typeof v === 'object' && v !== null ? formalParametersFrom(v) : v)),
-    returnType: obj['returnType'] !== undefined ? resolveField(obj['returnType'], _r1k9ajy7) : undefined,
-    typeParameters: obj['typeParameters'] !== undefined ? resolveField(obj['typeParameters'], (v: unknown) => (typeof v === 'object' && v !== null ? typeParametersFrom(v) : v)) : undefined,
+    ..._resolveCallSignatureFields(obj),
   } as CallSignatureConfig) as unknown as CallSignature;
 }
 
@@ -2346,8 +2379,8 @@ export function enumAssignmentFrom(input: EnumAssignment | EnumAssignmentFromInp
   }
   const obj = input as Record<string, unknown>;
   return enum_assignment_({
+    ..._resolveInitializerFields(obj),
     name: resolveField(obj['name'], _r1vtw8vp),
-    value: resolveField(obj['value'], _resolveExpression),
   } as EnumAssignmentConfig) as unknown as EnumAssignment;
 }
 
@@ -2420,9 +2453,9 @@ export function exportStatementFrom(input: ExportStatement | ExportStatementFrom
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   return export_statement_({
+    ..._resolveFromClauseFields(obj),
     declaration: obj['declaration'] !== undefined ? resolveField(obj['declaration'], _r1i4ii9p) : undefined,
     decorator: obj['decorator'] !== undefined ? resolveField(obj['decorator'], (v: unknown) => (typeof v === 'object' && v !== null ? decoratorFrom(v) : v)) : undefined,
-    source: obj['source'] !== undefined ? resolveField(obj['source'], (v: unknown) => (typeof v === 'object' && v !== null ? stringFrom(v) : v)) : undefined,
     value: obj['value'] !== undefined ? resolveField(obj['value'], _resolveExpression) : undefined,
     semicolonInner: obj['semicolonInner'] !== undefined ? resolveField(obj['semicolonInner'], _rd4g2sg) : undefined,
     children: obj['children'] !== undefined ? resolveField(obj['children'], _r15z1pjf) : undefined,
@@ -2555,11 +2588,9 @@ export function functionDeclarationFrom(input: FunctionDeclaration | FunctionDec
   }
   const obj = input as Record<string, unknown>;
   return function_declaration_({
+    ..._resolveCallSignatureFields(obj),
     body: resolveField(obj['body'], (v: unknown) => (typeof v === 'object' && v !== null ? statementBlockFrom(v) : v)),
     name: resolveField(obj['name'], _resolveImportIdentifier),
-    parameters: resolveField(obj['parameters'], (v: unknown) => (typeof v === 'object' && v !== null ? formalParametersFrom(v) : v)),
-    returnType: obj['returnType'] !== undefined ? resolveField(obj['returnType'], _r1k9ajy7) : undefined,
-    typeParameters: obj['typeParameters'] !== undefined ? resolveField(obj['typeParameters'], (v: unknown) => (typeof v === 'object' && v !== null ? typeParametersFrom(v) : v)) : undefined,
   } as FunctionDeclarationConfig) as unknown as FunctionDeclaration;
 }
 
@@ -2575,11 +2606,9 @@ export function functionExpressionFrom(input: FunctionExpression | FunctionExpre
   }
   const obj = input as Record<string, unknown>;
   return function_expression_({
+    ..._resolveCallSignatureFields(obj),
     body: resolveField(obj['body'], (v: unknown) => (typeof v === 'object' && v !== null ? statementBlockFrom(v) : v)),
     name: obj['name'] !== undefined ? resolveField(obj['name'], _resolveImportIdentifier) : undefined,
-    parameters: resolveField(obj['parameters'], (v: unknown) => (typeof v === 'object' && v !== null ? formalParametersFrom(v) : v)),
-    returnType: obj['returnType'] !== undefined ? resolveField(obj['returnType'], _r1k9ajy7) : undefined,
-    typeParameters: obj['typeParameters'] !== undefined ? resolveField(obj['typeParameters'], (v: unknown) => (typeof v === 'object' && v !== null ? typeParametersFrom(v) : v)) : undefined,
   } as FunctionExpressionConfig) as unknown as FunctionExpression;
 }
 
@@ -2594,10 +2623,8 @@ export function functionSignatureFrom(input: FunctionSignature | FunctionSignatu
   }
   const obj = input as Record<string, unknown>;
   return function_signature_({
+    ..._resolveCallSignatureFields(obj),
     name: resolveField(obj['name'], _resolveImportIdentifier),
-    parameters: resolveField(obj['parameters'], (v: unknown) => (typeof v === 'object' && v !== null ? formalParametersFrom(v) : v)),
-    returnType: obj['returnType'] !== undefined ? resolveField(obj['returnType'], _r1k9ajy7) : undefined,
-    typeParameters: obj['typeParameters'] !== undefined ? resolveField(obj['typeParameters'], (v: unknown) => (typeof v === 'object' && v !== null ? typeParametersFrom(v) : v)) : undefined,
   } as FunctionSignatureConfig) as unknown as FunctionSignature;
 }
 
@@ -2629,11 +2656,9 @@ export function generatorFunctionFrom(input: GeneratorFunction | GeneratorFuncti
   }
   const obj = input as Record<string, unknown>;
   return generator_function_({
+    ..._resolveCallSignatureFields(obj),
     body: resolveField(obj['body'], (v: unknown) => (typeof v === 'object' && v !== null ? statementBlockFrom(v) : v)),
     name: obj['name'] !== undefined ? resolveField(obj['name'], _resolveImportIdentifier) : undefined,
-    parameters: resolveField(obj['parameters'], (v: unknown) => (typeof v === 'object' && v !== null ? formalParametersFrom(v) : v)),
-    returnType: obj['returnType'] !== undefined ? resolveField(obj['returnType'], _r1k9ajy7) : undefined,
-    typeParameters: obj['typeParameters'] !== undefined ? resolveField(obj['typeParameters'], (v: unknown) => (typeof v === 'object' && v !== null ? typeParametersFrom(v) : v)) : undefined,
   } as GeneratorFunctionConfig) as unknown as GeneratorFunction;
 }
 
@@ -2649,11 +2674,9 @@ export function generatorFunctionDeclarationFrom(input: GeneratorFunctionDeclara
   }
   const obj = input as Record<string, unknown>;
   return generator_function_declaration_({
+    ..._resolveCallSignatureFields(obj),
     body: resolveField(obj['body'], (v: unknown) => (typeof v === 'object' && v !== null ? statementBlockFrom(v) : v)),
     name: resolveField(obj['name'], _resolveImportIdentifier),
-    parameters: resolveField(obj['parameters'], (v: unknown) => (typeof v === 'object' && v !== null ? formalParametersFrom(v) : v)),
-    returnType: obj['returnType'] !== undefined ? resolveField(obj['returnType'], _r1k9ajy7) : undefined,
-    typeParameters: obj['typeParameters'] !== undefined ? resolveField(obj['typeParameters'], (v: unknown) => (typeof v === 'object' && v !== null ? typeParametersFrom(v) : v)) : undefined,
   } as GeneratorFunctionDeclarationConfig) as unknown as GeneratorFunctionDeclaration;
 }
 
@@ -2781,7 +2804,7 @@ export function importStatementFrom(input: ImportStatement | ImportStatementFrom
   }
   const obj = input as Record<string, unknown>;
   return import_statement_({
-    source: obj['source'] !== undefined ? resolveField(obj['source'], (v: unknown) => (typeof v === 'object' && v !== null ? stringFrom(v) : v)) : undefined,
+    ..._resolveFromClauseFields(obj),
     importClause: obj['importClause'] !== undefined ? resolveField(obj['importClause'], _r1a3965y) : undefined,
     fromClause: obj['fromClause'] !== undefined ? resolveField(obj['fromClause'], _rd4g2sg) : undefined,
     importAttribute: obj['importAttribute'] !== undefined ? resolveField(obj['importAttribute'], (v: unknown) => (typeof v === 'object' && v !== null ? importAttributeFrom(v) : v)) : undefined,
@@ -3012,11 +3035,9 @@ export function methodDefinitionFrom(input: MethodDefinition | MethodDefinitionF
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   return method_definition_({
+    ..._resolveCallSignatureFields(obj),
     body: resolveField(obj['body'], (v: unknown) => (typeof v === 'object' && v !== null ? statementBlockFrom(v) : v)),
     name: resolveField(obj['name'], _r1vtw8vp),
-    parameters: resolveField(obj['parameters'], (v: unknown) => (typeof v === 'object' && v !== null ? formalParametersFrom(v) : v)),
-    returnType: obj['returnType'] !== undefined ? resolveField(obj['returnType'], _r1k9ajy7) : undefined,
-    typeParameters: obj['typeParameters'] !== undefined ? resolveField(obj['typeParameters'], (v: unknown) => (typeof v === 'object' && v !== null ? typeParametersFrom(v) : v)) : undefined,
     accessibilityModifier: obj['accessibilityModifier'] !== undefined ? resolveField(obj['accessibilityModifier'], (v: unknown) => (typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean' ? accessibility_modifier_('' + v) : v)) : undefined,
     overrideModifier: obj['overrideModifier'] !== undefined ? resolveField(obj['overrideModifier'], (v: unknown) => (typeof v === 'string' && v === 'override' ? override_modifier_() : v)) : undefined,
   } as MethodDefinitionConfig) as unknown as MethodDefinition;
@@ -3036,10 +3057,8 @@ export function methodSignatureFrom(input: MethodSignature | MethodSignatureFrom
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   return method_signature_({
+    ..._resolveCallSignatureFields(obj),
     name: resolveField(obj['name'], _r1vtw8vp),
-    parameters: resolveField(obj['parameters'], (v: unknown) => (typeof v === 'object' && v !== null ? formalParametersFrom(v) : v)),
-    returnType: obj['returnType'] !== undefined ? resolveField(obj['returnType'], _r1k9ajy7) : undefined,
-    typeParameters: obj['typeParameters'] !== undefined ? resolveField(obj['typeParameters'], (v: unknown) => (typeof v === 'object' && v !== null ? typeParametersFrom(v) : v)) : undefined,
     accessibilityModifier: obj['accessibilityModifier'] !== undefined ? resolveField(obj['accessibilityModifier'], (v: unknown) => (typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean' ? accessibility_modifier_('' + v) : v)) : undefined,
     overrideModifier: obj['overrideModifier'] !== undefined ? resolveField(obj['overrideModifier'], (v: unknown) => (typeof v === 'string' && v === 'override' ? override_modifier_() : v)) : undefined,
   } as MethodSignatureConfig) as unknown as MethodSignature;
@@ -3243,11 +3262,10 @@ export function optionalParameterFrom(input: OptionalParameter | OptionalParamet
   }
   const obj = input as Record<string, unknown>;
   return optional_parameter_({
-    decorator: obj['decorator'] !== undefined ? resolveField(obj['decorator'], (v: unknown) => (typeof v === 'object' && v !== null ? decoratorFrom(v) : v)) : undefined,
+    ..._resolveInitializerFields(obj),
+    ..._resolveParameterNameFields(obj),
     name: obj['name'] !== undefined ? resolveField(obj['name'], _resolveImportIdentifier) : undefined,
-    pattern: obj['pattern'] !== undefined ? resolveField(obj['pattern'], _rdqiv86) : undefined,
     type: obj['type'] !== undefined ? resolveField(obj['type'], (v: unknown) => (typeof v === 'object' && v !== null ? typeAnnotationFrom(v) : v)) : undefined,
-    value: obj['value'] !== undefined ? resolveField(obj['value'], _resolveExpression) : undefined,
     parameterName: resolveField(obj['parameterName'], _r1hu51bk),
     initializer: obj['initializer'] !== undefined ? resolveField(obj['initializer'], _resolveParameterName) : undefined,
   } as OptionalParameterConfig) as unknown as OptionalParameter;
@@ -3365,10 +3383,10 @@ export function publicFieldDefinitionFrom(input: PublicFieldDefinition | PublicF
   }
   const obj = input as Record<string, unknown>;
   return public_field_definition_({
+    ..._resolveInitializerFields(obj),
     decorator: obj['decorator'] !== undefined ? resolveField(obj['decorator'], (v: unknown) => (typeof v === 'object' && v !== null ? decoratorFrom(v) : v)) : undefined,
     name: resolveField(obj['name'], _r1vtw8vp),
     type: obj['type'] !== undefined ? resolveField(obj['type'], (v: unknown) => (typeof v === 'object' && v !== null ? typeAnnotationFrom(v) : v)) : undefined,
-    value: obj['value'] !== undefined ? resolveField(obj['value'], _resolveExpression) : undefined,
     accessibilityModifier: obj['accessibilityModifier'] !== undefined ? resolveField(obj['accessibilityModifier'], (v: unknown) => (typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean' ? accessibility_modifier_('' + v) : v)) : undefined,
     overrideModifier: obj['overrideModifier'] !== undefined ? resolveField(obj['overrideModifier'], (v: unknown) => (typeof v === 'string' && v === 'override' ? override_modifier_() : v)) : undefined,
     initializer: obj['initializer'] !== undefined ? resolveField(obj['initializer'], _rd4g2sg) : undefined,
@@ -3415,11 +3433,10 @@ export function requiredParameterFrom(input: RequiredParameter | RequiredParamet
   }
   const obj = input as Record<string, unknown>;
   return required_parameter_({
-    decorator: obj['decorator'] !== undefined ? resolveField(obj['decorator'], (v: unknown) => (typeof v === 'object' && v !== null ? decoratorFrom(v) : v)) : undefined,
+    ..._resolveInitializerFields(obj),
+    ..._resolveParameterNameFields(obj),
     name: obj['name'] !== undefined ? resolveField(obj['name'], _rzbb4vy) : undefined,
-    pattern: obj['pattern'] !== undefined ? resolveField(obj['pattern'], _rdqiv86) : undefined,
     type: obj['type'] !== undefined ? resolveField(obj['type'], (v: unknown) => (typeof v === 'object' && v !== null ? typeAnnotationFrom(v) : v)) : undefined,
-    value: obj['value'] !== undefined ? resolveField(obj['value'], _resolveExpression) : undefined,
     parameterName: resolveField(obj['parameterName'], _r1hu51bk),
     initializer: obj['initializer'] !== undefined ? resolveField(obj['initializer'], _resolveParameterName) : undefined,
   } as RequiredParameterConfig) as unknown as RequiredParameter;
@@ -3883,9 +3900,9 @@ export function variableDeclaratorFrom(input: VariableDeclarator | VariableDecla
   }
   const obj = input as Record<string, unknown>;
   return variable_declarator_({
+    ..._resolveInitializerFields(obj),
     name: resolveField(obj['name'], _rnmya26),
     type: obj['type'] !== undefined ? resolveField(obj['type'], (v: unknown) => (typeof v === 'object' && v !== null ? typeAnnotationFrom(v) : v)) : undefined,
-    value: obj['value'] !== undefined ? resolveField(obj['value'], _resolveExpression) : undefined,
   } as VariableDeclaratorConfig) as unknown as VariableDeclarator;
 }
 
