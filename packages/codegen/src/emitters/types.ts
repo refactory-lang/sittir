@@ -517,14 +517,24 @@ function emitVariantConfigType(
 		rawToProp.set(f.name, f.propertyName ?? toFieldName(f.name));
 	}
 
-	// Get child slot property names (included in all variants)
+	// Get child slot property names (included in all variants).
+	// Only include slots that actually surface as interface properties —
+	// children fully promoted to fields via overrides don't get a children prop.
 	const childSlotProps: string[] = [];
 	if (node.modelType === 'branch' && node.children) {
 		const fieldKeys = new Set(fields.map(f => f.propertyName ?? toFieldName(f.name)));
+		// Collect all child kinds covered by any field (tree-sitter or override)
+		const fieldCoveredKinds = new Set<string>();
+		for (const f of fields) {
+			for (const k of f.kinds) fieldCoveredKinds.add(k.kind);
+		}
 		const slotNames = childSlotNames(node.children, ctx);
-		eachChildSlot(node.children, (_slot, i) => {
+		eachChildSlot(node.children, (slot, i) => {
 			const name = slotNames[i]!;
-			if (!fieldKeys.has(name)) childSlotProps.push(name);
+			if (fieldKeys.has(name)) return; // already a named field
+			// Check if all kinds in this slot are covered by override fields
+			const allCovered = slot.kinds.every(k => fieldCoveredKinds.has(k.kind));
+			if (!allCovered) childSlotProps.push(name);
 		});
 	}
 

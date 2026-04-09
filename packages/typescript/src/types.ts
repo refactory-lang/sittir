@@ -1476,9 +1476,9 @@ export type EnumDeclarationConfig = ConfigOf<EnumDeclaration>;
 export type ExportClauseConfig = ConfigOf<ExportClause>;
 export type ExportSpecifierConfig = ConfigOf<ExportSpecifier>;
 export type ExportStatementConfig =
-  | Pick<ConfigOf<ExportStatement>, 'children' | 'declaration' | 'decorator' | 'semicolonInner' | 'source' | 'value'>
-  | Pick<ConfigOf<ExportStatement>, 'children' | 'declaration' | 'semicolonInner' | 'source'>
-  | Pick<ConfigOf<ExportStatement>, 'children' | 'declaration' | 'semicolonInner'>
+  | Pick<ConfigOf<ExportStatement>, 'declaration' | 'decorator' | 'semicolonInner' | 'source' | 'value'>
+  | Pick<ConfigOf<ExportStatement>, 'declaration' | 'semicolonInner' | 'source'>
+  | Pick<ConfigOf<ExportStatement>, 'declaration' | 'semicolonInner'>
 ;
 export type ExpressionStatementConfig = ConfigOf<ExpressionStatement>;
 export type ExtendsClauseConfig = ConfigOf<ExtendsClause>;
