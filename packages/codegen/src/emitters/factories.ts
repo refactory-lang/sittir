@@ -145,12 +145,12 @@ export function emitFactory(config: {
 					lines.push(`    getChildren() { return children; },`);
 					lines.push(`    setChildren(...children: (${slotType})[]) { return ${internalName}({ ...config, children }); },`);
 				} else {
-					lines.push(`    child(child?: ${slotType}) { return child !== undefined ? ${internalName}({ ...config, children: [child] }) : config?.children; },`);
+					lines.push(`    child(child?: ${slotType}) { return child !== undefined ? ${internalName}({ ...config, children: child }) : config?.children; },`);
 				}
 			} else if (slot.multiple) {
 				lines.push(`    ${name}(...${name}: (${slotType})[]) { return ${name}.length ? ${internalName}({ ...config, ${name} }) : config?.${name}; },`);
 			} else {
-				lines.push(`    ${name}(${name}?: ${slotType}) { return ${name} !== undefined ? ${internalName}({ ...config, ${name}: [${name}] }) : config?.${name}; },`);
+				lines.push(`    ${name}(${name}?: ${slotType}) { return ${name} !== undefined ? ${internalName}({ ...config, ${name} }) : config?.${name}; },`);
 			}
 		});
 	}

@@ -361,8 +361,11 @@ function emitConcreteInterface(
 			const slotType = slotProj.collapsedTypes.join(' | ');
 			if (slotType === '') return; // skip empty projections
 			const opt = slot.required ? '' : '?';
-			// Children are always arrays at runtime (AnyNodeData.children: readonly unknown[])
-			lines.push(`  readonly ${name}${opt}: readonly (${slotType})[];`);
+			if (slot.multiple) {
+				lines.push(`  readonly ${name}${opt}: readonly (${slotType})[];`);
+			} else {
+				lines.push(`  readonly ${name}${opt}: ${slotType};`);
+			}
 		});
 	}
 

@@ -18,6 +18,7 @@
 
 import type {
 	CamelCase,
+	SnakeCasedProperties,
 	SimplifyDeep,
 } from 'type-fest';
 
@@ -346,20 +347,29 @@ export type FluentNode<
 // ---------------------------------------------------------------------------
 
 /**
- * FluentNodeOf<T> — adds fluent getters/setters and render/edit methods
- * to a concrete node interface. Derived entirely from T.
+ * FluentNodeOf<T> — the runtime shape produced by factory/from functions.
  *
- * For branch nodes (have `fields`): setters derived from FieldsOf<T>.
- * For all nodes: render(), toEdit(), replace() methods.
+ * Transforms the concrete interface to match what factories actually produce:
+ * - `type` discriminant from T
+ * - `named: true`
+ * - `fields` with snake_case keys (runtime uses raw grammar names)
+ * - child slots converted to arrays (runtime always uses arrays)
+ * - Fluent setters derived from T's camelCase fields
+ * - render/toEdit/replace methods
  *
  * @example
  * ```ts
  * type FnNode = FluentNodeOf<FunctionItem>;
- * // = FunctionItem & { name(v?): ..., body(v?): ..., render(): string, ... }
+ * // = { type: 'function_item', named: true, fields: { name: ..., body: ... },
+ * //     name(v?): ..., body(v?): ..., render(): string, ... }
  * ```
  */
-export type FluentNodeOf<T extends { readonly type: string }> =
-	T & FluentSetters<FieldsOf<T>, never, T & FluentSetters<FieldsOf<T>> & NodeMethods<T['type']>> & NodeMethods<T['type']>;
+export type FluentNodeOf<T extends { readonly type: string }> = {
+	readonly type: T['type'];
+	readonly named: true;
+} & (FieldsOf<T> extends Record<string, never> ? {} : { readonly fields: SnakeCasedProperties<FieldsOf<T>> })
+  & RuntimeChildSlots<T>
+  & NodeMethods<T['type']>;
 
 // ---------------------------------------------------------------------------
 // Concrete interface transformations
@@ -370,6 +380,17 @@ type FieldsOf<T> = T extends { readonly fields: infer F } ? F : {};
 
 /** Extract child slot properties (everything except `type` and `fields`). */
 type ChildSlotsOf<T> = Omit<T, 'type' | 'fields' | 'text'>;
+
+/**
+ * RuntimeChildSlots<T> — converts singular child slots to arrays.
+ * The interface uses `child: Path` (semantic), but at runtime children
+ * are always arrays (`children: Path[]`). This bridges the gap.
+ */
+type RuntimeChildSlots<T> = {
+	[K in keyof ChildSlotsOf<T>]: ChildSlotsOf<T>[K] extends readonly (infer _E)[]
+		? ChildSlotsOf<T>[K]                           // already an array → keep
+		: readonly (NonNullable<ChildSlotsOf<T>[K]>)[]; // singular → wrap in array
+};
 
 /**
  * ConfigOf<T> — factory input shape derived from a concrete node interface.

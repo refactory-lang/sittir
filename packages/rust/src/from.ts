@@ -1837,7 +1837,7 @@ export function arguments_From(input: Arguments | ArgumentsFromInput | object): 
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   return arguments_({
-    children: obj.children !== undefined ? ((v: unknown) => Array.isArray(v) ? v : [v])(resolveField(obj.children, _resolveDeclarationStatement2)) : undefined,
+    children: obj['children'] !== undefined ? resolveField(obj['children'], _resolveDeclarationStatement2) : undefined,
   } as ArgumentsConfig) as unknown as Arguments;
 }
 
@@ -1927,7 +1927,7 @@ export function attributeFrom(input: Attribute | AttributeFromInput | object): A
   return attribute_({
     arguments: obj['arguments'] !== undefined ? resolveField(obj['arguments'], (v: unknown) => (typeof v === 'object' && v !== null ? tokenTreeFrom(v) : v)) : undefined,
     value: obj['value'] !== undefined ? resolveField(obj['value'], _resolveExpression) : undefined,
-    children: obj.children !== undefined ? ((v: unknown) => Array.isArray(v) ? v : [v])(resolveField(obj.children, _resolvePath2)) : [],
+    children: obj['children'] !== undefined ? resolveField(obj['children'], _resolvePath2) : undefined,
   } as AttributeConfig) as unknown as Attribute;
 }
 
@@ -1951,7 +1951,7 @@ export function awaitExpressionFrom(input: AwaitExpression | AwaitExpressionFrom
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   return await_expression_({
-    children: obj.children !== undefined ? ((v: unknown) => Array.isArray(v) ? v : [v])(resolveField(obj.children, _resolveExpression)) : [],
+    children: obj['children'] !== undefined ? resolveField(obj['children'], _resolveExpression) : undefined,
   } as AwaitExpressionConfig) as unknown as AwaitExpression;
 }
 
@@ -1963,7 +1963,7 @@ export function baseFieldInitializerFrom(input: BaseFieldInitializer | BaseField
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   return base_field_initializer_({
-    children: obj.children !== undefined ? ((v: unknown) => Array.isArray(v) ? v : [v])(resolveField(obj.children, _resolveExpression)) : [],
+    children: obj['children'] !== undefined ? resolveField(obj['children'], _resolveExpression) : undefined,
   } as BaseFieldInitializerConfig) as unknown as BaseFieldInitializer;
 }
 
@@ -1993,7 +1993,7 @@ export function blockFrom(input: Block | BlockFromInput | object): Block {
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   return block_({
     label: obj['label'] !== undefined ? resolveField(obj['label'], (v: unknown) => (typeof v === 'object' && v !== null ? labelFrom(v) : v)) : undefined,
-    children: obj.children !== undefined ? ((v: unknown) => Array.isArray(v) ? v : [v])(resolveField(obj.children, _resolveStatement2)) : undefined,
+    children: obj['children'] !== undefined ? resolveField(obj['children'], _resolveStatement2) : undefined,
   } as BlockConfig) as unknown as Block;
 }
 
@@ -2035,7 +2035,7 @@ export function bracketedTypeFrom(input: BracketedType | BracketedTypeFromInput 
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   return bracketed_type_({
-    children: obj.children !== undefined ? ((v: unknown) => Array.isArray(v) ? v : [v])(resolveField(obj.children, _raoo9kn)) : [],
+    children: obj['children'] !== undefined ? resolveField(obj['children'], _raoo9kn) : undefined,
   } as BracketedTypeConfig) as unknown as BracketedType;
 }
 
@@ -2111,7 +2111,7 @@ export function closureParametersFrom(input: ClosureParameters | ClosureParamete
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   return closure_parameters_({
-    children: obj.children !== undefined ? ((v: unknown) => Array.isArray(v) ? v : [v])(resolveField(obj.children, _r1q9fx9f)) : undefined,
+    children: obj['children'] !== undefined ? resolveField(obj['children'], _r1q9fx9f) : undefined,
   } as ClosureParametersConfig) as unknown as ClosureParameters;
 }
 
@@ -2197,7 +2197,7 @@ export function declarationListFrom(input: DeclarationList | DeclarationListFrom
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   return declaration_list_({
-    children: obj.children !== undefined ? ((v: unknown) => Array.isArray(v) ? v : [v])(resolveField(obj.children, _resolveDeclarationStatement)) : undefined,
+    children: obj['children'] !== undefined ? resolveField(obj['children'], _resolveDeclarationStatement) : undefined,
   } as DeclarationListConfig) as unknown as DeclarationList;
 }
 
@@ -2221,7 +2221,7 @@ export function elseClauseFrom(input: ElseClause | ElseClauseFromInput | object)
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   return else_clause_({
-    children: obj.children !== undefined ? ((v: unknown) => Array.isArray(v) ? v : [v])(resolveField(obj.children, _resolveExpressionEndingWithBlock3)) : [],
+    children: obj['children'] !== undefined ? resolveField(obj['children'], _resolveExpressionEndingWithBlock3) : undefined,
   } as ElseClauseConfig) as unknown as ElseClause;
 }
 
@@ -2271,7 +2271,7 @@ export function enumVariantListFrom(input: EnumVariantList | EnumVariantListFrom
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   return enum_variant_list_({
-    children: obj.children !== undefined ? ((v: unknown) => Array.isArray(v) ? v : [v])(resolveField(obj.children, _rmxz15l)) : undefined,
+    children: obj['children'] !== undefined ? resolveField(obj['children'], _rmxz15l) : undefined,
   } as EnumVariantListConfig) as unknown as EnumVariantList;
 }
 
@@ -2283,7 +2283,7 @@ export function expressionStatementFrom(input: ExpressionStatement | ExpressionS
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   return expression_statement_({
-    children: obj.children !== undefined ? ((v: unknown) => Array.isArray(v) ? v : [v])(resolveField(obj.children, _resolveTypeIdentifier8)) : [],
+    children: obj['children'] !== undefined ? resolveField(obj['children'], _resolveTypeIdentifier8) : undefined,
   } as ExpressionStatementConfig) as unknown as ExpressionStatement;
 }
 
@@ -2341,7 +2341,7 @@ export function fieldDeclarationListFrom(input: FieldDeclarationList | FieldDecl
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   return field_declaration_list_({
-    children: obj.children !== undefined ? ((v: unknown) => Array.isArray(v) ? v : [v])(resolveField(obj.children, _r1d1qsih)) : undefined,
+    children: obj['children'] !== undefined ? resolveField(obj['children'], _r1d1qsih) : undefined,
   } as FieldDeclarationListConfig) as unknown as FieldDeclarationList;
 }
 
@@ -2371,7 +2371,7 @@ export function fieldInitializerFrom(input: FieldInitializer | FieldInitializerF
   return field_initializer_({
     field: resolveField(obj['field'], _rkdlimm),
     value: resolveField(obj['value'], _resolveExpression),
-    children: obj.children !== undefined ? ((v: unknown) => Array.isArray(v) ? v : [v])(resolveField(obj.children, (v: unknown) => (typeof v === 'object' && v !== null ? attributeItemFrom(v) : v))) : undefined,
+    children: obj['children'] !== undefined ? resolveField(obj['children'], (v: unknown) => (typeof v === 'object' && v !== null ? attributeItemFrom(v) : v)) : undefined,
   } as FieldInitializerConfig) as unknown as FieldInitializer;
 }
 
@@ -2383,7 +2383,7 @@ export function fieldInitializerListFrom(input: FieldInitializerList | FieldInit
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   return field_initializer_list_({
-    children: obj.children !== undefined ? ((v: unknown) => Array.isArray(v) ? v : [v])(resolveField(obj.children, _r1n0ectv)) : undefined,
+    children: obj['children'] !== undefined ? resolveField(obj['children'], _r1n0ectv) : undefined,
   } as FieldInitializerListConfig) as unknown as FieldInitializerList;
 }
 
@@ -2429,7 +2429,7 @@ export function forLifetimesFrom(input: ForLifetimes | ForLifetimesFromInput | o
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   return for_lifetimes_({
-    children: obj.children !== undefined ? ((v: unknown) => Array.isArray(v) ? v : [v])(resolveField(obj.children, (v: unknown) => (typeof v === 'object' && v !== null ? lifetimeFrom(v) : v))) : [],
+    children: obj['children'] !== undefined ? resolveField(obj['children'], (v: unknown) => (typeof v === 'object' && v !== null ? lifetimeFrom(v) : v)) : [],
   } as ForLifetimesConfig) as unknown as ForLifetimes;
 }
 
@@ -2491,7 +2491,7 @@ export function functionModifiersFrom(input: FunctionModifiers | FunctionModifie
     default: obj['default'] !== undefined ? resolveField(obj['default'], _resolveTypeIdentifier9) : undefined,
     const: obj['const'] !== undefined ? resolveField(obj['const'], _resolveTypeIdentifier10) : undefined,
     unsafe: obj['unsafe'] !== undefined ? resolveField(obj['unsafe'], _resolveTypeIdentifier11) : undefined,
-    children: obj.children !== undefined ? ((v: unknown) => Array.isArray(v) ? v : [v])(resolveField(obj.children, (v: unknown) => (typeof v === 'object' && v !== null ? externModifierFrom(v) : v))) : undefined,
+    children: obj['children'] !== undefined ? resolveField(obj['children'], (v: unknown) => (typeof v === 'object' && v !== null ? externModifierFrom(v) : v)) : undefined,
   } as FunctionModifiersConfig) as unknown as FunctionModifiers;
 }
 
@@ -2575,7 +2575,7 @@ export function genericPatternFrom(input: GenericPattern | GenericPatternFromInp
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   return generic_pattern_({
     typeArguments: resolveField(obj['typeArguments'], (v: unknown) => (typeof v === 'object' && v !== null ? typeArgumentsFrom(v) : v)),
-    children: obj.children !== undefined ? ((v: unknown) => Array.isArray(v) ? v : [v])(resolveField(obj.children, _resolvePath4)) : [],
+    children: obj['children'] !== undefined ? resolveField(obj['children'], _resolvePath4) : undefined,
   } as GenericPatternConfig) as unknown as GenericPattern;
 }
 
@@ -2703,7 +2703,7 @@ export function letChainFrom(input: LetChain | LetChainFromInput | object): LetC
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   return let_chain_({
-    children: obj.children !== undefined ? ((v: unknown) => Array.isArray(v) ? v : [v])(resolveField(obj.children, _resolveCondition3)) : [],
+    children: obj['children'] !== undefined ? resolveField(obj['children'], _resolveCondition3) : [],
   } as LetChainConfig) as unknown as LetChain;
 }
 
@@ -2851,7 +2851,7 @@ export function matchArmFrom(input: MatchArm | MatchArmFromInput | object): Matc
   return match_arm_({
     pattern: resolveField(obj['pattern'], (v: unknown) => (typeof v === 'object' && v !== null ? matchPatternFrom(v) : v)),
     value: resolveField(obj['value'], _resolveTypeIdentifier8),
-    children: obj.children !== undefined ? ((v: unknown) => Array.isArray(v) ? v : [v])(resolveField(obj.children, _resolveDeclarationStatement3)) : undefined,
+    children: obj['children'] !== undefined ? resolveField(obj['children'], _resolveDeclarationStatement3) : undefined,
   } as MatchArmConfig) as unknown as MatchArm;
 }
 
@@ -2863,7 +2863,7 @@ export function matchBlockFrom(input: MatchBlock | MatchBlockFromInput | object)
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   return match_block_({
-    children: obj.children !== undefined ? ((v: unknown) => Array.isArray(v) ? v : [v])(resolveField(obj.children, (v: unknown) => (typeof v === 'object' && v !== null ? matchArmFrom(v) : v))) : undefined,
+    children: obj['children'] !== undefined ? resolveField(obj['children'], (v: unknown) => (typeof v === 'object' && v !== null ? matchArmFrom(v) : v)) : undefined,
   } as MatchBlockConfig) as unknown as MatchBlock;
 }
 
@@ -2891,7 +2891,7 @@ export function matchPatternFrom(input: MatchPattern | MatchPatternFromInput | o
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   return match_pattern_({
     condition: obj['condition'] !== undefined ? resolveField(obj['condition'], _resolveCondition2) : undefined,
-    children: obj.children !== undefined ? ((v: unknown) => Array.isArray(v) ? v : [v])(resolveField(obj.children, _resolvePattern)) : [],
+    children: obj['children'] !== undefined ? resolveField(obj['children'], _resolvePattern) : undefined,
   } as MatchPatternConfig) as unknown as MatchPattern;
 }
 
@@ -2995,7 +2995,7 @@ export function parametersFrom(input: Parameters | ParametersFromInput | object)
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   return parameters_({
-    children: obj.children !== undefined ? ((v: unknown) => Array.isArray(v) ? v : [v])(resolveField(obj.children, _rbdp9li)) : undefined,
+    children: obj['children'] !== undefined ? resolveField(obj['children'], _rbdp9li) : undefined,
   } as ParametersConfig) as unknown as Parameters;
 }
 
@@ -3007,7 +3007,7 @@ export function parenthesizedExpressionFrom(input: ParenthesizedExpression | Par
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   return parenthesized_expression_({
-    children: obj.children !== undefined ? ((v: unknown) => Array.isArray(v) ? v : [v])(resolveField(obj.children, _resolveExpression)) : [],
+    children: obj['children'] !== undefined ? resolveField(obj['children'], _resolveExpression) : undefined,
   } as ParenthesizedExpressionConfig) as unknown as ParenthesizedExpression;
 }
 
@@ -3093,7 +3093,7 @@ export function refPatternFrom(input: RefPattern | RefPatternFromInput | object)
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   return ref_pattern_({
-    children: obj.children !== undefined ? ((v: unknown) => Array.isArray(v) ? v : [v])(resolveField(obj.children, _resolvePattern)) : [],
+    children: obj['children'] !== undefined ? resolveField(obj['children'], _resolvePattern) : undefined,
   } as RefPatternConfig) as unknown as RefPattern;
 }
 
@@ -3149,7 +3149,7 @@ export function removedTraitBoundFrom(input: RemovedTraitBound | RemovedTraitBou
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   return removed_trait_bound_({
-    children: obj.children !== undefined ? ((v: unknown) => Array.isArray(v) ? v : [v])(resolveField(obj.children, _resolveType)) : [],
+    children: obj['children'] !== undefined ? resolveField(obj['children'], _resolveType) : undefined,
   } as RemovedTraitBoundConfig) as unknown as RemovedTraitBound;
 }
 
@@ -3161,7 +3161,7 @@ export function returnExpressionFrom(input: ReturnExpression | ReturnExpressionF
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   return return_expression_({
-    children: obj.children !== undefined ? ((v: unknown) => Array.isArray(v) ? v : [v])(resolveField(obj.children, _resolveExpression)) : undefined,
+    children: obj['children'] !== undefined ? resolveField(obj['children'], _resolveExpression) : undefined,
   } as ReturnExpressionConfig) as unknown as ReturnExpression;
 }
 
@@ -3245,7 +3245,7 @@ export function slicePatternFrom(input: SlicePattern | SlicePatternFromInput | o
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   return slice_pattern_({
-    children: obj.children !== undefined ? ((v: unknown) => Array.isArray(v) ? v : [v])(resolveField(obj.children, _resolvePattern)) : undefined,
+    children: obj['children'] !== undefined ? resolveField(obj['children'], _resolvePattern) : undefined,
   } as SlicePatternConfig) as unknown as SlicePattern;
 }
 
@@ -3291,7 +3291,7 @@ export function stringLiteralFrom(input: StringLiteral | StringLiteralFromInput 
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   return string_literal_({
-    children: obj.children !== undefined ? ((v: unknown) => Array.isArray(v) ? v : [v])(resolveField(obj.children, _ra1kaw)) : undefined,
+    children: obj['children'] !== undefined ? resolveField(obj['children'], _ra1kaw) : undefined,
   } as StringLiteralConfig) as unknown as StringLiteral;
 }
 
@@ -3339,7 +3339,7 @@ export function structPatternFrom(input: StructPattern | StructPatternFromInput 
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   return struct_pattern_({
     type: resolveField(obj['type'], _resolveType3),
-    children: obj.children !== undefined ? ((v: unknown) => Array.isArray(v) ? v : [v])(resolveField(obj.children, _rx4073x)) : undefined,
+    children: obj['children'] !== undefined ? resolveField(obj['children'], _rx4073x) : undefined,
   } as StructPatternConfig) as unknown as StructPattern;
 }
 
@@ -3365,7 +3365,7 @@ export function tokenRepetitionFrom(input: TokenRepetition | TokenRepetitionFrom
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   return token_repetition_({
-    children: obj.children !== undefined ? ((v: unknown) => Array.isArray(v) ? v : [v])(resolveField(obj.children, _r18bpr9a)) : undefined,
+    children: obj['children'] !== undefined ? resolveField(obj['children'], _r18bpr9a) : undefined,
   } as TokenRepetitionConfig) as unknown as TokenRepetition;
 }
 
@@ -3377,7 +3377,7 @@ export function tokenRepetitionPatternFrom(input: TokenRepetitionPattern | Token
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   return token_repetition_pattern_({
-    children: obj.children !== undefined ? ((v: unknown) => Array.isArray(v) ? v : [v])(resolveField(obj.children, _rznjc70)) : undefined,
+    children: obj['children'] !== undefined ? resolveField(obj['children'], _rznjc70) : undefined,
   } as TokenRepetitionPatternConfig) as unknown as TokenRepetitionPattern;
 }
 
@@ -3389,7 +3389,7 @@ export function tokenTreeFrom(input: TokenTree | TokenTreeFromInput | object): T
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   return token_tree_({
-    children: obj.children !== undefined ? ((v: unknown) => Array.isArray(v) ? v : [v])(resolveField(obj.children, _r18bpr9a)) : undefined,
+    children: obj['children'] !== undefined ? resolveField(obj['children'], _r18bpr9a) : undefined,
   } as TokenTreeConfig) as unknown as TokenTree;
 }
 
@@ -3401,7 +3401,7 @@ export function tokenTreePatternFrom(input: TokenTreePattern | TokenTreePatternF
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   return token_tree_pattern_({
-    children: obj.children !== undefined ? ((v: unknown) => Array.isArray(v) ? v : [v])(resolveField(obj.children, _rznjc70)) : undefined,
+    children: obj['children'] !== undefined ? resolveField(obj['children'], _rznjc70) : undefined,
   } as TokenTreePatternConfig) as unknown as TokenTreePattern;
 }
 
@@ -3413,7 +3413,7 @@ export function traitBoundsFrom(input: TraitBounds | TraitBoundsFromInput | obje
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   return trait_bounds_({
-    children: obj.children !== undefined ? ((v: unknown) => Array.isArray(v) ? v : [v])(resolveField(obj.children, _r1g3soma)) : [],
+    children: obj['children'] !== undefined ? resolveField(obj['children'], _r1g3soma) : [],
   } as TraitBoundsConfig) as unknown as TraitBounds;
 }
 
@@ -3491,7 +3491,7 @@ export function tuplePatternFrom(input: TuplePattern | TuplePatternFromInput | o
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   return tuple_pattern_({
-    children: obj.children !== undefined ? ((v: unknown) => Array.isArray(v) ? v : [v])(resolveField(obj.children, _resolveExpressionExceptRange4)) : undefined,
+    children: obj['children'] !== undefined ? resolveField(obj['children'], _resolveExpressionExceptRange4) : undefined,
   } as TuplePatternConfig) as unknown as TuplePattern;
 }
 
@@ -3505,7 +3505,7 @@ export function tupleStructPatternFrom(input: TupleStructPattern | TupleStructPa
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   return tuple_struct_pattern_({
     type: resolveField(obj['type'], _rnfan),
-    children: obj.children !== undefined ? ((v: unknown) => Array.isArray(v) ? v : [v])(resolveField(obj.children, _resolvePattern)) : undefined,
+    children: obj['children'] !== undefined ? resolveField(obj['children'], _resolvePattern) : undefined,
   } as TupleStructPatternConfig) as unknown as TupleStructPattern;
 }
 
@@ -3517,7 +3517,7 @@ export function tupleTypeFrom(input: TupleType | TupleTypeFromInput | object): T
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   return tuple_type_({
-    children: obj.children !== undefined ? ((v: unknown) => Array.isArray(v) ? v : [v])(resolveField(obj.children, _resolveType)) : [],
+    children: obj['children'] !== undefined ? resolveField(obj['children'], _resolveType) : [],
   } as TupleTypeConfig) as unknown as TupleType;
 }
 
@@ -3529,7 +3529,7 @@ export function typeArgumentsFrom(input: TypeArguments | TypeArgumentsFromInput 
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   return type_arguments_({
-    children: obj.children !== undefined ? ((v: unknown) => Array.isArray(v) ? v : [v])(resolveField(obj.children, _rzww8fe)) : [],
+    children: obj['children'] !== undefined ? resolveField(obj['children'], _rzww8fe) : [],
   } as TypeArgumentsConfig) as unknown as TypeArguments;
 }
 
@@ -3609,7 +3609,7 @@ export function typeParametersFrom(input: TypeParameters | TypeParametersFromInp
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   return type_parameters_({
-    children: obj.children !== undefined ? ((v: unknown) => Array.isArray(v) ? v : [v])(resolveField(obj.children, _rrcyxzh)) : [],
+    children: obj['children'] !== undefined ? resolveField(obj['children'], _rrcyxzh) : [],
   } as TypeParametersConfig) as unknown as TypeParameters;
 }
 
@@ -3681,7 +3681,7 @@ export function useBoundsFrom(input: UseBounds | UseBoundsFromInput | object): U
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   return use_bounds_({
-    children: obj.children !== undefined ? ((v: unknown) => Array.isArray(v) ? v : [v])(resolveField(obj.children, _r1qv9yc5)) : undefined,
+    children: obj['children'] !== undefined ? resolveField(obj['children'], _r1qv9yc5) : undefined,
   } as UseBoundsConfig) as unknown as UseBounds;
 }
 
@@ -3707,7 +3707,7 @@ export function useListFrom(input: UseList | UseListFromInput | object): UseList
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   return use_list_({
-    children: obj.children !== undefined ? ((v: unknown) => Array.isArray(v) ? v : [v])(resolveField(obj.children, _resolveUseClause)) : undefined,
+    children: obj['children'] !== undefined ? resolveField(obj['children'], _resolveUseClause) : undefined,
   } as UseListConfig) as unknown as UseList;
 }
 
@@ -3721,7 +3721,7 @@ export function useWildcardFrom(input: UseWildcard | UseWildcardFromInput | obje
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   return use_wildcard_({
     path: obj['path'] !== undefined ? resolveField(obj['path'], _resolvePath) : undefined,
-    children: obj.children !== undefined ? ((v: unknown) => Array.isArray(v) ? v : [v])(resolveField(obj.children, _resolvePath)) : undefined,
+    children: obj['children'] !== undefined ? resolveField(obj['children'], _resolvePath) : undefined,
   } as UseWildcardConfig) as unknown as UseWildcard;
 }
 
@@ -3751,7 +3751,7 @@ export function visibilityModifierFrom(input: VisibilityModifier | VisibilityMod
   return visibility_modifier_({
     pub: obj['pub'] !== undefined ? resolveField(obj['pub'], _resolveTypeIdentifier17) : undefined,
     in: obj['in'] !== undefined ? resolveField(obj['in'], _resolveTypeIdentifier18) : undefined,
-    children: obj.children !== undefined ? ((v: unknown) => Array.isArray(v) ? v : [v])(resolveField(obj.children, _resolvePath2)) : undefined,
+    children: obj['children'] !== undefined ? resolveField(obj['children'], _resolvePath2) : undefined,
   } as VisibilityModifierConfig) as unknown as VisibilityModifier;
 }
 
@@ -3763,7 +3763,7 @@ export function whereClauseFrom(input: WhereClause | WhereClauseFromInput | obje
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   return where_clause_({
-    children: obj.children !== undefined ? ((v: unknown) => Array.isArray(v) ? v : [v])(resolveField(obj.children, (v: unknown) => (typeof v === 'object' && v !== null ? wherePredicateFrom(v) : v))) : undefined,
+    children: obj['children'] !== undefined ? resolveField(obj['children'], (v: unknown) => (typeof v === 'object' && v !== null ? wherePredicateFrom(v) : v)) : undefined,
   } as WhereClauseConfig) as unknown as WhereClause;
 }
 
@@ -3805,6 +3805,6 @@ export function yieldExpressionFrom(input: YieldExpression | YieldExpressionFrom
   }
   const obj = (Array.isArray(input) ? { children: input } : input) as Record<string, unknown>;
   return yield_expression_({
-    children: obj.children !== undefined ? ((v: unknown) => Array.isArray(v) ? v : [v])(resolveField(obj.children, _resolveExpression)) : undefined,
+    children: obj['children'] !== undefined ? resolveField(obj['children'], _resolveExpression) : undefined,
   } as YieldExpressionConfig) as unknown as YieldExpression;
 }
