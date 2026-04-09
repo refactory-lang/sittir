@@ -11,20 +11,38 @@ export type { RulesConfig };
 
 // Matches $$$NAME, $$NAME, $_NAME, $NAME (longest prefix first)
 // Captures: [1] prefix ($$$, $$, $_, $), [2] NAME
-const VAR_RE = /(\$\$\$|\$\$|\$_|\$)([A-Z][A-Z0-9_]*)/g;
+const DEFAULT_VAR_RE = /(\$\$\$|\$\$|\$_|\$)([A-Z][A-Z0-9_]*)/g;
+
+// ---------------------------------------------------------------------------
+// Render context — precomputed once per createRenderer call
+// ---------------------------------------------------------------------------
+
+interface InternalRenderContext {
+	config: RulesConfig;
+	varPattern: RegExp;
+	prefix: string;
+}
+
+function buildRenderContext(config: RulesConfig): InternalRenderContext {
+	const prefix = config.expandoChar ?? '$';
+	const varPattern = prefix === '$'
+		? DEFAULT_VAR_RE
+		: new RegExp(`(${escapeRegex(prefix)}{3}|${escapeRegex(prefix)}{2}|${escapeRegex(prefix)}_|${escapeRegex(prefix)})([A-Z][A-Z0-9_]*)`, 'g');
+	return { config, varPattern, prefix };
+}
 
 // ---------------------------------------------------------------------------
 // Render engine
 // ---------------------------------------------------------------------------
 
-function render(node: AnyNodeData, config: RulesConfig): string {
+function render(node: AnyNodeData, ctx: InternalRenderContext): string {
 	if (node.text !== undefined && !node.fields && !node.children) return node.text;
 
 	if (!node.fields && !node.children) {
 		throw new Error(`Node '${node.type}' has no 'fields' or 'children' — did you mean to set 'text' for a leaf node?`);
 	}
 
-	const rule = config.rules[node.type];
+	const rule = ctx.config.rules[node.type];
 	if (!rule) throw new Error(`No render rule for '${node.type}'`);
 
 	const isObject = typeof rule !== 'string' && !Array.isArray(rule);
@@ -32,19 +50,13 @@ function render(node: AnyNodeData, config: RulesConfig): string {
 		: rule;
 	const ruleObj = isObject ? rule as unknown as Record<string, unknown> : undefined;
 
-	// Resolve expandoChar: if set, the template uses expandoChar instead of $
-	const prefix = config.expandoChar ?? '$';
-
-	// Build the regex dynamically if expandoChar differs from $
-	const varPattern = prefix === '$'
-		? VAR_RE
-		: new RegExp(`(${escapeRegex(prefix)}{3}|${escapeRegex(prefix)}{2}|${escapeRegex(prefix)}_|${escapeRegex(prefix)})([A-Z][A-Z0-9_]*)`, 'g');
+	const { varPattern, prefix } = ctx;
 
 	// Variant templates: try each and pick the first where all variables resolve
 	const templates = Array.isArray(rawTemplate) ? rawTemplate : [rawTemplate];
 	const template = templates.length === 1
 		? templates[0]!
-		: pickTemplate(templates, node, config, varPattern) ?? templates[0]!;
+		: pickTemplate(templates, node, varPattern) ?? templates[0]!;
 
 	// Trim trailing newline from YAML | block scalar
 	const tmpl = template.endsWith('\n') ? template.slice(0, -1) : template;
@@ -60,7 +72,7 @@ function render(node: AnyNodeData, config: RulesConfig): string {
 		// 1. Clause reference (e.g., $RETURN_TYPE_CLAUSE → return_type_clause key in rule)
 		if (ruleObj && clauseKey in ruleObj && clauseKey !== 'template' && clauseKey !== 'joinBy') {
 			const clauseTemplate = ruleObj[clauseKey] as string;
-			return renderClause(clauseTemplate, node, config, varPattern, consumed);
+			return renderClause(clauseTemplate, node, ctx, consumed);
 		}
 
 		// 2. Fields (tree-sitter FIELDs + promoted overrides)
@@ -69,12 +81,12 @@ function render(node: AnyNodeData, config: RulesConfig): string {
 			if (pfx.length === 3 || pfx === `${prefix}${prefix}${prefix}`) {
 				const items = Array.isArray(value) ? value : [value];
 				const sep = resolveJoinBy(ruleObj, name);
-				return items.map(item => renderValue(item as AnyNodeData | string | number, config)).join(sep);
+				return items.map(item => renderValue(item as AnyNodeData | string | number, ctx)).join(sep);
 			}
 			if (Array.isArray(value)) {
-				return value.length > 0 ? renderValue(value[0] as AnyNodeData | string | number, config) : '';
+				return value.length > 0 ? renderValue(value[0] as AnyNodeData | string | number, ctx) : '';
 			}
-			return renderValue(value as AnyNodeData | string | number, config);
+			return renderValue(value as AnyNodeData | string | number, ctx);
 		}
 
 		// 3. $$$CHILDREN — unconsumed remainder
@@ -82,7 +94,7 @@ function render(node: AnyNodeData, config: RulesConfig): string {
 			if (!node.children) return '';
 			const remaining = node.children.filter((_, i) => !consumed.has(i));
 			const sep = resolveJoinBy(ruleObj, name);
-			return remaining.map(c => renderValue(c as AnyNodeData | string | number, config)).join(sep);
+			return remaining.map(c => renderValue(c as AnyNodeData | string | number, ctx)).join(sep);
 		}
 
 		// 4. Named child by kind — consume first unconsumed match
@@ -103,9 +115,9 @@ function render(node: AnyNodeData, config: RulesConfig): string {
 						}
 					}
 					const sep = resolveJoinBy(ruleObj, name);
-					return items.map(item => renderValue(item as AnyNodeData | string | number, config)).join(sep);
+					return items.map(item => renderValue(item as AnyNodeData | string | number, ctx)).join(sep);
 				}
-				return renderValue(child as AnyNodeData | string | number, config);
+				return renderValue(child as AnyNodeData | string | number, ctx);
 			}
 		}
 
@@ -114,7 +126,7 @@ function render(node: AnyNodeData, config: RulesConfig): string {
 			for (let i = 0; i < node.children.length; i++) {
 				if (!consumed.has(i)) {
 					consumed.add(i);
-					return renderValue(node.children[i] as AnyNodeData | string | number, config);
+					return renderValue(node.children[i] as AnyNodeData | string | number, ctx);
 				}
 			}
 		}
@@ -135,7 +147,6 @@ function render(node: AnyNodeData, config: RulesConfig): string {
 function pickTemplate(
 	templates: string[],
 	node: AnyNodeData,
-	_config: RulesConfig,
 	varPattern: RegExp,
 ): string | null {
 	let bestTemplate: string | null = null;
@@ -172,10 +183,11 @@ function pickTemplate(
 function renderClause(
 	clauseTemplate: string,
 	node: AnyNodeData,
-	config: RulesConfig,
-	varPattern: RegExp,
+	ctx: InternalRenderContext,
 	consumed: Set<number>,
 ): string {
+	const { varPattern } = ctx;
+
 	// First pass: check if all variables resolve
 	let allPresent = true;
 	clauseTemplate.replace(varPattern, (_match: string, _pfx: string, name: string) => {
@@ -199,7 +211,7 @@ function renderClause(
 		const fieldKey = name.toLowerCase();
 		if (node.fields?.[fieldKey] !== undefined) {
 			const value = node.fields[fieldKey] as AnyNodeData | string | number;
-			return renderValue(value, config);
+			return renderValue(value, ctx);
 		}
 		// Children by kind fallback
 		if (node.children && Array.isArray(node.children)) {
@@ -208,7 +220,7 @@ function renderClause(
 			);
 			if (idx >= 0) {
 				consumed.add(idx);
-				return renderValue(node.children[idx] as AnyNodeData | string | number, config);
+				return renderValue(node.children[idx] as AnyNodeData | string | number, ctx);
 			}
 		}
 		return '';
@@ -223,10 +235,10 @@ function resolveJoinBy(ruleObj: Record<string, unknown> | undefined, _varName: s
 }
 
 /** Render a field value — handles AnyNodeData, string, and number. */
-function renderValue(value: AnyNodeData | string | number, config: RulesConfig): string {
+function renderValue(value: AnyNodeData | string | number, ctx: InternalRenderContext): string {
 	if (typeof value === 'string') return value;
 	if (typeof value === 'number') return String(value);
-	return render(value, config);
+	return render(value, ctx);
 }
 
 /** Escape a string for use in a RegExp. */
@@ -265,9 +277,10 @@ export function createRenderer(yamlPath: string): BoundRenderer;
 export function createRenderer(config: RulesConfig): BoundRenderer;
 export function createRenderer(pathOrConfig: string | RulesConfig): BoundRenderer {
 	const config = typeof pathOrConfig === 'string' ? loadTemplates(pathOrConfig) : pathOrConfig;
+	const ctx = buildRenderContext(config);
 
 	function boundRender(node: AnyNodeData): string {
-		return render(node, config);
+		return render(node, ctx);
 	}
 
 	function boundToEdit(node: AnyNodeData, startOrRange: number | ByteRange, end?: number): Edit {
