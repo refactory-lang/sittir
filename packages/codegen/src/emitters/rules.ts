@@ -141,8 +141,9 @@ function emitRuleForNode(node: StructuralNode, grammarRules: Record<string, Gram
 
 	const templateStr = parts.join('').replace(/\s+/g, ' ').trim();
 
-	// Build joinBy
-	const joinBy = buildJoinBy(fieldMultiple, fieldSeparators, node);
+	// Build joinBy — check model separators, then recursive grammar patterns
+	const joinBy = buildJoinBy(fieldMultiple, fieldSeparators, node)
+		?? detectRecursiveSeparator(grammarRules, node.kind);
 
 	// Determine if we need object form
 	if (clauses.length === 0 && joinBy === undefined) {
@@ -735,6 +736,42 @@ function buildJoinBy(
 // ---------------------------------------------------------------------------
 
 /** Check if two template parts should be attached (no space between). */
+/**
+ * Detect separator from recursive grammar patterns.
+ * Handles rules like `_let_chain: X && Y | Y && X | ...` where
+ * the rule references itself with a STRING separator between elements.
+ */
+function detectRecursiveSeparator(grammarRules: Record<string, GrammarRule>, kind: string): string | undefined {
+	// Check both the kind and the _-prefixed hidden variant
+	for (const name of [kind, `_${kind}`]) {
+		const rule = grammarRules[name];
+		if (!rule) continue;
+
+		const seps = new Set<string>();
+		findRecursiveSeps(rule, name, seps);
+		if (seps.size === 1) return ` ${[...seps][0]!} `;
+	}
+	return undefined;
+}
+
+/** Walk a rule looking for SEQ(self_ref, STRING, other) patterns. */
+function findRecursiveSeps(rule: GrammarRule, selfName: string, seps: Set<string>): void {
+	if (rule.type === 'SEQ') {
+		// Look for STRING between a self-reference and another element
+		for (let i = 1; i < rule.members.length - 1; i++) {
+			const prev = unwrapPrec(rule.members[i - 1]!);
+			const curr = rule.members[i]!;
+			if (curr.type === 'STRING' && prev.type === 'SYMBOL' && prev.name === selfName) {
+				seps.add(curr.value);
+			}
+		}
+	}
+	if (rule.type === 'CHOICE') for (const m of rule.members) findRecursiveSeps(m, selfName, seps);
+	if (rule.type === 'PREC' || rule.type === 'PREC_LEFT' || rule.type === 'PREC_RIGHT' || rule.type === 'PREC_DYNAMIC') {
+		findRecursiveSeps(rule.content, selfName, seps);
+	}
+}
+
 function isAttached(prev: string, next: string): boolean {
 	// Opening delimiters attach to following content
 	if (next === '(' || next === '[' || next === '<' || next === '{') return true;

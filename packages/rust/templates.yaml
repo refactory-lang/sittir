@@ -103,7 +103,9 @@ rules:
   index_expression: $OBJECT[$INDEX]
   inner_attribute_item: "# ![$ATTRIBUTE]"
   label: "'$IDENTIFIER"
-  let_chain: $$$CHILDREN
+  let_chain:
+    template: $$$CHILDREN
+    joinBy: " && "
   let_condition: let $PATTERN = $VALUE
   let_declaration:
     template: let $MUTABLE_SPECIFIER $PATTERN $TYPE_CLAUSE $VALUE_CLAUSE $ALTERNATIVE_CLAUSE ;
