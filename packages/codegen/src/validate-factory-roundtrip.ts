@@ -17,6 +17,7 @@ import { parse as parseYaml } from 'yaml';
 import { readNode, buildRoutingMap, createRenderer } from '@sittir/core';
 import type { AnyNodeData, AnyTreeNode, RulesConfig } from '@sittir/types';
 import { loadOverrides } from './overrides.ts';
+import { loadRawEntries } from './grammar-reader.ts';
 import { join as pathJoin } from 'node:path';
 
 const require = createRequire(import.meta.url);
@@ -168,27 +169,72 @@ function loadCorpusEntries(grammar: string): CorpusEntry[] {
 }
 
 // ---------------------------------------------------------------------------
-// Fragment kinds (same as readNode round-trip)
+// Supertype-based reparse wrapping
 // ---------------------------------------------------------------------------
 
-const FRAGMENT_ONLY_KINDS = new Set([
-	'parameters', 'closure_parameters', 'type_parameters', 'arguments',
-	'declaration_list', 'enum_variant_list', 'field_declaration_list',
-	'ordered_field_declaration_list', 'match_block', 'use_list',
-	'visibility_modifier', 'function_modifiers', 'extern_modifier',
-	'label', 'lifetime', 'lifetime_parameter', 'parameter', 'self_parameter',
-	'type_parameter', 'const_parameter', 'variadic_parameter',
-	'field_declaration', 'enum_variant', 'match_arm', 'match_pattern',
-	'attribute', 'attribute_item', 'inner_attribute_item',
-	'where_clause', 'where_predicate', 'trait_bounds',
-	'field_initializer', 'field_initializer_list', 'field_pattern',
-	'else_clause', 'for_lifetimes', 'use_as_clause', 'use_bounds',
-	'formal_parameters', 'class_body', 'statement_block',
-	'object_type', 'enum_body', 'extends_clause', 'implements_clause',
-	'import_clause', 'export_clause', 'decorator',
-	'argument_list', 'block',
-	'elif_clause', 'except_clause', 'finally_clause', 'with_clause',
-]);
+/** Build kind → supertype[] map from node-types.json. */
+function buildKindToSupertypes(rawEntries: { type: string; named: boolean; subtypes?: { type: string }[] }[]): Map<string, string[]> {
+	const result = new Map<string, string[]>();
+	for (const entry of rawEntries) {
+		if (!entry.subtypes) continue;
+		for (const sub of entry.subtypes) {
+			const existing = result.get(sub.type) ?? [];
+			existing.push(entry.type);
+			result.set(sub.type, existing);
+		}
+	}
+	return result;
+}
+
+/** Per-grammar wrapper functions: supertype → wrapping context. */
+const REPARSE_WRAPPERS: Record<string, Record<string, (r: string) => string>> = {
+	rust: {
+		'_expression': r => `fn _f() { let _ = ${r}; }`,
+		'_type': r => `type _X = ${r};`,
+		'_pattern': r => `fn _f() { let ${r} = (); }`,
+		'_declaration_statement': r => r,
+		'_literal': r => `fn _f() { let _ = ${r}; }`,
+		'_literal_pattern': r => `fn _f() { let ${r} = (); }`,
+	},
+	typescript: {
+		'_expression': r => `let _ = ${r};`,
+		'_type': r => `type _X = ${r};`,
+		'_pattern': r => `let ${r} = null;`,
+		'_declaration': r => r,
+		'_statement': r => r,
+	},
+	python: {
+		'_expression': r => `_ = ${r}`,
+		'_type': r => `_: ${r} = None`,
+		'_pattern': r => `match _:\n  case ${r}: pass`,
+		'_simple_statement': r => r,
+		'_compound_statement': r => r,
+	},
+};
+
+/**
+ * Wrap rendered output for reparsing. Returns the wrapped string,
+ * or null if no supertype wrapper is available (skip reparse).
+ */
+function wrapForReparse(
+	rendered: string,
+	kind: string,
+	grammar: string,
+	kindToSupertypes: Map<string, string[]>,
+): string | null {
+	const supertypes = kindToSupertypes.get(kind);
+	if (!supertypes || supertypes.length === 0) return null; // no supertype → skip
+
+	const wrappers = REPARSE_WRAPPERS[grammar];
+	if (!wrappers) return null;
+
+	for (const st of supertypes) {
+		const wrapper = wrappers[st];
+		if (wrapper) return wrapper(rendered);
+	}
+
+	return null; // no wrapper for any supertype → skip
+}
 
 // ---------------------------------------------------------------------------
 // Validation
@@ -222,6 +268,7 @@ export async function validateFactoryRoundTrip(
 	const routing = buildRoutingMap(overrides);
 	const ruleKinds = new Set(Object.keys(config.rules));
 	const { render } = createRenderer(config);
+	const kindToSupertypes = buildKindToSupertypes(loadRawEntries(grammar));
 
 	// Dynamically import the generated _factoryMap for this grammar
 	const factoryModulePath = FACTORY_MODULE_PATHS[grammar];
@@ -278,12 +325,14 @@ export async function validateFactoryRoundTrip(
 				const rendered = render(factoryData);
 				if (!rendered.trim()) { skip++; continue; }
 
-				if (FRAGMENT_ONLY_KINDS.has(kind)) {
-					pass++; // can't re-parse standalone, just verify render succeeds
+				// Wrap for reparse using supertype context
+				const wrapped = wrapForReparse(rendered, kind, grammar, kindToSupertypes);
+				if (wrapped === null) {
+					pass++; // no supertype → can't determine context → skip reparse
 					continue;
 				}
 
-				const tree2 = parser.parse(rendered) as TSTree;
+				const tree2 = parser.parse(wrapped) as TSTree;
 				if (tree2.rootNode.hasError) {
 					errors.push({ kind, message: `re-parse error: "${rendered.slice(0, 60)}"` });
 					continue;

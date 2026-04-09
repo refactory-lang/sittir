@@ -54,7 +54,7 @@ Running round-trip validation...
     x Tuples with yield [tuple]: re-parse error: "() a yield a, b, c"
     x Default Tuple Arguments [default_parameter]: kind not found in re-parsed tree
     x Conditional if expressions [module]: re-parse error: "a = b if c else d something() if a else d slice(1,1,1) if a else d"
-    x Async context managers and iterators [with_statement]: re-parse error: "with a as b: async for c in d:
+    x Async context managers and iterators [with_statement]: re-parse error: "with a as b:async for c in d:
  [e async for f in g]"
     x Arbitrary indentation between brackets [list]: re-parse error: "[] 3"
     x Splat Inside of Expression List [module]: re-parse error: "a,c = [1,2],3 w, x, y, z = 0, *a, c"
@@ -223,7 +223,7 @@ except"
  return c class B():
  pass class B(method1):
  def method1"
-    x Class definitions with superclasses [class_definition]: re-parse error: "class A (B, C): def d():
+    x Class definitions with superclasses [class_definition]: re-parse error: "class A (B, C):def d():
  e"
     x Decorated definitions [decorated_definition]: re-parse error: "@a.b class C:
  @d(1)
@@ -235,7 +235,7 @@ except"
  async def f():
  g"
     x Raise statements [module]: re-parse error: "raise raise RuntimeError('NO') raise RunTimeError('NO') from e"
-    x Comments at the ends of indented blocks [function_definition]: re-parse error: "def a () : if b:
+    x Comments at the ends of indented blocks [function_definition]: re-parse error: "def a () :if b:
  b # comment
  b # comment"
     x Newline tokens followed by comments [string_content]: kind not found in re-parsed tree
@@ -245,65 +245,20 @@ except"
     x Statements with semicolons [module]: re-parse error: "foo foo bar foo bar"
     x Type Alias Statements [module]: re-parse error: "type Point = tuple[float, float] type Point[T] = tuple[T, T] type IntFunc[**P] ="
     x Generic Function Definitions [type]: kind not found in re-parsed tree
-  x 35/99 factory round-trip (12 skipped, 52 errors)
-    x slice: re-parse error: ":"
-    x await: kind not found in re-parse (rendered: "await")
-    x typed_parameter: re-parse error: ": str"
-    x comparison_operator: re-parse error: "in"
+  x 79/99 factory round-trip (12 skipped, 8 errors)
     x assert_statement: re-parse error: "assert"
-    x keyword_argument: kind not found in re-parse (rendered: "f=g")
-    x dictionary_splat: re-parse error: "**"
-    x default_parameter: kind not found in re-parse (rendered: "printer=print")
-    x list_splat_pattern: re-parse error: "*"
-    x dictionary_splat_pattern: re-parse error: "**"
-    x string: re-parse error: "print \"'%s' has %i characters\" % (public_function(), len(p"
-    x pair: re-parse error: ""__builtins__": None"
-    x pattern_list: re-parse error: ","
-    x expression_list: re-parse error: ","
-    x generic_type: kind not found in re-parse (rendered: "List")
-    x parenthesized_expression: kind not found in re-parse (rendered: "()")
-    x typed_default_parameter: kind not found in re-parse (rendered: "answer: (p := 42)=5")
-    x yield: re-parse error: "yield from"
-    x generator_expression: kind not found in re-parse (rendered: "(x )")
-    x for_in_clause: re-parse error: "for xin range(1, 10)"
-    x tuple_pattern: kind not found in re-parse (rendered: "()")
-    x conditional_expression: re-parse error: "if else"
-    x with_statement: re-parse error: "with : async for c in d:
+    x with_statement: re-parse error: "with :async for c in d:
  [e async for f in g]"
-    x with_item: kind not found in re-parse (rendered: "a as b")
-    x as_pattern: re-parse error: "aas b"
-    x for_statement: re-parse error: "for cin d: [e async for f in g]"
-    x list_comprehension: kind not found in re-parse (rendered: "[e ]")
-    x union_type: kind not found in re-parse (rendered: "A[T]|B")
-    x interpolation: kind not found in re-parse (rendered: "{0 }")
-    x format_specifier: re-parse error: ":"
-    x format_expression: kind not found in re-parse (rendered: "c.d")
-    x if_clause: re-parse error: "if"
-    x dictionary_comprehension: kind not found in re-parse (rendered: "{a: b }")
-    x set: kind not found in re-parse (rendered: "{}")
-    x set_comprehension: kind not found in re-parse (rendered: "{a[b][c] }")
-    x match_statement: re-parse error: "match command.split(): 
+    x match_statement: re-parse error: "match command.split():
  case ["quit"]:
  print("Goodbye!")
- "
-    x case_clause: kind not found in re-parse (rendered: "case : print("Goodbye!")
- quit_game()")
-    x list_pattern: kind not found in re-parse (rendered: "[]")
-    x splat_pattern: kind not found in re-parse (rendered: "*objects")
-    x class_pattern: re-parse error: "(position=(x, y) )"
-    x keyword_pattern: re-parse error: "(x, y)="
-    x dict_pattern: kind not found in re-parse (rendered: "{}")
-    x complex_pattern: kind not found in re-parse (rendered: "3 + 5j")
-    x aliased_import: re-parse error: "b.cas d"
+ q"
     x import_from_statement: re-parse error: "from import b"
-    x chevron: re-parse error: ">>"
     x delete_statement: re-parse error: "del"
     x nonlocal_statement: re-parse error: "nonlocal"
-    x class_definition: re-parse error: "class A : def b(self):
+    x class_definition: re-parse error: "class A :def b(self):
  return c"
     x global_statement: re-parse error: "global"
-    x splat_type: kind not found in re-parse (rendered: "*P")
-    x constrained_type: re-parse error: ": Hashable"
   x 55/99 from() correctness (0 undefined, 44 divergent, 0 skipped)
     ! module: from() diverges: children: 1 vs 0
     ! expression_statement: from() diverges: children: 1 vs 0
@@ -350,7 +305,7 @@ except"
     ! global_statement: from() diverges: children: 2 vs 0
     ! exec_statement: from() diverges: children: 1 vs 0
 
-153 round-trip failure(s) — see above.
+109 round-trip failure(s) — see above.
 
 Done! Generated:
   templates.yaml, grammar.ts, types.ts, factories.ts, utils.ts, from.ts, consts.ts, index.ts

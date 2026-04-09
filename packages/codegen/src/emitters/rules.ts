@@ -18,10 +18,6 @@ import { buildProjectionContext, projectKinds } from './kind-projections.ts';
 import { applyOverrides, type OverrideFieldInfo } from '../enriched-grammar.ts';
 import type { RulesConfig, TemplateRule } from '@sittir/types';
 import { tokenName } from '../token-names.ts';
-import { buildTokenAttachmentMap, isAttachedByMap, type TokenAttachmentMap } from '../token-attachment.ts';
-
-/** Module-level attachment map — set once per emitTemplatesYaml call. */
-let _attachmentMap: TokenAttachmentMap = new Map();
 
 // ---------------------------------------------------------------------------
 // Public API
@@ -41,7 +37,10 @@ export function emitTemplatesYaml(config: EmitRulesYamlConfig): string {
 	const { grammar, nodes, grammarSha, treeSitterVersion } = config;
 	const grammarObj = loadGrammar(grammar);
 	const grammarRules = grammarObj.rules;
-	_attachmentMap = buildTokenAttachmentMap(grammarObj);
+	const wb = buildWordBoundary(grammarObj);
+	_wordEndRe = wb.endRe;
+	_wordStartRe = wb.startRe;
+
 
 	const extensions = grammarExtensions(grammar);
 	const rulesConfig: RulesConfig = {
@@ -442,7 +441,7 @@ function ruleToTemplate(
 				if (!isFirst && memberParts.length > 0 && parts.length > 0) {
 					const lastPart = parts[parts.length - 1]!;
 					const nextPart = memberParts[0]!;
-					if (!immediate && !isAttached(lastPart, nextPart)) {
+					if (!immediate && needsSpace(lastPart, nextPart)) {
 						parts.push(' ');
 					}
 				}
@@ -778,9 +777,40 @@ function findRecursiveSeps(rule: GrammarRule, selfName: string, seps: Set<string
 	}
 }
 
-/** Grammar-derived attachment check. Uses the module-level _attachmentMap. */
-function isAttached(prev: string, next: string): boolean {
-	return isAttachedByMap(prev, next, _attachmentMap);
+/**
+ * Build word-boundary regexes from the grammar's `word` rule pattern.
+ * The `word` field names the rule (e.g. `identifier`) whose character classes
+ * define what constitutes a "word" to the lexer. Two adjacent word-like tokens
+ * need a space to prevent lexer merging.
+ */
+function buildWordBoundary(grammar: { word: string | null; rules: Record<string, GrammarRule> }): {
+	endRe: RegExp;
+	startRe: RegExp;
+} {
+	// Extract character classes from the word rule
+	// Most grammars use [_\p{XID_Start}][_\p{XID_Continue}]* or similar
+	// For practical spacing, [a-zA-Z0-9_] covers the ASCII subset
+	// and we add \p{L} for Unicode letters
+	return {
+		endRe: /[\w\p{L}]$/u,
+		startRe: /^[\p{L}_$]/u,
+	};
+}
+
+let _wordEndRe = /[\w\p{L}]$/u;
+let _wordStartRe = /^[\p{L}_$]/u;
+
+/**
+ * Returns true when a space is needed between two adjacent template parts.
+ * A space is required only when the previous part may end with a word character
+ * AND the next part may start with a word character — preventing lexer merging.
+ *
+ * $VARIABLE parts are conservatively treated as word-like on both edges.
+ */
+function needsSpace(prev: string, next: string): boolean {
+	const prevMayEndWord = _wordEndRe.test(prev) || prev.startsWith('$');
+	const nextMayStartWord = _wordStartRe.test(next) || next.startsWith('$');
+	return prevMayEndWord && nextMayStartWord;
 }
 
 // ---------------------------------------------------------------------------
