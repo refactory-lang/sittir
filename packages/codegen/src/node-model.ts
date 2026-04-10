@@ -157,6 +157,35 @@ export function isTupleChildren(children: AnyChildrenModel): children is AnyChil
 }
 
 // ---------------------------------------------------------------------------
+// Structural variants — CHOICE fan-out from grammar factoring
+// ---------------------------------------------------------------------------
+
+/**
+ * A structural variant represents one form of a node produced by
+ * factoring non-blank CHOICEs in the grammar rule. All emitters
+ * (types, factories, templates, from) read from this shared set.
+ *
+ * - 1 variant = the CHOICE was factorable (demoted to child slot)
+ * - N variants = the CHOICE produces N distinct parent-level forms
+ */
+export interface StructuralVariant {
+	/** Variant discriminant name (e.g., "brace", "tuple", "unit"). */
+	name: string;
+	/** Template string parts — literals and $VARIABLE placeholders. */
+	parts: string[];
+	/** Fields present in this variant, with per-variant requiredness. */
+	fields: Map<string, { required: boolean; multiple: boolean }>;
+	/** Position → literal token for discriminant detection. */
+	literals: Map<number, string>;
+	/** Unique anonymous token identifying this variant (for detect map). */
+	detectToken?: string;
+	/** Assembled template string. */
+	template: string;
+	/** Clause entries synthesized for this variant. */
+	clauses: Array<{ name: string; template: string }>;
+}
+
+// ---------------------------------------------------------------------------
 // NodeModel variants (7 types)
 // ---------------------------------------------------------------------------
 
@@ -166,6 +195,7 @@ export interface BranchModel extends NodeModelBase {
 	fields: FieldModel[];
 	children?: ChildrenModel;
 	rule: EnrichedRule;
+	variants?: StructuralVariant[];
 }
 
 export interface ContainerModel extends NodeModelBase {
@@ -173,6 +203,7 @@ export interface ContainerModel extends NodeModelBase {
 	kind: string;
 	children: ChildrenModel;
 	rule: EnrichedRule;
+	variants?: StructuralVariant[];
 }
 
 export interface LeafModel extends NodeModelBase {

@@ -23,6 +23,10 @@ import { applyNaming } from './naming.ts';
 import { optimize } from './optimization.ts';
 import { hydrate } from './hydration.ts';
 import { loadOverrides, validateOverrides, mergeOverrides, detectOverrideCandidates } from './overrides.ts';
+import { factorRule, type FactorContext } from './factoring.ts';
+import type { OverrideFieldInfo } from './enriched-grammar.ts';
+import type { FieldModel, BranchModel, ContainerModel } from './node-model.ts';
+import { isTupleChildren } from './node-model.ts';
 
 function stripChildSignatures(children: any): any {
 	if (Array.isArray(children)) {
@@ -177,6 +181,99 @@ function createHiddenModels(models: Map<string, NodeModel>, grammar: Grammar): v
 }
 
 // ---------------------------------------------------------------------------
+// Step 6b: Compute structural variants (CHOICE fan-out)
+// ---------------------------------------------------------------------------
+
+function computeAllVariants(models: Map<string, NodeModel>, grammar: Grammar): void {
+	for (const [, model] of models) {
+		if (model.modelType !== 'branch' && model.modelType !== 'container') continue;
+
+		const rawRule = model.rule?.rule;
+		if (!rawRule) continue;
+
+		const fields: FieldModel[] = model.modelType === 'branch' ? model.fields : [];
+
+		// Build field metadata maps
+		const fieldRequired = new Map<string, boolean>();
+		const fieldMultiple = new Map<string, boolean>();
+		for (const f of fields) {
+			fieldRequired.set(f.name, f.required);
+			fieldMultiple.set(f.name, f.multiple);
+		}
+
+		// Build override field info
+		const overrideFields: OverrideFieldInfo[] = fields
+			.filter(f => f.override)
+			.sort((a, b) => {
+				const pa = (a.position ?? 0) === -1 ? Infinity : (a.position ?? 0);
+				const pb = (b.position ?? 0) === -1 ? Infinity : (b.position ?? 0);
+				return pa - pb;
+			})
+			.map(f => {
+				const anonymousKinds = new Set<string>(f.overrideValues ?? []);
+				const namedKinds = new Set<string>();
+				for (const k of f.kinds) {
+					if (!anonymousKinds.has(k)) namedKinds.add(k);
+				}
+				return { name: f.name, namedKinds, anonymousKinds };
+			});
+
+		// Build child slot map
+		const childSlotMap = buildChildSlotMapFromModel(model);
+
+		const ctx: FactorContext = {
+			fieldRequired,
+			fieldMultiple,
+			grammarRules: grammar.rules,
+			childSlotMap,
+		};
+
+		const variants = factorRule(rawRule, overrideFields, ctx);
+		if (variants.length > 0) {
+			(model as BranchModel | ContainerModel).variants = variants;
+		}
+	}
+}
+
+/** Build child slot map from pre-hydration model (kinds are Set<string>). */
+function buildChildSlotMapFromModel(
+	model: BranchModel | ContainerModel,
+): Map<string, { varName: string; multiple: boolean; slotName: string }> {
+	const map = new Map<string, { varName: string; multiple: boolean; slotName: string }>();
+	const children = model.children;
+	if (!children) return map;
+
+	if (isTupleChildren(children)) {
+		const kindSlotCount = new Map<string, number>();
+		eachChildSlot(children, (slot) => {
+			for (const k of slot.kinds) {
+				kindSlotCount.set(k as string, (kindSlotCount.get(k as string) ?? 0) + 1);
+			}
+		});
+		eachChildSlot(children, (slot) => {
+			for (const k of slot.kinds) {
+				const kind = k as string;
+				const kindName = kind.replace(/^_/, '');
+				const varName = kindName.toUpperCase();
+				const isMulti = slot.multiple || (kindSlotCount.get(kind) ?? 0) > 1;
+				if (!map.has(kind)) {
+					map.set(kind, { varName, multiple: isMulti, slotName: kindName });
+				} else {
+					map.get(kind)!.multiple = true;
+				}
+			}
+		});
+	} else {
+		const slot = Array.isArray(children) ? children[0]! : children;
+		for (const k of slot.kinds) {
+			map.set(k as string, { varName: 'CHILDREN', multiple: slot.multiple, slotName: 'children' });
+		}
+	}
+
+	return map;
+}
+
+// ---------------------------------------------------------------------------
 // buildModel — 13-step orchestrator
 // ---------------------------------------------------------------------------
 
@@ -209,6 +306,9 @@ export function buildModel(grammarName: string): { grammarModel: GrammarModel; s
 
 	// Step 6: Refine model types
 	refineAllModelTypes(models);
+
+	// Step 6b: Compute structural variants (CHOICE fan-out)
+	computeAllVariants(models, grammar);
 
 	// Step 7-8: Semantic aliases
 	const aliases = inferTokenAliases(models, grammar);

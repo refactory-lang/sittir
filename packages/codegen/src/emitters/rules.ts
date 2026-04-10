@@ -123,12 +123,17 @@ function emitRuleForNode(node: StructuralNode, grammarRules: Record<string, Gram
 	const rawRule = node.rule?.rule;
 	const enrichedGrammarRule = rawRule ? applyOverrides(rawRule, overrideFields) : rawRule;
 
+	// Build joinBy — check model separators, then recursive grammar patterns
+	const joinBy = buildJoinBy(fieldMultiple, fieldSeparators, node)
+		?? detectRecursiveSeparator(grammarRules, node.kind);
+
 	// Detect top-level CHOICE (variant node) — distinct structural alternatives
 	const variantBranches = enrichedGrammarRule ? topLevelChoice(enrichedGrammarRule) : null;
 
 	if (variantBranches && variantBranches.length > 1) {
 		// Variant template: walk each branch independently
-		return emitVariantTemplates(variantBranches, nodeFields, fieldRequired, fieldMultiple, fieldSeparators, grammarRules, childSlotMap, overrideFields, node);
+		// Pass model variants for enriched detect token / naming data
+		return emitVariantTemplates(variantBranches, nodeFields, fieldRequired, fieldMultiple, fieldSeparators, grammarRules, childSlotMap, overrideFields, node, node.variants);
 	}
 
 	// Single-template path (non-variant or single branch after flattening)
@@ -145,10 +150,6 @@ function emitRuleForNode(node: StructuralNode, grammarRules: Record<string, Gram
 	appendChildrenIfNeeded(parts, node, seen, childSlotMap, overrideFields);
 
 	const templateStr = parts.join('').replace(/\s+/g, ' ').trim();
-
-	// Build joinBy — check model separators, then recursive grammar patterns
-	const joinBy = buildJoinBy(fieldMultiple, fieldSeparators, node)
-		?? detectRecursiveSeparator(grammarRules, node.kind);
 
 	// Determine if we need object form
 	if (clauses.length === 0 && joinBy === undefined) {
@@ -208,7 +209,11 @@ function extractStringTokens(rule: GrammarRule): string[] {
 	return tokens;
 }
 
-/** Walk each variant branch and produce a template array or variant subtypes. */
+/**
+ * Walk each variant branch and produce a template array or variant subtypes.
+ * If model variants (from factoring.ts) are provided, uses their detect tokens
+ * and names for enriched variant subtype detection.
+ */
 function emitVariantTemplates(
 	branches: GrammarRule[],
 	nodeFields: ReturnType<typeof fieldsOf>,
@@ -219,6 +224,7 @@ function emitVariantTemplates(
 	childSlotMap: Map<string, ChildSlotInfo>,
 	overrideFields: OverrideFieldInfo[],
 	node: StructuralNode,
+	modelVariants?: readonly import('../node-model.ts').StructuralVariant[],
 ): TemplateRule {
 	const allClauses: ClauseEntry[] = [];
 	const clauseNames = new Set<string>();
@@ -258,8 +264,22 @@ function emitVariantTemplates(
 	}
 
 	// --- Variant subtype detection ---
-	// Check if all branches share the same $VARIABLES but differ only in anonymous tokens.
-	// If so, emit named variants + detect instead of string[].
+	// First try model variants (from factoring.ts) which have pre-computed detect tokens
+	if (modelVariants && modelVariants.length > 1) {
+		const variantResult = matchModelVariantsToTemplates(unique, modelVariants);
+		if (variantResult) {
+			const joinBy = buildJoinBy(fieldMultiple, fieldSeparators, node);
+			const ruleObj: Record<string, unknown> = {
+				variants: variantResult.variants,
+				detect: variantResult.detect,
+			};
+			for (const c of allClauses) ruleObj[c.name] = c.template;
+			if (joinBy !== undefined) ruleObj['joinBy'] = joinBy;
+			return ruleObj as unknown as TemplateRule;
+		}
+	}
+
+	// Fallback: grammar-based variant subtype detection
 	const variantSubtypes = detectVariantSubtypes(unique, branches);
 	if (variantSubtypes) {
 		const joinBy = buildJoinBy(fieldMultiple, fieldSeparators, node);
@@ -281,6 +301,41 @@ function emitVariantTemplates(
 	for (const c of allClauses) ruleObj[c.name] = c.template;
 	if (joinBy !== undefined) ruleObj['joinBy'] = joinBy;
 	return ruleObj as unknown as TemplateRule;
+}
+
+/**
+ * Match model variants (from factoring.ts) to generated templates.
+ * Uses detect tokens from structural analysis to create named variants.
+ */
+function matchModelVariantsToTemplates(
+	templates: string[],
+	modelVariants: readonly import('../node-model.ts').StructuralVariant[],
+): { variants: Record<string, string>; detect: Record<string, string> } | null {
+	// Only use model variants if they have detect tokens
+	const withDetect = modelVariants.filter(v => v.detectToken != null);
+	if (withDetect.length < 2) return null;
+
+	// Try to match each model variant's detect token to a template
+	// A template matches a model variant if it contains the detect token as a literal
+	const variants: Record<string, string> = {};
+	const detect: Record<string, string> = {};
+	const usedTemplates = new Set<string>();
+
+	for (const mv of withDetect) {
+		// Find a template that contains this variant's detect token
+		const matched = templates.find(t =>
+			!usedTemplates.has(t) && t.includes(mv.detectToken!)
+		);
+		if (!matched) return null; // Can't match all model variants to templates
+		variants[mv.name] = matched;
+		detect[mv.name] = mv.detectToken!;
+		usedTemplates.add(matched);
+	}
+
+	// All templates must be matched
+	if (usedTemplates.size !== templates.length) return null;
+
+	return { variants, detect };
 }
 
 /**
