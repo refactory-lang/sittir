@@ -145,10 +145,25 @@ export function emitTypes(config: EmitTypesConfig): string {
 
 	// Branch + container nodes
 	lines.push('// Node types — concrete interfaces');
+	const variantNodes = new Map<string, string[]>(); // kind → variant type names
 	for (const node of structNodes) {
 		const typeName = toTypeName(node.kind);
 		generatedTypes.add(typeName);
-		emitConcreteInterface(lines, node, typeName, ctx, leafSet);
+		const variants = node.variants;
+
+		if (variants && variants.length > 1) {
+			// Per-variant interfaces + base type as union
+			const variantTypeNames: string[] = [];
+			for (const v of variants) {
+				const vTypeName = `${typeName}${toTypeName(v.name)}`;
+				variantTypeNames.push(vTypeName);
+				emitVariantInterface(lines, node, v, vTypeName, ctx, leafSet);
+			}
+			lines.push(`export type ${typeName} = ${variantTypeNames.join(' | ')};`);
+			variantNodes.set(node.kind, variantTypeNames);
+		} else {
+			emitConcreteInterface(lines, node, typeName, ctx, leafSet);
+		}
 	}
 	lines.push('');
 
@@ -166,16 +181,31 @@ export function emitTypes(config: EmitTypesConfig): string {
 	// -----------------------------------------------------------------------
 	// 4. Config/Tree/FromInput — derived from concrete interfaces
 	// -----------------------------------------------------------------------
+	const structNodeMap = new Map(structNodes.map(n => [n.kind, n]));
 	lines.push('// Config types — derived from concrete interfaces');
 	for (const kind of nodeKinds) {
-		const node = modelMap.get(kind)!;
-		// Prefer model variants (from factoring.ts) over grammar re-walk
-		const variantSets = variantFieldSetsFromModel(node) ?? computeVariantFieldSets(node, grammarRules);
+		const typeName = toTypeName(kind);
+		const vTypeNames = variantNodes.get(kind);
 
-		if (variantSets) {
-			emitVariantConfigType(lines, kind, node, variantSets, ctx);
+		if (vTypeNames) {
+			// Per-variant Config types + base as union
+			const node = structNodeMap.get(kind)!;
+			const variants = node.variants!;
+			const configNames: string[] = [];
+			for (let i = 0; i < variants.length; i++) {
+				const vName = vTypeNames[i]!;
+				lines.push(`export type ${vName}Config = ConfigOf<${vName}>;`);
+				configNames.push(`${vName}Config`);
+			}
+			lines.push(`export type ${typeName}Config = ${configNames.join(' | ')};`);
 		} else {
-			lines.push(`export type ${toTypeName(kind)}Config = ConfigOf<${toTypeName(kind)}>;`);
+			const node = modelMap.get(kind)!;
+			const variantSets = variantFieldSetsFromModel(node) ?? computeVariantFieldSets(node, grammarRules);
+			if (variantSets) {
+				emitVariantConfigType(lines, kind, node, variantSets, ctx);
+			} else {
+				lines.push(`export type ${typeName}Config = ConfigOf<${typeName}>;`);
+			}
 		}
 	}
 	lines.push('');
@@ -195,7 +225,6 @@ export function emitTypes(config: EmitTypesConfig): string {
 	lines.push('// FromInput types — derived from concrete interfaces, with scalar widenings');
 	// For children-only nodes (no fields, single child slot), FromInput is the child element type
 	// so the from function can use rest params: `...children: TFromInput[]`
-	const structNodeMap = new Map(structNodes.map(n => [n.kind, n]));
 	for (const kind of nodeKinds) {
 		const sNode = structNodeMap.get(kind);
 		const sFields = sNode ? fieldsOf(sNode) : [];
@@ -222,7 +251,18 @@ export function emitTypes(config: EmitTypesConfig): string {
 				continue;
 			}
 		}
-		lines.push(`export type ${toTypeName(kind)}FromInput = FromInputOf<${toTypeName(kind)}, LeafScalarMap, LeafStringMap>;`);
+		const vTypeNames = variantNodes.get(kind);
+		if (vTypeNames) {
+			// Per-variant FromInput types + base as union
+			const fromInputNames: string[] = [];
+			for (const vtn of vTypeNames) {
+				lines.push(`export type ${vtn}FromInput = FromInputOf<${vtn}, LeafScalarMap, LeafStringMap>;`);
+				fromInputNames.push(`${vtn}FromInput`);
+			}
+			lines.push(`export type ${toTypeName(kind)}FromInput = ${fromInputNames.join(' | ')};`);
+		} else {
+			lines.push(`export type ${toTypeName(kind)}FromInput = FromInputOf<${toTypeName(kind)}, LeafScalarMap, LeafStringMap>;`);
+		}
 	}
 	lines.push('');
 
@@ -347,6 +387,20 @@ export function emitTypes(config: EmitTypesConfig): string {
 	lines.push('}');
 	lines.push('');
 
+	// VariantMap — kind → { variantName: VariantInterface } for variant-level type access
+	if (variantNodes.size > 0) {
+		lines.push('/** Maps variant node kinds to their per-variant interfaces. */');
+		lines.push('export interface VariantMap {');
+		for (const [kind, vTypeNames] of variantNodes) {
+			const node = structNodeMap.get(kind)!;
+			const variants = node.variants!;
+			const entries = variants.map((v, i) => `${v.name}: ${vTypeNames[i]!}`);
+			lines.push(`  '${kind}': { ${entries.join('; ')} };`);
+		}
+		lines.push('}');
+		lines.push('');
+	}
+
 	lines.push('/** Maps every branch kind string to its Config (factory input) type. */');
 	lines.push('export interface ConfigMap {');
 	for (const kind of nodeKinds) {
@@ -453,6 +507,67 @@ function emitConcreteInterface(
 			const slotProj = projectKinds(slot.kinds, ctx);
 			const slotType = slotProj.collapsedTypes.join(' | ');
 			if (slotType === '') return; // skip empty projections
+			const opt = slot.required ? '' : '?';
+			if (slot.multiple) {
+				lines.push(`  readonly ${name}${opt}: readonly (${slotType})[];`);
+			} else {
+				lines.push(`  readonly ${name}${opt}: ${slotType};`);
+			}
+		});
+	}
+
+	lines.push('}');
+}
+
+/**
+ * Emit a per-variant interface with only the fields present in that variant.
+ * Same structure as emitConcreteInterface but filtered by variant.fields.
+ */
+function emitVariantInterface(
+	lines: string[],
+	node: ReturnType<typeof structuralNodes>[number],
+	variant: import('../node-model.ts').StructuralVariant,
+	typeName: string,
+	ctx: ProjectionContext,
+	leafSet: Set<string>,
+): void {
+	const allFields = fieldsOf(node);
+	const variantFieldNames = new Set(variant.fields.keys());
+	const fields = allFields.filter(f => variantFieldNames.has(f.name));
+	const hasFields = fields.length > 0;
+	const hasChildren = node.children != null;
+
+	lines.push(`export interface ${typeName} {`);
+	lines.push(`  readonly type: '${node.kind}';`);
+
+	if (hasFields) {
+		lines.push('  readonly fields: {');
+		for (const f of fields) {
+			const proj = projectKinds(f.kinds, ctx);
+			const typeExpr = fieldTypeExpr(proj, leafSet);
+			const opt = f.required ? '' : '?';
+			if (f.multiple) {
+				lines.push(`    readonly ${f.name}${opt}: readonly (${typeExpr})[];`);
+			} else {
+				lines.push(`    readonly ${f.name}${opt}: ${typeExpr};`);
+			}
+		}
+		lines.push('  };');
+	}
+
+	// Hoisted child slots (same logic as emitConcreteInterface)
+	if (hasChildren) {
+		const fieldKeys = new Set(fields.map(f => f.name));
+		const fieldCoveredKinds = new Set<string>();
+		for (const f of fields) for (const k of f.kinds) fieldCoveredKinds.add(k.kind);
+		const slotNames = childSlotNames(node.children!, ctx);
+		eachChildSlot(node.children!, (slot, i) => {
+			const name = slotNames[i]!;
+			if (fieldKeys.has(name)) return;
+			if (slot.kinds.every(k => fieldCoveredKinds.has(k.kind))) return;
+			const slotProj = projectKinds(slot.kinds, ctx);
+			const slotType = slotProj.collapsedTypes.join(' | ');
+			if (slotType === '') return;
 			const opt = slot.required ? '' : '?';
 			if (slot.multiple) {
 				lines.push(`  readonly ${name}${opt}: readonly (${slotType})[];`);

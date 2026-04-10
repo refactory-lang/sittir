@@ -87,8 +87,13 @@ export function emitFactory(config: {
 		}
 	} else {
 		const opt = hasRequiredFields ? '' : '?';
+		const hasVariants = node.variants && node.variants.length > 1;
 		lines.push(`export function ${internalName}(`);
 		lines.push(`  config${opt}: ConfigOf<${typeName}>,`);
+		// Multi-variant nodes accept an optional _variant parameter to bypass inference
+		if (hasVariants) {
+			lines.push(`  _variant?: string,`);
+		}
 		lines.push(`) {`);
 
 		// Build fields object — raw names, values from camelCase config
@@ -143,14 +148,12 @@ export function emitFactory(config: {
 	const modelVariants = node.variants;
 	const hasMultipleVariants = modelVariants && modelVariants.length > 1;
 	if (hasMultipleVariants && !childrenOnlySlot) {
-		// Build if-else chain: check each variant's distinguishing field, most specific first
-		// Sort variants by field count descending (most fields = most specific)
+		// If _variant is provided (by variant-specific factories), skip inference
 		const sorted = [...modelVariants].sort((a, b) => b.fields.size - a.fields.size);
 		const configAccess = `config${hasRequiredFields ? '' : '?'}`;
 		const conditions: Array<{ condition: string; name: string }> = [];
 
 		for (const v of sorted) {
-			// Find a field unique to this variant
 			const uniqueField = [...v.fields.keys()].find(f =>
 				modelVariants.every((other, j) => modelVariants.indexOf(v) === j || !other.fields.has(f))
 			);
@@ -161,16 +164,14 @@ export function emitFactory(config: {
 		}
 
 		if (conditions.length > 0) {
-			// Build ternary chain: cond1 ? 'name1' : cond2 ? 'name2' : 'fallback'
 			const fallbackName = sorted.find(v => !conditions.some(c => c.name === v.name))?.name ?? sorted[sorted.length - 1]!.name;
 			let expr = `'${fallbackName}'`;
 			for (let i = conditions.length - 1; i >= 0; i--) {
 				expr = `${conditions[i]!.condition} ? '${conditions[i]!.name}' : ${expr}`;
 			}
-			lines.push(`  const variant = ${expr};`);
+			lines.push(`  const variant = _variant ?? (${expr});`);
 		} else {
-			// No distinguishing fields found — use first variant as default
-			lines.push(`  const variant = '${sorted[0]!.name}' as string;`);
+			lines.push(`  const variant = _variant ?? '${sorted[0]!.name}';`);
 		}
 	}
 
@@ -419,12 +420,12 @@ export function emitFactories(config: EmitFactoriesConfig): string {
 			const baseName = toRawFactoryName(node.kind);
 			for (const v of variants) {
 				const variantName = `${baseName}_${v.name}_`;
-				lines.push(`/** Variant factory: \`${node.kind}\` — ${v.name} form. Sets variant without runtime inference. */`);
+				const opt = node.modelType === 'branch' && fieldsOf(node).some(f => f.required) ? '' : '?';
+				lines.push(`/** Variant factory: \`${node.kind}\` — ${v.name} form. Bypasses runtime variant inference. */`);
 				lines.push(`export function ${variantName}(`);
-				lines.push(`  config${node.modelType === 'branch' && fieldsOf(node).some(f => f.required) ? '' : '?'}: ConfigOf<${typeName}>,`);
+				lines.push(`  config${opt}: ConfigOf<${typeName}>,`);
 				lines.push(`) {`);
-				lines.push(`  const base = ${baseName}(config as any);`);
-				lines.push(`  return { ...base, variant: '${v.name}' as const };`);
+				lines.push(`  return ${baseName}(config as any, '${v.name}');`);
 				lines.push(`}`);
 				lines.push('');
 			}
