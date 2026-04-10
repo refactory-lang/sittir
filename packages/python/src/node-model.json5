@@ -50,6 +50,41 @@
       },
     ],
     children: null,
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "FIELD",
+              name: "name",
+              content: {
+                type: "SYMBOL",
+                name: "dotted_name",
+              },
+            },
+            {
+              type: "STRING",
+              value: "as",
+            },
+            {
+              type: "FIELD",
+              name: "alias",
+              content: {
+                type: "SYMBOL",
+                name: "identifier",
+              },
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   argument_list: {
     modelType: "container",
@@ -62,6 +97,126 @@
       name: null,
       position: 0,
     },
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "STRING",
+              value: "(",
+            },
+            {
+              type: "CHOICE",
+              members: [
+                {
+                  type: "SEQ",
+                  members: [
+                    {
+                      type: "CHOICE",
+                      members: [
+                        {
+                          type: "SYMBOL",
+                          name: "expression",
+                        },
+                        {
+                          type: "SYMBOL",
+                          name: "list_splat",
+                        },
+                        {
+                          type: "SYMBOL",
+                          name: "dictionary_splat",
+                        },
+                        {
+                          type: "ALIAS",
+                          content: {
+                            type: "SYMBOL",
+                            name: "parenthesized_list_splat",
+                          },
+                          named: true,
+                          value: "parenthesized_expression",
+                        },
+                        {
+                          type: "SYMBOL",
+                          name: "keyword_argument",
+                        },
+                      ],
+                    },
+                    {
+                      type: "REPEAT",
+                      content: {
+                        type: "SEQ",
+                        members: [
+                          {
+                            type: "STRING",
+                            value: ",",
+                          },
+                          {
+                            type: "CHOICE",
+                            members: [
+                              {
+                                type: "SYMBOL",
+                                name: "expression",
+                              },
+                              {
+                                type: "SYMBOL",
+                                name: "list_splat",
+                              },
+                              {
+                                type: "SYMBOL",
+                                name: "dictionary_splat",
+                              },
+                              {
+                                type: "ALIAS",
+                                content: {
+                                  type: "SYMBOL",
+                                  name: "parenthesized_list_splat",
+                                },
+                                named: true,
+                                value: "parenthesized_expression",
+                              },
+                              {
+                                type: "SYMBOL",
+                                name: "keyword_argument",
+                              },
+                            ],
+                          },
+                        ],
+                      },
+                    },
+                  ],
+                },
+                {
+                  type: "BLANK",
+                },
+              ],
+            },
+            {
+              type: "CHOICE",
+              members: [
+                {
+                  type: "STRING",
+                  value: ",",
+                },
+                {
+                  type: "BLANK",
+                },
+              ],
+            },
+            {
+              type: "STRING",
+              value: ")",
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   as_pattern: {
     modelType: "branch",
@@ -85,6 +240,50 @@
       },
     ],
     children: null,
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "PREC_LEFT",
+          value: 0,
+          content: {
+            type: "SEQ",
+            members: [
+              {
+                type: "FIELD",
+                name: "expression",
+                content: {
+                  type: "SYMBOL",
+                  name: "expression",
+                },
+              },
+              {
+                type: "STRING",
+                value: "as",
+              },
+              {
+                type: "FIELD",
+                name: "alias",
+                content: {
+                  type: "ALIAS",
+                  content: {
+                    type: "SYMBOL",
+                    name: "expression",
+                  },
+                  named: true,
+                  value: "as_pattern_target",
+                },
+              },
+            ],
+          },
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   assert_statement: {
     modelType: "container",
@@ -97,6 +296,50 @@
       name: null,
       position: 0,
     },
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "STRING",
+              value: "assert",
+            },
+            {
+              type: "SEQ",
+              members: [
+                {
+                  type: "SYMBOL",
+                  name: "expression",
+                },
+                {
+                  type: "REPEAT",
+                  content: {
+                    type: "SEQ",
+                    members: [
+                      {
+                        type: "STRING",
+                        value: ",",
+                      },
+                      {
+                        type: "SYMBOL",
+                        name: "expression",
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   assignment: {
     modelType: "branch",
@@ -125,6 +368,134 @@
       },
     ],
     children: null,
+    variants: [
+      {
+        name: "v0",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "FIELD",
+              name: "left",
+              content: {
+                type: "SYMBOL",
+                name: "_left_hand_side",
+              },
+            },
+            {
+              type: "SEQ",
+              members: [
+                {
+                  type: "STRING",
+                  value: "=",
+                },
+                {
+                  type: "FIELD",
+                  name: "right",
+                  content: {
+                    type: "SYMBOL",
+                    name: "_right_hand_side",
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+      {
+        name: "v1",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "FIELD",
+              name: "left",
+              content: {
+                type: "SYMBOL",
+                name: "_left_hand_side",
+              },
+            },
+            {
+              type: "SEQ",
+              members: [
+                {
+                  type: "STRING",
+                  value: ":",
+                },
+                {
+                  type: "FIELD",
+                  name: "type",
+                  content: {
+                    type: "SYMBOL",
+                    name: "type",
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+      {
+        name: "v2",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "FIELD",
+              name: "left",
+              content: {
+                type: "SYMBOL",
+                name: "_left_hand_side",
+              },
+            },
+            {
+              type: "SEQ",
+              members: [
+                {
+                  type: "STRING",
+                  value: ":",
+                },
+                {
+                  type: "FIELD",
+                  name: "type",
+                  content: {
+                    type: "SYMBOL",
+                    name: "type",
+                  },
+                },
+                {
+                  type: "STRING",
+                  value: "=",
+                },
+                {
+                  type: "FIELD",
+                  name: "right",
+                  content: {
+                    type: "SYMBOL",
+                    name: "_right_hand_side",
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   attribute: {
     modelType: "branch",
@@ -146,6 +517,45 @@
       },
     ],
     children: null,
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "PREC",
+          value: 22,
+          content: {
+            type: "SEQ",
+            members: [
+              {
+                type: "FIELD",
+                name: "object",
+                content: {
+                  type: "SYMBOL",
+                  name: "primary_expression",
+                },
+              },
+              {
+                type: "STRING",
+                value: ".",
+              },
+              {
+                type: "FIELD",
+                name: "attribute",
+                content: {
+                  type: "SYMBOL",
+                  name: "identifier",
+                },
+              },
+            ],
+          },
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   augmented_assignment: {
     modelType: "branch",
@@ -174,6 +584,98 @@
       },
     ],
     children: null,
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "FIELD",
+              name: "left",
+              content: {
+                type: "SYMBOL",
+                name: "_left_hand_side",
+              },
+            },
+            {
+              type: "FIELD",
+              name: "operator",
+              content: {
+                type: "CHOICE",
+                members: [
+                  {
+                    type: "STRING",
+                    value: "+=",
+                  },
+                  {
+                    type: "STRING",
+                    value: "-=",
+                  },
+                  {
+                    type: "STRING",
+                    value: "*=",
+                  },
+                  {
+                    type: "STRING",
+                    value: "/=",
+                  },
+                  {
+                    type: "STRING",
+                    value: "@=",
+                  },
+                  {
+                    type: "STRING",
+                    value: "//=",
+                  },
+                  {
+                    type: "STRING",
+                    value: "%=",
+                  },
+                  {
+                    type: "STRING",
+                    value: "**=",
+                  },
+                  {
+                    type: "STRING",
+                    value: ">>=",
+                  },
+                  {
+                    type: "STRING",
+                    value: "<<=",
+                  },
+                  {
+                    type: "STRING",
+                    value: "&=",
+                  },
+                  {
+                    type: "STRING",
+                    value: "^=",
+                  },
+                  {
+                    type: "STRING",
+                    value: "|=",
+                  },
+                ],
+              },
+            },
+            {
+              type: "FIELD",
+              name: "right",
+              content: {
+                type: "SYMBOL",
+                name: "_right_hand_side",
+              },
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   await: {
     modelType: "branch",
@@ -190,6 +692,37 @@
       },
     ],
     children: null,
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "PREC",
+          value: 20,
+          content: {
+            type: "SEQ",
+            members: [
+              {
+                type: "STRING",
+                value: "await",
+              },
+              {
+                type: "FIELD",
+                name: "primary_expression",
+                content: {
+                  type: "SYMBOL",
+                  name: "primary_expression",
+                },
+              },
+            ],
+          },
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   binary_operator: {
     modelType: "branch",
@@ -218,6 +751,554 @@
       },
     ],
     children: null,
+    variants: [
+      {
+        name: "plus",
+        rule: {
+          type: "PREC_LEFT",
+          value: 18,
+          content: {
+            type: "SEQ",
+            members: [
+              {
+                type: "FIELD",
+                name: "left",
+                content: {
+                  type: "SYMBOL",
+                  name: "primary_expression",
+                },
+              },
+              {
+                type: "FIELD",
+                name: "operator",
+                content: {
+                  type: "STRING",
+                  value: "+",
+                },
+              },
+              {
+                type: "FIELD",
+                name: "right",
+                content: {
+                  type: "SYMBOL",
+                  name: "primary_expression",
+                },
+              },
+            ],
+          },
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+        detectToken: "+",
+      },
+      {
+        name: "minus",
+        rule: {
+          type: "PREC_LEFT",
+          value: 18,
+          content: {
+            type: "SEQ",
+            members: [
+              {
+                type: "FIELD",
+                name: "left",
+                content: {
+                  type: "SYMBOL",
+                  name: "primary_expression",
+                },
+              },
+              {
+                type: "FIELD",
+                name: "operator",
+                content: {
+                  type: "STRING",
+                  value: "-",
+                },
+              },
+              {
+                type: "FIELD",
+                name: "right",
+                content: {
+                  type: "SYMBOL",
+                  name: "primary_expression",
+                },
+              },
+            ],
+          },
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+        detectToken: "-",
+      },
+      {
+        name: "star",
+        rule: {
+          type: "PREC_LEFT",
+          value: 19,
+          content: {
+            type: "SEQ",
+            members: [
+              {
+                type: "FIELD",
+                name: "left",
+                content: {
+                  type: "SYMBOL",
+                  name: "primary_expression",
+                },
+              },
+              {
+                type: "FIELD",
+                name: "operator",
+                content: {
+                  type: "STRING",
+                  value: "*",
+                },
+              },
+              {
+                type: "FIELD",
+                name: "right",
+                content: {
+                  type: "SYMBOL",
+                  name: "primary_expression",
+                },
+              },
+            ],
+          },
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+        detectToken: "*",
+      },
+      {
+        name: "at",
+        rule: {
+          type: "PREC_LEFT",
+          value: 19,
+          content: {
+            type: "SEQ",
+            members: [
+              {
+                type: "FIELD",
+                name: "left",
+                content: {
+                  type: "SYMBOL",
+                  name: "primary_expression",
+                },
+              },
+              {
+                type: "FIELD",
+                name: "operator",
+                content: {
+                  type: "STRING",
+                  value: "@",
+                },
+              },
+              {
+                type: "FIELD",
+                name: "right",
+                content: {
+                  type: "SYMBOL",
+                  name: "primary_expression",
+                },
+              },
+            ],
+          },
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+        detectToken: "@",
+      },
+      {
+        name: "slash",
+        rule: {
+          type: "PREC_LEFT",
+          value: 19,
+          content: {
+            type: "SEQ",
+            members: [
+              {
+                type: "FIELD",
+                name: "left",
+                content: {
+                  type: "SYMBOL",
+                  name: "primary_expression",
+                },
+              },
+              {
+                type: "FIELD",
+                name: "operator",
+                content: {
+                  type: "STRING",
+                  value: "/",
+                },
+              },
+              {
+                type: "FIELD",
+                name: "right",
+                content: {
+                  type: "SYMBOL",
+                  name: "primary_expression",
+                },
+              },
+            ],
+          },
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+        detectToken: "/",
+      },
+      {
+        name: "percent",
+        rule: {
+          type: "PREC_LEFT",
+          value: 19,
+          content: {
+            type: "SEQ",
+            members: [
+              {
+                type: "FIELD",
+                name: "left",
+                content: {
+                  type: "SYMBOL",
+                  name: "primary_expression",
+                },
+              },
+              {
+                type: "FIELD",
+                name: "operator",
+                content: {
+                  type: "STRING",
+                  value: "%",
+                },
+              },
+              {
+                type: "FIELD",
+                name: "right",
+                content: {
+                  type: "SYMBOL",
+                  name: "primary_expression",
+                },
+              },
+            ],
+          },
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+        detectToken: "%",
+      },
+      {
+        name: "tok_2f2f",
+        rule: {
+          type: "PREC_LEFT",
+          value: 19,
+          content: {
+            type: "SEQ",
+            members: [
+              {
+                type: "FIELD",
+                name: "left",
+                content: {
+                  type: "SYMBOL",
+                  name: "primary_expression",
+                },
+              },
+              {
+                type: "FIELD",
+                name: "operator",
+                content: {
+                  type: "STRING",
+                  value: "//",
+                },
+              },
+              {
+                type: "FIELD",
+                name: "right",
+                content: {
+                  type: "SYMBOL",
+                  name: "primary_expression",
+                },
+              },
+            ],
+          },
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+        detectToken: "//",
+      },
+      {
+        name: "tok_2a2a",
+        rule: {
+          type: "PREC_RIGHT",
+          value: 21,
+          content: {
+            type: "SEQ",
+            members: [
+              {
+                type: "FIELD",
+                name: "left",
+                content: {
+                  type: "SYMBOL",
+                  name: "primary_expression",
+                },
+              },
+              {
+                type: "FIELD",
+                name: "operator",
+                content: {
+                  type: "STRING",
+                  value: "**",
+                },
+              },
+              {
+                type: "FIELD",
+                name: "right",
+                content: {
+                  type: "SYMBOL",
+                  name: "primary_expression",
+                },
+              },
+            ],
+          },
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+        detectToken: "**",
+      },
+      {
+        name: "pipe",
+        rule: {
+          type: "PREC_LEFT",
+          value: 14,
+          content: {
+            type: "SEQ",
+            members: [
+              {
+                type: "FIELD",
+                name: "left",
+                content: {
+                  type: "SYMBOL",
+                  name: "primary_expression",
+                },
+              },
+              {
+                type: "FIELD",
+                name: "operator",
+                content: {
+                  type: "STRING",
+                  value: "|",
+                },
+              },
+              {
+                type: "FIELD",
+                name: "right",
+                content: {
+                  type: "SYMBOL",
+                  name: "primary_expression",
+                },
+              },
+            ],
+          },
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+        detectToken: "|",
+      },
+      {
+        name: "amp",
+        rule: {
+          type: "PREC_LEFT",
+          value: 15,
+          content: {
+            type: "SEQ",
+            members: [
+              {
+                type: "FIELD",
+                name: "left",
+                content: {
+                  type: "SYMBOL",
+                  name: "primary_expression",
+                },
+              },
+              {
+                type: "FIELD",
+                name: "operator",
+                content: {
+                  type: "STRING",
+                  value: "&",
+                },
+              },
+              {
+                type: "FIELD",
+                name: "right",
+                content: {
+                  type: "SYMBOL",
+                  name: "primary_expression",
+                },
+              },
+            ],
+          },
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+        detectToken: "&",
+      },
+      {
+        name: "caret",
+        rule: {
+          type: "PREC_LEFT",
+          value: 16,
+          content: {
+            type: "SEQ",
+            members: [
+              {
+                type: "FIELD",
+                name: "left",
+                content: {
+                  type: "SYMBOL",
+                  name: "primary_expression",
+                },
+              },
+              {
+                type: "FIELD",
+                name: "operator",
+                content: {
+                  type: "STRING",
+                  value: "^",
+                },
+              },
+              {
+                type: "FIELD",
+                name: "right",
+                content: {
+                  type: "SYMBOL",
+                  name: "primary_expression",
+                },
+              },
+            ],
+          },
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+        detectToken: "^",
+      },
+      {
+        name: "tok_3c3c",
+        rule: {
+          type: "PREC_LEFT",
+          value: 17,
+          content: {
+            type: "SEQ",
+            members: [
+              {
+                type: "FIELD",
+                name: "left",
+                content: {
+                  type: "SYMBOL",
+                  name: "primary_expression",
+                },
+              },
+              {
+                type: "FIELD",
+                name: "operator",
+                content: {
+                  type: "STRING",
+                  value: "<<",
+                },
+              },
+              {
+                type: "FIELD",
+                name: "right",
+                content: {
+                  type: "SYMBOL",
+                  name: "primary_expression",
+                },
+              },
+            ],
+          },
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+        detectToken: "<<",
+      },
+      {
+        name: "tok_3e3e",
+        rule: {
+          type: "PREC_LEFT",
+          value: 17,
+          content: {
+            type: "SEQ",
+            members: [
+              {
+                type: "FIELD",
+                name: "left",
+                content: {
+                  type: "SYMBOL",
+                  name: "primary_expression",
+                },
+              },
+              {
+                type: "FIELD",
+                name: "operator",
+                content: {
+                  type: "STRING",
+                  value: ">>",
+                },
+              },
+              {
+                type: "FIELD",
+                name: "right",
+                content: {
+                  type: "SYMBOL",
+                  name: "primary_expression",
+                },
+              },
+            ],
+          },
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+        detectToken: ">>",
+      },
+    ],
   },
   block: {
     modelType: "branch",
@@ -237,6 +1318,32 @@
       kinds: {},
       separator: null,
     },
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "REPEAT",
+              content: {
+                type: "SYMBOL",
+                name: "_statement",
+              },
+            },
+            {
+              type: "SYMBOL",
+              name: "_dedent",
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   boolean_operator: {
     modelType: "branch",
@@ -265,6 +1372,92 @@
       },
     ],
     children: null,
+    variants: [
+      {
+        name: "and",
+        rule: {
+          type: "PREC_LEFT",
+          value: 11,
+          content: {
+            type: "SEQ",
+            members: [
+              {
+                type: "FIELD",
+                name: "left",
+                content: {
+                  type: "SYMBOL",
+                  name: "expression",
+                },
+              },
+              {
+                type: "FIELD",
+                name: "operator",
+                content: {
+                  type: "STRING",
+                  value: "and",
+                },
+              },
+              {
+                type: "FIELD",
+                name: "right",
+                content: {
+                  type: "SYMBOL",
+                  name: "expression",
+                },
+              },
+            ],
+          },
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+        detectToken: "and",
+      },
+      {
+        name: "or",
+        rule: {
+          type: "PREC_LEFT",
+          value: 10,
+          content: {
+            type: "SEQ",
+            members: [
+              {
+                type: "FIELD",
+                name: "left",
+                content: {
+                  type: "SYMBOL",
+                  name: "expression",
+                },
+              },
+              {
+                type: "FIELD",
+                name: "operator",
+                content: {
+                  type: "STRING",
+                  value: "or",
+                },
+              },
+              {
+                type: "FIELD",
+                name: "right",
+                content: {
+                  type: "SYMBOL",
+                  name: "expression",
+                },
+              },
+            ],
+          },
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+        detectToken: "or",
+      },
+    ],
   },
   break_statement: {
     modelType: "keyword",
@@ -291,6 +1484,50 @@
       },
     ],
     children: null,
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "PREC",
+          value: 22,
+          content: {
+            type: "SEQ",
+            members: [
+              {
+                type: "FIELD",
+                name: "function",
+                content: {
+                  type: "SYMBOL",
+                  name: "primary_expression",
+                },
+              },
+              {
+                type: "FIELD",
+                name: "arguments",
+                content: {
+                  type: "CHOICE",
+                  members: [
+                    {
+                      type: "SYMBOL",
+                      name: "generator_expression",
+                    },
+                    {
+                      type: "SYMBOL",
+                      name: "argument_list",
+                    },
+                  ],
+                },
+              },
+            ],
+          },
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   case_clause: {
     modelType: "branch",
@@ -319,6 +1556,90 @@
       name: null,
       position: 0,
     },
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "STRING",
+              value: "case",
+            },
+            {
+              type: "SEQ",
+              members: [
+                {
+                  type: "SYMBOL",
+                  name: "case_pattern",
+                },
+                {
+                  type: "REPEAT",
+                  content: {
+                    type: "SEQ",
+                    members: [
+                      {
+                        type: "STRING",
+                        value: ",",
+                      },
+                      {
+                        type: "SYMBOL",
+                        name: "case_pattern",
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+            {
+              type: "CHOICE",
+              members: [
+                {
+                  type: "STRING",
+                  value: ",",
+                },
+                {
+                  type: "BLANK",
+                },
+              ],
+            },
+            {
+              type: "CHOICE",
+              members: [
+                {
+                  type: "FIELD",
+                  name: "guard",
+                  content: {
+                    type: "SYMBOL",
+                    name: "if_clause",
+                  },
+                },
+                {
+                  type: "BLANK",
+                },
+              ],
+            },
+            {
+              type: "STRING",
+              value: ":",
+            },
+            {
+              type: "FIELD",
+              name: "consequence",
+              content: {
+                type: "SYMBOL",
+                name: "_suite",
+              },
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   case_pattern: {
     modelType: "container",
@@ -330,6 +1651,42 @@
       name: "NEEDS_NAME_0",
       position: 0,
     },
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "PREC",
+          value: 1,
+          content: {
+            type: "CHOICE",
+            members: [
+              {
+                type: "ALIAS",
+                content: {
+                  type: "SYMBOL",
+                  name: "_as_pattern",
+                },
+                named: true,
+                value: "as_pattern",
+              },
+              {
+                type: "SYMBOL",
+                name: "keyword_pattern",
+              },
+              {
+                type: "SYMBOL",
+                name: "_simple_pattern",
+              },
+            ],
+          },
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   chevron: {
     modelType: "branch",
@@ -346,6 +1703,33 @@
       },
     ],
     children: null,
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "STRING",
+              value: ">>",
+            },
+            {
+              type: "FIELD",
+              name: "expression",
+              content: {
+                type: "SYMBOL",
+                name: "expression",
+              },
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   class_definition: {
     modelType: "branch",
@@ -381,6 +1765,77 @@
       },
     ],
     children: null,
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "STRING",
+              value: "class",
+            },
+            {
+              type: "FIELD",
+              name: "name",
+              content: {
+                type: "SYMBOL",
+                name: "identifier",
+              },
+            },
+            {
+              type: "FIELD",
+              name: "type_parameters",
+              content: {
+                type: "CHOICE",
+                members: [
+                  {
+                    type: "SYMBOL",
+                    name: "type_parameter",
+                  },
+                  {
+                    type: "BLANK",
+                  },
+                ],
+              },
+            },
+            {
+              type: "FIELD",
+              name: "superclasses",
+              content: {
+                type: "CHOICE",
+                members: [
+                  {
+                    type: "SYMBOL",
+                    name: "argument_list",
+                  },
+                  {
+                    type: "BLANK",
+                  },
+                ],
+              },
+            },
+            {
+              type: "STRING",
+              value: ":",
+            },
+            {
+              type: "FIELD",
+              name: "body",
+              content: {
+                type: "SYMBOL",
+                name: "_suite",
+              },
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   class_pattern: {
     modelType: "branch",
@@ -407,6 +1862,91 @@
       },
     ],
     children: null,
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "FIELD",
+              name: "dotted_name",
+              content: {
+                type: "SYMBOL",
+                name: "dotted_name",
+              },
+            },
+            {
+              type: "STRING",
+              value: "(",
+            },
+            {
+              type: "CHOICE",
+              members: [
+                {
+                  type: "SEQ",
+                  members: [
+                    {
+                      type: "SEQ",
+                      members: [
+                        {
+                          type: "FIELD",
+                          name: "arguments",
+                          content: {
+                            type: "SYMBOL",
+                            name: "case_pattern",
+                          },
+                        },
+                        {
+                          type: "REPEAT",
+                          content: {
+                            type: "SEQ",
+                            members: [
+                              {
+                                type: "STRING",
+                                value: ",",
+                              },
+                              {
+                                type: "SYMBOL",
+                                name: "case_pattern",
+                              },
+                            ],
+                          },
+                        },
+                      ],
+                    },
+                    {
+                      type: "CHOICE",
+                      members: [
+                        {
+                          type: "STRING",
+                          value: ",",
+                        },
+                        {
+                          type: "BLANK",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                {
+                  type: "BLANK",
+                },
+              ],
+            },
+            {
+              type: "STRING",
+              value: ")",
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   comparison_operator: {
     modelType: "branch",
@@ -441,6 +1981,112 @@
       },
     ],
     children: null,
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "PREC_LEFT",
+          value: 13,
+          content: {
+            type: "SEQ",
+            members: [
+              {
+                type: "FIELD",
+                name: "left",
+                content: {
+                  type: "SYMBOL",
+                  name: "primary_expression",
+                },
+              },
+              {
+                type: "REPEAT1",
+                content: {
+                  type: "SEQ",
+                  members: [
+                    {
+                      type: "FIELD",
+                      name: "operators",
+                      content: {
+                        type: "CHOICE",
+                        members: [
+                          {
+                            type: "STRING",
+                            value: "<",
+                          },
+                          {
+                            type: "STRING",
+                            value: "<=",
+                          },
+                          {
+                            type: "STRING",
+                            value: "==",
+                          },
+                          {
+                            type: "STRING",
+                            value: "!=",
+                          },
+                          {
+                            type: "STRING",
+                            value: ">=",
+                          },
+                          {
+                            type: "STRING",
+                            value: ">",
+                          },
+                          {
+                            type: "STRING",
+                            value: "<>",
+                          },
+                          {
+                            type: "STRING",
+                            value: "in",
+                          },
+                          {
+                            type: "ALIAS",
+                            content: {
+                              type: "SYMBOL",
+                              name: "_not_in",
+                            },
+                            named: false,
+                            value: "not in",
+                          },
+                          {
+                            type: "STRING",
+                            value: "is",
+                          },
+                          {
+                            type: "ALIAS",
+                            content: {
+                              type: "SYMBOL",
+                              name: "_is_not",
+                            },
+                            named: false,
+                            value: "is not",
+                          },
+                        ],
+                      },
+                    },
+                    {
+                      type: "FIELD",
+                      name: "comparators",
+                      content: {
+                        type: "SYMBOL",
+                        name: "primary_expression",
+                      },
+                    },
+                  ],
+                },
+              },
+            ],
+          },
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   complex_pattern: {
     modelType: "branch",
@@ -466,6 +2112,84 @@
       },
     ],
     children: null,
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "PREC",
+          value: 1,
+          content: {
+            type: "SEQ",
+            members: [
+              {
+                type: "CHOICE",
+                members: [
+                  {
+                    type: "STRING",
+                    value: "-",
+                  },
+                  {
+                    type: "BLANK",
+                  },
+                ],
+              },
+              {
+                type: "FIELD",
+                name: "real",
+                content: {
+                  type: "CHOICE",
+                  members: [
+                    {
+                      type: "SYMBOL",
+                      name: "integer",
+                    },
+                    {
+                      type: "SYMBOL",
+                      name: "float",
+                    },
+                  ],
+                },
+              },
+              {
+                type: "CHOICE",
+                members: [
+                  {
+                    type: "STRING",
+                    value: "+",
+                  },
+                  {
+                    type: "STRING",
+                    value: "-",
+                  },
+                ],
+              },
+              {
+                type: "FIELD",
+                name: "imaginary",
+                content: {
+                  type: "CHOICE",
+                  members: [
+                    {
+                      type: "SYMBOL",
+                      name: "integer",
+                    },
+                    {
+                      type: "SYMBOL",
+                      name: "float",
+                    },
+                  ],
+                },
+              },
+            ],
+          },
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   concatenated_string: {
     modelType: "container",
@@ -478,6 +2202,32 @@
       name: null,
       position: 0,
     },
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "SYMBOL",
+              name: "string",
+            },
+            {
+              type: "REPEAT1",
+              content: {
+                type: "SYMBOL",
+                name: "string",
+              },
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   conditional_expression: {
     modelType: "branch",
@@ -512,6 +2262,57 @@
       },
     ],
     children: null,
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "PREC_RIGHT",
+          value: -1,
+          content: {
+            type: "SEQ",
+            members: [
+              {
+                type: "FIELD",
+                name: "body",
+                content: {
+                  type: "SYMBOL",
+                  name: "expression",
+                },
+              },
+              {
+                type: "STRING",
+                value: "if",
+              },
+              {
+                type: "FIELD",
+                name: "condition",
+                content: {
+                  type: "SYMBOL",
+                  name: "expression",
+                },
+              },
+              {
+                type: "STRING",
+                value: "else",
+              },
+              {
+                type: "FIELD",
+                name: "alternative",
+                content: {
+                  type: "SYMBOL",
+                  name: "expression",
+                },
+              },
+            ],
+          },
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   constrained_type: {
     modelType: "branch",
@@ -537,6 +2338,45 @@
       },
     ],
     children: null,
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "PREC_RIGHT",
+          value: 0,
+          content: {
+            type: "SEQ",
+            members: [
+              {
+                type: "FIELD",
+                name: "base_type",
+                content: {
+                  type: "SYMBOL",
+                  name: "type",
+                },
+              },
+              {
+                type: "STRING",
+                value: ":",
+              },
+              {
+                type: "FIELD",
+                name: "constraint",
+                content: {
+                  type: "SYMBOL",
+                  name: "type",
+                },
+              },
+            ],
+          },
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   continue_statement: {
     modelType: "keyword",
@@ -563,6 +2403,45 @@
       name: null,
       position: 0,
     },
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "REPEAT1",
+              content: {
+                type: "SYMBOL",
+                name: "decorator",
+              },
+            },
+            {
+              type: "FIELD",
+              name: "definition",
+              content: {
+                type: "CHOICE",
+                members: [
+                  {
+                    type: "SYMBOL",
+                    name: "class_definition",
+                  },
+                  {
+                    type: "SYMBOL",
+                    name: "function_definition",
+                  },
+                ],
+              },
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   decorator: {
     modelType: "branch",
@@ -588,6 +2467,41 @@
       },
     ],
     children: null,
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "STRING",
+              value: "@",
+            },
+            {
+              type: "FIELD",
+              name: "expression",
+              content: {
+                type: "SYMBOL",
+                name: "expression",
+              },
+            },
+            {
+              type: "FIELD",
+              name: "newline",
+              content: {
+                type: "SYMBOL",
+                name: "_newline",
+              },
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   default_parameter: {
     modelType: "branch",
@@ -609,6 +2523,50 @@
       },
     ],
     children: null,
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "FIELD",
+              name: "name",
+              content: {
+                type: "CHOICE",
+                members: [
+                  {
+                    type: "SYMBOL",
+                    name: "identifier",
+                  },
+                  {
+                    type: "SYMBOL",
+                    name: "tuple_pattern",
+                  },
+                ],
+              },
+            },
+            {
+              type: "STRING",
+              value: "=",
+            },
+            {
+              type: "FIELD",
+              name: "value",
+              content: {
+                type: "SYMBOL",
+                name: "expression",
+              },
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   delete_statement: {
     modelType: "container",
@@ -618,6 +2576,29 @@
       multiple: false,
       kinds: {},
     },
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "STRING",
+              value: "del",
+            },
+            {
+              type: "SYMBOL",
+              name: "_expressions",
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   dict_pattern: {
     modelType: "container",
@@ -630,6 +2611,97 @@
       name: null,
       position: 0,
     },
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "STRING",
+              value: "{",
+            },
+            {
+              type: "CHOICE",
+              members: [
+                {
+                  type: "SEQ",
+                  members: [
+                    {
+                      type: "SEQ",
+                      members: [
+                        {
+                          type: "CHOICE",
+                          members: [
+                            {
+                              type: "SYMBOL",
+                              name: "_key_value_pattern",
+                            },
+                            {
+                              type: "SYMBOL",
+                              name: "splat_pattern",
+                            },
+                          ],
+                        },
+                        {
+                          type: "REPEAT",
+                          content: {
+                            type: "SEQ",
+                            members: [
+                              {
+                                type: "STRING",
+                                value: ",",
+                              },
+                              {
+                                type: "CHOICE",
+                                members: [
+                                  {
+                                    type: "SYMBOL",
+                                    name: "_key_value_pattern",
+                                  },
+                                  {
+                                    type: "SYMBOL",
+                                    name: "splat_pattern",
+                                  },
+                                ],
+                              },
+                            ],
+                          },
+                        },
+                      ],
+                    },
+                    {
+                      type: "CHOICE",
+                      members: [
+                        {
+                          type: "STRING",
+                          value: ",",
+                        },
+                        {
+                          type: "BLANK",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                {
+                  type: "BLANK",
+                },
+              ],
+            },
+            {
+              type: "STRING",
+              value: "}",
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   dictionary: {
     modelType: "container",
@@ -642,6 +2714,92 @@
       name: null,
       position: 0,
     },
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "STRING",
+              value: "{",
+            },
+            {
+              type: "CHOICE",
+              members: [
+                {
+                  type: "SEQ",
+                  members: [
+                    {
+                      type: "CHOICE",
+                      members: [
+                        {
+                          type: "SYMBOL",
+                          name: "pair",
+                        },
+                        {
+                          type: "SYMBOL",
+                          name: "dictionary_splat",
+                        },
+                      ],
+                    },
+                    {
+                      type: "REPEAT",
+                      content: {
+                        type: "SEQ",
+                        members: [
+                          {
+                            type: "STRING",
+                            value: ",",
+                          },
+                          {
+                            type: "CHOICE",
+                            members: [
+                              {
+                                type: "SYMBOL",
+                                name: "pair",
+                              },
+                              {
+                                type: "SYMBOL",
+                                name: "dictionary_splat",
+                              },
+                            ],
+                          },
+                        ],
+                      },
+                    },
+                  ],
+                },
+                {
+                  type: "BLANK",
+                },
+              ],
+            },
+            {
+              type: "CHOICE",
+              members: [
+                {
+                  type: "STRING",
+                  value: ",",
+                },
+                {
+                  type: "BLANK",
+                },
+              ],
+            },
+            {
+              type: "STRING",
+              value: "}",
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   dictionary_comprehension: {
     modelType: "branch",
@@ -662,6 +2820,41 @@
       name: "comprehension_clauses",
       position: 0,
     },
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "STRING",
+              value: "{",
+            },
+            {
+              type: "FIELD",
+              name: "body",
+              content: {
+                type: "SYMBOL",
+                name: "pair",
+              },
+            },
+            {
+              type: "SYMBOL",
+              name: "_comprehension_clauses",
+            },
+            {
+              type: "STRING",
+              value: "}",
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   dictionary_splat: {
     modelType: "branch",
@@ -678,6 +2871,33 @@
       },
     ],
     children: null,
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "STRING",
+              value: "**",
+            },
+            {
+              type: "FIELD",
+              name: "expression",
+              content: {
+                type: "SYMBOL",
+                name: "expression",
+              },
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   dictionary_splat_pattern: {
     modelType: "container",
@@ -689,6 +2909,46 @@
       name: "NEEDS_NAME_0",
       position: 0,
     },
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "STRING",
+              value: "**",
+            },
+            {
+              type: "CHOICE",
+              members: [
+                {
+                  type: "SYMBOL",
+                  name: "identifier",
+                },
+                {
+                  type: "SYMBOL",
+                  name: "keyword_identifier",
+                },
+                {
+                  type: "SYMBOL",
+                  name: "subscript",
+                },
+                {
+                  type: "SYMBOL",
+                  name: "attribute",
+                },
+              ],
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   dotted_name: {
     modelType: "container",
@@ -701,6 +2961,45 @@
       name: null,
       position: 0,
     },
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "PREC",
+          value: 1,
+          content: {
+            type: "SEQ",
+            members: [
+              {
+                type: "SYMBOL",
+                name: "identifier",
+              },
+              {
+                type: "REPEAT",
+                content: {
+                  type: "SEQ",
+                  members: [
+                    {
+                      type: "STRING",
+                      value: ".",
+                    },
+                    {
+                      type: "SYMBOL",
+                      name: "identifier",
+                    },
+                  ],
+                },
+              },
+            ],
+          },
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   elif_clause: {
     modelType: "branch",
@@ -722,6 +3021,45 @@
       },
     ],
     children: null,
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "STRING",
+              value: "elif",
+            },
+            {
+              type: "FIELD",
+              name: "condition",
+              content: {
+                type: "SYMBOL",
+                name: "expression",
+              },
+            },
+            {
+              type: "STRING",
+              value: ":",
+            },
+            {
+              type: "FIELD",
+              name: "consequence",
+              content: {
+                type: "SYMBOL",
+                name: "_suite",
+              },
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   else_clause: {
     modelType: "branch",
@@ -736,6 +3074,37 @@
       },
     ],
     children: null,
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "STRING",
+              value: "else",
+            },
+            {
+              type: "STRING",
+              value: ":",
+            },
+            {
+              type: "FIELD",
+              name: "body",
+              content: {
+                type: "SYMBOL",
+                name: "_suite",
+              },
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   except_clause: {
     modelType: "branch",
@@ -764,6 +3133,123 @@
       name: "suite",
       position: 0,
     },
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "STRING",
+              value: "except",
+            },
+            {
+              type: "CHOICE",
+              members: [
+                {
+                  type: "TOKEN",
+                  content: {
+                    type: "PREC",
+                    value: 1,
+                    content: {
+                      type: "STRING",
+                      value: "*",
+                    },
+                  },
+                },
+                {
+                  type: "BLANK",
+                },
+              ],
+            },
+            {
+              type: "CHOICE",
+              members: [
+                {
+                  type: "SEQ",
+                  members: [
+                    {
+                      type: "FIELD",
+                      name: "value",
+                      content: {
+                        type: "SYMBOL",
+                        name: "expression",
+                      },
+                    },
+                    {
+                      type: "CHOICE",
+                      members: [
+                        {
+                          type: "CHOICE",
+                          members: [
+                            {
+                              type: "SEQ",
+                              members: [
+                                {
+                                  type: "STRING",
+                                  value: "as",
+                                },
+                                {
+                                  type: "FIELD",
+                                  name: "alias",
+                                  content: {
+                                    type: "SYMBOL",
+                                    name: "expression",
+                                  },
+                                },
+                              ],
+                            },
+                            {
+                              type: "BLANK",
+                            },
+                          ],
+                        },
+                        {
+                          type: "REPEAT",
+                          content: {
+                            type: "SEQ",
+                            members: [
+                              {
+                                type: "STRING",
+                                value: ",",
+                              },
+                              {
+                                type: "FIELD",
+                                name: "value",
+                                content: {
+                                  type: "SYMBOL",
+                                  name: "expression",
+                                },
+                              },
+                            ],
+                          },
+                        },
+                      ],
+                    },
+                  ],
+                },
+                {
+                  type: "BLANK",
+                },
+              ],
+            },
+            {
+              type: "STRING",
+              value: ":",
+            },
+            {
+              type: "SYMBOL",
+              name: "_suite",
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   exec_statement: {
     modelType: "branch",
@@ -785,6 +3271,84 @@
       name: null,
       position: 0,
     },
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "STRING",
+              value: "exec",
+            },
+            {
+              type: "FIELD",
+              name: "code",
+              content: {
+                type: "CHOICE",
+                members: [
+                  {
+                    type: "SYMBOL",
+                    name: "string",
+                  },
+                  {
+                    type: "SYMBOL",
+                    name: "identifier",
+                  },
+                ],
+              },
+            },
+            {
+              type: "CHOICE",
+              members: [
+                {
+                  type: "SEQ",
+                  members: [
+                    {
+                      type: "STRING",
+                      value: "in",
+                    },
+                    {
+                      type: "SEQ",
+                      members: [
+                        {
+                          type: "SYMBOL",
+                          name: "expression",
+                        },
+                        {
+                          type: "REPEAT",
+                          content: {
+                            type: "SEQ",
+                            members: [
+                              {
+                                type: "STRING",
+                                value: ",",
+                              },
+                              {
+                                type: "SYMBOL",
+                                name: "expression",
+                              },
+                            ],
+                          },
+                        },
+                      ],
+                    },
+                  ],
+                },
+                {
+                  type: "BLANK",
+                },
+              ],
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   expression_list: {
     modelType: "container",
@@ -797,6 +3361,87 @@
       name: null,
       position: 0,
     },
+    variants: [
+      {
+        name: "v0",
+        rule: {
+          type: "PREC_RIGHT",
+          value: 0,
+          content: {
+            type: "SEQ",
+            members: [
+              {
+                type: "SYMBOL",
+                name: "expression",
+              },
+              {
+                type: "STRING",
+                value: ",",
+              },
+            ],
+          },
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+      {
+        name: "v1",
+        rule: {
+          type: "PREC_RIGHT",
+          value: 0,
+          content: {
+            type: "SEQ",
+            members: [
+              {
+                type: "SYMBOL",
+                name: "expression",
+              },
+              {
+                type: "SEQ",
+                members: [
+                  {
+                    type: "REPEAT1",
+                    content: {
+                      type: "SEQ",
+                      members: [
+                        {
+                          type: "STRING",
+                          value: ",",
+                        },
+                        {
+                          type: "SYMBOL",
+                          name: "expression",
+                        },
+                      ],
+                    },
+                  },
+                  {
+                    type: "CHOICE",
+                    members: [
+                      {
+                        type: "STRING",
+                        value: ",",
+                      },
+                      {
+                        type: "BLANK",
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   expression_statement: {
     modelType: "container",
@@ -809,6 +3454,71 @@
       name: null,
       position: 0,
     },
+    variants: [
+      {
+        name: "v0",
+        rule: {
+          type: "SYMBOL",
+          name: "expression",
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+      {
+        name: "comma",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "SEQ",
+              members: [
+                {
+                  type: "SYMBOL",
+                  name: "expression",
+                },
+                {
+                  type: "REPEAT",
+                  content: {
+                    type: "SEQ",
+                    members: [
+                      {
+                        type: "STRING",
+                        value: ",",
+                      },
+                      {
+                        type: "SYMBOL",
+                        name: "expression",
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+            {
+              type: "CHOICE",
+              members: [
+                {
+                  type: "STRING",
+                  value: ",",
+                },
+                {
+                  type: "BLANK",
+                },
+              ],
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+        detectToken: ",",
+      },
+    ],
   },
   finally_clause: {
     modelType: "branch",
@@ -829,6 +3539,33 @@
       multiple: false,
       kinds: {},
     },
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "STRING",
+              value: "finally",
+            },
+            {
+              type: "STRING",
+              value: ":",
+            },
+            {
+              type: "SYMBOL",
+              name: "_suite",
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   for_in_clause: {
     modelType: "branch",
@@ -851,6 +3588,94 @@
       },
     ],
     children: null,
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "PREC_LEFT",
+          value: 0,
+          content: {
+            type: "SEQ",
+            members: [
+              {
+                type: "CHOICE",
+                members: [
+                  {
+                    type: "STRING",
+                    value: "async",
+                  },
+                  {
+                    type: "BLANK",
+                  },
+                ],
+              },
+              {
+                type: "STRING",
+                value: "for",
+              },
+              {
+                type: "FIELD",
+                name: "left",
+                content: {
+                  type: "SYMBOL",
+                  name: "_left_hand_side",
+                },
+              },
+              {
+                type: "STRING",
+                value: "in",
+              },
+              {
+                type: "FIELD",
+                name: "right",
+                content: {
+                  type: "SEQ",
+                  members: [
+                    {
+                      type: "SYMBOL",
+                      name: "_expression_within_for_in_clause",
+                    },
+                    {
+                      type: "REPEAT",
+                      content: {
+                        type: "SEQ",
+                        members: [
+                          {
+                            type: "STRING",
+                            value: ",",
+                          },
+                          {
+                            type: "SYMBOL",
+                            name: "_expression_within_for_in_clause",
+                          },
+                        ],
+                      },
+                    },
+                  ],
+                },
+              },
+              {
+                type: "CHOICE",
+                members: [
+                  {
+                    type: "STRING",
+                    value: ",",
+                  },
+                  {
+                    type: "BLANK",
+                  },
+                ],
+              },
+            ],
+          },
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   for_statement: {
     modelType: "branch",
@@ -886,6 +3711,85 @@
       },
     ],
     children: null,
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "CHOICE",
+              members: [
+                {
+                  type: "STRING",
+                  value: "async",
+                },
+                {
+                  type: "BLANK",
+                },
+              ],
+            },
+            {
+              type: "STRING",
+              value: "for",
+            },
+            {
+              type: "FIELD",
+              name: "left",
+              content: {
+                type: "SYMBOL",
+                name: "_left_hand_side",
+              },
+            },
+            {
+              type: "STRING",
+              value: "in",
+            },
+            {
+              type: "FIELD",
+              name: "right",
+              content: {
+                type: "SYMBOL",
+                name: "_expressions",
+              },
+            },
+            {
+              type: "STRING",
+              value: ":",
+            },
+            {
+              type: "FIELD",
+              name: "body",
+              content: {
+                type: "SYMBOL",
+                name: "_suite",
+              },
+            },
+            {
+              type: "FIELD",
+              name: "alternative",
+              content: {
+                type: "CHOICE",
+                members: [
+                  {
+                    type: "SYMBOL",
+                    name: "else_clause",
+                  },
+                  {
+                    type: "BLANK",
+                  },
+                ],
+              },
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   format_expression: {
     modelType: "branch",
@@ -923,6 +3827,39 @@
       name: null,
       position: 0,
     },
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "STRING",
+              value: ":",
+            },
+            {
+              type: "REPEAT",
+              content: {
+                type: "TOKEN",
+                content: {
+                  type: "PREC",
+                  value: 1,
+                  content: {
+                    type: "PATTERN",
+                    value: "[^{}\\n]+",
+                  },
+                },
+              },
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   function_definition: {
     modelType: "branch",
@@ -965,6 +3902,106 @@
       },
     ],
     children: null,
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "CHOICE",
+              members: [
+                {
+                  type: "STRING",
+                  value: "async",
+                },
+                {
+                  type: "BLANK",
+                },
+              ],
+            },
+            {
+              type: "STRING",
+              value: "def",
+            },
+            {
+              type: "FIELD",
+              name: "name",
+              content: {
+                type: "SYMBOL",
+                name: "identifier",
+              },
+            },
+            {
+              type: "FIELD",
+              name: "type_parameters",
+              content: {
+                type: "CHOICE",
+                members: [
+                  {
+                    type: "SYMBOL",
+                    name: "type_parameter",
+                  },
+                  {
+                    type: "BLANK",
+                  },
+                ],
+              },
+            },
+            {
+              type: "FIELD",
+              name: "parameters",
+              content: {
+                type: "SYMBOL",
+                name: "parameters",
+              },
+            },
+            {
+              type: "CHOICE",
+              members: [
+                {
+                  type: "SEQ",
+                  members: [
+                    {
+                      type: "STRING",
+                      value: "->",
+                    },
+                    {
+                      type: "FIELD",
+                      name: "return_type",
+                      content: {
+                        type: "SYMBOL",
+                        name: "type",
+                      },
+                    },
+                  ],
+                },
+                {
+                  type: "BLANK",
+                },
+              ],
+            },
+            {
+              type: "STRING",
+              value: ":",
+            },
+            {
+              type: "FIELD",
+              name: "body",
+              content: {
+                type: "SYMBOL",
+                name: "_suite",
+              },
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   future_import_statement: {
     modelType: "branch",
@@ -979,6 +4016,80 @@
       },
     ],
     children: null,
+    variants: [
+      {
+        name: "v0",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "STRING",
+              value: "from",
+            },
+            {
+              type: "STRING",
+              value: "__future__",
+            },
+            {
+              type: "STRING",
+              value: "import",
+            },
+            {
+              type: "SYMBOL",
+              name: "_import_list",
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+      {
+        name: "paren",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "STRING",
+              value: "from",
+            },
+            {
+              type: "STRING",
+              value: "__future__",
+            },
+            {
+              type: "STRING",
+              value: "import",
+            },
+            {
+              type: "SEQ",
+              members: [
+                {
+                  type: "STRING",
+                  value: "(",
+                },
+                {
+                  type: "SYMBOL",
+                  name: "_import_list",
+                },
+                {
+                  type: "STRING",
+                  value: ")",
+                },
+              ],
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+        detectToken: "(",
+      },
+    ],
   },
   generator_expression: {
     modelType: "branch",
@@ -999,6 +4110,41 @@
       name: "comprehension_clauses",
       position: 0,
     },
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "STRING",
+              value: "(",
+            },
+            {
+              type: "FIELD",
+              name: "body",
+              content: {
+                type: "SYMBOL",
+                name: "expression",
+              },
+            },
+            {
+              type: "SYMBOL",
+              name: "_comprehension_clauses",
+            },
+            {
+              type: "STRING",
+              value: ")",
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   generic_type: {
     modelType: "branch",
@@ -1024,6 +4170,59 @@
       },
     ],
     children: null,
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "PREC",
+          value: 1,
+          content: {
+            type: "SEQ",
+            members: [
+              {
+                type: "CHOICE",
+                members: [
+                  {
+                    type: "FIELD",
+                    name: "identifier",
+                    content: {
+                      type: "SYMBOL",
+                      name: "identifier",
+                    },
+                  },
+                  {
+                    type: "FIELD",
+                    name: "identifier",
+                    content: {
+                      type: "ALIAS",
+                      content: {
+                        type: "STRING",
+                        value: "type",
+                      },
+                      named: true,
+                      value: "identifier",
+                    },
+                  },
+                ],
+              },
+              {
+                type: "FIELD",
+                name: "type_parameter",
+                content: {
+                  type: "SYMBOL",
+                  name: "type_parameter",
+                },
+              },
+            ],
+          },
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   global_statement: {
     modelType: "container",
@@ -1036,6 +4235,50 @@
       name: null,
       position: 0,
     },
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "STRING",
+              value: "global",
+            },
+            {
+              type: "SEQ",
+              members: [
+                {
+                  type: "SYMBOL",
+                  name: "identifier",
+                },
+                {
+                  type: "REPEAT",
+                  content: {
+                    type: "SEQ",
+                    members: [
+                      {
+                        type: "STRING",
+                        value: ",",
+                      },
+                      {
+                        type: "SYMBOL",
+                        name: "identifier",
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   if_clause: {
     modelType: "branch",
@@ -1052,6 +4295,33 @@
       },
     ],
     children: null,
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "STRING",
+              value: "if",
+            },
+            {
+              type: "FIELD",
+              name: "expression",
+              content: {
+                type: "SYMBOL",
+                name: "expression",
+              },
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   if_statement: {
     modelType: "branch",
@@ -1081,6 +4351,72 @@
       },
     ],
     children: null,
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "STRING",
+              value: "if",
+            },
+            {
+              type: "FIELD",
+              name: "condition",
+              content: {
+                type: "SYMBOL",
+                name: "expression",
+              },
+            },
+            {
+              type: "STRING",
+              value: ":",
+            },
+            {
+              type: "FIELD",
+              name: "consequence",
+              content: {
+                type: "SYMBOL",
+                name: "_suite",
+              },
+            },
+            {
+              type: "REPEAT",
+              content: {
+                type: "FIELD",
+                name: "alternative",
+                content: {
+                  type: "SYMBOL",
+                  name: "elif_clause",
+                },
+              },
+            },
+            {
+              type: "CHOICE",
+              members: [
+                {
+                  type: "FIELD",
+                  name: "alternative",
+                  content: {
+                    type: "SYMBOL",
+                    name: "else_clause",
+                  },
+                },
+                {
+                  type: "BLANK",
+                },
+              ],
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   import_from_statement: {
     modelType: "branch",
@@ -1112,6 +4448,114 @@
       },
     ],
     children: null,
+    variants: [
+      {
+        name: "v0",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "STRING",
+              value: "from",
+            },
+            {
+              type: "FIELD",
+              name: "module_name",
+              content: {
+                type: "CHOICE",
+                members: [
+                  {
+                    type: "SYMBOL",
+                    name: "relative_import",
+                  },
+                  {
+                    type: "SYMBOL",
+                    name: "dotted_name",
+                  },
+                ],
+              },
+            },
+            {
+              type: "STRING",
+              value: "import",
+            },
+            {
+              type: "FIELD",
+              name: "wildcard_import",
+              content: {
+                type: "SYMBOL",
+                name: "wildcard_import",
+              },
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+      {
+        name: "paren",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "STRING",
+              value: "from",
+            },
+            {
+              type: "FIELD",
+              name: "module_name",
+              content: {
+                type: "CHOICE",
+                members: [
+                  {
+                    type: "SYMBOL",
+                    name: "relative_import",
+                  },
+                  {
+                    type: "SYMBOL",
+                    name: "dotted_name",
+                  },
+                ],
+              },
+            },
+            {
+              type: "STRING",
+              value: "import",
+            },
+            {
+              type: "FIELD",
+              name: "wildcard_import",
+              content: {
+                type: "SEQ",
+                members: [
+                  {
+                    type: "STRING",
+                    value: "(",
+                  },
+                  {
+                    type: "SYMBOL",
+                    name: "_import_list",
+                  },
+                  {
+                    type: "STRING",
+                    value: ")",
+                  },
+                ],
+              },
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+        detectToken: "(",
+      },
+    ],
   },
   import_prefix: {
     modelType: "leaf",
@@ -1131,6 +4575,29 @@
       },
     ],
     children: null,
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "STRING",
+              value: "import",
+            },
+            {
+              type: "SYMBOL",
+              name: "_import_list",
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   interpolation: {
     modelType: "branch",
@@ -1159,6 +4626,81 @@
       },
     ],
     children: null,
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "STRING",
+              value: "{",
+            },
+            {
+              type: "FIELD",
+              name: "expression",
+              content: {
+                type: "SYMBOL",
+                name: "_f_expression",
+              },
+            },
+            {
+              type: "CHOICE",
+              members: [
+                {
+                  type: "STRING",
+                  value: "=",
+                },
+                {
+                  type: "BLANK",
+                },
+              ],
+            },
+            {
+              type: "CHOICE",
+              members: [
+                {
+                  type: "FIELD",
+                  name: "type_conversion",
+                  content: {
+                    type: "SYMBOL",
+                    name: "type_conversion",
+                  },
+                },
+                {
+                  type: "BLANK",
+                },
+              ],
+            },
+            {
+              type: "CHOICE",
+              members: [
+                {
+                  type: "FIELD",
+                  name: "format_specifier",
+                  content: {
+                    type: "SYMBOL",
+                    name: "format_specifier",
+                  },
+                },
+                {
+                  type: "BLANK",
+                },
+              ],
+            },
+            {
+              type: "STRING",
+              value: "}",
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   "is not": {
     modelType: "token",
@@ -1185,6 +4727,50 @@
       },
     ],
     children: null,
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "FIELD",
+              name: "name",
+              content: {
+                type: "CHOICE",
+                members: [
+                  {
+                    type: "SYMBOL",
+                    name: "identifier",
+                  },
+                  {
+                    type: "SYMBOL",
+                    name: "keyword_identifier",
+                  },
+                ],
+              },
+            },
+            {
+              type: "STRING",
+              value: "=",
+            },
+            {
+              type: "FIELD",
+              name: "value",
+              content: {
+                type: "SYMBOL",
+                name: "expression",
+              },
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   keyword_pattern: {
     modelType: "branch",
@@ -1210,6 +4796,41 @@
       },
     ],
     children: null,
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "FIELD",
+              name: "identifier",
+              content: {
+                type: "SYMBOL",
+                name: "identifier",
+              },
+            },
+            {
+              type: "STRING",
+              value: "=",
+            },
+            {
+              type: "FIELD",
+              name: "simple_pattern",
+              content: {
+                type: "SYMBOL",
+                name: "_simple_pattern",
+              },
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   keyword_separator: {
     modelType: "keyword",
@@ -1236,6 +4857,57 @@
       },
     ],
     children: null,
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "PREC",
+          value: -2,
+          content: {
+            type: "SEQ",
+            members: [
+              {
+                type: "STRING",
+                value: "lambda",
+              },
+              {
+                type: "FIELD",
+                name: "parameters",
+                content: {
+                  type: "CHOICE",
+                  members: [
+                    {
+                      type: "SYMBOL",
+                      name: "lambda_parameters",
+                    },
+                    {
+                      type: "BLANK",
+                    },
+                  ],
+                },
+              },
+              {
+                type: "STRING",
+                value: ":",
+              },
+              {
+                type: "FIELD",
+                name: "body",
+                content: {
+                  type: "SYMBOL",
+                  name: "expression",
+                },
+              },
+            ],
+          },
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   lambda_parameters: {
     modelType: "container",
@@ -1246,6 +4918,20 @@
       kinds: {},
       separator: null,
     },
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "SYMBOL",
+          name: "_parameters",
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   list: {
     modelType: "container",
@@ -1256,6 +4942,41 @@
       kinds: {},
       separator: null,
     },
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "STRING",
+              value: "[",
+            },
+            {
+              type: "CHOICE",
+              members: [
+                {
+                  type: "SYMBOL",
+                  name: "_collection_elements",
+                },
+                {
+                  type: "BLANK",
+                },
+              ],
+            },
+            {
+              type: "STRING",
+              value: "]",
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   list_comprehension: {
     modelType: "branch",
@@ -1276,6 +4997,41 @@
       name: "comprehension_clauses",
       position: 0,
     },
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "STRING",
+              value: "[",
+            },
+            {
+              type: "FIELD",
+              name: "body",
+              content: {
+                type: "SYMBOL",
+                name: "expression",
+              },
+            },
+            {
+              type: "SYMBOL",
+              name: "_comprehension_clauses",
+            },
+            {
+              type: "STRING",
+              value: "]",
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   list_pattern: {
     modelType: "container",
@@ -1286,6 +5042,41 @@
       kinds: {},
       separator: null,
     },
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "STRING",
+              value: "[",
+            },
+            {
+              type: "CHOICE",
+              members: [
+                {
+                  type: "SYMBOL",
+                  name: "_patterns",
+                },
+                {
+                  type: "BLANK",
+                },
+              ],
+            },
+            {
+              type: "STRING",
+              value: "]",
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   list_splat: {
     modelType: "branch",
@@ -1302,6 +5093,33 @@
       },
     ],
     children: null,
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "STRING",
+              value: "*",
+            },
+            {
+              type: "FIELD",
+              name: "expression",
+              content: {
+                type: "SYMBOL",
+                name: "expression",
+              },
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   list_splat_pattern: {
     modelType: "container",
@@ -1313,6 +5131,46 @@
       name: "NEEDS_NAME_0",
       position: 0,
     },
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "STRING",
+              value: "*",
+            },
+            {
+              type: "CHOICE",
+              members: [
+                {
+                  type: "SYMBOL",
+                  name: "identifier",
+                },
+                {
+                  type: "SYMBOL",
+                  name: "keyword_identifier",
+                },
+                {
+                  type: "SYMBOL",
+                  name: "subscript",
+                },
+                {
+                  type: "SYMBOL",
+                  name: "attribute",
+                },
+              ],
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   match_statement: {
     modelType: "branch",
@@ -1335,6 +5193,87 @@
       },
     ],
     children: null,
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "STRING",
+              value: "match",
+            },
+            {
+              type: "SEQ",
+              members: [
+                {
+                  type: "FIELD",
+                  name: "subject",
+                  content: {
+                    type: "SYMBOL",
+                    name: "expression",
+                  },
+                },
+                {
+                  type: "REPEAT",
+                  content: {
+                    type: "SEQ",
+                    members: [
+                      {
+                        type: "STRING",
+                        value: ",",
+                      },
+                      {
+                        type: "FIELD",
+                        name: "subject",
+                        content: {
+                          type: "SYMBOL",
+                          name: "expression",
+                        },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+            {
+              type: "CHOICE",
+              members: [
+                {
+                  type: "STRING",
+                  value: ",",
+                },
+                {
+                  type: "BLANK",
+                },
+              ],
+            },
+            {
+              type: "STRING",
+              value: ":",
+            },
+            {
+              type: "FIELD",
+              name: "body",
+              content: {
+                type: "ALIAS",
+                content: {
+                  type: "SYMBOL",
+                  name: "_match_block",
+                },
+                named: true,
+                value: "block",
+              },
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   member_type: {
     modelType: "branch",
@@ -1360,6 +5299,41 @@
       },
     ],
     children: null,
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "FIELD",
+              name: "base_type",
+              content: {
+                type: "SYMBOL",
+                name: "type",
+              },
+            },
+            {
+              type: "STRING",
+              value: ".",
+            },
+            {
+              type: "FIELD",
+              name: "identifier",
+              content: {
+                type: "SYMBOL",
+                name: "identifier",
+              },
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   module: {
     modelType: "container",
@@ -1370,6 +5344,23 @@
       kinds: {},
       separator: null,
     },
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "REPEAT",
+          content: {
+            type: "SYMBOL",
+            name: "_statement",
+          },
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   named_expression: {
     modelType: "branch",
@@ -1391,6 +5382,41 @@
       },
     ],
     children: null,
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "FIELD",
+              name: "name",
+              content: {
+                type: "SYMBOL",
+                name: "_named_expression_lhs",
+              },
+            },
+            {
+              type: "STRING",
+              value: ":=",
+            },
+            {
+              type: "FIELD",
+              name: "value",
+              content: {
+                type: "SYMBOL",
+                name: "expression",
+              },
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   nonlocal_statement: {
     modelType: "container",
@@ -1403,6 +5429,50 @@
       name: null,
       position: 0,
     },
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "STRING",
+              value: "nonlocal",
+            },
+            {
+              type: "SEQ",
+              members: [
+                {
+                  type: "SYMBOL",
+                  name: "identifier",
+                },
+                {
+                  type: "REPEAT",
+                  content: {
+                    type: "SEQ",
+                    members: [
+                      {
+                        type: "STRING",
+                        value: ",",
+                      },
+                      {
+                        type: "SYMBOL",
+                        name: "identifier",
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   "not in": {
     modelType: "token",
@@ -1422,6 +5492,37 @@
       },
     ],
     children: null,
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "PREC",
+          value: 12,
+          content: {
+            type: "SEQ",
+            members: [
+              {
+                type: "STRING",
+                value: "not",
+              },
+              {
+                type: "FIELD",
+                name: "argument",
+                content: {
+                  type: "SYMBOL",
+                  name: "expression",
+                },
+              },
+            ],
+          },
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   pair: {
     modelType: "branch",
@@ -1443,6 +5544,41 @@
       },
     ],
     children: null,
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "FIELD",
+              name: "key",
+              content: {
+                type: "SYMBOL",
+                name: "expression",
+              },
+            },
+            {
+              type: "STRING",
+              value: ":",
+            },
+            {
+              type: "FIELD",
+              name: "value",
+              content: {
+                type: "SYMBOL",
+                name: "expression",
+              },
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   parameters: {
     modelType: "container",
@@ -1453,6 +5589,41 @@
       kinds: {},
       separator: null,
     },
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "STRING",
+              value: "(",
+            },
+            {
+              type: "CHOICE",
+              members: [
+                {
+                  type: "SYMBOL",
+                  name: "_parameters",
+                },
+                {
+                  type: "BLANK",
+                },
+              ],
+            },
+            {
+              type: "STRING",
+              value: ")",
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   parenthesized_expression: {
     modelType: "container",
@@ -1464,6 +5635,46 @@
       name: "NEEDS_NAME_0",
       position: 0,
     },
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "PREC",
+          value: 1,
+          content: {
+            type: "SEQ",
+            members: [
+              {
+                type: "STRING",
+                value: "(",
+              },
+              {
+                type: "CHOICE",
+                members: [
+                  {
+                    type: "SYMBOL",
+                    name: "expression",
+                  },
+                  {
+                    type: "SYMBOL",
+                    name: "yield",
+                  },
+                ],
+              },
+              {
+                type: "STRING",
+                value: ")",
+              },
+            ],
+          },
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   parenthesized_list_splat: {
     modelType: "container",
@@ -1475,6 +5686,51 @@
       name: "NEEDS_NAME_0",
       position: 0,
     },
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "PREC",
+          value: 1,
+          content: {
+            type: "SEQ",
+            members: [
+              {
+                type: "STRING",
+                value: "(",
+              },
+              {
+                type: "CHOICE",
+                members: [
+                  {
+                    type: "ALIAS",
+                    content: {
+                      type: "SYMBOL",
+                      name: "parenthesized_list_splat",
+                    },
+                    named: true,
+                    value: "parenthesized_expression",
+                  },
+                  {
+                    type: "SYMBOL",
+                    name: "list_splat",
+                  },
+                ],
+              },
+              {
+                type: "STRING",
+                value: ")",
+              },
+            ],
+          },
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   pass_statement: {
     modelType: "keyword",
@@ -1492,6 +5748,79 @@
       name: null,
       position: 0,
     },
+    variants: [
+      {
+        name: "v0",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "SYMBOL",
+              name: "pattern",
+            },
+            {
+              type: "STRING",
+              value: ",",
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+      {
+        name: "v1",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "SYMBOL",
+              name: "pattern",
+            },
+            {
+              type: "SEQ",
+              members: [
+                {
+                  type: "REPEAT1",
+                  content: {
+                    type: "SEQ",
+                    members: [
+                      {
+                        type: "STRING",
+                        value: ",",
+                      },
+                      {
+                        type: "SYMBOL",
+                        name: "pattern",
+                      },
+                    ],
+                  },
+                },
+                {
+                  type: "CHOICE",
+                  members: [
+                    {
+                      type: "STRING",
+                      value: ",",
+                    },
+                    {
+                      type: "BLANK",
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   positional_separator: {
     modelType: "keyword",
@@ -1521,6 +5850,139 @@
       },
     ],
     children: null,
+    variants: [
+      {
+        name: "chevron",
+        rule: {
+          type: "PREC",
+          value: 1,
+          content: {
+            type: "SEQ",
+            members: [
+              {
+                type: "STRING",
+                value: "print",
+              },
+              {
+                type: "FIELD",
+                name: "chevron",
+                content: {
+                  type: "SYMBOL",
+                  name: "chevron",
+                },
+              },
+              {
+                type: "REPEAT",
+                content: {
+                  type: "SEQ",
+                  members: [
+                    {
+                      type: "STRING",
+                      value: ",",
+                    },
+                    {
+                      type: "FIELD",
+                      name: "argument",
+                      content: {
+                        type: "SYMBOL",
+                        name: "expression",
+                      },
+                    },
+                  ],
+                },
+              },
+              {
+                type: "CHOICE",
+                members: [
+                  {
+                    type: "STRING",
+                    value: ",",
+                  },
+                  {
+                    type: "BLANK",
+                  },
+                ],
+              },
+            ],
+          },
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+      {
+        name: "v1",
+        rule: {
+          type: "PREC",
+          value: -3,
+          content: {
+            type: "PREC_DYNAMIC",
+            value: -1,
+            content: {
+              type: "SEQ",
+              members: [
+                {
+                  type: "STRING",
+                  value: "print",
+                },
+                {
+                  type: "SEQ",
+                  members: [
+                    {
+                      type: "FIELD",
+                      name: "argument",
+                      content: {
+                        type: "SYMBOL",
+                        name: "expression",
+                      },
+                    },
+                    {
+                      type: "REPEAT",
+                      content: {
+                        type: "SEQ",
+                        members: [
+                          {
+                            type: "STRING",
+                            value: ",",
+                          },
+                          {
+                            type: "FIELD",
+                            name: "argument",
+                            content: {
+                              type: "SYMBOL",
+                              name: "expression",
+                            },
+                          },
+                        ],
+                      },
+                    },
+                  ],
+                },
+                {
+                  type: "CHOICE",
+                  members: [
+                    {
+                      type: "STRING",
+                      value: ",",
+                    },
+                    {
+                      type: "BLANK",
+                    },
+                  ],
+                },
+              ],
+            },
+          },
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   raise_statement: {
     modelType: "branch",
@@ -1541,6 +6003,62 @@
       name: "expressions",
       position: 0,
     },
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "STRING",
+              value: "raise",
+            },
+            {
+              type: "CHOICE",
+              members: [
+                {
+                  type: "SYMBOL",
+                  name: "_expressions",
+                },
+                {
+                  type: "BLANK",
+                },
+              ],
+            },
+            {
+              type: "CHOICE",
+              members: [
+                {
+                  type: "SEQ",
+                  members: [
+                    {
+                      type: "STRING",
+                      value: "from",
+                    },
+                    {
+                      type: "FIELD",
+                      name: "cause",
+                      content: {
+                        type: "SYMBOL",
+                        name: "expression",
+                      },
+                    },
+                  ],
+                },
+                {
+                  type: "BLANK",
+                },
+              ],
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   relative_import: {
     modelType: "branch",
@@ -1566,6 +6084,45 @@
       },
     ],
     children: null,
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "FIELD",
+              name: "import_prefix",
+              content: {
+                type: "SYMBOL",
+                name: "import_prefix",
+              },
+            },
+            {
+              type: "CHOICE",
+              members: [
+                {
+                  type: "FIELD",
+                  name: "dotted_name",
+                  content: {
+                    type: "SYMBOL",
+                    name: "dotted_name",
+                  },
+                },
+                {
+                  type: "BLANK",
+                },
+              ],
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   return_statement: {
     modelType: "container",
@@ -1575,6 +6132,37 @@
       multiple: false,
       kinds: {},
     },
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "STRING",
+              value: "return",
+            },
+            {
+              type: "CHOICE",
+              members: [
+                {
+                  type: "SYMBOL",
+                  name: "_expressions",
+                },
+                {
+                  type: "BLANK",
+                },
+              ],
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   set: {
     modelType: "container",
@@ -1585,6 +6173,33 @@
       kinds: {},
       separator: null,
     },
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "STRING",
+              value: "{",
+            },
+            {
+              type: "SYMBOL",
+              name: "_collection_elements",
+            },
+            {
+              type: "STRING",
+              value: "}",
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   set_comprehension: {
     modelType: "branch",
@@ -1605,6 +6220,41 @@
       name: "comprehension_clauses",
       position: 0,
     },
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "STRING",
+              value: "{",
+            },
+            {
+              type: "FIELD",
+              name: "body",
+              content: {
+                type: "SYMBOL",
+                name: "expression",
+              },
+            },
+            {
+              type: "SYMBOL",
+              name: "_comprehension_clauses",
+            },
+            {
+              type: "STRING",
+              value: "}",
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   slice: {
     modelType: "branch",
@@ -1639,6 +6289,90 @@
       },
     ],
     children: null,
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "CHOICE",
+              members: [
+                {
+                  type: "FIELD",
+                  name: "start",
+                  content: {
+                    type: "SYMBOL",
+                    name: "expression",
+                  },
+                },
+                {
+                  type: "BLANK",
+                },
+              ],
+            },
+            {
+              type: "STRING",
+              value: ":",
+            },
+            {
+              type: "CHOICE",
+              members: [
+                {
+                  type: "FIELD",
+                  name: "stop",
+                  content: {
+                    type: "SYMBOL",
+                    name: "expression",
+                  },
+                },
+                {
+                  type: "BLANK",
+                },
+              ],
+            },
+            {
+              type: "CHOICE",
+              members: [
+                {
+                  type: "SEQ",
+                  members: [
+                    {
+                      type: "STRING",
+                      value: ":",
+                    },
+                    {
+                      type: "CHOICE",
+                      members: [
+                        {
+                          type: "FIELD",
+                          name: "step",
+                          content: {
+                            type: "SYMBOL",
+                            name: "expression",
+                          },
+                        },
+                        {
+                          type: "BLANK",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                {
+                  type: "BLANK",
+                },
+              ],
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   splat_pattern: {
     modelType: "branch",
@@ -1655,6 +6389,55 @@
       },
     ],
     children: null,
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "PREC",
+          value: 1,
+          content: {
+            type: "SEQ",
+            members: [
+              {
+                type: "CHOICE",
+                members: [
+                  {
+                    type: "STRING",
+                    value: "*",
+                  },
+                  {
+                    type: "STRING",
+                    value: "**",
+                  },
+                ],
+              },
+              {
+                type: "CHOICE",
+                members: [
+                  {
+                    type: "FIELD",
+                    name: "identifier",
+                    content: {
+                      type: "SYMBOL",
+                      name: "identifier",
+                    },
+                  },
+                  {
+                    type: "STRING",
+                    value: "_",
+                  },
+                ],
+              },
+            ],
+          },
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   splat_type: {
     modelType: "branch",
@@ -1671,6 +6454,46 @@
       },
     ],
     children: null,
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "PREC",
+          value: 1,
+          content: {
+            type: "SEQ",
+            members: [
+              {
+                type: "CHOICE",
+                members: [
+                  {
+                    type: "STRING",
+                    value: "*",
+                  },
+                  {
+                    type: "STRING",
+                    value: "**",
+                  },
+                ],
+              },
+              {
+                type: "FIELD",
+                name: "identifier",
+                content: {
+                  type: "SYMBOL",
+                  name: "identifier",
+                },
+              },
+            ],
+          },
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   string: {
     modelType: "branch",
@@ -1706,6 +6529,57 @@
       },
     ],
     children: null,
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "FIELD",
+              name: "string_start",
+              content: {
+                type: "SYMBOL",
+                name: "string_start",
+              },
+            },
+            {
+              type: "REPEAT",
+              content: {
+                type: "FIELD",
+                name: "content",
+                content: {
+                  type: "CHOICE",
+                  members: [
+                    {
+                      type: "SYMBOL",
+                      name: "interpolation",
+                    },
+                    {
+                      type: "SYMBOL",
+                      name: "string_content",
+                    },
+                  ],
+                },
+              },
+            },
+            {
+              type: "FIELD",
+              name: "string_end",
+              content: {
+                type: "SYMBOL",
+                name: "string_end",
+              },
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   string_content: {
     modelType: "container",
@@ -1718,6 +6592,44 @@
       name: null,
       position: 0,
     },
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "PREC_RIGHT",
+          value: 0,
+          content: {
+            type: "REPEAT1",
+            content: {
+              type: "CHOICE",
+              members: [
+                {
+                  type: "SYMBOL",
+                  name: "escape_interpolation",
+                },
+                {
+                  type: "SYMBOL",
+                  name: "escape_sequence",
+                },
+                {
+                  type: "SYMBOL",
+                  name: "_not_escape_sequence",
+                },
+                {
+                  type: "SYMBOL",
+                  name: "_string_content",
+                },
+              ],
+            },
+          },
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   subscript: {
     modelType: "branch",
@@ -1740,6 +6652,104 @@
       },
     ],
     children: null,
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "PREC",
+          value: 22,
+          content: {
+            type: "SEQ",
+            members: [
+              {
+                type: "FIELD",
+                name: "value",
+                content: {
+                  type: "SYMBOL",
+                  name: "primary_expression",
+                },
+              },
+              {
+                type: "STRING",
+                value: "[",
+              },
+              {
+                type: "SEQ",
+                members: [
+                  {
+                    type: "FIELD",
+                    name: "subscript",
+                    content: {
+                      type: "CHOICE",
+                      members: [
+                        {
+                          type: "SYMBOL",
+                          name: "expression",
+                        },
+                        {
+                          type: "SYMBOL",
+                          name: "slice",
+                        },
+                      ],
+                    },
+                  },
+                  {
+                    type: "REPEAT",
+                    content: {
+                      type: "SEQ",
+                      members: [
+                        {
+                          type: "STRING",
+                          value: ",",
+                        },
+                        {
+                          type: "FIELD",
+                          name: "subscript",
+                          content: {
+                            type: "CHOICE",
+                            members: [
+                              {
+                                type: "SYMBOL",
+                                name: "expression",
+                              },
+                              {
+                                type: "SYMBOL",
+                                name: "slice",
+                              },
+                            ],
+                          },
+                        },
+                      ],
+                    },
+                  },
+                ],
+              },
+              {
+                type: "CHOICE",
+                members: [
+                  {
+                    type: "STRING",
+                    value: ",",
+                  },
+                  {
+                    type: "BLANK",
+                  },
+                ],
+              },
+              {
+                type: "STRING",
+                value: "]",
+              },
+            ],
+          },
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   try_statement: {
     modelType: "branch",
@@ -1782,6 +6792,80 @@
       },
     ],
     children: null,
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "STRING",
+              value: "try",
+            },
+            {
+              type: "STRING",
+              value: ":",
+            },
+            {
+              type: "FIELD",
+              name: "body",
+              content: {
+                type: "SYMBOL",
+                name: "_suite",
+              },
+            },
+            {
+              type: "REPEAT",
+              content: {
+                type: "FIELD",
+                name: "except_clauses",
+                content: {
+                  type: "SYMBOL",
+                  name: "except_clause",
+                },
+              },
+            },
+            {
+              type: "CHOICE",
+              members: [
+                {
+                  type: "FIELD",
+                  name: "else_clause",
+                  content: {
+                    type: "SYMBOL",
+                    name: "else_clause",
+                  },
+                },
+                {
+                  type: "BLANK",
+                },
+              ],
+            },
+            {
+              type: "CHOICE",
+              members: [
+                {
+                  type: "FIELD",
+                  name: "finally_clause",
+                  content: {
+                    type: "SYMBOL",
+                    name: "finally_clause",
+                  },
+                },
+                {
+                  type: "BLANK",
+                },
+              ],
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   tuple: {
     modelType: "container",
@@ -1792,6 +6876,41 @@
       kinds: {},
       separator: null,
     },
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "STRING",
+              value: "(",
+            },
+            {
+              type: "CHOICE",
+              members: [
+                {
+                  type: "SYMBOL",
+                  name: "_collection_elements",
+                },
+                {
+                  type: "BLANK",
+                },
+              ],
+            },
+            {
+              type: "STRING",
+              value: ")",
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   tuple_pattern: {
     modelType: "container",
@@ -1802,6 +6921,41 @@
       kinds: {},
       separator: null,
     },
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "STRING",
+              value: "(",
+            },
+            {
+              type: "CHOICE",
+              members: [
+                {
+                  type: "SYMBOL",
+                  name: "_patterns",
+                },
+                {
+                  type: "BLANK",
+                },
+              ],
+            },
+            {
+              type: "STRING",
+              value: ")",
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   type: {
     modelType: "container",
@@ -1813,6 +6967,49 @@
       name: "NEEDS_NAME_0",
       position: 0,
     },
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "CHOICE",
+          members: [
+            {
+              type: "PREC",
+              value: 1,
+              content: {
+                type: "SYMBOL",
+                name: "expression",
+              },
+            },
+            {
+              type: "SYMBOL",
+              name: "splat_type",
+            },
+            {
+              type: "SYMBOL",
+              name: "generic_type",
+            },
+            {
+              type: "SYMBOL",
+              name: "union_type",
+            },
+            {
+              type: "SYMBOL",
+              name: "constrained_type",
+            },
+            {
+              type: "SYMBOL",
+              name: "member_type",
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   type_alias_statement: {
     modelType: "branch",
@@ -1834,6 +7031,49 @@
       },
     ],
     children: null,
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "PREC_DYNAMIC",
+          value: 1,
+          content: {
+            type: "SEQ",
+            members: [
+              {
+                type: "STRING",
+                value: "type",
+              },
+              {
+                type: "FIELD",
+                name: "left",
+                content: {
+                  type: "SYMBOL",
+                  name: "type",
+                },
+              },
+              {
+                type: "STRING",
+                value: "=",
+              },
+              {
+                type: "FIELD",
+                name: "right",
+                content: {
+                  type: "SYMBOL",
+                  name: "type",
+                },
+              },
+            ],
+          },
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   type_parameter: {
     modelType: "container",
@@ -1846,6 +7086,66 @@
       name: null,
       position: 0,
     },
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "STRING",
+              value: "[",
+            },
+            {
+              type: "SEQ",
+              members: [
+                {
+                  type: "SYMBOL",
+                  name: "type",
+                },
+                {
+                  type: "REPEAT",
+                  content: {
+                    type: "SEQ",
+                    members: [
+                      {
+                        type: "STRING",
+                        value: ",",
+                      },
+                      {
+                        type: "SYMBOL",
+                        name: "type",
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+            {
+              type: "CHOICE",
+              members: [
+                {
+                  type: "STRING",
+                  value: ",",
+                },
+                {
+                  type: "BLANK",
+                },
+              ],
+            },
+            {
+              type: "STRING",
+              value: "]",
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   typed_default_parameter: {
     modelType: "branch",
@@ -1874,6 +7174,57 @@
       },
     ],
     children: null,
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "PREC",
+          value: -1,
+          content: {
+            type: "SEQ",
+            members: [
+              {
+                type: "FIELD",
+                name: "name",
+                content: {
+                  type: "SYMBOL",
+                  name: "identifier",
+                },
+              },
+              {
+                type: "STRING",
+                value: ":",
+              },
+              {
+                type: "FIELD",
+                name: "type",
+                content: {
+                  type: "SYMBOL",
+                  name: "type",
+                },
+              },
+              {
+                type: "STRING",
+                value: "=",
+              },
+              {
+                type: "FIELD",
+                name: "value",
+                content: {
+                  type: "SYMBOL",
+                  name: "expression",
+                },
+              },
+            ],
+          },
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   typed_parameter: {
     modelType: "branch",
@@ -1894,6 +7245,54 @@
       name: "NEEDS_NAME_0",
       position: 0,
     },
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "PREC",
+          value: -1,
+          content: {
+            type: "SEQ",
+            members: [
+              {
+                type: "CHOICE",
+                members: [
+                  {
+                    type: "SYMBOL",
+                    name: "identifier",
+                  },
+                  {
+                    type: "SYMBOL",
+                    name: "list_splat_pattern",
+                  },
+                  {
+                    type: "SYMBOL",
+                    name: "dictionary_splat_pattern",
+                  },
+                ],
+              },
+              {
+                type: "STRING",
+                value: ":",
+              },
+              {
+                type: "FIELD",
+                name: "type",
+                content: {
+                  type: "SYMBOL",
+                  name: "type",
+                },
+              },
+            ],
+          },
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   unary_operator: {
     modelType: "branch",
@@ -1915,6 +7314,54 @@
       },
     ],
     children: null,
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "PREC",
+          value: 20,
+          content: {
+            type: "SEQ",
+            members: [
+              {
+                type: "FIELD",
+                name: "operator",
+                content: {
+                  type: "CHOICE",
+                  members: [
+                    {
+                      type: "STRING",
+                      value: "+",
+                    },
+                    {
+                      type: "STRING",
+                      value: "-",
+                    },
+                    {
+                      type: "STRING",
+                      value: "~",
+                    },
+                  ],
+                },
+              },
+              {
+                type: "FIELD",
+                name: "argument",
+                content: {
+                  type: "SYMBOL",
+                  name: "primary_expression",
+                },
+              },
+            ],
+          },
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   union_pattern: {
     modelType: "container",
@@ -1925,6 +7372,49 @@
       kinds: {},
       separator: null,
     },
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "PREC_RIGHT",
+          value: 0,
+          content: {
+            type: "SEQ",
+            members: [
+              {
+                type: "SYMBOL",
+                name: "_simple_pattern",
+              },
+              {
+                type: "REPEAT1",
+                content: {
+                  type: "PREC_LEFT",
+                  value: 0,
+                  content: {
+                    type: "SEQ",
+                    members: [
+                      {
+                        type: "STRING",
+                        value: "|",
+                      },
+                      {
+                        type: "SYMBOL",
+                        name: "_simple_pattern",
+                      },
+                    ],
+                  },
+                },
+              },
+            ],
+          },
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   union_type: {
     modelType: "branch",
@@ -1950,6 +7440,45 @@
       },
     ],
     children: null,
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "PREC_LEFT",
+          value: 0,
+          content: {
+            type: "SEQ",
+            members: [
+              {
+                type: "FIELD",
+                name: "left",
+                content: {
+                  type: "SYMBOL",
+                  name: "type",
+                },
+              },
+              {
+                type: "STRING",
+                value: "|",
+              },
+              {
+                type: "FIELD",
+                name: "right",
+                content: {
+                  type: "SYMBOL",
+                  name: "type",
+                },
+              },
+            ],
+          },
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   while_statement: {
     modelType: "branch",
@@ -1978,6 +7507,61 @@
       },
     ],
     children: null,
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "STRING",
+              value: "while",
+            },
+            {
+              type: "FIELD",
+              name: "condition",
+              content: {
+                type: "SYMBOL",
+                name: "expression",
+              },
+            },
+            {
+              type: "STRING",
+              value: ":",
+            },
+            {
+              type: "FIELD",
+              name: "body",
+              content: {
+                type: "SYMBOL",
+                name: "_suite",
+              },
+            },
+            {
+              type: "CHOICE",
+              members: [
+                {
+                  type: "FIELD",
+                  name: "alternative",
+                  content: {
+                    type: "SYMBOL",
+                    name: "else_clause",
+                  },
+                },
+                {
+                  type: "BLANK",
+                },
+              ],
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   wildcard_import: {
     modelType: "keyword",
@@ -1995,6 +7579,117 @@
       name: null,
       position: 0,
     },
+    variants: [
+      {
+        name: "v0",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "SEQ",
+              members: [
+                {
+                  type: "SYMBOL",
+                  name: "with_item",
+                },
+                {
+                  type: "REPEAT",
+                  content: {
+                    type: "SEQ",
+                    members: [
+                      {
+                        type: "STRING",
+                        value: ",",
+                      },
+                      {
+                        type: "SYMBOL",
+                        name: "with_item",
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+            {
+              type: "CHOICE",
+              members: [
+                {
+                  type: "STRING",
+                  value: ",",
+                },
+                {
+                  type: "BLANK",
+                },
+              ],
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+      {
+        name: "paren",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "STRING",
+              value: "(",
+            },
+            {
+              type: "SEQ",
+              members: [
+                {
+                  type: "SYMBOL",
+                  name: "with_item",
+                },
+                {
+                  type: "REPEAT",
+                  content: {
+                    type: "SEQ",
+                    members: [
+                      {
+                        type: "STRING",
+                        value: ",",
+                      },
+                      {
+                        type: "SYMBOL",
+                        name: "with_item",
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+            {
+              type: "CHOICE",
+              members: [
+                {
+                  type: "STRING",
+                  value: ",",
+                },
+                {
+                  type: "BLANK",
+                },
+              ],
+            },
+            {
+              type: "STRING",
+              value: ")",
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+        detectToken: "(",
+      },
+    ],
   },
   with_item: {
     modelType: "branch",
@@ -2009,6 +7704,33 @@
       },
     ],
     children: null,
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "PREC_DYNAMIC",
+          value: 1,
+          content: {
+            type: "SEQ",
+            members: [
+              {
+                type: "FIELD",
+                name: "value",
+                content: {
+                  type: "SYMBOL",
+                  name: "expression",
+                },
+              },
+            ],
+          },
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   with_statement: {
     modelType: "branch",
@@ -2032,6 +7754,57 @@
       },
     ],
     children: null,
+    variants: [
+      {
+        name: "default",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "CHOICE",
+              members: [
+                {
+                  type: "STRING",
+                  value: "async",
+                },
+                {
+                  type: "BLANK",
+                },
+              ],
+            },
+            {
+              type: "STRING",
+              value: "with",
+            },
+            {
+              type: "FIELD",
+              name: "with_clause",
+              content: {
+                type: "SYMBOL",
+                name: "with_clause",
+              },
+            },
+            {
+              type: "STRING",
+              value: ":",
+            },
+            {
+              type: "FIELD",
+              name: "body",
+              content: {
+                type: "SYMBOL",
+                name: "_suite",
+              },
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   yield: {
     modelType: "container",
@@ -2043,6 +7816,76 @@
       name: "NEEDS_NAME_0",
       position: 0,
     },
+    variants: [
+      {
+        name: "from",
+        rule: {
+          type: "PREC_RIGHT",
+          value: 0,
+          content: {
+            type: "SEQ",
+            members: [
+              {
+                type: "STRING",
+                value: "yield",
+              },
+              {
+                type: "SEQ",
+                members: [
+                  {
+                    type: "STRING",
+                    value: "from",
+                  },
+                  {
+                    type: "SYMBOL",
+                    name: "expression",
+                  },
+                ],
+              },
+            ],
+          },
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+        detectToken: "from",
+      },
+      {
+        name: "v1",
+        rule: {
+          type: "PREC_RIGHT",
+          value: 0,
+          content: {
+            type: "SEQ",
+            members: [
+              {
+                type: "STRING",
+                value: "yield",
+              },
+              {
+                type: "CHOICE",
+                members: [
+                  {
+                    type: "SYMBOL",
+                    name: "_expressions",
+                  },
+                  {
+                    type: "BLANK",
+                  },
+                ],
+              },
+            ],
+          },
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+    ],
   },
   "!=": {
     modelType: "token",

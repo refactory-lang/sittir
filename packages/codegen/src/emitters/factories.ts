@@ -143,27 +143,34 @@ export function emitFactory(config: {
 	const modelVariants = node.variants;
 	const hasMultipleVariants = modelVariants && modelVariants.length > 1;
 	if (hasMultipleVariants && !childrenOnlySlot) {
-		// Infer variant from which fields are present in config
-		lines.push(`  // Variant inference from field presence`);
-		for (let i = modelVariants.length - 1; i >= 0; i--) {
-			const v = modelVariants[i]!;
-			// Find a field unique to this variant (or detect token)
-			const uniqueFields = [...v.fields.keys()].filter(f =>
-				modelVariants.every((other, j) => j === i || !other.fields.has(f))
+		// Build if-else chain: check each variant's distinguishing field, most specific first
+		// Sort variants by field count descending (most fields = most specific)
+		const sorted = [...modelVariants].sort((a, b) => b.fields.size - a.fields.size);
+		const configAccess = `config${hasRequiredFields ? '' : '?'}`;
+		const conditions: Array<{ condition: string; name: string }> = [];
+
+		for (const v of sorted) {
+			// Find a field unique to this variant
+			const uniqueField = [...v.fields.keys()].find(f =>
+				modelVariants.every((other, j) => modelVariants.indexOf(v) === j || !other.fields.has(f))
 			);
-			if (uniqueFields.length > 0 && hasFields) {
-				const camel = fields.find(fd => fd.name === uniqueFields[0])?.propertyName ?? toFieldName(uniqueFields[0]!);
-				if (i === modelVariants.length - 1) {
-					lines.push(`  const variant = config${hasRequiredFields ? '' : '?'}.${camel} !== undefined ? '${v.name}' : '${modelVariants[0]!.name}';`);
-				}
-			} else if (v.detectToken && hasFields) {
-				// Use detect token if available (check operator/keyword override fields)
-				// This is a best-effort heuristic
+			if (uniqueField && hasFields) {
+				const camel = fields.find(fd => fd.name === uniqueField)?.propertyName ?? toFieldName(uniqueField);
+				conditions.push({ condition: `${configAccess}.${camel} !== undefined`, name: v.name });
 			}
 		}
-		// Fallback: if we couldn't generate inference, use first variant
-		if (!lines[lines.length - 1]?.includes('const variant')) {
-			lines.push(`  const variant = '${modelVariants[0]!.name}';`);
+
+		if (conditions.length > 0) {
+			// Build ternary chain: cond1 ? 'name1' : cond2 ? 'name2' : 'fallback'
+			const fallbackName = sorted.find(v => !conditions.some(c => c.name === v.name))?.name ?? sorted[sorted.length - 1]!.name;
+			let expr = `'${fallbackName}'`;
+			for (let i = conditions.length - 1; i >= 0; i--) {
+				expr = `${conditions[i]!.condition} ? '${conditions[i]!.name}' : ${expr}`;
+			}
+			lines.push(`  const variant = ${expr};`);
+		} else {
+			// No distinguishing fields found — use first variant as default
+			lines.push(`  const variant = '${sorted[0]!.name}' as string;`);
 		}
 	}
 

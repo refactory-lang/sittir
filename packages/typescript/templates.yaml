@@ -10,7 +10,10 @@ rules:
   abstract_class_declaration: $$$DECORATOR abstract class $NAME $TYPE_PARAMETERS $CLASS_HERITAGE $BODY
   abstract_method_signature: $ACCESSIBILITY_MODIFIER abstract $OVERRIDE_MODIFIER $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE
   adding_type_annotation: +?:$CHILDREN
-  ambient_declaration: declare $DECLARATION $TYPE_ANNOTATION $SEMICOLON
+  ambient_declaration:
+    - declare $DECLARATION $TYPE_ANNOTATION $SEMICOLON
+    - declare global $DECLARATION $TYPE_ANNOTATION $SEMICOLON
+    - declare module.$DECLARATION:$TYPE_ANNOTATION $SEMICOLON
   arguments:
     template: ($$$CHILDREN)
     joinBy: ","
@@ -33,16 +36,17 @@ rules:
   break_statement: break $LABEL
   call_expression:
     - $FUNCTION $TYPE_ARGUMENTS $ARGUMENTS
-    - $FUNCTION $ARGUMENTS
+    - $FUNCTION $ARGUMENTS $TYPE_ARGUMENTS
     - $FUNCTION?.$TYPE_ARGUMENTS $ARGUMENTS
   call_signature: $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE
   catch_clause: catch $PARAMETER $TYPE $BODY
   class: $$$DECORATOR class $NAME $TYPE_PARAMETERS $CLASS_HERITAGE $BODY
-  class_body: "{$$$DECORATOR $$$CHILDREN}"
+  class_body:
+    - "{$$$DECORATOR $$$CHILDREN}"
+    - "{$$$CHILDREN} $$$DECORATOR"
+    - "{} $$$DECORATOR $$$CHILDREN"
   class_declaration: $$$DECORATOR class $NAME $TYPE_PARAMETERS $CLASS_HERITAGE $BODY $AUTOMATIC_SEMICOLON
-  class_heritage:
-    - $EXTENDS_CLAUSE $IMPLEMENTS_CLAUSE
-    - $EXTENDS_CLAUSE
+  class_heritage: $EXTENDS_CLAUSE $IMPLEMENTS_CLAUSE
   class_static_block: static $BODY
   computed_property_name: "[$EXPRESSION]"
   conditional_type: $LEFT extends $RIGHT?$CONSEQUENCE:$ALTERNATIVE
@@ -65,9 +69,13 @@ rules:
     alias_clause: as $ALIAS
   export_statement:
     - export*from $SOURCE $DECLARATION $$$DECORATOR $VALUE
-    - export type $DECLARATION $SOURCE
-    - export=$DECLARATION
-    - export as namespace $DECLARATION
+    - export $DECLARATION from $SOURCE $$$DECORATOR $VALUE
+    - $$$DECORATOR export $DECLARATION $SOURCE $VALUE
+    - $$$DECORATOR export default $DECLARATION $SOURCE $VALUE
+    - $$$DECORATOR export default $VALUE $DECLARATION $SOURCE
+    - export type $DECLARATION $SOURCE $$$DECORATOR $VALUE
+    - export=$DECLARATION $$$DECORATOR $SOURCE $VALUE
+    - export as namespace $DECLARATION $$$DECORATOR $SOURCE $VALUE
   expression_statement: $$$CHILDREN
   extends_clause: extends $$$VALUE $$$TYPE_ARGUMENTS $$$CHILDREN
   extends_type_clause:
@@ -76,7 +84,7 @@ rules:
   finally_clause: finally $BODY
   flow_maybe_type: ?$PRIMARY_TYPE
   for_in_statement: for($LEFT $KIND $VALUE $OPERATOR $RIGHT)$BODY
-  for_statement: for($INITIALIZER $$$CONDITION $INCREMENT)$BODY
+  for_statement: for($INITIALIZER;$$$CONDITION $INCREMENT)$BODY
   formal_parameters: ($$$CHILDREN)
   function_declaration: function $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $BODY
   function_expression: function $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $BODY
@@ -93,10 +101,17 @@ rules:
   import_attribute: with $OBJECT
   import_clause: $DEFAULT_IMPORT $NAMED_IMPORTS
   import_require_clause: $IDENTIFIER=require($SOURCE)
-  import_specifier: $NAME $ALIAS
-  import_statement: import $IMPORT_CLAUSE $FROM_CLAUSE $SOURCE $IMPORT_ATTRIBUTE $SEMICOLON
+  import_specifier:
+    - $NAME $ALIAS
+    - $NAME as $ALIAS
+  import_statement:
+    - import $IMPORT_CLAUSE $FROM_CLAUSE $IMPORT_ATTRIBUTE $SEMICOLON $SOURCE
+    - import $IMPORT_CLAUSE $IMPORT_ATTRIBUTE $SEMICOLON $SOURCE $FROM_CLAUSE
+    - import $SOURCE $IMPORT_ATTRIBUTE $SEMICOLON $IMPORT_CLAUSE $FROM_CLAUSE
   index_signature:
-    template: $SIGN_CLAUSE[$NAME:$INDEX_TYPE $MAPPED_TYPE_CLAUSE]$TYPE
+    template:
+      - $SIGN_CLAUSE[$NAME:$INDEX_TYPE]$TYPE $MAPPED_TYPE_CLAUSE
+      - $SIGN_CLAUSE[$MAPPED_TYPE_CLAUSE]$TYPE $INDEX_TYPE $NAME
     sign_clause: $SIGN readonly
   index_type_query: keyof $PRIMARY_TYPE
   infer_type:
@@ -141,11 +156,15 @@ rules:
   optional_type: $CHILDREN?
   pair: $KEY:$VALUE
   pair_pattern: $KEY:$VALUE
-  parenthesized_expression: ($CHILDREN $TYPE)
+  parenthesized_expression:
+    - ($CHILDREN $TYPE)
+    - ($CHILDREN) $TYPE
   parenthesized_type: ($CHILDREN)
   program: $HASH_BANG_LINE $$$STATEMENTS
   property_signature: $ACCESSIBILITY_MODIFIER $OVERRIDE_MODIFIER $NAME $TYPE
-  public_field_definition: $$$DECORATOR $ACCESSIBILITY_MODIFIER $OVERRIDE_MODIFIER $NAME $TYPE $INITIALIZER $VALUE
+  public_field_definition:
+    - $$$DECORATOR $ACCESSIBILITY_MODIFIER $OVERRIDE_MODIFIER $NAME $TYPE $INITIALIZER $VALUE
+    - $$$DECORATOR $ACCESSIBILITY_MODIFIER $NAME $TYPE $INITIALIZER $VALUE $OVERRIDE_MODIFIER
   readonly_type: readonly $CHILDREN
   regex: /$PATTERN/$FLAGS
   required_parameter: $PARAMETER_NAME $TYPE $VALUE $$$DECORATOR $NAME $PATTERN $INITIALIZER
@@ -160,11 +179,11 @@ rules:
   statement_block: "{$$$STATEMENTS}$AUTOMATIC_SEMICOLON"
   string:
     variants:
-      double: '"$$$CHILDREN"'
-      single: "'$$$CHILDREN'"
+      tok_22: '"$$$CHILDREN"'
+      tok_27: "'$$$CHILDREN'"
     detect:
-      double: '"'
-      single: "'"
+      tok_22: '"'
+      tok_27: "'"
   subscript_expression: $OBJECT $OPTIONAL_CHAIN[$INDEX]
   switch_body: "{$$$CHILDREN}"
   switch_case: case $VALUE:$$$BODY
@@ -193,13 +212,13 @@ rules:
   type_query: typeof $CHILDREN
   unary_expression: $OPERATOR $ARGUMENT
   union_type: $LEFT|$RIGHT
-  update_expression:
-    - $ARGUMENT $OPERATOR
-    - $OPERATOR $ARGUMENT
+  update_expression: $ARGUMENT $OPERATOR
   variable_declaration: var $$$DECLARATORS $$$CHILDREN $SEMICOLON
   variable_declarator:
     - $NAME $TYPE $VALUE
-    - $NAME!$TYPE
+    - $NAME!$TYPE $VALUE
   while_statement: while $CONDITION $BODY
   with_statement: with $OBJECT $BODY
-  yield_expression: yield*$EXPRESSION
+  yield_expression:
+    - yield*$EXPRESSION
+    - yield $EXPRESSION

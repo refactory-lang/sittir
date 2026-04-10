@@ -167,8 +167,7 @@ export function ambient_declaration_(
     type_annotation: config.typeAnnotation,
     semicolon: config.semicolon,
   };
-  // Variant inference from field presence
-  const variant = config.typeAnnotation !== undefined ? 'module' : 'declaration';
+  const variant = config.typeAnnotation !== undefined ? 'module' : 'v0';
   return {
     type: 'ambient_declaration' as const,
     named: true as const,
@@ -457,9 +456,11 @@ export function binary_expression_(
     operator: config.operator,
     right: config.right,
   };
+  const variant = 'tok_2626' as string;
   return {
     type: 'binary_expression' as const,
     named: true as const,
+    variant,
     fields,
     left(left?: Expression | PrivatePropertyIdentifier) { return left !== undefined ? binary_expression_({ ...config, left: left }) : fields.left; },
     operator(operator?: '!=' | '!==' | '%' | '&' | '&&' | '*' | '**' | '+' | '-' | '/' | '<' | '<<' | '<=' | '==' | '===' | '>' | '>=' | '>>' | '>>>' | '??' | '^' | 'in' | 'instanceof' | '|' | '||') { return operator !== undefined ? binary_expression_({ ...config, operator: operator }) : fields.operator; },
@@ -503,8 +504,7 @@ export function call_expression_(
     function: config.function,
     type_arguments: config.typeArguments,
   };
-  // Variant inference from field presence
-  const variant = 'function';
+  const variant = 'v0' as string;
   return {
     type: 'call_expression' as const,
     named: true as const,
@@ -609,8 +609,7 @@ export function class_body_(
     decorator: config?.decorator,
   };
   const children = config?.children ?? [];
-  // Variant inference from field presence
-  const variant = 'decorator';
+  const variant = config?.decorator !== undefined ? 'decorator' : 'comma';
   return {
     type: 'class_body' as const,
     named: true as const,
@@ -1048,8 +1047,7 @@ export function export_statement_(
     value: config?.value,
   };
   const children: unknown[] = [];
-  // Variant inference from field presence
-  const variant = 'star';
+  const variant = config?.value !== undefined ? 'value' : 'v2';
   return {
     type: 'export_statement' as const,
     named: true as const,
@@ -1186,12 +1184,9 @@ export function for_in_statement_(
     right: config.right,
     value: config.value,
   };
-  // Variant inference from field presence
-  const variant = config.kind !== undefined ? 'kind' : 'left';
   return {
     type: 'for_in_statement' as const,
     named: true as const,
-    variant,
     fields,
     body(body?: Statement) { return body !== undefined ? for_in_statement_({ ...config, body: body }) : fields.body; },
     kind(kind?: 'const' | 'let' | 'var') { return kind !== undefined ? for_in_statement_({ ...config, kind: kind }) : fields.kind; },
@@ -1218,9 +1213,11 @@ export function for_statement_(
     increment: config.increment,
     initializer: config.initializer,
   };
+  const variant = 'v0' as string;
   return {
     type: 'for_statement' as const,
     named: true as const,
+    variant,
     fields,
     body(body?: Statement) { return body !== undefined ? for_statement_({ ...config, body: body }) : fields.body; },
     condition(...condition: (EmptyStatement | Expression | Expressions | SequenceExpression)[]) { return condition.length ? for_statement_({ ...config, condition: condition }) : fields.condition; },
@@ -1543,9 +1540,11 @@ export function import_clause_(
     default_import: config.defaultImport,
     named_imports: config.namedImports,
   };
+  const variant = 'v0' as string;
   return {
     type: 'import_clause' as const,
     named: true as const,
+    variant,
     fields,
     defaultImport(defaultImport?: Identifier | NamedImports | NamespaceImport) { return defaultImport !== undefined ? import_clause_({ ...config, defaultImport: defaultImport }) : fields.default_import; },
     namedImports(namedImports?: Identifier | NamedImports | NamespaceImport) { return namedImports !== undefined ? import_clause_({ ...config, namedImports: namedImports }) : fields.named_imports; },
@@ -1589,8 +1588,7 @@ export function import_specifier_(
     alias: config.alias,
     name: config.name,
   };
-  // Variant inference from field presence
-  const variant = config.alias !== undefined ? 'as' : 'name';
+  const variant = config.alias !== undefined ? 'as' : 'v0';
   return {
     type: 'import_specifier' as const,
     named: true as const,
@@ -1618,8 +1616,7 @@ export function import_statement_(
     import_attribute: config.importAttribute,
     semicolon: config.semicolon,
   };
-  // Variant inference from field presence
-  const variant = config.source !== undefined ? 'source' : 'import_clause';
+  const variant = config.fromClause !== undefined ? 'from_clause' : config.source !== undefined ? 'source' : 'v1';
   return {
     type: 'import_statement' as const,
     named: true as const,
@@ -1650,8 +1647,7 @@ export function index_signature_(
     type: config.type,
     mapped_type_clause: config.mappedTypeClause,
   };
-  // Variant inference from field presence
-  const variant = config.mappedTypeClause !== undefined ? 'mapped_type_clause' : 'colon';
+  const variant = config.name !== undefined ? 'colon' : config.mappedTypeClause !== undefined ? 'mapped_type_clause' : 'mapped_type_clause';
   return {
     type: 'index_signature' as const,
     named: true as const,
@@ -2444,9 +2440,11 @@ export function parenthesized_expression_(
     type: config.type,
   };
   const children = config.children ? [config.children] : [];
+  const variant = config.type !== undefined ? 'type' : 'v1';
   return {
     type: 'parenthesized_expression' as const,
     named: true as const,
+    variant,
     fields,
     children,
     typeField(type_?: TypeAnnotation) { return type_ !== undefined ? parenthesized_expression_({ ...config, type: type_ }) : fields.type; },
@@ -2542,9 +2540,11 @@ export function public_field_definition_(
     override_modifier: config.overrideModifier,
     initializer: config.initializer,
   };
+  const variant = config.overrideModifier !== undefined ? 'static' : 'abstract';
   return {
     type: 'public_field_definition' as const,
     named: true as const,
+    variant,
     fields,
     decorator(...decorator: (Decorator)[]) { return decorator.length ? public_field_definition_({ ...config, decorator: decorator }) : fields.decorator; },
     name(name?: PropertyName) { return name !== undefined ? public_field_definition_({ ...config, name: name }) : fields.name; },
@@ -3368,8 +3368,7 @@ export function variable_declarator_(
     type: config.type,
     value: config.value,
   };
-  // Variant inference from field presence
-  const variant = 'name';
+  const variant = 'v0' as string;
   return {
     type: 'variable_declarator' as const,
     named: true as const,
@@ -3440,9 +3439,11 @@ export function yield_expression_(
   const fields = {
     expression: config?.expression,
   };
+  const variant = 'star' as string;
   return {
     type: 'yield_expression' as const,
     named: true as const,
+    variant,
     fields,
     expression(expression?: Expression) { return expression !== undefined ? yield_expression_({ ...config, expression: expression }) : fields.expression; },
     render() { return render(this); },

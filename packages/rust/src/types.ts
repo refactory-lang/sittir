@@ -1369,7 +1369,10 @@ export interface TypeIdentifier {
 // Config types — derived from concrete interfaces
 export type AbstractTypeConfig = ConfigOf<AbstractType>;
 export type ArgumentsConfig = ConfigOf<Arguments>;
-export type ArrayExpressionConfig = ConfigOf<ArrayExpression>;
+export type ArrayExpressionConfig =
+  | Pick<ConfigOf<ArrayExpression>, 'attributes' | 'elements' | 'length'>
+  | Pick<ConfigOf<ArrayExpression>, 'attributes' | 'elements'>
+;
 export type ArrayTypeConfig = ConfigOf<ArrayType>;
 export type AssignmentExpressionConfig = ConfigOf<AssignmentExpression>;
 export type AssociatedTypeConfig = ConfigOf<AssociatedType>;
@@ -1407,14 +1410,20 @@ export type FieldDeclarationListConfig = ConfigOf<FieldDeclarationList>;
 export type FieldExpressionConfig = ConfigOf<FieldExpression>;
 export type FieldInitializerConfig = ConfigOf<FieldInitializer>;
 export type FieldInitializerListConfig = ConfigOf<FieldInitializerList>;
-export type FieldPatternConfig = ConfigOf<FieldPattern>;
+export type FieldPatternConfig =
+  | Pick<ConfigOf<FieldPattern>, 'mutableSpecifier' | 'name'>
+  | Pick<ConfigOf<FieldPattern>, 'mutableSpecifier' | 'name' | 'pattern'>
+;
 export type ForExpressionConfig = ConfigOf<ForExpression>;
 export type ForLifetimesConfig = ConfigOf<ForLifetimes>;
 export type ForeignModItemConfig = ConfigOf<ForeignModItem>;
 export type FunctionItemConfig = ConfigOf<FunctionItem>;
 export type FunctionModifiersConfig = ConfigOf<FunctionModifiers>;
 export type FunctionSignatureItemConfig = ConfigOf<FunctionSignatureItem>;
-export type FunctionTypeConfig = ConfigOf<FunctionType>;
+export type FunctionTypeConfig =
+  | Pick<ConfigOf<FunctionType>, 'forLifetimes' | 'parameters' | 'returnType' | 'trait'>
+  | Pick<ConfigOf<FunctionType>, 'forLifetimes' | 'functionModifiers' | 'parameters' | 'returnType'>
+;
 export type GenBlockConfig = ConfigOf<GenBlock>;
 export type GenericFunctionConfig = ConfigOf<GenericFunction>;
 export type GenericPatternConfig = ConfigOf<GenericPattern>;
@@ -1431,7 +1440,10 @@ export type LetConditionConfig = ConfigOf<LetCondition>;
 export type LetDeclarationConfig = ConfigOf<LetDeclaration>;
 export type LifetimeConfig = ConfigOf<Lifetime>;
 export type LifetimeParameterConfig = ConfigOf<LifetimeParameter>;
-export type LineCommentConfig = ConfigOf<LineComment>;
+export type LineCommentConfig =
+  | Pick<ConfigOf<LineComment>, 'inner' | 'outer'>
+  | Pick<ConfigOf<LineComment>, 'doc' | 'inner' | 'outer'>
+;
 export type LoopExpressionConfig = ConfigOf<LoopExpression>;
 export type MacroDefinitionConfig = ConfigOf<MacroDefinition>;
 export type MacroInvocationConfig = ConfigOf<MacroInvocation>;
@@ -1443,7 +1455,10 @@ export type MatchPatternConfig = ConfigOf<MatchPattern>;
 export type ModItemConfig = ConfigOf<ModItem>;
 export type MutPatternConfig = ConfigOf<MutPattern>;
 export type NegativeLiteralConfig = ConfigOf<NegativeLiteral>;
-export type OrPatternConfig = ConfigOf<OrPattern>;
+export type OrPatternConfig =
+  | Pick<ConfigOf<OrPattern>, 'left' | 'right'>
+  | Pick<ConfigOf<OrPattern>, 'left'>
+;
 export type OrderedFieldDeclarationListConfig = ConfigOf<OrderedFieldDeclarationList>;
 export type ParameterConfig = ConfigOf<Parameter>;
 export type ParametersConfig = ConfigOf<Parameters>;
@@ -1452,10 +1467,12 @@ export type PointerTypeConfig = ConfigOf<PointerType>;
 export type QualifiedTypeConfig = ConfigOf<QualifiedType>;
 export type RangeExpressionConfig =
   | Pick<ConfigOf<RangeExpression>, 'end' | 'operator' | 'start'>
+  | Pick<ConfigOf<RangeExpression>, 'operator' | 'start'>
   | Pick<ConfigOf<RangeExpression>, 'operator'>
 ;
 export type RangePatternConfig =
   | Pick<ConfigOf<RangePattern>, 'left' | 'right'>
+  | Pick<ConfigOf<RangePattern>, 'left'>
   | Pick<ConfigOf<RangePattern>, 'right'>
 ;
 export type RawStringLiteralConfig = ConfigOf<RawStringLiteral>;
@@ -1475,7 +1492,10 @@ export type SourceFileConfig = ConfigOf<SourceFile>;
 export type StaticItemConfig = ConfigOf<StaticItem>;
 export type StringLiteralConfig = ConfigOf<StringLiteral>;
 export type StructExpressionConfig = ConfigOf<StructExpression>;
-export type StructItemConfig = ConfigOf<StructItem>;
+export type StructItemConfig =
+  | Pick<ConfigOf<StructItem>, 'body' | 'name' | 'typeParameters' | 'visibilityModifier' | 'whereClause'>
+  | Pick<ConfigOf<StructItem>, 'name' | 'typeParameters' | 'visibilityModifier'>
+;
 export type StructPatternConfig = ConfigOf<StructPattern>;
 export type TokenBindingPatternConfig = ConfigOf<TokenBindingPattern>;
 export type TokenRepetitionConfig = ConfigOf<TokenRepetition>;

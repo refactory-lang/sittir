@@ -140,8 +140,7 @@ export function assignment_(
     right: config.right,
     type: config.type,
   };
-  // Variant inference from field presence
-  const variant = 'right';
+  const variant = 'v2' as string;
   return {
     type: 'assignment' as const,
     named: true as const,
@@ -237,9 +236,11 @@ export function binary_operator_(
     operator: config.operator,
     right: config.right,
   };
+  const variant = 'plus' as string;
   return {
     type: 'binary_operator' as const,
     named: true as const,
+    variant,
     fields,
     left(left?: PrimaryExpression) { return left !== undefined ? binary_operator_({ ...config, left: left }) : fields.left; },
     operator(operator?: '%' | '&' | '*' | '**' | '+' | '-' | '/' | '//' | '<<' | '>>' | '@' | '^' | '|') { return operator !== undefined ? binary_operator_({ ...config, operator: operator }) : fields.operator; },
@@ -287,9 +288,11 @@ export function boolean_operator_(
     operator: config.operator,
     right: config.right,
   };
+  const variant = 'and' as string;
   return {
     type: 'boolean_operator' as const,
     named: true as const,
+    variant,
     fields,
     left(left?: Expression) { return left !== undefined ? boolean_operator_({ ...config, left: left }) : fields.left; },
     operator(operator?: 'and' | 'or') { return operator !== undefined ? boolean_operator_({ ...config, operator: operator }) : fields.operator; },
@@ -1055,8 +1058,7 @@ export function future_import_statement_(
   const fields = {
     name: config.name,
   };
-  // Variant inference from field presence
-  const variant = 'comma';
+  const variant = 'v0' as string;
   return {
     type: 'future_import_statement' as const,
     named: true as const,
@@ -1193,9 +1195,11 @@ export function import_from_statement_(
     name: config.name,
     wildcard_import: config.wildcardImport,
   };
+  const variant = 'v0' as string;
   return {
     type: 'import_from_statement' as const,
     named: true as const,
+    variant,
     fields,
     moduleName(moduleName?: DottedName | RelativeImport) { return moduleName !== undefined ? import_from_statement_({ ...config, moduleName: moduleName }) : fields.module_name; },
     name(...name: (AliasedImport | DottedName)[]) { return name.length ? import_from_statement_({ ...config, name: name }) : fields.name; },
@@ -1680,8 +1684,7 @@ export function print_statement_(
     argument: config?.argument,
     chevron: config?.chevron,
   };
-  // Variant inference from field presence
-  const variant = 'chevron';
+  const variant = config?.chevron !== undefined ? 'chevron' : 'v1';
   return {
     type: 'print_statement' as const,
     named: true as const,

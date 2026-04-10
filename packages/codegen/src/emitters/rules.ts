@@ -119,39 +119,47 @@ function emitRuleForNode(node: StructuralNode, grammarRules: Record<string, Gram
 			return { name: f.name, namedKinds, anonymousKinds };
 		});
 
-	// Enrich the grammar rule: inject synthetic FIELDs at override positions
-	const rawRule = node.rule?.rule;
-	const enrichedGrammarRule = rawRule ? applyOverrides(rawRule, overrideFields) : rawRule;
-
 	// Build joinBy — check model separators, then recursive grammar patterns
 	const joinBy = buildJoinBy(fieldMultiple, fieldSeparators, node)
 		?? detectRecursiveSeparator(grammarRules, node.kind);
 
-	// Detect top-level CHOICE (variant node) — distinct structural alternatives
-	const variantBranches = enrichedGrammarRule ? topLevelChoice(enrichedGrammarRule) : null;
-
-	if (variantBranches && variantBranches.length > 1) {
-		// Variant template: walk each branch independently
-		// Pass model variants for enriched detect token / naming data
-		return emitVariantTemplates(variantBranches, nodeFields, fieldRequired, fieldMultiple, fieldSeparators, grammarRules, childSlotMap, overrideFields, node, node.variants);
+	// --- Model variants: resolved rules from factoring.ts ---
+	// When the model has >1 variant, use each variant's resolved grammar rule
+	// with ruleToTemplate to produce correct per-variant template strings.
+	const modelVariants = node.variants;
+	if (modelVariants && modelVariants.length > 1) {
+		return emitFromModelVariants(modelVariants, nodeFields, fieldRequired, fieldMultiple, fieldSeparators, grammarRules, childSlotMap, overrideFields, node, joinBy);
 	}
 
-	// Single-template path (non-variant or single branch after flattening)
+	// --- Single variant or no variants: use the enriched rule directly ---
+	const rawRule = node.rule?.rule;
+	const enrichedGrammarRule = rawRule ? applyOverrides(rawRule, overrideFields) : rawRule;
+
+	// For single-variant model, use the resolved rule (inner CHOICEs already resolved)
+	const ruleToWalk = (modelVariants && modelVariants.length === 1)
+		? modelVariants[0]!.rule
+		: enrichedGrammarRule;
+
+	// Detect top-level CHOICE (variant node) — legacy fallback for nodes without model variants
+	if (!modelVariants || modelVariants.length === 0) {
+		const variantBranches = enrichedGrammarRule ? topLevelChoice(enrichedGrammarRule) : null;
+		if (variantBranches && variantBranches.length > 1) {
+			return emitVariantTemplates(variantBranches, nodeFields, fieldRequired, fieldMultiple, fieldSeparators, grammarRules, childSlotMap, overrideFields, node);
+		}
+	}
+
+	// Single-template path
 	const seen = new Set<string>();
 	const clauses: ClauseEntry[] = [];
-	const parts = enrichedGrammarRule
-		? ruleToTemplate(enrichedGrammarRule, false, seen, fieldRequired, fieldMultiple, grammarRules, clauses, false, childSlotMap)
+	const parts = ruleToWalk
+		? ruleToTemplate(ruleToWalk, false, seen, fieldRequired, fieldMultiple, grammarRules, clauses, false, childSlotMap)
 		: [];
 
-	// Append missing fields the walker didn't reach
 	appendMissingFields(parts, nodeFields, seen);
-
-	// Append $$$CHILDREN for any children the walker didn't reach
 	appendChildrenIfNeeded(parts, node, seen, childSlotMap, overrideFields);
 
 	const templateStr = parts.join('').replace(/\s+/g, ' ').trim();
 
-	// Determine if we need object form
 	if (clauses.length === 0 && joinBy === undefined) {
 		return templateStr;
 	}
@@ -164,6 +172,94 @@ function emitRuleForNode(node: StructuralNode, grammarRules: Record<string, Gram
 		ruleObj['joinBy'] = joinBy;
 	}
 
+	return ruleObj as unknown as TemplateRule;
+}
+
+/**
+ * Emit template rules from pre-computed model variants.
+ * Runs ruleToTemplate on each variant's resolved grammar rule.
+ */
+function emitFromModelVariants(
+	variants: readonly import('../node-model.ts').StructuralVariant[],
+	nodeFields: ReturnType<typeof fieldsOf>,
+	fieldRequired: Map<string, boolean>,
+	fieldMultiple: Map<string, boolean>,
+	fieldSeparators: Map<string, string>,
+	grammarRules: Record<string, GrammarRule>,
+	childSlotMap: Map<string, ChildSlotInfo>,
+	overrideFields: OverrideFieldInfo[],
+	node: StructuralNode,
+	joinBy: string | undefined,
+): TemplateRule {
+	const allClauses: ClauseEntry[] = [];
+	const clauseNames = new Set<string>();
+	const templates: string[] = [];
+
+	for (const variant of variants) {
+		const seen = new Set<string>();
+		const clauses: ClauseEntry[] = [];
+		const parts = ruleToTemplate(variant.rule, false, seen, fieldRequired, fieldMultiple, grammarRules, clauses, false, childSlotMap);
+
+		appendMissingFields(parts, nodeFields, seen);
+		appendChildrenIfNeeded(parts, node, seen, childSlotMap, overrideFields);
+
+		const templateStr = parts.join('').replace(/\s+/g, ' ').trim();
+		if (templateStr) templates.push(templateStr);
+
+		for (const c of clauses) {
+			if (!clauseNames.has(c.name)) {
+				allClauses.push(c);
+				clauseNames.add(c.name);
+			}
+		}
+	}
+
+	// Deduplicate templates
+	const unique = [...new Set(templates)];
+	if (unique.length <= 1) {
+		const templateStr = unique[0] ?? '';
+		if (allClauses.length === 0 && joinBy === undefined) return templateStr;
+		const ruleObj: Record<string, unknown> = { template: templateStr };
+		for (const c of allClauses) ruleObj[c.name] = c.template;
+		if (joinBy !== undefined) ruleObj['joinBy'] = joinBy;
+		return ruleObj as unknown as TemplateRule;
+	}
+
+	// Multi-variant: try to build named variants with detect tokens
+	const withDetect = variants.filter(v => v.detectToken != null);
+	if (withDetect.length >= unique.length) {
+		// Match detect tokens to deduplicated templates
+		const variantMap: Record<string, string> = {};
+		const detectMap: Record<string, string> = {};
+		const used = new Set<string>();
+
+		for (const v of withDetect) {
+			const matched = unique.find(t => !used.has(t) && t.includes(v.detectToken!));
+			if (matched) {
+				variantMap[v.name] = matched;
+				detectMap[v.name] = v.detectToken!;
+				used.add(matched);
+			}
+		}
+
+		if (used.size === unique.length) {
+			const ruleObj: Record<string, unknown> = { variants: variantMap, detect: detectMap };
+			for (const c of allClauses) ruleObj[c.name] = c.template;
+			if (joinBy !== undefined) ruleObj['joinBy'] = joinBy;
+			return ruleObj as unknown as TemplateRule;
+		}
+	}
+
+	// Fallback: try grammar-based variant subtype detection
+	// (only works if we have the original branches — fall through to string[])
+
+	// Multi-variant as string[] or object with template: string[]
+	if (allClauses.length === 0 && joinBy === undefined) {
+		return unique as unknown as TemplateRule;
+	}
+	const ruleObj: Record<string, unknown> = { template: unique };
+	for (const c of allClauses) ruleObj[c.name] = c.template;
+	if (joinBy !== undefined) ruleObj['joinBy'] = joinBy;
 	return ruleObj as unknown as TemplateRule;
 }
 

@@ -14,7 +14,10 @@ rules:
   assert_statement:
     template: assert $$$CHILDREN
     joinBy: ","
-  assignment: $LEFT=$RIGHT $TYPE
+  assignment:
+    - $LEFT=$RIGHT $TYPE
+    - $LEFT:$TYPE $RIGHT
+    - $LEFT:$TYPE=$RIGHT
   attribute: $OBJECT.$ATTRIBUTE
   augmented_assignment: $LEFT $OPERATOR $RIGHT
   await: await $PRIMARY_EXPRESSION
@@ -58,7 +61,9 @@ rules:
     template: exec $CODE $$$CHILDREN
     joinBy: ","
   expression_list:
-    template: $$$CHILDREN,
+    template:
+      - $$$CHILDREN,
+      - $$$CHILDREN
     joinBy: ","
   expression_statement:
     template: $$$CHILDREN
@@ -67,11 +72,13 @@ rules:
   for_in_clause: for $LEFT in $$$RIGHT
   for_statement: for $LEFT in $RIGHT:$BODY $ALTERNATIVE
   format_expression: $EXPRESSION $FORMAT_SPECIFIER $TYPE_CONVERSION
-  format_specifier: :$$$CHILDREN
+  format_specifier: ": $$$CHILDREN"
   function_definition:
     template: def $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE_CLAUSE:$BODY
     return_type_clause: -> $RETURN_TYPE
-  future_import_statement: from __future__ import $$$NAME
+  future_import_statement:
+    - from __future__ import $$$NAME
+    - from __future__ import($$$NAME)
   generator_expression: ($BODY $CHILDREN)
   generic_type: $IDENTIFIER $TYPE_PARAMETER
   global_statement:
@@ -106,12 +113,14 @@ rules:
   parenthesized_expression: ($CHILDREN)
   parenthesized_list_splat: ($CHILDREN)
   pattern_list:
-    template: $$$CHILDREN,
+    template:
+      - $$$CHILDREN,
+      - $$$CHILDREN
     joinBy: ","
   print_statement:
     template:
       - print $CHEVRON $$$ARGUMENT
-      - print $$$ARGUMENT
+      - print $$$ARGUMENT $CHEVRON
     joinBy: ","
   raise_statement:
     template: raise $CHILDREN $CAUSE_CLAUSE
@@ -149,4 +158,6 @@ rules:
     joinBy: ","
   with_item: $VALUE
   with_statement: with $WITH_CLAUSE:$BODY
-  yield: yield from $CHILDREN
+  yield:
+    - yield from $CHILDREN
+    - yield $CHILDREN

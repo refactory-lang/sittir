@@ -1450,7 +1450,10 @@ export interface Undefined {
 export type AbstractClassDeclarationConfig = ConfigOf<AbstractClassDeclaration>;
 export type AbstractMethodSignatureConfig = ConfigOf<AbstractMethodSignature>;
 export type AddingTypeAnnotationConfig = ConfigOf<AddingTypeAnnotation>;
-export type AmbientDeclarationConfig = ConfigOf<AmbientDeclaration>;
+export type AmbientDeclarationConfig =
+  | Pick<ConfigOf<AmbientDeclaration>, 'declaration'>
+  | Pick<ConfigOf<AmbientDeclaration>, 'declaration' | 'semicolon' | 'typeAnnotation'>
+;
 export type ArgumentsConfig = ConfigOf<Arguments>;
 export type ArrayConfig = ConfigOf<Array>;
 export type ArrayPatternConfig = ConfigOf<ArrayPattern>;
@@ -1472,7 +1475,10 @@ export type CallExpressionConfig =
 export type CallSignatureConfig = ConfigOf<CallSignature>;
 export type CatchClauseConfig = ConfigOf<CatchClause>;
 export type ClassConfig = ConfigOf<Class>;
-export type ClassBodyConfig = ConfigOf<ClassBody>;
+export type ClassBodyConfig =
+  | Pick<ConfigOf<ClassBody>, 'children' | 'decorator'>
+  | Pick<ConfigOf<ClassBody>, 'children'>
+;
 export type ClassDeclarationConfig = ConfigOf<ClassDeclaration>;
 export type ClassHeritageConfig = ConfigOf<ClassHeritage>;
 export type ClassStaticBlockConfig = ConfigOf<ClassStaticBlock>;
@@ -1492,9 +1498,10 @@ export type EnumDeclarationConfig = ConfigOf<EnumDeclaration>;
 export type ExportClauseConfig = ConfigOf<ExportClause>;
 export type ExportSpecifierConfig = ConfigOf<ExportSpecifier>;
 export type ExportStatementConfig =
-  | Pick<ConfigOf<ExportStatement>, 'declaration' | 'decorator' | 'source' | 'value'>
+  | Pick<ConfigOf<ExportStatement>, 'source'>
   | Pick<ConfigOf<ExportStatement>, 'declaration' | 'source'>
-  | Pick<ConfigOf<ExportStatement>, 'declaration'>
+  | Pick<ConfigOf<ExportStatement>, 'declaration' | 'decorator' | 'source'>
+  | Pick<ConfigOf<ExportStatement>, 'declaration' | 'decorator' | 'source' | 'value'>
 ;
 export type ExpressionStatementConfig = ConfigOf<ExpressionStatement>;
 export type ExtendsClauseConfig = ConfigOf<ExtendsClause>;
@@ -1517,9 +1524,19 @@ export type ImportAliasConfig = ConfigOf<ImportAlias>;
 export type ImportAttributeConfig = ConfigOf<ImportAttribute>;
 export type ImportClauseConfig = ConfigOf<ImportClause>;
 export type ImportRequireClauseConfig = ConfigOf<ImportRequireClause>;
-export type ImportSpecifierConfig = ConfigOf<ImportSpecifier>;
-export type ImportStatementConfig = ConfigOf<ImportStatement>;
-export type IndexSignatureConfig = ConfigOf<IndexSignature>;
+export type ImportSpecifierConfig =
+  | Pick<ConfigOf<ImportSpecifier>, 'name'>
+  | Pick<ConfigOf<ImportSpecifier>, 'alias' | 'name'>
+;
+export type ImportStatementConfig =
+  | Pick<ConfigOf<ImportStatement>, 'fromClause' | 'importAttribute' | 'importClause' | 'semicolon'>
+  | Pick<ConfigOf<ImportStatement>, 'importAttribute' | 'importClause' | 'semicolon'>
+  | Pick<ConfigOf<ImportStatement>, 'importAttribute' | 'semicolon' | 'source'>
+;
+export type IndexSignatureConfig =
+  | Pick<ConfigOf<IndexSignature>, 'indexType' | 'name' | 'sign' | 'type'>
+  | Pick<ConfigOf<IndexSignature>, 'mappedTypeClause' | 'sign' | 'type'>
+;
 export type IndexTypeQueryConfig = ConfigOf<IndexTypeQuery>;
 export type InferTypeConfig = ConfigOf<InferType>;
 export type InstantiationExpressionConfig = ConfigOf<InstantiationExpression>;
@@ -1553,11 +1570,17 @@ export type OptionalParameterConfig = ConfigOf<OptionalParameter>;
 export type OptionalTypeConfig = ConfigOf<OptionalType>;
 export type PairConfig = ConfigOf<Pair>;
 export type PairPatternConfig = ConfigOf<PairPattern>;
-export type ParenthesizedExpressionConfig = ConfigOf<ParenthesizedExpression>;
+export type ParenthesizedExpressionConfig =
+  | Pick<ConfigOf<ParenthesizedExpression>, 'children' | 'type'>
+  | Pick<ConfigOf<ParenthesizedExpression>, 'children'>
+;
 export type ParenthesizedTypeConfig = ConfigOf<ParenthesizedType>;
 export type ProgramConfig = ConfigOf<Program>;
 export type PropertySignatureConfig = ConfigOf<PropertySignature>;
-export type PublicFieldDefinitionConfig = ConfigOf<PublicFieldDefinition>;
+export type PublicFieldDefinitionConfig =
+  | Pick<ConfigOf<PublicFieldDefinition>, 'accessibilityModifier' | 'decorator' | 'initializer' | 'name' | 'overrideModifier' | 'type' | 'value'>
+  | Pick<ConfigOf<PublicFieldDefinition>, 'accessibilityModifier' | 'decorator' | 'initializer' | 'name' | 'type' | 'value'>
+;
 export type ReadonlyTypeConfig = ConfigOf<ReadonlyType>;
 export type RegexConfig = ConfigOf<Regex>;
 export type RequiredParameterConfig = ConfigOf<RequiredParameter>;

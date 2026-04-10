@@ -6,8 +6,10 @@
  * whether a CHOICE produces 1 variant (demoted to child slot) or N variants
  * (parent-level structural alternatives).
  *
- * The result is a `StructuralVariant[]` stored on the node model, consumed
- * by all emitters (types, factories, templates, from, render).
+ * The output is a `StructuralVariant[]` on the node model, each carrying a
+ * **resolved grammar rule** — a version of the original rule with non-factorable
+ * CHOICEs replaced by their specific branch. The rules emitter runs
+ * `ruleToTemplate` on each resolved rule to produce correct template strings.
  */
 
 import type { GrammarRule } from './grammar.ts';
@@ -29,6 +31,10 @@ export interface FactorContext {
 /**
  * Factor a grammar rule into structural variants.
  *
+ * Each variant carries a resolved grammar rule where non-factorable CHOICEs
+ * have been replaced by their specific branch. The rules emitter can run
+ * `ruleToTemplate` on each to produce correct template strings.
+ *
  * @param rule - The raw grammar rule (pre-override)
  * @param overrideFields - Override field info for synthetic FIELD injection
  * @param ctx - Field metadata and grammar rules for inlining
@@ -42,18 +48,18 @@ export function factorRule(
 	// Apply override enrichment (inject synthetic FIELDs)
 	const enriched = applyOverrides(rule, overrideFields);
 
-	// Walk the enriched rule to produce variant skeletons
-	const seen = new Set<string>();
-	const rawVariants = walkRule(enriched, false, seen, ctx);
+	// Resolve CHOICEs into variant rules
+	const resolvedRules = resolveChoices(enriched, ctx);
 
-	// Deduplicate identical templates
-	const uniqueMap = new Map<string, StructuralVariant>();
-	for (const v of rawVariants) {
-		if (!uniqueMap.has(v.template)) {
-			uniqueMap.set(v.template, v);
-		}
+	// Build variant skeletons with field/literal metadata
+	const variants: StructuralVariant[] = [];
+	for (const resolved of resolvedRules) {
+		const v = buildVariantMetadata(resolved, ctx);
+		variants.push(v);
 	}
-	const unique = [...uniqueMap.values()];
+
+	// Deduplicate by field set signature (not template string — templates aren't generated yet)
+	const unique = deduplicateVariants(variants);
 
 	// Name the variants
 	for (let i = 0; i < unique.length; i++) {
@@ -64,279 +70,150 @@ export function factorRule(
 }
 
 // ---------------------------------------------------------------------------
-// Rule walker — produces StructuralVariant[] per grammar node
+// CHOICE resolution — produces GrammarRule[] (one resolved rule per variant)
 // ---------------------------------------------------------------------------
 
-function walkRule(
-	rule: GrammarRule,
-	optional: boolean,
-	seen: Set<string>,
-	ctx: FactorContext,
-): StructuralVariant[] {
+/**
+ * Walk a grammar rule and resolve non-factorable CHOICEs into separate rules.
+ * Returns one rule per variant path through the grammar.
+ *
+ * - CHOICE with BLANK: strip BLANK, mark optional (1 rule, unchanged)
+ * - CHOICE of atoms: factorable → 1 rule (CHOICE preserved as child slot)
+ * - CHOICE of SEQs: factor common prefix/suffix
+ *   - 1-position divergent: factorable → 1 rule (CHOICE preserved at that position)
+ *   - Multi-position divergent: not factorable → N rules (one per branch)
+ */
+function resolveChoices(rule: GrammarRule, ctx: FactorContext): GrammarRule[] {
 	switch (rule.type) {
-		case 'SEQ':
-			return walkSeq(rule.members, optional, seen, ctx);
-
-		case 'STRING':
-			if (optional) return [emptyVariant()];
-			return [singlePartVariant(rule.value)];
-
-		case 'FIELD': {
-			if (seen.has(rule.name)) return [emptyVariant()];
-			seen.add(rule.name);
-			const multi = ctx.fieldMultiple.get(rule.name) ?? false;
-			const varName = rule.name.toUpperCase();
-			const part = multi ? `$$$${varName}` : `$${varName}`;
-			const v = singlePartVariant(part);
-			const req = ctx.fieldRequired.get(rule.name) ?? false;
-			v.fields.set(rule.name, { required: req, multiple: multi });
-			return [v];
+		case 'SEQ': {
+			// Cross-product of resolved members
+			let current: GrammarRule[][] = [[]];
+			for (const member of rule.members) {
+				const memberResolutions = resolveChoices(member, ctx);
+				if (memberResolutions.length === 1) {
+					// Common case: single resolution — append to all
+					for (const seq of current) seq.push(memberResolutions[0]!);
+				} else {
+					// Cross-product
+					const next: GrammarRule[][] = [];
+					for (const seq of current) {
+						for (const mr of memberResolutions) {
+							next.push([...seq, mr]);
+						}
+					}
+					current = next;
+				}
+			}
+			return current.map(members => ({ type: 'SEQ' as const, members }));
 		}
-
-		case 'SYMBOL':
-			return walkSymbol(rule, optional, seen, ctx);
 
 		case 'CHOICE':
-			return walkChoice(rule.members, optional, seen, ctx);
+			return resolveChoice(rule.members, ctx);
 
 		case 'REPEAT':
+			return resolveChoices(rule.content, ctx).map(c => ({ type: 'REPEAT' as const, content: c }));
 		case 'REPEAT1':
-			return walkRule(rule.content, optional, seen, ctx);
+			return resolveChoices(rule.content, ctx).map(c => ({ type: 'REPEAT1' as const, content: c }));
 
 		case 'PREC':
+			return resolveChoices(rule.content, ctx).map(c => ({ type: 'PREC' as const, value: rule.value, content: c }));
 		case 'PREC_LEFT':
+			return resolveChoices(rule.content, ctx).map(c => ({ type: 'PREC_LEFT' as const, value: rule.value, content: c }));
 		case 'PREC_RIGHT':
+			return resolveChoices(rule.content, ctx).map(c => ({ type: 'PREC_RIGHT' as const, value: rule.value, content: c }));
 		case 'PREC_DYNAMIC':
-			return walkRule(rule.content, optional, seen, ctx);
+			return resolveChoices(rule.content, ctx).map(c => ({ type: 'PREC_DYNAMIC' as const, value: rule.value, content: c }));
 
 		case 'TOKEN':
-			return walkRule(rule.content, optional, seen, ctx);
+			return resolveChoices(rule.content, ctx).map(c => ({ type: 'TOKEN' as const, content: c }));
+		case 'IMMEDIATE_TOKEN':
+			return resolveChoices(rule.content, ctx).map(c => ({ type: 'IMMEDIATE_TOKEN' as const, content: c }));
 
-		case 'IMMEDIATE_TOKEN': {
-			let inner: GrammarRule = rule.content;
-			while (inner.type === 'PREC' || inner.type === 'PREC_LEFT' || inner.type === 'PREC_RIGHT' || inner.type === 'PREC_DYNAMIC') {
-				inner = inner.content;
-			}
-			if (inner.type === 'STRING') {
-				if (optional) return [emptyVariant()];
-				return [singlePartVariant(inner.value)];
-			}
-			return walkRule(rule.content, optional, seen, ctx);
-		}
+		case 'FIELD':
+			return resolveChoices(rule.content, ctx).map(c => ({ type: 'FIELD' as const, name: rule.name, content: c }));
 
-		case 'ALIAS': {
-			if (rule.named) {
-				const aliasName = rule.value ?? '';
-				const aliasSlot = ctx.childSlotMap.get(aliasName);
-				if (aliasSlot) {
-					if (seen.has(`child:${aliasSlot.slotName}`)) return [emptyVariant()];
-					seen.add(`child:${aliasSlot.slotName}`);
-					if (aliasSlot.slotName === 'children') seen.add('children');
-					const part = aliasSlot.multiple ? `$$$${aliasSlot.varName}` : `$${aliasSlot.varName}`;
-					return [singlePartVariant(part)];
-				}
-				if (seen.has('children')) return [emptyVariant()];
-				seen.add('children');
-				return [singlePartVariant('$$$CHILDREN')];
-			}
-			if (rule.value) {
-				if (optional) return [emptyVariant()];
-				return [singlePartVariant(rule.value)];
-			}
-			return walkRule(rule.content, optional, seen, ctx);
-		}
+		case 'ALIAS':
+			return resolveChoices(rule.content, ctx).map(c => ({
+				type: 'ALIAS' as const, content: c, named: rule.named, value: rule.value,
+			}));
 
+		// Terminals — no CHOICEs to resolve
+		case 'STRING':
+		case 'SYMBOL':
 		case 'BLANK':
 		case 'PATTERN':
-			return [emptyVariant()];
+			return [rule];
 	}
 }
 
-// ---------------------------------------------------------------------------
-// SYMBOL handler — inline hidden rules, child slots
-// ---------------------------------------------------------------------------
-
-function walkSymbol(
-	rule: GrammarRule & { type: 'SYMBOL' },
-	optional: boolean,
-	seen: Set<string>,
-	ctx: FactorContext,
-): StructuralVariant[] {
-	// Inline _-prefixed (hidden/abstract) rules that contain fields
-	if (rule.name.startsWith('_') && ctx.grammarRules[rule.name]) {
-		const inlineSeen = new Set(seen);
-		const inlined = walkRule(ctx.grammarRules[rule.name]!, optional, inlineSeen, ctx);
-		const hasRelevantFields = [...inlineSeen].some(f => !seen.has(f) && ctx.fieldRequired.has(f));
-		if (hasRelevantFields) {
-			for (const f of inlineSeen) {
-				if (ctx.fieldRequired.has(f)) seen.add(f);
-			}
-			if (inlineSeen.has('children')) seen.add('children');
-			return inlined;
-		}
-	}
-
-	// Named child slot
-	const childSlot = ctx.childSlotMap.get(rule.name);
-	if (childSlot) {
-		if (seen.has(`child:${childSlot.slotName}`) || (childSlot.slotName === 'children' && seen.has('children'))) return [emptyVariant()];
-		seen.add(`child:${childSlot.slotName}`);
-		if (childSlot.slotName === 'children') seen.add('children');
-		const part = childSlot.multiple ? `$$$${childSlot.varName}` : `$${childSlot.varName}`;
-		return [singlePartVariant(part)];
-	}
-
-	// Hidden rules not inlined and not in childSlotMap
-	if (rule.name.startsWith('_')) return [emptyVariant()];
-
-	// Unknown named symbol → generic children
-	if (seen.has('children')) return [emptyVariant()];
-	seen.add('children');
-	return [singlePartVariant('$$$CHILDREN')];
-}
-
-// ---------------------------------------------------------------------------
-// SEQ handler — cross-product of member variants
-// ---------------------------------------------------------------------------
-
-function walkSeq(
-	members: GrammarRule[],
-	optional: boolean,
-	seen: Set<string>,
-	ctx: FactorContext,
-): StructuralVariant[] {
-	let current: StructuralVariant[] = [emptyVariant()];
-
-	for (const member of members) {
-		const memberVariants = walkRule(member, optional, seen, ctx);
-
-		if (memberVariants.length === 1) {
-			// Common case: single variant per member — append to all current variants
-			const mv = memberVariants[0]!;
-			for (const cv of current) {
-				appendVariant(cv, mv);
-			}
-		} else {
-			// Cross-product: each current variant × each member variant
-			const next: StructuralVariant[] = [];
-			for (const cv of current) {
-				for (const mv of memberVariants) {
-					const combined = cloneVariant(cv);
-					appendVariant(combined, mv);
-					next.push(combined);
-				}
-			}
-			current = next;
-		}
-	}
-
-	return current;
-}
-
-// ---------------------------------------------------------------------------
-// CHOICE handler — BLANK preprocessing + factoring
-// ---------------------------------------------------------------------------
-
-function walkChoice(
-	members: GrammarRule[],
-	optional: boolean,
-	seen: Set<string>,
-	ctx: FactorContext,
-): StructuralVariant[] {
+/**
+ * Resolve a CHOICE node. Determines whether it's factorable (1 resolved rule)
+ * or produces N variant rules.
+ */
+function resolveChoice(members: GrammarRule[], ctx: FactorContext): GrammarRule[] {
 	const hasBlank = members.some(m => m.type === 'BLANK');
 	const nonBlank = members.filter(m => m.type !== 'BLANK');
 
 	if (hasBlank) {
-		// CHOICE with BLANK = optional group
-		if (nonBlank.length === 0) return [emptyVariant()];
-
-		if (nonBlank.length === 1) {
-			const inner = nonBlank[0]!;
-			// Suppress optional bare STRING tokens
-			if (inner.type === 'STRING') return [emptyVariant()];
-			// Walk as optional
-			return walkRule(inner, true, seen, ctx);
-		}
-
-		// Multiple non-blank + BLANK: walk non-blank branches as optional
-		// and cross-combine (the BLANK case adds an empty variant)
-		const branchResults: StructuralVariant[][] = [];
+		// CHOICE with BLANK = optional group. Preserve the CHOICE structure
+		// so ruleToTemplate can detect it and synthesize clauses / mark optional.
+		// But recurse into non-blank branches to resolve inner CHOICEs.
+		const resolvedMembers: GrammarRule[] = [];
 		for (const m of nonBlank) {
-			branchResults.push(walkRule(m, true, new Set(seen), ctx));
+			const resolutions = resolveChoices(m, ctx);
+			// If a non-blank branch resolves to multiple variants, we need to
+			// expand: CHOICE(variant1, variant2, BLANK)
+			resolvedMembers.push(...resolutions);
 		}
-		const all = branchResults.flat();
-		// Add empty variant for the BLANK case
-		all.push(emptyVariant());
-		return deduplicateVariants(all);
+		resolvedMembers.push({ type: 'BLANK' });
+
+		if (resolvedMembers.length === 2 && resolvedMembers[1]!.type === 'BLANK') {
+			// Simple case: CHOICE(resolved, BLANK) — keep as-is
+			return [{ type: 'CHOICE', members: resolvedMembers }];
+		}
+		// Multiple resolved branches + BLANK — the whole CHOICE is still one rule
+		// (optionality, not structural variants)
+		return [{ type: 'CHOICE', members: resolvedMembers }];
 	}
 
-	// No BLANK — true structural CHOICE
-	// Try factoring: extract common prefix/suffix
+	// No BLANK — true structural CHOICE. Attempt factoring.
 
-	// First, check if this is an "atom" CHOICE (all single elements, no SEQs)
+	// Check if this is an "atom" CHOICE (all single elements, no SEQs)
 	const allAtoms = nonBlank.every(m => {
 		const u = unwrapPrec(m);
 		return u.type === 'STRING' || u.type === 'FIELD' || u.type === 'SYMBOL' || u.type === 'ALIAS';
 	});
 
 	if (allAtoms) {
-		// Atom CHOICE: demote to child-level slot. Walk each branch, merge fields.
-		// This produces 1 variant with a union-typed slot.
-		const mergedSeen = new Set(seen);
-		const merged = emptyVariant();
-		let firstParts: string[] | null = null;
-
+		// Atom CHOICE: factorable — preserve the CHOICE as a child-level slot.
+		// Recurse into each branch to resolve nested CHOICEs (though atoms rarely have them).
+		const resolvedMembers: GrammarRule[] = [];
 		for (const m of nonBlank) {
-			const branchSeen = new Set(seen);
-			const results = walkRule(m, optional, branchSeen, ctx);
-			if (results.length > 0) {
-				const r = results[0]!;
-				if (firstParts === null) {
-					firstParts = r.parts;
-					merged.parts = [...r.parts];
-				}
-				// Merge fields
-				for (const [k, v] of r.fields) {
-					if (!merged.fields.has(k)) {
-						merged.fields.set(k, { ...v });
-					}
-				}
-				// Merge seen
-				for (const s of branchSeen) mergedSeen.add(s);
-			}
+			resolvedMembers.push(...resolveChoices(m, ctx));
 		}
-		for (const s of mergedSeen) seen.add(s);
-		merged.template = merged.parts.join('').replace(/\s+/g, ' ').trim();
-		return [merged];
+		return [{ type: 'CHOICE', members: resolvedMembers }];
 	}
 
 	// SEQ CHOICE: attempt distributive factoring
-	return factorSeqChoice(nonBlank, optional, seen, ctx);
+	return factorSeqChoice(nonBlank, ctx);
 }
 
 // ---------------------------------------------------------------------------
 // Distributive factoring of CHOICE-over-SEQ
 // ---------------------------------------------------------------------------
 
-function factorSeqChoice(
-	branches: GrammarRule[],
-	optional: boolean,
-	seen: Set<string>,
-	ctx: FactorContext,
-): StructuralVariant[] {
+function factorSeqChoice(branches: GrammarRule[], ctx: FactorContext): GrammarRule[] {
 	// Normalize each branch to a flat SEQ
 	const seqs = branches.map(b => normalizeToSeq(b));
 
-	// Extract common prefix
+	// Extract common prefix and suffix
 	const prefixLen = commonPrefixLength(seqs);
-	// Extract common suffix (from remaining elements)
 	const suffixLen = commonSuffixLength(seqs, prefixLen);
 
 	// Extract divergent middles
 	const middles: GrammarRule[][] = [];
 	for (const seq of seqs) {
-		const end = seq.length - suffixLen;
-		middles.push(seq.slice(prefixLen, end));
+		middles.push(seq.slice(prefixLen, seq.length - suffixLen));
 	}
 
 	// Check if divergent region is exactly 1 position per branch
@@ -344,56 +221,45 @@ function factorSeqChoice(
 	const anyNonEmpty = middles.some(m => m.length > 0);
 
 	if (allSinglePosition && anyNonEmpty && prefixLen + suffixLen > 0) {
-		// Factorable: CHOICE demoted to one position
-		// Build the single variant: prefix + demoted CHOICE + suffix
+		// Factorable: CHOICE demoted to one position within the SEQ.
+		// Build: SEQ(prefix..., CHOICE(middle0, middle1, ...), suffix...)
 		const prefix = seqs[0]!.slice(0, prefixLen);
 		const suffix = seqs[0]!.slice(seqs[0]!.length - suffixLen);
+		const choiceMembers = middles.filter(m => m.length > 0).map(m => m[0]!);
 
-		// Build the demoted CHOICE from middles
-		const choiceMembers = middles
-			.filter(m => m.length > 0)
-			.map(m => m[0]!);
+		const resolvedPrefix = prefix.flatMap(m => {
+			const r = resolveChoices(m, ctx);
+			return r.length === 1 ? [r[0]!] : [{ type: 'CHOICE' as const, members: r }];
+		});
+		const resolvedChoice = choiceMembers.length > 0
+			? resolveChoice(choiceMembers, ctx)
+			: [{ type: 'BLANK' as const }];
+		const resolvedSuffix = suffix.flatMap(m => {
+			const r = resolveChoices(m, ctx);
+			return r.length === 1 ? [r[0]!] : [{ type: 'CHOICE' as const, members: r }];
+		});
 
-		// Walk prefix
-		const prefixVariants = walkSeq(prefix, optional, seen, ctx);
-		// Walk the demoted CHOICE (as atom choice if possible)
-		const choiceVariants = choiceMembers.length > 0
-			? walkChoice(choiceMembers, optional, seen, ctx)
-			: [emptyVariant()];
-		// Walk suffix
-		const suffixVariants = walkSeq(suffix, optional, seen, ctx);
+		// If the demoted CHOICE itself resolved to multiple variants,
+		// that's fine — they're all at one position, treated as a union slot.
+		// Wrap in a CHOICE to preserve the structure.
+		const demotedChoice = resolvedChoice.length === 1
+			? resolvedChoice[0]!
+			: { type: 'CHOICE' as const, members: resolvedChoice };
 
-		// Combine: prefix × choice × suffix
-		const result: StructuralVariant[] = [];
-		for (const pv of prefixVariants) {
-			for (const cv of choiceVariants) {
-				for (const sv of suffixVariants) {
-					const combined = cloneVariant(pv);
-					appendVariant(combined, cv);
-					appendVariant(combined, sv);
-					result.push(combined);
-				}
-			}
-		}
-
-		return deduplicateVariants(result);
+		return [{ type: 'SEQ', members: [...resolvedPrefix, demotedChoice, ...resolvedSuffix] }];
 	}
 
-	// Not factorable: each branch produces its own variant(s)
-	const allVariants: StructuralVariant[] = [];
+	// Not factorable: each branch becomes its own variant.
+	// Resolve inner CHOICEs within each branch, then cross-product.
+	const allResolved: GrammarRule[] = [];
 	for (const branch of branches) {
-		const branchSeen = new Set(seen);
-		const results = walkRule(branch, optional, branchSeen, ctx);
-		allVariants.push(...results);
-		// Merge seen from all branches into parent
-		for (const s of branchSeen) seen.add(s);
+		allResolved.push(...resolveChoices(branch, ctx));
 	}
-
-	return deduplicateVariants(allVariants);
+	return allResolved;
 }
 
 // ---------------------------------------------------------------------------
-// Normalization helpers
+// Normalization + structural equality
 // ---------------------------------------------------------------------------
 
 function unwrapPrec(rule: GrammarRule): GrammarRule {
@@ -403,14 +269,12 @@ function unwrapPrec(rule: GrammarRule): GrammarRule {
 	return rule;
 }
 
-/** Flatten a rule to a SEQ member array. Single elements become [element]. */
 function normalizeToSeq(rule: GrammarRule): GrammarRule[] {
 	const unwrapped = unwrapPrec(rule);
 	if (unwrapped.type === 'SEQ') return unwrapped.members;
 	return [unwrapped];
 }
 
-/** Find the length of the common prefix across all SEQs. */
 function commonPrefixLength(seqs: GrammarRule[][]): number {
 	if (seqs.length === 0) return 0;
 	const minLen = Math.min(...seqs.map(s => s.length));
@@ -426,7 +290,6 @@ function commonPrefixLength(seqs: GrammarRule[][]): number {
 	return len;
 }
 
-/** Find the length of the common suffix, starting after `prefixLen` elements. */
 function commonSuffixLength(seqs: GrammarRule[][], prefixLen: number): number {
 	if (seqs.length === 0) return 0;
 	const minRemaining = Math.min(...seqs.map(s => s.length - prefixLen));
@@ -444,17 +307,11 @@ function commonSuffixLength(seqs: GrammarRule[][], prefixLen: number): number {
 
 /**
  * Structural identity for prefix/suffix alignment.
- *
- * - STRING: same value
- * - FIELD: same name (content may differ — pushed into field's type union)
- * - SYMBOL: same name
- * - BLANK: always equal
- * - PREC wrappers: unwrap and compare content
+ * STRING: same value. FIELD: same name. SYMBOL: same name. BLANK: always equal.
  */
 export function structurallyEqual(a: GrammarRule, b: GrammarRule): boolean {
 	const ua = unwrapPrec(a);
 	const ub = unwrapPrec(b);
-
 	if (ua.type !== ub.type) return false;
 
 	switch (ua.type) {
@@ -485,119 +342,92 @@ export function structurallyEqual(a: GrammarRule, b: GrammarRule): boolean {
 }
 
 // ---------------------------------------------------------------------------
-// Variant construction helpers
+// Variant metadata — extract fields and literals from a resolved rule
 // ---------------------------------------------------------------------------
 
-function emptyVariant(): StructuralVariant {
+/**
+ * Build a StructuralVariant with field/literal metadata from a resolved grammar rule.
+ * The template field is left empty — the rules emitter generates it via ruleToTemplate.
+ */
+function buildVariantMetadata(rule: GrammarRule, ctx: FactorContext): StructuralVariant {
+	const fields = new Map<string, { required: boolean; multiple: boolean }>();
+	const literals = new Map<number, string>();
+	let litPos = 0;
+
+	function walk(r: GrammarRule) {
+		switch (r.type) {
+			case 'FIELD':
+				fields.set(r.name, {
+					required: ctx.fieldRequired.get(r.name) ?? false,
+					multiple: ctx.fieldMultiple.get(r.name) ?? false,
+				});
+				walk(r.content);
+				break;
+			case 'STRING':
+				literals.set(litPos++, r.value);
+				break;
+			case 'SEQ':
+				for (const m of r.members) walk(m);
+				break;
+			case 'CHOICE':
+				for (const m of r.members) walk(m);
+				break;
+			case 'REPEAT':
+			case 'REPEAT1':
+				walk(r.content);
+				break;
+			case 'PREC':
+			case 'PREC_LEFT':
+			case 'PREC_RIGHT':
+			case 'PREC_DYNAMIC':
+				walk(r.content);
+				break;
+			case 'TOKEN':
+			case 'IMMEDIATE_TOKEN':
+				walk(r.content);
+				break;
+			case 'ALIAS':
+				walk(r.content);
+				break;
+			case 'SYMBOL':
+			case 'BLANK':
+			case 'PATTERN':
+				break;
+		}
+	}
+	walk(rule);
+
 	return {
 		name: '',
+		rule,
 		parts: [],
-		fields: new Map(),
-		literals: new Map(),
+		fields,
+		literals,
 		template: '',
 		clauses: [],
 	};
 }
 
-function singlePartVariant(part: string): StructuralVariant {
-	const v = emptyVariant();
-	v.parts = [part];
-	v.template = part;
-	if (!part.startsWith('$')) {
-		v.literals.set(0, part);
-	}
-	return v;
-}
-
-function cloneVariant(v: StructuralVariant): StructuralVariant {
-	return {
-		name: v.name,
-		parts: [...v.parts],
-		fields: new Map(v.fields),
-		literals: new Map(v.literals),
-		template: v.template,
-		clauses: [...v.clauses],
-	};
-}
-
-const _wordEndRe = /[\w\p{L}]$/u;
-const _wordStartRe = /^[\p{L}_$]/u;
-
-function needsSpace(prev: string, next: string): boolean {
-	const prevMayEndWord = _wordEndRe.test(prev) || prev.startsWith('$');
-	const nextMayStartWord = _wordStartRe.test(next) || next.startsWith('$');
-	return prevMayEndWord && nextMayStartWord;
-}
-
-/** Append variant `b` to variant `a` in place (with spacing). */
-function appendVariant(a: StructuralVariant, b: StructuralVariant): void {
-	if (b.parts.length === 0) return;
-
-	// Add space between parts if needed
-	if (a.parts.length > 0 && b.parts.length > 0) {
-		const lastPart = a.parts[a.parts.length - 1]!;
-		const nextPart = b.parts[0]!;
-		if (needsSpace(lastPart, nextPart)) {
-			a.parts.push(' ');
-		}
-	}
-
-	// Shift literal positions
-	const offset = a.parts.length;
-	for (const [pos, lit] of b.literals) {
-		a.literals.set(pos + offset, lit);
-	}
-
-	a.parts.push(...b.parts);
-	a.template = a.parts.join('').replace(/\s+/g, ' ').trim();
-
-	// Merge fields
-	for (const [k, v] of b.fields) {
-		if (!a.fields.has(k)) {
-			a.fields.set(k, { ...v });
-		}
-	}
-
-	// Merge clauses
-	a.clauses.push(...b.clauses);
-}
+// ---------------------------------------------------------------------------
+// Deduplication + naming
+// ---------------------------------------------------------------------------
 
 function deduplicateVariants(variants: StructuralVariant[]): StructuralVariant[] {
+	if (variants.length <= 1) return variants;
+
+	// Deduplicate by field set signature (fields present + their literals)
 	const seen = new Map<string, StructuralVariant>();
 	for (const v of variants) {
-		if (v.template && !seen.has(v.template)) {
-			seen.set(v.template, v);
+		const fieldKey = [...v.fields.keys()].sort().join(',');
+		const litKey = [...v.literals.values()].sort().join(',');
+		const key = `${fieldKey}|${litKey}`;
+		if (!seen.has(key)) {
+			seen.set(key, v);
 		}
 	}
-	// If all variants are empty, keep at least one
-	if (seen.size === 0 && variants.length > 0) return [variants[0]!];
 	return [...seen.values()];
 }
 
-// ---------------------------------------------------------------------------
-// Variant naming
-// ---------------------------------------------------------------------------
-
-/** Extract all STRING tokens from a grammar rule (for detect map). */
-function extractStringTokens(rule: GrammarRule): string[] {
-	const tokens: string[] = [];
-	const walk = (r: GrammarRule) => {
-		if (r.type === 'STRING') { tokens.push(r.value); return; }
-		if ('members' in r && Array.isArray(r.members)) { for (const m of r.members) walk(m); return; }
-		if ('content' in r && r.content) walk(r.content as GrammarRule);
-	};
-	walk(rule);
-	return tokens;
-}
-
-/**
- * Derive a readable name for a variant.
- *
- * Priority:
- * 1. Unique detect token → tokenName
- * 2. Unique field presence → field name
- * 3. Fallback → "v0", "v1", ...
- */
 function nameVariant(variant: StructuralVariant, index: number, all: StructuralVariant[]): string {
 	if (all.length === 1) return 'default';
 
@@ -622,11 +452,9 @@ function nameVariant(variant: StructuralVariant, index: number, all: StructuralV
 		if (isUnique) return fieldName;
 	}
 
-	// Fallback
 	return `v${index}`;
 }
 
-/** Convert a token string to a short readable name. */
 function tokenToName(token: string): string {
 	const names: Record<string, string> = {
 		';': 'semi', ':': 'colon', ',': 'comma', '.': 'dot',
@@ -637,9 +465,12 @@ function tokenToName(token: string): string {
 		'+': 'plus', '-': 'minus', '*': 'star', '/': 'slash',
 		'&': 'amp', '|': 'pipe', '^': 'caret', '~': 'tilde',
 		'%': 'percent', '@': 'at', '#': 'hash',
+		'for': 'for', 'fn': 'fn', 'struct': 'struct', 'enum': 'enum',
+		'impl': 'impl', 'trait': 'trait', 'unsafe': 'unsafe', 'async': 'async',
+		'const': 'const', 'static': 'static', 'mut': 'mut', 'ref': 'ref',
+		'pub': 'pub', 'use': 'use', 'mod': 'mod', 'type': 'type_kw',
 	};
 	if (names[token]) return names[token]!;
-	// Alphanumeric tokens → use as-is
 	if (/^[a-zA-Z_]\w*$/.test(token)) return token;
 	return `tok_${[...token].map(c => c.charCodeAt(0).toString(16)).join('')}`;
 }

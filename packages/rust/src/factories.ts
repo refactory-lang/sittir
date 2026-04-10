@@ -115,8 +115,7 @@ export function array_expression_(
     attributes: config?.attributes,
     elements: config?.elements,
   };
-  // Variant inference from field presence
-  const variant = 'semi';
+  const variant = config?.length !== undefined ? 'semi' : 'comma';
   return {
     type: 'array_expression' as const,
     named: true as const,
@@ -237,12 +236,9 @@ export function attribute_(
     value: config.value,
   };
   const children = config.children ? [config.children] : [];
-  // Variant inference from field presence
-  const variant = config.arguments !== undefined ? 'arguments' : 'value';
   return {
     type: 'attribute' as const,
     named: true as const,
-    variant,
     fields,
     children,
     arguments(arguments_?: TokenTree) { return arguments_ !== undefined ? attribute_({ ...config, arguments: arguments_ }) : fields.arguments; },
@@ -325,9 +321,11 @@ export function binary_expression_(
     operator: config.operator,
     right: config.right,
   };
+  const variant = 'tok_2626' as string;
   return {
     type: 'binary_expression' as const,
     named: true as const,
+    variant,
     fields,
     left(left?: Expression) { return left !== undefined ? binary_expression_({ ...config, left: left }) : fields.left; },
     operator(operator?: '!=' | '%' | '&' | '&&' | '*' | '+' | '-' | '/' | '<' | '<<' | '<=' | '==' | '>' | '>=' | '>>' | '^' | '|' | '||') { return operator !== undefined ? binary_expression_({ ...config, operator: operator }) : fields.operator; },
@@ -994,8 +992,7 @@ export function field_pattern_(
     pattern: config.pattern,
     mutable_specifier: config.mutableSpecifier,
   };
-  // Variant inference from field presence
-  const variant = config.pattern !== undefined ? 'colon' : 'name';
+  const variant = config.pattern !== undefined ? 'colon' : 'v0';
   return {
     type: 'field_pattern' as const,
     named: true as const,
@@ -1194,8 +1191,7 @@ export function function_type_(
     for_lifetimes: config.forLifetimes,
     function_modifiers: config.functionModifiers,
   };
-  // Variant inference from field presence
-  const variant = config.functionModifiers !== undefined ? 'fn' : 'trait';
+  const variant = config.trait !== undefined ? 'trait' : config.functionModifiers !== undefined ? 'fn' : 'fn';
   return {
     type: 'function_type' as const,
     named: true as const,
@@ -1595,9 +1591,11 @@ export function line_comment_(
     inner: config?.inner,
     outer: config?.outer,
   };
+  const variant = config?.doc !== undefined ? 'doc' : 'v0';
   return {
     type: 'line_comment' as const,
     named: true as const,
+    variant,
     fields,
     doc(doc?: DocComment) { return doc !== undefined ? line_comment_({ ...config, doc: doc }) : fields.doc; },
     inner(inner?: InnerDocCommentMarker) { return inner !== undefined ? line_comment_({ ...config, inner: inner }) : fields.inner; },
@@ -1642,8 +1640,7 @@ export function macro_definition_(
     name: config.name,
     rules: config.rules,
   };
-  // Variant inference from field presence
-  const variant = 'paren';
+  const variant = 'paren' as string;
   return {
     type: 'macro_definition' as const,
     named: true as const,
@@ -1878,8 +1875,7 @@ export function or_pattern_(
     left: config.left,
     right: config.right,
   };
-  // Variant inference from field presence
-  const variant = 'left';
+  const variant = config.right !== undefined ? 'right' : 'v1';
   return {
     type: 'or_pattern' as const,
     named: true as const,
@@ -2041,9 +2037,11 @@ export function range_expression_(
     operator: config.operator,
     end: config.end,
   };
+  const variant = config.end !== undefined ? 'ellipsis' : 'v1';
   return {
     type: 'range_expression' as const,
     named: true as const,
+    variant,
     fields,
     start(start?: Expression) { return start !== undefined ? range_expression_({ ...config, start: start }) : fields.start; },
     operator(operator?: '..' | '..=' | '...') { return operator !== undefined ? range_expression_({ ...config, operator: operator }) : fields.operator; },
@@ -2065,8 +2063,7 @@ export function range_pattern_(
     left: config?.left,
     right: config?.right,
   };
-  // Variant inference from field presence
-  const variant = 'right';
+  const variant = 'ellipsis' as string;
   return {
     type: 'range_pattern' as const,
     named: true as const,
@@ -2135,9 +2132,11 @@ export function reference_expression_(
     value: config.value,
     mutable_specifier: config.mutableSpecifier,
   };
+  const variant = 'raw' as string;
   return {
     type: 'reference_expression' as const,
     named: true as const,
+    variant,
     fields,
     value(value?: Expression) { return value !== undefined ? reference_expression_({ ...config, value: value }) : fields.value; },
     mutableSpecifier(mutableSpecifier?: MutableSpecifier) { return mutableSpecifier !== undefined ? reference_expression_({ ...config, mutableSpecifier: mutableSpecifier }) : fields.mutable_specifier; },
@@ -2477,8 +2476,7 @@ export function struct_item_(
     visibility_modifier: config.visibilityModifier,
     where_clause: config.whereClause,
   };
-  // Variant inference from field presence
-  const variant = 'where_clause';
+  const variant = 'v0' as string;
   return {
     type: 'struct_item' as const,
     named: true as const,
@@ -3160,7 +3158,6 @@ export function visibility_modifier_(
     in: config?.in,
   };
   const children = config?.children ? [config?.children] : [];
-  // Variant inference from field presence
   const variant = config?.pub !== undefined ? 'pub' : 'v0';
   return {
     type: 'visibility_modifier' as const,

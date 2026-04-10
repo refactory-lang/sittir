@@ -959,7 +959,11 @@ export type AliasedImportConfig = ConfigOf<AliasedImport>;
 export type ArgumentListConfig = ConfigOf<ArgumentList>;
 export type AsPatternConfig = ConfigOf<AsPattern>;
 export type AssertStatementConfig = ConfigOf<AssertStatement>;
-export type AssignmentConfig = ConfigOf<Assignment>;
+export type AssignmentConfig =
+  | Pick<ConfigOf<Assignment>, 'left' | 'right'>
+  | Pick<ConfigOf<Assignment>, 'left' | 'type'>
+  | Pick<ConfigOf<Assignment>, 'left' | 'right' | 'type'>
+;
 export type AttributeConfig = ConfigOf<Attribute>;
 export type AugmentedAssignmentConfig = ConfigOf<AugmentedAssignment>;
 export type AwaitConfig = ConfigOf<Await>;
