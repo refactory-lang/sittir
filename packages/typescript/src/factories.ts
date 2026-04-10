@@ -167,9 +167,12 @@ export function ambient_declaration_(
     type_annotation: config.typeAnnotation,
     semicolon: config.semicolon,
   };
+  // Variant inference from field presence
+  const variant = config.typeAnnotation !== undefined ? 'module' : 'declaration';
   return {
     type: 'ambient_declaration' as const,
     named: true as const,
+    variant,
     fields,
     declaration(declaration?: Declaration | PropertyIdentifier | StatementBlock) { return declaration !== undefined ? ambient_declaration_({ ...config, declaration: declaration }) : fields.declaration; },
     typeAnnotation(typeAnnotation?: Type) { return typeAnnotation !== undefined ? ambient_declaration_({ ...config, typeAnnotation: typeAnnotation }) : fields.type_annotation; },
@@ -500,9 +503,12 @@ export function call_expression_(
     function: config.function,
     type_arguments: config.typeArguments,
   };
+  // Variant inference from field presence
+  const variant = 'function';
   return {
     type: 'call_expression' as const,
     named: true as const,
+    variant,
     fields,
     arguments(arguments_?: Arguments | TemplateString) { return arguments_ !== undefined ? call_expression_({ ...config, arguments: arguments_ }) : fields.arguments; },
     function(function_?: Expression | Import | NewExpression | PrimaryExpression) { return function_ !== undefined ? call_expression_({ ...config, function: function_ }) : fields.function; },
@@ -603,9 +609,12 @@ export function class_body_(
     decorator: config?.decorator,
   };
   const children = config?.children ?? [];
+  // Variant inference from field presence
+  const variant = 'decorator';
   return {
     type: 'class_body' as const,
     named: true as const,
+    variant,
     fields,
     children,
     decorator(...decorator: (Decorator)[]) { return decorator.length ? class_body_({ ...config, decorator: decorator }) : fields.decorator; },
@@ -1039,9 +1048,12 @@ export function export_statement_(
     value: config?.value,
   };
   const children: unknown[] = [];
+  // Variant inference from field presence
+  const variant = 'star';
   return {
     type: 'export_statement' as const,
     named: true as const,
+    variant,
     fields,
     children,
     declaration(declaration?: Declaration | ExportClause | Expression | Identifier | NamespaceExport) { return declaration !== undefined ? export_statement_({ ...config, declaration: declaration }) : fields.declaration; },
@@ -1174,9 +1186,12 @@ export function for_in_statement_(
     right: config.right,
     value: config.value,
   };
+  // Variant inference from field presence
+  const variant = config.kind !== undefined ? 'kind' : 'left';
   return {
     type: 'for_in_statement' as const,
     named: true as const,
+    variant,
     fields,
     body(body?: Statement) { return body !== undefined ? for_in_statement_({ ...config, body: body }) : fields.body; },
     kind(kind?: 'const' | 'let' | 'var') { return kind !== undefined ? for_in_statement_({ ...config, kind: kind }) : fields.kind; },
@@ -1574,9 +1589,12 @@ export function import_specifier_(
     alias: config.alias,
     name: config.name,
   };
+  // Variant inference from field presence
+  const variant = config.alias !== undefined ? 'as' : 'name';
   return {
     type: 'import_specifier' as const,
     named: true as const,
+    variant,
     fields,
     alias(alias?: Identifier) { return alias !== undefined ? import_specifier_({ ...config, alias: alias }) : fields.alias; },
     name(name?: ModuleExportName) { return name !== undefined ? import_specifier_({ ...config, name: name }) : fields.name; },
@@ -1600,9 +1618,12 @@ export function import_statement_(
     import_attribute: config.importAttribute,
     semicolon: config.semicolon,
   };
+  // Variant inference from field presence
+  const variant = config.source !== undefined ? 'source' : 'import_clause';
   return {
     type: 'import_statement' as const,
     named: true as const,
+    variant,
     fields,
     source(source?: String) { return source !== undefined ? import_statement_({ ...config, source: source }) : fields.source; },
     importClause(importClause?: ImportClause | ImportRequireClause) { return importClause !== undefined ? import_statement_({ ...config, importClause: importClause }) : fields.import_clause; },
@@ -1629,9 +1650,12 @@ export function index_signature_(
     type: config.type,
     mapped_type_clause: config.mappedTypeClause,
   };
+  // Variant inference from field presence
+  const variant = config.mappedTypeClause !== undefined ? 'mapped_type_clause' : 'colon';
   return {
     type: 'index_signature' as const,
     named: true as const,
+    variant,
     fields,
     indexType(indexType?: Type) { return indexType !== undefined ? index_signature_({ ...config, indexType: indexType }) : fields.index_type; },
     name(name?: Identifier) { return name !== undefined ? index_signature_({ ...config, name: name }) : fields.name; },
@@ -3344,9 +3368,12 @@ export function variable_declarator_(
     type: config.type,
     value: config.value,
   };
+  // Variant inference from field presence
+  const variant = 'name';
   return {
     type: 'variable_declarator' as const,
     named: true as const,
+    variant,
     fields,
     name(name?: DestructuringPattern | Identifier) { return name !== undefined ? variable_declarator_({ ...config, name: name }) : fields.name; },
     typeField(type_?: TypeAnnotation) { return type_ !== undefined ? variable_declarator_({ ...config, type: type_ }) : fields.type; },

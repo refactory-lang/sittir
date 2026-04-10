@@ -139,9 +139,40 @@ export function emitFactory(config: {
 		}
 	}
 
+	// Variant inference for nodes with multiple structural variants
+	const modelVariants = node.variants;
+	const hasMultipleVariants = modelVariants && modelVariants.length > 1;
+	if (hasMultipleVariants && !childrenOnlySlot) {
+		// Infer variant from which fields are present in config
+		lines.push(`  // Variant inference from field presence`);
+		for (let i = modelVariants.length - 1; i >= 0; i--) {
+			const v = modelVariants[i]!;
+			// Find a field unique to this variant (or detect token)
+			const uniqueFields = [...v.fields.keys()].filter(f =>
+				modelVariants.every((other, j) => j === i || !other.fields.has(f))
+			);
+			if (uniqueFields.length > 0 && hasFields) {
+				const camel = fields.find(fd => fd.name === uniqueFields[0])?.propertyName ?? toFieldName(uniqueFields[0]!);
+				if (i === modelVariants.length - 1) {
+					lines.push(`  const variant = config${hasRequiredFields ? '' : '?'}.${camel} !== undefined ? '${v.name}' : '${modelVariants[0]!.name}';`);
+				}
+			} else if (v.detectToken && hasFields) {
+				// Use detect token if available (check operator/keyword override fields)
+				// This is a best-effort heuristic
+			}
+		}
+		// Fallback: if we couldn't generate inference, use first variant
+		if (!lines[lines.length - 1]?.includes('const variant')) {
+			lines.push(`  const variant = '${modelVariants[0]!.name}';`);
+		}
+	}
+
 	lines.push(`  return {`);
 	lines.push(`    type: '${node.kind}' as const,`);
 	lines.push(`    named: true as const,`);
+	if (hasMultipleVariants && !childrenOnlySlot) {
+		lines.push(`    variant,`);
+	}
 	if (hasFields) {
 		lines.push(`    fields,`);
 	}

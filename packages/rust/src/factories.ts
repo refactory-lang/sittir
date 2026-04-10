@@ -115,9 +115,12 @@ export function array_expression_(
     attributes: config?.attributes,
     elements: config?.elements,
   };
+  // Variant inference from field presence
+  const variant = 'semi';
   return {
     type: 'array_expression' as const,
     named: true as const,
+    variant,
     fields,
     length(length?: Expression) { return length !== undefined ? array_expression_({ ...config, length: length }) : fields.length; },
     attributes(...attributes: (AttributeItem)[]) { return attributes.length ? array_expression_({ ...config, attributes: attributes }) : fields.attributes; },
@@ -234,9 +237,12 @@ export function attribute_(
     value: config.value,
   };
   const children = config.children ? [config.children] : [];
+  // Variant inference from field presence
+  const variant = config.arguments !== undefined ? 'arguments' : 'value';
   return {
     type: 'attribute' as const,
     named: true as const,
+    variant,
     fields,
     children,
     arguments(arguments_?: TokenTree) { return arguments_ !== undefined ? attribute_({ ...config, arguments: arguments_ }) : fields.arguments; },
@@ -988,9 +994,12 @@ export function field_pattern_(
     pattern: config.pattern,
     mutable_specifier: config.mutableSpecifier,
   };
+  // Variant inference from field presence
+  const variant = config.pattern !== undefined ? 'colon' : 'name';
   return {
     type: 'field_pattern' as const,
     named: true as const,
+    variant,
     fields,
     name(name?: FieldIdentifier | ShorthandFieldIdentifier) { return name !== undefined ? field_pattern_({ ...config, name: name }) : fields.name; },
     pattern(pattern?: Pattern) { return pattern !== undefined ? field_pattern_({ ...config, pattern: pattern }) : fields.pattern; },
@@ -1185,9 +1194,12 @@ export function function_type_(
     for_lifetimes: config.forLifetimes,
     function_modifiers: config.functionModifiers,
   };
+  // Variant inference from field presence
+  const variant = config.functionModifiers !== undefined ? 'fn' : 'trait';
   return {
     type: 'function_type' as const,
     named: true as const,
+    variant,
     fields,
     parameters(parameters?: Parameters) { return parameters !== undefined ? function_type_({ ...config, parameters: parameters }) : fields.parameters; },
     returnType(returnType?: Type) { return returnType !== undefined ? function_type_({ ...config, returnType: returnType }) : fields.return_type; },
@@ -1630,9 +1642,12 @@ export function macro_definition_(
     name: config.name,
     rules: config.rules,
   };
+  // Variant inference from field presence
+  const variant = 'paren';
   return {
     type: 'macro_definition' as const,
     named: true as const,
+    variant,
     fields,
     name(name?: Identifier) { return name !== undefined ? macro_definition_({ ...config, name: name }) : fields.name; },
     rules(...rules: (MacroRule)[]) { return rules.length ? macro_definition_({ ...config, rules: rules }) : fields.rules; },
@@ -1863,9 +1878,12 @@ export function or_pattern_(
     left: config.left,
     right: config.right,
   };
+  // Variant inference from field presence
+  const variant = 'left';
   return {
     type: 'or_pattern' as const,
     named: true as const,
+    variant,
     fields,
     left(left?: Pattern) { return left !== undefined ? or_pattern_({ ...config, left: left }) : fields.left; },
     right(right?: Pattern) { return right !== undefined ? or_pattern_({ ...config, right: right }) : fields.right; },
@@ -2047,9 +2065,12 @@ export function range_pattern_(
     left: config?.left,
     right: config?.right,
   };
+  // Variant inference from field presence
+  const variant = 'right';
   return {
     type: 'range_pattern' as const,
     named: true as const,
+    variant,
     fields,
     left(left?: LiteralPattern | Path) { return left !== undefined ? range_pattern_({ ...config, left: left }) : fields.left; },
     right(right?: LiteralPattern | Path) { return right !== undefined ? range_pattern_({ ...config, right: right }) : fields.right; },
@@ -2456,9 +2477,12 @@ export function struct_item_(
     visibility_modifier: config.visibilityModifier,
     where_clause: config.whereClause,
   };
+  // Variant inference from field presence
+  const variant = 'where_clause';
   return {
     type: 'struct_item' as const,
     named: true as const,
+    variant,
     fields,
     body(body?: FieldDeclarationList | OrderedFieldDeclarationList) { return body !== undefined ? struct_item_({ ...config, body: body }) : fields.body; },
     name(name?: TypeIdentifier) { return name !== undefined ? struct_item_({ ...config, name: name }) : fields.name; },
@@ -3136,9 +3160,12 @@ export function visibility_modifier_(
     in: config?.in,
   };
   const children = config?.children ? [config?.children] : [];
+  // Variant inference from field presence
+  const variant = config?.pub !== undefined ? 'pub' : 'v0';
   return {
     type: 'visibility_modifier' as const,
     named: true as const,
+    variant,
     fields,
     children,
     pub(pub?: 'pub') { return pub !== undefined ? visibility_modifier_({ ...config, pub: pub }) : fields.pub; },

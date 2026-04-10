@@ -195,34 +195,39 @@ function pickTemplate(
 	node: AnyNodeData,
 	varPattern: RegExp,
 ): string | null {
-	let bestTemplate: string | null = null;
-	let bestResolved = -1;
-
-	for (const tmpl of templates) {
+	// Sort by specificity: more variables = more specific, try first.
+	// This ensures variant templates with more fields are preferred
+	// over fallback templates with fewer fields.
+	const scored = templates.map(tmpl => {
 		let total = 0;
 		let resolved = 0;
 		const tpl = tmpl.endsWith('\n') ? tmpl.slice(0, -1) : tmpl;
-		tpl.replace(varPattern, (_match: string, pfx: string, name: string) => {
+		tpl.replace(varPattern, (_match: string, _pfx: string, name: string) => {
 			const fieldKey = name.toLowerCase();
 			total++;
-			// Check fields
 			if (node.fields?.[fieldKey] !== undefined) { resolved++; return ''; }
-			// Check children by kind (for $$ and $$$ prefixed)
 			if (fieldKey === 'children' && node.children) { resolved++; return ''; }
 			if (node.children && Array.isArray(node.children)) {
 				if (node.children.some((c: any) => c?.type === fieldKey)) { resolved++; return ''; }
 			}
 			return '';
 		});
-		// All variables resolved — use this template
-		if (total > 0 && resolved === total) return tmpl;
-		// Track best partial match
-		if (resolved > bestResolved) {
-			bestResolved = resolved;
-			bestTemplate = tmpl;
-		}
+		return { tmpl, total, resolved };
+	});
+
+	// Sort: fully resolved first, then by total variable count descending (most specific first)
+	scored.sort((a, b) => {
+		const aFull = a.total > 0 && a.resolved === a.total ? 1 : 0;
+		const bFull = b.total > 0 && b.resolved === b.total ? 1 : 0;
+		if (aFull !== bFull) return bFull - aFull;
+		return b.total - a.total;
+	});
+
+	// Return first fully resolved, or best partial
+	for (const s of scored) {
+		if (s.total > 0 && s.resolved === s.total) return s.tmpl;
 	}
-	return bestTemplate;
+	return scored[0]?.tmpl ?? null;
 }
 
 /** Render a clause sub-template. If any variable is absent, omit the entire clause. */

@@ -140,9 +140,12 @@ export function assignment_(
     right: config.right,
     type: config.type,
   };
+  // Variant inference from field presence
+  const variant = 'right';
   return {
     type: 'assignment' as const,
     named: true as const,
+    variant,
     fields,
     left(left?: LeftHandSide | Pattern | PatternList) { return left !== undefined ? assignment_({ ...config, left: left }) : fields.left; },
     right(right?: Assignment | AugmentedAssignment | Expression | ExpressionList | PatternList | RightHandSide | Yield) { return right !== undefined ? assignment_({ ...config, right: right }) : fields.right; },
@@ -1052,9 +1055,12 @@ export function future_import_statement_(
   const fields = {
     name: config.name,
   };
+  // Variant inference from field presence
+  const variant = 'comma';
   return {
     type: 'future_import_statement' as const,
     named: true as const,
+    variant,
     fields,
     name(...name: (AliasedImport | DottedName)[]) { return name.length ? future_import_statement_({ ...config, name: name }) : fields.name; },
     render() { return render(this); },
@@ -1674,9 +1680,12 @@ export function print_statement_(
     argument: config?.argument,
     chevron: config?.chevron,
   };
+  // Variant inference from field presence
+  const variant = 'chevron';
   return {
     type: 'print_statement' as const,
     named: true as const,
+    variant,
     fields,
     argument(...argument: (Expression)[]) { return argument.length ? print_statement_({ ...config, argument: argument }) : fields.argument; },
     chevron(chevron?: Chevron) { return chevron !== undefined ? print_statement_({ ...config, chevron: chevron }) : fields.chevron; },
