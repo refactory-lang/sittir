@@ -814,7 +814,7 @@ describe('expression_statement', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.expressionStatement(ir.identifier('test_children') as any as any);
+    const node = ir.expressionStatement(ir.identifier('test_children') as any);
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -1131,7 +1131,7 @@ describe('function_modifiers', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.functionModifiers({ async: 'async' as any, default: 'default' as any, const: 'const' as any, unsafe: 'unsafe' as any, children: [] } as any);
+    const node = ir.functionModifiers({ async: 'async' as any, default: 'default' as any, const: 'const' as any, unsafe: 'unsafe' as any, children: [] });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });

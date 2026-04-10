@@ -60,9 +60,7 @@ rules:
   enum_variant_list:
     template: "{$$$CHILDREN}"
     joinBy: ","
-  expression_statement:
-    - $CHILDREN;
-    - $CHILDREN
+  expression_statement: $CHILDREN;
   extern_crate_declaration:
     template: $VISIBILITY_MODIFIER extern $CRATE $NAME $ALIAS_CLAUSE;
     alias_clause: as $ALIAS
@@ -91,7 +89,7 @@ rules:
   function_item:
     template: $VISIBILITY_MODIFIER $FUNCTION_MODIFIERS fn $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE_CLAUSE $WHERE_CLAUSE $BODY
     return_type_clause: -> $RETURN_TYPE
-  function_modifiers: $ASYNC $$$CHILDREN
+  function_modifiers: $ASYNC $DEFAULT $CONST $UNSAFE $$$CHILDREN
   function_signature_item:
     template: $VISIBILITY_MODIFIER $FUNCTION_MODIFIERS fn $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE_CLAUSE $WHERE_CLAUSE;
     return_type_clause: -> $RETURN_TYPE
@@ -172,18 +170,19 @@ rules:
     - $START $OPERATOR
     - $OPERATOR
   range_pattern:
-    - $LEFT...$RIGHT
-    - $LEFT..=$RIGHT
-    - $LEFT..$RIGHT
-    - $LEFT..
-    - ..=$RIGHT
-    - ..$RIGHT
+    variants:
+      ellipsis: $LEFT...$RIGHT
+      dotdot: $LEFT..
+      tok_2e2e3d: ..=$RIGHT
+    detect:
+      ellipsis: ...
+      dotdot: ..
+      tok_2e2e3d: ..=
   raw_string_literal: $RAW_STRING_LITERAL_START $STRING_CONTENT $RAW_STRING_LITERAL_END
   ref_pattern: ref $CHILDREN
   reference_expression:
     - "&raw const $VALUE"
     - "&raw $MUTABLE_SPECIFIER $VALUE"
-    - "&$MUTABLE_SPECIFIER $VALUE"
   reference_pattern: "&$MUTABLE_SPECIFIER $PATTERN"
   reference_type: "&$LIFETIME $MUTABLE_SPECIFIER $TYPE"
   removed_trait_bound: ?$CHILDREN
@@ -204,7 +203,6 @@ rules:
   struct_expression: $NAME $BODY
   struct_item:
     - $VISIBILITY_MODIFIER struct $NAME $TYPE_PARAMETERS $WHERE_CLAUSE $BODY
-    - $VISIBILITY_MODIFIER struct $NAME $TYPE_PARAMETERS $BODY $WHERE_CLAUSE;
     - $VISIBILITY_MODIFIER struct $NAME $TYPE_PARAMETERS;
   struct_pattern:
     template: $TYPE{$$$CHILDREN}

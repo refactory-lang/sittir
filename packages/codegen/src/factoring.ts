@@ -58,15 +58,26 @@ export function factorRule(
 		variants.push(v);
 	}
 
-	// Deduplicate by field set signature (not template string — templates aren't generated yet)
+	// Step 1: Dedup exact duplicates (same field set + same structural literals)
 	const unique = deduplicateVariants(variants);
 
-	// Name the variants
+	// Step 2: Name variants and compute detectTokens (relative to deduped set)
 	for (let i = 0; i < unique.length; i++) {
 		unique[i]!.name = nameVariant(unique[i]!, i, unique);
 	}
 
-	return unique;
+	// Step 3: Collapse same-field-set groups that can't produce named variant templates.
+	// Named variants require ALL variants in a same-field-set group to have detectTokens.
+	// Groups without full coverage produce string[] templates where pickTemplate handles
+	// selection — no variant factories needed.
+	const collapsed = collapseSameFieldSetVariants(unique);
+
+	// Step 4: Re-name after collapse (set may have changed)
+	for (let i = 0; i < collapsed.length; i++) {
+		collapsed[i]!.name = nameVariant(collapsed[i]!, i, collapsed);
+	}
+
+	return collapsed;
 }
 
 // ---------------------------------------------------------------------------
@@ -441,13 +452,17 @@ function extractContentKinds(content: GrammarRule): string[] {
 /**
  * Build a StructuralVariant with field/literal metadata from a resolved grammar rule.
  * The template field is left empty — the rules emitter generates it via ruleToTemplate.
+ *
+ * Only **structural** literals (outside FIELD nodes) are collected. Literals inside
+ * FIELD content (e.g. operator tokens in `field('operator', choice('+', '-', ...))`)
+ * are already captured by the field and don't distinguish variant structure.
  */
 function buildVariantMetadata(rule: GrammarRule, ctx: FactorContext): StructuralVariant {
 	const fields = new Map<string, { required: boolean; multiple: boolean; contentKinds?: string[] }>();
 	const literals = new Map<number, string>();
 	let litPos = 0;
 
-	function walk(r: GrammarRule) {
+	function walk(r: GrammarRule, insideField: boolean) {
 		switch (r.type) {
 			case 'FIELD': {
 				const contentKinds = extractContentKinds(r.content);
@@ -456,39 +471,41 @@ function buildVariantMetadata(rule: GrammarRule, ctx: FactorContext): Structural
 					multiple: ctx.fieldMultiple.get(r.name) ?? false,
 					...(contentKinds.length > 0 ? { contentKinds } : {}),
 				});
-				walk(r.content);
+				walk(r.content, true);
 				break;
 			}
 			case 'STRING':
-				literals.set(litPos++, r.value);
+				if (!insideField) {
+					literals.set(litPos++, r.value);
+				}
 				break;
 			case 'SEQ':
-				for (const m of r.members) walk(m);
+				for (const m of r.members) walk(m, insideField);
 				break;
 			case 'CHOICE':
-				for (const m of r.members) walk(m);
+				for (const m of r.members) walk(m, insideField);
 				break;
 			case 'REPEAT':
 			case 'REPEAT1':
-				walk(r.content);
+				walk(r.content, insideField);
 				break;
 			case 'PREC':
 			case 'PREC_LEFT':
 			case 'PREC_RIGHT':
 			case 'PREC_DYNAMIC':
-				walk(r.content);
+				walk(r.content, insideField);
 				break;
 			case 'TOKEN':
 			case 'IMMEDIATE_TOKEN':
-				walk(r.content);
+				walk(r.content, insideField);
 				break;
 			case 'ALIAS':
-				walk(r.content);
+				walk(r.content, insideField);
 				break;
 			case 'SYMBOL':
 				// Inline hidden rules to capture fields from _import_list etc.
 				if (r.name.startsWith('_') && ctx.grammarRules[r.name] && containsFields(ctx.grammarRules[r.name]!, ctx)) {
-					walk(ctx.grammarRules[r.name]!);
+					walk(ctx.grammarRules[r.name]!, insideField);
 				}
 				break;
 			case 'BLANK':
@@ -496,7 +513,7 @@ function buildVariantMetadata(rule: GrammarRule, ctx: FactorContext): Structural
 				break;
 		}
 	}
-	walk(rule);
+	walk(rule, false);
 
 	return {
 		name: '',
@@ -513,10 +530,10 @@ function buildVariantMetadata(rule: GrammarRule, ctx: FactorContext): Structural
 // Deduplication + naming
 // ---------------------------------------------------------------------------
 
+/** Dedup exact duplicates: same field set + same structural literals. */
 function deduplicateVariants(variants: StructuralVariant[]): StructuralVariant[] {
 	if (variants.length <= 1) return variants;
 
-	// Deduplicate by field set signature (fields present + their literals)
 	const seen = new Map<string, StructuralVariant>();
 	for (const v of variants) {
 		const fieldKey = [...v.fields.keys()].sort().join(',');
@@ -527,6 +544,51 @@ function deduplicateVariants(variants: StructuralVariant[]): StructuralVariant[]
 		}
 	}
 	return [...seen.values()];
+}
+
+/**
+ * Collapse same-field-set variant groups that can't produce named variant templates.
+ *
+ * Named variants require every variant in the group to have a detectToken (a structural
+ * literal unique to that variant). Without full coverage, the template emitter produces
+ * string[] and pickTemplate selects by field presence — no variant factory needed.
+ *
+ * Preserves original variant ordering.
+ */
+function collapseSameFieldSetVariants(variants: StructuralVariant[]): StructuralVariant[] {
+	if (variants.length <= 1) return variants;
+
+	// Group by field set, preserving encounter order
+	const fieldSetGroups = new Map<string, StructuralVariant[]>();
+	for (const v of variants) {
+		const key = [...v.fields.keys()].sort().join(',');
+		const group = fieldSetGroups.get(key) ?? [];
+		group.push(v);
+		fieldSetGroups.set(key, group);
+	}
+
+	// Determine which groups keep all variants (named variant potential)
+	const keepAll = new Set<string>();
+	for (const [key, group] of fieldSetGroups) {
+		if (group.length <= 1) continue;
+		if (group.every(v => v.detectToken != null)) keepAll.add(key);
+	}
+
+	// Walk original order: keep all or collapse to first representative
+	const seen = new Set<string>();
+	const result: StructuralVariant[] = [];
+	for (const v of variants) {
+		const key = [...v.fields.keys()].sort().join(',');
+		const group = fieldSetGroups.get(key)!;
+		if (group.length <= 1 || keepAll.has(key)) {
+			result.push(v);
+		} else if (!seen.has(key)) {
+			result.push(v);
+			seen.add(key);
+		}
+	}
+
+	return result;
 }
 
 function nameVariant(variant: StructuralVariant, index: number, all: StructuralVariant[]): string {

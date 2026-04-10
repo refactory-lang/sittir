@@ -1195,7 +1195,7 @@ describe('for_statement', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.forStatement({ body: ir.debuggerStatement('test') as any, condition: [ir.identifier('test_condition') as any], increment: ir.identifier('test_increment') as any, initializer: ir.identifier('test_initializer') as any } as any);
+    const node = ir.forStatement({ body: ir.debuggerStatement('test') as any, condition: [ir.identifier('test_condition') as any], increment: ir.identifier('test_increment') as any, initializer: ir.identifier('test_initializer') as any });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -1499,7 +1499,7 @@ describe('import_clause', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.importClause({ defaultImport: ir.identifier('test_default_import') as any, namedImports: ir.identifier('test_named_imports') as any } as any);
+    const node = ir.importClause({ defaultImport: ir.identifier('test_default_import') as any, namedImports: ir.identifier('test_named_imports') as any });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -3421,7 +3421,7 @@ describe('yield_expression', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.yieldExpression({ expression: ir.identifier('test_expression') as any } as any);
+    const node = ir.yieldExpression({ expression: ir.identifier('test_expression') as any });
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });

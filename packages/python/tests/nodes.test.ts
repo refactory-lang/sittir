@@ -807,7 +807,7 @@ describe('expression_list', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.expressionList(ir.identifier('test_children') as any as any);
+    const node = ir.expressionList(ir.identifier('test_children') as any);
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -829,7 +829,7 @@ describe('expression_statement', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.expressionStatement(ir.identifier('test_children') as any as any);
+    const node = ir.expressionStatement(ir.identifier('test_children') as any);
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -1678,7 +1678,7 @@ describe('pattern_list', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.patternList(ir.identifier('test_children') as any as any);
+    const node = ir.patternList(ir.identifier('test_children') as any);
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -2315,7 +2315,7 @@ describe('yield', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.yield(ir.identifier('test_children') as any as any);
+    const node = ir.yield(ir.identifier('test_children') as any);
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });

@@ -39,9 +39,7 @@ rules:
       $BODY
   class_pattern: $DOTTED_NAME($$$ARGUMENTS $$$CHILDREN)
   comparison_operator: $LEFT $$$OPERATORS $$$COMPARATORS
-  complex_pattern:
-    - $REAL+$IMAGINARY
-    - $REAL-$IMAGINARY
+  complex_pattern: $REAL+$IMAGINARY
   concatenated_string: $$$CHILDREN
   conditional_expression: $BODY if $CONDITION else $ALTERNATIVE
   constrained_type: $BASE_TYPE:$CONSTRAINT
@@ -73,9 +71,7 @@ rules:
     template: exec $CODE $$$CHILDREN
     joinBy: ","
   expression_list:
-    template:
-      - $$$CHILDREN,
-      - $$$CHILDREN
+    template: $$$CHILDREN,
     joinBy: ","
   expression_statement:
     template: $$$CHILDREN
@@ -93,9 +89,7 @@ rules:
       def $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE_CLAUSE:
         $BODY
     return_type_clause: -> $RETURN_TYPE
-  future_import_statement:
-    - from __future__ import $$$NAME
-    - from __future__ import($$$NAME)
+  future_import_statement: from __future__ import $$$NAME
   generator_expression: ($BODY $CHILDREN)
   generic_type: $IDENTIFIER $TYPE_PARAMETER
   global_statement:
@@ -136,9 +130,7 @@ rules:
   parenthesized_expression: ($CHILDREN)
   parenthesized_list_splat: ($CHILDREN)
   pattern_list:
-    template:
-      - $$$CHILDREN,
-      - $$$CHILDREN
+    template: $$$CHILDREN,
     joinBy: ","
   print_statement:
     template:
@@ -156,8 +148,6 @@ rules:
   splat_pattern:
     - "*$IDENTIFIER"
     - "*_"
-    - "**$IDENTIFIER"
-    - "**_"
   splat_type:
     variants:
       star: "*$IDENTIFIER"
@@ -197,14 +187,10 @@ rules:
 
       $ALTERNATIVE
   with_clause:
-    template:
-      - $$$CHILDREN
-      - ($$$CHILDREN)
+    template: $$$CHILDREN
     joinBy: ","
   with_item: $VALUE
   with_statement: |-
     with $WITH_CLAUSE:
       $BODY
-  yield:
-    - yield from $CHILDREN
-    - yield $CHILDREN
+  yield: yield from $CHILDREN

@@ -354,6 +354,8 @@ export function mergeOverrides(
  * Detect and log override candidates.
  * - Same-kind positional: SEQ(X, X) where X is the same symbol → "needs synthetic names"
  * - Discriminator tokens: CHOICE branches identical after token removal
+ * - Keyword alternatives: CHOICE of bare STRING tokens (mutually exclusive keywords
+ *   that should be a named override field, like static/abstract/accessor)
  */
 export function detectOverrideCandidates(
 	models: Map<string, NodeModel>,
@@ -372,13 +374,27 @@ export function detectOverrideCandidates(
 			console.log(`[overrides] ${kind}: needs synthetic names — same-kind positional children: ${duplicates.join(', ')}`);
 		}
 
-		// Check for discriminator tokens in CHOICE branches
+		// Check for discriminator tokens in CHOICE branches (top-level)
 		if (rule.type === 'CHOICE' && rule.members.length > 1) {
 			const stripped = rule.members.map(m => stripTokens(m));
 			const signatures = stripped.map(s => JSON.stringify(s));
 			const uniqueSigs = new Set(signatures);
 			if (uniqueSigs.size < signatures.length) {
 				console.log(`[overrides] ${kind}: discriminator token detected — CHOICE branches identical after token removal`);
+			}
+		}
+
+		// Check for keyword alternative CHOICEs nested anywhere in the rule.
+		// A CHOICE of 2+ bare STRING tokens (possibly with BLANK for optionality)
+		// outside any FIELD node is a keyword discriminator that needs an override
+		// field name. Bare STRINGs are const string symbols.
+		const kwAlts = findKeywordAlternatives(rule, grammar.rules);
+		for (const kw of kwAlts) {
+			// Filter noise: skip single-char punctuation and very large groups
+			// (e.g. JavaScript reserved-word-as-property-name in `object`)
+			const isKeywordGroup = kw.length <= 6 && kw.every(k => /^[a-zA-Z_]\w*$/.test(k));
+			if (isKeywordGroup) {
+				console.log(`[overrides] ${kind}: needs_name — keyword alternatives [${kw.join(', ')}] not captured by any field`);
 			}
 		}
 	}
@@ -399,6 +415,156 @@ function findDuplicateSymbols(symbols: string[]): string[] {
 	const counts = new Map<string, number>();
 	for (const s of symbols) counts.set(s, (counts.get(s) ?? 0) + 1);
 	return [...counts.entries()].filter(([, c]) => c > 1).map(([s]) => s);
+}
+
+/**
+ * Walk a rule tree and find keyword alternative patterns not captured by any FIELD.
+ * Two patterns detected:
+ *
+ * 1. **Sibling keywords**: CHOICE(STR("a"), STR("b"), BLANK?) — bare STRING tokens
+ *    as direct alternatives in one CHOICE.
+ *
+ * 2. **Leading keywords**: CHOICE(SEQ(CHOICE(STR("a"),BLANK),...), SEQ(CHOICE(STR("b"),BLANK),...))
+ *    — each branch of a non-optional CHOICE starts with a different keyword STRING.
+ *    The keyword is the first non-BLANK STRING reachable from the branch head.
+ *
+ * Bare STRINGs are const string symbols — they should be named override fields.
+ * Returns an array of keyword groups, each being the string values.
+ */
+function findKeywordAlternatives(
+	rule: GrammarRule,
+	grammarRules: Record<string, GrammarRule>,
+): string[][] {
+	const results: string[][] = [];
+
+	function walk(r: GrammarRule, insideField: boolean) {
+		switch (r.type) {
+			case 'FIELD':
+				walk(r.content, true);
+				break;
+			case 'CHOICE': {
+				if (!insideField) {
+					// Pattern 1: sibling keywords — CHOICE(STR, STR, ...)
+					const siblingKws: string[] = [];
+					for (const m of r.members) {
+						const s = unwrapToString(m);
+						if (s !== null) siblingKws.push(s);
+					}
+					if (siblingKws.length >= 2) {
+						results.push(siblingKws);
+					}
+
+					// Pattern 2: leading keywords — each branch starts with a unique keyword
+					const hasBlank = r.members.some(m => m.type === 'BLANK');
+					if (!hasBlank && r.members.length >= 2) {
+						const leadingKws: string[] = [];
+						let allHaveLead = true;
+						for (const m of r.members) {
+							const kw = extractLeadingKeyword(m);
+							if (kw !== null) leadingKws.push(kw);
+							else allHaveLead = false;
+						}
+						// Only report if all branches have a leading keyword and they differ
+						if (allHaveLead && leadingKws.length >= 2 && new Set(leadingKws).size === leadingKws.length) {
+							results.push(leadingKws);
+						}
+					}
+				}
+				// Recurse into branches for nested CHOICEs
+				for (const m of r.members) walk(m, insideField);
+				break;
+			}
+			case 'SEQ':
+				for (const m of r.members) walk(m, insideField);
+				break;
+			case 'REPEAT':
+			case 'REPEAT1':
+				walk(r.content, insideField);
+				break;
+			case 'PREC':
+			case 'PREC_LEFT':
+			case 'PREC_RIGHT':
+			case 'PREC_DYNAMIC':
+				walk(r.content, insideField);
+				break;
+			case 'TOKEN':
+			case 'IMMEDIATE_TOKEN':
+				walk(r.content, insideField);
+				break;
+			case 'ALIAS':
+				walk(r.content, insideField);
+				break;
+			case 'SYMBOL':
+				// Inline hidden rules that are structural (SEQ, REPEAT, etc.)
+				// but skip supertypes (CHOICE of mostly SYMBOLs) — those expand
+				// to contextual keywords like default/union/gen that are noise.
+				if (r.name.startsWith('_') && grammarRules[r.name]) {
+					const hidden = grammarRules[r.name]!;
+					if (!isSupertype(hidden)) {
+						walk(hidden, insideField);
+					}
+				}
+				break;
+			default:
+				break;
+		}
+	}
+	walk(rule, false);
+	return results;
+}
+
+/**
+ * Check if a rule is a supertype — a CHOICE where most members are SYMBOLs.
+ * Supertypes expand to type unions (e.g. _expression → many node kinds)
+ * and their contextual keyword members are noise for keyword detection.
+ */
+function isSupertype(rule: GrammarRule): boolean {
+	let r = rule;
+	// Unwrap PREC
+	while (r.type === 'PREC' || r.type === 'PREC_LEFT' || r.type === 'PREC_RIGHT' || r.type === 'PREC_DYNAMIC') r = r.content;
+	if (r.type !== 'CHOICE') return false;
+	const symbolCount = r.members.filter(m => {
+		let u = m;
+		while (u.type === 'PREC' || u.type === 'PREC_LEFT' || u.type === 'PREC_RIGHT' || u.type === 'PREC_DYNAMIC') u = u.content;
+		return u.type === 'SYMBOL' || u.type === 'ALIAS';
+	}).length;
+	// If >50% of members are symbols, it's a supertype/union
+	return symbolCount > r.members.length / 2;
+}
+
+/** Unwrap PREC wrappers to reach a STRING, or return null. */
+function unwrapToString(rule: GrammarRule): string | null {
+	if (rule.type === 'STRING') return rule.value;
+	if (rule.type === 'BLANK') return null;
+	if (rule.type === 'PREC' || rule.type === 'PREC_LEFT' || rule.type === 'PREC_RIGHT' || rule.type === 'PREC_DYNAMIC') {
+		return unwrapToString(rule.content);
+	}
+	return null;
+}
+
+/**
+ * Extract the leading keyword from a CHOICE branch.
+ * Handles: SEQ(CHOICE(STR("kw"), BLANK), ...) or just CHOICE(STR("kw"), BLANK).
+ * Returns the keyword string or null if the branch doesn't start with one.
+ */
+function extractLeadingKeyword(rule: GrammarRule): string | null {
+	// Direct: CHOICE(STR("kw"), BLANK)
+	if (rule.type === 'CHOICE') {
+		const strs = rule.members.filter(m => m.type === 'STRING');
+		const hasBlank = rule.members.some(m => m.type === 'BLANK');
+		if (strs.length === 1 && hasBlank) return (strs[0] as { value: string }).value;
+		// Direct STRING in a non-optional CHOICE — already handled by sibling pattern
+		return null;
+	}
+	// SEQ: check first member
+	if (rule.type === 'SEQ' && rule.members.length > 0) {
+		return extractLeadingKeyword(rule.members[0]!);
+	}
+	// PREC wrappers
+	if (rule.type === 'PREC' || rule.type === 'PREC_LEFT' || rule.type === 'PREC_RIGHT' || rule.type === 'PREC_DYNAMIC') {
+		return extractLeadingKeyword(rule.content);
+	}
+	return null;
 }
 
 /** Strip STRING nodes from a rule tree (for discriminator detection). */

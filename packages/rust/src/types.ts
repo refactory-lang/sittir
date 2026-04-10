@@ -409,7 +409,7 @@ export interface BaseFieldInitializer {
   readonly type: 'base_field_initializer';
   readonly children: Expression;
 }
-export interface BinaryExpressionTok_2626 {
+export interface BinaryExpression {
   readonly type: 'binary_expression';
   readonly fields: {
     readonly left: Expression;
@@ -417,143 +417,6 @@ export interface BinaryExpressionTok_2626 {
     readonly right: Expression;
   };
 }
-export interface BinaryExpressionTok_7c7c {
-  readonly type: 'binary_expression';
-  readonly fields: {
-    readonly left: Expression;
-    readonly operator: '!=' | '%' | '&' | '&&' | '*' | '+' | '-' | '/' | '<' | '<<' | '<=' | '==' | '>' | '>=' | '>>' | '^' | '|' | '||';
-    readonly right: Expression;
-  };
-}
-export interface BinaryExpressionAmp {
-  readonly type: 'binary_expression';
-  readonly fields: {
-    readonly left: Expression;
-    readonly operator: '!=' | '%' | '&' | '&&' | '*' | '+' | '-' | '/' | '<' | '<<' | '<=' | '==' | '>' | '>=' | '>>' | '^' | '|' | '||';
-    readonly right: Expression;
-  };
-}
-export interface BinaryExpressionPipe {
-  readonly type: 'binary_expression';
-  readonly fields: {
-    readonly left: Expression;
-    readonly operator: '!=' | '%' | '&' | '&&' | '*' | '+' | '-' | '/' | '<' | '<<' | '<=' | '==' | '>' | '>=' | '>>' | '^' | '|' | '||';
-    readonly right: Expression;
-  };
-}
-export interface BinaryExpressionCaret {
-  readonly type: 'binary_expression';
-  readonly fields: {
-    readonly left: Expression;
-    readonly operator: '!=' | '%' | '&' | '&&' | '*' | '+' | '-' | '/' | '<' | '<<' | '<=' | '==' | '>' | '>=' | '>>' | '^' | '|' | '||';
-    readonly right: Expression;
-  };
-}
-export interface BinaryExpressionTok_3d3d {
-  readonly type: 'binary_expression';
-  readonly fields: {
-    readonly left: Expression;
-    readonly operator: '!=' | '%' | '&' | '&&' | '*' | '+' | '-' | '/' | '<' | '<<' | '<=' | '==' | '>' | '>=' | '>>' | '^' | '|' | '||';
-    readonly right: Expression;
-  };
-}
-export interface BinaryExpressionTok_213d {
-  readonly type: 'binary_expression';
-  readonly fields: {
-    readonly left: Expression;
-    readonly operator: '!=' | '%' | '&' | '&&' | '*' | '+' | '-' | '/' | '<' | '<<' | '<=' | '==' | '>' | '>=' | '>>' | '^' | '|' | '||';
-    readonly right: Expression;
-  };
-}
-export interface BinaryExpressionAngle {
-  readonly type: 'binary_expression';
-  readonly fields: {
-    readonly left: Expression;
-    readonly operator: '!=' | '%' | '&' | '&&' | '*' | '+' | '-' | '/' | '<' | '<<' | '<=' | '==' | '>' | '>=' | '>>' | '^' | '|' | '||';
-    readonly right: Expression;
-  };
-}
-export interface BinaryExpressionTok_3c3d {
-  readonly type: 'binary_expression';
-  readonly fields: {
-    readonly left: Expression;
-    readonly operator: '!=' | '%' | '&' | '&&' | '*' | '+' | '-' | '/' | '<' | '<<' | '<=' | '==' | '>' | '>=' | '>>' | '^' | '|' | '||';
-    readonly right: Expression;
-  };
-}
-export interface BinaryExpressionCloseAngle {
-  readonly type: 'binary_expression';
-  readonly fields: {
-    readonly left: Expression;
-    readonly operator: '!=' | '%' | '&' | '&&' | '*' | '+' | '-' | '/' | '<' | '<<' | '<=' | '==' | '>' | '>=' | '>>' | '^' | '|' | '||';
-    readonly right: Expression;
-  };
-}
-export interface BinaryExpressionTok_3e3d {
-  readonly type: 'binary_expression';
-  readonly fields: {
-    readonly left: Expression;
-    readonly operator: '!=' | '%' | '&' | '&&' | '*' | '+' | '-' | '/' | '<' | '<<' | '<=' | '==' | '>' | '>=' | '>>' | '^' | '|' | '||';
-    readonly right: Expression;
-  };
-}
-export interface BinaryExpressionTok_3c3c {
-  readonly type: 'binary_expression';
-  readonly fields: {
-    readonly left: Expression;
-    readonly operator: '!=' | '%' | '&' | '&&' | '*' | '+' | '-' | '/' | '<' | '<<' | '<=' | '==' | '>' | '>=' | '>>' | '^' | '|' | '||';
-    readonly right: Expression;
-  };
-}
-export interface BinaryExpressionTok_3e3e {
-  readonly type: 'binary_expression';
-  readonly fields: {
-    readonly left: Expression;
-    readonly operator: '!=' | '%' | '&' | '&&' | '*' | '+' | '-' | '/' | '<' | '<<' | '<=' | '==' | '>' | '>=' | '>>' | '^' | '|' | '||';
-    readonly right: Expression;
-  };
-}
-export interface BinaryExpressionPlus {
-  readonly type: 'binary_expression';
-  readonly fields: {
-    readonly left: Expression;
-    readonly operator: '!=' | '%' | '&' | '&&' | '*' | '+' | '-' | '/' | '<' | '<<' | '<=' | '==' | '>' | '>=' | '>>' | '^' | '|' | '||';
-    readonly right: Expression;
-  };
-}
-export interface BinaryExpressionMinus {
-  readonly type: 'binary_expression';
-  readonly fields: {
-    readonly left: Expression;
-    readonly operator: '!=' | '%' | '&' | '&&' | '*' | '+' | '-' | '/' | '<' | '<<' | '<=' | '==' | '>' | '>=' | '>>' | '^' | '|' | '||';
-    readonly right: Expression;
-  };
-}
-export interface BinaryExpressionStar {
-  readonly type: 'binary_expression';
-  readonly fields: {
-    readonly left: Expression;
-    readonly operator: '!=' | '%' | '&' | '&&' | '*' | '+' | '-' | '/' | '<' | '<<' | '<=' | '==' | '>' | '>=' | '>>' | '^' | '|' | '||';
-    readonly right: Expression;
-  };
-}
-export interface BinaryExpressionSlash {
-  readonly type: 'binary_expression';
-  readonly fields: {
-    readonly left: Expression;
-    readonly operator: '!=' | '%' | '&' | '&&' | '*' | '+' | '-' | '/' | '<' | '<<' | '<=' | '==' | '>' | '>=' | '>>' | '^' | '|' | '||';
-    readonly right: Expression;
-  };
-}
-export interface BinaryExpressionPercent {
-  readonly type: 'binary_expression';
-  readonly fields: {
-    readonly left: Expression;
-    readonly operator: '!=' | '%' | '&' | '&&' | '*' | '+' | '-' | '/' | '<' | '<<' | '<=' | '==' | '>' | '>=' | '>>' | '^' | '|' | '||';
-    readonly right: Expression;
-  };
-}
-export type BinaryExpression = BinaryExpressionTok_2626 | BinaryExpressionTok_7c7c | BinaryExpressionAmp | BinaryExpressionPipe | BinaryExpressionCaret | BinaryExpressionTok_3d3d | BinaryExpressionTok_213d | BinaryExpressionAngle | BinaryExpressionTok_3c3d | BinaryExpressionCloseAngle | BinaryExpressionTok_3e3d | BinaryExpressionTok_3c3c | BinaryExpressionTok_3e3e | BinaryExpressionPlus | BinaryExpressionMinus | BinaryExpressionStar | BinaryExpressionSlash | BinaryExpressionPercent;
 export interface Block {
   readonly type: 'block';
   readonly fields: {
@@ -616,7 +479,7 @@ export interface ClosureParameters {
   readonly type: 'closure_parameters';
   readonly children?: readonly (Parameter | Pattern)[];
 }
-export interface CompoundAssignmentExprTok_2b3d {
+export interface CompoundAssignmentExpr {
   readonly type: 'compound_assignment_expr';
   readonly fields: {
     readonly left: Expression;
@@ -624,79 +487,6 @@ export interface CompoundAssignmentExprTok_2b3d {
     readonly right: Expression;
   };
 }
-export interface CompoundAssignmentExprTok_2d3d {
-  readonly type: 'compound_assignment_expr';
-  readonly fields: {
-    readonly left: Expression;
-    readonly operator: '%=' | '&=' | '*=' | '+=' | '-=' | '/=' | '<<=' | '>>=' | '^=' | '|=';
-    readonly right: Expression;
-  };
-}
-export interface CompoundAssignmentExprTok_2a3d {
-  readonly type: 'compound_assignment_expr';
-  readonly fields: {
-    readonly left: Expression;
-    readonly operator: '%=' | '&=' | '*=' | '+=' | '-=' | '/=' | '<<=' | '>>=' | '^=' | '|=';
-    readonly right: Expression;
-  };
-}
-export interface CompoundAssignmentExprTok_2f3d {
-  readonly type: 'compound_assignment_expr';
-  readonly fields: {
-    readonly left: Expression;
-    readonly operator: '%=' | '&=' | '*=' | '+=' | '-=' | '/=' | '<<=' | '>>=' | '^=' | '|=';
-    readonly right: Expression;
-  };
-}
-export interface CompoundAssignmentExprTok_253d {
-  readonly type: 'compound_assignment_expr';
-  readonly fields: {
-    readonly left: Expression;
-    readonly operator: '%=' | '&=' | '*=' | '+=' | '-=' | '/=' | '<<=' | '>>=' | '^=' | '|=';
-    readonly right: Expression;
-  };
-}
-export interface CompoundAssignmentExprTok_263d {
-  readonly type: 'compound_assignment_expr';
-  readonly fields: {
-    readonly left: Expression;
-    readonly operator: '%=' | '&=' | '*=' | '+=' | '-=' | '/=' | '<<=' | '>>=' | '^=' | '|=';
-    readonly right: Expression;
-  };
-}
-export interface CompoundAssignmentExprTok_7c3d {
-  readonly type: 'compound_assignment_expr';
-  readonly fields: {
-    readonly left: Expression;
-    readonly operator: '%=' | '&=' | '*=' | '+=' | '-=' | '/=' | '<<=' | '>>=' | '^=' | '|=';
-    readonly right: Expression;
-  };
-}
-export interface CompoundAssignmentExprTok_5e3d {
-  readonly type: 'compound_assignment_expr';
-  readonly fields: {
-    readonly left: Expression;
-    readonly operator: '%=' | '&=' | '*=' | '+=' | '-=' | '/=' | '<<=' | '>>=' | '^=' | '|=';
-    readonly right: Expression;
-  };
-}
-export interface CompoundAssignmentExprTok_3c3c3d {
-  readonly type: 'compound_assignment_expr';
-  readonly fields: {
-    readonly left: Expression;
-    readonly operator: '%=' | '&=' | '*=' | '+=' | '-=' | '/=' | '<<=' | '>>=' | '^=' | '|=';
-    readonly right: Expression;
-  };
-}
-export interface CompoundAssignmentExprTok_3e3e3d {
-  readonly type: 'compound_assignment_expr';
-  readonly fields: {
-    readonly left: Expression;
-    readonly operator: '%=' | '&=' | '*=' | '+=' | '-=' | '/=' | '<<=' | '>>=' | '^=' | '|=';
-    readonly right: Expression;
-  };
-}
-export type CompoundAssignmentExpr = CompoundAssignmentExprTok_2b3d | CompoundAssignmentExprTok_2d3d | CompoundAssignmentExprTok_2a3d | CompoundAssignmentExprTok_2f3d | CompoundAssignmentExprTok_253d | CompoundAssignmentExprTok_263d | CompoundAssignmentExprTok_7c3d | CompoundAssignmentExprTok_5e3d | CompoundAssignmentExprTok_3c3c3d | CompoundAssignmentExprTok_3e3e3d;
 export interface ConstBlock {
   readonly type: 'const_block';
   readonly fields: {
@@ -763,15 +553,10 @@ export interface EnumVariantList {
   readonly type: 'enum_variant_list';
   readonly children?: readonly (AttributeItem | EnumVariant)[];
 }
-export interface ExpressionStatementSemi {
+export interface ExpressionStatement {
   readonly type: 'expression_statement';
   readonly children: Expression | ExpressionEndingWithBlock;
 }
-export interface ExpressionStatementV1 {
-  readonly type: 'expression_statement';
-  readonly children: Expression | ExpressionEndingWithBlock;
-}
-export type ExpressionStatement = ExpressionStatementSemi | ExpressionStatementV1;
 export interface ExternCrateDeclaration {
   readonly type: 'extern_crate_declaration';
   readonly fields: {
@@ -876,42 +661,16 @@ export interface FunctionItem {
     readonly where_clause?: WhereClause;
   };
 }
-export interface FunctionModifiersAsync {
+export interface FunctionModifiers {
   readonly type: 'function_modifiers';
   readonly fields: {
     readonly async?: 'async';
+    readonly default?: 'default';
+    readonly const?: 'const';
+    readonly unsafe?: 'unsafe';
   };
   readonly children?: readonly (ExternModifier)[];
 }
-export interface FunctionModifiersDefault {
-  readonly type: 'function_modifiers';
-  readonly fields: {
-    readonly async?: 'async';
-  };
-  readonly children?: readonly (ExternModifier)[];
-}
-export interface FunctionModifiersConst {
-  readonly type: 'function_modifiers';
-  readonly fields: {
-    readonly async?: 'async';
-  };
-  readonly children?: readonly (ExternModifier)[];
-}
-export interface FunctionModifiersUnsafe {
-  readonly type: 'function_modifiers';
-  readonly fields: {
-    readonly async?: 'async';
-  };
-  readonly children?: readonly (ExternModifier)[];
-}
-export interface FunctionModifiersV4 {
-  readonly type: 'function_modifiers';
-  readonly fields: {
-    readonly async?: 'async';
-  };
-  readonly children?: readonly (ExternModifier)[];
-}
-export type FunctionModifiers = FunctionModifiersAsync | FunctionModifiersDefault | FunctionModifiersConst | FunctionModifiersUnsafe | FunctionModifiersV4;
 export interface FunctionSignatureItem {
   readonly type: 'function_signature_item';
   readonly fields: {
@@ -1236,7 +995,7 @@ export interface QualifiedType {
     readonly type: Type;
   };
 }
-export interface RangeExpressionV0 {
+export interface RangeExpressionEnd {
   readonly type: 'range_expression';
   readonly fields: {
     readonly start?: Expression;
@@ -1244,36 +1003,20 @@ export interface RangeExpressionV0 {
     readonly end?: Expression;
   };
 }
-export interface RangeExpressionEllipsis {
-  readonly type: 'range_expression';
-  readonly fields: {
-    readonly start?: Expression;
-    readonly operator: '..' | '..=' | '...';
-    readonly end?: Expression;
-  };
-}
-export interface RangeExpressionTok_2e2e3d {
-  readonly type: 'range_expression';
-  readonly fields: {
-    readonly start?: Expression;
-    readonly operator: '..' | '..=' | '...';
-    readonly end?: Expression;
-  };
-}
-export interface RangeExpressionV3 {
+export interface RangeExpressionV1 {
   readonly type: 'range_expression';
   readonly fields: {
     readonly start?: Expression;
     readonly operator: '..' | '..=' | '...';
   };
 }
-export interface RangeExpressionV4 {
+export interface RangeExpressionV2 {
   readonly type: 'range_expression';
   readonly fields: {
     readonly operator: '..' | '..=' | '...';
   };
 }
-export type RangeExpression = RangeExpressionV0 | RangeExpressionEllipsis | RangeExpressionTok_2e2e3d | RangeExpressionV3 | RangeExpressionV4;
+export type RangeExpression = RangeExpressionEnd | RangeExpressionV1 | RangeExpressionV2;
 export interface RangePatternEllipsis {
   readonly type: 'range_pattern';
   readonly fields: {
@@ -1281,39 +1024,19 @@ export interface RangePatternEllipsis {
     readonly right?: LiteralPattern | Path;
   };
 }
-export interface RangePatternV1 {
-  readonly type: 'range_pattern';
-  readonly fields: {
-    readonly left?: LiteralPattern | Path;
-    readonly right?: LiteralPattern | Path;
-  };
-}
-export interface RangePatternV2 {
-  readonly type: 'range_pattern';
-  readonly fields: {
-    readonly left?: LiteralPattern | Path;
-    readonly right?: LiteralPattern | Path;
-  };
-}
-export interface RangePatternV3 {
+export interface RangePatternDotdot {
   readonly type: 'range_pattern';
   readonly fields: {
     readonly left?: LiteralPattern | Path;
   };
 }
-export interface RangePatternV4 {
+export interface RangePatternTok_2e2e3d {
   readonly type: 'range_pattern';
   readonly fields: {
     readonly right?: LiteralPattern | Path;
   };
 }
-export interface RangePatternV5 {
-  readonly type: 'range_pattern';
-  readonly fields: {
-    readonly right?: LiteralPattern | Path;
-  };
-}
-export type RangePattern = RangePatternEllipsis | RangePatternV1 | RangePatternV2 | RangePatternV3 | RangePatternV4 | RangePatternV5;
+export type RangePattern = RangePatternEllipsis | RangePatternDotdot | RangePatternTok_2e2e3d;
 export interface RawStringLiteral {
   readonly type: 'raw_string_literal';
   readonly fields: {
@@ -1332,21 +1055,14 @@ export interface ReferenceExpressionConst {
     readonly value: Expression;
   };
 }
-export interface ReferenceExpressionV1 {
+export interface ReferenceExpressionMutableSpecifier {
   readonly type: 'reference_expression';
   readonly fields: {
     readonly value: Expression;
     readonly mutable_specifier?: MutableSpecifier;
   };
 }
-export interface ReferenceExpressionV2 {
-  readonly type: 'reference_expression';
-  readonly fields: {
-    readonly value: Expression;
-    readonly mutable_specifier?: MutableSpecifier;
-  };
-}
-export type ReferenceExpression = ReferenceExpressionConst | ReferenceExpressionV1 | ReferenceExpressionV2;
+export type ReferenceExpression = ReferenceExpressionConst | ReferenceExpressionMutableSpecifier;
 export interface ReferencePattern {
   readonly type: 'reference_pattern';
   readonly fields: {
@@ -1438,7 +1154,7 @@ export interface StructExpression {
     readonly name: GenericTypeWithTurbofish | ScopedTypeIdentifier | TypeIdentifier;
   };
 }
-export interface StructItemV0 {
+export interface StructItemWhereClause {
   readonly type: 'struct_item';
   readonly fields: {
     readonly body?: FieldDeclarationList;
@@ -1448,17 +1164,7 @@ export interface StructItemV0 {
     readonly where_clause?: WhereClause;
   };
 }
-export interface StructItemV1 {
-  readonly type: 'struct_item';
-  readonly fields: {
-    readonly body?: OrderedFieldDeclarationList;
-    readonly name: TypeIdentifier;
-    readonly type_parameters?: TypeParameters;
-    readonly visibility_modifier?: VisibilityModifier;
-    readonly where_clause?: WhereClause;
-  };
-}
-export interface StructItemV2 {
+export interface StructItemSemi {
   readonly type: 'struct_item';
   readonly fields: {
     readonly name: TypeIdentifier;
@@ -1466,7 +1172,7 @@ export interface StructItemV2 {
     readonly visibility_modifier?: VisibilityModifier;
   };
 }
-export type StructItem = StructItemV0 | StructItemV1 | StructItemV2;
+export type StructItem = StructItemWhereClause | StructItemSemi;
 export interface StructPattern {
   readonly type: 'struct_pattern';
   readonly fields: {
@@ -1627,28 +1333,13 @@ export interface TypeParameters {
   readonly type: 'type_parameters';
   readonly children: readonly (AttributeItem | ConstParameter | LifetimeParameter | Metavariable | TypeParameter)[];
 }
-export interface UnaryExpressionMinus {
+export interface UnaryExpression {
   readonly type: 'unary_expression';
   readonly fields: {
     readonly operator: '-' | '*' | '!';
     readonly operand: Expression;
   };
 }
-export interface UnaryExpressionStar {
-  readonly type: 'unary_expression';
-  readonly fields: {
-    readonly operator: '-' | '*' | '!';
-    readonly operand: Expression;
-  };
-}
-export interface UnaryExpressionBang {
-  readonly type: 'unary_expression';
-  readonly fields: {
-    readonly operator: '-' | '*' | '!';
-    readonly operand: Expression;
-  };
-}
-export type UnaryExpression = UnaryExpressionMinus | UnaryExpressionStar | UnaryExpressionBang;
 export interface UnionItem {
   readonly type: 'union_item';
   readonly fields: {
@@ -1704,7 +1395,7 @@ export interface VisibilityModifierV0 {
   readonly type: 'visibility_modifier';
   readonly children?: Path;
 }
-export interface VisibilityModifierPub {
+export interface VisibilityModifierParen {
   readonly type: 'visibility_modifier';
   readonly fields: {
     readonly pub?: 'pub';
@@ -1712,138 +1403,18 @@ export interface VisibilityModifierPub {
   };
   readonly children?: Path;
 }
-export type VisibilityModifier = VisibilityModifierV0 | VisibilityModifierPub;
+export type VisibilityModifier = VisibilityModifierV0 | VisibilityModifierParen;
 export interface WhereClause {
   readonly type: 'where_clause';
   readonly children?: readonly (WherePredicate)[];
 }
-export interface WherePredicateV0 {
+export interface WherePredicate {
   readonly type: 'where_predicate';
   readonly fields: {
     readonly bounds: TraitBounds;
-    readonly left: Lifetime;
+    readonly left: ArrayType | GenericType | HigherRankedTraitBound | Lifetime | PointerType | PrimitiveType | ReferenceType | ScopedTypeIdentifier | TupleType | TypeIdentifier;
   };
 }
-export interface WherePredicateU8 {
-  readonly type: 'where_predicate';
-  readonly fields: {
-    readonly bounds: TraitBounds;
-    readonly left: PrimitiveType;
-  };
-}
-export interface WherePredicateI8 {
-  readonly type: 'where_predicate';
-  readonly fields: {
-    readonly bounds: TraitBounds;
-    readonly left: PrimitiveType;
-  };
-}
-export interface WherePredicateU16 {
-  readonly type: 'where_predicate';
-  readonly fields: {
-    readonly bounds: TraitBounds;
-    readonly left: PrimitiveType;
-  };
-}
-export interface WherePredicateI16 {
-  readonly type: 'where_predicate';
-  readonly fields: {
-    readonly bounds: TraitBounds;
-    readonly left: PrimitiveType;
-  };
-}
-export interface WherePredicateU32 {
-  readonly type: 'where_predicate';
-  readonly fields: {
-    readonly bounds: TraitBounds;
-    readonly left: PrimitiveType;
-  };
-}
-export interface WherePredicateI32 {
-  readonly type: 'where_predicate';
-  readonly fields: {
-    readonly bounds: TraitBounds;
-    readonly left: PrimitiveType;
-  };
-}
-export interface WherePredicateU64 {
-  readonly type: 'where_predicate';
-  readonly fields: {
-    readonly bounds: TraitBounds;
-    readonly left: PrimitiveType;
-  };
-}
-export interface WherePredicateI64 {
-  readonly type: 'where_predicate';
-  readonly fields: {
-    readonly bounds: TraitBounds;
-    readonly left: PrimitiveType;
-  };
-}
-export interface WherePredicateU128 {
-  readonly type: 'where_predicate';
-  readonly fields: {
-    readonly bounds: TraitBounds;
-    readonly left: PrimitiveType;
-  };
-}
-export interface WherePredicateI128 {
-  readonly type: 'where_predicate';
-  readonly fields: {
-    readonly bounds: TraitBounds;
-    readonly left: PrimitiveType;
-  };
-}
-export interface WherePredicateIsize {
-  readonly type: 'where_predicate';
-  readonly fields: {
-    readonly bounds: TraitBounds;
-    readonly left: PrimitiveType;
-  };
-}
-export interface WherePredicateUsize {
-  readonly type: 'where_predicate';
-  readonly fields: {
-    readonly bounds: TraitBounds;
-    readonly left: PrimitiveType;
-  };
-}
-export interface WherePredicateF32 {
-  readonly type: 'where_predicate';
-  readonly fields: {
-    readonly bounds: TraitBounds;
-    readonly left: PrimitiveType;
-  };
-}
-export interface WherePredicateF64 {
-  readonly type: 'where_predicate';
-  readonly fields: {
-    readonly bounds: TraitBounds;
-    readonly left: PrimitiveType;
-  };
-}
-export interface WherePredicateBool {
-  readonly type: 'where_predicate';
-  readonly fields: {
-    readonly bounds: TraitBounds;
-    readonly left: PrimitiveType;
-  };
-}
-export interface WherePredicateStr {
-  readonly type: 'where_predicate';
-  readonly fields: {
-    readonly bounds: TraitBounds;
-    readonly left: PrimitiveType;
-  };
-}
-export interface WherePredicateChar {
-  readonly type: 'where_predicate';
-  readonly fields: {
-    readonly bounds: TraitBounds;
-    readonly left: PrimitiveType;
-  };
-}
-export type WherePredicate = WherePredicateV0 | WherePredicateU8 | WherePredicateI8 | WherePredicateU16 | WherePredicateI16 | WherePredicateU32 | WherePredicateI32 | WherePredicateU64 | WherePredicateI64 | WherePredicateU128 | WherePredicateI128 | WherePredicateIsize | WherePredicateUsize | WherePredicateF32 | WherePredicateF64 | WherePredicateBool | WherePredicateStr | WherePredicateChar;
 export interface WhileExpression {
   readonly type: 'while_expression';
   readonly fields: {
@@ -1977,25 +1548,7 @@ export type AttributeConfig = ConfigOf<Attribute>;
 export type AttributeItemConfig = ConfigOf<AttributeItem>;
 export type AwaitExpressionConfig = ConfigOf<AwaitExpression>;
 export type BaseFieldInitializerConfig = ConfigOf<BaseFieldInitializer>;
-export type BinaryExpressionTok_2626Config = ConfigOf<BinaryExpressionTok_2626>;
-export type BinaryExpressionTok_7c7cConfig = ConfigOf<BinaryExpressionTok_7c7c>;
-export type BinaryExpressionAmpConfig = ConfigOf<BinaryExpressionAmp>;
-export type BinaryExpressionPipeConfig = ConfigOf<BinaryExpressionPipe>;
-export type BinaryExpressionCaretConfig = ConfigOf<BinaryExpressionCaret>;
-export type BinaryExpressionTok_3d3dConfig = ConfigOf<BinaryExpressionTok_3d3d>;
-export type BinaryExpressionTok_213dConfig = ConfigOf<BinaryExpressionTok_213d>;
-export type BinaryExpressionAngleConfig = ConfigOf<BinaryExpressionAngle>;
-export type BinaryExpressionTok_3c3dConfig = ConfigOf<BinaryExpressionTok_3c3d>;
-export type BinaryExpressionCloseAngleConfig = ConfigOf<BinaryExpressionCloseAngle>;
-export type BinaryExpressionTok_3e3dConfig = ConfigOf<BinaryExpressionTok_3e3d>;
-export type BinaryExpressionTok_3c3cConfig = ConfigOf<BinaryExpressionTok_3c3c>;
-export type BinaryExpressionTok_3e3eConfig = ConfigOf<BinaryExpressionTok_3e3e>;
-export type BinaryExpressionPlusConfig = ConfigOf<BinaryExpressionPlus>;
-export type BinaryExpressionMinusConfig = ConfigOf<BinaryExpressionMinus>;
-export type BinaryExpressionStarConfig = ConfigOf<BinaryExpressionStar>;
-export type BinaryExpressionSlashConfig = ConfigOf<BinaryExpressionSlash>;
-export type BinaryExpressionPercentConfig = ConfigOf<BinaryExpressionPercent>;
-export type BinaryExpressionConfig = BinaryExpressionTok_2626Config | BinaryExpressionTok_7c7cConfig | BinaryExpressionAmpConfig | BinaryExpressionPipeConfig | BinaryExpressionCaretConfig | BinaryExpressionTok_3d3dConfig | BinaryExpressionTok_213dConfig | BinaryExpressionAngleConfig | BinaryExpressionTok_3c3dConfig | BinaryExpressionCloseAngleConfig | BinaryExpressionTok_3e3dConfig | BinaryExpressionTok_3c3cConfig | BinaryExpressionTok_3e3eConfig | BinaryExpressionPlusConfig | BinaryExpressionMinusConfig | BinaryExpressionStarConfig | BinaryExpressionSlashConfig | BinaryExpressionPercentConfig;
+export type BinaryExpressionConfig = ConfigOf<BinaryExpression>;
 export type BlockConfig = ConfigOf<Block>;
 export type BlockCommentConfig = ConfigOf<BlockComment>;
 export type BoundedTypeConfig = ConfigOf<BoundedType>;
@@ -2005,17 +1558,7 @@ export type CallExpressionConfig = ConfigOf<CallExpression>;
 export type CapturedPatternConfig = ConfigOf<CapturedPattern>;
 export type ClosureExpressionConfig = ConfigOf<ClosureExpression>;
 export type ClosureParametersConfig = ConfigOf<ClosureParameters>;
-export type CompoundAssignmentExprTok_2b3dConfig = ConfigOf<CompoundAssignmentExprTok_2b3d>;
-export type CompoundAssignmentExprTok_2d3dConfig = ConfigOf<CompoundAssignmentExprTok_2d3d>;
-export type CompoundAssignmentExprTok_2a3dConfig = ConfigOf<CompoundAssignmentExprTok_2a3d>;
-export type CompoundAssignmentExprTok_2f3dConfig = ConfigOf<CompoundAssignmentExprTok_2f3d>;
-export type CompoundAssignmentExprTok_253dConfig = ConfigOf<CompoundAssignmentExprTok_253d>;
-export type CompoundAssignmentExprTok_263dConfig = ConfigOf<CompoundAssignmentExprTok_263d>;
-export type CompoundAssignmentExprTok_7c3dConfig = ConfigOf<CompoundAssignmentExprTok_7c3d>;
-export type CompoundAssignmentExprTok_5e3dConfig = ConfigOf<CompoundAssignmentExprTok_5e3d>;
-export type CompoundAssignmentExprTok_3c3c3dConfig = ConfigOf<CompoundAssignmentExprTok_3c3c3d>;
-export type CompoundAssignmentExprTok_3e3e3dConfig = ConfigOf<CompoundAssignmentExprTok_3e3e3d>;
-export type CompoundAssignmentExprConfig = CompoundAssignmentExprTok_2b3dConfig | CompoundAssignmentExprTok_2d3dConfig | CompoundAssignmentExprTok_2a3dConfig | CompoundAssignmentExprTok_2f3dConfig | CompoundAssignmentExprTok_253dConfig | CompoundAssignmentExprTok_263dConfig | CompoundAssignmentExprTok_7c3dConfig | CompoundAssignmentExprTok_5e3dConfig | CompoundAssignmentExprTok_3c3c3dConfig | CompoundAssignmentExprTok_3e3e3dConfig;
+export type CompoundAssignmentExprConfig = ConfigOf<CompoundAssignmentExpr>;
 export type ConstBlockConfig = ConfigOf<ConstBlock>;
 export type ConstItemConfig = ConfigOf<ConstItem>;
 export type ConstParameterConfig = ConfigOf<ConstParameter>;
@@ -2026,9 +1569,7 @@ export type ElseClauseConfig = ConfigOf<ElseClause>;
 export type EnumItemConfig = ConfigOf<EnumItem>;
 export type EnumVariantConfig = ConfigOf<EnumVariant>;
 export type EnumVariantListConfig = ConfigOf<EnumVariantList>;
-export type ExpressionStatementSemiConfig = ConfigOf<ExpressionStatementSemi>;
-export type ExpressionStatementV1Config = ConfigOf<ExpressionStatementV1>;
-export type ExpressionStatementConfig = ExpressionStatementSemiConfig | ExpressionStatementV1Config;
+export type ExpressionStatementConfig = ConfigOf<ExpressionStatement>;
 export type ExternCrateDeclarationConfig = ConfigOf<ExternCrateDeclaration>;
 export type ExternModifierConfig = ConfigOf<ExternModifier>;
 export type FieldDeclarationConfig = ConfigOf<FieldDeclaration>;
@@ -2045,12 +1586,7 @@ export type ForeignModItemSemiConfig = ConfigOf<ForeignModItemSemi>;
 export type ForeignModItemBodyConfig = ConfigOf<ForeignModItemBody>;
 export type ForeignModItemConfig = ForeignModItemSemiConfig | ForeignModItemBodyConfig;
 export type FunctionItemConfig = ConfigOf<FunctionItem>;
-export type FunctionModifiersAsyncConfig = ConfigOf<FunctionModifiersAsync>;
-export type FunctionModifiersDefaultConfig = ConfigOf<FunctionModifiersDefault>;
-export type FunctionModifiersConstConfig = ConfigOf<FunctionModifiersConst>;
-export type FunctionModifiersUnsafeConfig = ConfigOf<FunctionModifiersUnsafe>;
-export type FunctionModifiersV4Config = ConfigOf<FunctionModifiersV4>;
-export type FunctionModifiersConfig = FunctionModifiersAsyncConfig | FunctionModifiersDefaultConfig | FunctionModifiersConstConfig | FunctionModifiersUnsafeConfig | FunctionModifiersV4Config;
+export type FunctionModifiersConfig = ConfigOf<FunctionModifiers>;
 export type FunctionSignatureItemConfig = ConfigOf<FunctionSignatureItem>;
 export type FunctionTypeTraitConfig = ConfigOf<FunctionTypeTrait>;
 export type FunctionTypeFnConfig = ConfigOf<FunctionTypeFn>;
@@ -2103,25 +1639,19 @@ export type PointerTypeConstConfig = ConfigOf<PointerTypeConst>;
 export type PointerTypeMutableSpecifierConfig = ConfigOf<PointerTypeMutableSpecifier>;
 export type PointerTypeConfig = PointerTypeConstConfig | PointerTypeMutableSpecifierConfig;
 export type QualifiedTypeConfig = ConfigOf<QualifiedType>;
-export type RangeExpressionV0Config = ConfigOf<RangeExpressionV0>;
-export type RangeExpressionEllipsisConfig = ConfigOf<RangeExpressionEllipsis>;
-export type RangeExpressionTok_2e2e3dConfig = ConfigOf<RangeExpressionTok_2e2e3d>;
-export type RangeExpressionV3Config = ConfigOf<RangeExpressionV3>;
-export type RangeExpressionV4Config = ConfigOf<RangeExpressionV4>;
-export type RangeExpressionConfig = RangeExpressionV0Config | RangeExpressionEllipsisConfig | RangeExpressionTok_2e2e3dConfig | RangeExpressionV3Config | RangeExpressionV4Config;
+export type RangeExpressionEndConfig = ConfigOf<RangeExpressionEnd>;
+export type RangeExpressionV1Config = ConfigOf<RangeExpressionV1>;
+export type RangeExpressionV2Config = ConfigOf<RangeExpressionV2>;
+export type RangeExpressionConfig = RangeExpressionEndConfig | RangeExpressionV1Config | RangeExpressionV2Config;
 export type RangePatternEllipsisConfig = ConfigOf<RangePatternEllipsis>;
-export type RangePatternV1Config = ConfigOf<RangePatternV1>;
-export type RangePatternV2Config = ConfigOf<RangePatternV2>;
-export type RangePatternV3Config = ConfigOf<RangePatternV3>;
-export type RangePatternV4Config = ConfigOf<RangePatternV4>;
-export type RangePatternV5Config = ConfigOf<RangePatternV5>;
-export type RangePatternConfig = RangePatternEllipsisConfig | RangePatternV1Config | RangePatternV2Config | RangePatternV3Config | RangePatternV4Config | RangePatternV5Config;
+export type RangePatternDotdotConfig = ConfigOf<RangePatternDotdot>;
+export type RangePatternTok_2e2e3dConfig = ConfigOf<RangePatternTok_2e2e3d>;
+export type RangePatternConfig = RangePatternEllipsisConfig | RangePatternDotdotConfig | RangePatternTok_2e2e3dConfig;
 export type RawStringLiteralConfig = ConfigOf<RawStringLiteral>;
 export type RefPatternConfig = ConfigOf<RefPattern>;
 export type ReferenceExpressionConstConfig = ConfigOf<ReferenceExpressionConst>;
-export type ReferenceExpressionV1Config = ConfigOf<ReferenceExpressionV1>;
-export type ReferenceExpressionV2Config = ConfigOf<ReferenceExpressionV2>;
-export type ReferenceExpressionConfig = ReferenceExpressionConstConfig | ReferenceExpressionV1Config | ReferenceExpressionV2Config;
+export type ReferenceExpressionMutableSpecifierConfig = ConfigOf<ReferenceExpressionMutableSpecifier>;
+export type ReferenceExpressionConfig = ReferenceExpressionConstConfig | ReferenceExpressionMutableSpecifierConfig;
 export type ReferencePatternConfig = ConfigOf<ReferencePattern>;
 export type ReferenceTypeConfig = ConfigOf<ReferenceType>;
 export type RemovedTraitBoundConfig = ConfigOf<RemovedTraitBound>;
@@ -2136,10 +1666,9 @@ export type SourceFileConfig = ConfigOf<SourceFile>;
 export type StaticItemConfig = ConfigOf<StaticItem>;
 export type StringLiteralConfig = ConfigOf<StringLiteral>;
 export type StructExpressionConfig = ConfigOf<StructExpression>;
-export type StructItemV0Config = ConfigOf<StructItemV0>;
-export type StructItemV1Config = ConfigOf<StructItemV1>;
-export type StructItemV2Config = ConfigOf<StructItemV2>;
-export type StructItemConfig = StructItemV0Config | StructItemV1Config | StructItemV2Config;
+export type StructItemWhereClauseConfig = ConfigOf<StructItemWhereClause>;
+export type StructItemSemiConfig = ConfigOf<StructItemSemi>;
+export type StructItemConfig = StructItemWhereClauseConfig | StructItemSemiConfig;
 export type StructPatternConfig = ConfigOf<StructPattern>;
 export type TokenBindingPatternConfig = ConfigOf<TokenBindingPattern>;
 export type TokenRepetitionPlusConfig = ConfigOf<TokenRepetitionPlus>;
@@ -2172,10 +1701,7 @@ export type TypeCastExpressionConfig = ConfigOf<TypeCastExpression>;
 export type TypeItemConfig = ConfigOf<TypeItem>;
 export type TypeParameterConfig = ConfigOf<TypeParameter>;
 export type TypeParametersConfig = ConfigOf<TypeParameters>;
-export type UnaryExpressionMinusConfig = ConfigOf<UnaryExpressionMinus>;
-export type UnaryExpressionStarConfig = ConfigOf<UnaryExpressionStar>;
-export type UnaryExpressionBangConfig = ConfigOf<UnaryExpressionBang>;
-export type UnaryExpressionConfig = UnaryExpressionMinusConfig | UnaryExpressionStarConfig | UnaryExpressionBangConfig;
+export type UnaryExpressionConfig = ConfigOf<UnaryExpression>;
 export type UnionItemConfig = ConfigOf<UnionItem>;
 export type UnsafeBlockConfig = ConfigOf<UnsafeBlock>;
 export type UseAsClauseConfig = ConfigOf<UseAsClause>;
@@ -2185,28 +1711,10 @@ export type UseListConfig = ConfigOf<UseList>;
 export type UseWildcardConfig = ConfigOf<UseWildcard>;
 export type VariadicParameterConfig = ConfigOf<VariadicParameter>;
 export type VisibilityModifierV0Config = ConfigOf<VisibilityModifierV0>;
-export type VisibilityModifierPubConfig = ConfigOf<VisibilityModifierPub>;
-export type VisibilityModifierConfig = VisibilityModifierV0Config | VisibilityModifierPubConfig;
+export type VisibilityModifierParenConfig = ConfigOf<VisibilityModifierParen>;
+export type VisibilityModifierConfig = VisibilityModifierV0Config | VisibilityModifierParenConfig;
 export type WhereClauseConfig = ConfigOf<WhereClause>;
-export type WherePredicateV0Config = ConfigOf<WherePredicateV0>;
-export type WherePredicateU8Config = ConfigOf<WherePredicateU8>;
-export type WherePredicateI8Config = ConfigOf<WherePredicateI8>;
-export type WherePredicateU16Config = ConfigOf<WherePredicateU16>;
-export type WherePredicateI16Config = ConfigOf<WherePredicateI16>;
-export type WherePredicateU32Config = ConfigOf<WherePredicateU32>;
-export type WherePredicateI32Config = ConfigOf<WherePredicateI32>;
-export type WherePredicateU64Config = ConfigOf<WherePredicateU64>;
-export type WherePredicateI64Config = ConfigOf<WherePredicateI64>;
-export type WherePredicateU128Config = ConfigOf<WherePredicateU128>;
-export type WherePredicateI128Config = ConfigOf<WherePredicateI128>;
-export type WherePredicateIsizeConfig = ConfigOf<WherePredicateIsize>;
-export type WherePredicateUsizeConfig = ConfigOf<WherePredicateUsize>;
-export type WherePredicateF32Config = ConfigOf<WherePredicateF32>;
-export type WherePredicateF64Config = ConfigOf<WherePredicateF64>;
-export type WherePredicateBoolConfig = ConfigOf<WherePredicateBool>;
-export type WherePredicateStrConfig = ConfigOf<WherePredicateStr>;
-export type WherePredicateCharConfig = ConfigOf<WherePredicateChar>;
-export type WherePredicateConfig = WherePredicateV0Config | WherePredicateU8Config | WherePredicateI8Config | WherePredicateU16Config | WherePredicateI16Config | WherePredicateU32Config | WherePredicateI32Config | WherePredicateU64Config | WherePredicateI64Config | WherePredicateU128Config | WherePredicateI128Config | WherePredicateIsizeConfig | WherePredicateUsizeConfig | WherePredicateF32Config | WherePredicateF64Config | WherePredicateBoolConfig | WherePredicateStrConfig | WherePredicateCharConfig;
+export type WherePredicateConfig = ConfigOf<WherePredicate>;
 export type WhileExpressionConfig = ConfigOf<WhileExpression>;
 export type YieldExpressionConfig = ConfigOf<YieldExpression>;
 
@@ -2391,25 +1899,7 @@ export type AttributeFromInput = FromInputOf<Attribute, LeafScalarMap, LeafStrin
 export type AttributeItemFromInput = FromInputOf<AttributeItem, LeafScalarMap, LeafStringMap>;
 export type AwaitExpressionFromInput = Expression;
 export type BaseFieldInitializerFromInput = Expression;
-export type BinaryExpressionTok_2626FromInput = FromInputOf<BinaryExpressionTok_2626, LeafScalarMap, LeafStringMap>;
-export type BinaryExpressionTok_7c7cFromInput = FromInputOf<BinaryExpressionTok_7c7c, LeafScalarMap, LeafStringMap>;
-export type BinaryExpressionAmpFromInput = FromInputOf<BinaryExpressionAmp, LeafScalarMap, LeafStringMap>;
-export type BinaryExpressionPipeFromInput = FromInputOf<BinaryExpressionPipe, LeafScalarMap, LeafStringMap>;
-export type BinaryExpressionCaretFromInput = FromInputOf<BinaryExpressionCaret, LeafScalarMap, LeafStringMap>;
-export type BinaryExpressionTok_3d3dFromInput = FromInputOf<BinaryExpressionTok_3d3d, LeafScalarMap, LeafStringMap>;
-export type BinaryExpressionTok_213dFromInput = FromInputOf<BinaryExpressionTok_213d, LeafScalarMap, LeafStringMap>;
-export type BinaryExpressionAngleFromInput = FromInputOf<BinaryExpressionAngle, LeafScalarMap, LeafStringMap>;
-export type BinaryExpressionTok_3c3dFromInput = FromInputOf<BinaryExpressionTok_3c3d, LeafScalarMap, LeafStringMap>;
-export type BinaryExpressionCloseAngleFromInput = FromInputOf<BinaryExpressionCloseAngle, LeafScalarMap, LeafStringMap>;
-export type BinaryExpressionTok_3e3dFromInput = FromInputOf<BinaryExpressionTok_3e3d, LeafScalarMap, LeafStringMap>;
-export type BinaryExpressionTok_3c3cFromInput = FromInputOf<BinaryExpressionTok_3c3c, LeafScalarMap, LeafStringMap>;
-export type BinaryExpressionTok_3e3eFromInput = FromInputOf<BinaryExpressionTok_3e3e, LeafScalarMap, LeafStringMap>;
-export type BinaryExpressionPlusFromInput = FromInputOf<BinaryExpressionPlus, LeafScalarMap, LeafStringMap>;
-export type BinaryExpressionMinusFromInput = FromInputOf<BinaryExpressionMinus, LeafScalarMap, LeafStringMap>;
-export type BinaryExpressionStarFromInput = FromInputOf<BinaryExpressionStar, LeafScalarMap, LeafStringMap>;
-export type BinaryExpressionSlashFromInput = FromInputOf<BinaryExpressionSlash, LeafScalarMap, LeafStringMap>;
-export type BinaryExpressionPercentFromInput = FromInputOf<BinaryExpressionPercent, LeafScalarMap, LeafStringMap>;
-export type BinaryExpressionFromInput = BinaryExpressionTok_2626FromInput | BinaryExpressionTok_7c7cFromInput | BinaryExpressionAmpFromInput | BinaryExpressionPipeFromInput | BinaryExpressionCaretFromInput | BinaryExpressionTok_3d3dFromInput | BinaryExpressionTok_213dFromInput | BinaryExpressionAngleFromInput | BinaryExpressionTok_3c3dFromInput | BinaryExpressionCloseAngleFromInput | BinaryExpressionTok_3e3dFromInput | BinaryExpressionTok_3c3cFromInput | BinaryExpressionTok_3e3eFromInput | BinaryExpressionPlusFromInput | BinaryExpressionMinusFromInput | BinaryExpressionStarFromInput | BinaryExpressionSlashFromInput | BinaryExpressionPercentFromInput;
+export type BinaryExpressionFromInput = FromInputOf<BinaryExpression, LeafScalarMap, LeafStringMap>;
 export type BlockFromInput = FromInputOf<Block, LeafScalarMap, LeafStringMap>;
 export type BlockCommentFromInput = FromInputOf<BlockComment, LeafScalarMap, LeafStringMap>;
 export type BoundedTypeFromInput = FromInputOf<BoundedType, LeafScalarMap, LeafStringMap>;
@@ -2419,17 +1909,7 @@ export type CallExpressionFromInput = FromInputOf<CallExpression, LeafScalarMap,
 export type CapturedPatternFromInput = FromInputOf<CapturedPattern, LeafScalarMap, LeafStringMap>;
 export type ClosureExpressionFromInput = FromInputOf<ClosureExpression, LeafScalarMap, LeafStringMap>;
 export type ClosureParametersFromInput = Parameter | Pattern;
-export type CompoundAssignmentExprTok_2b3dFromInput = FromInputOf<CompoundAssignmentExprTok_2b3d, LeafScalarMap, LeafStringMap>;
-export type CompoundAssignmentExprTok_2d3dFromInput = FromInputOf<CompoundAssignmentExprTok_2d3d, LeafScalarMap, LeafStringMap>;
-export type CompoundAssignmentExprTok_2a3dFromInput = FromInputOf<CompoundAssignmentExprTok_2a3d, LeafScalarMap, LeafStringMap>;
-export type CompoundAssignmentExprTok_2f3dFromInput = FromInputOf<CompoundAssignmentExprTok_2f3d, LeafScalarMap, LeafStringMap>;
-export type CompoundAssignmentExprTok_253dFromInput = FromInputOf<CompoundAssignmentExprTok_253d, LeafScalarMap, LeafStringMap>;
-export type CompoundAssignmentExprTok_263dFromInput = FromInputOf<CompoundAssignmentExprTok_263d, LeafScalarMap, LeafStringMap>;
-export type CompoundAssignmentExprTok_7c3dFromInput = FromInputOf<CompoundAssignmentExprTok_7c3d, LeafScalarMap, LeafStringMap>;
-export type CompoundAssignmentExprTok_5e3dFromInput = FromInputOf<CompoundAssignmentExprTok_5e3d, LeafScalarMap, LeafStringMap>;
-export type CompoundAssignmentExprTok_3c3c3dFromInput = FromInputOf<CompoundAssignmentExprTok_3c3c3d, LeafScalarMap, LeafStringMap>;
-export type CompoundAssignmentExprTok_3e3e3dFromInput = FromInputOf<CompoundAssignmentExprTok_3e3e3d, LeafScalarMap, LeafStringMap>;
-export type CompoundAssignmentExprFromInput = CompoundAssignmentExprTok_2b3dFromInput | CompoundAssignmentExprTok_2d3dFromInput | CompoundAssignmentExprTok_2a3dFromInput | CompoundAssignmentExprTok_2f3dFromInput | CompoundAssignmentExprTok_253dFromInput | CompoundAssignmentExprTok_263dFromInput | CompoundAssignmentExprTok_7c3dFromInput | CompoundAssignmentExprTok_5e3dFromInput | CompoundAssignmentExprTok_3c3c3dFromInput | CompoundAssignmentExprTok_3e3e3dFromInput;
+export type CompoundAssignmentExprFromInput = FromInputOf<CompoundAssignmentExpr, LeafScalarMap, LeafStringMap>;
 export type ConstBlockFromInput = FromInputOf<ConstBlock, LeafScalarMap, LeafStringMap>;
 export type ConstItemFromInput = FromInputOf<ConstItem, LeafScalarMap, LeafStringMap>;
 export type ConstParameterFromInput = FromInputOf<ConstParameter, LeafScalarMap, LeafStringMap>;
@@ -2457,12 +1937,7 @@ export type ForeignModItemSemiFromInput = FromInputOf<ForeignModItemSemi, LeafSc
 export type ForeignModItemBodyFromInput = FromInputOf<ForeignModItemBody, LeafScalarMap, LeafStringMap>;
 export type ForeignModItemFromInput = ForeignModItemSemiFromInput | ForeignModItemBodyFromInput;
 export type FunctionItemFromInput = FromInputOf<FunctionItem, LeafScalarMap, LeafStringMap>;
-export type FunctionModifiersAsyncFromInput = FromInputOf<FunctionModifiersAsync, LeafScalarMap, LeafStringMap>;
-export type FunctionModifiersDefaultFromInput = FromInputOf<FunctionModifiersDefault, LeafScalarMap, LeafStringMap>;
-export type FunctionModifiersConstFromInput = FromInputOf<FunctionModifiersConst, LeafScalarMap, LeafStringMap>;
-export type FunctionModifiersUnsafeFromInput = FromInputOf<FunctionModifiersUnsafe, LeafScalarMap, LeafStringMap>;
-export type FunctionModifiersV4FromInput = FromInputOf<FunctionModifiersV4, LeafScalarMap, LeafStringMap>;
-export type FunctionModifiersFromInput = FunctionModifiersAsyncFromInput | FunctionModifiersDefaultFromInput | FunctionModifiersConstFromInput | FunctionModifiersUnsafeFromInput | FunctionModifiersV4FromInput;
+export type FunctionModifiersFromInput = FromInputOf<FunctionModifiers, LeafScalarMap, LeafStringMap>;
 export type FunctionSignatureItemFromInput = FromInputOf<FunctionSignatureItem, LeafScalarMap, LeafStringMap>;
 export type FunctionTypeTraitFromInput = FromInputOf<FunctionTypeTrait, LeafScalarMap, LeafStringMap>;
 export type FunctionTypeFnFromInput = FromInputOf<FunctionTypeFn, LeafScalarMap, LeafStringMap>;
@@ -2515,25 +1990,19 @@ export type PointerTypeConstFromInput = FromInputOf<PointerTypeConst, LeafScalar
 export type PointerTypeMutableSpecifierFromInput = FromInputOf<PointerTypeMutableSpecifier, LeafScalarMap, LeafStringMap>;
 export type PointerTypeFromInput = PointerTypeConstFromInput | PointerTypeMutableSpecifierFromInput;
 export type QualifiedTypeFromInput = FromInputOf<QualifiedType, LeafScalarMap, LeafStringMap>;
-export type RangeExpressionV0FromInput = FromInputOf<RangeExpressionV0, LeafScalarMap, LeafStringMap>;
-export type RangeExpressionEllipsisFromInput = FromInputOf<RangeExpressionEllipsis, LeafScalarMap, LeafStringMap>;
-export type RangeExpressionTok_2e2e3dFromInput = FromInputOf<RangeExpressionTok_2e2e3d, LeafScalarMap, LeafStringMap>;
-export type RangeExpressionV3FromInput = FromInputOf<RangeExpressionV3, LeafScalarMap, LeafStringMap>;
-export type RangeExpressionV4FromInput = FromInputOf<RangeExpressionV4, LeafScalarMap, LeafStringMap>;
-export type RangeExpressionFromInput = RangeExpressionV0FromInput | RangeExpressionEllipsisFromInput | RangeExpressionTok_2e2e3dFromInput | RangeExpressionV3FromInput | RangeExpressionV4FromInput;
+export type RangeExpressionEndFromInput = FromInputOf<RangeExpressionEnd, LeafScalarMap, LeafStringMap>;
+export type RangeExpressionV1FromInput = FromInputOf<RangeExpressionV1, LeafScalarMap, LeafStringMap>;
+export type RangeExpressionV2FromInput = FromInputOf<RangeExpressionV2, LeafScalarMap, LeafStringMap>;
+export type RangeExpressionFromInput = RangeExpressionEndFromInput | RangeExpressionV1FromInput | RangeExpressionV2FromInput;
 export type RangePatternEllipsisFromInput = FromInputOf<RangePatternEllipsis, LeafScalarMap, LeafStringMap>;
-export type RangePatternV1FromInput = FromInputOf<RangePatternV1, LeafScalarMap, LeafStringMap>;
-export type RangePatternV2FromInput = FromInputOf<RangePatternV2, LeafScalarMap, LeafStringMap>;
-export type RangePatternV3FromInput = FromInputOf<RangePatternV3, LeafScalarMap, LeafStringMap>;
-export type RangePatternV4FromInput = FromInputOf<RangePatternV4, LeafScalarMap, LeafStringMap>;
-export type RangePatternV5FromInput = FromInputOf<RangePatternV5, LeafScalarMap, LeafStringMap>;
-export type RangePatternFromInput = RangePatternEllipsisFromInput | RangePatternV1FromInput | RangePatternV2FromInput | RangePatternV3FromInput | RangePatternV4FromInput | RangePatternV5FromInput;
+export type RangePatternDotdotFromInput = FromInputOf<RangePatternDotdot, LeafScalarMap, LeafStringMap>;
+export type RangePatternTok_2e2e3dFromInput = FromInputOf<RangePatternTok_2e2e3d, LeafScalarMap, LeafStringMap>;
+export type RangePatternFromInput = RangePatternEllipsisFromInput | RangePatternDotdotFromInput | RangePatternTok_2e2e3dFromInput;
 export type RawStringLiteralFromInput = FromInputOf<RawStringLiteral, LeafScalarMap, LeafStringMap>;
 export type RefPatternFromInput = Pattern;
 export type ReferenceExpressionConstFromInput = FromInputOf<ReferenceExpressionConst, LeafScalarMap, LeafStringMap>;
-export type ReferenceExpressionV1FromInput = FromInputOf<ReferenceExpressionV1, LeafScalarMap, LeafStringMap>;
-export type ReferenceExpressionV2FromInput = FromInputOf<ReferenceExpressionV2, LeafScalarMap, LeafStringMap>;
-export type ReferenceExpressionFromInput = ReferenceExpressionConstFromInput | ReferenceExpressionV1FromInput | ReferenceExpressionV2FromInput;
+export type ReferenceExpressionMutableSpecifierFromInput = FromInputOf<ReferenceExpressionMutableSpecifier, LeafScalarMap, LeafStringMap>;
+export type ReferenceExpressionFromInput = ReferenceExpressionConstFromInput | ReferenceExpressionMutableSpecifierFromInput;
 export type ReferencePatternFromInput = FromInputOf<ReferencePattern, LeafScalarMap, LeafStringMap>;
 export type ReferenceTypeFromInput = FromInputOf<ReferenceType, LeafScalarMap, LeafStringMap>;
 export type RemovedTraitBoundFromInput = Type;
@@ -2548,10 +2017,9 @@ export type SourceFileFromInput = FromInputOf<SourceFile, LeafScalarMap, LeafStr
 export type StaticItemFromInput = FromInputOf<StaticItem, LeafScalarMap, LeafStringMap>;
 export type StringLiteralFromInput = EscapeSequence | StringContent;
 export type StructExpressionFromInput = FromInputOf<StructExpression, LeafScalarMap, LeafStringMap>;
-export type StructItemV0FromInput = FromInputOf<StructItemV0, LeafScalarMap, LeafStringMap>;
-export type StructItemV1FromInput = FromInputOf<StructItemV1, LeafScalarMap, LeafStringMap>;
-export type StructItemV2FromInput = FromInputOf<StructItemV2, LeafScalarMap, LeafStringMap>;
-export type StructItemFromInput = StructItemV0FromInput | StructItemV1FromInput | StructItemV2FromInput;
+export type StructItemWhereClauseFromInput = FromInputOf<StructItemWhereClause, LeafScalarMap, LeafStringMap>;
+export type StructItemSemiFromInput = FromInputOf<StructItemSemi, LeafScalarMap, LeafStringMap>;
+export type StructItemFromInput = StructItemWhereClauseFromInput | StructItemSemiFromInput;
 export type StructPatternFromInput = FromInputOf<StructPattern, LeafScalarMap, LeafStringMap>;
 export type TokenBindingPatternFromInput = FromInputOf<TokenBindingPattern, LeafScalarMap, LeafStringMap>;
 export type TokenRepetitionFromInput = Crate | Identifier | Literal | Metavariable | MutableSpecifier | PrimitiveType | Self | Super | TokenRepetition | TokenTree;
@@ -2572,10 +2040,7 @@ export type TypeCastExpressionFromInput = FromInputOf<TypeCastExpression, LeafSc
 export type TypeItemFromInput = FromInputOf<TypeItem, LeafScalarMap, LeafStringMap>;
 export type TypeParameterFromInput = FromInputOf<TypeParameter, LeafScalarMap, LeafStringMap>;
 export type TypeParametersFromInput = AttributeItem | ConstParameter | LifetimeParameter | Metavariable | TypeParameter;
-export type UnaryExpressionMinusFromInput = FromInputOf<UnaryExpressionMinus, LeafScalarMap, LeafStringMap>;
-export type UnaryExpressionStarFromInput = FromInputOf<UnaryExpressionStar, LeafScalarMap, LeafStringMap>;
-export type UnaryExpressionBangFromInput = FromInputOf<UnaryExpressionBang, LeafScalarMap, LeafStringMap>;
-export type UnaryExpressionFromInput = UnaryExpressionMinusFromInput | UnaryExpressionStarFromInput | UnaryExpressionBangFromInput;
+export type UnaryExpressionFromInput = FromInputOf<UnaryExpression, LeafScalarMap, LeafStringMap>;
 export type UnionItemFromInput = FromInputOf<UnionItem, LeafScalarMap, LeafStringMap>;
 export type UnsafeBlockFromInput = FromInputOf<UnsafeBlock, LeafScalarMap, LeafStringMap>;
 export type UseAsClauseFromInput = FromInputOf<UseAsClause, LeafScalarMap, LeafStringMap>;
@@ -2585,28 +2050,10 @@ export type UseListFromInput = UseClause;
 export type UseWildcardFromInput = FromInputOf<UseWildcard, LeafScalarMap, LeafStringMap>;
 export type VariadicParameterFromInput = FromInputOf<VariadicParameter, LeafScalarMap, LeafStringMap>;
 export type VisibilityModifierV0FromInput = FromInputOf<VisibilityModifierV0, LeafScalarMap, LeafStringMap>;
-export type VisibilityModifierPubFromInput = FromInputOf<VisibilityModifierPub, LeafScalarMap, LeafStringMap>;
-export type VisibilityModifierFromInput = VisibilityModifierV0FromInput | VisibilityModifierPubFromInput;
+export type VisibilityModifierParenFromInput = FromInputOf<VisibilityModifierParen, LeafScalarMap, LeafStringMap>;
+export type VisibilityModifierFromInput = VisibilityModifierV0FromInput | VisibilityModifierParenFromInput;
 export type WhereClauseFromInput = WherePredicate;
-export type WherePredicateV0FromInput = FromInputOf<WherePredicateV0, LeafScalarMap, LeafStringMap>;
-export type WherePredicateU8FromInput = FromInputOf<WherePredicateU8, LeafScalarMap, LeafStringMap>;
-export type WherePredicateI8FromInput = FromInputOf<WherePredicateI8, LeafScalarMap, LeafStringMap>;
-export type WherePredicateU16FromInput = FromInputOf<WherePredicateU16, LeafScalarMap, LeafStringMap>;
-export type WherePredicateI16FromInput = FromInputOf<WherePredicateI16, LeafScalarMap, LeafStringMap>;
-export type WherePredicateU32FromInput = FromInputOf<WherePredicateU32, LeafScalarMap, LeafStringMap>;
-export type WherePredicateI32FromInput = FromInputOf<WherePredicateI32, LeafScalarMap, LeafStringMap>;
-export type WherePredicateU64FromInput = FromInputOf<WherePredicateU64, LeafScalarMap, LeafStringMap>;
-export type WherePredicateI64FromInput = FromInputOf<WherePredicateI64, LeafScalarMap, LeafStringMap>;
-export type WherePredicateU128FromInput = FromInputOf<WherePredicateU128, LeafScalarMap, LeafStringMap>;
-export type WherePredicateI128FromInput = FromInputOf<WherePredicateI128, LeafScalarMap, LeafStringMap>;
-export type WherePredicateIsizeFromInput = FromInputOf<WherePredicateIsize, LeafScalarMap, LeafStringMap>;
-export type WherePredicateUsizeFromInput = FromInputOf<WherePredicateUsize, LeafScalarMap, LeafStringMap>;
-export type WherePredicateF32FromInput = FromInputOf<WherePredicateF32, LeafScalarMap, LeafStringMap>;
-export type WherePredicateF64FromInput = FromInputOf<WherePredicateF64, LeafScalarMap, LeafStringMap>;
-export type WherePredicateBoolFromInput = FromInputOf<WherePredicateBool, LeafScalarMap, LeafStringMap>;
-export type WherePredicateStrFromInput = FromInputOf<WherePredicateStr, LeafScalarMap, LeafStringMap>;
-export type WherePredicateCharFromInput = FromInputOf<WherePredicateChar, LeafScalarMap, LeafStringMap>;
-export type WherePredicateFromInput = WherePredicateV0FromInput | WherePredicateU8FromInput | WherePredicateI8FromInput | WherePredicateU16FromInput | WherePredicateI16FromInput | WherePredicateU32FromInput | WherePredicateI32FromInput | WherePredicateU64FromInput | WherePredicateI64FromInput | WherePredicateU128FromInput | WherePredicateI128FromInput | WherePredicateIsizeFromInput | WherePredicateUsizeFromInput | WherePredicateF32FromInput | WherePredicateF64FromInput | WherePredicateBoolFromInput | WherePredicateStrFromInput | WherePredicateCharFromInput;
+export type WherePredicateFromInput = FromInputOf<WherePredicate, LeafScalarMap, LeafStringMap>;
 export type WhileExpressionFromInput = FromInputOf<WhileExpression, LeafScalarMap, LeafStringMap>;
 export type YieldExpressionFromInput = Expression;
 
@@ -3546,12 +2993,8 @@ export interface KindMap {
 /** Maps variant node kinds to their per-variant interfaces. */
 export interface VariantMap {
   'array_expression': { semi: ArrayExpressionSemi; comma: ArrayExpressionComma };
-  'binary_expression': { tok_2626: BinaryExpressionTok_2626; tok_7c7c: BinaryExpressionTok_7c7c; amp: BinaryExpressionAmp; pipe: BinaryExpressionPipe; caret: BinaryExpressionCaret; tok_3d3d: BinaryExpressionTok_3d3d; tok_213d: BinaryExpressionTok_213d; angle: BinaryExpressionAngle; tok_3c3d: BinaryExpressionTok_3c3d; close_angle: BinaryExpressionCloseAngle; tok_3e3d: BinaryExpressionTok_3e3d; tok_3c3c: BinaryExpressionTok_3c3c; tok_3e3e: BinaryExpressionTok_3e3e; plus: BinaryExpressionPlus; minus: BinaryExpressionMinus; star: BinaryExpressionStar; slash: BinaryExpressionSlash; percent: BinaryExpressionPercent };
-  'compound_assignment_expr': { tok_2b3d: CompoundAssignmentExprTok_2b3d; tok_2d3d: CompoundAssignmentExprTok_2d3d; tok_2a3d: CompoundAssignmentExprTok_2a3d; tok_2f3d: CompoundAssignmentExprTok_2f3d; tok_253d: CompoundAssignmentExprTok_253d; tok_263d: CompoundAssignmentExprTok_263d; tok_7c3d: CompoundAssignmentExprTok_7c3d; tok_5e3d: CompoundAssignmentExprTok_5e3d; tok_3c3c3d: CompoundAssignmentExprTok_3c3c3d; tok_3e3e3d: CompoundAssignmentExprTok_3e3e3d };
-  'expression_statement': { semi: ExpressionStatementSemi; v1: ExpressionStatementV1 };
   'field_pattern': { v0: FieldPatternV0; colon: FieldPatternColon };
   'foreign_mod_item': { semi: ForeignModItemSemi; body: ForeignModItemBody };
-  'function_modifiers': { async: FunctionModifiersAsync; default: FunctionModifiersDefault; const: FunctionModifiersConst; unsafe: FunctionModifiersUnsafe; v4: FunctionModifiersV4 };
   'function_type': { trait: FunctionTypeTrait; fn: FunctionTypeFn };
   'impl_item': { body: ImplItemBody; semi: ImplItemSemi };
   'line_comment': { v0: LineCommentV0; outer: LineCommentOuter };
@@ -3559,17 +3002,15 @@ export interface VariantMap {
   'mod_item': { semi: ModItemSemi; body: ModItemBody };
   'or_pattern': { right: OrPatternRight; v1: OrPatternV1 };
   'pointer_type': { const: PointerTypeConst; mutable_specifier: PointerTypeMutableSpecifier };
-  'range_expression': { v0: RangeExpressionV0; ellipsis: RangeExpressionEllipsis; tok_2e2e3d: RangeExpressionTok_2e2e3d; v3: RangeExpressionV3; v4: RangeExpressionV4 };
-  'range_pattern': { ellipsis: RangePatternEllipsis; v1: RangePatternV1; v2: RangePatternV2; v3: RangePatternV3; v4: RangePatternV4; v5: RangePatternV5 };
-  'reference_expression': { const: ReferenceExpressionConst; v1: ReferenceExpressionV1; v2: ReferenceExpressionV2 };
-  'struct_item': { v0: StructItemV0; v1: StructItemV1; v2: StructItemV2 };
+  'range_expression': { end: RangeExpressionEnd; v1: RangeExpressionV1; v2: RangeExpressionV2 };
+  'range_pattern': { ellipsis: RangePatternEllipsis; dotdot: RangePatternDotdot; tok_2e2e3d: RangePatternTok_2e2e3d };
+  'reference_expression': { const: ReferenceExpressionConst; mutable_specifier: ReferenceExpressionMutableSpecifier };
+  'struct_item': { where_clause: StructItemWhereClause; semi: StructItemSemi };
   'token_repetition': { plus: TokenRepetitionPlus; star: TokenRepetitionStar; question: TokenRepetitionQuestion };
   'token_repetition_pattern': { plus: TokenRepetitionPatternPlus; star: TokenRepetitionPatternStar; question: TokenRepetitionPatternQuestion };
   'token_tree': { paren: TokenTreeParen; bracket: TokenTreeBracket; brace: TokenTreeBrace };
   'token_tree_pattern': { paren: TokenTreePatternParen; bracket: TokenTreePatternBracket; brace: TokenTreePatternBrace };
-  'unary_expression': { minus: UnaryExpressionMinus; star: UnaryExpressionStar; bang: UnaryExpressionBang };
-  'visibility_modifier': { v0: VisibilityModifierV0; pub: VisibilityModifierPub };
-  'where_predicate': { v0: WherePredicateV0; u8: WherePredicateU8; i8: WherePredicateI8; u16: WherePredicateU16; i16: WherePredicateI16; u32: WherePredicateU32; i32: WherePredicateI32; u64: WherePredicateU64; i64: WherePredicateI64; u128: WherePredicateU128; i128: WherePredicateI128; isize: WherePredicateIsize; usize: WherePredicateUsize; f32: WherePredicateF32; f64: WherePredicateF64; bool: WherePredicateBool; str: WherePredicateStr; char: WherePredicateChar };
+  'visibility_modifier': { v0: VisibilityModifierV0; paren: VisibilityModifierParen };
 }
 
 /** Maps every branch kind string to its Config (factory input) type. */

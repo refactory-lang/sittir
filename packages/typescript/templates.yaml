@@ -12,7 +12,6 @@ rules:
   adding_type_annotation: +?:$CHILDREN
   ambient_declaration:
     - declare $DECLARATION
-    - declare global $DECLARATION
     - declare module.$DECLARATION:$TYPE_ANNOTATION $SEMICOLON
   arguments:
     template: ($$$CHILDREN)
@@ -39,14 +38,12 @@ rules:
   call_expression:
     - $FUNCTION $TYPE_ARGUMENTS $ARGUMENTS
     - $FUNCTION $ARGUMENTS
-    - $FUNCTION?.$TYPE_ARGUMENTS $ARGUMENTS
   call_signature: $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE
   catch_clause: catch $PARAMETER $TYPE $BODY
   class: $$$DECORATOR class $NAME $TYPE_PARAMETERS $CLASS_HERITAGE $BODY
   class_body:
     - "{$$$DECORATOR $$$CHILDREN}"
     - "{$$$CHILDREN}"
-    - "{} $$$CHILDREN"
   class_declaration: $$$DECORATOR class $NAME $TYPE_PARAMETERS $CLASS_HERITAGE $BODY $AUTOMATIC_SEMICOLON
   class_heritage: $EXTENDS_CLAUSE $IMPLEMENTS_CLAUSE
   class_static_block: static $BODY
@@ -76,17 +73,11 @@ rules:
     template: $NAME $ALIAS_CLAUSE
     alias_clause: as $ALIAS
   export_statement:
-    template:
-      - export*from $SOURCE $$$CHILDREN
-      - export $DECLARATION from $SOURCE
-      - export $DECLARATION
-      - $$$DECORATOR export $DECLARATION
-      - $$$DECORATOR export default $DECLARATION
-      - $$$DECORATOR export default $VALUE $DECLARATION
-      - export type $DECLARATION $SOURCE_CLAUSE
-      - export=$DECLARATION
-      - export as namespace $DECLARATION
-    source_clause: from $SOURCE
+    - export*from $SOURCE $$$CHILDREN
+    - export $DECLARATION from $SOURCE
+    - export $DECLARATION
+    - $$$DECORATOR export $DECLARATION
+    - $$$DECORATOR export default $VALUE $DECLARATION
   expression_statement: $$$CHILDREN
   extends_clause: extends $$$VALUE $$$TYPE_ARGUMENTS
   extends_type_clause:
@@ -121,7 +112,7 @@ rules:
     detect:
       with: with
       assert: assert
-  import_clause: $DEFAULT_IMPORT
+  import_clause: $DEFAULT_IMPORT $NAMED_IMPORTS
   import_require_clause: $IDENTIFIER=require($SOURCE)
   import_specifier:
     - $NAME
@@ -173,11 +164,7 @@ rules:
   object_pattern:
     template: "{$$$CHILDREN}"
     joinBy: ","
-  object_type:
-    - "{$OPENING $$$MEMBERS$$$CHILDREN}"
-    - "{$OPENING $$$MEMBERS$$$CHILDREN|}"
-    - "{|$OPENING $$$MEMBERS$$$CHILDREN}"
-    - "{|$OPENING $$$MEMBERS$$$CHILDREN|}"
+  object_type: "{$OPENING $$$MEMBERS$$$CHILDREN} $CLOSING"
   omitting_type_annotation: -?:$CHILDREN
   opting_type_annotation: ?:$CHILDREN
   optional_parameter:
@@ -253,6 +240,4 @@ rules:
     value_clause: = $VALUE
   while_statement: while $CONDITION $BODY
   with_statement: with $OBJECT $BODY
-  yield_expression:
-    - yield*$EXPRESSION
-    - yield $EXPRESSION
+  yield_expression: yield*$EXPRESSION
