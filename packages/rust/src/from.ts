@@ -2283,14 +2283,14 @@ export function arrayExpressionSemiFrom(input: RuntimeNodeOf<ArrayExpressionSemi
       length: input.fields?.length,
       attributes: input.fields?.attributes,
       elements: input.fields?.elements,
-    });
+    } as ArrayExpressionSemiConfig);
   }
   const obj = input as ArrayExpressionSemiFromInput;
   return array_expression__semi_({
     length: _resolveTypeIdentifier2(obj.length),
     attributes: obj.attributes !== undefined ? ((Array.isArray(obj.attributes) ? obj.attributes : [obj.attributes])).map(_resolveDeclarationStatement3) : undefined,
     elements: obj.elements !== undefined ? ((Array.isArray(obj.elements) ? obj.elements : [obj.elements])).map(_resolveDeclarationStatement2) : undefined,
-  });
+  } as ArrayExpressionSemiConfig);
 }
 
 export function arrayExpressionCommaFrom(input: RuntimeNodeOf<ArrayExpressionComma> | ArrayExpressionCommaFromInput) {
@@ -2298,13 +2298,13 @@ export function arrayExpressionCommaFrom(input: RuntimeNodeOf<ArrayExpressionCom
     return array_expression__comma_({
       attributes: input.fields?.attributes,
       elements: input.fields?.elements,
-    });
+    } as ArrayExpressionCommaConfig);
   }
   const obj = input as ArrayExpressionCommaFromInput;
   return array_expression__comma_({
     attributes: obj.attributes !== undefined ? ((Array.isArray(obj.attributes) ? obj.attributes : [obj.attributes])).map(_resolveDeclarationStatement3) : undefined,
     elements: obj.elements !== undefined ? ((Array.isArray(obj.elements) ? obj.elements : [obj.elements])).map(_resolveDeclarationStatement2) : undefined,
-  });
+  } as ArrayExpressionCommaConfig);
 }
 
 export function arrayTypeFrom(input: RuntimeNodeOf<ArrayType> | ArrayTypeFromInput) {
@@ -2427,14 +2427,14 @@ export function binaryExpressionTok_2626From(input: RuntimeNodeOf<BinaryExpressi
       left: input.fields?.left,
       operator: input.fields?.operator,
       right: input.fields?.right,
-    });
+    } as BinaryExpressionTok_2626Config);
   }
   const obj = input as BinaryExpressionTok_2626FromInput;
   return binary_expression__tok_2626_({
     left: _resolveTypeIdentifier2(obj.left),
     operator: _resolveTypeIdentifier5(obj.operator),
     right: _resolveTypeIdentifier2(obj.right),
-  });
+  } as BinaryExpressionTok_2626Config);
 }
 
 export function binaryExpressionTok_7c7cFrom(input: RuntimeNodeOf<BinaryExpressionTok_7c7c> | BinaryExpressionTok_7c7cFromInput) {
@@ -2443,14 +2443,14 @@ export function binaryExpressionTok_7c7cFrom(input: RuntimeNodeOf<BinaryExpressi
       left: input.fields?.left,
       operator: input.fields?.operator,
       right: input.fields?.right,
-    });
+    } as BinaryExpressionTok_7c7cConfig);
   }
   const obj = input as BinaryExpressionTok_7c7cFromInput;
   return binary_expression__tok_7c7c_({
     left: _resolveTypeIdentifier2(obj.left),
     operator: _resolveTypeIdentifier5(obj.operator),
     right: _resolveTypeIdentifier2(obj.right),
-  });
+  } as BinaryExpressionTok_7c7cConfig);
 }
 
 export function binaryExpressionAmpFrom(input: RuntimeNodeOf<BinaryExpressionAmp> | BinaryExpressionAmpFromInput) {
@@ -2459,14 +2459,14 @@ export function binaryExpressionAmpFrom(input: RuntimeNodeOf<BinaryExpressionAmp
       left: input.fields?.left,
       operator: input.fields?.operator,
       right: input.fields?.right,
-    });
+    } as BinaryExpressionAmpConfig);
   }
   const obj = input as BinaryExpressionAmpFromInput;
   return binary_expression__amp_({
     left: _resolveTypeIdentifier2(obj.left),
     operator: _resolveTypeIdentifier5(obj.operator),
     right: _resolveTypeIdentifier2(obj.right),
-  });
+  } as BinaryExpressionAmpConfig);
 }
 
 export function binaryExpressionPipeFrom(input: RuntimeNodeOf<BinaryExpressionPipe> | BinaryExpressionPipeFromInput) {
@@ -2475,14 +2475,14 @@ export function binaryExpressionPipeFrom(input: RuntimeNodeOf<BinaryExpressionPi
       left: input.fields?.left,
       operator: input.fields?.operator,
       right: input.fields?.right,
-    });
+    } as BinaryExpressionPipeConfig);
   }
   const obj = input as BinaryExpressionPipeFromInput;
   return binary_expression__pipe_({
     left: _resolveTypeIdentifier2(obj.left),
     operator: _resolveTypeIdentifier5(obj.operator),
     right: _resolveTypeIdentifier2(obj.right),
-  });
+  } as BinaryExpressionPipeConfig);
 }
 
 export function binaryExpressionCaretFrom(input: RuntimeNodeOf<BinaryExpressionCaret> | BinaryExpressionCaretFromInput) {
@@ -2491,14 +2491,14 @@ export function binaryExpressionCaretFrom(input: RuntimeNodeOf<BinaryExpressionC
       left: input.fields?.left,
       operator: input.fields?.operator,
       right: input.fields?.right,
-    });
+    } as BinaryExpressionCaretConfig);
   }
   const obj = input as BinaryExpressionCaretFromInput;
   return binary_expression__caret_({
     left: _resolveTypeIdentifier2(obj.left),
     operator: _resolveTypeIdentifier5(obj.operator),
     right: _resolveTypeIdentifier2(obj.right),
-  });
+  } as BinaryExpressionCaretConfig);
 }
 
 export function binaryExpressionTok_3d3dFrom(input: RuntimeNodeOf<BinaryExpressionTok_3d3d> | BinaryExpressionTok_3d3dFromInput) {
@@ -2507,14 +2507,14 @@ export function binaryExpressionTok_3d3dFrom(input: RuntimeNodeOf<BinaryExpressi
       left: input.fields?.left,
       operator: input.fields?.operator,
       right: input.fields?.right,
-    });
+    } as BinaryExpressionTok_3d3dConfig);
   }
   const obj = input as BinaryExpressionTok_3d3dFromInput;
   return binary_expression__tok_3d3d_({
     left: _resolveTypeIdentifier2(obj.left),
     operator: _resolveTypeIdentifier5(obj.operator),
     right: _resolveTypeIdentifier2(obj.right),
-  });
+  } as BinaryExpressionTok_3d3dConfig);
 }
 
 export function binaryExpressionTok_3c3cFrom(input: RuntimeNodeOf<BinaryExpressionTok_3c3c> | BinaryExpressionTok_3c3cFromInput) {
@@ -2523,14 +2523,14 @@ export function binaryExpressionTok_3c3cFrom(input: RuntimeNodeOf<BinaryExpressi
       left: input.fields?.left,
       operator: input.fields?.operator,
       right: input.fields?.right,
-    });
+    } as BinaryExpressionTok_3c3cConfig);
   }
   const obj = input as BinaryExpressionTok_3c3cFromInput;
   return binary_expression__tok_3c3c_({
     left: _resolveTypeIdentifier2(obj.left),
     operator: _resolveTypeIdentifier5(obj.operator),
     right: _resolveTypeIdentifier2(obj.right),
-  });
+  } as BinaryExpressionTok_3c3cConfig);
 }
 
 export function binaryExpressionPlusFrom(input: RuntimeNodeOf<BinaryExpressionPlus> | BinaryExpressionPlusFromInput) {
@@ -2539,14 +2539,14 @@ export function binaryExpressionPlusFrom(input: RuntimeNodeOf<BinaryExpressionPl
       left: input.fields?.left,
       operator: input.fields?.operator,
       right: input.fields?.right,
-    });
+    } as BinaryExpressionPlusConfig);
   }
   const obj = input as BinaryExpressionPlusFromInput;
   return binary_expression__plus_({
     left: _resolveTypeIdentifier2(obj.left),
     operator: _resolveTypeIdentifier5(obj.operator),
     right: _resolveTypeIdentifier2(obj.right),
-  });
+  } as BinaryExpressionPlusConfig);
 }
 
 export function binaryExpressionStarFrom(input: RuntimeNodeOf<BinaryExpressionStar> | BinaryExpressionStarFromInput) {
@@ -2555,14 +2555,14 @@ export function binaryExpressionStarFrom(input: RuntimeNodeOf<BinaryExpressionSt
       left: input.fields?.left,
       operator: input.fields?.operator,
       right: input.fields?.right,
-    });
+    } as BinaryExpressionStarConfig);
   }
   const obj = input as BinaryExpressionStarFromInput;
   return binary_expression__star_({
     left: _resolveTypeIdentifier2(obj.left),
     operator: _resolveTypeIdentifier5(obj.operator),
     right: _resolveTypeIdentifier2(obj.right),
-  });
+  } as BinaryExpressionStarConfig);
 }
 
 export function blockFrom(input: RuntimeNodeOf<Block> | BlockFromInput) {
@@ -2960,13 +2960,13 @@ export function fieldPatternV0From(input: RuntimeNodeOf<FieldPatternV0> | FieldP
     return field_pattern__v0_({
       name: input.fields?.name,
       mutableSpecifier: input.fields?.mutable_specifier,
-    });
+    } as FieldPatternV0Config);
   }
   const obj = input as FieldPatternV0FromInput;
   return field_pattern__v0_({
     name: _r1gfzgqs(obj.name),
     mutableSpecifier: _r1t2mpvp(obj.mutable_specifier),
-  });
+  } as FieldPatternV0Config);
 }
 
 export function fieldPatternColonFrom(input: RuntimeNodeOf<FieldPatternColon> | FieldPatternColonFromInput) {
@@ -2975,14 +2975,14 @@ export function fieldPatternColonFrom(input: RuntimeNodeOf<FieldPatternColon> | 
       name: input.fields?.name,
       pattern: input.fields?.pattern,
       mutableSpecifier: input.fields?.mutable_specifier,
-    });
+    } as FieldPatternColonConfig);
   }
   const obj = input as FieldPatternColonFromInput;
   return field_pattern__colon_({
     name: _r1gfzgqs(obj.name),
     pattern: _resolveTypeIdentifier6(obj.pattern),
     mutableSpecifier: _r1t2mpvp(obj.mutable_specifier),
-  });
+  } as FieldPatternColonConfig);
 }
 
 export function forExpressionFrom(input: RuntimeNodeOf<ForExpression> | ForExpressionFromInput) {
@@ -3115,7 +3115,7 @@ export function functionTypeTraitFrom(input: RuntimeNodeOf<FunctionTypeTrait> | 
       returnType: input.fields?.return_type,
       trait: input.fields?.trait,
       forLifetimes: input.fields?.for_lifetimes,
-    });
+    } as FunctionTypeTraitConfig);
   }
   const obj = input as FunctionTypeTraitFromInput;
   return function_type__trait_({
@@ -3123,7 +3123,7 @@ export function functionTypeTraitFrom(input: RuntimeNodeOf<FunctionTypeTrait> | 
     returnType: _resolveTypeIdentifier3(obj.return_type),
     trait: _resolveType3(obj.trait),
     forLifetimes: _r4c4kga(obj.for_lifetimes),
-  });
+  } as FunctionTypeTraitConfig);
 }
 
 export function functionTypeFnFrom(input: RuntimeNodeOf<FunctionTypeFn> | FunctionTypeFnFromInput) {
@@ -3133,7 +3133,7 @@ export function functionTypeFnFrom(input: RuntimeNodeOf<FunctionTypeFn> | Functi
       returnType: input.fields?.return_type,
       forLifetimes: input.fields?.for_lifetimes,
       functionModifiers: input.fields?.function_modifiers,
-    });
+    } as FunctionTypeFnConfig);
   }
   const obj = input as FunctionTypeFnFromInput;
   return function_type__fn_({
@@ -3141,7 +3141,7 @@ export function functionTypeFnFrom(input: RuntimeNodeOf<FunctionTypeFn> | Functi
     returnType: _resolveTypeIdentifier3(obj.return_type),
     forLifetimes: _r4c4kga(obj.for_lifetimes),
     functionModifiers: _r1qmi2a1(obj.function_modifiers),
-  });
+  } as FunctionTypeFnConfig);
 }
 
 export function genBlockFrom(input: RuntimeNodeOf<GenBlock> | GenBlockFromInput) {
@@ -3382,23 +3382,23 @@ export function lineCommentFrom(input: RuntimeNodeOf<LineComment> | LineCommentF
 export function lineCommentV0From(input: RuntimeNodeOf<LineCommentV0> | LineCommentV0FromInput) {
   if (isNodeData<'line_comment'>(input)) {
     return line_comment__v0_({
-    });
+    } as LineCommentV0Config);
   }
   const obj = input as LineCommentV0FromInput;
   return line_comment__v0_({
-  });
+  } as LineCommentV0Config);
 }
 
 export function lineCommentDocFrom(input: RuntimeNodeOf<LineCommentDoc> | LineCommentDocFromInput) {
   if (isNodeData<'line_comment'>(input)) {
     return line_comment__doc_({
       doc: input.fields?.doc,
-    });
+    } as LineCommentDocConfig);
   }
   const obj = input as LineCommentDocFromInput;
   return line_comment__doc_({
     doc: _r1fu18sq(obj.doc),
-  });
+  } as LineCommentDocConfig);
 }
 
 export function loopExpressionFrom(input: RuntimeNodeOf<LoopExpression> | LoopExpressionFromInput) {
@@ -3430,13 +3430,13 @@ export function macroDefinitionParenFrom(input: RuntimeNodeOf<MacroDefinitionPar
     return macro_definition__paren_({
       name: input.fields?.name,
       rules: input.fields?.rules,
-    });
+    } as MacroDefinitionParenConfig);
   }
   const obj = input as MacroDefinitionParenFromInput;
   return macro_definition__paren_({
     name: _resolveReservedIdentifier2(obj.name),
     rules: obj.rules !== undefined ? ((Array.isArray(obj.rules) ? obj.rules : [obj.rules])).map(_rbnduy3) : [],
-  });
+  } as MacroDefinitionParenConfig);
 }
 
 export function macroDefinitionBracketFrom(input: RuntimeNodeOf<MacroDefinitionBracket> | MacroDefinitionBracketFromInput) {
@@ -3444,13 +3444,13 @@ export function macroDefinitionBracketFrom(input: RuntimeNodeOf<MacroDefinitionB
     return macro_definition__bracket_({
       name: input.fields?.name,
       rules: input.fields?.rules,
-    });
+    } as MacroDefinitionBracketConfig);
   }
   const obj = input as MacroDefinitionBracketFromInput;
   return macro_definition__bracket_({
     name: _resolveReservedIdentifier2(obj.name),
     rules: obj.rules !== undefined ? ((Array.isArray(obj.rules) ? obj.rules : [obj.rules])).map(_rbnduy3) : [],
-  });
+  } as MacroDefinitionBracketConfig);
 }
 
 export function macroDefinitionBraceFrom(input: RuntimeNodeOf<MacroDefinitionBrace> | MacroDefinitionBraceFromInput) {
@@ -3458,13 +3458,13 @@ export function macroDefinitionBraceFrom(input: RuntimeNodeOf<MacroDefinitionBra
     return macro_definition__brace_({
       name: input.fields?.name,
       rules: input.fields?.rules,
-    });
+    } as MacroDefinitionBraceConfig);
   }
   const obj = input as MacroDefinitionBraceFromInput;
   return macro_definition__brace_({
     name: _resolveReservedIdentifier2(obj.name),
     rules: obj.rules !== undefined ? ((Array.isArray(obj.rules) ? obj.rules : [obj.rules])).map(_rbnduy3) : [],
-  });
+  } as MacroDefinitionBraceConfig);
 }
 
 export function macroInvocationFrom(input: RuntimeNodeOf<MacroInvocation> | MacroInvocationFromInput) {
@@ -3607,25 +3607,25 @@ export function orPatternRightFrom(input: RuntimeNodeOf<OrPatternRight> | OrPatt
     return or_pattern__right_({
       left: input.fields?.left,
       right: input.fields?.right,
-    });
+    } as OrPatternRightConfig);
   }
   const obj = input as OrPatternRightFromInput;
   return or_pattern__right_({
     left: _resolveTypeIdentifier6(obj.left),
     right: _resolveTypeIdentifier6(obj.right),
-  });
+  } as OrPatternRightConfig);
 }
 
 export function orPatternV1From(input: RuntimeNodeOf<OrPatternV1> | OrPatternV1FromInput) {
   if (isNodeData<'or_pattern'>(input)) {
     return or_pattern__v1_({
       left: input.fields?.left,
-    });
+    } as OrPatternV1Config);
   }
   const obj = input as OrPatternV1FromInput;
   return or_pattern__v1_({
     left: _resolveTypeIdentifier6(obj.left),
-  });
+  } as OrPatternV1Config);
 }
 
 export function orderedFieldDeclarationListFrom(input: RuntimeNodeOf<OrderedFieldDeclarationList> | OrderedFieldDeclarationListFromInput) {
@@ -3724,14 +3724,14 @@ export function rangeExpressionEllipsisFrom(input: RuntimeNodeOf<RangeExpression
       start: input.fields?.start,
       operator: input.fields?.operator,
       end: input.fields?.end,
-    });
+    } as RangeExpressionEllipsisConfig);
   }
   const obj = input as RangeExpressionEllipsisFromInput;
   return range_expression__ellipsis_({
     start: _resolveTypeIdentifier2(obj.start),
     operator: _resolveTypeIdentifier17(obj.operator),
     end: _resolveTypeIdentifier2(obj.end),
-  });
+  } as RangeExpressionEllipsisConfig);
 }
 
 export function rangeExpressionV1From(input: RuntimeNodeOf<RangeExpressionV1> | RangeExpressionV1FromInput) {
@@ -3739,25 +3739,25 @@ export function rangeExpressionV1From(input: RuntimeNodeOf<RangeExpressionV1> | 
     return range_expression__v1_({
       start: input.fields?.start,
       operator: input.fields?.operator,
-    });
+    } as RangeExpressionV1Config);
   }
   const obj = input as RangeExpressionV1FromInput;
   return range_expression__v1_({
     start: _resolveTypeIdentifier2(obj.start),
     operator: _resolveTypeIdentifier17(obj.operator),
-  });
+  } as RangeExpressionV1Config);
 }
 
 export function rangeExpressionV2From(input: RuntimeNodeOf<RangeExpressionV2> | RangeExpressionV2FromInput) {
   if (isNodeData<'range_expression'>(input)) {
     return range_expression__v2_({
       operator: input.fields?.operator,
-    });
+    } as RangeExpressionV2Config);
   }
   const obj = input as RangeExpressionV2FromInput;
   return range_expression__v2_({
     operator: _resolveTypeIdentifier17(obj.operator),
-  });
+  } as RangeExpressionV2Config);
 }
 
 export function rangePatternFrom(input: RuntimeNodeOf<RangePattern> | RangePatternFromInput) {
@@ -3775,37 +3775,37 @@ export function rangePatternEllipsisFrom(input: RuntimeNodeOf<RangePatternEllips
     return range_pattern__ellipsis_({
       left: input.fields?.left,
       right: input.fields?.right,
-    });
+    } as RangePatternEllipsisConfig);
   }
   const obj = input as RangePatternEllipsisFromInput;
   return range_pattern__ellipsis_({
     left: _resolvePath8(obj.left),
     right: _resolvePath8(obj.right),
-  });
+  } as RangePatternEllipsisConfig);
 }
 
 export function rangePatternV1From(input: RuntimeNodeOf<RangePatternV1> | RangePatternV1FromInput) {
   if (isNodeData<'range_pattern'>(input)) {
     return range_pattern__v1_({
       left: input.fields?.left,
-    });
+    } as RangePatternV1Config);
   }
   const obj = input as RangePatternV1FromInput;
   return range_pattern__v1_({
     left: _resolvePath8(obj.left),
-  });
+  } as RangePatternV1Config);
 }
 
 export function rangePatternV2From(input: RuntimeNodeOf<RangePatternV2> | RangePatternV2FromInput) {
   if (isNodeData<'range_pattern'>(input)) {
     return range_pattern__v2_({
       right: input.fields?.right,
-    });
+    } as RangePatternV2Config);
   }
   const obj = input as RangePatternV2FromInput;
   return range_pattern__v2_({
     right: _resolvePath8(obj.right),
-  });
+  } as RangePatternV2Config);
 }
 
 export function rawStringLiteralFrom(input: RuntimeNodeOf<RawStringLiteral> | RawStringLiteralFromInput) {
@@ -3848,13 +3848,13 @@ export function referenceExpressionRawFrom(input: RuntimeNodeOf<ReferenceExpress
     return reference_expression__raw_({
       value: input.fields?.value,
       mutableSpecifier: input.fields?.mutable_specifier,
-    });
+    } as ReferenceExpressionRawConfig);
   }
   const obj = input as ReferenceExpressionRawFromInput;
   return reference_expression__raw_({
     value: _resolveTypeIdentifier2(obj.value),
     mutableSpecifier: _r1t2mpvp(obj.mutable_specifier),
-  });
+  } as ReferenceExpressionRawConfig);
 }
 
 export function referenceExpressionV1From(input: RuntimeNodeOf<ReferenceExpressionV1> | ReferenceExpressionV1FromInput) {
@@ -3862,13 +3862,13 @@ export function referenceExpressionV1From(input: RuntimeNodeOf<ReferenceExpressi
     return reference_expression__v1_({
       value: input.fields?.value,
       mutableSpecifier: input.fields?.mutable_specifier,
-    });
+    } as ReferenceExpressionV1Config);
   }
   const obj = input as ReferenceExpressionV1FromInput;
   return reference_expression__v1_({
     value: _resolveTypeIdentifier2(obj.value),
     mutableSpecifier: _r1t2mpvp(obj.mutable_specifier),
-  });
+  } as ReferenceExpressionV1Config);
 }
 
 export function referencePatternFrom(input: RuntimeNodeOf<ReferencePattern> | ReferencePatternFromInput) {
@@ -4075,7 +4075,7 @@ export function structItemV0From(input: RuntimeNodeOf<StructItemV0> | StructItem
       typeParameters: input.fields?.type_parameters,
       visibilityModifier: input.fields?.visibility_modifier,
       whereClause: input.fields?.where_clause,
-    });
+    } as StructItemV0Config);
   }
   const obj = input as StructItemV0FromInput;
   return struct_item__v0_({
@@ -4084,7 +4084,7 @@ export function structItemV0From(input: RuntimeNodeOf<StructItemV0> | StructItem
     typeParameters: _r19n9507(obj.type_parameters),
     visibilityModifier: _r1ev4gjc(obj.visibility_modifier),
     whereClause: _r1molryx(obj.where_clause),
-  });
+  } as StructItemV0Config);
 }
 
 export function structItemV1From(input: RuntimeNodeOf<StructItemV1> | StructItemV1FromInput) {
@@ -4095,7 +4095,7 @@ export function structItemV1From(input: RuntimeNodeOf<StructItemV1> | StructItem
       typeParameters: input.fields?.type_parameters,
       visibilityModifier: input.fields?.visibility_modifier,
       whereClause: input.fields?.where_clause,
-    });
+    } as StructItemV1Config);
   }
   const obj = input as StructItemV1FromInput;
   return struct_item__v1_({
@@ -4104,7 +4104,7 @@ export function structItemV1From(input: RuntimeNodeOf<StructItemV1> | StructItem
     typeParameters: _r19n9507(obj.type_parameters),
     visibilityModifier: _r1ev4gjc(obj.visibility_modifier),
     whereClause: _r1molryx(obj.where_clause),
-  });
+  } as StructItemV1Config);
 }
 
 export function structItemV2From(input: RuntimeNodeOf<StructItemV2> | StructItemV2FromInput) {
@@ -4113,14 +4113,14 @@ export function structItemV2From(input: RuntimeNodeOf<StructItemV2> | StructItem
       name: input.fields?.name,
       typeParameters: input.fields?.type_parameters,
       visibilityModifier: input.fields?.visibility_modifier,
-    });
+    } as StructItemV2Config);
   }
   const obj = input as StructItemV2FromInput;
   return struct_item__v2_({
     name: _resolveTypeIdentifier4(obj.name),
     typeParameters: _r19n9507(obj.type_parameters),
     visibilityModifier: _r1ev4gjc(obj.visibility_modifier),
-  });
+  } as StructItemV2Config);
 }
 
 export function structPatternFrom(input: RuntimeNodeOf<StructPattern> | StructPatternFromInput) {
@@ -4513,12 +4513,12 @@ export function visibilityModifierV0From(input: RuntimeNodeOf<VisibilityModifier
   if (isNodeData<'visibility_modifier'>(input)) {
     return visibility_modifier__v0_({
       children: input.children?.[0] as VisibilityModifierV0Config['children'],
-    });
+    } as VisibilityModifierV0Config);
   }
   const obj = input as VisibilityModifierV0FromInput;
   return visibility_modifier__v0_({
     children: (obj as { children?: unknown }).children as VisibilityModifierV0Config['children'],
-  });
+  } as VisibilityModifierV0Config);
 }
 
 export function visibilityModifierPubFrom(input: RuntimeNodeOf<VisibilityModifierPub> | VisibilityModifierPubFromInput) {
@@ -4527,14 +4527,14 @@ export function visibilityModifierPubFrom(input: RuntimeNodeOf<VisibilityModifie
       pub: input.fields?.pub,
       in: input.fields?.in,
       children: input.children?.[0] as VisibilityModifierPubConfig['children'],
-    });
+    } as VisibilityModifierPubConfig);
   }
   const obj = input as VisibilityModifierPubFromInput;
   return visibility_modifier__pub_({
     pub: _resolveTypeIdentifier22(obj.pub),
     in: _resolveTypeIdentifier23(obj.in),
     children: (obj as { children?: unknown }).children as VisibilityModifierPubConfig['children'],
-  });
+  } as VisibilityModifierPubConfig);
 }
 
 export function whereClauseFrom(input: RuntimeNodeOf<WhereClause>): ReturnType<typeof where_clause_>;

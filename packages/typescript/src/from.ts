@@ -2391,24 +2391,24 @@ export function ambientDeclarationV0From(input: RuntimeNodeOf<AmbientDeclaration
   if (isNodeData<'ambient_declaration'>(input)) {
     return ambient_declaration__v0_({
       declaration: input.fields?.declaration,
-    });
+    } as AmbientDeclarationV0Config);
   }
   const obj = input as AmbientDeclarationV0FromInput;
   return ambient_declaration__v0_({
     declaration: _rca402w(obj.declaration),
-  });
+  } as AmbientDeclarationV0Config);
 }
 
 export function ambientDeclarationGlobalFrom(input: RuntimeNodeOf<AmbientDeclarationGlobal> | AmbientDeclarationGlobalFromInput) {
   if (isNodeData<'ambient_declaration'>(input)) {
     return ambient_declaration__global_({
       declaration: input.fields?.declaration,
-    });
+    } as AmbientDeclarationGlobalConfig);
   }
   const obj = input as AmbientDeclarationGlobalFromInput;
   return ambient_declaration__global_({
     declaration: _rca402w(obj.declaration),
-  });
+  } as AmbientDeclarationGlobalConfig);
 }
 
 export function ambientDeclarationModuleFrom(input: RuntimeNodeOf<AmbientDeclarationModule> | AmbientDeclarationModuleFromInput) {
@@ -2417,14 +2417,14 @@ export function ambientDeclarationModuleFrom(input: RuntimeNodeOf<AmbientDeclara
       declaration: input.fields?.declaration,
       typeAnnotation: input.fields?.type_annotation,
       semicolon: input.fields?.semicolon,
-    });
+    } as AmbientDeclarationModuleConfig);
   }
   const obj = input as AmbientDeclarationModuleFromInput;
   return ambient_declaration__module_({
     declaration: _rca402w(obj.declaration),
     typeAnnotation: _resolveTypeIdentifier4(obj.type_annotation),
     semicolon: _resolveTypeIdentifier3(obj.semicolon),
-  });
+  } as AmbientDeclarationModuleConfig);
 }
 
 export function arguments_From(input: RuntimeNodeOf<Arguments>): ReturnType<typeof arguments_>;
@@ -2591,14 +2591,14 @@ export function binaryExpressionTok_2626From(input: RuntimeNodeOf<BinaryExpressi
       left: input.fields?.left,
       operator: input.fields?.operator,
       right: input.fields?.right,
-    });
+    } as BinaryExpressionTok_2626Config);
   }
   const obj = input as BinaryExpressionTok_2626FromInput;
   return binary_expression__tok_2626_({
     left: _resolvePropertyName3(obj.left),
     operator: _resolveTypeIdentifier9(obj.operator),
     right: _resolveTypeIdentifier6(obj.right),
-  });
+  } as BinaryExpressionTok_2626Config);
 }
 
 export function binaryExpressionTok_7c7cFrom(input: RuntimeNodeOf<BinaryExpressionTok_7c7c> | BinaryExpressionTok_7c7cFromInput) {
@@ -2607,14 +2607,14 @@ export function binaryExpressionTok_7c7cFrom(input: RuntimeNodeOf<BinaryExpressi
       left: input.fields?.left,
       operator: input.fields?.operator,
       right: input.fields?.right,
-    });
+    } as BinaryExpressionTok_7c7cConfig);
   }
   const obj = input as BinaryExpressionTok_7c7cFromInput;
   return binary_expression__tok_7c7c_({
     left: _resolvePropertyName3(obj.left),
     operator: _resolveTypeIdentifier9(obj.operator),
     right: _resolveTypeIdentifier6(obj.right),
-  });
+  } as BinaryExpressionTok_7c7cConfig);
 }
 
 export function binaryExpressionTok_3e3eFrom(input: RuntimeNodeOf<BinaryExpressionTok_3e3e> | BinaryExpressionTok_3e3eFromInput) {
@@ -2623,14 +2623,14 @@ export function binaryExpressionTok_3e3eFrom(input: RuntimeNodeOf<BinaryExpressi
       left: input.fields?.left,
       operator: input.fields?.operator,
       right: input.fields?.right,
-    });
+    } as BinaryExpressionTok_3e3eConfig);
   }
   const obj = input as BinaryExpressionTok_3e3eFromInput;
   return binary_expression__tok_3e3e_({
     left: _resolvePropertyName3(obj.left),
     operator: _resolveTypeIdentifier9(obj.operator),
     right: _resolveTypeIdentifier6(obj.right),
-  });
+  } as BinaryExpressionTok_3e3eConfig);
 }
 
 export function binaryExpressionTok_3e3e3eFrom(input: RuntimeNodeOf<BinaryExpressionTok_3e3e3e> | BinaryExpressionTok_3e3e3eFromInput) {
@@ -2639,14 +2639,14 @@ export function binaryExpressionTok_3e3e3eFrom(input: RuntimeNodeOf<BinaryExpres
       left: input.fields?.left,
       operator: input.fields?.operator,
       right: input.fields?.right,
-    });
+    } as BinaryExpressionTok_3e3e3eConfig);
   }
   const obj = input as BinaryExpressionTok_3e3e3eFromInput;
   return binary_expression__tok_3e3e3e_({
     left: _resolvePropertyName3(obj.left),
     operator: _resolveTypeIdentifier9(obj.operator),
     right: _resolveTypeIdentifier6(obj.right),
-  });
+  } as BinaryExpressionTok_3e3e3eConfig);
 }
 
 export function binaryExpressionTok_3c3cFrom(input: RuntimeNodeOf<BinaryExpressionTok_3c3c> | BinaryExpressionTok_3c3cFromInput) {
@@ -2655,14 +2655,14 @@ export function binaryExpressionTok_3c3cFrom(input: RuntimeNodeOf<BinaryExpressi
       left: input.fields?.left,
       operator: input.fields?.operator,
       right: input.fields?.right,
-    });
+    } as BinaryExpressionTok_3c3cConfig);
   }
   const obj = input as BinaryExpressionTok_3c3cFromInput;
   return binary_expression__tok_3c3c_({
     left: _resolvePropertyName3(obj.left),
     operator: _resolveTypeIdentifier9(obj.operator),
     right: _resolveTypeIdentifier6(obj.right),
-  });
+  } as BinaryExpressionTok_3c3cConfig);
 }
 
 export function binaryExpressionAmpFrom(input: RuntimeNodeOf<BinaryExpressionAmp> | BinaryExpressionAmpFromInput) {
@@ -2671,14 +2671,14 @@ export function binaryExpressionAmpFrom(input: RuntimeNodeOf<BinaryExpressionAmp
       left: input.fields?.left,
       operator: input.fields?.operator,
       right: input.fields?.right,
-    });
+    } as BinaryExpressionAmpConfig);
   }
   const obj = input as BinaryExpressionAmpFromInput;
   return binary_expression__amp_({
     left: _resolvePropertyName3(obj.left),
     operator: _resolveTypeIdentifier9(obj.operator),
     right: _resolveTypeIdentifier6(obj.right),
-  });
+  } as BinaryExpressionAmpConfig);
 }
 
 export function binaryExpressionCaretFrom(input: RuntimeNodeOf<BinaryExpressionCaret> | BinaryExpressionCaretFromInput) {
@@ -2687,14 +2687,14 @@ export function binaryExpressionCaretFrom(input: RuntimeNodeOf<BinaryExpressionC
       left: input.fields?.left,
       operator: input.fields?.operator,
       right: input.fields?.right,
-    });
+    } as BinaryExpressionCaretConfig);
   }
   const obj = input as BinaryExpressionCaretFromInput;
   return binary_expression__caret_({
     left: _resolvePropertyName3(obj.left),
     operator: _resolveTypeIdentifier9(obj.operator),
     right: _resolveTypeIdentifier6(obj.right),
-  });
+  } as BinaryExpressionCaretConfig);
 }
 
 export function binaryExpressionPipeFrom(input: RuntimeNodeOf<BinaryExpressionPipe> | BinaryExpressionPipeFromInput) {
@@ -2703,14 +2703,14 @@ export function binaryExpressionPipeFrom(input: RuntimeNodeOf<BinaryExpressionPi
       left: input.fields?.left,
       operator: input.fields?.operator,
       right: input.fields?.right,
-    });
+    } as BinaryExpressionPipeConfig);
   }
   const obj = input as BinaryExpressionPipeFromInput;
   return binary_expression__pipe_({
     left: _resolvePropertyName3(obj.left),
     operator: _resolveTypeIdentifier9(obj.operator),
     right: _resolveTypeIdentifier6(obj.right),
-  });
+  } as BinaryExpressionPipeConfig);
 }
 
 export function binaryExpressionPlusFrom(input: RuntimeNodeOf<BinaryExpressionPlus> | BinaryExpressionPlusFromInput) {
@@ -2719,14 +2719,14 @@ export function binaryExpressionPlusFrom(input: RuntimeNodeOf<BinaryExpressionPl
       left: input.fields?.left,
       operator: input.fields?.operator,
       right: input.fields?.right,
-    });
+    } as BinaryExpressionPlusConfig);
   }
   const obj = input as BinaryExpressionPlusFromInput;
   return binary_expression__plus_({
     left: _resolvePropertyName3(obj.left),
     operator: _resolveTypeIdentifier9(obj.operator),
     right: _resolveTypeIdentifier6(obj.right),
-  });
+  } as BinaryExpressionPlusConfig);
 }
 
 export function binaryExpressionMinusFrom(input: RuntimeNodeOf<BinaryExpressionMinus> | BinaryExpressionMinusFromInput) {
@@ -2735,14 +2735,14 @@ export function binaryExpressionMinusFrom(input: RuntimeNodeOf<BinaryExpressionM
       left: input.fields?.left,
       operator: input.fields?.operator,
       right: input.fields?.right,
-    });
+    } as BinaryExpressionMinusConfig);
   }
   const obj = input as BinaryExpressionMinusFromInput;
   return binary_expression__minus_({
     left: _resolvePropertyName3(obj.left),
     operator: _resolveTypeIdentifier9(obj.operator),
     right: _resolveTypeIdentifier6(obj.right),
-  });
+  } as BinaryExpressionMinusConfig);
 }
 
 export function binaryExpressionStarFrom(input: RuntimeNodeOf<BinaryExpressionStar> | BinaryExpressionStarFromInput) {
@@ -2751,14 +2751,14 @@ export function binaryExpressionStarFrom(input: RuntimeNodeOf<BinaryExpressionSt
       left: input.fields?.left,
       operator: input.fields?.operator,
       right: input.fields?.right,
-    });
+    } as BinaryExpressionStarConfig);
   }
   const obj = input as BinaryExpressionStarFromInput;
   return binary_expression__star_({
     left: _resolvePropertyName3(obj.left),
     operator: _resolveTypeIdentifier9(obj.operator),
     right: _resolveTypeIdentifier6(obj.right),
-  });
+  } as BinaryExpressionStarConfig);
 }
 
 export function binaryExpressionSlashFrom(input: RuntimeNodeOf<BinaryExpressionSlash> | BinaryExpressionSlashFromInput) {
@@ -2767,14 +2767,14 @@ export function binaryExpressionSlashFrom(input: RuntimeNodeOf<BinaryExpressionS
       left: input.fields?.left,
       operator: input.fields?.operator,
       right: input.fields?.right,
-    });
+    } as BinaryExpressionSlashConfig);
   }
   const obj = input as BinaryExpressionSlashFromInput;
   return binary_expression__slash_({
     left: _resolvePropertyName3(obj.left),
     operator: _resolveTypeIdentifier9(obj.operator),
     right: _resolveTypeIdentifier6(obj.right),
-  });
+  } as BinaryExpressionSlashConfig);
 }
 
 export function binaryExpressionPercentFrom(input: RuntimeNodeOf<BinaryExpressionPercent> | BinaryExpressionPercentFromInput) {
@@ -2783,14 +2783,14 @@ export function binaryExpressionPercentFrom(input: RuntimeNodeOf<BinaryExpressio
       left: input.fields?.left,
       operator: input.fields?.operator,
       right: input.fields?.right,
-    });
+    } as BinaryExpressionPercentConfig);
   }
   const obj = input as BinaryExpressionPercentFromInput;
   return binary_expression__percent_({
     left: _resolvePropertyName3(obj.left),
     operator: _resolveTypeIdentifier9(obj.operator),
     right: _resolveTypeIdentifier6(obj.right),
-  });
+  } as BinaryExpressionPercentConfig);
 }
 
 export function binaryExpressionTok_2a2aFrom(input: RuntimeNodeOf<BinaryExpressionTok_2a2a> | BinaryExpressionTok_2a2aFromInput) {
@@ -2799,14 +2799,14 @@ export function binaryExpressionTok_2a2aFrom(input: RuntimeNodeOf<BinaryExpressi
       left: input.fields?.left,
       operator: input.fields?.operator,
       right: input.fields?.right,
-    });
+    } as BinaryExpressionTok_2a2aConfig);
   }
   const obj = input as BinaryExpressionTok_2a2aFromInput;
   return binary_expression__tok_2a2a_({
     left: _resolvePropertyName3(obj.left),
     operator: _resolveTypeIdentifier9(obj.operator),
     right: _resolveTypeIdentifier6(obj.right),
-  });
+  } as BinaryExpressionTok_2a2aConfig);
 }
 
 export function binaryExpressionAngleFrom(input: RuntimeNodeOf<BinaryExpressionAngle> | BinaryExpressionAngleFromInput) {
@@ -2815,14 +2815,14 @@ export function binaryExpressionAngleFrom(input: RuntimeNodeOf<BinaryExpressionA
       left: input.fields?.left,
       operator: input.fields?.operator,
       right: input.fields?.right,
-    });
+    } as BinaryExpressionAngleConfig);
   }
   const obj = input as BinaryExpressionAngleFromInput;
   return binary_expression__angle_({
     left: _resolvePropertyName3(obj.left),
     operator: _resolveTypeIdentifier9(obj.operator),
     right: _resolveTypeIdentifier6(obj.right),
-  });
+  } as BinaryExpressionAngleConfig);
 }
 
 export function binaryExpressionTok_3c3dFrom(input: RuntimeNodeOf<BinaryExpressionTok_3c3d> | BinaryExpressionTok_3c3dFromInput) {
@@ -2831,14 +2831,14 @@ export function binaryExpressionTok_3c3dFrom(input: RuntimeNodeOf<BinaryExpressi
       left: input.fields?.left,
       operator: input.fields?.operator,
       right: input.fields?.right,
-    });
+    } as BinaryExpressionTok_3c3dConfig);
   }
   const obj = input as BinaryExpressionTok_3c3dFromInput;
   return binary_expression__tok_3c3d_({
     left: _resolvePropertyName3(obj.left),
     operator: _resolveTypeIdentifier9(obj.operator),
     right: _resolveTypeIdentifier6(obj.right),
-  });
+  } as BinaryExpressionTok_3c3dConfig);
 }
 
 export function binaryExpressionTok_3d3dFrom(input: RuntimeNodeOf<BinaryExpressionTok_3d3d> | BinaryExpressionTok_3d3dFromInput) {
@@ -2847,14 +2847,14 @@ export function binaryExpressionTok_3d3dFrom(input: RuntimeNodeOf<BinaryExpressi
       left: input.fields?.left,
       operator: input.fields?.operator,
       right: input.fields?.right,
-    });
+    } as BinaryExpressionTok_3d3dConfig);
   }
   const obj = input as BinaryExpressionTok_3d3dFromInput;
   return binary_expression__tok_3d3d_({
     left: _resolvePropertyName3(obj.left),
     operator: _resolveTypeIdentifier9(obj.operator),
     right: _resolveTypeIdentifier6(obj.right),
-  });
+  } as BinaryExpressionTok_3d3dConfig);
 }
 
 export function binaryExpressionTok_3d3d3dFrom(input: RuntimeNodeOf<BinaryExpressionTok_3d3d3d> | BinaryExpressionTok_3d3d3dFromInput) {
@@ -2863,14 +2863,14 @@ export function binaryExpressionTok_3d3d3dFrom(input: RuntimeNodeOf<BinaryExpres
       left: input.fields?.left,
       operator: input.fields?.operator,
       right: input.fields?.right,
-    });
+    } as BinaryExpressionTok_3d3d3dConfig);
   }
   const obj = input as BinaryExpressionTok_3d3d3dFromInput;
   return binary_expression__tok_3d3d3d_({
     left: _resolvePropertyName3(obj.left),
     operator: _resolveTypeIdentifier9(obj.operator),
     right: _resolveTypeIdentifier6(obj.right),
-  });
+  } as BinaryExpressionTok_3d3d3dConfig);
 }
 
 export function binaryExpressionTok_213dFrom(input: RuntimeNodeOf<BinaryExpressionTok_213d> | BinaryExpressionTok_213dFromInput) {
@@ -2879,14 +2879,14 @@ export function binaryExpressionTok_213dFrom(input: RuntimeNodeOf<BinaryExpressi
       left: input.fields?.left,
       operator: input.fields?.operator,
       right: input.fields?.right,
-    });
+    } as BinaryExpressionTok_213dConfig);
   }
   const obj = input as BinaryExpressionTok_213dFromInput;
   return binary_expression__tok_213d_({
     left: _resolvePropertyName3(obj.left),
     operator: _resolveTypeIdentifier9(obj.operator),
     right: _resolveTypeIdentifier6(obj.right),
-  });
+  } as BinaryExpressionTok_213dConfig);
 }
 
 export function binaryExpressionTok_213d3dFrom(input: RuntimeNodeOf<BinaryExpressionTok_213d3d> | BinaryExpressionTok_213d3dFromInput) {
@@ -2895,14 +2895,14 @@ export function binaryExpressionTok_213d3dFrom(input: RuntimeNodeOf<BinaryExpres
       left: input.fields?.left,
       operator: input.fields?.operator,
       right: input.fields?.right,
-    });
+    } as BinaryExpressionTok_213d3dConfig);
   }
   const obj = input as BinaryExpressionTok_213d3dFromInput;
   return binary_expression__tok_213d3d_({
     left: _resolvePropertyName3(obj.left),
     operator: _resolveTypeIdentifier9(obj.operator),
     right: _resolveTypeIdentifier6(obj.right),
-  });
+  } as BinaryExpressionTok_213d3dConfig);
 }
 
 export function binaryExpressionTok_3e3dFrom(input: RuntimeNodeOf<BinaryExpressionTok_3e3d> | BinaryExpressionTok_3e3dFromInput) {
@@ -2911,14 +2911,14 @@ export function binaryExpressionTok_3e3dFrom(input: RuntimeNodeOf<BinaryExpressi
       left: input.fields?.left,
       operator: input.fields?.operator,
       right: input.fields?.right,
-    });
+    } as BinaryExpressionTok_3e3dConfig);
   }
   const obj = input as BinaryExpressionTok_3e3dFromInput;
   return binary_expression__tok_3e3d_({
     left: _resolvePropertyName3(obj.left),
     operator: _resolveTypeIdentifier9(obj.operator),
     right: _resolveTypeIdentifier6(obj.right),
-  });
+  } as BinaryExpressionTok_3e3dConfig);
 }
 
 export function binaryExpressionCloseAngleFrom(input: RuntimeNodeOf<BinaryExpressionCloseAngle> | BinaryExpressionCloseAngleFromInput) {
@@ -2927,14 +2927,14 @@ export function binaryExpressionCloseAngleFrom(input: RuntimeNodeOf<BinaryExpres
       left: input.fields?.left,
       operator: input.fields?.operator,
       right: input.fields?.right,
-    });
+    } as BinaryExpressionCloseAngleConfig);
   }
   const obj = input as BinaryExpressionCloseAngleFromInput;
   return binary_expression__close_angle_({
     left: _resolvePropertyName3(obj.left),
     operator: _resolveTypeIdentifier9(obj.operator),
     right: _resolveTypeIdentifier6(obj.right),
-  });
+  } as BinaryExpressionCloseAngleConfig);
 }
 
 export function binaryExpressionTok_3f3fFrom(input: RuntimeNodeOf<BinaryExpressionTok_3f3f> | BinaryExpressionTok_3f3fFromInput) {
@@ -2943,14 +2943,14 @@ export function binaryExpressionTok_3f3fFrom(input: RuntimeNodeOf<BinaryExpressi
       left: input.fields?.left,
       operator: input.fields?.operator,
       right: input.fields?.right,
-    });
+    } as BinaryExpressionTok_3f3fConfig);
   }
   const obj = input as BinaryExpressionTok_3f3fFromInput;
   return binary_expression__tok_3f3f_({
     left: _resolvePropertyName3(obj.left),
     operator: _resolveTypeIdentifier9(obj.operator),
     right: _resolveTypeIdentifier6(obj.right),
-  });
+  } as BinaryExpressionTok_3f3fConfig);
 }
 
 export function binaryExpressionInstanceofFrom(input: RuntimeNodeOf<BinaryExpressionInstanceof> | BinaryExpressionInstanceofFromInput) {
@@ -2959,14 +2959,14 @@ export function binaryExpressionInstanceofFrom(input: RuntimeNodeOf<BinaryExpres
       left: input.fields?.left,
       operator: input.fields?.operator,
       right: input.fields?.right,
-    });
+    } as BinaryExpressionInstanceofConfig);
   }
   const obj = input as BinaryExpressionInstanceofFromInput;
   return binary_expression__instanceof_({
     left: _resolvePropertyName3(obj.left),
     operator: _resolveTypeIdentifier9(obj.operator),
     right: _resolveTypeIdentifier6(obj.right),
-  });
+  } as BinaryExpressionInstanceofConfig);
 }
 
 export function binaryExpressionInFrom(input: RuntimeNodeOf<BinaryExpressionIn> | BinaryExpressionInFromInput) {
@@ -2975,14 +2975,14 @@ export function binaryExpressionInFrom(input: RuntimeNodeOf<BinaryExpressionIn> 
       left: input.fields?.left,
       operator: input.fields?.operator,
       right: input.fields?.right,
-    });
+    } as BinaryExpressionInConfig);
   }
   const obj = input as BinaryExpressionInFromInput;
   return binary_expression__in_({
     left: _resolvePropertyName3(obj.left),
     operator: _resolveTypeIdentifier9(obj.operator),
     right: _resolveTypeIdentifier6(obj.right),
-  });
+  } as BinaryExpressionInConfig);
 }
 
 export function breakStatementFrom(input: RuntimeNodeOf<BreakStatement> | BreakStatementFromInput) {
@@ -3013,14 +3013,14 @@ export function callExpressionV0From(input: RuntimeNodeOf<CallExpressionV0> | Ca
       arguments: input.fields?.arguments,
       function: input.fields?.function,
       typeArguments: input.fields?.type_arguments,
-    });
+    } as CallExpressionV0Config);
   }
   const obj = input as CallExpressionV0FromInput;
   return call_expression__v0_({
     arguments: _rq16gfq(obj.arguments),
     function: _r6g0yom(obj.function),
     typeArguments: _r1uqebll(obj.type_arguments),
-  });
+  } as CallExpressionV0Config);
 }
 
 export function callExpressionV1From(input: RuntimeNodeOf<CallExpressionV1> | CallExpressionV1FromInput) {
@@ -3028,13 +3028,13 @@ export function callExpressionV1From(input: RuntimeNodeOf<CallExpressionV1> | Ca
     return call_expression__v1_({
       arguments: input.fields?.arguments,
       function: input.fields?.function,
-    });
+    } as CallExpressionV1Config);
   }
   const obj = input as CallExpressionV1FromInput;
   return call_expression__v1_({
     arguments: _rq16gfq(obj.arguments),
     function: _r6g0yom(obj.function),
-  });
+  } as CallExpressionV1Config);
 }
 
 export function callExpressionTok_3f2eFrom(input: RuntimeNodeOf<CallExpressionTok_3f2e> | CallExpressionTok_3f2eFromInput) {
@@ -3043,14 +3043,14 @@ export function callExpressionTok_3f2eFrom(input: RuntimeNodeOf<CallExpressionTo
       arguments: input.fields?.arguments,
       function: input.fields?.function,
       typeArguments: input.fields?.type_arguments,
-    });
+    } as CallExpressionTok_3f2eConfig);
   }
   const obj = input as CallExpressionTok_3f2eFromInput;
   return call_expression__tok_3f2e_({
     arguments: _rq16gfq(obj.arguments),
     function: _r6g0yom(obj.function),
     typeArguments: _r1uqebll(obj.type_arguments),
-  });
+  } as CallExpressionTok_3f2eConfig);
 }
 
 export function callSignatureFrom(input: RuntimeNodeOf<CallSignature> | CallSignatureFromInput) {
@@ -3119,49 +3119,49 @@ export function classBodyDecoratorFrom(input: RuntimeNodeOf<ClassBodyDecorator> 
     return class_body__decorator_({
       decorator: input.fields?.decorator,
       children: input.children as ClassBodyDecoratorConfig['children'],
-    });
+    } as ClassBodyDecoratorConfig);
   }
   const obj = input as ClassBodyDecoratorFromInput;
   return class_body__decorator_({
     decorator: obj.decorator !== undefined ? ((Array.isArray(obj.decorator) ? obj.decorator : [obj.decorator])).map(_r1fl8679) : undefined,
     children: (obj as { children?: unknown }).children as ClassBodyDecoratorConfig['children'],
-  });
+  } as ClassBodyDecoratorConfig);
 }
 
 export function classBodyCommaFrom(input: RuntimeNodeOf<ClassBodyComma> | ClassBodyCommaFromInput) {
   if (isNodeData<'class_body'>(input)) {
     return class_body__comma_({
       children: input.children as ClassBodyCommaConfig['children'],
-    });
+    } as ClassBodyCommaConfig);
   }
   const obj = input as ClassBodyCommaFromInput;
   return class_body__comma_({
     children: (obj as { children?: unknown }).children as ClassBodyCommaConfig['children'],
-  });
+  } as ClassBodyCommaConfig);
 }
 
 export function classBodyV2From(input: RuntimeNodeOf<ClassBodyV2> | ClassBodyV2FromInput) {
   if (isNodeData<'class_body'>(input)) {
     return class_body__v2_({
       children: input.children as ClassBodyV2Config['children'],
-    });
+    } as ClassBodyV2Config);
   }
   const obj = input as ClassBodyV2FromInput;
   return class_body__v2_({
     children: (obj as { children?: unknown }).children as ClassBodyV2Config['children'],
-  });
+  } as ClassBodyV2Config);
 }
 
 export function classBodySemiFrom(input: RuntimeNodeOf<ClassBodySemi> | ClassBodySemiFromInput) {
   if (isNodeData<'class_body'>(input)) {
     return class_body__semi_({
       children: input.children as ClassBodySemiConfig['children'],
-    });
+    } as ClassBodySemiConfig);
   }
   const obj = input as ClassBodySemiFromInput;
   return class_body__semi_({
     children: (obj as { children?: unknown }).children as ClassBodySemiConfig['children'],
-  });
+  } as ClassBodySemiConfig);
 }
 
 export function classDeclarationFrom(input: RuntimeNodeOf<ClassDeclaration> | ClassDeclarationFromInput) {
@@ -3420,24 +3420,24 @@ export function exportStatementStarFrom(input: RuntimeNodeOf<ExportStatementStar
   if (isNodeData<'export_statement'>(input)) {
     return export_statement__star_({
       children: input.children?.[0] as ExportStatementStarConfig['children'],
-    });
+    } as ExportStatementStarConfig);
   }
   const obj = input as ExportStatementStarFromInput;
   return export_statement__star_({
     children: (obj as { children?: unknown }).children as ExportStatementStarConfig['children'],
-  });
+  } as ExportStatementStarConfig);
 }
 
 export function exportStatementV1From(input: RuntimeNodeOf<ExportStatementV1> | ExportStatementV1FromInput) {
   if (isNodeData<'export_statement'>(input)) {
     return export_statement__v1_({
       declaration: input.fields?.declaration,
-    });
+    } as ExportStatementV1Config);
   }
   const obj = input as ExportStatementV1FromInput;
   return export_statement__v1_({
     declaration: _r1tl6ta5(obj.declaration),
-  });
+  } as ExportStatementV1Config);
 }
 
 export function exportStatementV2From(input: RuntimeNodeOf<ExportStatementV2> | ExportStatementV2FromInput) {
@@ -3445,13 +3445,13 @@ export function exportStatementV2From(input: RuntimeNodeOf<ExportStatementV2> | 
     return export_statement__v2_({
       declaration: input.fields?.declaration,
       decorator: input.fields?.decorator,
-    });
+    } as ExportStatementV2Config);
   }
   const obj = input as ExportStatementV2FromInput;
   return export_statement__v2_({
     declaration: _r1tl6ta5(obj.declaration),
     decorator: obj.decorator !== undefined ? ((Array.isArray(obj.decorator) ? obj.decorator : [obj.decorator])).map(_r1fl8679) : undefined,
-  });
+  } as ExportStatementV2Config);
 }
 
 export function exportStatementV3From(input: RuntimeNodeOf<ExportStatementV3> | ExportStatementV3FromInput) {
@@ -3459,13 +3459,13 @@ export function exportStatementV3From(input: RuntimeNodeOf<ExportStatementV3> | 
     return export_statement__v3_({
       declaration: input.fields?.declaration,
       decorator: input.fields?.decorator,
-    });
+    } as ExportStatementV3Config);
   }
   const obj = input as ExportStatementV3FromInput;
   return export_statement__v3_({
     declaration: _r1tl6ta5(obj.declaration),
     decorator: obj.decorator !== undefined ? ((Array.isArray(obj.decorator) ? obj.decorator : [obj.decorator])).map(_r1fl8679) : undefined,
-  });
+  } as ExportStatementV3Config);
 }
 
 export function exportStatementValueFrom(input: RuntimeNodeOf<ExportStatementValue> | ExportStatementValueFromInput) {
@@ -3474,50 +3474,50 @@ export function exportStatementValueFrom(input: RuntimeNodeOf<ExportStatementVal
       declaration: input.fields?.declaration,
       decorator: input.fields?.decorator,
       value: input.fields?.value,
-    });
+    } as ExportStatementValueConfig);
   }
   const obj = input as ExportStatementValueFromInput;
   return export_statement__value_({
     declaration: _r1tl6ta5(obj.declaration),
     decorator: obj.decorator !== undefined ? ((Array.isArray(obj.decorator) ? obj.decorator : [obj.decorator])).map(_r1fl8679) : undefined,
     value: _resolveTypeIdentifier6(obj.value),
-  });
+  } as ExportStatementValueConfig);
 }
 
 export function exportStatementTypeKwFrom(input: RuntimeNodeOf<ExportStatementTypeKw> | ExportStatementTypeKwFromInput) {
   if (isNodeData<'export_statement'>(input)) {
     return export_statement__type_kw_({
       declaration: input.fields?.declaration,
-    });
+    } as ExportStatementTypeKwConfig);
   }
   const obj = input as ExportStatementTypeKwFromInput;
   return export_statement__type_kw_({
     declaration: _r1tl6ta5(obj.declaration),
-  });
+  } as ExportStatementTypeKwConfig);
 }
 
 export function exportStatementEqFrom(input: RuntimeNodeOf<ExportStatementEq> | ExportStatementEqFromInput) {
   if (isNodeData<'export_statement'>(input)) {
     return export_statement__eq_({
       declaration: input.fields?.declaration,
-    });
+    } as ExportStatementEqConfig);
   }
   const obj = input as ExportStatementEqFromInput;
   return export_statement__eq_({
     declaration: _r1tl6ta5(obj.declaration),
-  });
+  } as ExportStatementEqConfig);
 }
 
 export function exportStatementAsFrom(input: RuntimeNodeOf<ExportStatementAs> | ExportStatementAsFromInput) {
   if (isNodeData<'export_statement'>(input)) {
     return export_statement__as_({
       declaration: input.fields?.declaration,
-    });
+    } as ExportStatementAsConfig);
   }
   const obj = input as ExportStatementAsFromInput;
   return export_statement__as_({
     declaration: _r1tl6ta5(obj.declaration),
-  });
+  } as ExportStatementAsConfig);
 }
 
 export function expressionStatementFrom(input: RuntimeNodeOf<ExpressionStatement>): ReturnType<typeof expression_statement_>;
@@ -3618,7 +3618,7 @@ export function forStatementV0From(input: RuntimeNodeOf<ForStatementV0> | ForSta
       condition: input.fields?.condition,
       increment: input.fields?.increment,
       initializer: input.fields?.initializer,
-    });
+    } as ForStatementV0Config);
   }
   const obj = input as ForStatementV0FromInput;
   return for_statement__v0_({
@@ -3626,7 +3626,7 @@ export function forStatementV0From(input: RuntimeNodeOf<ForStatementV0> | ForSta
     condition: obj.condition !== undefined ? ((Array.isArray(obj.condition) ? obj.condition : [obj.condition])).map(_r1wds2lp) : [],
     increment: _resolveExpressions3(obj.increment),
     initializer: _r1n4up13(obj.initializer),
-  });
+  } as ForStatementV0Config);
 }
 
 export function forStatementV1From(input: RuntimeNodeOf<ForStatementV1> | ForStatementV1FromInput) {
@@ -3636,7 +3636,7 @@ export function forStatementV1From(input: RuntimeNodeOf<ForStatementV1> | ForSta
       condition: input.fields?.condition,
       increment: input.fields?.increment,
       initializer: input.fields?.initializer,
-    });
+    } as ForStatementV1Config);
   }
   const obj = input as ForStatementV1FromInput;
   return for_statement__v1_({
@@ -3644,7 +3644,7 @@ export function forStatementV1From(input: RuntimeNodeOf<ForStatementV1> | ForSta
     condition: obj.condition !== undefined ? ((Array.isArray(obj.condition) ? obj.condition : [obj.condition])).map(_r1wds2lp) : [],
     increment: _resolveExpressions3(obj.increment),
     initializer: _r1n4up13(obj.initializer),
-  });
+  } as ForStatementV1Config);
 }
 
 export function formalParametersFrom(input: RuntimeNodeOf<FormalParameters>): ReturnType<typeof formal_parameters_>;
@@ -3841,24 +3841,24 @@ export function importClauseV0From(input: RuntimeNodeOf<ImportClauseV0> | Import
   if (isNodeData<'import_clause'>(input)) {
     return import_clause__v0_({
       defaultImport: input.fields?.default_import,
-    });
+    } as ImportClauseV0Config);
   }
   const obj = input as ImportClauseV0FromInput;
   return import_clause__v0_({
     defaultImport: _r1588e16(obj.default_import),
-  });
+  } as ImportClauseV0Config);
 }
 
 export function importClauseCommaFrom(input: RuntimeNodeOf<ImportClauseComma> | ImportClauseCommaFromInput) {
   if (isNodeData<'import_clause'>(input)) {
     return import_clause__comma_({
       defaultImport: input.fields?.default_import,
-    });
+    } as ImportClauseCommaConfig);
   }
   const obj = input as ImportClauseCommaFromInput;
   return import_clause__comma_({
     defaultImport: _r1588e16(obj.default_import),
-  });
+  } as ImportClauseCommaConfig);
 }
 
 export function importRequireClauseFrom(input: RuntimeNodeOf<ImportRequireClause> | ImportRequireClauseFromInput) {
@@ -3889,12 +3889,12 @@ export function importSpecifierV0From(input: RuntimeNodeOf<ImportSpecifierV0> | 
   if (isNodeData<'import_specifier'>(input)) {
     return import_specifier__v0_({
       name: input.fields?.name,
-    });
+    } as ImportSpecifierV0Config);
   }
   const obj = input as ImportSpecifierV0FromInput;
   return import_specifier__v0_({
     name: _resolveModuleExportName4(obj.name),
-  });
+  } as ImportSpecifierV0Config);
 }
 
 export function importSpecifierAsFrom(input: RuntimeNodeOf<ImportSpecifierAs> | ImportSpecifierAsFromInput) {
@@ -3902,13 +3902,13 @@ export function importSpecifierAsFrom(input: RuntimeNodeOf<ImportSpecifierAs> | 
     return import_specifier__as_({
       alias: input.fields?.alias,
       name: input.fields?.name,
-    });
+    } as ImportSpecifierAsConfig);
   }
   const obj = input as ImportSpecifierAsFromInput;
   return import_specifier__as_({
     alias: _resolveImportIdentifier2(obj.alias),
     name: _resolveModuleExportName4(obj.name),
-  });
+  } as ImportSpecifierAsConfig);
 }
 
 export function importStatementFrom(input: RuntimeNodeOf<ImportStatement> | ImportStatementFromInput) {
@@ -3928,7 +3928,7 @@ export function importStatementFromClauseFrom(input: RuntimeNodeOf<ImportStateme
       fromClause: input.fields?.from_clause,
       importAttribute: input.fields?.import_attribute,
       semicolon: input.fields?.semicolon,
-    });
+    } as ImportStatementFromClauseConfig);
   }
   const obj = input as ImportStatementFromClauseFromInput;
   return import_statement__from_clause_({
@@ -3936,7 +3936,7 @@ export function importStatementFromClauseFrom(input: RuntimeNodeOf<ImportStateme
     fromClause: _resolveTypeIdentifier3(obj.from_clause),
     importAttribute: _r1n7cbqo(obj.import_attribute),
     semicolon: _resolveTypeIdentifier3(obj.semicolon),
-  });
+  } as ImportStatementFromClauseConfig);
 }
 
 export function importStatementV1From(input: RuntimeNodeOf<ImportStatementV1> | ImportStatementV1FromInput) {
@@ -3945,14 +3945,14 @@ export function importStatementV1From(input: RuntimeNodeOf<ImportStatementV1> | 
       importClause: input.fields?.import_clause,
       importAttribute: input.fields?.import_attribute,
       semicolon: input.fields?.semicolon,
-    });
+    } as ImportStatementV1Config);
   }
   const obj = input as ImportStatementV1FromInput;
   return import_statement__v1_({
     importClause: _r113fjlk(obj.import_clause),
     importAttribute: _r1n7cbqo(obj.import_attribute),
     semicolon: _resolveTypeIdentifier3(obj.semicolon),
-  });
+  } as ImportStatementV1Config);
 }
 
 export function importStatementSourceFrom(input: RuntimeNodeOf<ImportStatementSource> | ImportStatementSourceFromInput) {
@@ -3961,14 +3961,14 @@ export function importStatementSourceFrom(input: RuntimeNodeOf<ImportStatementSo
       source: input.fields?.source,
       importAttribute: input.fields?.import_attribute,
       semicolon: input.fields?.semicolon,
-    });
+    } as ImportStatementSourceConfig);
   }
   const obj = input as ImportStatementSourceFromInput;
   return import_statement__source_({
     source: _resolveModuleExportName3(obj.source),
     importAttribute: _r1n7cbqo(obj.import_attribute),
     semicolon: _resolveTypeIdentifier3(obj.semicolon),
-  });
+  } as ImportStatementSourceConfig);
 }
 
 export function indexSignatureFrom(input: RuntimeNodeOf<IndexSignature> | IndexSignatureFromInput) {
@@ -3988,7 +3988,7 @@ export function indexSignatureColonFrom(input: RuntimeNodeOf<IndexSignatureColon
       name: input.fields?.name,
       sign: input.fields?.sign,
       type: input.fields?.type,
-    });
+    } as IndexSignatureColonConfig);
   }
   const obj = input as IndexSignatureColonFromInput;
   return index_signature__colon_({
@@ -3996,7 +3996,7 @@ export function indexSignatureColonFrom(input: RuntimeNodeOf<IndexSignatureColon
     name: _resolveImportIdentifier(obj.name),
     sign: _resolveTypeIdentifier13(obj.sign),
     type: _rc3yugm(obj.type),
-  });
+  } as IndexSignatureColonConfig);
 }
 
 export function indexSignatureMappedTypeClauseFrom(input: RuntimeNodeOf<IndexSignatureMappedTypeClause> | IndexSignatureMappedTypeClauseFromInput) {
@@ -4005,14 +4005,14 @@ export function indexSignatureMappedTypeClauseFrom(input: RuntimeNodeOf<IndexSig
       sign: input.fields?.sign,
       type: input.fields?.type,
       mappedTypeClause: input.fields?.mapped_type_clause,
-    });
+    } as IndexSignatureMappedTypeClauseConfig);
   }
   const obj = input as IndexSignatureMappedTypeClauseFromInput;
   return index_signature__mapped_type_clause_({
     sign: _resolveTypeIdentifier13(obj.sign),
     type: _rc3yugm(obj.type),
     mappedTypeClause: _ro6lixi(obj.mapped_type_clause),
-  });
+  } as IndexSignatureMappedTypeClauseConfig);
 }
 
 export function indexTypeQueryFrom(input: RuntimeNodeOf<IndexTypeQuery> | IndexTypeQueryFromInput) {
@@ -4481,25 +4481,25 @@ export function parenthesizedExpressionTypeFrom(input: RuntimeNodeOf<Parenthesiz
     return parenthesized_expression__type_({
       type: input.fields?.type,
       children: input.children?.[0] as ParenthesizedExpressionTypeConfig['children'],
-    });
+    } as ParenthesizedExpressionTypeConfig);
   }
   const obj = input as ParenthesizedExpressionTypeFromInput;
   return parenthesized_expression__type_({
     type: _r1s2j1z2(obj.type),
     children: (obj as { children?: unknown }).children as ParenthesizedExpressionTypeConfig['children'],
-  });
+  } as ParenthesizedExpressionTypeConfig);
 }
 
 export function parenthesizedExpressionV1From(input: RuntimeNodeOf<ParenthesizedExpressionV1> | ParenthesizedExpressionV1FromInput) {
   if (isNodeData<'parenthesized_expression'>(input)) {
     return parenthesized_expression__v1_({
       children: input.children?.[0] as ParenthesizedExpressionV1Config['children'],
-    });
+    } as ParenthesizedExpressionV1Config);
   }
   const obj = input as ParenthesizedExpressionV1FromInput;
   return parenthesized_expression__v1_({
     children: (obj as { children?: unknown }).children as ParenthesizedExpressionV1Config['children'],
-  });
+  } as ParenthesizedExpressionV1Config);
 }
 
 export function parenthesizedTypeFrom(input: RuntimeNodeOf<ParenthesizedType>): ReturnType<typeof parenthesized_type_>;
@@ -4562,7 +4562,7 @@ export function publicFieldDefinitionStaticFrom(input: RuntimeNodeOf<PublicField
       accessibilityModifier: input.fields?.accessibility_modifier,
       overrideModifier: input.fields?.override_modifier,
       initializer: input.fields?.initializer,
-    });
+    } as PublicFieldDefinitionStaticConfig);
   }
   const obj = input as PublicFieldDefinitionStaticFromInput;
   return public_field_definition__static_({
@@ -4572,7 +4572,7 @@ export function publicFieldDefinitionStaticFrom(input: RuntimeNodeOf<PublicField
     accessibilityModifier: _resolveParameterName2(obj.accessibility_modifier),
     overrideModifier: _resolveParameterName3(obj.override_modifier),
     initializer: _resolveTypeIdentifier3(obj.initializer),
-  });
+  } as PublicFieldDefinitionStaticConfig);
 }
 
 export function publicFieldDefinitionAbstractFrom(input: RuntimeNodeOf<PublicFieldDefinitionAbstract> | PublicFieldDefinitionAbstractFromInput) {
@@ -4583,7 +4583,7 @@ export function publicFieldDefinitionAbstractFrom(input: RuntimeNodeOf<PublicFie
       type: input.fields?.type,
       accessibilityModifier: input.fields?.accessibility_modifier,
       initializer: input.fields?.initializer,
-    });
+    } as PublicFieldDefinitionAbstractConfig);
   }
   const obj = input as PublicFieldDefinitionAbstractFromInput;
   return public_field_definition__abstract_({
@@ -4592,7 +4592,7 @@ export function publicFieldDefinitionAbstractFrom(input: RuntimeNodeOf<PublicFie
     type: _r1s2j1z2(obj.type),
     accessibilityModifier: _resolveParameterName2(obj.accessibility_modifier),
     initializer: _resolveTypeIdentifier3(obj.initializer),
-  });
+  } as PublicFieldDefinitionAbstractConfig);
 }
 
 export function publicFieldDefinitionAccessorFrom(input: RuntimeNodeOf<PublicFieldDefinitionAccessor> | PublicFieldDefinitionAccessorFromInput) {
@@ -4603,7 +4603,7 @@ export function publicFieldDefinitionAccessorFrom(input: RuntimeNodeOf<PublicFie
       type: input.fields?.type,
       accessibilityModifier: input.fields?.accessibility_modifier,
       initializer: input.fields?.initializer,
-    });
+    } as PublicFieldDefinitionAccessorConfig);
   }
   const obj = input as PublicFieldDefinitionAccessorFromInput;
   return public_field_definition__accessor_({
@@ -4612,7 +4612,7 @@ export function publicFieldDefinitionAccessorFrom(input: RuntimeNodeOf<PublicFie
     type: _r1s2j1z2(obj.type),
     accessibilityModifier: _resolveParameterName2(obj.accessibility_modifier),
     initializer: _resolveTypeIdentifier3(obj.initializer),
-  });
+  } as PublicFieldDefinitionAccessorConfig);
 }
 
 export function readonlyTypeFrom(input: RuntimeNodeOf<ReadonlyType>): ReturnType<typeof readonly_type_>;
@@ -5076,13 +5076,13 @@ export function variableDeclaratorV0From(input: RuntimeNodeOf<VariableDeclarator
     return variable_declarator__v0_({
       name: input.fields?.name,
       type: input.fields?.type,
-    });
+    } as VariableDeclaratorV0Config);
   }
   const obj = input as VariableDeclaratorV0FromInput;
   return variable_declarator__v0_({
     name: _resolveLhsExpression2(obj.name),
     type: _r1s2j1z2(obj.type),
-  });
+  } as VariableDeclaratorV0Config);
 }
 
 export function variableDeclaratorBangFrom(input: RuntimeNodeOf<VariableDeclaratorBang> | VariableDeclaratorBangFromInput) {
@@ -5090,13 +5090,13 @@ export function variableDeclaratorBangFrom(input: RuntimeNodeOf<VariableDeclarat
     return variable_declarator__bang_({
       name: input.fields?.name,
       type: input.fields?.type,
-    });
+    } as VariableDeclaratorBangConfig);
   }
   const obj = input as VariableDeclaratorBangFromInput;
   return variable_declarator__bang_({
     name: _resolveLhsExpression2(obj.name),
     type: _r1s2j1z2(obj.type),
-  });
+  } as VariableDeclaratorBangConfig);
 }
 
 export function whileStatementFrom(input: RuntimeNodeOf<WhileStatement> | WhileStatementFromInput) {
@@ -5141,22 +5141,22 @@ export function yieldExpressionStarFrom(input: RuntimeNodeOf<YieldExpressionStar
   if (isNodeData<'yield_expression'>(input)) {
     return yield_expression__star_({
       expression: input.fields?.expression,
-    });
+    } as YieldExpressionStarConfig);
   }
   const obj = input as YieldExpressionStarFromInput;
   return yield_expression__star_({
     expression: _resolveTypeIdentifier6(obj.expression),
-  });
+  } as YieldExpressionStarConfig);
 }
 
 export function yieldExpressionV1From(input: RuntimeNodeOf<YieldExpressionV1> | YieldExpressionV1FromInput) {
   if (isNodeData<'yield_expression'>(input)) {
     return yield_expression__v1_({
       expression: input.fields?.expression,
-    });
+    } as YieldExpressionV1Config);
   }
   const obj = input as YieldExpressionV1FromInput;
   return yield_expression__v1_({
     expression: _resolveTypeIdentifier6(obj.expression),
-  });
+  } as YieldExpressionV1Config);
 }

@@ -272,22 +272,22 @@ export interface AssertStatement {
 export interface AssignmentV0 {
   readonly type: 'assignment';
   readonly fields: {
-    readonly left: LeftHandSide | Pattern | PatternList;
-    readonly right?: Assignment | AugmentedAssignment | Expression | ExpressionList | PatternList | RightHandSide | Yield;
+    readonly left: LeftHandSide;
+    readonly right?: RightHandSide;
   };
 }
 export interface AssignmentV1 {
   readonly type: 'assignment';
   readonly fields: {
-    readonly left: LeftHandSide | Pattern | PatternList;
+    readonly left: LeftHandSide;
     readonly type?: Type;
   };
 }
 export interface AssignmentV2 {
   readonly type: 'assignment';
   readonly fields: {
-    readonly left: LeftHandSide | Pattern | PatternList;
-    readonly right?: Assignment | AugmentedAssignment | Expression | ExpressionList | PatternList | RightHandSide | Yield;
+    readonly left: LeftHandSide;
+    readonly right?: RightHandSide;
     readonly type?: Type;
   };
 }

@@ -1207,7 +1207,8 @@ function emitVariantFromFunction(
 		}
 	}
 	out.dedent();
-	out.line(`});`);
+	// Resolvers return global union types — assert to variant config for narrowed fields
+	out.line(`} as ${variantTypeName}Config);`);
 	out.dedent();
 	out.line('}');
 
@@ -1254,7 +1255,7 @@ function emitVariantFromFunction(
 	}
 
 	out.dedent();
-	out.line(`});`);
+	out.line(`} as ${variantTypeName}Config);`);
 	out.dedent();
 	out.line('}');
 }

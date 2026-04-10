@@ -346,23 +346,56 @@ export function structurallyEqual(a: GrammarRule, b: GrammarRule): boolean {
 // ---------------------------------------------------------------------------
 
 /**
+ * Extract concrete type kinds from a FIELD's content rule.
+ * Returns SYMBOL names (the concrete types this field accepts in this variant).
+ */
+function extractContentKinds(content: GrammarRule): string[] {
+	const kinds: string[] = [];
+	function walk(r: GrammarRule) {
+		switch (r.type) {
+			case 'SYMBOL':
+				kinds.push(r.name);
+				break;
+			case 'CHOICE':
+				for (const m of r.members) walk(m);
+				break;
+			case 'PREC': case 'PREC_LEFT': case 'PREC_RIGHT': case 'PREC_DYNAMIC':
+				walk(r.content);
+				break;
+			case 'ALIAS':
+				if (r.named && r.value) kinds.push(r.value);
+				else walk(r.content);
+				break;
+			// STRING, BLANK, SEQ, REPEAT etc. — not type-contributing
+			default:
+				break;
+		}
+	}
+	walk(content);
+	return kinds;
+}
+
+/**
  * Build a StructuralVariant with field/literal metadata from a resolved grammar rule.
  * The template field is left empty — the rules emitter generates it via ruleToTemplate.
  */
 function buildVariantMetadata(rule: GrammarRule, ctx: FactorContext): StructuralVariant {
-	const fields = new Map<string, { required: boolean; multiple: boolean }>();
+	const fields = new Map<string, { required: boolean; multiple: boolean; contentKinds?: string[] }>();
 	const literals = new Map<number, string>();
 	let litPos = 0;
 
 	function walk(r: GrammarRule) {
 		switch (r.type) {
-			case 'FIELD':
+			case 'FIELD': {
+				const contentKinds = extractContentKinds(r.content);
 				fields.set(r.name, {
 					required: ctx.fieldRequired.get(r.name) ?? false,
 					multiple: ctx.fieldMultiple.get(r.name) ?? false,
+					...(contentKinds.length > 0 ? { contentKinds } : {}),
 				});
 				walk(r.content);
 				break;
+			}
 			case 'STRING':
 				literals.set(litPos++, r.value);
 				break;

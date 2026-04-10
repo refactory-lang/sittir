@@ -1587,13 +1587,13 @@ export function assignmentV0From(input: RuntimeNodeOf<AssignmentV0> | Assignment
     return assignment__v0_({
       left: input.fields?.left,
       right: input.fields?.right,
-    });
+    } as AssignmentV0Config);
   }
   const obj = input as AssignmentV0FromInput;
   return assignment__v0_({
     left: _resolveLeftHandSide2(obj.left),
     right: _resolveRightHandSide2(obj.right),
-  });
+  } as AssignmentV0Config);
 }
 
 export function assignmentV1From(input: RuntimeNodeOf<AssignmentV1> | AssignmentV1FromInput) {
@@ -1601,13 +1601,13 @@ export function assignmentV1From(input: RuntimeNodeOf<AssignmentV1> | Assignment
     return assignment__v1_({
       left: input.fields?.left,
       type: input.fields?.type,
-    });
+    } as AssignmentV1Config);
   }
   const obj = input as AssignmentV1FromInput;
   return assignment__v1_({
     left: _resolveLeftHandSide2(obj.left),
     type: _rtec52c(obj.type),
-  });
+  } as AssignmentV1Config);
 }
 
 export function assignmentV2From(input: RuntimeNodeOf<AssignmentV2> | AssignmentV2FromInput) {
@@ -1616,14 +1616,14 @@ export function assignmentV2From(input: RuntimeNodeOf<AssignmentV2> | Assignment
       left: input.fields?.left,
       right: input.fields?.right,
       type: input.fields?.type,
-    });
+    } as AssignmentV2Config);
   }
   const obj = input as AssignmentV2FromInput;
   return assignment__v2_({
     left: _resolveLeftHandSide2(obj.left),
     right: _resolveRightHandSide2(obj.right),
     type: _rtec52c(obj.type),
-  });
+  } as AssignmentV2Config);
 }
 
 export function attributeFrom(input: RuntimeNodeOf<Attribute> | AttributeFromInput) {
@@ -1684,14 +1684,14 @@ export function binaryOperatorPlusFrom(input: RuntimeNodeOf<BinaryOperatorPlus> 
       left: input.fields?.left,
       operator: input.fields?.operator,
       right: input.fields?.right,
-    });
+    } as BinaryOperatorPlusConfig);
   }
   const obj = input as BinaryOperatorPlusFromInput;
   return binary_operator__plus_({
     left: _resolveComprehensionClauses4(obj.left),
     operator: _resolveComprehensionClauses6(obj.operator),
     right: _resolveComprehensionClauses4(obj.right),
-  });
+  } as BinaryOperatorPlusConfig);
 }
 
 export function binaryOperatorMinusFrom(input: RuntimeNodeOf<BinaryOperatorMinus> | BinaryOperatorMinusFromInput) {
@@ -1700,14 +1700,14 @@ export function binaryOperatorMinusFrom(input: RuntimeNodeOf<BinaryOperatorMinus
       left: input.fields?.left,
       operator: input.fields?.operator,
       right: input.fields?.right,
-    });
+    } as BinaryOperatorMinusConfig);
   }
   const obj = input as BinaryOperatorMinusFromInput;
   return binary_operator__minus_({
     left: _resolveComprehensionClauses4(obj.left),
     operator: _resolveComprehensionClauses6(obj.operator),
     right: _resolveComprehensionClauses4(obj.right),
-  });
+  } as BinaryOperatorMinusConfig);
 }
 
 export function binaryOperatorStarFrom(input: RuntimeNodeOf<BinaryOperatorStar> | BinaryOperatorStarFromInput) {
@@ -1716,14 +1716,14 @@ export function binaryOperatorStarFrom(input: RuntimeNodeOf<BinaryOperatorStar> 
       left: input.fields?.left,
       operator: input.fields?.operator,
       right: input.fields?.right,
-    });
+    } as BinaryOperatorStarConfig);
   }
   const obj = input as BinaryOperatorStarFromInput;
   return binary_operator__star_({
     left: _resolveComprehensionClauses4(obj.left),
     operator: _resolveComprehensionClauses6(obj.operator),
     right: _resolveComprehensionClauses4(obj.right),
-  });
+  } as BinaryOperatorStarConfig);
 }
 
 export function binaryOperatorAtFrom(input: RuntimeNodeOf<BinaryOperatorAt> | BinaryOperatorAtFromInput) {
@@ -1732,14 +1732,14 @@ export function binaryOperatorAtFrom(input: RuntimeNodeOf<BinaryOperatorAt> | Bi
       left: input.fields?.left,
       operator: input.fields?.operator,
       right: input.fields?.right,
-    });
+    } as BinaryOperatorAtConfig);
   }
   const obj = input as BinaryOperatorAtFromInput;
   return binary_operator__at_({
     left: _resolveComprehensionClauses4(obj.left),
     operator: _resolveComprehensionClauses6(obj.operator),
     right: _resolveComprehensionClauses4(obj.right),
-  });
+  } as BinaryOperatorAtConfig);
 }
 
 export function binaryOperatorSlashFrom(input: RuntimeNodeOf<BinaryOperatorSlash> | BinaryOperatorSlashFromInput) {
@@ -1748,14 +1748,14 @@ export function binaryOperatorSlashFrom(input: RuntimeNodeOf<BinaryOperatorSlash
       left: input.fields?.left,
       operator: input.fields?.operator,
       right: input.fields?.right,
-    });
+    } as BinaryOperatorSlashConfig);
   }
   const obj = input as BinaryOperatorSlashFromInput;
   return binary_operator__slash_({
     left: _resolveComprehensionClauses4(obj.left),
     operator: _resolveComprehensionClauses6(obj.operator),
     right: _resolveComprehensionClauses4(obj.right),
-  });
+  } as BinaryOperatorSlashConfig);
 }
 
 export function binaryOperatorPercentFrom(input: RuntimeNodeOf<BinaryOperatorPercent> | BinaryOperatorPercentFromInput) {
@@ -1764,14 +1764,14 @@ export function binaryOperatorPercentFrom(input: RuntimeNodeOf<BinaryOperatorPer
       left: input.fields?.left,
       operator: input.fields?.operator,
       right: input.fields?.right,
-    });
+    } as BinaryOperatorPercentConfig);
   }
   const obj = input as BinaryOperatorPercentFromInput;
   return binary_operator__percent_({
     left: _resolveComprehensionClauses4(obj.left),
     operator: _resolveComprehensionClauses6(obj.operator),
     right: _resolveComprehensionClauses4(obj.right),
-  });
+  } as BinaryOperatorPercentConfig);
 }
 
 export function binaryOperatorTok_2f2fFrom(input: RuntimeNodeOf<BinaryOperatorTok_2f2f> | BinaryOperatorTok_2f2fFromInput) {
@@ -1780,14 +1780,14 @@ export function binaryOperatorTok_2f2fFrom(input: RuntimeNodeOf<BinaryOperatorTo
       left: input.fields?.left,
       operator: input.fields?.operator,
       right: input.fields?.right,
-    });
+    } as BinaryOperatorTok_2f2fConfig);
   }
   const obj = input as BinaryOperatorTok_2f2fFromInput;
   return binary_operator__tok_2f2f_({
     left: _resolveComprehensionClauses4(obj.left),
     operator: _resolveComprehensionClauses6(obj.operator),
     right: _resolveComprehensionClauses4(obj.right),
-  });
+  } as BinaryOperatorTok_2f2fConfig);
 }
 
 export function binaryOperatorTok_2a2aFrom(input: RuntimeNodeOf<BinaryOperatorTok_2a2a> | BinaryOperatorTok_2a2aFromInput) {
@@ -1796,14 +1796,14 @@ export function binaryOperatorTok_2a2aFrom(input: RuntimeNodeOf<BinaryOperatorTo
       left: input.fields?.left,
       operator: input.fields?.operator,
       right: input.fields?.right,
-    });
+    } as BinaryOperatorTok_2a2aConfig);
   }
   const obj = input as BinaryOperatorTok_2a2aFromInput;
   return binary_operator__tok_2a2a_({
     left: _resolveComprehensionClauses4(obj.left),
     operator: _resolveComprehensionClauses6(obj.operator),
     right: _resolveComprehensionClauses4(obj.right),
-  });
+  } as BinaryOperatorTok_2a2aConfig);
 }
 
 export function binaryOperatorPipeFrom(input: RuntimeNodeOf<BinaryOperatorPipe> | BinaryOperatorPipeFromInput) {
@@ -1812,14 +1812,14 @@ export function binaryOperatorPipeFrom(input: RuntimeNodeOf<BinaryOperatorPipe> 
       left: input.fields?.left,
       operator: input.fields?.operator,
       right: input.fields?.right,
-    });
+    } as BinaryOperatorPipeConfig);
   }
   const obj = input as BinaryOperatorPipeFromInput;
   return binary_operator__pipe_({
     left: _resolveComprehensionClauses4(obj.left),
     operator: _resolveComprehensionClauses6(obj.operator),
     right: _resolveComprehensionClauses4(obj.right),
-  });
+  } as BinaryOperatorPipeConfig);
 }
 
 export function binaryOperatorAmpFrom(input: RuntimeNodeOf<BinaryOperatorAmp> | BinaryOperatorAmpFromInput) {
@@ -1828,14 +1828,14 @@ export function binaryOperatorAmpFrom(input: RuntimeNodeOf<BinaryOperatorAmp> | 
       left: input.fields?.left,
       operator: input.fields?.operator,
       right: input.fields?.right,
-    });
+    } as BinaryOperatorAmpConfig);
   }
   const obj = input as BinaryOperatorAmpFromInput;
   return binary_operator__amp_({
     left: _resolveComprehensionClauses4(obj.left),
     operator: _resolveComprehensionClauses6(obj.operator),
     right: _resolveComprehensionClauses4(obj.right),
-  });
+  } as BinaryOperatorAmpConfig);
 }
 
 export function binaryOperatorCaretFrom(input: RuntimeNodeOf<BinaryOperatorCaret> | BinaryOperatorCaretFromInput) {
@@ -1844,14 +1844,14 @@ export function binaryOperatorCaretFrom(input: RuntimeNodeOf<BinaryOperatorCaret
       left: input.fields?.left,
       operator: input.fields?.operator,
       right: input.fields?.right,
-    });
+    } as BinaryOperatorCaretConfig);
   }
   const obj = input as BinaryOperatorCaretFromInput;
   return binary_operator__caret_({
     left: _resolveComprehensionClauses4(obj.left),
     operator: _resolveComprehensionClauses6(obj.operator),
     right: _resolveComprehensionClauses4(obj.right),
-  });
+  } as BinaryOperatorCaretConfig);
 }
 
 export function binaryOperatorTok_3c3cFrom(input: RuntimeNodeOf<BinaryOperatorTok_3c3c> | BinaryOperatorTok_3c3cFromInput) {
@@ -1860,14 +1860,14 @@ export function binaryOperatorTok_3c3cFrom(input: RuntimeNodeOf<BinaryOperatorTo
       left: input.fields?.left,
       operator: input.fields?.operator,
       right: input.fields?.right,
-    });
+    } as BinaryOperatorTok_3c3cConfig);
   }
   const obj = input as BinaryOperatorTok_3c3cFromInput;
   return binary_operator__tok_3c3c_({
     left: _resolveComprehensionClauses4(obj.left),
     operator: _resolveComprehensionClauses6(obj.operator),
     right: _resolveComprehensionClauses4(obj.right),
-  });
+  } as BinaryOperatorTok_3c3cConfig);
 }
 
 export function binaryOperatorTok_3e3eFrom(input: RuntimeNodeOf<BinaryOperatorTok_3e3e> | BinaryOperatorTok_3e3eFromInput) {
@@ -1876,14 +1876,14 @@ export function binaryOperatorTok_3e3eFrom(input: RuntimeNodeOf<BinaryOperatorTo
       left: input.fields?.left,
       operator: input.fields?.operator,
       right: input.fields?.right,
-    });
+    } as BinaryOperatorTok_3e3eConfig);
   }
   const obj = input as BinaryOperatorTok_3e3eFromInput;
   return binary_operator__tok_3e3e_({
     left: _resolveComprehensionClauses4(obj.left),
     operator: _resolveComprehensionClauses6(obj.operator),
     right: _resolveComprehensionClauses4(obj.right),
-  });
+  } as BinaryOperatorTok_3e3eConfig);
 }
 
 export function blockFrom(input: RuntimeNodeOf<Block> | BlockFromInput) {
@@ -1916,14 +1916,14 @@ export function booleanOperatorAndFrom(input: RuntimeNodeOf<BooleanOperatorAnd> 
       left: input.fields?.left,
       operator: input.fields?.operator,
       right: input.fields?.right,
-    });
+    } as BooleanOperatorAndConfig);
   }
   const obj = input as BooleanOperatorAndFromInput;
   return boolean_operator__and_({
     left: _resolveComprehensionClauses3(obj.left),
     operator: _resolveComprehensionClauses8(obj.operator),
     right: _resolveComprehensionClauses3(obj.right),
-  });
+  } as BooleanOperatorAndConfig);
 }
 
 export function booleanOperatorOrFrom(input: RuntimeNodeOf<BooleanOperatorOr> | BooleanOperatorOrFromInput) {
@@ -1932,14 +1932,14 @@ export function booleanOperatorOrFrom(input: RuntimeNodeOf<BooleanOperatorOr> | 
       left: input.fields?.left,
       operator: input.fields?.operator,
       right: input.fields?.right,
-    });
+    } as BooleanOperatorOrConfig);
   }
   const obj = input as BooleanOperatorOrFromInput;
   return boolean_operator__or_({
     left: _resolveComprehensionClauses3(obj.left),
     operator: _resolveComprehensionClauses8(obj.operator),
     right: _resolveComprehensionClauses3(obj.right),
-  });
+  } as BooleanOperatorOrConfig);
 }
 
 export function callFrom(input: RuntimeNodeOf<Call> | CallFromInput) {
@@ -2383,21 +2383,21 @@ export function futureImportStatementFrom(input: RuntimeNodeOf<FutureImportState
 export function futureImportStatementV0From(input: RuntimeNodeOf<FutureImportStatementV0> | FutureImportStatementV0FromInput) {
   if (isNodeData<'future_import_statement'>(input)) {
     return future_import_statement__v0_({
-    });
+    } as FutureImportStatementV0Config);
   }
   const obj = input as FutureImportStatementV0FromInput;
   return future_import_statement__v0_({
-  });
+  } as FutureImportStatementV0Config);
 }
 
 export function futureImportStatementParenFrom(input: RuntimeNodeOf<FutureImportStatementParen> | FutureImportStatementParenFromInput) {
   if (isNodeData<'future_import_statement'>(input)) {
     return future_import_statement__paren_({
-    });
+    } as FutureImportStatementParenConfig);
   }
   const obj = input as FutureImportStatementParenFromInput;
   return future_import_statement__paren_({
-  });
+  } as FutureImportStatementParenConfig);
 }
 
 export function generatorExpressionFrom(input: RuntimeNodeOf<GeneratorExpression> | GeneratorExpressionFromInput) {
@@ -2480,13 +2480,13 @@ export function importFromStatementV0From(input: RuntimeNodeOf<ImportFromStateme
     return import_from_statement__v0_({
       moduleName: input.fields?.module_name,
       wildcardImport: input.fields?.wildcard_import,
-    });
+    } as ImportFromStatementV0Config);
   }
   const obj = input as ImportFromStatementV0FromInput;
   return import_from_statement__v0_({
     moduleName: _r2jsk94(obj.module_name),
     wildcardImport: _r18yiena(obj.wildcard_import),
-  });
+  } as ImportFromStatementV0Config);
 }
 
 export function importFromStatementParenFrom(input: RuntimeNodeOf<ImportFromStatementParen> | ImportFromStatementParenFromInput) {
@@ -2494,13 +2494,13 @@ export function importFromStatementParenFrom(input: RuntimeNodeOf<ImportFromStat
     return import_from_statement__paren_({
       moduleName: input.fields?.module_name,
       wildcardImport: input.fields?.wildcard_import,
-    });
+    } as ImportFromStatementParenConfig);
   }
   const obj = input as ImportFromStatementParenFromInput;
   return import_from_statement__paren_({
     moduleName: _r2jsk94(obj.module_name),
     wildcardImport: _r18yiena(obj.wildcard_import),
-  });
+  } as ImportFromStatementParenConfig);
 }
 
 export function importStatementFrom(input: RuntimeNodeOf<ImportStatement> | ImportStatementFromInput) {
@@ -2772,25 +2772,25 @@ export function printStatementChevronFrom(input: RuntimeNodeOf<PrintStatementChe
     return print_statement__chevron_({
       argument: input.fields?.argument,
       chevron: input.fields?.chevron,
-    });
+    } as PrintStatementChevronConfig);
   }
   const obj = input as PrintStatementChevronFromInput;
   return print_statement__chevron_({
     argument: obj.argument !== undefined ? ((Array.isArray(obj.argument) ? obj.argument : [obj.argument])).map(_resolveComprehensionClauses3) : undefined,
     chevron: _rnbxrnb(obj.chevron),
-  });
+  } as PrintStatementChevronConfig);
 }
 
 export function printStatementV1From(input: RuntimeNodeOf<PrintStatementV1> | PrintStatementV1FromInput) {
   if (isNodeData<'print_statement'>(input)) {
     return print_statement__v1_({
       argument: input.fields?.argument,
-    });
+    } as PrintStatementV1Config);
   }
   const obj = input as PrintStatementV1FromInput;
   return print_statement__v1_({
     argument: obj.argument !== undefined ? ((Array.isArray(obj.argument) ? obj.argument : [obj.argument])).map(_resolveComprehensionClauses3) : undefined,
-  });
+  } as PrintStatementV1Config);
 }
 
 export function raiseStatementFrom(input: RuntimeNodeOf<RaiseStatement> | RaiseStatementFromInput) {

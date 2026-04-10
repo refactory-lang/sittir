@@ -347,14 +347,14 @@ export interface ArrayExpressionSemi {
   readonly fields: {
     readonly length?: Expression;
     readonly attributes?: readonly (AttributeItem)[];
-    readonly elements?: readonly (AttributeItem | Expression)[];
+    readonly elements?: readonly (Expression)[];
   };
 }
 export interface ArrayExpressionComma {
   readonly type: 'array_expression';
   readonly fields: {
     readonly attributes?: readonly (AttributeItem)[];
-    readonly elements?: readonly (AttributeItem | Expression)[];
+    readonly elements?: readonly (AttributeItem)[];
   };
 }
 export type ArrayExpression = ArrayExpressionSemi | ArrayExpressionComma;
@@ -676,14 +676,14 @@ export interface FieldInitializerList {
 export interface FieldPatternV0 {
   readonly type: 'field_pattern';
   readonly fields: {
-    readonly name: FieldIdentifier | ShorthandFieldIdentifier;
+    readonly name: ShorthandFieldIdentifier;
     readonly mutable_specifier?: MutableSpecifier;
   };
 }
 export interface FieldPatternColon {
   readonly type: 'field_pattern';
   readonly fields: {
-    readonly name: FieldIdentifier | ShorthandFieldIdentifier;
+    readonly name: FieldIdentifier;
     readonly pattern?: Pattern;
     readonly mutable_specifier?: MutableSpecifier;
   };
@@ -1193,7 +1193,7 @@ export interface StructExpression {
 export interface StructItemV0 {
   readonly type: 'struct_item';
   readonly fields: {
-    readonly body?: FieldDeclarationList | OrderedFieldDeclarationList;
+    readonly body?: FieldDeclarationList;
     readonly name: TypeIdentifier;
     readonly type_parameters?: TypeParameters;
     readonly visibility_modifier?: VisibilityModifier;
@@ -1203,7 +1203,7 @@ export interface StructItemV0 {
 export interface StructItemV1 {
   readonly type: 'struct_item';
   readonly fields: {
-    readonly body?: FieldDeclarationList | OrderedFieldDeclarationList;
+    readonly body?: OrderedFieldDeclarationList;
     readonly name: TypeIdentifier;
     readonly type_parameters?: TypeParameters;
     readonly visibility_modifier?: VisibilityModifier;

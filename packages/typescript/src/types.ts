@@ -369,19 +369,19 @@ export interface AddingTypeAnnotation {
 export interface AmbientDeclarationV0 {
   readonly type: 'ambient_declaration';
   readonly fields: {
-    readonly declaration: Declaration | PropertyIdentifier | StatementBlock;
+    readonly declaration: Declaration;
   };
 }
 export interface AmbientDeclarationGlobal {
   readonly type: 'ambient_declaration';
   readonly fields: {
-    readonly declaration: Declaration | PropertyIdentifier | StatementBlock;
+    readonly declaration: StatementBlock;
   };
 }
 export interface AmbientDeclarationModule {
   readonly type: 'ambient_declaration';
   readonly fields: {
-    readonly declaration: Declaration | PropertyIdentifier | StatementBlock;
+    readonly declaration: PropertyIdentifier;
     readonly type_annotation?: Type;
     readonly semicolon?: string;
   };
@@ -463,7 +463,7 @@ export interface AwaitExpression {
 export interface BinaryExpressionTok_2626 {
   readonly type: 'binary_expression';
   readonly fields: {
-    readonly left: Expression | PrivatePropertyIdentifier;
+    readonly left: Expression;
     readonly operator: '!=' | '!==' | '%' | '&' | '&&' | '*' | '**' | '+' | '-' | '/' | '<' | '<<' | '<=' | '==' | '===' | '>' | '>=' | '>>' | '>>>' | '??' | '^' | 'in' | 'instanceof' | '|' | '||';
     readonly right: Expression;
   };
@@ -471,7 +471,7 @@ export interface BinaryExpressionTok_2626 {
 export interface BinaryExpressionTok_7c7c {
   readonly type: 'binary_expression';
   readonly fields: {
-    readonly left: Expression | PrivatePropertyIdentifier;
+    readonly left: Expression;
     readonly operator: '!=' | '!==' | '%' | '&' | '&&' | '*' | '**' | '+' | '-' | '/' | '<' | '<<' | '<=' | '==' | '===' | '>' | '>=' | '>>' | '>>>' | '??' | '^' | 'in' | 'instanceof' | '|' | '||';
     readonly right: Expression;
   };
@@ -479,7 +479,7 @@ export interface BinaryExpressionTok_7c7c {
 export interface BinaryExpressionTok_3e3e {
   readonly type: 'binary_expression';
   readonly fields: {
-    readonly left: Expression | PrivatePropertyIdentifier;
+    readonly left: Expression;
     readonly operator: '!=' | '!==' | '%' | '&' | '&&' | '*' | '**' | '+' | '-' | '/' | '<' | '<<' | '<=' | '==' | '===' | '>' | '>=' | '>>' | '>>>' | '??' | '^' | 'in' | 'instanceof' | '|' | '||';
     readonly right: Expression;
   };
@@ -487,7 +487,7 @@ export interface BinaryExpressionTok_3e3e {
 export interface BinaryExpressionTok_3e3e3e {
   readonly type: 'binary_expression';
   readonly fields: {
-    readonly left: Expression | PrivatePropertyIdentifier;
+    readonly left: Expression;
     readonly operator: '!=' | '!==' | '%' | '&' | '&&' | '*' | '**' | '+' | '-' | '/' | '<' | '<<' | '<=' | '==' | '===' | '>' | '>=' | '>>' | '>>>' | '??' | '^' | 'in' | 'instanceof' | '|' | '||';
     readonly right: Expression;
   };
@@ -495,7 +495,7 @@ export interface BinaryExpressionTok_3e3e3e {
 export interface BinaryExpressionTok_3c3c {
   readonly type: 'binary_expression';
   readonly fields: {
-    readonly left: Expression | PrivatePropertyIdentifier;
+    readonly left: Expression;
     readonly operator: '!=' | '!==' | '%' | '&' | '&&' | '*' | '**' | '+' | '-' | '/' | '<' | '<<' | '<=' | '==' | '===' | '>' | '>=' | '>>' | '>>>' | '??' | '^' | 'in' | 'instanceof' | '|' | '||';
     readonly right: Expression;
   };
@@ -503,7 +503,7 @@ export interface BinaryExpressionTok_3c3c {
 export interface BinaryExpressionAmp {
   readonly type: 'binary_expression';
   readonly fields: {
-    readonly left: Expression | PrivatePropertyIdentifier;
+    readonly left: Expression;
     readonly operator: '!=' | '!==' | '%' | '&' | '&&' | '*' | '**' | '+' | '-' | '/' | '<' | '<<' | '<=' | '==' | '===' | '>' | '>=' | '>>' | '>>>' | '??' | '^' | 'in' | 'instanceof' | '|' | '||';
     readonly right: Expression;
   };
@@ -511,7 +511,7 @@ export interface BinaryExpressionAmp {
 export interface BinaryExpressionCaret {
   readonly type: 'binary_expression';
   readonly fields: {
-    readonly left: Expression | PrivatePropertyIdentifier;
+    readonly left: Expression;
     readonly operator: '!=' | '!==' | '%' | '&' | '&&' | '*' | '**' | '+' | '-' | '/' | '<' | '<<' | '<=' | '==' | '===' | '>' | '>=' | '>>' | '>>>' | '??' | '^' | 'in' | 'instanceof' | '|' | '||';
     readonly right: Expression;
   };
@@ -519,7 +519,7 @@ export interface BinaryExpressionCaret {
 export interface BinaryExpressionPipe {
   readonly type: 'binary_expression';
   readonly fields: {
-    readonly left: Expression | PrivatePropertyIdentifier;
+    readonly left: Expression;
     readonly operator: '!=' | '!==' | '%' | '&' | '&&' | '*' | '**' | '+' | '-' | '/' | '<' | '<<' | '<=' | '==' | '===' | '>' | '>=' | '>>' | '>>>' | '??' | '^' | 'in' | 'instanceof' | '|' | '||';
     readonly right: Expression;
   };
@@ -527,7 +527,7 @@ export interface BinaryExpressionPipe {
 export interface BinaryExpressionPlus {
   readonly type: 'binary_expression';
   readonly fields: {
-    readonly left: Expression | PrivatePropertyIdentifier;
+    readonly left: Expression;
     readonly operator: '!=' | '!==' | '%' | '&' | '&&' | '*' | '**' | '+' | '-' | '/' | '<' | '<<' | '<=' | '==' | '===' | '>' | '>=' | '>>' | '>>>' | '??' | '^' | 'in' | 'instanceof' | '|' | '||';
     readonly right: Expression;
   };
@@ -535,7 +535,7 @@ export interface BinaryExpressionPlus {
 export interface BinaryExpressionMinus {
   readonly type: 'binary_expression';
   readonly fields: {
-    readonly left: Expression | PrivatePropertyIdentifier;
+    readonly left: Expression;
     readonly operator: '!=' | '!==' | '%' | '&' | '&&' | '*' | '**' | '+' | '-' | '/' | '<' | '<<' | '<=' | '==' | '===' | '>' | '>=' | '>>' | '>>>' | '??' | '^' | 'in' | 'instanceof' | '|' | '||';
     readonly right: Expression;
   };
@@ -543,7 +543,7 @@ export interface BinaryExpressionMinus {
 export interface BinaryExpressionStar {
   readonly type: 'binary_expression';
   readonly fields: {
-    readonly left: Expression | PrivatePropertyIdentifier;
+    readonly left: Expression;
     readonly operator: '!=' | '!==' | '%' | '&' | '&&' | '*' | '**' | '+' | '-' | '/' | '<' | '<<' | '<=' | '==' | '===' | '>' | '>=' | '>>' | '>>>' | '??' | '^' | 'in' | 'instanceof' | '|' | '||';
     readonly right: Expression;
   };
@@ -551,7 +551,7 @@ export interface BinaryExpressionStar {
 export interface BinaryExpressionSlash {
   readonly type: 'binary_expression';
   readonly fields: {
-    readonly left: Expression | PrivatePropertyIdentifier;
+    readonly left: Expression;
     readonly operator: '!=' | '!==' | '%' | '&' | '&&' | '*' | '**' | '+' | '-' | '/' | '<' | '<<' | '<=' | '==' | '===' | '>' | '>=' | '>>' | '>>>' | '??' | '^' | 'in' | 'instanceof' | '|' | '||';
     readonly right: Expression;
   };
@@ -559,7 +559,7 @@ export interface BinaryExpressionSlash {
 export interface BinaryExpressionPercent {
   readonly type: 'binary_expression';
   readonly fields: {
-    readonly left: Expression | PrivatePropertyIdentifier;
+    readonly left: Expression;
     readonly operator: '!=' | '!==' | '%' | '&' | '&&' | '*' | '**' | '+' | '-' | '/' | '<' | '<<' | '<=' | '==' | '===' | '>' | '>=' | '>>' | '>>>' | '??' | '^' | 'in' | 'instanceof' | '|' | '||';
     readonly right: Expression;
   };
@@ -567,7 +567,7 @@ export interface BinaryExpressionPercent {
 export interface BinaryExpressionTok_2a2a {
   readonly type: 'binary_expression';
   readonly fields: {
-    readonly left: Expression | PrivatePropertyIdentifier;
+    readonly left: Expression;
     readonly operator: '!=' | '!==' | '%' | '&' | '&&' | '*' | '**' | '+' | '-' | '/' | '<' | '<<' | '<=' | '==' | '===' | '>' | '>=' | '>>' | '>>>' | '??' | '^' | 'in' | 'instanceof' | '|' | '||';
     readonly right: Expression;
   };
@@ -575,7 +575,7 @@ export interface BinaryExpressionTok_2a2a {
 export interface BinaryExpressionAngle {
   readonly type: 'binary_expression';
   readonly fields: {
-    readonly left: Expression | PrivatePropertyIdentifier;
+    readonly left: Expression;
     readonly operator: '!=' | '!==' | '%' | '&' | '&&' | '*' | '**' | '+' | '-' | '/' | '<' | '<<' | '<=' | '==' | '===' | '>' | '>=' | '>>' | '>>>' | '??' | '^' | 'in' | 'instanceof' | '|' | '||';
     readonly right: Expression;
   };
@@ -583,7 +583,7 @@ export interface BinaryExpressionAngle {
 export interface BinaryExpressionTok_3c3d {
   readonly type: 'binary_expression';
   readonly fields: {
-    readonly left: Expression | PrivatePropertyIdentifier;
+    readonly left: Expression;
     readonly operator: '!=' | '!==' | '%' | '&' | '&&' | '*' | '**' | '+' | '-' | '/' | '<' | '<<' | '<=' | '==' | '===' | '>' | '>=' | '>>' | '>>>' | '??' | '^' | 'in' | 'instanceof' | '|' | '||';
     readonly right: Expression;
   };
@@ -591,7 +591,7 @@ export interface BinaryExpressionTok_3c3d {
 export interface BinaryExpressionTok_3d3d {
   readonly type: 'binary_expression';
   readonly fields: {
-    readonly left: Expression | PrivatePropertyIdentifier;
+    readonly left: Expression;
     readonly operator: '!=' | '!==' | '%' | '&' | '&&' | '*' | '**' | '+' | '-' | '/' | '<' | '<<' | '<=' | '==' | '===' | '>' | '>=' | '>>' | '>>>' | '??' | '^' | 'in' | 'instanceof' | '|' | '||';
     readonly right: Expression;
   };
@@ -599,7 +599,7 @@ export interface BinaryExpressionTok_3d3d {
 export interface BinaryExpressionTok_3d3d3d {
   readonly type: 'binary_expression';
   readonly fields: {
-    readonly left: Expression | PrivatePropertyIdentifier;
+    readonly left: Expression;
     readonly operator: '!=' | '!==' | '%' | '&' | '&&' | '*' | '**' | '+' | '-' | '/' | '<' | '<<' | '<=' | '==' | '===' | '>' | '>=' | '>>' | '>>>' | '??' | '^' | 'in' | 'instanceof' | '|' | '||';
     readonly right: Expression;
   };
@@ -607,7 +607,7 @@ export interface BinaryExpressionTok_3d3d3d {
 export interface BinaryExpressionTok_213d {
   readonly type: 'binary_expression';
   readonly fields: {
-    readonly left: Expression | PrivatePropertyIdentifier;
+    readonly left: Expression;
     readonly operator: '!=' | '!==' | '%' | '&' | '&&' | '*' | '**' | '+' | '-' | '/' | '<' | '<<' | '<=' | '==' | '===' | '>' | '>=' | '>>' | '>>>' | '??' | '^' | 'in' | 'instanceof' | '|' | '||';
     readonly right: Expression;
   };
@@ -615,7 +615,7 @@ export interface BinaryExpressionTok_213d {
 export interface BinaryExpressionTok_213d3d {
   readonly type: 'binary_expression';
   readonly fields: {
-    readonly left: Expression | PrivatePropertyIdentifier;
+    readonly left: Expression;
     readonly operator: '!=' | '!==' | '%' | '&' | '&&' | '*' | '**' | '+' | '-' | '/' | '<' | '<<' | '<=' | '==' | '===' | '>' | '>=' | '>>' | '>>>' | '??' | '^' | 'in' | 'instanceof' | '|' | '||';
     readonly right: Expression;
   };
@@ -623,7 +623,7 @@ export interface BinaryExpressionTok_213d3d {
 export interface BinaryExpressionTok_3e3d {
   readonly type: 'binary_expression';
   readonly fields: {
-    readonly left: Expression | PrivatePropertyIdentifier;
+    readonly left: Expression;
     readonly operator: '!=' | '!==' | '%' | '&' | '&&' | '*' | '**' | '+' | '-' | '/' | '<' | '<<' | '<=' | '==' | '===' | '>' | '>=' | '>>' | '>>>' | '??' | '^' | 'in' | 'instanceof' | '|' | '||';
     readonly right: Expression;
   };
@@ -631,7 +631,7 @@ export interface BinaryExpressionTok_3e3d {
 export interface BinaryExpressionCloseAngle {
   readonly type: 'binary_expression';
   readonly fields: {
-    readonly left: Expression | PrivatePropertyIdentifier;
+    readonly left: Expression;
     readonly operator: '!=' | '!==' | '%' | '&' | '&&' | '*' | '**' | '+' | '-' | '/' | '<' | '<<' | '<=' | '==' | '===' | '>' | '>=' | '>>' | '>>>' | '??' | '^' | 'in' | 'instanceof' | '|' | '||';
     readonly right: Expression;
   };
@@ -639,7 +639,7 @@ export interface BinaryExpressionCloseAngle {
 export interface BinaryExpressionTok_3f3f {
   readonly type: 'binary_expression';
   readonly fields: {
-    readonly left: Expression | PrivatePropertyIdentifier;
+    readonly left: Expression;
     readonly operator: '!=' | '!==' | '%' | '&' | '&&' | '*' | '**' | '+' | '-' | '/' | '<' | '<<' | '<=' | '==' | '===' | '>' | '>=' | '>>' | '>>>' | '??' | '^' | 'in' | 'instanceof' | '|' | '||';
     readonly right: Expression;
   };
@@ -647,7 +647,7 @@ export interface BinaryExpressionTok_3f3f {
 export interface BinaryExpressionInstanceof {
   readonly type: 'binary_expression';
   readonly fields: {
-    readonly left: Expression | PrivatePropertyIdentifier;
+    readonly left: Expression;
     readonly operator: '!=' | '!==' | '%' | '&' | '&&' | '*' | '**' | '+' | '-' | '/' | '<' | '<<' | '<=' | '==' | '===' | '>' | '>=' | '>>' | '>>>' | '??' | '^' | 'in' | 'instanceof' | '|' | '||';
     readonly right: Expression;
   };
@@ -670,23 +670,23 @@ export interface BreakStatement {
 export interface CallExpressionV0 {
   readonly type: 'call_expression';
   readonly fields: {
-    readonly arguments: Arguments | TemplateString;
-    readonly function: Expression | Import | NewExpression | PrimaryExpression;
+    readonly arguments: Arguments;
+    readonly function: Expression | Import;
     readonly type_arguments?: TypeArguments;
   };
 }
 export interface CallExpressionV1 {
   readonly type: 'call_expression';
   readonly fields: {
-    readonly arguments: Arguments | TemplateString;
-    readonly function: Expression | Import | NewExpression | PrimaryExpression;
+    readonly arguments: TemplateString;
+    readonly function: NewExpression | PrimaryExpression;
   };
 }
 export interface CallExpressionTok_3f2e {
   readonly type: 'call_expression';
   readonly fields: {
-    readonly arguments: Arguments | TemplateString;
-    readonly function: Expression | Import | NewExpression | PrimaryExpression;
+    readonly arguments: Arguments;
+    readonly function: PrimaryExpression;
     readonly type_arguments?: TypeArguments;
   };
 }
@@ -863,27 +863,27 @@ export interface ExportStatementStar {
 export interface ExportStatementV1 {
   readonly type: 'export_statement';
   readonly fields: {
-    readonly declaration?: Declaration | ExportClause | Expression | Identifier | NamespaceExport;
+    readonly declaration?: NamespaceExport;
   };
 }
 export interface ExportStatementV2 {
   readonly type: 'export_statement';
   readonly fields: {
-    readonly declaration?: Declaration | ExportClause | Expression | Identifier | NamespaceExport;
+    readonly declaration?: Declaration;
     readonly decorator?: readonly (Decorator)[];
   };
 }
 export interface ExportStatementV3 {
   readonly type: 'export_statement';
   readonly fields: {
-    readonly declaration?: Declaration | ExportClause | Expression | Identifier | NamespaceExport;
+    readonly declaration?: Declaration;
     readonly decorator?: readonly (Decorator)[];
   };
 }
 export interface ExportStatementValue {
   readonly type: 'export_statement';
   readonly fields: {
-    readonly declaration?: Declaration | ExportClause | Expression | Identifier | NamespaceExport;
+    readonly declaration?: Expression;
     readonly decorator?: readonly (Decorator)[];
     readonly value?: Expression;
   };
@@ -891,19 +891,19 @@ export interface ExportStatementValue {
 export interface ExportStatementTypeKw {
   readonly type: 'export_statement';
   readonly fields: {
-    readonly declaration?: Declaration | ExportClause | Expression | Identifier | NamespaceExport;
+    readonly declaration?: ExportClause;
   };
 }
 export interface ExportStatementEq {
   readonly type: 'export_statement';
   readonly fields: {
-    readonly declaration?: Declaration | ExportClause | Expression | Identifier | NamespaceExport;
+    readonly declaration?: Expression;
   };
 }
 export interface ExportStatementAs {
   readonly type: 'export_statement';
   readonly fields: {
-    readonly declaration?: Declaration | ExportClause | Expression | Identifier | NamespaceExport;
+    readonly declaration?: Identifier;
   };
 }
 export type ExportStatement = ExportStatementStar | ExportStatementV1 | ExportStatementV2 | ExportStatementV3 | ExportStatementValue | ExportStatementTypeKw | ExportStatementEq | ExportStatementAs;
@@ -952,17 +952,17 @@ export interface ForStatementV0 {
   readonly fields: {
     readonly body: Statement;
     readonly condition: readonly (EmptyStatement | Expression | Expressions | SequenceExpression)[];
-    readonly increment?: Expression | Expressions | SequenceExpression;
-    readonly initializer: EmptyStatement | Expression | Expressions | LexicalDeclaration | SequenceExpression | VariableDeclaration;
+    readonly increment?: Expressions;
+    readonly initializer: LexicalDeclaration | VariableDeclaration;
   };
 }
 export interface ForStatementV1 {
   readonly type: 'for_statement';
   readonly fields: {
     readonly body: Statement;
-    readonly condition: readonly (EmptyStatement | Expression | Expressions | SequenceExpression)[];
-    readonly increment?: Expression | Expressions | SequenceExpression;
-    readonly initializer: EmptyStatement | Expression | Expressions | LexicalDeclaration | SequenceExpression | VariableDeclaration;
+    readonly condition: readonly (EmptyStatement)[];
+    readonly increment?: Expressions;
+    readonly initializer: LexicalDeclaration | VariableDeclaration;
   };
 }
 export type ForStatement = ForStatementV0 | ForStatementV1;
@@ -1063,7 +1063,7 @@ export interface ImportAttribute {
 export interface ImportClauseV0 {
   readonly type: 'import_clause';
   readonly fields: {
-    readonly default_import: Identifier | NamedImports | NamespaceImport;
+    readonly default_import: NamespaceImport;
   };
 }
 export interface ImportClauseComma {
@@ -1083,21 +1083,21 @@ export interface ImportRequireClause {
 export interface ImportSpecifierV0 {
   readonly type: 'import_specifier';
   readonly fields: {
-    readonly name: ModuleExportName;
+    readonly name: ImportIdentifier;
   };
 }
 export interface ImportSpecifierAs {
   readonly type: 'import_specifier';
   readonly fields: {
-    readonly alias?: Identifier;
-    readonly name: ModuleExportName;
+    readonly alias?: ImportIdentifier;
+    readonly name: Identifier | ModuleExportName;
   };
 }
 export type ImportSpecifier = ImportSpecifierV0 | ImportSpecifierAs;
 export interface ImportStatementFromClause {
   readonly type: 'import_statement';
   readonly fields: {
-    readonly import_clause?: ImportClause | ImportRequireClause;
+    readonly import_clause?: ImportClause;
     readonly from_clause?: string;
     readonly import_attribute?: ImportAttribute;
     readonly semicolon: string;
@@ -1106,7 +1106,7 @@ export interface ImportStatementFromClause {
 export interface ImportStatementV1 {
   readonly type: 'import_statement';
   readonly fields: {
-    readonly import_clause?: ImportClause | ImportRequireClause;
+    readonly import_clause?: ImportRequireClause;
     readonly import_attribute?: ImportAttribute;
     readonly semicolon: string;
   };
@@ -1655,7 +1655,7 @@ export interface VariableDeclaratorV0 {
 export interface VariableDeclaratorBang {
   readonly type: 'variable_declarator';
   readonly fields: {
-    readonly name: DestructuringPattern | Identifier;
+    readonly name: Identifier;
     readonly type?: TypeAnnotation;
   };
 }

@@ -175,8 +175,8 @@ export interface StructuralVariant {
 	rule: import('./grammar.ts').GrammarRule;
 	/** Template string parts — literals and $VARIABLE placeholders. */
 	parts: string[];
-	/** Fields present in this variant, with per-variant requiredness. */
-	fields: Map<string, { required: boolean; multiple: boolean }>;
+	/** Fields present in this variant, with per-variant requiredness and content types. */
+	fields: Map<string, { required: boolean; multiple: boolean; contentKinds?: string[] }>;
 	/** Position → literal token for discriminant detection. */
 	literals: Map<number, string>;
 	/** Unique anonymous token identifying this variant (for detect map). */

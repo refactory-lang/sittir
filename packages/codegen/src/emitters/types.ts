@@ -543,8 +543,25 @@ function emitVariantInterface(
 	if (hasFields) {
 		lines.push('  readonly fields: {');
 		for (const f of fields) {
-			const proj = projectKinds(f.kinds, ctx);
-			const typeExpr = fieldTypeExpr(proj, leafSet);
+			const variantField = variant.fields.get(f.name);
+			// Use variant-specific content kinds when available (narrower than global union)
+			let typeExpr: string;
+			if (variantField?.contentKinds && variantField.contentKinds.length > 0) {
+				// Filter the field's hydrated kinds to only those in this variant's content
+				const variantKindSet = new Set(variantField.contentKinds);
+				const narrowed = f.kinds.filter(k => variantKindSet.has(k.kind));
+				if (narrowed.length > 0) {
+					const narrowedProj = projectKinds(narrowed, ctx);
+					typeExpr = fieldTypeExpr(narrowedProj, leafSet);
+				} else {
+					// Fallback to global types if narrowing produced nothing
+					const proj = projectKinds(f.kinds, ctx);
+					typeExpr = fieldTypeExpr(proj, leafSet);
+				}
+			} else {
+				const proj = projectKinds(f.kinds, ctx);
+				typeExpr = fieldTypeExpr(proj, leafSet);
+			}
 			const opt = f.required ? '' : '?';
 			if (f.multiple) {
 				lines.push(`    readonly ${f.name}${opt}: readonly (${typeExpr})[];`);
