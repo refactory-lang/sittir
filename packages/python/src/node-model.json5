@@ -4018,7 +4018,7 @@
     children: null,
     variants: [
       {
-        name: "v0",
+        name: "default",
         rule: {
           type: "SEQ",
           members: [
@@ -4035,48 +4035,28 @@
               value: "import",
             },
             {
-              type: "SYMBOL",
-              name: "_import_list",
-            },
-          ],
-        },
-        parts: [],
-        fields: {},
-        literals: {},
-        template: "",
-        clauses: [],
-      },
-      {
-        name: "paren",
-        rule: {
-          type: "SEQ",
-          members: [
-            {
-              type: "STRING",
-              value: "from",
-            },
-            {
-              type: "STRING",
-              value: "__future__",
-            },
-            {
-              type: "STRING",
-              value: "import",
-            },
-            {
-              type: "SEQ",
+              type: "CHOICE",
               members: [
-                {
-                  type: "STRING",
-                  value: "(",
-                },
                 {
                   type: "SYMBOL",
                   name: "_import_list",
                 },
                 {
-                  type: "STRING",
-                  value: ")",
+                  type: "SEQ",
+                  members: [
+                    {
+                      type: "STRING",
+                      value: "(",
+                    },
+                    {
+                      type: "SYMBOL",
+                      name: "_import_list",
+                    },
+                    {
+                      type: "STRING",
+                      value: ")",
+                    },
+                  ],
                 },
               ],
             },
@@ -4087,7 +4067,6 @@
         literals: {},
         template: "",
         clauses: [],
-        detectToken: "(",
       },
     ],
   },

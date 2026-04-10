@@ -76,9 +76,7 @@ rules:
   function_definition:
     template: def $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE_CLAUSE:$BODY
     return_type_clause: -> $RETURN_TYPE
-  future_import_statement:
-    - from __future__ import $$$NAME
-    - from __future__ import($$$NAME)
+  future_import_statement: from __future__ import $$$NAME
   generator_expression: ($BODY $CHILDREN)
   generic_type: $IDENTIFIER $TYPE_PARAMETER
   global_statement:

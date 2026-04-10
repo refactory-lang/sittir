@@ -61,6 +61,16 @@ export function factorRule(
 	// Deduplicate by field set signature (not template string — templates aren't generated yet)
 	const unique = deduplicateVariants(variants);
 
+	// Guard: if all variants lost fields that the model has, the factoring didn't
+	// capture hidden rule inlining — fall back to single variant with the full rule.
+	const modelHasFields = ctx.fieldRequired.size > 0;
+	const allVariantsLostFields = unique.length > 1 && unique.every(v => v.fields.size === 0);
+	if (modelHasFields && allVariantsLostFields) {
+		const single = buildVariantMetadata(enriched, ctx);
+		single.name = 'default';
+		return [single];
+	}
+
 	// Name the variants
 	for (let i = 0; i < unique.length; i++) {
 		unique[i]!.name = nameVariant(unique[i]!, i, unique);

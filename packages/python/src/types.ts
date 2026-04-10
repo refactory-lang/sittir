@@ -661,13 +661,12 @@ export interface FunctionDefinition {
     readonly type_parameters?: TypeParameter;
   };
 }
-export interface FutureImportStatementV0 {
+export interface FutureImportStatement {
   readonly type: 'future_import_statement';
+  readonly fields: {
+    readonly name: readonly (AliasedImport | DottedName)[];
+  };
 }
-export interface FutureImportStatementParen {
-  readonly type: 'future_import_statement';
-}
-export type FutureImportStatement = FutureImportStatementV0 | FutureImportStatementParen;
 export interface GeneratorExpression {
   readonly type: 'generator_expression';
   readonly fields: {
@@ -1182,9 +1181,7 @@ export type ForStatementConfig = ConfigOf<ForStatement>;
 export type FormatExpressionConfig = ConfigOf<FormatExpression>;
 export type FormatSpecifierConfig = ConfigOf<FormatSpecifier>;
 export type FunctionDefinitionConfig = ConfigOf<FunctionDefinition>;
-export type FutureImportStatementV0Config = ConfigOf<FutureImportStatementV0>;
-export type FutureImportStatementParenConfig = ConfigOf<FutureImportStatementParen>;
-export type FutureImportStatementConfig = FutureImportStatementV0Config | FutureImportStatementParenConfig;
+export type FutureImportStatementConfig = ConfigOf<FutureImportStatement>;
 export type GeneratorExpressionConfig = ConfigOf<GeneratorExpression>;
 export type GenericTypeConfig = ConfigOf<GenericType>;
 export type GlobalStatementConfig = ConfigOf<GlobalStatement>;
@@ -1441,9 +1438,7 @@ export type ForStatementFromInput = FromInputOf<ForStatement, LeafScalarMap, Lea
 export type FormatExpressionFromInput = FromInputOf<FormatExpression, LeafScalarMap, LeafStringMap>;
 export type FormatSpecifierFromInput = FormatExpression;
 export type FunctionDefinitionFromInput = FromInputOf<FunctionDefinition, LeafScalarMap, LeafStringMap>;
-export type FutureImportStatementV0FromInput = FromInputOf<FutureImportStatementV0, LeafScalarMap, LeafStringMap>;
-export type FutureImportStatementParenFromInput = FromInputOf<FutureImportStatementParen, LeafScalarMap, LeafStringMap>;
-export type FutureImportStatementFromInput = FutureImportStatementV0FromInput | FutureImportStatementParenFromInput;
+export type FutureImportStatementFromInput = FromInputOf<FutureImportStatement, LeafScalarMap, LeafStringMap>;
 export type GeneratorExpressionFromInput = FromInputOf<GeneratorExpression, LeafScalarMap, LeafStringMap>;
 export type GenericTypeFromInput = FromInputOf<GenericType, LeafScalarMap, LeafStringMap>;
 export type GlobalStatementFromInput = Identifier;
@@ -2141,7 +2136,6 @@ export interface VariantMap {
   'boolean_operator': { and: BooleanOperatorAnd; or: BooleanOperatorOr };
   'expression_list': { v0: ExpressionListV0; v1: ExpressionListV1 };
   'expression_statement': { v0: ExpressionStatementV0; comma: ExpressionStatementComma };
-  'future_import_statement': { v0: FutureImportStatementV0; paren: FutureImportStatementParen };
   'import_from_statement': { v0: ImportFromStatementV0; paren: ImportFromStatementParen };
   'pattern_list': { v0: PatternListV0; v1: PatternListV1 };
   'print_statement': { chevron: PrintStatementChevron; v1: PrintStatementV1 };

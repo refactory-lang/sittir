@@ -172,6 +172,7 @@ export type _Config_ForStatement = Assert<Extends<ConfigOf<ForStatement>, ForSta
 export type _Config_FormatExpression = Assert<Extends<ConfigOf<FormatExpression>, FormatExpressionConfig>>;
 export type _Config_FormatSpecifier = Assert<Extends<ConfigOf<FormatSpecifier>, FormatSpecifierConfig>>;
 export type _Config_FunctionDefinition = Assert<Extends<ConfigOf<FunctionDefinition>, FunctionDefinitionConfig>>;
+export type _Config_FutureImportStatement = Assert<Extends<ConfigOf<FutureImportStatement>, FutureImportStatementConfig>>;
 export type _Config_GeneratorExpression = Assert<Extends<ConfigOf<GeneratorExpression>, GeneratorExpressionConfig>>;
 export type _Config_GenericType = Assert<Extends<ConfigOf<GenericType>, GenericTypeConfig>>;
 export type _Config_GlobalStatement = Assert<Extends<ConfigOf<GlobalStatement>, GlobalStatementConfig>>;
