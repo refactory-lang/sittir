@@ -1,4 +1,9 @@
 {
+  "externals": {
+    "_indent": { "role": "indent" },
+    "_dedent": { "role": "dedent" },
+    "_newline": { "role": "newline" }
+  },
   "as_pattern": {
     "fields": {
       "expression": {

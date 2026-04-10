@@ -16,6 +16,7 @@ import { isTupleChildren, eachChildSlot } from '../node-model.ts';
 import { type StructuralNode, structuralNodes, fieldsOf } from './utils.ts';
 import { buildProjectionContext, projectKinds } from './kind-projections.ts';
 import { applyOverrides, type OverrideFieldInfo } from '../enriched-grammar.ts';
+import { loadOverridesWithExternals, type ExternalRole } from '../overrides.ts';
 import type { RulesConfig, TemplateRule } from '@sittir/types';
 import { tokenName } from '../token-names.ts';
 
@@ -53,6 +54,10 @@ export function emitTemplatesYaml(config: EmitRulesYamlConfig): string {
 		},
 		rules: {},
 	};
+
+	// Load external token roles from overrides (e.g. _indent → indent for Python)
+	const { externals } = loadOverridesWithExternals(grammar);
+	_externalRoles = externals;
 
 	const ctx = buildProjectionContext(new Map(nodes.map(n => [n.kind, n])));
 	for (const node of structuralNodes(nodes)) {
@@ -616,11 +621,10 @@ function ruleToTemplate(
 			const multi = fieldMultiple.get(rule.name) ?? false;
 			const varName = rule.name.toUpperCase();
 			const varRef = multi ? `$$$${varName}` : `$${varName}`;
-			// Check if field content references an indented block (_suite, _indent-containing rules)
-			const contentName = rule.content.type === 'SYMBOL' ? rule.content.name : undefined;
-			if (contentName && gr[contentName]) {
-				const contentJson = JSON.stringify(gr[contentName]);
-				if (contentJson.includes('"_indent"')) {
+			// Check if field content references an indented block via external roles
+			if (Object.keys(_externalRoles).length > 0) {
+				const contentName = rule.content.type === 'SYMBOL' ? rule.content.name : undefined;
+				if (contentName && gr[contentName] && ruleReferencesExternal(gr[contentName]!, 'indent', gr)) {
 					return ['\n  ', varRef, '\n'];
 				}
 			}
@@ -651,10 +655,13 @@ function ruleToTemplate(
 			}
 			// Hidden rules that couldn't be inlined and aren't in childSlotMap:
 			if (rule.name.startsWith('_')) {
-				// Indentation tokens → emit structural whitespace
-				if (rule.name === '_indent') return ['\n  '];
-				if (rule.name === '_dedent') return ['\n'];
-				if (rule.name === '_newline') return ['\n'];
+				// External token roles from overrides (e.g. _indent → indent for Python)
+				const extRole = _externalRoles[rule.name];
+				if (extRole) {
+					if (extRole.role === 'indent') return ['\n  '];
+					if (extRole.role === 'dedent') return ['\n'];
+					if (extRole.role === 'newline') return ['\n'];
+				}
 				// If inside a REPEAT, they likely resolve to child types → emit $$$CHILDREN.
 				// Otherwise they're token-like (e.g. _semicolon) — no output.
 				if (inRepeat && !seen.has('children')) {
@@ -979,6 +986,23 @@ function buildWordBoundary(grammar: { word: string | null; rules: Record<string,
 }
 
 let _wordEndRe = /[\w\p{L}]$/u;
+let _externalRoles: Record<string, ExternalRole> = {};
+
+/** Check if a grammar rule references an external with the given role (non-recursive, max 2 levels). */
+function ruleReferencesExternal(rule: GrammarRule, role: string, gr: Record<string, GrammarRule>, depth = 0): boolean {
+	if (depth > 2) return false;
+	if (rule.type === 'SYMBOL') {
+		const ext = _externalRoles[rule.name];
+		if (ext?.role === role) return true;
+		if (rule.name.startsWith('_') && gr[rule.name] && depth < 2) {
+			return ruleReferencesExternal(gr[rule.name]!, role, gr, depth + 1);
+		}
+		return false;
+	}
+	if ('members' in rule) return rule.members.some(m => ruleReferencesExternal(m, role, gr, depth));
+	if ('content' in rule && rule.content) return ruleReferencesExternal(rule.content as GrammarRule, role, gr, depth);
+	return false;
+}
 let _wordStartRe = /^[\p{L}_$]/u;
 
 /**

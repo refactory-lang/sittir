@@ -105,7 +105,8 @@ rules:
   if_statement: |-
     if $CONDITION:
       $CONSEQUENCE
-    $$$ALTERNATIVE
+
+      $$$ALTERNATIVE
   import_from_statement:
     - from $MODULE_NAME import $WILDCARD_IMPORT
     - from $MODULE_NAME import $WILDCARD_IMPORT $$$NAME
@@ -172,7 +173,12 @@ rules:
   try_statement: |-
     try:
       $BODY
-    $$$EXCEPT_CLAUSES $ELSE_CLAUSE $FINALLY_CLAUSE
+
+      $$$EXCEPT_CLAUSES
+
+      $ELSE_CLAUSE
+
+      $FINALLY_CLAUSE
   tuple: () $$$CHILDREN
   tuple_pattern: () $$$CHILDREN
   type: $CHILDREN
@@ -188,7 +194,8 @@ rules:
   while_statement: |-
     while $CONDITION:
       $BODY
-    $ALTERNATIVE
+
+      $ALTERNATIVE
   with_clause:
     template:
       - $$$CHILDREN

@@ -18,7 +18,7 @@ Generating python IR...
     dict_pattern: [field-coverage] tree-sitter FIELD 'value' not explicitly in template (covered by $$$CHILDREN)
 
 Running round-trip validation...
-  x 92/115 round-trip (0 skipped, 23 errors)
+  x 91/115 round-trip (0 skipped, 24 errors)
     x Matching specific values [match_statement]: re-parse error: "match command.split():
  case ["quit"]:
  print("Goodbye!")
@@ -90,6 +90,11 @@ Running round-trip validation...
     x Maybe sequence pattern right hand side precedence validation [match_statement]: re-parse error: "match x:
  case a1, *a2, a3:
  pass"
+    x If else statements [if_statement]: re-parse error: "if a:
+ b
+
+ else:
+ f"
     x Nested if statements [if_statement]: re-parse error: "if a:
  if b:
  c
@@ -98,7 +103,8 @@ Running round-trip validation...
  f"
     x Try statements [try_statement]: re-parse error: "try:
  a
-except b:
+
+ except b:
  c except d as e:
  f except g, h:
  i except:

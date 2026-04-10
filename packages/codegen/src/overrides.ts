@@ -73,7 +73,18 @@ export interface OverrideEntry {
 	fields: Record<string, OverrideFieldDef>;
 }
 
+/** External token role — maps grammar SYMBOLs to structural whitespace roles. */
+export interface ExternalRole {
+	role: 'indent' | 'dedent' | 'newline';
+}
+
 export type OverridesConfig = Record<string, OverrideEntry>;
+
+/** Parsed overrides + external roles. */
+export interface OverridesWithExternals {
+	config: OverridesConfig;
+	externals: Record<string, ExternalRole>;
+}
 
 // ---------------------------------------------------------------------------
 // Loading
@@ -85,6 +96,29 @@ const overridePaths = new Map<string, string>();
 /** Register an explicit overrides.json path (for testing). */
 export function registerOverridesPath(grammar: string, path: string): void {
 	overridePaths.set(grammar, path);
+}
+
+/**
+ * Load overrides with external role config. Returns both the per-node overrides
+ * and any external token role definitions (e.g. _indent → indent for Python).
+ */
+export function loadOverridesWithExternals(grammarName: string): OverridesWithExternals {
+	// Load the raw JSON to extract externals before parsing strips them
+	const explicit = overridePaths.get(grammarName);
+	const codegenDir = dirname(dirname(new URL(import.meta.url).pathname));
+	const packagesDir = dirname(codegenDir);
+	const filePath = explicit ?? join(packagesDir, grammarName, 'overrides.json');
+
+	if (!existsSync(filePath)) return { config: {}, externals: {} };
+
+	try {
+		const raw = JSON.parse(readFileSync(filePath, 'utf-8')) as Record<string, unknown>;
+		const externals = (raw['externals'] ?? {}) as Record<string, ExternalRole>;
+		const config = loadOverrides(grammarName); // parsed + validated
+		return { config, externals };
+	} catch {
+		return { config: {}, externals: {} };
+	}
 }
 
 /**
@@ -119,11 +153,16 @@ function parseOverridesFile(path: string): OverridesConfig {
 	try {
 		const config = JSON.parse(readFileSync(path, 'utf-8')) as OverridesConfig;
 		// Remove fields with reserved names (skip with warning, don't abort)
+		// Remove externals key (handled separately by loadOverridesWithExternals)
+		delete (config as Record<string, unknown>)['externals'];
+		// Remove fields with reserved names (skip with warning, don't abort)
 		for (const [kind, entry] of Object.entries(config)) {
-			for (const fieldName of Object.keys(entry.fields)) {
+			const oe = entry as OverrideEntry | undefined;
+			if (!oe?.fields) continue;
+			for (const fieldName of Object.keys(oe.fields)) {
 				if (RESERVED_FIELD_NAMES.has(fieldName)) {
 					console.warn(`[overrides] ${kind}.${fieldName}: '${fieldName}' is reserved — skipping field`);
-					delete entry.fields[fieldName];
+					delete oe.fields[fieldName];
 				}
 			}
 		}
