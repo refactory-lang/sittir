@@ -1,0 +1,26 @@
+Generating typescript IR...
+[overrides] conditional_type: needs synthetic names — same-kind positional children: type
+[overrides] ternary_expression: needs synthetic names — same-kind positional children: expression
+
+@sittir/typescript: 145 kinds
+  v 145/145 variable resolution
+  v 145/145 field coverage
+  v 46/46 override consistency (46 nodes with overrides)
+  v 145/145 template structure
+  v 3/3 variant subtypes
+
+  Warnings (4):
+    export_statement: [override-consistency] override 'declaration' collides with tree-sitter FIELD
+    export_statement: [override-consistency] override 'source' collides with tree-sitter FIELD
+    import_clause: [override-consistency] override 'named_imports' not referenced in template
+    object_type: [override-consistency] override 'closing' not referenced in template
+
+Running round-trip validation...
+  v 0/4 round-trip (4 skipped, 0 errors)
+  v 0/0 factory round-trip (0 skipped, 0 errors)
+  v 0/0 from() correctness (0 undefined, 0 divergent, 0 skipped)
+
+Done! Generated:
+  templates.yaml, grammar.ts, types.ts, factories.ts, utils.ts, from.ts, consts.ts, index.ts
+  vitest.config.ts
+
