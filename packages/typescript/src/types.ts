@@ -415,13 +415,20 @@ export interface ArrowFunction {
     readonly type_parameters?: TypeParameters;
   };
 }
-export interface AsExpression {
+export interface AsExpressionConst {
+  readonly type: 'as_expression';
+  readonly fields: {
+    readonly expression: Expression;
+  };
+}
+export interface AsExpressionTypeAnnotation {
   readonly type: 'as_expression';
   readonly fields: {
     readonly expression: Expression;
     readonly type_annotation?: Type;
   };
 }
+export type AsExpression = AsExpressionConst | AsExpressionTypeAnnotation;
 export interface Asserts {
   readonly type: 'asserts';
   readonly children: Identifier | This | TypePredicate;
@@ -1252,7 +1259,14 @@ export interface MappedTypeClause {
     readonly type: Type;
   };
 }
-export interface MemberExpression {
+export interface MemberExpressionDot {
+  readonly type: 'member_expression';
+  readonly fields: {
+    readonly object: Expression | Import | PrimaryExpression;
+    readonly property: PrivatePropertyIdentifier | PropertyIdentifier;
+  };
+}
+export interface MemberExpressionOptionalChain {
   readonly type: 'member_expression';
   readonly fields: {
     readonly object: Expression | Import | PrimaryExpression;
@@ -1260,6 +1274,7 @@ export interface MemberExpression {
     readonly property: PrivatePropertyIdentifier | PropertyIdentifier;
   };
 }
+export type MemberExpression = MemberExpressionDot | MemberExpressionOptionalChain;
 export interface MethodDefinition {
   readonly type: 'method_definition';
   readonly fields: {
@@ -1863,7 +1878,9 @@ export type ArrayConfig = ConfigOf<Array>;
 export type ArrayPatternConfig = ConfigOf<ArrayPattern>;
 export type ArrayTypeConfig = ConfigOf<ArrayType>;
 export type ArrowFunctionConfig = ConfigOf<ArrowFunction>;
-export type AsExpressionConfig = ConfigOf<AsExpression>;
+export type AsExpressionConstConfig = ConfigOf<AsExpressionConst>;
+export type AsExpressionTypeAnnotationConfig = ConfigOf<AsExpressionTypeAnnotation>;
+export type AsExpressionConfig = AsExpressionConstConfig | AsExpressionTypeAnnotationConfig;
 export type AssertsConfig = ConfigOf<Asserts>;
 export type AssertsAnnotationConfig = ConfigOf<AssertsAnnotation>;
 export type AssignmentExpressionConfig = ConfigOf<AssignmentExpression>;
@@ -1987,7 +2004,9 @@ export type LexicalDeclarationConfig = ConfigOf<LexicalDeclaration>;
 export type LiteralTypeConfig = ConfigOf<LiteralType>;
 export type LookupTypeConfig = ConfigOf<LookupType>;
 export type MappedTypeClauseConfig = ConfigOf<MappedTypeClause>;
-export type MemberExpressionConfig = ConfigOf<MemberExpression>;
+export type MemberExpressionDotConfig = ConfigOf<MemberExpressionDot>;
+export type MemberExpressionOptionalChainConfig = ConfigOf<MemberExpressionOptionalChain>;
+export type MemberExpressionConfig = MemberExpressionDotConfig | MemberExpressionOptionalChainConfig;
 export type MethodDefinitionConfig = ConfigOf<MethodDefinition>;
 export type MethodSignatureConfig = ConfigOf<MethodSignature>;
 export type ModuleConfig = ConfigOf<Module>;
@@ -2259,7 +2278,9 @@ export type ArrayFromInput = Expression | SpreadElement;
 export type ArrayPatternFromInput = AssignmentPattern | Pattern;
 export type ArrayTypeFromInput = FromInputOf<ArrayType, LeafScalarMap, LeafStringMap>;
 export type ArrowFunctionFromInput = FromInputOf<ArrowFunction, LeafScalarMap, LeafStringMap>;
-export type AsExpressionFromInput = FromInputOf<AsExpression, LeafScalarMap, LeafStringMap>;
+export type AsExpressionConstFromInput = FromInputOf<AsExpressionConst, LeafScalarMap, LeafStringMap>;
+export type AsExpressionTypeAnnotationFromInput = FromInputOf<AsExpressionTypeAnnotation, LeafScalarMap, LeafStringMap>;
+export type AsExpressionFromInput = AsExpressionConstFromInput | AsExpressionTypeAnnotationFromInput;
 export type AssertsFromInput = Identifier | This | TypePredicate;
 export type AssertsAnnotationFromInput = FromInputOf<AssertsAnnotation, LeafScalarMap, LeafStringMap>;
 export type AssignmentExpressionFromInput = FromInputOf<AssignmentExpression, LeafScalarMap, LeafStringMap>;
@@ -2383,7 +2404,9 @@ export type LexicalDeclarationFromInput = FromInputOf<LexicalDeclaration, LeafSc
 export type LiteralTypeFromInput = False | Null | Number | String | True | UnaryExpression | Undefined;
 export type LookupTypeFromInput = FromInputOf<LookupType, LeafScalarMap, LeafStringMap>;
 export type MappedTypeClauseFromInput = FromInputOf<MappedTypeClause, LeafScalarMap, LeafStringMap>;
-export type MemberExpressionFromInput = FromInputOf<MemberExpression, LeafScalarMap, LeafStringMap>;
+export type MemberExpressionDotFromInput = FromInputOf<MemberExpressionDot, LeafScalarMap, LeafStringMap>;
+export type MemberExpressionOptionalChainFromInput = FromInputOf<MemberExpressionOptionalChain, LeafScalarMap, LeafStringMap>;
+export type MemberExpressionFromInput = MemberExpressionDotFromInput | MemberExpressionOptionalChainFromInput;
 export type MethodDefinitionFromInput = FromInputOf<MethodDefinition, LeafScalarMap, LeafStringMap>;
 export type MethodSignatureFromInput = FromInputOf<MethodSignature, LeafScalarMap, LeafStringMap>;
 export type ModuleFromInput = FromInputOf<Module, LeafScalarMap, LeafStringMap>;
@@ -3313,6 +3336,7 @@ export interface KindMap {
 /** Maps variant node kinds to their per-variant interfaces. */
 export interface VariantMap {
   'ambient_declaration': { v0: AmbientDeclarationV0; global: AmbientDeclarationGlobal; module: AmbientDeclarationModule };
+  'as_expression': { const: AsExpressionConst; type_annotation: AsExpressionTypeAnnotation };
   'binary_expression': { tok_2626: BinaryExpressionTok_2626; tok_7c7c: BinaryExpressionTok_7c7c; tok_3e3e: BinaryExpressionTok_3e3e; tok_3e3e3e: BinaryExpressionTok_3e3e3e; tok_3c3c: BinaryExpressionTok_3c3c; amp: BinaryExpressionAmp; caret: BinaryExpressionCaret; pipe: BinaryExpressionPipe; plus: BinaryExpressionPlus; minus: BinaryExpressionMinus; star: BinaryExpressionStar; slash: BinaryExpressionSlash; percent: BinaryExpressionPercent; tok_2a2a: BinaryExpressionTok_2a2a; angle: BinaryExpressionAngle; tok_3c3d: BinaryExpressionTok_3c3d; tok_3d3d: BinaryExpressionTok_3d3d; tok_3d3d3d: BinaryExpressionTok_3d3d3d; tok_213d: BinaryExpressionTok_213d; tok_213d3d: BinaryExpressionTok_213d3d; tok_3e3d: BinaryExpressionTok_3e3d; close_angle: BinaryExpressionCloseAngle; tok_3f3f: BinaryExpressionTok_3f3f; instanceof: BinaryExpressionInstanceof; in: BinaryExpressionIn };
   'call_expression': { v0: CallExpressionV0; v1: CallExpressionV1; tok_3f2e: CallExpressionTok_3f2e };
   'class_body': { decorator: ClassBodyDecorator; comma: ClassBodyComma; v2: ClassBodyV2; semi: ClassBodySemi };
@@ -3323,6 +3347,7 @@ export interface VariantMap {
   'import_specifier': { v0: ImportSpecifierV0; as: ImportSpecifierAs };
   'import_statement': { from: ImportStatementFrom; v1: ImportStatementV1; v2: ImportStatementV2 };
   'index_signature': { colon: IndexSignatureColon; mapped_type_clause: IndexSignatureMappedTypeClause };
+  'member_expression': { dot: MemberExpressionDot; optional_chain: MemberExpressionOptionalChain };
   'parenthesized_expression': { type: ParenthesizedExpressionType; v1: ParenthesizedExpressionV1 };
   'public_field_definition': { static: PublicFieldDefinitionStatic; abstract: PublicFieldDefinitionAbstract; accessor: PublicFieldDefinitionAccessor };
   'string': { tok_22: StringTok_22; tok_27: StringTok_27 };

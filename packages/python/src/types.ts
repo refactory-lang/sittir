@@ -908,12 +908,16 @@ export interface Slice {
     readonly step?: Expression;
   };
 }
-export interface SplatPattern {
+export interface SplatPatternIdentifier {
   readonly type: 'splat_pattern';
   readonly fields: {
     readonly identifier?: Identifier;
   };
 }
+export interface SplatPattern_ {
+  readonly type: 'splat_pattern';
+}
+export type SplatPattern = SplatPatternIdentifier | SplatPattern_;
 export interface SplatType {
   readonly type: 'splat_type';
   readonly fields: {
@@ -1242,7 +1246,9 @@ export type ReturnStatementConfig = ConfigOf<ReturnStatement>;
 export type SetConfig = ConfigOf<Set>;
 export type SetComprehensionConfig = ConfigOf<SetComprehension>;
 export type SliceConfig = ConfigOf<Slice>;
-export type SplatPatternConfig = ConfigOf<SplatPattern>;
+export type SplatPatternIdentifierConfig = ConfigOf<SplatPatternIdentifier>;
+export type SplatPattern_Config = ConfigOf<SplatPattern_>;
+export type SplatPatternConfig = SplatPatternIdentifierConfig | SplatPattern_Config;
 export type SplatTypeConfig = ConfigOf<SplatType>;
 export type StringConfig = ConfigOf<String>;
 export type StringContentConfig = ConfigOf<StringContent>;
@@ -1500,7 +1506,9 @@ export type ReturnStatementFromInput = Expression | ExpressionList;
 export type SetFromInput = Expression | ListSplat | ParenthesizedListSplat | Yield;
 export type SetComprehensionFromInput = FromInputOf<SetComprehension, LeafScalarMap, LeafStringMap>;
 export type SliceFromInput = FromInputOf<Slice, LeafScalarMap, LeafStringMap>;
-export type SplatPatternFromInput = FromInputOf<SplatPattern, LeafScalarMap, LeafStringMap>;
+export type SplatPatternIdentifierFromInput = FromInputOf<SplatPatternIdentifier, LeafScalarMap, LeafStringMap>;
+export type SplatPattern_FromInput = FromInputOf<SplatPattern_, LeafScalarMap, LeafStringMap>;
+export type SplatPatternFromInput = SplatPatternIdentifierFromInput | SplatPattern_FromInput;
 export type SplatTypeFromInput = FromInputOf<SplatType, LeafScalarMap, LeafStringMap>;
 export type StringFromInput = FromInputOf<String, LeafScalarMap, LeafStringMap>;
 export type StringContentFromInput = EscapeInterpolation | EscapeSequence;
@@ -2162,6 +2170,7 @@ export interface VariantMap {
   'import_from_statement': { v0: ImportFromStatementV0; v1: ImportFromStatementV1; paren: ImportFromStatementParen };
   'pattern_list': { v0: PatternListV0; v1: PatternListV1 };
   'print_statement': { chevron: PrintStatementChevron; v1: PrintStatementV1 };
+  'splat_pattern': { identifier: SplatPatternIdentifier; _: SplatPattern_ };
   'with_clause': { v0: WithClauseV0; paren: WithClauseParen };
   'yield': { from: YieldFrom; v1: YieldV1 };
 }

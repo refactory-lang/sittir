@@ -1876,7 +1876,7 @@ describe('splat_pattern', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.splatPattern({ identifier: ir.identifier('test_identifier') as any });
+    const node = ir.splatPattern({ identifier: ir.identifier('test_identifier') as any } as any);
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });

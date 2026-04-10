@@ -1087,7 +1087,7 @@ describe('foreign_mod_item', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.foreignMod({ body: ir.declarationList() as any, visibilityModifier: ir.visibilityModifier() as any, externModifier: ir.externModifier() as any });
+    const node = ir.foreignMod({ body: ir.declarationList() as any, visibilityModifier: ir.visibilityModifier() as any, externModifier: ir.externModifier() as any } as any);
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -1362,7 +1362,7 @@ describe('impl_item', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.impl({ body: ir.declarationList() as any, trait: ir.typeIdentifier('TestTrait') as any, type: ir.typeIdentifier('TestType') as any, typeParameters: ir.typeParameters() as any, whereClause: ir.whereClause() as any });
+    const node = ir.impl({ body: ir.declarationList() as any, trait: ir.typeIdentifier('TestTrait') as any, type: ir.typeIdentifier('TestType') as any, typeParameters: ir.typeParameters() as any, whereClause: ir.whereClause() as any } as any);
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -1790,7 +1790,7 @@ describe('mod_item', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.mod({ body: ir.declarationList() as any, name: ir.identifier('test_name') as any, visibilityModifier: ir.visibilityModifier() as any });
+    const node = ir.mod({ body: ir.declarationList() as any, name: ir.identifier('test_name') as any, visibilityModifier: ir.visibilityModifier() as any } as any);
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -1994,7 +1994,7 @@ describe('pointer_type', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.pointerType({ type: ir.typeIdentifier('TestType') as any, mutableSpecifier: ir.mutableSpecifier() as any });
+    const node = ir.pointerType({ type: ir.typeIdentifier('TestType') as any, mutableSpecifier: ir.mutableSpecifier() as any } as any);
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });

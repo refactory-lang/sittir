@@ -267,7 +267,7 @@ describe('as_expression', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.asExpression({ expression: ir.identifier('test_expression') as any, typeAnnotation: ir.typeIdentifier('TestType_annotation') as any });
+    const node = ir.asExpression({ expression: ir.identifier('test_expression') as any, typeAnnotation: ir.typeIdentifier('TestType_annotation') as any } as any);
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -1868,7 +1868,7 @@ describe('member_expression', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.memberExpression({ object: ir.identifier('test_object') as any, optionalChain: ir.optionalChain() as any, property: ir.privatePropertyIdentifier('#foo') as any });
+    const node = ir.memberExpression({ object: ir.identifier('test_object') as any, optionalChain: ir.optionalChain() as any, property: ir.privatePropertyIdentifier('#foo') as any } as any);
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });

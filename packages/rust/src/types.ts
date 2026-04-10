@@ -702,7 +702,14 @@ export interface ForLifetimes {
   readonly type: 'for_lifetimes';
   readonly children: readonly (Lifetime)[];
 }
-export interface ForeignModItem {
+export interface ForeignModItemSemi {
+  readonly type: 'foreign_mod_item';
+  readonly fields: {
+    readonly visibility_modifier?: VisibilityModifier;
+    readonly extern_modifier: ExternModifier;
+  };
+}
+export interface ForeignModItemBody {
   readonly type: 'foreign_mod_item';
   readonly fields: {
     readonly body?: DeclarationList;
@@ -710,6 +717,7 @@ export interface ForeignModItem {
     readonly extern_modifier: ExternModifier;
   };
 }
+export type ForeignModItem = ForeignModItemSemi | ForeignModItemBody;
 export interface FunctionItem {
   readonly type: 'function_item';
   readonly fields: {
@@ -813,7 +821,7 @@ export interface IfExpression {
     readonly consequence: Block;
   };
 }
-export interface ImplItem {
+export interface ImplItemBody {
   readonly type: 'impl_item';
   readonly fields: {
     readonly body?: DeclarationList;
@@ -823,6 +831,16 @@ export interface ImplItem {
     readonly where_clause?: WhereClause;
   };
 }
+export interface ImplItemSemi {
+  readonly type: 'impl_item';
+  readonly fields: {
+    readonly trait?: GenericType | ScopedTypeIdentifier | TypeIdentifier;
+    readonly type: Type;
+    readonly type_parameters?: TypeParameters;
+    readonly where_clause?: WhereClause;
+  };
+}
+export type ImplItem = ImplItemBody | ImplItemSemi;
 export interface IndexExpression {
   readonly type: 'index_expression';
   readonly fields: {
@@ -957,7 +975,14 @@ export interface MatchPattern {
   };
   readonly children: Pattern;
 }
-export interface ModItem {
+export interface ModItemSemi {
+  readonly type: 'mod_item';
+  readonly fields: {
+    readonly name: Identifier;
+    readonly visibility_modifier?: VisibilityModifier;
+  };
+}
+export interface ModItemBody {
   readonly type: 'mod_item';
   readonly fields: {
     readonly body?: DeclarationList;
@@ -965,6 +990,7 @@ export interface ModItem {
     readonly visibility_modifier?: VisibilityModifier;
   };
 }
+export type ModItem = ModItemSemi | ModItemBody;
 export interface MutPattern {
   readonly type: 'mut_pattern';
   readonly fields: {
@@ -1018,13 +1044,20 @@ export interface ParenthesizedExpression {
   readonly type: 'parenthesized_expression';
   readonly children: Expression;
 }
-export interface PointerType {
+export interface PointerTypeConst {
+  readonly type: 'pointer_type';
+  readonly fields: {
+    readonly type: Type;
+  };
+}
+export interface PointerTypeMutableSpecifier {
   readonly type: 'pointer_type';
   readonly fields: {
     readonly type: Type;
     readonly mutable_specifier?: MutableSpecifier;
   };
 }
+export type PointerType = PointerTypeConst | PointerTypeMutableSpecifier;
 export interface QualifiedType {
   readonly type: 'qualified_type';
   readonly fields: {
@@ -1086,11 +1119,10 @@ export interface RefPattern {
   readonly type: 'ref_pattern';
   readonly children: Pattern;
 }
-export interface ReferenceExpressionRaw {
+export interface ReferenceExpressionConst {
   readonly type: 'reference_expression';
   readonly fields: {
     readonly value: Expression;
-    readonly mutable_specifier?: MutableSpecifier;
   };
 }
 export interface ReferenceExpressionV1 {
@@ -1100,7 +1132,14 @@ export interface ReferenceExpressionV1 {
     readonly mutable_specifier?: MutableSpecifier;
   };
 }
-export type ReferenceExpression = ReferenceExpressionRaw | ReferenceExpressionV1;
+export interface ReferenceExpressionV2 {
+  readonly type: 'reference_expression';
+  readonly fields: {
+    readonly value: Expression;
+    readonly mutable_specifier?: MutableSpecifier;
+  };
+}
+export type ReferenceExpression = ReferenceExpressionConst | ReferenceExpressionV1 | ReferenceExpressionV2;
 export interface ReferencePattern {
   readonly type: 'reference_pattern';
   readonly fields: {
@@ -1623,7 +1662,9 @@ export type FieldPatternColonConfig = ConfigOf<FieldPatternColon>;
 export type FieldPatternConfig = FieldPatternV0Config | FieldPatternColonConfig;
 export type ForExpressionConfig = ConfigOf<ForExpression>;
 export type ForLifetimesConfig = ConfigOf<ForLifetimes>;
-export type ForeignModItemConfig = ConfigOf<ForeignModItem>;
+export type ForeignModItemSemiConfig = ConfigOf<ForeignModItemSemi>;
+export type ForeignModItemBodyConfig = ConfigOf<ForeignModItemBody>;
+export type ForeignModItemConfig = ForeignModItemSemiConfig | ForeignModItemBodyConfig;
 export type FunctionItemConfig = ConfigOf<FunctionItem>;
 export type FunctionModifiersConfig = ConfigOf<FunctionModifiers>;
 export type FunctionSignatureItemConfig = ConfigOf<FunctionSignatureItem>;
@@ -1637,7 +1678,9 @@ export type GenericTypeConfig = ConfigOf<GenericType>;
 export type GenericTypeWithTurbofishConfig = ConfigOf<GenericTypeWithTurbofish>;
 export type HigherRankedTraitBoundConfig = ConfigOf<HigherRankedTraitBound>;
 export type IfExpressionConfig = ConfigOf<IfExpression>;
-export type ImplItemConfig = ConfigOf<ImplItem>;
+export type ImplItemBodyConfig = ConfigOf<ImplItemBody>;
+export type ImplItemSemiConfig = ConfigOf<ImplItemSemi>;
+export type ImplItemConfig = ImplItemBodyConfig | ImplItemSemiConfig;
 export type IndexExpressionConfig = ConfigOf<IndexExpression>;
 export type InnerAttributeItemConfig = ConfigOf<InnerAttributeItem>;
 export type LabelConfig = ConfigOf<Label>;
@@ -1660,7 +1703,9 @@ export type MatchArmConfig = ConfigOf<MatchArm>;
 export type MatchBlockConfig = ConfigOf<MatchBlock>;
 export type MatchExpressionConfig = ConfigOf<MatchExpression>;
 export type MatchPatternConfig = ConfigOf<MatchPattern>;
-export type ModItemConfig = ConfigOf<ModItem>;
+export type ModItemSemiConfig = ConfigOf<ModItemSemi>;
+export type ModItemBodyConfig = ConfigOf<ModItemBody>;
+export type ModItemConfig = ModItemSemiConfig | ModItemBodyConfig;
 export type MutPatternConfig = ConfigOf<MutPattern>;
 export type NegativeLiteralConfig = ConfigOf<NegativeLiteral>;
 export type OrPatternRightConfig = ConfigOf<OrPatternRight>;
@@ -1670,7 +1715,9 @@ export type OrderedFieldDeclarationListConfig = ConfigOf<OrderedFieldDeclaration
 export type ParameterConfig = ConfigOf<Parameter>;
 export type ParametersConfig = ConfigOf<Parameters>;
 export type ParenthesizedExpressionConfig = ConfigOf<ParenthesizedExpression>;
-export type PointerTypeConfig = ConfigOf<PointerType>;
+export type PointerTypeConstConfig = ConfigOf<PointerTypeConst>;
+export type PointerTypeMutableSpecifierConfig = ConfigOf<PointerTypeMutableSpecifier>;
+export type PointerTypeConfig = PointerTypeConstConfig | PointerTypeMutableSpecifierConfig;
 export type QualifiedTypeConfig = ConfigOf<QualifiedType>;
 export type RangeExpressionEllipsisConfig = ConfigOf<RangeExpressionEllipsis>;
 export type RangeExpressionV1Config = ConfigOf<RangeExpressionV1>;
@@ -1682,9 +1729,10 @@ export type RangePatternV2Config = ConfigOf<RangePatternV2>;
 export type RangePatternConfig = RangePatternEllipsisConfig | RangePatternV1Config | RangePatternV2Config;
 export type RawStringLiteralConfig = ConfigOf<RawStringLiteral>;
 export type RefPatternConfig = ConfigOf<RefPattern>;
-export type ReferenceExpressionRawConfig = ConfigOf<ReferenceExpressionRaw>;
+export type ReferenceExpressionConstConfig = ConfigOf<ReferenceExpressionConst>;
 export type ReferenceExpressionV1Config = ConfigOf<ReferenceExpressionV1>;
-export type ReferenceExpressionConfig = ReferenceExpressionRawConfig | ReferenceExpressionV1Config;
+export type ReferenceExpressionV2Config = ConfigOf<ReferenceExpressionV2>;
+export type ReferenceExpressionConfig = ReferenceExpressionConstConfig | ReferenceExpressionV1Config | ReferenceExpressionV2Config;
 export type ReferencePatternConfig = ConfigOf<ReferencePattern>;
 export type ReferenceTypeConfig = ConfigOf<ReferenceType>;
 export type RemovedTraitBoundConfig = ConfigOf<RemovedTraitBound>;
@@ -1970,7 +2018,9 @@ export type FieldPatternColonFromInput = FromInputOf<FieldPatternColon, LeafScal
 export type FieldPatternFromInput = FieldPatternV0FromInput | FieldPatternColonFromInput;
 export type ForExpressionFromInput = FromInputOf<ForExpression, LeafScalarMap, LeafStringMap>;
 export type ForLifetimesFromInput = Lifetime;
-export type ForeignModItemFromInput = FromInputOf<ForeignModItem, LeafScalarMap, LeafStringMap>;
+export type ForeignModItemSemiFromInput = FromInputOf<ForeignModItemSemi, LeafScalarMap, LeafStringMap>;
+export type ForeignModItemBodyFromInput = FromInputOf<ForeignModItemBody, LeafScalarMap, LeafStringMap>;
+export type ForeignModItemFromInput = ForeignModItemSemiFromInput | ForeignModItemBodyFromInput;
 export type FunctionItemFromInput = FromInputOf<FunctionItem, LeafScalarMap, LeafStringMap>;
 export type FunctionModifiersFromInput = FromInputOf<FunctionModifiers, LeafScalarMap, LeafStringMap>;
 export type FunctionSignatureItemFromInput = FromInputOf<FunctionSignatureItem, LeafScalarMap, LeafStringMap>;
@@ -1984,7 +2034,9 @@ export type GenericTypeFromInput = FromInputOf<GenericType, LeafScalarMap, LeafS
 export type GenericTypeWithTurbofishFromInput = FromInputOf<GenericTypeWithTurbofish, LeafScalarMap, LeafStringMap>;
 export type HigherRankedTraitBoundFromInput = FromInputOf<HigherRankedTraitBound, LeafScalarMap, LeafStringMap>;
 export type IfExpressionFromInput = FromInputOf<IfExpression, LeafScalarMap, LeafStringMap>;
-export type ImplItemFromInput = FromInputOf<ImplItem, LeafScalarMap, LeafStringMap>;
+export type ImplItemBodyFromInput = FromInputOf<ImplItemBody, LeafScalarMap, LeafStringMap>;
+export type ImplItemSemiFromInput = FromInputOf<ImplItemSemi, LeafScalarMap, LeafStringMap>;
+export type ImplItemFromInput = ImplItemBodyFromInput | ImplItemSemiFromInput;
 export type IndexExpressionFromInput = FromInputOf<IndexExpression, LeafScalarMap, LeafStringMap>;
 export type InnerAttributeItemFromInput = FromInputOf<InnerAttributeItem, LeafScalarMap, LeafStringMap>;
 export type LabelFromInput = FromInputOf<Label, LeafScalarMap, LeafStringMap>;
@@ -2007,7 +2059,9 @@ export type MatchArmFromInput = FromInputOf<MatchArm, LeafScalarMap, LeafStringM
 export type MatchBlockFromInput = MatchArm;
 export type MatchExpressionFromInput = FromInputOf<MatchExpression, LeafScalarMap, LeafStringMap>;
 export type MatchPatternFromInput = FromInputOf<MatchPattern, LeafScalarMap, LeafStringMap>;
-export type ModItemFromInput = FromInputOf<ModItem, LeafScalarMap, LeafStringMap>;
+export type ModItemSemiFromInput = FromInputOf<ModItemSemi, LeafScalarMap, LeafStringMap>;
+export type ModItemBodyFromInput = FromInputOf<ModItemBody, LeafScalarMap, LeafStringMap>;
+export type ModItemFromInput = ModItemSemiFromInput | ModItemBodyFromInput;
 export type MutPatternFromInput = FromInputOf<MutPattern, LeafScalarMap, LeafStringMap>;
 export type NegativeLiteralFromInput = FromInputOf<NegativeLiteral, LeafScalarMap, LeafStringMap>;
 export type OrPatternRightFromInput = FromInputOf<OrPatternRight, LeafScalarMap, LeafStringMap>;
@@ -2017,7 +2071,9 @@ export type OrderedFieldDeclarationListFromInput = FromInputOf<OrderedFieldDecla
 export type ParameterFromInput = FromInputOf<Parameter, LeafScalarMap, LeafStringMap>;
 export type ParametersFromInput = AttributeItem | Parameter | SelfParameter | Type | VariadicParameter;
 export type ParenthesizedExpressionFromInput = Expression;
-export type PointerTypeFromInput = FromInputOf<PointerType, LeafScalarMap, LeafStringMap>;
+export type PointerTypeConstFromInput = FromInputOf<PointerTypeConst, LeafScalarMap, LeafStringMap>;
+export type PointerTypeMutableSpecifierFromInput = FromInputOf<PointerTypeMutableSpecifier, LeafScalarMap, LeafStringMap>;
+export type PointerTypeFromInput = PointerTypeConstFromInput | PointerTypeMutableSpecifierFromInput;
 export type QualifiedTypeFromInput = FromInputOf<QualifiedType, LeafScalarMap, LeafStringMap>;
 export type RangeExpressionEllipsisFromInput = FromInputOf<RangeExpressionEllipsis, LeafScalarMap, LeafStringMap>;
 export type RangeExpressionV1FromInput = FromInputOf<RangeExpressionV1, LeafScalarMap, LeafStringMap>;
@@ -2029,9 +2085,10 @@ export type RangePatternV2FromInput = FromInputOf<RangePatternV2, LeafScalarMap,
 export type RangePatternFromInput = RangePatternEllipsisFromInput | RangePatternV1FromInput | RangePatternV2FromInput;
 export type RawStringLiteralFromInput = FromInputOf<RawStringLiteral, LeafScalarMap, LeafStringMap>;
 export type RefPatternFromInput = Pattern;
-export type ReferenceExpressionRawFromInput = FromInputOf<ReferenceExpressionRaw, LeafScalarMap, LeafStringMap>;
+export type ReferenceExpressionConstFromInput = FromInputOf<ReferenceExpressionConst, LeafScalarMap, LeafStringMap>;
 export type ReferenceExpressionV1FromInput = FromInputOf<ReferenceExpressionV1, LeafScalarMap, LeafStringMap>;
-export type ReferenceExpressionFromInput = ReferenceExpressionRawFromInput | ReferenceExpressionV1FromInput;
+export type ReferenceExpressionV2FromInput = FromInputOf<ReferenceExpressionV2, LeafScalarMap, LeafStringMap>;
+export type ReferenceExpressionFromInput = ReferenceExpressionConstFromInput | ReferenceExpressionV1FromInput | ReferenceExpressionV2FromInput;
 export type ReferencePatternFromInput = FromInputOf<ReferencePattern, LeafScalarMap, LeafStringMap>;
 export type ReferenceTypeFromInput = FromInputOf<ReferenceType, LeafScalarMap, LeafStringMap>;
 export type RemovedTraitBoundFromInput = Type;
@@ -3026,13 +3083,17 @@ export interface VariantMap {
   'binary_expression': { tok_2626: BinaryExpressionTok_2626; tok_7c7c: BinaryExpressionTok_7c7c; amp: BinaryExpressionAmp; pipe: BinaryExpressionPipe; caret: BinaryExpressionCaret; tok_3d3d: BinaryExpressionTok_3d3d; tok_3c3c: BinaryExpressionTok_3c3c; plus: BinaryExpressionPlus; star: BinaryExpressionStar };
   'expression_statement': { semi: ExpressionStatementSemi; v1: ExpressionStatementV1 };
   'field_pattern': { v0: FieldPatternV0; colon: FieldPatternColon };
+  'foreign_mod_item': { semi: ForeignModItemSemi; body: ForeignModItemBody };
   'function_type': { trait: FunctionTypeTrait; fn: FunctionTypeFn };
+  'impl_item': { body: ImplItemBody; semi: ImplItemSemi };
   'line_comment': { v0: LineCommentV0; outer: LineCommentOuter };
   'macro_definition': { paren: MacroDefinitionParen; bracket: MacroDefinitionBracket; brace: MacroDefinitionBrace };
+  'mod_item': { semi: ModItemSemi; body: ModItemBody };
   'or_pattern': { right: OrPatternRight; v1: OrPatternV1 };
+  'pointer_type': { const: PointerTypeConst; mutable_specifier: PointerTypeMutableSpecifier };
   'range_expression': { ellipsis: RangeExpressionEllipsis; v1: RangeExpressionV1; v2: RangeExpressionV2 };
   'range_pattern': { ellipsis: RangePatternEllipsis; v1: RangePatternV1; v2: RangePatternV2 };
-  'reference_expression': { raw: ReferenceExpressionRaw; v1: ReferenceExpressionV1 };
+  'reference_expression': { const: ReferenceExpressionConst; v1: ReferenceExpressionV1; v2: ReferenceExpressionV2 };
   'struct_item': { v0: StructItemV0; v1: StructItemV1; v2: StructItemV2 };
   'token_tree': { paren: TokenTreeParen; bracket: TokenTreeBracket; brace: TokenTreeBrace };
   'token_tree_pattern': { paren: TokenTreePatternParen; bracket: TokenTreePatternBracket; brace: TokenTreePatternBrace };

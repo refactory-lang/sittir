@@ -1132,7 +1132,7 @@
     children: null,
     variants: [
       {
-        name: "default",
+        name: "const",
         rule: {
           type: "PREC_LEFT",
           value: "binary",
@@ -1152,21 +1152,46 @@
                 value: "as",
               },
               {
-                type: "CHOICE",
-                members: [
-                  {
-                    type: "STRING",
-                    value: "const",
-                  },
-                  {
-                    type: "FIELD",
-                    name: "type_annotation",
-                    content: {
-                      type: "SYMBOL",
-                      name: "type",
-                    },
-                  },
-                ],
+                type: "STRING",
+                value: "const",
+              },
+            ],
+          },
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+        detectToken: "const",
+      },
+      {
+        name: "type_annotation",
+        rule: {
+          type: "PREC_LEFT",
+          value: "binary",
+          content: {
+            type: "SEQ",
+            members: [
+              {
+                type: "FIELD",
+                name: "expression",
+                content: {
+                  type: "SYMBOL",
+                  name: "expression",
+                },
+              },
+              {
+                type: "STRING",
+                value: "as",
+              },
+              {
+                type: "FIELD",
+                name: "type_annotation",
+                content: {
+                  type: "SYMBOL",
+                  name: "type",
+                },
               },
             ],
           },
@@ -9318,7 +9343,7 @@
     children: null,
     variants: [
       {
-        name: "default",
+        name: "dot",
         rule: {
           type: "PREC",
           value: "member",
@@ -9347,21 +9372,77 @@
                 },
               },
               {
-                type: "CHOICE",
-                members: [
-                  {
-                    type: "STRING",
-                    value: ".",
-                  },
-                  {
-                    type: "FIELD",
-                    name: "optional_chain",
-                    content: {
+                type: "STRING",
+                value: ".",
+              },
+              {
+                type: "FIELD",
+                name: "property",
+                content: {
+                  type: "CHOICE",
+                  members: [
+                    {
                       type: "SYMBOL",
-                      name: "optional_chain",
+                      name: "private_property_identifier",
                     },
-                  },
-                ],
+                    {
+                      type: "ALIAS",
+                      content: {
+                        type: "SYMBOL",
+                        name: "identifier",
+                      },
+                      named: true,
+                      value: "property_identifier",
+                    },
+                  ],
+                },
+              },
+            ],
+          },
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+        detectToken: ".",
+      },
+      {
+        name: "optional_chain",
+        rule: {
+          type: "PREC",
+          value: "member",
+          content: {
+            type: "SEQ",
+            members: [
+              {
+                type: "FIELD",
+                name: "object",
+                content: {
+                  type: "CHOICE",
+                  members: [
+                    {
+                      type: "SYMBOL",
+                      name: "expression",
+                    },
+                    {
+                      type: "SYMBOL",
+                      name: "primary_expression",
+                    },
+                    {
+                      type: "SYMBOL",
+                      name: "import",
+                    },
+                  ],
+                },
+              },
+              {
+                type: "FIELD",
+                name: "optional_chain",
+                content: {
+                  type: "SYMBOL",
+                  name: "optional_chain",
+                },
               },
               {
                 type: "FIELD",

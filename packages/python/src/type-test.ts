@@ -204,7 +204,6 @@ export type _Config_ReturnStatement = Assert<Extends<ConfigOf<ReturnStatement>, 
 export type _Config_Set = Assert<Extends<ConfigOf<Set>, SetConfig>>;
 export type _Config_SetComprehension = Assert<Extends<ConfigOf<SetComprehension>, SetComprehensionConfig>>;
 export type _Config_Slice = Assert<Extends<ConfigOf<Slice>, SliceConfig>>;
-export type _Config_SplatPattern = Assert<Extends<ConfigOf<SplatPattern>, SplatPatternConfig>>;
 export type _Config_SplatType = Assert<Extends<ConfigOf<SplatType>, SplatTypeConfig>>;
 export type _Config_String = Assert<Extends<ConfigOf<String>, StringConfig>>;
 export type _Config_StringContent = Assert<Extends<ConfigOf<StringContent>, StringContentConfig>>;

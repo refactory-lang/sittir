@@ -85,7 +85,9 @@ rules:
   for_lifetimes:
     template: for<$$$CHILDREN>
     joinBy: ","
-  foreign_mod_item: $VISIBILITY_MODIFIER $EXTERN_MODIFIER; $BODY
+  foreign_mod_item:
+    - $VISIBILITY_MODIFIER $EXTERN_MODIFIER;
+    - $VISIBILITY_MODIFIER $EXTERN_MODIFIER $BODY
   function_item:
     template: $VISIBILITY_MODIFIER $FUNCTION_MODIFIERS fn $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE_CLAUSE $WHERE_CLAUSE $BODY
     return_type_clause: -> $RETURN_TYPE
@@ -106,7 +108,9 @@ rules:
   higher_ranked_trait_bound: for $TYPE_PARAMETERS $TYPE
   if_expression: if $CONDITION $CONSEQUENCE $ALTERNATIVE
   impl_item:
-    template: impl $TYPE_PARAMETERS $TRAIT_CLAUSE $TYPE $WHERE_CLAUSE $BODY
+    template:
+      - impl $TYPE_PARAMETERS $TRAIT_CLAUSE $TYPE $WHERE_CLAUSE $BODY
+      - impl $TYPE_PARAMETERS $TRAIT_CLAUSE $TYPE $WHERE_CLAUSE;
     trait_clause: "! $TRAIT for"
   index_expression: $OBJECT[$INDEX]
   inner_attribute_item: "#![$ATTRIBUTE]"
@@ -145,7 +149,9 @@ rules:
   match_pattern:
     template: $CHILDREN $CONDITION_CLAUSE
     condition_clause: if $CONDITION
-  mod_item: $VISIBILITY_MODIFIER mod $NAME; $BODY
+  mod_item:
+    - $VISIBILITY_MODIFIER mod $NAME;
+    - $VISIBILITY_MODIFIER mod $NAME $BODY
   mut_pattern: $MUTABLE_SPECIFIER $PATTERN
   negative_literal: $OPERATOR $VALUE
   or_pattern:
@@ -157,7 +163,9 @@ rules:
     template: ($$$CHILDREN)
     joinBy: ","
   parenthesized_expression: ($CHILDREN)
-  pointer_type: "*const $MUTABLE_SPECIFIER $TYPE"
+  pointer_type:
+    - "*const $TYPE"
+    - "*$MUTABLE_SPECIFIER $TYPE"
   qualified_type: $TYPE as $ALIAS
   range_expression:
     - $START $OPERATOR $END
@@ -170,7 +178,8 @@ rules:
   raw_string_literal: $RAW_STRING_LITERAL_START $STRING_CONTENT $RAW_STRING_LITERAL_END
   ref_pattern: ref $CHILDREN
   reference_expression:
-    - "&raw const $MUTABLE_SPECIFIER $VALUE"
+    - "&raw const $VALUE"
+    - "&raw $MUTABLE_SPECIFIER $VALUE"
     - "&$MUTABLE_SPECIFIER $VALUE"
   reference_pattern: "&$MUTABLE_SPECIFIER $PATTERN"
   reference_type: "&$LIFETIME $MUTABLE_SPECIFIER $TYPE"

@@ -132,7 +132,9 @@ rules:
   set: "{} $$$CHILDREN"
   set_comprehension: "{$BODY $CHILDREN}"
   slice: $START:$STOP $STEP
-  splat_pattern: "*$IDENTIFIER"
+  splat_pattern:
+    - "*$IDENTIFIER"
+    - "*_"
   splat_type: "*$IDENTIFIER"
   string: $STRING_START $$$CONTENT $STRING_END
   string_content: $$$CHILDREN

@@ -192,14 +192,30 @@ function resolveChoice(members: GrammarRule[], ctx: FactorContext): GrammarRule[
 	// No BLANK — true structural CHOICE. Attempt factoring.
 
 	// Check if this is an "atom" CHOICE (all single elements, no SEQs)
+	const atomTypes = new Set<string>();
 	const allAtoms = nonBlank.every(m => {
 		const u = unwrapPrec(m);
-		return u.type === 'STRING' || u.type === 'FIELD' || u.type === 'SYMBOL' || u.type === 'ALIAS';
+		if (u.type === 'STRING' || u.type === 'FIELD' || u.type === 'SYMBOL' || u.type === 'ALIAS') {
+			atomTypes.add(u.type);
+			return true;
+		}
+		return false;
 	});
 
 	if (allAtoms) {
-		// Atom CHOICE: factorable — preserve the CHOICE as a child-level slot.
-		// Recurse into each branch to resolve nested CHOICEs (though atoms rarely have them).
+		// Mixed FIELD + STRING means "named content OR fallback literal" — fan out as variants.
+		// e.g. CHOICE(FIELD:body | ";") → variant with body, variant with ;
+		const hasMixedFieldString = atomTypes.has('FIELD') && atomTypes.has('STRING');
+		if (hasMixedFieldString) {
+			// Each branch becomes its own variant
+			const allResolved: GrammarRule[] = [];
+			for (const m of nonBlank) {
+				allResolved.push(...resolveChoices(m, ctx));
+			}
+			return allResolved;
+		}
+
+		// Homogeneous atom CHOICE: factorable — preserve the CHOICE as a child-level slot.
 		const resolvedMembers: GrammarRule[] = [];
 		for (const m of nonBlank) {
 			resolvedMembers.push(...resolveChoices(m, ctx));

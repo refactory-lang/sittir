@@ -6757,7 +6757,7 @@
     children: null,
     variants: [
       {
-        name: "default",
+        name: "identifier",
         rule: {
           type: "PREC",
           value: 1,
@@ -6778,21 +6778,12 @@
                 ],
               },
               {
-                type: "CHOICE",
-                members: [
-                  {
-                    type: "FIELD",
-                    name: "identifier",
-                    content: {
-                      type: "SYMBOL",
-                      name: "identifier",
-                    },
-                  },
-                  {
-                    type: "STRING",
-                    value: "_",
-                  },
-                ],
+                type: "FIELD",
+                name: "identifier",
+                content: {
+                  type: "SYMBOL",
+                  name: "identifier",
+                },
               },
             ],
           },
@@ -6802,6 +6793,41 @@
         literals: {},
         template: "",
         clauses: [],
+      },
+      {
+        name: "_",
+        rule: {
+          type: "PREC",
+          value: 1,
+          content: {
+            type: "SEQ",
+            members: [
+              {
+                type: "CHOICE",
+                members: [
+                  {
+                    type: "STRING",
+                    value: "*",
+                  },
+                  {
+                    type: "STRING",
+                    value: "**",
+                  },
+                ],
+              },
+              {
+                type: "STRING",
+                value: "_",
+              },
+            ],
+          },
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+        detectToken: "_",
       },
     ],
   },

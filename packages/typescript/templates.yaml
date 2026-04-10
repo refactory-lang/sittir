@@ -25,7 +25,9 @@ rules:
     joinBy: ","
   array_type: $PRIMARY_TYPE[]
   arrow_function: $PARAMETER $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE=>$BODY
-  as_expression: $EXPRESSION as const $TYPE_ANNOTATION
+  as_expression:
+    - $EXPRESSION as const
+    - $EXPRESSION as $TYPE_ANNOTATION
   asserts: asserts $CHILDREN
   asserts_annotation: :$ASSERTS
   assignment_expression: $LEFT=$RIGHT
@@ -137,7 +139,9 @@ rules:
   mapped_type_clause:
     template: $NAME in $TYPE $ALIAS_CLAUSE
     alias_clause: as $ALIAS
-  member_expression: $OBJECT. $OPTIONAL_CHAIN $PROPERTY
+  member_expression:
+    - $OBJECT.$PROPERTY
+    - $OBJECT $OPTIONAL_CHAIN $PROPERTY
   method_definition: $ACCESSIBILITY_MODIFIER $OVERRIDE_MODIFIER $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $BODY
   method_signature: $ACCESSIBILITY_MODIFIER $OVERRIDE_MODIFIER $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE
   module: module $NAME $BODY
