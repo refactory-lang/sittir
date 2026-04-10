@@ -169,7 +169,8 @@ export function emitTypes(config: EmitTypesConfig): string {
 	lines.push('// Config types — derived from concrete interfaces');
 	for (const kind of nodeKinds) {
 		const node = modelMap.get(kind)!;
-		const variantSets = computeVariantFieldSets(node, grammarRules);
+		// Prefer model variants (from factoring.ts) over grammar re-walk
+		const variantSets = variantFieldSetsFromModel(node) ?? computeVariantFieldSets(node, grammarRules);
 
 		if (variantSets) {
 			emitVariantConfigType(lines, kind, node, variantSets, ctx);
@@ -566,7 +567,26 @@ function collectBranchFieldNames(
 }
 
 /**
- * Compute variant field sets for a node with top-level CHOICE.
+ * Derive variant field sets from pre-computed model variants (factoring.ts).
+ * Returns distinct field-name sets per variant, or null if no variants
+ * or all variants have the same fields.
+ */
+function variantFieldSetsFromModel(node: HydratedNodeModel): Set<string>[] | null {
+	if (node.modelType !== 'branch' && node.modelType !== 'container') return null;
+	const variants = (node as any).variants as import('../node-model.ts').StructuralVariant[] | undefined;
+	if (!variants || variants.length <= 1) return null;
+
+	const sets = variants.map(v => new Set(v.fields.keys()));
+
+	// Check if all sets are equal — if so, no union needed
+	const first = [...sets[0]!].sort().join(',');
+	if (sets.every(s => [...s].sort().join(',') === first)) return null;
+
+	return sets;
+}
+
+/**
+ * Compute variant field sets for a node with top-level CHOICE (legacy grammar re-walk).
  * Returns distinct field-name sets per branch, or null if no variants
  * or all branches have the same fields.
  */
