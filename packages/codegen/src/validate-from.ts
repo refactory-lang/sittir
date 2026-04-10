@@ -270,7 +270,12 @@ export async function validateFrom(
 					if (!readData.fields && readData.children) {
 						factoryResult = (factoryMap[kind]! as (...args: unknown[]) => AnyNodeData)(...readData.children);
 					} else {
-						factoryResult = factoryMap[kind]!(readData.fields ?? {}) as AnyNodeData;
+						const config = { ...(readData.fields ?? {}) } as Record<string, unknown>;
+						const namedChildren = (readData.children ?? []).filter((c: any) => c?.named !== false);
+						if (namedChildren.length) {
+							config.children = namedChildren;
+						}
+						factoryResult = factoryMap[kind]!(config) as AnyNodeData;
 					}
 				} catch {
 					skip++;
