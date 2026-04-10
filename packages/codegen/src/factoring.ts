@@ -553,6 +553,10 @@ function deduplicateVariants(variants: StructuralVariant[]): StructuralVariant[]
  * literal unique to that variant). Without full coverage, the template emitter produces
  * string[] and pickTemplate selects by field presence — no variant factory needed.
  *
+ * When collapsing, the first representative is kept but enriched:
+ * - Content types are unioned across all variants per field (preserves type coverage)
+ * - All resolved rules are collected in `mergedRules` (preserves template generation)
+ *
  * Preserves original variant ordering.
  */
 function collapseSameFieldSetVariants(variants: StructuralVariant[]): StructuralVariant[] {
@@ -574,7 +578,7 @@ function collapseSameFieldSetVariants(variants: StructuralVariant[]): Structural
 		if (group.every(v => v.detectToken != null)) keepAll.add(key);
 	}
 
-	// Walk original order: keep all or collapse to first representative
+	// Walk original order: keep all or collapse to merged representative
 	const seen = new Set<string>();
 	const result: StructuralVariant[] = [];
 	for (const v of variants) {
@@ -583,12 +587,48 @@ function collapseSameFieldSetVariants(variants: StructuralVariant[]): Structural
 		if (group.length <= 1 || keepAll.has(key)) {
 			result.push(v);
 		} else if (!seen.has(key)) {
-			result.push(v);
+			result.push(mergeVariantGroup(group));
 			seen.add(key);
 		}
 	}
 
 	return result;
+}
+
+/**
+ * Merge a group of same-field-set variants into one representative.
+ * - Union contentKinds across all variants per field
+ * - Collect all resolved rules in `mergedRules` for template generation
+ */
+function mergeVariantGroup(group: StructuralVariant[]): StructuralVariant {
+	const first = group[0]!;
+
+	// Union content types per field
+	const mergedFields = new Map<string, { required: boolean; multiple: boolean; contentKinds?: string[] }>();
+	for (const [fieldName, info] of first.fields) {
+		mergedFields.set(fieldName, { ...info, contentKinds: info.contentKinds ? [...info.contentKinds] : undefined });
+	}
+	for (const other of group.slice(1)) {
+		for (const [fieldName, otherInfo] of other.fields) {
+			const existing = mergedFields.get(fieldName);
+			if (existing && otherInfo.contentKinds) {
+				const unionKinds = new Set([
+					...(existing.contentKinds ?? []),
+					...otherInfo.contentKinds,
+				]);
+				mergedFields.set(fieldName, {
+					...existing,
+					contentKinds: [...unionKinds],
+				});
+			}
+		}
+	}
+
+	return {
+		...first,
+		fields: mergedFields,
+		mergedRules: group.map(v => v.rule),
+	};
 }
 
 function nameVariant(variant: StructuralVariant, index: number, all: StructuralVariant[]): string {

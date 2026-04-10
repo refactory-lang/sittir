@@ -369,7 +369,7 @@ export interface AddingTypeAnnotation {
 export interface AmbientDeclarationV0 {
   readonly type: 'ambient_declaration';
   readonly fields: {
-    readonly declaration: Declaration;
+    readonly declaration: Declaration | StatementBlock;
   };
 }
 export interface AmbientDeclarationModule {
@@ -479,7 +479,7 @@ export interface CallExpressionTypeArguments {
   readonly type: 'call_expression';
   readonly fields: {
     readonly arguments: Arguments;
-    readonly function: Expression | Import;
+    readonly function: Expression | Import | PrimaryExpression;
     readonly type_arguments?: TypeArguments;
   };
 }
@@ -663,14 +663,14 @@ export interface ExportStatementStar {
 export interface ExportStatementV1 {
   readonly type: 'export_statement';
   readonly fields: {
-    readonly declaration?: NamespaceExport;
+    readonly declaration?: ExportClause | NamespaceExport;
     readonly source?: String;
   };
 }
 export interface ExportStatementV2 {
   readonly type: 'export_statement';
   readonly fields: {
-    readonly declaration?: ExportClause;
+    readonly declaration?: ExportClause | Expression | Identifier;
   };
 }
 export interface ExportStatementV3 {

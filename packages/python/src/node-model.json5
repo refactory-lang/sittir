@@ -2109,6 +2109,126 @@
         template: "",
         clauses: [],
         detectToken: "+",
+        mergedRules: [
+          {
+            type: "PREC",
+            value: 1,
+            content: {
+              type: "SEQ",
+              members: [
+                {
+                  type: "CHOICE",
+                  members: [
+                    {
+                      type: "STRING",
+                      value: "-",
+                    },
+                    {
+                      type: "BLANK",
+                    },
+                  ],
+                },
+                {
+                  type: "FIELD",
+                  name: "real",
+                  content: {
+                    type: "CHOICE",
+                    members: [
+                      {
+                        type: "SYMBOL",
+                        name: "integer",
+                      },
+                      {
+                        type: "SYMBOL",
+                        name: "float",
+                      },
+                    ],
+                  },
+                },
+                {
+                  type: "STRING",
+                  value: "+",
+                },
+                {
+                  type: "FIELD",
+                  name: "imaginary",
+                  content: {
+                    type: "CHOICE",
+                    members: [
+                      {
+                        type: "SYMBOL",
+                        name: "integer",
+                      },
+                      {
+                        type: "SYMBOL",
+                        name: "float",
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+          {
+            type: "PREC",
+            value: 1,
+            content: {
+              type: "SEQ",
+              members: [
+                {
+                  type: "CHOICE",
+                  members: [
+                    {
+                      type: "STRING",
+                      value: "-",
+                    },
+                    {
+                      type: "BLANK",
+                    },
+                  ],
+                },
+                {
+                  type: "FIELD",
+                  name: "real",
+                  content: {
+                    type: "CHOICE",
+                    members: [
+                      {
+                        type: "SYMBOL",
+                        name: "integer",
+                      },
+                      {
+                        type: "SYMBOL",
+                        name: "float",
+                      },
+                    ],
+                  },
+                },
+                {
+                  type: "STRING",
+                  value: "-",
+                },
+                {
+                  type: "FIELD",
+                  name: "imaginary",
+                  content: {
+                    type: "CHOICE",
+                    members: [
+                      {
+                        type: "SYMBOL",
+                        name: "integer",
+                      },
+                      {
+                        type: "SYMBOL",
+                        name: "float",
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
       },
     ],
   },
@@ -3307,6 +3427,71 @@
         literals: {},
         template: "",
         clauses: [],
+        mergedRules: [
+          {
+            type: "PREC_RIGHT",
+            value: 0,
+            content: {
+              type: "SEQ",
+              members: [
+                {
+                  type: "SYMBOL",
+                  name: "expression",
+                },
+                {
+                  type: "STRING",
+                  value: ",",
+                },
+              ],
+            },
+          },
+          {
+            type: "PREC_RIGHT",
+            value: 0,
+            content: {
+              type: "SEQ",
+              members: [
+                {
+                  type: "SYMBOL",
+                  name: "expression",
+                },
+                {
+                  type: "SEQ",
+                  members: [
+                    {
+                      type: "REPEAT1",
+                      content: {
+                        type: "SEQ",
+                        members: [
+                          {
+                            type: "STRING",
+                            value: ",",
+                          },
+                          {
+                            type: "SYMBOL",
+                            name: "expression",
+                          },
+                        ],
+                      },
+                    },
+                    {
+                      type: "CHOICE",
+                      members: [
+                        {
+                          type: "STRING",
+                          value: ",",
+                        },
+                        {
+                          type: "BLANK",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+          },
+        ],
       },
     ],
   },
@@ -3333,6 +3518,54 @@
         literals: {},
         template: "",
         clauses: [],
+        mergedRules: [
+          {
+            type: "SYMBOL",
+            name: "expression",
+          },
+          {
+            type: "SEQ",
+            members: [
+              {
+                type: "SEQ",
+                members: [
+                  {
+                    type: "SYMBOL",
+                    name: "expression",
+                  },
+                  {
+                    type: "REPEAT",
+                    content: {
+                      type: "SEQ",
+                      members: [
+                        {
+                          type: "STRING",
+                          value: ",",
+                        },
+                        {
+                          type: "SYMBOL",
+                          name: "expression",
+                        },
+                      ],
+                    },
+                  },
+                ],
+              },
+              {
+                type: "CHOICE",
+                members: [
+                  {
+                    type: "STRING",
+                    value: ",",
+                  },
+                  {
+                    type: "BLANK",
+                  },
+                ],
+              },
+            ],
+          },
+        ],
       },
     ],
   },
@@ -3925,6 +4158,191 @@
         literals: {},
         template: "",
         clauses: [],
+        mergedRules: [
+          {
+            type: "SEQ",
+            members: [
+              {
+                type: "STRING",
+                value: "from",
+              },
+              {
+                type: "STRING",
+                value: "__future__",
+              },
+              {
+                type: "STRING",
+                value: "import",
+              },
+              {
+                type: "SEQ",
+                members: [
+                  {
+                    type: "SEQ",
+                    members: [
+                      {
+                        type: "FIELD",
+                        name: "name",
+                        content: {
+                          type: "CHOICE",
+                          members: [
+                            {
+                              type: "SYMBOL",
+                              name: "dotted_name",
+                            },
+                            {
+                              type: "SYMBOL",
+                              name: "aliased_import",
+                            },
+                          ],
+                        },
+                      },
+                      {
+                        type: "REPEAT",
+                        content: {
+                          type: "SEQ",
+                          members: [
+                            {
+                              type: "STRING",
+                              value: ",",
+                            },
+                            {
+                              type: "FIELD",
+                              name: "name",
+                              content: {
+                                type: "CHOICE",
+                                members: [
+                                  {
+                                    type: "SYMBOL",
+                                    name: "dotted_name",
+                                  },
+                                  {
+                                    type: "SYMBOL",
+                                    name: "aliased_import",
+                                  },
+                                ],
+                              },
+                            },
+                          ],
+                        },
+                      },
+                    ],
+                  },
+                  {
+                    type: "CHOICE",
+                    members: [
+                      {
+                        type: "STRING",
+                        value: ",",
+                      },
+                      {
+                        type: "BLANK",
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            type: "SEQ",
+            members: [
+              {
+                type: "STRING",
+                value: "from",
+              },
+              {
+                type: "STRING",
+                value: "__future__",
+              },
+              {
+                type: "STRING",
+                value: "import",
+              },
+              {
+                type: "SEQ",
+                members: [
+                  {
+                    type: "STRING",
+                    value: "(",
+                  },
+                  {
+                    type: "SEQ",
+                    members: [
+                      {
+                        type: "SEQ",
+                        members: [
+                          {
+                            type: "FIELD",
+                            name: "name",
+                            content: {
+                              type: "CHOICE",
+                              members: [
+                                {
+                                  type: "SYMBOL",
+                                  name: "dotted_name",
+                                },
+                                {
+                                  type: "SYMBOL",
+                                  name: "aliased_import",
+                                },
+                              ],
+                            },
+                          },
+                          {
+                            type: "REPEAT",
+                            content: {
+                              type: "SEQ",
+                              members: [
+                                {
+                                  type: "STRING",
+                                  value: ",",
+                                },
+                                {
+                                  type: "FIELD",
+                                  name: "name",
+                                  content: {
+                                    type: "CHOICE",
+                                    members: [
+                                      {
+                                        type: "SYMBOL",
+                                        name: "dotted_name",
+                                      },
+                                      {
+                                        type: "SYMBOL",
+                                        name: "aliased_import",
+                                      },
+                                    ],
+                                  },
+                                },
+                              ],
+                            },
+                          },
+                        ],
+                      },
+                      {
+                        type: "CHOICE",
+                        members: [
+                          {
+                            type: "STRING",
+                            value: ",",
+                          },
+                          {
+                            type: "BLANK",
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                  {
+                    type: "STRING",
+                    value: ")",
+                  },
+                ],
+              },
+            ],
+          },
+        ],
       },
     ],
   },
@@ -5711,6 +6129,63 @@
         literals: {},
         template: "",
         clauses: [],
+        mergedRules: [
+          {
+            type: "SEQ",
+            members: [
+              {
+                type: "SYMBOL",
+                name: "pattern",
+              },
+              {
+                type: "STRING",
+                value: ",",
+              },
+            ],
+          },
+          {
+            type: "SEQ",
+            members: [
+              {
+                type: "SYMBOL",
+                name: "pattern",
+              },
+              {
+                type: "SEQ",
+                members: [
+                  {
+                    type: "REPEAT1",
+                    content: {
+                      type: "SEQ",
+                      members: [
+                        {
+                          type: "STRING",
+                          value: ",",
+                        },
+                        {
+                          type: "SYMBOL",
+                          name: "pattern",
+                        },
+                      ],
+                    },
+                  },
+                  {
+                    type: "CHOICE",
+                    members: [
+                      {
+                        type: "STRING",
+                        value: ",",
+                      },
+                      {
+                        type: "BLANK",
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
       },
     ],
   },
@@ -6310,6 +6785,50 @@
         literals: {},
         template: "",
         clauses: [],
+        mergedRules: [
+          {
+            type: "PREC",
+            value: 1,
+            content: {
+              type: "SEQ",
+              members: [
+                {
+                  type: "STRING",
+                  value: "*",
+                },
+                {
+                  type: "FIELD",
+                  name: "identifier",
+                  content: {
+                    type: "SYMBOL",
+                    name: "identifier",
+                  },
+                },
+              ],
+            },
+          },
+          {
+            type: "PREC",
+            value: 1,
+            content: {
+              type: "SEQ",
+              members: [
+                {
+                  type: "STRING",
+                  value: "**",
+                },
+                {
+                  type: "FIELD",
+                  name: "identifier",
+                  content: {
+                    type: "SYMBOL",
+                    name: "identifier",
+                  },
+                },
+              ],
+            },
+          },
+        ],
       },
       {
         name: "_",
@@ -6335,6 +6854,42 @@
         literals: {},
         template: "",
         clauses: [],
+        mergedRules: [
+          {
+            type: "PREC",
+            value: 1,
+            content: {
+              type: "SEQ",
+              members: [
+                {
+                  type: "STRING",
+                  value: "*",
+                },
+                {
+                  type: "STRING",
+                  value: "_",
+                },
+              ],
+            },
+          },
+          {
+            type: "PREC",
+            value: 1,
+            content: {
+              type: "SEQ",
+              members: [
+                {
+                  type: "STRING",
+                  value: "**",
+                },
+                {
+                  type: "STRING",
+                  value: "_",
+                },
+              ],
+            },
+          },
+        ],
         detectToken: "_",
       },
     ],
@@ -7538,6 +8093,100 @@
         literals: {},
         template: "",
         clauses: [],
+        mergedRules: [
+          {
+            type: "SEQ",
+            members: [
+              {
+                type: "SEQ",
+                members: [
+                  {
+                    type: "SYMBOL",
+                    name: "with_item",
+                  },
+                  {
+                    type: "REPEAT",
+                    content: {
+                      type: "SEQ",
+                      members: [
+                        {
+                          type: "STRING",
+                          value: ",",
+                        },
+                        {
+                          type: "SYMBOL",
+                          name: "with_item",
+                        },
+                      ],
+                    },
+                  },
+                ],
+              },
+              {
+                type: "CHOICE",
+                members: [
+                  {
+                    type: "STRING",
+                    value: ",",
+                  },
+                  {
+                    type: "BLANK",
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            type: "SEQ",
+            members: [
+              {
+                type: "STRING",
+                value: "(",
+              },
+              {
+                type: "SEQ",
+                members: [
+                  {
+                    type: "SYMBOL",
+                    name: "with_item",
+                  },
+                  {
+                    type: "REPEAT",
+                    content: {
+                      type: "SEQ",
+                      members: [
+                        {
+                          type: "STRING",
+                          value: ",",
+                        },
+                        {
+                          type: "SYMBOL",
+                          name: "with_item",
+                        },
+                      ],
+                    },
+                  },
+                ],
+              },
+              {
+                type: "CHOICE",
+                members: [
+                  {
+                    type: "STRING",
+                    value: ",",
+                  },
+                  {
+                    type: "BLANK",
+                  },
+                ],
+              },
+              {
+                type: "STRING",
+                value: ")",
+              },
+            ],
+          },
+        ],
       },
     ],
   },
@@ -7701,6 +8350,59 @@
         template: "",
         clauses: [],
         detectToken: "from",
+        mergedRules: [
+          {
+            type: "PREC_RIGHT",
+            value: 0,
+            content: {
+              type: "SEQ",
+              members: [
+                {
+                  type: "STRING",
+                  value: "yield",
+                },
+                {
+                  type: "SEQ",
+                  members: [
+                    {
+                      type: "STRING",
+                      value: "from",
+                    },
+                    {
+                      type: "SYMBOL",
+                      name: "expression",
+                    },
+                  ],
+                },
+              ],
+            },
+          },
+          {
+            type: "PREC_RIGHT",
+            value: 0,
+            content: {
+              type: "SEQ",
+              members: [
+                {
+                  type: "STRING",
+                  value: "yield",
+                },
+                {
+                  type: "CHOICE",
+                  members: [
+                    {
+                      type: "SYMBOL",
+                      name: "_expressions",
+                    },
+                    {
+                      type: "BLANK",
+                    },
+                  ],
+                },
+              ],
+            },
+          },
+        ],
       },
     ],
   },

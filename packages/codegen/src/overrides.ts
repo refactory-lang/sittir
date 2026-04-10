@@ -436,6 +436,7 @@ function findKeywordAlternatives(
 	grammarRules: Record<string, GrammarRule>,
 ): string[][] {
 	const results: string[][] = [];
+	const visited = new Set<string>(); // cycle guard for hidden rule inlining
 
 	function walk(r: GrammarRule, insideField: boolean) {
 		switch (r.type) {
@@ -498,9 +499,10 @@ function findKeywordAlternatives(
 				// Inline hidden rules that are structural (SEQ, REPEAT, etc.)
 				// but skip supertypes (CHOICE of mostly SYMBOLs) — those expand
 				// to contextual keywords like default/union/gen that are noise.
-				if (r.name.startsWith('_') && grammarRules[r.name]) {
+				if (r.name.startsWith('_') && grammarRules[r.name] && !visited.has(r.name)) {
 					const hidden = grammarRules[r.name]!;
 					if (!isSupertype(hidden)) {
+						visited.add(r.name);
 						walk(hidden, insideField);
 					}
 				}

@@ -12,6 +12,7 @@ rules:
   adding_type_annotation: +?:$CHILDREN
   ambient_declaration:
     - declare $DECLARATION
+    - declare global $DECLARATION
     - declare module.$DECLARATION:$TYPE_ANNOTATION $SEMICOLON
   arguments:
     template: ($$$CHILDREN)
@@ -37,6 +38,7 @@ rules:
   break_statement: break $LABEL
   call_expression:
     - $FUNCTION $TYPE_ARGUMENTS $ARGUMENTS
+    - $FUNCTION?.$TYPE_ARGUMENTS $ARGUMENTS
     - $FUNCTION $ARGUMENTS
   call_signature: $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE
   catch_clause: catch $PARAMETER $TYPE $BODY
@@ -44,6 +46,7 @@ rules:
   class_body:
     - "{$$$DECORATOR $$$CHILDREN}"
     - "{$$$CHILDREN}"
+    - "{} $$$CHILDREN"
   class_declaration: $$$DECORATOR class $NAME $TYPE_PARAMETERS $CLASS_HERITAGE $BODY $AUTOMATIC_SEMICOLON
   class_heritage: $EXTENDS_CLAUSE $IMPLEMENTS_CLAUSE
   class_static_block: static $BODY
@@ -73,11 +76,17 @@ rules:
     template: $NAME $ALIAS_CLAUSE
     alias_clause: as $ALIAS
   export_statement:
-    - export*from $SOURCE $$$CHILDREN
-    - export $DECLARATION from $SOURCE
-    - export $DECLARATION
-    - $$$DECORATOR export $DECLARATION
-    - $$$DECORATOR export default $VALUE $DECLARATION
+    template:
+      - export*from $SOURCE $$$CHILDREN
+      - export $DECLARATION from $SOURCE
+      - export type $DECLARATION $SOURCE_CLAUSE
+      - export $DECLARATION
+      - export=$DECLARATION
+      - export as namespace $DECLARATION
+      - $$$DECORATOR export $DECLARATION
+      - $$$DECORATOR export default $DECLARATION
+      - $$$DECORATOR export default $VALUE $DECLARATION
+    source_clause: from $SOURCE
   expression_statement: $$$CHILDREN
   extends_clause: extends $$$VALUE $$$TYPE_ARGUMENTS
   extends_type_clause:

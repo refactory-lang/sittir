@@ -170,19 +170,18 @@ rules:
     - $START $OPERATOR
     - $OPERATOR
   range_pattern:
-    variants:
-      ellipsis: $LEFT...$RIGHT
-      dotdot: $LEFT..
-      tok_2e2e3d: ..=$RIGHT
-    detect:
-      ellipsis: ...
-      dotdot: ..
-      tok_2e2e3d: ..=
+    - $LEFT...$RIGHT
+    - $LEFT..=$RIGHT
+    - $LEFT..$RIGHT
+    - $LEFT..
+    - ..=$RIGHT
+    - ..$RIGHT
   raw_string_literal: $RAW_STRING_LITERAL_START $STRING_CONTENT $RAW_STRING_LITERAL_END
   ref_pattern: ref $CHILDREN
   reference_expression:
     - "&raw const $VALUE"
     - "&raw $MUTABLE_SPECIFIER $VALUE"
+    - "&$MUTABLE_SPECIFIER $VALUE"
   reference_pattern: "&$MUTABLE_SPECIFIER $PATTERN"
   reference_type: "&$LIFETIME $MUTABLE_SPECIFIER $TYPE"
   removed_trait_bound: ?$CHILDREN
@@ -203,6 +202,7 @@ rules:
   struct_expression: $NAME $BODY
   struct_item:
     - $VISIBILITY_MODIFIER struct $NAME $TYPE_PARAMETERS $WHERE_CLAUSE $BODY
+    - $VISIBILITY_MODIFIER struct $NAME $TYPE_PARAMETERS $BODY $WHERE_CLAUSE;
     - $VISIBILITY_MODIFIER struct $NAME $TYPE_PARAMETERS;
   struct_pattern:
     template: $TYPE{$$$CHILDREN}

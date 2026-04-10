@@ -471,6 +471,51 @@
         literals: {},
         template: "",
         clauses: [],
+        mergedRules: [
+          {
+            type: "SEQ",
+            members: [
+              {
+                type: "STRING",
+                value: "declare",
+              },
+              {
+                type: "FIELD",
+                name: "declaration",
+                content: {
+                  type: "SYMBOL",
+                  name: "declaration",
+                },
+              },
+            ],
+          },
+          {
+            type: "SEQ",
+            members: [
+              {
+                type: "STRING",
+                value: "declare",
+              },
+              {
+                type: "SEQ",
+                members: [
+                  {
+                    type: "STRING",
+                    value: "global",
+                  },
+                  {
+                    type: "FIELD",
+                    name: "declaration",
+                    content: {
+                      type: "SYMBOL",
+                      name: "statement_block",
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+        ],
       },
       {
         name: "module",
@@ -1727,6 +1772,103 @@
         literals: {},
         template: "",
         clauses: [],
+        mergedRules: [
+          {
+            type: "PREC",
+            value: "call",
+            content: {
+              type: "SEQ",
+              members: [
+                {
+                  type: "FIELD",
+                  name: "function",
+                  content: {
+                    type: "CHOICE",
+                    members: [
+                      {
+                        type: "SYMBOL",
+                        name: "expression",
+                      },
+                      {
+                        type: "SYMBOL",
+                        name: "import",
+                      },
+                    ],
+                  },
+                },
+                {
+                  type: "FIELD",
+                  name: "type_arguments",
+                  content: {
+                    type: "CHOICE",
+                    members: [
+                      {
+                        type: "SYMBOL",
+                        name: "type_arguments",
+                      },
+                      {
+                        type: "BLANK",
+                      },
+                    ],
+                  },
+                },
+                {
+                  type: "FIELD",
+                  name: "arguments",
+                  content: {
+                    type: "SYMBOL",
+                    name: "arguments",
+                  },
+                },
+              ],
+            },
+          },
+          {
+            type: "PREC",
+            value: "member",
+            content: {
+              type: "SEQ",
+              members: [
+                {
+                  type: "FIELD",
+                  name: "function",
+                  content: {
+                    type: "SYMBOL",
+                    name: "primary_expression",
+                  },
+                },
+                {
+                  type: "STRING",
+                  value: "?.",
+                },
+                {
+                  type: "FIELD",
+                  name: "type_arguments",
+                  content: {
+                    type: "CHOICE",
+                    members: [
+                      {
+                        type: "SYMBOL",
+                        name: "type_arguments",
+                      },
+                      {
+                        type: "BLANK",
+                      },
+                    ],
+                  },
+                },
+                {
+                  type: "FIELD",
+                  name: "arguments",
+                  content: {
+                    type: "SYMBOL",
+                    name: "arguments",
+                  },
+                },
+              ],
+            },
+          },
+        ],
       },
       {
         name: "v1",
@@ -2223,6 +2365,86 @@
         literals: {},
         template: "",
         clauses: [],
+        mergedRules: [
+          {
+            type: "SEQ",
+            members: [
+              {
+                type: "STRING",
+                value: "{",
+              },
+              {
+                type: "REPEAT",
+                content: {
+                  type: "SEQ",
+                  members: [
+                    {
+                      type: "SYMBOL",
+                      name: "method_signature",
+                    },
+                    {
+                      type: "SYMBOL",
+                      name: "_function_signature_automatic_semicolon",
+                    },
+                  ],
+                },
+              },
+              {
+                type: "STRING",
+                value: "}",
+              },
+            ],
+          },
+          {
+            type: "SEQ",
+            members: [
+              {
+                type: "STRING",
+                value: "{",
+              },
+              {
+                type: "REPEAT",
+                content: {
+                  type: "SEQ",
+                  members: [
+                    {
+                      type: "SYMBOL",
+                      name: "method_signature",
+                    },
+                    {
+                      type: "STRING",
+                      value: ",",
+                    },
+                  ],
+                },
+              },
+              {
+                type: "STRING",
+                value: "}",
+              },
+            ],
+          },
+          {
+            type: "SEQ",
+            members: [
+              {
+                type: "STRING",
+                value: "{",
+              },
+              {
+                type: "REPEAT",
+                content: {
+                  type: "STRING",
+                  value: ";",
+                },
+              },
+              {
+                type: "STRING",
+                value: "}",
+              },
+            ],
+          },
+        ],
       },
     ],
   },
@@ -3735,6 +3957,101 @@
         literals: {},
         template: "",
         clauses: [],
+        mergedRules: [
+          {
+            type: "SEQ",
+            members: [
+              {
+                type: "STRING",
+                value: "export",
+              },
+              {
+                type: "SEQ",
+                members: [
+                  {
+                    type: "FIELD",
+                    name: "declaration",
+                    content: {
+                      type: "SYMBOL",
+                      name: "namespace_export",
+                    },
+                  },
+                  {
+                    type: "SEQ",
+                    members: [
+                      {
+                        type: "STRING",
+                        value: "from",
+                      },
+                      {
+                        type: "FIELD",
+                        name: "source",
+                        content: {
+                          type: "SYMBOL",
+                          name: "string",
+                        },
+                      },
+                    ],
+                  },
+                ],
+              },
+              {
+                type: "SYMBOL",
+                name: "_semicolon",
+              },
+            ],
+          },
+          {
+            type: "SEQ",
+            members: [
+              {
+                type: "STRING",
+                value: "export",
+              },
+              {
+                type: "STRING",
+                value: "type",
+              },
+              {
+                type: "FIELD",
+                name: "declaration",
+                content: {
+                  type: "SYMBOL",
+                  name: "export_clause",
+                },
+              },
+              {
+                type: "CHOICE",
+                members: [
+                  {
+                    type: "SEQ",
+                    members: [
+                      {
+                        type: "STRING",
+                        value: "from",
+                      },
+                      {
+                        type: "FIELD",
+                        name: "source",
+                        content: {
+                          type: "SYMBOL",
+                          name: "string",
+                        },
+                      },
+                    ],
+                  },
+                  {
+                    type: "BLANK",
+                  },
+                ],
+              },
+              {
+                type: "SYMBOL",
+                name: "_semicolon",
+              },
+            ],
+          },
+        ],
       },
       {
         name: "v2",
@@ -3764,6 +4081,83 @@
         literals: {},
         template: "",
         clauses: [],
+        mergedRules: [
+          {
+            type: "SEQ",
+            members: [
+              {
+                type: "STRING",
+                value: "export",
+              },
+              {
+                type: "FIELD",
+                name: "declaration",
+                content: {
+                  type: "SYMBOL",
+                  name: "export_clause",
+                },
+              },
+              {
+                type: "SYMBOL",
+                name: "_semicolon",
+              },
+            ],
+          },
+          {
+            type: "SEQ",
+            members: [
+              {
+                type: "STRING",
+                value: "export",
+              },
+              {
+                type: "STRING",
+                value: "=",
+              },
+              {
+                type: "FIELD",
+                name: "declaration",
+                content: {
+                  type: "SYMBOL",
+                  name: "expression",
+                },
+              },
+              {
+                type: "SYMBOL",
+                name: "_semicolon",
+              },
+            ],
+          },
+          {
+            type: "SEQ",
+            members: [
+              {
+                type: "STRING",
+                value: "export",
+              },
+              {
+                type: "STRING",
+                value: "as",
+              },
+              {
+                type: "STRING",
+                value: "namespace",
+              },
+              {
+                type: "FIELD",
+                name: "declaration",
+                content: {
+                  type: "SYMBOL",
+                  name: "identifier",
+                },
+              },
+              {
+                type: "SYMBOL",
+                name: "_semicolon",
+              },
+            ],
+          },
+        ],
       },
       {
         name: "v3",
@@ -3804,6 +4198,81 @@
         literals: {},
         template: "",
         clauses: [],
+        mergedRules: [
+          {
+            type: "SEQ",
+            members: [
+              {
+                type: "REPEAT",
+                content: {
+                  type: "FIELD",
+                  name: "decorator",
+                  content: {
+                    type: "SYMBOL",
+                    name: "decorator",
+                  },
+                },
+              },
+              {
+                type: "STRING",
+                value: "export",
+              },
+              {
+                type: "FIELD",
+                name: "declaration",
+                content: {
+                  type: "FIELD",
+                  name: "declaration",
+                  content: {
+                    type: "SYMBOL",
+                    name: "declaration",
+                  },
+                },
+              },
+            ],
+          },
+          {
+            type: "SEQ",
+            members: [
+              {
+                type: "REPEAT",
+                content: {
+                  type: "FIELD",
+                  name: "decorator",
+                  content: {
+                    type: "SYMBOL",
+                    name: "decorator",
+                  },
+                },
+              },
+              {
+                type: "STRING",
+                value: "export",
+              },
+              {
+                type: "SEQ",
+                members: [
+                  {
+                    type: "STRING",
+                    value: "default",
+                  },
+                  {
+                    type: "FIELD",
+                    name: "declaration",
+                    content: {
+                      type: "FIELD",
+                      name: "declaration",
+                      content: {
+                        type: "SYMBOL",
+                        name: "declaration",
+                      },
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+        ],
       },
       {
         name: "default",
@@ -9416,6 +9885,1052 @@
         literals: {},
         template: "",
         clauses: [],
+        mergedRules: [
+          {
+            type: "SEQ",
+            members: [
+              {
+                type: "STRING",
+                value: "{",
+              },
+              {
+                type: "CHOICE",
+                members: [
+                  {
+                    type: "SEQ",
+                    members: [
+                      {
+                        type: "CHOICE",
+                        members: [
+                          {
+                            type: "STRING",
+                            value: ",",
+                          },
+                          {
+                            type: "STRING",
+                            value: ";",
+                          },
+                          {
+                            type: "BLANK",
+                          },
+                        ],
+                      },
+                      {
+                        type: "SEQ",
+                        members: [
+                          {
+                            type: "FIELD",
+                            name: "opening",
+                            content: {
+                              type: "CHOICE",
+                              members: [
+                                {
+                                  type: "SYMBOL",
+                                  name: "export_statement",
+                                },
+                                {
+                                  type: "SYMBOL",
+                                  name: "property_signature",
+                                },
+                                {
+                                  type: "SYMBOL",
+                                  name: "call_signature",
+                                },
+                                {
+                                  type: "SYMBOL",
+                                  name: "construct_signature",
+                                },
+                                {
+                                  type: "SYMBOL",
+                                  name: "index_signature",
+                                },
+                                {
+                                  type: "SYMBOL",
+                                  name: "method_signature",
+                                },
+                              ],
+                            },
+                          },
+                          {
+                            type: "REPEAT",
+                            content: {
+                              type: "SEQ",
+                              members: [
+                                {
+                                  type: "STRING",
+                                  value: ",",
+                                },
+                                {
+                                  type: "FIELD",
+                                  name: "members",
+                                  content: {
+                                    type: "CHOICE",
+                                    members: [
+                                      {
+                                        type: "SYMBOL",
+                                        name: "export_statement",
+                                      },
+                                      {
+                                        type: "SYMBOL",
+                                        name: "property_signature",
+                                      },
+                                      {
+                                        type: "SYMBOL",
+                                        name: "call_signature",
+                                      },
+                                      {
+                                        type: "SYMBOL",
+                                        name: "construct_signature",
+                                      },
+                                      {
+                                        type: "SYMBOL",
+                                        name: "index_signature",
+                                      },
+                                      {
+                                        type: "SYMBOL",
+                                        name: "method_signature",
+                                      },
+                                    ],
+                                  },
+                                },
+                              ],
+                            },
+                          },
+                        ],
+                      },
+                      {
+                        type: "CHOICE",
+                        members: [
+                          {
+                            type: "STRING",
+                            value: ",",
+                          },
+                          {
+                            type: "SYMBOL",
+                            name: "_semicolon",
+                          },
+                          {
+                            type: "BLANK",
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                  {
+                    type: "SEQ",
+                    members: [
+                      {
+                        type: "CHOICE",
+                        members: [
+                          {
+                            type: "STRING",
+                            value: ",",
+                          },
+                          {
+                            type: "STRING",
+                            value: ";",
+                          },
+                          {
+                            type: "BLANK",
+                          },
+                        ],
+                      },
+                      {
+                        type: "SEQ",
+                        members: [
+                          {
+                            type: "FIELD",
+                            name: "opening",
+                            content: {
+                              type: "CHOICE",
+                              members: [
+                                {
+                                  type: "SYMBOL",
+                                  name: "export_statement",
+                                },
+                                {
+                                  type: "SYMBOL",
+                                  name: "property_signature",
+                                },
+                                {
+                                  type: "SYMBOL",
+                                  name: "call_signature",
+                                },
+                                {
+                                  type: "SYMBOL",
+                                  name: "construct_signature",
+                                },
+                                {
+                                  type: "SYMBOL",
+                                  name: "index_signature",
+                                },
+                                {
+                                  type: "SYMBOL",
+                                  name: "method_signature",
+                                },
+                              ],
+                            },
+                          },
+                          {
+                            type: "REPEAT",
+                            content: {
+                              type: "SEQ",
+                              members: [
+                                {
+                                  type: "SYMBOL",
+                                  name: "_semicolon",
+                                },
+                                {
+                                  type: "FIELD",
+                                  name: "members",
+                                  content: {
+                                    type: "CHOICE",
+                                    members: [
+                                      {
+                                        type: "SYMBOL",
+                                        name: "export_statement",
+                                      },
+                                      {
+                                        type: "SYMBOL",
+                                        name: "property_signature",
+                                      },
+                                      {
+                                        type: "SYMBOL",
+                                        name: "call_signature",
+                                      },
+                                      {
+                                        type: "SYMBOL",
+                                        name: "construct_signature",
+                                      },
+                                      {
+                                        type: "SYMBOL",
+                                        name: "index_signature",
+                                      },
+                                      {
+                                        type: "SYMBOL",
+                                        name: "method_signature",
+                                      },
+                                    ],
+                                  },
+                                },
+                              ],
+                            },
+                          },
+                        ],
+                      },
+                      {
+                        type: "CHOICE",
+                        members: [
+                          {
+                            type: "STRING",
+                            value: ",",
+                          },
+                          {
+                            type: "SYMBOL",
+                            name: "_semicolon",
+                          },
+                          {
+                            type: "BLANK",
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                  {
+                    type: "BLANK",
+                  },
+                ],
+              },
+              {
+                type: "STRING",
+                value: "}",
+              },
+            ],
+          },
+          {
+            type: "SEQ",
+            members: [
+              {
+                type: "STRING",
+                value: "{",
+              },
+              {
+                type: "CHOICE",
+                members: [
+                  {
+                    type: "SEQ",
+                    members: [
+                      {
+                        type: "CHOICE",
+                        members: [
+                          {
+                            type: "STRING",
+                            value: ",",
+                          },
+                          {
+                            type: "STRING",
+                            value: ";",
+                          },
+                          {
+                            type: "BLANK",
+                          },
+                        ],
+                      },
+                      {
+                        type: "SEQ",
+                        members: [
+                          {
+                            type: "FIELD",
+                            name: "opening",
+                            content: {
+                              type: "CHOICE",
+                              members: [
+                                {
+                                  type: "SYMBOL",
+                                  name: "export_statement",
+                                },
+                                {
+                                  type: "SYMBOL",
+                                  name: "property_signature",
+                                },
+                                {
+                                  type: "SYMBOL",
+                                  name: "call_signature",
+                                },
+                                {
+                                  type: "SYMBOL",
+                                  name: "construct_signature",
+                                },
+                                {
+                                  type: "SYMBOL",
+                                  name: "index_signature",
+                                },
+                                {
+                                  type: "SYMBOL",
+                                  name: "method_signature",
+                                },
+                              ],
+                            },
+                          },
+                          {
+                            type: "REPEAT",
+                            content: {
+                              type: "SEQ",
+                              members: [
+                                {
+                                  type: "STRING",
+                                  value: ",",
+                                },
+                                {
+                                  type: "FIELD",
+                                  name: "members",
+                                  content: {
+                                    type: "CHOICE",
+                                    members: [
+                                      {
+                                        type: "SYMBOL",
+                                        name: "export_statement",
+                                      },
+                                      {
+                                        type: "SYMBOL",
+                                        name: "property_signature",
+                                      },
+                                      {
+                                        type: "SYMBOL",
+                                        name: "call_signature",
+                                      },
+                                      {
+                                        type: "SYMBOL",
+                                        name: "construct_signature",
+                                      },
+                                      {
+                                        type: "SYMBOL",
+                                        name: "index_signature",
+                                      },
+                                      {
+                                        type: "SYMBOL",
+                                        name: "method_signature",
+                                      },
+                                    ],
+                                  },
+                                },
+                              ],
+                            },
+                          },
+                        ],
+                      },
+                      {
+                        type: "CHOICE",
+                        members: [
+                          {
+                            type: "STRING",
+                            value: ",",
+                          },
+                          {
+                            type: "SYMBOL",
+                            name: "_semicolon",
+                          },
+                          {
+                            type: "BLANK",
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                  {
+                    type: "SEQ",
+                    members: [
+                      {
+                        type: "CHOICE",
+                        members: [
+                          {
+                            type: "STRING",
+                            value: ",",
+                          },
+                          {
+                            type: "STRING",
+                            value: ";",
+                          },
+                          {
+                            type: "BLANK",
+                          },
+                        ],
+                      },
+                      {
+                        type: "SEQ",
+                        members: [
+                          {
+                            type: "FIELD",
+                            name: "opening",
+                            content: {
+                              type: "CHOICE",
+                              members: [
+                                {
+                                  type: "SYMBOL",
+                                  name: "export_statement",
+                                },
+                                {
+                                  type: "SYMBOL",
+                                  name: "property_signature",
+                                },
+                                {
+                                  type: "SYMBOL",
+                                  name: "call_signature",
+                                },
+                                {
+                                  type: "SYMBOL",
+                                  name: "construct_signature",
+                                },
+                                {
+                                  type: "SYMBOL",
+                                  name: "index_signature",
+                                },
+                                {
+                                  type: "SYMBOL",
+                                  name: "method_signature",
+                                },
+                              ],
+                            },
+                          },
+                          {
+                            type: "REPEAT",
+                            content: {
+                              type: "SEQ",
+                              members: [
+                                {
+                                  type: "SYMBOL",
+                                  name: "_semicolon",
+                                },
+                                {
+                                  type: "FIELD",
+                                  name: "members",
+                                  content: {
+                                    type: "CHOICE",
+                                    members: [
+                                      {
+                                        type: "SYMBOL",
+                                        name: "export_statement",
+                                      },
+                                      {
+                                        type: "SYMBOL",
+                                        name: "property_signature",
+                                      },
+                                      {
+                                        type: "SYMBOL",
+                                        name: "call_signature",
+                                      },
+                                      {
+                                        type: "SYMBOL",
+                                        name: "construct_signature",
+                                      },
+                                      {
+                                        type: "SYMBOL",
+                                        name: "index_signature",
+                                      },
+                                      {
+                                        type: "SYMBOL",
+                                        name: "method_signature",
+                                      },
+                                    ],
+                                  },
+                                },
+                              ],
+                            },
+                          },
+                        ],
+                      },
+                      {
+                        type: "CHOICE",
+                        members: [
+                          {
+                            type: "STRING",
+                            value: ",",
+                          },
+                          {
+                            type: "SYMBOL",
+                            name: "_semicolon",
+                          },
+                          {
+                            type: "BLANK",
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                  {
+                    type: "BLANK",
+                  },
+                ],
+              },
+              {
+                type: "STRING",
+                value: "|}",
+              },
+            ],
+          },
+          {
+            type: "SEQ",
+            members: [
+              {
+                type: "STRING",
+                value: "{|",
+              },
+              {
+                type: "CHOICE",
+                members: [
+                  {
+                    type: "SEQ",
+                    members: [
+                      {
+                        type: "CHOICE",
+                        members: [
+                          {
+                            type: "STRING",
+                            value: ",",
+                          },
+                          {
+                            type: "STRING",
+                            value: ";",
+                          },
+                          {
+                            type: "BLANK",
+                          },
+                        ],
+                      },
+                      {
+                        type: "SEQ",
+                        members: [
+                          {
+                            type: "FIELD",
+                            name: "opening",
+                            content: {
+                              type: "CHOICE",
+                              members: [
+                                {
+                                  type: "SYMBOL",
+                                  name: "export_statement",
+                                },
+                                {
+                                  type: "SYMBOL",
+                                  name: "property_signature",
+                                },
+                                {
+                                  type: "SYMBOL",
+                                  name: "call_signature",
+                                },
+                                {
+                                  type: "SYMBOL",
+                                  name: "construct_signature",
+                                },
+                                {
+                                  type: "SYMBOL",
+                                  name: "index_signature",
+                                },
+                                {
+                                  type: "SYMBOL",
+                                  name: "method_signature",
+                                },
+                              ],
+                            },
+                          },
+                          {
+                            type: "REPEAT",
+                            content: {
+                              type: "SEQ",
+                              members: [
+                                {
+                                  type: "STRING",
+                                  value: ",",
+                                },
+                                {
+                                  type: "FIELD",
+                                  name: "members",
+                                  content: {
+                                    type: "CHOICE",
+                                    members: [
+                                      {
+                                        type: "SYMBOL",
+                                        name: "export_statement",
+                                      },
+                                      {
+                                        type: "SYMBOL",
+                                        name: "property_signature",
+                                      },
+                                      {
+                                        type: "SYMBOL",
+                                        name: "call_signature",
+                                      },
+                                      {
+                                        type: "SYMBOL",
+                                        name: "construct_signature",
+                                      },
+                                      {
+                                        type: "SYMBOL",
+                                        name: "index_signature",
+                                      },
+                                      {
+                                        type: "SYMBOL",
+                                        name: "method_signature",
+                                      },
+                                    ],
+                                  },
+                                },
+                              ],
+                            },
+                          },
+                        ],
+                      },
+                      {
+                        type: "CHOICE",
+                        members: [
+                          {
+                            type: "STRING",
+                            value: ",",
+                          },
+                          {
+                            type: "SYMBOL",
+                            name: "_semicolon",
+                          },
+                          {
+                            type: "BLANK",
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                  {
+                    type: "SEQ",
+                    members: [
+                      {
+                        type: "CHOICE",
+                        members: [
+                          {
+                            type: "STRING",
+                            value: ",",
+                          },
+                          {
+                            type: "STRING",
+                            value: ";",
+                          },
+                          {
+                            type: "BLANK",
+                          },
+                        ],
+                      },
+                      {
+                        type: "SEQ",
+                        members: [
+                          {
+                            type: "FIELD",
+                            name: "opening",
+                            content: {
+                              type: "CHOICE",
+                              members: [
+                                {
+                                  type: "SYMBOL",
+                                  name: "export_statement",
+                                },
+                                {
+                                  type: "SYMBOL",
+                                  name: "property_signature",
+                                },
+                                {
+                                  type: "SYMBOL",
+                                  name: "call_signature",
+                                },
+                                {
+                                  type: "SYMBOL",
+                                  name: "construct_signature",
+                                },
+                                {
+                                  type: "SYMBOL",
+                                  name: "index_signature",
+                                },
+                                {
+                                  type: "SYMBOL",
+                                  name: "method_signature",
+                                },
+                              ],
+                            },
+                          },
+                          {
+                            type: "REPEAT",
+                            content: {
+                              type: "SEQ",
+                              members: [
+                                {
+                                  type: "SYMBOL",
+                                  name: "_semicolon",
+                                },
+                                {
+                                  type: "FIELD",
+                                  name: "members",
+                                  content: {
+                                    type: "CHOICE",
+                                    members: [
+                                      {
+                                        type: "SYMBOL",
+                                        name: "export_statement",
+                                      },
+                                      {
+                                        type: "SYMBOL",
+                                        name: "property_signature",
+                                      },
+                                      {
+                                        type: "SYMBOL",
+                                        name: "call_signature",
+                                      },
+                                      {
+                                        type: "SYMBOL",
+                                        name: "construct_signature",
+                                      },
+                                      {
+                                        type: "SYMBOL",
+                                        name: "index_signature",
+                                      },
+                                      {
+                                        type: "SYMBOL",
+                                        name: "method_signature",
+                                      },
+                                    ],
+                                  },
+                                },
+                              ],
+                            },
+                          },
+                        ],
+                      },
+                      {
+                        type: "CHOICE",
+                        members: [
+                          {
+                            type: "STRING",
+                            value: ",",
+                          },
+                          {
+                            type: "SYMBOL",
+                            name: "_semicolon",
+                          },
+                          {
+                            type: "BLANK",
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                  {
+                    type: "BLANK",
+                  },
+                ],
+              },
+              {
+                type: "STRING",
+                value: "}",
+              },
+            ],
+          },
+          {
+            type: "SEQ",
+            members: [
+              {
+                type: "STRING",
+                value: "{|",
+              },
+              {
+                type: "CHOICE",
+                members: [
+                  {
+                    type: "SEQ",
+                    members: [
+                      {
+                        type: "CHOICE",
+                        members: [
+                          {
+                            type: "STRING",
+                            value: ",",
+                          },
+                          {
+                            type: "STRING",
+                            value: ";",
+                          },
+                          {
+                            type: "BLANK",
+                          },
+                        ],
+                      },
+                      {
+                        type: "SEQ",
+                        members: [
+                          {
+                            type: "FIELD",
+                            name: "opening",
+                            content: {
+                              type: "CHOICE",
+                              members: [
+                                {
+                                  type: "SYMBOL",
+                                  name: "export_statement",
+                                },
+                                {
+                                  type: "SYMBOL",
+                                  name: "property_signature",
+                                },
+                                {
+                                  type: "SYMBOL",
+                                  name: "call_signature",
+                                },
+                                {
+                                  type: "SYMBOL",
+                                  name: "construct_signature",
+                                },
+                                {
+                                  type: "SYMBOL",
+                                  name: "index_signature",
+                                },
+                                {
+                                  type: "SYMBOL",
+                                  name: "method_signature",
+                                },
+                              ],
+                            },
+                          },
+                          {
+                            type: "REPEAT",
+                            content: {
+                              type: "SEQ",
+                              members: [
+                                {
+                                  type: "STRING",
+                                  value: ",",
+                                },
+                                {
+                                  type: "FIELD",
+                                  name: "members",
+                                  content: {
+                                    type: "CHOICE",
+                                    members: [
+                                      {
+                                        type: "SYMBOL",
+                                        name: "export_statement",
+                                      },
+                                      {
+                                        type: "SYMBOL",
+                                        name: "property_signature",
+                                      },
+                                      {
+                                        type: "SYMBOL",
+                                        name: "call_signature",
+                                      },
+                                      {
+                                        type: "SYMBOL",
+                                        name: "construct_signature",
+                                      },
+                                      {
+                                        type: "SYMBOL",
+                                        name: "index_signature",
+                                      },
+                                      {
+                                        type: "SYMBOL",
+                                        name: "method_signature",
+                                      },
+                                    ],
+                                  },
+                                },
+                              ],
+                            },
+                          },
+                        ],
+                      },
+                      {
+                        type: "CHOICE",
+                        members: [
+                          {
+                            type: "STRING",
+                            value: ",",
+                          },
+                          {
+                            type: "SYMBOL",
+                            name: "_semicolon",
+                          },
+                          {
+                            type: "BLANK",
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                  {
+                    type: "SEQ",
+                    members: [
+                      {
+                        type: "CHOICE",
+                        members: [
+                          {
+                            type: "STRING",
+                            value: ",",
+                          },
+                          {
+                            type: "STRING",
+                            value: ";",
+                          },
+                          {
+                            type: "BLANK",
+                          },
+                        ],
+                      },
+                      {
+                        type: "SEQ",
+                        members: [
+                          {
+                            type: "FIELD",
+                            name: "opening",
+                            content: {
+                              type: "CHOICE",
+                              members: [
+                                {
+                                  type: "SYMBOL",
+                                  name: "export_statement",
+                                },
+                                {
+                                  type: "SYMBOL",
+                                  name: "property_signature",
+                                },
+                                {
+                                  type: "SYMBOL",
+                                  name: "call_signature",
+                                },
+                                {
+                                  type: "SYMBOL",
+                                  name: "construct_signature",
+                                },
+                                {
+                                  type: "SYMBOL",
+                                  name: "index_signature",
+                                },
+                                {
+                                  type: "SYMBOL",
+                                  name: "method_signature",
+                                },
+                              ],
+                            },
+                          },
+                          {
+                            type: "REPEAT",
+                            content: {
+                              type: "SEQ",
+                              members: [
+                                {
+                                  type: "SYMBOL",
+                                  name: "_semicolon",
+                                },
+                                {
+                                  type: "FIELD",
+                                  name: "members",
+                                  content: {
+                                    type: "CHOICE",
+                                    members: [
+                                      {
+                                        type: "SYMBOL",
+                                        name: "export_statement",
+                                      },
+                                      {
+                                        type: "SYMBOL",
+                                        name: "property_signature",
+                                      },
+                                      {
+                                        type: "SYMBOL",
+                                        name: "call_signature",
+                                      },
+                                      {
+                                        type: "SYMBOL",
+                                        name: "construct_signature",
+                                      },
+                                      {
+                                        type: "SYMBOL",
+                                        name: "index_signature",
+                                      },
+                                      {
+                                        type: "SYMBOL",
+                                        name: "method_signature",
+                                      },
+                                    ],
+                                  },
+                                },
+                              ],
+                            },
+                          },
+                        ],
+                      },
+                      {
+                        type: "CHOICE",
+                        members: [
+                          {
+                            type: "STRING",
+                            value: ",",
+                          },
+                          {
+                            type: "SYMBOL",
+                            name: "_semicolon",
+                          },
+                          {
+                            type: "BLANK",
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                  {
+                    type: "BLANK",
+                  },
+                ],
+              },
+              {
+                type: "STRING",
+                value: "|}",
+              },
+            ],
+          },
+        ],
       },
     ],
   },
@@ -13462,6 +14977,67 @@
         template: "",
         clauses: [],
         detectToken: "*",
+        mergedRules: [
+          {
+            type: "PREC_RIGHT",
+            value: 0,
+            content: {
+              type: "SEQ",
+              members: [
+                {
+                  type: "STRING",
+                  value: "yield",
+                },
+                {
+                  type: "SEQ",
+                  members: [
+                    {
+                      type: "STRING",
+                      value: "*",
+                    },
+                    {
+                      type: "FIELD",
+                      name: "expression",
+                      content: {
+                        type: "SYMBOL",
+                        name: "expression",
+                      },
+                    },
+                  ],
+                },
+              ],
+            },
+          },
+          {
+            type: "PREC_RIGHT",
+            value: 0,
+            content: {
+              type: "SEQ",
+              members: [
+                {
+                  type: "STRING",
+                  value: "yield",
+                },
+                {
+                  type: "CHOICE",
+                  members: [
+                    {
+                      type: "FIELD",
+                      name: "expression",
+                      content: {
+                        type: "SYMBOL",
+                        name: "expression",
+                      },
+                    },
+                    {
+                      type: "BLANK",
+                    },
+                  ],
+                },
+              ],
+            },
+          },
+        ],
       },
     ],
   },

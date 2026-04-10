@@ -173,6 +173,9 @@ export interface StructuralVariant {
 	name: string;
 	/** Resolved grammar rule for this variant path (CHOICEs resolved to specific branches). */
 	rule: import('./grammar.ts').GrammarRule;
+	/** When collapsed from multiple same-field-set variants, all resolved rules.
+	 *  The template emitter generates a template from each. */
+	mergedRules?: import('./grammar.ts').GrammarRule[];
 	/** Template string parts — literals and $VARIABLE placeholders. */
 	parts: string[];
 	/** Fields present in this variant, with per-variant requiredness and content types. */

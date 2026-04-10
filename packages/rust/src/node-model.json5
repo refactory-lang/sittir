@@ -2784,6 +2784,29 @@
         template: "",
         clauses: [],
         detectToken: ";",
+        mergedRules: [
+          {
+            type: "SEQ",
+            members: [
+              {
+                type: "SYMBOL",
+                name: "_expression",
+              },
+              {
+                type: "STRING",
+                value: ";",
+              },
+            ],
+          },
+          {
+            type: "PREC",
+            value: 1,
+            content: {
+              type: "SYMBOL",
+              name: "_expression_ending_with_block",
+            },
+          },
+        ],
       },
     ],
   },
@@ -9324,6 +9347,152 @@
         template: "",
         clauses: [],
         detectToken: "...",
+        mergedRules: [
+          {
+            type: "SEQ",
+            members: [
+              {
+                type: "FIELD",
+                name: "left",
+                content: {
+                  type: "CHOICE",
+                  members: [
+                    {
+                      type: "SYMBOL",
+                      name: "_literal_pattern",
+                    },
+                    {
+                      type: "SYMBOL",
+                      name: "_path",
+                    },
+                  ],
+                },
+              },
+              {
+                type: "SEQ",
+                members: [
+                  {
+                    type: "STRING",
+                    value: "...",
+                  },
+                  {
+                    type: "FIELD",
+                    name: "right",
+                    content: {
+                      type: "CHOICE",
+                      members: [
+                        {
+                          type: "SYMBOL",
+                          name: "_literal_pattern",
+                        },
+                        {
+                          type: "SYMBOL",
+                          name: "_path",
+                        },
+                      ],
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            type: "SEQ",
+            members: [
+              {
+                type: "FIELD",
+                name: "left",
+                content: {
+                  type: "CHOICE",
+                  members: [
+                    {
+                      type: "SYMBOL",
+                      name: "_literal_pattern",
+                    },
+                    {
+                      type: "SYMBOL",
+                      name: "_path",
+                    },
+                  ],
+                },
+              },
+              {
+                type: "SEQ",
+                members: [
+                  {
+                    type: "STRING",
+                    value: "..=",
+                  },
+                  {
+                    type: "FIELD",
+                    name: "right",
+                    content: {
+                      type: "CHOICE",
+                      members: [
+                        {
+                          type: "SYMBOL",
+                          name: "_literal_pattern",
+                        },
+                        {
+                          type: "SYMBOL",
+                          name: "_path",
+                        },
+                      ],
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            type: "SEQ",
+            members: [
+              {
+                type: "FIELD",
+                name: "left",
+                content: {
+                  type: "CHOICE",
+                  members: [
+                    {
+                      type: "SYMBOL",
+                      name: "_literal_pattern",
+                    },
+                    {
+                      type: "SYMBOL",
+                      name: "_path",
+                    },
+                  ],
+                },
+              },
+              {
+                type: "SEQ",
+                members: [
+                  {
+                    type: "STRING",
+                    value: "..",
+                  },
+                  {
+                    type: "FIELD",
+                    name: "right",
+                    content: {
+                      type: "CHOICE",
+                      members: [
+                        {
+                          type: "SYMBOL",
+                          name: "_literal_pattern",
+                        },
+                        {
+                          type: "SYMBOL",
+                          name: "_path",
+                        },
+                      ],
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+        ],
       },
       {
         name: "dotdot",
@@ -9393,6 +9562,60 @@
         literals: {},
         template: "",
         clauses: [],
+        mergedRules: [
+          {
+            type: "SEQ",
+            members: [
+              {
+                type: "STRING",
+                value: "..=",
+              },
+              {
+                type: "FIELD",
+                name: "right",
+                content: {
+                  type: "CHOICE",
+                  members: [
+                    {
+                      type: "SYMBOL",
+                      name: "_literal_pattern",
+                    },
+                    {
+                      type: "SYMBOL",
+                      name: "_path",
+                    },
+                  ],
+                },
+              },
+            ],
+          },
+          {
+            type: "SEQ",
+            members: [
+              {
+                type: "STRING",
+                value: "..",
+              },
+              {
+                type: "FIELD",
+                name: "right",
+                content: {
+                  type: "CHOICE",
+                  members: [
+                    {
+                      type: "SYMBOL",
+                      name: "_literal_pattern",
+                    },
+                    {
+                      type: "SYMBOL",
+                      name: "_path",
+                    },
+                  ],
+                },
+              },
+            ],
+          },
+        ],
         detectToken: "..=",
       },
     ],
@@ -9620,6 +9843,83 @@
         literals: {},
         template: "",
         clauses: [],
+        mergedRules: [
+          {
+            type: "PREC",
+            value: 12,
+            content: {
+              type: "SEQ",
+              members: [
+                {
+                  type: "STRING",
+                  value: "&",
+                },
+                {
+                  type: "SEQ",
+                  members: [
+                    {
+                      type: "STRING",
+                      value: "raw",
+                    },
+                    {
+                      type: "FIELD",
+                      name: "mutable_specifier",
+                      content: {
+                        type: "SYMBOL",
+                        name: "mutable_specifier",
+                      },
+                    },
+                  ],
+                },
+                {
+                  type: "FIELD",
+                  name: "value",
+                  content: {
+                    type: "SYMBOL",
+                    name: "_expression",
+                  },
+                },
+              ],
+            },
+          },
+          {
+            type: "PREC",
+            value: 12,
+            content: {
+              type: "SEQ",
+              members: [
+                {
+                  type: "STRING",
+                  value: "&",
+                },
+                {
+                  type: "CHOICE",
+                  members: [
+                    {
+                      type: "FIELD",
+                      name: "mutable_specifier",
+                      content: {
+                        type: "SYMBOL",
+                        name: "mutable_specifier",
+                      },
+                    },
+                    {
+                      type: "BLANK",
+                    },
+                  ],
+                },
+                {
+                  type: "FIELD",
+                  name: "value",
+                  content: {
+                    type: "SYMBOL",
+                    name: "_expression",
+                  },
+                },
+              ],
+            },
+          },
+        ],
       },
     ],
   },
@@ -10800,6 +11100,168 @@
         literals: {},
         template: "",
         clauses: [],
+        mergedRules: [
+          {
+            type: "SEQ",
+            members: [
+              {
+                type: "CHOICE",
+                members: [
+                  {
+                    type: "FIELD",
+                    name: "visibility_modifier",
+                    content: {
+                      type: "SYMBOL",
+                      name: "visibility_modifier",
+                    },
+                  },
+                  {
+                    type: "BLANK",
+                  },
+                ],
+              },
+              {
+                type: "STRING",
+                value: "struct",
+              },
+              {
+                type: "FIELD",
+                name: "name",
+                content: {
+                  type: "SYMBOL",
+                  name: "_type_identifier",
+                },
+              },
+              {
+                type: "FIELD",
+                name: "type_parameters",
+                content: {
+                  type: "CHOICE",
+                  members: [
+                    {
+                      type: "SYMBOL",
+                      name: "type_parameters",
+                    },
+                    {
+                      type: "BLANK",
+                    },
+                  ],
+                },
+              },
+              {
+                type: "SEQ",
+                members: [
+                  {
+                    type: "CHOICE",
+                    members: [
+                      {
+                        type: "FIELD",
+                        name: "where_clause",
+                        content: {
+                          type: "SYMBOL",
+                          name: "where_clause",
+                        },
+                      },
+                      {
+                        type: "BLANK",
+                      },
+                    ],
+                  },
+                  {
+                    type: "FIELD",
+                    name: "body",
+                    content: {
+                      type: "SYMBOL",
+                      name: "field_declaration_list",
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            type: "SEQ",
+            members: [
+              {
+                type: "CHOICE",
+                members: [
+                  {
+                    type: "FIELD",
+                    name: "visibility_modifier",
+                    content: {
+                      type: "SYMBOL",
+                      name: "visibility_modifier",
+                    },
+                  },
+                  {
+                    type: "BLANK",
+                  },
+                ],
+              },
+              {
+                type: "STRING",
+                value: "struct",
+              },
+              {
+                type: "FIELD",
+                name: "name",
+                content: {
+                  type: "SYMBOL",
+                  name: "_type_identifier",
+                },
+              },
+              {
+                type: "FIELD",
+                name: "type_parameters",
+                content: {
+                  type: "CHOICE",
+                  members: [
+                    {
+                      type: "SYMBOL",
+                      name: "type_parameters",
+                    },
+                    {
+                      type: "BLANK",
+                    },
+                  ],
+                },
+              },
+              {
+                type: "SEQ",
+                members: [
+                  {
+                    type: "FIELD",
+                    name: "body",
+                    content: {
+                      type: "SYMBOL",
+                      name: "ordered_field_declaration_list",
+                    },
+                  },
+                  {
+                    type: "CHOICE",
+                    members: [
+                      {
+                        type: "FIELD",
+                        name: "where_clause",
+                        content: {
+                          type: "SYMBOL",
+                          name: "where_clause",
+                        },
+                      },
+                      {
+                        type: "BLANK",
+                      },
+                    ],
+                  },
+                  {
+                    type: "STRING",
+                    value: ";",
+                  },
+                ],
+              },
+            ],
+          },
+        ],
       },
       {
         name: "semi",

@@ -147,7 +147,9 @@ rules:
   slice: $START:$STOP $STEP
   splat_pattern:
     - "*$IDENTIFIER"
+    - "**$IDENTIFIER"
     - "*_"
+    - "**_"
   splat_type:
     variants:
       star: "*$IDENTIFIER"

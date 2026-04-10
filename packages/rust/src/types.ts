@@ -1157,7 +1157,7 @@ export interface StructExpression {
 export interface StructItemWhereClause {
   readonly type: 'struct_item';
   readonly fields: {
-    readonly body?: FieldDeclarationList;
+    readonly body?: FieldDeclarationList | OrderedFieldDeclarationList;
     readonly name: TypeIdentifier;
     readonly type_parameters?: TypeParameters;
     readonly visibility_modifier?: VisibilityModifier;
