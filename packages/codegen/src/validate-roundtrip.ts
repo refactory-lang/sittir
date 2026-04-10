@@ -51,7 +51,7 @@ function parseCorpus(content: string): CorpusEntry[] {
 
 		// Collect source lines until separator (---- line)
 		const sourceLines: string[] = [];
-		while (i < lines.length && !lines[i]!.startsWith('----')) {
+		while (i < lines.length && !lines[i]!.match(/^-{3,}$/)) {
 			sourceLines.push(lines[i]!);
 			i++;
 		}

@@ -16,9 +16,14 @@ Generating typescript IR...
     object_type: [override-consistency] override 'closing' not referenced in template
 
 Running round-trip validation...
-  v 0/4 round-trip (4 skipped, 0 errors)
-  v 0/0 factory round-trip (0 skipped, 0 errors)
-  v 0/0 from() correctness (0 undefined, 0 divergent, 0 skipped)
+  v 110/112 round-trip (2 skipped, 0 errors)
+  v 119/123 factory round-trip (4 skipped, 0 errors)
+  x 118/123 from() correctness (1 undefined, 4 divergent, 0 skipped)
+    ! class_body: from() diverges: named children: 1 vs 0
+    ! parenthesized_expression: from() diverges: factory has extra fields: type
+    x literal_type: from() produces undefined nodes at: .children[0]
+    ! call_expression: from() diverges: from() has extra fields: type_arguments
+    ! import_statement: from() diverges: from() has extra fields: from_clause, import_clause
 
 Done! Generated:
   templates.yaml, grammar.ts, types.ts, factories.ts, utils.ts, from.ts, consts.ts, index.ts

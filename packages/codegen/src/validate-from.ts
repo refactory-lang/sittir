@@ -90,7 +90,7 @@ function parseCorpus(content: string): CorpusEntry[] {
 		i++;
 		while (i < lines.length && lines[i]!.startsWith('====')) i++;
 		const sourceLines: string[] = [];
-		while (i < lines.length && !lines[i]!.startsWith('----')) { sourceLines.push(lines[i]!); i++; }
+		while (i < lines.length && !lines[i]!.match(/^-{3,}$/)) { sourceLines.push(lines[i]!); i++; }
 		while (i < lines.length && !lines[i]!.startsWith('====')) i++;
 		const source = sourceLines.join('\n').trim();
 		if (source) entries.push({ name, source });
