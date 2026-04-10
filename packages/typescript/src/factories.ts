@@ -163,7 +163,7 @@ export function ambient_declaration_(
   config: ConfigOf<AmbientDeclaration>,
 ) {
   if ('typeAnnotation' in config && config.typeAnnotation !== undefined) return ambient_declaration__module_(config as AmbientDeclarationModuleConfig);
-  return ambient_declaration__v0_(config as AmbientDeclarationV0Config);
+  return ambient_declaration__global_(config as AmbientDeclarationGlobalConfig);
 }
 
 /** Variant factory: `ambient_declaration` — v0 form. */
@@ -485,7 +485,7 @@ export function assignment_pattern_(
 export function augmented_assignment_expression_(
   config: ConfigOf<AugmentedAssignmentExpression>,
 ) {
-  return augmented_assignment_expression__tok_2b3d_(config as AugmentedAssignmentExpressionTok_2b3dConfig);
+  return augmented_assignment_expression__tok_3f3f3d_(config as AugmentedAssignmentExpressionTok_3f3f3dConfig);
 }
 
 /** Variant factory: `augmented_assignment_expression` — tok_2b3d form. */
@@ -902,7 +902,7 @@ export function await_expression_(
 export function binary_expression_(
   config: ConfigOf<BinaryExpression>,
 ) {
-  return binary_expression__tok_2626_(config as BinaryExpressionTok_2626Config);
+  return binary_expression__in_(config as BinaryExpressionInConfig);
 }
 
 /** Variant factory: `binary_expression` — tok_2626 form. */
@@ -1579,7 +1579,9 @@ export function break_statement_(
 export function call_expression_(
   config: ConfigOf<CallExpression>,
 ) {
-  return call_expression__v0_(config as CallExpressionV0Config);
+  if ('typeArguments' in config && config.typeArguments !== undefined) return call_expression__v0_(config as CallExpressionV0Config);
+  else if ('typeArguments' in config && config.typeArguments !== undefined) return call_expression__tok_3f2e_(config as CallExpressionTok_3f2eConfig);
+  return call_expression__v1_(config as CallExpressionV1Config);
 }
 
 /** Variant factory: `call_expression` — v0 form. */
@@ -1741,7 +1743,7 @@ export function class_body_(
   config?: ConfigOf<ClassBody>,
 ) {
   if (config && 'decorator' in config && config.decorator !== undefined) return class_body__decorator_(config as ClassBodyDecoratorConfig);
-  return class_body__v1_(config as ClassBodyV1Config);
+  return class_body__semi_(config as ClassBodySemiConfig);
 }
 
 /** Variant factory: `class_body` — decorator form. */
@@ -2287,8 +2289,13 @@ export function export_specifier_(
 export function export_statement_(
   config?: ConfigOf<ExportStatement>,
 ) {
-  if (config && 'value' in config && config.value !== undefined) return export_statement__value_(config as ExportStatementValueConfig);
-  return export_statement__v1_(config as ExportStatementV1Config);
+  if (config && 'decorator' in config && config.decorator !== undefined) return export_statement__value_(config as ExportStatementValueConfig);
+  else if (config && 'source' in config && config.source !== undefined) return export_statement__v1_(config as ExportStatementV1Config);
+  else if (config && 'decorator' in config && config.decorator !== undefined) return export_statement__v3_(config as ExportStatementV3Config);
+  else if (config && 'decorator' in config && config.decorator !== undefined) return export_statement__v4_(config as ExportStatementV4Config);
+  else if (config && 'source' in config && config.source !== undefined) return export_statement__type_kw_(config as ExportStatementTypeKwConfig);
+  else if (config && 'source' in config && config.source !== undefined) return export_statement__star_(config as ExportStatementStarConfig);
+  return export_statement__as_(config as ExportStatementAsConfig);
 }
 
 /** Variant factory: `export_statement` — star form. */
@@ -2628,7 +2635,13 @@ export function flow_maybe_type_(
 export function for_in_statement_(
   config: ConfigOf<ForInStatement>,
 ) {
-  return for_in_statement__v2_(config as ForInStatementV2Config);
+  if ('kind' in config && config.kind !== undefined) return for_in_statement__v2_(config as ForInStatementV2Config);
+  else if ('kind' in config && config.kind !== undefined) return for_in_statement__v3_(config as ForInStatementV3Config);
+  else if ('kind' in config && config.kind !== undefined) return for_in_statement__v4_(config as ForInStatementV4Config);
+  else if ('kind' in config && config.kind !== undefined) return for_in_statement__v5_(config as ForInStatementV5Config);
+  else if ('kind' in config && config.kind !== undefined) return for_in_statement__v6_(config as ForInStatementV6Config);
+  else if ('kind' in config && config.kind !== undefined) return for_in_statement__v7_(config as ForInStatementV7Config);
+  return for_in_statement__v1_(config as ForInStatementV1Config);
 }
 
 /** Variant factory: `for_in_statement` — v0 form. */
@@ -2874,7 +2887,7 @@ export function for_in_statement__v7_(
 export function for_statement_(
   config: ConfigOf<ForStatement>,
 ) {
-  return for_statement__v0_(config as ForStatementV0Config);
+  return for_statement__v1_(config as ForStatementV1Config);
 }
 
 /** Variant factory: `for_statement` — v0 form. */
@@ -3215,7 +3228,7 @@ export function import_alias_(
 export function import_attribute_(
   config: ConfigOf<ImportAttribute>,
 ) {
-  return import_attribute__with_(config as ImportAttributeWithConfig);
+  return import_attribute__assert_(config as ImportAttributeAssertConfig);
 }
 
 /** Variant factory: `import_attribute` — with form. */
@@ -3265,7 +3278,7 @@ export function import_attribute__assert_(
 export function import_clause_(
   config: ConfigOf<ImportClause>,
 ) {
-  return import_clause__v0_(config as ImportClauseV0Config);
+  return import_clause__comma_(config as ImportClauseCommaConfig);
 }
 
 /** Variant factory: `import_clause` — v0 form. */
@@ -3338,7 +3351,9 @@ export function import_require_clause_(
 export function import_specifier_(
   config: ConfigOf<ImportSpecifier>,
 ) {
-  return import_specifier__v1_(config as ImportSpecifierV1Config);
+  if ('alias' in config && config.alias !== undefined) return import_specifier__v1_(config as ImportSpecifierV1Config);
+  else if ('alias' in config && config.alias !== undefined) return import_specifier__v2_(config as ImportSpecifierV2Config);
+  return import_specifier__v0_(config as ImportSpecifierV0Config);
 }
 
 /** Variant factory: `import_specifier` — v0 form. */
@@ -3414,8 +3429,9 @@ export function import_specifier__v2_(
 export function import_statement_(
   config: ConfigOf<ImportStatement>,
 ) {
-  if ('fromClause' in config && config.fromClause !== undefined) return import_statement__from_(config as ImportStatementFromConfig);
-  return import_statement__v1_(config as ImportStatementV1Config);
+  if ('importClause' in config && config.importClause !== undefined) return import_statement__from_(config as ImportStatementFromConfig);
+  else if ('importClause' in config && config.importClause !== undefined) return import_statement__v1_(config as ImportStatementV1Config);
+  return import_statement__v2_(config as ImportStatementV2Config);
 }
 
 /** Variant factory: `import_statement` — from form. */
@@ -3504,7 +3520,6 @@ export function index_signature_(
   config: ConfigOf<IndexSignature>,
 ) {
   if ('name' in config && config.name !== undefined) return index_signature__colon_(config as IndexSignatureColonConfig);
-  else if ('mappedTypeClause' in config && config.mappedTypeClause !== undefined) return index_signature__mapped_type_clause_(config as IndexSignatureMappedTypeClauseConfig);
   return index_signature__mapped_type_clause_(config as IndexSignatureMappedTypeClauseConfig);
 }
 
@@ -3749,7 +3764,7 @@ export function labeled_statement_(
 export function lexical_declaration_(
   config: ConfigOf<LexicalDeclaration>,
 ) {
-  return lexical_declaration__let_(config as LexicalDeclarationLetConfig);
+  return lexical_declaration__const_(config as LexicalDeclarationConstConfig);
 }
 
 /** Variant factory: `lexical_declaration` — let form. */
@@ -4234,7 +4249,7 @@ export function object_pattern_(
 export function object_type_(
   config?: ConfigOf<ObjectType>,
 ) {
-  return object_type__v0_(config as ObjectTypeV0Config);
+  return object_type__v3_(config as ObjectTypeV3Config);
 }
 
 /** Variant factory: `object_type` — v0 form. */
@@ -4595,7 +4610,7 @@ export function public_field_definition_(
   config: ConfigOf<PublicFieldDefinition>,
 ) {
   if ('overrideModifier' in config && config.overrideModifier !== undefined) return public_field_definition__static_(config as PublicFieldDefinitionStaticConfig);
-  return public_field_definition__abstract_(config as PublicFieldDefinitionAbstractConfig);
+  return public_field_definition__accessor_(config as PublicFieldDefinitionAccessorConfig);
 }
 
 /** Variant factory: `public_field_definition` — static form. */
@@ -5446,7 +5461,7 @@ export function type_query_(
 export function unary_expression_(
   config: ConfigOf<UnaryExpression>,
 ) {
-  return unary_expression__bang_(config as UnaryExpressionBangConfig);
+  return unary_expression__delete_(config as UnaryExpressionDeleteConfig);
 }
 
 /** Variant factory: `unary_expression` — bang form. */
@@ -5643,7 +5658,7 @@ export function union_type_(
 export function update_expression_(
   config: ConfigOf<UpdateExpression>,
 ) {
-  return update_expression__tok_2b2b_(config as UpdateExpressionTok_2b2bConfig);
+  return update_expression__tok_2d2d_(config as UpdateExpressionTok_2d2dConfig);
 }
 
 /** Variant factory: `update_expression` — tok_2b2b form. */
@@ -5823,7 +5838,7 @@ export function with_statement_(
 export function yield_expression_(
   config?: ConfigOf<YieldExpression>,
 ) {
-  return yield_expression__star_(config as YieldExpressionStarConfig);
+  return yield_expression__v1_(config as YieldExpressionV1Config);
 }
 
 /** Variant factory: `yield_expression` — star form. */

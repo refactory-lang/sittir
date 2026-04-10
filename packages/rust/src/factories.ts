@@ -346,7 +346,7 @@ export function base_field_initializer_(
 export function binary_expression_(
   config: ConfigOf<BinaryExpression>,
 ) {
-  return binary_expression__tok_2626_(config as BinaryExpressionTok_2626Config);
+  return binary_expression__percent_(config as BinaryExpressionPercentConfig);
 }
 
 /** Variant factory: `binary_expression` — tok_2626 form. */
@@ -1031,7 +1031,7 @@ export function closure_parameters_(
 export function compound_assignment_expr_(
   config: ConfigOf<CompoundAssignmentExpr>,
 ) {
-  return compound_assignment_expr__tok_2b3d_(config as CompoundAssignmentExprTok_2b3dConfig);
+  return compound_assignment_expr__tok_3e3e3d_(config as CompoundAssignmentExprTok_3e3e3dConfig);
 }
 
 /** Variant factory: `compound_assignment_expr` — tok_2b3d form. */
@@ -1940,7 +1940,7 @@ export function function_item_(
 export function function_modifiers_(
   config?: ConfigOf<FunctionModifiers>,
 ) {
-  return function_modifiers__async_(config as FunctionModifiersAsyncConfig);
+  return function_modifiers__v4_(config as FunctionModifiersV4Config);
 }
 
 /** Variant factory: `function_modifiers` — async form. */
@@ -2110,7 +2110,6 @@ export function function_type_(
   config: ConfigOf<FunctionType>,
 ) {
   if ('trait' in config && config.trait !== undefined) return function_type__trait_(config as FunctionTypeTraitConfig);
-  else if ('functionModifiers' in config && config.functionModifiers !== undefined) return function_type__fn_(config as FunctionTypeFnConfig);
   return function_type__fn_(config as FunctionTypeFnConfig);
 }
 
@@ -2654,7 +2653,7 @@ export function loop_expression_(
 export function macro_definition_(
   config: ConfigOf<MacroDefinition>,
 ) {
-  return macro_definition__paren_(config as MacroDefinitionParenConfig);
+  return macro_definition__brace_(config as MacroDefinitionBraceConfig);
 }
 
 /** Variant factory: `macro_definition` — paren form. */
@@ -3193,7 +3192,11 @@ export function qualified_type_(
 export function range_expression_(
   config: ConfigOf<RangeExpression>,
 ) {
-  return range_expression__v0_(config as RangeExpressionV0Config);
+  if ('start' in config && config.start !== undefined) return range_expression__v0_(config as RangeExpressionV0Config);
+  else if ('start' in config && config.start !== undefined) return range_expression__ellipsis_(config as RangeExpressionEllipsisConfig);
+  else if ('start' in config && config.start !== undefined) return range_expression__tok_2e2e3d_(config as RangeExpressionTok_2e2e3dConfig);
+  else if ('start' in config && config.start !== undefined) return range_expression__v3_(config as RangeExpressionV3Config);
+  return range_expression__v4_(config as RangeExpressionV4Config);
 }
 
 /** Variant factory: `range_expression` — v0 form. */
@@ -3323,7 +3326,11 @@ export function range_expression__v4_(
 export function range_pattern_(
   config?: ConfigOf<RangePattern>,
 ) {
-  return range_pattern__ellipsis_(config as RangePatternEllipsisConfig);
+  if (config && 'left' in config && config.left !== undefined) return range_pattern__ellipsis_(config as RangePatternEllipsisConfig);
+  else if (config && 'left' in config && config.left !== undefined) return range_pattern__v1_(config as RangePatternV1Config);
+  else if (config && 'left' in config && config.left !== undefined) return range_pattern__v2_(config as RangePatternV2Config);
+  else if (config && 'left' in config && config.left !== undefined) return range_pattern__v3_(config as RangePatternV3Config);
+  return range_pattern__v5_(config as RangePatternV5Config);
 }
 
 /** Variant factory: `range_pattern` — ellipsis form. */
@@ -3511,7 +3518,9 @@ export function ref_pattern_(
 export function reference_expression_(
   config: ConfigOf<ReferenceExpression>,
 ) {
-  return reference_expression__v1_(config as ReferenceExpressionV1Config);
+  if ('mutableSpecifier' in config && config.mutableSpecifier !== undefined) return reference_expression__v1_(config as ReferenceExpressionV1Config);
+  else if ('mutableSpecifier' in config && config.mutableSpecifier !== undefined) return reference_expression__v2_(config as ReferenceExpressionV2Config);
+  return reference_expression__const_(config as ReferenceExpressionConstConfig);
 }
 
 /** Variant factory: `reference_expression` — const form. */
@@ -3903,7 +3912,9 @@ export function struct_expression_(
 export function struct_item_(
   config: ConfigOf<StructItem>,
 ) {
-  return struct_item__v0_(config as StructItemV0Config);
+  if ('whereClause' in config && config.whereClause !== undefined) return struct_item__v0_(config as StructItemV0Config);
+  else if ('body' in config && config.body !== undefined) return struct_item__v1_(config as StructItemV1Config);
+  return struct_item__v2_(config as StructItemV2Config);
 }
 
 /** Variant factory: `struct_item` — v0 form. */
@@ -4697,7 +4708,7 @@ export function type_parameters_(
 export function unary_expression_(
   config: ConfigOf<UnaryExpression>,
 ) {
-  return unary_expression__minus_(config as UnaryExpressionMinusConfig);
+  return unary_expression__bang_(config as UnaryExpressionBangConfig);
 }
 
 /** Variant factory: `unary_expression` — minus form. */
@@ -5029,7 +5040,7 @@ export function where_clause_(
 export function where_predicate_(
   config: ConfigOf<WherePredicate>,
 ) {
-  return where_predicate__v0_(config as WherePredicateV0Config);
+  return where_predicate__char_(config as WherePredicateCharConfig);
 }
 
 /** Variant factory: `where_predicate` — v0 form. */

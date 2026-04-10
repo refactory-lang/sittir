@@ -97,31 +97,45 @@ export function emitFactory(config: {
 			lines.push(`  config${opt}: ConfigOf<${typeName}>,`);
 			lines.push(`) {`);
 
+			// Sort variants by field count descending — most specific first.
+			// The variant with the fewest fields is the fallback.
 			const sorted = [...modelVariants].sort((a, b) => b.fields.size - a.fields.size);
-			let emittedIf = false;
+			const fallback = sorted[sorted.length - 1]!;
+			const fallbackFields = new Set(fallback.fields.keys());
 
+			let emittedIf = false;
 			for (const v of sorted) {
+				if (v === fallback) continue; // skip fallback — it's the else
 				const vFactory = `${internalName}_${v.name}_`;
 				const vConfigType = `${typeName}${toTypeName(v.name)}Config`;
-				const uniqueField = [...v.fields.keys()].find(f =>
+
+				// Find a field this variant has that the fallback doesn't
+				const distinguishingField = [...v.fields.keys()].find(f => !fallbackFields.has(f));
+				// Or find a field unique to this variant vs all others
+				const uniqueField = distinguishingField ?? [...v.fields.keys()].find(f =>
 					modelVariants.every((other, j) => modelVariants.indexOf(v) === j || !other.fields.has(f))
 				);
+
 				if (uniqueField && hasFields) {
 					const camel = fields.find(fd => fd.name === uniqueField)?.propertyName ?? toFieldName(uniqueField);
 					const kw = emittedIf ? 'else if' : 'if';
 					const guard = hasRequiredFields ? '' : 'config && ';
 					lines.push(`  ${kw} (${guard}'${camel}' in config && config.${camel} !== undefined) return ${vFactory}(config as ${vConfigType});`);
 					emittedIf = true;
+				} else if (v.fields.size > fallback.fields.size) {
+					// Can't find a distinguishing field, but this variant has more fields.
+					// Use field count as heuristic — check any field not in fallback.
+					const anyExtraField = [...v.fields.keys()].find(f => !fallbackFields.has(f));
+					if (anyExtraField) {
+						const camel = fields.find(fd => fd.name === anyExtraField)?.propertyName ?? toFieldName(anyExtraField);
+						const kw = emittedIf ? 'else if' : 'if';
+						const guard = hasRequiredFields ? '' : 'config && ';
+						lines.push(`  ${kw} (${guard}'${camel}' in config && config.${camel} !== undefined) return ${vFactory}(config as ${vConfigType});`);
+						emittedIf = true;
+					}
 				}
 			}
 
-			// Fallback to first variant without a unique field (or last variant)
-			const fallback = sorted.find(v => {
-				const uniqueField = [...v.fields.keys()].find(f =>
-					modelVariants.every((other, j) => modelVariants.indexOf(v) === j || !other.fields.has(f))
-				);
-				return !uniqueField || !hasFields;
-			}) ?? sorted[sorted.length - 1]!;
 			const fallbackConfigType = `${typeName}${toTypeName(fallback.name)}Config`;
 			lines.push(`  return ${internalName}_${fallback.name}_(config as ${fallbackConfigType});`);
 			lines.push(`}`);

@@ -177,9 +177,11 @@ function structuralDiff(a: AnyNodeData, b: AnyNodeData): string[] {
 	if (missingInB.length) diffs.push(`from() has extra fields: ${missingInB.join(', ')}`);
 	if (missingInA.length) diffs.push(`factory has extra fields: ${missingInA.join(', ')}`);
 
-	const aLen = (a.children ?? []).length;
-	const bLen = (b.children ?? []).length;
-	if (aLen !== bLen) diffs.push(`children: ${aLen} vs ${bLen}`);
+	// Compare only named children — anonymous tokens (delimiters, separators)
+	// are reconstructed from templates, not carried in factory output
+	const aNamed = (a.children ?? []).filter((c: any) => c?.named !== false);
+	const bNamed = (b.children ?? []).filter((c: any) => c?.named !== false);
+	if (aNamed.length !== bNamed.length) diffs.push(`named children: ${aNamed.length} vs ${bNamed.length}`);
 
 	return diffs;
 }

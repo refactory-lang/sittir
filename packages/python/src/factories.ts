@@ -135,7 +135,9 @@ export function assert_statement_(
 export function assignment_(
   config: ConfigOf<Assignment>,
 ) {
-  return assignment__v2_(config as AssignmentV2Config);
+  if ('right' in config && config.right !== undefined) return assignment__v2_(config as AssignmentV2Config);
+  else if ('right' in config && config.right !== undefined) return assignment__v0_(config as AssignmentV0Config);
+  return assignment__v1_(config as AssignmentV1Config);
 }
 
 /** Variant factory: `assignment` — v0 form. */
@@ -238,7 +240,7 @@ export function attribute_(
 export function augmented_assignment_(
   config: ConfigOf<AugmentedAssignment>,
 ) {
-  return augmented_assignment__tok_2b3d_(config as AugmentedAssignmentTok_2b3dConfig);
+  return augmented_assignment__tok_7c3d_(config as AugmentedAssignmentTok_7c3dConfig);
 }
 
 /** Variant factory: `augmented_assignment` — tok_2b3d form. */
@@ -603,7 +605,7 @@ export function await_(
 export function binary_operator_(
   config: ConfigOf<BinaryOperator>,
 ) {
-  return binary_operator__plus_(config as BinaryOperatorPlusConfig);
+  return binary_operator__tok_3e3e_(config as BinaryOperatorTok_3e3eConfig);
 }
 
 /** Variant factory: `binary_operator` — plus form. */
@@ -972,7 +974,7 @@ export function block_(
 export function boolean_operator_(
   config: ConfigOf<BooleanOperator>,
 ) {
-  return boolean_operator__and_(config as BooleanOperatorAndConfig);
+  return boolean_operator__or_(config as BooleanOperatorOrConfig);
 }
 
 /** Variant factory: `boolean_operator` — and form. */
@@ -1170,7 +1172,7 @@ export function class_pattern_(
 export function comparison_operator_(
   config: ConfigOf<ComparisonOperator>,
 ) {
-  return comparison_operator__angle_(config as ComparisonOperatorAngleConfig);
+  return comparison_operator__is_(config as ComparisonOperatorIsConfig);
 }
 
 /** Variant factory: `comparison_operator` — angle form. */
@@ -1436,7 +1438,7 @@ export function comparison_operator__is_(
 export function complex_pattern_(
   config: ConfigOf<ComplexPattern>,
 ) {
-  return complex_pattern__plus_(config as ComplexPatternPlusConfig);
+  return complex_pattern__v1_(config as ComplexPatternV1Config);
 }
 
 /** Variant factory: `complex_pattern` — plus form. */
@@ -2131,7 +2133,7 @@ export function function_definition_(
 export function future_import_statement_(
   config: ConfigOf<FutureImportStatement>,
 ) {
-  return future_import_statement__v0_(config as FutureImportStatementV0Config);
+  return future_import_statement__paren_(config as FutureImportStatementParenConfig);
 }
 
 /** Variant factory: `future_import_statement` — v0 form. */
@@ -2293,7 +2295,9 @@ export function if_statement_(
 export function import_from_statement_(
   config: ConfigOf<ImportFromStatement>,
 ) {
-  return import_from_statement__v1_(config as ImportFromStatementV1Config);
+  if ('name' in config && config.name !== undefined) return import_from_statement__v1_(config as ImportFromStatementV1Config);
+  else if ('name' in config && config.name !== undefined) return import_from_statement__paren_(config as ImportFromStatementParenConfig);
+  return import_from_statement__v0_(config as ImportFromStatementV0Config);
 }
 
 /** Variant factory: `import_from_statement` — v0 form. */
@@ -3067,7 +3071,9 @@ export function slice_(
 export function splat_pattern_(
   config?: ConfigOf<SplatPattern>,
 ) {
-  return splat_pattern__v0_(config as SplatPatternV0Config);
+  if (config && 'identifier' in config && config.identifier !== undefined) return splat_pattern__v0_(config as SplatPatternV0Config);
+  else if (config && 'identifier' in config && config.identifier !== undefined) return splat_pattern__v2_(config as SplatPatternV2Config);
+  return splat_pattern__v3_(config as SplatPatternV3Config);
 }
 
 /** Variant factory: `splat_pattern` — v0 form. */
@@ -3153,7 +3159,7 @@ export function splat_pattern__v3_(
 export function splat_type_(
   config: ConfigOf<SplatType>,
 ) {
-  return splat_type__star_(config as SplatTypeStarConfig);
+  return splat_type__tok_2a2a_(config as SplatTypeTok_2a2aConfig);
 }
 
 /** Variant factory: `splat_type` — star form. */
@@ -3445,7 +3451,7 @@ export function typed_parameter_(
 export function unary_operator_(
   config: ConfigOf<UnaryOperator>,
 ) {
-  return unary_operator__plus_(config as UnaryOperatorPlusConfig);
+  return unary_operator__tilde_(config as UnaryOperatorTildeConfig);
 }
 
 /** Variant factory: `unary_operator` — plus form. */
