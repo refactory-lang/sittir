@@ -1131,7 +1131,7 @@ describe('function_modifiers', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.functionModifiers({ async: 'async' as any, default: 'default' as any, const: 'const' as any, unsafe: 'unsafe' as any, children: [] });
+    const node = ir.functionModifiers({ async: 'async' as any, default: 'default' as any, const: 'const' as any, unsafe: 'unsafe' as any, children: [] } as any);
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -2568,7 +2568,7 @@ describe('token_repetition', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.tokenRepetition(ir.identifier('test_children') as any);
+    const node = ir.tokenRepetition(ir.identifier('test_children') as any as any);
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -2597,7 +2597,7 @@ describe('token_repetition_pattern', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.tokenRepetitionPattern(ir.identifier('test_children') as any);
+    const node = ir.tokenRepetitionPattern(ir.identifier('test_children') as any as any);
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });

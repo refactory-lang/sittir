@@ -203,24 +203,30 @@ function resolveChoice(members: GrammarRule[], ctx: FactorContext): GrammarRule[
 	});
 
 	if (allAtoms) {
-		// Mixed FIELD + STRING means "named content OR fallback literal" — fan out as variants.
-		// e.g. CHOICE(FIELD:body | ";") → variant with body, variant with ;
-		const hasMixedFieldString = atomTypes.has('FIELD') && atomTypes.has('STRING');
-		if (hasMixedFieldString) {
-			// Each branch becomes its own variant
-			const allResolved: GrammarRule[] = [];
+		// Only FIELD+SYMBOL (or FIELD+FIELD with same name) are type alternatives
+		// for a single slot — structurally identical, demote to child-level CHOICE.
+		// Everything else (STRING involved, or ALIAS mixed in) is structurally
+		// different and should fan out as separate variants.
+		const isSlotAlternatives = nonBlank.every(m => {
+			const u = unwrapPrec(m);
+			return u.type === 'FIELD' || u.type === 'SYMBOL';
+		});
+
+		if (isSlotAlternatives) {
+			// Type alternatives for a slot — preserve as child-level CHOICE
+			const resolvedMembers: GrammarRule[] = [];
 			for (const m of nonBlank) {
-				allResolved.push(...resolveChoices(m, ctx));
+				resolvedMembers.push(...resolveChoices(m, ctx));
 			}
-			return allResolved;
+			return [{ type: 'CHOICE', members: resolvedMembers }];
 		}
 
-		// Homogeneous atom CHOICE: factorable — preserve the CHOICE as a child-level slot.
-		const resolvedMembers: GrammarRule[] = [];
+		// Structurally different atoms — fan out as separate variants
+		const allResolved: GrammarRule[] = [];
 		for (const m of nonBlank) {
-			resolvedMembers.push(...resolveChoices(m, ctx));
+			allResolved.push(...resolveChoices(m, ctx));
 		}
-		return [{ type: 'CHOICE', members: resolvedMembers }];
+		return allResolved;
 	}
 
 	// SEQ CHOICE: attempt distributive factoring

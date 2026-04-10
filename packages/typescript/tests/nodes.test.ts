@@ -704,7 +704,7 @@ describe('constraint', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.constraint(ir.typeIdentifier('TestChildren') as any);
+    const node = ir.constraint(ir.typeIdentifier('TestChildren') as any as any);
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });

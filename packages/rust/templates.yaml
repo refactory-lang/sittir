@@ -91,7 +91,7 @@ rules:
   function_item:
     template: $VISIBILITY_MODIFIER $FUNCTION_MODIFIERS fn $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE_CLAUSE $WHERE_CLAUSE $BODY
     return_type_clause: -> $RETURN_TYPE
-  function_modifiers: $ASYNC $DEFAULT $CONST $UNSAFE $$$CHILDREN
+  function_modifiers: $ASYNC $$$CHILDREN
   function_signature_item:
     template: $VISIBILITY_MODIFIER $FUNCTION_MODIFIERS fn $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE_CLAUSE $WHERE_CLAUSE;
     return_type_clause: -> $RETURN_TYPE
@@ -173,8 +173,11 @@ rules:
     - $OPERATOR
   range_pattern:
     - $LEFT...$RIGHT
+    - $LEFT..=$RIGHT
+    - $LEFT..$RIGHT
     - $LEFT..
     - ..=$RIGHT
+    - ..$RIGHT
   raw_string_literal: $RAW_STRING_LITERAL_START $STRING_CONTENT $RAW_STRING_LITERAL_END
   ref_pattern: ref $CHILDREN
   reference_expression:
@@ -207,8 +210,24 @@ rules:
     template: $TYPE{$$$CHILDREN}
     joinBy: ","
   token_binding_pattern: $NAME:$TYPE
-  token_repetition: $($$$CHILDREN)+
-  token_repetition_pattern: $($$$CHILDREN)+
+  token_repetition:
+    variants:
+      plus: $($$$CHILDREN)+
+      star: $($$$CHILDREN)*
+      question: $($$$CHILDREN)?
+    detect:
+      plus: +
+      star: "*"
+      question: "?"
+  token_repetition_pattern:
+    variants:
+      plus: $($$$CHILDREN)+
+      star: $($$$CHILDREN)*
+      question: $($$$CHILDREN)?
+    detect:
+      plus: +
+      star: "*"
+      question: "?"
   token_tree:
     variants:
       paren: ($$$CHILDREN)

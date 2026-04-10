@@ -33,7 +33,9 @@ rules:
   class_definition: class $NAME $TYPE_PARAMETERS $SUPERCLASSES:$BODY
   class_pattern: $DOTTED_NAME($$$ARGUMENTS $$$CHILDREN)
   comparison_operator: $LEFT $$$OPERATORS $$$COMPARATORS
-  complex_pattern: $REAL+$IMAGINARY
+  complex_pattern:
+    - $REAL+$IMAGINARY
+    - $REAL-$IMAGINARY
   concatenated_string: $$$CHILDREN
   conditional_expression: $BODY if $CONDITION else $ALTERNATIVE
   constrained_type: $BASE_TYPE:$CONSTRAINT
@@ -135,7 +137,15 @@ rules:
   splat_pattern:
     - "*$IDENTIFIER"
     - "*_"
-  splat_type: "*$IDENTIFIER"
+    - "**$IDENTIFIER"
+    - "**_"
+  splat_type:
+    variants:
+      star: "*$IDENTIFIER"
+      tok_2a2a: "**$IDENTIFIER"
+    detect:
+      star: "*"
+      tok_2a2a: "**"
   string: $STRING_START $$$CONTENT $STRING_END
   string_content: $$$CHILDREN
   subscript:

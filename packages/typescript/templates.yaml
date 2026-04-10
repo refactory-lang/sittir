@@ -52,7 +52,13 @@ rules:
   class_static_block: static $BODY
   computed_property_name: "[$EXPRESSION]"
   conditional_type: $LEFT extends $RIGHT?$CONSEQUENCE:$ALTERNATIVE
-  constraint: extends $CHILDREN
+  constraint:
+    variants:
+      extends: extends $CHILDREN
+      colon: :$CHILDREN
+    detect:
+      extends: extends
+      colon: ":"
   construct_signature: new $TYPE_PARAMETERS $PARAMETERS $TYPE
   constructor_type: new $TYPE_PARAMETERS $PARAMETERS=>$TYPE
   continue_statement: continue $LABEL
@@ -108,7 +114,13 @@ rules:
     template: implements $$$CHILDREN
     joinBy: ","
   import_alias: import $NAME=$VALUE $SEMICOLON
-  import_attribute: with $OBJECT
+  import_attribute:
+    variants:
+      with: with $OBJECT
+      assert: assert $OBJECT
+    detect:
+      with: with
+      assert: assert
   import_clause: $DEFAULT_IMPORT
   import_require_clause: $IDENTIFIER=require($SOURCE)
   import_specifier:
@@ -161,7 +173,11 @@ rules:
   object_pattern:
     template: "{$$$CHILDREN}"
     joinBy: ","
-  object_type: "{$OPENING $$$CHILDREN $$$MEMBERS} $CLOSING"
+  object_type:
+    - "{$OPENING $$$MEMBERS$$$CHILDREN}"
+    - "{$OPENING $$$MEMBERS$$$CHILDREN|}"
+    - "{|$OPENING $$$MEMBERS$$$CHILDREN}"
+    - "{|$OPENING $$$MEMBERS$$$CHILDREN|}"
   omitting_type_annotation: -?:$CHILDREN
   opting_type_annotation: ?:$CHILDREN
   optional_parameter:
