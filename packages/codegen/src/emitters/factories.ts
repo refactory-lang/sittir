@@ -98,18 +98,19 @@ export function emitFactory(config: {
 			lines.push(`) {`);
 
 			const sorted = [...modelVariants].sort((a, b) => b.fields.size - a.fields.size);
-			const configAccess = `config${opt}`;
 			let emittedIf = false;
 
 			for (const v of sorted) {
 				const vFactory = `${internalName}_${v.name}_`;
+				const vConfigType = `${typeName}${toTypeName(v.name)}Config`;
 				const uniqueField = [...v.fields.keys()].find(f =>
 					modelVariants.every((other, j) => modelVariants.indexOf(v) === j || !other.fields.has(f))
 				);
 				if (uniqueField && hasFields) {
 					const camel = fields.find(fd => fd.name === uniqueField)?.propertyName ?? toFieldName(uniqueField);
 					const kw = emittedIf ? 'else if' : 'if';
-					lines.push(`  ${kw} (${configAccess}.${camel} !== undefined) return ${vFactory}(config as any);`);
+					const guard = hasRequiredFields ? '' : 'config && ';
+					lines.push(`  ${kw} (${guard}'${camel}' in config && config.${camel} !== undefined) return ${vFactory}(config as ${vConfigType});`);
 					emittedIf = true;
 				}
 			}
@@ -121,7 +122,8 @@ export function emitFactory(config: {
 				);
 				return !uniqueField || !hasFields;
 			}) ?? sorted[sorted.length - 1]!;
-			lines.push(`  return ${internalName}_${fallback.name}_(config as any);`);
+			const fallbackConfigType = `${typeName}${toTypeName(fallback.name)}Config`;
+			lines.push(`  return ${internalName}_${fallback.name}_(config as ${fallbackConfigType});`);
 			lines.push(`}`);
 			// Skip the rest of emitFactory — no return object, no fluent methods
 			return lines.join('\n');
@@ -354,6 +356,7 @@ export function emitVariantFactory(config: {
 	}
 
 	// Fluent getters/setters — scoped to variant fields, re-call variant factory
+	// Build a typed config reconstruction from fields + children (avoids spreading optionality mismatch)
 	for (const f of fields) {
 		const camel = f.propertyName ?? toFieldName(f.name);
 		const paramName = toParamName(f.name);
@@ -362,9 +365,9 @@ export function emitVariantFactory(config: {
 		const fieldType = fieldTypeExprFromProj(proj, leafSet);
 
 		if (f.multiple) {
-			lines.push(`    ${methodName}(...${paramName}: (${fieldType})[]) { return ${paramName}.length ? ${internalName}({ ...config, ${camel}: ${paramName} }) : fields.${f.name}; },`);
+			lines.push(`    ${methodName}(...${paramName}: (${fieldType})[]) { return ${paramName}.length ? ${internalName}({ ...config, ${camel}: ${paramName} } as ${variantTypeName}Config) : fields.${f.name}; },`);
 		} else {
-			lines.push(`    ${methodName}(${paramName}?: ${fieldType}) { return ${paramName} !== undefined ? ${internalName}({ ...config, ${camel}: ${paramName} }) : fields.${f.name}; },`);
+			lines.push(`    ${methodName}(${paramName}?: ${fieldType}) { return ${paramName} !== undefined ? ${internalName}({ ...config, ${camel}: ${paramName} } as ${variantTypeName}Config) : fields.${f.name}; },`);
 		}
 	}
 

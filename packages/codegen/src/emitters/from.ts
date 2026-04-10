@@ -340,6 +340,25 @@ export function emitFrom(config: EmitFromConfig): string {
 	// Type-only imports — collect supertype union names used as resolver return types
 	const baseTypeImports = nodes.map(n => toTypeName(n.kind)).sort();
 	const configTypeImports = nodes.map(n => toTypeName(n.kind) + 'Config').sort();
+	// Add variant type imports (skip children-only nodes — they share the same element type)
+	const childrenOnlyKinds = new Set<string>();
+	for (const node of nodes) {
+		const nFields = fieldsOf(node);
+		if (nFields.length === 0 && node.children != null && !isTupleChildren(node.children)) {
+			childrenOnlyKinds.add(node.kind);
+		}
+	}
+	for (const node of nodes) {
+		const variants = node.variants;
+		if (variants && variants.length > 1 && !childrenOnlyKinds.has(node.kind)) {
+			const typeName = toTypeName(node.kind);
+			for (const v of variants) {
+				const vTypeName = `${typeName}${toTypeName(v.name)}`;
+				baseTypeImports.push(vTypeName);
+				configTypeImports.push(`${vTypeName}Config`);
+			}
+		}
+	}
 	// Collect ALL supertype union names used in resolver return types
 	const supertypeUnionImports = new Set<string>();
 	for (const [, { supertypeKind, resolved }] of resolverRegistry) {
@@ -358,15 +377,32 @@ export function emitFrom(config: EmitFromConfig): string {
 	out.line("import { isNodeData, hasKind } from './utils.js';");
 	out.line();
 
-	// Import factory functions
+	// Import factory functions (including variant factories, skip children-only)
 	const referencedFactories = collectReferencedFactories(nodes, leafSet, leafValueMap, keywordKinds, ctx);
+	for (const node of nodes) {
+		const variants = node.variants;
+		if (variants && variants.length > 1 && !childrenOnlyKinds.has(node.kind)) {
+			for (const v of variants) {
+				referencedFactories.add(`${toRawFactoryName(node.kind)}_${v.name}_`);
+			}
+		}
+	}
 	if (referencedFactories.size > 0) {
 		const imports = [...referencedFactories].sort().join(', ');
 		out.line(`import { ${imports} } from './factories.js';`);
 	}
 
-	// Import FromInput types from types.ts
+	// Import FromInput types from types.ts (including variant FromInput types, skip children-only)
 	const fromInputImports = nodes.map(n => `${toTypeName(n.kind)}FromInput`);
+	for (const node of nodes) {
+		const variants = node.variants;
+		if (variants && variants.length > 1 && !childrenOnlyKinds.has(node.kind)) {
+			const typeName = toTypeName(node.kind);
+			for (const v of variants) {
+				fromInputImports.push(`${typeName}${toTypeName(v.name)}FromInput`);
+			}
+		}
+	}
 	out.line(`import type { ${fromInputImports.join(', ')} } from './types.js';`);
 	out.line();
 
@@ -444,6 +480,15 @@ export function emitFrom(config: EmitFromConfig): string {
 	for (const node of nodes) {
 		emitFromFunction(out, node, leafSet, leafValueMap, keywordKinds, nodes, config.grammar, branchNodeSet, supertypeSet, resolverRegistry, supertypeResolverNames, ctx, sharedFieldGroups);
 		out.line();
+
+		// Variant-specific from functions (skip children-only — they share element type)
+		const variants = node.variants;
+		if (variants && variants.length > 1 && !childrenOnlyKinds.has(node.kind)) {
+			for (const v of variants) {
+				emitVariantFromFunction(out, node, v, leafSet, branchNodeSet, supertypeSet, keywordKinds, resolverRegistry, supertypeResolverNames, ctx, sharedFieldGroups);
+				out.line();
+			}
+		}
 	}
 
 	return out.toString();
@@ -929,8 +974,17 @@ function emitFromFunction(
 		}
 		out.dedent();
 		out.line('}');
+	} else if (node.variants && node.variants.length > 1 && fields.length > 0) {
+		// Multi-variant: suppress base from (it would just cast through any).
+		// Users call variant-specific from functions directly.
+		// Still emit the export name for _fromMap compatibility.
+		out.line(`export function ${exportName}(input: RuntimeNodeOf<${typeName}> | ${typeName}FromInput) {`);
+		out.indent();
+		out.line(`return ${factoryName}(input as unknown as ${typeName}Config);`);
+		out.dedent();
+		out.line('}');
 	} else {
-		// Standard from function — config object
+		// Standard from function — config object (single variant or no variants)
 		out.line(`export function ${exportName}(input: RuntimeNodeOf<${typeName}> | ${typeName}FromInput) {`);
 		out.indent();
 
@@ -1045,6 +1099,119 @@ function emitFromFunction(
 		out.dedent();
 		out.line('}');
 	}
+}
+
+// ---------------------------------------------------------------------------
+// Variant-specific from function emitter
+// ---------------------------------------------------------------------------
+
+/**
+ * Emit a from function scoped to a specific variant's fields.
+ * Accepts RuntimeNodeOf<VariantType> | VariantFromInput, calls variant factory.
+ */
+function emitVariantFromFunction(
+	out: CodeBuilder,
+	node: StructuralNode,
+	variant: import('../node-model.ts').StructuralVariant,
+	leafSet: Set<string>,
+	branchNodeSet: Set<string>,
+	supertypeSet: Set<string>,
+	keywordKinds: Map<string, string>,
+	resolverRegistry: Map<string, { name: string; resolved: ResolvedFieldTypes }>,
+	supertypeResolverNames: Map<string, string>,
+	ctx: ProjectionContext,
+	sharedFieldGroups: Map<string, { funcName: string; fieldNames: Set<string> }[]>,
+): void {
+	const typeName = toTypeName(node.kind);
+	const variantTypeName = `${typeName}${toTypeName(variant.name)}`;
+	const factoryName = `${toRawFactoryName(node.kind)}_${variant.name}_`;
+	const camelFactoryName = `${toFactoryName(node.kind)}${toTypeName(variant.name)}`;
+	const exportName = `${camelFactoryName}From`;
+
+	const allFields = fieldsOf(node);
+	const variantFieldNames = new Set(variant.fields.keys());
+	const fields = allFields.filter(f => variantFieldNames.has(f.name));
+
+	out.line(`export function ${exportName}(input: RuntimeNodeOf<${variantTypeName}> | ${variantTypeName}FromInput) {`);
+	out.indent();
+
+	const hasChildren = node.children != null;
+
+	// Path 1: NodeData passthrough
+	out.line(`if (isNodeData<'${node.kind}'>(input)) {`);
+	out.indent();
+	out.line(`return ${factoryName}({`);
+	out.indent();
+	for (const f of fields) {
+		const camel = f.propertyName ?? toFieldName(f.name);
+		out.line(`${camel}: input.fields?.${f.name},`);
+	}
+	if (hasChildren) {
+		const fieldCoveredKinds = new Set<string>();
+		for (const f of fields) for (const k of f.kinds) fieldCoveredKinds.add(k.kind);
+		const slot = Array.isArray(node.children!) ? node.children![0]! : node.children!;
+		const allCovered = !isTupleChildren(node.children!) && slot.kinds.every((k: { kind: string }) => fieldCoveredKinds.has(k.kind));
+		if (!allCovered) {
+			const slotNames2 = childSlotNames(node.children!, ctx);
+			const slotName = slotNames2[0] ?? 'children';
+			if (slot.multiple) {
+				out.line(`${slotName}: input.children as ${variantTypeName}Config['${slotName}'],`);
+			} else {
+				out.line(`${slotName}: input.children?.[0] as ${variantTypeName}Config['${slotName}'],`);
+			}
+		}
+	}
+	out.dedent();
+	out.line(`});`);
+	out.dedent();
+	out.line('}');
+
+	// Path 2: FromInput resolve
+	out.line(`const obj = input as ${variantTypeName}FromInput;`);
+	out.line(`return ${factoryName}({`);
+	out.indent();
+
+	for (const field of fields) {
+		const configKey = field.propertyName ?? toFieldName(field.name);
+		const inputKey = field.name;
+		const fieldProj = projectKinds(field.kinds, ctx);
+		const resolverCall = getResolverExpression(fieldProj, leafSet, branchNodeSet, supertypeSet, keywordKinds, resolverRegistry, supertypeResolverNames);
+
+		if (field.multiple) {
+			const toArr = `(Array.isArray(obj.${inputKey}) ? obj.${inputKey} : [obj.${inputKey}]) as unknown[]`;
+			if (field.required) {
+				out.line(`${configKey}: obj.${inputKey} !== undefined ? (${toArr}).map(${resolverCall}) : [],`);
+			} else {
+				out.line(`${configKey}: obj.${inputKey} !== undefined ? (${toArr}).map(${resolverCall}) : undefined,`);
+			}
+		} else if (field.required) {
+			out.line(`${configKey}: ${resolverCall}(obj.${inputKey}),`);
+		} else {
+			out.line(`${configKey}: ${resolverCall}(obj.${inputKey}),`);
+		}
+	}
+
+	// Children passthrough (when not field-covered)
+	if (hasChildren) {
+		const fieldCoveredKinds2 = new Set<string>();
+		for (const f of fields) for (const k of f.kinds) fieldCoveredKinds2.add(k.kind);
+		const slot2 = Array.isArray(node.children!) ? node.children![0]! : node.children!;
+		const allCovered2 = !isTupleChildren(node.children!) && slot2.kinds.every((k: { kind: string }) => fieldCoveredKinds2.has(k.kind));
+		if (!allCovered2) {
+			const slotNames3 = childSlotNames(node.children!, ctx);
+			const slotName2 = slotNames3[0] ?? 'children';
+			if (slot2.multiple) {
+				out.line(`${slotName2}: (obj as { ${slotName2}?: unknown }).${slotName2} as ${variantTypeName}Config['${slotName2}'],`);
+			} else {
+				out.line(`${slotName2}: (obj as { ${slotName2}?: unknown }).${slotName2} as ${variantTypeName}Config['${slotName2}'],`);
+			}
+		}
+	}
+
+	out.dedent();
+	out.line(`});`);
+	out.dedent();
+	out.line('}');
 }
 
 // ---------------------------------------------------------------------------

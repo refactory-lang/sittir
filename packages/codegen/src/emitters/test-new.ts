@@ -116,8 +116,10 @@ export function emitTests(config: EmitTestsConfig): string {
 		const full = fullArgs(node, dc);
 		const fullHasContent = full !== '' && !full.includes("type: 'unknown'") && (hasRequiredContent || fullHasScalarValues(node, dc));
 		if (fullHasContent) {
+			const hasMultipleVariants = node.variants && node.variants.length > 1;
+			const castSuffix = hasMultipleVariants ? ' as any' : '';
 			lines.push(`  it('renders with optional fields', () => {`);
-			lines.push(`    const node = ir.${irKey}(${full});`);
+			lines.push(`    const node = ir.${irKey}(${full}${castSuffix});`);
 			lines.push(`    const source = render(node);`);
 			lines.push(`    expect(source.length).toBeGreaterThan(0);`);
 			lines.push(`  });`);

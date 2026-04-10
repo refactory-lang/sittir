@@ -465,7 +465,7 @@ describe('call_expression', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.callExpression({ arguments: ir.arguments() as any, function: ir.identifier('test_function') as any, typeArguments: ir.typeArguments(ir.typeIdentifier('TestChildren') as any) as any });
+    const node = ir.callExpression({ arguments: ir.arguments() as any, function: ir.identifier('test_function') as any, typeArguments: ir.typeArguments(ir.typeIdentifier('TestChildren') as any) as any } as any);
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -569,7 +569,7 @@ describe('class_body', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.classBody({ decorator: [], children: [] });
+    const node = ir.classBody({ decorator: [], children: [] } as any);
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -1024,7 +1024,7 @@ describe('export_statement', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.exportStatement({ declaration: ir.identifier('test_declaration') as any, decorator: [], source: ir.string() as any, value: ir.identifier('test_value') as any });
+    const node = ir.exportStatement({ declaration: ir.identifier('test_declaration') as any, decorator: [], source: ir.string() as any, value: ir.identifier('test_value') as any } as any);
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -1195,7 +1195,7 @@ describe('for_statement', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.forStatement({ body: ir.debuggerStatement('test') as any, condition: [ir.identifier('test_condition') as any], increment: ir.identifier('test_increment') as any, initializer: ir.identifier('test_initializer') as any });
+    const node = ir.forStatement({ body: ir.debuggerStatement('test') as any, condition: [ir.identifier('test_condition') as any], increment: ir.identifier('test_increment') as any, initializer: ir.identifier('test_initializer') as any } as any);
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -1499,7 +1499,7 @@ describe('import_clause', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.importClause({ defaultImport: ir.identifier('test_default_import') as any, namedImports: ir.identifier('test_named_imports') as any });
+    const node = ir.importClause({ defaultImport: ir.identifier('test_default_import') as any, namedImports: ir.identifier('test_named_imports') as any } as any);
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -1546,7 +1546,7 @@ describe('import_specifier', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.importSpecifier({ alias: ir.identifier('test_alias') as any, name: ir.identifier('test_name') as any });
+    const node = ir.importSpecifier({ alias: ir.identifier('test_alias') as any, name: ir.identifier('test_name') as any } as any);
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -1581,7 +1581,7 @@ describe('index_signature', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.indexSignature({ indexType: ir.typeIdentifier('TestIndex_type') as any, name: ir.identifier('test_name') as any, sign: '+' as any, type: ir.addingTypeAnnotation(ir.typeIdentifier('TestChildren') as any) as any, mappedTypeClause: ir.mappedTypeClause({ name: ir.typeIdentifier('TestName') as any, type: ir.typeIdentifier('TestType') as any }) as any });
+    const node = ir.indexSignature({ indexType: ir.typeIdentifier('TestIndex_type') as any, name: ir.identifier('test_name') as any, sign: '+' as any, type: ir.addingTypeAnnotation(ir.typeIdentifier('TestChildren') as any) as any, mappedTypeClause: ir.mappedTypeClause({ name: ir.typeIdentifier('TestName') as any, type: ir.typeIdentifier('TestType') as any }) as any } as any);
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -2366,7 +2366,7 @@ describe('parenthesized_expression', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.parenthesizedExpression({ type: ir.typeAnnotation(ir.typeIdentifier('TestChildren') as any) as any, children: ir.identifier('test_children') as any });
+    const node = ir.parenthesizedExpression({ type: ir.typeAnnotation(ir.typeIdentifier('TestChildren') as any) as any, children: ir.identifier('test_children') as any } as any);
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -3350,7 +3350,7 @@ describe('variable_declarator', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.variableDeclarator({ name: ir.identifier('test_name') as any, type: ir.typeAnnotation(ir.typeIdentifier('TestChildren') as any) as any, value: ir.identifier('test_value') as any });
+    const node = ir.variableDeclarator({ name: ir.identifier('test_name') as any, type: ir.typeAnnotation(ir.typeIdentifier('TestChildren') as any) as any, value: ir.identifier('test_value') as any } as any);
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -3421,7 +3421,7 @@ describe('yield_expression', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.yieldExpression({ expression: ir.identifier('test_expression') as any });
+    const node = ir.yieldExpression({ expression: ir.identifier('test_expression') as any } as any);
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });

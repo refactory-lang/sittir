@@ -123,7 +123,7 @@ describe('assignment', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.assignment({ left: ir.identifier('test_left') as any, right: ir.identifier('test_right') as any, type: ir.type(ir.identifier('test_children') as any) as any });
+    const node = ir.assignment({ left: ir.identifier('test_left') as any, right: ir.identifier('test_right') as any, type: ir.type(ir.identifier('test_children') as any) as any } as any);
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -807,7 +807,7 @@ describe('expression_list', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.expressionList(ir.identifier('test_children') as any);
+    const node = ir.expressionList(ir.identifier('test_children') as any as any);
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -829,7 +829,7 @@ describe('expression_statement', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.expressionStatement(ir.identifier('test_children') as any);
+    const node = ir.expressionStatement(ir.identifier('test_children') as any as any);
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -1145,7 +1145,7 @@ describe('import_from_statement', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.importFromStatement({ moduleName: ir.dottedName(ir.identifier('test_children') as any) as any, name: [], wildcardImport: ir.wildcardImport() as any });
+    const node = ir.importFromStatement({ moduleName: ir.dottedName(ir.identifier('test_children') as any) as any, name: [], wildcardImport: ir.wildcardImport() as any } as any);
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -1678,7 +1678,7 @@ describe('pattern_list', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.patternList(ir.identifier('test_children') as any);
+    const node = ir.patternList(ir.identifier('test_children') as any as any);
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -1705,7 +1705,7 @@ describe('print_statement', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.printStatement({ argument: [ir.identifier('test_argument') as any], chevron: ir.chevron({ expression: ir.identifier('test_expression') as any }) as any });
+    const node = ir.printStatement({ argument: [ir.identifier('test_argument') as any], chevron: ir.chevron({ expression: ir.identifier('test_expression') as any }) as any } as any);
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
@@ -2315,7 +2315,7 @@ describe('yield', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.yield(ir.identifier('test_children') as any);
+    const node = ir.yield(ir.identifier('test_children') as any as any);
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });
