@@ -340,12 +340,18 @@ export function emitFrom(config: EmitFromConfig): string {
 	// Type-only imports — collect supertype union names used as resolver return types
 	const baseTypeImports = nodes.map(n => toTypeName(n.kind)).sort();
 	const configTypeImports = nodes.map(n => toTypeName(n.kind) + 'Config').sort();
-	// Add variant type imports (skip children-only nodes — they share the same element type)
+	// Add child slot types for children-only nodes (used in from function signatures)
 	const childrenOnlyKinds = new Set<string>();
 	for (const node of nodes) {
 		const nFields = fieldsOf(node);
 		if (nFields.length === 0 && node.children != null && !isTupleChildren(node.children)) {
 			childrenOnlyKinds.add(node.kind);
+			// Add collapsed child types to imports
+			const slot = Array.isArray(node.children) ? node.children[0]! : node.children;
+			const slotProj = projectKinds(slot.kinds, ctx);
+			for (const t of slotProj.collapsedTypes) {
+				baseTypeImports.push(t);
+			}
 		}
 	}
 	for (const node of nodes) {
@@ -845,7 +851,7 @@ function emitHiddenSeqFieldResolver(
 		const resolverCall = getResolverExpression(fieldProj, leafSet, branchNodeSet, supertypeSet, keywordKinds, resolverRegistry, supertypeResolverNames);
 
 		if (field.multiple) {
-			const toArr = `(Array.isArray(obj.${inputKey}) ? obj.${inputKey} : [obj.${inputKey}]) as unknown[]`;
+			const toArr = `(Array.isArray(obj.${inputKey}) ? obj.${inputKey} : [obj.${inputKey}])`;
 			if (field.required) {
 				out.line(`${configKey}: obj.${inputKey} !== undefined ? (${toArr}).map(${resolverCall}) : [],`);
 			} else {
@@ -949,38 +955,77 @@ function emitFromFunction(
 	if (childrenOnlyInfo) {
 		// Children-only from function — rest params for multiple, direct param for single
 		const { slot, resolver } = childrenOnlyInfo;
+		const actualSlot = Array.isArray(node.children!) ? node.children![0]! : node.children!;
+		const slotProj = projectKinds(actualSlot.kinds, ctx);
+		const childType = slotProj.collapsedTypes.join(' | ');
 		if (slot.multiple) {
 			out.line(`export function ${exportName}(input: RuntimeNodeOf<${typeName}>): ReturnType<typeof ${factoryName}>;`);
 			out.line(`export function ${exportName}(...children: ${typeName}FromInput[]): ReturnType<typeof ${factoryName}>;`);
-			out.line(`export function ${exportName}(...args: unknown[]) {`);
+			out.line(`export function ${exportName}(...args: (RuntimeNodeOf<${typeName}> | ${typeName}FromInput)[]) {`);
 			out.indent();
 			out.line(`if (args.length === 1 && isNodeData(args[0]) && args[0].type === '${node.kind}') {`);
 			out.indent();
-			out.line(`return ${factoryName}(...(args[0] as any).children);`);
+			out.line(`return ${factoryName}(...(args[0].children ?? []) as (${childType})[]);`);
 			out.dedent();
 			out.line('}');
-			out.line(`return ${factoryName}(...(args as unknown[]).map(${resolver}) as any[]);`);
+			out.line(`return ${factoryName}(...args.map(v => ${resolver}(v)) as (${childType})[]);`);
 		} else {
 			out.line(`export function ${exportName}(input: RuntimeNodeOf<${typeName}>): ReturnType<typeof ${factoryName}>;`);
 			out.line(`export function ${exportName}(child${slot.required ? '' : '?'}: ${typeName}FromInput): ReturnType<typeof ${factoryName}>;`);
-			out.line(`export function ${exportName}(arg?: unknown) {`);
+			out.line(`export function ${exportName}(arg?: RuntimeNodeOf<${typeName}> | ${typeName}FromInput) {`);
 			out.indent();
 			out.line(`if (isNodeData(arg) && arg.type === '${node.kind}') {`);
 			out.indent();
-			out.line(`return ${factoryName}((arg as any).children?.[0]);`);
+			out.line(`return ${factoryName}(arg.children?.[0] as ${childType});`);
 			out.dedent();
 			out.line('}');
-			out.line(`return ${factoryName}(${resolver}(arg) as any);`);
+			out.line(`return ${factoryName}(${resolver}(arg) as ${childType});`);
 		}
 		out.dedent();
 		out.line('}');
 	} else if (node.variants && node.variants.length > 1 && fields.length > 0) {
-		// Multi-variant: suppress base from (it would just cast through any).
-		// Users call variant-specific from functions directly.
-		// Still emit the export name for _fromMap compatibility.
+		// Multi-variant base from: extract fields from NodeData, pass FromInput to dispatcher.
+		// Base from for multi-variant: extract only fields common to ALL variants,
+		// then delegate to factory dispatcher which narrows to the right variant.
+		const modelVariants = node.variants!;
+		const commonFields = fields.filter(f =>
+			modelVariants.every(v => v.fields.has(f.name))
+		);
+
 		out.line(`export function ${exportName}(input: RuntimeNodeOf<${typeName}> | ${typeName}FromInput) {`);
 		out.indent();
-		out.line(`return ${factoryName}(input as unknown as ${typeName}Config);`);
+		out.line(`if (isNodeData<'${node.kind}'>(input)) {`);
+		out.indent();
+		out.line(`return ${factoryName}({`);
+		out.indent();
+		// Spread all fields with camelCase key conversion — handles variant-specific fields
+		// that may or may not exist on the union type
+		const fieldsRef = commonFields.length === fields.length ? 'input.fields' : "('fields' in input ? input.fields : undefined)";
+		out.line(`...Object.fromEntries(Object.entries(${fieldsRef} ?? {}).map(([k, v]) => [k.replace(/_([a-z])/g, (_, c: string) => c.toUpperCase()), v])),`);
+		if (hasChildren) {
+			const fieldCoveredKinds = new Set<string>();
+			for (const f of fields) for (const k of f.kinds) fieldCoveredKinds.add(k.kind);
+			const slotNames = childSlotNames(node.children!, ctx);
+			if (!isTupleChildren(node.children!)) {
+				const slot = Array.isArray(node.children!) ? node.children![0]! : node.children!;
+				const allCovered = slot.kinds.every((k: { kind: string }) => fieldCoveredKinds.has(k.kind));
+				if (!allCovered) {
+					if (slot.multiple) {
+						out.line(`${slotNames[0]!}: input.children,`);
+					} else {
+						out.line(`${slotNames[0]!}: input.children?.[0],`);
+					}
+				}
+			}
+		}
+		out.dedent();
+		out.line(`} as ${typeName}Config);`);
+		out.dedent();
+		out.line('}');
+		// FromInput path: convert snake_case keys to camelCase for factory dispatcher.
+		// Use Record<string, unknown> intermediate to bridge Object.fromEntries index signature.
+		out.line(`const mapped: Record<string, unknown> = Object.fromEntries(Object.entries(input).map(([k, v]) => [k.replace(/_([a-z])/g, (_, c: string) => c.toUpperCase()), v]));`);
+		out.line(`return ${factoryName}(mapped as ${typeName}Config);`);
 		out.dedent();
 		out.line('}');
 	} else {
@@ -1052,7 +1097,7 @@ function emitFromFunction(
 			const resolverCall = getResolverExpression(fieldProj, leafSet, branchNodeSet, supertypeSet, keywordKinds, resolverRegistry, supertypeResolverNames);
 
 			if (field.multiple) {
-				const toArr = `(Array.isArray(obj.${inputKey}) ? obj.${inputKey} : [obj.${inputKey}]) as unknown[]`;
+				const toArr = `(Array.isArray(obj.${inputKey}) ? obj.${inputKey} : [obj.${inputKey}])`;
 				if (field.required) {
 					out.line(`${configKey}: obj.${inputKey} !== undefined ? (${toArr}).map(${resolverCall}) : [],`);
 				} else {
@@ -1080,7 +1125,7 @@ function emitFromFunction(
 				const slotResolver = getResolverExpression(slotProj, leafSet, branchNodeSet, supertypeSet, keywordKinds, resolverRegistry, supertypeResolverNames);
 
 				if (slot.multiple) {
-					const toArr = `(Array.isArray(obj.${propName}) ? obj.${propName} : [obj.${propName}]) as unknown[]`;
+					const toArr = `(Array.isArray(obj.${propName}) ? obj.${propName} : [obj.${propName}])`;
 					if (slot.required) {
 						out.line(`${propName}: obj.${propName} !== undefined ? (${toArr}).map(${slotResolver}) : [],`);
 					} else {
@@ -1178,7 +1223,7 @@ function emitVariantFromFunction(
 		const resolverCall = getResolverExpression(fieldProj, leafSet, branchNodeSet, supertypeSet, keywordKinds, resolverRegistry, supertypeResolverNames);
 
 		if (field.multiple) {
-			const toArr = `(Array.isArray(obj.${inputKey}) ? obj.${inputKey} : [obj.${inputKey}]) as unknown[]`;
+			const toArr = `(Array.isArray(obj.${inputKey}) ? obj.${inputKey} : [obj.${inputKey}])`;
 			if (field.required) {
 				out.line(`${configKey}: obj.${inputKey} !== undefined ? (${toArr}).map(${resolverCall}) : [],`);
 			} else {
