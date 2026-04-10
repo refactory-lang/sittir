@@ -18,9 +18,7 @@ Generating python IR...
     dict_pattern: [field-coverage] tree-sitter FIELD 'value' not explicitly in template (covered by $$$CHILDREN)
 
 Running round-trip validation...
-  x 86/115 round-trip (0 skipped, 29 errors)
-    x Async context managers and iterators [with_statement]: re-parse error: "with a as b:async for c in d:
- [e async for f in g]"
+  x 92/115 round-trip (0 skipped, 23 errors)
     x Matching specific values [match_statement]: re-parse error: "match command.split():
  case ["quit"]:
  print("Goodbye!")
@@ -72,11 +70,13 @@ Running round-trip validation...
  handle_click_at(x, y)"
     x Constants and enums [match_statement]: re-parse error: "match event.get():
  case Click((x, y), button=Button.LEFT): # This is a left cli"
-    x Dict mappings [for_statement]: re-parse error: "for action in actions:match action:
+    x Dict mappings [for_statement]: re-parse error: "for action in actions:
+ match action:
  case {"text": message, "color": c}:
- ui.set"
-    x Builtin classes [for_statement]: re-parse error: "for action in actions:match action:
- case {"text": str(message), "color": str(c)"
+ ui.s"
+    x Builtin classes [for_statement]: re-parse error: "for action in actions:
+ match action:
+ case {"text": str(message), "color": str("
     x Complex case patterns on classes [match_statement]: re-parse error: "match x:
  case Something(): # no args
  foo1()
@@ -90,25 +90,19 @@ Running round-trip validation...
     x Maybe sequence pattern right hand side precedence validation [match_statement]: re-parse error: "match x:
  case a1, *a2, a3:
  pass"
-    x If else statements [if_statement]: re-parse error: "if a:b else:
- f"
-    x Nested if statements [if_statement]: re-parse error: "if a:if b:
+    x Nested if statements [if_statement]: re-parse error: "if a:
+ if b:
  c
  else:
  if e:
  f"
-    x For statements [for_statement]: re-parse error: "for line, i in lines:print line
- for character, j in line:
- print character else"
-    x Try statements [try_statement]: re-parse error: "try:a except b:
+    x Try statements [try_statement]: re-parse error: "try:
+ a
+except b:
  c except d as e:
  f except g, h:
  i except:
  j"
-    x Class definitions [class_definition]: re-parse error: "class A :def b(self):
- return c"
-    x Class definitions with superclasses [class_definition]: re-parse error: "class A (B, C):def d():
- e"
     x Decorated definitions [decorated_definition]: re-parse error: "@a.b class C:
  @d(1)
  @e[2].f.g
@@ -119,11 +113,9 @@ Running round-trip validation...
  async def f():
  g"
     x Raise statements [raise_statement]: re-parse error: "raise raise"
-    x Comments at the ends of indented blocks [function_definition]: re-parse error: "def a () :if b:
- b # comment
- b # comment"
-  x 91/99 factory round-trip (2 skipped, 6 errors)
-    x with_statement: re-parse error: "with :async for c in d:
+  x 92/99 factory round-trip (2 skipped, 5 errors)
+    x with_statement: re-parse error: "with :
+ async for c in d:
  [e async for f in g]"
     x match_statement: re-parse error: "match command.split():
  case ["quit"]:
@@ -132,21 +124,14 @@ Running round-trip validation...
     x dict_pattern: Node 'undefined' has no 'fields' or 'children' — did you mean to set 'text' for 
     x import_from_statement: re-parse error: "from import b"
     x delete_statement: re-parse error: "del"
-    x class_definition: re-parse error: "class A :def b(self):
- return c"
-  x 87/99 from() correctness (0 undefined, 12 divergent, 0 skipped)
-    ! typed_parameter: from() diverges: children: 1 vs 0
-    ! block: from() diverges: children: 1 vs 0
-    ! generator_expression: from() diverges: children: 1 vs 0
-    ! list_comprehension: from() diverges: children: 1 vs 0
-    ! dictionary_comprehension: from() diverges: children: 1 vs 0
-    ! set_comprehension: from() diverges: children: 1 vs 0
-    ! case_clause: from() diverges: children: 3 vs 0
-    ! raise_statement: from() diverges: children: 1 vs 0
-    ! dict_pattern: from() diverges: children: 5 vs 1
-    ! except_clause: from() diverges: children: 1 vs 0
-    ! decorated_definition: from() diverges: children: 1 vs 0
-    ! exec_statement: from() diverges: children: 1 vs 0
+  x 92/99 from() correctness (0 undefined, 7 divergent, 0 skipped)
+    ! block: from() diverges: named children: 1 vs 0
+    ! generator_expression: from() diverges: named children: 0 vs 1
+    ! list_comprehension: from() diverges: named children: 0 vs 1
+    ! dictionary_comprehension: from() diverges: named children: 0 vs 1
+    ! set_comprehension: from() diverges: named children: 0 vs 1
+    ! dict_pattern: from() diverges: named children: 0 vs 1
+    ! except_clause: from() diverges: named children: 0 vs 1
 
 Done! Generated:
   templates.yaml, grammar.ts, types.ts, factories.ts, utils.ts, from.ts, consts.ts, index.ts

@@ -84,15 +84,9 @@ Running round-trip validation...
     x ref_pattern: re-parse error: "ref ref"
     x captured_pattern: re-parse error: "a@"
     x generic_pattern: re-parse error: "::"
-  x 127/135 from() correctness (0 undefined, 8 divergent, 0 skipped)
-    ! block: from() diverges: children: 2 vs 0
-    ! attribute: from() diverges: children: 1 vs 0
-    ! struct_pattern: from() diverges: children: 6 vs 0
-    ! tuple_struct_pattern: from() diverges: children: 3 vs 0
-    ! match_arm: from() diverges: children: 3 vs 0
-    ! match_pattern: from() diverges: children: 1 vs 0
-    ! field_initializer: from() diverges: children: 1 vs 0
-    ! generic_pattern: from() diverges: children: 1 vs 0
+  x 133/135 from() correctness (0 undefined, 2 divergent, 0 skipped)
+    ! attribute: from() diverges: named children: 1 vs 0
+    ! match_pattern: from() diverges: named children: 1 vs 0
 
 Done! Generated:
   templates.yaml, grammar.ts, types.ts, factories.ts, utils.ts, from.ts, consts.ts, index.ts

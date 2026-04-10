@@ -22,15 +22,21 @@ rules:
   augmented_assignment: $LEFT $OPERATOR $RIGHT
   await: await $PRIMARY_EXPRESSION
   binary_operator: $LEFT $OPERATOR $RIGHT
-  block: $$$CHILDREN $$$ALTERNATIVE
+  block: |-
+    $$$CHILDREN
+     $$$ALTERNATIVE
   boolean_operator: $LEFT $OPERATOR $RIGHT
   call: $FUNCTION $ARGUMENTS
   case_clause:
-    template: case $$$CHILDREN $GUARD:$CONSEQUENCE
+    template: |-
+      case $$$CHILDREN $GUARD:
+        $CONSEQUENCE
     joinBy: ","
   case_pattern: $CHILDREN
   chevron: ">>$EXPRESSION"
-  class_definition: class $NAME $TYPE_PARAMETERS $SUPERCLASSES:$BODY
+  class_definition: |-
+    class $NAME $TYPE_PARAMETERS $SUPERCLASSES:
+      $BODY
   class_pattern: $DOTTED_NAME($$$ARGUMENTS $$$CHILDREN)
   comparison_operator: $LEFT $$$OPERATORS $$$COMPARATORS
   complex_pattern:
@@ -53,8 +59,12 @@ rules:
   dictionary_splat: "**$EXPRESSION"
   dictionary_splat_pattern: "**$CHILDREN"
   dotted_name: $$$CHILDREN
-  elif_clause: elif $CONDITION:$CONSEQUENCE
-  else_clause: else:$BODY
+  elif_clause: |-
+    elif $CONDITION:
+      $CONSEQUENCE
+  else_clause: |-
+    else:
+      $BODY
   except_clause:
     template: except $$$VALUE $ALIAS_CLAUSE:$CHILDREN
     alias_clause: as $ALIAS
@@ -72,11 +82,16 @@ rules:
     joinBy: ","
   finally_clause: "finally: $BLOCK"
   for_in_clause: for $LEFT in $$$RIGHT
-  for_statement: for $LEFT in $RIGHT:$BODY $ALTERNATIVE
+  for_statement: |-
+    for $LEFT in $RIGHT:
+      $BODY
+    $ALTERNATIVE
   format_expression: $EXPRESSION $FORMAT_SPECIFIER $TYPE_CONVERSION
   format_specifier: ": $$$CHILDREN"
   function_definition:
-    template: def $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE_CLAUSE:$BODY
+    template: |-
+      def $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE_CLAUSE:
+        $BODY
     return_type_clause: -> $RETURN_TYPE
   future_import_statement:
     - from __future__ import $$$NAME
@@ -87,7 +102,10 @@ rules:
     template: global $$$CHILDREN
     joinBy: ","
   if_clause: if $EXPRESSION
-  if_statement: if $CONDITION:$CONSEQUENCE $$$ALTERNATIVE
+  if_statement: |-
+    if $CONDITION:
+      $CONSEQUENCE
+    $$$ALTERNATIVE
   import_from_statement:
     - from $MODULE_NAME import $WILDCARD_IMPORT
     - from $MODULE_NAME import $WILDCARD_IMPORT $$$NAME
@@ -151,7 +169,10 @@ rules:
   subscript:
     template: $VALUE[$$$SUBSCRIPT]
     joinBy: ","
-  try_statement: try:$BODY $$$EXCEPT_CLAUSES $ELSE_CLAUSE $FINALLY_CLAUSE
+  try_statement: |-
+    try:
+      $BODY
+    $$$EXCEPT_CLAUSES $ELSE_CLAUSE $FINALLY_CLAUSE
   tuple: () $$$CHILDREN
   tuple_pattern: () $$$CHILDREN
   type: $CHILDREN
@@ -164,14 +185,19 @@ rules:
   unary_operator: $OPERATOR $ARGUMENT
   union_pattern: $$$CHILDREN
   union_type: $LEFT|$RIGHT
-  while_statement: while $CONDITION:$BODY $ALTERNATIVE
+  while_statement: |-
+    while $CONDITION:
+      $BODY
+    $ALTERNATIVE
   with_clause:
     template:
       - $$$CHILDREN
       - ($$$CHILDREN)
     joinBy: ","
   with_item: $VALUE
-  with_statement: with $WITH_CLAUSE:$BODY
+  with_statement: |-
+    with $WITH_CLAUSE:
+      $BODY
   yield:
     - yield from $CHILDREN
     - yield $CHILDREN

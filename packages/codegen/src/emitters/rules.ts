@@ -158,7 +158,7 @@ function emitRuleForNode(node: StructuralNode, grammarRules: Record<string, Gram
 	appendMissingFields(parts, nodeFields, seen);
 	appendChildrenIfNeeded(parts, node, seen, childSlotMap, overrideFields);
 
-	const templateStr = parts.join('').replace(/\s+/g, ' ').trim();
+	const templateStr = parts.join('').split('\n').map(l => { const m = l.match(/^(\s*)(.*)/); const indent = m![1]!; const rest = m![2]!.replace(/ {2,}/g, ' ').trim(); return indent + rest; }).join('\n').trim();
 
 	if (clauses.length === 0 && joinBy === undefined) {
 		return templateStr;
@@ -205,7 +205,7 @@ function emitFromModelVariants(
 		appendMissingFields(parts, variantFields, seen);
 		appendChildrenIfNeeded(parts, node, seen, childSlotMap, overrideFields);
 
-		const templateStr = parts.join('').replace(/\s+/g, ' ').trim();
+		const templateStr = parts.join('').split('\n').map(l => { const m = l.match(/^(\s*)(.*)/); const indent = m![1]!; const rest = m![2]!.replace(/ {2,}/g, ' ').trim(); return indent + rest; }).join('\n').trim();
 		if (templateStr) templates.push(templateStr);
 
 		for (const c of clauses) {
@@ -336,7 +336,7 @@ function emitVariantTemplates(
 		// Append children if needed for this branch
 		appendChildrenIfNeeded(parts, node, seen, childSlotMap, overrideFields);
 
-		const templateStr = parts.join('').replace(/\s+/g, ' ').trim();
+		const templateStr = parts.join('').split('\n').map(l => { const m = l.match(/^(\s*)(.*)/); const indent = m![1]!; const rest = m![2]!.replace(/ {2,}/g, ' ').trim(); return indent + rest; }).join('\n').trim();
 		if (templateStr) templates.push(templateStr);
 
 		// Collect clauses (deduplicate by name)
@@ -615,7 +615,16 @@ function ruleToTemplate(
 			seen.add(rule.name);
 			const multi = fieldMultiple.get(rule.name) ?? false;
 			const varName = rule.name.toUpperCase();
-			return [multi ? `$$$${varName}` : `$${varName}`];
+			const varRef = multi ? `$$$${varName}` : `$${varName}`;
+			// Check if field content references an indented block (_suite, _indent-containing rules)
+			const contentName = rule.content.type === 'SYMBOL' ? rule.content.name : undefined;
+			if (contentName && gr[contentName]) {
+				const contentJson = JSON.stringify(gr[contentName]);
+				if (contentJson.includes('"_indent"')) {
+					return ['\n  ', varRef, '\n'];
+				}
+			}
+			return [varRef];
 		}
 
 		case 'SYMBOL': {
@@ -641,9 +650,13 @@ function ruleToTemplate(
 				return [childSlot.multiple ? `$$$${childSlot.varName}` : `$${childSlot.varName}`];
 			}
 			// Hidden rules that couldn't be inlined and aren't in childSlotMap:
-			// If inside a REPEAT, they likely resolve to child types → emit $$$CHILDREN.
-			// Otherwise they're token-like (e.g. _semicolon) — no output.
 			if (rule.name.startsWith('_')) {
+				// Indentation tokens → emit structural whitespace
+				if (rule.name === '_indent') return ['\n  '];
+				if (rule.name === '_dedent') return ['\n'];
+				if (rule.name === '_newline') return ['\n'];
+				// If inside a REPEAT, they likely resolve to child types → emit $$$CHILDREN.
+				// Otherwise they're token-like (e.g. _semicolon) — no output.
 				if (inRepeat && !seen.has('children')) {
 					seen.add('children');
 					return ['$$$CHILDREN'];
