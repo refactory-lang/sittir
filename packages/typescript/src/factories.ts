@@ -186,6 +186,30 @@ export function ambient_declaration_(
 }
 
 
+/** Variant factory: `ambient_declaration` — v0 form. Sets variant without runtime inference. */
+export function ambient_declaration__v0_(
+  config: ConfigOf<AmbientDeclaration>,
+) {
+  const base = ambient_declaration_(config as any);
+  return { ...base, variant: 'v0' as const };
+}
+
+/** Variant factory: `ambient_declaration` — global form. Sets variant without runtime inference. */
+export function ambient_declaration__global_(
+  config: ConfigOf<AmbientDeclaration>,
+) {
+  const base = ambient_declaration_(config as any);
+  return { ...base, variant: 'global' as const };
+}
+
+/** Variant factory: `ambient_declaration` — module form. Sets variant without runtime inference. */
+export function ambient_declaration__module_(
+  config: ConfigOf<AmbientDeclaration>,
+) {
+  const base = ambient_declaration_(config as any);
+  return { ...base, variant: 'module' as const };
+}
+
 export function arguments_(
   ...children: (Expression | SpreadElement)[]
 ) {
@@ -475,6 +499,206 @@ export function binary_expression_(
 }
 
 
+/** Variant factory: `binary_expression` — tok_2626 form. Sets variant without runtime inference. */
+export function binary_expression__tok_2626_(
+  config: ConfigOf<BinaryExpression>,
+) {
+  const base = binary_expression_(config as any);
+  return { ...base, variant: 'tok_2626' as const };
+}
+
+/** Variant factory: `binary_expression` — tok_7c7c form. Sets variant without runtime inference. */
+export function binary_expression__tok_7c7c_(
+  config: ConfigOf<BinaryExpression>,
+) {
+  const base = binary_expression_(config as any);
+  return { ...base, variant: 'tok_7c7c' as const };
+}
+
+/** Variant factory: `binary_expression` — tok_3e3e form. Sets variant without runtime inference. */
+export function binary_expression__tok_3e3e_(
+  config: ConfigOf<BinaryExpression>,
+) {
+  const base = binary_expression_(config as any);
+  return { ...base, variant: 'tok_3e3e' as const };
+}
+
+/** Variant factory: `binary_expression` — tok_3e3e3e form. Sets variant without runtime inference. */
+export function binary_expression__tok_3e3e3e_(
+  config: ConfigOf<BinaryExpression>,
+) {
+  const base = binary_expression_(config as any);
+  return { ...base, variant: 'tok_3e3e3e' as const };
+}
+
+/** Variant factory: `binary_expression` — tok_3c3c form. Sets variant without runtime inference. */
+export function binary_expression__tok_3c3c_(
+  config: ConfigOf<BinaryExpression>,
+) {
+  const base = binary_expression_(config as any);
+  return { ...base, variant: 'tok_3c3c' as const };
+}
+
+/** Variant factory: `binary_expression` — amp form. Sets variant without runtime inference. */
+export function binary_expression__amp_(
+  config: ConfigOf<BinaryExpression>,
+) {
+  const base = binary_expression_(config as any);
+  return { ...base, variant: 'amp' as const };
+}
+
+/** Variant factory: `binary_expression` — caret form. Sets variant without runtime inference. */
+export function binary_expression__caret_(
+  config: ConfigOf<BinaryExpression>,
+) {
+  const base = binary_expression_(config as any);
+  return { ...base, variant: 'caret' as const };
+}
+
+/** Variant factory: `binary_expression` — pipe form. Sets variant without runtime inference. */
+export function binary_expression__pipe_(
+  config: ConfigOf<BinaryExpression>,
+) {
+  const base = binary_expression_(config as any);
+  return { ...base, variant: 'pipe' as const };
+}
+
+/** Variant factory: `binary_expression` — plus form. Sets variant without runtime inference. */
+export function binary_expression__plus_(
+  config: ConfigOf<BinaryExpression>,
+) {
+  const base = binary_expression_(config as any);
+  return { ...base, variant: 'plus' as const };
+}
+
+/** Variant factory: `binary_expression` — minus form. Sets variant without runtime inference. */
+export function binary_expression__minus_(
+  config: ConfigOf<BinaryExpression>,
+) {
+  const base = binary_expression_(config as any);
+  return { ...base, variant: 'minus' as const };
+}
+
+/** Variant factory: `binary_expression` — star form. Sets variant without runtime inference. */
+export function binary_expression__star_(
+  config: ConfigOf<BinaryExpression>,
+) {
+  const base = binary_expression_(config as any);
+  return { ...base, variant: 'star' as const };
+}
+
+/** Variant factory: `binary_expression` — slash form. Sets variant without runtime inference. */
+export function binary_expression__slash_(
+  config: ConfigOf<BinaryExpression>,
+) {
+  const base = binary_expression_(config as any);
+  return { ...base, variant: 'slash' as const };
+}
+
+/** Variant factory: `binary_expression` — percent form. Sets variant without runtime inference. */
+export function binary_expression__percent_(
+  config: ConfigOf<BinaryExpression>,
+) {
+  const base = binary_expression_(config as any);
+  return { ...base, variant: 'percent' as const };
+}
+
+/** Variant factory: `binary_expression` — tok_2a2a form. Sets variant without runtime inference. */
+export function binary_expression__tok_2a2a_(
+  config: ConfigOf<BinaryExpression>,
+) {
+  const base = binary_expression_(config as any);
+  return { ...base, variant: 'tok_2a2a' as const };
+}
+
+/** Variant factory: `binary_expression` — angle form. Sets variant without runtime inference. */
+export function binary_expression__angle_(
+  config: ConfigOf<BinaryExpression>,
+) {
+  const base = binary_expression_(config as any);
+  return { ...base, variant: 'angle' as const };
+}
+
+/** Variant factory: `binary_expression` — tok_3c3d form. Sets variant without runtime inference. */
+export function binary_expression__tok_3c3d_(
+  config: ConfigOf<BinaryExpression>,
+) {
+  const base = binary_expression_(config as any);
+  return { ...base, variant: 'tok_3c3d' as const };
+}
+
+/** Variant factory: `binary_expression` — tok_3d3d form. Sets variant without runtime inference. */
+export function binary_expression__tok_3d3d_(
+  config: ConfigOf<BinaryExpression>,
+) {
+  const base = binary_expression_(config as any);
+  return { ...base, variant: 'tok_3d3d' as const };
+}
+
+/** Variant factory: `binary_expression` — tok_3d3d3d form. Sets variant without runtime inference. */
+export function binary_expression__tok_3d3d3d_(
+  config: ConfigOf<BinaryExpression>,
+) {
+  const base = binary_expression_(config as any);
+  return { ...base, variant: 'tok_3d3d3d' as const };
+}
+
+/** Variant factory: `binary_expression` — tok_213d form. Sets variant without runtime inference. */
+export function binary_expression__tok_213d_(
+  config: ConfigOf<BinaryExpression>,
+) {
+  const base = binary_expression_(config as any);
+  return { ...base, variant: 'tok_213d' as const };
+}
+
+/** Variant factory: `binary_expression` — tok_213d3d form. Sets variant without runtime inference. */
+export function binary_expression__tok_213d3d_(
+  config: ConfigOf<BinaryExpression>,
+) {
+  const base = binary_expression_(config as any);
+  return { ...base, variant: 'tok_213d3d' as const };
+}
+
+/** Variant factory: `binary_expression` — tok_3e3d form. Sets variant without runtime inference. */
+export function binary_expression__tok_3e3d_(
+  config: ConfigOf<BinaryExpression>,
+) {
+  const base = binary_expression_(config as any);
+  return { ...base, variant: 'tok_3e3d' as const };
+}
+
+/** Variant factory: `binary_expression` — close_angle form. Sets variant without runtime inference. */
+export function binary_expression__close_angle_(
+  config: ConfigOf<BinaryExpression>,
+) {
+  const base = binary_expression_(config as any);
+  return { ...base, variant: 'close_angle' as const };
+}
+
+/** Variant factory: `binary_expression` — tok_3f3f form. Sets variant without runtime inference. */
+export function binary_expression__tok_3f3f_(
+  config: ConfigOf<BinaryExpression>,
+) {
+  const base = binary_expression_(config as any);
+  return { ...base, variant: 'tok_3f3f' as const };
+}
+
+/** Variant factory: `binary_expression` — instanceof form. Sets variant without runtime inference. */
+export function binary_expression__instanceof_(
+  config: ConfigOf<BinaryExpression>,
+) {
+  const base = binary_expression_(config as any);
+  return { ...base, variant: 'instanceof' as const };
+}
+
+/** Variant factory: `binary_expression` — in form. Sets variant without runtime inference. */
+export function binary_expression__in_(
+  config: ConfigOf<BinaryExpression>,
+) {
+  const base = binary_expression_(config as any);
+  return { ...base, variant: 'in' as const };
+}
+
 export function break_statement_(
   config?: ConfigOf<BreakStatement>,
 ) {
@@ -522,6 +746,30 @@ export function call_expression_(
   };
 }
 
+
+/** Variant factory: `call_expression` — v0 form. Sets variant without runtime inference. */
+export function call_expression__v0_(
+  config: ConfigOf<CallExpression>,
+) {
+  const base = call_expression_(config as any);
+  return { ...base, variant: 'v0' as const };
+}
+
+/** Variant factory: `call_expression` — v1 form. Sets variant without runtime inference. */
+export function call_expression__v1_(
+  config: ConfigOf<CallExpression>,
+) {
+  const base = call_expression_(config as any);
+  return { ...base, variant: 'v1' as const };
+}
+
+/** Variant factory: `call_expression` — tok_3f2e form. Sets variant without runtime inference. */
+export function call_expression__tok_3f2e_(
+  config: ConfigOf<CallExpression>,
+) {
+  const base = call_expression_(config as any);
+  return { ...base, variant: 'tok_3f2e' as const };
+}
 
 export function call_signature_(
   config: ConfigOf<CallSignature>,
@@ -628,6 +876,38 @@ export function class_body_(
   };
 }
 
+
+/** Variant factory: `class_body` — decorator form. Sets variant without runtime inference. */
+export function class_body__decorator_(
+  config?: ConfigOf<ClassBody>,
+) {
+  const base = class_body_(config as any);
+  return { ...base, variant: 'decorator' as const };
+}
+
+/** Variant factory: `class_body` — comma form. Sets variant without runtime inference. */
+export function class_body__comma_(
+  config?: ConfigOf<ClassBody>,
+) {
+  const base = class_body_(config as any);
+  return { ...base, variant: 'comma' as const };
+}
+
+/** Variant factory: `class_body` — v2 form. Sets variant without runtime inference. */
+export function class_body__v2_(
+  config?: ConfigOf<ClassBody>,
+) {
+  const base = class_body_(config as any);
+  return { ...base, variant: 'v2' as const };
+}
+
+/** Variant factory: `class_body` — semi form. Sets variant without runtime inference. */
+export function class_body__semi_(
+  config?: ConfigOf<ClassBody>,
+) {
+  const base = class_body_(config as any);
+  return { ...base, variant: 'semi' as const };
+}
 
 export function class_declaration_(
   config: ConfigOf<ClassDeclaration>,
@@ -1068,6 +1348,70 @@ export function export_statement_(
 }
 
 
+/** Variant factory: `export_statement` — star form. Sets variant without runtime inference. */
+export function export_statement__star_(
+  config?: ConfigOf<ExportStatement>,
+) {
+  const base = export_statement_(config as any);
+  return { ...base, variant: 'star' as const };
+}
+
+/** Variant factory: `export_statement` — v1 form. Sets variant without runtime inference. */
+export function export_statement__v1_(
+  config?: ConfigOf<ExportStatement>,
+) {
+  const base = export_statement_(config as any);
+  return { ...base, variant: 'v1' as const };
+}
+
+/** Variant factory: `export_statement` — v2 form. Sets variant without runtime inference. */
+export function export_statement__v2_(
+  config?: ConfigOf<ExportStatement>,
+) {
+  const base = export_statement_(config as any);
+  return { ...base, variant: 'v2' as const };
+}
+
+/** Variant factory: `export_statement` — v3 form. Sets variant without runtime inference. */
+export function export_statement__v3_(
+  config?: ConfigOf<ExportStatement>,
+) {
+  const base = export_statement_(config as any);
+  return { ...base, variant: 'v3' as const };
+}
+
+/** Variant factory: `export_statement` — value form. Sets variant without runtime inference. */
+export function export_statement__value_(
+  config?: ConfigOf<ExportStatement>,
+) {
+  const base = export_statement_(config as any);
+  return { ...base, variant: 'value' as const };
+}
+
+/** Variant factory: `export_statement` — type_kw form. Sets variant without runtime inference. */
+export function export_statement__type_kw_(
+  config?: ConfigOf<ExportStatement>,
+) {
+  const base = export_statement_(config as any);
+  return { ...base, variant: 'type_kw' as const };
+}
+
+/** Variant factory: `export_statement` — eq form. Sets variant without runtime inference. */
+export function export_statement__eq_(
+  config?: ConfigOf<ExportStatement>,
+) {
+  const base = export_statement_(config as any);
+  return { ...base, variant: 'eq' as const };
+}
+
+/** Variant factory: `export_statement` — as form. Sets variant without runtime inference. */
+export function export_statement__as_(
+  config?: ConfigOf<ExportStatement>,
+) {
+  const base = export_statement_(config as any);
+  return { ...base, variant: 'as' as const };
+}
+
 export function expression_statement_(
   child: Expression | SequenceExpression,
 ) {
@@ -1232,6 +1576,22 @@ export function for_statement_(
   };
 }
 
+
+/** Variant factory: `for_statement` — v0 form. Sets variant without runtime inference. */
+export function for_statement__v0_(
+  config: ConfigOf<ForStatement>,
+) {
+  const base = for_statement_(config as any);
+  return { ...base, variant: 'v0' as const };
+}
+
+/** Variant factory: `for_statement` — v1 form. Sets variant without runtime inference. */
+export function for_statement__v1_(
+  config: ConfigOf<ForStatement>,
+) {
+  const base = for_statement_(config as any);
+  return { ...base, variant: 'v1' as const };
+}
 
 export function formal_parameters_(
   ...children: (OptionalParameter | RequiredParameter)[]
@@ -1558,6 +1918,22 @@ export function import_clause_(
 }
 
 
+/** Variant factory: `import_clause` — v0 form. Sets variant without runtime inference. */
+export function import_clause__v0_(
+  config: ConfigOf<ImportClause>,
+) {
+  const base = import_clause_(config as any);
+  return { ...base, variant: 'v0' as const };
+}
+
+/** Variant factory: `import_clause` — comma form. Sets variant without runtime inference. */
+export function import_clause__comma_(
+  config: ConfigOf<ImportClause>,
+) {
+  const base = import_clause_(config as any);
+  return { ...base, variant: 'comma' as const };
+}
+
 export function import_require_clause_(
   config: ConfigOf<ImportRequireClause>,
 ) {
@@ -1606,6 +1982,22 @@ export function import_specifier_(
 }
 
 
+/** Variant factory: `import_specifier` — v0 form. Sets variant without runtime inference. */
+export function import_specifier__v0_(
+  config: ConfigOf<ImportSpecifier>,
+) {
+  const base = import_specifier_(config as any);
+  return { ...base, variant: 'v0' as const };
+}
+
+/** Variant factory: `import_specifier` — as form. Sets variant without runtime inference. */
+export function import_specifier__as_(
+  config: ConfigOf<ImportSpecifier>,
+) {
+  const base = import_specifier_(config as any);
+  return { ...base, variant: 'as' as const };
+}
+
 export function import_statement_(
   config: ConfigOf<ImportStatement>,
 ) {
@@ -1637,6 +2029,30 @@ export function import_statement_(
 }
 
 
+/** Variant factory: `import_statement` — from_clause form. Sets variant without runtime inference. */
+export function import_statement__from_clause_(
+  config: ConfigOf<ImportStatement>,
+) {
+  const base = import_statement_(config as any);
+  return { ...base, variant: 'from_clause' as const };
+}
+
+/** Variant factory: `import_statement` — v1 form. Sets variant without runtime inference. */
+export function import_statement__v1_(
+  config: ConfigOf<ImportStatement>,
+) {
+  const base = import_statement_(config as any);
+  return { ...base, variant: 'v1' as const };
+}
+
+/** Variant factory: `import_statement` — source form. Sets variant without runtime inference. */
+export function import_statement__source_(
+  config: ConfigOf<ImportStatement>,
+) {
+  const base = import_statement_(config as any);
+  return { ...base, variant: 'source' as const };
+}
+
 export function index_signature_(
   config: ConfigOf<IndexSignature>,
 ) {
@@ -1667,6 +2083,22 @@ export function index_signature_(
   };
 }
 
+
+/** Variant factory: `index_signature` — colon form. Sets variant without runtime inference. */
+export function index_signature__colon_(
+  config: ConfigOf<IndexSignature>,
+) {
+  const base = index_signature_(config as any);
+  return { ...base, variant: 'colon' as const };
+}
+
+/** Variant factory: `index_signature` — mapped_type_clause form. Sets variant without runtime inference. */
+export function index_signature__mapped_type_clause_(
+  config: ConfigOf<IndexSignature>,
+) {
+  const base = index_signature_(config as any);
+  return { ...base, variant: 'mapped_type_clause' as const };
+}
 
 export function index_type_query_(
   config: ConfigOf<IndexTypeQuery>,
@@ -2459,6 +2891,22 @@ export function parenthesized_expression_(
 }
 
 
+/** Variant factory: `parenthesized_expression` — type form. Sets variant without runtime inference. */
+export function parenthesized_expression__type_(
+  config?: ConfigOf<ParenthesizedExpression>,
+) {
+  const base = parenthesized_expression_(config as any);
+  return { ...base, variant: 'type' as const };
+}
+
+/** Variant factory: `parenthesized_expression` — v1 form. Sets variant without runtime inference. */
+export function parenthesized_expression__v1_(
+  config?: ConfigOf<ParenthesizedExpression>,
+) {
+  const base = parenthesized_expression_(config as any);
+  return { ...base, variant: 'v1' as const };
+}
+
 export function parenthesized_type_(
   child: Type,
 ) {
@@ -2562,6 +3010,30 @@ export function public_field_definition_(
   };
 }
 
+
+/** Variant factory: `public_field_definition` — static form. Sets variant without runtime inference. */
+export function public_field_definition__static_(
+  config: ConfigOf<PublicFieldDefinition>,
+) {
+  const base = public_field_definition_(config as any);
+  return { ...base, variant: 'static' as const };
+}
+
+/** Variant factory: `public_field_definition` — abstract form. Sets variant without runtime inference. */
+export function public_field_definition__abstract_(
+  config: ConfigOf<PublicFieldDefinition>,
+) {
+  const base = public_field_definition_(config as any);
+  return { ...base, variant: 'abstract' as const };
+}
+
+/** Variant factory: `public_field_definition` — accessor form. Sets variant without runtime inference. */
+export function public_field_definition__accessor_(
+  config: ConfigOf<PublicFieldDefinition>,
+) {
+  const base = public_field_definition_(config as any);
+  return { ...base, variant: 'accessor' as const };
+}
 
 export function readonly_type_(
   child: Type,
@@ -2799,6 +3271,22 @@ export function string_(
   };
 }
 
+
+/** Variant factory: `string` — tok_22 form. Sets variant without runtime inference. */
+export function string__tok_22_(
+  config?: ConfigOf<String>,
+) {
+  const base = string_(config as any);
+  return { ...base, variant: 'tok_22' as const };
+}
+
+/** Variant factory: `string` — tok_27 form. Sets variant without runtime inference. */
+export function string__tok_27_(
+  config?: ConfigOf<String>,
+) {
+  const base = string_(config as any);
+  return { ...base, variant: 'tok_27' as const };
+}
 
 export function subscript_expression_(
   config: ConfigOf<SubscriptExpression>,
@@ -3387,6 +3875,22 @@ export function variable_declarator_(
 }
 
 
+/** Variant factory: `variable_declarator` — v0 form. Sets variant without runtime inference. */
+export function variable_declarator__v0_(
+  config: ConfigOf<VariableDeclarator>,
+) {
+  const base = variable_declarator_(config as any);
+  return { ...base, variant: 'v0' as const };
+}
+
+/** Variant factory: `variable_declarator` — bang form. Sets variant without runtime inference. */
+export function variable_declarator__bang_(
+  config: ConfigOf<VariableDeclarator>,
+) {
+  const base = variable_declarator_(config as any);
+  return { ...base, variant: 'bang' as const };
+}
+
 export function while_statement_(
   config: ConfigOf<WhileStatement>,
 ) {
@@ -3455,6 +3959,22 @@ export function yield_expression_(
   };
 }
 
+
+/** Variant factory: `yield_expression` — star form. Sets variant without runtime inference. */
+export function yield_expression__star_(
+  config?: ConfigOf<YieldExpression>,
+) {
+  const base = yield_expression_(config as any);
+  return { ...base, variant: 'star' as const };
+}
+
+/** Variant factory: `yield_expression` — v1 form. Sets variant without runtime inference. */
+export function yield_expression__v1_(
+  config?: ConfigOf<YieldExpression>,
+) {
+  const base = yield_expression_(config as any);
+  return { ...base, variant: 'v1' as const };
+}
 
 export function accessibility_modifier_(text: string) {
   return {

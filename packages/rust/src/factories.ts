@@ -134,6 +134,22 @@ export function array_expression_(
 }
 
 
+/** Variant factory: `array_expression` — semi form. Sets variant without runtime inference. */
+export function array_expression__semi_(
+  config?: ConfigOf<ArrayExpression>,
+) {
+  const base = array_expression_(config as any);
+  return { ...base, variant: 'semi' as const };
+}
+
+/** Variant factory: `array_expression` — comma form. Sets variant without runtime inference. */
+export function array_expression__comma_(
+  config?: ConfigOf<ArrayExpression>,
+) {
+  const base = array_expression_(config as any);
+  return { ...base, variant: 'comma' as const };
+}
+
 export function array_type_(
   config: ConfigOf<ArrayType>,
 ) {
@@ -339,6 +355,78 @@ export function binary_expression_(
   };
 }
 
+
+/** Variant factory: `binary_expression` — tok_2626 form. Sets variant without runtime inference. */
+export function binary_expression__tok_2626_(
+  config: ConfigOf<BinaryExpression>,
+) {
+  const base = binary_expression_(config as any);
+  return { ...base, variant: 'tok_2626' as const };
+}
+
+/** Variant factory: `binary_expression` — tok_7c7c form. Sets variant without runtime inference. */
+export function binary_expression__tok_7c7c_(
+  config: ConfigOf<BinaryExpression>,
+) {
+  const base = binary_expression_(config as any);
+  return { ...base, variant: 'tok_7c7c' as const };
+}
+
+/** Variant factory: `binary_expression` — amp form. Sets variant without runtime inference. */
+export function binary_expression__amp_(
+  config: ConfigOf<BinaryExpression>,
+) {
+  const base = binary_expression_(config as any);
+  return { ...base, variant: 'amp' as const };
+}
+
+/** Variant factory: `binary_expression` — pipe form. Sets variant without runtime inference. */
+export function binary_expression__pipe_(
+  config: ConfigOf<BinaryExpression>,
+) {
+  const base = binary_expression_(config as any);
+  return { ...base, variant: 'pipe' as const };
+}
+
+/** Variant factory: `binary_expression` — caret form. Sets variant without runtime inference. */
+export function binary_expression__caret_(
+  config: ConfigOf<BinaryExpression>,
+) {
+  const base = binary_expression_(config as any);
+  return { ...base, variant: 'caret' as const };
+}
+
+/** Variant factory: `binary_expression` — tok_3d3d form. Sets variant without runtime inference. */
+export function binary_expression__tok_3d3d_(
+  config: ConfigOf<BinaryExpression>,
+) {
+  const base = binary_expression_(config as any);
+  return { ...base, variant: 'tok_3d3d' as const };
+}
+
+/** Variant factory: `binary_expression` — tok_3c3c form. Sets variant without runtime inference. */
+export function binary_expression__tok_3c3c_(
+  config: ConfigOf<BinaryExpression>,
+) {
+  const base = binary_expression_(config as any);
+  return { ...base, variant: 'tok_3c3c' as const };
+}
+
+/** Variant factory: `binary_expression` — plus form. Sets variant without runtime inference. */
+export function binary_expression__plus_(
+  config: ConfigOf<BinaryExpression>,
+) {
+  const base = binary_expression_(config as any);
+  return { ...base, variant: 'plus' as const };
+}
+
+/** Variant factory: `binary_expression` — star form. Sets variant without runtime inference. */
+export function binary_expression__star_(
+  config: ConfigOf<BinaryExpression>,
+) {
+  const base = binary_expression_(config as any);
+  return { ...base, variant: 'star' as const };
+}
 
 export function block_(
   config?: ConfigOf<Block>,
@@ -823,6 +911,22 @@ export function expression_statement_(
 }
 
 
+/** Variant factory: `expression_statement` — semi form. Sets variant without runtime inference. */
+export function expression_statement__semi_(
+  config?: ConfigOf<ExpressionStatement>,
+) {
+  const base = expression_statement_(config as any);
+  return { ...base, variant: 'semi' as const };
+}
+
+/** Variant factory: `expression_statement` — v1 form. Sets variant without runtime inference. */
+export function expression_statement__v1_(
+  config?: ConfigOf<ExpressionStatement>,
+) {
+  const base = expression_statement_(config as any);
+  return { ...base, variant: 'v1' as const };
+}
+
 export function extern_crate_declaration_(
   config: ConfigOf<ExternCrateDeclaration>,
 ) {
@@ -1010,6 +1114,22 @@ export function field_pattern_(
   };
 }
 
+
+/** Variant factory: `field_pattern` — v0 form. Sets variant without runtime inference. */
+export function field_pattern__v0_(
+  config: ConfigOf<FieldPattern>,
+) {
+  const base = field_pattern_(config as any);
+  return { ...base, variant: 'v0' as const };
+}
+
+/** Variant factory: `field_pattern` — colon form. Sets variant without runtime inference. */
+export function field_pattern__colon_(
+  config: ConfigOf<FieldPattern>,
+) {
+  const base = field_pattern_(config as any);
+  return { ...base, variant: 'colon' as const };
+}
 
 export function for_expression_(
   config: ConfigOf<ForExpression>,
@@ -1211,6 +1331,22 @@ export function function_type_(
   };
 }
 
+
+/** Variant factory: `function_type` — trait form. Sets variant without runtime inference. */
+export function function_type__trait_(
+  config: ConfigOf<FunctionType>,
+) {
+  const base = function_type_(config as any);
+  return { ...base, variant: 'trait' as const };
+}
+
+/** Variant factory: `function_type` — fn form. Sets variant without runtime inference. */
+export function function_type__fn_(
+  config: ConfigOf<FunctionType>,
+) {
+  const base = function_type_(config as any);
+  return { ...base, variant: 'fn' as const };
+}
 
 export function gen_block_(
   config: ConfigOf<GenBlock>,
@@ -1610,6 +1746,22 @@ export function line_comment_(
 }
 
 
+/** Variant factory: `line_comment` — v0 form. Sets variant without runtime inference. */
+export function line_comment__v0_(
+  config?: ConfigOf<LineComment>,
+) {
+  const base = line_comment_(config as any);
+  return { ...base, variant: 'v0' as const };
+}
+
+/** Variant factory: `line_comment` — doc form. Sets variant without runtime inference. */
+export function line_comment__doc_(
+  config?: ConfigOf<LineComment>,
+) {
+  const base = line_comment_(config as any);
+  return { ...base, variant: 'doc' as const };
+}
+
 export function loop_expression_(
   config: ConfigOf<LoopExpression>,
 ) {
@@ -1657,6 +1809,30 @@ export function macro_definition_(
   };
 }
 
+
+/** Variant factory: `macro_definition` — paren form. Sets variant without runtime inference. */
+export function macro_definition__paren_(
+  config: ConfigOf<MacroDefinition>,
+) {
+  const base = macro_definition_(config as any);
+  return { ...base, variant: 'paren' as const };
+}
+
+/** Variant factory: `macro_definition` — bracket form. Sets variant without runtime inference. */
+export function macro_definition__bracket_(
+  config: ConfigOf<MacroDefinition>,
+) {
+  const base = macro_definition_(config as any);
+  return { ...base, variant: 'bracket' as const };
+}
+
+/** Variant factory: `macro_definition` — brace form. Sets variant without runtime inference. */
+export function macro_definition__brace_(
+  config: ConfigOf<MacroDefinition>,
+) {
+  const base = macro_definition_(config as any);
+  return { ...base, variant: 'brace' as const };
+}
 
 export function macro_invocation_(
   config: ConfigOf<MacroInvocation>,
@@ -1893,6 +2069,22 @@ export function or_pattern_(
 }
 
 
+/** Variant factory: `or_pattern` — right form. Sets variant without runtime inference. */
+export function or_pattern__right_(
+  config: ConfigOf<OrPattern>,
+) {
+  const base = or_pattern_(config as any);
+  return { ...base, variant: 'right' as const };
+}
+
+/** Variant factory: `or_pattern` — v1 form. Sets variant without runtime inference. */
+export function or_pattern__v1_(
+  config: ConfigOf<OrPattern>,
+) {
+  const base = or_pattern_(config as any);
+  return { ...base, variant: 'v1' as const };
+}
+
 export function ordered_field_declaration_list_(
   config?: ConfigOf<OrderedFieldDeclarationList>,
 ) {
@@ -2056,6 +2248,30 @@ export function range_expression_(
 }
 
 
+/** Variant factory: `range_expression` — ellipsis form. Sets variant without runtime inference. */
+export function range_expression__ellipsis_(
+  config: ConfigOf<RangeExpression>,
+) {
+  const base = range_expression_(config as any);
+  return { ...base, variant: 'ellipsis' as const };
+}
+
+/** Variant factory: `range_expression` — v1 form. Sets variant without runtime inference. */
+export function range_expression__v1_(
+  config: ConfigOf<RangeExpression>,
+) {
+  const base = range_expression_(config as any);
+  return { ...base, variant: 'v1' as const };
+}
+
+/** Variant factory: `range_expression` — v2 form. Sets variant without runtime inference. */
+export function range_expression__v2_(
+  config: ConfigOf<RangeExpression>,
+) {
+  const base = range_expression_(config as any);
+  return { ...base, variant: 'v2' as const };
+}
+
 export function range_pattern_(
   config?: ConfigOf<RangePattern>,
 ) {
@@ -2080,6 +2296,30 @@ export function range_pattern_(
   };
 }
 
+
+/** Variant factory: `range_pattern` — ellipsis form. Sets variant without runtime inference. */
+export function range_pattern__ellipsis_(
+  config?: ConfigOf<RangePattern>,
+) {
+  const base = range_pattern_(config as any);
+  return { ...base, variant: 'ellipsis' as const };
+}
+
+/** Variant factory: `range_pattern` — v1 form. Sets variant without runtime inference. */
+export function range_pattern__v1_(
+  config?: ConfigOf<RangePattern>,
+) {
+  const base = range_pattern_(config as any);
+  return { ...base, variant: 'v1' as const };
+}
+
+/** Variant factory: `range_pattern` — v2 form. Sets variant without runtime inference. */
+export function range_pattern__v2_(
+  config?: ConfigOf<RangePattern>,
+) {
+  const base = range_pattern_(config as any);
+  return { ...base, variant: 'v2' as const };
+}
 
 export function raw_string_literal_(
   config: ConfigOf<RawStringLiteral>,
@@ -2149,6 +2389,22 @@ export function reference_expression_(
   };
 }
 
+
+/** Variant factory: `reference_expression` — raw form. Sets variant without runtime inference. */
+export function reference_expression__raw_(
+  config: ConfigOf<ReferenceExpression>,
+) {
+  const base = reference_expression_(config as any);
+  return { ...base, variant: 'raw' as const };
+}
+
+/** Variant factory: `reference_expression` — v1 form. Sets variant without runtime inference. */
+export function reference_expression__v1_(
+  config: ConfigOf<ReferenceExpression>,
+) {
+  const base = reference_expression_(config as any);
+  return { ...base, variant: 'v1' as const };
+}
 
 export function reference_pattern_(
   config: ConfigOf<ReferencePattern>,
@@ -2497,6 +2753,30 @@ export function struct_item_(
 }
 
 
+/** Variant factory: `struct_item` — v0 form. Sets variant without runtime inference. */
+export function struct_item__v0_(
+  config: ConfigOf<StructItem>,
+) {
+  const base = struct_item_(config as any);
+  return { ...base, variant: 'v0' as const };
+}
+
+/** Variant factory: `struct_item` — v1 form. Sets variant without runtime inference. */
+export function struct_item__v1_(
+  config: ConfigOf<StructItem>,
+) {
+  const base = struct_item_(config as any);
+  return { ...base, variant: 'v1' as const };
+}
+
+/** Variant factory: `struct_item` — v2 form. Sets variant without runtime inference. */
+export function struct_item__v2_(
+  config: ConfigOf<StructItem>,
+) {
+  const base = struct_item_(config as any);
+  return { ...base, variant: 'v2' as const };
+}
+
 export function struct_pattern_(
   config: ConfigOf<StructPattern>,
 ) {
@@ -2602,6 +2882,30 @@ export function token_tree_(
 }
 
 
+/** Variant factory: `token_tree` — paren form. Sets variant without runtime inference. */
+export function token_tree__paren_(
+  config?: ConfigOf<TokenTree>,
+) {
+  const base = token_tree_(config as any);
+  return { ...base, variant: 'paren' as const };
+}
+
+/** Variant factory: `token_tree` — bracket form. Sets variant without runtime inference. */
+export function token_tree__bracket_(
+  config?: ConfigOf<TokenTree>,
+) {
+  const base = token_tree_(config as any);
+  return { ...base, variant: 'bracket' as const };
+}
+
+/** Variant factory: `token_tree` — brace form. Sets variant without runtime inference. */
+export function token_tree__brace_(
+  config?: ConfigOf<TokenTree>,
+) {
+  const base = token_tree_(config as any);
+  return { ...base, variant: 'brace' as const };
+}
+
 export function token_tree_pattern_(
   ...children: (Crate | Identifier | Literal | Metavariable | MutableSpecifier | PrimitiveType | Self | Super | TokenBindingPattern | TokenRepetitionPattern | TokenTreePattern)[]
 ) {
@@ -2620,6 +2924,30 @@ export function token_tree_pattern_(
   };
 }
 
+
+/** Variant factory: `token_tree_pattern` — paren form. Sets variant without runtime inference. */
+export function token_tree_pattern__paren_(
+  config?: ConfigOf<TokenTreePattern>,
+) {
+  const base = token_tree_pattern_(config as any);
+  return { ...base, variant: 'paren' as const };
+}
+
+/** Variant factory: `token_tree_pattern` — bracket form. Sets variant without runtime inference. */
+export function token_tree_pattern__bracket_(
+  config?: ConfigOf<TokenTreePattern>,
+) {
+  const base = token_tree_pattern_(config as any);
+  return { ...base, variant: 'bracket' as const };
+}
+
+/** Variant factory: `token_tree_pattern` — brace form. Sets variant without runtime inference. */
+export function token_tree_pattern__brace_(
+  config?: ConfigOf<TokenTreePattern>,
+) {
+  const base = token_tree_pattern_(config as any);
+  return { ...base, variant: 'brace' as const };
+}
 
 export function trait_bounds_(
   ...children: (HigherRankedTraitBound | Lifetime | Type)[]
@@ -3177,6 +3505,22 @@ export function visibility_modifier_(
   };
 }
 
+
+/** Variant factory: `visibility_modifier` — v0 form. Sets variant without runtime inference. */
+export function visibility_modifier__v0_(
+  config?: ConfigOf<VisibilityModifier>,
+) {
+  const base = visibility_modifier_(config as any);
+  return { ...base, variant: 'v0' as const };
+}
+
+/** Variant factory: `visibility_modifier` — pub form. Sets variant without runtime inference. */
+export function visibility_modifier__pub_(
+  config?: ConfigOf<VisibilityModifier>,
+) {
+  const base = visibility_modifier_(config as any);
+  return { ...base, variant: 'pub' as const };
+}
 
 export function where_clause_(
   ...children: (WherePredicate)[]

@@ -36,8 +36,17 @@ export function emitIrNamespace(config: EmitIrNamespaceConfig): string {
 	// Reserved words use _prefix internal name from factories.ts
 	const factoryImports: string[] = [];
 	const importName = toRawFactoryName;
+	const modelMap = new Map(allNodes.map(n => [n.kind, n]));
 	for (const kind of branchKinds) {
 		factoryImports.push(importName(kind));
+		// Add variant factory imports
+		const node = modelMap.get(kind)!;
+		const variants = (node.modelType === 'branch' || node.modelType === 'container') ? node.variants : undefined;
+		if (variants && variants.length > 1) {
+			for (const v of variants) {
+				factoryImports.push(`${importName(kind)}_${v.name}_`);
+			}
+		}
 	}
 	for (const kind of leafKinds) {
 		if (!keywordKinds.has(kind)) {
@@ -64,12 +73,23 @@ export function emitIrNamespace(config: EmitIrNamespaceConfig): string {
 
 	lines.push('export const ir = {');
 
-	// Branch factories — combined with .from() via Object.assign
+	// Branch factories — combined with .from() and variant factories via Object.assign
 	lines.push('  // Branch node factories');
 	for (const kind of branchKinds) {
 		const irKey = resolveIrKey(kind, usedKeys);
 		const fromFn = `${toFactoryName(kind)}From`;
-		lines.push(`  ${irKey}: Object.assign(${importName(kind)}, { from: ${fromFn} }),`);
+		const node = modelMap.get(kind)!;
+		const variants = (node.modelType === 'branch' || node.modelType === 'container') ? node.variants : undefined;
+		if (variants && variants.length > 1) {
+			// Filter out variant names that collide with 'from' (reserved for .from() resolver)
+			const variantEntries = variants
+				.filter(v => v.name !== 'from')
+				.map(v => `${v.name}: ${importName(kind)}_${v.name}_`);
+			const extras = variantEntries.length > 0 ? `, ${variantEntries.join(', ')}` : '';
+			lines.push(`  ${irKey}: Object.assign(${importName(kind)}, { from: ${fromFn}${extras} }),`);
+		} else {
+			lines.push(`  ${irKey}: Object.assign(${importName(kind)}, { from: ${fromFn} }),`);
+		}
 	}
 
 	lines.push('');

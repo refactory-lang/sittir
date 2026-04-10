@@ -411,6 +411,24 @@ export function emitFactories(config: EmitFactoriesConfig): string {
 	for (const node of nodes) {
 		lines.push(emitFactory({ node, leafKinds, ctx }));
 		lines.push('');
+
+		// Variant-specific factory methods for nodes with named variants
+		const variants = node.variants;
+		if (variants && variants.length > 1) {
+			const typeName = toTypeName(node.kind);
+			const baseName = toRawFactoryName(node.kind);
+			for (const v of variants) {
+				const variantName = `${baseName}_${v.name}_`;
+				lines.push(`/** Variant factory: \`${node.kind}\` — ${v.name} form. Sets variant without runtime inference. */`);
+				lines.push(`export function ${variantName}(`);
+				lines.push(`  config${node.modelType === 'branch' && fieldsOf(node).some(f => f.required) ? '' : '?'}: ConfigOf<${typeName}>,`);
+				lines.push(`) {`);
+				lines.push(`  const base = ${baseName}(config as any);`);
+				lines.push(`  return { ...base, variant: '${v.name}' as const };`);
+				lines.push(`}`);
+				lines.push('');
+			}
+		}
 	}
 
 	// Terminal (leaf) factories

@@ -159,6 +159,30 @@ export function assignment_(
 }
 
 
+/** Variant factory: `assignment` — v0 form. Sets variant without runtime inference. */
+export function assignment__v0_(
+  config: ConfigOf<Assignment>,
+) {
+  const base = assignment_(config as any);
+  return { ...base, variant: 'v0' as const };
+}
+
+/** Variant factory: `assignment` — v1 form. Sets variant without runtime inference. */
+export function assignment__v1_(
+  config: ConfigOf<Assignment>,
+) {
+  const base = assignment_(config as any);
+  return { ...base, variant: 'v1' as const };
+}
+
+/** Variant factory: `assignment` — v2 form. Sets variant without runtime inference. */
+export function assignment__v2_(
+  config: ConfigOf<Assignment>,
+) {
+  const base = assignment_(config as any);
+  return { ...base, variant: 'v2' as const };
+}
+
 export function attribute_(
   config: ConfigOf<Attribute>,
 ) {
@@ -255,6 +279,110 @@ export function binary_operator_(
 }
 
 
+/** Variant factory: `binary_operator` — plus form. Sets variant without runtime inference. */
+export function binary_operator__plus_(
+  config: ConfigOf<BinaryOperator>,
+) {
+  const base = binary_operator_(config as any);
+  return { ...base, variant: 'plus' as const };
+}
+
+/** Variant factory: `binary_operator` — minus form. Sets variant without runtime inference. */
+export function binary_operator__minus_(
+  config: ConfigOf<BinaryOperator>,
+) {
+  const base = binary_operator_(config as any);
+  return { ...base, variant: 'minus' as const };
+}
+
+/** Variant factory: `binary_operator` — star form. Sets variant without runtime inference. */
+export function binary_operator__star_(
+  config: ConfigOf<BinaryOperator>,
+) {
+  const base = binary_operator_(config as any);
+  return { ...base, variant: 'star' as const };
+}
+
+/** Variant factory: `binary_operator` — at form. Sets variant without runtime inference. */
+export function binary_operator__at_(
+  config: ConfigOf<BinaryOperator>,
+) {
+  const base = binary_operator_(config as any);
+  return { ...base, variant: 'at' as const };
+}
+
+/** Variant factory: `binary_operator` — slash form. Sets variant without runtime inference. */
+export function binary_operator__slash_(
+  config: ConfigOf<BinaryOperator>,
+) {
+  const base = binary_operator_(config as any);
+  return { ...base, variant: 'slash' as const };
+}
+
+/** Variant factory: `binary_operator` — percent form. Sets variant without runtime inference. */
+export function binary_operator__percent_(
+  config: ConfigOf<BinaryOperator>,
+) {
+  const base = binary_operator_(config as any);
+  return { ...base, variant: 'percent' as const };
+}
+
+/** Variant factory: `binary_operator` — tok_2f2f form. Sets variant without runtime inference. */
+export function binary_operator__tok_2f2f_(
+  config: ConfigOf<BinaryOperator>,
+) {
+  const base = binary_operator_(config as any);
+  return { ...base, variant: 'tok_2f2f' as const };
+}
+
+/** Variant factory: `binary_operator` — tok_2a2a form. Sets variant without runtime inference. */
+export function binary_operator__tok_2a2a_(
+  config: ConfigOf<BinaryOperator>,
+) {
+  const base = binary_operator_(config as any);
+  return { ...base, variant: 'tok_2a2a' as const };
+}
+
+/** Variant factory: `binary_operator` — pipe form. Sets variant without runtime inference. */
+export function binary_operator__pipe_(
+  config: ConfigOf<BinaryOperator>,
+) {
+  const base = binary_operator_(config as any);
+  return { ...base, variant: 'pipe' as const };
+}
+
+/** Variant factory: `binary_operator` — amp form. Sets variant without runtime inference. */
+export function binary_operator__amp_(
+  config: ConfigOf<BinaryOperator>,
+) {
+  const base = binary_operator_(config as any);
+  return { ...base, variant: 'amp' as const };
+}
+
+/** Variant factory: `binary_operator` — caret form. Sets variant without runtime inference. */
+export function binary_operator__caret_(
+  config: ConfigOf<BinaryOperator>,
+) {
+  const base = binary_operator_(config as any);
+  return { ...base, variant: 'caret' as const };
+}
+
+/** Variant factory: `binary_operator` — tok_3c3c form. Sets variant without runtime inference. */
+export function binary_operator__tok_3c3c_(
+  config: ConfigOf<BinaryOperator>,
+) {
+  const base = binary_operator_(config as any);
+  return { ...base, variant: 'tok_3c3c' as const };
+}
+
+/** Variant factory: `binary_operator` — tok_3e3e form. Sets variant without runtime inference. */
+export function binary_operator__tok_3e3e_(
+  config: ConfigOf<BinaryOperator>,
+) {
+  const base = binary_operator_(config as any);
+  return { ...base, variant: 'tok_3e3e' as const };
+}
+
 export function block_(
   config?: ConfigOf<Block>,
 ) {
@@ -306,6 +434,22 @@ export function boolean_operator_(
   };
 }
 
+
+/** Variant factory: `boolean_operator` — and form. Sets variant without runtime inference. */
+export function boolean_operator__and_(
+  config: ConfigOf<BooleanOperator>,
+) {
+  const base = boolean_operator_(config as any);
+  return { ...base, variant: 'and' as const };
+}
+
+/** Variant factory: `boolean_operator` — or form. Sets variant without runtime inference. */
+export function boolean_operator__or_(
+  config: ConfigOf<BooleanOperator>,
+) {
+  const base = boolean_operator_(config as any);
+  return { ...base, variant: 'or' as const };
+}
 
 export function call_(
   config: ConfigOf<Call>,
@@ -887,6 +1031,22 @@ export function expression_list_(
 }
 
 
+/** Variant factory: `expression_list` — v0 form. Sets variant without runtime inference. */
+export function expression_list__v0_(
+  config?: ConfigOf<ExpressionList>,
+) {
+  const base = expression_list_(config as any);
+  return { ...base, variant: 'v0' as const };
+}
+
+/** Variant factory: `expression_list` — v1 form. Sets variant without runtime inference. */
+export function expression_list__v1_(
+  config?: ConfigOf<ExpressionList>,
+) {
+  const base = expression_list_(config as any);
+  return { ...base, variant: 'v1' as const };
+}
+
 export function expression_statement_(
   ...children: (Assignment | AugmentedAssignment | Expression | Yield)[]
 ) {
@@ -905,6 +1065,22 @@ export function expression_statement_(
   };
 }
 
+
+/** Variant factory: `expression_statement` — v0 form. Sets variant without runtime inference. */
+export function expression_statement__v0_(
+  config?: ConfigOf<ExpressionStatement>,
+) {
+  const base = expression_statement_(config as any);
+  return { ...base, variant: 'v0' as const };
+}
+
+/** Variant factory: `expression_statement` — comma form. Sets variant without runtime inference. */
+export function expression_statement__comma_(
+  config?: ConfigOf<ExpressionStatement>,
+) {
+  const base = expression_statement_(config as any);
+  return { ...base, variant: 'comma' as const };
+}
 
 export function finally_clause_(
   config: ConfigOf<FinallyClause>,
@@ -1075,6 +1251,22 @@ export function future_import_statement_(
 }
 
 
+/** Variant factory: `future_import_statement` — v0 form. Sets variant without runtime inference. */
+export function future_import_statement__v0_(
+  config: ConfigOf<FutureImportStatement>,
+) {
+  const base = future_import_statement_(config as any);
+  return { ...base, variant: 'v0' as const };
+}
+
+/** Variant factory: `future_import_statement` — paren form. Sets variant without runtime inference. */
+export function future_import_statement__paren_(
+  config: ConfigOf<FutureImportStatement>,
+) {
+  const base = future_import_statement_(config as any);
+  return { ...base, variant: 'paren' as const };
+}
+
 export function generator_expression_(
   config: ConfigOf<GeneratorExpression>,
 ) {
@@ -1213,6 +1405,22 @@ export function import_from_statement_(
   };
 }
 
+
+/** Variant factory: `import_from_statement` — v0 form. Sets variant without runtime inference. */
+export function import_from_statement__v0_(
+  config: ConfigOf<ImportFromStatement>,
+) {
+  const base = import_from_statement_(config as any);
+  return { ...base, variant: 'v0' as const };
+}
+
+/** Variant factory: `import_from_statement` — paren form. Sets variant without runtime inference. */
+export function import_from_statement__paren_(
+  config: ConfigOf<ImportFromStatement>,
+) {
+  const base = import_from_statement_(config as any);
+  return { ...base, variant: 'paren' as const };
+}
 
 export function import_statement_(
   config: ConfigOf<ImportStatement>,
@@ -1677,6 +1885,22 @@ export function pattern_list_(
 }
 
 
+/** Variant factory: `pattern_list` — v0 form. Sets variant without runtime inference. */
+export function pattern_list__v0_(
+  config?: ConfigOf<PatternList>,
+) {
+  const base = pattern_list_(config as any);
+  return { ...base, variant: 'v0' as const };
+}
+
+/** Variant factory: `pattern_list` — v1 form. Sets variant without runtime inference. */
+export function pattern_list__v1_(
+  config?: ConfigOf<PatternList>,
+) {
+  const base = pattern_list_(config as any);
+  return { ...base, variant: 'v1' as const };
+}
+
 export function print_statement_(
   config?: ConfigOf<PrintStatement>,
 ) {
@@ -1701,6 +1925,22 @@ export function print_statement_(
   };
 }
 
+
+/** Variant factory: `print_statement` — chevron form. Sets variant without runtime inference. */
+export function print_statement__chevron_(
+  config?: ConfigOf<PrintStatement>,
+) {
+  const base = print_statement_(config as any);
+  return { ...base, variant: 'chevron' as const };
+}
+
+/** Variant factory: `print_statement` — v1 form. Sets variant without runtime inference. */
+export function print_statement__v1_(
+  config?: ConfigOf<PrintStatement>,
+) {
+  const base = print_statement_(config as any);
+  return { ...base, variant: 'v1' as const };
+}
 
 export function raise_statement_(
   config?: ConfigOf<RaiseStatement>,
@@ -2229,6 +2469,22 @@ export function with_clause_(
 }
 
 
+/** Variant factory: `with_clause` — v0 form. Sets variant without runtime inference. */
+export function with_clause__v0_(
+  config?: ConfigOf<WithClause>,
+) {
+  const base = with_clause_(config as any);
+  return { ...base, variant: 'v0' as const };
+}
+
+/** Variant factory: `with_clause` — paren form. Sets variant without runtime inference. */
+export function with_clause__paren_(
+  config?: ConfigOf<WithClause>,
+) {
+  const base = with_clause_(config as any);
+  return { ...base, variant: 'paren' as const };
+}
+
 export function with_item_(
   config: ConfigOf<WithItem>,
 ) {
@@ -2291,6 +2547,22 @@ export function yield_(
   };
 }
 
+
+/** Variant factory: `yield` — from form. Sets variant without runtime inference. */
+export function yield__from_(
+  config?: ConfigOf<Yield>,
+) {
+  const base = yield_(config as any);
+  return { ...base, variant: 'from' as const };
+}
+
+/** Variant factory: `yield` — v1 form. Sets variant without runtime inference. */
+export function yield__v1_(
+  config?: ConfigOf<Yield>,
+) {
+  const base = yield_(config as any);
+  return { ...base, variant: 'v1' as const };
+}
 
 export function break_statement_() {
   return {
