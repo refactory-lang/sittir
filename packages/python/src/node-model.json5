@@ -4018,7 +4018,7 @@
     children: null,
     variants: [
       {
-        name: "default",
+        name: "v0",
         rule: {
           type: "SEQ",
           members: [
@@ -4035,26 +4035,68 @@
               value: "import",
             },
             {
-              type: "CHOICE",
+              type: "SEQ",
               members: [
-                {
-                  type: "SYMBOL",
-                  name: "_import_list",
-                },
                 {
                   type: "SEQ",
                   members: [
                     {
-                      type: "STRING",
-                      value: "(",
+                      type: "FIELD",
+                      name: "name",
+                      content: {
+                        type: "CHOICE",
+                        members: [
+                          {
+                            type: "SYMBOL",
+                            name: "dotted_name",
+                          },
+                          {
+                            type: "SYMBOL",
+                            name: "aliased_import",
+                          },
+                        ],
+                      },
                     },
                     {
-                      type: "SYMBOL",
-                      name: "_import_list",
+                      type: "REPEAT",
+                      content: {
+                        type: "SEQ",
+                        members: [
+                          {
+                            type: "STRING",
+                            value: ",",
+                          },
+                          {
+                            type: "FIELD",
+                            name: "name",
+                            content: {
+                              type: "CHOICE",
+                              members: [
+                                {
+                                  type: "SYMBOL",
+                                  name: "dotted_name",
+                                },
+                                {
+                                  type: "SYMBOL",
+                                  name: "aliased_import",
+                                },
+                              ],
+                            },
+                          },
+                        ],
+                      },
                     },
+                  ],
+                },
+                {
+                  type: "CHOICE",
+                  members: [
                     {
                       type: "STRING",
-                      value: ")",
+                      value: ",",
+                    },
+                    {
+                      type: "BLANK",
                     },
                   ],
                 },
@@ -4067,6 +4109,113 @@
         literals: {},
         template: "",
         clauses: [],
+      },
+      {
+        name: "paren",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "STRING",
+              value: "from",
+            },
+            {
+              type: "STRING",
+              value: "__future__",
+            },
+            {
+              type: "STRING",
+              value: "import",
+            },
+            {
+              type: "SEQ",
+              members: [
+                {
+                  type: "STRING",
+                  value: "(",
+                },
+                {
+                  type: "SEQ",
+                  members: [
+                    {
+                      type: "SEQ",
+                      members: [
+                        {
+                          type: "FIELD",
+                          name: "name",
+                          content: {
+                            type: "CHOICE",
+                            members: [
+                              {
+                                type: "SYMBOL",
+                                name: "dotted_name",
+                              },
+                              {
+                                type: "SYMBOL",
+                                name: "aliased_import",
+                              },
+                            ],
+                          },
+                        },
+                        {
+                          type: "REPEAT",
+                          content: {
+                            type: "SEQ",
+                            members: [
+                              {
+                                type: "STRING",
+                                value: ",",
+                              },
+                              {
+                                type: "FIELD",
+                                name: "name",
+                                content: {
+                                  type: "CHOICE",
+                                  members: [
+                                    {
+                                      type: "SYMBOL",
+                                      name: "dotted_name",
+                                    },
+                                    {
+                                      type: "SYMBOL",
+                                      name: "aliased_import",
+                                    },
+                                  ],
+                                },
+                              },
+                            ],
+                          },
+                        },
+                      ],
+                    },
+                    {
+                      type: "CHOICE",
+                      members: [
+                        {
+                          type: "STRING",
+                          value: ",",
+                        },
+                        {
+                          type: "BLANK",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                {
+                  type: "STRING",
+                  value: ")",
+                },
+              ],
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+        detectToken: "(",
       },
     ],
   },
@@ -4475,6 +4624,116 @@
         clauses: [],
       },
       {
+        name: "v1",
+        rule: {
+          type: "SEQ",
+          members: [
+            {
+              type: "STRING",
+              value: "from",
+            },
+            {
+              type: "FIELD",
+              name: "module_name",
+              content: {
+                type: "CHOICE",
+                members: [
+                  {
+                    type: "SYMBOL",
+                    name: "relative_import",
+                  },
+                  {
+                    type: "SYMBOL",
+                    name: "dotted_name",
+                  },
+                ],
+              },
+            },
+            {
+              type: "STRING",
+              value: "import",
+            },
+            {
+              type: "FIELD",
+              name: "wildcard_import",
+              content: {
+                type: "SEQ",
+                members: [
+                  {
+                    type: "SEQ",
+                    members: [
+                      {
+                        type: "FIELD",
+                        name: "name",
+                        content: {
+                          type: "CHOICE",
+                          members: [
+                            {
+                              type: "SYMBOL",
+                              name: "dotted_name",
+                            },
+                            {
+                              type: "SYMBOL",
+                              name: "aliased_import",
+                            },
+                          ],
+                        },
+                      },
+                      {
+                        type: "REPEAT",
+                        content: {
+                          type: "SEQ",
+                          members: [
+                            {
+                              type: "STRING",
+                              value: ",",
+                            },
+                            {
+                              type: "FIELD",
+                              name: "name",
+                              content: {
+                                type: "CHOICE",
+                                members: [
+                                  {
+                                    type: "SYMBOL",
+                                    name: "dotted_name",
+                                  },
+                                  {
+                                    type: "SYMBOL",
+                                    name: "aliased_import",
+                                  },
+                                ],
+                              },
+                            },
+                          ],
+                        },
+                      },
+                    ],
+                  },
+                  {
+                    type: "CHOICE",
+                    members: [
+                      {
+                        type: "STRING",
+                        value: ",",
+                      },
+                      {
+                        type: "BLANK",
+                      },
+                    ],
+                  },
+                ],
+              },
+            },
+          ],
+        },
+        parts: [],
+        fields: {},
+        literals: {},
+        template: "",
+        clauses: [],
+      },
+      {
         name: "paren",
         rule: {
           type: "SEQ",
@@ -4515,8 +4774,72 @@
                     value: "(",
                   },
                   {
-                    type: "SYMBOL",
-                    name: "_import_list",
+                    type: "SEQ",
+                    members: [
+                      {
+                        type: "SEQ",
+                        members: [
+                          {
+                            type: "FIELD",
+                            name: "name",
+                            content: {
+                              type: "CHOICE",
+                              members: [
+                                {
+                                  type: "SYMBOL",
+                                  name: "dotted_name",
+                                },
+                                {
+                                  type: "SYMBOL",
+                                  name: "aliased_import",
+                                },
+                              ],
+                            },
+                          },
+                          {
+                            type: "REPEAT",
+                            content: {
+                              type: "SEQ",
+                              members: [
+                                {
+                                  type: "STRING",
+                                  value: ",",
+                                },
+                                {
+                                  type: "FIELD",
+                                  name: "name",
+                                  content: {
+                                    type: "CHOICE",
+                                    members: [
+                                      {
+                                        type: "SYMBOL",
+                                        name: "dotted_name",
+                                      },
+                                      {
+                                        type: "SYMBOL",
+                                        name: "aliased_import",
+                                      },
+                                    ],
+                                  },
+                                },
+                              ],
+                            },
+                          },
+                        ],
+                      },
+                      {
+                        type: "CHOICE",
+                        members: [
+                          {
+                            type: "STRING",
+                            value: ",",
+                          },
+                          {
+                            type: "BLANK",
+                          },
+                        ],
+                      },
+                    ],
                   },
                   {
                     type: "STRING",
@@ -4565,8 +4888,72 @@
               value: "import",
             },
             {
-              type: "SYMBOL",
-              name: "_import_list",
+              type: "SEQ",
+              members: [
+                {
+                  type: "SEQ",
+                  members: [
+                    {
+                      type: "FIELD",
+                      name: "name",
+                      content: {
+                        type: "CHOICE",
+                        members: [
+                          {
+                            type: "SYMBOL",
+                            name: "dotted_name",
+                          },
+                          {
+                            type: "SYMBOL",
+                            name: "aliased_import",
+                          },
+                        ],
+                      },
+                    },
+                    {
+                      type: "REPEAT",
+                      content: {
+                        type: "SEQ",
+                        members: [
+                          {
+                            type: "STRING",
+                            value: ",",
+                          },
+                          {
+                            type: "FIELD",
+                            name: "name",
+                            content: {
+                              type: "CHOICE",
+                              members: [
+                                {
+                                  type: "SYMBOL",
+                                  name: "dotted_name",
+                                },
+                                {
+                                  type: "SYMBOL",
+                                  name: "aliased_import",
+                                },
+                              ],
+                            },
+                          },
+                        ],
+                      },
+                    },
+                  ],
+                },
+                {
+                  type: "CHOICE",
+                  members: [
+                    {
+                      type: "STRING",
+                      value: ",",
+                    },
+                    {
+                      type: "BLANK",
+                    },
+                  ],
+                },
+              ],
             },
           ],
         },

@@ -1562,8 +1562,35 @@
                   type: "SEQ",
                   members: [
                     {
-                      type: "SYMBOL",
-                      name: "_block_doc_comment_marker",
+                      type: "CHOICE",
+                      members: [
+                        {
+                          type: "FIELD",
+                          name: "outer",
+                          content: {
+                            type: "ALIAS",
+                            content: {
+                              type: "SYMBOL",
+                              name: "_outer_block_doc_comment_marker",
+                            },
+                            named: true,
+                            value: "outer_doc_comment_marker",
+                          },
+                        },
+                        {
+                          type: "FIELD",
+                          name: "inner",
+                          content: {
+                            type: "ALIAS",
+                            content: {
+                              type: "SYMBOL",
+                              name: "_inner_block_doc_comment_marker",
+                            },
+                            named: true,
+                            value: "inner_doc_comment_marker",
+                          },
+                        },
+                      ],
                     },
                     {
                       type: "CHOICE",
@@ -6235,7 +6262,7 @@
         clauses: [],
       },
       {
-        name: "doc",
+        name: "outer",
         rule: {
           type: "SEQ",
           members: [
@@ -6247,8 +6274,35 @@
               type: "SEQ",
               members: [
                 {
-                  type: "SYMBOL",
-                  name: "_line_doc_comment_marker",
+                  type: "CHOICE",
+                  members: [
+                    {
+                      type: "FIELD",
+                      name: "outer",
+                      content: {
+                        type: "ALIAS",
+                        content: {
+                          type: "SYMBOL",
+                          name: "_outer_line_doc_comment_marker",
+                        },
+                        named: true,
+                        value: "outer_doc_comment_marker",
+                      },
+                    },
+                    {
+                      type: "FIELD",
+                      name: "inner",
+                      content: {
+                        type: "ALIAS",
+                        content: {
+                          type: "SYMBOL",
+                          name: "_inner_line_doc_comment_marker",
+                        },
+                        named: true,
+                        value: "inner_doc_comment_marker",
+                      },
+                    },
+                  ],
                 },
                 {
                   type: "FIELD",

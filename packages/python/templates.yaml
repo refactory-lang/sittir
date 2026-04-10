@@ -76,7 +76,9 @@ rules:
   function_definition:
     template: def $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE_CLAUSE:$BODY
     return_type_clause: -> $RETURN_TYPE
-  future_import_statement: from __future__ import $$$NAME
+  future_import_statement:
+    - from __future__ import $$$NAME
+    - from __future__ import($$$NAME)
   generator_expression: ($BODY $CHILDREN)
   generic_type: $IDENTIFIER $TYPE_PARAMETER
   global_statement:
@@ -84,7 +86,9 @@ rules:
     joinBy: ","
   if_clause: if $EXPRESSION
   if_statement: if $CONDITION:$CONSEQUENCE $$$ALTERNATIVE
-  import_from_statement: from $MODULE_NAME import $WILDCARD_IMPORT
+  import_from_statement:
+    - from $MODULE_NAME import $WILDCARD_IMPORT
+    - from $MODULE_NAME import $WILDCARD_IMPORT $$$NAME
   import_statement: import $$$NAME
   interpolation: "{$EXPRESSION $TYPE_CONVERSION $FORMAT_SPECIFIER}"
   keyword_argument: $NAME=$VALUE

@@ -229,7 +229,6 @@ export type _Config_ExtendsClause = Assert<Extends<ConfigOf<ExtendsClause>, Exte
 export type _Config_ExtendsTypeClause = Assert<Extends<ConfigOf<ExtendsTypeClause>, ExtendsTypeClauseConfig>>;
 export type _Config_FinallyClause = Assert<Extends<ConfigOf<FinallyClause>, FinallyClauseConfig>>;
 export type _Config_FlowMaybeType = Assert<Extends<ConfigOf<FlowMaybeType>, FlowMaybeTypeConfig>>;
-export type _Config_ForInStatement = Assert<Extends<ConfigOf<ForInStatement>, ForInStatementConfig>>;
 export type _Config_FormalParameters = Assert<Extends<ConfigOf<FormalParameters>, FormalParametersConfig>>;
 export type _Config_FunctionDeclaration = Assert<Extends<ConfigOf<FunctionDeclaration>, FunctionDeclarationConfig>>;
 export type _Config_FunctionExpression = Assert<Extends<ConfigOf<FunctionExpression>, FunctionExpressionConfig>>;

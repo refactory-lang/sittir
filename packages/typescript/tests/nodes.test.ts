@@ -1166,7 +1166,7 @@ describe('for_in_statement', () => {
     expect(node.render()).toBe(render(node));
   });
   it('renders with optional fields', () => {
-    const node = ir.forInStatement({ body: ir.debuggerStatement('test') as any, kind: 'const' as any, left: ir.identifier('test_left') as any, operator: 'in' as any, right: ir.identifier('test_right') as any, value: ir.identifier('test_value') as any });
+    const node = ir.forInStatement({ body: ir.debuggerStatement('test') as any, kind: 'const' as any, left: ir.identifier('test_left') as any, operator: 'in' as any, right: ir.identifier('test_right') as any, value: ir.identifier('test_value') as any } as any);
     const source = render(node);
     expect(source.length).toBeGreaterThan(0);
   });

@@ -61,16 +61,6 @@ export function factorRule(
 	// Deduplicate by field set signature (not template string — templates aren't generated yet)
 	const unique = deduplicateVariants(variants);
 
-	// Guard: if all variants lost fields that the model has, the factoring didn't
-	// capture hidden rule inlining — fall back to single variant with the full rule.
-	const modelHasFields = ctx.fieldRequired.size > 0;
-	const allVariantsLostFields = unique.length > 1 && unique.every(v => v.fields.size === 0);
-	if (modelHasFields && allVariantsLostFields) {
-		const single = buildVariantMetadata(enriched, ctx);
-		single.name = 'default';
-		return [single];
-	}
-
 	// Name the variants
 	for (let i = 0; i < unique.length; i++) {
 		unique[i]!.name = nameVariant(unique[i]!, i, unique);
@@ -147,9 +137,22 @@ function resolveChoices(rule: GrammarRule, ctx: FactorContext): GrammarRule[] {
 				type: 'ALIAS' as const, content: c, named: rule.named, value: rule.value,
 			}));
 
+		case 'SYMBOL': {
+			// Inline hidden rules (_-prefixed) that contain fields —
+			// same logic as ruleToTemplate's SYMBOL handler.
+			// This ensures the factoring captures fields from _import_list, _call_signature, etc.
+			if (rule.name.startsWith('_') && ctx.grammarRules[rule.name]) {
+				const inlinedRule = ctx.grammarRules[rule.name]!;
+				// Check if the hidden rule contains any FIELD nodes worth inlining
+				if (containsFields(inlinedRule, ctx)) {
+					return resolveChoices(inlinedRule, ctx);
+				}
+			}
+			return [rule];
+		}
+
 		// Terminals — no CHOICEs to resolve
 		case 'STRING':
-		case 'SYMBOL':
 		case 'BLANK':
 		case 'PATTERN':
 			return [rule];
@@ -266,6 +269,34 @@ function factorSeqChoice(branches: GrammarRule[], ctx: FactorContext): GrammarRu
 		allResolved.push(...resolveChoices(branch, ctx));
 	}
 	return allResolved;
+}
+
+// ---------------------------------------------------------------------------
+// Hidden rule inlining helpers
+// ---------------------------------------------------------------------------
+
+/** Check if a grammar rule contains FIELD nodes relevant to the current context. */
+function containsFields(rule: GrammarRule, ctx: FactorContext): boolean {
+	switch (rule.type) {
+		case 'FIELD':
+			return ctx.fieldRequired.has(rule.name) || ctx.fieldMultiple.has(rule.name);
+		case 'SEQ':
+		case 'CHOICE':
+			return rule.members.some(m => containsFields(m, ctx));
+		case 'REPEAT':
+		case 'REPEAT1':
+		case 'PREC':
+		case 'PREC_LEFT':
+		case 'PREC_RIGHT':
+		case 'PREC_DYNAMIC':
+		case 'TOKEN':
+		case 'IMMEDIATE_TOKEN':
+			return containsFields(rule.content, ctx);
+		case 'ALIAS':
+			return containsFields(rule.content, ctx);
+		default:
+			return false;
+	}
 }
 
 // ---------------------------------------------------------------------------
@@ -433,6 +464,11 @@ function buildVariantMetadata(rule: GrammarRule, ctx: FactorContext): Structural
 				walk(r.content);
 				break;
 			case 'SYMBOL':
+				// Inline hidden rules to capture fields from _import_list etc.
+				if (r.name.startsWith('_') && ctx.grammarRules[r.name] && containsFields(ctx.grammarRules[r.name]!, ctx)) {
+					walk(ctx.grammarRules[r.name]!);
+				}
+				break;
 			case 'BLANK':
 			case 'PATTERN':
 				break;

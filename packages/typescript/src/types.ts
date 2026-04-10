@@ -858,22 +858,32 @@ export interface ExportSpecifier {
 }
 export interface ExportStatementStar {
   readonly type: 'export_statement';
+  readonly fields: {
+    readonly source?: String;
+  };
   readonly children?: ExportClause | Expression | Identifier | NamespaceExport;
 }
 export interface ExportStatementV1 {
   readonly type: 'export_statement';
   readonly fields: {
     readonly declaration?: NamespaceExport;
+    readonly source?: String;
   };
 }
 export interface ExportStatementV2 {
+  readonly type: 'export_statement';
+  readonly fields: {
+    readonly declaration?: ExportClause;
+  };
+}
+export interface ExportStatementV3 {
   readonly type: 'export_statement';
   readonly fields: {
     readonly declaration?: Declaration;
     readonly decorator?: readonly (Decorator)[];
   };
 }
-export interface ExportStatementV3 {
+export interface ExportStatementV4 {
   readonly type: 'export_statement';
   readonly fields: {
     readonly declaration?: Declaration;
@@ -892,6 +902,7 @@ export interface ExportStatementTypeKw {
   readonly type: 'export_statement';
   readonly fields: {
     readonly declaration?: ExportClause;
+    readonly source?: String;
   };
 }
 export interface ExportStatementEq {
@@ -906,7 +917,7 @@ export interface ExportStatementAs {
     readonly declaration?: Identifier;
   };
 }
-export type ExportStatement = ExportStatementStar | ExportStatementV1 | ExportStatementV2 | ExportStatementV3 | ExportStatementValue | ExportStatementTypeKw | ExportStatementEq | ExportStatementAs;
+export type ExportStatement = ExportStatementStar | ExportStatementV1 | ExportStatementV2 | ExportStatementV3 | ExportStatementV4 | ExportStatementValue | ExportStatementTypeKw | ExportStatementEq | ExportStatementAs;
 export interface ExpressionStatement {
   readonly type: 'expression_statement';
   readonly children: Expression | SequenceExpression;
@@ -936,17 +947,37 @@ export interface FlowMaybeType {
     readonly primary_type: PrimaryType;
   };
 }
-export interface ForInStatement {
+export interface ForInStatementV0 {
+  readonly type: 'for_in_statement';
+  readonly fields: {
+    readonly body: Statement;
+    readonly left: LhsExpression | ParenthesizedExpression;
+    readonly operator: 'in' | 'of';
+    readonly right: Expressions;
+  };
+}
+export interface ForInStatementVar {
   readonly type: 'for_in_statement';
   readonly fields: {
     readonly body: Statement;
     readonly kind?: 'const' | 'let' | 'var';
-    readonly left: AugmentedAssignmentLhs | LhsExpression;
+    readonly left: DestructuringPattern | Identifier;
     readonly operator: 'in' | 'of';
-    readonly right: Expression | Expressions | SequenceExpression;
+    readonly right: Expressions;
     readonly value?: Expression;
   };
 }
+export interface ForInStatementLet {
+  readonly type: 'for_in_statement';
+  readonly fields: {
+    readonly body: Statement;
+    readonly kind?: 'const' | 'let' | 'var';
+    readonly left: DestructuringPattern | Identifier;
+    readonly operator: 'in' | 'of';
+    readonly right: Expressions;
+  };
+}
+export type ForInStatement = ForInStatementV0 | ForInStatementVar | ForInStatementLet;
 export interface ForStatementV0 {
   readonly type: 'for_statement';
   readonly fields: {
@@ -1094,9 +1125,10 @@ export interface ImportSpecifierAs {
   };
 }
 export type ImportSpecifier = ImportSpecifierV0 | ImportSpecifierAs;
-export interface ImportStatementFromClause {
+export interface ImportStatementFrom {
   readonly type: 'import_statement';
   readonly fields: {
+    readonly source?: String;
     readonly import_clause?: ImportClause;
     readonly from_clause?: string;
     readonly import_attribute?: ImportAttribute;
@@ -1111,7 +1143,7 @@ export interface ImportStatementV1 {
     readonly semicolon: string;
   };
 }
-export interface ImportStatementSource {
+export interface ImportStatementV2 {
   readonly type: 'import_statement';
   readonly fields: {
     readonly source?: String;
@@ -1119,7 +1151,7 @@ export interface ImportStatementSource {
     readonly semicolon: string;
   };
 }
-export type ImportStatement = ImportStatementFromClause | ImportStatementV1 | ImportStatementSource;
+export type ImportStatement = ImportStatementFrom | ImportStatementV1 | ImportStatementV2;
 export interface IndexSignatureColon {
   readonly type: 'index_signature';
   readonly fields: {
@@ -1399,6 +1431,7 @@ export interface PublicFieldDefinitionStatic {
     readonly decorator?: readonly (Decorator)[];
     readonly name: PropertyName;
     readonly type?: TypeAnnotation;
+    readonly value?: Expression;
     readonly accessibility_modifier?: AccessibilityModifier;
     readonly override_modifier?: OverrideModifier;
     readonly initializer?: string;
@@ -1410,6 +1443,7 @@ export interface PublicFieldDefinitionAbstract {
     readonly decorator?: readonly (Decorator)[];
     readonly name: PropertyName;
     readonly type?: TypeAnnotation;
+    readonly value?: Expression;
     readonly accessibility_modifier?: AccessibilityModifier;
     readonly initializer?: string;
   };
@@ -1420,6 +1454,7 @@ export interface PublicFieldDefinitionAccessor {
     readonly decorator?: readonly (Decorator)[];
     readonly name: PropertyName;
     readonly type?: TypeAnnotation;
+    readonly value?: Expression;
     readonly accessibility_modifier?: AccessibilityModifier;
     readonly initializer?: string;
   };
@@ -1645,11 +1680,12 @@ export interface VariableDeclaration {
     readonly semicolon: string;
   };
 }
-export interface VariableDeclaratorV0 {
+export interface VariableDeclaratorEq {
   readonly type: 'variable_declarator';
   readonly fields: {
     readonly name: DestructuringPattern | Identifier;
     readonly type?: TypeAnnotation;
+    readonly value?: Expression;
   };
 }
 export interface VariableDeclaratorBang {
@@ -1659,7 +1695,7 @@ export interface VariableDeclaratorBang {
     readonly type?: TypeAnnotation;
   };
 }
-export type VariableDeclarator = VariableDeclaratorV0 | VariableDeclaratorBang;
+export type VariableDeclarator = VariableDeclaratorEq | VariableDeclaratorBang;
 export interface WhileStatement {
   readonly type: 'while_statement';
   readonly fields: {
@@ -1895,17 +1931,21 @@ export type ExportStatementStarConfig = ConfigOf<ExportStatementStar>;
 export type ExportStatementV1Config = ConfigOf<ExportStatementV1>;
 export type ExportStatementV2Config = ConfigOf<ExportStatementV2>;
 export type ExportStatementV3Config = ConfigOf<ExportStatementV3>;
+export type ExportStatementV4Config = ConfigOf<ExportStatementV4>;
 export type ExportStatementValueConfig = ConfigOf<ExportStatementValue>;
 export type ExportStatementTypeKwConfig = ConfigOf<ExportStatementTypeKw>;
 export type ExportStatementEqConfig = ConfigOf<ExportStatementEq>;
 export type ExportStatementAsConfig = ConfigOf<ExportStatementAs>;
-export type ExportStatementConfig = ExportStatementStarConfig | ExportStatementV1Config | ExportStatementV2Config | ExportStatementV3Config | ExportStatementValueConfig | ExportStatementTypeKwConfig | ExportStatementEqConfig | ExportStatementAsConfig;
+export type ExportStatementConfig = ExportStatementStarConfig | ExportStatementV1Config | ExportStatementV2Config | ExportStatementV3Config | ExportStatementV4Config | ExportStatementValueConfig | ExportStatementTypeKwConfig | ExportStatementEqConfig | ExportStatementAsConfig;
 export type ExpressionStatementConfig = ConfigOf<ExpressionStatement>;
 export type ExtendsClauseConfig = ConfigOf<ExtendsClause>;
 export type ExtendsTypeClauseConfig = ConfigOf<ExtendsTypeClause>;
 export type FinallyClauseConfig = ConfigOf<FinallyClause>;
 export type FlowMaybeTypeConfig = ConfigOf<FlowMaybeType>;
-export type ForInStatementConfig = ConfigOf<ForInStatement>;
+export type ForInStatementV0Config = ConfigOf<ForInStatementV0>;
+export type ForInStatementVarConfig = ConfigOf<ForInStatementVar>;
+export type ForInStatementLetConfig = ConfigOf<ForInStatementLet>;
+export type ForInStatementConfig = ForInStatementV0Config | ForInStatementVarConfig | ForInStatementLetConfig;
 export type ForStatementV0Config = ConfigOf<ForStatementV0>;
 export type ForStatementV1Config = ConfigOf<ForStatementV1>;
 export type ForStatementConfig = ForStatementV0Config | ForStatementV1Config;
@@ -1928,10 +1968,10 @@ export type ImportRequireClauseConfig = ConfigOf<ImportRequireClause>;
 export type ImportSpecifierV0Config = ConfigOf<ImportSpecifierV0>;
 export type ImportSpecifierAsConfig = ConfigOf<ImportSpecifierAs>;
 export type ImportSpecifierConfig = ImportSpecifierV0Config | ImportSpecifierAsConfig;
-export type ImportStatementFromClauseConfig = ConfigOf<ImportStatementFromClause>;
+export type ImportStatementFromConfig = ConfigOf<ImportStatementFrom>;
 export type ImportStatementV1Config = ConfigOf<ImportStatementV1>;
-export type ImportStatementSourceConfig = ConfigOf<ImportStatementSource>;
-export type ImportStatementConfig = ImportStatementFromClauseConfig | ImportStatementV1Config | ImportStatementSourceConfig;
+export type ImportStatementV2Config = ConfigOf<ImportStatementV2>;
+export type ImportStatementConfig = ImportStatementFromConfig | ImportStatementV1Config | ImportStatementV2Config;
 export type IndexSignatureColonConfig = ConfigOf<IndexSignatureColon>;
 export type IndexSignatureMappedTypeClauseConfig = ConfigOf<IndexSignatureMappedTypeClause>;
 export type IndexSignatureConfig = IndexSignatureColonConfig | IndexSignatureMappedTypeClauseConfig;
@@ -2017,9 +2057,9 @@ export type UnaryExpressionConfig = ConfigOf<UnaryExpression>;
 export type UnionTypeConfig = ConfigOf<UnionType>;
 export type UpdateExpressionConfig = ConfigOf<UpdateExpression>;
 export type VariableDeclarationConfig = ConfigOf<VariableDeclaration>;
-export type VariableDeclaratorV0Config = ConfigOf<VariableDeclaratorV0>;
+export type VariableDeclaratorEqConfig = ConfigOf<VariableDeclaratorEq>;
 export type VariableDeclaratorBangConfig = ConfigOf<VariableDeclaratorBang>;
-export type VariableDeclaratorConfig = VariableDeclaratorV0Config | VariableDeclaratorBangConfig;
+export type VariableDeclaratorConfig = VariableDeclaratorEqConfig | VariableDeclaratorBangConfig;
 export type WhileStatementConfig = ConfigOf<WhileStatement>;
 export type WithStatementConfig = ConfigOf<WithStatement>;
 export type YieldExpressionStarConfig = ConfigOf<YieldExpressionStar>;
@@ -2287,17 +2327,21 @@ export type ExportStatementStarFromInput = FromInputOf<ExportStatementStar, Leaf
 export type ExportStatementV1FromInput = FromInputOf<ExportStatementV1, LeafScalarMap, LeafStringMap>;
 export type ExportStatementV2FromInput = FromInputOf<ExportStatementV2, LeafScalarMap, LeafStringMap>;
 export type ExportStatementV3FromInput = FromInputOf<ExportStatementV3, LeafScalarMap, LeafStringMap>;
+export type ExportStatementV4FromInput = FromInputOf<ExportStatementV4, LeafScalarMap, LeafStringMap>;
 export type ExportStatementValueFromInput = FromInputOf<ExportStatementValue, LeafScalarMap, LeafStringMap>;
 export type ExportStatementTypeKwFromInput = FromInputOf<ExportStatementTypeKw, LeafScalarMap, LeafStringMap>;
 export type ExportStatementEqFromInput = FromInputOf<ExportStatementEq, LeafScalarMap, LeafStringMap>;
 export type ExportStatementAsFromInput = FromInputOf<ExportStatementAs, LeafScalarMap, LeafStringMap>;
-export type ExportStatementFromInput = ExportStatementStarFromInput | ExportStatementV1FromInput | ExportStatementV2FromInput | ExportStatementV3FromInput | ExportStatementValueFromInput | ExportStatementTypeKwFromInput | ExportStatementEqFromInput | ExportStatementAsFromInput;
+export type ExportStatementFromInput = ExportStatementStarFromInput | ExportStatementV1FromInput | ExportStatementV2FromInput | ExportStatementV3FromInput | ExportStatementV4FromInput | ExportStatementValueFromInput | ExportStatementTypeKwFromInput | ExportStatementEqFromInput | ExportStatementAsFromInput;
 export type ExpressionStatementFromInput = Expression | SequenceExpression;
 export type ExtendsClauseFromInput = FromInputOf<ExtendsClause, LeafScalarMap, LeafStringMap>;
 export type ExtendsTypeClauseFromInput = FromInputOf<ExtendsTypeClause, LeafScalarMap, LeafStringMap>;
 export type FinallyClauseFromInput = FromInputOf<FinallyClause, LeafScalarMap, LeafStringMap>;
 export type FlowMaybeTypeFromInput = FromInputOf<FlowMaybeType, LeafScalarMap, LeafStringMap>;
-export type ForInStatementFromInput = FromInputOf<ForInStatement, LeafScalarMap, LeafStringMap>;
+export type ForInStatementV0FromInput = FromInputOf<ForInStatementV0, LeafScalarMap, LeafStringMap>;
+export type ForInStatementVarFromInput = FromInputOf<ForInStatementVar, LeafScalarMap, LeafStringMap>;
+export type ForInStatementLetFromInput = FromInputOf<ForInStatementLet, LeafScalarMap, LeafStringMap>;
+export type ForInStatementFromInput = ForInStatementV0FromInput | ForInStatementVarFromInput | ForInStatementLetFromInput;
 export type ForStatementV0FromInput = FromInputOf<ForStatementV0, LeafScalarMap, LeafStringMap>;
 export type ForStatementV1FromInput = FromInputOf<ForStatementV1, LeafScalarMap, LeafStringMap>;
 export type ForStatementFromInput = ForStatementV0FromInput | ForStatementV1FromInput;
@@ -2320,10 +2364,10 @@ export type ImportRequireClauseFromInput = FromInputOf<ImportRequireClause, Leaf
 export type ImportSpecifierV0FromInput = FromInputOf<ImportSpecifierV0, LeafScalarMap, LeafStringMap>;
 export type ImportSpecifierAsFromInput = FromInputOf<ImportSpecifierAs, LeafScalarMap, LeafStringMap>;
 export type ImportSpecifierFromInput = ImportSpecifierV0FromInput | ImportSpecifierAsFromInput;
-export type ImportStatementFromClauseFromInput = FromInputOf<ImportStatementFromClause, LeafScalarMap, LeafStringMap>;
+export type ImportStatementFromFromInput = FromInputOf<ImportStatementFrom, LeafScalarMap, LeafStringMap>;
 export type ImportStatementV1FromInput = FromInputOf<ImportStatementV1, LeafScalarMap, LeafStringMap>;
-export type ImportStatementSourceFromInput = FromInputOf<ImportStatementSource, LeafScalarMap, LeafStringMap>;
-export type ImportStatementFromInput = ImportStatementFromClauseFromInput | ImportStatementV1FromInput | ImportStatementSourceFromInput;
+export type ImportStatementV2FromInput = FromInputOf<ImportStatementV2, LeafScalarMap, LeafStringMap>;
+export type ImportStatementFromInput = ImportStatementFromFromInput | ImportStatementV1FromInput | ImportStatementV2FromInput;
 export type IndexSignatureColonFromInput = FromInputOf<IndexSignatureColon, LeafScalarMap, LeafStringMap>;
 export type IndexSignatureMappedTypeClauseFromInput = FromInputOf<IndexSignatureMappedTypeClause, LeafScalarMap, LeafStringMap>;
 export type IndexSignatureFromInput = IndexSignatureColonFromInput | IndexSignatureMappedTypeClauseFromInput;
@@ -2407,9 +2451,9 @@ export type UnaryExpressionFromInput = FromInputOf<UnaryExpression, LeafScalarMa
 export type UnionTypeFromInput = FromInputOf<UnionType, LeafScalarMap, LeafStringMap>;
 export type UpdateExpressionFromInput = FromInputOf<UpdateExpression, LeafScalarMap, LeafStringMap>;
 export type VariableDeclarationFromInput = FromInputOf<VariableDeclaration, LeafScalarMap, LeafStringMap>;
-export type VariableDeclaratorV0FromInput = FromInputOf<VariableDeclaratorV0, LeafScalarMap, LeafStringMap>;
+export type VariableDeclaratorEqFromInput = FromInputOf<VariableDeclaratorEq, LeafScalarMap, LeafStringMap>;
 export type VariableDeclaratorBangFromInput = FromInputOf<VariableDeclaratorBang, LeafScalarMap, LeafStringMap>;
-export type VariableDeclaratorFromInput = VariableDeclaratorV0FromInput | VariableDeclaratorBangFromInput;
+export type VariableDeclaratorFromInput = VariableDeclaratorEqFromInput | VariableDeclaratorBangFromInput;
 export type WhileStatementFromInput = FromInputOf<WhileStatement, LeafScalarMap, LeafStringMap>;
 export type WithStatementFromInput = FromInputOf<WithStatement, LeafScalarMap, LeafStringMap>;
 export type YieldExpressionStarFromInput = FromInputOf<YieldExpressionStar, LeafScalarMap, LeafStringMap>;
@@ -3272,16 +3316,17 @@ export interface VariantMap {
   'binary_expression': { tok_2626: BinaryExpressionTok_2626; tok_7c7c: BinaryExpressionTok_7c7c; tok_3e3e: BinaryExpressionTok_3e3e; tok_3e3e3e: BinaryExpressionTok_3e3e3e; tok_3c3c: BinaryExpressionTok_3c3c; amp: BinaryExpressionAmp; caret: BinaryExpressionCaret; pipe: BinaryExpressionPipe; plus: BinaryExpressionPlus; minus: BinaryExpressionMinus; star: BinaryExpressionStar; slash: BinaryExpressionSlash; percent: BinaryExpressionPercent; tok_2a2a: BinaryExpressionTok_2a2a; angle: BinaryExpressionAngle; tok_3c3d: BinaryExpressionTok_3c3d; tok_3d3d: BinaryExpressionTok_3d3d; tok_3d3d3d: BinaryExpressionTok_3d3d3d; tok_213d: BinaryExpressionTok_213d; tok_213d3d: BinaryExpressionTok_213d3d; tok_3e3d: BinaryExpressionTok_3e3d; close_angle: BinaryExpressionCloseAngle; tok_3f3f: BinaryExpressionTok_3f3f; instanceof: BinaryExpressionInstanceof; in: BinaryExpressionIn };
   'call_expression': { v0: CallExpressionV0; v1: CallExpressionV1; tok_3f2e: CallExpressionTok_3f2e };
   'class_body': { decorator: ClassBodyDecorator; comma: ClassBodyComma; v2: ClassBodyV2; semi: ClassBodySemi };
-  'export_statement': { star: ExportStatementStar; v1: ExportStatementV1; v2: ExportStatementV2; v3: ExportStatementV3; value: ExportStatementValue; type_kw: ExportStatementTypeKw; eq: ExportStatementEq; as: ExportStatementAs };
+  'export_statement': { star: ExportStatementStar; v1: ExportStatementV1; v2: ExportStatementV2; v3: ExportStatementV3; v4: ExportStatementV4; value: ExportStatementValue; type_kw: ExportStatementTypeKw; eq: ExportStatementEq; as: ExportStatementAs };
+  'for_in_statement': { v0: ForInStatementV0; var: ForInStatementVar; let: ForInStatementLet };
   'for_statement': { v0: ForStatementV0; v1: ForStatementV1 };
   'import_clause': { v0: ImportClauseV0; comma: ImportClauseComma };
   'import_specifier': { v0: ImportSpecifierV0; as: ImportSpecifierAs };
-  'import_statement': { from_clause: ImportStatementFromClause; v1: ImportStatementV1; source: ImportStatementSource };
+  'import_statement': { from: ImportStatementFrom; v1: ImportStatementV1; v2: ImportStatementV2 };
   'index_signature': { colon: IndexSignatureColon; mapped_type_clause: IndexSignatureMappedTypeClause };
   'parenthesized_expression': { type: ParenthesizedExpressionType; v1: ParenthesizedExpressionV1 };
   'public_field_definition': { static: PublicFieldDefinitionStatic; abstract: PublicFieldDefinitionAbstract; accessor: PublicFieldDefinitionAccessor };
   'string': { tok_22: StringTok_22; tok_27: StringTok_27 };
-  'variable_declarator': { v0: VariableDeclaratorV0; bang: VariableDeclaratorBang };
+  'variable_declarator': { eq: VariableDeclaratorEq; bang: VariableDeclaratorBang };
   'yield_expression': { star: YieldExpressionStar; v1: YieldExpressionV1 };
 }
 

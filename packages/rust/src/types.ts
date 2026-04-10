@@ -879,13 +879,15 @@ export interface LifetimeParameter {
 export interface LineCommentV0 {
   readonly type: 'line_comment';
 }
-export interface LineCommentDoc {
+export interface LineCommentOuter {
   readonly type: 'line_comment';
   readonly fields: {
     readonly doc?: DocComment;
+    readonly inner?: InnerDocCommentMarker;
+    readonly outer?: OuterDocCommentMarker;
   };
 }
-export type LineComment = LineCommentV0 | LineCommentDoc;
+export type LineComment = LineCommentV0 | LineCommentOuter;
 export interface LoopExpression {
   readonly type: 'loop_expression';
   readonly fields: {
@@ -1645,8 +1647,8 @@ export type LetDeclarationConfig = ConfigOf<LetDeclaration>;
 export type LifetimeConfig = ConfigOf<Lifetime>;
 export type LifetimeParameterConfig = ConfigOf<LifetimeParameter>;
 export type LineCommentV0Config = ConfigOf<LineCommentV0>;
-export type LineCommentDocConfig = ConfigOf<LineCommentDoc>;
-export type LineCommentConfig = LineCommentV0Config | LineCommentDocConfig;
+export type LineCommentOuterConfig = ConfigOf<LineCommentOuter>;
+export type LineCommentConfig = LineCommentV0Config | LineCommentOuterConfig;
 export type LoopExpressionConfig = ConfigOf<LoopExpression>;
 export type MacroDefinitionParenConfig = ConfigOf<MacroDefinitionParen>;
 export type MacroDefinitionBracketConfig = ConfigOf<MacroDefinitionBracket>;
@@ -1992,8 +1994,8 @@ export type LetDeclarationFromInput = FromInputOf<LetDeclaration, LeafScalarMap,
 export type LifetimeFromInput = FromInputOf<Lifetime, LeafScalarMap, LeafStringMap>;
 export type LifetimeParameterFromInput = FromInputOf<LifetimeParameter, LeafScalarMap, LeafStringMap>;
 export type LineCommentV0FromInput = FromInputOf<LineCommentV0, LeafScalarMap, LeafStringMap>;
-export type LineCommentDocFromInput = FromInputOf<LineCommentDoc, LeafScalarMap, LeafStringMap>;
-export type LineCommentFromInput = LineCommentV0FromInput | LineCommentDocFromInput;
+export type LineCommentOuterFromInput = FromInputOf<LineCommentOuter, LeafScalarMap, LeafStringMap>;
+export type LineCommentFromInput = LineCommentV0FromInput | LineCommentOuterFromInput;
 export type LoopExpressionFromInput = FromInputOf<LoopExpression, LeafScalarMap, LeafStringMap>;
 export type MacroDefinitionParenFromInput = FromInputOf<MacroDefinitionParen, LeafScalarMap, LeafStringMap>;
 export type MacroDefinitionBracketFromInput = FromInputOf<MacroDefinitionBracket, LeafScalarMap, LeafStringMap>;
@@ -3025,7 +3027,7 @@ export interface VariantMap {
   'expression_statement': { semi: ExpressionStatementSemi; v1: ExpressionStatementV1 };
   'field_pattern': { v0: FieldPatternV0; colon: FieldPatternColon };
   'function_type': { trait: FunctionTypeTrait; fn: FunctionTypeFn };
-  'line_comment': { v0: LineCommentV0; doc: LineCommentDoc };
+  'line_comment': { v0: LineCommentV0; outer: LineCommentOuter };
   'macro_definition': { paren: MacroDefinitionParen; bracket: MacroDefinitionBracket; brace: MacroDefinitionBrace };
   'or_pattern': { right: OrPatternRight; v1: OrPatternV1 };
   'range_expression': { ellipsis: RangeExpressionEllipsis; v1: RangeExpressionV1; v2: RangeExpressionV2 };
