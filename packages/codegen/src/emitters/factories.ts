@@ -344,12 +344,17 @@ export function emitVariantFactory(config: {
 		}
 	}
 
+	// If the node model is a branch, always emit fields (even empty) so render doesn't throw
+	const nodeIsFieldBearing = fieldsOf(node).length > 0;
+
 	lines.push(`  return {`);
 	lines.push(`    type: '${node.kind}' as const,`);
 	lines.push(`    named: true as const,`);
 	lines.push(`    variant: '${variant.name}' as const,`);
 	if (hasFields) {
 		lines.push(`    fields,`);
+	} else if (nodeIsFieldBearing) {
+		lines.push(`    fields: {},`);
 	}
 	if (hasChildren) {
 		lines.push(`    children,`);

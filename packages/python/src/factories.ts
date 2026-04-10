@@ -1551,6 +1551,7 @@ export function future_import_statement__v0_(
     type: 'future_import_statement' as const,
     named: true as const,
     variant: 'v0' as const,
+    fields: {},
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1568,6 +1569,7 @@ export function future_import_statement__paren_(
     type: 'future_import_statement' as const,
     named: true as const,
     variant: 'paren' as const,
+    fields: {},
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);

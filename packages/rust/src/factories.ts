@@ -1944,6 +1944,7 @@ export function line_comment__v0_(
     type: 'line_comment' as const,
     named: true as const,
     variant: 'v0' as const,
+    fields: {},
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -3929,6 +3930,7 @@ export function visibility_modifier__v0_(
     type: 'visibility_modifier' as const,
     named: true as const,
     variant: 'v0' as const,
+    fields: {},
     children,
     child(child?: Path) { return child !== undefined ? visibility_modifier__v0_({ ...config, children: child }) : config?.children; },
     render() { return render(this); },
