@@ -15,8 +15,8 @@ rules:
     template: assert $$$CHILDREN
     joinBy: ","
   assignment:
-    - $LEFT=$RIGHT $TYPE
-    - $LEFT:$TYPE $RIGHT
+    - $LEFT=$RIGHT
+    - $LEFT:$TYPE
     - $LEFT:$TYPE=$RIGHT
   attribute: $OBJECT.$ATTRIBUTE
   augmented_assignment: $LEFT $OPERATOR $RIGHT
@@ -86,7 +86,7 @@ rules:
     joinBy: ","
   if_clause: if $EXPRESSION
   if_statement: if $CONDITION:$CONSEQUENCE $$$ALTERNATIVE
-  import_from_statement: from $MODULE_NAME import $WILDCARD_IMPORT $$$NAME
+  import_from_statement: from $MODULE_NAME import $WILDCARD_IMPORT
   import_statement: import $$$NAME
   interpolation: "{$EXPRESSION $TYPE_CONVERSION $FORMAT_SPECIFIER}"
   keyword_argument: $NAME=$VALUE
@@ -120,7 +120,7 @@ rules:
   print_statement:
     template:
       - print $CHEVRON $$$ARGUMENT
-      - print $$$ARGUMENT $CHEVRON
+      - print $$$ARGUMENT
     joinBy: ","
   raise_statement:
     template: raise $CHILDREN $CAUSE_CLAUSE

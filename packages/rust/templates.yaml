@@ -14,7 +14,7 @@ rules:
     joinBy: ","
   array_expression:
     - "[$$$ATTRIBUTES $$$ELEMENTS;$LENGTH]"
-    - "[$$$ATTRIBUTES $$$ELEMENTS $$$CHILDREN] $LENGTH"
+    - "[$$$ATTRIBUTES $$$ELEMENTS $$$CHILDREN]"
   array_type:
     template: "[$ELEMENT $LENGTH_CLAUSE]"
     length_clause: ; $LENGTH
@@ -77,7 +77,7 @@ rules:
     template: "{$$$CHILDREN}"
     joinBy: ","
   field_pattern:
-    - $MUTABLE_SPECIFIER $NAME $PATTERN
+    - $MUTABLE_SPECIFIER $NAME
     - $MUTABLE_SPECIFIER $NAME:$PATTERN
   for_expression:
     template: $LABEL_CLAUSE for $PATTERN in $VALUE $BODY
@@ -95,8 +95,8 @@ rules:
     return_type_clause: -> $RETURN_TYPE
   function_type:
     template:
-      - $FOR_LIFETIMES $TRAIT $PARAMETERS $RETURN_TYPE_CLAUSE $FUNCTION_MODIFIERS
-      - $FOR_LIFETIMES $FUNCTION_MODIFIERS fn $PARAMETERS $RETURN_TYPE_CLAUSE $TRAIT
+      - $FOR_LIFETIMES $TRAIT $PARAMETERS $RETURN_TYPE_CLAUSE
+      - $FOR_LIFETIMES $FUNCTION_MODIFIERS fn $PARAMETERS $RETURN_TYPE_CLAUSE
     return_type_clause: -> $RETURN_TYPE
   gen_block: gen $BLOCK
   generic_function: $FUNCTION::$TYPE_ARGUMENTS
@@ -105,7 +105,9 @@ rules:
   generic_type_with_turbofish: $TYPE::$TYPE_ARGUMENTS
   higher_ranked_trait_bound: for $TYPE_PARAMETERS $TYPE
   if_expression: if $CONDITION $CONSEQUENCE $ALTERNATIVE
-  impl_item: impl $TYPE_PARAMETERS $TRAIT $TYPE $WHERE_CLAUSE $BODY
+  impl_item:
+    template: impl $TYPE_PARAMETERS $TRAIT_CLAUSE $TYPE $WHERE_CLAUSE $BODY
+    trait_clause: "! $TRAIT for"
   index_expression: $OBJECT[$INDEX]
   inner_attribute_item: "#![$ATTRIBUTE]"
   label: "'$IDENTIFIER"
@@ -121,7 +123,7 @@ rules:
   lifetime: "'$IDENTIFIER"
   lifetime_parameter: $NAME $BOUNDS
   line_comment:
-    - // $DOC $INNER $OUTER
+    - //
     - //$OUTER $INNER $DOC
   loop_expression:
     template: $LABEL_CLAUSE loop $BODY
@@ -148,7 +150,7 @@ rules:
   negative_literal: $OPERATOR $VALUE
   or_pattern:
     - $LEFT|$RIGHT
-    - "|$LEFT $RIGHT"
+    - "|$LEFT"
   ordered_field_declaration_list: ($$$ATTRIBUTES $VISIBILITY_MODIFIER $$$TYPE $$$DECLARATIONS $$$CHILDREN)
   parameter: $MUTABLE_SPECIFIER $PATTERN:$TYPE
   parameters:
@@ -159,11 +161,12 @@ rules:
   qualified_type: $TYPE as $ALIAS
   range_expression:
     - $START $OPERATOR $END
-    - $OPERATOR $START $END
+    - $START $OPERATOR
+    - $OPERATOR
   range_pattern:
     - $LEFT...$RIGHT
-    - $LEFT.. $RIGHT
-    - ..=$RIGHT $LEFT
+    - $LEFT..
+    - ..=$RIGHT
   raw_string_literal: $RAW_STRING_LITERAL_START $STRING_CONTENT $RAW_STRING_LITERAL_END
   ref_pattern: ref $CHILDREN
   reference_expression:
@@ -190,7 +193,7 @@ rules:
   struct_item:
     - $VISIBILITY_MODIFIER struct $NAME $TYPE_PARAMETERS $WHERE_CLAUSE $BODY
     - $VISIBILITY_MODIFIER struct $NAME $TYPE_PARAMETERS $BODY $WHERE_CLAUSE;
-    - $VISIBILITY_MODIFIER struct $NAME $TYPE_PARAMETERS; $BODY $WHERE_CLAUSE
+    - $VISIBILITY_MODIFIER struct $NAME $TYPE_PARAMETERS;
   struct_pattern:
     template: $TYPE{$$$CHILDREN}
     joinBy: ","
@@ -255,7 +258,7 @@ rules:
     template: $MUTABLE_SPECIFIER $PATTERN_CLAUSE...
     pattern_clause: "$PATTERN :"
   visibility_modifier:
-    - $CHILDREN $PUB $IN
+    - $CHILDREN
     - $PUB $CHILDREN$IN
   where_clause:
     template: where $$$CHILDREN

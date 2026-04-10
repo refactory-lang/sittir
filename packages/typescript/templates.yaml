@@ -11,8 +11,8 @@ rules:
   abstract_method_signature: $ACCESSIBILITY_MODIFIER abstract $OVERRIDE_MODIFIER $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE
   adding_type_annotation: +?:$CHILDREN
   ambient_declaration:
-    - declare $DECLARATION $TYPE_ANNOTATION $SEMICOLON
-    - declare global $DECLARATION $TYPE_ANNOTATION $SEMICOLON
+    - declare $DECLARATION
+    - declare global $DECLARATION
     - declare module.$DECLARATION:$TYPE_ANNOTATION $SEMICOLON
   arguments:
     template: ($$$CHILDREN)
@@ -36,15 +36,15 @@ rules:
   break_statement: break $LABEL
   call_expression:
     - $FUNCTION $TYPE_ARGUMENTS $ARGUMENTS
-    - $FUNCTION $ARGUMENTS $TYPE_ARGUMENTS
+    - $FUNCTION $ARGUMENTS
     - $FUNCTION?.$TYPE_ARGUMENTS $ARGUMENTS
   call_signature: $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE
   catch_clause: catch $PARAMETER $TYPE $BODY
   class: $$$DECORATOR class $NAME $TYPE_PARAMETERS $CLASS_HERITAGE $BODY
   class_body:
     - "{$$$DECORATOR $$$CHILDREN}"
-    - "{$$$CHILDREN} $$$DECORATOR"
-    - "{} $$$DECORATOR $$$CHILDREN"
+    - "{$$$CHILDREN}"
+    - "{} $$$CHILDREN"
   class_declaration: $$$DECORATOR class $NAME $TYPE_PARAMETERS $CLASS_HERITAGE $BODY $AUTOMATIC_SEMICOLON
   class_heritage: $EXTENDS_CLAUSE $IMPLEMENTS_CLAUSE
   class_static_block: static $BODY
@@ -68,14 +68,14 @@ rules:
     template: $NAME $ALIAS_CLAUSE
     alias_clause: as $ALIAS
   export_statement:
-    - export*from $SOURCE $DECLARATION $$$DECORATOR $VALUE
-    - export $DECLARATION from $SOURCE $$$DECORATOR $VALUE
-    - $$$DECORATOR export $DECLARATION $SOURCE $VALUE
-    - $$$DECORATOR export default $DECLARATION $SOURCE $VALUE
-    - $$$DECORATOR export default $VALUE $DECLARATION $SOURCE
-    - export type $DECLARATION $SOURCE $$$DECORATOR $VALUE
-    - export=$DECLARATION $$$DECORATOR $SOURCE $VALUE
-    - export as namespace $DECLARATION $$$DECORATOR $SOURCE $VALUE
+    - export*from $SOURCE $$$CHILDREN
+    - export $DECLARATION from $SOURCE
+    - $$$DECORATOR export $DECLARATION
+    - $$$DECORATOR export default $DECLARATION
+    - $$$DECORATOR export default $VALUE $DECLARATION
+    - export type $DECLARATION $SOURCE
+    - export=$DECLARATION
+    - export as namespace $DECLARATION
   expression_statement: $$$CHILDREN
   extends_clause: extends $$$VALUE $$$TYPE_ARGUMENTS $$$CHILDREN
   extends_type_clause:
@@ -99,19 +99,19 @@ rules:
     joinBy: ","
   import_alias: import $NAME=$VALUE $SEMICOLON
   import_attribute: with $OBJECT
-  import_clause: $DEFAULT_IMPORT $NAMED_IMPORTS
+  import_clause: $DEFAULT_IMPORT
   import_require_clause: $IDENTIFIER=require($SOURCE)
   import_specifier:
-    - $NAME $ALIAS
+    - $NAME
     - $NAME as $ALIAS
   import_statement:
-    - import $IMPORT_CLAUSE $FROM_CLAUSE $IMPORT_ATTRIBUTE $SEMICOLON $SOURCE
-    - import $IMPORT_CLAUSE $IMPORT_ATTRIBUTE $SEMICOLON $SOURCE $FROM_CLAUSE
-    - import $SOURCE $IMPORT_ATTRIBUTE $SEMICOLON $IMPORT_CLAUSE $FROM_CLAUSE
+    - import $IMPORT_CLAUSE $FROM_CLAUSE $IMPORT_ATTRIBUTE $SEMICOLON
+    - import $IMPORT_CLAUSE $IMPORT_ATTRIBUTE $SEMICOLON
+    - import $SOURCE $IMPORT_ATTRIBUTE $SEMICOLON
   index_signature:
     template:
-      - $SIGN_CLAUSE[$NAME:$INDEX_TYPE]$TYPE $MAPPED_TYPE_CLAUSE
-      - $SIGN_CLAUSE[$MAPPED_TYPE_CLAUSE]$TYPE $INDEX_TYPE $NAME
+      - $SIGN_CLAUSE[$NAME:$INDEX_TYPE]$TYPE
+      - $SIGN_CLAUSE[$MAPPED_TYPE_CLAUSE]$TYPE
     sign_clause: $SIGN readonly
   index_type_query: keyof $PRIMARY_TYPE
   infer_type:
@@ -158,13 +158,13 @@ rules:
   pair_pattern: $KEY:$VALUE
   parenthesized_expression:
     - ($CHILDREN $TYPE)
-    - ($CHILDREN) $TYPE
+    - ($CHILDREN)
   parenthesized_type: ($CHILDREN)
   program: $HASH_BANG_LINE $$$STATEMENTS
   property_signature: $ACCESSIBILITY_MODIFIER $OVERRIDE_MODIFIER $NAME $TYPE
   public_field_definition:
-    - $$$DECORATOR $ACCESSIBILITY_MODIFIER $OVERRIDE_MODIFIER $NAME $TYPE $INITIALIZER $VALUE
-    - $$$DECORATOR $ACCESSIBILITY_MODIFIER $NAME $TYPE $INITIALIZER $VALUE $OVERRIDE_MODIFIER
+    - $$$DECORATOR $ACCESSIBILITY_MODIFIER $OVERRIDE_MODIFIER $NAME $TYPE $INITIALIZER
+    - $$$DECORATOR $ACCESSIBILITY_MODIFIER $NAME $TYPE $INITIALIZER
   readonly_type: readonly $CHILDREN
   regex: /$PATTERN/$FLAGS
   required_parameter: $PARAMETER_NAME $TYPE $VALUE $$$DECORATOR $NAME $PATTERN $INITIALIZER
@@ -216,7 +216,7 @@ rules:
   variable_declaration: var $$$DECLARATORS $$$CHILDREN $SEMICOLON
   variable_declarator:
     - $NAME $TYPE $VALUE
-    - $NAME!$TYPE $VALUE
+    - $NAME!$TYPE
   while_statement: while $CONDITION $BODY
   with_statement: with $OBJECT $BODY
   yield_expression:

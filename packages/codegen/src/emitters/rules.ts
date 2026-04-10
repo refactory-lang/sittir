@@ -200,7 +200,9 @@ function emitFromModelVariants(
 		const clauses: ClauseEntry[] = [];
 		const parts = ruleToTemplate(variant.rule, false, seen, fieldRequired, fieldMultiple, grammarRules, clauses, false, childSlotMap);
 
-		appendMissingFields(parts, nodeFields, seen);
+		// Only append fields that belong to THIS variant, not all node fields
+		const variantFields = nodeFields.filter(f => variant.fields.has(f.name));
+		appendMissingFields(parts, variantFields, seen);
 		appendChildrenIfNeeded(parts, node, seen, childSlotMap, overrideFields);
 
 		const templateStr = parts.join('').replace(/\s+/g, ' ').trim();
@@ -804,6 +806,15 @@ function tryClause(
 		} else if (unwrapped.type === 'SYMBOL' && !unwrapped.name.startsWith('_')) {
 			// Named symbol in optional context — treat as field-like
 			fields.push({ name: unwrapped.name, multi: false });
+		} else if (unwrapped.type === 'CHOICE') {
+			// CHOICE(STRING | BLANK) = optional token inside clause — include it
+			const nonBlank = unwrapped.members.filter(mb => mb.type !== 'BLANK');
+			const hasBlank = unwrapped.members.some(mb => mb.type === 'BLANK');
+			if (hasBlank && nonBlank.length === 1 && nonBlank[0]!.type === 'STRING') {
+				tokens.push(nonBlank[0]!.value);
+			} else {
+				return null; // Complex CHOICE — don't clausify
+			}
 		} else {
 			// Complex structure — don't clausify
 			return null;
@@ -832,6 +843,12 @@ function tryClause(
 			const varName = unwrapped.name.toUpperCase();
 			clauseParts.push(`$${varName}`);
 			seen.add(unwrapped.name);
+		} else if (unwrapped.type === 'CHOICE') {
+			// CHOICE(STRING | BLANK) — include optional token in clause
+			const nonBlank = unwrapped.members.filter(mb => mb.type !== 'BLANK');
+			if (nonBlank.length === 1 && nonBlank[0]!.type === 'STRING') {
+				clauseParts.push(nonBlank[0]!.value);
+			}
 		}
 	}
 
