@@ -11,7 +11,8 @@ describe('emitFrom', () => {
 
 	it('emits _resolveByKind dispatch', () => {
 		expect(source).toContain('function _resolveByKind(kind: string, rest: unknown)');
-		expect(source).toContain("case 'function_item':");
+		// Dispatches via _fromMap lookup (function_item must be a registered key)
+		expect(source).toContain("'function_item': functionItemFrom");
 	});
 
 	it('emits shared resolver functions', () => {

@@ -70,7 +70,7 @@ describe('emitFactory', () => {
 
 		// Single children slot — uses child() or getChildren/setChildren to avoid name collision
 		expect(source).toContain('children,');
-		expect(source).toMatch(/child\(child\?:|getChildren\(\)|setChildren\(/);
+		expect(source).toMatch(/child\(c\?:|child\(child\?:|getChildren\(\)|setChildren\(/);
 	});
 });
 

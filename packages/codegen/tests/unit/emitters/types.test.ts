@@ -35,7 +35,7 @@ describe('emitTypes', () => {
 		const source = emitTypes({ grammar: 'rust', nodes: [branchNode('function_item')] });
 		expect(source).toContain("export type FunctionItemConfig = ConfigOf<FunctionItem>;");
 		expect(source).toContain("export interface FunctionItemTree extends TreeNode<'function_item'> {}");
-		expect(source).toContain("export type FunctionItemFromInput = FromInputOf<FunctionItem>;");
+		expect(source).toContain("export type FunctionItemFromInput = FromInputOf<FunctionItem, LeafScalarMap, LeafStringMap>;");
 	});
 
 	it('should emit discriminated union', () => {
@@ -120,24 +120,25 @@ describe('emitTypes', () => {
 		expect(source).toContain("export interface MutableSpecifierTree extends TreeNode<'mutable_specifier'> {}");
 	});
 
-	it('should use camelCase field names in concrete interfaces', () => {
+	it('should use raw field names in concrete interfaces (camelCase via ConfigOf)', () => {
 		const nodes: HydratedNodeModel[] = [
 			{
 				modelType: 'branch',
 				kind: 'function_item',
 				fields: [
-					{ name: 'return_type', required: false, multiple: false, kinds: [], propertyName: 'returnType' },
-					{ name: 'type_parameters', required: false, multiple: false, kinds: [], propertyName: 'typeParameters' },
+					{ name: 'return_type', required: false, multiple: false, kinds: [{ kind: '_type', named: true }], propertyName: 'returnType' },
+					{ name: 'type_parameters', required: false, multiple: false, kinds: [{ kind: 'type_parameters', named: true }], propertyName: 'typeParameters' },
 				],
 				members: [],
 				children: [],
 			} as unknown as HydratedNodeModel,
 		];
 		const source = emitTypes({ grammar: 'rust', nodes });
-		expect(source).toContain('returnType?:');
-		expect(source).toContain('typeParameters?:');
-		expect(source).not.toContain('return_type');
-		expect(source).not.toContain('type_parameters');
+		// Concrete interfaces use raw field names (for zero-cost render pass-through)
+		expect(source).toContain('return_type?:');
+		expect(source).toContain('type_parameters?:');
+		// Config types derived via ConfigOf provide camelCase access
+		expect(source).toContain('export type FunctionItemConfig = ConfigOf<FunctionItem>');
 	});
 
 	it('should emit supertype TreeNode unions', () => {
