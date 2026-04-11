@@ -1,15 +1,20 @@
 <!--
 Sync Impact Report
-- Version change: 0.0.0 → 1.0.0 (initial ratification)
-- Added principles: I. Grammar Alignment, II. Fewer Abstractions,
-  III. Generated vs Hand-Written, IV. Test-First, V. Library-First,
-  VI. Deterministic Output
-- Added sections: Technology Stack, Development Workflow
+- Version change: 1.0.0 → 1.1.0 (two new principles + tech stack fix)
+- Modified principles: none renamed
+- Added sections:
+  - VII. Grammar-Agnostic Pipeline
+  - VIII. Non-lossy Transformations
+- Removed sections: none
+- Technology Stack: "tsc / tsgo (strict mode)" → "tsgo (strict mode)"
 - Templates requiring updates:
   - .specify/templates/plan-template.md — ✅ no changes needed
     (Constitution Check references this file dynamically)
   - .specify/templates/spec-template.md — ✅ no changes needed
   - .specify/templates/tasks-template.md — ✅ no changes needed
+- Known violations of new principles:
+  - emitters/types.ts:63-65 hardcodes integer_literal/float_literal/
+    boolean_literal kind checks (violates VII). Tracked as tech debt.
 - Follow-up TODOs: none
 -->
 
@@ -71,6 +76,35 @@ byte-identical output. No timestamps, random identifiers, or
 order-dependent iteration. This enables diffing regenerated output
 against prior versions and ensures CI reproducibility.
 
+### VII. Grammar-Agnostic Pipeline
+
+The codegen pipeline MUST work for any tree-sitter grammar without
+modification. All language-specific knowledge — field names, external
+token roles, spacing rules, formatting directives — MUST flow through
+override configuration, never through hardcoded conditionals.
+
+Concrete violations:
+- `if (language === 'rust')` or `if (kind === 'function_item')` in
+  pipeline code
+- Hardcoded indent/dedent behavior instead of external role mapping
+- Kind-specific type narrowing instead of override-driven classification
+
+Test: would this logic break if applied to a different grammar? If
+yes, it belongs in overrides, not in the pipeline.
+
+### VIII. Non-lossy Transformations
+
+Every optimization and transformation in the pipeline MUST preserve
+all information that affects output. Merging, collapsing, factoring,
+and deduplication MUST retain the data needed to reconstruct the
+original output. When forms are collapsed, the original rule shapes
+MUST be preserved. When variants are deduplicated, structurally
+identical entries are removed but distinct content is retained.
+
+This is distinct from Deterministic Output (same input → same output).
+Non-lossy means: no transformation step silently discards data that a
+downstream consumer needs.
+
 ## Technology Stack
 
 - **Language**: TypeScript (ESM, `.ts` extensions in imports)
@@ -78,7 +112,7 @@ against prior versions and ensures CI reproducibility.
 - **Testing**: Vitest
 - **Linting**: oxlint
 - **Formatting**: oxfmt
-- **Type checking**: tsc / tsgo (strict mode)
+- **Type checking**: tsgo (strict mode)
 - **Grammar inputs**: `grammar.json` + `node-types.json` from
   tree-sitter grammar packages
 - **Zero runtime dependencies**: generated builder packages MUST NOT
@@ -108,4 +142,4 @@ All code reviews MUST verify compliance with these principles.
 Complexity beyond what the constitution permits MUST be justified in
 the plan's Complexity Tracking table.
 
-**Version**: 1.0.0 | **Ratified**: 2026-03-24 | **Last Amended**: 2026-03-24
+**Version**: 1.1.0 | **Ratified**: 2026-03-24 | **Last Amended**: 2026-04-11
