@@ -61,6 +61,7 @@ interface AdaptedVariant {
     literals: Map<number, string>
     clauses: Array<{ name: string; template: string }>
     mergedRules?: any[]
+    rule: any // Minimal GrammarRule-compatible object for template emitter
 }
 
 export interface AdaptedBranchModel extends AdaptedNodeBase {
@@ -306,5 +307,7 @@ function adaptForm(form: AssembledForm): AdaptedVariant {
         literals: new Map(),
         clauses: [],
         mergedRules: form.mergedRules,
+        // Provide a minimal GrammarRule-compatible object for emitters that walk the rule tree
+        rule: { type: 'BLANK' } as any,
     }
 }

@@ -4,11 +4,12 @@ import { link } from '../compiler/link.ts'
 import { optimize } from '../compiler/optimize.ts'
 import { assemble } from '../compiler/assemble.ts'
 import { toHydratedModels } from '../compiler/adapter.ts'
+import { resolveGrammarJsPath } from '../compiler/resolve-grammar.ts'
 import { resolve } from 'node:path'
 
-const pythonGrammar = resolve(import.meta.dirname!, '../../../../node_modules/.pnpm/tree-sitter-python@0.25.0/node_modules/tree-sitter-python/grammar.js')
-const rustGrammar = resolve(import.meta.dirname!, '../../../../node_modules/.pnpm/tree-sitter-rust@0.24.0/node_modules/tree-sitter-rust/grammar.js')
-const tsGrammar = resolve(import.meta.dirname!, '../../../../node_modules/.pnpm/tree-sitter-typescript@0.23.2/node_modules/tree-sitter-typescript/typescript/grammar.js')
+const pythonGrammar = resolveGrammarJsPath('python')
+const rustGrammar = resolveGrammarJsPath('rust')
+const tsGrammar = resolveGrammarJsPath('typescript')
 
 describe('Evaluate — real tree-sitter grammars', () => {
 
