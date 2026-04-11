@@ -64,15 +64,40 @@ describe('Assemble — classifyNode', () => {
         expect(classifyNode('items', rule)).toBe('container')
     })
 
-    it('classifies visible choice of structures as polymorph', () => {
+    it('classifies visible choice with different field sets as polymorph', () => {
         const rule: Rule = {
             type: 'choice',
             members: [
-                { type: 'variant', name: 'if', content: { type: 'seq', members: [{ type: 'string', value: 'if' }] } },
-                { type: 'variant', name: 'while', content: { type: 'seq', members: [{ type: 'string', value: 'while' }] } },
+                { type: 'variant', name: 'if', content: { type: 'seq', members: [
+                    { type: 'string', value: 'if' },
+                    { type: 'field', name: 'condition', content: { type: 'symbol', name: 'expr' } },
+                ] } },
+                { type: 'variant', name: 'while', content: { type: 'seq', members: [
+                    { type: 'string', value: 'while' },
+                    { type: 'field', name: 'body', content: { type: 'symbol', name: 'block' } },
+                ] } },
             ],
         }
         expect(classifyNode('statement', rule)).toBe('polymorph')
+    })
+
+    it('classifies visible choice with same field set as branch', () => {
+        const rule: Rule = {
+            type: 'choice',
+            members: [
+                { type: 'variant', name: 'plus', content: { type: 'seq', members: [
+                    { type: 'field', name: 'left', content: { type: 'symbol', name: 'expr' } },
+                    { type: 'string', value: '+' },
+                    { type: 'field', name: 'right', content: { type: 'symbol', name: 'expr' } },
+                ] } },
+                { type: 'variant', name: 'minus', content: { type: 'seq', members: [
+                    { type: 'field', name: 'left', content: { type: 'symbol', name: 'expr' } },
+                    { type: 'string', value: '-' },
+                    { type: 'field', name: 'right', content: { type: 'symbol', name: 'expr' } },
+                ] } },
+            ],
+        }
+        expect(classifyNode('binary_op', rule)).toBe('branch')
     })
 
     it('classifies visible pattern as leaf', () => {
@@ -228,18 +253,18 @@ describe('Assemble — assemble()', () => {
 })
 
 describe('Assemble — T029a identical detect tokens', () => {
-    it('collapses polymorph forms with same detect token', () => {
+    it('collapses polymorph forms with same detect token but different fields', () => {
         const optimized = makeOptimized({
             decl: {
                 type: 'choice',
                 members: [
-                    { type: 'variant', name: 'pub', content: { type: 'seq', members: [
+                    { type: 'variant', name: 'pub_item', content: { type: 'seq', members: [
                         { type: 'string', value: 'pub' },
                         { type: 'field', name: 'item', content: { type: 'symbol', name: 'x' } },
                     ]}},
-                    { type: 'variant', name: 'pub2', content: { type: 'seq', members: [
+                    { type: 'variant', name: 'pub_alias', content: { type: 'seq', members: [
                         { type: 'string', value: 'pub' },
-                        { type: 'field', name: 'item', content: { type: 'symbol', name: 'y' } },
+                        { type: 'field', name: 'alias', content: { type: 'symbol', name: 'y' } },
                     ]}},
                 ],
             },
@@ -248,7 +273,7 @@ describe('Assemble — T029a identical detect tokens', () => {
         })
         const nodeMap = assemble(optimized)
         const decl = nodeMap.nodes.get('decl')
-        // Both forms have 'pub' as detect token + same field set → should collapse
+        // Different field sets → polymorph, even though detect token is same
         expect(decl?.modelType).toBe('polymorph')
     })
 })

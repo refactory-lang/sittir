@@ -77,6 +77,10 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
         }
     }
 
+    // Part A: Collect anonymous tokens/keywords from the rule tree
+    // Tree-sitter promotes string literals to named node-types entries
+    collectAnonymousNodes(optimized.rules, nodes)
+
     return {
         name: optimized.name,
         nodes,
@@ -86,10 +90,137 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
 }
 
 // ---------------------------------------------------------------------------
+// collectAnonymousNodes — extract string literals from rules as token/keyword entries
+// ---------------------------------------------------------------------------
+
+function collectAnonymousNodes(rules: Record<string, Rule>, nodes: Map<string, AssembledNode>): void {
+    const seen = new Set<string>()
+
+    for (const rule of Object.values(rules)) {
+        walkForStrings(rule, seen)
+    }
+
+    for (const value of seen) {
+        if (nodes.has(value)) continue // Already classified as a named rule
+
+        const isAlphanumeric = /^\w+$/.test(value)
+        const { typeName } = nameNode(value)
+
+        if (isAlphanumeric) {
+            // Keyword token (e.g., "if", "class", "pub")
+            nodes.set(value, {
+                kind: value,
+                typeName,
+                factoryName: undefined,
+                irKey: undefined,
+                modelType: 'keyword',
+                text: value,
+            } as AssembledKeyword)
+        } else {
+            // Operator/punctuation token (e.g., "+", "->", "{")
+            nodes.set(value, {
+                kind: value,
+                typeName,
+                factoryName: undefined,
+                irKey: undefined,
+                modelType: 'token',
+            } as AssembledToken)
+        }
+    }
+}
+
+function walkForStrings(rule: Rule, out: Set<string>): void {
+    switch (rule.type) {
+        case 'string':
+            out.add(rule.value)
+            break
+        case 'seq':
+            for (const m of rule.members) walkForStrings(m, out)
+            break
+        case 'choice':
+            for (const m of rule.members) walkForStrings(m, out)
+            break
+        case 'optional':
+            walkForStrings(rule.content, out)
+            break
+        case 'repeat':
+            walkForStrings(rule.content, out)
+            break
+        case 'field':
+            walkForStrings(rule.content, out)
+            break
+        case 'variant':
+            walkForStrings(rule.content, out)
+            break
+        case 'clause':
+            walkForStrings(rule.content, out)
+            break
+        case 'group':
+            walkForStrings(rule.content, out)
+            break
+    }
+}
+
+// ---------------------------------------------------------------------------
 // classifyNode — structural simplification + visibility
 // ---------------------------------------------------------------------------
 
 type ModelType = AssembledNode['modelType']
+
+/**
+ * Check if all variant members of a choice have the same field names.
+ * If so, it's a branch with operator variation (e.g., binary_operator with prec variants),
+ * not a polymorph with structurally distinct forms.
+ */
+function allVariantsHaveSameFieldSet(rule: Rule): boolean {
+    if (rule.type !== 'choice') return false
+
+    const fieldSets: Set<string>[] = []
+    for (const member of rule.members) {
+        const content = member.type === 'variant' ? member.content : member
+        const fields = extractFieldNames(content)
+        fieldSets.push(fields)
+    }
+
+    if (fieldSets.length < 2) return false
+
+    const first = fieldSets[0]
+    return fieldSets.every(s =>
+        s.size === first.size && [...s].every(f => first.has(f))
+    )
+}
+
+function extractFieldNames(rule: Rule): Set<string> {
+    const names = new Set<string>()
+    walkForFieldNames(rule, names)
+    return names
+}
+
+function walkForFieldNames(rule: Rule, out: Set<string>): void {
+    switch (rule.type) {
+        case 'field':
+            out.add(rule.name)
+            break
+        case 'seq':
+            for (const m of rule.members) walkForFieldNames(m, out)
+            break
+        case 'choice':
+            for (const m of rule.members) walkForFieldNames(m, out)
+            break
+        case 'optional':
+            walkForFieldNames(rule.content, out)
+            break
+        case 'repeat':
+            walkForFieldNames(rule.content, out)
+            break
+        case 'variant':
+            walkForFieldNames(rule.content, out)
+            break
+        case 'clause':
+            walkForFieldNames(rule.content, out)
+            break
+    }
+}
 
 export function classifyNode(kind: string, rule: Rule): ModelType {
     // Already-classified types pass through
@@ -98,8 +229,12 @@ export function classifyNode(kind: string, rule: Rule): ModelType {
     if (rule.type === 'group') return 'group'
 
     // Check for variant presence BEFORE simplifying — variants mean polymorph
+    // BUT: if all variants have the same field set, it's a branch with operator variation
     if (rule.type === 'choice' && rule.members.some(m => m.type === 'variant')) {
-        return kind.startsWith('_') ? 'supertype' : 'polymorph'
+        if (kind.startsWith('_')) return 'supertype'
+        // Check if all variants have identical field sets → branch, not polymorph
+        if (allVariantsHaveSameFieldSet(rule)) return 'branch'
+        return 'polymorph'
     }
 
     const simplified = simplifyRule(rule)
@@ -117,6 +252,11 @@ export function classifyNode(kind: string, rule: Rule): ModelType {
         case 'choice': {
             const allStrings = simplified.members.every(m => m.type === 'string')
             if (allStrings) return 'enum'
+            // Check if all members are symbols → supertype (hidden) or container-like (visible)
+            const allSymbols = simplified.members.every(m => m.type === 'symbol')
+            if (allSymbols) return hidden ? 'supertype' : 'polymorph'
+            // Check if same field set → branch with variation, not polymorph
+            if (!hidden && allVariantsHaveSameFieldSet(rule)) return 'branch'
             return hidden ? 'supertype' : 'polymorph'
         }
         case 'pattern':
