@@ -8,6 +8,10 @@
  */
 
 import { mkdirSync, writeFileSync } from 'node:fs';
+import { validateTemplates, formatValidationReport } from './validate-templates.ts';
+import { validateRoundTrip, formatRoundTripReport } from './validate-roundtrip.ts';
+import { validateFactoryRoundTrip, formatFactoryRoundTripReport } from './validate-factory-roundtrip.ts';
+import { validateFrom, formatFromReport } from './validate-from.ts';
 import { join, dirname } from 'node:path';
 import { generate } from './index.ts';
 import type { CodegenConfig } from './index.ts';
@@ -18,6 +22,7 @@ interface CliArgs {
 	outputDir?: string;
 	all?: boolean;
 	testsDir?: string;
+	roundtrip?: boolean;
 	help?: boolean;
 }
 
@@ -44,6 +49,9 @@ function parseArgs(argv: string[]): CliArgs {
 				break;
 			case '--tests-dir':
 				args.testsDir = argv[++i];
+				break;
+			case '--roundtrip':
+				args.roundtrip = true;
 				break;
 			case '--help':
 			case '-h':
@@ -101,7 +109,7 @@ const outDir = cliArgs.outputDir;
 writeFile(join(outDir, 'grammar.ts'), result.grammar);
 writeFile(join(outDir, 'types.ts'), result.types);
 writeFile(join(outDir, 'factories.ts'), result.factories);
-writeFile(join(outDir, 'assign.ts'), result.assign);
+writeFile(join(outDir, 'wrap.ts'), result.wrap);
 writeFile(join(outDir, 'utils.ts'), result.utils);
 writeFile(join(outDir, 'from.ts'), result.from);
 writeFile(join(outDir, 'ir.ts'), result.irNamespace);
@@ -123,6 +131,35 @@ writeFile(join(outDir, 'type-test.ts'), result.typeTests);
 
 // Write vitest config
 writeFile(join(dirname(outDir), 'vitest.config.ts'), result.config);
+
+// --- Post-generation validation ---
+const validation = validateTemplates(config.grammar, result.templatesYaml);
+console.log('');
+console.log(formatValidationReport(validation));
+
+if (validation.errors.length > 0) {
+	console.error(`\n${validation.errors.length} validation error(s) — see above.`);
+}
+
+// --- Round-trip validation (optional, requires web-tree-sitter) ---
+if (cliArgs.roundtrip) {
+	console.log('\nRunning round-trip validation...');
+	const rtResult = await validateRoundTrip(config.grammar, result.templatesYaml);
+	console.log(formatRoundTripReport(rtResult));
+
+	// Factory round-trip (corpus → readNode → factory() → render → re-parse)
+	const frtResult = await validateFactoryRoundTrip(config.grammar, result.templatesYaml);
+	console.log(formatFactoryRoundTripReport(frtResult));
+
+	// from() correctness (structural comparison: from() vs factory())
+	const fromResult = await validateFrom(config.grammar, result.templatesYaml);
+	console.log(formatFromReport(fromResult));
+
+	const totalFail = rtResult.fail + frtResult.fail;
+	if (totalFail > 0) {
+		console.error(`\n${totalFail} round-trip failure(s) — see above.`);
+	}
+}
 
 console.log(`
 Done! Generated:

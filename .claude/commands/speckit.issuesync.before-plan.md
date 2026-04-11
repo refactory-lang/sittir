@@ -2,9 +2,6 @@
 description: Sync linked issue status for before_plan hook.
 ---
 
-
-<!-- Extension: workflows -->
-<!-- Config: .specify/extensions/workflows/ -->
 Run:
 
 ```bash

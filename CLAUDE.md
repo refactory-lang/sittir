@@ -8,7 +8,7 @@ Three-layer architecture:
 
 - **`@sittir/core`** — Grammar-driven render engine, validation, CST, Edit creation. S-expression templates parsed once and cached. `render(node, rules)` uses regex replace. No `.from()` resolution — generated packages inline all resolution logic.
 - **`@sittir/types`** — Pure TypeScript types (zero runtime). `AnyNodeData`, `ConfigOf<T>`, `TreeNodeOf<T>`, `FromInputOf<T>` transformation types. `ByteRange`, `Edit`, `RenderContext`.
-- **`@sittir/codegen`** — Reads grammar.json + node-types.json, emits: S-expression render templates, unified factory functions, ir namespace, const enums, navigation types, assign functions, `.from()` resolution, tests.
+- **`@sittir/codegen`** — Reads grammar.json + node-types.json, emits: YAML render templates, unified factory functions, ir namespace, const enums, navigation types, wrap/readNode functions, `.from()` resolution, tests.
 
 Generated packages (`@sittir/rust`, `@sittir/typescript`, `@sittir/python`) contain:
 - `grammar.ts` — grammar type literal for type projections
@@ -17,7 +17,7 @@ Generated packages (`@sittir/rust`, `@sittir/typescript`, `@sittir/python`) cont
 - `joinby.ts` — separator map for list children (ast-grep `joinBy` convention)
 - `factories.ts` — unified factories: config input (camelCase) → NodeData output (raw fields) + fluent getters/setters + methods
 - `from.ts` — `.from()` ergonomic resolution with inlined per-field logic (tree-shakeable)
-- `assign.ts` — generic tree node → NodeData hydration driven by field metadata + `edit()` entry point
+- `wrap.ts` — tree node → NodeData hydration via `readNode()` entry point + per-kind wrap functions + `edit()` alias + override field promotion heuristics
 - `utils.ts` — shared client-side utilities (`isNodeData`, `_inferBranch`, `_BRANCH_FIELDS`)
 - `ir.ts` — developer-facing namespace with short names
 - `consts.ts` — discoverable arrays/maps of kinds, keywords, operators
@@ -43,15 +43,15 @@ Seven surfaces, one common shape (`NodeData`):
 | Factory output | `NodeData` + fluent getters/setters + methods | Raw storage, camelCase accessors |
 | From input | `FromInput` (loose: strings, numbers, objects) | Adds resolution on top of factory |
 | From output | Same as factory output | Calls factory internally |
-| Assign input | `SgNode` / `TreeNode` (raw field names) | **ast-grep owns this shape** |
-| Assign output | `NodeData` (raw) | Direct mapping, no translation |
+| readNode input | `SgNode` / `TreeNode` (raw field names) | **ast-grep owns this shape** |
+| readNode output | `NodeData` (raw) | Direct mapping, no translation |
 | Render input | `AnyNodeData` — reads `node.fields[rawName]` | Zero-cost from any producer |
 
 Design targets per tier:
 
 - **Factory** — zero-cost translation + compile-time constraints + client-side validation of text inputs. Config uses camelCase keys; factory maps to raw `fields` internally. Fluent getters/setters provide camelCase access: no-arg = getter, with-arg = setter (returns new node).
 - **FromInput** — adds resolution (string → leaf, object → branch inference, supertype expansion) on top of factory. Exposed getters/setters same as factory.
-- **Assign** — strips all protections and translations. Maps `SgNode` directly to `NodeData` raw shape. Should be a single generic function driven by field metadata, not per-kind generated functions.
+- **Wrap / readNode** — strips all protections and translations. `readNode(target)` is the typed public entry point; per-kind `wrapXxx()` functions recursively hydrate from TreeNode to `NodeData`. Override field promotion heuristics are inlined.
 - **Render** — reads `node.fields[rawName]` and `node.fields['children']`. Zero-cost consumption from any producer.
 
 ## Commands

@@ -10,7 +10,7 @@
 
 ### User Story 1 - Codegen produces YAML templates from grammar (Priority: P1)
 
-A developer runs the sittir codegen CLI against a tree-sitter grammar (e.g., Rust). The codegen walks the grammar's enriched rule tree and emits a single `templates.yaml` file per language containing render templates in ast-grep meta variable syntax, with synthesized clauses for optional token+field groups and per-rule `joinBy` separators.+
+A developer runs the sittir codegen CLI against a tree-sitter grammar (e.g., Rust). The codegen walks the grammar's enriched rule tree and emits a single `templates.yaml` file per language containing render templates in ast-grep meta variable syntax, with synthesized clauses for optional token+field groups and per-rule `joinBy` separators.
 
 **Why this priority**: This is the core pipeline change. Without YAML template emission, nothing else works. It replaces the current S-expression `rules.ts` + `joinby.ts` generation.
 
@@ -90,6 +90,40 @@ All existing tests that exercise factory creation + rendering continue to pass a
 
 ---
 
+### User Story 6 - Override fields for under-fielded grammars (Priority: P2)
+
+A developer maintains an `overrides.json` file per grammar that provides synthetic field names for nodes where the tree-sitter grammar lacks explicit FIELDs (e.g., operators, positional children). The codegen merges these overrides with node-types.json during enrichment, and `wrap.ts` promotes the override-named children into `fields` at runtime so templates can reference them as `$FIELD_NAME`.
+
+**Why this priority**: Enables correct templates for ~10-15 Rust nodes that lack explicit FIELDs. TypeScript and Python grammars barely need overrides.
+
+**Independent Test**: Create an `overrides.json` with entries for `index_expression` (value/index fields) and `unary_expression` (operator/argument fields), run codegen, and verify the generated templates reference these as `$VALUE`, `$INDEX`, `$OPERATOR`, `$ARGUMENT`.
+
+**Acceptance Scenarios**:
+
+1. **Given** an `overrides.json` with `index_expression` fields `value` and `index`, **When** the codegen runs, **Then** the template for `index_expression` references `$VALUE` and `$INDEX` instead of positional `$$$CHILDREN`.
+2. **Given** an override entry with `"anonymous": true` on the `operator` field, **When** `wrap.ts` runs at runtime, **Then** the anonymous token is promoted from `children` into `fields.operator`.
+3. **Given** an `overrides.json` entry that doesn't match the grammar rule structure, **When** the codegen validates it, **Then** a descriptive error is reported.
+4. **Given** a grammar where the codegen detects same-kind positional children (`SEQ(X, X)`), **When** running in diagnostic mode, **Then** the codegen logs "needs synthetic names" to help authors create overrides.
+
+---
+
+### User Story 7 - Wrap emitter field promotion heuristics (Priority: P2)
+
+The codegen inlines per-kind override field promotion code into generated `wrapXxx()` functions using 5 heuristics (tree-sitter FIELD, unique kind, anonymous token with per-token matching, positional consumption, CHOICE branch). The render engine also provides a children-by-kind fallback for named children stored in the `children` array. Together, all named positions are resolvable via template variables.
+
+**Why this priority**: Makes render templates work correctly for nodes with override fields — without promotion and fallback, `$FIELD_NAME` variables in templates would have nothing to resolve against.
+
+**Independent Test**: Create a `NodeData` for `index_expression` via factory, render it, verify the template resolves `$OBJECT` and `$INDEX` variables correctly.
+
+**Acceptance Scenarios**:
+
+1. **Given** a `function_item` with an unnamed `visibility_modifier` child (Heuristic 2), **When** the template renders, **Then** `$VISIBILITY_MODIFIER` resolves via children-by-kind fallback.
+2. **Given** a `unary_expression` with an anonymous `-` token (Heuristic 3), **When** `readNode` runs with overrides, **Then** `fields.operator` contains the `-` token (matched via `values: ["-", "*", "!", "&"]`).
+3. **Given** an `index_expression` with two `_expression` children (Heuristic 4), **When** `readNode` runs with overrides, **Then** `fields.object` and `fields.index` are correctly assigned by consumption order.
+4. **Given** a `range_expression` with multiple CHOICE branches (Heuristic 5), **When** `readNode` runs with overrides, **Then** `fields.start`, `fields.operator` (matched via `values: ["..", "..="]`), and `fields.end` are correctly assigned.
+
+---
+
 ### Edge Cases
 
 - What happens when a rule references a node kind that has no template entry in `templates.yaml`? (Expected: render engine throws a descriptive error)
@@ -97,6 +131,8 @@ All existing tests that exercise factory creation + rendering continue to pass a
 - What happens when `joinBy` is specified as an object but a `$$$VARIABLE` in the template has no corresponding key? (Expected: falls back to default single space)
 - What happens when a template contains `$` followed by a non-variable character (literal dollar sign)? (Expected: `expandoChar` provides escape mechanism for languages that use `$` literally)
 - What happens when YAML multiline template strings have trailing newlines from `|` block scalar? (Expected: render engine trims trailing newline from YAML block scalar artifacts)
+- What happens when an `overrides.json` entry conflicts with an existing tree-sitter FIELD? (Expected: codegen reports an error — overrides cannot shadow existing FIELDs)
+- What happens when override field promotion encounters a child that matches no heuristic? (Expected: child remains in `children` array, accessible via `$$$CHILDREN` or children-by-kind fallback)
 
 ## Requirements *(mandatory)*
 
@@ -105,21 +141,30 @@ All existing tests that exercise factory creation + rendering continue to pass a
 - **FR-001**: Codegen MUST emit a single `templates.yaml` file per grammar package, replacing `rules.ts` and `joinby.ts`
 - **FR-002**: Each `templates.yaml` MUST contain top-level keys: `language`, `extensions`, `expandoChar`, `metadata`, and `rules`
 - **FR-003**: Rules MUST support two forms: string (simple template) and object (template + clauses + joinBy)
-- **FR-004**: Template syntax MUST use ast-grep meta variable conventions: `$NAME` (single), `$$NAME` (unnamed), `$$$NAME` (multi), `$_NAME` (non-capturing)
+- **FR-004**: Template syntax MUST use ast-grep meta variable conventions: `$NAME` (single), `$$NAME` (unnamed — implemented for ast-grep compatibility but unused in current grammar templates), `$$$NAME` (multi), `$_NAME` (non-capturing)
 - **FR-005**: Codegen MUST synthesize clauses for anonymous tokens adjacent to non-required fields in grammar `CHOICE([SEQ(STRING, FIELD), BLANK])` patterns
 - **FR-006**: Clauses MUST be nested YAML keys under the parent rule, named `{field_name}_clause` in snake_case
 - **FR-007**: Render engine MUST resolve clause variables against `node.fields` and omit the entire clause when any variable is absent
 - **FR-008**: `joinBy` MUST support string form (applies to all `$$$` variables) and object form (keyed by variable name)
 - **FR-009**: Default separator for `$$$` variables without explicit `joinBy` MUST be a single space
-- **FR-010**: Formatting MUST be literal in templates — the render engine MUST concatenate without whitespace collapsing or `parts.join(' ')`
+- **FR-010**: Formatting MUST be literal in templates — the render engine MUST concatenate without general whitespace collapsing or `parts.join(' ')`. The sole exception is absent-field space absorption per FR-017.
 - **FR-011**: Render engine MUST return `node.text` directly for leaf nodes (no template lookup)
 - **FR-012**: The S-expression parser (`sexpr.ts`) MUST be removed
 - **FR-013**: Generated `rules.ts` and `joinby.ts` files MUST be removed from all language packages
 - **FR-014**: Type system MUST replace `TemplateElement`/`ParsedTemplate` with `TemplateRule` and `RulesConfig` types
 - **FR-015**: Casing convention MUST follow: camelCase for config/structural keys (ast-grep origin), snake_case for rule/clause/field names (tree-sitter origin), UPPER_SNAKE for template variables (ast-grep patterns)
 - **FR-016**: Variable resolution MUST map by lowercasing: `$NAME` to `fields.name`, `$RETURN_TYPE` to `fields.return_type`
-- **FR-017**: Absent fields MUST render as empty string (consistent with ast-grep fix behavior)
+- **FR-017**: Absent fields MUST render as empty string and absorb exactly one adjacent space (consistent with ast-grep fix behavior). Each absent variable absorbs independently, so cascading absent variables collapse all intermediate spaces — e.g., `"$A $B $C"` all absent → `""`. Example: `"$$$CHILDREN struct $NAME"` with absent `$$$CHILDREN` renders `"struct Foo"`, not `" struct Foo"`
 - **FR-018**: Codegen MUST derive formatting signals from grammar structure: `IMMEDIATE_TOKEN` for no-space-before, delimiter pairs for attached tokens, block delimiters for multiline with indentation
+- **FR-019**: Each grammar package MAY include an `overrides.json` file that provides supplemental field names for nodes lacking explicit tree-sitter FIELDs, mirroring the shape of `node-types.json`
+- **FR-020**: Override entries with `"anonymous": true` MUST mark fields that map to anonymous tokens (operators, delimiters)
+- **FR-021**: Codegen MUST merge override fields with node-types.json fields during enrichment; overrides MUST NOT shadow existing tree-sitter FIELDs
+- **FR-022**: Codegen MUST validate `overrides.json` entries against the grammar rule structure: (a) node kind must exist in grammar, (b) field count must be plausible for the rule's positional children, (c) `anonymous: true` fields must correspond to actual anonymous tokens in the grammar rule, (d) per FR-021. Report descriptive errors for each violation.
+- **FR-023**: Codegen MUST detect and log override candidates automatically: same-kind positional children (`SEQ(X, X)`) and discriminator tokens (CHOICE branches identical after token removal)
+- **FR-024**: The wrap emitter MUST implement 5 field promotion heuristics inlined into generated `wrapXxx()` functions: (1) tree-sitter FIELD by name, (2) unnamed child with unique kind, (3) anonymous token as value with per-token matching via `values` array in `overrides.json`, (4) same-kind positional by consumption order, (5) top-level CHOICE branch by token. `overrides.json` entries take precedence over automatic heuristics (2).
+- **FR-025**: After wrap promotion and render-time children-by-kind fallback, all named positions MUST be resolvable via template variables; `$$$CHILDREN` renders the remaining children array
+- **FR-026**: The render engine MUST resolve variables primarily via field lookup (`$FIELD_NAME` from `node.fields`), with a children-by-kind fallback (`node.children` searched by `type === fieldKey`) for named children not stored in `fields`. `$$$CHILDREN` resolves from the children array. Clause sub-templates render conditionally. Override field promotion in the wrap emitter handles the primary field promotion path.
+- **FR-027**: Codegen MUST classify each node's unnamed children by simplifying the grammar rule (strip tokens from SEQs, unwrap single-member SEQs, leave CHOICEs intact) to determine the appropriate template pattern
 
 ### Key Entities
 
@@ -127,6 +172,8 @@ All existing tests that exercise factory creation + rendering continue to pass a
 - **RulesConfig**: The full YAML file shape — `language`, `extensions`, `expandoChar`, `metadata`, and `rules` (a record of kind to TemplateRule)
 - **Clause**: A synthesized sub-template that bundles anonymous tokens with non-required fields; present as a YAML key under the parent rule, not a grammar node
 - **joinBy**: A separator specification — string (all `$$$` vars) or object (per-variable) — that controls how multi-variable arrays are joined during rendering
+- **overrides.json**: A per-grammar supplemental field definition file that provides synthetic field names (and optional `values` arrays for token matching) for nodes where the tree-sitter grammar lacks explicit FIELDs; codegen-time only, not shipped at runtime
+- **Override field promotion**: Per-kind logic inlined into generated `wrapXxx()` functions that promotes override-named children from `children` into `fields`, making render templates and factory output symmetric. Complements the render engine's children-by-kind fallback.
 
 ## Success Criteria *(mandatory)*
 
@@ -134,12 +181,25 @@ All existing tests that exercise factory creation + rendering continue to pass a
 
 - **SC-001**: All 5 known open issues (#1, #5, #7, #8, #9) are resolved by the migration
 - **SC-002**: Codegen produces valid `templates.yaml` for all 3 supported grammars (Rust, TypeScript, Python)
-- **SC-003**: 100% of existing tests pass after migration without changes to factory/from/assign APIs
+- **SC-003**: 100% of existing tests pass after migration without changes to factory/from/wrap APIs
 - **SC-004**: Render engine produces correctly formatted output for representative node types (functions, declarations, control flow, containers) across all 3 grammars
-- **SC-005**: Render engine code is reduced from ~133 lines + 119 lines (sexpr parser) to ~50 lines total
-- **SC-006**: Template files are human-readable — a developer can look at a template and immediately understand what code it produces
+- **SC-005**: Render engine code is reduced from ~133 lines + 119 lines (sexpr parser) to ~150 substantive lines total (214 with comments/blanks), eliminating the S-expression parser entirely
+- **SC-006**: Template files use literal code syntax with `$VARIABLE` slots — no escaping or encoded format required to read templates
 - **SC-007**: Per-rule `joinBy` correctly produces distinct separators for different `$$$` variables within the same rule (e.g., `, ` for params, `\n` for body)
 - **SC-008**: Clauses correctly omit paired tokens when optional fields are absent (e.g., `-> ` omitted when no `return_type`)
+- **SC-009**: `overrides.json` for Rust correctly provides field names for ~10-15 under-fielded nodes (e.g., `index_expression`, `unary_expression`, `range_expression`)
+- **SC-010**: Wrap emitter correctly promotes override fields into `fields` for all 5 heuristic categories via `readNode()`; render engine children-by-kind fallback handles named children; verified by factory→render round-trip tests (Rust 624/624, TS 654/655, Python 438/442)
+- **SC-011**: Templates for nodes with override fields use `$FIELD_NAME` variables instead of positional `$$$CHILDREN`
+
+## Clarifications
+
+### Session 2026-04-05
+
+- Q: How should the render engine handle whitespace adjacent to absent variables? → A: Absent variables collapse exactly one adjacent space (ast-grep fix behavior). Present variables preserve literal formatting.
+- Q: How does the render engine distinguish `$FIELD_NAME` from `$KIND_NAME`? → A: No kind matching at runtime. `$NAME` is always a field lookup. Kind-specific child consumption is handled by `wrap.ts` promoting children to fields before render.
+- Q: Is `$$NAME` (double-dollar unnamed) needed for current grammars? → A: Implemented for ast-grep compatibility but unused in current grammar templates. No templates will reference `$$NAME` initially.
+- Q: What should `overrides.json` validation check? → A: Full validation: (a) node kind exists in grammar, (b) field count plausible, (c) anonymous fields match grammar tokens, (d) no shadowing of existing FIELDs.
+- Q: When overrides.json and automatic heuristic 2 (unique kind) both apply to the same child, which wins? → A: Overrides take precedence — explicit human intent overrides automatic heuristics.
 
 ## Assumptions
 
@@ -149,4 +209,3 @@ All existing tests that exercise factory creation + rendering continue to pass a
 - The `expandoChar` mechanism for languages using `$` literally (PHP, shell) is specified but not immediately needed — Rust, TypeScript, and Python do not use `$` in their syntax
 - Indentation is universally 4 spaces, baked into templates by the codegen — no per-language indent configuration. Style-conformant indentation (e.g., 2 spaces for TypeScript) is the external formatter's job (`prettier`, `rustfmt`, `black`)
 - The existing test infrastructure exercises factories + render in a way that validates correctness of the new engine without test rewrites
-/sp

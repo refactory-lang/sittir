@@ -11,6 +11,7 @@
  */
 
 import type { HydratedNodeModel } from '../node-model.ts';
+import { isTupleChildren } from '../node-model.ts';
 import { toIrKey, toFactoryName, toRawFactoryName, toShortName, toTypeName } from '../naming.ts';
 import { structuralNodes, leafKindsOf, keywordKindsOf, fieldsOf, escapeString } from './utils.ts';
 import { buildProjectionContext, projectKinds, type ProjectionContext } from './kind-projections.ts';
@@ -36,8 +37,17 @@ export function emitIrNamespace(config: EmitIrNamespaceConfig): string {
 	// Reserved words use _prefix internal name from factories.ts
 	const factoryImports: string[] = [];
 	const importName = toRawFactoryName;
+	const modelMap = new Map(allNodes.map(n => [n.kind, n]));
 	for (const kind of branchKinds) {
 		factoryImports.push(importName(kind));
+		// Add variant factory imports
+		const node = modelMap.get(kind)!;
+		const variants = (node.modelType === 'branch' || node.modelType === 'container') ? node.variants : undefined;
+		if (variants && variants.length > 1) {
+			for (const v of variants) {
+				factoryImports.push(`${importName(kind)}_${v.name}_`);
+			}
+		}
 	}
 	for (const kind of leafKinds) {
 		if (!keywordKinds.has(kind)) {
@@ -50,10 +60,29 @@ export function emitIrNamespace(config: EmitIrNamespaceConfig): string {
 
 	lines.push(`import { ${factoryImports.join(', ')} } from './factories.js';`);
 
-	// Import .from() functions from from.ts
+	// Detect children-only nodes (skip variant from functions for these)
+	const childrenOnlyKinds = new Set<string>();
+	for (const kind of branchKinds) {
+		const n = modelMap.get(kind)!;
+		if (n.modelType !== 'branch' && n.modelType !== 'container') continue;
+		const nFields = fieldsOf(n);
+		if (nFields.length === 0 && n.children != null && !isTupleChildren(n.children)) {
+			childrenOnlyKinds.add(kind);
+		}
+	}
+
+	// Import .from() functions from from.ts (including variant from functions)
 	const fromImports: string[] = [];
 	for (const kind of branchKinds) {
 		fromImports.push(`${toFactoryName(kind)}From`);
+		if (childrenOnlyKinds.has(kind)) continue;
+		const node = modelMap.get(kind)!;
+		const variants = (node.modelType === 'branch' || node.modelType === 'container') ? node.variants : undefined;
+		if (variants && variants.length > 1) {
+			for (const v of variants) {
+				fromImports.push(`${toFactoryName(kind)}${toTypeName(v.name)}From`);
+			}
+		}
 	}
 	lines.push(`import { ${fromImports.join(', ')} } from './from.js';`);
 	lines.push('');
@@ -64,12 +93,27 @@ export function emitIrNamespace(config: EmitIrNamespaceConfig): string {
 
 	lines.push('export const ir = {');
 
-	// Branch factories — combined with .from() via Object.assign
+	// Branch factories — combined with .from() and variant factories via Object.assign
 	lines.push('  // Branch node factories');
 	for (const kind of branchKinds) {
 		const irKey = resolveIrKey(kind, usedKeys);
 		const fromFn = `${toFactoryName(kind)}From`;
-		lines.push(`  ${irKey}: Object.assign(${importName(kind)}, { from: ${fromFn} }),`);
+		const node = modelMap.get(kind)!;
+		const variants = (node.modelType === 'branch' || node.modelType === 'container') ? node.variants : undefined;
+		if (variants && variants.length > 1 && !childrenOnlyKinds.has(kind)) {
+			// Each variant gets its own factory + from, attached as properties on the base factory
+			const variantEntries = variants
+				.filter(v => v.name !== 'from')
+				.map(v => {
+					const vFactory = `${importName(kind)}_${v.name}_`;
+					const vFrom = `${toFactoryName(kind)}${toTypeName(v.name)}From`;
+					return `${v.name}: Object.assign(${vFactory}, { from: ${vFrom} })`;
+				});
+			const extras = variantEntries.length > 0 ? `, ${variantEntries.join(', ')}` : '';
+			lines.push(`  ${irKey}: Object.assign(${importName(kind)}, { from: ${fromFn}${extras} }),`);
+		} else {
+			lines.push(`  ${irKey}: Object.assign(${importName(kind)}, { from: ${fromFn} }),`);
+		}
 	}
 
 	lines.push('');

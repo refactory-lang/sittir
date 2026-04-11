@@ -13,7 +13,7 @@ const config: RulesConfig = {
 			template: 'fn $NAME($$$PARAMETERS) $RETURN_TYPE_CLAUSE$BODY_CLAUSE',
 			return_type_clause: '-> $RETURN_TYPE ',
 			body_clause: '$BODY',
-			joinBy: { PARAMETERS: ', ' },
+			joinBy: ', ',
 		},
 		block: {
 			template: '{ $$$CHILDREN }',

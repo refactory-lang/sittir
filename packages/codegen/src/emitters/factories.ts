@@ -39,55 +39,166 @@ export function emitFactory(config: {
 
 	// Factory function — accepts *Config (camelCase), return type inferred
 	const hasChildren = node.children != null;
-	const hasRequiredFields = fieldsOf(node).some(f => f.required) || (hasChildren && childHasRequired(node.children!));
 
-	const opt = hasRequiredFields ? '' : '?';
-	lines.push(`export function ${internalName}(`);
-	lines.push(`  config${opt}: ${typeName}Config,`);
-	lines.push(`) {`);
-
-	// Build fields object — raw names, values from camelCase config
-	const fields = fieldsOf(node);
-	const hasFields = fields.length > 0;
-	if (hasFields) {
-		lines.push(`  const fields = {`);
-		for (const f of fields) {
-			const camel = f.propertyName ?? toFieldName(f.name);
-			lines.push(`    ${f.name}: config${opt}.${camel},`);
-		}
-		lines.push(`  };`);
+	// Skip child slots whose kinds don't project to any type (hidden rules without models)
+	const skipSlots = new Set<number>();
+	if (hasChildren) {
+		eachChildSlot(node.children!, (slot, i) => {
+			const proj = projectKinds(slot.kinds, ctx);
+			if (proj.collapsedTypes.length === 0) skipSlots.add(i);
+		});
 	}
 
-	// Build children array from child slots in config
-	if (hasChildren) {
-		const slotNames = childSlotNames(node.children!, ctx);
-		const isTuple = isTupleChildren(node.children!);
-		if (!isTuple) {
-			// Single child slot — direct assignment, no spread
-			const name = slotNames[0]!;
-			const slot = Array.isArray(node.children!) ? node.children![0]! : node.children!;
-			if (slot.multiple) {
-				lines.push(`  const children = config${opt}.${name} ?? [];`);
-			} else {
-				lines.push(`  const children = config${opt}.${name} ? [config${opt}.${name}] : [];`);
-			}
+	const fields = fieldsOf(node);
+	const hasFields = fields.length > 0;
+	const hasRequiredFields = fields.some(f => f.required) || (hasChildren && childHasRequired(node.children!, skipSlots));
+
+	// Detect children-only nodes: no fields, single non-skipped child slot
+	const isChildrenOnly = !hasFields && hasChildren && !isTupleChildren(node.children!) && !skipSlots.has(0);
+	let childrenOnlySlot: { slot: HydratedFieldModel; name: string; slotType: string } | undefined;
+	if (isChildrenOnly) {
+		const slot = Array.isArray(node.children!) ? node.children![0]! : node.children!;
+		const name = childSlotNames(node.children!, ctx)[0]!;
+		const slotProj = projectKinds(slot.kinds, ctx);
+		const slotType = slotProj.collapsedTypes.join(' | ');
+		// Only use rest-params if children kinds are NOT fully covered by fields
+		const fieldCoveredKinds = new Set<string>();
+		for (const f of fields) for (const k of f.kinds) fieldCoveredKinds.add(k.kind);
+		const allCovered = slot.kinds.every((k: { kind: string }) => fieldCoveredKinds.has(k.kind));
+		if (!allCovered && slotType) {
+			childrenOnlySlot = { slot, name, slotType };
+		}
+	}
+
+	if (childrenOnlySlot) {
+		// Children-only: rest params for multiple, direct param for single
+		const { slot, slotType } = childrenOnlySlot;
+		if (slot.multiple) {
+			// Rest param becomes the children array directly
+			lines.push(`export function ${internalName}(`);
+			lines.push(`  ...children: (${slotType})[]`);
+			lines.push(`) {`);
 		} else {
-			// Multiple child slots — merge into one array
-			const childExprs: string[] = [];
-			eachChildSlot(node.children!, (slot, i) => {
-				const name = slotNames[i]!;
-				if (slot.multiple) {
-					childExprs.push(`...(config${opt}.${name} ?? [])`);
-				} else {
-					childExprs.push(`...(config${opt}.${name} ? [config${opt}.${name}] : [])`);
+			const opt = slot.required ? '' : '?';
+			lines.push(`export function ${internalName}(`);
+			lines.push(`  child${opt}: ${slotType},`);
+			lines.push(`) {`);
+			lines.push(`  const children = child ? [child] : [];`);
+		}
+	} else {
+		const opt = hasRequiredFields ? '' : '?';
+		const modelVariants = node.variants;
+		const hasMultipleVariants = modelVariants && modelVariants.length > 1;
+
+		if (hasMultipleVariants) {
+			// Multi-variant base factory = dispatcher. Infers variant from field presence,
+			// delegates to the standalone variant factory.
+			lines.push(`export function ${internalName}(`);
+			lines.push(`  config${opt}: ConfigOf<${typeName}>,`);
+			lines.push(`) {`);
+
+			// Sort variants by field count descending — most specific first.
+			// The variant with the fewest fields is the fallback.
+			const sorted = [...modelVariants].sort((a, b) => b.fields.size - a.fields.size);
+			const fallback = sorted[sorted.length - 1]!;
+			const fallbackFields = new Set(fallback.fields.keys());
+
+			let emittedIf = false;
+			for (const v of sorted) {
+				if (v === fallback) continue; // skip fallback — it's the else
+				const vFactory = `${internalName}_${v.name}_`;
+				const vConfigType = `${typeName}${toTypeName(v.name)}Config`;
+
+				// Find a field this variant has that the fallback doesn't
+				const distinguishingField = [...v.fields.keys()].find(f => !fallbackFields.has(f));
+				// Or find a field unique to this variant vs all others
+				const uniqueField = distinguishingField ?? [...v.fields.keys()].find(f =>
+					modelVariants.every((other, j) => modelVariants.indexOf(v) === j || !other.fields.has(f))
+				);
+
+				if (uniqueField && hasFields) {
+					const camel = fields.find(fd => fd.name === uniqueField)?.propertyName ?? toFieldName(uniqueField);
+					const kw = emittedIf ? 'else if' : 'if';
+					const guard = hasRequiredFields ? '' : 'config && ';
+					lines.push(`  ${kw} (${guard}'${camel}' in config && config.${camel} !== undefined) return ${vFactory}(config as ${vConfigType});`);
+					emittedIf = true;
+				} else if (v.fields.size > fallback.fields.size) {
+					// Can't find a distinguishing field, but this variant has more fields.
+					// Use field count as heuristic — check any field not in fallback.
+					const anyExtraField = [...v.fields.keys()].find(f => !fallbackFields.has(f));
+					if (anyExtraField) {
+						const camel = fields.find(fd => fd.name === anyExtraField)?.propertyName ?? toFieldName(anyExtraField);
+						const kw = emittedIf ? 'else if' : 'if';
+						const guard = hasRequiredFields ? '' : 'config && ';
+						lines.push(`  ${kw} (${guard}'${camel}' in config && config.${camel} !== undefined) return ${vFactory}(config as ${vConfigType});`);
+						emittedIf = true;
+					}
 				}
-			});
-			lines.push(`  const children = [${childExprs.join(', ')}];`);
+			}
+
+			const fallbackConfigType = `${typeName}${toTypeName(fallback.name)}Config`;
+			lines.push(`  return ${internalName}_${fallback.name}_(config as ${fallbackConfigType});`);
+			lines.push(`}`);
+			// Skip the rest of emitFactory — no return object, no fluent methods
+			return lines.join('\n');
+		}
+
+		// Single variant or no variants — normal factory
+		lines.push(`export function ${internalName}(`);
+		lines.push(`  config${opt}: ConfigOf<${typeName}>,`);
+		lines.push(`) {`);
+
+		// Build fields object — raw names, values from camelCase config
+		if (hasFields) {
+			lines.push(`  const fields = {`);
+			for (const f of fields) {
+				const camel = f.propertyName ?? toFieldName(f.name);
+				lines.push(`    ${f.name}: config${opt}.${camel},`);
+			}
+			lines.push(`  };`);
+		}
+
+		// Build children array from child slots in config
+		if (hasChildren) {
+			const slotNames = childSlotNames(node.children!, ctx);
+			const isTuple = isTupleChildren(node.children!);
+			if (!isTuple) {
+				const fieldCoveredKinds = new Set<string>();
+				for (const f of fields) for (const k of f.kinds) fieldCoveredKinds.add(k.kind);
+				const slot = Array.isArray(node.children!) ? node.children![0]! : node.children!;
+				const allCovered = slot.kinds.every((k: { kind: string }) => fieldCoveredKinds.has(k.kind));
+
+				if (allCovered) {
+					lines.push(`  const children: unknown[] = [];`);
+				} else if (!skipSlots.has(0)) {
+					const name = slotNames[0]!;
+					if (slot.multiple) {
+						lines.push(`  const children = config${opt}.${name} ?? [];`);
+					} else {
+						lines.push(`  const children = config${opt}.${name} ? [config${opt}.${name}] : [];`);
+					}
+				} else {
+					lines.push(`  const children: unknown[] = [];`);
+				}
+			} else {
+				const childExprs: string[] = [];
+				eachChildSlot(node.children!, (slot, i) => {
+					if (skipSlots.has(i)) return;
+					const name = slotNames[i]!;
+					if (slot.multiple) {
+						childExprs.push(`...(config${opt}.${name} ?? [])`);
+					} else {
+						childExprs.push(`...(config${opt}.${name} ? [config${opt}.${name}] : [])`);
+					}
+				});
+				lines.push(`  const children = [${childExprs.join(', ')}];`);
+			}
 		}
 	}
 
 	lines.push(`  return {`);
 	lines.push(`    type: '${node.kind}' as const,`);
+	lines.push(`    named: true as const,`);
 	if (hasFields) {
 		lines.push(`    fields,`);
 	}
@@ -110,12 +221,30 @@ export function emitFactory(config: {
 		}
 	}
 	if (hasChildren) {
+		// Skip children slots that already have a field getter (override-promoted fields)
+		const fieldMethodNames = new Set(fields.map(f => {
+			const camel = f.propertyName ?? toFieldName(f.name);
+			return camel === 'type' ? 'typeField' : camel;
+		}));
 		const slotNames = childSlotNames(node.children!, ctx);
+		const factoryFieldCoveredKinds = new Set<string>();
+		for (const f of fieldsOf(node)) for (const k of f.kinds) factoryFieldCoveredKinds.add(k.kind);
 		eachChildSlot(node.children!, (slot, i) => {
 			const name = slotNames[i]!;
+			if (fieldMethodNames.has(name)) return; // already emitted as field getter
+			if (skipSlots.has(i)) return; // hidden rule without a model — no type to emit
+			if (slot.kinds.every(k => factoryFieldCoveredKinds.has(k.kind))) return; // covered by fields
 			const slotProj = projectKinds(slot.kinds, ctx);
 			const slotType = slotProj.collapsedTypes.join(' | ');
-			if (name === 'children') {
+			if (childrenOnlySlot) {
+				// Children-only node — setter re-calls with rest/direct params
+				if (childrenOnlySlot.slot.multiple) {
+					lines.push(`    getChildren() { return children; },`);
+					lines.push(`    setChildren(...children: (${slotType})[]) { return ${internalName}(...children); },`);
+				} else {
+					lines.push(`    child(c?: ${slotType}) { return c !== undefined ? ${internalName}(c) : children[0]; },`);
+				}
+			} else if (name === 'children') {
 				// Single children slot — use child/getChildren/setChildren to avoid name collision
 				if (slot.multiple) {
 					lines.push(`    getChildren() { return children; },`);
@@ -147,6 +276,169 @@ export function emitFactory(config: {
 }
 
 /**
+ * Emit a standalone variant factory for a specific structural variant.
+ * The variant factory constructs the node directly with only the variant's fields,
+ * hardcodes the variant name, and has fluent setters scoped to its fields.
+ */
+export function emitVariantFactory(config: {
+	node: StructuralNode;
+	variant: import('../node-model.ts').StructuralVariant;
+	leafKinds: string[];
+	ctx: ProjectionContext;
+}): string {
+	const { node, variant, leafKinds, ctx } = config;
+	const leafSet = new Set(leafKinds);
+	const typeName = toTypeName(node.kind);
+	const variantTypeName = `${typeName}${toTypeName(variant.name)}`;
+	const baseName = toRawFactoryName(node.kind);
+	const internalName = `${baseName}_${variant.name}_`;
+
+	const allFields = fieldsOf(node);
+	const variantFieldNames = new Set(variant.fields.keys());
+	const fields = allFields.filter(f => variantFieldNames.has(f.name));
+	const hasFields = fields.length > 0;
+	const hasChildren = node.children != null;
+	const hasRequiredFields = fields.some(f => f.required);
+
+	const lines: string[] = [];
+	const opt = hasRequiredFields ? '' : '?';
+
+	lines.push(`/** Variant factory: \`${node.kind}\` — ${variant.name} form. */`);
+	lines.push(`export function ${internalName}(`);
+	lines.push(`  config${opt}: ${variantTypeName}Config,`);
+	lines.push(`) {`);
+
+	// Build fields object — only variant fields
+	if (hasFields) {
+		lines.push(`  const fields = {`);
+		for (const f of fields) {
+			const camel = f.propertyName ?? toFieldName(f.name);
+			lines.push(`    ${f.name}: config${opt}.${camel},`);
+		}
+		lines.push(`  };`);
+	}
+
+	// Build children array
+	if (hasChildren) {
+		const skipSlots = new Set<number>();
+		eachChildSlot(node.children!, (slot, i) => {
+			const proj = projectKinds(slot.kinds, ctx);
+			if (proj.collapsedTypes.length === 0) skipSlots.add(i);
+		});
+		const slotNames = childSlotNames(node.children!, ctx);
+		if (!isTupleChildren(node.children!)) {
+			const fieldCoveredKinds = new Set<string>();
+			for (const f of fields) for (const k of f.kinds) fieldCoveredKinds.add(k.kind);
+			const slot = Array.isArray(node.children!) ? node.children![0]! : node.children!;
+			const allCovered = slot.kinds.every((k: { kind: string }) => fieldCoveredKinds.has(k.kind));
+			if (allCovered) {
+				lines.push(`  const children: unknown[] = [];`);
+			} else if (!skipSlots.has(0)) {
+				const name = slotNames[0]!;
+				if (slot.multiple) {
+					lines.push(`  const children = config${opt}.${name} ?? [];`);
+				} else {
+					lines.push(`  const children = config${opt}.${name} ? [config${opt}.${name}] : [];`);
+				}
+			} else {
+				lines.push(`  const children: unknown[] = [];`);
+			}
+		} else {
+			const childExprs: string[] = [];
+			eachChildSlot(node.children!, (slot, i) => {
+				if (skipSlots.has(i)) return;
+				const name = slotNames[i]!;
+				if (slot.multiple) {
+					childExprs.push(`...(config${opt}.${name} ?? [])`);
+				} else {
+					childExprs.push(`...(config${opt}.${name} ? [config${opt}.${name}] : [])`);
+				}
+			});
+			lines.push(`  const children = [${childExprs.join(', ')}];`);
+		}
+	}
+
+	// If the node model is a branch, always emit fields (even empty) so render doesn't throw
+	const nodeIsFieldBearing = fieldsOf(node).length > 0;
+
+	lines.push(`  return {`);
+	lines.push(`    type: '${node.kind}' as const,`);
+	lines.push(`    named: true as const,`);
+	lines.push(`    variant: '${variant.name}' as const,`);
+	if (hasFields) {
+		lines.push(`    fields,`);
+	} else if (nodeIsFieldBearing) {
+		lines.push(`    fields: {},`);
+	}
+	if (hasChildren) {
+		lines.push(`    children,`);
+	}
+
+	// Fluent getters/setters — scoped to variant fields, re-call variant factory
+	// Build a typed config reconstruction from fields + children (avoids spreading optionality mismatch)
+	for (const f of fields) {
+		const camel = f.propertyName ?? toFieldName(f.name);
+		const paramName = toParamName(f.name);
+		const methodName = camel === 'type' ? 'typeField' : camel;
+		const proj = projectKinds(f.kinds, ctx);
+		const fieldType = fieldTypeExprFromProj(proj, leafSet);
+
+		if (f.multiple) {
+			lines.push(`    ${methodName}(...${paramName}: (${fieldType})[]) { return ${paramName}.length ? ${internalName}({ ...config, ${camel}: ${paramName} } as ${variantTypeName}Config) : fields.${f.name}; },`);
+		} else {
+			lines.push(`    ${methodName}(${paramName}?: ${fieldType}) { return ${paramName} !== undefined ? ${internalName}({ ...config, ${camel}: ${paramName} } as ${variantTypeName}Config) : fields.${f.name}; },`);
+		}
+	}
+
+	// Child slot setters (same as base factory)
+	if (hasChildren) {
+		const fieldMethodNames = new Set(fields.map(f => {
+			const camel = f.propertyName ?? toFieldName(f.name);
+			return camel === 'type' ? 'typeField' : camel;
+		}));
+		const slotNames = childSlotNames(node.children!, ctx);
+		const factoryFieldCoveredKinds = new Set<string>();
+		for (const f of fields) for (const k of f.kinds) factoryFieldCoveredKinds.add(k.kind);
+		eachChildSlot(node.children!, (slot, i) => {
+			const name = slotNames[i]!;
+			if (fieldMethodNames.has(name)) return;
+			const skipSlots = new Set<number>();
+			eachChildSlot(node.children!, (s, j) => {
+				const proj = projectKinds(s.kinds, ctx);
+				if (proj.collapsedTypes.length === 0) skipSlots.add(j);
+			});
+			if (skipSlots.has(i)) return;
+			if (slot.kinds.every(k => factoryFieldCoveredKinds.has(k.kind))) return;
+			const slotProj = projectKinds(slot.kinds, ctx);
+			const slotType = slotProj.collapsedTypes.join(' | ');
+			if (name === 'children') {
+				if (slot.multiple) {
+					lines.push(`    getChildren() { return children; },`);
+					lines.push(`    setChildren(...children: (${slotType})[]) { return ${internalName}({ ...config, children }); },`);
+				} else {
+					lines.push(`    child(child?: ${slotType}) { return child !== undefined ? ${internalName}({ ...config, children: child }) : config?.children; },`);
+				}
+			} else if (slot.multiple) {
+				lines.push(`    ${name}(...${name}: (${slotType})[]) { return ${name}.length ? ${internalName}({ ...config, ${name} }) : config?.${name}; },`);
+			} else {
+				lines.push(`    ${name}(${name}?: ${slotType}) { return ${name} !== undefined ? ${internalName}({ ...config, ${name} }) : config?.${name}; },`);
+			}
+		});
+	}
+
+	lines.push(`    render() { return render(this); },`);
+	lines.push(`    toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {`);
+	lines.push(`      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);`);
+	lines.push(`      return toEdit(this, startOrRange);`);
+	lines.push(`    },`);
+	lines.push(`    replace(target: ${typeName}Tree) { const r = target.range(); return toEdit(this, r); },`);
+	lines.push(`  };`);
+	lines.push(`}`);
+
+	return lines.join('\n');
+}
+
+/**
  * Emit terminal (leaf) factories with template literal types and input validation.
  */
 export function emitTerminalFactory(
@@ -164,6 +456,7 @@ export function emitTerminalFactory(
 		lines.push(`export function ${internalName}() {`);
 		lines.push(`  return {`);
 		lines.push(`    type: '${kind}' as const,`);
+		lines.push(`    named: true as const,`);
 		lines.push(`    text: '${escapeString(fixedText)}',`);
 		lines.push(`    render: () => '${escapeString(fixedText)}',`);
 		lines.push(`    toEdit: (startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) => {`);
@@ -204,6 +497,7 @@ export function emitTerminalFactory(
 	}
 	lines.push(`  return {`);
 	lines.push(`    type: '${kind}' as const,`);
+	lines.push(`    named: true as const,`);
 	lines.push(`    text,`);
 	lines.push(`    render: () => text,`);
 	lines.push(`    toEdit: (startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) => {`);
@@ -260,9 +554,8 @@ export function emitFactories(config: EmitFactoriesConfig): string {
 		}
 	}
 	for (const k of leafKinds) allTypeNames.add(toTypeName(k));
-	// Add *Config and *Tree types (Config for factory param, Tree for replace)
+	// Add *Tree types (for replace method parameter)
 	for (const n of nodes) {
-		allTypeNames.add(toTypeName(n.kind) + 'Config');
 		allTypeNames.add(toTypeName(n.kind) + 'Tree');
 	}
 	// Add *Tree types for leaf kinds (used in replace)
@@ -274,9 +567,21 @@ export function emitFactories(config: EmitFactoriesConfig): string {
 		const cleanName = stName.replace(/^_/, '');
 		allTypeNames.add(toTypeName(cleanName));
 	}
+	// Add variant type names and variant Config types
+	for (const n of nodes) {
+		const variants = n.variants;
+		if (variants && variants.length > 1) {
+			const typeName = toTypeName(n.kind);
+			for (const v of variants) {
+				const vTypeName = `${typeName}${toTypeName(v.name)}`;
+				allTypeNames.add(vTypeName);
+				allTypeNames.add(`${vTypeName}Config`);
+			}
+		}
+	}
 	const sortedTypes = [...allTypeNames].sort();
 	lines.push(`import type { ${sortedTypes.join(', ')} } from './types.js';`);
-	lines.push("import type { Edit, AnyNodeData } from '@sittir/types';");
+	lines.push("import type { Edit, AnyNodeData, ConfigOf } from '@sittir/types';");
 	lines.push("import { createRenderer } from '@sittir/core';");
 	lines.push("import { join, dirname } from 'node:path';");
 	lines.push("import { fileURLToPath } from 'node:url';");
@@ -300,6 +605,15 @@ export function emitFactories(config: EmitFactoriesConfig): string {
 	for (const node of nodes) {
 		lines.push(emitFactory({ node, leafKinds, ctx }));
 		lines.push('');
+
+		// Standalone variant factories — each constructs with only its fields
+		const variants = node.variants;
+		if (variants && variants.length > 1) {
+			for (const v of variants) {
+				lines.push(emitVariantFactory({ node, variant: v, leafKinds, ctx }));
+				lines.push('');
+			}
+		}
 	}
 
 	// Terminal (leaf) factories
@@ -310,6 +624,16 @@ export function emitFactories(config: EmitFactoriesConfig): string {
 		lines.push('');
 	}
 
+	lines.push('');
+
+	// _factoryMap — kind → factory function for dynamic access
+	lines.push('/** @internal Map of kind string to factory function. */');
+	lines.push('export const _factoryMap: Record<string, (config?: any) => unknown> = {');
+	for (const node of nodes) {
+		const factoryName = toRawFactoryName(node.kind);
+		lines.push(`  '${node.kind}': ${factoryName},`);
+	}
+	lines.push('};');
 	lines.push('');
 
 	return lines.join('\n');
@@ -338,12 +662,12 @@ function fieldTypeExprFromProj(proj: import('./kind-projections.ts').KindProject
 	return proj.collapsedTypes.join(' | ');
 }
 
-/** Check if any child slot has `required: true`. */
-function childHasRequired(children: { required: boolean } | { required: boolean }[]): boolean {
+/** Check if any child slot has `required: true`, skipping slots in the skip set. */
+function childHasRequired(children: { required: boolean } | { required: boolean }[], skipSlots?: Set<number>): boolean {
 	if (Array.isArray(children)) {
-		return children.some(slot => slot.required);
+		return children.some((slot, i) => !skipSlots?.has(i) && slot.required);
 	}
-	return children.required;
+	return !skipSlots?.has(0) && children.required;
 }
 
 /** Check if a pattern can be safely embedded as a JS regex literal. */

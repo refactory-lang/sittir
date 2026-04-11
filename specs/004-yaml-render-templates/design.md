@@ -287,6 +287,163 @@ function_item:
 | — | `*_clause` (snake_case) | Synthesized clauses — sittir addition, YAML structure |
 | — (from rewriter) | `joinBy` (camelCase) | Separator for `$$$` variables |
 
+### Unnamed children resolution — consumption model
+
+The wrap emitter promotes override-named children from the raw children array into `fields` during tree node hydration. From the render template's perspective, override fields are indistinguishable from tree-sitter fields — both are resolved via `$FIELD_NAME` from `node.fields`.
+
+The render engine walks the template left-to-right. For each variable:
+
+1. **`$FIELD_NAME`** — look up `node.fields[name]` (tree-sitter FIELDs AND override fields promoted by wrap)
+2. **Children-by-kind fallback** — if not in `fields`, search `node.children` for a child whose `type` matches the field key
+3. **`$$$CHILDREN`** — render all children joined by separator
+4. **Clause** — render sub-template if underlying field present
+
+The children-by-kind fallback handles named children (from node-types.json) that the factory stores in the `children` array but the template references as `$FIELD_NAME` variables.
+
+`$$$CHILDREN` is only for truly unnamed groups — REPEAT nodes like `declaration_list`, `arguments`, `string_literal`. Named positions always get template variables.
+
+```yaml
+# Override fields — promoted to fields by wrap emitter
+unary_expression: "$OPERATOR$ARGUMENT"
+# wrap promoted operator (anon token) and argument (named child) into fields
+
+index_expression: "$VALUE[$INDEX]"
+# wrap promoted value and index into fields; "[" and "]" stay as template literals
+
+range_expression: "$START$OPERATOR$END"
+
+# Tree-sitter fields — no different from overrides
+function_item:
+  template: $VISIBILITY_MODIFIER $FUNCTION_MODIFIERS fn $NAME$TYPE_PARAMETERS($$$PARAMETERS) $RETURN_TYPE_CLAUSE $WHERE_CLAUSE $BODY
+  return_type_clause: "-> $RETURN_TYPE"
+
+binary_expression: "$LEFT $OPERATOR $RIGHT"
+
+# Truly unnamed groups — $$$CHILDREN
+arguments:
+  template: "$$$CHILDREN"
+  joinBy:
+    CHILDREN: ", "
+
+declaration_list:
+  template: "$$$CHILDREN"
+  joinBy:
+    CHILDREN: "\n"
+
+# Mixed — named children consumed, rest to $$$CHILDREN
+block:
+  template: |
+    $LABEL_CLAUSE{
+        $$$CHILDREN
+    }
+  label_clause: "$LABEL: "
+  joinBy:
+    CHILDREN: "\n"
+```
+
+### `overrides.json` — supplemental names for under-fielded grammars
+
+Mirrors the shape of `node-types.json`. An override entry is the fields block the grammar author didn't write:
+
+```json
+{
+  "index_expression": {
+    "fields": {
+      "value": {},
+      "index": {}
+    }
+  },
+  "unary_expression": {
+    "fields": {
+      "operator": { "anonymous": true },
+      "argument": {}
+    }
+  },
+  "range_expression": {
+    "fields": {
+      "start": {},
+      "operator": { "anonymous": true },
+      "end": {}
+    }
+  },
+  "macro_definition": {
+    "fields": {
+      "delimiter": { "anonymous": true }
+    }
+  }
+}
+```
+
+`anonymous: true` marks entries that map to anonymous tokens (operators, delimiters). The codegen merges override fields with node-types.json fields during enrichment. The overrides.json file is codegen-time only, not shipped at runtime.
+
+The codegen detects overrides.json candidates automatically:
+- **Same-kind positional:** grammar rule simplification produces `SEQ(X, X)` — log: "needs synthetic names"
+- **Discriminator tokens:** CHOICE branches identical after token removal — log: "discriminator token at position N"
+
+TypeScript and Python grammars barely need overrides.json (their grammars wrap operators in FIELDs). Rust needs it for ~10-15 nodes. The overrides.json is validated by the codegen against the grammar rule structure.
+
+### Override field promotion — wrap emitter heuristics
+
+The wrap emitter (`packages/codegen/src/emitters/wrap.ts`) generates per-kind `wrapXxx()` functions that promote override-named children from the `children` array into `fields` during tree node hydration. The public entry point is `readNode(target)`, which dispatches to the appropriate wrap function. After promotion, all named positions are in `fields` regardless of whether they came from tree-sitter FIELDs or overrides.json.
+
+Additionally, the render engine provides a **children-by-kind fallback**: when a template variable like `$VISIBILITY_MODIFIER` is not found in `fields`, the render engine searches the `children` array for a child whose `type` matches the field key (e.g., `visibility_modifier`). This handles named children that the factory stores in `children` but the template references as field variables.
+
+**Heuristic 1: Tree-sitter FIELD → read via `target.field(name)`.**
+The grammar has `field('name', ...)`. The wrap function reads it directly via the tree-sitter field accessor.
+
+**Heuristic 2: Unnamed child with unique kind → promote to fields by kind.**
+One `visibility_modifier` appears as an unnamed child. The wrap function finds it in `target.children()` by kind and promotes to `config[name]`.
+
+**Heuristic 3: Anonymous token as value → promote to fields, match by text.**
+The grammar has `CHOICE("-", "*", "!")` — an anonymous token. The wrap function finds the first unnamed child matching specific token values (from `overrides.json` `values` array) and promotes to `config.operator`.
+
+```ts
+// Generated wrap code for unary_expression (heuristic 3 with per-token matching):
+config['operator'] = (() => {
+  const _vals = new Set(["-", "*", "!", "&"]);
+  for (let i = 0; i < _allChildren.length; i++) {
+    if (_consumed.has(i)) continue;
+    const c = _allChildren[i]!;
+    if (!c.isNamed() && _vals.has(c.text())) { _consumed.add(i); return c.text(); }
+  }
+  return undefined;
+})();
+```
+
+**Heuristic 4: Same-kind positional → promote by consumption order.**
+Two `_expression` children disambiguated by their position. The wrap function consumes them in order: first match → `object`, second → `index`.
+
+**Heuristic 5: Top-level CHOICE with structural variants → token position determines names.**
+The wrap function uses the consumed-index tracking to assign children to the correct override field names.
+
+**Summary of heuristics:**
+
+| Heuristic | Trigger | Promotion logic | Overrides needed? |
+|---|---|---|---|
+| 1. Field by name | tree-sitter FIELD | `target.field(name)` | No |
+| 2. Child by kind | Unnamed, unique kind | Find in children by kind set | Yes — for the field name |
+| 3. Token as value | Anonymous token | Match by `values` from overrides | Yes — name + values |
+| 4. Position by token | Same kind, positional | Consume in order from children | Yes — for the names |
+| 5. Branch by token | Top-level CHOICE | Token position determines assignment | Yes — for the names |
+
+Heuristic 1 is fully automatic (tree-sitter FIELD). Heuristics 2-5 need `overrides.json` entries.
+
+### Children classification
+
+The codegen classifies each node's unnamed children by simplifying the grammar rule:
+
+1. **Strip tokens from SEQs** — to identify trivial containers
+2. **Unwrap single-member SEQs** — the only structural simplification
+3. **Leave CHOICEs intact** — identical branches after token removal = discriminator detected
+
+| Simplified root | Example | Template |
+|---|---|---|
+| **SYMBOL** | `abstract_type` → `type_parameters` | `$$$CHILDREN` |
+| **REPEAT** | `declaration_list` → `_declaration_statement*` | `$$$CHILDREN` + joinBy |
+| **SEQ** | `function_item` → `SEQ(vis, mods, where)` | Fields + `$$$CHILDREN` for unnamed |
+| **SEQ with REPEAT** | `block` → `SEQ(label, stmt*, expr)` | `$LABEL ... $$$CHILDREN ...` |
+| **CHOICE** | `range_expression` → multiple forms | `$$$CHILDREN` (tokens disambiguate at wrap time) |
+
 ## What changes
 
 ### Files removed
@@ -836,6 +993,6 @@ Add:
 - `AnyNodeData` / `NodeData<G,K>` — the node shape is unchanged
 - `NodeModel` / `EnrichedRule` — the pipeline feeding the codegen is unchanged
 - `factories.ts` — factory functions don't depend on render format
-- `from.ts` / `assign.ts` — resolver/hydration logic is independent
+- `from.ts` / `wrap.ts` — resolver/hydration logic is independent
 - `consts.ts` / `types.ts` — grammar-derived types and constants
 - The test infrastructure — tests exercise factories + render, which still compose the same way

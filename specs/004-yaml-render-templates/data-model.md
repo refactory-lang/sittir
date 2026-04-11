@@ -60,12 +60,47 @@ A sub-template that bundles anonymous tokens with a non-required field. Exists o
 - `return_type_clause: "-> $RETURN_TYPE "` — emitted when grammar has `CHOICE([SEQ("->", FIELD(return_type)), BLANK])`
 - `value_clause: " = $VALUE"` — emitted when grammar has `CHOICE([SEQ("=", FIELD(value)), BLANK])`
 
+### OverridesConfig
+
+Per-grammar supplemental field definitions for nodes where the tree-sitter grammar lacks explicit FIELDs. Mirrors `node-types.json` shape.
+
+**Fields**:
+- Key: node kind (snake_case, e.g., `"index_expression"`)
+- Value: `{ fields: Record<string, OverrideFieldDef> }`
+  - `OverrideFieldDef`: `{ anonymous?: boolean }` — `anonymous: true` marks fields mapping to anonymous tokens
+
+**Identity**: One OverridesConfig per grammar/language. Keyed by `language`.
+
+**Lifecycle**: Hand-authored per grammar. Read by codegen at enrichment time. Validated against grammar rule structure. Not shipped at runtime.
+
+**Examples**:
+```json
+{
+  "index_expression": { "fields": { "value": {}, "index": {} } },
+  "unary_expression": { "fields": { "operator": { "anonymous": true }, "argument": {} } }
+}
+```
+
+### PromotionHeuristic (conceptual, not a runtime type)
+
+Classification of how a field is promoted from unnamed children into `fields` during wrap-time promotion.
+
+| Heuristic | Trigger | Automatic? |
+|---|---|---|
+| 1. Field by name | tree-sitter FIELD | Yes |
+| 2. Child by kind | Unnamed, unique kind in node | Yes |
+| 3. Token as value | Anonymous token matched by text | No — needs overrides.json |
+| 4. Position by token | Same kind, separated by token | No — needs overrides.json |
+| 5. Branch by token | Top-level CHOICE with token discriminator | No — needs overrides.json |
+
 ## Relationships
 
 ```
 RulesConfig 1──* TemplateRule    (rules map: kind → template)
 TemplateRule 1──* Clause         (object form only: nested _clause keys)
 TemplateRule 1──? joinBy         (object form only: separator config)
+OverridesConfig 1──* OverrideNode  (node kind → override fields)
+OverrideNode 1──* OverrideField   (field name → { anonymous? })
 ```
 
 ## Types removed

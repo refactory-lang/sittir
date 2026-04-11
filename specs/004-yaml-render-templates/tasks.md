@@ -3,7 +3,7 @@
 **Input**: Design documents from `specs/004-yaml-render-templates/`
 **Prerequisites**: plan.md, spec.md, research.md, data-model.md, design.md
 
-**Tests**: Existing generated tests serve as the regression gate (constitution IV). No new test tasks — the existing factory→render test suite validates the new engine.
+**Tests**: Existing generated tests serve as the regression gate (constitution IV). New tests added only for wrap heuristic validation (T056) — override field promotion is new behavior not covered by existing factory→render tests.
 
 **Organization**: Tasks grouped by user story. US2 (render engine) is foundational since all other stories depend on a working render engine.
 
@@ -48,6 +48,10 @@
 - [x] T011 Update `packages/core/src/types.ts` — re-export `TemplateRule`, `RulesConfig` from `@sittir/types`; remove re-exports of `RenderTemplate`, `RenderRule`, `TemplateElement`, `ParsedTemplate`, `RulesRegistry`, `JoinByMap`
 - [x] T012 Update `packages/core/src/index.ts` — ensure new types and updated `createRenderer` are exported
 
+### Post-clarification render engine update
+
+- [x] T055 [US2] Update render engine in `packages/core/src/render.ts` for post-clarification requirements: (a) implement absent-field adjacent space absorption per FR-017, (b) verify no runtime kind-matching exists per FR-026 — only field lookup and clause resolution
+
 **Checkpoint**: Core render engine works with hand-crafted RulesConfig. `createRenderer` accepts a YAML path. Old S-expr types removed.
 
 ---
@@ -68,13 +72,13 @@
 ### Factories emitter update
 
 - [x] T017 [US1] Update factories emitter in `packages/codegen/src/emitters/factories.ts` — generated `factories.ts` calls `createRenderer(yamlPath)` with path to `templates.yaml` instead of importing `rules`/`joinBy` from separate files
-- [x] T018 [US1] Update assign emitter in `packages/codegen/src/emitters/assign.ts` — use the bound renderer from `createRenderer(yamlPath)` instead of importing `rules`/`joinBy`
+- [x] T018 [US1] Update wrap emitter in `packages/codegen/src/emitters/wrap.ts` — use the bound renderer from `createRenderer(yamlPath)` instead of importing `rules`/`joinBy`
 
 ### CLI update
 
 - [x] T019 [US1] Update `packages/codegen/src/cli.ts` — emit `templates.yaml` to the package root (resolve one level up from `--output` path, e.g., `--output packages/rust/src` → `packages/rust/templates.yaml`), remove `rules.ts` and `joinby.ts` from output file list
 
-**Checkpoint**: Codegen CLI produces `templates.yaml` for a grammar. Generated `factories.ts` and `assign.ts` use `createRenderer(yamlPath)`.
+**Checkpoint**: Codegen CLI produces `templates.yaml` for a grammar. Generated `factories.ts` and `wrap.ts` use `createRenderer(yamlPath)`.
 
 ---
 
@@ -125,7 +129,59 @@
 
 ---
 
-## Phase 7: Polish & Cross-Cutting Concerns
+## Phase 7: User Story 6 — Override Fields (`overrides.json`) (P2)
+
+**Goal**: Create `overrides.json` files per grammar that provide supplemental field names for under-fielded nodes. Codegen merges overrides during enrichment and validates against grammar structure.
+
+**Independent Test**: Run codegen for Rust with `overrides.json` and verify templates for `index_expression`, `unary_expression`, `range_expression` use `$FIELD_NAME` variables instead of positional `$$$CHILDREN`.
+
+### Overrides infrastructure
+
+- [x] T038 [US6] Add `overrides.json` schema and loading to codegen — merge override fields with node-types.json fields during enrichment in the NodeModel pipeline
+- [x] T039 [US6] Add validation: overrides MUST NOT shadow existing tree-sitter FIELDs; entries MUST match grammar rule structure
+- [x] T040 [US6] Add automatic detection logging: same-kind positional (`SEQ(X, X)`) logs "needs synthetic names"; discriminator tokens log "discriminator token at position N"
+
+### Per-grammar overrides
+
+- [x] T041 [P] [US6] Create `packages/rust/overrides.json` — ~10-15 entries including `index_expression` (value/index), `unary_expression` (operator/argument), `range_expression` (start/operator/end), `macro_definition` (delimiter)
+- [x] T042 [P] [US6] Create `packages/typescript/overrides.json` — minimal or empty (TypeScript wraps operators in FIELDs)
+- [x] T043 [P] [US6] Create `packages/python/overrides.json` — minimal or empty (Python wraps operators in FIELDs)
+
+**Checkpoint**: Codegen loads and validates overrides.json for all 3 grammars. Override fields appear in enriched NodeModel.
+
+---
+
+## Phase 8: User Story 7 — Wrap Emitter Field Promotion Heuristics (P2)
+
+**Goal**: Codegen generates per-kind override field promotion code inlined into `wrapXxx()` functions, implementing 5 heuristics. After wrap + render-time children-by-kind fallback, all named positions are resolvable via template variables.
+
+**Implementation note**: The heuristics are inlined into the wrap emitter. The render engine also contributes a children-by-kind fallback for named children stored in `children` array.
+
+**Independent Test**: Create a `NodeData` for `index_expression` via factory, render it, verify template resolves `$OBJECT` and `$INDEX`.
+
+### Children classification
+
+- [x] T044 [US7] Implement children classification in codegen — simplify grammar rules (strip tokens from SEQs, unwrap single-member SEQs, leave CHOICEs intact) to determine template pattern per node kind
+
+### Wrap emitter updates
+
+- [x] T045 [US7] Update wrap emitter to generate heuristic 2 (unique kind promotion) — find unnamed child by kind set from `target.children()`
+- [x] T046 [US7] Update wrap emitter to generate heuristic 3 (anonymous token promotion) — match by specific token `values` from overrides.json
+- [x] T047 [US7] Update wrap emitter to generate heuristic 4 (token-positional promotion) — consume same-kind children in order using override names
+- [x] T048 [US7] Update wrap emitter to generate heuristic 5 (CHOICE branch promotion) — token position determines field assignment
+
+### Integration
+
+- [x] T056 [US7] Add factory→render round-trip tests for override field validation — generated tests cover `index_expression`, `unary_expression`, `range_expression`
+- [x] T049 [US7] Regenerate all 3 grammar packages with override fields and updated wrap functions
+- [x] T050 [US7] Run `pnpm test` — verify all existing tests pass (Rust 624/624, TS 654/655, Python 438/442)
+- [x] T051 [US7] Validate templates for override-field nodes use `$FIELD_NAME` variables (spot-check `index_expression`, `unary_expression`, `range_expression` in Rust)
+
+**Checkpoint**: `wrap.ts` correctly promotes override fields via `readNode()`. Templates reference named fields. All tests pass.
+
+---
+
+## Phase 9: Polish & Cross-Cutting Concerns
 
 **Purpose**: Final cleanup and validation
 
@@ -133,6 +189,9 @@
 - [x] T035 [P] Verify render engine line count is ~50 lines (SC-005)
 - [x] T036 [P] Verify `templates.yaml` determinism — regenerate Rust twice, diff output, confirm byte-identical
 - [x] T037 Verify `expandoChar` works end-to-end — create a manual test with a mock grammar where `expandoChar` is non-null (e.g., `%`), confirm variable scanner uses `%NAME` instead of `$NAME`
+- [x] T052 Verify SC-009: `overrides.json` for Rust provides field names for ~10-15 under-fielded nodes
+- [x] T053 [P] Verify SC-010: `wrap.ts` promotes override fields correctly for all 5 heuristic categories
+- [x] T054 [P] Verify SC-011: templates for override-field nodes use `$FIELD_NAME` variables instead of `$$$CHILDREN`
 
 ---
 
@@ -146,7 +205,9 @@
 - **US5 Regression (Phase 4)**: Depends on US1 (needs regenerated packages)
 - **US3 Cleanup (Phase 5)**: Depends on US5 passing (safe to delete after regression passes)
 - **US4 Multi-lang (Phase 6)**: Depends on US5 (needs all 3 grammars regenerated)
-- **Polish (Phase 7)**: Depends on all prior phases
+- **US6 Overrides (Phase 7)**: Depends on US1 (needs codegen infrastructure to merge overrides)
+- **US7 Wrap Heuristics (Phase 8)**: Depends on US6 (needs overrides.json to drive promotion)
+- **Polish (Phase 9)**: Depends on all prior phases
 
 ### User Story Dependencies
 
@@ -155,6 +216,8 @@
 - **US5 (Regression)**: Depends on US1 (needs regenerated packages)
 - **US3 (Cleanup)**: Depends on US5 (safe to remove old files after tests pass)
 - **US4 (Multi-lang)**: Depends on US5 (all grammars must be regenerated)
+- **US6 (Overrides)**: Depends on US1 (codegen infrastructure needed to merge overrides into enrichment)
+- **US7 (Wrap Heuristics)**: Depends on US6 (override field names drive wrap promotion logic)
 
 ### Within Each Phase
 
@@ -168,6 +231,7 @@
 - T020, T021, T022 (regenerate grammars) — T020 first, T021/T022 in parallel after
 - T026, T027, T028 (delete old files) can run in parallel
 - T031, T032, T033 (validate templates) can run in parallel
+- T041, T042, T043 (create per-grammar overrides.json) can run in parallel
 
 ---
 
@@ -209,7 +273,9 @@ Task: T028 "Delete packages/python/src/rules.ts and joinby.ts"
 3. Full test suite (T023, T024)
 4. Cleanup old files (Phase 5)
 5. Multi-language validation (Phase 6)
-6. Polish (Phase 7)
+6. Override fields — create overrides.json per grammar (Phase 7)
+7. Wrap heuristics — field promotion for override nodes (Phase 8)
+8. Polish & cross-cutting verification (Phase 9)
 
 ---
 
@@ -218,6 +284,6 @@ Task: T028 "Delete packages/python/src/rules.ts and joinby.ts"
 - [P] tasks = different files, no dependencies
 - [Story] label maps task to specific user story for traceability
 - US2 is placed in Foundational phase because the render engine must exist before any other story can be validated
-- No new test files needed — existing generated tests are the regression gate (constitution IV)
+- Existing generated tests are the primary regression gate (constitution IV); new tests added only for wrap heuristic validation (T056)
 - Commit after each phase checkpoint
 - Stop at any checkpoint to validate independently

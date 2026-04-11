@@ -7,6 +7,7 @@
  */
 
 import type { Grammar, GrammarRule } from './grammar.ts';
+import { simplifyRule } from './classify.ts';
 
 // ---------------------------------------------------------------------------
 // EnrichedRule — 6-variant discriminated union
@@ -14,19 +15,25 @@ import type { Grammar, GrammarRule } from './grammar.ts';
 
 export interface SupertypeRule {
 	modelType: 'supertype';
-	subtypes: string[];
+	subtypes: Set<string>;
 	rule: GrammarRule;
 }
 
 export interface EnrichedFieldInfo {
 	name: string;
-	kinds: string[];
+	kinds: Set<string>;
 	required: boolean;
 	multiple: boolean;
+	/** Positional index in the grammar rule (0-based, shared namespace with children). */
+	position: number;
 }
 
 export interface EnrichedChildInfo {
-	kinds: string[];
+	/** Positional index in the simplified rule (0-based). */
+	position: number;
+	/** Field name — auto-assigned from kind (unique) or NEEDS_NAME placeholder. */
+	name: string | null;
+	kinds: Set<string>;
 	required: boolean;
 	multiple: boolean;
 }
@@ -37,6 +44,7 @@ export interface BranchRule {
 	children?: EnrichedChildInfo[];
 	separators: Map<string, string>;
 	rule: GrammarRule;
+	simplifiedRule: GrammarRule;
 }
 
 export interface ContainerRule {
@@ -44,6 +52,7 @@ export interface ContainerRule {
 	children: EnrichedChildInfo[];
 	separators: Map<string, string>;
 	rule: GrammarRule;
+	simplifiedRule: GrammarRule;
 }
 
 export interface KeywordRule {
@@ -88,19 +97,26 @@ export function hasFields(rule: GrammarRule): boolean {
 	}
 }
 
-/** Check if a rule contains non-FIELD SYMBOL references. */
-export function hasChildren(rule: GrammarRule): boolean {
-	return walkHasChildren(rule, false);
+/**
+ * Check if a rule contains non-FIELD SYMBOL references that produce named children.
+ * Uses the supertype set from node-types.json to correctly identify supertypes
+ * (which start with `_` but still produce named children).
+ */
+export function hasChildren(rule: GrammarRule, supertypeSet: ReadonlySet<string>): boolean {
+	return walkHasChildren(rule, false, supertypeSet);
 }
 
-function walkHasChildren(rule: GrammarRule, insideField: boolean): boolean {
+function walkHasChildren(rule: GrammarRule, insideField: boolean, supertypeSet: ReadonlySet<string>): boolean {
 	switch (rule.type) {
-		case 'SYMBOL': return !insideField && !rule.name.startsWith('_');
-		case 'FIELD': return walkHasChildren(rule.content, true);
-		case 'SEQ': case 'CHOICE': return rule.members.some(m => walkHasChildren(m, insideField));
+		case 'SYMBOL':
+			// Named symbols (no `_` prefix) and supertypes produce children.
+			// Hidden non-supertype symbols are inlined by tree-sitter.
+			return !insideField && (!rule.name.startsWith('_') || supertypeSet.has(rule.name));
+		case 'FIELD': return walkHasChildren(rule.content, true, supertypeSet);
+		case 'SEQ': case 'CHOICE': return rule.members.some(m => walkHasChildren(m, insideField, supertypeSet));
 		case 'REPEAT': case 'REPEAT1': case 'PREC': case 'PREC_LEFT': case 'PREC_RIGHT': case 'PREC_DYNAMIC':
 		case 'TOKEN': case 'IMMEDIATE_TOKEN':
-			return walkHasChildren(rule.content, insideField);
+			return walkHasChildren(rule.content, insideField, supertypeSet);
 		case 'ALIAS': return !insideField && rule.named;
 		default: return false;
 	}
@@ -113,10 +129,10 @@ function walkHasChildren(rule: GrammarRule, insideField: boolean): boolean {
 function extractSubtypes(rule: GrammarRule, grammar: Grammar): SupertypeRule {
 	const subtypes: string[] = [];
 	collectConcreteTypes(rule, grammar, subtypes, new Set());
-	return { modelType: 'supertype', subtypes, rule };
+	return { modelType: 'supertype', subtypes: new Set(subtypes), rule };
 }
 
-function collectConcreteTypes(rule: GrammarRule, grammar: Grammar, types: string[], visited: Set<string>): void {
+export function collectConcreteTypes(rule: GrammarRule, grammar: Grammar, types: string[], visited: Set<string>): void {
 	switch (rule.type) {
 		case 'SYMBOL': {
 			if (visited.has(rule.name)) return;
@@ -162,24 +178,119 @@ function extractFields(rule: GrammarRule, grammar: Grammar, supertypeSet: Readon
 	const fieldAccums = new Map<string, FieldAccum>();
 	walkForFields(rule, false, false, fieldAccums, grammar);
 
+	// Assign positions by walking rule structure in order
+	const fieldPositions = assignFieldPositions(rule, grammar);
+
 	const fields: EnrichedFieldInfo[] = [];
 	for (const [name, accum] of fieldAccums) {
 		fields.push({
 			name,
-			kinds: [...accum.kinds],
+			kinds: accum.kinds,
 			required: !accum.optional,
 			multiple: accum.repeated,
+			position: fieldPositions.get(name) ?? -1,
 		});
 	}
 
-	const childSlots = collectChildSlots(rule, false, false, false, grammar, supertypeSet);
+	const simplified = simplifyRule(rule);
+	const childSlots = collectChildSlots(simplified, false, false);
 	const children: EnrichedChildInfo[] | undefined = childSlots.length > 0
 		? slotsToChildren(childSlots)
 		: undefined;
+	if (children) nameChildSlots(children, grammar.rules);
 
 	const separators = extractSeparators(rule);
 
-	return { modelType: 'branch', fields, children, separators, rule };
+	return { modelType: 'branch', fields, children, separators, rule, simplifiedRule: simplified };
+}
+
+/**
+ * Walk the rule structure to assign positional indices to FIELD nodes.
+ * Position counts all top-level slots (fields and children) in SEQ order.
+ * Returns a map from field name to its first (earliest) position.
+ */
+function assignFieldPositions(rule: GrammarRule, grammar: Grammar): Map<string, number> {
+	const positions = new Map<string, number>();
+	let counter = { value: 0 };
+	walkForPositions(rule, positions, counter, grammar);
+	return positions;
+}
+
+function walkForPositions(
+	rule: GrammarRule,
+	positions: Map<string, number>,
+	counter: { value: number },
+	grammar: Grammar,
+	visited?: Set<string>,
+): void {
+	switch (rule.type) {
+		case 'SEQ':
+			for (const m of rule.members) walkForPositions(m, positions, counter, grammar, visited);
+			break;
+		case 'FIELD':
+			if (!positions.has(rule.name)) {
+				positions.set(rule.name, counter.value);
+			}
+			counter.value++;
+			break;
+		case 'SYMBOL':
+			// Non-field symbols also occupy a position (they become children)
+			if (rule.name.startsWith('_') && grammar) {
+				const v = visited ?? new Set<string>();
+				if (!v.has(rule.name)) {
+					v.add(rule.name);
+					const subRule = grammar.rules[rule.name];
+					if (subRule) walkForPositions(subRule, positions, counter, grammar, v);
+				}
+			} else {
+				counter.value++;
+			}
+			break;
+		case 'STRING':
+			counter.value++;
+			break;
+		case 'CHOICE': {
+			// Use the longest branch's positions
+			const nonBlank = rule.members.filter(m => m.type !== 'BLANK');
+			if (nonBlank.length === 0) break;
+			// Walk each branch with a snapshot of the counter, take max
+			const branchPositions: Map<string, number>[] = [];
+			const branchCounters: number[] = [];
+			for (const m of nonBlank) {
+				const bp = new Map<string, number>();
+				const bc = { value: counter.value };
+				walkForPositions(m, bp, bc, grammar, visited ? new Set(visited) : undefined);
+				branchPositions.push(bp);
+				branchCounters.push(bc.value);
+			}
+			// Merge: use minimum position for each field name
+			for (const bp of branchPositions) {
+				for (const [name, pos] of bp) {
+					const existing = positions.get(name);
+					if (existing === undefined || pos < existing) {
+						positions.set(name, pos);
+					}
+				}
+			}
+			counter.value = Math.max(...branchCounters);
+			break;
+		}
+		case 'REPEAT': case 'REPEAT1':
+			walkForPositions(rule.content, positions, counter, grammar, visited);
+			break;
+		case 'PREC': case 'PREC_LEFT': case 'PREC_RIGHT': case 'PREC_DYNAMIC':
+			walkForPositions(rule.content, positions, counter, grammar, visited);
+			break;
+		case 'ALIAS':
+			walkForPositions(rule.content, positions, counter, grammar, visited);
+			break;
+		case 'TOKEN': case 'IMMEDIATE_TOKEN':
+			// Tokens are a single position
+			counter.value++;
+			break;
+		default:
+			break;
+	}
 }
 
 function walkForFields(
@@ -332,58 +443,33 @@ interface ChildSlot {
 }
 
 /**
- * Position-aware child slot collection.
+ * Position-aware child slot collection from a simplified rule.
  *
- * Returns one ChildSlot per positional child in the grammar rule.
- * SEQ concatenates positions. CHOICE merges per-position (padding shorter
- * branches with optional empty slots). REPEAT collapses its content to a
- * single repeated slot. Supertypes and named symbols are kept as kind
- * references. Hidden non-supertype symbols (e.g. _call_signature) are
- * recursed into — tree-sitter inlines them into the parent node.
+ * Walks the output of simplifyRule() — only SYMBOL, SEQ, CHOICE, REPEAT,
+ * REPEAT1, and BLANK nodes remain. FIELD/PREC/STRING/TOKEN/ALIAS have
+ * already been stripped or transformed by simplifyRule().
+ *
+ * Hidden non-supertype symbols (e.g. _call_signature) are recursed into
+ * after simplification — tree-sitter inlines them into the parent node.
  */
 function collectChildSlots(
 	rule: GrammarRule,
 	optional: boolean,
 	repeated: boolean,
-	insideField: boolean,
-	grammar: Grammar,
-	supertypeSet: ReadonlySet<string>,
-	visited?: Set<string>,
 ): ChildSlot[] {
 	switch (rule.type) {
+		case 'SYMBOL': {
+			// All symbols (named, supertypes, and hidden) are kept as single-kind slots.
+			// Hidden rules like _statement are meaningful groupings — don't expand them.
+			return [{ kinds: new Set([rule.name]), optional, repeated }];
+		}
+
 		case 'SEQ': {
 			const slots: ChildSlot[] = [];
 			for (const m of rule.members) {
-				slots.push(...collectChildSlots(m, optional, repeated, insideField, grammar, supertypeSet, visited));
+				slots.push(...collectChildSlots(m, optional, repeated));
 			}
 			return slots;
-		}
-
-		case 'FIELD':
-			// Fields are consumed by the field walk — children inside are not positional
-			return collectChildSlots(rule.content, optional, repeated, true, grammar, supertypeSet, visited);
-
-		case 'SYMBOL': {
-			if (insideField) return [];
-			// Named symbols and supertypes are real node kinds — keep as-is
-			if (!rule.name.startsWith('_') || supertypeSet.has(rule.name)) {
-				return [{ kinds: new Set([rule.name]), optional, repeated }];
-			}
-			// Hidden non-supertype symbols are inlined by tree-sitter — recurse
-			const inner = grammar.rules[rule.name];
-			if (!inner) return [];
-			const v = visited ?? new Set<string>();
-			if (v.has(rule.name)) return [];
-			v.add(rule.name);
-			return collectChildSlots(inner, optional, repeated, insideField, grammar, supertypeSet, v);
-		}
-
-		case 'ALIAS': {
-			if (insideField) return [];
-			if (rule.named) {
-				return [{ kinds: new Set([rule.value]), optional, repeated }];
-			}
-			return collectChildSlots(rule.content, optional, repeated, false, grammar, supertypeSet, visited);
 		}
 
 		case 'CHOICE': {
@@ -392,7 +478,7 @@ function collectChildSlots(
 			if (nonBlank.length === 0) return [];
 
 			const branchSlots = nonBlank.map(m =>
-				collectChildSlots(m, false, repeated, insideField, grammar, supertypeSet, visited),
+				collectChildSlots(m, false, repeated),
 			);
 
 			// Find max slot count across branches
@@ -413,7 +499,6 @@ function collectChildSlots(
 						if (slot.optional) slotOptional = true;
 						if (slot.repeated) slotRepeated = true;
 					} else {
-						// Branch is shorter — this position is absent, so optional
 						slotOptional = true;
 					}
 				}
@@ -426,21 +511,21 @@ function collectChildSlots(
 		}
 
 		case 'REPEAT': {
-			// Collapse content to single slot, mark as multiple + optional
-			const inner = collectChildSlots(rule.content, true, true, insideField, grammar, supertypeSet, visited);
+			const inner = collectChildSlots(rule.content, true, true);
 			return collapseSlots(inner, true, true);
 		}
 
 		case 'REPEAT1': {
-			const inner = collectChildSlots(rule.content, optional, true, insideField, grammar, supertypeSet, visited);
+			const inner = collectChildSlots(rule.content, optional, true);
 			return collapseSlots(inner, optional, true);
 		}
 
-		case 'PREC': case 'PREC_LEFT': case 'PREC_RIGHT': case 'PREC_DYNAMIC':
-			return collectChildSlots(rule.content, optional, repeated, insideField, grammar, supertypeSet, visited);
+		case 'FIELD':
+			// Field-owned children are not positional — skip them
+			return [];
 
-		case 'TOKEN': case 'IMMEDIATE_TOKEN':
-			return collectChildSlots(rule.content, optional, repeated, insideField, grammar, supertypeSet, visited);
+		case 'BLANK':
+			return [];
 
 		default:
 			return [];
@@ -459,13 +544,77 @@ function collapseSlots(slots: ChildSlot[], optional: boolean, repeated: boolean)
 }
 
 function slotsToChildren(slots: ChildSlot[]): EnrichedChildInfo[] {
-	return slots.map(s => ({ kinds: [...s.kinds], required: !s.optional, multiple: s.repeated }));
+	return slots.map((s, i) => ({ position: i, name: null, kinds: s.kinds, required: !s.optional, multiple: s.repeated }));
 }
 
 function extractChildren(rule: GrammarRule, grammar: Grammar, supertypeSet: ReadonlySet<string>): ContainerRule {
-	const children = slotsToChildren(collectChildSlots(rule, false, false, false, grammar, supertypeSet));
+	const simplified = simplifyRule(rule);
+	const children = slotsToChildren(collectChildSlots(simplified, false, false));
+	nameChildSlots(children, grammar.rules);
 	const separators = extractSeparators(rule);
-	return { modelType: 'container', children, separators, rule };
+	return { modelType: 'container', children, separators, rule, simplifiedRule: simplified };
+}
+
+/**
+ * Assign names to child slots based on kind uniqueness:
+ * - Single-kind, unique across all slots → kind-as-name (Tier 1)
+ * - Single-kind supertype → skip (supertypes are fields, not children)
+ * - Hidden rule whose body is all FIELDs → skip (tree-sitter inlines its fields onto the parent)
+ * - Same kind in multiple slots or multi-kind slot → NEEDS_NAME_N placeholder (Tier 2)
+ * - Single pure REPEAT slot → null (uses $$CHILDREN)
+ */
+function nameChildSlots(children: EnrichedChildInfo[], grammarRules: Record<string, GrammarRule>): void {
+	// Pure REPEAT (single slot, multiple) → no name needed, uses $$CHILDREN
+	if (children.length === 1 && children[0]!.multiple) return;
+
+	// Count how many slots each kind appears in
+	const kindSlotCount = new Map<string, number>();
+	for (const child of children) {
+		for (const kind of child.kinds) {
+			kindSlotCount.set(kind, (kindSlotCount.get(kind) ?? 0) + 1);
+		}
+	}
+
+	for (const child of children) {
+		if (child.kinds.size === 1) {
+			const kind = child.kinds.values().next().value!;
+			if ((kindSlotCount.get(kind) ?? 0) > 1) {
+				// Same kind in multiple positions → needs human naming
+				child.name = `NEEDS_NAME_${child.position}`;
+			} else if (kind.startsWith('_') && isAllFieldsRule(grammarRules[kind])) {
+				// Hidden rule whose body is entirely FIELDs — tree-sitter inlines
+				// these onto the parent, so the fields already exist directly.
+				// Don't name it; the template walker inlines the hidden rule.
+				child.name = null;
+			} else {
+				// Unique kind → kind-as-name (strip _ prefix from hidden rules)
+				child.name = kind.startsWith('_') ? kind.slice(1) : kind;
+			}
+		} else {
+			// Multiple kinds → needs human naming
+			child.name = `NEEDS_NAME_${child.position}`;
+		}
+	}
+}
+
+/** Check if a grammar rule's body (after unwrapping PREC) is a SEQ of only FIELDs. */
+function isAllFieldsRule(rule: GrammarRule | undefined): boolean {
+	if (!rule) return false;
+	let r = rule;
+	while (r.type === 'PREC' || r.type === 'PREC_LEFT' || r.type === 'PREC_RIGHT' || r.type === 'PREC_DYNAMIC') {
+		r = r.content;
+	}
+	if (r.type !== 'SEQ') return false;
+	return r.members.every(m => {
+		let u = m;
+		while (u.type === 'PREC' || u.type === 'PREC_LEFT' || u.type === 'PREC_RIGHT' || u.type === 'PREC_DYNAMIC') {
+			u = u.content;
+		}
+		// FIELD or CHOICE-with-BLANK wrapping a FIELD (optional field)
+		if (u.type === 'FIELD') return true;
+		if (u.type === 'CHOICE' && u.members.some(m2 => m2.type === 'BLANK') && u.members.some(m2 => m2.type === 'FIELD')) return true;
+		return false;
+	});
 }
 
 // ---------------------------------------------------------------------------
@@ -624,8 +773,13 @@ function extractSeparators(rule: GrammarRule): Map<string, string> {
 			if (r.content.type === 'SEQ') {
 				const sep = seqToSeparator(r.content);
 				if (sep) {
+					let hasField = false;
 					for (const m of r.content.members) {
-						if (m.type === 'FIELD') out.set(m.name, sep);
+						if (m.type === 'FIELD') { out.set(m.name, sep); hasField = true; }
+					}
+					// Children separator: REPEAT(SEQ(STRING, non-FIELD)) → unnamed children
+					if (!hasField && !out.has('__children__')) {
+						out.set('__children__', sep);
 					}
 				}
 			}
@@ -668,7 +822,7 @@ export function classifyRules(grammar: Grammar): Map<string, EnrichedRule> {
 		}
 
 		// 3. Has children?
-		if (hasChildren(rule)) {
+		if (hasChildren(rule, supertypeSet)) {
 			result.set(kind, extractChildren(rule, grammar, supertypeSet));
 			continue;
 		}
@@ -693,4 +847,196 @@ export function classifyRules(grammar: Grammar): Map<string, EnrichedRule> {
 	}
 
 	return result;
+}
+
+// ---------------------------------------------------------------------------
+// Override enrichment — inject synthetic FIELD nodes into grammar rules
+// ---------------------------------------------------------------------------
+//
+// Runs before template emission. Walks the raw grammar rule tree and wraps
+// positions that match override fields with synthetic FIELD nodes:
+//
+//   SYMBOL("_expression")  →  FIELD("start", SYMBOL("_expression"))
+//   CHOICE("..", "..=")    →  FIELD("operator", CHOICE("..", "..="))
+//   STRING("-")            →  FIELD("operator", STRING("-"))
+//
+// After enrichment, the template walker sees only FIELDs and emits $VARIABLE
+// without any override-specific logic.
+// ---------------------------------------------------------------------------
+
+export interface OverrideFieldInfo {
+	name: string;
+	/** Named type references (e.g. "_expression", "block"). */
+	namedKinds: Set<string>;
+	/** Anonymous token values (e.g. "-", "..", "!"). */
+	anonymousKinds: Set<string>;
+}
+
+/**
+ * Enrich a grammar rule by wrapping override-matched positions with synthetic FIELDs.
+ * Returns a new rule tree (original is not mutated).
+ */
+export function applyOverrides(
+	rule: GrammarRule,
+	overrides: OverrideFieldInfo[],
+): GrammarRule {
+	if (overrides.length === 0) return rule;
+	const consumed = new Set<string>();
+	return walkAndWrap(rule, overrides, consumed);
+}
+
+function walkAndWrap(
+	rule: GrammarRule,
+	entries: OverrideFieldInfo[],
+	consumed: Set<string>,
+): GrammarRule {
+	switch (rule.type) {
+		case 'SYMBOL': {
+			const match = findNamedOverride(rule.name, entries, consumed);
+			if (match) {
+				consumed.add(match.name);
+				return { type: 'FIELD', name: match.name, content: rule };
+			}
+			return rule;
+		}
+
+		case 'STRING': {
+			const match = findAnonymousOverride(rule.value, entries, consumed);
+			if (match) {
+				consumed.add(match.name);
+				return { type: 'FIELD', name: match.name, content: rule };
+			}
+			return rule;
+		}
+
+		case 'CHOICE': {
+			// Check if the whole CHOICE matches an override.
+			// Case 1: CHOICE of STRINGs → anonymous override (e.g. CHOICE("..", "..=", "..."))
+			const stringMembers = rule.members.filter(m => unwrapPrecForOverride(m).type === 'STRING');
+			if (stringMembers.length >= 2) {
+				const stringValues = new Set(stringMembers.map(m => (unwrapPrecForOverride(m) as Extract<GrammarRule, { type: 'STRING' }>).value));
+				const match = findChoiceOverride(stringValues, entries, consumed, /* anonymous */ true);
+				if (match) {
+					consumed.add(match.name);
+					return { type: 'FIELD', name: match.name, content: rule };
+				}
+			}
+
+			// Case 2: CHOICE of SYMBOLs → named override (e.g. CHOICE(integer_literal, float_literal))
+			const symbolMembers = rule.members.filter(m => unwrapPrecForOverride(m).type === 'SYMBOL');
+			if (symbolMembers.length >= 2) {
+				const symbolNames = new Set(symbolMembers.map(m => (unwrapPrecForOverride(m) as Extract<GrammarRule, { type: 'SYMBOL' }>).name));
+				const match = findChoiceOverride(symbolNames, entries, consumed, /* anonymous */ false);
+				if (match) {
+					consumed.add(match.name);
+					return { type: 'FIELD', name: match.name, content: rule };
+				}
+			}
+
+			// No whole-CHOICE match — recurse into each branch independently.
+			// Each branch gets its own consumed clone so all branches are wrapped symmetrically.
+			const parentConsumed = new Set(consumed);
+			const wrappedMembers: GrammarRule[] = [];
+			for (const m of rule.members) {
+				const branchConsumed = new Set(parentConsumed);
+				wrappedMembers.push(walkAndWrap(m, entries, branchConsumed));
+				for (const c of branchConsumed) consumed.add(c);
+			}
+			return { type: 'CHOICE', members: wrappedMembers };
+		}
+
+		case 'SEQ':
+			return { type: 'SEQ', members: rule.members.map(m => walkAndWrap(m, entries, consumed)) };
+
+		case 'REPEAT':
+			return { type: 'REPEAT', content: walkAndWrap(rule.content, entries, consumed) };
+		case 'REPEAT1':
+			return { type: 'REPEAT1', content: walkAndWrap(rule.content, entries, consumed) };
+
+		case 'FIELD':
+			return { type: 'FIELD', name: rule.name, content: walkAndWrap(rule.content, entries, consumed) };
+
+		case 'PREC':
+			return { type: 'PREC', value: rule.value, content: walkAndWrap(rule.content, entries, consumed) };
+		case 'PREC_LEFT':
+			return { type: 'PREC_LEFT', value: rule.value, content: walkAndWrap(rule.content, entries, consumed) };
+		case 'PREC_RIGHT':
+			return { type: 'PREC_RIGHT', value: rule.value, content: walkAndWrap(rule.content, entries, consumed) };
+		case 'PREC_DYNAMIC':
+			return { type: 'PREC_DYNAMIC', value: rule.value, content: walkAndWrap(rule.content, entries, consumed) };
+
+		case 'ALIAS':
+			if (rule.named) {
+				const match = findNamedOverride(rule.value, entries, consumed);
+				if (match) {
+					consumed.add(match.name);
+					return { type: 'FIELD', name: match.name, content: rule };
+				}
+			}
+			return { type: 'ALIAS', content: walkAndWrap(rule.content, entries, consumed), named: rule.named, value: rule.value };
+
+		case 'TOKEN':
+			return { type: 'TOKEN', content: walkAndWrap(rule.content, entries, consumed) };
+		case 'IMMEDIATE_TOKEN':
+			return { type: 'IMMEDIATE_TOKEN', content: walkAndWrap(rule.content, entries, consumed) };
+
+		case 'BLANK':
+		case 'PATTERN':
+			return rule;
+	}
+}
+
+/** Match a SYMBOL name against named override kinds (strips _ prefix for hidden rules). */
+function findNamedOverride(
+	symbolName: string,
+	entries: OverrideFieldInfo[],
+	consumed: Set<string>,
+): OverrideFieldInfo | undefined {
+	const lookupName = symbolName.startsWith('_') ? symbolName.slice(1) : symbolName;
+	return entries.find(e =>
+		!consumed.has(e.name) && (
+			e.namedKinds.has(symbolName) ||
+			e.namedKinds.has(lookupName) ||
+			// Name-based fallback for empty-kinds override fields (hidden grammar rules)
+			(e.namedKinds.size === 0 && e.anonymousKinds.size === 0 && e.name === lookupName)
+		),
+	);
+}
+
+/** Match a STRING token value against anonymous override kinds. */
+function findAnonymousOverride(
+	tokenValue: string,
+	entries: OverrideFieldInfo[],
+	consumed: Set<string>,
+): OverrideFieldInfo | undefined {
+	return entries.find(e =>
+		!consumed.has(e.name) &&
+		e.anonymousKinds.has(tokenValue),
+	);
+}
+
+/** Match a set of CHOICE values against an override (any overlap → match). */
+function findChoiceOverride(
+	values: Set<string>,
+	entries: OverrideFieldInfo[],
+	consumed: Set<string>,
+	anonymous: boolean,
+): OverrideFieldInfo | undefined {
+	return entries.find(e => {
+		if (consumed.has(e.name)) return false;
+		const kinds = anonymous ? e.anonymousKinds : e.namedKinds;
+		for (const v of values) {
+			if (kinds.has(v)) return true;
+			if (!anonymous && v.startsWith('_') && kinds.has(v.slice(1))) return true;
+		}
+		return false;
+	});
+}
+
+/** Unwrap PREC wrappers to get the core rule type (for override matching). */
+function unwrapPrecForOverride(rule: GrammarRule): GrammarRule {
+	while (rule.type === 'PREC' || rule.type === 'PREC_LEFT' || rule.type === 'PREC_RIGHT' || rule.type === 'PREC_DYNAMIC') {
+		rule = rule.content;
+	}
+	return rule;
 }

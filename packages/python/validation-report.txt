@@ -1,0 +1,145 @@
+Generating python IR...
+[overrides] conditional_expression: needs synthetic names — same-kind positional children: expression
+[overrides] constrained_type: needs synthetic names — same-kind positional children: type
+[overrides] pair: needs synthetic names — same-kind positional children: expression
+[overrides] type_alias_statement: needs synthetic names — same-kind positional children: type
+[overrides] union_type: needs synthetic names — same-kind positional children: type
+[overrides] with_clause: discriminator token detected — CHOICE branches identical after token removal
+
+@sittir/python: 101 kinds
+  v 101/101 variable resolution
+  v 101/101 field coverage
+  v 26/26 override consistency (26 nodes with overrides)
+  v 101/101 template structure
+  v 1/1 variant subtypes
+
+  Warnings (2):
+    dict_pattern: [field-coverage] tree-sitter FIELD 'key' not explicitly in template (covered by $$$CHILDREN)
+    dict_pattern: [field-coverage] tree-sitter FIELD 'value' not explicitly in template (covered by $$$CHILDREN)
+
+Running round-trip validation...
+  x 91/115 round-trip (0 skipped, 24 errors)
+    x Matching specific values [match_statement]: re-parse error: "match command.split():
+ case ["quit"]:
+ print("Goodbye!")
+ quit_game()
+ case ["l"
+    x Matching multiple values [match_statement]: re-parse error: "match command.split():
+ case ["drop", *objects]:
+ for obj in objects:
+ character"
+    x Adding a wild card [match_statement]: re-parse error: "match command.split():
+# ^ conditional
+ case ["quit"]: ... # Code omitted for br"
+    x Or patterns [match_statement]: re-parse error: "match command.split():
+ case ["north"] | ["go", "north"]:
+ current_room = curren"
+    x As patterns [match_statement]: re-parse error: "match command.split():
+ case ["go", ("north" | "south" | "east" | "west") as dir"
+    x If guards [match_statement]: re-parse error: "match 0:
+ case 0 if False:
+ x = False
+ case 0 if True:
+ x = True"
+    x Literals [match_statement]: re-parse error: "match xxx:
+ case 3 | -3:
+ pass
+ case "something":
+ pass
+ case "something" "else""
+    x Comma separated cases [match_statement]: re-parse error: "match (0, 1, 2):
+ case 0,1:
+ x = 0
+ case 0, *x:
+ x = 0"
+    x Case terminating in comma [match_statement]: re-parse error: "match x:
+ case *x,:
+ y = 0"
+    x Multiple match patterns [match_statement]: re-parse error: "match ...:
+ case a, b:
+ return locals()"
+    x Match match, case case [match_statement]: re-parse error: "match match:
+ case case:
+ x = 0"
+    x Matching objects [match_statement]: re-parse error: "match event.get():
+ case Click(position=(x, y)):
+ handle_click_at(x, y)
+ case Ke"
+    x Positional arguments [match_statement]: re-parse error: "match event.get():
+ case Click((x, y)):
+ handle_click_at(x, y)"
+    x Constants and enums [match_statement]: re-parse error: "match event.get():
+ case Click((x, y), button=Button.LEFT): # This is a left cli"
+    x Dict mappings [for_statement]: re-parse error: "for action in actions:
+ match action:
+ case {"text": message, "color": c}:
+ ui.s"
+    x Builtin classes [for_statement]: re-parse error: "for action in actions:
+ match action:
+ case {"text": str(message), "color": str("
+    x Complex case patterns on classes [match_statement]: re-parse error: "match x:
+ case Something(): # no args
+ foo1()
+ case Something.Else(): # more com"
+    x Complex case patterns on complex numbers [match_statement]: re-parse error: "match x:
+ case -3 + 5j:
+ pass
+ case -3 + 5j as b2:
+ pass
+ case 3j as b1, -3 + 5j"
+    x Maybe sequence pattern right hand side precedence validation [match_statement]: re-parse error: "match x:
+ case a1, *a2, a3:
+ pass"
+    x If else statements [if_statement]: re-parse error: "if a:
+ b
+
+ else:
+ f"
+    x Nested if statements [if_statement]: re-parse error: "if a:
+ if b:
+ c
+ else:
+ if e:
+ f"
+    x Try statements [try_statement]: re-parse error: "try:
+ a
+
+ except b:
+ c except d as e:
+ f except g, h:
+ i except:
+ j"
+    x Decorated definitions [decorated_definition]: re-parse error: "@a.b class C:
+ @d(1)
+ @e[2].f.g
+ def f():
+ g
+
+ @f()
+ async def f():
+ g"
+    x Raise statements [raise_statement]: re-parse error: "raise raise"
+  x 92/99 factory round-trip (2 skipped, 5 errors)
+    x with_statement: re-parse error: "with :
+ async for c in d:
+ [e async for f in g]"
+    x match_statement: re-parse error: "match command.split():
+ case ["quit"]:
+ print("Goodbye!")
+ q"
+    x dict_pattern: Node 'undefined' has no 'fields' or 'children' — did you mean to set 'text' for 
+    x import_from_statement: re-parse error: "from import b"
+    x delete_statement: re-parse error: "del"
+  x 92/99 from() correctness (0 undefined, 7 divergent, 0 skipped)
+    ! block: from() diverges: named children: 1 vs 0
+    ! generator_expression: from() diverges: named children: 0 vs 1
+    ! list_comprehension: from() diverges: named children: 0 vs 1
+    ! dictionary_comprehension: from() diverges: named children: 0 vs 1
+    ! set_comprehension: from() diverges: named children: 0 vs 1
+    ! dict_pattern: from() diverges: named children: 0 vs 1
+    ! except_clause: from() diverges: named children: 0 vs 1
+
+Done! Generated:
+  templates.yaml, grammar.ts, types.ts, factories.ts, utils.ts, from.ts, consts.ts, index.ts
+  vitest.config.ts
+

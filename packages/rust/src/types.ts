@@ -17,6 +17,25 @@ export type LeafScalarMap = {
   integer_literal: number;
 };
 
+/** Narrowed string types for leaf kinds used by FromInputOf. */
+export type LeafStringMap = {
+  boolean_literal: "false" | "true";
+  empty_statement: ";";
+  fragment_specifier: "block" | "expr" | "expr_2021" | "ident" | "item" | "lifetime" | "literal" | "meta" | "pat" | "pat_param" | "path" | "stmt" | "tt" | "ty" | "vis";
+  never_type: "!";
+  remaining_field_pattern: "..";
+  unit_expression: "()";
+  unit_type: "()";
+  char_literal: `'${string}'` | `b'${string}'`;
+  crate: "crate";
+  metavariable: `$${string}`;
+  mutable_specifier: "mut";
+  primitive_type: "bool" | "char" | "f32" | "f64" | "i128" | "i16" | "i32" | "i64" | "i8" | "isize" | "str" | "u128" | "u16" | "u32" | "u64" | "u8" | "usize";
+  self: "self";
+  shebang: `#!${string}`;
+  super: "super";
+};
+
 /** All named node kinds in this grammar. */
 export const enum SyntaxKind {
   AbstractType = 'abstract_type',
@@ -316,25 +335,29 @@ export interface AbstractType {
   readonly type: 'abstract_type';
   readonly fields: {
     readonly trait: BoundedType | FunctionType | GenericType | RemovedTraitBound | ScopedTypeIdentifier | TupleType | TypeIdentifier;
+    readonly type_parameters?: TypeParameters;
   };
-  readonly children?: TypeParameters;
 }
 export interface Arguments {
   readonly type: 'arguments';
-  readonly attributeItem?: readonly (AttributeItem)[];
-  readonly expression?: Expression;
-  readonly attributeItemOrExpression?: readonly (AttributeItem | Expression)[];
+  readonly children?: readonly (AttributeItem | Expression)[];
 }
-export interface ArrayExpression {
+export interface ArrayExpressionSemi {
   readonly type: 'array_expression';
   readonly fields: {
     readonly length?: Expression;
+    readonly attributes?: readonly (AttributeItem)[];
+    readonly elements?: readonly (Expression)[];
   };
-  readonly attributeItem?: readonly (AttributeItem)[];
-  readonly attributeItemOrExpression1?: readonly (AttributeItem | Expression)[];
-  readonly expression?: Expression;
-  readonly attributeItemOrExpression2?: readonly (AttributeItem | Expression)[];
 }
+export interface ArrayExpressionComma {
+  readonly type: 'array_expression';
+  readonly fields: {
+    readonly attributes?: readonly (AttributeItem)[];
+    readonly elements?: readonly (AttributeItem)[];
+  };
+}
+export type ArrayExpression = ArrayExpressionSemi | ArrayExpressionComma;
 export interface ArrayType {
   readonly type: 'array_type';
   readonly fields: {
@@ -354,13 +377,15 @@ export interface AssociatedType {
   readonly fields: {
     readonly bounds?: TraitBounds;
     readonly name: TypeIdentifier;
-    readonly typeParameters?: TypeParameters;
+    readonly type_parameters?: TypeParameters;
+    readonly where_clause?: WhereClause;
   };
-  readonly children?: WhereClause;
 }
 export interface AsyncBlock {
   readonly type: 'async_block';
-  readonly children: Block;
+  readonly fields: {
+    readonly block: Block;
+  };
 }
 export interface Attribute {
   readonly type: 'attribute';
@@ -368,11 +393,13 @@ export interface Attribute {
     readonly arguments?: TokenTree;
     readonly value?: Expression;
   };
-  readonly children: Crate | Identifier | Metavariable | ScopedIdentifier | Self | Super;
+  readonly children: Path;
 }
 export interface AttributeItem {
   readonly type: 'attribute_item';
-  readonly children: Attribute;
+  readonly fields: {
+    readonly attribute: Attribute;
+  };
 }
 export interface AwaitExpression {
   readonly type: 'await_expression';
@@ -386,15 +413,16 @@ export interface BinaryExpression {
   readonly type: 'binary_expression';
   readonly fields: {
     readonly left: Expression;
-    readonly operator: '&&' | '||' | '&' | '|' | '^' | '==' | '!=' | '<' | '<=' | '>' | '>=' | '<<' | '>>' | '+' | '-' | '*' | '/' | '%';
+    readonly operator: '!=' | '%' | '&' | '&&' | '*' | '+' | '-' | '/' | '<' | '<<' | '<=' | '==' | '>' | '>=' | '>>' | '^' | '|' | '||';
     readonly right: Expression;
   };
 }
 export interface Block {
   readonly type: 'block';
-  readonly label?: Label;
-  readonly children2?: readonly (DeclarationStatement | ExpressionStatement)[];
-  readonly expression?: Expression;
+  readonly fields: {
+    readonly label?: Label;
+  };
+  readonly children?: readonly (DeclarationStatement | Expression | ExpressionStatement | Statement)[];
 }
 export interface BlockComment {
   readonly type: 'block_comment';
@@ -406,8 +434,10 @@ export interface BlockComment {
 }
 export interface BoundedType {
   readonly type: 'bounded_type';
-  readonly lifetimeOrTypeOrUseBounds1: Lifetime | Type | UseBounds;
-  readonly lifetimeOrTypeOrUseBounds2: Lifetime | Type | UseBounds;
+  readonly fields: {
+    readonly left: Lifetime | Type | UseBounds;
+    readonly right: Lifetime | Type | UseBounds;
+  };
 }
 export interface BracketedType {
   readonly type: 'bracketed_type';
@@ -415,39 +445,45 @@ export interface BracketedType {
 }
 export interface BreakExpression {
   readonly type: 'break_expression';
-  readonly label?: Label;
-  readonly expression?: Expression;
+  readonly fields: {
+    readonly label?: Label;
+    readonly expression?: Expression;
+  };
 }
 export interface CallExpression {
   readonly type: 'call_expression';
   readonly fields: {
     readonly arguments: Arguments;
-    readonly function: ArrayExpression | AssignmentExpression | AsyncBlock | AwaitExpression | BinaryExpression | Block | BreakExpression | CallExpression | ClosureExpression | CompoundAssignmentExpr | ConstBlock | ContinueExpression | FieldExpression | ForExpression | GenBlock | GenericFunction | Identifier | IfExpression | IndexExpression | Literal | LoopExpression | MacroInvocation | MatchExpression | Metavariable | ParenthesizedExpression | ReferenceExpression | ReturnExpression | ScopedIdentifier | Self | StructExpression | TryBlock | TryExpression | TupleExpression | TypeCastExpression | UnaryExpression | UnitExpression | UnsafeBlock | WhileExpression | YieldExpression;
+    readonly function: ArrayExpression | AssignmentExpression | AwaitExpression | BinaryExpression | BreakExpression | CallExpression | ClosureExpression | CompoundAssignmentExpr | ContinueExpression | ExpressionEndingWithBlock | ExpressionExceptRange | FieldExpression | GenericFunction | Identifier | IndexExpression | Literal | MacroInvocation | Metavariable | ParenthesizedExpression | ReferenceExpression | ReturnExpression | ScopedIdentifier | Self | StructExpression | TryExpression | TupleExpression | TypeCastExpression | UnaryExpression | UnitExpression | YieldExpression;
   };
 }
 export interface CapturedPattern {
   readonly type: 'captured_pattern';
-  readonly identifier: Identifier;
-  readonly pattern: Pattern;
+  readonly fields: {
+    readonly identifier: Identifier;
+    readonly pattern: Pattern;
+  };
 }
 export interface ClosureExpression {
   readonly type: 'closure_expression';
   readonly fields: {
     readonly body: Block | Expression;
     readonly parameters: ClosureParameters;
-    readonly returnType?: Type;
+    readonly return_type?: Type;
+    readonly async?: 'async';
+    readonly move?: 'move';
+    readonly static?: 'static';
   };
 }
 export interface ClosureParameters {
   readonly type: 'closure_parameters';
-  readonly parameterOrPattern1?: Parameter | Pattern;
-  readonly parameterOrPattern2?: readonly (Parameter | Pattern)[];
+  readonly children?: readonly (Parameter | Pattern)[];
 }
 export interface CompoundAssignmentExpr {
   readonly type: 'compound_assignment_expr';
   readonly fields: {
     readonly left: Expression;
-    readonly operator: '+=' | '-=' | '*=' | '/=' | '%=' | '&=' | '|=' | '^=' | '<<=' | '>>=';
+    readonly operator: '%=' | '&=' | '*=' | '+=' | '-=' | '/=' | '<<=' | '>>=' | '^=' | '|=';
     readonly right: Expression;
   };
 }
@@ -463,8 +499,8 @@ export interface ConstItem {
     readonly name: Identifier;
     readonly type: Type;
     readonly value?: Expression;
+    readonly visibility_modifier?: VisibilityModifier;
   };
-  readonly children?: VisibilityModifier;
 }
 export interface ConstParameter {
   readonly type: 'const_parameter';
@@ -476,7 +512,9 @@ export interface ConstParameter {
 }
 export interface ContinueExpression {
   readonly type: 'continue_expression';
-  readonly children?: Label;
+  readonly fields: {
+    readonly label?: Label;
+  };
 }
 export interface DeclarationList {
   readonly type: 'declaration_list';
@@ -497,10 +535,10 @@ export interface EnumItem {
   readonly fields: {
     readonly body: EnumVariantList;
     readonly name: TypeIdentifier;
-    readonly typeParameters?: TypeParameters;
+    readonly type_parameters?: TypeParameters;
+    readonly visibility_modifier?: VisibilityModifier;
+    readonly where_clause?: WhereClause;
   };
-  readonly visibilityModifier?: VisibilityModifier;
-  readonly whereClause?: WhereClause;
 }
 export interface EnumVariant {
   readonly type: 'enum_variant';
@@ -508,45 +546,43 @@ export interface EnumVariant {
     readonly body?: FieldDeclarationList | OrderedFieldDeclarationList;
     readonly name: Identifier;
     readonly value?: Expression;
+    readonly visibility_modifier?: VisibilityModifier;
   };
-  readonly children?: VisibilityModifier;
 }
 export interface EnumVariantList {
   readonly type: 'enum_variant_list';
-  readonly attributeItem?: readonly (AttributeItem)[];
-  readonly enumVariant?: EnumVariant;
-  readonly attributeItemOrEnumVariant?: readonly (AttributeItem | EnumVariant)[];
+  readonly children?: readonly (AttributeItem | EnumVariant)[];
 }
 export interface ExpressionStatement {
   readonly type: 'expression_statement';
-  readonly children: Expression;
+  readonly children: Expression | ExpressionEndingWithBlock;
 }
 export interface ExternCrateDeclaration {
   readonly type: 'extern_crate_declaration';
   readonly fields: {
     readonly alias?: Identifier;
     readonly name: Identifier;
+    readonly visibility_modifier?: VisibilityModifier;
+    readonly crate: Crate;
   };
-  readonly visibilityModifier?: VisibilityModifier;
-  readonly crate: Crate;
 }
 export interface ExternModifier {
   readonly type: 'extern_modifier';
-  readonly children?: StringLiteral;
+  readonly fields: {
+    readonly string_literal?: StringLiteral;
+  };
 }
 export interface FieldDeclaration {
   readonly type: 'field_declaration';
   readonly fields: {
     readonly name: FieldIdentifier;
     readonly type: Type;
+    readonly visibility_modifier?: VisibilityModifier;
   };
-  readonly children?: VisibilityModifier;
 }
 export interface FieldDeclarationList {
   readonly type: 'field_declaration_list';
-  readonly attributeItem?: readonly (AttributeItem)[];
-  readonly fieldDeclaration?: FieldDeclaration;
-  readonly attributeItemOrFieldDeclaration?: readonly (AttributeItem | FieldDeclaration)[];
+  readonly children?: readonly (AttributeItem | FieldDeclaration)[];
 }
 export interface FieldExpression {
   readonly type: 'field_expression';
@@ -565,54 +601,74 @@ export interface FieldInitializer {
 }
 export interface FieldInitializerList {
   readonly type: 'field_initializer_list';
-  readonly children1?: BaseFieldInitializer | FieldInitializer | ShorthandFieldInitializer;
-  readonly children2?: readonly (BaseFieldInitializer | FieldInitializer | ShorthandFieldInitializer)[];
+  readonly children?: readonly (BaseFieldInitializer | FieldInitializer | ShorthandFieldInitializer)[];
 }
-export interface FieldPattern {
+export interface FieldPatternV0 {
   readonly type: 'field_pattern';
   readonly fields: {
-    readonly name: FieldIdentifier | ShorthandFieldIdentifier;
-    readonly pattern?: Pattern;
+    readonly name: ShorthandFieldIdentifier;
+    readonly mutable_specifier?: MutableSpecifier;
   };
-  readonly children?: MutableSpecifier;
 }
+export interface FieldPatternColon {
+  readonly type: 'field_pattern';
+  readonly fields: {
+    readonly name: FieldIdentifier;
+    readonly pattern?: Pattern;
+    readonly mutable_specifier?: MutableSpecifier;
+  };
+}
+export type FieldPattern = FieldPatternV0 | FieldPatternColon;
 export interface ForExpression {
   readonly type: 'for_expression';
   readonly fields: {
     readonly body: Block;
     readonly pattern: Pattern;
     readonly value: Expression;
+    readonly label?: Label;
   };
-  readonly children?: Label;
 }
 export interface ForLifetimes {
   readonly type: 'for_lifetimes';
-  readonly lifetime1: Lifetime;
-  readonly lifetime2?: readonly (Lifetime)[];
+  readonly children: readonly (Lifetime)[];
 }
-export interface ForeignModItem {
+export interface ForeignModItemSemi {
+  readonly type: 'foreign_mod_item';
+  readonly fields: {
+    readonly visibility_modifier?: VisibilityModifier;
+    readonly extern_modifier: ExternModifier;
+  };
+}
+export interface ForeignModItemBody {
   readonly type: 'foreign_mod_item';
   readonly fields: {
     readonly body?: DeclarationList;
+    readonly visibility_modifier?: VisibilityModifier;
+    readonly extern_modifier: ExternModifier;
   };
-  readonly visibilityModifier?: VisibilityModifier;
-  readonly externModifier: ExternModifier;
 }
+export type ForeignModItem = ForeignModItemSemi | ForeignModItemBody;
 export interface FunctionItem {
   readonly type: 'function_item';
   readonly fields: {
     readonly body: Block;
     readonly name: Identifier | Metavariable;
     readonly parameters: Parameters;
-    readonly returnType?: Type;
-    readonly typeParameters?: TypeParameters;
+    readonly return_type?: Type;
+    readonly type_parameters?: TypeParameters;
+    readonly visibility_modifier?: VisibilityModifier;
+    readonly function_modifiers?: FunctionModifiers;
+    readonly where_clause?: WhereClause;
   };
-  readonly visibilityModifier?: VisibilityModifier;
-  readonly functionModifiers?: FunctionModifiers;
-  readonly whereClause?: WhereClause;
 }
 export interface FunctionModifiers {
   readonly type: 'function_modifiers';
+  readonly fields: {
+    readonly async?: 'async';
+    readonly default?: 'default';
+    readonly const?: 'const';
+    readonly unsafe?: 'unsafe';
+  };
   readonly children?: readonly (ExternModifier)[];
 }
 export interface FunctionSignatureItem {
@@ -620,38 +676,49 @@ export interface FunctionSignatureItem {
   readonly fields: {
     readonly name: Identifier | Metavariable;
     readonly parameters: Parameters;
-    readonly returnType?: Type;
-    readonly typeParameters?: TypeParameters;
+    readonly return_type?: Type;
+    readonly type_parameters?: TypeParameters;
+    readonly visibility_modifier?: VisibilityModifier;
+    readonly function_modifiers?: FunctionModifiers;
+    readonly where_clause?: WhereClause;
   };
-  readonly visibilityModifier?: VisibilityModifier;
-  readonly functionModifiers?: FunctionModifiers;
-  readonly whereClause?: WhereClause;
 }
-export interface FunctionType {
+export interface FunctionTypeTrait {
   readonly type: 'function_type';
   readonly fields: {
     readonly parameters: Parameters;
-    readonly returnType?: Type;
+    readonly return_type?: Type;
     readonly trait?: ScopedTypeIdentifier | TypeIdentifier;
+    readonly for_lifetimes?: ForLifetimes;
   };
-  readonly forLifetimes?: ForLifetimes;
-  readonly functionModifiers?: FunctionModifiers;
 }
+export interface FunctionTypeFn {
+  readonly type: 'function_type';
+  readonly fields: {
+    readonly parameters: Parameters;
+    readonly return_type?: Type;
+    readonly for_lifetimes?: ForLifetimes;
+    readonly function_modifiers?: FunctionModifiers;
+  };
+}
+export type FunctionType = FunctionTypeTrait | FunctionTypeFn;
 export interface GenBlock {
   readonly type: 'gen_block';
-  readonly children: Block;
+  readonly fields: {
+    readonly block: Block;
+  };
 }
 export interface GenericFunction {
   readonly type: 'generic_function';
   readonly fields: {
     readonly function: FieldExpression | Identifier | ScopedIdentifier;
-    readonly typeArguments: TypeArguments;
+    readonly type_arguments: TypeArguments;
   };
 }
 export interface GenericPattern {
   readonly type: 'generic_pattern';
   readonly fields: {
-    readonly typeArguments: TypeArguments;
+    readonly type_arguments: TypeArguments;
   };
   readonly children: Identifier | ScopedIdentifier;
 }
@@ -659,52 +726,69 @@ export interface GenericType {
   readonly type: 'generic_type';
   readonly fields: {
     readonly type: Identifier | ScopedIdentifier | ScopedTypeIdentifier | TypeIdentifier;
-    readonly typeArguments: TypeArguments;
+    readonly type_arguments: TypeArguments;
   };
 }
 export interface GenericTypeWithTurbofish {
   readonly type: 'generic_type_with_turbofish';
   readonly fields: {
     readonly type: ScopedIdentifier | TypeIdentifier;
-    readonly typeArguments: TypeArguments;
+    readonly type_arguments: TypeArguments;
   };
 }
 export interface HigherRankedTraitBound {
   readonly type: 'higher_ranked_trait_bound';
   readonly fields: {
     readonly type: Type;
-    readonly typeParameters: TypeParameters;
+    readonly type_parameters: TypeParameters;
   };
 }
 export interface IfExpression {
   readonly type: 'if_expression';
   readonly fields: {
     readonly alternative?: ElseClause;
-    readonly condition: Expression | LetChain | LetCondition;
+    readonly condition: Condition | Expression | LetChain | LetCondition;
     readonly consequence: Block;
   };
 }
-export interface ImplItem {
+export interface ImplItemBody {
   readonly type: 'impl_item';
   readonly fields: {
     readonly body?: DeclarationList;
     readonly trait?: GenericType | ScopedTypeIdentifier | TypeIdentifier;
     readonly type: Type;
-    readonly typeParameters?: TypeParameters;
+    readonly type_parameters?: TypeParameters;
+    readonly where_clause?: WhereClause;
   };
-  readonly children?: WhereClause;
 }
+export interface ImplItemSemi {
+  readonly type: 'impl_item';
+  readonly fields: {
+    readonly trait?: GenericType | ScopedTypeIdentifier | TypeIdentifier;
+    readonly type: Type;
+    readonly type_parameters?: TypeParameters;
+    readonly where_clause?: WhereClause;
+  };
+}
+export type ImplItem = ImplItemBody | ImplItemSemi;
 export interface IndexExpression {
   readonly type: 'index_expression';
-  readonly children: readonly (Expression)[];
+  readonly fields: {
+    readonly object: Expression;
+    readonly index: Expression;
+  };
 }
 export interface InnerAttributeItem {
   readonly type: 'inner_attribute_item';
-  readonly children: Attribute;
+  readonly fields: {
+    readonly attribute: Attribute;
+  };
 }
 export interface Label {
   readonly type: 'label';
-  readonly children: Identifier;
+  readonly fields: {
+    readonly identifier: Identifier;
+  };
 }
 export interface LetChain {
   readonly type: 'let_chain';
@@ -724,12 +808,14 @@ export interface LetDeclaration {
     readonly pattern: Pattern;
     readonly type?: Type;
     readonly value?: Expression;
+    readonly mutable_specifier?: MutableSpecifier;
   };
-  readonly children?: MutableSpecifier;
 }
 export interface Lifetime {
   readonly type: 'lifetime';
-  readonly children: Identifier;
+  readonly fields: {
+    readonly identifier: Identifier;
+  };
 }
 export interface LifetimeParameter {
   readonly type: 'lifetime_parameter';
@@ -738,7 +824,10 @@ export interface LifetimeParameter {
     readonly name: Lifetime;
   };
 }
-export interface LineComment {
+export interface LineCommentV0 {
+  readonly type: 'line_comment';
+}
+export interface LineCommentOuter {
   readonly type: 'line_comment';
   readonly fields: {
     readonly doc?: DocComment;
@@ -746,27 +835,42 @@ export interface LineComment {
     readonly outer?: OuterDocCommentMarker;
   };
 }
+export type LineComment = LineCommentV0 | LineCommentOuter;
 export interface LoopExpression {
   readonly type: 'loop_expression';
   readonly fields: {
     readonly body: Block;
+    readonly label?: Label;
   };
-  readonly children?: Label;
 }
-export interface MacroDefinition {
+export interface MacroDefinitionParen {
   readonly type: 'macro_definition';
   readonly fields: {
     readonly name: Identifier;
+    readonly rules: readonly (MacroRule)[];
   };
-  readonly macroRule1?: readonly (MacroRule)[];
-  readonly macroRule2?: MacroRule;
 }
+export interface MacroDefinitionBracket {
+  readonly type: 'macro_definition';
+  readonly fields: {
+    readonly name: Identifier;
+    readonly rules: readonly (MacroRule)[];
+  };
+}
+export interface MacroDefinitionBrace {
+  readonly type: 'macro_definition';
+  readonly fields: {
+    readonly name: Identifier;
+    readonly rules: readonly (MacroRule)[];
+  };
+}
+export type MacroDefinition = MacroDefinitionParen | MacroDefinitionBracket | MacroDefinitionBrace;
 export interface MacroInvocation {
   readonly type: 'macro_invocation';
   readonly fields: {
     readonly macro: Identifier | ScopedIdentifier;
+    readonly token_tree: TokenTree;
   };
-  readonly children: TokenTree;
 }
 export interface MacroRule {
   readonly type: 'macro_rule';
@@ -779,14 +883,13 @@ export interface MatchArm {
   readonly type: 'match_arm';
   readonly fields: {
     readonly pattern: MatchPattern;
-    readonly value: Expression;
+    readonly value: Expression | ExpressionEndingWithBlock;
   };
   readonly children?: readonly (AttributeItem | InnerAttributeItem)[];
 }
 export interface MatchBlock {
   readonly type: 'match_block';
-  readonly matchArm1?: readonly (MatchArm)[];
-  readonly matchArm2?: MatchArm;
+  readonly children?: readonly (MatchArm)[];
 }
 export interface MatchExpression {
   readonly type: 'match_expression';
@@ -798,65 +901,93 @@ export interface MatchExpression {
 export interface MatchPattern {
   readonly type: 'match_pattern';
   readonly fields: {
-    readonly condition?: Expression | LetChain | LetCondition;
+    readonly condition?: Condition | Expression | LetChain | LetCondition;
   };
   readonly children: Pattern;
 }
-export interface ModItem {
+export interface ModItemSemi {
+  readonly type: 'mod_item';
+  readonly fields: {
+    readonly name: Identifier;
+    readonly visibility_modifier?: VisibilityModifier;
+  };
+}
+export interface ModItemBody {
   readonly type: 'mod_item';
   readonly fields: {
     readonly body?: DeclarationList;
     readonly name: Identifier;
+    readonly visibility_modifier?: VisibilityModifier;
   };
-  readonly children?: VisibilityModifier;
 }
+export type ModItem = ModItemSemi | ModItemBody;
 export interface MutPattern {
   readonly type: 'mut_pattern';
-  readonly mutableSpecifier: MutableSpecifier;
-  readonly pattern: Pattern;
+  readonly fields: {
+    readonly mutable_specifier: MutableSpecifier;
+    readonly pattern: Pattern;
+  };
 }
 export interface NegativeLiteral {
   readonly type: 'negative_literal';
-  readonly children: FloatLiteral | IntegerLiteral;
+  readonly fields: {
+    readonly operator: '-';
+    readonly value: FloatLiteral | IntegerLiteral;
+  };
 }
-export interface OrPattern {
+export interface OrPatternRight {
   readonly type: 'or_pattern';
-  readonly children: readonly (Pattern)[];
+  readonly fields: {
+    readonly left: Pattern;
+    readonly right?: Pattern;
+  };
 }
+export interface OrPatternV1 {
+  readonly type: 'or_pattern';
+  readonly fields: {
+    readonly left: Pattern;
+  };
+}
+export type OrPattern = OrPatternRight | OrPatternV1;
 export interface OrderedFieldDeclarationList {
   readonly type: 'ordered_field_declaration_list';
   readonly fields: {
     readonly type?: readonly (Type)[];
+    readonly attributes?: readonly (AttributeItem)[];
+    readonly visibility_modifier?: VisibilityModifier;
+    readonly declarations?: readonly (AttributeItem | VisibilityModifier)[];
   };
-  readonly attributeItem?: readonly (AttributeItem)[];
-  readonly visibilityModifier?: VisibilityModifier;
-  readonly attributeItemOrVisibilityModifier?: readonly (AttributeItem | VisibilityModifier)[];
 }
 export interface Parameter {
   readonly type: 'parameter';
   readonly fields: {
     readonly pattern: Pattern | Self;
     readonly type: Type;
+    readonly mutable_specifier?: MutableSpecifier;
   };
-  readonly children?: MutableSpecifier;
 }
 export interface Parameters {
   readonly type: 'parameters';
-  readonly attributeItem?: AttributeItem;
-  readonly children2?: Parameter | SelfParameter | Type | VariadicParameter;
-  readonly children3?: readonly (AttributeItem | Parameter | SelfParameter | Type | VariadicParameter)[];
+  readonly children?: readonly (AttributeItem | Parameter | SelfParameter | Type | VariadicParameter)[];
 }
 export interface ParenthesizedExpression {
   readonly type: 'parenthesized_expression';
   readonly children: Expression;
 }
-export interface PointerType {
+export interface PointerTypeConst {
   readonly type: 'pointer_type';
   readonly fields: {
     readonly type: Type;
   };
-  readonly children?: MutableSpecifier;
 }
+export interface PointerTypeMutableSpecifier {
+  readonly type: 'pointer_type';
+  readonly fields: {
+    readonly type: Type;
+    readonly mutable_specifier?: MutableSpecifier;
+  };
+}
+export type PointerType = PointerTypeConst | PointerTypeMutableSpecifier;
 export interface QualifiedType {
   readonly type: 'qualified_type';
   readonly fields: {
@@ -864,44 +995,88 @@ export interface QualifiedType {
     readonly type: Type;
   };
 }
-export interface RangeExpression {
+export interface RangeExpressionEnd {
   readonly type: 'range_expression';
-  readonly children?: readonly (Expression)[];
-}
-export interface RangePattern {
-  readonly type: 'range_pattern';
   readonly fields: {
-    readonly left?: Crate | Identifier | LiteralPattern | Metavariable | ScopedIdentifier | Self | Super;
-    readonly right?: Crate | Identifier | LiteralPattern | Metavariable | ScopedIdentifier | Self | Super;
+    readonly start?: Expression;
+    readonly operator: '..' | '..=' | '...';
+    readonly end?: Expression;
   };
 }
+export interface RangeExpressionV1 {
+  readonly type: 'range_expression';
+  readonly fields: {
+    readonly start?: Expression;
+    readonly operator: '..' | '..=' | '...';
+  };
+}
+export interface RangeExpressionV2 {
+  readonly type: 'range_expression';
+  readonly fields: {
+    readonly operator: '..' | '..=' | '...';
+  };
+}
+export type RangeExpression = RangeExpressionEnd | RangeExpressionV1 | RangeExpressionV2;
+export interface RangePatternEllipsis {
+  readonly type: 'range_pattern';
+  readonly fields: {
+    readonly left?: LiteralPattern | Path;
+    readonly right?: LiteralPattern | Path;
+  };
+}
+export interface RangePatternDotdot {
+  readonly type: 'range_pattern';
+  readonly fields: {
+    readonly left?: LiteralPattern | Path;
+  };
+}
+export interface RangePatternTok_2e2e3d {
+  readonly type: 'range_pattern';
+  readonly fields: {
+    readonly right?: LiteralPattern | Path;
+  };
+}
+export type RangePattern = RangePatternEllipsis | RangePatternDotdot | RangePatternTok_2e2e3d;
 export interface RawStringLiteral {
   readonly type: 'raw_string_literal';
-  readonly children: StringContent;
+  readonly fields: {
+    readonly raw_string_literal_start: string;
+    readonly string_content: StringContent;
+    readonly raw_string_literal_end: string;
+  };
 }
 export interface RefPattern {
   readonly type: 'ref_pattern';
   readonly children: Pattern;
 }
-export interface ReferenceExpression {
+export interface ReferenceExpressionConst {
   readonly type: 'reference_expression';
   readonly fields: {
     readonly value: Expression;
   };
-  readonly children?: MutableSpecifier;
 }
+export interface ReferenceExpressionMutableSpecifier {
+  readonly type: 'reference_expression';
+  readonly fields: {
+    readonly value: Expression;
+    readonly mutable_specifier?: MutableSpecifier;
+  };
+}
+export type ReferenceExpression = ReferenceExpressionConst | ReferenceExpressionMutableSpecifier;
 export interface ReferencePattern {
   readonly type: 'reference_pattern';
-  readonly mutableSpecifier?: MutableSpecifier;
-  readonly pattern: Pattern;
+  readonly fields: {
+    readonly mutable_specifier?: MutableSpecifier;
+    readonly pattern: Pattern;
+  };
 }
 export interface ReferenceType {
   readonly type: 'reference_type';
   readonly fields: {
     readonly type: Type;
+    readonly lifetime?: Lifetime;
+    readonly mutable_specifier?: MutableSpecifier;
   };
-  readonly lifetime?: Lifetime;
-  readonly mutableSpecifier?: MutableSpecifier;
 }
 export interface RemovedTraitBound {
   readonly type: 'removed_trait_bound';
@@ -915,33 +1090,37 @@ export interface ScopedIdentifier {
   readonly type: 'scoped_identifier';
   readonly fields: {
     readonly name: Identifier | Super;
-    readonly path?: BracketedType | Crate | GenericType | Identifier | Metavariable | ScopedIdentifier | Self | Super;
+    readonly path?: BracketedType | GenericType | Path;
   };
 }
 export interface ScopedTypeIdentifier {
   readonly type: 'scoped_type_identifier';
   readonly fields: {
     readonly name: TypeIdentifier;
-    readonly path?: BracketedType | Crate | GenericType | Identifier | Metavariable | ScopedIdentifier | Self | Super;
+    readonly path?: BracketedType | GenericType | Path;
   };
 }
 export interface ScopedUseList {
   readonly type: 'scoped_use_list';
   readonly fields: {
     readonly list: UseList;
-    readonly path?: Crate | Identifier | Metavariable | ScopedIdentifier | Self | Super;
+    readonly path?: Path;
   };
 }
 export interface SelfParameter {
   readonly type: 'self_parameter';
-  readonly lifetime?: Lifetime;
-  readonly mutableSpecifier?: MutableSpecifier;
-  readonly self: Self;
+  readonly fields: {
+    readonly lifetime?: Lifetime;
+    readonly mutable_specifier?: MutableSpecifier;
+    readonly self: Self;
+  };
 }
 export interface ShorthandFieldInitializer {
   readonly type: 'shorthand_field_initializer';
-  readonly attributeItem?: readonly (AttributeItem)[];
-  readonly identifier: Identifier;
+  readonly fields: {
+    readonly attributes?: readonly (AttributeItem)[];
+    readonly identifier: Identifier;
+  };
 }
 export interface SlicePattern {
   readonly type: 'slice_pattern';
@@ -949,8 +1128,10 @@ export interface SlicePattern {
 }
 export interface SourceFile {
   readonly type: 'source_file';
-  readonly shebang?: Shebang;
-  readonly children2?: readonly (DeclarationStatement | ExpressionStatement)[];
+  readonly fields: {
+    readonly shebang?: Shebang;
+    readonly statements?: readonly (Statement)[];
+  };
 }
 export interface StaticItem {
   readonly type: 'static_item';
@@ -958,9 +1139,9 @@ export interface StaticItem {
     readonly name: Identifier;
     readonly type: Type;
     readonly value?: Expression;
+    readonly visibility_modifier?: VisibilityModifier;
+    readonly mutable_specifier?: MutableSpecifier;
   };
-  readonly visibilityModifier?: VisibilityModifier;
-  readonly mutableSpecifier?: MutableSpecifier;
 }
 export interface StringLiteral {
   readonly type: 'string_literal';
@@ -973,23 +1154,31 @@ export interface StructExpression {
     readonly name: GenericTypeWithTurbofish | ScopedTypeIdentifier | TypeIdentifier;
   };
 }
-export interface StructItem {
+export interface StructItemWhereClause {
   readonly type: 'struct_item';
   readonly fields: {
     readonly body?: FieldDeclarationList | OrderedFieldDeclarationList;
     readonly name: TypeIdentifier;
-    readonly typeParameters?: TypeParameters;
+    readonly type_parameters?: TypeParameters;
+    readonly visibility_modifier?: VisibilityModifier;
+    readonly where_clause?: WhereClause;
   };
-  readonly visibilityModifier?: VisibilityModifier;
-  readonly whereClause?: WhereClause;
 }
+export interface StructItemSemi {
+  readonly type: 'struct_item';
+  readonly fields: {
+    readonly name: TypeIdentifier;
+    readonly type_parameters?: TypeParameters;
+    readonly visibility_modifier?: VisibilityModifier;
+  };
+}
+export type StructItem = StructItemWhereClause | StructItemSemi;
 export interface StructPattern {
   readonly type: 'struct_pattern';
   readonly fields: {
     readonly type: ScopedTypeIdentifier | TypeIdentifier;
   };
-  readonly fieldPatternOrRemainingFieldPattern1?: FieldPattern | RemainingFieldPattern;
-  readonly fieldPatternOrRemainingFieldPattern2?: readonly (FieldPattern | RemainingFieldPattern)[];
+  readonly children?: readonly (FieldPattern | RemainingFieldPattern)[];
 }
 export interface TokenBindingPattern {
   readonly type: 'token_binding_pattern';
@@ -998,26 +1187,61 @@ export interface TokenBindingPattern {
     readonly type: FragmentSpecifier;
   };
 }
-export interface TokenRepetition {
+export interface TokenRepetitionPlus {
   readonly type: 'token_repetition';
   readonly children?: readonly (Crate | Identifier | Literal | Metavariable | MutableSpecifier | PrimitiveType | Self | Super | TokenRepetition | TokenTree)[];
 }
-export interface TokenRepetitionPattern {
+export interface TokenRepetitionStar {
+  readonly type: 'token_repetition';
+  readonly children?: readonly (Crate | Identifier | Literal | Metavariable | MutableSpecifier | PrimitiveType | Self | Super | TokenRepetition | TokenTree)[];
+}
+export interface TokenRepetitionQuestion {
+  readonly type: 'token_repetition';
+  readonly children?: readonly (Crate | Identifier | Literal | Metavariable | MutableSpecifier | PrimitiveType | Self | Super | TokenRepetition | TokenTree)[];
+}
+export type TokenRepetition = TokenRepetitionPlus | TokenRepetitionStar | TokenRepetitionQuestion;
+export interface TokenRepetitionPatternPlus {
   readonly type: 'token_repetition_pattern';
   readonly children?: readonly (Crate | Identifier | Literal | Metavariable | MutableSpecifier | PrimitiveType | Self | Super | TokenBindingPattern | TokenRepetitionPattern | TokenTreePattern)[];
 }
-export interface TokenTree {
+export interface TokenRepetitionPatternStar {
+  readonly type: 'token_repetition_pattern';
+  readonly children?: readonly (Crate | Identifier | Literal | Metavariable | MutableSpecifier | PrimitiveType | Self | Super | TokenBindingPattern | TokenRepetitionPattern | TokenTreePattern)[];
+}
+export interface TokenRepetitionPatternQuestion {
+  readonly type: 'token_repetition_pattern';
+  readonly children?: readonly (Crate | Identifier | Literal | Metavariable | MutableSpecifier | PrimitiveType | Self | Super | TokenBindingPattern | TokenRepetitionPattern | TokenTreePattern)[];
+}
+export type TokenRepetitionPattern = TokenRepetitionPatternPlus | TokenRepetitionPatternStar | TokenRepetitionPatternQuestion;
+export interface TokenTreeParen {
   readonly type: 'token_tree';
   readonly children?: readonly (Crate | Identifier | Literal | Metavariable | MutableSpecifier | PrimitiveType | Self | Super | TokenRepetition | TokenTree)[];
 }
-export interface TokenTreePattern {
+export interface TokenTreeBracket {
+  readonly type: 'token_tree';
+  readonly children?: readonly (Crate | Identifier | Literal | Metavariable | MutableSpecifier | PrimitiveType | Self | Super | TokenRepetition | TokenTree)[];
+}
+export interface TokenTreeBrace {
+  readonly type: 'token_tree';
+  readonly children?: readonly (Crate | Identifier | Literal | Metavariable | MutableSpecifier | PrimitiveType | Self | Super | TokenRepetition | TokenTree)[];
+}
+export type TokenTree = TokenTreeParen | TokenTreeBracket | TokenTreeBrace;
+export interface TokenTreePatternParen {
   readonly type: 'token_tree_pattern';
   readonly children?: readonly (Crate | Identifier | Literal | Metavariable | MutableSpecifier | PrimitiveType | Self | Super | TokenBindingPattern | TokenRepetitionPattern | TokenTreePattern)[];
 }
+export interface TokenTreePatternBracket {
+  readonly type: 'token_tree_pattern';
+  readonly children?: readonly (Crate | Identifier | Literal | Metavariable | MutableSpecifier | PrimitiveType | Self | Super | TokenBindingPattern | TokenRepetitionPattern | TokenTreePattern)[];
+}
+export interface TokenTreePatternBrace {
+  readonly type: 'token_tree_pattern';
+  readonly children?: readonly (Crate | Identifier | Literal | Metavariable | MutableSpecifier | PrimitiveType | Self | Super | TokenBindingPattern | TokenRepetitionPattern | TokenTreePattern)[];
+}
+export type TokenTreePattern = TokenTreePatternParen | TokenTreePatternBracket | TokenTreePatternBrace;
 export interface TraitBounds {
   readonly type: 'trait_bounds';
-  readonly higherRankedTraitBoundOrLifetimeOrType1: HigherRankedTraitBound | Lifetime | Type;
-  readonly higherRankedTraitBoundOrLifetimeOrType2?: readonly (HigherRankedTraitBound | Lifetime | Type)[];
+  readonly children: readonly (HigherRankedTraitBound | Lifetime | Type)[];
 }
 export interface TraitItem {
   readonly type: 'trait_item';
@@ -1025,38 +1249,43 @@ export interface TraitItem {
     readonly body: DeclarationList;
     readonly bounds?: TraitBounds;
     readonly name: TypeIdentifier;
-    readonly typeParameters?: TypeParameters;
+    readonly type_parameters?: TypeParameters;
+    readonly visibility_modifier?: VisibilityModifier;
+    readonly where_clause?: WhereClause;
   };
-  readonly visibilityModifier?: VisibilityModifier;
-  readonly whereClause?: WhereClause;
 }
 export interface TryBlock {
   readonly type: 'try_block';
-  readonly children: Block;
+  readonly fields: {
+    readonly block: Block;
+  };
 }
 export interface TryExpression {
   readonly type: 'try_expression';
-  readonly children: Expression;
+  readonly fields: {
+    readonly value: Expression;
+    readonly operator: '?';
+  };
 }
 export interface TupleExpression {
   readonly type: 'tuple_expression';
-  readonly attributeItem?: readonly (AttributeItem)[];
-  readonly expression1: Expression;
-  readonly expression2?: readonly (Expression)[];
-  readonly expression3?: Expression;
+  readonly fields: {
+    readonly attributes?: readonly (AttributeItem)[];
+    readonly first: Expression;
+    readonly rest?: readonly (Expression)[];
+    readonly trailing?: Expression;
+  };
 }
 export interface TuplePattern {
   readonly type: 'tuple_pattern';
-  readonly closureExpressionOrPattern1?: ClosureExpression | Pattern;
-  readonly closureExpressionOrPattern2?: readonly (ClosureExpression | Pattern)[];
+  readonly children?: readonly (ClosureExpression | Pattern)[];
 }
 export interface TupleStructPattern {
   readonly type: 'tuple_struct_pattern';
   readonly fields: {
     readonly type: GenericType | Identifier | ScopedIdentifier;
   };
-  readonly pattern1?: Pattern;
-  readonly pattern2?: readonly (Pattern)[];
+  readonly children?: readonly (Pattern)[];
 }
 export interface TupleType {
   readonly type: 'tuple_type';
@@ -1064,16 +1293,14 @@ export interface TupleType {
 }
 export interface TypeArguments {
   readonly type: 'type_arguments';
-  readonly children1: Block | Lifetime | Literal | Type | TypeBinding;
-  readonly traitBounds?: TraitBounds;
-  readonly children3?: readonly (Block | Lifetime | Literal | TraitBounds | Type | TypeBinding)[];
+  readonly children: readonly (Block | Lifetime | Literal | TraitBounds | Type | TypeBinding)[];
 }
 export interface TypeBinding {
   readonly type: 'type_binding';
   readonly fields: {
     readonly name: TypeIdentifier;
     readonly type: Type;
-    readonly typeArguments?: TypeArguments;
+    readonly type_arguments?: TypeArguments;
   };
 }
 export interface TypeCastExpression {
@@ -1088,86 +1315,98 @@ export interface TypeItem {
   readonly fields: {
     readonly name: TypeIdentifier;
     readonly type: Type;
-    readonly typeParameters?: TypeParameters;
+    readonly type_parameters?: TypeParameters;
+    readonly visibility_modifier?: VisibilityModifier;
+    readonly where_clause?: WhereClause;
+    readonly trailing_where_clause?: WhereClause;
   };
-  readonly visibilityModifier?: VisibilityModifier;
-  readonly whereClause1?: WhereClause;
-  readonly whereClause2?: WhereClause;
 }
 export interface TypeParameter {
   readonly type: 'type_parameter';
   readonly fields: {
     readonly bounds?: TraitBounds;
-    readonly defaultType?: Type;
+    readonly default_type?: Type;
     readonly name: TypeIdentifier;
   };
 }
 export interface TypeParameters {
   readonly type: 'type_parameters';
-  readonly attributeItem?: readonly (AttributeItem)[];
-  readonly children2: ConstParameter | LifetimeParameter | Metavariable | TypeParameter;
-  readonly children3?: readonly (AttributeItem | ConstParameter | LifetimeParameter | Metavariable | TypeParameter)[];
+  readonly children: readonly (AttributeItem | ConstParameter | LifetimeParameter | Metavariable | TypeParameter)[];
 }
 export interface UnaryExpression {
   readonly type: 'unary_expression';
-  readonly children: Expression;
+  readonly fields: {
+    readonly operator: '-' | '*' | '!';
+    readonly operand: Expression;
+  };
 }
 export interface UnionItem {
   readonly type: 'union_item';
   readonly fields: {
     readonly body: FieldDeclarationList;
     readonly name: TypeIdentifier;
-    readonly typeParameters?: TypeParameters;
+    readonly type_parameters?: TypeParameters;
+    readonly visibility_modifier?: VisibilityModifier;
+    readonly where_clause?: WhereClause;
   };
-  readonly visibilityModifier?: VisibilityModifier;
-  readonly whereClause?: WhereClause;
 }
 export interface UnsafeBlock {
   readonly type: 'unsafe_block';
-  readonly children: Block;
+  readonly fields: {
+    readonly block: Block;
+  };
 }
 export interface UseAsClause {
   readonly type: 'use_as_clause';
   readonly fields: {
     readonly alias: Identifier;
-    readonly path: Crate | Identifier | Metavariable | ScopedIdentifier | Self | Super;
+    readonly path: Path;
   };
 }
 export interface UseBounds {
   readonly type: 'use_bounds';
-  readonly lifetimeOrTypeIdentifier1?: Lifetime | TypeIdentifier;
-  readonly lifetimeOrTypeIdentifier2?: readonly (Lifetime | TypeIdentifier)[];
+  readonly children?: readonly (Lifetime | TypeIdentifier)[];
 }
 export interface UseDeclaration {
   readonly type: 'use_declaration';
   readonly fields: {
-    readonly argument: Crate | Identifier | Metavariable | ScopedIdentifier | ScopedUseList | Self | Super | UseAsClause | UseList | UseWildcard;
+    readonly argument: UseClause;
+    readonly visibility_modifier?: VisibilityModifier;
   };
-  readonly children?: VisibilityModifier;
 }
 export interface UseList {
   readonly type: 'use_list';
-  readonly children?: readonly (Crate | Identifier | Metavariable | ScopedIdentifier | ScopedUseList | Self | Super | UseAsClause | UseList | UseWildcard)[];
+  readonly children?: readonly (UseClause)[];
 }
 export interface UseWildcard {
   readonly type: 'use_wildcard';
-  readonly children?: Crate | Identifier | Metavariable | ScopedIdentifier | Self | Super;
+  readonly fields: {
+    readonly path?: Path;
+  };
 }
 export interface VariadicParameter {
   readonly type: 'variadic_parameter';
   readonly fields: {
     readonly pattern?: Pattern;
+    readonly mutable_specifier?: MutableSpecifier;
   };
-  readonly children?: MutableSpecifier;
 }
-export interface VisibilityModifier {
+export interface VisibilityModifierV0 {
   readonly type: 'visibility_modifier';
-  readonly children?: Crate | Identifier | Metavariable | ScopedIdentifier | Self | Super;
+  readonly children?: Path;
 }
+export interface VisibilityModifierParen {
+  readonly type: 'visibility_modifier';
+  readonly fields: {
+    readonly pub?: 'pub';
+    readonly in?: 'in';
+  };
+  readonly children?: Path;
+}
+export type VisibilityModifier = VisibilityModifierV0 | VisibilityModifierParen;
 export interface WhereClause {
   readonly type: 'where_clause';
-  readonly wherePredicate1?: WherePredicate;
-  readonly wherePredicate2?: readonly (WherePredicate)[];
+  readonly children?: readonly (WherePredicate)[];
 }
 export interface WherePredicate {
   readonly type: 'where_predicate';
@@ -1180,9 +1419,9 @@ export interface WhileExpression {
   readonly type: 'while_expression';
   readonly fields: {
     readonly body: Block;
-    readonly condition: Expression | LetChain | LetCondition;
+    readonly condition: Condition | Expression | LetChain | LetCondition;
+    readonly label?: Label;
   };
-  readonly children?: Label;
 }
 export interface YieldExpression {
   readonly type: 'yield_expression';
@@ -1298,7 +1537,9 @@ export interface TypeIdentifier {
 // Config types — derived from concrete interfaces
 export type AbstractTypeConfig = ConfigOf<AbstractType>;
 export type ArgumentsConfig = ConfigOf<Arguments>;
-export type ArrayExpressionConfig = ConfigOf<ArrayExpression>;
+export type ArrayExpressionSemiConfig = ConfigOf<ArrayExpressionSemi>;
+export type ArrayExpressionCommaConfig = ConfigOf<ArrayExpressionComma>;
+export type ArrayExpressionConfig = ArrayExpressionSemiConfig | ArrayExpressionCommaConfig;
 export type ArrayTypeConfig = ConfigOf<ArrayType>;
 export type AssignmentExpressionConfig = ConfigOf<AssignmentExpression>;
 export type AssociatedTypeConfig = ConfigOf<AssociatedType>;
@@ -1336,14 +1577,20 @@ export type FieldDeclarationListConfig = ConfigOf<FieldDeclarationList>;
 export type FieldExpressionConfig = ConfigOf<FieldExpression>;
 export type FieldInitializerConfig = ConfigOf<FieldInitializer>;
 export type FieldInitializerListConfig = ConfigOf<FieldInitializerList>;
-export type FieldPatternConfig = ConfigOf<FieldPattern>;
+export type FieldPatternV0Config = ConfigOf<FieldPatternV0>;
+export type FieldPatternColonConfig = ConfigOf<FieldPatternColon>;
+export type FieldPatternConfig = FieldPatternV0Config | FieldPatternColonConfig;
 export type ForExpressionConfig = ConfigOf<ForExpression>;
 export type ForLifetimesConfig = ConfigOf<ForLifetimes>;
-export type ForeignModItemConfig = ConfigOf<ForeignModItem>;
+export type ForeignModItemSemiConfig = ConfigOf<ForeignModItemSemi>;
+export type ForeignModItemBodyConfig = ConfigOf<ForeignModItemBody>;
+export type ForeignModItemConfig = ForeignModItemSemiConfig | ForeignModItemBodyConfig;
 export type FunctionItemConfig = ConfigOf<FunctionItem>;
 export type FunctionModifiersConfig = ConfigOf<FunctionModifiers>;
 export type FunctionSignatureItemConfig = ConfigOf<FunctionSignatureItem>;
-export type FunctionTypeConfig = ConfigOf<FunctionType>;
+export type FunctionTypeTraitConfig = ConfigOf<FunctionTypeTrait>;
+export type FunctionTypeFnConfig = ConfigOf<FunctionTypeFn>;
+export type FunctionTypeConfig = FunctionTypeTraitConfig | FunctionTypeFnConfig;
 export type GenBlockConfig = ConfigOf<GenBlock>;
 export type GenericFunctionConfig = ConfigOf<GenericFunction>;
 export type GenericPatternConfig = ConfigOf<GenericPattern>;
@@ -1351,7 +1598,9 @@ export type GenericTypeConfig = ConfigOf<GenericType>;
 export type GenericTypeWithTurbofishConfig = ConfigOf<GenericTypeWithTurbofish>;
 export type HigherRankedTraitBoundConfig = ConfigOf<HigherRankedTraitBound>;
 export type IfExpressionConfig = ConfigOf<IfExpression>;
-export type ImplItemConfig = ConfigOf<ImplItem>;
+export type ImplItemBodyConfig = ConfigOf<ImplItemBody>;
+export type ImplItemSemiConfig = ConfigOf<ImplItemSemi>;
+export type ImplItemConfig = ImplItemBodyConfig | ImplItemSemiConfig;
 export type IndexExpressionConfig = ConfigOf<IndexExpression>;
 export type InnerAttributeItemConfig = ConfigOf<InnerAttributeItem>;
 export type LabelConfig = ConfigOf<Label>;
@@ -1360,30 +1609,49 @@ export type LetConditionConfig = ConfigOf<LetCondition>;
 export type LetDeclarationConfig = ConfigOf<LetDeclaration>;
 export type LifetimeConfig = ConfigOf<Lifetime>;
 export type LifetimeParameterConfig = ConfigOf<LifetimeParameter>;
-export type LineCommentConfig = ConfigOf<LineComment>;
+export type LineCommentV0Config = ConfigOf<LineCommentV0>;
+export type LineCommentOuterConfig = ConfigOf<LineCommentOuter>;
+export type LineCommentConfig = LineCommentV0Config | LineCommentOuterConfig;
 export type LoopExpressionConfig = ConfigOf<LoopExpression>;
-export type MacroDefinitionConfig = ConfigOf<MacroDefinition>;
+export type MacroDefinitionParenConfig = ConfigOf<MacroDefinitionParen>;
+export type MacroDefinitionBracketConfig = ConfigOf<MacroDefinitionBracket>;
+export type MacroDefinitionBraceConfig = ConfigOf<MacroDefinitionBrace>;
+export type MacroDefinitionConfig = MacroDefinitionParenConfig | MacroDefinitionBracketConfig | MacroDefinitionBraceConfig;
 export type MacroInvocationConfig = ConfigOf<MacroInvocation>;
 export type MacroRuleConfig = ConfigOf<MacroRule>;
 export type MatchArmConfig = ConfigOf<MatchArm>;
 export type MatchBlockConfig = ConfigOf<MatchBlock>;
 export type MatchExpressionConfig = ConfigOf<MatchExpression>;
 export type MatchPatternConfig = ConfigOf<MatchPattern>;
-export type ModItemConfig = ConfigOf<ModItem>;
+export type ModItemSemiConfig = ConfigOf<ModItemSemi>;
+export type ModItemBodyConfig = ConfigOf<ModItemBody>;
+export type ModItemConfig = ModItemSemiConfig | ModItemBodyConfig;
 export type MutPatternConfig = ConfigOf<MutPattern>;
 export type NegativeLiteralConfig = ConfigOf<NegativeLiteral>;
-export type OrPatternConfig = ConfigOf<OrPattern>;
+export type OrPatternRightConfig = ConfigOf<OrPatternRight>;
+export type OrPatternV1Config = ConfigOf<OrPatternV1>;
+export type OrPatternConfig = OrPatternRightConfig | OrPatternV1Config;
 export type OrderedFieldDeclarationListConfig = ConfigOf<OrderedFieldDeclarationList>;
 export type ParameterConfig = ConfigOf<Parameter>;
 export type ParametersConfig = ConfigOf<Parameters>;
 export type ParenthesizedExpressionConfig = ConfigOf<ParenthesizedExpression>;
-export type PointerTypeConfig = ConfigOf<PointerType>;
+export type PointerTypeConstConfig = ConfigOf<PointerTypeConst>;
+export type PointerTypeMutableSpecifierConfig = ConfigOf<PointerTypeMutableSpecifier>;
+export type PointerTypeConfig = PointerTypeConstConfig | PointerTypeMutableSpecifierConfig;
 export type QualifiedTypeConfig = ConfigOf<QualifiedType>;
-export type RangeExpressionConfig = ConfigOf<RangeExpression>;
-export type RangePatternConfig = ConfigOf<RangePattern>;
+export type RangeExpressionEndConfig = ConfigOf<RangeExpressionEnd>;
+export type RangeExpressionV1Config = ConfigOf<RangeExpressionV1>;
+export type RangeExpressionV2Config = ConfigOf<RangeExpressionV2>;
+export type RangeExpressionConfig = RangeExpressionEndConfig | RangeExpressionV1Config | RangeExpressionV2Config;
+export type RangePatternEllipsisConfig = ConfigOf<RangePatternEllipsis>;
+export type RangePatternDotdotConfig = ConfigOf<RangePatternDotdot>;
+export type RangePatternTok_2e2e3dConfig = ConfigOf<RangePatternTok_2e2e3d>;
+export type RangePatternConfig = RangePatternEllipsisConfig | RangePatternDotdotConfig | RangePatternTok_2e2e3dConfig;
 export type RawStringLiteralConfig = ConfigOf<RawStringLiteral>;
 export type RefPatternConfig = ConfigOf<RefPattern>;
-export type ReferenceExpressionConfig = ConfigOf<ReferenceExpression>;
+export type ReferenceExpressionConstConfig = ConfigOf<ReferenceExpressionConst>;
+export type ReferenceExpressionMutableSpecifierConfig = ConfigOf<ReferenceExpressionMutableSpecifier>;
+export type ReferenceExpressionConfig = ReferenceExpressionConstConfig | ReferenceExpressionMutableSpecifierConfig;
 export type ReferencePatternConfig = ConfigOf<ReferencePattern>;
 export type ReferenceTypeConfig = ConfigOf<ReferenceType>;
 export type RemovedTraitBoundConfig = ConfigOf<RemovedTraitBound>;
@@ -1398,13 +1666,27 @@ export type SourceFileConfig = ConfigOf<SourceFile>;
 export type StaticItemConfig = ConfigOf<StaticItem>;
 export type StringLiteralConfig = ConfigOf<StringLiteral>;
 export type StructExpressionConfig = ConfigOf<StructExpression>;
-export type StructItemConfig = ConfigOf<StructItem>;
+export type StructItemWhereClauseConfig = ConfigOf<StructItemWhereClause>;
+export type StructItemSemiConfig = ConfigOf<StructItemSemi>;
+export type StructItemConfig = StructItemWhereClauseConfig | StructItemSemiConfig;
 export type StructPatternConfig = ConfigOf<StructPattern>;
 export type TokenBindingPatternConfig = ConfigOf<TokenBindingPattern>;
-export type TokenRepetitionConfig = ConfigOf<TokenRepetition>;
-export type TokenRepetitionPatternConfig = ConfigOf<TokenRepetitionPattern>;
-export type TokenTreeConfig = ConfigOf<TokenTree>;
-export type TokenTreePatternConfig = ConfigOf<TokenTreePattern>;
+export type TokenRepetitionPlusConfig = ConfigOf<TokenRepetitionPlus>;
+export type TokenRepetitionStarConfig = ConfigOf<TokenRepetitionStar>;
+export type TokenRepetitionQuestionConfig = ConfigOf<TokenRepetitionQuestion>;
+export type TokenRepetitionConfig = TokenRepetitionPlusConfig | TokenRepetitionStarConfig | TokenRepetitionQuestionConfig;
+export type TokenRepetitionPatternPlusConfig = ConfigOf<TokenRepetitionPatternPlus>;
+export type TokenRepetitionPatternStarConfig = ConfigOf<TokenRepetitionPatternStar>;
+export type TokenRepetitionPatternQuestionConfig = ConfigOf<TokenRepetitionPatternQuestion>;
+export type TokenRepetitionPatternConfig = TokenRepetitionPatternPlusConfig | TokenRepetitionPatternStarConfig | TokenRepetitionPatternQuestionConfig;
+export type TokenTreeParenConfig = ConfigOf<TokenTreeParen>;
+export type TokenTreeBracketConfig = ConfigOf<TokenTreeBracket>;
+export type TokenTreeBraceConfig = ConfigOf<TokenTreeBrace>;
+export type TokenTreeConfig = TokenTreeParenConfig | TokenTreeBracketConfig | TokenTreeBraceConfig;
+export type TokenTreePatternParenConfig = ConfigOf<TokenTreePatternParen>;
+export type TokenTreePatternBracketConfig = ConfigOf<TokenTreePatternBracket>;
+export type TokenTreePatternBraceConfig = ConfigOf<TokenTreePatternBrace>;
+export type TokenTreePatternConfig = TokenTreePatternParenConfig | TokenTreePatternBracketConfig | TokenTreePatternBraceConfig;
 export type TraitBoundsConfig = ConfigOf<TraitBounds>;
 export type TraitItemConfig = ConfigOf<TraitItem>;
 export type TryBlockConfig = ConfigOf<TryBlock>;
@@ -1428,7 +1710,9 @@ export type UseDeclarationConfig = ConfigOf<UseDeclaration>;
 export type UseListConfig = ConfigOf<UseList>;
 export type UseWildcardConfig = ConfigOf<UseWildcard>;
 export type VariadicParameterConfig = ConfigOf<VariadicParameter>;
-export type VisibilityModifierConfig = ConfigOf<VisibilityModifier>;
+export type VisibilityModifierV0Config = ConfigOf<VisibilityModifierV0>;
+export type VisibilityModifierParenConfig = ConfigOf<VisibilityModifierParen>;
+export type VisibilityModifierConfig = VisibilityModifierV0Config | VisibilityModifierParenConfig;
 export type WhereClauseConfig = ConfigOf<WhereClause>;
 export type WherePredicateConfig = ConfigOf<WherePredicate>;
 export type WhileExpressionConfig = ConfigOf<WhileExpression>;
@@ -1601,144 +1885,177 @@ export interface StringContentTree extends TreeNode<'string_content'> {}
 export interface SuperTree extends TreeNode<'super'> {}
 export interface TypeIdentifierTree extends TreeNode<'type_identifier'> {}
 
-// FromInput types — derived from concrete interfaces
-export type AbstractTypeFromInput = FromInputOf<AbstractType>;
-export type ArgumentsFromInput = FromInputOf<Arguments>;
-export type ArrayExpressionFromInput = FromInputOf<ArrayExpression>;
-export type ArrayTypeFromInput = FromInputOf<ArrayType>;
-export type AssignmentExpressionFromInput = FromInputOf<AssignmentExpression>;
-export type AssociatedTypeFromInput = FromInputOf<AssociatedType>;
-export type AsyncBlockFromInput = FromInputOf<AsyncBlock>;
-export type AttributeFromInput = FromInputOf<Attribute>;
-export type AttributeItemFromInput = FromInputOf<AttributeItem>;
-export type AwaitExpressionFromInput = FromInputOf<AwaitExpression>;
-export type BaseFieldInitializerFromInput = FromInputOf<BaseFieldInitializer>;
-export type BinaryExpressionFromInput = FromInputOf<BinaryExpression>;
-export type BlockFromInput = FromInputOf<Block>;
-export type BlockCommentFromInput = FromInputOf<BlockComment>;
-export type BoundedTypeFromInput = FromInputOf<BoundedType>;
-export type BracketedTypeFromInput = FromInputOf<BracketedType>;
-export type BreakExpressionFromInput = FromInputOf<BreakExpression>;
-export type CallExpressionFromInput = FromInputOf<CallExpression>;
-export type CapturedPatternFromInput = FromInputOf<CapturedPattern>;
-export type ClosureExpressionFromInput = FromInputOf<ClosureExpression>;
-export type ClosureParametersFromInput = FromInputOf<ClosureParameters>;
-export type CompoundAssignmentExprFromInput = FromInputOf<CompoundAssignmentExpr>;
-export type ConstBlockFromInput = FromInputOf<ConstBlock>;
-export type ConstItemFromInput = FromInputOf<ConstItem>;
-export type ConstParameterFromInput = FromInputOf<ConstParameter>;
-export type ContinueExpressionFromInput = FromInputOf<ContinueExpression>;
-export type DeclarationListFromInput = FromInputOf<DeclarationList>;
-export type DynamicTypeFromInput = FromInputOf<DynamicType>;
-export type ElseClauseFromInput = FromInputOf<ElseClause>;
-export type EnumItemFromInput = FromInputOf<EnumItem>;
-export type EnumVariantFromInput = FromInputOf<EnumVariant>;
-export type EnumVariantListFromInput = FromInputOf<EnumVariantList>;
-export type ExpressionStatementFromInput = FromInputOf<ExpressionStatement>;
-export type ExternCrateDeclarationFromInput = FromInputOf<ExternCrateDeclaration>;
-export type ExternModifierFromInput = FromInputOf<ExternModifier>;
-export type FieldDeclarationFromInput = FromInputOf<FieldDeclaration>;
-export type FieldDeclarationListFromInput = FromInputOf<FieldDeclarationList>;
-export type FieldExpressionFromInput = FromInputOf<FieldExpression>;
-export type FieldInitializerFromInput = FromInputOf<FieldInitializer>;
-export type FieldInitializerListFromInput = FromInputOf<FieldInitializerList>;
-export type FieldPatternFromInput = FromInputOf<FieldPattern>;
-export type ForExpressionFromInput = FromInputOf<ForExpression>;
-export type ForLifetimesFromInput = FromInputOf<ForLifetimes>;
-export type ForeignModItemFromInput = FromInputOf<ForeignModItem>;
-export type FunctionItemFromInput = FromInputOf<FunctionItem>;
-export type FunctionModifiersFromInput = FromInputOf<FunctionModifiers>;
-export type FunctionSignatureItemFromInput = FromInputOf<FunctionSignatureItem>;
-export type FunctionTypeFromInput = FromInputOf<FunctionType>;
-export type GenBlockFromInput = FromInputOf<GenBlock>;
-export type GenericFunctionFromInput = FromInputOf<GenericFunction>;
-export type GenericPatternFromInput = FromInputOf<GenericPattern>;
-export type GenericTypeFromInput = FromInputOf<GenericType>;
-export type GenericTypeWithTurbofishFromInput = FromInputOf<GenericTypeWithTurbofish>;
-export type HigherRankedTraitBoundFromInput = FromInputOf<HigherRankedTraitBound>;
-export type IfExpressionFromInput = FromInputOf<IfExpression>;
-export type ImplItemFromInput = FromInputOf<ImplItem>;
-export type IndexExpressionFromInput = FromInputOf<IndexExpression>;
-export type InnerAttributeItemFromInput = FromInputOf<InnerAttributeItem>;
-export type LabelFromInput = FromInputOf<Label>;
-export type LetChainFromInput = FromInputOf<LetChain>;
-export type LetConditionFromInput = FromInputOf<LetCondition>;
-export type LetDeclarationFromInput = FromInputOf<LetDeclaration>;
-export type LifetimeFromInput = FromInputOf<Lifetime>;
-export type LifetimeParameterFromInput = FromInputOf<LifetimeParameter>;
-export type LineCommentFromInput = FromInputOf<LineComment>;
-export type LoopExpressionFromInput = FromInputOf<LoopExpression>;
-export type MacroDefinitionFromInput = FromInputOf<MacroDefinition>;
-export type MacroInvocationFromInput = FromInputOf<MacroInvocation>;
-export type MacroRuleFromInput = FromInputOf<MacroRule>;
-export type MatchArmFromInput = FromInputOf<MatchArm>;
-export type MatchBlockFromInput = FromInputOf<MatchBlock>;
-export type MatchExpressionFromInput = FromInputOf<MatchExpression>;
-export type MatchPatternFromInput = FromInputOf<MatchPattern>;
-export type ModItemFromInput = FromInputOf<ModItem>;
-export type MutPatternFromInput = FromInputOf<MutPattern>;
-export type NegativeLiteralFromInput = FromInputOf<NegativeLiteral>;
-export type OrPatternFromInput = FromInputOf<OrPattern>;
-export type OrderedFieldDeclarationListFromInput = FromInputOf<OrderedFieldDeclarationList>;
-export type ParameterFromInput = FromInputOf<Parameter>;
-export type ParametersFromInput = FromInputOf<Parameters>;
-export type ParenthesizedExpressionFromInput = FromInputOf<ParenthesizedExpression>;
-export type PointerTypeFromInput = FromInputOf<PointerType>;
-export type QualifiedTypeFromInput = FromInputOf<QualifiedType>;
-export type RangeExpressionFromInput = FromInputOf<RangeExpression>;
-export type RangePatternFromInput = FromInputOf<RangePattern>;
-export type RawStringLiteralFromInput = FromInputOf<RawStringLiteral>;
-export type RefPatternFromInput = FromInputOf<RefPattern>;
-export type ReferenceExpressionFromInput = FromInputOf<ReferenceExpression>;
-export type ReferencePatternFromInput = FromInputOf<ReferencePattern>;
-export type ReferenceTypeFromInput = FromInputOf<ReferenceType>;
-export type RemovedTraitBoundFromInput = FromInputOf<RemovedTraitBound>;
-export type ReturnExpressionFromInput = FromInputOf<ReturnExpression>;
-export type ScopedIdentifierFromInput = FromInputOf<ScopedIdentifier>;
-export type ScopedTypeIdentifierFromInput = FromInputOf<ScopedTypeIdentifier>;
-export type ScopedUseListFromInput = FromInputOf<ScopedUseList>;
-export type SelfParameterFromInput = FromInputOf<SelfParameter>;
-export type ShorthandFieldInitializerFromInput = FromInputOf<ShorthandFieldInitializer>;
-export type SlicePatternFromInput = FromInputOf<SlicePattern>;
-export type SourceFileFromInput = FromInputOf<SourceFile>;
-export type StaticItemFromInput = FromInputOf<StaticItem>;
-export type StringLiteralFromInput = FromInputOf<StringLiteral>;
-export type StructExpressionFromInput = FromInputOf<StructExpression>;
-export type StructItemFromInput = FromInputOf<StructItem>;
-export type StructPatternFromInput = FromInputOf<StructPattern>;
-export type TokenBindingPatternFromInput = FromInputOf<TokenBindingPattern>;
-export type TokenRepetitionFromInput = FromInputOf<TokenRepetition>;
-export type TokenRepetitionPatternFromInput = FromInputOf<TokenRepetitionPattern>;
-export type TokenTreeFromInput = FromInputOf<TokenTree>;
-export type TokenTreePatternFromInput = FromInputOf<TokenTreePattern>;
-export type TraitBoundsFromInput = FromInputOf<TraitBounds>;
-export type TraitItemFromInput = FromInputOf<TraitItem>;
-export type TryBlockFromInput = FromInputOf<TryBlock>;
-export type TryExpressionFromInput = FromInputOf<TryExpression>;
-export type TupleExpressionFromInput = FromInputOf<TupleExpression>;
-export type TuplePatternFromInput = FromInputOf<TuplePattern>;
-export type TupleStructPatternFromInput = FromInputOf<TupleStructPattern>;
-export type TupleTypeFromInput = FromInputOf<TupleType>;
-export type TypeArgumentsFromInput = FromInputOf<TypeArguments>;
-export type TypeBindingFromInput = FromInputOf<TypeBinding>;
-export type TypeCastExpressionFromInput = FromInputOf<TypeCastExpression>;
-export type TypeItemFromInput = FromInputOf<TypeItem>;
-export type TypeParameterFromInput = FromInputOf<TypeParameter>;
-export type TypeParametersFromInput = FromInputOf<TypeParameters>;
-export type UnaryExpressionFromInput = FromInputOf<UnaryExpression>;
-export type UnionItemFromInput = FromInputOf<UnionItem>;
-export type UnsafeBlockFromInput = FromInputOf<UnsafeBlock>;
-export type UseAsClauseFromInput = FromInputOf<UseAsClause>;
-export type UseBoundsFromInput = FromInputOf<UseBounds>;
-export type UseDeclarationFromInput = FromInputOf<UseDeclaration>;
-export type UseListFromInput = FromInputOf<UseList>;
-export type UseWildcardFromInput = FromInputOf<UseWildcard>;
-export type VariadicParameterFromInput = FromInputOf<VariadicParameter>;
-export type VisibilityModifierFromInput = FromInputOf<VisibilityModifier>;
-export type WhereClauseFromInput = FromInputOf<WhereClause>;
-export type WherePredicateFromInput = FromInputOf<WherePredicate>;
-export type WhileExpressionFromInput = FromInputOf<WhileExpression>;
-export type YieldExpressionFromInput = FromInputOf<YieldExpression>;
+// FromInput types — derived from concrete interfaces, with scalar widenings
+export type AbstractTypeFromInput = FromInputOf<AbstractType, LeafScalarMap, LeafStringMap>;
+export type ArgumentsFromInput = AttributeItem | Expression;
+export type ArrayExpressionSemiFromInput = FromInputOf<ArrayExpressionSemi, LeafScalarMap, LeafStringMap>;
+export type ArrayExpressionCommaFromInput = FromInputOf<ArrayExpressionComma, LeafScalarMap, LeafStringMap>;
+export type ArrayExpressionFromInput = ArrayExpressionSemiFromInput | ArrayExpressionCommaFromInput;
+export type ArrayTypeFromInput = FromInputOf<ArrayType, LeafScalarMap, LeafStringMap>;
+export type AssignmentExpressionFromInput = FromInputOf<AssignmentExpression, LeafScalarMap, LeafStringMap>;
+export type AssociatedTypeFromInput = FromInputOf<AssociatedType, LeafScalarMap, LeafStringMap>;
+export type AsyncBlockFromInput = FromInputOf<AsyncBlock, LeafScalarMap, LeafStringMap>;
+export type AttributeFromInput = FromInputOf<Attribute, LeafScalarMap, LeafStringMap>;
+export type AttributeItemFromInput = FromInputOf<AttributeItem, LeafScalarMap, LeafStringMap>;
+export type AwaitExpressionFromInput = Expression;
+export type BaseFieldInitializerFromInput = Expression;
+export type BinaryExpressionFromInput = FromInputOf<BinaryExpression, LeafScalarMap, LeafStringMap>;
+export type BlockFromInput = FromInputOf<Block, LeafScalarMap, LeafStringMap>;
+export type BlockCommentFromInput = FromInputOf<BlockComment, LeafScalarMap, LeafStringMap>;
+export type BoundedTypeFromInput = FromInputOf<BoundedType, LeafScalarMap, LeafStringMap>;
+export type BracketedTypeFromInput = QualifiedType | Type;
+export type BreakExpressionFromInput = FromInputOf<BreakExpression, LeafScalarMap, LeafStringMap>;
+export type CallExpressionFromInput = FromInputOf<CallExpression, LeafScalarMap, LeafStringMap>;
+export type CapturedPatternFromInput = FromInputOf<CapturedPattern, LeafScalarMap, LeafStringMap>;
+export type ClosureExpressionFromInput = FromInputOf<ClosureExpression, LeafScalarMap, LeafStringMap>;
+export type ClosureParametersFromInput = Parameter | Pattern;
+export type CompoundAssignmentExprFromInput = FromInputOf<CompoundAssignmentExpr, LeafScalarMap, LeafStringMap>;
+export type ConstBlockFromInput = FromInputOf<ConstBlock, LeafScalarMap, LeafStringMap>;
+export type ConstItemFromInput = FromInputOf<ConstItem, LeafScalarMap, LeafStringMap>;
+export type ConstParameterFromInput = FromInputOf<ConstParameter, LeafScalarMap, LeafStringMap>;
+export type ContinueExpressionFromInput = FromInputOf<ContinueExpression, LeafScalarMap, LeafStringMap>;
+export type DeclarationListFromInput = DeclarationStatement;
+export type DynamicTypeFromInput = FromInputOf<DynamicType, LeafScalarMap, LeafStringMap>;
+export type ElseClauseFromInput = Block | IfExpression;
+export type EnumItemFromInput = FromInputOf<EnumItem, LeafScalarMap, LeafStringMap>;
+export type EnumVariantFromInput = FromInputOf<EnumVariant, LeafScalarMap, LeafStringMap>;
+export type EnumVariantListFromInput = AttributeItem | EnumVariant;
+export type ExpressionStatementFromInput = Expression | ExpressionEndingWithBlock;
+export type ExternCrateDeclarationFromInput = FromInputOf<ExternCrateDeclaration, LeafScalarMap, LeafStringMap>;
+export type ExternModifierFromInput = FromInputOf<ExternModifier, LeafScalarMap, LeafStringMap>;
+export type FieldDeclarationFromInput = FromInputOf<FieldDeclaration, LeafScalarMap, LeafStringMap>;
+export type FieldDeclarationListFromInput = AttributeItem | FieldDeclaration;
+export type FieldExpressionFromInput = FromInputOf<FieldExpression, LeafScalarMap, LeafStringMap>;
+export type FieldInitializerFromInput = FromInputOf<FieldInitializer, LeafScalarMap, LeafStringMap>;
+export type FieldInitializerListFromInput = BaseFieldInitializer | FieldInitializer | ShorthandFieldInitializer;
+export type FieldPatternV0FromInput = FromInputOf<FieldPatternV0, LeafScalarMap, LeafStringMap>;
+export type FieldPatternColonFromInput = FromInputOf<FieldPatternColon, LeafScalarMap, LeafStringMap>;
+export type FieldPatternFromInput = FieldPatternV0FromInput | FieldPatternColonFromInput;
+export type ForExpressionFromInput = FromInputOf<ForExpression, LeafScalarMap, LeafStringMap>;
+export type ForLifetimesFromInput = Lifetime;
+export type ForeignModItemSemiFromInput = FromInputOf<ForeignModItemSemi, LeafScalarMap, LeafStringMap>;
+export type ForeignModItemBodyFromInput = FromInputOf<ForeignModItemBody, LeafScalarMap, LeafStringMap>;
+export type ForeignModItemFromInput = ForeignModItemSemiFromInput | ForeignModItemBodyFromInput;
+export type FunctionItemFromInput = FromInputOf<FunctionItem, LeafScalarMap, LeafStringMap>;
+export type FunctionModifiersFromInput = FromInputOf<FunctionModifiers, LeafScalarMap, LeafStringMap>;
+export type FunctionSignatureItemFromInput = FromInputOf<FunctionSignatureItem, LeafScalarMap, LeafStringMap>;
+export type FunctionTypeTraitFromInput = FromInputOf<FunctionTypeTrait, LeafScalarMap, LeafStringMap>;
+export type FunctionTypeFnFromInput = FromInputOf<FunctionTypeFn, LeafScalarMap, LeafStringMap>;
+export type FunctionTypeFromInput = FunctionTypeTraitFromInput | FunctionTypeFnFromInput;
+export type GenBlockFromInput = FromInputOf<GenBlock, LeafScalarMap, LeafStringMap>;
+export type GenericFunctionFromInput = FromInputOf<GenericFunction, LeafScalarMap, LeafStringMap>;
+export type GenericPatternFromInput = FromInputOf<GenericPattern, LeafScalarMap, LeafStringMap>;
+export type GenericTypeFromInput = FromInputOf<GenericType, LeafScalarMap, LeafStringMap>;
+export type GenericTypeWithTurbofishFromInput = FromInputOf<GenericTypeWithTurbofish, LeafScalarMap, LeafStringMap>;
+export type HigherRankedTraitBoundFromInput = FromInputOf<HigherRankedTraitBound, LeafScalarMap, LeafStringMap>;
+export type IfExpressionFromInput = FromInputOf<IfExpression, LeafScalarMap, LeafStringMap>;
+export type ImplItemBodyFromInput = FromInputOf<ImplItemBody, LeafScalarMap, LeafStringMap>;
+export type ImplItemSemiFromInput = FromInputOf<ImplItemSemi, LeafScalarMap, LeafStringMap>;
+export type ImplItemFromInput = ImplItemBodyFromInput | ImplItemSemiFromInput;
+export type IndexExpressionFromInput = FromInputOf<IndexExpression, LeafScalarMap, LeafStringMap>;
+export type InnerAttributeItemFromInput = FromInputOf<InnerAttributeItem, LeafScalarMap, LeafStringMap>;
+export type LabelFromInput = FromInputOf<Label, LeafScalarMap, LeafStringMap>;
+export type LetChainFromInput = Expression | LetCondition;
+export type LetConditionFromInput = FromInputOf<LetCondition, LeafScalarMap, LeafStringMap>;
+export type LetDeclarationFromInput = FromInputOf<LetDeclaration, LeafScalarMap, LeafStringMap>;
+export type LifetimeFromInput = FromInputOf<Lifetime, LeafScalarMap, LeafStringMap>;
+export type LifetimeParameterFromInput = FromInputOf<LifetimeParameter, LeafScalarMap, LeafStringMap>;
+export type LineCommentV0FromInput = FromInputOf<LineCommentV0, LeafScalarMap, LeafStringMap>;
+export type LineCommentOuterFromInput = FromInputOf<LineCommentOuter, LeafScalarMap, LeafStringMap>;
+export type LineCommentFromInput = LineCommentV0FromInput | LineCommentOuterFromInput;
+export type LoopExpressionFromInput = FromInputOf<LoopExpression, LeafScalarMap, LeafStringMap>;
+export type MacroDefinitionParenFromInput = FromInputOf<MacroDefinitionParen, LeafScalarMap, LeafStringMap>;
+export type MacroDefinitionBracketFromInput = FromInputOf<MacroDefinitionBracket, LeafScalarMap, LeafStringMap>;
+export type MacroDefinitionBraceFromInput = FromInputOf<MacroDefinitionBrace, LeafScalarMap, LeafStringMap>;
+export type MacroDefinitionFromInput = MacroDefinitionParenFromInput | MacroDefinitionBracketFromInput | MacroDefinitionBraceFromInput;
+export type MacroInvocationFromInput = FromInputOf<MacroInvocation, LeafScalarMap, LeafStringMap>;
+export type MacroRuleFromInput = FromInputOf<MacroRule, LeafScalarMap, LeafStringMap>;
+export type MatchArmFromInput = FromInputOf<MatchArm, LeafScalarMap, LeafStringMap>;
+export type MatchBlockFromInput = MatchArm;
+export type MatchExpressionFromInput = FromInputOf<MatchExpression, LeafScalarMap, LeafStringMap>;
+export type MatchPatternFromInput = FromInputOf<MatchPattern, LeafScalarMap, LeafStringMap>;
+export type ModItemSemiFromInput = FromInputOf<ModItemSemi, LeafScalarMap, LeafStringMap>;
+export type ModItemBodyFromInput = FromInputOf<ModItemBody, LeafScalarMap, LeafStringMap>;
+export type ModItemFromInput = ModItemSemiFromInput | ModItemBodyFromInput;
+export type MutPatternFromInput = FromInputOf<MutPattern, LeafScalarMap, LeafStringMap>;
+export type NegativeLiteralFromInput = FromInputOf<NegativeLiteral, LeafScalarMap, LeafStringMap>;
+export type OrPatternRightFromInput = FromInputOf<OrPatternRight, LeafScalarMap, LeafStringMap>;
+export type OrPatternV1FromInput = FromInputOf<OrPatternV1, LeafScalarMap, LeafStringMap>;
+export type OrPatternFromInput = OrPatternRightFromInput | OrPatternV1FromInput;
+export type OrderedFieldDeclarationListFromInput = FromInputOf<OrderedFieldDeclarationList, LeafScalarMap, LeafStringMap>;
+export type ParameterFromInput = FromInputOf<Parameter, LeafScalarMap, LeafStringMap>;
+export type ParametersFromInput = AttributeItem | Parameter | SelfParameter | Type | VariadicParameter;
+export type ParenthesizedExpressionFromInput = Expression;
+export type PointerTypeConstFromInput = FromInputOf<PointerTypeConst, LeafScalarMap, LeafStringMap>;
+export type PointerTypeMutableSpecifierFromInput = FromInputOf<PointerTypeMutableSpecifier, LeafScalarMap, LeafStringMap>;
+export type PointerTypeFromInput = PointerTypeConstFromInput | PointerTypeMutableSpecifierFromInput;
+export type QualifiedTypeFromInput = FromInputOf<QualifiedType, LeafScalarMap, LeafStringMap>;
+export type RangeExpressionEndFromInput = FromInputOf<RangeExpressionEnd, LeafScalarMap, LeafStringMap>;
+export type RangeExpressionV1FromInput = FromInputOf<RangeExpressionV1, LeafScalarMap, LeafStringMap>;
+export type RangeExpressionV2FromInput = FromInputOf<RangeExpressionV2, LeafScalarMap, LeafStringMap>;
+export type RangeExpressionFromInput = RangeExpressionEndFromInput | RangeExpressionV1FromInput | RangeExpressionV2FromInput;
+export type RangePatternEllipsisFromInput = FromInputOf<RangePatternEllipsis, LeafScalarMap, LeafStringMap>;
+export type RangePatternDotdotFromInput = FromInputOf<RangePatternDotdot, LeafScalarMap, LeafStringMap>;
+export type RangePatternTok_2e2e3dFromInput = FromInputOf<RangePatternTok_2e2e3d, LeafScalarMap, LeafStringMap>;
+export type RangePatternFromInput = RangePatternEllipsisFromInput | RangePatternDotdotFromInput | RangePatternTok_2e2e3dFromInput;
+export type RawStringLiteralFromInput = FromInputOf<RawStringLiteral, LeafScalarMap, LeafStringMap>;
+export type RefPatternFromInput = Pattern;
+export type ReferenceExpressionConstFromInput = FromInputOf<ReferenceExpressionConst, LeafScalarMap, LeafStringMap>;
+export type ReferenceExpressionMutableSpecifierFromInput = FromInputOf<ReferenceExpressionMutableSpecifier, LeafScalarMap, LeafStringMap>;
+export type ReferenceExpressionFromInput = ReferenceExpressionConstFromInput | ReferenceExpressionMutableSpecifierFromInput;
+export type ReferencePatternFromInput = FromInputOf<ReferencePattern, LeafScalarMap, LeafStringMap>;
+export type ReferenceTypeFromInput = FromInputOf<ReferenceType, LeafScalarMap, LeafStringMap>;
+export type RemovedTraitBoundFromInput = Type;
+export type ReturnExpressionFromInput = Expression;
+export type ScopedIdentifierFromInput = FromInputOf<ScopedIdentifier, LeafScalarMap, LeafStringMap>;
+export type ScopedTypeIdentifierFromInput = FromInputOf<ScopedTypeIdentifier, LeafScalarMap, LeafStringMap>;
+export type ScopedUseListFromInput = FromInputOf<ScopedUseList, LeafScalarMap, LeafStringMap>;
+export type SelfParameterFromInput = FromInputOf<SelfParameter, LeafScalarMap, LeafStringMap>;
+export type ShorthandFieldInitializerFromInput = FromInputOf<ShorthandFieldInitializer, LeafScalarMap, LeafStringMap>;
+export type SlicePatternFromInput = Pattern;
+export type SourceFileFromInput = FromInputOf<SourceFile, LeafScalarMap, LeafStringMap>;
+export type StaticItemFromInput = FromInputOf<StaticItem, LeafScalarMap, LeafStringMap>;
+export type StringLiteralFromInput = EscapeSequence | StringContent;
+export type StructExpressionFromInput = FromInputOf<StructExpression, LeafScalarMap, LeafStringMap>;
+export type StructItemWhereClauseFromInput = FromInputOf<StructItemWhereClause, LeafScalarMap, LeafStringMap>;
+export type StructItemSemiFromInput = FromInputOf<StructItemSemi, LeafScalarMap, LeafStringMap>;
+export type StructItemFromInput = StructItemWhereClauseFromInput | StructItemSemiFromInput;
+export type StructPatternFromInput = FromInputOf<StructPattern, LeafScalarMap, LeafStringMap>;
+export type TokenBindingPatternFromInput = FromInputOf<TokenBindingPattern, LeafScalarMap, LeafStringMap>;
+export type TokenRepetitionFromInput = Crate | Identifier | Literal | Metavariable | MutableSpecifier | PrimitiveType | Self | Super | TokenRepetition | TokenTree;
+export type TokenRepetitionPatternFromInput = Crate | Identifier | Literal | Metavariable | MutableSpecifier | PrimitiveType | Self | Super | TokenBindingPattern | TokenRepetitionPattern | TokenTreePattern;
+export type TokenTreeFromInput = Crate | Identifier | Literal | Metavariable | MutableSpecifier | PrimitiveType | Self | Super | TokenRepetition | TokenTree;
+export type TokenTreePatternFromInput = Crate | Identifier | Literal | Metavariable | MutableSpecifier | PrimitiveType | Self | Super | TokenBindingPattern | TokenRepetitionPattern | TokenTreePattern;
+export type TraitBoundsFromInput = HigherRankedTraitBound | Lifetime | Type;
+export type TraitItemFromInput = FromInputOf<TraitItem, LeafScalarMap, LeafStringMap>;
+export type TryBlockFromInput = FromInputOf<TryBlock, LeafScalarMap, LeafStringMap>;
+export type TryExpressionFromInput = FromInputOf<TryExpression, LeafScalarMap, LeafStringMap>;
+export type TupleExpressionFromInput = FromInputOf<TupleExpression, LeafScalarMap, LeafStringMap>;
+export type TuplePatternFromInput = ClosureExpression | Pattern;
+export type TupleStructPatternFromInput = FromInputOf<TupleStructPattern, LeafScalarMap, LeafStringMap>;
+export type TupleTypeFromInput = Type;
+export type TypeArgumentsFromInput = Block | Lifetime | Literal | TraitBounds | Type | TypeBinding;
+export type TypeBindingFromInput = FromInputOf<TypeBinding, LeafScalarMap, LeafStringMap>;
+export type TypeCastExpressionFromInput = FromInputOf<TypeCastExpression, LeafScalarMap, LeafStringMap>;
+export type TypeItemFromInput = FromInputOf<TypeItem, LeafScalarMap, LeafStringMap>;
+export type TypeParameterFromInput = FromInputOf<TypeParameter, LeafScalarMap, LeafStringMap>;
+export type TypeParametersFromInput = AttributeItem | ConstParameter | LifetimeParameter | Metavariable | TypeParameter;
+export type UnaryExpressionFromInput = FromInputOf<UnaryExpression, LeafScalarMap, LeafStringMap>;
+export type UnionItemFromInput = FromInputOf<UnionItem, LeafScalarMap, LeafStringMap>;
+export type UnsafeBlockFromInput = FromInputOf<UnsafeBlock, LeafScalarMap, LeafStringMap>;
+export type UseAsClauseFromInput = FromInputOf<UseAsClause, LeafScalarMap, LeafStringMap>;
+export type UseBoundsFromInput = Lifetime | TypeIdentifier;
+export type UseDeclarationFromInput = FromInputOf<UseDeclaration, LeafScalarMap, LeafStringMap>;
+export type UseListFromInput = UseClause;
+export type UseWildcardFromInput = FromInputOf<UseWildcard, LeafScalarMap, LeafStringMap>;
+export type VariadicParameterFromInput = FromInputOf<VariadicParameter, LeafScalarMap, LeafStringMap>;
+export type VisibilityModifierV0FromInput = FromInputOf<VisibilityModifierV0, LeafScalarMap, LeafStringMap>;
+export type VisibilityModifierParenFromInput = FromInputOf<VisibilityModifierParen, LeafScalarMap, LeafStringMap>;
+export type VisibilityModifierFromInput = VisibilityModifierV0FromInput | VisibilityModifierParenFromInput;
+export type WhereClauseFromInput = WherePredicate;
+export type WherePredicateFromInput = FromInputOf<WherePredicate, LeafScalarMap, LeafStringMap>;
+export type WhileExpressionFromInput = FromInputOf<WhileExpression, LeafScalarMap, LeafStringMap>;
+export type YieldExpressionFromInput = Expression;
 
 // Supertype unions (node)
 export type DeclarationStatement =
@@ -2203,6 +2520,169 @@ export type TypeFromInput =
   | TupleTypeFromInput
 ;
 
+// Hidden rule unions (grammar-internal groupings)
+export type Path =
+  | Self
+  | Identifier
+  | Metavariable
+  | Super
+  | Crate
+  | ScopedIdentifier
+;
+
+export type Statement =
+  | ExpressionStatement
+  | ConstItem
+  | MacroInvocation
+  | MacroDefinition
+  | EmptyStatement
+  | AttributeItem
+  | InnerAttributeItem
+  | ModItem
+  | ForeignModItem
+  | StructItem
+  | UnionItem
+  | EnumItem
+  | TypeItem
+  | FunctionItem
+  | FunctionSignatureItem
+  | ImplItem
+  | TraitItem
+  | AssociatedType
+  | LetDeclaration
+  | UseDeclaration
+  | ExternCrateDeclaration
+  | StaticItem
+;
+
+export type ExpressionEndingWithBlock =
+  | UnsafeBlock
+  | AsyncBlock
+  | GenBlock
+  | TryBlock
+  | Block
+  | IfExpression
+  | MatchExpression
+  | WhileExpression
+  | LoopExpression
+  | ForExpression
+  | ConstBlock
+;
+
+export type ExpressionExceptRange =
+  | UnaryExpression
+  | ReferenceExpression
+  | TryExpression
+  | BinaryExpression
+  | AssignmentExpression
+  | CompoundAssignmentExpr
+  | TypeCastExpression
+  | CallExpression
+  | ReturnExpression
+  | YieldExpression
+  | StringLiteral
+  | RawStringLiteral
+  | CharLiteral
+  | BooleanLiteral
+  | IntegerLiteral
+  | FloatLiteral
+  | Identifier
+  | Self
+  | ScopedIdentifier
+  | GenericFunction
+  | AwaitExpression
+  | FieldExpression
+  | ArrayExpression
+  | TupleExpression
+  | MacroInvocation
+  | UnitExpression
+  | BreakExpression
+  | ContinueExpression
+  | IndexExpression
+  | Metavariable
+  | ClosureExpression
+  | ParenthesizedExpression
+  | StructExpression
+  | UnsafeBlock
+  | AsyncBlock
+  | GenBlock
+  | TryBlock
+  | Block
+  | IfExpression
+  | MatchExpression
+  | WhileExpression
+  | LoopExpression
+  | ForExpression
+  | ConstBlock
+;
+
+export type ReservedIdentifier =
+  | Identifier
+;
+
+export type Condition =
+  | UnaryExpression
+  | ReferenceExpression
+  | TryExpression
+  | BinaryExpression
+  | AssignmentExpression
+  | CompoundAssignmentExpr
+  | TypeCastExpression
+  | CallExpression
+  | ReturnExpression
+  | YieldExpression
+  | StringLiteral
+  | RawStringLiteral
+  | CharLiteral
+  | BooleanLiteral
+  | IntegerLiteral
+  | FloatLiteral
+  | Identifier
+  | Self
+  | ScopedIdentifier
+  | GenericFunction
+  | AwaitExpression
+  | FieldExpression
+  | ArrayExpression
+  | TupleExpression
+  | MacroInvocation
+  | UnitExpression
+  | BreakExpression
+  | ContinueExpression
+  | IndexExpression
+  | Metavariable
+  | ClosureExpression
+  | ParenthesizedExpression
+  | StructExpression
+  | UnsafeBlock
+  | AsyncBlock
+  | GenBlock
+  | TryBlock
+  | Block
+  | IfExpression
+  | MatchExpression
+  | WhileExpression
+  | LoopExpression
+  | ForExpression
+  | ConstBlock
+  | RangeExpression
+  | LetCondition
+  | LetChain
+;
+
+export type UseClause =
+  | Self
+  | Identifier
+  | Metavariable
+  | Super
+  | Crate
+  | ScopedIdentifier
+  | UseAsClause
+  | UseList
+  | ScopedUseList
+  | UseWildcard
+;
+
 export type RustNode =
   | AbstractType
   | Arguments
@@ -2508,4 +2988,309 @@ export interface KindMap {
   'string_content': StringContent;
   'super': Super;
   'type_identifier': TypeIdentifier;
+}
+
+/** Maps variant node kinds to their per-variant interfaces. */
+export interface VariantMap {
+  'array_expression': { semi: ArrayExpressionSemi; comma: ArrayExpressionComma };
+  'field_pattern': { v0: FieldPatternV0; colon: FieldPatternColon };
+  'foreign_mod_item': { semi: ForeignModItemSemi; body: ForeignModItemBody };
+  'function_type': { trait: FunctionTypeTrait; fn: FunctionTypeFn };
+  'impl_item': { body: ImplItemBody; semi: ImplItemSemi };
+  'line_comment': { v0: LineCommentV0; outer: LineCommentOuter };
+  'macro_definition': { paren: MacroDefinitionParen; bracket: MacroDefinitionBracket; brace: MacroDefinitionBrace };
+  'mod_item': { semi: ModItemSemi; body: ModItemBody };
+  'or_pattern': { right: OrPatternRight; v1: OrPatternV1 };
+  'pointer_type': { const: PointerTypeConst; mutable_specifier: PointerTypeMutableSpecifier };
+  'range_expression': { end: RangeExpressionEnd; v1: RangeExpressionV1; v2: RangeExpressionV2 };
+  'range_pattern': { ellipsis: RangePatternEllipsis; dotdot: RangePatternDotdot; tok_2e2e3d: RangePatternTok_2e2e3d };
+  'reference_expression': { const: ReferenceExpressionConst; mutable_specifier: ReferenceExpressionMutableSpecifier };
+  'struct_item': { where_clause: StructItemWhereClause; semi: StructItemSemi };
+  'token_repetition': { plus: TokenRepetitionPlus; star: TokenRepetitionStar; question: TokenRepetitionQuestion };
+  'token_repetition_pattern': { plus: TokenRepetitionPatternPlus; star: TokenRepetitionPatternStar; question: TokenRepetitionPatternQuestion };
+  'token_tree': { paren: TokenTreeParen; bracket: TokenTreeBracket; brace: TokenTreeBrace };
+  'token_tree_pattern': { paren: TokenTreePatternParen; bracket: TokenTreePatternBracket; brace: TokenTreePatternBrace };
+  'visibility_modifier': { v0: VisibilityModifierV0; paren: VisibilityModifierParen };
+}
+
+/** Maps every branch kind string to its Config (factory input) type. */
+export interface ConfigMap {
+  'abstract_type': AbstractTypeConfig;
+  'arguments': ArgumentsConfig;
+  'array_expression': ArrayExpressionConfig;
+  'array_type': ArrayTypeConfig;
+  'assignment_expression': AssignmentExpressionConfig;
+  'associated_type': AssociatedTypeConfig;
+  'async_block': AsyncBlockConfig;
+  'attribute': AttributeConfig;
+  'attribute_item': AttributeItemConfig;
+  'await_expression': AwaitExpressionConfig;
+  'base_field_initializer': BaseFieldInitializerConfig;
+  'binary_expression': BinaryExpressionConfig;
+  'block': BlockConfig;
+  'block_comment': BlockCommentConfig;
+  'bounded_type': BoundedTypeConfig;
+  'bracketed_type': BracketedTypeConfig;
+  'break_expression': BreakExpressionConfig;
+  'call_expression': CallExpressionConfig;
+  'captured_pattern': CapturedPatternConfig;
+  'closure_expression': ClosureExpressionConfig;
+  'closure_parameters': ClosureParametersConfig;
+  'compound_assignment_expr': CompoundAssignmentExprConfig;
+  'const_block': ConstBlockConfig;
+  'const_item': ConstItemConfig;
+  'const_parameter': ConstParameterConfig;
+  'continue_expression': ContinueExpressionConfig;
+  'declaration_list': DeclarationListConfig;
+  'dynamic_type': DynamicTypeConfig;
+  'else_clause': ElseClauseConfig;
+  'enum_item': EnumItemConfig;
+  'enum_variant': EnumVariantConfig;
+  'enum_variant_list': EnumVariantListConfig;
+  'expression_statement': ExpressionStatementConfig;
+  'extern_crate_declaration': ExternCrateDeclarationConfig;
+  'extern_modifier': ExternModifierConfig;
+  'field_declaration': FieldDeclarationConfig;
+  'field_declaration_list': FieldDeclarationListConfig;
+  'field_expression': FieldExpressionConfig;
+  'field_initializer': FieldInitializerConfig;
+  'field_initializer_list': FieldInitializerListConfig;
+  'field_pattern': FieldPatternConfig;
+  'for_expression': ForExpressionConfig;
+  'for_lifetimes': ForLifetimesConfig;
+  'foreign_mod_item': ForeignModItemConfig;
+  'function_item': FunctionItemConfig;
+  'function_modifiers': FunctionModifiersConfig;
+  'function_signature_item': FunctionSignatureItemConfig;
+  'function_type': FunctionTypeConfig;
+  'gen_block': GenBlockConfig;
+  'generic_function': GenericFunctionConfig;
+  'generic_pattern': GenericPatternConfig;
+  'generic_type': GenericTypeConfig;
+  'generic_type_with_turbofish': GenericTypeWithTurbofishConfig;
+  'higher_ranked_trait_bound': HigherRankedTraitBoundConfig;
+  'if_expression': IfExpressionConfig;
+  'impl_item': ImplItemConfig;
+  'index_expression': IndexExpressionConfig;
+  'inner_attribute_item': InnerAttributeItemConfig;
+  'label': LabelConfig;
+  'let_chain': LetChainConfig;
+  'let_condition': LetConditionConfig;
+  'let_declaration': LetDeclarationConfig;
+  'lifetime': LifetimeConfig;
+  'lifetime_parameter': LifetimeParameterConfig;
+  'line_comment': LineCommentConfig;
+  'loop_expression': LoopExpressionConfig;
+  'macro_definition': MacroDefinitionConfig;
+  'macro_invocation': MacroInvocationConfig;
+  'macro_rule': MacroRuleConfig;
+  'match_arm': MatchArmConfig;
+  'match_block': MatchBlockConfig;
+  'match_expression': MatchExpressionConfig;
+  'match_pattern': MatchPatternConfig;
+  'mod_item': ModItemConfig;
+  'mut_pattern': MutPatternConfig;
+  'negative_literal': NegativeLiteralConfig;
+  'or_pattern': OrPatternConfig;
+  'ordered_field_declaration_list': OrderedFieldDeclarationListConfig;
+  'parameter': ParameterConfig;
+  'parameters': ParametersConfig;
+  'parenthesized_expression': ParenthesizedExpressionConfig;
+  'pointer_type': PointerTypeConfig;
+  'qualified_type': QualifiedTypeConfig;
+  'range_expression': RangeExpressionConfig;
+  'range_pattern': RangePatternConfig;
+  'raw_string_literal': RawStringLiteralConfig;
+  'ref_pattern': RefPatternConfig;
+  'reference_expression': ReferenceExpressionConfig;
+  'reference_pattern': ReferencePatternConfig;
+  'reference_type': ReferenceTypeConfig;
+  'removed_trait_bound': RemovedTraitBoundConfig;
+  'return_expression': ReturnExpressionConfig;
+  'scoped_identifier': ScopedIdentifierConfig;
+  'scoped_type_identifier': ScopedTypeIdentifierConfig;
+  'scoped_use_list': ScopedUseListConfig;
+  'self_parameter': SelfParameterConfig;
+  'shorthand_field_initializer': ShorthandFieldInitializerConfig;
+  'slice_pattern': SlicePatternConfig;
+  'source_file': SourceFileConfig;
+  'static_item': StaticItemConfig;
+  'string_literal': StringLiteralConfig;
+  'struct_expression': StructExpressionConfig;
+  'struct_item': StructItemConfig;
+  'struct_pattern': StructPatternConfig;
+  'token_binding_pattern': TokenBindingPatternConfig;
+  'token_repetition': TokenRepetitionConfig;
+  'token_repetition_pattern': TokenRepetitionPatternConfig;
+  'token_tree': TokenTreeConfig;
+  'token_tree_pattern': TokenTreePatternConfig;
+  'trait_bounds': TraitBoundsConfig;
+  'trait_item': TraitItemConfig;
+  'try_block': TryBlockConfig;
+  'try_expression': TryExpressionConfig;
+  'tuple_expression': TupleExpressionConfig;
+  'tuple_pattern': TuplePatternConfig;
+  'tuple_struct_pattern': TupleStructPatternConfig;
+  'tuple_type': TupleTypeConfig;
+  'type_arguments': TypeArgumentsConfig;
+  'type_binding': TypeBindingConfig;
+  'type_cast_expression': TypeCastExpressionConfig;
+  'type_item': TypeItemConfig;
+  'type_parameter': TypeParameterConfig;
+  'type_parameters': TypeParametersConfig;
+  'unary_expression': UnaryExpressionConfig;
+  'union_item': UnionItemConfig;
+  'unsafe_block': UnsafeBlockConfig;
+  'use_as_clause': UseAsClauseConfig;
+  'use_bounds': UseBoundsConfig;
+  'use_declaration': UseDeclarationConfig;
+  'use_list': UseListConfig;
+  'use_wildcard': UseWildcardConfig;
+  'variadic_parameter': VariadicParameterConfig;
+  'visibility_modifier': VisibilityModifierConfig;
+  'where_clause': WhereClauseConfig;
+  'where_predicate': WherePredicateConfig;
+  'while_expression': WhileExpressionConfig;
+  'yield_expression': YieldExpressionConfig;
+}
+
+/** Maps every branch kind string to its FromInput (ergonomic .from() input) type. */
+export interface FromInputMap {
+  'abstract_type': AbstractTypeFromInput;
+  'arguments': ArgumentsFromInput;
+  'array_expression': ArrayExpressionFromInput;
+  'array_type': ArrayTypeFromInput;
+  'assignment_expression': AssignmentExpressionFromInput;
+  'associated_type': AssociatedTypeFromInput;
+  'async_block': AsyncBlockFromInput;
+  'attribute': AttributeFromInput;
+  'attribute_item': AttributeItemFromInput;
+  'await_expression': AwaitExpressionFromInput;
+  'base_field_initializer': BaseFieldInitializerFromInput;
+  'binary_expression': BinaryExpressionFromInput;
+  'block': BlockFromInput;
+  'block_comment': BlockCommentFromInput;
+  'bounded_type': BoundedTypeFromInput;
+  'bracketed_type': BracketedTypeFromInput;
+  'break_expression': BreakExpressionFromInput;
+  'call_expression': CallExpressionFromInput;
+  'captured_pattern': CapturedPatternFromInput;
+  'closure_expression': ClosureExpressionFromInput;
+  'closure_parameters': ClosureParametersFromInput;
+  'compound_assignment_expr': CompoundAssignmentExprFromInput;
+  'const_block': ConstBlockFromInput;
+  'const_item': ConstItemFromInput;
+  'const_parameter': ConstParameterFromInput;
+  'continue_expression': ContinueExpressionFromInput;
+  'declaration_list': DeclarationListFromInput;
+  'dynamic_type': DynamicTypeFromInput;
+  'else_clause': ElseClauseFromInput;
+  'enum_item': EnumItemFromInput;
+  'enum_variant': EnumVariantFromInput;
+  'enum_variant_list': EnumVariantListFromInput;
+  'expression_statement': ExpressionStatementFromInput;
+  'extern_crate_declaration': ExternCrateDeclarationFromInput;
+  'extern_modifier': ExternModifierFromInput;
+  'field_declaration': FieldDeclarationFromInput;
+  'field_declaration_list': FieldDeclarationListFromInput;
+  'field_expression': FieldExpressionFromInput;
+  'field_initializer': FieldInitializerFromInput;
+  'field_initializer_list': FieldInitializerListFromInput;
+  'field_pattern': FieldPatternFromInput;
+  'for_expression': ForExpressionFromInput;
+  'for_lifetimes': ForLifetimesFromInput;
+  'foreign_mod_item': ForeignModItemFromInput;
+  'function_item': FunctionItemFromInput;
+  'function_modifiers': FunctionModifiersFromInput;
+  'function_signature_item': FunctionSignatureItemFromInput;
+  'function_type': FunctionTypeFromInput;
+  'gen_block': GenBlockFromInput;
+  'generic_function': GenericFunctionFromInput;
+  'generic_pattern': GenericPatternFromInput;
+  'generic_type': GenericTypeFromInput;
+  'generic_type_with_turbofish': GenericTypeWithTurbofishFromInput;
+  'higher_ranked_trait_bound': HigherRankedTraitBoundFromInput;
+  'if_expression': IfExpressionFromInput;
+  'impl_item': ImplItemFromInput;
+  'index_expression': IndexExpressionFromInput;
+  'inner_attribute_item': InnerAttributeItemFromInput;
+  'label': LabelFromInput;
+  'let_chain': LetChainFromInput;
+  'let_condition': LetConditionFromInput;
+  'let_declaration': LetDeclarationFromInput;
+  'lifetime': LifetimeFromInput;
+  'lifetime_parameter': LifetimeParameterFromInput;
+  'line_comment': LineCommentFromInput;
+  'loop_expression': LoopExpressionFromInput;
+  'macro_definition': MacroDefinitionFromInput;
+  'macro_invocation': MacroInvocationFromInput;
+  'macro_rule': MacroRuleFromInput;
+  'match_arm': MatchArmFromInput;
+  'match_block': MatchBlockFromInput;
+  'match_expression': MatchExpressionFromInput;
+  'match_pattern': MatchPatternFromInput;
+  'mod_item': ModItemFromInput;
+  'mut_pattern': MutPatternFromInput;
+  'negative_literal': NegativeLiteralFromInput;
+  'or_pattern': OrPatternFromInput;
+  'ordered_field_declaration_list': OrderedFieldDeclarationListFromInput;
+  'parameter': ParameterFromInput;
+  'parameters': ParametersFromInput;
+  'parenthesized_expression': ParenthesizedExpressionFromInput;
+  'pointer_type': PointerTypeFromInput;
+  'qualified_type': QualifiedTypeFromInput;
+  'range_expression': RangeExpressionFromInput;
+  'range_pattern': RangePatternFromInput;
+  'raw_string_literal': RawStringLiteralFromInput;
+  'ref_pattern': RefPatternFromInput;
+  'reference_expression': ReferenceExpressionFromInput;
+  'reference_pattern': ReferencePatternFromInput;
+  'reference_type': ReferenceTypeFromInput;
+  'removed_trait_bound': RemovedTraitBoundFromInput;
+  'return_expression': ReturnExpressionFromInput;
+  'scoped_identifier': ScopedIdentifierFromInput;
+  'scoped_type_identifier': ScopedTypeIdentifierFromInput;
+  'scoped_use_list': ScopedUseListFromInput;
+  'self_parameter': SelfParameterFromInput;
+  'shorthand_field_initializer': ShorthandFieldInitializerFromInput;
+  'slice_pattern': SlicePatternFromInput;
+  'source_file': SourceFileFromInput;
+  'static_item': StaticItemFromInput;
+  'string_literal': StringLiteralFromInput;
+  'struct_expression': StructExpressionFromInput;
+  'struct_item': StructItemFromInput;
+  'struct_pattern': StructPatternFromInput;
+  'token_binding_pattern': TokenBindingPatternFromInput;
+  'token_repetition': TokenRepetitionFromInput;
+  'token_repetition_pattern': TokenRepetitionPatternFromInput;
+  'token_tree': TokenTreeFromInput;
+  'token_tree_pattern': TokenTreePatternFromInput;
+  'trait_bounds': TraitBoundsFromInput;
+  'trait_item': TraitItemFromInput;
+  'try_block': TryBlockFromInput;
+  'try_expression': TryExpressionFromInput;
+  'tuple_expression': TupleExpressionFromInput;
+  'tuple_pattern': TuplePatternFromInput;
+  'tuple_struct_pattern': TupleStructPatternFromInput;
+  'tuple_type': TupleTypeFromInput;
+  'type_arguments': TypeArgumentsFromInput;
+  'type_binding': TypeBindingFromInput;
+  'type_cast_expression': TypeCastExpressionFromInput;
+  'type_item': TypeItemFromInput;
+  'type_parameter': TypeParameterFromInput;
+  'type_parameters': TypeParametersFromInput;
+  'unary_expression': UnaryExpressionFromInput;
+  'union_item': UnionItemFromInput;
+  'unsafe_block': UnsafeBlockFromInput;
+  'use_as_clause': UseAsClauseFromInput;
+  'use_bounds': UseBoundsFromInput;
+  'use_declaration': UseDeclarationFromInput;
+  'use_list': UseListFromInput;
+  'use_wildcard': UseWildcardFromInput;
+  'variadic_parameter': VariadicParameterFromInput;
+  'visibility_modifier': VisibilityModifierFromInput;
+  'where_clause': WhereClauseFromInput;
+  'where_predicate': WherePredicateFromInput;
+  'while_expression': WhileExpressionFromInput;
+  'yield_expression': YieldExpressionFromInput;
 }

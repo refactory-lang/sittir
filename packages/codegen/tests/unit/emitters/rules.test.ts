@@ -44,9 +44,12 @@ describe('emitTemplatesYaml', () => {
 		const config = getConfig();
 		const rule = config.rules['struct_item'];
 		expect(rule).toBeDefined();
-		const template = typeof rule === 'string' ? rule : (rule as any).template;
-		expect(template).toContain('struct');
-		expect(template).toContain('$NAME');
+		// struct_item may be string, string[], or { template: ... }
+		const templates = typeof rule === 'string' ? [rule]
+			: Array.isArray(rule) ? rule
+			: [(rule as any).template].flat();
+		expect(templates.some((t: string) => t.includes('struct'))).toBe(true);
+		expect(templates.some((t: string) => t.includes('$NAME'))).toBe(true);
 	});
 
 	it('synthesizes clauses for optional token+field groups', () => {

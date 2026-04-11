@@ -12,11 +12,14 @@
  *   6. Discriminated union of all node types
  */
 
-import type { HydratedNodeModel } from '../node-model.ts';
+import type { HydratedNodeModel, HydratedFieldModel } from '../node-model.ts';
 import { isTupleChildren, eachChildSlot } from '../node-model.ts';
 import { toTypeName, toFieldName, toGrammarTypeName } from '../naming.ts';
-import { structuralNodes, fieldsOf, leafKindsOf, supertypeEntriesOf, childSlotNames } from './utils.ts';
+import { structuralNodes, fieldsOf, leafKindsOf, leafValuesOf, keywordKindsOf, supertypeEntriesOf, hiddenEntriesOf, childSlotNames } from './utils.ts';
+import { extractLeafPattern } from '../grammar-reader.ts';
 import { buildProjectionContext, projectKinds, type ProjectionContext, type KindProjection } from './kind-projections.ts';
+import type { GrammarRule } from '../grammar.ts';
+import { loadGrammar } from '../grammar.ts';
 
 export interface EmitTypesConfig {
 	grammar: string;
@@ -35,6 +38,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 	const ctx = buildProjectionContext(modelMap);
 	const leafSet = new Set(leafKinds);
 
+	const grammarRules = loadGrammar(grammar).rules;
 	const nodeKinds = structNodes.map(n => n.kind);
 	const allKinds = [...nodeKinds, ...leafKinds];
 	const generatedTypes = new Set<string>();
@@ -68,7 +72,41 @@ export function emitTypes(config: EmitTypesConfig): string {
 		for (const entry of scalarEntries) lines.push(entry);
 	}
 	lines.push('};');
-	// NodeFromInput removed — FromInput types now use FromInputOf<T> (interface-derived)
+	lines.push('');
+
+	// LeafStringMap — narrowed string types for leaf kinds
+	// Values → literal unions, keyword tokens → literal, patterns → template literals where feasible
+	const leafValueMap = leafValuesOf(config.nodes);
+	const keywordKinds = keywordKindsOf(config.nodes);
+	const stringEntries: string[] = [];
+	for (const kind of leafKinds) {
+		const keyword = keywordKinds.get(kind);
+		if (keyword) {
+			// Single keyword value
+			stringEntries.push(`  ${kind}: ${JSON.stringify(keyword)};`);
+			continue;
+		}
+		const values = leafValueMap.get(kind);
+		if (values && values.length > 0) {
+			// Finite set of values → literal union
+			const literals = values.map(v => JSON.stringify(v)).join(' | ');
+			stringEntries.push(`  ${kind}: ${literals};`);
+			continue;
+		}
+		// Pattern-based: try to extract a useful template literal prefix
+		const pattern = extractLeafPattern(grammar, kind);
+		if (pattern) {
+			const templateLiteral = patternToTemplateLiteral(pattern);
+			if (templateLiteral) {
+				stringEntries.push(`  ${kind}: ${templateLiteral};`);
+			}
+		}
+		// No constraint → omitted, falls back to `string`
+	}
+	lines.push('/** Narrowed string types for leaf kinds used by FromInputOf. */');
+	lines.push('export type LeafStringMap = {');
+	for (const entry of stringEntries) lines.push(entry);
+	lines.push('};');
 	lines.push('');
 
 	// -----------------------------------------------------------------------
@@ -107,10 +145,25 @@ export function emitTypes(config: EmitTypesConfig): string {
 
 	// Branch + container nodes
 	lines.push('// Node types — concrete interfaces');
+	const variantNodes = new Map<string, string[]>(); // kind → variant type names
 	for (const node of structNodes) {
 		const typeName = toTypeName(node.kind);
 		generatedTypes.add(typeName);
-		emitConcreteInterface(lines, node, typeName, ctx, leafSet);
+		const variants = node.variants;
+
+		if (variants && variants.length > 1) {
+			// Per-variant interfaces + base type as union
+			const variantTypeNames: string[] = [];
+			for (const v of variants) {
+				const vTypeName = `${typeName}${toTypeName(v.name)}`;
+				variantTypeNames.push(vTypeName);
+				emitVariantInterface(lines, node, v, vTypeName, ctx, leafSet);
+			}
+			lines.push(`export type ${typeName} = ${variantTypeNames.join(' | ')};`);
+			variantNodes.set(node.kind, variantTypeNames);
+		} else {
+			emitConcreteInterface(lines, node, typeName, ctx, leafSet);
+		}
 	}
 	lines.push('');
 
@@ -128,9 +181,32 @@ export function emitTypes(config: EmitTypesConfig): string {
 	// -----------------------------------------------------------------------
 	// 4. Config/Tree/FromInput — derived from concrete interfaces
 	// -----------------------------------------------------------------------
+	const structNodeMap = new Map(structNodes.map(n => [n.kind, n]));
 	lines.push('// Config types — derived from concrete interfaces');
 	for (const kind of nodeKinds) {
-		lines.push(`export type ${toTypeName(kind)}Config = ConfigOf<${toTypeName(kind)}>;`);
+		const typeName = toTypeName(kind);
+		const vTypeNames = variantNodes.get(kind);
+
+		if (vTypeNames) {
+			// Per-variant Config types + base as union
+			const node = structNodeMap.get(kind)!;
+			const variants = node.variants!;
+			const configNames: string[] = [];
+			for (let i = 0; i < variants.length; i++) {
+				const vName = vTypeNames[i]!;
+				lines.push(`export type ${vName}Config = ConfigOf<${vName}>;`);
+				configNames.push(`${vName}Config`);
+			}
+			lines.push(`export type ${typeName}Config = ${configNames.join(' | ')};`);
+		} else {
+			const node = modelMap.get(kind)!;
+			const variantSets = variantFieldSetsFromModel(node) ?? computeVariantFieldSets(node, grammarRules);
+			if (variantSets) {
+				emitVariantConfigType(lines, kind, node, variantSets, ctx);
+			} else {
+				lines.push(`export type ${typeName}Config = ConfigOf<${typeName}>;`);
+			}
+		}
 	}
 	lines.push('');
 
@@ -146,9 +222,47 @@ export function emitTypes(config: EmitTypesConfig): string {
 	}
 	lines.push('');
 
-	lines.push('// FromInput types — derived from concrete interfaces');
+	lines.push('// FromInput types — derived from concrete interfaces, with scalar widenings');
+	// For children-only nodes (no fields, single child slot), FromInput is the child element type
+	// so the from function can use rest params: `...children: TFromInput[]`
 	for (const kind of nodeKinds) {
-		lines.push(`export type ${toTypeName(kind)}FromInput = FromInputOf<${toTypeName(kind)}>;`);
+		const sNode = structNodeMap.get(kind);
+		const sFields = sNode ? fieldsOf(sNode) : [];
+		const isChildrenOnly = sNode && sFields.length === 0 && sNode.children != null && !isTupleChildren(sNode.children);
+		if (isChildrenOnly) {
+			const slot = Array.isArray(sNode.children!) ? sNode.children![0]! : sNode.children!;
+			const slotProj = projectKinds(slot.kinds, ctx);
+			if (slotProj.collapsedTypes.length > 0) {
+				// Element type: each child type + its FromInput variant (widened for .from())
+				const childTypes: string[] = [];
+				for (const t of slotProj.collapsedTypes) {
+					const tn = toTypeName(t);
+					childTypes.push(tn);
+					// Add widened variant: leaves accept strings/scalars, branches accept FromInput
+					if (leafSet.has(t)) {
+						childTypes.push('string');
+					} else if (structNodeMap.has(t)) {
+						childTypes.push(`${tn}FromInput`);
+					}
+					// Supertypes are already expanded into their concrete types
+				}
+				const deduped = [...new Set(childTypes)];
+				lines.push(`export type ${toTypeName(kind)}FromInput = ${deduped.join(' | ')};`);
+				continue;
+			}
+		}
+		const vTypeNames = variantNodes.get(kind);
+		if (vTypeNames) {
+			// Per-variant FromInput types + base as union
+			const fromInputNames: string[] = [];
+			for (const vtn of vTypeNames) {
+				lines.push(`export type ${vtn}FromInput = FromInputOf<${vtn}, LeafScalarMap, LeafStringMap>;`);
+				fromInputNames.push(`${vtn}FromInput`);
+			}
+			lines.push(`export type ${toTypeName(kind)}FromInput = ${fromInputNames.join(' | ')};`);
+		} else {
+			lines.push(`export type ${toTypeName(kind)}FromInput = FromInputOf<${toTypeName(kind)}, LeafScalarMap, LeafStringMap>;`);
+		}
 	}
 	lines.push('');
 
@@ -225,6 +339,31 @@ export function emitTypes(config: EmitTypesConfig): string {
 	}
 
 	// -----------------------------------------------------------------------
+	// 5b. Hidden rule unions (non-supertype hidden rules used as child slot kinds)
+	// -----------------------------------------------------------------------
+	const hiddenEntries = hiddenEntriesOf(config.nodes);
+	if (hiddenEntries.length > 0) {
+		lines.push('// Hidden rule unions (grammar-internal groupings)');
+		for (const h of hiddenEntries) {
+			const cleanName = h.name.replace(/^_/, '');
+			const typeName = toTypeName(cleanName);
+			if (generatedTypes.has(typeName)) continue;
+			generatedTypes.add(typeName);
+
+			const members = h.subtypes
+				.map(sub => toTypeName(sub))
+				.filter(t => generatedTypes.has(t));
+
+			if (members.length > 0) {
+				lines.push(`export type ${typeName} =`);
+				for (const m of members) lines.push(`  | ${m}`);
+				lines.push(';');
+				lines.push('');
+			}
+		}
+	}
+
+	// -----------------------------------------------------------------------
 	// 6. Discriminated union of all node types
 	// -----------------------------------------------------------------------
 	lines.push(`export type ${grammarPrefix}Node =`);
@@ -235,7 +374,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 	lines.push('');
 
 	// -----------------------------------------------------------------------
-	// 7. KindMap — kind string → concrete interface
+	// 7. KindMap, ConfigMap, FromInputMap — kind string → type mappings
 	// -----------------------------------------------------------------------
 	lines.push('/** Maps every kind string to its concrete interface. */');
 	lines.push('export interface KindMap {');
@@ -244,6 +383,36 @@ export function emitTypes(config: EmitTypesConfig): string {
 		if (generatedTypes.has(typeName)) {
 			lines.push(`  '${kind}': ${typeName};`);
 		}
+	}
+	lines.push('}');
+	lines.push('');
+
+	// VariantMap — kind → { variantName: VariantInterface } for variant-level type access
+	if (variantNodes.size > 0) {
+		lines.push('/** Maps variant node kinds to their per-variant interfaces. */');
+		lines.push('export interface VariantMap {');
+		for (const [kind, vTypeNames] of variantNodes) {
+			const node = structNodeMap.get(kind)!;
+			const variants = node.variants!;
+			const entries = variants.map((v, i) => `${v.name}: ${vTypeNames[i]!}`);
+			lines.push(`  '${kind}': { ${entries.join('; ')} };`);
+		}
+		lines.push('}');
+		lines.push('');
+	}
+
+	lines.push('/** Maps every branch kind string to its Config (factory input) type. */');
+	lines.push('export interface ConfigMap {');
+	for (const kind of nodeKinds) {
+		lines.push(`  '${kind}': ${toTypeName(kind)}Config;`);
+	}
+	lines.push('}');
+	lines.push('');
+
+	lines.push('/** Maps every branch kind string to its FromInput (ergonomic .from() input) type. */');
+	lines.push('export interface FromInputMap {');
+	for (const kind of nodeKinds) {
+		lines.push(`  '${kind}': ${toTypeName(kind)}FromInput;`);
 	}
 	lines.push('}');
 	lines.push('');
@@ -268,6 +437,32 @@ function escapeString(s: string): string {
 	return s.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
 }
 
+/**
+ * Convert a leaf regex pattern to a TypeScript template literal type where feasible.
+ * Returns the template literal string (e.g. `` `$${string}` ``) or undefined.
+ *
+ * Handles patterns with:
+ * - Fixed prefixes (e.g. `\$` → `$`)
+ * - Fixed suffixes (e.g. quotes)
+ * - Simple character classes followed by wildcards
+ */
+function patternToTemplateLiteral(pattern: string): string | undefined {
+	// Pattern: $[identifier] → `$${string}`
+	if (/^\\\$/.test(pattern)) return '`$${string}`';
+
+	// Pattern: starts with a quote char → char/string literal
+	// e.g. b?'...' → `'${string}'` | `b'${string}'`
+	if (/^b\?'/.test(pattern)) return "`'${string}'` | `b'${string}'`";
+	if (/^'/.test(pattern)) return "`'${string}'`";
+	if (/^"/.test(pattern)) return '`"${string}"`';
+
+	// Pattern: #!... (shebang)
+	if (/^#!/.test(pattern)) return '`#!${string}`';
+
+	// Too complex or no clear prefix
+	return undefined;
+}
+
 function emitConcreteInterface(
 	lines: string[],
 	node: ReturnType<typeof structuralNodes>[number],
@@ -282,31 +477,114 @@ function emitConcreteInterface(
 	lines.push(`export interface ${typeName} {`);
 	lines.push(`  readonly type: '${node.kind}';`);
 
-	// Fields block — use raw grammar field names to match factory config keys
+	// Fields block — raw snake_case grammar field names (matching runtime)
 	if (hasFields) {
 		lines.push('  readonly fields: {');
 		for (const f of fields) {
 			const proj = projectKinds(f.kinds, ctx);
 			const typeExpr = fieldTypeExpr(proj, leafSet);
 			const opt = f.required ? '' : '?';
-			const key = f.propertyName ?? toFieldName(f.name);
 			if (f.multiple) {
-				lines.push(`    readonly ${key}${opt}: readonly (${typeExpr})[];`);
+				lines.push(`    readonly ${f.name}${opt}: readonly (${typeExpr})[];`);
 			} else {
-				lines.push(`    readonly ${key}${opt}: ${typeExpr};`);
+				lines.push(`    readonly ${f.name}${opt}: ${typeExpr};`);
 			}
 		}
 		lines.push('  };');
 	}
 
-	// Hoisted child slots
+	// Hoisted child slots (skip slots already covered by override fields)
 	if (hasChildren) {
+		const fieldKeys = new Set(fields.map(f => f.name));
+		const fieldCoveredKinds = new Set<string>();
+		for (const f of fields) for (const k of f.kinds) fieldCoveredKinds.add(k.kind);
 		const slotNames = childSlotNames(node.children!, ctx);
 		eachChildSlot(node.children!, (slot, i) => {
 			const name = slotNames[i]!;
+			if (fieldKeys.has(name)) return; // already emitted as field
+			// Skip if all children kinds are covered by fields (override promoted)
+			if (slot.kinds.every(k => fieldCoveredKinds.has(k.kind))) return;
 			const slotProj = projectKinds(slot.kinds, ctx);
 			const slotType = slotProj.collapsedTypes.join(' | ');
 			if (slotType === '') return; // skip empty projections
+			const opt = slot.required ? '' : '?';
+			if (slot.multiple) {
+				lines.push(`  readonly ${name}${opt}: readonly (${slotType})[];`);
+			} else {
+				lines.push(`  readonly ${name}${opt}: ${slotType};`);
+			}
+		});
+	}
+
+	lines.push('}');
+}
+
+/**
+ * Emit a per-variant interface with only the fields present in that variant.
+ * Same structure as emitConcreteInterface but filtered by variant.fields.
+ */
+function emitVariantInterface(
+	lines: string[],
+	node: ReturnType<typeof structuralNodes>[number],
+	variant: import('../node-model.ts').StructuralVariant,
+	typeName: string,
+	ctx: ProjectionContext,
+	leafSet: Set<string>,
+): void {
+	const allFields = fieldsOf(node);
+	const variantFieldNames = new Set(variant.fields.keys());
+	const fields = allFields.filter(f => variantFieldNames.has(f.name));
+	const hasFields = fields.length > 0;
+	const hasChildren = node.children != null;
+
+	lines.push(`export interface ${typeName} {`);
+	lines.push(`  readonly type: '${node.kind}';`);
+
+	if (hasFields) {
+		lines.push('  readonly fields: {');
+		for (const f of fields) {
+			const variantField = variant.fields.get(f.name);
+			// Use variant-specific content kinds when available (narrower than global union)
+			let typeExpr: string;
+			if (variantField?.contentKinds && variantField.contentKinds.length > 0) {
+				// Filter the field's hydrated kinds to only those in this variant's content
+				const variantKindSet = new Set(variantField.contentKinds);
+				const narrowed = f.kinds.filter(k => variantKindSet.has(k.kind));
+				if (narrowed.length > 0) {
+					const narrowedProj = projectKinds(narrowed, ctx);
+					typeExpr = fieldTypeExpr(narrowedProj, leafSet);
+				} else {
+					// Fallback to global types if narrowing produced nothing
+					const proj = projectKinds(f.kinds, ctx);
+					typeExpr = fieldTypeExpr(proj, leafSet);
+				}
+			} else {
+				const proj = projectKinds(f.kinds, ctx);
+				typeExpr = fieldTypeExpr(proj, leafSet);
+			}
+			const opt = f.required ? '' : '?';
+			if (f.multiple) {
+				lines.push(`    readonly ${f.name}${opt}: readonly (${typeExpr})[];`);
+			} else {
+				lines.push(`    readonly ${f.name}${opt}: ${typeExpr};`);
+			}
+		}
+		lines.push('  };');
+	}
+
+	// Hoisted child slots (same logic as emitConcreteInterface)
+	if (hasChildren) {
+		const fieldKeys = new Set(fields.map(f => f.name));
+		const fieldCoveredKinds = new Set<string>();
+		for (const f of fields) for (const k of f.kinds) fieldCoveredKinds.add(k.kind);
+		const slotNames = childSlotNames(node.children!, ctx);
+		eachChildSlot(node.children!, (slot, i) => {
+			const name = slotNames[i]!;
+			if (fieldKeys.has(name)) return;
+			if (slot.kinds.every(k => fieldCoveredKinds.has(k.kind))) return;
+			const slotProj = projectKinds(slot.kinds, ctx);
+			const slotType = slotProj.collapsedTypes.join(' | ');
+			if (slotType === '') return;
 			const opt = slot.required ? '' : '?';
 			if (slot.multiple) {
 				lines.push(`  readonly ${name}${opt}: readonly (${slotType})[];`);
@@ -342,4 +620,205 @@ function emitLeafInterface(
 		lines.push('  readonly text: string;');
 		lines.push('}');
 	}
+}
+
+// ---------------------------------------------------------------------------
+// Variant config types — union config for top-level CHOICE nodes
+// ---------------------------------------------------------------------------
+
+/**
+ * Detect a top-level non-optional CHOICE and return its branches.
+ * Unwraps PREC wrappers. Returns null if the rule is not a top-level
+ * CHOICE, or if any BLANK member exists (optionality, not variants).
+ */
+function topLevelChoice(rule: GrammarRule): GrammarRule[] | null {
+	let r = rule;
+	while (r.type === 'PREC' || r.type === 'PREC_LEFT' || r.type === 'PREC_RIGHT' || r.type === 'PREC_DYNAMIC') {
+		r = r.content;
+	}
+	if (r.type !== 'CHOICE') return null;
+	if (r.members.some(m => m.type === 'BLANK')) return null;
+	return r.members.length > 1 ? r.members : null;
+}
+
+/** Walk a grammar rule tree, following hidden rule references to collect inlined content. */
+function walkWithInlining(
+	rule: GrammarRule,
+	grammarRules: Record<string, GrammarRule>,
+	fn: (r: GrammarRule) => void,
+	visited?: Set<string>,
+): void {
+	fn(rule);
+
+	// Follow hidden rules to find FIELDs attributed to the parent
+	if (rule.type === 'SYMBOL' && rule.name.startsWith('_') && grammarRules[rule.name]) {
+		const v = visited ?? new Set<string>();
+		if (!v.has(rule.name)) {
+			v.add(rule.name);
+			walkWithInlining(grammarRules[rule.name]!, grammarRules, fn, v);
+		}
+	}
+
+	if ('members' in rule && Array.isArray((rule as any).members)) {
+		for (const m of (rule as any).members as GrammarRule[]) {
+			walkWithInlining(m, grammarRules, fn, visited);
+		}
+	}
+	if ('content' in rule && (rule as any).content) {
+		walkWithInlining((rule as any).content as GrammarRule, grammarRules, fn, visited);
+	}
+}
+
+/** Collect field names (grammar FIELDs + override matches) present in a grammar rule branch. */
+function collectBranchFieldNames(
+	branch: GrammarRule,
+	overrideFields: readonly HydratedFieldModel[],
+	grammarRules: Record<string, GrammarRule>,
+): Set<string> {
+	const fieldNames = new Set<string>();
+	const symbolNames = new Set<string>();
+	const stringValues = new Set<string>();
+
+	walkWithInlining(branch, grammarRules, r => {
+		if (r.type === 'FIELD') fieldNames.add(r.name);
+		if (r.type === 'SYMBOL') symbolNames.add(r.name);
+		if (r.type === 'STRING') stringValues.add(r.value);
+	});
+
+	// Match override fields by their kinds or anonymous token values
+	for (const field of overrideFields) {
+		if (field.kinds.some(k => symbolNames.has(k.kind))) {
+			fieldNames.add(field.name);
+		}
+		if (field.overrideValues?.some(v => stringValues.has(v))) {
+			fieldNames.add(field.name);
+		}
+	}
+
+	return fieldNames;
+}
+
+/**
+ * Derive variant field sets from pre-computed model variants (factoring.ts).
+ * Returns distinct field-name sets per variant, or null if no variants
+ * or all variants have the same fields.
+ */
+function variantFieldSetsFromModel(node: HydratedNodeModel): Set<string>[] | null {
+	if (node.modelType !== 'branch' && node.modelType !== 'container') return null;
+	const variants = (node as any).variants as import('../node-model.ts').StructuralVariant[] | undefined;
+	if (!variants || variants.length <= 1) return null;
+
+	const sets = variants.map(v => new Set(v.fields.keys()));
+
+	// Check if all sets are equal — if so, no union needed
+	const first = [...sets[0]!].sort().join(',');
+	if (sets.every(s => [...s].sort().join(',') === first)) return null;
+
+	return sets;
+}
+
+/**
+ * Compute variant field sets for a node with top-level CHOICE (legacy grammar re-walk).
+ * Returns distinct field-name sets per branch, or null if no variants
+ * or all branches have the same fields.
+ */
+function computeVariantFieldSets(
+	node: HydratedNodeModel,
+	grammarRules: Record<string, GrammarRule>,
+): Set<string>[] | null {
+	if (node.modelType !== 'branch') return null;
+
+	const rawRule = node.rule?.rule;
+	if (!rawRule) return null;
+
+	const branches = topLevelChoice(rawRule);
+	if (!branches) return null;
+
+	const overrideFields = node.fields.filter(f => f.override);
+	const sets = branches.map(b => collectBranchFieldNames(b, overrideFields, grammarRules));
+
+	// Check if all sets are equal — if so, no union needed
+	const first = [...sets[0]!].sort().join(',');
+	if (sets.every(s => [...s].sort().join(',') === first)) return null;
+
+	return sets;
+}
+
+/** Emit a union config type using Pick<ConfigOf<T>, ...> per variant. */
+function emitVariantConfigType(
+	lines: string[],
+	kind: string,
+	node: HydratedNodeModel,
+	variantSets: Set<string>[],
+	ctx: ProjectionContext,
+): void {
+	const typeName = toTypeName(kind);
+	const fields = node.modelType === 'branch' ? node.fields : [];
+
+	// Map raw field names to ConfigOf property names (CamelCase, since ConfigOf uses CamelCase keys)
+	const rawToProp = new Map<string, string>();
+	for (const f of fields) {
+		rawToProp.set(f.name, f.propertyName ?? toFieldName(f.name));
+	}
+
+	// Get child slot property names (included in all variants).
+	// Only include slots that actually surface as interface properties —
+	// children fully promoted to fields via overrides don't get a children prop.
+	const childSlotProps: string[] = [];
+	if (node.modelType === 'branch' && node.children) {
+		const fieldKeys = new Set(fields.map(f => f.propertyName ?? toFieldName(f.name)));
+		// Collect all child kinds covered by any field (tree-sitter or override)
+		const fieldCoveredKinds = new Set<string>();
+		for (const f of fields) {
+			for (const k of f.kinds) fieldCoveredKinds.add(k.kind);
+		}
+		const slotNames = childSlotNames(node.children, ctx);
+		eachChildSlot(node.children, (slot, i) => {
+			const name = slotNames[i]!;
+			if (fieldKeys.has(name)) return; // already a named field
+			// Check if all kinds in this slot are covered by override fields
+			const allCovered = slot.kinds.every(k => fieldCoveredKinds.has(k.kind));
+			if (!allCovered) childSlotProps.push(name);
+		});
+	}
+
+	// Find fields not traced to any branch (e.g., from hidden rules with empty types).
+	// These are included in all variants since they're structurally present everywhere.
+	const allBranchFields = new Set<string>();
+	for (const set of variantSets) {
+		for (const name of set) allBranchFields.add(name);
+	}
+	const untrackedProps = fields
+		.filter(f => !allBranchFields.has(f.name))
+		.map(f => f.propertyName ?? toFieldName(f.name));
+
+	// Deduplicate variant property sets
+	const uniqueVariants: string[][] = [];
+	const seen = new Set<string>();
+	for (const rawFieldSet of variantSets) {
+		const props = [...rawFieldSet]
+			.filter(name => rawToProp.has(name))
+			.map(name => rawToProp.get(name)!)
+			.concat(childSlotProps)
+			.concat(untrackedProps)
+			.sort();
+		const key = props.join(',');
+		if (!seen.has(key) && props.length > 0) {
+			seen.add(key);
+			uniqueVariants.push(props);
+		}
+	}
+
+	if (uniqueVariants.length <= 1) {
+		// Collapsed to single variant — use normal ConfigOf
+		lines.push(`export type ${typeName}Config = ConfigOf<${typeName}>;`);
+		return;
+	}
+
+	lines.push(`export type ${typeName}Config =`);
+	for (const props of uniqueVariants) {
+		const pickKeys = props.map(p => `'${p}'`).join(' | ');
+		lines.push(`  | Pick<ConfigOf<${typeName}>, ${pickKeys}>`);
+	}
+	lines.push(';');
 }

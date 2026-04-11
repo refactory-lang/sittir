@@ -1,8 +1,8 @@
 ---
 description: Create a minor enhancement workflow with condensed single-document planning.
 scripts:
-  sh: .specify/extensions/workflows/scripts/bash/create-enhance.sh --json
-  ps: .specify/extensions/workflows/scripts/powershell/create-enhance.ps1 -Json
+  sh: .specify/scripts/bash/create-enhance.sh --json
+  ps: .specify/scripts/powershell/create-enhance.ps1 -Json
 handoffs:
 - label: Implement Enhancement
   agent: speckit.implement

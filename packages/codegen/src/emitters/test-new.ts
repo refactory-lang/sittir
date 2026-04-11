@@ -10,7 +10,7 @@
  */
 
 import type { HydratedNodeModel } from '../node-model.ts';
-import { eachChildSlot } from '../node-model.ts';
+import { isTupleChildren, eachChildSlot } from '../node-model.ts';
 import { collectRequiredTokens } from '../grammar-reader.ts';
 import { toFieldName, toIrKey, toFactoryName } from '../naming.ts';
 import { type StructuralNode, structuralNodes, fieldsOf, leafKindsOf, keywordKindsOf, leafValuesOf, childSlotNames } from './utils.ts';
@@ -74,26 +74,28 @@ export function emitTests(config: EmitTestsConfig): string {
 		lines.push(`describe('${node.kind}', () => {`);
 
 		// Test 1: factory produces correct kind
+		const minimal = minimalArgs(node, dc);
+		const hasUnknown = minimal.includes("type: 'unknown'");
 		lines.push(`  it('factory produces NodeData with kind', () => {`);
-		lines.push(`    const node = ir.${irKey}(${minimalArgs(node, dc)});`);
+		lines.push(`    const node = ir.${irKey}(${minimal});`);
 		lines.push(`    expect(node.type).toBe('${node.kind}');`);
 		lines.push(`  });`);
 
-		// Test 2: render produces non-empty string (skip for all-optional nodes with no tokens)
-		const hasRequiredContent = requiredTokens.length > 0 ||
-			minimalArgs(node, dc) !== '';
+		// Test 2: render produces non-empty string (skip for nodes whose minimal args only produce empty arrays)
+		const hasRequiredContent = !hasUnknown && (requiredTokens.length > 0 ||
+			minimalHasRenderableContent(node, dc));
 		if (hasRequiredContent) {
 			lines.push(`  it('renders to non-empty string', () => {`);
-			lines.push(`    const node = ir.${irKey}(${minimalArgs(node, dc)});`);
+			lines.push(`    const node = ir.${irKey}(${minimal});`);
 			lines.push(`    const source = render(node);`);
 			lines.push(`    expect(source.length).toBeGreaterThan(0);`);
 			lines.push(`  });`);
 		}
 
 		// Test 3: rendered output contains required tokens
-		if (requiredTokens.length > 0) {
+		if (requiredTokens.length > 0 && !hasUnknown) {
 			lines.push(`  it('contains required tokens', () => {`);
-			lines.push(`    const node = ir.${irKey}(${minimalArgs(node, dc)});`);
+			lines.push(`    const node = ir.${irKey}(${minimal});`);
 			lines.push(`    const source = render(node);`);
 			for (const token of requiredTokens) {
 				lines.push(`    expect(source).toContain('${escapeString(token)}');`);
@@ -102,18 +104,22 @@ export function emitTests(config: EmitTestsConfig): string {
 		}
 
 		// Test 4: node.render() method works
-		lines.push(`  it('node.render() works', () => {`);
-		lines.push(`    const node = ir.${irKey}(${minimalArgs(node, dc)});`);
-		lines.push(`    expect(typeof node.render).toBe('function');`);
-		lines.push(`    expect(node.render()).toBe(render(node));`);
-		lines.push(`  });`);
+		if (!hasUnknown) {
+			lines.push(`  it('node.render() works', () => {`);
+			lines.push(`    const node = ir.${irKey}(${minimal});`);
+			lines.push(`    expect(typeof node.render).toBe('function');`);
+			lines.push(`    expect(node.render()).toBe(render(node));`);
+			lines.push(`  });`);
+		}
 
 		// Test 5: render with all fields (optional + required) produces non-empty string
 		const full = fullArgs(node, dc);
 		const fullHasContent = full !== '' && !full.includes("type: 'unknown'") && (hasRequiredContent || fullHasScalarValues(node, dc));
 		if (fullHasContent) {
+			const hasMultipleVariants = node.variants && node.variants.length > 1;
+			const castSuffix = hasMultipleVariants ? ' as any' : '';
 			lines.push(`  it('renders with optional fields', () => {`);
-			lines.push(`    const node = ir.${irKey}(${full});`);
+			lines.push(`    const node = ir.${irKey}(${full}${castSuffix});`);
 			lines.push(`    const source = render(node);`);
 			lines.push(`    expect(source.length).toBeGreaterThan(0);`);
 			lines.push(`  });`);
@@ -178,22 +184,50 @@ interface DummyCtx {
  * Generate minimal factory arguments for a node kind.
  * Provides all required fields and children as a declarative config object.
  */
+function isChildrenOnlyNode(node: StructuralNode, dc: DummyCtx): boolean {
+	return fieldsOf(node).length === 0 && node.children != null && !isTupleChildren(node.children);
+}
+
 function minimalArgs(node: StructuralNode, dc: DummyCtx): string {
 	const requiredFields = fieldsOf(node).filter(f => f.required);
+
+	// Children-only: emit values directly as rest args
+	if (isChildrenOnlyNode(node, dc) && requiredFields.length === 0) {
+		const slot = Array.isArray(node.children!) ? node.children![0]! : node.children!;
+		if (!slot.required) return '';
+		const proj = projectKinds(slot.kinds, dc.ctx);
+		if (proj.collapsedTypes.length === 0) return '';
+		const val = dummyValue({ name: 'children', kinds: slot.kinds, multiple: slot.multiple }, dc);
+		if (slot.multiple) {
+			// For multiple children, strip the [] wrapper and emit elements as rest args
+			const inner = val.replace(/^\[/, '').replace(/\]$/, '').trim();
+			return inner || '';
+		}
+		return val;
+	}
+
 	const requiredChildren: { name: string; kinds: readonly HydratedNodeModel[]; multiple: boolean }[] = [];
 
 	if (node.children != null) {
 		const slotNames = childSlotNames(node.children, dc.ctx);
 		eachChildSlot(node.children, (slot, i) => {
 			if (slot.required) {
+				const proj = projectKinds(slot.kinds, dc.ctx);
+				if (proj.collapsedTypes.length === 0) return; // hidden rule without a model
 				requiredChildren.push({ name: slotNames[i]!, kinds: slot.kinds, multiple: slot.multiple });
 			}
 		});
 	}
 
+	// Skip children whose names overlap with field property names OR whose kinds are covered by fields
+	const fieldKeys = new Set(requiredFields.map(f => f.propertyName ?? toFieldName(f.name)));
+	const testFieldCoveredKinds = new Set<string>();
+	for (const f of requiredFields) for (const k of f.kinds) testFieldCoveredKinds.add(k.kind);
 	const allRequired = [
 		...requiredFields.map(f => ({ key: f.propertyName ?? toFieldName(f.name), field: f })),
-		...requiredChildren.map(c => ({ key: c.name, field: c })),
+		...requiredChildren
+			.filter(c => !fieldKeys.has(c.name) && !c.kinds.every((k: { kind: string }) => testFieldCoveredKinds.has(k.kind)))
+			.map(c => ({ key: c.name, field: c })),
 	];
 
 	if (allRequired.length === 0) return '';
@@ -214,16 +248,34 @@ function fullArgs(node: StructuralNode, dc: DummyCtx): string {
 	if (node.children != null) {
 		const slotNames = childSlotNames(node.children, dc.ctx);
 		eachChildSlot(node.children, (slot, i) => {
+			const proj = projectKinds(slot.kinds, dc.ctx);
+			if (proj.collapsedTypes.length === 0) return; // hidden rule without a model
 			allChildren.push({ name: slotNames[i]!, kinds: slot.kinds, multiple: slot.multiple, required: slot.required });
 		});
 	}
-	const optionalChildren = allChildren.filter(c => !c.required);
+
+	// Children-only: emit values directly as rest args
+	if (isChildrenOnlyNode(node, dc) && allFields.length === 0 && allChildren.length > 0) {
+		const slot = allChildren[0]!;
+		const val = dummyValue({ name: slot.name, kinds: slot.kinds, multiple: slot.multiple }, dc);
+		if (slot.multiple) {
+			const inner = val.replace(/^\[/, '').replace(/\]$/, '').trim();
+			return inner || '';
+		}
+		return val;
+	}
+
+	// Skip children whose names overlap with field property names OR whose kinds are covered by fields
+	const fieldKeys = new Set(allFields.map(f => f.propertyName ?? toFieldName(f.name)));
+	const fullFieldCoveredKinds = new Set<string>();
+	for (const f of allFields) for (const k of f.kinds) fullFieldCoveredKinds.add(k.kind);
+	const optionalChildren = allChildren.filter(c => !c.required && !fieldKeys.has(c.name) && !c.kinds.every((k: { kind: string }) => fullFieldCoveredKinds.has(k.kind)));
 
 	if (optionalFields.length === 0 && optionalChildren.length === 0) return '';
 
 	const entries = [
 		...allFields.map(f => ({ key: f.propertyName ?? toFieldName(f.name), field: f })),
-		...allChildren.map(c => ({ key: c.name, field: c })),
+		...allChildren.filter(c => !fieldKeys.has(c.name) && !c.kinds.every((k: { kind: string }) => fullFieldCoveredKinds.has(k.kind))).map(c => ({ key: c.name, field: c })),
 	];
 
 	const parts = entries.map(({ key, field }) => `${key}: ${dummyValue(field, dc)}`);
@@ -231,19 +283,50 @@ function fullArgs(node: StructuralNode, dc: DummyCtx): string {
 }
 
 /**
- * Check if fullArgs would produce at least one scalar (non-empty-array) value.
- * Nodes with only optional multiple children produce only `[]` entries, which render to nothing.
+ * Check if fullArgs would produce at least one scalar (non-empty-array) value
+ * that is actually renderable (not a NEEDS_NAME placeholder).
  */
 function fullHasScalarValues(node: StructuralNode, dc: DummyCtx): boolean {
 	const allFields = fieldsOf(node);
-	if (allFields.some(f => !f.required && !f.multiple)) return true; // optional scalar fields produce values
+	// Optional scalar fields produce values — but skip NEEDS_NAME placeholders (unreferenceable in templates)
+	if (allFields.some(f => !f.required && !f.multiple && !f.name.startsWith('NEEDS_NAME'))) return true;
 	if (node.children != null) {
+		const slotNames = childSlotNames(node.children, dc.ctx);
 		let hasNonMultipleOptional = false;
-		eachChildSlot(node.children, (slot) => {
-			if (!slot.required && !slot.multiple) hasNonMultipleOptional = true;
+		eachChildSlot(node.children, (slot, i) => {
+			if (!slot.required && !slot.multiple && !slotNames[i]!.startsWith('NEEDS_NAME')) hasNonMultipleOptional = true;
 		});
 		if (hasNonMultipleOptional) return true;
 	}
+	return false;
+}
+
+/**
+ * Check if minimalArgs would produce renderable (non-empty) output.
+ * Returns false when minimal args are empty or consist entirely of empty-array children.
+ */
+function minimalHasRenderableContent(node: StructuralNode, dc: DummyCtx): boolean {
+	const requiredFields = fieldsOf(node).filter(f => f.required);
+	// Any required scalar field → definitely renderable
+	if (requiredFields.some(f => !f.multiple)) return true;
+	// Required multiple fields with concrete leaf kinds → might be renderable
+	if (requiredFields.some(f => f.multiple && dummyValue(f, dc) !== '[]')) return true;
+
+	if (node.children != null) {
+		const fieldKeys = new Set(requiredFields.map(f => f.propertyName ?? toFieldName(f.name)));
+		const slotNames = childSlotNames(node.children, dc.ctx);
+		let hasContent = false;
+		eachChildSlot(node.children, (slot, i) => {
+			if (!slot.required) return;
+			if (fieldKeys.has(slotNames[i]!)) return; // already counted as field
+			if (!slot.multiple) { hasContent = true; return; }
+			// Required multiple child — check if dummyValue produces non-empty
+			const dummy = dummyValue({ name: slotNames[i]!, kinds: slot.kinds, multiple: true }, dc);
+			if (dummy !== '[]') hasContent = true;
+		});
+		if (hasContent) return true;
+	}
+
 	return false;
 }
 

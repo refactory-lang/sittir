@@ -18,9 +18,17 @@
  */
 export interface AnyNodeData {
 	type: string;
+	/** Variant subtype name — set by factory, absent on readNode output. */
+	variant?: string;
 	fields?: Record<string, unknown>;
 	children?: readonly unknown[];
 	text?: string;
+	/** Byte offset span in source. */
+	span?: { start: number; end: number };
+	/** Tree-sitter node id for O(1) drill-in via tree.nodeById(). */
+	nodeId?: number;
+	/** Whether this is a named (vs anonymous) node in the grammar. */
+	named: boolean;
 }
 
 // ---------------------------------------------------------------------------
@@ -48,11 +56,17 @@ export interface AnyNodeData {
  */
 export type TemplateRule =
 	| string
+	| string[]
 	| TemplateRuleObject;
 
 export interface TemplateRuleObject {
-	template: string;
-	joinBy?: string | Record<string, string>;
+	/** Standard template — mutually exclusive with `variants`. */
+	template?: string | string[];
+	/** Named subtype templates — mutually exclusive with `template`. */
+	variants?: Record<string, string>;
+	/** Discriminator tokens for detecting variant from anonymous children. */
+	detect?: Record<string, string>;
+	joinBy?: string;
 	[clauseKey: `${string}_clause`]: string;
 }
 
@@ -152,6 +166,7 @@ export interface AnyTreeNode extends ReplaceTarget {
 	id(): number;
 	field(name: string): AnyTreeNode | null;
 	fieldChildren(name: string): AnyTreeNode[];
+	fieldNameForChild?(index: number): string | null;
 	text(): string;
 	children(): AnyTreeNode[];
 	isNamed(): boolean;

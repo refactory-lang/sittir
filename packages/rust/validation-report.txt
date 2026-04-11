@@ -1,0 +1,94 @@
+Generating rust IR...
+[overrides] assignment_expression: needs synthetic names — same-kind positional children: _expression
+[overrides] compound_assignment_expr: needs synthetic names — same-kind positional children: _expression
+[overrides] index_expression: needs synthetic names — same-kind positional children: _expression
+[overrides] qualified_type: needs synthetic names — same-kind positional children: _type
+[overrides] token_tree: discriminator token detected — CHOICE branches identical after token removal
+[overrides] token_tree_pattern: discriminator token detected — CHOICE branches identical after token removal
+
+@sittir/rust: 137 kinds
+  v 137/137 variable resolution
+  v 137/137 field coverage
+  v 64/64 override consistency (64 nodes with overrides)
+  v 137/137 template structure
+  v 5/5 variant subtypes
+
+  Warnings (3):
+    function_modifiers: [override-consistency] override 'default' not referenced in template
+    function_modifiers: [override-consistency] override 'const' not referenced in template
+    function_modifiers: [override-consistency] override 'unsafe' not referenced in template
+
+Running round-trip validation...
+  x 101/149 round-trip (2 skipped, 46 errors)
+    x Async function [try_expression]: re-parse error: "?"
+    x Await expression [try_expression]: re-parse error: "?"
+    x Function declarations [array_expression]: re-parse error: "[ 1 2]"
+    x Impl with lifetimes first [bounded_type]: re-parse error: "'a+"
+    x Functions with precise capture syntax [bounded_type]: re-parse error: "use<'_, T>+"
+    x Functions with empty precise capture syntax [bounded_type]: re-parse error: "use<>+"
+    x Let-else Statements [try_expression]: re-parse error: "?"
+    x Structs [struct_item]: re-parse error: "struct Proton"
+    x Functions with destructured parameters [reference_pattern]: re-parse error: "&"
+    x Type aliases [bounded_type]: re-parse error: "+"
+    x Attributes [struct_item]: re-parse error: "struct Baz"
+    x Attributes and Expressions [array_expression]: re-parse error: "[#[hello] 2 7 8]"
+    x Trait impls [unary_expression]: re-parse error: "*"
+    x Impl dyn with parentheses [bounded_type]: re-parse error: "+"
+    x Trait impl signature [impl_item]: re-parse error: "impl <K: Debug + Ord> ! Debug for OccupiedError<K>"
+    x Impls with default functions [block]: re-parse error: "{// Make 'default' still works as an identifier default.bar();}"
+    x Unsized types in trait bounds [removed_trait_bound]: re-parse error: "??"
+    x Higher-ranked types [bounded_type]: re-parse error: "'b+"
+    x Crate visibility [struct_item]: re-parse error: "crate struct Foo (crate crate::Bar)"
+    x Raw identifiers [parenthesized_expression]: re-parse error: "(()"
+    x Unary operator expressions [unary_expression]: re-parse error: "-"
+    x Try expressions [try_expression]: re-parse error: "?"
+    x Grouped expressions [parenthesized_expression]: re-parse error: "(()"
+    x Range expressions [parenthesized_expression]: re-parse error: "(()"
+    x Type cast expressions [unary_expression]: re-parse error: "-"
+    x Tuple expressions [tuple_expression]: re-parse error: "( , )"
+    x Match expressions [or_pattern]: re-parse error: "|"
+    x While expressions [unary_expression]: re-parse error: "!"
+    x Index expressions [index_expression]: kind not found in re-parsed tree
+    x Closures [mut_pattern]: re-parse error: "mut"
+    x Inline const or Const blocks as expression [unary_expression]: re-parse error: "*"
+    x Raw string literals [raw_string_literal]: kind not found in re-parsed tree
+    x Raw byte string literals [raw_string_literal]: kind not found in re-parsed tree
+    x Raw C string literals [raw_string_literal]: kind not found in re-parsed tree
+    x Reference patterns [ref_pattern]: re-parse error: "ref ref"
+    x Struct patterns [tuple_expression]: re-parse error: "( , )"
+    x Captured patterns [or_pattern]: re-parse error: "|"
+    x Or patterns [or_pattern]: re-parse error: "|"
+    x Function types [function_type]: kind not found in re-parsed tree
+    x Trait objects [bounded_type]: re-parse error: "'a+"
+    x anon:function_modifiers.async: re-parsed tree missing kind
+    x anon:negative_literal.operator: re-parsed tree missing kind
+    x anon:range_expression.operator: re-parsed tree missing kind
+    x anon:try_expression.operator: re-parsed tree missing kind
+    x anon:unary_expression.operator: re-parsed tree missing kind
+    x anon:visibility_modifier.pub: re-parsed tree missing kind
+  x 112/135 factory round-trip (6 skipped, 17 errors)
+    x try_expression: re-parse error: "?"
+    x macro_invocation: re-parse error: "println!"
+    x array_expression: re-parse error: "[ ;]"
+    x tuple_expression: re-parse error: "( , )"
+    x generic_type: kind not found in re-parse (rendered: "result::Result")
+    x bounded_type: re-parse error: "'a+"
+    x struct_item: re-parse error: "struct Proton"
+    x reference_pattern: re-parse error: "&"
+    x unary_expression: re-parse error: "*"
+    x removed_trait_bound: re-parse error: "??"
+    x parenthesized_expression: re-parse error: "(()"
+    x or_pattern: re-parse error: "|"
+    x index_expression: kind not found in re-parse (rendered: "[]")
+    x generic_function: re-parse error: "std::sizeof::"
+    x ref_pattern: re-parse error: "ref ref"
+    x captured_pattern: re-parse error: "a@"
+    x generic_pattern: re-parse error: "::"
+  x 133/135 from() correctness (0 undefined, 2 divergent, 0 skipped)
+    ! attribute: from() diverges: named children: 1 vs 0
+    ! match_pattern: from() diverges: named children: 1 vs 0
+
+Done! Generated:
+  templates.yaml, grammar.ts, types.ts, factories.ts, utils.ts, from.ts, consts.ts, index.ts
+  vitest.config.ts
+

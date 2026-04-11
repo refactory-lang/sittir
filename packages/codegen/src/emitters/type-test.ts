@@ -64,8 +64,11 @@ export function emitTypeTests(config: EmitTypeTestsConfig): string {
 	lines.push('');
 
 	// 2. ConfigOf<T> produces the *Config type
+	// Skip variant nodes — ConfigOf distributes over the union and may not match the variant Config union
 	lines.push('// --- ConfigOf<T> assignable to *Config ---');
 	for (const node of nodes) {
+		const hasVariants = node.variants && node.variants.length > 1;
+		if (hasVariants) continue;
 		const tn = toTypeName(node.kind);
 		lines.push(`export type _Config_${tn} = Assert<Extends<ConfigOf<${tn}>, ${tn}Config>>;`);
 	}

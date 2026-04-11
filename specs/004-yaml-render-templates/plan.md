@@ -56,7 +56,9 @@ packages/
 ├── codegen/src/
 │   ├── emitters/
 │   │   ├── rules.ts          # MODIFIED: emit YAML instead of S-expr TypeScript
+│   │   ├── wrap.ts           # MODIFIED: override field promotion heuristics inlined into wrapXxx()
 │   │   └── joinby.ts         # REMOVED: merged into rules emitter (per-rule joinBy in YAML)
+│   ├── classify.ts           # NEW: children classification (grammar rule simplification)
 │   └── cli.ts                # MODIFIED: update output file list
 ├── core/
 │   ├── package.json          # MODIFIED: add `yaml` dependency
@@ -68,12 +70,18 @@ packages/
 │   └── (core types)          # MODIFIED: replace TemplateElement/ParsedTemplate with TemplateRule/RulesConfig
 ├── rust/
 │   ├── templates.yaml        # NEW: auto-generated YAML templates (core loads this)
+│   ├── overrides.json        # NEW: supplemental field names for under-fielded nodes (~10-15 entries)
 │   └── src/
 │       ├── rules.ts          # REMOVED: replaced by templates.yaml
 │       ├── joinby.ts         # REMOVED: absorbed into templates.yaml
+│       ├── wrap.ts           # MODIFIED: override field promotion inlined into wrapXxx() functions
 │       └── factories.ts      # MODIFIED: createRenderer takes YAML path, no longer imports rules/joinBy
-├── typescript/               # Same pattern as rust/
-└── python/                   # Same pattern as rust/
+├── typescript/
+│   ├── overrides.json        # NEW: minimal or empty (TypeScript wraps operators in FIELDs)
+│   └── ...                   # Same pattern as rust/
+└── python/
+    ├── overrides.json        # NEW: minimal or empty (Python wraps operators in FIELDs)
+    └── ...                   # Same pattern as rust/
 ```
 
 **Structure Decision**: Existing monorepo structure preserved. Changes are within existing packages — no new packages needed. The key structural change is `templates.yaml` appearing at each grammar package root, loaded by core's YAML-aware render API at runtime.
@@ -83,3 +91,5 @@ packages/
 | Violation | Why Needed | Simpler Alternative Rejected Because |
 |-----------|------------|-------------------------------------|
 | `metadata.generatedAt` timestamp | Useful for debugging stale templates | **Removed per constitution** — use `grammarSha` only for provenance tracking. Timestamps break deterministic output. |
+| `overrides.json` per grammar | Provides field names for ~10-15 under-fielded Rust nodes | Automatic detection alone insufficient — same-kind positional nodes need human-provided names. Overrides file is minimal and validated by codegen. |
+| 5 wrap promotion heuristics | Cover all unnamed child patterns in tree-sitter grammars | Fewer heuristics would leave gaps (e.g., can't handle `index_expression` without token-positional). More would be speculative. Inlined into wrap emitter, not a separate file. |

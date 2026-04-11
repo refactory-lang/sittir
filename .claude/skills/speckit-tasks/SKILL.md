@@ -1,15 +1,15 @@
 ---
-name: speckit-tasks
-description: Break down implementation plans into actionable task lists. Use after
-  planning to create a structured task breakdown. Generates tasks.md with ordered,
-  dependency-aware tasks.
-compatibility: Requires spec-kit project structure with .specify/ directory
+name: "speckit-tasks"
+description: "Generate an actionable, dependency-ordered tasks.md for the feature based on available design artifacts."
+argument-hint: "Optional task generation constraints"
+compatibility: "Requires spec-kit project structure with .specify/ directory"
 metadata:
-  author: github-spec-kit
-  source: templates/commands/tasks.md
+  author: "github-spec-kit"
+  source: "templates/commands/tasks.md"
+user-invocable: true
+disable-model-invocation: true
 ---
 
-# Speckit Tasks Skill
 
 ## User Input
 

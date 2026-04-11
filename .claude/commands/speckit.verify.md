@@ -2,8 +2,8 @@
 description: Perform a non-destructive post-implementation verification gate validating
   the implementation against spec.md, plan.md, tasks.md, and constitution.md.
 scripts:
-  sh: .specify/scripts/bash/check-prerequisites.sh --json --require-tasks --include-tasks
-  ps: .specify/scripts/powershell/check-prerequisites.ps1 -Json -RequireTasks -IncludeTasks
+  sh: scripts/bash/check-prerequisites.sh --json --require-tasks --include-tasks
+  ps: scripts/powershell/check-prerequisites.ps1 -Json -RequireTasks -IncludeTasks
 handoffs:
 - label: Address findings and re-implement
   agent: speckit.implement

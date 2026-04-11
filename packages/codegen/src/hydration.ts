@@ -1,5 +1,5 @@
 /**
- * Step 12: Hydration — resolve kinds: string[] → kinds: HydratedNodeModel[]
+ * Step 12: Hydration — resolve kinds: Set<string> → kinds: HydratedNodeModel[]
  *
  * After hydration, all model properties become readonly.
  */
@@ -10,7 +10,7 @@ import type {
 	ChildModel,
 	HydratedNodeModel,
 } from './node-model.ts';
-import { isBranch, isContainer, eachChildSlot } from './node-model.ts';
+import { isBranch, isContainer, isHidden, eachChildSlot } from './node-model.ts';
 
 // ---------------------------------------------------------------------------
 // Hydration
@@ -22,9 +22,7 @@ function hydrateField(field: FieldModel, modelMap: Map<string, NodeModel>): void
 		const model = modelMap.get(kind);
 		if (model) resolved.push(model);
 	}
-	// Replace kinds with resolved references
-	// This is a type-level lie during mutation — runtime it's NodeModel[],
-	// but after freeze it matches HydratedNodeModel[]
+	// Replace kinds (Set<string>) with resolved references (NodeModel[])
 	(field as any).kinds = resolved;
 }
 
@@ -38,7 +36,7 @@ function hydrateChild(child: ChildModel, modelMap: Map<string, NodeModel>): void
 }
 
 /**
- * Resolve all `kinds: string[]` to `kinds: NodeModel[]` references.
+ * Resolve all `kinds: Set<string>` to `kinds: NodeModel[]` references.
  * After this step, models should be treated as frozen (HydratedNodeModel).
  */
 export function hydrate(models: Map<string, NodeModel>): ReadonlyMap<string, HydratedNodeModel> {
@@ -51,6 +49,14 @@ export function hydrate(models: Map<string, NodeModel>): ReadonlyMap<string, Hyd
 		}
 		if (isContainer(model)) {
 			eachChildSlot(model.children, (child) => hydrateChild(child, models));
+		}
+		if (isHidden(model)) {
+			const resolved: NodeModel[] = [];
+			for (const kind of model.subtypes) {
+				const sub = models.get(kind);
+				if (sub) resolved.push(sub);
+			}
+			(model as any).subtypes = resolved;
 		}
 	}
 

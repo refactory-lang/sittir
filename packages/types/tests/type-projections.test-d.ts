@@ -1,5 +1,5 @@
 /**
- * Type-level tests for NodeData<G,K>, NodeFields<G,K>, TreeNode<G,K>.
+ * Type-level tests for NodeData<G,K>, NodeConfig<G,K>, TreeNode<G,K>.
  *
  * These are compile-time tests — they verify that the generic types
  * project the correct shapes from the Rust grammar. If any assertion
@@ -8,7 +8,7 @@
  * Run with: pnpm --filter @sittir/types type-check
  */
 
-import type { NodeData, NodeFields, TreeNode, NodeKind, FieldName, KindOf } from '../src/index.ts';
+import type { NodeData, NodeConfig, TreeNode, NodeKind, FieldName, KindOf } from '../src/index.ts';
 
 // ---------------------------------------------------------------------------
 // Use the Rust grammar type from the generated package
@@ -38,10 +38,10 @@ type _1b = Expect<Extends<FnItem, { readonly type: 'function_item'; readonly fie
 type _1c = Expect<Extends<FnItem, { readonly text?: string }>>;
 
 // ---------------------------------------------------------------------------
-// 2. NodeFields<G, K> — fields shape
+// 2. NodeConfig<G, K> — fields shape
 // ---------------------------------------------------------------------------
 
-type FnFields = NodeFields<RustGrammar, 'function_item'>;
+type FnFields = NodeConfig<RustGrammar, 'function_item'>;
 
 // 'name' should be a required field (function_item requires name)
 type _2a = Expect<Extends<FnFields, { readonly name: unknown }>>;
@@ -128,7 +128,7 @@ type _7d = Expect<Equal<
 // ---------------------------------------------------------------------------
 
 // The name field on function_item accepts identifier | metavariable
-// Check that NodeFields projects this correctly
+// Check that NodeConfig projects this correctly
 type FnNameType = FnFields['name'];
 
 // It should be some node type — not 'never' and not 'unknown'
@@ -139,7 +139,7 @@ type _8a = Expect<Equal<Extends<FnNameType, never>, false>>;
 // ---------------------------------------------------------------------------
 
 type BinExpr = NodeData<RustGrammar, 'binary_expression'>;
-type BinFields = NodeFields<RustGrammar, 'binary_expression'>;
+type BinFields = NodeConfig<RustGrammar, 'binary_expression'>;
 
 type _9a = Expect<Equal<BinExpr['type'], 'binary_expression'>>;
 type _9b = Expect<Extends<'left', keyof BinFields>>;
@@ -151,7 +151,7 @@ type _9d = Expect<Extends<'right', keyof BinFields>>;
 // ---------------------------------------------------------------------------
 
 type BlockNode = NodeData<RustGrammar, 'block'>;
-type BlockFields = NodeFields<RustGrammar, 'block'>;
+type BlockFields = NodeConfig<RustGrammar, 'block'>;
 
 type _10a = Expect<Equal<BlockNode['type'], 'block'>>;
 
@@ -191,7 +191,7 @@ type _13a = Expect<Extends<null, FnTreeFieldResult>>;
 // 14. Nested NodeData — struct_item.fields.name is identifier-like
 // ---------------------------------------------------------------------------
 
-type StructFields = NodeFields<RustGrammar, 'struct_item'>;
+type StructFields = NodeConfig<RustGrammar, 'struct_item'>;
 type StructName = StructFields['name'];
 
 type _14a = Expect<Extends<StructName, { readonly type: string }>>;
@@ -200,7 +200,7 @@ type _14a = Expect<Extends<StructName, { readonly type: string }>>;
 // 15. Let declaration — optional fields
 // ---------------------------------------------------------------------------
 
-type LetFields = NodeFields<RustGrammar, 'let_declaration'>;
+type LetFields = NodeConfig<RustGrammar, 'let_declaration'>;
 
 // pattern is required
 type _15a = Expect<Extends<'pattern', keyof LetFields>>;

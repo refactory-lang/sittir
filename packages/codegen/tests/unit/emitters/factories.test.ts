@@ -21,7 +21,7 @@ describe('emitFactory', () => {
 		const source = emitFactory({ node, leafKinds: ['identifier', 'metavariable'], ctx });
 
 		expect(source).toContain('export function function_item_(');
-		expect(source).toContain('config: FunctionItemConfig,');
+		expect(source).toContain('config: ConfigOf<FunctionItem>,');
 		expect(source).toContain("type: 'function_item' as const,");
 		expect(source).toContain('fields,');
 		expect(source).toContain('body(body?:');
@@ -70,7 +70,7 @@ describe('emitFactory', () => {
 
 		// Single children slot — uses child() or getChildren/setChildren to avoid name collision
 		expect(source).toContain('children,');
-		expect(source).toMatch(/child\(child\?:|getChildren\(\)|setChildren\(/);
+		expect(source).toMatch(/child\(c\?:|child\(child\?:|getChildren\(\)|setChildren\(/);
 	});
 });
 

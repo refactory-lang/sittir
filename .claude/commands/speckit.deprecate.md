@@ -2,8 +2,8 @@
 description: Initiate a feature deprecation workflow with phased sunset process (warnings
   -> disabled -> removed).
 scripts:
-  sh: .specify/scripts/bash/create-deprecate.sh --json
-  ps: .specify/scripts/powershell/create-deprecate.ps1 -Json
+  sh: scripts/bash/create-deprecate.sh --json
+  ps: scripts/powershell/create-deprecate.ps1 -Json
 handoffs:
 - label: Create Deprecation Plan
   agent: speckit.plan
