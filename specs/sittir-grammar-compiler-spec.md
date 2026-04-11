@@ -3,15 +3,17 @@
 ## Pipeline
 
 ```
-grammar.js   →  [1. Evaluate]  →  RawGrammar           (rules)
+grammar.js  ─┐
+              ├→  [1. Evaluate]  →  RawGrammar           (rules + overrides applied)
+overrides.ts ─┘                        ↓
+                  [2. Link]      →  LinkedGrammar          (resolved rules + suggested overrides)
                                        ↓
-overrides    →  [2. Link]      →  LinkedGrammar          (resolved rules)
+                  [3. Optimize]  →  OptimizedGrammar       (restructured rules)
                                        ↓
-                 [3. Optimize]  →  OptimizedGrammar       (restructured rules)
+                  [4. Assemble]  →  NodeMap                (per-kind nodes)
                                        ↓
-                 [4. Assemble]  →  NodeMap                (per-kind nodes)
-                                       ↓
-                 [5. Emit]      →  types, factories, templates, from, ir
+                  [5. Emit]      →  types, factories, templates, from, ir
+                                     + overrides.suggested.ts
 ```
 
 **No nodes until Assemble.** Phases 1-3 produce and consume rules. Phase 4 turns rules into nodes. Phase 5 emits from nodes (and from factory signatures for from/ir).
@@ -215,7 +217,7 @@ Rule subset present: `seq`, `optional`, `choice`, `repeat`, `repeat1`, `field` (
 
 ### After Link: `LinkedGrammar`
 
-No `node-types.json` as primary input. Content types, required, multiple — all derivable from the rule tree at Assemble time. node-types.json used for **validation only**.
+No `node-types.json` as primary input. Content types, required, multiple — all derivable from the rule tree at Assemble time. node-types.json used for **validation only**. Overrides already applied by Evaluate — Link does not process them.
 
 ```ts
 interface LinkedGrammar {
@@ -225,9 +227,18 @@ interface LinkedGrammar {
     externalRoles: Map<string, ExternalRole>;
     word: string | null;
     references: SymbolRef[];         // enriched: position added by tree walk
+    suggestedOverrides?: SuggestedOverride[];  // from diagnostic derivations
 }
 
 type ExternalRole = { role: 'indent' | 'dedent' | 'newline' };
+
+interface SuggestedOverride {
+    kind: string;                    // target rule
+    path: (string | number)[];       // position within rule (name or index)
+    rule: Rule;                      // suggested Rule insertion
+    derivation: string;              // which derivation produced this
+    confidence: 'high' | 'medium' | 'low';
+}
 ```
 
 Rule subset present: `seq`, `optional`, `choice`, `repeat`, `field` (with provenance), `variant` (absent — not yet), `clause`, `enum` (+ promoted), `supertype` (+ promoted), `group`, `string`, `pattern`, `indent`, `dedent`, `newline`.
@@ -368,15 +379,25 @@ Exception: `mergedRules` on `AssembledForm` preserves collapsed form rules for t
 
 ## Phase 1: compiler/evaluate.ts
 
-**In:** `grammar.js` source (or `grammar.json` fallback)
+**In:** `grammar.js` source (sole input format — no grammar.json), or `overrides.ts` (grammar extension that imports grammar.js as base)
 **Out:** `RawGrammar`
+
+Evaluate executes the grammar DSL and produces a `RawGrammar`. When overrides exist, the entry point is `overrides.ts` — a grammar extension that imports the base grammar.js. Tree-sitter's native `grammar(base, { rules })` mechanism handles the merge:
+
+1. `grammar()` starts with `Object.assign({}, baseGrammar.rules)` — copies all base rules
+2. For each rule in the extension, the rule function receives `($, original)` — where `original` is the base grammar's definition
+3. The extension rule can return a new definition, or use `transform(original, patches)` to modify surgically
+4. Result: a single merged grammar object with all rules (base + overrides)
+
+**No custom two-pass system.** Tree-sitter's `grammar()` already provides the base rule as the second argument to each extension rule function. Our `transform`/`insert`/`replace` primitives are additional DSL functions that operate on the `original` rule.
+
+Reference implementation saved at: `specs/005-five-phase-compiler/reference/tree-sitter-dsl.js` (lines 246-331 show the extension mechanism).
 
 ### Operations
 
 | Function | In → Out | Stateless? |
 |---|---|---|
-| `evaluate(path)` | path → `RawGrammar` | Yes (I/O) |
-| `normalizeFromJson(json)` | grammar.json → `RawGrammar` | Yes |
+| `evaluate(entryPath)` | path to grammar.js or overrides.ts → `RawGrammar` | Yes (I/O) |
 | `seq(...members)` | `Input[]` → `Rule{seq}` | Yes |
 | `choice(...members)` | `Input[]` → `Rule{choice\|optional\|enum}` | Yes |
 | `optional(content)` | `Input` → `Rule{optional}` | Yes |
@@ -387,6 +408,38 @@ Exception: `mergedRules` on `AssembledForm` preserves collapsed form rules for t
 | `prec(n, content)` | `Input` → `Rule` (strips PREC) | Yes |
 | `normalize(input)` | `Input` → `Rule` | Yes |
 | `createProxy(currentRule, refs)` | → `$` Proxy | Stateful (accumulates refs) |
+| `transform(original, patches)` | base Rule + position map → modified Rule (walks object tree, applies patches) | Yes |
+| `insert(original, position, wrapper)` | base Rule + position + wrapper → modified Rule (sugar over transform) | Yes |
+| `replace(original, position, replacement)` | base Rule + position + replacement → modified Rule (substitute/suppress) | Yes |
+
+### Override DSL primitives
+
+Overrides are grammar extensions that use tree-sitter's native `($, original)` pattern. The `original` parameter is the base grammar's rule definition (provided by `grammar()` at line 326 of tree-sitter's dsl.js). New DSL primitives (`transform`, `insert`, `replace`) operate on `original`:
+
+```ts
+// overrides.ts
+const base = require('tree-sitter-rust/grammar')
+
+module.exports = grammar(base, {
+  name: 'rust',
+  rules: {
+    // ($, original) — original is the base grammar's function_item rule
+    function_item: ($, original) => transform(original, {
+      2: field('body'),                    // insert: wrap position 2 in a field
+      'parameters': field('params'),       // insert: address by existing field name
+    }),
+
+    _newline: ($) => role('newline'),      // external role mapping
+    _indent: ($) => role('indent'),
+  }
+})
+```
+
+**How it works**: `grammar(base, { rules })` calls each rule function with `ruleFn.call(ruleBuilder, ruleBuilder, baseGrammar.rules[ruleName])`. The second argument is the base rule — a plain object tree of `{ type: 'SEQ', members: [...] }`. Our `transform()` walks this object tree and applies patches at the specified positions.
+
+**Addressing**: hybrid keys — numeric positional index for unnamed positions, field name when traversing through a named field node.
+
+**Insert vs replace**: `insert` adds structure (field wrappers, role annotations) while preserving grammar content. `replace` substitutes a different Rule subtree; suppress is a replace with no content.
 
 ### Reference tracking
 
@@ -472,18 +525,22 @@ Position within SEQ can't be captured at eval time without significant complexit
 
 ## Phase 2: compiler/link.ts
 
-**In:** `RawGrammar` + `overrides.json`. node-types.json for **validation only**.
+**In:** `RawGrammar` (overrides already applied by Evaluate). node-types.json for **validation only**.
 **Out:** `LinkedGrammar`
 
 Link resolves what nodes ARE. After Link: no `symbol`, `alias`, `token`, `repeat1`. Terminals (`string`, `pattern`) and structural whitespace (`indent`, `dedent`, `newline`) survive. All `field` nodes enriched with provenance. Child slots resolved. External tokens → structural directives. Clauses detected. `seq(X, repeat(X))` normalized to `repeat(X)`.
 
 **Link does NOT restructure the tree.** Tree shape identical before and after — only node types and provenance change.
 
+**Link does NOT process overrides.** Override application happens in Evaluate's second pass. Link receives rules already annotated with `source: 'override'` provenance.
+
+**Link generates suggested overrides.** New reference graph derivations (field name inference, synthetic supertypes, override inference, naming consistency, global optionality, separator consistency, override candidate quality) produce entries for `overrides.suggested.ts` — a grammar extension file in the same format as manual overrides. Each entry includes derivation source and confidence in comments. Entries already in `overrides.ts` are omitted.
+
 ### Reference resolution (removes symbol, alias, token, repeat1)
 
 | Function | In → Out | Stateless? |
 |---|---|---|
-| `link(raw, overrides)` | `RawGrammar` + overrides → `LinkedGrammar` | Yes |
+| `link(raw)` | `RawGrammar` → `LinkedGrammar` | Yes |
 | `resolveRule(rule, ctx)` | `Rule` → `Rule` (resolve all references) | Yes |
 | `inlineHiddenRule(sym, rules)` | `Rule{symbol}` → content (if has relevant fields) | Yes |
 | `resolveHiddenChoice(sym, rules)` | `Rule{symbol}` → `Rule{supertype\|enum}` (if hidden choice) | Yes |
@@ -505,8 +562,9 @@ Link resolves what nodes ARE. After Link: no `symbol`, `alias`, `token`, `repeat
 
 | Function | In → Out | Stateless? |
 |---|---|---|
-| `promoteFields(rule, overrideFields)` | Rule + overrides → Rule with `field` nodes (source: 'override') | Yes |
 | `assignPositions(rule)` | SEQ walk → fields with position context | Yes |
+
+Note: `promoteFields()` is eliminated from Link. Override-driven field promotion now happens in Evaluate's second pass via `transform`/`insert`.
 
 ### Reference graph enrichment
 
@@ -545,7 +603,7 @@ After all rules are linked, Link walks each rule tree to assign `position` to Sy
 
 | Current function | Current location | New function |
 |---|---|---|
-| `applyOverrides()` + helpers | enriched-grammar.ts | `promoteFields()` |
+| `applyOverrides()` + helpers | enriched-grammar.ts | Moved to Evaluate: `applyOverrides()` via grammar extension |
 | `containsFields()` | factoring.ts | Internal to `inlineHiddenRule()` |
 | `tryClause()` | emitters/rules.ts | `detectClause()` |
 | `ruleReferencesExternal()` | emitters/rules.ts | `detectIndentField()` |
@@ -557,8 +615,8 @@ After all rules are linked, Link walks each rule tree to assign `position` to Sy
 | `initializeModels()` | node-model.ts | Eliminated (no nodes in Link) |
 | `reconcile()` | node-model.ts | Eliminated (no nodes in Link) |
 | `refineAllModelTypes()` | node-model.ts | Eliminated (no nodes in Link) |
-| `mergeOverrides()` | overrides.ts | `promoteFields()` |
-| `loadOverridesWithExternals()` | overrides.ts | `loadOverrides()` returns both |
+| `mergeOverrides()` | overrides.ts | Moved to Evaluate: grammar extension mechanism |
+| `loadOverridesWithExternals()` | overrides.ts | Moved to Evaluate: grammar extension mechanism |
 | `inferTokenAliases()`, `applyTokenAliases()` | semantic-aliases.ts | Absorbed into `link()` |
 | `createHiddenModels()` | build-model.ts | Absorbed into `resolveRule()` |
 | `enrichBranch()`, `enrichContainer()`, etc. | node-model.ts | Eliminated (Assemble derives from tree) |
@@ -861,8 +919,8 @@ All five phases become pure functions:
 
 | Current state | Migration |
 |---|---|
-| `grammarJsonCache`, `explicitPaths` | `evaluate()` takes path directly |
+| `grammarJsonCache`, `explicitPaths` | `evaluate()` takes single entry path (grammar.js or overrides.ts) |
 | `nodeTypesCache`, `explicitNodeTypePaths` | `validateAgainstNodeTypes()` takes path |
-| `overridePaths` | `link()` takes overrides directly |
+| `overridePaths` | Eliminated — overrides.ts imports grammar.js directly via tree-sitter's `grammar(base)` |
 | `_wordEndRe`, `_wordStartRe`, `_externalRoles` | Eliminated — spacing config from Optimize, externals resolved in Link |
 | Model mutation everywhere | Each phase returns new data |

@@ -151,8 +151,110 @@ CONTRACTS_DIR='$feature_dir/contracts'
 EOF
 }
 
+# Check if jq is available for safe JSON construction
+has_jq() {
+    command -v jq >/dev/null 2>&1
+}
+
+# Escape a string for safe embedding in a JSON value (fallback when jq is unavailable).
+# Handles backslash, double-quote, and JSON-required control character escapes (RFC 8259).
+json_escape() {
+    local s="$1"
+    s="${s//\\/\\\\}"
+    s="${s//\"/\\\"}"
+    s="${s//$'\n'/\\n}"
+    s="${s//$'\t'/\\t}"
+    s="${s//$'\r'/\\r}"
+    s="${s//$'\b'/\\b}"
+    s="${s//$'\f'/\\f}"
+    # Escape any remaining U+0001-U+001F control characters as \uXXXX.
+    local LC_ALL=C
+    local i char code
+    for (( i=0; i<${#s}; i++ )); do
+        char="${s:$i:1}"
+        printf -v code '%d' "'$char" 2>/dev/null || code=256
+        if (( code >= 1 && code <= 31 )); then
+            printf '\\u%04x' "$code"
+        else
+            printf '%s' "$char"
+        fi
+    done
+}
+
 check_file() { [[ -f "$1" ]] && echo "  ✓ $2" || echo "  ✗ $2"; }
 check_dir() { [[ -d "$1" && -n $(ls -A "$1" 2>/dev/null) ]] && echo "  ✓ $2" || echo "  ✗ $2"; }
+
+# Resolve a template name to a file path using the priority stack:
+#   1. .specify/templates/overrides/
+#   2. .specify/presets/<preset-id>/templates/ (sorted by priority from .registry)
+#   3. .specify/extensions/<ext-id>/templates/
+#   4. .specify/templates/ (core)
+resolve_template() {
+    local template_name="$1"
+    local repo_root="$2"
+    local base="$repo_root/.specify/templates"
+
+    # Priority 1: Project overrides
+    local override="$base/overrides/${template_name}.md"
+    [ -f "$override" ] && echo "$override" && return 0
+
+    # Priority 2: Installed presets (sorted by priority from .registry)
+    local presets_dir="$repo_root/.specify/presets"
+    if [ -d "$presets_dir" ]; then
+        local registry_file="$presets_dir/.registry"
+        if [ -f "$registry_file" ] && command -v python3 >/dev/null 2>&1; then
+            local sorted_presets=""
+            if sorted_presets=$(SPECKIT_REGISTRY="$registry_file" python3 -c "
+import json, sys, os
+try:
+    with open(os.environ['SPECKIT_REGISTRY']) as f:
+        data = json.load(f)
+    presets = data.get('presets', {})
+    for pid, meta in sorted(presets.items(), key=lambda x: x[1].get('priority', 10)):
+        print(pid)
+except Exception:
+    sys.exit(1)
+" 2>/dev/null); then
+                if [ -n "$sorted_presets" ]; then
+                    while IFS= read -r preset_id; do
+                        local candidate="$presets_dir/$preset_id/templates/${template_name}.md"
+                        [ -f "$candidate" ] && echo "$candidate" && return 0
+                    done <<< "$sorted_presets"
+                fi
+            else
+                for preset in "$presets_dir"/*/; do
+                    [ -d "$preset" ] || continue
+                    local candidate="$preset/templates/${template_name}.md"
+                    [ -f "$candidate" ] && echo "$candidate" && return 0
+                done
+            fi
+        else
+            for preset in "$presets_dir"/*/; do
+                [ -d "$preset" ] || continue
+                local candidate="$preset/templates/${template_name}.md"
+                [ -f "$candidate" ] && echo "$candidate" && return 0
+            done
+        fi
+    fi
+
+    # Priority 3: Extension-provided templates
+    local ext_dir="$repo_root/.specify/extensions"
+    if [ -d "$ext_dir" ]; then
+        for ext in "$ext_dir"/*/; do
+            [ -d "$ext" ] || continue
+            case "$(basename "$ext")" in .*) continue;; esac
+            local candidate="$ext/templates/${template_name}.md"
+            [ -f "$candidate" ] && echo "$candidate" && return 0
+        done
+    fi
+
+    # Priority 4: Core templates
+    local core="$base/${template_name}.md"
+    [ -f "$core" ] && echo "$core" && return 0
+
+    # Template not found
+    return 1
+}
 
 
 # Extended branch validation supporting spec-kit-extensions

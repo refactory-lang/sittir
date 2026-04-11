@@ -32,6 +32,7 @@
 ## Notes
 
 - All items pass validation.
-- The spec references the detailed design document at `specs/sittir-grammar-compiler-spec.md` for implementation-level details — the spec itself stays at the behavioral/requirements level.
-- The spec uses domain terminology (Rule, NodeMap, phase names) that is necessary for precision but avoids prescribing specific code structure, file layout, or algorithms.
-- Ready for `/speckit.clarify` or `/speckit.plan`.
+- Design decisions resolved during clarification session and documented in spec's "Design Decisions" section.
+- Key clarifications: grammar.js only (no JSON), overrides as grammar extensions with transform/insert/replace DSL, two-pass Evaluate, suggested overrides as diagnostic output from Link.
+- Both spec.md and design doc (specs/sittir-grammar-compiler-spec.md) updated to reflect decisions.
+- Ready for `/speckit.plan`.
