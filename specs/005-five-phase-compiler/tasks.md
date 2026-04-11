@@ -103,15 +103,15 @@ Per the design doc: **all emitters consume `NodeMap` exclusively**. Current emit
 
 Per the design doc's "Eliminated from Emit" table, these functions must be removed from emitters because their logic now lives in compiler phases:
 
-- [ ] T034 Remove `tryClause()` from `emitters/rules.ts` — now `detectClause()` in `compiler/link.ts`
-- [ ] T034a Remove `topLevelChoice()` from emitters — now `classifyNode()` in `compiler/assemble.ts` produces `polymorph`
-- [ ] T034b Remove `ruleReferencesExternal()` from `emitters/rules.ts` — now `detectIndentField()` in `compiler/link.ts`
-- [ ] T034c Remove `needsSpace()` and `buildWordBoundary()` from `emitters/rules.ts` — now in `compiler/optimize.ts`
-- [ ] T034d Remove `variantFieldSetsFromModel()` from emitters — now `extractForms()` in `compiler/assemble.ts`
-- [ ] T034e Remove `computeVariantFieldSets()` — eliminated entirely, variant Rules from Optimize + forms in Assemble
-- [ ] T034f Remove `walkWithInlining()` from emitters — hidden rules already inlined by `compiler/link.ts`
-- [ ] T034g Remove `buildJoinBy()` and `detectRecursiveSeparator()` from `emitters/rules.ts` — separator captured on Rule by `compiler/evaluate.ts`
-- [ ] T034h Remove `appendMissingFields()` — eliminated, Assemble provides complete field set per form
+- [x] T034 Remove `tryClause()` from `emitters/rules.ts` — now `detectClause()` in `compiler/link.ts`
+- [x] T034a Remove `topLevelChoice()` from emitters — now `classifyNode()` in `compiler/assemble.ts` produces `polymorph`
+- [x] T034b Remove `ruleReferencesExternal()` from `emitters/rules.ts` — now `detectIndentField()` in `compiler/link.ts`
+- [x] T034c Remove `needsSpace()` and `buildWordBoundary()` from `emitters/rules.ts` — now in `compiler/optimize.ts`
+- [x] T034d Remove `variantFieldSetsFromModel()` from emitters — now `extractForms()` in `compiler/assemble.ts`
+- [x] T034e Remove `computeVariantFieldSets()` — eliminated entirely, variant Rules from Optimize + forms in Assemble
+- [x] T034f Remove `walkWithInlining()` from emitters — hidden rules already inlined by `compiler/link.ts`
+- [x] T034g Remove `buildJoinBy()` and `detectRecursiveSeparator()` from `emitters/rules.ts` — separator captured on Rule by `compiler/evaluate.ts`
+- [x] T034h Remove `appendMissingFields()` — eliminated, Assemble provides complete field set per form
 
 **Checkpoint**: No emitter contains logic that belongs in compiler phases.
 

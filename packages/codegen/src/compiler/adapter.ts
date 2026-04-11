@@ -27,11 +27,18 @@ interface AdaptedNodeBase {
     factoryName?: string
 }
 
+/** Lightweight kind reference matching HydratedNodeModel shape for emitter compat */
+interface KindRef {
+    kind: string
+    modelType: string
+    typeName: string
+}
+
 interface AdaptedField {
     name: string
     required: boolean
     multiple: boolean
-    kinds: Set<string>
+    kinds: readonly KindRef[]
     propertyName: string
     position?: number
     override?: boolean
@@ -40,7 +47,7 @@ interface AdaptedField {
 interface AdaptedChild {
     required: boolean
     multiple: boolean
-    kinds: Set<string>
+    kinds: readonly KindRef[]
     name?: string
     separator?: string | null
 }
@@ -117,21 +124,21 @@ export function toHydratedModels(nodeMap: NodeMap): AdaptedNodeModel[] {
     const result: AdaptedNodeModel[] = []
 
     for (const [_kind, node] of nodeMap.nodes) {
-        const adapted = adaptNode(node)
+        const adapted = adaptNode(node, nodeMap)
         if (adapted) result.push(adapted)
     }
 
     return result
 }
 
-function adaptNode(node: AssembledNode): AdaptedNodeModel | null {
+function adaptNode(node: AssembledNode, nodeMap: NodeMap): AdaptedNodeModel | null {
     switch (node.modelType) {
         case 'branch':
-            return adaptBranch(node)
+            return adaptBranch(node, nodeMap)
         case 'container':
-            return adaptContainer(node)
+            return adaptContainer(node, nodeMap)
         case 'polymorph':
-            return adaptPolymorph(node)
+            return adaptPolymorph(node, nodeMap)
         case 'leaf':
             return adaptLeaf(node)
         case 'keyword':
@@ -147,32 +154,30 @@ function adaptNode(node: AssembledNode): AdaptedNodeModel | null {
     }
 }
 
-function adaptBranch(node: AssembledBranch): AdaptedBranchModel {
+function adaptBranch(node: AssembledBranch, nodeMap: NodeMap): AdaptedBranchModel {
     return {
         modelType: 'branch',
         kind: node.kind,
         typeName: node.typeName,
         factoryName: node.factoryName,
-        fields: node.fields.map(adaptField),
-        children: node.children ? adaptChildren(node.children) : undefined,
+        fields: node.fields.map(f => adaptField(f, nodeMap)),
+        children: node.children ? adaptChildren(node.children, nodeMap) : undefined,
         rule: null,
     }
 }
 
-function adaptContainer(node: AssembledContainer): AdaptedContainerModel {
+function adaptContainer(node: AssembledContainer, nodeMap: NodeMap): AdaptedContainerModel {
     return {
         modelType: 'container',
         kind: node.kind,
         typeName: node.typeName,
         factoryName: node.factoryName,
-        children: adaptChildren(node.children),
+        children: adaptChildren(node.children, nodeMap),
         rule: null,
     }
 }
 
-function adaptPolymorph(node: AssembledPolymorph): AdaptedBranchModel {
-    // Polymorphs map to branch models with variants
-    // Collect all fields across forms as the union field set
+function adaptPolymorph(node: AssembledPolymorph, nodeMap: NodeMap): AdaptedBranchModel {
     const allFields = new Map<string, AssembledField>()
     for (const form of node.forms) {
         for (const f of form.fields) {
@@ -185,7 +190,7 @@ function adaptPolymorph(node: AssembledPolymorph): AdaptedBranchModel {
         kind: node.kind,
         typeName: node.typeName,
         factoryName: node.factoryName,
-        fields: [...allFields.values()].map(adaptField),
+        fields: [...allFields.values()].map(f => adaptField(f, nodeMap)),
         rule: null,
         variants: node.forms.map(adaptForm),
     }
@@ -246,29 +251,38 @@ function adaptSupertype(node: AssembledSupertype): AdaptedSupertypeModel {
 // Sub-structure adapters
 // ---------------------------------------------------------------------------
 
-function adaptField(field: AssembledField): AdaptedField {
+function adaptField(field: AssembledField, nodeMap: NodeMap): AdaptedField {
     return {
         name: field.name,
         required: field.required,
         multiple: field.multiple,
-        kinds: new Set(field.contentTypes),
+        kinds: field.contentTypes.map(k => resolveKindRef(k, nodeMap)),
         propertyName: field.propertyName,
         override: field.source === 'override',
     }
 }
 
-function adaptChildren(children: AssembledChild[]): AdaptedChild | AdaptedChild[] {
-    if (children.length === 1) {
-        return adaptChild(children[0])
+function resolveKindRef(kind: string, nodeMap: NodeMap): KindRef {
+    const node = nodeMap.nodes.get(kind)
+    return {
+        kind,
+        modelType: node?.modelType ?? 'leaf',
+        typeName: node?.typeName ?? kind,
     }
-    return children.map(adaptChild)
 }
 
-function adaptChild(child: AssembledChild): AdaptedChild {
+function adaptChildren(children: AssembledChild[], nodeMap: NodeMap): AdaptedChild | AdaptedChild[] {
+    if (children.length === 1) {
+        return adaptChild(children[0], nodeMap)
+    }
+    return children.map(c => adaptChild(c, nodeMap))
+}
+
+function adaptChild(child: AssembledChild, nodeMap: NodeMap): AdaptedChild {
     return {
         required: child.required,
         multiple: child.multiple,
-        kinds: new Set(child.contentTypes),
+        kinds: child.contentTypes.map(k => resolveKindRef(k, nodeMap)),
         name: child.name,
     }
 }
