@@ -153,8 +153,8 @@ Each emitter's entry point changes from `emitX(config: { grammar, nodes: Hydrate
 
 ### Phase 2h: CLI Integration
 
-- [ ] T043 Rewrite `packages/codegen/src/cli.ts` to compose phases: evaluate → link → optimize → assemble → emit. Remove all calls to old pipeline functions.
-- [ ] T044 Update `packages/codegen/src/index.ts` to export phase functions and types as public API
+- [x] T043 Rewrite `packages/codegen/src/cli.ts` to compose phases: evaluate → link → optimize → assemble → emit. Remove all calls to old pipeline functions.
+- [x] T044 Update `packages/codegen/src/index.ts` to export phase functions and types as public API
 
 **Checkpoint**: `npx tsx packages/codegen/src/cli.ts --grammar rust --all` produces correct output via the new pipeline
 
