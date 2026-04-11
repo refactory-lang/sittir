@@ -38,9 +38,9 @@
 - [x] T008 Implement override DSL primitives (`transform`, `insert`, `replace`) that operate on tree-sitter's `original` rule parameter — hybrid addressing (numeric index + field name), added to globalThis alongside existing DSL functions in `packages/codegen/src/compiler/evaluate.ts`
 - [x] T009 Implement grammar extension execution: `evaluate(entryPath)` accepts either grammar.js directly or overrides.ts (which imports grammar.js as base). Tree-sitter's `grammar(base, { rules })` handles merge — each rule fn receives `($, original)`. No custom two-pass. See reference: `specs/005-five-phase-compiler/reference/tree-sitter-dsl.js` lines 246-331. Implement in `packages/codegen/src/compiler/evaluate.ts`
 - [x] T010 Implement `RawGrammar` contract assembly (rules, extras, externals, supertypes, inline, conflicts, word, references) with provenance tracking — rules from overrides carry `source: 'override'` in `packages/codegen/src/compiler/evaluate.ts`
-- [ ] T011 Convert existing `packages/rust/overrides.json` to `packages/rust/overrides.ts` grammar extension format
-- [ ] T012 [P] Convert existing `packages/typescript/overrides.json` to `packages/typescript/overrides.ts` grammar extension format
-- [ ] T013 [P] Convert existing `packages/python/overrides.json` to `packages/python/overrides.ts` grammar extension format
+- [x] T011 Convert existing `packages/rust/overrides.json` to `packages/rust/overrides.ts` grammar extension format — base grammar at `node_modules/.pnpm/tree-sitter-rust@0.24.0/node_modules/tree-sitter-rust/grammar.js`. Each field override becomes a `transform(original, { position: field(name, content) })` call.
+- [x] T012 [P] Convert existing `packages/typescript/overrides.json` to `packages/typescript/overrides.ts` grammar extension format — base grammar at `node_modules/.pnpm/tree-sitter-typescript@0.23.2/node_modules/tree-sitter-typescript/typescript/grammar.js`
+- [x] T013 [P] Convert existing `packages/python/overrides.json` to `packages/python/overrides.ts` grammar extension format — base grammar at `node_modules/.pnpm/tree-sitter-python@0.25.0/node_modules/tree-sitter-python/grammar.js`
 - [x] T014 Write unit tests for Evaluate phase: proxy reference capture, pattern detection, override application via native grammar(base) extension in `packages/codegen/src/__tests__/evaluate.test.ts`
 - [x] T014a [P] Write tests verifying override semantics: (1) `insert` wraps a position without removing original content, (2) `replace` substitutes content entirely, (3) `replace` with no content suppresses the position in `packages/codegen/src/__tests__/evaluate.test.ts`
 - [x] T009a [P] Write error-path tests: (1) grammar.js that throws during evaluation, (2) grammar.js with undefined symbol references, (3) grammar.js with no rules — verify clear error messages, no silent failures in `packages/codegen/src/__tests__/evaluate.test.ts`
@@ -88,29 +88,77 @@
 
 **Checkpoint**: `assemble()` produces a `NodeMap` with correctly classified nodes for all three grammars
 
-### Phase 2e: Emit (migrate existing emitters)
+### Phase 2e: NodeMap Adapter
 
-- [ ] T033 Migrate `emitters/types.ts` to consume `NodeMap` exclusively — remove kind-specific conditionals (integer_literal/float_literal/boolean_literal), add `emitFormInterface` for polymorphs
-- [ ] T034 Migrate `emitters/factories.ts` to consume `NodeMap` exclusively — add `emitFormFactory` for polymorphs
-- [ ] T035 Migrate `emitters/rules.ts` → `emitters/templates.ts` — consume `NodeMap`, add `emitPolymorphTemplates`
-- [ ] T036 Migrate `emitters/from.ts` to derive from factory signatures — add `emitFormFrom`, `resolveFieldStrategy`, `emitResolver`
-- [ ] T037 Migrate `emitters/ir-namespace.ts` → `emitters/ir.ts` to derive from factory exports
-- [ ] T038 [P] Migrate `emitters/wrap.ts` to consume `NodeMap` exclusively
-- [ ] T039 [P] Migrate `emitters/consts.ts` to consume `NodeMap` exclusively
-- [ ] T040 [P] Migrate `emitters/grammar.ts`, `emitters/index-file.ts`, `emitters/client-utils.ts` to consume `NodeMap`
-- [ ] T041 [P] Migrate `emitters/test-new.ts`, `emitters/type-test.ts`, `emitters/config.ts` to consume `NodeMap`
-- [ ] T042 Create `emitters/suggested.ts` — emit `overrides.suggested.ts` from LinkedGrammar's suggestedOverrides
+Per the design doc: **all emitters consume `NodeMap` exclusively**. Current emitters consume `HydratedNodeModel[]` + `naming.ts` helpers + `node-model.ts` utilities (`isTupleChildren`, `eachChildSlot`). An adapter bridges `NodeMap` → old emitter interfaces so existing output logic works immediately. Then each emitter is incrementally rewritten to consume `AssembledNode` directly.
 
-**Checkpoint**: All emitters produce output from NodeMap. E2e validation tests pass.
+- [x] T033 Create `packages/codegen/src/compiler/adapter.ts` — maps `NodeMap` → `HydratedNodeModel[]` for backward compatibility with existing emitters. Maps each `AssembledNode` model type to the corresponding `HydratedNodeModel` shape (branch→structural, container→structural, polymorph→structural+variants, leaf→terminal, keyword→terminal, enum→hidden, supertype→hidden, group→hidden).
+- [x] T033a Re-export naming helpers from adapter: `toTypeName` → `nameNode().typeName`, `toFactoryName` → `nameNode().factoryName`, `toFieldName` → `nameField().propertyName`, `toParamName` → `nameField().paramName`. These delegate to `assemble.ts` functions so naming logic stays in one place.
+- [x] T033b Re-export model utilities from adapter: `isTupleChildren` (derive from `AssembledChild[]` structure), `eachChildSlot` (iterate `AssembledChild[]`). These compute from `AssembledNode` fields, not old model types.
+- [x] T033c Write adapter tests in `packages/codegen/src/__tests__/adapter.test.ts` — verify each `AssembledNode` model type maps to the expected `HydratedNodeModel` shape.
 
-### Phase 2f: CLI Integration
+**Checkpoint**: Adapter produces `HydratedNodeModel[]` from `NodeMap`. Existing emitters can consume it.
+
+### Phase 2f: Eliminate functions that moved to earlier phases
+
+Per the design doc's "Eliminated from Emit" table, these functions must be removed from emitters because their logic now lives in compiler phases:
+
+- [ ] T034 Remove `tryClause()` from `emitters/rules.ts` — now `detectClause()` in `compiler/link.ts`
+- [ ] T034a Remove `topLevelChoice()` from emitters — now `classifyNode()` in `compiler/assemble.ts` produces `polymorph`
+- [ ] T034b Remove `ruleReferencesExternal()` from `emitters/rules.ts` — now `detectIndentField()` in `compiler/link.ts`
+- [ ] T034c Remove `needsSpace()` and `buildWordBoundary()` from `emitters/rules.ts` — now in `compiler/optimize.ts`
+- [ ] T034d Remove `variantFieldSetsFromModel()` from emitters — now `extractForms()` in `compiler/assemble.ts`
+- [ ] T034e Remove `computeVariantFieldSets()` — eliminated entirely, variant Rules from Optimize + forms in Assemble
+- [ ] T034f Remove `walkWithInlining()` from emitters — hidden rules already inlined by `compiler/link.ts`
+- [ ] T034g Remove `buildJoinBy()` and `detectRecursiveSeparator()` from `emitters/rules.ts` — separator captured on Rule by `compiler/evaluate.ts`
+- [ ] T034h Remove `appendMissingFields()` — eliminated, Assemble provides complete field set per form
+
+**Checkpoint**: No emitter contains logic that belongs in compiler phases.
+
+### Phase 2g: Rewrite emitters to consume NodeMap directly
+
+Per the design doc's derivation chains:
+```
+NodeMap ──→ types.ts      (interfaces, unions, Config, FromInput)
+       ├──→ factories.ts  (constructors, per-form for polymorphs)
+       ├──→ templates.ts  (render strings, clauses, joinBy)
+       │    factory sig ↓
+       ├──→ from.ts       (sugar over factory: resolve fields, call factory)
+       └──→ ir.ts         (re-exports factories + from with form accessors)
+```
+
+Each emitter's entry point changes from `emitX(config: { grammar, nodes: HydratedNodeModel[] })` to `emitX(nodeMap: NodeMap)`. Internal helpers switch from `HydratedNodeModel` to `AssembledNode` discriminated union with `switch (node.modelType)`.
+
+- [ ] T035 Rewrite `emitters/types.ts`: entry `emitTypes(nodeMap: NodeMap) → string`. Iterate `nodeMap.nodes`, switch on `modelType`. `emitInterface(node: AssembledBranch | AssembledContainer)` for branches/containers. `emitFormInterface(node: AssembledPolymorph, form: AssembledForm)` for polymorphs. `emitConfigType(node: AssembledNode)` for all types with factories. Remove kind-specific conditionals (`integer_literal`/`float_literal`/`boolean_literal`) — use override-driven classification instead. Remove imports from `node-model.ts` and `naming.ts`.
+- [ ] T036 Rewrite `emitters/factories.ts`: entry `emitFactories(nodeMap: NodeMap) → string`. `emitFactory(node: AssembledBranch | AssembledContainer)` for single-form nodes. `emitFormFactory(node: AssembledPolymorph, form: AssembledForm)` for per-form factories. Access fields via `node.fields` / `form.fields` (already have `propertyName`, `paramName`, `required`, `multiple`, `contentTypes`). Remove imports from `node-model.ts` and `naming.ts`.
+- [ ] T037 Rewrite `emitters/rules.ts` → new file `emitters/templates.ts`: entry `emitTemplatesYaml(nodeMap: NodeMap) → string`. `emitTemplate(node: AssembledBranch | AssembledContainer)` produces per-node template rule. `emitPolymorphTemplates(node: AssembledPolymorph)` produces per-form template rules. Separator comes from `AssembledContainer.separator` (no `detectRecursiveSeparator`). Clauses come from Rule tree (via `mergedRules` on collapsed forms). Remove all eliminated functions (tryClause, needsSpace, buildWordBoundary, etc.).
+- [ ] T038 Rewrite `emitters/from.ts`: entry `emitFrom(nodeMap: NodeMap) → string`. **Derives from factory signatures, not the node model.** `emitFromFunction(node: AssembledNode)` for each node with a factory. `emitFormFrom(node: AssembledPolymorph, form: AssembledForm)` for per-form from. `resolveFieldStrategy(field: AssembledField) → strategy` picks resolver based on `field.contentTypes`. `emitResolver(strategy) → string` emits resolver code. Remove imports from `node-model.ts` and `naming.ts`.
+- [ ] T039 Rewrite `emitters/ir-namespace.ts` → new file `emitters/ir.ts`: entry `emitIr(nodeMap: NodeMap) → string`. **Derives from factory exports, not the node model.** Thin namespace wrapper re-exporting factories + from with form accessors. Remove imports from `node-model.ts` and `naming.ts`.
+- [ ] T040 [P] Rewrite `emitters/wrap.ts`: entry `emitWrap(nodeMap: NodeMap) → string`. Switch on `AssembledNode.modelType` for per-kind wrap functions. Access fields via `node.fields` with `propertyName`. Remove imports from `node-model.ts` and `naming.ts`.
+- [ ] T041 [P] Rewrite `emitters/consts.ts`: entry `emitConsts(nodeMap: NodeMap) → string`. Iterate `nodeMap.nodes`, emit kind/keyword/operator arrays. Remove imports from `node-model.ts` and `naming.ts`.
+- [ ] T042 [P] Rewrite `emitters/grammar.ts`: entry `emitGrammar(nodeMap: NodeMap) → string`. Emit grammar type literal. Remove imports from `naming.ts`.
+- [ ] T042a [P] Rewrite `emitters/index-file.ts`: entry `emitIndex(nodeMap: NodeMap) → string`. Barrel re-exports. Remove imports from `node-model.ts`.
+- [ ] T042b [P] Rewrite `emitters/client-utils.ts`: entry `emitUtils(nodeMap: NodeMap) → string`. Emit `isNodeData`, `_inferBranch`, `_BRANCH_FIELDS`. Remove imports from `node-model.ts`.
+- [ ] T042c [P] Rewrite `emitters/test-new.ts`: entry `emitTests(nodeMap: NodeMap) → string`. Per-kind test generation using `AssembledNode.modelType`. Remove imports from `node-model.ts` and `naming.ts`.
+- [ ] T042d [P] Rewrite `emitters/type-test.ts`: entry `emitTypeTests(nodeMap: NodeMap) → string`. Type assertion tests. Remove imports from `node-model.ts` and `naming.ts`.
+- [ ] T042e [P] Rewrite `emitters/config.ts`: entry `emitConfig(nodeMap: NodeMap) → string`. Remove imports from `node-model.ts`.
+- [ ] T042f Create `emitters/suggested.ts`: entry `emitSuggestedOverrides(linked: LinkedGrammar) → string`. Emit `overrides.suggested.ts` as a grammar extension from `linked.suggestedOverrides`. Each entry includes derivation source and confidence in comments.
+
+### Phase 2g-verify: Emitter NodeMap-only enforcement
+
+- [ ] T042g Grep all files in `packages/codegen/src/emitters/` for imports from `node-model.ts`, `naming.ts`, `enriched-grammar.ts`, `hydration.ts`, `grammar-model.ts`, `factoring.ts` — verify zero matches. Every emitter must import only from `compiler/rule.ts` (for types) and `compiler/assemble.ts` (for naming helpers if needed).
+- [ ] T042h Grep all emitter function signatures for `HydratedNodeModel`, `HydratedFieldModel`, `HydratedChildrenModel`, `GrammarRule`, `StructuralNode`, `StructuralVariant` — verify zero matches. Every emitter parameter must be `NodeMap` or `AssembledNode` variants.
+
+**Checkpoint**: All emitters consume `NodeMap` exclusively. No imports from old model modules. E2e validation tests pass.
+
+### Phase 2h: CLI Integration
 
 - [ ] T043 Rewrite `packages/codegen/src/cli.ts` to compose phases: evaluate → link → optimize → assemble → emit. Remove all calls to old pipeline functions.
 - [ ] T044 Update `packages/codegen/src/index.ts` to export phase functions and types as public API
 
 **Checkpoint**: `npx tsx packages/codegen/src/cli.ts --grammar rust --all` produces correct output via the new pipeline
 
-### Phase 2g: Delete Old Code
+### Phase 2i: Delete Old Code
 
 - [ ] T045a [P] Delete grammar loading files absorbed into Evaluate: `packages/codegen/src/grammar-reader.ts`, `packages/codegen/src/grammar.ts`, `packages/codegen/src/overrides.ts`, `packages/codegen/src/grammar-model.ts`
 - [ ] T045b [P] Delete classification/enrichment files absorbed into Link and Assemble: `packages/codegen/src/enriched-grammar.ts`, `packages/codegen/src/classify.ts`, `packages/codegen/src/semantic-aliases.ts`, `packages/codegen/src/node-types.ts`
@@ -243,13 +291,21 @@ T001-T004 (Setup)
     ↓
 T005-T014, T014a, T009a, T008a, T008b, T010a (Evaluate + edge cases)
     ↓
+T011-T013 (Override conversions — can run after Evaluate works)
+    ↓
 T015-T022, T019a, T016a (Link + edge cases)
     ↓
 T023-T026 (Optimize)
     ↓
 T027-T032, T027a, T027b, T029a (Assemble + edge cases)
     ↓
-T033-T042 (Emit) — T038-T041 are [P]
+T033-T033c (NodeMap adapter + tests)
+    ↓
+T034-T034h (Eliminate functions that moved to compiler phases)
+    ↓
+T035-T042f (Rewrite emitters to consume NodeMap) — T040-T042e are [P]
+    ↓
+T042g-T042h (NodeMap-only enforcement verification)
     ↓
 T043-T044 (CLI)
     ↓
