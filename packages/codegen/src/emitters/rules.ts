@@ -201,22 +201,27 @@ function emitFromModelVariants(
 	const templates: string[] = [];
 
 	for (const variant of variants) {
-		const seen = new Set<string>();
-		const clauses: ClauseEntry[] = [];
-		const parts = ruleToTemplate(variant.rule, false, seen, fieldRequired, fieldMultiple, grammarRules, clauses, false, childSlotMap);
+		// When a variant was collapsed from multiple same-field-set variants,
+		// generate a template from each merged rule (preserves all template forms).
+		const rulesToWalk = variant.mergedRules ?? [variant.rule];
+		for (const rule of rulesToWalk) {
+			const seen = new Set<string>();
+			const clauses: ClauseEntry[] = [];
+			const parts = ruleToTemplate(rule, false, seen, fieldRequired, fieldMultiple, grammarRules, clauses, false, childSlotMap);
 
-		// Only append fields that belong to THIS variant, not all node fields
-		const variantFields = nodeFields.filter(f => variant.fields.has(f.name));
-		appendMissingFields(parts, variantFields, seen);
-		appendChildrenIfNeeded(parts, node, seen, childSlotMap, overrideFields);
+			// Only append fields that belong to THIS variant, not all node fields
+			const variantFields = nodeFields.filter(f => variant.fields.has(f.name));
+			appendMissingFields(parts, variantFields, seen);
+			appendChildrenIfNeeded(parts, node, seen, childSlotMap, overrideFields);
 
-		const templateStr = parts.join('').split('\n').map(l => { const m = l.match(/^(\s*)(.*)/); const indent = m![1]!; const rest = m![2]!.replace(/ {2,}/g, ' ').trim(); return indent + rest; }).join('\n').trim();
-		if (templateStr) templates.push(templateStr);
+			const templateStr = parts.join('').split('\n').map(l => { const m = l.match(/^(\s*)(.*)/); const indent = m![1]!; const rest = m![2]!.replace(/ {2,}/g, ' ').trim(); return indent + rest; }).join('\n').trim();
+			if (templateStr) templates.push(templateStr);
 
-		for (const c of clauses) {
-			if (!clauseNames.has(c.name)) {
-				allClauses.push(c);
-				clauseNames.add(c.name);
+			for (const c of clauses) {
+				if (!clauseNames.has(c.name)) {
+					allClauses.push(c);
+					clauseNames.add(c.name);
+				}
 			}
 		}
 	}
