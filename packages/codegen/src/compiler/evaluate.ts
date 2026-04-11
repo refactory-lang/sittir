@@ -249,17 +249,21 @@ interface PrecFn {
 }
 
 export const prec: PrecFn = Object.assign(
-    function prec(_precedence: number, content: Input): Rule {
+    function prec(precedenceOrContent: number | Input, content?: Input): Rule {
+        if (content === undefined) return normalize(precedenceOrContent as Input)
         return normalize(content)
     },
     {
-        left(_precedence: number, content: Input): Rule {
+        left(precedenceOrContent: number | Input, content?: Input): Rule {
+            if (content == null) return normalize(precedenceOrContent as Input)
             return normalize(content)
         },
-        right(_precedence: number, content: Input): Rule {
+        right(precedenceOrContent: number | Input, content?: Input): Rule {
+            if (content == null) return normalize(precedenceOrContent as Input)
             return normalize(content)
         },
-        dynamic(_precedence: number, content: Input): Rule {
+        dynamic(precedenceOrContent: number | Input, content?: Input): Rule {
+            if (content == null) return normalize(precedenceOrContent as Input)
             return normalize(content)
         },
     },
@@ -308,14 +312,15 @@ interface GrammarOptions {
  */
 function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: GrammarOptions): { grammar: any } {
     let baseRules: Record<string, Rule> = {}
+    let baseGrammar: any = null
     let opts: GrammarOptions
 
     if (options === undefined) {
         opts = optionsOrBase as GrammarOptions
     } else {
         // Extension mode: first arg is a base grammar result
-        const base = (optionsOrBase as { grammar: any }).grammar
-        baseRules = { ...base.rules }
+        baseGrammar = (optionsOrBase as { grammar: any }).grammar
+        baseRules = { ...baseGrammar.rules }
         opts = options
     }
 
@@ -345,52 +350,77 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
     const conflicts: string[][] = []
     let word: string | null = null
 
+    // All callbacks follow tree-sitter's pattern: fn($, baseValue)
+    // where baseValue is the base grammar's version of that property
+
     if (opts.extras) {
         const $ = createProxy('_extras_', refs)
-        for (const e of opts.extras($)) {
-            const n = normalize(e)
-            if (n.type === 'symbol') extras.push(n.name)
-            else if (n.type === 'pattern') extras.push(n.value)
+        const baseExtras = baseGrammar?.extras ?? []
+        const result = opts.extras.call($, $, baseExtras)
+        if (Array.isArray(result)) {
+            for (const e of result) {
+                const n = normalize(e)
+                if (n.type === 'symbol') extras.push(n.name)
+                else if (n.type === 'pattern') extras.push(n.value)
+            }
         }
     }
 
     if (opts.externals) {
         const $ = createProxy('_externals_', refs)
-        for (const e of opts.externals($)) {
-            const n = normalize(e)
-            if (n.type === 'symbol') externals.push(n.name)
+        const baseExternals = baseGrammar?.externals ?? []
+        const result = opts.externals.call($, $, baseExternals)
+        if (Array.isArray(result)) {
+            for (const e of result) {
+                const n = normalize(e)
+                if (n.type === 'symbol') externals.push(n.name)
+            }
         }
     }
 
     if (opts.supertypes) {
         const $ = createProxy('_supertypes_', refs)
-        for (const s of opts.supertypes($)) {
-            const n = normalize(s)
-            if (n.type === 'symbol') supertypes.push(n.name)
+        const baseSupertypes = baseGrammar?.supertypes ?? []
+        const result = opts.supertypes.call($, $, baseSupertypes)
+        if (Array.isArray(result)) {
+            for (const s of result) {
+                const n = normalize(s)
+                if (n.type === 'symbol') supertypes.push(n.name)
+            }
         }
     }
 
     if (opts.inline) {
         const $ = createProxy('_inline_', refs)
-        for (const i of opts.inline($)) {
-            const n = normalize(i)
-            if (n.type === 'symbol') inline.push(n.name)
+        const baseInline = baseGrammar?.inline ?? []
+        const result = opts.inline.call($, $, baseInline)
+        if (Array.isArray(result)) {
+            for (const i of result) {
+                const n = normalize(i)
+                if (n.type === 'symbol') inline.push(n.name)
+            }
         }
     }
 
     if (opts.conflicts) {
         const $ = createProxy('_conflicts_', refs)
-        for (const c of opts.conflicts($)) {
-            conflicts.push(c.map(r => {
-                const n = normalize(r)
-                return n.type === 'symbol' ? n.name : ''
-            }).filter(Boolean))
+        const baseConflicts = baseGrammar?.conflicts ?? []
+        const result = opts.conflicts.call($, $, baseConflicts)
+        if (Array.isArray(result)) {
+            for (const c of result) {
+                if (Array.isArray(c)) {
+                    conflicts.push(c.map(r => {
+                        const n = normalize(r)
+                        return n.type === 'symbol' ? n.name : ''
+                    }).filter(Boolean))
+                }
+            }
         }
     }
 
     if (opts.word) {
         const $ = createProxy('_word_', refs)
-        const w = opts.word($)
+        const w = opts.word.call($, $)
         word = w.name
     }
 
