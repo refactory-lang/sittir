@@ -128,16 +128,16 @@ describe('Assemble — classifyNode', () => {
         expect(classifyNode('_expression', rule)).toBe('supertype')
     })
 
-    it('classifies hidden choice of symbols as supertype', () => {
+    it('classifies SupertypeRule (from Link) as supertype regardless of name', () => {
+        // Link classifies hidden choice-of-symbols as SupertypeRule
+        // Assemble just passes it through — no name check needed
         const rule: Rule = {
-            type: 'choice',
-            members: [
-                { type: 'variant', name: 'a', content: { type: 'symbol', name: 'binary_expression' } },
-                { type: 'variant', name: 'b', content: { type: 'symbol', name: 'identifier' } },
-            ],
+            type: 'supertype', name: 'expression',
+            subtypes: ['binary_expression', 'identifier'], source: 'grammar',
         }
-        // Hidden (_-prefixed) + choice = supertype per design doc
+        expect(classifyNode('expression', rule)).toBe('supertype')
         expect(classifyNode('_expression', rule)).toBe('supertype')
+        expect(classifyNode('anything', rule)).toBe('supertype')
     })
 
     it('classifies hidden seq with fields as group', () => {

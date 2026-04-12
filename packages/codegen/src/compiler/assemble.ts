@@ -243,23 +243,12 @@ function walkForFieldNames(rule: Rule, out: Set<string>): void {
 /**
  * Classify a rule into a model type.
  *
- * Two axes per the design doc:
- *   1. Simplified rule shape (structural)
- *   2. Visibility (hidden = _-prefixed = no AST node; visible = named = has AST node)
+ * By the time rules reach Assemble:
+ * - Link has already classified hidden rules into SupertypeRule / EnumRule / GroupRule
+ * - Those pass through via the already-classified check below
+ * - Everything else is classified purely by structure
  *
- * Hidden (_-prefixed) is a tree-sitter grammar-level declaration, not a naming convention.
- * Hidden rules don't produce AST nodes or factories, but they DO exist in the NodeMap
- * as supertype, enum, or group.
- *
- * | Simplified shape              | Hidden (_-prefixed)   | Visible (named)    |
- * |-------------------------------|-----------------------|--------------------|
- * | seq (containing field nodes)  | group                 | branch             |
- * | repeat                        | inlined into parent   | container          |
- * | choice (of structures/symbols)| supertype             | polymorph          |
- * | choice (of strings)           | enum                  | enum               |
- * | pattern                       | inlined               | leaf               |
- * | single string (alphanumeric)  | inlined               | keyword            |
- * | non-alphanumeric terminal     | inlined               | token              |
+ * No name-based checks. The _ prefix is an input signal for Link, not for Assemble.
  */
 export function classifyNode(kind: string, rule: Rule): ModelType {
     // Already-classified types pass through (from Link)
@@ -267,13 +256,8 @@ export function classifyNode(kind: string, rule: Rule): ModelType {
     if (rule.type === 'supertype') return 'supertype'
     if (rule.type === 'group') return 'group'
 
-    const hidden = kind.startsWith('_')
-
-    // Check for variant presence BEFORE simplifying
-    // Variants mean this is a choice that Optimize processed
+    // Choice with variants: branch if same field set, else polymorph
     if (rule.type === 'choice' && rule.members.some(m => m.type === 'variant')) {
-        if (hidden) return 'supertype'
-        // Visible choice with variants: branch if same field set, else polymorph
         if (allVariantsHaveSameFieldSet(rule)) return 'branch'
         return 'polymorph'
     }
@@ -283,26 +267,23 @@ export function classifyNode(kind: string, rule: Rule): ModelType {
     switch (simplified.type) {
         case 'seq': {
             const hasFields = simplified.members.some(m => m.type === 'field')
-            if (hasFields) return hidden ? 'group' : 'branch'
-            // seq without fields — hidden: inlined (shouldn't reach here), visible: token
+            if (hasFields) return 'branch'
             return 'token'
         }
         case 'repeat':
-            return 'container'  // hidden repeat = inlined, but if it reaches here, container
+            return 'container'
         case 'choice': {
-            const allStrings = simplified.members.every(m => m.type === 'string')
-            if (allStrings) return 'enum'
-            return hidden ? 'supertype' : 'polymorph'
+            if (simplified.members.every(m => m.type === 'string')) return 'enum'
+            return 'polymorph'
         }
         case 'pattern':
             return 'leaf'
         case 'string': {
-            const isAlphanumeric = /^\w+$/.test(simplified.value)
-            if (isAlphanumeric) return 'keyword'
+            if (/^\w+$/.test(simplified.value)) return 'keyword'
             return 'token'
         }
         case 'field':
-            return hidden ? 'group' : 'branch'
+            return 'branch'
         case 'optional':
             return classifyNode(kind, simplified.content)
         default:
