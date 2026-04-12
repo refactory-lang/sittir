@@ -26,6 +26,7 @@ import { resolve } from 'node:path'
 import { generateV2 } from '../compiler/generate.ts'
 import { validateFactoryRoundTrip } from '../validate-factory-roundtrip.ts'
 import { validateFrom } from '../validate-from.ts'
+import { validateRenderable } from '../validate-renderable.ts'
 
 /**
  * v2 current floors — asserted. When a fix lands, raise these in the
@@ -33,22 +34,22 @@ import { validateFrom } from '../validate-from.ts'
  */
 const FLOORS = {
     python: {
-        factoryPass: 54,
-        factoryTotal: 84,
-        fromPass: 87,
-        fromTotal: 100,
+        factoryPass: 65,
+        factoryTotal: 104,
+        fromPass: 98,
+        fromTotal: 113,
     },
     rust: {
-        factoryPass: 56,
-        factoryTotal: 122,
-        fromPass: 119,
-        fromTotal: 135,
+        factoryPass: 61,
+        factoryTotal: 136,
+        fromPass: 129,
+        fromTotal: 145,
     },
     typescript: {
-        factoryPass: 90,
-        factoryTotal: 115,
-        fromPass: 107,
-        fromTotal: 126,
+        factoryPass: 97,
+        factoryTotal: 129,
+        fromPass: 114,
+        fromTotal: 137,
     },
 } as const
 
@@ -141,6 +142,32 @@ describe('corpus validation — v1 baseline gap report', () => {
             // Floors must never be negative (nonsensical)
             expect(v2.factoryPass).toBeGreaterThanOrEqual(0)
             expect(v2.fromPass).toBeGreaterThanOrEqual(0)
+        },
+    )
+})
+
+describe('renderability — every node-types.json kind must be reachable', () => {
+    // Every named entry in tree-sitter's node-types.json must be reachable
+    // by @sittir/core's render() via one of: supertype dispatch, pure leaf
+    // (direct text), or a rules-map entry. An un-renderable kind means
+    // `render(node)` will throw at runtime for any instance of that kind.
+    it.each(Object.keys(FLOORS) as GrammarName[])(
+        '%s: 100%% of named kinds are renderable',
+        async (grammar) => {
+            const yaml = await loadTemplates(grammar)
+            const result = validateRenderable(grammar, yaml)
+            if (result.missing.length > 0) {
+                const lines = result.missing
+                    .slice(0, 10)
+                    .map(m => `  - ${m.kind}: ${m.reason}`)
+                    .join('\n')
+                throw new Error(
+                    `${result.missing.length} un-renderable kind(s) in ${grammar}:\n${lines}`,
+                )
+            }
+            expect(result.missing).toHaveLength(0)
+            expect(result.renderable).toBe(result.total)
+            expect(result.total).toBeGreaterThan(0)
         },
     )
 })

@@ -40,6 +40,13 @@ describe('export_statement', () => {
   });
 });
 
+describe('namespace_export', () => {
+  it('factory produces correct type', () => {
+    const node = ir.namespaceExport();
+    expect(node.type).toBe('namespace_export');
+  });
+});
+
 describe('export_clause', () => {
   it('factory produces correct type', () => {
     const node = ir.exportClause();
@@ -258,6 +265,13 @@ describe('statement', () => {
   });
 });
 
+describe('expression_statement', () => {
+  it('factory produces correct type', () => {
+    const node = ir.expressionStatement();
+    expect(node.type).toBe('expression_statement');
+  });
+});
+
 describe('variable_declaration', () => {
   it('factory produces correct type', () => {
     const node = ir.variableDeclaration({ declarators: 'test' as any, semicolon: 'test' as any });
@@ -420,6 +434,27 @@ describe('continue_statement', () => {
   it('render produces non-empty string', () => {
     const node = ir.continueStatement({ label: { type: 'identifier', text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('debugger_statement', () => {
+  it('factory produces correct type', () => {
+    const node = ir.debuggerStatement();
+    expect(node.type).toBe('debugger_statement');
+  });
+});
+
+describe('return_statement', () => {
+  it('factory produces correct type', () => {
+    const node = ir.returnStatement();
+    expect(node.type).toBe('return_statement');
+  });
+});
+
+describe('throw_statement', () => {
+  it('factory produces correct type', () => {
+    const node = ir.throwStatement();
+    expect(node.type).toBe('throw_statement');
   });
 });
 
@@ -645,6 +680,13 @@ describe('html_character_reference', () => {
 describe('jsx_expression', () => {
 });
 
+describe('jsx_opening_element', () => {
+  it('factory produces correct type', () => {
+    const node = ir.jsxOpeningElement();
+    expect(node.type).toBe('jsx_opening_element');
+  });
+});
+
 describe('jsx_identifier', () => {
   it('factory produces correct type', () => {
     const node = ir.jsxIdentifier('test');
@@ -664,6 +706,13 @@ describe('nested_identifier', () => {
   });
 });
 
+describe('jsx_namespace_name', () => {
+  it('factory produces correct type', () => {
+    const node = ir.jsxNamespaceName();
+    expect(node.type).toBe('jsx_namespace_name');
+  });
+});
+
 describe('jsx_closing_element', () => {
   it('factory produces correct type', () => {
     const node = ir.jsxClosingElement({});
@@ -672,6 +721,20 @@ describe('jsx_closing_element', () => {
   it('render produces non-empty string', () => {
     const node = ir.jsxClosingElement({});
     expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('jsx_self_closing_element', () => {
+  it('factory produces correct type', () => {
+    const node = ir.jsxSelfClosingElement();
+    expect(node.type).toBe('jsx_self_closing_element');
+  });
+});
+
+describe('jsx_attribute', () => {
+  it('factory produces correct type', () => {
+    const node = ir.jsxAttribute();
+    expect(node.type).toBe('jsx_attribute');
   });
 });
 
@@ -970,6 +1033,13 @@ describe('template_string', () => {
   });
 });
 
+describe('template_substitution', () => {
+  it('factory produces correct type', () => {
+    const node = ir.templateSubstitution();
+    expect(node.type).toBe('template_substitution');
+  });
+});
+
 describe('regex', () => {
   it('factory produces correct type', () => {
     const node = ir.regex({ pattern: { type: 'regex_pattern', text: 'test' } as any });
@@ -1128,6 +1198,13 @@ describe('field_definition', () => {
   });
 });
 
+describe('formal_parameters', () => {
+  it('factory produces correct type', () => {
+    const node = ir.formalParameters();
+    expect(node.type).toBe('formal_parameters');
+  });
+});
+
 describe('class_static_block', () => {
   it('factory produces correct type', () => {
     const node = ir.classStaticBlock({ body: { type: 'statement_block', text: 'test' } as any });
@@ -1147,6 +1224,13 @@ describe('pattern', () => {
   it('rest_pattern form produces correct type', () => {
     const node = ir.pattern.rest_pattern({});
     expect(node.type).toBe('pattern');
+  });
+});
+
+describe('rest_pattern', () => {
+  it('factory produces correct type', () => {
+    const node = ir.restPattern();
+    expect(node.type).toBe('rest_pattern');
   });
 });
 
@@ -1318,6 +1402,13 @@ describe('import_require_clause', () => {
   });
 });
 
+describe('extends_clause', () => {
+  it('factory produces correct type', () => {
+    const node = ir.extendsClause();
+    expect(node.type).toBe('extends_clause');
+  });
+});
+
 describe('implements_clause', () => {
   it('factory produces correct type', () => {
     const node = ir.implementsClause();
@@ -1344,6 +1435,20 @@ describe('abstract_class_declaration', () => {
   it('render produces non-empty string', () => {
     const node = ir.abstractClassDeclaration({ classHeritage: 'test' as any, name: { type: '_type_identifier', text: 'test' } as any, typeParameters: { type: 'type_parameters', text: 'test' } as any, body: { type: 'class_body', text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('module', () => {
+  it('factory produces correct type', () => {
+    const node = ir.module();
+    expect(node.type).toBe('module');
+  });
+});
+
+describe('internal_module', () => {
+  it('factory produces correct type', () => {
+    const node = ir.internalModule();
+    expect(node.type).toBe('internal_module');
   });
 });
 
@@ -1887,6 +1992,13 @@ describe('object_type', () => {
   });
 });
 
+describe('call_signature', () => {
+  it('factory produces correct type', () => {
+    const node = ir.callSignature();
+    expect(node.type).toBe('call_signature');
+  });
+});
+
 describe('property_signature', () => {
   it('factory produces correct type', () => {
     const node = ir.propertySignature({ accessibilityModifier: { type: 'accessibility_modifier', text: 'test' } as any, overrideModifier: 'test' as any, name: { type: '_property_name', text: 'test' } as any, type: { type: 'type_annotation', text: 'test' } as any });
@@ -1960,6 +2072,13 @@ describe('array_type', () => {
   it('render produces non-empty string', () => {
     const node = ir.arrayType({ primaryType: { type: 'primary_type', text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('tuple_type', () => {
+  it('factory produces correct type', () => {
+    const node = ir.tupleType();
+    expect(node.type).toBe('tuple_type');
   });
 });
 

@@ -2,8 +2,18 @@
 grammar: python
 grammarSha: ""
 rules:
+  module:
+    template: $$$CHILDREN
+  _simple_statements:
+    template: $$$CHILDREN;
+  import_statement:
+    template: import$$$CHILDREN
+  import_prefix:
+    template: $$$CHILDREN
   relative_import:
     template: $IMPORT_PREFIX$DOTTED_NAME
+  future_import_statement:
+    template: from __future__ import$$$CHILDREN
   import_from_statement:
     template: $WILDCARD_IMPORT$MODULE_NAME import$$$CHILDREN
   _import_list:
@@ -40,8 +50,12 @@ rules:
         template: $$$CHILDREN
   named_expression:
     template: "$NAME:=$VALUE"
+  return_statement:
+    template: return$$$CHILDREN
+  delete_statement:
+    template: del$$$CHILDREN
   raise_statement:
-    template: raise from$CAUSE
+    template: raise$$$CHILDREN from$CAUSE
   if_statement:
     template: "if$CONDITION:$CONSEQUENCE$ALTERNATIVE"
   elif_clause:
@@ -59,9 +73,9 @@ rules:
   try_statement:
     template: $EXCEPT_CLAUSES$ELSE_CLAUSE$FINALLY_CLAUSE$$$CHILDREN
   except_clause:
-    template: "except*$VALUE as$ALIAS:"
+    template: "except*$VALUE as$ALIAS:$$$CHILDREN"
   finally_clause:
-    template: "$BLOCK:"
+    template: "$BLOCK:$$$CHILDREN"
   with_statement:
     template: "$WITH_CLAUSE with$$$CHILDREN:$BODY"
   with_clause_with_item:
@@ -78,6 +92,10 @@ rules:
     template: $VALUE
   function_definition:
     template: "async def$NAME$TYPE_PARAMETERS$PARAMETERS->$RETURN_TYPE:$BODY"
+  parameters:
+    template: ($$$CHILDREN)
+  lambda_parameters:
+    template: $$$CHILDREN
   list_splat:
     template: $EXPRESSION$$$CHILDREN
   dictionary_splat:
@@ -94,28 +112,38 @@ rules:
     template: "class$NAME$TYPE_PARAMETERS$SUPERCLASSES:$BODY"
   type_parameter:
     template: "[$$$CHILDREN,]"
+  parenthesized_list_splat:
+    template: $$$CHILDREN
   argument_list:
     template: ($$$CHILDREN,)
   decorated_definition:
     template: $$$CHILDREN$DEFINITION
   decorator:
-    template: $EXPRESSION$NEWLINE
+    template: $EXPRESSION$NEWLINE$$$CHILDREN
+  block:
+    template: $$$CHILDREN
   expression_list:
     template: $$$CHILDREN,
   dotted_name:
     template: $$$CHILDREN
+  case_pattern__as_pattern:
+    template: $$$CHILDREN
   case_pattern_keyword_pattern:
+    template: $$$CHILDREN
+  case_pattern__simple_pattern:
     template: $$$CHILDREN
   case_pattern:
     variants:
       - name: _as_pattern
-        template: ""
+        template: $$$CHILDREN
       - name: keyword_pattern
         template: $$$CHILDREN
       - name: _simple_pattern
-        template: ""
+        template: $$$CHILDREN
   _as_pattern:
     template: $$$CHILDREN as
+  union_pattern:
+    template: $$$CHILDREN
   _list_pattern:
     template: "[$$$CHILDREN,]"
   _tuple_pattern:
@@ -125,7 +153,7 @@ rules:
   _key_value_pattern:
     template: "$KEY:$VALUE"
   keyword_pattern:
-    template: $IDENTIFIER$SIMPLE_PATTERN
+    template: $IDENTIFIER$SIMPLE_PATTERN$$$CHILDREN
   splat_pattern:
     template: $IDENTIFIER$$$CHILDREN
   class_pattern:
@@ -204,10 +232,18 @@ rules:
         template: $$$CHILDREN
       - name: list_pattern
         template: $$$CHILDREN
+  tuple_pattern:
+    template: ($$$CHILDREN)
+  list_pattern:
+    template: "[$$$CHILDREN]"
   default_parameter:
     template: $NAME=$VALUE
   typed_default_parameter:
     template: "$NAME:$TYPE=$VALUE"
+  list_splat_pattern:
+    template: $$$CHILDREN
+  dictionary_splat_pattern:
+    template: $$$CHILDREN
   as_pattern:
     template: $EXPRESSION as$ALIAS
   expression_comparison_operator:
@@ -420,19 +456,27 @@ rules:
     template: $BASE_TYPE$IDENTIFIER$$$CHILDREN
   keyword_argument:
     template: $NAME=$VALUE
+  list:
+    template: "[$$$CHILDREN]"
+  set:
+    template: "{$$$CHILDREN}"
+  tuple:
+    template: ($$$CHILDREN)
   dictionary:
     template: "{$$$CHILDREN,}"
   pair:
     template: "$KEY:$VALUE"
   list_comprehension:
-    template: "[$BODY]"
+    template: "[$BODY$$$CHILDREN]"
   dictionary_comprehension:
-    template: "{$BODY}"
+    template: "{$BODY$$$CHILDREN}"
   set_comprehension:
-    template: "{$BODY}"
+    template: "{$BODY$$$CHILDREN}"
   generator_expression:
-    template: ($BODY)
+    template: ($BODY$$$CHILDREN)
   _comprehension_clauses:
+    template: $$$CHILDREN
+  parenthesized_expression:
     template: $$$CHILDREN
   _collection_elements:
     template: $$$CHILDREN,
@@ -450,6 +494,8 @@ rules:
     template: $$$CHILDREN
   interpolation:
     template: "{$EXPRESSION=$TYPE_CONVERSION$FORMAT_SPECIFIER}"
+  escape_sequence:
+    template: $$$CHILDREN
   format_specifier:
     template: ":$$$CHILDREN"
   integer_form_0:
@@ -458,6 +504,8 @@ rules:
     template: 0o
   integer_form_2:
     template: 0b
+  integer_form_3:
+    template: $$$CHILDREN
   integer:
     variants:
       - name: form_0
@@ -467,7 +515,7 @@ rules:
       - name: form_2
         template: 0b
       - name: form_3
-        template: ""
+        template: $$$CHILDREN
   keyword_identifier_form_0:
     template: print
   keyword_identifier_form_1:
@@ -480,6 +528,8 @@ rules:
         template: type
   await:
     template: $PRIMARY_EXPRESSION$$$CHILDREN
+  line_continuation:
+    template: $$$CHILDREN
   as_pattern_target_comparison_operator:
     template: $$$CHILDREN
   as_pattern_target_not_operator:

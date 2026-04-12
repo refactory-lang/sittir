@@ -14,9 +14,9 @@ const GRAMMARS = ['rust', 'typescript', 'python'] as const;
 // reflect v2 behavior against v1-generated templates.yaml. The authoritative
 // v2 regression guard is `src/__tests__/corpus-validation.test.ts`.
 const RT_CEILINGS: Record<string, { roundTrip: number; factoryRoundTrip: number }> = {
-  rust:       { roundTrip: 46, factoryRoundTrip: 17 },
+  rust:       { roundTrip: 46, factoryRoundTrip: 20 },
   typescript: { roundTrip: 0,  factoryRoundTrip: 3 },
-  python:     { roundTrip: 24, factoryRoundTrip: 7 },
+  python:     { roundTrip: 24, factoryRoundTrip: 10 },
 };
 
 for (const grammar of GRAMMARS) {

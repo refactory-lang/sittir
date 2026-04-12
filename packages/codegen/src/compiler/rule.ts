@@ -347,15 +347,33 @@ export function deriveChildren(rule: Rule): AssembledChild[] {
 function walkForChildren(rule: Rule, out: AssembledChild[], isOptional: boolean, isRepeated: boolean): void {
     switch (rule.type) {
         case 'symbol':
-            if (!rule.hidden) {
+            // Both visible and hidden symbols contribute to the runtime child
+            // set: hidden symbols (supertypes) dispatch to their concrete
+            // subtypes at parse time, so tree-sitter surfaces those children
+            // under the parent. The child slot name we emit reflects the
+            // symbol we referenced (stripped of any leading underscore so
+            // `_expression` → `expression`).
+            {
+                const cleanName = rule.name.replace(/^_+/, '') || rule.name
                 out.push({
-                    name: rule.name,
-                    propertyName: snakeToCamel(rule.name),
+                    name: cleanName,
+                    propertyName: snakeToCamel(cleanName),
                     required: !isOptional,
                     multiple: isRepeated,
                     contentTypes: [rule.name],
                 })
             }
+            break
+        case 'supertype':
+            // Resolved supertype reference — dispatches to any subtype at
+            // runtime. Emit one slot with the supertype's name.
+            out.push({
+                name: rule.name.replace(/^_+/, '') || rule.name,
+                propertyName: snakeToCamel(rule.name.replace(/^_+/, '') || rule.name),
+                required: !isOptional,
+                multiple: isRepeated,
+                contentTypes: rule.subtypes,
+            })
             break
         case 'seq':
             for (const m of rule.members) walkForChildren(m, out, isOptional, isRepeated)

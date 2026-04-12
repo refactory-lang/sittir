@@ -23,6 +23,7 @@ export const NODE_KINDS = [
   'binary_expression',
   'break_statement',
   'call_expression',
+  'call_signature',
   'catch_clause',
   'class',
   'class_body',
@@ -36,6 +37,7 @@ export const NODE_KINDS = [
   'construct_signature',
   'constructor_type',
   'continue_statement',
+  'debugger_statement',
   'declaration',
   'decorator',
   'decorator_call_expression',
@@ -52,12 +54,15 @@ export const NODE_KINDS = [
   'export_specifier',
   'export_statement',
   'expression',
+  'expression_statement',
+  'extends_clause',
   'extends_type_clause',
   'field_definition',
   'finally_clause',
   'flow_maybe_type',
   'for_in_statement',
   'for_statement',
+  'formal_parameters',
   'function_declaration',
   'function_expression',
   'function_signature',
@@ -79,10 +84,15 @@ export const NODE_KINDS = [
   'instantiation_expression',
   'interface_body',
   'interface_declaration',
+  'internal_module',
   'intersection_type',
+  'jsx_attribute',
   'jsx_closing_element',
   'jsx_element',
   'jsx_expression',
+  'jsx_namespace_name',
+  'jsx_opening_element',
+  'jsx_self_closing_element',
   'labeled_statement',
   'lexical_declaration',
   'literal_type',
@@ -92,7 +102,9 @@ export const NODE_KINDS = [
   'meta_property',
   'method_definition',
   'method_signature',
+  'module',
   'named_imports',
+  'namespace_export',
   'namespace_import',
   'nested_identifier',
   'nested_type_identifier',
@@ -123,7 +135,9 @@ export const NODE_KINDS = [
   'regex',
   'regex_pattern',
   'required_parameter',
+  'rest_pattern',
   'rest_type',
+  'return_statement',
   'satisfies_expression',
   'sequence_expression',
   'shorthand_property_identifier',
@@ -139,10 +153,13 @@ export const NODE_KINDS = [
   'switch_statement',
   'template_literal_type',
   'template_string',
+  'template_substitution',
   'template_type',
   'ternary_expression',
+  'throw_statement',
   'try_statement',
   'tuple_parameter',
+  'tuple_type',
   'type',
   'type_alias_declaration',
   'type_annotation',
@@ -285,13 +302,11 @@ export const KEYWORDS = [
   'await',
   'boolean',
   'break',
-  'call_signature',
   'case',
   'catch',
   'const',
   'continue',
   'debugger',
-  'debugger_statement',
   'declare',
   'default',
   'delete',
@@ -302,13 +317,10 @@ export const KEYWORDS = [
   'enum',
   'existential_type',
   'export',
-  'expression_statement',
   'extends',
-  'extends_clause',
   'false',
   'finally',
   'for',
-  'formal_parameters',
   'from',
   'function',
   'get',
@@ -321,19 +333,12 @@ export const KEYWORDS = [
   'infer',
   'instanceof',
   'interface',
-  'internal_module',
   'is',
-  'jsx_attribute',
-  'jsx_namespace_name',
-  'jsx_opening_element',
-  'jsx_self_closing_element',
   'keyof',
   'let',
   'meta',
-  'module',
   'n',
   'namespace',
-  'namespace_export',
   'never',
   'new',
   'null',
@@ -348,9 +353,7 @@ export const KEYWORDS = [
   'public',
   'readonly',
   'require',
-  'rest_pattern',
   'return',
-  'return_statement',
   'satisfies',
   'set',
   'statement_identifier',
@@ -360,14 +363,11 @@ export const KEYWORDS = [
   'switch',
   'symbol',
   'target',
-  'template_substitution',
   'this',
   'this_type',
   'throw',
-  'throw_statement',
   'true',
   'try',
-  'tuple_type',
   'type_identifier',
   'typeof',
   'undefined',
@@ -545,6 +545,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'typeArguments', required: true, multiple: false },
     { name: 'arguments', required: true, multiple: false },
   ],
+  'call_signature': [
+  ],
   'catch_clause': [
     { name: 'parameter', required: false, multiple: false },
     { name: 'type', required: false, multiple: false },
@@ -598,6 +600,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'continue_statement': [
     { name: 'label', required: true, multiple: false },
   ],
+  'debugger_statement': [
+  ],
   'declaration': [
   ],
   'decorator': [
@@ -648,6 +652,10 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'expression': [
   ],
+  'expression_statement': [
+  ],
+  'extends_clause': [
+  ],
   'extends_type_clause': [
     { name: 'type', required: true, multiple: true },
   ],
@@ -669,6 +677,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'condition', required: true, multiple: false },
     { name: 'increment', required: true, multiple: false },
     { name: 'body', required: true, multiple: false },
+  ],
+  'formal_parameters': [
   ],
   'function_declaration': [
     { name: 'name', required: true, multiple: false },
@@ -759,9 +769,13 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'typeParameters', required: true, multiple: false },
     { name: 'body', required: true, multiple: false },
   ],
+  'internal_module': [
+  ],
   'intersection_type': [
     { name: 'left', required: true, multiple: false },
     { name: 'right', required: true, multiple: false },
+  ],
+  'jsx_attribute': [
   ],
   'jsx_closing_element': [
     { name: 'name', required: false, multiple: false },
@@ -771,6 +785,12 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'closeTag', required: true, multiple: false },
   ],
   'jsx_expression': [
+  ],
+  'jsx_namespace_name': [
+  ],
+  'jsx_opening_element': [
+  ],
+  'jsx_self_closing_element': [
   ],
   'labeled_statement': [
     { name: 'label', required: true, multiple: false },
@@ -809,7 +829,11 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'overrideModifier', required: true, multiple: false },
     { name: 'name', required: true, multiple: false },
   ],
+  'module': [
+  ],
   'named_imports': [
+  ],
+  'namespace_export': [
   ],
   'namespace_import': [
     { name: 'identifier', required: true, multiple: false },
@@ -909,7 +933,11 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'parameterName', required: true, multiple: false },
     { name: 'initializer', required: true, multiple: false },
   ],
+  'rest_pattern': [
+  ],
   'rest_type': [
+  ],
+  'return_statement': [
   ],
   'satisfies_expression': [
     { name: 'expression', required: true, multiple: false },
@@ -954,12 +982,16 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'template_string': [
   ],
+  'template_substitution': [
+  ],
   'template_type': [
   ],
   'ternary_expression': [
     { name: 'condition', required: true, multiple: false },
     { name: 'consequence', required: true, multiple: false },
     { name: 'alternative', required: true, multiple: false },
+  ],
+  'throw_statement': [
   ],
   'try_statement': [
     { name: 'body', required: true, multiple: false },
@@ -969,6 +1001,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'tuple_parameter': [
     { name: 'name', required: true, multiple: false },
     { name: 'type', required: true, multiple: false },
+  ],
+  'tuple_type': [
   ],
   'type': [
   ],

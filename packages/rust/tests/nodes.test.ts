@@ -72,6 +72,13 @@ describe('token_binding_pattern', () => {
   });
 });
 
+describe('token_repetition_pattern', () => {
+  it('factory produces correct type', () => {
+    const node = ir.tokenRepetitionPattern();
+    expect(node.type).toBe('token_repetition_pattern');
+  });
+});
+
 describe('token_tree', () => {
   it('paren form produces correct type', () => {
     const node = ir.tokenTree.paren({});
@@ -84,6 +91,13 @@ describe('token_tree', () => {
   it('brace form produces correct type', () => {
     const node = ir.tokenTree.brace({});
     expect(node.type).toBe('token_tree');
+  });
+});
+
+describe('token_repetition', () => {
+  it('factory produces correct type', () => {
+    const node = ir.tokenRepetition();
+    expect(node.type).toBe('token_repetition');
   });
 });
 
@@ -371,6 +385,13 @@ describe('higher_ranked_trait_bound', () => {
   });
 });
 
+describe('removed_trait_bound', () => {
+  it('factory produces correct type', () => {
+    const node = ir.removedTraitBound();
+    expect(node.type).toBe('removed_trait_bound');
+  });
+});
+
 describe('type_parameters', () => {
   it('factory produces correct type', () => {
     const node = ir.typeParameters();
@@ -441,6 +462,13 @@ describe('scoped_use_list', () => {
   it('render produces non-empty string', () => {
     const node = ir.scopedUseList({ path: { type: '_path', text: 'test' } as any, list: { type: 'use_list', text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('use_list', () => {
+  it('factory produces correct type', () => {
+    const node = ir.useList();
+    expect(node.type).toBe('use_list');
   });
 });
 
@@ -579,6 +607,13 @@ describe('function_type', () => {
   it('render produces non-empty string', () => {
     const node = ir.functionType({ forLifetimes: { type: 'for_lifetimes', text: 'test' } as any, functionModifiers: 'test' as any });
     expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('tuple_type', () => {
+  it('factory produces correct type', () => {
+    const node = ir.tupleType();
+    expect(node.type).toBe('tuple_type');
   });
 });
 
@@ -909,6 +944,13 @@ describe('array_expression', () => {
   });
 });
 
+describe('parenthesized_expression', () => {
+  it('factory produces correct type', () => {
+    const node = ir.parenthesizedExpression();
+    expect(node.type).toBe('parenthesized_expression');
+  });
+});
+
 describe('tuple_expression', () => {
   it('factory produces correct type', () => {
     const node = ir.tupleExpression({ attributes: 'test' as any, first: 'test' as any, rest: 'test' as any, trailing: 'test' as any });
@@ -957,6 +999,13 @@ describe('field_initializer', () => {
   it('render produces non-empty string', () => {
     const node = ir.fieldInitializer({ field: { type: '_field_identifier', text: 'test' } as any, value: { type: '_expression', text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('base_field_initializer', () => {
+  it('factory produces correct type', () => {
+    const node = ir.baseFieldInitializer();
+    expect(node.type).toBe('base_field_initializer');
   });
 });
 
@@ -1146,6 +1195,13 @@ describe('index_expression', () => {
   });
 });
 
+describe('await_expression', () => {
+  it('factory produces correct type', () => {
+    const node = ir.awaitExpression();
+    expect(node.type).toBe('await_expression');
+  });
+});
+
 describe('field_expression', () => {
   it('factory produces correct type', () => {
     const node = ir.fieldExpression({ value: { type: '_expression', text: 'test' } as any, field: { type: '_field_identifier', text: 'test' } as any });
@@ -1230,6 +1286,13 @@ describe('tuple_pattern', () => {
   });
 });
 
+describe('slice_pattern', () => {
+  it('factory produces correct type', () => {
+    const node = ir.slicePattern();
+    expect(node.type).toBe('slice_pattern');
+  });
+});
+
 describe('tuple_struct_pattern', () => {
   it('factory produces correct type', () => {
     const node = ir.tupleStructPattern({ type: { type: 'identifier', text: 'test' } as any });
@@ -1282,6 +1345,13 @@ describe('range_pattern', () => {
   it('right form produces correct type', () => {
     const node = ir.rangePattern.right({ right: { type: '_literal_pattern', text: 'test' } as any });
     expect(node.type).toBe('range_pattern');
+  });
+});
+
+describe('ref_pattern', () => {
+  it('factory produces correct type', () => {
+    const node = ir.refPattern();
+    expect(node.type).toBe('ref_pattern');
   });
 });
 

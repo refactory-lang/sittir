@@ -5,59 +5,65 @@ rules:
   source_file:
     template: $SHEBANG$STATEMENTS
   expression_statement_semi:
-    template: ;
+    template: $$$CHILDREN;
+  expression_statement__expression_ending_with_block:
+    template: $$$CHILDREN
   expression_statement:
     variants:
       - name: semi
-        template: ;
+        template: $$$CHILDREN;
       - name: _expression_ending_with_block
-        template: ""
+        template: $$$CHILDREN
   macro_definition:
     template: $RULES$NAME($$$CHILDREN);
   macro_rule:
     template: $LEFT=>$RIGHT
   token_tree_pattern_paren:
-    template: ()
+    template: ($$$CHILDREN)
   token_tree_pattern_bracket:
-    template: "[]"
+    template: "[$$$CHILDREN]"
   token_tree_pattern_brace:
-    template: "{}"
+    template: "{$$$CHILDREN}"
   token_tree_pattern:
     variants:
       - name: paren
-        template: ()
+        template: ($$$CHILDREN)
       - name: bracket
-        template: "[]"
+        template: "[$$$CHILDREN]"
       - name: brace
-        template: "{}"
+        template: "{$$$CHILDREN}"
   token_binding_pattern:
     template: "$NAME:$TYPE"
+  token_repetition_pattern:
+    template: $($$$CHILDREN)+
   token_tree_paren:
-    template: ()
+    template: ($$$CHILDREN)
   token_tree_bracket:
-    template: "[]"
+    template: "[$$$CHILDREN]"
   token_tree_brace:
-    template: "{}"
+    template: "{$$$CHILDREN}"
   token_tree:
     variants:
       - name: paren
-        template: ()
+        template: ($$$CHILDREN)
       - name: bracket
-        template: "[]"
+        template: "[$$$CHILDREN]"
       - name: brace
-        template: "{}"
+        template: "{$$$CHILDREN}"
+  token_repetition:
+    template: $($$$CHILDREN)+
   attribute_item:
     template: "$ATTRIBUTE[$$$CHILDREN]"
   inner_attribute_item:
     template: "$ATTRIBUTE![$$$CHILDREN]"
   attribute:
-    template: =$VALUE
+    template: $$$CHILDREN=$VALUE
   mod_item:
     template: $VISIBILITY_MODIFIER mod$NAME;
   foreign_mod_item:
     template: $VISIBILITY_MODIFIER$EXTERN_MODIFIER;
   declaration_list:
-    template: "{}"
+    template: "{$$$CHILDREN}"
   struct_item:
     template: $VISIBILITY_MODIFIER$WHERE_CLAUSE$NAME$TYPE_PARAMETERS$$$CHILDREN$BODY
   union_item:
@@ -102,6 +108,8 @@ rules:
     template: ":$$$CHILDREN"
   higher_ranked_trait_bound:
     template: for$TYPE_PARAMETERS$TYPE
+  removed_trait_bound:
+    template: "?$$$CHILDREN"
   type_parameters:
     template: <$$$CHILDREN,>
   const_parameter:
@@ -116,6 +124,8 @@ rules:
     template: $VISIBILITY_MODIFIER use$ARGUMENT;
   scoped_use_list:
     template: "$PATH::$LIST"
+  use_list:
+    template: "{$$$CHILDREN,}"
   use_as_clause:
     template: $PATH as$ALIAS
   use_wildcard:
@@ -140,6 +150,8 @@ rules:
         template: $$$CHILDREN
       - name: pub
         template: pub($$$CHILDREN)
+  bracketed_type:
+    template: $$$CHILDREN
   qualified_type:
     template: $TYPE as$ALIAS
   lifetime:
@@ -150,6 +162,8 @@ rules:
     template: for<$$$CHILDREN,>
   function_type:
     template: $FOR_LIFETIMES$FUNCTION_MODIFIERS->$RETURN_TYPE
+  tuple_type:
+    template: ($$$CHILDREN,)
   generic_function:
     template: "$FUNCTION::$TYPE_ARGUMENTS"
   generic_type:
@@ -175,19 +189,19 @@ rules:
   macro_invocation:
     template: $TOKEN_TREE!$$$CHILDREN
   delim_token_tree_paren:
-    template: ()
+    template: ($$$CHILDREN)
   delim_token_tree_bracket:
-    template: "[]"
+    template: "[$$$CHILDREN]"
   delim_token_tree_brace:
-    template: "{}"
+    template: "{$$$CHILDREN}"
   delim_token_tree:
     variants:
       - name: paren
-        template: ()
+        template: ($$$CHILDREN)
       - name: bracket
-        template: "[]"
+        template: "[$$$CHILDREN]"
       - name: brace
-        template: "{}"
+        template: "{$$$CHILDREN}"
   scoped_identifier:
     template: "$PATH::$NAME"
   scoped_type_identifier_in_expression_position:
@@ -195,7 +209,7 @@ rules:
   scoped_type_identifier:
     template: "$PATH::$NAME"
   range_expression_start:
-    template: $START$END
+    template: $START$END$$$CHILDREN
   range_expression_start2:
     template: $START$END
   range_expression_start3:
@@ -205,7 +219,7 @@ rules:
   range_expression:
     variants:
       - name: start
-        template: $START$END
+        template: $START$END$$$CHILDREN
       - name: start2
         template: $START$END
       - name: start3
@@ -213,7 +227,7 @@ rules:
       - name: dotdot
         template: ..
   unary_expression:
-    template: $OPERAND
+    template: $OPERAND$$$CHILDREN
   try_expression:
     template: $VALUE?
   reference_expression:
@@ -227,23 +241,23 @@ rules:
   type_cast_expression:
     template: $VALUE as$TYPE
   return_expression_return:
-    template: return
+    template: return$$$CHILDREN
   return_expression_return2:
     template: return
   return_expression:
     variants:
       - name: return
-        template: return
+        template: return$$$CHILDREN
       - name: return2
         template: return
   yield_expression_yield:
-    template: yield
+    template: yield$$$CHILDREN
   yield_expression_yield2:
     template: yield
   yield_expression:
     variants:
       - name: yield
-        template: yield
+        template: yield$$$CHILDREN
       - name: yield2
         template: yield
   call_expression:
@@ -251,9 +265,11 @@ rules:
   arguments:
     template: ($$$CHILDREN,)
   array_expression:
-    template: "$ATTRIBUTES$ELEMENTS;$LENGTH]"
+    template: "$ATTRIBUTES$ELEMENTS$$$CHILDREN;$LENGTH]"
+  parenthesized_expression:
+    template: ($$$CHILDREN)
   tuple_expression:
-    template: $ATTRIBUTES$FIRST$REST$TRAILING)
+    template: $ATTRIBUTES$FIRST$REST$TRAILING$$$CHILDREN)
   struct_expression:
     template: $NAME$BODY
   field_initializer_list:
@@ -262,6 +278,8 @@ rules:
     template: $ATTRIBUTES$IDENTIFIER
   field_initializer:
     template: "$$$CHILDREN$FIELD:$VALUE"
+  base_field_initializer:
+    template: ..$$$CHILDREN
   if_expression:
     template: if$CONDITION$CONSEQUENCE$ALTERNATIVE
   let_condition:
@@ -277,7 +295,7 @@ rules:
   last_match_arm:
     template: $$$CHILDREN$PATTERN=>$VALUE,
   match_pattern:
-    template: if$CONDITION
+    template: $$$CHILDREN if$CONDITION
   while_expression:
     template: $LABEL while$CONDITION$BODY
   loop_expression:
@@ -293,11 +311,13 @@ rules:
   label:
     template: $IDENTIFIER$$$CHILDREN
   break_expression:
-    template: $LABEL$EXPRESSION
+    template: $LABEL$EXPRESSION$$$CHILDREN
   continue_expression:
     template: $LABEL$$$CHILDREN
   index_expression:
-    template: "$OBJECT$INDEX]"
+    template: "$OBJECT$INDEX$$$CHILDREN]"
+  await_expression:
+    template: $$$CHILDREN.await
   field_expression:
     template: $VALUE.$FIELD
   unsafe_block:
@@ -309,13 +329,15 @@ rules:
   try_block:
     template: $BLOCK$$$CHILDREN
   block:
-    template: "$LABEL{}"
+    template: "$LABEL{$$$CHILDREN}"
   generic_pattern:
     template: "$$$CHILDREN::$TYPE_ARGUMENTS"
   tuple_pattern:
     template: ($$$CHILDREN,)
+  slice_pattern:
+    template: "[$$$CHILDREN,]"
   tuple_struct_pattern:
-    template: $TYPE(,)
+    template: $TYPE($$$CHILDREN,)
   struct_pattern:
     template: "$TYPE{$$$CHILDREN,}"
   field_pattern:
@@ -332,18 +354,22 @@ rules:
         template: $LEFT...$RIGHT
       - name: right
         template: ..=$RIGHT
+  ref_pattern:
+    template: ref$$$CHILDREN
   captured_pattern:
-    template: $IDENTIFIER$PATTERN
+    template: $IDENTIFIER$PATTERN$$$CHILDREN
   reference_pattern:
-    template: $MUTABLE_SPECIFIER$PATTERN
+    template: $MUTABLE_SPECIFIER$PATTERN$$$CHILDREN
   or_pattern:
-    template: $LEFT$RIGHT
+    template: $LEFT$RIGHT$$$CHILDREN
   negative_literal:
     template: $VALUE$$$CHILDREN
   string_literal:
     template: $$$CHILDREN"
   raw_string_literal:
     template: $RAW_STRING_LITERAL_START$STRING_CONTENT$RAW_STRING_LITERAL_END
+  escape_sequence:
+    template: $$$CHILDREN
   comment_line_comment:
     template: $$$CHILDREN
   comment_block_comment:
@@ -354,29 +380,33 @@ rules:
         template: $$$CHILDREN
       - name: block_comment
         template: $$$CHILDREN
+  line_comment:
+    template: $$$CHILDREN
+  block_comment:
+    template: $$$CHILDREN
   _type_identifier:
     template: $$$CHILDREN
   _field_identifier:
     template: $$$CHILDREN
   let_chain_andand:
-    template: "&&$$$CHILDREN"
+    template: $$$CHILDREN&&
   let_chain_andand2:
-    template: "&&"
+    template: $$$CHILDREN&&
   let_chain_andand3:
     template: $$$CHILDREN&&
   let_chain_andand4:
     template: $$$CHILDREN&&
   let_chain_andand5:
-    template: "&&$$$CHILDREN"
+    template: $$$CHILDREN&&
   let_chain:
     variants:
       - name: andand
-        template: "&&$$$CHILDREN"
+        template: $$$CHILDREN&&
       - name: andand2
-        template: "&&"
+        template: $$$CHILDREN&&
       - name: andand3
         template: $$$CHILDREN&&
       - name: andand4
         template: $$$CHILDREN&&
       - name: andand5
-        template: "&&$$$CHILDREN"
+        template: $$$CHILDREN&&

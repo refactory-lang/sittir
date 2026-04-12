@@ -12,6 +12,7 @@ import { validateTemplates, formatValidationReport } from './validate-templates.
 import { validateRoundTrip, formatRoundTripReport } from './validate-roundtrip.ts';
 import { validateFactoryRoundTrip, formatFactoryRoundTripReport } from './validate-factory-roundtrip.ts';
 import { validateFrom, formatFromReport } from './validate-from.ts';
+import { validateRenderable, formatRenderableReport } from './validate-renderable.ts';
 import { join, dirname } from 'node:path';
 import { generateV2 } from './compiler/generate.ts';
 
@@ -148,6 +149,17 @@ console.log(formatValidationReport(validation));
 
 if (validation.errors.length > 0) {
 	console.error(`\n${validation.errors.length} validation error(s) — see above.`);
+}
+
+// --- Renderability check: every named kind in node-types.json must be
+// reachable by @sittir/core's render() function (supertype, leaf, or rule).
+const renderable = validateRenderable(config.grammar, result.templatesYaml);
+console.log('');
+console.log(formatRenderableReport(renderable));
+if (renderable.missing.length > 0) {
+	console.error(
+		`\n${renderable.missing.length} un-renderable kind(s) — render() will throw for instances.`,
+	);
 }
 
 // --- Round-trip validation (optional, requires web-tree-sitter) ---

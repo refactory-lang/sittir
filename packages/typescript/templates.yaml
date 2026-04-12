@@ -5,7 +5,7 @@ rules:
   program:
     template: $HASH_BANG_LINE$STATEMENTS
   export_statement_form_0:
-    template: $DECLARATION$SOURCE
+    template: $DECLARATION$SOURCE$$$CHILDREN
   export_statement_declaration:
     template: $DECLARATION$SOURCE$$$CHILDREN
   export_statement_declaration2:
@@ -15,13 +15,15 @@ rules:
   export_statement:
     variants:
       - name: form_0
-        template: $DECLARATION$SOURCE
+        template: $DECLARATION$SOURCE$$$CHILDREN
       - name: declaration
         template: $DECLARATION$SOURCE$$$CHILDREN
       - name: declaration2
         template: $DECLARATION$SOURCE$$$CHILDREN
       - name: namespace
         template: $DECLARATION$SOURCE namespace$$$CHILDREN
+  namespace_export:
+    template: "*as$$$CHILDREN"
   export_clause:
     template: "{$$$CHILDREN,}"
   export_specifier:
@@ -69,7 +71,7 @@ rules:
       - name: ambient_declaration
         template: $$$CHILDREN
   import_statement:
-    template: $IMPORT_CLAUSE$FROM_CLAUSE$IMPORT_ATTRIBUTE$SEMICOLON
+    template: $IMPORT_CLAUSE$FROM_CLAUSE$IMPORT_ATTRIBUTE$SEMICOLON$$$CHILDREN
   import_clause_namespace_import:
     template: $$$CHILDREN
   import_clause_named_imports:
@@ -176,14 +178,16 @@ rules:
         template: $$$CHILDREN
       - name: labeled_statement
         template: $$$CHILDREN
+  expression_statement:
+    template: $$$CHILDREN
   variable_declaration:
-    template: $DECLARATORS$SEMICOLON
+    template: $DECLARATORS$SEMICOLON$$$CHILDREN
   lexical_declaration:
-    template: $DECLARATORS$SEMICOLON
+    template: $DECLARATORS$SEMICOLON$$$CHILDREN
   variable_declarator:
-    template: $NAME$TYPE
+    template: $NAME$TYPE$$$CHILDREN
   statement_block:
-    template: "$STATEMENTS$AUTOMATIC_SEMICOLON}"
+    template: "$STATEMENTS$AUTOMATIC_SEMICOLON}$$$CHILDREN"
   else_clause:
     template: $STATEMENT$$$CHILDREN
   if_statement:
@@ -193,21 +197,27 @@ rules:
   for_statement:
     template: for($INITIALIZER$CONDITION$INCREMENT)$BODY
   for_in_statement:
-    template: for await$BODY
+    template: for await$$$CHILDREN$BODY
   _for_header:
     template: ($LEFT$OPERATOR$RIGHT)
   while_statement:
     template: while$CONDITION$BODY
   do_statement:
-    template: do$BODY while$CONDITION
+    template: do$BODY while$CONDITION$$$CHILDREN
   try_statement:
     template: try$BODY$HANDLER$FINALIZER
   with_statement:
     template: with$OBJECT$BODY
   break_statement:
-    template: break$LABEL
+    template: break$LABEL$$$CHILDREN
   continue_statement:
-    template: continue$LABEL
+    template: continue$LABEL$$$CHILDREN
+  debugger_statement:
+    template: debugger$$$CHILDREN
+  return_statement:
+    template: return$$$CHILDREN
+  throw_statement:
+    template: throw$$$CHILDREN
   labeled_statement:
     template: "$LABEL:$BODY"
   switch_body:
@@ -220,6 +230,8 @@ rules:
     template: catch($PARAMETER$TYPE)$BODY
   finally_clause:
     template: finally$BODY
+  parenthesized_expression:
+    template: $$$CHILDREN
   expression_as_expression:
     template: $$$CHILDREN
   expression_satisfies_expression:
@@ -307,11 +319,21 @@ rules:
   array_pattern:
     template: "[$$$CHILDREN]"
   jsx_element:
-    template: $OPEN_TAG$CLOSE_TAG
+    template: $OPEN_TAG$$$CHILDREN$CLOSE_TAG
+  jsx_expression:
+    template: $$$CHILDREN
+  jsx_opening_element:
+    template: $$$CHILDREN>
   nested_identifier:
     template: $OBJECT.$PROPERTY
+  jsx_namespace_name:
+    template: "$$$CHILDREN:"
   jsx_closing_element:
     template: </$NAME>
+  jsx_self_closing_element:
+    template: $$$CHILDREN/>
+  jsx_attribute:
+    template: $$$CHILDREN=
   class:
     template: $CLASS_HERITAGE class$NAME$TYPE_PARAMETERS$$$CHILDREN$BODY
   class_declaration:
@@ -327,13 +349,13 @@ rules:
       - name: implements_clause
         template: $$$CHILDREN
   function_expression:
-    template: async function$NAME$BODY
+    template: async function$NAME$$$CHILDREN$BODY
   function_declaration:
-    template: async function$NAME$BODY
+    template: async function$NAME$$$CHILDREN$BODY
   generator_function:
-    template: async function*$NAME$BODY
+    template: async function*$NAME$$$CHILDREN$BODY
   generator_function_declaration:
-    template: async function*$NAME$BODY
+    template: async function*$NAME$$$CHILDREN$BODY
   arrow_function:
     template: async$PARAMETER=>$BODY
   _call_signature:
@@ -369,7 +391,7 @@ rules:
   spread_element:
     template: $EXPRESSION$$$CHILDREN
   ternary_expression:
-    template: "$CONDITION$CONSEQUENCE:$ALTERNATIVE"
+    template: "$CONDITION$$$CHILDREN$CONSEQUENCE:$ALTERNATIVE"
   binary_expression:
     template: $LEFT$OPERATOR$RIGHT
   unary_expression:
@@ -388,6 +410,8 @@ rules:
         template: "\"$$$CHILDREN\""
       - name: tok_sq
         template: "'$$$CHILDREN'"
+  escape_sequence:
+    template: $$$CHILDREN
   comment_slashslash:
     template: //
   comment_tok_slash_star:
@@ -400,8 +424,12 @@ rules:
         template: /*/
   template_string:
     template: "`$$$CHILDREN`"
+  template_substitution:
+    template: "${$$$CHILDREN}"
   regex:
     template: /$PATTERN/$FLAGS
+  regex_pattern:
+    template: $$$CHILDREN
   number_form_0:
     template: 0x
   number_form_1:
@@ -436,6 +464,8 @@ rules:
         template: import.meta
   arguments:
     template: ($$$CHILDREN)
+  decorator:
+    template: $$$CHILDREN
   decorator_member_expression:
     template: $OBJECT.$PROPERTY
   decorator_call_expression:
@@ -443,17 +473,23 @@ rules:
   class_body:
     template: "{$DECORATOR$$$CHILDREN}"
   field_definition:
-    template: $DECORATOR static$PROPERTY
+    template: $DECORATOR static$PROPERTY$$$CHILDREN
+  formal_parameters:
+    template: ($$$CHILDREN,)
   class_static_block:
-    template: static$BODY
+    template: static$$$CHILDREN$BODY
+  pattern__lhs_expression:
+    template: $$$CHILDREN
   pattern_rest_pattern:
     template: $$$CHILDREN
   pattern:
     variants:
       - name: _lhs_expression
-        template: ""
+        template: $$$CHILDREN
       - name: rest_pattern
         template: $$$CHILDREN
+  rest_pattern:
+    template: ...$$$CHILDREN
   method_definition:
     template: $ACCESSIBILITY_MODIFIER$OVERRIDE_MODIFIER$$$CHILDREN readonly async get$NAME?$BODY
   pair:
@@ -463,7 +499,7 @@ rules:
   computed_property_name:
     template: "$EXPRESSION$$$CHILDREN]"
   public_field_definition:
-    template: $ACCESSIBILITY_MODIFIER$OVERRIDE_MODIFIER$INITIALIZER$NAME?$TYPE
+    template: $ACCESSIBILITY_MODIFIER$OVERRIDE_MODIFIER$INITIALIZER$NAME?$TYPE$$$CHILDREN
   _jsx_start_opening_element:
     template: <$NAME$ATTRIBUTE
   non_null_expression:
@@ -473,7 +509,9 @@ rules:
   abstract_method_signature:
     template: $ACCESSIBILITY_MODIFIER$OVERRIDE_MODIFIER$$$CHILDREN get$NAME?
   function_signature:
-    template: async function$NAME
+    template: async function$NAME$$$CHILDREN
+  decorator_parenthesized_expression:
+    template: $$$CHILDREN
   type_assertion:
     template: $TYPE_ARGUMENTS$EXPRESSION
   as_expression:
@@ -484,6 +522,8 @@ rules:
     template: $EXPRESSION$TYPE_ARGUMENTS
   import_require_clause:
     template: $IDENTIFIER=require($SOURCE)
+  extends_clause:
+    template: extends$$$CHILDREN
   _extends_clause_single:
     template: $VALUE$TYPE_ARGUMENTS
   implements_clause:
@@ -492,6 +532,10 @@ rules:
     template: $DECLARATION$TYPE_ANNOTATION
   abstract_class_declaration:
     template: $CLASS_HERITAGE abstract class$NAME$TYPE_PARAMETERS$$$CHILDREN$BODY
+  module:
+    template: module$$$CHILDREN
+  internal_module:
+    template: namespace$$$CHILDREN
   _module:
     template: $NAME$BODY
   import_alias:
@@ -507,13 +551,13 @@ rules:
   enum_body:
     template: "$OPENING$MEMBERS}"
   enum_assignment:
-    template: $NAME
+    template: $NAME$$$CHILDREN
   type_alias_declaration:
-    template: type$NAME$TYPE_PARAMETERS=$VALUE
+    template: type$NAME$TYPE_PARAMETERS=$VALUE$$$CHILDREN
   required_parameter:
-    template: $PARAMETER_NAME$INITIALIZER
+    template: $PARAMETER_NAME$INITIALIZER$$$CHILDREN
   optional_parameter:
-    template: $PARAMETER_NAME$INITIALIZER$TYPE
+    template: $PARAMETER_NAME$INITIALIZER$TYPE$$$CHILDREN
   _parameter_name:
     template: $DECORATOR$$$CHILDREN readonly$PATTERN
   omitting_type_annotation:
@@ -542,6 +586,10 @@ rules:
     template: $$$CHILDREN
   type_infer_type:
     template: $$$CHILDREN
+  type__type_query_member_expression_in_type_annotation:
+    template: $$$CHILDREN
+  type__type_query_call_expression_in_type_annotation:
+    template: $$$CHILDREN
   type:
     variants:
       - name: primary_type
@@ -555,9 +603,9 @@ rules:
       - name: infer_type
         template: $$$CHILDREN
       - name: _type_query_member_expression_in_type_annotation
-        template: ""
+        template: $$$CHILDREN
       - name: _type_query_call_expression_in_type_annotation
-        template: ""
+        template: $$$CHILDREN
   tuple_parameter:
     template: $NAME$TYPE
   optional_tuple_parameter:
@@ -571,6 +619,8 @@ rules:
   primary_type_parenthesized_type:
     template: $$$CHILDREN
   primary_type_predefined_type:
+    template: $$$CHILDREN
+  primary_type__type_identifier:
     template: $$$CHILDREN
   primary_type_nested_type_identifier:
     template: $$$CHILDREN
@@ -613,7 +663,7 @@ rules:
       - name: predefined_type
         template: $$$CHILDREN
       - name: _type_identifier
-        template: ""
+        template: $$$CHILDREN
       - name: nested_type_identifier
         template: $$$CHILDREN
       - name: generic_type
@@ -648,6 +698,8 @@ rules:
         template: $$$CHILDREN
       - name: const
         template: const
+  template_type:
+    template: $$$CHILDREN
   template_literal_type:
     template: "`$$$CHILDREN`"
   infer_type:
@@ -676,6 +728,8 @@ rules:
     template: "$PRIMARY_TYPE$INDEX_TYPE$$$CHILDREN]"
   mapped_type_clause:
     template: $NAME in$TYPE as$ALIAS
+  literal_type__number:
+    template: $$$CHILDREN
   literal_type_number:
     template: $$$CHILDREN
   literal_type_string:
@@ -691,7 +745,7 @@ rules:
   literal_type:
     variants:
       - name: _number
-        template: ""
+        template: $$$CHILDREN
       - name: number
         template: $$$CHILDREN
       - name: string
@@ -756,6 +810,8 @@ rules:
     template: <$$$CHILDREN,>
   object_type:
     template: $OPENING$MEMBERS$CLOSING
+  call_signature:
+    template: $$$CHILDREN
   property_signature:
     template: $ACCESSIBILITY_MODIFIER$OVERRIDE_MODIFIER$$$CHILDREN readonly$NAME?$TYPE
   type_parameters:
@@ -772,6 +828,8 @@ rules:
     template: "$MAPPED_TYPE_CLAUSE[$NAME:$INDEX_TYPE]$TYPE"
   array_type:
     template: "$PRIMARY_TYPE[]"
+  tuple_type:
+    template: "[$$$CHILDREN,]"
   readonly_type:
     template: readonly$$$CHILDREN
   union_type:
@@ -784,19 +842,23 @@ rules:
     template: $$$CHILDREN
   shorthand_property_identifier_identifier:
     template: $$$CHILDREN
+  shorthand_property_identifier__reserved_identifier:
+    template: $$$CHILDREN
   shorthand_property_identifier:
     variants:
       - name: identifier
         template: $$$CHILDREN
       - name: _reserved_identifier
-        template: ""
+        template: $$$CHILDREN
   shorthand_property_identifier_pattern_identifier:
+    template: $$$CHILDREN
+  shorthand_property_identifier_pattern__reserved_identifier:
     template: $$$CHILDREN
   shorthand_property_identifier_pattern:
     variants:
       - name: identifier
         template: $$$CHILDREN
       - name: _reserved_identifier
-        template: ""
+        template: $$$CHILDREN
   interface_body:
     template: $OPENING$MEMBERS$CLOSING

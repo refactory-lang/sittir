@@ -9,6 +9,20 @@ describe('module', () => {
   });
 });
 
+describe('_simple_statements', () => {
+  it('factory produces correct type', () => {
+    const node = ir.hiddenSimpleStatements();
+    expect(node.type).toBe('_simple_statements');
+  });
+});
+
+describe('import_statement', () => {
+  it('factory produces correct type', () => {
+    const node = ir.importStatement();
+    expect(node.type).toBe('import_statement');
+  });
+});
+
 describe('import_prefix', () => {
   it('factory produces correct type', () => {
     const node = ir.importPrefix();
@@ -24,6 +38,13 @@ describe('relative_import', () => {
   it('render produces non-empty string', () => {
     const node = ir.relativeImport({ importPrefix: { type: 'import_prefix', text: 'test' } as any, dottedName: { type: 'dotted_name', text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('future_import_statement', () => {
+  it('factory produces correct type', () => {
+    const node = ir.futureImportStatement();
+    expect(node.type).toBe('future_import_statement');
   });
 });
 
@@ -120,6 +141,20 @@ describe('named_expression', () => {
   it('render produces non-empty string', () => {
     const node = ir.namedExpression({ name: { type: '_named_expression_lhs', text: 'test' } as any, value: { type: 'expression', text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('return_statement', () => {
+  it('factory produces correct type', () => {
+    const node = ir.returnStatement();
+    expect(node.type).toBe('return_statement');
+  });
+});
+
+describe('delete_statement', () => {
+  it('factory produces correct type', () => {
+    const node = ir.deleteStatement();
+    expect(node.type).toBe('delete_statement');
   });
 });
 
@@ -312,6 +347,20 @@ describe('function_definition', () => {
   });
 });
 
+describe('parameters', () => {
+  it('factory produces correct type', () => {
+    const node = ir.parameters();
+    expect(node.type).toBe('parameters');
+  });
+});
+
+describe('lambda_parameters', () => {
+  it('factory produces correct type', () => {
+    const node = ir.lambdaParameters();
+    expect(node.type).toBe('lambda_parameters');
+  });
+});
+
 describe('list_splat', () => {
   it('factory produces correct type', () => {
     const node = ir.listSplat({ expression: 'test' as any });
@@ -420,6 +469,13 @@ describe('decorator', () => {
   });
 });
 
+describe('block', () => {
+  it('factory produces correct type', () => {
+    const node = ir.block();
+    expect(node.type).toBe('block');
+  });
+});
+
 describe('expression_list', () => {
   it('factory produces correct type', () => {
     const node = ir.expressionList();
@@ -453,6 +509,13 @@ describe('_as_pattern', () => {
   it('factory produces correct type', () => {
     const node = ir.hiddenAsPattern();
     expect(node.type).toBe('_as_pattern');
+  });
+});
+
+describe('union_pattern', () => {
+  it('factory produces correct type', () => {
+    const node = ir.unionPattern();
+    expect(node.type).toBe('union_pattern');
   });
 });
 
@@ -602,6 +665,20 @@ describe('pattern', () => {
   it('list_pattern form produces correct type', () => {
     const node = ir.pattern.list_pattern({});
     expect(node.type).toBe('pattern');
+  });
+});
+
+describe('tuple_pattern', () => {
+  it('factory produces correct type', () => {
+    const node = ir.tuplePattern();
+    expect(node.type).toBe('tuple_pattern');
+  });
+});
+
+describe('list_pattern', () => {
+  it('factory produces correct type', () => {
+    const node = ir.listPattern();
+    expect(node.type).toBe('list_pattern');
   });
 });
 
@@ -1044,6 +1121,27 @@ describe('keyword_argument', () => {
   it('render produces non-empty string', () => {
     const node = ir.keywordArgument({ name: { type: 'identifier', text: 'test' } as any, value: { type: 'expression', text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('list', () => {
+  it('factory produces correct type', () => {
+    const node = ir.list();
+    expect(node.type).toBe('list');
+  });
+});
+
+describe('set', () => {
+  it('factory produces correct type', () => {
+    const node = ir.set();
+    expect(node.type).toBe('set');
+  });
+});
+
+describe('tuple', () => {
+  it('factory produces correct type', () => {
+    const node = ir.tuple();
+    expect(node.type).toBe('tuple');
   });
 });
 

@@ -102,7 +102,9 @@ export const enum SyntaxKind {
   MacroRule = 'macro_rule',
   TokenTreePattern = 'token_tree_pattern',
   TokenBindingPattern = 'token_binding_pattern',
+  TokenRepetitionPattern = 'token_repetition_pattern',
   TokenTree = 'token_tree',
+  TokenRepetition = 'token_repetition',
   AttributeItem = 'attribute_item',
   InnerAttributeItem = 'inner_attribute_item',
   Attribute = 'attribute',
@@ -131,6 +133,7 @@ export const enum SyntaxKind {
   AssociatedType = 'associated_type',
   TraitBounds = 'trait_bounds',
   HigherRankedTraitBound = 'higher_ranked_trait_bound',
+  RemovedTraitBound = 'removed_trait_bound',
   TypeParameters = 'type_parameters',
   ConstParameter = 'const_parameter',
   TypeParameter = 'type_parameter',
@@ -138,6 +141,7 @@ export const enum SyntaxKind {
   LetDeclaration = 'let_declaration',
   UseDeclaration = 'use_declaration',
   ScopedUseList = 'scoped_use_list',
+  UseList = 'use_list',
   UseAsClause = 'use_as_clause',
   UseWildcard = 'use_wildcard',
   Parameters = 'parameters',
@@ -152,6 +156,7 @@ export const enum SyntaxKind {
   ArrayType = 'array_type',
   ForLifetimes = 'for_lifetimes',
   FunctionType = 'function_type',
+  TupleType = 'tuple_type',
   GenericFunction = 'generic_function',
   GenericType = 'generic_type',
   GenericTypeWithTurbofish = 'generic_type_with_turbofish',
@@ -181,11 +186,13 @@ export const enum SyntaxKind {
   CallExpression = 'call_expression',
   Arguments = 'arguments',
   ArrayExpression = 'array_expression',
+  ParenthesizedExpression = 'parenthesized_expression',
   TupleExpression = 'tuple_expression',
   StructExpression = 'struct_expression',
   FieldInitializerList = 'field_initializer_list',
   ShorthandFieldInitializer = 'shorthand_field_initializer',
   FieldInitializer = 'field_initializer',
+  BaseFieldInitializer = 'base_field_initializer',
   IfExpression = 'if_expression',
   LetCondition = 'let_condition',
   ElseClause = 'else_clause',
@@ -204,6 +211,7 @@ export const enum SyntaxKind {
   BreakExpression = 'break_expression',
   ContinueExpression = 'continue_expression',
   IndexExpression = 'index_expression',
+  AwaitExpression = 'await_expression',
   FieldExpression = 'field_expression',
   UnsafeBlock = 'unsafe_block',
   AsyncBlock = 'async_block',
@@ -212,11 +220,13 @@ export const enum SyntaxKind {
   Block = 'block',
   GenericPattern = 'generic_pattern',
   TuplePattern = 'tuple_pattern',
+  SlicePattern = 'slice_pattern',
   TupleStructPattern = 'tuple_struct_pattern',
   StructPattern = 'struct_pattern',
   FieldPattern = 'field_pattern',
   MutPattern = 'mut_pattern',
   RangePattern = 'range_pattern',
+  RefPattern = 'ref_pattern',
   CapturedPattern = 'captured_pattern',
   ReferencePattern = 'reference_pattern',
   OrPattern = 'or_pattern',
@@ -591,6 +601,11 @@ export interface TokenBindingPattern {
   };
 }
 
+export interface TokenRepetitionPattern {
+  readonly type: 'token_repetition_pattern';
+  readonly children: readonly (HiddenTokenPattern)[];
+}
+
 export interface TokenTreeParen {
   readonly type: 'token_tree';
 }
@@ -604,6 +619,11 @@ export interface TokenTreeBrace {
 }
 
 export type TokenTree = TokenTreeParen | TokenTreeBracket | TokenTreeBrace;
+export interface TokenRepetition {
+  readonly type: 'token_repetition';
+  readonly children: readonly (HiddenTokens)[];
+}
+
 export interface AttributeItem {
   readonly type: 'attribute_item';
   readonly fields: {
@@ -626,6 +646,7 @@ export interface Attribute {
     readonly value?: HiddenExpression;
     readonly arguments?: DelimTokenTree;
   };
+  readonly children: HiddenPath;
 }
 
 export interface ModItem {
@@ -648,6 +669,7 @@ export interface ForeignModItem {
 
 export interface DeclarationList {
   readonly type: 'declaration_list';
+  readonly children: readonly (HiddenDeclarationStatement)[];
 }
 
 export interface StructItem {
@@ -854,7 +876,7 @@ export interface AssociatedType {
 
 export interface TraitBounds {
   readonly type: 'trait_bounds';
-  readonly children: readonly (Lifetime | HigherRankedTraitBound)[];
+  readonly children: readonly (HiddenType | Lifetime | HigherRankedTraitBound)[];
 }
 
 export interface HigherRankedTraitBound {
@@ -863,6 +885,11 @@ export interface HigherRankedTraitBound {
     readonly type_parameters: TypeParameters;
     readonly type: HiddenType;
   };
+}
+
+export interface RemovedTraitBound {
+  readonly type: 'removed_trait_bound';
+  readonly children: HiddenType;
 }
 
 export interface TypeParameters {
@@ -924,6 +951,11 @@ export interface ScopedUseList {
   };
 }
 
+export interface UseList {
+  readonly type: 'use_list';
+  readonly children: readonly (HiddenUseClause)[];
+}
+
 export interface UseAsClause {
   readonly type: 'use_as_clause';
   readonly fields: {
@@ -941,7 +973,7 @@ export interface UseWildcard {
 
 export interface Parameters {
   readonly type: 'parameters';
-  readonly children: readonly (AttributeItem | Parameter | SelfParameter | VariadicParameter)[];
+  readonly children: readonly (AttributeItem | Parameter | SelfParameter | VariadicParameter | HiddenType)[];
 }
 
 export interface SelfParameter {
@@ -1030,6 +1062,11 @@ export interface FunctionType {
   };
 }
 
+export interface TupleType {
+  readonly type: 'tuple_type';
+  readonly children: readonly (HiddenType)[];
+}
+
 export interface GenericFunction {
   readonly type: 'generic_function';
   readonly fields: {
@@ -1060,17 +1097,17 @@ export interface BoundedType {
     readonly left: Lifetime | HiddenType | UseBounds;
     readonly right: string;
   };
-  readonly children: Lifetime | UseBounds;
+  readonly children: Lifetime | HiddenType | UseBounds;
 }
 
 export interface UseBounds {
   readonly type: 'use_bounds';
-  readonly children: readonly (Lifetime)[];
+  readonly children: readonly (Lifetime | HiddenTypeIdentifier)[];
 }
 
 export interface TypeArguments {
   readonly type: 'type_arguments';
-  readonly children: readonly (TypeBinding | Lifetime | Block | TraitBounds)[];
+  readonly children: readonly (HiddenType | TypeBinding | Lifetime | HiddenLiteral | Block | TraitBounds)[];
 }
 
 export interface TypeBinding {
@@ -1196,6 +1233,7 @@ export interface UnaryExpression {
   readonly fields: {
     readonly operand: Minus | Star | Bang;
   };
+  readonly children: HiddenExpression;
 }
 
 export interface TryExpression {
@@ -1276,7 +1314,7 @@ export interface CallExpression {
 
 export interface Arguments {
   readonly type: 'arguments';
-  readonly children: readonly (AttributeItem)[];
+  readonly children: readonly (AttributeItem | HiddenExpression)[];
 }
 
 export interface ArrayExpression {
@@ -1286,7 +1324,12 @@ export interface ArrayExpression {
     readonly elements: string;
     readonly length: HiddenExpression;
   };
-  readonly children: readonly (AttributeItem)[];
+  readonly children: readonly (HiddenExpression | AttributeItem)[];
+}
+
+export interface ParenthesizedExpression {
+  readonly type: 'parenthesized_expression';
+  readonly children: HiddenExpression;
 }
 
 export interface TupleExpression {
@@ -1297,6 +1340,7 @@ export interface TupleExpression {
     readonly rest: string;
     readonly trailing: string;
   };
+  readonly children: HiddenExpression;
 }
 
 export interface StructExpression {
@@ -1327,6 +1371,11 @@ export interface FieldInitializer {
     readonly value: HiddenExpression;
   };
   readonly children: readonly (AttributeItem)[];
+}
+
+export interface BaseFieldInitializer {
+  readonly type: 'base_field_initializer';
+  readonly children: HiddenExpression;
 }
 
 export interface IfExpression {
@@ -1387,6 +1436,7 @@ export interface MatchPattern {
   readonly fields: {
     readonly condition?: HiddenCondition;
   };
+  readonly children: HiddenPattern;
 }
 
 export interface WhileExpression {
@@ -1434,7 +1484,7 @@ export interface ClosureExpression {
 
 export interface ClosureParameters {
   readonly type: 'closure_parameters';
-  readonly children: readonly (Parameter)[];
+  readonly children: readonly (HiddenPattern | Parameter)[];
 }
 
 export interface Label {
@@ -1451,6 +1501,7 @@ export interface BreakExpression {
     readonly label: string;
     readonly expression: Label;
   };
+  readonly children: HiddenExpression;
 }
 
 export interface ContinueExpression {
@@ -1467,6 +1518,12 @@ export interface IndexExpression {
     readonly object: HiddenExpression;
     readonly index: string;
   };
+  readonly children: HiddenExpression;
+}
+
+export interface AwaitExpression {
+  readonly type: 'await_expression';
+  readonly children: HiddenExpression;
 }
 
 export interface FieldExpression {
@@ -1514,6 +1571,7 @@ export interface Block {
   readonly fields: {
     readonly label: string;
   };
+  readonly children: readonly (HiddenStatement | HiddenExpression)[];
 }
 
 export interface GenericPattern {
@@ -1526,7 +1584,12 @@ export interface GenericPattern {
 
 export interface TuplePattern {
   readonly type: 'tuple_pattern';
-  readonly children: readonly (ClosureExpression)[];
+  readonly children: readonly (HiddenPattern | ClosureExpression)[];
+}
+
+export interface SlicePattern {
+  readonly type: 'slice_pattern';
+  readonly children: readonly (HiddenPattern)[];
 }
 
 export interface TupleStructPattern {
@@ -1534,6 +1597,7 @@ export interface TupleStructPattern {
   readonly fields: {
     readonly type: Identifier | ScopedIdentifier | GenericTypeWithTurbofish;
   };
+  readonly children: readonly (HiddenPattern)[];
 }
 
 export interface StructPattern {
@@ -1578,12 +1642,18 @@ export interface RangePatternRight {
 }
 
 export type RangePattern = RangePatternLeft | RangePatternRight;
+export interface RefPattern {
+  readonly type: 'ref_pattern';
+  readonly children: HiddenPattern;
+}
+
 export interface CapturedPattern {
   readonly type: 'captured_pattern';
   readonly fields: {
     readonly identifier: Identifier;
     readonly pattern: string;
   };
+  readonly children: HiddenPattern;
 }
 
 export interface ReferencePattern {
@@ -1592,6 +1662,7 @@ export interface ReferencePattern {
     readonly mutable_specifier: string;
     readonly pattern: MutableSpecifier;
   };
+  readonly children: HiddenPattern;
 }
 
 export interface OrPattern {
@@ -1600,6 +1671,7 @@ export interface OrPattern {
     readonly left: HiddenPattern;
     readonly right: HiddenPattern;
   };
+  readonly children: HiddenPattern;
 }
 
 export interface NegativeLiteral {
@@ -2120,10 +2192,12 @@ export type TokenTreePatternBracketConfig = ConfigOf<TokenTreePatternBracket>;
 export type TokenTreePatternBraceConfig = ConfigOf<TokenTreePatternBrace>;
 export type TokenTreePatternConfig = TokenTreePatternParenConfig | TokenTreePatternBracketConfig | TokenTreePatternBraceConfig;
 export type TokenBindingPatternConfig = ConfigOf<TokenBindingPattern>;
+export type TokenRepetitionPatternConfig = ConfigOf<TokenRepetitionPattern>;
 export type TokenTreeParenConfig = ConfigOf<TokenTreeParen>;
 export type TokenTreeBracketConfig = ConfigOf<TokenTreeBracket>;
 export type TokenTreeBraceConfig = ConfigOf<TokenTreeBrace>;
 export type TokenTreeConfig = TokenTreeParenConfig | TokenTreeBracketConfig | TokenTreeBraceConfig;
+export type TokenRepetitionConfig = ConfigOf<TokenRepetition>;
 export type AttributeItemConfig = ConfigOf<AttributeItem>;
 export type InnerAttributeItemConfig = ConfigOf<InnerAttributeItem>;
 export type AttributeConfig = ConfigOf<Attribute>;
@@ -2152,6 +2226,7 @@ export type TraitItemConfig = ConfigOf<TraitItem>;
 export type AssociatedTypeConfig = ConfigOf<AssociatedType>;
 export type TraitBoundsConfig = ConfigOf<TraitBounds>;
 export type HigherRankedTraitBoundConfig = ConfigOf<HigherRankedTraitBound>;
+export type RemovedTraitBoundConfig = ConfigOf<RemovedTraitBound>;
 export type TypeParametersConfig = ConfigOf<TypeParameters>;
 export type ConstParameterConfig = ConfigOf<ConstParameter>;
 export type TypeParameterConfig = ConfigOf<TypeParameter>;
@@ -2159,6 +2234,7 @@ export type LifetimeParameterConfig = ConfigOf<LifetimeParameter>;
 export type LetDeclarationConfig = ConfigOf<LetDeclaration>;
 export type UseDeclarationConfig = ConfigOf<UseDeclaration>;
 export type ScopedUseListConfig = ConfigOf<ScopedUseList>;
+export type UseListConfig = ConfigOf<UseList>;
 export type UseAsClauseConfig = ConfigOf<UseAsClause>;
 export type UseWildcardConfig = ConfigOf<UseWildcard>;
 export type ParametersConfig = ConfigOf<Parameters>;
@@ -2175,6 +2251,7 @@ export type LifetimeConfig = ConfigOf<Lifetime>;
 export type ArrayTypeConfig = ConfigOf<ArrayType>;
 export type ForLifetimesConfig = ConfigOf<ForLifetimes>;
 export type FunctionTypeConfig = ConfigOf<FunctionType>;
+export type TupleTypeConfig = ConfigOf<TupleType>;
 export type GenericFunctionConfig = ConfigOf<GenericFunction>;
 export type GenericTypeConfig = ConfigOf<GenericType>;
 export type GenericTypeWithTurbofishConfig = ConfigOf<GenericTypeWithTurbofish>;
@@ -2215,11 +2292,13 @@ export type YieldExpressionConfig = YieldExpressionYieldConfig | YieldExpression
 export type CallExpressionConfig = ConfigOf<CallExpression>;
 export type ArgumentsConfig = ConfigOf<Arguments>;
 export type ArrayExpressionConfig = ConfigOf<ArrayExpression>;
+export type ParenthesizedExpressionConfig = ConfigOf<ParenthesizedExpression>;
 export type TupleExpressionConfig = ConfigOf<TupleExpression>;
 export type StructExpressionConfig = ConfigOf<StructExpression>;
 export type FieldInitializerListConfig = ConfigOf<FieldInitializerList>;
 export type ShorthandFieldInitializerConfig = ConfigOf<ShorthandFieldInitializer>;
 export type FieldInitializerConfig = ConfigOf<FieldInitializer>;
+export type BaseFieldInitializerConfig = ConfigOf<BaseFieldInitializer>;
 export type IfExpressionConfig = ConfigOf<IfExpression>;
 export type LetConditionConfig = ConfigOf<LetCondition>;
 export type ElseClauseConfig = ConfigOf<ElseClause>;
@@ -2238,6 +2317,7 @@ export type LabelConfig = ConfigOf<Label>;
 export type BreakExpressionConfig = ConfigOf<BreakExpression>;
 export type ContinueExpressionConfig = ConfigOf<ContinueExpression>;
 export type IndexExpressionConfig = ConfigOf<IndexExpression>;
+export type AwaitExpressionConfig = ConfigOf<AwaitExpression>;
 export type FieldExpressionConfig = ConfigOf<FieldExpression>;
 export type UnsafeBlockConfig = ConfigOf<UnsafeBlock>;
 export type AsyncBlockConfig = ConfigOf<AsyncBlock>;
@@ -2246,6 +2326,7 @@ export type TryBlockConfig = ConfigOf<TryBlock>;
 export type BlockConfig = ConfigOf<Block>;
 export type GenericPatternConfig = ConfigOf<GenericPattern>;
 export type TuplePatternConfig = ConfigOf<TuplePattern>;
+export type SlicePatternConfig = ConfigOf<SlicePattern>;
 export type TupleStructPatternConfig = ConfigOf<TupleStructPattern>;
 export type StructPatternConfig = ConfigOf<StructPattern>;
 export type FieldPatternConfig = ConfigOf<FieldPattern>;
@@ -2253,6 +2334,7 @@ export type MutPatternConfig = ConfigOf<MutPattern>;
 export type RangePatternLeftConfig = ConfigOf<RangePatternLeft>;
 export type RangePatternRightConfig = ConfigOf<RangePatternRight>;
 export type RangePatternConfig = RangePatternLeftConfig | RangePatternRightConfig;
+export type RefPatternConfig = ConfigOf<RefPattern>;
 export type CapturedPatternConfig = ConfigOf<CapturedPattern>;
 export type ReferencePatternConfig = ConfigOf<ReferencePattern>;
 export type OrPatternConfig = ConfigOf<OrPattern>;
@@ -2286,10 +2368,12 @@ export interface TokenTreePatternParenTree extends TreeNode<'token_tree_pattern'
 export interface TokenTreePatternBracketTree extends TreeNode<'token_tree_pattern'> {}
 export interface TokenTreePatternBraceTree extends TreeNode<'token_tree_pattern'> {}
 export interface TokenBindingPatternTree extends TreeNode<'token_binding_pattern'> {}
+export interface TokenRepetitionPatternTree extends TreeNode<'token_repetition_pattern'> {}
 export interface TokenTreeTree extends TreeNode<'token_tree'> {}
 export interface TokenTreeParenTree extends TreeNode<'token_tree'> {}
 export interface TokenTreeBracketTree extends TreeNode<'token_tree'> {}
 export interface TokenTreeBraceTree extends TreeNode<'token_tree'> {}
+export interface TokenRepetitionTree extends TreeNode<'token_repetition'> {}
 export interface AttributeItemTree extends TreeNode<'attribute_item'> {}
 export interface InnerAttributeItemTree extends TreeNode<'inner_attribute_item'> {}
 export interface AttributeTree extends TreeNode<'attribute'> {}
@@ -2318,6 +2402,7 @@ export interface TraitItemTree extends TreeNode<'trait_item'> {}
 export interface AssociatedTypeTree extends TreeNode<'associated_type'> {}
 export interface TraitBoundsTree extends TreeNode<'trait_bounds'> {}
 export interface HigherRankedTraitBoundTree extends TreeNode<'higher_ranked_trait_bound'> {}
+export interface RemovedTraitBoundTree extends TreeNode<'removed_trait_bound'> {}
 export interface TypeParametersTree extends TreeNode<'type_parameters'> {}
 export interface ConstParameterTree extends TreeNode<'const_parameter'> {}
 export interface TypeParameterTree extends TreeNode<'type_parameter'> {}
@@ -2325,6 +2410,7 @@ export interface LifetimeParameterTree extends TreeNode<'lifetime_parameter'> {}
 export interface LetDeclarationTree extends TreeNode<'let_declaration'> {}
 export interface UseDeclarationTree extends TreeNode<'use_declaration'> {}
 export interface ScopedUseListTree extends TreeNode<'scoped_use_list'> {}
+export interface UseListTree extends TreeNode<'use_list'> {}
 export interface UseAsClauseTree extends TreeNode<'use_as_clause'> {}
 export interface UseWildcardTree extends TreeNode<'use_wildcard'> {}
 export interface ParametersTree extends TreeNode<'parameters'> {}
@@ -2341,6 +2427,7 @@ export interface LifetimeTree extends TreeNode<'lifetime'> {}
 export interface ArrayTypeTree extends TreeNode<'array_type'> {}
 export interface ForLifetimesTree extends TreeNode<'for_lifetimes'> {}
 export interface FunctionTypeTree extends TreeNode<'function_type'> {}
+export interface TupleTypeTree extends TreeNode<'tuple_type'> {}
 export interface GenericFunctionTree extends TreeNode<'generic_function'> {}
 export interface GenericTypeTree extends TreeNode<'generic_type'> {}
 export interface GenericTypeWithTurbofishTree extends TreeNode<'generic_type_with_turbofish'> {}
@@ -2381,11 +2468,13 @@ export interface YieldExpressionYield2Tree extends TreeNode<'yield_expression'> 
 export interface CallExpressionTree extends TreeNode<'call_expression'> {}
 export interface ArgumentsTree extends TreeNode<'arguments'> {}
 export interface ArrayExpressionTree extends TreeNode<'array_expression'> {}
+export interface ParenthesizedExpressionTree extends TreeNode<'parenthesized_expression'> {}
 export interface TupleExpressionTree extends TreeNode<'tuple_expression'> {}
 export interface StructExpressionTree extends TreeNode<'struct_expression'> {}
 export interface FieldInitializerListTree extends TreeNode<'field_initializer_list'> {}
 export interface ShorthandFieldInitializerTree extends TreeNode<'shorthand_field_initializer'> {}
 export interface FieldInitializerTree extends TreeNode<'field_initializer'> {}
+export interface BaseFieldInitializerTree extends TreeNode<'base_field_initializer'> {}
 export interface IfExpressionTree extends TreeNode<'if_expression'> {}
 export interface LetConditionTree extends TreeNode<'let_condition'> {}
 export interface ElseClauseTree extends TreeNode<'else_clause'> {}
@@ -2404,6 +2493,7 @@ export interface LabelTree extends TreeNode<'label'> {}
 export interface BreakExpressionTree extends TreeNode<'break_expression'> {}
 export interface ContinueExpressionTree extends TreeNode<'continue_expression'> {}
 export interface IndexExpressionTree extends TreeNode<'index_expression'> {}
+export interface AwaitExpressionTree extends TreeNode<'await_expression'> {}
 export interface FieldExpressionTree extends TreeNode<'field_expression'> {}
 export interface UnsafeBlockTree extends TreeNode<'unsafe_block'> {}
 export interface AsyncBlockTree extends TreeNode<'async_block'> {}
@@ -2412,6 +2502,7 @@ export interface TryBlockTree extends TreeNode<'try_block'> {}
 export interface BlockTree extends TreeNode<'block'> {}
 export interface GenericPatternTree extends TreeNode<'generic_pattern'> {}
 export interface TuplePatternTree extends TreeNode<'tuple_pattern'> {}
+export interface SlicePatternTree extends TreeNode<'slice_pattern'> {}
 export interface TupleStructPatternTree extends TreeNode<'tuple_struct_pattern'> {}
 export interface StructPatternTree extends TreeNode<'struct_pattern'> {}
 export interface FieldPatternTree extends TreeNode<'field_pattern'> {}
@@ -2419,6 +2510,7 @@ export interface MutPatternTree extends TreeNode<'mut_pattern'> {}
 export interface RangePatternTree extends TreeNode<'range_pattern'> {}
 export interface RangePatternLeftTree extends TreeNode<'range_pattern'> {}
 export interface RangePatternRightTree extends TreeNode<'range_pattern'> {}
+export interface RefPatternTree extends TreeNode<'ref_pattern'> {}
 export interface CapturedPatternTree extends TreeNode<'captured_pattern'> {}
 export interface ReferencePatternTree extends TreeNode<'reference_pattern'> {}
 export interface OrPatternTree extends TreeNode<'or_pattern'> {}
@@ -2533,7 +2625,9 @@ export type MacroDefinitionFromInput = FromInputOf<MacroDefinition, LeafScalarMa
 export type MacroRuleFromInput = FromInputOf<MacroRule, LeafScalarMap, LeafStringMap>;
 export type TokenTreePatternFromInput = FromInputOf<TokenTreePatternParen, LeafScalarMap, LeafStringMap> | FromInputOf<TokenTreePatternBracket, LeafScalarMap, LeafStringMap> | FromInputOf<TokenTreePatternBrace, LeafScalarMap, LeafStringMap>;
 export type TokenBindingPatternFromInput = FromInputOf<TokenBindingPattern, LeafScalarMap, LeafStringMap>;
+export type TokenRepetitionPatternFromInput = FromInputOf<TokenRepetitionPattern, LeafScalarMap, LeafStringMap>;
 export type TokenTreeFromInput = FromInputOf<TokenTreeParen, LeafScalarMap, LeafStringMap> | FromInputOf<TokenTreeBracket, LeafScalarMap, LeafStringMap> | FromInputOf<TokenTreeBrace, LeafScalarMap, LeafStringMap>;
+export type TokenRepetitionFromInput = FromInputOf<TokenRepetition, LeafScalarMap, LeafStringMap>;
 export type AttributeItemFromInput = FromInputOf<AttributeItem, LeafScalarMap, LeafStringMap>;
 export type InnerAttributeItemFromInput = FromInputOf<InnerAttributeItem, LeafScalarMap, LeafStringMap>;
 export type AttributeFromInput = FromInputOf<Attribute, LeafScalarMap, LeafStringMap>;
@@ -2562,6 +2656,7 @@ export type TraitItemFromInput = FromInputOf<TraitItem, LeafScalarMap, LeafStrin
 export type AssociatedTypeFromInput = FromInputOf<AssociatedType, LeafScalarMap, LeafStringMap>;
 export type TraitBoundsFromInput = FromInputOf<TraitBounds, LeafScalarMap, LeafStringMap>;
 export type HigherRankedTraitBoundFromInput = FromInputOf<HigherRankedTraitBound, LeafScalarMap, LeafStringMap>;
+export type RemovedTraitBoundFromInput = FromInputOf<RemovedTraitBound, LeafScalarMap, LeafStringMap>;
 export type TypeParametersFromInput = FromInputOf<TypeParameters, LeafScalarMap, LeafStringMap>;
 export type ConstParameterFromInput = FromInputOf<ConstParameter, LeafScalarMap, LeafStringMap>;
 export type TypeParameterFromInput = FromInputOf<TypeParameter, LeafScalarMap, LeafStringMap>;
@@ -2569,6 +2664,7 @@ export type LifetimeParameterFromInput = FromInputOf<LifetimeParameter, LeafScal
 export type LetDeclarationFromInput = FromInputOf<LetDeclaration, LeafScalarMap, LeafStringMap>;
 export type UseDeclarationFromInput = FromInputOf<UseDeclaration, LeafScalarMap, LeafStringMap>;
 export type ScopedUseListFromInput = FromInputOf<ScopedUseList, LeafScalarMap, LeafStringMap>;
+export type UseListFromInput = FromInputOf<UseList, LeafScalarMap, LeafStringMap>;
 export type UseAsClauseFromInput = FromInputOf<UseAsClause, LeafScalarMap, LeafStringMap>;
 export type UseWildcardFromInput = FromInputOf<UseWildcard, LeafScalarMap, LeafStringMap>;
 export type ParametersFromInput = FromInputOf<Parameters, LeafScalarMap, LeafStringMap>;
@@ -2583,6 +2679,7 @@ export type LifetimeFromInput = FromInputOf<Lifetime, LeafScalarMap, LeafStringM
 export type ArrayTypeFromInput = FromInputOf<ArrayType, LeafScalarMap, LeafStringMap>;
 export type ForLifetimesFromInput = FromInputOf<ForLifetimes, LeafScalarMap, LeafStringMap>;
 export type FunctionTypeFromInput = FromInputOf<FunctionType, LeafScalarMap, LeafStringMap>;
+export type TupleTypeFromInput = FromInputOf<TupleType, LeafScalarMap, LeafStringMap>;
 export type GenericFunctionFromInput = FromInputOf<GenericFunction, LeafScalarMap, LeafStringMap>;
 export type GenericTypeFromInput = FromInputOf<GenericType, LeafScalarMap, LeafStringMap>;
 export type GenericTypeWithTurbofishFromInput = FromInputOf<GenericTypeWithTurbofish, LeafScalarMap, LeafStringMap>;
@@ -2612,11 +2709,13 @@ export type YieldExpressionFromInput = FromInputOf<YieldExpressionYield, LeafSca
 export type CallExpressionFromInput = FromInputOf<CallExpression, LeafScalarMap, LeafStringMap>;
 export type ArgumentsFromInput = FromInputOf<Arguments, LeafScalarMap, LeafStringMap>;
 export type ArrayExpressionFromInput = FromInputOf<ArrayExpression, LeafScalarMap, LeafStringMap>;
+export type ParenthesizedExpressionFromInput = FromInputOf<ParenthesizedExpression, LeafScalarMap, LeafStringMap>;
 export type TupleExpressionFromInput = FromInputOf<TupleExpression, LeafScalarMap, LeafStringMap>;
 export type StructExpressionFromInput = FromInputOf<StructExpression, LeafScalarMap, LeafStringMap>;
 export type FieldInitializerListFromInput = FromInputOf<FieldInitializerList, LeafScalarMap, LeafStringMap>;
 export type ShorthandFieldInitializerFromInput = FromInputOf<ShorthandFieldInitializer, LeafScalarMap, LeafStringMap>;
 export type FieldInitializerFromInput = FromInputOf<FieldInitializer, LeafScalarMap, LeafStringMap>;
+export type BaseFieldInitializerFromInput = FromInputOf<BaseFieldInitializer, LeafScalarMap, LeafStringMap>;
 export type IfExpressionFromInput = FromInputOf<IfExpression, LeafScalarMap, LeafStringMap>;
 export type LetConditionFromInput = FromInputOf<LetCondition, LeafScalarMap, LeafStringMap>;
 export type ElseClauseFromInput = FromInputOf<ElseClause, LeafScalarMap, LeafStringMap>;
@@ -2635,6 +2734,7 @@ export type LabelFromInput = FromInputOf<Label, LeafScalarMap, LeafStringMap>;
 export type BreakExpressionFromInput = FromInputOf<BreakExpression, LeafScalarMap, LeafStringMap>;
 export type ContinueExpressionFromInput = FromInputOf<ContinueExpression, LeafScalarMap, LeafStringMap>;
 export type IndexExpressionFromInput = FromInputOf<IndexExpression, LeafScalarMap, LeafStringMap>;
+export type AwaitExpressionFromInput = FromInputOf<AwaitExpression, LeafScalarMap, LeafStringMap>;
 export type FieldExpressionFromInput = FromInputOf<FieldExpression, LeafScalarMap, LeafStringMap>;
 export type UnsafeBlockFromInput = FromInputOf<UnsafeBlock, LeafScalarMap, LeafStringMap>;
 export type AsyncBlockFromInput = FromInputOf<AsyncBlock, LeafScalarMap, LeafStringMap>;
@@ -2643,11 +2743,13 @@ export type TryBlockFromInput = FromInputOf<TryBlock, LeafScalarMap, LeafStringM
 export type BlockFromInput = FromInputOf<Block, LeafScalarMap, LeafStringMap>;
 export type GenericPatternFromInput = FromInputOf<GenericPattern, LeafScalarMap, LeafStringMap>;
 export type TuplePatternFromInput = FromInputOf<TuplePattern, LeafScalarMap, LeafStringMap>;
+export type SlicePatternFromInput = FromInputOf<SlicePattern, LeafScalarMap, LeafStringMap>;
 export type TupleStructPatternFromInput = FromInputOf<TupleStructPattern, LeafScalarMap, LeafStringMap>;
 export type StructPatternFromInput = FromInputOf<StructPattern, LeafScalarMap, LeafStringMap>;
 export type FieldPatternFromInput = FromInputOf<FieldPattern, LeafScalarMap, LeafStringMap>;
 export type MutPatternFromInput = FromInputOf<MutPattern, LeafScalarMap, LeafStringMap>;
 export type RangePatternFromInput = FromInputOf<RangePatternLeft, LeafScalarMap, LeafStringMap> | FromInputOf<RangePatternRight, LeafScalarMap, LeafStringMap>;
+export type RefPatternFromInput = FromInputOf<RefPattern, LeafScalarMap, LeafStringMap>;
 export type CapturedPatternFromInput = FromInputOf<CapturedPattern, LeafScalarMap, LeafStringMap>;
 export type ReferencePatternFromInput = FromInputOf<ReferencePattern, LeafScalarMap, LeafStringMap>;
 export type OrPatternFromInput = FromInputOf<OrPattern, LeafScalarMap, LeafStringMap>;
@@ -2700,21 +2802,23 @@ export type DeclarationStatementTree = ConstItemTree | MacroInvocationTree | Mac
 
 export type TokenPattern =
   | TokenTreePattern
+  | TokenRepetitionPattern
   | TokenBindingPattern
   | Metavariable
 ;
 
-export type TokenPatternConfig = TokenTreePatternConfig | TokenBindingPatternConfig;
-export type TokenPatternFromInput = TokenTreePatternFromInput | TokenBindingPatternFromInput;
+export type TokenPatternConfig = TokenTreePatternConfig | TokenRepetitionPatternConfig | TokenBindingPatternConfig;
+export type TokenPatternFromInput = TokenTreePatternFromInput | TokenRepetitionPatternFromInput | TokenBindingPatternFromInput;
 export type TokenPatternTree = TokenTreePatternTree | TokenRepetitionPatternTree | TokenBindingPatternTree | MetavariableTree | HiddenNonSpecialTokenTree;
 
 export type Tokens =
   | TokenTree
+  | TokenRepetition
   | Metavariable
 ;
 
-export type TokensConfig = TokenTreeConfig;
-export type TokensFromInput = TokenTreeFromInput;
+export type TokensConfig = TokenTreeConfig | TokenRepetitionConfig;
+export type TokensFromInput = TokenTreeFromInput | TokenRepetitionFromInput;
 export type TokensTree = TokenTreeTree | TokenRepetitionTree | MetavariableTree | HiddenNonSpecialTokenTree;
 
 export type NonSpecialToken =
@@ -2729,12 +2833,13 @@ export type NonSpecialTokenTree = HiddenLiteralTree | IdentifierTree | MutableSp
 
 export type UseClause =
   | UseAsClause
+  | UseList
   | ScopedUseList
   | UseWildcard
 ;
 
-export type UseClauseConfig = UseAsClauseConfig | ScopedUseListConfig | UseWildcardConfig;
-export type UseClauseFromInput = UseAsClauseFromInput | ScopedUseListFromInput | UseWildcardFromInput;
+export type UseClauseConfig = UseAsClauseConfig | UseListConfig | ScopedUseListConfig | UseWildcardConfig;
+export type UseClauseFromInput = UseAsClauseFromInput | UseListFromInput | ScopedUseListFromInput | UseWildcardFromInput;
 export type UseClauseTree = HiddenPathTree | UseAsClauseTree | UseListTree | ScopedUseListTree | UseWildcardTree;
 
 export type ExpressionExceptRange =
@@ -2753,6 +2858,7 @@ export type ExpressionExceptRange =
   | Self
   | ScopedIdentifier
   | GenericFunction
+  | AwaitExpression
   | FieldExpression
   | ArrayExpression
   | TupleExpression
@@ -2762,11 +2868,12 @@ export type ExpressionExceptRange =
   | IndexExpression
   | Metavariable
   | ClosureExpression
+  | ParenthesizedExpression
   | StructExpression
 ;
 
-export type ExpressionExceptRangeConfig = UnaryExpressionConfig | ReferenceExpressionConfig | TryExpressionConfig | BinaryExpressionConfig | AssignmentExpressionConfig | CompoundAssignmentExprConfig | TypeCastExpressionConfig | CallExpressionConfig | ReturnExpressionConfig | YieldExpressionConfig | ScopedIdentifierConfig | GenericFunctionConfig | FieldExpressionConfig | ArrayExpressionConfig | TupleExpressionConfig | MacroInvocationConfig | BreakExpressionConfig | ContinueExpressionConfig | IndexExpressionConfig | ClosureExpressionConfig | StructExpressionConfig;
-export type ExpressionExceptRangeFromInput = UnaryExpressionFromInput | ReferenceExpressionFromInput | TryExpressionFromInput | BinaryExpressionFromInput | AssignmentExpressionFromInput | CompoundAssignmentExprFromInput | TypeCastExpressionFromInput | CallExpressionFromInput | ReturnExpressionFromInput | YieldExpressionFromInput | ScopedIdentifierFromInput | GenericFunctionFromInput | FieldExpressionFromInput | ArrayExpressionFromInput | TupleExpressionFromInput | MacroInvocationFromInput | BreakExpressionFromInput | ContinueExpressionFromInput | IndexExpressionFromInput | ClosureExpressionFromInput | StructExpressionFromInput;
+export type ExpressionExceptRangeConfig = UnaryExpressionConfig | ReferenceExpressionConfig | TryExpressionConfig | BinaryExpressionConfig | AssignmentExpressionConfig | CompoundAssignmentExprConfig | TypeCastExpressionConfig | CallExpressionConfig | ReturnExpressionConfig | YieldExpressionConfig | ScopedIdentifierConfig | GenericFunctionConfig | AwaitExpressionConfig | FieldExpressionConfig | ArrayExpressionConfig | TupleExpressionConfig | MacroInvocationConfig | BreakExpressionConfig | ContinueExpressionConfig | IndexExpressionConfig | ClosureExpressionConfig | ParenthesizedExpressionConfig | StructExpressionConfig;
+export type ExpressionExceptRangeFromInput = UnaryExpressionFromInput | ReferenceExpressionFromInput | TryExpressionFromInput | BinaryExpressionFromInput | AssignmentExpressionFromInput | CompoundAssignmentExprFromInput | TypeCastExpressionFromInput | CallExpressionFromInput | ReturnExpressionFromInput | YieldExpressionFromInput | ScopedIdentifierFromInput | GenericFunctionFromInput | AwaitExpressionFromInput | FieldExpressionFromInput | ArrayExpressionFromInput | TupleExpressionFromInput | MacroInvocationFromInput | BreakExpressionFromInput | ContinueExpressionFromInput | IndexExpressionFromInput | ClosureExpressionFromInput | ParenthesizedExpressionFromInput | StructExpressionFromInput;
 export type ExpressionExceptRangeTree = UnaryExpressionTree | ReferenceExpressionTree | TryExpressionTree | BinaryExpressionTree | AssignmentExpressionTree | CompoundAssignmentExprTree | TypeCastExpressionTree | CallExpressionTree | ReturnExpressionTree | YieldExpressionTree | HiddenLiteralTree | IdentifierTree | HiddenReservedIdentifierTree | SelfTree | ScopedIdentifierTree | GenericFunctionTree | AwaitExpressionTree | FieldExpressionTree | ArrayExpressionTree | TupleExpressionTree | MacroInvocationTree | UnitExpressionTree | BreakExpressionTree | ContinueExpressionTree | IndexExpressionTree | MetavariableTree | ClosureExpressionTree | ParenthesizedExpressionTree | StructExpressionTree | HiddenExpressionEndingWithBlockTree;
 
 export type Expression =
@@ -2821,6 +2928,8 @@ export type Pattern =
   | TupleStructPattern
   | StructPattern
   | HiddenReservedIdentifier
+  | RefPattern
+  | SlicePattern
   | CapturedPattern
   | ReferencePattern
   | MutPattern
@@ -2830,8 +2939,8 @@ export type Pattern =
   | MacroInvocation
 ;
 
-export type PatternConfig = ScopedIdentifierConfig | GenericPatternConfig | TuplePatternConfig | TupleStructPatternConfig | StructPatternConfig | CapturedPatternConfig | ReferencePatternConfig | MutPatternConfig | RangePatternConfig | OrPatternConfig | ConstBlockConfig | MacroInvocationConfig;
-export type PatternFromInput = ScopedIdentifierFromInput | GenericPatternFromInput | TuplePatternFromInput | TupleStructPatternFromInput | StructPatternFromInput | CapturedPatternFromInput | ReferencePatternFromInput | MutPatternFromInput | RangePatternFromInput | OrPatternFromInput | ConstBlockFromInput | MacroInvocationFromInput;
+export type PatternConfig = ScopedIdentifierConfig | GenericPatternConfig | TuplePatternConfig | TupleStructPatternConfig | StructPatternConfig | RefPatternConfig | SlicePatternConfig | CapturedPatternConfig | ReferencePatternConfig | MutPatternConfig | RangePatternConfig | OrPatternConfig | ConstBlockConfig | MacroInvocationConfig;
+export type PatternFromInput = ScopedIdentifierFromInput | GenericPatternFromInput | TuplePatternFromInput | TupleStructPatternFromInput | StructPatternFromInput | RefPatternFromInput | SlicePatternFromInput | CapturedPatternFromInput | ReferencePatternFromInput | MutPatternFromInput | RangePatternFromInput | OrPatternFromInput | ConstBlockFromInput | MacroInvocationFromInput;
 export type PatternTree = HiddenLiteralPatternTree | IdentifierTree | ScopedIdentifierTree | GenericPatternTree | TuplePatternTree | TupleStructPatternTree | StructPatternTree | HiddenReservedIdentifierTree | RefPatternTree | SlicePatternTree | CapturedPatternTree | ReferencePatternTree | RemainingFieldPatternTree | MutPatternTree | RangePatternTree | OrPatternTree | ConstBlockTree | MacroInvocationTree;
 
 export type LiteralPattern =
@@ -2856,7 +2965,9 @@ export type RustNode =
   | MacroRule
   | TokenTreePattern
   | TokenBindingPattern
+  | TokenRepetitionPattern
   | TokenTree
+  | TokenRepetition
   | AttributeItem
   | InnerAttributeItem
   | Attribute
@@ -2885,6 +2996,7 @@ export type RustNode =
   | AssociatedType
   | TraitBounds
   | HigherRankedTraitBound
+  | RemovedTraitBound
   | TypeParameters
   | ConstParameter
   | TypeParameter
@@ -2892,6 +3004,7 @@ export type RustNode =
   | LetDeclaration
   | UseDeclaration
   | ScopedUseList
+  | UseList
   | UseAsClause
   | UseWildcard
   | Parameters
@@ -2906,6 +3019,7 @@ export type RustNode =
   | ArrayType
   | ForLifetimes
   | FunctionType
+  | TupleType
   | GenericFunction
   | GenericType
   | GenericTypeWithTurbofish
@@ -2935,11 +3049,13 @@ export type RustNode =
   | CallExpression
   | Arguments
   | ArrayExpression
+  | ParenthesizedExpression
   | TupleExpression
   | StructExpression
   | FieldInitializerList
   | ShorthandFieldInitializer
   | FieldInitializer
+  | BaseFieldInitializer
   | IfExpression
   | LetCondition
   | ElseClause
@@ -2958,6 +3074,7 @@ export type RustNode =
   | BreakExpression
   | ContinueExpression
   | IndexExpression
+  | AwaitExpression
   | FieldExpression
   | UnsafeBlock
   | AsyncBlock
@@ -2966,11 +3083,13 @@ export type RustNode =
   | Block
   | GenericPattern
   | TuplePattern
+  | SlicePattern
   | TupleStructPattern
   | StructPattern
   | FieldPattern
   | MutPattern
   | RangePattern
+  | RefPattern
   | CapturedPattern
   | ReferencePattern
   | OrPattern
@@ -2993,7 +3112,9 @@ export interface KindMap {
   'macro_rule': MacroRule;
   'token_tree_pattern': TokenTreePattern;
   'token_binding_pattern': TokenBindingPattern;
+  'token_repetition_pattern': TokenRepetitionPattern;
   'token_tree': TokenTree;
+  'token_repetition': TokenRepetition;
   'attribute_item': AttributeItem;
   'inner_attribute_item': InnerAttributeItem;
   'attribute': Attribute;
@@ -3022,6 +3143,7 @@ export interface KindMap {
   'associated_type': AssociatedType;
   'trait_bounds': TraitBounds;
   'higher_ranked_trait_bound': HigherRankedTraitBound;
+  'removed_trait_bound': RemovedTraitBound;
   'type_parameters': TypeParameters;
   'const_parameter': ConstParameter;
   'type_parameter': TypeParameter;
@@ -3029,6 +3151,7 @@ export interface KindMap {
   'let_declaration': LetDeclaration;
   'use_declaration': UseDeclaration;
   'scoped_use_list': ScopedUseList;
+  'use_list': UseList;
   'use_as_clause': UseAsClause;
   'use_wildcard': UseWildcard;
   'parameters': Parameters;
@@ -3043,6 +3166,7 @@ export interface KindMap {
   'array_type': ArrayType;
   'for_lifetimes': ForLifetimes;
   'function_type': FunctionType;
+  'tuple_type': TupleType;
   'generic_function': GenericFunction;
   'generic_type': GenericType;
   'generic_type_with_turbofish': GenericTypeWithTurbofish;
@@ -3072,11 +3196,13 @@ export interface KindMap {
   'call_expression': CallExpression;
   'arguments': Arguments;
   'array_expression': ArrayExpression;
+  'parenthesized_expression': ParenthesizedExpression;
   'tuple_expression': TupleExpression;
   'struct_expression': StructExpression;
   'field_initializer_list': FieldInitializerList;
   'shorthand_field_initializer': ShorthandFieldInitializer;
   'field_initializer': FieldInitializer;
+  'base_field_initializer': BaseFieldInitializer;
   'if_expression': IfExpression;
   'let_condition': LetCondition;
   'else_clause': ElseClause;
@@ -3095,6 +3221,7 @@ export interface KindMap {
   'break_expression': BreakExpression;
   'continue_expression': ContinueExpression;
   'index_expression': IndexExpression;
+  'await_expression': AwaitExpression;
   'field_expression': FieldExpression;
   'unsafe_block': UnsafeBlock;
   'async_block': AsyncBlock;
@@ -3103,11 +3230,13 @@ export interface KindMap {
   'block': Block;
   'generic_pattern': GenericPattern;
   'tuple_pattern': TuplePattern;
+  'slice_pattern': SlicePattern;
   'tuple_struct_pattern': TupleStructPattern;
   'struct_pattern': StructPattern;
   'field_pattern': FieldPattern;
   'mut_pattern': MutPattern;
   'range_pattern': RangePattern;
+  'ref_pattern': RefPattern;
   'captured_pattern': CapturedPattern;
   'reference_pattern': ReferencePattern;
   'or_pattern': OrPattern;
@@ -3230,7 +3359,9 @@ export interface ConfigMap {
   'macro_rule': MacroRuleConfig;
   'token_tree_pattern': TokenTreePatternConfig;
   'token_binding_pattern': TokenBindingPatternConfig;
+  'token_repetition_pattern': TokenRepetitionPatternConfig;
   'token_tree': TokenTreeConfig;
+  'token_repetition': TokenRepetitionConfig;
   'attribute_item': AttributeItemConfig;
   'inner_attribute_item': InnerAttributeItemConfig;
   'attribute': AttributeConfig;
@@ -3259,6 +3390,7 @@ export interface ConfigMap {
   'associated_type': AssociatedTypeConfig;
   'trait_bounds': TraitBoundsConfig;
   'higher_ranked_trait_bound': HigherRankedTraitBoundConfig;
+  'removed_trait_bound': RemovedTraitBoundConfig;
   'type_parameters': TypeParametersConfig;
   'const_parameter': ConstParameterConfig;
   'type_parameter': TypeParameterConfig;
@@ -3266,6 +3398,7 @@ export interface ConfigMap {
   'let_declaration': LetDeclarationConfig;
   'use_declaration': UseDeclarationConfig;
   'scoped_use_list': ScopedUseListConfig;
+  'use_list': UseListConfig;
   'use_as_clause': UseAsClauseConfig;
   'use_wildcard': UseWildcardConfig;
   'parameters': ParametersConfig;
@@ -3280,6 +3413,7 @@ export interface ConfigMap {
   'array_type': ArrayTypeConfig;
   'for_lifetimes': ForLifetimesConfig;
   'function_type': FunctionTypeConfig;
+  'tuple_type': TupleTypeConfig;
   'generic_function': GenericFunctionConfig;
   'generic_type': GenericTypeConfig;
   'generic_type_with_turbofish': GenericTypeWithTurbofishConfig;
@@ -3309,11 +3443,13 @@ export interface ConfigMap {
   'call_expression': CallExpressionConfig;
   'arguments': ArgumentsConfig;
   'array_expression': ArrayExpressionConfig;
+  'parenthesized_expression': ParenthesizedExpressionConfig;
   'tuple_expression': TupleExpressionConfig;
   'struct_expression': StructExpressionConfig;
   'field_initializer_list': FieldInitializerListConfig;
   'shorthand_field_initializer': ShorthandFieldInitializerConfig;
   'field_initializer': FieldInitializerConfig;
+  'base_field_initializer': BaseFieldInitializerConfig;
   'if_expression': IfExpressionConfig;
   'let_condition': LetConditionConfig;
   'else_clause': ElseClauseConfig;
@@ -3332,6 +3468,7 @@ export interface ConfigMap {
   'break_expression': BreakExpressionConfig;
   'continue_expression': ContinueExpressionConfig;
   'index_expression': IndexExpressionConfig;
+  'await_expression': AwaitExpressionConfig;
   'field_expression': FieldExpressionConfig;
   'unsafe_block': UnsafeBlockConfig;
   'async_block': AsyncBlockConfig;
@@ -3340,11 +3477,13 @@ export interface ConfigMap {
   'block': BlockConfig;
   'generic_pattern': GenericPatternConfig;
   'tuple_pattern': TuplePatternConfig;
+  'slice_pattern': SlicePatternConfig;
   'tuple_struct_pattern': TupleStructPatternConfig;
   'struct_pattern': StructPatternConfig;
   'field_pattern': FieldPatternConfig;
   'mut_pattern': MutPatternConfig;
   'range_pattern': RangePatternConfig;
+  'ref_pattern': RefPatternConfig;
   'captured_pattern': CapturedPatternConfig;
   'reference_pattern': ReferencePatternConfig;
   'or_pattern': OrPatternConfig;
@@ -3367,7 +3506,9 @@ export interface FromInputMap {
   'macro_rule': MacroRuleFromInput;
   'token_tree_pattern': TokenTreePatternFromInput;
   'token_binding_pattern': TokenBindingPatternFromInput;
+  'token_repetition_pattern': TokenRepetitionPatternFromInput;
   'token_tree': TokenTreeFromInput;
+  'token_repetition': TokenRepetitionFromInput;
   'attribute_item': AttributeItemFromInput;
   'inner_attribute_item': InnerAttributeItemFromInput;
   'attribute': AttributeFromInput;
@@ -3396,6 +3537,7 @@ export interface FromInputMap {
   'associated_type': AssociatedTypeFromInput;
   'trait_bounds': TraitBoundsFromInput;
   'higher_ranked_trait_bound': HigherRankedTraitBoundFromInput;
+  'removed_trait_bound': RemovedTraitBoundFromInput;
   'type_parameters': TypeParametersFromInput;
   'const_parameter': ConstParameterFromInput;
   'type_parameter': TypeParameterFromInput;
@@ -3403,6 +3545,7 @@ export interface FromInputMap {
   'let_declaration': LetDeclarationFromInput;
   'use_declaration': UseDeclarationFromInput;
   'scoped_use_list': ScopedUseListFromInput;
+  'use_list': UseListFromInput;
   'use_as_clause': UseAsClauseFromInput;
   'use_wildcard': UseWildcardFromInput;
   'parameters': ParametersFromInput;
@@ -3417,6 +3560,7 @@ export interface FromInputMap {
   'array_type': ArrayTypeFromInput;
   'for_lifetimes': ForLifetimesFromInput;
   'function_type': FunctionTypeFromInput;
+  'tuple_type': TupleTypeFromInput;
   'generic_function': GenericFunctionFromInput;
   'generic_type': GenericTypeFromInput;
   'generic_type_with_turbofish': GenericTypeWithTurbofishFromInput;
@@ -3446,11 +3590,13 @@ export interface FromInputMap {
   'call_expression': CallExpressionFromInput;
   'arguments': ArgumentsFromInput;
   'array_expression': ArrayExpressionFromInput;
+  'parenthesized_expression': ParenthesizedExpressionFromInput;
   'tuple_expression': TupleExpressionFromInput;
   'struct_expression': StructExpressionFromInput;
   'field_initializer_list': FieldInitializerListFromInput;
   'shorthand_field_initializer': ShorthandFieldInitializerFromInput;
   'field_initializer': FieldInitializerFromInput;
+  'base_field_initializer': BaseFieldInitializerFromInput;
   'if_expression': IfExpressionFromInput;
   'let_condition': LetConditionFromInput;
   'else_clause': ElseClauseFromInput;
@@ -3469,6 +3615,7 @@ export interface FromInputMap {
   'break_expression': BreakExpressionFromInput;
   'continue_expression': ContinueExpressionFromInput;
   'index_expression': IndexExpressionFromInput;
+  'await_expression': AwaitExpressionFromInput;
   'field_expression': FieldExpressionFromInput;
   'unsafe_block': UnsafeBlockFromInput;
   'async_block': AsyncBlockFromInput;
@@ -3477,11 +3624,13 @@ export interface FromInputMap {
   'block': BlockFromInput;
   'generic_pattern': GenericPatternFromInput;
   'tuple_pattern': TuplePatternFromInput;
+  'slice_pattern': SlicePatternFromInput;
   'tuple_struct_pattern': TupleStructPatternFromInput;
   'struct_pattern': StructPatternFromInput;
   'field_pattern': FieldPatternFromInput;
   'mut_pattern': MutPatternFromInput;
   'range_pattern': RangePatternFromInput;
+  'ref_pattern': RefPatternFromInput;
   'captured_pattern': CapturedPatternFromInput;
   'reference_pattern': ReferencePatternFromInput;
   'or_pattern': OrPatternFromInput;

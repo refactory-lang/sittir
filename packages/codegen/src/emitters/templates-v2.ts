@@ -24,11 +24,15 @@ export function emitTemplatesFromNodeMap(config: EmitTemplatesFromNodeMapConfig)
 
     for (const [kind, node] of nodeMap.nodes) {
         if (node instanceof AssembledBranch || node instanceof AssembledGroup) {
-            const template = renderRule(node.rule)
-            if (template) rules[kind] = { template }
+            // Always emit a rule entry for structural nodes — even an empty
+            // template falls back to $$$CHILDREN rendering at runtime and
+            // that is still a valid renderable path. Missing entries mean
+            // the renderer throws.
+            const template = renderRule(node.rule) || '$$$CHILDREN'
+            rules[kind] = { template }
         } else if (node instanceof AssembledContainer) {
-            const template = renderRule(node.rule)
-            if (template) rules[kind] = { template }
+            const template = renderRule(node.rule) || '$$$CHILDREN'
+            rules[kind] = { template }
             if (node.separator) joinBy[kind] = node.separator
         } else if (node instanceof AssembledPolymorph) {
             // Emit per-form template
@@ -36,11 +40,18 @@ export function emitTemplatesFromNodeMap(config: EmitTemplatesFromNodeMapConfig)
             for (const form of node.forms) {
                 variants.push({
                     name: form.name,
-                    template: renderRule(form.rule),
+                    template: renderRule(form.rule) || '$$$CHILDREN',
                     detectToken: form.detectToken,
                 })
             }
-            if (variants.length > 0) rules[kind] = { variants }
+            if (variants.length > 0) {
+                rules[kind] = { variants }
+            } else {
+                // Polymorph with no synthesised forms (pure supertype
+                // dispatch). Fall back to a single children-reference
+                // template so the kind is still renderable.
+                rules[kind] = { template: '$$$CHILDREN' }
+            }
         }
     }
 
@@ -103,8 +114,9 @@ function walkRule(rule: Rule, seen: Set<string>, inRepeat: boolean): string[] {
         }
 
         case 'symbol':
-            if (rule.hidden) return []
-            // Visible symbol → children reference
+            // Hidden symbols (supertype references) dispatch to concrete
+            // children at parse time, so they still contribute to the
+            // rendered template as a children-reference placeholder.
             if (seen.has('children')) return []
             seen.add('children')
             return ['$$$CHILDREN']
@@ -166,10 +178,15 @@ function yamlStringify(obj: any, indent = 0): string {
     const pad = '  '.repeat(indent)
     if (obj === null || obj === undefined) return 'null'
     if (typeof obj === 'string') {
-        // Quote strings with YAML-reserved leading characters or anywhere
-        // containing ones that break plain-scalar parsing.
-        const reservedLead = /^[`@!*&|>%'"#\s-]|^---$|^\.\.\.$/
-        if (reservedLead.test(obj) || /[:#{}\[\]\n`]/.test(obj) || obj === '') {
+        // Quote strings with YAML-reserved leading characters, or anywhere
+        // containing ones that break plain-scalar parsing. `?` and `:` as
+        // entire values are interpreted as indicator tokens too.
+        const reservedLead = /^[`@!*&|>%'"#?\s-]|^---$|^\.\.\.$/
+        if (
+            reservedLead.test(obj) ||
+            /[:#{}\[\]\n`]/.test(obj) ||
+            obj === '' || obj === '?' || obj === '-'
+        ) {
             return JSON.stringify(obj)
         }
         return obj

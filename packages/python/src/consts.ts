@@ -9,6 +9,7 @@ export const NODE_KINDS = [
   '_list_pattern',
   '_parameters',
   '_patterns',
+  '_simple_statements',
   '_tuple_pattern',
   'aliased_import',
   'argument_list',
@@ -20,6 +21,7 @@ export const NODE_KINDS = [
   'augmented_assignment',
   'await',
   'binary_operator',
+  'block',
   'boolean_operator',
   'call',
   'case_clause',
@@ -35,6 +37,7 @@ export const NODE_KINDS = [
   'decorated_definition',
   'decorator',
   'default_parameter',
+  'delete_statement',
   'dict_pattern',
   'dictionary',
   'dictionary_comprehension',
@@ -55,6 +58,7 @@ export const NODE_KINDS = [
   'format_expression',
   'format_specifier',
   'function_definition',
+  'future_import_statement',
   'generator_expression',
   'generic_type',
   'global_statement',
@@ -62,15 +66,19 @@ export const NODE_KINDS = [
   'if_statement',
   'import_from_statement',
   'import_prefix',
+  'import_statement',
   'integer',
   'interpolation',
   'keyword_argument',
   'keyword_identifier',
   'keyword_pattern',
   'lambda',
+  'lambda_parameters',
   'lambda_within_for_in_clause',
   'line_continuation',
+  'list',
   'list_comprehension',
+  'list_pattern',
   'list_splat',
   'list_splat_pattern',
   'match_statement',
@@ -81,6 +89,7 @@ export const NODE_KINDS = [
   'not_operator',
   'pair',
   'parameter',
+  'parameters',
   'parenthesized_expression',
   'parenthesized_list_splat',
   'pattern',
@@ -89,6 +98,8 @@ export const NODE_KINDS = [
   'print_statement',
   'raise_statement',
   'relative_import',
+  'return_statement',
+  'set',
   'set_comprehension',
   'slice',
   'splat_pattern',
@@ -97,12 +108,15 @@ export const NODE_KINDS = [
   'string_content',
   'subscript',
   'try_statement',
+  'tuple',
+  'tuple_pattern',
   'type',
   'type_alias_statement',
   'type_parameter',
   'typed_default_parameter',
   'typed_parameter',
   'unary_operator',
+  'union_pattern',
   'union_type',
   'while_statement',
   'with_clause',
@@ -187,12 +201,10 @@ export const KEYWORDS = [
   '_is_not',
   '_not_escape_sequence',
   '_not_in',
-  '_simple_statements',
   'and',
   'as',
   'assert',
   'async',
-  'block',
   'break',
   'break_statement',
   'case',
@@ -201,7 +213,6 @@ export const KEYWORDS = [
   'continue_statement',
   'def',
   'del',
-  'delete_statement',
   'elif',
   'ellipsis',
   'else',
@@ -212,36 +223,25 @@ export const KEYWORDS = [
   'float',
   'for',
   'from',
-  'future_import_statement',
   'global',
   'if',
   'import',
-  'import_statement',
   'in',
   'is',
   'keyword_separator',
-  'lambda_parameters',
-  'list',
-  'list_pattern',
   'match',
   'none',
   'nonlocal',
   'not',
   'or',
-  'parameters',
   'pass',
   'pass_statement',
   'positional_separator',
   'print',
   'raise',
   'return',
-  'return_statement',
-  'set',
   'true',
   'try',
-  'tuple',
-  'tuple_pattern',
-  'union_pattern',
   'while',
   'wildcard_import',
   'with',
@@ -329,6 +329,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   '_patterns': [
   ],
+  '_simple_statements': [
+  ],
   '_tuple_pattern': [
   ],
   'aliased_import': [
@@ -366,6 +368,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'left', required: true, multiple: false },
     { name: 'operator', required: true, multiple: false },
     { name: 'right', required: true, multiple: false },
+  ],
+  'block': [
   ],
   'boolean_operator': [
     { name: 'left', required: true, multiple: false },
@@ -424,6 +428,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'default_parameter': [
     { name: 'name', required: true, multiple: false },
     { name: 'value', required: true, multiple: false },
+  ],
+  'delete_statement': [
   ],
   'dict_pattern': [
   ],
@@ -488,6 +494,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'returnType', required: false, multiple: false },
     { name: 'body', required: true, multiple: false },
   ],
+  'future_import_statement': [
+  ],
   'generator_expression': [
     { name: 'body', required: true, multiple: false },
   ],
@@ -511,6 +519,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'import_prefix': [
   ],
+  'import_statement': [
+  ],
   'integer': [
   ],
   'interpolation': [
@@ -532,14 +542,20 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'parameters', required: true, multiple: false },
     { name: 'body', required: true, multiple: false },
   ],
+  'lambda_parameters': [
+  ],
   'lambda_within_for_in_clause': [
     { name: 'parameters', required: true, multiple: false },
     { name: 'body', required: true, multiple: false },
   ],
   'line_continuation': [
   ],
+  'list': [
+  ],
   'list_comprehension': [
     { name: 'body', required: true, multiple: false },
+  ],
+  'list_pattern': [
   ],
   'list_splat': [
     { name: 'expression', required: true, multiple: false },
@@ -571,6 +587,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'parameter': [
   ],
+  'parameters': [
+  ],
   'parenthesized_expression': [
   ],
   'parenthesized_list_splat': [
@@ -591,6 +609,10 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'relative_import': [
     { name: 'importPrefix', required: true, multiple: false },
     { name: 'dottedName', required: true, multiple: false },
+  ],
+  'return_statement': [
+  ],
+  'set': [
   ],
   'set_comprehension': [
     { name: 'body', required: true, multiple: false },
@@ -622,6 +644,10 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'elseClause', required: true, multiple: false },
     { name: 'finallyClause', required: true, multiple: false },
   ],
+  'tuple': [
+  ],
+  'tuple_pattern': [
+  ],
   'type': [
   ],
   'type_alias_statement': [
@@ -641,6 +667,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'unary_operator': [
     { name: 'operator', required: true, multiple: false },
     { name: 'argument', required: true, multiple: false },
+  ],
+  'union_pattern': [
   ],
   'union_type': [
     { name: 'left', required: true, multiple: false },
