@@ -71,6 +71,17 @@ Test: would this logic break if applied to a different grammar? If yes, it belon
 
 Corollary: if Assemble or Emit contains a conditional like `if (language === 'rust')` or `if (kind === 'function_item')`, that's a bug. The logic should be driven by structure in the rule tree or by override configuration.
 
+### Overrides as structural patches
+
+Overrides transform raw grammar rules into enriched rules. The same transform applies to two substrates:
+
+- **Rules** (codegen time): `grammar rule → override patches → enriched rule` — used by Evaluate to produce the rule tree that Assemble/Emit consume.
+- **SgNodes** (runtime): `raw SgNode → same positional patches → sittir NodeData` — the override patches tell you which children to wrap in fields, which positions to name.
+
+This means: applying the projection defined by `overrides.ts` to a raw parse tree node is sufficient to produce a sittir node. The override file encodes the structural delta between what tree-sitter's parser gives you and what sittir's typed API exposes.
+
+Implication: `readNode`/`wrap` logic is derivable from the override patches — not a separate per-kind codegen concern.
+
 ### Derivability
 
 Metadata that *can* be derived from the rule tree at Assemble time *must* be derived, not carried forward on Rule nodes through earlier phases. This keeps Rules clean and phases independent.
