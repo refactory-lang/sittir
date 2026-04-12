@@ -32,6 +32,20 @@ export function link(raw: RawGrammar): LinkedGrammar {
         rules[name] = resolveRule(rule, name, raw.rules, supertypes, externalRoles)
     }
 
+    // Create synthetic rules for external tokens that have no grammar rule
+    // These are declared in grammar.externals but have no rule body
+    // Per design doc: externals are grammar-level declarations — Link creates leaf rules for them
+    for (const ext of raw.externals) {
+        if (!rules[ext]) {
+            rules[ext] = { type: 'pattern', value: '' } as Rule
+        }
+    }
+
+    // Create synthetic rules for named aliases
+    // alias($.x, $.y) creates a node with kind 'y' that mirrors 'x's structure
+    // Walk all rules to find alias references and create entries for alias targets
+    collectAliasTargets(raw.rules, rules)
+
     // Classify hidden rules that weren't already resolved
     for (const [name, rule] of Object.entries(rules)) {
         if (name.startsWith('_')) {
@@ -235,6 +249,52 @@ export function computeParentSets(refs: SymbolRef[]): Map<string, SymbolRef[]> {
         }
     }
     return parents
+}
+
+// ---------------------------------------------------------------------------
+// detectClause — optional(seq(STRING, FIELD, ...)) → clause
+// ---------------------------------------------------------------------------
+
+// ---------------------------------------------------------------------------
+// collectAliasTargets — find named aliases and create rules for their targets
+// ---------------------------------------------------------------------------
+
+function collectAliasTargets(rawRules: Record<string, Rule>, resolvedRules: Record<string, Rule>): void {
+    for (const rule of Object.values(rawRules)) {
+        walkForAliases(rule, rawRules, resolvedRules)
+    }
+}
+
+function walkForAliases(rule: Rule, rawRules: Record<string, Rule>, resolvedRules: Record<string, Rule>): void {
+    switch (rule.type) {
+        case 'alias':
+            if (rule.named && rule.value && !resolvedRules[rule.value]) {
+                // Named alias: alias($.x, $.y) — create a rule for 'y' based on 'x's content
+                const sourceRule = rule.content.type === 'symbol' ? rawRules[rule.content.name] : rule.content
+                if (sourceRule) {
+                    resolvedRules[rule.value] = sourceRule
+                }
+            }
+            break
+        case 'seq':
+            for (const m of rule.members) walkForAliases(m, rawRules, resolvedRules)
+            break
+        case 'choice':
+            for (const m of rule.members) walkForAliases(m, rawRules, resolvedRules)
+            break
+        case 'optional':
+            walkForAliases(rule.content, rawRules, resolvedRules)
+            break
+        case 'repeat':
+            walkForAliases(rule.content, rawRules, resolvedRules)
+            break
+        case 'field':
+            walkForAliases(rule.content, rawRules, resolvedRules)
+            break
+        case 'token':
+            walkForAliases(rule.content, rawRules, resolvedRules)
+            break
+    }
 }
 
 // ---------------------------------------------------------------------------

@@ -134,6 +134,10 @@ function walkForStrings(rule: Rule, out: Set<string>): void {
         case 'string':
             out.add(rule.value)
             break
+        case 'enum':
+            // Enum values are string literals — collect them as anonymous nodes
+            for (const v of rule.values) out.add(v)
+            break
         case 'seq':
             for (const m of rule.members) walkForStrings(m, out)
             break
