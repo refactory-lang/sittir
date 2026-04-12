@@ -300,71 +300,83 @@ export interface AssembledForm {
 
 export class AssembledBranch extends AssembledNodeBase {
     readonly modelType = 'branch' as const
-    readonly fields: AssembledField[]
-    readonly children?: AssembledChild[]
+    readonly #fields: AssembledField[]
+    readonly #children?: AssembledChild[]
 
     constructor(init: {
         kind: string; typeName: string; factoryName?: string; irKey?: string
         fields: AssembledField[]; children?: AssembledChild[]
     }) {
         super(init)
-        this.fields = init.fields
-        this.children = init.children
+        this.#fields = init.fields
+        this.#children = init.children
     }
+
+    get fields(): AssembledField[] { return this.#fields }
+    get children(): AssembledChild[] | undefined { return this.#children }
 }
 
 export class AssembledContainer extends AssembledNodeBase {
     readonly modelType = 'container' as const
-    readonly children: AssembledChild[]
-    readonly separator?: string
+    readonly #children: AssembledChild[]
+    readonly #separator?: string
 
     constructor(init: {
         kind: string; typeName: string; factoryName?: string; irKey?: string
         children: AssembledChild[]; separator?: string
     }) {
         super(init)
-        this.children = init.children
-        this.separator = init.separator
+        this.#children = init.children
+        this.#separator = init.separator
     }
+
+    get children(): AssembledChild[] { return this.#children }
+    get separator(): string | undefined { return this.#separator }
 }
 
 export class AssembledPolymorph extends AssembledNodeBase {
     readonly modelType = 'polymorph' as const
-    readonly forms: AssembledForm[]
+    readonly #forms: AssembledForm[]
 
     constructor(init: {
         kind: string; typeName: string; factoryName?: string; irKey?: string
         forms: AssembledForm[]
     }) {
         super(init)
-        this.forms = init.forms
+        this.#forms = init.forms
     }
+
+    get forms(): AssembledForm[] { return this.#forms }
 }
 
 export class AssembledLeaf extends AssembledNodeBase {
     readonly modelType = 'leaf' as const
-    readonly pattern?: string
+    readonly #pattern?: string
 
     constructor(init: {
         kind: string; typeName: string; factoryName?: string; irKey?: string
         pattern?: string
     }) {
         super(init)
-        this.pattern = init.pattern
+        this.#pattern = init.pattern
     }
+
+    get pattern(): string | undefined { return this.#pattern }
 }
 
 export class AssembledKeyword extends AssembledNodeBase {
     readonly modelType = 'keyword' as const
-    readonly text: string
+    readonly #text: string
 
     constructor(init: {
         kind: string; typeName: string; factoryName?: string; irKey?: string
         text: string
     }) {
         super(init)
-        this.text = init.text
+        this.#text = init.text
     }
+
+    get text(): string { return this.#text }
 }
 
 export class AssembledToken extends AssembledNodeBase {
@@ -379,41 +391,47 @@ export class AssembledToken extends AssembledNodeBase {
 
 export class AssembledEnum extends AssembledNodeBase {
     readonly modelType = 'enum' as const
-    readonly values: string[]
+    readonly #values: string[]
 
     constructor(init: {
         kind: string; typeName: string; factoryName?: string; irKey?: string
         values: string[]
     }) {
         super(init)
-        this.values = init.values
+        this.#values = init.values
     }
+
+    get values(): string[] { return this.#values }
 }
 
 export class AssembledSupertype extends AssembledNodeBase {
     readonly modelType = 'supertype' as const
-    readonly subtypes: string[]
+    readonly #subtypes: string[]
 
     constructor(init: {
         kind: string; typeName: string; factoryName?: string; irKey?: string
         subtypes: string[]
     }) {
         super(init)
-        this.subtypes = init.subtypes
+        this.#subtypes = init.subtypes
     }
+
+    get subtypes(): string[] { return this.#subtypes }
 }
 
 export class AssembledGroup extends AssembledNodeBase {
     readonly modelType = 'group' as const
-    readonly fields: AssembledField[]
+    readonly #fields: AssembledField[]
 
     constructor(init: {
         kind: string; typeName: string; factoryName?: string; irKey?: string
         fields: AssembledField[]
     }) {
         super(init)
-        this.fields = init.fields
+        this.#fields = init.fields
     }
+
+    get fields(): AssembledField[] { return this.#fields }
 }
 
 export type AssembledNode =
