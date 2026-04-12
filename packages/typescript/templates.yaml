@@ -10,6 +10,7 @@ rules:
     template: "*as $$$CHILDREN"
   export_clause:
     template: "{$$$CHILDREN,}"
+    joinBy: ","
   export_specifier:
     template: type $NAME $ALIAS_CLAUSE
     alias: as $ALIAS
@@ -34,6 +35,7 @@ rules:
     template: "*as $IDENTIFIER"
   named_imports:
     template: "{$$$CHILDREN,}"
+    joinBy: ","
   import_specifier_name:
     template: $NAME
   import_specifier_as:
@@ -50,8 +52,10 @@ rules:
     template: $$$CHILDREN
   variable_declaration:
     template: var $DECLARATORS $SEMICOLON
+    joinBy: ","
   lexical_declaration:
     template: $KIND $DECLARATORS $SEMICOLON
+    joinBy: ","
   variable_declarator:
     template: $NAME $TYPE $$$CHILDREN
   statement_block:
@@ -115,16 +119,20 @@ rules:
     template: yield $EXPRESSION
   object:
     template: "{$$$CHILDREN}"
+    joinBy: ","
   object_pattern:
     template: "{$$$CHILDREN}"
+    joinBy: ","
   assignment_pattern:
     template: $LEFT=$RIGHT
   object_assignment_pattern:
     template: $LEFT=$RIGHT
   array:
     template: "[$$$CHILDREN]"
+    joinBy: ","
   array_pattern:
     template: "[$$$CHILDREN]"
+    joinBy: ","
   jsx_element:
     template: $OPEN_TAG $$$CHILDREN $CLOSE_TAG
   jsx_expression:
@@ -208,6 +216,7 @@ rules:
     template: $ARGUMENT $OPERATOR
   sequence_expression:
     template: $$$CHILDREN
+    joinBy: ","
   string:
     template: "\"$$$CHILDREN\""
   template_string:
@@ -218,6 +227,7 @@ rules:
     template: /$PATTERN/$FLAGS
   arguments:
     template: ($$$CHILDREN)
+    joinBy: ","
   decorator:
     template: "@$$$CHILDREN"
   decorator_member_expression:
@@ -230,6 +240,7 @@ rules:
     template: $DECORATOR static $PROPERTY $$$CHILDREN
   formal_parameters:
     template: ($$$CHILDREN,)
+    joinBy: ","
   class_static_block:
     template: static $$$CHILDREN $BODY
   pattern:
@@ -270,10 +281,12 @@ rules:
     template: $IDENTIFIER=require($SOURCE)
   extends_clause:
     template: extends $$$CHILDREN
+    joinBy: ","
   _extends_clause_single:
     template: $VALUE $TYPE_ARGUMENTS
   implements_clause:
     template: implements $$$CHILDREN
+    joinBy: ","
   ambient_declaration:
     template: declare $DECLARATION
   abstract_class_declaration:
@@ -292,10 +305,12 @@ rules:
     template: interface $NAME $TYPE_PARAMETERS $EXTENDS_TYPE_CLAUSE $BODY
   extends_type_clause:
     template: extends $TYPE
+    joinBy: ","
   enum_declaration:
     template: const enum $NAME $BODY
   enum_body:
     template: "{$OPENING}"
+    joinBy: ","
   enum_assignment:
     template: $NAME $$$CHILDREN
   type_alias_declaration:
@@ -377,6 +392,7 @@ rules:
     template: ($$$CHILDREN)
   type_arguments:
     template: <$$$CHILDREN,>
+    joinBy: ","
   object_type:
     template: $OPENING $MEMBERS $CLOSING
   call_signature:
@@ -385,6 +401,7 @@ rules:
     template: $ACCESSIBILITY_MODIFIER $OVERRIDE_MODIFIER $$$CHILDREN readonly $NAME?$TYPE
   type_parameters:
     template: <$$$CHILDREN,>
+    joinBy: ","
   type_parameter:
     template: const $NAME $CONSTRAINT $VALUE
   default_type:
@@ -405,6 +422,7 @@ rules:
     template: "$PRIMARY_TYPE[]"
   tuple_type:
     template: "[$$$CHILDREN,]"
+    joinBy: ","
   readonly_type:
     template: readonly $$$CHILDREN
   union_type:

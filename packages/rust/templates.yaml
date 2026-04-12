@@ -8,6 +8,7 @@ rules:
     template: $$$CHILDREN;
   macro_definition:
     template: macro_rules!$NAME $RULES
+    joinBy: ";"
   macro_rule:
     template: $LEFT=>$RIGHT
   token_tree_pattern:
@@ -40,15 +41,18 @@ rules:
     template: $VISIBILITY_MODIFIER enum $NAME $TYPE_PARAMETERS $WHERE_CLAUSE $BODY
   enum_variant_list:
     template: "{$$$CHILDREN,}"
+    joinBy: ","
   enum_variant:
     template: $VISIBILITY_MODIFIER $NAME $BODY $VALUE_CLAUSE
     value: =$VALUE
   field_declaration_list:
     template: "{$$$CHILDREN,}"
+    joinBy: ","
   field_declaration:
     template: "$VISIBILITY_MODIFIER $NAME:$TYPE"
   ordered_field_declaration_list:
     template: ($ATTRIBUTES $VISIBILITY_MODIFIER)
+    joinBy: ","
   extern_crate_declaration:
     template: $VISIBILITY_MODIFIER extern $CRATE $NAME $ALIAS_CLAUSE;
     alias: as $ALIAS
@@ -68,6 +72,7 @@ rules:
     template: $$$CHILDREN
   where_clause:
     template: where $$$CHILDREN,
+    joinBy: ","
   where_predicate:
     template: $LEFT $BOUNDS
   impl_item:
@@ -79,12 +84,14 @@ rules:
     template: type $NAME $TYPE_PARAMETERS $BOUNDS $WHERE_CLAUSE;
   trait_bounds:
     template: ":$$$CHILDREN"
+    joinBy: +
   higher_ranked_trait_bound:
     template: for $TYPE_PARAMETERS $TYPE
   removed_trait_bound:
     template: "?$$$CHILDREN"
   type_parameters:
     template: <$$$CHILDREN,>
+    joinBy: ","
   const_parameter:
     template: "const $NAME:$TYPE $VALUE_CLAUSE"
     value: =$VALUE
@@ -104,12 +111,14 @@ rules:
     template: "$PATH::$LIST"
   use_list:
     template: "{$$$CHILDREN,}"
+    joinBy: ","
   use_as_clause:
     template: $PATH as $ALIAS
   use_wildcard:
     template: $PATH*
   parameters:
     template: ($$$CHILDREN _,)
+    joinBy: ","
   self_parameter:
     template: $LIFETIME $MUTABLE_SPECIFIER $SELF $$$CHILDREN
   variadic_parameter:
@@ -132,11 +141,13 @@ rules:
     length: ;$LENGTH
   for_lifetimes:
     template: for<$$$CHILDREN,>
+    joinBy: ","
   function_type:
     template: $FOR_LIFETIMES $FUNCTION_MODIFIERS $RETURN_TYPE_CLAUSE
     return_type: "->$RETURN_TYPE"
   tuple_type:
     template: ($$$CHILDREN,)
+    joinBy: ","
   generic_function:
     template: "$FUNCTION::$TYPE_ARGUMENTS"
   generic_type:
@@ -147,8 +158,10 @@ rules:
     template: $LEFT+$RIGHT
   use_bounds:
     template: use<$$$CHILDREN,>
+    joinBy: ","
   type_arguments:
     template: <$$$CHILDREN,>
+    joinBy: ","
   type_binding:
     template: $NAME $TYPE_ARGUMENTS=$TYPE
   reference_type:
@@ -193,16 +206,20 @@ rules:
     template: $FUNCTION $ARGUMENTS
   arguments:
     template: ($$$CHILDREN,)
+    joinBy: ","
   array_expression:
     template: "[$ATTRIBUTES $ELEMENTS]"
+    joinBy: ","
   parenthesized_expression:
     template: ($$$CHILDREN)
   tuple_expression:
     template: ($ATTRIBUTES $FIRST $REST $TRAILING)
+    joinBy: ","
   struct_expression:
     template: $NAME $BODY
   field_initializer_list:
     template: "{$$$CHILDREN,}"
+    joinBy: ","
   shorthand_field_initializer:
     template: $ATTRIBUTES $IDENTIFIER
   field_initializer:
@@ -246,6 +263,7 @@ rules:
     return_type: "->$RETURN_TYPE"
   closure_parameters:
     template: "|$$$CHILDREN|"
+    joinBy: ","
   label:
     template: "'$IDENTIFIER"
   break_expression:
@@ -272,12 +290,16 @@ rules:
     template: "$$$CHILDREN::$TYPE_ARGUMENTS"
   tuple_pattern:
     template: ($$$CHILDREN,)
+    joinBy: ","
   slice_pattern:
     template: "[$$$CHILDREN,]"
+    joinBy: ","
   tuple_struct_pattern:
     template: $TYPE($$$CHILDREN,)
+    joinBy: ","
   struct_pattern:
     template: "$TYPE{$$$CHILDREN,}"
+    joinBy: ","
   field_pattern_name:
     template: $NAME
   field_pattern_colon:

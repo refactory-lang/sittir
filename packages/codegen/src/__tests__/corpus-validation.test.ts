@@ -40,13 +40,13 @@ const FLOORS = {
         fromTotal: 114,
     },
     rust: {
-        factoryPass: 97,
+        factoryPass: 106,
         factoryTotal: 135,
         fromPass: 137,
         fromTotal: 149,
     },
     typescript: {
-        factoryPass: 111,
+        factoryPass: 112,
         factoryTotal: 126,
         fromPass: 115,
         fromTotal: 142,
