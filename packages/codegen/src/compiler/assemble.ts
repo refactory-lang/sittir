@@ -8,7 +8,6 @@
 import type {
     Rule, OptimizedGrammar, NodeMap,
     AssembledNode, AssembledField, AssembledChild,
-    AssembledForm,
     KindProjection, SignaturePool, ProjectionContext,
     FieldRule,
 } from './rule.ts'
@@ -44,9 +43,14 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
                 break
             }
             case 'polymorph': {
+                // Synthesize a hidden group for each form and insert into the NodeMap.
+                // The polymorph holds references to these groups.
+                const forms = extractForms(rule, kind)
+                for (const form of forms) {
+                    nodes.set(form.kind, form)
+                }
                 nodes.set(kind, new AssembledPolymorph({
-                    kind, typeName, factoryName, irKey,
-                    forms: extractForms(rule, kind),
+                    kind, typeName, factoryName, irKey, forms,
                 }))
                 break
             }
@@ -338,37 +342,31 @@ export function simplifyRule(rule: Rule): Rule {
 // ---------------------------------------------------------------------------
 
 // ---------------------------------------------------------------------------
-// extractForms — for polymorphs, each choice branch as a form
+// extractForms — for polymorphs, synthesize a hidden AssembledGroup per form
 // ---------------------------------------------------------------------------
 
-function extractForms(rule: Rule, kind: string): AssembledForm[] {
+function extractForms(rule: Rule, parentKind: string): AssembledGroup[] {
     if (rule.type !== 'choice') return []
 
-    const forms: AssembledForm[] = rule.members.map((member, i) => {
+    return rule.members.map((member, i) => {
         const name = member.type === 'variant' ? member.name : `form_${i}`
-        const { typeName, factoryName } = nameNode(`${kind}_${name}`)
-        const fields = deriveFields(member)
-        const children = deriveChildren(member)
+        const formKind = `${parentKind}_${name}`
+        const { typeName, factoryName, irKey } = nameNode(formKind)
 
-        return {
-            name,
+        // The form's rule IS its choice member (unwrap variant if present)
+        const formRule = member.type === 'variant' ? member.content : member
+
+        // Per design doc: polymorph form groups DO get factories
+        // (the polymorph's dispatcher invokes them)
+        return new AssembledGroup({
+            kind: formKind,
             typeName,
             factoryName,
-            fields,
-            children: children.length > 0 ? children : undefined,
-        }
+            irKey,
+            rule: formRule,
+            name,
+        })
     })
-
-    return collapseForms(forms)
-}
-
-// ---------------------------------------------------------------------------
-// collapseForms — merge same-field-set forms without detect tokens
-// ---------------------------------------------------------------------------
-
-function collapseForms(forms: AssembledForm[]): AssembledForm[] {
-    // For now, return as-is — full collapse logic comes in refinement
-    return forms
 }
 
 // ---------------------------------------------------------------------------

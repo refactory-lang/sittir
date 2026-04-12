@@ -385,15 +385,12 @@ export interface AssembledChild {
     readonly contentTypes: string[]
 }
 
-export interface AssembledForm {
-    readonly name: string
-    readonly typeName: string
-    readonly factoryName: string
-    readonly detectToken?: string
-    readonly fields: AssembledField[]
-    readonly children?: AssembledChild[]
-    readonly mergedRules?: Rule[]
-}
+/**
+ * @deprecated AssembledForm is replaced by AssembledGroup.
+ * A polymorph's forms are now hidden groups synthesized from the choice branches.
+ * This type alias is kept temporarily for backwards-compat with adapters/emitters.
+ */
+export type AssembledForm = AssembledGroup
 
 // --- Concrete classes per model type ---
 
@@ -448,17 +445,18 @@ export class AssembledContainer extends AssembledNodeBase {
 
 export class AssembledPolymorph extends AssembledNodeBase {
     readonly modelType = 'polymorph' as const
-    readonly #forms: AssembledForm[]
+    readonly #forms: AssembledGroup[]
 
     constructor(init: {
         kind: string; typeName: string; factoryName?: string; irKey?: string
-        forms: AssembledForm[]
+        forms: AssembledGroup[]
     }) {
         super(init)
         this.#forms = init.forms
     }
 
-    get forms(): AssembledForm[] { return this.#forms }
+    /** A polymorph's forms are hidden groups synthesized from the choice branches. */
+    get forms(): AssembledGroup[] { return this.#forms }
 }
 
 export class AssembledLeaf extends AssembledNodeBase {
@@ -534,15 +532,22 @@ export class AssembledSupertype extends AssembledNodeBase {
 export class AssembledGroup extends AssembledNodeBase {
     readonly modelType = 'group' as const
     readonly rule: Rule
+    readonly detectToken?: string
+    /** Short label (e.g., variant name like 'pub' or 'tuple'). Defaults to kind. */
+    readonly name: string
 
     #fields?: AssembledField[]
 
     constructor(init: {
         kind: string; typeName: string; factoryName?: string; irKey?: string
         rule: Rule
+        detectToken?: string
+        name?: string
     }) {
         super(init)
         this.rule = init.rule
+        this.detectToken = init.detectToken
+        this.name = init.name ?? init.kind
     }
 
     get fields(): AssembledField[] {
