@@ -9,7 +9,7 @@ import type {
     Rule, LinkedGrammar, OptimizedGrammar,
     VariantRule, ChoiceRule, PolymorphRule,
 } from './rule.ts'
-import { deriveFields, deriveChildren } from './rule.ts'
+import { deriveFields, hasAnyField, hasAnyChild } from './rule.ts'
 
 // ---------------------------------------------------------------------------
 // optimize() — main entry point
@@ -59,11 +59,12 @@ function promotePolymorph(rule: Rule): Rule {
     // a per-form template — the kind must stay a branch in that case and
     // tree-sitter will expose the terminal variant's bytes as the node's text.
     const contents = choice.members.map(m => m.type === 'variant' ? m.content : m)
-    const anyTerminalVariant = contents.some(c =>
-        deriveFields(c).length === 0 && deriveChildren(c).length === 0,
-    )
+    const anyTerminalVariant = contents.some(c => !hasAnyField(c) && !hasAnyChild(c))
     if (anyTerminalVariant) return rule
 
+    // Compare field SETS across variants. Polymorph only applies when the
+    // sets differ — this is the one place we need the names, not just
+    // existence, so deriveFields is the right tool.
     const fieldSets = contents.map(c => new Set(deriveFields(c).map(f => f.name)))
     const allSame = fieldSets.every(s => setsEqual(s, fieldSets[0]!))
     if (allSame) return rule // homogeneous → branch, not polymorph

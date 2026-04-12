@@ -296,6 +296,56 @@ function safeParamName(name: string): string {
     return TS_RESERVED.has(name) ? `${name}_` : name
 }
 
+/**
+ * Cheap existence predicate: does this rule's tree contain any field()?
+ * Used by pre-assembly phases (classifier, optimizer) that only need to
+ * know IF fields exist — not the full list. Shorter-circuits than
+ * deriveFields.
+ */
+export function hasAnyField(rule: Rule): boolean {
+    switch (rule.type) {
+        case 'field':
+            return true
+        case 'seq':
+        case 'choice':
+            return rule.members.some(hasAnyField)
+        case 'optional':
+        case 'repeat':
+        case 'repeat1':
+        case 'variant':
+        case 'clause':
+        case 'group':
+            return hasAnyField(rule.content)
+        default:
+            return false
+    }
+}
+
+/**
+ * Cheap existence predicate: does this rule's tree contain any symbol
+ * reference (visible OR hidden)? Hidden symbols dispatch to concrete
+ * subtypes at parse time, so they DO contribute children.
+ */
+export function hasAnyChild(rule: Rule): boolean {
+    switch (rule.type) {
+        case 'symbol':
+        case 'supertype':
+            return true
+        case 'seq':
+        case 'choice':
+            return rule.members.some(hasAnyChild)
+        case 'optional':
+        case 'repeat':
+        case 'repeat1':
+        case 'variant':
+        case 'clause':
+        case 'group':
+            return hasAnyChild(rule.content)
+        default:
+            return false
+    }
+}
+
 export function deriveFields(rule: Rule, isOptional = false, isRepeated = false): AssembledField[] {
     const raw = deriveFieldsRaw(rule, isOptional, isRepeated)
     // Deduplicate by field name. If the same name appears multiple times

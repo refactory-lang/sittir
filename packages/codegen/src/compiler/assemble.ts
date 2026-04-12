@@ -15,7 +15,7 @@ import {
     AssembledBranch, AssembledContainer, AssembledPolymorph,
     AssembledLeaf, AssembledKeyword, AssembledToken, AssembledEnum,
     AssembledSupertype, AssembledGroup,
-    deriveFields, deriveChildren,
+    hasAnyField, hasAnyChild,
 } from './rule.ts'
 import { tokenToName } from './optimize.ts'
 
@@ -301,14 +301,11 @@ export function classifyNode(kind: string, rule: Rule): ModelType {
     }
 
     // seq/choice/optional/repeat/field/... — distinguish branch from container.
-    // Homogeneous variant choices (promotePolymorph left them alone) are
-    // branches: all variants share the same field set and the generated
-    // branch factory will merge them.
-    const fields = deriveFields(rule)
-    if (fields.length > 0) return 'branch'
-
-    const children = deriveChildren(rule)
-    if (children.length > 0) return 'container'
+    // Only need existence checks, not full extraction. The class getters
+    // (AssembledBranch.fields, AssembledContainer.children) do the full walk
+    // later, once.
+    if (hasAnyField(rule)) return 'branch'
+    if (hasAnyChild(rule)) return 'container'
 
     // No fields, no children — Link should have wrapped this as TerminalRule.
     throw new Error(
