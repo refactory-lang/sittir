@@ -64,9 +64,6 @@ export default grammar(base, {
 
         // closure_expression: 3 field(s)
         closure_expression: ($, original) => transform(original, {
-            -1: field('async'), // async
-            -1: field('move'), // move
-            -1: field('static'), // static
         }),
 
         // const_item: 1 field(s)
@@ -124,10 +121,6 @@ export default grammar(base, {
 
         // function_modifiers: 4 field(s)
         function_modifiers: ($, original) => transform(original, {
-            -1: field('async'), // async
-            -1: field('default'), // default
-            -1: field('const'), // const
-            -1: field('unsafe'), // unsafe
         }),
 
         // function_item: 3 field(s)
@@ -214,7 +207,6 @@ export default grammar(base, {
 
         // negative_literal: 2 field(s)
         negative_literal: ($, original) => transform(original, {
-            -1: field('operator'), // -
             0: field('value'), // integer_literal | float_literal
         }),
 
@@ -244,7 +236,6 @@ export default grammar(base, {
         // range_expression: 3 field(s)
         range_expression: ($, original) => transform(original, {
             0: field('start'), // _expression
-            -1: field('operator'), // .. | ..= | ...
             1: field('end'), // _expression
         }),
 
@@ -317,7 +308,6 @@ export default grammar(base, {
         // try_expression: 2 field(s)
         try_expression: ($, original) => transform(original, {
             0: field('value'), // _expression
-            -1: field('operator'), // ?
         }),
 
         // tuple_expression: 4 field(s)
@@ -337,7 +327,6 @@ export default grammar(base, {
 
         // unary_expression: 2 field(s)
         unary_expression: ($, original) => transform(original, {
-            -1: field('operator'), // - | * | !
             0: field('operand'), // _expression
         }),
 
@@ -374,8 +363,6 @@ export default grammar(base, {
 
         // visibility_modifier: 2 field(s)
         visibility_modifier: ($, original) => transform(original, {
-            -1: field('pub'), // pub
-            -1: field('in'), // in
         }),
 
     },

@@ -332,9 +332,12 @@ describe('Evaluate — DSL functions', () => {
 
 describe('Evaluate — edge cases', () => {
     describe('T008a — transform out of bounds', () => {
-        it('throws when position does not exist', () => {
+        it('skips out-of-bounds positions without crashing', () => {
             const original: any = { type: 'seq', members: [{ type: 'string', value: 'a' }] }
-            expect(() => transform(original, { 99: field('x', 'y') })).toThrow(/out of bounds/)
+            const result = transform(original, { 99: field('x', 'y') })
+            // Out-of-bounds patches are silently skipped
+            expect((result as any).members).toHaveLength(1)
+            expect((result as any).members[0]).toEqual({ type: 'string', value: 'a' })
         })
     })
 

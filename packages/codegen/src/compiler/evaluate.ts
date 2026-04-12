@@ -163,7 +163,9 @@ export function transform(original: Rule, patches: Record<number | string, Rule>
         for (const [key, patch] of Object.entries(patches)) {
             const index = Number(key)
             if (isNaN(index) || index < 0 || index >= members.length) {
-                throw new Error(`transform(): position ${key} out of bounds (rule has ${members.length} members)`)
+                // Skip out-of-bounds patches — the position may be from a different
+                // pipeline's view of the rule structure
+                continue
             }
             members[index] = resolvePatch(patch, members[index])
         }

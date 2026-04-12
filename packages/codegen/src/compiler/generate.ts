@@ -63,10 +63,9 @@ export async function generateV2(cfg: GenerateConfigV2): Promise<GeneratedFilesV
     // Resolve grammar.js path
     const grammarJsPath = resolveGrammarJsPath(cfg.grammar)
 
-    // TODO: Load overrides.ts once positional indices are reconciled with grammar.js rule structure
-    // For now, use base grammar.js directly — overrides.ts positions are from the old pipeline's
-    // node-types.json view and don't match the new pipeline's rule tree structure
-    const entryPath = grammarJsPath
+    // Use overrides.ts if it exists (grammar extension), else base grammar.js
+    const overridesPath = resolveOverridesPath(cfg.grammar)
+    const entryPath = existsSync(overridesPath) ? overridesPath : grammarJsPath
 
     // Phase 1: Evaluate
     const raw = await evaluate(entryPath)

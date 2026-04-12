@@ -63,7 +63,8 @@ for (const [kind, entry] of Object.entries(overrides)) {
     // Build the patches object: { position: field(name) }
     const patches: string[] = []
     for (const [fieldName, info] of Object.entries(fields)) {
-        // The transform wraps the child at `position` with a field named `fieldName`
+        // Skip position -1 (anonymous-only overrides — these match tokens, not positional children)
+        if (info.position < 0) continue
         const comment = info.types.map(t => t.type).join(' | ')
         patches.push(`            ${info.position}: field('${fieldName}'), // ${comment}`)
     }
