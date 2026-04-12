@@ -240,6 +240,105 @@ export interface KindProjection {
 }
 
 // ---------------------------------------------------------------------------
+// Derivation helpers — walk a Rule to produce fields, children, content types
+// ---------------------------------------------------------------------------
+
+function snakeToCamel(name: string): string {
+    return name.replace(/_([a-z])/g, (_, c) => c.toUpperCase())
+}
+
+export function deriveFields(rule: Rule, isOptional = false, isRepeated = false): AssembledField[] {
+    switch (rule.type) {
+        case 'field': {
+            const contentTypes = deriveContentTypes(rule.content)
+            const propertyName = snakeToCamel(rule.name)
+            return [{
+                name: rule.name,
+                propertyName,
+                paramName: propertyName,
+                required: !isOptional,
+                multiple: isRepeated,
+                contentTypes,
+                source: rule.source ?? 'grammar',
+                projection: { typeName: '', kinds: contentTypes },
+            }]
+        }
+        case 'seq':
+            return rule.members.flatMap(m => deriveFields(m, isOptional, isRepeated))
+        case 'optional':
+            return deriveFields(rule.content, true, isRepeated)
+        case 'repeat':
+            return deriveFields(rule.content, isOptional, true)
+        case 'choice':
+            return rule.members.flatMap(m => deriveFields(m, isOptional, isRepeated))
+        case 'clause':
+            return deriveFields(rule.content, true, isRepeated)
+        case 'variant':
+            return deriveFields(rule.content, isOptional, isRepeated)
+        case 'group':
+            return deriveFields(rule.content, isOptional, isRepeated)
+        default:
+            return []
+    }
+}
+
+export function deriveChildren(rule: Rule): AssembledChild[] {
+    const out: AssembledChild[] = []
+    walkForChildren(rule, out, false, false)
+    return out
+}
+
+function walkForChildren(rule: Rule, out: AssembledChild[], isOptional: boolean, isRepeated: boolean): void {
+    switch (rule.type) {
+        case 'symbol':
+            if (!rule.hidden) {
+                out.push({
+                    name: rule.name,
+                    propertyName: snakeToCamel(rule.name),
+                    required: !isOptional,
+                    multiple: isRepeated,
+                    contentTypes: [rule.name],
+                })
+            }
+            break
+        case 'seq':
+            for (const m of rule.members) walkForChildren(m, out, isOptional, isRepeated)
+            break
+        case 'optional':
+            walkForChildren(rule.content, out, true, isRepeated)
+            break
+        case 'repeat':
+            walkForChildren(rule.content, out, isOptional, true)
+            break
+        case 'choice':
+            for (const m of rule.members) walkForChildren(m, out, isOptional, isRepeated)
+            break
+        case 'field':
+            // Fields are handled by deriveFields, not children
+            break
+        case 'variant':
+            walkForChildren(rule.content, out, isOptional, isRepeated)
+            break
+        case 'clause':
+            walkForChildren(rule.content, out, true, isRepeated)
+            break
+    }
+}
+
+function deriveContentTypes(rule: Rule): string[] {
+    switch (rule.type) {
+        case 'symbol': return [rule.name]
+        case 'choice': return rule.members.flatMap(m => deriveContentTypes(m))
+        case 'enum': return rule.values
+        case 'supertype': return rule.subtypes
+        case 'field': return deriveContentTypes(rule.content)
+        case 'variant': return deriveContentTypes(rule.content)
+        case 'optional': return deriveContentTypes(rule.content)
+        default: return []
+    }
+}
+
+// ---------------------------------------------------------------------------
 // Assembled node types — class hierarchy
 //
 // Abstract base + concrete subclasses per model type.
@@ -300,38 +399,51 @@ export interface AssembledForm {
 
 export class AssembledBranch extends AssembledNodeBase {
     readonly modelType = 'branch' as const
-    readonly #fields: AssembledField[]
-    readonly #children?: AssembledChild[]
+    readonly rule: Rule
+
+    // Cached derivations — lazy, computed on first access
+    #fields?: AssembledField[]
+    #children?: AssembledChild[]
 
     constructor(init: {
         kind: string; typeName: string; factoryName?: string; irKey?: string
-        fields: AssembledField[]; children?: AssembledChild[]
+        rule: Rule
     }) {
         super(init)
-        this.#fields = init.fields
-        this.#children = init.children
+        this.rule = init.rule
     }
 
-    get fields(): AssembledField[] { return this.#fields }
-    get children(): AssembledChild[] | undefined { return this.#children }
+    get fields(): AssembledField[] {
+        return this.#fields ??= deriveFields(this.rule)
+    }
+
+    get children(): AssembledChild[] | undefined {
+        return this.#children ??= deriveChildren(this.rule)
+    }
 }
 
 export class AssembledContainer extends AssembledNodeBase {
     readonly modelType = 'container' as const
-    readonly #children: AssembledChild[]
-    readonly #separator?: string
+    readonly rule: Rule
+
+    #children?: AssembledChild[]
 
     constructor(init: {
         kind: string; typeName: string; factoryName?: string; irKey?: string
-        children: AssembledChild[]; separator?: string
+        rule: Rule
     }) {
         super(init)
-        this.#children = init.children
-        this.#separator = init.separator
+        this.rule = init.rule
     }
 
-    get children(): AssembledChild[] { return this.#children }
-    get separator(): string | undefined { return this.#separator }
+    get children(): AssembledChild[] {
+        return this.#children ??= deriveChildren(this.rule)
+    }
+
+    get separator(): string | undefined {
+        // Separator is captured on the repeat rule by Evaluate
+        return this.rule.type === 'repeat' ? this.rule.separator : undefined
+    }
 }
 
 export class AssembledPolymorph extends AssembledNodeBase {
@@ -421,17 +533,21 @@ export class AssembledSupertype extends AssembledNodeBase {
 
 export class AssembledGroup extends AssembledNodeBase {
     readonly modelType = 'group' as const
-    readonly #fields: AssembledField[]
+    readonly rule: Rule
+
+    #fields?: AssembledField[]
 
     constructor(init: {
         kind: string; typeName: string; factoryName?: string; irKey?: string
-        fields: AssembledField[]
+        rule: Rule
     }) {
         super(init)
-        this.#fields = init.fields
+        this.rule = init.rule
     }
 
-    get fields(): AssembledField[] { return this.#fields }
+    get fields(): AssembledField[] {
+        return this.#fields ??= deriveFields(this.rule)
+    }
 }
 
 export type AssembledNode =

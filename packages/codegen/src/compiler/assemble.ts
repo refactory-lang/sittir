@@ -32,17 +32,13 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
         switch (modelType) {
             case 'branch': {
                 nodes.set(kind, new AssembledBranch({
-                    kind, typeName, factoryName, irKey,
-                    fields: extractFields(rule),
-                    children: extractChildren(rule),
+                    kind, typeName, factoryName, irKey, rule,
                 }))
                 break
             }
             case 'container': {
                 nodes.set(kind, new AssembledContainer({
-                    kind, typeName, factoryName, irKey,
-                    children: extractChildren(rule),
-                    separator: rule.type === 'repeat' ? rule.separator : undefined,
+                    kind, typeName, factoryName, irKey, rule,
                 }))
                 break
             }
@@ -96,9 +92,10 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
                 break
             }
             case 'group': {
+                // Unwrap GroupRule to its inner content (the seq-with-fields)
+                const groupRule = rule.type === 'group' ? rule.content : rule
                 nodes.set(kind, new AssembledGroup({
-                    kind, typeName,
-                    fields: rule.type === 'group' ? extractFields(rule.content) : extractFields(rule),
+                    kind, typeName, rule: groupRule,
                 }))
                 break
             }
