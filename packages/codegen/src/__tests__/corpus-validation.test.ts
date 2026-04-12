@@ -27,19 +27,19 @@ const FLOORS = {
     python: {
         factoryPass: 54,
         factoryTotal: 84,
-        fromPass: 67,
+        fromPass: 87,
         fromTotal: 100,
     },
     rust: {
         factoryPass: 56,
         factoryTotal: 122,
-        fromPass: 72,
+        fromPass: 119,
         fromTotal: 135,
     },
     typescript: {
         factoryPass: 90,
         factoryTotal: 115,
-        fromPass: 53,
+        fromPass: 107,
         fromTotal: 126,
     },
 } as const

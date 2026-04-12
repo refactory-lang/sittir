@@ -125,7 +125,6 @@ function emitBranchFrom(node: AssembledBranch, nodeMap: NodeMap): string {
 
     const lines: string[] = []
     lines.push(`export function ${fn}(input${opt}: ${node.typeName}FromInput) {`)
-    lines.push(`  if (isNodeData(input)) return input;`)
 
     if (fields.length > 0) {
         lines.push(`  return ${factory}({`)
@@ -150,10 +149,17 @@ function emitContainerFrom(node: AssembledContainer, nodeMap: NodeMap): string {
     const fn = `${node.factoryName}From`
     const factory = rawName(node.kind)
 
+    // Containers are called variadically. If a single NodeData-shaped input
+    // arrived, unwrap its .children so we pass them as positional args —
+    // matching how the factory accepts them. This makes from() structurally
+    // equivalent to factoryMap[kind](config).
     return [
         `export function ${fn}(...input: any[]) {`,
-        `  if (input.length === 1 && isNodeData(input[0])) return input[0];`,
-        `  return ${factory}(...input);`,
+        `  if (input.length === 1 && isNodeData(input[0])) {`,
+        `    const nd = input[0] as any;`,
+        `    return ${factory}(...(nd.children ?? []));`,
+        `  }`,
+        `  return ${factory}(...(input as any[]));`,
         '}',
     ].join('\n')
 }
@@ -162,9 +168,13 @@ function emitPolymorphFrom(node: AssembledPolymorph, nodeMap: NodeMap): string {
     const fn = `${node.factoryName}From`
     const factory = rawName(node.kind)
 
+    // Always route through the factory — even when input is a NodeData —
+    // so the result shape matches what factoryMap produces. Otherwise
+    // from() returns `input` unchanged which retains readNode metadata
+    // (span, id, etc.) that a direct factory call would strip, causing
+    // structural divergence with validateFrom.
     return [
         `export function ${fn}(input?: ${node.typeName}FromInput) {`,
-        `  if (isNodeData(input)) return input;`,
         `  return ${factory}(input as any);`,
         '}',
     ].join('\n')
@@ -223,9 +233,11 @@ function emitKeywordFrom(node: AssembledNode): string {
 // ---------------------------------------------------------------------------
 
 function resolveField(field: AssembledField, nodeMap: NodeMap): string {
-    // FromInputOf<T> preserves the interface's raw (snake_case) field keys,
-    // so we read via field.name, not field.propertyName.
-    const prop = `(input as any)?.${field.name}`
+    // Input may come in two shapes:
+    //   - Loose FromInput: top-level { field_name: ... }  (developer-facing)
+    //   - Raw NodeData:    { fields: { field_name: ... } } (readNode output)
+    // Accept both by checking top-level first, then fields-wrapper.
+    const prop = `((input as any)?.${field.name} ?? (input as any)?.fields?.${field.name})`
 
     // Check content types — if all are leaves, resolve as string → leaf
     const allLeaves = field.contentTypes.every(t => {

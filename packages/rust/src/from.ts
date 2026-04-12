@@ -11,10 +11,9 @@ function isNodeData(v: unknown): v is AnyNodeData {
 }
 
 export function sourceFileFrom(input: SourceFileFromInput) {
-  if (isNodeData(input)) return input;
   return sourceFile({
-    shebang: typeof (input as any)?.shebang === 'string' ? shebang((input as any)?.shebang) : (input as any)?.shebang,
-    statements: (input as any)?.statements,
+    shebang: typeof ((input as any)?.shebang ?? (input as any)?.fields?.shebang) === 'string' ? shebang(((input as any)?.shebang ?? (input as any)?.fields?.shebang)) : ((input as any)?.shebang ?? (input as any)?.fields?.shebang),
+    statements: ((input as any)?.statements ?? (input as any)?.fields?.statements),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -22,7 +21,6 @@ export function sourceFileFrom(input: SourceFileFromInput) {
 
 
 export function expressionStatementFrom(input?: ExpressionStatementFromInput) {
-  if (isNodeData(input)) return input;
   return expressionStatement(input as any);
 }
 export function expressionStatementSemiFrom(input?: any) {
@@ -35,19 +33,17 @@ export function expressionStatementUExpressionEndingWithBlockFrom(input?: any) {
 }
 
 export function macroDefinitionFrom(input: MacroDefinitionFromInput) {
-  if (isNodeData(input)) return input;
   return macroDefinition({
-    rules: (input as any)?.rules,
-    name: (input as any)?.name,
+    rules: ((input as any)?.rules ?? (input as any)?.fields?.rules),
+    name: ((input as any)?.name ?? (input as any)?.fields?.name),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function macroRuleFrom(input: MacroRuleFromInput) {
-  if (isNodeData(input)) return input;
   return macroRule({
-    left: (input as any)?.left,
-    right: (input as any)?.right,
+    left: ((input as any)?.left ?? (input as any)?.fields?.left),
+    right: ((input as any)?.right ?? (input as any)?.fields?.right),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -56,7 +52,6 @@ export function macroRuleFrom(input: MacroRuleFromInput) {
 
 
 export function tokenTreePatternFrom(input?: TokenTreePatternFromInput) {
-  if (isNodeData(input)) return input;
   return tokenTreePattern(input as any);
 }
 export function tokenTreePatternParenFrom(input?: any) {
@@ -73,10 +68,9 @@ export function tokenTreePatternBraceFrom(input?: any) {
 }
 
 export function tokenBindingPatternFrom(input: TokenBindingPatternFromInput) {
-  if (isNodeData(input)) return input;
   return tokenBindingPattern({
-    name: typeof (input as any)?.name === 'string' ? metavariable((input as any)?.name) : (input as any)?.name,
-    type: typeof (input as any)?.type === 'string' ? fragmentSpecifier((input as any)?.type) : (input as any)?.type,
+    name: typeof ((input as any)?.name ?? (input as any)?.fields?.name) === 'string' ? metavariable(((input as any)?.name ?? (input as any)?.fields?.name)) : ((input as any)?.name ?? (input as any)?.fields?.name),
+    type: typeof ((input as any)?.type ?? (input as any)?.fields?.type) === 'string' ? fragmentSpecifier(((input as any)?.type ?? (input as any)?.fields?.type)) : ((input as any)?.type ?? (input as any)?.fields?.type),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -85,7 +79,6 @@ export function tokenBindingPatternFrom(input: TokenBindingPatternFromInput) {
 
 
 export function tokenTreeFrom(input?: TokenTreeFromInput) {
-  if (isNodeData(input)) return input;
   return tokenTree(input as any);
 }
 export function tokenTreeParenFrom(input?: any) {
@@ -102,395 +95,385 @@ export function tokenTreeBraceFrom(input?: any) {
 }
 
 export function attributeItemFrom(input: AttributeItemFromInput) {
-  if (isNodeData(input)) return input;
   return attributeItem({
-    attribute: (input as any)?.attribute,
+    attribute: ((input as any)?.attribute ?? (input as any)?.fields?.attribute),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function innerAttributeItemFrom(input: InnerAttributeItemFromInput) {
-  if (isNodeData(input)) return input;
   return innerAttributeItem({
-    attribute: (input as any)?.attribute,
+    attribute: ((input as any)?.attribute ?? (input as any)?.fields?.attribute),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function attributeFrom(input?: AttributeFromInput) {
-  if (isNodeData(input)) return input;
   return attribute({
-    value: (input as any)?.value,
-    arguments: (input as any)?.arguments,
+    value: ((input as any)?.value ?? (input as any)?.fields?.value),
+    arguments: ((input as any)?.arguments ?? (input as any)?.fields?.arguments),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function modItemFrom(input: ModItemFromInput) {
-  if (isNodeData(input)) return input;
   return modItem({
-    visibilityModifier: (input as any)?.visibility_modifier,
-    name: typeof (input as any)?.name === 'string' ? identifier((input as any)?.name) : (input as any)?.name,
-    body: (input as any)?.body,
+    visibilityModifier: ((input as any)?.visibility_modifier ?? (input as any)?.fields?.visibility_modifier),
+    name: typeof ((input as any)?.name ?? (input as any)?.fields?.name) === 'string' ? identifier(((input as any)?.name ?? (input as any)?.fields?.name)) : ((input as any)?.name ?? (input as any)?.fields?.name),
+    body: ((input as any)?.body ?? (input as any)?.fields?.body),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function foreignModItemFrom(input: ForeignModItemFromInput) {
-  if (isNodeData(input)) return input;
   return foreignModItem({
-    visibilityModifier: (input as any)?.visibility_modifier,
-    externModifier: (input as any)?.extern_modifier,
-    body: (input as any)?.body,
+    visibilityModifier: ((input as any)?.visibility_modifier ?? (input as any)?.fields?.visibility_modifier),
+    externModifier: ((input as any)?.extern_modifier ?? (input as any)?.fields?.extern_modifier),
+    body: ((input as any)?.body ?? (input as any)?.fields?.body),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function declarationListFrom(...input: any[]) {
-  if (input.length === 1 && isNodeData(input[0])) return input[0];
-  return declarationList(...input);
+  if (input.length === 1 && isNodeData(input[0])) {
+    const nd = input[0] as any;
+    return declarationList(...(nd.children ?? []));
+  }
+  return declarationList(...(input as any[]));
 }
 
 export function structItemFrom(input: StructItemFromInput) {
-  if (isNodeData(input)) return input;
   return structItem({
-    visibilityModifier: (input as any)?.visibility_modifier,
-    whereClause: (input as any)?.where_clause,
-    name: (input as any)?.name,
-    typeParameters: (input as any)?.type_parameters,
-    body: (input as any)?.body,
+    visibilityModifier: ((input as any)?.visibility_modifier ?? (input as any)?.fields?.visibility_modifier),
+    whereClause: ((input as any)?.where_clause ?? (input as any)?.fields?.where_clause),
+    name: ((input as any)?.name ?? (input as any)?.fields?.name),
+    typeParameters: ((input as any)?.type_parameters ?? (input as any)?.fields?.type_parameters),
+    body: ((input as any)?.body ?? (input as any)?.fields?.body),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function unionItemFrom(input: UnionItemFromInput) {
-  if (isNodeData(input)) return input;
   return unionItem({
-    visibilityModifier: (input as any)?.visibility_modifier,
-    whereClause: (input as any)?.where_clause,
-    name: (input as any)?.name,
-    typeParameters: (input as any)?.type_parameters,
-    body: (input as any)?.body,
+    visibilityModifier: ((input as any)?.visibility_modifier ?? (input as any)?.fields?.visibility_modifier),
+    whereClause: ((input as any)?.where_clause ?? (input as any)?.fields?.where_clause),
+    name: ((input as any)?.name ?? (input as any)?.fields?.name),
+    typeParameters: ((input as any)?.type_parameters ?? (input as any)?.fields?.type_parameters),
+    body: ((input as any)?.body ?? (input as any)?.fields?.body),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function enumItemFrom(input: EnumItemFromInput) {
-  if (isNodeData(input)) return input;
   return enumItem({
-    visibilityModifier: (input as any)?.visibility_modifier,
-    whereClause: (input as any)?.where_clause,
-    name: (input as any)?.name,
-    typeParameters: (input as any)?.type_parameters,
-    body: (input as any)?.body,
+    visibilityModifier: ((input as any)?.visibility_modifier ?? (input as any)?.fields?.visibility_modifier),
+    whereClause: ((input as any)?.where_clause ?? (input as any)?.fields?.where_clause),
+    name: ((input as any)?.name ?? (input as any)?.fields?.name),
+    typeParameters: ((input as any)?.type_parameters ?? (input as any)?.fields?.type_parameters),
+    body: ((input as any)?.body ?? (input as any)?.fields?.body),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function enumVariantListFrom(...input: any[]) {
-  if (input.length === 1 && isNodeData(input[0])) return input[0];
-  return enumVariantList(...input);
+  if (input.length === 1 && isNodeData(input[0])) {
+    const nd = input[0] as any;
+    return enumVariantList(...(nd.children ?? []));
+  }
+  return enumVariantList(...(input as any[]));
 }
 
 export function enumVariantFrom(input: EnumVariantFromInput) {
-  if (isNodeData(input)) return input;
   return enumVariant({
-    visibilityModifier: (input as any)?.visibility_modifier,
-    name: typeof (input as any)?.name === 'string' ? identifier((input as any)?.name) : (input as any)?.name,
-    body: (input as any)?.body,
-    value: (input as any)?.value,
+    visibilityModifier: ((input as any)?.visibility_modifier ?? (input as any)?.fields?.visibility_modifier),
+    name: typeof ((input as any)?.name ?? (input as any)?.fields?.name) === 'string' ? identifier(((input as any)?.name ?? (input as any)?.fields?.name)) : ((input as any)?.name ?? (input as any)?.fields?.name),
+    body: ((input as any)?.body ?? (input as any)?.fields?.body),
+    value: ((input as any)?.value ?? (input as any)?.fields?.value),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function fieldDeclarationListFrom(...input: any[]) {
-  if (input.length === 1 && isNodeData(input[0])) return input[0];
-  return fieldDeclarationList(...input);
+  if (input.length === 1 && isNodeData(input[0])) {
+    const nd = input[0] as any;
+    return fieldDeclarationList(...(nd.children ?? []));
+  }
+  return fieldDeclarationList(...(input as any[]));
 }
 
 export function fieldDeclarationFrom(input: FieldDeclarationFromInput) {
-  if (isNodeData(input)) return input;
   return fieldDeclaration({
-    visibilityModifier: (input as any)?.visibility_modifier,
-    name: (input as any)?.name,
-    type: (input as any)?.type,
+    visibilityModifier: ((input as any)?.visibility_modifier ?? (input as any)?.fields?.visibility_modifier),
+    name: ((input as any)?.name ?? (input as any)?.fields?.name),
+    type: ((input as any)?.type ?? (input as any)?.fields?.type),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function orderedFieldDeclarationListFrom(input: OrderedFieldDeclarationListFromInput) {
-  if (isNodeData(input)) return input;
   return orderedFieldDeclarationList({
-    attributes: (input as any)?.attributes,
-    visibilityModifier: (input as any)?.visibility_modifier,
-    declarations: (input as any)?.declarations,
+    attributes: ((input as any)?.attributes ?? (input as any)?.fields?.attributes),
+    visibilityModifier: ((input as any)?.visibility_modifier ?? (input as any)?.fields?.visibility_modifier),
+    declarations: ((input as any)?.declarations ?? (input as any)?.fields?.declarations),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function externCrateDeclarationFrom(input: ExternCrateDeclarationFromInput) {
-  if (isNodeData(input)) return input;
   return externCrateDeclaration({
-    visibilityModifier: (input as any)?.visibility_modifier,
-    crate: (input as any)?.crate,
-    name: typeof (input as any)?.name === 'string' ? identifier((input as any)?.name) : (input as any)?.name,
-    alias: typeof (input as any)?.alias === 'string' ? identifier((input as any)?.alias) : (input as any)?.alias,
+    visibilityModifier: ((input as any)?.visibility_modifier ?? (input as any)?.fields?.visibility_modifier),
+    crate: ((input as any)?.crate ?? (input as any)?.fields?.crate),
+    name: typeof ((input as any)?.name ?? (input as any)?.fields?.name) === 'string' ? identifier(((input as any)?.name ?? (input as any)?.fields?.name)) : ((input as any)?.name ?? (input as any)?.fields?.name),
+    alias: typeof ((input as any)?.alias ?? (input as any)?.fields?.alias) === 'string' ? identifier(((input as any)?.alias ?? (input as any)?.fields?.alias)) : ((input as any)?.alias ?? (input as any)?.fields?.alias),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function constItemFrom(input: ConstItemFromInput) {
-  if (isNodeData(input)) return input;
   return constItem({
-    visibilityModifier: (input as any)?.visibility_modifier,
-    name: typeof (input as any)?.name === 'string' ? identifier((input as any)?.name) : (input as any)?.name,
-    type: (input as any)?.type,
-    value: (input as any)?.value,
+    visibilityModifier: ((input as any)?.visibility_modifier ?? (input as any)?.fields?.visibility_modifier),
+    name: typeof ((input as any)?.name ?? (input as any)?.fields?.name) === 'string' ? identifier(((input as any)?.name ?? (input as any)?.fields?.name)) : ((input as any)?.name ?? (input as any)?.fields?.name),
+    type: ((input as any)?.type ?? (input as any)?.fields?.type),
+    value: ((input as any)?.value ?? (input as any)?.fields?.value),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function staticItemFrom(input: StaticItemFromInput) {
-  if (isNodeData(input)) return input;
   return staticItem({
-    visibilityModifier: (input as any)?.visibility_modifier,
-    mutableSpecifier: (input as any)?.mutable_specifier,
-    name: typeof (input as any)?.name === 'string' ? identifier((input as any)?.name) : (input as any)?.name,
-    type: (input as any)?.type,
-    value: (input as any)?.value,
+    visibilityModifier: ((input as any)?.visibility_modifier ?? (input as any)?.fields?.visibility_modifier),
+    mutableSpecifier: ((input as any)?.mutable_specifier ?? (input as any)?.fields?.mutable_specifier),
+    name: typeof ((input as any)?.name ?? (input as any)?.fields?.name) === 'string' ? identifier(((input as any)?.name ?? (input as any)?.fields?.name)) : ((input as any)?.name ?? (input as any)?.fields?.name),
+    type: ((input as any)?.type ?? (input as any)?.fields?.type),
+    value: ((input as any)?.value ?? (input as any)?.fields?.value),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function typeItemFrom(input: TypeItemFromInput) {
-  if (isNodeData(input)) return input;
   return typeItem({
-    visibilityModifier: (input as any)?.visibility_modifier,
-    whereClause: (input as any)?.where_clause,
-    trailingWhereClause: (input as any)?.trailing_where_clause,
-    typeParameters: (input as any)?.type_parameters,
-    type: (input as any)?.type,
+    visibilityModifier: ((input as any)?.visibility_modifier ?? (input as any)?.fields?.visibility_modifier),
+    whereClause: ((input as any)?.where_clause ?? (input as any)?.fields?.where_clause),
+    trailingWhereClause: ((input as any)?.trailing_where_clause ?? (input as any)?.fields?.trailing_where_clause),
+    typeParameters: ((input as any)?.type_parameters ?? (input as any)?.fields?.type_parameters),
+    type: ((input as any)?.type ?? (input as any)?.fields?.type),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function functionItemFrom(input: FunctionItemFromInput) {
-  if (isNodeData(input)) return input;
   return functionItem({
-    visibilityModifier: (input as any)?.visibility_modifier,
-    functionModifiers: (input as any)?.function_modifiers,
-    whereClause: (input as any)?.where_clause,
-    name: (input as any)?.name,
-    typeParameters: (input as any)?.type_parameters,
-    parameters: (input as any)?.parameters,
-    returnType: (input as any)?.return_type,
-    body: (input as any)?.body,
+    visibilityModifier: ((input as any)?.visibility_modifier ?? (input as any)?.fields?.visibility_modifier),
+    functionModifiers: ((input as any)?.function_modifiers ?? (input as any)?.fields?.function_modifiers),
+    whereClause: ((input as any)?.where_clause ?? (input as any)?.fields?.where_clause),
+    name: ((input as any)?.name ?? (input as any)?.fields?.name),
+    typeParameters: ((input as any)?.type_parameters ?? (input as any)?.fields?.type_parameters),
+    parameters: ((input as any)?.parameters ?? (input as any)?.fields?.parameters),
+    returnType: ((input as any)?.return_type ?? (input as any)?.fields?.return_type),
+    body: ((input as any)?.body ?? (input as any)?.fields?.body),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function functionSignatureItemFrom(input: FunctionSignatureItemFromInput) {
-  if (isNodeData(input)) return input;
   return functionSignatureItem({
-    visibilityModifier: (input as any)?.visibility_modifier,
-    functionModifiers: (input as any)?.function_modifiers,
-    whereClause: (input as any)?.where_clause,
-    name: (input as any)?.name,
-    typeParameters: (input as any)?.type_parameters,
-    parameters: (input as any)?.parameters,
-    returnType: (input as any)?.return_type,
+    visibilityModifier: ((input as any)?.visibility_modifier ?? (input as any)?.fields?.visibility_modifier),
+    functionModifiers: ((input as any)?.function_modifiers ?? (input as any)?.fields?.function_modifiers),
+    whereClause: ((input as any)?.where_clause ?? (input as any)?.fields?.where_clause),
+    name: ((input as any)?.name ?? (input as any)?.fields?.name),
+    typeParameters: ((input as any)?.type_parameters ?? (input as any)?.fields?.type_parameters),
+    parameters: ((input as any)?.parameters ?? (input as any)?.fields?.parameters),
+    returnType: ((input as any)?.return_type ?? (input as any)?.fields?.return_type),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function functionModifiersFrom(...input: any[]) {
-  if (input.length === 1 && isNodeData(input[0])) return input[0];
-  return functionModifiers(...input);
+  if (input.length === 1 && isNodeData(input[0])) {
+    const nd = input[0] as any;
+    return functionModifiers(...(nd.children ?? []));
+  }
+  return functionModifiers(...(input as any[]));
 }
 
 export function whereClauseFrom(...input: any[]) {
-  if (input.length === 1 && isNodeData(input[0])) return input[0];
-  return whereClause(...input);
+  if (input.length === 1 && isNodeData(input[0])) {
+    const nd = input[0] as any;
+    return whereClause(...(nd.children ?? []));
+  }
+  return whereClause(...(input as any[]));
 }
 
 export function wherePredicateFrom(input: WherePredicateFromInput) {
-  if (isNodeData(input)) return input;
   return wherePredicate({
-    left: (input as any)?.left,
-    bounds: (input as any)?.bounds,
+    left: ((input as any)?.left ?? (input as any)?.fields?.left),
+    bounds: ((input as any)?.bounds ?? (input as any)?.fields?.bounds),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function implItemFrom(input: ImplItemFromInput) {
-  if (isNodeData(input)) return input;
   return implItem({
-    whereClause: (input as any)?.where_clause,
-    typeParameters: (input as any)?.type_parameters,
-    trait: (input as any)?.trait,
-    type: (input as any)?.type,
-    body: (input as any)?.body,
+    whereClause: ((input as any)?.where_clause ?? (input as any)?.fields?.where_clause),
+    typeParameters: ((input as any)?.type_parameters ?? (input as any)?.fields?.type_parameters),
+    trait: ((input as any)?.trait ?? (input as any)?.fields?.trait),
+    type: ((input as any)?.type ?? (input as any)?.fields?.type),
+    body: ((input as any)?.body ?? (input as any)?.fields?.body),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function traitItemFrom(input: TraitItemFromInput) {
-  if (isNodeData(input)) return input;
   return traitItem({
-    visibilityModifier: (input as any)?.visibility_modifier,
-    whereClause: (input as any)?.where_clause,
-    name: (input as any)?.name,
-    typeParameters: (input as any)?.type_parameters,
-    bounds: (input as any)?.bounds,
-    body: (input as any)?.body,
+    visibilityModifier: ((input as any)?.visibility_modifier ?? (input as any)?.fields?.visibility_modifier),
+    whereClause: ((input as any)?.where_clause ?? (input as any)?.fields?.where_clause),
+    name: ((input as any)?.name ?? (input as any)?.fields?.name),
+    typeParameters: ((input as any)?.type_parameters ?? (input as any)?.fields?.type_parameters),
+    bounds: ((input as any)?.bounds ?? (input as any)?.fields?.bounds),
+    body: ((input as any)?.body ?? (input as any)?.fields?.body),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function associatedTypeFrom(input: AssociatedTypeFromInput) {
-  if (isNodeData(input)) return input;
   return associatedType({
-    whereClause: (input as any)?.where_clause,
-    name: (input as any)?.name,
-    typeParameters: (input as any)?.type_parameters,
-    bounds: (input as any)?.bounds,
+    whereClause: ((input as any)?.where_clause ?? (input as any)?.fields?.where_clause),
+    name: ((input as any)?.name ?? (input as any)?.fields?.name),
+    typeParameters: ((input as any)?.type_parameters ?? (input as any)?.fields?.type_parameters),
+    bounds: ((input as any)?.bounds ?? (input as any)?.fields?.bounds),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function traitBoundsFrom(...input: any[]) {
-  if (input.length === 1 && isNodeData(input[0])) return input[0];
-  return traitBounds(...input);
+  if (input.length === 1 && isNodeData(input[0])) {
+    const nd = input[0] as any;
+    return traitBounds(...(nd.children ?? []));
+  }
+  return traitBounds(...(input as any[]));
 }
 
 export function higherRankedTraitBoundFrom(input: HigherRankedTraitBoundFromInput) {
-  if (isNodeData(input)) return input;
   return higherRankedTraitBound({
-    typeParameters: (input as any)?.type_parameters,
-    type: (input as any)?.type,
+    typeParameters: ((input as any)?.type_parameters ?? (input as any)?.fields?.type_parameters),
+    type: ((input as any)?.type ?? (input as any)?.fields?.type),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function typeParametersFrom(...input: any[]) {
-  if (input.length === 1 && isNodeData(input[0])) return input[0];
-  return typeParameters(...input);
+  if (input.length === 1 && isNodeData(input[0])) {
+    const nd = input[0] as any;
+    return typeParameters(...(nd.children ?? []));
+  }
+  return typeParameters(...(input as any[]));
 }
 
 export function constParameterFrom(input: ConstParameterFromInput) {
-  if (isNodeData(input)) return input;
   return constParameter({
-    name: typeof (input as any)?.name === 'string' ? identifier((input as any)?.name) : (input as any)?.name,
-    type: (input as any)?.type,
-    value: (input as any)?.value,
+    name: typeof ((input as any)?.name ?? (input as any)?.fields?.name) === 'string' ? identifier(((input as any)?.name ?? (input as any)?.fields?.name)) : ((input as any)?.name ?? (input as any)?.fields?.name),
+    type: ((input as any)?.type ?? (input as any)?.fields?.type),
+    value: ((input as any)?.value ?? (input as any)?.fields?.value),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function typeParameterFrom(input: TypeParameterFromInput) {
-  if (isNodeData(input)) return input;
   return typeParameter({
-    name: (input as any)?.name,
-    bounds: (input as any)?.bounds,
-    defaultType: (input as any)?.default_type,
+    name: ((input as any)?.name ?? (input as any)?.fields?.name),
+    bounds: ((input as any)?.bounds ?? (input as any)?.fields?.bounds),
+    defaultType: ((input as any)?.default_type ?? (input as any)?.fields?.default_type),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function lifetimeParameterFrom(input: LifetimeParameterFromInput) {
-  if (isNodeData(input)) return input;
   return lifetimeParameter({
-    name: (input as any)?.name,
-    bounds: (input as any)?.bounds,
+    name: ((input as any)?.name ?? (input as any)?.fields?.name),
+    bounds: ((input as any)?.bounds ?? (input as any)?.fields?.bounds),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function letDeclarationFrom(input: LetDeclarationFromInput) {
-  if (isNodeData(input)) return input;
   return letDeclaration({
-    mutableSpecifier: (input as any)?.mutable_specifier,
-    pattern: (input as any)?.pattern,
-    type: (input as any)?.type,
-    value: (input as any)?.value,
-    alternative: (input as any)?.alternative,
+    mutableSpecifier: ((input as any)?.mutable_specifier ?? (input as any)?.fields?.mutable_specifier),
+    pattern: ((input as any)?.pattern ?? (input as any)?.fields?.pattern),
+    type: ((input as any)?.type ?? (input as any)?.fields?.type),
+    value: ((input as any)?.value ?? (input as any)?.fields?.value),
+    alternative: ((input as any)?.alternative ?? (input as any)?.fields?.alternative),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function useDeclarationFrom(input: UseDeclarationFromInput) {
-  if (isNodeData(input)) return input;
   return useDeclaration({
-    visibilityModifier: (input as any)?.visibility_modifier,
-    argument: (input as any)?.argument,
+    visibilityModifier: ((input as any)?.visibility_modifier ?? (input as any)?.fields?.visibility_modifier),
+    argument: ((input as any)?.argument ?? (input as any)?.fields?.argument),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function scopedUseListFrom(input: ScopedUseListFromInput) {
-  if (isNodeData(input)) return input;
   return scopedUseList({
-    path: (input as any)?.path,
-    list: (input as any)?.list,
+    path: ((input as any)?.path ?? (input as any)?.fields?.path),
+    list: ((input as any)?.list ?? (input as any)?.fields?.list),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function useAsClauseFrom(input: UseAsClauseFromInput) {
-  if (isNodeData(input)) return input;
   return useAsClause({
-    path: (input as any)?.path,
-    alias: typeof (input as any)?.alias === 'string' ? identifier((input as any)?.alias) : (input as any)?.alias,
+    path: ((input as any)?.path ?? (input as any)?.fields?.path),
+    alias: typeof ((input as any)?.alias ?? (input as any)?.fields?.alias) === 'string' ? identifier(((input as any)?.alias ?? (input as any)?.fields?.alias)) : ((input as any)?.alias ?? (input as any)?.fields?.alias),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function useWildcardFrom(input: UseWildcardFromInput) {
-  if (isNodeData(input)) return input;
   return useWildcard({
-    path: (input as any)?.path,
+    path: ((input as any)?.path ?? (input as any)?.fields?.path),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function parametersFrom(...input: any[]) {
-  if (input.length === 1 && isNodeData(input[0])) return input[0];
-  return parameters(...input);
+  if (input.length === 1 && isNodeData(input[0])) {
+    const nd = input[0] as any;
+    return parameters(...(nd.children ?? []));
+  }
+  return parameters(...(input as any[]));
 }
 
 export function selfParameterFrom(input: SelfParameterFromInput) {
-  if (isNodeData(input)) return input;
   return selfParameter({
-    lifetime: (input as any)?.lifetime,
-    mutableSpecifier: (input as any)?.mutable_specifier,
-    self: typeof (input as any)?.self === 'string' ? mutableSpecifier((input as any)?.self) : (input as any)?.self,
+    lifetime: ((input as any)?.lifetime ?? (input as any)?.fields?.lifetime),
+    mutableSpecifier: ((input as any)?.mutable_specifier ?? (input as any)?.fields?.mutable_specifier),
+    self: typeof ((input as any)?.self ?? (input as any)?.fields?.self) === 'string' ? mutableSpecifier(((input as any)?.self ?? (input as any)?.fields?.self)) : ((input as any)?.self ?? (input as any)?.fields?.self),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function variadicParameterFrom(input: VariadicParameterFromInput) {
-  if (isNodeData(input)) return input;
   return variadicParameter({
-    mutableSpecifier: typeof (input as any)?.mutable_specifier === 'string' ? mutableSpecifier((input as any)?.mutable_specifier) : (input as any)?.mutable_specifier,
-    pattern: (input as any)?.pattern,
+    mutableSpecifier: typeof ((input as any)?.mutable_specifier ?? (input as any)?.fields?.mutable_specifier) === 'string' ? mutableSpecifier(((input as any)?.mutable_specifier ?? (input as any)?.fields?.mutable_specifier)) : ((input as any)?.mutable_specifier ?? (input as any)?.fields?.mutable_specifier),
+    pattern: ((input as any)?.pattern ?? (input as any)?.fields?.pattern),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function parameterFrom(input: ParameterFromInput) {
-  if (isNodeData(input)) return input;
   return parameter({
-    mutableSpecifier: typeof (input as any)?.mutable_specifier === 'string' ? mutableSpecifier((input as any)?.mutable_specifier) : (input as any)?.mutable_specifier,
-    pattern: (input as any)?.pattern,
-    type: (input as any)?.type,
+    mutableSpecifier: typeof ((input as any)?.mutable_specifier ?? (input as any)?.fields?.mutable_specifier) === 'string' ? mutableSpecifier(((input as any)?.mutable_specifier ?? (input as any)?.fields?.mutable_specifier)) : ((input as any)?.mutable_specifier ?? (input as any)?.fields?.mutable_specifier),
+    pattern: ((input as any)?.pattern ?? (input as any)?.fields?.pattern),
+    type: ((input as any)?.type ?? (input as any)?.fields?.type),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function externModifierFrom(input: ExternModifierFromInput) {
-  if (isNodeData(input)) return input;
   return externModifier({
-    stringLiteral: (input as any)?.string_literal,
+    stringLiteral: ((input as any)?.string_literal ?? (input as any)?.fields?.string_literal),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -498,7 +481,6 @@ export function externModifierFrom(input: ExternModifierFromInput) {
 
 
 export function visibilityModifierFrom(input?: VisibilityModifierFromInput) {
-  if (isNodeData(input)) return input;
   return visibilityModifier(input as any);
 }
 export function visibilityModifierCrateFrom(input?: any) {
@@ -511,139 +493,134 @@ export function visibilityModifierPubFrom(input?: any) {
 }
 
 export function bracketedTypeFrom(input?: BracketedTypeFromInput) {
-  if (isNodeData(input)) return input;
   return bracketedType(input as any);
 }
 
 export function qualifiedTypeFrom(input: QualifiedTypeFromInput) {
-  if (isNodeData(input)) return input;
   return qualifiedType({
-    type: (input as any)?.type,
-    alias: (input as any)?.alias,
+    type: ((input as any)?.type ?? (input as any)?.fields?.type),
+    alias: ((input as any)?.alias ?? (input as any)?.fields?.alias),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function lifetimeFrom(input: LifetimeFromInput) {
-  if (isNodeData(input)) return input;
   return lifetime({
-    identifier: (input as any)?.identifier,
+    identifier: ((input as any)?.identifier ?? (input as any)?.fields?.identifier),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function arrayTypeFrom(input: ArrayTypeFromInput) {
-  if (isNodeData(input)) return input;
   return arrayType({
-    element: (input as any)?.element,
-    length: (input as any)?.length,
+    element: ((input as any)?.element ?? (input as any)?.fields?.element),
+    length: ((input as any)?.length ?? (input as any)?.fields?.length),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function forLifetimesFrom(...input: any[]) {
-  if (input.length === 1 && isNodeData(input[0])) return input[0];
-  return forLifetimes(...input);
+  if (input.length === 1 && isNodeData(input[0])) {
+    const nd = input[0] as any;
+    return forLifetimes(...(nd.children ?? []));
+  }
+  return forLifetimes(...(input as any[]));
 }
 
 export function functionTypeFrom(input: FunctionTypeFromInput) {
-  if (isNodeData(input)) return input;
   return functionType({
-    forLifetimes: (input as any)?.for_lifetimes,
-    functionModifiers: (input as any)?.function_modifiers,
-    returnType: (input as any)?.return_type,
+    forLifetimes: ((input as any)?.for_lifetimes ?? (input as any)?.fields?.for_lifetimes),
+    functionModifiers: ((input as any)?.function_modifiers ?? (input as any)?.fields?.function_modifiers),
+    returnType: ((input as any)?.return_type ?? (input as any)?.fields?.return_type),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function genericFunctionFrom(input: GenericFunctionFromInput) {
-  if (isNodeData(input)) return input;
   return genericFunction({
-    function: (input as any)?.function,
-    typeArguments: (input as any)?.type_arguments,
+    function: ((input as any)?.function ?? (input as any)?.fields?.function),
+    typeArguments: ((input as any)?.type_arguments ?? (input as any)?.fields?.type_arguments),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function genericTypeFrom(input: GenericTypeFromInput) {
-  if (isNodeData(input)) return input;
   return genericType({
-    type: (input as any)?.type,
-    typeArguments: (input as any)?.type_arguments,
+    type: ((input as any)?.type ?? (input as any)?.fields?.type),
+    typeArguments: ((input as any)?.type_arguments ?? (input as any)?.fields?.type_arguments),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function genericTypeWithTurbofishFrom(input: GenericTypeWithTurbofishFromInput) {
-  if (isNodeData(input)) return input;
   return genericTypeWithTurbofish({
-    type: (input as any)?.type,
-    typeArguments: (input as any)?.type_arguments,
+    type: ((input as any)?.type ?? (input as any)?.fields?.type),
+    typeArguments: ((input as any)?.type_arguments ?? (input as any)?.fields?.type_arguments),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function boundedTypeFrom(input: BoundedTypeFromInput) {
-  if (isNodeData(input)) return input;
   return boundedType({
-    left: (input as any)?.left,
-    right: (input as any)?.right,
+    left: ((input as any)?.left ?? (input as any)?.fields?.left),
+    right: ((input as any)?.right ?? (input as any)?.fields?.right),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function useBoundsFrom(...input: any[]) {
-  if (input.length === 1 && isNodeData(input[0])) return input[0];
-  return useBounds(...input);
+  if (input.length === 1 && isNodeData(input[0])) {
+    const nd = input[0] as any;
+    return useBounds(...(nd.children ?? []));
+  }
+  return useBounds(...(input as any[]));
 }
 
 export function typeArgumentsFrom(...input: any[]) {
-  if (input.length === 1 && isNodeData(input[0])) return input[0];
-  return typeArguments(...input);
+  if (input.length === 1 && isNodeData(input[0])) {
+    const nd = input[0] as any;
+    return typeArguments(...(nd.children ?? []));
+  }
+  return typeArguments(...(input as any[]));
 }
 
 export function typeBindingFrom(input: TypeBindingFromInput) {
-  if (isNodeData(input)) return input;
   return typeBinding({
-    name: (input as any)?.name,
-    typeArguments: (input as any)?.type_arguments,
-    type: (input as any)?.type,
+    name: ((input as any)?.name ?? (input as any)?.fields?.name),
+    typeArguments: ((input as any)?.type_arguments ?? (input as any)?.fields?.type_arguments),
+    type: ((input as any)?.type ?? (input as any)?.fields?.type),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function referenceTypeFrom(input: ReferenceTypeFromInput) {
-  if (isNodeData(input)) return input;
   return referenceType({
-    lifetime: (input as any)?.lifetime,
-    mutableSpecifier: (input as any)?.mutable_specifier,
-    type: (input as any)?.type,
+    lifetime: ((input as any)?.lifetime ?? (input as any)?.fields?.lifetime),
+    mutableSpecifier: ((input as any)?.mutable_specifier ?? (input as any)?.fields?.mutable_specifier),
+    type: ((input as any)?.type ?? (input as any)?.fields?.type),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function pointerTypeFrom(input: PointerTypeFromInput) {
-  if (isNodeData(input)) return input;
   return pointerType({
-    mutableSpecifier: (input as any)?.mutable_specifier,
-    type: (input as any)?.type,
+    mutableSpecifier: ((input as any)?.mutable_specifier ?? (input as any)?.fields?.mutable_specifier),
+    type: ((input as any)?.type ?? (input as any)?.fields?.type),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function abstractTypeFrom(input: AbstractTypeFromInput) {
-  if (isNodeData(input)) return input;
   return abstractType({
-    typeParameters: (input as any)?.type_parameters,
-    trait: (input as any)?.trait,
+    typeParameters: ((input as any)?.type_parameters ?? (input as any)?.fields?.type_parameters),
+    trait: ((input as any)?.trait ?? (input as any)?.fields?.trait),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function dynamicTypeFrom(input: DynamicTypeFromInput) {
-  if (isNodeData(input)) return input;
   return dynamicType({
-    trait: (input as any)?.trait,
+    trait: ((input as any)?.trait ?? (input as any)?.fields?.trait),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -654,9 +631,8 @@ export function mutableSpecifierFrom(input?: MutableSpecifier) {
 }
 
 export function macroInvocationFrom(input: MacroInvocationFromInput) {
-  if (isNodeData(input)) return input;
   return macroInvocation({
-    tokenTree: (input as any)?.token_tree,
+    tokenTree: ((input as any)?.token_tree ?? (input as any)?.fields?.token_tree),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -665,7 +641,6 @@ export function macroInvocationFrom(input: MacroInvocationFromInput) {
 
 
 export function delimTokenTreeFrom(input?: DelimTokenTreeFromInput) {
-  if (isNodeData(input)) return input;
   return delimTokenTree(input as any);
 }
 export function delimTokenTreeParenFrom(input?: any) {
@@ -682,28 +657,25 @@ export function delimTokenTreeBraceFrom(input?: any) {
 }
 
 export function scopedIdentifierFrom(input: ScopedIdentifierFromInput) {
-  if (isNodeData(input)) return input;
   return scopedIdentifier({
-    path: (input as any)?.path,
-    name: (input as any)?.name,
+    path: ((input as any)?.path ?? (input as any)?.fields?.path),
+    name: ((input as any)?.name ?? (input as any)?.fields?.name),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function scopedTypeIdentifierInExpressionPositionFrom(input: ScopedTypeIdentifierInExpressionPositionFromInput) {
-  if (isNodeData(input)) return input;
   return scopedTypeIdentifierInExpressionPosition({
-    path: (input as any)?.path,
-    name: (input as any)?.name,
+    path: ((input as any)?.path ?? (input as any)?.fields?.path),
+    name: ((input as any)?.name ?? (input as any)?.fields?.name),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function scopedTypeIdentifierFrom(input: ScopedTypeIdentifierFromInput) {
-  if (isNodeData(input)) return input;
   return scopedTypeIdentifier({
-    path: (input as any)?.path,
-    name: (input as any)?.name,
+    path: ((input as any)?.path ?? (input as any)?.fields?.path),
+    name: ((input as any)?.name ?? (input as any)?.fields?.name),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -713,28 +685,27 @@ export function scopedTypeIdentifierFrom(input: ScopedTypeIdentifierFromInput) {
 
 
 export function rangeExpressionFrom(input?: RangeExpressionFromInput) {
-  if (isNodeData(input)) return input;
   return rangeExpression(input as any);
 }
 export function rangeExpressionStartFrom(input?: any) {
   if (isNodeData(input)) return input;
   return rangeExpressionStart({
-    start: (input as any)?.start,
-    end: (input as any)?.end,
+    start: ((input as any)?.start ?? (input as any)?.fields?.start),
+    end: ((input as any)?.end ?? (input as any)?.fields?.end),
   });
 }
 export function rangeExpressionStart2From(input?: any) {
   if (isNodeData(input)) return input;
   return rangeExpressionStart2({
-    start: (input as any)?.start,
-    end: (input as any)?.end,
+    start: ((input as any)?.start ?? (input as any)?.fields?.start),
+    end: ((input as any)?.end ?? (input as any)?.fields?.end),
   });
 }
 export function rangeExpressionStart3From(input?: any) {
   if (isNodeData(input)) return input;
   return rangeExpressionStart3({
-    start: (input as any)?.start,
-    end: (input as any)?.end,
+    start: ((input as any)?.start ?? (input as any)?.fields?.start),
+    end: ((input as any)?.end ?? (input as any)?.fields?.end),
   });
 }
 export function rangeExpressionDotdotFrom(input?: any) {
@@ -743,64 +714,57 @@ export function rangeExpressionDotdotFrom(input?: any) {
 }
 
 export function unaryExpressionFrom(input: UnaryExpressionFromInput) {
-  if (isNodeData(input)) return input;
   return unaryExpression({
-    operand: (input as any)?.operand,
+    operand: ((input as any)?.operand ?? (input as any)?.fields?.operand),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function tryExpressionFrom(input: TryExpressionFromInput) {
-  if (isNodeData(input)) return input;
   return tryExpression({
-    value: (input as any)?.value,
+    value: ((input as any)?.value ?? (input as any)?.fields?.value),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function referenceExpressionFrom(input: ReferenceExpressionFromInput) {
-  if (isNodeData(input)) return input;
   return referenceExpression({
-    mutableSpecifier: (input as any)?.mutable_specifier,
-    value: (input as any)?.value,
+    mutableSpecifier: ((input as any)?.mutable_specifier ?? (input as any)?.fields?.mutable_specifier),
+    value: ((input as any)?.value ?? (input as any)?.fields?.value),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function binaryExpressionFrom(input: BinaryExpressionFromInput) {
-  if (isNodeData(input)) return input;
   return binaryExpression({
-    left: (input as any)?.left,
-    operator: (input as any)?.operator,
-    right: (input as any)?.right,
+    left: ((input as any)?.left ?? (input as any)?.fields?.left),
+    operator: ((input as any)?.operator ?? (input as any)?.fields?.operator),
+    right: ((input as any)?.right ?? (input as any)?.fields?.right),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function assignmentExpressionFrom(input: AssignmentExpressionFromInput) {
-  if (isNodeData(input)) return input;
   return assignmentExpression({
-    left: (input as any)?.left,
-    right: (input as any)?.right,
+    left: ((input as any)?.left ?? (input as any)?.fields?.left),
+    right: ((input as any)?.right ?? (input as any)?.fields?.right),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function compoundAssignmentExprFrom(input: CompoundAssignmentExprFromInput) {
-  if (isNodeData(input)) return input;
   return compoundAssignmentExpr({
-    left: (input as any)?.left,
-    operator: (input as any)?.operator,
-    right: (input as any)?.right,
+    left: ((input as any)?.left ?? (input as any)?.fields?.left),
+    operator: ((input as any)?.operator ?? (input as any)?.fields?.operator),
+    right: ((input as any)?.right ?? (input as any)?.fields?.right),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function typeCastExpressionFrom(input: TypeCastExpressionFromInput) {
-  if (isNodeData(input)) return input;
   return typeCastExpression({
-    value: (input as any)?.value,
-    type: (input as any)?.type,
+    value: ((input as any)?.value ?? (input as any)?.fields?.value),
+    type: ((input as any)?.type ?? (input as any)?.fields?.type),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -808,7 +772,6 @@ export function typeCastExpressionFrom(input: TypeCastExpressionFromInput) {
 
 
 export function returnExpressionFrom(input?: ReturnExpressionFromInput) {
-  if (isNodeData(input)) return input;
   return returnExpression(input as any);
 }
 export function returnExpressionReturnFrom(input?: any) {
@@ -823,7 +786,6 @@ export function returnExpressionReturn2From(input?: any) {
 
 
 export function yieldExpressionFrom(input?: YieldExpressionFromInput) {
-  if (isNodeData(input)) return input;
   return yieldExpression(input as any);
 }
 export function yieldExpressionYieldFrom(input?: any) {
@@ -836,316 +798,302 @@ export function yieldExpressionYield2From(input?: any) {
 }
 
 export function callExpressionFrom(input: CallExpressionFromInput) {
-  if (isNodeData(input)) return input;
   return callExpression({
-    function: (input as any)?.function,
-    arguments: (input as any)?.arguments,
+    function: ((input as any)?.function ?? (input as any)?.fields?.function),
+    arguments: ((input as any)?.arguments ?? (input as any)?.fields?.arguments),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function arguments_From(...input: any[]) {
-  if (input.length === 1 && isNodeData(input[0])) return input[0];
-  return arguments_(...input);
+  if (input.length === 1 && isNodeData(input[0])) {
+    const nd = input[0] as any;
+    return arguments_(...(nd.children ?? []));
+  }
+  return arguments_(...(input as any[]));
 }
 
 export function arrayExpressionFrom(input: ArrayExpressionFromInput) {
-  if (isNodeData(input)) return input;
   return arrayExpression({
-    attributes: (input as any)?.attributes,
-    elements: (input as any)?.elements,
-    length: (input as any)?.length,
+    attributes: ((input as any)?.attributes ?? (input as any)?.fields?.attributes),
+    elements: ((input as any)?.elements ?? (input as any)?.fields?.elements),
+    length: ((input as any)?.length ?? (input as any)?.fields?.length),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function tupleExpressionFrom(input: TupleExpressionFromInput) {
-  if (isNodeData(input)) return input;
   return tupleExpression({
-    attributes: (input as any)?.attributes,
-    first: (input as any)?.first,
-    rest: (input as any)?.rest,
-    trailing: (input as any)?.trailing,
+    attributes: ((input as any)?.attributes ?? (input as any)?.fields?.attributes),
+    first: ((input as any)?.first ?? (input as any)?.fields?.first),
+    rest: ((input as any)?.rest ?? (input as any)?.fields?.rest),
+    trailing: ((input as any)?.trailing ?? (input as any)?.fields?.trailing),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function structExpressionFrom(input: StructExpressionFromInput) {
-  if (isNodeData(input)) return input;
   return structExpression({
-    name: (input as any)?.name,
-    body: (input as any)?.body,
+    name: ((input as any)?.name ?? (input as any)?.fields?.name),
+    body: ((input as any)?.body ?? (input as any)?.fields?.body),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function fieldInitializerListFrom(...input: any[]) {
-  if (input.length === 1 && isNodeData(input[0])) return input[0];
-  return fieldInitializerList(...input);
+  if (input.length === 1 && isNodeData(input[0])) {
+    const nd = input[0] as any;
+    return fieldInitializerList(...(nd.children ?? []));
+  }
+  return fieldInitializerList(...(input as any[]));
 }
 
 export function shorthandFieldInitializerFrom(input: ShorthandFieldInitializerFromInput) {
-  if (isNodeData(input)) return input;
   return shorthandFieldInitializer({
-    attributes: (input as any)?.attributes,
-    identifier: typeof (input as any)?.identifier === 'string' ? identifier((input as any)?.identifier) : (input as any)?.identifier,
+    attributes: ((input as any)?.attributes ?? (input as any)?.fields?.attributes),
+    identifier: typeof ((input as any)?.identifier ?? (input as any)?.fields?.identifier) === 'string' ? identifier(((input as any)?.identifier ?? (input as any)?.fields?.identifier)) : ((input as any)?.identifier ?? (input as any)?.fields?.identifier),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function fieldInitializerFrom(input: FieldInitializerFromInput) {
-  if (isNodeData(input)) return input;
   return fieldInitializer({
-    field: (input as any)?.field,
-    value: (input as any)?.value,
+    field: ((input as any)?.field ?? (input as any)?.fields?.field),
+    value: ((input as any)?.value ?? (input as any)?.fields?.value),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function ifExpressionFrom(input: IfExpressionFromInput) {
-  if (isNodeData(input)) return input;
   return ifExpression({
-    condition: (input as any)?.condition,
-    consequence: (input as any)?.consequence,
-    alternative: (input as any)?.alternative,
+    condition: ((input as any)?.condition ?? (input as any)?.fields?.condition),
+    consequence: ((input as any)?.consequence ?? (input as any)?.fields?.consequence),
+    alternative: ((input as any)?.alternative ?? (input as any)?.fields?.alternative),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function letConditionFrom(input: LetConditionFromInput) {
-  if (isNodeData(input)) return input;
   return letCondition({
-    pattern: (input as any)?.pattern,
-    value: (input as any)?.value,
+    pattern: ((input as any)?.pattern ?? (input as any)?.fields?.pattern),
+    value: ((input as any)?.value ?? (input as any)?.fields?.value),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function elseClauseFrom(...input: any[]) {
-  if (input.length === 1 && isNodeData(input[0])) return input[0];
-  return elseClause(...input);
+  if (input.length === 1 && isNodeData(input[0])) {
+    const nd = input[0] as any;
+    return elseClause(...(nd.children ?? []));
+  }
+  return elseClause(...(input as any[]));
 }
 
 export function matchExpressionFrom(input: MatchExpressionFromInput) {
-  if (isNodeData(input)) return input;
   return matchExpression({
-    value: (input as any)?.value,
-    body: (input as any)?.body,
+    value: ((input as any)?.value ?? (input as any)?.fields?.value),
+    body: ((input as any)?.body ?? (input as any)?.fields?.body),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function matchBlockFrom(...input: any[]) {
-  if (input.length === 1 && isNodeData(input[0])) return input[0];
-  return matchBlock(...input);
+  if (input.length === 1 && isNodeData(input[0])) {
+    const nd = input[0] as any;
+    return matchBlock(...(nd.children ?? []));
+  }
+  return matchBlock(...(input as any[]));
 }
 
 export function matchArmFrom(input: MatchArmFromInput) {
-  if (isNodeData(input)) return input;
   return matchArm({
-    pattern: (input as any)?.pattern,
-    value: (input as any)?.value,
+    pattern: ((input as any)?.pattern ?? (input as any)?.fields?.pattern),
+    value: ((input as any)?.value ?? (input as any)?.fields?.value),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function lastMatchArmFrom(input: LastMatchArmFromInput) {
-  if (isNodeData(input)) return input;
   return lastMatchArm({
-    pattern: (input as any)?.pattern,
-    value: (input as any)?.value,
+    pattern: ((input as any)?.pattern ?? (input as any)?.fields?.pattern),
+    value: ((input as any)?.value ?? (input as any)?.fields?.value),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function matchPatternFrom(input?: MatchPatternFromInput) {
-  if (isNodeData(input)) return input;
   return matchPattern({
-    condition: (input as any)?.condition,
+    condition: ((input as any)?.condition ?? (input as any)?.fields?.condition),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function whileExpressionFrom(input: WhileExpressionFromInput) {
-  if (isNodeData(input)) return input;
   return whileExpression({
-    label: (input as any)?.label,
-    condition: (input as any)?.condition,
-    body: (input as any)?.body,
+    label: ((input as any)?.label ?? (input as any)?.fields?.label),
+    condition: ((input as any)?.condition ?? (input as any)?.fields?.condition),
+    body: ((input as any)?.body ?? (input as any)?.fields?.body),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function loopExpressionFrom(input: LoopExpressionFromInput) {
-  if (isNodeData(input)) return input;
   return loopExpression({
-    label: (input as any)?.label,
-    body: (input as any)?.body,
+    label: ((input as any)?.label ?? (input as any)?.fields?.label),
+    body: ((input as any)?.body ?? (input as any)?.fields?.body),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function forExpressionFrom(input: ForExpressionFromInput) {
-  if (isNodeData(input)) return input;
   return forExpression({
-    label: (input as any)?.label,
-    pattern: (input as any)?.pattern,
-    value: (input as any)?.value,
-    body: (input as any)?.body,
+    label: ((input as any)?.label ?? (input as any)?.fields?.label),
+    pattern: ((input as any)?.pattern ?? (input as any)?.fields?.pattern),
+    value: ((input as any)?.value ?? (input as any)?.fields?.value),
+    body: ((input as any)?.body ?? (input as any)?.fields?.body),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function constBlockFrom(input: ConstBlockFromInput) {
-  if (isNodeData(input)) return input;
   return constBlock({
-    body: (input as any)?.body,
+    body: ((input as any)?.body ?? (input as any)?.fields?.body),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function closureExpressionFrom(input: ClosureExpressionFromInput) {
-  if (isNodeData(input)) return input;
   return closureExpression({
-    parameters: (input as any)?.parameters,
-    returnType: (input as any)?.return_type,
-    body: (input as any)?.body,
+    parameters: ((input as any)?.parameters ?? (input as any)?.fields?.parameters),
+    returnType: ((input as any)?.return_type ?? (input as any)?.fields?.return_type),
+    body: ((input as any)?.body ?? (input as any)?.fields?.body),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function closureParametersFrom(...input: any[]) {
-  if (input.length === 1 && isNodeData(input[0])) return input[0];
-  return closureParameters(...input);
+  if (input.length === 1 && isNodeData(input[0])) {
+    const nd = input[0] as any;
+    return closureParameters(...(nd.children ?? []));
+  }
+  return closureParameters(...(input as any[]));
 }
 
 export function labelFrom(input: LabelFromInput) {
-  if (isNodeData(input)) return input;
   return label({
-    identifier: (input as any)?.identifier,
+    identifier: ((input as any)?.identifier ?? (input as any)?.fields?.identifier),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function breakExpressionFrom(input: BreakExpressionFromInput) {
-  if (isNodeData(input)) return input;
   return breakExpression({
-    label: (input as any)?.label,
-    expression: (input as any)?.expression,
+    label: ((input as any)?.label ?? (input as any)?.fields?.label),
+    expression: ((input as any)?.expression ?? (input as any)?.fields?.expression),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function continueExpressionFrom(input: ContinueExpressionFromInput) {
-  if (isNodeData(input)) return input;
   return continueExpression({
-    label: (input as any)?.label,
+    label: ((input as any)?.label ?? (input as any)?.fields?.label),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function indexExpressionFrom(input: IndexExpressionFromInput) {
-  if (isNodeData(input)) return input;
   return indexExpression({
-    object: (input as any)?.object,
-    index: (input as any)?.index,
+    object: ((input as any)?.object ?? (input as any)?.fields?.object),
+    index: ((input as any)?.index ?? (input as any)?.fields?.index),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function fieldExpressionFrom(input: FieldExpressionFromInput) {
-  if (isNodeData(input)) return input;
   return fieldExpression({
-    value: (input as any)?.value,
-    field: (input as any)?.field,
+    value: ((input as any)?.value ?? (input as any)?.fields?.value),
+    field: ((input as any)?.field ?? (input as any)?.fields?.field),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function unsafeBlockFrom(input: UnsafeBlockFromInput) {
-  if (isNodeData(input)) return input;
   return unsafeBlock({
-    block: (input as any)?.block,
+    block: ((input as any)?.block ?? (input as any)?.fields?.block),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function asyncBlockFrom(input: AsyncBlockFromInput) {
-  if (isNodeData(input)) return input;
   return asyncBlock({
-    block: (input as any)?.block,
+    block: ((input as any)?.block ?? (input as any)?.fields?.block),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function genBlockFrom(input: GenBlockFromInput) {
-  if (isNodeData(input)) return input;
   return genBlock({
-    block: (input as any)?.block,
+    block: ((input as any)?.block ?? (input as any)?.fields?.block),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function tryBlockFrom(input: TryBlockFromInput) {
-  if (isNodeData(input)) return input;
   return tryBlock({
-    block: (input as any)?.block,
+    block: ((input as any)?.block ?? (input as any)?.fields?.block),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function blockFrom(input: BlockFromInput) {
-  if (isNodeData(input)) return input;
   return block({
-    label: (input as any)?.label,
+    label: ((input as any)?.label ?? (input as any)?.fields?.label),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function genericPatternFrom(input: GenericPatternFromInput) {
-  if (isNodeData(input)) return input;
   return genericPattern({
-    typeArguments: (input as any)?.type_arguments,
+    typeArguments: ((input as any)?.type_arguments ?? (input as any)?.fields?.type_arguments),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function tuplePatternFrom(...input: any[]) {
-  if (input.length === 1 && isNodeData(input[0])) return input[0];
-  return tuplePattern(...input);
+  if (input.length === 1 && isNodeData(input[0])) {
+    const nd = input[0] as any;
+    return tuplePattern(...(nd.children ?? []));
+  }
+  return tuplePattern(...(input as any[]));
 }
 
 export function tupleStructPatternFrom(input: TupleStructPatternFromInput) {
-  if (isNodeData(input)) return input;
   return tupleStructPattern({
-    type: (input as any)?.type,
+    type: ((input as any)?.type ?? (input as any)?.fields?.type),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function structPatternFrom(input: StructPatternFromInput) {
-  if (isNodeData(input)) return input;
   return structPattern({
-    type: (input as any)?.type,
+    type: ((input as any)?.type ?? (input as any)?.fields?.type),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function fieldPatternFrom(input: FieldPatternFromInput) {
-  if (isNodeData(input)) return input;
   return fieldPattern({
-    mutableSpecifier: (input as any)?.mutable_specifier,
-    name: (input as any)?.name,
-    pattern: (input as any)?.pattern,
+    mutableSpecifier: ((input as any)?.mutable_specifier ?? (input as any)?.fields?.mutable_specifier),
+    name: ((input as any)?.name ?? (input as any)?.fields?.name),
+    pattern: ((input as any)?.pattern ?? (input as any)?.fields?.pattern),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function mutPatternFrom(input: MutPatternFromInput) {
-  if (isNodeData(input)) return input;
   return mutPattern({
-    mutableSpecifier: typeof (input as any)?.mutable_specifier === 'string' ? mutableSpecifier((input as any)?.mutable_specifier) : (input as any)?.mutable_specifier,
-    pattern: (input as any)?.pattern,
+    mutableSpecifier: typeof ((input as any)?.mutable_specifier ?? (input as any)?.fields?.mutable_specifier) === 'string' ? mutableSpecifier(((input as any)?.mutable_specifier ?? (input as any)?.fields?.mutable_specifier)) : ((input as any)?.mutable_specifier ?? (input as any)?.fields?.mutable_specifier),
+    pattern: ((input as any)?.pattern ?? (input as any)?.fields?.pattern),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -1153,82 +1101,77 @@ export function mutPatternFrom(input: MutPatternFromInput) {
 
 
 export function rangePatternFrom(input?: RangePatternFromInput) {
-  if (isNodeData(input)) return input;
   return rangePattern(input as any);
 }
 export function rangePatternLeftFrom(input?: any) {
   if (isNodeData(input)) return input;
   return rangePatternLeft({
-    left: (input as any)?.left,
-    right: (input as any)?.right,
+    left: ((input as any)?.left ?? (input as any)?.fields?.left),
+    right: ((input as any)?.right ?? (input as any)?.fields?.right),
   });
 }
 export function rangePatternRightFrom(input?: any) {
   if (isNodeData(input)) return input;
   return rangePatternRight({
-    right: (input as any)?.right,
+    right: ((input as any)?.right ?? (input as any)?.fields?.right),
   });
 }
 
 export function capturedPatternFrom(input: CapturedPatternFromInput) {
-  if (isNodeData(input)) return input;
   return capturedPattern({
-    identifier: typeof (input as any)?.identifier === 'string' ? identifier((input as any)?.identifier) : (input as any)?.identifier,
-    pattern: (input as any)?.pattern,
+    identifier: typeof ((input as any)?.identifier ?? (input as any)?.fields?.identifier) === 'string' ? identifier(((input as any)?.identifier ?? (input as any)?.fields?.identifier)) : ((input as any)?.identifier ?? (input as any)?.fields?.identifier),
+    pattern: ((input as any)?.pattern ?? (input as any)?.fields?.pattern),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function referencePatternFrom(input: ReferencePatternFromInput) {
-  if (isNodeData(input)) return input;
   return referencePattern({
-    mutableSpecifier: (input as any)?.mutable_specifier,
-    pattern: typeof (input as any)?.pattern === 'string' ? mutableSpecifier((input as any)?.pattern) : (input as any)?.pattern,
+    mutableSpecifier: ((input as any)?.mutable_specifier ?? (input as any)?.fields?.mutable_specifier),
+    pattern: typeof ((input as any)?.pattern ?? (input as any)?.fields?.pattern) === 'string' ? mutableSpecifier(((input as any)?.pattern ?? (input as any)?.fields?.pattern)) : ((input as any)?.pattern ?? (input as any)?.fields?.pattern),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function orPatternFrom(input: OrPatternFromInput) {
-  if (isNodeData(input)) return input;
   return orPattern({
-    left: (input as any)?.left,
-    right: (input as any)?.right,
+    left: ((input as any)?.left ?? (input as any)?.fields?.left),
+    right: ((input as any)?.right ?? (input as any)?.fields?.right),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function negativeLiteralFrom(input: NegativeLiteralFromInput) {
-  if (isNodeData(input)) return input;
   return negativeLiteral({
-    value: (input as any)?.value,
+    value: ((input as any)?.value ?? (input as any)?.fields?.value),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function stringLiteralFrom(...input: any[]) {
-  if (input.length === 1 && isNodeData(input[0])) return input[0];
-  return stringLiteral(...input);
+  if (input.length === 1 && isNodeData(input[0])) {
+    const nd = input[0] as any;
+    return stringLiteral(...(nd.children ?? []));
+  }
+  return stringLiteral(...(input as any[]));
 }
 
 export function rawStringLiteralFrom(input: RawStringLiteralFromInput) {
-  if (isNodeData(input)) return input;
   return rawStringLiteral({
-    rawStringLiteralStart: (input as any)?.raw_string_literal_start,
-    stringContent: (input as any)?.string_content,
-    rawStringLiteralEnd: (input as any)?.raw_string_literal_end,
+    rawStringLiteralStart: ((input as any)?.raw_string_literal_start ?? (input as any)?.fields?.raw_string_literal_start),
+    stringContent: ((input as any)?.string_content ?? (input as any)?.fields?.string_content),
+    rawStringLiteralEnd: ((input as any)?.raw_string_literal_end ?? (input as any)?.fields?.raw_string_literal_end),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function escapeSequenceFrom(input?: EscapeSequenceFromInput) {
-  if (isNodeData(input)) return input;
   return escapeSequence(input as any);
 }
 
 
 
 export function commentFrom(input?: CommentFromInput) {
-  if (isNodeData(input)) return input;
   return comment(input as any);
 }
 export function commentLineCommentFrom(input?: any) {
@@ -1241,12 +1184,10 @@ export function commentBlockCommentFrom(input?: any) {
 }
 
 export function lineCommentFrom(input?: LineCommentFromInput) {
-  if (isNodeData(input)) return input;
   return lineComment(input as any);
 }
 
 export function blockCommentFrom(input?: BlockCommentFromInput) {
-  if (isNodeData(input)) return input;
   return blockComment(input as any);
 }
 
@@ -1261,13 +1202,19 @@ export function shebangFrom(input: string | Shebang) {
 }
 
 export function hiddenTypeIdentifierFrom(...input: any[]) {
-  if (input.length === 1 && isNodeData(input[0])) return input[0];
-  return hiddenTypeIdentifier(...input);
+  if (input.length === 1 && isNodeData(input[0])) {
+    const nd = input[0] as any;
+    return hiddenTypeIdentifier(...(nd.children ?? []));
+  }
+  return hiddenTypeIdentifier(...(input as any[]));
 }
 
 export function hiddenFieldIdentifierFrom(...input: any[]) {
-  if (input.length === 1 && isNodeData(input[0])) return input[0];
-  return hiddenFieldIdentifier(...input);
+  if (input.length === 1 && isNodeData(input[0])) {
+    const nd = input[0] as any;
+    return hiddenFieldIdentifier(...(nd.children ?? []));
+  }
+  return hiddenFieldIdentifier(...(input as any[]));
 }
 
 export function selfFrom(input?: Self) {
@@ -1296,7 +1243,6 @@ export function metavariableFrom(input: string | Metavariable) {
 
 
 export function letChainFrom(input?: LetChainFromInput) {
-  if (isNodeData(input)) return input;
   return letChain(input as any);
 }
 export function letChainAndandFrom(input?: any) {
