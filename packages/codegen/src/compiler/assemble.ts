@@ -7,12 +7,15 @@
 
 import type {
     Rule, OptimizedGrammar, NodeMap,
-    AssembledNode, AssembledNodeBase, AssembledField, AssembledChild,
-    AssembledForm, AssembledBranch, AssembledContainer, AssembledPolymorph,
-    AssembledLeaf, AssembledKeyword, AssembledToken, AssembledEnum,
-    AssembledSupertype, AssembledGroup,
+    AssembledNode, AssembledField, AssembledChild,
+    AssembledForm,
     KindProjection, SignaturePool, ProjectionContext,
     FieldRule,
+} from './rule.ts'
+import {
+    AssembledBranch, AssembledContainer, AssembledPolymorph,
+    AssembledLeaf, AssembledKeyword, AssembledToken, AssembledEnum,
+    AssembledSupertype, AssembledGroup,
 } from './rule.ts'
 
 // ---------------------------------------------------------------------------
@@ -25,43 +28,55 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
     for (const [kind, rule] of Object.entries(optimized.rules)) {
         const modelType = classifyNode(kind, rule)
         const { typeName, factoryName, irKey } = nameNode(kind)
-        const base: AssembledNodeBase = { kind, typeName, factoryName, irKey }
 
         switch (modelType) {
             case 'branch': {
-                const fields = extractFields(rule)
-                const children = extractChildren(rule)
-                nodes.set(kind, { ...base, modelType, fields, children } as AssembledBranch)
+                nodes.set(kind, new AssembledBranch({
+                    kind, typeName, factoryName, irKey,
+                    fields: extractFields(rule),
+                    children: extractChildren(rule),
+                }))
                 break
             }
             case 'container': {
-                const children = extractChildren(rule)
-                const separator = rule.type === 'repeat' ? rule.separator : undefined
-                nodes.set(kind, { ...base, modelType, children, separator } as AssembledContainer)
+                nodes.set(kind, new AssembledContainer({
+                    kind, typeName, factoryName, irKey,
+                    children: extractChildren(rule),
+                    separator: rule.type === 'repeat' ? rule.separator : undefined,
+                }))
                 break
             }
             case 'polymorph': {
-                const forms = extractForms(rule, kind)
-                nodes.set(kind, { ...base, modelType, forms } as AssembledPolymorph)
+                nodes.set(kind, new AssembledPolymorph({
+                    kind, typeName, factoryName, irKey,
+                    forms: extractForms(rule, kind),
+                }))
                 break
             }
             case 'leaf': {
-                const pattern = rule.type === 'pattern' ? rule.value : undefined
-                nodes.set(kind, { ...base, modelType, pattern } as AssembledLeaf)
+                nodes.set(kind, new AssembledLeaf({
+                    kind, typeName, factoryName, irKey,
+                    pattern: rule.type === 'pattern' ? rule.value : undefined,
+                }))
                 break
             }
             case 'keyword': {
-                const text = rule.type === 'string' ? rule.value : ''
-                nodes.set(kind, { ...base, modelType, text } as AssembledKeyword)
+                nodes.set(kind, new AssembledKeyword({
+                    kind, typeName, factoryName, irKey,
+                    text: rule.type === 'string' ? rule.value : '',
+                }))
                 break
             }
             case 'token': {
-                nodes.set(kind, { ...base, modelType, factoryName: undefined, irKey: undefined } as AssembledToken)
+                // Hidden — no factoryName
+                nodes.set(kind, new AssembledToken({ kind, typeName }))
                 break
             }
             case 'enum': {
-                const values = rule.type === 'enum' ? rule.values : []
-                nodes.set(kind, { ...base, modelType, values, factoryName: undefined, irKey: undefined } as AssembledEnum)
+                nodes.set(kind, new AssembledEnum({
+                    kind, typeName,
+                    values: rule.type === 'enum' ? rule.values : [],
+                }))
                 break
             }
             case 'supertype': {
@@ -77,12 +92,14 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
                 } else {
                     subtypes = []
                 }
-                nodes.set(kind, { ...base, modelType, subtypes, factoryName: undefined, irKey: undefined } as AssembledSupertype)
+                nodes.set(kind, new AssembledSupertype({ kind, typeName, subtypes }))
                 break
             }
             case 'group': {
-                const fields = rule.type === 'group' ? extractFields(rule.content) : extractFields(rule)
-                nodes.set(kind, { ...base, modelType, fields, factoryName: undefined, irKey: undefined } as AssembledGroup)
+                nodes.set(kind, new AssembledGroup({
+                    kind, typeName,
+                    fields: rule.type === 'group' ? extractFields(rule.content) : extractFields(rule),
+                }))
                 break
             }
         }
@@ -119,23 +136,13 @@ function collectAnonymousNodes(rules: Record<string, Rule>, nodes: Map<string, A
 
         if (isAlphanumeric) {
             // Keyword token (e.g., "if", "class", "pub")
-            nodes.set(value, {
-                kind: value,
-                typeName,
-                factoryName: undefined,
-                irKey: undefined,
-                modelType: 'keyword',
-                text: value,
-            } as AssembledKeyword)
+            // Anonymous keywords from grammar — no factory (hidden)
+            nodes.set(value, new AssembledKeyword({
+                kind: value, typeName, text: value,
+            }))
         } else {
             // Operator/punctuation token (e.g., "+", "->", "{")
-            nodes.set(value, {
-                kind: value,
-                typeName,
-                factoryName: undefined,
-                irKey: undefined,
-                modelType: 'token',
-            } as AssembledToken)
+            nodes.set(value, new AssembledToken({ kind: value, typeName }))
         }
     }
 }

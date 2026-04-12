@@ -239,11 +239,32 @@ export interface KindProjection {
     readonly kinds: string[]
 }
 
-export interface AssembledNodeBase {
+// ---------------------------------------------------------------------------
+// Assembled node types — class hierarchy
+//
+// Abstract base + concrete subclasses per model type.
+// Shape matches the previous interfaces exactly; methods/getters will be added
+// as we collapse logic into the classes.
+// ---------------------------------------------------------------------------
+
+export abstract class AssembledNodeBase {
     readonly kind: string
     readonly typeName: string
     readonly factoryName?: string
     readonly irKey?: string
+    abstract readonly modelType: string
+
+    constructor(init: { kind: string; typeName: string; factoryName?: string; irKey?: string }) {
+        this.kind = init.kind
+        this.typeName = init.typeName
+        this.factoryName = init.factoryName
+        this.irKey = init.irKey
+    }
+
+    /** A node is hidden when it has no factory (supertype, group, token). */
+    get hidden(): boolean {
+        return this.factoryName === undefined
+    }
 }
 
 export interface AssembledField {
@@ -275,52 +296,124 @@ export interface AssembledForm {
     readonly mergedRules?: Rule[]
 }
 
-// --- Discriminated union of model types ---
+// --- Concrete classes per model type ---
 
-export interface AssembledBranch extends AssembledNodeBase {
-    readonly modelType: 'branch'
+export class AssembledBranch extends AssembledNodeBase {
+    readonly modelType = 'branch' as const
     readonly fields: AssembledField[]
     readonly children?: AssembledChild[]
+
+    constructor(init: {
+        kind: string; typeName: string; factoryName?: string; irKey?: string
+        fields: AssembledField[]; children?: AssembledChild[]
+    }) {
+        super(init)
+        this.fields = init.fields
+        this.children = init.children
+    }
 }
 
-export interface AssembledContainer extends AssembledNodeBase {
-    readonly modelType: 'container'
+export class AssembledContainer extends AssembledNodeBase {
+    readonly modelType = 'container' as const
     readonly children: AssembledChild[]
     readonly separator?: string
+
+    constructor(init: {
+        kind: string; typeName: string; factoryName?: string; irKey?: string
+        children: AssembledChild[]; separator?: string
+    }) {
+        super(init)
+        this.children = init.children
+        this.separator = init.separator
+    }
 }
 
-export interface AssembledPolymorph extends AssembledNodeBase {
-    readonly modelType: 'polymorph'
+export class AssembledPolymorph extends AssembledNodeBase {
+    readonly modelType = 'polymorph' as const
     readonly forms: AssembledForm[]
+
+    constructor(init: {
+        kind: string; typeName: string; factoryName?: string; irKey?: string
+        forms: AssembledForm[]
+    }) {
+        super(init)
+        this.forms = init.forms
+    }
 }
 
-export interface AssembledLeaf extends AssembledNodeBase {
-    readonly modelType: 'leaf'
+export class AssembledLeaf extends AssembledNodeBase {
+    readonly modelType = 'leaf' as const
     readonly pattern?: string
+
+    constructor(init: {
+        kind: string; typeName: string; factoryName?: string; irKey?: string
+        pattern?: string
+    }) {
+        super(init)
+        this.pattern = init.pattern
+    }
 }
 
-export interface AssembledKeyword extends AssembledNodeBase {
-    readonly modelType: 'keyword'
+export class AssembledKeyword extends AssembledNodeBase {
+    readonly modelType = 'keyword' as const
     readonly text: string
+
+    constructor(init: {
+        kind: string; typeName: string; factoryName?: string; irKey?: string
+        text: string
+    }) {
+        super(init)
+        this.text = init.text
+    }
 }
 
-export interface AssembledToken extends AssembledNodeBase {
-    readonly modelType: 'token'
+export class AssembledToken extends AssembledNodeBase {
+    readonly modelType = 'token' as const
+
+    constructor(init: {
+        kind: string; typeName: string; factoryName?: string; irKey?: string
+    }) {
+        super(init)
+    }
 }
 
-export interface AssembledEnum extends AssembledNodeBase {
-    readonly modelType: 'enum'
+export class AssembledEnum extends AssembledNodeBase {
+    readonly modelType = 'enum' as const
     readonly values: string[]
+
+    constructor(init: {
+        kind: string; typeName: string; factoryName?: string; irKey?: string
+        values: string[]
+    }) {
+        super(init)
+        this.values = init.values
+    }
 }
 
-export interface AssembledSupertype extends AssembledNodeBase {
-    readonly modelType: 'supertype'
+export class AssembledSupertype extends AssembledNodeBase {
+    readonly modelType = 'supertype' as const
     readonly subtypes: string[]
+
+    constructor(init: {
+        kind: string; typeName: string; factoryName?: string; irKey?: string
+        subtypes: string[]
+    }) {
+        super(init)
+        this.subtypes = init.subtypes
+    }
 }
 
-export interface AssembledGroup extends AssembledNodeBase {
-    readonly modelType: 'group'
+export class AssembledGroup extends AssembledNodeBase {
+    readonly modelType = 'group' as const
     readonly fields: AssembledField[]
+
+    constructor(init: {
+        kind: string; typeName: string; factoryName?: string; irKey?: string
+        fields: AssembledField[]
+    }) {
+        super(init)
+        this.fields = init.fields
+    }
 }
 
 export type AssembledNode =
