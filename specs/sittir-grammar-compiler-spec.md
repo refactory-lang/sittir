@@ -73,14 +73,16 @@ Corollary: if Assemble or Emit contains a conditional like `if (language === 'ru
 
 ### Overrides as structural patches
 
-Overrides transform raw grammar rules into enriched rules. The same transform applies to two substrates:
+Overrides transform grammar rules into enriched grammar rules. The output is still a valid tree-sitter grammar — `transform(original, { 2: field('body') })` wraps position 2 in `field()`, which is a native tree-sitter concept. The enriched rules are rules that tree-sitter could parse.
 
-- **Rules** (codegen time): `grammar rule → override patches → enriched rule` — used by Evaluate to produce the rule tree that Assemble/Emit consume.
-- **SgNodes** (runtime): `raw SgNode → same positional patches → sittir NodeData` — the override patches tell you which children to wrap in fields, which positions to name.
+This means the same transform applies to two substrates:
 
-This means: applying the projection defined by `overrides.ts` to a raw parse tree node is sufficient to produce a sittir node. The override file encodes the structural delta between what tree-sitter's parser gives you and what sittir's typed API exposes.
+- **Rules** (codegen time): `grammar rule → override patches → enriched rule (still valid grammar)` — Evaluate produces enriched rules that Assemble/Emit consume.
+- **SgNodes** (runtime): `raw SgNode → project same overrides → "better" SgNode` — the override projection makes implicit structure explicit. An unnamed positional child becomes addressable by field name.
 
-Implication: `readNode`/`wrap` logic is derivable from the override patches — not a separate per-kind codegen concern.
+The override operates entirely within tree-sitter's own concepts. It doesn't create sittir-specific structures — it creates better tree-sitter structures. The sittir factories/types are the typed API surface for these enriched structures.
+
+Implication: `readNode`/`wrap` logic is a projection of the override patches onto node instances — not a separate per-kind codegen concern. The same positional patch that wraps rule position 2 in `field('body')` tells the runtime to expose `sgNode.child(2)` as `.body`.
 
 ### Derivability
 
