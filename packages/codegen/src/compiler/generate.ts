@@ -16,7 +16,7 @@ import { resolveGrammarJsPath, resolveOverridesPath } from './resolve-grammar.ts
 import { emitGrammar } from '../emitters/grammar.ts'
 import { emitTypesFromNodeMap } from '../emitters/types-v2.ts'
 import { emitTemplatesYaml } from '../emitters/rules.ts'
-import { emitFactories } from '../emitters/factories.ts'
+import { emitFactoriesFromNodeMap } from '../emitters/factories-v2.ts'
 import { emitWrap } from '../emitters/wrap.ts'
 import { emitFrom } from '../emitters/from.ts'
 import { emitClientUtilsFromNodeMap } from '../emitters/client-utils-v2.ts'
@@ -92,7 +92,7 @@ export async function generateV2(cfg: GenerateConfigV2): Promise<GeneratedFilesV
         grammar: emitGrammar({ grammar: cfg.grammar }),
         types: emitTypesFromNodeMap({ grammar: cfg.grammar, nodeMap }),
         templatesYaml: emitTemplatesYaml({ grammar: cfg.grammar, nodes: nodes as any, grammarSha: '' }),
-        factories: emitFactories({ grammar: cfg.grammar, nodes: nodes as any }),
+        factories: emitFactoriesFromNodeMap({ grammar: cfg.grammar, nodeMap }),
         wrap: emitWrap({ grammar: cfg.grammar, nodes: nodes as any }),
         utils: emitClientUtilsFromNodeMap({ nodeMap }),
         from: emitFrom({ grammar: cfg.grammar, nodes: nodes as any }),
