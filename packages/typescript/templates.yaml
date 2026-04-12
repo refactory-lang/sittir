@@ -4,8 +4,20 @@ grammarSha: ""
 rules:
   program:
     template: $HASH_BANG_LINE $STATEMENTS
+  export_statement_form_0:
+    template: export*$$$CHILDREN
+  export_statement_export:
+    template: export type $$$CHILDREN
+  export_statement_export2:
+    template: export=$$$CHILDREN
+  export_statement_export3:
+    template: export as namespace $$$CHILDREN
   export_statement:
-    template: export $DECLARATION $SOURCE
+    variants:
+      form_0: export*$$$CHILDREN
+      export: export type $$$CHILDREN
+      export2: export=$$$CHILDREN
+      export3: export as namespace $$$CHILDREN
   namespace_export:
     template: "*as $$$CHILDREN"
   export_clause:
@@ -18,17 +30,8 @@ rules:
     template: $$$CHILDREN
   import_statement:
     template: import $IMPORT_CLAUSE $FROM_CLAUSE $IMPORT_ATTRIBUTE $SEMICOLON
-  import_clause_namespace_import:
-    template: $$$CHILDREN
-  import_clause_named_imports:
-    template: $$$CHILDREN
-  import_clause_default_import:
-    template: $DEFAULT_IMPORT $NAMED_IMPORTS
   import_clause:
-    variants:
-      namespace_import: $$$CHILDREN
-      named_imports: $$$CHILDREN
-      default_import: $DEFAULT_IMPORT $NAMED_IMPORTS
+    template: $$$CHILDREN
   _from_clause:
     template: from $SOURCE
   namespace_import:
@@ -153,14 +156,8 @@ rules:
     template: $CLASS_HERITAGE class $NAME $TYPE_PARAMETERS $$$CHILDREN $BODY
   class_declaration:
     template: $CLASS_HERITAGE class $NAME $TYPE_PARAMETERS $AUTOMATIC_SEMICOLON $BODY $$$CHILDREN
-  class_heritage_extends_clause:
-    template: $EXTENDS_CLAUSE $IMPLEMENTS_CLAUSE
-  class_heritage_implements_clause:
-    template: $$$CHILDREN
   class_heritage:
-    variants:
-      extends_clause: $EXTENDS_CLAUSE $IMPLEMENTS_CLAUSE
-      implements_clause: $$$CHILDREN
+    template: $$$CHILDREN
   function_expression:
     template: async function $NAME $$$CHILDREN $BODY
   function_declaration:

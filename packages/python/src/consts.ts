@@ -169,6 +169,7 @@ export const LEAF_KINDS = [
   'or',
   'pass',
   'pass_statement',
+  'print',
   'raise',
   'return',
   'true',
@@ -224,6 +225,7 @@ export const KEYWORDS = [
   'pass',
   'pass_statement',
   'positional_separator',
+  'print',
   'raise',
   'return',
   'true',
@@ -573,7 +575,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'primary_expression': [
   ],
   'print_statement': [
-    { name: 'chevron', required: true, multiple: false },
     { name: 'argument', required: true, multiple: true },
   ],
   'raise_statement': [

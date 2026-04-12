@@ -375,6 +375,7 @@ export type _Config_MutPattern = Assert<Extends<ConfigOf<MutPattern>, MutPattern
 export type _Config_RefPattern = Assert<Extends<ConfigOf<RefPattern>, RefPatternConfig>>;
 export type _Config_CapturedPattern = Assert<Extends<ConfigOf<CapturedPattern>, CapturedPatternConfig>>;
 export type _Config_ReferencePattern = Assert<Extends<ConfigOf<ReferencePattern>, ReferencePatternConfig>>;
+export type _Config_OrPattern = Assert<Extends<ConfigOf<OrPattern>, OrPatternConfig>>;
 export type _Config_NegativeLiteral = Assert<Extends<ConfigOf<NegativeLiteral>, NegativeLiteralConfig>>;
 export type _Config_StringLiteral = Assert<Extends<ConfigOf<StringLiteral>, StringLiteralConfig>>;
 export type _Config_RawStringLiteral = Assert<Extends<ConfigOf<RawStringLiteral>, RawStringLiteralConfig>>;

@@ -83,13 +83,13 @@ describe('aliased_import', () => {
 });
 
 describe('print_statement', () => {
-  it('print form produces correct type', () => {
-    const node = ir.printStatement.print({ chevron: { type: 'chevron', text: 'test' } as any, argument: [] });
+  it('factory produces correct type', () => {
+    const node = ir.printStatement({ argument: [] });
     expect(node.type).toBe('print_statement');
   });
-  it('print2 form produces correct type', () => {
-    const node = ir.printStatement.print2({ chevron: 'test' as any });
-    expect(node.type).toBe('print_statement');
+  it('render produces non-empty string', () => {
+    const node = ir.printStatement({ argument: [] });
+    expect(node.render().length).toBeGreaterThan(0);
   });
 });
 

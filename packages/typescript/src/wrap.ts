@@ -296,10 +296,7 @@ const _wrapTable: Record<string, (data: AnyNodeData, tree: TreeHandle) => unknow
   'string_fragment': (d) => d,
   'this_type': (d) => d,
   'type_identifier': (d) => d,
-  'export': (d) => d,
-  'default': (d) => d,
   'as': (d) => d,
-  'namespace': (d) => d,
   'typeof': (d) => d,
   'from': (d) => d,
   'with': (d) => d,
@@ -323,6 +320,7 @@ const _wrapTable: Record<string, (data: AnyNodeData, tree: TreeHandle) => unknow
   'return': (d) => d,
   'throw': (d) => d,
   'case': (d) => d,
+  'default': (d) => d,
   'catch': (d) => d,
   'finally': (d) => d,
   'yield': (d) => d,
@@ -345,6 +343,7 @@ const _wrapTable: Record<string, (data: AnyNodeData, tree: TreeHandle) => unknow
   'extends': (d) => d,
   'implements': (d) => d,
   'global': (d) => d,
+  'namespace': (d) => d,
   'interface': (d) => d,
   'enum': (d) => d,
   'public': (d) => d,
@@ -374,13 +373,11 @@ export function wrapProgram(data: AnyNodeData, tree: TreeHandle): unknown {
 }
 
 export function wrapExportStatement(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'declaration', ["export_clause","expression","identifier"]);
-  promoteNamed(data, 'source', ["_automatic_semicolon","_from_clause","declaration"]);
   return {
     ...data,
+    get decorator() { return drillInAll(data.fields?.['decorator'], tree); },
     get declaration() { return drillIn(data.fields?.['declaration'], tree); },
-    get source() { return drillIn(data.fields?.['source'], tree); },
-    get child() { return drillIn(data.children?.[0], tree); },
+    get value() { return drillIn(data.fields?.['value'], tree); },
   };
 }
 
@@ -441,12 +438,11 @@ export function wrapImportStatement(data: AnyNodeData, tree: TreeHandle): unknow
 }
 
 export function wrapImportClause(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteNamed(data, 'default_import', ["identifier"]);
-  promoteFirstAnon(data, 'named_imports');
   return {
     ...data,
-    get defaultImport() { return drillIn(data.fields?.['default_import'], tree); },
-    get namedImports() { return drillIn(data.fields?.['named_imports'], tree); },
+    get namespaceImport() { return drillIn(data.fields?.['namespaceImport'], tree); },
+    get namedImports() { return drillIn(data.fields?.['namedImports'], tree); },
+    get importIdentifier() { return drillIn(data.fields?.['importIdentifier'], tree); },
   };
 }
 
@@ -733,8 +729,8 @@ export function wrapExpression(data: AnyNodeData, tree: TreeHandle): unknown {
     get satisfiesExpression() { return drillIn(data.fields?.['satisfiesExpression'], tree); },
     get instantiationExpression() { return drillIn(data.fields?.['instantiationExpression'], tree); },
     get internalModule() { return drillIn(data.fields?.['internalModule'], tree); },
-    get typeAssertion() { return drillIn(data.fields?.['typeAssertion'], tree); },
     get primaryExpression() { return drillIn(data.fields?.['primaryExpression'], tree); },
+    get jsxElement() { return drillIn(data.fields?.['jsxElement'], tree); },
     get assignmentExpression() { return drillIn(data.fields?.['assignmentExpression'], tree); },
     get augmentedAssignmentExpression() { return drillIn(data.fields?.['augmentedAssignmentExpression'], tree); },
     get awaitExpression() { return drillIn(data.fields?.['awaitExpression'], tree); },
@@ -927,12 +923,10 @@ export function wrapClassDeclaration(data: AnyNodeData, tree: TreeHandle): unkno
 }
 
 export function wrapClassHeritage(data: AnyNodeData, tree: TreeHandle): unknown {
-  promote(data, 'extends_clause');
-  promote(data, 'implements_clause');
   return {
     ...data,
-    get extendsClause() { return drillIn(data.fields?.['extends_clause'], tree); },
-    get implementsClause() { return drillIn(data.fields?.['implements_clause'], tree); },
+    get extendsClause() { return drillIn(data.fields?.['extendsClause'], tree); },
+    get implementsClause() { return drillIn(data.fields?.['implementsClause'], tree); },
   };
 }
 

@@ -215,13 +215,10 @@ describe('Evaluate — DSL functions', () => {
     })
 
     describe('transform — sub-rule modification', () => {
-        // transform() uses STRUCTURAL positions: patches count past
-        // anonymous-string delimiters so the author can target "the Nth
-        // named member" without having to see the parser-internal raw
-        // layout. Here:
-        //
-        //   raw layout:        '{'  block  params  '}'
-        //   structural index:        0      1
+        // transform() uses RAW positions: patches target members by their
+        // literal index in the seq, including anonymous-string delimiters
+        // and already-labeled field wrappers. The whole point is that the
+        // author can add a name to ANY position — named or unnamed.
         const original: any = {
             type: 'seq',
             members: [
@@ -233,9 +230,8 @@ describe('Evaluate — DSL functions', () => {
         }
 
         it('wraps a positional member with a field via numeric index', () => {
-            // Structural position 0 targets `block` (raw index 1).
             const result = transform(original, {
-                0: field('body', { type: 'symbol', name: 'block' }),
+                1: field('body', { type: 'symbol', name: 'block' }),
             })
             expect(result.type).toBe('seq')
             expect((result as any).members[1]).toEqual({
@@ -248,7 +244,7 @@ describe('Evaluate — DSL functions', () => {
 
         it('preserves members not targeted by patches', () => {
             const result = transform(original, {
-                0: field('body', { type: 'symbol', name: 'block' }),
+                1: field('body', { type: 'symbol', name: 'block' }),
             })
             expect((result as any).members[0]).toEqual({ type: 'string', value: '{' })
             expect((result as any).members[2]).toEqual({ type: 'symbol', name: 'params' })
@@ -256,20 +252,16 @@ describe('Evaluate — DSL functions', () => {
         })
 
         it('marks transformed fields with source override', () => {
-            // Structural position 0 targets the first named member (block,
-            // raw index 1).
             const result = transform(original, {
-                0: field('body', { type: 'symbol', name: 'block' }),
+                1: field('body', { type: 'symbol', name: 'block' }),
             })
             expect((result as any).members[1].source).toBe('override')
         })
 
         it('supports multiple patches in one call', () => {
-            // Structural positions 0 and 1 target block and params
-            // (raw indices 1 and 2).
             const result = transform(original, {
-                0: field('body', { type: 'symbol', name: 'block' }),
-                1: field('parameters', { type: 'symbol', name: 'params' }),
+                1: field('body', { type: 'symbol', name: 'block' }),
+                2: field('parameters', { type: 'symbol', name: 'params' }),
             })
             expect((result as any).members[1].name).toBe('body')
             expect((result as any).members[2].name).toBe('parameters')

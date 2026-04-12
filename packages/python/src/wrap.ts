@@ -233,6 +233,7 @@ const _wrapTable: Record<string, (data: AnyNodeData, tree: TreeHandle) => unknow
   'from': (d) => d,
   '__future__': (d) => d,
   'as': (d) => d,
+  'print': (d) => d,
   'assert': (d) => d,
   'return': (d) => d,
   'del': (d) => d,
@@ -338,11 +339,10 @@ export function wrapAliasedImport(data: AnyNodeData, tree: TreeHandle): unknown 
 }
 
 export function wrapPrintStatement(data: AnyNodeData, tree: TreeHandle): unknown {
-  promote(data, 'chevron');
   return {
     ...data,
     get argument() { return drillInAll(data.fields?.['argument'], tree); },
-    get chevron() { return drillIn(data.fields?.['chevron'], tree); },
+    get child() { return drillIn(data.children?.[0], tree); },
   };
 }
 

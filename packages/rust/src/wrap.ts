@@ -1066,12 +1066,8 @@ export function wrapScopedTypeIdentifier(data: AnyNodeData, tree: TreeHandle): u
 }
 
 export function wrapRangeExpression(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteFirst(data, 'start');
-  promoteFirstAnon(data, 'end');
   return {
     ...data,
-    get start() { return drillIn(data.fields?.['start'], tree); },
-    get end() { return drillIn(data.fields?.['end'], tree); },
     get child() { return drillIn(data.children?.[0], tree); },
   };
 }
@@ -1552,12 +1548,9 @@ export function wrapReferencePattern(data: AnyNodeData, tree: TreeHandle): unkno
 }
 
 export function wrapOrPattern(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteFirst(data, 'left');
-  promoteFirst(data, 'right');
   return {
     ...data,
-    get left() { return drillIn(data.fields?.['left'], tree); },
-    get right() { return drillIn(data.fields?.['right'], tree); },
+    get child() { return drillIn(data.children?.[0], tree); },
   };
 }
 

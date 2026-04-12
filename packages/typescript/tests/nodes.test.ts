@@ -22,13 +22,21 @@ describe('hash_bang_line', () => {
 });
 
 describe('export_statement', () => {
-  it('factory produces correct type', () => {
-    const node = ir.exportStatement({ declaration: { type: 'export_clause', text: 'test' } as any, source: { type: '_semicolon', text: 'test' } as any });
+  it('form_0 form produces correct type', () => {
+    const node = ir.exportStatement.form_0({ decorator: [], declaration: { type: 'declaration', text: 'test' } as any, value: { type: 'expression', text: 'test' } as any });
     expect(node.type).toBe('export_statement');
   });
-  it('render produces non-empty string', () => {
-    const node = ir.exportStatement({ declaration: { type: 'export_clause', text: 'test' } as any, source: { type: '_semicolon', text: 'test' } as any });
-    expect(node.render().length).toBeGreaterThan(0);
+  it('export form produces correct type', () => {
+    const node = ir.exportStatement.export({});
+    expect(node.type).toBe('export_statement');
+  });
+  it('export2 form produces correct type', () => {
+    const node = ir.exportStatement.export2({});
+    expect(node.type).toBe('export_statement');
+  });
+  it('export3 form produces correct type', () => {
+    const node = ir.exportStatement.export3({});
+    expect(node.type).toBe('export_statement');
   });
 });
 
@@ -84,16 +92,8 @@ describe('import_statement', () => {
 });
 
 describe('import_clause', () => {
-  it('namespace_import form produces correct type', () => {
-    const node = ir.importClause.namespace_import({});
-    expect(node.type).toBe('import_clause');
-  });
-  it('named_imports form produces correct type', () => {
-    const node = ir.importClause.named_imports({});
-    expect(node.type).toBe('import_clause');
-  });
-  it('default_import form produces correct type', () => {
-    const node = ir.importClause.default_import({ defaultImport: { type: '_import_identifier', text: 'test' } as any, namedImports: 'test' as any });
+  it('factory produces correct type', () => {
+    const node = ir.importClause();
     expect(node.type).toBe('import_clause');
   });
 });
@@ -609,12 +609,8 @@ describe('class_declaration', () => {
 });
 
 describe('class_heritage', () => {
-  it('extends_clause form produces correct type', () => {
-    const node = ir.classHeritage.extends_clause({ extendsClause: { type: 'extends_clause', text: 'test' } as any, implementsClause: { type: 'implements_clause', text: 'test' } as any });
-    expect(node.type).toBe('class_heritage');
-  });
-  it('implements_clause form produces correct type', () => {
-    const node = ir.classHeritage.implements_clause({});
+  it('factory produces correct type', () => {
+    const node = ir.classHeritage();
     expect(node.type).toBe('class_heritage');
   });
 });

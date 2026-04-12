@@ -157,39 +157,21 @@ export function field(name: string, content?: Input): FieldRule {
  * at that position. Field patches are marked with source: 'override'.
  */
 export function transform(original: Rule, patches: Record<number | string, Rule>): Rule {
-    // For seq: apply patches to members by STRUCTURAL position, i.e. the
-    // Nth non-anonymous-string member. This matches how v1 overrides.json
-    // computed positions (against the simplified rule view where delimiters
-    // were stripped) and keeps the override author's mental model in sync
-    // with the grammar's named children.
+    // For seq: apply patches to members by RAW position. The override
+    // author sees the rule tree as-is, including anonymous string
+    // delimiters and already-labeled field wrappers, and can wrap any
+    // position with a field() — that's the whole point of the primitive
+    // being "add a name to an unnamed entry." No hidden remapping.
     if (original.type === 'seq') {
         const members = [...original.members]
-        // Build a map from structural-index → real-index by counting past
-        // members that are already labeled or not user-addressable:
-        //
-        //   - STRING literals — grammar-internal delimiters/keywords
-        //     (`'struct'`, `'fn'`, `'const'`, `(`, `,`, …). Not a slot.
-        //   - FIELD wrappers — already labeled by the base grammar. An
-        //     override targeting them wouldn't add information.
-        //
-        // The remaining positions are the UNLABELED named members —
-        // typically optional(symbol) or choice-of-symbols — which are
-        // exactly what overrides want to tag with a field name.
-        const structuralToReal: number[] = []
-        for (let i = 0; i < members.length; i++) {
-            const m = members[i]!
-            if (m.type === 'string' || m.type === 'field') continue
-            structuralToReal.push(i)
-        }
         for (const [key, patch] of Object.entries(patches)) {
-            const structuralIndex = Number(key)
-            if (isNaN(structuralIndex) || structuralIndex < 0) continue
-            const realIndex = structuralToReal[structuralIndex]
-            if (realIndex === undefined) {
-                // Out of bounds against the structural view — skip.
+            const index = Number(key)
+            if (isNaN(index) || index < 0 || index >= members.length) {
+                // Skip out-of-bounds patches — the position may have been
+                // computed against a different view of the rule.
                 continue
             }
-            members[realIndex] = resolvePatch(patch, members[realIndex]!)
+            members[index] = resolvePatch(patch, members[index]!)
         }
         return { type: 'seq', members }
     }

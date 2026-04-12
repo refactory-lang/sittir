@@ -709,8 +709,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'value', required: true, multiple: false },
   ],
   'or_pattern': [
-    { name: 'left', required: true, multiple: false },
-    { name: 'right', required: true, multiple: false },
   ],
   'ordered_field_declaration_list': [
     { name: 'attributes', required: true, multiple: false },
@@ -734,8 +732,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'alias', required: true, multiple: false },
   ],
   'range_expression': [
-    { name: 'start', required: true, multiple: false },
-    { name: 'end', required: true, multiple: false },
   ],
   'range_pattern': [
     { name: 'left', required: true, multiple: false },

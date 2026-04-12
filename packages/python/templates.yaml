@@ -20,16 +20,9 @@ rules:
     joinBy: ","
   aliased_import:
     template: $NAME as $ALIAS
-  print_statement_print:
-    template: print $CHEVRON $ARGUMENT,
-    joinBy: ","
-  print_statement_print2:
-    template: print $CHEVRON,
-    joinBy: ","
   print_statement:
-    variants:
-      print: print $CHEVRON $ARGUMENT,
-      print2: print $CHEVRON,
+    template: print $$$CHILDREN $ARGUMENT,
+    joinBy: ","
   chevron:
     template: ">>$EXPRESSION"
   assert_statement:

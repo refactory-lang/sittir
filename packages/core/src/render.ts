@@ -109,7 +109,16 @@ function render(node: AnyNodeData, ctx: InternalRenderContext): string {
 		const clauseKey = `${fieldKey}`;
 
 		// 1. Clause reference (e.g., $RETURN_TYPE_CLAUSE → return_type_clause key in rule)
-		if (ruleObj && clauseKey in ruleObj && clauseKey !== 'template' && clauseKey !== 'joinBy') {
+		// Exclude rule-object meta keys and require the value be a string template.
+		if (
+			ruleObj
+			&& clauseKey in ruleObj
+			&& clauseKey !== 'template'
+			&& clauseKey !== 'joinBy'
+			&& clauseKey !== 'variants'
+			&& clauseKey !== 'detect'
+			&& typeof ruleObj[clauseKey] === 'string'
+		) {
 			const clauseTemplate = ruleObj[clauseKey] as string;
 			return renderClause(clauseTemplate, node, ctx, consumed);
 		}

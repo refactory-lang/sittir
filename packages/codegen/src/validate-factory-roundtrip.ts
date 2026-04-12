@@ -307,14 +307,20 @@ export async function validateFactoryRoundTrip(
 			const handle = treeHandle(tree1);
 			const readData = readNode(handle, node1.id, routing);
 
-			// Direct factory call with readNode fields — no from() resolver
+			// Direct factory call with readNode fields — no from() resolver.
+			// Children-only factories take positional rest-params; spread
+			// NAMED children only, otherwise the first anonymous delimiter
+			// (`(`, `[`, etc.) binds to the first positional slot and the
+			// real child never reaches the factory.
 			const factory = factoryMap[kind];
 			let factoryData: AnyNodeData;
 			if (factory) {
 				try {
-					// Children-only factories use rest params — spread children directly
 					if (!readData.fields && readData.children) {
-						factoryData = (factory as (...args: unknown[]) => AnyNodeData)(...readData.children);
+						const namedChildren = (readData.children ?? []).filter(
+							(c: any) => c?.named !== false,
+						);
+						factoryData = (factory as (...args: unknown[]) => AnyNodeData)(...namedChildren);
 					} else {
 						factoryData = factory(readData.fields ?? {}) as AnyNodeData;
 					}

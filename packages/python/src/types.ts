@@ -23,6 +23,7 @@ export type LeafStringMap = {
   from: "from";
   __future__: "__future__";
   as: "as";
+  print: "print";
   assert: "assert";
   return: "return";
   del: "del";
@@ -196,6 +197,7 @@ export const enum SyntaxKind {
   From = 'from',
   HiddenUFutureU = '__future__',
   As = 'as',
+  Print = 'print',
   Assert = 'assert',
   Return = 'return',
   Del = 'del',
@@ -380,22 +382,14 @@ export interface AliasedImport {
   };
 }
 
-export interface PrintStatementPrint {
+export interface PrintStatement {
   readonly type: 'print_statement';
   readonly fields: {
-    readonly chevron: Chevron;
     readonly argument: readonly (Expression)[];
   };
+  readonly children: Chevron;
 }
 
-export interface PrintStatementPrint2 {
-  readonly type: 'print_statement';
-  readonly fields: {
-    readonly chevron: string;
-  };
-}
-
-export type PrintStatement = PrintStatementPrint | PrintStatementPrint2;
 export interface Chevron {
   readonly type: 'chevron';
   readonly fields: {
@@ -1254,6 +1248,11 @@ export interface As {
   readonly text: "as";
 }
 
+export interface Print {
+  readonly type: 'print';
+  readonly text: "print";
+}
+
 export interface Assert {
   readonly type: 'assert';
   readonly text: "assert";
@@ -1413,9 +1412,7 @@ export type FutureImportStatementConfig = ConfigOf<FutureImportStatement>;
 export type ImportFromStatementConfig = ConfigOf<ImportFromStatement>;
 export type HiddenImportListConfig = ConfigOf<HiddenImportList>;
 export type AliasedImportConfig = ConfigOf<AliasedImport>;
-export type PrintStatementPrintConfig = ConfigOf<PrintStatementPrint>;
-export type PrintStatementPrint2Config = ConfigOf<PrintStatementPrint2>;
-export type PrintStatementConfig = PrintStatementPrintConfig | PrintStatementPrint2Config;
+export type PrintStatementConfig = ConfigOf<PrintStatement>;
 export type ChevronConfig = ConfigOf<Chevron>;
 export type AssertStatementConfig = ConfigOf<AssertStatement>;
 export type ExpressionStatementConfig = ConfigOf<ExpressionStatement>;
@@ -1537,8 +1534,6 @@ export interface ImportFromStatementTree extends TreeNode<'import_from_statement
 export interface HiddenImportListTree extends TreeNode<'_import_list'> {}
 export interface AliasedImportTree extends TreeNode<'aliased_import'> {}
 export interface PrintStatementTree extends TreeNode<'print_statement'> {}
-export interface PrintStatementPrintTree extends TreeNode<'print_statement'> {}
-export interface PrintStatementPrint2Tree extends TreeNode<'print_statement'> {}
 export interface ChevronTree extends TreeNode<'chevron'> {}
 export interface AssertStatementTree extends TreeNode<'assert_statement'> {}
 export interface ExpressionStatementTree extends TreeNode<'expression_statement'> {}
@@ -1670,6 +1665,7 @@ export interface ImportTree extends TreeNode<'import'> {}
 export interface FromTree extends TreeNode<'from'> {}
 export interface HiddenUFutureUTree extends TreeNode<'__future__'> {}
 export interface AsTree extends TreeNode<'as'> {}
+export interface PrintTree extends TreeNode<'print'> {}
 export interface AssertTree extends TreeNode<'assert'> {}
 export interface ReturnTree extends TreeNode<'return'> {}
 export interface DelTree extends TreeNode<'del'> {}
@@ -1713,7 +1709,7 @@ export type FutureImportStatementFromInput = FromInputOf<FutureImportStatement, 
 export type ImportFromStatementFromInput = FromInputOf<ImportFromStatement, LeafScalarMap, LeafStringMap>;
 export type HiddenImportListFromInput = FromInputOf<HiddenImportList, LeafScalarMap, LeafStringMap>;
 export type AliasedImportFromInput = FromInputOf<AliasedImport, LeafScalarMap, LeafStringMap>;
-export type PrintStatementFromInput = FromInputOf<PrintStatementPrint, LeafScalarMap, LeafStringMap> | FromInputOf<PrintStatementPrint2, LeafScalarMap, LeafStringMap>;
+export type PrintStatementFromInput = FromInputOf<PrintStatement, LeafScalarMap, LeafStringMap>;
 export type ChevronFromInput = FromInputOf<Chevron, LeafScalarMap, LeafStringMap>;
 export type AssertStatementFromInput = FromInputOf<AssertStatement, LeafScalarMap, LeafStringMap>;
 export type ExpressionStatementFromInput = FromInputOf<ExpressionStatement, LeafScalarMap, LeafStringMap>;
@@ -2216,6 +2212,7 @@ export interface KindMap {
   'from': From;
   '__future__': HiddenUFutureU;
   'as': As;
+  'print': Print;
   'assert': Assert;
   'return': Return;
   'del': Del;
@@ -2252,7 +2249,6 @@ export interface KindMap {
 }
 
 export interface VariantMap {
-  'print_statement': { print: PrintStatementPrint; print2: PrintStatementPrint2 };
   'assignment': { eq: AssignmentEq; colon: AssignmentColon; colon2: AssignmentColon2 };
 }
 

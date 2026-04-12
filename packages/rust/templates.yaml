@@ -183,7 +183,7 @@ rules:
   scoped_type_identifier:
     template: "$PATH::$NAME"
   range_expression:
-    template: $START $END $$$CHILDREN
+    template: $$$CHILDREN..
   unary_expression:
     template: $OPERAND $$$CHILDREN
   try_expression:
@@ -324,14 +324,8 @@ rules:
     template: $IDENTIFIER@$PATTERN
   reference_pattern:
     template: "&$MUTABLE_SPECIFIER $PATTERN"
-  or_pattern_pipe:
-    template: $LEFT|$RIGHT
-  or_pattern_pipe2:
-    template: "|$LEFT"
   or_pattern:
-    variants:
-      pipe: $LEFT|$RIGHT
-      pipe2: "|$LEFT"
+    template: $$$CHILDREN|
   negative_literal:
     template: "-$VALUE"
   string_literal:

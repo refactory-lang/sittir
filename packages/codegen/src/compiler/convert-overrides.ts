@@ -9,6 +9,8 @@
 
 import { readFileSync, writeFileSync } from 'node:fs'
 import { resolve, relative } from 'node:path'
+import { evaluate } from './evaluate.ts'
+import type { Rule } from './rule.ts'
 
 interface OverrideField {
     types: { type: string; named: boolean }[]
@@ -35,6 +37,30 @@ const overridesTsPath = resolve(repoRoot, `packages/${grammarName}/overrides.ts`
 
 const overrides: Record<string, OverrideEntry> = JSON.parse(readFileSync(overridesJsonPath, 'utf-8'))
 
+// Load the base grammar so we can translate structural positions (the v1
+// convention used when overrides.json was generated) into raw positions
+// that the new transform() primitive operates on. transform() intentionally
+// takes raw indices so users can add a field name to an unnamed entry.
+const raw = await evaluate(grammarJsPath)
+
+/**
+ * Convert a "structural position N" — the Nth member that is neither a
+ * string literal nor an already-labeled field() wrapper — into the
+ * corresponding raw member index in the actual rule tree.
+ */
+function structuralToRaw(kind: string, structuralPos: number): number | null {
+    const rule = raw.rules[kind]
+    if (!rule || rule.type !== 'seq') return null
+    let seen = 0
+    for (let i = 0; i < rule.members.length; i++) {
+        const m = rule.members[i]!
+        if (m.type === 'string' || m.type === 'field') continue
+        if (seen === structuralPos) return i
+        seen++
+    }
+    return null
+}
+
 // Compute relative path from packages/<grammar>/ to the grammar.js
 const grammarRelPath = relative(resolve(repoRoot, `packages/${grammarName}`), grammarJsPath)
 
@@ -56,18 +82,29 @@ const lines: string[] = [
     `    rules: {`,
 ]
 
+let skippedOutOfBounds = 0
 for (const [kind, entry] of Object.entries(overrides)) {
     const fields = entry.fields
     if (!fields || Object.keys(fields).length === 0) continue
 
-    // Build the patches object: { position: field(name) }
+    // Build the patches object: { rawIndex: field(name) }. overrides.json
+    // positions are the v1 "structural" view; translate each to a raw
+    // member index against the v2 rule tree before emitting.
     const patches: string[] = []
     for (const [fieldName, info] of Object.entries(fields)) {
-        // Skip position -1 (anonymous-only overrides — these match tokens, not positional children)
+        // Skip position -1 (anonymous-only overrides — these match tokens,
+        // not positional children).
         if (info.position < 0) continue
+        const rawIndex = structuralToRaw(kind, info.position)
+        if (rawIndex === null) {
+            skippedOutOfBounds++
+            continue
+        }
         const comment = info.types.map(t => t.type).join(' | ')
-        patches.push(`            ${info.position}: field('${fieldName}'), // ${comment}`)
+        patches.push(`            ${rawIndex}: field('${fieldName}'), // ${comment} [struct=${info.position}]`)
     }
+
+    if (patches.length === 0) continue
 
     lines.push(`        // ${kind}: ${Object.keys(fields).length} field(s)`)
     lines.push(`        ${kind}: ($, original) => transform(original, {`)

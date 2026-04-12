@@ -779,12 +779,8 @@ describe('scoped_type_identifier', () => {
 
 describe('range_expression', () => {
   it('factory produces correct type', () => {
-    const node = ir.rangeExpression({ start: { type: '_expression', text: 'test' } as any, end: { type: '..', text: 'test' } as any });
+    const node = ir.rangeExpression();
     expect(node.type).toBe('range_expression');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.rangeExpression({ start: { type: '_expression', text: 'test' } as any, end: { type: '..', text: 'test' } as any });
-    expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
@@ -1350,12 +1346,8 @@ describe('reference_pattern', () => {
 });
 
 describe('or_pattern', () => {
-  it('pipe form produces correct type', () => {
-    const node = ir.orPattern.pipe({ left: { type: '_pattern', text: 'test' } as any, right: { type: '_pattern', text: 'test' } as any });
-    expect(node.type).toBe('or_pattern');
-  });
-  it('pipe2 form produces correct type', () => {
-    const node = ir.orPattern.pipe2({ left: { type: '_pattern', text: 'test' } as any });
+  it('factory produces correct type', () => {
+    const node = ir.orPattern();
     expect(node.type).toBe('or_pattern');
   });
 });

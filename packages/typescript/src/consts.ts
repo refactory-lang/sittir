@@ -197,7 +197,6 @@ export const LEAF_KINDS = [
   'else',
   'enum',
   'escape_sequence',
-  'export',
   'extends',
   'false',
   'finally',
@@ -291,7 +290,6 @@ export const KEYWORDS = [
   'empty_statement',
   'enum',
   'existential_type',
-  'export',
   'extends',
   'false',
   'finally',
@@ -525,8 +523,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'body', required: true, multiple: false },
   ],
   'class_heritage': [
-    { name: 'extendsClause', required: true, multiple: false },
-    { name: 'implementsClause', required: true, multiple: false },
   ],
   'class_static_block': [
     { name: 'body', required: true, multiple: false },
@@ -598,8 +594,9 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'alias', required: false, multiple: false },
   ],
   'export_statement': [
+    { name: 'decorator', required: true, multiple: true },
     { name: 'declaration', required: true, multiple: false },
-    { name: 'source', required: true, multiple: false },
+    { name: 'value', required: true, multiple: false },
   ],
   'expression': [
   ],
@@ -675,8 +672,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'object', required: true, multiple: false },
   ],
   'import_clause': [
-    { name: 'defaultImport', required: true, multiple: false },
-    { name: 'namedImports', required: true, multiple: false },
   ],
   'import_require_clause': [
     { name: 'identifier', required: true, multiple: false },

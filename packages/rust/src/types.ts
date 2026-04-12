@@ -1155,10 +1155,6 @@ export interface ScopedTypeIdentifier {
 
 export interface RangeExpression {
   readonly type: 'range_expression';
-  readonly fields: {
-    readonly start: HiddenExpression;
-    readonly end: Dotdot | Ellipsis | Dotdoteq;
-  };
   readonly children: HiddenExpression;
 }
 
@@ -1592,22 +1588,11 @@ export interface ReferencePattern {
   };
 }
 
-export interface OrPatternPipe {
+export interface OrPattern {
   readonly type: 'or_pattern';
-  readonly fields: {
-    readonly left: HiddenPattern;
-    readonly right: HiddenPattern;
-  };
+  readonly children: HiddenPattern;
 }
 
-export interface OrPatternPipe2 {
-  readonly type: 'or_pattern';
-  readonly fields: {
-    readonly left: HiddenPattern;
-  };
-}
-
-export type OrPattern = OrPatternPipe | OrPatternPipe2;
 export interface NegativeLiteral {
   readonly type: 'negative_literal';
   readonly fields: {
@@ -2267,9 +2252,7 @@ export type RangePatternConfig = RangePatternLeftConfig | RangePatternRightConfi
 export type RefPatternConfig = ConfigOf<RefPattern>;
 export type CapturedPatternConfig = ConfigOf<CapturedPattern>;
 export type ReferencePatternConfig = ConfigOf<ReferencePattern>;
-export type OrPatternPipeConfig = ConfigOf<OrPatternPipe>;
-export type OrPatternPipe2Config = ConfigOf<OrPatternPipe2>;
-export type OrPatternConfig = OrPatternPipeConfig | OrPatternPipe2Config;
+export type OrPatternConfig = ConfigOf<OrPattern>;
 export type NegativeLiteralConfig = ConfigOf<NegativeLiteral>;
 export type StringLiteralConfig = ConfigOf<StringLiteral>;
 export type RawStringLiteralConfig = ConfigOf<RawStringLiteral>;
@@ -2421,8 +2404,6 @@ export interface RefPatternTree extends TreeNode<'ref_pattern'> {}
 export interface CapturedPatternTree extends TreeNode<'captured_pattern'> {}
 export interface ReferencePatternTree extends TreeNode<'reference_pattern'> {}
 export interface OrPatternTree extends TreeNode<'or_pattern'> {}
-export interface OrPatternPipeTree extends TreeNode<'or_pattern'> {}
-export interface OrPatternPipe2Tree extends TreeNode<'or_pattern'> {}
 export interface NegativeLiteralTree extends TreeNode<'negative_literal'> {}
 export interface StringLiteralTree extends TreeNode<'string_literal'> {}
 export interface RawStringLiteralTree extends TreeNode<'raw_string_literal'> {}
@@ -2659,7 +2640,7 @@ export type RangePatternFromInput = FromInputOf<RangePatternLeft, LeafScalarMap,
 export type RefPatternFromInput = FromInputOf<RefPattern, LeafScalarMap, LeafStringMap>;
 export type CapturedPatternFromInput = FromInputOf<CapturedPattern, LeafScalarMap, LeafStringMap>;
 export type ReferencePatternFromInput = FromInputOf<ReferencePattern, LeafScalarMap, LeafStringMap>;
-export type OrPatternFromInput = FromInputOf<OrPatternPipe, LeafScalarMap, LeafStringMap> | FromInputOf<OrPatternPipe2, LeafScalarMap, LeafStringMap>;
+export type OrPatternFromInput = FromInputOf<OrPattern, LeafScalarMap, LeafStringMap>;
 export type NegativeLiteralFromInput = FromInputOf<NegativeLiteral, LeafScalarMap, LeafStringMap>;
 export type StringLiteralFromInput = FromInputOf<StringLiteral, LeafScalarMap, LeafStringMap>;
 export type RawStringLiteralFromInput = FromInputOf<RawStringLiteral, LeafScalarMap, LeafStringMap>;
@@ -3255,7 +3236,6 @@ export interface VariantMap {
   'closure_expression': { body: ClosureExpressionBody; body2: ClosureExpressionBody2 };
   'field_pattern': { name: FieldPatternName; colon: FieldPatternColon };
   'range_pattern': { left: RangePatternLeft; right: RangePatternRight };
-  'or_pattern': { pipe: OrPatternPipe; pipe2: OrPatternPipe2 };
 }
 
 export interface ConfigMap {
