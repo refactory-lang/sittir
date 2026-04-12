@@ -13,9 +13,13 @@ import { validateRoundTrip, formatRoundTripReport } from './validate-roundtrip.t
 import { validateFactoryRoundTrip, formatFactoryRoundTripReport } from './validate-factory-roundtrip.ts';
 import { validateFrom, formatFromReport } from './validate-from.ts';
 import { join, dirname } from 'node:path';
-import { generate } from './index.ts';
-import type { CodegenConfig } from './index.ts';
 import { generateV2 } from './compiler/generate.ts';
+
+interface CodegenConfig {
+	grammar: string;
+	nodes?: string[];
+	outputDir: string;
+}
 
 interface CliArgs {
 	grammar?: string;
@@ -105,10 +109,8 @@ const config: CodegenConfig = {
 	outputDir: cliArgs.outputDir!,
 };
 
-console.log(`Generating ${config.grammar} IR${cliArgs.v2 ? ' (v2 pipeline)' : ''}...`);
-const result = cliArgs.v2
-	? await generateV2({ grammar: config.grammar, nodes: config.nodes, outputDir: config.outputDir })
-	: generate(config);
+console.log(`Generating ${config.grammar} IR...`);
+const result = await generateV2({ grammar: config.grammar, nodes: config.nodes, outputDir: config.outputDir });
 
 const outDir = cliArgs.outputDir;
 
