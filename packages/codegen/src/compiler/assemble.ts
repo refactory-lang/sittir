@@ -16,6 +16,7 @@ import {
     AssembledBranch, AssembledContainer, AssembledPolymorph,
     AssembledLeaf, AssembledKeyword, AssembledToken, AssembledEnum,
     AssembledSupertype, AssembledGroup,
+    deriveFields, deriveChildren,
 } from './rule.ts'
 
 // ---------------------------------------------------------------------------
@@ -336,90 +337,6 @@ export function simplifyRule(rule: Rule): Rule {
 // extractFields — walk rule tree, collect fields with derived metadata
 // ---------------------------------------------------------------------------
 
-export function extractFields(rule: Rule, isOptional = false, isRepeated = false): AssembledField[] {
-    switch (rule.type) {
-        case 'field': {
-            const contentTypes = deriveContentTypes(rule.content)
-            const { propertyName, paramName } = nameField(rule.name)
-            return [{
-                name: rule.name,
-                propertyName,
-                paramName,
-                required: !isOptional,
-                multiple: isRepeated,
-                contentTypes,
-                source: rule.source ?? 'grammar',
-                projection: { typeName: '', kinds: contentTypes },
-            }]
-        }
-        case 'seq':
-            return rule.members.flatMap(m => extractFields(m, isOptional, isRepeated))
-        case 'optional':
-            return extractFields(rule.content, true, isRepeated)
-        case 'repeat':
-            return extractFields(rule.content, isOptional, true)
-        case 'choice':
-            return rule.members.flatMap(m => extractFields(m, isOptional, isRepeated))
-        case 'clause':
-            return extractFields(rule.content, true, isRepeated)
-        case 'variant':
-            return extractFields(rule.content, isOptional, isRepeated)
-        case 'group':
-            return extractFields(rule.content, isOptional, isRepeated)
-        default:
-            return []
-    }
-}
-
-// ---------------------------------------------------------------------------
-// extractChildren — collect non-field named children
-// ---------------------------------------------------------------------------
-
-export function extractChildren(rule: Rule): AssembledChild[] {
-    // For now, children are symbols not wrapped in fields
-    const children: AssembledChild[] = []
-    walkForChildren(rule, children, false, false)
-    return children
-}
-
-function walkForChildren(rule: Rule, out: AssembledChild[], isOptional: boolean, isRepeated: boolean): void {
-    switch (rule.type) {
-        case 'symbol':
-            if (!rule.hidden) {
-                const { propertyName } = nameField(rule.name)
-                out.push({
-                    name: rule.name,
-                    propertyName,
-                    required: !isOptional,
-                    multiple: isRepeated,
-                    contentTypes: [rule.name],
-                })
-            }
-            break
-        case 'seq':
-            for (const m of rule.members) walkForChildren(m, out, isOptional, isRepeated)
-            break
-        case 'optional':
-            walkForChildren(rule.content, out, true, isRepeated)
-            break
-        case 'repeat':
-            walkForChildren(rule.content, out, isOptional, true)
-            break
-        case 'choice':
-            for (const m of rule.members) walkForChildren(m, out, isOptional, isRepeated)
-            break
-        case 'field':
-            // Fields are handled by extractFields, not children
-            break
-        case 'variant':
-            walkForChildren(rule.content, out, isOptional, isRepeated)
-            break
-        case 'clause':
-            walkForChildren(rule.content, out, true, isRepeated)
-            break
-    }
-}
-
 // ---------------------------------------------------------------------------
 // extractForms — for polymorphs, each choice branch as a form
 // ---------------------------------------------------------------------------
@@ -428,11 +345,10 @@ function extractForms(rule: Rule, kind: string): AssembledForm[] {
     if (rule.type !== 'choice') return []
 
     const forms: AssembledForm[] = rule.members.map((member, i) => {
-        const content = member.type === 'variant' ? member : member
         const name = member.type === 'variant' ? member.name : `form_${i}`
         const { typeName, factoryName } = nameNode(`${kind}_${name}`)
-        const fields = extractFields(content)
-        const children = extractChildren(content)
+        const fields = deriveFields(member)
+        const children = deriveChildren(member)
 
         return {
             name,
@@ -453,31 +369,6 @@ function extractForms(rule: Rule, kind: string): AssembledForm[] {
 function collapseForms(forms: AssembledForm[]): AssembledForm[] {
     // For now, return as-is — full collapse logic comes in refinement
     return forms
-}
-
-// ---------------------------------------------------------------------------
-// deriveContentTypes — walk field content, collect kind names
-// ---------------------------------------------------------------------------
-
-function deriveContentTypes(rule: Rule): string[] {
-    switch (rule.type) {
-        case 'symbol':
-            return [rule.name]
-        case 'choice':
-            return rule.members.flatMap(m => deriveContentTypes(m))
-        case 'enum':
-            return rule.values
-        case 'supertype':
-            return rule.subtypes
-        case 'field':
-            return deriveContentTypes(rule.content)
-        case 'variant':
-            return deriveContentTypes(rule.content)
-        case 'optional':
-            return deriveContentTypes(rule.content)
-        default:
-            return []
-    }
 }
 
 // ---------------------------------------------------------------------------

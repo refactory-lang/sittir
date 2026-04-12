@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
-import { assemble, classifyNode, simplifyRule, extractFields, nameNode, nameField } from '../compiler/assemble.ts'
+import { assemble, classifyNode, simplifyRule, nameNode, nameField } from '../compiler/assemble.ts'
+import { deriveFields } from '../compiler/rule.ts'
 import type { Rule, OptimizedGrammar, NodeMap, AssembledNode } from '../compiler/rule.ts'
 
 function makeOptimized(rules: Record<string, Rule>, overrides?: Partial<OptimizedGrammar>): OptimizedGrammar {
@@ -165,7 +166,7 @@ describe('Assemble — T027a empty seq after stripping', () => {
     })
 })
 
-describe('Assemble — extractFields', () => {
+describe('Rule — deriveFields', () => {
     it('extracts fields from a seq rule', () => {
         const rule: Rule = {
             type: 'seq',
@@ -175,7 +176,7 @@ describe('Assemble — extractFields', () => {
                 { type: 'field', name: 'body', content: { type: 'symbol', name: 'block' } },
             ],
         }
-        const fields = extractFields(rule)
+        const fields = deriveFields(rule)
         expect(fields).toHaveLength(2)
         expect(fields[0].name).toBe('name')
         expect(fields[1].name).toBe('body')
@@ -188,7 +189,7 @@ describe('Assemble — extractFields', () => {
                 { type: 'field', name: 'x', content: { type: 'symbol', name: 'y' } },
             ],
         }
-        const fields = extractFields(rule)
+        const fields = deriveFields(rule)
         expect(fields[0].required).toBe(true)
     })
 
@@ -197,7 +198,7 @@ describe('Assemble — extractFields', () => {
             type: 'optional',
             content: { type: 'field', name: 'x', content: { type: 'symbol', name: 'y' } },
         }
-        const fields = extractFields(rule)
+        const fields = deriveFields(rule)
         expect(fields[0].required).toBe(false)
     })
 
@@ -206,7 +207,7 @@ describe('Assemble — extractFields', () => {
             type: 'repeat',
             content: { type: 'field', name: 'items', content: { type: 'symbol', name: 'item' } },
         }
-        const fields = extractFields(rule)
+        const fields = deriveFields(rule)
         expect(fields[0].multiple).toBe(true)
     })
 })
