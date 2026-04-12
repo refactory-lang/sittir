@@ -248,9 +248,9 @@ describe('Link — T019a cycle detection', () => {
     })
 })
 
-describe('Link — T016a gray zone (2-4 parent refs)', () => {
+describe('Link — T016a hidden choice classification', () => {
 
-    it('inlines hidden choice with 3 parent refs (below 5 threshold)', () => {
+    it('classifies hidden choice of symbols as supertype', () => {
         const refs: SymbolRef[] = [
             { from: 'a', to: '_helper' },
             { from: 'b', to: '_helper' },
@@ -271,9 +271,7 @@ describe('Link — T016a gray zone (2-4 parent refs)', () => {
             y: { type: 'pattern', value: 'y' },
         }, { references: refs })
         const linked = link(raw)
-        // Should NOT be promoted to supertype (below 5 threshold)
-        expect(linked.rules['_helper'].type).not.toBe('supertype')
-        // Should remain as choice (not promoted)
-        expect(linked.rules['_helper'].type).toBe('choice')
+        // All hidden choices → supertype (Link classifies, Assemble passes through)
+        expect(linked.rules['_helper'].type).toBe('supertype')
     })
 })

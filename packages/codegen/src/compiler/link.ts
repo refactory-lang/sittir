@@ -163,34 +163,9 @@ function classifyHiddenRule(
         return rule
     }
 
-    // Choice of symbols → supertype or inline
+    // Choice → supertype or enum
     if (rule.type === 'choice') {
-        const allSymbols = rule.members.every(m => m.type === 'symbol')
         const allStrings = rule.members.every(m => m.type === 'string')
-
-        if (allSymbols && supertypes.has(name)) {
-            return {
-                type: 'supertype',
-                name,
-                subtypes: rule.members.map(m => (m as any).name),
-                source: 'grammar',
-            } satisfies SupertypeRule
-        }
-
-        if (allSymbols) {
-            // Count parent references to decide: promote or inline
-            const parentCount = references.filter(r => r.to === name).length
-            if (parentCount >= 5) {
-                return {
-                    type: 'supertype',
-                    name,
-                    subtypes: rule.members.map(m => (m as any).name),
-                    source: 'promoted',
-                } satisfies SupertypeRule
-            }
-            // Below threshold: leave as choice (will be inlined at Assemble)
-        }
-
         if (allStrings) {
             return {
                 type: 'enum',
@@ -198,9 +173,19 @@ function classifyHiddenRule(
                 source: 'promoted',
             } satisfies EnumRule
         }
+
+        // Any hidden choice (of symbols, structures, or mixed) → supertype
+        // Grammar-declared supertypes get source: 'grammar', others get 'promoted'
+        const subtypes = collectSubtypeNames(rule)
+        return {
+            type: 'supertype',
+            name,
+            subtypes,
+            source: supertypes.has(name) ? 'grammar' : 'promoted',
+        } satisfies SupertypeRule
     }
 
-    // Seq with fields → group
+    // Seq with fields → group (fields promoted to parent)
     if (rule.type === 'seq') {
         const hasFields = rule.members.some(m => m.type === 'field')
         if (hasFields) {
@@ -212,7 +197,25 @@ function classifyHiddenRule(
         }
     }
 
+    // Other hidden rules survive as-is — Assemble classifies by structure
     return rule
+}
+
+/** Extract concrete kind names from a choice for supertype subtypes */
+function collectSubtypeNames(rule: Rule): string[] {
+    const names: string[] = []
+    if (rule.type === 'choice') {
+        for (const m of rule.members) {
+            if (m.type === 'symbol') names.push(m.name)
+            else if (m.type === 'seq') {
+                // Mixed content — extract symbol references
+                for (const s of m.members) {
+                    if (s.type === 'symbol') names.push(s.name)
+                }
+            }
+        }
+    }
+    return names
 }
 
 // ---------------------------------------------------------------------------
