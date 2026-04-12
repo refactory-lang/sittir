@@ -3,11 +3,11 @@ grammar: rust
 grammarSha: ""
 rules:
   source_file:
-    template: $SHEBANG$STATEMENTS
+    template: $SHEBANG $STATEMENTS
   expression_statement:
     template: $$$CHILDREN;
   macro_definition:
-    template: $RULES$NAME($$$CHILDREN);
+    template: $RULES $NAME($$$CHILDREN);
   macro_rule:
     template: $LEFT=>$RIGHT
   token_tree_pattern:
@@ -27,125 +27,140 @@ rules:
   attribute:
     template: $$$CHILDREN=$VALUE
   mod_item:
-    template: $VISIBILITY_MODIFIER mod$NAME;
+    template: $VISIBILITY_MODIFIER mod $NAME;
   foreign_mod_item:
-    template: $VISIBILITY_MODIFIER$EXTERN_MODIFIER;
+    template: $VISIBILITY_MODIFIER $EXTERN_MODIFIER;
   declaration_list:
     template: "{$$$CHILDREN}"
   struct_item:
-    template: $VISIBILITY_MODIFIER$WHERE_CLAUSE$NAME$TYPE_PARAMETERS$$$CHILDREN$BODY
+    template: $VISIBILITY_MODIFIER $WHERE_CLAUSE $NAME $TYPE_PARAMETERS $$$CHILDREN $BODY
   union_item:
-    template: $VISIBILITY_MODIFIER$WHERE_CLAUSE$NAME$TYPE_PARAMETERS$$$CHILDREN$BODY
+    template: $VISIBILITY_MODIFIER $WHERE_CLAUSE $NAME $TYPE_PARAMETERS $$$CHILDREN $BODY
   enum_item:
-    template: $VISIBILITY_MODIFIER$WHERE_CLAUSE$NAME$TYPE_PARAMETERS$$$CHILDREN$BODY
+    template: $VISIBILITY_MODIFIER $WHERE_CLAUSE $NAME $TYPE_PARAMETERS $$$CHILDREN $BODY
   enum_variant_list:
     template: "{$$$CHILDREN,}"
   enum_variant:
-    template: $VISIBILITY_MODIFIER$NAME$BODY=$VALUE
+    template: $VISIBILITY_MODIFIER $NAME $BODY $VALUE_CLAUSE
+    value: =$VALUE
   field_declaration_list:
     template: "{$$$CHILDREN,}"
   field_declaration:
-    template: "$VISIBILITY_MODIFIER$NAME:$TYPE"
+    template: "$VISIBILITY_MODIFIER $NAME:$TYPE"
   ordered_field_declaration_list:
-    template: $ATTRIBUTES$VISIBILITY_MODIFIER$DECLARATIONS)
+    template: $ATTRIBUTES $VISIBILITY_MODIFIER $DECLARATIONS)
   extern_crate_declaration:
-    template: $VISIBILITY_MODIFIER$CRATE$$$CHILDREN$NAME as$ALIAS;
+    template: $VISIBILITY_MODIFIER $CRATE $$$CHILDREN $NAME $ALIAS_CLAUSE;
+    alias: as $ALIAS
   const_item:
-    template: "$VISIBILITY_MODIFIER const$NAME:$TYPE=$VALUE;"
+    template: "$VISIBILITY_MODIFIER const $NAME:$TYPE $VALUE_CLAUSE;"
+    value: =$VALUE
   static_item:
-    template: "$VISIBILITY_MODIFIER$MUTABLE_SPECIFIER ref$$$CHILDREN$NAME:$TYPE=$VALUE;"
+    template: "$VISIBILITY_MODIFIER $MUTABLE_SPECIFIER ref $$$CHILDREN $NAME:$TYPE $VALUE_CLAUSE;"
+    value: =$VALUE
   type_item:
-    template: $VISIBILITY_MODIFIER$WHERE_CLAUSE$TRAILING_WHERE_CLAUSE$TYPE_PARAMETERS$$$CHILDREN=$TYPE;
+    template: $VISIBILITY_MODIFIER $WHERE_CLAUSE $TRAILING_WHERE_CLAUSE $TYPE_PARAMETERS $$$CHILDREN=$TYPE;
   function_item:
-    template: $VISIBILITY_MODIFIER$FUNCTION_MODIFIERS$WHERE_CLAUSE$NAME$TYPE_PARAMETERS$PARAMETERS->$RETURN_TYPE$$$CHILDREN$BODY
+    template: $VISIBILITY_MODIFIER $FUNCTION_MODIFIERS $WHERE_CLAUSE $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE_CLAUSE $$$CHILDREN $BODY
+    return_type: "->$RETURN_TYPE"
   function_signature_item:
-    template: $VISIBILITY_MODIFIER$FUNCTION_MODIFIERS$WHERE_CLAUSE$NAME$TYPE_PARAMETERS$PARAMETERS->$RETURN_TYPE$$$CHILDREN;
+    template: $VISIBILITY_MODIFIER $FUNCTION_MODIFIERS $WHERE_CLAUSE $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE_CLAUSE $$$CHILDREN;
+    return_type: "->$RETURN_TYPE"
   function_modifiers:
     template: $$$CHILDREN
   where_clause:
-    template: where$$$CHILDREN,
+    template: where $$$CHILDREN,
   where_predicate:
-    template: $LEFT$BOUNDS
+    template: $LEFT $BOUNDS
   impl_item:
-    template: $WHERE_CLAUSE impl$TYPE_PARAMETERS!$TRAIT for$TYPE$$$CHILDREN$BODY
+    template: $WHERE_CLAUSE impl $TYPE_PARAMETERS $TRAIT_CLAUSE $TYPE $$$CHILDREN $BODY
+    trait: "!$TRAIT for"
   trait_item:
-    template: $VISIBILITY_MODIFIER$WHERE_CLAUSE trait$NAME$TYPE_PARAMETERS$BOUNDS$$$CHILDREN$BODY
+    template: $VISIBILITY_MODIFIER $WHERE_CLAUSE trait $NAME $TYPE_PARAMETERS $BOUNDS $$$CHILDREN $BODY
   associated_type:
-    template: $WHERE_CLAUSE$NAME$TYPE_PARAMETERS$BOUNDS$$$CHILDREN;
+    template: $WHERE_CLAUSE $NAME $TYPE_PARAMETERS $BOUNDS $$$CHILDREN;
   trait_bounds:
     template: ":$$$CHILDREN"
   higher_ranked_trait_bound:
-    template: for$TYPE_PARAMETERS$TYPE
+    template: for $TYPE_PARAMETERS $TYPE
   removed_trait_bound:
     template: "?$$$CHILDREN"
   type_parameters:
     template: <$$$CHILDREN,>
   const_parameter:
-    template: "const$NAME:$TYPE=$VALUE"
+    template: "const $NAME:$TYPE $VALUE_CLAUSE"
+    value: =$VALUE
   type_parameter:
-    template: $NAME$BOUNDS=$DEFAULT_TYPE
+    template: $NAME $BOUNDS $DEFAULT_TYPE_CLAUSE
+    default_type: =$DEFAULT_TYPE
   lifetime_parameter:
-    template: $NAME$BOUNDS
+    template: $NAME $BOUNDS
   let_declaration:
-    template: "$MUTABLE_SPECIFIER$$$CHILDREN$PATTERN:$TYPE=$VALUE else$ALTERNATIVE;"
+    template: $MUTABLE_SPECIFIER $$$CHILDREN $PATTERN $TYPE_CLAUSE $VALUE_CLAUSE $ALTERNATIVE_CLAUSE;
+    type: ":$TYPE"
+    value: =$VALUE
+    alternative: else $ALTERNATIVE
   use_declaration:
-    template: $VISIBILITY_MODIFIER use$ARGUMENT;
+    template: $VISIBILITY_MODIFIER use $ARGUMENT;
   scoped_use_list:
     template: "$PATH::$LIST"
   use_list:
     template: "{$$$CHILDREN,}"
   use_as_clause:
-    template: $PATH as$ALIAS
+    template: $PATH as $ALIAS
   use_wildcard:
     template: $PATH*
   parameters:
     template: ($$$CHILDREN _,)
   self_parameter:
-    template: $LIFETIME$MUTABLE_SPECIFIER$SELF$$$CHILDREN
+    template: $LIFETIME $MUTABLE_SPECIFIER $SELF $$$CHILDREN
   variadic_parameter:
-    template: "$MUTABLE_SPECIFIER$PATTERN:..."
+    template: $MUTABLE_SPECIFIER $PATTERN_CLAUSE...
+    pattern: "$PATTERN:"
   parameter:
-    template: "$MUTABLE_SPECIFIER$PATTERN:$TYPE"
+    template: "$MUTABLE_SPECIFIER $PATTERN:$TYPE"
   extern_modifier:
-    template: $STRING_LITERAL$$$CHILDREN
+    template: $STRING_LITERAL $$$CHILDREN
   visibility_modifier:
     template: $$$CHILDREN
   bracketed_type:
     template: <$$$CHILDREN>
   qualified_type:
-    template: $TYPE as$ALIAS
+    template: $TYPE as $ALIAS
   lifetime:
-    template: $IDENTIFIER$$$CHILDREN
+    template: $IDENTIFIER $$$CHILDREN
   array_type:
-    template: "[$ELEMENT;$LENGTH]"
+    template: "[$ELEMENT $LENGTH_CLAUSE]"
+    length: ;$LENGTH
   for_lifetimes:
     template: for<$$$CHILDREN,>
   function_type:
-    template: $FOR_LIFETIMES$FUNCTION_MODIFIERS->$RETURN_TYPE
+    template: $FOR_LIFETIMES $FUNCTION_MODIFIERS $RETURN_TYPE_CLAUSE
+    return_type: "->$RETURN_TYPE"
   tuple_type:
     template: ($$$CHILDREN,)
   generic_function:
     template: "$FUNCTION::$TYPE_ARGUMENTS"
   generic_type:
-    template: $TYPE$TYPE_ARGUMENTS
+    template: $TYPE $TYPE_ARGUMENTS
   generic_type_with_turbofish:
     template: "$TYPE::$TYPE_ARGUMENTS"
   bounded_type:
-    template: $LEFT$RIGHT$$$CHILDREN
+    template: $LEFT $RIGHT $$$CHILDREN
   use_bounds:
     template: use<$$$CHILDREN,>
   type_arguments:
     template: <$$$CHILDREN,>
   type_binding:
-    template: $NAME$TYPE_ARGUMENTS=$TYPE
+    template: $NAME $TYPE_ARGUMENTS=$TYPE
   reference_type:
-    template: $LIFETIME$MUTABLE_SPECIFIER$$$CHILDREN$TYPE
+    template: $LIFETIME $MUTABLE_SPECIFIER $$$CHILDREN $TYPE
   pointer_type:
-    template: $MUTABLE_SPECIFIER const$TYPE
+    template: $MUTABLE_SPECIFIER const $TYPE
   abstract_type:
-    template: $TYPE_PARAMETERS for$$$CHILDREN$TRAIT
+    template: $TYPE_PARAMETERS for $$$CHILDREN $TRAIT
   dynamic_type:
-    template: dyn$TRAIT
+    template: dyn $TRAIT
   macro_invocation:
     template: $TOKEN_TREE!$$$CHILDREN
   delim_token_tree:
@@ -157,27 +172,27 @@ rules:
   scoped_type_identifier:
     template: "$PATH::$NAME"
   range_expression:
-    template: $START$END$$$CHILDREN
+    template: $START $END $$$CHILDREN
   unary_expression:
-    template: $OPERAND$$$CHILDREN
+    template: $OPERAND $$$CHILDREN
   try_expression:
     template: $VALUE?
   reference_expression:
-    template: $MUTABLE_SPECIFIER raw const$VALUE
+    template: $MUTABLE_SPECIFIER raw const $VALUE
   binary_expression:
-    template: $LEFT$OPERATOR$RIGHT
+    template: $LEFT $OPERATOR $RIGHT
   assignment_expression:
     template: $LEFT=$RIGHT
   compound_assignment_expr:
-    template: $LEFT$OPERATOR$RIGHT
+    template: $LEFT $OPERATOR $RIGHT
   type_cast_expression:
-    template: $VALUE as$TYPE
+    template: $VALUE as $TYPE
   return_expression:
-    template: return$$$CHILDREN
+    template: return $$$CHILDREN
   yield_expression:
-    template: yield$$$CHILDREN
+    template: yield $$$CHILDREN
   call_expression:
-    template: $FUNCTION$ARGUMENTS
+    template: $FUNCTION $ARGUMENTS
   arguments:
     template: ($$$CHILDREN,)
   array_expression_semi:
@@ -186,80 +201,79 @@ rules:
     template: $$$CHILDREN,
   array_expression:
     variants:
-      - name: semi
-        template: $$$CHILDREN;$LENGTH
-      - name: form_1
-        template: $$$CHILDREN,
+      semi: $$$CHILDREN;$LENGTH
+      form_1: $$$CHILDREN,
   parenthesized_expression:
     template: ($$$CHILDREN)
   tuple_expression:
-    template: $ATTRIBUTES$FIRST$REST$TRAILING$$$CHILDREN)
+    template: $ATTRIBUTES $FIRST $REST $TRAILING $$$CHILDREN)
   struct_expression:
-    template: $NAME$BODY
+    template: $NAME $BODY
   field_initializer_list:
     template: "{$$$CHILDREN,}"
   shorthand_field_initializer:
-    template: $ATTRIBUTES$IDENTIFIER
+    template: $ATTRIBUTES $IDENTIFIER
   field_initializer:
-    template: "$$$CHILDREN$FIELD:$VALUE"
+    template: "$$$CHILDREN $FIELD:$VALUE"
   base_field_initializer:
     template: ..$$$CHILDREN
   if_expression:
-    template: if$CONDITION$CONSEQUENCE$ALTERNATIVE
+    template: if $CONDITION $CONSEQUENCE $ALTERNATIVE
   let_condition:
-    template: let$PATTERN=$VALUE
+    template: let $PATTERN=$VALUE
   else_clause:
-    template: else$$$CHILDREN
+    template: else $$$CHILDREN
   match_expression:
-    template: match$VALUE$BODY
+    template: match $VALUE $BODY
   match_block:
     template: "{$$$CHILDREN}"
   match_arm:
-    template: $$$CHILDREN$PATTERN=>$VALUE,
+    template: $$$CHILDREN $PATTERN=>$VALUE,
   last_match_arm:
-    template: $$$CHILDREN$PATTERN=>$VALUE,
+    template: $$$CHILDREN $PATTERN=>$VALUE,
   match_pattern:
-    template: $$$CHILDREN if$CONDITION
+    template: $$$CHILDREN $CONDITION_CLAUSE
+    condition: if $CONDITION
   while_expression:
-    template: $LABEL while$CONDITION$BODY
+    template: $LABEL while $CONDITION $BODY
   loop_expression:
-    template: $LABEL loop$BODY
+    template: $LABEL loop $BODY
   for_expression:
-    template: $LABEL for$PATTERN in$VALUE$BODY
+    template: $LABEL for $PATTERN in $VALUE $BODY
   const_block:
-    template: const$BODY
+    template: const $BODY
   closure_expression_body:
-    template: "->$RETURN_TYPE$BODY"
+    template: $RETURN_TYPE_CLAUSE $BODY
+    return_type: "->$RETURN_TYPE"
   closure_expression_body2:
     template: $BODY
   closure_expression:
     variants:
-      - name: body
-        template: "->$RETURN_TYPE$BODY"
-      - name: body2
-        template: $BODY
+      body: $RETURN_TYPE_CLAUSE $BODY
+      body2: $BODY
+    return_type: "->$RETURN_TYPE"
   closure_parameters:
     template: "|$$$CHILDREN|"
   label:
-    template: $IDENTIFIER$$$CHILDREN
+    template: $IDENTIFIER $$$CHILDREN
   break_expression:
-    template: $LABEL$EXPRESSION$$$CHILDREN
+    template: $LABEL $EXPRESSION $$$CHILDREN
   continue_expression:
-    template: $LABEL$$$CHILDREN
+    template: $LABEL $$$CHILDREN
   index_expression:
-    template: "$OBJECT$INDEX$$$CHILDREN]"
+    template: "$OBJECT $INDEX $$$CHILDREN]"
   await_expression:
     template: $$$CHILDREN.await
   field_expression:
     template: $VALUE.$FIELD
   unsafe_block:
-    template: $BLOCK$$$CHILDREN
+    template: $BLOCK $$$CHILDREN
   async_block:
-    template: $BLOCK move$$$CHILDREN
+    template: $BLOCK move $$$CHILDREN
   gen_block:
-    template: $BLOCK move$$$CHILDREN
+    template: $BLOCK move $$$CHILDREN
   try_block:
-    template: $BLOCK$$$CHILDREN
+    template: $BLOCK $$$CHILDREN
   block:
     template: "$LABEL{$$$CHILDREN}"
   generic_pattern:
@@ -278,42 +292,38 @@ rules:
     template: "$NAME:$PATTERN"
   field_pattern:
     variants:
-      - name: name
-        template: $NAME
-      - name: colon
-        template: "$NAME:$PATTERN"
+      name: $NAME
+      colon: "$NAME:$PATTERN"
   mut_pattern:
-    template: $MUTABLE_SPECIFIER$PATTERN
+    template: $MUTABLE_SPECIFIER $PATTERN
   range_pattern_left:
     template: $LEFT...$RIGHT
   range_pattern_right:
     template: ..=$RIGHT
   range_pattern:
     variants:
-      - name: left
-        template: $LEFT...$RIGHT
-      - name: right
-        template: ..=$RIGHT
+      left: $LEFT...$RIGHT
+      right: ..=$RIGHT
   ref_pattern:
-    template: ref$$$CHILDREN
+    template: ref $$$CHILDREN
   captured_pattern:
-    template: $IDENTIFIER$PATTERN$$$CHILDREN
+    template: $IDENTIFIER $PATTERN $$$CHILDREN
   reference_pattern:
-    template: $MUTABLE_SPECIFIER$PATTERN$$$CHILDREN
+    template: $MUTABLE_SPECIFIER $PATTERN $$$CHILDREN
   or_pattern:
-    template: $LEFT$RIGHT$$$CHILDREN
+    template: $LEFT $RIGHT $$$CHILDREN
   negative_literal:
-    template: $VALUE$$$CHILDREN
+    template: $VALUE $$$CHILDREN
   string_literal:
     template: $$$CHILDREN"
   raw_string_literal:
-    template: $RAW_STRING_LITERAL_START$STRING_CONTENT$RAW_STRING_LITERAL_END
+    template: $RAW_STRING_LITERAL_START $STRING_CONTENT $RAW_STRING_LITERAL_END
   comment:
     template: $$$CHILDREN
   line_comment:
-    template: //$$$CHILDREN$DOC
+    template: //$$$CHILDREN $DOC
   block_comment:
-    template: /*$$$CHILDREN$DOC*/
+    template: /*$$$CHILDREN $DOC*/
   _type_identifier:
     template: $$$CHILDREN
   _field_identifier:

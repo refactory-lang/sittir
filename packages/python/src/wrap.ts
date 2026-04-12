@@ -286,8 +286,7 @@ export function wrapModule(data: AnyNodeData, tree: TreeHandle): unknown {
 export function wrapSimpleStatements(data: AnyNodeData, tree: TreeHandle): unknown {
   return {
     ...data,
-    get simpleStatement() { return drillInAll(data.fields?.['simpleStatement'], tree); },
-    get newline() { return drillIn(data.fields?.['newline'], tree); },
+    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   };
 }
 
@@ -434,7 +433,7 @@ export function wrapMatchStatement(data: AnyNodeData, tree: TreeHandle): unknown
   return {
     ...data,
     get subject() { return drillInAll(data.fields?.['subject'], tree); },
-    get body() { return drillIn(data.fields?.['body'], tree); },
+    get body() { return (data.fields?.['body'] as AnyNodeData | undefined)?.text; },
   };
 }
 
@@ -469,7 +468,7 @@ export function wrapWhileStatement(data: AnyNodeData, tree: TreeHandle): unknown
 export function wrapTryStatement(data: AnyNodeData, tree: TreeHandle): unknown {
   promoteFirstAnon(data, 'except_clauses');
   promoteFirstAnon(data, 'else_clause');
-  promoteNamed(data, 'finally_clause', ["_indent","_newline","_simple_statements","block"]);
+  promoteNamed(data, 'finally_clause', ["_simple_statements","block"]);
   return {
     ...data,
     get exceptClauses() { return drillIn(data.fields?.['except_clauses'], tree); },
@@ -645,15 +644,13 @@ export function wrapDecorator(data: AnyNodeData, tree: TreeHandle): unknown {
     ...data,
     get expression() { return drillIn(data.fields?.['expression'], tree); },
     get newline() { return drillIn(data.fields?.['newline'], tree); },
-    get child() { return drillIn(data.children?.[0], tree); },
   };
 }
 
 export function wrapBlock(data: AnyNodeData, tree: TreeHandle): unknown {
   return {
     ...data,
-    get statement() { return drillInAll(data.fields?.['statement'], tree); },
-    get dedent() { return drillIn(data.fields?.['dedent'], tree); },
+    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   };
 }
 

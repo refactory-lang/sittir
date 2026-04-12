@@ -281,16 +281,11 @@ export const enum CompoundStatementKind {
 }
 
 export const enum MatchBlockKind {
-  Indent = '_indent',
-  Dedent = '_dedent',
-  Newline = '_newline',
 }
 
 export const enum SuiteKind {
   HiddenSimpleStatements = '_simple_statements',
-  Indent = '_indent',
   Block = 'block',
-  Newline = '_newline',
 }
 
 export const enum SimplePatternKind {
@@ -343,7 +338,7 @@ export interface Module {
 
 export interface HiddenSimpleStatements {
   readonly type: '_simple_statements';
-  readonly children: readonly (HiddenSimpleStatement | Newline)[];
+  readonly children: readonly (HiddenSimpleStatement)[];
 }
 
 export interface ImportStatement {
@@ -651,12 +646,11 @@ export interface Decorator {
     readonly expression: string;
     readonly newline: Expression;
   };
-  readonly children: Newline;
 }
 
 export interface Block {
   readonly type: 'block';
-  readonly children: readonly (HiddenStatement | Dedent)[];
+  readonly children: readonly (HiddenStatement)[];
 }
 
 export interface ExpressionList {
@@ -1903,7 +1897,7 @@ export type CompoundStatementConfig = IfStatementConfig | ForStatementConfig | W
 export type CompoundStatementFromInput = IfStatementFromInput | ForStatementFromInput | WhileStatementFromInput | TryStatementFromInput | WithStatementFromInput | FunctionDefinitionFromInput | ClassDefinitionFromInput | DecoratedDefinitionFromInput | MatchStatementFromInput;
 export type CompoundStatementTree = IfStatementTree | ForStatementTree | WhileStatementTree | TryStatementTree | WithStatementTree | FunctionDefinitionTree | ClassDefinitionTree | DecoratedDefinitionTree | MatchStatementTree;
 
-export type MatchBlockTree = IndentTree | DedentTree | NewlineTree;
+export type MatchBlockTree = ;
 
 export type Suite =
   | HiddenSimpleStatements
@@ -1912,7 +1906,7 @@ export type Suite =
 
 export type SuiteConfig = HiddenSimpleStatementsConfig | BlockConfig;
 export type SuiteFromInput = HiddenSimpleStatementsFromInput | BlockFromInput;
-export type SuiteTree = HiddenSimpleStatementsTree | IndentTree | BlockTree | NewlineTree;
+export type SuiteTree = HiddenSimpleStatementsTree | BlockTree;
 
 export type SimplePattern =
   | ClassPattern

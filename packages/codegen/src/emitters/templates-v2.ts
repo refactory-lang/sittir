@@ -24,23 +24,23 @@ export function emitTemplatesFromNodeMap(config: EmitTemplatesFromNodeMapConfig)
 
     for (const [kind, node] of nodeMap.nodes) {
         if (node instanceof AssembledBranch || node instanceof AssembledGroup) {
-            const template = renderRule(node.rule)
+            const { template, clauses } = renderRule(node.rule)
             if (!template) {
                 throw new Error(
                     `emitTemplatesFromNodeMap: ${node.modelType} '${kind}' produced an empty template. ` +
                     `This means the rule has no visible content — it should have been classified as leaf/token instead.`,
                 )
             }
-            rules[kind] = { template }
+            rules[kind] = { template, ...clauses }
         } else if (node instanceof AssembledContainer) {
-            const template = renderRule(node.rule)
+            const { template, clauses } = renderRule(node.rule)
             if (!template) {
                 throw new Error(
                     `emitTemplatesFromNodeMap: container '${kind}' produced an empty template. ` +
                     `This means the rule has no visible content — it should have been classified as leaf/token instead.`,
                 )
             }
-            rules[kind] = { template }
+            rules[kind] = { template, ...clauses }
             if (node.separator) joinBy[kind] = node.separator
         } else if (node instanceof AssembledPolymorph) {
             if (node.forms.length === 0) {
@@ -49,22 +49,30 @@ export function emitTemplatesFromNodeMap(config: EmitTemplatesFromNodeMapConfig)
                     `This is a classifier bug — the rule should have been classified as branch/container/leaf.`,
                 )
             }
-            const variants: any[] = []
+            // Emit variants as a RECORD ({ formName: template }) and a
+            // sibling `detect` map ({ formName: detectToken }) — matching
+            // the shape @sittir/core's resolveTemplate expects.
+            const variants: Record<string, string> = {}
+            const detect: Record<string, string> = {}
+            // Per-form clauses are merged into the parent rule entry — the
+            // renderer looks them up off the outer rule object regardless
+            // of which variant is active.
+            const mergedClauses: Record<string, string> = {}
             for (const form of node.forms) {
-                const template = renderRule(form.rule)
+                const { template, clauses } = renderRule(form.rule)
                 if (!template) {
                     throw new Error(
                         `emitTemplatesFromNodeMap: polymorph '${kind}' form '${form.name}' ` +
                         `produced an empty template.`,
                     )
                 }
-                variants.push({
-                    name: form.name,
-                    template,
-                    detectToken: form.detectToken,
-                })
+                variants[form.name] = template
+                if (form.detectToken) detect[form.name] = form.detectToken
+                Object.assign(mergedClauses, clauses)
             }
-            rules[kind] = { variants }
+            const entry: Record<string, unknown> = { variants, ...mergedClauses }
+            if (Object.keys(detect).length > 0) entry.detect = detect
+            rules[kind] = entry
         }
     }
 
@@ -82,17 +90,35 @@ export function emitTemplatesFromNodeMap(config: EmitTemplatesFromNodeMapConfig)
 // renderRule — walk the Rule tree producing a template string
 // ---------------------------------------------------------------------------
 
-function renderRule(rule: Rule, inRepeat = false): string {
-    const parts = walkRule(rule, new Set(), inRepeat)
-    return joinParts(parts)
+/**
+ * Walk a rule and produce the main template string plus any clause
+ * sub-templates. A ClauseRule in the tree becomes a `$CLAUSE_NAME_CLAUSE`
+ * placeholder in the main string and an entry in the `clauses` map; the
+ * renderer drops the clause entirely at runtime when the field it
+ * references is absent, which is how optional prefix/suffix constructs
+ * like Python's `return_type_clause: -> $RETURN_TYPE` avoid rendering a
+ * dangling arrow.
+ */
+function renderRule(rule: Rule, inRepeat = false): {
+    template: string
+    clauses: Record<string, string>
+} {
+    const clauses: Record<string, string> = {}
+    const parts = walkRule(rule, new Set(), inRepeat, clauses)
+    return { template: joinParts(parts), clauses }
 }
 
-function walkRule(rule: Rule, seen: Set<string>, inRepeat: boolean): string[] {
+function walkRule(
+    rule: Rule,
+    seen: Set<string>,
+    inRepeat: boolean,
+    clauses: Record<string, string>,
+): string[] {
     switch (rule.type) {
         case 'seq': {
             const out: string[] = []
             for (const m of rule.members) {
-                const parts = walkRule(m, seen, inRepeat)
+                const parts = walkRule(m, seen, inRepeat, clauses)
                 if (out.length > 0 && parts.length > 0) {
                     const lastChar = out[out.length - 1]!.slice(-1)
                     const firstChar = parts[0]!.charAt(0)
@@ -106,17 +132,17 @@ function walkRule(rule: Rule, seen: Set<string>, inRepeat: boolean): string[] {
         case 'choice': {
             // For choice in a template, just emit the first non-empty member
             for (const m of rule.members) {
-                const parts = walkRule(m, seen, inRepeat)
+                const parts = walkRule(m, seen, inRepeat, clauses)
                 if (parts.length > 0) return parts
             }
             return []
         }
 
         case 'optional':
-            return walkRule(rule.content, seen, inRepeat)
+            return walkRule(rule.content, seen, inRepeat, clauses)
 
         case 'repeat':
-            return walkRule(rule.content, seen, true)
+            return walkRule(rule.content, seen, true, clauses)
 
         case 'field': {
             if (seen.has(rule.name)) return []
@@ -146,13 +172,30 @@ function walkRule(rule: Rule, seen: Set<string>, inRepeat: boolean): string[] {
             return rule.values.length > 0 ? [rule.values[0]!] : []
 
         case 'variant':
-            return walkRule(rule.content, seen, inRepeat)
+            return walkRule(rule.content, seen, inRepeat, clauses)
 
-        case 'clause':
-            return walkRule(rule.content, seen, inRepeat)
+        case 'clause': {
+            // Emit a separate sub-template for the clause and reference it
+            // from the main template as $NAME_CLAUSE. The renderer drops the
+            // whole clause when the referenced field is absent — this is how
+            // optional prefix/suffix constructs like `-> $RETURN_TYPE` avoid
+            // rendering a dangling arrow.
+            //
+            // Walk the clause content with a FRESH seen set so fields
+            // referenced inside the clause don't collide with main-template
+            // field tracking.
+            if (seen.has(rule.name)) return []
+            seen.add(rule.name)
+            const clauseSeen = new Set<string>()
+            const clauseParts = walkRule(rule.content, clauseSeen, inRepeat, clauses)
+            const clauseTemplate = joinParts(clauseParts)
+            if (clauseTemplate) clauses[rule.name] = clauseTemplate
+            const varName = rule.name.toUpperCase()
+            return [`$${varName}_CLAUSE`]
+        }
 
         case 'group':
-            return walkRule(rule.content, seen, inRepeat)
+            return walkRule(rule.content, seen, inRepeat, clauses)
 
         case 'supertype':
             if (seen.has('children')) return []
@@ -181,9 +224,21 @@ function joinParts(parts: string[]): string {
 
 const WORD = /\w/
 
+/**
+ * Decide whether a space separator is required between two adjacent
+ * template fragments. A placeholder (`$FOO`, `$$$CHILDREN`) always gets
+ * treated as word-like on the `$`-starting side — it WILL render to user
+ * content at runtime, and if that content starts with a word char (the
+ * overwhelmingly common case) the absence of a space merges two tokens
+ * (`mod english` → `modenglish`). Symmetrically, a fragment that ends
+ * with a placeholder character is treated as word-like on its trailing
+ * edge.
+ */
 function needsSpace(prev: string, next: string): boolean {
     if (!prev || !next) return false
-    return WORD.test(prev) && WORD.test(next)
+    const prevIsWordLike = WORD.test(prev)
+    const nextIsWordLike = WORD.test(next) || next === '$'
+    return prevIsWordLike && nextIsWordLike
 }
 
 // Minimal YAML stringifier for the template structure

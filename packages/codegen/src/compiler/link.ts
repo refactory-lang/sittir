@@ -231,6 +231,22 @@ function resolveRule(
             return resolveRule(rule.content, currentName, allRules, supertypes, externalRoles)
 
         case 'symbol':
+            // Externals with canonical structural-whitespace names are
+            // converted to their dedicated rule types so the template
+            // emitter renders real newlines/indents. Grammar-side naming
+            // convention: `_indent`, `_dedent`, `_newline`.
+            if (rule.name === '_indent') {
+                externalRoles.set('_indent', { role: 'indent' })
+                return { type: 'indent' } as Rule
+            }
+            if (rule.name === '_dedent') {
+                externalRoles.set('_dedent', { role: 'dedent' })
+                return { type: 'dedent' } as Rule
+            }
+            if (rule.name === '_newline') {
+                externalRoles.set('_newline', { role: 'newline' })
+                return { type: 'newline' } as Rule
+            }
             // Visible symbols stay as symbols (they're named children)
             // Hidden symbols: check for inline/supertype/enum/group
             return rule

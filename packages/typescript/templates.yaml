@@ -3,131 +3,122 @@ grammar: typescript
 grammarSha: ""
 rules:
   program:
-    template: $HASH_BANG_LINE$STATEMENTS
+    template: $HASH_BANG_LINE $STATEMENTS
   export_statement_form_0:
-    template: $DECLARATION$SOURCE$$$CHILDREN
+    template: $DECLARATION $SOURCE $$$CHILDREN
   export_statement_declaration:
-    template: $DECLARATION$SOURCE$$$CHILDREN
+    template: $DECLARATION $SOURCE $$$CHILDREN
   export_statement_declaration2:
-    template: $DECLARATION$SOURCE$$$CHILDREN
+    template: $DECLARATION $SOURCE $$$CHILDREN
   export_statement_namespace:
-    template: $DECLARATION$SOURCE namespace$$$CHILDREN
+    template: $DECLARATION $SOURCE namespace $$$CHILDREN
   export_statement:
     variants:
-      - name: form_0
-        template: $DECLARATION$SOURCE$$$CHILDREN
-      - name: declaration
-        template: $DECLARATION$SOURCE$$$CHILDREN
-      - name: declaration2
-        template: $DECLARATION$SOURCE$$$CHILDREN
-      - name: namespace
-        template: $DECLARATION$SOURCE namespace$$$CHILDREN
+      form_0: $DECLARATION $SOURCE $$$CHILDREN
+      declaration: $DECLARATION $SOURCE $$$CHILDREN
+      declaration2: $DECLARATION $SOURCE $$$CHILDREN
+      namespace: $DECLARATION $SOURCE namespace $$$CHILDREN
   namespace_export:
-    template: "*as$$$CHILDREN"
+    template: "*as $$$CHILDREN"
   export_clause:
     template: "{$$$CHILDREN,}"
   export_specifier:
-    template: type$NAME as$ALIAS
+    template: type $NAME $ALIAS_CLAUSE
+    alias: as $ALIAS
   declaration:
     template: $$$CHILDREN
   import_statement:
-    template: $IMPORT_CLAUSE$FROM_CLAUSE$IMPORT_ATTRIBUTE$SEMICOLON$$$CHILDREN
+    template: $IMPORT_CLAUSE $FROM_CLAUSE $IMPORT_ATTRIBUTE $SEMICOLON $$$CHILDREN
   import_clause_namespace_import:
     template: $$$CHILDREN
   import_clause_named_imports:
     template: $$$CHILDREN
   import_clause_default_import:
-    template: $DEFAULT_IMPORT$NAMED_IMPORTS
+    template: $DEFAULT_IMPORT $NAMED_IMPORTS
   import_clause:
     variants:
-      - name: namespace_import
-        template: $$$CHILDREN
-      - name: named_imports
-        template: $$$CHILDREN
-      - name: default_import
-        template: $DEFAULT_IMPORT$NAMED_IMPORTS
+      namespace_import: $$$CHILDREN
+      named_imports: $$$CHILDREN
+      default_import: $DEFAULT_IMPORT $NAMED_IMPORTS
   _from_clause:
-    template: from$SOURCE
+    template: from $SOURCE
   namespace_import:
-    template: $IDENTIFIER as$$$CHILDREN
+    template: $IDENTIFIER as $$$CHILDREN
   named_imports:
     template: "{$$$CHILDREN,}"
   import_specifier_name:
     template: $NAME
   import_specifier_as:
-    template: $NAME as$ALIAS
+    template: $NAME as $ALIAS
   import_specifier:
     variants:
-      - name: name
-        template: $NAME
-      - name: as
-        template: $NAME as$ALIAS
+      name: $NAME
+      as: $NAME as $ALIAS
   import_attribute:
-    template: $OBJECT$$$CHILDREN
+    template: $OBJECT $$$CHILDREN
   statement:
     template: $$$CHILDREN
   expression_statement:
     template: $$$CHILDREN
   variable_declaration:
-    template: $DECLARATORS$SEMICOLON$$$CHILDREN
+    template: $DECLARATORS $SEMICOLON $$$CHILDREN
   lexical_declaration:
-    template: $DECLARATORS$SEMICOLON$$$CHILDREN
+    template: $DECLARATORS $SEMICOLON $$$CHILDREN
   variable_declarator:
-    template: $NAME$TYPE$$$CHILDREN
+    template: $NAME $TYPE $$$CHILDREN
   statement_block:
-    template: "$STATEMENTS$AUTOMATIC_SEMICOLON}$$$CHILDREN"
+    template: "$STATEMENTS $AUTOMATIC_SEMICOLON}$$$CHILDREN"
   else_clause:
-    template: $STATEMENT$$$CHILDREN
+    template: $STATEMENT $$$CHILDREN
   if_statement:
-    template: if$CONDITION$CONSEQUENCE$ALTERNATIVE
+    template: if $CONDITION $CONSEQUENCE $ALTERNATIVE
   switch_statement:
-    template: switch$VALUE$BODY
+    template: switch $VALUE $BODY
   for_statement:
-    template: for($INITIALIZER$CONDITION$INCREMENT)$BODY
+    template: for($INITIALIZER $CONDITION $INCREMENT)$BODY
   for_in_statement:
-    template: for await$$$CHILDREN$BODY
+    template: for await $$$CHILDREN $BODY
   _for_header:
-    template: ($LEFT$OPERATOR$RIGHT)
+    template: ($LEFT $OPERATOR $RIGHT)
   while_statement:
-    template: while$CONDITION$BODY
+    template: while $CONDITION $BODY
   do_statement:
-    template: do$BODY while$CONDITION$$$CHILDREN
+    template: do $BODY while $CONDITION $$$CHILDREN
   try_statement:
-    template: try$BODY$HANDLER$FINALIZER
+    template: try $BODY $HANDLER $FINALIZER
   with_statement:
-    template: with$OBJECT$BODY
+    template: with $OBJECT $BODY
   break_statement:
-    template: break$LABEL$$$CHILDREN
+    template: break $LABEL $$$CHILDREN
   continue_statement:
-    template: continue$LABEL$$$CHILDREN
+    template: continue $LABEL $$$CHILDREN
   debugger_statement:
-    template: debugger$$$CHILDREN
+    template: debugger $$$CHILDREN
   return_statement:
-    template: return$$$CHILDREN
+    template: return $$$CHILDREN
   throw_statement:
-    template: throw$$$CHILDREN
+    template: throw $$$CHILDREN
   labeled_statement:
     template: "$LABEL:$BODY"
   switch_body:
     template: "{$$$CHILDREN}"
   switch_case:
-    template: "case$VALUE:$BODY"
+    template: "case $VALUE:$BODY"
   switch_default:
     template: "default:$BODY"
   catch_clause:
-    template: catch($PARAMETER$TYPE)$BODY
+    template: catch $PARAMETER_CLAUSE $BODY
+    parameter: ($PARAMETER $TYPE)
   finally_clause:
-    template: finally$BODY
+    template: finally $BODY
   parenthesized_expression_expression:
-    template: $$$CHILDREN$TYPE
+    template: $$$CHILDREN $TYPE
   parenthesized_expression_sequence_expression:
     template: $$$CHILDREN
   parenthesized_expression:
     variants:
-      - name: expression
-        template: $$$CHILDREN$TYPE
-      - name: sequence_expression
-        template: $$$CHILDREN
+      expression: $$$CHILDREN $TYPE
+      sequence_expression: $$$CHILDREN
   expression:
     template: $$$CHILDREN
   primary_expression:
@@ -147,7 +138,7 @@ rules:
   array_pattern:
     template: "[$$$CHILDREN]"
   jsx_element:
-    template: $OPEN_TAG$$$CHILDREN$CLOSE_TAG
+    template: $OPEN_TAG $$$CHILDREN $CLOSE_TAG
   jsx_expression:
     template: "{$$$CHILDREN}"
   jsx_opening_element:
@@ -163,77 +154,70 @@ rules:
   jsx_attribute:
     template: $$$CHILDREN=
   class:
-    template: $CLASS_HERITAGE class$NAME$TYPE_PARAMETERS$$$CHILDREN$BODY
+    template: $CLASS_HERITAGE class $NAME $TYPE_PARAMETERS $$$CHILDREN $BODY
   class_declaration:
-    template: $CLASS_HERITAGE$AUTOMATIC_SEMICOLON$NAME$TYPE_PARAMETERS$$$CHILDREN$BODY
+    template: $CLASS_HERITAGE $AUTOMATIC_SEMICOLON $NAME $TYPE_PARAMETERS $$$CHILDREN $BODY
   class_heritage_extends_clause:
-    template: $EXTENDS_CLAUSE$IMPLEMENTS_CLAUSE
+    template: $EXTENDS_CLAUSE $IMPLEMENTS_CLAUSE
   class_heritage_implements_clause:
     template: $$$CHILDREN
   class_heritage:
     variants:
-      - name: extends_clause
-        template: $EXTENDS_CLAUSE$IMPLEMENTS_CLAUSE
-      - name: implements_clause
-        template: $$$CHILDREN
+      extends_clause: $EXTENDS_CLAUSE $IMPLEMENTS_CLAUSE
+      implements_clause: $$$CHILDREN
   function_expression:
-    template: async function$NAME$$$CHILDREN$BODY
+    template: async function $NAME $$$CHILDREN $BODY
   function_declaration:
-    template: async function$NAME$$$CHILDREN$BODY
+    template: async function $NAME $$$CHILDREN $BODY
   generator_function:
-    template: async function*$NAME$$$CHILDREN$BODY
+    template: async function*$NAME $$$CHILDREN $BODY
   generator_function_declaration:
-    template: async function*$NAME$$$CHILDREN$BODY
+    template: async function*$NAME $$$CHILDREN $BODY
   arrow_function_parameter:
     template: $PARAMETER
   arrow_function__call_signature:
     template: $$$CHILDREN
   arrow_function:
     variants:
-      - name: parameter
-        template: $PARAMETER
-      - name: _call_signature
-        template: $$$CHILDREN
+      parameter: $PARAMETER
+      _call_signature: $$$CHILDREN
   _call_signature:
-    template: $TYPE_PARAMETERS$PARAMETERS$RETURN_TYPE
+    template: $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE
   call_expression_function:
-    template: $FUNCTION$TYPE_ARGUMENTS$ARGUMENTS
+    template: $FUNCTION $TYPE_ARGUMENTS $ARGUMENTS
   call_expression_function2:
-    template: $FUNCTION$ARGUMENTS
+    template: $FUNCTION $ARGUMENTS
   call_expression_tok_q_dot:
-    template: $FUNCTION?.$TYPE_ARGUMENTS$ARGUMENTS
+    template: $FUNCTION?.$TYPE_ARGUMENTS $ARGUMENTS
   call_expression:
     variants:
-      - name: function
-        template: $FUNCTION$TYPE_ARGUMENTS$ARGUMENTS
-      - name: function2
-        template: $FUNCTION$ARGUMENTS
-      - name: tok_q_dot
-        template: $FUNCTION?.$TYPE_ARGUMENTS$ARGUMENTS
+      function: $FUNCTION $TYPE_ARGUMENTS $ARGUMENTS
+      function2: $FUNCTION $ARGUMENTS
+      tok_q_dot: $FUNCTION?.$TYPE_ARGUMENTS $ARGUMENTS
   new_expression:
-    template: new$CONSTRUCTOR$TYPE_ARGUMENTS$ARGUMENTS
+    template: new $CONSTRUCTOR $TYPE_ARGUMENTS $ARGUMENTS
   await_expression:
-    template: $EXPRESSION$$$CHILDREN
+    template: $EXPRESSION $$$CHILDREN
   member_expression:
     template: $OBJECT.$PROPERTY
   subscript_expression:
-    template: "$OBJECT$OPTIONAL_CHAIN[$INDEX]"
+    template: "$OBJECT $OPTIONAL_CHAIN[$INDEX]"
   assignment_expression:
-    template: using$LEFT=$RIGHT
+    template: using $LEFT=$RIGHT
   augmented_assignment_expression:
-    template: $LEFT$OPERATOR$RIGHT
+    template: $LEFT $OPERATOR $RIGHT
   _initializer:
     template: =$VALUE
   spread_element:
-    template: $EXPRESSION$$$CHILDREN
+    template: $EXPRESSION $$$CHILDREN
   ternary_expression:
-    template: "$CONDITION$$$CHILDREN$CONSEQUENCE:$ALTERNATIVE"
+    template: "$CONDITION $$$CHILDREN $CONSEQUENCE:$ALTERNATIVE"
   binary_expression:
-    template: $LEFT$OPERATOR$RIGHT
+    template: $LEFT $OPERATOR $RIGHT
   unary_expression:
-    template: $OPERATOR$ARGUMENT
+    template: $OPERATOR $ARGUMENT
   update_expression:
-    template: $ARGUMENT$OPERATOR
+    template: $ARGUMENT $OPERATOR
   sequence_expression:
     template: $$$CHILDREN
   string:
@@ -251,89 +235,89 @@ rules:
   decorator_member_expression:
     template: $OBJECT.$PROPERTY
   decorator_call_expression:
-    template: $FUNCTION$TYPE_ARGUMENTS$ARGUMENTS
+    template: $FUNCTION $TYPE_ARGUMENTS $ARGUMENTS
   class_body:
-    template: "{$DECORATOR$$$CHILDREN}"
+    template: "{$DECORATOR $$$CHILDREN}"
   field_definition:
-    template: $DECORATOR static$PROPERTY$$$CHILDREN
+    template: $DECORATOR static $PROPERTY $$$CHILDREN
   formal_parameters:
     template: ($$$CHILDREN,)
   class_static_block:
-    template: static$$$CHILDREN$BODY
+    template: static $$$CHILDREN $BODY
   pattern:
     template: $$$CHILDREN
   rest_pattern:
     template: ...$$$CHILDREN
   method_definition:
-    template: $ACCESSIBILITY_MODIFIER$OVERRIDE_MODIFIER$$$CHILDREN readonly async get$NAME?$BODY
+    template: $ACCESSIBILITY_MODIFIER $OVERRIDE_MODIFIER $$$CHILDREN readonly async get $NAME?$BODY
   pair:
     template: "$KEY:$VALUE"
   pair_pattern:
     template: "$KEY:$VALUE"
   computed_property_name:
-    template: "$EXPRESSION$$$CHILDREN]"
+    template: "$EXPRESSION $$$CHILDREN]"
   public_field_definition:
-    template: $ACCESSIBILITY_MODIFIER$OVERRIDE_MODIFIER$INITIALIZER$NAME?$TYPE$$$CHILDREN
+    template: $ACCESSIBILITY_MODIFIER $OVERRIDE_MODIFIER $INITIALIZER $NAME?$TYPE $$$CHILDREN
   _jsx_start_opening_element:
-    template: <$NAME$ATTRIBUTE
+    template: <$NAME $ATTRIBUTE
   non_null_expression:
     template: $EXPRESSION!
   method_signature:
-    template: $ACCESSIBILITY_MODIFIER$OVERRIDE_MODIFIER$$$CHILDREN readonly async get$NAME?
+    template: $ACCESSIBILITY_MODIFIER $OVERRIDE_MODIFIER $$$CHILDREN readonly async get $NAME?
   abstract_method_signature:
-    template: $ACCESSIBILITY_MODIFIER$OVERRIDE_MODIFIER$$$CHILDREN get$NAME?
+    template: $ACCESSIBILITY_MODIFIER $OVERRIDE_MODIFIER $$$CHILDREN get $NAME?
   function_signature:
-    template: async function$NAME$$$CHILDREN
+    template: async function $NAME $$$CHILDREN
   decorator_parenthesized_expression:
     template: ($$$CHILDREN)
   type_assertion:
-    template: $TYPE_ARGUMENTS$EXPRESSION
+    template: $TYPE_ARGUMENTS $EXPRESSION
   as_expression:
-    template: $EXPRESSION$TYPE_ANNOTATION const
+    template: $EXPRESSION $TYPE_ANNOTATION const
   satisfies_expression:
-    template: $EXPRESSION$TYPE_ANNOTATION$$$CHILDREN
+    template: $EXPRESSION $TYPE_ANNOTATION $$$CHILDREN
   instantiation_expression:
-    template: $EXPRESSION$TYPE_ARGUMENTS
+    template: $EXPRESSION $TYPE_ARGUMENTS
   import_require_clause:
     template: $IDENTIFIER=require($SOURCE)
   extends_clause:
-    template: extends$$$CHILDREN
+    template: extends $$$CHILDREN
   _extends_clause_single:
-    template: $VALUE$TYPE_ARGUMENTS
+    template: $VALUE $TYPE_ARGUMENTS
   implements_clause:
-    template: implements$$$CHILDREN
+    template: implements $$$CHILDREN
   ambient_declaration:
-    template: $DECLARATION$TYPE_ANNOTATION
+    template: $DECLARATION $TYPE_ANNOTATION
   abstract_class_declaration:
-    template: $CLASS_HERITAGE abstract class$NAME$TYPE_PARAMETERS$$$CHILDREN$BODY
+    template: $CLASS_HERITAGE abstract class $NAME $TYPE_PARAMETERS $$$CHILDREN $BODY
   module:
-    template: module$$$CHILDREN
+    template: module $$$CHILDREN
   internal_module:
-    template: namespace$$$CHILDREN
+    template: namespace $$$CHILDREN
   _module:
-    template: $NAME$BODY
+    template: $NAME $BODY
   import_alias:
-    template: $NAME$VALUE$SEMICOLON$$$CHILDREN
+    template: $NAME $VALUE $SEMICOLON $$$CHILDREN
   nested_type_identifier:
     template: $MODULE.$NAME
   interface_declaration:
-    template: $EXTENDS_TYPE_CLAUSE$NAME$TYPE_PARAMETERS$$$CHILDREN$BODY
+    template: $EXTENDS_TYPE_CLAUSE $NAME $TYPE_PARAMETERS $$$CHILDREN $BODY
   extends_type_clause:
-    template: extends$TYPE
+    template: extends $TYPE
   enum_declaration:
-    template: const enum$NAME$BODY
+    template: const enum $NAME $BODY
   enum_body:
-    template: "$OPENING$MEMBERS}"
+    template: "$OPENING $MEMBERS}"
   enum_assignment:
-    template: $NAME$$$CHILDREN
+    template: $NAME $$$CHILDREN
   type_alias_declaration:
-    template: type$NAME$TYPE_PARAMETERS=$VALUE$$$CHILDREN
+    template: type $NAME $TYPE_PARAMETERS=$VALUE $$$CHILDREN
   required_parameter:
-    template: $PARAMETER_NAME$INITIALIZER$$$CHILDREN
+    template: $PARAMETER_NAME $INITIALIZER $$$CHILDREN
   optional_parameter:
-    template: $PARAMETER_NAME$INITIALIZER$TYPE$$$CHILDREN
+    template: $PARAMETER_NAME $INITIALIZER $TYPE $$$CHILDREN
   _parameter_name:
-    template: $DECORATOR$$$CHILDREN readonly$PATTERN
+    template: $DECORATOR $$$CHILDREN readonly $PATTERN
   omitting_type_annotation:
     template: "-?:$$$CHILDREN"
   adding_type_annotation:
@@ -345,15 +329,15 @@ rules:
   _type_query_member_expression_in_type_annotation:
     template: $OBJECT.$PROPERTY
   _type_query_call_expression_in_type_annotation:
-    template: $FUNCTION$ARGUMENTS
+    template: $FUNCTION $ARGUMENTS
   asserts:
-    template: asserts$$$CHILDREN
+    template: asserts $$$CHILDREN
   asserts_annotation:
     template: $ASSERTS
   type:
     template: $$$CHILDREN
   tuple_parameter:
-    template: $NAME$TYPE
+    template: $NAME $TYPE
   optional_tuple_parameter:
     template: $NAME?$TYPE
   optional_type:
@@ -361,7 +345,7 @@ rules:
   rest_type:
     template: ...$$$CHILDREN
   constructor_type:
-    template: abstract new$TYPE_PARAMETERS$PARAMETERS=>$TYPE
+    template: abstract new $TYPE_PARAMETERS $PARAMETERS=>$TYPE
   primary_type:
     template: $$$CHILDREN
   template_type:
@@ -369,13 +353,13 @@ rules:
   template_literal_type:
     template: "`$$$CHILDREN`"
   infer_type:
-    template: $TYPE_IDENTIFIER$CONSTRAINT extends$$$CHILDREN
+    template: $TYPE_IDENTIFIER $CONSTRAINT extends $$$CHILDREN
   conditional_type:
-    template: "$LEFT extends$RIGHT?$CONSEQUENCE:$ALTERNATIVE"
+    template: "$LEFT extends $RIGHT?$CONSEQUENCE:$ALTERNATIVE"
   generic_type:
-    template: $NAME$TYPE_ARGUMENTS
+    template: $NAME $TYPE_ARGUMENTS
   type_predicate:
-    template: $NAME is$TYPE
+    template: $NAME is $TYPE
   type_predicate_annotation:
     template: $TYPE_PREDICATE
   _type_query_member_expression:
@@ -383,65 +367,64 @@ rules:
   _type_query_subscript_expression:
     template: "$OBJECT?.[$INDEX]"
   _type_query_call_expression:
-    template: $FUNCTION$ARGUMENTS
+    template: $FUNCTION $ARGUMENTS
   _type_query_instantiation_expression:
-    template: $FUNCTION$TYPE_ARGUMENTS
+    template: $FUNCTION $TYPE_ARGUMENTS
   type_query:
-    template: typeof$$$CHILDREN
+    template: typeof $$$CHILDREN
   index_type_query:
-    template: $PRIMARY_TYPE$$$CHILDREN
+    template: $PRIMARY_TYPE $$$CHILDREN
   lookup_type:
-    template: "$PRIMARY_TYPE$INDEX_TYPE$$$CHILDREN]"
+    template: "$PRIMARY_TYPE $INDEX_TYPE $$$CHILDREN]"
   mapped_type_clause:
-    template: $NAME in$TYPE as$ALIAS
+    template: $NAME in $TYPE $ALIAS_CLAUSE
+    alias: as $ALIAS
   literal_type:
     template: $$$CHILDREN
   _number:
-    template: $OPERATOR$ARGUMENT
+    template: $OPERATOR $ARGUMENT
   flow_maybe_type:
-    template: $PRIMARY_TYPE$$$CHILDREN
+    template: $PRIMARY_TYPE $$$CHILDREN
   parenthesized_type:
     template: ($$$CHILDREN)
   type_arguments:
     template: <$$$CHILDREN,>
   object_type:
-    template: $OPENING$MEMBERS$CLOSING
+    template: $OPENING $MEMBERS $CLOSING
   call_signature:
     template: $$$CHILDREN
   property_signature:
-    template: $ACCESSIBILITY_MODIFIER$OVERRIDE_MODIFIER$$$CHILDREN readonly$NAME?$TYPE
+    template: $ACCESSIBILITY_MODIFIER $OVERRIDE_MODIFIER $$$CHILDREN readonly $NAME?$TYPE
   type_parameters:
     template: <$$$CHILDREN,>
   type_parameter:
-    template: const$NAME$CONSTRAINT$VALUE
+    template: const $NAME $CONSTRAINT $VALUE
   default_type:
     template: =$$$CHILDREN
   constraint:
-    template: extends$$$CHILDREN
+    template: extends $$$CHILDREN
   construct_signature:
-    template: abstract new$TYPE_PARAMETERS$PARAMETERS$TYPE
+    template: abstract new $TYPE_PARAMETERS $PARAMETERS $TYPE
   index_signature_colon:
     template: "$NAME:$INDEX_TYPE"
   index_signature_mapped_type_clause:
     template: $$$CHILDREN
   index_signature:
     variants:
-      - name: colon
-        template: "$NAME:$INDEX_TYPE"
-      - name: mapped_type_clause
-        template: $$$CHILDREN
+      colon: "$NAME:$INDEX_TYPE"
+      mapped_type_clause: $$$CHILDREN
   array_type:
     template: "$PRIMARY_TYPE[]"
   tuple_type:
     template: "[$$$CHILDREN,]"
   readonly_type:
-    template: readonly$$$CHILDREN
+    template: readonly $$$CHILDREN
   union_type:
-    template: $LEFT$RIGHT$$$CHILDREN
+    template: $LEFT $RIGHT $$$CHILDREN
   intersection_type:
-    template: $LEFT$RIGHT$$$CHILDREN
+    template: $LEFT $RIGHT $$$CHILDREN
   function_type:
-    template: $TYPE_PARAMETERS$PARAMETERS=>$RETURN_TYPE
+    template: $TYPE_PARAMETERS $PARAMETERS=>$RETURN_TYPE
   _type_identifier:
     template: $$$CHILDREN
   shorthand_property_identifier:
@@ -449,4 +432,4 @@ rules:
   shorthand_property_identifier_pattern:
     template: $$$CHILDREN
   interface_body:
-    template: $OPENING$MEMBERS$CLOSING
+    template: $OPENING $MEMBERS $CLOSING
