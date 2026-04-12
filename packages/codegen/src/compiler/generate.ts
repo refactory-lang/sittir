@@ -21,7 +21,7 @@ import { emitWrap } from '../emitters/wrap.ts'
 import { emitFromNodeMap } from '../emitters/from-v2.ts'
 import { emitClientUtilsFromNodeMap } from '../emitters/client-utils-v2.ts'
 import { emitIrFromNodeMap } from '../emitters/ir-v2.ts'
-import { emitTests } from '../emitters/test-new.ts'
+import { emitTestsFromNodeMap } from '../emitters/test-v2.ts'
 import { emitTypeTestsFromNodeMap } from '../emitters/type-test-v2.ts'
 import { emitConfig } from '../emitters/config.ts'
 
@@ -99,7 +99,7 @@ export async function generateV2(cfg: GenerateConfigV2): Promise<GeneratedFilesV
         irNamespace: emitIrFromNodeMap({ grammar: cfg.grammar, nodeMap }),
         consts: emitConstsFromNodeMap({ grammar: cfg.grammar, nodeMap }),
         index: emitIndexFromNodeMap({ grammar: cfg.grammar, nodeMap }),
-        tests: emitTests({ grammar: cfg.grammar, nodes: nodes as any }),
+        tests: emitTestsFromNodeMap({ grammar: cfg.grammar, nodeMap }),
         typeTests: emitTypeTestsFromNodeMap({ nodeMap }),
         config: emitConfig({ grammar: cfg.grammar }),
         nodeModel: JSON.stringify({ name: nodeMap.name, nodeCount: nodeMap.nodes.size }, null, 2),
