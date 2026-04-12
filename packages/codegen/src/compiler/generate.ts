@@ -81,13 +81,15 @@ export async function generateV2(cfg: GenerateConfigV2): Promise<GeneratedFilesV
     // Phase 4: Assemble
     const nodeMap = assemble(optimized)
 
-    // Adapter: NodeMap → HydratedNodeModel[] for existing emitters
+    // Adapter: NodeMap → HydratedNodeModel[] for the wrap emitter.
+    // wrap.ts is the only remaining adapter consumer — it will be rewritten
+    // to derive from the override projection (not NodeMap) in a future pass.
     const allModels = toHydratedModels(nodeMap)
     const nodes = cfg.nodes && cfg.nodes.length > 0
         ? allModels.filter(n => cfg.nodes!.includes(n.kind))
         : allModels
 
-    // Phase 5: Emit (via existing emitters + adapter)
+    // Phase 5: Emit — all emitters consume NodeMap directly except wrap
     return {
         grammar: emitGrammar({ grammar: cfg.grammar }),
         types: emitTypesFromNodeMap({ grammar: cfg.grammar, nodeMap }),
