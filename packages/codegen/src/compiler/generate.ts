@@ -20,7 +20,7 @@ import { emitFactories } from '../emitters/factories.ts'
 import { emitWrap } from '../emitters/wrap.ts'
 import { emitFrom } from '../emitters/from.ts'
 import { emitClientUtilsFromNodeMap } from '../emitters/client-utils-v2.ts'
-import { emitIrNamespace } from '../emitters/ir-namespace.ts'
+import { emitIrFromNodeMap } from '../emitters/ir-v2.ts'
 import { emitTests } from '../emitters/test-new.ts'
 import { emitTypeTests } from '../emitters/type-test.ts'
 import { emitConfig } from '../emitters/config.ts'
@@ -96,7 +96,7 @@ export async function generateV2(cfg: GenerateConfigV2): Promise<GeneratedFilesV
         wrap: emitWrap({ grammar: cfg.grammar, nodes: nodes as any }),
         utils: emitClientUtilsFromNodeMap({ nodeMap }),
         from: emitFrom({ grammar: cfg.grammar, nodes: nodes as any }),
-        irNamespace: emitIrNamespace({ grammar: cfg.grammar, nodes: nodes as any }),
+        irNamespace: emitIrFromNodeMap({ grammar: cfg.grammar, nodeMap }),
         consts: emitConstsFromNodeMap({ grammar: cfg.grammar, nodeMap }),
         index: emitIndexFromNodeMap({ grammar: cfg.grammar, nodeMap }),
         tests: emitTests({ grammar: cfg.grammar, nodes: nodes as any }),
