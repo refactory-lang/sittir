@@ -44,12 +44,34 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
                 break
             }
             case 'polymorph': {
-                // Synthesize a hidden group for each form and insert into the NodeMap.
-                // The polymorph holds references to these groups.
-                const forms = extractForms(rule, kind)
-                for (const form of forms) {
-                    nodes.set(form.kind, form)
+                // PolymorphRule is Optimize's output: already has forms in
+                // declaration order. Build one AssembledGroup per form and
+                // insert into the NodeMap; the polymorph references them.
+                if (rule.type !== 'polymorph') {
+                    throw new Error(
+                        `assemble: kind '${kind}' classified as polymorph but rule.type=${rule.type}. ` +
+                        `promotePolymorph in Optimize should have wrapped it.`,
+                    )
                 }
+                const nameCounts = new Map<string, number>()
+                const forms: AssembledGroup[] = rule.forms.map((form) => {
+                    // Disambiguate duplicate form names (two `expression` variants
+                    // over different shapes — e.g. python's expression_statement).
+                    const seen = nameCounts.get(form.name) ?? 0
+                    nameCounts.set(form.name, seen + 1)
+                    const disambiguated = seen === 0 ? form.name : `${form.name}${seen + 1}`
+                    const formKind = `${kind}_${disambiguated}`
+                    const formNames = nameNode(formKind)
+                    return new AssembledGroup({
+                        kind: formKind,
+                        typeName: formNames.typeName,
+                        factoryName: formNames.factoryName,
+                        irKey: formNames.irKey,
+                        rule: form.content,
+                        name: disambiguated,
+                    })
+                })
+                for (const form of forms) nodes.set(form.kind, form)
                 nodes.set(kind, new AssembledPolymorph({
                     kind, typeName, factoryName, irKey, forms,
                 }))
@@ -252,75 +274,47 @@ function walkForFieldNames(rule: Rule, out: Set<string>): void {
 }
 
 /**
- * Classify a rule into a model type.
+ * Classify a rule into a model type by pure rule.type dispatch.
  *
- * By the time rules reach Assemble:
- * - Link has already classified hidden rules into SupertypeRule / EnumRule / GroupRule
- * - Those pass through via the already-classified check below
- * - Everything else is classified purely by structure
+ * By the time rules reach Assemble, Link and Optimize have already
+ * pre-classified the interesting cases via dedicated rule types:
  *
- * No name-based checks. The _ prefix is an input signal for Link, not for Assemble.
- */
-/**
- * Classify a rule by structural shape alone (no name heuristics).
+ *   EnumRule       — Link: choice-of-strings
+ *   SupertypeRule  — Link: hidden choice-of-symbols (grammar or promoted)
+ *   GroupRule      — Link: hidden seq with fields
+ *   TerminalRule   — Link: subtree with no fields and no symbol refs
+ *   PolymorphRule  — Optimize: choice-of-variants with heterogeneous fields
  *
- * Decision rules, in order:
- *
- *   1. Pre-classified types (enum/supertype/group) pass through — Link has
- *      already determined the shape.
- *
- *   2. If the rule contains any `field(...)` → BRANCH. Fields are always
- *      structural user-addressable slots.
- *
- *   3. If the rule contains any visible OR hidden symbol (including
- *      supertype references that dispatch to concrete children at parse
- *      time) → it's a structural node with a children slot:
- *        - choice-with-variants with homogeneous field sets → branch
- *        - choice-with-variants with heterogeneous field sets → polymorph
- *        - otherwise → container
- *
- *   4. If the rule's content is exclusively terminal (patterns, string
- *      literals) with no fields and no symbol references → LEAF.
- *      escape_sequence, line_comment, block_comment, regex_pattern fall
- *      here; tree-sitter exposes them as text-only nodes.
- *
- *   5. Bare terminals: `pattern` → leaf; alphanumeric `string` → keyword;
- *      other `string` → token.
+ * Assemble just dispatches on rule.type. The only structural inspection
+ * left is distinguishing branch (has fields) from container (has children
+ * only) for ordinary seq rules — that's a one-level check.
  */
 export function classifyNode(kind: string, rule: Rule): ModelType {
-    // 1. Already-classified types pass through (from Link)
-    if (rule.type === 'enum') return 'enum'
-    if (rule.type === 'supertype') return 'supertype'
-    if (rule.type === 'group') return 'group'
-
-    const fields = deriveFields(rule)
-    const children = deriveChildren(rule)
-    const hasStructure = fields.length > 0 || children.length > 0
-
-    // 2. Choice-of-variants with structural content → polymorph or branch.
-    //    (Choice-of-variants with ONLY pattern/string content is a token-
-    //    constructor like `integer` — it falls through to leaf below.)
-    if (rule.type === 'choice' && rule.members.some(m => m.type === 'variant') && hasStructure) {
-        return allVariantsHaveSameFieldSet(rule) ? 'branch' : 'polymorph'
+    switch (rule.type) {
+        case 'enum':      return 'enum'
+        case 'supertype': return 'supertype'
+        case 'group':     return 'group'
+        case 'terminal':  return 'leaf'
+        case 'polymorph': return 'polymorph'
+        case 'pattern':   return 'leaf'
+        case 'string':    return /^\w+$/.test(rule.value) ? 'keyword' : 'token'
     }
 
-    // 3. Any fields → branch.
+    // seq/choice/optional/repeat/field/... — distinguish branch from container.
+    // Homogeneous variant choices (promotePolymorph left them alone) are
+    // branches: all variants share the same field set and the generated
+    // branch factory will merge them.
+    const fields = deriveFields(rule)
     if (fields.length > 0) return 'branch'
 
-    // 4. Any visible children (including those coming from hidden supertype
-    //    references) → container.
+    const children = deriveChildren(rule)
     if (children.length > 0) return 'container'
 
-    // 5. No fields, no children → terminal. Route by rule shape.
-    if (rule.type === 'pattern') return 'leaf'
-    if (rule.type === 'string') {
-        return /^\w+$/.test(rule.value) ? 'keyword' : 'token'
-    }
-
-    // A seq/choice/repeat containing only terminal content (patterns, strings)
-    // and no symbol references is itself a terminal — tree-sitter exposes it
-    // as a text-only leaf node (escape_sequence, line_comment, integer, …).
-    return 'leaf'
+    // No fields, no children — Link should have wrapped this as TerminalRule.
+    throw new Error(
+        `classifyNode: '${kind}' has no fields, no children, and no rule-type ` +
+        `classification. Link should have wrapped it as TerminalRule. rule.type=${rule.type}`,
+    )
 }
 
 // ---------------------------------------------------------------------------
@@ -364,40 +358,9 @@ export function simplifyRule(rule: Rule): Rule {
 // extractFields — walk rule tree, collect fields with derived metadata
 // ---------------------------------------------------------------------------
 
-// ---------------------------------------------------------------------------
-// extractForms — for polymorphs, synthesize a hidden AssembledGroup per form
-// ---------------------------------------------------------------------------
-
-function extractForms(rule: Rule, parentKind: string): AssembledGroup[] {
-    if (rule.type !== 'choice') return []
-
-    // Disambiguate form names when two variants share the same name (e.g. two
-    // `variant('expression', ...)` entries over different shapes). Duplicates
-    // get numeric suffixes so kinds/factoryNames remain unique.
-    const nameCounts = new Map<string, number>()
-    return rule.members.map((member, i) => {
-        let baseName = member.type === 'variant' ? member.name : `form_${i}`
-        const seen = nameCounts.get(baseName) ?? 0
-        nameCounts.set(baseName, seen + 1)
-        const name = seen === 0 ? baseName : `${baseName}${seen + 1}`
-        const formKind = `${parentKind}_${name}`
-        const { typeName, factoryName, irKey } = nameNode(formKind)
-
-        // The form's rule IS its choice member (unwrap variant if present)
-        const formRule = member.type === 'variant' ? member.content : member
-
-        // Per design doc: polymorph form groups DO get factories
-        // (the polymorph's dispatcher invokes them)
-        return new AssembledGroup({
-            kind: formKind,
-            typeName,
-            factoryName,
-            irKey,
-            rule: formRule,
-            name,
-        })
-    })
-}
+// extractForms — deleted. PolymorphRule.forms is built by Optimize's
+// promotePolymorph pass; assemble builds AssembledGroup instances from
+// those forms directly (see the 'polymorph' case of the switch above).
 
 // ---------------------------------------------------------------------------
 // Naming

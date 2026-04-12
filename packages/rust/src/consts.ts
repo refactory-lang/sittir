@@ -154,7 +154,6 @@ export const LEAF_KINDS = [
   'as',
   'async',
   'await',
-  'b',
   'bool',
   'boolean_literal',
   'break',
@@ -255,7 +254,6 @@ export const KEYWORDS = [
   'as',
   'async',
   'await',
-  'b',
   'bool',
   'break',
   'char',
@@ -381,7 +379,6 @@ export const OPERATORS = [
   "?",
   "@",
   "[",
-  "\\",
   "]",
   "^",
   "^=",
@@ -416,8 +413,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'arguments': [
   ],
   'array_expression': [
-    { name: 'attributes', required: true, multiple: false },
-    { name: 'elements', required: true, multiple: false },
     { name: 'length', required: true, multiple: false },
   ],
   'array_type': [
@@ -478,7 +473,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'pattern', required: true, multiple: false },
   ],
   'closure_expression': [
-    { name: 'parameters', required: true, multiple: false },
     { name: 'returnType', required: false, multiple: false },
     { name: 'body', required: true, multiple: false },
   ],
@@ -561,7 +555,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'field_initializer_list': [
   ],
   'field_pattern': [
-    { name: 'mutableSpecifier', required: true, multiple: false },
     { name: 'name', required: true, multiple: false },
     { name: 'pattern', required: true, multiple: false },
   ],

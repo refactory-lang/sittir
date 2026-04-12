@@ -122,12 +122,6 @@ export const NODE_KINDS = [
 
 /** All leaf/terminal node kind strings. */
 export const LEAF_KINDS = [
-  '0B',
-  '0O',
-  '0X',
-  '0b',
-  '0o',
-  '0x',
   'False',
   'None',
   'True',
@@ -190,12 +184,6 @@ export const ALL_KINDS = [...NODE_KINDS, ...LEAF_KINDS] as const;
 
 /** Language keywords (alphabetic anonymous tokens). */
 export const KEYWORDS = [
-  '0B',
-  '0O',
-  '0X',
-  '0b',
-  '0o',
-  '0x',
   'False',
   'None',
   'True',
@@ -249,9 +237,7 @@ export const KEYWORDS = [
 
 /** Operator/punctuation tokens. */
 export const OPERATORS = [
-  "\u0000",
   "!=",
-  "#",
   "%",
   "%=",
   "&",
@@ -348,7 +334,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'assert_statement': [
   ],
   'assignment': [
-    { name: 'left', required: true, multiple: false },
     { name: 'right', required: true, multiple: false },
     { name: 'type', required: true, multiple: false },
   ],

@@ -24,28 +24,8 @@ rules:
     template: $EXPRESSION$$$CHILDREN
   assert_statement:
     template: assert$$$CHILDREN
-  expression_statement_expression:
-    template: $$$CHILDREN
-  expression_statement_expression2:
-    template: $$$CHILDREN,
-  expression_statement_assignment:
-    template: $$$CHILDREN
-  expression_statement_augmented_assignment:
-    template: $$$CHILDREN
-  expression_statement_yield:
-    template: $$$CHILDREN
   expression_statement:
-    variants:
-      - name: expression
-        template: $$$CHILDREN
-      - name: expression2
-        template: $$$CHILDREN,
-      - name: assignment
-        template: $$$CHILDREN
-      - name: augmented_assignment
-        template: $$$CHILDREN
-      - name: yield
-        template: $$$CHILDREN
+    template: $$$CHILDREN
   named_expression:
     template: "$NAME:=$VALUE"
   return_statement:
@@ -76,16 +56,8 @@ rules:
     template: "$BLOCK:$$$CHILDREN"
   with_statement:
     template: "$WITH_CLAUSE with$$$CHILDREN:$BODY"
-  with_clause_with_item:
-    template: $$$CHILDREN,
-  with_clause_paren:
-    template: ($$$CHILDREN,)
   with_clause:
-    variants:
-      - name: with_item
-        template: $$$CHILDREN,
-      - name: paren
-        template: ($$$CHILDREN,)
+    template: $$$CHILDREN,
   with_item:
     template: $VALUE
   function_definition:
@@ -124,20 +96,8 @@ rules:
     template: $$$CHILDREN,
   dotted_name:
     template: $$$CHILDREN
-  case_pattern__as_pattern:
-    template: $$$CHILDREN
-  case_pattern_keyword_pattern:
-    template: $$$CHILDREN
-  case_pattern__simple_pattern:
-    template: $$$CHILDREN
   case_pattern:
-    variants:
-      - name: _as_pattern
-        template: $$$CHILDREN
-      - name: keyword_pattern
-        template: $$$CHILDREN
-      - name: _simple_pattern
-        template: $$$CHILDREN
+    template: $$$CHILDREN
   _as_pattern:
     template: $$$CHILDREN as
   union_pattern:
@@ -162,74 +122,10 @@ rules:
     template: $$$CHILDREN,
   _patterns:
     template: $$$CHILDREN,
-  parameter_identifier:
-    template: $$$CHILDREN
-  parameter_typed_parameter:
-    template: $$$CHILDREN
-  parameter_default_parameter:
-    template: $$$CHILDREN
-  parameter_typed_default_parameter:
-    template: $$$CHILDREN
-  parameter_list_splat_pattern:
-    template: $$$CHILDREN
-  parameter_tuple_pattern:
-    template: $$$CHILDREN
-  parameter_keyword_separator:
-    template: $$$CHILDREN
-  parameter_positional_separator:
-    template: $$$CHILDREN
-  parameter_dictionary_splat_pattern:
-    template: $$$CHILDREN
   parameter:
-    variants:
-      - name: identifier
-        template: $$$CHILDREN
-      - name: typed_parameter
-        template: $$$CHILDREN
-      - name: default_parameter
-        template: $$$CHILDREN
-      - name: typed_default_parameter
-        template: $$$CHILDREN
-      - name: list_splat_pattern
-        template: $$$CHILDREN
-      - name: tuple_pattern
-        template: $$$CHILDREN
-      - name: keyword_separator
-        template: $$$CHILDREN
-      - name: positional_separator
-        template: $$$CHILDREN
-      - name: dictionary_splat_pattern
-        template: $$$CHILDREN
-  pattern_identifier:
-    template: $$$CHILDREN
-  pattern_keyword_identifier:
-    template: $$$CHILDREN
-  pattern_subscript:
-    template: $$$CHILDREN
-  pattern_attribute:
-    template: $$$CHILDREN
-  pattern_list_splat_pattern:
-    template: $$$CHILDREN
-  pattern_tuple_pattern:
-    template: $$$CHILDREN
-  pattern_list_pattern:
     template: $$$CHILDREN
   pattern:
-    variants:
-      - name: identifier
-        template: $$$CHILDREN
-      - name: keyword_identifier
-        template: $$$CHILDREN
-      - name: subscript
-        template: $$$CHILDREN
-      - name: attribute
-        template: $$$CHILDREN
-      - name: list_splat_pattern
-        template: $$$CHILDREN
-      - name: tuple_pattern
-        template: $$$CHILDREN
-      - name: list_pattern
-        template: $$$CHILDREN
+    template: $$$CHILDREN
   tuple_pattern:
     template: ($$$CHILDREN)
   list_pattern:
@@ -244,146 +140,10 @@ rules:
     template: "**$$$CHILDREN"
   as_pattern:
     template: $EXPRESSION as$ALIAS
-  expression_comparison_operator:
-    template: $$$CHILDREN
-  expression_not_operator:
-    template: $$$CHILDREN
-  expression_boolean_operator:
-    template: $$$CHILDREN
-  expression_lambda:
-    template: $$$CHILDREN
-  expression_primary_expression:
-    template: $$$CHILDREN
-  expression_conditional_expression:
-    template: $$$CHILDREN
-  expression_named_expression:
-    template: $$$CHILDREN
-  expression_as_pattern:
-    template: $$$CHILDREN
   expression:
-    variants:
-      - name: comparison_operator
-        template: $$$CHILDREN
-      - name: not_operator
-        template: $$$CHILDREN
-      - name: boolean_operator
-        template: $$$CHILDREN
-      - name: lambda
-        template: $$$CHILDREN
-      - name: primary_expression
-        template: $$$CHILDREN
-      - name: conditional_expression
-        template: $$$CHILDREN
-      - name: named_expression
-        template: $$$CHILDREN
-      - name: as_pattern
-        template: $$$CHILDREN
-  primary_expression_await:
-    template: $$$CHILDREN
-  primary_expression_binary_operator:
-    template: $$$CHILDREN
-  primary_expression_identifier:
-    template: $$$CHILDREN
-  primary_expression_keyword_identifier:
-    template: $$$CHILDREN
-  primary_expression_string:
-    template: $$$CHILDREN
-  primary_expression_concatenated_string:
-    template: $$$CHILDREN
-  primary_expression_integer:
-    template: $$$CHILDREN
-  primary_expression_float:
-    template: $$$CHILDREN
-  primary_expression_true:
-    template: $$$CHILDREN
-  primary_expression_false:
-    template: $$$CHILDREN
-  primary_expression_none:
-    template: $$$CHILDREN
-  primary_expression_unary_operator:
-    template: $$$CHILDREN
-  primary_expression_attribute:
-    template: $$$CHILDREN
-  primary_expression_subscript:
-    template: $$$CHILDREN
-  primary_expression_call:
-    template: $$$CHILDREN
-  primary_expression_list:
-    template: $$$CHILDREN
-  primary_expression_list_comprehension:
-    template: $$$CHILDREN
-  primary_expression_dictionary:
-    template: $$$CHILDREN
-  primary_expression_dictionary_comprehension:
-    template: $$$CHILDREN
-  primary_expression_set:
-    template: $$$CHILDREN
-  primary_expression_set_comprehension:
-    template: $$$CHILDREN
-  primary_expression_tuple:
-    template: $$$CHILDREN
-  primary_expression_parenthesized_expression:
-    template: $$$CHILDREN
-  primary_expression_generator_expression:
-    template: $$$CHILDREN
-  primary_expression_ellipsis:
-    template: $$$CHILDREN
-  primary_expression_list_splat_pattern:
     template: $$$CHILDREN
   primary_expression:
-    variants:
-      - name: await
-        template: $$$CHILDREN
-      - name: binary_operator
-        template: $$$CHILDREN
-      - name: identifier
-        template: $$$CHILDREN
-      - name: keyword_identifier
-        template: $$$CHILDREN
-      - name: string
-        template: $$$CHILDREN
-      - name: concatenated_string
-        template: $$$CHILDREN
-      - name: integer
-        template: $$$CHILDREN
-      - name: float
-        template: $$$CHILDREN
-      - name: true
-        template: $$$CHILDREN
-      - name: false
-        template: $$$CHILDREN
-      - name: none
-        template: $$$CHILDREN
-      - name: unary_operator
-        template: $$$CHILDREN
-      - name: attribute
-        template: $$$CHILDREN
-      - name: subscript
-        template: $$$CHILDREN
-      - name: call
-        template: $$$CHILDREN
-      - name: list
-        template: $$$CHILDREN
-      - name: list_comprehension
-        template: $$$CHILDREN
-      - name: dictionary
-        template: $$$CHILDREN
-      - name: dictionary_comprehension
-        template: $$$CHILDREN
-      - name: set
-        template: $$$CHILDREN
-      - name: set_comprehension
-        template: $$$CHILDREN
-      - name: tuple
-        template: $$$CHILDREN
-      - name: parenthesized_expression
-        template: $$$CHILDREN
-      - name: generator_expression
-        template: $$$CHILDREN
-      - name: ellipsis
-        template: $$$CHILDREN
-      - name: list_splat_pattern
-        template: $$$CHILDREN
+    template: $$$CHILDREN
   not_operator:
     template: not$ARGUMENT
   boolean_operator:
@@ -398,8 +158,20 @@ rules:
     template: "lambda$PARAMETERS:$BODY"
   lambda_within_for_in_clause:
     template: "lambda$PARAMETERS:$BODY"
+  assignment_eq:
+    template: =$RIGHT
+  assignment_colon:
+    template: ":$TYPE"
+  assignment_colon2:
+    template: ":$TYPE=$RIGHT"
   assignment:
-    template: $LEFT=$RIGHT
+    variants:
+      - name: eq
+        template: =$RIGHT
+      - name: colon
+        template: ":$TYPE"
+      - name: colon2
+        template: ":$TYPE=$RIGHT"
   augmented_assignment:
     template: $LEFT$OPERATOR$RIGHT
   pattern_list:
@@ -416,32 +188,8 @@ rules:
     template: $FUNCTION$ARGUMENTS
   typed_parameter:
     template: "$$$CHILDREN:$TYPE"
-  type_expression:
-    template: $$$CHILDREN
-  type_splat_type:
-    template: $$$CHILDREN
-  type_generic_type:
-    template: $$$CHILDREN
-  type_union_type:
-    template: $$$CHILDREN
-  type_constrained_type:
-    template: $$$CHILDREN
-  type_member_type:
-    template: $$$CHILDREN
   type:
-    variants:
-      - name: expression
-        template: $$$CHILDREN
-      - name: splat_type
-        template: $$$CHILDREN
-      - name: generic_type
-        template: $$$CHILDREN
-      - name: union_type
-        template: $$$CHILDREN
-      - name: constrained_type
-        template: $$$CHILDREN
-      - name: member_type
-        template: $$$CHILDREN
+    template: $$$CHILDREN
   splat_type:
     template: $IDENTIFIER$$$CHILDREN
   generic_type:
@@ -496,39 +244,7 @@ rules:
     template: ":$$$CHILDREN"
   await:
     template: $PRIMARY_EXPRESSION$$$CHILDREN
-  as_pattern_target_comparison_operator:
-    template: $$$CHILDREN
-  as_pattern_target_not_operator:
-    template: $$$CHILDREN
-  as_pattern_target_boolean_operator:
-    template: $$$CHILDREN
-  as_pattern_target_lambda:
-    template: $$$CHILDREN
-  as_pattern_target_primary_expression:
-    template: $$$CHILDREN
-  as_pattern_target_conditional_expression:
-    template: $$$CHILDREN
-  as_pattern_target_named_expression:
-    template: $$$CHILDREN
-  as_pattern_target_as_pattern:
-    template: $$$CHILDREN
   as_pattern_target:
-    variants:
-      - name: comparison_operator
-        template: $$$CHILDREN
-      - name: not_operator
-        template: $$$CHILDREN
-      - name: boolean_operator
-        template: $$$CHILDREN
-      - name: lambda
-        template: $$$CHILDREN
-      - name: primary_expression
-        template: $$$CHILDREN
-      - name: conditional_expression
-        template: $$$CHILDREN
-      - name: named_expression
-        template: $$$CHILDREN
-      - name: as_pattern
-        template: $$$CHILDREN
+    template: $$$CHILDREN
   format_expression:
     template: "{$EXPRESSION=$TYPE_CONVERSION$FORMAT_SPECIFIER}"

@@ -65,16 +65,16 @@ describe('Assemble — classifyNode', () => {
         expect(classifyNode('items', rule)).toBe('container')
     })
 
-    it('classifies visible choice with different field sets as polymorph', () => {
+    it('classifies a PolymorphRule as polymorph', () => {
+        // PolymorphRule is produced by Optimize's promotePolymorph pass;
+        // classifyNode just dispatches on rule.type.
         const rule: Rule = {
-            type: 'choice',
-            members: [
-                { type: 'variant', name: 'if', content: { type: 'seq', members: [
-                    { type: 'string', value: 'if' },
+            type: 'polymorph',
+            forms: [
+                { name: 'if', content: { type: 'seq', members: [
                     { type: 'field', name: 'condition', content: { type: 'symbol', name: 'expr' } },
                 ] } },
-                { type: 'variant', name: 'while', content: { type: 'seq', members: [
-                    { type: 'string', value: 'while' },
+                { name: 'while', content: { type: 'seq', members: [
                     { type: 'field', name: 'body', content: { type: 'symbol', name: 'block' } },
                 ] } },
             ],
@@ -152,17 +152,18 @@ describe('Assemble — classifyNode', () => {
 
 describe('Assemble — T027a empty seq after stripping', () => {
     it('classifies a named seq of pure punctuation as a leaf', () => {
+        // Post-Link, a pure-terminal subtree is wrapped as TerminalRule;
+        // classifyNode then dispatches it to 'leaf' by rule.type alone.
         const rule: Rule = {
-            type: 'seq',
-            members: [
-                { type: 'string', value: '{' },
-                { type: 'string', value: '}' },
-            ],
+            type: 'terminal',
+            content: {
+                type: 'seq',
+                members: [
+                    { type: 'string', value: '{' },
+                    { type: 'string', value: '}' },
+                ],
+            },
         }
-        // A NAMED rule with only anonymous punctuation content exposes as
-        // a text-only terminal at the tree-sitter level — just like
-        // escape_sequence or line_comment. The v2 classifier calls this a
-        // leaf (user-facing constructible node), not a hidden token.
         const modelType = classifyNode('braces', rule)
         expect(modelType).toBe('leaf')
     })
@@ -268,16 +269,18 @@ describe('Assemble — assemble()', () => {
 })
 
 describe('Assemble — T029a identical detect tokens', () => {
-    it('collapses polymorph forms with same detect token but different fields', () => {
+    it('assembles a PolymorphRule (from Optimize) with same detect token but different fields', () => {
+        // Simulate Optimize's output: the heterogeneous-field choice has
+        // been promoted to PolymorphRule with forms in declaration order.
         const optimized = makeOptimized({
             decl: {
-                type: 'choice',
-                members: [
-                    { type: 'variant', name: 'pub_item', content: { type: 'seq', members: [
+                type: 'polymorph',
+                forms: [
+                    { name: 'pub_item', content: { type: 'seq', members: [
                         { type: 'string', value: 'pub' },
                         { type: 'field', name: 'item', content: { type: 'symbol', name: 'x' } },
                     ]}},
-                    { type: 'variant', name: 'pub_alias', content: { type: 'seq', members: [
+                    { name: 'pub_alias', content: { type: 'seq', members: [
                         { type: 'string', value: 'pub' },
                         { type: 'field', name: 'alias', content: { type: 'symbol', name: 'y' } },
                     ]}},

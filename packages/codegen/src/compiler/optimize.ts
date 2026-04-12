@@ -7,8 +7,9 @@
 
 import type {
     Rule, LinkedGrammar, OptimizedGrammar,
-    VariantRule, ChoiceRule,
+    VariantRule, ChoiceRule, PolymorphRule,
 } from './rule.ts'
+import { deriveFields, deriveChildren } from './rule.ts'
 
 // ---------------------------------------------------------------------------
 // optimize() — main entry point
@@ -21,12 +22,77 @@ export function optimize(linked: LinkedGrammar): OptimizedGrammar {
         rules[name] = optimizeRule(rule, name)
     }
 
+    // Promote top-level variant-bearing choices with heterogeneous field
+    // sets to PolymorphRule. Homogeneous variants remain as choice+variant
+    // because the downstream branch factory can merge them.
+    for (const [name, rule] of Object.entries(rules)) {
+        rules[name] = promotePolymorph(rule)
+    }
+
     return {
         name: linked.name,
         rules,
         supertypes: linked.supertypes,
         word: linked.word,
     }
+}
+
+/**
+ * Walk the top level of a rule looking for a choice-of-variants. Promote
+ * to PolymorphRule only when:
+ *
+ *   - Every variant has at least one field or symbol reference (if any
+ *     variant is pure terminal, the rule is a branch with anonymous
+ *     text content — polymorph forms have no way to render raw text).
+ *   - Field sets across variants are heterogeneous (otherwise it's a
+ *     plain branch where all variants share the same shape).
+ *
+ * "Top level" means: the outermost choice reachable through anonymous-
+ * delimiter seq wrappers (e.g. `seq('(', choice, ')')`).
+ */
+function promotePolymorph(rule: Rule): Rule {
+    const choice = findVariantChoice(rule)
+    if (!choice) return rule
+
+    // Every variant must be structurally non-empty. A pure-terminal variant
+    // (patterns/strings only, no fields, no symbols) can't render through
+    // a per-form template — the kind must stay a branch in that case and
+    // tree-sitter will expose the terminal variant's bytes as the node's text.
+    const contents = choice.members.map(m => m.type === 'variant' ? m.content : m)
+    const anyTerminalVariant = contents.some(c =>
+        deriveFields(c).length === 0 && deriveChildren(c).length === 0,
+    )
+    if (anyTerminalVariant) return rule
+
+    const fieldSets = contents.map(c => new Set(deriveFields(c).map(f => f.name)))
+    const allSame = fieldSets.every(s => setsEqual(s, fieldSets[0]!))
+    if (allSame) return rule // homogeneous → branch, not polymorph
+
+    const forms: PolymorphRule['forms'] = choice.members.map((m, i) => ({
+        name: m.type === 'variant' ? m.name : `form_${i}`,
+        content: m.type === 'variant' ? m.content : m,
+    }))
+    return { type: 'polymorph', forms }
+}
+
+function findVariantChoice(rule: Rule): ChoiceRule | null {
+    if (rule.type === 'choice' && rule.members.some(m => m.type === 'variant')) {
+        return rule
+    }
+    // Walk through anonymous-delimiter wrappers (seq of string + choice + string).
+    if (rule.type === 'seq') {
+        const choices = rule.members.filter(m =>
+            m.type === 'choice' && m.members.some(mm => mm.type === 'variant'),
+        )
+        if (choices.length === 1) return choices[0] as ChoiceRule
+    }
+    return null
+}
+
+function setsEqual<T>(a: Set<T>, b: Set<T>): boolean {
+    if (a.size !== b.size) return false
+    for (const x of a) if (!b.has(x)) return false
+    return true
 }
 
 function optimizeRule(rule: Rule, name: string): Rule {

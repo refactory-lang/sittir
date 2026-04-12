@@ -66,44 +66,8 @@ describe('export_specifier', () => {
 });
 
 describe('declaration', () => {
-  it('form_0 form produces correct type', () => {
-    const node = ir.declaration.form_0({});
-    expect(node.type).toBe('declaration');
-  });
-  it('function_signature form produces correct type', () => {
-    const node = ir.declaration.function_signature({});
-    expect(node.type).toBe('declaration');
-  });
-  it('abstract_class_declaration form produces correct type', () => {
-    const node = ir.declaration.abstract_class_declaration({});
-    expect(node.type).toBe('declaration');
-  });
-  it('module form produces correct type', () => {
-    const node = ir.declaration.module({});
-    expect(node.type).toBe('declaration');
-  });
-  it('internal_module form produces correct type', () => {
-    const node = ir.declaration.internal_module({});
-    expect(node.type).toBe('declaration');
-  });
-  it('type_alias_declaration form produces correct type', () => {
-    const node = ir.declaration.type_alias_declaration({});
-    expect(node.type).toBe('declaration');
-  });
-  it('enum_declaration form produces correct type', () => {
-    const node = ir.declaration.enum_declaration({});
-    expect(node.type).toBe('declaration');
-  });
-  it('interface_declaration form produces correct type', () => {
-    const node = ir.declaration.interface_declaration({});
-    expect(node.type).toBe('declaration');
-  });
-  it('import_alias form produces correct type', () => {
-    const node = ir.declaration.import_alias({});
-    expect(node.type).toBe('declaration');
-  });
-  it('ambient_declaration form produces correct type', () => {
-    const node = ir.declaration.ambient_declaration({});
+  it('factory produces correct type', () => {
+    const node = ir.declaration();
     expect(node.type).toBe('declaration');
   });
 });
@@ -161,13 +125,13 @@ describe('named_imports', () => {
 });
 
 describe('import_specifier', () => {
-  it('factory produces correct type', () => {
-    const node = ir.importSpecifier({ name: { type: '_import_identifier', text: 'test' } as any, alias: { type: '_import_identifier', text: 'test' } as any });
+  it('name form produces correct type', () => {
+    const node = ir.importSpecifier.name({ name: { type: '_import_identifier', text: 'test' } as any });
     expect(node.type).toBe('import_specifier');
   });
-  it('render produces non-empty string', () => {
-    const node = ir.importSpecifier({ name: { type: '_import_identifier', text: 'test' } as any, alias: { type: '_import_identifier', text: 'test' } as any });
-    expect(node.render().length).toBeGreaterThan(0);
+  it('as form produces correct type', () => {
+    const node = ir.importSpecifier.as({ name: { type: '_module_export_name', text: 'test' } as any, alias: { type: '_import_identifier', text: 'test' } as any });
+    expect(node.type).toBe('import_specifier');
   });
 });
 
@@ -183,84 +147,8 @@ describe('import_attribute', () => {
 });
 
 describe('statement', () => {
-  it('export_statement form produces correct type', () => {
-    const node = ir.statement.export_statement({});
-    expect(node.type).toBe('statement');
-  });
-  it('import_statement form produces correct type', () => {
-    const node = ir.statement.import_statement({});
-    expect(node.type).toBe('statement');
-  });
-  it('debugger_statement form produces correct type', () => {
-    const node = ir.statement.debugger_statement({});
-    expect(node.type).toBe('statement');
-  });
-  it('expression_statement form produces correct type', () => {
-    const node = ir.statement.expression_statement({});
-    expect(node.type).toBe('statement');
-  });
-  it('declaration form produces correct type', () => {
-    const node = ir.statement.declaration({});
-    expect(node.type).toBe('statement');
-  });
-  it('statement_block form produces correct type', () => {
-    const node = ir.statement.statement_block({});
-    expect(node.type).toBe('statement');
-  });
-  it('if_statement form produces correct type', () => {
-    const node = ir.statement.if_statement({});
-    expect(node.type).toBe('statement');
-  });
-  it('switch_statement form produces correct type', () => {
-    const node = ir.statement.switch_statement({});
-    expect(node.type).toBe('statement');
-  });
-  it('for_statement form produces correct type', () => {
-    const node = ir.statement.for_statement({});
-    expect(node.type).toBe('statement');
-  });
-  it('for_in_statement form produces correct type', () => {
-    const node = ir.statement.for_in_statement({});
-    expect(node.type).toBe('statement');
-  });
-  it('while_statement form produces correct type', () => {
-    const node = ir.statement.while_statement({});
-    expect(node.type).toBe('statement');
-  });
-  it('do_statement form produces correct type', () => {
-    const node = ir.statement.do_statement({});
-    expect(node.type).toBe('statement');
-  });
-  it('try_statement form produces correct type', () => {
-    const node = ir.statement.try_statement({});
-    expect(node.type).toBe('statement');
-  });
-  it('with_statement form produces correct type', () => {
-    const node = ir.statement.with_statement({});
-    expect(node.type).toBe('statement');
-  });
-  it('break_statement form produces correct type', () => {
-    const node = ir.statement.break_statement({});
-    expect(node.type).toBe('statement');
-  });
-  it('continue_statement form produces correct type', () => {
-    const node = ir.statement.continue_statement({});
-    expect(node.type).toBe('statement');
-  });
-  it('return_statement form produces correct type', () => {
-    const node = ir.statement.return_statement({});
-    expect(node.type).toBe('statement');
-  });
-  it('throw_statement form produces correct type', () => {
-    const node = ir.statement.throw_statement({});
-    expect(node.type).toBe('statement');
-  });
-  it('empty_statement form produces correct type', () => {
-    const node = ir.statement.empty_statement({});
-    expect(node.type).toBe('statement');
-  });
-  it('labeled_statement form produces correct type', () => {
-    const node = ir.statement.labeled_statement({});
+  it('factory produces correct type', () => {
+    const node = ir.statement();
     expect(node.type).toBe('statement');
   });
 });
@@ -521,86 +409,26 @@ describe('finally_clause', () => {
 });
 
 describe('parenthesized_expression', () => {
-  it('factory produces correct type', () => {
-    const node = ir.parenthesizedExpression({ type: { type: 'type_annotation', text: 'test' } as any });
+  it('expression form produces correct type', () => {
+    const node = ir.parenthesizedExpression.expression({ type: { type: 'type_annotation', text: 'test' } as any });
     expect(node.type).toBe('parenthesized_expression');
   });
-  it('render produces non-empty string', () => {
-    const node = ir.parenthesizedExpression({ type: { type: 'type_annotation', text: 'test' } as any });
-    expect(node.render().length).toBeGreaterThan(0);
+  it('sequence_expression form produces correct type', () => {
+    const node = ir.parenthesizedExpression.sequence_expression({});
+    expect(node.type).toBe('parenthesized_expression');
   });
 });
 
 describe('expression', () => {
-  it('as_expression form produces correct type', () => {
-    const node = ir.expression.as_expression({});
-    expect(node.type).toBe('expression');
-  });
-  it('satisfies_expression form produces correct type', () => {
-    const node = ir.expression.satisfies_expression({});
-    expect(node.type).toBe('expression');
-  });
-  it('instantiation_expression form produces correct type', () => {
-    const node = ir.expression.instantiation_expression({});
-    expect(node.type).toBe('expression');
-  });
-  it('internal_module form produces correct type', () => {
-    const node = ir.expression.internal_module({});
-    expect(node.type).toBe('expression');
-  });
-  it('type_assertion form produces correct type', () => {
-    const node = ir.expression.type_assertion({});
-    expect(node.type).toBe('expression');
-  });
-  it('primary_expression form produces correct type', () => {
-    const node = ir.expression.primary_expression({});
-    expect(node.type).toBe('expression');
-  });
-  it('assignment_expression form produces correct type', () => {
-    const node = ir.expression.assignment_expression({});
-    expect(node.type).toBe('expression');
-  });
-  it('augmented_assignment_expression form produces correct type', () => {
-    const node = ir.expression.augmented_assignment_expression({});
-    expect(node.type).toBe('expression');
-  });
-  it('await_expression form produces correct type', () => {
-    const node = ir.expression.await_expression({});
-    expect(node.type).toBe('expression');
-  });
-  it('unary_expression form produces correct type', () => {
-    const node = ir.expression.unary_expression({});
-    expect(node.type).toBe('expression');
-  });
-  it('binary_expression form produces correct type', () => {
-    const node = ir.expression.binary_expression({});
-    expect(node.type).toBe('expression');
-  });
-  it('ternary_expression form produces correct type', () => {
-    const node = ir.expression.ternary_expression({});
-    expect(node.type).toBe('expression');
-  });
-  it('update_expression form produces correct type', () => {
-    const node = ir.expression.update_expression({});
-    expect(node.type).toBe('expression');
-  });
-  it('new_expression form produces correct type', () => {
-    const node = ir.expression.new_expression({});
-    expect(node.type).toBe('expression');
-  });
-  it('yield_expression form produces correct type', () => {
-    const node = ir.expression.yield_expression({});
+  it('factory produces correct type', () => {
+    const node = ir.expression();
     expect(node.type).toBe('expression');
   });
 });
 
 describe('primary_expression', () => {
-  it('form_0 form produces correct type', () => {
-    const node = ir.primaryExpression.form_0({});
-    expect(node.type).toBe('primary_expression');
-  });
-  it('non_null_expression form produces correct type', () => {
-    const node = ir.primaryExpression.non_null_expression({});
+  it('factory produces correct type', () => {
+    const node = ir.primaryExpression();
     expect(node.type).toBe('primary_expression');
   });
 });
@@ -844,13 +672,13 @@ describe('generator_function_declaration', () => {
 });
 
 describe('arrow_function', () => {
-  it('factory produces correct type', () => {
-    const node = ir.arrowFunction({ parameter: { type: '_reserved_identifier', text: 'test' } as any, body: { type: 'expression', text: 'test' } as any });
+  it('parameter form produces correct type', () => {
+    const node = ir.arrowFunction.parameter({ parameter: { type: '_reserved_identifier', text: 'test' } as any });
     expect(node.type).toBe('arrow_function');
   });
-  it('render produces non-empty string', () => {
-    const node = ir.arrowFunction({ parameter: { type: '_reserved_identifier', text: 'test' } as any, body: { type: 'expression', text: 'test' } as any });
-    expect(node.render().length).toBeGreaterThan(0);
+  it('_call_signature form produces correct type', () => {
+    const node = ir.arrowFunction._call_signature({});
+    expect(node.type).toBe('arrow_function');
   });
 });
 
@@ -998,12 +826,8 @@ describe('sequence_expression', () => {
 });
 
 describe('string', () => {
-  it('tok_dq form produces correct type', () => {
-    const node = ir.string.tok_dq({});
-    expect(node.type).toBe('string');
-  });
-  it('tok_sq form produces correct type', () => {
-    const node = ir.string.tok_sq({});
+  it('factory produces correct type', () => {
+    const node = ir.string();
     expect(node.type).toBe('string');
   });
 });
@@ -1238,12 +1062,8 @@ describe('class_static_block', () => {
 });
 
 describe('pattern', () => {
-  it('_lhs_expression form produces correct type', () => {
-    const node = ir.pattern._lhs_expression({});
-    expect(node.type).toBe('pattern');
-  });
-  it('rest_pattern form produces correct type', () => {
-    const node = ir.pattern.rest_pattern({});
+  it('factory produces correct type', () => {
+    const node = ir.pattern();
     expect(node.type).toBe('pattern');
   });
 });
@@ -1642,32 +1462,8 @@ describe('asserts_annotation', () => {
 });
 
 describe('type', () => {
-  it('primary_type form produces correct type', () => {
-    const node = ir.type.primary_type({});
-    expect(node.type).toBe('type');
-  });
-  it('function_type form produces correct type', () => {
-    const node = ir.type.function_type({});
-    expect(node.type).toBe('type');
-  });
-  it('readonly_type form produces correct type', () => {
-    const node = ir.type.readonly_type({});
-    expect(node.type).toBe('type');
-  });
-  it('constructor_type form produces correct type', () => {
-    const node = ir.type.constructor_type({});
-    expect(node.type).toBe('type');
-  });
-  it('infer_type form produces correct type', () => {
-    const node = ir.type.infer_type({});
-    expect(node.type).toBe('type');
-  });
-  it('_type_query_member_expression_in_type_annotation form produces correct type', () => {
-    const node = ir.type._type_query_member_expression_in_type_annotation({});
-    expect(node.type).toBe('type');
-  });
-  it('_type_query_call_expression_in_type_annotation form produces correct type', () => {
-    const node = ir.type._type_query_call_expression_in_type_annotation({});
+  it('factory produces correct type', () => {
+    const node = ir.type();
     expect(node.type).toBe('type');
   });
 });
@@ -1720,84 +1516,8 @@ describe('constructor_type', () => {
 });
 
 describe('primary_type', () => {
-  it('parenthesized_type form produces correct type', () => {
-    const node = ir.primaryType.parenthesized_type({});
-    expect(node.type).toBe('primary_type');
-  });
-  it('predefined_type form produces correct type', () => {
-    const node = ir.primaryType.predefined_type({});
-    expect(node.type).toBe('primary_type');
-  });
-  it('_type_identifier form produces correct type', () => {
-    const node = ir.primaryType._type_identifier({});
-    expect(node.type).toBe('primary_type');
-  });
-  it('nested_type_identifier form produces correct type', () => {
-    const node = ir.primaryType.nested_type_identifier({});
-    expect(node.type).toBe('primary_type');
-  });
-  it('generic_type form produces correct type', () => {
-    const node = ir.primaryType.generic_type({});
-    expect(node.type).toBe('primary_type');
-  });
-  it('object_type form produces correct type', () => {
-    const node = ir.primaryType.object_type({});
-    expect(node.type).toBe('primary_type');
-  });
-  it('array_type form produces correct type', () => {
-    const node = ir.primaryType.array_type({});
-    expect(node.type).toBe('primary_type');
-  });
-  it('tuple_type form produces correct type', () => {
-    const node = ir.primaryType.tuple_type({});
-    expect(node.type).toBe('primary_type');
-  });
-  it('flow_maybe_type form produces correct type', () => {
-    const node = ir.primaryType.flow_maybe_type({});
-    expect(node.type).toBe('primary_type');
-  });
-  it('type_query form produces correct type', () => {
-    const node = ir.primaryType.type_query({});
-    expect(node.type).toBe('primary_type');
-  });
-  it('index_type_query form produces correct type', () => {
-    const node = ir.primaryType.index_type_query({});
-    expect(node.type).toBe('primary_type');
-  });
-  it('this form produces correct type', () => {
-    const node = ir.primaryType.this({});
-    expect(node.type).toBe('primary_type');
-  });
-  it('existential_type form produces correct type', () => {
-    const node = ir.primaryType.existential_type({});
-    expect(node.type).toBe('primary_type');
-  });
-  it('literal_type form produces correct type', () => {
-    const node = ir.primaryType.literal_type({});
-    expect(node.type).toBe('primary_type');
-  });
-  it('lookup_type form produces correct type', () => {
-    const node = ir.primaryType.lookup_type({});
-    expect(node.type).toBe('primary_type');
-  });
-  it('conditional_type form produces correct type', () => {
-    const node = ir.primaryType.conditional_type({});
-    expect(node.type).toBe('primary_type');
-  });
-  it('template_literal_type form produces correct type', () => {
-    const node = ir.primaryType.template_literal_type({});
-    expect(node.type).toBe('primary_type');
-  });
-  it('intersection_type form produces correct type', () => {
-    const node = ir.primaryType.intersection_type({});
-    expect(node.type).toBe('primary_type');
-  });
-  it('union_type form produces correct type', () => {
-    const node = ir.primaryType.union_type({});
-    expect(node.type).toBe('primary_type');
-  });
-  it('const form produces correct type', () => {
-    const node = ir.primaryType.const({});
+  it('factory produces correct type', () => {
+    const node = ir.primaryType();
     expect(node.type).toBe('primary_type');
   });
 });
@@ -1912,32 +1632,8 @@ describe('mapped_type_clause', () => {
 });
 
 describe('literal_type', () => {
-  it('_number form produces correct type', () => {
-    const node = ir.literalType._number({});
-    expect(node.type).toBe('literal_type');
-  });
-  it('number form produces correct type', () => {
-    const node = ir.literalType.number({});
-    expect(node.type).toBe('literal_type');
-  });
-  it('string form produces correct type', () => {
-    const node = ir.literalType.string({});
-    expect(node.type).toBe('literal_type');
-  });
-  it('true form produces correct type', () => {
-    const node = ir.literalType.true({});
-    expect(node.type).toBe('literal_type');
-  });
-  it('false form produces correct type', () => {
-    const node = ir.literalType.false({});
-    expect(node.type).toBe('literal_type');
-  });
-  it('null form produces correct type', () => {
-    const node = ir.literalType.null({});
-    expect(node.type).toBe('literal_type');
-  });
-  it('undefined form produces correct type', () => {
-    const node = ir.literalType.undefined({});
+  it('factory produces correct type', () => {
+    const node = ir.literalType();
     expect(node.type).toBe('literal_type');
   });
 });
@@ -2048,13 +1744,13 @@ describe('construct_signature', () => {
 });
 
 describe('index_signature', () => {
-  it('factory produces correct type', () => {
-    const node = ir.indexSignature({ mappedTypeClause: 'test' as any, name: { type: 'identifier', text: 'test' } as any, indexType: { type: 'type', text: 'test' } as any, type: { type: 'type_annotation', text: 'test' } as any });
+  it('colon form produces correct type', () => {
+    const node = ir.indexSignature.colon({ name: { type: 'identifier', text: 'test' } as any, indexType: { type: 'type', text: 'test' } as any });
     expect(node.type).toBe('index_signature');
   });
-  it('render produces non-empty string', () => {
-    const node = ir.indexSignature({ mappedTypeClause: 'test' as any, name: { type: 'identifier', text: 'test' } as any, indexType: { type: 'type', text: 'test' } as any, type: { type: 'type_annotation', text: 'test' } as any });
-    expect(node.render().length).toBeGreaterThan(0);
+  it('mapped_type_clause form produces correct type', () => {
+    const node = ir.indexSignature.mapped_type_clause({});
+    expect(node.type).toBe('index_signature');
   });
 });
 
@@ -2132,23 +1828,15 @@ describe('statement_identifier', () => {
 });
 
 describe('shorthand_property_identifier', () => {
-  it('identifier form produces correct type', () => {
-    const node = ir.shorthandPropertyIdentifier.identifier({});
-    expect(node.type).toBe('shorthand_property_identifier');
-  });
-  it('_reserved_identifier form produces correct type', () => {
-    const node = ir.shorthandPropertyIdentifier._reserved_identifier({});
+  it('factory produces correct type', () => {
+    const node = ir.shorthandPropertyIdentifier();
     expect(node.type).toBe('shorthand_property_identifier');
   });
 });
 
 describe('shorthand_property_identifier_pattern', () => {
-  it('identifier form produces correct type', () => {
-    const node = ir.shorthandPropertyIdentifierPattern.identifier({});
-    expect(node.type).toBe('shorthand_property_identifier_pattern');
-  });
-  it('_reserved_identifier form produces correct type', () => {
-    const node = ir.shorthandPropertyIdentifierPattern._reserved_identifier({});
+  it('factory produces correct type', () => {
+    const node = ir.shorthandPropertyIdentifierPattern();
     expect(node.type).toBe('shorthand_property_identifier_pattern');
   });
 });

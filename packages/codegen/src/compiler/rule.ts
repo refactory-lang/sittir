@@ -30,6 +30,8 @@ export type Rule =
     | EnumRule
     | SupertypeRule
     | GroupRule
+    | TerminalRule
+    | PolymorphRule
 
     // Terminals
     | StringRule
@@ -118,6 +120,39 @@ export interface GroupRule {
     readonly type: 'group'
     readonly name: string
     readonly content: Rule
+}
+
+/**
+ * TerminalRule — composed text-only terminal.
+ *
+ * A rule whose subtree contains no fields and no symbol references
+ * (neither visible nor hidden). Examples: `integer`, `escape_sequence`,
+ * `line_comment`, `regex_pattern`, `import_prefix`. Tree-sitter exposes
+ * instances of these kinds as text-only nodes, so `render()` can return
+ * `node.text` directly without ever consulting templates.
+ *
+ * Added by Link (see `promoteTerminals`). Not present after Evaluate.
+ * Assemble routes this to `modelType: 'leaf'` without inspecting content.
+ */
+export interface TerminalRule {
+    readonly type: 'terminal'
+    readonly content: Rule
+}
+
+/**
+ * PolymorphRule — choice-of-variants with heterogeneous field sets.
+ *
+ * A structural dispatch: multiple named variants, each with its own
+ * field shape. Added by Optimize when it detects that a variant-bearing
+ * choice has variants with different field sets (the homogeneous case
+ * is a branch, not a polymorph). Assemble routes this directly to
+ * `modelType: 'polymorph'` and builds one form per variant — no
+ * simplifyRule or content guessing.
+ */
+export interface PolymorphRule {
+    readonly type: 'polymorph'
+    /** Ordered list of forms (one per variant, in declaration order). */
+    readonly forms: Array<{ readonly name: string; readonly content: Rule }>
 }
 
 // ---------------------------------------------------------------------------

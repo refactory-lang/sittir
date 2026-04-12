@@ -28,48 +28,8 @@ rules:
     template: "{$$$CHILDREN,}"
   export_specifier:
     template: type$NAME as$ALIAS
-  declaration_form_0:
-    template: $$$CHILDREN
-  declaration_function_signature:
-    template: $$$CHILDREN
-  declaration_abstract_class_declaration:
-    template: $$$CHILDREN
-  declaration_module:
-    template: $$$CHILDREN
-  declaration_internal_module:
-    template: $$$CHILDREN
-  declaration_type_alias_declaration:
-    template: $$$CHILDREN
-  declaration_enum_declaration:
-    template: $$$CHILDREN
-  declaration_interface_declaration:
-    template: $$$CHILDREN
-  declaration_import_alias:
-    template: $$$CHILDREN
-  declaration_ambient_declaration:
-    template: $$$CHILDREN
   declaration:
-    variants:
-      - name: form_0
-        template: $$$CHILDREN
-      - name: function_signature
-        template: $$$CHILDREN
-      - name: abstract_class_declaration
-        template: $$$CHILDREN
-      - name: module
-        template: $$$CHILDREN
-      - name: internal_module
-        template: $$$CHILDREN
-      - name: type_alias_declaration
-        template: $$$CHILDREN
-      - name: enum_declaration
-        template: $$$CHILDREN
-      - name: interface_declaration
-        template: $$$CHILDREN
-      - name: import_alias
-        template: $$$CHILDREN
-      - name: ambient_declaration
-        template: $$$CHILDREN
+    template: $$$CHILDREN
   import_statement:
     template: $IMPORT_CLAUSE$FROM_CLAUSE$IMPORT_ATTRIBUTE$SEMICOLON$$$CHILDREN
   import_clause_namespace_import:
@@ -92,92 +52,20 @@ rules:
     template: $IDENTIFIER as$$$CHILDREN
   named_imports:
     template: "{$$$CHILDREN,}"
+  import_specifier_name:
+    template: $NAME
+  import_specifier_as:
+    template: $NAME as$ALIAS
   import_specifier:
-    template: type$NAME
+    variants:
+      - name: name
+        template: $NAME
+      - name: as
+        template: $NAME as$ALIAS
   import_attribute:
     template: $OBJECT$$$CHILDREN
-  statement_export_statement:
-    template: $$$CHILDREN
-  statement_import_statement:
-    template: $$$CHILDREN
-  statement_debugger_statement:
-    template: $$$CHILDREN
-  statement_expression_statement:
-    template: $$$CHILDREN
-  statement_declaration:
-    template: $$$CHILDREN
-  statement_statement_block:
-    template: $$$CHILDREN
-  statement_if_statement:
-    template: $$$CHILDREN
-  statement_switch_statement:
-    template: $$$CHILDREN
-  statement_for_statement:
-    template: $$$CHILDREN
-  statement_for_in_statement:
-    template: $$$CHILDREN
-  statement_while_statement:
-    template: $$$CHILDREN
-  statement_do_statement:
-    template: $$$CHILDREN
-  statement_try_statement:
-    template: $$$CHILDREN
-  statement_with_statement:
-    template: $$$CHILDREN
-  statement_break_statement:
-    template: $$$CHILDREN
-  statement_continue_statement:
-    template: $$$CHILDREN
-  statement_return_statement:
-    template: $$$CHILDREN
-  statement_throw_statement:
-    template: $$$CHILDREN
-  statement_empty_statement:
-    template: $$$CHILDREN
-  statement_labeled_statement:
-    template: $$$CHILDREN
   statement:
-    variants:
-      - name: export_statement
-        template: $$$CHILDREN
-      - name: import_statement
-        template: $$$CHILDREN
-      - name: debugger_statement
-        template: $$$CHILDREN
-      - name: expression_statement
-        template: $$$CHILDREN
-      - name: declaration
-        template: $$$CHILDREN
-      - name: statement_block
-        template: $$$CHILDREN
-      - name: if_statement
-        template: $$$CHILDREN
-      - name: switch_statement
-        template: $$$CHILDREN
-      - name: for_statement
-        template: $$$CHILDREN
-      - name: for_in_statement
-        template: $$$CHILDREN
-      - name: while_statement
-        template: $$$CHILDREN
-      - name: do_statement
-        template: $$$CHILDREN
-      - name: try_statement
-        template: $$$CHILDREN
-      - name: with_statement
-        template: $$$CHILDREN
-      - name: break_statement
-        template: $$$CHILDREN
-      - name: continue_statement
-        template: $$$CHILDREN
-      - name: return_statement
-        template: $$$CHILDREN
-      - name: throw_statement
-        template: $$$CHILDREN
-      - name: empty_statement
-        template: $$$CHILDREN
-      - name: labeled_statement
-        template: $$$CHILDREN
+    template: $$$CHILDREN
   expression_statement:
     template: $$$CHILDREN
   variable_declaration:
@@ -230,80 +118,20 @@ rules:
     template: catch($PARAMETER$TYPE)$BODY
   finally_clause:
     template: finally$BODY
+  parenthesized_expression_expression:
+    template: $$$CHILDREN$TYPE
+  parenthesized_expression_sequence_expression:
+    template: $$$CHILDREN
   parenthesized_expression:
-    template: ($$$CHILDREN$TYPE)
-  expression_as_expression:
-    template: $$$CHILDREN
-  expression_satisfies_expression:
-    template: $$$CHILDREN
-  expression_instantiation_expression:
-    template: $$$CHILDREN
-  expression_internal_module:
-    template: $$$CHILDREN
-  expression_type_assertion:
-    template: $$$CHILDREN
-  expression_primary_expression:
-    template: $$$CHILDREN
-  expression_assignment_expression:
-    template: $$$CHILDREN
-  expression_augmented_assignment_expression:
-    template: $$$CHILDREN
-  expression_await_expression:
-    template: $$$CHILDREN
-  expression_unary_expression:
-    template: $$$CHILDREN
-  expression_binary_expression:
-    template: $$$CHILDREN
-  expression_ternary_expression:
-    template: $$$CHILDREN
-  expression_update_expression:
-    template: $$$CHILDREN
-  expression_new_expression:
-    template: $$$CHILDREN
-  expression_yield_expression:
-    template: $$$CHILDREN
-  expression:
     variants:
-      - name: as_expression
+      - name: expression
+        template: $$$CHILDREN$TYPE
+      - name: sequence_expression
         template: $$$CHILDREN
-      - name: satisfies_expression
-        template: $$$CHILDREN
-      - name: instantiation_expression
-        template: $$$CHILDREN
-      - name: internal_module
-        template: $$$CHILDREN
-      - name: type_assertion
-        template: $$$CHILDREN
-      - name: primary_expression
-        template: $$$CHILDREN
-      - name: assignment_expression
-        template: $$$CHILDREN
-      - name: augmented_assignment_expression
-        template: $$$CHILDREN
-      - name: await_expression
-        template: $$$CHILDREN
-      - name: unary_expression
-        template: $$$CHILDREN
-      - name: binary_expression
-        template: $$$CHILDREN
-      - name: ternary_expression
-        template: $$$CHILDREN
-      - name: update_expression
-        template: $$$CHILDREN
-      - name: new_expression
-        template: $$$CHILDREN
-      - name: yield_expression
-        template: $$$CHILDREN
-  primary_expression_form_0:
-    template: $$$CHILDREN
-  primary_expression_non_null_expression:
+  expression:
     template: $$$CHILDREN
   primary_expression:
-    variants:
-      - name: form_0
-        template: $$$CHILDREN
-      - name: non_null_expression
-        template: $$$CHILDREN
+    template: $$$CHILDREN
   yield_expression:
     template: $EXPRESSION*$$$CHILDREN
   object:
@@ -356,8 +184,16 @@ rules:
     template: async function*$NAME$$$CHILDREN$BODY
   generator_function_declaration:
     template: async function*$NAME$$$CHILDREN$BODY
+  arrow_function_parameter:
+    template: $PARAMETER
+  arrow_function__call_signature:
+    template: $$$CHILDREN
   arrow_function:
-    template: async$PARAMETER=>$BODY
+    variants:
+      - name: parameter
+        template: $PARAMETER
+      - name: _call_signature
+        template: $$$CHILDREN
   _call_signature:
     template: $TYPE_PARAMETERS$PARAMETERS$RETURN_TYPE
   call_expression_function:
@@ -400,16 +236,8 @@ rules:
     template: $ARGUMENT$OPERATOR
   sequence_expression:
     template: $$$CHILDREN
-  string_tok_dq:
-    template: "\"$$$CHILDREN\""
-  string_tok_sq:
-    template: "'$$$CHILDREN'"
   string:
-    variants:
-      - name: tok_dq
-        template: "\"$$$CHILDREN\""
-      - name: tok_sq
-        template: "'$$$CHILDREN'"
+    template: "\"$$$CHILDREN\""
   template_string:
     template: "`$$$CHILDREN`"
   template_substitution:
@@ -432,16 +260,8 @@ rules:
     template: ($$$CHILDREN,)
   class_static_block:
     template: static$$$CHILDREN$BODY
-  pattern__lhs_expression:
-    template: $$$CHILDREN
-  pattern_rest_pattern:
-    template: $$$CHILDREN
   pattern:
-    variants:
-      - name: _lhs_expression
-        template: $$$CHILDREN
-      - name: rest_pattern
-        template: $$$CHILDREN
+    template: $$$CHILDREN
   rest_pattern:
     template: ...$$$CHILDREN
   method_definition:
@@ -530,36 +350,8 @@ rules:
     template: asserts$$$CHILDREN
   asserts_annotation:
     template: $ASSERTS
-  type_primary_type:
-    template: $$$CHILDREN
-  type_function_type:
-    template: $$$CHILDREN
-  type_readonly_type:
-    template: $$$CHILDREN
-  type_constructor_type:
-    template: $$$CHILDREN
-  type_infer_type:
-    template: $$$CHILDREN
-  type__type_query_member_expression_in_type_annotation:
-    template: $$$CHILDREN
-  type__type_query_call_expression_in_type_annotation:
-    template: $$$CHILDREN
   type:
-    variants:
-      - name: primary_type
-        template: $$$CHILDREN
-      - name: function_type
-        template: $$$CHILDREN
-      - name: readonly_type
-        template: $$$CHILDREN
-      - name: constructor_type
-        template: $$$CHILDREN
-      - name: infer_type
-        template: $$$CHILDREN
-      - name: _type_query_member_expression_in_type_annotation
-        template: $$$CHILDREN
-      - name: _type_query_call_expression_in_type_annotation
-        template: $$$CHILDREN
+    template: $$$CHILDREN
   tuple_parameter:
     template: $NAME$TYPE
   optional_tuple_parameter:
@@ -570,88 +362,8 @@ rules:
     template: ...$$$CHILDREN
   constructor_type:
     template: abstract new$TYPE_PARAMETERS$PARAMETERS=>$TYPE
-  primary_type_parenthesized_type:
-    template: $$$CHILDREN
-  primary_type_predefined_type:
-    template: $$$CHILDREN
-  primary_type__type_identifier:
-    template: $$$CHILDREN
-  primary_type_nested_type_identifier:
-    template: $$$CHILDREN
-  primary_type_generic_type:
-    template: $$$CHILDREN
-  primary_type_object_type:
-    template: $$$CHILDREN
-  primary_type_array_type:
-    template: $$$CHILDREN
-  primary_type_tuple_type:
-    template: $$$CHILDREN
-  primary_type_flow_maybe_type:
-    template: $$$CHILDREN
-  primary_type_type_query:
-    template: $$$CHILDREN
-  primary_type_index_type_query:
-    template: $$$CHILDREN
-  primary_type_this:
-    template: $$$CHILDREN
-  primary_type_existential_type:
-    template: $$$CHILDREN
-  primary_type_literal_type:
-    template: $$$CHILDREN
-  primary_type_lookup_type:
-    template: $$$CHILDREN
-  primary_type_conditional_type:
-    template: $$$CHILDREN
-  primary_type_template_literal_type:
-    template: $$$CHILDREN
-  primary_type_intersection_type:
-    template: $$$CHILDREN
-  primary_type_union_type:
-    template: $$$CHILDREN
-  primary_type_const:
-    template: const
   primary_type:
-    variants:
-      - name: parenthesized_type
-        template: $$$CHILDREN
-      - name: predefined_type
-        template: $$$CHILDREN
-      - name: _type_identifier
-        template: $$$CHILDREN
-      - name: nested_type_identifier
-        template: $$$CHILDREN
-      - name: generic_type
-        template: $$$CHILDREN
-      - name: object_type
-        template: $$$CHILDREN
-      - name: array_type
-        template: $$$CHILDREN
-      - name: tuple_type
-        template: $$$CHILDREN
-      - name: flow_maybe_type
-        template: $$$CHILDREN
-      - name: type_query
-        template: $$$CHILDREN
-      - name: index_type_query
-        template: $$$CHILDREN
-      - name: this
-        template: $$$CHILDREN
-      - name: existential_type
-        template: $$$CHILDREN
-      - name: literal_type
-        template: $$$CHILDREN
-      - name: lookup_type
-        template: $$$CHILDREN
-      - name: conditional_type
-        template: $$$CHILDREN
-      - name: template_literal_type
-        template: $$$CHILDREN
-      - name: intersection_type
-        template: $$$CHILDREN
-      - name: union_type
-        template: $$$CHILDREN
-      - name: const
-        template: const
+    template: $$$CHILDREN
   template_type:
     template: "${$$$CHILDREN}"
   template_literal_type:
@@ -682,36 +394,8 @@ rules:
     template: "$PRIMARY_TYPE$INDEX_TYPE$$$CHILDREN]"
   mapped_type_clause:
     template: $NAME in$TYPE as$ALIAS
-  literal_type__number:
-    template: $$$CHILDREN
-  literal_type_number:
-    template: $$$CHILDREN
-  literal_type_string:
-    template: $$$CHILDREN
-  literal_type_true:
-    template: $$$CHILDREN
-  literal_type_false:
-    template: $$$CHILDREN
-  literal_type_null:
-    template: $$$CHILDREN
-  literal_type_undefined:
-    template: $$$CHILDREN
   literal_type:
-    variants:
-      - name: _number
-        template: $$$CHILDREN
-      - name: number
-        template: $$$CHILDREN
-      - name: string
-        template: $$$CHILDREN
-      - name: true
-        template: $$$CHILDREN
-      - name: false
-        template: $$$CHILDREN
-      - name: null
-        template: $$$CHILDREN
-      - name: undefined
-        template: $$$CHILDREN
+    template: $$$CHILDREN
   _number:
     template: $OPERATOR$ARGUMENT
   flow_maybe_type:
@@ -736,8 +420,16 @@ rules:
     template: extends$$$CHILDREN
   construct_signature:
     template: abstract new$TYPE_PARAMETERS$PARAMETERS$TYPE
+  index_signature_colon:
+    template: "$NAME:$INDEX_TYPE"
+  index_signature_mapped_type_clause:
+    template: $$$CHILDREN
   index_signature:
-    template: "$MAPPED_TYPE_CLAUSE[$NAME:$INDEX_TYPE]$TYPE"
+    variants:
+      - name: colon
+        template: "$NAME:$INDEX_TYPE"
+      - name: mapped_type_clause
+        template: $$$CHILDREN
   array_type:
     template: "$PRIMARY_TYPE[]"
   tuple_type:
@@ -752,25 +444,9 @@ rules:
     template: $TYPE_PARAMETERS$PARAMETERS=>$RETURN_TYPE
   _type_identifier:
     template: $$$CHILDREN
-  shorthand_property_identifier_identifier:
-    template: $$$CHILDREN
-  shorthand_property_identifier__reserved_identifier:
-    template: $$$CHILDREN
   shorthand_property_identifier:
-    variants:
-      - name: identifier
-        template: $$$CHILDREN
-      - name: _reserved_identifier
-        template: $$$CHILDREN
-  shorthand_property_identifier_pattern_identifier:
-    template: $$$CHILDREN
-  shorthand_property_identifier_pattern__reserved_identifier:
     template: $$$CHILDREN
   shorthand_property_identifier_pattern:
-    variants:
-      - name: identifier
-        template: $$$CHILDREN
-      - name: _reserved_identifier
-        template: $$$CHILDREN
+    template: $$$CHILDREN
   interface_body:
     template: $OPENING$MEMBERS$CLOSING

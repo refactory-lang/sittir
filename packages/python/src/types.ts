@@ -54,12 +54,6 @@ export type LeafStringMap = {
   and: "and";
   or: "or";
   is: "is";
-  "0x": "0x";
-  "0X": "0X";
-  "0o": "0o";
-  "0O": "0O";
-  "0b": "0b";
-  "0B": "0B";
   True: "True";
   False: "False";
   None: "None";
@@ -234,12 +228,6 @@ export const enum SyntaxKind {
   And = 'and',
   Or = 'or',
   Is = 'is',
-  Tok_0x = '0x',
-  Tok_0X = '0X',
-  Tok_0o = '0o',
-  Tok_0O = '0O',
-  Tok_0b = '0b',
-  Tok_0B = '0B',
   True = 'True',
   False = 'False',
   None = 'None',
@@ -422,27 +410,11 @@ export interface AssertStatement {
   readonly children: readonly (Expression)[];
 }
 
-export interface ExpressionStatementExpression {
+export interface ExpressionStatement {
   readonly type: 'expression_statement';
+  readonly children: readonly (Expression | Assignment | AugmentedAssignment | Yield)[];
 }
 
-export interface ExpressionStatementExpression2 {
-  readonly type: 'expression_statement';
-}
-
-export interface ExpressionStatementAssignment {
-  readonly type: 'expression_statement';
-}
-
-export interface ExpressionStatementAugmentedAssignment {
-  readonly type: 'expression_statement';
-}
-
-export interface ExpressionStatementYield {
-  readonly type: 'expression_statement';
-}
-
-export type ExpressionStatement = ExpressionStatementExpression | ExpressionStatementExpression2 | ExpressionStatementAssignment | ExpressionStatementAugmentedAssignment | ExpressionStatementYield;
 export interface NamedExpression {
   readonly type: 'named_expression';
   readonly fields: {
@@ -565,15 +537,11 @@ export interface WithStatement {
   readonly children: WithClause;
 }
 
-export interface WithClauseWithItem {
+export interface WithClause {
   readonly type: 'with_clause';
+  readonly children: readonly (WithItem)[];
 }
 
-export interface WithClauseParen {
-  readonly type: 'with_clause';
-}
-
-export type WithClause = WithClauseWithItem | WithClauseParen;
 export interface WithItem {
   readonly type: 'with_item';
   readonly fields: {
@@ -701,19 +669,11 @@ export interface DottedName {
   readonly children: readonly (Identifier)[];
 }
 
-export interface CasePatternAsPattern {
+export interface CasePattern {
   readonly type: 'case_pattern';
+  readonly children: HiddenAsPattern | KeywordPattern | HiddenSimplePattern;
 }
 
-export interface CasePatternKeywordPattern {
-  readonly type: 'case_pattern';
-}
-
-export interface CasePatternSimplePattern {
-  readonly type: 'case_pattern';
-}
-
-export type CasePattern = CasePatternAsPattern | CasePatternKeywordPattern | CasePatternSimplePattern;
 export interface HiddenAsPattern {
   readonly type: '_as_pattern';
   readonly children: CasePattern | Identifier;
@@ -784,72 +744,16 @@ export interface HiddenPatterns {
   readonly children: readonly (Pattern)[];
 }
 
-export interface ParameterIdentifier {
+export interface Parameter {
   readonly type: 'parameter';
+  readonly children: Identifier | TypedParameter | DefaultParameter | TypedDefaultParameter | ListSplatPattern | TuplePattern | KeywordSeparator | PositionalSeparator | DictionarySplatPattern;
 }
 
-export interface ParameterTypedParameter {
-  readonly type: 'parameter';
-}
-
-export interface ParameterDefaultParameter {
-  readonly type: 'parameter';
-}
-
-export interface ParameterTypedDefaultParameter {
-  readonly type: 'parameter';
-}
-
-export interface ParameterListSplatPattern {
-  readonly type: 'parameter';
-}
-
-export interface ParameterTuplePattern {
-  readonly type: 'parameter';
-}
-
-export interface ParameterKeywordSeparator {
-  readonly type: 'parameter';
-}
-
-export interface ParameterPositionalSeparator {
-  readonly type: 'parameter';
-}
-
-export interface ParameterDictionarySplatPattern {
-  readonly type: 'parameter';
-}
-
-export type Parameter = ParameterIdentifier | ParameterTypedParameter | ParameterDefaultParameter | ParameterTypedDefaultParameter | ParameterListSplatPattern | ParameterTuplePattern | ParameterKeywordSeparator | ParameterPositionalSeparator | ParameterDictionarySplatPattern;
-export interface PatternIdentifier {
+export interface Pattern {
   readonly type: 'pattern';
+  readonly children: Identifier | KeywordIdentifier | Subscript | Attribute | ListSplatPattern | TuplePattern | ListPattern;
 }
 
-export interface PatternKeywordIdentifier {
-  readonly type: 'pattern';
-}
-
-export interface PatternSubscript {
-  readonly type: 'pattern';
-}
-
-export interface PatternAttribute {
-  readonly type: 'pattern';
-}
-
-export interface PatternListSplatPattern {
-  readonly type: 'pattern';
-}
-
-export interface PatternTuplePattern {
-  readonly type: 'pattern';
-}
-
-export interface PatternListPattern {
-  readonly type: 'pattern';
-}
-
-export type Pattern = PatternIdentifier | PatternKeywordIdentifier | PatternSubscript | PatternAttribute | PatternListSplatPattern | PatternTuplePattern | PatternListPattern;
 export interface TuplePattern {
   readonly type: 'tuple_pattern';
   readonly children: HiddenPatterns;
@@ -895,144 +799,16 @@ export interface AsPattern {
   };
 }
 
-export interface ExpressionComparisonOperator {
+export interface Expression {
   readonly type: 'expression';
+  readonly children: ComparisonOperator | NotOperator | BooleanOperator | Lambda | PrimaryExpression | ConditionalExpression | NamedExpression | AsPattern;
 }
 
-export interface ExpressionNotOperator {
-  readonly type: 'expression';
-}
-
-export interface ExpressionBooleanOperator {
-  readonly type: 'expression';
-}
-
-export interface ExpressionLambda {
-  readonly type: 'expression';
-}
-
-export interface ExpressionPrimaryExpression {
-  readonly type: 'expression';
-}
-
-export interface ExpressionConditionalExpression {
-  readonly type: 'expression';
-}
-
-export interface ExpressionNamedExpression {
-  readonly type: 'expression';
-}
-
-export interface ExpressionAsPattern {
-  readonly type: 'expression';
-}
-
-export type Expression = ExpressionComparisonOperator | ExpressionNotOperator | ExpressionBooleanOperator | ExpressionLambda | ExpressionPrimaryExpression | ExpressionConditionalExpression | ExpressionNamedExpression | ExpressionAsPattern;
-export interface PrimaryExpressionAwait {
+export interface PrimaryExpression {
   readonly type: 'primary_expression';
+  readonly children: Await | BinaryOperator | Identifier | KeywordIdentifier | String | ConcatenatedString | Integer | Float | True | False | None | UnaryOperator | Attribute | Subscript | Call | List | ListComprehension | Dictionary | DictionaryComprehension | Set | SetComprehension | Tuple | ParenthesizedExpression | GeneratorExpression | Ellipsis | ListSplatPattern;
 }
 
-export interface PrimaryExpressionBinaryOperator {
-  readonly type: 'primary_expression';
-}
-
-export interface PrimaryExpressionIdentifier {
-  readonly type: 'primary_expression';
-}
-
-export interface PrimaryExpressionKeywordIdentifier {
-  readonly type: 'primary_expression';
-}
-
-export interface PrimaryExpressionString {
-  readonly type: 'primary_expression';
-}
-
-export interface PrimaryExpressionConcatenatedString {
-  readonly type: 'primary_expression';
-}
-
-export interface PrimaryExpressionInteger {
-  readonly type: 'primary_expression';
-}
-
-export interface PrimaryExpressionFloat {
-  readonly type: 'primary_expression';
-}
-
-export interface PrimaryExpressionTrue {
-  readonly type: 'primary_expression';
-}
-
-export interface PrimaryExpressionFalse {
-  readonly type: 'primary_expression';
-}
-
-export interface PrimaryExpressionNone {
-  readonly type: 'primary_expression';
-}
-
-export interface PrimaryExpressionUnaryOperator {
-  readonly type: 'primary_expression';
-}
-
-export interface PrimaryExpressionAttribute {
-  readonly type: 'primary_expression';
-}
-
-export interface PrimaryExpressionSubscript {
-  readonly type: 'primary_expression';
-}
-
-export interface PrimaryExpressionCall {
-  readonly type: 'primary_expression';
-}
-
-export interface PrimaryExpressionList {
-  readonly type: 'primary_expression';
-}
-
-export interface PrimaryExpressionListComprehension {
-  readonly type: 'primary_expression';
-}
-
-export interface PrimaryExpressionDictionary {
-  readonly type: 'primary_expression';
-}
-
-export interface PrimaryExpressionDictionaryComprehension {
-  readonly type: 'primary_expression';
-}
-
-export interface PrimaryExpressionSet {
-  readonly type: 'primary_expression';
-}
-
-export interface PrimaryExpressionSetComprehension {
-  readonly type: 'primary_expression';
-}
-
-export interface PrimaryExpressionTuple {
-  readonly type: 'primary_expression';
-}
-
-export interface PrimaryExpressionParenthesizedExpression {
-  readonly type: 'primary_expression';
-}
-
-export interface PrimaryExpressionGeneratorExpression {
-  readonly type: 'primary_expression';
-}
-
-export interface PrimaryExpressionEllipsis {
-  readonly type: 'primary_expression';
-}
-
-export interface PrimaryExpressionListSplatPattern {
-  readonly type: 'primary_expression';
-}
-
-export type PrimaryExpression = PrimaryExpressionAwait | PrimaryExpressionBinaryOperator | PrimaryExpressionIdentifier | PrimaryExpressionKeywordIdentifier | PrimaryExpressionString | PrimaryExpressionConcatenatedString | PrimaryExpressionInteger | PrimaryExpressionFloat | PrimaryExpressionTrue | PrimaryExpressionFalse | PrimaryExpressionNone | PrimaryExpressionUnaryOperator | PrimaryExpressionAttribute | PrimaryExpressionSubscript | PrimaryExpressionCall | PrimaryExpressionList | PrimaryExpressionListComprehension | PrimaryExpressionDictionary | PrimaryExpressionDictionaryComprehension | PrimaryExpressionSet | PrimaryExpressionSetComprehension | PrimaryExpressionTuple | PrimaryExpressionParenthesizedExpression | PrimaryExpressionGeneratorExpression | PrimaryExpressionEllipsis | PrimaryExpressionListSplatPattern;
 export interface NotOperator {
   readonly type: 'not_operator';
   readonly fields: {
@@ -1090,15 +866,29 @@ export interface LambdaWithinForInClause {
   };
 }
 
-export interface Assignment {
+export interface AssignmentEq {
   readonly type: 'assignment';
   readonly fields: {
-    readonly left: HiddenLeftHandSide;
     readonly right: HiddenRightHandSide;
+  };
+}
+
+export interface AssignmentColon {
+  readonly type: 'assignment';
+  readonly fields: {
     readonly type: Type;
   };
 }
 
+export interface AssignmentColon2 {
+  readonly type: 'assignment';
+  readonly fields: {
+    readonly type: Type;
+    readonly right: HiddenRightHandSide;
+  };
+}
+
+export type Assignment = AssignmentEq | AssignmentColon | AssignmentColon2;
 export interface AugmentedAssignment {
   readonly type: 'augmented_assignment';
   readonly fields: {
@@ -1160,31 +950,11 @@ export interface TypedParameter {
   readonly children: Identifier | ListSplatPattern | DictionarySplatPattern;
 }
 
-export interface TypeExpression {
+export interface Type {
   readonly type: 'type';
+  readonly children: Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType;
 }
 
-export interface TypeSplatType {
-  readonly type: 'type';
-}
-
-export interface TypeGenericType {
-  readonly type: 'type';
-}
-
-export interface TypeUnionType {
-  readonly type: 'type';
-}
-
-export interface TypeConstrainedType {
-  readonly type: 'type';
-}
-
-export interface TypeMemberType {
-  readonly type: 'type';
-}
-
-export type Type = TypeExpression | TypeSplatType | TypeGenericType | TypeUnionType | TypeConstrainedType | TypeMemberType;
 export interface SplatType {
   readonly type: 'splat_type';
   readonly fields: {
@@ -1378,39 +1148,11 @@ export interface Await {
   readonly children: PrimaryExpression;
 }
 
-export interface AsPatternTargetComparisonOperator {
+export interface AsPatternTarget {
   readonly type: 'as_pattern_target';
+  readonly children: ComparisonOperator | NotOperator | BooleanOperator | Lambda | PrimaryExpression | ConditionalExpression | NamedExpression | AsPattern;
 }
 
-export interface AsPatternTargetNotOperator {
-  readonly type: 'as_pattern_target';
-}
-
-export interface AsPatternTargetBooleanOperator {
-  readonly type: 'as_pattern_target';
-}
-
-export interface AsPatternTargetLambda {
-  readonly type: 'as_pattern_target';
-}
-
-export interface AsPatternTargetPrimaryExpression {
-  readonly type: 'as_pattern_target';
-}
-
-export interface AsPatternTargetConditionalExpression {
-  readonly type: 'as_pattern_target';
-}
-
-export interface AsPatternTargetNamedExpression {
-  readonly type: 'as_pattern_target';
-}
-
-export interface AsPatternTargetAsPattern {
-  readonly type: 'as_pattern_target';
-}
-
-export type AsPatternTarget = AsPatternTargetComparisonOperator | AsPatternTargetNotOperator | AsPatternTargetBooleanOperator | AsPatternTargetLambda | AsPatternTargetPrimaryExpression | AsPatternTargetConditionalExpression | AsPatternTargetNamedExpression | AsPatternTargetAsPattern;
 export interface FormatExpression {
   readonly type: 'format_expression';
   readonly fields: {
@@ -1682,36 +1424,6 @@ export interface Is {
   readonly text: "is";
 }
 
-export interface Tok_0x {
-  readonly type: '0x';
-  readonly text: "0x";
-}
-
-export interface Tok_0X {
-  readonly type: '0X';
-  readonly text: "0X";
-}
-
-export interface Tok_0o {
-  readonly type: '0o';
-  readonly text: "0o";
-}
-
-export interface Tok_0O {
-  readonly type: '0O';
-  readonly text: "0O";
-}
-
-export interface Tok_0b {
-  readonly type: '0b';
-  readonly text: "0b";
-}
-
-export interface Tok_0B {
-  readonly type: '0B';
-  readonly text: "0B";
-}
-
 // Config types
 export type ModuleConfig = ConfigOf<Module>;
 export type HiddenSimpleStatementsConfig = ConfigOf<HiddenSimpleStatements>;
@@ -1724,12 +1436,7 @@ export type AliasedImportConfig = ConfigOf<AliasedImport>;
 export type PrintStatementConfig = ConfigOf<PrintStatement>;
 export type ChevronConfig = ConfigOf<Chevron>;
 export type AssertStatementConfig = ConfigOf<AssertStatement>;
-export type ExpressionStatementExpressionConfig = ConfigOf<ExpressionStatementExpression>;
-export type ExpressionStatementExpression2Config = ConfigOf<ExpressionStatementExpression2>;
-export type ExpressionStatementAssignmentConfig = ConfigOf<ExpressionStatementAssignment>;
-export type ExpressionStatementAugmentedAssignmentConfig = ConfigOf<ExpressionStatementAugmentedAssignment>;
-export type ExpressionStatementYieldConfig = ConfigOf<ExpressionStatementYield>;
-export type ExpressionStatementConfig = ExpressionStatementExpressionConfig | ExpressionStatementExpression2Config | ExpressionStatementAssignmentConfig | ExpressionStatementAugmentedAssignmentConfig | ExpressionStatementYieldConfig;
+export type ExpressionStatementConfig = ConfigOf<ExpressionStatement>;
 export type NamedExpressionConfig = ConfigOf<NamedExpression>;
 export type ReturnStatementConfig = ConfigOf<ReturnStatement>;
 export type DeleteStatementConfig = ConfigOf<DeleteStatement>;
@@ -1745,9 +1452,7 @@ export type TryStatementConfig = ConfigOf<TryStatement>;
 export type ExceptClauseConfig = ConfigOf<ExceptClause>;
 export type FinallyClauseConfig = ConfigOf<FinallyClause>;
 export type WithStatementConfig = ConfigOf<WithStatement>;
-export type WithClauseWithItemConfig = ConfigOf<WithClauseWithItem>;
-export type WithClauseParenConfig = ConfigOf<WithClauseParen>;
-export type WithClauseConfig = WithClauseWithItemConfig | WithClauseParenConfig;
+export type WithClauseConfig = ConfigOf<WithClause>;
 export type WithItemConfig = ConfigOf<WithItem>;
 export type FunctionDefinitionConfig = ConfigOf<FunctionDefinition>;
 export type ParametersConfig = ConfigOf<Parameters>;
@@ -1767,10 +1472,7 @@ export type DecoratorConfig = ConfigOf<Decorator>;
 export type BlockConfig = ConfigOf<Block>;
 export type ExpressionListConfig = ConfigOf<ExpressionList>;
 export type DottedNameConfig = ConfigOf<DottedName>;
-export type CasePatternAsPatternConfig = ConfigOf<CasePatternAsPattern>;
-export type CasePatternKeywordPatternConfig = ConfigOf<CasePatternKeywordPattern>;
-export type CasePatternSimplePatternConfig = ConfigOf<CasePatternSimplePattern>;
-export type CasePatternConfig = CasePatternAsPatternConfig | CasePatternKeywordPatternConfig | CasePatternSimplePatternConfig;
+export type CasePatternConfig = ConfigOf<CasePattern>;
 export type HiddenAsPatternConfig = ConfigOf<HiddenAsPattern>;
 export type UnionPatternConfig = ConfigOf<UnionPattern>;
 export type HiddenListPatternConfig = ConfigOf<HiddenListPattern>;
@@ -1782,24 +1484,8 @@ export type ClassPatternConfig = ConfigOf<ClassPattern>;
 export type ComplexPatternConfig = ConfigOf<ComplexPattern>;
 export type HiddenParametersConfig = ConfigOf<HiddenParameters>;
 export type HiddenPatternsConfig = ConfigOf<HiddenPatterns>;
-export type ParameterIdentifierConfig = ConfigOf<ParameterIdentifier>;
-export type ParameterTypedParameterConfig = ConfigOf<ParameterTypedParameter>;
-export type ParameterDefaultParameterConfig = ConfigOf<ParameterDefaultParameter>;
-export type ParameterTypedDefaultParameterConfig = ConfigOf<ParameterTypedDefaultParameter>;
-export type ParameterListSplatPatternConfig = ConfigOf<ParameterListSplatPattern>;
-export type ParameterTuplePatternConfig = ConfigOf<ParameterTuplePattern>;
-export type ParameterKeywordSeparatorConfig = ConfigOf<ParameterKeywordSeparator>;
-export type ParameterPositionalSeparatorConfig = ConfigOf<ParameterPositionalSeparator>;
-export type ParameterDictionarySplatPatternConfig = ConfigOf<ParameterDictionarySplatPattern>;
-export type ParameterConfig = ParameterIdentifierConfig | ParameterTypedParameterConfig | ParameterDefaultParameterConfig | ParameterTypedDefaultParameterConfig | ParameterListSplatPatternConfig | ParameterTuplePatternConfig | ParameterKeywordSeparatorConfig | ParameterPositionalSeparatorConfig | ParameterDictionarySplatPatternConfig;
-export type PatternIdentifierConfig = ConfigOf<PatternIdentifier>;
-export type PatternKeywordIdentifierConfig = ConfigOf<PatternKeywordIdentifier>;
-export type PatternSubscriptConfig = ConfigOf<PatternSubscript>;
-export type PatternAttributeConfig = ConfigOf<PatternAttribute>;
-export type PatternListSplatPatternConfig = ConfigOf<PatternListSplatPattern>;
-export type PatternTuplePatternConfig = ConfigOf<PatternTuplePattern>;
-export type PatternListPatternConfig = ConfigOf<PatternListPattern>;
-export type PatternConfig = PatternIdentifierConfig | PatternKeywordIdentifierConfig | PatternSubscriptConfig | PatternAttributeConfig | PatternListSplatPatternConfig | PatternTuplePatternConfig | PatternListPatternConfig;
+export type ParameterConfig = ConfigOf<Parameter>;
+export type PatternConfig = ConfigOf<Pattern>;
 export type TuplePatternConfig = ConfigOf<TuplePattern>;
 export type ListPatternConfig = ConfigOf<ListPattern>;
 export type DefaultParameterConfig = ConfigOf<DefaultParameter>;
@@ -1807,42 +1493,8 @@ export type TypedDefaultParameterConfig = ConfigOf<TypedDefaultParameter>;
 export type ListSplatPatternConfig = ConfigOf<ListSplatPattern>;
 export type DictionarySplatPatternConfig = ConfigOf<DictionarySplatPattern>;
 export type AsPatternConfig = ConfigOf<AsPattern>;
-export type ExpressionComparisonOperatorConfig = ConfigOf<ExpressionComparisonOperator>;
-export type ExpressionNotOperatorConfig = ConfigOf<ExpressionNotOperator>;
-export type ExpressionBooleanOperatorConfig = ConfigOf<ExpressionBooleanOperator>;
-export type ExpressionLambdaConfig = ConfigOf<ExpressionLambda>;
-export type ExpressionPrimaryExpressionConfig = ConfigOf<ExpressionPrimaryExpression>;
-export type ExpressionConditionalExpressionConfig = ConfigOf<ExpressionConditionalExpression>;
-export type ExpressionNamedExpressionConfig = ConfigOf<ExpressionNamedExpression>;
-export type ExpressionAsPatternConfig = ConfigOf<ExpressionAsPattern>;
-export type ExpressionConfig = ExpressionComparisonOperatorConfig | ExpressionNotOperatorConfig | ExpressionBooleanOperatorConfig | ExpressionLambdaConfig | ExpressionPrimaryExpressionConfig | ExpressionConditionalExpressionConfig | ExpressionNamedExpressionConfig | ExpressionAsPatternConfig;
-export type PrimaryExpressionAwaitConfig = ConfigOf<PrimaryExpressionAwait>;
-export type PrimaryExpressionBinaryOperatorConfig = ConfigOf<PrimaryExpressionBinaryOperator>;
-export type PrimaryExpressionIdentifierConfig = ConfigOf<PrimaryExpressionIdentifier>;
-export type PrimaryExpressionKeywordIdentifierConfig = ConfigOf<PrimaryExpressionKeywordIdentifier>;
-export type PrimaryExpressionStringConfig = ConfigOf<PrimaryExpressionString>;
-export type PrimaryExpressionConcatenatedStringConfig = ConfigOf<PrimaryExpressionConcatenatedString>;
-export type PrimaryExpressionIntegerConfig = ConfigOf<PrimaryExpressionInteger>;
-export type PrimaryExpressionFloatConfig = ConfigOf<PrimaryExpressionFloat>;
-export type PrimaryExpressionTrueConfig = ConfigOf<PrimaryExpressionTrue>;
-export type PrimaryExpressionFalseConfig = ConfigOf<PrimaryExpressionFalse>;
-export type PrimaryExpressionNoneConfig = ConfigOf<PrimaryExpressionNone>;
-export type PrimaryExpressionUnaryOperatorConfig = ConfigOf<PrimaryExpressionUnaryOperator>;
-export type PrimaryExpressionAttributeConfig = ConfigOf<PrimaryExpressionAttribute>;
-export type PrimaryExpressionSubscriptConfig = ConfigOf<PrimaryExpressionSubscript>;
-export type PrimaryExpressionCallConfig = ConfigOf<PrimaryExpressionCall>;
-export type PrimaryExpressionListConfig = ConfigOf<PrimaryExpressionList>;
-export type PrimaryExpressionListComprehensionConfig = ConfigOf<PrimaryExpressionListComprehension>;
-export type PrimaryExpressionDictionaryConfig = ConfigOf<PrimaryExpressionDictionary>;
-export type PrimaryExpressionDictionaryComprehensionConfig = ConfigOf<PrimaryExpressionDictionaryComprehension>;
-export type PrimaryExpressionSetConfig = ConfigOf<PrimaryExpressionSet>;
-export type PrimaryExpressionSetComprehensionConfig = ConfigOf<PrimaryExpressionSetComprehension>;
-export type PrimaryExpressionTupleConfig = ConfigOf<PrimaryExpressionTuple>;
-export type PrimaryExpressionParenthesizedExpressionConfig = ConfigOf<PrimaryExpressionParenthesizedExpression>;
-export type PrimaryExpressionGeneratorExpressionConfig = ConfigOf<PrimaryExpressionGeneratorExpression>;
-export type PrimaryExpressionEllipsisConfig = ConfigOf<PrimaryExpressionEllipsis>;
-export type PrimaryExpressionListSplatPatternConfig = ConfigOf<PrimaryExpressionListSplatPattern>;
-export type PrimaryExpressionConfig = PrimaryExpressionAwaitConfig | PrimaryExpressionBinaryOperatorConfig | PrimaryExpressionIdentifierConfig | PrimaryExpressionKeywordIdentifierConfig | PrimaryExpressionStringConfig | PrimaryExpressionConcatenatedStringConfig | PrimaryExpressionIntegerConfig | PrimaryExpressionFloatConfig | PrimaryExpressionTrueConfig | PrimaryExpressionFalseConfig | PrimaryExpressionNoneConfig | PrimaryExpressionUnaryOperatorConfig | PrimaryExpressionAttributeConfig | PrimaryExpressionSubscriptConfig | PrimaryExpressionCallConfig | PrimaryExpressionListConfig | PrimaryExpressionListComprehensionConfig | PrimaryExpressionDictionaryConfig | PrimaryExpressionDictionaryComprehensionConfig | PrimaryExpressionSetConfig | PrimaryExpressionSetComprehensionConfig | PrimaryExpressionTupleConfig | PrimaryExpressionParenthesizedExpressionConfig | PrimaryExpressionGeneratorExpressionConfig | PrimaryExpressionEllipsisConfig | PrimaryExpressionListSplatPatternConfig;
+export type ExpressionConfig = ConfigOf<Expression>;
+export type PrimaryExpressionConfig = ConfigOf<PrimaryExpression>;
 export type NotOperatorConfig = ConfigOf<NotOperator>;
 export type BooleanOperatorConfig = ConfigOf<BooleanOperator>;
 export type BinaryOperatorConfig = ConfigOf<BinaryOperator>;
@@ -1850,7 +1502,10 @@ export type UnaryOperatorConfig = ConfigOf<UnaryOperator>;
 export type ComparisonOperatorConfig = ConfigOf<ComparisonOperator>;
 export type LambdaConfig = ConfigOf<Lambda>;
 export type LambdaWithinForInClauseConfig = ConfigOf<LambdaWithinForInClause>;
-export type AssignmentConfig = ConfigOf<Assignment>;
+export type AssignmentEqConfig = ConfigOf<AssignmentEq>;
+export type AssignmentColonConfig = ConfigOf<AssignmentColon>;
+export type AssignmentColon2Config = ConfigOf<AssignmentColon2>;
+export type AssignmentConfig = AssignmentEqConfig | AssignmentColonConfig | AssignmentColon2Config;
 export type AugmentedAssignmentConfig = ConfigOf<AugmentedAssignment>;
 export type PatternListConfig = ConfigOf<PatternList>;
 export type YieldConfig = ConfigOf<Yield>;
@@ -1859,13 +1514,7 @@ export type SubscriptConfig = ConfigOf<Subscript>;
 export type SliceConfig = ConfigOf<Slice>;
 export type CallConfig = ConfigOf<Call>;
 export type TypedParameterConfig = ConfigOf<TypedParameter>;
-export type TypeExpressionConfig = ConfigOf<TypeExpression>;
-export type TypeSplatTypeConfig = ConfigOf<TypeSplatType>;
-export type TypeGenericTypeConfig = ConfigOf<TypeGenericType>;
-export type TypeUnionTypeConfig = ConfigOf<TypeUnionType>;
-export type TypeConstrainedTypeConfig = ConfigOf<TypeConstrainedType>;
-export type TypeMemberTypeConfig = ConfigOf<TypeMemberType>;
-export type TypeConfig = TypeExpressionConfig | TypeSplatTypeConfig | TypeGenericTypeConfig | TypeUnionTypeConfig | TypeConstrainedTypeConfig | TypeMemberTypeConfig;
+export type TypeConfig = ConfigOf<Type>;
 export type SplatTypeConfig = ConfigOf<SplatType>;
 export type GenericTypeConfig = ConfigOf<GenericType>;
 export type UnionTypeConfig = ConfigOf<UnionType>;
@@ -1893,15 +1542,7 @@ export type StringContentConfig = ConfigOf<StringContent>;
 export type InterpolationConfig = ConfigOf<Interpolation>;
 export type FormatSpecifierConfig = ConfigOf<FormatSpecifier>;
 export type AwaitConfig = ConfigOf<Await>;
-export type AsPatternTargetComparisonOperatorConfig = ConfigOf<AsPatternTargetComparisonOperator>;
-export type AsPatternTargetNotOperatorConfig = ConfigOf<AsPatternTargetNotOperator>;
-export type AsPatternTargetBooleanOperatorConfig = ConfigOf<AsPatternTargetBooleanOperator>;
-export type AsPatternTargetLambdaConfig = ConfigOf<AsPatternTargetLambda>;
-export type AsPatternTargetPrimaryExpressionConfig = ConfigOf<AsPatternTargetPrimaryExpression>;
-export type AsPatternTargetConditionalExpressionConfig = ConfigOf<AsPatternTargetConditionalExpression>;
-export type AsPatternTargetNamedExpressionConfig = ConfigOf<AsPatternTargetNamedExpression>;
-export type AsPatternTargetAsPatternConfig = ConfigOf<AsPatternTargetAsPattern>;
-export type AsPatternTargetConfig = AsPatternTargetComparisonOperatorConfig | AsPatternTargetNotOperatorConfig | AsPatternTargetBooleanOperatorConfig | AsPatternTargetLambdaConfig | AsPatternTargetPrimaryExpressionConfig | AsPatternTargetConditionalExpressionConfig | AsPatternTargetNamedExpressionConfig | AsPatternTargetAsPatternConfig;
+export type AsPatternTargetConfig = ConfigOf<AsPatternTarget>;
 export type FormatExpressionConfig = ConfigOf<FormatExpression>;
 
 // Tree types
@@ -1917,11 +1558,6 @@ export interface PrintStatementTree extends TreeNode<'print_statement'> {}
 export interface ChevronTree extends TreeNode<'chevron'> {}
 export interface AssertStatementTree extends TreeNode<'assert_statement'> {}
 export interface ExpressionStatementTree extends TreeNode<'expression_statement'> {}
-export interface ExpressionStatementExpressionTree extends TreeNode<'expression_statement'> {}
-export interface ExpressionStatementExpression2Tree extends TreeNode<'expression_statement'> {}
-export interface ExpressionStatementAssignmentTree extends TreeNode<'expression_statement'> {}
-export interface ExpressionStatementAugmentedAssignmentTree extends TreeNode<'expression_statement'> {}
-export interface ExpressionStatementYieldTree extends TreeNode<'expression_statement'> {}
 export interface NamedExpressionTree extends TreeNode<'named_expression'> {}
 export interface ReturnStatementTree extends TreeNode<'return_statement'> {}
 export interface DeleteStatementTree extends TreeNode<'delete_statement'> {}
@@ -1938,8 +1574,6 @@ export interface ExceptClauseTree extends TreeNode<'except_clause'> {}
 export interface FinallyClauseTree extends TreeNode<'finally_clause'> {}
 export interface WithStatementTree extends TreeNode<'with_statement'> {}
 export interface WithClauseTree extends TreeNode<'with_clause'> {}
-export interface WithClauseWithItemTree extends TreeNode<'with_clause'> {}
-export interface WithClauseParenTree extends TreeNode<'with_clause'> {}
 export interface WithItemTree extends TreeNode<'with_item'> {}
 export interface FunctionDefinitionTree extends TreeNode<'function_definition'> {}
 export interface ParametersTree extends TreeNode<'parameters'> {}
@@ -1960,9 +1594,6 @@ export interface BlockTree extends TreeNode<'block'> {}
 export interface ExpressionListTree extends TreeNode<'expression_list'> {}
 export interface DottedNameTree extends TreeNode<'dotted_name'> {}
 export interface CasePatternTree extends TreeNode<'case_pattern'> {}
-export interface CasePatternAsPatternTree extends TreeNode<'case_pattern'> {}
-export interface CasePatternKeywordPatternTree extends TreeNode<'case_pattern'> {}
-export interface CasePatternSimplePatternTree extends TreeNode<'case_pattern'> {}
 export interface HiddenAsPatternTree extends TreeNode<'_as_pattern'> {}
 export interface UnionPatternTree extends TreeNode<'union_pattern'> {}
 export interface HiddenListPatternTree extends TreeNode<'_list_pattern'> {}
@@ -1975,23 +1606,7 @@ export interface ComplexPatternTree extends TreeNode<'complex_pattern'> {}
 export interface HiddenParametersTree extends TreeNode<'_parameters'> {}
 export interface HiddenPatternsTree extends TreeNode<'_patterns'> {}
 export interface ParameterTree extends TreeNode<'parameter'> {}
-export interface ParameterIdentifierTree extends TreeNode<'parameter'> {}
-export interface ParameterTypedParameterTree extends TreeNode<'parameter'> {}
-export interface ParameterDefaultParameterTree extends TreeNode<'parameter'> {}
-export interface ParameterTypedDefaultParameterTree extends TreeNode<'parameter'> {}
-export interface ParameterListSplatPatternTree extends TreeNode<'parameter'> {}
-export interface ParameterTuplePatternTree extends TreeNode<'parameter'> {}
-export interface ParameterKeywordSeparatorTree extends TreeNode<'parameter'> {}
-export interface ParameterPositionalSeparatorTree extends TreeNode<'parameter'> {}
-export interface ParameterDictionarySplatPatternTree extends TreeNode<'parameter'> {}
 export interface PatternTree extends TreeNode<'pattern'> {}
-export interface PatternIdentifierTree extends TreeNode<'pattern'> {}
-export interface PatternKeywordIdentifierTree extends TreeNode<'pattern'> {}
-export interface PatternSubscriptTree extends TreeNode<'pattern'> {}
-export interface PatternAttributeTree extends TreeNode<'pattern'> {}
-export interface PatternListSplatPatternTree extends TreeNode<'pattern'> {}
-export interface PatternTuplePatternTree extends TreeNode<'pattern'> {}
-export interface PatternListPatternTree extends TreeNode<'pattern'> {}
 export interface TuplePatternTree extends TreeNode<'tuple_pattern'> {}
 export interface ListPatternTree extends TreeNode<'list_pattern'> {}
 export interface DefaultParameterTree extends TreeNode<'default_parameter'> {}
@@ -2000,41 +1615,7 @@ export interface ListSplatPatternTree extends TreeNode<'list_splat_pattern'> {}
 export interface DictionarySplatPatternTree extends TreeNode<'dictionary_splat_pattern'> {}
 export interface AsPatternTree extends TreeNode<'as_pattern'> {}
 export interface ExpressionTree extends TreeNode<'expression'> {}
-export interface ExpressionComparisonOperatorTree extends TreeNode<'expression'> {}
-export interface ExpressionNotOperatorTree extends TreeNode<'expression'> {}
-export interface ExpressionBooleanOperatorTree extends TreeNode<'expression'> {}
-export interface ExpressionLambdaTree extends TreeNode<'expression'> {}
-export interface ExpressionPrimaryExpressionTree extends TreeNode<'expression'> {}
-export interface ExpressionConditionalExpressionTree extends TreeNode<'expression'> {}
-export interface ExpressionNamedExpressionTree extends TreeNode<'expression'> {}
-export interface ExpressionAsPatternTree extends TreeNode<'expression'> {}
 export interface PrimaryExpressionTree extends TreeNode<'primary_expression'> {}
-export interface PrimaryExpressionAwaitTree extends TreeNode<'primary_expression'> {}
-export interface PrimaryExpressionBinaryOperatorTree extends TreeNode<'primary_expression'> {}
-export interface PrimaryExpressionIdentifierTree extends TreeNode<'primary_expression'> {}
-export interface PrimaryExpressionKeywordIdentifierTree extends TreeNode<'primary_expression'> {}
-export interface PrimaryExpressionStringTree extends TreeNode<'primary_expression'> {}
-export interface PrimaryExpressionConcatenatedStringTree extends TreeNode<'primary_expression'> {}
-export interface PrimaryExpressionIntegerTree extends TreeNode<'primary_expression'> {}
-export interface PrimaryExpressionFloatTree extends TreeNode<'primary_expression'> {}
-export interface PrimaryExpressionTrueTree extends TreeNode<'primary_expression'> {}
-export interface PrimaryExpressionFalseTree extends TreeNode<'primary_expression'> {}
-export interface PrimaryExpressionNoneTree extends TreeNode<'primary_expression'> {}
-export interface PrimaryExpressionUnaryOperatorTree extends TreeNode<'primary_expression'> {}
-export interface PrimaryExpressionAttributeTree extends TreeNode<'primary_expression'> {}
-export interface PrimaryExpressionSubscriptTree extends TreeNode<'primary_expression'> {}
-export interface PrimaryExpressionCallTree extends TreeNode<'primary_expression'> {}
-export interface PrimaryExpressionListTree extends TreeNode<'primary_expression'> {}
-export interface PrimaryExpressionListComprehensionTree extends TreeNode<'primary_expression'> {}
-export interface PrimaryExpressionDictionaryTree extends TreeNode<'primary_expression'> {}
-export interface PrimaryExpressionDictionaryComprehensionTree extends TreeNode<'primary_expression'> {}
-export interface PrimaryExpressionSetTree extends TreeNode<'primary_expression'> {}
-export interface PrimaryExpressionSetComprehensionTree extends TreeNode<'primary_expression'> {}
-export interface PrimaryExpressionTupleTree extends TreeNode<'primary_expression'> {}
-export interface PrimaryExpressionParenthesizedExpressionTree extends TreeNode<'primary_expression'> {}
-export interface PrimaryExpressionGeneratorExpressionTree extends TreeNode<'primary_expression'> {}
-export interface PrimaryExpressionEllipsisTree extends TreeNode<'primary_expression'> {}
-export interface PrimaryExpressionListSplatPatternTree extends TreeNode<'primary_expression'> {}
 export interface NotOperatorTree extends TreeNode<'not_operator'> {}
 export interface BooleanOperatorTree extends TreeNode<'boolean_operator'> {}
 export interface BinaryOperatorTree extends TreeNode<'binary_operator'> {}
@@ -2043,6 +1624,9 @@ export interface ComparisonOperatorTree extends TreeNode<'comparison_operator'> 
 export interface LambdaTree extends TreeNode<'lambda'> {}
 export interface LambdaWithinForInClauseTree extends TreeNode<'lambda_within_for_in_clause'> {}
 export interface AssignmentTree extends TreeNode<'assignment'> {}
+export interface AssignmentEqTree extends TreeNode<'assignment'> {}
+export interface AssignmentColonTree extends TreeNode<'assignment'> {}
+export interface AssignmentColon2Tree extends TreeNode<'assignment'> {}
 export interface AugmentedAssignmentTree extends TreeNode<'augmented_assignment'> {}
 export interface PatternListTree extends TreeNode<'pattern_list'> {}
 export interface YieldTree extends TreeNode<'yield'> {}
@@ -2052,12 +1636,6 @@ export interface SliceTree extends TreeNode<'slice'> {}
 export interface CallTree extends TreeNode<'call'> {}
 export interface TypedParameterTree extends TreeNode<'typed_parameter'> {}
 export interface TypeTree extends TreeNode<'type'> {}
-export interface TypeExpressionTree extends TreeNode<'type'> {}
-export interface TypeSplatTypeTree extends TreeNode<'type'> {}
-export interface TypeGenericTypeTree extends TreeNode<'type'> {}
-export interface TypeUnionTypeTree extends TreeNode<'type'> {}
-export interface TypeConstrainedTypeTree extends TreeNode<'type'> {}
-export interface TypeMemberTypeTree extends TreeNode<'type'> {}
 export interface SplatTypeTree extends TreeNode<'splat_type'> {}
 export interface GenericTypeTree extends TreeNode<'generic_type'> {}
 export interface UnionTypeTree extends TreeNode<'union_type'> {}
@@ -2086,14 +1664,6 @@ export interface InterpolationTree extends TreeNode<'interpolation'> {}
 export interface FormatSpecifierTree extends TreeNode<'format_specifier'> {}
 export interface AwaitTree extends TreeNode<'await'> {}
 export interface AsPatternTargetTree extends TreeNode<'as_pattern_target'> {}
-export interface AsPatternTargetComparisonOperatorTree extends TreeNode<'as_pattern_target'> {}
-export interface AsPatternTargetNotOperatorTree extends TreeNode<'as_pattern_target'> {}
-export interface AsPatternTargetBooleanOperatorTree extends TreeNode<'as_pattern_target'> {}
-export interface AsPatternTargetLambdaTree extends TreeNode<'as_pattern_target'> {}
-export interface AsPatternTargetPrimaryExpressionTree extends TreeNode<'as_pattern_target'> {}
-export interface AsPatternTargetConditionalExpressionTree extends TreeNode<'as_pattern_target'> {}
-export interface AsPatternTargetNamedExpressionTree extends TreeNode<'as_pattern_target'> {}
-export interface AsPatternTargetAsPatternTree extends TreeNode<'as_pattern_target'> {}
 export interface FormatExpressionTree extends TreeNode<'format_expression'> {}
 export interface ImportPrefixTree extends TreeNode<'import_prefix'> {}
 export interface PassStatementTree extends TreeNode<'pass_statement'> {}
@@ -2147,12 +1717,6 @@ export interface NotTree extends TreeNode<'not'> {}
 export interface AndTree extends TreeNode<'and'> {}
 export interface OrTree extends TreeNode<'or'> {}
 export interface IsTree extends TreeNode<'is'> {}
-export interface Tok_0xTree extends TreeNode<'0x'> {}
-export interface Tok_0XTree extends TreeNode<'0X'> {}
-export interface Tok_0oTree extends TreeNode<'0o'> {}
-export interface Tok_0OTree extends TreeNode<'0O'> {}
-export interface Tok_0bTree extends TreeNode<'0b'> {}
-export interface Tok_0BTree extends TreeNode<'0B'> {}
 export interface TrueTree extends TreeNode<'True'> {}
 export interface FalseTree extends TreeNode<'False'> {}
 export interface NoneTree extends TreeNode<'None'> {}
@@ -2169,7 +1733,7 @@ export type AliasedImportFromInput = FromInputOf<AliasedImport, LeafScalarMap, L
 export type PrintStatementFromInput = FromInputOf<PrintStatement, LeafScalarMap, LeafStringMap>;
 export type ChevronFromInput = FromInputOf<Chevron, LeafScalarMap, LeafStringMap>;
 export type AssertStatementFromInput = FromInputOf<AssertStatement, LeafScalarMap, LeafStringMap>;
-export type ExpressionStatementFromInput = FromInputOf<ExpressionStatementExpression, LeafScalarMap, LeafStringMap> | FromInputOf<ExpressionStatementExpression2, LeafScalarMap, LeafStringMap> | FromInputOf<ExpressionStatementAssignment, LeafScalarMap, LeafStringMap> | FromInputOf<ExpressionStatementAugmentedAssignment, LeafScalarMap, LeafStringMap> | FromInputOf<ExpressionStatementYield, LeafScalarMap, LeafStringMap>;
+export type ExpressionStatementFromInput = FromInputOf<ExpressionStatement, LeafScalarMap, LeafStringMap>;
 export type NamedExpressionFromInput = FromInputOf<NamedExpression, LeafScalarMap, LeafStringMap>;
 export type ReturnStatementFromInput = FromInputOf<ReturnStatement, LeafScalarMap, LeafStringMap>;
 export type DeleteStatementFromInput = FromInputOf<DeleteStatement, LeafScalarMap, LeafStringMap>;
@@ -2185,7 +1749,7 @@ export type TryStatementFromInput = FromInputOf<TryStatement, LeafScalarMap, Lea
 export type ExceptClauseFromInput = FromInputOf<ExceptClause, LeafScalarMap, LeafStringMap>;
 export type FinallyClauseFromInput = FromInputOf<FinallyClause, LeafScalarMap, LeafStringMap>;
 export type WithStatementFromInput = FromInputOf<WithStatement, LeafScalarMap, LeafStringMap>;
-export type WithClauseFromInput = FromInputOf<WithClauseWithItem, LeafScalarMap, LeafStringMap> | FromInputOf<WithClauseParen, LeafScalarMap, LeafStringMap>;
+export type WithClauseFromInput = FromInputOf<WithClause, LeafScalarMap, LeafStringMap>;
 export type WithItemFromInput = FromInputOf<WithItem, LeafScalarMap, LeafStringMap>;
 export type FunctionDefinitionFromInput = FromInputOf<FunctionDefinition, LeafScalarMap, LeafStringMap>;
 export type ParametersFromInput = FromInputOf<Parameters, LeafScalarMap, LeafStringMap>;
@@ -2205,7 +1769,7 @@ export type DecoratorFromInput = FromInputOf<Decorator, LeafScalarMap, LeafStrin
 export type BlockFromInput = FromInputOf<Block, LeafScalarMap, LeafStringMap>;
 export type ExpressionListFromInput = FromInputOf<ExpressionList, LeafScalarMap, LeafStringMap>;
 export type DottedNameFromInput = FromInputOf<DottedName, LeafScalarMap, LeafStringMap>;
-export type CasePatternFromInput = FromInputOf<CasePatternAsPattern, LeafScalarMap, LeafStringMap> | FromInputOf<CasePatternKeywordPattern, LeafScalarMap, LeafStringMap> | FromInputOf<CasePatternSimplePattern, LeafScalarMap, LeafStringMap>;
+export type CasePatternFromInput = FromInputOf<CasePattern, LeafScalarMap, LeafStringMap>;
 export type HiddenAsPatternFromInput = FromInputOf<HiddenAsPattern, LeafScalarMap, LeafStringMap>;
 export type UnionPatternFromInput = FromInputOf<UnionPattern, LeafScalarMap, LeafStringMap>;
 export type HiddenListPatternFromInput = FromInputOf<HiddenListPattern, LeafScalarMap, LeafStringMap>;
@@ -2217,8 +1781,8 @@ export type ClassPatternFromInput = FromInputOf<ClassPattern, LeafScalarMap, Lea
 export type ComplexPatternFromInput = FromInputOf<ComplexPattern, LeafScalarMap, LeafStringMap>;
 export type HiddenParametersFromInput = FromInputOf<HiddenParameters, LeafScalarMap, LeafStringMap>;
 export type HiddenPatternsFromInput = FromInputOf<HiddenPatterns, LeafScalarMap, LeafStringMap>;
-export type ParameterFromInput = FromInputOf<ParameterIdentifier, LeafScalarMap, LeafStringMap> | FromInputOf<ParameterTypedParameter, LeafScalarMap, LeafStringMap> | FromInputOf<ParameterDefaultParameter, LeafScalarMap, LeafStringMap> | FromInputOf<ParameterTypedDefaultParameter, LeafScalarMap, LeafStringMap> | FromInputOf<ParameterListSplatPattern, LeafScalarMap, LeafStringMap> | FromInputOf<ParameterTuplePattern, LeafScalarMap, LeafStringMap> | FromInputOf<ParameterKeywordSeparator, LeafScalarMap, LeafStringMap> | FromInputOf<ParameterPositionalSeparator, LeafScalarMap, LeafStringMap> | FromInputOf<ParameterDictionarySplatPattern, LeafScalarMap, LeafStringMap>;
-export type PatternFromInput = FromInputOf<PatternIdentifier, LeafScalarMap, LeafStringMap> | FromInputOf<PatternKeywordIdentifier, LeafScalarMap, LeafStringMap> | FromInputOf<PatternSubscript, LeafScalarMap, LeafStringMap> | FromInputOf<PatternAttribute, LeafScalarMap, LeafStringMap> | FromInputOf<PatternListSplatPattern, LeafScalarMap, LeafStringMap> | FromInputOf<PatternTuplePattern, LeafScalarMap, LeafStringMap> | FromInputOf<PatternListPattern, LeafScalarMap, LeafStringMap>;
+export type ParameterFromInput = FromInputOf<Parameter, LeafScalarMap, LeafStringMap>;
+export type PatternFromInput = FromInputOf<Pattern, LeafScalarMap, LeafStringMap>;
 export type TuplePatternFromInput = FromInputOf<TuplePattern, LeafScalarMap, LeafStringMap>;
 export type ListPatternFromInput = FromInputOf<ListPattern, LeafScalarMap, LeafStringMap>;
 export type DefaultParameterFromInput = FromInputOf<DefaultParameter, LeafScalarMap, LeafStringMap>;
@@ -2226,8 +1790,8 @@ export type TypedDefaultParameterFromInput = FromInputOf<TypedDefaultParameter, 
 export type ListSplatPatternFromInput = FromInputOf<ListSplatPattern, LeafScalarMap, LeafStringMap>;
 export type DictionarySplatPatternFromInput = FromInputOf<DictionarySplatPattern, LeafScalarMap, LeafStringMap>;
 export type AsPatternFromInput = FromInputOf<AsPattern, LeafScalarMap, LeafStringMap>;
-export type ExpressionFromInput = FromInputOf<ExpressionComparisonOperator, LeafScalarMap, LeafStringMap> | FromInputOf<ExpressionNotOperator, LeafScalarMap, LeafStringMap> | FromInputOf<ExpressionBooleanOperator, LeafScalarMap, LeafStringMap> | FromInputOf<ExpressionLambda, LeafScalarMap, LeafStringMap> | FromInputOf<ExpressionPrimaryExpression, LeafScalarMap, LeafStringMap> | FromInputOf<ExpressionConditionalExpression, LeafScalarMap, LeafStringMap> | FromInputOf<ExpressionNamedExpression, LeafScalarMap, LeafStringMap> | FromInputOf<ExpressionAsPattern, LeafScalarMap, LeafStringMap>;
-export type PrimaryExpressionFromInput = FromInputOf<PrimaryExpressionAwait, LeafScalarMap, LeafStringMap> | FromInputOf<PrimaryExpressionBinaryOperator, LeafScalarMap, LeafStringMap> | FromInputOf<PrimaryExpressionIdentifier, LeafScalarMap, LeafStringMap> | FromInputOf<PrimaryExpressionKeywordIdentifier, LeafScalarMap, LeafStringMap> | FromInputOf<PrimaryExpressionString, LeafScalarMap, LeafStringMap> | FromInputOf<PrimaryExpressionConcatenatedString, LeafScalarMap, LeafStringMap> | FromInputOf<PrimaryExpressionInteger, LeafScalarMap, LeafStringMap> | FromInputOf<PrimaryExpressionFloat, LeafScalarMap, LeafStringMap> | FromInputOf<PrimaryExpressionTrue, LeafScalarMap, LeafStringMap> | FromInputOf<PrimaryExpressionFalse, LeafScalarMap, LeafStringMap> | FromInputOf<PrimaryExpressionNone, LeafScalarMap, LeafStringMap> | FromInputOf<PrimaryExpressionUnaryOperator, LeafScalarMap, LeafStringMap> | FromInputOf<PrimaryExpressionAttribute, LeafScalarMap, LeafStringMap> | FromInputOf<PrimaryExpressionSubscript, LeafScalarMap, LeafStringMap> | FromInputOf<PrimaryExpressionCall, LeafScalarMap, LeafStringMap> | FromInputOf<PrimaryExpressionList, LeafScalarMap, LeafStringMap> | FromInputOf<PrimaryExpressionListComprehension, LeafScalarMap, LeafStringMap> | FromInputOf<PrimaryExpressionDictionary, LeafScalarMap, LeafStringMap> | FromInputOf<PrimaryExpressionDictionaryComprehension, LeafScalarMap, LeafStringMap> | FromInputOf<PrimaryExpressionSet, LeafScalarMap, LeafStringMap> | FromInputOf<PrimaryExpressionSetComprehension, LeafScalarMap, LeafStringMap> | FromInputOf<PrimaryExpressionTuple, LeafScalarMap, LeafStringMap> | FromInputOf<PrimaryExpressionParenthesizedExpression, LeafScalarMap, LeafStringMap> | FromInputOf<PrimaryExpressionGeneratorExpression, LeafScalarMap, LeafStringMap> | FromInputOf<PrimaryExpressionEllipsis, LeafScalarMap, LeafStringMap> | FromInputOf<PrimaryExpressionListSplatPattern, LeafScalarMap, LeafStringMap>;
+export type ExpressionFromInput = FromInputOf<Expression, LeafScalarMap, LeafStringMap>;
+export type PrimaryExpressionFromInput = FromInputOf<PrimaryExpression, LeafScalarMap, LeafStringMap>;
 export type NotOperatorFromInput = FromInputOf<NotOperator, LeafScalarMap, LeafStringMap>;
 export type BooleanOperatorFromInput = FromInputOf<BooleanOperator, LeafScalarMap, LeafStringMap>;
 export type BinaryOperatorFromInput = FromInputOf<BinaryOperator, LeafScalarMap, LeafStringMap>;
@@ -2235,7 +1799,7 @@ export type UnaryOperatorFromInput = FromInputOf<UnaryOperator, LeafScalarMap, L
 export type ComparisonOperatorFromInput = FromInputOf<ComparisonOperator, LeafScalarMap, LeafStringMap>;
 export type LambdaFromInput = FromInputOf<Lambda, LeafScalarMap, LeafStringMap>;
 export type LambdaWithinForInClauseFromInput = FromInputOf<LambdaWithinForInClause, LeafScalarMap, LeafStringMap>;
-export type AssignmentFromInput = FromInputOf<Assignment, LeafScalarMap, LeafStringMap>;
+export type AssignmentFromInput = FromInputOf<AssignmentEq, LeafScalarMap, LeafStringMap> | FromInputOf<AssignmentColon, LeafScalarMap, LeafStringMap> | FromInputOf<AssignmentColon2, LeafScalarMap, LeafStringMap>;
 export type AugmentedAssignmentFromInput = FromInputOf<AugmentedAssignment, LeafScalarMap, LeafStringMap>;
 export type PatternListFromInput = FromInputOf<PatternList, LeafScalarMap, LeafStringMap>;
 export type YieldFromInput = FromInputOf<Yield, LeafScalarMap, LeafStringMap>;
@@ -2244,7 +1808,7 @@ export type SubscriptFromInput = FromInputOf<Subscript, LeafScalarMap, LeafStrin
 export type SliceFromInput = FromInputOf<Slice, LeafScalarMap, LeafStringMap>;
 export type CallFromInput = FromInputOf<Call, LeafScalarMap, LeafStringMap>;
 export type TypedParameterFromInput = FromInputOf<TypedParameter, LeafScalarMap, LeafStringMap>;
-export type TypeFromInput = FromInputOf<TypeExpression, LeafScalarMap, LeafStringMap> | FromInputOf<TypeSplatType, LeafScalarMap, LeafStringMap> | FromInputOf<TypeGenericType, LeafScalarMap, LeafStringMap> | FromInputOf<TypeUnionType, LeafScalarMap, LeafStringMap> | FromInputOf<TypeConstrainedType, LeafScalarMap, LeafStringMap> | FromInputOf<TypeMemberType, LeafScalarMap, LeafStringMap>;
+export type TypeFromInput = FromInputOf<Type, LeafScalarMap, LeafStringMap>;
 export type SplatTypeFromInput = FromInputOf<SplatType, LeafScalarMap, LeafStringMap>;
 export type GenericTypeFromInput = FromInputOf<GenericType, LeafScalarMap, LeafStringMap>;
 export type UnionTypeFromInput = FromInputOf<UnionType, LeafScalarMap, LeafStringMap>;
@@ -2272,7 +1836,7 @@ export type StringContentFromInput = FromInputOf<StringContent, LeafScalarMap, L
 export type InterpolationFromInput = FromInputOf<Interpolation, LeafScalarMap, LeafStringMap>;
 export type FormatSpecifierFromInput = FromInputOf<FormatSpecifier, LeafScalarMap, LeafStringMap>;
 export type AwaitFromInput = FromInputOf<Await, LeafScalarMap, LeafStringMap>;
-export type AsPatternTargetFromInput = FromInputOf<AsPatternTargetComparisonOperator, LeafScalarMap, LeafStringMap> | FromInputOf<AsPatternTargetNotOperator, LeafScalarMap, LeafStringMap> | FromInputOf<AsPatternTargetBooleanOperator, LeafScalarMap, LeafStringMap> | FromInputOf<AsPatternTargetLambda, LeafScalarMap, LeafStringMap> | FromInputOf<AsPatternTargetPrimaryExpression, LeafScalarMap, LeafStringMap> | FromInputOf<AsPatternTargetConditionalExpression, LeafScalarMap, LeafStringMap> | FromInputOf<AsPatternTargetNamedExpression, LeafScalarMap, LeafStringMap> | FromInputOf<AsPatternTargetAsPattern, LeafScalarMap, LeafStringMap>;
+export type AsPatternTargetFromInput = FromInputOf<AsPatternTarget, LeafScalarMap, LeafStringMap>;
 export type FormatExpressionFromInput = FromInputOf<FormatExpression, LeafScalarMap, LeafStringMap>;
 
 // Supertype unions
@@ -2700,27 +2264,13 @@ export interface KindMap {
   'and': And;
   'or': Or;
   'is': Is;
-  '0x': Tok_0x;
-  '0X': Tok_0X;
-  '0o': Tok_0o;
-  '0O': Tok_0O;
-  '0b': Tok_0b;
-  '0B': Tok_0B;
   'True': True;
   'False': False;
   'None': None;
 }
 
 export interface VariantMap {
-  'expression_statement': { expression: ExpressionStatementExpression; expression2: ExpressionStatementExpression2; assignment: ExpressionStatementAssignment; augmented_assignment: ExpressionStatementAugmentedAssignment; yield: ExpressionStatementYield };
-  'with_clause': { with_item: WithClauseWithItem; paren: WithClauseParen };
-  'case_pattern': { _as_pattern: CasePatternAsPattern; keyword_pattern: CasePatternKeywordPattern; _simple_pattern: CasePatternSimplePattern };
-  'parameter': { identifier: ParameterIdentifier; typed_parameter: ParameterTypedParameter; default_parameter: ParameterDefaultParameter; typed_default_parameter: ParameterTypedDefaultParameter; list_splat_pattern: ParameterListSplatPattern; tuple_pattern: ParameterTuplePattern; keyword_separator: ParameterKeywordSeparator; positional_separator: ParameterPositionalSeparator; dictionary_splat_pattern: ParameterDictionarySplatPattern };
-  'pattern': { identifier: PatternIdentifier; keyword_identifier: PatternKeywordIdentifier; subscript: PatternSubscript; attribute: PatternAttribute; list_splat_pattern: PatternListSplatPattern; tuple_pattern: PatternTuplePattern; list_pattern: PatternListPattern };
-  'expression': { comparison_operator: ExpressionComparisonOperator; not_operator: ExpressionNotOperator; boolean_operator: ExpressionBooleanOperator; lambda: ExpressionLambda; primary_expression: ExpressionPrimaryExpression; conditional_expression: ExpressionConditionalExpression; named_expression: ExpressionNamedExpression; as_pattern: ExpressionAsPattern };
-  'primary_expression': { await: PrimaryExpressionAwait; binary_operator: PrimaryExpressionBinaryOperator; identifier: PrimaryExpressionIdentifier; keyword_identifier: PrimaryExpressionKeywordIdentifier; string: PrimaryExpressionString; concatenated_string: PrimaryExpressionConcatenatedString; integer: PrimaryExpressionInteger; float: PrimaryExpressionFloat; true: PrimaryExpressionTrue; false: PrimaryExpressionFalse; none: PrimaryExpressionNone; unary_operator: PrimaryExpressionUnaryOperator; attribute: PrimaryExpressionAttribute; subscript: PrimaryExpressionSubscript; call: PrimaryExpressionCall; list: PrimaryExpressionList; list_comprehension: PrimaryExpressionListComprehension; dictionary: PrimaryExpressionDictionary; dictionary_comprehension: PrimaryExpressionDictionaryComprehension; set: PrimaryExpressionSet; set_comprehension: PrimaryExpressionSetComprehension; tuple: PrimaryExpressionTuple; parenthesized_expression: PrimaryExpressionParenthesizedExpression; generator_expression: PrimaryExpressionGeneratorExpression; ellipsis: PrimaryExpressionEllipsis; list_splat_pattern: PrimaryExpressionListSplatPattern };
-  'type': { expression: TypeExpression; splat_type: TypeSplatType; generic_type: TypeGenericType; union_type: TypeUnionType; constrained_type: TypeConstrainedType; member_type: TypeMemberType };
-  'as_pattern_target': { comparison_operator: AsPatternTargetComparisonOperator; not_operator: AsPatternTargetNotOperator; boolean_operator: AsPatternTargetBooleanOperator; lambda: AsPatternTargetLambda; primary_expression: AsPatternTargetPrimaryExpression; conditional_expression: AsPatternTargetConditionalExpression; named_expression: AsPatternTargetNamedExpression; as_pattern: AsPatternTargetAsPattern };
+  'assignment': { eq: AssignmentEq; colon: AssignmentColon; colon2: AssignmentColon2 };
 }
 
 export interface ConfigMap {

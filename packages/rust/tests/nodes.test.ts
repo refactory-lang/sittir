@@ -14,12 +14,8 @@ describe('source_file', () => {
 });
 
 describe('expression_statement', () => {
-  it('semi form produces correct type', () => {
-    const node = ir.expressionStatement.semi({});
-    expect(node.type).toBe('expression_statement');
-  });
-  it('_expression_ending_with_block form produces correct type', () => {
-    const node = ir.expressionStatement._expression_ending_with_block({});
+  it('factory produces correct type', () => {
+    const node = ir.expressionStatement();
     expect(node.type).toBe('expression_statement');
   });
 });
@@ -47,16 +43,8 @@ describe('macro_rule', () => {
 });
 
 describe('token_tree_pattern', () => {
-  it('paren form produces correct type', () => {
-    const node = ir.tokenTreePattern.paren({});
-    expect(node.type).toBe('token_tree_pattern');
-  });
-  it('bracket form produces correct type', () => {
-    const node = ir.tokenTreePattern.bracket({});
-    expect(node.type).toBe('token_tree_pattern');
-  });
-  it('brace form produces correct type', () => {
-    const node = ir.tokenTreePattern.brace({});
+  it('factory produces correct type', () => {
+    const node = ir.tokenTreePattern();
     expect(node.type).toBe('token_tree_pattern');
   });
 });
@@ -80,16 +68,8 @@ describe('token_repetition_pattern', () => {
 });
 
 describe('token_tree', () => {
-  it('paren form produces correct type', () => {
-    const node = ir.tokenTree.paren({});
-    expect(node.type).toBe('token_tree');
-  });
-  it('bracket form produces correct type', () => {
-    const node = ir.tokenTree.bracket({});
-    expect(node.type).toBe('token_tree');
-  });
-  it('brace form produces correct type', () => {
-    const node = ir.tokenTree.brace({});
+  it('factory produces correct type', () => {
+    const node = ir.tokenTree();
     expect(node.type).toBe('token_tree');
   });
 });
@@ -546,12 +526,8 @@ describe('extern_modifier', () => {
 });
 
 describe('visibility_modifier', () => {
-  it('crate form produces correct type', () => {
-    const node = ir.visibilityModifier.crate({});
-    expect(node.type).toBe('visibility_modifier');
-  });
-  it('pub form produces correct type', () => {
-    const node = ir.visibilityModifier.pub({});
+  it('factory produces correct type', () => {
+    const node = ir.visibilityModifier();
     expect(node.type).toBe('visibility_modifier');
   });
 });
@@ -762,16 +738,8 @@ describe('macro_invocation', () => {
 });
 
 describe('delim_token_tree', () => {
-  it('paren form produces correct type', () => {
-    const node = ir.delimTokenTree.paren({});
-    expect(node.type).toBe('delim_token_tree');
-  });
-  it('bracket form produces correct type', () => {
-    const node = ir.delimTokenTree.bracket({});
-    expect(node.type).toBe('delim_token_tree');
-  });
-  it('brace form produces correct type', () => {
-    const node = ir.delimTokenTree.brace({});
+  it('factory produces correct type', () => {
+    const node = ir.delimTokenTree();
     expect(node.type).toBe('delim_token_tree');
   });
 });
@@ -810,21 +778,13 @@ describe('scoped_type_identifier', () => {
 });
 
 describe('range_expression', () => {
-  it('start form produces correct type', () => {
-    const node = ir.rangeExpression.start({ start: { type: '_expression', text: 'test' } as any, end: { type: '..', text: 'test' } as any });
+  it('factory produces correct type', () => {
+    const node = ir.rangeExpression({ start: { type: '_expression', text: 'test' } as any, end: { type: '..', text: 'test' } as any });
     expect(node.type).toBe('range_expression');
   });
-  it('start2 form produces correct type', () => {
-    const node = ir.rangeExpression.start2({ start: { type: '_expression', text: 'test' } as any, end: 'test' as any });
-    expect(node.type).toBe('range_expression');
-  });
-  it('start3 form produces correct type', () => {
-    const node = ir.rangeExpression.start3({ start: 'test' as any, end: { type: '_expression', text: 'test' } as any });
-    expect(node.type).toBe('range_expression');
-  });
-  it('dotdot form produces correct type', () => {
-    const node = ir.rangeExpression.dotdot({});
-    expect(node.type).toBe('range_expression');
+  it('render produces non-empty string', () => {
+    const node = ir.rangeExpression({ start: { type: '_expression', text: 'test' } as any, end: { type: '..', text: 'test' } as any });
+    expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
@@ -906,23 +866,15 @@ describe('type_cast_expression', () => {
 });
 
 describe('return_expression', () => {
-  it('return form produces correct type', () => {
-    const node = ir.returnExpression.return({});
-    expect(node.type).toBe('return_expression');
-  });
-  it('return2 form produces correct type', () => {
-    const node = ir.returnExpression.return2({});
+  it('factory produces correct type', () => {
+    const node = ir.returnExpression();
     expect(node.type).toBe('return_expression');
   });
 });
 
 describe('yield_expression', () => {
-  it('yield form produces correct type', () => {
-    const node = ir.yieldExpression.yield({});
-    expect(node.type).toBe('yield_expression');
-  });
-  it('yield2 form produces correct type', () => {
-    const node = ir.yieldExpression.yield2({});
+  it('factory produces correct type', () => {
+    const node = ir.yieldExpression();
     expect(node.type).toBe('yield_expression');
   });
 });
@@ -946,13 +898,13 @@ describe('arguments', () => {
 });
 
 describe('array_expression', () => {
-  it('factory produces correct type', () => {
-    const node = ir.arrayExpression({ attributes: 'test' as any, elements: 'test' as any, length: { type: '_expression', text: 'test' } as any });
+  it('semi form produces correct type', () => {
+    const node = ir.arrayExpression.semi({ length: { type: '_expression', text: 'test' } as any });
     expect(node.type).toBe('array_expression');
   });
-  it('render produces non-empty string', () => {
-    const node = ir.arrayExpression({ attributes: 'test' as any, elements: 'test' as any, length: { type: '_expression', text: 'test' } as any });
-    expect(node.render().length).toBeGreaterThan(0);
+  it('form_1 form produces correct type', () => {
+    const node = ir.arrayExpression.form_1({});
+    expect(node.type).toBe('array_expression');
   });
 });
 
@@ -1154,13 +1106,13 @@ describe('const_block', () => {
 });
 
 describe('closure_expression', () => {
-  it('factory produces correct type', () => {
-    const node = ir.closureExpression({ parameters: { type: 'closure_parameters', text: 'test' } as any, body: { type: 'block', text: 'test' } as any });
+  it('body form produces correct type', () => {
+    const node = ir.closureExpression.body({ body: { type: 'block', text: 'test' } as any });
     expect(node.type).toBe('closure_expression');
   });
-  it('render produces non-empty string', () => {
-    const node = ir.closureExpression({ parameters: { type: 'closure_parameters', text: 'test' } as any, body: { type: 'block', text: 'test' } as any });
-    expect(node.render().length).toBeGreaterThan(0);
+  it('body2 form produces correct type', () => {
+    const node = ir.closureExpression.body2({ body: { type: '_expression', text: 'test' } as any });
+    expect(node.type).toBe('closure_expression');
   });
 });
 
@@ -1336,13 +1288,13 @@ describe('struct_pattern', () => {
 });
 
 describe('field_pattern', () => {
-  it('factory produces correct type', () => {
-    const node = ir.fieldPattern({ mutableSpecifier: 'test' as any, name: { type: 'identifier', text: 'test' } as any, pattern: { type: '_pattern', text: 'test' } as any });
+  it('name form produces correct type', () => {
+    const node = ir.fieldPattern.name({ name: { type: 'identifier', text: 'test' } as any });
     expect(node.type).toBe('field_pattern');
   });
-  it('render produces non-empty string', () => {
-    const node = ir.fieldPattern({ mutableSpecifier: 'test' as any, name: { type: 'identifier', text: 'test' } as any, pattern: { type: '_pattern', text: 'test' } as any });
-    expect(node.render().length).toBeGreaterThan(0);
+  it('colon form produces correct type', () => {
+    const node = ir.fieldPattern.colon({ name: { type: '_field_identifier', text: 'test' } as any, pattern: { type: '_pattern', text: 'test' } as any });
+    expect(node.type).toBe('field_pattern');
   });
 });
 
@@ -1462,12 +1414,8 @@ describe('escape_sequence', () => {
 });
 
 describe('comment', () => {
-  it('line_comment form produces correct type', () => {
-    const node = ir.comment.line_comment({});
-    expect(node.type).toBe('comment');
-  });
-  it('block_comment form produces correct type', () => {
-    const node = ir.comment.block_comment({});
+  it('factory produces correct type', () => {
+    const node = ir.comment();
     expect(node.type).toBe('comment');
   });
 });
@@ -1557,24 +1505,8 @@ describe('metavariable', () => {
 });
 
 describe('let_chain', () => {
-  it('andand form produces correct type', () => {
-    const node = ir.letChain.andand({});
-    expect(node.type).toBe('let_chain');
-  });
-  it('andand2 form produces correct type', () => {
-    const node = ir.letChain.andand2({});
-    expect(node.type).toBe('let_chain');
-  });
-  it('andand3 form produces correct type', () => {
-    const node = ir.letChain.andand3({});
-    expect(node.type).toBe('let_chain');
-  });
-  it('andand4 form produces correct type', () => {
-    const node = ir.letChain.andand4({});
-    expect(node.type).toBe('let_chain');
-  });
-  it('andand5 form produces correct type', () => {
-    const node = ir.letChain.andand5({});
+  it('factory produces correct type', () => {
+    const node = ir.letChain();
     expect(node.type).toBe('let_chain');
   });
 });

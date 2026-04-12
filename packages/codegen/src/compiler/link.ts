@@ -53,6 +53,15 @@ export function link(raw: RawGrammar): LinkedGrammar {
         }
     }
 
+    // Promote pure-terminal rules (no fields, no symbol references) to
+    // TerminalRule. This eliminates content-inspection classification
+    // downstream — Assemble just dispatches on rule.type.
+    for (const [name, rule] of Object.entries(rules)) {
+        if (isTerminalShape(rule)) {
+            rules[name] = { type: 'terminal', content: rule } as Rule
+        }
+    }
+
     return {
         name: raw.name,
         rules,
@@ -61,6 +70,102 @@ export function link(raw: RawGrammar): LinkedGrammar {
         word: raw.word,
         references,
     }
+}
+
+/**
+ * A rule is terminal-shaped when its subtree has no fields and no symbol
+ * references — hidden or visible. Tree-sitter exposes such a kind as a
+ * pure text node at parse time.
+ *
+ * Skips rules that already have a classification wrapper (enum, supertype,
+ * group, terminal) — those are terminal in the "structural" sense but
+ * Link has already tagged them and we don't want to double-wrap.
+ */
+function isTerminalShape(rule: Rule): boolean {
+    switch (rule.type) {
+        case 'enum':
+        case 'supertype':
+        case 'group':
+        case 'terminal':
+        case 'polymorph':
+            return false // already has a structural classification
+
+        case 'field':
+            return false // a field means it's a branch
+
+        case 'symbol':
+        case 'supertype' as never:
+            return false // a symbol means it carries children
+
+        case 'string':
+        case 'pattern':
+        case 'indent':
+        case 'dedent':
+        case 'newline':
+            // Bare terminals don't need wrapping — they're already leaf-shaped
+            // at the point Assemble inspects them. We only wrap composed
+            // terminal structures.
+            return false
+
+        case 'seq':
+            return rule.members.every(isTerminalShape_allowBareTerm)
+        case 'choice':
+            return rule.members.every(isTerminalShape_allowBareTerm)
+        case 'optional':
+        case 'repeat':
+        case 'repeat1':
+            return isTerminalShape_allowBareTerm(rule.content)
+        case 'variant':
+        case 'clause':
+            return isTerminalShape_allowBareTerm(rule.content)
+        case 'alias':
+        case 'token':
+            // Should be resolved by Link, but handle defensively
+            return isTerminalShape_allowBareTerm(rule.content)
+    }
+    return false
+}
+
+/**
+ * Like isTerminalShape but bare terminals (string/pattern/whitespace) count
+ * as terminal. Used to recurse into composed structures.
+ */
+function isTerminalShape_allowBareTerm(rule: Rule): boolean {
+    switch (rule.type) {
+        case 'string':
+        case 'pattern':
+        case 'indent':
+        case 'dedent':
+        case 'newline':
+            return true
+        case 'enum':
+            return true // enum is a set of string literals → still terminal
+        case 'field':
+            return false
+        case 'symbol':
+            return false
+        case 'supertype':
+            return false
+        case 'group':
+        case 'terminal':
+            return false
+        case 'seq':
+        case 'choice':
+            return rule.members.every(isTerminalShape_allowBareTerm)
+        case 'optional':
+        case 'repeat':
+        case 'repeat1':
+            return isTerminalShape_allowBareTerm(rule.content)
+        case 'variant':
+        case 'clause':
+            return isTerminalShape_allowBareTerm(rule.content)
+        case 'alias':
+        case 'token':
+            return isTerminalShape_allowBareTerm(rule.content)
+        case 'polymorph':
+            return false
+    }
+    return false
 }
 
 // ---------------------------------------------------------------------------

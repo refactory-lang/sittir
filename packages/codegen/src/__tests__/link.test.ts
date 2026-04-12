@@ -75,7 +75,12 @@ describe('Link — reference resolution', () => {
             items: { type: 'repeat1', content: { type: 'string', value: 'x' } },
         })
         const linked = link(raw)
-        expect(linked.rules['items'].type).toBe('repeat')
+        // `items` is a pure-terminal subtree (only string literals) so Link
+        // also wraps it as TerminalRule; unwrap to verify the repeat1→repeat
+        // normalization inside.
+        const rule = linked.rules['items']
+        const inner = rule.type === 'terminal' ? (rule as any).content : rule
+        expect(inner.type).toBe('repeat')
     })
 
     it('flattens token to its content', () => {
