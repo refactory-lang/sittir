@@ -233,7 +233,6 @@ const _wrapTable: Record<string, (data: AnyNodeData, tree: TreeHandle) => unknow
   'negative_literal': (d, t) => wrapNegativeLiteral(d, t),
   'string_literal': (d, t) => wrapStringLiteral(d, t),
   'raw_string_literal': (d, t) => wrapRawStringLiteral(d, t),
-  'escape_sequence': (d, t) => wrapEscapeSequence(d, t),
   'comment': (d, t) => wrapComment(d, t),
   'line_comment': (d, t) => wrapLineComment(d, t),
   'block_comment': (d, t) => wrapBlockComment(d, t),
@@ -241,7 +240,12 @@ const _wrapTable: Record<string, (data: AnyNodeData, tree: TreeHandle) => unknow
   '_field_identifier': (d, t) => wrapFieldIdentifier(d, t),
   'let_chain': (d, t) => wrapLetChain(d, t),
   'fragment_specifier': (d) => d,
+  'unit_type': (d) => d,
   'mutable_specifier': (d) => d,
+  'unit_expression': (d) => d,
+  'integer_literal': (d) => d,
+  'char_literal': (d) => d,
+  'escape_sequence': (d) => d,
   'boolean_literal': (d) => d,
   'identifier': (d) => d,
   'shebang': (d) => d,
@@ -252,6 +256,8 @@ const _wrapTable: Record<string, (data: AnyNodeData, tree: TreeHandle) => unknow
   'metavariable': (d) => d,
   'primitive_type': (d) => d,
   'shorthand_field_identifier': (d) => d,
+  'outer_doc_comment_marker': (d) => d,
+  'inner_doc_comment_marker': (d) => d,
   'type_identifier': (d) => d,
   'field_identifier': (d) => d,
   'expr': (d) => d,
@@ -874,6 +880,8 @@ export function wrapVisibilityModifier(data: AnyNodeData, tree: TreeHandle): unk
 export function wrapBracketedType(data: AnyNodeData, tree: TreeHandle): unknown {
   return {
     ...data,
+    get childType() { return drillIn(data.fields?.['childType'], tree); },
+    get qualifiedType() { return drillIn(data.fields?.['qualifiedType'], tree); },
   };
 }
 
@@ -1612,12 +1620,6 @@ export function wrapRawStringLiteral(data: AnyNodeData, tree: TreeHandle): unkno
   };
 }
 
-export function wrapEscapeSequence(data: AnyNodeData, tree: TreeHandle): unknown {
-  return {
-    ...data,
-  };
-}
-
 export function wrapComment(data: AnyNodeData, tree: TreeHandle): unknown {
   return {
     ...data,
@@ -1627,12 +1629,17 @@ export function wrapComment(data: AnyNodeData, tree: TreeHandle): unknown {
 export function wrapLineComment(data: AnyNodeData, tree: TreeHandle): unknown {
   return {
     ...data,
+    get doc() { return drillIn(data.fields?.['doc'], tree); },
+    get child() { return drillIn(data.children?.[0], tree); },
   };
 }
 
 export function wrapBlockComment(data: AnyNodeData, tree: TreeHandle): unknown {
   return {
     ...data,
+    get doc() { return drillIn(data.fields?.['doc'], tree); },
+    get blockDocCommentMarker() { return drillIn(data.fields?.['blockDocCommentMarker'], tree); },
+    get blockCommentContent() { return drillIn(data.fields?.['blockCommentContent'], tree); },
   };
 }
 

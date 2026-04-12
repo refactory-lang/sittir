@@ -231,7 +231,7 @@ rules:
   finally_clause:
     template: finally$BODY
   parenthesized_expression:
-    template: $$$CHILDREN
+    template: ($$$CHILDREN$TYPE)
   expression_as_expression:
     template: $$$CHILDREN
   expression_satisfies_expression:
@@ -321,7 +321,7 @@ rules:
   jsx_element:
     template: $OPEN_TAG$$$CHILDREN$CLOSE_TAG
   jsx_expression:
-    template: $$$CHILDREN
+    template: "{$$$CHILDREN}"
   jsx_opening_element:
     template: $$$CHILDREN>
   nested_identifier:
@@ -410,62 +410,16 @@ rules:
         template: "\"$$$CHILDREN\""
       - name: tok_sq
         template: "'$$$CHILDREN'"
-  escape_sequence:
-    template: $$$CHILDREN
-  comment_slashslash:
-    template: //
-  comment_tok_slash_star:
-    template: /*/
-  comment:
-    variants:
-      - name: slashslash
-        template: //
-      - name: tok_slash_star
-        template: /*/
   template_string:
     template: "`$$$CHILDREN`"
   template_substitution:
     template: "${$$$CHILDREN}"
   regex:
     template: /$PATTERN/$FLAGS
-  regex_pattern:
-    template: $$$CHILDREN
-  number_form_0:
-    template: 0x
-  number_form_1:
-    template: 0.e-
-  number_form_2:
-    template: 0b
-  number_form_3:
-    template: 0o
-  number_n:
-    template: 0x n
-  number:
-    variants:
-      - name: form_0
-        template: 0x
-      - name: form_1
-        template: 0.e-
-      - name: form_2
-        template: 0b
-      - name: form_3
-        template: 0o
-      - name: n
-        template: 0x n
-  meta_property_new:
-    template: new.target
-  meta_property_import:
-    template: import.meta
-  meta_property:
-    variants:
-      - name: new
-        template: new.target
-      - name: import
-        template: import.meta
   arguments:
     template: ($$$CHILDREN)
   decorator:
-    template: $$$CHILDREN
+    template: "@$$$CHILDREN"
   decorator_member_expression:
     template: $OBJECT.$PROPERTY
   decorator_call_expression:
@@ -511,7 +465,7 @@ rules:
   function_signature:
     template: async function$NAME$$$CHILDREN
   decorator_parenthesized_expression:
-    template: $$$CHILDREN
+    template: ($$$CHILDREN)
   type_assertion:
     template: $TYPE_ARGUMENTS$EXPRESSION
   as_expression:
@@ -699,7 +653,7 @@ rules:
       - name: const
         template: const
   template_type:
-    template: $$$CHILDREN
+    template: "${$$$CHILDREN}"
   template_literal_type:
     template: "`$$$CHILDREN`"
   infer_type:
@@ -764,48 +718,6 @@ rules:
     template: $PRIMARY_TYPE$$$CHILDREN
   parenthesized_type:
     template: ($$$CHILDREN)
-  predefined_type_any:
-    template: any
-  predefined_type_number:
-    template: number
-  predefined_type_boolean:
-    template: boolean
-  predefined_type_string:
-    template: string
-  predefined_type_symbol:
-    template: symbol
-  predefined_type_unique:
-    template: unique symbol
-  predefined_type_void:
-    template: void
-  predefined_type_unknown:
-    template: unknown
-  predefined_type_never:
-    template: never
-  predefined_type_object:
-    template: object
-  predefined_type:
-    variants:
-      - name: any
-        template: any
-      - name: number
-        template: number
-      - name: boolean
-        template: boolean
-      - name: string
-        template: string
-      - name: symbol
-        template: symbol
-      - name: unique
-        template: unique symbol
-      - name: void
-        template: void
-      - name: unknown
-        template: unknown
-      - name: never
-        template: never
-      - name: object
-        template: object
   type_arguments:
     template: <$$$CHILDREN,>
   object_type:

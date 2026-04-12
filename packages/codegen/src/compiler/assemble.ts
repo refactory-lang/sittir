@@ -261,57 +261,66 @@ function walkForFieldNames(rule: Rule, out: Set<string>): void {
  *
  * No name-based checks. The _ prefix is an input signal for Link, not for Assemble.
  */
+/**
+ * Classify a rule by structural shape alone (no name heuristics).
+ *
+ * Decision rules, in order:
+ *
+ *   1. Pre-classified types (enum/supertype/group) pass through — Link has
+ *      already determined the shape.
+ *
+ *   2. If the rule contains any `field(...)` → BRANCH. Fields are always
+ *      structural user-addressable slots.
+ *
+ *   3. If the rule contains any visible OR hidden symbol (including
+ *      supertype references that dispatch to concrete children at parse
+ *      time) → it's a structural node with a children slot:
+ *        - choice-with-variants with homogeneous field sets → branch
+ *        - choice-with-variants with heterogeneous field sets → polymorph
+ *        - otherwise → container
+ *
+ *   4. If the rule's content is exclusively terminal (patterns, string
+ *      literals) with no fields and no symbol references → LEAF.
+ *      escape_sequence, line_comment, block_comment, regex_pattern fall
+ *      here; tree-sitter exposes them as text-only nodes.
+ *
+ *   5. Bare terminals: `pattern` → leaf; alphanumeric `string` → keyword;
+ *      other `string` → token.
+ */
 export function classifyNode(kind: string, rule: Rule): ModelType {
-    // Already-classified types pass through (from Link)
+    // 1. Already-classified types pass through (from Link)
     if (rule.type === 'enum') return 'enum'
     if (rule.type === 'supertype') return 'supertype'
     if (rule.type === 'group') return 'group'
 
-    // Choice with variants: branch if same field set, else polymorph
-    if (rule.type === 'choice' && rule.members.some(m => m.type === 'variant')) {
-        if (allVariantsHaveSameFieldSet(rule)) return 'branch'
-        return 'polymorph'
+    const fields = deriveFields(rule)
+    const children = deriveChildren(rule)
+    const hasStructure = fields.length > 0 || children.length > 0
+
+    // 2. Choice-of-variants with structural content → polymorph or branch.
+    //    (Choice-of-variants with ONLY pattern/string content is a token-
+    //    constructor like `integer` — it falls through to leaf below.)
+    if (rule.type === 'choice' && rule.members.some(m => m.type === 'variant') && hasStructure) {
+        return allVariantsHaveSameFieldSet(rule) ? 'branch' : 'polymorph'
     }
 
-    const simplified = simplifyRule(rule)
+    // 3. Any fields → branch.
+    if (fields.length > 0) return 'branch'
 
-    switch (simplified.type) {
-        case 'seq': {
-            // Fields can be buried under optional/repeat/nested seq, so use
-            // deriveFields / deriveChildren (which walk the tree). If the rule
-            // has any fields → branch; else if it has visible children → container;
-            // else → token.
-            const fields = deriveFields(rule)
-            if (fields.length > 0) return 'branch'
-            const children = deriveChildren(rule)
-            if (children.length > 0) return 'container'
-            return 'token'
-        }
-        case 'repeat':
-            return 'container'
-        case 'choice': {
-            if (simplified.members.every(m => m.type === 'string')) return 'enum'
-            return 'polymorph'
-        }
-        case 'pattern':
-            return 'leaf'
-        case 'string': {
-            if (/^\w+$/.test(simplified.value)) return 'keyword'
-            return 'token'
-        }
-        case 'field':
-            return 'branch'
-        case 'optional':
-            return classifyNode(kind, simplified.content)
-        default: {
-            // Fall-through: inspect fields/children before giving up as token.
-            const fields = deriveFields(rule)
-            if (fields.length > 0) return 'branch'
-            const children = deriveChildren(rule)
-            if (children.length > 0) return 'container'
-            return 'token'
-        }
+    // 4. Any visible children (including those coming from hidden supertype
+    //    references) → container.
+    if (children.length > 0) return 'container'
+
+    // 5. No fields, no children → terminal. Route by rule shape.
+    if (rule.type === 'pattern') return 'leaf'
+    if (rule.type === 'string') {
+        return /^\w+$/.test(rule.value) ? 'keyword' : 'token'
     }
+
+    // A seq/choice/repeat containing only terminal content (patterns, strings)
+    // and no symbol references is itself a terminal — tree-sitter exposes it
+    // as a text-only leaf node (escape_sequence, line_comment, integer, …).
+    return 'leaf'
 }
 
 // ---------------------------------------------------------------------------

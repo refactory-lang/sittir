@@ -69,7 +69,6 @@ export const enum SyntaxKind {
   Module = 'module',
   HiddenSimpleStatements = '_simple_statements',
   ImportStatement = 'import_statement',
-  ImportPrefix = 'import_prefix',
   RelativeImport = 'relative_import',
   FutureImportStatement = 'future_import_statement',
   ImportFromStatement = 'import_from_statement',
@@ -179,23 +178,27 @@ export const enum SyntaxKind {
   String = 'string',
   StringContent = 'string_content',
   Interpolation = 'interpolation',
-  EscapeSequence = 'escape_sequence',
   FormatSpecifier = 'format_specifier',
-  Integer = 'integer',
-  KeywordIdentifier = 'keyword_identifier',
   Await = 'await',
-  LineContinuation = 'line_continuation',
   AsPatternTarget = 'as_pattern_target',
   FormatExpression = 'format_expression',
+  ImportPrefix = 'import_prefix',
   PassStatement = 'pass_statement',
   BreakStatement = 'break_statement',
   ContinueStatement = 'continue_statement',
+  HiddenNotIn = '_not_in',
+  HiddenIsNot = '_is_not',
+  EscapeSequence = 'escape_sequence',
   TypeConversion = 'type_conversion',
+  Integer = 'integer',
+  Float = 'float',
   Identifier = 'identifier',
+  KeywordIdentifier = 'keyword_identifier',
   True = 'true',
   False = 'false',
   None = 'none',
   Comment = 'comment',
+  LineContinuation = 'line_continuation',
   Import = 'import',
   From = 'from',
   HiddenUFutureU = '__future__',
@@ -358,10 +361,6 @@ export interface HiddenSimpleStatements {
 export interface ImportStatement {
   readonly type: 'import_statement';
   readonly children: HiddenImportList;
-}
-
-export interface ImportPrefix {
-  readonly type: 'import_prefix';
 }
 
 export interface RelativeImport {
@@ -662,6 +661,7 @@ export interface TypeParameter {
 
 export interface ParenthesizedListSplat {
   readonly type: 'parenthesized_list_splat';
+  readonly children: ParenthesizedListSplat | ListSplat;
 }
 
 export interface ArgumentList {
@@ -879,10 +879,12 @@ export interface TypedDefaultParameter {
 
 export interface ListSplatPattern {
   readonly type: 'list_splat_pattern';
+  readonly children: Identifier | KeywordIdentifier | Subscript | Attribute;
 }
 
 export interface DictionarySplatPattern {
   readonly type: 'dictionary_splat_pattern';
+  readonly children: Identifier | KeywordIdentifier | Subscript | Attribute;
 }
 
 export interface AsPattern {
@@ -1301,6 +1303,7 @@ export interface HiddenComprehensionClauses {
 
 export interface ParenthesizedExpression {
   readonly type: 'parenthesized_expression';
+  readonly children: Expression | Yield;
 }
 
 export interface HiddenCollectionElements {
@@ -1362,51 +1365,17 @@ export interface Interpolation {
   };
 }
 
-export interface EscapeSequence {
-  readonly type: 'escape_sequence';
-}
-
 export interface FormatSpecifier {
   readonly type: 'format_specifier';
   readonly children: readonly (Interpolation)[];
 }
 
-export interface IntegerForm0 {
-  readonly type: 'integer';
-}
-
-export interface IntegerForm1 {
-  readonly type: 'integer';
-}
-
-export interface IntegerForm2 {
-  readonly type: 'integer';
-}
-
-export interface IntegerForm3 {
-  readonly type: 'integer';
-}
-
-export type Integer = IntegerForm0 | IntegerForm1 | IntegerForm2 | IntegerForm3;
-export interface KeywordIdentifierForm0 {
-  readonly type: 'keyword_identifier';
-}
-
-export interface KeywordIdentifierForm1 {
-  readonly type: 'keyword_identifier';
-}
-
-export type KeywordIdentifier = KeywordIdentifierForm0 | KeywordIdentifierForm1;
 export interface Await {
   readonly type: 'await';
   readonly fields: {
     readonly primary_expression: string;
   };
   readonly children: PrimaryExpression;
-}
-
-export interface LineContinuation {
-  readonly type: 'line_continuation';
 }
 
 export interface AsPatternTargetComparisonOperator {
@@ -1453,6 +1422,11 @@ export interface FormatExpression {
 
 
 // Leaf node types
+export interface ImportPrefix {
+  readonly type: 'import_prefix';
+  readonly text: string;
+}
+
 export interface PassStatement {
   readonly type: 'pass_statement';
   readonly text: "pass";
@@ -1468,13 +1442,43 @@ export interface ContinueStatement {
   readonly text: "continue";
 }
 
+export interface HiddenNotIn {
+  readonly type: '_not_in';
+  readonly text: string;
+}
+
+export interface HiddenIsNot {
+  readonly type: '_is_not';
+  readonly text: string;
+}
+
+export interface EscapeSequence {
+  readonly type: 'escape_sequence';
+  readonly text: string;
+}
+
 export interface TypeConversion {
   readonly type: 'type_conversion';
   readonly text: string;
 }
 
+export interface Integer {
+  readonly type: 'integer';
+  readonly text: string;
+}
+
+export interface Float {
+  readonly type: 'float';
+  readonly text: string;
+}
+
 export interface Identifier {
   readonly type: 'identifier';
+  readonly text: string;
+}
+
+export interface KeywordIdentifier {
+  readonly type: 'keyword_identifier';
   readonly text: string;
 }
 
@@ -1495,6 +1499,11 @@ export interface None {
 
 export interface Comment {
   readonly type: 'comment';
+  readonly text: string;
+}
+
+export interface LineContinuation {
+  readonly type: 'line_continuation';
   readonly text: string;
 }
 
@@ -1707,7 +1716,6 @@ export interface Tok_0B {
 export type ModuleConfig = ConfigOf<Module>;
 export type HiddenSimpleStatementsConfig = ConfigOf<HiddenSimpleStatements>;
 export type ImportStatementConfig = ConfigOf<ImportStatement>;
-export type ImportPrefixConfig = ConfigOf<ImportPrefix>;
 export type RelativeImportConfig = ConfigOf<RelativeImport>;
 export type FutureImportStatementConfig = ConfigOf<FutureImportStatement>;
 export type ImportFromStatementConfig = ConfigOf<ImportFromStatement>;
@@ -1883,18 +1891,8 @@ export type ConcatenatedStringConfig = ConfigOf<ConcatenatedString>;
 export type StringConfig = ConfigOf<String>;
 export type StringContentConfig = ConfigOf<StringContent>;
 export type InterpolationConfig = ConfigOf<Interpolation>;
-export type EscapeSequenceConfig = ConfigOf<EscapeSequence>;
 export type FormatSpecifierConfig = ConfigOf<FormatSpecifier>;
-export type IntegerForm0Config = ConfigOf<IntegerForm0>;
-export type IntegerForm1Config = ConfigOf<IntegerForm1>;
-export type IntegerForm2Config = ConfigOf<IntegerForm2>;
-export type IntegerForm3Config = ConfigOf<IntegerForm3>;
-export type IntegerConfig = IntegerForm0Config | IntegerForm1Config | IntegerForm2Config | IntegerForm3Config;
-export type KeywordIdentifierForm0Config = ConfigOf<KeywordIdentifierForm0>;
-export type KeywordIdentifierForm1Config = ConfigOf<KeywordIdentifierForm1>;
-export type KeywordIdentifierConfig = KeywordIdentifierForm0Config | KeywordIdentifierForm1Config;
 export type AwaitConfig = ConfigOf<Await>;
-export type LineContinuationConfig = ConfigOf<LineContinuation>;
 export type AsPatternTargetComparisonOperatorConfig = ConfigOf<AsPatternTargetComparisonOperator>;
 export type AsPatternTargetNotOperatorConfig = ConfigOf<AsPatternTargetNotOperator>;
 export type AsPatternTargetBooleanOperatorConfig = ConfigOf<AsPatternTargetBooleanOperator>;
@@ -1910,7 +1908,6 @@ export type FormatExpressionConfig = ConfigOf<FormatExpression>;
 export interface ModuleTree extends TreeNode<'module'> {}
 export interface HiddenSimpleStatementsTree extends TreeNode<'_simple_statements'> {}
 export interface ImportStatementTree extends TreeNode<'import_statement'> {}
-export interface ImportPrefixTree extends TreeNode<'import_prefix'> {}
 export interface RelativeImportTree extends TreeNode<'relative_import'> {}
 export interface FutureImportStatementTree extends TreeNode<'future_import_statement'> {}
 export interface ImportFromStatementTree extends TreeNode<'import_from_statement'> {}
@@ -2086,18 +2083,8 @@ export interface ConcatenatedStringTree extends TreeNode<'concatenated_string'> 
 export interface StringTree extends TreeNode<'string'> {}
 export interface StringContentTree extends TreeNode<'string_content'> {}
 export interface InterpolationTree extends TreeNode<'interpolation'> {}
-export interface EscapeSequenceTree extends TreeNode<'escape_sequence'> {}
 export interface FormatSpecifierTree extends TreeNode<'format_specifier'> {}
-export interface IntegerTree extends TreeNode<'integer'> {}
-export interface IntegerForm0Tree extends TreeNode<'integer'> {}
-export interface IntegerForm1Tree extends TreeNode<'integer'> {}
-export interface IntegerForm2Tree extends TreeNode<'integer'> {}
-export interface IntegerForm3Tree extends TreeNode<'integer'> {}
-export interface KeywordIdentifierTree extends TreeNode<'keyword_identifier'> {}
-export interface KeywordIdentifierForm0Tree extends TreeNode<'keyword_identifier'> {}
-export interface KeywordIdentifierForm1Tree extends TreeNode<'keyword_identifier'> {}
 export interface AwaitTree extends TreeNode<'await'> {}
-export interface LineContinuationTree extends TreeNode<'line_continuation'> {}
 export interface AsPatternTargetTree extends TreeNode<'as_pattern_target'> {}
 export interface AsPatternTargetComparisonOperatorTree extends TreeNode<'as_pattern_target'> {}
 export interface AsPatternTargetNotOperatorTree extends TreeNode<'as_pattern_target'> {}
@@ -2108,15 +2095,23 @@ export interface AsPatternTargetConditionalExpressionTree extends TreeNode<'as_p
 export interface AsPatternTargetNamedExpressionTree extends TreeNode<'as_pattern_target'> {}
 export interface AsPatternTargetAsPatternTree extends TreeNode<'as_pattern_target'> {}
 export interface FormatExpressionTree extends TreeNode<'format_expression'> {}
+export interface ImportPrefixTree extends TreeNode<'import_prefix'> {}
 export interface PassStatementTree extends TreeNode<'pass_statement'> {}
 export interface BreakStatementTree extends TreeNode<'break_statement'> {}
 export interface ContinueStatementTree extends TreeNode<'continue_statement'> {}
+export interface HiddenNotInTree extends TreeNode<'_not_in'> {}
+export interface HiddenIsNotTree extends TreeNode<'_is_not'> {}
+export interface EscapeSequenceTree extends TreeNode<'escape_sequence'> {}
 export interface TypeConversionTree extends TreeNode<'type_conversion'> {}
+export interface IntegerTree extends TreeNode<'integer'> {}
+export interface FloatTree extends TreeNode<'float'> {}
 export interface IdentifierTree extends TreeNode<'identifier'> {}
+export interface KeywordIdentifierTree extends TreeNode<'keyword_identifier'> {}
 export interface TrueTree extends TreeNode<'true'> {}
 export interface FalseTree extends TreeNode<'false'> {}
 export interface NoneTree extends TreeNode<'none'> {}
 export interface CommentTree extends TreeNode<'comment'> {}
+export interface LineContinuationTree extends TreeNode<'line_continuation'> {}
 export interface ImportTree extends TreeNode<'import'> {}
 export interface FromTree extends TreeNode<'from'> {}
 export interface HiddenUFutureUTree extends TreeNode<'__future__'> {}
@@ -2166,7 +2161,6 @@ export interface NoneTree extends TreeNode<'None'> {}
 export type ModuleFromInput = FromInputOf<Module, LeafScalarMap, LeafStringMap>;
 export type HiddenSimpleStatementsFromInput = FromInputOf<HiddenSimpleStatements, LeafScalarMap, LeafStringMap>;
 export type ImportStatementFromInput = FromInputOf<ImportStatement, LeafScalarMap, LeafStringMap>;
-export type ImportPrefixFromInput = FromInputOf<ImportPrefix, LeafScalarMap, LeafStringMap>;
 export type RelativeImportFromInput = FromInputOf<RelativeImport, LeafScalarMap, LeafStringMap>;
 export type FutureImportStatementFromInput = FromInputOf<FutureImportStatement, LeafScalarMap, LeafStringMap>;
 export type ImportFromStatementFromInput = FromInputOf<ImportFromStatement, LeafScalarMap, LeafStringMap>;
@@ -2276,12 +2270,8 @@ export type ConcatenatedStringFromInput = FromInputOf<ConcatenatedString, LeafSc
 export type StringFromInput = FromInputOf<String, LeafScalarMap, LeafStringMap>;
 export type StringContentFromInput = FromInputOf<StringContent, LeafScalarMap, LeafStringMap>;
 export type InterpolationFromInput = FromInputOf<Interpolation, LeafScalarMap, LeafStringMap>;
-export type EscapeSequenceFromInput = FromInputOf<EscapeSequence, LeafScalarMap, LeafStringMap>;
 export type FormatSpecifierFromInput = FromInputOf<FormatSpecifier, LeafScalarMap, LeafStringMap>;
-export type IntegerFromInput = FromInputOf<IntegerForm0, LeafScalarMap, LeafStringMap> | FromInputOf<IntegerForm1, LeafScalarMap, LeafStringMap> | FromInputOf<IntegerForm2, LeafScalarMap, LeafStringMap> | FromInputOf<IntegerForm3, LeafScalarMap, LeafStringMap>;
-export type KeywordIdentifierFromInput = FromInputOf<KeywordIdentifierForm0, LeafScalarMap, LeafStringMap> | FromInputOf<KeywordIdentifierForm1, LeafScalarMap, LeafStringMap>;
 export type AwaitFromInput = FromInputOf<Await, LeafScalarMap, LeafStringMap>;
-export type LineContinuationFromInput = FromInputOf<LineContinuation, LeafScalarMap, LeafStringMap>;
 export type AsPatternTargetFromInput = FromInputOf<AsPatternTargetComparisonOperator, LeafScalarMap, LeafStringMap> | FromInputOf<AsPatternTargetNotOperator, LeafScalarMap, LeafStringMap> | FromInputOf<AsPatternTargetBooleanOperator, LeafScalarMap, LeafStringMap> | FromInputOf<AsPatternTargetLambda, LeafScalarMap, LeafStringMap> | FromInputOf<AsPatternTargetPrimaryExpression, LeafScalarMap, LeafStringMap> | FromInputOf<AsPatternTargetConditionalExpression, LeafScalarMap, LeafStringMap> | FromInputOf<AsPatternTargetNamedExpression, LeafScalarMap, LeafStringMap> | FromInputOf<AsPatternTargetAsPattern, LeafScalarMap, LeafStringMap>;
 export type FormatExpressionFromInput = FromInputOf<FormatExpression, LeafScalarMap, LeafStringMap>;
 
@@ -2322,8 +2312,6 @@ export type NamedExpressionLhs =
   | KeywordIdentifier
 ;
 
-export type NamedExpressionLhsConfig = KeywordIdentifierConfig;
-export type NamedExpressionLhsFromInput = KeywordIdentifierFromInput;
 export type NamedExpressionLhsTree = IdentifierTree | KeywordIdentifierTree;
 
 export type Expressions =
@@ -2428,7 +2416,6 @@ export type PythonNode =
   | Module
   | HiddenSimpleStatements
   | ImportStatement
-  | ImportPrefix
   | RelativeImport
   | FutureImportStatement
   | ImportFromStatement
@@ -2538,12 +2525,8 @@ export type PythonNode =
   | String
   | StringContent
   | Interpolation
-  | EscapeSequence
   | FormatSpecifier
-  | Integer
-  | KeywordIdentifier
   | Await
-  | LineContinuation
   | AsPatternTarget
   | FormatExpression
 ;
@@ -2552,7 +2535,6 @@ export interface KindMap {
   'module': Module;
   '_simple_statements': HiddenSimpleStatements;
   'import_statement': ImportStatement;
-  'import_prefix': ImportPrefix;
   'relative_import': RelativeImport;
   'future_import_statement': FutureImportStatement;
   'import_from_statement': ImportFromStatement;
@@ -2662,23 +2644,27 @@ export interface KindMap {
   'string': String;
   'string_content': StringContent;
   'interpolation': Interpolation;
-  'escape_sequence': EscapeSequence;
   'format_specifier': FormatSpecifier;
-  'integer': Integer;
-  'keyword_identifier': KeywordIdentifier;
   'await': Await;
-  'line_continuation': LineContinuation;
   'as_pattern_target': AsPatternTarget;
   'format_expression': FormatExpression;
+  'import_prefix': ImportPrefix;
   'pass_statement': PassStatement;
   'break_statement': BreakStatement;
   'continue_statement': ContinueStatement;
+  '_not_in': HiddenNotIn;
+  '_is_not': HiddenIsNot;
+  'escape_sequence': EscapeSequence;
   'type_conversion': TypeConversion;
+  'integer': Integer;
+  'float': Float;
   'identifier': Identifier;
+  'keyword_identifier': KeywordIdentifier;
   'true': True;
   'false': False;
   'none': None;
   'comment': Comment;
+  'line_continuation': LineContinuation;
   'import': Import;
   'from': From;
   '__future__': HiddenUFutureU;
@@ -2734,8 +2720,6 @@ export interface VariantMap {
   'expression': { comparison_operator: ExpressionComparisonOperator; not_operator: ExpressionNotOperator; boolean_operator: ExpressionBooleanOperator; lambda: ExpressionLambda; primary_expression: ExpressionPrimaryExpression; conditional_expression: ExpressionConditionalExpression; named_expression: ExpressionNamedExpression; as_pattern: ExpressionAsPattern };
   'primary_expression': { await: PrimaryExpressionAwait; binary_operator: PrimaryExpressionBinaryOperator; identifier: PrimaryExpressionIdentifier; keyword_identifier: PrimaryExpressionKeywordIdentifier; string: PrimaryExpressionString; concatenated_string: PrimaryExpressionConcatenatedString; integer: PrimaryExpressionInteger; float: PrimaryExpressionFloat; true: PrimaryExpressionTrue; false: PrimaryExpressionFalse; none: PrimaryExpressionNone; unary_operator: PrimaryExpressionUnaryOperator; attribute: PrimaryExpressionAttribute; subscript: PrimaryExpressionSubscript; call: PrimaryExpressionCall; list: PrimaryExpressionList; list_comprehension: PrimaryExpressionListComprehension; dictionary: PrimaryExpressionDictionary; dictionary_comprehension: PrimaryExpressionDictionaryComprehension; set: PrimaryExpressionSet; set_comprehension: PrimaryExpressionSetComprehension; tuple: PrimaryExpressionTuple; parenthesized_expression: PrimaryExpressionParenthesizedExpression; generator_expression: PrimaryExpressionGeneratorExpression; ellipsis: PrimaryExpressionEllipsis; list_splat_pattern: PrimaryExpressionListSplatPattern };
   'type': { expression: TypeExpression; splat_type: TypeSplatType; generic_type: TypeGenericType; union_type: TypeUnionType; constrained_type: TypeConstrainedType; member_type: TypeMemberType };
-  'integer': { form_0: IntegerForm0; form_1: IntegerForm1; form_2: IntegerForm2; form_3: IntegerForm3 };
-  'keyword_identifier': { form_0: KeywordIdentifierForm0; form_1: KeywordIdentifierForm1 };
   'as_pattern_target': { comparison_operator: AsPatternTargetComparisonOperator; not_operator: AsPatternTargetNotOperator; boolean_operator: AsPatternTargetBooleanOperator; lambda: AsPatternTargetLambda; primary_expression: AsPatternTargetPrimaryExpression; conditional_expression: AsPatternTargetConditionalExpression; named_expression: AsPatternTargetNamedExpression; as_pattern: AsPatternTargetAsPattern };
 }
 
@@ -2743,7 +2727,6 @@ export interface ConfigMap {
   'module': ModuleConfig;
   '_simple_statements': HiddenSimpleStatementsConfig;
   'import_statement': ImportStatementConfig;
-  'import_prefix': ImportPrefixConfig;
   'relative_import': RelativeImportConfig;
   'future_import_statement': FutureImportStatementConfig;
   'import_from_statement': ImportFromStatementConfig;
@@ -2853,12 +2836,8 @@ export interface ConfigMap {
   'string': StringConfig;
   'string_content': StringContentConfig;
   'interpolation': InterpolationConfig;
-  'escape_sequence': EscapeSequenceConfig;
   'format_specifier': FormatSpecifierConfig;
-  'integer': IntegerConfig;
-  'keyword_identifier': KeywordIdentifierConfig;
   'await': AwaitConfig;
-  'line_continuation': LineContinuationConfig;
   'as_pattern_target': AsPatternTargetConfig;
   'format_expression': FormatExpressionConfig;
 }
@@ -2867,7 +2846,6 @@ export interface FromInputMap {
   'module': ModuleFromInput;
   '_simple_statements': HiddenSimpleStatementsFromInput;
   'import_statement': ImportStatementFromInput;
-  'import_prefix': ImportPrefixFromInput;
   'relative_import': RelativeImportFromInput;
   'future_import_statement': FutureImportStatementFromInput;
   'import_from_statement': ImportFromStatementFromInput;
@@ -2977,12 +2955,8 @@ export interface FromInputMap {
   'string': StringFromInput;
   'string_content': StringContentFromInput;
   'interpolation': InterpolationFromInput;
-  'escape_sequence': EscapeSequenceFromInput;
   'format_specifier': FormatSpecifierFromInput;
-  'integer': IntegerFromInput;
-  'keyword_identifier': KeywordIdentifierFromInput;
   'await': AwaitFromInput;
-  'line_continuation': LineContinuationFromInput;
   'as_pattern_target': AsPatternTargetFromInput;
   'format_expression': FormatExpressionFromInput;
 }

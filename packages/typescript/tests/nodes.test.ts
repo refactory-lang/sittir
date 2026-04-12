@@ -521,6 +521,14 @@ describe('finally_clause', () => {
 });
 
 describe('parenthesized_expression', () => {
+  it('factory produces correct type', () => {
+    const node = ir.parenthesizedExpression({ type: { type: 'type_annotation', text: 'test' } as any });
+    expect(node.type).toBe('parenthesized_expression');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.parenthesizedExpression({ type: { type: 'type_annotation', text: 'test' } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
 });
 
 describe('expression', () => {
@@ -678,6 +686,10 @@ describe('html_character_reference', () => {
 });
 
 describe('jsx_expression', () => {
+  it('factory produces correct type', () => {
+    const node = ir.jsxExpression();
+    expect(node.type).toBe('jsx_expression');
+  });
 });
 
 describe('jsx_opening_element', () => {
@@ -1013,16 +1025,18 @@ describe('unescaped_single_string_fragment', () => {
 });
 
 describe('escape_sequence', () => {
+  it('factory produces correct type', () => {
+    const node = ir.escapeSequence('test');
+    expect(node.type).toBe('escape_sequence');
+    expect(node.text).toBe('test');
+  });
 });
 
 describe('comment', () => {
-  it('slashslash form produces correct type', () => {
-    const node = ir.comment.slashslash({});
+  it('factory produces correct type', () => {
+    const node = ir.comment('test');
     expect(node.type).toBe('comment');
-  });
-  it('tok_slash_star form produces correct type', () => {
-    const node = ir.comment.tok_slash_star({});
-    expect(node.type).toBe('comment');
+    expect(node.text).toBe('test');
   });
 });
 
@@ -1053,8 +1067,9 @@ describe('regex', () => {
 
 describe('regex_pattern', () => {
   it('factory produces correct type', () => {
-    const node = ir.regexPattern();
+    const node = ir.regexPattern('test');
     expect(node.type).toBe('regex_pattern');
+    expect(node.text).toBe('test');
   });
 });
 
@@ -1067,36 +1082,34 @@ describe('regex_flags', () => {
 });
 
 describe('number', () => {
-  it('form_0 form produces correct type', () => {
-    const node = ir.number.form_0({});
+  it('factory produces correct type', () => {
+    const node = ir.number('test');
     expect(node.type).toBe('number');
+    expect(node.text).toBe('test');
   });
-  it('form_1 form produces correct type', () => {
-    const node = ir.number.form_1({});
-    expect(node.type).toBe('number');
+});
+
+describe('identifier', () => {
+  it('factory produces correct type', () => {
+    const node = ir.identifier('test');
+    expect(node.type).toBe('identifier');
+    expect(node.text).toBe('test');
   });
-  it('form_2 form produces correct type', () => {
-    const node = ir.number.form_2({});
-    expect(node.type).toBe('number');
-  });
-  it('form_3 form produces correct type', () => {
-    const node = ir.number.form_3({});
-    expect(node.type).toBe('number');
-  });
-  it('n form produces correct type', () => {
-    const node = ir.number.n({});
-    expect(node.type).toBe('number');
+});
+
+describe('private_property_identifier', () => {
+  it('factory produces correct type', () => {
+    const node = ir.privatePropertyIdentifier('test');
+    expect(node.type).toBe('private_property_identifier');
+    expect(node.text).toBe('test');
   });
 });
 
 describe('meta_property', () => {
-  it('new form produces correct type', () => {
-    const node = ir.metaProperty.new({});
+  it('factory produces correct type', () => {
+    const node = ir.metaProperty('test');
     expect(node.type).toBe('meta_property');
-  });
-  it('import form produces correct type', () => {
-    const node = ir.metaProperty.import({});
-    expect(node.type).toBe('meta_property');
+    expect(node.text).toBe('test');
   });
 });
 
@@ -1156,6 +1169,10 @@ describe('arguments', () => {
 });
 
 describe('decorator', () => {
+  it('factory produces correct type', () => {
+    const node = ir.decorator();
+    expect(node.type).toBe('decorator');
+  });
 });
 
 describe('decorator_member_expression', () => {
@@ -1182,8 +1199,12 @@ describe('decorator_call_expression', () => {
 
 describe('class_body', () => {
   it('factory produces correct type', () => {
-    const node = ir.classBody();
+    const node = ir.classBody({ decorator: [] });
     expect(node.type).toBe('class_body');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.classBody({ decorator: [] });
+    expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
@@ -1345,6 +1366,10 @@ describe('function_signature', () => {
 });
 
 describe('decorator_parenthesized_expression', () => {
+  it('factory produces correct type', () => {
+    const node = ir.decoratorParenthesizedExpression();
+    expect(node.type).toBe('decorator_parenthesized_expression');
+  });
 });
 
 describe('type_assertion', () => {
@@ -1778,6 +1803,10 @@ describe('primary_type', () => {
 });
 
 describe('template_type', () => {
+  it('factory produces correct type', () => {
+    const node = ir.templateType();
+    expect(node.type).toBe('template_type');
+  });
 });
 
 describe('template_literal_type', () => {
@@ -1932,45 +1961,10 @@ describe('parenthesized_type', () => {
 });
 
 describe('predefined_type', () => {
-  it('any form produces correct type', () => {
-    const node = ir.predefinedType.any({});
+  it('factory produces correct type', () => {
+    const node = ir.predefinedType('test');
     expect(node.type).toBe('predefined_type');
-  });
-  it('number form produces correct type', () => {
-    const node = ir.predefinedType.number({});
-    expect(node.type).toBe('predefined_type');
-  });
-  it('boolean form produces correct type', () => {
-    const node = ir.predefinedType.boolean({});
-    expect(node.type).toBe('predefined_type');
-  });
-  it('string form produces correct type', () => {
-    const node = ir.predefinedType.string({});
-    expect(node.type).toBe('predefined_type');
-  });
-  it('symbol form produces correct type', () => {
-    const node = ir.predefinedType.symbol({});
-    expect(node.type).toBe('predefined_type');
-  });
-  it('unique form produces correct type', () => {
-    const node = ir.predefinedType.unique({});
-    expect(node.type).toBe('predefined_type');
-  });
-  it('void form produces correct type', () => {
-    const node = ir.predefinedType.void({});
-    expect(node.type).toBe('predefined_type');
-  });
-  it('unknown form produces correct type', () => {
-    const node = ir.predefinedType.unknown({});
-    expect(node.type).toBe('predefined_type');
-  });
-  it('never form produces correct type', () => {
-    const node = ir.predefinedType.never({});
-    expect(node.type).toBe('predefined_type');
-  });
-  it('object form produces correct type', () => {
-    const node = ir.predefinedType.object({});
-    expect(node.type).toBe('predefined_type');
+    expect(node.text).toBe('test');
   });
 });
 
@@ -2129,6 +2123,14 @@ describe('_type_identifier', () => {
   });
 });
 
+describe('statement_identifier', () => {
+  it('factory produces correct type', () => {
+    const node = ir.statementIdentifier('test');
+    expect(node.type).toBe('statement_identifier');
+    expect(node.text).toBe('test');
+  });
+});
+
 describe('shorthand_property_identifier', () => {
   it('identifier form produces correct type', () => {
     const node = ir.shorthandPropertyIdentifier.identifier({});
@@ -2151,6 +2153,22 @@ describe('shorthand_property_identifier_pattern', () => {
   });
 });
 
+describe('property_identifier', () => {
+  it('factory produces correct type', () => {
+    const node = ir.propertyIdentifier('test');
+    expect(node.type).toBe('property_identifier');
+    expect(node.text).toBe('test');
+  });
+});
+
+describe('string_fragment', () => {
+  it('factory produces correct type', () => {
+    const node = ir.stringFragment('test');
+    expect(node.type).toBe('string_fragment');
+    expect(node.text).toBe('test');
+  });
+});
+
 describe('interface_body', () => {
   it('factory produces correct type', () => {
     const node = ir.interfaceBody({ opening: { type: '{', text: 'test' } as any, members: 'test' as any, closing: { type: '}', text: 'test' } as any });
@@ -2167,5 +2185,13 @@ describe('this_type', () => {
     const node = ir.thisType();
     expect(node.type).toBe('this_type');
     expect(node.text).toBe('this');
+  });
+});
+
+describe('type_identifier', () => {
+  it('factory produces correct type', () => {
+    const node = ir.typeIdentifier('test');
+    expect(node.type).toBe('type_identifier');
+    expect(node.text).toBe('test');
   });
 });

@@ -30,7 +30,6 @@ export const NODE_KINDS = [
   'class_declaration',
   'class_heritage',
   'class_static_block',
-  'comment',
   'computed_property_name',
   'conditional_type',
   'constraint',
@@ -49,7 +48,6 @@ export const NODE_KINDS = [
   'enum_assignment',
   'enum_body',
   'enum_declaration',
-  'escape_sequence',
   'export_clause',
   'export_specifier',
   'export_statement',
@@ -99,7 +97,6 @@ export const NODE_KINDS = [
   'lookup_type',
   'mapped_type_clause',
   'member_expression',
-  'meta_property',
   'method_definition',
   'method_signature',
   'module',
@@ -110,7 +107,6 @@ export const NODE_KINDS = [
   'nested_type_identifier',
   'new_expression',
   'non_null_expression',
-  'number',
   'object',
   'object_assignment_pattern',
   'object_pattern',
@@ -125,7 +121,6 @@ export const NODE_KINDS = [
   'parenthesized_expression',
   'parenthesized_type',
   'pattern',
-  'predefined_type',
   'primary_expression',
   'primary_type',
   'program',
@@ -133,7 +128,6 @@ export const NODE_KINDS = [
   'public_field_definition',
   'readonly_type',
   'regex',
-  'regex_pattern',
   'required_parameter',
   'rest_pattern',
   'rest_type',
@@ -203,6 +197,7 @@ export const LEAF_KINDS = [
   'break',
   'case',
   'catch',
+  'comment',
   'const',
   'continue',
   'debugger',
@@ -213,6 +208,7 @@ export const LEAF_KINDS = [
   'e',
   'else',
   'enum',
+  'escape_sequence',
   'export',
   'extends',
   'false',
@@ -224,6 +220,7 @@ export const LEAF_KINDS = [
   'global',
   'hash_bang_line',
   'html_character_reference',
+  'identifier',
   'if',
   'implements',
   'import',
@@ -236,24 +233,32 @@ export const LEAF_KINDS = [
   'keyof',
   'let',
   'meta',
+  'meta_property',
   'n',
   'namespace',
   'never',
   'new',
   'null',
+  'number',
   'of',
   'override',
   'override_modifier',
+  'predefined_type',
   'private',
+  'private_property_identifier',
+  'property_identifier',
   'protected',
   'public',
   'readonly',
   'regex_flags',
+  'regex_pattern',
   'require',
   'return',
   'satisfies',
   'set',
+  'statement_identifier',
   'static',
+  'string_fragment',
   'super',
   'switch',
   'symbol',
@@ -263,6 +268,7 @@ export const LEAF_KINDS = [
   'throw',
   'true',
   'try',
+  'type_identifier',
   'typeof',
   'undefined',
   'unescaped_double_jsx_string_fragment',
@@ -325,7 +331,6 @@ export const KEYWORDS = [
   'function',
   'get',
   'global',
-  'identifier',
   'if',
   'implements',
   'import',
@@ -347,8 +352,6 @@ export const KEYWORDS = [
   'override',
   'override_modifier',
   'private',
-  'private_property_identifier',
-  'property_identifier',
   'protected',
   'public',
   'readonly',
@@ -356,9 +359,7 @@ export const KEYWORDS = [
   'return',
   'satisfies',
   'set',
-  'statement_identifier',
   'static',
-  'string_fragment',
   'super',
   'switch',
   'symbol',
@@ -368,7 +369,6 @@ export const KEYWORDS = [
   'throw',
   'true',
   'try',
-  'type_identifier',
   'typeof',
   'undefined',
   'unique',
@@ -559,6 +559,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'body', required: true, multiple: false },
   ],
   'class_body': [
+    { name: 'decorator', required: true, multiple: true },
   ],
   'class_declaration': [
     { name: 'classHeritage', required: true, multiple: false },
@@ -573,8 +574,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'class_static_block': [
     { name: 'body', required: true, multiple: false },
-  ],
-  'comment': [
   ],
   'computed_property_name': [
     { name: 'expression', required: true, multiple: false },
@@ -636,8 +635,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'enum_declaration': [
     { name: 'name', required: true, multiple: false },
     { name: 'body', required: true, multiple: false },
-  ],
-  'escape_sequence': [
   ],
   'export_clause': [
   ],
@@ -816,8 +813,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'optionalChain', required: true, multiple: false },
     { name: 'property', required: true, multiple: false },
   ],
-  'meta_property': [
-  ],
   'method_definition': [
     { name: 'accessibilityModifier', required: true, multiple: false },
     { name: 'overrideModifier', required: true, multiple: false },
@@ -853,8 +848,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'non_null_expression': [
     { name: 'expression', required: true, multiple: false },
-  ],
-  'number': [
   ],
   'object': [
   ],
@@ -893,12 +886,11 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'value', required: true, multiple: false },
   ],
   'parenthesized_expression': [
+    { name: 'type', required: true, multiple: false },
   ],
   'parenthesized_type': [
   ],
   'pattern': [
-  ],
-  'predefined_type': [
   ],
   'primary_expression': [
   ],
@@ -926,8 +918,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'regex': [
     { name: 'pattern', required: true, multiple: false },
     { name: 'flags', required: false, multiple: false },
-  ],
-  'regex_pattern': [
   ],
   'required_parameter': [
     { name: 'parameterName', required: true, multiple: false },

@@ -151,7 +151,7 @@ describe('Assemble — classifyNode', () => {
 })
 
 describe('Assemble — T027a empty seq after stripping', () => {
-    it('handles rule that simplifies to empty seq', () => {
+    it('classifies a named seq of pure punctuation as a leaf', () => {
         const rule: Rule = {
             type: 'seq',
             members: [
@@ -159,10 +159,12 @@ describe('Assemble — T027a empty seq after stripping', () => {
                 { type: 'string', value: '}' },
             ],
         }
-        // After stripping anon tokens, this becomes an empty seq
-        // classifyNode should handle gracefully
+        // A NAMED rule with only anonymous punctuation content exposes as
+        // a text-only terminal at the tree-sitter level — just like
+        // escape_sequence or line_comment. The v2 classifier calls this a
+        // leaf (user-facing constructible node), not a hidden token.
         const modelType = classifyNode('braces', rule)
-        expect(modelType).toBe('token') // pure punctuation → token
+        expect(modelType).toBe('leaf')
     })
 })
 

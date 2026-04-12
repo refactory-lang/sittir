@@ -233,7 +233,6 @@ export const enum SyntaxKind {
   NegativeLiteral = 'negative_literal',
   StringLiteral = 'string_literal',
   RawStringLiteral = 'raw_string_literal',
-  EscapeSequence = 'escape_sequence',
   Comment = 'comment',
   LineComment = 'line_comment',
   BlockComment = 'block_comment',
@@ -241,7 +240,12 @@ export const enum SyntaxKind {
   HiddenFieldIdentifier = '_field_identifier',
   LetChain = 'let_chain',
   FragmentSpecifier = 'fragment_specifier',
+  UnitType = 'unit_type',
   MutableSpecifier = 'mutable_specifier',
+  UnitExpression = 'unit_expression',
+  IntegerLiteral = 'integer_literal',
+  CharLiteral = 'char_literal',
+  EscapeSequence = 'escape_sequence',
   BooleanLiteral = 'boolean_literal',
   Identifier = 'identifier',
   Shebang = 'shebang',
@@ -252,6 +256,8 @@ export const enum SyntaxKind {
   Metavariable = 'metavariable',
   PrimitiveType = 'primitive_type',
   ShorthandFieldIdentifier = 'shorthand_field_identifier',
+  OuterDocCommentMarker = 'outer_doc_comment_marker',
+  InnerDocCommentMarker = 'inner_doc_comment_marker',
   TypeIdentifier = 'type_identifier',
   FieldIdentifier = 'field_identifier',
   Expr = 'expr',
@@ -1022,6 +1028,7 @@ export interface VisibilityModifierPub {
 export type VisibilityModifier = VisibilityModifierCrate | VisibilityModifierPub;
 export interface BracketedType {
   readonly type: 'bracketed_type';
+  readonly children: HiddenType | QualifiedType;
 }
 
 export interface QualifiedType {
@@ -1696,10 +1703,6 @@ export interface RawStringLiteral {
   };
 }
 
-export interface EscapeSequence {
-  readonly type: 'escape_sequence';
-}
-
 export interface CommentLineComment {
   readonly type: 'comment';
 }
@@ -1711,10 +1714,18 @@ export interface CommentBlockComment {
 export type Comment = CommentLineComment | CommentBlockComment;
 export interface LineComment {
   readonly type: 'line_comment';
+  readonly fields: {
+    readonly doc: LineDocContent;
+  };
+  readonly children: HiddenLineDocCommentMarker;
 }
 
 export interface BlockComment {
   readonly type: 'block_comment';
+  readonly fields: {
+    readonly doc?: BlockCommentContent;
+  };
+  readonly children: HiddenBlockDocCommentMarker | BlockCommentContent;
 }
 
 export interface HiddenTypeIdentifier {
@@ -1755,9 +1766,34 @@ export interface FragmentSpecifier {
   readonly text: "block" | "expr" | "expr_2021" | "ident" | "item" | "lifetime" | "literal" | "meta" | "pat" | "pat_param" | "path" | "stmt" | "tt" | "ty" | "vis";
 }
 
+export interface UnitType {
+  readonly type: 'unit_type';
+  readonly text: string;
+}
+
 export interface MutableSpecifier {
   readonly type: 'mutable_specifier';
   readonly text: "mut";
+}
+
+export interface UnitExpression {
+  readonly type: 'unit_expression';
+  readonly text: string;
+}
+
+export interface IntegerLiteral {
+  readonly type: 'integer_literal';
+  readonly text: string;
+}
+
+export interface CharLiteral {
+  readonly type: 'char_literal';
+  readonly text: string;
+}
+
+export interface EscapeSequence {
+  readonly type: 'escape_sequence';
+  readonly text: string;
 }
 
 export interface BooleanLiteral {
@@ -1807,6 +1843,16 @@ export interface PrimitiveType {
 
 export interface ShorthandFieldIdentifier {
   readonly type: 'shorthand_field_identifier';
+  readonly text: string;
+}
+
+export interface OuterDocCommentMarker {
+  readonly type: 'outer_doc_comment_marker';
+  readonly text: string;
+}
+
+export interface InnerDocCommentMarker {
+  readonly type: 'inner_doc_comment_marker';
   readonly text: string;
 }
 
@@ -2341,7 +2387,6 @@ export type OrPatternConfig = ConfigOf<OrPattern>;
 export type NegativeLiteralConfig = ConfigOf<NegativeLiteral>;
 export type StringLiteralConfig = ConfigOf<StringLiteral>;
 export type RawStringLiteralConfig = ConfigOf<RawStringLiteral>;
-export type EscapeSequenceConfig = ConfigOf<EscapeSequence>;
 export type CommentLineCommentConfig = ConfigOf<CommentLineComment>;
 export type CommentBlockCommentConfig = ConfigOf<CommentBlockComment>;
 export type CommentConfig = CommentLineCommentConfig | CommentBlockCommentConfig;
@@ -2517,7 +2562,6 @@ export interface OrPatternTree extends TreeNode<'or_pattern'> {}
 export interface NegativeLiteralTree extends TreeNode<'negative_literal'> {}
 export interface StringLiteralTree extends TreeNode<'string_literal'> {}
 export interface RawStringLiteralTree extends TreeNode<'raw_string_literal'> {}
-export interface EscapeSequenceTree extends TreeNode<'escape_sequence'> {}
 export interface CommentTree extends TreeNode<'comment'> {}
 export interface CommentLineCommentTree extends TreeNode<'comment'> {}
 export interface CommentBlockCommentTree extends TreeNode<'comment'> {}
@@ -2532,7 +2576,12 @@ export interface LetChainAndand3Tree extends TreeNode<'let_chain'> {}
 export interface LetChainAndand4Tree extends TreeNode<'let_chain'> {}
 export interface LetChainAndand5Tree extends TreeNode<'let_chain'> {}
 export interface FragmentSpecifierTree extends TreeNode<'fragment_specifier'> {}
+export interface UnitTypeTree extends TreeNode<'unit_type'> {}
 export interface MutableSpecifierTree extends TreeNode<'mutable_specifier'> {}
+export interface UnitExpressionTree extends TreeNode<'unit_expression'> {}
+export interface IntegerLiteralTree extends TreeNode<'integer_literal'> {}
+export interface CharLiteralTree extends TreeNode<'char_literal'> {}
+export interface EscapeSequenceTree extends TreeNode<'escape_sequence'> {}
 export interface BooleanLiteralTree extends TreeNode<'boolean_literal'> {}
 export interface IdentifierTree extends TreeNode<'identifier'> {}
 export interface ShebangTree extends TreeNode<'shebang'> {}
@@ -2543,6 +2592,8 @@ export interface CrateTree extends TreeNode<'crate'> {}
 export interface MetavariableTree extends TreeNode<'metavariable'> {}
 export interface PrimitiveTypeTree extends TreeNode<'primitive_type'> {}
 export interface ShorthandFieldIdentifierTree extends TreeNode<'shorthand_field_identifier'> {}
+export interface OuterDocCommentMarkerTree extends TreeNode<'outer_doc_comment_marker'> {}
+export interface InnerDocCommentMarkerTree extends TreeNode<'inner_doc_comment_marker'> {}
 export interface TypeIdentifierTree extends TreeNode<'type_identifier'> {}
 export interface FieldIdentifierTree extends TreeNode<'field_identifier'> {}
 export interface ExprTree extends TreeNode<'expr'> {}
@@ -2756,7 +2807,6 @@ export type OrPatternFromInput = FromInputOf<OrPattern, LeafScalarMap, LeafStrin
 export type NegativeLiteralFromInput = FromInputOf<NegativeLiteral, LeafScalarMap, LeafStringMap>;
 export type StringLiteralFromInput = FromInputOf<StringLiteral, LeafScalarMap, LeafStringMap>;
 export type RawStringLiteralFromInput = FromInputOf<RawStringLiteral, LeafScalarMap, LeafStringMap>;
-export type EscapeSequenceFromInput = FromInputOf<EscapeSequence, LeafScalarMap, LeafStringMap>;
 export type CommentFromInput = FromInputOf<CommentLineComment, LeafScalarMap, LeafStringMap> | FromInputOf<CommentBlockComment, LeafScalarMap, LeafStringMap>;
 export type LineCommentFromInput = FromInputOf<LineComment, LeafScalarMap, LeafStringMap>;
 export type BlockCommentFromInput = FromInputOf<BlockComment, LeafScalarMap, LeafStringMap>;
@@ -2863,6 +2913,7 @@ export type ExpressionExceptRange =
   | ArrayExpression
   | TupleExpression
   | MacroInvocation
+  | UnitExpression
   | BreakExpression
   | ContinueExpression
   | IndexExpression
@@ -2946,7 +2997,9 @@ export type PatternTree = HiddenLiteralPatternTree | IdentifierTree | ScopedIden
 export type LiteralPattern =
   | StringLiteral
   | RawStringLiteral
+  | CharLiteral
   | BooleanLiteral
+  | IntegerLiteral
   | NegativeLiteral
 ;
 
@@ -3096,7 +3149,6 @@ export type RustNode =
   | NegativeLiteral
   | StringLiteral
   | RawStringLiteral
-  | EscapeSequence
   | Comment
   | LineComment
   | BlockComment
@@ -3243,7 +3295,6 @@ export interface KindMap {
   'negative_literal': NegativeLiteral;
   'string_literal': StringLiteral;
   'raw_string_literal': RawStringLiteral;
-  'escape_sequence': EscapeSequence;
   'comment': Comment;
   'line_comment': LineComment;
   'block_comment': BlockComment;
@@ -3251,7 +3302,12 @@ export interface KindMap {
   '_field_identifier': HiddenFieldIdentifier;
   'let_chain': LetChain;
   'fragment_specifier': FragmentSpecifier;
+  'unit_type': UnitType;
   'mutable_specifier': MutableSpecifier;
+  'unit_expression': UnitExpression;
+  'integer_literal': IntegerLiteral;
+  'char_literal': CharLiteral;
+  'escape_sequence': EscapeSequence;
   'boolean_literal': BooleanLiteral;
   'identifier': Identifier;
   'shebang': Shebang;
@@ -3262,6 +3318,8 @@ export interface KindMap {
   'metavariable': Metavariable;
   'primitive_type': PrimitiveType;
   'shorthand_field_identifier': ShorthandFieldIdentifier;
+  'outer_doc_comment_marker': OuterDocCommentMarker;
+  'inner_doc_comment_marker': InnerDocCommentMarker;
   'type_identifier': TypeIdentifier;
   'field_identifier': FieldIdentifier;
   'expr': Expr;
@@ -3490,7 +3548,6 @@ export interface ConfigMap {
   'negative_literal': NegativeLiteralConfig;
   'string_literal': StringLiteralConfig;
   'raw_string_literal': RawStringLiteralConfig;
-  'escape_sequence': EscapeSequenceConfig;
   'comment': CommentConfig;
   'line_comment': LineCommentConfig;
   'block_comment': BlockCommentConfig;
@@ -3637,7 +3694,6 @@ export interface FromInputMap {
   'negative_literal': NegativeLiteralFromInput;
   'string_literal': StringLiteralFromInput;
   'raw_string_literal': RawStringLiteralFromInput;
-  'escape_sequence': EscapeSequenceFromInput;
   'comment': CommentFromInput;
   'line_comment': LineCommentFromInput;
   'block_comment': BlockCommentFromInput;

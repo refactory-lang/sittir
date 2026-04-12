@@ -46,7 +46,6 @@ export const NODE_KINDS = [
   'dotted_name',
   'elif_clause',
   'else_clause',
-  'escape_sequence',
   'except_clause',
   'exec_statement',
   'expression',
@@ -65,17 +64,13 @@ export const NODE_KINDS = [
   'if_clause',
   'if_statement',
   'import_from_statement',
-  'import_prefix',
   'import_statement',
-  'integer',
   'interpolation',
   'keyword_argument',
-  'keyword_identifier',
   'keyword_pattern',
   'lambda',
   'lambda_parameters',
   'lambda_within_for_in_clause',
-  'line_continuation',
   'list',
   'list_comprehension',
   'list_pattern',
@@ -138,6 +133,8 @@ export const LEAF_KINDS = [
   'True',
   '_',
   '__future__',
+  '_is_not',
+  '_not_in',
   'and',
   'as',
   'assert',
@@ -153,18 +150,24 @@ export const LEAF_KINDS = [
   'del',
   'elif',
   'else',
+  'escape_sequence',
   'except',
   'exec',
   'false',
   'finally',
+  'float',
   'for',
   'from',
   'global',
   'identifier',
   'if',
   'import',
+  'import_prefix',
   'in',
+  'integer',
   'is',
+  'keyword_identifier',
+  'line_continuation',
   'match',
   'none',
   'nonlocal',
@@ -198,9 +201,7 @@ export const KEYWORDS = [
   'True',
   '_',
   '__future__',
-  '_is_not',
   '_not_escape_sequence',
-  '_not_in',
   'and',
   'as',
   'assert',
@@ -220,7 +221,6 @@ export const KEYWORDS = [
   'exec',
   'false',
   'finally',
-  'float',
   'for',
   'from',
   'global',
@@ -452,8 +452,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'else_clause': [
     { name: 'body', required: true, multiple: false },
   ],
-  'escape_sequence': [
-  ],
   'except_clause': [
     { name: 'value', required: false, multiple: true },
     { name: 'alias', required: false, multiple: false },
@@ -517,11 +515,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'wildcardImport', required: true, multiple: false },
     { name: 'moduleName', required: true, multiple: false },
   ],
-  'import_prefix': [
-  ],
   'import_statement': [
-  ],
-  'integer': [
   ],
   'interpolation': [
     { name: 'expression', required: true, multiple: false },
@@ -531,8 +525,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'keyword_argument': [
     { name: 'name', required: true, multiple: false },
     { name: 'value', required: true, multiple: false },
-  ],
-  'keyword_identifier': [
   ],
   'keyword_pattern': [
     { name: 'identifier', required: true, multiple: false },
@@ -547,8 +539,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'lambda_within_for_in_clause': [
     { name: 'parameters', required: true, multiple: false },
     { name: 'body', required: true, multiple: false },
-  ],
-  'line_continuation': [
   ],
   'list': [
   ],

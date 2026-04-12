@@ -8,8 +8,6 @@ rules:
     template: $$$CHILDREN;
   import_statement:
     template: import$$$CHILDREN
-  import_prefix:
-    template: $$$CHILDREN
   relative_import:
     template: $IMPORT_PREFIX$DOTTED_NAME
   future_import_statement:
@@ -113,7 +111,7 @@ rules:
   type_parameter:
     template: "[$$$CHILDREN,]"
   parenthesized_list_splat:
-    template: $$$CHILDREN
+    template: ($$$CHILDREN)
   argument_list:
     template: ($$$CHILDREN,)
   decorated_definition:
@@ -241,9 +239,9 @@ rules:
   typed_default_parameter:
     template: "$NAME:$TYPE=$VALUE"
   list_splat_pattern:
-    template: $$$CHILDREN
+    template: "*$$$CHILDREN"
   dictionary_splat_pattern:
-    template: $$$CHILDREN
+    template: "**$$$CHILDREN"
   as_pattern:
     template: $EXPRESSION as$ALIAS
   expression_comparison_operator:
@@ -477,7 +475,7 @@ rules:
   _comprehension_clauses:
     template: $$$CHILDREN
   parenthesized_expression:
-    template: $$$CHILDREN
+    template: ($$$CHILDREN)
   _collection_elements:
     template: $$$CHILDREN,
   for_in_clause:
@@ -494,42 +492,10 @@ rules:
     template: $$$CHILDREN
   interpolation:
     template: "{$EXPRESSION=$TYPE_CONVERSION$FORMAT_SPECIFIER}"
-  escape_sequence:
-    template: $$$CHILDREN
   format_specifier:
     template: ":$$$CHILDREN"
-  integer_form_0:
-    template: 0x
-  integer_form_1:
-    template: 0o
-  integer_form_2:
-    template: 0b
-  integer_form_3:
-    template: $$$CHILDREN
-  integer:
-    variants:
-      - name: form_0
-        template: 0x
-      - name: form_1
-        template: 0o
-      - name: form_2
-        template: 0b
-      - name: form_3
-        template: $$$CHILDREN
-  keyword_identifier_form_0:
-    template: print
-  keyword_identifier_form_1:
-    template: type
-  keyword_identifier:
-    variants:
-      - name: form_0
-        template: print
-      - name: form_1
-        template: type
   await:
     template: $PRIMARY_EXPRESSION$$$CHILDREN
-  line_continuation:
-    template: $$$CHILDREN
   as_pattern_target_comparison_operator:
     template: $$$CHILDREN
   as_pattern_target_not_operator:

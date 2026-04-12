@@ -557,6 +557,10 @@ describe('visibility_modifier', () => {
 });
 
 describe('bracketed_type', () => {
+  it('factory produces correct type', () => {
+    const node = ir.bracketedType();
+    expect(node.type).toBe('bracketed_type');
+  });
 });
 
 describe('qualified_type', () => {
@@ -614,6 +618,14 @@ describe('tuple_type', () => {
   it('factory produces correct type', () => {
     const node = ir.tupleType();
     expect(node.type).toBe('tuple_type');
+  });
+});
+
+describe('unit_type', () => {
+  it('factory produces correct type', () => {
+    const node = ir.unitType('test');
+    expect(node.type).toBe('unit_type');
+    expect(node.text).toBe('test');
   });
 });
 
@@ -959,6 +971,14 @@ describe('tuple_expression', () => {
   it('render produces non-empty string', () => {
     const node = ir.tupleExpression({ attributes: 'test' as any, first: 'test' as any, rest: 'test' as any, trailing: 'test' as any });
     expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('unit_expression', () => {
+  it('factory produces correct type', () => {
+    const node = ir.unitExpression('test');
+    expect(node.type).toBe('unit_expression');
+    expect(node.text).toBe('test');
   });
 });
 
@@ -1399,6 +1419,14 @@ describe('negative_literal', () => {
   });
 });
 
+describe('integer_literal', () => {
+  it('factory produces correct type', () => {
+    const node = ir.integerLiteral('test');
+    expect(node.type).toBe('integer_literal');
+    expect(node.text).toBe('test');
+  });
+});
+
 describe('string_literal', () => {
   it('factory produces correct type', () => {
     const node = ir.stringLiteral();
@@ -1417,7 +1445,20 @@ describe('raw_string_literal', () => {
   });
 });
 
+describe('char_literal', () => {
+  it('factory produces correct type', () => {
+    const node = ir.charLiteral('test');
+    expect(node.type).toBe('char_literal');
+    expect(node.text).toBe('test');
+  });
+});
+
 describe('escape_sequence', () => {
+  it('factory produces correct type', () => {
+    const node = ir.escapeSequence('test');
+    expect(node.type).toBe('escape_sequence');
+    expect(node.text).toBe('test');
+  });
 });
 
 describe('comment', () => {
@@ -1432,9 +1473,25 @@ describe('comment', () => {
 });
 
 describe('line_comment', () => {
+  it('factory produces correct type', () => {
+    const node = ir.lineComment({ doc: { type: '_line_doc_content', text: 'test' } as any });
+    expect(node.type).toBe('line_comment');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.lineComment({ doc: { type: '_line_doc_content', text: 'test' } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
 });
 
 describe('block_comment', () => {
+  it('factory produces correct type', () => {
+    const node = ir.blockComment({});
+    expect(node.type).toBe('block_comment');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.blockComment({});
+    expect(node.render().length).toBeGreaterThan(0);
+  });
 });
 
 describe('identifier', () => {
@@ -1526,6 +1583,22 @@ describe('shorthand_field_identifier', () => {
   it('factory produces correct type', () => {
     const node = ir.shorthandFieldIdentifier('test');
     expect(node.type).toBe('shorthand_field_identifier');
+    expect(node.text).toBe('test');
+  });
+});
+
+describe('outer_doc_comment_marker', () => {
+  it('factory produces correct type', () => {
+    const node = ir.outerDocCommentMarker('test');
+    expect(node.type).toBe('outer_doc_comment_marker');
+    expect(node.text).toBe('test');
+  });
+});
+
+describe('inner_doc_comment_marker', () => {
+  it('factory produces correct type', () => {
+    const node = ir.innerDocCommentMarker('test');
+    expect(node.type).toBe('inner_doc_comment_marker');
     expect(node.text).toBe('test');
   });
 });

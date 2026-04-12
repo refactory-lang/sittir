@@ -25,8 +25,9 @@ describe('import_statement', () => {
 
 describe('import_prefix', () => {
   it('factory produces correct type', () => {
-    const node = ir.importPrefix();
+    const node = ir.importPrefix('test');
     expect(node.type).toBe('import_prefix');
+    expect(node.text).toBe('test');
   });
 });
 
@@ -438,6 +439,10 @@ describe('type_parameter', () => {
 });
 
 describe('parenthesized_list_splat', () => {
+  it('factory produces correct type', () => {
+    const node = ir.parenthesizedListSplat();
+    expect(node.type).toBe('parenthesized_list_splat');
+  });
 });
 
 describe('argument_list', () => {
@@ -705,9 +710,17 @@ describe('typed_default_parameter', () => {
 });
 
 describe('list_splat_pattern', () => {
+  it('factory produces correct type', () => {
+    const node = ir.listSplatPattern();
+    expect(node.type).toBe('list_splat_pattern');
+  });
 });
 
 describe('dictionary_splat_pattern', () => {
+  it('factory produces correct type', () => {
+    const node = ir.dictionarySplatPattern();
+    expect(node.type).toBe('dictionary_splat_pattern');
+  });
 });
 
 describe('as_pattern', () => {
@@ -904,6 +917,22 @@ describe('unary_operator', () => {
   it('render produces non-empty string', () => {
     const node = ir.unaryOperator({ operator: { type: '+', text: 'test' } as any, argument: { type: 'primary_expression', text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('_not_in', () => {
+  it('factory produces correct type', () => {
+    const node = ir.hiddenNotIn('test');
+    expect(node.type).toBe('_not_in');
+    expect(node.text).toBe('test');
+  });
+});
+
+describe('_is_not', () => {
+  it('factory produces correct type', () => {
+    const node = ir.hiddenIsNot('test');
+    expect(node.type).toBe('_is_not');
+    expect(node.text).toBe('test');
   });
 });
 
@@ -1215,6 +1244,10 @@ describe('_comprehension_clauses', () => {
 });
 
 describe('parenthesized_expression', () => {
+  it('factory produces correct type', () => {
+    const node = ir.parenthesizedExpression();
+    expect(node.type).toBe('parenthesized_expression');
+  });
 });
 
 describe('_collection_elements', () => {
@@ -1294,6 +1327,11 @@ describe('interpolation', () => {
 });
 
 describe('escape_sequence', () => {
+  it('factory produces correct type', () => {
+    const node = ir.escapeSequence('test');
+    expect(node.type).toBe('escape_sequence');
+    expect(node.text).toBe('test');
+  });
 });
 
 describe('format_specifier', () => {
@@ -1312,21 +1350,18 @@ describe('type_conversion', () => {
 });
 
 describe('integer', () => {
-  it('form_0 form produces correct type', () => {
-    const node = ir.integer.form_0({});
+  it('factory produces correct type', () => {
+    const node = ir.integer('test');
     expect(node.type).toBe('integer');
+    expect(node.text).toBe('test');
   });
-  it('form_1 form produces correct type', () => {
-    const node = ir.integer.form_1({});
-    expect(node.type).toBe('integer');
-  });
-  it('form_2 form produces correct type', () => {
-    const node = ir.integer.form_2({});
-    expect(node.type).toBe('integer');
-  });
-  it('form_3 form produces correct type', () => {
-    const node = ir.integer.form_3({});
-    expect(node.type).toBe('integer');
+});
+
+describe('float', () => {
+  it('factory produces correct type', () => {
+    const node = ir.float('test');
+    expect(node.type).toBe('float');
+    expect(node.text).toBe('test');
   });
 });
 
@@ -1339,13 +1374,10 @@ describe('identifier', () => {
 });
 
 describe('keyword_identifier', () => {
-  it('form_0 form produces correct type', () => {
-    const node = ir.keywordIdentifier.form_0({});
+  it('factory produces correct type', () => {
+    const node = ir.keywordIdentifier('test');
     expect(node.type).toBe('keyword_identifier');
-  });
-  it('form_1 form produces correct type', () => {
-    const node = ir.keywordIdentifier.form_1({});
-    expect(node.type).toBe('keyword_identifier');
+    expect(node.text).toBe('test');
   });
 });
 
@@ -1393,6 +1425,11 @@ describe('comment', () => {
 });
 
 describe('line_continuation', () => {
+  it('factory produces correct type', () => {
+    const node = ir.lineContinuation('test');
+    expect(node.type).toBe('line_continuation');
+    expect(node.text).toBe('test');
+  });
 });
 
 describe('as_pattern_target', () => {

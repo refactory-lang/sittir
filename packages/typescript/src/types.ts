@@ -181,14 +181,9 @@ export const enum SyntaxKind {
   UpdateExpression = 'update_expression',
   SequenceExpression = 'sequence_expression',
   String = 'string',
-  EscapeSequence = 'escape_sequence',
-  Comment = 'comment',
   TemplateString = 'template_string',
   TemplateSubstitution = 'template_substitution',
   Regex = 'regex',
-  RegexPattern = 'regex_pattern',
-  Number = 'number',
-  MetaProperty = 'meta_property',
   Arguments = 'arguments',
   Decorator = 'decorator',
   DecoratorMemberExpression = 'decorator_member_expression',
@@ -258,7 +253,6 @@ export const enum SyntaxKind {
   LiteralType = 'literal_type',
   FlowMaybeType = 'flow_maybe_type',
   ParenthesizedType = 'parenthesized_type',
-  PredefinedType = 'predefined_type',
   TypeArguments = 'type_arguments',
   ObjectType = 'object_type',
   CallSignature = 'call_signature',
@@ -287,7 +281,14 @@ export const enum SyntaxKind {
   UnescapedSingleJsxStringFragment = 'unescaped_single_jsx_string_fragment',
   UnescapedDoubleStringFragment = 'unescaped_double_string_fragment',
   UnescapedSingleStringFragment = 'unescaped_single_string_fragment',
+  EscapeSequence = 'escape_sequence',
+  Comment = 'comment',
+  RegexPattern = 'regex_pattern',
   RegexFlags = 'regex_flags',
+  Number = 'number',
+  Identifier = 'identifier',
+  PrivatePropertyIdentifier = 'private_property_identifier',
+  MetaProperty = 'meta_property',
   This = 'this',
   Super = 'super',
   True = 'true',
@@ -296,7 +297,12 @@ export const enum SyntaxKind {
   Undefined = 'undefined',
   AccessibilityModifier = 'accessibility_modifier',
   OverrideModifier = 'override_modifier',
+  PredefinedType = 'predefined_type',
+  StatementIdentifier = 'statement_identifier',
+  PropertyIdentifier = 'property_identifier',
+  StringFragment = 'string_fragment',
   ThisType = 'this_type',
+  TypeIdentifier = 'type_identifier',
   Export = 'export',
   Default = 'default',
   As = 'as',
@@ -913,6 +919,10 @@ export interface FinallyClause {
 
 export interface ParenthesizedExpression {
   readonly type: 'parenthesized_expression';
+  readonly fields: {
+    readonly type: TypeAnnotation;
+  };
+  readonly children: Expression | SequenceExpression;
 }
 
 export interface ExpressionAsExpression {
@@ -1040,6 +1050,7 @@ export interface JsxElement {
 
 export interface JsxExpression {
   readonly type: 'jsx_expression';
+  readonly children: Expression | SequenceExpression | SpreadElement;
 }
 
 export interface JsxOpeningElement {
@@ -1294,19 +1305,6 @@ export interface StringTokSq {
 }
 
 export type String = StringTokDq | StringTokSq;
-export interface EscapeSequence {
-  readonly type: 'escape_sequence';
-}
-
-export interface CommentSlashslash {
-  readonly type: 'comment';
-}
-
-export interface CommentTokSlashStar {
-  readonly type: 'comment';
-}
-
-export type Comment = CommentSlashslash | CommentTokSlashStar;
 export interface TemplateString {
   readonly type: 'template_string';
   readonly children: readonly (TemplateChars | EscapeSequence | TemplateSubstitution)[];
@@ -1325,40 +1323,6 @@ export interface Regex {
   };
 }
 
-export interface RegexPattern {
-  readonly type: 'regex_pattern';
-}
-
-export interface NumberForm0 {
-  readonly type: 'number';
-}
-
-export interface NumberForm1 {
-  readonly type: 'number';
-}
-
-export interface NumberForm2 {
-  readonly type: 'number';
-}
-
-export interface NumberForm3 {
-  readonly type: 'number';
-}
-
-export interface NumberN {
-  readonly type: 'number';
-}
-
-export type Number = NumberForm0 | NumberForm1 | NumberForm2 | NumberForm3 | NumberN;
-export interface MetaPropertyNew {
-  readonly type: 'meta_property';
-}
-
-export interface MetaPropertyImport {
-  readonly type: 'meta_property';
-}
-
-export type MetaProperty = MetaPropertyNew | MetaPropertyImport;
 export interface Arguments {
   readonly type: 'arguments';
   readonly children: readonly (Expression | SpreadElement)[];
@@ -1366,6 +1330,7 @@ export interface Arguments {
 
 export interface Decorator {
   readonly type: 'decorator';
+  readonly children: Identifier | DecoratorMemberExpression | DecoratorCallExpression | DecoratorParenthesizedExpression;
 }
 
 export interface DecoratorMemberExpression {
@@ -1387,6 +1352,9 @@ export interface DecoratorCallExpression {
 
 export interface ClassBody {
   readonly type: 'class_body';
+  readonly fields: {
+    readonly decorator: readonly (Decorator)[];
+  };
   readonly children: readonly (MethodDefinition | HiddenSemicolon | MethodSignature | FunctionSignatureAutomaticSemicolon | ClassStaticBlock | AbstractMethodSignature | IndexSignature | PublicFieldDefinition)[];
 }
 
@@ -1519,6 +1487,7 @@ export interface FunctionSignature {
 
 export interface DecoratorParenthesizedExpression {
   readonly type: 'decorator_parenthesized_expression';
+  readonly children: Identifier | DecoratorMemberExpression | DecoratorCallExpression;
 }
 
 export interface TypeAssertion {
@@ -1870,6 +1839,7 @@ export interface PrimaryTypeConst {
 export type PrimaryType = PrimaryTypeParenthesizedType | PrimaryTypePredefinedType | PrimaryTypeTypeIdentifier | PrimaryTypeNestedTypeIdentifier | PrimaryTypeGenericType | PrimaryTypeObjectType | PrimaryTypeArrayType | PrimaryTypeTupleType | PrimaryTypeFlowMaybeType | PrimaryTypeTypeQuery | PrimaryTypeIndexTypeQuery | PrimaryTypeThis | PrimaryTypeExistentialType | PrimaryTypeLiteralType | PrimaryTypeLookupType | PrimaryTypeConditionalType | PrimaryTypeTemplateLiteralType | PrimaryTypeIntersectionType | PrimaryTypeUnionType | PrimaryTypeConst;
 export interface TemplateType {
   readonly type: 'template_type';
+  readonly children: PrimaryType | InferType;
 }
 
 export interface TemplateLiteralType {
@@ -1992,47 +1962,6 @@ export interface ParenthesizedType {
   readonly children: Type;
 }
 
-export interface PredefinedTypeAny {
-  readonly type: 'predefined_type';
-}
-
-export interface PredefinedTypeNumber {
-  readonly type: 'predefined_type';
-}
-
-export interface PredefinedTypeBoolean {
-  readonly type: 'predefined_type';
-}
-
-export interface PredefinedTypeString {
-  readonly type: 'predefined_type';
-}
-
-export interface PredefinedTypeSymbol {
-  readonly type: 'predefined_type';
-}
-
-export interface PredefinedTypeUnique {
-  readonly type: 'predefined_type';
-}
-
-export interface PredefinedTypeVoid {
-  readonly type: 'predefined_type';
-}
-
-export interface PredefinedTypeUnknown {
-  readonly type: 'predefined_type';
-}
-
-export interface PredefinedTypeNever {
-  readonly type: 'predefined_type';
-}
-
-export interface PredefinedTypeObject {
-  readonly type: 'predefined_type';
-}
-
-export type PredefinedType = PredefinedTypeAny | PredefinedTypeNumber | PredefinedTypeBoolean | PredefinedTypeString | PredefinedTypeSymbol | PredefinedTypeUnique | PredefinedTypeVoid | PredefinedTypeUnknown | PredefinedTypeNever | PredefinedTypeObject;
 export interface TypeArguments {
   readonly type: 'type_arguments';
   readonly children: readonly (Type)[];
@@ -2225,8 +2154,43 @@ export interface UnescapedSingleStringFragment {
   readonly text: string;
 }
 
+export interface EscapeSequence {
+  readonly type: 'escape_sequence';
+  readonly text: string;
+}
+
+export interface Comment {
+  readonly type: 'comment';
+  readonly text: string;
+}
+
+export interface RegexPattern {
+  readonly type: 'regex_pattern';
+  readonly text: string;
+}
+
 export interface RegexFlags {
   readonly type: 'regex_flags';
+  readonly text: string;
+}
+
+export interface Number {
+  readonly type: 'number';
+  readonly text: string;
+}
+
+export interface Identifier {
+  readonly type: 'identifier';
+  readonly text: string;
+}
+
+export interface PrivatePropertyIdentifier {
+  readonly type: 'private_property_identifier';
+  readonly text: string;
+}
+
+export interface MetaProperty {
+  readonly type: 'meta_property';
   readonly text: string;
 }
 
@@ -2270,9 +2234,34 @@ export interface OverrideModifier {
   readonly text: "override";
 }
 
+export interface PredefinedType {
+  readonly type: 'predefined_type';
+  readonly text: string;
+}
+
+export interface StatementIdentifier {
+  readonly type: 'statement_identifier';
+  readonly text: string;
+}
+
+export interface PropertyIdentifier {
+  readonly type: 'property_identifier';
+  readonly text: string;
+}
+
+export interface StringFragment {
+  readonly type: 'string_fragment';
+  readonly text: string;
+}
+
 export interface ThisType {
   readonly type: 'this_type';
   readonly text: "this";
+}
+
+export interface TypeIdentifier {
+  readonly type: 'type_identifier';
+  readonly text: string;
 }
 
 export interface Export {
@@ -2795,23 +2784,9 @@ export type SequenceExpressionConfig = ConfigOf<SequenceExpression>;
 export type StringTokDqConfig = ConfigOf<StringTokDq>;
 export type StringTokSqConfig = ConfigOf<StringTokSq>;
 export type StringConfig = StringTokDqConfig | StringTokSqConfig;
-export type EscapeSequenceConfig = ConfigOf<EscapeSequence>;
-export type CommentSlashslashConfig = ConfigOf<CommentSlashslash>;
-export type CommentTokSlashStarConfig = ConfigOf<CommentTokSlashStar>;
-export type CommentConfig = CommentSlashslashConfig | CommentTokSlashStarConfig;
 export type TemplateStringConfig = ConfigOf<TemplateString>;
 export type TemplateSubstitutionConfig = ConfigOf<TemplateSubstitution>;
 export type RegexConfig = ConfigOf<Regex>;
-export type RegexPatternConfig = ConfigOf<RegexPattern>;
-export type NumberForm0Config = ConfigOf<NumberForm0>;
-export type NumberForm1Config = ConfigOf<NumberForm1>;
-export type NumberForm2Config = ConfigOf<NumberForm2>;
-export type NumberForm3Config = ConfigOf<NumberForm3>;
-export type NumberNConfig = ConfigOf<NumberN>;
-export type NumberConfig = NumberForm0Config | NumberForm1Config | NumberForm2Config | NumberForm3Config | NumberNConfig;
-export type MetaPropertyNewConfig = ConfigOf<MetaPropertyNew>;
-export type MetaPropertyImportConfig = ConfigOf<MetaPropertyImport>;
-export type MetaPropertyConfig = MetaPropertyNewConfig | MetaPropertyImportConfig;
 export type ArgumentsConfig = ConfigOf<Arguments>;
 export type DecoratorConfig = ConfigOf<Decorator>;
 export type DecoratorMemberExpressionConfig = ConfigOf<DecoratorMemberExpression>;
@@ -2917,17 +2892,6 @@ export type LiteralTypeUndefinedConfig = ConfigOf<LiteralTypeUndefined>;
 export type LiteralTypeConfig = LiteralTypeNumberConfig | LiteralTypeNumberConfig | LiteralTypeStringConfig | LiteralTypeTrueConfig | LiteralTypeFalseConfig | LiteralTypeNullConfig | LiteralTypeUndefinedConfig;
 export type FlowMaybeTypeConfig = ConfigOf<FlowMaybeType>;
 export type ParenthesizedTypeConfig = ConfigOf<ParenthesizedType>;
-export type PredefinedTypeAnyConfig = ConfigOf<PredefinedTypeAny>;
-export type PredefinedTypeNumberConfig = ConfigOf<PredefinedTypeNumber>;
-export type PredefinedTypeBooleanConfig = ConfigOf<PredefinedTypeBoolean>;
-export type PredefinedTypeStringConfig = ConfigOf<PredefinedTypeString>;
-export type PredefinedTypeSymbolConfig = ConfigOf<PredefinedTypeSymbol>;
-export type PredefinedTypeUniqueConfig = ConfigOf<PredefinedTypeUnique>;
-export type PredefinedTypeVoidConfig = ConfigOf<PredefinedTypeVoid>;
-export type PredefinedTypeUnknownConfig = ConfigOf<PredefinedTypeUnknown>;
-export type PredefinedTypeNeverConfig = ConfigOf<PredefinedTypeNever>;
-export type PredefinedTypeObjectConfig = ConfigOf<PredefinedTypeObject>;
-export type PredefinedTypeConfig = PredefinedTypeAnyConfig | PredefinedTypeNumberConfig | PredefinedTypeBooleanConfig | PredefinedTypeStringConfig | PredefinedTypeSymbolConfig | PredefinedTypeUniqueConfig | PredefinedTypeVoidConfig | PredefinedTypeUnknownConfig | PredefinedTypeNeverConfig | PredefinedTypeObjectConfig;
 export type TypeArgumentsConfig = ConfigOf<TypeArguments>;
 export type ObjectTypeConfig = ConfigOf<ObjectType>;
 export type CallSignatureConfig = ConfigOf<CallSignature>;
@@ -3093,23 +3057,9 @@ export interface SequenceExpressionTree extends TreeNode<'sequence_expression'> 
 export interface StringTree extends TreeNode<'string'> {}
 export interface StringTokDqTree extends TreeNode<'string'> {}
 export interface StringTokSqTree extends TreeNode<'string'> {}
-export interface EscapeSequenceTree extends TreeNode<'escape_sequence'> {}
-export interface CommentTree extends TreeNode<'comment'> {}
-export interface CommentSlashslashTree extends TreeNode<'comment'> {}
-export interface CommentTokSlashStarTree extends TreeNode<'comment'> {}
 export interface TemplateStringTree extends TreeNode<'template_string'> {}
 export interface TemplateSubstitutionTree extends TreeNode<'template_substitution'> {}
 export interface RegexTree extends TreeNode<'regex'> {}
-export interface RegexPatternTree extends TreeNode<'regex_pattern'> {}
-export interface NumberTree extends TreeNode<'number'> {}
-export interface NumberForm0Tree extends TreeNode<'number'> {}
-export interface NumberForm1Tree extends TreeNode<'number'> {}
-export interface NumberForm2Tree extends TreeNode<'number'> {}
-export interface NumberForm3Tree extends TreeNode<'number'> {}
-export interface NumberNTree extends TreeNode<'number'> {}
-export interface MetaPropertyTree extends TreeNode<'meta_property'> {}
-export interface MetaPropertyNewTree extends TreeNode<'meta_property'> {}
-export interface MetaPropertyImportTree extends TreeNode<'meta_property'> {}
 export interface ArgumentsTree extends TreeNode<'arguments'> {}
 export interface DecoratorTree extends TreeNode<'decorator'> {}
 export interface DecoratorMemberExpressionTree extends TreeNode<'decorator_member_expression'> {}
@@ -3215,17 +3165,6 @@ export interface LiteralTypeNullTree extends TreeNode<'literal_type'> {}
 export interface LiteralTypeUndefinedTree extends TreeNode<'literal_type'> {}
 export interface FlowMaybeTypeTree extends TreeNode<'flow_maybe_type'> {}
 export interface ParenthesizedTypeTree extends TreeNode<'parenthesized_type'> {}
-export interface PredefinedTypeTree extends TreeNode<'predefined_type'> {}
-export interface PredefinedTypeAnyTree extends TreeNode<'predefined_type'> {}
-export interface PredefinedTypeNumberTree extends TreeNode<'predefined_type'> {}
-export interface PredefinedTypeBooleanTree extends TreeNode<'predefined_type'> {}
-export interface PredefinedTypeStringTree extends TreeNode<'predefined_type'> {}
-export interface PredefinedTypeSymbolTree extends TreeNode<'predefined_type'> {}
-export interface PredefinedTypeUniqueTree extends TreeNode<'predefined_type'> {}
-export interface PredefinedTypeVoidTree extends TreeNode<'predefined_type'> {}
-export interface PredefinedTypeUnknownTree extends TreeNode<'predefined_type'> {}
-export interface PredefinedTypeNeverTree extends TreeNode<'predefined_type'> {}
-export interface PredefinedTypeObjectTree extends TreeNode<'predefined_type'> {}
 export interface TypeArgumentsTree extends TreeNode<'type_arguments'> {}
 export interface ObjectTypeTree extends TreeNode<'object_type'> {}
 export interface CallSignatureTree extends TreeNode<'call_signature'> {}
@@ -3258,7 +3197,14 @@ export interface UnescapedDoubleJsxStringFragmentTree extends TreeNode<'unescape
 export interface UnescapedSingleJsxStringFragmentTree extends TreeNode<'unescaped_single_jsx_string_fragment'> {}
 export interface UnescapedDoubleStringFragmentTree extends TreeNode<'unescaped_double_string_fragment'> {}
 export interface UnescapedSingleStringFragmentTree extends TreeNode<'unescaped_single_string_fragment'> {}
+export interface EscapeSequenceTree extends TreeNode<'escape_sequence'> {}
+export interface CommentTree extends TreeNode<'comment'> {}
+export interface RegexPatternTree extends TreeNode<'regex_pattern'> {}
 export interface RegexFlagsTree extends TreeNode<'regex_flags'> {}
+export interface NumberTree extends TreeNode<'number'> {}
+export interface IdentifierTree extends TreeNode<'identifier'> {}
+export interface PrivatePropertyIdentifierTree extends TreeNode<'private_property_identifier'> {}
+export interface MetaPropertyTree extends TreeNode<'meta_property'> {}
 export interface ThisTree extends TreeNode<'this'> {}
 export interface SuperTree extends TreeNode<'super'> {}
 export interface TrueTree extends TreeNode<'true'> {}
@@ -3267,7 +3213,12 @@ export interface NullTree extends TreeNode<'null'> {}
 export interface UndefinedTree extends TreeNode<'undefined'> {}
 export interface AccessibilityModifierTree extends TreeNode<'accessibility_modifier'> {}
 export interface OverrideModifierTree extends TreeNode<'override_modifier'> {}
+export interface PredefinedTypeTree extends TreeNode<'predefined_type'> {}
+export interface StatementIdentifierTree extends TreeNode<'statement_identifier'> {}
+export interface PropertyIdentifierTree extends TreeNode<'property_identifier'> {}
+export interface StringFragmentTree extends TreeNode<'string_fragment'> {}
 export interface ThisTypeTree extends TreeNode<'this_type'> {}
+export interface TypeIdentifierTree extends TreeNode<'type_identifier'> {}
 export interface ExportTree extends TreeNode<'export'> {}
 export interface DefaultTree extends TreeNode<'default'> {}
 export interface AsTree extends TreeNode<'as'> {}
@@ -3425,14 +3376,9 @@ export type UnaryExpressionFromInput = FromInputOf<UnaryExpression, LeafScalarMa
 export type UpdateExpressionFromInput = FromInputOf<UpdateExpression, LeafScalarMap, LeafStringMap>;
 export type SequenceExpressionFromInput = FromInputOf<SequenceExpression, LeafScalarMap, LeafStringMap>;
 export type StringFromInput = FromInputOf<StringTokDq, LeafScalarMap, LeafStringMap> | FromInputOf<StringTokSq, LeafScalarMap, LeafStringMap>;
-export type EscapeSequenceFromInput = FromInputOf<EscapeSequence, LeafScalarMap, LeafStringMap>;
-export type CommentFromInput = FromInputOf<CommentSlashslash, LeafScalarMap, LeafStringMap> | FromInputOf<CommentTokSlashStar, LeafScalarMap, LeafStringMap>;
 export type TemplateStringFromInput = FromInputOf<TemplateString, LeafScalarMap, LeafStringMap>;
 export type TemplateSubstitutionFromInput = FromInputOf<TemplateSubstitution, LeafScalarMap, LeafStringMap>;
 export type RegexFromInput = FromInputOf<Regex, LeafScalarMap, LeafStringMap>;
-export type RegexPatternFromInput = FromInputOf<RegexPattern, LeafScalarMap, LeafStringMap>;
-export type NumberFromInput = FromInputOf<NumberForm0, LeafScalarMap, LeafStringMap> | FromInputOf<NumberForm1, LeafScalarMap, LeafStringMap> | FromInputOf<NumberForm2, LeafScalarMap, LeafStringMap> | FromInputOf<NumberForm3, LeafScalarMap, LeafStringMap> | FromInputOf<NumberN, LeafScalarMap, LeafStringMap>;
-export type MetaPropertyFromInput = FromInputOf<MetaPropertyNew, LeafScalarMap, LeafStringMap> | FromInputOf<MetaPropertyImport, LeafScalarMap, LeafStringMap>;
 export type ArgumentsFromInput = FromInputOf<Arguments, LeafScalarMap, LeafStringMap>;
 export type DecoratorFromInput = FromInputOf<Decorator, LeafScalarMap, LeafStringMap>;
 export type DecoratorMemberExpressionFromInput = FromInputOf<DecoratorMemberExpression, LeafScalarMap, LeafStringMap>;
@@ -3502,7 +3448,6 @@ export type MappedTypeClauseFromInput = FromInputOf<MappedTypeClause, LeafScalar
 export type LiteralTypeFromInput = FromInputOf<LiteralTypeNumber, LeafScalarMap, LeafStringMap> | FromInputOf<LiteralTypeNumber, LeafScalarMap, LeafStringMap> | FromInputOf<LiteralTypeString, LeafScalarMap, LeafStringMap> | FromInputOf<LiteralTypeTrue, LeafScalarMap, LeafStringMap> | FromInputOf<LiteralTypeFalse, LeafScalarMap, LeafStringMap> | FromInputOf<LiteralTypeNull, LeafScalarMap, LeafStringMap> | FromInputOf<LiteralTypeUndefined, LeafScalarMap, LeafStringMap>;
 export type FlowMaybeTypeFromInput = FromInputOf<FlowMaybeType, LeafScalarMap, LeafStringMap>;
 export type ParenthesizedTypeFromInput = FromInputOf<ParenthesizedType, LeafScalarMap, LeafStringMap>;
-export type PredefinedTypeFromInput = FromInputOf<PredefinedTypeAny, LeafScalarMap, LeafStringMap> | FromInputOf<PredefinedTypeNumber, LeafScalarMap, LeafStringMap> | FromInputOf<PredefinedTypeBoolean, LeafScalarMap, LeafStringMap> | FromInputOf<PredefinedTypeString, LeafScalarMap, LeafStringMap> | FromInputOf<PredefinedTypeSymbol, LeafScalarMap, LeafStringMap> | FromInputOf<PredefinedTypeUnique, LeafScalarMap, LeafStringMap> | FromInputOf<PredefinedTypeVoid, LeafScalarMap, LeafStringMap> | FromInputOf<PredefinedTypeUnknown, LeafScalarMap, LeafStringMap> | FromInputOf<PredefinedTypeNever, LeafScalarMap, LeafStringMap> | FromInputOf<PredefinedTypeObject, LeafScalarMap, LeafStringMap>;
 export type TypeArgumentsFromInput = FromInputOf<TypeArguments, LeafScalarMap, LeafStringMap>;
 export type ObjectTypeFromInput = FromInputOf<ObjectType, LeafScalarMap, LeafStringMap>;
 export type CallSignatureFromInput = FromInputOf<CallSignature, LeafScalarMap, LeafStringMap>;
@@ -3526,6 +3471,7 @@ export type InterfaceBodyFromInput = FromInputOf<InterfaceBody, LeafScalarMap, L
 
 // Supertype unions
 export type ModuleExportName =
+  | Identifier
   | String
 ;
 
@@ -3612,21 +3558,15 @@ export type DestructuringPatternConfig = ObjectPatternConfig | ArrayPatternConfi
 export type DestructuringPatternFromInput = ObjectPatternFromInput | ArrayPatternFromInput;
 export type DestructuringPatternTree = ObjectPatternTree | ArrayPatternTree;
 
-export type Identifier =
-  | Undefined
-  | Identifier
-;
-
-export type IdentifierTree = UndefinedTree | IdentifierTree;
-
 export type PropertyName =
+  | PrivatePropertyIdentifier
   | String
   | Number
   | ComputedPropertyName
 ;
 
-export type PropertyNameConfig = StringConfig | NumberConfig | ComputedPropertyNameConfig;
-export type PropertyNameFromInput = StringFromInput | NumberFromInput | ComputedPropertyNameFromInput;
+export type PropertyNameConfig = StringConfig | ComputedPropertyNameConfig;
+export type PropertyNameFromInput = StringFromInput | ComputedPropertyNameFromInput;
 export type PropertyNameTree = PrivatePropertyIdentifierTree | StringTree | NumberTree | ComputedPropertyNameTree;
 
 export type ReservedIdentifierTree = ;
@@ -3730,14 +3670,9 @@ export type TypescriptNode =
   | UpdateExpression
   | SequenceExpression
   | String
-  | EscapeSequence
-  | Comment
   | TemplateString
   | TemplateSubstitution
   | Regex
-  | RegexPattern
-  | Number
-  | MetaProperty
   | Arguments
   | Decorator
   | DecoratorMemberExpression
@@ -3807,7 +3742,6 @@ export type TypescriptNode =
   | LiteralType
   | FlowMaybeType
   | ParenthesizedType
-  | PredefinedType
   | TypeArguments
   | ObjectType
   | CallSignature
@@ -3909,14 +3843,9 @@ export interface KindMap {
   'update_expression': UpdateExpression;
   'sequence_expression': SequenceExpression;
   'string': String;
-  'escape_sequence': EscapeSequence;
-  'comment': Comment;
   'template_string': TemplateString;
   'template_substitution': TemplateSubstitution;
   'regex': Regex;
-  'regex_pattern': RegexPattern;
-  'number': Number;
-  'meta_property': MetaProperty;
   'arguments': Arguments;
   'decorator': Decorator;
   'decorator_member_expression': DecoratorMemberExpression;
@@ -3986,7 +3915,6 @@ export interface KindMap {
   'literal_type': LiteralType;
   'flow_maybe_type': FlowMaybeType;
   'parenthesized_type': ParenthesizedType;
-  'predefined_type': PredefinedType;
   'type_arguments': TypeArguments;
   'object_type': ObjectType;
   'call_signature': CallSignature;
@@ -4015,7 +3943,14 @@ export interface KindMap {
   'unescaped_single_jsx_string_fragment': UnescapedSingleJsxStringFragment;
   'unescaped_double_string_fragment': UnescapedDoubleStringFragment;
   'unescaped_single_string_fragment': UnescapedSingleStringFragment;
+  'escape_sequence': EscapeSequence;
+  'comment': Comment;
+  'regex_pattern': RegexPattern;
   'regex_flags': RegexFlags;
+  'number': Number;
+  'identifier': Identifier;
+  'private_property_identifier': PrivatePropertyIdentifier;
+  'meta_property': MetaProperty;
   'this': This;
   'super': Super;
   'true': True;
@@ -4024,7 +3959,12 @@ export interface KindMap {
   'undefined': Undefined;
   'accessibility_modifier': AccessibilityModifier;
   'override_modifier': OverrideModifier;
+  'predefined_type': PredefinedType;
+  'statement_identifier': StatementIdentifier;
+  'property_identifier': PropertyIdentifier;
+  'string_fragment': StringFragment;
   'this_type': ThisType;
+  'type_identifier': TypeIdentifier;
   'export': Export;
   'default': Default;
   'as': As;
@@ -4114,14 +4054,10 @@ export interface VariantMap {
   'class_heritage': { extends_clause: ClassHeritageExtendsClause; implements_clause: ClassHeritageImplementsClause };
   'call_expression': { function: CallExpressionFunction; function2: CallExpressionFunction2; tok_q_dot: CallExpressionTokQDot };
   'string': { tok_dq: StringTokDq; tok_sq: StringTokSq };
-  'comment': { slashslash: CommentSlashslash; tok_slash_star: CommentTokSlashStar };
-  'number': { form_0: NumberForm0; form_1: NumberForm1; form_2: NumberForm2; form_3: NumberForm3; n: NumberN };
-  'meta_property': { new: MetaPropertyNew; import: MetaPropertyImport };
   'pattern': { _lhs_expression: PatternLhsExpression; rest_pattern: PatternRestPattern };
   'type': { primary_type: TypePrimaryType; function_type: TypeFunctionType; readonly_type: TypeReadonlyType; constructor_type: TypeConstructorType; infer_type: TypeInferType; _type_query_member_expression_in_type_annotation: TypeTypeQueryMemberExpressionInTypeAnnotation; _type_query_call_expression_in_type_annotation: TypeTypeQueryCallExpressionInTypeAnnotation };
   'primary_type': { parenthesized_type: PrimaryTypeParenthesizedType; predefined_type: PrimaryTypePredefinedType; _type_identifier: PrimaryTypeTypeIdentifier; nested_type_identifier: PrimaryTypeNestedTypeIdentifier; generic_type: PrimaryTypeGenericType; object_type: PrimaryTypeObjectType; array_type: PrimaryTypeArrayType; tuple_type: PrimaryTypeTupleType; flow_maybe_type: PrimaryTypeFlowMaybeType; type_query: PrimaryTypeTypeQuery; index_type_query: PrimaryTypeIndexTypeQuery; this: PrimaryTypeThis; existential_type: PrimaryTypeExistentialType; literal_type: PrimaryTypeLiteralType; lookup_type: PrimaryTypeLookupType; conditional_type: PrimaryTypeConditionalType; template_literal_type: PrimaryTypeTemplateLiteralType; intersection_type: PrimaryTypeIntersectionType; union_type: PrimaryTypeUnionType; const: PrimaryTypeConst };
   'literal_type': { _number: LiteralTypeNumber; number: LiteralTypeNumber; string: LiteralTypeString; true: LiteralTypeTrue; false: LiteralTypeFalse; null: LiteralTypeNull; undefined: LiteralTypeUndefined };
-  'predefined_type': { any: PredefinedTypeAny; number: PredefinedTypeNumber; boolean: PredefinedTypeBoolean; string: PredefinedTypeString; symbol: PredefinedTypeSymbol; unique: PredefinedTypeUnique; void: PredefinedTypeVoid; unknown: PredefinedTypeUnknown; never: PredefinedTypeNever; object: PredefinedTypeObject };
   'shorthand_property_identifier': { identifier: ShorthandPropertyIdentifierIdentifier; _reserved_identifier: ShorthandPropertyIdentifierReservedIdentifier };
   'shorthand_property_identifier_pattern': { identifier: ShorthandPropertyIdentifierPatternIdentifier; _reserved_identifier: ShorthandPropertyIdentifierPatternReservedIdentifier };
 }
@@ -4205,14 +4141,9 @@ export interface ConfigMap {
   'update_expression': UpdateExpressionConfig;
   'sequence_expression': SequenceExpressionConfig;
   'string': StringConfig;
-  'escape_sequence': EscapeSequenceConfig;
-  'comment': CommentConfig;
   'template_string': TemplateStringConfig;
   'template_substitution': TemplateSubstitutionConfig;
   'regex': RegexConfig;
-  'regex_pattern': RegexPatternConfig;
-  'number': NumberConfig;
-  'meta_property': MetaPropertyConfig;
   'arguments': ArgumentsConfig;
   'decorator': DecoratorConfig;
   'decorator_member_expression': DecoratorMemberExpressionConfig;
@@ -4282,7 +4213,6 @@ export interface ConfigMap {
   'literal_type': LiteralTypeConfig;
   'flow_maybe_type': FlowMaybeTypeConfig;
   'parenthesized_type': ParenthesizedTypeConfig;
-  'predefined_type': PredefinedTypeConfig;
   'type_arguments': TypeArgumentsConfig;
   'object_type': ObjectTypeConfig;
   'call_signature': CallSignatureConfig;
@@ -4384,14 +4314,9 @@ export interface FromInputMap {
   'update_expression': UpdateExpressionFromInput;
   'sequence_expression': SequenceExpressionFromInput;
   'string': StringFromInput;
-  'escape_sequence': EscapeSequenceFromInput;
-  'comment': CommentFromInput;
   'template_string': TemplateStringFromInput;
   'template_substitution': TemplateSubstitutionFromInput;
   'regex': RegexFromInput;
-  'regex_pattern': RegexPatternFromInput;
-  'number': NumberFromInput;
-  'meta_property': MetaPropertyFromInput;
   'arguments': ArgumentsFromInput;
   'decorator': DecoratorFromInput;
   'decorator_member_expression': DecoratorMemberExpressionFromInput;
@@ -4461,7 +4386,6 @@ export interface FromInputMap {
   'literal_type': LiteralTypeFromInput;
   'flow_maybe_type': FlowMaybeTypeFromInput;
   'parenthesized_type': ParenthesizedTypeFromInput;
-  'predefined_type': PredefinedTypeFromInput;
   'type_arguments': TypeArgumentsFromInput;
   'object_type': ObjectTypeFromInput;
   'call_signature': CallSignatureFromInput;

@@ -151,7 +151,7 @@ rules:
       - name: pub
         template: pub($$$CHILDREN)
   bracketed_type:
-    template: $$$CHILDREN
+    template: <$$$CHILDREN>
   qualified_type:
     template: $TYPE as$ALIAS
   lifetime:
@@ -368,8 +368,6 @@ rules:
     template: $$$CHILDREN"
   raw_string_literal:
     template: $RAW_STRING_LITERAL_START$STRING_CONTENT$RAW_STRING_LITERAL_END
-  escape_sequence:
-    template: $$$CHILDREN
   comment_line_comment:
     template: $$$CHILDREN
   comment_block_comment:
@@ -381,9 +379,9 @@ rules:
       - name: block_comment
         template: $$$CHILDREN
   line_comment:
-    template: $$$CHILDREN
+    template: //$$$CHILDREN$DOC
   block_comment:
-    template: $$$CHILDREN
+    template: /*$$$CHILDREN$DOC*/
   _type_identifier:
     template: $$$CHILDREN
   _field_identifier:

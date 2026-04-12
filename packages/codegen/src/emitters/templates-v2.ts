@@ -24,34 +24,47 @@ export function emitTemplatesFromNodeMap(config: EmitTemplatesFromNodeMapConfig)
 
     for (const [kind, node] of nodeMap.nodes) {
         if (node instanceof AssembledBranch || node instanceof AssembledGroup) {
-            // Always emit a rule entry for structural nodes — even an empty
-            // template falls back to $$$CHILDREN rendering at runtime and
-            // that is still a valid renderable path. Missing entries mean
-            // the renderer throws.
-            const template = renderRule(node.rule) || '$$$CHILDREN'
+            const template = renderRule(node.rule)
+            if (!template) {
+                throw new Error(
+                    `emitTemplatesFromNodeMap: ${node.modelType} '${kind}' produced an empty template. ` +
+                    `This means the rule has no visible content — it should have been classified as leaf/token instead.`,
+                )
+            }
             rules[kind] = { template }
         } else if (node instanceof AssembledContainer) {
-            const template = renderRule(node.rule) || '$$$CHILDREN'
+            const template = renderRule(node.rule)
+            if (!template) {
+                throw new Error(
+                    `emitTemplatesFromNodeMap: container '${kind}' produced an empty template. ` +
+                    `This means the rule has no visible content — it should have been classified as leaf/token instead.`,
+                )
+            }
             rules[kind] = { template }
             if (node.separator) joinBy[kind] = node.separator
         } else if (node instanceof AssembledPolymorph) {
-            // Emit per-form template
+            if (node.forms.length === 0) {
+                throw new Error(
+                    `emitTemplatesFromNodeMap: polymorph '${kind}' has zero synthesised forms. ` +
+                    `This is a classifier bug — the rule should have been classified as branch/container/leaf.`,
+                )
+            }
             const variants: any[] = []
             for (const form of node.forms) {
+                const template = renderRule(form.rule)
+                if (!template) {
+                    throw new Error(
+                        `emitTemplatesFromNodeMap: polymorph '${kind}' form '${form.name}' ` +
+                        `produced an empty template.`,
+                    )
+                }
                 variants.push({
                     name: form.name,
-                    template: renderRule(form.rule) || '$$$CHILDREN',
+                    template,
                     detectToken: form.detectToken,
                 })
             }
-            if (variants.length > 0) {
-                rules[kind] = { variants }
-            } else {
-                // Polymorph with no synthesised forms (pure supertype
-                // dispatch). Fall back to a single children-reference
-                // template so the kind is still renderable.
-                rules[kind] = { template: '$$$CHILDREN' }
-            }
+            rules[kind] = { variants }
         }
     }
 
