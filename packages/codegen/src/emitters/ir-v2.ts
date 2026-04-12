@@ -46,8 +46,8 @@ export function emitIrFromNodeMap(config: EmitIrFromNodeMapConfig): string {
             fromImports.add(`${node.factoryName}From`)
             if (node.modelType === 'polymorph') {
                 for (const form of node.forms) {
-                    const formTypeName = form.name.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('')
-                    fromImports.add(`${node.factoryName}${formTypeName}From`)
+                    const fromFn = `${form.typeName.charAt(0).toLowerCase()}${form.typeName.slice(1)}From`
+                    fromImports.add(fromFn)
                 }
             }
         }
@@ -76,8 +76,7 @@ export function emitIrFromNodeMap(config: EmitIrFromNodeMapConfig): string {
         if (node.modelType === 'polymorph' && node.forms.length > 1) {
             const variantEntries = node.forms.map(form => {
                 const vFactory = form.factoryName ?? toRawFactoryName(form.kind)
-                const formTypeName = form.name.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('')
-                const vFrom = `${node.factoryName}${formTypeName}From`
+                const vFrom = `${form.typeName.charAt(0).toLowerCase()}${form.typeName.slice(1)}From`
                 return `${form.name}: Object.assign(${vFactory}, { from: ${vFrom} })`
             })
             lines.push(`  ${irKey}: Object.assign(${rawName}, { from: ${fromFn}, ${variantEntries.join(', ')} }),`)

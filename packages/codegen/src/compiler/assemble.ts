@@ -386,8 +386,11 @@ export function nameNode(kind: string): { typeName: string; factoryName: string;
     // Tokens/keywords can contain non-identifier chars (!=, #, %, ->, ==, etc.).
     // Route through tokenToName first so typeName is always a valid identifier.
     const normalized = /^[\w_]+$/.test(kind) ? kind : tokenToName(kind)
-    let typeName = normalized
-        .replace(/^_/, '')
+    // Preserve internal double-underscore as a discriminator by encoding it
+    // into a dedicated marker segment (`U`) — so `literal_type__number` and
+    // `literal_type_number` produce distinct type names.
+    const marked = normalized.replace(/^_/, '').replace(/__+/g, '_U_')
+    let typeName = marked
         .split('_')
         .filter(Boolean)
         .map(w => w.charAt(0).toUpperCase() + w.slice(1))

@@ -130,15 +130,15 @@ function emitBranchFactory(node: AssembledBranch): string {
         lines.push('  };')
     }
 
-    if (hasChildren) {
-        lines.push('  const children = (config as any)?.children ?? [];')
-    }
+    // Always thread children — tree-sitter may surface children the rule
+    // doesn't explicitly reference (supertypes, anonymous promoted nodes).
+    lines.push('  const children = (config as any)?.children ?? [];')
 
     lines.push('  return {')
     lines.push(`    type: '${node.kind}' as const,`)
     lines.push('    named: true as const,')
     if (hasFields) lines.push('    fields,')
-    if (hasChildren) lines.push('    children,')
+    lines.push('    children,')
 
     // Fluent field getters/setters — only for actual fields in the interface.
     // Param name must not shadow the outer factory function (fn); suffix when needed.
@@ -154,10 +154,8 @@ function emitBranchFactory(node: AssembledBranch): string {
     }
 
     // Children accessor — single getChildren/setChildren API
-    if (hasChildren) {
-        lines.push('    getChildren() { return children; },')
-        lines.push(`    setChildren(...items: any[]) { return ${fn}({ ...(config as any), children: items } as any); },`)
-    }
+    lines.push('    getChildren() { return children; },')
+    lines.push(`    setChildren(...items: any[]) { return ${fn}({ ...(config as any), children: items } as any); },`)
 
     lines.push(`    render() { return render(this); },`)
     lines.push(`    toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {`)
@@ -250,20 +248,29 @@ function emitFormFactory(node: AssembledPolymorph, form: AssembledForm): string 
     if (hasFields) {
         lines.push('  const fields = {')
         for (const f of fields) {
-            lines.push(`    ${f.name}: config${opt}.${f.propertyName},`)
+            lines.push(`    ${f.name}: (config as any)?.${f.propertyName},`)
         }
         lines.push('  };')
     }
+
+    // Always thread children through — tree-sitter may surface children not
+    // referenced in the rule.
+    lines.push('  const children = (config as any)?.children ?? [];')
 
     lines.push('  return {')
     lines.push(`    type: '${node.kind}' as const,`)
     lines.push('    named: true as const,')
     if (hasFields) lines.push('    fields,')
+    lines.push('    children,')
 
     for (const f of fields) {
         const method = f.propertyName === 'type' ? 'typeField' : f.propertyName
-        lines.push(`    ${method}(${f.paramName}?: any) { return ${f.paramName} !== undefined ? ${fn}({ ...config, ${f.propertyName}: ${f.paramName} }) : fields.${f.name}; },`)
+        let param = f.paramName
+        if (param === fn || param === method) param = `${param}_`
+        lines.push(`    ${method}(${param}?: any) { return ${param} !== undefined ? ${fn}({ ...(config as any), ${f.propertyName}: ${param} } as any) : fields.${f.name}; },`)
     }
+    lines.push('    getChildren() { return children; },')
+    lines.push(`    setChildren(...items: any[]) { return ${fn}({ ...(config as any), children: items } as any); },`)
 
     lines.push(`    render() { return render(this); },`)
     lines.push(`    toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {`)

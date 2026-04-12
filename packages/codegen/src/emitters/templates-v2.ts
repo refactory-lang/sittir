@@ -166,8 +166,12 @@ function yamlStringify(obj: any, indent = 0): string {
     const pad = '  '.repeat(indent)
     if (obj === null || obj === undefined) return 'null'
     if (typeof obj === 'string') {
-        // Quote strings with special characters
-        if (/[:#{}\[\]\n]/.test(obj) || obj === '') return JSON.stringify(obj)
+        // Quote strings with YAML-reserved leading characters or anywhere
+        // containing ones that break plain-scalar parsing.
+        const reservedLead = /^[`@!*&|>%'"#\s-]|^---$|^\.\.\.$/
+        if (reservedLead.test(obj) || /[:#{}\[\]\n`]/.test(obj) || obj === '') {
+            return JSON.stringify(obj)
+        }
         return obj
     }
     if (typeof obj === 'number' || typeof obj === 'boolean') return String(obj)

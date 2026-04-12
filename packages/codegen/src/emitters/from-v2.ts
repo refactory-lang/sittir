@@ -121,21 +121,22 @@ function emitBranchFrom(node: AssembledBranch, nodeMap: NodeMap): string {
     const fn = `${node.factoryName}From`
     const factory = rawName(node.kind)
     const fields = node.fields
-    const children = node.children ?? []
     const opt = fields.some(f => f.required) ? '' : '?'
 
     const lines: string[] = []
     lines.push(`export function ${fn}(input${opt}: ${node.typeName}FromInput) {`)
     lines.push(`  if (isNodeData(input)) return input;`)
 
-    if (fields.length > 0 || children.length > 0) {
+    if (fields.length > 0) {
         lines.push(`  return ${factory}({`)
         for (const f of fields) {
             lines.push(`    ${f.propertyName}: ${resolveField(f, nodeMap)},`)
         }
-        if (children.length > 0) {
-            lines.push(`    children: ((input as any)?.children ?? []) as any,`)
-        }
+        // Always forward children: tree-sitter may surface children that
+        // aren't represented in the rule's explicit symbol refs (supertype
+        // expansions, anonymous children etc.). The factory ignores this
+        // key if it has no children slot.
+        lines.push(`    children: ((input as any)?.children ?? []) as any,`)
         lines.push('  } as any);')
     } else {
         lines.push(`  return ${factory}(input as any);`)
@@ -170,8 +171,8 @@ function emitPolymorphFrom(node: AssembledPolymorph, nodeMap: NodeMap): string {
 }
 
 function emitFormFrom(node: AssembledPolymorph, form: AssembledForm, nodeMap: NodeMap): string {
-    const formTypeName = form.name.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('')
-    const fn = `${node.factoryName}${formTypeName}From`
+    // Use the form's own full typeName (already disambiguated for collisions).
+    const fn = `${form.typeName.charAt(0).toLowerCase()}${form.typeName.slice(1)}From`
     // Form factories are named by their own kind (consistent with _factoryMap)
     const factory = form.factoryName ?? rawName(form.kind)
 

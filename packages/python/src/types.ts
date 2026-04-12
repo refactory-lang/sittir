@@ -163,7 +163,7 @@ export const enum SyntaxKind {
   Comment = 'comment',
   Import = 'import',
   From = 'from',
-  Future = '__future__',
+  FutureU = '__future__',
   As = 'as',
   Print = 'print',
   Assert = 'assert',
@@ -595,7 +595,7 @@ export interface KeywordPattern {
 export interface SplatPattern {
   readonly type: 'splat_pattern';
   readonly fields: {
-    readonly identifier: Star | "**";
+    readonly identifier: Star | Starstar;
   };
   readonly children: Identifier;
 }
@@ -925,7 +925,7 @@ export interface AugmentedAssignment {
   readonly type: 'augmented_assignment';
   readonly fields: {
     readonly left: LeftHandSide;
-    readonly operator: "+=" | "-=" | "*=" | "/=" | "@=" | "//=" | "%=" | "**=" | ">>=" | "<<=" | "&=" | "^=" | "|=";
+    readonly operator: Pluseq | Minuseq | Stareq | Slasheq | Ateq | Slashslasheq | Percenteq | Starstareq | Shreq | Shleq | Ampeq | Careteq | Pipeeq;
     readonly right: RightHandSide;
   };
 }
@@ -1000,7 +1000,7 @@ export type Type = TypeExpression | TypeSplatType | TypeGenericType | TypeUnionT
 export interface SplatType {
   readonly type: 'splat_type';
   readonly fields: {
-    readonly identifier: Star | "**";
+    readonly identifier: Star | Starstar;
   };
   readonly children: Identifier;
 }
@@ -1283,7 +1283,7 @@ export interface From {
   readonly text: "from";
 }
 
-export interface Future {
+export interface FutureU {
   readonly type: '__future__';
   readonly text: "__future__";
 }
@@ -1824,7 +1824,7 @@ export interface NoneTree extends TreeNode<'none'> {}
 export interface CommentTree extends TreeNode<'comment'> {}
 export interface ImportTree extends TreeNode<'import'> {}
 export interface FromTree extends TreeNode<'from'> {}
-export interface FutureTree extends TreeNode<'__future__'> {}
+export interface FutureUTree extends TreeNode<'__future__'> {}
 export interface AsTree extends TreeNode<'as'> {}
 export interface PrintTree extends TreeNode<'print'> {}
 export interface AssertTree extends TreeNode<'assert'> {}
@@ -2246,7 +2246,7 @@ export interface KindMap {
   'comment': Comment;
   'import': Import;
   'from': From;
-  '__future__': Future;
+  '__future__': FutureU;
   'as': As;
   'print': Print;
   'assert': Assert;

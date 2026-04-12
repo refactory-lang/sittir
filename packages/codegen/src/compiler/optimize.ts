@@ -268,10 +268,63 @@ const TOKEN_NAMES: Record<string, string> = {
     '~': 'tilde',
     '#': 'hash',
     '@': 'at',
+    // Multi-char tokens
+    '==': 'eqeq',
+    '!=': 'neq',
+    '<=': 'le',
+    '>=': 'ge',
+    '&&': 'andand',
+    '||': 'oror',
+    '<<': 'shl',
+    '>>': 'shr',
+    '**': 'starstar',
+    '...': 'ellipsis',
+    '..': 'dotdot',
+    '..=': 'dotdoteq',
+    '+=': 'pluseq',
+    '-=': 'minuseq',
+    '*=': 'stareq',
+    '/=': 'slasheq',
+    '%=': 'percenteq',
+    '&=': 'ampeq',
+    '|=': 'pipeeq',
+    '^=': 'careteq',
+    '<<=': 'shleq',
+    '>>=': 'shreq',
+    '**=': 'starstareq',
+    '//': 'slashslash',
+    '//=': 'slashslasheq',
+    '++': 'plusplus',
+    '--': 'minusminus',
+    ':=': 'coloneq',
+    '<>': 'ltgt',
+    '@=': 'ateq',
+    '0b': 'tok_0b',
+    '0B': 'tok_0B',
+    '0o': 'tok_0o',
+    '0O': 'tok_0O',
+    '0x': 'tok_0x',
+    '0X': 'tok_0X',
+}
+
+/** Char-by-char fallback for arbitrary punctuation (e.g. "\\n", "~@"). */
+function charFallback(token: string): string {
+    const CHAR_NAMES: Record<string, string> = {
+        '!': 'bang', '"': 'dq', '#': 'hash', '$': 'dollar', '%': 'pct',
+        '&': 'amp', "'": 'sq', '(': 'lp', ')': 'rp', '*': 'star',
+        '+': 'plus', ',': 'comma', '-': 'minus', '.': 'dot', '/': 'slash',
+        ':': 'colon', ';': 'semi', '<': 'lt', '=': 'eq', '>': 'gt',
+        '?': 'q', '@': 'at', '[': 'lb', '\\': 'bs', ']': 'rb',
+        '^': 'caret', '`': 'bt', '{': 'lbr', '|': 'pipe', '}': 'rbr',
+        '~': 'tilde', ' ': 'sp', '\t': 'tab', '\n': 'nl', '\r': 'cr',
+    }
+    return 'tok_' + [...token].map(c => CHAR_NAMES[c] ?? (/[\w]/.test(c) ? c : 'x')).join('_')
 }
 
 export function tokenToName(token: string): string {
-    return TOKEN_NAMES[token] ?? token
+    if (TOKEN_NAMES[token]) return TOKEN_NAMES[token]
+    if (/^[\w_]+$/.test(token)) return token
+    return charFallback(token)
 }
 
 // ---------------------------------------------------------------------------
