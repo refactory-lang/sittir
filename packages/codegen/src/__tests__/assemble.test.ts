@@ -120,11 +120,23 @@ describe('Assemble — classifyNode', () => {
         expect(classifyNode('visibility', rule)).toBe('enum')
     })
 
-    it('classifies hidden choice as supertype', () => {
+    it('classifies hidden choice as supertype when already SupertypeRule', () => {
         const rule: Rule = {
             type: 'supertype', name: '_expression',
             subtypes: ['binary_expression', 'identifier'], source: 'grammar',
         }
+        expect(classifyNode('_expression', rule)).toBe('supertype')
+    })
+
+    it('classifies hidden choice of symbols as supertype', () => {
+        const rule: Rule = {
+            type: 'choice',
+            members: [
+                { type: 'variant', name: 'a', content: { type: 'symbol', name: 'binary_expression' } },
+                { type: 'variant', name: 'b', content: { type: 'symbol', name: 'identifier' } },
+            ],
+        }
+        // Hidden (_-prefixed) + choice = supertype per design doc
         expect(classifyNode('_expression', rule)).toBe('supertype')
     })
 

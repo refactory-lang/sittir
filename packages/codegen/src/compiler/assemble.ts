@@ -65,7 +65,18 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
                 break
             }
             case 'supertype': {
-                const subtypes = rule.type === 'supertype' ? rule.subtypes : []
+                // Extract subtypes: from SupertypeRule directly, or from choice members
+                let subtypes: string[]
+                if (rule.type === 'supertype') {
+                    subtypes = rule.subtypes
+                } else if (rule.type === 'choice') {
+                    subtypes = rule.members
+                        .map(m => m.type === 'variant' ? m.content : m)
+                        .filter(m => m.type === 'symbol')
+                        .map(m => (m as any).name)
+                } else {
+                    subtypes = []
+                }
                 nodes.set(kind, { ...base, modelType, subtypes, factoryName: undefined, irKey: undefined } as AssembledSupertype)
                 break
             }
@@ -189,6 +200,9 @@ function allVariantsHaveSameFieldSet(rule: Rule): boolean {
     if (fieldSets.length < 2) return false
 
     const first = fieldSets[0]
+    // Must have at least one field — empty field sets mean children-based, not field-based
+    if (first.size === 0) return false
+
     return fieldSets.every(s =>
         s.size === first.size && [...s].every(f => first.has(f))
     )
@@ -226,52 +240,68 @@ function walkForFieldNames(rule: Rule, out: Set<string>): void {
     }
 }
 
+/**
+ * Classify a rule into a model type.
+ *
+ * Two axes per the design doc:
+ *   1. Simplified rule shape (structural)
+ *   2. Visibility (hidden = _-prefixed = no AST node; visible = named = has AST node)
+ *
+ * Hidden (_-prefixed) is a tree-sitter grammar-level declaration, not a naming convention.
+ * Hidden rules don't produce AST nodes or factories, but they DO exist in the NodeMap
+ * as supertype, enum, or group.
+ *
+ * | Simplified shape              | Hidden (_-prefixed)   | Visible (named)    |
+ * |-------------------------------|-----------------------|--------------------|
+ * | seq (containing field nodes)  | group                 | branch             |
+ * | repeat                        | inlined into parent   | container          |
+ * | choice (of structures/symbols)| supertype             | polymorph          |
+ * | choice (of strings)           | enum                  | enum               |
+ * | pattern                       | inlined               | leaf               |
+ * | single string (alphanumeric)  | inlined               | keyword            |
+ * | non-alphanumeric terminal     | inlined               | token              |
+ */
 export function classifyNode(kind: string, rule: Rule): ModelType {
-    // Already-classified types pass through
+    // Already-classified types pass through (from Link)
     if (rule.type === 'enum') return 'enum'
     if (rule.type === 'supertype') return 'supertype'
     if (rule.type === 'group') return 'group'
 
-    // Check for variant presence BEFORE simplifying — variants mean polymorph
-    // BUT: if all variants have the same field set, it's a branch with operator variation
+    const hidden = kind.startsWith('_')
+
+    // Check for variant presence BEFORE simplifying
+    // Variants mean this is a choice that Optimize processed
     if (rule.type === 'choice' && rule.members.some(m => m.type === 'variant')) {
-        if (kind.startsWith('_')) return 'supertype'
-        // Check if all variants have identical field sets → branch, not polymorph
+        if (hidden) return 'supertype'
+        // Visible choice with variants: branch if same field set, else polymorph
         if (allVariantsHaveSameFieldSet(rule)) return 'branch'
         return 'polymorph'
     }
 
     const simplified = simplifyRule(rule)
-    const hidden = kind.startsWith('_')
 
     switch (simplified.type) {
         case 'seq': {
             const hasFields = simplified.members.some(m => m.type === 'field')
             if (hasFields) return hidden ? 'group' : 'branch'
-            // seq with no fields after simplification → token (pure punctuation)
-            return hidden ? 'token' : 'token'
+            // seq without fields — hidden: inlined (shouldn't reach here), visible: token
+            return 'token'
         }
         case 'repeat':
-            return hidden ? 'container' : 'container'
+            return 'container'  // hidden repeat = inlined, but if it reaches here, container
         case 'choice': {
             const allStrings = simplified.members.every(m => m.type === 'string')
             if (allStrings) return 'enum'
-            // Check if all members are symbols → supertype (hidden) or container-like (visible)
-            const allSymbols = simplified.members.every(m => m.type === 'symbol')
-            if (allSymbols) return hidden ? 'supertype' : 'polymorph'
-            // Check if same field set → branch with variation, not polymorph
-            if (!hidden && allVariantsHaveSameFieldSet(rule)) return 'branch'
             return hidden ? 'supertype' : 'polymorph'
         }
         case 'pattern':
-            return hidden ? 'leaf' : 'leaf'
+            return 'leaf'
         case 'string': {
             const isAlphanumeric = /^\w+$/.test(simplified.value)
-            if (isAlphanumeric) return hidden ? 'keyword' : 'keyword'
+            if (isAlphanumeric) return 'keyword'
             return 'token'
         }
         case 'field':
-            // Single field → branch (the field wraps content)
             return hidden ? 'group' : 'branch'
         case 'optional':
             return classifyNode(kind, simplified.content)

@@ -135,7 +135,11 @@ function getRef(rule: Rule): SymbolRef | undefined {
 // Named patterns
 // ---------------------------------------------------------------------------
 
-export function field(name: string, content: Input): FieldRule {
+export function field(name: string, content?: Input): FieldRule {
+    if (content === undefined) {
+        // No content — used in transform() patches where the content comes from the original member
+        return { type: 'field', name, content: { type: 'string', value: '' } as any, _needsContent: true } as any
+    }
     const resolved = normalize(content)
     const ref = getRef(resolved)
     if (ref) ref.fieldName = name
@@ -153,24 +157,44 @@ export function field(name: string, content: Input): FieldRule {
  * at that position. Field patches are marked with source: 'override'.
  */
 export function transform(original: Rule, patches: Record<number | string, Rule>): Rule {
-    if (original.type !== 'seq') {
-        throw new Error(`transform() expects a seq rule, got '${original.type}'`)
-    }
-
-    const members = [...original.members]
-    for (const [key, patch] of Object.entries(patches)) {
-        const index = Number(key)
-        if (isNaN(index) || index < 0 || index >= members.length) {
-            throw new Error(`transform(): position ${key} out of bounds (rule has ${members.length} members)`)
+    // For seq: apply patches to members by position
+    if (original.type === 'seq') {
+        const members = [...original.members]
+        for (const [key, patch] of Object.entries(patches)) {
+            const index = Number(key)
+            if (isNaN(index) || index < 0 || index >= members.length) {
+                throw new Error(`transform(): position ${key} out of bounds (rule has ${members.length} members)`)
+            }
+            members[index] = resolvePatch(patch, members[index])
         }
-        // Mark field patches with override provenance
-        const marked = patch.type === 'field'
-            ? { ...patch, source: 'override' as const }
-            : patch
-        members[index] = marked
+        return { type: 'seq', members }
     }
 
-    return { type: 'seq', members }
+    // For choice: apply transform to each member recursively
+    if (original.type === 'choice') {
+        return {
+            type: 'choice',
+            members: original.members.map(m => transform(m, patches)),
+        }
+    }
+
+    // For prec-like wrappers that were already stripped — just apply to content
+    if ('content' in original && original.content) {
+        return { ...original, content: transform(original.content as Rule, patches) } as Rule
+    }
+
+    // For other types, return as-is (patches don't apply)
+    return original
+}
+
+function resolvePatch(patch: Rule, originalMember: Rule): Rule {
+    if (patch.type === 'field' && (patch as any)._needsContent) {
+        return { type: 'field', name: patch.name, content: originalMember, source: 'override' as const }
+    }
+    if (patch.type === 'field') {
+        return { ...patch, source: 'override' as const }
+    }
+    return patch
 }
 
 /**

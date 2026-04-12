@@ -35,7 +35,10 @@ export function resolveGrammarJsPath(grammar: string): string {
  * Returns the path in packages/{grammar}/overrides.ts.
  */
 export function resolveOverridesPath(grammar: string): string {
-    const codegenDir = dirname(dirname(new URL(import.meta.url).pathname))
-    const packagesDir = dirname(codegenDir)
+    // Navigate from compiler/ → src/ → codegen/ → packages/
+    const compilerDir = dirname(new URL(import.meta.url).pathname)  // compiler/
+    const srcDir = dirname(compilerDir)                              // src/
+    const codegenDir = dirname(srcDir)                               // codegen/
+    const packagesDir = dirname(codegenDir)                          // packages/
     return join(packagesDir, grammar, 'overrides.ts')
 }
