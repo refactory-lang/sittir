@@ -86,11 +86,11 @@ export function emitConstsFromNodeMap(config: EmitConstsFromNodeMapConfig): stri
     lines.push('] as const;')
     lines.push('')
 
-    // OPERATORS
+    // OPERATORS — JSON.stringify to safely handle quotes/backslashes/newlines
     lines.push('/** Operator/punctuation tokens. */')
     lines.push('export const OPERATORS = [')
     for (const op of operators.sort()) {
-        lines.push(`  '${op.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}',`)
+        lines.push(`  ${JSON.stringify(op)},`)
     }
     lines.push('] as const;')
     lines.push('')

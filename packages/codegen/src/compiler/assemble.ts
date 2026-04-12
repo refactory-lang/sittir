@@ -17,6 +17,7 @@ import {
     AssembledSupertype, AssembledGroup,
     deriveFields, deriveChildren,
 } from './rule.ts'
+import { tokenToName } from './optimize.ts'
 
 // ---------------------------------------------------------------------------
 // assemble() — main entry point
@@ -132,6 +133,7 @@ function collectAnonymousNodes(rules: Record<string, Rule>, nodes: Map<string, A
 
     for (const value of seen) {
         if (nodes.has(value)) continue // Already classified as a named rule
+        if (value === '' || /^\s+$/.test(value)) continue // Skip whitespace/empty
 
         const isAlphanumeric = /^\w+$/.test(value)
         const { typeName } = nameNode(value)
@@ -348,8 +350,15 @@ export function simplifyRule(rule: Rule): Rule {
 function extractForms(rule: Rule, parentKind: string): AssembledGroup[] {
     if (rule.type !== 'choice') return []
 
+    // Disambiguate form names when two variants share the same name (e.g. two
+    // `variant('expression', ...)` entries over different shapes). Duplicates
+    // get numeric suffixes so kinds/factoryNames remain unique.
+    const nameCounts = new Map<string, number>()
     return rule.members.map((member, i) => {
-        const name = member.type === 'variant' ? member.name : `form_${i}`
+        let baseName = member.type === 'variant' ? member.name : `form_${i}`
+        const seen = nameCounts.get(baseName) ?? 0
+        nameCounts.set(baseName, seen + 1)
+        const name = seen === 0 ? baseName : `${baseName}${seen + 1}`
         const formKind = `${parentKind}_${name}`
         const { typeName, factoryName, irKey } = nameNode(formKind)
 
@@ -374,19 +383,38 @@ function extractForms(rule: Rule, parentKind: string): AssembledGroup[] {
 // ---------------------------------------------------------------------------
 
 export function nameNode(kind: string): { typeName: string; factoryName: string; irKey: string } {
-    const typeName = kind
+    // Tokens/keywords can contain non-identifier chars (!=, #, %, ->, ==, etc.).
+    // Route through tokenToName first so typeName is always a valid identifier.
+    const normalized = /^[\w_]+$/.test(kind) ? kind : tokenToName(kind)
+    let typeName = normalized
         .replace(/^_/, '')
         .split('_')
+        .filter(Boolean)
         .map(w => w.charAt(0).toUpperCase() + w.slice(1))
-        .join('')
+        .join('') || 'Anonymous'
+    // TypeScript identifiers cannot start with a digit
+    if (/^\d/.test(typeName)) typeName = `Tok_${typeName}`
     const factoryName = typeName.charAt(0).toLowerCase() + typeName.slice(1)
     const irKey = factoryName
     return { typeName, factoryName, irKey }
 }
 
+// Reserved words that cannot be used as parameter/method names in TypeScript.
+const TS_RESERVED_WORDS = new Set([
+    'arguments', 'await', 'break', 'case', 'catch', 'class', 'const', 'continue',
+    'debugger', 'default', 'delete', 'do', 'else', 'enum', 'export', 'extends',
+    'false', 'finally', 'for', 'function', 'if', 'import', 'in', 'instanceof',
+    'new', 'null', 'return', 'super', 'switch', 'this', 'throw', 'true', 'try',
+    'typeof', 'var', 'void', 'while', 'with', 'yield', 'let', 'static', 'implements',
+    'interface', 'package', 'private', 'protected', 'public',
+])
+
 export function nameField(fieldName: string): { propertyName: string; paramName: string } {
-    const propertyName = fieldName.replace(/_([a-z])/g, (_, c) => c.toUpperCase())
-    return { propertyName, paramName: propertyName }
+    let propertyName = fieldName.replace(/_([a-z])/g, (_, c) => c.toUpperCase())
+    // Avoid TS reserved keywords for param names by suffixing with '_'
+    let paramName = propertyName
+    if (TS_RESERVED_WORDS.has(paramName)) paramName = `${paramName}_`
+    return { propertyName, paramName }
 }
 
 // ---------------------------------------------------------------------------

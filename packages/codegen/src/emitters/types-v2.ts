@@ -12,8 +12,10 @@
  */
 
 import type {
-    NodeMap, AssembledNode, AssembledField, AssembledForm,
-    AssembledBranch, AssembledContainer, AssembledPolymorph,
+    NodeMap, AssembledNode, AssembledField, AssembledForm, AssembledChild,
+} from '../compiler/rule.ts'
+import {
+    AssembledBranch, AssembledContainer, AssembledPolymorph, AssembledGroup,
 } from '../compiler/rule.ts'
 
 type StructuralNode = AssembledBranch | AssembledContainer | AssembledPolymorph
@@ -81,7 +83,7 @@ export function emitTypesFromNodeMap(config: EmitTypesFromNodeMapConfig): string
     for (const kind of leafKinds) {
         const node = nodeMap.nodes.get(kind)
         if (node?.modelType === 'enum' && node.values.every(v => /^\d+$/.test(v))) {
-            lines.push(`  ${kind}: number;`)
+            lines.push(`  ${quoteKey(kind)}: number;`)
         }
     }
     lines.push('};')
@@ -92,12 +94,12 @@ export function emitTypesFromNodeMap(config: EmitTypesFromNodeMapConfig): string
     for (const kind of leafKinds) {
         const kw = keywordKinds.get(kind)
         if (kw) {
-            lines.push(`  ${kind}: ${JSON.stringify(kw)};`)
+            lines.push(`  ${quoteKey(kind)}: ${JSON.stringify(kw)};`)
             continue
         }
         const values = leafValueMap.get(kind)
         if (values && values.length > 0) {
-            lines.push(`  ${kind}: ${values.map(v => JSON.stringify(v)).join(' | ')};`)
+            lines.push(`  ${quoteKey(kind)}: ${values.map(v => JSON.stringify(v)).join(' | ')};`)
         }
     }
     lines.push('};')
@@ -141,12 +143,12 @@ export function emitTypesFromNodeMap(config: EmitTypesFromNodeMapConfig): string
             for (const form of node.forms) {
                 const ftn = `${node.typeName}${toPascal(form.name)}`
                 formTypeNames.push(ftn)
-                emitFormInterface(lines, node, form, ftn)
+                emitFormInterface(lines, node, form, ftn, nodeMap)
             }
             lines.push(`export type ${node.typeName} = ${formTypeNames.join(' | ')};`)
             polymorphTypeNames.set(node.kind, formTypeNames)
         } else {
-            emitInterface(lines, node)
+            emitInterface(lines, node, nodeMap)
         }
     }
     lines.push('')
@@ -177,8 +179,12 @@ export function emitTypesFromNodeMap(config: EmitTypesFromNodeMapConfig): string
         const node = nodeMap.nodes.get(kind)!
         const ptn = polymorphTypeNames.get(kind)
         if (ptn) {
-            const configNames = ptn.map(vtn => `ConfigOf<${vtn}>`)
-            lines.push(`export type ${node.typeName}Config = ${configNames.join(' | ')};`)
+            // Per-form Config aliases
+            for (const ftn of ptn) {
+                lines.push(`export type ${ftn}Config = ConfigOf<${ftn}>;`)
+            }
+            // Umbrella Config union
+            lines.push(`export type ${node.typeName}Config = ${ptn.map(ftn => `${ftn}Config`).join(' | ')};`)
         } else {
             lines.push(`export type ${node.typeName}Config = ConfigOf<${node.typeName}>;`)
         }
@@ -189,6 +195,13 @@ export function emitTypesFromNodeMap(config: EmitTypesFromNodeMapConfig): string
     for (const kind of [...nodeKinds, ...leafKinds]) {
         const node = nodeMap.nodes.get(kind)!
         lines.push(`export interface ${node.typeName}Tree extends TreeNode<'${kind}'> {}`)
+        // Per-form Tree aliases for polymorphs (so factories can reference them)
+        const ptn = polymorphTypeNames.get(kind)
+        if (ptn) {
+            for (const ftn of ptn) {
+                lines.push(`export interface ${ftn}Tree extends TreeNode<'${kind}'> {}`)
+            }
+        }
     }
     lines.push('')
 
@@ -304,15 +317,16 @@ function fieldsOf(node: AssembledNode): readonly AssembledField[] {
     return []
 }
 
-function emitInterface(lines: string[], node: StructuralNode): void {
+function emitInterface(lines: string[], node: StructuralNode, nodeMap: NodeMap): void {
     const fields = fieldsOf(node)
+    const children = childrenOf(node)
     lines.push(`export interface ${node.typeName} {`)
     lines.push(`  readonly type: '${node.kind}';`)
 
     if (fields.length > 0) {
         lines.push('  readonly fields: {')
         for (const f of fields) {
-            const typeExpr = fieldTypeExpr(f)
+            const typeExpr = fieldTypeExpr(f, nodeMap)
             const opt = f.required ? '' : '?'
             if (f.multiple) {
                 lines.push(`    readonly ${f.name}${opt}: readonly (${typeExpr})[];`)
@@ -323,18 +337,47 @@ function emitInterface(lines: string[], node: StructuralNode): void {
         lines.push('  };')
     }
 
+    if (children && children.length > 0) {
+        const childTypes = children
+            .map(c => {
+                const expr = c.contentTypes.map(t => {
+                    const n = nodeMap.nodes.get(t)
+                    const name = n?.typeName ?? toPascal(t)
+                    return /^[A-Za-z_$][\w$]*$/.test(name) ? name : JSON.stringify(t)
+                }).join(' | ')
+                return expr || 'AnyNodeData'
+            })
+            .filter(Boolean)
+        if (childTypes.length > 0) {
+            const union = childTypes.join(' | ')
+            const anyMultiple = children.some(c => c.multiple)
+            if (anyMultiple) {
+                lines.push(`  readonly children: readonly (${union})[];`)
+            } else {
+                lines.push(`  readonly children: ${union};`)
+            }
+        }
+    }
+
     lines.push('}')
     lines.push('')
 }
 
-function emitFormInterface(lines: string[], node: AssembledNode, form: AssembledForm, typeName: string): void {
+function childrenOf(node: AssembledNode): readonly AssembledChild[] {
+    if (node instanceof AssembledBranch || node instanceof AssembledContainer || node instanceof AssembledGroup) {
+        return node.children ?? []
+    }
+    return []
+}
+
+function emitFormInterface(lines: string[], node: AssembledNode, form: AssembledForm, typeName: string, nodeMap: NodeMap): void {
     lines.push(`export interface ${typeName} {`)
     lines.push(`  readonly type: '${node.kind}';`)
 
     if (form.fields.length > 0) {
         lines.push('  readonly fields: {')
         for (const f of form.fields) {
-            const typeExpr = fieldTypeExpr(f)
+            const typeExpr = fieldTypeExpr(f, nodeMap)
             const opt = f.required ? '' : '?'
             if (f.multiple) {
                 lines.push(`    readonly ${f.name}${opt}: readonly (${typeExpr})[];`)
@@ -349,11 +392,24 @@ function emitFormInterface(lines: string[], node: AssembledNode, form: Assembled
     lines.push('')
 }
 
-function fieldTypeExpr(field: AssembledField): string {
+function fieldTypeExpr(field: AssembledField, nodeMap?: NodeMap): string {
     if (field.contentTypes.length === 0) return 'string'
-    return field.contentTypes.map(t => toPascal(t)).join(' | ')
+    return field.contentTypes.map(t => {
+        // Prefer the assembled node's typeName (already a safe identifier);
+        // fall back to toPascal(t). If that produces an invalid identifier
+        // (e.g. anonymous punctuation like `*`), emit a string literal type.
+        const node = nodeMap?.nodes.get(t)
+        const name = node?.typeName ?? toPascal(t)
+        if (/^[A-Za-z_$][\w$]*$/.test(name)) return name
+        return JSON.stringify(t)
+    }).join(' | ')
 }
 
 function toPascal(kind: string): string {
     return kind.replace(/^_/, '').split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('')
+}
+
+/** Quote a type/object key if it is not a plain identifier. */
+function quoteKey(key: string): string {
+    return /^[A-Za-z_$][\w$]*$/.test(key) ? key : JSON.stringify(key)
 }

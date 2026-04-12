@@ -4,14 +4,8 @@
 import type { AnyNodeData, AnyTreeNodeOf, RuntimeNodeOf, FluentNodeOf, TreeNodeOf } from '@sittir/types';
 import type { KindMap, ConfigMap, FromInputMap } from './types.js';
 
-// ---------------------------------------------------------------------------
-// Type guards
-// ---------------------------------------------------------------------------
-
 /**
  * Type guard: returns true if `v` is a NodeData (has `type` + `fields` or `text`).
- * Generic overload narrows from a union of RuntimeNodeOf, FromInput, or TreeNode
- * to RuntimeNodeOf<KindMap[K]>.
  */
 export function isNodeData<K extends keyof KindMap & keyof FromInputMap>(
   v: RuntimeNodeOf<KindMap[K]> | FromInputMap[K] | TreeNodeOf<KindMap[K]>
@@ -26,7 +20,6 @@ export function isNodeData(v: unknown): v is AnyNodeData {
 
 /**
  * Type guard: returns true if `v` is a TreeNode (SgNode-compatible).
- * Generic overload narrows from a union to TreeNodeOf<KindMap[K]>.
  */
 export function isTreeNode<K extends keyof KindMap & keyof FromInputMap>(
   v: TreeNodeOf<KindMap[K]> | RuntimeNodeOf<KindMap[K]>
@@ -38,27 +31,10 @@ export function isTreeNode(v: unknown): v is AnyTreeNodeOf {
   return typeof o['type'] === 'string' && typeof o['field'] === 'function' && typeof o['text'] === 'function';
 }
 
-// ---------------------------------------------------------------------------
-// Kind discrimination
-// ---------------------------------------------------------------------------
-
-/** Returns true if `v` has a `kind` string property for branch discrimination. */
 export function hasKind(v: object): v is { kind: string } & Record<string, unknown> {
   return 'kind' in v && typeof (v as Record<string, unknown>).kind === 'string';
 }
 
-// ---------------------------------------------------------------------------
-// Field resolution
-// ---------------------------------------------------------------------------
-
-// ---------------------------------------------------------------------------
-// Grammar-typed type guards
-// ---------------------------------------------------------------------------
-
-/**
- * Type guard: returns true if `v` is a NodeData of the given kind.
- * Narrows `v` to `KindMap[K]`.
- */
 export function isNodeOfKind<K extends keyof KindMap>(
   v: unknown,
   kind: K,
@@ -66,10 +42,6 @@ export function isNodeOfKind<K extends keyof KindMap>(
   return isNodeData(v) && v.type === kind;
 }
 
-/**
- * Type guard: returns true if `v` has `kind === k`.
- * Narrows `v` to `{ kind: K } & FromInputMap[K]`.
- */
 export function hasKindOf<K extends keyof FromInputMap>(
   v: object,
   kind: K,

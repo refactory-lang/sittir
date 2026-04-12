@@ -247,7 +247,48 @@ function snakeToCamel(name: string): string {
     return name.replace(/_([a-z])/g, (_, c) => c.toUpperCase())
 }
 
+// TypeScript reserved words that must be avoided as parameter names.
+const TS_RESERVED = new Set([
+    'arguments', 'await', 'break', 'case', 'catch', 'class', 'const', 'continue',
+    'debugger', 'default', 'delete', 'do', 'else', 'enum', 'export', 'extends',
+    'false', 'finally', 'for', 'function', 'if', 'import', 'in', 'instanceof',
+    'new', 'null', 'return', 'super', 'switch', 'this', 'throw', 'true', 'try',
+    'typeof', 'var', 'void', 'while', 'with', 'yield', 'let', 'static', 'implements',
+    'interface', 'package', 'private', 'protected', 'public',
+])
+
+function safeParamName(name: string): string {
+    return TS_RESERVED.has(name) ? `${name}_` : name
+}
+
 export function deriveFields(rule: Rule, isOptional = false, isRepeated = false): AssembledField[] {
+    const raw = deriveFieldsRaw(rule, isOptional, isRepeated)
+    // Deduplicate by field name. If the same name appears multiple times
+    // (e.g. once as single, once as repeat), merge into a multiple/optional
+    // field with the union of content types.
+    const byName = new Map<string, AssembledField>()
+    for (const f of raw) {
+        const existing = byName.get(f.name)
+        if (!existing) {
+            byName.set(f.name, { ...f })
+            continue
+        }
+        const merged: AssembledField = {
+            ...existing,
+            required: existing.required && f.required,
+            multiple: existing.multiple || f.multiple,
+            contentTypes: Array.from(new Set([...existing.contentTypes, ...f.contentTypes])),
+            projection: {
+                ...existing.projection,
+                kinds: Array.from(new Set([...existing.projection.kinds, ...f.projection.kinds])),
+            },
+        }
+        byName.set(f.name, merged)
+    }
+    return Array.from(byName.values())
+}
+
+function deriveFieldsRaw(rule: Rule, isOptional: boolean, isRepeated: boolean): AssembledField[] {
     switch (rule.type) {
         case 'field': {
             const contentTypes = deriveContentTypes(rule.content)
@@ -255,7 +296,7 @@ export function deriveFields(rule: Rule, isOptional = false, isRepeated = false)
             return [{
                 name: rule.name,
                 propertyName,
-                paramName: propertyName,
+                paramName: safeParamName(propertyName),
                 required: !isOptional,
                 multiple: isRepeated,
                 contentTypes,
@@ -264,28 +305,43 @@ export function deriveFields(rule: Rule, isOptional = false, isRepeated = false)
             }]
         }
         case 'seq':
-            return rule.members.flatMap(m => deriveFields(m, isOptional, isRepeated))
+            return rule.members.flatMap(m => deriveFieldsRaw(m, isOptional, isRepeated))
         case 'optional':
-            return deriveFields(rule.content, true, isRepeated)
+            return deriveFieldsRaw(rule.content, true, isRepeated)
         case 'repeat':
-            return deriveFields(rule.content, isOptional, true)
+            return deriveFieldsRaw(rule.content, isOptional, true)
         case 'choice':
-            return rule.members.flatMap(m => deriveFields(m, isOptional, isRepeated))
+            return rule.members.flatMap(m => deriveFieldsRaw(m, isOptional, isRepeated))
         case 'clause':
-            return deriveFields(rule.content, true, isRepeated)
+            return deriveFieldsRaw(rule.content, true, isRepeated)
         case 'variant':
-            return deriveFields(rule.content, isOptional, isRepeated)
+            return deriveFieldsRaw(rule.content, isOptional, isRepeated)
         case 'group':
-            return deriveFields(rule.content, isOptional, isRepeated)
+            return deriveFieldsRaw(rule.content, isOptional, isRepeated)
         default:
             return []
     }
 }
 
 export function deriveChildren(rule: Rule): AssembledChild[] {
-    const out: AssembledChild[] = []
-    walkForChildren(rule, out, false, false)
-    return out
+    const raw: AssembledChild[] = []
+    walkForChildren(rule, raw, false, false)
+    // Deduplicate by child name; merge single+multiple into multiple.
+    const byName = new Map<string, AssembledChild>()
+    for (const c of raw) {
+        const existing = byName.get(c.name)
+        if (!existing) {
+            byName.set(c.name, { ...c })
+            continue
+        }
+        byName.set(c.name, {
+            ...existing,
+            required: existing.required && c.required,
+            multiple: existing.multiple || c.multiple,
+            contentTypes: Array.from(new Set([...existing.contentTypes, ...c.contentTypes])),
+        })
+    }
+    return Array.from(byName.values())
 }
 
 function walkForChildren(rule: Rule, out: AssembledChild[], isOptional: boolean, isRepeated: boolean): void {
@@ -537,6 +593,7 @@ export class AssembledGroup extends AssembledNodeBase {
     readonly name: string
 
     #fields?: AssembledField[]
+    #children?: AssembledChild[]
 
     constructor(init: {
         kind: string; typeName: string; factoryName?: string; irKey?: string
@@ -552,6 +609,10 @@ export class AssembledGroup extends AssembledNodeBase {
 
     get fields(): AssembledField[] {
         return this.#fields ??= deriveFields(this.rule)
+    }
+
+    get children(): AssembledChild[] {
+        return this.#children ??= deriveChildren(this.rule)
     }
 }
 

@@ -22,40 +22,42 @@ export function emitIrFromNodeMap(config: EmitIrFromNodeMapConfig): string {
     ]
 
     // Collect factory imports
-    const factoryImports: string[] = []
-    const fromImports: string[] = []
+    const factoryImports = new Set<string>()
+    const fromImports = new Set<string>()
     const usedKeys = new Map<string, string>()
 
     for (const [kind, node] of nodeMap.nodes) {
         if (!node.factoryName) continue // supertype, group, token — no factory
+        // Skip synthesized polymorph form groups here: they are imported
+        // via their parent polymorph's form list below to avoid duplicates.
+        if (node.modelType === 'group') continue
 
-        const rawName = toRawFactoryName(kind)
-        factoryImports.push(rawName)
+        factoryImports.add(toRawFactoryName(kind))
 
-        // Polymorph: import per-form factories
+        // Polymorph: import per-form factories (named by their own kind)
         if (node.modelType === 'polymorph') {
             for (const form of node.forms) {
-                factoryImports.push(`${rawName}_${form.name}_`)
+                factoryImports.add(form.factoryName ?? toRawFactoryName(form.kind))
             }
         }
 
         // from() imports
         if (node.modelType === 'branch' || node.modelType === 'container' || node.modelType === 'polymorph') {
-            fromImports.push(`${node.factoryName}From`)
+            fromImports.add(`${node.factoryName}From`)
             if (node.modelType === 'polymorph') {
                 for (const form of node.forms) {
                     const formTypeName = form.name.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('')
-                    fromImports.push(`${node.factoryName}${formTypeName}From`)
+                    fromImports.add(`${node.factoryName}${formTypeName}From`)
                 }
             }
         }
     }
 
-    if (factoryImports.length > 0) {
-        lines.push(`import { ${factoryImports.join(', ')} } from './factories.js';`)
+    if (factoryImports.size > 0) {
+        lines.push(`import { ${[...factoryImports].join(', ')} } from './factories.js';`)
     }
-    if (fromImports.length > 0) {
-        lines.push(`import { ${fromImports.join(', ')} } from './from.js';`)
+    if (fromImports.size > 0) {
+        lines.push(`import { ${[...fromImports].join(', ')} } from './from.js';`)
     }
     lines.push('')
 
@@ -73,7 +75,7 @@ export function emitIrFromNodeMap(config: EmitIrFromNodeMapConfig): string {
 
         if (node.modelType === 'polymorph' && node.forms.length > 1) {
             const variantEntries = node.forms.map(form => {
-                const vFactory = `${rawName}_${form.name}_`
+                const vFactory = form.factoryName ?? toRawFactoryName(form.kind)
                 const formTypeName = form.name.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('')
                 const vFrom = `${node.factoryName}${formTypeName}From`
                 return `${form.name}: Object.assign(${vFactory}, { from: ${vFrom} })`

@@ -25,15 +25,21 @@ export function emitFactoriesFromNodeMap(config: EmitFactoriesFromNodeMapConfig)
         '',
     ]
 
-    // Collect type imports
+    // Collect type imports — only for nodes that have emitted types and valid identifiers.
+    // Skip AssembledToken/Supertype/Group: they don't produce factories or type imports.
     const typeImports = new Set<string>()
+    const isValidIdent = (s: string) => /^[A-Za-z_$][\w$]*$/.test(s)
     for (const [, node] of nodeMap.nodes) {
-        if (node.typeName) typeImports.add(node.typeName)
-        if (node.typeName) typeImports.add(`${node.typeName}Tree`)
+        if (!node.factoryName) continue // hidden nodes have no factoryName → skip imports
+        if (!node.typeName || !isValidIdent(node.typeName)) continue
+        typeImports.add(node.typeName)
+        typeImports.add(`${node.typeName}Tree`)
         if (node.modelType === 'polymorph') {
             for (const form of node.forms) {
-                typeImports.add(form.typeName)
-                typeImports.add(`${form.typeName}Config`)
+                if (isValidIdent(form.typeName)) {
+                    typeImports.add(form.typeName)
+                    typeImports.add(`${form.typeName}Config`)
+                }
             }
         }
     }
@@ -108,7 +114,9 @@ export function emitFactoriesFromNodeMap(config: EmitFactoriesFromNodeMapConfig)
 function emitBranchFactory(node: AssembledBranch): string {
     const fn = rawName(node.kind)
     const fields = node.fields
+    const children = node.children ?? []
     const hasFields = fields.length > 0
+    const hasChildren = children.length > 0
     const opt = fields.some(f => f.required) ? '' : '?'
 
     const lines: string[] = []
@@ -117,35 +125,38 @@ function emitBranchFactory(node: AssembledBranch): string {
     if (hasFields) {
         lines.push('  const fields = {')
         for (const f of fields) {
-            lines.push(`    ${f.name}: config${opt}.${f.propertyName},`)
+            lines.push(`    ${f.name}: (config as any)?.${f.propertyName},`)
         }
         lines.push('  };')
     }
 
-    // Children
-    if (node.children && node.children.length > 0) {
-        const childExprs = node.children.map(c =>
-            c.multiple
-                ? `...(config${opt}.${c.propertyName} ?? [])`
-                : `...(config${opt}.${c.propertyName} ? [config${opt}.${c.propertyName}] : [])`
-        )
-        lines.push(`  const children = [${childExprs.join(', ')}];`)
+    if (hasChildren) {
+        lines.push('  const children = (config as any)?.children ?? [];')
     }
 
     lines.push('  return {')
     lines.push(`    type: '${node.kind}' as const,`)
     lines.push('    named: true as const,')
     if (hasFields) lines.push('    fields,')
-    if (node.children && node.children.length > 0) lines.push('    children,')
+    if (hasChildren) lines.push('    children,')
 
-    // Fluent getters/setters
+    // Fluent field getters/setters — only for actual fields in the interface.
+    // Param name must not shadow the outer factory function (fn); suffix when needed.
     for (const f of fields) {
         const method = f.propertyName === 'type' ? 'typeField' : f.propertyName
+        let param = f.paramName
+        if (param === fn || param === method) param = `${param}_`
         if (f.multiple) {
-            lines.push(`    ${method}(...${f.paramName}: any[]) { return ${f.paramName}.length ? ${fn}({ ...config, ${f.propertyName}: ${f.paramName} }) : fields.${f.name}; },`)
+            lines.push(`    ${method}(...${param}: any[]) { return ${param}.length ? ${fn}({ ...(config as any), ${f.propertyName}: ${param} } as any) : fields.${f.name}; },`)
         } else {
-            lines.push(`    ${method}(${f.paramName}?: any) { return ${f.paramName} !== undefined ? ${fn}({ ...config, ${f.propertyName}: ${f.paramName} }) : fields.${f.name}; },`)
+            lines.push(`    ${method}(${param}?: any) { return ${param} !== undefined ? ${fn}({ ...(config as any), ${f.propertyName}: ${param} } as any) : fields.${f.name}; },`)
         }
+    }
+
+    // Children accessor — single getChildren/setChildren API
+    if (hasChildren) {
+        lines.push('    getChildren() { return children; },')
+        lines.push(`    setChildren(...items: any[]) { return ${fn}({ ...(config as any), children: items } as any); },`)
     }
 
     lines.push(`    render() { return render(this); },`)
@@ -199,24 +210,25 @@ function emitPolymorphFactory(node: AssembledPolymorph): string {
     const lines: string[] = []
     lines.push(`export function ${fn}(config?: ConfigOf<${node.typeName}>) {`)
 
-    // Dispatch to per-form factory based on field presence
+    // Dispatch to per-form factory based on field presence. Form factories
+    // are named by their own kind (form.factoryName ?? rawName(form.kind)).
+    const formFn = (form: AssembledForm) => form.factoryName ?? rawName(form.kind)
     if (forms.length > 1) {
         const sorted = [...forms].sort((a, b) => b.fields.length - a.fields.length)
         const fallback = sorted[sorted.length - 1]!
 
         for (const form of sorted) {
             if (form === fallback) continue
-            const vFn = `${fn}_${form.name}_`
             const distinguishing = form.fields.find(f =>
                 !fallback.fields.some(ff => ff.name === f.name)
             )
             if (distinguishing) {
-                lines.push(`  if (config && '${distinguishing.propertyName}' in config) return ${vFn}(config as any);`)
+                lines.push(`  if (config && '${distinguishing.propertyName}' in config) return ${formFn(form)}(config as any);`)
             }
         }
-        lines.push(`  return ${fn}_${fallback.name}_(config as any);`)
+        lines.push(`  return ${formFn(fallback)}(config as any);`)
     } else {
-        lines.push(`  return ${fn}_${forms[0].name}_(config as any);`)
+        lines.push(`  return ${formFn(forms[0]!)}(config as any);`)
     }
 
     lines.push('}')
@@ -224,7 +236,10 @@ function emitPolymorphFactory(node: AssembledPolymorph): string {
 }
 
 function emitFormFactory(node: AssembledPolymorph, form: AssembledForm): string {
-    const fn = `${rawName(node.kind)}_${form.name}_`
+    // Use the form's own kind for the function name so _factoryMap (which
+    // keys by kind) resolves cleanly: rawName(form.kind) matches the emitted
+    // function name.
+    const fn = form.factoryName ?? rawName(form.kind)
     const fields = form.fields
     const hasFields = fields.length > 0
     const opt = fields.some(f => f.required) ? '' : '?'

@@ -190,9 +190,20 @@ These are the critical acceptance tests. Generated code must actually work at ru
 - [ ] T052a [US1] readNode round-trip: corpus → tree-sitter parse → readNode → NodeData. Verify the NodeData has the expected `type`, `fields`, and `children` for each corpus entry. Uses `packages/codegen/fixtures/*.txt` as corpus.
 - [ ] T052b [US1] Factory round-trip: corpus → parse → readNode → strip metadata → call factory with the stripped data → verify factory-produced NodeData matches readNode output structurally
 - [ ] T052c [US1] Render round-trip: factory-produced NodeData → render → re-parse with tree-sitter → verify the kind and structure match the original
-- [ ] T052d [US1] from() round-trip: corpus → parse → readNode → strip metadata → call `.from()` on loose input → verify result matches factory output
-- [ ] T052e [US1] Wire `validate-factory-roundtrip.ts` into the v2 CLI: when `--roundtrip` flag is passed, run the round-trip validation against the v2-generated output
-- [ ] T052f [US1] Create vitest test file `packages/codegen/src/__tests__/roundtrip.test.ts` that runs the round-trip validators against the v2 pipeline output for all 3 grammars with representative corpus fixtures
+- [ ] T052d [US1] from() round-trip: corpus → parse → readNode → strip metadata → call `.from()` on loose input (string for leaves, object-with-kind for branches) → verify result matches factory output structurally
+- [ ] T052d-i [US1] from() with string inputs for leaf-typed fields: verify `ir.branch.from({ name: 'x', ... })` produces the same NodeData as `ir.branch({ name: ir.identifier('x'), ... })`
+- [ ] T052d-ii [US1] from() with mixed objects/nodes: verify objects with a `kind` discriminator resolve to the right factory
+- [ ] T052d-iii [US1] from() with supertype inputs: verify loose input matching a supertype's subtype resolves correctly (e.g., an `expression` field accepting any expression subtype)
+- [ ] T052e [US1] Wire `validate-factory-roundtrip.ts` and `validate-from.ts` into the v2 CLI: when `--roundtrip` flag is passed, run both factory and from() round-trips against the v2-generated output
+- [ ] T052f [US1] Create vitest test file `packages/codegen/src/__tests__/roundtrip.test.ts` that runs BOTH factory and from() round-trip validators against the v2 pipeline output for all 3 grammars with representative corpus fixtures
+
+### Code dedup in emitters
+
+The from emitter should share resolver functions across fields with identical content-type signatures. A field typed `expression | identifier` shared across 10 different branches should generate ONE resolver function, not 10 inline copies.
+
+- [ ] T042i Dedupe resolvers in `emitters/from-v2.ts`: group fields by canonical content-type signature, emit one resolver per signature, reference it from each field site
+- [ ] T042j Dedupe factory method signatures in `emitters/factories-v2.ts`: children-only nodes with identical child-type signatures share their setter/getter method signatures
+- [ ] T042k Dedupe type unions in `emitters/types-v2.ts`: if multiple fields have the same content-type union, hoist the union into a named type alias used by all referencing fields
 
 **Checkpoint**: All three grammars produce correct output. E2e tests pass. Type-check passes. readNode + factory + render + from() all round-trip correctly. MVP complete.
 
