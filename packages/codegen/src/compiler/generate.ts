@@ -14,7 +14,7 @@ import { toHydratedModels } from './adapter.ts'
 import { resolveGrammarJsPath, resolveOverridesPath } from './resolve-grammar.ts'
 
 import { emitGrammar } from '../emitters/grammar.ts'
-import { emitTypes } from '../emitters/types.ts'
+import { emitTypesFromNodeMap } from '../emitters/types-v2.ts'
 import { emitTemplatesYaml } from '../emitters/rules.ts'
 import { emitFactories } from '../emitters/factories.ts'
 import { emitWrap } from '../emitters/wrap.ts'
@@ -90,7 +90,7 @@ export async function generateV2(cfg: GenerateConfigV2): Promise<GeneratedFilesV
     // Phase 5: Emit (via existing emitters + adapter)
     return {
         grammar: emitGrammar({ grammar: cfg.grammar }),
-        types: emitTypes({ grammar: cfg.grammar, nodes: nodes as any }),
+        types: emitTypesFromNodeMap({ grammar: cfg.grammar, nodeMap }),
         templatesYaml: emitTemplatesYaml({ grammar: cfg.grammar, nodes: nodes as any, grammarSha: '' }),
         factories: emitFactories({ grammar: cfg.grammar, nodes: nodes as any }),
         wrap: emitWrap({ grammar: cfg.grammar, nodes: nodes as any }),
