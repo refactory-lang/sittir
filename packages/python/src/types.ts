@@ -70,12 +70,14 @@ export const enum SyntaxKind {
   ImportPrefix = 'import_prefix',
   RelativeImport = 'relative_import',
   ImportFromStatement = 'import_from_statement',
-  ImportList = '_import_list',
+  HiddenImportList = '_import_list',
   AliasedImport = 'aliased_import',
   PrintStatement = 'print_statement',
   Chevron = 'chevron',
+  AssertStatement = 'assert_statement',
   ExpressionStatement = 'expression_statement',
   NamedExpression = 'named_expression',
+  RaiseStatement = 'raise_statement',
   IfStatement = 'if_statement',
   ElifClause = 'elif_clause',
   ElseClause = 'else_clause',
@@ -84,6 +86,7 @@ export const enum SyntaxKind {
   ForStatement = 'for_statement',
   WhileStatement = 'while_statement',
   TryStatement = 'try_statement',
+  ExceptClause = 'except_clause',
   FinallyClause = 'finally_clause',
   WithStatement = 'with_statement',
   WithClause = 'with_clause',
@@ -91,17 +94,29 @@ export const enum SyntaxKind {
   FunctionDefinition = 'function_definition',
   ListSplat = 'list_splat',
   DictionarySplat = 'dictionary_splat',
+  GlobalStatement = 'global_statement',
+  NonlocalStatement = 'nonlocal_statement',
   ExecStatement = 'exec_statement',
   TypeAliasStatement = 'type_alias_statement',
   ClassDefinition = 'class_definition',
+  TypeParameter = 'type_parameter',
   ParenthesizedListSplat = 'parenthesized_list_splat',
+  ArgumentList = 'argument_list',
   DecoratedDefinition = 'decorated_definition',
   Decorator = 'decorator',
+  ExpressionList = 'expression_list',
+  DottedName = 'dotted_name',
   CasePattern = 'case_pattern',
+  HiddenAsPattern = '_as_pattern',
+  HiddenListPattern = '_list_pattern',
+  HiddenTuplePattern = '_tuple_pattern',
+  DictPattern = 'dict_pattern',
   KeywordPattern = 'keyword_pattern',
   SplatPattern = 'splat_pattern',
   ClassPattern = 'class_pattern',
   ComplexPattern = 'complex_pattern',
+  HiddenParameters = '_parameters',
+  HiddenPatterns = '_patterns',
   Parameter = 'parameter',
   Pattern = 'pattern',
   DefaultParameter = 'default_parameter',
@@ -120,6 +135,8 @@ export const enum SyntaxKind {
   LambdaWithinForInClause = 'lambda_within_for_in_clause',
   Assignment = 'assignment',
   AugmentedAssignment = 'augmented_assignment',
+  PatternList = 'pattern_list',
+  Yield = 'yield',
   Attribute = 'attribute',
   Subscript = 'subscript',
   Slice = 'slice',
@@ -132,15 +149,19 @@ export const enum SyntaxKind {
   ConstrainedType = 'constrained_type',
   MemberType = 'member_type',
   KeywordArgument = 'keyword_argument',
+  Dictionary = 'dictionary',
   Pair = 'pair',
   ListComprehension = 'list_comprehension',
   DictionaryComprehension = 'dictionary_comprehension',
   SetComprehension = 'set_comprehension',
   GeneratorExpression = 'generator_expression',
+  HiddenComprehensionClauses = '_comprehension_clauses',
   ParenthesizedExpression = 'parenthesized_expression',
+  HiddenCollectionElements = '_collection_elements',
   ForInClause = 'for_in_clause',
   IfClause = 'if_clause',
   ConditionalExpression = 'conditional_expression',
+  ConcatenatedString = 'concatenated_string',
   String = 'string',
   StringContent = 'string_content',
   Interpolation = 'interpolation',
@@ -163,7 +184,7 @@ export const enum SyntaxKind {
   Comment = 'comment',
   Import = 'import',
   From = 'from',
-  FutureU = '__future__',
+  HiddenUFutureU = '__future__',
   As = 'as',
   Print = 'print',
   Assert = 'assert',
@@ -191,7 +212,7 @@ export const enum SyntaxKind {
   Nonlocal = 'nonlocal',
   Exec = 'exec',
   Class = 'class',
-  Anonymous = '_',
+  Hidden = '_',
   Not = 'not',
   And = 'and',
   Or = 'or',
@@ -209,8 +230,8 @@ export const enum SyntaxKind {
 
 // Scoped enums per supertype
 export const enum StatementKind {
-  SimpleStatements = '_simple_statements',
-  CompoundStatement = '_compound_statement',
+  HiddenSimpleStatements = '_simple_statements',
+  HiddenCompoundStatement = '_compound_statement',
 }
 
 export const enum SimpleStatementKind {
@@ -261,7 +282,7 @@ export const enum MatchBlockKind {
 }
 
 export const enum SuiteKind {
-  SimpleStatements = '_simple_statements',
+  HiddenSimpleStatements = '_simple_statements',
   Indent = '_indent',
   Block = 'block',
   Newline = '_newline',
@@ -271,8 +292,8 @@ export const enum SimplePatternKind {
   ClassPattern = 'class_pattern',
   SplatPattern = 'splat_pattern',
   UnionPattern = 'union_pattern',
-  ListPattern = '_list_pattern',
-  TuplePattern = '_tuple_pattern',
+  HiddenListPattern = '_list_pattern',
+  HiddenTuplePattern = '_tuple_pattern',
   DictPattern = 'dict_pattern',
   String = 'string',
   ConcatenatedString = 'concatenated_string',
@@ -335,7 +356,7 @@ export interface ImportFromStatement {
   readonly children: WildcardImport;
 }
 
-export interface ImportList {
+export interface HiddenImportList {
   readonly type: '_import_list';
   readonly fields: {
     readonly name: readonly (DottedName | AliasedImport)[];
@@ -367,6 +388,11 @@ export interface Chevron {
   readonly children: Expression;
 }
 
+export interface AssertStatement {
+  readonly type: 'assert_statement';
+  readonly children: readonly (Expression)[];
+}
+
 export interface ExpressionStatementExpression {
   readonly type: 'expression_statement';
 }
@@ -391,8 +417,15 @@ export type ExpressionStatement = ExpressionStatementExpression | ExpressionStat
 export interface NamedExpression {
   readonly type: 'named_expression';
   readonly fields: {
-    readonly name: NamedExpressionLhs;
+    readonly name: HiddenNamedExpressionLhs;
     readonly value: Expression;
+  };
+}
+
+export interface RaiseStatement {
+  readonly type: 'raise_statement';
+  readonly fields: {
+    readonly cause?: Expression;
   };
 }
 
@@ -400,7 +433,7 @@ export interface IfStatement {
   readonly type: 'if_statement';
   readonly fields: {
     readonly condition: Expression;
-    readonly consequence: Suite;
+    readonly consequence: HiddenSuite;
     readonly alternative?: readonly (ElifClause | ElseClause)[];
   };
 }
@@ -409,14 +442,14 @@ export interface ElifClause {
   readonly type: 'elif_clause';
   readonly fields: {
     readonly condition: Expression;
-    readonly consequence: Suite;
+    readonly consequence: HiddenSuite;
   };
 }
 
 export interface ElseClause {
   readonly type: 'else_clause';
   readonly fields: {
-    readonly body: Suite;
+    readonly body: HiddenSuite;
   };
 }
 
@@ -424,7 +457,7 @@ export interface MatchStatement {
   readonly type: 'match_statement';
   readonly fields: {
     readonly subject: readonly (Expression)[];
-    readonly body: MatchBlock;
+    readonly body: HiddenMatchBlock;
   };
 }
 
@@ -432,7 +465,7 @@ export interface CaseClause {
   readonly type: 'case_clause';
   readonly fields: {
     readonly guard?: IfClause;
-    readonly consequence: Suite;
+    readonly consequence: HiddenSuite;
   };
   readonly children: readonly (CasePattern)[];
 }
@@ -440,9 +473,9 @@ export interface CaseClause {
 export interface ForStatement {
   readonly type: 'for_statement';
   readonly fields: {
-    readonly left: LeftHandSide;
-    readonly right: Expressions;
-    readonly body: Suite;
+    readonly left: HiddenLeftHandSide;
+    readonly right: HiddenExpressions;
+    readonly body: HiddenSuite;
     readonly alternative: ElseClause;
   };
 }
@@ -451,7 +484,7 @@ export interface WhileStatement {
   readonly type: 'while_statement';
   readonly fields: {
     readonly condition: Expression;
-    readonly body: Suite;
+    readonly body: HiddenSuite;
     readonly alternative?: ElseClause;
   };
 }
@@ -461,9 +494,17 @@ export interface TryStatement {
   readonly fields: {
     readonly except_clauses: string;
     readonly else_clause: string;
-    readonly finally_clause: Suite;
+    readonly finally_clause: HiddenSuite;
   };
   readonly children: readonly (ExceptClause | ElseClause | FinallyClause)[];
+}
+
+export interface ExceptClause {
+  readonly type: 'except_clause';
+  readonly fields: {
+    readonly value?: readonly (Expression)[];
+    readonly alias?: Expression;
+  };
 }
 
 export interface FinallyClause {
@@ -477,7 +518,7 @@ export interface WithStatement {
   readonly type: 'with_statement';
   readonly fields: {
     readonly with_clause: string;
-    readonly body: Suite;
+    readonly body: HiddenSuite;
   };
   readonly children: WithClause;
 }
@@ -505,7 +546,7 @@ export interface FunctionDefinition {
     readonly type_parameters: TypeParameter;
     readonly parameters: Parameters;
     readonly return_type?: Type;
-    readonly body: Suite;
+    readonly body: HiddenSuite;
   };
 }
 
@@ -523,6 +564,16 @@ export interface DictionarySplat {
     readonly expression: string;
   };
   readonly children: Expression;
+}
+
+export interface GlobalStatement {
+  readonly type: 'global_statement';
+  readonly children: readonly (Identifier)[];
+}
+
+export interface NonlocalStatement {
+  readonly type: 'nonlocal_statement';
+  readonly children: readonly (Identifier)[];
 }
 
 export interface ExecStatement {
@@ -547,12 +598,22 @@ export interface ClassDefinition {
     readonly name: Identifier;
     readonly type_parameters: TypeParameter;
     readonly superclasses: ArgumentList;
-    readonly body: Suite;
+    readonly body: HiddenSuite;
   };
+}
+
+export interface TypeParameter {
+  readonly type: 'type_parameter';
+  readonly children: readonly (Type)[];
 }
 
 export interface ParenthesizedListSplat {
   readonly type: 'parenthesized_list_splat';
+}
+
+export interface ArgumentList {
+  readonly type: 'argument_list';
+  readonly children: readonly (Expression | ListSplat | DictionarySplat | ParenthesizedListSplat | KeywordArgument)[];
 }
 
 export interface DecoratedDefinition {
@@ -571,6 +632,16 @@ export interface Decorator {
   };
 }
 
+export interface ExpressionList {
+  readonly type: 'expression_list';
+  readonly children: readonly (Expression)[];
+}
+
+export interface DottedName {
+  readonly type: 'dotted_name';
+  readonly children: readonly (Identifier)[];
+}
+
 export interface CasePatternAsPattern {
   readonly type: 'case_pattern';
 }
@@ -584,6 +655,26 @@ export interface CasePatternSimplePattern {
 }
 
 export type CasePattern = CasePatternAsPattern | CasePatternKeywordPattern | CasePatternSimplePattern;
+export interface HiddenAsPattern {
+  readonly type: '_as_pattern';
+  readonly children: CasePattern | Identifier;
+}
+
+export interface HiddenListPattern {
+  readonly type: '_list_pattern';
+  readonly children: readonly (CasePattern)[];
+}
+
+export interface HiddenTuplePattern {
+  readonly type: '_tuple_pattern';
+  readonly children: readonly (CasePattern)[];
+}
+
+export interface DictPattern {
+  readonly type: 'dict_pattern';
+  readonly children: readonly (SplatPattern)[];
+}
+
 export interface KeywordPattern {
   readonly type: 'keyword_pattern';
   readonly fields: {
@@ -616,6 +707,16 @@ export interface ComplexPattern {
     readonly imaginary: Integer | Float;
   };
   readonly children: Integer | Float;
+}
+
+export interface HiddenParameters {
+  readonly type: '_parameters';
+  readonly children: readonly (Parameter)[];
+}
+
+export interface HiddenPatterns {
+  readonly type: '_patterns';
+  readonly children: readonly (Pattern)[];
 }
 
 export interface ParameterIdentifier {
@@ -908,15 +1009,15 @@ export interface LambdaWithinForInClause {
   readonly type: 'lambda_within_for_in_clause';
   readonly fields: {
     readonly parameters: LambdaParameters;
-    readonly body: ExpressionWithinForInClause;
+    readonly body: HiddenExpressionWithinForInClause;
   };
 }
 
 export interface Assignment {
   readonly type: 'assignment';
   readonly fields: {
-    readonly left: LeftHandSide;
-    readonly right: RightHandSide;
+    readonly left: HiddenLeftHandSide;
+    readonly right: HiddenRightHandSide;
     readonly type: Type;
   };
 }
@@ -924,10 +1025,20 @@ export interface Assignment {
 export interface AugmentedAssignment {
   readonly type: 'augmented_assignment';
   readonly fields: {
-    readonly left: LeftHandSide;
+    readonly left: HiddenLeftHandSide;
     readonly operator: Pluseq | Minuseq | Stareq | Slasheq | Ateq | Slashslasheq | Percenteq | Starstareq | Shreq | Shleq | Ampeq | Careteq | Pipeeq;
-    readonly right: RightHandSide;
+    readonly right: HiddenRightHandSide;
   };
+}
+
+export interface PatternList {
+  readonly type: 'pattern_list';
+  readonly children: readonly (Pattern)[];
+}
+
+export interface Yield {
+  readonly type: 'yield';
+  readonly children: Expression;
 }
 
 export interface Attribute {
@@ -1048,6 +1159,11 @@ export interface KeywordArgument {
   };
 }
 
+export interface Dictionary {
+  readonly type: 'dictionary';
+  readonly children: readonly (Pair | DictionarySplat)[];
+}
+
 export interface Pair {
   readonly type: 'pair';
   readonly fields: {
@@ -1084,14 +1200,24 @@ export interface GeneratorExpression {
   };
 }
 
+export interface HiddenComprehensionClauses {
+  readonly type: '_comprehension_clauses';
+  readonly children: readonly (ForInClause | IfClause)[];
+}
+
 export interface ParenthesizedExpression {
   readonly type: 'parenthesized_expression';
+}
+
+export interface HiddenCollectionElements {
+  readonly type: '_collection_elements';
+  readonly children: readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[];
 }
 
 export interface ForInClause {
   readonly type: 'for_in_clause';
   readonly fields: {
-    readonly left: LeftHandSide;
+    readonly left: HiddenLeftHandSide;
     readonly right: string;
   };
 }
@@ -1114,6 +1240,11 @@ export interface ConditionalExpression {
   readonly children: Expression;
 }
 
+export interface ConcatenatedString {
+  readonly type: 'concatenated_string';
+  readonly children: readonly (String)[];
+}
+
 export interface String {
   readonly type: 'string';
   readonly fields: {
@@ -1131,7 +1262,7 @@ export interface StringContent {
 export interface Interpolation {
   readonly type: 'interpolation';
   readonly fields: {
-    readonly expression: FExpression;
+    readonly expression: HiddenFExpression;
     readonly type_conversion?: TypeConversion;
     readonly format_specifier?: FormatSpecifier;
   };
@@ -1220,7 +1351,7 @@ export type AsPatternTarget = AsPatternTargetComparisonOperator | AsPatternTarge
 export interface FormatExpression {
   readonly type: 'format_expression';
   readonly fields: {
-    readonly expression: FExpression;
+    readonly expression: HiddenFExpression;
     readonly type_conversion?: TypeConversion;
     readonly format_specifier?: FormatSpecifier;
   };
@@ -1283,7 +1414,7 @@ export interface From {
   readonly text: "from";
 }
 
-export interface FutureU {
+export interface HiddenUFutureU {
   readonly type: '__future__';
   readonly text: "__future__";
 }
@@ -1423,7 +1554,7 @@ export interface Class {
   readonly text: "class";
 }
 
-export interface Anonymous {
+export interface Hidden {
   readonly type: '_';
   readonly text: "_";
 }
@@ -1483,10 +1614,11 @@ export type ModuleConfig = ConfigOf<Module>;
 export type ImportPrefixConfig = ConfigOf<ImportPrefix>;
 export type RelativeImportConfig = ConfigOf<RelativeImport>;
 export type ImportFromStatementConfig = ConfigOf<ImportFromStatement>;
-export type ImportListConfig = ConfigOf<ImportList>;
+export type HiddenImportListConfig = ConfigOf<HiddenImportList>;
 export type AliasedImportConfig = ConfigOf<AliasedImport>;
 export type PrintStatementConfig = ConfigOf<PrintStatement>;
 export type ChevronConfig = ConfigOf<Chevron>;
+export type AssertStatementConfig = ConfigOf<AssertStatement>;
 export type ExpressionStatementExpressionConfig = ConfigOf<ExpressionStatementExpression>;
 export type ExpressionStatementExpression2Config = ConfigOf<ExpressionStatementExpression2>;
 export type ExpressionStatementAssignmentConfig = ConfigOf<ExpressionStatementAssignment>;
@@ -1494,6 +1626,7 @@ export type ExpressionStatementAugmentedAssignmentConfig = ConfigOf<ExpressionSt
 export type ExpressionStatementYieldConfig = ConfigOf<ExpressionStatementYield>;
 export type ExpressionStatementConfig = ExpressionStatementExpressionConfig | ExpressionStatementExpression2Config | ExpressionStatementAssignmentConfig | ExpressionStatementAugmentedAssignmentConfig | ExpressionStatementYieldConfig;
 export type NamedExpressionConfig = ConfigOf<NamedExpression>;
+export type RaiseStatementConfig = ConfigOf<RaiseStatement>;
 export type IfStatementConfig = ConfigOf<IfStatement>;
 export type ElifClauseConfig = ConfigOf<ElifClause>;
 export type ElseClauseConfig = ConfigOf<ElseClause>;
@@ -1502,6 +1635,7 @@ export type CaseClauseConfig = ConfigOf<CaseClause>;
 export type ForStatementConfig = ConfigOf<ForStatement>;
 export type WhileStatementConfig = ConfigOf<WhileStatement>;
 export type TryStatementConfig = ConfigOf<TryStatement>;
+export type ExceptClauseConfig = ConfigOf<ExceptClause>;
 export type FinallyClauseConfig = ConfigOf<FinallyClause>;
 export type WithStatementConfig = ConfigOf<WithStatement>;
 export type WithClauseWithItemConfig = ConfigOf<WithClauseWithItem>;
@@ -1511,20 +1645,32 @@ export type WithItemConfig = ConfigOf<WithItem>;
 export type FunctionDefinitionConfig = ConfigOf<FunctionDefinition>;
 export type ListSplatConfig = ConfigOf<ListSplat>;
 export type DictionarySplatConfig = ConfigOf<DictionarySplat>;
+export type GlobalStatementConfig = ConfigOf<GlobalStatement>;
+export type NonlocalStatementConfig = ConfigOf<NonlocalStatement>;
 export type ExecStatementConfig = ConfigOf<ExecStatement>;
 export type TypeAliasStatementConfig = ConfigOf<TypeAliasStatement>;
 export type ClassDefinitionConfig = ConfigOf<ClassDefinition>;
+export type TypeParameterConfig = ConfigOf<TypeParameter>;
 export type ParenthesizedListSplatConfig = ConfigOf<ParenthesizedListSplat>;
+export type ArgumentListConfig = ConfigOf<ArgumentList>;
 export type DecoratedDefinitionConfig = ConfigOf<DecoratedDefinition>;
 export type DecoratorConfig = ConfigOf<Decorator>;
+export type ExpressionListConfig = ConfigOf<ExpressionList>;
+export type DottedNameConfig = ConfigOf<DottedName>;
 export type CasePatternAsPatternConfig = ConfigOf<CasePatternAsPattern>;
 export type CasePatternKeywordPatternConfig = ConfigOf<CasePatternKeywordPattern>;
 export type CasePatternSimplePatternConfig = ConfigOf<CasePatternSimplePattern>;
 export type CasePatternConfig = CasePatternAsPatternConfig | CasePatternKeywordPatternConfig | CasePatternSimplePatternConfig;
+export type HiddenAsPatternConfig = ConfigOf<HiddenAsPattern>;
+export type HiddenListPatternConfig = ConfigOf<HiddenListPattern>;
+export type HiddenTuplePatternConfig = ConfigOf<HiddenTuplePattern>;
+export type DictPatternConfig = ConfigOf<DictPattern>;
 export type KeywordPatternConfig = ConfigOf<KeywordPattern>;
 export type SplatPatternConfig = ConfigOf<SplatPattern>;
 export type ClassPatternConfig = ConfigOf<ClassPattern>;
 export type ComplexPatternConfig = ConfigOf<ComplexPattern>;
+export type HiddenParametersConfig = ConfigOf<HiddenParameters>;
+export type HiddenPatternsConfig = ConfigOf<HiddenPatterns>;
 export type ParameterIdentifierConfig = ConfigOf<ParameterIdentifier>;
 export type ParameterTypedParameterConfig = ConfigOf<ParameterTypedParameter>;
 export type ParameterDefaultParameterConfig = ConfigOf<ParameterDefaultParameter>;
@@ -1593,6 +1739,8 @@ export type LambdaConfig = ConfigOf<Lambda>;
 export type LambdaWithinForInClauseConfig = ConfigOf<LambdaWithinForInClause>;
 export type AssignmentConfig = ConfigOf<Assignment>;
 export type AugmentedAssignmentConfig = ConfigOf<AugmentedAssignment>;
+export type PatternListConfig = ConfigOf<PatternList>;
+export type YieldConfig = ConfigOf<Yield>;
 export type AttributeConfig = ConfigOf<Attribute>;
 export type SubscriptConfig = ConfigOf<Subscript>;
 export type SliceConfig = ConfigOf<Slice>;
@@ -1611,15 +1759,19 @@ export type UnionTypeConfig = ConfigOf<UnionType>;
 export type ConstrainedTypeConfig = ConfigOf<ConstrainedType>;
 export type MemberTypeConfig = ConfigOf<MemberType>;
 export type KeywordArgumentConfig = ConfigOf<KeywordArgument>;
+export type DictionaryConfig = ConfigOf<Dictionary>;
 export type PairConfig = ConfigOf<Pair>;
 export type ListComprehensionConfig = ConfigOf<ListComprehension>;
 export type DictionaryComprehensionConfig = ConfigOf<DictionaryComprehension>;
 export type SetComprehensionConfig = ConfigOf<SetComprehension>;
 export type GeneratorExpressionConfig = ConfigOf<GeneratorExpression>;
+export type HiddenComprehensionClausesConfig = ConfigOf<HiddenComprehensionClauses>;
 export type ParenthesizedExpressionConfig = ConfigOf<ParenthesizedExpression>;
+export type HiddenCollectionElementsConfig = ConfigOf<HiddenCollectionElements>;
 export type ForInClauseConfig = ConfigOf<ForInClause>;
 export type IfClauseConfig = ConfigOf<IfClause>;
 export type ConditionalExpressionConfig = ConfigOf<ConditionalExpression>;
+export type ConcatenatedStringConfig = ConfigOf<ConcatenatedString>;
 export type StringConfig = ConfigOf<String>;
 export type StringContentConfig = ConfigOf<StringContent>;
 export type InterpolationConfig = ConfigOf<Interpolation>;
@@ -1651,10 +1803,11 @@ export interface ModuleTree extends TreeNode<'module'> {}
 export interface ImportPrefixTree extends TreeNode<'import_prefix'> {}
 export interface RelativeImportTree extends TreeNode<'relative_import'> {}
 export interface ImportFromStatementTree extends TreeNode<'import_from_statement'> {}
-export interface ImportListTree extends TreeNode<'_import_list'> {}
+export interface HiddenImportListTree extends TreeNode<'_import_list'> {}
 export interface AliasedImportTree extends TreeNode<'aliased_import'> {}
 export interface PrintStatementTree extends TreeNode<'print_statement'> {}
 export interface ChevronTree extends TreeNode<'chevron'> {}
+export interface AssertStatementTree extends TreeNode<'assert_statement'> {}
 export interface ExpressionStatementTree extends TreeNode<'expression_statement'> {}
 export interface ExpressionStatementExpressionTree extends TreeNode<'expression_statement'> {}
 export interface ExpressionStatementExpression2Tree extends TreeNode<'expression_statement'> {}
@@ -1662,6 +1815,7 @@ export interface ExpressionStatementAssignmentTree extends TreeNode<'expression_
 export interface ExpressionStatementAugmentedAssignmentTree extends TreeNode<'expression_statement'> {}
 export interface ExpressionStatementYieldTree extends TreeNode<'expression_statement'> {}
 export interface NamedExpressionTree extends TreeNode<'named_expression'> {}
+export interface RaiseStatementTree extends TreeNode<'raise_statement'> {}
 export interface IfStatementTree extends TreeNode<'if_statement'> {}
 export interface ElifClauseTree extends TreeNode<'elif_clause'> {}
 export interface ElseClauseTree extends TreeNode<'else_clause'> {}
@@ -1670,6 +1824,7 @@ export interface CaseClauseTree extends TreeNode<'case_clause'> {}
 export interface ForStatementTree extends TreeNode<'for_statement'> {}
 export interface WhileStatementTree extends TreeNode<'while_statement'> {}
 export interface TryStatementTree extends TreeNode<'try_statement'> {}
+export interface ExceptClauseTree extends TreeNode<'except_clause'> {}
 export interface FinallyClauseTree extends TreeNode<'finally_clause'> {}
 export interface WithStatementTree extends TreeNode<'with_statement'> {}
 export interface WithClauseTree extends TreeNode<'with_clause'> {}
@@ -1679,20 +1834,32 @@ export interface WithItemTree extends TreeNode<'with_item'> {}
 export interface FunctionDefinitionTree extends TreeNode<'function_definition'> {}
 export interface ListSplatTree extends TreeNode<'list_splat'> {}
 export interface DictionarySplatTree extends TreeNode<'dictionary_splat'> {}
+export interface GlobalStatementTree extends TreeNode<'global_statement'> {}
+export interface NonlocalStatementTree extends TreeNode<'nonlocal_statement'> {}
 export interface ExecStatementTree extends TreeNode<'exec_statement'> {}
 export interface TypeAliasStatementTree extends TreeNode<'type_alias_statement'> {}
 export interface ClassDefinitionTree extends TreeNode<'class_definition'> {}
+export interface TypeParameterTree extends TreeNode<'type_parameter'> {}
 export interface ParenthesizedListSplatTree extends TreeNode<'parenthesized_list_splat'> {}
+export interface ArgumentListTree extends TreeNode<'argument_list'> {}
 export interface DecoratedDefinitionTree extends TreeNode<'decorated_definition'> {}
 export interface DecoratorTree extends TreeNode<'decorator'> {}
+export interface ExpressionListTree extends TreeNode<'expression_list'> {}
+export interface DottedNameTree extends TreeNode<'dotted_name'> {}
 export interface CasePatternTree extends TreeNode<'case_pattern'> {}
 export interface CasePatternAsPatternTree extends TreeNode<'case_pattern'> {}
 export interface CasePatternKeywordPatternTree extends TreeNode<'case_pattern'> {}
 export interface CasePatternSimplePatternTree extends TreeNode<'case_pattern'> {}
+export interface HiddenAsPatternTree extends TreeNode<'_as_pattern'> {}
+export interface HiddenListPatternTree extends TreeNode<'_list_pattern'> {}
+export interface HiddenTuplePatternTree extends TreeNode<'_tuple_pattern'> {}
+export interface DictPatternTree extends TreeNode<'dict_pattern'> {}
 export interface KeywordPatternTree extends TreeNode<'keyword_pattern'> {}
 export interface SplatPatternTree extends TreeNode<'splat_pattern'> {}
 export interface ClassPatternTree extends TreeNode<'class_pattern'> {}
 export interface ComplexPatternTree extends TreeNode<'complex_pattern'> {}
+export interface HiddenParametersTree extends TreeNode<'_parameters'> {}
+export interface HiddenPatternsTree extends TreeNode<'_patterns'> {}
 export interface ParameterTree extends TreeNode<'parameter'> {}
 export interface ParameterIdentifierTree extends TreeNode<'parameter'> {}
 export interface ParameterTypedParameterTree extends TreeNode<'parameter'> {}
@@ -1761,6 +1928,8 @@ export interface LambdaTree extends TreeNode<'lambda'> {}
 export interface LambdaWithinForInClauseTree extends TreeNode<'lambda_within_for_in_clause'> {}
 export interface AssignmentTree extends TreeNode<'assignment'> {}
 export interface AugmentedAssignmentTree extends TreeNode<'augmented_assignment'> {}
+export interface PatternListTree extends TreeNode<'pattern_list'> {}
+export interface YieldTree extends TreeNode<'yield'> {}
 export interface AttributeTree extends TreeNode<'attribute'> {}
 export interface SubscriptTree extends TreeNode<'subscript'> {}
 export interface SliceTree extends TreeNode<'slice'> {}
@@ -1779,15 +1948,19 @@ export interface UnionTypeTree extends TreeNode<'union_type'> {}
 export interface ConstrainedTypeTree extends TreeNode<'constrained_type'> {}
 export interface MemberTypeTree extends TreeNode<'member_type'> {}
 export interface KeywordArgumentTree extends TreeNode<'keyword_argument'> {}
+export interface DictionaryTree extends TreeNode<'dictionary'> {}
 export interface PairTree extends TreeNode<'pair'> {}
 export interface ListComprehensionTree extends TreeNode<'list_comprehension'> {}
 export interface DictionaryComprehensionTree extends TreeNode<'dictionary_comprehension'> {}
 export interface SetComprehensionTree extends TreeNode<'set_comprehension'> {}
 export interface GeneratorExpressionTree extends TreeNode<'generator_expression'> {}
+export interface HiddenComprehensionClausesTree extends TreeNode<'_comprehension_clauses'> {}
 export interface ParenthesizedExpressionTree extends TreeNode<'parenthesized_expression'> {}
+export interface HiddenCollectionElementsTree extends TreeNode<'_collection_elements'> {}
 export interface ForInClauseTree extends TreeNode<'for_in_clause'> {}
 export interface IfClauseTree extends TreeNode<'if_clause'> {}
 export interface ConditionalExpressionTree extends TreeNode<'conditional_expression'> {}
+export interface ConcatenatedStringTree extends TreeNode<'concatenated_string'> {}
 export interface StringTree extends TreeNode<'string'> {}
 export interface StringContentTree extends TreeNode<'string_content'> {}
 export interface InterpolationTree extends TreeNode<'interpolation'> {}
@@ -1824,7 +1997,7 @@ export interface NoneTree extends TreeNode<'none'> {}
 export interface CommentTree extends TreeNode<'comment'> {}
 export interface ImportTree extends TreeNode<'import'> {}
 export interface FromTree extends TreeNode<'from'> {}
-export interface FutureUTree extends TreeNode<'__future__'> {}
+export interface HiddenUFutureUTree extends TreeNode<'__future__'> {}
 export interface AsTree extends TreeNode<'as'> {}
 export interface PrintTree extends TreeNode<'print'> {}
 export interface AssertTree extends TreeNode<'assert'> {}
@@ -1852,7 +2025,7 @@ export interface GlobalTree extends TreeNode<'global'> {}
 export interface NonlocalTree extends TreeNode<'nonlocal'> {}
 export interface ExecTree extends TreeNode<'exec'> {}
 export interface ClassTree extends TreeNode<'class'> {}
-export interface AnonymousTree extends TreeNode<'_'> {}
+export interface HiddenTree extends TreeNode<'_'> {}
 export interface NotTree extends TreeNode<'not'> {}
 export interface AndTree extends TreeNode<'and'> {}
 export interface OrTree extends TreeNode<'or'> {}
@@ -1872,12 +2045,14 @@ export type ModuleFromInput = FromInputOf<Module, LeafScalarMap, LeafStringMap>;
 export type ImportPrefixFromInput = FromInputOf<ImportPrefix, LeafScalarMap, LeafStringMap>;
 export type RelativeImportFromInput = FromInputOf<RelativeImport, LeafScalarMap, LeafStringMap>;
 export type ImportFromStatementFromInput = FromInputOf<ImportFromStatement, LeafScalarMap, LeafStringMap>;
-export type ImportListFromInput = FromInputOf<ImportList, LeafScalarMap, LeafStringMap>;
+export type HiddenImportListFromInput = FromInputOf<HiddenImportList, LeafScalarMap, LeafStringMap>;
 export type AliasedImportFromInput = FromInputOf<AliasedImport, LeafScalarMap, LeafStringMap>;
 export type PrintStatementFromInput = FromInputOf<PrintStatement, LeafScalarMap, LeafStringMap>;
 export type ChevronFromInput = FromInputOf<Chevron, LeafScalarMap, LeafStringMap>;
+export type AssertStatementFromInput = FromInputOf<AssertStatement, LeafScalarMap, LeafStringMap>;
 export type ExpressionStatementFromInput = FromInputOf<ExpressionStatementExpression, LeafScalarMap, LeafStringMap> | FromInputOf<ExpressionStatementExpression2, LeafScalarMap, LeafStringMap> | FromInputOf<ExpressionStatementAssignment, LeafScalarMap, LeafStringMap> | FromInputOf<ExpressionStatementAugmentedAssignment, LeafScalarMap, LeafStringMap> | FromInputOf<ExpressionStatementYield, LeafScalarMap, LeafStringMap>;
 export type NamedExpressionFromInput = FromInputOf<NamedExpression, LeafScalarMap, LeafStringMap>;
+export type RaiseStatementFromInput = FromInputOf<RaiseStatement, LeafScalarMap, LeafStringMap>;
 export type IfStatementFromInput = FromInputOf<IfStatement, LeafScalarMap, LeafStringMap>;
 export type ElifClauseFromInput = FromInputOf<ElifClause, LeafScalarMap, LeafStringMap>;
 export type ElseClauseFromInput = FromInputOf<ElseClause, LeafScalarMap, LeafStringMap>;
@@ -1886,6 +2061,7 @@ export type CaseClauseFromInput = FromInputOf<CaseClause, LeafScalarMap, LeafStr
 export type ForStatementFromInput = FromInputOf<ForStatement, LeafScalarMap, LeafStringMap>;
 export type WhileStatementFromInput = FromInputOf<WhileStatement, LeafScalarMap, LeafStringMap>;
 export type TryStatementFromInput = FromInputOf<TryStatement, LeafScalarMap, LeafStringMap>;
+export type ExceptClauseFromInput = FromInputOf<ExceptClause, LeafScalarMap, LeafStringMap>;
 export type FinallyClauseFromInput = FromInputOf<FinallyClause, LeafScalarMap, LeafStringMap>;
 export type WithStatementFromInput = FromInputOf<WithStatement, LeafScalarMap, LeafStringMap>;
 export type WithClauseFromInput = FromInputOf<WithClauseWithItem, LeafScalarMap, LeafStringMap> | FromInputOf<WithClauseParen, LeafScalarMap, LeafStringMap>;
@@ -1893,17 +2069,29 @@ export type WithItemFromInput = FromInputOf<WithItem, LeafScalarMap, LeafStringM
 export type FunctionDefinitionFromInput = FromInputOf<FunctionDefinition, LeafScalarMap, LeafStringMap>;
 export type ListSplatFromInput = FromInputOf<ListSplat, LeafScalarMap, LeafStringMap>;
 export type DictionarySplatFromInput = FromInputOf<DictionarySplat, LeafScalarMap, LeafStringMap>;
+export type GlobalStatementFromInput = FromInputOf<GlobalStatement, LeafScalarMap, LeafStringMap>;
+export type NonlocalStatementFromInput = FromInputOf<NonlocalStatement, LeafScalarMap, LeafStringMap>;
 export type ExecStatementFromInput = FromInputOf<ExecStatement, LeafScalarMap, LeafStringMap>;
 export type TypeAliasStatementFromInput = FromInputOf<TypeAliasStatement, LeafScalarMap, LeafStringMap>;
 export type ClassDefinitionFromInput = FromInputOf<ClassDefinition, LeafScalarMap, LeafStringMap>;
+export type TypeParameterFromInput = FromInputOf<TypeParameter, LeafScalarMap, LeafStringMap>;
 export type ParenthesizedListSplatFromInput = FromInputOf<ParenthesizedListSplat, LeafScalarMap, LeafStringMap>;
+export type ArgumentListFromInput = FromInputOf<ArgumentList, LeafScalarMap, LeafStringMap>;
 export type DecoratedDefinitionFromInput = FromInputOf<DecoratedDefinition, LeafScalarMap, LeafStringMap>;
 export type DecoratorFromInput = FromInputOf<Decorator, LeafScalarMap, LeafStringMap>;
+export type ExpressionListFromInput = FromInputOf<ExpressionList, LeafScalarMap, LeafStringMap>;
+export type DottedNameFromInput = FromInputOf<DottedName, LeafScalarMap, LeafStringMap>;
 export type CasePatternFromInput = FromInputOf<CasePatternAsPattern, LeafScalarMap, LeafStringMap> | FromInputOf<CasePatternKeywordPattern, LeafScalarMap, LeafStringMap> | FromInputOf<CasePatternSimplePattern, LeafScalarMap, LeafStringMap>;
+export type HiddenAsPatternFromInput = FromInputOf<HiddenAsPattern, LeafScalarMap, LeafStringMap>;
+export type HiddenListPatternFromInput = FromInputOf<HiddenListPattern, LeafScalarMap, LeafStringMap>;
+export type HiddenTuplePatternFromInput = FromInputOf<HiddenTuplePattern, LeafScalarMap, LeafStringMap>;
+export type DictPatternFromInput = FromInputOf<DictPattern, LeafScalarMap, LeafStringMap>;
 export type KeywordPatternFromInput = FromInputOf<KeywordPattern, LeafScalarMap, LeafStringMap>;
 export type SplatPatternFromInput = FromInputOf<SplatPattern, LeafScalarMap, LeafStringMap>;
 export type ClassPatternFromInput = FromInputOf<ClassPattern, LeafScalarMap, LeafStringMap>;
 export type ComplexPatternFromInput = FromInputOf<ComplexPattern, LeafScalarMap, LeafStringMap>;
+export type HiddenParametersFromInput = FromInputOf<HiddenParameters, LeafScalarMap, LeafStringMap>;
+export type HiddenPatternsFromInput = FromInputOf<HiddenPatterns, LeafScalarMap, LeafStringMap>;
 export type ParameterFromInput = FromInputOf<ParameterIdentifier, LeafScalarMap, LeafStringMap> | FromInputOf<ParameterTypedParameter, LeafScalarMap, LeafStringMap> | FromInputOf<ParameterDefaultParameter, LeafScalarMap, LeafStringMap> | FromInputOf<ParameterTypedDefaultParameter, LeafScalarMap, LeafStringMap> | FromInputOf<ParameterListSplatPattern, LeafScalarMap, LeafStringMap> | FromInputOf<ParameterTuplePattern, LeafScalarMap, LeafStringMap> | FromInputOf<ParameterKeywordSeparator, LeafScalarMap, LeafStringMap> | FromInputOf<ParameterPositionalSeparator, LeafScalarMap, LeafStringMap> | FromInputOf<ParameterDictionarySplatPattern, LeafScalarMap, LeafStringMap>;
 export type PatternFromInput = FromInputOf<PatternIdentifier, LeafScalarMap, LeafStringMap> | FromInputOf<PatternKeywordIdentifier, LeafScalarMap, LeafStringMap> | FromInputOf<PatternSubscript, LeafScalarMap, LeafStringMap> | FromInputOf<PatternAttribute, LeafScalarMap, LeafStringMap> | FromInputOf<PatternListSplatPattern, LeafScalarMap, LeafStringMap> | FromInputOf<PatternTuplePattern, LeafScalarMap, LeafStringMap> | FromInputOf<PatternListPattern, LeafScalarMap, LeafStringMap>;
 export type DefaultParameterFromInput = FromInputOf<DefaultParameter, LeafScalarMap, LeafStringMap>;
@@ -1922,6 +2110,8 @@ export type LambdaFromInput = FromInputOf<Lambda, LeafScalarMap, LeafStringMap>;
 export type LambdaWithinForInClauseFromInput = FromInputOf<LambdaWithinForInClause, LeafScalarMap, LeafStringMap>;
 export type AssignmentFromInput = FromInputOf<Assignment, LeafScalarMap, LeafStringMap>;
 export type AugmentedAssignmentFromInput = FromInputOf<AugmentedAssignment, LeafScalarMap, LeafStringMap>;
+export type PatternListFromInput = FromInputOf<PatternList, LeafScalarMap, LeafStringMap>;
+export type YieldFromInput = FromInputOf<Yield, LeafScalarMap, LeafStringMap>;
 export type AttributeFromInput = FromInputOf<Attribute, LeafScalarMap, LeafStringMap>;
 export type SubscriptFromInput = FromInputOf<Subscript, LeafScalarMap, LeafStringMap>;
 export type SliceFromInput = FromInputOf<Slice, LeafScalarMap, LeafStringMap>;
@@ -1934,15 +2124,19 @@ export type UnionTypeFromInput = FromInputOf<UnionType, LeafScalarMap, LeafStrin
 export type ConstrainedTypeFromInput = FromInputOf<ConstrainedType, LeafScalarMap, LeafStringMap>;
 export type MemberTypeFromInput = FromInputOf<MemberType, LeafScalarMap, LeafStringMap>;
 export type KeywordArgumentFromInput = FromInputOf<KeywordArgument, LeafScalarMap, LeafStringMap>;
+export type DictionaryFromInput = FromInputOf<Dictionary, LeafScalarMap, LeafStringMap>;
 export type PairFromInput = FromInputOf<Pair, LeafScalarMap, LeafStringMap>;
 export type ListComprehensionFromInput = FromInputOf<ListComprehension, LeafScalarMap, LeafStringMap>;
 export type DictionaryComprehensionFromInput = FromInputOf<DictionaryComprehension, LeafScalarMap, LeafStringMap>;
 export type SetComprehensionFromInput = FromInputOf<SetComprehension, LeafScalarMap, LeafStringMap>;
 export type GeneratorExpressionFromInput = FromInputOf<GeneratorExpression, LeafScalarMap, LeafStringMap>;
+export type HiddenComprehensionClausesFromInput = FromInputOf<HiddenComprehensionClauses, LeafScalarMap, LeafStringMap>;
 export type ParenthesizedExpressionFromInput = FromInputOf<ParenthesizedExpression, LeafScalarMap, LeafStringMap>;
+export type HiddenCollectionElementsFromInput = FromInputOf<HiddenCollectionElements, LeafScalarMap, LeafStringMap>;
 export type ForInClauseFromInput = FromInputOf<ForInClause, LeafScalarMap, LeafStringMap>;
 export type IfClauseFromInput = FromInputOf<IfClause, LeafScalarMap, LeafStringMap>;
 export type ConditionalExpressionFromInput = FromInputOf<ConditionalExpression, LeafScalarMap, LeafStringMap>;
+export type ConcatenatedStringFromInput = FromInputOf<ConcatenatedString, LeafScalarMap, LeafStringMap>;
 export type StringFromInput = FromInputOf<String, LeafScalarMap, LeafStringMap>;
 export type StringContentFromInput = FromInputOf<StringContent, LeafScalarMap, LeafStringMap>;
 export type InterpolationFromInput = FromInputOf<Interpolation, LeafScalarMap, LeafStringMap>;
@@ -1956,21 +2150,25 @@ export type AsPatternTargetFromInput = FromInputOf<AsPatternTargetComparisonOper
 export type FormatExpressionFromInput = FromInputOf<FormatExpression, LeafScalarMap, LeafStringMap>;
 
 // Supertype unions
-export type StatementTree = SimpleStatementsTree | CompoundStatementTree;
+export type StatementTree = HiddenSimpleStatementsTree | HiddenCompoundStatementTree;
 
 export type SimpleStatement =
   | ImportFromStatement
   | PrintStatement
+  | AssertStatement
   | ExpressionStatement
+  | RaiseStatement
   | PassStatement
   | BreakStatement
   | ContinueStatement
+  | GlobalStatement
+  | NonlocalStatement
   | ExecStatement
   | TypeAliasStatement
 ;
 
-export type SimpleStatementConfig = ImportFromStatementConfig | PrintStatementConfig | ExpressionStatementConfig | ExecStatementConfig | TypeAliasStatementConfig;
-export type SimpleStatementFromInput = ImportFromStatementFromInput | PrintStatementFromInput | ExpressionStatementFromInput | ExecStatementFromInput | TypeAliasStatementFromInput;
+export type SimpleStatementConfig = ImportFromStatementConfig | PrintStatementConfig | AssertStatementConfig | ExpressionStatementConfig | RaiseStatementConfig | GlobalStatementConfig | NonlocalStatementConfig | ExecStatementConfig | TypeAliasStatementConfig;
+export type SimpleStatementFromInput = ImportFromStatementFromInput | PrintStatementFromInput | AssertStatementFromInput | ExpressionStatementFromInput | RaiseStatementFromInput | GlobalStatementFromInput | NonlocalStatementFromInput | ExecStatementFromInput | TypeAliasStatementFromInput;
 export type SimpleStatementTree = FutureImportStatementTree | ImportStatementTree | ImportFromStatementTree | PrintStatementTree | AssertStatementTree | ExpressionStatementTree | ReturnStatementTree | DeleteStatementTree | RaiseStatementTree | PassStatementTree | BreakStatementTree | ContinueStatementTree | GlobalStatementTree | NonlocalStatementTree | ExecStatementTree | TypeAliasStatementTree;
 
 export type NamedExpressionLhs =
@@ -1984,10 +2182,11 @@ export type NamedExpressionLhsTree = IdentifierTree | KeywordIdentifierTree;
 
 export type Expressions =
   | Expression
+  | ExpressionList
 ;
 
-export type ExpressionsConfig = ExpressionConfig;
-export type ExpressionsFromInput = ExpressionFromInput;
+export type ExpressionsConfig = ExpressionConfig | ExpressionListConfig;
+export type ExpressionsFromInput = ExpressionFromInput | ExpressionListFromInput;
 export type ExpressionsTree = ExpressionTree | ExpressionListTree;
 
 export type CompoundStatement =
@@ -2008,21 +2207,26 @@ export type CompoundStatementTree = IfStatementTree | ForStatementTree | WhileSt
 
 export type MatchBlockTree = IndentTree | DedentTree | NewlineTree;
 
-export type SuiteTree = SimpleStatementsTree | IndentTree | BlockTree | NewlineTree;
+export type SuiteTree = HiddenSimpleStatementsTree | IndentTree | BlockTree | NewlineTree;
 
 export type SimplePattern =
   | ClassPattern
   | SplatPattern
+  | HiddenListPattern
+  | HiddenTuplePattern
+  | DictPattern
   | String
+  | ConcatenatedString
   | True
   | False
   | None
   | ComplexPattern
+  | DottedName
 ;
 
-export type SimplePatternConfig = ClassPatternConfig | SplatPatternConfig | StringConfig | ComplexPatternConfig;
-export type SimplePatternFromInput = ClassPatternFromInput | SplatPatternFromInput | StringFromInput | ComplexPatternFromInput;
-export type SimplePatternTree = ClassPatternTree | SplatPatternTree | UnionPatternTree | ListPatternTree | TuplePatternTree | DictPatternTree | StringTree | ConcatenatedStringTree | TrueTree | FalseTree | NoneTree | ComplexPatternTree | DottedNameTree;
+export type SimplePatternConfig = ClassPatternConfig | SplatPatternConfig | HiddenListPatternConfig | HiddenTuplePatternConfig | DictPatternConfig | StringConfig | ConcatenatedStringConfig | ComplexPatternConfig | DottedNameConfig;
+export type SimplePatternFromInput = ClassPatternFromInput | SplatPatternFromInput | HiddenListPatternFromInput | HiddenTuplePatternFromInput | DictPatternFromInput | StringFromInput | ConcatenatedStringFromInput | ComplexPatternFromInput | DottedNameFromInput;
+export type SimplePatternTree = ClassPatternTree | SplatPatternTree | UnionPatternTree | HiddenListPatternTree | HiddenTuplePatternTree | DictPatternTree | StringTree | ConcatenatedStringTree | TrueTree | FalseTree | NoneTree | ComplexPatternTree | DottedNameTree;
 
 export type ExpressionWithinForInClause =
   | Expression
@@ -2035,28 +2239,35 @@ export type ExpressionWithinForInClauseTree = ExpressionTree | LambdaWithinForIn
 
 export type LeftHandSide =
   | Pattern
+  | PatternList
 ;
 
-export type LeftHandSideConfig = PatternConfig;
-export type LeftHandSideFromInput = PatternFromInput;
+export type LeftHandSideConfig = PatternConfig | PatternListConfig;
+export type LeftHandSideFromInput = PatternFromInput | PatternListFromInput;
 export type LeftHandSideTree = PatternTree | PatternListTree;
 
 export type RightHandSide =
   | Expression
+  | ExpressionList
   | Assignment
   | AugmentedAssignment
+  | PatternList
+  | Yield
 ;
 
-export type RightHandSideConfig = ExpressionConfig | AssignmentConfig | AugmentedAssignmentConfig;
-export type RightHandSideFromInput = ExpressionFromInput | AssignmentFromInput | AugmentedAssignmentFromInput;
+export type RightHandSideConfig = ExpressionConfig | ExpressionListConfig | AssignmentConfig | AugmentedAssignmentConfig | PatternListConfig | YieldConfig;
+export type RightHandSideFromInput = ExpressionFromInput | ExpressionListFromInput | AssignmentFromInput | AugmentedAssignmentFromInput | PatternListFromInput | YieldFromInput;
 export type RightHandSideTree = ExpressionTree | ExpressionListTree | AssignmentTree | AugmentedAssignmentTree | PatternListTree | YieldTree;
 
 export type FExpression =
   | Expression
+  | ExpressionList
+  | PatternList
+  | Yield
 ;
 
-export type FExpressionConfig = ExpressionConfig;
-export type FExpressionFromInput = ExpressionFromInput;
+export type FExpressionConfig = ExpressionConfig | ExpressionListConfig | PatternListConfig | YieldConfig;
+export type FExpressionFromInput = ExpressionFromInput | ExpressionListFromInput | PatternListFromInput | YieldFromInput;
 export type FExpressionTree = ExpressionTree | ExpressionListTree | PatternListTree | YieldTree;
 
 export type PythonNode =
@@ -2064,12 +2275,14 @@ export type PythonNode =
   | ImportPrefix
   | RelativeImport
   | ImportFromStatement
-  | ImportList
+  | HiddenImportList
   | AliasedImport
   | PrintStatement
   | Chevron
+  | AssertStatement
   | ExpressionStatement
   | NamedExpression
+  | RaiseStatement
   | IfStatement
   | ElifClause
   | ElseClause
@@ -2078,6 +2291,7 @@ export type PythonNode =
   | ForStatement
   | WhileStatement
   | TryStatement
+  | ExceptClause
   | FinallyClause
   | WithStatement
   | WithClause
@@ -2085,17 +2299,29 @@ export type PythonNode =
   | FunctionDefinition
   | ListSplat
   | DictionarySplat
+  | GlobalStatement
+  | NonlocalStatement
   | ExecStatement
   | TypeAliasStatement
   | ClassDefinition
+  | TypeParameter
   | ParenthesizedListSplat
+  | ArgumentList
   | DecoratedDefinition
   | Decorator
+  | ExpressionList
+  | DottedName
   | CasePattern
+  | HiddenAsPattern
+  | HiddenListPattern
+  | HiddenTuplePattern
+  | DictPattern
   | KeywordPattern
   | SplatPattern
   | ClassPattern
   | ComplexPattern
+  | HiddenParameters
+  | HiddenPatterns
   | Parameter
   | Pattern
   | DefaultParameter
@@ -2114,6 +2340,8 @@ export type PythonNode =
   | LambdaWithinForInClause
   | Assignment
   | AugmentedAssignment
+  | PatternList
+  | Yield
   | Attribute
   | Subscript
   | Slice
@@ -2126,15 +2354,19 @@ export type PythonNode =
   | ConstrainedType
   | MemberType
   | KeywordArgument
+  | Dictionary
   | Pair
   | ListComprehension
   | DictionaryComprehension
   | SetComprehension
   | GeneratorExpression
+  | HiddenComprehensionClauses
   | ParenthesizedExpression
+  | HiddenCollectionElements
   | ForInClause
   | IfClause
   | ConditionalExpression
+  | ConcatenatedString
   | String
   | StringContent
   | Interpolation
@@ -2153,12 +2385,14 @@ export interface KindMap {
   'import_prefix': ImportPrefix;
   'relative_import': RelativeImport;
   'import_from_statement': ImportFromStatement;
-  '_import_list': ImportList;
+  '_import_list': HiddenImportList;
   'aliased_import': AliasedImport;
   'print_statement': PrintStatement;
   'chevron': Chevron;
+  'assert_statement': AssertStatement;
   'expression_statement': ExpressionStatement;
   'named_expression': NamedExpression;
+  'raise_statement': RaiseStatement;
   'if_statement': IfStatement;
   'elif_clause': ElifClause;
   'else_clause': ElseClause;
@@ -2167,6 +2401,7 @@ export interface KindMap {
   'for_statement': ForStatement;
   'while_statement': WhileStatement;
   'try_statement': TryStatement;
+  'except_clause': ExceptClause;
   'finally_clause': FinallyClause;
   'with_statement': WithStatement;
   'with_clause': WithClause;
@@ -2174,17 +2409,29 @@ export interface KindMap {
   'function_definition': FunctionDefinition;
   'list_splat': ListSplat;
   'dictionary_splat': DictionarySplat;
+  'global_statement': GlobalStatement;
+  'nonlocal_statement': NonlocalStatement;
   'exec_statement': ExecStatement;
   'type_alias_statement': TypeAliasStatement;
   'class_definition': ClassDefinition;
+  'type_parameter': TypeParameter;
   'parenthesized_list_splat': ParenthesizedListSplat;
+  'argument_list': ArgumentList;
   'decorated_definition': DecoratedDefinition;
   'decorator': Decorator;
+  'expression_list': ExpressionList;
+  'dotted_name': DottedName;
   'case_pattern': CasePattern;
+  '_as_pattern': HiddenAsPattern;
+  '_list_pattern': HiddenListPattern;
+  '_tuple_pattern': HiddenTuplePattern;
+  'dict_pattern': DictPattern;
   'keyword_pattern': KeywordPattern;
   'splat_pattern': SplatPattern;
   'class_pattern': ClassPattern;
   'complex_pattern': ComplexPattern;
+  '_parameters': HiddenParameters;
+  '_patterns': HiddenPatterns;
   'parameter': Parameter;
   'pattern': Pattern;
   'default_parameter': DefaultParameter;
@@ -2203,6 +2450,8 @@ export interface KindMap {
   'lambda_within_for_in_clause': LambdaWithinForInClause;
   'assignment': Assignment;
   'augmented_assignment': AugmentedAssignment;
+  'pattern_list': PatternList;
+  'yield': Yield;
   'attribute': Attribute;
   'subscript': Subscript;
   'slice': Slice;
@@ -2215,15 +2464,19 @@ export interface KindMap {
   'constrained_type': ConstrainedType;
   'member_type': MemberType;
   'keyword_argument': KeywordArgument;
+  'dictionary': Dictionary;
   'pair': Pair;
   'list_comprehension': ListComprehension;
   'dictionary_comprehension': DictionaryComprehension;
   'set_comprehension': SetComprehension;
   'generator_expression': GeneratorExpression;
+  '_comprehension_clauses': HiddenComprehensionClauses;
   'parenthesized_expression': ParenthesizedExpression;
+  '_collection_elements': HiddenCollectionElements;
   'for_in_clause': ForInClause;
   'if_clause': IfClause;
   'conditional_expression': ConditionalExpression;
+  'concatenated_string': ConcatenatedString;
   'string': String;
   'string_content': StringContent;
   'interpolation': Interpolation;
@@ -2246,7 +2499,7 @@ export interface KindMap {
   'comment': Comment;
   'import': Import;
   'from': From;
-  '__future__': FutureU;
+  '__future__': HiddenUFutureU;
   'as': As;
   'print': Print;
   'assert': Assert;
@@ -2274,7 +2527,7 @@ export interface KindMap {
   'nonlocal': Nonlocal;
   'exec': Exec;
   'class': Class;
-  '_': Anonymous;
+  '_': Hidden;
   'not': Not;
   'and': And;
   'or': Or;
@@ -2309,12 +2562,14 @@ export interface ConfigMap {
   'import_prefix': ImportPrefixConfig;
   'relative_import': RelativeImportConfig;
   'import_from_statement': ImportFromStatementConfig;
-  '_import_list': ImportListConfig;
+  '_import_list': HiddenImportListConfig;
   'aliased_import': AliasedImportConfig;
   'print_statement': PrintStatementConfig;
   'chevron': ChevronConfig;
+  'assert_statement': AssertStatementConfig;
   'expression_statement': ExpressionStatementConfig;
   'named_expression': NamedExpressionConfig;
+  'raise_statement': RaiseStatementConfig;
   'if_statement': IfStatementConfig;
   'elif_clause': ElifClauseConfig;
   'else_clause': ElseClauseConfig;
@@ -2323,6 +2578,7 @@ export interface ConfigMap {
   'for_statement': ForStatementConfig;
   'while_statement': WhileStatementConfig;
   'try_statement': TryStatementConfig;
+  'except_clause': ExceptClauseConfig;
   'finally_clause': FinallyClauseConfig;
   'with_statement': WithStatementConfig;
   'with_clause': WithClauseConfig;
@@ -2330,17 +2586,29 @@ export interface ConfigMap {
   'function_definition': FunctionDefinitionConfig;
   'list_splat': ListSplatConfig;
   'dictionary_splat': DictionarySplatConfig;
+  'global_statement': GlobalStatementConfig;
+  'nonlocal_statement': NonlocalStatementConfig;
   'exec_statement': ExecStatementConfig;
   'type_alias_statement': TypeAliasStatementConfig;
   'class_definition': ClassDefinitionConfig;
+  'type_parameter': TypeParameterConfig;
   'parenthesized_list_splat': ParenthesizedListSplatConfig;
+  'argument_list': ArgumentListConfig;
   'decorated_definition': DecoratedDefinitionConfig;
   'decorator': DecoratorConfig;
+  'expression_list': ExpressionListConfig;
+  'dotted_name': DottedNameConfig;
   'case_pattern': CasePatternConfig;
+  '_as_pattern': HiddenAsPatternConfig;
+  '_list_pattern': HiddenListPatternConfig;
+  '_tuple_pattern': HiddenTuplePatternConfig;
+  'dict_pattern': DictPatternConfig;
   'keyword_pattern': KeywordPatternConfig;
   'splat_pattern': SplatPatternConfig;
   'class_pattern': ClassPatternConfig;
   'complex_pattern': ComplexPatternConfig;
+  '_parameters': HiddenParametersConfig;
+  '_patterns': HiddenPatternsConfig;
   'parameter': ParameterConfig;
   'pattern': PatternConfig;
   'default_parameter': DefaultParameterConfig;
@@ -2359,6 +2627,8 @@ export interface ConfigMap {
   'lambda_within_for_in_clause': LambdaWithinForInClauseConfig;
   'assignment': AssignmentConfig;
   'augmented_assignment': AugmentedAssignmentConfig;
+  'pattern_list': PatternListConfig;
+  'yield': YieldConfig;
   'attribute': AttributeConfig;
   'subscript': SubscriptConfig;
   'slice': SliceConfig;
@@ -2371,15 +2641,19 @@ export interface ConfigMap {
   'constrained_type': ConstrainedTypeConfig;
   'member_type': MemberTypeConfig;
   'keyword_argument': KeywordArgumentConfig;
+  'dictionary': DictionaryConfig;
   'pair': PairConfig;
   'list_comprehension': ListComprehensionConfig;
   'dictionary_comprehension': DictionaryComprehensionConfig;
   'set_comprehension': SetComprehensionConfig;
   'generator_expression': GeneratorExpressionConfig;
+  '_comprehension_clauses': HiddenComprehensionClausesConfig;
   'parenthesized_expression': ParenthesizedExpressionConfig;
+  '_collection_elements': HiddenCollectionElementsConfig;
   'for_in_clause': ForInClauseConfig;
   'if_clause': IfClauseConfig;
   'conditional_expression': ConditionalExpressionConfig;
+  'concatenated_string': ConcatenatedStringConfig;
   'string': StringConfig;
   'string_content': StringContentConfig;
   'interpolation': InterpolationConfig;
@@ -2398,12 +2672,14 @@ export interface FromInputMap {
   'import_prefix': ImportPrefixFromInput;
   'relative_import': RelativeImportFromInput;
   'import_from_statement': ImportFromStatementFromInput;
-  '_import_list': ImportListFromInput;
+  '_import_list': HiddenImportListFromInput;
   'aliased_import': AliasedImportFromInput;
   'print_statement': PrintStatementFromInput;
   'chevron': ChevronFromInput;
+  'assert_statement': AssertStatementFromInput;
   'expression_statement': ExpressionStatementFromInput;
   'named_expression': NamedExpressionFromInput;
+  'raise_statement': RaiseStatementFromInput;
   'if_statement': IfStatementFromInput;
   'elif_clause': ElifClauseFromInput;
   'else_clause': ElseClauseFromInput;
@@ -2412,6 +2688,7 @@ export interface FromInputMap {
   'for_statement': ForStatementFromInput;
   'while_statement': WhileStatementFromInput;
   'try_statement': TryStatementFromInput;
+  'except_clause': ExceptClauseFromInput;
   'finally_clause': FinallyClauseFromInput;
   'with_statement': WithStatementFromInput;
   'with_clause': WithClauseFromInput;
@@ -2419,17 +2696,29 @@ export interface FromInputMap {
   'function_definition': FunctionDefinitionFromInput;
   'list_splat': ListSplatFromInput;
   'dictionary_splat': DictionarySplatFromInput;
+  'global_statement': GlobalStatementFromInput;
+  'nonlocal_statement': NonlocalStatementFromInput;
   'exec_statement': ExecStatementFromInput;
   'type_alias_statement': TypeAliasStatementFromInput;
   'class_definition': ClassDefinitionFromInput;
+  'type_parameter': TypeParameterFromInput;
   'parenthesized_list_splat': ParenthesizedListSplatFromInput;
+  'argument_list': ArgumentListFromInput;
   'decorated_definition': DecoratedDefinitionFromInput;
   'decorator': DecoratorFromInput;
+  'expression_list': ExpressionListFromInput;
+  'dotted_name': DottedNameFromInput;
   'case_pattern': CasePatternFromInput;
+  '_as_pattern': HiddenAsPatternFromInput;
+  '_list_pattern': HiddenListPatternFromInput;
+  '_tuple_pattern': HiddenTuplePatternFromInput;
+  'dict_pattern': DictPatternFromInput;
   'keyword_pattern': KeywordPatternFromInput;
   'splat_pattern': SplatPatternFromInput;
   'class_pattern': ClassPatternFromInput;
   'complex_pattern': ComplexPatternFromInput;
+  '_parameters': HiddenParametersFromInput;
+  '_patterns': HiddenPatternsFromInput;
   'parameter': ParameterFromInput;
   'pattern': PatternFromInput;
   'default_parameter': DefaultParameterFromInput;
@@ -2448,6 +2737,8 @@ export interface FromInputMap {
   'lambda_within_for_in_clause': LambdaWithinForInClauseFromInput;
   'assignment': AssignmentFromInput;
   'augmented_assignment': AugmentedAssignmentFromInput;
+  'pattern_list': PatternListFromInput;
+  'yield': YieldFromInput;
   'attribute': AttributeFromInput;
   'subscript': SubscriptFromInput;
   'slice': SliceFromInput;
@@ -2460,15 +2751,19 @@ export interface FromInputMap {
   'constrained_type': ConstrainedTypeFromInput;
   'member_type': MemberTypeFromInput;
   'keyword_argument': KeywordArgumentFromInput;
+  'dictionary': DictionaryFromInput;
   'pair': PairFromInput;
   'list_comprehension': ListComprehensionFromInput;
   'dictionary_comprehension': DictionaryComprehensionFromInput;
   'set_comprehension': SetComprehensionFromInput;
   'generator_expression': GeneratorExpressionFromInput;
+  '_comprehension_clauses': HiddenComprehensionClausesFromInput;
   'parenthesized_expression': ParenthesizedExpressionFromInput;
+  '_collection_elements': HiddenCollectionElementsFromInput;
   'for_in_clause': ForInClauseFromInput;
   'if_clause': IfClauseFromInput;
   'conditional_expression': ConditionalExpressionFromInput;
+  'concatenated_string': ConcatenatedStringFromInput;
   'string': StringFromInput;
   'string_content': StringContentFromInput;
   'interpolation': InterpolationFromInput;

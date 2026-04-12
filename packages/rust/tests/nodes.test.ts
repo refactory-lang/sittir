@@ -109,6 +109,17 @@ describe('inner_attribute_item', () => {
   });
 });
 
+describe('attribute', () => {
+  it('factory produces correct type', () => {
+    const node = ir.attribute({});
+    expect(node.type).toBe('attribute');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.attribute({});
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
 describe('mod_item', () => {
   it('factory produces correct type', () => {
     const node = ir.modItem({ visibilityModifier: { type: 'visibility_modifier', text: 'test' } as any, name: { type: 'identifier', text: 'test' } as any, body: { type: 'declaration_list', text: 'test' } as any });
@@ -171,6 +182,13 @@ describe('enum_item', () => {
   });
 });
 
+describe('enum_variant_list', () => {
+  it('factory produces correct type', () => {
+    const node = ir.enumVariantList();
+    expect(node.type).toBe('enum_variant_list');
+  });
+});
+
 describe('enum_variant', () => {
   it('factory produces correct type', () => {
     const node = ir.enumVariant({ visibilityModifier: { type: 'visibility_modifier', text: 'test' } as any, name: { type: 'identifier', text: 'test' } as any, body: { type: 'field_declaration_list', text: 'test' } as any });
@@ -179,6 +197,13 @@ describe('enum_variant', () => {
   it('render produces non-empty string', () => {
     const node = ir.enumVariant({ visibilityModifier: { type: 'visibility_modifier', text: 'test' } as any, name: { type: 'identifier', text: 'test' } as any, body: { type: 'field_declaration_list', text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('field_declaration_list', () => {
+  it('factory produces correct type', () => {
+    const node = ir.fieldDeclarationList();
+    expect(node.type).toBe('field_declaration_list');
   });
 });
 
@@ -277,6 +302,13 @@ describe('function_modifiers', () => {
   });
 });
 
+describe('where_clause', () => {
+  it('factory produces correct type', () => {
+    const node = ir.whereClause();
+    expect(node.type).toBe('where_clause');
+  });
+});
+
 describe('where_predicate', () => {
   it('factory produces correct type', () => {
     const node = ir.wherePredicate({ left: { type: 'lifetime', text: 'test' } as any, bounds: { type: 'trait_bounds', text: 'test' } as any });
@@ -321,6 +353,13 @@ describe('associated_type', () => {
   });
 });
 
+describe('trait_bounds', () => {
+  it('factory produces correct type', () => {
+    const node = ir.traitBounds();
+    expect(node.type).toBe('trait_bounds');
+  });
+});
+
 describe('higher_ranked_trait_bound', () => {
   it('factory produces correct type', () => {
     const node = ir.higherRankedTraitBound({ typeParameters: { type: 'type_parameters', text: 'test' } as any, type: { type: '_type', text: 'test' } as any });
@@ -329,6 +368,13 @@ describe('higher_ranked_trait_bound', () => {
   it('render produces non-empty string', () => {
     const node = ir.higherRankedTraitBound({ typeParameters: { type: 'type_parameters', text: 'test' } as any, type: { type: '_type', text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('type_parameters', () => {
+  it('factory produces correct type', () => {
+    const node = ir.typeParameters();
+    expect(node.type).toBe('type_parameters');
   });
 });
 
@@ -417,6 +463,13 @@ describe('use_wildcard', () => {
   it('render produces non-empty string', () => {
     const node = ir.useWildcard({ path: 'test' as any });
     expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('parameters', () => {
+  it('factory produces correct type', () => {
+    const node = ir.parameters();
+    expect(node.type).toBe('parameters');
   });
 });
 
@@ -511,6 +564,13 @@ describe('array_type', () => {
   });
 });
 
+describe('for_lifetimes', () => {
+  it('factory produces correct type', () => {
+    const node = ir.forLifetimes();
+    expect(node.type).toBe('for_lifetimes');
+  });
+});
+
 describe('function_type', () => {
   it('factory produces correct type', () => {
     const node = ir.functionType({ forLifetimes: { type: 'for_lifetimes', text: 'test' } as any, functionModifiers: 'test' as any });
@@ -563,6 +623,20 @@ describe('bounded_type', () => {
   it('render produces non-empty string', () => {
     const node = ir.boundedType({ left: { type: 'lifetime', text: 'test' } as any, right: 'test' as any });
     expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('use_bounds', () => {
+  it('factory produces correct type', () => {
+    const node = ir.useBounds();
+    expect(node.type).toBe('use_bounds');
+  });
+});
+
+describe('type_arguments', () => {
+  it('factory produces correct type', () => {
+    const node = ir.typeArguments();
+    expect(node.type).toBe('type_arguments');
   });
 });
 
@@ -817,6 +891,13 @@ describe('call_expression', () => {
   });
 });
 
+describe('arguments', () => {
+  it('factory produces correct type', () => {
+    const node = ir.arguments_();
+    expect(node.type).toBe('arguments');
+  });
+});
+
 describe('array_expression', () => {
   it('factory produces correct type', () => {
     const node = ir.arrayExpression({ attributes: 'test' as any, elements: 'test' as any, length: { type: '_expression', text: 'test' } as any });
@@ -847,6 +928,13 @@ describe('struct_expression', () => {
   it('render produces non-empty string', () => {
     const node = ir.structExpression({ name: { type: '_type_identifier', text: 'test' } as any, body: { type: 'field_initializer_list', text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('field_initializer_list', () => {
+  it('factory produces correct type', () => {
+    const node = ir.fieldInitializerList();
+    expect(node.type).toBe('field_initializer_list');
   });
 });
 
@@ -894,6 +982,13 @@ describe('let_condition', () => {
   });
 });
 
+describe('else_clause', () => {
+  it('factory produces correct type', () => {
+    const node = ir.elseClause();
+    expect(node.type).toBe('else_clause');
+  });
+});
+
 describe('match_expression', () => {
   it('factory produces correct type', () => {
     const node = ir.matchExpression({ value: { type: '_expression', text: 'test' } as any, body: { type: 'match_block', text: 'test' } as any });
@@ -902,6 +997,13 @@ describe('match_expression', () => {
   it('render produces non-empty string', () => {
     const node = ir.matchExpression({ value: { type: '_expression', text: 'test' } as any, body: { type: 'match_block', text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('match_block', () => {
+  it('factory produces correct type', () => {
+    const node = ir.matchBlock();
+    expect(node.type).toBe('match_block');
   });
 });
 
@@ -923,6 +1025,17 @@ describe('last_match_arm', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.lastMatchArm({ pattern: { type: 'match_pattern', text: 'test' } as any, value: { type: '_expression', text: 'test' } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('match_pattern', () => {
+  it('factory produces correct type', () => {
+    const node = ir.matchPattern({});
+    expect(node.type).toBe('match_pattern');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.matchPattern({});
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -979,6 +1092,13 @@ describe('closure_expression', () => {
   it('render produces non-empty string', () => {
     const node = ir.closureExpression({ parameters: { type: 'closure_parameters', text: 'test' } as any, body: { type: 'block', text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('closure_parameters', () => {
+  it('factory produces correct type', () => {
+    const node = ir.closureParameters();
+    expect(node.type).toBe('closure_parameters');
   });
 });
 
@@ -1103,6 +1223,13 @@ describe('generic_pattern', () => {
   });
 });
 
+describe('tuple_pattern', () => {
+  it('factory produces correct type', () => {
+    const node = ir.tuplePattern();
+    expect(node.type).toBe('tuple_pattern');
+  });
+});
+
 describe('tuple_struct_pattern', () => {
   it('factory produces correct type', () => {
     const node = ir.tupleStructPattern({ type: { type: 'identifier', text: 'test' } as any });
@@ -1202,6 +1329,13 @@ describe('negative_literal', () => {
   });
 });
 
+describe('string_literal', () => {
+  it('factory produces correct type', () => {
+    const node = ir.stringLiteral();
+    expect(node.type).toBe('string_literal');
+  });
+});
+
 describe('raw_string_literal', () => {
   it('factory produces correct type', () => {
     const node = ir.rawStringLiteral({ rawStringLiteralStart: { type: '_raw_string_literal_start', text: 'test' } as any, stringContent: { type: 'raw_string_literal_content', text: 'test' } as any, rawStringLiteralEnd: { type: '_raw_string_literal_end', text: 'test' } as any });
@@ -1246,6 +1380,20 @@ describe('shebang', () => {
     const node = ir.shebang('test');
     expect(node.type).toBe('shebang');
     expect(node.text).toBe('test');
+  });
+});
+
+describe('_type_identifier', () => {
+  it('factory produces correct type', () => {
+    const node = ir.hiddenTypeIdentifier();
+    expect(node.type).toBe('_type_identifier');
+  });
+});
+
+describe('_field_identifier', () => {
+  it('factory produces correct type', () => {
+    const node = ir.hiddenFieldIdentifier();
+    expect(node.type).toBe('_field_identifier');
   });
 });
 

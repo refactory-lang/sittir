@@ -25,22 +25,22 @@ import { validateFrom } from '../validate-from.ts'
  */
 const FLOORS = {
     python: {
-        factoryPass: 45,
-        factoryTotal: 70,
-        fromPass: 56,
-        fromTotal: 86,
+        factoryPass: 54,
+        factoryTotal: 84,
+        fromPass: 67,
+        fromTotal: 100,
     },
     rust: {
-        factoryPass: 40,
-        factoryTotal: 104,
-        fromPass: 57,
-        fromTotal: 117,
+        factoryPass: 56,
+        factoryTotal: 122,
+        fromPass: 72,
+        fromTotal: 135,
     },
     typescript: {
-        factoryPass: 68,
-        factoryTotal: 93,
-        fromPass: 42,
-        fromTotal: 104,
+        factoryPass: 90,
+        factoryTotal: 115,
+        fromPass: 53,
+        fromTotal: 126,
     },
 } as const
 

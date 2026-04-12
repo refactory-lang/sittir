@@ -105,13 +105,16 @@ const _wrapTable: Record<string, (data: AnyNodeData, tree: TreeHandle) => unknow
   'token_tree': (d, t) => wrapTokenTree(d, t),
   'attribute_item': (d, t) => wrapAttributeItem(d, t),
   'inner_attribute_item': (d, t) => wrapInnerAttributeItem(d, t),
+  'attribute': (d, t) => wrapAttribute(d, t),
   'mod_item': (d, t) => wrapModItem(d, t),
   'foreign_mod_item': (d, t) => wrapForeignModItem(d, t),
   'declaration_list': (d, t) => wrapDeclarationList(d, t),
   'struct_item': (d, t) => wrapStructItem(d, t),
   'union_item': (d, t) => wrapUnionItem(d, t),
   'enum_item': (d, t) => wrapEnumItem(d, t),
+  'enum_variant_list': (d, t) => wrapEnumVariantList(d, t),
   'enum_variant': (d, t) => wrapEnumVariant(d, t),
+  'field_declaration_list': (d, t) => wrapFieldDeclarationList(d, t),
   'field_declaration': (d, t) => wrapFieldDeclaration(d, t),
   'ordered_field_declaration_list': (d, t) => wrapOrderedFieldDeclarationList(d, t),
   'extern_crate_declaration': (d, t) => wrapExternCrateDeclaration(d, t),
@@ -121,11 +124,14 @@ const _wrapTable: Record<string, (data: AnyNodeData, tree: TreeHandle) => unknow
   'function_item': (d, t) => wrapFunctionItem(d, t),
   'function_signature_item': (d, t) => wrapFunctionSignatureItem(d, t),
   'function_modifiers': (d, t) => wrapFunctionModifiers(d, t),
+  'where_clause': (d, t) => wrapWhereClause(d, t),
   'where_predicate': (d, t) => wrapWherePredicate(d, t),
   'impl_item': (d, t) => wrapImplItem(d, t),
   'trait_item': (d, t) => wrapTraitItem(d, t),
   'associated_type': (d, t) => wrapAssociatedType(d, t),
+  'trait_bounds': (d, t) => wrapTraitBounds(d, t),
   'higher_ranked_trait_bound': (d, t) => wrapHigherRankedTraitBound(d, t),
+  'type_parameters': (d, t) => wrapTypeParameters(d, t),
   'const_parameter': (d, t) => wrapConstParameter(d, t),
   'type_parameter': (d, t) => wrapTypeParameter(d, t),
   'lifetime_parameter': (d, t) => wrapLifetimeParameter(d, t),
@@ -134,6 +140,7 @@ const _wrapTable: Record<string, (data: AnyNodeData, tree: TreeHandle) => unknow
   'scoped_use_list': (d, t) => wrapScopedUseList(d, t),
   'use_as_clause': (d, t) => wrapUseAsClause(d, t),
   'use_wildcard': (d, t) => wrapUseWildcard(d, t),
+  'parameters': (d, t) => wrapParameters(d, t),
   'self_parameter': (d, t) => wrapSelfParameter(d, t),
   'variadic_parameter': (d, t) => wrapVariadicParameter(d, t),
   'parameter': (d, t) => wrapParameter(d, t),
@@ -143,11 +150,14 @@ const _wrapTable: Record<string, (data: AnyNodeData, tree: TreeHandle) => unknow
   'qualified_type': (d, t) => wrapQualifiedType(d, t),
   'lifetime': (d, t) => wrapLifetime(d, t),
   'array_type': (d, t) => wrapArrayType(d, t),
+  'for_lifetimes': (d, t) => wrapForLifetimes(d, t),
   'function_type': (d, t) => wrapFunctionType(d, t),
   'generic_function': (d, t) => wrapGenericFunction(d, t),
   'generic_type': (d, t) => wrapGenericType(d, t),
   'generic_type_with_turbofish': (d, t) => wrapGenericTypeWithTurbofish(d, t),
   'bounded_type': (d, t) => wrapBoundedType(d, t),
+  'use_bounds': (d, t) => wrapUseBounds(d, t),
+  'type_arguments': (d, t) => wrapTypeArguments(d, t),
   'type_binding': (d, t) => wrapTypeBinding(d, t),
   'reference_type': (d, t) => wrapReferenceType(d, t),
   'pointer_type': (d, t) => wrapPointerType(d, t),
@@ -169,21 +179,27 @@ const _wrapTable: Record<string, (data: AnyNodeData, tree: TreeHandle) => unknow
   'return_expression': (d, t) => wrapReturnExpression(d, t),
   'yield_expression': (d, t) => wrapYieldExpression(d, t),
   'call_expression': (d, t) => wrapCallExpression(d, t),
+  'arguments': (d, t) => wrapArguments(d, t),
   'array_expression': (d, t) => wrapArrayExpression(d, t),
   'tuple_expression': (d, t) => wrapTupleExpression(d, t),
   'struct_expression': (d, t) => wrapStructExpression(d, t),
+  'field_initializer_list': (d, t) => wrapFieldInitializerList(d, t),
   'shorthand_field_initializer': (d, t) => wrapShorthandFieldInitializer(d, t),
   'field_initializer': (d, t) => wrapFieldInitializer(d, t),
   'if_expression': (d, t) => wrapIfExpression(d, t),
   'let_condition': (d, t) => wrapLetCondition(d, t),
+  'else_clause': (d, t) => wrapElseClause(d, t),
   'match_expression': (d, t) => wrapMatchExpression(d, t),
+  'match_block': (d, t) => wrapMatchBlock(d, t),
   'match_arm': (d, t) => wrapMatchArm(d, t),
   'last_match_arm': (d, t) => wrapLastMatchArm(d, t),
+  'match_pattern': (d, t) => wrapMatchPattern(d, t),
   'while_expression': (d, t) => wrapWhileExpression(d, t),
   'loop_expression': (d, t) => wrapLoopExpression(d, t),
   'for_expression': (d, t) => wrapForExpression(d, t),
   'const_block': (d, t) => wrapConstBlock(d, t),
   'closure_expression': (d, t) => wrapClosureExpression(d, t),
+  'closure_parameters': (d, t) => wrapClosureParameters(d, t),
   'label': (d, t) => wrapLabel(d, t),
   'break_expression': (d, t) => wrapBreakExpression(d, t),
   'continue_expression': (d, t) => wrapContinueExpression(d, t),
@@ -195,6 +211,7 @@ const _wrapTable: Record<string, (data: AnyNodeData, tree: TreeHandle) => unknow
   'try_block': (d, t) => wrapTryBlock(d, t),
   'block': (d, t) => wrapBlock(d, t),
   'generic_pattern': (d, t) => wrapGenericPattern(d, t),
+  'tuple_pattern': (d, t) => wrapTuplePattern(d, t),
   'tuple_struct_pattern': (d, t) => wrapTupleStructPattern(d, t),
   'struct_pattern': (d, t) => wrapStructPattern(d, t),
   'field_pattern': (d, t) => wrapFieldPattern(d, t),
@@ -204,11 +221,14 @@ const _wrapTable: Record<string, (data: AnyNodeData, tree: TreeHandle) => unknow
   'reference_pattern': (d, t) => wrapReferencePattern(d, t),
   'or_pattern': (d, t) => wrapOrPattern(d, t),
   'negative_literal': (d, t) => wrapNegativeLiteral(d, t),
+  'string_literal': (d, t) => wrapStringLiteral(d, t),
   'raw_string_literal': (d, t) => wrapRawStringLiteral(d, t),
   'escape_sequence': (d, t) => wrapEscapeSequence(d, t),
   'comment': (d, t) => wrapComment(d, t),
   'line_comment': (d, t) => wrapLineComment(d, t),
   'block_comment': (d, t) => wrapBlockComment(d, t),
+  '_type_identifier': (d, t) => wrapTypeIdentifier(d, t),
+  '_field_identifier': (d, t) => wrapFieldIdentifier(d, t),
   'let_chain': (d, t) => wrapLetChain(d, t),
   'fragment_specifier': (d) => d,
   'mutable_specifier': (d) => d,
@@ -377,6 +397,14 @@ export function wrapInnerAttributeItem(data: AnyNodeData, tree: TreeHandle): unk
   };
 }
 
+export function wrapAttribute(data: AnyNodeData, tree: TreeHandle): unknown {
+  return {
+    ...data,
+    get value() { return drillIn(data.fields?.['value'], tree); },
+    get arguments() { return drillIn(data.fields?.['arguments'], tree); },
+  };
+}
+
 export function wrapModItem(data: AnyNodeData, tree: TreeHandle): unknown {
   promote(data, 'visibility_modifier');
   return {
@@ -409,8 +437,8 @@ export function wrapStructItem(data: AnyNodeData, tree: TreeHandle): unknown {
   promoteFirstAnon(data, 'where_clause');
   return {
     ...data,
-    get name() { return (data.fields?.['name'] as AnyNodeData | undefined)?.text; },
-    get typeParameters() { return (data.fields?.['type_parameters'] as AnyNodeData | undefined)?.text; },
+    get name() { return drillIn(data.fields?.['name'], tree); },
+    get typeParameters() { return drillIn(data.fields?.['type_parameters'], tree); },
     get body() { return drillIn(data.fields?.['body'], tree); },
     get visibilityModifier() { return drillIn(data.fields?.['visibility_modifier'], tree); },
     get whereClause() { return drillIn(data.fields?.['where_clause'], tree); },
@@ -423,9 +451,9 @@ export function wrapUnionItem(data: AnyNodeData, tree: TreeHandle): unknown {
   promoteFirstAnon(data, 'where_clause');
   return {
     ...data,
-    get name() { return (data.fields?.['name'] as AnyNodeData | undefined)?.text; },
-    get typeParameters() { return (data.fields?.['type_parameters'] as AnyNodeData | undefined)?.text; },
-    get body() { return (data.fields?.['body'] as AnyNodeData | undefined)?.text; },
+    get name() { return drillIn(data.fields?.['name'], tree); },
+    get typeParameters() { return drillIn(data.fields?.['type_parameters'], tree); },
+    get body() { return drillIn(data.fields?.['body'], tree); },
     get visibilityModifier() { return drillIn(data.fields?.['visibility_modifier'], tree); },
     get whereClause() { return drillIn(data.fields?.['where_clause'], tree); },
     get child() { return drillIn(data.children?.[0], tree); },
@@ -437,12 +465,20 @@ export function wrapEnumItem(data: AnyNodeData, tree: TreeHandle): unknown {
   promoteFirstAnon(data, 'where_clause');
   return {
     ...data,
-    get name() { return (data.fields?.['name'] as AnyNodeData | undefined)?.text; },
-    get typeParameters() { return (data.fields?.['type_parameters'] as AnyNodeData | undefined)?.text; },
-    get body() { return (data.fields?.['body'] as AnyNodeData | undefined)?.text; },
+    get name() { return drillIn(data.fields?.['name'], tree); },
+    get typeParameters() { return drillIn(data.fields?.['type_parameters'], tree); },
+    get body() { return drillIn(data.fields?.['body'], tree); },
     get visibilityModifier() { return drillIn(data.fields?.['visibility_modifier'], tree); },
     get whereClause() { return drillIn(data.fields?.['where_clause'], tree); },
     get child() { return drillIn(data.children?.[0], tree); },
+  };
+}
+
+export function wrapEnumVariantList(data: AnyNodeData, tree: TreeHandle): unknown {
+  return {
+    ...data,
+    get attributeItem() { return drillInAll(data.fields?.['attributeItem'], tree); },
+    get enumVariant() { return drillInAll(data.fields?.['enumVariant'], tree); },
   };
 }
 
@@ -457,11 +493,19 @@ export function wrapEnumVariant(data: AnyNodeData, tree: TreeHandle): unknown {
   };
 }
 
+export function wrapFieldDeclarationList(data: AnyNodeData, tree: TreeHandle): unknown {
+  return {
+    ...data,
+    get attributeItem() { return drillInAll(data.fields?.['attributeItem'], tree); },
+    get fieldDeclaration() { return drillInAll(data.fields?.['fieldDeclaration'], tree); },
+  };
+}
+
 export function wrapFieldDeclaration(data: AnyNodeData, tree: TreeHandle): unknown {
   promote(data, 'visibility_modifier');
   return {
     ...data,
-    get name() { return (data.fields?.['name'] as AnyNodeData | undefined)?.text; },
+    get name() { return drillIn(data.fields?.['name'], tree); },
     get type() { return drillIn(data.fields?.['type'], tree); },
     get visibilityModifier() { return drillIn(data.fields?.['visibility_modifier'], tree); },
   };
@@ -520,10 +564,10 @@ export function wrapStaticItem(data: AnyNodeData, tree: TreeHandle): unknown {
 export function wrapTypeItem(data: AnyNodeData, tree: TreeHandle): unknown {
   promote(data, 'visibility_modifier');
   promoteFirstAnon(data, 'where_clause');
-  promoteFirstAnon(data, 'trailing_where_clause');
+  promoteNamed(data, 'trailing_where_clause', ["_type_identifier"]);
   return {
     ...data,
-    get typeParameters() { return (data.fields?.['type_parameters'] as AnyNodeData | undefined)?.text; },
+    get typeParameters() { return drillIn(data.fields?.['type_parameters'], tree); },
     get type() { return drillIn(data.fields?.['type'], tree); },
     get visibilityModifier() { return drillIn(data.fields?.['visibility_modifier'], tree); },
     get whereClause() { return drillIn(data.fields?.['where_clause'], tree); },
@@ -539,8 +583,8 @@ export function wrapFunctionItem(data: AnyNodeData, tree: TreeHandle): unknown {
   return {
     ...data,
     get name() { return drillIn(data.fields?.['name'], tree); },
-    get typeParameters() { return (data.fields?.['type_parameters'] as AnyNodeData | undefined)?.text; },
-    get parameters() { return (data.fields?.['parameters'] as AnyNodeData | undefined)?.text; },
+    get typeParameters() { return drillIn(data.fields?.['type_parameters'], tree); },
+    get parameters() { return drillIn(data.fields?.['parameters'], tree); },
     get returnType() { return drillIn(data.fields?.['return_type'], tree); },
     get body() { return drillIn(data.fields?.['body'], tree); },
     get visibilityModifier() { return drillIn(data.fields?.['visibility_modifier'], tree); },
@@ -557,8 +601,8 @@ export function wrapFunctionSignatureItem(data: AnyNodeData, tree: TreeHandle): 
   return {
     ...data,
     get name() { return drillIn(data.fields?.['name'], tree); },
-    get typeParameters() { return (data.fields?.['type_parameters'] as AnyNodeData | undefined)?.text; },
-    get parameters() { return (data.fields?.['parameters'] as AnyNodeData | undefined)?.text; },
+    get typeParameters() { return drillIn(data.fields?.['type_parameters'], tree); },
+    get parameters() { return drillIn(data.fields?.['parameters'], tree); },
     get returnType() { return drillIn(data.fields?.['return_type'], tree); },
     get visibilityModifier() { return drillIn(data.fields?.['visibility_modifier'], tree); },
     get functionModifiers() { return drillIn(data.fields?.['function_modifiers'], tree); },
@@ -574,11 +618,18 @@ export function wrapFunctionModifiers(data: AnyNodeData, tree: TreeHandle): unkn
   };
 }
 
+export function wrapWhereClause(data: AnyNodeData, tree: TreeHandle): unknown {
+  return {
+    ...data,
+    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+  };
+}
+
 export function wrapWherePredicate(data: AnyNodeData, tree: TreeHandle): unknown {
   return {
     ...data,
     get left() { return drillIn(data.fields?.['left'], tree); },
-    get bounds() { return (data.fields?.['bounds'] as AnyNodeData | undefined)?.text; },
+    get bounds() { return drillIn(data.fields?.['bounds'], tree); },
   };
 }
 
@@ -586,7 +637,7 @@ export function wrapImplItem(data: AnyNodeData, tree: TreeHandle): unknown {
   promoteFirstAnon(data, 'where_clause');
   return {
     ...data,
-    get typeParameters() { return (data.fields?.['type_parameters'] as AnyNodeData | undefined)?.text; },
+    get typeParameters() { return drillIn(data.fields?.['type_parameters'], tree); },
     get trait() { return drillIn(data.fields?.['trait'], tree); },
     get type() { return drillIn(data.fields?.['type'], tree); },
     get body() { return drillIn(data.fields?.['body'], tree); },
@@ -600,9 +651,9 @@ export function wrapTraitItem(data: AnyNodeData, tree: TreeHandle): unknown {
   promoteFirstAnon(data, 'where_clause');
   return {
     ...data,
-    get name() { return (data.fields?.['name'] as AnyNodeData | undefined)?.text; },
-    get typeParameters() { return (data.fields?.['type_parameters'] as AnyNodeData | undefined)?.text; },
-    get bounds() { return (data.fields?.['bounds'] as AnyNodeData | undefined)?.text; },
+    get name() { return drillIn(data.fields?.['name'], tree); },
+    get typeParameters() { return drillIn(data.fields?.['type_parameters'], tree); },
+    get bounds() { return drillIn(data.fields?.['bounds'], tree); },
     get body() { return drillIn(data.fields?.['body'], tree); },
     get visibilityModifier() { return drillIn(data.fields?.['visibility_modifier'], tree); },
     get whereClause() { return drillIn(data.fields?.['where_clause'], tree); },
@@ -614,19 +665,38 @@ export function wrapAssociatedType(data: AnyNodeData, tree: TreeHandle): unknown
   promoteFirstAnon(data, 'where_clause');
   return {
     ...data,
-    get name() { return (data.fields?.['name'] as AnyNodeData | undefined)?.text; },
-    get typeParameters() { return (data.fields?.['type_parameters'] as AnyNodeData | undefined)?.text; },
-    get bounds() { return (data.fields?.['bounds'] as AnyNodeData | undefined)?.text; },
+    get name() { return drillIn(data.fields?.['name'], tree); },
+    get typeParameters() { return drillIn(data.fields?.['type_parameters'], tree); },
+    get bounds() { return drillIn(data.fields?.['bounds'], tree); },
     get whereClause() { return drillIn(data.fields?.['where_clause'], tree); },
     get child() { return drillIn(data.children?.[0], tree); },
+  };
+}
+
+export function wrapTraitBounds(data: AnyNodeData, tree: TreeHandle): unknown {
+  return {
+    ...data,
+    get lifetime() { return drillInAll(data.fields?.['lifetime'], tree); },
+    get higherRankedTraitBound() { return drillInAll(data.fields?.['higherRankedTraitBound'], tree); },
   };
 }
 
 export function wrapHigherRankedTraitBound(data: AnyNodeData, tree: TreeHandle): unknown {
   return {
     ...data,
-    get typeParameters() { return (data.fields?.['type_parameters'] as AnyNodeData | undefined)?.text; },
+    get typeParameters() { return drillIn(data.fields?.['type_parameters'], tree); },
     get type() { return drillIn(data.fields?.['type'], tree); },
+  };
+}
+
+export function wrapTypeParameters(data: AnyNodeData, tree: TreeHandle): unknown {
+  return {
+    ...data,
+    get attributeItem() { return drillInAll(data.fields?.['attributeItem'], tree); },
+    get metavariable() { return drillInAll(data.fields?.['metavariable'], tree); },
+    get typeParameter() { return drillInAll(data.fields?.['typeParameter'], tree); },
+    get lifetimeParameter() { return drillInAll(data.fields?.['lifetimeParameter'], tree); },
+    get constParameter() { return drillInAll(data.fields?.['constParameter'], tree); },
   };
 }
 
@@ -642,8 +712,8 @@ export function wrapConstParameter(data: AnyNodeData, tree: TreeHandle): unknown
 export function wrapTypeParameter(data: AnyNodeData, tree: TreeHandle): unknown {
   return {
     ...data,
-    get name() { return (data.fields?.['name'] as AnyNodeData | undefined)?.text; },
-    get bounds() { return (data.fields?.['bounds'] as AnyNodeData | undefined)?.text; },
+    get name() { return drillIn(data.fields?.['name'], tree); },
+    get bounds() { return drillIn(data.fields?.['bounds'], tree); },
     get defaultType() { return drillIn(data.fields?.['default_type'], tree); },
   };
 }
@@ -652,7 +722,7 @@ export function wrapLifetimeParameter(data: AnyNodeData, tree: TreeHandle): unkn
   return {
     ...data,
     get name() { return drillIn(data.fields?.['name'], tree); },
-    get bounds() { return (data.fields?.['bounds'] as AnyNodeData | undefined)?.text; },
+    get bounds() { return drillIn(data.fields?.['bounds'], tree); },
   };
 }
 
@@ -699,6 +769,16 @@ export function wrapUseWildcard(data: AnyNodeData, tree: TreeHandle): unknown {
   return {
     ...data,
     get path() { return drillIn(data.fields?.['path'], tree); },
+  };
+}
+
+export function wrapParameters(data: AnyNodeData, tree: TreeHandle): unknown {
+  return {
+    ...data,
+    get attributeItem() { return drillInAll(data.fields?.['attributeItem'], tree); },
+    get parameter() { return drillInAll(data.fields?.['parameter'], tree); },
+    get selfParameter() { return drillInAll(data.fields?.['selfParameter'], tree); },
+    get variadicParameter() { return drillInAll(data.fields?.['variadicParameter'], tree); },
   };
 }
 
@@ -780,8 +860,15 @@ export function wrapArrayType(data: AnyNodeData, tree: TreeHandle): unknown {
   };
 }
 
+export function wrapForLifetimes(data: AnyNodeData, tree: TreeHandle): unknown {
+  return {
+    ...data,
+    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+  };
+}
+
 export function wrapFunctionType(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteFirstAnon(data, 'for_lifetimes');
+  promote(data, 'for_lifetimes');
   promoteFirstAnon(data, 'function_modifiers');
   return {
     ...data,
@@ -795,7 +882,7 @@ export function wrapGenericFunction(data: AnyNodeData, tree: TreeHandle): unknow
   return {
     ...data,
     get function() { return drillIn(data.fields?.['function'], tree); },
-    get typeArguments() { return (data.fields?.['type_arguments'] as AnyNodeData | undefined)?.text; },
+    get typeArguments() { return drillIn(data.fields?.['type_arguments'], tree); },
   };
 }
 
@@ -803,7 +890,7 @@ export function wrapGenericType(data: AnyNodeData, tree: TreeHandle): unknown {
   return {
     ...data,
     get type() { return drillIn(data.fields?.['type'], tree); },
-    get typeArguments() { return (data.fields?.['type_arguments'] as AnyNodeData | undefined)?.text; },
+    get typeArguments() { return drillIn(data.fields?.['type_arguments'], tree); },
   };
 }
 
@@ -811,7 +898,7 @@ export function wrapGenericTypeWithTurbofish(data: AnyNodeData, tree: TreeHandle
   return {
     ...data,
     get type() { return drillIn(data.fields?.['type'], tree); },
-    get typeArguments() { return (data.fields?.['type_arguments'] as AnyNodeData | undefined)?.text; },
+    get typeArguments() { return drillIn(data.fields?.['type_arguments'], tree); },
   };
 }
 
@@ -827,11 +914,28 @@ export function wrapBoundedType(data: AnyNodeData, tree: TreeHandle): unknown {
   };
 }
 
+export function wrapUseBounds(data: AnyNodeData, tree: TreeHandle): unknown {
+  return {
+    ...data,
+    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+  };
+}
+
+export function wrapTypeArguments(data: AnyNodeData, tree: TreeHandle): unknown {
+  return {
+    ...data,
+    get typeBinding() { return drillInAll(data.fields?.['typeBinding'], tree); },
+    get lifetime() { return drillInAll(data.fields?.['lifetime'], tree); },
+    get block() { return drillInAll(data.fields?.['block'], tree); },
+    get traitBounds() { return drillInAll(data.fields?.['traitBounds'], tree); },
+  };
+}
+
 export function wrapTypeBinding(data: AnyNodeData, tree: TreeHandle): unknown {
   return {
     ...data,
-    get name() { return (data.fields?.['name'] as AnyNodeData | undefined)?.text; },
-    get typeArguments() { return (data.fields?.['type_arguments'] as AnyNodeData | undefined)?.text; },
+    get name() { return drillIn(data.fields?.['name'], tree); },
+    get typeArguments() { return drillIn(data.fields?.['type_arguments'], tree); },
     get type() { return drillIn(data.fields?.['type'], tree); },
   };
 }
@@ -902,7 +1006,7 @@ export function wrapScopedTypeIdentifierInExpressionPosition(data: AnyNodeData, 
   return {
     ...data,
     get path() { return drillIn(data.fields?.['path'], tree); },
-    get name() { return (data.fields?.['name'] as AnyNodeData | undefined)?.text; },
+    get name() { return drillIn(data.fields?.['name'], tree); },
   };
 }
 
@@ -910,7 +1014,7 @@ export function wrapScopedTypeIdentifier(data: AnyNodeData, tree: TreeHandle): u
   return {
     ...data,
     get path() { return drillIn(data.fields?.['path'], tree); },
-    get name() { return (data.fields?.['name'] as AnyNodeData | undefined)?.text; },
+    get name() { return drillIn(data.fields?.['name'], tree); },
   };
 }
 
@@ -1000,7 +1104,14 @@ export function wrapCallExpression(data: AnyNodeData, tree: TreeHandle): unknown
   return {
     ...data,
     get function() { return drillIn(data.fields?.['function'], tree); },
-    get arguments() { return (data.fields?.['arguments'] as AnyNodeData | undefined)?.text; },
+    get arguments() { return drillIn(data.fields?.['arguments'], tree); },
+  };
+}
+
+export function wrapArguments(data: AnyNodeData, tree: TreeHandle): unknown {
+  return {
+    ...data,
+    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   };
 }
 
@@ -1034,7 +1145,16 @@ export function wrapStructExpression(data: AnyNodeData, tree: TreeHandle): unkno
   return {
     ...data,
     get name() { return drillIn(data.fields?.['name'], tree); },
-    get body() { return (data.fields?.['body'] as AnyNodeData | undefined)?.text; },
+    get body() { return drillIn(data.fields?.['body'], tree); },
+  };
+}
+
+export function wrapFieldInitializerList(data: AnyNodeData, tree: TreeHandle): unknown {
+  return {
+    ...data,
+    get shorthandFieldInitializer() { return drillInAll(data.fields?.['shorthandFieldInitializer'], tree); },
+    get fieldInitializer() { return drillInAll(data.fields?.['fieldInitializer'], tree); },
+    get baseFieldInitializer() { return drillInAll(data.fields?.['baseFieldInitializer'], tree); },
   };
 }
 
@@ -1051,7 +1171,7 @@ export function wrapShorthandFieldInitializer(data: AnyNodeData, tree: TreeHandl
 export function wrapFieldInitializer(data: AnyNodeData, tree: TreeHandle): unknown {
   return {
     ...data,
-    get field() { return (data.fields?.['field'] as AnyNodeData | undefined)?.text; },
+    get field() { return drillIn(data.fields?.['field'], tree); },
     get value() { return drillIn(data.fields?.['value'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   };
@@ -1062,7 +1182,7 @@ export function wrapIfExpression(data: AnyNodeData, tree: TreeHandle): unknown {
     ...data,
     get condition() { return drillIn(data.fields?.['condition'], tree); },
     get consequence() { return drillIn(data.fields?.['consequence'], tree); },
-    get alternative() { return (data.fields?.['alternative'] as AnyNodeData | undefined)?.text; },
+    get alternative() { return drillIn(data.fields?.['alternative'], tree); },
   };
 }
 
@@ -1074,18 +1194,34 @@ export function wrapLetCondition(data: AnyNodeData, tree: TreeHandle): unknown {
   };
 }
 
+export function wrapElseClause(data: AnyNodeData, tree: TreeHandle): unknown {
+  return {
+    ...data,
+    get block() { return drillIn(data.fields?.['block'], tree); },
+    get ifExpression() { return drillIn(data.fields?.['ifExpression'], tree); },
+  };
+}
+
 export function wrapMatchExpression(data: AnyNodeData, tree: TreeHandle): unknown {
   return {
     ...data,
     get value() { return drillIn(data.fields?.['value'], tree); },
-    get body() { return (data.fields?.['body'] as AnyNodeData | undefined)?.text; },
+    get body() { return drillIn(data.fields?.['body'], tree); },
+  };
+}
+
+export function wrapMatchBlock(data: AnyNodeData, tree: TreeHandle): unknown {
+  return {
+    ...data,
+    get matchArm() { return drillInAll(data.fields?.['matchArm'], tree); },
+    get lastMatchArm() { return drillIn(data.fields?.['lastMatchArm'], tree); },
   };
 }
 
 export function wrapMatchArm(data: AnyNodeData, tree: TreeHandle): unknown {
   return {
     ...data,
-    get pattern() { return (data.fields?.['pattern'] as AnyNodeData | undefined)?.text; },
+    get pattern() { return drillIn(data.fields?.['pattern'], tree); },
     get value() { return drillIn(data.fields?.['value'], tree); },
     get attributeItem() { return drillInAll(data.fields?.['attributeItem'], tree); },
     get innerAttributeItem() { return drillInAll(data.fields?.['innerAttributeItem'], tree); },
@@ -1095,10 +1231,17 @@ export function wrapMatchArm(data: AnyNodeData, tree: TreeHandle): unknown {
 export function wrapLastMatchArm(data: AnyNodeData, tree: TreeHandle): unknown {
   return {
     ...data,
-    get pattern() { return (data.fields?.['pattern'] as AnyNodeData | undefined)?.text; },
+    get pattern() { return drillIn(data.fields?.['pattern'], tree); },
     get value() { return drillIn(data.fields?.['value'], tree); },
     get attributeItem() { return drillInAll(data.fields?.['attributeItem'], tree); },
     get innerAttributeItem() { return drillInAll(data.fields?.['innerAttributeItem'], tree); },
+  };
+}
+
+export function wrapMatchPattern(data: AnyNodeData, tree: TreeHandle): unknown {
+  return {
+    ...data,
+    get condition() { return drillIn(data.fields?.['condition'], tree); },
   };
 }
 
@@ -1142,9 +1285,16 @@ export function wrapConstBlock(data: AnyNodeData, tree: TreeHandle): unknown {
 export function wrapClosureExpression(data: AnyNodeData, tree: TreeHandle): unknown {
   return {
     ...data,
-    get parameters() { return (data.fields?.['parameters'] as AnyNodeData | undefined)?.text; },
+    get parameters() { return drillIn(data.fields?.['parameters'], tree); },
     get returnType() { return drillIn(data.fields?.['return_type'], tree); },
     get body() { return drillIn(data.fields?.['body'], tree); },
+  };
+}
+
+export function wrapClosureParameters(data: AnyNodeData, tree: TreeHandle): unknown {
+  return {
+    ...data,
+    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   };
 }
 
@@ -1190,7 +1340,7 @@ export function wrapFieldExpression(data: AnyNodeData, tree: TreeHandle): unknow
   return {
     ...data,
     get value() { return drillIn(data.fields?.['value'], tree); },
-    get field() { return (data.fields?.['field'] as AnyNodeData | undefined)?.text; },
+    get field() { return drillIn(data.fields?.['field'], tree); },
   };
 }
 
@@ -1241,9 +1391,16 @@ export function wrapBlock(data: AnyNodeData, tree: TreeHandle): unknown {
 export function wrapGenericPattern(data: AnyNodeData, tree: TreeHandle): unknown {
   return {
     ...data,
-    get typeArguments() { return (data.fields?.['type_arguments'] as AnyNodeData | undefined)?.text; },
+    get typeArguments() { return drillIn(data.fields?.['type_arguments'], tree); },
     get identifier() { return drillIn(data.fields?.['identifier'], tree); },
     get scopedIdentifier() { return drillIn(data.fields?.['scopedIdentifier'], tree); },
+  };
+}
+
+export function wrapTuplePattern(data: AnyNodeData, tree: TreeHandle): unknown {
+  return {
+    ...data,
+    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   };
 }
 
@@ -1332,6 +1489,14 @@ export function wrapNegativeLiteral(data: AnyNodeData, tree: TreeHandle): unknow
   };
 }
 
+export function wrapStringLiteral(data: AnyNodeData, tree: TreeHandle): unknown {
+  return {
+    ...data,
+    get escapeSequence() { return drillInAll(data.fields?.['escapeSequence'], tree); },
+    get stringContent() { return drillInAll(data.fields?.['stringContent'], tree); },
+  };
+}
+
 export function wrapRawStringLiteral(data: AnyNodeData, tree: TreeHandle): unknown {
   promoteNamed(data, 'raw_string_literal_start', ["_raw_string_literal_start"]);
   promoteNamed(data, 'string_content', ["raw_string_literal_content"]);
@@ -1365,6 +1530,20 @@ export function wrapLineComment(data: AnyNodeData, tree: TreeHandle): unknown {
 export function wrapBlockComment(data: AnyNodeData, tree: TreeHandle): unknown {
   return {
     ...data,
+  };
+}
+
+export function wrapTypeIdentifier(data: AnyNodeData, tree: TreeHandle): unknown {
+  return {
+    ...data,
+    get child() { return drillIn(data.children?.[0], tree); },
+  };
+}
+
+export function wrapFieldIdentifier(data: AnyNodeData, tree: TreeHandle): unknown {
+  return {
+    ...data,
+    get child() { return drillIn(data.children?.[0], tree); },
   };
 }
 

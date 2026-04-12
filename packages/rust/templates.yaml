@@ -50,6 +50,8 @@ rules:
     template: "$ATTRIBUTE[$$$CHILDREN]"
   inner_attribute_item:
     template: "$ATTRIBUTE![$$$CHILDREN]"
+  attribute:
+    template: =$VALUE
   mod_item:
     template: $VISIBILITY_MODIFIER mod$NAME;
   foreign_mod_item:
@@ -62,8 +64,12 @@ rules:
     template: $VISIBILITY_MODIFIER$WHERE_CLAUSE$NAME$TYPE_PARAMETERS$$$CHILDREN$BODY
   enum_item:
     template: $VISIBILITY_MODIFIER$WHERE_CLAUSE$NAME$TYPE_PARAMETERS$$$CHILDREN$BODY
+  enum_variant_list:
+    template: "{$$$CHILDREN,}"
   enum_variant:
     template: $VISIBILITY_MODIFIER$NAME$BODY=$VALUE
+  field_declaration_list:
+    template: "{$$$CHILDREN,}"
   field_declaration:
     template: "$VISIBILITY_MODIFIER$NAME:$TYPE"
   ordered_field_declaration_list:
@@ -82,6 +88,8 @@ rules:
     template: $VISIBILITY_MODIFIER$FUNCTION_MODIFIERS$WHERE_CLAUSE$NAME$TYPE_PARAMETERS$PARAMETERS->$RETURN_TYPE$$$CHILDREN;
   function_modifiers:
     template: $$$CHILDREN
+  where_clause:
+    template: where$$$CHILDREN,
   where_predicate:
     template: $LEFT$BOUNDS
   impl_item:
@@ -90,8 +98,12 @@ rules:
     template: $VISIBILITY_MODIFIER$WHERE_CLAUSE trait$NAME$TYPE_PARAMETERS$BOUNDS$$$CHILDREN$BODY
   associated_type:
     template: $WHERE_CLAUSE$NAME$TYPE_PARAMETERS$BOUNDS$$$CHILDREN;
+  trait_bounds:
+    template: ":$$$CHILDREN"
   higher_ranked_trait_bound:
     template: for$TYPE_PARAMETERS$TYPE
+  type_parameters:
+    template: <$$$CHILDREN,>
   const_parameter:
     template: "const$NAME:$TYPE=$VALUE"
   type_parameter:
@@ -108,6 +120,8 @@ rules:
     template: $PATH as$ALIAS
   use_wildcard:
     template: $PATH*
+  parameters:
+    template: ($$$CHILDREN _,)
   self_parameter:
     template: $LIFETIME$MUTABLE_SPECIFIER$SELF$$$CHILDREN
   variadic_parameter:
@@ -132,6 +146,8 @@ rules:
     template: $IDENTIFIER$$$CHILDREN
   array_type:
     template: "[$ELEMENT;$LENGTH]"
+  for_lifetimes:
+    template: for<$$$CHILDREN,>
   function_type:
     template: $FOR_LIFETIMES$FUNCTION_MODIFIERS->$RETURN_TYPE
   generic_function:
@@ -142,6 +158,10 @@ rules:
     template: "$TYPE::$TYPE_ARGUMENTS"
   bounded_type:
     template: $LEFT$RIGHT$$$CHILDREN
+  use_bounds:
+    template: use<$$$CHILDREN,>
+  type_arguments:
+    template: <$$$CHILDREN,>
   type_binding:
     template: $NAME$TYPE_ARGUMENTS=$TYPE
   reference_type:
@@ -228,12 +248,16 @@ rules:
         template: yield
   call_expression:
     template: $FUNCTION$ARGUMENTS
+  arguments:
+    template: ($$$CHILDREN,)
   array_expression:
     template: "$ATTRIBUTES$ELEMENTS;$LENGTH]"
   tuple_expression:
     template: $ATTRIBUTES$FIRST$REST$TRAILING)
   struct_expression:
     template: $NAME$BODY
+  field_initializer_list:
+    template: "{$$$CHILDREN,}"
   shorthand_field_initializer:
     template: $ATTRIBUTES$IDENTIFIER
   field_initializer:
@@ -242,12 +266,18 @@ rules:
     template: if$CONDITION$CONSEQUENCE$ALTERNATIVE
   let_condition:
     template: let$PATTERN=$VALUE
+  else_clause:
+    template: else$$$CHILDREN
   match_expression:
     template: match$VALUE$BODY
+  match_block:
+    template: "{$$$CHILDREN}"
   match_arm:
     template: $$$CHILDREN$PATTERN=>$VALUE,
   last_match_arm:
     template: $$$CHILDREN$PATTERN=>$VALUE,
+  match_pattern:
+    template: if$CONDITION
   while_expression:
     template: $LABEL while$CONDITION$BODY
   loop_expression:
@@ -258,6 +288,8 @@ rules:
     template: const$BODY
   closure_expression:
     template: static async move$PARAMETERS->$RETURN_TYPE$BODY
+  closure_parameters:
+    template: "|$$$CHILDREN|"
   label:
     template: $IDENTIFIER$$$CHILDREN
   break_expression:
@@ -280,6 +312,8 @@ rules:
     template: "$LABEL{}"
   generic_pattern:
     template: "$$$CHILDREN::$TYPE_ARGUMENTS"
+  tuple_pattern:
+    template: ($$$CHILDREN,)
   tuple_struct_pattern:
     template: $TYPE(,)
   struct_pattern:
@@ -306,6 +340,8 @@ rules:
     template: $LEFT$RIGHT
   negative_literal:
     template: $VALUE$$$CHILDREN
+  string_literal:
+    template: $$$CHILDREN"
   raw_string_literal:
     template: $RAW_STRING_LITERAL_START$STRING_CONTENT$RAW_STRING_LITERAL_END
   comment_line_comment:
@@ -318,6 +354,10 @@ rules:
         template: $$$CHILDREN
       - name: block_comment
         template: $$$CHILDREN
+  _type_identifier:
+    template: $$$CHILDREN
+  _field_identifier:
+    template: $$$CHILDREN
   let_chain_andand:
     template: "&&$$$CHILDREN"
   let_chain_andand2:

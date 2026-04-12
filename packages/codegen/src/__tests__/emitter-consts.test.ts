@@ -41,7 +41,9 @@ describe('emitConstsFromNodeMap', () => {
         expect(output).toContain('KEYWORDS')
         expect(output).toContain("'fn'")
         expect(output).toContain('OPERATORS')
-        expect(output).toContain("'+'")
+        // Operators are JSON-stringified to safely escape special chars,
+        // so single chars use double quotes.
+        expect(output).toContain('"+"')
     })
 
     it('emits FIELD_MAP for branch nodes', () => {

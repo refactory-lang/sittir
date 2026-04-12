@@ -2,12 +2,19 @@
 
 /** All branch (non-leaf) node kind strings. */
 export const NODE_KINDS = [
+  '_jsx_start_opening_element',
+  '_type_identifier',
   'abstract_class_declaration',
   'abstract_method_signature',
+  'adding_type_annotation',
   'ambient_declaration',
+  'arguments',
+  'array',
+  'array_pattern',
   'array_type',
   'arrow_function',
   'as_expression',
+  'asserts',
   'asserts_annotation',
   'assignment_expression',
   'assignment_pattern',
@@ -25,6 +32,7 @@ export const NODE_KINDS = [
   'comment',
   'computed_property_name',
   'conditional_type',
+  'constraint',
   'construct_signature',
   'constructor_type',
   'continue_statement',
@@ -33,14 +41,18 @@ export const NODE_KINDS = [
   'decorator_call_expression',
   'decorator_member_expression',
   'decorator_parenthesized_expression',
+  'default_type',
   'do_statement',
   'else_clause',
   'enum_assignment',
   'enum_body',
   'enum_declaration',
   'escape_sequence',
+  'export_clause',
+  'export_specifier',
   'export_statement',
   'expression',
+  'extends_type_clause',
   'field_definition',
   'finally_clause',
   'flow_maybe_type',
@@ -54,10 +66,12 @@ export const NODE_KINDS = [
   'generator_function_declaration',
   'generic_type',
   'if_statement',
+  'implements_clause',
   'import_alias',
   'import_attribute',
   'import_clause',
   'import_require_clause',
+  'import_specifier',
   'import_statement',
   'index_signature',
   'index_type_query',
@@ -78,19 +92,26 @@ export const NODE_KINDS = [
   'meta_property',
   'method_definition',
   'method_signature',
+  'named_imports',
   'namespace_import',
   'nested_identifier',
   'nested_type_identifier',
   'new_expression',
   'non_null_expression',
   'number',
+  'object',
   'object_assignment_pattern',
+  'object_pattern',
   'object_type',
+  'omitting_type_annotation',
+  'opting_type_annotation',
   'optional_parameter',
   'optional_tuple_parameter',
+  'optional_type',
   'pair',
   'pair_pattern',
   'parenthesized_expression',
+  'parenthesized_type',
   'pattern',
   'predefined_type',
   'primary_expression',
@@ -98,10 +119,13 @@ export const NODE_KINDS = [
   'program',
   'property_signature',
   'public_field_definition',
+  'readonly_type',
   'regex',
   'regex_pattern',
   'required_parameter',
+  'rest_type',
   'satisfies_expression',
+  'sequence_expression',
   'shorthand_property_identifier',
   'shorthand_property_identifier_pattern',
   'spread_element',
@@ -121,10 +145,14 @@ export const NODE_KINDS = [
   'tuple_parameter',
   'type',
   'type_alias_declaration',
+  'type_annotation',
+  'type_arguments',
   'type_assertion',
   'type_parameter',
+  'type_parameters',
   'type_predicate',
   'type_predicate_annotation',
+  'type_query',
   'unary_expression',
   'union_type',
   'update_expression',
@@ -248,18 +276,11 @@ export const KEYWORDS = [
   '0x',
   'E',
   '_',
-  '_jsx_start_opening_element',
-  '_type_identifier',
   'abstract',
   'accessor',
-  'adding_type_annotation',
   'any',
-  'arguments',
-  'array',
-  'array_pattern',
   'as',
   'assert',
-  'asserts',
   'async',
   'await',
   'boolean',
@@ -268,13 +289,11 @@ export const KEYWORDS = [
   'case',
   'catch',
   'const',
-  'constraint',
   'continue',
   'debugger',
   'debugger_statement',
   'declare',
   'default',
-  'default_type',
   'delete',
   'do',
   'e',
@@ -283,12 +302,9 @@ export const KEYWORDS = [
   'enum',
   'existential_type',
   'export',
-  'export_clause',
-  'export_specifier',
   'expression_statement',
   'extends',
   'extends_clause',
-  'extends_type_clause',
   'false',
   'finally',
   'for',
@@ -300,9 +316,7 @@ export const KEYWORDS = [
   'identifier',
   'if',
   'implements',
-  'implements_clause',
   'import',
-  'import_specifier',
   'in',
   'infer',
   'instanceof',
@@ -318,36 +332,26 @@ export const KEYWORDS = [
   'meta',
   'module',
   'n',
-  'named_imports',
   'namespace',
   'namespace_export',
   'never',
   'new',
   'null',
-  'object',
-  'object_pattern',
   'of',
-  'omitting_type_annotation',
-  'opting_type_annotation',
   'optional_chain',
-  'optional_type',
   'override',
   'override_modifier',
-  'parenthesized_type',
   'private',
   'private_property_identifier',
   'property_identifier',
   'protected',
   'public',
   'readonly',
-  'readonly_type',
   'require',
   'rest_pattern',
-  'rest_type',
   'return',
   'return_statement',
   'satisfies',
-  'sequence_expression',
   'set',
   'statement_identifier',
   'static',
@@ -364,11 +368,7 @@ export const KEYWORDS = [
   'true',
   'try',
   'tuple_type',
-  'type_annotation',
-  'type_arguments',
   'type_identifier',
-  'type_parameters',
-  'type_query',
   'typeof',
   'undefined',
   'unique',
@@ -470,6 +470,13 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   required: boolean;
   multiple: boolean;
 }>> = {
+  '_jsx_start_opening_element': [
+    { name: 'name', required: false, multiple: false },
+    { name: 'typeArguments', required: false, multiple: false },
+    { name: 'attribute', required: false, multiple: true },
+  ],
+  '_type_identifier': [
+  ],
   'abstract_class_declaration': [
     { name: 'classHeritage', required: true, multiple: false },
     { name: 'name', required: true, multiple: false },
@@ -481,9 +488,17 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'overrideModifier', required: true, multiple: false },
     { name: 'name', required: true, multiple: false },
   ],
+  'adding_type_annotation': [
+  ],
   'ambient_declaration': [
     { name: 'declaration', required: true, multiple: false },
     { name: 'typeAnnotation', required: true, multiple: false },
+  ],
+  'arguments': [
+  ],
+  'array': [
+  ],
+  'array_pattern': [
   ],
   'array_type': [
     { name: 'primaryType', required: true, multiple: false },
@@ -495,6 +510,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'as_expression': [
     { name: 'expression', required: true, multiple: false },
     { name: 'typeAnnotation', required: true, multiple: false },
+  ],
+  'asserts': [
   ],
   'asserts_annotation': [
     { name: 'asserts', required: true, multiple: false },
@@ -566,6 +583,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'consequence', required: true, multiple: false },
     { name: 'alternative', required: true, multiple: false },
   ],
+  'constraint': [
+  ],
   'construct_signature': [
     { name: 'typeParameters', required: true, multiple: false },
     { name: 'parameters', required: true, multiple: false },
@@ -594,6 +613,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'decorator_parenthesized_expression': [
   ],
+  'default_type': [
+  ],
   'do_statement': [
     { name: 'body', required: true, multiple: false },
     { name: 'condition', required: true, multiple: false },
@@ -614,12 +635,21 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'escape_sequence': [
   ],
+  'export_clause': [
+  ],
+  'export_specifier': [
+    { name: 'name', required: true, multiple: false },
+    { name: 'alias', required: false, multiple: false },
+  ],
   'export_statement': [
     { name: 'declaration', required: true, multiple: false },
     { name: 'source', required: true, multiple: false },
     { name: 'value', required: true, multiple: false },
   ],
   'expression': [
+  ],
+  'extends_type_clause': [
+    { name: 'type', required: true, multiple: true },
   ],
   'field_definition': [
     { name: 'decorator', required: true, multiple: true },
@@ -673,6 +703,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'consequence', required: true, multiple: false },
     { name: 'alternative', required: false, multiple: false },
   ],
+  'implements_clause': [
+  ],
   'import_alias': [
     { name: 'name', required: true, multiple: false },
     { name: 'value', required: true, multiple: false },
@@ -688,6 +720,10 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'import_require_clause': [
     { name: 'identifier', required: true, multiple: false },
     { name: 'source', required: true, multiple: false },
+  ],
+  'import_specifier': [
+    { name: 'name', required: true, multiple: false },
+    { name: 'alias', required: true, multiple: false },
   ],
   'import_statement': [
     { name: 'importClause', required: true, multiple: false },
@@ -773,6 +809,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'overrideModifier', required: true, multiple: false },
     { name: 'name', required: true, multiple: false },
   ],
+  'named_imports': [
+  ],
   'namespace_import': [
     { name: 'identifier', required: true, multiple: false },
   ],
@@ -794,14 +832,22 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'number': [
   ],
+  'object': [
+  ],
   'object_assignment_pattern': [
     { name: 'left', required: true, multiple: false },
     { name: 'right', required: true, multiple: false },
+  ],
+  'object_pattern': [
   ],
   'object_type': [
     { name: 'opening', required: true, multiple: false },
     { name: 'members', required: true, multiple: false },
     { name: 'closing', required: true, multiple: false },
+  ],
+  'omitting_type_annotation': [
+  ],
+  'opting_type_annotation': [
   ],
   'optional_parameter': [
     { name: 'parameterName', required: true, multiple: false },
@@ -812,6 +858,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'name', required: true, multiple: false },
     { name: 'type', required: true, multiple: false },
   ],
+  'optional_type': [
+  ],
   'pair': [
     { name: 'key', required: true, multiple: false },
     { name: 'value', required: true, multiple: false },
@@ -821,6 +869,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'value', required: true, multiple: false },
   ],
   'parenthesized_expression': [
+  ],
+  'parenthesized_type': [
   ],
   'pattern': [
   ],
@@ -847,6 +897,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'name', required: true, multiple: false },
     { name: 'type', required: true, multiple: false },
   ],
+  'readonly_type': [
+  ],
   'regex': [
     { name: 'pattern', required: true, multiple: false },
     { name: 'flags', required: false, multiple: false },
@@ -857,9 +909,13 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'parameterName', required: true, multiple: false },
     { name: 'initializer', required: true, multiple: false },
   ],
+  'rest_type': [
+  ],
   'satisfies_expression': [
     { name: 'expression', required: true, multiple: false },
     { name: 'typeAnnotation', required: true, multiple: false },
+  ],
+  'sequence_expression': [
   ],
   'shorthand_property_identifier': [
   ],
@@ -921,6 +977,10 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'typeParameters', required: true, multiple: false },
     { name: 'value', required: true, multiple: false },
   ],
+  'type_annotation': [
+  ],
+  'type_arguments': [
+  ],
   'type_assertion': [
     { name: 'typeArguments', required: true, multiple: false },
     { name: 'expression', required: true, multiple: false },
@@ -930,12 +990,16 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'constraint', required: true, multiple: false },
     { name: 'value', required: true, multiple: false },
   ],
+  'type_parameters': [
+  ],
   'type_predicate': [
     { name: 'name', required: true, multiple: false },
     { name: 'type', required: true, multiple: false },
   ],
   'type_predicate_annotation': [
     { name: 'typePredicate', required: true, multiple: false },
+  ],
+  'type_query': [
   ],
   'unary_expression': [
     { name: 'operator', required: true, multiple: false },

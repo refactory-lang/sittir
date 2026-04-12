@@ -40,11 +40,11 @@ describe('import_from_statement', () => {
 
 describe('_import_list', () => {
   it('factory produces correct type', () => {
-    const node = ir.importList({ name: [] });
+    const node = ir.hiddenImportList({ name: [] });
     expect(node.type).toBe('_import_list');
   });
   it('render produces non-empty string', () => {
-    const node = ir.importList({ name: [] });
+    const node = ir.hiddenImportList({ name: [] });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -82,6 +82,13 @@ describe('chevron', () => {
   });
 });
 
+describe('assert_statement', () => {
+  it('factory produces correct type', () => {
+    const node = ir.assertStatement();
+    expect(node.type).toBe('assert_statement');
+  });
+});
+
 describe('expression_statement', () => {
   it('expression form produces correct type', () => {
     const node = ir.expressionStatement.expression({});
@@ -112,6 +119,17 @@ describe('named_expression', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.namedExpression({ name: { type: '_named_expression_lhs', text: 'test' } as any, value: { type: 'expression', text: 'test' } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('raise_statement', () => {
+  it('factory produces correct type', () => {
+    const node = ir.raiseStatement({});
+    expect(node.type).toBe('raise_statement');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.raiseStatement({});
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -228,6 +246,17 @@ describe('try_statement', () => {
   });
 });
 
+describe('except_clause', () => {
+  it('factory produces correct type', () => {
+    const node = ir.exceptClause({});
+    expect(node.type).toBe('except_clause');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.exceptClause({});
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
 describe('finally_clause', () => {
   it('factory produces correct type', () => {
     const node = ir.finallyClause({ block: 'test' as any });
@@ -305,6 +334,20 @@ describe('dictionary_splat', () => {
   });
 });
 
+describe('global_statement', () => {
+  it('factory produces correct type', () => {
+    const node = ir.globalStatement();
+    expect(node.type).toBe('global_statement');
+  });
+});
+
+describe('nonlocal_statement', () => {
+  it('factory produces correct type', () => {
+    const node = ir.nonlocalStatement();
+    expect(node.type).toBe('nonlocal_statement');
+  });
+});
+
 describe('exec_statement', () => {
   it('factory produces correct type', () => {
     const node = ir.execStatement({ code: { type: 'string', text: 'test' } as any });
@@ -338,7 +381,21 @@ describe('class_definition', () => {
   });
 });
 
+describe('type_parameter', () => {
+  it('factory produces correct type', () => {
+    const node = ir.typeParameter();
+    expect(node.type).toBe('type_parameter');
+  });
+});
+
 describe('parenthesized_list_splat', () => {
+});
+
+describe('argument_list', () => {
+  it('factory produces correct type', () => {
+    const node = ir.argumentList();
+    expect(node.type).toBe('argument_list');
+  });
 });
 
 describe('decorated_definition', () => {
@@ -363,6 +420,20 @@ describe('decorator', () => {
   });
 });
 
+describe('expression_list', () => {
+  it('factory produces correct type', () => {
+    const node = ir.expressionList();
+    expect(node.type).toBe('expression_list');
+  });
+});
+
+describe('dotted_name', () => {
+  it('factory produces correct type', () => {
+    const node = ir.dottedName();
+    expect(node.type).toBe('dotted_name');
+  });
+});
+
 describe('case_pattern', () => {
   it('_as_pattern form produces correct type', () => {
     const node = ir.casePattern._as_pattern({});
@@ -375,6 +446,34 @@ describe('case_pattern', () => {
   it('_simple_pattern form produces correct type', () => {
     const node = ir.casePattern._simple_pattern({});
     expect(node.type).toBe('case_pattern');
+  });
+});
+
+describe('_as_pattern', () => {
+  it('factory produces correct type', () => {
+    const node = ir.hiddenAsPattern();
+    expect(node.type).toBe('_as_pattern');
+  });
+});
+
+describe('_list_pattern', () => {
+  it('factory produces correct type', () => {
+    const node = ir.hiddenListPattern();
+    expect(node.type).toBe('_list_pattern');
+  });
+});
+
+describe('_tuple_pattern', () => {
+  it('factory produces correct type', () => {
+    const node = ir.hiddenTuplePattern();
+    expect(node.type).toBe('_tuple_pattern');
+  });
+});
+
+describe('dict_pattern', () => {
+  it('factory produces correct type', () => {
+    const node = ir.dictPattern();
+    expect(node.type).toBe('dict_pattern');
   });
 });
 
@@ -419,6 +518,20 @@ describe('complex_pattern', () => {
   it('render produces non-empty string', () => {
     const node = ir.complexPattern({ real: 'test' as any, imaginary: { type: 'integer', text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('_parameters', () => {
+  it('factory produces correct type', () => {
+    const node = ir.hiddenParameters();
+    expect(node.type).toBe('_parameters');
+  });
+});
+
+describe('_patterns', () => {
+  it('factory produces correct type', () => {
+    const node = ir.hiddenPatterns();
+    expect(node.type).toBe('_patterns');
   });
 });
 
@@ -772,6 +885,20 @@ describe('augmented_assignment', () => {
   });
 });
 
+describe('pattern_list', () => {
+  it('factory produces correct type', () => {
+    const node = ir.patternList();
+    expect(node.type).toBe('pattern_list');
+  });
+});
+
+describe('yield', () => {
+  it('factory produces correct type', () => {
+    const node = ir.yield_();
+    expect(node.type).toBe('yield');
+  });
+});
+
 describe('attribute', () => {
   it('factory produces correct type', () => {
     const node = ir.attribute({ object: { type: 'primary_expression', text: 'test' } as any, attribute: { type: 'identifier', text: 'test' } as any });
@@ -920,6 +1047,13 @@ describe('keyword_argument', () => {
   });
 });
 
+describe('dictionary', () => {
+  it('factory produces correct type', () => {
+    const node = ir.dictionary();
+    expect(node.type).toBe('dictionary');
+  });
+});
+
 describe('pair', () => {
   it('factory produces correct type', () => {
     const node = ir.pair({ key: { type: 'expression', text: 'test' } as any, value: { type: 'expression', text: 'test' } as any });
@@ -975,7 +1109,21 @@ describe('generator_expression', () => {
   });
 });
 
+describe('_comprehension_clauses', () => {
+  it('factory produces correct type', () => {
+    const node = ir.hiddenComprehensionClauses();
+    expect(node.type).toBe('_comprehension_clauses');
+  });
+});
+
 describe('parenthesized_expression', () => {
+});
+
+describe('_collection_elements', () => {
+  it('factory produces correct type', () => {
+    const node = ir.hiddenCollectionElements();
+    expect(node.type).toBe('_collection_elements');
+  });
 });
 
 describe('for_in_clause', () => {
@@ -1008,6 +1156,13 @@ describe('conditional_expression', () => {
   it('render produces non-empty string', () => {
     const node = ir.conditionalExpression({ body: { type: 'expression', text: 'test' } as any, condition: 'test' as any, alternative: { type: 'expression', text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('concatenated_string', () => {
+  it('factory produces correct type', () => {
+    const node = ir.concatenatedString();
+    expect(node.type).toBe('concatenated_string');
   });
 });
 
@@ -1098,7 +1253,7 @@ describe('keyword_identifier', () => {
 
 describe('true', () => {
   it('factory produces keyword', () => {
-    const node = ir.true();
+    const node = ir.true_();
     expect(node.type).toBe('true');
     expect(node.text).toBe('True');
   });
@@ -1106,7 +1261,7 @@ describe('true', () => {
 
 describe('false', () => {
   it('factory produces keyword', () => {
-    const node = ir.false();
+    const node = ir.false_();
     expect(node.type).toBe('false');
     expect(node.text).toBe('False');
   });
@@ -1122,11 +1277,11 @@ describe('none', () => {
 
 describe('await', () => {
   it('factory produces correct type', () => {
-    const node = ir.await({ primaryExpression: 'test' as any });
+    const node = ir.await_({ primaryExpression: 'test' as any });
     expect(node.type).toBe('await');
   });
   it('render produces non-empty string', () => {
-    const node = ir.await({ primaryExpression: 'test' as any });
+    const node = ir.await_({ primaryExpression: 'test' as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });

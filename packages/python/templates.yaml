@@ -14,6 +14,8 @@ rules:
     template: $CHEVRON$$$CHILDREN$ARGUMENT,
   chevron:
     template: $EXPRESSION$$$CHILDREN
+  assert_statement:
+    template: assert$$$CHILDREN
   expression_statement_expression:
     template: $$$CHILDREN
   expression_statement_expression2:
@@ -38,6 +40,8 @@ rules:
         template: $$$CHILDREN
   named_expression:
     template: "$NAME:=$VALUE"
+  raise_statement:
+    template: raise from$CAUSE
   if_statement:
     template: "if$CONDITION:$CONSEQUENCE$ALTERNATIVE"
   elif_clause:
@@ -54,6 +58,8 @@ rules:
     template: "while$CONDITION:$BODY$ALTERNATIVE"
   try_statement:
     template: $EXCEPT_CLAUSES$ELSE_CLAUSE$FINALLY_CLAUSE$$$CHILDREN
+  except_clause:
+    template: "except*$VALUE as$ALIAS:"
   finally_clause:
     template: "$BLOCK:"
   with_statement:
@@ -76,16 +82,28 @@ rules:
     template: $EXPRESSION$$$CHILDREN
   dictionary_splat:
     template: $EXPRESSION$$$CHILDREN
+  global_statement:
+    template: global$$$CHILDREN
+  nonlocal_statement:
+    template: nonlocal$$$CHILDREN
   exec_statement:
     template: exec$CODE in$$$CHILDREN
   type_alias_statement:
     template: type$LEFT=$RIGHT
   class_definition:
     template: "class$NAME$TYPE_PARAMETERS$SUPERCLASSES:$BODY"
+  type_parameter:
+    template: "[$$$CHILDREN,]"
+  argument_list:
+    template: ($$$CHILDREN,)
   decorated_definition:
     template: $$$CHILDREN$DEFINITION
   decorator:
     template: $EXPRESSION$NEWLINE
+  expression_list:
+    template: $$$CHILDREN,
+  dotted_name:
+    template: $$$CHILDREN
   case_pattern_keyword_pattern:
     template: $$$CHILDREN
   case_pattern:
@@ -96,6 +114,14 @@ rules:
         template: $$$CHILDREN
       - name: _simple_pattern
         template: ""
+  _as_pattern:
+    template: $$$CHILDREN as
+  _list_pattern:
+    template: "[$$$CHILDREN,]"
+  _tuple_pattern:
+    template: ($$$CHILDREN,)
+  dict_pattern:
+    template: "{$$$CHILDREN,}"
   _key_value_pattern:
     template: "$KEY:$VALUE"
   keyword_pattern:
@@ -106,6 +132,10 @@ rules:
     template: $DOTTED_NAME$ARGUMENTS$$$CHILDREN,)
   complex_pattern:
     template: $REAL$IMAGINARY+$$$CHILDREN
+  _parameters:
+    template: $$$CHILDREN,
+  _patterns:
+    template: $$$CHILDREN,
   parameter_identifier:
     template: $$$CHILDREN
   parameter_typed_parameter:
@@ -338,6 +368,10 @@ rules:
     template: $LEFT=$RIGHT
   augmented_assignment:
     template: $LEFT$OPERATOR$RIGHT
+  pattern_list:
+    template: $$$CHILDREN,
+  yield:
+    template: yield from$$$CHILDREN
   attribute:
     template: $OBJECT.$ATTRIBUTE
   subscript:
@@ -386,6 +420,8 @@ rules:
     template: $BASE_TYPE$IDENTIFIER$$$CHILDREN
   keyword_argument:
     template: $NAME=$VALUE
+  dictionary:
+    template: "{$$$CHILDREN,}"
   pair:
     template: "$KEY:$VALUE"
   list_comprehension:
@@ -396,12 +432,18 @@ rules:
     template: "{$BODY}"
   generator_expression:
     template: ($BODY)
+  _comprehension_clauses:
+    template: $$$CHILDREN
+  _collection_elements:
+    template: $$$CHILDREN,
   for_in_clause:
     template: async for$LEFT in$RIGHT,
   if_clause:
     template: $EXPRESSION$$$CHILDREN
   conditional_expression:
     template: $BODY$CONDITION$ALTERNATIVE else$$$CHILDREN
+  concatenated_string:
+    template: $$$CHILDREN
   string:
     template: $STRING_START$CONTENT$STRING_END
   string_content:

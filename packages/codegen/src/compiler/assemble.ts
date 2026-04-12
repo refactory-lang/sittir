@@ -277,8 +277,14 @@ export function classifyNode(kind: string, rule: Rule): ModelType {
 
     switch (simplified.type) {
         case 'seq': {
-            const hasFields = simplified.members.some(m => m.type === 'field')
-            if (hasFields) return 'branch'
+            // Fields can be buried under optional/repeat/nested seq, so use
+            // deriveFields / deriveChildren (which walk the tree). If the rule
+            // has any fields → branch; else if it has visible children → container;
+            // else → token.
+            const fields = deriveFields(rule)
+            if (fields.length > 0) return 'branch'
+            const children = deriveChildren(rule)
+            if (children.length > 0) return 'container'
             return 'token'
         }
         case 'repeat':
@@ -297,8 +303,14 @@ export function classifyNode(kind: string, rule: Rule): ModelType {
             return 'branch'
         case 'optional':
             return classifyNode(kind, simplified.content)
-        default:
+        default: {
+            // Fall-through: inspect fields/children before giving up as token.
+            const fields = deriveFields(rule)
+            if (fields.length > 0) return 'branch'
+            const children = deriveChildren(rule)
+            if (children.length > 0) return 'container'
             return 'token'
+        }
     }
 }
 
@@ -382,14 +394,29 @@ function extractForms(rule: Rule, parentKind: string): AssembledGroup[] {
 // Naming
 // ---------------------------------------------------------------------------
 
+// Reserved or restricted identifiers that cannot be top-level function names
+// in strict-mode TypeScript (or would shadow globals in problematic ways).
+const FACTORY_NAME_RESERVED = new Set([
+    'arguments', 'eval', 'yield', 'await', 'async', 'function', 'class',
+    'import', 'export', 'default', 'return', 'throw', 'new', 'delete',
+    'typeof', 'instanceof', 'in', 'of', 'let', 'const', 'var', 'null',
+    'true', 'false', 'undefined', 'NaN', 'Infinity', 'static', 'public',
+    'private', 'protected', 'interface', 'package', 'implements',
+])
+
 export function nameNode(kind: string): { typeName: string; factoryName: string; irKey: string } {
     // Tokens/keywords can contain non-identifier chars (!=, #, %, ->, ==, etc.).
     // Route through tokenToName first so typeName is always a valid identifier.
     const normalized = /^[\w_]+$/.test(kind) ? kind : tokenToName(kind)
-    // Preserve internal double-underscore as a discriminator by encoding it
-    // into a dedicated marker segment (`U`) — so `literal_type__number` and
-    // `literal_type_number` produce distinct type names.
-    const marked = normalized.replace(/^_/, '').replace(/__+/g, '_U_')
+    // Preserve both leading underscore (hidden-rule marker) and internal
+    // double underscores as discriminators. Hidden vs visible kinds that
+    // share the same base must produce distinct names.
+    //   `_type_identifier`  → `Hidden_Type_Identifier`  → `HiddenTypeIdentifier`
+    //   `type_identifier`   → `Type_Identifier`         → `TypeIdentifier`
+    //   `literal_type__x`   → `Literal_Type_U_X`        → `LiteralTypeUX`
+    const hidden = normalized.startsWith('_')
+    const marked = (hidden ? `hidden_${normalized.slice(1)}` : normalized)
+        .replace(/__+/g, '_U_')
     let typeName = marked
         .split('_')
         .filter(Boolean)
@@ -397,7 +424,10 @@ export function nameNode(kind: string): { typeName: string; factoryName: string;
         .join('') || 'Anonymous'
     // TypeScript identifiers cannot start with a digit
     if (/^\d/.test(typeName)) typeName = `Tok_${typeName}`
-    const factoryName = typeName.charAt(0).toLowerCase() + typeName.slice(1)
+    let factoryName = typeName.charAt(0).toLowerCase() + typeName.slice(1)
+    // Avoid names that are illegal as top-level function declarations
+    // (e.g. `arguments`, `eval`) or that shadow language keywords.
+    if (FACTORY_NAME_RESERVED.has(factoryName)) factoryName = `${factoryName}_`
     const irKey = factoryName
     return { typeName, factoryName, irKey }
 }

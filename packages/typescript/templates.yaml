@@ -22,6 +22,10 @@ rules:
         template: $DECLARATION$SOURCE$$$CHILDREN
       - name: namespace
         template: $DECLARATION$SOURCE namespace$$$CHILDREN
+  export_clause:
+    template: "{$$$CHILDREN,}"
+  export_specifier:
+    template: type$NAME as$ALIAS
   declaration_form_0:
     template: $$$CHILDREN
   declaration_function_signature:
@@ -84,6 +88,10 @@ rules:
     template: from$SOURCE
   namespace_import:
     template: $IDENTIFIER as$$$CHILDREN
+  named_imports:
+    template: "{$$$CHILDREN,}"
+  import_specifier:
+    template: type$NAME
   import_attribute:
     template: $OBJECT$$$CHILDREN
   statement_export_statement:
@@ -286,10 +294,18 @@ rules:
         template: $$$CHILDREN
   yield_expression:
     template: $EXPRESSION*$$$CHILDREN
+  object:
+    template: "{$$$CHILDREN}"
+  object_pattern:
+    template: "{$$$CHILDREN}"
   assignment_pattern:
     template: $LEFT=$RIGHT
   object_assignment_pattern:
     template: $LEFT=$RIGHT
+  array:
+    template: "[$$$CHILDREN]"
+  array_pattern:
+    template: "[$$$CHILDREN]"
   jsx_element:
     template: $OPEN_TAG$CLOSE_TAG
   nested_identifier:
@@ -360,6 +376,8 @@ rules:
     template: $OPERATOR$ARGUMENT
   update_expression:
     template: $ARGUMENT$OPERATOR
+  sequence_expression:
+    template: $$$CHILDREN
   string_tok_dq:
     template: "\"$$$CHILDREN\""
   string_tok_sq:
@@ -416,6 +434,8 @@ rules:
         template: new.target
       - name: import
         template: import.meta
+  arguments:
+    template: ($$$CHILDREN)
   decorator_member_expression:
     template: $OBJECT.$PROPERTY
   decorator_call_expression:
@@ -444,6 +464,8 @@ rules:
     template: "$EXPRESSION$$$CHILDREN]"
   public_field_definition:
     template: $ACCESSIBILITY_MODIFIER$OVERRIDE_MODIFIER$INITIALIZER$NAME?$TYPE
+  _jsx_start_opening_element:
+    template: <$NAME$ATTRIBUTE
   non_null_expression:
     template: $EXPRESSION!
   method_signature:
@@ -464,6 +486,8 @@ rules:
     template: $IDENTIFIER=require($SOURCE)
   _extends_clause_single:
     template: $VALUE$TYPE_ARGUMENTS
+  implements_clause:
+    template: implements$$$CHILDREN
   ambient_declaration:
     template: $DECLARATION$TYPE_ANNOTATION
   abstract_class_declaration:
@@ -476,6 +500,8 @@ rules:
     template: $MODULE.$NAME
   interface_declaration:
     template: $EXTENDS_TYPE_CLAUSE$NAME$TYPE_PARAMETERS$$$CHILDREN$BODY
+  extends_type_clause:
+    template: extends$TYPE
   enum_declaration:
     template: const enum$NAME$BODY
   enum_body:
@@ -490,10 +516,20 @@ rules:
     template: $PARAMETER_NAME$INITIALIZER$TYPE
   _parameter_name:
     template: $DECORATOR$$$CHILDREN readonly$PATTERN
+  omitting_type_annotation:
+    template: "-?:$$$CHILDREN"
+  adding_type_annotation:
+    template: "+?:$$$CHILDREN"
+  opting_type_annotation:
+    template: "?:$$$CHILDREN"
+  type_annotation:
+    template: ":$$$CHILDREN"
   _type_query_member_expression_in_type_annotation:
     template: $OBJECT.$PROPERTY
   _type_query_call_expression_in_type_annotation:
     template: $FUNCTION$ARGUMENTS
+  asserts:
+    template: asserts$$$CHILDREN
   asserts_annotation:
     template: $ASSERTS
   type_primary_type:
@@ -526,6 +562,10 @@ rules:
     template: $NAME$TYPE
   optional_tuple_parameter:
     template: $NAME?$TYPE
+  optional_type:
+    template: $$$CHILDREN?
+  rest_type:
+    template: ...$$$CHILDREN
   constructor_type:
     template: abstract new$TYPE_PARAMETERS$PARAMETERS=>$TYPE
   primary_type_parenthesized_type:
@@ -628,6 +668,8 @@ rules:
     template: $FUNCTION$ARGUMENTS
   _type_query_instantiation_expression:
     template: $FUNCTION$TYPE_ARGUMENTS
+  type_query:
+    template: typeof$$$CHILDREN
   index_type_query:
     template: $PRIMARY_TYPE$$$CHILDREN
   lookup_type:
@@ -666,6 +708,8 @@ rules:
     template: $OPERATOR$ARGUMENT
   flow_maybe_type:
     template: $PRIMARY_TYPE$$$CHILDREN
+  parenthesized_type:
+    template: ($$$CHILDREN)
   predefined_type_any:
     template: any
   predefined_type_number:
@@ -708,24 +752,36 @@ rules:
         template: never
       - name: object
         template: object
+  type_arguments:
+    template: <$$$CHILDREN,>
   object_type:
     template: $OPENING$MEMBERS$CLOSING
   property_signature:
     template: $ACCESSIBILITY_MODIFIER$OVERRIDE_MODIFIER$$$CHILDREN readonly$NAME?$TYPE
+  type_parameters:
+    template: <$$$CHILDREN,>
   type_parameter:
     template: const$NAME$CONSTRAINT$VALUE
+  default_type:
+    template: =$$$CHILDREN
+  constraint:
+    template: extends$$$CHILDREN
   construct_signature:
     template: abstract new$TYPE_PARAMETERS$PARAMETERS$TYPE
   index_signature:
     template: "$MAPPED_TYPE_CLAUSE[$NAME:$INDEX_TYPE]$TYPE"
   array_type:
     template: "$PRIMARY_TYPE[]"
+  readonly_type:
+    template: readonly$$$CHILDREN
   union_type:
     template: $LEFT$RIGHT$$$CHILDREN
   intersection_type:
     template: $LEFT$RIGHT$$$CHILDREN
   function_type:
     template: $TYPE_PARAMETERS$PARAMETERS=>$RETURN_TYPE
+  _type_identifier:
+    template: $$$CHILDREN
   shorthand_property_identifier_identifier:
     template: $$$CHILDREN
   shorthand_property_identifier:

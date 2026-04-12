@@ -2,12 +2,16 @@
 
 /** All branch (non-leaf) node kind strings. */
 export const NODE_KINDS = [
+  '_field_identifier',
+  '_type_identifier',
   'abstract_type',
+  'arguments',
   'array_expression',
   'array_type',
   'assignment_expression',
   'associated_type',
   'async_block',
+  'attribute',
   'attribute_item',
   'binary_expression',
   'block',
@@ -18,6 +22,7 @@ export const NODE_KINDS = [
   'call_expression',
   'captured_pattern',
   'closure_expression',
+  'closure_parameters',
   'comment',
   'compound_assignment_expr',
   'const_block',
@@ -27,17 +32,22 @@ export const NODE_KINDS = [
   'declaration_list',
   'delim_token_tree',
   'dynamic_type',
+  'else_clause',
   'enum_item',
   'enum_variant',
+  'enum_variant_list',
   'escape_sequence',
   'expression_statement',
   'extern_crate_declaration',
   'extern_modifier',
   'field_declaration',
+  'field_declaration_list',
   'field_expression',
   'field_initializer',
+  'field_initializer_list',
   'field_pattern',
   'for_expression',
+  'for_lifetimes',
   'foreign_mod_item',
   'function_item',
   'function_modifiers',
@@ -66,13 +76,16 @@ export const NODE_KINDS = [
   'macro_invocation',
   'macro_rule',
   'match_arm',
+  'match_block',
   'match_expression',
+  'match_pattern',
   'mod_item',
   'mut_pattern',
   'negative_literal',
   'or_pattern',
   'ordered_field_declaration_list',
   'parameter',
+  'parameters',
   'pointer_type',
   'qualified_type',
   'range_expression',
@@ -90,29 +103,36 @@ export const NODE_KINDS = [
   'shorthand_field_initializer',
   'source_file',
   'static_item',
+  'string_literal',
   'struct_expression',
   'struct_item',
   'struct_pattern',
   'token_binding_pattern',
   'token_tree',
   'token_tree_pattern',
+  'trait_bounds',
   'trait_item',
   'try_block',
   'try_expression',
   'tuple_expression',
+  'tuple_pattern',
   'tuple_struct_pattern',
+  'type_arguments',
   'type_binding',
   'type_cast_expression',
   'type_item',
   'type_parameter',
+  'type_parameters',
   'unary_expression',
   'union_item',
   'unsafe_block',
   'use_as_clause',
+  'use_bounds',
   'use_declaration',
   'use_wildcard',
   'variadic_parameter',
   'visibility_modifier',
+  'where_clause',
   'where_predicate',
   'while_expression',
   'yield_expression',
@@ -214,14 +234,10 @@ export const ALL_KINDS = [...NODE_KINDS, ...LEAF_KINDS] as const;
 /** Language keywords (alphabetic anonymous tokens). */
 export const KEYWORDS = [
   '_',
-  '_field_identifier',
   '_inner_line_doc_comment_marker',
   '_outer_line_doc_comment_marker',
-  '_type_identifier',
-  'arguments',
   'as',
   'async',
-  'attribute',
   'await',
   'await_expression',
   'b',
@@ -230,28 +246,22 @@ export const KEYWORDS = [
   'break',
   'char',
   'char_literal',
-  'closure_parameters',
   'const',
   'continue',
   'crate',
   'default',
   'dyn',
   'else',
-  'else_clause',
   'empty_statement',
   'enum',
-  'enum_variant_list',
   'expr',
   'expr_2021',
   'extern',
   'f32',
   'f64',
   'false',
-  'field_declaration_list',
-  'field_initializer_list',
   'fn',
   'for',
-  'for_lifetimes',
   'gen',
   'i128',
   'i16',
@@ -270,8 +280,6 @@ export const KEYWORDS = [
   'literal',
   'loop',
   'match',
-  'match_block',
-  'match_pattern',
   'meta',
   'mod',
   'move',
@@ -279,7 +287,6 @@ export const KEYWORDS = [
   'mutable_specifier',
   'never_type',
   'outer_doc_comment_marker',
-  'parameters',
   'parenthesized_expression',
   'pat',
   'pat_param',
@@ -296,22 +303,17 @@ export const KEYWORDS = [
   'static',
   'stmt',
   'str',
-  'string_literal',
   'struct',
   'super',
   'token_repetition',
   'token_repetition_pattern',
   'trait',
-  'trait_bounds',
   'true',
   'try',
   'tt',
-  'tuple_pattern',
   'tuple_type',
   'ty',
   'type',
-  'type_arguments',
-  'type_parameters',
   'u128',
   'u16',
   'u32',
@@ -322,12 +324,10 @@ export const KEYWORDS = [
   'unit_type',
   'unsafe',
   'use',
-  'use_bounds',
   'use_list',
   'usize',
   'vis',
   'where',
-  'where_clause',
   'while',
   'yield',
 ] as const;
@@ -405,9 +405,15 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   required: boolean;
   multiple: boolean;
 }>> = {
+  '_field_identifier': [
+  ],
+  '_type_identifier': [
+  ],
   'abstract_type': [
     { name: 'typeParameters', required: true, multiple: false },
     { name: 'trait', required: true, multiple: false },
+  ],
+  'arguments': [
   ],
   'array_expression': [
     { name: 'attributes', required: true, multiple: false },
@@ -430,6 +436,10 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'async_block': [
     { name: 'block', required: true, multiple: false },
+  ],
+  'attribute': [
+    { name: 'value', required: false, multiple: false },
+    { name: 'arguments', required: false, multiple: false },
   ],
   'attribute_item': [
     { name: 'attribute', required: true, multiple: false },
@@ -467,6 +477,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'returnType', required: false, multiple: false },
     { name: 'body', required: true, multiple: false },
   ],
+  'closure_parameters': [
+  ],
   'comment': [
   ],
   'compound_assignment_expr': [
@@ -498,6 +510,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'dynamic_type': [
     { name: 'trait', required: true, multiple: false },
   ],
+  'else_clause': [
+  ],
   'enum_item': [
     { name: 'visibilityModifier', required: true, multiple: false },
     { name: 'whereClause', required: true, multiple: false },
@@ -510,6 +524,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'name', required: true, multiple: false },
     { name: 'body', required: true, multiple: false },
     { name: 'value', required: false, multiple: false },
+  ],
+  'enum_variant_list': [
   ],
   'escape_sequence': [
   ],
@@ -529,6 +545,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'name', required: true, multiple: false },
     { name: 'type', required: true, multiple: false },
   ],
+  'field_declaration_list': [
+  ],
   'field_expression': [
     { name: 'value', required: true, multiple: false },
     { name: 'field', required: true, multiple: false },
@@ -536,6 +554,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'field_initializer': [
     { name: 'field', required: true, multiple: false },
     { name: 'value', required: true, multiple: false },
+  ],
+  'field_initializer_list': [
   ],
   'field_pattern': [
     { name: 'mutableSpecifier', required: true, multiple: false },
@@ -547,6 +567,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'pattern', required: true, multiple: false },
     { name: 'value', required: true, multiple: false },
     { name: 'body', required: true, multiple: false },
+  ],
+  'for_lifetimes': [
   ],
   'foreign_mod_item': [
     { name: 'visibilityModifier', required: true, multiple: false },
@@ -668,9 +690,14 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'pattern', required: true, multiple: false },
     { name: 'value', required: true, multiple: false },
   ],
+  'match_block': [
+  ],
   'match_expression': [
     { name: 'value', required: true, multiple: false },
     { name: 'body', required: true, multiple: false },
+  ],
+  'match_pattern': [
+    { name: 'condition', required: false, multiple: false },
   ],
   'mod_item': [
     { name: 'visibilityModifier', required: true, multiple: false },
@@ -697,6 +724,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'mutableSpecifier', required: true, multiple: false },
     { name: 'pattern', required: true, multiple: false },
     { name: 'type', required: true, multiple: false },
+  ],
+  'parameters': [
   ],
   'pointer_type': [
     { name: 'mutableSpecifier', required: true, multiple: false },
@@ -770,6 +799,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'type', required: true, multiple: false },
     { name: 'value', required: false, multiple: false },
   ],
+  'string_literal': [
+  ],
   'struct_expression': [
     { name: 'name', required: true, multiple: false },
     { name: 'body', required: true, multiple: false },
@@ -792,6 +823,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'token_tree_pattern': [
   ],
+  'trait_bounds': [
+  ],
   'trait_item': [
     { name: 'visibilityModifier', required: true, multiple: false },
     { name: 'whereClause', required: true, multiple: false },
@@ -812,8 +845,12 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'rest', required: true, multiple: false },
     { name: 'trailing', required: true, multiple: false },
   ],
+  'tuple_pattern': [
+  ],
   'tuple_struct_pattern': [
     { name: 'type', required: true, multiple: false },
+  ],
+  'type_arguments': [
   ],
   'type_binding': [
     { name: 'name', required: true, multiple: false },
@@ -836,6 +873,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'bounds', required: false, multiple: false },
     { name: 'defaultType', required: false, multiple: false },
   ],
+  'type_parameters': [
+  ],
   'unary_expression': [
     { name: 'operand', required: true, multiple: false },
   ],
@@ -853,6 +892,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'path', required: true, multiple: false },
     { name: 'alias', required: true, multiple: false },
   ],
+  'use_bounds': [
+  ],
   'use_declaration': [
     { name: 'visibilityModifier', required: true, multiple: false },
     { name: 'argument', required: true, multiple: false },
@@ -865,6 +906,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'pattern', required: false, multiple: false },
   ],
   'visibility_modifier': [
+  ],
+  'where_clause': [
   ],
   'where_predicate': [
     { name: 'left', required: true, multiple: false },
