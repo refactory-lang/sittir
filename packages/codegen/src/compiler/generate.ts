@@ -19,13 +19,15 @@ import { emitTemplatesYaml } from '../emitters/rules.ts'
 import { emitFactories } from '../emitters/factories.ts'
 import { emitWrap } from '../emitters/wrap.ts'
 import { emitFrom } from '../emitters/from.ts'
-import { emitClientUtils } from '../emitters/client-utils.ts'
-import { emitConsts } from '../emitters/consts.ts'
+import { emitClientUtilsFromNodeMap } from '../emitters/client-utils-v2.ts'
 import { emitIrNamespace } from '../emitters/ir-namespace.ts'
 import { emitTests } from '../emitters/test-new.ts'
 import { emitTypeTests } from '../emitters/type-test.ts'
 import { emitConfig } from '../emitters/config.ts'
-import { emitIndex } from '../emitters/index-file.ts'
+
+// v2 emitters — consume NodeMap directly
+import { emitConstsFromNodeMap } from '../emitters/consts-v2.ts'
+import { emitIndexFromNodeMap } from '../emitters/index-file-v2.ts'
 
 import type { NodeMap } from './rule.ts'
 
@@ -92,11 +94,11 @@ export async function generateV2(cfg: GenerateConfigV2): Promise<GeneratedFilesV
         templatesYaml: emitTemplatesYaml({ grammar: cfg.grammar, nodes: nodes as any, grammarSha: '' }),
         factories: emitFactories({ grammar: cfg.grammar, nodes: nodes as any }),
         wrap: emitWrap({ grammar: cfg.grammar, nodes: nodes as any }),
-        utils: emitClientUtils({ nodes: nodes as any }),
+        utils: emitClientUtilsFromNodeMap({ nodeMap }),
         from: emitFrom({ grammar: cfg.grammar, nodes: nodes as any }),
         irNamespace: emitIrNamespace({ grammar: cfg.grammar, nodes: nodes as any }),
-        consts: emitConsts({ grammar: cfg.grammar, nodes: nodes as any }),
-        index: emitIndex({ grammar: cfg.grammar, nodes: nodes as any }),
+        consts: emitConstsFromNodeMap({ grammar: cfg.grammar, nodeMap }),
+        index: emitIndexFromNodeMap({ grammar: cfg.grammar, nodeMap }),
         tests: emitTests({ grammar: cfg.grammar, nodes: nodes as any }),
         typeTests: emitTypeTests({ nodes: nodes as any }),
         config: emitConfig({ grammar: cfg.grammar }),
