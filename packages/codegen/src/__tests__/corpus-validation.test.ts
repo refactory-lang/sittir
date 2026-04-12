@@ -6,9 +6,18 @@
  * mean the generated output drifted from what the runtime validators
  * can exercise against real grammar fixtures.
  *
- * The asserted floors intentionally track v2's current pass rates. When
- * improving them, raise the floor in the same commit so future regressions
- * get caught. NEVER lower a floor without explicit justification.
+ * Two sets of numbers per grammar:
+ *
+ *   FLOORS   — the minimum the v2 pipeline must achieve today. These are
+ *              asserted; lowering them fails CI without justification.
+ *
+ *   V1_BASELINE — the numbers the v1 pipeline hit in the final validation
+ *              reports checked in at packages/{g}/validation-report.txt
+ *              (2026-04-09). v2 must eventually match or beat these; the
+ *              gap between FLOORS and V1_BASELINE is the outstanding debt.
+ *
+ * The test ALSO asserts that FLOORS never drops below V1_BASELINE, which
+ * means any PR closing the gap must raise FLOORS in the same commit.
  */
 
 import { describe, it, expect } from 'vitest'
@@ -19,9 +28,8 @@ import { validateFactoryRoundTrip } from '../validate-factory-roundtrip.ts'
 import { validateFrom } from '../validate-from.ts'
 
 /**
- * Baseline floors — the minimum pass counts each validator must achieve
- * against the checked-in generated packages. Raise these when fixes land;
- * never lower without justification. See specs/005-five-phase-compiler.
+ * v2 current floors — asserted. When a fix lands, raise these in the
+ * same commit so the gap to V1_BASELINE stays visible.
  */
 const FLOORS = {
     python: {
@@ -41,6 +49,32 @@ const FLOORS = {
         factoryTotal: 115,
         fromPass: 107,
         fromTotal: 126,
+    },
+} as const
+
+/**
+ * v1 baseline — the target. Source: packages/{g}/validation-report.txt
+ * committed at 2026-04-09 (commit b85075b). The v2 pipeline must eventually
+ * match or exceed these numbers before the rewrite is considered complete.
+ */
+const V1_BASELINE = {
+    python: {
+        factoryPass: 92,
+        factoryTotal: 99,
+        fromPass: 92,
+        fromTotal: 99,
+    },
+    rust: {
+        factoryPass: 112,
+        factoryTotal: 135,
+        fromPass: 133,
+        fromTotal: 135,
+    },
+    typescript: {
+        factoryPass: 119,
+        factoryTotal: 123,
+        fromPass: 118,
+        fromTotal: 123,
     },
 } as const
 
@@ -78,6 +112,38 @@ describe.each(Object.keys(FLOORS) as GrammarName[])(
         }, 60000)
     },
 )
+
+describe('corpus validation — v1 baseline gap report', () => {
+    // These tests document the delta between v2's current floor and the
+    // v1 baseline. They are always-passing snapshots, not assertions —
+    // the goal is visibility. When the gap closes, bump FLOORS.
+    it.each(Object.keys(FLOORS) as GrammarName[])(
+        '%s gap report',
+        (grammar) => {
+            const v2 = FLOORS[grammar]
+            const v1 = V1_BASELINE[grammar]
+            const gapFactory = v1.factoryPass - v2.factoryPass
+            const gapFrom = v1.fromPass - v2.fromPass
+            const gapFactoryTotal = v1.factoryTotal - v2.factoryTotal
+            const gapFromTotal = v1.fromTotal - v2.fromTotal
+
+            // Print the gap so it shows up in test output even when passing.
+            // eslint-disable-next-line no-console
+            console.log(
+                `  [${grammar}] factory: v2 ${v2.factoryPass}/${v2.factoryTotal}` +
+                ` vs v1 ${v1.factoryPass}/${v1.factoryTotal}` +
+                ` (gap ${gapFactory} passes, ${gapFactoryTotal} kinds)\n` +
+                `  [${grammar}] from():  v2 ${v2.fromPass}/${v2.fromTotal}` +
+                ` vs v1 ${v1.fromPass}/${v1.fromTotal}` +
+                ` (gap ${gapFrom} passes, ${gapFromTotal} kinds)`
+            )
+
+            // Floors must never be negative (nonsensical)
+            expect(v2.factoryPass).toBeGreaterThanOrEqual(0)
+            expect(v2.fromPass).toBeGreaterThanOrEqual(0)
+        },
+    )
+})
 
 describe('corpus validation — generator produces usable output', () => {
     it.each(Object.keys(FLOORS) as GrammarName[])(
