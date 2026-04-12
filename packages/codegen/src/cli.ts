@@ -15,6 +15,7 @@ import { validateFrom, formatFromReport } from './validate-from.ts';
 import { join, dirname } from 'node:path';
 import { generate } from './index.ts';
 import type { CodegenConfig } from './index.ts';
+import { generateV2 } from './compiler/generate.ts';
 
 interface CliArgs {
 	grammar?: string;
@@ -24,6 +25,7 @@ interface CliArgs {
 	testsDir?: string;
 	roundtrip?: boolean;
 	help?: boolean;
+	v2?: boolean;
 }
 
 function parseArgs(argv: string[]): CliArgs {
@@ -52,6 +54,9 @@ function parseArgs(argv: string[]): CliArgs {
 				break;
 			case '--roundtrip':
 				args.roundtrip = true;
+				break;
+			case '--v2':
+				args.v2 = true;
 				break;
 			case '--help':
 			case '-h':
@@ -100,8 +105,10 @@ const config: CodegenConfig = {
 	outputDir: cliArgs.outputDir!,
 };
 
-console.log(`Generating ${config.grammar} IR...`);
-const result = generate(config);
+console.log(`Generating ${config.grammar} IR${cliArgs.v2 ? ' (v2 pipeline)' : ''}...`);
+const result = cliArgs.v2
+	? await generateV2({ grammar: config.grammar, nodes: config.nodes, outputDir: config.outputDir })
+	: generate(config);
 
 const outDir = cliArgs.outputDir;
 
