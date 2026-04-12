@@ -4,20 +4,8 @@ grammarSha: ""
 rules:
   program:
     template: $HASH_BANG_LINE $STATEMENTS
-  export_statement_form_0:
-    template: $DECLARATION $SOURCE $$$CHILDREN
-  export_statement_declaration:
-    template: $DECLARATION $SOURCE $$$CHILDREN
-  export_statement_eq:
-    template: $DECLARATION=$SOURCE $$$CHILDREN
-  export_statement_namespace:
-    template: $DECLARATION $SOURCE namespace $$$CHILDREN
   export_statement:
-    variants:
-      form_0: $DECLARATION $SOURCE $$$CHILDREN
-      declaration: $DECLARATION $SOURCE $$$CHILDREN
-      eq: $DECLARATION=$SOURCE $$$CHILDREN
-      namespace: $DECLARATION $SOURCE namespace $$$CHILDREN
+    template: export $DECLARATION $SOURCE
   namespace_export:
     template: "*as $$$CHILDREN"
   export_clause:
@@ -28,7 +16,7 @@ rules:
   declaration:
     template: $$$CHILDREN
   import_statement:
-    template: $IMPORT_CLAUSE $FROM_CLAUSE $IMPORT_ATTRIBUTE $SEMICOLON $$$CHILDREN
+    template: import $IMPORT_CLAUSE $FROM_CLAUSE $IMPORT_ATTRIBUTE $SEMICOLON
   import_clause_namespace_import:
     template: $$$CHILDREN
   import_clause_named_imports:
@@ -43,7 +31,7 @@ rules:
   _from_clause:
     template: from $SOURCE
   namespace_import:
-    template: "*$IDENTIFIER $$$CHILDREN"
+    template: "*as $IDENTIFIER"
   named_imports:
     template: "{$$$CHILDREN,}"
   import_specifier_name:
@@ -61,15 +49,15 @@ rules:
   expression_statement:
     template: $$$CHILDREN
   variable_declaration:
-    template: $DECLARATORS $SEMICOLON $$$CHILDREN
+    template: var $DECLARATORS $SEMICOLON
   lexical_declaration:
-    template: $DECLARATORS $SEMICOLON $$$CHILDREN
+    template: $KIND $DECLARATORS $SEMICOLON
   variable_declarator:
     template: $NAME $TYPE $$$CHILDREN
   statement_block:
     template: "{$STATEMENTS}$AUTOMATIC_SEMICOLON"
   else_clause:
-    template: $STATEMENT $$$CHILDREN
+    template: else $STATEMENT
   if_statement:
     template: if $CONDITION $CONSEQUENCE $ALTERNATIVE
   switch_statement:
@@ -124,7 +112,7 @@ rules:
   primary_expression:
     template: $$$CHILDREN
   yield_expression:
-    template: $EXPRESSION*$$$CHILDREN
+    template: yield $EXPRESSION
   object:
     template: "{$$$CHILDREN}"
   object_pattern:
@@ -156,7 +144,7 @@ rules:
   class:
     template: $CLASS_HERITAGE class $NAME $TYPE_PARAMETERS $$$CHILDREN $BODY
   class_declaration:
-    template: $CLASS_HERITAGE $AUTOMATIC_SEMICOLON $NAME $TYPE_PARAMETERS $$$CHILDREN $BODY
+    template: $CLASS_HERITAGE class $NAME $TYPE_PARAMETERS $AUTOMATIC_SEMICOLON $BODY $$$CHILDREN
   class_heritage_extends_clause:
     template: $EXTENDS_CLAUSE $IMPLEMENTS_CLAUSE
   class_heritage_implements_clause:
@@ -197,7 +185,7 @@ rules:
   new_expression:
     template: new $CONSTRUCTOR $TYPE_ARGUMENTS $ARGUMENTS
   await_expression:
-    template: $EXPRESSION $$$CHILDREN
+    template: await $EXPRESSION
   member_expression:
     template: $OBJECT.$PROPERTY
   subscript_expression:
@@ -265,7 +253,7 @@ rules:
   method_signature:
     template: $ACCESSIBILITY_MODIFIER $OVERRIDE_MODIFIER $$$CHILDREN readonly async get $NAME?
   abstract_method_signature:
-    template: $ACCESSIBILITY_MODIFIER $OVERRIDE_MODIFIER $$$CHILDREN get $NAME?
+    template: $ACCESSIBILITY_MODIFIER abstract $OVERRIDE_MODIFIER get $NAME?$$$CHILDREN
   function_signature:
     template: async function $NAME $$$CHILDREN
   decorator_parenthesized_expression:
@@ -273,9 +261,9 @@ rules:
   type_assertion:
     template: $TYPE_ARGUMENTS $EXPRESSION
   as_expression:
-    template: $EXPRESSION $TYPE_ANNOTATION const
+    template: $EXPRESSION as $TYPE_ANNOTATION
   satisfies_expression:
-    template: $EXPRESSION $TYPE_ANNOTATION $$$CHILDREN
+    template: $EXPRESSION satisfies $TYPE_ANNOTATION
   instantiation_expression:
     template: $EXPRESSION $TYPE_ARGUMENTS
   import_require_clause:
@@ -287,7 +275,7 @@ rules:
   implements_clause:
     template: implements $$$CHILDREN
   ambient_declaration:
-    template: $DECLARATION $TYPE_ANNOTATION
+    template: declare $DECLARATION
   abstract_class_declaration:
     template: $CLASS_HERITAGE abstract class $NAME $TYPE_PARAMETERS $$$CHILDREN $BODY
   module:
@@ -297,11 +285,11 @@ rules:
   _module:
     template: $NAME $BODY
   import_alias:
-    template: $NAME $VALUE=$SEMICOLON $$$CHILDREN
+    template: import $NAME=$VALUE $SEMICOLON
   nested_type_identifier:
     template: $MODULE.$NAME
   interface_declaration:
-    template: $EXTENDS_TYPE_CLAUSE $NAME $TYPE_PARAMETERS $$$CHILDREN $BODY
+    template: interface $NAME $TYPE_PARAMETERS $EXTENDS_TYPE_CLAUSE $BODY
   extends_type_clause:
     template: extends $TYPE
   enum_declaration:
@@ -313,9 +301,9 @@ rules:
   type_alias_declaration:
     template: type $NAME $TYPE_PARAMETERS=$VALUE $$$CHILDREN
   required_parameter:
-    template: $PARAMETER_NAME $INITIALIZER $$$CHILDREN
+    template: $PARAMETER_NAME $TYPE $INITIALIZER
   optional_parameter:
-    template: $PARAMETER_NAME?$INITIALIZER $$$CHILDREN
+    template: $PARAMETER_NAME?$TYPE $INITIALIZER
   _parameter_name:
     template: $DECORATOR $$$CHILDREN readonly $PATTERN
   omitting_type_annotation:
@@ -353,7 +341,7 @@ rules:
   template_literal_type:
     template: "`$$$CHILDREN`"
   infer_type:
-    template: $TYPE_IDENTIFIER $CONSTRAINT extends $$$CHILDREN
+    template: infer $TYPE_IDENTIFIER $CONSTRAINT
   conditional_type:
     template: "$LEFT extends $RIGHT?$CONSEQUENCE:$ALTERNATIVE"
   generic_type:
@@ -373,7 +361,7 @@ rules:
   type_query:
     template: typeof $$$CHILDREN
   index_type_query:
-    template: $PRIMARY_TYPE $$$CHILDREN
+    template: keyof $PRIMARY_TYPE
   lookup_type:
     template: "$PRIMARY_TYPE[$INDEX_TYPE]"
   mapped_type_clause:

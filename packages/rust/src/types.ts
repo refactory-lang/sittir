@@ -566,9 +566,9 @@ export interface ExpressionStatement {
 export interface MacroDefinition {
   readonly type: 'macro_definition';
   readonly fields: {
-    readonly rules: Identifier | HiddenReservedIdentifier;
+    readonly name: Identifier | HiddenReservedIdentifier;
+    readonly rules: string;
   };
-  readonly children: readonly (MacroRule)[];
 }
 
 export interface MacroRule {
@@ -657,36 +657,32 @@ export interface StructItem {
   readonly type: 'struct_item';
   readonly fields: {
     readonly visibility_modifier: VisibilityModifier;
-    readonly where_clause: string;
     readonly name: HiddenTypeIdentifier;
     readonly type_parameters: TypeParameters;
-    readonly body: FieldDeclarationList | OrderedFieldDeclarationList;
+    readonly where_clause: string;
   };
-  readonly children: WhereClause;
 }
 
 export interface UnionItem {
   readonly type: 'union_item';
   readonly fields: {
     readonly visibility_modifier: VisibilityModifier;
-    readonly where_clause: string;
     readonly name: HiddenTypeIdentifier;
     readonly type_parameters: TypeParameters;
+    readonly where_clause: WhereClause;
     readonly body: FieldDeclarationList;
   };
-  readonly children: WhereClause;
 }
 
 export interface EnumItem {
   readonly type: 'enum_item';
   readonly fields: {
     readonly visibility_modifier: VisibilityModifier;
-    readonly where_clause: string;
     readonly name: HiddenTypeIdentifier;
     readonly type_parameters: TypeParameters;
+    readonly where_clause: WhereClause;
     readonly body: EnumVariantList;
   };
-  readonly children: WhereClause;
 }
 
 export interface EnumVariantList {
@@ -730,11 +726,10 @@ export interface ExternCrateDeclaration {
   readonly type: 'extern_crate_declaration';
   readonly fields: {
     readonly visibility_modifier: VisibilityModifier;
-    readonly crate: string;
+    readonly crate: Crate;
     readonly name: Identifier;
     readonly alias?: Identifier;
   };
-  readonly children: Crate;
 }
 
 export interface ConstItem {
@@ -763,12 +758,12 @@ export interface TypeItem {
   readonly type: 'type_item';
   readonly fields: {
     readonly visibility_modifier: VisibilityModifier;
-    readonly where_clause: string;
-    readonly trailing_where_clause: HiddenTypeIdentifier;
+    readonly name: HiddenTypeIdentifier;
     readonly type_parameters: TypeParameters;
+    readonly where_clause: WhereClause;
     readonly type: HiddenType;
+    readonly trailing_where_clause: WhereClause;
   };
-  readonly children: WhereClause;
 }
 
 export interface FunctionItem {
@@ -776,11 +771,10 @@ export interface FunctionItem {
   readonly fields: {
     readonly visibility_modifier: VisibilityModifier;
     readonly function_modifiers: FunctionModifiers;
-    readonly where_clause: string;
     readonly name: Identifier | Metavariable;
     readonly type_parameters: TypeParameters;
     readonly parameters: Parameters;
-    readonly return_type?: HiddenType;
+    readonly where_clause: string;
     readonly body: Block;
   };
   readonly children: WhereClause;
@@ -791,11 +785,10 @@ export interface FunctionSignatureItem {
   readonly fields: {
     readonly visibility_modifier: VisibilityModifier;
     readonly function_modifiers: FunctionModifiers;
-    readonly where_clause: string;
     readonly name: Identifier | Metavariable;
     readonly type_parameters: TypeParameters;
     readonly parameters: Parameters;
-    readonly return_type?: HiddenType;
+    readonly where_clause: string;
   };
   readonly children: WhereClause;
 }
@@ -846,12 +839,11 @@ export interface TraitItem {
 export interface AssociatedType {
   readonly type: 'associated_type';
   readonly fields: {
-    readonly where_clause: string;
     readonly name: HiddenTypeIdentifier;
     readonly type_parameters: TypeParameters;
     readonly bounds: TraitBounds;
+    readonly where_clause: WhereClause;
   };
-  readonly children: WhereClause;
 }
 
 export interface TraitBounds {
@@ -906,13 +898,12 @@ export interface LifetimeParameter {
 export interface LetDeclaration {
   readonly type: 'let_declaration';
   readonly fields: {
-    readonly mutable_specifier: string;
+    readonly mutable_specifier: MutableSpecifier;
     readonly pattern: HiddenPattern;
     readonly type?: HiddenType;
     readonly value?: HiddenExpression;
     readonly alternative?: Block;
   };
-  readonly children: MutableSpecifier;
 }
 
 export interface UseDeclaration {
@@ -986,9 +977,8 @@ export interface Parameter {
 export interface ExternModifier {
   readonly type: 'extern_modifier';
   readonly fields: {
-    readonly string_literal: string;
+    readonly string_literal: StringLiteral;
   };
-  readonly children: StringLiteral;
 }
 
 export interface VisibilityModifier {
@@ -1117,7 +1107,6 @@ export interface AbstractType {
     readonly type_parameters: string;
     readonly trait: HiddenTypeIdentifier | ScopedTypeIdentifier | RemovedTraitBound | GenericType | FunctionType | TupleType | BoundedType;
   };
-  readonly children: TypeParameters;
 }
 
 export interface DynamicType {
@@ -1130,9 +1119,9 @@ export interface DynamicType {
 export interface MacroInvocation {
   readonly type: 'macro_invocation';
   readonly fields: {
-    readonly token_tree: ScopedIdentifier | Identifier | HiddenReservedIdentifier;
+    readonly macro: ScopedIdentifier | Identifier | HiddenReservedIdentifier;
+    readonly token_tree: DelimTokenTree;
   };
-  readonly children: DelimTokenTree;
 }
 
 export interface DelimTokenTree {
@@ -1437,18 +1426,16 @@ export interface Label {
 export interface BreakExpression {
   readonly type: 'break_expression';
   readonly fields: {
-    readonly label: string;
-    readonly expression: Label;
+    readonly label: Label;
+    readonly expression: HiddenExpression;
   };
-  readonly children: HiddenExpression;
 }
 
 export interface ContinueExpression {
   readonly type: 'continue_expression';
   readonly fields: {
-    readonly label: string;
+    readonly label: Label;
   };
-  readonly children: Label;
 }
 
 export interface IndexExpression {
@@ -1475,9 +1462,8 @@ export interface FieldExpression {
 export interface UnsafeBlock {
   readonly type: 'unsafe_block';
   readonly fields: {
-    readonly block: string;
+    readonly block: Block;
   };
-  readonly children: Block;
 }
 
 export interface AsyncBlock {
@@ -1499,9 +1485,8 @@ export interface GenBlock {
 export interface TryBlock {
   readonly type: 'try_block';
   readonly fields: {
-    readonly block: string;
+    readonly block: Block;
   };
-  readonly children: Block;
 }
 
 export interface Block {

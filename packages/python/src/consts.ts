@@ -169,7 +169,6 @@ export const LEAF_KINDS = [
   'or',
   'pass',
   'pass_statement',
-  'print',
   'raise',
   'return',
   'true',
@@ -225,7 +224,6 @@ export const KEYWORDS = [
   'pass',
   'pass_statement',
   'positional_separator',
-  'print',
   'raise',
   'return',
   'true',
@@ -497,8 +495,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'alternative', required: false, multiple: true },
   ],
   'import_from_statement': [
-    { name: 'wildcardImport', required: true, multiple: false },
     { name: 'moduleName', required: true, multiple: false },
+    { name: 'wildcardImport', required: true, multiple: false },
   ],
   'import_statement': [
   ],
@@ -615,6 +613,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'subscript', required: true, multiple: true },
   ],
   'try_statement': [
+    { name: 'body', required: true, multiple: false },
     { name: 'exceptClauses', required: true, multiple: false },
     { name: 'elseClause', required: true, multiple: false },
     { name: 'finallyClause', required: true, multiple: false },

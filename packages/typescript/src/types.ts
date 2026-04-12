@@ -23,7 +23,10 @@ export type LeafStringMap = {
   accessibility_modifier: "public" | "private" | "protected";
   override_modifier: "override";
   this_type: "this";
+  export: "export";
+  default: "default";
   as: "as";
+  namespace: "namespace";
   typeof: "typeof";
   from: "from";
   with: "with";
@@ -47,7 +50,6 @@ export type LeafStringMap = {
   return: "return";
   throw: "throw";
   case: "case";
-  default: "default";
   catch: "catch";
   finally: "finally";
   yield: "yield";
@@ -70,7 +72,6 @@ export type LeafStringMap = {
   extends: "extends";
   implements: "implements";
   global: "global";
-  namespace: "namespace";
   interface: "interface";
   enum: "enum";
   public: "public";
@@ -283,7 +284,10 @@ export const enum SyntaxKind {
   StringFragment = 'string_fragment',
   ThisType = 'this_type',
   TypeIdentifier = 'type_identifier',
+  Export = 'export',
+  Default = 'default',
   As = 'as',
+  Namespace = 'namespace',
   Typeof = 'typeof',
   From = 'from',
   With = 'with',
@@ -307,7 +311,6 @@ export const enum SyntaxKind {
   Return = 'return',
   Throw = 'throw',
   Case = 'case',
-  Default = 'default',
   Catch = 'catch',
   Finally = 'finally',
   Yield = 'yield',
@@ -330,7 +333,6 @@ export const enum SyntaxKind {
   Extends = 'extends',
   Implements = 'implements',
   Global = 'global',
-  Namespace = 'namespace',
   Interface = 'interface',
   Enum = 'enum',
   Public = 'public',
@@ -453,40 +455,15 @@ export interface Program {
   };
 }
 
-export interface ExportStatementForm0 {
+export interface ExportStatement {
   readonly type: 'export_statement';
   readonly fields: {
-    readonly declaration: Declaration;
-    readonly source: ExportClause;
-    readonly value: Expression;
+    readonly declaration: ExportClause | Expression | Identifier;
+    readonly source: HiddenSemicolon | Declaration | HiddenFromClause;
   };
+  readonly children: HiddenSemicolon;
 }
 
-export interface ExportStatementDeclaration {
-  readonly type: 'export_statement';
-  readonly fields: {
-    readonly declaration: string;
-    readonly source: string;
-  };
-}
-
-export interface ExportStatementEq {
-  readonly type: 'export_statement';
-  readonly fields: {
-    readonly declaration: string;
-    readonly source: Expression;
-  };
-}
-
-export interface ExportStatementNamespace {
-  readonly type: 'export_statement';
-  readonly fields: {
-    readonly declaration: string;
-    readonly source: string;
-  };
-}
-
-export type ExportStatement = ExportStatementForm0 | ExportStatementDeclaration | ExportStatementEq | ExportStatementNamespace;
 export interface NamespaceExport {
   readonly type: 'namespace_export';
   readonly children: HiddenModuleExportName;
@@ -513,12 +490,11 @@ export interface Declaration {
 export interface ImportStatement {
   readonly type: 'import_statement';
   readonly fields: {
-    readonly import_clause: string;
-    readonly from_clause: Type | Typeof;
-    readonly import_attribute: ImportRequireClause | String;
-    readonly semicolon: ImportAttribute;
+    readonly import_clause: Type | Typeof;
+    readonly from_clause: ImportRequireClause | String;
+    readonly import_attribute: ImportAttribute;
+    readonly semicolon: HiddenSemicolon;
   };
-  readonly children: HiddenSemicolon;
 }
 
 export interface ImportClauseNamespaceImport {
@@ -541,9 +517,8 @@ export type ImportClause = ImportClauseNamespaceImport | ImportClauseNamedImport
 export interface NamespaceImport {
   readonly type: 'namespace_import';
   readonly fields: {
-    readonly identifier: string;
+    readonly identifier: Identifier;
   };
-  readonly children: Identifier;
 }
 
 export interface NamedImports {
@@ -589,18 +564,17 @@ export interface VariableDeclaration {
   readonly type: 'variable_declaration';
   readonly fields: {
     readonly declarators: string;
-    readonly semicolon: string;
+    readonly semicolon: HiddenSemicolon;
   };
-  readonly children: HiddenSemicolon;
 }
 
 export interface LexicalDeclaration {
   readonly type: 'lexical_declaration';
   readonly fields: {
-    readonly declarators: Let | Const;
-    readonly semicolon: string;
+    readonly kind: Let | Const;
+    readonly declarators: string;
+    readonly semicolon: HiddenSemicolon;
   };
-  readonly children: HiddenSemicolon;
 }
 
 export interface VariableDeclarator {
@@ -623,9 +597,8 @@ export interface StatementBlock {
 export interface ElseClause {
   readonly type: 'else_clause';
   readonly fields: {
-    readonly statement: string;
+    readonly statement: Statement;
   };
-  readonly children: Statement;
 }
 
 export interface IfStatement {
@@ -797,9 +770,8 @@ export interface PrimaryExpression {
 export interface YieldExpression {
   readonly type: 'yield_expression';
   readonly fields: {
-    readonly expression: string;
+    readonly expression: Expression;
   };
-  readonly children: Expression;
 }
 
 export interface Object {
@@ -902,12 +874,12 @@ export interface ClassDeclaration {
   readonly type: 'class_declaration';
   readonly fields: {
     readonly class_heritage: string;
-    readonly automatic_semicolon: string;
     readonly name: HiddenTypeIdentifier;
     readonly type_parameters: TypeParameters;
+    readonly automatic_semicolon: ClassHeritage;
     readonly body: ClassBody;
   };
-  readonly children: ClassHeritage | AutomaticSemicolon;
+  readonly children: AutomaticSemicolon;
 }
 
 export interface ClassHeritageExtendsClause {
@@ -1010,9 +982,8 @@ export interface NewExpression {
 export interface AwaitExpression {
   readonly type: 'await_expression';
   readonly fields: {
-    readonly expression: string;
+    readonly expression: Expression;
   };
-  readonly children: Expression;
 }
 
 export interface MemberExpression {
@@ -1263,10 +1234,10 @@ export interface AbstractMethodSignature {
   readonly type: 'abstract_method_signature';
   readonly fields: {
     readonly accessibility_modifier: AccessibilityModifier;
-    readonly override_modifier: string;
+    readonly override_modifier: OverrideModifier;
     readonly name: HiddenPropertyName;
   };
-  readonly children: OverrideModifier | HiddenCallSignature;
+  readonly children: HiddenCallSignature;
 }
 
 export interface FunctionSignature {
@@ -1294,18 +1265,16 @@ export interface AsExpression {
   readonly type: 'as_expression';
   readonly fields: {
     readonly expression: Expression;
-    readonly type_annotation: string;
+    readonly type_annotation: Type;
   };
-  readonly children: Type;
 }
 
 export interface SatisfiesExpression {
   readonly type: 'satisfies_expression';
   readonly fields: {
     readonly expression: Expression;
-    readonly type_annotation: string;
+    readonly type_annotation: Type;
   };
-  readonly children: Type;
 }
 
 export interface InstantiationExpression {
@@ -1337,8 +1306,7 @@ export interface ImplementsClause {
 export interface AmbientDeclaration {
   readonly type: 'ambient_declaration';
   readonly fields: {
-    readonly declaration: string;
-    readonly type_annotation: Declaration;
+    readonly declaration: Declaration;
   };
 }
 
@@ -1366,11 +1334,10 @@ export interface InternalModule {
 export interface ImportAlias {
   readonly type: 'import_alias';
   readonly fields: {
-    readonly name: string;
-    readonly value: Identifier;
-    readonly semicolon: Identifier | NestedIdentifier;
+    readonly name: Identifier;
+    readonly value: Identifier | NestedIdentifier;
+    readonly semicolon: HiddenSemicolon;
   };
-  readonly children: HiddenSemicolon;
 }
 
 export interface NestedTypeIdentifier {
@@ -1384,12 +1351,11 @@ export interface NestedTypeIdentifier {
 export interface InterfaceDeclaration {
   readonly type: 'interface_declaration';
   readonly fields: {
-    readonly extends_type_clause: string;
     readonly name: HiddenTypeIdentifier;
     readonly type_parameters: TypeParameters;
+    readonly extends_type_clause: ExtendsTypeClause;
     readonly body: ObjectType;
   };
-  readonly children: ExtendsTypeClause;
 }
 
 export interface ExtendsTypeClause {
@@ -1436,18 +1402,18 @@ export interface RequiredParameter {
   readonly type: 'required_parameter';
   readonly fields: {
     readonly parameter_name: HiddenParameterName;
-    readonly initializer: TypeAnnotation;
+    readonly type: TypeAnnotation;
+    readonly initializer: HiddenInitializer;
   };
-  readonly children: HiddenInitializer;
 }
 
 export interface OptionalParameter {
   readonly type: 'optional_parameter';
   readonly fields: {
     readonly parameter_name: HiddenParameterName;
-    readonly initializer: TypeAnnotation;
+    readonly type: TypeAnnotation;
+    readonly initializer: HiddenInitializer;
   };
-  readonly children: HiddenInitializer;
 }
 
 export interface OmittingTypeAnnotation {
@@ -1540,10 +1506,9 @@ export interface TemplateLiteralType {
 export interface InferType {
   readonly type: 'infer_type';
   readonly fields: {
-    readonly type_identifier: string;
-    readonly constraint: HiddenTypeIdentifier;
+    readonly type_identifier: HiddenTypeIdentifier;
+    readonly constraint: string;
   };
-  readonly children: Type;
 }
 
 export interface ConditionalType {
@@ -1587,9 +1552,8 @@ export interface TypeQuery {
 export interface IndexTypeQuery {
   readonly type: 'index_type_query';
   readonly fields: {
-    readonly primary_type: string;
+    readonly primary_type: PrimaryType;
   };
-  readonly children: PrimaryType;
 }
 
 export interface LookupType {
@@ -1920,9 +1884,24 @@ export interface TypeIdentifier {
   readonly text: string;
 }
 
+export interface Export {
+  readonly type: 'export';
+  readonly text: "export";
+}
+
+export interface Default {
+  readonly type: 'default';
+  readonly text: "default";
+}
+
 export interface As {
   readonly type: 'as';
   readonly text: "as";
+}
+
+export interface Namespace {
+  readonly type: 'namespace';
+  readonly text: "namespace";
 }
 
 export interface Typeof {
@@ -2040,11 +2019,6 @@ export interface Case {
   readonly text: "case";
 }
 
-export interface Default {
-  readonly type: 'default';
-  readonly text: "default";
-}
-
 export interface Catch {
   readonly type: 'catch';
   readonly text: "catch";
@@ -2155,11 +2129,6 @@ export interface Global {
   readonly text: "global";
 }
 
-export interface Namespace {
-  readonly type: 'namespace';
-  readonly text: "namespace";
-}
-
 export interface Interface {
   readonly type: 'interface';
   readonly text: "interface";
@@ -2207,11 +2176,7 @@ export interface Keyof {
 
 // Config types
 export type ProgramConfig = ConfigOf<Program>;
-export type ExportStatementForm0Config = ConfigOf<ExportStatementForm0>;
-export type ExportStatementDeclarationConfig = ConfigOf<ExportStatementDeclaration>;
-export type ExportStatementEqConfig = ConfigOf<ExportStatementEq>;
-export type ExportStatementNamespaceConfig = ConfigOf<ExportStatementNamespace>;
-export type ExportStatementConfig = ExportStatementForm0Config | ExportStatementDeclarationConfig | ExportStatementEqConfig | ExportStatementNamespaceConfig;
+export type ExportStatementConfig = ConfigOf<ExportStatement>;
 export type NamespaceExportConfig = ConfigOf<NamespaceExport>;
 export type ExportClauseConfig = ConfigOf<ExportClause>;
 export type ExportSpecifierConfig = ConfigOf<ExportSpecifier>;
@@ -2400,10 +2365,6 @@ export type InterfaceBodyConfig = ConfigOf<InterfaceBody>;
 // Tree types
 export interface ProgramTree extends TreeNode<'program'> {}
 export interface ExportStatementTree extends TreeNode<'export_statement'> {}
-export interface ExportStatementForm0Tree extends TreeNode<'export_statement'> {}
-export interface ExportStatementDeclarationTree extends TreeNode<'export_statement'> {}
-export interface ExportStatementEqTree extends TreeNode<'export_statement'> {}
-export interface ExportStatementNamespaceTree extends TreeNode<'export_statement'> {}
 export interface NamespaceExportTree extends TreeNode<'namespace_export'> {}
 export interface ExportClauseTree extends TreeNode<'export_clause'> {}
 export interface ExportSpecifierTree extends TreeNode<'export_specifier'> {}
@@ -2618,7 +2579,10 @@ export interface PropertyIdentifierTree extends TreeNode<'property_identifier'> 
 export interface StringFragmentTree extends TreeNode<'string_fragment'> {}
 export interface ThisTypeTree extends TreeNode<'this_type'> {}
 export interface TypeIdentifierTree extends TreeNode<'type_identifier'> {}
+export interface ExportTree extends TreeNode<'export'> {}
+export interface DefaultTree extends TreeNode<'default'> {}
 export interface AsTree extends TreeNode<'as'> {}
+export interface NamespaceTree extends TreeNode<'namespace'> {}
 export interface TypeofTree extends TreeNode<'typeof'> {}
 export interface FromTree extends TreeNode<'from'> {}
 export interface WithTree extends TreeNode<'with'> {}
@@ -2642,7 +2606,6 @@ export interface DebuggerTree extends TreeNode<'debugger'> {}
 export interface ReturnTree extends TreeNode<'return'> {}
 export interface ThrowTree extends TreeNode<'throw'> {}
 export interface CaseTree extends TreeNode<'case'> {}
-export interface DefaultTree extends TreeNode<'default'> {}
 export interface CatchTree extends TreeNode<'catch'> {}
 export interface FinallyTree extends TreeNode<'finally'> {}
 export interface YieldTree extends TreeNode<'yield'> {}
@@ -2665,7 +2628,6 @@ export interface RequireTree extends TreeNode<'require'> {}
 export interface ExtendsTree extends TreeNode<'extends'> {}
 export interface ImplementsTree extends TreeNode<'implements'> {}
 export interface GlobalTree extends TreeNode<'global'> {}
-export interface NamespaceTree extends TreeNode<'namespace'> {}
 export interface InterfaceTree extends TreeNode<'interface'> {}
 export interface EnumTree extends TreeNode<'enum'> {}
 export interface PublicTree extends TreeNode<'public'> {}
@@ -2678,7 +2640,7 @@ export interface KeyofTree extends TreeNode<'keyof'> {}
 
 // FromInput types
 export type ProgramFromInput = FromInputOf<Program, LeafScalarMap, LeafStringMap>;
-export type ExportStatementFromInput = FromInputOf<ExportStatementForm0, LeafScalarMap, LeafStringMap> | FromInputOf<ExportStatementDeclaration, LeafScalarMap, LeafStringMap> | FromInputOf<ExportStatementEq, LeafScalarMap, LeafStringMap> | FromInputOf<ExportStatementNamespace, LeafScalarMap, LeafStringMap>;
+export type ExportStatementFromInput = FromInputOf<ExportStatement, LeafScalarMap, LeafStringMap>;
 export type NamespaceExportFromInput = FromInputOf<NamespaceExport, LeafScalarMap, LeafStringMap>;
 export type ExportClauseFromInput = FromInputOf<ExportClause, LeafScalarMap, LeafStringMap>;
 export type ExportSpecifierFromInput = FromInputOf<ExportSpecifier, LeafScalarMap, LeafStringMap>;
@@ -3344,7 +3306,10 @@ export interface KindMap {
   'string_fragment': StringFragment;
   'this_type': ThisType;
   'type_identifier': TypeIdentifier;
+  'export': Export;
+  'default': Default;
   'as': As;
+  'namespace': Namespace;
   'typeof': Typeof;
   'from': From;
   'with': With;
@@ -3368,7 +3333,6 @@ export interface KindMap {
   'return': Return;
   'throw': Throw;
   'case': Case;
-  'default': Default;
   'catch': Catch;
   'finally': Finally;
   'yield': Yield;
@@ -3391,7 +3355,6 @@ export interface KindMap {
   'extends': Extends;
   'implements': Implements;
   'global': Global;
-  'namespace': Namespace;
   'interface': Interface;
   'enum': Enum;
   'public': Public;
@@ -3404,7 +3367,6 @@ export interface KindMap {
 }
 
 export interface VariantMap {
-  'export_statement': { form_0: ExportStatementForm0; declaration: ExportStatementDeclaration; eq: ExportStatementEq; namespace: ExportStatementNamespace };
   'import_clause': { namespace_import: ImportClauseNamespaceImport; named_imports: ImportClauseNamedImports; default_import: ImportClauseDefaultImport };
   'import_specifier': { name: ImportSpecifierName; as: ImportSpecifierAs };
   'parenthesized_expression': { expression: ParenthesizedExpressionExpression; sequence_expression: ParenthesizedExpressionSequenceExpression };

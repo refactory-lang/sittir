@@ -13,13 +13,19 @@ rules:
   future_import_statement:
     template: from __future__ import $$$CHILDREN
   import_from_statement:
-    template: $WILDCARD_IMPORT $MODULE_NAME import $$$CHILDREN
+    template: from $MODULE_NAME import $WILDCARD_IMPORT
   _import_list:
     template: $NAME,
   aliased_import:
     template: $NAME as $ALIAS
+  print_statement_print:
+    template: print $CHEVRON $ARGUMENT,
+  print_statement_print2:
+    template: print $CHEVRON,
   print_statement:
-    template: $CHEVRON $$$CHILDREN $ARGUMENT,
+    variants:
+      print: print $CHEVRON $ARGUMENT,
+      print2: print $CHEVRON,
   chevron:
     template: ">>$EXPRESSION"
   assert_statement:
@@ -50,12 +56,12 @@ rules:
   while_statement:
     template: "while $CONDITION:$BODY $ALTERNATIVE"
   try_statement:
-    template: "$EXCEPT_CLAUSES:$ELSE_CLAUSE $FINALLY_CLAUSE $$$CHILDREN"
+    template: "try:$BODY $EXCEPT_CLAUSES $ELSE_CLAUSE $FINALLY_CLAUSE"
   except_clause:
     template: "except*$VALUE $ALIAS_CLAUSE:$$$CHILDREN"
     alias: as $ALIAS
   finally_clause:
-    template: "$BLOCK:$$$CHILDREN"
+    template: "finally:$BLOCK"
   with_statement:
     template: "$WITH_CLAUSE with $$$CHILDREN:$BODY"
   with_clause:
@@ -229,9 +235,9 @@ rules:
   for_in_clause:
     template: async for $LEFT in $RIGHT,
   if_clause:
-    template: $EXPRESSION $$$CHILDREN
+    template: if $EXPRESSION
   conditional_expression:
-    template: $BODY $CONDITION $ALTERNATIVE else $$$CHILDREN
+    template: $BODY if $CONDITION else $ALTERNATIVE
   concatenated_string:
     template: $$$CHILDREN
   string:
@@ -243,7 +249,7 @@ rules:
   format_specifier:
     template: ":$$$CHILDREN"
   await:
-    template: $PRIMARY_EXPRESSION $$$CHILDREN
+    template: await $PRIMARY_EXPRESSION
   as_pattern_target:
     template: $$$CHILDREN
   format_expression:

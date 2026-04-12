@@ -51,11 +51,11 @@ describe('future_import_statement', () => {
 
 describe('import_from_statement', () => {
   it('factory produces correct type', () => {
-    const node = ir.importFromStatement({ wildcardImport: 'test' as any, moduleName: { type: 'relative_import', text: 'test' } as any });
+    const node = ir.importFromStatement({ moduleName: { type: 'relative_import', text: 'test' } as any, wildcardImport: { type: 'wildcard_import', text: 'test' } as any });
     expect(node.type).toBe('import_from_statement');
   });
   it('render produces non-empty string', () => {
-    const node = ir.importFromStatement({ wildcardImport: 'test' as any, moduleName: { type: 'relative_import', text: 'test' } as any });
+    const node = ir.importFromStatement({ moduleName: { type: 'relative_import', text: 'test' } as any, wildcardImport: { type: 'wildcard_import', text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -83,13 +83,13 @@ describe('aliased_import', () => {
 });
 
 describe('print_statement', () => {
-  it('factory produces correct type', () => {
-    const node = ir.printStatement({ chevron: 'test' as any, argument: [] });
+  it('print form produces correct type', () => {
+    const node = ir.printStatement.print({ chevron: { type: 'chevron', text: 'test' } as any, argument: [] });
     expect(node.type).toBe('print_statement');
   });
-  it('render produces non-empty string', () => {
-    const node = ir.printStatement({ chevron: 'test' as any, argument: [] });
-    expect(node.render().length).toBeGreaterThan(0);
+  it('print2 form produces correct type', () => {
+    const node = ir.printStatement.print2({ chevron: 'test' as any });
+    expect(node.type).toBe('print_statement');
   });
 });
 
@@ -257,11 +257,11 @@ describe('while_statement', () => {
 
 describe('try_statement', () => {
   it('factory produces correct type', () => {
-    const node = ir.tryStatement({ exceptClauses: 'test' as any, elseClause: { type: '_suite', text: 'test' } as any, finallyClause: 'test' as any });
+    const node = ir.tryStatement({ body: { type: '_suite', text: 'test' } as any, exceptClauses: 'test' as any, elseClause: { type: 'else_clause', text: 'test' } as any, finallyClause: { type: 'finally_clause', text: 'test' } as any });
     expect(node.type).toBe('try_statement');
   });
   it('render produces non-empty string', () => {
-    const node = ir.tryStatement({ exceptClauses: 'test' as any, elseClause: { type: '_suite', text: 'test' } as any, finallyClause: 'test' as any });
+    const node = ir.tryStatement({ body: { type: '_suite', text: 'test' } as any, exceptClauses: 'test' as any, elseClause: { type: 'else_clause', text: 'test' } as any, finallyClause: { type: 'finally_clause', text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -279,11 +279,11 @@ describe('except_clause', () => {
 
 describe('finally_clause', () => {
   it('factory produces correct type', () => {
-    const node = ir.finallyClause({ block: 'test' as any });
+    const node = ir.finallyClause({ block: { type: '_suite', text: 'test' } as any });
     expect(node.type).toBe('finally_clause');
   });
   it('render produces non-empty string', () => {
-    const node = ir.finallyClause({ block: 'test' as any });
+    const node = ir.finallyClause({ block: { type: '_suite', text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -1042,22 +1042,22 @@ describe('for_in_clause', () => {
 
 describe('if_clause', () => {
   it('factory produces correct type', () => {
-    const node = ir.ifClause({ expression: 'test' as any });
+    const node = ir.ifClause({ expression: { type: 'expression', text: 'test' } as any });
     expect(node.type).toBe('if_clause');
   });
   it('render produces non-empty string', () => {
-    const node = ir.ifClause({ expression: 'test' as any });
+    const node = ir.ifClause({ expression: { type: 'expression', text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
 describe('conditional_expression', () => {
   it('factory produces correct type', () => {
-    const node = ir.conditionalExpression({ body: { type: 'expression', text: 'test' } as any, condition: 'test' as any, alternative: { type: 'expression', text: 'test' } as any });
+    const node = ir.conditionalExpression({ body: { type: 'expression', text: 'test' } as any, condition: { type: 'expression', text: 'test' } as any, alternative: { type: 'expression', text: 'test' } as any });
     expect(node.type).toBe('conditional_expression');
   });
   it('render produces non-empty string', () => {
-    const node = ir.conditionalExpression({ body: { type: 'expression', text: 'test' } as any, condition: 'test' as any, alternative: { type: 'expression', text: 'test' } as any });
+    const node = ir.conditionalExpression({ body: { type: 'expression', text: 'test' } as any, condition: { type: 'expression', text: 'test' } as any, alternative: { type: 'expression', text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -1179,11 +1179,11 @@ describe('none', () => {
 
 describe('await', () => {
   it('factory produces correct type', () => {
-    const node = ir.await_({ primaryExpression: 'test' as any });
+    const node = ir.await_({ primaryExpression: { type: 'primary_expression', text: 'test' } as any });
     expect(node.type).toBe('await');
   });
   it('render produces non-empty string', () => {
-    const node = ir.await_({ primaryExpression: 'test' as any });
+    const node = ir.await_({ primaryExpression: { type: 'primary_expression', text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });

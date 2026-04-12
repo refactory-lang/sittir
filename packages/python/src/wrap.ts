@@ -233,7 +233,6 @@ const _wrapTable: Record<string, (data: AnyNodeData, tree: TreeHandle) => unknow
   'from': (d) => d,
   '__future__': (d) => d,
   'as': (d) => d,
-  'print': (d) => d,
   'assert': (d) => d,
   'return': (d) => d,
   'del': (d) => d,
@@ -315,12 +314,11 @@ export function wrapFutureImportStatement(data: AnyNodeData, tree: TreeHandle): 
 }
 
 export function wrapImportFromStatement(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteFirstAnon(data, 'wildcard_import');
+  promoteNamed(data, 'wildcard_import', ["_import_list"]);
   return {
     ...data,
     get moduleName() { return drillIn(data.fields?.['module_name'], tree); },
     get wildcardImport() { return drillIn(data.fields?.['wildcard_import'], tree); },
-    get importList() { return drillIn(data.fields?.['importList'], tree); },
   };
 }
 
@@ -340,12 +338,11 @@ export function wrapAliasedImport(data: AnyNodeData, tree: TreeHandle): unknown 
 }
 
 export function wrapPrintStatement(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteFirstAnon(data, 'chevron');
+  promote(data, 'chevron');
   return {
     ...data,
     get argument() { return drillInAll(data.fields?.['argument'], tree); },
     get chevron() { return drillIn(data.fields?.['chevron'], tree); },
-    get child() { return drillIn(data.children?.[0], tree); },
   };
 }
 
@@ -466,10 +463,11 @@ export function wrapWhileStatement(data: AnyNodeData, tree: TreeHandle): unknown
 
 export function wrapTryStatement(data: AnyNodeData, tree: TreeHandle): unknown {
   promoteFirstAnon(data, 'except_clauses');
-  promoteNamed(data, 'else_clause', ["_simple_statements","block"]);
-  promoteFirstAnon(data, 'finally_clause');
+  promote(data, 'else_clause');
+  promote(data, 'finally_clause');
   return {
     ...data,
+    get body() { return drillIn(data.fields?.['body'], tree); },
     get exceptClauses() { return drillIn(data.fields?.['except_clauses'], tree); },
     get elseClause() { return drillIn(data.fields?.['else_clause'], tree); },
     get finallyClause() { return drillIn(data.fields?.['finally_clause'], tree); },
@@ -486,11 +484,10 @@ export function wrapExceptClause(data: AnyNodeData, tree: TreeHandle): unknown {
 }
 
 export function wrapFinallyClause(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteFirstAnon(data, 'block');
+  promoteNamed(data, 'block', ["_simple_statements","block"]);
   return {
     ...data,
     get block() { return drillIn(data.fields?.['block'], tree); },
-    get child() { return drillIn(data.children?.[0], tree); },
   };
 }
 
@@ -1209,24 +1206,22 @@ export function wrapForInClause(data: AnyNodeData, tree: TreeHandle): unknown {
 }
 
 export function wrapIfClause(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteFirstAnon(data, 'expression');
+  promote(data, 'expression');
   return {
     ...data,
     get expression() { return drillIn(data.fields?.['expression'], tree); },
-    get child() { return drillIn(data.children?.[0], tree); },
   };
 }
 
 export function wrapConditionalExpression(data: AnyNodeData, tree: TreeHandle): unknown {
   promoteNamed(data, 'body', ["expression"]);
-  promoteFirstAnon(data, 'condition');
+  promoteNamed(data, 'condition', ["expression"]);
   promoteNamed(data, 'alternative', ["expression"]);
   return {
     ...data,
     get body() { return drillIn(data.fields?.['body'], tree); },
     get condition() { return drillIn(data.fields?.['condition'], tree); },
     get alternative() { return drillIn(data.fields?.['alternative'], tree); },
-    get child() { return drillIn(data.children?.[0], tree); },
   };
 }
 
@@ -1276,11 +1271,10 @@ export function wrapFormatSpecifier(data: AnyNodeData, tree: TreeHandle): unknow
 }
 
 export function wrapAwait(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteFirstAnon(data, 'primary_expression');
+  promote(data, 'primary_expression');
   return {
     ...data,
     get primaryExpression() { return drillIn(data.fields?.['primary_expression'], tree); },
-    get child() { return drillIn(data.children?.[0], tree); },
   };
 }
 

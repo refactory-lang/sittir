@@ -197,6 +197,7 @@ export const LEAF_KINDS = [
   'else',
   'enum',
   'escape_sequence',
+  'export',
   'extends',
   'false',
   'finally',
@@ -290,6 +291,7 @@ export const KEYWORDS = [
   'empty_statement',
   'enum',
   'existential_type',
+  'export',
   'extends',
   'false',
   'finally',
@@ -448,7 +450,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'ambient_declaration': [
     { name: 'declaration', required: true, multiple: false },
-    { name: 'typeAnnotation', required: true, multiple: false },
   ],
   'arguments': [
   ],
@@ -518,9 +519,9 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'class_declaration': [
     { name: 'classHeritage', required: true, multiple: false },
-    { name: 'automaticSemicolon', required: true, multiple: false },
     { name: 'name', required: true, multiple: false },
     { name: 'typeParameters', required: true, multiple: false },
+    { name: 'automaticSemicolon', required: true, multiple: false },
     { name: 'body', required: true, multiple: false },
   ],
   'class_heritage': [
@@ -599,7 +600,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'export_statement': [
     { name: 'declaration', required: true, multiple: false },
     { name: 'source', required: true, multiple: false },
-    { name: 'value', required: true, multiple: false },
   ],
   'expression': [
   ],
@@ -713,9 +713,9 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'closing', required: true, multiple: false },
   ],
   'interface_declaration': [
-    { name: 'extendsTypeClause', required: true, multiple: false },
     { name: 'name', required: true, multiple: false },
     { name: 'typeParameters', required: true, multiple: false },
+    { name: 'extendsTypeClause', required: true, multiple: false },
     { name: 'body', required: true, multiple: false },
   ],
   'internal_module': [
@@ -746,6 +746,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'body', required: true, multiple: false },
   ],
   'lexical_declaration': [
+    { name: 'kind', required: true, multiple: false },
     { name: 'declarators', required: true, multiple: false },
     { name: 'semicolon', required: true, multiple: false },
   ],
@@ -820,6 +821,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'optional_parameter': [
     { name: 'parameterName', required: true, multiple: false },
+    { name: 'type', required: true, multiple: false },
     { name: 'initializer', required: true, multiple: false },
   ],
   'optional_tuple_parameter': [
@@ -872,6 +874,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'required_parameter': [
     { name: 'parameterName', required: true, multiple: false },
+    { name: 'type', required: true, multiple: false },
     { name: 'initializer', required: true, multiple: false },
   ],
   'rest_pattern': [

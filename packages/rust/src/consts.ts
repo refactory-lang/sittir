@@ -425,10 +425,10 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'right', required: true, multiple: false },
   ],
   'associated_type': [
-    { name: 'whereClause', required: true, multiple: false },
     { name: 'name', required: true, multiple: false },
     { name: 'typeParameters', required: true, multiple: false },
     { name: 'bounds', required: true, multiple: false },
+    { name: 'whereClause', required: true, multiple: false },
   ],
   'async_block': [
     { name: 'block', required: true, multiple: false },
@@ -514,9 +514,9 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'enum_item': [
     { name: 'visibilityModifier', required: true, multiple: false },
-    { name: 'whereClause', required: true, multiple: false },
     { name: 'name', required: true, multiple: false },
     { name: 'typeParameters', required: true, multiple: false },
+    { name: 'whereClause', required: true, multiple: false },
     { name: 'body', required: true, multiple: false },
   ],
   'enum_variant': [
@@ -575,11 +575,10 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'function_item': [
     { name: 'visibilityModifier', required: true, multiple: false },
     { name: 'functionModifiers', required: true, multiple: false },
-    { name: 'whereClause', required: true, multiple: false },
     { name: 'name', required: true, multiple: false },
     { name: 'typeParameters', required: true, multiple: false },
     { name: 'parameters', required: true, multiple: false },
-    { name: 'returnType', required: false, multiple: false },
+    { name: 'whereClause', required: true, multiple: false },
     { name: 'body', required: true, multiple: false },
   ],
   'function_modifiers': [
@@ -587,11 +586,10 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'function_signature_item': [
     { name: 'visibilityModifier', required: true, multiple: false },
     { name: 'functionModifiers', required: true, multiple: false },
-    { name: 'whereClause', required: true, multiple: false },
     { name: 'name', required: true, multiple: false },
     { name: 'typeParameters', required: true, multiple: false },
     { name: 'parameters', required: true, multiple: false },
-    { name: 'returnType', required: false, multiple: false },
+    { name: 'whereClause', required: true, multiple: false },
   ],
   'function_type': [
     { name: 'forLifetimes', required: true, multiple: false },
@@ -674,9 +672,11 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'body', required: true, multiple: false },
   ],
   'macro_definition': [
+    { name: 'name', required: true, multiple: false },
     { name: 'rules', required: true, multiple: false },
   ],
   'macro_invocation': [
+    { name: 'macro', required: true, multiple: false },
     { name: 'tokenTree', required: true, multiple: false },
   ],
   'macro_rule': [
@@ -811,10 +811,9 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'struct_item': [
     { name: 'visibilityModifier', required: true, multiple: false },
-    { name: 'whereClause', required: true, multiple: false },
     { name: 'name', required: true, multiple: false },
     { name: 'typeParameters', required: true, multiple: false },
-    { name: 'body', required: true, multiple: false },
+    { name: 'whereClause', required: true, multiple: false },
   ],
   'struct_pattern': [
     { name: 'type', required: true, multiple: false },
@@ -873,10 +872,11 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'type_item': [
     { name: 'visibilityModifier', required: true, multiple: false },
-    { name: 'whereClause', required: true, multiple: false },
-    { name: 'trailingWhereClause', required: true, multiple: false },
+    { name: 'name', required: true, multiple: false },
     { name: 'typeParameters', required: true, multiple: false },
+    { name: 'whereClause', required: true, multiple: false },
     { name: 'type', required: true, multiple: false },
+    { name: 'trailingWhereClause', required: true, multiple: false },
   ],
   'type_parameter': [
     { name: 'name', required: true, multiple: false },
@@ -890,9 +890,9 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'union_item': [
     { name: 'visibilityModifier', required: true, multiple: false },
-    { name: 'whereClause', required: true, multiple: false },
     { name: 'name', required: true, multiple: false },
     { name: 'typeParameters', required: true, multiple: false },
+    { name: 'whereClause', required: true, multiple: false },
     { name: 'body', required: true, multiple: false },
   ],
   'unsafe_block': [

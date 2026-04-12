@@ -28,6 +28,7 @@ export function expressionStatementFrom(...input: any[]) {
 
 export function macroDefinitionFrom(input: MacroDefinitionFromInput) {
   return macroDefinition({
+    name: ((input as any)?.name ?? (input as any)?.fields?.name),
     rules: ((input as any)?.rules ?? (input as any)?.fields?.rules),
     children: ((input as any)?.children ?? []) as any,
   } as any);
@@ -132,10 +133,9 @@ export function declarationListFrom(...input: any[]) {
 export function structItemFrom(input: StructItemFromInput) {
   return structItem({
     visibilityModifier: ((input as any)?.visibility_modifier ?? (input as any)?.fields?.visibility_modifier),
-    whereClause: ((input as any)?.where_clause ?? (input as any)?.fields?.where_clause),
     name: ((input as any)?.name ?? (input as any)?.fields?.name),
     typeParameters: ((input as any)?.type_parameters ?? (input as any)?.fields?.type_parameters),
-    body: ((input as any)?.body ?? (input as any)?.fields?.body),
+    whereClause: ((input as any)?.where_clause ?? (input as any)?.fields?.where_clause),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -143,9 +143,9 @@ export function structItemFrom(input: StructItemFromInput) {
 export function unionItemFrom(input: UnionItemFromInput) {
   return unionItem({
     visibilityModifier: ((input as any)?.visibility_modifier ?? (input as any)?.fields?.visibility_modifier),
-    whereClause: ((input as any)?.where_clause ?? (input as any)?.fields?.where_clause),
     name: ((input as any)?.name ?? (input as any)?.fields?.name),
     typeParameters: ((input as any)?.type_parameters ?? (input as any)?.fields?.type_parameters),
+    whereClause: ((input as any)?.where_clause ?? (input as any)?.fields?.where_clause),
     body: ((input as any)?.body ?? (input as any)?.fields?.body),
     children: ((input as any)?.children ?? []) as any,
   } as any);
@@ -154,9 +154,9 @@ export function unionItemFrom(input: UnionItemFromInput) {
 export function enumItemFrom(input: EnumItemFromInput) {
   return enumItem({
     visibilityModifier: ((input as any)?.visibility_modifier ?? (input as any)?.fields?.visibility_modifier),
-    whereClause: ((input as any)?.where_clause ?? (input as any)?.fields?.where_clause),
     name: ((input as any)?.name ?? (input as any)?.fields?.name),
     typeParameters: ((input as any)?.type_parameters ?? (input as any)?.fields?.type_parameters),
+    whereClause: ((input as any)?.where_clause ?? (input as any)?.fields?.where_clause),
     body: ((input as any)?.body ?? (input as any)?.fields?.body),
     children: ((input as any)?.children ?? []) as any,
   } as any);
@@ -208,7 +208,7 @@ export function orderedFieldDeclarationListFrom(input: OrderedFieldDeclarationLi
 export function externCrateDeclarationFrom(input: ExternCrateDeclarationFromInput) {
   return externCrateDeclaration({
     visibilityModifier: ((input as any)?.visibility_modifier ?? (input as any)?.fields?.visibility_modifier),
-    crate: ((input as any)?.crate ?? (input as any)?.fields?.crate),
+    crate: typeof ((input as any)?.crate ?? (input as any)?.fields?.crate) === 'string' ? crate(((input as any)?.crate ?? (input as any)?.fields?.crate)) : ((input as any)?.crate ?? (input as any)?.fields?.crate),
     name: typeof ((input as any)?.name ?? (input as any)?.fields?.name) === 'string' ? identifier(((input as any)?.name ?? (input as any)?.fields?.name)) : ((input as any)?.name ?? (input as any)?.fields?.name),
     alias: typeof ((input as any)?.alias ?? (input as any)?.fields?.alias) === 'string' ? identifier(((input as any)?.alias ?? (input as any)?.fields?.alias)) : ((input as any)?.alias ?? (input as any)?.fields?.alias),
     children: ((input as any)?.children ?? []) as any,
@@ -239,10 +239,11 @@ export function staticItemFrom(input: StaticItemFromInput) {
 export function typeItemFrom(input: TypeItemFromInput) {
   return typeItem({
     visibilityModifier: ((input as any)?.visibility_modifier ?? (input as any)?.fields?.visibility_modifier),
-    whereClause: ((input as any)?.where_clause ?? (input as any)?.fields?.where_clause),
-    trailingWhereClause: ((input as any)?.trailing_where_clause ?? (input as any)?.fields?.trailing_where_clause),
+    name: ((input as any)?.name ?? (input as any)?.fields?.name),
     typeParameters: ((input as any)?.type_parameters ?? (input as any)?.fields?.type_parameters),
+    whereClause: ((input as any)?.where_clause ?? (input as any)?.fields?.where_clause),
     type: ((input as any)?.type ?? (input as any)?.fields?.type),
+    trailingWhereClause: ((input as any)?.trailing_where_clause ?? (input as any)?.fields?.trailing_where_clause),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -251,11 +252,10 @@ export function functionItemFrom(input: FunctionItemFromInput) {
   return functionItem({
     visibilityModifier: ((input as any)?.visibility_modifier ?? (input as any)?.fields?.visibility_modifier),
     functionModifiers: ((input as any)?.function_modifiers ?? (input as any)?.fields?.function_modifiers),
-    whereClause: ((input as any)?.where_clause ?? (input as any)?.fields?.where_clause),
     name: ((input as any)?.name ?? (input as any)?.fields?.name),
     typeParameters: ((input as any)?.type_parameters ?? (input as any)?.fields?.type_parameters),
     parameters: ((input as any)?.parameters ?? (input as any)?.fields?.parameters),
-    returnType: ((input as any)?.return_type ?? (input as any)?.fields?.return_type),
+    whereClause: ((input as any)?.where_clause ?? (input as any)?.fields?.where_clause),
     body: ((input as any)?.body ?? (input as any)?.fields?.body),
     children: ((input as any)?.children ?? []) as any,
   } as any);
@@ -265,11 +265,10 @@ export function functionSignatureItemFrom(input: FunctionSignatureItemFromInput)
   return functionSignatureItem({
     visibilityModifier: ((input as any)?.visibility_modifier ?? (input as any)?.fields?.visibility_modifier),
     functionModifiers: ((input as any)?.function_modifiers ?? (input as any)?.fields?.function_modifiers),
-    whereClause: ((input as any)?.where_clause ?? (input as any)?.fields?.where_clause),
     name: ((input as any)?.name ?? (input as any)?.fields?.name),
     typeParameters: ((input as any)?.type_parameters ?? (input as any)?.fields?.type_parameters),
     parameters: ((input as any)?.parameters ?? (input as any)?.fields?.parameters),
-    returnType: ((input as any)?.return_type ?? (input as any)?.fields?.return_type),
+    whereClause: ((input as any)?.where_clause ?? (input as any)?.fields?.where_clause),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -323,10 +322,10 @@ export function traitItemFrom(input: TraitItemFromInput) {
 
 export function associatedTypeFrom(input: AssociatedTypeFromInput) {
   return associatedType({
-    whereClause: ((input as any)?.where_clause ?? (input as any)?.fields?.where_clause),
     name: ((input as any)?.name ?? (input as any)?.fields?.name),
     typeParameters: ((input as any)?.type_parameters ?? (input as any)?.fields?.type_parameters),
     bounds: ((input as any)?.bounds ?? (input as any)?.fields?.bounds),
+    whereClause: ((input as any)?.where_clause ?? (input as any)?.fields?.where_clause),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -391,7 +390,7 @@ export function lifetimeParameterFrom(input: LifetimeParameterFromInput) {
 
 export function letDeclarationFrom(input: LetDeclarationFromInput) {
   return letDeclaration({
-    mutableSpecifier: ((input as any)?.mutable_specifier ?? (input as any)?.fields?.mutable_specifier),
+    mutableSpecifier: typeof ((input as any)?.mutable_specifier ?? (input as any)?.fields?.mutable_specifier) === 'string' ? mutableSpecifier(((input as any)?.mutable_specifier ?? (input as any)?.fields?.mutable_specifier)) : ((input as any)?.mutable_specifier ?? (input as any)?.fields?.mutable_specifier),
     pattern: ((input as any)?.pattern ?? (input as any)?.fields?.pattern),
     type: ((input as any)?.type ?? (input as any)?.fields?.type),
     value: ((input as any)?.value ?? (input as any)?.fields?.value),
@@ -645,6 +644,7 @@ export function mutableSpecifierFrom(input?: MutableSpecifier) {
 
 export function macroInvocationFrom(input: MacroInvocationFromInput) {
   return macroInvocation({
+    macro: ((input as any)?.macro ?? (input as any)?.fields?.macro),
     tokenTree: ((input as any)?.token_tree ?? (input as any)?.fields?.token_tree),
     children: ((input as any)?.children ?? []) as any,
   } as any);

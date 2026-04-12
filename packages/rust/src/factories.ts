@@ -128,6 +128,7 @@ export function expressionStatement(child?: any) {
 
 export function macroDefinition(config: ConfigOf<MacroDefinition>) {
   const fields = {
+    name: (config as any)?.name,
     rules: (config as any)?.rules,
   };
   const children = (config as any)?.children ?? [];
@@ -136,6 +137,7 @@ export function macroDefinition(config: ConfigOf<MacroDefinition>) {
     named: true as const,
     fields,
     children,
+    name(name_?: any) { return name_ !== undefined ? macroDefinition({ ...(config as any), name: name_ } as any) : fields.name; },
     rules(rules_?: any) { return rules_ !== undefined ? macroDefinition({ ...(config as any), rules: rules_ } as any) : fields.rules; },
     getChildren() { return children; },
     setChildren(...items: any[]) { return macroDefinition({ ...(config as any), children: items } as any); },
@@ -389,10 +391,9 @@ export function declarationList(...children: any[]) {
 export function structItem(config: ConfigOf<StructItem>) {
   const fields = {
     visibility_modifier: (config as any)?.visibilityModifier,
-    where_clause: (config as any)?.whereClause,
     name: (config as any)?.name,
     type_parameters: (config as any)?.typeParameters,
-    body: (config as any)?.body,
+    where_clause: (config as any)?.whereClause,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -401,10 +402,9 @@ export function structItem(config: ConfigOf<StructItem>) {
     fields,
     children,
     visibilityModifier(visibilityModifier_?: any) { return visibilityModifier_ !== undefined ? structItem({ ...(config as any), visibilityModifier: visibilityModifier_ } as any) : fields.visibility_modifier; },
-    whereClause(whereClause_?: any) { return whereClause_ !== undefined ? structItem({ ...(config as any), whereClause: whereClause_ } as any) : fields.where_clause; },
     name(name_?: any) { return name_ !== undefined ? structItem({ ...(config as any), name: name_ } as any) : fields.name; },
     typeParameters(typeParameters_?: any) { return typeParameters_ !== undefined ? structItem({ ...(config as any), typeParameters: typeParameters_ } as any) : fields.type_parameters; },
-    body(body_?: any) { return body_ !== undefined ? structItem({ ...(config as any), body: body_ } as any) : fields.body; },
+    whereClause(whereClause_?: any) { return whereClause_ !== undefined ? structItem({ ...(config as any), whereClause: whereClause_ } as any) : fields.where_clause; },
     getChildren() { return children; },
     setChildren(...items: any[]) { return structItem({ ...(config as any), children: items } as any); },
     render() { return render(this); },
@@ -419,9 +419,9 @@ export function structItem(config: ConfigOf<StructItem>) {
 export function unionItem(config: ConfigOf<UnionItem>) {
   const fields = {
     visibility_modifier: (config as any)?.visibilityModifier,
-    where_clause: (config as any)?.whereClause,
     name: (config as any)?.name,
     type_parameters: (config as any)?.typeParameters,
+    where_clause: (config as any)?.whereClause,
     body: (config as any)?.body,
   };
   const children = (config as any)?.children ?? [];
@@ -431,9 +431,9 @@ export function unionItem(config: ConfigOf<UnionItem>) {
     fields,
     children,
     visibilityModifier(visibilityModifier_?: any) { return visibilityModifier_ !== undefined ? unionItem({ ...(config as any), visibilityModifier: visibilityModifier_ } as any) : fields.visibility_modifier; },
-    whereClause(whereClause_?: any) { return whereClause_ !== undefined ? unionItem({ ...(config as any), whereClause: whereClause_ } as any) : fields.where_clause; },
     name(name_?: any) { return name_ !== undefined ? unionItem({ ...(config as any), name: name_ } as any) : fields.name; },
     typeParameters(typeParameters_?: any) { return typeParameters_ !== undefined ? unionItem({ ...(config as any), typeParameters: typeParameters_ } as any) : fields.type_parameters; },
+    whereClause(whereClause_?: any) { return whereClause_ !== undefined ? unionItem({ ...(config as any), whereClause: whereClause_ } as any) : fields.where_clause; },
     body(body_?: any) { return body_ !== undefined ? unionItem({ ...(config as any), body: body_ } as any) : fields.body; },
     getChildren() { return children; },
     setChildren(...items: any[]) { return unionItem({ ...(config as any), children: items } as any); },
@@ -449,9 +449,9 @@ export function unionItem(config: ConfigOf<UnionItem>) {
 export function enumItem(config: ConfigOf<EnumItem>) {
   const fields = {
     visibility_modifier: (config as any)?.visibilityModifier,
-    where_clause: (config as any)?.whereClause,
     name: (config as any)?.name,
     type_parameters: (config as any)?.typeParameters,
+    where_clause: (config as any)?.whereClause,
     body: (config as any)?.body,
   };
   const children = (config as any)?.children ?? [];
@@ -461,9 +461,9 @@ export function enumItem(config: ConfigOf<EnumItem>) {
     fields,
     children,
     visibilityModifier(visibilityModifier_?: any) { return visibilityModifier_ !== undefined ? enumItem({ ...(config as any), visibilityModifier: visibilityModifier_ } as any) : fields.visibility_modifier; },
-    whereClause(whereClause_?: any) { return whereClause_ !== undefined ? enumItem({ ...(config as any), whereClause: whereClause_ } as any) : fields.where_clause; },
     name(name_?: any) { return name_ !== undefined ? enumItem({ ...(config as any), name: name_ } as any) : fields.name; },
     typeParameters(typeParameters_?: any) { return typeParameters_ !== undefined ? enumItem({ ...(config as any), typeParameters: typeParameters_ } as any) : fields.type_parameters; },
+    whereClause(whereClause_?: any) { return whereClause_ !== undefined ? enumItem({ ...(config as any), whereClause: whereClause_ } as any) : fields.where_clause; },
     body(body_?: any) { return body_ !== undefined ? enumItem({ ...(config as any), body: body_ } as any) : fields.body; },
     getChildren() { return children; },
     setChildren(...items: any[]) { return enumItem({ ...(config as any), children: items } as any); },
@@ -671,10 +671,11 @@ export function staticItem(config: ConfigOf<StaticItem>) {
 export function typeItem(config: ConfigOf<TypeItem>) {
   const fields = {
     visibility_modifier: (config as any)?.visibilityModifier,
-    where_clause: (config as any)?.whereClause,
-    trailing_where_clause: (config as any)?.trailingWhereClause,
+    name: (config as any)?.name,
     type_parameters: (config as any)?.typeParameters,
+    where_clause: (config as any)?.whereClause,
     type: (config as any)?.type,
+    trailing_where_clause: (config as any)?.trailingWhereClause,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -683,10 +684,11 @@ export function typeItem(config: ConfigOf<TypeItem>) {
     fields,
     children,
     visibilityModifier(visibilityModifier_?: any) { return visibilityModifier_ !== undefined ? typeItem({ ...(config as any), visibilityModifier: visibilityModifier_ } as any) : fields.visibility_modifier; },
-    whereClause(whereClause_?: any) { return whereClause_ !== undefined ? typeItem({ ...(config as any), whereClause: whereClause_ } as any) : fields.where_clause; },
-    trailingWhereClause(trailingWhereClause_?: any) { return trailingWhereClause_ !== undefined ? typeItem({ ...(config as any), trailingWhereClause: trailingWhereClause_ } as any) : fields.trailing_where_clause; },
+    name(name_?: any) { return name_ !== undefined ? typeItem({ ...(config as any), name: name_ } as any) : fields.name; },
     typeParameters(typeParameters_?: any) { return typeParameters_ !== undefined ? typeItem({ ...(config as any), typeParameters: typeParameters_ } as any) : fields.type_parameters; },
+    whereClause(whereClause_?: any) { return whereClause_ !== undefined ? typeItem({ ...(config as any), whereClause: whereClause_ } as any) : fields.where_clause; },
     typeField(type?: any) { return type !== undefined ? typeItem({ ...(config as any), type: type } as any) : fields.type; },
+    trailingWhereClause(trailingWhereClause_?: any) { return trailingWhereClause_ !== undefined ? typeItem({ ...(config as any), trailingWhereClause: trailingWhereClause_ } as any) : fields.trailing_where_clause; },
     getChildren() { return children; },
     setChildren(...items: any[]) { return typeItem({ ...(config as any), children: items } as any); },
     render() { return render(this); },
@@ -702,11 +704,10 @@ export function functionItem(config: ConfigOf<FunctionItem>) {
   const fields = {
     visibility_modifier: (config as any)?.visibilityModifier,
     function_modifiers: (config as any)?.functionModifiers,
-    where_clause: (config as any)?.whereClause,
     name: (config as any)?.name,
     type_parameters: (config as any)?.typeParameters,
     parameters: (config as any)?.parameters,
-    return_type: (config as any)?.returnType,
+    where_clause: (config as any)?.whereClause,
     body: (config as any)?.body,
   };
   const children = (config as any)?.children ?? [];
@@ -717,11 +718,10 @@ export function functionItem(config: ConfigOf<FunctionItem>) {
     children,
     visibilityModifier(visibilityModifier_?: any) { return visibilityModifier_ !== undefined ? functionItem({ ...(config as any), visibilityModifier: visibilityModifier_ } as any) : fields.visibility_modifier; },
     functionModifiers(functionModifiers_?: any) { return functionModifiers_ !== undefined ? functionItem({ ...(config as any), functionModifiers: functionModifiers_ } as any) : fields.function_modifiers; },
-    whereClause(whereClause_?: any) { return whereClause_ !== undefined ? functionItem({ ...(config as any), whereClause: whereClause_ } as any) : fields.where_clause; },
     name(name_?: any) { return name_ !== undefined ? functionItem({ ...(config as any), name: name_ } as any) : fields.name; },
     typeParameters(typeParameters_?: any) { return typeParameters_ !== undefined ? functionItem({ ...(config as any), typeParameters: typeParameters_ } as any) : fields.type_parameters; },
     parameters(parameters_?: any) { return parameters_ !== undefined ? functionItem({ ...(config as any), parameters: parameters_ } as any) : fields.parameters; },
-    returnType(returnType_?: any) { return returnType_ !== undefined ? functionItem({ ...(config as any), returnType: returnType_ } as any) : fields.return_type; },
+    whereClause(whereClause_?: any) { return whereClause_ !== undefined ? functionItem({ ...(config as any), whereClause: whereClause_ } as any) : fields.where_clause; },
     body(body_?: any) { return body_ !== undefined ? functionItem({ ...(config as any), body: body_ } as any) : fields.body; },
     getChildren() { return children; },
     setChildren(...items: any[]) { return functionItem({ ...(config as any), children: items } as any); },
@@ -738,11 +738,10 @@ export function functionSignatureItem(config: ConfigOf<FunctionSignatureItem>) {
   const fields = {
     visibility_modifier: (config as any)?.visibilityModifier,
     function_modifiers: (config as any)?.functionModifiers,
-    where_clause: (config as any)?.whereClause,
     name: (config as any)?.name,
     type_parameters: (config as any)?.typeParameters,
     parameters: (config as any)?.parameters,
-    return_type: (config as any)?.returnType,
+    where_clause: (config as any)?.whereClause,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -752,11 +751,10 @@ export function functionSignatureItem(config: ConfigOf<FunctionSignatureItem>) {
     children,
     visibilityModifier(visibilityModifier_?: any) { return visibilityModifier_ !== undefined ? functionSignatureItem({ ...(config as any), visibilityModifier: visibilityModifier_ } as any) : fields.visibility_modifier; },
     functionModifiers(functionModifiers_?: any) { return functionModifiers_ !== undefined ? functionSignatureItem({ ...(config as any), functionModifiers: functionModifiers_ } as any) : fields.function_modifiers; },
-    whereClause(whereClause_?: any) { return whereClause_ !== undefined ? functionSignatureItem({ ...(config as any), whereClause: whereClause_ } as any) : fields.where_clause; },
     name(name_?: any) { return name_ !== undefined ? functionSignatureItem({ ...(config as any), name: name_ } as any) : fields.name; },
     typeParameters(typeParameters_?: any) { return typeParameters_ !== undefined ? functionSignatureItem({ ...(config as any), typeParameters: typeParameters_ } as any) : fields.type_parameters; },
     parameters(parameters_?: any) { return parameters_ !== undefined ? functionSignatureItem({ ...(config as any), parameters: parameters_ } as any) : fields.parameters; },
-    returnType(returnType_?: any) { return returnType_ !== undefined ? functionSignatureItem({ ...(config as any), returnType: returnType_ } as any) : fields.return_type; },
+    whereClause(whereClause_?: any) { return whereClause_ !== undefined ? functionSignatureItem({ ...(config as any), whereClause: whereClause_ } as any) : fields.where_clause; },
     getChildren() { return children; },
     setChildren(...items: any[]) { return functionSignatureItem({ ...(config as any), children: items } as any); },
     render() { return render(this); },
@@ -884,10 +882,10 @@ export function traitItem(config: ConfigOf<TraitItem>) {
 
 export function associatedType(config: ConfigOf<AssociatedType>) {
   const fields = {
-    where_clause: (config as any)?.whereClause,
     name: (config as any)?.name,
     type_parameters: (config as any)?.typeParameters,
     bounds: (config as any)?.bounds,
+    where_clause: (config as any)?.whereClause,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -895,10 +893,10 @@ export function associatedType(config: ConfigOf<AssociatedType>) {
     named: true as const,
     fields,
     children,
-    whereClause(whereClause_?: any) { return whereClause_ !== undefined ? associatedType({ ...(config as any), whereClause: whereClause_ } as any) : fields.where_clause; },
     name(name_?: any) { return name_ !== undefined ? associatedType({ ...(config as any), name: name_ } as any) : fields.name; },
     typeParameters(typeParameters_?: any) { return typeParameters_ !== undefined ? associatedType({ ...(config as any), typeParameters: typeParameters_ } as any) : fields.type_parameters; },
     bounds(bounds_?: any) { return bounds_ !== undefined ? associatedType({ ...(config as any), bounds: bounds_ } as any) : fields.bounds; },
+    whereClause(whereClause_?: any) { return whereClause_ !== undefined ? associatedType({ ...(config as any), whereClause: whereClause_ } as any) : fields.where_clause; },
     getChildren() { return children; },
     setChildren(...items: any[]) { return associatedType({ ...(config as any), children: items } as any); },
     render() { return render(this); },
@@ -1727,6 +1725,7 @@ export function mutableSpecifier() {
 
 export function macroInvocation(config: ConfigOf<MacroInvocation>) {
   const fields = {
+    macro: (config as any)?.macro,
     token_tree: (config as any)?.tokenTree,
   };
   const children = (config as any)?.children ?? [];
@@ -1735,6 +1734,7 @@ export function macroInvocation(config: ConfigOf<MacroInvocation>) {
     named: true as const,
     fields,
     children,
+    macro(macro_?: any) { return macro_ !== undefined ? macroInvocation({ ...(config as any), macro: macro_ } as any) : fields.macro; },
     tokenTree(tokenTree_?: any) { return tokenTree_ !== undefined ? macroInvocation({ ...(config as any), tokenTree: tokenTree_ } as any) : fields.token_tree; },
     getChildren() { return children; },
     setChildren(...items: any[]) { return macroInvocation({ ...(config as any), children: items } as any); },

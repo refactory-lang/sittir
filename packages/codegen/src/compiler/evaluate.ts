@@ -165,12 +165,21 @@ export function transform(original: Rule, patches: Record<number | string, Rule>
     if (original.type === 'seq') {
         const members = [...original.members]
         // Build a map from structural-index → real-index by counting past
-        // anonymous-string members.
+        // members that are already labeled or not user-addressable:
+        //
+        //   - STRING literals — grammar-internal delimiters/keywords
+        //     (`'struct'`, `'fn'`, `'const'`, `(`, `,`, …). Not a slot.
+        //   - FIELD wrappers — already labeled by the base grammar. An
+        //     override targeting them wouldn't add information.
+        //
+        // The remaining positions are the UNLABELED named members —
+        // typically optional(symbol) or choice-of-symbols — which are
+        // exactly what overrides want to tag with a field name.
         const structuralToReal: number[] = []
         for (let i = 0; i < members.length; i++) {
             const m = members[i]!
-            const isAnonStr = m.type === 'string' && !/^\w+$/.test(m.value)
-            if (!isAnonStr) structuralToReal.push(i)
+            if (m.type === 'string' || m.type === 'field') continue
+            structuralToReal.push(i)
         }
         for (const [key, patch] of Object.entries(patches)) {
             const structuralIndex = Number(key)
