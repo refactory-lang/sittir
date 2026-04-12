@@ -566,8 +566,7 @@ export interface ExpressionStatement {
 export interface MacroDefinition {
   readonly type: 'macro_definition';
   readonly fields: {
-    readonly rules: string;
-    readonly name: Identifier | HiddenReservedIdentifier;
+    readonly rules: Identifier | HiddenReservedIdentifier;
   };
   readonly children: readonly (MacroRule)[];
 }
@@ -611,17 +610,15 @@ export interface TokenRepetition {
 export interface AttributeItem {
   readonly type: 'attribute_item';
   readonly fields: {
-    readonly attribute: string;
+    readonly attribute: Attribute;
   };
-  readonly children: Attribute;
 }
 
 export interface InnerAttributeItem {
   readonly type: 'inner_attribute_item';
   readonly fields: {
-    readonly attribute: string;
+    readonly attribute: Attribute;
   };
-  readonly children: Attribute;
 }
 
 export interface Attribute {
@@ -726,7 +723,6 @@ export interface OrderedFieldDeclarationList {
   readonly fields: {
     readonly attributes: string;
     readonly visibility_modifier: string;
-    readonly declarations: string;
   };
 }
 
@@ -1016,9 +1012,8 @@ export interface QualifiedType {
 export interface Lifetime {
   readonly type: 'lifetime';
   readonly fields: {
-    readonly identifier: string;
+    readonly identifier: Identifier;
   };
-  readonly children: Identifier;
 }
 
 export interface ArrayType {
@@ -1076,9 +1071,8 @@ export interface BoundedType {
   readonly type: 'bounded_type';
   readonly fields: {
     readonly left: Lifetime | HiddenType | UseBounds;
-    readonly right: string;
+    readonly right: Lifetime | HiddenType | UseBounds;
   };
-  readonly children: Lifetime | HiddenType | UseBounds;
 }
 
 export interface UseBounds {
@@ -1103,20 +1097,18 @@ export interface TypeBinding {
 export interface ReferenceType {
   readonly type: 'reference_type';
   readonly fields: {
-    readonly lifetime: string;
-    readonly mutable_specifier: Lifetime;
+    readonly lifetime: Lifetime;
+    readonly mutable_specifier: MutableSpecifier;
     readonly type: HiddenType;
   };
-  readonly children: MutableSpecifier;
 }
 
 export interface PointerType {
   readonly type: 'pointer_type';
   readonly fields: {
-    readonly mutable_specifier: string;
+    readonly mutable_specifier: MutableSpecifier;
     readonly type: HiddenType;
   };
-  readonly children: MutableSpecifier;
 }
 
 export interface AbstractType {
@@ -1176,7 +1168,7 @@ export interface RangeExpression {
   readonly type: 'range_expression';
   readonly fields: {
     readonly start: HiddenExpression;
-    readonly end: Dotdot | Ellipsis | Dotdoteq | HiddenExpression;
+    readonly end: Dotdot | Ellipsis | Dotdoteq;
   };
   readonly children: HiddenExpression;
 }
@@ -1199,10 +1191,9 @@ export interface TryExpression {
 export interface ReferenceExpression {
   readonly type: 'reference_expression';
   readonly fields: {
-    readonly mutable_specifier: string;
+    readonly mutable_specifier: MutableSpecifier;
     readonly value: HiddenExpression;
   };
-  readonly children: MutableSpecifier;
 }
 
 export interface BinaryExpression {
@@ -1262,18 +1253,14 @@ export interface Arguments {
   readonly children: readonly (AttributeItem | HiddenExpression)[];
 }
 
-export interface ArrayExpressionSemi {
+export interface ArrayExpression {
   readonly type: 'array_expression';
   readonly fields: {
-    readonly length: HiddenExpression;
+    readonly attributes: string;
+    readonly elements: string;
   };
 }
 
-export interface ArrayExpressionForm1 {
-  readonly type: 'array_expression';
-}
-
-export type ArrayExpression = ArrayExpressionSemi | ArrayExpressionForm1;
 export interface ParenthesizedExpression {
   readonly type: 'parenthesized_expression';
   readonly children: HiddenExpression;
@@ -1285,9 +1272,8 @@ export interface TupleExpression {
     readonly attributes: string;
     readonly first: string;
     readonly rest: string;
-    readonly trailing: string;
+    readonly trailing: HiddenExpression;
   };
-  readonly children: HiddenExpression;
 }
 
 export interface StructExpression {
@@ -1444,9 +1430,8 @@ export interface ClosureParameters {
 export interface Label {
   readonly type: 'label';
   readonly fields: {
-    readonly identifier: string;
+    readonly identifier: Identifier;
   };
-  readonly children: Identifier;
 }
 
 export interface BreakExpression {
@@ -1470,9 +1455,8 @@ export interface IndexExpression {
   readonly type: 'index_expression';
   readonly fields: {
     readonly object: HiddenExpression;
-    readonly index: string;
+    readonly index: HiddenExpression;
   };
-  readonly children: HiddenExpression;
 }
 
 export interface AwaitExpression {
@@ -1611,35 +1595,39 @@ export interface CapturedPattern {
   readonly type: 'captured_pattern';
   readonly fields: {
     readonly identifier: Identifier;
-    readonly pattern: string;
+    readonly pattern: HiddenPattern;
   };
-  readonly children: HiddenPattern;
 }
 
 export interface ReferencePattern {
   readonly type: 'reference_pattern';
   readonly fields: {
-    readonly mutable_specifier: string;
-    readonly pattern: MutableSpecifier;
+    readonly mutable_specifier: MutableSpecifier;
+    readonly pattern: HiddenPattern;
   };
-  readonly children: HiddenPattern;
 }
 
-export interface OrPattern {
+export interface OrPatternPipe {
   readonly type: 'or_pattern';
   readonly fields: {
     readonly left: HiddenPattern;
     readonly right: HiddenPattern;
   };
-  readonly children: HiddenPattern;
 }
 
+export interface OrPatternPipe2 {
+  readonly type: 'or_pattern';
+  readonly fields: {
+    readonly left: HiddenPattern;
+  };
+}
+
+export type OrPattern = OrPatternPipe | OrPatternPipe2;
 export interface NegativeLiteral {
   readonly type: 'negative_literal';
   readonly fields: {
-    readonly value: string;
+    readonly value: IntegerLiteral | FloatLiteral;
   };
-  readonly children: IntegerLiteral | FloatLiteral;
 }
 
 export interface StringLiteral {
@@ -2244,9 +2232,7 @@ export type ReturnExpressionConfig = ConfigOf<ReturnExpression>;
 export type YieldExpressionConfig = ConfigOf<YieldExpression>;
 export type CallExpressionConfig = ConfigOf<CallExpression>;
 export type ArgumentsConfig = ConfigOf<Arguments>;
-export type ArrayExpressionSemiConfig = ConfigOf<ArrayExpressionSemi>;
-export type ArrayExpressionForm1Config = ConfigOf<ArrayExpressionForm1>;
-export type ArrayExpressionConfig = ArrayExpressionSemiConfig | ArrayExpressionForm1Config;
+export type ArrayExpressionConfig = ConfigOf<ArrayExpression>;
 export type ParenthesizedExpressionConfig = ConfigOf<ParenthesizedExpression>;
 export type TupleExpressionConfig = ConfigOf<TupleExpression>;
 export type StructExpressionConfig = ConfigOf<StructExpression>;
@@ -2296,7 +2282,9 @@ export type RangePatternConfig = RangePatternLeftConfig | RangePatternRightConfi
 export type RefPatternConfig = ConfigOf<RefPattern>;
 export type CapturedPatternConfig = ConfigOf<CapturedPattern>;
 export type ReferencePatternConfig = ConfigOf<ReferencePattern>;
-export type OrPatternConfig = ConfigOf<OrPattern>;
+export type OrPatternPipeConfig = ConfigOf<OrPatternPipe>;
+export type OrPatternPipe2Config = ConfigOf<OrPatternPipe2>;
+export type OrPatternConfig = OrPatternPipeConfig | OrPatternPipe2Config;
 export type NegativeLiteralConfig = ConfigOf<NegativeLiteral>;
 export type StringLiteralConfig = ConfigOf<StringLiteral>;
 export type RawStringLiteralConfig = ConfigOf<RawStringLiteral>;
@@ -2398,8 +2386,6 @@ export interface YieldExpressionTree extends TreeNode<'yield_expression'> {}
 export interface CallExpressionTree extends TreeNode<'call_expression'> {}
 export interface ArgumentsTree extends TreeNode<'arguments'> {}
 export interface ArrayExpressionTree extends TreeNode<'array_expression'> {}
-export interface ArrayExpressionSemiTree extends TreeNode<'array_expression'> {}
-export interface ArrayExpressionForm1Tree extends TreeNode<'array_expression'> {}
 export interface ParenthesizedExpressionTree extends TreeNode<'parenthesized_expression'> {}
 export interface TupleExpressionTree extends TreeNode<'tuple_expression'> {}
 export interface StructExpressionTree extends TreeNode<'struct_expression'> {}
@@ -2450,6 +2436,8 @@ export interface RefPatternTree extends TreeNode<'ref_pattern'> {}
 export interface CapturedPatternTree extends TreeNode<'captured_pattern'> {}
 export interface ReferencePatternTree extends TreeNode<'reference_pattern'> {}
 export interface OrPatternTree extends TreeNode<'or_pattern'> {}
+export interface OrPatternPipeTree extends TreeNode<'or_pattern'> {}
+export interface OrPatternPipe2Tree extends TreeNode<'or_pattern'> {}
 export interface NegativeLiteralTree extends TreeNode<'negative_literal'> {}
 export interface StringLiteralTree extends TreeNode<'string_literal'> {}
 export interface RawStringLiteralTree extends TreeNode<'raw_string_literal'> {}
@@ -2642,7 +2630,7 @@ export type ReturnExpressionFromInput = FromInputOf<ReturnExpression, LeafScalar
 export type YieldExpressionFromInput = FromInputOf<YieldExpression, LeafScalarMap, LeafStringMap>;
 export type CallExpressionFromInput = FromInputOf<CallExpression, LeafScalarMap, LeafStringMap>;
 export type ArgumentsFromInput = FromInputOf<Arguments, LeafScalarMap, LeafStringMap>;
-export type ArrayExpressionFromInput = FromInputOf<ArrayExpressionSemi, LeafScalarMap, LeafStringMap> | FromInputOf<ArrayExpressionForm1, LeafScalarMap, LeafStringMap>;
+export type ArrayExpressionFromInput = FromInputOf<ArrayExpression, LeafScalarMap, LeafStringMap>;
 export type ParenthesizedExpressionFromInput = FromInputOf<ParenthesizedExpression, LeafScalarMap, LeafStringMap>;
 export type TupleExpressionFromInput = FromInputOf<TupleExpression, LeafScalarMap, LeafStringMap>;
 export type StructExpressionFromInput = FromInputOf<StructExpression, LeafScalarMap, LeafStringMap>;
@@ -2686,7 +2674,7 @@ export type RangePatternFromInput = FromInputOf<RangePatternLeft, LeafScalarMap,
 export type RefPatternFromInput = FromInputOf<RefPattern, LeafScalarMap, LeafStringMap>;
 export type CapturedPatternFromInput = FromInputOf<CapturedPattern, LeafScalarMap, LeafStringMap>;
 export type ReferencePatternFromInput = FromInputOf<ReferencePattern, LeafScalarMap, LeafStringMap>;
-export type OrPatternFromInput = FromInputOf<OrPattern, LeafScalarMap, LeafStringMap>;
+export type OrPatternFromInput = FromInputOf<OrPatternPipe, LeafScalarMap, LeafStringMap> | FromInputOf<OrPatternPipe2, LeafScalarMap, LeafStringMap>;
 export type NegativeLiteralFromInput = FromInputOf<NegativeLiteral, LeafScalarMap, LeafStringMap>;
 export type StringLiteralFromInput = FromInputOf<StringLiteral, LeafScalarMap, LeafStringMap>;
 export type RawStringLiteralFromInput = FromInputOf<RawStringLiteral, LeafScalarMap, LeafStringMap>;
@@ -3279,10 +3267,10 @@ export interface KindMap {
 }
 
 export interface VariantMap {
-  'array_expression': { semi: ArrayExpressionSemi; form_1: ArrayExpressionForm1 };
   'closure_expression': { body: ClosureExpressionBody; body2: ClosureExpressionBody2 };
   'field_pattern': { name: FieldPatternName; colon: FieldPatternColon };
   'range_pattern': { left: RangePatternLeft; right: RangePatternRight };
+  'or_pattern': { pipe: OrPatternPipe; pipe2: OrPatternPipe2 };
 }
 
 export interface ConfigMap {

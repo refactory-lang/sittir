@@ -8,15 +8,15 @@ rules:
     template: $DECLARATION $SOURCE $$$CHILDREN
   export_statement_declaration:
     template: $DECLARATION $SOURCE $$$CHILDREN
-  export_statement_declaration2:
-    template: $DECLARATION $SOURCE $$$CHILDREN
+  export_statement_eq:
+    template: $DECLARATION=$SOURCE $$$CHILDREN
   export_statement_namespace:
     template: $DECLARATION $SOURCE namespace $$$CHILDREN
   export_statement:
     variants:
       form_0: $DECLARATION $SOURCE $$$CHILDREN
       declaration: $DECLARATION $SOURCE $$$CHILDREN
-      declaration2: $DECLARATION $SOURCE $$$CHILDREN
+      eq: $DECLARATION=$SOURCE $$$CHILDREN
       namespace: $DECLARATION $SOURCE namespace $$$CHILDREN
   namespace_export:
     template: "*as $$$CHILDREN"
@@ -43,7 +43,7 @@ rules:
   _from_clause:
     template: from $SOURCE
   namespace_import:
-    template: $IDENTIFIER as $$$CHILDREN
+    template: "*$IDENTIFIER $$$CHILDREN"
   named_imports:
     template: "{$$$CHILDREN,}"
   import_specifier_name:
@@ -67,7 +67,7 @@ rules:
   variable_declarator:
     template: $NAME $TYPE $$$CHILDREN
   statement_block:
-    template: "$STATEMENTS $AUTOMATIC_SEMICOLON}$$$CHILDREN"
+    template: "{$STATEMENTS}$AUTOMATIC_SEMICOLON"
   else_clause:
     template: $STATEMENT $$$CHILDREN
   if_statement:
@@ -209,7 +209,7 @@ rules:
   _initializer:
     template: =$VALUE
   spread_element:
-    template: $EXPRESSION $$$CHILDREN
+    template: ...$EXPRESSION
   ternary_expression:
     template: "$CONDITION $$$CHILDREN $CONSEQUENCE:$ALTERNATIVE"
   binary_expression:
@@ -255,7 +255,7 @@ rules:
   pair_pattern:
     template: "$KEY:$VALUE"
   computed_property_name:
-    template: "$EXPRESSION $$$CHILDREN]"
+    template: "[$EXPRESSION]"
   public_field_definition:
     template: $ACCESSIBILITY_MODIFIER $OVERRIDE_MODIFIER $INITIALIZER $NAME?$TYPE $$$CHILDREN
   _jsx_start_opening_element:
@@ -297,7 +297,7 @@ rules:
   _module:
     template: $NAME $BODY
   import_alias:
-    template: $NAME $VALUE $SEMICOLON $$$CHILDREN
+    template: $NAME $VALUE=$SEMICOLON $$$CHILDREN
   nested_type_identifier:
     template: $MODULE.$NAME
   interface_declaration:
@@ -307,7 +307,7 @@ rules:
   enum_declaration:
     template: const enum $NAME $BODY
   enum_body:
-    template: "$OPENING $MEMBERS}"
+    template: "{$OPENING}"
   enum_assignment:
     template: $NAME $$$CHILDREN
   type_alias_declaration:
@@ -315,7 +315,7 @@ rules:
   required_parameter:
     template: $PARAMETER_NAME $INITIALIZER $$$CHILDREN
   optional_parameter:
-    template: $PARAMETER_NAME $INITIALIZER $TYPE $$$CHILDREN
+    template: $PARAMETER_NAME?$INITIALIZER $$$CHILDREN
   _parameter_name:
     template: $DECORATOR $$$CHILDREN readonly $PATTERN
   omitting_type_annotation:
@@ -375,7 +375,7 @@ rules:
   index_type_query:
     template: $PRIMARY_TYPE $$$CHILDREN
   lookup_type:
-    template: "$PRIMARY_TYPE $INDEX_TYPE $$$CHILDREN]"
+    template: "$PRIMARY_TYPE[$INDEX_TYPE]"
   mapped_type_clause:
     template: $NAME in $TYPE $ALIAS_CLAUSE
     alias: as $ALIAS
@@ -384,7 +384,7 @@ rules:
   _number:
     template: $OPERATOR $ARGUMENT
   flow_maybe_type:
-    template: $PRIMARY_TYPE $$$CHILDREN
+    template: "?$PRIMARY_TYPE"
   parenthesized_type:
     template: ($$$CHILDREN)
   type_arguments:
@@ -420,9 +420,9 @@ rules:
   readonly_type:
     template: readonly $$$CHILDREN
   union_type:
-    template: $LEFT $RIGHT $$$CHILDREN
+    template: $LEFT|$RIGHT
   intersection_type:
-    template: $LEFT $RIGHT $$$CHILDREN
+    template: $LEFT&$RIGHT
   function_type:
     template: $TYPE_PARAMETERS $PARAMETERS=>$RETURN_TYPE
   _type_identifier:

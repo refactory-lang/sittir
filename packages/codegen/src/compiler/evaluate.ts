@@ -157,17 +157,30 @@ export function field(name: string, content?: Input): FieldRule {
  * at that position. Field patches are marked with source: 'override'.
  */
 export function transform(original: Rule, patches: Record<number | string, Rule>): Rule {
-    // For seq: apply patches to members by position
+    // For seq: apply patches to members by STRUCTURAL position, i.e. the
+    // Nth non-anonymous-string member. This matches how v1 overrides.json
+    // computed positions (against the simplified rule view where delimiters
+    // were stripped) and keeps the override author's mental model in sync
+    // with the grammar's named children.
     if (original.type === 'seq') {
         const members = [...original.members]
+        // Build a map from structural-index → real-index by counting past
+        // anonymous-string members.
+        const structuralToReal: number[] = []
+        for (let i = 0; i < members.length; i++) {
+            const m = members[i]!
+            const isAnonStr = m.type === 'string' && !/^\w+$/.test(m.value)
+            if (!isAnonStr) structuralToReal.push(i)
+        }
         for (const [key, patch] of Object.entries(patches)) {
-            const index = Number(key)
-            if (isNaN(index) || index < 0 || index >= members.length) {
-                // Skip out-of-bounds patches — the position may be from a different
-                // pipeline's view of the rule structure
+            const structuralIndex = Number(key)
+            if (isNaN(structuralIndex) || structuralIndex < 0) continue
+            const realIndex = structuralToReal[structuralIndex]
+            if (realIndex === undefined) {
+                // Out of bounds against the structural view — skip.
                 continue
             }
-            members[index] = resolvePatch(patch, members[index])
+            members[realIndex] = resolvePatch(patch, members[realIndex]!)
         }
         return { type: 'seq', members }
     }

@@ -7,7 +7,7 @@ rules:
   expression_statement:
     template: $$$CHILDREN;
   macro_definition:
-    template: $RULES $NAME($$$CHILDREN);
+    template: macro_rules!$RULES($$$CHILDREN);
   macro_rule:
     template: $LEFT=>$RIGHT
   token_tree_pattern:
@@ -21,9 +21,9 @@ rules:
   token_repetition:
     template: $($$$CHILDREN)+
   attribute_item:
-    template: "$ATTRIBUTE[$$$CHILDREN]"
+    template: "#[$ATTRIBUTE]"
   inner_attribute_item:
-    template: "$ATTRIBUTE![$$$CHILDREN]"
+    template: "#![$ATTRIBUTE]"
   attribute:
     template: $$$CHILDREN=$VALUE
   mod_item:
@@ -48,7 +48,7 @@ rules:
   field_declaration:
     template: "$VISIBILITY_MODIFIER $NAME:$TYPE"
   ordered_field_declaration_list:
-    template: $ATTRIBUTES $VISIBILITY_MODIFIER $DECLARATIONS)
+    template: ($ATTRIBUTES $VISIBILITY_MODIFIER)
   extern_crate_declaration:
     template: $VISIBILITY_MODIFIER $CRATE $$$CHILDREN $NAME $ALIAS_CLAUSE;
     alias: as $ALIAS
@@ -128,7 +128,7 @@ rules:
   qualified_type:
     template: $TYPE as $ALIAS
   lifetime:
-    template: $IDENTIFIER $$$CHILDREN
+    template: "'$IDENTIFIER"
   array_type:
     template: "[$ELEMENT $LENGTH_CLAUSE]"
     length: ;$LENGTH
@@ -146,7 +146,7 @@ rules:
   generic_type_with_turbofish:
     template: "$TYPE::$TYPE_ARGUMENTS"
   bounded_type:
-    template: $LEFT $RIGHT $$$CHILDREN
+    template: $LEFT+$RIGHT
   use_bounds:
     template: use<$$$CHILDREN,>
   type_arguments:
@@ -154,9 +154,9 @@ rules:
   type_binding:
     template: $NAME $TYPE_ARGUMENTS=$TYPE
   reference_type:
-    template: $LIFETIME $MUTABLE_SPECIFIER $$$CHILDREN $TYPE
+    template: "&$LIFETIME $MUTABLE_SPECIFIER $TYPE"
   pointer_type:
-    template: $MUTABLE_SPECIFIER const $TYPE
+    template: "*$MUTABLE_SPECIFIER $TYPE"
   abstract_type:
     template: $TYPE_PARAMETERS for $$$CHILDREN $TRAIT
   dynamic_type:
@@ -178,7 +178,7 @@ rules:
   try_expression:
     template: $VALUE?
   reference_expression:
-    template: $MUTABLE_SPECIFIER raw const $VALUE
+    template: "&$MUTABLE_SPECIFIER $VALUE"
   binary_expression:
     template: $LEFT $OPERATOR $RIGHT
   assignment_expression:
@@ -195,18 +195,12 @@ rules:
     template: $FUNCTION $ARGUMENTS
   arguments:
     template: ($$$CHILDREN,)
-  array_expression_semi:
-    template: $$$CHILDREN;$LENGTH
-  array_expression_form_1:
-    template: $$$CHILDREN,
   array_expression:
-    variants:
-      semi: $$$CHILDREN;$LENGTH
-      form_1: $$$CHILDREN,
+    template: "[$ATTRIBUTES $ELEMENTS]"
   parenthesized_expression:
     template: ($$$CHILDREN)
   tuple_expression:
-    template: $ATTRIBUTES $FIRST $REST $TRAILING $$$CHILDREN)
+    template: ($ATTRIBUTES $FIRST $REST $TRAILING)
   struct_expression:
     template: $NAME $BODY
   field_initializer_list:
@@ -255,13 +249,13 @@ rules:
   closure_parameters:
     template: "|$$$CHILDREN|"
   label:
-    template: $IDENTIFIER $$$CHILDREN
+    template: "'$IDENTIFIER"
   break_expression:
     template: $LABEL $EXPRESSION $$$CHILDREN
   continue_expression:
     template: $LABEL $$$CHILDREN
   index_expression:
-    template: "$OBJECT $INDEX $$$CHILDREN]"
+    template: "$OBJECT[$INDEX]"
   await_expression:
     template: $$$CHILDREN.await
   field_expression:
@@ -307,13 +301,19 @@ rules:
   ref_pattern:
     template: ref $$$CHILDREN
   captured_pattern:
-    template: $IDENTIFIER $PATTERN $$$CHILDREN
+    template: $IDENTIFIER@$PATTERN
   reference_pattern:
-    template: $MUTABLE_SPECIFIER $PATTERN $$$CHILDREN
+    template: "&$MUTABLE_SPECIFIER $PATTERN"
+  or_pattern_pipe:
+    template: $LEFT|$RIGHT
+  or_pattern_pipe2:
+    template: "|$LEFT"
   or_pattern:
-    template: $LEFT $RIGHT $$$CHILDREN
+    variants:
+      pipe: $LEFT|$RIGHT
+      pipe2: "|$LEFT"
   negative_literal:
-    template: $VALUE $$$CHILDREN
+    template: "-$VALUE"
   string_literal:
     template: $$$CHILDREN"
   raw_string_literal:

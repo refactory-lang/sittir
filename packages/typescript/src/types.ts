@@ -470,11 +470,11 @@ export interface ExportStatementDeclaration {
   };
 }
 
-export interface ExportStatementDeclaration2 {
+export interface ExportStatementEq {
   readonly type: 'export_statement';
   readonly fields: {
     readonly declaration: string;
-    readonly source: string;
+    readonly source: Expression;
   };
 }
 
@@ -486,7 +486,7 @@ export interface ExportStatementNamespace {
   };
 }
 
-export type ExportStatement = ExportStatementForm0 | ExportStatementDeclaration | ExportStatementDeclaration2 | ExportStatementNamespace;
+export type ExportStatement = ExportStatementForm0 | ExportStatementDeclaration | ExportStatementEq | ExportStatementNamespace;
 export interface NamespaceExport {
   readonly type: 'namespace_export';
   readonly children: HiddenModuleExportName;
@@ -616,9 +616,8 @@ export interface StatementBlock {
   readonly type: 'statement_block';
   readonly fields: {
     readonly statements: string;
-    readonly automatic_semicolon: string;
+    readonly automatic_semicolon: AutomaticSemicolon;
   };
-  readonly children: AutomaticSemicolon;
 }
 
 export interface ElseClause {
@@ -1054,9 +1053,8 @@ export interface AugmentedAssignmentExpression {
 export interface SpreadElement {
   readonly type: 'spread_element';
   readonly fields: {
-    readonly expression: string;
+    readonly expression: Expression;
   };
-  readonly children: Expression;
 }
 
 export interface TernaryExpression {
@@ -1219,9 +1217,8 @@ export interface PairPattern {
 export interface ComputedPropertyName {
   readonly type: 'computed_property_name';
   readonly fields: {
-    readonly expression: string;
+    readonly expression: Expression;
   };
-  readonly children: Expression;
 }
 
 export interface PublicFieldDefinition {
@@ -1371,9 +1368,9 @@ export interface ImportAlias {
   readonly fields: {
     readonly name: string;
     readonly value: Identifier;
-    readonly semicolon: string;
+    readonly semicolon: Identifier | NestedIdentifier;
   };
-  readonly children: Identifier | NestedIdentifier | HiddenSemicolon;
+  readonly children: HiddenSemicolon;
 }
 
 export interface NestedTypeIdentifier {
@@ -1414,7 +1411,6 @@ export interface EnumBody {
   readonly type: 'enum_body';
   readonly fields: {
     readonly opening: string;
-    readonly members: string;
   };
 }
 
@@ -1449,8 +1445,7 @@ export interface OptionalParameter {
   readonly type: 'optional_parameter';
   readonly fields: {
     readonly parameter_name: HiddenParameterName;
-    readonly initializer: string;
-    readonly type: TypeAnnotation;
+    readonly initializer: TypeAnnotation;
   };
   readonly children: HiddenInitializer;
 }
@@ -1601,9 +1596,8 @@ export interface LookupType {
   readonly type: 'lookup_type';
   readonly fields: {
     readonly primary_type: PrimaryType;
-    readonly index_type: string;
+    readonly index_type: Type;
   };
-  readonly children: Type;
 }
 
 export interface MappedTypeClause {
@@ -1623,9 +1617,8 @@ export interface LiteralType {
 export interface FlowMaybeType {
   readonly type: 'flow_maybe_type';
   readonly fields: {
-    readonly primary_type: string;
+    readonly primary_type: PrimaryType;
   };
-  readonly children: PrimaryType;
 }
 
 export interface ParenthesizedType {
@@ -1730,18 +1723,16 @@ export interface UnionType {
   readonly type: 'union_type';
   readonly fields: {
     readonly left: Type;
-    readonly right: string;
+    readonly right: Type;
   };
-  readonly children: Type;
 }
 
 export interface IntersectionType {
   readonly type: 'intersection_type';
   readonly fields: {
     readonly left: Type;
-    readonly right: string;
+    readonly right: Type;
   };
-  readonly children: Type;
 }
 
 export interface FunctionType {
@@ -2218,9 +2209,9 @@ export interface Keyof {
 export type ProgramConfig = ConfigOf<Program>;
 export type ExportStatementForm0Config = ConfigOf<ExportStatementForm0>;
 export type ExportStatementDeclarationConfig = ConfigOf<ExportStatementDeclaration>;
-export type ExportStatementDeclaration2Config = ConfigOf<ExportStatementDeclaration2>;
+export type ExportStatementEqConfig = ConfigOf<ExportStatementEq>;
 export type ExportStatementNamespaceConfig = ConfigOf<ExportStatementNamespace>;
-export type ExportStatementConfig = ExportStatementForm0Config | ExportStatementDeclarationConfig | ExportStatementDeclaration2Config | ExportStatementNamespaceConfig;
+export type ExportStatementConfig = ExportStatementForm0Config | ExportStatementDeclarationConfig | ExportStatementEqConfig | ExportStatementNamespaceConfig;
 export type NamespaceExportConfig = ConfigOf<NamespaceExport>;
 export type ExportClauseConfig = ConfigOf<ExportClause>;
 export type ExportSpecifierConfig = ConfigOf<ExportSpecifier>;
@@ -2411,7 +2402,7 @@ export interface ProgramTree extends TreeNode<'program'> {}
 export interface ExportStatementTree extends TreeNode<'export_statement'> {}
 export interface ExportStatementForm0Tree extends TreeNode<'export_statement'> {}
 export interface ExportStatementDeclarationTree extends TreeNode<'export_statement'> {}
-export interface ExportStatementDeclaration2Tree extends TreeNode<'export_statement'> {}
+export interface ExportStatementEqTree extends TreeNode<'export_statement'> {}
 export interface ExportStatementNamespaceTree extends TreeNode<'export_statement'> {}
 export interface NamespaceExportTree extends TreeNode<'namespace_export'> {}
 export interface ExportClauseTree extends TreeNode<'export_clause'> {}
@@ -2687,7 +2678,7 @@ export interface KeyofTree extends TreeNode<'keyof'> {}
 
 // FromInput types
 export type ProgramFromInput = FromInputOf<Program, LeafScalarMap, LeafStringMap>;
-export type ExportStatementFromInput = FromInputOf<ExportStatementForm0, LeafScalarMap, LeafStringMap> | FromInputOf<ExportStatementDeclaration, LeafScalarMap, LeafStringMap> | FromInputOf<ExportStatementDeclaration2, LeafScalarMap, LeafStringMap> | FromInputOf<ExportStatementNamespace, LeafScalarMap, LeafStringMap>;
+export type ExportStatementFromInput = FromInputOf<ExportStatementForm0, LeafScalarMap, LeafStringMap> | FromInputOf<ExportStatementDeclaration, LeafScalarMap, LeafStringMap> | FromInputOf<ExportStatementEq, LeafScalarMap, LeafStringMap> | FromInputOf<ExportStatementNamespace, LeafScalarMap, LeafStringMap>;
 export type NamespaceExportFromInput = FromInputOf<NamespaceExport, LeafScalarMap, LeafStringMap>;
 export type ExportClauseFromInput = FromInputOf<ExportClause, LeafScalarMap, LeafStringMap>;
 export type ExportSpecifierFromInput = FromInputOf<ExportSpecifier, LeafScalarMap, LeafStringMap>;
@@ -3413,7 +3404,7 @@ export interface KindMap {
 }
 
 export interface VariantMap {
-  'export_statement': { form_0: ExportStatementForm0; declaration: ExportStatementDeclaration; declaration2: ExportStatementDeclaration2; namespace: ExportStatementNamespace };
+  'export_statement': { form_0: ExportStatementForm0; declaration: ExportStatementDeclaration; eq: ExportStatementEq; namespace: ExportStatementNamespace };
   'import_clause': { namespace_import: ImportClauseNamespaceImport; named_imports: ImportClauseNamedImports; default_import: ImportClauseDefaultImport };
   'import_specifier': { name: ImportSpecifierName; as: ImportSpecifierAs };
   'parenthesized_expression': { expression: ParenthesizedExpressionExpression; sequence_expression: ParenthesizedExpressionSequenceExpression };

@@ -395,9 +395,8 @@ export interface PrintStatement {
 export interface Chevron {
   readonly type: 'chevron';
   readonly fields: {
-    readonly expression: string;
+    readonly expression: Expression;
   };
-  readonly children: Expression;
 }
 
 export interface AssertStatement {
@@ -500,10 +499,10 @@ export interface TryStatement {
   readonly type: 'try_statement';
   readonly fields: {
     readonly except_clauses: string;
-    readonly else_clause: string;
-    readonly finally_clause: HiddenSuite;
+    readonly else_clause: HiddenSuite;
+    readonly finally_clause: string;
   };
-  readonly children: readonly (ExceptClause | ElseClause | FinallyClause)[];
+  readonly children: ElseClause | FinallyClause;
 }
 
 export interface ExceptClause {
@@ -568,17 +567,15 @@ export interface LambdaParameters {
 export interface ListSplat {
   readonly type: 'list_splat';
   readonly fields: {
-    readonly expression: string;
+    readonly expression: Expression;
   };
-  readonly children: Expression;
 }
 
 export interface DictionarySplat {
   readonly type: 'dictionary_splat';
   readonly fields: {
-    readonly expression: string;
+    readonly expression: Expression;
   };
-  readonly children: Expression;
 }
 
 export interface GlobalStatement {
@@ -643,8 +640,8 @@ export interface DecoratedDefinition {
 export interface Decorator {
   readonly type: 'decorator';
   readonly fields: {
-    readonly expression: string;
-    readonly newline: Expression;
+    readonly expression: Expression;
+    readonly newline: string;
   };
 }
 
@@ -697,9 +694,8 @@ export interface KeywordPattern {
   readonly type: 'keyword_pattern';
   readonly fields: {
     readonly identifier: Identifier;
-    readonly simple_pattern: string;
+    readonly simple_pattern: HiddenSimplePattern;
   };
-  readonly children: HiddenSimplePattern;
 }
 
 export interface SplatPattern {
@@ -716,7 +712,6 @@ export interface ClassPattern {
     readonly dotted_name: DottedName;
     readonly arguments: string;
   };
-  readonly children: readonly (CasePattern)[];
 }
 
 export interface ComplexPattern {
@@ -922,10 +917,9 @@ export interface Slice {
   readonly type: 'slice';
   readonly fields: {
     readonly start: Expression;
-    readonly stop: string;
-    readonly step: Expression;
+    readonly stop: Expression;
+    readonly step: string;
   };
-  readonly children: Expression;
 }
 
 export interface Call {
@@ -969,27 +963,24 @@ export interface UnionType {
   readonly type: 'union_type';
   readonly fields: {
     readonly left: Type;
-    readonly right: string;
+    readonly right: Type;
   };
-  readonly children: Type;
 }
 
 export interface ConstrainedType {
   readonly type: 'constrained_type';
   readonly fields: {
     readonly base_type: Type;
-    readonly constraint: string;
+    readonly constraint: Type;
   };
-  readonly children: Type;
 }
 
 export interface MemberType {
   readonly type: 'member_type';
   readonly fields: {
     readonly base_type: Type;
-    readonly identifier: string;
+    readonly identifier: Identifier;
   };
-  readonly children: Identifier;
 }
 
 export interface KeywordArgument {

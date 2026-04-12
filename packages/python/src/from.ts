@@ -790,7 +790,7 @@ export function constrainedTypeFrom(input: ConstrainedTypeFromInput) {
 export function memberTypeFrom(input: MemberTypeFromInput) {
   return memberType({
     baseType: ((input as any)?.base_type ?? (input as any)?.fields?.base_type),
-    identifier: ((input as any)?.identifier ?? (input as any)?.fields?.identifier),
+    identifier: typeof ((input as any)?.identifier ?? (input as any)?.fields?.identifier) === 'string' ? identifier(((input as any)?.identifier ?? (input as any)?.fields?.identifier)) : ((input as any)?.identifier ?? (input as any)?.fields?.identifier),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }

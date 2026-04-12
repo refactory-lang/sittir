@@ -585,7 +585,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'enum_body': [
     { name: 'opening', required: true, multiple: false },
-    { name: 'members', required: true, multiple: false },
   ],
   'enum_declaration': [
     { name: 'name', required: true, multiple: false },
@@ -822,7 +821,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'optional_parameter': [
     { name: 'parameterName', required: true, multiple: false },
     { name: 'initializer', required: true, multiple: false },
-    { name: 'type', required: true, multiple: false },
   ],
   'optional_tuple_parameter': [
     { name: 'name', required: true, multiple: false },

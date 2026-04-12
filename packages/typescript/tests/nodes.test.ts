@@ -30,8 +30,8 @@ describe('export_statement', () => {
     const node = ir.exportStatement.declaration({ declaration: 'test' as any, source: 'test' as any });
     expect(node.type).toBe('export_statement');
   });
-  it('declaration2 form produces correct type', () => {
-    const node = ir.exportStatement.declaration2({ declaration: 'test' as any, source: 'test' as any });
+  it('eq form produces correct type', () => {
+    const node = ir.exportStatement.eq({ declaration: 'test' as any, source: { type: 'expression', text: 'test' } as any });
     expect(node.type).toBe('export_statement');
   });
   it('namespace form produces correct type', () => {
@@ -195,11 +195,11 @@ describe('variable_declarator', () => {
 
 describe('statement_block', () => {
   it('factory produces correct type', () => {
-    const node = ir.statementBlock({ statements: 'test' as any, automaticSemicolon: 'test' as any });
+    const node = ir.statementBlock({ statements: 'test' as any, automaticSemicolon: { type: '_automatic_semicolon', text: 'test' } as any });
     expect(node.type).toBe('statement_block');
   });
   it('render produces non-empty string', () => {
-    const node = ir.statementBlock({ statements: 'test' as any, automaticSemicolon: 'test' as any });
+    const node = ir.statementBlock({ statements: 'test' as any, automaticSemicolon: { type: '_automatic_semicolon', text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -765,11 +765,11 @@ describe('augmented_assignment_expression', () => {
 
 describe('spread_element', () => {
   it('factory produces correct type', () => {
-    const node = ir.spreadElement({ expression: 'test' as any });
+    const node = ir.spreadElement({ expression: { type: 'expression', text: 'test' } as any });
     expect(node.type).toBe('spread_element');
   });
   it('render produces non-empty string', () => {
-    const node = ir.spreadElement({ expression: 'test' as any });
+    const node = ir.spreadElement({ expression: { type: 'expression', text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -1110,11 +1110,11 @@ describe('pair_pattern', () => {
 
 describe('computed_property_name', () => {
   it('factory produces correct type', () => {
-    const node = ir.computedPropertyName({ expression: 'test' as any });
+    const node = ir.computedPropertyName({ expression: { type: 'expression', text: 'test' } as any });
     expect(node.type).toBe('computed_property_name');
   });
   it('render produces non-empty string', () => {
-    const node = ir.computedPropertyName({ expression: 'test' as any });
+    const node = ir.computedPropertyName({ expression: { type: 'expression', text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -1299,11 +1299,11 @@ describe('internal_module', () => {
 
 describe('import_alias', () => {
   it('factory produces correct type', () => {
-    const node = ir.importAlias({ name: 'test' as any, value: { type: 'identifier', text: 'test' } as any, semicolon: 'test' as any });
+    const node = ir.importAlias({ name: 'test' as any, value: { type: 'identifier', text: 'test' } as any, semicolon: { type: 'identifier', text: 'test' } as any });
     expect(node.type).toBe('import_alias');
   });
   it('render produces non-empty string', () => {
-    const node = ir.importAlias({ name: 'test' as any, value: { type: 'identifier', text: 'test' } as any, semicolon: 'test' as any });
+    const node = ir.importAlias({ name: 'test' as any, value: { type: 'identifier', text: 'test' } as any, semicolon: { type: 'identifier', text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -1354,11 +1354,11 @@ describe('enum_declaration', () => {
 
 describe('enum_body', () => {
   it('factory produces correct type', () => {
-    const node = ir.enumBody({ opening: 'test' as any, members: 'test' as any });
+    const node = ir.enumBody({ opening: 'test' as any });
     expect(node.type).toBe('enum_body');
   });
   it('render produces non-empty string', () => {
-    const node = ir.enumBody({ opening: 'test' as any, members: 'test' as any });
+    const node = ir.enumBody({ opening: 'test' as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -1406,11 +1406,11 @@ describe('required_parameter', () => {
 
 describe('optional_parameter', () => {
   it('factory produces correct type', () => {
-    const node = ir.optionalParameter({ parameterName: { type: '_parameter_name', text: 'test' } as any, initializer: 'test' as any, type: { type: 'type_annotation', text: 'test' } as any });
+    const node = ir.optionalParameter({ parameterName: { type: '_parameter_name', text: 'test' } as any, initializer: { type: 'type_annotation', text: 'test' } as any });
     expect(node.type).toBe('optional_parameter');
   });
   it('render produces non-empty string', () => {
-    const node = ir.optionalParameter({ parameterName: { type: '_parameter_name', text: 'test' } as any, initializer: 'test' as any, type: { type: 'type_annotation', text: 'test' } as any });
+    const node = ir.optionalParameter({ parameterName: { type: '_parameter_name', text: 'test' } as any, initializer: { type: 'type_annotation', text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -1611,11 +1611,11 @@ describe('index_type_query', () => {
 
 describe('lookup_type', () => {
   it('factory produces correct type', () => {
-    const node = ir.lookupType({ primaryType: { type: 'primary_type', text: 'test' } as any, indexType: 'test' as any });
+    const node = ir.lookupType({ primaryType: { type: 'primary_type', text: 'test' } as any, indexType: { type: 'type', text: 'test' } as any });
     expect(node.type).toBe('lookup_type');
   });
   it('render produces non-empty string', () => {
-    const node = ir.lookupType({ primaryType: { type: 'primary_type', text: 'test' } as any, indexType: 'test' as any });
+    const node = ir.lookupType({ primaryType: { type: 'primary_type', text: 'test' } as any, indexType: { type: 'type', text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -1640,11 +1640,11 @@ describe('literal_type', () => {
 
 describe('flow_maybe_type', () => {
   it('factory produces correct type', () => {
-    const node = ir.flowMaybeType({ primaryType: 'test' as any });
+    const node = ir.flowMaybeType({ primaryType: { type: 'primary_type', text: 'test' } as any });
     expect(node.type).toBe('flow_maybe_type');
   });
   it('render produces non-empty string', () => {
-    const node = ir.flowMaybeType({ primaryType: 'test' as any });
+    const node = ir.flowMaybeType({ primaryType: { type: 'primary_type', text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -1781,22 +1781,22 @@ describe('readonly_type', () => {
 
 describe('union_type', () => {
   it('factory produces correct type', () => {
-    const node = ir.unionType({ left: { type: 'type', text: 'test' } as any, right: 'test' as any });
+    const node = ir.unionType({ left: { type: 'type', text: 'test' } as any, right: { type: 'type', text: 'test' } as any });
     expect(node.type).toBe('union_type');
   });
   it('render produces non-empty string', () => {
-    const node = ir.unionType({ left: { type: 'type', text: 'test' } as any, right: 'test' as any });
+    const node = ir.unionType({ left: { type: 'type', text: 'test' } as any, right: { type: 'type', text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
 describe('intersection_type', () => {
   it('factory produces correct type', () => {
-    const node = ir.intersectionType({ left: { type: 'type', text: 'test' } as any, right: 'test' as any });
+    const node = ir.intersectionType({ left: { type: 'type', text: 'test' } as any, right: { type: 'type', text: 'test' } as any });
     expect(node.type).toBe('intersection_type');
   });
   it('render produces non-empty string', () => {
-    const node = ir.intersectionType({ left: { type: 'type', text: 'test' } as any, right: 'test' as any });
+    const node = ir.intersectionType({ left: { type: 'type', text: 'test' } as any, right: { type: 'type', text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });

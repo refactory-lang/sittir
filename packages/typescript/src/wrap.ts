@@ -550,12 +550,11 @@ export function wrapVariableDeclarator(data: AnyNodeData, tree: TreeHandle): unk
 
 export function wrapStatementBlock(data: AnyNodeData, tree: TreeHandle): unknown {
   promoteFirstAnon(data, 'statements');
-  promoteFirstAnon(data, 'automatic_semicolon');
+  promoteNamed(data, 'automatic_semicolon', ["_automatic_semicolon"]);
   return {
     ...data,
     get statements() { return drillIn(data.fields?.['statements'], tree); },
     get automaticSemicolon() { return drillIn(data.fields?.['automatic_semicolon'], tree); },
-    get child() { return drillIn(data.children?.[0], tree); },
   };
 }
 
@@ -1048,11 +1047,10 @@ export function wrapAugmentedAssignmentExpression(data: AnyNodeData, tree: TreeH
 }
 
 export function wrapSpreadElement(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteFirstAnon(data, 'expression');
+  promote(data, 'expression');
   return {
     ...data,
     get expression() { return drillIn(data.fields?.['expression'], tree); },
-    get child() { return drillIn(data.children?.[0], tree); },
   };
 }
 
@@ -1250,11 +1248,10 @@ export function wrapPairPattern(data: AnyNodeData, tree: TreeHandle): unknown {
 }
 
 export function wrapComputedPropertyName(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteFirstAnon(data, 'expression');
+  promote(data, 'expression');
   return {
     ...data,
     get expression() { return drillIn(data.fields?.['expression'], tree); },
-    get child() { return drillIn(data.children?.[0], tree); },
   };
 }
 
@@ -1436,14 +1433,13 @@ export function wrapInternalModule(data: AnyNodeData, tree: TreeHandle): unknown
 export function wrapImportAlias(data: AnyNodeData, tree: TreeHandle): unknown {
   promoteFirstAnon(data, 'name');
   promoteNamed(data, 'value', ["identifier"]);
-  promoteFirstAnon(data, 'semicolon');
+  promoteNamed(data, 'semicolon', ["identifier","nested_identifier"]);
   return {
     ...data,
     get name() { return drillIn(data.fields?.['name'], tree); },
     get value() { return drillIn(data.fields?.['value'], tree); },
     get semicolon() { return drillIn(data.fields?.['semicolon'], tree); },
-    get identifier() { return drillIn(data.fields?.['identifier'], tree); },
-    get nestedIdentifier() { return drillIn(data.fields?.['nestedIdentifier'], tree); },
+    get child() { return drillIn(data.children?.[0], tree); },
   };
 }
 
@@ -1484,11 +1480,9 @@ export function wrapEnumDeclaration(data: AnyNodeData, tree: TreeHandle): unknow
 
 export function wrapEnumBody(data: AnyNodeData, tree: TreeHandle): unknown {
   promoteFirstAnon(data, 'opening');
-  promoteFirstAnon(data, 'members');
   return {
     ...data,
     get opening() { return drillIn(data.fields?.['opening'], tree); },
-    get members() { return drillIn(data.fields?.['members'], tree); },
   };
 }
 
@@ -1523,10 +1517,9 @@ export function wrapRequiredParameter(data: AnyNodeData, tree: TreeHandle): unkn
 
 export function wrapOptionalParameter(data: AnyNodeData, tree: TreeHandle): unknown {
   promoteNamed(data, 'parameter_name', ["_parameter_name"]);
-  promoteFirstAnon(data, 'initializer');
+  promoteNamed(data, 'initializer', ["type_annotation"]);
   return {
     ...data,
-    get type() { return drillIn(data.fields?.['type'], tree); },
     get parameterName() { return drillIn(data.fields?.['parameter_name'], tree); },
     get initializer() { return drillIn(data.fields?.['initializer'], tree); },
     get child() { return drillIn(data.children?.[0], tree); },
@@ -1739,12 +1732,11 @@ export function wrapIndexTypeQuery(data: AnyNodeData, tree: TreeHandle): unknown
 
 export function wrapLookupType(data: AnyNodeData, tree: TreeHandle): unknown {
   promote(data, 'primary_type');
-  promoteFirstAnon(data, 'index_type');
+  promoteNamed(data, 'index_type', ["type"]);
   return {
     ...data,
     get primaryType() { return drillIn(data.fields?.['primary_type'], tree); },
     get indexType() { return drillIn(data.fields?.['index_type'], tree); },
-    get child() { return drillIn(data.children?.[0], tree); },
   };
 }
 
@@ -1770,11 +1762,10 @@ export function wrapLiteralType(data: AnyNodeData, tree: TreeHandle): unknown {
 }
 
 export function wrapFlowMaybeType(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteFirstAnon(data, 'primary_type');
+  promote(data, 'primary_type');
   return {
     ...data,
     get primaryType() { return drillIn(data.fields?.['primary_type'], tree); },
-    get child() { return drillIn(data.children?.[0], tree); },
   };
 }
 
@@ -1895,23 +1886,21 @@ export function wrapReadonlyType(data: AnyNodeData, tree: TreeHandle): unknown {
 
 export function wrapUnionType(data: AnyNodeData, tree: TreeHandle): unknown {
   promoteNamed(data, 'left', ["type"]);
-  promoteFirstAnon(data, 'right');
+  promoteNamed(data, 'right', ["type"]);
   return {
     ...data,
     get left() { return drillIn(data.fields?.['left'], tree); },
     get right() { return drillIn(data.fields?.['right'], tree); },
-    get child() { return drillIn(data.children?.[0], tree); },
   };
 }
 
 export function wrapIntersectionType(data: AnyNodeData, tree: TreeHandle): unknown {
   promoteNamed(data, 'left', ["type"]);
-  promoteFirstAnon(data, 'right');
+  promoteNamed(data, 'right', ["type"]);
   return {
     ...data,
     get left() { return drillIn(data.fields?.['left'], tree); },
     get right() { return drillIn(data.fields?.['right'], tree); },
-    get child() { return drillIn(data.children?.[0], tree); },
   };
 }
 

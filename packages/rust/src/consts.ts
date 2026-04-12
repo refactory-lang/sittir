@@ -413,7 +413,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'arguments': [
   ],
   'array_expression': [
-    { name: 'length', required: true, multiple: false },
+    { name: 'attributes', required: true, multiple: false },
+    { name: 'elements', required: true, multiple: false },
   ],
   'array_type': [
     { name: 'element', required: true, multiple: false },
@@ -674,7 +675,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'macro_definition': [
     { name: 'rules', required: true, multiple: false },
-    { name: 'name', required: true, multiple: false },
   ],
   'macro_invocation': [
     { name: 'tokenTree', required: true, multiple: false },
@@ -715,7 +715,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'ordered_field_declaration_list': [
     { name: 'attributes', required: true, multiple: false },
     { name: 'visibilityModifier', required: true, multiple: false },
-    { name: 'declarations', required: true, multiple: false },
   ],
   'parameter': [
     { name: 'mutableSpecifier', required: true, multiple: false },

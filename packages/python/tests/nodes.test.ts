@@ -95,11 +95,11 @@ describe('print_statement', () => {
 
 describe('chevron', () => {
   it('factory produces correct type', () => {
-    const node = ir.chevron({ expression: 'test' as any });
+    const node = ir.chevron({ expression: { type: 'expression', text: 'test' } as any });
     expect(node.type).toBe('chevron');
   });
   it('render produces non-empty string', () => {
-    const node = ir.chevron({ expression: 'test' as any });
+    const node = ir.chevron({ expression: { type: 'expression', text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -257,11 +257,11 @@ describe('while_statement', () => {
 
 describe('try_statement', () => {
   it('factory produces correct type', () => {
-    const node = ir.tryStatement({ exceptClauses: 'test' as any, elseClause: 'test' as any, finallyClause: { type: '_suite', text: 'test' } as any });
+    const node = ir.tryStatement({ exceptClauses: 'test' as any, elseClause: { type: '_suite', text: 'test' } as any, finallyClause: 'test' as any });
     expect(node.type).toBe('try_statement');
   });
   it('render produces non-empty string', () => {
-    const node = ir.tryStatement({ exceptClauses: 'test' as any, elseClause: 'test' as any, finallyClause: { type: '_suite', text: 'test' } as any });
+    const node = ir.tryStatement({ exceptClauses: 'test' as any, elseClause: { type: '_suite', text: 'test' } as any, finallyClause: 'test' as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -344,22 +344,22 @@ describe('lambda_parameters', () => {
 
 describe('list_splat', () => {
   it('factory produces correct type', () => {
-    const node = ir.listSplat({ expression: 'test' as any });
+    const node = ir.listSplat({ expression: { type: 'expression', text: 'test' } as any });
     expect(node.type).toBe('list_splat');
   });
   it('render produces non-empty string', () => {
-    const node = ir.listSplat({ expression: 'test' as any });
+    const node = ir.listSplat({ expression: { type: 'expression', text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
 describe('dictionary_splat', () => {
   it('factory produces correct type', () => {
-    const node = ir.dictionarySplat({ expression: 'test' as any });
+    const node = ir.dictionarySplat({ expression: { type: 'expression', text: 'test' } as any });
     expect(node.type).toBe('dictionary_splat');
   });
   it('render produces non-empty string', () => {
-    const node = ir.dictionarySplat({ expression: 'test' as any });
+    const node = ir.dictionarySplat({ expression: { type: 'expression', text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -445,11 +445,11 @@ describe('decorated_definition', () => {
 
 describe('decorator', () => {
   it('factory produces correct type', () => {
-    const node = ir.decorator({ expression: 'test' as any, newline: { type: 'expression', text: 'test' } as any });
+    const node = ir.decorator({ expression: { type: 'expression', text: 'test' } as any, newline: 'test' as any });
     expect(node.type).toBe('decorator');
   });
   it('render produces non-empty string', () => {
-    const node = ir.decorator({ expression: 'test' as any, newline: { type: 'expression', text: 'test' } as any });
+    const node = ir.decorator({ expression: { type: 'expression', text: 'test' } as any, newline: 'test' as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -519,11 +519,11 @@ describe('dict_pattern', () => {
 
 describe('keyword_pattern', () => {
   it('factory produces correct type', () => {
-    const node = ir.keywordPattern({ identifier: { type: 'identifier', text: 'test' } as any, simplePattern: 'test' as any });
+    const node = ir.keywordPattern({ identifier: { type: 'identifier', text: 'test' } as any, simplePattern: { type: '_simple_pattern', text: 'test' } as any });
     expect(node.type).toBe('keyword_pattern');
   });
   it('render produces non-empty string', () => {
-    const node = ir.keywordPattern({ identifier: { type: 'identifier', text: 'test' } as any, simplePattern: 'test' as any });
+    const node = ir.keywordPattern({ identifier: { type: 'identifier', text: 'test' } as any, simplePattern: { type: '_simple_pattern', text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -821,11 +821,11 @@ describe('subscript', () => {
 
 describe('slice', () => {
   it('factory produces correct type', () => {
-    const node = ir.slice({ start: { type: 'expression', text: 'test' } as any, stop: 'test' as any, step: { type: 'expression', text: 'test' } as any });
+    const node = ir.slice({ start: { type: 'expression', text: 'test' } as any, stop: { type: 'expression', text: 'test' } as any, step: 'test' as any });
     expect(node.type).toBe('slice');
   });
   it('render produces non-empty string', () => {
-    const node = ir.slice({ start: { type: 'expression', text: 'test' } as any, stop: 'test' as any, step: { type: 'expression', text: 'test' } as any });
+    const node = ir.slice({ start: { type: 'expression', text: 'test' } as any, stop: { type: 'expression', text: 'test' } as any, step: 'test' as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -883,33 +883,33 @@ describe('generic_type', () => {
 
 describe('union_type', () => {
   it('factory produces correct type', () => {
-    const node = ir.unionType({ left: { type: 'type', text: 'test' } as any, right: 'test' as any });
+    const node = ir.unionType({ left: { type: 'type', text: 'test' } as any, right: { type: 'type', text: 'test' } as any });
     expect(node.type).toBe('union_type');
   });
   it('render produces non-empty string', () => {
-    const node = ir.unionType({ left: { type: 'type', text: 'test' } as any, right: 'test' as any });
+    const node = ir.unionType({ left: { type: 'type', text: 'test' } as any, right: { type: 'type', text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
 describe('constrained_type', () => {
   it('factory produces correct type', () => {
-    const node = ir.constrainedType({ baseType: { type: 'type', text: 'test' } as any, constraint: 'test' as any });
+    const node = ir.constrainedType({ baseType: { type: 'type', text: 'test' } as any, constraint: { type: 'type', text: 'test' } as any });
     expect(node.type).toBe('constrained_type');
   });
   it('render produces non-empty string', () => {
-    const node = ir.constrainedType({ baseType: { type: 'type', text: 'test' } as any, constraint: 'test' as any });
+    const node = ir.constrainedType({ baseType: { type: 'type', text: 'test' } as any, constraint: { type: 'type', text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
 describe('member_type', () => {
   it('factory produces correct type', () => {
-    const node = ir.memberType({ baseType: { type: 'type', text: 'test' } as any, identifier: 'test' as any });
+    const node = ir.memberType({ baseType: { type: 'type', text: 'test' } as any, identifier: { type: 'identifier', text: 'test' } as any });
     expect(node.type).toBe('member_type');
   });
   it('render produces non-empty string', () => {
-    const node = ir.memberType({ baseType: { type: 'type', text: 'test' } as any, identifier: 'test' as any });
+    const node = ir.memberType({ baseType: { type: 'type', text: 'test' } as any, identifier: { type: 'identifier', text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });

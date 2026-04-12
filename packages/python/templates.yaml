@@ -21,7 +21,7 @@ rules:
   print_statement:
     template: $CHEVRON $$$CHILDREN $ARGUMENT,
   chevron:
-    template: $EXPRESSION $$$CHILDREN
+    template: ">>$EXPRESSION"
   assert_statement:
     template: assert $$$CHILDREN
   expression_statement:
@@ -50,7 +50,7 @@ rules:
   while_statement:
     template: "while $CONDITION:$BODY $ALTERNATIVE"
   try_statement:
-    template: $EXCEPT_CLAUSES $ELSE_CLAUSE $FINALLY_CLAUSE $$$CHILDREN
+    template: "$EXCEPT_CLAUSES:$ELSE_CLAUSE $FINALLY_CLAUSE $$$CHILDREN"
   except_clause:
     template: "except*$VALUE $ALIAS_CLAUSE:$$$CHILDREN"
     alias: as $ALIAS
@@ -70,9 +70,9 @@ rules:
   lambda_parameters:
     template: $$$CHILDREN
   list_splat:
-    template: $EXPRESSION $$$CHILDREN
+    template: "*$EXPRESSION"
   dictionary_splat:
-    template: $EXPRESSION $$$CHILDREN
+    template: "**$EXPRESSION"
   global_statement:
     template: global $$$CHILDREN
   nonlocal_statement:
@@ -92,7 +92,7 @@ rules:
   decorated_definition:
     template: $$$CHILDREN $DEFINITION
   decorator:
-    template: "$EXPRESSION $NEWLINE\n"
+    template: "@$EXPRESSION $NEWLINE"
   block:
     template: "$$$CHILDREN\n"
   expression_list:
@@ -114,11 +114,11 @@ rules:
   _key_value_pattern:
     template: "$KEY:$VALUE"
   keyword_pattern:
-    template: $IDENTIFIER $SIMPLE_PATTERN $$$CHILDREN
+    template: $IDENTIFIER=$SIMPLE_PATTERN
   splat_pattern:
     template: $IDENTIFIER $$$CHILDREN
   class_pattern:
-    template: $DOTTED_NAME $ARGUMENTS $$$CHILDREN,)
+    template: $DOTTED_NAME($ARGUMENTS)
   complex_pattern:
     template: $REAL $IMAGINARY+$$$CHILDREN
   _parameters:
@@ -183,7 +183,7 @@ rules:
   subscript:
     template: "$VALUE[$SUBSCRIPT,]"
   slice:
-    template: "$START $STOP $STEP:$$$CHILDREN"
+    template: "$START:$STOP $STEP"
   call:
     template: $FUNCTION $ARGUMENTS
   typed_parameter:
@@ -195,11 +195,11 @@ rules:
   generic_type:
     template: $IDENTIFIER $TYPE_PARAMETER
   union_type:
-    template: $LEFT $RIGHT $$$CHILDREN
+    template: $LEFT|$RIGHT
   constrained_type:
-    template: $BASE_TYPE $CONSTRAINT $$$CHILDREN
+    template: "$BASE_TYPE:$CONSTRAINT"
   member_type:
-    template: $BASE_TYPE $IDENTIFIER $$$CHILDREN
+    template: $BASE_TYPE.$IDENTIFIER
   keyword_argument:
     template: $NAME=$VALUE
   list:
