@@ -22,7 +22,7 @@ import { emitFrom } from '../emitters/from.ts'
 import { emitClientUtilsFromNodeMap } from '../emitters/client-utils-v2.ts'
 import { emitIrFromNodeMap } from '../emitters/ir-v2.ts'
 import { emitTests } from '../emitters/test-new.ts'
-import { emitTypeTests } from '../emitters/type-test.ts'
+import { emitTypeTestsFromNodeMap } from '../emitters/type-test-v2.ts'
 import { emitConfig } from '../emitters/config.ts'
 
 // v2 emitters — consume NodeMap directly
@@ -100,7 +100,7 @@ export async function generateV2(cfg: GenerateConfigV2): Promise<GeneratedFilesV
         consts: emitConstsFromNodeMap({ grammar: cfg.grammar, nodeMap }),
         index: emitIndexFromNodeMap({ grammar: cfg.grammar, nodeMap }),
         tests: emitTests({ grammar: cfg.grammar, nodes: nodes as any }),
-        typeTests: emitTypeTests({ nodes: nodes as any }),
+        typeTests: emitTypeTestsFromNodeMap({ nodeMap }),
         config: emitConfig({ grammar: cfg.grammar }),
         nodeModel: JSON.stringify({ name: nodeMap.name, nodeCount: nodeMap.nodes.size }, null, 2),
         nodeMap,
