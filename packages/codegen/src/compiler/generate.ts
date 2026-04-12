@@ -18,7 +18,7 @@ import { emitTypesFromNodeMap } from '../emitters/types-v2.ts'
 import { emitTemplatesYaml } from '../emitters/rules.ts'
 import { emitFactoriesFromNodeMap } from '../emitters/factories-v2.ts'
 import { emitWrap } from '../emitters/wrap.ts'
-import { emitFrom } from '../emitters/from.ts'
+import { emitFromNodeMap } from '../emitters/from-v2.ts'
 import { emitClientUtilsFromNodeMap } from '../emitters/client-utils-v2.ts'
 import { emitIrFromNodeMap } from '../emitters/ir-v2.ts'
 import { emitTests } from '../emitters/test-new.ts'
@@ -95,7 +95,7 @@ export async function generateV2(cfg: GenerateConfigV2): Promise<GeneratedFilesV
         factories: emitFactoriesFromNodeMap({ grammar: cfg.grammar, nodeMap }),
         wrap: emitWrap({ grammar: cfg.grammar, nodes: nodes as any }),
         utils: emitClientUtilsFromNodeMap({ nodeMap }),
-        from: emitFrom({ grammar: cfg.grammar, nodes: nodes as any }),
+        from: emitFromNodeMap({ grammar: cfg.grammar, nodeMap }),
         irNamespace: emitIrFromNodeMap({ grammar: cfg.grammar, nodeMap }),
         consts: emitConstsFromNodeMap({ grammar: cfg.grammar, nodeMap }),
         index: emitIndexFromNodeMap({ grammar: cfg.grammar, nodeMap }),
