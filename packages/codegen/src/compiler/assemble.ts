@@ -98,7 +98,7 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
             }
             case 'enum': {
                 nodes.set(kind, new AssembledEnum({
-                    kind, typeName,
+                    kind, typeName, factoryName, irKey,
                     values: rule.type === 'enum' ? rule.values : [],
                 }))
                 break

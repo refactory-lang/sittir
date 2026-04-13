@@ -67,6 +67,13 @@ describe('token_repetition_pattern', () => {
   });
 });
 
+describe('fragment_specifier', () => {
+  it('factory accepts valid value', () => {
+    const node = ir.fragmentSpecifier('block');
+    expect(node.type).toBe('fragment_specifier');
+  });
+});
+
 describe('token_tree', () => {
   it('factory produces correct type', () => {
     const node = ir.tokenTree();
@@ -1447,6 +1454,13 @@ describe('escape_sequence', () => {
   });
 });
 
+describe('boolean_literal', () => {
+  it('factory accepts valid value', () => {
+    const node = ir.booleanLiteral('true');
+    expect(node.type).toBe('boolean_literal');
+  });
+});
+
 describe('comment', () => {
   it('factory produces correct type', () => {
     const node = ir.comment();
@@ -1521,6 +1535,13 @@ describe('shebang', () => {
   });
 });
 
+describe('_reserved_identifier', () => {
+  it('factory accepts valid value', () => {
+    const node = ir.reservedIdentifier('default');
+    expect(node.type).toBe('_reserved_identifier');
+  });
+});
+
 describe('_type_identifier', () => {
   it('factory produces correct type', () => {
     const node = ir.typeIdentifier();
@@ -1564,6 +1585,13 @@ describe('metavariable', () => {
     const node = ir.metavariable('test');
     expect(node.type).toBe('metavariable');
     expect(node.text).toBe('test');
+  });
+});
+
+describe('primitive_type', () => {
+  it('factory accepts valid value', () => {
+    const node = ir.primitiveType('u8');
+    expect(node.type).toBe('primitive_type');
   });
 });
 

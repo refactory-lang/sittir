@@ -1423,6 +1423,13 @@ describe('type_alias_declaration', () => {
   });
 });
 
+describe('accessibility_modifier', () => {
+  it('factory accepts valid value', () => {
+    const node = ir.accessibilityModifier('public');
+    expect(node.type).toBe('accessibility_modifier');
+  });
+});
+
 describe('override_modifier', () => {
   it('factory produces keyword', () => {
     const node = ir.overrideModifier();

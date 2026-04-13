@@ -113,6 +113,79 @@ validate-all.test.ts` to call `generateV2` directly. The v2 corpus
 validation test already hits the same surface area; the integration
 suite can be slimmed down to just that.
 
+### Apples-to-apples comparison (recorded 2026-04-12)
+
+Ran both pipelines on every grammar via
+`packages/codegen/scripts/compare-v1-v2.ts` and diffed the emitted
+files. Counts below are **after** the enum-factoryName fix in
+`assemble.ts` (see Findings → Enum factoryName drop).
+
+**Byte-identical output (safe to delete v1 emitter for):**
+- `grammar.ts` — identical for all three grammars
+- `index.ts` — identical for all three grammars
+
+**v2 strictly leaner (v2 smaller, same or more coverage):**
+- `from.ts` — v1 4528/4738/2926 lines → v2 1555/1877/1203 (v2
+  inlines resolution, v1 had per-grammar stamped helpers)
+- `factories.ts` — v1 slightly larger due to trailing-underscore
+  naming convention (`abstract_type_(…)` vs `abstractType(…)`).
+  Same semantic coverage after the enum fix.
+- `utils.ts` — v1 78 → v2 50 (shared helper consolidation)
+
+**v2 strictly broader (more coverage, more emitted types):**
+- `types.ts` — v2 +145 rust / +179 ts / +97 python interfaces. v2
+  emits stub interfaces for every kind a field union references;
+  v1 dropped many of them.
+- `templates.yaml` — v2 +67 rust / +197 ts / +82 python entries.
+  v2's pure-switch classifier catches rules v1's heuristic path
+  dropped (especially typescript).
+- `wrap.ts`, `consts.ts`, `type-tests.ts`, `tests.test.ts` — all
+  larger in v2, matching the broader node coverage.
+- `from.ts` functions — v1=163/167/**1** vs v2=174/217/138. Python
+  v1 effectively only emitted one from() binding — a clear v1 bug
+  the v2 path avoids.
+
+**Naming convention change (not a gap):**
+- v1 exports factories as `abstract_type_` (snake_case + trailing
+  `_`). v2 exports them as `abstractType` (camelCase, trailing `_`
+  only on JS-reserved collisions).
+- Disk outputs (`packages/{rust,typescript,python}/src/factories.ts`)
+  already match v2's camelCase convention — v1's form only ever
+  existed in the integration test harness.
+
+**Findings worth acting on:**
+
+1. **Enum factoryName drop (fixed).** `assemble.ts` case `'enum'`
+   constructed `AssembledEnum` without passing `factoryName` /
+   `irKey`, so visible enums (e.g. rust `boolean_literal`,
+   `primitive_type`, `fragment_specifier`) emitted an interface
+   and a `const enum SyntaxKind` entry but **no factory**. Users
+   had no way to construct these kinds through the ir namespace.
+   One-line fix on the `new AssembledEnum(...)` call; rust gained
+   4 factories, typescript gained 1, python unchanged. All 507
+   tests still pass.
+
+2. **`doc_comment` elimination (needs investigation).** v1 had a
+   standalone `doc_comment` kind in rust. v2 only emits the
+   `_line_doc_comment_marker` / `_block_doc_comment_marker` pair.
+   Not clear whether v2's classification is correct (they may be
+   the actual tree-sitter kinds and `doc_comment` a v1 invention)
+   or whether Link is eagerly inlining something it shouldn't.
+
+3. **Python from() coverage.** v1 emitted a single `from` function
+   for all of python. This is a v1 regex/detection bug, not a v2
+   gap — noted here for the record.
+
+**Conclusion for C6.** v2 can replace v1 as the canonical generator
+for every file. The integration test's `RT_CEILINGS` table is the
+only thing still semantically tied to v1 (ceilings were calibrated
+against v1-generated templates on disk), and the authoritative guard
+is already `corpus-validation.test.ts`. C6 is **unblocked**: delete
+`generate()`, migrate `validate-all.test.ts` to `generateV2`, and
+drop `RT_CEILINGS` once the suite runs clean against v2 output.
+After that, C4 (delete v1 source files) and C16 (delete ceilings
+file) can follow in sequence.
+
 ---
 
 ## C7. Classifier: add `terminal` and `polymorph` to the spec
