@@ -134,7 +134,7 @@ Each emitter's entry point changes from `emitX(config: { grammar, nodes: Hydrate
 - [x] T037 Rewrite `emitters/rules.ts` → new file `emitters/templates.ts`: entry `emitTemplatesYaml(nodeMap: NodeMap) → string`. `emitTemplate(node: AssembledBranch | AssembledContainer)` produces per-node template rule. `emitPolymorphTemplates(node: AssembledPolymorph)` produces per-form template rules. Separator comes from `AssembledContainer.separator` (no `detectRecursiveSeparator`). Clauses come from Rule tree (via `mergedRules` on collapsed forms). Remove all eliminated functions (tryClause, needsSpace, buildWordBoundary, etc.).
 - [x] T038 Rewrite `emitters/from.ts`: entry `emitFrom(nodeMap: NodeMap) → string`. **Derives from factory signatures, not the node model.** `emitFromFunction(node: AssembledNode)` for each node with a factory. `emitFormFrom(node: AssembledPolymorph, form: AssembledForm)` for per-form from. `resolveFieldStrategy(field: AssembledField) → strategy` picks resolver based on `field.contentTypes`. `emitResolver(strategy) → string` emits resolver code. Remove imports from `node-model.ts` and `naming.ts`.
 - [x] T039 Rewrite `emitters/ir-namespace.ts` → new file `emitters/ir.ts`: entry `emitIr(nodeMap: NodeMap) → string`. **Derives from factory exports, not the node model.** Thin namespace wrapper re-exporting factories + from with form accessors. Remove imports from `node-model.ts` and `naming.ts`.
-- [ ] T040 [P] Rewrite `emitters/wrap.ts`: entry `emitWrap(nodeMap: NodeMap) → string`. Switch on `AssembledNode.modelType` for per-kind wrap functions. Access fields via `node.fields` with `propertyName`. Remove imports from `node-model.ts` and `naming.ts`.
+- [x] T040 [P] `emitters/wrap-v2.ts` created — consumes NodeMap directly via `AssembledNode.emitWrap()` class method dispatch. Read-only shape: `{...data, get field() { drillIn(data.fields[raw], tree) }, get children() { ... } }`. No setters, no render/toEdit/replace, no `promote*` preamble. Override-field promotion happens during readNode hydration via inlined `_routing` (built once at module load from reconstructed OverridesConfig + supertypeExpansion). Old `emitters/wrap.ts` retained until C6 deletes v1 `generate()`. Commit `e0c6b94`.
 - [x] T041 [P] Rewrite `emitters/consts.ts`: entry `emitConsts(nodeMap: NodeMap) → string`. Iterate `nodeMap.nodes`, emit kind/keyword/operator arrays. Remove imports from `node-model.ts` and `naming.ts`.
 - [x] T042 [P] Rewrite `emitters/grammar.ts`: entry `emitGrammar(nodeMap: NodeMap) → string`. Emit grammar type literal. Remove imports from `naming.ts`.
 - [x] T042a [P] Rewrite `emitters/index-file.ts`: entry `emitIndex(nodeMap: NodeMap) → string`. Barrel re-exports. Remove imports from `node-model.ts`.
@@ -194,23 +194,23 @@ Each emitter's entry point changes from `emitX(config: { grammar, nodes: Hydrate
 
 These are the critical acceptance tests. Generated code must actually work at runtime when parsing real source and reconstructing it through factories.
 
-- [ ] T052a [US1] readNode round-trip: corpus → tree-sitter parse → readNode → NodeData. Verify the NodeData has the expected `type`, `fields`, and `children` for each corpus entry. Uses `packages/codegen/fixtures/*.txt` as corpus.
-- [ ] T052b [US1] Factory round-trip: corpus → parse → readNode → strip metadata → call factory with the stripped data → verify factory-produced NodeData matches readNode output structurally
-- [ ] T052c [US1] Render round-trip: factory-produced NodeData → render → re-parse with tree-sitter → verify the kind and structure match the original
-- [ ] T052d [US1] from() round-trip: corpus → parse → readNode → strip metadata → call `.from()` on loose input (string for leaves, object-with-kind for branches) → verify result matches factory output structurally
-- [ ] T052d-i [US1] from() with string inputs for leaf-typed fields: verify `ir.branch.from({ name: 'x', ... })` produces the same NodeData as `ir.branch({ name: ir.identifier('x'), ... })`
-- [ ] T052d-ii [US1] from() with mixed objects/nodes: verify objects with a `kind` discriminator resolve to the right factory
-- [ ] T052d-iii [US1] from() with supertype inputs: verify loose input matching a supertype's subtype resolves correctly (e.g., an `expression` field accepting any expression subtype)
-- [ ] T052e [US1] Wire `validate-factory-roundtrip.ts` and `validate-from.ts` into the v2 CLI: when `--roundtrip` flag is passed, run both factory and from() round-trips against the v2-generated output
-- [ ] T052f [US1] Create vitest test file `packages/codegen/src/__tests__/roundtrip.test.ts` that runs BOTH factory and from() round-trip validators against the v2 pipeline output for all 3 grammars with representative corpus fixtures
+- [x] T052a [US1] readNode round-trip — `validateReadNodeRoundTrip` runs against all three grammars in `corpus-validation.test.ts`, with floor assertions that fail CI on regression. Same validator is also exposed via `sittir --roundtrip`.
+- [x] T052b [US1] Factory round-trip — `validateFactoryRoundTrip` runs against all three grammars in `corpus-validation.test.ts`. Same validator is exposed via `sittir --roundtrip`.
+- [x] T052c [US1] Render round-trip — `validateRenderable` runs against all three grammars in `corpus-validation.test.ts`. (The render → re-parse step is what `validateFactoryRoundTrip` does end-to-end, so T052c is covered both ways.)
+- [x] T052d [US1] from() round-trip (NodeData input path) — `validateFrom` runs against all three grammars in `corpus-validation.test.ts`. Floor assertions in place.
+- [ ] T052d-i [US1] from() with string inputs for leaf-typed fields — **deferred to C6-prereq**. v2 `from.ts` lacks the loose-string→leaf dispatch for multi-leaf-content fields. corpus-validation only feeds materialized `NodeData`, so this gap isn't exercised today.
+- [ ] T052d-ii [US1] from() with mixed objects/nodes — **deferred to C6-prereq**. Same reason: the `_resolveByKind` dispatch isn't emitted in v2.
+- [ ] T052d-iii [US1] from() with supertype inputs — **deferred to C6-prereq**. Same reason.
+- [x] T052e [US1] CLI `--roundtrip` flag wires all four validators (`validateReadNodeRoundTrip`, `validateRoundTrip`, `validateFactoryRoundTrip`, `validateFrom`). See `packages/codegen/src/cli.ts:165-191`.
+- [x] T052f [US1] `corpus-validation.test.ts` is the canonical vitest entry point for round-trip validation across all three grammars. The placeholder `roundtrip.test.ts` is a generator-output smoke test (separate purpose) — kept as the "does generateV2 produce non-empty files" sanity layer.
 
 ### Code dedup in emitters
 
 The from emitter should share resolver functions across fields with identical content-type signatures. A field typed `expression | identifier` shared across 10 different branches should generate ONE resolver function, not 10 inline copies.
 
-- [ ] T042i Dedupe resolvers in `emitters/from-v2.ts`: group fields by canonical content-type signature, emit one resolver per signature, reference it from each field site
-- [ ] T042j Dedupe factory method signatures in `emitters/factories-v2.ts`: children-only nodes with identical child-type signatures share their setter/getter method signatures
-- [ ] T042k Dedupe type unions in `emitters/types-v2.ts`: if multiple fields have the same content-type union, hoist the union into a named type alias used by all referencing fields
+- [ ] T042i Dedupe resolvers in `emitters/from-v2.ts` — **subordinate to C6-prereq.** v2 currently inlines a minimal `resolveField` rather than emitting per-signature resolvers; there's nothing to dedup until C6-prereq lands the resolver scaffolding. When that work happens, dedup falls out as part of the same pass (group fields by content-type signature → emit one helper per signature).
+- [ ] T042j Dedupe factory method signatures in `emitters/factories-v2.ts` — **low ROI evaluated 2026-04-13.** factories.ts is 2.8k–4.5k lines per grammar and method signatures are 2–3 lines per field. Dedup would save ~5–10% at the cost of indirection; the same lines are also subject to type-checking benefit from the explicit per-node signatures. Defer until profiling shows file size matters.
+- [ ] T042k Dedupe type unions in `emitters/types-v2.ts` — **low ROI evaluated 2026-04-13.** Audited rust/typescript/python: the most-repeated multi-type field union appears at most 2× in any one grammar (`(AttributeItem | InnerAttributeItem)[]`, `(HiddenTokens)[]`, etc.). Single-type fields already reference existing interface aliases. Hoisting saves ~10 type aliases per grammar — not worth the emitter complexity. Defer.
 
 **Checkpoint**: All three grammars produce correct output. E2e tests pass. Type-check passes. readNode + factory + render + from() all round-trip correctly. MVP complete.
 
@@ -333,11 +333,11 @@ rather than recomputing via free functions.
   `build-model.ts`, `hydration.ts`, `naming.ts`, `optimization.ts`,
   `kind-projections.ts`, `factoring.ts`, `token-attachment.ts`,
   `token-names.ts`, `emitters/rules.ts`. Keep `validate-templates.ts`.
-- [ ] **C5** Delete the `NodeMap → HydratedNodeModel` adapter
-  (`packages/codegen/src/compiler/adapter.ts`). Blocked by **T040**:
-  `wrap.ts` currently consumes `HydratedNodeModel[]` via the adapter
-  and must first be rewritten to dispatch on `AssembledNode.modelType`
-  directly. Once T040 lands, delete `adapter.ts`.
+- [x] **C5** Deleted `packages/codegen/src/compiler/adapter.ts`. wrap-v2
+  now consumes NodeMap directly (T040), and the v1 `generate()` path
+  builds its own HydratedNodeModel[] — so the adapter has zero callers.
+  Migration scaffolding tests (`adapter.test.ts`,
+  `pipeline-comparison.test.ts`) deleted alongside. Commit `e0c6b94`.
 - [ ] **C6** Delete the legacy `generate()` path in
   `packages/codegen/src/index.ts`. **Blocked by C6-prereq (from.ts
   resolver gap — see comparison findings below).** v2 is a functional
@@ -383,11 +383,23 @@ rather than recomputing via free functions.
   `packages/codegen/tests/integration/validate-all.test.ts`.
   Blocked by C6 — the ceilings were calibrated against v1 factories
   on disk; `corpus-validation.test.ts` is the authoritative v2 guard.
-- [ ] **C17** Audit node-types.json usage. Link converts
-  `_indent`/`_dedent`/`_newline` external symbol refs via name
-  matching, which breaks for grammars using differently-named
-  externals. Make detection either explicit (`externalRoles` config)
-  or position-based from the grammar's `externals` list.
+- [x] **C17** Audited the externals lists of all three current grammars
+  (2026-04-13):
+  - **rust**, **typescript**: no `_indent`/`_dedent`/`_newline`
+    externals at all (not indent-based).
+  - **python**: uses the canonical names `_newline`, `_indent`,
+    `_dedent` exactly as link.ts's by-name detection expects.
+  - Python also exposes non-structural externals (`string_start`,
+    `string_end`, `_string_content`, `escape_interpolation`,
+    `comment`) — those are terminal tokens, not indentation
+    sentinels, and don't pass through the indent/dedent/newline
+    conversion path.
+
+  **Conclusion:** by-name detection is sufficient for the three
+  grammars currently in tree. The risk only surfaces when a new
+  grammar with differently-named structural-whitespace externals
+  is added. Defer adding an `externalRoles` config / position-based
+  detection until that need actually arises.
 - [ ] **C18** Remove `any` casts from field access in factory and
   from emitters. `(config as any)?.${propertyName}` can become typed
   access now that `ConfigOf<T>` is fully defined. Fluent getters/
