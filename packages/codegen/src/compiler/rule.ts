@@ -103,17 +103,33 @@ export interface ClauseRule {
     readonly content: Rule
 }
 
+/**
+ * Rule-level provenance vocabulary.
+ *
+ *   'grammar'  — the user wrote this classification explicitly in grammar.js
+ *                (e.g. `supertypes: [$._expression]` or a literal enum rule).
+ *   'override' — an overrides.ts patch produced this rule.
+ *   'promoted' — Link derived this classification from rule shape (hidden
+ *                choice-of-strings → enum, hidden choice-of-symbols →
+ *                supertype, field-free symbol-free subtree → terminal,
+ *                heterogeneous-field choice → polymorph).
+ *
+ * Suggestion check is uniform across all rule-level sources:
+ *    isSuggestion = source !== 'grammar' && source !== 'override'
+ */
+export type RuleSource = 'grammar' | 'promoted' | 'override'
+
 export interface EnumRule {
     readonly type: 'enum'
     readonly values: string[]
-    readonly source?: 'grammar' | 'promoted'
+    readonly source?: RuleSource
 }
 
 export interface SupertypeRule {
     readonly type: 'supertype'
     readonly name: string
     readonly subtypes: string[]
-    readonly source?: 'grammar' | 'promoted'
+    readonly source?: RuleSource
 }
 
 export interface GroupRule {
@@ -137,6 +153,8 @@ export interface GroupRule {
 export interface TerminalRule {
     readonly type: 'terminal'
     readonly content: Rule
+    /** Always 'promoted' today — Link synthesises terminals from shape. */
+    readonly source?: RuleSource
 }
 
 /**
@@ -153,6 +171,8 @@ export interface PolymorphRule {
     readonly type: 'polymorph'
     /** Ordered list of forms (one per variant, in declaration order). */
     readonly forms: Array<{ readonly name: string; readonly content: Rule }>
+    /** Always 'promoted' today — Link synthesises polymorphs from shape. */
+    readonly source?: RuleSource
 }
 
 // ---------------------------------------------------------------------------

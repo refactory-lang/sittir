@@ -59,7 +59,7 @@ export function link(raw: RawGrammar): LinkedGrammar {
     // downstream — Assemble just dispatches on rule.type.
     for (const [name, rule] of Object.entries(rules)) {
         if (isTerminalShape(rule)) {
-            rules[name] = { type: 'terminal', content: rule } as Rule
+            rules[name] = { type: 'terminal', content: rule, source: 'promoted' } as Rule
         }
     }
 
@@ -277,7 +277,7 @@ function promotePolymorph(rule: Rule): Rule {
         name: m.type === 'variant' ? m.name : `form_${i}`,
         content: m.type === 'variant' ? m.content : m,
     }))
-    return { type: 'polymorph', forms }
+    return { type: 'polymorph', forms, source: 'promoted' }
 }
 
 function findVariantChoice(rule: Rule): ChoiceRule | null {
