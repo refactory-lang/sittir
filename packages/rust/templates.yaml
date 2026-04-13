@@ -21,6 +21,8 @@ rules:
     template: ($$$CHILDREN)
   token_repetition:
     template: $($$$CHILDREN)+
+  _non_special_token:
+    template: $$$CHILDREN
   attribute_item:
     template: "#[$ATTRIBUTE]"
   inner_attribute_item:
@@ -130,6 +132,8 @@ rules:
     template: extern $STRING_LITERAL
   visibility_modifier:
     template: $$$CHILDREN
+  _type:
+    template: $$$CHILDREN
   bracketed_type:
     template: <$$$CHILDREN>
   qualified_type:
@@ -172,10 +176,14 @@ rules:
     template: impl $TYPE_PARAMETERS $TRAIT
   dynamic_type:
     template: dyn $TRAIT
+  _expression_except_range:
+    template: $$$CHILDREN
   macro_invocation:
     template: $MACRO!$TOKEN_TREE
   delim_token_tree:
     template: ($$$CHILDREN)
+  _non_delim_token:
+    template: $$$CHILDREN
   scoped_identifier:
     template: "$PATH::$NAME"
   scoped_type_identifier_in_expression_position:
@@ -230,6 +238,8 @@ rules:
     template: if $CONDITION $CONSEQUENCE $ALTERNATIVE
   let_condition:
     template: let $PATTERN=$VALUE
+  _let_chain:
+    template: $$$CHILDREN&&
   else_clause:
     template: else $$$CHILDREN
   match_expression:
@@ -286,6 +296,8 @@ rules:
     template: try $BLOCK
   block:
     template: "$LABEL{$$$CHILDREN}"
+  _pattern:
+    template: $$$CHILDREN
   generic_pattern:
     template: "$$$CHILDREN::$TYPE_ARGUMENTS"
   tuple_pattern:
@@ -336,8 +348,14 @@ rules:
     template: $$$CHILDREN
   line_comment:
     template: //$$$CHILDREN $DOC
+  _line_doc_comment_marker:
+    template: $OUTER
   block_comment:
     template: /*$$$CHILDREN $DOC*/
+  _block_doc_comment_marker:
+    template: $OUTER
+  _path:
+    template: $$$CHILDREN
   _type_identifier:
     template: $$$CHILDREN
   _field_identifier:

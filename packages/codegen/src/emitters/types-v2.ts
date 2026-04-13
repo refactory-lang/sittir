@@ -275,6 +275,17 @@ export function emitTypesFromNodeMap(config: EmitTypesFromNodeMapConfig): string
                 lines.push('')
             }
 
+            if (st.subtypes.length === 0) {
+                // A supertype without subtypes is semantic nonsense — it
+                // means Link classified a hidden rule as supertype despite
+                // having nothing to project a union over. That's a bug in
+                // classifyHiddenRule; surface it here instead of emitting
+                // a degenerate type alias.
+                throw new Error(
+                    `emitTypesFromNodeMap: supertype '${st.kind}' has zero subtypes. ` +
+                    `Link's classifyHiddenRule promoted a non-symbol-choice as supertype — fix it there.`,
+                )
+            }
             // Config/Tree/FromInput unions
             const branchSet = new Set(nodeKinds)
             const branchMembers = st.subtypes.filter(sub => branchSet.has(sub))
@@ -282,13 +293,7 @@ export function emitTypesFromNodeMap(config: EmitTypesFromNodeMapConfig): string
                 lines.push(`export type ${typeName}Config = ${branchMembers.map(sub => `${nodeMap.nodes.get(sub)?.typeName ?? toPascal(sub)}Config`).join(' | ')};`)
                 lines.push(`export type ${typeName}FromInput = ${branchMembers.map(sub => `${nodeMap.nodes.get(sub)?.typeName ?? toPascal(sub)}FromInput`).join(' | ')};`)
             }
-            // Supertype with zero subtypes → fall back to AnyNodeData tree
-            // rather than emitting an empty union (`export type XTree = ;`).
-            if (st.subtypes.length > 0) {
-                lines.push(`export type ${typeName}Tree = ${st.subtypes.map(sub => `${nodeMap.nodes.get(sub)?.typeName ?? toPascal(sub)}Tree`).join(' | ')};`)
-            } else {
-                lines.push(`export interface ${typeName}Tree extends TreeNode<'${st.kind}'> {}`)
-            }
+            lines.push(`export type ${typeName}Tree = ${st.subtypes.map(sub => `${nodeMap.nodes.get(sub)?.typeName ?? toPascal(sub)}Tree`).join(' | ')};`)
             lines.push('')
         }
     }

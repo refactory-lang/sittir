@@ -222,6 +222,17 @@ describe('match_statement', () => {
   });
 });
 
+describe('_match_block', () => {
+  it('factory produces correct type', () => {
+    const node = ir.matchBlock({ alternative: [] });
+    expect(node.type).toBe('_match_block');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.matchBlock({ alternative: [] });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
 describe('case_clause', () => {
   it('factory produces correct type', () => {
     const node = ir.caseClause({ consequence: { type: '_suite', text: 'test' } as any, children: [] as any });
@@ -454,6 +465,13 @@ describe('decorator', () => {
   });
 });
 
+describe('_suite', () => {
+  it('factory produces correct type', () => {
+    const node = ir.suite();
+    expect(node.type).toBe('_suite');
+  });
+});
+
 describe('block', () => {
   it('factory produces correct type', () => {
     const node = ir.block();
@@ -479,6 +497,13 @@ describe('case_pattern', () => {
   it('factory produces correct type', () => {
     const node = ir.casePattern();
     expect(node.type).toBe('case_pattern');
+  });
+});
+
+describe('_simple_pattern', () => {
+  it('factory produces correct type', () => {
+    const node = ir.simplePattern();
+    expect(node.type).toBe('_simple_pattern');
   });
 });
 

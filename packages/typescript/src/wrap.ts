@@ -152,6 +152,7 @@ const _wrapTable: Record<string, (data: AnyNodeData, tree: TreeHandle) => unknow
   'jsx_closing_element': (d, t) => wrapJsxClosingElement(d, t),
   'jsx_self_closing_element': (d, t) => wrapJsxSelfClosingElement(d, t),
   'jsx_attribute': (d, t) => wrapJsxAttribute(d, t),
+  '_jsx_string': (d, t) => wrapHiddenJsxString(d, t),
   'class': (d, t) => wrapClass(d, t),
   'class_declaration': (d, t) => wrapClassDeclaration(d, t),
   'class_heritage': (d, t) => wrapClassHeritage(d, t),
@@ -165,7 +166,9 @@ const _wrapTable: Record<string, (data: AnyNodeData, tree: TreeHandle) => unknow
   'await_expression': (d, t) => wrapAwaitExpression(d, t),
   'member_expression': (d, t) => wrapMemberExpression(d, t),
   'subscript_expression': (d, t) => wrapSubscriptExpression(d, t),
+  '_lhs_expression': (d, t) => wrapHiddenLhsExpression(d, t),
   'assignment_expression': (d, t) => wrapAssignmentExpression(d, t),
+  '_augmented_assignment_lhs': (d, t) => wrapHiddenAugmentedAssignmentLhs(d, t),
   'augmented_assignment_expression': (d, t) => wrapAugmentedAssignmentExpression(d, t),
   'spread_element': (d, t) => wrapSpreadElement(d, t),
   'ternary_expression': (d, t) => wrapTernaryExpression(d, t),
@@ -190,9 +193,12 @@ const _wrapTable: Record<string, (data: AnyNodeData, tree: TreeHandle) => unknow
   'method_definition': (d, t) => wrapMethodDefinition(d, t),
   'pair': (d, t) => wrapPair(d, t),
   'pair_pattern': (d, t) => wrapPairPattern(d, t),
+  '_property_name': (d, t) => wrapHiddenPropertyName(d, t),
   'computed_property_name': (d, t) => wrapComputedPropertyName(d, t),
+  '_semicolon': (d, t) => wrapHiddenSemicolon(d, t),
   'public_field_definition': (d, t) => wrapPublicFieldDefinition(d, t),
   '_jsx_start_opening_element': (d, t) => wrapHiddenJsxStartOpeningElement(d, t),
+  '_import_identifier': (d, t) => wrapHiddenImportIdentifier(d, t),
   'non_null_expression': (d, t) => wrapNonNullExpression(d, t),
   'method_signature': (d, t) => wrapMethodSignature(d, t),
   'abstract_method_signature': (d, t) => wrapAbstractMethodSignature(d, t),
@@ -288,6 +294,7 @@ const _wrapTable: Record<string, (data: AnyNodeData, tree: TreeHandle) => unknow
   'false': (d) => d,
   'null': (d) => d,
   'undefined': (d) => d,
+  '_reserved_identifier': (d) => d,
   'accessibility_modifier': (d) => d,
   'override_modifier': (d) => d,
   'predefined_type': (d) => d,
@@ -427,7 +434,7 @@ export function wrapImportStatement(data: AnyNodeData, tree: TreeHandle): unknow
   promoteNamed(data, 'import_clause', ["type","typeof"]);
   promoteNamed(data, 'from_clause', ["import_require_clause","string"]);
   promote(data, 'import_attribute');
-  promoteNamed(data, 'semicolon', ["_automatic_semicolon"]);
+  promoteNamed(data, 'semicolon', ["_semicolon"]);
   return {
     ...data,
     get importClause() { return drillIn(data.fields?.['import_clause'], tree); },
@@ -514,7 +521,7 @@ export function wrapExpressionStatement(data: AnyNodeData, tree: TreeHandle): un
 
 export function wrapVariableDeclaration(data: AnyNodeData, tree: TreeHandle): unknown {
   promoteFirstAnon(data, 'declarators');
-  promoteNamed(data, 'semicolon', ["_automatic_semicolon"]);
+  promoteNamed(data, 'semicolon', ["_semicolon"]);
   return {
     ...data,
     get declarators() { return drillIn(data.fields?.['declarators'], tree); },
@@ -524,7 +531,7 @@ export function wrapVariableDeclaration(data: AnyNodeData, tree: TreeHandle): un
 
 export function wrapLexicalDeclaration(data: AnyNodeData, tree: TreeHandle): unknown {
   promoteFirstAnon(data, 'declarators');
-  promoteNamed(data, 'semicolon', ["_automatic_semicolon"]);
+  promoteNamed(data, 'semicolon', ["_semicolon"]);
   return {
     ...data,
     get kind() { return drillIn(data.fields?.['kind'], tree); },
@@ -896,6 +903,15 @@ export function wrapJsxAttribute(data: AnyNodeData, tree: TreeHandle): unknown {
   };
 }
 
+export function wrapHiddenJsxString(data: AnyNodeData, tree: TreeHandle): unknown {
+  return {
+    ...data,
+    get unescapedDoubleJsxStringFragment() { return drillInAll(data.fields?.['unescapedDoubleJsxStringFragment'], tree); },
+    get htmlCharacterReference() { return drillInAll(data.fields?.['htmlCharacterReference'], tree); },
+    get unescapedSingleJsxStringFragment() { return drillInAll(data.fields?.['unescapedSingleJsxStringFragment'], tree); },
+  };
+}
+
 export function wrapClass(data: AnyNodeData, tree: TreeHandle): unknown {
   promoteFirstAnon(data, 'class_heritage');
   return {
@@ -1019,11 +1035,35 @@ export function wrapSubscriptExpression(data: AnyNodeData, tree: TreeHandle): un
   };
 }
 
+export function wrapHiddenLhsExpression(data: AnyNodeData, tree: TreeHandle): unknown {
+  return {
+    ...data,
+    get memberExpression() { return drillIn(data.fields?.['memberExpression'], tree); },
+    get subscriptExpression() { return drillIn(data.fields?.['subscriptExpression'], tree); },
+    get identifier() { return drillIn(data.fields?.['identifier'], tree); },
+    get reservedIdentifier() { return drillIn(data.fields?.['reservedIdentifier'], tree); },
+    get destructuringPattern() { return drillIn(data.fields?.['destructuringPattern'], tree); },
+    get nonNullExpression() { return drillIn(data.fields?.['nonNullExpression'], tree); },
+  };
+}
+
 export function wrapAssignmentExpression(data: AnyNodeData, tree: TreeHandle): unknown {
   return {
     ...data,
     get left() { return drillIn(data.fields?.['left'], tree); },
     get right() { return drillIn(data.fields?.['right'], tree); },
+  };
+}
+
+export function wrapHiddenAugmentedAssignmentLhs(data: AnyNodeData, tree: TreeHandle): unknown {
+  return {
+    ...data,
+    get memberExpression() { return drillIn(data.fields?.['memberExpression'], tree); },
+    get subscriptExpression() { return drillIn(data.fields?.['subscriptExpression'], tree); },
+    get reservedIdentifier() { return drillIn(data.fields?.['reservedIdentifier'], tree); },
+    get identifier() { return drillIn(data.fields?.['identifier'], tree); },
+    get parenthesizedExpression() { return drillIn(data.fields?.['parenthesizedExpression'], tree); },
+    get nonNullExpression() { return drillIn(data.fields?.['nonNullExpression'], tree); },
   };
 }
 
@@ -1237,11 +1277,30 @@ export function wrapPairPattern(data: AnyNodeData, tree: TreeHandle): unknown {
   };
 }
 
+export function wrapHiddenPropertyName(data: AnyNodeData, tree: TreeHandle): unknown {
+  return {
+    ...data,
+    get identifier() { return drillIn(data.fields?.['identifier'], tree); },
+    get reservedIdentifier() { return drillIn(data.fields?.['reservedIdentifier'], tree); },
+    get privatePropertyIdentifier() { return drillIn(data.fields?.['privatePropertyIdentifier'], tree); },
+    get string() { return drillIn(data.fields?.['string'], tree); },
+    get number() { return drillIn(data.fields?.['number'], tree); },
+    get computedPropertyName() { return drillIn(data.fields?.['computedPropertyName'], tree); },
+  };
+}
+
 export function wrapComputedPropertyName(data: AnyNodeData, tree: TreeHandle): unknown {
   promote(data, 'expression');
   return {
     ...data,
     get expression() { return drillIn(data.fields?.['expression'], tree); },
+  };
+}
+
+export function wrapHiddenSemicolon(data: AnyNodeData, tree: TreeHandle): unknown {
+  return {
+    ...data,
+    get child() { return drillIn(data.children?.[0], tree); },
   };
 }
 
@@ -1266,6 +1325,13 @@ export function wrapHiddenJsxStartOpeningElement(data: AnyNodeData, tree: TreeHa
     get name() { return drillIn(data.fields?.['name'], tree); },
     get typeArguments() { return drillIn(data.fields?.['type_arguments'], tree); },
     get attribute() { return drillInAll(data.fields?.['attribute'], tree); },
+  };
+}
+
+export function wrapHiddenImportIdentifier(data: AnyNodeData, tree: TreeHandle): unknown {
+  return {
+    ...data,
+    get child() { return drillIn(data.children?.[0], tree); },
   };
 }
 
@@ -1419,7 +1485,7 @@ export function wrapInternalModule(data: AnyNodeData, tree: TreeHandle): unknown
 export function wrapImportAlias(data: AnyNodeData, tree: TreeHandle): unknown {
   promoteNamed(data, 'name', ["identifier"]);
   promoteNamed(data, 'value', ["identifier","nested_identifier"]);
-  promoteNamed(data, 'semicolon', ["_automatic_semicolon"]);
+  promoteNamed(data, 'semicolon', ["_semicolon"]);
   return {
     ...data,
     get name() { return drillIn(data.fields?.['name'], tree); },

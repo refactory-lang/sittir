@@ -49,6 +49,8 @@ rules:
   match_statement:
     template: "match $SUBJECT,:$BODY"
     joinBy: ","
+  _match_block:
+    template: "\n  $ALTERNATIVE\n"
   case_clause:
     template: "case $$$CHILDREN,$GUARD:$CONSEQUENCE"
     joinBy: ","
@@ -107,6 +109,8 @@ rules:
     template: $$$CHILDREN $DEFINITION
   decorator:
     template: "@$EXPRESSION $NEWLINE"
+  _suite:
+    template: $$$CHILDREN
   block:
     template: "$$$CHILDREN\n"
   expression_list:
@@ -115,6 +119,8 @@ rules:
     template: $$$CHILDREN
     joinBy: .
   case_pattern:
+    template: $$$CHILDREN
+  _simple_pattern:
     template: $$$CHILDREN
   _as_pattern:
     template: $$$CHILDREN as

@@ -105,6 +105,7 @@ const _wrapTable: Record<string, (data: AnyNodeData, tree: TreeHandle) => unknow
   'token_repetition_pattern': (d, t) => wrapTokenRepetitionPattern(d, t),
   'token_tree': (d, t) => wrapTokenTree(d, t),
   'token_repetition': (d, t) => wrapTokenRepetition(d, t),
+  '_non_special_token': (d, t) => wrapHiddenNonSpecialToken(d, t),
   'attribute_item': (d, t) => wrapAttributeItem(d, t),
   'inner_attribute_item': (d, t) => wrapInnerAttributeItem(d, t),
   'attribute': (d, t) => wrapAttribute(d, t),
@@ -150,6 +151,7 @@ const _wrapTable: Record<string, (data: AnyNodeData, tree: TreeHandle) => unknow
   'parameter': (d, t) => wrapParameter(d, t),
   'extern_modifier': (d, t) => wrapExternModifier(d, t),
   'visibility_modifier': (d, t) => wrapVisibilityModifier(d, t),
+  '_type': (d, t) => wrapHiddenType(d, t),
   'bracketed_type': (d, t) => wrapBracketedType(d, t),
   'qualified_type': (d, t) => wrapQualifiedType(d, t),
   'lifetime': (d, t) => wrapLifetime(d, t),
@@ -168,8 +170,10 @@ const _wrapTable: Record<string, (data: AnyNodeData, tree: TreeHandle) => unknow
   'pointer_type': (d, t) => wrapPointerType(d, t),
   'abstract_type': (d, t) => wrapAbstractType(d, t),
   'dynamic_type': (d, t) => wrapDynamicType(d, t),
+  '_expression_except_range': (d, t) => wrapHiddenExpressionExceptRange(d, t),
   'macro_invocation': (d, t) => wrapMacroInvocation(d, t),
   'delim_token_tree': (d, t) => wrapDelimTokenTree(d, t),
+  '_non_delim_token': (d, t) => wrapHiddenNonDelimToken(d, t),
   'scoped_identifier': (d, t) => wrapScopedIdentifier(d, t),
   'scoped_type_identifier_in_expression_position': (d, t) => wrapScopedTypeIdentifierInExpressionPosition(d, t),
   'scoped_type_identifier': (d, t) => wrapScopedTypeIdentifier(d, t),
@@ -195,6 +199,7 @@ const _wrapTable: Record<string, (data: AnyNodeData, tree: TreeHandle) => unknow
   'base_field_initializer': (d, t) => wrapBaseFieldInitializer(d, t),
   'if_expression': (d, t) => wrapIfExpression(d, t),
   'let_condition': (d, t) => wrapLetCondition(d, t),
+  '_let_chain': (d, t) => wrapHiddenLetChain(d, t),
   'else_clause': (d, t) => wrapElseClause(d, t),
   'match_expression': (d, t) => wrapMatchExpression(d, t),
   'match_block': (d, t) => wrapMatchBlock(d, t),
@@ -218,6 +223,7 @@ const _wrapTable: Record<string, (data: AnyNodeData, tree: TreeHandle) => unknow
   'gen_block': (d, t) => wrapGenBlock(d, t),
   'try_block': (d, t) => wrapTryBlock(d, t),
   'block': (d, t) => wrapBlock(d, t),
+  '_pattern': (d, t) => wrapHiddenPattern(d, t),
   'generic_pattern': (d, t) => wrapGenericPattern(d, t),
   'tuple_pattern': (d, t) => wrapTuplePattern(d, t),
   'slice_pattern': (d, t) => wrapSlicePattern(d, t),
@@ -235,7 +241,10 @@ const _wrapTable: Record<string, (data: AnyNodeData, tree: TreeHandle) => unknow
   'raw_string_literal': (d, t) => wrapRawStringLiteral(d, t),
   'comment': (d, t) => wrapComment(d, t),
   'line_comment': (d, t) => wrapLineComment(d, t),
+  '_line_doc_comment_marker': (d, t) => wrapHiddenLineDocCommentMarker(d, t),
   'block_comment': (d, t) => wrapBlockComment(d, t),
+  '_block_doc_comment_marker': (d, t) => wrapHiddenBlockDocCommentMarker(d, t),
+  '_path': (d, t) => wrapHiddenPath(d, t),
   '_type_identifier': (d, t) => wrapHiddenTypeIdentifier(d, t),
   '_field_identifier': (d, t) => wrapHiddenFieldIdentifier(d, t),
   'let_chain': (d, t) => wrapLetChain(d, t),
@@ -273,21 +282,6 @@ const _wrapTable: Record<string, (data: AnyNodeData, tree: TreeHandle) => unknow
   'tt': (d) => d,
   'ty': (d) => d,
   'vis': (d) => d,
-  'mod': (d) => d,
-  'struct': (d) => d,
-  'union': (d) => d,
-  'enum': (d) => d,
-  'extern': (d) => d,
-  'as': (d) => d,
-  'const': (d) => d,
-  'static': (d) => d,
-  'ref': (d) => d,
-  'type': (d) => d,
-  'fn': (d) => d,
-  'async': (d) => d,
-  'default': (d) => d,
-  'unsafe': (d) => d,
-  'where': (d) => d,
   'u8': (d) => d,
   'i8': (d) => d,
   'u16': (d) => d,
@@ -305,29 +299,44 @@ const _wrapTable: Record<string, (data: AnyNodeData, tree: TreeHandle) => unknow
   'bool': (d) => d,
   'str': (d) => d,
   'char': (d) => d,
-  'impl': (d) => d,
-  'for': (d) => d,
-  'trait': (d) => d,
-  'let': (d) => d,
-  'else': (d) => d,
-  'use': (d) => d,
   '_': (d) => d,
+  'as': (d) => d,
+  'async': (d) => d,
+  'await': (d) => d,
+  'break': (d) => d,
+  'const': (d) => d,
+  'continue': (d) => d,
+  'default': (d) => d,
+  'enum': (d) => d,
+  'fn': (d) => d,
+  'for': (d) => d,
+  'gen': (d) => d,
+  'if': (d) => d,
+  'impl': (d) => d,
+  'let': (d) => d,
+  'loop': (d) => d,
+  'match': (d) => d,
+  'mod': (d) => d,
   'pub': (d) => d,
+  'return': (d) => d,
+  'static': (d) => d,
+  'struct': (d) => d,
+  'trait': (d) => d,
+  'type': (d) => d,
+  'union': (d) => d,
+  'unsafe': (d) => d,
+  'use': (d) => d,
+  'where': (d) => d,
+  'while': (d) => d,
+  'extern': (d) => d,
+  'ref': (d) => d,
+  'else': (d) => d,
   'in': (d) => d,
   'dyn': (d) => d,
   'mut': (d) => d,
   'raw': (d) => d,
-  'return': (d) => d,
   'yield': (d) => d,
-  'if': (d) => d,
-  'match': (d) => d,
-  'while': (d) => d,
-  'loop': (d) => d,
-  'break': (d) => d,
-  'continue': (d) => d,
-  'await': (d) => d,
   'move': (d) => d,
-  'gen': (d) => d,
   'try': (d) => d,
   'true': (d) => d,
   'false': (d) => d,
@@ -408,6 +417,18 @@ export function wrapTokenRepetition(data: AnyNodeData, tree: TreeHandle): unknow
   return {
     ...data,
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+  };
+}
+
+export function wrapHiddenNonSpecialToken(data: AnyNodeData, tree: TreeHandle): unknown {
+  return {
+    ...data,
+    get literal() { return drillIn(data.fields?.['literal'], tree); },
+    get identifier() { return drillIn(data.fields?.['identifier'], tree); },
+    get mutableSpecifier() { return drillIn(data.fields?.['mutableSpecifier'], tree); },
+    get self() { return drillIn(data.fields?.['self'], tree); },
+    get super() { return drillIn(data.fields?.['super'], tree); },
+    get crate() { return drillIn(data.fields?.['crate'], tree); },
   };
 }
 
@@ -869,6 +890,28 @@ export function wrapVisibilityModifier(data: AnyNodeData, tree: TreeHandle): unk
   };
 }
 
+export function wrapHiddenType(data: AnyNodeData, tree: TreeHandle): unknown {
+  return {
+    ...data,
+    get abstractType() { return drillIn(data.fields?.['abstractType'], tree); },
+    get referenceType() { return drillIn(data.fields?.['referenceType'], tree); },
+    get metavariable() { return drillIn(data.fields?.['metavariable'], tree); },
+    get pointerType() { return drillIn(data.fields?.['pointerType'], tree); },
+    get genericType() { return drillIn(data.fields?.['genericType'], tree); },
+    get scopedTypeIdentifier() { return drillIn(data.fields?.['scopedTypeIdentifier'], tree); },
+    get tupleType() { return drillIn(data.fields?.['tupleType'], tree); },
+    get unitType() { return drillIn(data.fields?.['unitType'], tree); },
+    get arrayType() { return drillIn(data.fields?.['arrayType'], tree); },
+    get functionType() { return drillIn(data.fields?.['functionType'], tree); },
+    get typeIdentifier() { return drillIn(data.fields?.['typeIdentifier'], tree); },
+    get macroInvocation() { return drillIn(data.fields?.['macroInvocation'], tree); },
+    get neverType() { return drillIn(data.fields?.['neverType'], tree); },
+    get dynamicType() { return drillIn(data.fields?.['dynamicType'], tree); },
+    get boundedType() { return drillIn(data.fields?.['boundedType'], tree); },
+    get removedTraitBound() { return drillIn(data.fields?.['removedTraitBound'], tree); },
+  };
+}
+
 export function wrapBracketedType(data: AnyNodeData, tree: TreeHandle): unknown {
   return {
     ...data,
@@ -951,8 +994,8 @@ export function wrapGenericTypeWithTurbofish(data: AnyNodeData, tree: TreeHandle
 }
 
 export function wrapBoundedType(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteFirst(data, 'left');
-  promoteFirst(data, 'right');
+  promoteNamed(data, 'left', ["_type","lifetime","use_bounds"]);
+  promoteNamed(data, 'right', ["_type","lifetime","use_bounds"]);
   return {
     ...data,
     get left() { return drillIn(data.fields?.['left'], tree); },
@@ -1025,6 +1068,42 @@ export function wrapDynamicType(data: AnyNodeData, tree: TreeHandle): unknown {
   };
 }
 
+export function wrapHiddenExpressionExceptRange(data: AnyNodeData, tree: TreeHandle): unknown {
+  return {
+    ...data,
+    get unaryExpression() { return drillIn(data.fields?.['unaryExpression'], tree); },
+    get referenceExpression() { return drillIn(data.fields?.['referenceExpression'], tree); },
+    get tryExpression() { return drillIn(data.fields?.['tryExpression'], tree); },
+    get binaryExpression() { return drillIn(data.fields?.['binaryExpression'], tree); },
+    get assignmentExpression() { return drillIn(data.fields?.['assignmentExpression'], tree); },
+    get compoundAssignmentExpr() { return drillIn(data.fields?.['compoundAssignmentExpr'], tree); },
+    get typeCastExpression() { return drillIn(data.fields?.['typeCastExpression'], tree); },
+    get callExpression() { return drillIn(data.fields?.['callExpression'], tree); },
+    get returnExpression() { return drillIn(data.fields?.['returnExpression'], tree); },
+    get yieldExpression() { return drillIn(data.fields?.['yieldExpression'], tree); },
+    get literal() { return drillIn(data.fields?.['literal'], tree); },
+    get identifier() { return drillIn(data.fields?.['identifier'], tree); },
+    get reservedIdentifier() { return drillIn(data.fields?.['reservedIdentifier'], tree); },
+    get self() { return drillIn(data.fields?.['self'], tree); },
+    get scopedIdentifier() { return drillIn(data.fields?.['scopedIdentifier'], tree); },
+    get genericFunction() { return drillIn(data.fields?.['genericFunction'], tree); },
+    get awaitExpression() { return drillIn(data.fields?.['awaitExpression'], tree); },
+    get fieldExpression() { return drillIn(data.fields?.['fieldExpression'], tree); },
+    get arrayExpression() { return drillIn(data.fields?.['arrayExpression'], tree); },
+    get tupleExpression() { return drillIn(data.fields?.['tupleExpression'], tree); },
+    get macroInvocation() { return drillIn(data.fields?.['macroInvocation'], tree); },
+    get unitExpression() { return drillIn(data.fields?.['unitExpression'], tree); },
+    get breakExpression() { return drillIn(data.fields?.['breakExpression'], tree); },
+    get continueExpression() { return drillIn(data.fields?.['continueExpression'], tree); },
+    get indexExpression() { return drillIn(data.fields?.['indexExpression'], tree); },
+    get metavariable() { return drillIn(data.fields?.['metavariable'], tree); },
+    get closureExpression() { return drillIn(data.fields?.['closureExpression'], tree); },
+    get parenthesizedExpression() { return drillIn(data.fields?.['parenthesizedExpression'], tree); },
+    get structExpression() { return drillIn(data.fields?.['structExpression'], tree); },
+    get expressionEndingWithBlock() { return drillIn(data.fields?.['expressionEndingWithBlock'], tree); },
+  };
+}
+
 export function wrapMacroInvocation(data: AnyNodeData, tree: TreeHandle): unknown {
   promoteNamed(data, 'token_tree', ["delim_token_tree"]);
   return {
@@ -1038,6 +1117,13 @@ export function wrapDelimTokenTree(data: AnyNodeData, tree: TreeHandle): unknown
   return {
     ...data,
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+  };
+}
+
+export function wrapHiddenNonDelimToken(data: AnyNodeData, tree: TreeHandle): unknown {
+  return {
+    ...data,
+    get child() { return drillIn(data.children?.[0], tree); },
   };
 }
 
@@ -1082,7 +1168,7 @@ export function wrapUnaryExpression(data: AnyNodeData, tree: TreeHandle): unknow
 }
 
 export function wrapTryExpression(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteFirst(data, 'value');
+  promoteNamed(data, 'value', ["_expression_except_range","range_expression"]);
   return {
     ...data,
     get value() { return drillIn(data.fields?.['value'], tree); },
@@ -1183,7 +1269,7 @@ export function wrapTupleExpression(data: AnyNodeData, tree: TreeHandle): unknow
   promoteFirstAnon(data, 'attributes');
   promoteFirstAnon(data, 'first');
   promoteFirstAnon(data, 'rest');
-  promoteFirst(data, 'trailing');
+  promoteNamed(data, 'trailing', ["_expression_except_range","range_expression"]);
   return {
     ...data,
     get attributes() { return drillIn(data.fields?.['attributes'], tree); },
@@ -1250,6 +1336,15 @@ export function wrapLetCondition(data: AnyNodeData, tree: TreeHandle): unknown {
     ...data,
     get pattern() { return drillIn(data.fields?.['pattern'], tree); },
     get value() { return drillIn(data.fields?.['value'], tree); },
+  };
+}
+
+export function wrapHiddenLetChain(data: AnyNodeData, tree: TreeHandle): unknown {
+  return {
+    ...data,
+    get letChain() { return drillIn(data.fields?.['letChain'], tree); },
+    get letCondition() { return drillIn(data.fields?.['letCondition'], tree); },
+    get expression() { return drillIn(data.fields?.['expression'], tree); },
   };
 }
 
@@ -1368,7 +1463,7 @@ export function wrapLabel(data: AnyNodeData, tree: TreeHandle): unknown {
 
 export function wrapBreakExpression(data: AnyNodeData, tree: TreeHandle): unknown {
   promote(data, 'label');
-  promoteFirst(data, 'expression');
+  promoteNamed(data, 'expression', ["_expression_except_range","range_expression"]);
   return {
     ...data,
     get label() { return drillIn(data.fields?.['label'], tree); },
@@ -1385,8 +1480,8 @@ export function wrapContinueExpression(data: AnyNodeData, tree: TreeHandle): unk
 }
 
 export function wrapIndexExpression(data: AnyNodeData, tree: TreeHandle): unknown {
-  promoteFirst(data, 'object');
-  promoteFirst(data, 'index');
+  promoteNamed(data, 'object', ["_expression_except_range","range_expression"]);
+  promoteNamed(data, 'index', ["_expression_except_range","range_expression"]);
   return {
     ...data,
     get object() { return drillIn(data.fields?.['object'], tree); },
@@ -1453,6 +1548,30 @@ export function wrapBlock(data: AnyNodeData, tree: TreeHandle): unknown {
   };
 }
 
+export function wrapHiddenPattern(data: AnyNodeData, tree: TreeHandle): unknown {
+  return {
+    ...data,
+    get literalPattern() { return drillIn(data.fields?.['literalPattern'], tree); },
+    get identifier() { return drillIn(data.fields?.['identifier'], tree); },
+    get scopedIdentifier() { return drillIn(data.fields?.['scopedIdentifier'], tree); },
+    get genericPattern() { return drillIn(data.fields?.['genericPattern'], tree); },
+    get tuplePattern() { return drillIn(data.fields?.['tuplePattern'], tree); },
+    get tupleStructPattern() { return drillIn(data.fields?.['tupleStructPattern'], tree); },
+    get structPattern() { return drillIn(data.fields?.['structPattern'], tree); },
+    get reservedIdentifier() { return drillIn(data.fields?.['reservedIdentifier'], tree); },
+    get refPattern() { return drillIn(data.fields?.['refPattern'], tree); },
+    get slicePattern() { return drillIn(data.fields?.['slicePattern'], tree); },
+    get capturedPattern() { return drillIn(data.fields?.['capturedPattern'], tree); },
+    get referencePattern() { return drillIn(data.fields?.['referencePattern'], tree); },
+    get remainingFieldPattern() { return drillIn(data.fields?.['remainingFieldPattern'], tree); },
+    get mutPattern() { return drillIn(data.fields?.['mutPattern'], tree); },
+    get rangePattern() { return drillIn(data.fields?.['rangePattern'], tree); },
+    get orPattern() { return drillIn(data.fields?.['orPattern'], tree); },
+    get constBlock() { return drillIn(data.fields?.['constBlock'], tree); },
+    get macroInvocation() { return drillIn(data.fields?.['macroInvocation'], tree); },
+  };
+}
+
 export function wrapGenericPattern(data: AnyNodeData, tree: TreeHandle): unknown {
   return {
     ...data,
@@ -1504,7 +1623,7 @@ export function wrapFieldPattern(data: AnyNodeData, tree: TreeHandle): unknown {
 
 export function wrapMutPattern(data: AnyNodeData, tree: TreeHandle): unknown {
   promote(data, 'mutable_specifier');
-  promoteFirst(data, 'pattern');
+  promoteNamed(data, 'pattern', ["_pattern"]);
   return {
     ...data,
     get mutableSpecifier() { return drillIn(data.fields?.['mutable_specifier'], tree); },
@@ -1529,7 +1648,7 @@ export function wrapRefPattern(data: AnyNodeData, tree: TreeHandle): unknown {
 
 export function wrapCapturedPattern(data: AnyNodeData, tree: TreeHandle): unknown {
   promote(data, 'identifier');
-  promoteFirst(data, 'pattern');
+  promoteNamed(data, 'pattern', ["_pattern"]);
   return {
     ...data,
     get identifier() { return drillIn(data.fields?.['identifier'], tree); },
@@ -1539,7 +1658,7 @@ export function wrapCapturedPattern(data: AnyNodeData, tree: TreeHandle): unknow
 
 export function wrapReferencePattern(data: AnyNodeData, tree: TreeHandle): unknown {
   promote(data, 'mutable_specifier');
-  promoteFirst(data, 'pattern');
+  promoteNamed(data, 'pattern', ["_pattern"]);
   return {
     ...data,
     get mutableSpecifier() { return drillIn(data.fields?.['mutable_specifier'], tree); },
@@ -1598,12 +1717,41 @@ export function wrapLineComment(data: AnyNodeData, tree: TreeHandle): unknown {
   };
 }
 
+export function wrapHiddenLineDocCommentMarker(data: AnyNodeData, tree: TreeHandle): unknown {
+  return {
+    ...data,
+    get outer() { return (data.fields?.['outer'] as AnyNodeData | undefined)?.text; },
+    get inner() { return (data.fields?.['inner'] as AnyNodeData | undefined)?.text; },
+  };
+}
+
 export function wrapBlockComment(data: AnyNodeData, tree: TreeHandle): unknown {
   return {
     ...data,
     get doc() { return drillIn(data.fields?.['doc'], tree); },
     get blockDocCommentMarker() { return drillIn(data.fields?.['blockDocCommentMarker'], tree); },
     get blockCommentContent() { return drillIn(data.fields?.['blockCommentContent'], tree); },
+  };
+}
+
+export function wrapHiddenBlockDocCommentMarker(data: AnyNodeData, tree: TreeHandle): unknown {
+  return {
+    ...data,
+    get outer() { return drillIn(data.fields?.['outer'], tree); },
+    get inner() { return drillIn(data.fields?.['inner'], tree); },
+  };
+}
+
+export function wrapHiddenPath(data: AnyNodeData, tree: TreeHandle): unknown {
+  return {
+    ...data,
+    get self() { return drillIn(data.fields?.['self'], tree); },
+    get metavariable() { return drillIn(data.fields?.['metavariable'], tree); },
+    get super() { return drillIn(data.fields?.['super'], tree); },
+    get crate() { return drillIn(data.fields?.['crate'], tree); },
+    get identifier() { return drillIn(data.fields?.['identifier'], tree); },
+    get scopedIdentifier() { return drillIn(data.fields?.['scopedIdentifier'], tree); },
+    get reservedIdentifier() { return drillIn(data.fields?.['reservedIdentifier'], tree); },
   };
 }
 

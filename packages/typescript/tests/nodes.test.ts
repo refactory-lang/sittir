@@ -570,6 +570,13 @@ describe('jsx_attribute', () => {
   });
 });
 
+describe('_jsx_string', () => {
+  it('factory produces correct type', () => {
+    const node = ir.jsxString();
+    expect(node.type).toBe('_jsx_string');
+  });
+});
+
 describe('unescaped_double_jsx_string_fragment', () => {
   it('factory produces correct type', () => {
     const node = ir.unescapedDoubleJsxStringFragment('test');
@@ -729,6 +736,13 @@ describe('subscript_expression', () => {
   });
 });
 
+describe('_lhs_expression', () => {
+  it('factory produces correct type', () => {
+    const node = ir.lhs();
+    expect(node.type).toBe('_lhs_expression');
+  });
+});
+
 describe('assignment_expression', () => {
   it('factory produces correct type', () => {
     const node = ir.assignment({ left: { type: 'parenthesized_expression', text: 'test' } as any, right: { type: 'expression', text: 'test' } as any });
@@ -737,6 +751,13 @@ describe('assignment_expression', () => {
   it('render produces non-empty string', () => {
     const node = ir.assignment({ left: { type: 'parenthesized_expression', text: 'test' } as any, right: { type: 'expression', text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('_augmented_assignment_lhs', () => {
+  it('factory produces correct type', () => {
+    const node = ir.augmentedAssignmentLhs();
+    expect(node.type).toBe('_augmented_assignment_lhs');
   });
 });
 
@@ -1096,6 +1117,13 @@ describe('pair_pattern', () => {
   });
 });
 
+describe('_property_name', () => {
+  it('factory produces correct type', () => {
+    const node = ir.propertyName();
+    expect(node.type).toBe('_property_name');
+  });
+});
+
 describe('computed_property_name', () => {
   it('factory produces correct type', () => {
     const node = ir.computedPropertyName({ expression: { type: 'expression', text: 'test' } as any });
@@ -1104,6 +1132,21 @@ describe('computed_property_name', () => {
   it('render produces non-empty string', () => {
     const node = ir.computedPropertyName({ expression: { type: 'expression', text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('_reserved_identifier', () => {
+  it('factory produces correct type', () => {
+    const node = ir.reservedIdentifier('test');
+    expect(node.type).toBe('_reserved_identifier');
+    expect(node.text).toBe('test');
+  });
+});
+
+describe('_semicolon', () => {
+  it('factory produces correct type', () => {
+    const node = ir.semicolon();
+    expect(node.type).toBe('_semicolon');
   });
 });
 
@@ -1126,6 +1169,13 @@ describe('_jsx_start_opening_element', () => {
   it('render produces non-empty string', () => {
     const node = ir.jsxStartOpeningElement({});
     expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('_import_identifier', () => {
+  it('factory produces correct type', () => {
+    const node = ir.importIdentifier();
+    expect(node.type).toBe('_import_identifier');
   });
 });
 

@@ -81,6 +81,13 @@ describe('token_repetition', () => {
   });
 });
 
+describe('_non_special_token', () => {
+  it('factory produces correct type', () => {
+    const node = ir.nonSpecialToken();
+    expect(node.type).toBe('_non_special_token');
+  });
+});
+
 describe('attribute_item', () => {
   it('factory produces correct type', () => {
     const node = ir.attribute({ attribute: { type: 'attribute', text: 'test' } as any });
@@ -532,6 +539,13 @@ describe('visibility_modifier', () => {
   });
 });
 
+describe('_type', () => {
+  it('factory produces correct type', () => {
+    const node = ir.hiddenType();
+    expect(node.type).toBe('_type');
+  });
+});
+
 describe('bracketed_type', () => {
   it('factory produces correct type', () => {
     const node = ir.bracketedType();
@@ -726,6 +740,13 @@ describe('mutable_specifier', () => {
   });
 });
 
+describe('_expression_except_range', () => {
+  it('factory produces correct type', () => {
+    const node = ir.expressionExceptRange();
+    expect(node.type).toBe('_expression_except_range');
+  });
+});
+
 describe('macro_invocation', () => {
   it('factory produces correct type', () => {
     const node = ir.macroInvocation({ macro: { type: 'scoped_identifier', text: 'test' } as any, tokenTree: { type: 'delim_token_tree', text: 'test' } as any });
@@ -741,6 +762,13 @@ describe('delim_token_tree', () => {
   it('factory produces correct type', () => {
     const node = ir.delimTokenTree();
     expect(node.type).toBe('delim_token_tree');
+  });
+});
+
+describe('_non_delim_token', () => {
+  it('factory produces correct type', () => {
+    const node = ir.nonDelimToken();
+    expect(node.type).toBe('_non_delim_token');
   });
 });
 
@@ -999,6 +1027,13 @@ describe('let_condition', () => {
   });
 });
 
+describe('_let_chain', () => {
+  it('factory produces correct type', () => {
+    const node = ir.letChain();
+    expect(node.type).toBe('_let_chain');
+  });
+});
+
 describe('else_clause', () => {
   it('factory produces correct type', () => {
     const node = ir.elseClause();
@@ -1236,6 +1271,13 @@ describe('block', () => {
   });
 });
 
+describe('_pattern', () => {
+  it('factory produces correct type', () => {
+    const node = ir.pattern();
+    expect(node.type).toBe('_pattern');
+  });
+});
+
 describe('generic_pattern', () => {
   it('factory produces correct type', () => {
     const node = ir.genericPattern({ typeArguments: { type: 'type_arguments', text: 'test' } as any, children: [] as any });
@@ -1423,6 +1465,17 @@ describe('line_comment', () => {
   });
 });
 
+describe('_line_doc_comment_marker', () => {
+  it('factory produces correct type', () => {
+    const node = ir.lineDocCommentMarker({ outer: { type: '_outer_line_doc_comment_marker', text: 'test' } as any, inner: { type: '_inner_line_doc_comment_marker', text: 'test' } as any });
+    expect(node.type).toBe('_line_doc_comment_marker');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.lineDocCommentMarker({ outer: { type: '_outer_line_doc_comment_marker', text: 'test' } as any, inner: { type: '_inner_line_doc_comment_marker', text: 'test' } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
 describe('block_comment', () => {
   it('factory produces correct type', () => {
     const node = ir.blockComment({ children: [] as any });
@@ -1431,6 +1484,24 @@ describe('block_comment', () => {
   it('render produces non-empty string', () => {
     const node = ir.blockComment({ children: [] as any });
     expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('_block_doc_comment_marker', () => {
+  it('factory produces correct type', () => {
+    const node = ir.blockDocCommentMarker({ outer: { type: '_outer_block_doc_comment_marker', text: 'test' } as any, inner: { type: '_inner_block_doc_comment_marker', text: 'test' } as any });
+    expect(node.type).toBe('_block_doc_comment_marker');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.blockDocCommentMarker({ outer: { type: '_outer_block_doc_comment_marker', text: 'test' } as any, inner: { type: '_inner_block_doc_comment_marker', text: 'test' } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('_path', () => {
+  it('factory produces correct type', () => {
+    const node = ir.path();
+    expect(node.type).toBe('_path');
   });
 });
 

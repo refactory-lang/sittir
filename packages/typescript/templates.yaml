@@ -152,6 +152,8 @@ rules:
     template: $$$CHILDREN/>
   jsx_attribute:
     template: $$$CHILDREN=
+  _jsx_string:
+    template: "\"$$$CHILDREN\""
   class:
     template: $CLASS_HERITAGE class $NAME $TYPE_PARAMETERS $$$CHILDREN $BODY
   class_declaration:
@@ -195,8 +197,12 @@ rules:
     template: $OBJECT.$PROPERTY
   subscript_expression:
     template: "$OBJECT $OPTIONAL_CHAIN[$INDEX]"
+  _lhs_expression:
+    template: $$$CHILDREN
   assignment_expression:
     template: using $LEFT=$RIGHT
+  _augmented_assignment_lhs:
+    template: $$$CHILDREN
   augmented_assignment_expression:
     template: $LEFT $OPERATOR $RIGHT
   _initializer:
@@ -250,12 +256,18 @@ rules:
     template: "$KEY:$VALUE"
   pair_pattern:
     template: "$KEY:$VALUE"
+  _property_name:
+    template: $$$CHILDREN
   computed_property_name:
     template: "[$EXPRESSION]"
+  _semicolon:
+    template: $$$CHILDREN
   public_field_definition:
     template: $ACCESSIBILITY_MODIFIER $OVERRIDE_MODIFIER $INITIALIZER $NAME?$TYPE $$$CHILDREN
   _jsx_start_opening_element:
     template: <$NAME $ATTRIBUTE
+  _import_identifier:
+    template: $$$CHILDREN
   non_null_expression:
     template: $EXPRESSION!
   method_signature:

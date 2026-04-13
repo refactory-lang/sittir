@@ -80,6 +80,7 @@ export const enum SyntaxKind {
   ElifClause = 'elif_clause',
   ElseClause = 'else_clause',
   MatchStatement = 'match_statement',
+  HiddenMatchBlock = '_match_block',
   CaseClause = 'case_clause',
   ForStatement = 'for_statement',
   WhileStatement = 'while_statement',
@@ -104,10 +105,12 @@ export const enum SyntaxKind {
   ArgumentList = 'argument_list',
   DecoratedDefinition = 'decorated_definition',
   Decorator = 'decorator',
+  HiddenSuite = '_suite',
   Block = 'block',
   ExpressionList = 'expression_list',
   DottedName = 'dotted_name',
   CasePattern = 'case_pattern',
+  HiddenSimplePattern = '_simple_pattern',
   HiddenAsPattern = '_as_pattern',
   UnionPattern = 'union_pattern',
   HiddenListPattern = '_list_pattern',
@@ -280,30 +283,6 @@ export const enum CompoundStatementKind {
   MatchStatement = 'match_statement',
 }
 
-export const enum MatchBlockKind {
-}
-
-export const enum SuiteKind {
-  HiddenSimpleStatements = '_simple_statements',
-  Block = 'block',
-}
-
-export const enum SimplePatternKind {
-  ClassPattern = 'class_pattern',
-  SplatPattern = 'splat_pattern',
-  UnionPattern = 'union_pattern',
-  HiddenListPattern = '_list_pattern',
-  HiddenTuplePattern = '_tuple_pattern',
-  DictPattern = 'dict_pattern',
-  String = 'string',
-  ConcatenatedString = 'concatenated_string',
-  True = 'true',
-  False = 'false',
-  None = 'none',
-  ComplexPattern = 'complex_pattern',
-  DottedName = 'dotted_name',
-}
-
 export const enum ExpressionWithinForInClauseKind {
   Expression = 'expression',
   LambdaWithinForInClause = 'lambda_within_for_in_clause',
@@ -462,6 +441,13 @@ export interface MatchStatement {
   readonly fields: {
     readonly subject: readonly (Expression)[];
     readonly body: HiddenMatchBlock;
+  };
+}
+
+export interface HiddenMatchBlock {
+  readonly type: '_match_block';
+  readonly fields: {
+    readonly alternative: readonly (CaseClause)[];
   };
 }
 
@@ -642,6 +628,11 @@ export interface Decorator {
   };
 }
 
+export interface HiddenSuite {
+  readonly type: '_suite';
+  readonly children: HiddenSimpleStatements | Block;
+}
+
 export interface Block {
   readonly type: 'block';
   readonly children: readonly (HiddenStatement)[];
@@ -660,6 +651,11 @@ export interface DottedName {
 export interface CasePattern {
   readonly type: 'case_pattern';
   readonly children: HiddenAsPattern | KeywordPattern | HiddenSimplePattern;
+}
+
+export interface HiddenSimplePattern {
+  readonly type: '_simple_pattern';
+  readonly children: ClassPattern | SplatPattern | UnionPattern | HiddenListPattern | HiddenTuplePattern | DictPattern | String | ConcatenatedString | True | False | None | Integer | Float | ComplexPattern | DottedName;
 }
 
 export interface HiddenAsPattern {
@@ -1424,6 +1420,7 @@ export type IfStatementConfig = ConfigOf<IfStatement>;
 export type ElifClauseConfig = ConfigOf<ElifClause>;
 export type ElseClauseConfig = ConfigOf<ElseClause>;
 export type MatchStatementConfig = ConfigOf<MatchStatement>;
+export type HiddenMatchBlockConfig = ConfigOf<HiddenMatchBlock>;
 export type CaseClauseConfig = ConfigOf<CaseClause>;
 export type ForStatementConfig = ConfigOf<ForStatement>;
 export type WhileStatementConfig = ConfigOf<WhileStatement>;
@@ -1448,10 +1445,12 @@ export type ParenthesizedListSplatConfig = ConfigOf<ParenthesizedListSplat>;
 export type ArgumentListConfig = ConfigOf<ArgumentList>;
 export type DecoratedDefinitionConfig = ConfigOf<DecoratedDefinition>;
 export type DecoratorConfig = ConfigOf<Decorator>;
+export type HiddenSuiteConfig = ConfigOf<HiddenSuite>;
 export type BlockConfig = ConfigOf<Block>;
 export type ExpressionListConfig = ConfigOf<ExpressionList>;
 export type DottedNameConfig = ConfigOf<DottedName>;
 export type CasePatternConfig = ConfigOf<CasePattern>;
+export type HiddenSimplePatternConfig = ConfigOf<HiddenSimplePattern>;
 export type HiddenAsPatternConfig = ConfigOf<HiddenAsPattern>;
 export type UnionPatternConfig = ConfigOf<UnionPattern>;
 export type HiddenListPatternConfig = ConfigOf<HiddenListPattern>;
@@ -1545,6 +1544,7 @@ export interface IfStatementTree extends TreeNode<'if_statement'> {}
 export interface ElifClauseTree extends TreeNode<'elif_clause'> {}
 export interface ElseClauseTree extends TreeNode<'else_clause'> {}
 export interface MatchStatementTree extends TreeNode<'match_statement'> {}
+export interface HiddenMatchBlockTree extends AnyTreeNode {}
 export interface CaseClauseTree extends TreeNode<'case_clause'> {}
 export interface ForStatementTree extends TreeNode<'for_statement'> {}
 export interface WhileStatementTree extends TreeNode<'while_statement'> {}
@@ -1569,10 +1569,12 @@ export interface ParenthesizedListSplatTree extends TreeNode<'parenthesized_list
 export interface ArgumentListTree extends TreeNode<'argument_list'> {}
 export interface DecoratedDefinitionTree extends TreeNode<'decorated_definition'> {}
 export interface DecoratorTree extends TreeNode<'decorator'> {}
+export interface HiddenSuiteTree extends AnyTreeNode {}
 export interface BlockTree extends TreeNode<'block'> {}
 export interface ExpressionListTree extends TreeNode<'expression_list'> {}
 export interface DottedNameTree extends TreeNode<'dotted_name'> {}
 export interface CasePatternTree extends TreeNode<'case_pattern'> {}
+export interface HiddenSimplePatternTree extends AnyTreeNode {}
 export interface HiddenAsPatternTree extends AnyTreeNode {}
 export interface UnionPatternTree extends TreeNode<'union_pattern'> {}
 export interface HiddenListPatternTree extends AnyTreeNode {}
@@ -1718,6 +1720,7 @@ export type IfStatementFromInput = FromInputOf<IfStatement, LeafScalarMap, LeafS
 export type ElifClauseFromInput = FromInputOf<ElifClause, LeafScalarMap, LeafStringMap>;
 export type ElseClauseFromInput = FromInputOf<ElseClause, LeafScalarMap, LeafStringMap>;
 export type MatchStatementFromInput = FromInputOf<MatchStatement, LeafScalarMap, LeafStringMap>;
+export type HiddenMatchBlockFromInput = FromInputOf<HiddenMatchBlock, LeafScalarMap, LeafStringMap>;
 export type CaseClauseFromInput = FromInputOf<CaseClause, LeafScalarMap, LeafStringMap>;
 export type ForStatementFromInput = FromInputOf<ForStatement, LeafScalarMap, LeafStringMap>;
 export type WhileStatementFromInput = FromInputOf<WhileStatement, LeafScalarMap, LeafStringMap>;
@@ -1742,10 +1745,12 @@ export type ParenthesizedListSplatFromInput = FromInputOf<ParenthesizedListSplat
 export type ArgumentListFromInput = FromInputOf<ArgumentList, LeafScalarMap, LeafStringMap>;
 export type DecoratedDefinitionFromInput = FromInputOf<DecoratedDefinition, LeafScalarMap, LeafStringMap>;
 export type DecoratorFromInput = FromInputOf<Decorator, LeafScalarMap, LeafStringMap>;
+export type HiddenSuiteFromInput = FromInputOf<HiddenSuite, LeafScalarMap, LeafStringMap>;
 export type BlockFromInput = FromInputOf<Block, LeafScalarMap, LeafStringMap>;
 export type ExpressionListFromInput = FromInputOf<ExpressionList, LeafScalarMap, LeafStringMap>;
 export type DottedNameFromInput = FromInputOf<DottedName, LeafScalarMap, LeafStringMap>;
 export type CasePatternFromInput = FromInputOf<CasePattern, LeafScalarMap, LeafStringMap>;
+export type HiddenSimplePatternFromInput = FromInputOf<HiddenSimplePattern, LeafScalarMap, LeafStringMap>;
 export type HiddenAsPatternFromInput = FromInputOf<HiddenAsPattern, LeafScalarMap, LeafStringMap>;
 export type UnionPatternFromInput = FromInputOf<UnionPattern, LeafScalarMap, LeafStringMap>;
 export type HiddenListPatternFromInput = FromInputOf<HiddenListPattern, LeafScalarMap, LeafStringMap>;
@@ -1879,37 +1884,6 @@ export type CompoundStatementConfig = IfStatementConfig | ForStatementConfig | W
 export type CompoundStatementFromInput = IfStatementFromInput | ForStatementFromInput | WhileStatementFromInput | TryStatementFromInput | WithStatementFromInput | FunctionDefinitionFromInput | ClassDefinitionFromInput | DecoratedDefinitionFromInput | MatchStatementFromInput;
 export type CompoundStatementTree = IfStatementTree | ForStatementTree | WhileStatementTree | TryStatementTree | WithStatementTree | FunctionDefinitionTree | ClassDefinitionTree | DecoratedDefinitionTree | MatchStatementTree;
 
-export interface MatchBlockTree extends TreeNode<'_match_block'> {}
-
-export type Suite =
-  | HiddenSimpleStatements
-  | Block
-;
-
-export type SuiteConfig = HiddenSimpleStatementsConfig | BlockConfig;
-export type SuiteFromInput = HiddenSimpleStatementsFromInput | BlockFromInput;
-export type SuiteTree = HiddenSimpleStatementsTree | BlockTree;
-
-export type SimplePattern =
-  | ClassPattern
-  | SplatPattern
-  | UnionPattern
-  | HiddenListPattern
-  | HiddenTuplePattern
-  | DictPattern
-  | String
-  | ConcatenatedString
-  | True
-  | False
-  | None
-  | ComplexPattern
-  | DottedName
-;
-
-export type SimplePatternConfig = ClassPatternConfig | SplatPatternConfig | UnionPatternConfig | HiddenListPatternConfig | HiddenTuplePatternConfig | DictPatternConfig | StringConfig | ConcatenatedStringConfig | ComplexPatternConfig | DottedNameConfig;
-export type SimplePatternFromInput = ClassPatternFromInput | SplatPatternFromInput | UnionPatternFromInput | HiddenListPatternFromInput | HiddenTuplePatternFromInput | DictPatternFromInput | StringFromInput | ConcatenatedStringFromInput | ComplexPatternFromInput | DottedNameFromInput;
-export type SimplePatternTree = ClassPatternTree | SplatPatternTree | UnionPatternTree | HiddenListPatternTree | HiddenTuplePatternTree | DictPatternTree | StringTree | ConcatenatedStringTree | TrueTree | FalseTree | NoneTree | ComplexPatternTree | DottedNameTree;
-
 export type ExpressionWithinForInClause =
   | Expression
   | LambdaWithinForInClause
@@ -1973,6 +1947,7 @@ export type PythonNode =
   | ElifClause
   | ElseClause
   | MatchStatement
+  | HiddenMatchBlock
   | CaseClause
   | ForStatement
   | WhileStatement
@@ -1997,10 +1972,12 @@ export type PythonNode =
   | ArgumentList
   | DecoratedDefinition
   | Decorator
+  | HiddenSuite
   | Block
   | ExpressionList
   | DottedName
   | CasePattern
+  | HiddenSimplePattern
   | HiddenAsPattern
   | UnionPattern
   | HiddenListPattern
@@ -2092,6 +2069,7 @@ export interface KindMap {
   'elif_clause': ElifClause;
   'else_clause': ElseClause;
   'match_statement': MatchStatement;
+  '_match_block': HiddenMatchBlock;
   'case_clause': CaseClause;
   'for_statement': ForStatement;
   'while_statement': WhileStatement;
@@ -2116,10 +2094,12 @@ export interface KindMap {
   'argument_list': ArgumentList;
   'decorated_definition': DecoratedDefinition;
   'decorator': Decorator;
+  '_suite': HiddenSuite;
   'block': Block;
   'expression_list': ExpressionList;
   'dotted_name': DottedName;
   'case_pattern': CasePattern;
+  '_simple_pattern': HiddenSimplePattern;
   '_as_pattern': HiddenAsPattern;
   'union_pattern': UnionPattern;
   '_list_pattern': HiddenListPattern;
@@ -2270,6 +2250,7 @@ export interface ConfigMap {
   'elif_clause': ElifClauseConfig;
   'else_clause': ElseClauseConfig;
   'match_statement': MatchStatementConfig;
+  '_match_block': HiddenMatchBlockConfig;
   'case_clause': CaseClauseConfig;
   'for_statement': ForStatementConfig;
   'while_statement': WhileStatementConfig;
@@ -2294,10 +2275,12 @@ export interface ConfigMap {
   'argument_list': ArgumentListConfig;
   'decorated_definition': DecoratedDefinitionConfig;
   'decorator': DecoratorConfig;
+  '_suite': HiddenSuiteConfig;
   'block': BlockConfig;
   'expression_list': ExpressionListConfig;
   'dotted_name': DottedNameConfig;
   'case_pattern': CasePatternConfig;
+  '_simple_pattern': HiddenSimplePatternConfig;
   '_as_pattern': HiddenAsPatternConfig;
   'union_pattern': UnionPatternConfig;
   '_list_pattern': HiddenListPatternConfig;
@@ -2389,6 +2372,7 @@ export interface FromInputMap {
   'elif_clause': ElifClauseFromInput;
   'else_clause': ElseClauseFromInput;
   'match_statement': MatchStatementFromInput;
+  '_match_block': HiddenMatchBlockFromInput;
   'case_clause': CaseClauseFromInput;
   'for_statement': ForStatementFromInput;
   'while_statement': WhileStatementFromInput;
@@ -2413,10 +2397,12 @@ export interface FromInputMap {
   'argument_list': ArgumentListFromInput;
   'decorated_definition': DecoratedDefinitionFromInput;
   'decorator': DecoratorFromInput;
+  '_suite': HiddenSuiteFromInput;
   'block': BlockFromInput;
   'expression_list': ExpressionListFromInput;
   'dotted_name': DottedNameFromInput;
   'case_pattern': CasePatternFromInput;
+  '_simple_pattern': HiddenSimplePatternFromInput;
   '_as_pattern': HiddenAsPatternFromInput;
   'union_pattern': UnionPatternFromInput;
   '_list_pattern': HiddenListPatternFromInput;

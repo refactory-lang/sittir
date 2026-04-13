@@ -139,6 +139,7 @@ export const enum SyntaxKind {
   JsxClosingElement = 'jsx_closing_element',
   JsxSelfClosingElement = 'jsx_self_closing_element',
   JsxAttribute = 'jsx_attribute',
+  HiddenJsxString = '_jsx_string',
   Class = 'class',
   ClassDeclaration = 'class_declaration',
   ClassHeritage = 'class_heritage',
@@ -152,7 +153,9 @@ export const enum SyntaxKind {
   AwaitExpression = 'await_expression',
   MemberExpression = 'member_expression',
   SubscriptExpression = 'subscript_expression',
+  HiddenLhsExpression = '_lhs_expression',
   AssignmentExpression = 'assignment_expression',
+  HiddenAugmentedAssignmentLhs = '_augmented_assignment_lhs',
   AugmentedAssignmentExpression = 'augmented_assignment_expression',
   SpreadElement = 'spread_element',
   TernaryExpression = 'ternary_expression',
@@ -177,9 +180,12 @@ export const enum SyntaxKind {
   MethodDefinition = 'method_definition',
   Pair = 'pair',
   PairPattern = 'pair_pattern',
+  HiddenPropertyName = '_property_name',
   ComputedPropertyName = 'computed_property_name',
+  HiddenSemicolon = '_semicolon',
   PublicFieldDefinition = 'public_field_definition',
   HiddenJsxStartOpeningElement = '_jsx_start_opening_element',
+  HiddenImportIdentifier = '_import_identifier',
   NonNullExpression = 'non_null_expression',
   MethodSignature = 'method_signature',
   AbstractMethodSignature = 'abstract_method_signature',
@@ -275,6 +281,7 @@ export const enum SyntaxKind {
   False = 'false',
   Null = 'null',
   Undefined = 'undefined',
+  HiddenReservedIdentifier = '_reserved_identifier',
   AccessibilityModifier = 'accessibility_modifier',
   OverrideModifier = 'override_modifier',
   PredefinedType = 'predefined_type',
@@ -386,9 +393,6 @@ export const enum JsxAttributeNameKind {
   JsxNamespaceName = 'jsx_namespace_name',
 }
 
-export const enum JsxStringKind {
-}
-
 export const enum JsxAttributeValueKind {
   HiddenJsxString = '_jsx_string',
   JsxExpression = 'jsx_expression',
@@ -400,14 +404,6 @@ export const enum FormalParameterKind {
   OptionalParameter = 'optional_parameter',
 }
 
-export const enum LhsExpressionKind {
-  NonNullExpression = 'non_null_expression',
-}
-
-export const enum AugmentedAssignmentLhsKind {
-  NonNullExpression = 'non_null_expression',
-}
-
 export const enum DestructuringPatternKind {
   ObjectPattern = 'object_pattern',
   ArrayPattern = 'array_pattern',
@@ -415,24 +411,6 @@ export const enum DestructuringPatternKind {
 
 export const enum IdentifierKind {
   Undefined = 'undefined',
-  Identifier = 'identifier',
-}
-
-export const enum PropertyNameKind {
-  PrivatePropertyIdentifier = 'private_property_identifier',
-  String = 'string',
-  Number = 'number',
-  ComputedPropertyName = 'computed_property_name',
-}
-
-export const enum ReservedIdentifierKind {
-}
-
-export const enum SemicolonKind {
-  AutomaticSemicolon = '_automatic_semicolon',
-}
-
-export const enum ImportIdentifierKind {
   Identifier = 'identifier',
 }
 
@@ -858,6 +836,11 @@ export interface JsxAttribute {
   readonly children: HiddenJsxAttributeName | HiddenJsxAttributeValue;
 }
 
+export interface HiddenJsxString {
+  readonly type: '_jsx_string';
+  readonly children: readonly (UnescapedDoubleJsxStringFragment | HtmlCharacterReference | UnescapedSingleJsxStringFragment)[];
+}
+
 export interface Class {
   readonly type: 'class';
   readonly fields: {
@@ -995,12 +978,22 @@ export interface SubscriptExpression {
   };
 }
 
+export interface HiddenLhsExpression {
+  readonly type: '_lhs_expression';
+  readonly children: MemberExpression | SubscriptExpression | HiddenIdentifier | HiddenReservedIdentifier | HiddenDestructuringPattern | NonNullExpression;
+}
+
 export interface AssignmentExpression {
   readonly type: 'assignment_expression';
   readonly fields: {
     readonly left: ParenthesizedExpression | HiddenLhsExpression;
     readonly right: Expression;
   };
+}
+
+export interface HiddenAugmentedAssignmentLhs {
+  readonly type: '_augmented_assignment_lhs';
+  readonly children: MemberExpression | SubscriptExpression | HiddenReservedIdentifier | Identifier | ParenthesizedExpression | NonNullExpression;
 }
 
 export interface AugmentedAssignmentExpression {
@@ -1176,11 +1169,21 @@ export interface PairPattern {
   };
 }
 
+export interface HiddenPropertyName {
+  readonly type: '_property_name';
+  readonly children: Identifier | HiddenReservedIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName;
+}
+
 export interface ComputedPropertyName {
   readonly type: 'computed_property_name';
   readonly fields: {
     readonly expression: Expression;
   };
+}
+
+export interface HiddenSemicolon {
+  readonly type: '_semicolon';
+  readonly children: AutomaticSemicolon;
 }
 
 export interface PublicFieldDefinition {
@@ -1202,6 +1205,11 @@ export interface HiddenJsxStartOpeningElement {
     readonly type_arguments?: TypeArguments;
     readonly attribute?: readonly (HiddenJsxAttribute)[];
   };
+}
+
+export interface HiddenImportIdentifier {
+  readonly type: '_import_identifier';
+  readonly children: Identifier;
 }
 
 export interface NonNullExpression {
@@ -1835,6 +1843,11 @@ export interface Undefined {
   readonly text: "undefined";
 }
 
+export interface HiddenReservedIdentifier {
+  readonly type: '_reserved_identifier';
+  readonly text: string;
+}
+
 export interface AccessibilityModifier {
   readonly type: 'accessibility_modifier';
   readonly text: "public" | "private" | "protected";
@@ -2225,6 +2238,7 @@ export type JsxNamespaceNameConfig = ConfigOf<JsxNamespaceName>;
 export type JsxClosingElementConfig = ConfigOf<JsxClosingElement>;
 export type JsxSelfClosingElementConfig = ConfigOf<JsxSelfClosingElement>;
 export type JsxAttributeConfig = ConfigOf<JsxAttribute>;
+export type HiddenJsxStringConfig = ConfigOf<HiddenJsxString>;
 export type ClassConfig = ConfigOf<Class>;
 export type ClassDeclarationConfig = ConfigOf<ClassDeclaration>;
 export type ClassHeritageConfig = ConfigOf<ClassHeritage>;
@@ -2243,7 +2257,9 @@ export type NewExpressionConfig = ConfigOf<NewExpression>;
 export type AwaitExpressionConfig = ConfigOf<AwaitExpression>;
 export type MemberExpressionConfig = ConfigOf<MemberExpression>;
 export type SubscriptExpressionConfig = ConfigOf<SubscriptExpression>;
+export type HiddenLhsExpressionConfig = ConfigOf<HiddenLhsExpression>;
 export type AssignmentExpressionConfig = ConfigOf<AssignmentExpression>;
+export type HiddenAugmentedAssignmentLhsConfig = ConfigOf<HiddenAugmentedAssignmentLhs>;
 export type AugmentedAssignmentExpressionConfig = ConfigOf<AugmentedAssignmentExpression>;
 export type SpreadElementConfig = ConfigOf<SpreadElement>;
 export type TernaryExpressionConfig = ConfigOf<TernaryExpression>;
@@ -2268,9 +2284,12 @@ export type RestPatternConfig = ConfigOf<RestPattern>;
 export type MethodDefinitionConfig = ConfigOf<MethodDefinition>;
 export type PairConfig = ConfigOf<Pair>;
 export type PairPatternConfig = ConfigOf<PairPattern>;
+export type HiddenPropertyNameConfig = ConfigOf<HiddenPropertyName>;
 export type ComputedPropertyNameConfig = ConfigOf<ComputedPropertyName>;
+export type HiddenSemicolonConfig = ConfigOf<HiddenSemicolon>;
 export type PublicFieldDefinitionConfig = ConfigOf<PublicFieldDefinition>;
 export type HiddenJsxStartOpeningElementConfig = ConfigOf<HiddenJsxStartOpeningElement>;
+export type HiddenImportIdentifierConfig = ConfigOf<HiddenImportIdentifier>;
 export type NonNullExpressionConfig = ConfigOf<NonNullExpression>;
 export type MethodSignatureConfig = ConfigOf<MethodSignature>;
 export type AbstractMethodSignatureConfig = ConfigOf<AbstractMethodSignature>;
@@ -2412,6 +2431,7 @@ export interface JsxNamespaceNameTree extends AnyTreeNode {}
 export interface JsxClosingElementTree extends AnyTreeNode {}
 export interface JsxSelfClosingElementTree extends AnyTreeNode {}
 export interface JsxAttributeTree extends AnyTreeNode {}
+export interface HiddenJsxStringTree extends AnyTreeNode {}
 export interface ClassTree extends TreeNode<'class'> {}
 export interface ClassDeclarationTree extends TreeNode<'class_declaration'> {}
 export interface ClassHeritageTree extends TreeNode<'class_heritage'> {}
@@ -2430,7 +2450,9 @@ export interface NewExpressionTree extends TreeNode<'new_expression'> {}
 export interface AwaitExpressionTree extends TreeNode<'await_expression'> {}
 export interface MemberExpressionTree extends TreeNode<'member_expression'> {}
 export interface SubscriptExpressionTree extends TreeNode<'subscript_expression'> {}
+export interface HiddenLhsExpressionTree extends AnyTreeNode {}
 export interface AssignmentExpressionTree extends TreeNode<'assignment_expression'> {}
+export interface HiddenAugmentedAssignmentLhsTree extends AnyTreeNode {}
 export interface AugmentedAssignmentExpressionTree extends TreeNode<'augmented_assignment_expression'> {}
 export interface SpreadElementTree extends TreeNode<'spread_element'> {}
 export interface TernaryExpressionTree extends TreeNode<'ternary_expression'> {}
@@ -2455,9 +2477,12 @@ export interface RestPatternTree extends TreeNode<'rest_pattern'> {}
 export interface MethodDefinitionTree extends TreeNode<'method_definition'> {}
 export interface PairTree extends TreeNode<'pair'> {}
 export interface PairPatternTree extends TreeNode<'pair_pattern'> {}
+export interface HiddenPropertyNameTree extends AnyTreeNode {}
 export interface ComputedPropertyNameTree extends TreeNode<'computed_property_name'> {}
+export interface HiddenSemicolonTree extends AnyTreeNode {}
 export interface PublicFieldDefinitionTree extends TreeNode<'public_field_definition'> {}
 export interface HiddenJsxStartOpeningElementTree extends AnyTreeNode {}
+export interface HiddenImportIdentifierTree extends AnyTreeNode {}
 export interface NonNullExpressionTree extends TreeNode<'non_null_expression'> {}
 export interface MethodSignatureTree extends TreeNode<'method_signature'> {}
 export interface AbstractMethodSignatureTree extends TreeNode<'abstract_method_signature'> {}
@@ -2555,6 +2580,7 @@ export interface TrueTree extends AnyTreeNode {}
 export interface FalseTree extends AnyTreeNode {}
 export interface NullTree extends AnyTreeNode {}
 export interface UndefinedTree extends AnyTreeNode {}
+export interface HiddenReservedIdentifierTree extends AnyTreeNode {}
 export interface AccessibilityModifierTree extends TreeNode<'accessibility_modifier'> {}
 export interface OverrideModifierTree extends AnyTreeNode {}
 export interface PredefinedTypeTree extends TreeNode<'predefined_type'> {}
@@ -2678,6 +2704,7 @@ export type JsxNamespaceNameFromInput = FromInputOf<JsxNamespaceName, LeafScalar
 export type JsxClosingElementFromInput = FromInputOf<JsxClosingElement, LeafScalarMap, LeafStringMap>;
 export type JsxSelfClosingElementFromInput = FromInputOf<JsxSelfClosingElement, LeafScalarMap, LeafStringMap>;
 export type JsxAttributeFromInput = FromInputOf<JsxAttribute, LeafScalarMap, LeafStringMap>;
+export type HiddenJsxStringFromInput = FromInputOf<HiddenJsxString, LeafScalarMap, LeafStringMap>;
 export type ClassFromInput = FromInputOf<Class, LeafScalarMap, LeafStringMap>;
 export type ClassDeclarationFromInput = FromInputOf<ClassDeclaration, LeafScalarMap, LeafStringMap>;
 export type ClassHeritageFromInput = FromInputOf<ClassHeritage, LeafScalarMap, LeafStringMap>;
@@ -2691,7 +2718,9 @@ export type NewExpressionFromInput = FromInputOf<NewExpression, LeafScalarMap, L
 export type AwaitExpressionFromInput = FromInputOf<AwaitExpression, LeafScalarMap, LeafStringMap>;
 export type MemberExpressionFromInput = FromInputOf<MemberExpression, LeafScalarMap, LeafStringMap>;
 export type SubscriptExpressionFromInput = FromInputOf<SubscriptExpression, LeafScalarMap, LeafStringMap>;
+export type HiddenLhsExpressionFromInput = FromInputOf<HiddenLhsExpression, LeafScalarMap, LeafStringMap>;
 export type AssignmentExpressionFromInput = FromInputOf<AssignmentExpression, LeafScalarMap, LeafStringMap>;
+export type HiddenAugmentedAssignmentLhsFromInput = FromInputOf<HiddenAugmentedAssignmentLhs, LeafScalarMap, LeafStringMap>;
 export type AugmentedAssignmentExpressionFromInput = FromInputOf<AugmentedAssignmentExpression, LeafScalarMap, LeafStringMap>;
 export type SpreadElementFromInput = FromInputOf<SpreadElement, LeafScalarMap, LeafStringMap>;
 export type TernaryExpressionFromInput = FromInputOf<TernaryExpression, LeafScalarMap, LeafStringMap>;
@@ -2716,9 +2745,12 @@ export type RestPatternFromInput = FromInputOf<RestPattern, LeafScalarMap, LeafS
 export type MethodDefinitionFromInput = FromInputOf<MethodDefinition, LeafScalarMap, LeafStringMap>;
 export type PairFromInput = FromInputOf<Pair, LeafScalarMap, LeafStringMap>;
 export type PairPatternFromInput = FromInputOf<PairPattern, LeafScalarMap, LeafStringMap>;
+export type HiddenPropertyNameFromInput = FromInputOf<HiddenPropertyName, LeafScalarMap, LeafStringMap>;
 export type ComputedPropertyNameFromInput = FromInputOf<ComputedPropertyName, LeafScalarMap, LeafStringMap>;
+export type HiddenSemicolonFromInput = FromInputOf<HiddenSemicolon, LeafScalarMap, LeafStringMap>;
 export type PublicFieldDefinitionFromInput = FromInputOf<PublicFieldDefinition, LeafScalarMap, LeafStringMap>;
 export type HiddenJsxStartOpeningElementFromInput = FromInputOf<HiddenJsxStartOpeningElement, LeafScalarMap, LeafStringMap>;
+export type HiddenImportIdentifierFromInput = FromInputOf<HiddenImportIdentifier, LeafScalarMap, LeafStringMap>;
 export type NonNullExpressionFromInput = FromInputOf<NonNullExpression, LeafScalarMap, LeafStringMap>;
 export type MethodSignatureFromInput = FromInputOf<MethodSignature, LeafScalarMap, LeafStringMap>;
 export type AbstractMethodSignatureFromInput = FromInputOf<AbstractMethodSignature, LeafScalarMap, LeafStringMap>;
@@ -2838,14 +2870,13 @@ export type JsxAttributeNameConfig = JsxNamespaceNameConfig;
 export type JsxAttributeNameFromInput = JsxNamespaceNameFromInput;
 export type JsxAttributeNameTree = HiddenJsxIdentifierTree | JsxNamespaceNameTree;
 
-export interface JsxStringTree extends TreeNode<'_jsx_string'> {}
-
 export type JsxAttributeValue =
+  | HiddenJsxString
   | JsxExpression
 ;
 
-export type JsxAttributeValueConfig = JsxExpressionConfig;
-export type JsxAttributeValueFromInput = JsxExpressionFromInput;
+export type JsxAttributeValueConfig = HiddenJsxStringConfig | JsxExpressionConfig;
+export type JsxAttributeValueFromInput = HiddenJsxStringFromInput | JsxExpressionFromInput;
 export type JsxAttributeValueTree = HiddenJsxStringTree | JsxExpressionTree | HiddenJsxElementTree;
 
 export type FormalParameter =
@@ -2857,22 +2888,6 @@ export type FormalParameterConfig = RequiredParameterConfig | OptionalParameterC
 export type FormalParameterFromInput = RequiredParameterFromInput | OptionalParameterFromInput;
 export type FormalParameterTree = RequiredParameterTree | OptionalParameterTree;
 
-export type LhsExpression =
-  | NonNullExpression
-;
-
-export type LhsExpressionConfig = NonNullExpressionConfig;
-export type LhsExpressionFromInput = NonNullExpressionFromInput;
-export type LhsExpressionTree = NonNullExpressionTree;
-
-export type AugmentedAssignmentLhs =
-  | NonNullExpression
-;
-
-export type AugmentedAssignmentLhsConfig = NonNullExpressionConfig;
-export type AugmentedAssignmentLhsFromInput = NonNullExpressionFromInput;
-export type AugmentedAssignmentLhsTree = NonNullExpressionTree;
-
 export type DestructuringPattern =
   | ObjectPattern
   | ArrayPattern
@@ -2881,27 +2896,6 @@ export type DestructuringPattern =
 export type DestructuringPatternConfig = ObjectPatternConfig | ArrayPatternConfig;
 export type DestructuringPatternFromInput = ObjectPatternFromInput | ArrayPatternFromInput;
 export type DestructuringPatternTree = ObjectPatternTree | ArrayPatternTree;
-
-export type PropertyName =
-  | PrivatePropertyIdentifier
-  | String
-  | Number
-  | ComputedPropertyName
-;
-
-export type PropertyNameConfig = StringConfig | ComputedPropertyNameConfig;
-export type PropertyNameFromInput = StringFromInput | ComputedPropertyNameFromInput;
-export type PropertyNameTree = PrivatePropertyIdentifierTree | StringTree | NumberTree | ComputedPropertyNameTree;
-
-export interface ReservedIdentifierTree extends TreeNode<'_reserved_identifier'> {}
-
-export type SemicolonTree = AutomaticSemicolonTree;
-
-export type ImportIdentifier =
-  | Identifier
-;
-
-export type ImportIdentifierTree = IdentifierTree;
 
 export type TupleTypeMember =
   | TupleParameter
@@ -2972,6 +2966,7 @@ export type TypescriptNode =
   | JsxClosingElement
   | JsxSelfClosingElement
   | JsxAttribute
+  | HiddenJsxString
   | Class
   | ClassDeclaration
   | ClassHeritage
@@ -2985,7 +2980,9 @@ export type TypescriptNode =
   | AwaitExpression
   | MemberExpression
   | SubscriptExpression
+  | HiddenLhsExpression
   | AssignmentExpression
+  | HiddenAugmentedAssignmentLhs
   | AugmentedAssignmentExpression
   | SpreadElement
   | TernaryExpression
@@ -3010,9 +3007,12 @@ export type TypescriptNode =
   | MethodDefinition
   | Pair
   | PairPattern
+  | HiddenPropertyName
   | ComputedPropertyName
+  | HiddenSemicolon
   | PublicFieldDefinition
   | HiddenJsxStartOpeningElement
+  | HiddenImportIdentifier
   | NonNullExpression
   | MethodSignature
   | AbstractMethodSignature
@@ -3145,6 +3145,7 @@ export interface KindMap {
   'jsx_closing_element': JsxClosingElement;
   'jsx_self_closing_element': JsxSelfClosingElement;
   'jsx_attribute': JsxAttribute;
+  '_jsx_string': HiddenJsxString;
   'class': Class;
   'class_declaration': ClassDeclaration;
   'class_heritage': ClassHeritage;
@@ -3158,7 +3159,9 @@ export interface KindMap {
   'await_expression': AwaitExpression;
   'member_expression': MemberExpression;
   'subscript_expression': SubscriptExpression;
+  '_lhs_expression': HiddenLhsExpression;
   'assignment_expression': AssignmentExpression;
+  '_augmented_assignment_lhs': HiddenAugmentedAssignmentLhs;
   'augmented_assignment_expression': AugmentedAssignmentExpression;
   'spread_element': SpreadElement;
   'ternary_expression': TernaryExpression;
@@ -3183,9 +3186,12 @@ export interface KindMap {
   'method_definition': MethodDefinition;
   'pair': Pair;
   'pair_pattern': PairPattern;
+  '_property_name': HiddenPropertyName;
   'computed_property_name': ComputedPropertyName;
+  '_semicolon': HiddenSemicolon;
   'public_field_definition': PublicFieldDefinition;
   '_jsx_start_opening_element': HiddenJsxStartOpeningElement;
+  '_import_identifier': HiddenImportIdentifier;
   'non_null_expression': NonNullExpression;
   'method_signature': MethodSignature;
   'abstract_method_signature': AbstractMethodSignature;
@@ -3281,6 +3287,7 @@ export interface KindMap {
   'false': False;
   'null': Null;
   'undefined': Undefined;
+  '_reserved_identifier': HiddenReservedIdentifier;
   'accessibility_modifier': AccessibilityModifier;
   'override_modifier': OverrideModifier;
   'predefined_type': PredefinedType;
@@ -3414,6 +3421,7 @@ export interface ConfigMap {
   'jsx_closing_element': JsxClosingElementConfig;
   'jsx_self_closing_element': JsxSelfClosingElementConfig;
   'jsx_attribute': JsxAttributeConfig;
+  '_jsx_string': HiddenJsxStringConfig;
   'class': ClassConfig;
   'class_declaration': ClassDeclarationConfig;
   'class_heritage': ClassHeritageConfig;
@@ -3427,7 +3435,9 @@ export interface ConfigMap {
   'await_expression': AwaitExpressionConfig;
   'member_expression': MemberExpressionConfig;
   'subscript_expression': SubscriptExpressionConfig;
+  '_lhs_expression': HiddenLhsExpressionConfig;
   'assignment_expression': AssignmentExpressionConfig;
+  '_augmented_assignment_lhs': HiddenAugmentedAssignmentLhsConfig;
   'augmented_assignment_expression': AugmentedAssignmentExpressionConfig;
   'spread_element': SpreadElementConfig;
   'ternary_expression': TernaryExpressionConfig;
@@ -3452,9 +3462,12 @@ export interface ConfigMap {
   'method_definition': MethodDefinitionConfig;
   'pair': PairConfig;
   'pair_pattern': PairPatternConfig;
+  '_property_name': HiddenPropertyNameConfig;
   'computed_property_name': ComputedPropertyNameConfig;
+  '_semicolon': HiddenSemicolonConfig;
   'public_field_definition': PublicFieldDefinitionConfig;
   '_jsx_start_opening_element': HiddenJsxStartOpeningElementConfig;
+  '_import_identifier': HiddenImportIdentifierConfig;
   'non_null_expression': NonNullExpressionConfig;
   'method_signature': MethodSignatureConfig;
   'abstract_method_signature': AbstractMethodSignatureConfig;
@@ -3587,6 +3600,7 @@ export interface FromInputMap {
   'jsx_closing_element': JsxClosingElementFromInput;
   'jsx_self_closing_element': JsxSelfClosingElementFromInput;
   'jsx_attribute': JsxAttributeFromInput;
+  '_jsx_string': HiddenJsxStringFromInput;
   'class': ClassFromInput;
   'class_declaration': ClassDeclarationFromInput;
   'class_heritage': ClassHeritageFromInput;
@@ -3600,7 +3614,9 @@ export interface FromInputMap {
   'await_expression': AwaitExpressionFromInput;
   'member_expression': MemberExpressionFromInput;
   'subscript_expression': SubscriptExpressionFromInput;
+  '_lhs_expression': HiddenLhsExpressionFromInput;
   'assignment_expression': AssignmentExpressionFromInput;
+  '_augmented_assignment_lhs': HiddenAugmentedAssignmentLhsFromInput;
   'augmented_assignment_expression': AugmentedAssignmentExpressionFromInput;
   'spread_element': SpreadElementFromInput;
   'ternary_expression': TernaryExpressionFromInput;
@@ -3625,9 +3641,12 @@ export interface FromInputMap {
   'method_definition': MethodDefinitionFromInput;
   'pair': PairFromInput;
   'pair_pattern': PairPatternFromInput;
+  '_property_name': HiddenPropertyNameFromInput;
   'computed_property_name': ComputedPropertyNameFromInput;
+  '_semicolon': HiddenSemicolonFromInput;
   'public_field_definition': PublicFieldDefinitionFromInput;
   '_jsx_start_opening_element': HiddenJsxStartOpeningElementFromInput;
+  '_import_identifier': HiddenImportIdentifierFromInput;
   'non_null_expression': NonNullExpressionFromInput;
   'method_signature': MethodSignatureFromInput;
   'abstract_method_signature': AbstractMethodSignatureFromInput;

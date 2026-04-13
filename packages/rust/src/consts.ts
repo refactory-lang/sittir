@@ -2,7 +2,16 @@
 
 /** All branch (non-leaf) node kind strings. */
 export const NODE_KINDS = [
+  '_block_doc_comment_marker',
+  '_expression_except_range',
   '_field_identifier',
+  '_let_chain',
+  '_line_doc_comment_marker',
+  '_non_delim_token',
+  '_non_special_token',
+  '_path',
+  '_pattern',
+  '_type',
   '_type_identifier',
   'abstract_type',
   'arguments',
@@ -402,7 +411,29 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   required: boolean;
   multiple: boolean;
 }>> = {
+  '_block_doc_comment_marker': [
+    { name: 'outer', required: true, multiple: false },
+    { name: 'inner', required: true, multiple: false },
+  ],
+  '_expression_except_range': [
+  ],
   '_field_identifier': [
+  ],
+  '_let_chain': [
+  ],
+  '_line_doc_comment_marker': [
+    { name: 'outer', required: true, multiple: false },
+    { name: 'inner', required: true, multiple: false },
+  ],
+  '_non_delim_token': [
+  ],
+  '_non_special_token': [
+  ],
+  '_path': [
+  ],
+  '_pattern': [
+  ],
+  '_type': [
   ],
   '_type_identifier': [
   ],

@@ -284,7 +284,16 @@ function classifyHiddenRule(
         return rule
     }
 
-    // Choice → supertype or enum
+    // Choice → classify per spec taxonomy:
+    //   all strings         → enum
+    //   all symbols         → supertype (or grammar-declared supertype)
+    //   mixed/structural    → leave as-is, Assemble classifies by shape
+    //
+    // The old rule was "any hidden choice → supertype, subtypes best-effort",
+    // which produced zero-subtype supertypes for hidden choices of
+    // structural members (_match_block, _line_doc_comment_marker,
+    // _jsx_string, …). Those are real alternatives with fields/seqs,
+    // not abstract kind unions.
     if (rule.type === 'choice') {
         const allStrings = rule.members.every(m => m.type === 'string')
         if (allStrings) {
@@ -295,15 +304,25 @@ function classifyHiddenRule(
             } satisfies EnumRule
         }
 
-        // Any hidden choice (of symbols, structures, or mixed) → supertype
-        // Grammar-declared supertypes get source: 'grammar', others get 'promoted'
-        const subtypes = collectSubtypeNames(rule)
-        return {
-            type: 'supertype',
-            name,
-            subtypes,
-            source: supertypes.has(name) ? 'grammar' : 'promoted',
-        } satisfies SupertypeRule
+        const allSymbols = rule.members.every(m => m.type === 'symbol')
+        if (allSymbols || supertypes.has(name)) {
+            const subtypes = collectSubtypeNames(rule)
+            // Only promote if we actually resolved subtype names. An empty
+            // subtypes list means the choice members aren't symbols and we
+            // can't project a union — fall through to leave-as-is.
+            if (subtypes.length > 0) {
+                return {
+                    type: 'supertype',
+                    name,
+                    subtypes,
+                    source: supertypes.has(name) ? 'grammar' : 'promoted',
+                } satisfies SupertypeRule
+            }
+        }
+
+        // Mixed/structural hidden choice — survive as-is. Assemble sees it
+        // as a polymorph/branch/container depending on its members.
+        return rule
     }
 
     // Seq with fields → group (fields promoted to parent)

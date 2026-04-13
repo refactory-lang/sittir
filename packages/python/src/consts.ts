@@ -7,9 +7,12 @@ export const NODE_KINDS = [
   '_comprehension_clauses',
   '_import_list',
   '_list_pattern',
+  '_match_block',
   '_parameters',
   '_patterns',
+  '_simple_pattern',
   '_simple_statements',
+  '_suite',
   '_tuple_pattern',
   'aliased_import',
   'argument_list',
@@ -311,11 +314,18 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   '_list_pattern': [
   ],
+  '_match_block': [
+    { name: 'alternative', required: true, multiple: true },
+  ],
   '_parameters': [
   ],
   '_patterns': [
   ],
+  '_simple_pattern': [
+  ],
   '_simple_statements': [
+  ],
+  '_suite': [
   ],
   '_tuple_pattern': [
   ],
