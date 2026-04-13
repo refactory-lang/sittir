@@ -400,15 +400,23 @@ rather than recomputing via free functions.
   grammar with differently-named structural-whitespace externals
   is added. Defer adding an `externalRoles` config / position-based
   detection until that need actually arises.
-- [~] **C18** Partial — dropped ~628 `(config as any)?.X` reads in
-  factory field accessors (commit `e2fa0b6`). Counts: rust
-  712→465, typescript 739→494, python 415→279. Still outstanding:
-  setter spread casts (`{...(config as any), X: Y} as any`),
-  the `children` slot read (`ChildSlotsOf<T>` is conditionally
-  narrowed), and the `from-v2 resolveField` casts (input is
-  `FromInputOf<T>` which doesn't expose `.fields`, but the
-  resolver also accepts NodeData — needs a discriminated guard).
-  Fluent getter/setter return types are still `any`.
+- [~] **C18** Partial — dropped ~968 `as any` casts across the
+  three generated packages over two passes:
+  - Factory field reads (commit `e2fa0b6`, ~628 casts):
+    `(config as any)?.X` → `config?.X` since `ConfigOf<T>` already
+    exposes camelCase keys for every field.
+  - From() resolver (commit `1a4c48e`, ~340 casts): pulled the
+    dual-shape `((input as any)?.X ?? (input as any)?.fields?.X)`
+    unwrap up to a single `const f = (input.fields ?? input)` view
+    at the top of each function. One cast per function instead of
+    two casts per field.
+
+  Still outstanding: setter spread casts
+  (`{...(config as any), X: Y} as any`), the `children` slot read
+  (`ChildSlotsOf<T>` is conditionally narrowed), polymorph
+  dispatcher casts, fluent getter/setter return types still `any`.
+  These need either a tighter `ConfigOf<T>` definition or
+  per-call-site type narrowing — left for a later pass.
 - [x] **C19** Full type-check across all generated packages — done as
   part of **T052**. All three generated packages type-clean via
   `tsgo --noEmit`. Commit `a77f94b`.
