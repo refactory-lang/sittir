@@ -89,8 +89,8 @@ const RESERVED_KEYWORDS = new Set([
 
 export function sourceFile(config: ConfigOf<SourceFile>) {
   const fields = {
-    shebang: (config as any)?.shebang,
-    statements: (config as any)?.statements,
+    shebang: config?.shebang,
+    statements: config?.statements,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -129,8 +129,8 @@ export function expressionStatement(child?: any) {
 
 export function macroDefinition(config: ConfigOf<MacroDefinition>) {
   const fields = {
-    name: (config as any)?.name,
-    rules: (config as any)?.rules,
+    name: config?.name,
+    rules: config?.rules,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -153,8 +153,8 @@ export function macroDefinition(config: ConfigOf<MacroDefinition>) {
 
 export function macroRule(config: ConfigOf<MacroRule>) {
   const fields = {
-    left: (config as any)?.left,
-    right: (config as any)?.right,
+    left: config?.left,
+    right: config?.right,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -192,8 +192,8 @@ export function tokenTreePattern(..._children: any[]) {
 
 export function tokenBindingPattern(config: ConfigOf<TokenBindingPattern>) {
   const fields = {
-    name: (config as any)?.name,
-    type: (config as any)?.type,
+    name: config?.name,
+    type: config?.type,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -288,7 +288,7 @@ export function hiddenNonSpecialToken(child?: any) {
 
 export function attributeItem(config: ConfigOf<AttributeItem>) {
   const fields = {
-    attribute: (config as any)?.attribute,
+    attribute: config?.attribute,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -310,7 +310,7 @@ export function attributeItem(config: ConfigOf<AttributeItem>) {
 
 export function innerAttributeItem(config: ConfigOf<InnerAttributeItem>) {
   const fields = {
-    attribute: (config as any)?.attribute,
+    attribute: config?.attribute,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -332,8 +332,8 @@ export function innerAttributeItem(config: ConfigOf<InnerAttributeItem>) {
 
 export function attribute(config?: ConfigOf<Attribute>) {
   const fields = {
-    value: (config as any)?.value,
-    arguments: (config as any)?.arguments,
+    value: config?.value,
+    arguments: config?.arguments,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -356,9 +356,9 @@ export function attribute(config?: ConfigOf<Attribute>) {
 
 export function modItem(config: ConfigOf<ModItem>) {
   const fields = {
-    visibility_modifier: (config as any)?.visibilityModifier,
-    name: (config as any)?.name,
-    body: (config as any)?.body,
+    visibility_modifier: config?.visibilityModifier,
+    name: config?.name,
+    body: config?.body,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -382,9 +382,9 @@ export function modItem(config: ConfigOf<ModItem>) {
 
 export function foreignModItem(config: ConfigOf<ForeignModItem>) {
   const fields = {
-    visibility_modifier: (config as any)?.visibilityModifier,
-    extern_modifier: (config as any)?.externModifier,
-    body: (config as any)?.body,
+    visibility_modifier: config?.visibilityModifier,
+    extern_modifier: config?.externModifier,
+    body: config?.body,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -423,10 +423,10 @@ export function declarationList(..._children: any[]) {
 
 export function structItem(config: ConfigOf<StructItem>) {
   const fields = {
-    visibility_modifier: (config as any)?.visibilityModifier,
-    name: (config as any)?.name,
-    type_parameters: (config as any)?.typeParameters,
-    where_clause: (config as any)?.whereClause,
+    visibility_modifier: config?.visibilityModifier,
+    name: config?.name,
+    type_parameters: config?.typeParameters,
+    where_clause: config?.whereClause,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -451,11 +451,11 @@ export function structItem(config: ConfigOf<StructItem>) {
 
 export function unionItem(config: ConfigOf<UnionItem>) {
   const fields = {
-    visibility_modifier: (config as any)?.visibilityModifier,
-    name: (config as any)?.name,
-    type_parameters: (config as any)?.typeParameters,
-    where_clause: (config as any)?.whereClause,
-    body: (config as any)?.body,
+    visibility_modifier: config?.visibilityModifier,
+    name: config?.name,
+    type_parameters: config?.typeParameters,
+    where_clause: config?.whereClause,
+    body: config?.body,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -481,11 +481,11 @@ export function unionItem(config: ConfigOf<UnionItem>) {
 
 export function enumItem(config: ConfigOf<EnumItem>) {
   const fields = {
-    visibility_modifier: (config as any)?.visibilityModifier,
-    name: (config as any)?.name,
-    type_parameters: (config as any)?.typeParameters,
-    where_clause: (config as any)?.whereClause,
-    body: (config as any)?.body,
+    visibility_modifier: config?.visibilityModifier,
+    name: config?.name,
+    type_parameters: config?.typeParameters,
+    where_clause: config?.whereClause,
+    body: config?.body,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -526,10 +526,10 @@ export function enumVariantList(..._children: any[]) {
 
 export function enumVariant(config: ConfigOf<EnumVariant>) {
   const fields = {
-    visibility_modifier: (config as any)?.visibilityModifier,
-    name: (config as any)?.name,
-    body: (config as any)?.body,
-    value: (config as any)?.value,
+    visibility_modifier: config?.visibilityModifier,
+    name: config?.name,
+    body: config?.body,
+    value: config?.value,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -569,9 +569,9 @@ export function fieldDeclarationList(..._children: any[]) {
 
 export function fieldDeclaration(config: ConfigOf<FieldDeclaration>) {
   const fields = {
-    visibility_modifier: (config as any)?.visibilityModifier,
-    name: (config as any)?.name,
-    type: (config as any)?.type,
+    visibility_modifier: config?.visibilityModifier,
+    name: config?.name,
+    type: config?.type,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -595,8 +595,8 @@ export function fieldDeclaration(config: ConfigOf<FieldDeclaration>) {
 
 export function orderedFieldDeclarationList(config: ConfigOf<OrderedFieldDeclarationList>) {
   const fields = {
-    attributes: (config as any)?.attributes,
-    visibility_modifier: (config as any)?.visibilityModifier,
+    attributes: config?.attributes,
+    visibility_modifier: config?.visibilityModifier,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -619,10 +619,10 @@ export function orderedFieldDeclarationList(config: ConfigOf<OrderedFieldDeclara
 
 export function externCrateDeclaration(config: ConfigOf<ExternCrateDeclaration>) {
   const fields = {
-    visibility_modifier: (config as any)?.visibilityModifier,
-    crate: (config as any)?.crate,
-    name: (config as any)?.name,
-    alias: (config as any)?.alias,
+    visibility_modifier: config?.visibilityModifier,
+    crate: config?.crate,
+    name: config?.name,
+    alias: config?.alias,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -647,10 +647,10 @@ export function externCrateDeclaration(config: ConfigOf<ExternCrateDeclaration>)
 
 export function constItem(config: ConfigOf<ConstItem>) {
   const fields = {
-    visibility_modifier: (config as any)?.visibilityModifier,
-    name: (config as any)?.name,
-    type: (config as any)?.type,
-    value: (config as any)?.value,
+    visibility_modifier: config?.visibilityModifier,
+    name: config?.name,
+    type: config?.type,
+    value: config?.value,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -675,11 +675,11 @@ export function constItem(config: ConfigOf<ConstItem>) {
 
 export function staticItem(config: ConfigOf<StaticItem>) {
   const fields = {
-    visibility_modifier: (config as any)?.visibilityModifier,
-    mutable_specifier: (config as any)?.mutableSpecifier,
-    name: (config as any)?.name,
-    type: (config as any)?.type,
-    value: (config as any)?.value,
+    visibility_modifier: config?.visibilityModifier,
+    mutable_specifier: config?.mutableSpecifier,
+    name: config?.name,
+    type: config?.type,
+    value: config?.value,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -705,12 +705,12 @@ export function staticItem(config: ConfigOf<StaticItem>) {
 
 export function typeItem(config: ConfigOf<TypeItem>) {
   const fields = {
-    visibility_modifier: (config as any)?.visibilityModifier,
-    name: (config as any)?.name,
-    type_parameters: (config as any)?.typeParameters,
-    where_clause: (config as any)?.whereClause,
-    type: (config as any)?.type,
-    trailing_where_clause: (config as any)?.trailingWhereClause,
+    visibility_modifier: config?.visibilityModifier,
+    name: config?.name,
+    type_parameters: config?.typeParameters,
+    where_clause: config?.whereClause,
+    type: config?.type,
+    trailing_where_clause: config?.trailingWhereClause,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -737,13 +737,13 @@ export function typeItem(config: ConfigOf<TypeItem>) {
 
 export function functionItem(config: ConfigOf<FunctionItem>) {
   const fields = {
-    visibility_modifier: (config as any)?.visibilityModifier,
-    function_modifiers: (config as any)?.functionModifiers,
-    name: (config as any)?.name,
-    type_parameters: (config as any)?.typeParameters,
-    parameters: (config as any)?.parameters,
-    where_clause: (config as any)?.whereClause,
-    body: (config as any)?.body,
+    visibility_modifier: config?.visibilityModifier,
+    function_modifiers: config?.functionModifiers,
+    name: config?.name,
+    type_parameters: config?.typeParameters,
+    parameters: config?.parameters,
+    where_clause: config?.whereClause,
+    body: config?.body,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -771,12 +771,12 @@ export function functionItem(config: ConfigOf<FunctionItem>) {
 
 export function functionSignatureItem(config: ConfigOf<FunctionSignatureItem>) {
   const fields = {
-    visibility_modifier: (config as any)?.visibilityModifier,
-    function_modifiers: (config as any)?.functionModifiers,
-    name: (config as any)?.name,
-    type_parameters: (config as any)?.typeParameters,
-    parameters: (config as any)?.parameters,
-    where_clause: (config as any)?.whereClause,
+    visibility_modifier: config?.visibilityModifier,
+    function_modifiers: config?.functionModifiers,
+    name: config?.name,
+    type_parameters: config?.typeParameters,
+    parameters: config?.parameters,
+    where_clause: config?.whereClause,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -833,8 +833,8 @@ export function whereClause(..._children: any[]) {
 
 export function wherePredicate(config: ConfigOf<WherePredicate>) {
   const fields = {
-    left: (config as any)?.left,
-    bounds: (config as any)?.bounds,
+    left: config?.left,
+    bounds: config?.bounds,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -857,11 +857,11 @@ export function wherePredicate(config: ConfigOf<WherePredicate>) {
 
 export function implItem(config: ConfigOf<ImplItem>) {
   const fields = {
-    where_clause: (config as any)?.whereClause,
-    type_parameters: (config as any)?.typeParameters,
-    trait: (config as any)?.trait,
-    type: (config as any)?.type,
-    body: (config as any)?.body,
+    where_clause: config?.whereClause,
+    type_parameters: config?.typeParameters,
+    trait: config?.trait,
+    type: config?.type,
+    body: config?.body,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -887,12 +887,12 @@ export function implItem(config: ConfigOf<ImplItem>) {
 
 export function traitItem(config: ConfigOf<TraitItem>) {
   const fields = {
-    visibility_modifier: (config as any)?.visibilityModifier,
-    where_clause: (config as any)?.whereClause,
-    name: (config as any)?.name,
-    type_parameters: (config as any)?.typeParameters,
-    bounds: (config as any)?.bounds,
-    body: (config as any)?.body,
+    visibility_modifier: config?.visibilityModifier,
+    where_clause: config?.whereClause,
+    name: config?.name,
+    type_parameters: config?.typeParameters,
+    bounds: config?.bounds,
+    body: config?.body,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -919,10 +919,10 @@ export function traitItem(config: ConfigOf<TraitItem>) {
 
 export function associatedType(config: ConfigOf<AssociatedType>) {
   const fields = {
-    name: (config as any)?.name,
-    type_parameters: (config as any)?.typeParameters,
-    bounds: (config as any)?.bounds,
-    where_clause: (config as any)?.whereClause,
+    name: config?.name,
+    type_parameters: config?.typeParameters,
+    bounds: config?.bounds,
+    where_clause: config?.whereClause,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -962,8 +962,8 @@ export function traitBounds(..._children: any[]) {
 
 export function higherRankedTraitBound(config: ConfigOf<HigherRankedTraitBound>) {
   const fields = {
-    type_parameters: (config as any)?.typeParameters,
-    type: (config as any)?.type,
+    type_parameters: config?.typeParameters,
+    type: config?.type,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -1017,9 +1017,9 @@ export function typeParameters(..._children: any[]) {
 
 export function constParameter(config: ConfigOf<ConstParameter>) {
   const fields = {
-    name: (config as any)?.name,
-    type: (config as any)?.type,
-    value: (config as any)?.value,
+    name: config?.name,
+    type: config?.type,
+    value: config?.value,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -1043,9 +1043,9 @@ export function constParameter(config: ConfigOf<ConstParameter>) {
 
 export function typeParameter(config: ConfigOf<TypeParameter>) {
   const fields = {
-    name: (config as any)?.name,
-    bounds: (config as any)?.bounds,
-    default_type: (config as any)?.defaultType,
+    name: config?.name,
+    bounds: config?.bounds,
+    default_type: config?.defaultType,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -1069,8 +1069,8 @@ export function typeParameter(config: ConfigOf<TypeParameter>) {
 
 export function lifetimeParameter(config: ConfigOf<LifetimeParameter>) {
   const fields = {
-    name: (config as any)?.name,
-    bounds: (config as any)?.bounds,
+    name: config?.name,
+    bounds: config?.bounds,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -1093,11 +1093,11 @@ export function lifetimeParameter(config: ConfigOf<LifetimeParameter>) {
 
 export function letDeclaration(config: ConfigOf<LetDeclaration>) {
   const fields = {
-    mutable_specifier: (config as any)?.mutableSpecifier,
-    pattern: (config as any)?.pattern,
-    type: (config as any)?.type,
-    value: (config as any)?.value,
-    alternative: (config as any)?.alternative,
+    mutable_specifier: config?.mutableSpecifier,
+    pattern: config?.pattern,
+    type: config?.type,
+    value: config?.value,
+    alternative: config?.alternative,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -1123,8 +1123,8 @@ export function letDeclaration(config: ConfigOf<LetDeclaration>) {
 
 export function useDeclaration(config: ConfigOf<UseDeclaration>) {
   const fields = {
-    visibility_modifier: (config as any)?.visibilityModifier,
-    argument: (config as any)?.argument,
+    visibility_modifier: config?.visibilityModifier,
+    argument: config?.argument,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -1147,8 +1147,8 @@ export function useDeclaration(config: ConfigOf<UseDeclaration>) {
 
 export function scopedUseList(config: ConfigOf<ScopedUseList>) {
   const fields = {
-    path: (config as any)?.path,
-    list: (config as any)?.list,
+    path: config?.path,
+    list: config?.list,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -1186,8 +1186,8 @@ export function useList(..._children: any[]) {
 
 export function useAsClause(config: ConfigOf<UseAsClause>) {
   const fields = {
-    path: (config as any)?.path,
-    alias: (config as any)?.alias,
+    path: config?.path,
+    alias: config?.alias,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -1210,7 +1210,7 @@ export function useAsClause(config: ConfigOf<UseAsClause>) {
 
 export function useWildcard(config: ConfigOf<UseWildcard>) {
   const fields = {
-    path: (config as any)?.path,
+    path: config?.path,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -1247,9 +1247,9 @@ export function parameters(..._children: any[]) {
 
 export function selfParameter(config: ConfigOf<SelfParameter>) {
   const fields = {
-    lifetime: (config as any)?.lifetime,
-    mutable_specifier: (config as any)?.mutableSpecifier,
-    self: (config as any)?.self,
+    lifetime: config?.lifetime,
+    mutable_specifier: config?.mutableSpecifier,
+    self: config?.self,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -1273,8 +1273,8 @@ export function selfParameter(config: ConfigOf<SelfParameter>) {
 
 export function variadicParameter(config: ConfigOf<VariadicParameter>) {
   const fields = {
-    mutable_specifier: (config as any)?.mutableSpecifier,
-    pattern: (config as any)?.pattern,
+    mutable_specifier: config?.mutableSpecifier,
+    pattern: config?.pattern,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -1297,9 +1297,9 @@ export function variadicParameter(config: ConfigOf<VariadicParameter>) {
 
 export function parameter(config: ConfigOf<Parameter>) {
   const fields = {
-    mutable_specifier: (config as any)?.mutableSpecifier,
-    pattern: (config as any)?.pattern,
-    type: (config as any)?.type,
+    mutable_specifier: config?.mutableSpecifier,
+    pattern: config?.pattern,
+    type: config?.type,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -1323,7 +1323,7 @@ export function parameter(config: ConfigOf<Parameter>) {
 
 export function externModifier(config: ConfigOf<ExternModifier>) {
   const fields = {
-    string_literal: (config as any)?.stringLiteral,
+    string_literal: config?.stringLiteral,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -1393,8 +1393,8 @@ export function bracketedType(child?: any) {
 
 export function qualifiedType(config: ConfigOf<QualifiedType>) {
   const fields = {
-    type: (config as any)?.type,
-    alias: (config as any)?.alias,
+    type: config?.type,
+    alias: config?.alias,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -1417,7 +1417,7 @@ export function qualifiedType(config: ConfigOf<QualifiedType>) {
 
 export function lifetime(config: ConfigOf<Lifetime>) {
   const fields = {
-    identifier: (config as any)?.identifier,
+    identifier: config?.identifier,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -1439,8 +1439,8 @@ export function lifetime(config: ConfigOf<Lifetime>) {
 
 export function arrayType(config: ConfigOf<ArrayType>) {
   const fields = {
-    element: (config as any)?.element,
-    length: (config as any)?.length,
+    element: config?.element,
+    length: config?.length,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -1478,9 +1478,9 @@ export function forLifetimes(..._children: any[]) {
 
 export function functionType(config: ConfigOf<FunctionType>) {
   const fields = {
-    for_lifetimes: (config as any)?.forLifetimes,
-    function_modifiers: (config as any)?.functionModifiers,
-    return_type: (config as any)?.returnType,
+    for_lifetimes: config?.forLifetimes,
+    function_modifiers: config?.functionModifiers,
+    return_type: config?.returnType,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -1530,8 +1530,8 @@ export function unitType(text: string) {
 
 export function genericFunction(config: ConfigOf<GenericFunction>) {
   const fields = {
-    function: (config as any)?.function,
-    type_arguments: (config as any)?.typeArguments,
+    function: config?.function,
+    type_arguments: config?.typeArguments,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -1554,8 +1554,8 @@ export function genericFunction(config: ConfigOf<GenericFunction>) {
 
 export function genericType(config: ConfigOf<GenericType>) {
   const fields = {
-    type: (config as any)?.type,
-    type_arguments: (config as any)?.typeArguments,
+    type: config?.type,
+    type_arguments: config?.typeArguments,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -1578,8 +1578,8 @@ export function genericType(config: ConfigOf<GenericType>) {
 
 export function genericTypeWithTurbofish(config: ConfigOf<GenericTypeWithTurbofish>) {
   const fields = {
-    type: (config as any)?.type,
-    type_arguments: (config as any)?.typeArguments,
+    type: config?.type,
+    type_arguments: config?.typeArguments,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -1602,8 +1602,8 @@ export function genericTypeWithTurbofish(config: ConfigOf<GenericTypeWithTurbofi
 
 export function boundedType(config: ConfigOf<BoundedType>) {
   const fields = {
-    left: (config as any)?.left,
-    right: (config as any)?.right,
+    left: config?.left,
+    right: config?.right,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -1656,9 +1656,9 @@ export function typeArguments(..._children: any[]) {
 
 export function typeBinding(config: ConfigOf<TypeBinding>) {
   const fields = {
-    name: (config as any)?.name,
-    type_arguments: (config as any)?.typeArguments,
-    type: (config as any)?.type,
+    name: config?.name,
+    type_arguments: config?.typeArguments,
+    type: config?.type,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -1682,9 +1682,9 @@ export function typeBinding(config: ConfigOf<TypeBinding>) {
 
 export function referenceType(config: ConfigOf<ReferenceType>) {
   const fields = {
-    lifetime: (config as any)?.lifetime,
-    mutable_specifier: (config as any)?.mutableSpecifier,
-    type: (config as any)?.type,
+    lifetime: config?.lifetime,
+    mutable_specifier: config?.mutableSpecifier,
+    type: config?.type,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -1708,8 +1708,8 @@ export function referenceType(config: ConfigOf<ReferenceType>) {
 
 export function pointerType(config: ConfigOf<PointerType>) {
   const fields = {
-    mutable_specifier: (config as any)?.mutableSpecifier,
-    type: (config as any)?.type,
+    mutable_specifier: config?.mutableSpecifier,
+    type: config?.type,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -1732,8 +1732,8 @@ export function pointerType(config: ConfigOf<PointerType>) {
 
 export function abstractType(config: ConfigOf<AbstractType>) {
   const fields = {
-    type_parameters: (config as any)?.typeParameters,
-    trait: (config as any)?.trait,
+    type_parameters: config?.typeParameters,
+    trait: config?.trait,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -1756,7 +1756,7 @@ export function abstractType(config: ConfigOf<AbstractType>) {
 
 export function dynamicType(config: ConfigOf<DynamicType>) {
   const fields = {
-    trait: (config as any)?.trait,
+    trait: config?.trait,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -1805,8 +1805,8 @@ export function hiddenExpressionExceptRange(child?: any) {
 
 export function macroInvocation(config: ConfigOf<MacroInvocation>) {
   const fields = {
-    macro: (config as any)?.macro,
-    token_tree: (config as any)?.tokenTree,
+    macro: config?.macro,
+    token_tree: config?.tokenTree,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -1860,8 +1860,8 @@ export function hiddenNonDelimToken(child?: any) {
 
 export function scopedIdentifier(config: ConfigOf<ScopedIdentifier>) {
   const fields = {
-    path: (config as any)?.path,
-    name: (config as any)?.name,
+    path: config?.path,
+    name: config?.name,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -1884,8 +1884,8 @@ export function scopedIdentifier(config: ConfigOf<ScopedIdentifier>) {
 
 export function scopedTypeIdentifierInExpressionPosition(config: ConfigOf<ScopedTypeIdentifierInExpressionPosition>) {
   const fields = {
-    path: (config as any)?.path,
-    name: (config as any)?.name,
+    path: config?.path,
+    name: config?.name,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -1908,8 +1908,8 @@ export function scopedTypeIdentifierInExpressionPosition(config: ConfigOf<Scoped
 
 export function scopedTypeIdentifier(config: ConfigOf<ScopedTypeIdentifier>) {
   const fields = {
-    path: (config as any)?.path,
-    name: (config as any)?.name,
+    path: config?.path,
+    name: config?.name,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -1948,7 +1948,7 @@ export function rangeExpression(child?: any) {
 
 export function unaryExpression(config: ConfigOf<UnaryExpression>) {
   const fields = {
-    operand: (config as any)?.operand,
+    operand: config?.operand,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -1970,7 +1970,7 @@ export function unaryExpression(config: ConfigOf<UnaryExpression>) {
 
 export function tryExpression(config: ConfigOf<TryExpression>) {
   const fields = {
-    value: (config as any)?.value,
+    value: config?.value,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -1992,8 +1992,8 @@ export function tryExpression(config: ConfigOf<TryExpression>) {
 
 export function referenceExpression(config: ConfigOf<ReferenceExpression>) {
   const fields = {
-    mutable_specifier: (config as any)?.mutableSpecifier,
-    value: (config as any)?.value,
+    mutable_specifier: config?.mutableSpecifier,
+    value: config?.value,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -2016,9 +2016,9 @@ export function referenceExpression(config: ConfigOf<ReferenceExpression>) {
 
 export function binaryExpression(config: ConfigOf<BinaryExpression>) {
   const fields = {
-    left: (config as any)?.left,
-    operator: (config as any)?.operator,
-    right: (config as any)?.right,
+    left: config?.left,
+    operator: config?.operator,
+    right: config?.right,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -2042,8 +2042,8 @@ export function binaryExpression(config: ConfigOf<BinaryExpression>) {
 
 export function assignmentExpression(config: ConfigOf<AssignmentExpression>) {
   const fields = {
-    left: (config as any)?.left,
-    right: (config as any)?.right,
+    left: config?.left,
+    right: config?.right,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -2066,9 +2066,9 @@ export function assignmentExpression(config: ConfigOf<AssignmentExpression>) {
 
 export function compoundAssignmentExpr(config: ConfigOf<CompoundAssignmentExpr>) {
   const fields = {
-    left: (config as any)?.left,
-    operator: (config as any)?.operator,
-    right: (config as any)?.right,
+    left: config?.left,
+    operator: config?.operator,
+    right: config?.right,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -2092,8 +2092,8 @@ export function compoundAssignmentExpr(config: ConfigOf<CompoundAssignmentExpr>)
 
 export function typeCastExpression(config: ConfigOf<TypeCastExpression>) {
   const fields = {
-    value: (config as any)?.value,
-    type: (config as any)?.type,
+    value: config?.value,
+    type: config?.type,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -2148,8 +2148,8 @@ export function yieldExpression(child?: any) {
 
 export function callExpression(config: ConfigOf<CallExpression>) {
   const fields = {
-    function: (config as any)?.function,
-    arguments: (config as any)?.arguments,
+    function: config?.function,
+    arguments: config?.arguments,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -2187,8 +2187,8 @@ export function arguments_(..._children: any[]) {
 
 export function arrayExpression(config: ConfigOf<ArrayExpression>) {
   const fields = {
-    attributes: (config as any)?.attributes,
-    elements: (config as any)?.elements,
+    attributes: config?.attributes,
+    elements: config?.elements,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -2227,10 +2227,10 @@ export function parenthesizedExpression(child?: any) {
 
 export function tupleExpression(config: ConfigOf<TupleExpression>) {
   const fields = {
-    attributes: (config as any)?.attributes,
-    first: (config as any)?.first,
-    rest: (config as any)?.rest,
-    trailing: (config as any)?.trailing,
+    attributes: config?.attributes,
+    first: config?.first,
+    rest: config?.rest,
+    trailing: config?.trailing,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -2266,8 +2266,8 @@ export function unitExpression(text: string) {
 
 export function structExpression(config: ConfigOf<StructExpression>) {
   const fields = {
-    name: (config as any)?.name,
-    body: (config as any)?.body,
+    name: config?.name,
+    body: config?.body,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -2305,8 +2305,8 @@ export function fieldInitializerList(..._children: any[]) {
 
 export function shorthandFieldInitializer(config: ConfigOf<ShorthandFieldInitializer>) {
   const fields = {
-    attributes: (config as any)?.attributes,
-    identifier: (config as any)?.identifier,
+    attributes: config?.attributes,
+    identifier: config?.identifier,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -2329,8 +2329,8 @@ export function shorthandFieldInitializer(config: ConfigOf<ShorthandFieldInitial
 
 export function fieldInitializer(config: ConfigOf<FieldInitializer>) {
   const fields = {
-    field: (config as any)?.field,
-    value: (config as any)?.value,
+    field: config?.field,
+    value: config?.value,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -2369,9 +2369,9 @@ export function baseFieldInitializer(child?: any) {
 
 export function ifExpression(config: ConfigOf<IfExpression>) {
   const fields = {
-    condition: (config as any)?.condition,
-    consequence: (config as any)?.consequence,
-    alternative: (config as any)?.alternative,
+    condition: config?.condition,
+    consequence: config?.consequence,
+    alternative: config?.alternative,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -2395,8 +2395,8 @@ export function ifExpression(config: ConfigOf<IfExpression>) {
 
 export function letCondition(config: ConfigOf<LetCondition>) {
   const fields = {
-    pattern: (config as any)?.pattern,
-    value: (config as any)?.value,
+    pattern: config?.pattern,
+    value: config?.value,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -2451,8 +2451,8 @@ export function elseClause(child?: any) {
 
 export function matchExpression(config: ConfigOf<MatchExpression>) {
   const fields = {
-    value: (config as any)?.value,
-    body: (config as any)?.body,
+    value: config?.value,
+    body: config?.body,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -2490,8 +2490,8 @@ export function matchBlock(..._children: any[]) {
 
 export function matchArm(config: ConfigOf<MatchArm>) {
   const fields = {
-    pattern: (config as any)?.pattern,
-    value: (config as any)?.value,
+    pattern: config?.pattern,
+    value: config?.value,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -2514,8 +2514,8 @@ export function matchArm(config: ConfigOf<MatchArm>) {
 
 export function lastMatchArm(config: ConfigOf<LastMatchArm>) {
   const fields = {
-    pattern: (config as any)?.pattern,
-    value: (config as any)?.value,
+    pattern: config?.pattern,
+    value: config?.value,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -2538,7 +2538,7 @@ export function lastMatchArm(config: ConfigOf<LastMatchArm>) {
 
 export function matchPattern(config?: ConfigOf<MatchPattern>) {
   const fields = {
-    condition: (config as any)?.condition,
+    condition: config?.condition,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -2560,9 +2560,9 @@ export function matchPattern(config?: ConfigOf<MatchPattern>) {
 
 export function whileExpression(config: ConfigOf<WhileExpression>) {
   const fields = {
-    label: (config as any)?.label,
-    condition: (config as any)?.condition,
-    body: (config as any)?.body,
+    label: config?.label,
+    condition: config?.condition,
+    body: config?.body,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -2586,8 +2586,8 @@ export function whileExpression(config: ConfigOf<WhileExpression>) {
 
 export function loopExpression(config: ConfigOf<LoopExpression>) {
   const fields = {
-    label: (config as any)?.label,
-    body: (config as any)?.body,
+    label: config?.label,
+    body: config?.body,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -2610,10 +2610,10 @@ export function loopExpression(config: ConfigOf<LoopExpression>) {
 
 export function forExpression(config: ConfigOf<ForExpression>) {
   const fields = {
-    label: (config as any)?.label,
-    pattern: (config as any)?.pattern,
-    value: (config as any)?.value,
-    body: (config as any)?.body,
+    label: config?.label,
+    pattern: config?.pattern,
+    value: config?.value,
+    body: config?.body,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -2638,7 +2638,7 @@ export function forExpression(config: ConfigOf<ForExpression>) {
 
 export function constBlock(config: ConfigOf<ConstBlock>) {
   const fields = {
-    body: (config as any)?.body,
+    body: config?.body,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -2664,8 +2664,8 @@ export function closureExpression(config?: ConfigOf<ClosureExpression>) {
 }
 export function closureExpressionBody(config: ConfigOf<ClosureExpressionBody>) {
   const fields = {
-    return_type: (config as any)?.returnType,
-    body: (config as any)?.body,
+    return_type: config?.returnType,
+    body: config?.body,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -2687,7 +2687,7 @@ export function closureExpressionBody(config: ConfigOf<ClosureExpressionBody>) {
 }
 export function closureExpressionBody2(config: ConfigOf<ClosureExpressionBody2>) {
   const fields = {
-    body: (config as any)?.body,
+    body: config?.body,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -2724,7 +2724,7 @@ export function closureParameters(..._children: any[]) {
 
 export function label(config: ConfigOf<Label>) {
   const fields = {
-    identifier: (config as any)?.identifier,
+    identifier: config?.identifier,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -2746,8 +2746,8 @@ export function label(config: ConfigOf<Label>) {
 
 export function breakExpression(config: ConfigOf<BreakExpression>) {
   const fields = {
-    label: (config as any)?.label,
-    expression: (config as any)?.expression,
+    label: config?.label,
+    expression: config?.expression,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -2770,7 +2770,7 @@ export function breakExpression(config: ConfigOf<BreakExpression>) {
 
 export function continueExpression(config: ConfigOf<ContinueExpression>) {
   const fields = {
-    label: (config as any)?.label,
+    label: config?.label,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -2792,8 +2792,8 @@ export function continueExpression(config: ConfigOf<ContinueExpression>) {
 
 export function indexExpression(config: ConfigOf<IndexExpression>) {
   const fields = {
-    object: (config as any)?.object,
-    index: (config as any)?.index,
+    object: config?.object,
+    index: config?.index,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -2832,8 +2832,8 @@ export function awaitExpression(child?: any) {
 
 export function fieldExpression(config: ConfigOf<FieldExpression>) {
   const fields = {
-    value: (config as any)?.value,
-    field: (config as any)?.field,
+    value: config?.value,
+    field: config?.field,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -2856,7 +2856,7 @@ export function fieldExpression(config: ConfigOf<FieldExpression>) {
 
 export function unsafeBlock(config: ConfigOf<UnsafeBlock>) {
   const fields = {
-    block: (config as any)?.block,
+    block: config?.block,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -2878,7 +2878,7 @@ export function unsafeBlock(config: ConfigOf<UnsafeBlock>) {
 
 export function asyncBlock(config: ConfigOf<AsyncBlock>) {
   const fields = {
-    block: (config as any)?.block,
+    block: config?.block,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -2900,7 +2900,7 @@ export function asyncBlock(config: ConfigOf<AsyncBlock>) {
 
 export function genBlock(config: ConfigOf<GenBlock>) {
   const fields = {
-    block: (config as any)?.block,
+    block: config?.block,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -2922,7 +2922,7 @@ export function genBlock(config: ConfigOf<GenBlock>) {
 
 export function tryBlock(config: ConfigOf<TryBlock>) {
   const fields = {
-    block: (config as any)?.block,
+    block: config?.block,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -2944,7 +2944,7 @@ export function tryBlock(config: ConfigOf<TryBlock>) {
 
 export function block(config: ConfigOf<Block>) {
   const fields = {
-    label: (config as any)?.label,
+    label: config?.label,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -2982,7 +2982,7 @@ export function hiddenPattern(child?: any) {
 
 export function genericPattern(config: ConfigOf<GenericPattern>) {
   const fields = {
-    type_arguments: (config as any)?.typeArguments,
+    type_arguments: config?.typeArguments,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -3034,7 +3034,7 @@ export function slicePattern(..._children: any[]) {
 
 export function tupleStructPattern(config: ConfigOf<TupleStructPattern>) {
   const fields = {
-    type: (config as any)?.type,
+    type: config?.type,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -3056,7 +3056,7 @@ export function tupleStructPattern(config: ConfigOf<TupleStructPattern>) {
 
 export function structPattern(config: ConfigOf<StructPattern>) {
   const fields = {
-    type: (config as any)?.type,
+    type: config?.type,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -3082,7 +3082,7 @@ export function fieldPattern(config?: ConfigOf<FieldPattern>) {
 }
 export function fieldPatternName(config: ConfigOf<FieldPatternName>) {
   const fields = {
-    name: (config as any)?.name,
+    name: config?.name,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -3103,8 +3103,8 @@ export function fieldPatternName(config: ConfigOf<FieldPatternName>) {
 }
 export function fieldPatternColon(config: ConfigOf<FieldPatternColon>) {
   const fields = {
-    name: (config as any)?.name,
-    pattern: (config as any)?.pattern,
+    name: config?.name,
+    pattern: config?.pattern,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -3127,8 +3127,8 @@ export function fieldPatternColon(config: ConfigOf<FieldPatternColon>) {
 
 export function mutPattern(config: ConfigOf<MutPattern>) {
   const fields = {
-    mutable_specifier: (config as any)?.mutableSpecifier,
-    pattern: (config as any)?.pattern,
+    mutable_specifier: config?.mutableSpecifier,
+    pattern: config?.pattern,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -3155,8 +3155,8 @@ export function rangePattern(config?: ConfigOf<RangePattern>) {
 }
 export function rangePatternLeft(config: ConfigOf<RangePatternLeft>) {
   const fields = {
-    left: (config as any)?.left,
-    right: (config as any)?.right,
+    left: config?.left,
+    right: config?.right,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -3178,7 +3178,7 @@ export function rangePatternLeft(config: ConfigOf<RangePatternLeft>) {
 }
 export function rangePatternRight(config: ConfigOf<RangePatternRight>) {
   const fields = {
-    right: (config as any)?.right,
+    right: config?.right,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -3216,8 +3216,8 @@ export function refPattern(child?: any) {
 
 export function capturedPattern(config: ConfigOf<CapturedPattern>) {
   const fields = {
-    identifier: (config as any)?.identifier,
-    pattern: (config as any)?.pattern,
+    identifier: config?.identifier,
+    pattern: config?.pattern,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -3240,8 +3240,8 @@ export function capturedPattern(config: ConfigOf<CapturedPattern>) {
 
 export function referencePattern(config: ConfigOf<ReferencePattern>) {
   const fields = {
-    mutable_specifier: (config as any)?.mutableSpecifier,
-    pattern: (config as any)?.pattern,
+    mutable_specifier: config?.mutableSpecifier,
+    pattern: config?.pattern,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -3280,7 +3280,7 @@ export function orPattern(child?: any) {
 
 export function negativeLiteral(config: ConfigOf<NegativeLiteral>) {
   const fields = {
-    value: (config as any)?.value,
+    value: config?.value,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -3328,9 +3328,9 @@ export function stringLiteral(..._children: any[]) {
 
 export function rawStringLiteral(config: ConfigOf<RawStringLiteral>) {
   const fields = {
-    raw_string_literal_start: (config as any)?.rawStringLiteralStart,
-    string_content: (config as any)?.stringContent,
-    raw_string_literal_end: (config as any)?.rawStringLiteralEnd,
+    raw_string_literal_start: config?.rawStringLiteralStart,
+    string_content: config?.stringContent,
+    raw_string_literal_end: config?.rawStringLiteralEnd,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -3403,7 +3403,7 @@ export function comment(child?: any) {
 
 export function lineComment(config: ConfigOf<LineComment>) {
   const fields = {
-    doc: (config as any)?.doc,
+    doc: config?.doc,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -3425,8 +3425,8 @@ export function lineComment(config: ConfigOf<LineComment>) {
 
 export function hiddenLineDocCommentMarker(config: ConfigOf<HiddenLineDocCommentMarker>) {
   const fields = {
-    outer: (config as any)?.outer,
-    inner: (config as any)?.inner,
+    outer: config?.outer,
+    inner: config?.inner,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -3449,7 +3449,7 @@ export function hiddenLineDocCommentMarker(config: ConfigOf<HiddenLineDocComment
 
 export function blockComment(config?: ConfigOf<BlockComment>) {
   const fields = {
-    doc: (config as any)?.doc,
+    doc: config?.doc,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -3471,8 +3471,8 @@ export function blockComment(config?: ConfigOf<BlockComment>) {
 
 export function hiddenBlockDocCommentMarker(config: ConfigOf<HiddenBlockDocCommentMarker>) {
   const fields = {
-    outer: (config as any)?.outer,
-    inner: (config as any)?.inner,
+    outer: config?.outer,
+    inner: config?.inner,
   };
   const children = (config as any)?.children ?? [];
   return {

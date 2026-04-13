@@ -770,12 +770,16 @@ function emitFieldCarryingFactory(
     if (hasFields) {
         lines.push('  const fields = {')
         for (const f of fields) {
-            lines.push(`    ${f.name}: (config as any)?.${f.propertyName},`)
+            // ConfigOf<T> exposes camelCase keys for every field; access
+            // them directly. The optional chain handles the `config?` arg
+            // shape (optional when no fields are required).
+            lines.push(`    ${f.name}: config?.${f.propertyName},`)
         }
         lines.push('  };')
     }
     // Always thread children — tree-sitter surfaces supertype-dispatched
-    // children that the rule doesn't reference explicitly.
+    // children that the rule doesn't reference explicitly. ConfigOf<T>
+    // includes a `children` slot via ChildSlotsOf<T>.
     lines.push('  const children = (config as any)?.children ?? [];')
 
     lines.push('  return {')

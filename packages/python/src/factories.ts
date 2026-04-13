@@ -115,8 +115,8 @@ export function importPrefix(text: string) {
 
 export function relativeImport(config: ConfigOf<RelativeImport>) {
   const fields = {
-    import_prefix: (config as any)?.importPrefix,
-    dotted_name: (config as any)?.dottedName,
+    import_prefix: config?.importPrefix,
+    dotted_name: config?.dottedName,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -155,8 +155,8 @@ export function futureImportStatement(child?: any) {
 
 export function importFromStatement(config: ConfigOf<ImportFromStatement>) {
   const fields = {
-    module_name: (config as any)?.moduleName,
-    wildcard_import: (config as any)?.wildcardImport,
+    module_name: config?.moduleName,
+    wildcard_import: config?.wildcardImport,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -179,7 +179,7 @@ export function importFromStatement(config: ConfigOf<ImportFromStatement>) {
 
 export function hiddenImportList(config: ConfigOf<HiddenImportList>) {
   const fields = {
-    name: (config as any)?.name,
+    name: config?.name,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -201,8 +201,8 @@ export function hiddenImportList(config: ConfigOf<HiddenImportList>) {
 
 export function aliasedImport(config: ConfigOf<AliasedImport>) {
   const fields = {
-    name: (config as any)?.name,
-    alias: (config as any)?.alias,
+    name: config?.name,
+    alias: config?.alias,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -225,7 +225,7 @@ export function aliasedImport(config: ConfigOf<AliasedImport>) {
 
 export function printStatement(config: ConfigOf<PrintStatement>) {
   const fields = {
-    argument: (config as any)?.argument,
+    argument: config?.argument,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -247,7 +247,7 @@ export function printStatement(config: ConfigOf<PrintStatement>) {
 
 export function chevron(config: ConfigOf<Chevron>) {
   const fields = {
-    expression: (config as any)?.expression,
+    expression: config?.expression,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -299,8 +299,8 @@ export function expressionStatement(..._children: any[]) {
 
 export function namedExpression(config: ConfigOf<NamedExpression>) {
   const fields = {
-    name: (config as any)?.name,
-    value: (config as any)?.value,
+    name: config?.name,
+    value: config?.value,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -355,7 +355,7 @@ export function deleteStatement(child?: any) {
 
 export function raiseStatement(config?: ConfigOf<RaiseStatement>) {
   const fields = {
-    cause: (config as any)?.cause,
+    cause: config?.cause,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -410,9 +410,9 @@ export function continueStatement() {
 
 export function ifStatement(config: ConfigOf<IfStatement>) {
   const fields = {
-    condition: (config as any)?.condition,
-    consequence: (config as any)?.consequence,
-    alternative: (config as any)?.alternative,
+    condition: config?.condition,
+    consequence: config?.consequence,
+    alternative: config?.alternative,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -436,8 +436,8 @@ export function ifStatement(config: ConfigOf<IfStatement>) {
 
 export function elifClause(config: ConfigOf<ElifClause>) {
   const fields = {
-    condition: (config as any)?.condition,
-    consequence: (config as any)?.consequence,
+    condition: config?.condition,
+    consequence: config?.consequence,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -460,7 +460,7 @@ export function elifClause(config: ConfigOf<ElifClause>) {
 
 export function elseClause(config: ConfigOf<ElseClause>) {
   const fields = {
-    body: (config as any)?.body,
+    body: config?.body,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -482,8 +482,8 @@ export function elseClause(config: ConfigOf<ElseClause>) {
 
 export function matchStatement(config: ConfigOf<MatchStatement>) {
   const fields = {
-    subject: (config as any)?.subject,
-    body: (config as any)?.body,
+    subject: config?.subject,
+    body: config?.body,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -506,7 +506,7 @@ export function matchStatement(config: ConfigOf<MatchStatement>) {
 
 export function hiddenMatchBlock(config: ConfigOf<HiddenMatchBlock>) {
   const fields = {
-    alternative: (config as any)?.alternative,
+    alternative: config?.alternative,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -528,8 +528,8 @@ export function hiddenMatchBlock(config: ConfigOf<HiddenMatchBlock>) {
 
 export function caseClause(config: ConfigOf<CaseClause>) {
   const fields = {
-    guard: (config as any)?.guard,
-    consequence: (config as any)?.consequence,
+    guard: config?.guard,
+    consequence: config?.consequence,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -552,10 +552,10 @@ export function caseClause(config: ConfigOf<CaseClause>) {
 
 export function forStatement(config: ConfigOf<ForStatement>) {
   const fields = {
-    left: (config as any)?.left,
-    right: (config as any)?.right,
-    body: (config as any)?.body,
-    alternative: (config as any)?.alternative,
+    left: config?.left,
+    right: config?.right,
+    body: config?.body,
+    alternative: config?.alternative,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -580,9 +580,9 @@ export function forStatement(config: ConfigOf<ForStatement>) {
 
 export function whileStatement(config: ConfigOf<WhileStatement>) {
   const fields = {
-    condition: (config as any)?.condition,
-    body: (config as any)?.body,
-    alternative: (config as any)?.alternative,
+    condition: config?.condition,
+    body: config?.body,
+    alternative: config?.alternative,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -606,10 +606,10 @@ export function whileStatement(config: ConfigOf<WhileStatement>) {
 
 export function tryStatement(config: ConfigOf<TryStatement>) {
   const fields = {
-    body: (config as any)?.body,
-    except_clauses: (config as any)?.exceptClauses,
-    else_clause: (config as any)?.elseClause,
-    finally_clause: (config as any)?.finallyClause,
+    body: config?.body,
+    except_clauses: config?.exceptClauses,
+    else_clause: config?.elseClause,
+    finally_clause: config?.finallyClause,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -634,8 +634,8 @@ export function tryStatement(config: ConfigOf<TryStatement>) {
 
 export function exceptClause(config?: ConfigOf<ExceptClause>) {
   const fields = {
-    value: (config as any)?.value,
-    alias: (config as any)?.alias,
+    value: config?.value,
+    alias: config?.alias,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -658,7 +658,7 @@ export function exceptClause(config?: ConfigOf<ExceptClause>) {
 
 export function finallyClause(config: ConfigOf<FinallyClause>) {
   const fields = {
-    block: (config as any)?.block,
+    block: config?.block,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -680,8 +680,8 @@ export function finallyClause(config: ConfigOf<FinallyClause>) {
 
 export function withStatement(config: ConfigOf<WithStatement>) {
   const fields = {
-    with_clause: (config as any)?.withClause,
-    body: (config as any)?.body,
+    with_clause: config?.withClause,
+    body: config?.body,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -719,7 +719,7 @@ export function withClause(..._children: any[]) {
 
 export function withItem(config: ConfigOf<WithItem>) {
   const fields = {
-    value: (config as any)?.value,
+    value: config?.value,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -741,11 +741,11 @@ export function withItem(config: ConfigOf<WithItem>) {
 
 export function functionDefinition(config: ConfigOf<FunctionDefinition>) {
   const fields = {
-    name: (config as any)?.name,
-    type_parameters: (config as any)?.typeParameters,
-    parameters: (config as any)?.parameters,
-    return_type: (config as any)?.returnType,
-    body: (config as any)?.body,
+    name: config?.name,
+    type_parameters: config?.typeParameters,
+    parameters: config?.parameters,
+    return_type: config?.returnType,
+    body: config?.body,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -803,7 +803,7 @@ export function lambdaParameters(child?: any) {
 
 export function listSplat(config: ConfigOf<ListSplat>) {
   const fields = {
-    expression: (config as any)?.expression,
+    expression: config?.expression,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -825,7 +825,7 @@ export function listSplat(config: ConfigOf<ListSplat>) {
 
 export function dictionarySplat(config: ConfigOf<DictionarySplat>) {
   const fields = {
-    expression: (config as any)?.expression,
+    expression: config?.expression,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -877,7 +877,7 @@ export function nonlocalStatement(..._children: any[]) {
 
 export function execStatement(config: ConfigOf<ExecStatement>) {
   const fields = {
-    code: (config as any)?.code,
+    code: config?.code,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -899,8 +899,8 @@ export function execStatement(config: ConfigOf<ExecStatement>) {
 
 export function typeAliasStatement(config: ConfigOf<TypeAliasStatement>) {
   const fields = {
-    left: (config as any)?.left,
-    right: (config as any)?.right,
+    left: config?.left,
+    right: config?.right,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -923,10 +923,10 @@ export function typeAliasStatement(config: ConfigOf<TypeAliasStatement>) {
 
 export function classDefinition(config: ConfigOf<ClassDefinition>) {
   const fields = {
-    name: (config as any)?.name,
-    type_parameters: (config as any)?.typeParameters,
-    superclasses: (config as any)?.superclasses,
-    body: (config as any)?.body,
+    name: config?.name,
+    type_parameters: config?.typeParameters,
+    superclasses: config?.superclasses,
+    body: config?.body,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -997,7 +997,7 @@ export function argumentList(..._children: any[]) {
 
 export function decoratedDefinition(config: ConfigOf<DecoratedDefinition>) {
   const fields = {
-    definition: (config as any)?.definition,
+    definition: config?.definition,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -1019,8 +1019,8 @@ export function decoratedDefinition(config: ConfigOf<DecoratedDefinition>) {
 
 export function decorator(config: ConfigOf<Decorator>) {
   const fields = {
-    expression: (config as any)?.expression,
-    newline: (config as any)?.newline,
+    expression: config?.expression,
+    newline: config?.newline,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -1212,8 +1212,8 @@ export function dictPattern(..._children: any[]) {
 
 export function keywordPattern(config: ConfigOf<KeywordPattern>) {
   const fields = {
-    identifier: (config as any)?.identifier,
-    simple_pattern: (config as any)?.simplePattern,
+    identifier: config?.identifier,
+    simple_pattern: config?.simplePattern,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -1236,7 +1236,7 @@ export function keywordPattern(config: ConfigOf<KeywordPattern>) {
 
 export function splatPattern(config: ConfigOf<SplatPattern>) {
   const fields = {
-    identifier: (config as any)?.identifier,
+    identifier: config?.identifier,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -1258,8 +1258,8 @@ export function splatPattern(config: ConfigOf<SplatPattern>) {
 
 export function classPattern(config: ConfigOf<ClassPattern>) {
   const fields = {
-    dotted_name: (config as any)?.dottedName,
-    arguments: (config as any)?.arguments,
+    dotted_name: config?.dottedName,
+    arguments: config?.arguments,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -1282,8 +1282,8 @@ export function classPattern(config: ConfigOf<ClassPattern>) {
 
 export function complexPattern(config: ConfigOf<ComplexPattern>) {
   const fields = {
-    real: (config as any)?.real,
-    imaginary: (config as any)?.imaginary,
+    real: config?.real,
+    imaginary: config?.imaginary,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -1400,8 +1400,8 @@ export function listPattern(child?: any) {
 
 export function defaultParameter(config: ConfigOf<DefaultParameter>) {
   const fields = {
-    name: (config as any)?.name,
-    value: (config as any)?.value,
+    name: config?.name,
+    value: config?.value,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -1424,9 +1424,9 @@ export function defaultParameter(config: ConfigOf<DefaultParameter>) {
 
 export function typedDefaultParameter(config: ConfigOf<TypedDefaultParameter>) {
   const fields = {
-    name: (config as any)?.name,
-    type: (config as any)?.type,
-    value: (config as any)?.value,
+    name: config?.name,
+    type: config?.type,
+    value: config?.value,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -1482,8 +1482,8 @@ export function dictionarySplatPattern(child?: any) {
 
 export function asPattern(config: ConfigOf<AsPattern>) {
   const fields = {
-    expression: (config as any)?.expression,
-    alias: (config as any)?.alias,
+    expression: config?.expression,
+    alias: config?.alias,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -1538,7 +1538,7 @@ export function primaryExpression(child?: any) {
 
 export function notOperator(config: ConfigOf<NotOperator>) {
   const fields = {
-    argument: (config as any)?.argument,
+    argument: config?.argument,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -1560,9 +1560,9 @@ export function notOperator(config: ConfigOf<NotOperator>) {
 
 export function booleanOperator(config: ConfigOf<BooleanOperator>) {
   const fields = {
-    left: (config as any)?.left,
-    operator: (config as any)?.operator,
-    right: (config as any)?.right,
+    left: config?.left,
+    operator: config?.operator,
+    right: config?.right,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -1586,9 +1586,9 @@ export function booleanOperator(config: ConfigOf<BooleanOperator>) {
 
 export function binaryOperator(config: ConfigOf<BinaryOperator>) {
   const fields = {
-    left: (config as any)?.left,
-    operator: (config as any)?.operator,
-    right: (config as any)?.right,
+    left: config?.left,
+    operator: config?.operator,
+    right: config?.right,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -1612,8 +1612,8 @@ export function binaryOperator(config: ConfigOf<BinaryOperator>) {
 
 export function unaryOperator(config: ConfigOf<UnaryOperator>) {
   const fields = {
-    operator: (config as any)?.operator,
-    argument: (config as any)?.argument,
+    operator: config?.operator,
+    argument: config?.argument,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -1658,8 +1658,8 @@ export function hiddenIsNot(text: string) {
 
 export function comparisonOperator(config: ConfigOf<ComparisonOperator>) {
   const fields = {
-    left: (config as any)?.left,
-    comparators: (config as any)?.comparators,
+    left: config?.left,
+    comparators: config?.comparators,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -1682,8 +1682,8 @@ export function comparisonOperator(config: ConfigOf<ComparisonOperator>) {
 
 export function lambda(config: ConfigOf<Lambda>) {
   const fields = {
-    parameters: (config as any)?.parameters,
-    body: (config as any)?.body,
+    parameters: config?.parameters,
+    body: config?.body,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -1706,8 +1706,8 @@ export function lambda(config: ConfigOf<Lambda>) {
 
 export function lambdaWithinForInClause(config: ConfigOf<LambdaWithinForInClause>) {
   const fields = {
-    parameters: (config as any)?.parameters,
-    body: (config as any)?.body,
+    parameters: config?.parameters,
+    body: config?.body,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -1735,7 +1735,7 @@ export function assignment(config?: ConfigOf<Assignment>) {
 }
 export function assignmentEq(config: ConfigOf<AssignmentEq>) {
   const fields = {
-    right: (config as any)?.right,
+    right: config?.right,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -1756,7 +1756,7 @@ export function assignmentEq(config: ConfigOf<AssignmentEq>) {
 }
 export function assignmentColon(config: ConfigOf<AssignmentColon>) {
   const fields = {
-    type: (config as any)?.type,
+    type: config?.type,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -1777,8 +1777,8 @@ export function assignmentColon(config: ConfigOf<AssignmentColon>) {
 }
 export function assignmentColon2(config: ConfigOf<AssignmentColon2>) {
   const fields = {
-    type: (config as any)?.type,
-    right: (config as any)?.right,
+    type: config?.type,
+    right: config?.right,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -1801,9 +1801,9 @@ export function assignmentColon2(config: ConfigOf<AssignmentColon2>) {
 
 export function augmentedAssignment(config: ConfigOf<AugmentedAssignment>) {
   const fields = {
-    left: (config as any)?.left,
-    operator: (config as any)?.operator,
-    right: (config as any)?.right,
+    left: config?.left,
+    operator: config?.operator,
+    right: config?.right,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -1858,8 +1858,8 @@ export function yield_(child?: any) {
 
 export function attribute(config: ConfigOf<Attribute>) {
   const fields = {
-    object: (config as any)?.object,
-    attribute: (config as any)?.attribute,
+    object: config?.object,
+    attribute: config?.attribute,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -1882,8 +1882,8 @@ export function attribute(config: ConfigOf<Attribute>) {
 
 export function subscript(config: ConfigOf<Subscript>) {
   const fields = {
-    value: (config as any)?.value,
-    subscript: (config as any)?.subscript,
+    value: config?.value,
+    subscript: config?.subscript,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -1906,9 +1906,9 @@ export function subscript(config: ConfigOf<Subscript>) {
 
 export function slice(config: ConfigOf<Slice>) {
   const fields = {
-    start: (config as any)?.start,
-    stop: (config as any)?.stop,
-    step: (config as any)?.step,
+    start: config?.start,
+    stop: config?.stop,
+    step: config?.step,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -1932,8 +1932,8 @@ export function slice(config: ConfigOf<Slice>) {
 
 export function call(config: ConfigOf<Call>) {
   const fields = {
-    function: (config as any)?.function,
-    arguments: (config as any)?.arguments,
+    function: config?.function,
+    arguments: config?.arguments,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -1956,7 +1956,7 @@ export function call(config: ConfigOf<Call>) {
 
 export function typedParameter(config: ConfigOf<TypedParameter>) {
   const fields = {
-    type: (config as any)?.type,
+    type: config?.type,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -1994,7 +1994,7 @@ export function type(child?: any) {
 
 export function splatType(config: ConfigOf<SplatType>) {
   const fields = {
-    identifier: (config as any)?.identifier,
+    identifier: config?.identifier,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -2016,8 +2016,8 @@ export function splatType(config: ConfigOf<SplatType>) {
 
 export function genericType(config: ConfigOf<GenericType>) {
   const fields = {
-    identifier: (config as any)?.identifier,
-    type_parameter: (config as any)?.typeParameter,
+    identifier: config?.identifier,
+    type_parameter: config?.typeParameter,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -2040,8 +2040,8 @@ export function genericType(config: ConfigOf<GenericType>) {
 
 export function unionType(config: ConfigOf<UnionType>) {
   const fields = {
-    left: (config as any)?.left,
-    right: (config as any)?.right,
+    left: config?.left,
+    right: config?.right,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -2064,8 +2064,8 @@ export function unionType(config: ConfigOf<UnionType>) {
 
 export function constrainedType(config: ConfigOf<ConstrainedType>) {
   const fields = {
-    base_type: (config as any)?.baseType,
-    constraint: (config as any)?.constraint,
+    base_type: config?.baseType,
+    constraint: config?.constraint,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -2088,8 +2088,8 @@ export function constrainedType(config: ConfigOf<ConstrainedType>) {
 
 export function memberType(config: ConfigOf<MemberType>) {
   const fields = {
-    base_type: (config as any)?.baseType,
-    identifier: (config as any)?.identifier,
+    base_type: config?.baseType,
+    identifier: config?.identifier,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -2112,8 +2112,8 @@ export function memberType(config: ConfigOf<MemberType>) {
 
 export function keywordArgument(config: ConfigOf<KeywordArgument>) {
   const fields = {
-    name: (config as any)?.name,
-    value: (config as any)?.value,
+    name: config?.name,
+    value: config?.value,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -2199,8 +2199,8 @@ export function dictionary(..._children: any[]) {
 
 export function pair(config: ConfigOf<Pair>) {
   const fields = {
-    key: (config as any)?.key,
-    value: (config as any)?.value,
+    key: config?.key,
+    value: config?.value,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -2223,7 +2223,7 @@ export function pair(config: ConfigOf<Pair>) {
 
 export function listComprehension(config: ConfigOf<ListComprehension>) {
   const fields = {
-    body: (config as any)?.body,
+    body: config?.body,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -2245,7 +2245,7 @@ export function listComprehension(config: ConfigOf<ListComprehension>) {
 
 export function dictionaryComprehension(config: ConfigOf<DictionaryComprehension>) {
   const fields = {
-    body: (config as any)?.body,
+    body: config?.body,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -2267,7 +2267,7 @@ export function dictionaryComprehension(config: ConfigOf<DictionaryComprehension
 
 export function setComprehension(config: ConfigOf<SetComprehension>) {
   const fields = {
-    body: (config as any)?.body,
+    body: config?.body,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -2289,7 +2289,7 @@ export function setComprehension(config: ConfigOf<SetComprehension>) {
 
 export function generatorExpression(config: ConfigOf<GeneratorExpression>) {
   const fields = {
-    body: (config as any)?.body,
+    body: config?.body,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -2357,8 +2357,8 @@ export function hiddenCollectionElements(..._children: any[]) {
 
 export function forInClause(config: ConfigOf<ForInClause>) {
   const fields = {
-    left: (config as any)?.left,
-    right: (config as any)?.right,
+    left: config?.left,
+    right: config?.right,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -2381,7 +2381,7 @@ export function forInClause(config: ConfigOf<ForInClause>) {
 
 export function ifClause(config: ConfigOf<IfClause>) {
   const fields = {
-    expression: (config as any)?.expression,
+    expression: config?.expression,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -2403,9 +2403,9 @@ export function ifClause(config: ConfigOf<IfClause>) {
 
 export function conditionalExpression(config: ConfigOf<ConditionalExpression>) {
   const fields = {
-    body: (config as any)?.body,
-    condition: (config as any)?.condition,
-    alternative: (config as any)?.alternative,
+    body: config?.body,
+    condition: config?.condition,
+    alternative: config?.alternative,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -2444,9 +2444,9 @@ export function concatenatedString(..._children: any[]) {
 
 export function string(config: ConfigOf<String>) {
   const fields = {
-    string_start: (config as any)?.stringStart,
-    content: (config as any)?.content,
-    string_end: (config as any)?.stringEnd,
+    string_start: config?.stringStart,
+    content: config?.content,
+    string_end: config?.stringEnd,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -2485,9 +2485,9 @@ export function stringContent(..._children: any[]) {
 
 export function interpolation(config: ConfigOf<Interpolation>) {
   const fields = {
-    expression: (config as any)?.expression,
-    type_conversion: (config as any)?.typeConversion,
-    format_specifier: (config as any)?.formatSpecifier,
+    expression: config?.expression,
+    type_conversion: config?.typeConversion,
+    format_specifier: config?.formatSpecifier,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -2625,7 +2625,7 @@ export function none() {
 
 export function await_(config: ConfigOf<Await>) {
   const fields = {
-    primary_expression: (config as any)?.primaryExpression,
+    primary_expression: config?.primaryExpression,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -2685,9 +2685,9 @@ export function asPatternTarget(child?: any) {
 
 export function formatExpression(config: ConfigOf<FormatExpression>) {
   const fields = {
-    expression: (config as any)?.expression,
-    type_conversion: (config as any)?.typeConversion,
-    format_specifier: (config as any)?.formatSpecifier,
+    expression: config?.expression,
+    type_conversion: config?.typeConversion,
+    format_specifier: config?.formatSpecifier,
   };
   const children = (config as any)?.children ?? [];
   return {
