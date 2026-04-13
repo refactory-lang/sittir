@@ -1739,7 +1739,7 @@ export function assignmentEq(config: ConfigOf<AssignmentEq>) {
   };
   const children = (config as any)?.children ?? [];
   return {
-    type: 'assignment_eq' as const,
+    type: 'assignment' as const,
     named: true as const,
     fields,
     children,
@@ -1760,7 +1760,7 @@ export function assignmentColon(config: ConfigOf<AssignmentColon>) {
   };
   const children = (config as any)?.children ?? [];
   return {
-    type: 'assignment_colon' as const,
+    type: 'assignment' as const,
     named: true as const,
     fields,
     children,
@@ -1782,7 +1782,7 @@ export function assignmentColon2(config: ConfigOf<AssignmentColon2>) {
   };
   const children = (config as any)?.children ?? [];
   return {
-    type: 'assignment_colon2' as const,
+    type: 'assignment' as const,
     named: true as const,
     fields,
     children,

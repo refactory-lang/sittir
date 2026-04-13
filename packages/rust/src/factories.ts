@@ -2669,7 +2669,7 @@ export function closureExpressionBody(config: ConfigOf<ClosureExpressionBody>) {
   };
   const children = (config as any)?.children ?? [];
   return {
-    type: 'closure_expression_body' as const,
+    type: 'closure_expression' as const,
     named: true as const,
     fields,
     children,
@@ -2691,7 +2691,7 @@ export function closureExpressionBody2(config: ConfigOf<ClosureExpressionBody2>)
   };
   const children = (config as any)?.children ?? [];
   return {
-    type: 'closure_expression_body2' as const,
+    type: 'closure_expression' as const,
     named: true as const,
     fields,
     children,
@@ -3086,7 +3086,7 @@ export function fieldPatternName(config: ConfigOf<FieldPatternName>) {
   };
   const children = (config as any)?.children ?? [];
   return {
-    type: 'field_pattern_name' as const,
+    type: 'field_pattern' as const,
     named: true as const,
     fields,
     children,
@@ -3108,7 +3108,7 @@ export function fieldPatternColon(config: ConfigOf<FieldPatternColon>) {
   };
   const children = (config as any)?.children ?? [];
   return {
-    type: 'field_pattern_colon' as const,
+    type: 'field_pattern' as const,
     named: true as const,
     fields,
     children,
@@ -3160,7 +3160,7 @@ export function rangePatternLeft(config: ConfigOf<RangePatternLeft>) {
   };
   const children = (config as any)?.children ?? [];
   return {
-    type: 'range_pattern_left' as const,
+    type: 'range_pattern' as const,
     named: true as const,
     fields,
     children,
@@ -3182,7 +3182,7 @@ export function rangePatternRight(config: ConfigOf<RangePatternRight>) {
   };
   const children = (config as any)?.children ?? [];
   return {
-    type: 'range_pattern_right' as const,
+    type: 'range_pattern' as const,
     named: true as const,
     fields,
     children,

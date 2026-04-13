@@ -734,12 +734,16 @@ export class AssembledBranch extends AssembledNodeBase {
  * nodes that carry fields + children and produce a fluent-API factory.
  */
 function emitFieldCarryingFactory(
-    node: AssembledNodeBase & { kind: string; typeName: string; fields: AssembledField[]; children?: AssembledChild[] | readonly AssembledChild[] },
+    node: AssembledNodeBase & { kind: string; typeName: string; fields: AssembledField[]; children?: AssembledChild[] | readonly AssembledChild[]; parentKind?: string },
     fields: AssembledField[],
 ): string {
     const fn = node.rawFactoryName!
     const hasFields = fields.length > 0
     const opt = fields.some(f => f.required) ? '' : '?'
+    // Polymorph forms emit their parent's kind as the NodeData type so the
+    // runtime value matches what tree-sitter produces. Non-form nodes
+    // (branches, standalone groups) use their own kind.
+    const typeKind = node.parentKind ?? node.kind
     const lines: string[] = []
     lines.push(`export function ${fn}(config${opt}: ConfigOf<${node.typeName}>) {`)
 
@@ -755,7 +759,7 @@ function emitFieldCarryingFactory(
     lines.push('  const children = (config as any)?.children ?? [];')
 
     lines.push('  return {')
-    lines.push(`    type: '${node.kind}' as const,`)
+    lines.push(`    type: '${typeKind}' as const,`)
     lines.push('    named: true as const,')
     if (hasFields) lines.push('    fields,')
     lines.push('    children,')
@@ -1167,6 +1171,14 @@ export class AssembledGroup extends AssembledNodeBase {
     readonly detectToken?: string
     /** Short label (e.g., variant name like 'pub' or 'tuple'). Defaults to kind. */
     readonly name: string
+    /**
+     * When this group is a polymorph form, the parent polymorph's kind —
+     * what tree-sitter actually produces for this node. Form factories
+     * must emit `type: parentKind` so the runtime NodeData matches the
+     * tree-sitter kind, not the synthesized form kind. Undefined for
+     * standalone groups (inlined hidden seqs).
+     */
+    readonly parentKind?: string
 
     #fields?: AssembledField[]
     #children?: AssembledChild[]
@@ -1176,11 +1188,13 @@ export class AssembledGroup extends AssembledNodeBase {
         rule: Rule
         detectToken?: string
         name?: string
+        parentKind?: string
     }) {
         super(init)
         this.rule = init.rule
         this.detectToken = init.detectToken
         this.name = init.name ?? init.kind
+        this.parentKind = init.parentKind
     }
 
     get fields(): AssembledField[] {

@@ -125,7 +125,7 @@ export function exportStatementForm0(config: ConfigOf<ExportStatementForm0>) {
   };
   const children = (config as any)?.children ?? [];
   return {
-    type: 'export_statement_form_0' as const,
+    type: 'export_statement' as const,
     named: true as const,
     fields,
     children,
@@ -145,7 +145,7 @@ export function exportStatementForm0(config: ConfigOf<ExportStatementForm0>) {
 export function exportStatementExport(config?: ConfigOf<ExportStatementExport>) {
   const children = (config as any)?.children ?? [];
   return {
-    type: 'export_statement_export' as const,
+    type: 'export_statement' as const,
     named: true as const,
     children,
     getChildren() { return children; },
@@ -161,7 +161,7 @@ export function exportStatementExport(config?: ConfigOf<ExportStatementExport>) 
 export function exportStatementExport2(config?: ConfigOf<ExportStatementExport2>) {
   const children = (config as any)?.children ?? [];
   return {
-    type: 'export_statement_export2' as const,
+    type: 'export_statement' as const,
     named: true as const,
     children,
     getChildren() { return children; },
@@ -177,7 +177,7 @@ export function exportStatementExport2(config?: ConfigOf<ExportStatementExport2>
 export function exportStatementExport3(config?: ConfigOf<ExportStatementExport3>) {
   const children = (config as any)?.children ?? [];
   return {
-    type: 'export_statement_export3' as const,
+    type: 'export_statement' as const,
     named: true as const,
     children,
     getChildren() { return children; },
@@ -364,7 +364,7 @@ export function importSpecifierName(config: ConfigOf<ImportSpecifierName>) {
   };
   const children = (config as any)?.children ?? [];
   return {
-    type: 'import_specifier_name' as const,
+    type: 'import_specifier' as const,
     named: true as const,
     fields,
     children,
@@ -386,7 +386,7 @@ export function importSpecifierAs(config: ConfigOf<ImportSpecifierAs>) {
   };
   const children = (config as any)?.children ?? [];
   return {
-    type: 'import_specifier_as' as const,
+    type: 'import_specifier' as const,
     named: true as const,
     fields,
     children,
@@ -1010,7 +1010,7 @@ export function parenthesizedExpressionExpression(config: ConfigOf<Parenthesized
   };
   const children = (config as any)?.children ?? [];
   return {
-    type: 'parenthesized_expression_expression' as const,
+    type: 'parenthesized_expression' as const,
     named: true as const,
     fields,
     children,
@@ -1028,7 +1028,7 @@ export function parenthesizedExpressionExpression(config: ConfigOf<Parenthesized
 export function parenthesizedExpressionSequenceExpression(config?: ConfigOf<ParenthesizedExpressionSequenceExpression>) {
   const children = (config as any)?.children ?? [];
   return {
-    type: 'parenthesized_expression_sequence_expression' as const,
+    type: 'parenthesized_expression' as const,
     named: true as const,
     children,
     getChildren() { return children; },
@@ -1593,7 +1593,7 @@ export function arrowFunctionParameter(config: ConfigOf<ArrowFunctionParameter>)
   };
   const children = (config as any)?.children ?? [];
   return {
-    type: 'arrow_function_parameter' as const,
+    type: 'arrow_function' as const,
     named: true as const,
     fields,
     children,
@@ -1611,7 +1611,7 @@ export function arrowFunctionParameter(config: ConfigOf<ArrowFunctionParameter>)
 export function arrowFunctionUCallSignature(config?: ConfigOf<ArrowFunctionUCallSignature>) {
   const children = (config as any)?.children ?? [];
   return {
-    type: 'arrow_function__call_signature' as const,
+    type: 'arrow_function' as const,
     named: true as const,
     children,
     getChildren() { return children; },
@@ -1638,7 +1638,7 @@ export function callExpressionFunction(config: ConfigOf<CallExpressionFunction>)
   };
   const children = (config as any)?.children ?? [];
   return {
-    type: 'call_expression_function' as const,
+    type: 'call_expression' as const,
     named: true as const,
     fields,
     children,
@@ -1662,7 +1662,7 @@ export function callExpressionFunction2(config: ConfigOf<CallExpressionFunction2
   };
   const children = (config as any)?.children ?? [];
   return {
-    type: 'call_expression_function2' as const,
+    type: 'call_expression' as const,
     named: true as const,
     fields,
     children,
@@ -1686,7 +1686,7 @@ export function callExpressionTokQDot(config: ConfigOf<CallExpressionTokQDot>) {
   };
   const children = (config as any)?.children ?? [];
   return {
-    type: 'call_expression_tok_q_dot' as const,
+    type: 'call_expression' as const,
     named: true as const,
     fields,
     children,
@@ -4031,7 +4031,7 @@ export function indexSignatureColon(config: ConfigOf<IndexSignatureColon>) {
   };
   const children = (config as any)?.children ?? [];
   return {
-    type: 'index_signature_colon' as const,
+    type: 'index_signature' as const,
     named: true as const,
     fields,
     children,
@@ -4050,7 +4050,7 @@ export function indexSignatureColon(config: ConfigOf<IndexSignatureColon>) {
 export function indexSignatureMappedTypeClause(config?: ConfigOf<IndexSignatureMappedTypeClause>) {
   const children = (config as any)?.children ?? [];
   return {
-    type: 'index_signature_mapped_type_clause' as const,
+    type: 'index_signature' as const,
     named: true as const,
     children,
     getChildren() { return children; },

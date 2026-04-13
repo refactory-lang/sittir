@@ -69,6 +69,7 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
                         irKey: formNames.irKey,
                         rule: form.content,
                         name: disambiguated,
+                        parentKind: kind,
                     })
                 })
                 for (const form of forms) nodes.set(form.kind, form)
@@ -158,24 +159,58 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
  * pass claims keys in nodeMap iteration order.
  */
 function resolveIrKeys(nodes: Map<string, AssembledNode>): void {
+    // Two-phase claim:
+    // Phase 1 — "short form is the full name". Any node whose short
+    //   irKey equals its own factoryName gets first dibs (it has nothing
+    //   to fall back to that wouldn't also collide). Examples: `expression`,
+    //   `as_pattern` (→ `asPattern`), `module` (→ `module`). This forces
+    //   suffix-stripped collisions (e.g. `expression_statement` → `expression`)
+    //   to lose to the genuinely-short kind.
+    // Phase 2 — "short form is a strip of the full name". These have a
+    //   distinct factoryName fallback (e.g. `expression_statement` →
+    //   `expressionStatement`).
+    // Within each phase, hidden (`_`-prefixed) kinds sort after non-hidden
+    // so visible kinds claim the short key and hidden ones get `hiddenX`.
     const claimed = new Set<string>()
-    for (const [, node] of nodes) {
+    const phase1: AssembledNode[] = []
+    const phase2: AssembledNode[] = []
+    for (const node of nodes.values()) {
         if (!node.factoryName) continue
-        // Synthesised polymorph form groups live under their parent's
-        // variant dispatch, not as top-level ir keys.
         if (node.modelType === 'group') continue
+        const short = shortenIrKey(node.kind)
+        if (short === node.factoryName) phase1.push(node)
+        else phase2.push(node)
+    }
+    const hiddenSort = (a: AssembledNode, b: AssembledNode) => {
+        const aHidden = a.kind.startsWith('_') ? 1 : 0
+        const bHidden = b.kind.startsWith('_') ? 1 : 0
+        return aHidden - bHidden
+    }
+    phase1.sort(hiddenSort)
+    phase2.sort(hiddenSort)
 
+    const assign = (node: AssembledNode) => {
         const short = shortenIrKey(node.kind)
         if (!claimed.has(short)) {
             claimed.add(short)
             node.irKey = short
-            continue
+            return
         }
-        // Collision — fall back to the full factory name.
-        const full = node.factoryName
-        claimed.add(full)
-        node.irKey = full
+        // Collision — fall back to the full factory name. For hidden
+        // kinds this is `hiddenX`, distinct from the visible short form.
+        let full = node.factoryName!
+        // Extremely rare: even the full name collides (two kinds normalise
+        // to the same factoryName). Suffix with `_N` to guarantee uniqueness.
+        let candidate = full
+        let n = 2
+        while (claimed.has(candidate)) {
+            candidate = `${full}${n++}`
+        }
+        claimed.add(candidate)
+        node.irKey = candidate
     }
+    for (const node of phase1) assign(node)
+    for (const node of phase2) assign(node)
 }
 
 function shortenIrKey(kind: string): string {

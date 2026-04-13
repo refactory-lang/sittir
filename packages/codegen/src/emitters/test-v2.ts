@@ -68,7 +68,14 @@ function emitBranchTest(lines: string[], node: AssembledNode, kind: string, key:
         }
     }
     if (node.children && node.children.length > 0) {
-        configParts.push(`children: [] as any`)
+        // Non-empty dummy so branches with `$$$CHILDREN`-only templates
+        // render to a non-empty string. Use the first content type of
+        // the first child slot as the dummy kind.
+        const firstKind = node.children[0]?.contentTypes[0]
+        const dummy = firstKind
+            ? `{ type: '${firstKind}', text: 'test' } as any`
+            : `'test' as any`
+        configParts.push(`children: [${dummy}] as any`)
     }
 
     const configArg = configParts.length > 0 ? `{ ${configParts.join(', ')} }` : '{}'
@@ -151,7 +158,16 @@ function emitEnumTest(lines: string[], node: AssembledNode, kind: string, key: s
 }
 
 function dummyValue(field: AssembledField): string {
-    if (field.multiple) return '[]'
+    // Multiple fields need a non-empty dummy array so templates with
+    // `$FIELD`/`joinBy` produce non-empty output; otherwise the generated
+    // `render produces non-empty string` test fails for kinds where
+    // every required field is multiple.
+    if (field.multiple) {
+        if (field.contentTypes.length > 0) {
+            return `[{ type: '${field.contentTypes[0]}', text: 'test' } as any]`
+        }
+        return `['test' as any]`
+    }
     if (field.contentTypes.length > 0) {
         // Use first content type to generate a dummy
         return `{ type: '${field.contentTypes[0]}', text: 'test' } as any`

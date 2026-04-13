@@ -141,7 +141,7 @@ Each emitter's entry point changes from `emitX(config: { grammar, nodes: Hydrate
 - [x] T042b [P] Rewrite `emitters/client-utils.ts`: entry `emitUtils(nodeMap: NodeMap) → string`. Emit `isNodeData`, `_inferBranch`, `_BRANCH_FIELDS`. Remove imports from `node-model.ts`.
 - [x] T042c [P] Rewrite `emitters/test-new.ts`: entry `emitTests(nodeMap: NodeMap) → string`. Per-kind test generation using `AssembledNode.modelType`. Remove imports from `node-model.ts` and `naming.ts`.
 - [x] T042d [P] Rewrite `emitters/type-test.ts`: entry `emitTypeTests(nodeMap: NodeMap) → string`. Type assertion tests. Remove imports from `node-model.ts` and `naming.ts`.
-- [ ] T042e [P] Rewrite `emitters/config.ts`: entry `emitConfig(nodeMap: NodeMap) → string`. Remove imports from `node-model.ts`.
+- [x] T042e [P] `emitters/config.ts` — already NodeMap-compatible (takes only `{ grammar }`, never imported from `node-model.ts`). No rewrite needed.
 - [ ] T042f Create `emitters/suggested.ts`: entry `emitSuggestedOverrides(linked: LinkedGrammar) → string`. Emit `overrides.suggested.ts` as a grammar extension from `linked.suggestedOverrides`. Each entry includes derivation source and confidence in comments.
 
 ### Phase 2g-verify: Emitter NodeMap-only enforcement
