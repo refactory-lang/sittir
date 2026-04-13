@@ -579,6 +579,18 @@ export abstract class AssembledNodeBase {
         if (this.factoryName === undefined) return undefined
         return `${this.factoryName}From`
     }
+
+    /**
+     * Emit the templates.yaml entry for this node. Returns `undefined`
+     * for nodes that don't need a template (leaves/keywords/enums/tokens
+     * render via `.text` directly; supertypes dispatch through their
+     * concrete subtype). Structural subclasses (AssembledBranch,
+     * AssembledContainer, AssembledGroup, AssembledPolymorph) override
+     * this to walk their rule tree and produce the right shape.
+     */
+    renderTemplate(): Record<string, unknown> | undefined {
+        return undefined
+    }
 }
 
 export interface AssembledField {
@@ -632,6 +644,20 @@ export class AssembledBranch extends AssembledNodeBase {
     get children(): AssembledChild[] | undefined {
         return this.#children ??= deriveChildren(this.rule)
     }
+
+    renderTemplate(): Record<string, unknown> {
+        const { template, clauses } = renderRuleTemplate(this.rule)
+        if (!template) {
+            throw new Error(
+                `AssembledBranch.renderTemplate: '${this.kind}' produced an empty template. ` +
+                `Rule has no visible content — should have been classified as leaf/token.`,
+            )
+        }
+        const entry: Record<string, unknown> = { template, ...clauses }
+        const sep = findRepeatSeparator(this.rule)
+        if (sep) entry.joinBy = sep
+        return entry
+    }
 }
 
 export class AssembledContainer extends AssembledNodeBase {
@@ -656,6 +682,20 @@ export class AssembledContainer extends AssembledNodeBase {
         // Separator is captured on the repeat rule by Evaluate
         return this.rule.type === 'repeat' ? this.rule.separator : undefined
     }
+
+    renderTemplate(): Record<string, unknown> {
+        const { template, clauses } = renderRuleTemplate(this.rule)
+        if (!template) {
+            throw new Error(
+                `AssembledContainer.renderTemplate: '${this.kind}' produced an empty template. ` +
+                `Rule has no visible content — should have been classified as leaf/token.`,
+            )
+        }
+        const entry: Record<string, unknown> = { template, ...clauses }
+        const sep = this.separator ?? findRepeatSeparator(this.rule)
+        if (sep) entry.joinBy = sep
+        return entry
+    }
 }
 
 export class AssembledPolymorph extends AssembledNodeBase {
@@ -672,6 +712,36 @@ export class AssembledPolymorph extends AssembledNodeBase {
 
     /** A polymorph's forms are hidden groups synthesized from the choice branches. */
     get forms(): AssembledGroup[] { return this.#forms }
+
+    renderTemplate(): Record<string, unknown> {
+        if (this.#forms.length === 0) {
+            throw new Error(
+                `AssembledPolymorph.renderTemplate: '${this.kind}' has zero synthesised forms. ` +
+                `Classifier bug — rule should have been classified as branch/container/leaf.`,
+            )
+        }
+        // Variants as a record, detect as a sibling record, per-form
+        // clauses merged into the outer rule object (the renderer looks
+        // them up there regardless of which variant is active).
+        const variants: Record<string, string> = {}
+        const detect: Record<string, string> = {}
+        const mergedClauses: Record<string, string> = {}
+        for (const form of this.#forms) {
+            const { template, clauses } = renderRuleTemplate(form.rule)
+            if (!template) {
+                throw new Error(
+                    `AssembledPolymorph.renderTemplate: '${this.kind}' form '${form.name}' ` +
+                    `produced an empty template.`,
+                )
+            }
+            variants[form.name] = template
+            if (form.detectToken) detect[form.name] = form.detectToken
+            Object.assign(mergedClauses, clauses)
+        }
+        const entry: Record<string, unknown> = { variants, ...mergedClauses }
+        if (Object.keys(detect).length > 0) entry.detect = detect
+        return entry
+    }
 }
 
 export class AssembledLeaf extends AssembledNodeBase {
@@ -773,6 +843,20 @@ export class AssembledGroup extends AssembledNodeBase {
     get children(): AssembledChild[] {
         return this.#children ??= deriveChildren(this.rule)
     }
+
+    renderTemplate(): Record<string, unknown> {
+        const { template, clauses } = renderRuleTemplate(this.rule)
+        if (!template) {
+            throw new Error(
+                `AssembledGroup.renderTemplate: '${this.kind}' produced an empty template. ` +
+                `Rule has no visible content — should have been classified as leaf/token.`,
+            )
+        }
+        const entry: Record<string, unknown> = { template, ...clauses }
+        const sep = findRepeatSeparator(this.rule)
+        if (sep) entry.joinBy = sep
+        return entry
+    }
 }
 
 export type AssembledNode =
@@ -803,4 +887,232 @@ export interface NodeMap {
     readonly nodes: Map<string, AssembledNode>
     readonly signatures: SignaturePool
     readonly projections: ProjectionContext
+}
+
+// ---------------------------------------------------------------------------
+// Template walker — shared by AssembledBranch/Container/Group.renderTemplate
+// ---------------------------------------------------------------------------
+//
+// Walks a Rule subtree producing a template string + any clause sub-
+// templates. A ClauseRule becomes a `$NAME_CLAUSE` placeholder plus an
+// entry in the `clauses` map — the renderer drops the whole clause at
+// runtime when the referenced field is absent, handling constructs like
+// python's `return_type_clause: -> $RETURN_TYPE`.
+
+interface WalkResult {
+    template: string
+    clauses: Record<string, string>
+}
+
+export function renderRuleTemplate(rule: Rule, inRepeat = false): WalkResult {
+    const clauses: Record<string, string> = {}
+    const parts = walkRuleForTemplate(rule, new Set(), inRepeat, clauses)
+    return { template: parts.join(''), clauses }
+}
+
+function walkRuleForTemplate(
+    rule: Rule,
+    seen: Set<string>,
+    inRepeat: boolean,
+    clauses: Record<string, string>,
+): string[] {
+    switch (rule.type) {
+        case 'seq': {
+            const out: string[] = []
+            for (const m of rule.members) {
+                const parts = walkRuleForTemplate(m, seen, inRepeat, clauses)
+                if (out.length > 0 && parts.length > 0) {
+                    const lastChar = out[out.length - 1]!.slice(-1)
+                    const firstChar = parts[0]!.charAt(0)
+                    if (needsSpace(lastChar, firstChar)) out.push(' ')
+                }
+                out.push(...parts)
+            }
+            return out
+        }
+
+        case 'choice':
+            // For choice in a template, emit the first non-empty member.
+            for (const m of rule.members) {
+                const parts = walkRuleForTemplate(m, seen, inRepeat, clauses)
+                if (parts.length > 0) return parts
+            }
+            return []
+
+        case 'optional':
+            // `optional(',')` and friends — pure punctuation in an optional
+            // wrapper is context-dependent and including it unconditionally
+            // produces invalid output (python: `match X,:`). Skip the
+            // whole optional when its content has no field/symbol ref.
+            if (containsOnlyPunctuation(rule.content)) return []
+            return walkRuleForTemplate(rule.content, seen, inRepeat, clauses)
+
+        case 'repeat':
+            return walkRuleForTemplate(rule.content, seen, true, clauses)
+
+        case 'field': {
+            if (seen.has(rule.name)) return []
+            seen.add(rule.name)
+            const varName = rule.name.toUpperCase()
+            // Fields inside a repeat are multi-valued — emit `$$$NAME` so
+            // the renderer joins instances with the rule's joinBy separator.
+            return [inRepeat ? `$$$${varName}` : `$${varName}`]
+        }
+
+        case 'symbol':
+            // Hidden symbols (supertype refs) dispatch to concrete children
+            // at parse time, so they still contribute to the template as
+            // a children-reference placeholder.
+            if (seen.has('children')) return []
+            seen.add('children')
+            return ['$$$CHILDREN']
+
+        case 'string':
+            if (inRepeat) return [] // joinBy handles separators
+            return [rule.value]
+
+        case 'pattern': {
+            // Extract a representative literal from the regex — delimiter
+            // tokens like `[bc]?"` (rust string_literal prefix) need their
+            // literal tail in the template so round-trip reparse works.
+            const lit = representativeLiteral(rule.value)
+            return lit ? [lit] : []
+        }
+
+        case 'enum':
+            return rule.values.length > 0 ? [rule.values[0]!] : []
+
+        case 'variant':
+            return walkRuleForTemplate(rule.content, seen, inRepeat, clauses)
+
+        case 'clause': {
+            // Emit a separate sub-template and reference it from the main
+            // template as `$NAME_CLAUSE`. Fresh seen set for clause body
+            // so fields don't collide with main-template tracking.
+            if (seen.has(rule.name)) return []
+            seen.add(rule.name)
+            const clauseSeen = new Set<string>()
+            const clauseParts = walkRuleForTemplate(rule.content, clauseSeen, inRepeat, clauses)
+            const clauseTemplate = clauseParts.join('')
+            if (clauseTemplate) clauses[rule.name] = clauseTemplate
+            return [`$${rule.name.toUpperCase()}_CLAUSE`]
+        }
+
+        case 'group':
+            return walkRuleForTemplate(rule.content, seen, inRepeat, clauses)
+
+        case 'supertype':
+            if (seen.has('children')) return []
+            seen.add('children')
+            return ['$$$CHILDREN']
+
+        case 'indent':
+            return ['\n  ']
+        case 'dedent':
+            return ['\n']
+        case 'newline':
+            return ['\n']
+
+        default:
+            return []
+    }
+}
+
+/**
+ * True if `rule` contains only string/pattern/whitespace terminals —
+ * no fields, no symbols, no enum/supertype refs. Drives the
+ * `optional(...)` skip heuristic in the template walker.
+ */
+function containsOnlyPunctuation(rule: Rule): boolean {
+    switch (rule.type) {
+        case 'string':
+        case 'pattern':
+        case 'indent':
+        case 'dedent':
+        case 'newline':
+            return true
+        case 'field':
+        case 'symbol':
+        case 'supertype':
+        case 'enum':
+            return false
+        case 'seq':
+        case 'choice':
+            return rule.members.every(containsOnlyPunctuation)
+        case 'optional':
+        case 'repeat':
+        case 'repeat1':
+        case 'variant':
+        case 'clause':
+        case 'group':
+            return containsOnlyPunctuation(rule.content)
+        default:
+            return false
+    }
+}
+
+/**
+ * Extract a representative literal from a regex pattern. Strips
+ * character classes, quantifiers, escapes, and alternations; returns
+ * whatever literal characters remain. Best-effort — grammar authors
+ * with unusual tokens can add an override to supply a template.
+ *
+ *   `[bc]?"`   → `"`    (rust string_literal prefix+quote)
+ *   `r"#*"`    → `r"`   (raw string marker — quantifier drops)
+ *   `/\\d+/`    → ``     (pure regex content, no literal tail)
+ *   `0[xX]`    → `0`    (literal head, class tail)
+ */
+function representativeLiteral(regex: string): string {
+    let s = regex
+    s = s.replace(/\\(.)/g, (_, c) => (/[dwWsSbBnrtfv0]/.test(c) ? '' : c))
+    s = s.replace(/\[[^\]]*\][*+?]?/g, '')
+    s = s.replace(/\([^)]*\)[*+?]?/g, '')
+    s = s.replace(/\{\d+(,\d*)?\}/g, '')
+    s = s.replace(/[.*+?|^$]/g, '')
+    return s
+}
+
+/**
+ * Walk a rule tree looking for the first repeat-with-separator. Used by
+ * structural nodes to propagate tree-sitter's `sepBy` / `repSeq`
+ * separator hints onto their joinBy slot so `$$$CHILDREN` renders
+ * with the right glue.
+ */
+export function findRepeatSeparator(rule: Rule): string | undefined {
+    switch (rule.type) {
+        case 'repeat':
+            if (rule.separator) return rule.separator
+            return findRepeatSeparator(rule.content)
+        case 'seq':
+        case 'choice':
+            for (const m of rule.members) {
+                const sep = findRepeatSeparator(m)
+                if (sep) return sep
+            }
+            return undefined
+        case 'optional':
+        case 'variant':
+        case 'clause':
+        case 'group':
+        case 'field':
+            return findRepeatSeparator(rule.content)
+        default:
+            return undefined
+    }
+}
+
+const TEMPLATE_WORD = /\w/
+
+/**
+ * Should we insert a space separator between two adjacent template
+ * fragments? Placeholders (`$FOO`, `$$$CHILDREN`) are treated as
+ * word-like on the `$`-starting side — they WILL render to user
+ * content at runtime and the common case is word content. Without a
+ * space we'd merge two tokens (`mod english` → `modenglish`).
+ */
+function needsSpace(prev: string, next: string): boolean {
+    if (!prev || !next) return false
+    const prevIsWordLike = TEMPLATE_WORD.test(prev)
+    const nextIsWordLike = TEMPLATE_WORD.test(next) || next === '$'
+    return prevIsWordLike && nextIsWordLike
 }
