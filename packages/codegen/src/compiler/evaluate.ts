@@ -354,7 +354,13 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
         opts = options
     }
 
-    const refs: SymbolRef[] = []
+    // Seed the refs array with the base grammar's references so the
+    // diagnostic derivations in Link can see the full reference graph,
+    // not just the handful of refs introduced by override callbacks.
+    // Refs from rules the override REPLACES will be filtered below.
+    const refs: SymbolRef[] = baseGrammar?.references
+        ? [...baseGrammar.references]
+        : []
     const rules: Record<string, Rule> = { ...baseRules }
 
     // Build the rule name set for proxy validation

@@ -62,6 +62,11 @@ export function link(raw: RawGrammar): LinkedGrammar {
         }
     }
 
+    // Reference-graph diagnostic derivations — produce
+    // SuggestedOverride[] entries for the suggested.ts emitter.
+    // See `deriveSuggestedOverrides` for the full set of analyses.
+    const suggestedOverrides = deriveSuggestedOverrides(rules, references, supertypes)
+
     return {
         name: raw.name,
         rules,
@@ -69,7 +74,134 @@ export function link(raw: RawGrammar): LinkedGrammar {
         externalRoles,
         word: raw.word,
         references,
+        suggestedOverrides,
     }
+}
+
+// ---------------------------------------------------------------------------
+// deriveSuggestedOverrides — diagnostic derivations from the reference graph
+// ---------------------------------------------------------------------------
+//
+// Walks the symbol-reference graph (already enriched by Evaluate) and emits
+// suggested override entries for grammar curators. Each suggestion carries
+// its derivation source ("field-name-inference", "global-optionality", etc.)
+// and a confidence rating so the curator can decide whether to apply it.
+//
+// Currently implemented derivations:
+//   1. field-name-inference       — symbol used as same field in N parents
+//                                   → suggest that field name for unnamed uses
+//   2. global-optionality         — symbol always optional → flag as inherent
+//   3. naming-consistency         — symbol uses 2+ field names across parents
+//                                   → flag (no suggestion, just diagnostic)
+//
+// Deferred for follow-up (see T020 in tasks.md):
+//   - synthetic supertype detection (needs field content overlap analysis)
+//   - override inference / candidate quality
+//   - separator consistency (separator field not on SymbolRef yet)
+// ---------------------------------------------------------------------------
+
+function deriveSuggestedOverrides(
+    rules: Record<string, Rule>,
+    references: SymbolRef[],
+    supertypes: Set<string>,
+): SuggestedOverride[] {
+    const out: SuggestedOverride[] = []
+
+    // Group references by `to` (the symbol being referenced). Each group
+    // tells us "where is this symbol used across the grammar?"
+    const refsByTo = new Map<string, SymbolRef[]>()
+    for (const ref of references) {
+        const list = refsByTo.get(ref.to) ?? []
+        list.push(ref)
+        refsByTo.set(ref.to, list)
+    }
+
+    for (const [to, refs] of refsByTo) {
+        // Skip symbols with too few references for any meaningful inference.
+        if (refs.length < 2) continue
+        // Skip references TO a supertype kind — those refs flow through
+        // hidden dispatch and don't have a single "field name" identity.
+        if (supertypes.has(to)) continue
+
+        // --- Derivation 1: field name inference -----------------------
+        // Count how often each fieldName appears across the parents that
+        // reference this symbol. If 5+ parents use the same name with
+        // ≥80% agreement, suggest that name for parents that don't have
+        // one (i.e. references with fieldName === undefined).
+        const namedRefs = refs.filter(r => r.fieldName !== undefined)
+        const unnamedRefs = refs.filter(r => r.fieldName === undefined)
+        if (namedRefs.length >= 5 && unnamedRefs.length > 0) {
+            const nameCounts = new Map<string, number>()
+            for (const r of namedRefs) {
+                nameCounts.set(r.fieldName!, (nameCounts.get(r.fieldName!) ?? 0) + 1)
+            }
+            // Pick the modal field name.
+            let bestName = ''
+            let bestCount = 0
+            for (const [name, count] of nameCounts) {
+                if (count > bestCount) {
+                    bestName = name
+                    bestCount = count
+                }
+            }
+            const agreement = bestCount / namedRefs.length
+            if (agreement >= 0.8) {
+                const confidence = agreement >= 0.95 ? 'high'
+                    : agreement >= 0.85 ? 'medium' : 'low'
+                for (const ref of unnamedRefs) {
+                    if (!rules[ref.from]) continue // parent rule was inlined / removed
+                    out.push({
+                        kind: ref.from,
+                        path: ref.position !== undefined ? [ref.position] : [],
+                        rule: { type: 'symbol', name: to } as Rule,
+                        derivation: `field-name-inference: ${bestCount}/${namedRefs.length} parents use field('${bestName}', $.${to})`,
+                        confidence,
+                    })
+                }
+            }
+        }
+
+        // --- Derivation 2: global optionality -------------------------
+        // If every reference to this symbol is optional, the symbol is
+        // inherently optional and the grammar curator may want to mark it
+        // as such (or, more practically, drop the per-site optional and
+        // make the rule itself default-optional).
+        if (refs.length >= 3 && refs.every(r => r.optional === true)) {
+            // Emit one suggestion per parent where the optional could be
+            // hoisted. Use the first reference as the canonical position.
+            const ref = refs[0]!
+            if (rules[ref.from]) {
+                out.push({
+                    kind: to,
+                    path: [],
+                    rule: { type: 'symbol', name: to } as Rule,
+                    derivation: `global-optionality: every one of ${refs.length} references to '${to}' is optional — consider making it inherently optional`,
+                    confidence: 'medium',
+                })
+            }
+        }
+
+        // --- Derivation 3: naming consistency (diagnostic only) -------
+        // If the same symbol is referenced under 2+ distinct field names
+        // (and at least one use is named), the naming is parent-specific.
+        // Flag for the curator without proposing a fix — the right name
+        // depends on the parent's semantic role.
+        if (namedRefs.length >= 2) {
+            const distinctNames = new Set(namedRefs.map(r => r.fieldName!))
+            if (distinctNames.size >= 2) {
+                const sample = [...distinctNames].sort().slice(0, 4).join(', ')
+                out.push({
+                    kind: to,
+                    path: [],
+                    rule: { type: 'symbol', name: to } as Rule,
+                    derivation: `naming-consistency: '${to}' is referenced under ${distinctNames.size} different field names (${sample}) — naming is parent-specific`,
+                    confidence: 'low',
+                })
+            }
+        }
+    }
+
+    return out
 }
 
 /**
