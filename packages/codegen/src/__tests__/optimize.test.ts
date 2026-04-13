@@ -142,20 +142,8 @@ describe('Optimize — optimize()', () => {
         }
     })
 
-    it('wraps choice members in variants for visible rules', () => {
-        const linked = makeLinked({
-            statement: {
-                type: 'choice',
-                members: [
-                    { type: 'seq', members: [{ type: 'string', value: 'if' }, { type: 'symbol', name: 'expr' }] },
-                    { type: 'seq', members: [{ type: 'string', value: 'while' }, { type: 'symbol', name: 'expr' }] },
-                ],
-            },
-            expr: { type: 'pattern', value: '.*' },
-        })
-        const optimized = optimize(linked)
-        const stmt = optimized.rules['statement'] as any
-        expect(stmt.type).toBe('choice')
-        expect(stmt.members.every((m: any) => m.type === 'variant')).toBe(true)
-    })
+    // Note: the test that asserted "optimize wraps visible choice members
+    // in variants" moved to link.test.ts after variant tagging was
+    // relocated to Link in commit (Phase 2 classification cleanup).
+    // See `link.test.ts → 'tagVariants wraps visible choice members'`.
 })

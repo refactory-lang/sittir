@@ -280,3 +280,82 @@ describe('Link — T016a hidden choice classification', () => {
         expect(linked.rules['_helper'].type).toBe('supertype')
     })
 })
+
+describe('Link — variant tagging + polymorph promotion', () => {
+    it('tagVariants wraps visible choice members in variant rules', () => {
+        // Moved from optimize.test.ts after variant tagging relocated to
+        // Link. Variant wrapping is classification (it adds wrapper nodes
+        // that name each branch) — not simplification.
+        const raw = makeRaw({
+            statement: {
+                type: 'choice',
+                members: [
+                    { type: 'seq', members: [{ type: 'string', value: 'if' }, { type: 'symbol', name: 'expr' }] },
+                    { type: 'seq', members: [{ type: 'string', value: 'while' }, { type: 'symbol', name: 'expr' }] },
+                ],
+            },
+            expr: { type: 'pattern', value: '.*' },
+        })
+        const linked = link(raw)
+        const stmt = linked.rules['statement'] as any
+        // Both branches have the same (empty) field shape, so promotePolymorph
+        // leaves this as a choice with variant-wrapped members.
+        expect(stmt.type).toBe('choice')
+        expect(stmt.members.every((m: any) => m.type === 'variant')).toBe(true)
+        expect(stmt.members[0].name).toBe('if')
+        expect(stmt.members[1].name).toBe('while')
+    })
+
+    it('promotePolymorph wraps heterogeneous-field choices', () => {
+        const raw = makeRaw({
+            assignment: {
+                type: 'choice',
+                members: [
+                    { type: 'seq', members: [
+                        { type: 'string', value: '=' },
+                        { type: 'field', name: 'left', content: { type: 'symbol', name: 'expr' } },
+                    ] },
+                    { type: 'seq', members: [
+                        { type: 'string', value: ':' },
+                        { type: 'field', name: 'right', content: { type: 'symbol', name: 'expr' } },
+                    ] },
+                ],
+            },
+            expr: { type: 'pattern', value: '.*' },
+        })
+        const linked = link(raw)
+        const assignment = linked.rules['assignment'] as any
+        expect(assignment.type).toBe('polymorph')
+        expect(assignment.forms).toHaveLength(2)
+        expect(assignment.forms[0].name).toBe('eq')
+        expect(assignment.forms[1].name).toBe('colon')
+    })
+
+    it('homogeneous-field choices stay as choice + variants (not polymorph)', () => {
+        // Two variants, both with a single `value` field — same field set
+        // → not a polymorph. Must carry symbol refs so promoteTerminals
+        // doesn't kick in first.
+        const raw = makeRaw({
+            literal: {
+                type: 'choice',
+                members: [
+                    { type: 'seq', members: [
+                        { type: 'string', value: 'int' },
+                        { type: 'field', name: 'value', content: { type: 'symbol', name: 'num' } },
+                    ] },
+                    { type: 'seq', members: [
+                        { type: 'string', value: 'float' },
+                        { type: 'field', name: 'value', content: { type: 'symbol', name: 'num' } },
+                    ] },
+                ],
+            },
+            num: { type: 'pattern', value: '[0-9]+' },
+        })
+        const linked = link(raw)
+        const literal = linked.rules['literal'] as any
+        // Same field shape across variants — stays as choice+variants,
+        // not a polymorph.
+        expect(literal.type).toBe('choice')
+        expect(literal.members.every((m: any) => m.type === 'variant')).toBe(true)
+    })
+})

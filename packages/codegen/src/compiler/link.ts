@@ -14,8 +14,9 @@ import type {
     Rule, RawGrammar, LinkedGrammar,
     SymbolRef, ExternalRole,
     FieldRule, SupertypeRule, EnumRule, ClauseRule, GroupRule,
-    SeqRule,
+    SeqRule, ChoiceRule, VariantRule, PolymorphRule,
 } from './rule.ts'
+import { deriveFields, hasAnyField, hasAnyChild } from './rule.ts'
 
 // ---------------------------------------------------------------------------
 // link() — main entry point
@@ -62,6 +63,22 @@ export function link(raw: RawGrammar): LinkedGrammar {
         }
     }
 
+    // Tag visible choices with `variant` wrappers — names every branch
+    // and dedupes structurally identical ones. Hidden choices already
+    // resolved into supertype/enum/inline by `classifyHiddenRule`.
+    for (const [name, rule] of Object.entries(rules)) {
+        rules[name] = tagVariants(rule, name)
+    }
+
+    // Promote choice-of-variants with heterogeneous field shapes to
+    // PolymorphRule. Reads the `variant` tags placed by tagVariants.
+    // This is the last classification pass — every kind now has its
+    // structural classification baked into rule.type, so Assemble can
+    // dispatch on rule.type alone.
+    for (const [name, rule] of Object.entries(rules)) {
+        rules[name] = promotePolymorph(rule)
+    }
+
     return {
         name: raw.name,
         rules,
@@ -70,6 +87,314 @@ export function link(raw: RawGrammar): LinkedGrammar {
         word: raw.word,
         references,
     }
+}
+
+// ---------------------------------------------------------------------------
+// tagVariants — wrap visible choice members in `variant` rules
+// ---------------------------------------------------------------------------
+//
+// Walks the rule tree. Visible choices (under a non-hidden parent rule)
+// get their members wrapped in `variant` nodes via `wrapVariants`,
+// which dedupes structurally identical members and assigns each a
+// `nameVariant`-derived name. Hidden choices are recursed-into without
+// wrapping (they were already resolved by classifyHiddenRule).
+//
+// This is a TAGGING pass — it adds wrapper nodes but does not restructure
+// or simplify anything. Optimize is the simplification phase
+// (fan-out, factoring, prefix/suffix extraction).
+// ---------------------------------------------------------------------------
+
+function tagVariants(rule: Rule, name: string): Rule {
+    switch (rule.type) {
+        case 'seq':
+            return { type: 'seq', members: rule.members.map(m => tagVariants(m, name)) }
+
+        case 'choice': {
+            // Wrap visible choice members in variants.
+            if (!name.startsWith('_')) {
+                return wrapVariants(rule)
+            }
+            return { type: 'choice', members: rule.members.map(m => tagVariants(m, name)) }
+        }
+
+        case 'optional':
+            return { type: 'optional', content: tagVariants(rule.content, name) }
+
+        case 'repeat':
+            return { ...rule, content: tagVariants(rule.content, name) }
+
+        case 'field':
+            return { ...rule, content: tagVariants(rule.content, name) }
+
+        case 'clause':
+            return { ...rule, content: tagVariants(rule.content, name) }
+
+        case 'group':
+            return { ...rule, content: tagVariants(rule.content, name) }
+
+        default:
+            return rule
+    }
+}
+
+// ---------------------------------------------------------------------------
+// wrapVariants / nameVariant / deduplicateVariants
+// ---------------------------------------------------------------------------
+//
+// Wrap every member of a choice in a `variant` rule, deriving each
+// member's name from a distinguishing detect token / symbol / index.
+// Structurally identical members are deduplicated (non-lossy: tree-sitter
+// would parse them the same way).
+
+export function wrapVariants(choice: Rule): Rule {
+    if (choice.type !== 'choice') return choice
+
+    const members = choice.members.map((member, i) => {
+        const variantName = nameVariant(member, i, choice.members)
+        return {
+            type: 'variant' as const,
+            name: variantName,
+            content: member,
+        } satisfies VariantRule
+    })
+
+    return { type: 'choice', members: deduplicateVariants(members) }
+}
+
+export function deduplicateVariants(variants: Rule[]): Rule[] {
+    const seen: Rule[] = []
+    const result: Rule[] = []
+
+    for (const v of variants) {
+        const content = v.type === 'variant' ? v.content : v
+        const isDuplicate = seen.some(s => rulesEqualForVariant(s, content))
+        if (!isDuplicate) {
+            seen.push(content)
+            result.push(v)
+        }
+    }
+
+    return result
+}
+
+export function nameVariant(variant: Rule, index: number, _all: Rule[]): string {
+    // Find a distinguishing string literal in this branch.
+    const detectToken = findDetectToken(variant)
+    if (detectToken) return tokenToName(detectToken)
+
+    // Find a distinguishing symbol name.
+    const detectSymbol = findDetectSymbol(variant)
+    if (detectSymbol) return detectSymbol
+
+    return `form_${index}`
+}
+
+function findDetectToken(rule: Rule): string | null {
+    if (rule.type === 'string') return rule.value
+    if (rule.type === 'seq' && rule.members.length > 0) {
+        for (const m of rule.members) {
+            if (m.type === 'string') return m.value
+        }
+    }
+    return null
+}
+
+function findDetectSymbol(rule: Rule): string | null {
+    if (rule.type === 'symbol') return rule.name
+    if (rule.type === 'field') return rule.name
+    if (rule.type === 'seq') {
+        for (const m of rule.members) {
+            const sym = findDetectSymbol(m)
+            if (sym) return sym
+        }
+    }
+    return null
+}
+
+// Structural equality used by deduplicateVariants — must NOT recurse
+// into details we don't care about for "are these two variants the
+// same shape". We compare member-by-member, normalising variant
+// wrappers to their content.
+function rulesEqualForVariant(a: Rule, b: Rule): boolean {
+    if (a.type !== b.type) return false
+    switch (a.type) {
+        case 'string':
+        case 'pattern':
+            return (a as any).value === (b as any).value
+        case 'symbol':
+            return (a as any).name === (b as any).name
+        case 'seq':
+        case 'choice':
+            return (a as any).members.length === (b as any).members.length
+                && (a as any).members.every((m: Rule, i: number) =>
+                    rulesEqualForVariant(m, (b as any).members[i]))
+        case 'optional':
+        case 'repeat':
+        case 'repeat1':
+            return rulesEqualForVariant((a as any).content, (b as any).content)
+        case 'field':
+            return (a as any).name === (b as any).name
+                && rulesEqualForVariant((a as any).content, (b as any).content)
+        case 'variant':
+            return rulesEqualForVariant((a as any).content, (b as any).content)
+        default:
+            return false
+    }
+}
+
+// ---------------------------------------------------------------------------
+// promotePolymorph — wrap heterogeneous-field choices in PolymorphRule
+// ---------------------------------------------------------------------------
+//
+// Walks the top level of a rule looking for a choice-of-variants. Promotes
+// to PolymorphRule only when:
+//
+//   - Every variant has at least one field or symbol reference (a pure
+//     terminal variant means the kind is a branch with anonymous text
+//     content — polymorph forms have no way to render raw text).
+//   - Field sets across variants are heterogeneous (otherwise it's a
+//     plain branch where all variants share the same shape).
+//
+// "Top level" means: the outermost choice reachable through anonymous
+// delimiter seq wrappers (e.g. `seq('(', choice, ')')`).
+
+function promotePolymorph(rule: Rule): Rule {
+    const choice = findVariantChoice(rule)
+    if (!choice) return rule
+
+    // Every variant must be structurally non-empty.
+    const contents = choice.members.map(m => m.type === 'variant' ? m.content : m)
+    const anyTerminalVariant = contents.some(c => !hasAnyField(c) && !hasAnyChild(c))
+    if (anyTerminalVariant) return rule
+
+    // Compare field SETS across variants. Polymorph only applies when the
+    // sets differ — homogeneous variants stay as a regular branch.
+    const fieldSets = contents.map(c => new Set(deriveFields(c).map(f => f.name)))
+    const allSame = fieldSets.every(s => setsEqual(s, fieldSets[0]!))
+    if (allSame) return rule
+
+    const forms: PolymorphRule['forms'] = choice.members.map((m, i) => ({
+        name: m.type === 'variant' ? m.name : `form_${i}`,
+        content: m.type === 'variant' ? m.content : m,
+    }))
+    return { type: 'polymorph', forms }
+}
+
+function findVariantChoice(rule: Rule): ChoiceRule | null {
+    if (rule.type === 'choice' && rule.members.some(m => m.type === 'variant')) {
+        return rule
+    }
+    // Walk through anonymous-delimiter wrappers (seq of string + choice + string).
+    if (rule.type === 'seq') {
+        const choices = rule.members.filter(m =>
+            m.type === 'choice' && m.members.some(mm => mm.type === 'variant'),
+        )
+        if (choices.length === 1) return choices[0] as ChoiceRule
+    }
+    return null
+}
+
+function setsEqual<T>(a: Set<T>, b: Set<T>): boolean {
+    if (a.size !== b.size) return false
+    for (const x of a) if (!b.has(x)) return false
+    return true
+}
+
+// ---------------------------------------------------------------------------
+// tokenToName — map punctuation to readable names
+// ---------------------------------------------------------------------------
+//
+// Used by both nameVariant (above) and Assemble's nameNode for kinds
+// that are operators / punctuation. Single source of truth for "what
+// do we call this token in TypeScript identifier space".
+
+const TOKEN_NAMES: Record<string, string> = {
+    ';': 'semi',
+    '{': 'brace',
+    '}': 'close_brace',
+    '(': 'paren',
+    ')': 'close_paren',
+    '[': 'bracket',
+    ']': 'close_bracket',
+    ',': 'comma',
+    ':': 'colon',
+    '.': 'dot',
+    '::': 'path',
+    '->': 'arrow',
+    '=>': 'fat_arrow',
+    '=': 'eq',
+    '!': 'bang',
+    '?': 'question',
+    '<': 'lt',
+    '>': 'gt',
+    '+': 'plus',
+    '-': 'minus',
+    '*': 'star',
+    '/': 'slash',
+    '%': 'percent',
+    '&': 'amp',
+    '|': 'pipe',
+    '^': 'caret',
+    '~': 'tilde',
+    '#': 'hash',
+    '@': 'at',
+    // Multi-char tokens
+    '==': 'eqeq',
+    '!=': 'neq',
+    '<=': 'le',
+    '>=': 'ge',
+    '&&': 'andand',
+    '||': 'oror',
+    '<<': 'shl',
+    '>>': 'shr',
+    '**': 'starstar',
+    '...': 'ellipsis',
+    '..': 'dotdot',
+    '..=': 'dotdoteq',
+    '+=': 'pluseq',
+    '-=': 'minuseq',
+    '*=': 'stareq',
+    '/=': 'slasheq',
+    '%=': 'percenteq',
+    '&=': 'ampeq',
+    '|=': 'pipeeq',
+    '^=': 'careteq',
+    '<<=': 'shleq',
+    '>>=': 'shreq',
+    '**=': 'starstareq',
+    '//': 'slashslash',
+    '//=': 'slashslasheq',
+    '++': 'plusplus',
+    '--': 'minusminus',
+    ':=': 'coloneq',
+    '<>': 'ltgt',
+    '@=': 'ateq',
+    '0b': 'tok_0b',
+    '0B': 'tok_0B',
+    '0o': 'tok_0o',
+    '0O': 'tok_0O',
+    '0x': 'tok_0x',
+    '0X': 'tok_0X',
+}
+
+/** Char-by-char fallback for arbitrary punctuation (e.g. "\\n", "~@"). */
+function charFallback(token: string): string {
+    const CHAR_NAMES: Record<string, string> = {
+        '!': 'bang', '"': 'dq', '#': 'hash', '$': 'dollar', '%': 'pct',
+        '&': 'amp', "'": 'sq', '(': 'lp', ')': 'rp', '*': 'star',
+        '+': 'plus', ',': 'comma', '-': 'minus', '.': 'dot', '/': 'slash',
+        ':': 'colon', ';': 'semi', '<': 'lt', '=': 'eq', '>': 'gt',
+        '?': 'q', '@': 'at', '[': 'lb', '\\': 'bs', ']': 'rb',
+        '^': 'caret', '`': 'bt', '{': 'lbr', '|': 'pipe', '}': 'rbr',
+        '~': 'tilde', ' ': 'sp', '\t': 'tab', '\n': 'nl', '\r': 'cr',
+    }
+    return 'tok_' + [...token].map(c => CHAR_NAMES[c] ?? (/[\w]/.test(c) ? c : 'x')).join('_')
+}
+
+export function tokenToName(token: string): string {
+    if (TOKEN_NAMES[token]) return TOKEN_NAMES[token]
+    if (/^[\w_]+$/.test(token)) return token
+    return charFallback(token)
 }
 
 /**
