@@ -132,8 +132,6 @@ rules:
     template: extern $STRING_LITERAL
   visibility_modifier:
     template: $$$CHILDREN
-  _type:
-    template: $$$CHILDREN
   bracketed_type:
     template: <$$$CHILDREN>
   qualified_type:
@@ -296,8 +294,6 @@ rules:
     template: try $BLOCK
   block:
     template: "$LABEL{$$$CHILDREN}"
-  _pattern:
-    template: $$$CHILDREN
   generic_pattern:
     template: "$$$CHILDREN::$TYPE_ARGUMENTS"
   tuple_pattern:

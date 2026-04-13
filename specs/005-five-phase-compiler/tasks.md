@@ -601,6 +601,36 @@ scratch file you annotated to track regressions).
   uses for parameters). IDE completions and type-checked chains
   (`ir.foo(...).bar(...).baz(...)`) would become usable.
 
+### Types emitter sugar (T070-T073)
+
+- [x] **T070** Inline-enum field literal unions. Fields whose content
+  is a choice-of-strings (`binary_expression.operator`,
+  `compound_assignment_expr.operator`, etc.) now emit as
+  `"==" | "!=" | ...` instead of `string`. Implemented by threading
+  `literalValues` on `AssembledField`, populated in `deriveFieldsRaw`
+  (`rule.ts`), merged in `mergeFields`, and consumed by
+  `fieldTypeExpr` (`types-v2.ts`). Paired with removing the
+  phantom-kind leak in `collectAnonymousNodes` + `deriveContentTypes`
+  (enum values are `text` contents, never distinct kinds).
+
+- [x] **T071** `Terminal<K, V>` alias. Added `interface Terminal<K, V>`
+  in `@sittir/types` and retargeted every leaf/keyword/enum emission
+  in types-v2 to `export type X = Terminal<"kind", "literal"|...>`.
+  Dedupes hundreds of boilerplate interfaces per grammar.
+
+- [x] **T072** Externals inheritance through grammar extensions.
+  `grammarFn` now inherits `externals`/`extras`/`supertypes`/`inline`/
+  `conflicts`/`word` from the base grammar when the override doesn't
+  redeclare them, and accepts string entries from
+  `previous.concat([...])` patterns. Prevents float_literal /
+  string_content / _automatic_semicolon from vanishing from rust/ts
+  nodeMaps.
+
+- [ ] **T073** Drop unreferenced `Terminal<K>` aliases. If a kind has
+  no factory AND doesn't appear in any field/child/supertype union
+  or KindMap entry, the type is dead weight — skip emission. Low
+  urgency; dead aliases are cheap.
+
 ### Evaluate follow-up (T069)
 
 - [ ] **T069** Better hidden-convention handling in `createProxy`.

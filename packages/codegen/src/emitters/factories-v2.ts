@@ -1,13 +1,15 @@
 /**
- * Emits factories.ts — thin dispatch over AssembledNode.emitFactory().
+ * Emits factories.ts — consumes NodeMap directly.
  *
- * Every node subclass owns its own factory emission as a class method.
- * This file is preamble (type imports, @sittir/core renderer wiring,
- * RESERVED_KEYWORDS set) + loop over the NodeMap + the _factoryMap
- * dispatch table.
+ * Owns ALL factory string generation. Rule.ts exposes the IR
+ * (AssembledNode class hierarchy, derivation functions) but does
+ * not know how to spell a factory. This file dispatches on
+ * `node.modelType` and calls model-specific helpers locally.
  */
 
-import type { NodeMap } from '../compiler/rule.ts'
+import type {
+    NodeMap, AssembledNode, AssembledField, AssembledChild, AssembledGroup,
+} from '../compiler/rule.ts'
 
 export interface EmitFactoriesFromNodeMapConfig {
     grammar: string
@@ -41,8 +43,10 @@ export function emitFactoriesFromNodeMap(config: EmitFactoriesFromNodeMapConfig)
             }
         }
     }
+    typeImports.add('ConfigMap')
+    typeImports.add('KindMap')
     lines.push(`import type { ${[...typeImports].sort().join(', ')} } from './types.js';`)
-    lines.push("import type { Edit, ConfigOf } from '@sittir/types';")
+    lines.push("import type { Edit, ConfigOf, ChildOf, FluentNode } from '@sittir/types';")
     lines.push("import { createRenderer } from '@sittir/core';")
     lines.push("import { join, dirname } from 'node:path';")
     lines.push("import { fileURLToPath } from 'node:url';")
@@ -66,36 +70,101 @@ export function emitFactoriesFromNodeMap(config: EmitFactoriesFromNodeMapConfig)
         lines.push('')
     }
 
-    // Per-node factory emission. Each node class knows how to emit
-    // itself — branches/groups share emitFieldCarryingFactory, the
-    // polymorph dispatcher also emits its forms inline.
+    // Per-node factory emission. Dispatch on modelType — polymorph
+    // form groups are skipped at the top level because the polymorph
+    // dispatcher emits its forms inline.
     for (const [, node] of nodeMap.nodes) {
-        const source = node.emitFactory()
-        if (source === undefined) continue
-        // Skip polymorph form groups at the top level — they're emitted
-        // inline by their parent polymorph's emitFactory.
         if (node.modelType === 'group' && isPolymorphForm(node.kind, nodeMap)) continue
+        const source = renderFactoryForNode(node)
+        if (source === undefined) continue
         lines.push(source)
         lines.push('')
     }
 
-    // _factoryMap — runtime dispatch table keyed by grammar kind.
-    lines.push('export const _factoryMap: Record<string, (config?: unknown) => unknown> = {')
+    // Collect entries for _factoryMap / FluentKindMap. Every kind
+    // with a factory lands here — branches, containers, polymorphs,
+    // leaves, keywords, enums — because each entry's type is
+    // `typeof <factory>`, so the map slot uses the factory's own
+    // signature directly. Polymorph forms are reached through the
+    // parent polymorph dispatcher and are not registered separately.
+    interface MapEntry {
+        kind: string
+        factory: string
+        typeName: string
+        fluent: boolean
+    }
+    const mapEntries: MapEntry[] = []
     for (const [kind, node] of nodeMap.nodes) {
         if (!node.rawFactoryName) continue
-        lines.push(`  '${kind}': ${node.rawFactoryName},`)
+        if (isPolymorphForm(kind, nodeMap)) continue
+        const fluent = node.modelType === 'branch' ||
+            node.modelType === 'container' ||
+            node.modelType === 'polymorph'
+        mapEntries.push({ kind, factory: node.rawFactoryName, typeName: node.typeName, fluent })
+    }
+
+    // FluentKindMap — kind string → fluent factory output shape.
+    // Only branches / containers / polymorphs get a `FluentNode`
+    // entry; leaves / keywords / enums produce raw NodeData instead
+    // and are keyed to their own interface.
+    lines.push('export type FluentKindMap = {')
+    for (const { kind, typeName, fluent } of mapEntries) {
+        if (fluent) {
+            lines.push(`  ${JSON.stringify(kind)}: FluentNode<${JSON.stringify(kind)}, ConfigOf<${typeName}>>;`)
+        } else {
+            lines.push(`  ${JSON.stringify(kind)}: ${typeName};`)
+        }
     }
     lines.push('};')
+    lines.push('')
+
+    // _factoryMap — runtime dispatch table. Declared as a plain
+    // const so every entry's type comes from the factory's own
+    // signature via inference. `_FactoryMap` is then just
+    // `typeof _factoryMap`, giving consumers a precise type for
+    // each slot without duplicating the kind→factory mapping.
+    lines.push('export const _factoryMap = {')
+    for (const { kind, factory } of mapEntries) {
+        lines.push(`  ${JSON.stringify(kind)}: ${factory},`)
+    }
+    lines.push('} as const;')
+    lines.push('export type _FactoryMap = typeof _factoryMap;')
     lines.push('')
 
     return lines.join('\n')
 }
 
+// ---------------------------------------------------------------------------
+// Dispatch
+// ---------------------------------------------------------------------------
+
+function renderFactoryForNode(node: AssembledNode): string | undefined {
+    if (!node.rawFactoryName) return undefined
+    switch (node.modelType) {
+        case 'branch':
+            return emitFieldCarryingFactory(node, node.fields, node.children ?? [])
+        case 'group':
+            return emitFieldCarryingFactory(node, node.fields, node.children)
+        case 'container':
+            return emitContainerFactory(node)
+        case 'polymorph':
+            return emitPolymorphFactory(node)
+        case 'leaf':
+            return emitTextFactory(node, '(text: string)', 'text')
+        case 'keyword':
+            return emitTextFactory(node, '()', `'${escForSource(node.text)}' as const`)
+        case 'enum':
+            return emitTextFactory(node, '(text: string)', 'text')
+        default:
+            return undefined
+    }
+}
+
 /**
  * A group is a polymorph form iff another node in the map is an
  * AssembledPolymorph that references it by kind. Polymorph form
- * groups are emitted by their parent's emitFactory, not at the
- * top level — this check prevents duplicate emission.
+ * groups are emitted by their parent's dispatcher, not at the top
+ * level — this check prevents duplicate emission.
  */
 function isPolymorphForm(kind: string, nodeMap: NodeMap): boolean {
     for (const [, node] of nodeMap.nodes) {
@@ -105,4 +174,258 @@ function isPolymorphForm(kind: string, nodeMap: NodeMap): boolean {
         }
     }
     return false
+}
+
+// ---------------------------------------------------------------------------
+// Field-carrying factory (branches, groups, polymorph forms)
+// ---------------------------------------------------------------------------
+
+interface FieldCarryingNode {
+    readonly kind: string
+    readonly typeName: string
+    readonly treeTypeName: string
+    readonly rawFactoryName?: string
+    readonly parentKind?: string
+}
+
+function emitFieldCarryingFactory(
+    node: FieldCarryingNode,
+    fields: readonly AssembledField[],
+    children: readonly AssembledChild[],
+): string {
+    const fn = node.rawFactoryName!
+    const hasFields = fields.length > 0
+    const hasChildren = children.length > 0
+    // `children` slot is a single child when no child entry is repeated
+    // — matches the shape `readonly [T]` emitted by types-v2.
+    const childrenMultiple = children.some(c => c.multiple)
+    // `config` is optional only when EVERY field and EVERY child slot
+    // is optional. A required field or child means the caller must
+    // supply the argument.
+    const hasRequired =
+        fields.some(f => f.required) ||
+        children.some(c => c.required)
+    const opt = hasRequired ? '' : '?'
+    // Polymorph forms emit their parent's kind as the NodeData type so the
+    // runtime value matches what tree-sitter produces.
+    const typeKind = node.parentKind ?? node.kind
+    const lines: string[] = []
+    lines.push(`export function ${fn}(config${opt}: ConfigOf<${node.typeName}>) {`)
+
+    if (hasFields) {
+        lines.push('  const fields = {')
+        for (const f of fields) {
+            lines.push(`    ${f.name}: config?.${f.propertyName},`)
+        }
+        lines.push('  };')
+    }
+    if (hasChildren) {
+        lines.push(`  const children = config?.children ?? [];`)
+    }
+
+    lines.push('  return {')
+    lines.push(`    type: '${typeKind}' as const,`)
+    lines.push('    named: true as const,')
+    if (hasFields) lines.push('    fields,')
+    if (hasChildren) lines.push('    children,')
+
+    // Fluent field getters/setters.
+    for (const f of fields) {
+        const method = f.propertyName === 'type' ? 'typeField' : f.propertyName
+        let param = f.paramName
+        if (param === fn || param === method) param = `${param}_`
+        const paramType = `ConfigOf<${node.typeName}>['${f.propertyName}']`
+        if (f.multiple) {
+            lines.push(`    ${method}(...${param}: NonNullable<${paramType}>) { return ${param}.length ? ${fn}({ ...(config ?? {}), ${f.propertyName}: ${param} }) : fields.${f.name}; },`)
+        } else {
+            lines.push(`    ${method}(${param}?: ${paramType}) { return ${param} !== undefined ? ${fn}({ ...(config ?? {}), ${f.propertyName}: ${param} }) : fields.${f.name}; },`)
+        }
+    }
+
+    if (hasChildren) {
+        if (childrenMultiple) {
+            lines.push('    getChildren() { return children; },')
+            const elementType = `ChildOf<${node.typeName}>`
+            lines.push(`    setChildren(...items: ${elementType}[]) { return ${fn}({ ...(config ?? {}), children: items }); },`)
+        } else {
+            const elementType = `ChildOf<${node.typeName}>`
+            lines.push(`    getChild() { return children[0]; },`)
+            lines.push(`    setChild(child: ${elementType}) { return ${fn}({ ...(config ?? {}), children: [child] }); },`)
+        }
+    }
+
+    lines.push(...factorySuffix(node.treeTypeName))
+    lines.push('  };')
+    lines.push('}')
+    return lines.join('\n')
+}
+
+// ---------------------------------------------------------------------------
+// Container factory (children only, no fields)
+// ---------------------------------------------------------------------------
+
+interface ContainerNode {
+    readonly kind: string
+    readonly typeName: string
+    readonly treeTypeName: string
+    readonly rawFactoryName?: string
+    readonly children: readonly AssembledChild[]
+}
+
+function emitContainerFactory(node: ContainerNode): string {
+    const fn = node.rawFactoryName!
+    const child = node.children[0]
+    const lines: string[] = []
+    // Parameter is typed as the element type, not the tuple/array
+    // type. Singular containers take one element positionally;
+    // repeated containers take them as rest args. Internally the
+    // factory always stores `children` as an array to match the
+    // runtime shape. The stored value is cast to the interface's
+    // tuple/array type so downstream consumers see the precise shape.
+    const elementType = `ChildOf<${node.typeName}>`
+    const storedType = `ConfigOf<${node.typeName}>['children']`
+    if (child?.multiple) {
+        lines.push(`export function ${fn}(..._children: ${elementType}[]) {`)
+        // Filter out non-NodeData args (empty objects, undefined).
+        lines.push(`  const children = _children.filter(c => c && typeof c === "object" && "type" in c) as ${storedType};`)
+    } else {
+        const optMark = child?.required ? '' : '?'
+        lines.push(`export function ${fn}(child${optMark}: ${elementType}) {`)
+        // Treat an empty/non-NodeData arg as "no child" so validator
+        // paths passing `{}` don't wrap a typeless object as a child.
+        lines.push('  const hasChild = child && typeof child === "object" && "type" in child;')
+        lines.push(`  const children = (hasChild ? [child] : []) as ${storedType};`)
+    }
+    lines.push('  return {')
+    lines.push(`    type: '${node.kind}' as const,`)
+    lines.push('    named: true as const,')
+    lines.push('    children,')
+    lines.push(...factorySuffix(node.treeTypeName))
+    lines.push('  };')
+    lines.push('}')
+    return lines.join('\n')
+}
+
+// ---------------------------------------------------------------------------
+// Polymorph factory — dispatcher + inline form factories
+// ---------------------------------------------------------------------------
+
+interface PolymorphNode {
+    readonly kind: string
+    readonly typeName: string
+    readonly treeTypeName: string
+    readonly rawFactoryName?: string
+    readonly forms: AssembledGroup[]
+}
+
+function emitPolymorphFactory(node: PolymorphNode): string {
+    const fn = node.rawFactoryName!
+    const forms = node.forms
+
+    if (forms.length === 0) {
+        // Defensive stub — shouldn't happen after classifier fix.
+        return `export function ${fn}(_config?: unknown) { return { type: '${node.kind}' as const, named: true as const, render() { return render(this); }, toEdit(s: number | { start: { index: number }; end: { index: number } }, e?: number) { return typeof s === 'number' ? toEdit(this, s, e!) : toEdit(this, s); }, replace(t: ${node.treeTypeName}) { const r = t.range(); return toEdit(this, r); } }; }`
+    }
+
+    const lines: string[] = []
+    // Signature: union of per-form ConfigOf types. The inline union
+    // (rather than ConfigOf<T> over a union T) is what lets TypeScript
+    // narrow via `'field' in config` — distributive ConfigOf over
+    // union members doesn't narrow the same way.
+    const configUnion = forms.map(f => `ConfigOf<${f.typeName}>`).join(' | ')
+    // `config` is only optional when EVERY form has every field AND
+    // every child slot optional.
+    const anyFormHasRequired = forms.some(f =>
+        f.fields.some(fd => fd.required) ||
+        f.children.some(c => c.required),
+    )
+    const polyOpt = anyFormHasRequired ? '' : '?'
+    lines.push(`export function ${fn}(config${polyOpt}: ${configUnion}) {`)
+
+    // Dispatch: most-specific form first (by field count). A form
+    // matches when all its fields are present in config. The smallest
+    // form is the fallback for empty or no-match cases. The call to
+    // the picked form factory is cast to that form's ConfigOf because
+    // the union type doesn't narrow across `in` checks well enough
+    // to pass structural assignability on its own.
+    if (forms.length > 1) {
+        const sorted = [...forms].sort((a, b) => b.fields.length - a.fields.length)
+        const fallback = sorted[sorted.length - 1]!
+        const seenFieldSets = new Set<string>()
+        for (const form of sorted) {
+            if (form === fallback) continue
+            if (form.fields.length === 0) continue
+            const key = [...form.fields.map(f => f.propertyName)].sort().join(',')
+            if (seenFieldSets.has(key)) continue
+            seenFieldSets.add(key)
+            const checks = form.fields
+                .map(f => `'${f.propertyName}' in config`)
+                .join(' && ')
+            lines.push(`  if (config && ${checks}) return ${form.rawFactoryName!}(config as ConfigOf<${form.typeName}>);`)
+        }
+        lines.push(`  return ${fallback.rawFactoryName!}(config as ConfigOf<${fallback.typeName}>);`)
+    } else {
+        lines.push(`  return ${forms[0]!.rawFactoryName!}(config);`)
+    }
+    lines.push('}')
+
+    // Emit each form factory inline after the dispatcher.
+    const parts = [lines.join('\n')]
+    for (const form of forms) {
+        parts.push(emitFieldCarryingFactory(form, form.fields, form.children))
+    }
+    return parts.join('\n')
+}
+
+// ---------------------------------------------------------------------------
+// Text factory (leaves, keywords, enums)
+// ---------------------------------------------------------------------------
+
+interface TextFactoryNode {
+    readonly kind: string
+    readonly treeTypeName: string
+    readonly rawFactoryName?: string
+}
+
+function emitTextFactory(
+    node: TextFactoryNode,
+    sig: string,
+    textExpr: string,
+): string {
+    const fn = node.rawFactoryName!
+    return [
+        `export function ${fn}${sig} {`,
+        '  return {',
+        `    type: '${node.kind}' as const,`,
+        '    named: true as const,',
+        `    text: ${textExpr},`,
+        `    render: () => ${textExpr},`,
+        `    toEdit: (s: number | { start: { index: number }; end: { index: number } }, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: ${textExpr} } : { startPos: s.start.index, endPos: s.end.index, insertedText: ${textExpr} },`,
+        `    replace: (t: ${node.treeTypeName}) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: ${textExpr} }; },`,
+        '  };',
+        '}',
+    ].join('\n')
+}
+
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+function escForSource(s: string): string {
+    return s.replace(/\\/g, '\\\\').replace(/'/g, "\\'")
+}
+
+/**
+ * Common suffix every user-addressable factory returns — render(),
+ * toEdit(...), replace(target).
+ */
+function factorySuffix(treeTypeName: string): string[] {
+    return [
+        `    render() { return render(this); },`,
+        `    toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {`,
+        `      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);`,
+        `      return toEdit(this, startOrRange);`,
+        `    },`,
+        `    replace(target: ${treeTypeName}) { const r = target.range(); return toEdit(this, r); },`,
+    ]
 }

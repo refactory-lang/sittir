@@ -12,10 +12,12 @@ interface _NodeData {
   readonly nodeId?: number;
 }
 import { readNode, buildRoutingMap, type TreeHandle } from '@sittir/core';
+import type { WrappedNode } from '@sittir/types';
+import type { AbstractClassDeclaration, AbstractMethodSignature, AddingTypeAnnotation, AmbientDeclaration, Arguments, Array, ArrayPattern, ArrayType, ArrowFunction, AsExpression, Asserts, AssertsAnnotation, AssignmentExpression, AssignmentPattern, AugmentedAssignmentExpression, AugmentedAssignmentLhs, AwaitExpression, BinaryExpression, BreakStatement, CallExpression, CallSignature, CatchClause, Class, ClassBody, ClassDeclaration, ClassHeritage, ClassStaticBlock, ComputedPropertyName, ConditionalType, Constraint, ConstructSignature, ConstructorType, ContinueStatement, DebuggerStatement, Declaration, Decorator, DecoratorCallExpression, DecoratorMemberExpression, DecoratorParenthesizedExpression, DefaultType, DoStatement, ElseClause, EnumAssignment, EnumBody, EnumDeclaration, ExportClause, ExportSpecifier, ExportStatement, Expression, ExpressionStatement, ExtendsClause, ExtendsTypeClause, FieldDefinition, FinallyClause, FlowMaybeType, ForInStatement, ForStatement, FormalParameters, FunctionDeclaration, FunctionExpression, FunctionSignature, FunctionType, GeneratorFunction, GeneratorFunctionDeclaration, GenericType, HiddenTypeIdentifier, IfStatement, ImplementsClause, ImportAlias, ImportAttribute, ImportClause, ImportIdentifier, ImportRequireClause, ImportSpecifier, ImportStatement, IndexSignature, IndexTypeQuery, InferType, InstantiationExpression, InterfaceBody, InterfaceDeclaration, InternalModule, IntersectionType, JsxAttribute, JsxClosingElement, JsxElement, JsxExpression, JsxNamespaceName, JsxOpeningElement, JsxSelfClosingElement, JsxStartOpeningElement, JsxString, LabeledStatement, LexicalDeclaration, LhsExpression, LiteralType, LookupType, MappedTypeClause, MemberExpression, MethodDefinition, MethodSignature, Module, NamedImports, NamespaceExport, NamespaceImport, NestedIdentifier, NestedTypeIdentifier, NewExpression, NonNullExpression, Object, ObjectAssignmentPattern, ObjectPattern, ObjectType, OmittingTypeAnnotation, OptingTypeAnnotation, OptionalParameter, OptionalTupleParameter, OptionalType, Pair, PairPattern, ParenthesizedExpression, ParenthesizedType, Pattern, PrimaryExpression, PrimaryType, Program, PropertyName, PropertySignature, PublicFieldDefinition, ReadonlyType, Regex, RequiredParameter, RestPattern, RestType, ReturnStatement, SatisfiesExpression, Semicolon, SequenceExpression, ShorthandPropertyIdentifier, ShorthandPropertyIdentifierPattern, SpreadElement, Statement, StatementBlock, String, SubscriptExpression, SwitchBody, SwitchCase, SwitchDefault, SwitchStatement, TemplateLiteralType, TemplateString, TemplateSubstitution, TemplateType, TernaryExpression, ThrowStatement, TryStatement, TupleParameter, TupleType, Type, TypeAliasDeclaration, TypeAnnotation, TypeArguments, TypeAssertion, TypeParameter, TypeParameters, TypePredicate, TypePredicateAnnotation, TypeQuery, UnaryExpression, UnionType, UpdateExpression, VariableDeclaration, VariableDeclarator, WhileStatement, WithStatement, YieldExpression } from './types.js';
 
 // Routing data — overrides + supertype expansion reconstructed at
 // codegen time from NodeMap, then handed to readNode at module load.
-const _overrides = {"program":{"fields":{"hash_bang_line":{"types":[{"type":"hash_bang_line","named":true}],"multiple":false,"required":true,"position":0},"statements":{"types":[],"multiple":false,"required":true,"position":1}}},"import_statement":{"fields":{"import_clause":{"types":[{"type":"type","named":true},{"type":"typeof","named":true}],"multiple":false,"required":true,"position":0},"from_clause":{"types":[{"type":"import_require_clause","named":true},{"type":"string","named":true}],"multiple":false,"required":true,"position":1},"import_attribute":{"types":[{"type":"import_attribute","named":true}],"multiple":false,"required":true,"position":2},"semicolon":{"types":[{"type":"_semicolon","named":true}],"multiple":false,"required":true,"position":3}}},"namespace_import":{"fields":{"identifier":{"types":[{"type":"identifier","named":true}],"multiple":false,"required":true,"position":0}}},"import_attribute":{"fields":{"object":{"types":[{"type":"with","named":true},{"type":"assert","named":true}],"multiple":false,"required":true,"position":0}}},"variable_declaration":{"fields":{"declarators":{"types":[],"multiple":false,"required":true,"position":0},"semicolon":{"types":[{"type":"_semicolon","named":true}],"multiple":false,"required":true,"position":1}}},"lexical_declaration":{"fields":{"declarators":{"types":[],"multiple":false,"required":true,"position":1},"semicolon":{"types":[{"type":"_semicolon","named":true}],"multiple":false,"required":true,"position":2}}},"statement_block":{"fields":{"statements":{"types":[],"multiple":false,"required":true,"position":0},"automatic_semicolon":{"types":[{"type":"_automatic_semicolon","named":true}],"multiple":false,"required":true,"position":1}}},"else_clause":{"fields":{"statement":{"types":[{"type":"statement","named":true}],"multiple":false,"required":true,"position":0}}},"yield_expression":{"fields":{"expression":{"types":[{"type":"expression","named":true}],"multiple":false,"required":true,"position":0}}},"class":{"fields":{"class_heritage":{"types":[],"multiple":false,"required":true,"position":0}}},"class_declaration":{"fields":{"class_heritage":{"types":[],"multiple":false,"required":true,"position":0},"automatic_semicolon":{"types":[{"type":"class_heritage","named":true}],"multiple":false,"required":true,"position":3}}},"await_expression":{"fields":{"expression":{"types":[{"type":"expression","named":true}],"multiple":false,"required":true,"position":0}}},"spread_element":{"fields":{"expression":{"types":[{"type":"expression","named":true}],"multiple":false,"required":true,"position":0}}},"method_definition":{"fields":{"accessibility_modifier":{"types":[{"type":"accessibility_modifier","named":true}],"multiple":false,"required":true,"position":0},"override_modifier":{"types":[],"multiple":false,"required":true,"position":1}}},"computed_property_name":{"fields":{"expression":{"types":[{"type":"expression","named":true}],"multiple":false,"required":true,"position":0}}},"public_field_definition":{"fields":{"accessibility_modifier":{"types":[],"multiple":false,"required":true,"position":0},"override_modifier":{"types":[],"multiple":false,"required":true,"position":1},"initializer":{"types":[],"multiple":false,"required":true,"position":2}}},"non_null_expression":{"fields":{"expression":{"types":[{"type":"expression","named":true}],"multiple":false,"required":true,"position":0}}},"method_signature":{"fields":{"accessibility_modifier":{"types":[{"type":"accessibility_modifier","named":true}],"multiple":false,"required":true,"position":0},"override_modifier":{"types":[],"multiple":false,"required":true,"position":1}}},"abstract_method_signature":{"fields":{"accessibility_modifier":{"types":[{"type":"accessibility_modifier","named":true}],"multiple":false,"required":true,"position":0},"override_modifier":{"types":[{"type":"override_modifier","named":true}],"multiple":false,"required":true,"position":1}}},"type_assertion":{"fields":{"type_arguments":{"types":[{"type":"type_arguments","named":true}],"multiple":false,"required":true,"position":0},"expression":{"types":[{"type":"expression","named":true}],"multiple":false,"required":true,"position":1}}},"as_expression":{"fields":{"expression":{"types":[{"type":"expression","named":true}],"multiple":false,"required":true,"position":0},"type_annotation":{"types":[{"type":"type","named":true}],"multiple":false,"required":true,"position":1}}},"satisfies_expression":{"fields":{"expression":{"types":[{"type":"expression","named":true}],"multiple":false,"required":true,"position":0},"type_annotation":{"types":[{"type":"type","named":true}],"multiple":false,"required":true,"position":1}}},"instantiation_expression":{"fields":{"expression":{"types":[{"type":"expression","named":true}],"multiple":false,"required":true,"position":0}}},"import_require_clause":{"fields":{"identifier":{"types":[{"type":"identifier","named":true}],"multiple":false,"required":true,"position":0}}},"ambient_declaration":{"fields":{"declaration":{"types":[{"type":"declaration","named":true}],"multiple":false,"required":true,"position":0}}},"abstract_class_declaration":{"fields":{"class_heritage":{"types":[],"multiple":false,"required":true,"position":0}}},"import_alias":{"fields":{"name":{"types":[{"type":"identifier","named":true}],"multiple":false,"required":true,"position":0},"value":{"types":[{"type":"identifier","named":true},{"type":"nested_identifier","named":true}],"multiple":false,"required":true,"position":1},"semicolon":{"types":[{"type":"_semicolon","named":true}],"multiple":false,"required":true,"position":2}}},"interface_declaration":{"fields":{"extends_type_clause":{"types":[{"type":"extends_type_clause","named":true}],"multiple":false,"required":true,"position":2}}},"enum_body":{"fields":{"opening":{"types":[],"multiple":false,"required":true,"position":0}}},"required_parameter":{"fields":{"parameter_name":{"types":[{"type":"_parameter_name","named":true}],"multiple":false,"required":true,"position":0},"initializer":{"types":[{"type":"_initializer","named":true}],"multiple":false,"required":true,"position":2}}},"optional_parameter":{"fields":{"parameter_name":{"types":[{"type":"_parameter_name","named":true}],"multiple":false,"required":true,"position":0},"initializer":{"types":[{"type":"_initializer","named":true}],"multiple":false,"required":true,"position":2}}},"asserts_annotation":{"fields":{"asserts":{"types":[],"multiple":false,"required":true,"position":0}}},"infer_type":{"fields":{"type_identifier":{"types":[{"type":"_type_identifier","named":true}],"multiple":false,"required":true,"position":0},"constraint":{"types":[],"multiple":false,"required":true,"position":1}}},"type_predicate_annotation":{"fields":{"type_predicate":{"types":[],"multiple":false,"required":true,"position":0}}},"index_type_query":{"fields":{"primary_type":{"types":[{"type":"primary_type","named":true}],"multiple":false,"required":true,"position":0}}},"lookup_type":{"fields":{"primary_type":{"types":[{"type":"primary_type","named":true}],"multiple":false,"required":true,"position":0},"index_type":{"types":[{"type":"type","named":true}],"multiple":false,"required":true,"position":1}}},"flow_maybe_type":{"fields":{"primary_type":{"types":[{"type":"primary_type","named":true}],"multiple":false,"required":true,"position":0}}},"object_type":{"fields":{"opening":{"types":[{"type":"{","named":false},{"type":"{|","named":false}],"multiple":false,"required":true,"position":0},"members":{"types":[],"multiple":false,"required":true,"position":1},"closing":{"types":[{"type":"}","named":false},{"type":"|}","named":false}],"multiple":false,"required":true,"position":2}}},"property_signature":{"fields":{"accessibility_modifier":{"types":[{"type":"accessibility_modifier","named":true}],"multiple":false,"required":true,"position":0},"override_modifier":{"types":[],"multiple":false,"required":true,"position":1}}},"array_type":{"fields":{"primary_type":{"types":[{"type":"primary_type","named":true}],"multiple":false,"required":true,"position":0}}},"union_type":{"fields":{"left":{"types":[{"type":"type","named":true}],"multiple":false,"required":true,"position":0},"right":{"types":[{"type":"type","named":true}],"multiple":false,"required":true,"position":1}}},"intersection_type":{"fields":{"left":{"types":[{"type":"type","named":true}],"multiple":false,"required":true,"position":0},"right":{"types":[{"type":"type","named":true}],"multiple":false,"required":true,"position":1}}},"interface_body":{"fields":{"opening":{"types":[{"type":"{","named":false},{"type":"{|","named":false}],"multiple":false,"required":true,"position":0},"members":{"types":[],"multiple":false,"required":true,"position":1},"closing":{"types":[{"type":"}","named":false},{"type":"|}","named":false}],"multiple":false,"required":true,"position":2}}}} as const;
+const _overrides = {"program":{"fields":{"hash_bang_line":{"types":[{"type":"hash_bang_line","named":true}],"multiple":false,"required":false,"position":0},"statements":{"types":[{"type":"statement","named":true}],"multiple":true,"required":true,"position":1}}},"import_statement":{"fields":{"import_clause":{"types":[],"multiple":false,"required":false,"position":0},"from_clause":{"types":[{"type":"import_clause","named":true},{"type":"_from_clause","named":true},{"type":"import_require_clause","named":true},{"type":"string","named":true}],"multiple":false,"required":true,"position":1},"import_attribute":{"types":[{"type":"import_attribute","named":true}],"multiple":false,"required":false,"position":2},"semicolon":{"types":[{"type":"_semicolon","named":true}],"multiple":false,"required":true,"position":3}}},"namespace_import":{"fields":{"identifier":{"types":[{"type":"identifier","named":true}],"multiple":false,"required":true,"position":0}}},"import_attribute":{"fields":{"object":{"types":[],"multiple":false,"required":true,"position":0}}},"variable_declaration":{"fields":{"declarators":{"types":[{"type":"variable_declarator","named":true},{"type":"variable_declarator","named":true}],"multiple":false,"required":true,"position":0},"semicolon":{"types":[{"type":"_semicolon","named":true}],"multiple":false,"required":true,"position":1}}},"lexical_declaration":{"fields":{"declarators":{"types":[{"type":"variable_declarator","named":true},{"type":"variable_declarator","named":true}],"multiple":false,"required":true,"position":1},"semicolon":{"types":[{"type":"_semicolon","named":true}],"multiple":false,"required":true,"position":2}}},"statement_block":{"fields":{"statements":{"types":[{"type":"statement","named":true}],"multiple":true,"required":true,"position":0},"automatic_semicolon":{"types":[{"type":"_automatic_semicolon","named":true}],"multiple":false,"required":false,"position":1}}},"else_clause":{"fields":{"statement":{"types":[{"type":"statement","named":true}],"multiple":false,"required":true,"position":0}}},"yield_expression":{"fields":{"expression":{"types":[{"type":"expression","named":true},{"type":"expression","named":true}],"multiple":false,"required":true,"position":0}}},"class":{"fields":{"class_heritage":{"types":[{"type":"decorator","named":true}],"multiple":true,"required":true,"position":0}}},"class_declaration":{"fields":{"class_heritage":{"types":[{"type":"decorator","named":true}],"multiple":true,"required":true,"position":0},"automatic_semicolon":{"types":[{"type":"class_heritage","named":true}],"multiple":false,"required":false,"position":3}}},"await_expression":{"fields":{"expression":{"types":[{"type":"expression","named":true}],"multiple":false,"required":true,"position":0}}},"spread_element":{"fields":{"expression":{"types":[{"type":"expression","named":true}],"multiple":false,"required":true,"position":0}}},"method_definition":{"fields":{"accessibility_modifier":{"types":[{"type":"accessibility_modifier","named":true}],"multiple":false,"required":false,"position":0},"override_modifier":{"types":[],"multiple":false,"required":false,"position":1}}},"computed_property_name":{"fields":{"expression":{"types":[{"type":"expression","named":true}],"multiple":false,"required":true,"position":0}}},"public_field_definition":{"fields":{"accessibility_modifier":{"types":[{"type":"decorator","named":true}],"multiple":true,"required":true,"position":0},"override_modifier":{"types":[{"type":"accessibility_modifier","named":true},{"type":"accessibility_modifier","named":true}],"multiple":false,"required":false,"position":1},"initializer":{"types":[{"type":"override_modifier","named":true}],"multiple":false,"required":true,"position":2}}},"non_null_expression":{"fields":{"expression":{"types":[{"type":"expression","named":true}],"multiple":false,"required":true,"position":0}}},"method_signature":{"fields":{"accessibility_modifier":{"types":[{"type":"accessibility_modifier","named":true}],"multiple":false,"required":false,"position":0},"override_modifier":{"types":[],"multiple":false,"required":false,"position":1}}},"abstract_method_signature":{"fields":{"accessibility_modifier":{"types":[{"type":"accessibility_modifier","named":true}],"multiple":false,"required":false,"position":0},"override_modifier":{"types":[{"type":"override_modifier","named":true}],"multiple":false,"required":false,"position":1}}},"type_assertion":{"fields":{"type_arguments":{"types":[{"type":"type_arguments","named":true}],"multiple":false,"required":true,"position":0},"expression":{"types":[{"type":"expression","named":true}],"multiple":false,"required":true,"position":1}}},"as_expression":{"fields":{"expression":{"types":[{"type":"expression","named":true}],"multiple":false,"required":true,"position":0},"type_annotation":{"types":[{"type":"type","named":true}],"multiple":false,"required":true,"position":1}}},"satisfies_expression":{"fields":{"expression":{"types":[{"type":"expression","named":true}],"multiple":false,"required":true,"position":0},"type_annotation":{"types":[{"type":"type","named":true}],"multiple":false,"required":true,"position":1}}},"instantiation_expression":{"fields":{"expression":{"types":[{"type":"expression","named":true}],"multiple":false,"required":true,"position":0}}},"import_require_clause":{"fields":{"identifier":{"types":[{"type":"identifier","named":true}],"multiple":false,"required":true,"position":0}}},"ambient_declaration":{"fields":{"declaration":{"types":[{"type":"declaration","named":true},{"type":"statement_block","named":true},{"type":"identifier","named":true},{"type":"type","named":true},{"type":"_semicolon","named":true}],"multiple":false,"required":true,"position":0}}},"abstract_class_declaration":{"fields":{"class_heritage":{"types":[{"type":"decorator","named":true}],"multiple":true,"required":true,"position":0}}},"import_alias":{"fields":{"name":{"types":[{"type":"identifier","named":true}],"multiple":false,"required":true,"position":0},"value":{"types":[{"type":"identifier","named":true},{"type":"nested_identifier","named":true}],"multiple":false,"required":true,"position":1},"semicolon":{"types":[{"type":"_semicolon","named":true}],"multiple":false,"required":true,"position":2}}},"interface_declaration":{"fields":{"extends_type_clause":{"types":[{"type":"extends_type_clause","named":true}],"multiple":false,"required":false,"position":2}}},"enum_body":{"fields":{"opening":{"types":[{"type":"_property_name","named":true},{"type":"enum_assignment","named":true},{"type":"_property_name","named":true},{"type":"enum_assignment","named":true}],"multiple":false,"required":false,"position":0}}},"required_parameter":{"fields":{"parameter_name":{"types":[{"type":"_parameter_name","named":true}],"multiple":false,"required":true,"position":0},"initializer":{"types":[{"type":"_initializer","named":true}],"multiple":false,"required":false,"position":2}}},"optional_parameter":{"fields":{"parameter_name":{"types":[{"type":"_parameter_name","named":true}],"multiple":false,"required":true,"position":0},"initializer":{"types":[{"type":"_initializer","named":true}],"multiple":false,"required":false,"position":2}}},"asserts_annotation":{"fields":{"asserts":{"types":[{"type":"asserts","named":true}],"multiple":false,"required":true,"position":0}}},"infer_type":{"fields":{"type_identifier":{"types":[{"type":"_type_identifier","named":true}],"multiple":false,"required":true,"position":0},"constraint":{"types":[{"type":"type","named":true}],"multiple":false,"required":false,"position":1}}},"type_predicate_annotation":{"fields":{"type_predicate":{"types":[{"type":"type_predicate","named":true}],"multiple":false,"required":true,"position":0}}},"index_type_query":{"fields":{"primary_type":{"types":[{"type":"primary_type","named":true}],"multiple":false,"required":true,"position":0}}},"lookup_type":{"fields":{"primary_type":{"types":[{"type":"primary_type","named":true}],"multiple":false,"required":true,"position":0},"index_type":{"types":[{"type":"type","named":true}],"multiple":false,"required":true,"position":1}}},"flow_maybe_type":{"fields":{"primary_type":{"types":[{"type":"primary_type","named":true}],"multiple":false,"required":true,"position":0}}},"object_type":{"fields":{"opening":{"types":[],"multiple":false,"required":true,"position":0},"members":{"types":[{"type":"export_statement","named":true},{"type":"property_signature","named":true},{"type":"call_signature","named":true},{"type":"construct_signature","named":true},{"type":"index_signature","named":true},{"type":"method_signature","named":true},{"type":"_semicolon","named":true},{"type":"export_statement","named":true},{"type":"property_signature","named":true},{"type":"call_signature","named":true},{"type":"construct_signature","named":true},{"type":"index_signature","named":true},{"type":"method_signature","named":true},{"type":"_semicolon","named":true}],"multiple":false,"required":false,"position":1},"closing":{"types":[],"multiple":false,"required":true,"position":2}}},"property_signature":{"fields":{"accessibility_modifier":{"types":[{"type":"accessibility_modifier","named":true}],"multiple":false,"required":false,"position":0},"override_modifier":{"types":[],"multiple":false,"required":false,"position":1}}},"array_type":{"fields":{"primary_type":{"types":[{"type":"primary_type","named":true}],"multiple":false,"required":true,"position":0}}},"union_type":{"fields":{"left":{"types":[{"type":"type","named":true}],"multiple":false,"required":false,"position":0},"right":{"types":[{"type":"type","named":true}],"multiple":false,"required":true,"position":1}}},"intersection_type":{"fields":{"left":{"types":[{"type":"type","named":true}],"multiple":false,"required":false,"position":0},"right":{"types":[{"type":"type","named":true}],"multiple":false,"required":true,"position":1}}},"interface_body":{"fields":{"opening":{"types":[],"multiple":false,"required":true,"position":0},"members":{"types":[{"type":"export_statement","named":true},{"type":"property_signature","named":true},{"type":"call_signature","named":true},{"type":"construct_signature","named":true},{"type":"index_signature","named":true},{"type":"method_signature","named":true},{"type":"_semicolon","named":true},{"type":"export_statement","named":true},{"type":"property_signature","named":true},{"type":"call_signature","named":true},{"type":"construct_signature","named":true},{"type":"index_signature","named":true},{"type":"method_signature","named":true},{"type":"_semicolon","named":true}],"multiple":false,"required":false,"position":1},"closing":{"types":[],"multiple":false,"required":true,"position":2}}}} as const;
 const _supertypeExpansion = new Map<string, readonly string[]>(Object.entries({"_module_export_name":["identifier","string"],"_expressions":["expression","sequence_expression"],"_jsx_element":["jsx_element","jsx_self_closing_element"],"_jsx_child":["jsx_text","html_character_reference","_jsx_element","jsx_expression"],"_jsx_identifier":["jsx_identifier","identifier"],"_jsx_element_name":["_jsx_identifier","nested_identifier","jsx_namespace_name"],"_jsx_attribute":["jsx_attribute","jsx_expression"],"_jsx_attribute_name":["_jsx_identifier","jsx_namespace_name"],"_jsx_attribute_value":["_jsx_string","jsx_expression","_jsx_element"],"_formal_parameter":["required_parameter","optional_parameter"],"_destructuring_pattern":["object_pattern","array_pattern"],"_identifier":["undefined","identifier"],"_tuple_type_member":["tuple_parameter","optional_tuple_parameter","optional_type","rest_type","type"]}));
 const _routing = buildRoutingMap(_overrides, _supertypeExpansion);
 
@@ -35,56 +37,56 @@ function drillInAll(entries: unknown, tree: TreeHandle): unknown[] {
   return arr.map(e => drillIn(e, tree));
 }
 
-export function wrapProgram(data: _NodeData, tree: TreeHandle) {
+export function wrapProgram(data: _NodeData, tree: TreeHandle): WrappedNode<Program> {
   return {
     ...data,
     get hashBangLine() { return drillIn(data.fields?.['hash_bang_line'], tree); },
-    get statements() { return drillIn(data.fields?.['statements'], tree); },
+    get statements() { return drillInAll(data.fields?.['statements'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<Program>;
 }
 
-export function wrapExportStatement(data: _NodeData, tree: TreeHandle) {
+export function wrapExportStatement(data: _NodeData, tree: TreeHandle): WrappedNode<ExportStatement> {
   return {
     ...data,
     get decorator() { return drillInAll(data.fields?.['decorator'], tree); },
     get declaration() { return drillIn(data.fields?.['declaration'], tree); },
     get value() { return drillIn(data.fields?.['value'], tree); },
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<ExportStatement>;
 }
 
-export function wrapNamespaceExport(data: _NodeData, tree: TreeHandle) {
+export function wrapNamespaceExport(data: _NodeData, tree: TreeHandle): WrappedNode<NamespaceExport> {
   return {
     ...data,
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<NamespaceExport>;
 }
 
-export function wrapExportClause(data: _NodeData, tree: TreeHandle) {
+export function wrapExportClause(data: _NodeData, tree: TreeHandle): WrappedNode<ExportClause> {
   return {
     ...data,
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<ExportClause>;
 }
 
-export function wrapExportSpecifier(data: _NodeData, tree: TreeHandle) {
+export function wrapExportSpecifier(data: _NodeData, tree: TreeHandle): WrappedNode<ExportSpecifier> {
   return {
     ...data,
     get name() { return drillIn(data.fields?.['name'], tree); },
     get alias() { return drillIn(data.fields?.['alias'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<ExportSpecifier>;
 }
 
-export function wrapDeclaration(data: _NodeData, tree: TreeHandle) {
+export function wrapDeclaration(data: _NodeData, tree: TreeHandle): WrappedNode<Declaration> {
   return {
     ...data,
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<Declaration>;
 }
 
-export function wrapImportStatement(data: _NodeData, tree: TreeHandle) {
+export function wrapImportStatement(data: _NodeData, tree: TreeHandle): WrappedNode<ImportStatement> {
   return {
     ...data,
     get importClause() { return drillIn(data.fields?.['import_clause'], tree); },
@@ -92,128 +94,128 @@ export function wrapImportStatement(data: _NodeData, tree: TreeHandle) {
     get importAttribute() { return drillIn(data.fields?.['import_attribute'], tree); },
     get semicolon() { return drillIn(data.fields?.['semicolon'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<ImportStatement>;
 }
 
-export function wrapImportClause(data: _NodeData, tree: TreeHandle) {
+export function wrapImportClause(data: _NodeData, tree: TreeHandle): WrappedNode<ImportClause> {
   return {
     ...data,
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<ImportClause>;
 }
 
-export function wrapNamespaceImport(data: _NodeData, tree: TreeHandle) {
+export function wrapNamespaceImport(data: _NodeData, tree: TreeHandle): WrappedNode<NamespaceImport> {
   return {
     ...data,
     get identifier() { return drillIn(data.fields?.['identifier'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<NamespaceImport>;
 }
 
-export function wrapNamedImports(data: _NodeData, tree: TreeHandle) {
+export function wrapNamedImports(data: _NodeData, tree: TreeHandle): WrappedNode<NamedImports> {
   return {
     ...data,
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<NamedImports>;
 }
 
-export function wrapImportSpecifier(data: _NodeData, tree: TreeHandle) {
+export function wrapImportSpecifier(data: _NodeData, tree: TreeHandle): WrappedNode<ImportSpecifier> {
   return {
     ...data,
     get name() { return drillIn(data.fields?.['name'], tree); },
     get alias() { return drillIn(data.fields?.['alias'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<ImportSpecifier>;
 }
 
-export function wrapImportAttribute(data: _NodeData, tree: TreeHandle) {
+export function wrapImportAttribute(data: _NodeData, tree: TreeHandle): WrappedNode<ImportAttribute> {
   return {
     ...data,
     get object() { return drillIn(data.fields?.['object'], tree); },
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<ImportAttribute>;
 }
 
-export function wrapStatement(data: _NodeData, tree: TreeHandle) {
+export function wrapStatement(data: _NodeData, tree: TreeHandle): WrappedNode<Statement> {
   return {
     ...data,
     get body() { return drillIn(data.fields?.['body'], tree); },
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<Statement>;
 }
 
-export function wrapExpressionStatement(data: _NodeData, tree: TreeHandle) {
+export function wrapExpressionStatement(data: _NodeData, tree: TreeHandle): WrappedNode<ExpressionStatement> {
   return {
     ...data,
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<ExpressionStatement>;
 }
 
-export function wrapVariableDeclaration(data: _NodeData, tree: TreeHandle) {
+export function wrapVariableDeclaration(data: _NodeData, tree: TreeHandle): WrappedNode<VariableDeclaration> {
   return {
     ...data,
     get declarators() { return drillIn(data.fields?.['declarators'], tree); },
     get semicolon() { return drillIn(data.fields?.['semicolon'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<VariableDeclaration>;
 }
 
-export function wrapLexicalDeclaration(data: _NodeData, tree: TreeHandle) {
+export function wrapLexicalDeclaration(data: _NodeData, tree: TreeHandle): WrappedNode<LexicalDeclaration> {
   return {
     ...data,
     get kind() { return drillIn(data.fields?.['kind'], tree); },
     get declarators() { return drillIn(data.fields?.['declarators'], tree); },
     get semicolon() { return drillIn(data.fields?.['semicolon'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<LexicalDeclaration>;
 }
 
-export function wrapVariableDeclarator(data: _NodeData, tree: TreeHandle) {
+export function wrapVariableDeclarator(data: _NodeData, tree: TreeHandle): WrappedNode<VariableDeclarator> {
   return {
     ...data,
     get name() { return drillIn(data.fields?.['name'], tree); },
     get typeField() { return drillIn(data.fields?.['type'], tree); },
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<VariableDeclarator>;
 }
 
-export function wrapStatementBlock(data: _NodeData, tree: TreeHandle) {
+export function wrapStatementBlock(data: _NodeData, tree: TreeHandle): WrappedNode<StatementBlock> {
   return {
     ...data,
-    get statements() { return drillIn(data.fields?.['statements'], tree); },
+    get statements() { return drillInAll(data.fields?.['statements'], tree); },
     get automaticSemicolon() { return drillIn(data.fields?.['automatic_semicolon'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<StatementBlock>;
 }
 
-export function wrapElseClause(data: _NodeData, tree: TreeHandle) {
+export function wrapElseClause(data: _NodeData, tree: TreeHandle): WrappedNode<ElseClause> {
   return {
     ...data,
     get statement() { return drillIn(data.fields?.['statement'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<ElseClause>;
 }
 
-export function wrapIfStatement(data: _NodeData, tree: TreeHandle) {
+export function wrapIfStatement(data: _NodeData, tree: TreeHandle): WrappedNode<IfStatement> {
   return {
     ...data,
     get condition() { return drillIn(data.fields?.['condition'], tree); },
     get consequence() { return drillIn(data.fields?.['consequence'], tree); },
     get alternative() { return drillIn(data.fields?.['alternative'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<IfStatement>;
 }
 
-export function wrapSwitchStatement(data: _NodeData, tree: TreeHandle) {
+export function wrapSwitchStatement(data: _NodeData, tree: TreeHandle): WrappedNode<SwitchStatement> {
   return {
     ...data,
     get value() { return drillIn(data.fields?.['value'], tree); },
     get body() { return drillIn(data.fields?.['body'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<SwitchStatement>;
 }
 
-export function wrapForStatement(data: _NodeData, tree: TreeHandle) {
+export function wrapForStatement(data: _NodeData, tree: TreeHandle): WrappedNode<ForStatement> {
   return {
     ...data,
     get initializer() { return drillIn(data.fields?.['initializer'], tree); },
@@ -221,604 +223,604 @@ export function wrapForStatement(data: _NodeData, tree: TreeHandle) {
     get increment() { return drillIn(data.fields?.['increment'], tree); },
     get body() { return drillIn(data.fields?.['body'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<ForStatement>;
 }
 
-export function wrapForInStatement(data: _NodeData, tree: TreeHandle) {
+export function wrapForInStatement(data: _NodeData, tree: TreeHandle): WrappedNode<ForInStatement> {
   return {
     ...data,
     get body() { return drillIn(data.fields?.['body'], tree); },
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<ForInStatement>;
 }
 
-export function wrapWhileStatement(data: _NodeData, tree: TreeHandle) {
+export function wrapWhileStatement(data: _NodeData, tree: TreeHandle): WrappedNode<WhileStatement> {
   return {
     ...data,
     get condition() { return drillIn(data.fields?.['condition'], tree); },
     get body() { return drillIn(data.fields?.['body'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<WhileStatement>;
 }
 
-export function wrapDoStatement(data: _NodeData, tree: TreeHandle) {
+export function wrapDoStatement(data: _NodeData, tree: TreeHandle): WrappedNode<DoStatement> {
   return {
     ...data,
     get body() { return drillIn(data.fields?.['body'], tree); },
     get condition() { return drillIn(data.fields?.['condition'], tree); },
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<DoStatement>;
 }
 
-export function wrapTryStatement(data: _NodeData, tree: TreeHandle) {
+export function wrapTryStatement(data: _NodeData, tree: TreeHandle): WrappedNode<TryStatement> {
   return {
     ...data,
     get body() { return drillIn(data.fields?.['body'], tree); },
     get handler() { return drillIn(data.fields?.['handler'], tree); },
     get finalizer() { return drillIn(data.fields?.['finalizer'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<TryStatement>;
 }
 
-export function wrapWithStatement(data: _NodeData, tree: TreeHandle) {
+export function wrapWithStatement(data: _NodeData, tree: TreeHandle): WrappedNode<WithStatement> {
   return {
     ...data,
     get object() { return drillIn(data.fields?.['object'], tree); },
     get body() { return drillIn(data.fields?.['body'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<WithStatement>;
 }
 
-export function wrapBreakStatement(data: _NodeData, tree: TreeHandle) {
+export function wrapBreakStatement(data: _NodeData, tree: TreeHandle): WrappedNode<BreakStatement> {
   return {
     ...data,
     get label() { return drillIn(data.fields?.['label'], tree); },
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<BreakStatement>;
 }
 
-export function wrapContinueStatement(data: _NodeData, tree: TreeHandle) {
+export function wrapContinueStatement(data: _NodeData, tree: TreeHandle): WrappedNode<ContinueStatement> {
   return {
     ...data,
     get label() { return drillIn(data.fields?.['label'], tree); },
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<ContinueStatement>;
 }
 
-export function wrapDebuggerStatement(data: _NodeData, tree: TreeHandle) {
+export function wrapDebuggerStatement(data: _NodeData, tree: TreeHandle): WrappedNode<DebuggerStatement> {
   return {
     ...data,
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<DebuggerStatement>;
 }
 
-export function wrapReturnStatement(data: _NodeData, tree: TreeHandle) {
+export function wrapReturnStatement(data: _NodeData, tree: TreeHandle): WrappedNode<ReturnStatement> {
   return {
     ...data,
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<ReturnStatement>;
 }
 
-export function wrapThrowStatement(data: _NodeData, tree: TreeHandle) {
+export function wrapThrowStatement(data: _NodeData, tree: TreeHandle): WrappedNode<ThrowStatement> {
   return {
     ...data,
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<ThrowStatement>;
 }
 
-export function wrapLabeledStatement(data: _NodeData, tree: TreeHandle) {
+export function wrapLabeledStatement(data: _NodeData, tree: TreeHandle): WrappedNode<LabeledStatement> {
   return {
     ...data,
     get label() { return drillIn(data.fields?.['label'], tree); },
     get body() { return drillIn(data.fields?.['body'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<LabeledStatement>;
 }
 
-export function wrapSwitchBody(data: _NodeData, tree: TreeHandle) {
+export function wrapSwitchBody(data: _NodeData, tree: TreeHandle): WrappedNode<SwitchBody> {
   return {
     ...data,
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<SwitchBody>;
 }
 
-export function wrapSwitchCase(data: _NodeData, tree: TreeHandle) {
+export function wrapSwitchCase(data: _NodeData, tree: TreeHandle): WrappedNode<SwitchCase> {
   return {
     ...data,
     get value() { return drillIn(data.fields?.['value'], tree); },
-    get body() { return drillIn(data.fields?.['body'], tree); },
+    get body() { return drillInAll(data.fields?.['body'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<SwitchCase>;
 }
 
-export function wrapSwitchDefault(data: _NodeData, tree: TreeHandle) {
+export function wrapSwitchDefault(data: _NodeData, tree: TreeHandle): WrappedNode<SwitchDefault> {
   return {
     ...data,
-    get body() { return drillIn(data.fields?.['body'], tree); },
+    get body() { return drillInAll(data.fields?.['body'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<SwitchDefault>;
 }
 
-export function wrapCatchClause(data: _NodeData, tree: TreeHandle) {
+export function wrapCatchClause(data: _NodeData, tree: TreeHandle): WrappedNode<CatchClause> {
   return {
     ...data,
     get parameter() { return drillIn(data.fields?.['parameter'], tree); },
     get typeField() { return drillIn(data.fields?.['type'], tree); },
     get body() { return drillIn(data.fields?.['body'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<CatchClause>;
 }
 
-export function wrapFinallyClause(data: _NodeData, tree: TreeHandle) {
+export function wrapFinallyClause(data: _NodeData, tree: TreeHandle): WrappedNode<FinallyClause> {
   return {
     ...data,
     get body() { return drillIn(data.fields?.['body'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<FinallyClause>;
 }
 
-export function wrapParenthesizedExpression(data: _NodeData, tree: TreeHandle) {
+export function wrapParenthesizedExpression(data: _NodeData, tree: TreeHandle): WrappedNode<ParenthesizedExpression> {
   return {
     ...data,
     get typeField() { return drillIn(data.fields?.['type'], tree); },
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<ParenthesizedExpression>;
 }
 
-export function wrapExpression(data: _NodeData, tree: TreeHandle) {
+export function wrapExpression(data: _NodeData, tree: TreeHandle): WrappedNode<Expression> {
   return {
     ...data,
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<Expression>;
 }
 
-export function wrapPrimaryExpression(data: _NodeData, tree: TreeHandle) {
+export function wrapPrimaryExpression(data: _NodeData, tree: TreeHandle): WrappedNode<PrimaryExpression> {
   return {
     ...data,
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<PrimaryExpression>;
 }
 
-export function wrapYieldExpression(data: _NodeData, tree: TreeHandle) {
+export function wrapYieldExpression(data: _NodeData, tree: TreeHandle): WrappedNode<YieldExpression> {
   return {
     ...data,
     get expression() { return drillIn(data.fields?.['expression'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<YieldExpression>;
 }
 
-export function wrapObject(data: _NodeData, tree: TreeHandle) {
+export function wrapObject(data: _NodeData, tree: TreeHandle): WrappedNode<Object> {
   return {
     ...data,
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<Object>;
 }
 
-export function wrapObjectPattern(data: _NodeData, tree: TreeHandle) {
+export function wrapObjectPattern(data: _NodeData, tree: TreeHandle): WrappedNode<ObjectPattern> {
   return {
     ...data,
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<ObjectPattern>;
 }
 
-export function wrapAssignmentPattern(data: _NodeData, tree: TreeHandle) {
-  return {
-    ...data,
-    get left() { return drillIn(data.fields?.['left'], tree); },
-    get right() { return drillIn(data.fields?.['right'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
-}
-
-export function wrapObjectAssignmentPattern(data: _NodeData, tree: TreeHandle) {
+export function wrapAssignmentPattern(data: _NodeData, tree: TreeHandle): WrappedNode<AssignmentPattern> {
   return {
     ...data,
     get left() { return drillIn(data.fields?.['left'], tree); },
     get right() { return drillIn(data.fields?.['right'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<AssignmentPattern>;
 }
 
-export function wrapArray(data: _NodeData, tree: TreeHandle) {
+export function wrapObjectAssignmentPattern(data: _NodeData, tree: TreeHandle): WrappedNode<ObjectAssignmentPattern> {
+  return {
+    ...data,
+    get left() { return drillIn(data.fields?.['left'], tree); },
+    get right() { return drillIn(data.fields?.['right'], tree); },
+    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<ObjectAssignmentPattern>;
+}
+
+export function wrapArray(data: _NodeData, tree: TreeHandle): WrappedNode<Array> {
   return {
     ...data,
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<Array>;
 }
 
-export function wrapArrayPattern(data: _NodeData, tree: TreeHandle) {
+export function wrapArrayPattern(data: _NodeData, tree: TreeHandle): WrappedNode<ArrayPattern> {
   return {
     ...data,
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<ArrayPattern>;
 }
 
-export function wrapJsxElement(data: _NodeData, tree: TreeHandle) {
+export function wrapJsxElement(data: _NodeData, tree: TreeHandle): WrappedNode<JsxElement> {
   return {
     ...data,
     get openTag() { return drillIn(data.fields?.['open_tag'], tree); },
     get closeTag() { return drillIn(data.fields?.['close_tag'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<JsxElement>;
 }
 
-export function wrapJsxExpression(data: _NodeData, tree: TreeHandle) {
+export function wrapJsxExpression(data: _NodeData, tree: TreeHandle): WrappedNode<JsxExpression> {
   return {
     ...data,
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<JsxExpression>;
 }
 
-export function wrapJsxOpeningElement(data: _NodeData, tree: TreeHandle) {
+export function wrapJsxOpeningElement(data: _NodeData, tree: TreeHandle): WrappedNode<JsxOpeningElement> {
   return {
     ...data,
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<JsxOpeningElement>;
 }
 
-export function wrapNestedIdentifier(data: _NodeData, tree: TreeHandle) {
+export function wrapNestedIdentifier(data: _NodeData, tree: TreeHandle): WrappedNode<NestedIdentifier> {
   return {
     ...data,
     get object() { return drillIn(data.fields?.['object'], tree); },
     get property() { return drillIn(data.fields?.['property'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<NestedIdentifier>;
 }
 
-export function wrapJsxNamespaceName(data: _NodeData, tree: TreeHandle) {
+export function wrapJsxNamespaceName(data: _NodeData, tree: TreeHandle): WrappedNode<JsxNamespaceName> {
   return {
     ...data,
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<JsxNamespaceName>;
 }
 
-export function wrapJsxClosingElement(data: _NodeData, tree: TreeHandle) {
+export function wrapJsxClosingElement(data: _NodeData, tree: TreeHandle): WrappedNode<JsxClosingElement> {
   return {
     ...data,
     get name() { return drillIn(data.fields?.['name'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<JsxClosingElement>;
 }
 
-export function wrapJsxSelfClosingElement(data: _NodeData, tree: TreeHandle) {
+export function wrapJsxSelfClosingElement(data: _NodeData, tree: TreeHandle): WrappedNode<JsxSelfClosingElement> {
   return {
     ...data,
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<JsxSelfClosingElement>;
 }
 
-export function wrapJsxAttribute(data: _NodeData, tree: TreeHandle) {
+export function wrapJsxAttribute(data: _NodeData, tree: TreeHandle): WrappedNode<JsxAttribute> {
   return {
     ...data,
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<JsxAttribute>;
 }
 
-export function wrapHiddenJsxString(data: _NodeData, tree: TreeHandle) {
+export function wrapJsxString(data: _NodeData, tree: TreeHandle): WrappedNode<JsxString> {
   return {
     ...data,
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<JsxString>;
 }
 
-export function wrapClass(data: _NodeData, tree: TreeHandle) {
+export function wrapClass(data: _NodeData, tree: TreeHandle): WrappedNode<Class> {
   return {
     ...data,
-    get classHeritage() { return drillIn(data.fields?.['class_heritage'], tree); },
+    get classHeritage() { return drillInAll(data.fields?.['class_heritage'], tree); },
     get name() { return drillIn(data.fields?.['name'], tree); },
     get typeParameters() { return drillIn(data.fields?.['type_parameters'], tree); },
     get body() { return drillIn(data.fields?.['body'], tree); },
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<Class>;
 }
 
-export function wrapClassDeclaration(data: _NodeData, tree: TreeHandle) {
+export function wrapClassDeclaration(data: _NodeData, tree: TreeHandle): WrappedNode<ClassDeclaration> {
   return {
     ...data,
-    get classHeritage() { return drillIn(data.fields?.['class_heritage'], tree); },
+    get classHeritage() { return drillInAll(data.fields?.['class_heritage'], tree); },
     get name() { return drillIn(data.fields?.['name'], tree); },
     get typeParameters() { return drillIn(data.fields?.['type_parameters'], tree); },
     get automaticSemicolon() { return drillIn(data.fields?.['automatic_semicolon'], tree); },
     get body() { return drillIn(data.fields?.['body'], tree); },
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<ClassDeclaration>;
 }
 
-export function wrapClassHeritage(data: _NodeData, tree: TreeHandle) {
+export function wrapClassHeritage(data: _NodeData, tree: TreeHandle): WrappedNode<ClassHeritage> {
   return {
     ...data,
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<ClassHeritage>;
 }
 
-export function wrapFunctionExpression(data: _NodeData, tree: TreeHandle) {
-  return {
-    ...data,
-    get name() { return drillIn(data.fields?.['name'], tree); },
-    get body() { return drillIn(data.fields?.['body'], tree); },
-    get child() { return drillIn(data.children?.[0], tree); },
-  };
-}
-
-export function wrapFunctionDeclaration(data: _NodeData, tree: TreeHandle) {
+export function wrapFunctionExpression(data: _NodeData, tree: TreeHandle): WrappedNode<FunctionExpression> {
   return {
     ...data,
     get name() { return drillIn(data.fields?.['name'], tree); },
     get body() { return drillIn(data.fields?.['body'], tree); },
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<FunctionExpression>;
 }
 
-export function wrapGeneratorFunction(data: _NodeData, tree: TreeHandle) {
+export function wrapFunctionDeclaration(data: _NodeData, tree: TreeHandle): WrappedNode<FunctionDeclaration> {
   return {
     ...data,
     get name() { return drillIn(data.fields?.['name'], tree); },
     get body() { return drillIn(data.fields?.['body'], tree); },
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<FunctionDeclaration>;
 }
 
-export function wrapGeneratorFunctionDeclaration(data: _NodeData, tree: TreeHandle) {
+export function wrapGeneratorFunction(data: _NodeData, tree: TreeHandle): WrappedNode<GeneratorFunction> {
   return {
     ...data,
     get name() { return drillIn(data.fields?.['name'], tree); },
     get body() { return drillIn(data.fields?.['body'], tree); },
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<GeneratorFunction>;
 }
 
-export function wrapArrowFunction(data: _NodeData, tree: TreeHandle) {
+export function wrapGeneratorFunctionDeclaration(data: _NodeData, tree: TreeHandle): WrappedNode<GeneratorFunctionDeclaration> {
+  return {
+    ...data,
+    get name() { return drillIn(data.fields?.['name'], tree); },
+    get body() { return drillIn(data.fields?.['body'], tree); },
+    get child() { return drillIn(data.children?.[0], tree); },
+  } as unknown as WrappedNode<GeneratorFunctionDeclaration>;
+}
+
+export function wrapArrowFunction(data: _NodeData, tree: TreeHandle): WrappedNode<ArrowFunction> {
   return {
     ...data,
     get parameter() { return drillIn(data.fields?.['parameter'], tree); },
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<ArrowFunction>;
 }
 
-export function wrapCallExpression(data: _NodeData, tree: TreeHandle) {
+export function wrapCallExpression(data: _NodeData, tree: TreeHandle): WrappedNode<CallExpression> {
   return {
     ...data,
     get function() { return drillIn(data.fields?.['function'], tree); },
     get typeArguments() { return drillIn(data.fields?.['type_arguments'], tree); },
     get arguments() { return drillIn(data.fields?.['arguments'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<CallExpression>;
 }
 
-export function wrapNewExpression(data: _NodeData, tree: TreeHandle) {
+export function wrapNewExpression(data: _NodeData, tree: TreeHandle): WrappedNode<NewExpression> {
   return {
     ...data,
     get constructor() { return drillIn(data.fields?.['constructor'], tree); },
     get typeArguments() { return drillIn(data.fields?.['type_arguments'], tree); },
     get arguments() { return drillIn(data.fields?.['arguments'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<NewExpression>;
 }
 
-export function wrapAwaitExpression(data: _NodeData, tree: TreeHandle) {
+export function wrapAwaitExpression(data: _NodeData, tree: TreeHandle): WrappedNode<AwaitExpression> {
   return {
     ...data,
     get expression() { return drillIn(data.fields?.['expression'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<AwaitExpression>;
 }
 
-export function wrapMemberExpression(data: _NodeData, tree: TreeHandle) {
+export function wrapMemberExpression(data: _NodeData, tree: TreeHandle): WrappedNode<MemberExpression> {
   return {
     ...data,
     get object() { return drillIn(data.fields?.['object'], tree); },
     get optionalChain() { return drillIn(data.fields?.['optional_chain'], tree); },
     get property() { return drillIn(data.fields?.['property'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<MemberExpression>;
 }
 
-export function wrapSubscriptExpression(data: _NodeData, tree: TreeHandle) {
+export function wrapSubscriptExpression(data: _NodeData, tree: TreeHandle): WrappedNode<SubscriptExpression> {
   return {
     ...data,
     get object() { return drillIn(data.fields?.['object'], tree); },
     get optionalChain() { return drillIn(data.fields?.['optional_chain'], tree); },
     get index() { return drillIn(data.fields?.['index'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<SubscriptExpression>;
 }
 
-export function wrapHiddenLhsExpression(data: _NodeData, tree: TreeHandle) {
+export function wrapLhsExpression(data: _NodeData, tree: TreeHandle): WrappedNode<LhsExpression> {
   return {
     ...data,
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<LhsExpression>;
 }
 
-export function wrapAssignmentExpression(data: _NodeData, tree: TreeHandle) {
+export function wrapAssignmentExpression(data: _NodeData, tree: TreeHandle): WrappedNode<AssignmentExpression> {
   return {
     ...data,
     get left() { return drillIn(data.fields?.['left'], tree); },
     get right() { return drillIn(data.fields?.['right'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<AssignmentExpression>;
 }
 
-export function wrapHiddenAugmentedAssignmentLhs(data: _NodeData, tree: TreeHandle) {
+export function wrapAugmentedAssignmentLhs(data: _NodeData, tree: TreeHandle): WrappedNode<AugmentedAssignmentLhs> {
   return {
     ...data,
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<AugmentedAssignmentLhs>;
 }
 
-export function wrapAugmentedAssignmentExpression(data: _NodeData, tree: TreeHandle) {
+export function wrapAugmentedAssignmentExpression(data: _NodeData, tree: TreeHandle): WrappedNode<AugmentedAssignmentExpression> {
   return {
     ...data,
     get left() { return drillIn(data.fields?.['left'], tree); },
     get operator() { return drillIn(data.fields?.['operator'], tree); },
     get right() { return drillIn(data.fields?.['right'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<AugmentedAssignmentExpression>;
 }
 
-export function wrapSpreadElement(data: _NodeData, tree: TreeHandle) {
+export function wrapSpreadElement(data: _NodeData, tree: TreeHandle): WrappedNode<SpreadElement> {
   return {
     ...data,
     get expression() { return drillIn(data.fields?.['expression'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<SpreadElement>;
 }
 
-export function wrapTernaryExpression(data: _NodeData, tree: TreeHandle) {
+export function wrapTernaryExpression(data: _NodeData, tree: TreeHandle): WrappedNode<TernaryExpression> {
   return {
     ...data,
     get condition() { return drillIn(data.fields?.['condition'], tree); },
     get consequence() { return drillIn(data.fields?.['consequence'], tree); },
     get alternative() { return drillIn(data.fields?.['alternative'], tree); },
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<TernaryExpression>;
 }
 
-export function wrapBinaryExpression(data: _NodeData, tree: TreeHandle) {
+export function wrapBinaryExpression(data: _NodeData, tree: TreeHandle): WrappedNode<BinaryExpression> {
   return {
     ...data,
     get left() { return drillIn(data.fields?.['left'], tree); },
     get operator() { return drillIn(data.fields?.['operator'], tree); },
     get right() { return drillIn(data.fields?.['right'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<BinaryExpression>;
 }
 
-export function wrapUnaryExpression(data: _NodeData, tree: TreeHandle) {
+export function wrapUnaryExpression(data: _NodeData, tree: TreeHandle): WrappedNode<UnaryExpression> {
   return {
     ...data,
     get operator() { return drillIn(data.fields?.['operator'], tree); },
     get argument() { return drillIn(data.fields?.['argument'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<UnaryExpression>;
 }
 
-export function wrapUpdateExpression(data: _NodeData, tree: TreeHandle) {
+export function wrapUpdateExpression(data: _NodeData, tree: TreeHandle): WrappedNode<UpdateExpression> {
   return {
     ...data,
     get argument() { return drillIn(data.fields?.['argument'], tree); },
     get operator() { return drillIn(data.fields?.['operator'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<UpdateExpression>;
 }
 
-export function wrapSequenceExpression(data: _NodeData, tree: TreeHandle) {
+export function wrapSequenceExpression(data: _NodeData, tree: TreeHandle): WrappedNode<SequenceExpression> {
   return {
     ...data,
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<SequenceExpression>;
 }
 
-export function wrapString(data: _NodeData, tree: TreeHandle) {
+export function wrapString(data: _NodeData, tree: TreeHandle): WrappedNode<String> {
   return {
     ...data,
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<String>;
 }
 
-export function wrapTemplateString(data: _NodeData, tree: TreeHandle) {
+export function wrapTemplateString(data: _NodeData, tree: TreeHandle): WrappedNode<TemplateString> {
   return {
     ...data,
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<TemplateString>;
 }
 
-export function wrapTemplateSubstitution(data: _NodeData, tree: TreeHandle) {
+export function wrapTemplateSubstitution(data: _NodeData, tree: TreeHandle): WrappedNode<TemplateSubstitution> {
   return {
     ...data,
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<TemplateSubstitution>;
 }
 
-export function wrapRegex(data: _NodeData, tree: TreeHandle) {
+export function wrapRegex(data: _NodeData, tree: TreeHandle): WrappedNode<Regex> {
   return {
     ...data,
     get pattern() { return drillIn(data.fields?.['pattern'], tree); },
     get flags() { return drillIn(data.fields?.['flags'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<Regex>;
 }
 
-export function wrapArguments(data: _NodeData, tree: TreeHandle) {
+export function wrapArguments(data: _NodeData, tree: TreeHandle): WrappedNode<Arguments> {
   return {
     ...data,
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<Arguments>;
 }
 
-export function wrapDecorator(data: _NodeData, tree: TreeHandle) {
+export function wrapDecorator(data: _NodeData, tree: TreeHandle): WrappedNode<Decorator> {
   return {
     ...data,
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<Decorator>;
 }
 
-export function wrapDecoratorMemberExpression(data: _NodeData, tree: TreeHandle) {
+export function wrapDecoratorMemberExpression(data: _NodeData, tree: TreeHandle): WrappedNode<DecoratorMemberExpression> {
   return {
     ...data,
     get object() { return drillIn(data.fields?.['object'], tree); },
     get property() { return drillIn(data.fields?.['property'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<DecoratorMemberExpression>;
 }
 
-export function wrapDecoratorCallExpression(data: _NodeData, tree: TreeHandle) {
+export function wrapDecoratorCallExpression(data: _NodeData, tree: TreeHandle): WrappedNode<DecoratorCallExpression> {
   return {
     ...data,
     get function() { return drillIn(data.fields?.['function'], tree); },
     get typeArguments() { return drillIn(data.fields?.['type_arguments'], tree); },
     get arguments() { return drillIn(data.fields?.['arguments'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<DecoratorCallExpression>;
 }
 
-export function wrapClassBody(data: _NodeData, tree: TreeHandle) {
+export function wrapClassBody(data: _NodeData, tree: TreeHandle): WrappedNode<ClassBody> {
   return {
     ...data,
     get decorator() { return drillInAll(data.fields?.['decorator'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<ClassBody>;
 }
 
-export function wrapFieldDefinition(data: _NodeData, tree: TreeHandle) {
+export function wrapFieldDefinition(data: _NodeData, tree: TreeHandle): WrappedNode<FieldDefinition> {
   return {
     ...data,
     get decorator() { return drillInAll(data.fields?.['decorator'], tree); },
     get property() { return drillIn(data.fields?.['property'], tree); },
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<FieldDefinition>;
 }
 
-export function wrapFormalParameters(data: _NodeData, tree: TreeHandle) {
+export function wrapFormalParameters(data: _NodeData, tree: TreeHandle): WrappedNode<FormalParameters> {
   return {
     ...data,
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<FormalParameters>;
 }
 
-export function wrapClassStaticBlock(data: _NodeData, tree: TreeHandle) {
+export function wrapClassStaticBlock(data: _NodeData, tree: TreeHandle): WrappedNode<ClassStaticBlock> {
   return {
     ...data,
     get body() { return drillIn(data.fields?.['body'], tree); },
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<ClassStaticBlock>;
 }
 
-export function wrapPattern(data: _NodeData, tree: TreeHandle) {
+export function wrapPattern(data: _NodeData, tree: TreeHandle): WrappedNode<Pattern> {
   return {
     ...data,
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<Pattern>;
 }
 
-export function wrapRestPattern(data: _NodeData, tree: TreeHandle) {
+export function wrapRestPattern(data: _NodeData, tree: TreeHandle): WrappedNode<RestPattern> {
   return {
     ...data,
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<RestPattern>;
 }
 
-export function wrapMethodDefinition(data: _NodeData, tree: TreeHandle) {
+export function wrapMethodDefinition(data: _NodeData, tree: TreeHandle): WrappedNode<MethodDefinition> {
   return {
     ...data,
     get accessibilityModifier() { return drillIn(data.fields?.['accessibility_modifier'], tree); },
@@ -826,233 +828,233 @@ export function wrapMethodDefinition(data: _NodeData, tree: TreeHandle) {
     get name() { return drillIn(data.fields?.['name'], tree); },
     get body() { return drillIn(data.fields?.['body'], tree); },
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<MethodDefinition>;
 }
 
-export function wrapPair(data: _NodeData, tree: TreeHandle) {
+export function wrapPair(data: _NodeData, tree: TreeHandle): WrappedNode<Pair> {
   return {
     ...data,
     get key() { return drillIn(data.fields?.['key'], tree); },
     get value() { return drillIn(data.fields?.['value'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<Pair>;
 }
 
-export function wrapPairPattern(data: _NodeData, tree: TreeHandle) {
+export function wrapPairPattern(data: _NodeData, tree: TreeHandle): WrappedNode<PairPattern> {
   return {
     ...data,
     get key() { return drillIn(data.fields?.['key'], tree); },
     get value() { return drillIn(data.fields?.['value'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<PairPattern>;
 }
 
-export function wrapHiddenPropertyName(data: _NodeData, tree: TreeHandle) {
+export function wrapPropertyName(data: _NodeData, tree: TreeHandle): WrappedNode<PropertyName> {
   return {
     ...data,
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<PropertyName>;
 }
 
-export function wrapComputedPropertyName(data: _NodeData, tree: TreeHandle) {
+export function wrapComputedPropertyName(data: _NodeData, tree: TreeHandle): WrappedNode<ComputedPropertyName> {
   return {
     ...data,
     get expression() { return drillIn(data.fields?.['expression'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<ComputedPropertyName>;
 }
 
-export function wrapHiddenSemicolon(data: _NodeData, tree: TreeHandle) {
+export function wrapSemicolon(data: _NodeData, tree: TreeHandle): WrappedNode<Semicolon> {
   return {
     ...data,
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<Semicolon>;
 }
 
-export function wrapPublicFieldDefinition(data: _NodeData, tree: TreeHandle) {
+export function wrapPublicFieldDefinition(data: _NodeData, tree: TreeHandle): WrappedNode<PublicFieldDefinition> {
   return {
     ...data,
-    get accessibilityModifier() { return drillIn(data.fields?.['accessibility_modifier'], tree); },
+    get accessibilityModifier() { return drillInAll(data.fields?.['accessibility_modifier'], tree); },
     get overrideModifier() { return drillIn(data.fields?.['override_modifier'], tree); },
     get initializer() { return drillIn(data.fields?.['initializer'], tree); },
     get name() { return drillIn(data.fields?.['name'], tree); },
     get typeField() { return drillIn(data.fields?.['type'], tree); },
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<PublicFieldDefinition>;
 }
 
-export function wrapHiddenJsxStartOpeningElement(data: _NodeData, tree: TreeHandle) {
+export function wrapJsxStartOpeningElement(data: _NodeData, tree: TreeHandle): WrappedNode<JsxStartOpeningElement> {
   return {
     ...data,
     get name() { return drillIn(data.fields?.['name'], tree); },
     get typeArguments() { return drillIn(data.fields?.['type_arguments'], tree); },
     get attribute() { return drillInAll(data.fields?.['attribute'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<JsxStartOpeningElement>;
 }
 
-export function wrapHiddenImportIdentifier(data: _NodeData, tree: TreeHandle) {
+export function wrapImportIdentifier(data: _NodeData, tree: TreeHandle): WrappedNode<ImportIdentifier> {
   return {
     ...data,
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<ImportIdentifier>;
 }
 
-export function wrapNonNullExpression(data: _NodeData, tree: TreeHandle) {
+export function wrapNonNullExpression(data: _NodeData, tree: TreeHandle): WrappedNode<NonNullExpression> {
   return {
     ...data,
     get expression() { return drillIn(data.fields?.['expression'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<NonNullExpression>;
 }
 
-export function wrapMethodSignature(data: _NodeData, tree: TreeHandle) {
+export function wrapMethodSignature(data: _NodeData, tree: TreeHandle): WrappedNode<MethodSignature> {
   return {
     ...data,
     get accessibilityModifier() { return drillIn(data.fields?.['accessibility_modifier'], tree); },
     get overrideModifier() { return drillIn(data.fields?.['override_modifier'], tree); },
     get name() { return drillIn(data.fields?.['name'], tree); },
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<MethodSignature>;
 }
 
-export function wrapAbstractMethodSignature(data: _NodeData, tree: TreeHandle) {
+export function wrapAbstractMethodSignature(data: _NodeData, tree: TreeHandle): WrappedNode<AbstractMethodSignature> {
   return {
     ...data,
     get accessibilityModifier() { return drillIn(data.fields?.['accessibility_modifier'], tree); },
     get overrideModifier() { return drillIn(data.fields?.['override_modifier'], tree); },
     get name() { return drillIn(data.fields?.['name'], tree); },
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<AbstractMethodSignature>;
 }
 
-export function wrapFunctionSignature(data: _NodeData, tree: TreeHandle) {
+export function wrapFunctionSignature(data: _NodeData, tree: TreeHandle): WrappedNode<FunctionSignature> {
   return {
     ...data,
     get name() { return drillIn(data.fields?.['name'], tree); },
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<FunctionSignature>;
 }
 
-export function wrapDecoratorParenthesizedExpression(data: _NodeData, tree: TreeHandle) {
+export function wrapDecoratorParenthesizedExpression(data: _NodeData, tree: TreeHandle): WrappedNode<DecoratorParenthesizedExpression> {
   return {
     ...data,
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<DecoratorParenthesizedExpression>;
 }
 
-export function wrapTypeAssertion(data: _NodeData, tree: TreeHandle) {
+export function wrapTypeAssertion(data: _NodeData, tree: TreeHandle): WrappedNode<TypeAssertion> {
   return {
     ...data,
     get typeArguments() { return drillIn(data.fields?.['type_arguments'], tree); },
     get expression() { return drillIn(data.fields?.['expression'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<TypeAssertion>;
 }
 
-export function wrapAsExpression(data: _NodeData, tree: TreeHandle) {
+export function wrapAsExpression(data: _NodeData, tree: TreeHandle): WrappedNode<AsExpression> {
   return {
     ...data,
     get expression() { return drillIn(data.fields?.['expression'], tree); },
     get typeAnnotation() { return drillIn(data.fields?.['type_annotation'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<AsExpression>;
 }
 
-export function wrapSatisfiesExpression(data: _NodeData, tree: TreeHandle) {
+export function wrapSatisfiesExpression(data: _NodeData, tree: TreeHandle): WrappedNode<SatisfiesExpression> {
   return {
     ...data,
     get expression() { return drillIn(data.fields?.['expression'], tree); },
     get typeAnnotation() { return drillIn(data.fields?.['type_annotation'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<SatisfiesExpression>;
 }
 
-export function wrapInstantiationExpression(data: _NodeData, tree: TreeHandle) {
+export function wrapInstantiationExpression(data: _NodeData, tree: TreeHandle): WrappedNode<InstantiationExpression> {
   return {
     ...data,
     get expression() { return drillIn(data.fields?.['expression'], tree); },
     get typeArguments() { return drillIn(data.fields?.['type_arguments'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<InstantiationExpression>;
 }
 
-export function wrapImportRequireClause(data: _NodeData, tree: TreeHandle) {
+export function wrapImportRequireClause(data: _NodeData, tree: TreeHandle): WrappedNode<ImportRequireClause> {
   return {
     ...data,
     get identifier() { return drillIn(data.fields?.['identifier'], tree); },
     get source() { return drillIn(data.fields?.['source'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<ImportRequireClause>;
 }
 
-export function wrapExtendsClause(data: _NodeData, tree: TreeHandle) {
+export function wrapExtendsClause(data: _NodeData, tree: TreeHandle): WrappedNode<ExtendsClause> {
   return {
     ...data,
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<ExtendsClause>;
 }
 
-export function wrapImplementsClause(data: _NodeData, tree: TreeHandle) {
+export function wrapImplementsClause(data: _NodeData, tree: TreeHandle): WrappedNode<ImplementsClause> {
   return {
     ...data,
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<ImplementsClause>;
 }
 
-export function wrapAmbientDeclaration(data: _NodeData, tree: TreeHandle) {
+export function wrapAmbientDeclaration(data: _NodeData, tree: TreeHandle): WrappedNode<AmbientDeclaration> {
   return {
     ...data,
     get declaration() { return drillIn(data.fields?.['declaration'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<AmbientDeclaration>;
 }
 
-export function wrapAbstractClassDeclaration(data: _NodeData, tree: TreeHandle) {
+export function wrapAbstractClassDeclaration(data: _NodeData, tree: TreeHandle): WrappedNode<AbstractClassDeclaration> {
   return {
     ...data,
-    get classHeritage() { return drillIn(data.fields?.['class_heritage'], tree); },
+    get classHeritage() { return drillInAll(data.fields?.['class_heritage'], tree); },
     get name() { return drillIn(data.fields?.['name'], tree); },
     get typeParameters() { return drillIn(data.fields?.['type_parameters'], tree); },
     get body() { return drillIn(data.fields?.['body'], tree); },
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<AbstractClassDeclaration>;
 }
 
-export function wrapModule(data: _NodeData, tree: TreeHandle) {
+export function wrapModule(data: _NodeData, tree: TreeHandle): WrappedNode<Module> {
   return {
     ...data,
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<Module>;
 }
 
-export function wrapInternalModule(data: _NodeData, tree: TreeHandle) {
+export function wrapInternalModule(data: _NodeData, tree: TreeHandle): WrappedNode<InternalModule> {
   return {
     ...data,
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<InternalModule>;
 }
 
-export function wrapImportAlias(data: _NodeData, tree: TreeHandle) {
+export function wrapImportAlias(data: _NodeData, tree: TreeHandle): WrappedNode<ImportAlias> {
   return {
     ...data,
     get name() { return drillIn(data.fields?.['name'], tree); },
     get value() { return drillIn(data.fields?.['value'], tree); },
     get semicolon() { return drillIn(data.fields?.['semicolon'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<ImportAlias>;
 }
 
-export function wrapNestedTypeIdentifier(data: _NodeData, tree: TreeHandle) {
+export function wrapNestedTypeIdentifier(data: _NodeData, tree: TreeHandle): WrappedNode<NestedTypeIdentifier> {
   return {
     ...data,
     get module() { return drillIn(data.fields?.['module'], tree); },
     get name() { return drillIn(data.fields?.['name'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<NestedTypeIdentifier>;
 }
 
-export function wrapInterfaceDeclaration(data: _NodeData, tree: TreeHandle) {
+export function wrapInterfaceDeclaration(data: _NodeData, tree: TreeHandle): WrappedNode<InterfaceDeclaration> {
   return {
     ...data,
     get name() { return drillIn(data.fields?.['name'], tree); },
@@ -1060,196 +1062,196 @@ export function wrapInterfaceDeclaration(data: _NodeData, tree: TreeHandle) {
     get extendsTypeClause() { return drillIn(data.fields?.['extends_type_clause'], tree); },
     get body() { return drillIn(data.fields?.['body'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<InterfaceDeclaration>;
 }
 
-export function wrapExtendsTypeClause(data: _NodeData, tree: TreeHandle) {
+export function wrapExtendsTypeClause(data: _NodeData, tree: TreeHandle): WrappedNode<ExtendsTypeClause> {
   return {
     ...data,
     get typeField() { return drillInAll(data.fields?.['type'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<ExtendsTypeClause>;
 }
 
-export function wrapEnumDeclaration(data: _NodeData, tree: TreeHandle) {
+export function wrapEnumDeclaration(data: _NodeData, tree: TreeHandle): WrappedNode<EnumDeclaration> {
   return {
     ...data,
     get name() { return drillIn(data.fields?.['name'], tree); },
     get body() { return drillIn(data.fields?.['body'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<EnumDeclaration>;
 }
 
-export function wrapEnumBody(data: _NodeData, tree: TreeHandle) {
+export function wrapEnumBody(data: _NodeData, tree: TreeHandle): WrappedNode<EnumBody> {
   return {
     ...data,
     get opening() { return drillIn(data.fields?.['opening'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<EnumBody>;
 }
 
-export function wrapEnumAssignment(data: _NodeData, tree: TreeHandle) {
+export function wrapEnumAssignment(data: _NodeData, tree: TreeHandle): WrappedNode<EnumAssignment> {
   return {
     ...data,
     get name() { return drillIn(data.fields?.['name'], tree); },
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<EnumAssignment>;
 }
 
-export function wrapTypeAliasDeclaration(data: _NodeData, tree: TreeHandle) {
+export function wrapTypeAliasDeclaration(data: _NodeData, tree: TreeHandle): WrappedNode<TypeAliasDeclaration> {
   return {
     ...data,
     get name() { return drillIn(data.fields?.['name'], tree); },
     get typeParameters() { return drillIn(data.fields?.['type_parameters'], tree); },
     get value() { return drillIn(data.fields?.['value'], tree); },
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<TypeAliasDeclaration>;
 }
 
-export function wrapRequiredParameter(data: _NodeData, tree: TreeHandle) {
+export function wrapRequiredParameter(data: _NodeData, tree: TreeHandle): WrappedNode<RequiredParameter> {
   return {
     ...data,
     get parameterName() { return drillIn(data.fields?.['parameter_name'], tree); },
     get typeField() { return drillIn(data.fields?.['type'], tree); },
     get initializer() { return drillIn(data.fields?.['initializer'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<RequiredParameter>;
 }
 
-export function wrapOptionalParameter(data: _NodeData, tree: TreeHandle) {
+export function wrapOptionalParameter(data: _NodeData, tree: TreeHandle): WrappedNode<OptionalParameter> {
   return {
     ...data,
     get parameterName() { return drillIn(data.fields?.['parameter_name'], tree); },
     get typeField() { return drillIn(data.fields?.['type'], tree); },
     get initializer() { return drillIn(data.fields?.['initializer'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<OptionalParameter>;
 }
 
-export function wrapOmittingTypeAnnotation(data: _NodeData, tree: TreeHandle) {
+export function wrapOmittingTypeAnnotation(data: _NodeData, tree: TreeHandle): WrappedNode<OmittingTypeAnnotation> {
   return {
     ...data,
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<OmittingTypeAnnotation>;
 }
 
-export function wrapAddingTypeAnnotation(data: _NodeData, tree: TreeHandle) {
+export function wrapAddingTypeAnnotation(data: _NodeData, tree: TreeHandle): WrappedNode<AddingTypeAnnotation> {
   return {
     ...data,
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<AddingTypeAnnotation>;
 }
 
-export function wrapOptingTypeAnnotation(data: _NodeData, tree: TreeHandle) {
+export function wrapOptingTypeAnnotation(data: _NodeData, tree: TreeHandle): WrappedNode<OptingTypeAnnotation> {
   return {
     ...data,
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<OptingTypeAnnotation>;
 }
 
-export function wrapTypeAnnotation(data: _NodeData, tree: TreeHandle) {
+export function wrapTypeAnnotation(data: _NodeData, tree: TreeHandle): WrappedNode<TypeAnnotation> {
   return {
     ...data,
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<TypeAnnotation>;
 }
 
-export function wrapAsserts(data: _NodeData, tree: TreeHandle) {
+export function wrapAsserts(data: _NodeData, tree: TreeHandle): WrappedNode<Asserts> {
   return {
     ...data,
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<Asserts>;
 }
 
-export function wrapAssertsAnnotation(data: _NodeData, tree: TreeHandle) {
+export function wrapAssertsAnnotation(data: _NodeData, tree: TreeHandle): WrappedNode<AssertsAnnotation> {
   return {
     ...data,
     get asserts() { return drillIn(data.fields?.['asserts'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<AssertsAnnotation>;
 }
 
-export function wrapType(data: _NodeData, tree: TreeHandle) {
+export function wrapType(data: _NodeData, tree: TreeHandle): WrappedNode<Type> {
   return {
     ...data,
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<Type>;
 }
 
-export function wrapTupleParameter(data: _NodeData, tree: TreeHandle) {
+export function wrapTupleParameter(data: _NodeData, tree: TreeHandle): WrappedNode<TupleParameter> {
   return {
     ...data,
     get name() { return drillIn(data.fields?.['name'], tree); },
     get typeField() { return drillIn(data.fields?.['type'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<TupleParameter>;
 }
 
-export function wrapOptionalTupleParameter(data: _NodeData, tree: TreeHandle) {
+export function wrapOptionalTupleParameter(data: _NodeData, tree: TreeHandle): WrappedNode<OptionalTupleParameter> {
   return {
     ...data,
     get name() { return drillIn(data.fields?.['name'], tree); },
     get typeField() { return drillIn(data.fields?.['type'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<OptionalTupleParameter>;
 }
 
-export function wrapOptionalType(data: _NodeData, tree: TreeHandle) {
+export function wrapOptionalType(data: _NodeData, tree: TreeHandle): WrappedNode<OptionalType> {
   return {
     ...data,
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<OptionalType>;
 }
 
-export function wrapRestType(data: _NodeData, tree: TreeHandle) {
+export function wrapRestType(data: _NodeData, tree: TreeHandle): WrappedNode<RestType> {
   return {
     ...data,
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<RestType>;
 }
 
-export function wrapConstructorType(data: _NodeData, tree: TreeHandle) {
+export function wrapConstructorType(data: _NodeData, tree: TreeHandle): WrappedNode<ConstructorType> {
   return {
     ...data,
     get typeParameters() { return drillIn(data.fields?.['type_parameters'], tree); },
     get parameters() { return drillIn(data.fields?.['parameters'], tree); },
     get typeField() { return drillIn(data.fields?.['type'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<ConstructorType>;
 }
 
-export function wrapPrimaryType(data: _NodeData, tree: TreeHandle) {
+export function wrapPrimaryType(data: _NodeData, tree: TreeHandle): WrappedNode<PrimaryType> {
   return {
     ...data,
     get name() { return drillIn(data.fields?.['name'], tree); },
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<PrimaryType>;
 }
 
-export function wrapTemplateType(data: _NodeData, tree: TreeHandle) {
+export function wrapTemplateType(data: _NodeData, tree: TreeHandle): WrappedNode<TemplateType> {
   return {
     ...data,
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<TemplateType>;
 }
 
-export function wrapTemplateLiteralType(data: _NodeData, tree: TreeHandle) {
+export function wrapTemplateLiteralType(data: _NodeData, tree: TreeHandle): WrappedNode<TemplateLiteralType> {
   return {
     ...data,
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<TemplateLiteralType>;
 }
 
-export function wrapInferType(data: _NodeData, tree: TreeHandle) {
+export function wrapInferType(data: _NodeData, tree: TreeHandle): WrappedNode<InferType> {
   return {
     ...data,
     get typeIdentifier() { return drillIn(data.fields?.['type_identifier'], tree); },
     get constraint() { return drillIn(data.fields?.['constraint'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<InferType>;
 }
 
-export function wrapConditionalType(data: _NodeData, tree: TreeHandle) {
+export function wrapConditionalType(data: _NodeData, tree: TreeHandle): WrappedNode<ConditionalType> {
   return {
     ...data,
     get left() { return drillIn(data.fields?.['left'], tree); },
@@ -1257,116 +1259,116 @@ export function wrapConditionalType(data: _NodeData, tree: TreeHandle) {
     get consequence() { return drillIn(data.fields?.['consequence'], tree); },
     get alternative() { return drillIn(data.fields?.['alternative'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<ConditionalType>;
 }
 
-export function wrapGenericType(data: _NodeData, tree: TreeHandle) {
+export function wrapGenericType(data: _NodeData, tree: TreeHandle): WrappedNode<GenericType> {
   return {
     ...data,
     get name() { return drillIn(data.fields?.['name'], tree); },
     get typeArguments() { return drillIn(data.fields?.['type_arguments'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<GenericType>;
 }
 
-export function wrapTypePredicate(data: _NodeData, tree: TreeHandle) {
+export function wrapTypePredicate(data: _NodeData, tree: TreeHandle): WrappedNode<TypePredicate> {
   return {
     ...data,
     get name() { return drillIn(data.fields?.['name'], tree); },
     get typeField() { return drillIn(data.fields?.['type'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<TypePredicate>;
 }
 
-export function wrapTypePredicateAnnotation(data: _NodeData, tree: TreeHandle) {
+export function wrapTypePredicateAnnotation(data: _NodeData, tree: TreeHandle): WrappedNode<TypePredicateAnnotation> {
   return {
     ...data,
     get typePredicate() { return drillIn(data.fields?.['type_predicate'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<TypePredicateAnnotation>;
 }
 
-export function wrapTypeQuery(data: _NodeData, tree: TreeHandle) {
+export function wrapTypeQuery(data: _NodeData, tree: TreeHandle): WrappedNode<TypeQuery> {
   return {
     ...data,
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<TypeQuery>;
 }
 
-export function wrapIndexTypeQuery(data: _NodeData, tree: TreeHandle) {
+export function wrapIndexTypeQuery(data: _NodeData, tree: TreeHandle): WrappedNode<IndexTypeQuery> {
   return {
     ...data,
     get primaryType() { return drillIn(data.fields?.['primary_type'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<IndexTypeQuery>;
 }
 
-export function wrapLookupType(data: _NodeData, tree: TreeHandle) {
+export function wrapLookupType(data: _NodeData, tree: TreeHandle): WrappedNode<LookupType> {
   return {
     ...data,
     get primaryType() { return drillIn(data.fields?.['primary_type'], tree); },
     get indexType() { return drillIn(data.fields?.['index_type'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<LookupType>;
 }
 
-export function wrapMappedTypeClause(data: _NodeData, tree: TreeHandle) {
+export function wrapMappedTypeClause(data: _NodeData, tree: TreeHandle): WrappedNode<MappedTypeClause> {
   return {
     ...data,
     get name() { return drillIn(data.fields?.['name'], tree); },
     get typeField() { return drillIn(data.fields?.['type'], tree); },
     get alias() { return drillIn(data.fields?.['alias'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<MappedTypeClause>;
 }
 
-export function wrapLiteralType(data: _NodeData, tree: TreeHandle) {
+export function wrapLiteralType(data: _NodeData, tree: TreeHandle): WrappedNode<LiteralType> {
   return {
     ...data,
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<LiteralType>;
 }
 
-export function wrapFlowMaybeType(data: _NodeData, tree: TreeHandle) {
+export function wrapFlowMaybeType(data: _NodeData, tree: TreeHandle): WrappedNode<FlowMaybeType> {
   return {
     ...data,
     get primaryType() { return drillIn(data.fields?.['primary_type'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<FlowMaybeType>;
 }
 
-export function wrapParenthesizedType(data: _NodeData, tree: TreeHandle) {
+export function wrapParenthesizedType(data: _NodeData, tree: TreeHandle): WrappedNode<ParenthesizedType> {
   return {
     ...data,
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<ParenthesizedType>;
 }
 
-export function wrapTypeArguments(data: _NodeData, tree: TreeHandle) {
+export function wrapTypeArguments(data: _NodeData, tree: TreeHandle): WrappedNode<TypeArguments> {
   return {
     ...data,
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<TypeArguments>;
 }
 
-export function wrapObjectType(data: _NodeData, tree: TreeHandle) {
+export function wrapObjectType(data: _NodeData, tree: TreeHandle): WrappedNode<ObjectType> {
   return {
     ...data,
     get opening() { return drillIn(data.fields?.['opening'], tree); },
     get members() { return drillIn(data.fields?.['members'], tree); },
     get closing() { return drillIn(data.fields?.['closing'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<ObjectType>;
 }
 
-export function wrapCallSignature(data: _NodeData, tree: TreeHandle) {
+export function wrapCallSignature(data: _NodeData, tree: TreeHandle): WrappedNode<CallSignature> {
   return {
     ...data,
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<CallSignature>;
 }
 
-export function wrapPropertySignature(data: _NodeData, tree: TreeHandle) {
+export function wrapPropertySignature(data: _NodeData, tree: TreeHandle): WrappedNode<PropertySignature> {
   return {
     ...data,
     get accessibilityModifier() { return drillIn(data.fields?.['accessibility_modifier'], tree); },
@@ -1374,138 +1376,138 @@ export function wrapPropertySignature(data: _NodeData, tree: TreeHandle) {
     get name() { return drillIn(data.fields?.['name'], tree); },
     get typeField() { return drillIn(data.fields?.['type'], tree); },
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<PropertySignature>;
 }
 
-export function wrapTypeParameters(data: _NodeData, tree: TreeHandle) {
+export function wrapTypeParameters(data: _NodeData, tree: TreeHandle): WrappedNode<TypeParameters> {
   return {
     ...data,
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<TypeParameters>;
 }
 
-export function wrapTypeParameter(data: _NodeData, tree: TreeHandle) {
+export function wrapTypeParameter(data: _NodeData, tree: TreeHandle): WrappedNode<TypeParameter> {
   return {
     ...data,
     get name() { return drillIn(data.fields?.['name'], tree); },
     get constraint() { return drillIn(data.fields?.['constraint'], tree); },
     get value() { return drillIn(data.fields?.['value'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<TypeParameter>;
 }
 
-export function wrapDefaultType(data: _NodeData, tree: TreeHandle) {
+export function wrapDefaultType(data: _NodeData, tree: TreeHandle): WrappedNode<DefaultType> {
   return {
     ...data,
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<DefaultType>;
 }
 
-export function wrapConstraint(data: _NodeData, tree: TreeHandle) {
+export function wrapConstraint(data: _NodeData, tree: TreeHandle): WrappedNode<Constraint> {
   return {
     ...data,
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<Constraint>;
 }
 
-export function wrapConstructSignature(data: _NodeData, tree: TreeHandle) {
+export function wrapConstructSignature(data: _NodeData, tree: TreeHandle): WrappedNode<ConstructSignature> {
   return {
     ...data,
     get typeParameters() { return drillIn(data.fields?.['type_parameters'], tree); },
     get parameters() { return drillIn(data.fields?.['parameters'], tree); },
     get typeField() { return drillIn(data.fields?.['type'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<ConstructSignature>;
 }
 
-export function wrapIndexSignature(data: _NodeData, tree: TreeHandle) {
+export function wrapIndexSignature(data: _NodeData, tree: TreeHandle): WrappedNode<IndexSignature> {
   return {
     ...data,
     get name() { return drillIn(data.fields?.['name'], tree); },
     get indexType() { return drillIn(data.fields?.['index_type'], tree); },
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<IndexSignature>;
 }
 
-export function wrapArrayType(data: _NodeData, tree: TreeHandle) {
+export function wrapArrayType(data: _NodeData, tree: TreeHandle): WrappedNode<ArrayType> {
   return {
     ...data,
     get primaryType() { return drillIn(data.fields?.['primary_type'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<ArrayType>;
 }
 
-export function wrapTupleType(data: _NodeData, tree: TreeHandle) {
+export function wrapTupleType(data: _NodeData, tree: TreeHandle): WrappedNode<TupleType> {
   return {
     ...data,
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<TupleType>;
 }
 
-export function wrapReadonlyType(data: _NodeData, tree: TreeHandle) {
+export function wrapReadonlyType(data: _NodeData, tree: TreeHandle): WrappedNode<ReadonlyType> {
   return {
     ...data,
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<ReadonlyType>;
 }
 
-export function wrapUnionType(data: _NodeData, tree: TreeHandle) {
+export function wrapUnionType(data: _NodeData, tree: TreeHandle): WrappedNode<UnionType> {
   return {
     ...data,
     get left() { return drillIn(data.fields?.['left'], tree); },
     get right() { return drillIn(data.fields?.['right'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<UnionType>;
 }
 
-export function wrapIntersectionType(data: _NodeData, tree: TreeHandle) {
+export function wrapIntersectionType(data: _NodeData, tree: TreeHandle): WrappedNode<IntersectionType> {
   return {
     ...data,
     get left() { return drillIn(data.fields?.['left'], tree); },
     get right() { return drillIn(data.fields?.['right'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<IntersectionType>;
 }
 
-export function wrapFunctionType(data: _NodeData, tree: TreeHandle) {
+export function wrapFunctionType(data: _NodeData, tree: TreeHandle): WrappedNode<FunctionType> {
   return {
     ...data,
     get typeParameters() { return drillIn(data.fields?.['type_parameters'], tree); },
     get parameters() { return drillIn(data.fields?.['parameters'], tree); },
     get returnType() { return drillIn(data.fields?.['return_type'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<FunctionType>;
 }
 
-export function wrapHiddenTypeIdentifier(data: _NodeData, tree: TreeHandle) {
+export function wrapHiddenTypeIdentifier(data: _NodeData, tree: TreeHandle): WrappedNode<HiddenTypeIdentifier> {
   return {
     ...data,
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<HiddenTypeIdentifier>;
 }
 
-export function wrapShorthandPropertyIdentifier(data: _NodeData, tree: TreeHandle) {
+export function wrapShorthandPropertyIdentifier(data: _NodeData, tree: TreeHandle): WrappedNode<ShorthandPropertyIdentifier> {
   return {
     ...data,
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<ShorthandPropertyIdentifier>;
 }
 
-export function wrapShorthandPropertyIdentifierPattern(data: _NodeData, tree: TreeHandle) {
+export function wrapShorthandPropertyIdentifierPattern(data: _NodeData, tree: TreeHandle): WrappedNode<ShorthandPropertyIdentifierPattern> {
   return {
     ...data,
     get child() { return drillIn(data.children?.[0], tree); },
-  };
+  } as unknown as WrappedNode<ShorthandPropertyIdentifierPattern>;
 }
 
-export function wrapInterfaceBody(data: _NodeData, tree: TreeHandle) {
+export function wrapInterfaceBody(data: _NodeData, tree: TreeHandle): WrappedNode<InterfaceBody> {
   return {
     ...data,
     get opening() { return drillIn(data.fields?.['opening'], tree); },
     get members() { return drillIn(data.fields?.['members'], tree); },
     get closing() { return drillIn(data.fields?.['closing'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  };
+  } as unknown as WrappedNode<InterfaceBody>;
 }
 
 const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown> = {
@@ -1569,7 +1571,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'jsx_closing_element': (d, t) => wrapJsxClosingElement(d, t),
   'jsx_self_closing_element': (d, t) => wrapJsxSelfClosingElement(d, t),
   'jsx_attribute': (d, t) => wrapJsxAttribute(d, t),
-  '_jsx_string': (d, t) => wrapHiddenJsxString(d, t),
+  '_jsx_string': (d, t) => wrapJsxString(d, t),
   'unescaped_double_jsx_string_fragment': (d) => d,
   'unescaped_single_jsx_string_fragment': (d) => d,
   'class': (d, t) => wrapClass(d, t),
@@ -1585,9 +1587,9 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'await_expression': (d, t) => wrapAwaitExpression(d, t),
   'member_expression': (d, t) => wrapMemberExpression(d, t),
   'subscript_expression': (d, t) => wrapSubscriptExpression(d, t),
-  '_lhs_expression': (d, t) => wrapHiddenLhsExpression(d, t),
+  '_lhs_expression': (d, t) => wrapLhsExpression(d, t),
   'assignment_expression': (d, t) => wrapAssignmentExpression(d, t),
-  '_augmented_assignment_lhs': (d, t) => wrapHiddenAugmentedAssignmentLhs(d, t),
+  '_augmented_assignment_lhs': (d, t) => wrapAugmentedAssignmentLhs(d, t),
   'augmented_assignment_expression': (d, t) => wrapAugmentedAssignmentExpression(d, t),
   'spread_element': (d, t) => wrapSpreadElement(d, t),
   'ternary_expression': (d, t) => wrapTernaryExpression(d, t),
@@ -1628,13 +1630,13 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'method_definition': (d, t) => wrapMethodDefinition(d, t),
   'pair': (d, t) => wrapPair(d, t),
   'pair_pattern': (d, t) => wrapPairPattern(d, t),
-  '_property_name': (d, t) => wrapHiddenPropertyName(d, t),
+  '_property_name': (d, t) => wrapPropertyName(d, t),
   'computed_property_name': (d, t) => wrapComputedPropertyName(d, t),
   '_reserved_identifier': (d) => d,
-  '_semicolon': (d, t) => wrapHiddenSemicolon(d, t),
+  '_semicolon': (d, t) => wrapSemicolon(d, t),
   'public_field_definition': (d, t) => wrapPublicFieldDefinition(d, t),
-  '_jsx_start_opening_element': (d, t) => wrapHiddenJsxStartOpeningElement(d, t),
-  '_import_identifier': (d, t) => wrapHiddenImportIdentifier(d, t),
+  '_jsx_start_opening_element': (d, t) => wrapJsxStartOpeningElement(d, t),
+  '_import_identifier': (d, t) => wrapImportIdentifier(d, t),
   'non_null_expression': (d, t) => wrapNonNullExpression(d, t),
   'method_signature': (d, t) => wrapMethodSignature(d, t),
   'abstract_method_signature': (d, t) => wrapAbstractMethodSignature(d, t),
@@ -1708,6 +1710,14 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'intersection_type': (d, t) => wrapIntersectionType(d, t),
   'function_type': (d, t) => wrapFunctionType(d, t),
   '_type_identifier': (d, t) => wrapHiddenTypeIdentifier(d, t),
+  '_automatic_semicolon': (d) => d,
+  '_template_chars': (d) => d,
+  '_ternary_qmark': (d) => d,
+  'html_comment': (d) => d,
+  '||': (d) => d,
+  'jsx_text': (d) => d,
+  '_function_signature_automatic_semicolon': (d) => d,
+  '__error_recovery': (d) => d,
   'statement_identifier': (d) => d,
   'shorthand_property_identifier': (d, t) => wrapShorthandPropertyIdentifier(d, t),
   'shorthand_property_identifier_pattern': (d, t) => wrapShorthandPropertyIdentifierPattern(d, t),

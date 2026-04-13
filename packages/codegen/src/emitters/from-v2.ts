@@ -1,156 +1,15 @@
 /**
- * Emit the grammar-level resolver helper block. These functions live
- * at module scope and are called by per-kind from() functions to turn
- * loose developer input into factory output.
+ * Emits from.ts — consumes NodeMap directly.
  *
- *   _leafRegistry        — kind → { values?, pattern?, factory }
- *   _resolveLeafString   — string + leaf-kinds → leaf NodeData
- *   _resolveByKind       — kind + rest → _fromMap[kind](rest)
- *   _resolveScalar       — boolean/number → leaf factory (primitive coercion)
- *   _resolveOne          — single-field resolver (the workhorse)
- *   _resolveMany         — array variant (maps over elements)
- *
- * Per-field call sites are emitted by `resolveFieldFromView` in rule.ts
- * as `_resolveOne(f.field, [leaves], [branches])` etc.
- */
-function emitResolverHelpers(lines: string[], nodeMap: import('../compiler/rule.ts').NodeMap): void {
-    // Build the leaf registry from NodeMap leaves/keywords/enums.
-    // Each entry knows: the factory function name, optional value list
-    // (for leaves with a closed value set — e.g. boolean_literal: ['true','false']),
-    // and optional pattern (for leaves with a regex match — e.g. char_literal).
-    const registryEntries: string[] = []
-    for (const [kind, node] of nodeMap.nodes) {
-        if (!node.rawFactoryName) continue
-        const factory = node.rawFactoryName
-        if (node.modelType === 'enum') {
-            const values = node.values.map(v => JSON.stringify(v)).join(', ')
-            registryEntries.push(`  ${JSON.stringify(kind)}: { values: [${values}], factory: ${factory} },`)
-        } else if (node.modelType === 'keyword') {
-            // Keyword factories take no args; baked-in text. The registry
-            // entry uses a thunk so the surrounding dispatch can call
-            // `entry.factory(text)` uniformly.
-            registryEntries.push(`  ${JSON.stringify(kind)}: { values: [${JSON.stringify(node.text)}], factory: () => ${factory}() },`)
-        } else if (node.modelType === 'leaf') {
-            // Pattern-based leaves don't carry a regex on AssembledLeaf
-            // (only the raw pattern string), and we don't try to compile
-            // it here — fall back to "any string accepted".
-            registryEntries.push(`  ${JSON.stringify(kind)}: { factory: ${factory} },`)
-        }
-    }
-
-    lines.push('// --- Loose-input resolver helpers (see C6-prereq) ---')
-    lines.push('interface _LeafEntry { values?: readonly string[]; pattern?: RegExp; factory: (text: string) => unknown }')
-    lines.push('const _leafRegistry: Record<string, _LeafEntry> = {')
-    for (const entry of registryEntries) lines.push(entry)
-    lines.push('};')
-    lines.push('')
-
-    // _resolveLeafString — given a loose string and a list of candidate
-    // leaf kinds, pick the right leaf factory by checking value lists
-    // first, then pattern, then falling back to the first registered
-    // leaf with no value/pattern constraint.
-    lines.push('function _resolveLeafString(v: string, kinds: readonly string[]): unknown {')
-    lines.push('  for (const kind of kinds) {')
-    lines.push('    const entry = _leafRegistry[kind];')
-    lines.push('    if (!entry) continue;')
-    lines.push('    if (entry.values && entry.values.includes(v)) return entry.factory(v);')
-    lines.push('    if (entry.pattern && entry.pattern.test(v)) return entry.factory(v);')
-    lines.push('  }')
-    lines.push('  // Fallback: any leaf without value/pattern constraint accepts any string.')
-    lines.push('  for (const kind of kinds) {')
-    lines.push('    const entry = _leafRegistry[kind];')
-    lines.push('    if (entry && !entry.values && !entry.pattern) return entry.factory(v);')
-    lines.push('  }')
-    lines.push('  return undefined;')
-    lines.push('}')
-    lines.push('')
-
-    // _resolveByKind — dispatch a kind-tagged object to the matching
-    // from() function. Used for branch/supertype field resolution when
-    // the loose input carries a `kind` discriminator.
-    lines.push('function _resolveByKind(kind: string, rest: unknown): unknown {')
-    lines.push('  const fn = (_fromMap as Record<string, (input?: unknown) => unknown>)[kind];')
-    lines.push('  if (fn) return fn(rest);')
-    lines.push('  return rest;')
-    lines.push('}')
-    lines.push('')
-
-    // _resolveScalar — turn a JS primitive into a leaf factory call when
-    // the grammar has a matching leaf kind. Skipped silently when the
-    // grammar lacks the corresponding kind (e.g. python's `True`/`False`
-    // are keywords, not boolean_literal).
-    const hasBool = nodeMap.nodes.has('boolean_literal')
-    const hasInt = nodeMap.nodes.has('integer_literal') || nodeMap.nodes.has('integer')
-    const hasFloat = nodeMap.nodes.has('float_literal') || nodeMap.nodes.has('float')
-    lines.push('function _resolveScalar(v: unknown): unknown {')
-    if (hasBool) {
-        lines.push('  if (typeof v === "boolean") {')
-        lines.push('    const e = _leafRegistry["boolean_literal"]; return e?.factory(v ? "true" : "false");')
-        lines.push('  }')
-    }
-    if (hasInt || hasFloat) {
-        lines.push('  if (typeof v === "number") {')
-        if (hasInt) {
-            const intKind = nodeMap.nodes.has('integer_literal') ? 'integer_literal' : 'integer'
-            lines.push(`    if (Number.isInteger(v)) { const e = _leafRegistry[${JSON.stringify(intKind)}]; return e?.factory(String(v)); }`)
-        }
-        if (hasFloat) {
-            const floatKind = nodeMap.nodes.has('float_literal') ? 'float_literal' : 'float'
-            lines.push(`    const e = _leafRegistry[${JSON.stringify(floatKind)}]; return e?.factory(String(v));`)
-        }
-        lines.push('  }')
-    }
-    lines.push('  return undefined;')
-    lines.push('}')
-    lines.push('')
-
-    // _resolveOne — single-element loose resolver. Tries in order:
-    //   1. NodeData passthrough
-    //   2. JS primitive coercion (boolean/number → leaf)
-    //   3. String + matching leaf kind → leaf factory
-    //   4. Object with `kind` discriminator → _resolveByKind
-    //   5. Single-branch passthrough (the loose object IS already shaped right)
-    //   6. Otherwise undefined
-    lines.push('function _resolveOne<T>(v: unknown, leafKinds: readonly string[], branchKinds: readonly string[]): T {')
-    lines.push('  if (v === undefined || v === null) return v as T;')
-    lines.push('  if (isNodeData(v)) return v as T;')
-    lines.push('  if (typeof v === "boolean" || typeof v === "number") {')
-    lines.push('    const scalar = _resolveScalar(v);')
-    lines.push('    if (scalar !== undefined) return scalar as T;')
-    lines.push('  }')
-    lines.push('  if (typeof v === "string" && leafKinds.length > 0) {')
-    lines.push('    const leaf = _resolveLeafString(v, leafKinds);')
-    lines.push('    if (leaf !== undefined) return leaf as T;')
-    lines.push('  }')
-    lines.push('  if (typeof v === "object" && v !== null && "kind" in v) {')
-    lines.push('    const { kind, ...rest } = v as { kind: string } & Record<string, unknown>;')
-    lines.push('    return _resolveByKind(kind, rest) as T;')
-    lines.push('  }')
-    lines.push('  // Single-branch passthrough — the loose object IS the branch.')
-    lines.push('  if (branchKinds.length === 1 && typeof v === "object") {')
-    lines.push('    return _resolveByKind(branchKinds[0]!, v) as T;')
-    lines.push('  }')
-    lines.push('  return v as T;')
-    lines.push('}')
-    lines.push('')
-
-    // _resolveMany — array variant. Wraps each element through _resolveOne.
-    lines.push('function _resolveMany<T>(v: unknown, leafKinds: readonly string[], branchKinds: readonly string[]): readonly T[] {')
-    lines.push('  if (v === undefined || v === null) return [];')
-    lines.push('  const arr = Array.isArray(v) ? v : [v];')
-    lines.push('  return arr.map(e => _resolveOne<T>(e, leafKinds, branchKinds));')
-    lines.push('}')
-}
-
-/**
- * Emits from.ts — thin dispatch over AssembledNode.emitFromFunction().
- *
- * Every node subclass owns its own `from()` emission as a class method.
- * This file is preamble (factory imports, type imports, isNodeData
- * helper) + loop over the NodeMap + the _fromMap dispatch table.
+ * Owns ALL `from()` resolver string generation. Rule.ts exposes the
+ * IR; this file dispatches on `node.modelType` and emits the per-kind
+ * resolver bodies plus the module-scoped helpers (_resolveOne,
+ * _resolveMany, _resolveLeafString, _resolveByKind, _resolveScalar).
  */
 
-import type { NodeMap } from '../compiler/rule.ts'
+import type {
+    NodeMap, AssembledNode, AssembledField, AssembledGroup,
+} from '../compiler/rule.ts'
 
 export interface EmitFromNodeMapConfig {
     grammar: string
@@ -197,10 +56,6 @@ export function emitFromNodeMap(config: EmitFromNodeMapConfig): string {
     lines.push('')
 
     // isNodeData helper — referenced by the emitted per-kind bodies.
-    // Structural guard: has a string `type` plus either a `fields`
-    // object or a `text` string. We keep the shape local to this file
-    // instead of importing a named type from @sittir/types so every
-    // grammar package stays self-contained at the type level.
     lines.push("interface _NodeDataLike { readonly type: string; readonly fields?: object; readonly text?: string }")
     lines.push("function isNodeData(v: unknown): v is _NodeDataLike {")
     lines.push("  if (v === null || typeof v !== 'object') return false;")
@@ -209,18 +64,13 @@ export function emitFromNodeMap(config: EmitFromNodeMapConfig): string {
     lines.push('}')
     lines.push('')
 
-    // Loose-input resolver scaffolding — see C6-prereq in 005 tasks.md.
-    // These helpers let field-level resolvers turn loose developer input
-    // (strings, primitives, kind-tagged objects) into the proper factory
-    // result without each per-kind from() function reinventing the dispatch.
+    // Loose-input resolver scaffolding.
     emitResolverHelpers(lines, nodeMap)
     lines.push('')
 
-    // Per-node from emission via class method. Polymorph forms are
-    // inlined by their parent polymorph's emitFromFunction, so we skip
-    // them at the top level — same pattern as emitFactory.
+    // Per-node from emission via local dispatch.
     for (const [, node] of nodeMap.nodes) {
-        const source = node.emitFromFunction(nodeMap)
+        const source = renderFromForNode(node, nodeMap)
         if (source === undefined) continue
         lines.push(source)
         lines.push('')
@@ -238,4 +88,373 @@ export function emitFromNodeMap(config: EmitFromNodeMapConfig): string {
     lines.push('')
 
     return lines.join('\n')
+}
+
+// ---------------------------------------------------------------------------
+// Dispatch
+// ---------------------------------------------------------------------------
+
+function renderFromForNode(node: AssembledNode, nodeMap: NodeMap): string | undefined {
+    if (!node.rawFactoryName || !node.fromFunctionName) return undefined
+    switch (node.modelType) {
+        case 'branch':
+            return emitBranchFrom(node, nodeMap)
+        case 'container':
+            return emitContainerFrom(node)
+        case 'polymorph':
+            return emitPolymorphFrom(node, nodeMap)
+        case 'leaf':
+        case 'enum':
+            return emitStringLikeFrom(node)
+        case 'keyword':
+            return emitKeywordFrom(node)
+        default:
+            return undefined
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Branch from() — loose input, field-level resolution
+// ---------------------------------------------------------------------------
+
+interface BranchLikeNode {
+    readonly kind: string
+    readonly typeName: string
+    readonly fromInputTypeName: string
+    readonly rawFactoryName?: string
+    readonly fromFunctionName?: string
+    readonly fields: readonly AssembledField[]
+    readonly children?: readonly { readonly required: boolean }[]
+}
+
+function emitBranchFrom(node: BranchLikeNode, nodeMap: NodeMap): string {
+    const fn = node.fromFunctionName!
+    const factory = node.rawFactoryName!
+    const fields = node.fields
+    const childSlots = node.children ?? []
+    const opt =
+        fields.some(f => f.required) || childSlots.some(c => c.required) ? '' : '?'
+    const typeName = node.typeName
+    const lines: string[] = []
+    lines.push(`export function ${fn}(input${opt}: ${node.fromInputTypeName}) {`)
+    if (fields.length > 0) {
+        // `input` may be either loose ConfigOf-style (camelCase top-level
+        // keys) or a parsed NodeData (snake_case keys under `fields`).
+        // Normalise to a single object that exposes both shapes — the
+        // per-field resolver tries each in order.
+        lines.push(`  const _fields = (input as { fields?: Record<string, unknown> })?.fields;`)
+        lines.push(`  const _f = _fields ?? (input as Record<string, unknown>) ?? {};`)
+        lines.push(`  return ${factory}({`)
+        for (const f of fields) {
+            lines.push(`    ${f.propertyName}: ${resolveFieldFromLooseInput(f, nodeMap, typeName, '_f')},`)
+        }
+        // Only pass-through children for branches that actually declare
+        // a children slot — field-only branches have no `children` in
+        // their ConfigOf and get a TS2353 error if we include it. The
+        // pass-through is cast to the slot type so the resulting
+        // `children` value narrows to match `ConfigOf<T>['children']`
+        // rather than widening to `readonly unknown[]`.
+        if (childSlots.length > 0) {
+            const childType = `NonNullable<ConfigOf<${typeName}>['children']>`
+            lines.push(`    children: ((input as { children?: ${childType} })?.children ?? []) as ${childType},`)
+        }
+        lines.push('  });')
+    } else {
+        lines.push(`  return ${factory}(input);`)
+    }
+    lines.push('}')
+    return lines.join('\n')
+}
+
+// ---------------------------------------------------------------------------
+// Container from() — accepts element args OR a self NodeData
+// ---------------------------------------------------------------------------
+
+interface ContainerFromNode {
+    readonly kind: string
+    readonly typeName: string
+    readonly rawFactoryName?: string
+    readonly fromFunctionName?: string
+}
+
+function emitContainerFrom(node: ContainerFromNode): string {
+    const fn = node.fromFunctionName!
+    const factory = node.rawFactoryName!
+    const childType = `NonNullable<ConfigOf<${node.typeName}>['children']>`
+    const elementType = `${childType}[number]`
+    return [
+        `export function ${fn}(...input: readonly (${elementType} | ${node.typeName})[]) {`,
+        `  if (input.length === 1 && isNodeData(input[0]) && input[0].type === '${node.kind}') {`,
+        `    const data = input[0] as ${node.typeName};`,
+        `    return ${factory}(...(data.children as ${childType}));`,
+        `  }`,
+        `  return ${factory}(...(input as ${childType}));`,
+        '}',
+    ].join('\n')
+}
+
+// ---------------------------------------------------------------------------
+// Polymorph from() — dispatcher + inline per-form resolvers
+// ---------------------------------------------------------------------------
+
+interface PolymorphFromNode {
+    readonly kind: string
+    readonly fromInputTypeName: string
+    readonly rawFactoryName?: string
+    readonly fromFunctionName?: string
+    readonly forms: AssembledGroup[]
+}
+
+function emitPolymorphFrom(node: PolymorphFromNode, nodeMap: NodeMap): string {
+    const fn = node.fromFunctionName!
+    const factory = node.rawFactoryName!
+    // Cast through `unknown` — the polymorph factory takes the strict
+    // config-union but `input` is a FromInputOf (loose widening) which
+    // doesn't overlap structurally. A runtime field-presence check
+    // inside the factory handles the dispatch. We spell the target
+    // as the literal `ConfigOf<FormN> | ...` union rather than
+    // `Parameters<typeof fn>[0]` because grammar kinds named
+    // `Parameters` would shadow TypeScript's built-in `Parameters<T>`.
+    const configUnion = node.forms.map(f => `ConfigOf<${f.typeName}>`).join(' | ')
+    const dispatcher = [
+        `export function ${fn}(input?: ${node.fromInputTypeName}) {`,
+        `  return ${factory}(input as unknown as ${configUnion});`,
+        '}',
+    ].join('\n')
+    const parts = [dispatcher]
+    for (const form of node.forms) {
+        const formFn = `${form.typeName.charAt(0).toLowerCase()}${form.typeName.slice(1)}From`
+        const formFactory = form.rawFactoryName!
+        const formOpt = form.fields.some(fd => fd.required) ? '' : '?'
+        const fLines: string[] = []
+        fLines.push(`export function ${formFn}(input${formOpt}: ConfigOf<${form.typeName}>) {`)
+        if (form.fields.length > 0) {
+            // Same dual-shape reader as branch from — handles both
+            // loose camelCase input and parsed NodeData with snake_case
+            // fields. Without this, `input.field` on an optional
+            // parameter fails the `possibly undefined` check.
+            fLines.push(`  const _fields = (input as { fields?: Record<string, unknown> })?.fields;`)
+            fLines.push(`  const _f = _fields ?? (input as Record<string, unknown>) ?? {};`)
+            fLines.push(`  return ${formFactory}({`)
+            for (const f of form.fields) {
+                fLines.push(`    ${f.propertyName}: ${resolveFieldFromLooseInput(f, nodeMap, form.typeName, '_f')},`)
+            }
+            fLines.push('  });')
+        } else {
+            fLines.push(`  return ${formFactory}(input);`)
+        }
+        fLines.push('}')
+        parts.push(fLines.join('\n'))
+    }
+    return parts.join('\n\n')
+}
+
+// ---------------------------------------------------------------------------
+// Leaf / enum from() — `string | NodeData` passthrough
+// ---------------------------------------------------------------------------
+
+interface LeafFromNode {
+    readonly typeName: string
+    readonly rawFactoryName?: string
+    readonly fromFunctionName?: string
+}
+
+function emitStringLikeFrom(node: LeafFromNode): string {
+    const fn = node.fromFunctionName!
+    const factory = node.rawFactoryName!
+    return [
+        `export function ${fn}(input: string | ${node.typeName}) {`,
+        `  if (isNodeData(input)) return input;`,
+        `  return ${factory}(input as string);`,
+        '}',
+    ].join('\n')
+}
+
+// ---------------------------------------------------------------------------
+// Keyword from() — NodeData passthrough or zero-arg factory
+// ---------------------------------------------------------------------------
+
+function emitKeywordFrom(node: LeafFromNode): string {
+    const fn = node.fromFunctionName!
+    const factory = node.rawFactoryName!
+    return [
+        `export function ${fn}(input?: ${node.typeName}) {`,
+        `  if (isNodeData(input)) return input;`,
+        `  return ${factory}();`,
+        '}',
+    ].join('\n')
+}
+
+// ---------------------------------------------------------------------------
+// Field-level resolver call generation
+// ---------------------------------------------------------------------------
+
+function resolveFieldFromLooseInput(
+    field: AssembledField,
+    nodeMap: NodeMap,
+    parentTypeName: string,
+    sourceVar = 'loose',
+): string {
+    // For `_resolveOne<T>` the type parameter T is the slot's own type.
+    // For `_resolveMany<T>` (repeated fields) the slot is already an
+    // array, so T must be the element type — otherwise the return
+    // shape is `readonly (readonly T[])[]`, an array of arrays.
+    const slotType = `NonNullable<ConfigOf<${parentTypeName}>['${field.propertyName}']>`
+    const typeParam = field.multiple ? `${slotType}[number]` : slotType
+    // Accept both shapes for every field read: raw (snake_case) name
+    // when the caller passed a parsed NodeData's `fields`, and
+    // camelCase when they passed a loose ConfigOf-style input.
+    const rawKey = field.name
+    const camelKey = field.propertyName
+    const access = rawKey === camelKey
+        ? `${sourceVar}.${rawKey}`
+        : `(${sourceVar}.${rawKey} ?? ${sourceVar}.${camelKey})`
+    return resolveFieldCall(access, field, nodeMap, typeParam)
+}
+
+function resolveFieldCall(
+    prop: string,
+    field: AssembledField,
+    nodeMap: NodeMap,
+    typeParam: string | undefined,
+): string {
+    const types = field.contentTypes
+
+    // Classify content types into leaves vs branches.
+    const leafKinds: string[] = []
+    const branchKinds: string[] = []
+    for (const t of types) {
+        const n = nodeMap.nodes.get(t)
+        if (!n) {
+            // Unknown kind — treat as branch so it goes through _resolveByKind
+            branchKinds.push(t)
+            continue
+        }
+        switch (n.modelType) {
+            case 'leaf':
+            case 'enum':
+            case 'keyword':
+                leafKinds.push(t)
+                break
+            case 'token':
+                // Anonymous tokens have no factory binding — skip.
+                break
+            case 'supertype':
+            case 'branch':
+            case 'container':
+            case 'polymorph':
+            case 'group':
+                branchKinds.push(t)
+                break
+        }
+    }
+
+    const leafArr = JSON.stringify(leafKinds)
+    const branchArr = JSON.stringify(branchKinds)
+    const helper = field.multiple ? '_resolveMany' : '_resolveOne'
+    const generic = typeParam ? `<${typeParam}>` : ''
+    return `${helper}${generic}(${prop}, ${leafArr}, ${branchArr})`
+}
+
+// ---------------------------------------------------------------------------
+// Module-scoped resolver helpers (emitted into generated from.ts)
+// ---------------------------------------------------------------------------
+
+function emitResolverHelpers(lines: string[], nodeMap: NodeMap): void {
+    // Build the leaf registry from NodeMap leaves/keywords/enums.
+    const registryEntries: string[] = []
+    for (const [kind, node] of nodeMap.nodes) {
+        if (!node.rawFactoryName) continue
+        const factory = node.rawFactoryName
+        if (node.modelType === 'enum') {
+            const values = node.values.map(v => JSON.stringify(v)).join(', ')
+            registryEntries.push(`  ${JSON.stringify(kind)}: { values: [${values}], factory: ${factory} },`)
+        } else if (node.modelType === 'keyword') {
+            registryEntries.push(`  ${JSON.stringify(kind)}: { values: [${JSON.stringify(node.text)}], factory: () => ${factory}() },`)
+        } else if (node.modelType === 'leaf') {
+            registryEntries.push(`  ${JSON.stringify(kind)}: { factory: ${factory} },`)
+        }
+    }
+
+    lines.push('// --- Loose-input resolver helpers (see C6-prereq) ---')
+    lines.push('interface _LeafEntry { values?: readonly string[]; pattern?: RegExp; factory: (text: string) => unknown }')
+    lines.push('const _leafRegistry: Record<string, _LeafEntry> = {')
+    for (const entry of registryEntries) lines.push(entry)
+    lines.push('};')
+    lines.push('')
+
+    lines.push('function _resolveLeafString(v: string, kinds: readonly string[]): unknown {')
+    lines.push('  for (const kind of kinds) {')
+    lines.push('    const entry = _leafRegistry[kind];')
+    lines.push('    if (!entry) continue;')
+    lines.push('    if (entry.values && entry.values.includes(v)) return entry.factory(v);')
+    lines.push('    if (entry.pattern && entry.pattern.test(v)) return entry.factory(v);')
+    lines.push('  }')
+    lines.push('  for (const kind of kinds) {')
+    lines.push('    const entry = _leafRegistry[kind];')
+    lines.push('    if (entry && !entry.values && !entry.pattern) return entry.factory(v);')
+    lines.push('  }')
+    lines.push('  return undefined;')
+    lines.push('}')
+    lines.push('')
+
+    lines.push('function _resolveByKind(kind: string, rest: unknown): unknown {')
+    lines.push('  const fn = (_fromMap as Record<string, (input?: unknown) => unknown>)[kind];')
+    lines.push('  if (fn) return fn(rest);')
+    lines.push('  return rest;')
+    lines.push('}')
+    lines.push('')
+
+    const hasBool = nodeMap.nodes.has('boolean_literal')
+    const hasInt = nodeMap.nodes.has('integer_literal') || nodeMap.nodes.has('integer')
+    const hasFloat = nodeMap.nodes.has('float_literal') || nodeMap.nodes.has('float')
+    lines.push('function _resolveScalar(v: unknown): unknown {')
+    if (hasBool) {
+        lines.push('  if (typeof v === "boolean") {')
+        lines.push('    const e = _leafRegistry["boolean_literal"]; return e?.factory(v ? "true" : "false");')
+        lines.push('  }')
+    }
+    if (hasInt || hasFloat) {
+        lines.push('  if (typeof v === "number") {')
+        if (hasInt) {
+            const intKind = nodeMap.nodes.has('integer_literal') ? 'integer_literal' : 'integer'
+            lines.push(`    if (Number.isInteger(v)) { const e = _leafRegistry[${JSON.stringify(intKind)}]; return e?.factory(String(v)); }`)
+        }
+        if (hasFloat) {
+            const floatKind = nodeMap.nodes.has('float_literal') ? 'float_literal' : 'float'
+            lines.push(`    const e = _leafRegistry[${JSON.stringify(floatKind)}]; return e?.factory(String(v));`)
+        }
+        lines.push('  }')
+    }
+    lines.push('  return undefined;')
+    lines.push('}')
+    lines.push('')
+
+    lines.push('function _resolveOne<T>(v: unknown, leafKinds: readonly string[], branchKinds: readonly string[]): T {')
+    lines.push('  if (v === undefined || v === null) return v as T;')
+    lines.push('  if (isNodeData(v)) return v as T;')
+    lines.push('  if (typeof v === "boolean" || typeof v === "number") {')
+    lines.push('    const scalar = _resolveScalar(v);')
+    lines.push('    if (scalar !== undefined) return scalar as T;')
+    lines.push('  }')
+    lines.push('  if (typeof v === "string" && leafKinds.length > 0) {')
+    lines.push('    const leaf = _resolveLeafString(v, leafKinds);')
+    lines.push('    if (leaf !== undefined) return leaf as T;')
+    lines.push('  }')
+    lines.push('  if (typeof v === "object" && v !== null && "kind" in v) {')
+    lines.push('    const { kind, ...rest } = v as { kind: string } & Record<string, unknown>;')
+    lines.push('    return _resolveByKind(kind, rest) as T;')
+    lines.push('  }')
+    lines.push('  if (branchKinds.length === 1 && typeof v === "object") {')
+    lines.push('    return _resolveByKind(branchKinds[0]!, v) as T;')
+    lines.push('  }')
+    lines.push('  return v as T;')
+    lines.push('}')
+    lines.push('')
+
+    lines.push('function _resolveMany<T>(v: unknown, leafKinds: readonly string[], branchKinds: readonly string[]): readonly T[] {')
+    lines.push('  if (v === undefined || v === null) return [];')
+    lines.push('  const arr = Array.isArray(v) ? v : [v];')
+    lines.push('  return arr.map(e => _resolveOne<T>(e, leafKinds, branchKinds));')
+    lines.push('}')
 }

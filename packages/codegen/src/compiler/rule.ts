@@ -460,6 +460,9 @@ export function deriveFields(rule: Rule, isOptional = false, isRepeated = false)
             required: existing.required && f.required,
             multiple: existing.multiple || f.multiple,
             contentTypes: Array.from(new Set([...existing.contentTypes, ...f.contentTypes])),
+            literalValues: (existing.literalValues || f.literalValues)
+                ? Array.from(new Set([...(existing.literalValues ?? []), ...(f.literalValues ?? [])]))
+                : undefined,
             projection: {
                 ...existing.projection,
                 kinds: Array.from(new Set([...existing.projection.kinds, ...f.projection.kinds])),
@@ -474,14 +477,20 @@ function deriveFieldsRaw(rule: Rule, isOptional: boolean, isRepeated: boolean): 
     switch (rule.type) {
         case 'field': {
             const contentTypes = deriveContentTypes(rule.content)
+            const literalValues = deriveLiteralValues(rule.content)
             const propertyName = snakeToCamel(rule.name)
+            // A field wrapping a repeat/optional carries that shape on
+            // itself — `field('statements', repeat($._statement))` means
+            // one field named `statements` whose value is many statements.
+            const innerShape = fieldInnerShape(rule.content)
             return [{
                 name: rule.name,
                 propertyName,
                 paramName: safeParamName(propertyName),
-                required: !isOptional,
-                multiple: isRepeated,
+                required: !isOptional && !innerShape.optional,
+                multiple: isRepeated || innerShape.repeated,
                 contentTypes,
+                literalValues: literalValues.length > 0 ? literalValues : undefined,
                 source: rule.source ?? 'grammar',
                 projection: { typeName: '', kinds: contentTypes },
             }]
@@ -585,11 +594,63 @@ function deriveContentTypes(rule: Rule): string[] {
     switch (rule.type) {
         case 'symbol': return [rule.name]
         case 'choice': return rule.members.flatMap(m => deriveContentTypes(m))
-        case 'enum': return rule.values
+        // Enum values are `text` contents, not distinct node kinds. A
+        // field whose content is an inline enum should type as a
+        // string-literal union (see deriveLiteralValues) — the parser
+        // emits a single node whose `text` happens to match one of the
+        // enum values, never a node whose `type` is `"u8"`, `"usize"`.
+        case 'enum': return []
         case 'supertype': return rule.subtypes
         case 'field': return deriveContentTypes(rule.content)
         case 'variant': return deriveContentTypes(rule.content)
         case 'optional': return deriveContentTypes(rule.content)
+        case 'repeat': return deriveContentTypes(rule.content)
+        case 'seq': return rule.members.flatMap(m => deriveContentTypes(m))
+        case 'clause': return deriveContentTypes(rule.content)
+        case 'group': return deriveContentTypes(rule.content)
+        default: return []
+    }
+}
+
+/**
+ * Collect inline-enum string values from a field's content. Returns
+ * `[]` if the content is anything other than a pure choice-of-strings
+ * (or an already-classified EnumRule). Used by types-v2 to emit
+ * string-literal unions instead of a fallback `string` type.
+ */
+/**
+ * Inspect a field's inner content to infer optional/repeated flags.
+ * Needed because overrides can wrap a `repeat(...)` or `optional(...)`
+ * directly in a field — the outer `deriveFieldsRaw` walker only sees
+ * the field wrapper and doesn't know its body's shape.
+ */
+function fieldInnerShape(rule: Rule): { optional: boolean; repeated: boolean } {
+    switch (rule.type) {
+        case 'repeat': return { optional: false, repeated: true }
+        case 'optional': {
+            const inner = fieldInnerShape(rule.content)
+            return { optional: true, repeated: inner.repeated }
+        }
+        default: return { optional: false, repeated: false }
+    }
+}
+
+function deriveLiteralValues(rule: Rule): string[] {
+    switch (rule.type) {
+        case 'enum': return rule.values
+        case 'string': return [rule.value]
+        case 'choice': {
+            const parts: string[] = []
+            for (const m of rule.members) {
+                const inner = m.type === 'variant' ? m.content : m
+                if (inner.type === 'string') parts.push(inner.value)
+                else return []  // not a pure string-choice — bail
+            }
+            return parts
+        }
+        case 'field': return deriveLiteralValues(rule.content)
+        case 'variant': return deriveLiteralValues(rule.content)
+        case 'optional': return deriveLiteralValues(rule.content)
         default: return []
     }
 }
@@ -617,8 +678,11 @@ const JS_RESERVED_FACTORY_NAMES = new Set([
 
 export abstract class AssembledNodeBase {
     readonly kind: string
-    readonly typeName: string
-    readonly factoryName?: string
+    // typeName / factoryName are writable so assemble()'s post-pass
+    // (resolveCollidingNames) can rename hidden kinds that clashed with
+    // a visible sibling — same pattern as `irKey`.
+    typeName: string
+    factoryName?: string
     /**
      * Short key for the ir namespace (`ir.x`). Populated by assemble()
      * via resolveIrKeys() AFTER every node is constructed so that the
@@ -698,63 +762,6 @@ export abstract class AssembledNodeBase {
     renderTemplate(): Record<string, unknown> | undefined {
         return undefined
     }
-
-    /**
-     * Emit the factory export for this node as a TS source snippet.
-     * Returns `undefined` for hidden nodes (token/supertype/group-with-
-     * no-factoryName) — they don't produce a factory binding. Concrete
-     * subclasses override with their own emission.
-     */
-    emitFactory(): string | undefined {
-        return undefined
-    }
-
-    /**
-     * Emit the `from()` resolver export for this node. Takes the full
-     * NodeMap because branch/form resolvers need to look up field-
-     * content types (leaves vs branches) to decide whether a string
-     * input should be wrapped in a leaf factory call. Returns
-     * `undefined` for nodes that don't produce a from() binding.
-     */
-    emitFromFunction(_nodeMap: NodeMap): string | undefined {
-        return undefined
-    }
-
-    /**
-     * Emit the `wrap${TypeName}(data, tree)` read-only view function
-     * for this node. Mirrors the factory's field set but with lazy
-     * `drillIn`/`drillInAll` getters instead of fluent accessors.
-     * No setters, no render/toEdit/replace — wrap is strictly a
-     * read-only lazy projection of parsed NodeData.
-     *
-     * Returns `undefined` for non-structural nodes (leaves, keywords,
-     * enums, tokens, supertypes) — those are pass-through in the
-     * `_wrapTable` dispatcher.
-     */
-    emitWrap(_nodeMap: NodeMap): string | undefined {
-        return undefined
-    }
-}
-
-/** Escape a string literal value for embedding in single-quoted TS source. */
-function escForSource(s: string): string {
-    return s.replace(/\\/g, '\\\\').replace(/'/g, "\\'")
-}
-
-/**
- * Common suffix every user-addressable factory returns — render(),
- * toEdit(...), replace(target). Takes the tree type name so each
- * subclass can parameterize its `replace` target.
- */
-function factorySuffix(treeTypeName: string): string[] {
-    return [
-        `    render() { return render(this); },`,
-        `    toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {`,
-        `      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);`,
-        `      return toEdit(this, startOrRange);`,
-        `    },`,
-        `    replace(target: ${treeTypeName}) { const r = target.range(); return toEdit(this, r); },`,
-    ]
 }
 
 export interface AssembledField {
@@ -764,6 +771,13 @@ export interface AssembledField {
     readonly required: boolean
     readonly multiple: boolean
     readonly contentTypes: string[]
+    /**
+     * Literal values when the field's content is an inline enum
+     * (choice-of-strings). Empty for normal fields. When populated,
+     * types-v2 emits the field as a string-literal union instead of
+     * a kind-reference union.
+     */
+    readonly literalValues?: readonly string[]
     readonly source: 'grammar' | 'override' | 'inlined' | 'inferred'
     readonly projection: KindProjection
 }
@@ -822,167 +836,6 @@ export class AssembledBranch extends AssembledNodeBase {
         if (sep) entry.joinBy = sep
         return entry
     }
-
-    emitFactory(): string | undefined {
-        if (!this.rawFactoryName) return undefined
-        return emitFieldCarryingFactory(this, this.fields)
-    }
-
-    emitFromFunction(nodeMap: NodeMap): string | undefined {
-        if (!this.rawFactoryName) return undefined
-        const fn = this.fromFunctionName!
-        const factory = this.rawFactoryName
-        const fields = this.fields
-        const opt = fields.some(f => f.required) ? '' : '?'
-        const typeName = this.typeName
-        const lines: string[] = []
-        lines.push(`export function ${fn}(input${opt}: ${this.fromInputTypeName}) {`)
-        if (fields.length > 0) {
-            // Input is FromInputOf<T> — each field is already typed to
-            // the widened accept shape (strings for leaves, kind-tagged
-            // objects for branches, nested NodeData). Hand each field
-            // straight through _resolveOne with the slot's ConfigOf<T>
-            // type parameter; no passthrough branch or structural casts.
-            lines.push(`  return ${factory}({`)
-            for (const f of fields) {
-                lines.push(`    ${f.propertyName}: ${resolveFieldFromLooseInput(f, nodeMap, typeName, 'input')},`)
-            }
-            lines.push(`    children: input.children ?? [],`)
-            lines.push('  });')
-        } else {
-            lines.push(`  return ${factory}(input);`)
-        }
-        lines.push('}')
-        return lines.join('\n')
-    }
-
-    emitWrap(_nodeMap: NodeMap): string | undefined {
-        if (!this.rawFactoryName) return undefined
-        return emitFieldCarryingWrap(this, this.fields, this.children ?? [])
-    }
-}
-
-/**
- * Shared body for AssembledBranch, AssembledGroup, and polymorph forms —
- * nodes that carry fields + children and produce a fluent-API factory.
- */
-function emitFieldCarryingFactory(
-    node: AssembledNodeBase & { kind: string; typeName: string; fields: AssembledField[]; children?: AssembledChild[] | readonly AssembledChild[]; parentKind?: string },
-    fields: AssembledField[],
-): string {
-    const fn = node.rawFactoryName!
-    const hasFields = fields.length > 0
-    // Only emit children threading when the node actually has a child
-    // slot. For field-only branches (e.g. inner_attribute_item), the
-    // types.ts interface has no `children:` member and the factory
-    // should mirror that — no `children` property, no `getChildren()`
-    // / `setChildren()` methods.
-    const children = node.children ?? []
-    const hasChildren = children.length > 0
-    const opt = fields.some(f => f.required) ? '' : '?'
-    // Polymorph forms emit their parent's kind as the NodeData type so the
-    // runtime value matches what tree-sitter produces. Non-form nodes
-    // (branches, standalone groups) use their own kind.
-    const typeKind = node.parentKind ?? node.kind
-    const lines: string[] = []
-    lines.push(`export function ${fn}(config${opt}: ConfigOf<${node.typeName}>) {`)
-
-    if (hasFields) {
-        lines.push('  const fields = {')
-        for (const f of fields) {
-            // ConfigOf<T> exposes camelCase keys for every field; access
-            // them directly. The optional chain handles the `config?` arg
-            // shape (optional when no fields are required).
-            lines.push(`    ${f.name}: config?.${f.propertyName},`)
-        }
-        lines.push('  };')
-    }
-    if (hasChildren) {
-        lines.push(`  const children = config?.children ?? [];`)
-    }
-
-    lines.push('  return {')
-    lines.push(`    type: '${typeKind}' as const,`)
-    lines.push('    named: true as const,')
-    if (hasFields) lines.push('    fields,')
-    if (hasChildren) lines.push('    children,')
-
-    // Fluent field getters/setters. Param name must not shadow the
-    // outer factory function — suffix when needed. The setter path
-    // uses `ConfigOf<T>['field']` for the parameter type so callers
-    // get proper IntelliSense on replacement values.
-    for (const f of fields) {
-        const method = f.propertyName === 'type' ? 'typeField' : f.propertyName
-        let param = f.paramName
-        if (param === fn || param === method) param = `${param}_`
-        const paramType = `ConfigOf<${node.typeName}>['${f.propertyName}']`
-        if (f.multiple) {
-            lines.push(`    ${method}(...${param}: NonNullable<${paramType}>) { return ${param}.length ? ${fn}({ ...(config ?? {}), ${f.propertyName}: ${param} }) : fields.${f.name}; },`)
-        } else {
-            lines.push(`    ${method}(${param}?: ${paramType}) { return ${param} !== undefined ? ${fn}({ ...(config ?? {}), ${f.propertyName}: ${param} }) : fields.${f.name}; },`)
-        }
-    }
-
-    if (hasChildren) {
-        lines.push('    getChildren() { return children; },')
-        lines.push(`    setChildren(...items: unknown[]) { return ${fn}({ ...(config ?? {}), children: items }); },`)
-    }
-
-    lines.push(...factorySuffix(node.treeTypeName))
-    lines.push('  };')
-    lines.push('}')
-    return lines.join('\n')
-}
-
-/**
- * Shared body for the `wrap${TypeName}(data, tree)` read-only view
- * function. Mirrors `emitFieldCarryingFactory` but with lazy drillIn
- * getters instead of fluent getter/setter methods, and no
- * render/toEdit/replace suffix. Used by AssembledBranch, AssembledGroup
- * (polymorph forms are emitted inline by the parent polymorph),
- * AssembledContainer, and AssembledPolymorph.
- */
-function emitFieldCarryingWrap(
-    node: AssembledNodeBase & { kind: string; typeName: string },
-    fields: readonly AssembledField[],
-    children: readonly AssembledChild[],
-): string {
-    const fn = `wrap${node.typeName}`
-    const lines: string[] = []
-    lines.push(`export function ${fn}(data: _NodeData, tree: TreeHandle) {`)
-    lines.push('  return {')
-    lines.push('    ...data,')
-
-    for (const f of fields) {
-        // Avoid shadowing built-in property names on the returned view.
-        const method = f.propertyName === 'type' ? 'typeField' : f.propertyName
-        if (f.multiple) {
-            lines.push(`    get ${method}() { return drillInAll(data.fields?.['${f.name}'], tree); },`)
-        } else {
-            lines.push(`    get ${method}() { return drillIn(data.fields?.['${f.name}'], tree); },`)
-        }
-    }
-
-    // Children slot — always project through drillIn so nested subtrees
-    // hydrate lazily. A node with a default children array always exposes
-    // `children`; specialised single-child containers expose `child`.
-    if (children.length > 0) {
-        const anyMultiple = children.some(c => c.multiple)
-        if (anyMultiple) {
-            lines.push(`    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },`)
-        } else {
-            lines.push(`    get child() { return drillIn(data.children?.[0], tree); },`)
-        }
-    } else {
-        // Even nodes without a declared child slot may receive
-        // supertype-dispatched children from tree-sitter. Expose them
-        // anyway so callers can walk the full tree.
-        lines.push(`    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },`)
-    }
-
-    lines.push('  };')
-    lines.push('}')
-    return lines.join('\n')
 }
 
 export class AssembledContainer extends AssembledNodeBase {
@@ -1022,57 +875,6 @@ export class AssembledContainer extends AssembledNodeBase {
         return entry
     }
 
-    emitFactory(): string | undefined {
-        if (!this.rawFactoryName) return undefined
-        const fn = this.rawFactoryName
-        const child = this.children[0]
-        const lines: string[] = []
-        // Child param type — derive from the content types on the
-        // container's first (and typically only) child slot. Use
-        // `ConfigOf<T>['children']` when it's the full rest-param shape.
-        // When the slot is single (non-multiple) we take one positional
-        // arg of the element type.
-        const childType = `ConfigOf<${this.typeName}>['children']`
-        if (child?.multiple) {
-            lines.push(`export function ${fn}(..._children: NonNullable<${childType}>) {`)
-            // Filter out non-NodeData args (empty objects, undefined).
-            lines.push('  const children = _children.filter(c => c && typeof c === "object" && "type" in c);')
-        } else {
-            lines.push(`export function ${fn}(child?: ${childType}) {`)
-            // Treat an empty/non-NodeData arg as "no child" so validator
-            // paths passing `{}` don't wrap a typeless object as a child.
-            lines.push('  const hasChild = child && typeof child === "object" && "type" in child;')
-            lines.push('  const children = hasChild ? [child] : [];')
-        }
-        lines.push('  return {')
-        lines.push(`    type: '${this.kind}' as const,`)
-        lines.push('    named: true as const,')
-        lines.push('    children,')
-        lines.push(...factorySuffix(this.treeTypeName))
-        lines.push('  };')
-        lines.push('}')
-        return lines.join('\n')
-    }
-
-    emitFromFunction(_nodeMap: NodeMap): string | undefined {
-        if (!this.rawFactoryName) return undefined
-        const fn = this.fromFunctionName!
-        const factory = this.rawFactoryName
-        return [
-            `export function ${fn}(...input: unknown[]) {`,
-            `  if (input.length === 1 && isNodeData(input[0])) {`,
-            `    return ${factory}(...((input[0] as { children?: unknown[] }).children ?? []));`,
-            `  }`,
-            `  return ${factory}(...input);`,
-            '}',
-        ].join('\n')
-    }
-
-    emitWrap(_nodeMap: NodeMap): string | undefined {
-        if (!this.rawFactoryName) return undefined
-        // Containers carry no fields — just the children slot.
-        return emitFieldCarryingWrap(this, [], this.children)
-    }
 }
 
 export class AssembledPolymorph extends AssembledNodeBase {
@@ -1120,123 +922,6 @@ export class AssembledPolymorph extends AssembledNodeBase {
         return entry
     }
 
-    emitFactory(): string | undefined {
-        if (!this.rawFactoryName) return undefined
-        const fn = this.rawFactoryName
-        const forms = this.#forms
-
-        if (forms.length === 0) {
-            // Empty polymorph stub — shouldn't happen after the classifier
-            // fix but keep a defensive path so the file still compiles.
-            return `export function ${fn}(_config?: unknown) { return { type: '${this.kind}' as const, named: true as const, render() { return render(this); }, toEdit(s: number | { start: { index: number }; end: { index: number } }, e?: number) { return typeof s === 'number' ? toEdit(this, s, e!) : toEdit(this, s); }, replace(t: ${this.treeTypeName}) { const r = t.range(); return toEdit(this, r); } }; }`
-        }
-
-        const lines: string[] = []
-        // Signature: union of per-form ConfigOf types. The inline
-        // union (rather than ConfigOf<T> over a union T) is what lets
-        // TypeScript narrow via `'field' in config` — the distributive
-        // ConfigOf over union members doesn't narrow the same way.
-        const configUnion = forms
-            .map(f => `ConfigOf<${f.typeName}>`)
-            .join(' | ')
-        lines.push(`export function ${fn}(config?: ${configUnion}) {`)
-
-        // Dispatch: for each form (most-specific first), check that
-        // ALL of that form's fields are present in config. The first
-        // matching form wins. The fallback (form with the smallest
-        // field set) handles empty-config and no-match cases.
-        //
-        // This correctly distinguishes overlapping field sets like
-        // python `assignment`:
-        //   eq     : { right }
-        //   colon  : { type }
-        //   colon2 : { right, type }
-        // sorted as colon2 → eq → colon, so `{right, type}` routes
-        // to colon2, `{right}` to eq, `{type}` to colon, `{}` falls
-        // through to colon.
-        if (forms.length > 1) {
-            const sorted = [...forms].sort((a, b) => b.fields.length - a.fields.length)
-            const fallback = sorted[sorted.length - 1]!
-            const seenFieldSets = new Set<string>()
-            for (const form of sorted) {
-                if (form === fallback) continue
-                if (form.fields.length === 0) continue
-                const key = [...form.fields.map(f => f.propertyName)].sort().join(',')
-                if (seenFieldSets.has(key)) continue
-                seenFieldSets.add(key)
-                const checks = form.fields
-                    .map(f => `'${f.propertyName}' in config`)
-                    .join(' && ')
-                lines.push(`  if (config && ${checks}) return ${form.rawFactoryName!}(config);`)
-            }
-            lines.push(`  return ${fallback.rawFactoryName!}(config);`)
-        } else {
-            lines.push(`  return ${forms[0]!.rawFactoryName!}(config);`)
-        }
-        lines.push('}')
-
-        // Emit each form factory inline after the dispatcher so they
-        // appear in a single file section per polymorph.
-        const parts = [lines.join('\n')]
-        for (const form of forms) parts.push(form.emitFactory()!)
-        return parts.join('\n')
-    }
-
-    emitWrap(_nodeMap: NodeMap): string | undefined {
-        if (!this.rawFactoryName) return undefined
-        // Polymorph wraps under the parent kind — union every form's
-        // fields so the lazy view exposes any field that might be
-        // populated at runtime. First-occurrence wins on duplicate
-        // field names (forms with the same field name share semantics).
-        const allFields = new Map<string, AssembledField>()
-        for (const form of this.#forms) {
-            for (const f of form.fields) {
-                if (!allFields.has(f.name)) allFields.set(f.name, f)
-            }
-        }
-        // Children: union across forms; if any form has a multiple
-        // children slot, expose `children` (mapped via drillIn).
-        const allChildren: AssembledChild[] = []
-        for (const form of this.#forms) {
-            for (const c of form.children) {
-                if (!allChildren.some(existing => existing.name === c.name)) {
-                    allChildren.push(c)
-                }
-            }
-        }
-        return emitFieldCarryingWrap(this, [...allFields.values()], allChildren)
-    }
-
-    emitFromFunction(nodeMap: NodeMap): string | undefined {
-        if (!this.rawFactoryName) return undefined
-        const fn = this.fromFunctionName!
-        const factory = this.rawFactoryName
-        const dispatcher = [
-            `export function ${fn}(input?: ${this.fromInputTypeName}) {`,
-            `  return ${factory}(input);`,
-            '}',
-        ].join('\n')
-        const parts = [dispatcher]
-        for (const form of this.#forms) {
-            // Form-specific naming: lowercased form type name + 'From'.
-            const formFn = `${form.typeName.charAt(0).toLowerCase()}${form.typeName.slice(1)}From`
-            const formFactory = form.rawFactoryName!
-            const fLines: string[] = []
-            fLines.push(`export function ${formFn}(input?: ConfigOf<${form.typeName}>) {`)
-            if (form.fields.length > 0) {
-                fLines.push(`  return ${formFactory}({`)
-                for (const f of form.fields) {
-                    fLines.push(`    ${f.propertyName}: ${resolveFieldFromLooseInput(f, nodeMap, form.typeName, 'input')},`)
-                }
-                fLines.push('  });')
-            } else {
-                fLines.push(`  return ${formFactory}(input);`)
-            }
-            fLines.push('}')
-            parts.push(fLines.join('\n'))
-        }
-        return parts.join('\n\n')
-    }
 }
 
 export class AssembledLeaf extends AssembledNodeBase {
@@ -1252,16 +937,6 @@ export class AssembledLeaf extends AssembledNodeBase {
     }
 
     get pattern(): string | undefined { return this.#pattern }
-
-    emitFactory(): string | undefined {
-        if (!this.rawFactoryName) return undefined
-        return emitTextFactory(this, '(text: string)', 'text')
-    }
-
-    emitFromFunction(_nodeMap: NodeMap): string | undefined {
-        if (!this.rawFactoryName) return undefined
-        return emitStringLikeFrom(this)
-    }
 }
 
 export class AssembledKeyword extends AssembledNodeBase {
@@ -1277,27 +952,6 @@ export class AssembledKeyword extends AssembledNodeBase {
     }
 
     get text(): string { return this.#text }
-
-    emitFactory(): string | undefined {
-        // Anonymous keywords collected from string literals in rules
-        // have no factoryName and don't get a public factory binding.
-        if (!this.rawFactoryName) return undefined
-        // Keyword factories carry a fixed text literal; callers don't
-        // pass an argument.
-        return emitTextFactory(this, '()', `'${escForSource(this.#text)}'`)
-    }
-
-    emitFromFunction(_nodeMap: NodeMap): string | undefined {
-        if (!this.rawFactoryName) return undefined
-        const fn = this.fromFunctionName!
-        const factory = this.rawFactoryName
-        return [
-            `export function ${fn}(input?: ${this.typeName}) {`,
-            `  if (isNodeData(input)) return input;`,
-            `  return ${factory}();`,
-            '}',
-        ].join('\n')
-    }
 }
 
 export class AssembledToken extends AssembledNodeBase {
@@ -1324,130 +978,6 @@ export class AssembledEnum extends AssembledNodeBase {
     }
 
     get values(): string[] { return this.#values }
-
-    emitFactory(): string | undefined {
-        if (!this.rawFactoryName) return undefined
-        return emitTextFactory(this, '(text: string)', 'text')
-    }
-
-    emitFromFunction(_nodeMap: NodeMap): string | undefined {
-        if (!this.rawFactoryName) return undefined
-        return emitStringLikeFrom(this)
-    }
-}
-
-/**
- * Shared body for the text-only factories — AssembledLeaf, AssembledKeyword,
- * AssembledEnum. Produces a fixed `{type, named, text, render, toEdit,
- * replace}` shape. The signature and the text expression vary per kind:
- * leaves/enums take a `text: string` arg; keywords bake in their text.
- */
-function emitTextFactory(
-    node: AssembledNodeBase & { kind: string },
-    sig: string,
-    textExpr: string,
-): string {
-    const fn = node.rawFactoryName!
-    return [
-        `export function ${fn}${sig} {`,
-        '  return {',
-        `    type: '${node.kind}' as const,`,
-        '    named: true as const,',
-        `    text: ${textExpr},`,
-        `    render: () => ${textExpr},`,
-        `    toEdit: (s: number | { start: { index: number }; end: { index: number } }, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: ${textExpr} } : { startPos: s.start.index, endPos: s.end.index, insertedText: ${textExpr} },`,
-        `    replace: (t: ${node.treeTypeName}) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: ${textExpr} }; },`,
-        '  };',
-        '}',
-    ].join('\n')
-}
-
-/**
- * Shared body for leaf/enum `from()` — accept `string | NodeData`,
- * pass through NodeData unchanged, otherwise wrap the string via
- * the leaf factory.
- */
-function emitStringLikeFrom(node: AssembledNodeBase): string {
-    const fn = node.fromFunctionName!
-    const factory = node.rawFactoryName!
-    return [
-        `export function ${fn}(input: string | ${node.typeName}) {`,
-        `  if (isNodeData(input)) return input;`,
-        `  return ${factory}(input as string);`,
-        '}',
-    ].join('\n')
-}
-
-/**
- * Resolve a factory field's value from loose `from()` input. Accepts
- * either top-level shape (`input.field_name`) or NodeData wrap shape
- * (`input.fields.field_name`). If the field is leaf-only, wrap bare
- * string inputs via the leaf factory.
- */
-/**
- * Variant of `resolveField` that consumes a normalized `f` view
- * (built once at the top of the from function as
- * `((input as any).fields ?? input)`). Per-field accesses become
- * `f.X` instead of repeating the dual-shape cast at every site.
- *
- * Emits a call to one of the loose-input resolver helpers (defined
- * at the top of from.ts by `emitResolverHelpers`):
- *
- *   _resolveOne(f.field, [leafKinds], [branchKinds])     // single
- *   _resolveMany(f.field, [leafKinds], [branchKinds])    // multiple
- *
- * The helpers handle: NodeData passthrough, primitive coercion via
- * `_resolveScalar`, string→leaf via `_resolveLeafString`, kind-tagged
- * objects via `_resolveByKind`, and single-branch passthrough.
- */
-/**
- * Emit a typed resolver call that reads from `${sourceVar}.${fieldName}`.
- * Supplies `ConfigOf<${parentTypeName}>['${propertyName}']` as the T
- * parameter so the helper's return type matches the factory's expected
- * slot — no `as any` or `as unknown` needed at the call site.
- */
-function resolveFieldFromLooseInput(field: AssembledField, nodeMap: NodeMap, parentTypeName: string, sourceVar = 'loose'): string {
-    const typeParam = `NonNullable<ConfigOf<${parentTypeName}>['${field.propertyName}']>`
-    return resolveFieldCall(`${sourceVar}.${field.propertyName}`, field, nodeMap, typeParam)
-}
-
-function resolveFieldCall(prop: string, field: AssembledField, nodeMap: NodeMap, typeParam: string | undefined): string {
-    const types = field.contentTypes
-
-    // Classify content types into leaves vs branches.
-    const leafKinds: string[] = []
-    const branchKinds: string[] = []
-    for (const t of types) {
-        const n = nodeMap.nodes.get(t)
-        if (!n) {
-            // Unknown kind — treat as branch so it goes through _resolveByKind
-            branchKinds.push(t)
-            continue
-        }
-        switch (n.modelType) {
-            case 'leaf':
-            case 'enum':
-            case 'keyword':
-                leafKinds.push(t)
-                break
-            case 'token':
-                // Anonymous tokens have no factory binding — skip.
-                break
-            case 'supertype':
-            case 'branch':
-            case 'container':
-            case 'polymorph':
-            case 'group':
-                branchKinds.push(t)
-                break
-        }
-    }
-
-    const leafArr = JSON.stringify(leafKinds)
-    const branchArr = JSON.stringify(branchKinds)
-    const helper = field.multiple ? '_resolveMany' : '_resolveOne'
-    const generic = typeParam ? `<${typeParam}>` : ''
-    return `${helper}${generic}(${prop}, ${leafArr}, ${branchArr})`
 }
 
 export class AssembledSupertype extends AssembledNodeBase {
@@ -1519,17 +1049,6 @@ export class AssembledGroup extends AssembledNodeBase {
         return entry
     }
 
-    emitFactory(): string | undefined {
-        if (!this.rawFactoryName) return undefined // hidden group
-        return emitFieldCarryingFactory(this, this.fields)
-    }
-
-    emitFromFunction(_nodeMap: NodeMap): string | undefined {
-        // Polymorph forms are emitted inline by their parent polymorph's
-        // emitFromFunction — top-level group from() bindings aren't needed.
-        // Non-form groups are hidden and have no factory binding anyway.
-        return undefined
-    }
 }
 
 export type AssembledNode =

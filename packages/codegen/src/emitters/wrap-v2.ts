@@ -15,7 +15,9 @@
  * required.
  */
 
-import type { NodeMap, AssembledField } from '../compiler/rule.ts'
+import type {
+    NodeMap, AssembledField, AssembledChild, AssembledNode,
+} from '../compiler/rule.ts'
 
 export interface EmitWrapFromNodeMapConfig {
     grammar: string
@@ -61,6 +63,23 @@ export function emitWrapFromNodeMap(config: EmitWrapFromNodeMapConfig): string {
         }
     }
 
+    // Collect type imports for `WrappedNode<T>` return annotations —
+    // every kind that gets a `wrap${TypeName}` function contributes
+    // its concrete interface.
+    const isValidIdent = (s: string) => /^[A-Za-z_$][\w$]*$/.test(s)
+    const typeImports = new Set<string>()
+    for (const [, node] of nodeMap.nodes) {
+        if (!node.rawFactoryName) continue
+        if (node.modelType !== 'branch' &&
+            node.modelType !== 'container' &&
+            node.modelType !== 'polymorph') continue
+        if (!isValidIdent(node.typeName)) continue
+        typeImports.add(node.typeName)
+    }
+    const typeImportLine = typeImports.size > 0
+        ? `import type { ${[...typeImports].sort().join(', ')} } from './types.js';`
+        : undefined
+
     // ------------------------------------------------------------------
     // Preamble
     // ------------------------------------------------------------------
@@ -79,6 +98,8 @@ export function emitWrapFromNodeMap(config: EmitWrapFromNodeMapConfig): string {
         "  readonly nodeId?: number;",
         "}",
         "import { readNode, buildRoutingMap, type TreeHandle } from '@sittir/core';",
+        "import type { WrappedNode } from '@sittir/types';",
+        ...(typeImportLine ? [typeImportLine] : []),
         '',
         '// Routing data — overrides + supertype expansion reconstructed at',
         '// codegen time from NodeMap, then handed to readNode at module load.',
@@ -105,10 +126,10 @@ export function emitWrapFromNodeMap(config: EmitWrapFromNodeMapConfig): string {
     ]
 
     // ------------------------------------------------------------------
-    // Per-kind wrap functions — pure dispatch over AssembledNode.emitWrap
+    // Per-kind wrap functions — local dispatch on modelType.
     // ------------------------------------------------------------------
     for (const [, node] of nodeMap.nodes) {
-        const source = node.emitWrap(nodeMap)
+        const source = renderWrapForNode(node)
         if (source === undefined) continue
         lines.push(source)
         lines.push('')
@@ -190,4 +211,104 @@ function isNamedKind(kind: string, nodeMap: NodeMap): boolean {
     const n = nodeMap.nodes.get(kind)
     if (!n) return true // unknown kind — assume named (will route by kind)
     return n.modelType !== 'token'
+}
+
+// ---------------------------------------------------------------------------
+// Per-node wrap dispatch
+// ---------------------------------------------------------------------------
+
+function renderWrapForNode(node: AssembledNode): string | undefined {
+    if (!node.rawFactoryName) return undefined
+    switch (node.modelType) {
+        case 'branch':
+            return emitFieldCarryingWrap(node, node.fields, node.children ?? [])
+        case 'container':
+            return emitFieldCarryingWrap(node, [], node.children)
+        case 'polymorph': {
+            // Polymorph wraps under the parent kind — union every form's
+            // fields so the lazy view exposes any field that might be
+            // populated at runtime. First-occurrence wins on duplicate
+            // field names.
+            const allFields = new Map<string, AssembledField>()
+            for (const form of node.forms) {
+                for (const f of form.fields) {
+                    if (!allFields.has(f.name)) allFields.set(f.name, f)
+                }
+            }
+            const allChildren: AssembledChild[] = []
+            for (const form of node.forms) {
+                for (const c of form.children) {
+                    if (!allChildren.some(existing => existing.name === c.name)) {
+                        allChildren.push(c)
+                    }
+                }
+            }
+            return emitFieldCarryingWrap(node, [...allFields.values()], allChildren)
+        }
+        default:
+            return undefined
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Field-carrying wrap — lazy drillIn projection over NodeData
+// ---------------------------------------------------------------------------
+
+interface WrapNode {
+    readonly kind: string
+    readonly typeName: string
+}
+
+function emitFieldCarryingWrap(
+    node: WrapNode,
+    fields: readonly AssembledField[],
+    children: readonly AssembledChild[],
+): string {
+    const fn = `wrap${node.typeName}`
+    const lines: string[] = []
+    // `data` stays structurally typed (`_NodeData`) so the loose
+    // `data.fields?.['...']` / `data.children?.[0]` access patterns
+    // inside the body still compile — polymorph forms union fields
+    // that no single concrete interface carries. The RETURN type
+    // narrows to `WrappedNode<T>` so consumers of the wrap function
+    // see the concrete camelCase field accessors.
+    lines.push(`export function ${fn}(data: _NodeData, tree: TreeHandle): WrappedNode<${node.typeName}> {`)
+    lines.push('  return {')
+    lines.push('    ...data,')
+
+    for (const f of fields) {
+        // Avoid shadowing built-in property names on the returned view.
+        const method = f.propertyName === 'type' ? 'typeField' : f.propertyName
+        if (f.multiple) {
+            lines.push(`    get ${method}() { return drillInAll(data.fields?.['${f.name}'], tree); },`)
+        } else {
+            lines.push(`    get ${method}() { return drillIn(data.fields?.['${f.name}'], tree); },`)
+        }
+    }
+
+    // Children slot — always project through drillIn so nested subtrees
+    // hydrate lazily. A node with a default children array always
+    // exposes `children`; specialised single-child containers expose
+    // `child`.
+    if (children.length > 0) {
+        const anyMultiple = children.some(c => c.multiple)
+        if (anyMultiple) {
+            lines.push(`    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },`)
+        } else {
+            lines.push(`    get child() { return drillIn(data.children?.[0], tree); },`)
+        }
+    } else {
+        // Even nodes without a declared child slot may receive
+        // supertype-dispatched children from tree-sitter. Expose them
+        // anyway so callers can walk the full tree.
+        lines.push(`    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },`)
+    }
+
+    // Cast to the concrete WrappedNode<T> — the body uses drillIn,
+    // which returns `unknown` at the call site because the generic
+    // readNode machinery can't narrow; the object shape is correct
+    // at runtime, so the cast is the honest bridge.
+    lines.push(`  } as unknown as WrappedNode<${node.typeName}>;`)
+    lines.push('}')
+    return lines.join('\n')
 }

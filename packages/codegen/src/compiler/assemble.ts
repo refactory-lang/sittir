@@ -135,7 +135,15 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
     // Tree-sitter promotes string literals to named node-types entries
     collectAnonymousNodes(optimized.rules, nodes)
 
-    // Part B: Resolve ir-namespace keys after the NodeMap is complete so
+    // Part B: Resolve typeName/factoryName collisions between hidden
+    // and visible kinds. `nameNode` drops the leading `_` (so users
+    // see `TypeIdentifier`, not `HiddenTypeIdentifier`) — this pass
+    // then re-adds a `Hidden` prefix only to hidden kinds that actually
+    // collide with a visible sibling. Warn on every rename so
+    // suggested.ts / logging can surface the list.
+    resolveCollidingNames(nodes)
+
+    // Part C: Resolve ir-namespace keys after the NodeMap is complete so
     // collision detection sees every node at once. Emitters read
     // `node.irKey` rather than re-running shortening rules.
     resolveIrKeys(nodes)
@@ -159,6 +167,74 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
  * to the full factoryName; JS reserved words get a `_` suffix. This
  * pass claims keys in nodeMap iteration order.
  */
+/**
+ * Find typeName collisions between hidden (`_`-prefixed) kinds and
+ * their visible siblings, and disambiguate by re-prefixing the hidden
+ * kind with `Hidden`. Non-colliding hidden kinds keep their clean
+ * names. Emits a warning for every rename so the run log surfaces
+ * which grammar rules are sharing names.
+ */
+function resolveCollidingNames(nodes: Map<string, AssembledNode>): void {
+    // Group nodes by typeName. Preferred winner: the non-hidden kind.
+    const byType = new Map<string, AssembledNode[]>()
+    for (const node of nodes.values()) {
+        const bucket = byType.get(node.typeName) ?? []
+        bucket.push(node)
+        byType.set(node.typeName, bucket)
+    }
+    for (const [typeName, group] of byType) {
+        if (group.length < 2) continue
+        const visible = group.filter(n => !n.kind.startsWith('_'))
+        const hidden = group.filter(n => n.kind.startsWith('_'))
+        if (visible.length >= 1 && hidden.length >= 1) {
+            // Visible wins. Rename each hidden with `Hidden` prefix.
+            for (const h of hidden) {
+                const newType = `Hidden${typeName}`
+                console.warn(
+                    `[assemble] typeName collision: kind '${h.kind}' renamed ` +
+                    `'${typeName}' → '${newType}' (visible sibling(s): ${visible.map(v => `'${v.kind}'`).join(', ')})`,
+                )
+                h.typeName = newType
+                if (h.factoryName !== undefined) {
+                    h.factoryName = newType.charAt(0).toLowerCase() + newType.slice(1)
+                }
+            }
+        } else if (visible.length >= 2) {
+            // Two visible kinds collapsed to the same typeName (e.g.
+            // python's `true` keyword + `True` named node). Keep the
+            // first (sorted by kind) and append a numeric disambiguator
+            // to the rest. Warn so the situation is visible.
+            const sorted = [...visible].sort((a, b) => a.kind.localeCompare(b.kind))
+            for (let i = 1; i < sorted.length; i++) {
+                const n = sorted[i]!
+                const newType = `${typeName}${i + 1}`
+                console.warn(
+                    `[assemble] typeName collision between visible kinds: '${n.kind}' renamed ` +
+                    `'${typeName}' → '${newType}' (siblings: ${sorted.slice(0, i).map(s => `'${s.kind}'`).join(', ')})`,
+                )
+                n.typeName = newType
+                if (n.factoryName !== undefined) {
+                    n.factoryName = newType.charAt(0).toLowerCase() + newType.slice(1)
+                }
+            }
+        } else if (hidden.length >= 2) {
+            // Two hidden kinds both normalized to the same name. Give
+            // every one after the first a numeric suffix.
+            for (let i = 1; i < hidden.length; i++) {
+                const h = hidden[i]!
+                const newType = `${typeName}${i + 1}`
+                console.warn(
+                    `[assemble] typeName collision among hidden kinds: '${h.kind}' renamed '${typeName}' → '${newType}'`,
+                )
+                h.typeName = newType
+                if (h.factoryName !== undefined) {
+                    h.factoryName = newType.charAt(0).toLowerCase() + newType.slice(1)
+                }
+            }
+        }
+    }
+}
+
 function resolveIrKeys(nodes: Map<string, AssembledNode>): void {
     // Two-phase claim:
     // Phase 1 — "short form is the full name". Any node whose short
@@ -278,8 +354,10 @@ function walkForStrings(rule: Rule, out: Set<string>): void {
             out.add(rule.value)
             break
         case 'enum':
-            // Enum values are string literals — collect them as anonymous nodes
-            for (const v of rule.values) out.add(v)
+            // Enum values are the `text` content of the parent kind,
+            // not distinct node kinds. The parser produces a single
+            // node (e.g. `primitive_type` with text `"usize"`), never
+            // a `usize` node. Do NOT descend.
             break
         case 'seq':
             for (const m of rule.members) walkForStrings(m, out)
@@ -476,15 +554,16 @@ export function nameNode(kind: string): { typeName: string; factoryName: string;
     // Tokens/keywords can contain non-identifier chars (!=, #, %, ->, ==, etc.).
     // Route through tokenToName first so typeName is always a valid identifier.
     const normalized = /^[\w_]+$/.test(kind) ? kind : tokenToName(kind)
-    // Preserve both leading underscore (hidden-rule marker) and internal
-    // double underscores as discriminators. Hidden vs visible kinds that
-    // share the same base must produce distinct names.
-    //   `_type_identifier`  → `Hidden_Type_Identifier`  → `HiddenTypeIdentifier`
-    //   `type_identifier`   → `Type_Identifier`         → `TypeIdentifier`
-    //   `literal_type__x`   → `Literal_Type_U_X`        → `LiteralTypeUX`
-    const hidden = normalized.startsWith('_')
-    const marked = (hidden ? `hidden_${normalized.slice(1)}` : normalized)
-        .replace(/__+/g, '_U_')
+    // Strip leading underscore (hidden-rule marker) and collapse internal
+    // double underscores into `_U_` so they survive PascalCase flattening.
+    //   `_type_identifier`  → `TypeIdentifier`  (same as visible sibling)
+    //   `type_identifier`   → `TypeIdentifier`
+    //   `literal_type__x`   → `LiteralTypeUX`
+    // Collisions between hidden/visible kinds are resolved post-hoc by
+    // `resolveCollidingNames()` in assemble() — at which point the whole
+    // NodeMap is visible and we can apply a disambiguator only where
+    // actually needed.
+    const marked = normalized.replace(/^_+/, '').replace(/__+/g, '_U_')
     let typeName = marked
         .split('_')
         .filter(Boolean)

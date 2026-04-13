@@ -441,12 +441,16 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 
     if (opts.externals) {
         const $ = createProxy('_externals_', refs)
+        // Pass the base externals (already resolved to strings) so the
+        // override callback's `previous.concat([...])` pattern preserves
+        // them. Wrap each as a string rule so `normalize` round-trips.
         const baseExternals = baseGrammar?.externals ?? []
         const result = opts.externals.call($, $, baseExternals)
         if (Array.isArray(result)) {
             for (const e of result) {
                 const n = normalize(e)
                 if (n.type === 'symbol') externals.push(n.name)
+                else if (n.type === 'string') externals.push(n.value)
             }
         }
     }
@@ -495,6 +499,21 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
         const $ = createProxy('_word_', refs)
         const w = opts.word.call($, $)
         word = w.name
+    }
+
+    // Extension inheritance — when extending a base grammar, inherit
+    // metadata lists the override didn't explicitly re-declare. Tree-sitter
+    // itself inherits externals/extras/supertypes/inline/conflicts/word
+    // implicitly; we model the same behavior so downstream phases see the
+    // full declaration set instead of an empty list.
+    const inherited = baseGrammar?.grammar ?? baseGrammar
+    if (inherited) {
+        if (!opts.externals && Array.isArray(inherited.externals)) externals.push(...inherited.externals)
+        if (!opts.extras && Array.isArray(inherited.extras)) extras.push(...inherited.extras)
+        if (!opts.supertypes && Array.isArray(inherited.supertypes)) supertypes.push(...inherited.supertypes)
+        if (!opts.inline && Array.isArray(inherited.inline)) inline.push(...inherited.inline)
+        if (!opts.conflicts && Array.isArray(inherited.conflicts)) conflicts.push(...inherited.conflicts)
+        if (!opts.word && inherited.word) word = inherited.word
     }
 
     return {

@@ -47,6 +47,16 @@ export type {
 /** Flatten an intersection into a single object type (shallow). From type-fest. */
 export type Simplify<T> = { [K in keyof T]: T[K] } & {};
 
+/**
+ * Terminal node shape — shared by every leaf, keyword, and enum.
+ * `K` pins the `type` discriminant; `V` narrows `text` to a specific
+ * literal or literal union (defaulting to `string` for open-valued leaves).
+ */
+export interface Terminal<K extends string, V extends string = string> {
+	readonly type: K;
+	readonly text: V;
+}
+
 // ---------------------------------------------------------------------------
 // Grammar primitives
 // ---------------------------------------------------------------------------
@@ -327,20 +337,21 @@ export type FluentSetters<
 };
 
 /**
- * Full fluent node type — NodeData + typed setters + render/edit methods.
+ * Full fluent node type — the factory output shape keyed by the
+ * kind string `K` (a literal like `'function_item'`) and the
+ * matching Config type `C`. Produces the `{type, named, fields?,
+ * children?, render, toEdit, replace}` surface plus fluent setters
+ * derived from C's camelCase field keys.
  *
- * Generated packages alias this per-kind:
- * ```ts
- * export type FunctionItemNode = FluentNode<FunctionItem, FunctionItemFields, 'name'>;
- * ```
+ * Used by the generated `_factoryMap` as the return type of each
+ * entry so callers like `_factoryMap[kind](config)` get a typed
+ * result without per-entry casts.
  */
-export type FluentNode<
-	N extends { readonly type: string },
-	Fields = {},
-	Excluded extends string = never,
-> = N &
-	FluentSetters<Fields, Excluded, N & FluentSetters<Fields, Excluded> & NodeMethods<N['type']>> &
-	NodeMethods<N['type']>;
+export type FluentNode<K extends string, C = unknown> =
+	& { readonly type: K; readonly named: true }
+	& (C extends { children: infer Ch } ? { readonly children: NonNullable<Ch> } : {})
+	& FluentSetters<C, 'children'>
+	& NodeMethods<K>;
 
 // ---------------------------------------------------------------------------
 // RuntimeNodeOf<T> — concrete interface to runtime node transformation
@@ -407,13 +418,46 @@ type RuntimeChildSlots<T> = {
 };
 
 /**
+ * WrappedNode<T> — the read-only lazy view produced by the generated
+ * `wrap<TypeName>(data, tree)` functions. Starts from the concrete
+ * NodeData interface T and augments it with camelCase getters at
+ * the top level so callers reach fields via `node.fieldName` instead
+ * of `node.fields.field_name`. Children get a `child` / `children`
+ * getter matching the interface's children slot shape.
+ */
+export type WrappedNode<T> = Simplify<
+	T
+	& { readonly [K in keyof FieldsOf<T> as SetterKey<K & string>]: FieldsOf<T>[K] }
+	& (T extends { readonly children: infer C }
+		? NonNullable<C> extends readonly [infer Only]
+			? { readonly child: Only }
+			: { readonly children: NonNullable<C> }
+		: {})
+>;
+
+/**
+ * ChildOf<T> — element type of a node's `children` slot. Works on
+ * both tuple-shaped singular slots (`readonly [X]` → X) and array
+ * shaped repeated slots (`readonly X[]` → X). Used by factories and
+ * resolvers to type child parameters without repeating the
+ * `NonNullable<ConfigOf<T>['children']>[number]` ceremony.
+ */
+export type ChildOf<T> = T extends { readonly children: infer C }
+	? NonNullable<C> extends readonly (infer E)[]
+		? E
+		: never
+	: never;
+
+/**
  * ConfigOf<T> — factory input shape. CamelCase keys at top level for ergonomics,
  * field values are the raw interface types (already snake_case internally).
- * No recursion needed — you pass runtime nodes as field values.
+ * Child slots are wrapped in `Partial<>` so the factory can default missing
+ * ones to `[]` at runtime — the caller is free to omit `children` on nodes
+ * where the underlying grammar rule matches zero occurrences.
  */
 export type ConfigOf<T> = Simplify<
 	{ [K in keyof FieldsOf<T> as CamelCase<K & string>]: FieldsOf<T>[K] }
-	& ChildSlotsOf<T>
+	& Partial<ChildSlotsOf<T>>
 >;
 
 /**

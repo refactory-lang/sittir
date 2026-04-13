@@ -14,7 +14,7 @@
 // Summary
 // ---------------------------------------------------------------
 // Field inferences: 0  (0 applied, 0 held)
-// Rule promotions:  19  (19 applied, 0 held)
+// Rule promotions:  17  (17 applied, 0 held)
 
 // ---------------------------------------------------------------
 // Rule promotions
@@ -26,12 +26,10 @@
 // with its concrete type in your grammar.js (e.g. add it to the
 // `supertypes:` array).
 
-// supertype (9)
+// supertype (7)
 //   [applied]  _statement
-//   [applied]  _simple_statement
 //   [applied]  _named_expression_lhs
 //   [applied]  _expressions
-//   [applied]  _compound_statement
 //   [applied]  _expression_within_for_in_clause
 //   [applied]  _left_hand_side
 //   [applied]  _right_hand_side

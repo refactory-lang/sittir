@@ -21,10 +21,16 @@ export function emitTestsFromNodeMap(config: EmitTestsFromNodeMapConfig): string
     ]
 
     // Branch/container/polymorph tests
+    const isValidIdent = (s: string) => /^[A-Za-z_$][\w$]*$/.test(s)
     for (const [kind, node] of nodeMap.nodes) {
         if (!node.factoryName) continue
         const key = node.irKey
         if (!key) continue // synthesised group or skipped kind
+        // Skip kinds whose irKey isn't a valid JS identifier — those are
+        // anonymous tokens that surface as leaves but can't be accessed
+        // via `ir.<key>(...)` syntax. The external externals-inheritance
+        // pass surfaces new such kinds for grammars that declare them.
+        if (!isValidIdent(key)) continue
 
         switch (node.modelType) {
             case 'branch':

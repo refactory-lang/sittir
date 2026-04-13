@@ -125,13 +125,19 @@ export const NODE_KINDS = [
 
 /** All leaf/terminal node kind strings. */
 export const LEAF_KINDS = [
+  ')',
   'False',
   'None',
   'True',
+  ']',
   '_',
   '__future__',
+  '_dedent',
+  '_indent',
   '_is_not',
+  '_newline',
   '_not_in',
+  '_string_content',
   'and',
   'as',
   'assert',
@@ -147,6 +153,7 @@ export const LEAF_KINDS = [
   'del',
   'elif',
   'else',
+  'escape_interpolation',
   'escape_sequence',
   'except',
   'exec',
@@ -175,11 +182,14 @@ export const LEAF_KINDS = [
   'print',
   'raise',
   'return',
+  'string_end',
+  'string_start',
   'true',
   'try',
   'type_conversion',
   'while',
   'with',
+  '}',
 ] as const;
 
 /** All node kind strings (branch + leaf). */
@@ -208,7 +218,6 @@ export const KEYWORDS = [
   'elif',
   'ellipsis',
   'else',
-  'except',
   'exec',
   'false',
   'finally',
@@ -242,33 +251,23 @@ export const KEYWORDS = [
 export const OPERATORS = [
   "!=",
   "%",
-  "%=",
   "&",
-  "&=",
   "(",
-  ")",
   "*",
   "**",
-  "**=",
-  "*=",
   "+",
-  "+=",
   ",",
   "-",
-  "-=",
   "->",
   ".",
   "...",
   "/",
   "//",
-  "//=",
-  "/=",
   ":",
   ":=",
   ";",
   "<",
   "<<",
-  "<<=",
   "<=",
   "<>",
   "=",
@@ -276,19 +275,12 @@ export const OPERATORS = [
   ">",
   ">=",
   ">>",
-  ">>=",
   "@",
-  "@=",
   "[",
   "\\",
-  "]",
   "^",
-  "^=",
   "{",
   "|",
-  "|=",
-  "}",
-  "~",
 ] as const;
 
 export type NodeKind = (typeof NODE_KINDS)[number];
@@ -386,20 +378,20 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'class_definition': [
     { name: 'name', required: true, multiple: false },
-    { name: 'typeParameters', required: true, multiple: false },
-    { name: 'superclasses', required: true, multiple: false },
+    { name: 'typeParameters', required: false, multiple: false },
+    { name: 'superclasses', required: false, multiple: false },
     { name: 'body', required: true, multiple: false },
   ],
   'class_pattern': [
     { name: 'dottedName', required: true, multiple: false },
-    { name: 'arguments', required: true, multiple: false },
+    { name: 'arguments', required: false, multiple: false },
   ],
   'comparison_operator': [
     { name: 'left', required: true, multiple: false },
-    { name: 'comparators', required: true, multiple: false },
+    { name: 'comparators', required: true, multiple: true },
   ],
   'complex_pattern': [
-    { name: 'real', required: true, multiple: false },
+    { name: 'real', required: false, multiple: false },
     { name: 'imaginary', required: true, multiple: false },
   ],
   'concatenated_string': [
@@ -471,7 +463,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'left', required: true, multiple: false },
     { name: 'right', required: true, multiple: false },
     { name: 'body', required: true, multiple: false },
-    { name: 'alternative', required: true, multiple: false },
+    { name: 'alternative', required: false, multiple: false },
   ],
   'format_expression': [
     { name: 'expression', required: true, multiple: false },
@@ -482,7 +474,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'function_definition': [
     { name: 'name', required: true, multiple: false },
-    { name: 'typeParameters', required: true, multiple: false },
+    { name: 'typeParameters', required: false, multiple: false },
     { name: 'parameters', required: true, multiple: false },
     { name: 'returnType', required: false, multiple: false },
     { name: 'body', required: true, multiple: false },
@@ -526,13 +518,13 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'simplePattern', required: true, multiple: false },
   ],
   'lambda': [
-    { name: 'parameters', required: true, multiple: false },
+    { name: 'parameters', required: false, multiple: false },
     { name: 'body', required: true, multiple: false },
   ],
   'lambda_parameters': [
   ],
   'lambda_within_for_in_clause': [
-    { name: 'parameters', required: true, multiple: false },
+    { name: 'parameters', required: false, multiple: false },
     { name: 'body', required: true, multiple: false },
   ],
   'list': [
@@ -592,7 +584,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'relative_import': [
     { name: 'importPrefix', required: true, multiple: false },
-    { name: 'dottedName', required: true, multiple: false },
+    { name: 'dottedName', required: false, multiple: false },
   ],
   'return_statement': [
   ],
@@ -602,9 +594,9 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'body', required: true, multiple: false },
   ],
   'slice': [
-    { name: 'start', required: true, multiple: false },
-    { name: 'stop', required: true, multiple: false },
-    { name: 'step', required: true, multiple: false },
+    { name: 'start', required: false, multiple: false },
+    { name: 'stop', required: false, multiple: false },
+    { name: 'step', required: false, multiple: false },
   ],
   'splat_pattern': [
     { name: 'identifier', required: true, multiple: false },
@@ -614,7 +606,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'string': [
     { name: 'stringStart', required: true, multiple: false },
-    { name: 'content', required: true, multiple: false },
+    { name: 'content', required: true, multiple: true },
     { name: 'stringEnd', required: true, multiple: false },
   ],
   'string_content': [
@@ -625,9 +617,9 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'try_statement': [
     { name: 'body', required: true, multiple: false },
-    { name: 'exceptClauses', required: true, multiple: false },
-    { name: 'elseClause', required: true, multiple: false },
-    { name: 'finallyClause', required: true, multiple: false },
+    { name: 'exceptClauses', required: true, multiple: true },
+    { name: 'elseClause', required: false, multiple: false },
+    { name: 'finallyClause', required: false, multiple: false },
   ],
   'tuple': [
   ],
@@ -670,7 +662,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'value', required: true, multiple: false },
   ],
   'with_statement': [
-    { name: 'withClause', required: true, multiple: false },
+    { name: 'withClause', required: false, multiple: false },
     { name: 'body', required: true, multiple: false },
   ],
   'yield': [

@@ -60,7 +60,12 @@ export function emitIrFromNodeMap(config: EmitIrFromNodeMapConfig): string {
     // Helper — attaches properties via defineProperty so reserved Function
     // prototype names (name, length, arguments, caller) don't throw when
     // a polymorph has a form named `name` or similar.
-    lines.push('function _attach<T extends (...args: unknown[]) => unknown, P extends Record<string, unknown>>(fn: T, props: P): T & P {')
+    // `T extends (...args: never[]) => unknown` keeps the generic bound
+    // contravariant in its argument types, so concrete factory signatures
+    // like `(config: ConfigOf<X>) => {...}` still satisfy it. A stricter
+    // `(...args: unknown[])` bound erases the specific return type and
+    // makes every `ir.kind(...)` call type as `unknown`.
+    lines.push('function _attach<T extends (...args: never[]) => unknown, P extends Record<string, unknown>>(fn: T, props: P): T & P {')
     lines.push('  for (const key of Object.keys(props)) {')
     lines.push('    Object.defineProperty(fn, key, { value: props[key], writable: true, configurable: true, enumerable: true });')
     lines.push('  }')
@@ -74,6 +79,7 @@ export function emitIrFromNodeMap(config: EmitIrFromNodeMapConfig): string {
     lines.push('  // Node factories')
     for (const [, node] of nodeMap.nodes) {
         if (!node.irKey || !node.rawFactoryName || !node.fromFunctionName) continue
+        if (!/^[A-Za-z_$][\w$]*$/.test(node.irKey)) continue
         if (node.modelType !== 'branch' && node.modelType !== 'container' && node.modelType !== 'polymorph') continue
 
         if (node.modelType === 'polymorph' && node.forms.length > 1) {
@@ -93,6 +99,7 @@ export function emitIrFromNodeMap(config: EmitIrFromNodeMapConfig): string {
     for (const [, node] of nodeMap.nodes) {
         if (node.modelType !== 'keyword') continue
         if (!node.irKey || !node.rawFactoryName) continue
+        if (!/^[A-Za-z_$][\w$]*$/.test(node.irKey)) continue
         lines.push(`  ${node.irKey}: ${node.rawFactoryName},`)
     }
 
@@ -103,6 +110,7 @@ export function emitIrFromNodeMap(config: EmitIrFromNodeMapConfig): string {
     for (const [, node] of nodeMap.nodes) {
         if (node.modelType !== 'leaf' && node.modelType !== 'enum') continue
         if (!node.irKey || !node.rawFactoryName) continue
+        if (!/^[A-Za-z_$][\w$]*$/.test(node.irKey)) continue
         lines.push(`  ${node.irKey}: ${node.rawFactoryName},`)
     }
 

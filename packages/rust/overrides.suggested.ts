@@ -14,7 +14,7 @@
 // Summary
 // ---------------------------------------------------------------
 // Field inferences: 15  (15 applied, 0 held)
-// Rule promotions:  21  (21 applied, 0 held)
+// Rule promotions:  17  (17 applied, 0 held)
 
 // ---------------------------------------------------------------
 // Rule promotions
@@ -26,18 +26,14 @@
 // with its concrete type in your grammar.js (e.g. add it to the
 // `supertypes:` array).
 
-// supertype (11)
+// supertype (7)
 //   [applied]  _statement
-//   [applied]  _declaration_statement
 //   [applied]  _token_pattern
 //   [applied]  _tokens
 //   [applied]  _use_clause
-//   [applied]  _expression
 //   [applied]  _expression_ending_with_block
 //   [applied]  _delim_tokens
 //   [applied]  _condition
-//   [applied]  _literal
-//   [applied]  _literal_pattern
 
 // terminal (7)
 //   [applied]  unit_type
