@@ -296,6 +296,180 @@ The from emitter should share resolver functions across fields with identical co
 
 ---
 
+## Phase 10: Cleanup Backlog (merged from cleanup-backlog.md)
+
+**Purpose**: Simplifications and debt pay-downs tracked during and after
+the v1→v2 milestone. Not functional blockers — they pay down complexity
+that accumulated while the pipeline was being landed incrementally.
+Overarching theme: **lean on the AssembledNode class hierarchy**. Phase 4
+produces real class instances, so emitters should consume them directly
+rather than recomputing via free functions.
+
+**Priority chain (all completed):** C1 → C3 → C9 → C10 → C11.
+
+- [x] **C1** Collapse free-function naming helpers into `AssembledNode`.
+  Moved `typeName`, `factoryName`, `irKey`, `rawFactoryName`,
+  `treeTypeName`, `configTypeName`, `fromInputTypeName`,
+  `fromFunctionName` onto the class as readonly fields / getters.
+  `naming.ts` still exists but v2 emitters no longer import from it.
+- [x] **C2** Unify ir-key resolution into `assemble.ts` → `resolveIrKeys()`
+  post-pass. `buildIrKeyMap` in `emitters/ir-keys.ts` deleted; emitters
+  read `node.irKey` directly.
+- [x] **C3** Collapse per-emitter `toTypeName` / `toRawFactoryName` /
+  `toShortName` copies. Folded into C1 — every v2 emitter now pulls
+  names from the class.
+- [ ] **C4** Delete v1 grammar-loading / model files absorbed into v2.
+  Covered by **T045a-d** and **T046** above. Blocked by C6 (below).
+  Files to delete: `grammar-reader.ts`, `grammar.ts`, `overrides.ts`,
+  `grammar-model.ts`, `enriched-grammar.ts`, `classify.ts`,
+  `semantic-aliases.ts`, `node-types.ts`, `node-model.ts`,
+  `build-model.ts`, `hydration.ts`, `naming.ts`, `optimization.ts`,
+  `kind-projections.ts`, `factoring.ts`, `token-attachment.ts`,
+  `token-names.ts`, `emitters/rules.ts`. Keep `validate-templates.ts`.
+- [ ] **C5** Delete the `NodeMap → HydratedNodeModel` adapter
+  (`packages/codegen/src/compiler/adapter.ts`). Blocked by **T040**:
+  `wrap.ts` currently consumes `HydratedNodeModel[]` via the adapter
+  and must first be rewritten to dispatch on `AssembledNode.modelType`
+  directly. Once T040 lands, delete `adapter.ts`.
+- [ ] **C6** Delete the legacy `generate()` path in
+  `packages/codegen/src/index.ts`. **Blocked by C6-prereq (from.ts
+  resolver gap — see comparison findings below).** v2 is a functional
+  superset of v1 for every file *except* `from.ts`, which has a real
+  capability regression. Work order once unblocked: migrate
+  `validate-all.test.ts` to `generateV2`, drop `RT_CEILINGS`, delete
+  v1 `generate()`, then C4 and C16 follow.
+- [x] **C7** Classifier: add `terminal` and `polymorph` to the spec
+  doc. Updated `specs/sittir-grammar-compiler-spec.md` taxonomy table
+  and rule-variant-presence table. Commit `c583646`.
+- [ ] **C8** Move `hasAnyField` / `hasAnyChild` into class constructors.
+  **Not applicable** — these predicates are called from `classifyNode`
+  and `promotePolymorph` on raw `Rule` objects, *before* any
+  `AssembledNode` exists. No simplification possible at call sites.
+- [x] **C9** Templates walker: hoist into `AssembledNode.renderTemplate()`.
+  `templates-v2.ts` shrunk from ~400 lines to 81 (preamble + dispatch
+  loop + YAML serialisation). Walker helpers (`renderRule`, `joinParts`,
+  `needsSpace`, `findRepeatSeparator`) live in `rule.ts`.
+- [x] **C10** Factory emitter: hoist per-model emission into
+  `AssembledNode.emitFactory()`. `factories-v2.ts` shrunk from 346
+  lines to 108. Commit `f818b15`.
+- [x] **C11** from-v2: collapse per-model `emitXxxFrom` into
+  `AssembledNode.emitFromFunction(nodeMap)`. `from-v2.ts` shrunk from
+  263 lines to 85. Commit `3063164`.
+- [ ] **C12** `validate-templates` and `validate-renderable` should
+  share a rule-lookup sourced from NodeMap instead of re-parsing the
+  generated YAML. Substantial rework: also need to migrate
+  `cli.ts`, `corpus-validation.test.ts`, `validate-all.test.ts` call
+  sites. The YAML round-trip becomes an output check only.
+- [x] **C13** Move `convert-overrides.ts` out of `src/compiler/` into
+  `packages/codegen/scripts/` with a note explaining its historical
+  one-shot role. Commit `6bc6bf3`.
+- [x] **C14** Spec doc refresh. Added notes on `promoteTerminals`
+  (Link) and `promotePolymorph` (Optimize); described the class
+  hierarchy and pure-switch classification in the Phase 4 Assemble
+  section. Commit `c583646`.
+- [ ] **C15** Test infrastructure: consolidate the shared ~60% of
+  `validate-roundtrip.ts`, `validate-factory-roundtrip.ts`, and
+  `validate-from.ts` (tree-sitter adapter, corpus loading,
+  wrap-for-reparse) into `packages/codegen/src/validators/common.ts`.
+  Each validator keeps only its per-kind check.
+- [ ] **C16** Delete `RT_CEILINGS` from
+  `packages/codegen/tests/integration/validate-all.test.ts`.
+  Blocked by C6 — the ceilings were calibrated against v1 factories
+  on disk; `corpus-validation.test.ts` is the authoritative v2 guard.
+- [ ] **C17** Audit node-types.json usage. Link converts
+  `_indent`/`_dedent`/`_newline` external symbol refs via name
+  matching, which breaks for grammars using differently-named
+  externals. Make detection either explicit (`externalRoles` config)
+  or position-based from the grammar's `externals` list.
+- [ ] **C18** Remove `any` casts from field access in factory and
+  from emitters. `(config as any)?.${propertyName}` can become typed
+  access now that `ConfigOf<T>` is fully defined. Fluent getters/
+  setters should return concrete field types.
+- [ ] **C19** Full type-check across all generated packages. Tracked
+  under **T052**. Residual errors: stale supertype Tree names, missing
+  leaf interfaces for external tokens, kinds referenced in field type
+  unions without emitted interfaces. Needs completion of `types-v2`
+  stub interface emission.
+
+### Apples-to-apples v1-vs-v2 comparison (recorded 2026-04-12)
+
+Ran both pipelines on every grammar via
+`packages/codegen/scripts/compare-v1-v2.ts` and diffed the emitted
+files. Counts below are **after** the enum `factoryName` fix in
+`assemble.ts` (commit `56b9f61`).
+
+**Byte-identical output:** `grammar.ts`, `index.ts` (all three grammars).
+
+**v2 strictly leaner:**
+- `factories.ts` — v1 slightly larger due to snake_case + trailing-
+  underscore naming (`abstract_type_` vs `abstractType`). Same
+  semantic coverage after the enum fix.
+- `utils.ts` — v1 78 → v2 50 lines (shared helper consolidation).
+
+**v2 strictly broader (more coverage):**
+- `types.ts` — v2 +145 rust / +179 ts / +97 python interfaces. v2
+  emits stub interfaces for every kind a field union references.
+- `templates.yaml` — v2 +67 rust / +197 ts / +82 python entries. v2's
+  pure-switch classifier catches rules v1's heuristic path dropped.
+- `wrap.ts`, `consts.ts`, `type-tests.ts`, `tests.test.ts` — all
+  larger in v2, matching the broader node coverage.
+- `from.ts` bindings — v1=163/167/**1** vs v2=174/217/138. Python v1
+  effectively only emitted one from() binding — a v1 regex bug.
+
+**v2 leaner-but-less-capable (real regression — see C6-prereq below):**
+- `from.ts` — v1 4528/4738/2926 lines → v2 1555/1877/1203. v2's
+  size drop is not purely dedup; it's missing substantial resolver
+  logic v1 had.
+
+### Findings worth acting on
+
+1. **Enum factoryName drop (fixed, commit `56b9f61`).** `assemble.ts`
+   case `'enum'` constructed `AssembledEnum` without passing
+   `factoryName` / `irKey`, so visible enums (rust `boolean_literal`,
+   `primitive_type`, `fragment_specifier`, etc.) emitted interfaces
+   + SyntaxKind entries but no factories. One-line fix; rust gained
+   4 factories, ts gained 1, python unchanged. All 507 tests still
+   pass.
+
+2. **`doc_comment` elimination (needs investigation).** v1 had a
+   standalone `doc_comment` kind in rust. v2 only emits the
+   `_line_doc_comment_marker` / `_block_doc_comment_marker` pair.
+   Unclear whether v2's classification is correct (they may be the
+   actual tree-sitter kinds and `doc_comment` a v1 invention) or
+   whether Link is eagerly inlining something it shouldn't.
+
+3. **Python from() coverage.** v1 emitted a single `from` function
+   for all of python — a v1 regex/detection bug, not a v2 gap.
+
+- [ ] **C6-prereq** **from.ts resolver emission (v1 parity + dedup).**
+  v1 emits 258 private `_resolve*` / `_r*` helpers plus `_leafRegistry`,
+  `_resolveByKind`, `_resolveScalar`, `_resolveLeafString` dispatch
+  infrastructure. v2 emits zero private resolvers — `resolveField()`
+  inlines a minimal passthrough.
+
+  | Capability | v1 | v2 |
+  |---|---|---|
+  | Loose string → single-leaf wrap | ✓ | ✓ |
+  | Loose string → leaf-by-value/pattern dispatch | ✓ | ✗ |
+  | Array field → map each loose element | ✓ | ✗ (raw passthrough) |
+  | Supertype field → dispatch by object `kind` | ✓ | ✗ |
+  | Branch inference (object without kind) | ✓ (helpful error) | ✗ (silent passthrough) |
+  | JS primitive → leaf (`true` → boolean_literal) | ✓ | ✗ |
+  | Variadic container children | ✓ (array unwrap) | partial |
+
+  Example — v1 `blockFrom` maps each child through a typed resolver;
+  v2 `blockFrom` passes `input.children` straight through as-is.
+  Corpus validators don't catch this because they feed materialized
+  NodeData, not loose developer input. **Proposed work order:**
+  (a) `_fromMap` runtime dispatch wiring — already done,
+  (b) emit shared `_resolveByKind(kind, rest) → _fromMap[kind](rest)`,
+  (c) teach `resolveField` to emit array map calls for `multiple`
+  branch fields, (d) emit per-signature resolver helpers deduped
+  by content-type signature (supersedes T042i), (e) emit
+  `_resolveScalar` for primitive coercion. Unblocks C6.
+
+---
+
 ## Dependencies & Execution Order
 
 ### Phase Dependencies
