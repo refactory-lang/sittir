@@ -153,6 +153,8 @@ Each names a structural pattern. No derived metadata — `required`, `multiple`,
 | `enum` | closed set of string values | `source`: grammar choice-of-strings / promoted from hidden rule. |
 | `supertype` | closed set of kind names (union type) | `source`: grammar supertypes list / promoted from hidden choice-of-symbols. |
 | `group` | inlined hidden seq with fields | Preserves provenance when `_call_signature` is inlined — fields came from this group. |
+| `terminal` | composed text-only terminal (seq/choice of strings+patterns) | Added by Link's `promoteTerminals` pass when a rule has no fields and no symbol refs — classified as leaf at Assemble time. |
+| `polymorph` | choice-of-variants with heterogeneous field sets | Added by Optimize's `promotePolymorph` pass when a branch's CHOICE has members with incompatible field shapes — classified as polymorph at Assemble time, synthesizing one AssembledGroup per form. |
 
 ### Hidden rule resolution (Link)
 
@@ -182,6 +184,8 @@ Hidden rules (`_`-prefixed) resolve based on their content:
 | `enum` | ✓ (from choice-of-strings) | ✓ (+ promoted) | ✓ |
 | `supertype` | ✓ (from grammar.supertypes) | ✓ (+ promoted) | ✓ |
 | `group` | | ✓ | ✓ |
+| `terminal` | | ✓ (from `promoteTerminals`) | ✓ |
+| `polymorph` | | | ✓ (from `promotePolymorph`) |
 | `string` | ✓ | ✓ | ✓ |
 | `pattern` | ✓ | ✓ | ✓ |
 | `indent` | | ✓ | ✓ |
@@ -543,6 +547,10 @@ Position within SEQ can't be captured at eval time without significant complexit
 
 Link resolves what nodes ARE. After Link: no `symbol`, `alias`, `token`, `repeat1`. Terminals (`string`, `pattern`) and structural whitespace (`indent`, `dedent`, `newline`) survive. All `field` nodes enriched with provenance. Child slots resolved. External tokens → structural directives. Clauses detected. `seq(X, repeat(X))` normalized to `repeat(X)`.
 
+Link also runs a **terminal promotion** pass (`promoteTerminals`) that walks every rule and wraps any field-free, symbol-free subtree in a `terminal` Rule. This lets Assemble classify composed text-only constructs (e.g. `seq('->', '!', $.identifier_start_pattern)`) as `leaf` model types without re-walking the tree.
+
+Link converts tree-sitter external tokens for structural whitespace (`_indent`, `_dedent`, `_newline`) into `indent` / `dedent` / `newline` Rule nodes via name matching. See C17 in `specs/005-five-phase-compiler/cleanup-backlog.md` for the audit of grammars using non-standard external names.
+
 **Link does NOT restructure the tree.** Tree shape identical before and after — only node types and provenance change.
 
 **Link does NOT process overrides.** Override application happens in Evaluate's second pass. Link receives rules already annotated with `source: 'override'` provenance.
@@ -644,6 +652,8 @@ After all rules are linked, Link walks each rule tree to assign `position` to Sy
 
 Restructures `seq`/`choice`/`optional`/`repeat`. Does NOT change named content. Adds `variant` wrappers around choice members. Non-lossy.
 
+Optimize also runs **polymorph promotion** (`promotePolymorph`): after variants are named, any visible CHOICE whose members have heterogeneous field shapes is wrapped in a `polymorph` Rule. The polymorph carries the full list of forms and their detect tokens so that Assemble can construct one `AssembledPolymorph` node with one `AssembledGroup` per form — classification then becomes a pure `switch` on `rule.type` with no field-shape inspection.
+
 ### CHOICE handling
 
 | Function | In → Out | Stateless? |
@@ -702,6 +712,10 @@ Note: `variant` remains a Rule type — it wraps individual choice branches at t
 **Out:** `NodeMap`
 
 First time nodes appear. All metadata (required, multiple, contentTypes, detectToken, modelType) **derived from the rule tree**, not carried on Rule nodes.
+
+**Class hierarchy.** Nodes are real ES class instances, not plain data shapes. `AssembledNodeBase` owns identity (`kind`, `typeName`, `factoryName`, `irKey`, derived name surfaces like `rawFactoryName`, `treeTypeName`, `configTypeName`, `fromInputTypeName`, `fromFunctionName`). The concrete subclasses — `AssembledBranch`, `AssembledContainer`, `AssembledPolymorph`, `AssembledLeaf`, `AssembledKeyword`, `AssembledToken`, `AssembledEnum`, `AssembledSupertype`, `AssembledGroup` — each override `renderTemplate()`, `emitFactory()`, and `emitFromFunction(nodeMap)` to own their own emission. Emitters are thin dispatch loops over `nodeMap.nodes` calling these methods.
+
+**Classification is a pure switch.** After Link's `promoteTerminals` and Optimize's `promotePolymorph` passes, `classifyNode(kind, rule)` reduces to a `switch` on `rule.type` — every case maps directly to one model type. No field-shape inspection, no ancestor walks.
 
 ### Derivation from tree context
 
