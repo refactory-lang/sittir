@@ -11,9 +11,10 @@ function isNodeData(v: unknown): v is AnyNodeData {
 }
 
 export function programFrom(input: ProgramFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return program({
-    hashBangLine: typeof ((input as any)?.hash_bang_line ?? (input as any)?.fields?.hash_bang_line) === 'string' ? hashBangLine(((input as any)?.hash_bang_line ?? (input as any)?.fields?.hash_bang_line)) : ((input as any)?.hash_bang_line ?? (input as any)?.fields?.hash_bang_line),
-    statements: ((input as any)?.statements ?? (input as any)?.fields?.statements),
+    hashBangLine: typeof f.hash_bang_line === 'string' ? hashBangLine(f.hash_bang_line) : f.hash_bang_line,
+    statements: f.statements,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -29,10 +30,11 @@ export function exportStatementFrom(input?: ExportStatementFromInput) {
 
 export function exportStatementForm0From(input?: any) {
   if (isNodeData(input)) return input;
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return exportStatementForm0({
-    decorator: (((input as any)?.decorator ?? (input as any)?.fields?.decorator) ?? []),
-    declaration: ((input as any)?.declaration ?? (input as any)?.fields?.declaration),
-    value: ((input as any)?.value ?? (input as any)?.fields?.value),
+    decorator: (f.decorator ?? []),
+    declaration: f.declaration,
+    value: f.value,
   });
 }
 
@@ -68,9 +70,10 @@ export function exportClauseFrom(...input: any[]) {
 }
 
 export function exportSpecifierFrom(input: ExportSpecifierFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return exportSpecifier({
-    name: ((input as any)?.name ?? (input as any)?.fields?.name),
-    alias: ((input as any)?.alias ?? (input as any)?.fields?.alias),
+    name: f.name,
+    alias: f.alias,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -89,11 +92,12 @@ export function import_From(input?: Import) {
 }
 
 export function importStatementFrom(input: ImportStatementFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return importStatement({
-    importClause: ((input as any)?.import_clause ?? (input as any)?.fields?.import_clause),
-    fromClause: ((input as any)?.from_clause ?? (input as any)?.fields?.from_clause),
-    importAttribute: ((input as any)?.import_attribute ?? (input as any)?.fields?.import_attribute),
-    semicolon: ((input as any)?.semicolon ?? (input as any)?.fields?.semicolon),
+    importClause: f.import_clause,
+    fromClause: f.from_clause,
+    importAttribute: f.import_attribute,
+    semicolon: f.semicolon,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -107,8 +111,9 @@ export function importClauseFrom(...input: any[]) {
 }
 
 export function namespaceImportFrom(input: NamespaceImportFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return namespaceImport({
-    identifier: typeof ((input as any)?.identifier ?? (input as any)?.fields?.identifier) === 'string' ? identifier(((input as any)?.identifier ?? (input as any)?.fields?.identifier)) : ((input as any)?.identifier ?? (input as any)?.fields?.identifier),
+    identifier: typeof f.identifier === 'string' ? identifier(f.identifier) : f.identifier,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -127,22 +132,25 @@ export function importSpecifierFrom(input?: ImportSpecifierFromInput) {
 
 export function importSpecifierNameFrom(input?: any) {
   if (isNodeData(input)) return input;
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return importSpecifierName({
-    name: ((input as any)?.name ?? (input as any)?.fields?.name),
+    name: f.name,
   });
 }
 
 export function importSpecifierAsFrom(input?: any) {
   if (isNodeData(input)) return input;
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return importSpecifierAs({
-    name: ((input as any)?.name ?? (input as any)?.fields?.name),
-    alias: ((input as any)?.alias ?? (input as any)?.fields?.alias),
+    name: f.name,
+    alias: f.alias,
   });
 }
 
 export function importAttributeFrom(input: ImportAttributeFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return importAttribute({
-    object: ((input as any)?.object ?? (input as any)?.fields?.object),
+    object: f.object,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -164,122 +172,137 @@ export function expressionStatementFrom(...input: any[]) {
 }
 
 export function variableDeclarationFrom(input: VariableDeclarationFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return variableDeclaration({
-    declarators: ((input as any)?.declarators ?? (input as any)?.fields?.declarators),
-    semicolon: ((input as any)?.semicolon ?? (input as any)?.fields?.semicolon),
+    declarators: f.declarators,
+    semicolon: f.semicolon,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function lexicalDeclarationFrom(input: LexicalDeclarationFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return lexicalDeclaration({
-    kind: ((input as any)?.kind ?? (input as any)?.fields?.kind),
-    declarators: ((input as any)?.declarators ?? (input as any)?.fields?.declarators),
-    semicolon: ((input as any)?.semicolon ?? (input as any)?.fields?.semicolon),
+    kind: f.kind,
+    declarators: f.declarators,
+    semicolon: f.semicolon,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function variableDeclaratorFrom(input: VariableDeclaratorFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return variableDeclarator({
-    name: ((input as any)?.name ?? (input as any)?.fields?.name),
-    type: ((input as any)?.type ?? (input as any)?.fields?.type),
+    name: f.name,
+    type: f.type,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function statementBlockFrom(input: StatementBlockFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return statementBlock({
-    statements: ((input as any)?.statements ?? (input as any)?.fields?.statements),
-    automaticSemicolon: ((input as any)?.automatic_semicolon ?? (input as any)?.fields?.automatic_semicolon),
+    statements: f.statements,
+    automaticSemicolon: f.automatic_semicolon,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function elseClauseFrom(input: ElseClauseFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return elseClause({
-    statement: ((input as any)?.statement ?? (input as any)?.fields?.statement),
+    statement: f.statement,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function ifStatementFrom(input: IfStatementFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return ifStatement({
-    condition: ((input as any)?.condition ?? (input as any)?.fields?.condition),
-    consequence: ((input as any)?.consequence ?? (input as any)?.fields?.consequence),
-    alternative: ((input as any)?.alternative ?? (input as any)?.fields?.alternative),
+    condition: f.condition,
+    consequence: f.consequence,
+    alternative: f.alternative,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function switchStatementFrom(input: SwitchStatementFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return switchStatement({
-    value: ((input as any)?.value ?? (input as any)?.fields?.value),
-    body: ((input as any)?.body ?? (input as any)?.fields?.body),
+    value: f.value,
+    body: f.body,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function forStatementFrom(input: ForStatementFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return forStatement({
-    initializer: ((input as any)?.initializer ?? (input as any)?.fields?.initializer),
-    condition: ((input as any)?.condition ?? (input as any)?.fields?.condition),
-    increment: ((input as any)?.increment ?? (input as any)?.fields?.increment),
-    body: ((input as any)?.body ?? (input as any)?.fields?.body),
+    initializer: f.initializer,
+    condition: f.condition,
+    increment: f.increment,
+    body: f.body,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function forInStatementFrom(input: ForInStatementFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return forInStatement({
-    body: ((input as any)?.body ?? (input as any)?.fields?.body),
+    body: f.body,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function whileStatementFrom(input: WhileStatementFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return whileStatement({
-    condition: ((input as any)?.condition ?? (input as any)?.fields?.condition),
-    body: ((input as any)?.body ?? (input as any)?.fields?.body),
+    condition: f.condition,
+    body: f.body,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function doStatementFrom(input: DoStatementFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return doStatement({
-    body: ((input as any)?.body ?? (input as any)?.fields?.body),
-    condition: ((input as any)?.condition ?? (input as any)?.fields?.condition),
+    body: f.body,
+    condition: f.condition,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function tryStatementFrom(input: TryStatementFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return tryStatement({
-    body: ((input as any)?.body ?? (input as any)?.fields?.body),
-    handler: ((input as any)?.handler ?? (input as any)?.fields?.handler),
-    finalizer: ((input as any)?.finalizer ?? (input as any)?.fields?.finalizer),
+    body: f.body,
+    handler: f.handler,
+    finalizer: f.finalizer,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function withStatementFrom(input: WithStatementFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return withStatement({
-    object: ((input as any)?.object ?? (input as any)?.fields?.object),
-    body: ((input as any)?.body ?? (input as any)?.fields?.body),
+    object: f.object,
+    body: f.body,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function breakStatementFrom(input: BreakStatementFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return breakStatement({
-    label: typeof ((input as any)?.label ?? (input as any)?.fields?.label) === 'string' ? identifier(((input as any)?.label ?? (input as any)?.fields?.label)) : ((input as any)?.label ?? (input as any)?.fields?.label),
+    label: typeof f.label === 'string' ? identifier(f.label) : f.label,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function continueStatementFrom(input: ContinueStatementFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return continueStatement({
-    label: typeof ((input as any)?.label ?? (input as any)?.fields?.label) === 'string' ? identifier(((input as any)?.label ?? (input as any)?.fields?.label)) : ((input as any)?.label ?? (input as any)?.fields?.label),
+    label: typeof f.label === 'string' ? identifier(f.label) : f.label,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -309,9 +332,10 @@ export function throwStatementFrom(...input: any[]) {
 }
 
 export function labeledStatementFrom(input: LabeledStatementFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return labeledStatement({
-    label: ((input as any)?.label ?? (input as any)?.fields?.label),
-    body: ((input as any)?.body ?? (input as any)?.fields?.body),
+    label: f.label,
+    body: f.body,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -325,32 +349,36 @@ export function switchBodyFrom(...input: any[]) {
 }
 
 export function switchCaseFrom(input: SwitchCaseFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return switchCase({
-    value: ((input as any)?.value ?? (input as any)?.fields?.value),
-    body: ((input as any)?.body ?? (input as any)?.fields?.body),
+    value: f.value,
+    body: f.body,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function switchDefaultFrom(input: SwitchDefaultFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return switchDefault({
-    body: ((input as any)?.body ?? (input as any)?.fields?.body),
+    body: f.body,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function catchClauseFrom(input: CatchClauseFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return catchClause({
-    parameter: ((input as any)?.parameter ?? (input as any)?.fields?.parameter),
-    type: ((input as any)?.type ?? (input as any)?.fields?.type),
-    body: ((input as any)?.body ?? (input as any)?.fields?.body),
+    parameter: f.parameter,
+    type: f.type,
+    body: f.body,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function finallyClauseFrom(input: FinallyClauseFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return finallyClause({
-    body: ((input as any)?.body ?? (input as any)?.fields?.body),
+    body: f.body,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -361,8 +389,9 @@ export function parenthesizedExpressionFrom(input?: ParenthesizedExpressionFromI
 
 export function parenthesizedExpressionExpressionFrom(input?: any) {
   if (isNodeData(input)) return input;
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return parenthesizedExpressionExpression({
-    type: ((input as any)?.type ?? (input as any)?.fields?.type),
+    type: f.type,
   });
 }
 
@@ -388,8 +417,9 @@ export function primaryExpressionFrom(...input: any[]) {
 }
 
 export function yieldExpressionFrom(input: YieldExpressionFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return yieldExpression({
-    expression: ((input as any)?.expression ?? (input as any)?.fields?.expression),
+    expression: f.expression,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -411,17 +441,19 @@ export function objectPatternFrom(...input: any[]) {
 }
 
 export function assignmentPatternFrom(input: AssignmentPatternFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return assignmentPattern({
-    left: ((input as any)?.left ?? (input as any)?.fields?.left),
-    right: ((input as any)?.right ?? (input as any)?.fields?.right),
+    left: f.left,
+    right: f.right,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function objectAssignmentPatternFrom(input: ObjectAssignmentPatternFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return objectAssignmentPattern({
-    left: ((input as any)?.left ?? (input as any)?.fields?.left),
-    right: ((input as any)?.right ?? (input as any)?.fields?.right),
+    left: f.left,
+    right: f.right,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -443,9 +475,10 @@ export function arrayPatternFrom(...input: any[]) {
 }
 
 export function jsxElementFrom(input: JsxElementFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return jsxElement({
-    openTag: ((input as any)?.open_tag ?? (input as any)?.fields?.open_tag),
-    closeTag: ((input as any)?.close_tag ?? (input as any)?.fields?.close_tag),
+    openTag: f.open_tag,
+    closeTag: f.close_tag,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -477,9 +510,10 @@ export function jsxIdentifierFrom(input: string | JsxIdentifier) {
 }
 
 export function nestedIdentifierFrom(input: NestedIdentifierFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return nestedIdentifier({
-    object: ((input as any)?.object ?? (input as any)?.fields?.object),
-    property: typeof ((input as any)?.property ?? (input as any)?.fields?.property) === 'string' ? identifier(((input as any)?.property ?? (input as any)?.fields?.property)) : ((input as any)?.property ?? (input as any)?.fields?.property),
+    object: f.object,
+    property: typeof f.property === 'string' ? identifier(f.property) : f.property,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -493,8 +527,9 @@ export function jsxNamespaceNameFrom(...input: any[]) {
 }
 
 export function jsxClosingElementFrom(input?: JsxClosingElementFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return jsxClosingElement({
-    name: ((input as any)?.name ?? (input as any)?.fields?.name),
+    name: f.name,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -534,22 +569,24 @@ export function unescapedSingleJsxStringFragmentFrom(input: string | UnescapedSi
 }
 
 export function class_From(input: ClassFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return class_({
-    classHeritage: ((input as any)?.class_heritage ?? (input as any)?.fields?.class_heritage),
-    name: ((input as any)?.name ?? (input as any)?.fields?.name),
-    typeParameters: ((input as any)?.type_parameters ?? (input as any)?.fields?.type_parameters),
-    body: ((input as any)?.body ?? (input as any)?.fields?.body),
+    classHeritage: f.class_heritage,
+    name: f.name,
+    typeParameters: f.type_parameters,
+    body: f.body,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function classDeclarationFrom(input: ClassDeclarationFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return classDeclaration({
-    classHeritage: ((input as any)?.class_heritage ?? (input as any)?.fields?.class_heritage),
-    name: ((input as any)?.name ?? (input as any)?.fields?.name),
-    typeParameters: ((input as any)?.type_parameters ?? (input as any)?.fields?.type_parameters),
-    automaticSemicolon: ((input as any)?.automatic_semicolon ?? (input as any)?.fields?.automatic_semicolon),
-    body: ((input as any)?.body ?? (input as any)?.fields?.body),
+    classHeritage: f.class_heritage,
+    name: f.name,
+    typeParameters: f.type_parameters,
+    automaticSemicolon: f.automatic_semicolon,
+    body: f.body,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -563,33 +600,37 @@ export function classHeritageFrom(...input: any[]) {
 }
 
 export function functionExpressionFrom(input: FunctionExpressionFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return functionExpression({
-    name: typeof ((input as any)?.name ?? (input as any)?.fields?.name) === 'string' ? identifier(((input as any)?.name ?? (input as any)?.fields?.name)) : ((input as any)?.name ?? (input as any)?.fields?.name),
-    body: ((input as any)?.body ?? (input as any)?.fields?.body),
+    name: typeof f.name === 'string' ? identifier(f.name) : f.name,
+    body: f.body,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function functionDeclarationFrom(input: FunctionDeclarationFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return functionDeclaration({
-    name: typeof ((input as any)?.name ?? (input as any)?.fields?.name) === 'string' ? identifier(((input as any)?.name ?? (input as any)?.fields?.name)) : ((input as any)?.name ?? (input as any)?.fields?.name),
-    body: ((input as any)?.body ?? (input as any)?.fields?.body),
+    name: typeof f.name === 'string' ? identifier(f.name) : f.name,
+    body: f.body,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function generatorFunctionFrom(input: GeneratorFunctionFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return generatorFunction({
-    name: typeof ((input as any)?.name ?? (input as any)?.fields?.name) === 'string' ? identifier(((input as any)?.name ?? (input as any)?.fields?.name)) : ((input as any)?.name ?? (input as any)?.fields?.name),
-    body: ((input as any)?.body ?? (input as any)?.fields?.body),
+    name: typeof f.name === 'string' ? identifier(f.name) : f.name,
+    body: f.body,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function generatorFunctionDeclarationFrom(input: GeneratorFunctionDeclarationFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return generatorFunctionDeclaration({
-    name: typeof ((input as any)?.name ?? (input as any)?.fields?.name) === 'string' ? identifier(((input as any)?.name ?? (input as any)?.fields?.name)) : ((input as any)?.name ?? (input as any)?.fields?.name),
-    body: ((input as any)?.body ?? (input as any)?.fields?.body),
+    name: typeof f.name === 'string' ? identifier(f.name) : f.name,
+    body: f.body,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -600,8 +641,9 @@ export function arrowFunctionFrom(input?: ArrowFunctionFromInput) {
 
 export function arrowFunctionParameterFrom(input?: any) {
   if (isNodeData(input)) return input;
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return arrowFunctionParameter({
-    parameter: ((input as any)?.parameter ?? (input as any)?.fields?.parameter),
+    parameter: f.parameter,
   });
 }
 
@@ -616,60 +658,67 @@ export function callExpressionFrom(input?: CallExpressionFromInput) {
 
 export function callExpressionFunctionFrom(input?: any) {
   if (isNodeData(input)) return input;
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return callExpressionFunction({
-    function: ((input as any)?.function ?? (input as any)?.fields?.function),
-    typeArguments: ((input as any)?.type_arguments ?? (input as any)?.fields?.type_arguments),
-    arguments: ((input as any)?.arguments ?? (input as any)?.fields?.arguments),
+    function: f.function,
+    typeArguments: f.type_arguments,
+    arguments: f.arguments,
   });
 }
 
 export function callExpressionFunction2From(input?: any) {
   if (isNodeData(input)) return input;
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return callExpressionFunction2({
-    function: ((input as any)?.function ?? (input as any)?.fields?.function),
-    arguments: ((input as any)?.arguments ?? (input as any)?.fields?.arguments),
+    function: f.function,
+    arguments: f.arguments,
   });
 }
 
 export function callExpressionTokQDotFrom(input?: any) {
   if (isNodeData(input)) return input;
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return callExpressionTokQDot({
-    function: ((input as any)?.function ?? (input as any)?.fields?.function),
-    typeArguments: ((input as any)?.type_arguments ?? (input as any)?.fields?.type_arguments),
-    arguments: ((input as any)?.arguments ?? (input as any)?.fields?.arguments),
+    function: f.function,
+    typeArguments: f.type_arguments,
+    arguments: f.arguments,
   });
 }
 
 export function newExpressionFrom(input: NewExpressionFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return newExpression({
-    constructor: ((input as any)?.constructor ?? (input as any)?.fields?.constructor),
-    typeArguments: ((input as any)?.type_arguments ?? (input as any)?.fields?.type_arguments),
-    arguments: ((input as any)?.arguments ?? (input as any)?.fields?.arguments),
+    constructor: f.constructor,
+    typeArguments: f.type_arguments,
+    arguments: f.arguments,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function awaitExpressionFrom(input: AwaitExpressionFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return awaitExpression({
-    expression: ((input as any)?.expression ?? (input as any)?.fields?.expression),
+    expression: f.expression,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function memberExpressionFrom(input: MemberExpressionFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return memberExpression({
-    object: ((input as any)?.object ?? (input as any)?.fields?.object),
-    optionalChain: ((input as any)?.optional_chain ?? (input as any)?.fields?.optional_chain),
-    property: ((input as any)?.property ?? (input as any)?.fields?.property),
+    object: f.object,
+    optionalChain: f.optional_chain,
+    property: f.property,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function subscriptExpressionFrom(input: SubscriptExpressionFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return subscriptExpression({
-    object: ((input as any)?.object ?? (input as any)?.fields?.object),
-    optionalChain: ((input as any)?.optional_chain ?? (input as any)?.fields?.optional_chain),
-    index: ((input as any)?.index ?? (input as any)?.fields?.index),
+    object: f.object,
+    optionalChain: f.optional_chain,
+    index: f.index,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -683,9 +732,10 @@ export function hiddenLhsExpressionFrom(...input: any[]) {
 }
 
 export function assignmentExpressionFrom(input: AssignmentExpressionFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return assignmentExpression({
-    left: ((input as any)?.left ?? (input as any)?.fields?.left),
-    right: ((input as any)?.right ?? (input as any)?.fields?.right),
+    left: f.left,
+    right: f.right,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -699,51 +749,57 @@ export function hiddenAugmentedAssignmentLhsFrom(...input: any[]) {
 }
 
 export function augmentedAssignmentExpressionFrom(input: AugmentedAssignmentExpressionFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return augmentedAssignmentExpression({
-    left: ((input as any)?.left ?? (input as any)?.fields?.left),
-    operator: ((input as any)?.operator ?? (input as any)?.fields?.operator),
-    right: ((input as any)?.right ?? (input as any)?.fields?.right),
+    left: f.left,
+    operator: f.operator,
+    right: f.right,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function spreadElementFrom(input: SpreadElementFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return spreadElement({
-    expression: ((input as any)?.expression ?? (input as any)?.fields?.expression),
+    expression: f.expression,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function ternaryExpressionFrom(input: TernaryExpressionFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return ternaryExpression({
-    condition: ((input as any)?.condition ?? (input as any)?.fields?.condition),
-    consequence: ((input as any)?.consequence ?? (input as any)?.fields?.consequence),
-    alternative: ((input as any)?.alternative ?? (input as any)?.fields?.alternative),
+    condition: f.condition,
+    consequence: f.consequence,
+    alternative: f.alternative,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function binaryExpressionFrom(input: BinaryExpressionFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return binaryExpression({
-    left: ((input as any)?.left ?? (input as any)?.fields?.left),
-    operator: ((input as any)?.operator ?? (input as any)?.fields?.operator),
-    right: ((input as any)?.right ?? (input as any)?.fields?.right),
+    left: f.left,
+    operator: f.operator,
+    right: f.right,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function unaryExpressionFrom(input: UnaryExpressionFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return unaryExpression({
-    operator: ((input as any)?.operator ?? (input as any)?.fields?.operator),
-    argument: ((input as any)?.argument ?? (input as any)?.fields?.argument),
+    operator: f.operator,
+    argument: f.argument,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function updateExpressionFrom(input: UpdateExpressionFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return updateExpression({
-    argument: ((input as any)?.argument ?? (input as any)?.fields?.argument),
-    operator: ((input as any)?.operator ?? (input as any)?.fields?.operator),
+    argument: f.argument,
+    operator: f.operator,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -801,9 +857,10 @@ export function templateSubstitutionFrom(...input: any[]) {
 }
 
 export function regexFrom(input: RegexFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return regex({
-    pattern: typeof ((input as any)?.pattern ?? (input as any)?.fields?.pattern) === 'string' ? regexPattern(((input as any)?.pattern ?? (input as any)?.fields?.pattern)) : ((input as any)?.pattern ?? (input as any)?.fields?.pattern),
-    flags: typeof ((input as any)?.flags ?? (input as any)?.fields?.flags) === 'string' ? regexFlags(((input as any)?.flags ?? (input as any)?.fields?.flags)) : ((input as any)?.flags ?? (input as any)?.fields?.flags),
+    pattern: typeof f.pattern === 'string' ? regexPattern(f.pattern) : f.pattern,
+    flags: typeof f.flags === 'string' ? regexFlags(f.flags) : f.flags,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -885,33 +942,37 @@ export function decoratorFrom(...input: any[]) {
 }
 
 export function decoratorMemberExpressionFrom(input: DecoratorMemberExpressionFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return decoratorMemberExpression({
-    object: ((input as any)?.object ?? (input as any)?.fields?.object),
-    property: typeof ((input as any)?.property ?? (input as any)?.fields?.property) === 'string' ? identifier(((input as any)?.property ?? (input as any)?.fields?.property)) : ((input as any)?.property ?? (input as any)?.fields?.property),
+    object: f.object,
+    property: typeof f.property === 'string' ? identifier(f.property) : f.property,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function decoratorCallExpressionFrom(input: DecoratorCallExpressionFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return decoratorCallExpression({
-    function: ((input as any)?.function ?? (input as any)?.fields?.function),
-    typeArguments: ((input as any)?.type_arguments ?? (input as any)?.fields?.type_arguments),
-    arguments: ((input as any)?.arguments ?? (input as any)?.fields?.arguments),
+    function: f.function,
+    typeArguments: f.type_arguments,
+    arguments: f.arguments,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function classBodyFrom(input: ClassBodyFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return classBody({
-    decorator: (((input as any)?.decorator ?? (input as any)?.fields?.decorator) ?? []),
+    decorator: (f.decorator ?? []),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function fieldDefinitionFrom(input: FieldDefinitionFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return fieldDefinition({
-    decorator: (((input as any)?.decorator ?? (input as any)?.fields?.decorator) ?? []),
-    property: ((input as any)?.property ?? (input as any)?.fields?.property),
+    decorator: (f.decorator ?? []),
+    property: f.property,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -925,8 +986,9 @@ export function formalParametersFrom(...input: any[]) {
 }
 
 export function classStaticBlockFrom(input: ClassStaticBlockFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return classStaticBlock({
-    body: ((input as any)?.body ?? (input as any)?.fields?.body),
+    body: f.body,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -948,27 +1010,30 @@ export function restPatternFrom(...input: any[]) {
 }
 
 export function methodDefinitionFrom(input: MethodDefinitionFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return methodDefinition({
-    accessibilityModifier: typeof ((input as any)?.accessibility_modifier ?? (input as any)?.fields?.accessibility_modifier) === 'string' ? accessibilityModifier(((input as any)?.accessibility_modifier ?? (input as any)?.fields?.accessibility_modifier)) : ((input as any)?.accessibility_modifier ?? (input as any)?.fields?.accessibility_modifier),
-    overrideModifier: ((input as any)?.override_modifier ?? (input as any)?.fields?.override_modifier),
-    name: ((input as any)?.name ?? (input as any)?.fields?.name),
-    body: ((input as any)?.body ?? (input as any)?.fields?.body),
+    accessibilityModifier: typeof f.accessibility_modifier === 'string' ? accessibilityModifier(f.accessibility_modifier) : f.accessibility_modifier,
+    overrideModifier: f.override_modifier,
+    name: f.name,
+    body: f.body,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function pairFrom(input: PairFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return pair({
-    key: ((input as any)?.key ?? (input as any)?.fields?.key),
-    value: ((input as any)?.value ?? (input as any)?.fields?.value),
+    key: f.key,
+    value: f.value,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function pairPatternFrom(input: PairPatternFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return pairPattern({
-    key: ((input as any)?.key ?? (input as any)?.fields?.key),
-    value: ((input as any)?.value ?? (input as any)?.fields?.value),
+    key: f.key,
+    value: f.value,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -982,8 +1047,9 @@ export function hiddenPropertyNameFrom(...input: any[]) {
 }
 
 export function computedPropertyNameFrom(input: ComputedPropertyNameFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return computedPropertyName({
-    expression: ((input as any)?.expression ?? (input as any)?.fields?.expression),
+    expression: f.expression,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -1002,21 +1068,23 @@ export function hiddenSemicolonFrom(...input: any[]) {
 }
 
 export function publicFieldDefinitionFrom(input: PublicFieldDefinitionFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return publicFieldDefinition({
-    accessibilityModifier: ((input as any)?.accessibility_modifier ?? (input as any)?.fields?.accessibility_modifier),
-    overrideModifier: ((input as any)?.override_modifier ?? (input as any)?.fields?.override_modifier),
-    initializer: ((input as any)?.initializer ?? (input as any)?.fields?.initializer),
-    name: ((input as any)?.name ?? (input as any)?.fields?.name),
-    type: ((input as any)?.type ?? (input as any)?.fields?.type),
+    accessibilityModifier: f.accessibility_modifier,
+    overrideModifier: f.override_modifier,
+    initializer: f.initializer,
+    name: f.name,
+    type: f.type,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function hiddenJsxStartOpeningElementFrom(input?: HiddenJsxStartOpeningElementFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return hiddenJsxStartOpeningElement({
-    name: ((input as any)?.name ?? (input as any)?.fields?.name),
-    typeArguments: ((input as any)?.type_arguments ?? (input as any)?.fields?.type_arguments),
-    attribute: (((input as any)?.attribute ?? (input as any)?.fields?.attribute) ?? []),
+    name: f.name,
+    typeArguments: f.type_arguments,
+    attribute: (f.attribute ?? []),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -1030,33 +1098,37 @@ export function hiddenImportIdentifierFrom(...input: any[]) {
 }
 
 export function nonNullExpressionFrom(input: NonNullExpressionFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return nonNullExpression({
-    expression: ((input as any)?.expression ?? (input as any)?.fields?.expression),
+    expression: f.expression,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function methodSignatureFrom(input: MethodSignatureFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return methodSignature({
-    accessibilityModifier: typeof ((input as any)?.accessibility_modifier ?? (input as any)?.fields?.accessibility_modifier) === 'string' ? accessibilityModifier(((input as any)?.accessibility_modifier ?? (input as any)?.fields?.accessibility_modifier)) : ((input as any)?.accessibility_modifier ?? (input as any)?.fields?.accessibility_modifier),
-    overrideModifier: ((input as any)?.override_modifier ?? (input as any)?.fields?.override_modifier),
-    name: ((input as any)?.name ?? (input as any)?.fields?.name),
+    accessibilityModifier: typeof f.accessibility_modifier === 'string' ? accessibilityModifier(f.accessibility_modifier) : f.accessibility_modifier,
+    overrideModifier: f.override_modifier,
+    name: f.name,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function abstractMethodSignatureFrom(input: AbstractMethodSignatureFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return abstractMethodSignature({
-    accessibilityModifier: typeof ((input as any)?.accessibility_modifier ?? (input as any)?.fields?.accessibility_modifier) === 'string' ? accessibilityModifier(((input as any)?.accessibility_modifier ?? (input as any)?.fields?.accessibility_modifier)) : ((input as any)?.accessibility_modifier ?? (input as any)?.fields?.accessibility_modifier),
-    overrideModifier: ((input as any)?.override_modifier ?? (input as any)?.fields?.override_modifier),
-    name: ((input as any)?.name ?? (input as any)?.fields?.name),
+    accessibilityModifier: typeof f.accessibility_modifier === 'string' ? accessibilityModifier(f.accessibility_modifier) : f.accessibility_modifier,
+    overrideModifier: f.override_modifier,
+    name: f.name,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function functionSignatureFrom(input: FunctionSignatureFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return functionSignature({
-    name: typeof ((input as any)?.name ?? (input as any)?.fields?.name) === 'string' ? identifier(((input as any)?.name ?? (input as any)?.fields?.name)) : ((input as any)?.name ?? (input as any)?.fields?.name),
+    name: typeof f.name === 'string' ? identifier(f.name) : f.name,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -1070,41 +1142,46 @@ export function decoratorParenthesizedExpressionFrom(...input: any[]) {
 }
 
 export function typeAssertionFrom(input: TypeAssertionFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return typeAssertion({
-    typeArguments: ((input as any)?.type_arguments ?? (input as any)?.fields?.type_arguments),
-    expression: ((input as any)?.expression ?? (input as any)?.fields?.expression),
+    typeArguments: f.type_arguments,
+    expression: f.expression,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function asExpressionFrom(input: AsExpressionFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return asExpression({
-    expression: ((input as any)?.expression ?? (input as any)?.fields?.expression),
-    typeAnnotation: ((input as any)?.type_annotation ?? (input as any)?.fields?.type_annotation),
+    expression: f.expression,
+    typeAnnotation: f.type_annotation,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function satisfiesExpressionFrom(input: SatisfiesExpressionFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return satisfiesExpression({
-    expression: ((input as any)?.expression ?? (input as any)?.fields?.expression),
-    typeAnnotation: ((input as any)?.type_annotation ?? (input as any)?.fields?.type_annotation),
+    expression: f.expression,
+    typeAnnotation: f.type_annotation,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function instantiationExpressionFrom(input: InstantiationExpressionFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return instantiationExpression({
-    expression: ((input as any)?.expression ?? (input as any)?.fields?.expression),
-    typeArguments: ((input as any)?.type_arguments ?? (input as any)?.fields?.type_arguments),
+    expression: f.expression,
+    typeArguments: f.type_arguments,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function importRequireClauseFrom(input: ImportRequireClauseFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return importRequireClause({
-    identifier: typeof ((input as any)?.identifier ?? (input as any)?.fields?.identifier) === 'string' ? identifier(((input as any)?.identifier ?? (input as any)?.fields?.identifier)) : ((input as any)?.identifier ?? (input as any)?.fields?.identifier),
-    source: ((input as any)?.source ?? (input as any)?.fields?.source),
+    identifier: typeof f.identifier === 'string' ? identifier(f.identifier) : f.identifier,
+    source: f.source,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -1126,18 +1203,20 @@ export function implementsClauseFrom(...input: any[]) {
 }
 
 export function ambientDeclarationFrom(input: AmbientDeclarationFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return ambientDeclaration({
-    declaration: ((input as any)?.declaration ?? (input as any)?.fields?.declaration),
+    declaration: f.declaration,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function abstractClassDeclarationFrom(input: AbstractClassDeclarationFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return abstractClassDeclaration({
-    classHeritage: ((input as any)?.class_heritage ?? (input as any)?.fields?.class_heritage),
-    name: ((input as any)?.name ?? (input as any)?.fields?.name),
-    typeParameters: ((input as any)?.type_parameters ?? (input as any)?.fields?.type_parameters),
-    body: ((input as any)?.body ?? (input as any)?.fields?.body),
+    classHeritage: f.class_heritage,
+    name: f.name,
+    typeParameters: f.type_parameters,
+    body: f.body,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -1159,66 +1238,74 @@ export function internalModuleFrom(...input: any[]) {
 }
 
 export function importAliasFrom(input: ImportAliasFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return importAlias({
-    name: typeof ((input as any)?.name ?? (input as any)?.fields?.name) === 'string' ? identifier(((input as any)?.name ?? (input as any)?.fields?.name)) : ((input as any)?.name ?? (input as any)?.fields?.name),
-    value: ((input as any)?.value ?? (input as any)?.fields?.value),
-    semicolon: ((input as any)?.semicolon ?? (input as any)?.fields?.semicolon),
+    name: typeof f.name === 'string' ? identifier(f.name) : f.name,
+    value: f.value,
+    semicolon: f.semicolon,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function nestedTypeIdentifierFrom(input: NestedTypeIdentifierFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return nestedTypeIdentifier({
-    module: ((input as any)?.module ?? (input as any)?.fields?.module),
-    name: ((input as any)?.name ?? (input as any)?.fields?.name),
+    module: f.module,
+    name: f.name,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function interfaceDeclarationFrom(input: InterfaceDeclarationFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return interfaceDeclaration({
-    name: ((input as any)?.name ?? (input as any)?.fields?.name),
-    typeParameters: ((input as any)?.type_parameters ?? (input as any)?.fields?.type_parameters),
-    extendsTypeClause: ((input as any)?.extends_type_clause ?? (input as any)?.fields?.extends_type_clause),
-    body: ((input as any)?.body ?? (input as any)?.fields?.body),
+    name: f.name,
+    typeParameters: f.type_parameters,
+    extendsTypeClause: f.extends_type_clause,
+    body: f.body,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function extendsTypeClauseFrom(input: ExtendsTypeClauseFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return extendsTypeClause({
-    type: (((input as any)?.type ?? (input as any)?.fields?.type) ?? []),
+    type: (f.type ?? []),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function enumDeclarationFrom(input: EnumDeclarationFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return enumDeclaration({
-    name: typeof ((input as any)?.name ?? (input as any)?.fields?.name) === 'string' ? identifier(((input as any)?.name ?? (input as any)?.fields?.name)) : ((input as any)?.name ?? (input as any)?.fields?.name),
-    body: ((input as any)?.body ?? (input as any)?.fields?.body),
+    name: typeof f.name === 'string' ? identifier(f.name) : f.name,
+    body: f.body,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function enumBodyFrom(input: EnumBodyFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return enumBody({
-    opening: ((input as any)?.opening ?? (input as any)?.fields?.opening),
+    opening: f.opening,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function enumAssignmentFrom(input: EnumAssignmentFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return enumAssignment({
-    name: ((input as any)?.name ?? (input as any)?.fields?.name),
+    name: f.name,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function typeAliasDeclarationFrom(input: TypeAliasDeclarationFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return typeAliasDeclaration({
-    name: ((input as any)?.name ?? (input as any)?.fields?.name),
-    typeParameters: ((input as any)?.type_parameters ?? (input as any)?.fields?.type_parameters),
-    value: ((input as any)?.value ?? (input as any)?.fields?.value),
+    name: f.name,
+    typeParameters: f.type_parameters,
+    value: f.value,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -1234,19 +1321,21 @@ export function overrideModifierFrom(input?: OverrideModifier) {
 }
 
 export function requiredParameterFrom(input: RequiredParameterFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return requiredParameter({
-    parameterName: ((input as any)?.parameter_name ?? (input as any)?.fields?.parameter_name),
-    type: ((input as any)?.type ?? (input as any)?.fields?.type),
-    initializer: ((input as any)?.initializer ?? (input as any)?.fields?.initializer),
+    parameterName: f.parameter_name,
+    type: f.type,
+    initializer: f.initializer,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function optionalParameterFrom(input: OptionalParameterFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return optionalParameter({
-    parameterName: ((input as any)?.parameter_name ?? (input as any)?.fields?.parameter_name),
-    type: ((input as any)?.type ?? (input as any)?.fields?.type),
-    initializer: ((input as any)?.initializer ?? (input as any)?.fields?.initializer),
+    parameterName: f.parameter_name,
+    type: f.type,
+    initializer: f.initializer,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -1292,8 +1381,9 @@ export function assertsFrom(...input: any[]) {
 }
 
 export function assertsAnnotationFrom(input: AssertsAnnotationFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return assertsAnnotation({
-    asserts: ((input as any)?.asserts ?? (input as any)?.fields?.asserts),
+    asserts: f.asserts,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -1307,17 +1397,19 @@ export function typeFrom(...input: any[]) {
 }
 
 export function tupleParameterFrom(input: TupleParameterFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return tupleParameter({
-    name: ((input as any)?.name ?? (input as any)?.fields?.name),
-    type: ((input as any)?.type ?? (input as any)?.fields?.type),
+    name: f.name,
+    type: f.type,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function optionalTupleParameterFrom(input: OptionalTupleParameterFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return optionalTupleParameter({
-    name: typeof ((input as any)?.name ?? (input as any)?.fields?.name) === 'string' ? identifier(((input as any)?.name ?? (input as any)?.fields?.name)) : ((input as any)?.name ?? (input as any)?.fields?.name),
-    type: ((input as any)?.type ?? (input as any)?.fields?.type),
+    name: typeof f.name === 'string' ? identifier(f.name) : f.name,
+    type: f.type,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -1339,10 +1431,11 @@ export function restTypeFrom(...input: any[]) {
 }
 
 export function constructorTypeFrom(input: ConstructorTypeFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return constructorType({
-    typeParameters: ((input as any)?.type_parameters ?? (input as any)?.fields?.type_parameters),
-    parameters: ((input as any)?.parameters ?? (input as any)?.fields?.parameters),
-    type: ((input as any)?.type ?? (input as any)?.fields?.type),
+    typeParameters: f.type_parameters,
+    parameters: f.parameters,
+    type: f.type,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -1372,42 +1465,47 @@ export function templateLiteralTypeFrom(...input: any[]) {
 }
 
 export function inferTypeFrom(input: InferTypeFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return inferType({
-    typeIdentifier: ((input as any)?.type_identifier ?? (input as any)?.fields?.type_identifier),
-    constraint: ((input as any)?.constraint ?? (input as any)?.fields?.constraint),
+    typeIdentifier: f.type_identifier,
+    constraint: f.constraint,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function conditionalTypeFrom(input: ConditionalTypeFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return conditionalType({
-    left: ((input as any)?.left ?? (input as any)?.fields?.left),
-    right: ((input as any)?.right ?? (input as any)?.fields?.right),
-    consequence: ((input as any)?.consequence ?? (input as any)?.fields?.consequence),
-    alternative: ((input as any)?.alternative ?? (input as any)?.fields?.alternative),
+    left: f.left,
+    right: f.right,
+    consequence: f.consequence,
+    alternative: f.alternative,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function genericTypeFrom(input: GenericTypeFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return genericType({
-    name: ((input as any)?.name ?? (input as any)?.fields?.name),
-    typeArguments: ((input as any)?.type_arguments ?? (input as any)?.fields?.type_arguments),
+    name: f.name,
+    typeArguments: f.type_arguments,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function typePredicateFrom(input: TypePredicateFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return typePredicate({
-    name: ((input as any)?.name ?? (input as any)?.fields?.name),
-    type: ((input as any)?.type ?? (input as any)?.fields?.type),
+    name: f.name,
+    type: f.type,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function typePredicateAnnotationFrom(input: TypePredicateAnnotationFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return typePredicateAnnotation({
-    typePredicate: ((input as any)?.type_predicate ?? (input as any)?.fields?.type_predicate),
+    typePredicate: f.type_predicate,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -1421,25 +1519,28 @@ export function typeQueryFrom(...input: any[]) {
 }
 
 export function indexTypeQueryFrom(input: IndexTypeQueryFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return indexTypeQuery({
-    primaryType: ((input as any)?.primary_type ?? (input as any)?.fields?.primary_type),
+    primaryType: f.primary_type,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function lookupTypeFrom(input: LookupTypeFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return lookupType({
-    primaryType: ((input as any)?.primary_type ?? (input as any)?.fields?.primary_type),
-    indexType: ((input as any)?.index_type ?? (input as any)?.fields?.index_type),
+    primaryType: f.primary_type,
+    indexType: f.index_type,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function mappedTypeClauseFrom(input: MappedTypeClauseFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return mappedTypeClause({
-    name: ((input as any)?.name ?? (input as any)?.fields?.name),
-    type: ((input as any)?.type ?? (input as any)?.fields?.type),
-    alias: ((input as any)?.alias ?? (input as any)?.fields?.alias),
+    name: f.name,
+    type: f.type,
+    alias: f.alias,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -1453,8 +1554,9 @@ export function literalTypeFrom(...input: any[]) {
 }
 
 export function flowMaybeTypeFrom(input: FlowMaybeTypeFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return flowMaybeType({
-    primaryType: ((input as any)?.primary_type ?? (input as any)?.fields?.primary_type),
+    primaryType: f.primary_type,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -1481,10 +1583,11 @@ export function typeArgumentsFrom(...input: any[]) {
 }
 
 export function objectTypeFrom(input: ObjectTypeFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return objectType({
-    opening: ((input as any)?.opening ?? (input as any)?.fields?.opening),
-    members: ((input as any)?.members ?? (input as any)?.fields?.members),
-    closing: ((input as any)?.closing ?? (input as any)?.fields?.closing),
+    opening: f.opening,
+    members: f.members,
+    closing: f.closing,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -1498,11 +1601,12 @@ export function callSignatureFrom(...input: any[]) {
 }
 
 export function propertySignatureFrom(input: PropertySignatureFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return propertySignature({
-    accessibilityModifier: typeof ((input as any)?.accessibility_modifier ?? (input as any)?.fields?.accessibility_modifier) === 'string' ? accessibilityModifier(((input as any)?.accessibility_modifier ?? (input as any)?.fields?.accessibility_modifier)) : ((input as any)?.accessibility_modifier ?? (input as any)?.fields?.accessibility_modifier),
-    overrideModifier: ((input as any)?.override_modifier ?? (input as any)?.fields?.override_modifier),
-    name: ((input as any)?.name ?? (input as any)?.fields?.name),
-    type: ((input as any)?.type ?? (input as any)?.fields?.type),
+    accessibilityModifier: typeof f.accessibility_modifier === 'string' ? accessibilityModifier(f.accessibility_modifier) : f.accessibility_modifier,
+    overrideModifier: f.override_modifier,
+    name: f.name,
+    type: f.type,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -1516,10 +1620,11 @@ export function typeParametersFrom(...input: any[]) {
 }
 
 export function typeParameterFrom(input: TypeParameterFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return typeParameter({
-    name: ((input as any)?.name ?? (input as any)?.fields?.name),
-    constraint: ((input as any)?.constraint ?? (input as any)?.fields?.constraint),
-    value: ((input as any)?.value ?? (input as any)?.fields?.value),
+    name: f.name,
+    constraint: f.constraint,
+    value: f.value,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -1541,10 +1646,11 @@ export function constraintFrom(...input: any[]) {
 }
 
 export function constructSignatureFrom(input: ConstructSignatureFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return constructSignature({
-    typeParameters: ((input as any)?.type_parameters ?? (input as any)?.fields?.type_parameters),
-    parameters: ((input as any)?.parameters ?? (input as any)?.fields?.parameters),
-    type: ((input as any)?.type ?? (input as any)?.fields?.type),
+    typeParameters: f.type_parameters,
+    parameters: f.parameters,
+    type: f.type,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -1555,9 +1661,10 @@ export function indexSignatureFrom(input?: IndexSignatureFromInput) {
 
 export function indexSignatureColonFrom(input?: any) {
   if (isNodeData(input)) return input;
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return indexSignatureColon({
-    name: ((input as any)?.name ?? (input as any)?.fields?.name),
-    indexType: ((input as any)?.index_type ?? (input as any)?.fields?.index_type),
+    name: f.name,
+    indexType: f.index_type,
   });
 }
 
@@ -1567,8 +1674,9 @@ export function indexSignatureMappedTypeClauseFrom(input?: any) {
 }
 
 export function arrayTypeFrom(input: ArrayTypeFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return arrayType({
-    primaryType: ((input as any)?.primary_type ?? (input as any)?.fields?.primary_type),
+    primaryType: f.primary_type,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -1590,26 +1698,29 @@ export function readonlyTypeFrom(...input: any[]) {
 }
 
 export function unionTypeFrom(input: UnionTypeFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return unionType({
-    left: ((input as any)?.left ?? (input as any)?.fields?.left),
-    right: ((input as any)?.right ?? (input as any)?.fields?.right),
+    left: f.left,
+    right: f.right,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function intersectionTypeFrom(input: IntersectionTypeFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return intersectionType({
-    left: ((input as any)?.left ?? (input as any)?.fields?.left),
-    right: ((input as any)?.right ?? (input as any)?.fields?.right),
+    left: f.left,
+    right: f.right,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function functionTypeFrom(input: FunctionTypeFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return functionType({
-    typeParameters: ((input as any)?.type_parameters ?? (input as any)?.fields?.type_parameters),
-    parameters: ((input as any)?.parameters ?? (input as any)?.fields?.parameters),
-    returnType: ((input as any)?.return_type ?? (input as any)?.fields?.return_type),
+    typeParameters: f.type_parameters,
+    parameters: f.parameters,
+    returnType: f.return_type,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -1654,10 +1765,11 @@ export function stringFragmentFrom(input: string | StringFragment) {
 }
 
 export function interfaceBodyFrom(input: InterfaceBodyFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return interfaceBody({
-    opening: ((input as any)?.opening ?? (input as any)?.fields?.opening),
-    members: ((input as any)?.members ?? (input as any)?.fields?.members),
-    closing: ((input as any)?.closing ?? (input as any)?.fields?.closing),
+    opening: f.opening,
+    members: f.members,
+    closing: f.closing,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }

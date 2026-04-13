@@ -730,9 +730,14 @@ export class AssembledBranch extends AssembledNodeBase {
         const lines: string[] = []
         lines.push(`export function ${fn}(input${opt}: ${this.fromInputTypeName}) {`)
         if (fields.length > 0) {
+            // Normalize loose input vs NodeData passthrough into a single
+            // `f` view at the top of the function. Per-field accesses
+            // become `f.X` instead of repeating the dual-shape cast on
+            // every field site.
+            lines.push('  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;')
             lines.push(`  return ${factory}({`)
             for (const f of fields) {
-                lines.push(`    ${f.propertyName}: ${resolveField(f, nodeMap)},`)
+                lines.push(`    ${f.propertyName}: ${resolveFieldFromView(f, nodeMap)},`)
             }
             lines.push(`    children: ((input as any)?.children ?? []) as any,`)
             lines.push('  } as any);')
@@ -1075,9 +1080,10 @@ export class AssembledPolymorph extends AssembledNodeBase {
             fLines.push(`export function ${formFn}(input?: any) {`)
             fLines.push(`  if (isNodeData(input)) return input;`)
             if (form.fields.length > 0) {
+                fLines.push('  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;')
                 fLines.push(`  return ${formFactory}({`)
                 for (const f of form.fields) {
-                    fLines.push(`    ${f.propertyName}: ${resolveField(f, nodeMap)},`)
+                    fLines.push(`    ${f.propertyName}: ${resolveFieldFromView(f, nodeMap)},`)
                 }
                 fLines.push('  });')
             } else {
@@ -1235,8 +1241,14 @@ function emitStringLikeFrom(node: AssembledNodeBase): string {
  * (`input.fields.field_name`). If the field is leaf-only, wrap bare
  * string inputs via the leaf factory.
  */
-function resolveField(field: AssembledField, nodeMap: NodeMap): string {
-    const prop = `((input as any)?.${field.name} ?? (input as any)?.fields?.${field.name})`
+/**
+ * Variant of `resolveField` that consumes a normalized `f` view
+ * (built once at the top of the from function as
+ * `((input as any).fields ?? input)`). Per-field accesses become
+ * `f.X` instead of repeating the dual-shape cast at every site.
+ */
+function resolveFieldFromView(field: AssembledField, nodeMap: NodeMap): string {
+    const prop = `f.${field.name}`
     const allLeaves = field.contentTypes.every(t => {
         const n = nodeMap.nodes.get(t)
         return n && (n.modelType === 'leaf' || n.modelType === 'keyword' || n.modelType === 'enum')
@@ -1244,8 +1256,6 @@ function resolveField(field: AssembledField, nodeMap: NodeMap): string {
     if (allLeaves && field.contentTypes.length === 1) {
         const leafKind = field.contentTypes[0]!
         const leafNode = nodeMap.nodes.get(leafKind)
-        // Keywords have 0-arg factories (text is baked in) — don't emit
-        // a string-wrap call for them; pass the value through unchanged.
         if (leafNode?.modelType === 'keyword') {
             if (field.multiple) return `(${prop} ?? [])`
             return `${prop}`

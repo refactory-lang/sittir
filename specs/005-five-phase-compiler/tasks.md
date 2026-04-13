@@ -400,10 +400,15 @@ rather than recomputing via free functions.
   grammar with differently-named structural-whitespace externals
   is added. Defer adding an `externalRoles` config / position-based
   detection until that need actually arises.
-- [ ] **C18** Remove `any` casts from field access in factory and
-  from emitters. `(config as any)?.${propertyName}` can become typed
-  access now that `ConfigOf<T>` is fully defined. Fluent getters/
-  setters should return concrete field types.
+- [~] **C18** Partial — dropped ~628 `(config as any)?.X` reads in
+  factory field accessors (commit `e2fa0b6`). Counts: rust
+  712→465, typescript 739→494, python 415→279. Still outstanding:
+  setter spread casts (`{...(config as any), X: Y} as any`),
+  the `children` slot read (`ChildSlotsOf<T>` is conditionally
+  narrowed), and the `from-v2 resolveField` casts (input is
+  `FromInputOf<T>` which doesn't expose `.fields`, but the
+  resolver also accepts NodeData — needs a discriminated guard).
+  Fluent getter/setter return types are still `any`.
 - [x] **C19** Full type-check across all generated packages — done as
   part of **T052**. All three generated packages type-clean via
   `tsgo --noEmit`. Commit `a77f94b`.
