@@ -134,6 +134,11 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
     // Tree-sitter promotes string literals to named node-types entries
     collectAnonymousNodes(optimized.rules, nodes)
 
+    // Part B: Resolve ir-namespace keys after the NodeMap is complete so
+    // collision detection sees every node at once. Emitters read
+    // `node.irKey` rather than re-running shortening rules.
+    resolveIrKeys(nodes)
+
     return {
         name: optimized.name,
         nodes,
@@ -141,6 +146,64 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
         projections: buildProjections(nodes),
     }
 }
+
+// ---------------------------------------------------------------------------
+// resolveIrKeys — dedupe-aware short-name pass over the whole NodeMap
+// ---------------------------------------------------------------------------
+
+/**
+ * The ir namespace (`import { ir } from './ir.js'`) exposes each kind
+ * under a short ergonomic key. Collisions on the short form fall back
+ * to the full factoryName; JS reserved words get a `_` suffix. This
+ * pass claims keys in nodeMap iteration order.
+ */
+function resolveIrKeys(nodes: Map<string, AssembledNode>): void {
+    const claimed = new Set<string>()
+    for (const [, node] of nodes) {
+        if (!node.factoryName) continue
+        // Synthesised polymorph form groups live under their parent's
+        // variant dispatch, not as top-level ir keys.
+        if (node.modelType === 'group') continue
+
+        const short = shortenIrKey(node.kind)
+        if (!claimed.has(short)) {
+            claimed.add(short)
+            node.irKey = short
+            continue
+        }
+        // Collision — fall back to the full factory name.
+        const full = node.factoryName
+        claimed.add(full)
+        node.irKey = full
+    }
+}
+
+function shortenIrKey(kind: string): string {
+    const stripped = kind
+        .replace(/_item$/, '')
+        .replace(/_expression$/, '')
+        .replace(/_statement$/, '')
+        .replace(/_declaration$/, '')
+        .replace(/_definition$/, '')
+    const parts = stripped.split('_').filter(Boolean)
+    if (parts.length === 0) return nameNode(kind).factoryName
+    const camel = parts
+        .map((w, i) => (i === 0 ? w : w.charAt(0).toUpperCase() + w.slice(1)))
+        .join('')
+    // Reserved-word names fall back to the factory name, which already
+    // carries the `_` suffix from nameNode.
+    if (IR_KEY_RESERVED.has(camel)) return nameNode(kind).factoryName
+    return camel
+}
+
+const IR_KEY_RESERVED = new Set([
+    'break', 'case', 'catch', 'class', 'const', 'continue', 'debugger',
+    'default', 'delete', 'do', 'else', 'enum', 'export', 'extends',
+    'false', 'finally', 'for', 'function', 'if', 'import', 'in',
+    'instanceof', 'let', 'new', 'null', 'return', 'static', 'super',
+    'switch', 'this', 'throw', 'true', 'try', 'typeof', 'var', 'void',
+    'while', 'with', 'yield', 'async', 'await',
+])
 
 // ---------------------------------------------------------------------------
 // collectAnonymousNodes — extract string literals from rules as token/keyword entries

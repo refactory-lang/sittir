@@ -3003,7 +3003,7 @@ export function abstractClassDeclaration(config: ConfigOf<AbstractClassDeclarati
   };
 }
 
-export function module_(child?: any) {
+export function module(child?: any) {
   const hasChild = child && typeof child === "object" && "type" in child;
   const children = hasChild ? [child] : [];
   return {
@@ -3394,7 +3394,7 @@ export function assertsAnnotation(config: ConfigOf<AssertsAnnotation>) {
   };
 }
 
-export function type_(child?: any) {
+export function type(child?: any) {
   const hasChild = child && typeof child === "object" && "type" in child;
   const children = hasChild ? [child] : [];
   return {
@@ -4478,7 +4478,7 @@ export const _factoryMap: Record<string, (config?: any) => unknown> = {
   'implements_clause': implementsClause,
   'ambient_declaration': ambientDeclaration,
   'abstract_class_declaration': abstractClassDeclaration,
-  'module': module_,
+  'module': module,
   'internal_module': internalModule,
   'import_alias': importAlias,
   'nested_type_identifier': nestedTypeIdentifier,
@@ -4497,7 +4497,7 @@ export const _factoryMap: Record<string, (config?: any) => unknown> = {
   'type_annotation': typeAnnotation,
   'asserts': asserts,
   'asserts_annotation': assertsAnnotation,
-  'type': type_,
+  'type': type,
   'tuple_parameter': tupleParameter,
   'optional_tuple_parameter': optionalTupleParameter,
   'optional_type': optionalType,

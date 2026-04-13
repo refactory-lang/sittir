@@ -6,13 +6,10 @@
  */
 
 import type { NodeMap, AssembledNode, AssembledPolymorph } from '../compiler/rule.ts'
-import { nameNode } from '../compiler/assemble.ts'
-import type { IrKeyMap } from './ir-keys.ts'
 
 export interface EmitIrFromNodeMapConfig {
     grammar: string
     nodeMap: NodeMap
-    irKeys: IrKeyMap
 }
 
 export function emitIrFromNodeMap(config: EmitIrFromNodeMapConfig): string {
@@ -23,33 +20,30 @@ export function emitIrFromNodeMap(config: EmitIrFromNodeMapConfig): string {
         '',
     ]
 
-    // Collect factory imports
+    // Collect factory imports. Every name surface comes off the node
+    // itself now — no local shortening, no side-channel IrKeyMap.
     const factoryImports = new Set<string>()
     const fromImports = new Set<string>()
-    const irKeys = config.irKeys
 
-    for (const [kind, node] of nodeMap.nodes) {
-        if (!node.factoryName) continue // supertype, group, token — no factory
-        // Skip synthesized polymorph form groups here: they are imported
+    for (const [, node] of nodeMap.nodes) {
+        if (!node.rawFactoryName) continue // supertype, token, hidden — no factory
+        // Skip synthesised polymorph form groups here — they are imported
         // via their parent polymorph's form list below to avoid duplicates.
         if (node.modelType === 'group') continue
 
-        factoryImports.add(toRawFactoryName(kind))
+        factoryImports.add(node.rawFactoryName)
 
-        // Polymorph: import per-form factories (named by their own kind)
         if (node.modelType === 'polymorph') {
             for (const form of node.forms) {
-                factoryImports.add(form.factoryName ?? toRawFactoryName(form.kind))
+                if (form.rawFactoryName) factoryImports.add(form.rawFactoryName)
             }
         }
 
-        // from() imports
         if (node.modelType === 'branch' || node.modelType === 'container' || node.modelType === 'polymorph') {
-            fromImports.add(`${node.factoryName}From`)
+            if (node.fromFunctionName) fromImports.add(node.fromFunctionName)
             if (node.modelType === 'polymorph') {
                 for (const form of node.forms) {
-                    const fromFn = `${form.typeName.charAt(0).toLowerCase()}${form.typeName.slice(1)}From`
-                    fromImports.add(fromFn)
+                    if (form.fromFunctionName) fromImports.add(form.fromFunctionName)
                 }
             }
         }
@@ -67,24 +61,17 @@ export function emitIrFromNodeMap(config: EmitIrFromNodeMapConfig): string {
 
     // Branch/container/polymorph factories — combined with .from()
     lines.push('  // Node factories')
-    for (const [kind, node] of nodeMap.nodes) {
-        if (!node.factoryName) continue
+    for (const [, node] of nodeMap.nodes) {
+        if (!node.irKey || !node.rawFactoryName || !node.fromFunctionName) continue
         if (node.modelType !== 'branch' && node.modelType !== 'container' && node.modelType !== 'polymorph') continue
 
-        const irKey = irKeys.get(kind)
-        if (!irKey) continue
-        const rawName = toRawFactoryName(kind)
-        const fromFn = `${node.factoryName}From`
-
         if (node.modelType === 'polymorph' && node.forms.length > 1) {
-            const variantEntries = node.forms.map(form => {
-                const vFactory = form.factoryName ?? toRawFactoryName(form.kind)
-                const vFrom = `${form.typeName.charAt(0).toLowerCase()}${form.typeName.slice(1)}From`
-                return `${form.name}: Object.assign(${vFactory}, { from: ${vFrom} })`
-            })
-            lines.push(`  ${irKey}: Object.assign(${rawName}, { from: ${fromFn}, ${variantEntries.join(', ')} }),`)
+            const variantEntries = node.forms
+                .filter(form => form.rawFactoryName && form.fromFunctionName)
+                .map(form => `${form.name}: Object.assign(${form.rawFactoryName}, { from: ${form.fromFunctionName} })`)
+            lines.push(`  ${node.irKey}: Object.assign(${node.rawFactoryName}, { from: ${node.fromFunctionName}, ${variantEntries.join(', ')} }),`)
         } else {
-            lines.push(`  ${irKey}: Object.assign(${rawName}, { from: ${fromFn} }),`)
+            lines.push(`  ${node.irKey}: Object.assign(${node.rawFactoryName}, { from: ${node.fromFunctionName} }),`)
         }
     }
 
@@ -92,38 +79,23 @@ export function emitIrFromNodeMap(config: EmitIrFromNodeMapConfig): string {
 
     // Keyword factories
     lines.push('  // Keyword factories')
-    for (const [kind, node] of nodeMap.nodes) {
+    for (const [, node] of nodeMap.nodes) {
         if (node.modelType !== 'keyword') continue
-        if (!node.factoryName) continue
-        const irKey = irKeys.get(kind)
-        if (!irKey) continue
-        lines.push(`  ${irKey}: ${toRawFactoryName(kind)},`)
+        if (!node.irKey || !node.rawFactoryName) continue
+        lines.push(`  ${node.irKey}: ${node.rawFactoryName},`)
     }
 
     lines.push('')
 
     // Leaf factories
     lines.push('  // Leaf node factories')
-    for (const [kind, node] of nodeMap.nodes) {
+    for (const [, node] of nodeMap.nodes) {
         if (node.modelType !== 'leaf' && node.modelType !== 'enum') continue
-        if (!node.factoryName) continue
-        const irKey = irKeys.get(kind)
-        if (!irKey) continue
-        lines.push(`  ${irKey}: ${toRawFactoryName(kind)},`)
+        if (!node.irKey || !node.rawFactoryName) continue
+        lines.push(`  ${node.irKey}: ${node.rawFactoryName},`)
     }
 
     lines.push('} as const;')
     return lines.join('\n')
 }
 
-function toRawFactoryName(kind: string): string {
-    const { factoryName } = nameNode(kind)
-    // JS reserved words get a trailing underscore
-    const reserved = new Set(['break', 'case', 'catch', 'class', 'const', 'continue',
-        'debugger', 'default', 'delete', 'do', 'else', 'enum', 'export', 'extends',
-        'false', 'finally', 'for', 'function', 'if', 'import', 'in', 'instanceof',
-        'let', 'new', 'null', 'return', 'static', 'super', 'switch', 'this',
-        'throw', 'true', 'try', 'typeof', 'var', 'void', 'while', 'with', 'yield',
-        'type', 'interface', 'module', 'namespace', 'async', 'await'])
-    return reserved.has(factoryName) ? `${factoryName}_` : factoryName
-}

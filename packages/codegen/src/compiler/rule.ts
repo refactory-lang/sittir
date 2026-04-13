@@ -505,11 +505,34 @@ function deriveContentTypes(rule: Rule): string[] {
 // as we collapse logic into the classes.
 // ---------------------------------------------------------------------------
 
+/**
+ * JS reserved words that a raw factory function name collides with —
+ * those get a trailing underscore so the emitted code parses.
+ */
+const JS_RESERVED_FACTORY_NAMES = new Set([
+    'break', 'case', 'catch', 'class', 'const', 'continue', 'debugger',
+    'default', 'delete', 'do', 'else', 'enum', 'export', 'extends',
+    'false', 'finally', 'for', 'function', 'if', 'import', 'in',
+    'instanceof', 'let', 'new', 'null', 'return', 'static', 'super',
+    'switch', 'this', 'throw', 'true', 'try', 'typeof', 'var', 'void',
+    'while', 'with', 'yield', 'async', 'await', 'arguments',
+])
+
 export abstract class AssembledNodeBase {
     readonly kind: string
     readonly typeName: string
     readonly factoryName?: string
-    readonly irKey?: string
+    /**
+     * Short key for the ir namespace (`ir.x`). Populated by assemble()
+     * via resolveIrKeys() AFTER every node is constructed so that the
+     * collision-resolution pass sees the whole NodeMap at once. Emitters
+     * should read this rather than recomputing their own shortening.
+     *
+     * Writable (not readonly) so assemble's post-pass can install the
+     * resolved key — the rest of the pipeline should treat it as
+     * effectively immutable.
+     */
+    irKey?: string
     abstract readonly modelType: string
 
     constructor(init: { kind: string; typeName: string; factoryName?: string; irKey?: string }) {
@@ -522,6 +545,39 @@ export abstract class AssembledNodeBase {
     /** A node is hidden when it has no factory (supertype, group, token). */
     get hidden(): boolean {
         return this.factoryName === undefined
+    }
+
+    /**
+     * Factory function name to emit in factories.ts — factoryName with a
+     * trailing `_` when the bare name collides with a JS reserved word.
+     * Returns `undefined` for hidden nodes.
+     */
+    get rawFactoryName(): string | undefined {
+        if (this.factoryName === undefined) return undefined
+        return JS_RESERVED_FACTORY_NAMES.has(this.factoryName)
+            ? `${this.factoryName}_`
+            : this.factoryName
+    }
+
+    /** Tree interface name: `${typeName}Tree`. */
+    get treeTypeName(): string {
+        return `${this.typeName}Tree`
+    }
+
+    /** Config type alias: `${typeName}Config`. */
+    get configTypeName(): string {
+        return `${this.typeName}Config`
+    }
+
+    /** FromInput type alias: `${typeName}FromInput`. */
+    get fromInputTypeName(): string {
+        return `${this.typeName}FromInput`
+    }
+
+    /** `from()` resolver function name: `${factoryName}From` for non-hidden nodes. */
+    get fromFunctionName(): string | undefined {
+        if (this.factoryName === undefined) return undefined
+        return `${this.factoryName}From`
     }
 }
 

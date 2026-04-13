@@ -56,7 +56,7 @@ const RESERVED_KEYWORDS = new Set([
   'with',
 ]);
 
-export function module_(..._children: any[]) {
+export function module(..._children: any[]) {
   const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: 'module' as const,
@@ -1979,7 +1979,7 @@ export function typedParameter(config: ConfigOf<TypedParameter>) {
   };
 }
 
-export function type_(child?: any) {
+export function type(child?: any) {
   const hasChild = child && typeof child === "object" && "type" in child;
   const children = hasChild ? [child] : [];
   return {
@@ -2713,7 +2713,7 @@ export function formatExpression(config: ConfigOf<FormatExpression>) {
 }
 
 export const _factoryMap: Record<string, (config?: any) => unknown> = {
-  'module': module_,
+  'module': module,
   '_simple_statements': hiddenSimpleStatements,
   'import_statement': importStatement,
   'import_prefix': importPrefix,
@@ -2811,7 +2811,7 @@ export const _factoryMap: Record<string, (config?: any) => unknown> = {
   'slice': slice,
   'call': call,
   'typed_parameter': typedParameter,
-  'type': type_,
+  'type': type,
   'splat_type': splatType,
   'generic_type': genericType,
   'union_type': unionType,

@@ -10,7 +10,6 @@ import type {
     AssembledBranch, AssembledContainer, AssembledPolymorph,
     AssembledLeaf, AssembledKeyword, AssembledEnum,
 } from '../compiler/rule.ts'
-import { nameNode, nameField } from '../compiler/assemble.ts'
 
 export interface EmitFactoriesFromNodeMapConfig {
     grammar: string
@@ -33,12 +32,12 @@ export function emitFactoriesFromNodeMap(config: EmitFactoriesFromNodeMapConfig)
         if (!node.factoryName) continue // hidden nodes have no factoryName → skip imports
         if (!node.typeName || !isValidIdent(node.typeName)) continue
         typeImports.add(node.typeName)
-        typeImports.add(`${node.typeName}Tree`)
+        typeImports.add(`${node.treeTypeName}`)
         if (node.modelType === 'polymorph') {
             for (const form of node.forms) {
                 if (isValidIdent(form.typeName)) {
                     typeImports.add(form.typeName)
-                    typeImports.add(`${form.typeName}Config`)
+                    typeImports.add(`${form.configTypeName}`)
                 }
             }
         }
@@ -98,8 +97,8 @@ export function emitFactoriesFromNodeMap(config: EmitFactoriesFromNodeMapConfig)
     // _factoryMap
     lines.push('export const _factoryMap: Record<string, (config?: any) => unknown> = {')
     for (const [kind, node] of nodeMap.nodes) {
-        if (!node.factoryName) continue
-        lines.push(`  '${kind}': ${rawName(kind)},`)
+        if (!node.rawFactoryName) continue
+        lines.push(`  '${kind}': ${node.rawFactoryName},`)
     }
     lines.push('};')
     lines.push('')
@@ -112,7 +111,7 @@ export function emitFactoriesFromNodeMap(config: EmitFactoriesFromNodeMapConfig)
 // ---------------------------------------------------------------------------
 
 function emitBranchFactory(node: AssembledBranch): string {
-    const fn = rawName(node.kind)
+    const fn = node.rawFactoryName!
     const fields = node.fields
     const children = node.children ?? []
     const hasFields = fields.length > 0
@@ -162,14 +161,14 @@ function emitBranchFactory(node: AssembledBranch): string {
     lines.push(`      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);`)
     lines.push(`      return toEdit(this, startOrRange);`)
     lines.push(`    },`)
-    lines.push(`    replace(target: ${node.typeName}Tree) { const r = target.range(); return toEdit(this, r); },`)
+    lines.push(`    replace(target: ${node.treeTypeName}) { const r = target.range(); return toEdit(this, r); },`)
     lines.push('  };')
     lines.push('}')
     return lines.join('\n')
 }
 
 function emitContainerFactory(node: AssembledContainer): string {
-    const fn = rawName(node.kind)
+    const fn = node.rawFactoryName!
     const children = node.children
     const child = children[0]
 
@@ -196,27 +195,27 @@ function emitContainerFactory(node: AssembledContainer): string {
     lines.push(`      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);`)
     lines.push(`      return toEdit(this, startOrRange);`)
     lines.push(`    },`)
-    lines.push(`    replace(target: ${node.typeName}Tree) { const r = target.range(); return toEdit(this, r); },`)
+    lines.push(`    replace(target: ${node.treeTypeName}) { const r = target.range(); return toEdit(this, r); },`)
     lines.push('  };')
     lines.push('}')
     return lines.join('\n')
 }
 
 function emitPolymorphFactory(node: AssembledPolymorph): string {
-    const fn = rawName(node.kind)
+    const fn = node.rawFactoryName!
     const forms = node.forms
 
     if (forms.length === 0) {
         // Empty polymorph — emit a stub
-        return `export function ${fn}(config?: any) { return { type: '${node.kind}' as const, named: true as const, render() { return render(this); }, toEdit(s: any, e?: any) { return typeof s === 'number' ? toEdit(this, s, e!) : toEdit(this, s); }, replace(t: ${node.typeName}Tree) { const r = t.range(); return toEdit(this, r); } }; }`
+        return `export function ${fn}(config?: any) { return { type: '${node.kind}' as const, named: true as const, render() { return render(this); }, toEdit(s: any, e?: any) { return typeof s === 'number' ? toEdit(this, s, e!) : toEdit(this, s); }, replace(t: ${node.treeTypeName}) { const r = t.range(); return toEdit(this, r); } }; }`
     }
 
     const lines: string[] = []
     lines.push(`export function ${fn}(config?: ConfigOf<${node.typeName}>) {`)
 
     // Dispatch to per-form factory based on field presence. Form factories
-    // are named by their own kind (form.factoryName ?? rawName(form.kind)).
-    const formFn = (form: AssembledForm) => form.factoryName ?? rawName(form.kind)
+    // are named by their own kind (form.rawFactoryName!).
+    const formFn = (form: AssembledForm) => form.rawFactoryName!
     if (forms.length > 1) {
         const sorted = [...forms].sort((a, b) => b.fields.length - a.fields.length)
         const fallback = sorted[sorted.length - 1]!
@@ -241,9 +240,9 @@ function emitPolymorphFactory(node: AssembledPolymorph): string {
 
 function emitFormFactory(node: AssembledPolymorph, form: AssembledForm): string {
     // Use the form's own kind for the function name so _factoryMap (which
-    // keys by kind) resolves cleanly: rawName(form.kind) matches the emitted
+    // keys by kind) resolves cleanly: form.rawFactoryName! matches the emitted
     // function name.
-    const fn = form.factoryName ?? rawName(form.kind)
+    const fn = form.rawFactoryName!
     const fields = form.fields
     const hasFields = fields.length > 0
     const opt = fields.some(f => f.required) ? '' : '?'
@@ -283,14 +282,14 @@ function emitFormFactory(node: AssembledPolymorph, form: AssembledForm): string 
     lines.push(`      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);`)
     lines.push(`      return toEdit(this, startOrRange);`)
     lines.push(`    },`)
-    lines.push(`    replace(target: ${node.typeName}Tree) { const r = target.range(); return toEdit(this, r); },`)
+    lines.push(`    replace(target: ${node.treeTypeName}) { const r = target.range(); return toEdit(this, r); },`)
     lines.push('  };')
     lines.push('}')
     return lines.join('\n')
 }
 
 function emitLeafFactory(node: AssembledLeaf): string {
-    const fn = rawName(node.kind)
+    const fn = node.rawFactoryName!
     return [
         `export function ${fn}(text: string) {`,
         '  return {',
@@ -299,14 +298,14 @@ function emitLeafFactory(node: AssembledLeaf): string {
         '    text,',
         '    render: () => text,',
         `    toEdit: (s: number | { start: { index: number }; end: { index: number } }, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },`,
-        `    replace: (t: ${node.typeName}Tree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },`,
+        `    replace: (t: ${node.treeTypeName}) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },`,
         '  };',
         '}',
     ].join('\n')
 }
 
 function emitKeywordFactory(node: AssembledKeyword): string {
-    const fn = rawName(node.kind)
+    const fn = node.rawFactoryName!
     const text = esc(node.text)
     return [
         `export function ${fn}() {`,
@@ -316,14 +315,14 @@ function emitKeywordFactory(node: AssembledKeyword): string {
         `    text: '${text}',`,
         `    render: () => '${text}',`,
         `    toEdit: (s: number | { start: { index: number }; end: { index: number } }, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: '${text}' } : { startPos: s.start.index, endPos: s.end.index, insertedText: '${text}' },`,
-        `    replace: (t: ${node.typeName}Tree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: '${text}' }; },`,
+        `    replace: (t: ${node.treeTypeName}) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: '${text}' }; },`,
         '  };',
         '}',
     ].join('\n')
 }
 
 function emitEnumFactory(node: AssembledEnum): string {
-    const fn = rawName(node.kind)
+    const fn = node.rawFactoryName!
     return [
         `export function ${fn}(text: string) {`,
         '  return {',
@@ -332,7 +331,7 @@ function emitEnumFactory(node: AssembledEnum): string {
         '    text,',
         '    render: () => text,',
         `    toEdit: (s: number | { start: { index: number }; end: { index: number } }, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },`,
-        `    replace: (t: ${node.typeName}Tree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },`,
+        `    replace: (t: ${node.treeTypeName}) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },`,
         '  };',
         '}',
     ].join('\n')
@@ -341,20 +340,6 @@ function emitEnumFactory(node: AssembledEnum): string {
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
-
-const JS_RESERVED = new Set([
-    'break', 'case', 'catch', 'class', 'const', 'continue', 'debugger', 'default',
-    'delete', 'do', 'else', 'enum', 'export', 'extends', 'false', 'finally', 'for',
-    'function', 'if', 'import', 'in', 'instanceof', 'let', 'new', 'null', 'return',
-    'static', 'super', 'switch', 'this', 'throw', 'true', 'try', 'typeof', 'var',
-    'void', 'while', 'with', 'yield', 'type', 'interface', 'module', 'namespace',
-    'async', 'await',
-])
-
-function rawName(kind: string): string {
-    const { factoryName } = nameNode(kind)
-    return JS_RESERVED.has(factoryName) ? `${factoryName}_` : factoryName
-}
 
 function esc(s: string): string {
     return s.replace(/\\/g, '\\\\').replace(/'/g, "\\'")

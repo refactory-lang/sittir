@@ -12,7 +12,6 @@ import type {
     NodeMap, AssembledNode, AssembledField, AssembledForm,
     AssembledBranch, AssembledContainer, AssembledPolymorph,
 } from '../compiler/rule.ts'
-import { nameNode } from '../compiler/assemble.ts'
 
 export interface EmitFromNodeMapConfig {
     grammar: string
@@ -34,21 +33,21 @@ export function emitFromNodeMap(config: EmitFromNodeMapConfig): string {
     for (const [kind, node] of nodeMap.nodes) {
         if (!node.factoryName) continue
         if (node.modelType === 'branch' || node.modelType === 'container' || node.modelType === 'polymorph') {
-            factoryImports.add(rawName(kind))
+            factoryImports.add(node.rawFactoryName!)
             typeImports.add(node.typeName)
-            typeImports.add(`${node.typeName}Config`)
-            typeImports.add(`${node.typeName}FromInput`)
+            typeImports.add(`${node.configTypeName}`)
+            typeImports.add(`${node.fromInputTypeName}`)
 
             if (node.modelType === 'polymorph') {
                 for (const form of node.forms) {
                     // Form factories are now named by their own kind (consistent with _factoryMap)
-                    factoryImports.add(form.factoryName ?? rawName(form.kind))
+                    factoryImports.add(form.rawFactoryName!)
                     typeImports.add(form.typeName)
                 }
             }
         }
         if (node.modelType === 'leaf' || node.modelType === 'keyword' || node.modelType === 'enum') {
-            factoryImports.add(rawName(kind))
+            factoryImports.add(node.rawFactoryName!)
             typeImports.add(node.typeName)
         }
     }
@@ -76,27 +75,27 @@ export function emitFromNodeMap(config: EmitFromNodeMapConfig): string {
         switch (node.modelType) {
             case 'branch':
                 lines.push(emitBranchFrom(node, nodeMap))
-                fromMapEntries.push({ kind, fn: `${node.factoryName}From` })
+                fromMapEntries.push({ kind, fn: node.fromFunctionName! })
                 break
             case 'container':
                 lines.push(emitContainerFrom(node, nodeMap))
-                fromMapEntries.push({ kind, fn: `${node.factoryName}From` })
+                fromMapEntries.push({ kind, fn: node.fromFunctionName! })
                 break
             case 'polymorph':
                 lines.push(emitPolymorphFrom(node, nodeMap))
                 for (const form of node.forms) {
                     lines.push(emitFormFrom(node, form, nodeMap))
                 }
-                fromMapEntries.push({ kind, fn: `${node.factoryName}From` })
+                fromMapEntries.push({ kind, fn: node.fromFunctionName! })
                 break
             case 'leaf':
             case 'enum':
                 lines.push(emitLeafFrom(node))
-                fromMapEntries.push({ kind, fn: `${node.factoryName}From` })
+                fromMapEntries.push({ kind, fn: node.fromFunctionName! })
                 break
             case 'keyword':
                 lines.push(emitKeywordFrom(node))
-                fromMapEntries.push({ kind, fn: `${node.factoryName}From` })
+                fromMapEntries.push({ kind, fn: node.fromFunctionName! })
                 break
         }
         lines.push('')
@@ -118,13 +117,13 @@ export function emitFromNodeMap(config: EmitFromNodeMapConfig): string {
 // ---------------------------------------------------------------------------
 
 function emitBranchFrom(node: AssembledBranch, nodeMap: NodeMap): string {
-    const fn = `${node.factoryName}From`
-    const factory = rawName(node.kind)
+    const fn = node.fromFunctionName!
+    const factory = node.rawFactoryName!
     const fields = node.fields
     const opt = fields.some(f => f.required) ? '' : '?'
 
     const lines: string[] = []
-    lines.push(`export function ${fn}(input${opt}: ${node.typeName}FromInput) {`)
+    lines.push(`export function ${fn}(input${opt}: ${node.fromInputTypeName}) {`)
 
     if (fields.length > 0) {
         lines.push(`  return ${factory}({`)
@@ -146,8 +145,8 @@ function emitBranchFrom(node: AssembledBranch, nodeMap: NodeMap): string {
 }
 
 function emitContainerFrom(node: AssembledContainer, nodeMap: NodeMap): string {
-    const fn = `${node.factoryName}From`
-    const factory = rawName(node.kind)
+    const fn = node.fromFunctionName!
+    const factory = node.rawFactoryName!
 
     // Containers are called variadically. If a single NodeData-shaped input
     // arrived, unwrap its .children so we pass them as positional args —
@@ -165,8 +164,8 @@ function emitContainerFrom(node: AssembledContainer, nodeMap: NodeMap): string {
 }
 
 function emitPolymorphFrom(node: AssembledPolymorph, nodeMap: NodeMap): string {
-    const fn = `${node.factoryName}From`
-    const factory = rawName(node.kind)
+    const fn = node.fromFunctionName!
+    const factory = node.rawFactoryName!
 
     // Always route through the factory — even when input is a NodeData —
     // so the result shape matches what factoryMap produces. Otherwise
@@ -174,7 +173,7 @@ function emitPolymorphFrom(node: AssembledPolymorph, nodeMap: NodeMap): string {
     // (span, id, etc.) that a direct factory call would strip, causing
     // structural divergence with validateFrom.
     return [
-        `export function ${fn}(input?: ${node.typeName}FromInput) {`,
+        `export function ${fn}(input?: ${node.fromInputTypeName}) {`,
         `  return ${factory}(input as any);`,
         '}',
     ].join('\n')
@@ -184,7 +183,7 @@ function emitFormFrom(node: AssembledPolymorph, form: AssembledForm, nodeMap: No
     // Use the form's own full typeName (already disambiguated for collisions).
     const fn = `${form.typeName.charAt(0).toLowerCase()}${form.typeName.slice(1)}From`
     // Form factories are named by their own kind (consistent with _factoryMap)
-    const factory = form.factoryName ?? rawName(form.kind)
+    const factory = form.rawFactoryName!
 
     const lines: string[] = []
     lines.push(`export function ${fn}(input?: any) {`)
@@ -205,8 +204,8 @@ function emitFormFrom(node: AssembledPolymorph, form: AssembledForm, nodeMap: No
 }
 
 function emitLeafFrom(node: AssembledNode): string {
-    const fn = `${node.factoryName}From`
-    const factory = rawName(node.kind)
+    const fn = node.fromFunctionName!
+    const factory = node.rawFactoryName!
 
     return [
         `export function ${fn}(input: string | ${node.typeName}) {`,
@@ -217,8 +216,8 @@ function emitLeafFrom(node: AssembledNode): string {
 }
 
 function emitKeywordFrom(node: AssembledNode): string {
-    const fn = `${node.factoryName}From`
-    const factory = rawName(node.kind)
+    const fn = node.fromFunctionName!
+    const factory = node.rawFactoryName!
 
     return [
         `export function ${fn}(input?: ${node.typeName}) {`,
@@ -246,8 +245,9 @@ function resolveField(field: AssembledField, nodeMap: NodeMap): string {
     })
 
     if (allLeaves && field.contentTypes.length === 1) {
-        const leafKind = field.contentTypes[0]
-        const leafFactory = rawName(leafKind)
+        const leafKind = field.contentTypes[0]!
+        const leafNode = nodeMap.nodes.get(leafKind)
+        const leafFactory = leafNode?.rawFactoryName ?? leafKind
         if (field.multiple) {
             return `(${prop} ?? []).map((v: any) => typeof v === 'string' ? ${leafFactory}(v) : v)`
         }
@@ -261,20 +261,3 @@ function resolveField(field: AssembledField, nodeMap: NodeMap): string {
     return `${prop}`
 }
 
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
-const JS_RESERVED = new Set([
-    'break', 'case', 'catch', 'class', 'const', 'continue', 'debugger', 'default',
-    'delete', 'do', 'else', 'enum', 'export', 'extends', 'false', 'finally', 'for',
-    'function', 'if', 'import', 'in', 'instanceof', 'let', 'new', 'null', 'return',
-    'static', 'super', 'switch', 'this', 'throw', 'true', 'try', 'typeof', 'var',
-    'void', 'while', 'with', 'yield', 'type', 'interface', 'module', 'namespace',
-    'async', 'await',
-])
-
-function rawName(kind: string): string {
-    const { factoryName } = nameNode(kind)
-    return JS_RESERVED.has(factoryName) ? `${factoryName}_` : factoryName
-}

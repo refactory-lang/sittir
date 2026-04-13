@@ -53,7 +53,7 @@ export function tokenTreePatternFrom(...input: any[]) {
 export function tokenBindingPatternFrom(input: TokenBindingPatternFromInput) {
   return tokenBindingPattern({
     name: typeof ((input as any)?.name ?? (input as any)?.fields?.name) === 'string' ? metavariable(((input as any)?.name ?? (input as any)?.fields?.name)) : ((input as any)?.name ?? (input as any)?.fields?.name),
-    type: typeof ((input as any)?.type ?? (input as any)?.fields?.type) === 'string' ? fragmentSpecifier(((input as any)?.type ?? (input as any)?.fields?.type)) : ((input as any)?.type ?? (input as any)?.fields?.type),
+    type: typeof ((input as any)?.type ?? (input as any)?.fields?.type) === 'string' ? fragment_specifier(((input as any)?.type ?? (input as any)?.fields?.type)) : ((input as any)?.type ?? (input as any)?.fields?.type),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
