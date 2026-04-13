@@ -192,7 +192,7 @@ const _wrapTable: Record<string, (data: AnyNodeData, tree: TreeHandle) => unknow
   'pair_pattern': (d, t) => wrapPairPattern(d, t),
   'computed_property_name': (d, t) => wrapComputedPropertyName(d, t),
   'public_field_definition': (d, t) => wrapPublicFieldDefinition(d, t),
-  '_jsx_start_opening_element': (d, t) => wrapJsxStartOpeningElement(d, t),
+  '_jsx_start_opening_element': (d, t) => wrapHiddenJsxStartOpeningElement(d, t),
   'non_null_expression': (d, t) => wrapNonNullExpression(d, t),
   'method_signature': (d, t) => wrapMethodSignature(d, t),
   'abstract_method_signature': (d, t) => wrapAbstractMethodSignature(d, t),
@@ -262,7 +262,7 @@ const _wrapTable: Record<string, (data: AnyNodeData, tree: TreeHandle) => unknow
   'union_type': (d, t) => wrapUnionType(d, t),
   'intersection_type': (d, t) => wrapIntersectionType(d, t),
   'function_type': (d, t) => wrapFunctionType(d, t),
-  '_type_identifier': (d, t) => wrapTypeIdentifier(d, t),
+  '_type_identifier': (d, t) => wrapHiddenTypeIdentifier(d, t),
   'shorthand_property_identifier': (d, t) => wrapShorthandPropertyIdentifier(d, t),
   'shorthand_property_identifier_pattern': (d, t) => wrapShorthandPropertyIdentifierPattern(d, t),
   'interface_body': (d, t) => wrapInterfaceBody(d, t),
@@ -1260,7 +1260,7 @@ export function wrapPublicFieldDefinition(data: AnyNodeData, tree: TreeHandle): 
   };
 }
 
-export function wrapJsxStartOpeningElement(data: AnyNodeData, tree: TreeHandle): unknown {
+export function wrapHiddenJsxStartOpeningElement(data: AnyNodeData, tree: TreeHandle): unknown {
   return {
     ...data,
     get name() { return drillIn(data.fields?.['name'], tree); },
@@ -1895,7 +1895,7 @@ export function wrapFunctionType(data: AnyNodeData, tree: TreeHandle): unknown {
   };
 }
 
-export function wrapTypeIdentifier(data: AnyNodeData, tree: TreeHandle): unknown {
+export function wrapHiddenTypeIdentifier(data: AnyNodeData, tree: TreeHandle): unknown {
   return {
     ...data,
     get child() { return drillIn(data.children?.[0], tree); },

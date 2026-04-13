@@ -15,18 +15,18 @@ describe('source_file', () => {
 
 describe('expression_statement', () => {
   it('factory produces correct type', () => {
-    const node = ir.expressionStatement();
+    const node = ir.expression();
     expect(node.type).toBe('expression_statement');
   });
 });
 
 describe('macro_definition', () => {
   it('factory produces correct type', () => {
-    const node = ir.macroDefinition({ name: { type: 'identifier', text: 'test' } as any, rules: 'test' as any });
+    const node = ir.macro({ name: { type: 'identifier', text: 'test' } as any, rules: 'test' as any });
     expect(node.type).toBe('macro_definition');
   });
   it('render produces non-empty string', () => {
-    const node = ir.macroDefinition({ name: { type: 'identifier', text: 'test' } as any, rules: 'test' as any });
+    const node = ir.macro({ name: { type: 'identifier', text: 'test' } as any, rules: 'test' as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -83,55 +83,55 @@ describe('token_repetition', () => {
 
 describe('attribute_item', () => {
   it('factory produces correct type', () => {
-    const node = ir.attributeItem({ attribute: { type: 'attribute', text: 'test' } as any });
+    const node = ir.attribute({ attribute: { type: 'attribute', text: 'test' } as any });
     expect(node.type).toBe('attribute_item');
   });
   it('render produces non-empty string', () => {
-    const node = ir.attributeItem({ attribute: { type: 'attribute', text: 'test' } as any });
+    const node = ir.attribute({ attribute: { type: 'attribute', text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
 describe('inner_attribute_item', () => {
   it('factory produces correct type', () => {
-    const node = ir.innerAttributeItem({ attribute: { type: 'attribute', text: 'test' } as any });
+    const node = ir.innerAttribute({ attribute: { type: 'attribute', text: 'test' } as any });
     expect(node.type).toBe('inner_attribute_item');
   });
   it('render produces non-empty string', () => {
-    const node = ir.innerAttributeItem({ attribute: { type: 'attribute', text: 'test' } as any });
+    const node = ir.innerAttribute({ attribute: { type: 'attribute', text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
 describe('attribute', () => {
   it('factory produces correct type', () => {
-    const node = ir.attribute({});
+    const node = ir.attribute({ children: [] as any });
     expect(node.type).toBe('attribute');
   });
   it('render produces non-empty string', () => {
-    const node = ir.attribute({});
+    const node = ir.attribute({ children: [] as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
 describe('mod_item', () => {
   it('factory produces correct type', () => {
-    const node = ir.modItem({ visibilityModifier: { type: 'visibility_modifier', text: 'test' } as any, name: { type: 'identifier', text: 'test' } as any, body: { type: 'declaration_list', text: 'test' } as any });
+    const node = ir.mod({ visibilityModifier: { type: 'visibility_modifier', text: 'test' } as any, name: { type: 'identifier', text: 'test' } as any, body: { type: 'declaration_list', text: 'test' } as any });
     expect(node.type).toBe('mod_item');
   });
   it('render produces non-empty string', () => {
-    const node = ir.modItem({ visibilityModifier: { type: 'visibility_modifier', text: 'test' } as any, name: { type: 'identifier', text: 'test' } as any, body: { type: 'declaration_list', text: 'test' } as any });
+    const node = ir.mod({ visibilityModifier: { type: 'visibility_modifier', text: 'test' } as any, name: { type: 'identifier', text: 'test' } as any, body: { type: 'declaration_list', text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
 describe('foreign_mod_item', () => {
   it('factory produces correct type', () => {
-    const node = ir.foreignModItem({ visibilityModifier: { type: 'visibility_modifier', text: 'test' } as any, externModifier: { type: 'extern_modifier', text: 'test' } as any, body: { type: 'declaration_list', text: 'test' } as any });
+    const node = ir.foreignMod({ visibilityModifier: { type: 'visibility_modifier', text: 'test' } as any, externModifier: { type: 'extern_modifier', text: 'test' } as any, body: { type: 'declaration_list', text: 'test' } as any });
     expect(node.type).toBe('foreign_mod_item');
   });
   it('render produces non-empty string', () => {
-    const node = ir.foreignModItem({ visibilityModifier: { type: 'visibility_modifier', text: 'test' } as any, externModifier: { type: 'extern_modifier', text: 'test' } as any, body: { type: 'declaration_list', text: 'test' } as any });
+    const node = ir.foreignMod({ visibilityModifier: { type: 'visibility_modifier', text: 'test' } as any, externModifier: { type: 'extern_modifier', text: 'test' } as any, body: { type: 'declaration_list', text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -145,22 +145,22 @@ describe('declaration_list', () => {
 
 describe('struct_item', () => {
   it('factory produces correct type', () => {
-    const node = ir.structItem({ visibilityModifier: { type: 'visibility_modifier', text: 'test' } as any, name: { type: '_type_identifier', text: 'test' } as any, typeParameters: { type: 'type_parameters', text: 'test' } as any, whereClause: 'test' as any });
+    const node = ir.struct({ visibilityModifier: { type: 'visibility_modifier', text: 'test' } as any, name: { type: '_type_identifier', text: 'test' } as any, typeParameters: { type: 'type_parameters', text: 'test' } as any, whereClause: 'test' as any });
     expect(node.type).toBe('struct_item');
   });
   it('render produces non-empty string', () => {
-    const node = ir.structItem({ visibilityModifier: { type: 'visibility_modifier', text: 'test' } as any, name: { type: '_type_identifier', text: 'test' } as any, typeParameters: { type: 'type_parameters', text: 'test' } as any, whereClause: 'test' as any });
+    const node = ir.struct({ visibilityModifier: { type: 'visibility_modifier', text: 'test' } as any, name: { type: '_type_identifier', text: 'test' } as any, typeParameters: { type: 'type_parameters', text: 'test' } as any, whereClause: 'test' as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
 describe('union_item', () => {
   it('factory produces correct type', () => {
-    const node = ir.unionItem({ visibilityModifier: { type: 'visibility_modifier', text: 'test' } as any, name: { type: '_type_identifier', text: 'test' } as any, typeParameters: { type: 'type_parameters', text: 'test' } as any, whereClause: { type: 'where_clause', text: 'test' } as any, body: { type: 'field_declaration_list', text: 'test' } as any });
+    const node = ir.union({ visibilityModifier: { type: 'visibility_modifier', text: 'test' } as any, name: { type: '_type_identifier', text: 'test' } as any, typeParameters: { type: 'type_parameters', text: 'test' } as any, whereClause: { type: 'where_clause', text: 'test' } as any, body: { type: 'field_declaration_list', text: 'test' } as any });
     expect(node.type).toBe('union_item');
   });
   it('render produces non-empty string', () => {
-    const node = ir.unionItem({ visibilityModifier: { type: 'visibility_modifier', text: 'test' } as any, name: { type: '_type_identifier', text: 'test' } as any, typeParameters: { type: 'type_parameters', text: 'test' } as any, whereClause: { type: 'where_clause', text: 'test' } as any, body: { type: 'field_declaration_list', text: 'test' } as any });
+    const node = ir.union({ visibilityModifier: { type: 'visibility_modifier', text: 'test' } as any, name: { type: '_type_identifier', text: 'test' } as any, typeParameters: { type: 'type_parameters', text: 'test' } as any, whereClause: { type: 'where_clause', text: 'test' } as any, body: { type: 'field_declaration_list', text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -203,11 +203,11 @@ describe('field_declaration_list', () => {
 
 describe('field_declaration', () => {
   it('factory produces correct type', () => {
-    const node = ir.fieldDeclaration({ visibilityModifier: { type: 'visibility_modifier', text: 'test' } as any, name: { type: '_field_identifier', text: 'test' } as any, type: { type: '_type', text: 'test' } as any });
+    const node = ir.field({ visibilityModifier: { type: 'visibility_modifier', text: 'test' } as any, name: { type: '_field_identifier', text: 'test' } as any, type: { type: '_type', text: 'test' } as any });
     expect(node.type).toBe('field_declaration');
   });
   it('render produces non-empty string', () => {
-    const node = ir.fieldDeclaration({ visibilityModifier: { type: 'visibility_modifier', text: 'test' } as any, name: { type: '_field_identifier', text: 'test' } as any, type: { type: '_type', text: 'test' } as any });
+    const node = ir.field({ visibilityModifier: { type: 'visibility_modifier', text: 'test' } as any, name: { type: '_field_identifier', text: 'test' } as any, type: { type: '_type', text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -225,11 +225,11 @@ describe('ordered_field_declaration_list', () => {
 
 describe('extern_crate_declaration', () => {
   it('factory produces correct type', () => {
-    const node = ir.externCrateDeclaration({ visibilityModifier: { type: 'visibility_modifier', text: 'test' } as any, crate: { type: 'crate', text: 'test' } as any, name: { type: 'identifier', text: 'test' } as any });
+    const node = ir.externCrate({ visibilityModifier: { type: 'visibility_modifier', text: 'test' } as any, crate: { type: 'crate', text: 'test' } as any, name: { type: 'identifier', text: 'test' } as any });
     expect(node.type).toBe('extern_crate_declaration');
   });
   it('render produces non-empty string', () => {
-    const node = ir.externCrateDeclaration({ visibilityModifier: { type: 'visibility_modifier', text: 'test' } as any, crate: { type: 'crate', text: 'test' } as any, name: { type: 'identifier', text: 'test' } as any });
+    const node = ir.externCrate({ visibilityModifier: { type: 'visibility_modifier', text: 'test' } as any, crate: { type: 'crate', text: 'test' } as any, name: { type: 'identifier', text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -247,44 +247,44 @@ describe('const_item', () => {
 
 describe('static_item', () => {
   it('factory produces correct type', () => {
-    const node = ir.staticItem({ visibilityModifier: { type: 'visibility_modifier', text: 'test' } as any, mutableSpecifier: 'test' as any, name: { type: 'identifier', text: 'test' } as any, type: { type: '_type', text: 'test' } as any });
+    const node = ir.staticItem({ visibilityModifier: { type: 'visibility_modifier', text: 'test' } as any, mutableSpecifier: 'test' as any, name: { type: 'identifier', text: 'test' } as any, type: { type: '_type', text: 'test' } as any, children: [] as any });
     expect(node.type).toBe('static_item');
   });
   it('render produces non-empty string', () => {
-    const node = ir.staticItem({ visibilityModifier: { type: 'visibility_modifier', text: 'test' } as any, mutableSpecifier: 'test' as any, name: { type: 'identifier', text: 'test' } as any, type: { type: '_type', text: 'test' } as any });
+    const node = ir.staticItem({ visibilityModifier: { type: 'visibility_modifier', text: 'test' } as any, mutableSpecifier: 'test' as any, name: { type: 'identifier', text: 'test' } as any, type: { type: '_type', text: 'test' } as any, children: [] as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
 describe('type_item', () => {
   it('factory produces correct type', () => {
-    const node = ir.typeItem({ visibilityModifier: { type: 'visibility_modifier', text: 'test' } as any, name: { type: '_type_identifier', text: 'test' } as any, typeParameters: { type: 'type_parameters', text: 'test' } as any, whereClause: { type: 'where_clause', text: 'test' } as any, type: { type: '_type', text: 'test' } as any, trailingWhereClause: { type: 'where_clause', text: 'test' } as any });
+    const node = ir.type({ visibilityModifier: { type: 'visibility_modifier', text: 'test' } as any, name: { type: '_type_identifier', text: 'test' } as any, typeParameters: { type: 'type_parameters', text: 'test' } as any, whereClause: { type: 'where_clause', text: 'test' } as any, type: { type: '_type', text: 'test' } as any, trailingWhereClause: { type: 'where_clause', text: 'test' } as any });
     expect(node.type).toBe('type_item');
   });
   it('render produces non-empty string', () => {
-    const node = ir.typeItem({ visibilityModifier: { type: 'visibility_modifier', text: 'test' } as any, name: { type: '_type_identifier', text: 'test' } as any, typeParameters: { type: 'type_parameters', text: 'test' } as any, whereClause: { type: 'where_clause', text: 'test' } as any, type: { type: '_type', text: 'test' } as any, trailingWhereClause: { type: 'where_clause', text: 'test' } as any });
+    const node = ir.type({ visibilityModifier: { type: 'visibility_modifier', text: 'test' } as any, name: { type: '_type_identifier', text: 'test' } as any, typeParameters: { type: 'type_parameters', text: 'test' } as any, whereClause: { type: 'where_clause', text: 'test' } as any, type: { type: '_type', text: 'test' } as any, trailingWhereClause: { type: 'where_clause', text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
 describe('function_item', () => {
   it('factory produces correct type', () => {
-    const node = ir.functionItem({ visibilityModifier: { type: 'visibility_modifier', text: 'test' } as any, functionModifiers: { type: 'function_modifiers', text: 'test' } as any, name: { type: 'identifier', text: 'test' } as any, typeParameters: { type: 'type_parameters', text: 'test' } as any, parameters: { type: 'parameters', text: 'test' } as any, whereClause: 'test' as any, body: { type: 'block', text: 'test' } as any });
+    const node = ir.functionItem({ visibilityModifier: { type: 'visibility_modifier', text: 'test' } as any, functionModifiers: { type: 'function_modifiers', text: 'test' } as any, name: { type: 'identifier', text: 'test' } as any, typeParameters: { type: 'type_parameters', text: 'test' } as any, parameters: { type: 'parameters', text: 'test' } as any, whereClause: 'test' as any, body: { type: 'block', text: 'test' } as any, children: [] as any });
     expect(node.type).toBe('function_item');
   });
   it('render produces non-empty string', () => {
-    const node = ir.functionItem({ visibilityModifier: { type: 'visibility_modifier', text: 'test' } as any, functionModifiers: { type: 'function_modifiers', text: 'test' } as any, name: { type: 'identifier', text: 'test' } as any, typeParameters: { type: 'type_parameters', text: 'test' } as any, parameters: { type: 'parameters', text: 'test' } as any, whereClause: 'test' as any, body: { type: 'block', text: 'test' } as any });
+    const node = ir.functionItem({ visibilityModifier: { type: 'visibility_modifier', text: 'test' } as any, functionModifiers: { type: 'function_modifiers', text: 'test' } as any, name: { type: 'identifier', text: 'test' } as any, typeParameters: { type: 'type_parameters', text: 'test' } as any, parameters: { type: 'parameters', text: 'test' } as any, whereClause: 'test' as any, body: { type: 'block', text: 'test' } as any, children: [] as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
 describe('function_signature_item', () => {
   it('factory produces correct type', () => {
-    const node = ir.functionSignatureItem({ visibilityModifier: { type: 'visibility_modifier', text: 'test' } as any, functionModifiers: { type: 'function_modifiers', text: 'test' } as any, name: { type: 'identifier', text: 'test' } as any, typeParameters: { type: 'type_parameters', text: 'test' } as any, parameters: { type: 'parameters', text: 'test' } as any, whereClause: 'test' as any });
+    const node = ir.functionSignature({ visibilityModifier: { type: 'visibility_modifier', text: 'test' } as any, functionModifiers: { type: 'function_modifiers', text: 'test' } as any, name: { type: 'identifier', text: 'test' } as any, typeParameters: { type: 'type_parameters', text: 'test' } as any, parameters: { type: 'parameters', text: 'test' } as any, whereClause: 'test' as any, children: [] as any });
     expect(node.type).toBe('function_signature_item');
   });
   it('render produces non-empty string', () => {
-    const node = ir.functionSignatureItem({ visibilityModifier: { type: 'visibility_modifier', text: 'test' } as any, functionModifiers: { type: 'function_modifiers', text: 'test' } as any, name: { type: 'identifier', text: 'test' } as any, typeParameters: { type: 'type_parameters', text: 'test' } as any, parameters: { type: 'parameters', text: 'test' } as any, whereClause: 'test' as any });
+    const node = ir.functionSignature({ visibilityModifier: { type: 'visibility_modifier', text: 'test' } as any, functionModifiers: { type: 'function_modifiers', text: 'test' } as any, name: { type: 'identifier', text: 'test' } as any, typeParameters: { type: 'type_parameters', text: 'test' } as any, parameters: { type: 'parameters', text: 'test' } as any, whereClause: 'test' as any, children: [] as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -316,22 +316,22 @@ describe('where_predicate', () => {
 
 describe('impl_item', () => {
   it('factory produces correct type', () => {
-    const node = ir.implItem({ whereClause: 'test' as any, typeParameters: { type: 'type_parameters', text: 'test' } as any, type: { type: '_type', text: 'test' } as any, body: { type: 'declaration_list', text: 'test' } as any });
+    const node = ir.impl({ whereClause: 'test' as any, typeParameters: { type: 'type_parameters', text: 'test' } as any, type: { type: '_type', text: 'test' } as any, body: { type: 'declaration_list', text: 'test' } as any, children: [] as any });
     expect(node.type).toBe('impl_item');
   });
   it('render produces non-empty string', () => {
-    const node = ir.implItem({ whereClause: 'test' as any, typeParameters: { type: 'type_parameters', text: 'test' } as any, type: { type: '_type', text: 'test' } as any, body: { type: 'declaration_list', text: 'test' } as any });
+    const node = ir.impl({ whereClause: 'test' as any, typeParameters: { type: 'type_parameters', text: 'test' } as any, type: { type: '_type', text: 'test' } as any, body: { type: 'declaration_list', text: 'test' } as any, children: [] as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
 describe('trait_item', () => {
   it('factory produces correct type', () => {
-    const node = ir.traitItem({ visibilityModifier: { type: 'visibility_modifier', text: 'test' } as any, whereClause: 'test' as any, name: { type: '_type_identifier', text: 'test' } as any, typeParameters: { type: 'type_parameters', text: 'test' } as any, bounds: { type: 'trait_bounds', text: 'test' } as any, body: { type: 'declaration_list', text: 'test' } as any });
+    const node = ir.trait({ visibilityModifier: { type: 'visibility_modifier', text: 'test' } as any, whereClause: 'test' as any, name: { type: '_type_identifier', text: 'test' } as any, typeParameters: { type: 'type_parameters', text: 'test' } as any, bounds: { type: 'trait_bounds', text: 'test' } as any, body: { type: 'declaration_list', text: 'test' } as any, children: [] as any });
     expect(node.type).toBe('trait_item');
   });
   it('render produces non-empty string', () => {
-    const node = ir.traitItem({ visibilityModifier: { type: 'visibility_modifier', text: 'test' } as any, whereClause: 'test' as any, name: { type: '_type_identifier', text: 'test' } as any, typeParameters: { type: 'type_parameters', text: 'test' } as any, bounds: { type: 'trait_bounds', text: 'test' } as any, body: { type: 'declaration_list', text: 'test' } as any });
+    const node = ir.trait({ visibilityModifier: { type: 'visibility_modifier', text: 'test' } as any, whereClause: 'test' as any, name: { type: '_type_identifier', text: 'test' } as any, typeParameters: { type: 'type_parameters', text: 'test' } as any, bounds: { type: 'trait_bounds', text: 'test' } as any, body: { type: 'declaration_list', text: 'test' } as any, children: [] as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -425,11 +425,11 @@ describe('let_declaration', () => {
 
 describe('use_declaration', () => {
   it('factory produces correct type', () => {
-    const node = ir.useDeclaration({ visibilityModifier: { type: 'visibility_modifier', text: 'test' } as any, argument: { type: '_use_clause', text: 'test' } as any });
+    const node = ir.use({ visibilityModifier: { type: 'visibility_modifier', text: 'test' } as any, argument: { type: '_use_clause', text: 'test' } as any });
     expect(node.type).toBe('use_declaration');
   });
   it('render produces non-empty string', () => {
-    const node = ir.useDeclaration({ visibilityModifier: { type: 'visibility_modifier', text: 'test' } as any, argument: { type: '_use_clause', text: 'test' } as any });
+    const node = ir.use({ visibilityModifier: { type: 'visibility_modifier', text: 'test' } as any, argument: { type: '_use_clause', text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -483,11 +483,11 @@ describe('parameters', () => {
 
 describe('self_parameter', () => {
   it('factory produces correct type', () => {
-    const node = ir.selfParameter({ lifetime: 'test' as any, mutableSpecifier: { type: 'lifetime', text: 'test' } as any, self: { type: 'mutable_specifier', text: 'test' } as any });
+    const node = ir.selfParameter({ lifetime: 'test' as any, mutableSpecifier: { type: 'lifetime', text: 'test' } as any, self: { type: 'mutable_specifier', text: 'test' } as any, children: [] as any });
     expect(node.type).toBe('self_parameter');
   });
   it('render produces non-empty string', () => {
-    const node = ir.selfParameter({ lifetime: 'test' as any, mutableSpecifier: { type: 'lifetime', text: 'test' } as any, self: { type: 'mutable_specifier', text: 'test' } as any });
+    const node = ir.selfParameter({ lifetime: 'test' as any, mutableSpecifier: { type: 'lifetime', text: 'test' } as any, self: { type: 'mutable_specifier', text: 'test' } as any, children: [] as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -779,18 +779,18 @@ describe('scoped_type_identifier', () => {
 
 describe('range_expression', () => {
   it('factory produces correct type', () => {
-    const node = ir.rangeExpression();
+    const node = ir.range();
     expect(node.type).toBe('range_expression');
   });
 });
 
 describe('unary_expression', () => {
   it('factory produces correct type', () => {
-    const node = ir.unaryExpression({ operand: { type: '-', text: 'test' } as any });
+    const node = ir.unary({ operand: { type: '-', text: 'test' } as any, children: [] as any });
     expect(node.type).toBe('unary_expression');
   });
   it('render produces non-empty string', () => {
-    const node = ir.unaryExpression({ operand: { type: '-', text: 'test' } as any });
+    const node = ir.unary({ operand: { type: '-', text: 'test' } as any, children: [] as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -808,33 +808,33 @@ describe('try_expression', () => {
 
 describe('reference_expression', () => {
   it('factory produces correct type', () => {
-    const node = ir.referenceExpression({ mutableSpecifier: { type: 'mutable_specifier', text: 'test' } as any, value: { type: '_expression', text: 'test' } as any });
+    const node = ir.reference({ mutableSpecifier: { type: 'mutable_specifier', text: 'test' } as any, value: { type: '_expression', text: 'test' } as any });
     expect(node.type).toBe('reference_expression');
   });
   it('render produces non-empty string', () => {
-    const node = ir.referenceExpression({ mutableSpecifier: { type: 'mutable_specifier', text: 'test' } as any, value: { type: '_expression', text: 'test' } as any });
+    const node = ir.reference({ mutableSpecifier: { type: 'mutable_specifier', text: 'test' } as any, value: { type: '_expression', text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
 describe('binary_expression', () => {
   it('factory produces correct type', () => {
-    const node = ir.binaryExpression({ left: { type: '_expression', text: 'test' } as any, operator: { type: '==', text: 'test' } as any, right: { type: '_expression', text: 'test' } as any });
+    const node = ir.binary({ left: { type: '_expression', text: 'test' } as any, operator: { type: '==', text: 'test' } as any, right: { type: '_expression', text: 'test' } as any });
     expect(node.type).toBe('binary_expression');
   });
   it('render produces non-empty string', () => {
-    const node = ir.binaryExpression({ left: { type: '_expression', text: 'test' } as any, operator: { type: '==', text: 'test' } as any, right: { type: '_expression', text: 'test' } as any });
+    const node = ir.binary({ left: { type: '_expression', text: 'test' } as any, operator: { type: '==', text: 'test' } as any, right: { type: '_expression', text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
 describe('assignment_expression', () => {
   it('factory produces correct type', () => {
-    const node = ir.assignmentExpression({ left: { type: '_expression', text: 'test' } as any, right: { type: '_expression', text: 'test' } as any });
+    const node = ir.assignment({ left: { type: '_expression', text: 'test' } as any, right: { type: '_expression', text: 'test' } as any });
     expect(node.type).toBe('assignment_expression');
   });
   it('render produces non-empty string', () => {
-    const node = ir.assignmentExpression({ left: { type: '_expression', text: 'test' } as any, right: { type: '_expression', text: 'test' } as any });
+    const node = ir.assignment({ left: { type: '_expression', text: 'test' } as any, right: { type: '_expression', text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -852,11 +852,11 @@ describe('compound_assignment_expr', () => {
 
 describe('type_cast_expression', () => {
   it('factory produces correct type', () => {
-    const node = ir.typeCastExpression({ value: { type: '_expression', text: 'test' } as any, type: { type: '_type', text: 'test' } as any });
+    const node = ir.typeCast({ value: { type: '_expression', text: 'test' } as any, type: { type: '_type', text: 'test' } as any });
     expect(node.type).toBe('type_cast_expression');
   });
   it('render produces non-empty string', () => {
-    const node = ir.typeCastExpression({ value: { type: '_expression', text: 'test' } as any, type: { type: '_type', text: 'test' } as any });
+    const node = ir.typeCast({ value: { type: '_expression', text: 'test' } as any, type: { type: '_type', text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -877,54 +877,54 @@ describe('yield_expression', () => {
 
 describe('call_expression', () => {
   it('factory produces correct type', () => {
-    const node = ir.callExpression({ function: { type: '_expression_except_range', text: 'test' } as any, arguments: { type: 'arguments', text: 'test' } as any });
+    const node = ir.call({ function: { type: '_expression_except_range', text: 'test' } as any, arguments: { type: 'arguments', text: 'test' } as any });
     expect(node.type).toBe('call_expression');
   });
   it('render produces non-empty string', () => {
-    const node = ir.callExpression({ function: { type: '_expression_except_range', text: 'test' } as any, arguments: { type: 'arguments', text: 'test' } as any });
+    const node = ir.call({ function: { type: '_expression_except_range', text: 'test' } as any, arguments: { type: 'arguments', text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
 describe('arguments', () => {
   it('factory produces correct type', () => {
-    const node = ir.arguments_();
+    const node = ir.arguments();
     expect(node.type).toBe('arguments');
   });
 });
 
 describe('array_expression', () => {
   it('factory produces correct type', () => {
-    const node = ir.arrayExpression({ attributes: 'test' as any, elements: 'test' as any });
+    const node = ir.array({ attributes: 'test' as any, elements: 'test' as any });
     expect(node.type).toBe('array_expression');
   });
   it('render produces non-empty string', () => {
-    const node = ir.arrayExpression({ attributes: 'test' as any, elements: 'test' as any });
+    const node = ir.array({ attributes: 'test' as any, elements: 'test' as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
 describe('parenthesized_expression', () => {
   it('factory produces correct type', () => {
-    const node = ir.parenthesizedExpression();
+    const node = ir.parenthesized();
     expect(node.type).toBe('parenthesized_expression');
   });
 });
 
 describe('tuple_expression', () => {
   it('factory produces correct type', () => {
-    const node = ir.tupleExpression({ attributes: 'test' as any, first: 'test' as any, rest: 'test' as any, trailing: { type: '_expression', text: 'test' } as any });
+    const node = ir.tuple({ attributes: 'test' as any, first: 'test' as any, rest: 'test' as any, trailing: { type: '_expression', text: 'test' } as any });
     expect(node.type).toBe('tuple_expression');
   });
   it('render produces non-empty string', () => {
-    const node = ir.tupleExpression({ attributes: 'test' as any, first: 'test' as any, rest: 'test' as any, trailing: { type: '_expression', text: 'test' } as any });
+    const node = ir.tuple({ attributes: 'test' as any, first: 'test' as any, rest: 'test' as any, trailing: { type: '_expression', text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
 describe('unit_expression', () => {
   it('factory produces correct type', () => {
-    const node = ir.unitExpression('test');
+    const node = ir.unit('test');
     expect(node.type).toBe('unit_expression');
     expect(node.text).toBe('test');
   });
@@ -961,11 +961,11 @@ describe('shorthand_field_initializer', () => {
 
 describe('field_initializer', () => {
   it('factory produces correct type', () => {
-    const node = ir.fieldInitializer({ field: { type: '_field_identifier', text: 'test' } as any, value: { type: '_expression', text: 'test' } as any });
+    const node = ir.fieldInitializer({ field: { type: '_field_identifier', text: 'test' } as any, value: { type: '_expression', text: 'test' } as any, children: [] as any });
     expect(node.type).toBe('field_initializer');
   });
   it('render produces non-empty string', () => {
-    const node = ir.fieldInitializer({ field: { type: '_field_identifier', text: 'test' } as any, value: { type: '_expression', text: 'test' } as any });
+    const node = ir.fieldInitializer({ field: { type: '_field_identifier', text: 'test' } as any, value: { type: '_expression', text: 'test' } as any, children: [] as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -1008,11 +1008,11 @@ describe('else_clause', () => {
 
 describe('match_expression', () => {
   it('factory produces correct type', () => {
-    const node = ir.matchExpression({ value: { type: '_expression', text: 'test' } as any, body: { type: 'match_block', text: 'test' } as any });
+    const node = ir.match({ value: { type: '_expression', text: 'test' } as any, body: { type: 'match_block', text: 'test' } as any });
     expect(node.type).toBe('match_expression');
   });
   it('render produces non-empty string', () => {
-    const node = ir.matchExpression({ value: { type: '_expression', text: 'test' } as any, body: { type: 'match_block', text: 'test' } as any });
+    const node = ir.match({ value: { type: '_expression', text: 'test' } as any, body: { type: 'match_block', text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -1026,33 +1026,33 @@ describe('match_block', () => {
 
 describe('match_arm', () => {
   it('factory produces correct type', () => {
-    const node = ir.matchArm({ pattern: { type: 'match_pattern', text: 'test' } as any, value: { type: '_expression', text: 'test' } as any });
+    const node = ir.matchArm({ pattern: { type: 'match_pattern', text: 'test' } as any, value: { type: '_expression', text: 'test' } as any, children: [] as any });
     expect(node.type).toBe('match_arm');
   });
   it('render produces non-empty string', () => {
-    const node = ir.matchArm({ pattern: { type: 'match_pattern', text: 'test' } as any, value: { type: '_expression', text: 'test' } as any });
+    const node = ir.matchArm({ pattern: { type: 'match_pattern', text: 'test' } as any, value: { type: '_expression', text: 'test' } as any, children: [] as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
 describe('last_match_arm', () => {
   it('factory produces correct type', () => {
-    const node = ir.lastMatchArm({ pattern: { type: 'match_pattern', text: 'test' } as any, value: { type: '_expression', text: 'test' } as any });
+    const node = ir.lastMatchArm({ pattern: { type: 'match_pattern', text: 'test' } as any, value: { type: '_expression', text: 'test' } as any, children: [] as any });
     expect(node.type).toBe('last_match_arm');
   });
   it('render produces non-empty string', () => {
-    const node = ir.lastMatchArm({ pattern: { type: 'match_pattern', text: 'test' } as any, value: { type: '_expression', text: 'test' } as any });
+    const node = ir.lastMatchArm({ pattern: { type: 'match_pattern', text: 'test' } as any, value: { type: '_expression', text: 'test' } as any, children: [] as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
 describe('match_pattern', () => {
   it('factory produces correct type', () => {
-    const node = ir.matchPattern({});
+    const node = ir.matchPattern({ children: [] as any });
     expect(node.type).toBe('match_pattern');
   });
   it('render produces non-empty string', () => {
-    const node = ir.matchPattern({});
+    const node = ir.matchPattern({ children: [] as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -1070,11 +1070,11 @@ describe('while_expression', () => {
 
 describe('loop_expression', () => {
   it('factory produces correct type', () => {
-    const node = ir.loopExpression({ label: 'test' as any, body: { type: 'block', text: 'test' } as any });
+    const node = ir.loop({ label: 'test' as any, body: { type: 'block', text: 'test' } as any });
     expect(node.type).toBe('loop_expression');
   });
   it('render produces non-empty string', () => {
-    const node = ir.loopExpression({ label: 'test' as any, body: { type: 'block', text: 'test' } as any });
+    const node = ir.loop({ label: 'test' as any, body: { type: 'block', text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -1103,11 +1103,11 @@ describe('const_block', () => {
 
 describe('closure_expression', () => {
   it('body form produces correct type', () => {
-    const node = ir.closureExpression.body({ body: { type: 'block', text: 'test' } as any });
+    const node = ir.closure.body({ body: { type: 'block', text: 'test' } as any });
     expect(node.type).toBe('closure_expression');
   });
   it('body2 form produces correct type', () => {
-    const node = ir.closureExpression.body2({ body: { type: '_expression', text: 'test' } as any });
+    const node = ir.closure.body2({ body: { type: '_expression', text: 'test' } as any });
     expect(node.type).toBe('closure_expression');
   });
 });
@@ -1154,11 +1154,11 @@ describe('continue_expression', () => {
 
 describe('index_expression', () => {
   it('factory produces correct type', () => {
-    const node = ir.indexExpression({ object: { type: '_expression', text: 'test' } as any, index: { type: '_expression', text: 'test' } as any });
+    const node = ir.index({ object: { type: '_expression', text: 'test' } as any, index: { type: '_expression', text: 'test' } as any });
     expect(node.type).toBe('index_expression');
   });
   it('render produces non-empty string', () => {
-    const node = ir.indexExpression({ object: { type: '_expression', text: 'test' } as any, index: { type: '_expression', text: 'test' } as any });
+    const node = ir.index({ object: { type: '_expression', text: 'test' } as any, index: { type: '_expression', text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -1194,22 +1194,22 @@ describe('unsafe_block', () => {
 
 describe('async_block', () => {
   it('factory produces correct type', () => {
-    const node = ir.asyncBlock({ block: 'test' as any });
+    const node = ir.asyncBlock({ block: 'test' as any, children: [] as any });
     expect(node.type).toBe('async_block');
   });
   it('render produces non-empty string', () => {
-    const node = ir.asyncBlock({ block: 'test' as any });
+    const node = ir.asyncBlock({ block: 'test' as any, children: [] as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
 describe('gen_block', () => {
   it('factory produces correct type', () => {
-    const node = ir.genBlock({ block: 'test' as any });
+    const node = ir.genBlock({ block: 'test' as any, children: [] as any });
     expect(node.type).toBe('gen_block');
   });
   it('render produces non-empty string', () => {
-    const node = ir.genBlock({ block: 'test' as any });
+    const node = ir.genBlock({ block: 'test' as any, children: [] as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -1227,22 +1227,22 @@ describe('try_block', () => {
 
 describe('block', () => {
   it('factory produces correct type', () => {
-    const node = ir.block({ label: 'test' as any });
+    const node = ir.block({ label: 'test' as any, children: [] as any });
     expect(node.type).toBe('block');
   });
   it('render produces non-empty string', () => {
-    const node = ir.block({ label: 'test' as any });
+    const node = ir.block({ label: 'test' as any, children: [] as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
 describe('generic_pattern', () => {
   it('factory produces correct type', () => {
-    const node = ir.genericPattern({ typeArguments: { type: 'type_arguments', text: 'test' } as any });
+    const node = ir.genericPattern({ typeArguments: { type: 'type_arguments', text: 'test' } as any, children: [] as any });
     expect(node.type).toBe('generic_pattern');
   });
   it('render produces non-empty string', () => {
-    const node = ir.genericPattern({ typeArguments: { type: 'type_arguments', text: 'test' } as any });
+    const node = ir.genericPattern({ typeArguments: { type: 'type_arguments', text: 'test' } as any, children: [] as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -1263,22 +1263,22 @@ describe('slice_pattern', () => {
 
 describe('tuple_struct_pattern', () => {
   it('factory produces correct type', () => {
-    const node = ir.tupleStructPattern({ type: { type: 'identifier', text: 'test' } as any });
+    const node = ir.tupleStructPattern({ type: { type: 'identifier', text: 'test' } as any, children: [] as any });
     expect(node.type).toBe('tuple_struct_pattern');
   });
   it('render produces non-empty string', () => {
-    const node = ir.tupleStructPattern({ type: { type: 'identifier', text: 'test' } as any });
+    const node = ir.tupleStructPattern({ type: { type: 'identifier', text: 'test' } as any, children: [] as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
 describe('struct_pattern', () => {
   it('factory produces correct type', () => {
-    const node = ir.structPattern({ type: { type: '_type_identifier', text: 'test' } as any });
+    const node = ir.structPattern({ type: { type: '_type_identifier', text: 'test' } as any, children: [] as any });
     expect(node.type).toBe('struct_pattern');
   });
   it('render produces non-empty string', () => {
-    const node = ir.structPattern({ type: { type: '_type_identifier', text: 'test' } as any });
+    const node = ir.structPattern({ type: { type: '_type_identifier', text: 'test' } as any, children: [] as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -1414,22 +1414,22 @@ describe('comment', () => {
 
 describe('line_comment', () => {
   it('factory produces correct type', () => {
-    const node = ir.lineComment({ doc: { type: '_line_doc_content', text: 'test' } as any });
+    const node = ir.lineComment({ doc: { type: '_line_doc_content', text: 'test' } as any, children: [] as any });
     expect(node.type).toBe('line_comment');
   });
   it('render produces non-empty string', () => {
-    const node = ir.lineComment({ doc: { type: '_line_doc_content', text: 'test' } as any });
+    const node = ir.lineComment({ doc: { type: '_line_doc_content', text: 'test' } as any, children: [] as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
 describe('block_comment', () => {
   it('factory produces correct type', () => {
-    const node = ir.blockComment({});
+    const node = ir.blockComment({ children: [] as any });
     expect(node.type).toBe('block_comment');
   });
   it('render produces non-empty string', () => {
-    const node = ir.blockComment({});
+    const node = ir.blockComment({ children: [] as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -1452,14 +1452,14 @@ describe('shebang', () => {
 
 describe('_type_identifier', () => {
   it('factory produces correct type', () => {
-    const node = ir.hiddenTypeIdentifier();
+    const node = ir.typeIdentifier();
     expect(node.type).toBe('_type_identifier');
   });
 });
 
 describe('_field_identifier', () => {
   it('factory produces correct type', () => {
-    const node = ir.hiddenFieldIdentifier();
+    const node = ir.fieldIdentifier();
     expect(node.type).toBe('_field_identifier');
   });
 });

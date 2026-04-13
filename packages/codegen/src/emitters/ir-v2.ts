@@ -7,10 +7,12 @@
 
 import type { NodeMap, AssembledNode, AssembledPolymorph } from '../compiler/rule.ts'
 import { nameNode } from '../compiler/assemble.ts'
+import type { IrKeyMap } from './ir-keys.ts'
 
 export interface EmitIrFromNodeMapConfig {
     grammar: string
     nodeMap: NodeMap
+    irKeys: IrKeyMap
 }
 
 export function emitIrFromNodeMap(config: EmitIrFromNodeMapConfig): string {
@@ -24,7 +26,7 @@ export function emitIrFromNodeMap(config: EmitIrFromNodeMapConfig): string {
     // Collect factory imports
     const factoryImports = new Set<string>()
     const fromImports = new Set<string>()
-    const usedKeys = new Map<string, string>()
+    const irKeys = config.irKeys
 
     for (const [kind, node] of nodeMap.nodes) {
         if (!node.factoryName) continue // supertype, group, token — no factory
@@ -69,7 +71,8 @@ export function emitIrFromNodeMap(config: EmitIrFromNodeMapConfig): string {
         if (!node.factoryName) continue
         if (node.modelType !== 'branch' && node.modelType !== 'container' && node.modelType !== 'polymorph') continue
 
-        const irKey = resolveIrKey(kind, usedKeys)
+        const irKey = irKeys.get(kind)
+        if (!irKey) continue
         const rawName = toRawFactoryName(kind)
         const fromFn = `${node.factoryName}From`
 
@@ -92,7 +95,8 @@ export function emitIrFromNodeMap(config: EmitIrFromNodeMapConfig): string {
     for (const [kind, node] of nodeMap.nodes) {
         if (node.modelType !== 'keyword') continue
         if (!node.factoryName) continue
-        const irKey = resolveIrKey(kind, usedKeys)
+        const irKey = irKeys.get(kind)
+        if (!irKey) continue
         lines.push(`  ${irKey}: ${toRawFactoryName(kind)},`)
     }
 
@@ -103,40 +107,13 @@ export function emitIrFromNodeMap(config: EmitIrFromNodeMapConfig): string {
     for (const [kind, node] of nodeMap.nodes) {
         if (node.modelType !== 'leaf' && node.modelType !== 'enum') continue
         if (!node.factoryName) continue
-        const irKey = resolveIrKey(kind, usedKeys)
+        const irKey = irKeys.get(kind)
+        if (!irKey) continue
         lines.push(`  ${irKey}: ${toRawFactoryName(kind)},`)
     }
 
     lines.push('} as const;')
     return lines.join('\n')
-}
-
-function resolveIrKey(kind: string, usedKeys: Map<string, string>): string {
-    const { irKey } = nameNode(kind)
-    // Try short name first (strip common suffixes)
-    const short = toShortName(kind)
-    if (!usedKeys.has(short)) {
-        usedKeys.set(short, kind)
-        return short
-    }
-    // Collision — use full irKey
-    if (!usedKeys.has(irKey)) {
-        usedKeys.set(irKey, kind)
-        return irKey
-    }
-    return irKey
-}
-
-function toShortName(kind: string): string {
-    // Strip common suffixes: _item, _expression, _statement, _declaration
-    const stripped = kind
-        .replace(/_item$/, '')
-        .replace(/_expression$/, '')
-        .replace(/_statement$/, '')
-        .replace(/_declaration$/, '')
-        .replace(/_definition$/, '')
-    const parts = stripped.split('_')
-    return parts.map((w, i) => i === 0 ? w : w.charAt(0).toUpperCase() + w.slice(1)).join('')
 }
 
 function toRawFactoryName(kind: string): string {

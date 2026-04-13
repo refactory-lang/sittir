@@ -141,7 +141,12 @@ export function emitWrap(config: EmitWrapConfig): string {
 	lines.push('const _wrapTable: Record<string, (data: AnyNodeData, tree: TreeHandle) => unknown> = {');
 
 	for (const node of nodes) {
-		lines.push(`  '${node.kind}': (d, t) => wrap${toTypeName(node.kind)}(d, t),`);
+		// Prefer the adapter-provided typeName (which carries v2's Hidden
+		// prefix for leading-underscore kinds) over recomputing via
+		// toTypeName — avoids collisions like `_as_pattern` vs `as_pattern`
+		// both mapping to `AsPattern`.
+		const tn = (node as any).typeName ?? toTypeName(node.kind)
+		lines.push(`  '${node.kind}': (d, t) => wrap${tn}(d, t),`);
 	}
 	// Leaves just pass through
 	for (const kind of leafKinds) {
@@ -162,7 +167,7 @@ export function emitWrap(config: EmitWrapConfig): string {
 	// Per-kind wrap functions: promote overrides, return lazy getters
 	// ---------------------------------------------------------------------------
 	for (const node of nodes) {
-		const typeName = toTypeName(node.kind);
+		const typeName = (node as any).typeName ?? toTypeName(node.kind);
 		const fields = fieldsOf(node);
 
 		const tsFields = fields.filter(f => !f.override);

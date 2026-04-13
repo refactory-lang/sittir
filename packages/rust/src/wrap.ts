@@ -236,8 +236,8 @@ const _wrapTable: Record<string, (data: AnyNodeData, tree: TreeHandle) => unknow
   'comment': (d, t) => wrapComment(d, t),
   'line_comment': (d, t) => wrapLineComment(d, t),
   'block_comment': (d, t) => wrapBlockComment(d, t),
-  '_type_identifier': (d, t) => wrapTypeIdentifier(d, t),
-  '_field_identifier': (d, t) => wrapFieldIdentifier(d, t),
+  '_type_identifier': (d, t) => wrapHiddenTypeIdentifier(d, t),
+  '_field_identifier': (d, t) => wrapHiddenFieldIdentifier(d, t),
   'let_chain': (d, t) => wrapLetChain(d, t),
   'fragment_specifier': (d) => d,
   'unit_type': (d) => d,
@@ -1607,14 +1607,14 @@ export function wrapBlockComment(data: AnyNodeData, tree: TreeHandle): unknown {
   };
 }
 
-export function wrapTypeIdentifier(data: AnyNodeData, tree: TreeHandle): unknown {
+export function wrapHiddenTypeIdentifier(data: AnyNodeData, tree: TreeHandle): unknown {
   return {
     ...data,
     get child() { return drillIn(data.children?.[0], tree); },
   };
 }
 
-export function wrapFieldIdentifier(data: AnyNodeData, tree: TreeHandle): unknown {
+export function wrapHiddenFieldIdentifier(data: AnyNodeData, tree: TreeHandle): unknown {
   return {
     ...data,
     get child() { return drillIn(data.children?.[0], tree); },

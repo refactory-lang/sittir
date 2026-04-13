@@ -22,6 +22,7 @@ import { emitFromNodeMap } from '../emitters/from-v2.ts'
 import { emitClientUtilsFromNodeMap } from '../emitters/client-utils-v2.ts'
 import { emitIrFromNodeMap } from '../emitters/ir-v2.ts'
 import { emitTestsFromNodeMap } from '../emitters/test-v2.ts'
+import { buildIrKeyMap } from '../emitters/ir-keys.ts'
 import { emitTypeTestsFromNodeMap } from '../emitters/type-test-v2.ts'
 import { emitConfig } from '../emitters/config.ts'
 
@@ -89,6 +90,11 @@ export async function generateV2(cfg: GenerateConfigV2): Promise<GeneratedFilesV
         ? allModels.filter(n => cfg.nodes!.includes(n.kind))
         : allModels
 
+    // Build the ir-namespace key map once; every emitter that needs to
+    // resolve a kind to its ir.x accessor uses this same map so ir.ts
+    // and the generated tests stay in sync.
+    const irKeys = buildIrKeyMap(nodeMap)
+
     // Phase 5: Emit — all emitters consume NodeMap directly except wrap
     return {
         grammar: emitGrammar({ grammar: cfg.grammar }),
@@ -98,10 +104,10 @@ export async function generateV2(cfg: GenerateConfigV2): Promise<GeneratedFilesV
         wrap: emitWrap({ grammar: cfg.grammar, nodes: nodes as any }),
         utils: emitClientUtilsFromNodeMap({ nodeMap }),
         from: emitFromNodeMap({ grammar: cfg.grammar, nodeMap }),
-        irNamespace: emitIrFromNodeMap({ grammar: cfg.grammar, nodeMap }),
+        irNamespace: emitIrFromNodeMap({ grammar: cfg.grammar, nodeMap, irKeys }),
         consts: emitConstsFromNodeMap({ grammar: cfg.grammar, nodeMap }),
         index: emitIndexFromNodeMap({ grammar: cfg.grammar, nodeMap }),
-        tests: emitTestsFromNodeMap({ grammar: cfg.grammar, nodeMap }),
+        tests: emitTestsFromNodeMap({ grammar: cfg.grammar, nodeMap, irKeys }),
         typeTests: emitTypeTestsFromNodeMap({ nodeMap }),
         config: emitConfig({ grammar: cfg.grammar }),
         nodeModel: JSON.stringify({ name: nodeMap.name, nodeCount: nodeMap.nodes.size }, null, 2),

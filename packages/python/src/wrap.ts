@@ -97,12 +97,12 @@ function drillInAll(entries: unknown, tree: TreeHandle): unknown[] {
 /** Kind → wrap function. */
 const _wrapTable: Record<string, (data: AnyNodeData, tree: TreeHandle) => unknown> = {
   'module': (d, t) => wrapModule(d, t),
-  '_simple_statements': (d, t) => wrapSimpleStatements(d, t),
+  '_simple_statements': (d, t) => wrapHiddenSimpleStatements(d, t),
   'import_statement': (d, t) => wrapImportStatement(d, t),
   'relative_import': (d, t) => wrapRelativeImport(d, t),
   'future_import_statement': (d, t) => wrapFutureImportStatement(d, t),
   'import_from_statement': (d, t) => wrapImportFromStatement(d, t),
-  '_import_list': (d, t) => wrapImportList(d, t),
+  '_import_list': (d, t) => wrapHiddenImportList(d, t),
   'aliased_import': (d, t) => wrapAliasedImport(d, t),
   'print_statement': (d, t) => wrapPrintStatement(d, t),
   'chevron': (d, t) => wrapChevron(d, t),
@@ -144,17 +144,17 @@ const _wrapTable: Record<string, (data: AnyNodeData, tree: TreeHandle) => unknow
   'expression_list': (d, t) => wrapExpressionList(d, t),
   'dotted_name': (d, t) => wrapDottedName(d, t),
   'case_pattern': (d, t) => wrapCasePattern(d, t),
-  '_as_pattern': (d, t) => wrapAsPattern(d, t),
+  '_as_pattern': (d, t) => wrapHiddenAsPattern(d, t),
   'union_pattern': (d, t) => wrapUnionPattern(d, t),
-  '_list_pattern': (d, t) => wrapListPattern(d, t),
-  '_tuple_pattern': (d, t) => wrapTuplePattern(d, t),
+  '_list_pattern': (d, t) => wrapHiddenListPattern(d, t),
+  '_tuple_pattern': (d, t) => wrapHiddenTuplePattern(d, t),
   'dict_pattern': (d, t) => wrapDictPattern(d, t),
   'keyword_pattern': (d, t) => wrapKeywordPattern(d, t),
   'splat_pattern': (d, t) => wrapSplatPattern(d, t),
   'class_pattern': (d, t) => wrapClassPattern(d, t),
   'complex_pattern': (d, t) => wrapComplexPattern(d, t),
-  '_parameters': (d, t) => wrapParameters(d, t),
-  '_patterns': (d, t) => wrapPatterns(d, t),
+  '_parameters': (d, t) => wrapHiddenParameters(d, t),
+  '_patterns': (d, t) => wrapHiddenPatterns(d, t),
   'parameter': (d, t) => wrapParameter(d, t),
   'pattern': (d, t) => wrapPattern(d, t),
   'tuple_pattern': (d, t) => wrapTuplePattern(d, t),
@@ -198,9 +198,9 @@ const _wrapTable: Record<string, (data: AnyNodeData, tree: TreeHandle) => unknow
   'dictionary_comprehension': (d, t) => wrapDictionaryComprehension(d, t),
   'set_comprehension': (d, t) => wrapSetComprehension(d, t),
   'generator_expression': (d, t) => wrapGeneratorExpression(d, t),
-  '_comprehension_clauses': (d, t) => wrapComprehensionClauses(d, t),
+  '_comprehension_clauses': (d, t) => wrapHiddenComprehensionClauses(d, t),
   'parenthesized_expression': (d, t) => wrapParenthesizedExpression(d, t),
-  '_collection_elements': (d, t) => wrapCollectionElements(d, t),
+  '_collection_elements': (d, t) => wrapHiddenCollectionElements(d, t),
   'for_in_clause': (d, t) => wrapForInClause(d, t),
   'if_clause': (d, t) => wrapIfClause(d, t),
   'conditional_expression': (d, t) => wrapConditionalExpression(d, t),
@@ -283,7 +283,7 @@ export function wrapModule(data: AnyNodeData, tree: TreeHandle): unknown {
   };
 }
 
-export function wrapSimpleStatements(data: AnyNodeData, tree: TreeHandle): unknown {
+export function wrapHiddenSimpleStatements(data: AnyNodeData, tree: TreeHandle): unknown {
   return {
     ...data,
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
@@ -323,7 +323,7 @@ export function wrapImportFromStatement(data: AnyNodeData, tree: TreeHandle): un
   };
 }
 
-export function wrapImportList(data: AnyNodeData, tree: TreeHandle): unknown {
+export function wrapHiddenImportList(data: AnyNodeData, tree: TreeHandle): unknown {
   return {
     ...data,
     get name() { return drillInAll(data.fields?.['name'], tree); },
@@ -670,7 +670,7 @@ export function wrapCasePattern(data: AnyNodeData, tree: TreeHandle): unknown {
   };
 }
 
-export function wrapAsPattern(data: AnyNodeData, tree: TreeHandle): unknown {
+export function wrapHiddenAsPattern(data: AnyNodeData, tree: TreeHandle): unknown {
   return {
     ...data,
     get casePattern() { return drillIn(data.fields?.['casePattern'], tree); },
@@ -685,14 +685,14 @@ export function wrapUnionPattern(data: AnyNodeData, tree: TreeHandle): unknown {
   };
 }
 
-export function wrapListPattern(data: AnyNodeData, tree: TreeHandle): unknown {
+export function wrapHiddenListPattern(data: AnyNodeData, tree: TreeHandle): unknown {
   return {
     ...data,
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   };
 }
 
-export function wrapTuplePattern(data: AnyNodeData, tree: TreeHandle): unknown {
+export function wrapHiddenTuplePattern(data: AnyNodeData, tree: TreeHandle): unknown {
   return {
     ...data,
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
@@ -748,14 +748,14 @@ export function wrapComplexPattern(data: AnyNodeData, tree: TreeHandle): unknown
   };
 }
 
-export function wrapParameters(data: AnyNodeData, tree: TreeHandle): unknown {
+export function wrapHiddenParameters(data: AnyNodeData, tree: TreeHandle): unknown {
   return {
     ...data,
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   };
 }
 
-export function wrapPatterns(data: AnyNodeData, tree: TreeHandle): unknown {
+export function wrapHiddenPatterns(data: AnyNodeData, tree: TreeHandle): unknown {
   return {
     ...data,
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
@@ -1171,7 +1171,7 @@ export function wrapGeneratorExpression(data: AnyNodeData, tree: TreeHandle): un
   };
 }
 
-export function wrapComprehensionClauses(data: AnyNodeData, tree: TreeHandle): unknown {
+export function wrapHiddenComprehensionClauses(data: AnyNodeData, tree: TreeHandle): unknown {
   return {
     ...data,
     get forInClause() { return drillInAll(data.fields?.['forInClause'], tree); },
@@ -1187,7 +1187,7 @@ export function wrapParenthesizedExpression(data: AnyNodeData, tree: TreeHandle)
   };
 }
 
-export function wrapCollectionElements(data: AnyNodeData, tree: TreeHandle): unknown {
+export function wrapHiddenCollectionElements(data: AnyNodeData, tree: TreeHandle): unknown {
   return {
     ...data,
     get expression() { return drillInAll(data.fields?.['expression'], tree); },
