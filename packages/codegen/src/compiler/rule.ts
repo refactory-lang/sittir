@@ -240,11 +240,27 @@ export interface RawGrammar {
 
 export type ExternalRole = { role: 'indent' | 'dedent' | 'newline' }
 
+/**
+ * Suggested override entry — emitted by the suggested.ts emitter from
+ * fields whose `source` is `'inferred'` or `'inlined'`, and from rules
+ * whose `source` is `'promoted'`. The classification work happens in
+ * Link; this type is just the wire shape the emitter consumes.
+ */
 export interface SuggestedOverride {
+    /** The parent kind that needs the override applied. */
     readonly kind: string
+    /**
+     * Position within the parent rule the override would target. Empty
+     * array when the suggestion applies at the symbol level (e.g.
+     * global-optionality, naming-consistency diagnostics) rather than
+     * at a specific position.
+     */
     readonly path: (string | number)[]
+    /** The rule fragment the override would emit (typically a `field()` wrapper). */
     readonly rule: Rule
+    /** Human-readable derivation tag — `field-name-inference: 6/6 ...`. */
     readonly derivation: string
+    /** Confidence based on agreement ratio. */
     readonly confidence: 'high' | 'medium' | 'low'
 }
 
@@ -255,7 +271,6 @@ export interface LinkedGrammar {
     readonly externalRoles: Map<string, ExternalRole>
     readonly word: string | null
     readonly references: SymbolRef[]
-    readonly suggestedOverrides?: SuggestedOverride[]
 }
 
 export interface OptimizedGrammar {

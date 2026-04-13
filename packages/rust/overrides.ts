@@ -7,7 +7,7 @@
  * @generated from overrides.json — review before committing
  */
 
-// @ts-nocheck — grammar.js is untyped
+// @ts-ignore
 import base from '../../node_modules/.pnpm/tree-sitter-rust@0.24.0/node_modules/tree-sitter-rust/grammar.js'
 
 export default grammar(base, {
