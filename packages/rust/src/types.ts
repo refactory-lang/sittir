@@ -976,7 +976,10 @@ export interface UseBounds {
 
 export interface TypeArguments {
   readonly type: 'type_arguments';
-  readonly children: readonly (HiddenType | TypeBinding | Lifetime | HiddenLiteral | Block | TraitBounds)[];
+  readonly fields: {
+    readonly bounds?: readonly (TraitBounds)[];
+  };
+  readonly children: readonly (HiddenType | TypeBinding | Lifetime | HiddenLiteral | Block)[];
 }
 
 export interface TypeBinding {
@@ -1271,9 +1274,9 @@ export interface LastMatchArm {
 export interface MatchPattern {
   readonly type: 'match_pattern';
   readonly fields: {
+    readonly pattern: HiddenPattern;
     readonly condition?: HiddenCondition;
   };
-  readonly children: HiddenPattern;
 }
 
 export interface WhileExpression {
@@ -1328,7 +1331,10 @@ export interface ClosureExpressionBody2 {
 export type ClosureExpression = ClosureExpressionBody | ClosureExpressionBody2;
 export interface ClosureParameters {
   readonly type: 'closure_parameters';
-  readonly children: readonly (HiddenPattern | Parameter)[];
+  readonly fields: {
+    readonly pattern?: readonly (HiddenPattern)[];
+  };
+  readonly children: readonly (Parameter)[];
 }
 
 export interface Label {
@@ -1427,20 +1433,25 @@ export interface GenericPattern {
 
 export interface TuplePattern {
   readonly type: 'tuple_pattern';
-  readonly children: readonly (HiddenPattern | ClosureExpression)[];
+  readonly fields: {
+    readonly pattern?: readonly (HiddenPattern)[];
+  };
+  readonly children: readonly (ClosureExpression)[];
 }
 
 export interface SlicePattern {
   readonly type: 'slice_pattern';
-  readonly children: readonly (HiddenPattern)[];
+  readonly fields: {
+    readonly pattern?: readonly (HiddenPattern)[];
+  };
 }
 
 export interface TupleStructPattern {
   readonly type: 'tuple_struct_pattern';
   readonly fields: {
     readonly type: Identifier | ScopedIdentifier | GenericTypeWithTurbofish;
+    readonly pattern?: readonly (HiddenPattern)[];
   };
-  readonly children: readonly (HiddenPattern)[];
 }
 
 export interface StructPattern {
@@ -1493,7 +1504,9 @@ export interface RangePatternRight {
 export type RangePattern = RangePatternLeft | RangePatternRight;
 export interface RefPattern {
   readonly type: 'ref_pattern';
-  readonly children: HiddenPattern;
+  readonly fields: {
+    readonly pattern: HiddenPattern;
+  };
 }
 
 export interface CapturedPattern {
@@ -1514,7 +1527,9 @@ export interface ReferencePattern {
 
 export interface OrPattern {
   readonly type: 'or_pattern';
-  readonly children: HiddenPattern;
+  readonly fields: {
+    readonly pattern: HiddenPattern;
+  };
 }
 
 export interface NegativeLiteral {

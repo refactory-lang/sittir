@@ -139,8 +139,84 @@ describe('import_attribute', () => {
 });
 
 describe('statement', () => {
-  it('factory produces correct type', () => {
-    const node = ir.statement();
+  it('export_statement form produces correct type', () => {
+    const node = ir.statement.export_statement({});
+    expect(node.type).toBe('statement');
+  });
+  it('import_statement form produces correct type', () => {
+    const node = ir.statement.import_statement({});
+    expect(node.type).toBe('statement');
+  });
+  it('debugger_statement form produces correct type', () => {
+    const node = ir.statement.debugger_statement({});
+    expect(node.type).toBe('statement');
+  });
+  it('expression_statement form produces correct type', () => {
+    const node = ir.statement.expression_statement({});
+    expect(node.type).toBe('statement');
+  });
+  it('declaration form produces correct type', () => {
+    const node = ir.statement.declaration({});
+    expect(node.type).toBe('statement');
+  });
+  it('body form produces correct type', () => {
+    const node = ir.statement.body({ body: { type: 'statement_block', text: 'test' } as any });
+    expect(node.type).toBe('statement');
+  });
+  it('if_statement form produces correct type', () => {
+    const node = ir.statement.if_statement({});
+    expect(node.type).toBe('statement');
+  });
+  it('switch_statement form produces correct type', () => {
+    const node = ir.statement.switch_statement({});
+    expect(node.type).toBe('statement');
+  });
+  it('for_statement form produces correct type', () => {
+    const node = ir.statement.for_statement({});
+    expect(node.type).toBe('statement');
+  });
+  it('for_in_statement form produces correct type', () => {
+    const node = ir.statement.for_in_statement({});
+    expect(node.type).toBe('statement');
+  });
+  it('while_statement form produces correct type', () => {
+    const node = ir.statement.while_statement({});
+    expect(node.type).toBe('statement');
+  });
+  it('do_statement form produces correct type', () => {
+    const node = ir.statement.do_statement({});
+    expect(node.type).toBe('statement');
+  });
+  it('try_statement form produces correct type', () => {
+    const node = ir.statement.try_statement({});
+    expect(node.type).toBe('statement');
+  });
+  it('with_statement form produces correct type', () => {
+    const node = ir.statement.with_statement({});
+    expect(node.type).toBe('statement');
+  });
+  it('break_statement form produces correct type', () => {
+    const node = ir.statement.break_statement({});
+    expect(node.type).toBe('statement');
+  });
+  it('continue_statement form produces correct type', () => {
+    const node = ir.statement.continue_statement({});
+    expect(node.type).toBe('statement');
+  });
+  it('return_statement form produces correct type', () => {
+    const node = ir.statement.return_statement({});
+    expect(node.type).toBe('statement');
+  });
+  it('throw_statement form produces correct type', () => {
+    const node = ir.statement.throw_statement({});
+    expect(node.type).toBe('statement');
+  });
+  it('empty_statement form produces correct type', () => {
+    const node = ir.statement.empty_statement({});
+    expect(node.type).toBe('statement');
+  });
+  it('labeled_statement form produces correct type', () => {
+    const node = ir.statement.labeled_statement({});
     expect(node.type).toBe('statement');
   });
 });
@@ -1562,8 +1638,12 @@ describe('constructor_type', () => {
 
 describe('primary_type', () => {
   it('factory produces correct type', () => {
-    const node = ir.primaryType();
+    const node = ir.primaryType({ name: { type: '_type_identifier', text: 'test' } as any, children: [{ type: 'parenthesized_type', text: 'test' } as any] as any });
     expect(node.type).toBe('primary_type');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.primaryType({ name: { type: '_type_identifier', text: 'test' } as any, children: [{ type: 'parenthesized_type', text: 'test' } as any] as any });
+    expect(node.render().length).toBeGreaterThan(0);
   });
 });
 

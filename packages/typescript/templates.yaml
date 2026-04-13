@@ -49,8 +49,68 @@ rules:
       as: $NAME as $ALIAS
   import_attribute:
     template: $OBJECT $$$CHILDREN
-  statement:
+  statement_export_statement:
     template: $$$CHILDREN
+  statement_import_statement:
+    template: $$$CHILDREN
+  statement_debugger_statement:
+    template: $$$CHILDREN
+  statement_expression_statement:
+    template: $$$CHILDREN
+  statement_declaration:
+    template: $$$CHILDREN
+  statement_body:
+    template: $BODY
+  statement_if_statement:
+    template: $$$CHILDREN
+  statement_switch_statement:
+    template: $$$CHILDREN
+  statement_for_statement:
+    template: $$$CHILDREN
+  statement_for_in_statement:
+    template: $$$CHILDREN
+  statement_while_statement:
+    template: $$$CHILDREN
+  statement_do_statement:
+    template: $$$CHILDREN
+  statement_try_statement:
+    template: $$$CHILDREN
+  statement_with_statement:
+    template: $$$CHILDREN
+  statement_break_statement:
+    template: $$$CHILDREN
+  statement_continue_statement:
+    template: $$$CHILDREN
+  statement_return_statement:
+    template: $$$CHILDREN
+  statement_throw_statement:
+    template: $$$CHILDREN
+  statement_empty_statement:
+    template: $$$CHILDREN
+  statement_labeled_statement:
+    template: $$$CHILDREN
+  statement:
+    variants:
+      export_statement: $$$CHILDREN
+      import_statement: $$$CHILDREN
+      debugger_statement: $$$CHILDREN
+      expression_statement: $$$CHILDREN
+      declaration: $$$CHILDREN
+      body: $BODY
+      if_statement: $$$CHILDREN
+      switch_statement: $$$CHILDREN
+      for_statement: $$$CHILDREN
+      for_in_statement: $$$CHILDREN
+      while_statement: $$$CHILDREN
+      do_statement: $$$CHILDREN
+      try_statement: $$$CHILDREN
+      with_statement: $$$CHILDREN
+      break_statement: $$$CHILDREN
+      continue_statement: $$$CHILDREN
+      return_statement: $$$CHILDREN
+      throw_statement: $$$CHILDREN
+      empty_statement: $$$CHILDREN
+      labeled_statement: $$$CHILDREN
   expression_statement:
     template: $$$CHILDREN
   variable_declaration:

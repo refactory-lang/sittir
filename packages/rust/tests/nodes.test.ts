@@ -679,8 +679,12 @@ describe('use_bounds', () => {
 
 describe('type_arguments', () => {
   it('factory produces correct type', () => {
-    const node = ir.typeArguments();
+    const node = ir.typeArguments({ children: [{ type: '_type', text: 'test' } as any] as any });
     expect(node.type).toBe('type_arguments');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.typeArguments({ children: [{ type: '_type', text: 'test' } as any] as any });
+    expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
@@ -1090,11 +1094,11 @@ describe('last_match_arm', () => {
 
 describe('match_pattern', () => {
   it('factory produces correct type', () => {
-    const node = ir.matchPattern({ children: [{ type: '_pattern', text: 'test' } as any] as any });
+    const node = ir.matchPattern({ pattern: { type: '_pattern', text: 'test' } as any });
     expect(node.type).toBe('match_pattern');
   });
   it('render produces non-empty string', () => {
-    const node = ir.matchPattern({ children: [{ type: '_pattern', text: 'test' } as any] as any });
+    const node = ir.matchPattern({ pattern: { type: '_pattern', text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -1156,8 +1160,12 @@ describe('closure_expression', () => {
 
 describe('closure_parameters', () => {
   it('factory produces correct type', () => {
-    const node = ir.closureParameters();
+    const node = ir.closureParameters({ children: [{ type: 'parameter', text: 'test' } as any] as any });
     expect(node.type).toBe('closure_parameters');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.closureParameters({ children: [{ type: 'parameter', text: 'test' } as any] as any });
+    expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
@@ -1298,25 +1306,33 @@ describe('generic_pattern', () => {
 
 describe('tuple_pattern', () => {
   it('factory produces correct type', () => {
-    const node = ir.tuplePattern();
+    const node = ir.tuplePattern({ children: [{ type: 'closure_expression', text: 'test' } as any] as any });
     expect(node.type).toBe('tuple_pattern');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.tuplePattern({ children: [{ type: 'closure_expression', text: 'test' } as any] as any });
+    expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
 describe('slice_pattern', () => {
   it('factory produces correct type', () => {
-    const node = ir.slicePattern();
+    const node = ir.slicePattern({});
     expect(node.type).toBe('slice_pattern');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.slicePattern({});
+    expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
 describe('tuple_struct_pattern', () => {
   it('factory produces correct type', () => {
-    const node = ir.tupleStructPattern({ type: { type: 'identifier', text: 'test' } as any, children: [{ type: '_pattern', text: 'test' } as any] as any });
+    const node = ir.tupleStructPattern({ type: { type: 'identifier', text: 'test' } as any });
     expect(node.type).toBe('tuple_struct_pattern');
   });
   it('render produces non-empty string', () => {
-    const node = ir.tupleStructPattern({ type: { type: 'identifier', text: 'test' } as any, children: [{ type: '_pattern', text: 'test' } as any] as any });
+    const node = ir.tupleStructPattern({ type: { type: 'identifier', text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -1367,8 +1383,12 @@ describe('range_pattern', () => {
 
 describe('ref_pattern', () => {
   it('factory produces correct type', () => {
-    const node = ir.refPattern();
+    const node = ir.refPattern({ pattern: { type: '_pattern', text: 'test' } as any });
     expect(node.type).toBe('ref_pattern');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.refPattern({ pattern: { type: '_pattern', text: 'test' } as any });
+    expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
@@ -1396,8 +1416,12 @@ describe('reference_pattern', () => {
 
 describe('or_pattern', () => {
   it('factory produces correct type', () => {
-    const node = ir.orPattern();
+    const node = ir.orPattern({ pattern: { type: '_pattern', text: 'test' } as any });
     expect(node.type).toBe('or_pattern');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.orPattern({ pattern: { type: '_pattern', text: 'test' } as any });
+    expect(node.render().length).toBeGreaterThan(0);
   });
 });
 

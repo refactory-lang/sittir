@@ -740,12 +740,12 @@ export function useBoundsFrom(...input: any[]) {
   return useBounds(...(input as any[]));
 }
 
-export function typeArgumentsFrom(...input: any[]) {
-  if (input.length === 1 && isNodeData(input[0])) {
-    const nd = input[0] as any;
-    return typeArguments(...(nd.children ?? []));
-  }
-  return typeArguments(...(input as any[]));
+export function typeArgumentsFrom(input?: TypeArgumentsFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  return typeArguments({
+    bounds: _resolveMany(f.bounds, [], ["trait_bounds"]) as any,
+    children: ((input as any)?.children ?? []) as any,
+  } as any);
 }
 
 export function typeBindingFrom(input: TypeBindingFromInput) {
@@ -1109,9 +1109,10 @@ export function lastMatchArmFrom(input: LastMatchArmFromInput) {
   } as any);
 }
 
-export function matchPatternFrom(input?: MatchPatternFromInput) {
+export function matchPatternFrom(input: MatchPatternFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return matchPattern({
+    pattern: _resolveOne(f.pattern, [], ["_pattern"]) as any,
     condition: _resolveOne(f.condition, [], ["_condition"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
@@ -1176,12 +1177,12 @@ export function closureExpressionBody2From(input?: any) {
   });
 }
 
-export function closureParametersFrom(...input: any[]) {
-  if (input.length === 1 && isNodeData(input[0])) {
-    const nd = input[0] as any;
-    return closureParameters(...(nd.children ?? []));
-  }
-  return closureParameters(...(input as any[]));
+export function closureParametersFrom(input?: ClosureParametersFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  return closureParameters({
+    pattern: _resolveMany(f.pattern, [], ["_pattern"]) as any,
+    children: ((input as any)?.children ?? []) as any,
+  } as any);
 }
 
 export function labelFrom(input: LabelFromInput) {
@@ -1291,26 +1292,27 @@ export function genericPatternFrom(input: GenericPatternFromInput) {
   } as any);
 }
 
-export function tuplePatternFrom(...input: any[]) {
-  if (input.length === 1 && isNodeData(input[0])) {
-    const nd = input[0] as any;
-    return tuplePattern(...(nd.children ?? []));
-  }
-  return tuplePattern(...(input as any[]));
+export function tuplePatternFrom(input?: TuplePatternFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  return tuplePattern({
+    pattern: _resolveMany(f.pattern, [], ["_pattern"]) as any,
+    children: ((input as any)?.children ?? []) as any,
+  } as any);
 }
 
-export function slicePatternFrom(...input: any[]) {
-  if (input.length === 1 && isNodeData(input[0])) {
-    const nd = input[0] as any;
-    return slicePattern(...(nd.children ?? []));
-  }
-  return slicePattern(...(input as any[]));
+export function slicePatternFrom(input?: SlicePatternFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  return slicePattern({
+    pattern: _resolveMany(f.pattern, [], ["_pattern"]) as any,
+    children: ((input as any)?.children ?? []) as any,
+  } as any);
 }
 
 export function tupleStructPatternFrom(input: TupleStructPatternFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return tupleStructPattern({
     type: _resolveOne(f.type, ["identifier"], ["scoped_identifier","generic_type_with_turbofish"]) as any,
+    pattern: _resolveMany(f.pattern, [], ["_pattern"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -1374,12 +1376,12 @@ export function rangePatternRightFrom(input?: any) {
   });
 }
 
-export function refPatternFrom(...input: any[]) {
-  if (input.length === 1 && isNodeData(input[0])) {
-    const nd = input[0] as any;
-    return refPattern(...(nd.children ?? []));
-  }
-  return refPattern(...(input as any[]));
+export function refPatternFrom(input: RefPatternFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  return refPattern({
+    pattern: _resolveOne(f.pattern, [], ["_pattern"]) as any,
+    children: ((input as any)?.children ?? []) as any,
+  } as any);
 }
 
 export function capturedPatternFrom(input: CapturedPatternFromInput) {
@@ -1400,12 +1402,12 @@ export function referencePatternFrom(input: ReferencePatternFromInput) {
   } as any);
 }
 
-export function orPatternFrom(...input: any[]) {
-  if (input.length === 1 && isNodeData(input[0])) {
-    const nd = input[0] as any;
-    return orPattern(...(nd.children ?? []));
-  }
-  return orPattern(...(input as any[]));
+export function orPatternFrom(input: OrPatternFromInput) {
+  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  return orPattern({
+    pattern: _resolveOne(f.pattern, [], ["_pattern"]) as any,
+    children: ((input as any)?.children ?? []) as any,
+  } as any);
 }
 
 export function negativeLiteralFrom(input: NegativeLiteralFromInput) {

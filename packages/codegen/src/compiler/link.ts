@@ -63,6 +63,18 @@ export function link(raw: RawGrammar): LinkedGrammar {
         }
     }
 
+    // Field name inference — rewrite bare symbol refs into field(X, $.Y)
+    // wrappers tagged with source: 'inferred' when cross-parent usage
+    // shows high agreement. The emitter (suggested.ts) picks up every
+    // field with source !== 'grammar' && source !== 'override' and
+    // surfaces it for the curator to either accept into overrides.ts
+    // or reject. Runs BEFORE tagVariants so the new field() wrappers
+    // are visible to nested-symbol walks during variant tagging.
+    const inferredFieldNames = inferFieldNames(references)
+    for (const [name, rule] of Object.entries(rules)) {
+        rules[name] = applyInferredFields(rule, name, inferredFieldNames)
+    }
+
     // Tag visible choices with `variant` wrappers — names every branch
     // and dedupes structurally identical ones. Hidden choices already
     // resolved into supertype/enum/inline by `classifyHiddenRule`.
@@ -785,4 +797,137 @@ function detectClause(content: Rule, currentName: string): Rule {
         }
     }
     return { type: 'optional', content }
+}
+
+// ---------------------------------------------------------------------------
+// Field name inference
+// ---------------------------------------------------------------------------
+//
+// Walks the reference graph to find "this symbol is consistently named
+// 'X' in N parents, but parent Y uses it bare" cases. When found, rewrite
+// parent Y's rule tree to wrap the bare reference in `field('X', $.Y)`
+// with source: 'inferred'. Downstream emitters treat inferred fields as
+// real fields (they appear in interfaces, factories, etc.), and the
+// suggested.ts emitter surfaces them as override candidates for the
+// grammar curator to accept / reject.
+//
+// Inference rules:
+//   - Symbol has ≥5 named references across parents
+//   - ≥80% of the named references agree on the same field name
+//   - Confidence = 'high' (≥95%), 'medium' (≥85%), 'low' (≥80%)
+//   - Only the highest-confidence inference is emitted per target symbol
+// ---------------------------------------------------------------------------
+
+interface InferredName {
+    readonly name: string
+    readonly confidence: 'high' | 'medium' | 'low'
+}
+
+function inferFieldNames(references: SymbolRef[]): Map<string, InferredName> {
+    // Group references by `to` (the symbol being referenced).
+    const refsByTo = new Map<string, SymbolRef[]>()
+    for (const ref of references) {
+        const list = refsByTo.get(ref.to) ?? []
+        list.push(ref)
+        refsByTo.set(ref.to, list)
+    }
+
+    const inferred = new Map<string, InferredName>()
+    for (const [to, refs] of refsByTo) {
+        const namedRefs = refs.filter(r => r.fieldName !== undefined)
+        if (namedRefs.length < 5) continue
+
+        const nameCounts = new Map<string, number>()
+        for (const r of namedRefs) {
+            nameCounts.set(r.fieldName!, (nameCounts.get(r.fieldName!) ?? 0) + 1)
+        }
+        let bestName = ''
+        let bestCount = 0
+        for (const [name, count] of nameCounts) {
+            if (count > bestCount) {
+                bestName = name
+                bestCount = count
+            }
+        }
+        const agreement = bestCount / namedRefs.length
+        if (agreement < 0.8) continue
+        const confidence: InferredName['confidence'] =
+            agreement >= 0.95 ? 'high' :
+            agreement >= 0.85 ? 'medium' : 'low'
+        inferred.set(to, { name: bestName, confidence })
+    }
+    return inferred
+}
+
+/**
+ * Walk a rule tree and wrap bare symbol references in `field()` wrappers
+ * when the symbol has an inferred name. Stops descending into existing
+ * `field()` / `alias` boundaries — those already own their field name.
+ *
+ * The `_insideField` flag tracks whether the current recursion context
+ * is under an existing field wrapper; bare symbols inside one inherit
+ * that wrapper's name and are NOT re-wrapped.
+ */
+function applyInferredFields(
+    rule: Rule,
+    _ruleName: string,
+    inferred: Map<string, InferredName>,
+    _insideField = false,
+): Rule {
+    switch (rule.type) {
+        case 'symbol': {
+            // Already inside a field wrapper? Leave alone.
+            if (_insideField) return rule
+            const inf = inferred.get(rule.name)
+            if (!inf) return rule
+            // Wrap: field('name', $.symbol) with source: 'inferred'
+            return {
+                type: 'field',
+                name: inf.name,
+                content: rule,
+                source: 'inferred',
+            } satisfies FieldRule
+        }
+
+        case 'field':
+            // Stop descending — inner wrappers own their own names.
+            return rule
+
+        case 'alias':
+            // Alias creates a new kind; its inner ref doesn't inherit.
+            return rule
+
+        case 'seq':
+            return {
+                type: 'seq',
+                members: rule.members.map(m => applyInferredFields(m, _ruleName, inferred, _insideField)),
+            }
+
+        case 'choice':
+            return {
+                type: 'choice',
+                members: rule.members.map(m => applyInferredFields(m, _ruleName, inferred, _insideField)),
+            }
+
+        case 'optional':
+            return { type: 'optional', content: applyInferredFields(rule.content, _ruleName, inferred, _insideField) }
+
+        case 'repeat':
+            return { ...rule, content: applyInferredFields(rule.content, _ruleName, inferred, _insideField) }
+
+        case 'repeat1':
+            return { ...rule, content: applyInferredFields(rule.content, _ruleName, inferred, _insideField) }
+
+        case 'variant':
+            return { ...rule, content: applyInferredFields(rule.content, _ruleName, inferred, _insideField) }
+
+        case 'clause':
+            return { ...rule, content: applyInferredFields(rule.content, _ruleName, inferred, _insideField) }
+
+        case 'group':
+            return { ...rule, content: applyInferredFields(rule.content, _ruleName, inferred, _insideField) }
+
+        default:
+            return rule
+    }
 }

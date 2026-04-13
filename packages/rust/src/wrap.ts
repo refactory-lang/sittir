@@ -642,6 +642,7 @@ export function wrapUseBounds(data: AnyNodeData, tree: TreeHandle) {
 export function wrapTypeArguments(data: AnyNodeData, tree: TreeHandle) {
   return {
     ...data,
+    get bounds() { return drillInAll(data.fields?.['bounds'], tree); },
     get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
@@ -987,8 +988,9 @@ export function wrapLastMatchArm(data: AnyNodeData, tree: TreeHandle) {
 export function wrapMatchPattern(data: AnyNodeData, tree: TreeHandle) {
   return {
     ...data,
+    get pattern() { return drillIn(data.fields?.['pattern'], tree); },
     get condition() { return drillIn(data.fields?.['condition'], tree); },
-    get child() { return drillIn(data.children?.[0], tree); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -1042,6 +1044,7 @@ export function wrapClosureExpression(data: AnyNodeData, tree: TreeHandle) {
 export function wrapClosureParameters(data: AnyNodeData, tree: TreeHandle) {
   return {
     ...data,
+    get pattern() { return drillInAll(data.fields?.['pattern'], tree); },
     get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
@@ -1154,6 +1157,7 @@ export function wrapGenericPattern(data: AnyNodeData, tree: TreeHandle) {
 export function wrapTuplePattern(data: AnyNodeData, tree: TreeHandle) {
   return {
     ...data,
+    get pattern() { return drillInAll(data.fields?.['pattern'], tree); },
     get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
@@ -1161,6 +1165,7 @@ export function wrapTuplePattern(data: AnyNodeData, tree: TreeHandle) {
 export function wrapSlicePattern(data: AnyNodeData, tree: TreeHandle) {
   return {
     ...data,
+    get pattern() { return drillInAll(data.fields?.['pattern'], tree); },
     get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
@@ -1169,6 +1174,7 @@ export function wrapTupleStructPattern(data: AnyNodeData, tree: TreeHandle) {
   return {
     ...data,
     get typeField() { return drillIn(data.fields?.['type'], tree); },
+    get pattern() { return drillInAll(data.fields?.['pattern'], tree); },
     get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
@@ -1211,7 +1217,8 @@ export function wrapRangePattern(data: AnyNodeData, tree: TreeHandle) {
 export function wrapRefPattern(data: AnyNodeData, tree: TreeHandle) {
   return {
     ...data,
-    get child() { return drillIn(data.children?.[0], tree); },
+    get pattern() { return drillIn(data.fields?.['pattern'], tree); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -1236,7 +1243,8 @@ export function wrapReferencePattern(data: AnyNodeData, tree: TreeHandle) {
 export function wrapOrPattern(data: AnyNodeData, tree: TreeHandle) {
   return {
     ...data,
-    get child() { return drillIn(data.children?.[0], tree); },
+    get pattern() { return drillIn(data.fields?.['pattern'], tree); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 

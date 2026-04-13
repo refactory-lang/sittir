@@ -509,6 +509,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'body', required: true, multiple: false },
   ],
   'closure_parameters': [
+    { name: 'pattern', required: false, multiple: true },
   ],
   'comment': [
   ],
@@ -725,6 +726,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'body', required: true, multiple: false },
   ],
   'match_pattern': [
+    { name: 'pattern', required: true, multiple: false },
     { name: 'condition', required: false, multiple: false },
   ],
   'mod_item': [
@@ -740,6 +742,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'value', required: true, multiple: false },
   ],
   'or_pattern': [
+    { name: 'pattern', required: true, multiple: false },
   ],
   'ordered_field_declaration_list': [
     { name: 'attributes', required: true, multiple: false },
@@ -774,6 +777,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'rawStringLiteralEnd', required: true, multiple: false },
   ],
   'ref_pattern': [
+    { name: 'pattern', required: true, multiple: false },
   ],
   'reference_expression': [
     { name: 'mutableSpecifier', required: true, multiple: false },
@@ -818,6 +822,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'identifier', required: true, multiple: false },
   ],
   'slice_pattern': [
+    { name: 'pattern', required: false, multiple: true },
   ],
   'source_file': [
     { name: 'shebang', required: true, multiple: false },
@@ -880,13 +885,16 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'trailing', required: true, multiple: false },
   ],
   'tuple_pattern': [
+    { name: 'pattern', required: false, multiple: true },
   ],
   'tuple_struct_pattern': [
     { name: 'type', required: true, multiple: false },
+    { name: 'pattern', required: false, multiple: true },
   ],
   'tuple_type': [
   ],
   'type_arguments': [
+    { name: 'bounds', required: false, multiple: true },
   ],
   'type_binding': [
     { name: 'name', required: true, multiple: false },

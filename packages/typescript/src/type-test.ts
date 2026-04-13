@@ -284,7 +284,6 @@ export type _Config_ImportClause = _TypeAssert<_TypeExtends<ConfigOf<ImportClaus
 export type _Config_NamespaceImport = _TypeAssert<_TypeExtends<ConfigOf<NamespaceImport>, NamespaceImportConfig>>;
 export type _Config_NamedImports = _TypeAssert<_TypeExtends<ConfigOf<NamedImports>, NamedImportsConfig>>;
 export type _Config_ImportAttribute = _TypeAssert<_TypeExtends<ConfigOf<ImportAttribute>, ImportAttributeConfig>>;
-export type _Config_Statement = _TypeAssert<_TypeExtends<ConfigOf<Statement>, StatementConfig>>;
 export type _Config_ExpressionStatement = _TypeAssert<_TypeExtends<ConfigOf<ExpressionStatement>, ExpressionStatementConfig>>;
 export type _Config_VariableDeclaration = _TypeAssert<_TypeExtends<ConfigOf<VariableDeclaration>, VariableDeclarationConfig>>;
 export type _Config_LexicalDeclaration = _TypeAssert<_TypeExtends<ConfigOf<LexicalDeclaration>, LexicalDeclarationConfig>>;

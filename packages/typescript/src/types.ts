@@ -527,11 +527,90 @@ export interface ImportAttribute {
   readonly children: Object;
 }
 
-export interface Statement {
+export interface StatementExportStatement {
   readonly type: 'statement';
-  readonly children: ExportStatement | ImportStatement | DebuggerStatement | ExpressionStatement | Declaration | StatementBlock | IfStatement | SwitchStatement | ForStatement | ForInStatement | WhileStatement | DoStatement | TryStatement | WithStatement | BreakStatement | ContinueStatement | ReturnStatement | ThrowStatement | EmptyStatement | LabeledStatement;
 }
 
+export interface StatementImportStatement {
+  readonly type: 'statement';
+}
+
+export interface StatementDebuggerStatement {
+  readonly type: 'statement';
+}
+
+export interface StatementExpressionStatement {
+  readonly type: 'statement';
+}
+
+export interface StatementDeclaration {
+  readonly type: 'statement';
+}
+
+export interface StatementBody {
+  readonly type: 'statement';
+  readonly fields: {
+    readonly body: StatementBlock;
+  };
+}
+
+export interface StatementIfStatement {
+  readonly type: 'statement';
+}
+
+export interface StatementSwitchStatement {
+  readonly type: 'statement';
+}
+
+export interface StatementForStatement {
+  readonly type: 'statement';
+}
+
+export interface StatementForInStatement {
+  readonly type: 'statement';
+}
+
+export interface StatementWhileStatement {
+  readonly type: 'statement';
+}
+
+export interface StatementDoStatement {
+  readonly type: 'statement';
+}
+
+export interface StatementTryStatement {
+  readonly type: 'statement';
+}
+
+export interface StatementWithStatement {
+  readonly type: 'statement';
+}
+
+export interface StatementBreakStatement {
+  readonly type: 'statement';
+}
+
+export interface StatementContinueStatement {
+  readonly type: 'statement';
+}
+
+export interface StatementReturnStatement {
+  readonly type: 'statement';
+}
+
+export interface StatementThrowStatement {
+  readonly type: 'statement';
+}
+
+export interface StatementEmptyStatement {
+  readonly type: 'statement';
+}
+
+export interface StatementLabeledStatement {
+  readonly type: 'statement';
+}
+
+export type Statement = StatementExportStatement | StatementImportStatement | StatementDebuggerStatement | StatementExpressionStatement | StatementDeclaration | StatementBody | StatementIfStatement | StatementSwitchStatement | StatementForStatement | StatementForInStatement | StatementWhileStatement | StatementDoStatement | StatementTryStatement | StatementWithStatement | StatementBreakStatement | StatementContinueStatement | StatementReturnStatement | StatementThrowStatement | StatementEmptyStatement | StatementLabeledStatement;
 export interface ExpressionStatement {
   readonly type: 'expression_statement';
   readonly children: HiddenExpressions | HiddenSemicolon;
@@ -1489,7 +1568,10 @@ export interface ConstructorType {
 
 export interface PrimaryType {
   readonly type: 'primary_type';
-  readonly children: ParenthesizedType | PredefinedType | HiddenTypeIdentifier | NestedTypeIdentifier | GenericType | ObjectType | ArrayType | TupleType | FlowMaybeType | TypeQuery | IndexTypeQuery | This | ExistentialType | LiteralType | LookupType | ConditionalType | TemplateLiteralType | IntersectionType | UnionType;
+  readonly fields: {
+    readonly name: HiddenTypeIdentifier;
+  };
+  readonly children: ParenthesizedType | PredefinedType | NestedTypeIdentifier | GenericType | ObjectType | ArrayType | TupleType | FlowMaybeType | TypeQuery | IndexTypeQuery | This | ExistentialType | LiteralType | LookupType | ConditionalType | TemplateLiteralType | IntersectionType | UnionType;
 }
 
 export interface TemplateType {
@@ -2192,7 +2274,27 @@ export type ImportSpecifierNameConfig = ConfigOf<ImportSpecifierName>;
 export type ImportSpecifierAsConfig = ConfigOf<ImportSpecifierAs>;
 export type ImportSpecifierConfig = ImportSpecifierNameConfig | ImportSpecifierAsConfig;
 export type ImportAttributeConfig = ConfigOf<ImportAttribute>;
-export type StatementConfig = ConfigOf<Statement>;
+export type StatementExportStatementConfig = ConfigOf<StatementExportStatement>;
+export type StatementImportStatementConfig = ConfigOf<StatementImportStatement>;
+export type StatementDebuggerStatementConfig = ConfigOf<StatementDebuggerStatement>;
+export type StatementExpressionStatementConfig = ConfigOf<StatementExpressionStatement>;
+export type StatementDeclarationConfig = ConfigOf<StatementDeclaration>;
+export type StatementBodyConfig = ConfigOf<StatementBody>;
+export type StatementIfStatementConfig = ConfigOf<StatementIfStatement>;
+export type StatementSwitchStatementConfig = ConfigOf<StatementSwitchStatement>;
+export type StatementForStatementConfig = ConfigOf<StatementForStatement>;
+export type StatementForInStatementConfig = ConfigOf<StatementForInStatement>;
+export type StatementWhileStatementConfig = ConfigOf<StatementWhileStatement>;
+export type StatementDoStatementConfig = ConfigOf<StatementDoStatement>;
+export type StatementTryStatementConfig = ConfigOf<StatementTryStatement>;
+export type StatementWithStatementConfig = ConfigOf<StatementWithStatement>;
+export type StatementBreakStatementConfig = ConfigOf<StatementBreakStatement>;
+export type StatementContinueStatementConfig = ConfigOf<StatementContinueStatement>;
+export type StatementReturnStatementConfig = ConfigOf<StatementReturnStatement>;
+export type StatementThrowStatementConfig = ConfigOf<StatementThrowStatement>;
+export type StatementEmptyStatementConfig = ConfigOf<StatementEmptyStatement>;
+export type StatementLabeledStatementConfig = ConfigOf<StatementLabeledStatement>;
+export type StatementConfig = StatementExportStatementConfig | StatementImportStatementConfig | StatementDebuggerStatementConfig | StatementExpressionStatementConfig | StatementDeclarationConfig | StatementBodyConfig | StatementIfStatementConfig | StatementSwitchStatementConfig | StatementForStatementConfig | StatementForInStatementConfig | StatementWhileStatementConfig | StatementDoStatementConfig | StatementTryStatementConfig | StatementWithStatementConfig | StatementBreakStatementConfig | StatementContinueStatementConfig | StatementReturnStatementConfig | StatementThrowStatementConfig | StatementEmptyStatementConfig | StatementLabeledStatementConfig;
 export type ExpressionStatementConfig = ConfigOf<ExpressionStatement>;
 export type VariableDeclarationConfig = ConfigOf<VariableDeclaration>;
 export type LexicalDeclarationConfig = ConfigOf<LexicalDeclaration>;
@@ -2386,6 +2488,26 @@ export interface ImportSpecifierNameTree extends TreeNode<'import_specifier'> {}
 export interface ImportSpecifierAsTree extends TreeNode<'import_specifier'> {}
 export interface ImportAttributeTree extends TreeNode<'import_attribute'> {}
 export interface StatementTree extends TreeNode<'statement'> {}
+export interface StatementExportStatementTree extends TreeNode<'statement'> {}
+export interface StatementImportStatementTree extends TreeNode<'statement'> {}
+export interface StatementDebuggerStatementTree extends TreeNode<'statement'> {}
+export interface StatementExpressionStatementTree extends TreeNode<'statement'> {}
+export interface StatementDeclarationTree extends TreeNode<'statement'> {}
+export interface StatementBodyTree extends TreeNode<'statement'> {}
+export interface StatementIfStatementTree extends TreeNode<'statement'> {}
+export interface StatementSwitchStatementTree extends TreeNode<'statement'> {}
+export interface StatementForStatementTree extends TreeNode<'statement'> {}
+export interface StatementForInStatementTree extends TreeNode<'statement'> {}
+export interface StatementWhileStatementTree extends TreeNode<'statement'> {}
+export interface StatementDoStatementTree extends TreeNode<'statement'> {}
+export interface StatementTryStatementTree extends TreeNode<'statement'> {}
+export interface StatementWithStatementTree extends TreeNode<'statement'> {}
+export interface StatementBreakStatementTree extends TreeNode<'statement'> {}
+export interface StatementContinueStatementTree extends TreeNode<'statement'> {}
+export interface StatementReturnStatementTree extends TreeNode<'statement'> {}
+export interface StatementThrowStatementTree extends TreeNode<'statement'> {}
+export interface StatementEmptyStatementTree extends TreeNode<'statement'> {}
+export interface StatementLabeledStatementTree extends TreeNode<'statement'> {}
 export interface ExpressionStatementTree extends TreeNode<'expression_statement'> {}
 export interface VariableDeclarationTree extends TreeNode<'variable_declaration'> {}
 export interface LexicalDeclarationTree extends TreeNode<'lexical_declaration'> {}
@@ -2660,7 +2782,7 @@ export type NamespaceImportFromInput = FromInputOf<NamespaceImport, LeafScalarMa
 export type NamedImportsFromInput = FromInputOf<NamedImports, LeafScalarMap, LeafStringMap>;
 export type ImportSpecifierFromInput = FromInputOf<ImportSpecifierName, LeafScalarMap, LeafStringMap> | FromInputOf<ImportSpecifierAs, LeafScalarMap, LeafStringMap>;
 export type ImportAttributeFromInput = FromInputOf<ImportAttribute, LeafScalarMap, LeafStringMap>;
-export type StatementFromInput = FromInputOf<Statement, LeafScalarMap, LeafStringMap>;
+export type StatementFromInput = FromInputOf<StatementExportStatement, LeafScalarMap, LeafStringMap> | FromInputOf<StatementImportStatement, LeafScalarMap, LeafStringMap> | FromInputOf<StatementDebuggerStatement, LeafScalarMap, LeafStringMap> | FromInputOf<StatementExpressionStatement, LeafScalarMap, LeafStringMap> | FromInputOf<StatementDeclaration, LeafScalarMap, LeafStringMap> | FromInputOf<StatementBody, LeafScalarMap, LeafStringMap> | FromInputOf<StatementIfStatement, LeafScalarMap, LeafStringMap> | FromInputOf<StatementSwitchStatement, LeafScalarMap, LeafStringMap> | FromInputOf<StatementForStatement, LeafScalarMap, LeafStringMap> | FromInputOf<StatementForInStatement, LeafScalarMap, LeafStringMap> | FromInputOf<StatementWhileStatement, LeafScalarMap, LeafStringMap> | FromInputOf<StatementDoStatement, LeafScalarMap, LeafStringMap> | FromInputOf<StatementTryStatement, LeafScalarMap, LeafStringMap> | FromInputOf<StatementWithStatement, LeafScalarMap, LeafStringMap> | FromInputOf<StatementBreakStatement, LeafScalarMap, LeafStringMap> | FromInputOf<StatementContinueStatement, LeafScalarMap, LeafStringMap> | FromInputOf<StatementReturnStatement, LeafScalarMap, LeafStringMap> | FromInputOf<StatementThrowStatement, LeafScalarMap, LeafStringMap> | FromInputOf<StatementEmptyStatement, LeafScalarMap, LeafStringMap> | FromInputOf<StatementLabeledStatement, LeafScalarMap, LeafStringMap>;
 export type ExpressionStatementFromInput = FromInputOf<ExpressionStatement, LeafScalarMap, LeafStringMap>;
 export type VariableDeclarationFromInput = FromInputOf<VariableDeclaration, LeafScalarMap, LeafStringMap>;
 export type LexicalDeclarationFromInput = FromInputOf<LexicalDeclaration, LeafScalarMap, LeafStringMap>;
@@ -3580,6 +3702,7 @@ export interface KindMap {
 export interface VariantMap {
   'export_statement': { form_0: ExportStatementForm0; export: ExportStatementExport; export2: ExportStatementExport2; export3: ExportStatementExport3 };
   'import_specifier': { name: ImportSpecifierName; as: ImportSpecifierAs };
+  'statement': { export_statement: StatementExportStatement; import_statement: StatementImportStatement; debugger_statement: StatementDebuggerStatement; expression_statement: StatementExpressionStatement; declaration: StatementDeclaration; body: StatementBody; if_statement: StatementIfStatement; switch_statement: StatementSwitchStatement; for_statement: StatementForStatement; for_in_statement: StatementForInStatement; while_statement: StatementWhileStatement; do_statement: StatementDoStatement; try_statement: StatementTryStatement; with_statement: StatementWithStatement; break_statement: StatementBreakStatement; continue_statement: StatementContinueStatement; return_statement: StatementReturnStatement; throw_statement: StatementThrowStatement; empty_statement: StatementEmptyStatement; labeled_statement: StatementLabeledStatement };
   'parenthesized_expression': { expression: ParenthesizedExpressionExpression; sequence_expression: ParenthesizedExpressionSequenceExpression };
   'arrow_function': { parameter: ArrowFunctionParameter; _call_signature: ArrowFunctionUCallSignature };
   'call_expression': { function: CallExpressionFunction; function2: CallExpressionFunction2; tok_q_dot: CallExpressionTokQDot };

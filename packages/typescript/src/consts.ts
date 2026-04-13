@@ -862,6 +862,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'primary_expression': [
   ],
   'primary_type': [
+    { name: 'name', required: true, multiple: false },
   ],
   'program': [
     { name: 'hashBangLine', required: true, multiple: false },
@@ -911,6 +912,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'expression', required: true, multiple: false },
   ],
   'statement': [
+    { name: 'body', required: true, multiple: false },
   ],
   'statement_block': [
     { name: 'statements', required: true, multiple: false },

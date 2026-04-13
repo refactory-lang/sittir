@@ -164,7 +164,7 @@ rules:
     template: use<$$$CHILDREN>
     joinBy: ","
   type_arguments:
-    template: <$$$CHILDREN>
+    template: <$$$CHILDREN $BOUNDS>
     joinBy: ","
   type_binding:
     template: $NAME $TYPE_ARGUMENTS=$TYPE
@@ -251,7 +251,7 @@ rules:
   last_match_arm:
     template: $$$CHILDREN $PATTERN=>$VALUE
   match_pattern:
-    template: $$$CHILDREN $CONDITION_CLAUSE
+    template: $PATTERN $CONDITION_CLAUSE
     condition: if $CONDITION
   while_expression:
     template: $LABEL while $CONDITION $BODY
@@ -272,7 +272,7 @@ rules:
       body2: $BODY
     return_type: "->$RETURN_TYPE"
   closure_parameters:
-    template: "|$$$CHILDREN|"
+    template: "|$PATTERN $$$CHILDREN|"
     joinBy: ","
   label:
     template: "'$IDENTIFIER"
@@ -301,13 +301,13 @@ rules:
   generic_pattern:
     template: "$$$CHILDREN::$TYPE_ARGUMENTS"
   tuple_pattern:
-    template: ($$$CHILDREN)
+    template: ($PATTERN $$$CHILDREN)
     joinBy: ","
   slice_pattern:
-    template: "[$$$CHILDREN]"
+    template: "[$PATTERN]"
     joinBy: ","
   tuple_struct_pattern:
-    template: $TYPE($$$CHILDREN)
+    template: $TYPE($PATTERN)
     joinBy: ","
   struct_pattern:
     template: "$TYPE{$$$CHILDREN}"
@@ -331,13 +331,13 @@ rules:
       left: $LEFT...$RIGHT
       right: ..=$RIGHT
   ref_pattern:
-    template: ref $$$CHILDREN
+    template: ref $PATTERN
   captured_pattern:
     template: $IDENTIFIER@$PATTERN
   reference_pattern:
     template: "&$MUTABLE_SPECIFIER $PATTERN"
   or_pattern:
-    template: $$$CHILDREN|
+    template: $PATTERN|
   negative_literal:
     template: "-$VALUE"
   string_literal:

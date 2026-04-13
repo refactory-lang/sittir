@@ -128,6 +128,7 @@ export function wrapImportAttribute(data: AnyNodeData, tree: TreeHandle) {
 export function wrapStatement(data: AnyNodeData, tree: TreeHandle) {
   return {
     ...data,
+    get body() { return drillIn(data.fields?.['body'], tree); },
     get child() { return drillIn(data.children?.[0], tree); },
   };
 }
@@ -1211,6 +1212,7 @@ export function wrapConstructorType(data: AnyNodeData, tree: TreeHandle) {
 export function wrapPrimaryType(data: AnyNodeData, tree: TreeHandle) {
   return {
     ...data,
+    get name() { return drillIn(data.fields?.['name'], tree); },
     get child() { return drillIn(data.children?.[0], tree); },
   };
 }

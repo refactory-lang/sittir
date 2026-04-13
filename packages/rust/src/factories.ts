@@ -1639,12 +1639,19 @@ export function useBounds(..._children: any[]) {
   };
 }
 
-export function typeArguments(..._children: any[]) {
-  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
+export function typeArguments(config?: ConfigOf<TypeArguments>) {
+  const fields = {
+    bounds: config?.bounds,
+  };
+  const children = (config as any)?.children ?? [];
   return {
     type: 'type_arguments' as const,
     named: true as const,
+    fields,
     children,
+    bounds(...bounds_: any[]) { return bounds_.length ? typeArguments({ ...(config as any), bounds: bounds_ } as any) : fields.bounds; },
+    getChildren() { return children; },
+    setChildren(...items: any[]) { return typeArguments({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2536,8 +2543,9 @@ export function lastMatchArm(config: ConfigOf<LastMatchArm>) {
   };
 }
 
-export function matchPattern(config?: ConfigOf<MatchPattern>) {
+export function matchPattern(config: ConfigOf<MatchPattern>) {
   const fields = {
+    pattern: config?.pattern,
     condition: config?.condition,
   };
   const children = (config as any)?.children ?? [];
@@ -2546,6 +2554,7 @@ export function matchPattern(config?: ConfigOf<MatchPattern>) {
     named: true as const,
     fields,
     children,
+    pattern(pattern_?: any) { return pattern_ !== undefined ? matchPattern({ ...(config as any), pattern: pattern_ } as any) : fields.pattern; },
     condition(condition_?: any) { return condition_ !== undefined ? matchPattern({ ...(config as any), condition: condition_ } as any) : fields.condition; },
     getChildren() { return children; },
     setChildren(...items: any[]) { return matchPattern({ ...(config as any), children: items } as any); },
@@ -2707,12 +2716,19 @@ export function closureExpressionBody2(config: ConfigOf<ClosureExpressionBody2>)
   };
 }
 
-export function closureParameters(..._children: any[]) {
-  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
+export function closureParameters(config?: ConfigOf<ClosureParameters>) {
+  const fields = {
+    pattern: config?.pattern,
+  };
+  const children = (config as any)?.children ?? [];
   return {
     type: 'closure_parameters' as const,
     named: true as const,
+    fields,
     children,
+    pattern(...pattern_: any[]) { return pattern_.length ? closureParameters({ ...(config as any), pattern: pattern_ } as any) : fields.pattern; },
+    getChildren() { return children; },
+    setChildren(...items: any[]) { return closureParameters({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -3002,12 +3018,19 @@ export function genericPattern(config: ConfigOf<GenericPattern>) {
   };
 }
 
-export function tuplePattern(..._children: any[]) {
-  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
+export function tuplePattern(config?: ConfigOf<TuplePattern>) {
+  const fields = {
+    pattern: config?.pattern,
+  };
+  const children = (config as any)?.children ?? [];
   return {
     type: 'tuple_pattern' as const,
     named: true as const,
+    fields,
     children,
+    pattern(...pattern_: any[]) { return pattern_.length ? tuplePattern({ ...(config as any), pattern: pattern_ } as any) : fields.pattern; },
+    getChildren() { return children; },
+    setChildren(...items: any[]) { return tuplePattern({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -3017,12 +3040,19 @@ export function tuplePattern(..._children: any[]) {
   };
 }
 
-export function slicePattern(..._children: any[]) {
-  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
+export function slicePattern(config?: ConfigOf<SlicePattern>) {
+  const fields = {
+    pattern: config?.pattern,
+  };
+  const children = (config as any)?.children ?? [];
   return {
     type: 'slice_pattern' as const,
     named: true as const,
+    fields,
     children,
+    pattern(...pattern_: any[]) { return pattern_.length ? slicePattern({ ...(config as any), pattern: pattern_ } as any) : fields.pattern; },
+    getChildren() { return children; },
+    setChildren(...items: any[]) { return slicePattern({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -3035,6 +3065,7 @@ export function slicePattern(..._children: any[]) {
 export function tupleStructPattern(config: ConfigOf<TupleStructPattern>) {
   const fields = {
     type: config?.type,
+    pattern: config?.pattern,
   };
   const children = (config as any)?.children ?? [];
   return {
@@ -3043,6 +3074,7 @@ export function tupleStructPattern(config: ConfigOf<TupleStructPattern>) {
     fields,
     children,
     typeField(type?: any) { return type !== undefined ? tupleStructPattern({ ...(config as any), type: type } as any) : fields.type; },
+    pattern(...pattern_: any[]) { return pattern_.length ? tupleStructPattern({ ...(config as any), pattern: pattern_ } as any) : fields.pattern; },
     getChildren() { return children; },
     setChildren(...items: any[]) { return tupleStructPattern({ ...(config as any), children: items } as any); },
     render() { return render(this); },
@@ -3198,13 +3230,19 @@ export function rangePatternRight(config: ConfigOf<RangePatternRight>) {
   };
 }
 
-export function refPattern(child?: any) {
-  const hasChild = child && typeof child === "object" && "type" in child;
-  const children = hasChild ? [child] : [];
+export function refPattern(config: ConfigOf<RefPattern>) {
+  const fields = {
+    pattern: config?.pattern,
+  };
+  const children = (config as any)?.children ?? [];
   return {
     type: 'ref_pattern' as const,
     named: true as const,
+    fields,
     children,
+    pattern(pattern_?: any) { return pattern_ !== undefined ? refPattern({ ...(config as any), pattern: pattern_ } as any) : fields.pattern; },
+    getChildren() { return children; },
+    setChildren(...items: any[]) { return refPattern({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -3262,13 +3300,19 @@ export function referencePattern(config: ConfigOf<ReferencePattern>) {
   };
 }
 
-export function orPattern(child?: any) {
-  const hasChild = child && typeof child === "object" && "type" in child;
-  const children = hasChild ? [child] : [];
+export function orPattern(config: ConfigOf<OrPattern>) {
+  const fields = {
+    pattern: config?.pattern,
+  };
+  const children = (config as any)?.children ?? [];
   return {
     type: 'or_pattern' as const,
     named: true as const,
+    fields,
     children,
+    pattern(pattern_?: any) { return pattern_ !== undefined ? orPattern({ ...(config as any), pattern: pattern_ } as any) : fields.pattern; },
+    getChildren() { return children; },
+    setChildren(...items: any[]) { return orPattern({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
