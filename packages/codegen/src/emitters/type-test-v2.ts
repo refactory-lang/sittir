@@ -56,16 +56,29 @@ export function emitTypeTestsFromNodeMap(config: EmitTypeTestsFromNodeMapConfig)
 
     // Helpers
     lines.push('type Extends<A, B> = A extends B ? true : false;')
-    lines.push('type Assert<T extends true> = T;')
+    lines.push('type _TypeAssert<T extends true> = T;')
     lines.push('')
+
+    // Dedup by typeName — two distinct kinds (e.g. python's `'True'` string
+    // literal vs a supertype/keyword with the same PascalCase name) can
+    // normalise to the same typeName, producing duplicate `_Type_X` /
+    // `_Config_X` / `_Tree_X` identifiers. The assertions are equivalent,
+    // so keep the first occurrence and skip the rest.
+    const seenType = new Set<string>()
+    const seenConfig = new Set<string>()
+    const seenTree = new Set<string>()
 
     // 1. type literal checks
     lines.push('// --- Concrete interface `type` literal ---')
     for (const s of structuralKinds) {
-        lines.push(`export type _Type_${s.typeName} = Assert<Extends<${s.typeName}['type'], '${s.kind}'>>;`)
+        if (seenType.has(s.typeName)) continue
+        seenType.add(s.typeName)
+        lines.push(`export type _Type_${s.typeName} = _TypeAssert<Extends<${s.typeName}['type'], '${s.kind}'>>;`)
     }
     for (const l of leafKinds) {
-        lines.push(`export type _Type_${l.typeName} = Assert<Extends<${l.typeName}['type'], '${l.kind}'>>;`)
+        if (seenType.has(l.typeName)) continue
+        seenType.add(l.typeName)
+        lines.push(`export type _Type_${l.typeName} = _TypeAssert<Extends<${l.typeName}['type'], '${l.kind}'>>;`)
     }
     lines.push('')
 
@@ -73,17 +86,23 @@ export function emitTypeTestsFromNodeMap(config: EmitTypeTestsFromNodeMapConfig)
     lines.push('// --- ConfigOf<T> assignable to *Config ---')
     for (const s of structuralKinds) {
         if (s.hasVariants) continue
-        lines.push(`export type _Config_${s.typeName} = Assert<Extends<ConfigOf<${s.typeName}>, ${s.typeName}Config>>;`)
+        if (seenConfig.has(s.typeName)) continue
+        seenConfig.add(s.typeName)
+        lines.push(`export type _Config_${s.typeName} = _TypeAssert<Extends<ConfigOf<${s.typeName}>, ${s.typeName}Config>>;`)
     }
     lines.push('')
 
     // 3. TreeNode type literal checks
     lines.push('// --- TreeNode types have correct `type` ---')
     for (const s of structuralKinds) {
-        lines.push(`export type _Tree_${s.typeName} = Assert<Extends<${s.typeName}Tree['type'], '${s.kind}'>>;`)
+        if (seenTree.has(s.typeName)) continue
+        seenTree.add(s.typeName)
+        lines.push(`export type _Tree_${s.typeName} = _TypeAssert<Extends<${s.typeName}Tree['type'], '${s.kind}'>>;`)
     }
     for (const l of leafKinds) {
-        lines.push(`export type _Tree_${l.typeName} = Assert<Extends<${l.typeName}Tree['type'], '${l.kind}'>>;`)
+        if (seenTree.has(l.typeName)) continue
+        seenTree.add(l.typeName)
+        lines.push(`export type _Tree_${l.typeName} = _TypeAssert<Extends<${l.typeName}Tree['type'], '${l.kind}'>>;`)
     }
     lines.push('')
 

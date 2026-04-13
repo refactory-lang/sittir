@@ -120,11 +120,18 @@ export function emitTypesFromNodeMap(config: EmitTypesFromNodeMapConfig): string
     lines.push('};')
     lines.push('')
 
-    // 1. SyntaxKind enum
+    // 1. SyntaxKind enum — dedup on member name. Two kinds can resolve
+    // to the same typeName (e.g. python's `true` and `'True'` string
+    // literal keyword both → `True`); keep the first and skip the rest
+    // to avoid a `const enum` duplicate-member error.
     lines.push('export const enum SyntaxKind {')
+    const seenEnumMembers = new Set<string>()
     for (const kind of allKinds) {
         const node = nodeMap.nodes.get(kind)
-        lines.push(`  ${node?.typeName ?? toPascal(kind)} = '${kind}',`)
+        const member = node?.typeName ?? toPascal(kind)
+        if (seenEnumMembers.has(member)) continue
+        seenEnumMembers.add(member)
+        lines.push(`  ${member} = '${kind}',`)
     }
     lines.push('}')
     lines.push('')
@@ -137,9 +144,13 @@ export function emitTypesFromNodeMap(config: EmitTypesFromNodeMapConfig): string
             const cleanName = st.kind.replace(/^_/, '')
             const enumName = toPascal(cleanName) + 'Kind'
             lines.push(`export const enum ${enumName} {`)
+            const seenSubMembers = new Set<string>()
             for (const sub of st.subtypes) {
                 const subNode = nodeMap.nodes.get(sub)
-                lines.push(`  ${subNode?.typeName ?? toPascal(sub)} = '${sub}',`)
+                const member = subNode?.typeName ?? toPascal(sub)
+                if (seenSubMembers.has(member)) continue
+                seenSubMembers.add(member)
+                lines.push(`  ${member} = '${sub}',`)
             }
             lines.push('}')
             lines.push('')

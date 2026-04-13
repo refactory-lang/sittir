@@ -231,9 +231,6 @@ export const enum SyntaxKind {
   And = 'and',
   Or = 'or',
   Is = 'is',
-  True = 'True',
-  False = 'False',
-  None = 'None',
 }
 
 // Scoped enums per supertype
