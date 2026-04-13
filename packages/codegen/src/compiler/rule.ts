@@ -591,6 +591,37 @@ export abstract class AssembledNodeBase {
     renderTemplate(): Record<string, unknown> | undefined {
         return undefined
     }
+
+    /**
+     * Emit the factory export for this node as a TS source snippet.
+     * Returns `undefined` for hidden nodes (token/supertype/group-with-
+     * no-factoryName) — they don't produce a factory binding. Concrete
+     * subclasses override with their own emission.
+     */
+    emitFactory(): string | undefined {
+        return undefined
+    }
+}
+
+/** Escape a string literal value for embedding in single-quoted TS source. */
+function escForSource(s: string): string {
+    return s.replace(/\\/g, '\\\\').replace(/'/g, "\\'")
+}
+
+/**
+ * Common suffix every user-addressable factory returns — render(),
+ * toEdit(...), replace(target). Takes the tree type name so each
+ * subclass can parameterize its `replace` target.
+ */
+function factorySuffix(treeTypeName: string): string[] {
+    return [
+        `    render() { return render(this); },`,
+        `    toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {`,
+        `      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);`,
+        `      return toEdit(this, startOrRange);`,
+        `    },`,
+        `    replace(target: ${treeTypeName}) { const r = target.range(); return toEdit(this, r); },`,
+    ]
 }
 
 export interface AssembledField {
@@ -658,6 +689,63 @@ export class AssembledBranch extends AssembledNodeBase {
         if (sep) entry.joinBy = sep
         return entry
     }
+
+    emitFactory(): string | undefined {
+        if (!this.rawFactoryName) return undefined
+        return emitFieldCarryingFactory(this, this.fields)
+    }
+}
+
+/**
+ * Shared body for AssembledBranch, AssembledGroup, and polymorph forms —
+ * nodes that carry fields + children and produce a fluent-API factory.
+ */
+function emitFieldCarryingFactory(
+    node: AssembledNodeBase & { kind: string; typeName: string; fields: AssembledField[]; children?: AssembledChild[] | readonly AssembledChild[] },
+    fields: AssembledField[],
+): string {
+    const fn = node.rawFactoryName!
+    const hasFields = fields.length > 0
+    const opt = fields.some(f => f.required) ? '' : '?'
+    const lines: string[] = []
+    lines.push(`export function ${fn}(config${opt}: ConfigOf<${node.typeName}>) {`)
+
+    if (hasFields) {
+        lines.push('  const fields = {')
+        for (const f of fields) {
+            lines.push(`    ${f.name}: (config as any)?.${f.propertyName},`)
+        }
+        lines.push('  };')
+    }
+    // Always thread children — tree-sitter surfaces supertype-dispatched
+    // children that the rule doesn't reference explicitly.
+    lines.push('  const children = (config as any)?.children ?? [];')
+
+    lines.push('  return {')
+    lines.push(`    type: '${node.kind}' as const,`)
+    lines.push('    named: true as const,')
+    if (hasFields) lines.push('    fields,')
+    lines.push('    children,')
+
+    // Fluent field getters/setters. Param name must not shadow the
+    // outer factory function — suffix when needed.
+    for (const f of fields) {
+        const method = f.propertyName === 'type' ? 'typeField' : f.propertyName
+        let param = f.paramName
+        if (param === fn || param === method) param = `${param}_`
+        if (f.multiple) {
+            lines.push(`    ${method}(...${param}: any[]) { return ${param}.length ? ${fn}({ ...(config as any), ${f.propertyName}: ${param} } as any) : fields.${f.name}; },`)
+        } else {
+            lines.push(`    ${method}(${param}?: any) { return ${param} !== undefined ? ${fn}({ ...(config as any), ${f.propertyName}: ${param} } as any) : fields.${f.name}; },`)
+        }
+    }
+
+    lines.push('    getChildren() { return children; },')
+    lines.push(`    setChildren(...items: any[]) { return ${fn}({ ...(config as any), children: items } as any); },`)
+    lines.push(...factorySuffix(node.treeTypeName))
+    lines.push('  };')
+    lines.push('}')
+    return lines.join('\n')
 }
 
 export class AssembledContainer extends AssembledNodeBase {
@@ -695,6 +783,32 @@ export class AssembledContainer extends AssembledNodeBase {
         const sep = this.separator ?? findRepeatSeparator(this.rule)
         if (sep) entry.joinBy = sep
         return entry
+    }
+
+    emitFactory(): string | undefined {
+        if (!this.rawFactoryName) return undefined
+        const fn = this.rawFactoryName
+        const child = this.children[0]
+        const lines: string[] = []
+        if (child?.multiple) {
+            lines.push(`export function ${fn}(..._children: any[]) {`)
+            // Filter out non-NodeData args (empty objects, undefined).
+            lines.push('  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);')
+        } else {
+            lines.push(`export function ${fn}(child?: any) {`)
+            // Treat an empty/non-NodeData arg as "no child" so validator
+            // paths passing `{}` don't wrap a typeless object as a child.
+            lines.push('  const hasChild = child && typeof child === "object" && "type" in child;')
+            lines.push('  const children = hasChild ? [child] : [];')
+        }
+        lines.push('  return {')
+        lines.push(`    type: '${this.kind}' as const,`)
+        lines.push('    named: true as const,')
+        lines.push('    children,')
+        lines.push(...factorySuffix(this.treeTypeName))
+        lines.push('  };')
+        lines.push('}')
+        return lines.join('\n')
     }
 }
 
@@ -742,6 +856,48 @@ export class AssembledPolymorph extends AssembledNodeBase {
         if (Object.keys(detect).length > 0) entry.detect = detect
         return entry
     }
+
+    emitFactory(): string | undefined {
+        if (!this.rawFactoryName) return undefined
+        const fn = this.rawFactoryName
+        const forms = this.#forms
+
+        if (forms.length === 0) {
+            // Empty polymorph stub — shouldn't happen after the classifier
+            // fix but keep a defensive path so the file still compiles.
+            return `export function ${fn}(config?: any) { return { type: '${this.kind}' as const, named: true as const, render() { return render(this); }, toEdit(s: any, e?: any) { return typeof s === 'number' ? toEdit(this, s, e!) : toEdit(this, s); }, replace(t: ${this.treeTypeName}) { const r = t.range(); return toEdit(this, r); } }; }`
+        }
+
+        const lines: string[] = []
+        lines.push(`export function ${fn}(config?: ConfigOf<${this.typeName}>) {`)
+
+        // Dispatch to per-form factory based on the presence of a
+        // distinguishing field. The fallback is the form with the
+        // smallest field set (handles shared-shape variants gracefully).
+        if (forms.length > 1) {
+            const sorted = [...forms].sort((a, b) => b.fields.length - a.fields.length)
+            const fallback = sorted[sorted.length - 1]!
+            for (const form of sorted) {
+                if (form === fallback) continue
+                const distinguishing = form.fields.find(f =>
+                    !fallback.fields.some(ff => ff.name === f.name)
+                )
+                if (distinguishing) {
+                    lines.push(`  if (config && '${distinguishing.propertyName}' in config) return ${form.rawFactoryName!}(config as any);`)
+                }
+            }
+            lines.push(`  return ${fallback.rawFactoryName!}(config as any);`)
+        } else {
+            lines.push(`  return ${forms[0]!.rawFactoryName!}(config as any);`)
+        }
+        lines.push('}')
+
+        // Emit each form factory inline after the dispatcher so they
+        // appear in a single file section per polymorph.
+        const parts = [lines.join('\n')]
+        for (const form of forms) parts.push(form.emitFactory()!)
+        return parts.join('\n')
+    }
 }
 
 export class AssembledLeaf extends AssembledNodeBase {
@@ -757,6 +913,11 @@ export class AssembledLeaf extends AssembledNodeBase {
     }
 
     get pattern(): string | undefined { return this.#pattern }
+
+    emitFactory(): string | undefined {
+        if (!this.rawFactoryName) return undefined
+        return emitTextFactory(this, '(text: string)', 'text')
+    }
 }
 
 export class AssembledKeyword extends AssembledNodeBase {
@@ -772,6 +933,15 @@ export class AssembledKeyword extends AssembledNodeBase {
     }
 
     get text(): string { return this.#text }
+
+    emitFactory(): string | undefined {
+        // Anonymous keywords collected from string literals in rules
+        // have no factoryName and don't get a public factory binding.
+        if (!this.rawFactoryName) return undefined
+        // Keyword factories carry a fixed text literal; callers don't
+        // pass an argument.
+        return emitTextFactory(this, '()', `'${escForSource(this.#text)}'`)
+    }
 }
 
 export class AssembledToken extends AssembledNodeBase {
@@ -782,6 +952,7 @@ export class AssembledToken extends AssembledNodeBase {
     }) {
         super(init)
     }
+    // No emitFactory — tokens are hidden, no factoryName.
 }
 
 export class AssembledEnum extends AssembledNodeBase {
@@ -797,6 +968,37 @@ export class AssembledEnum extends AssembledNodeBase {
     }
 
     get values(): string[] { return this.#values }
+
+    emitFactory(): string | undefined {
+        if (!this.rawFactoryName) return undefined
+        return emitTextFactory(this, '(text: string)', 'text')
+    }
+}
+
+/**
+ * Shared body for the text-only factories — AssembledLeaf, AssembledKeyword,
+ * AssembledEnum. Produces a fixed `{type, named, text, render, toEdit,
+ * replace}` shape. The signature and the text expression vary per kind:
+ * leaves/enums take a `text: string` arg; keywords bake in their text.
+ */
+function emitTextFactory(
+    node: AssembledNodeBase & { kind: string },
+    sig: string,
+    textExpr: string,
+): string {
+    const fn = node.rawFactoryName!
+    return [
+        `export function ${fn}${sig} {`,
+        '  return {',
+        `    type: '${node.kind}' as const,`,
+        '    named: true as const,',
+        `    text: ${textExpr},`,
+        `    render: () => ${textExpr},`,
+        `    toEdit: (s: number | { start: { index: number }; end: { index: number } }, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: ${textExpr} } : { startPos: s.start.index, endPos: s.end.index, insertedText: ${textExpr} },`,
+        `    replace: (t: ${node.treeTypeName}) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: ${textExpr} }; },`,
+        '  };',
+        '}',
+    ].join('\n')
 }
 
 export class AssembledSupertype extends AssembledNodeBase {
@@ -856,6 +1058,11 @@ export class AssembledGroup extends AssembledNodeBase {
         const sep = findRepeatSeparator(this.rule)
         if (sep) entry.joinBy = sep
         return entry
+    }
+
+    emitFactory(): string | undefined {
+        if (!this.rawFactoryName) return undefined // hidden group
+        return emitFieldCarryingFactory(this, this.fields)
     }
 }
 

@@ -1,15 +1,13 @@
 /**
- * Emits factories.ts — per-kind constructor functions.
- * Consumes NodeMap directly. No old-model imports.
+ * Emits factories.ts — thin dispatch over AssembledNode.emitFactory().
  *
- * Each factory: config (camelCase) → NodeData (raw field names) + fluent API + render/edit.
+ * Every node subclass owns its own factory emission as a class method.
+ * This file is preamble (type imports, @sittir/core renderer wiring,
+ * RESERVED_KEYWORDS set) + loop over the NodeMap + the _factoryMap
+ * dispatch table.
  */
 
-import type {
-    NodeMap, AssembledNode, AssembledField, AssembledForm,
-    AssembledBranch, AssembledContainer, AssembledPolymorph,
-    AssembledLeaf, AssembledKeyword, AssembledEnum,
-} from '../compiler/rule.ts'
+import type { NodeMap } from '../compiler/rule.ts'
 
 export interface EmitFactoriesFromNodeMapConfig {
     grammar: string
@@ -24,20 +22,21 @@ export function emitFactoriesFromNodeMap(config: EmitFactoriesFromNodeMapConfig)
         '',
     ]
 
-    // Collect type imports — only for nodes that have emitted types and valid identifiers.
-    // Skip AssembledToken/Supertype/Group: they don't produce factories or type imports.
+    // Collect type imports — only for nodes that will emit a factory
+    // and whose typeName is a valid TS identifier. Polymorph forms
+    // contribute their own type + Config alias.
     const typeImports = new Set<string>()
     const isValidIdent = (s: string) => /^[A-Za-z_$][\w$]*$/.test(s)
     for (const [, node] of nodeMap.nodes) {
-        if (!node.factoryName) continue // hidden nodes have no factoryName → skip imports
+        if (!node.factoryName) continue
         if (!node.typeName || !isValidIdent(node.typeName)) continue
         typeImports.add(node.typeName)
-        typeImports.add(`${node.treeTypeName}`)
+        typeImports.add(node.treeTypeName)
         if (node.modelType === 'polymorph') {
             for (const form of node.forms) {
                 if (isValidIdent(form.typeName)) {
                     typeImports.add(form.typeName)
-                    typeImports.add(`${form.configTypeName}`)
+                    typeImports.add(form.configTypeName)
                 }
             }
         }
@@ -52,49 +51,35 @@ export function emitFactoriesFromNodeMap(config: EmitFactoriesFromNodeMapConfig)
     lines.push("const { render, toEdit } = createRenderer(join(__dirname, '..', 'templates.yaml'));")
     lines.push('')
 
-    // Reserved keywords
+    // RESERVED_KEYWORDS — exported for runtime consumers that need to
+    // know which bare identifiers collide with grammar keywords.
     const keywords: string[] = []
     for (const [kind, node] of nodeMap.nodes) {
         if (node.modelType === 'keyword') keywords.push(kind)
     }
     if (keywords.length > 0) {
         lines.push('const RESERVED_KEYWORDS = new Set([')
-        for (const kw of keywords.sort()) lines.push(`  '${esc(kw)}',`)
+        for (const kw of keywords.sort()) {
+            lines.push(`  '${kw.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}',`)
+        }
         lines.push(']);')
         lines.push('')
     }
 
-    // Branch/container/polymorph factories
-    for (const [kind, node] of nodeMap.nodes) {
-        if (!node.factoryName) continue
-
-        switch (node.modelType) {
-            case 'branch':
-                lines.push(emitBranchFactory(node))
-                break
-            case 'container':
-                lines.push(emitContainerFactory(node))
-                break
-            case 'polymorph':
-                lines.push(emitPolymorphFactory(node))
-                for (const form of node.forms) {
-                    lines.push(emitFormFactory(node, form))
-                }
-                break
-            case 'leaf':
-                lines.push(emitLeafFactory(node))
-                break
-            case 'keyword':
-                lines.push(emitKeywordFactory(node))
-                break
-            case 'enum':
-                lines.push(emitEnumFactory(node))
-                break
-        }
+    // Per-node factory emission. Each node class knows how to emit
+    // itself — branches/groups share emitFieldCarryingFactory, the
+    // polymorph dispatcher also emits its forms inline.
+    for (const [, node] of nodeMap.nodes) {
+        const source = node.emitFactory()
+        if (source === undefined) continue
+        // Skip polymorph form groups at the top level — they're emitted
+        // inline by their parent polymorph's emitFactory.
+        if (node.modelType === 'group' && isPolymorphForm(node.kind, nodeMap)) continue
+        lines.push(source)
         lines.push('')
     }
 
-    // _factoryMap
+    // _factoryMap — runtime dispatch table keyed by grammar kind.
     lines.push('export const _factoryMap: Record<string, (config?: any) => unknown> = {')
     for (const [kind, node] of nodeMap.nodes) {
         if (!node.rawFactoryName) continue
@@ -106,241 +91,18 @@ export function emitFactoriesFromNodeMap(config: EmitFactoriesFromNodeMapConfig)
     return lines.join('\n')
 }
 
-// ---------------------------------------------------------------------------
-// Per-model-type factory emitters
-// ---------------------------------------------------------------------------
-
-function emitBranchFactory(node: AssembledBranch): string {
-    const fn = node.rawFactoryName!
-    const fields = node.fields
-    const children = node.children ?? []
-    const hasFields = fields.length > 0
-    const hasChildren = children.length > 0
-    const opt = fields.some(f => f.required) ? '' : '?'
-
-    const lines: string[] = []
-    lines.push(`export function ${fn}(config${opt}: ConfigOf<${node.typeName}>) {`)
-
-    if (hasFields) {
-        lines.push('  const fields = {')
-        for (const f of fields) {
-            lines.push(`    ${f.name}: (config as any)?.${f.propertyName},`)
-        }
-        lines.push('  };')
-    }
-
-    // Always thread children — tree-sitter may surface children the rule
-    // doesn't explicitly reference (supertypes, anonymous promoted nodes).
-    lines.push('  const children = (config as any)?.children ?? [];')
-
-    lines.push('  return {')
-    lines.push(`    type: '${node.kind}' as const,`)
-    lines.push('    named: true as const,')
-    if (hasFields) lines.push('    fields,')
-    lines.push('    children,')
-
-    // Fluent field getters/setters — only for actual fields in the interface.
-    // Param name must not shadow the outer factory function (fn); suffix when needed.
-    for (const f of fields) {
-        const method = f.propertyName === 'type' ? 'typeField' : f.propertyName
-        let param = f.paramName
-        if (param === fn || param === method) param = `${param}_`
-        if (f.multiple) {
-            lines.push(`    ${method}(...${param}: any[]) { return ${param}.length ? ${fn}({ ...(config as any), ${f.propertyName}: ${param} } as any) : fields.${f.name}; },`)
-        } else {
-            lines.push(`    ${method}(${param}?: any) { return ${param} !== undefined ? ${fn}({ ...(config as any), ${f.propertyName}: ${param} } as any) : fields.${f.name}; },`)
+/**
+ * A group is a polymorph form iff another node in the map is an
+ * AssembledPolymorph that references it by kind. Polymorph form
+ * groups are emitted by their parent's emitFactory, not at the
+ * top level — this check prevents duplicate emission.
+ */
+function isPolymorphForm(kind: string, nodeMap: NodeMap): boolean {
+    for (const [, node] of nodeMap.nodes) {
+        if (node.modelType !== 'polymorph') continue
+        for (const form of node.forms) {
+            if (form.kind === kind) return true
         }
     }
-
-    // Children accessor — single getChildren/setChildren API
-    lines.push('    getChildren() { return children; },')
-    lines.push(`    setChildren(...items: any[]) { return ${fn}({ ...(config as any), children: items } as any); },`)
-
-    lines.push(`    render() { return render(this); },`)
-    lines.push(`    toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {`)
-    lines.push(`      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);`)
-    lines.push(`      return toEdit(this, startOrRange);`)
-    lines.push(`    },`)
-    lines.push(`    replace(target: ${node.treeTypeName}) { const r = target.range(); return toEdit(this, r); },`)
-    lines.push('  };')
-    lines.push('}')
-    return lines.join('\n')
-}
-
-function emitContainerFactory(node: AssembledContainer): string {
-    const fn = node.rawFactoryName!
-    const children = node.children
-    const child = children[0]
-
-    const lines: string[] = []
-    if (child?.multiple) {
-        lines.push(`export function ${fn}(..._children: any[]) {`)
-        // Filter out non-NodeData args (empty objects, undefined).
-        lines.push('  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);')
-    } else {
-        lines.push(`export function ${fn}(child?: any) {`)
-        // Treat an empty/non-NodeData arg as "no child". Validator paths
-        // may pass `{}` when a parent has fields but no children and we
-        // don't want that to become a fake child wrapping undefined.
-        lines.push('  const hasChild = child && typeof child === "object" && "type" in child;')
-        lines.push('  const children = hasChild ? [child] : [];')
-    }
-
-    lines.push('  return {')
-    lines.push(`    type: '${node.kind}' as const,`)
-    lines.push('    named: true as const,')
-    lines.push('    children,')
-    lines.push(`    render() { return render(this); },`)
-    lines.push(`    toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {`)
-    lines.push(`      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);`)
-    lines.push(`      return toEdit(this, startOrRange);`)
-    lines.push(`    },`)
-    lines.push(`    replace(target: ${node.treeTypeName}) { const r = target.range(); return toEdit(this, r); },`)
-    lines.push('  };')
-    lines.push('}')
-    return lines.join('\n')
-}
-
-function emitPolymorphFactory(node: AssembledPolymorph): string {
-    const fn = node.rawFactoryName!
-    const forms = node.forms
-
-    if (forms.length === 0) {
-        // Empty polymorph — emit a stub
-        return `export function ${fn}(config?: any) { return { type: '${node.kind}' as const, named: true as const, render() { return render(this); }, toEdit(s: any, e?: any) { return typeof s === 'number' ? toEdit(this, s, e!) : toEdit(this, s); }, replace(t: ${node.treeTypeName}) { const r = t.range(); return toEdit(this, r); } }; }`
-    }
-
-    const lines: string[] = []
-    lines.push(`export function ${fn}(config?: ConfigOf<${node.typeName}>) {`)
-
-    // Dispatch to per-form factory based on field presence. Form factories
-    // are named by their own kind (form.rawFactoryName!).
-    const formFn = (form: AssembledForm) => form.rawFactoryName!
-    if (forms.length > 1) {
-        const sorted = [...forms].sort((a, b) => b.fields.length - a.fields.length)
-        const fallback = sorted[sorted.length - 1]!
-
-        for (const form of sorted) {
-            if (form === fallback) continue
-            const distinguishing = form.fields.find(f =>
-                !fallback.fields.some(ff => ff.name === f.name)
-            )
-            if (distinguishing) {
-                lines.push(`  if (config && '${distinguishing.propertyName}' in config) return ${formFn(form)}(config as any);`)
-            }
-        }
-        lines.push(`  return ${formFn(fallback)}(config as any);`)
-    } else {
-        lines.push(`  return ${formFn(forms[0]!)}(config as any);`)
-    }
-
-    lines.push('}')
-    return lines.join('\n')
-}
-
-function emitFormFactory(node: AssembledPolymorph, form: AssembledForm): string {
-    // Use the form's own kind for the function name so _factoryMap (which
-    // keys by kind) resolves cleanly: form.rawFactoryName! matches the emitted
-    // function name.
-    const fn = form.rawFactoryName!
-    const fields = form.fields
-    const hasFields = fields.length > 0
-    const opt = fields.some(f => f.required) ? '' : '?'
-
-    const lines: string[] = []
-    lines.push(`export function ${fn}(config${opt}: ConfigOf<${form.typeName}>) {`)
-
-    if (hasFields) {
-        lines.push('  const fields = {')
-        for (const f of fields) {
-            lines.push(`    ${f.name}: (config as any)?.${f.propertyName},`)
-        }
-        lines.push('  };')
-    }
-
-    // Always thread children through — tree-sitter may surface children not
-    // referenced in the rule.
-    lines.push('  const children = (config as any)?.children ?? [];')
-
-    lines.push('  return {')
-    lines.push(`    type: '${node.kind}' as const,`)
-    lines.push('    named: true as const,')
-    if (hasFields) lines.push('    fields,')
-    lines.push('    children,')
-
-    for (const f of fields) {
-        const method = f.propertyName === 'type' ? 'typeField' : f.propertyName
-        let param = f.paramName
-        if (param === fn || param === method) param = `${param}_`
-        lines.push(`    ${method}(${param}?: any) { return ${param} !== undefined ? ${fn}({ ...(config as any), ${f.propertyName}: ${param} } as any) : fields.${f.name}; },`)
-    }
-    lines.push('    getChildren() { return children; },')
-    lines.push(`    setChildren(...items: any[]) { return ${fn}({ ...(config as any), children: items } as any); },`)
-
-    lines.push(`    render() { return render(this); },`)
-    lines.push(`    toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {`)
-    lines.push(`      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);`)
-    lines.push(`      return toEdit(this, startOrRange);`)
-    lines.push(`    },`)
-    lines.push(`    replace(target: ${node.treeTypeName}) { const r = target.range(); return toEdit(this, r); },`)
-    lines.push('  };')
-    lines.push('}')
-    return lines.join('\n')
-}
-
-function emitLeafFactory(node: AssembledLeaf): string {
-    const fn = node.rawFactoryName!
-    return [
-        `export function ${fn}(text: string) {`,
-        '  return {',
-        `    type: '${node.kind}' as const,`,
-        '    named: true as const,',
-        '    text,',
-        '    render: () => text,',
-        `    toEdit: (s: number | { start: { index: number }; end: { index: number } }, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },`,
-        `    replace: (t: ${node.treeTypeName}) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },`,
-        '  };',
-        '}',
-    ].join('\n')
-}
-
-function emitKeywordFactory(node: AssembledKeyword): string {
-    const fn = node.rawFactoryName!
-    const text = esc(node.text)
-    return [
-        `export function ${fn}() {`,
-        '  return {',
-        `    type: '${node.kind}' as const,`,
-        '    named: true as const,',
-        `    text: '${text}',`,
-        `    render: () => '${text}',`,
-        `    toEdit: (s: number | { start: { index: number }; end: { index: number } }, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: '${text}' } : { startPos: s.start.index, endPos: s.end.index, insertedText: '${text}' },`,
-        `    replace: (t: ${node.treeTypeName}) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: '${text}' }; },`,
-        '  };',
-        '}',
-    ].join('\n')
-}
-
-function emitEnumFactory(node: AssembledEnum): string {
-    const fn = node.rawFactoryName!
-    return [
-        `export function ${fn}(text: string) {`,
-        '  return {',
-        `    type: '${node.kind}' as const,`,
-        '    named: true as const,',
-        '    text,',
-        '    render: () => text,',
-        `    toEdit: (s: number | { start: { index: number }; end: { index: number } }, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },`,
-        `    replace: (t: ${node.treeTypeName}) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },`,
-        '  };',
-        '}',
-    ].join('\n')
-}
-
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
-function esc(s: string): string {
-    return s.replace(/\\/g, '\\\\').replace(/'/g, "\\'")
+    return false
 }

@@ -1510,7 +1510,7 @@ export function unitType(text: string) {
   return {
     type: 'unit_type' as const,
     named: true as const,
-    text,
+    text: text,
     render: () => text,
     toEdit: (s: number | { start: { index: number }; end: { index: number } }, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
     replace: (t: UnitTypeTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
@@ -2246,7 +2246,7 @@ export function unitExpression(text: string) {
   return {
     type: 'unit_expression' as const,
     named: true as const,
-    text,
+    text: text,
     render: () => text,
     toEdit: (s: number | { start: { index: number }; end: { index: number } }, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
     replace: (t: UnitExpressionTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
@@ -2647,8 +2647,6 @@ export function constBlock(config: ConfigOf<ConstBlock>) {
   };
 }
 
-
-
 export function closureExpression(config?: ConfigOf<ClosureExpression>) {
   if (config && 'returnType' in config) return closureExpressionBody(config as any);
   return closureExpressionBody2(config as any);
@@ -2660,7 +2658,7 @@ export function closureExpressionBody(config: ConfigOf<ClosureExpressionBody>) {
   };
   const children = (config as any)?.children ?? [];
   return {
-    type: 'closure_expression' as const,
+    type: 'closure_expression_body' as const,
     named: true as const,
     fields,
     children,
@@ -2673,7 +2671,7 @@ export function closureExpressionBody(config: ConfigOf<ClosureExpressionBody>) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(target: ClosureExpressionTree) { const r = target.range(); return toEdit(this, r); },
+    replace(target: ClosureExpressionBodyTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 export function closureExpressionBody2(config: ConfigOf<ClosureExpressionBody2>) {
@@ -2682,7 +2680,7 @@ export function closureExpressionBody2(config: ConfigOf<ClosureExpressionBody2>)
   };
   const children = (config as any)?.children ?? [];
   return {
-    type: 'closure_expression' as const,
+    type: 'closure_expression_body2' as const,
     named: true as const,
     fields,
     children,
@@ -2694,7 +2692,7 @@ export function closureExpressionBody2(config: ConfigOf<ClosureExpressionBody2>)
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(target: ClosureExpressionTree) { const r = target.range(); return toEdit(this, r); },
+    replace(target: ClosureExpressionBody2Tree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -3067,8 +3065,6 @@ export function structPattern(config: ConfigOf<StructPattern>) {
   };
 }
 
-
-
 export function fieldPattern(config?: ConfigOf<FieldPattern>) {
   if (config && 'pattern' in config) return fieldPatternColon(config as any);
   return fieldPatternName(config as any);
@@ -3079,7 +3075,7 @@ export function fieldPatternName(config: ConfigOf<FieldPatternName>) {
   };
   const children = (config as any)?.children ?? [];
   return {
-    type: 'field_pattern' as const,
+    type: 'field_pattern_name' as const,
     named: true as const,
     fields,
     children,
@@ -3091,7 +3087,7 @@ export function fieldPatternName(config: ConfigOf<FieldPatternName>) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(target: FieldPatternTree) { const r = target.range(); return toEdit(this, r); },
+    replace(target: FieldPatternNameTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 export function fieldPatternColon(config: ConfigOf<FieldPatternColon>) {
@@ -3101,7 +3097,7 @@ export function fieldPatternColon(config: ConfigOf<FieldPatternColon>) {
   };
   const children = (config as any)?.children ?? [];
   return {
-    type: 'field_pattern' as const,
+    type: 'field_pattern_colon' as const,
     named: true as const,
     fields,
     children,
@@ -3114,7 +3110,7 @@ export function fieldPatternColon(config: ConfigOf<FieldPatternColon>) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(target: FieldPatternTree) { const r = target.range(); return toEdit(this, r); },
+    replace(target: FieldPatternColonTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -3142,8 +3138,6 @@ export function mutPattern(config: ConfigOf<MutPattern>) {
   };
 }
 
-
-
 export function rangePattern(config?: ConfigOf<RangePattern>) {
   if (config && 'left' in config) return rangePatternLeft(config as any);
   return rangePatternRight(config as any);
@@ -3155,7 +3149,7 @@ export function rangePatternLeft(config: ConfigOf<RangePatternLeft>) {
   };
   const children = (config as any)?.children ?? [];
   return {
-    type: 'range_pattern' as const,
+    type: 'range_pattern_left' as const,
     named: true as const,
     fields,
     children,
@@ -3168,7 +3162,7 @@ export function rangePatternLeft(config: ConfigOf<RangePatternLeft>) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(target: RangePatternTree) { const r = target.range(); return toEdit(this, r); },
+    replace(target: RangePatternLeftTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 export function rangePatternRight(config: ConfigOf<RangePatternRight>) {
@@ -3177,7 +3171,7 @@ export function rangePatternRight(config: ConfigOf<RangePatternRight>) {
   };
   const children = (config as any)?.children ?? [];
   return {
-    type: 'range_pattern' as const,
+    type: 'range_pattern_right' as const,
     named: true as const,
     fields,
     children,
@@ -3189,7 +3183,7 @@ export function rangePatternRight(config: ConfigOf<RangePatternRight>) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(target: RangePatternTree) { const r = target.range(); return toEdit(this, r); },
+    replace(target: RangePatternRightTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -3299,7 +3293,7 @@ export function integerLiteral(text: string) {
   return {
     type: 'integer_literal' as const,
     named: true as const,
-    text,
+    text: text,
     render: () => text,
     toEdit: (s: number | { start: { index: number }; end: { index: number } }, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
     replace: (t: IntegerLiteralTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
@@ -3351,7 +3345,7 @@ export function charLiteral(text: string) {
   return {
     type: 'char_literal' as const,
     named: true as const,
-    text,
+    text: text,
     render: () => text,
     toEdit: (s: number | { start: { index: number }; end: { index: number } }, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
     replace: (t: CharLiteralTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
@@ -3362,7 +3356,7 @@ export function escapeSequence(text: string) {
   return {
     type: 'escape_sequence' as const,
     named: true as const,
-    text,
+    text: text,
     render: () => text,
     toEdit: (s: number | { start: { index: number }; end: { index: number } }, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
     replace: (t: EscapeSequenceTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
@@ -3497,7 +3491,7 @@ export function identifier(text: string) {
   return {
     type: 'identifier' as const,
     named: true as const,
-    text,
+    text: text,
     render: () => text,
     toEdit: (s: number | { start: { index: number }; end: { index: number } }, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
     replace: (t: IdentifierTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
@@ -3508,7 +3502,7 @@ export function shebang(text: string) {
   return {
     type: 'shebang' as const,
     named: true as const,
-    text,
+    text: text,
     render: () => text,
     toEdit: (s: number | { start: { index: number }; end: { index: number } }, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
     replace: (t: ShebangTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
@@ -3584,7 +3578,7 @@ export function metavariable(text: string) {
   return {
     type: 'metavariable' as const,
     named: true as const,
-    text,
+    text: text,
     render: () => text,
     toEdit: (s: number | { start: { index: number }; end: { index: number } }, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
     replace: (t: MetavariableTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
@@ -3611,7 +3605,7 @@ export function shorthandFieldIdentifier(text: string) {
   return {
     type: 'shorthand_field_identifier' as const,
     named: true as const,
-    text,
+    text: text,
     render: () => text,
     toEdit: (s: number | { start: { index: number }; end: { index: number } }, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
     replace: (t: ShorthandFieldIdentifierTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
@@ -3622,7 +3616,7 @@ export function outerDocCommentMarker(text: string) {
   return {
     type: 'outer_doc_comment_marker' as const,
     named: true as const,
-    text,
+    text: text,
     render: () => text,
     toEdit: (s: number | { start: { index: number }; end: { index: number } }, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
     replace: (t: OuterDocCommentMarkerTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
@@ -3633,7 +3627,7 @@ export function innerDocCommentMarker(text: string) {
   return {
     type: 'inner_doc_comment_marker' as const,
     named: true as const,
-    text,
+    text: text,
     render: () => text,
     toEdit: (s: number | { start: { index: number }; end: { index: number } }, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
     replace: (t: InnerDocCommentMarkerTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
@@ -3644,7 +3638,7 @@ export function typeIdentifier(text: string) {
   return {
     type: 'type_identifier' as const,
     named: true as const,
-    text,
+    text: text,
     render: () => text,
     toEdit: (s: number | { start: { index: number }; end: { index: number } }, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
     replace: (t: TypeIdentifierTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
@@ -3655,7 +3649,7 @@ export function fieldIdentifier(text: string) {
   return {
     type: 'field_identifier' as const,
     named: true as const,
-    text,
+    text: text,
     render: () => text,
     toEdit: (s: number | { start: { index: number }; end: { index: number } }, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
     replace: (t: FieldIdentifierTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
