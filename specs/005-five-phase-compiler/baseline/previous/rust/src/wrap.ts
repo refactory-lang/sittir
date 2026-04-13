@@ -8,7 +8,7 @@ import { readNode, buildRoutingMap, type TreeHandle } from '@sittir/core';
 // codegen time from NodeMap, then handed to readNode at module load.
 const _overrides = {"source_file":{"fields":{"shebang":{"types":[{"type":"shebang","named":true}],"multiple":false,"required":true,"position":0},"statements":{"types":[],"multiple":false,"required":true,"position":1}}},"macro_definition":{"fields":{"rules":{"types":[],"multiple":false,"required":true,"position":1}}},"attribute_item":{"fields":{"attribute":{"types":[{"type":"attribute","named":true}],"multiple":false,"required":true,"position":0}}},"inner_attribute_item":{"fields":{"attribute":{"types":[{"type":"attribute","named":true}],"multiple":false,"required":true,"position":0}}},"mod_item":{"fields":{"visibility_modifier":{"types":[{"type":"visibility_modifier","named":true}],"multiple":false,"required":true,"position":0}}},"foreign_mod_item":{"fields":{"visibility_modifier":{"types":[{"type":"visibility_modifier","named":true}],"multiple":false,"required":true,"position":0},"extern_modifier":{"types":[{"type":"extern_modifier","named":true}],"multiple":false,"required":true,"position":1}}},"struct_item":{"fields":{"visibility_modifier":{"types":[{"type":"visibility_modifier","named":true}],"multiple":false,"required":true,"position":0},"where_clause":{"types":[],"multiple":false,"required":true,"position":3}}},"union_item":{"fields":{"visibility_modifier":{"types":[{"type":"visibility_modifier","named":true}],"multiple":false,"required":true,"position":0},"where_clause":{"types":[{"type":"where_clause","named":true}],"multiple":false,"required":true,"position":3}}},"enum_item":{"fields":{"visibility_modifier":{"types":[{"type":"visibility_modifier","named":true}],"multiple":false,"required":true,"position":0},"where_clause":{"types":[{"type":"where_clause","named":true}],"multiple":false,"required":true,"position":3}}},"enum_variant":{"fields":{"visibility_modifier":{"types":[{"type":"visibility_modifier","named":true}],"multiple":false,"required":true,"position":0}}},"field_declaration":{"fields":{"visibility_modifier":{"types":[{"type":"visibility_modifier","named":true}],"multiple":false,"required":true,"position":0}}},"ordered_field_declaration_list":{"fields":{"attributes":{"types":[],"multiple":false,"required":true,"position":0},"visibility_modifier":{"types":[],"multiple":false,"required":true,"position":1}}},"extern_crate_declaration":{"fields":{"visibility_modifier":{"types":[{"type":"visibility_modifier","named":true}],"multiple":false,"required":true,"position":0},"crate":{"types":[{"type":"crate","named":true}],"multiple":false,"required":true,"position":1}}},"const_item":{"fields":{"visibility_modifier":{"types":[{"type":"visibility_modifier","named":true}],"multiple":false,"required":true,"position":0}}},"static_item":{"fields":{"visibility_modifier":{"types":[{"type":"visibility_modifier","named":true}],"multiple":false,"required":true,"position":0},"mutable_specifier":{"types":[],"multiple":false,"required":true,"position":1}}},"type_item":{"fields":{"visibility_modifier":{"types":[{"type":"visibility_modifier","named":true}],"multiple":false,"required":true,"position":0},"where_clause":{"types":[{"type":"where_clause","named":true}],"multiple":false,"required":true,"position":3},"trailing_where_clause":{"types":[{"type":"where_clause","named":true}],"multiple":false,"required":true,"position":5}}},"function_item":{"fields":{"visibility_modifier":{"types":[{"type":"visibility_modifier","named":true}],"multiple":false,"required":true,"position":0},"function_modifiers":{"types":[{"type":"function_modifiers","named":true}],"multiple":false,"required":true,"position":1},"where_clause":{"types":[],"multiple":false,"required":true,"position":5}}},"function_signature_item":{"fields":{"visibility_modifier":{"types":[{"type":"visibility_modifier","named":true}],"multiple":false,"required":true,"position":0},"function_modifiers":{"types":[{"type":"function_modifiers","named":true}],"multiple":false,"required":true,"position":1},"where_clause":{"types":[],"multiple":false,"required":true,"position":5}}},"impl_item":{"fields":{"where_clause":{"types":[],"multiple":false,"required":true,"position":0}}},"trait_item":{"fields":{"visibility_modifier":{"types":[{"type":"visibility_modifier","named":true}],"multiple":false,"required":true,"position":0},"where_clause":{"types":[],"multiple":false,"required":true,"position":1}}},"associated_type":{"fields":{"where_clause":{"types":[{"type":"where_clause","named":true}],"multiple":false,"required":true,"position":3}}},"let_declaration":{"fields":{"mutable_specifier":{"types":[{"type":"mutable_specifier","named":true}],"multiple":false,"required":true,"position":0}}},"use_declaration":{"fields":{"visibility_modifier":{"types":[{"type":"visibility_modifier","named":true}],"multiple":false,"required":true,"position":0}}},"use_wildcard":{"fields":{"path":{"types":[],"multiple":false,"required":true,"position":0}}},"self_parameter":{"fields":{"lifetime":{"types":[],"multiple":false,"required":true,"position":0},"mutable_specifier":{"types":[{"type":"lifetime","named":true}],"multiple":false,"required":true,"position":1},"self":{"types":[{"type":"mutable_specifier","named":true}],"multiple":false,"required":true,"position":2}}},"variadic_parameter":{"fields":{"mutable_specifier":{"types":[{"type":"mutable_specifier","named":true}],"multiple":false,"required":true,"position":0}}},"parameter":{"fields":{"mutable_specifier":{"types":[{"type":"mutable_specifier","named":true}],"multiple":false,"required":true,"position":0}}},"extern_modifier":{"fields":{"string_literal":{"types":[{"type":"string_literal","named":true}],"multiple":false,"required":true,"position":0}}},"lifetime":{"fields":{"identifier":{"types":[{"type":"identifier","named":true}],"multiple":false,"required":true,"position":0}}},"function_type":{"fields":{"for_lifetimes":{"types":[{"type":"for_lifetimes","named":true}],"multiple":false,"required":true,"position":0},"function_modifiers":{"types":[],"multiple":false,"required":true,"position":1}}},"bounded_type":{"fields":{"left":{"types":[{"type":"lifetime","named":true},{"type":"_type","named":true},{"type":"use_bounds","named":true}],"multiple":false,"required":true,"position":0},"right":{"types":[{"type":"lifetime","named":true},{"type":"_type","named":true},{"type":"use_bounds","named":true}],"multiple":false,"required":true,"position":1}}},"reference_type":{"fields":{"lifetime":{"types":[{"type":"lifetime","named":true}],"multiple":false,"required":true,"position":0},"mutable_specifier":{"types":[{"type":"mutable_specifier","named":true}],"multiple":false,"required":true,"position":1}}},"pointer_type":{"fields":{"mutable_specifier":{"types":[{"type":"mutable_specifier","named":true}],"multiple":false,"required":true,"position":0}}},"abstract_type":{"fields":{"type_parameters":{"types":[],"multiple":false,"required":true,"position":0}}},"macro_invocation":{"fields":{"token_tree":{"types":[{"type":"delim_token_tree","named":true}],"multiple":false,"required":true,"position":1}}},"unary_expression":{"fields":{"operand":{"types":[{"type":"-","named":false},{"type":"*","named":false},{"type":"!","named":false}],"multiple":false,"required":true,"position":0}}},"try_expression":{"fields":{"value":{"types":[{"type":"_expression","named":true}],"multiple":false,"required":true,"position":0}}},"reference_expression":{"fields":{"mutable_specifier":{"types":[{"type":"mutable_specifier","named":true}],"multiple":false,"required":true,"position":0}}},"array_expression":{"fields":{"attributes":{"types":[],"multiple":false,"required":true,"position":0},"elements":{"types":[],"multiple":false,"required":true,"position":1}}},"tuple_expression":{"fields":{"attributes":{"types":[],"multiple":false,"required":true,"position":0},"first":{"types":[],"multiple":false,"required":true,"position":1},"rest":{"types":[],"multiple":false,"required":true,"position":2},"trailing":{"types":[{"type":"_expression","named":true}],"multiple":false,"required":true,"position":3}}},"shorthand_field_initializer":{"fields":{"attributes":{"types":[],"multiple":false,"required":true,"position":0},"identifier":{"types":[{"type":"identifier","named":true}],"multiple":false,"required":true,"position":1}}},"while_expression":{"fields":{"label":{"types":[],"multiple":false,"required":true,"position":0}}},"loop_expression":{"fields":{"label":{"types":[],"multiple":false,"required":true,"position":0}}},"for_expression":{"fields":{"label":{"types":[],"multiple":false,"required":true,"position":0}}},"label":{"fields":{"identifier":{"types":[{"type":"identifier","named":true}],"multiple":false,"required":true,"position":0}}},"break_expression":{"fields":{"label":{"types":[{"type":"label","named":true}],"multiple":false,"required":true,"position":0},"expression":{"types":[{"type":"_expression","named":true}],"multiple":false,"required":true,"position":1}}},"continue_expression":{"fields":{"label":{"types":[{"type":"label","named":true}],"multiple":false,"required":true,"position":0}}},"index_expression":{"fields":{"object":{"types":[{"type":"_expression","named":true}],"multiple":false,"required":true,"position":0},"index":{"types":[{"type":"_expression","named":true}],"multiple":false,"required":true,"position":1}}},"unsafe_block":{"fields":{"block":{"types":[{"type":"block","named":true}],"multiple":false,"required":true,"position":0}}},"async_block":{"fields":{"block":{"types":[],"multiple":false,"required":true,"position":0}}},"gen_block":{"fields":{"block":{"types":[],"multiple":false,"required":true,"position":0}}},"try_block":{"fields":{"block":{"types":[{"type":"block","named":true}],"multiple":false,"required":true,"position":0}}},"block":{"fields":{"label":{"types":[],"multiple":false,"required":true,"position":0}}},"mut_pattern":{"fields":{"mutable_specifier":{"types":[{"type":"mutable_specifier","named":true}],"multiple":false,"required":true,"position":0},"pattern":{"types":[{"type":"_pattern","named":true}],"multiple":false,"required":true,"position":1}}},"captured_pattern":{"fields":{"identifier":{"types":[{"type":"identifier","named":true}],"multiple":false,"required":true,"position":0},"pattern":{"types":[{"type":"_pattern","named":true}],"multiple":false,"required":true,"position":1}}},"reference_pattern":{"fields":{"mutable_specifier":{"types":[{"type":"mutable_specifier","named":true}],"multiple":false,"required":true,"position":0},"pattern":{"types":[{"type":"_pattern","named":true}],"multiple":false,"required":true,"position":1}}},"negative_literal":{"fields":{"value":{"types":[{"type":"integer_literal","named":true},{"type":"float_literal","named":true}],"multiple":false,"required":true,"position":0}}},"raw_string_literal":{"fields":{"raw_string_literal_start":{"types":[{"type":"_raw_string_literal_start","named":true}],"multiple":false,"required":true,"position":0},"string_content":{"types":[{"type":"raw_string_literal_content","named":true}],"multiple":false,"required":true,"position":1},"raw_string_literal_end":{"types":[{"type":"_raw_string_literal_end","named":true}],"multiple":false,"required":true,"position":2}}}} as const;
 const _supertypeExpansion = new Map<string, readonly string[]>(Object.entries({"_statement":["expression_statement","_declaration_statement"],"_declaration_statement":["const_item","macro_invocation","macro_definition","empty_statement","attribute_item","inner_attribute_item","mod_item","foreign_mod_item","struct_item","union_item","enum_item","type_item","function_item","function_signature_item","impl_item","trait_item","associated_type","let_declaration","use_declaration","extern_crate_declaration","static_item"],"_token_pattern":["token_tree_pattern","token_repetition_pattern","token_binding_pattern","metavariable","_non_special_token"],"_tokens":["token_tree","token_repetition","metavariable","_non_special_token"],"_use_clause":["_path","use_as_clause","use_list","scoped_use_list","use_wildcard"],"_expression":["_expression_except_range","range_expression"],"_expression_ending_with_block":["unsafe_block","async_block","gen_block","try_block","block","if_expression","match_expression","while_expression","loop_expression","for_expression","const_block"],"_delim_tokens":["_non_delim_token","delim_token_tree"],"_condition":["_expression","let_condition","_let_chain"],"_literal":["string_literal","raw_string_literal","char_literal","boolean_literal","integer_literal","float_literal"],"_literal_pattern":["string_literal","raw_string_literal","char_literal","boolean_literal","integer_literal","float_literal","negative_literal"]}));
-const _routing = buildRoutingMap(_overrides, _supertypeExpansion);
+const _routing = buildRoutingMap(_overrides as any, _supertypeExpansion);
 
 // Drill-in helpers — pass _routing to readNode so override field
 // promotion happens during hydration, not as a wrap-time fix-up.
@@ -31,7 +31,7 @@ export function wrapSourceFile(data: AnyNodeData, tree: TreeHandle) {
     ...data,
     get shebang() { return drillIn(data.fields?.['shebang'], tree); },
     get statements() { return drillIn(data.fields?.['statements'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -47,7 +47,7 @@ export function wrapMacroDefinition(data: AnyNodeData, tree: TreeHandle) {
     ...data,
     get name() { return drillIn(data.fields?.['name'], tree); },
     get rules() { return drillIn(data.fields?.['rules'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -56,14 +56,14 @@ export function wrapMacroRule(data: AnyNodeData, tree: TreeHandle) {
     ...data,
     get left() { return drillIn(data.fields?.['left'], tree); },
     get right() { return drillIn(data.fields?.['right'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
 export function wrapTokenTreePattern(data: AnyNodeData, tree: TreeHandle) {
   return {
     ...data,
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -72,28 +72,28 @@ export function wrapTokenBindingPattern(data: AnyNodeData, tree: TreeHandle) {
     ...data,
     get name() { return drillIn(data.fields?.['name'], tree); },
     get typeField() { return drillIn(data.fields?.['type'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
 export function wrapTokenRepetitionPattern(data: AnyNodeData, tree: TreeHandle) {
   return {
     ...data,
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
 export function wrapTokenTree(data: AnyNodeData, tree: TreeHandle) {
   return {
     ...data,
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
 export function wrapTokenRepetition(data: AnyNodeData, tree: TreeHandle) {
   return {
     ...data,
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -108,7 +108,7 @@ export function wrapAttributeItem(data: AnyNodeData, tree: TreeHandle) {
   return {
     ...data,
     get attribute() { return drillIn(data.fields?.['attribute'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -116,7 +116,7 @@ export function wrapInnerAttributeItem(data: AnyNodeData, tree: TreeHandle) {
   return {
     ...data,
     get attribute() { return drillIn(data.fields?.['attribute'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -135,7 +135,7 @@ export function wrapModItem(data: AnyNodeData, tree: TreeHandle) {
     get visibilityModifier() { return drillIn(data.fields?.['visibility_modifier'], tree); },
     get name() { return drillIn(data.fields?.['name'], tree); },
     get body() { return drillIn(data.fields?.['body'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -145,14 +145,14 @@ export function wrapForeignModItem(data: AnyNodeData, tree: TreeHandle) {
     get visibilityModifier() { return drillIn(data.fields?.['visibility_modifier'], tree); },
     get externModifier() { return drillIn(data.fields?.['extern_modifier'], tree); },
     get body() { return drillIn(data.fields?.['body'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
 export function wrapDeclarationList(data: AnyNodeData, tree: TreeHandle) {
   return {
     ...data,
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -163,7 +163,7 @@ export function wrapStructItem(data: AnyNodeData, tree: TreeHandle) {
     get name() { return drillIn(data.fields?.['name'], tree); },
     get typeParameters() { return drillIn(data.fields?.['type_parameters'], tree); },
     get whereClause() { return drillIn(data.fields?.['where_clause'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -175,7 +175,7 @@ export function wrapUnionItem(data: AnyNodeData, tree: TreeHandle) {
     get typeParameters() { return drillIn(data.fields?.['type_parameters'], tree); },
     get whereClause() { return drillIn(data.fields?.['where_clause'], tree); },
     get body() { return drillIn(data.fields?.['body'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -187,14 +187,14 @@ export function wrapEnumItem(data: AnyNodeData, tree: TreeHandle) {
     get typeParameters() { return drillIn(data.fields?.['type_parameters'], tree); },
     get whereClause() { return drillIn(data.fields?.['where_clause'], tree); },
     get body() { return drillIn(data.fields?.['body'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
 export function wrapEnumVariantList(data: AnyNodeData, tree: TreeHandle) {
   return {
     ...data,
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -205,14 +205,14 @@ export function wrapEnumVariant(data: AnyNodeData, tree: TreeHandle) {
     get name() { return drillIn(data.fields?.['name'], tree); },
     get body() { return drillIn(data.fields?.['body'], tree); },
     get value() { return drillIn(data.fields?.['value'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
 export function wrapFieldDeclarationList(data: AnyNodeData, tree: TreeHandle) {
   return {
     ...data,
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -222,7 +222,7 @@ export function wrapFieldDeclaration(data: AnyNodeData, tree: TreeHandle) {
     get visibilityModifier() { return drillIn(data.fields?.['visibility_modifier'], tree); },
     get name() { return drillIn(data.fields?.['name'], tree); },
     get typeField() { return drillIn(data.fields?.['type'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -231,7 +231,7 @@ export function wrapOrderedFieldDeclarationList(data: AnyNodeData, tree: TreeHan
     ...data,
     get attributes() { return drillIn(data.fields?.['attributes'], tree); },
     get visibilityModifier() { return drillIn(data.fields?.['visibility_modifier'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -242,7 +242,7 @@ export function wrapExternCrateDeclaration(data: AnyNodeData, tree: TreeHandle) 
     get crate() { return drillIn(data.fields?.['crate'], tree); },
     get name() { return drillIn(data.fields?.['name'], tree); },
     get alias() { return drillIn(data.fields?.['alias'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -253,7 +253,7 @@ export function wrapConstItem(data: AnyNodeData, tree: TreeHandle) {
     get name() { return drillIn(data.fields?.['name'], tree); },
     get typeField() { return drillIn(data.fields?.['type'], tree); },
     get value() { return drillIn(data.fields?.['value'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -278,7 +278,7 @@ export function wrapTypeItem(data: AnyNodeData, tree: TreeHandle) {
     get whereClause() { return drillIn(data.fields?.['where_clause'], tree); },
     get typeField() { return drillIn(data.fields?.['type'], tree); },
     get trailingWhereClause() { return drillIn(data.fields?.['trailing_where_clause'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -312,14 +312,14 @@ export function wrapFunctionSignatureItem(data: AnyNodeData, tree: TreeHandle) {
 export function wrapFunctionModifiers(data: AnyNodeData, tree: TreeHandle) {
   return {
     ...data,
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
 export function wrapWhereClause(data: AnyNodeData, tree: TreeHandle) {
   return {
     ...data,
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -328,7 +328,7 @@ export function wrapWherePredicate(data: AnyNodeData, tree: TreeHandle) {
     ...data,
     get left() { return drillIn(data.fields?.['left'], tree); },
     get bounds() { return drillIn(data.fields?.['bounds'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -364,14 +364,14 @@ export function wrapAssociatedType(data: AnyNodeData, tree: TreeHandle) {
     get typeParameters() { return drillIn(data.fields?.['type_parameters'], tree); },
     get bounds() { return drillIn(data.fields?.['bounds'], tree); },
     get whereClause() { return drillIn(data.fields?.['where_clause'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
 export function wrapTraitBounds(data: AnyNodeData, tree: TreeHandle) {
   return {
     ...data,
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -380,7 +380,7 @@ export function wrapHigherRankedTraitBound(data: AnyNodeData, tree: TreeHandle) 
     ...data,
     get typeParameters() { return drillIn(data.fields?.['type_parameters'], tree); },
     get typeField() { return drillIn(data.fields?.['type'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -394,7 +394,7 @@ export function wrapRemovedTraitBound(data: AnyNodeData, tree: TreeHandle) {
 export function wrapTypeParameters(data: AnyNodeData, tree: TreeHandle) {
   return {
     ...data,
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -404,7 +404,7 @@ export function wrapConstParameter(data: AnyNodeData, tree: TreeHandle) {
     get name() { return drillIn(data.fields?.['name'], tree); },
     get typeField() { return drillIn(data.fields?.['type'], tree); },
     get value() { return drillIn(data.fields?.['value'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -414,7 +414,7 @@ export function wrapTypeParameter(data: AnyNodeData, tree: TreeHandle) {
     get name() { return drillIn(data.fields?.['name'], tree); },
     get bounds() { return drillIn(data.fields?.['bounds'], tree); },
     get defaultType() { return drillIn(data.fields?.['default_type'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -423,7 +423,7 @@ export function wrapLifetimeParameter(data: AnyNodeData, tree: TreeHandle) {
     ...data,
     get name() { return drillIn(data.fields?.['name'], tree); },
     get bounds() { return drillIn(data.fields?.['bounds'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -435,7 +435,7 @@ export function wrapLetDeclaration(data: AnyNodeData, tree: TreeHandle) {
     get typeField() { return drillIn(data.fields?.['type'], tree); },
     get value() { return drillIn(data.fields?.['value'], tree); },
     get alternative() { return drillIn(data.fields?.['alternative'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -444,7 +444,7 @@ export function wrapUseDeclaration(data: AnyNodeData, tree: TreeHandle) {
     ...data,
     get visibilityModifier() { return drillIn(data.fields?.['visibility_modifier'], tree); },
     get argument() { return drillIn(data.fields?.['argument'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -453,14 +453,14 @@ export function wrapScopedUseList(data: AnyNodeData, tree: TreeHandle) {
     ...data,
     get path() { return drillIn(data.fields?.['path'], tree); },
     get list() { return drillIn(data.fields?.['list'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
 export function wrapUseList(data: AnyNodeData, tree: TreeHandle) {
   return {
     ...data,
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -469,7 +469,7 @@ export function wrapUseAsClause(data: AnyNodeData, tree: TreeHandle) {
     ...data,
     get path() { return drillIn(data.fields?.['path'], tree); },
     get alias() { return drillIn(data.fields?.['alias'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -477,14 +477,14 @@ export function wrapUseWildcard(data: AnyNodeData, tree: TreeHandle) {
   return {
     ...data,
     get path() { return drillIn(data.fields?.['path'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
 export function wrapParameters(data: AnyNodeData, tree: TreeHandle) {
   return {
     ...data,
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -503,7 +503,7 @@ export function wrapVariadicParameter(data: AnyNodeData, tree: TreeHandle) {
     ...data,
     get mutableSpecifier() { return drillIn(data.fields?.['mutable_specifier'], tree); },
     get pattern() { return drillIn(data.fields?.['pattern'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -513,7 +513,7 @@ export function wrapParameter(data: AnyNodeData, tree: TreeHandle) {
     get mutableSpecifier() { return drillIn(data.fields?.['mutable_specifier'], tree); },
     get pattern() { return drillIn(data.fields?.['pattern'], tree); },
     get typeField() { return drillIn(data.fields?.['type'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -521,7 +521,7 @@ export function wrapExternModifier(data: AnyNodeData, tree: TreeHandle) {
   return {
     ...data,
     get stringLiteral() { return drillIn(data.fields?.['string_literal'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -551,7 +551,7 @@ export function wrapQualifiedType(data: AnyNodeData, tree: TreeHandle) {
     ...data,
     get typeField() { return drillIn(data.fields?.['type'], tree); },
     get alias() { return drillIn(data.fields?.['alias'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -559,7 +559,7 @@ export function wrapLifetime(data: AnyNodeData, tree: TreeHandle) {
   return {
     ...data,
     get identifier() { return drillIn(data.fields?.['identifier'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -568,14 +568,14 @@ export function wrapArrayType(data: AnyNodeData, tree: TreeHandle) {
     ...data,
     get element() { return drillIn(data.fields?.['element'], tree); },
     get length() { return drillIn(data.fields?.['length'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
 export function wrapForLifetimes(data: AnyNodeData, tree: TreeHandle) {
   return {
     ...data,
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -585,14 +585,14 @@ export function wrapFunctionType(data: AnyNodeData, tree: TreeHandle) {
     get forLifetimes() { return drillIn(data.fields?.['for_lifetimes'], tree); },
     get functionModifiers() { return drillIn(data.fields?.['function_modifiers'], tree); },
     get returnType() { return drillIn(data.fields?.['return_type'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
 export function wrapTupleType(data: AnyNodeData, tree: TreeHandle) {
   return {
     ...data,
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -601,7 +601,7 @@ export function wrapGenericFunction(data: AnyNodeData, tree: TreeHandle) {
     ...data,
     get function() { return drillIn(data.fields?.['function'], tree); },
     get typeArguments() { return drillIn(data.fields?.['type_arguments'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -610,7 +610,7 @@ export function wrapGenericType(data: AnyNodeData, tree: TreeHandle) {
     ...data,
     get typeField() { return drillIn(data.fields?.['type'], tree); },
     get typeArguments() { return drillIn(data.fields?.['type_arguments'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -619,7 +619,7 @@ export function wrapGenericTypeWithTurbofish(data: AnyNodeData, tree: TreeHandle
     ...data,
     get typeField() { return drillIn(data.fields?.['type'], tree); },
     get typeArguments() { return drillIn(data.fields?.['type_arguments'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -628,14 +628,14 @@ export function wrapBoundedType(data: AnyNodeData, tree: TreeHandle) {
     ...data,
     get left() { return drillIn(data.fields?.['left'], tree); },
     get right() { return drillIn(data.fields?.['right'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
 export function wrapUseBounds(data: AnyNodeData, tree: TreeHandle) {
   return {
     ...data,
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -643,7 +643,7 @@ export function wrapTypeArguments(data: AnyNodeData, tree: TreeHandle) {
   return {
     ...data,
     get bounds() { return drillInAll(data.fields?.['bounds'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -653,7 +653,7 @@ export function wrapTypeBinding(data: AnyNodeData, tree: TreeHandle) {
     get name() { return drillIn(data.fields?.['name'], tree); },
     get typeArguments() { return drillIn(data.fields?.['type_arguments'], tree); },
     get typeField() { return drillIn(data.fields?.['type'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -663,7 +663,7 @@ export function wrapReferenceType(data: AnyNodeData, tree: TreeHandle) {
     get lifetime() { return drillIn(data.fields?.['lifetime'], tree); },
     get mutableSpecifier() { return drillIn(data.fields?.['mutable_specifier'], tree); },
     get typeField() { return drillIn(data.fields?.['type'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -672,7 +672,7 @@ export function wrapPointerType(data: AnyNodeData, tree: TreeHandle) {
     ...data,
     get mutableSpecifier() { return drillIn(data.fields?.['mutable_specifier'], tree); },
     get typeField() { return drillIn(data.fields?.['type'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -681,7 +681,7 @@ export function wrapAbstractType(data: AnyNodeData, tree: TreeHandle) {
     ...data,
     get typeParameters() { return drillIn(data.fields?.['type_parameters'], tree); },
     get trait() { return drillIn(data.fields?.['trait'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -689,7 +689,7 @@ export function wrapDynamicType(data: AnyNodeData, tree: TreeHandle) {
   return {
     ...data,
     get trait() { return drillIn(data.fields?.['trait'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -705,14 +705,14 @@ export function wrapMacroInvocation(data: AnyNodeData, tree: TreeHandle) {
     ...data,
     get macro() { return drillIn(data.fields?.['macro'], tree); },
     get tokenTree() { return drillIn(data.fields?.['token_tree'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
 export function wrapDelimTokenTree(data: AnyNodeData, tree: TreeHandle) {
   return {
     ...data,
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -728,7 +728,7 @@ export function wrapScopedIdentifier(data: AnyNodeData, tree: TreeHandle) {
     ...data,
     get path() { return drillIn(data.fields?.['path'], tree); },
     get name() { return drillIn(data.fields?.['name'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -737,7 +737,7 @@ export function wrapScopedTypeIdentifierInExpressionPosition(data: AnyNodeData, 
     ...data,
     get path() { return drillIn(data.fields?.['path'], tree); },
     get name() { return drillIn(data.fields?.['name'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -746,7 +746,7 @@ export function wrapScopedTypeIdentifier(data: AnyNodeData, tree: TreeHandle) {
     ...data,
     get path() { return drillIn(data.fields?.['path'], tree); },
     get name() { return drillIn(data.fields?.['name'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -769,7 +769,7 @@ export function wrapTryExpression(data: AnyNodeData, tree: TreeHandle) {
   return {
     ...data,
     get value() { return drillIn(data.fields?.['value'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -778,7 +778,7 @@ export function wrapReferenceExpression(data: AnyNodeData, tree: TreeHandle) {
     ...data,
     get mutableSpecifier() { return drillIn(data.fields?.['mutable_specifier'], tree); },
     get value() { return drillIn(data.fields?.['value'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -788,7 +788,7 @@ export function wrapBinaryExpression(data: AnyNodeData, tree: TreeHandle) {
     get left() { return drillIn(data.fields?.['left'], tree); },
     get operator() { return drillIn(data.fields?.['operator'], tree); },
     get right() { return drillIn(data.fields?.['right'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -797,7 +797,7 @@ export function wrapAssignmentExpression(data: AnyNodeData, tree: TreeHandle) {
     ...data,
     get left() { return drillIn(data.fields?.['left'], tree); },
     get right() { return drillIn(data.fields?.['right'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -807,7 +807,7 @@ export function wrapCompoundAssignmentExpr(data: AnyNodeData, tree: TreeHandle) 
     get left() { return drillIn(data.fields?.['left'], tree); },
     get operator() { return drillIn(data.fields?.['operator'], tree); },
     get right() { return drillIn(data.fields?.['right'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -816,7 +816,7 @@ export function wrapTypeCastExpression(data: AnyNodeData, tree: TreeHandle) {
     ...data,
     get value() { return drillIn(data.fields?.['value'], tree); },
     get typeField() { return drillIn(data.fields?.['type'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -839,14 +839,14 @@ export function wrapCallExpression(data: AnyNodeData, tree: TreeHandle) {
     ...data,
     get function() { return drillIn(data.fields?.['function'], tree); },
     get arguments() { return drillIn(data.fields?.['arguments'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
 export function wrapArguments(data: AnyNodeData, tree: TreeHandle) {
   return {
     ...data,
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -855,7 +855,7 @@ export function wrapArrayExpression(data: AnyNodeData, tree: TreeHandle) {
     ...data,
     get attributes() { return drillIn(data.fields?.['attributes'], tree); },
     get elements() { return drillIn(data.fields?.['elements'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -873,7 +873,7 @@ export function wrapTupleExpression(data: AnyNodeData, tree: TreeHandle) {
     get first() { return drillIn(data.fields?.['first'], tree); },
     get rest() { return drillIn(data.fields?.['rest'], tree); },
     get trailing() { return drillIn(data.fields?.['trailing'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -882,14 +882,14 @@ export function wrapStructExpression(data: AnyNodeData, tree: TreeHandle) {
     ...data,
     get name() { return drillIn(data.fields?.['name'], tree); },
     get body() { return drillIn(data.fields?.['body'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
 export function wrapFieldInitializerList(data: AnyNodeData, tree: TreeHandle) {
   return {
     ...data,
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -898,7 +898,7 @@ export function wrapShorthandFieldInitializer(data: AnyNodeData, tree: TreeHandl
     ...data,
     get attributes() { return drillIn(data.fields?.['attributes'], tree); },
     get identifier() { return drillIn(data.fields?.['identifier'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -907,7 +907,7 @@ export function wrapFieldInitializer(data: AnyNodeData, tree: TreeHandle) {
     ...data,
     get field() { return drillIn(data.fields?.['field'], tree); },
     get value() { return drillIn(data.fields?.['value'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -924,7 +924,7 @@ export function wrapIfExpression(data: AnyNodeData, tree: TreeHandle) {
     get condition() { return drillIn(data.fields?.['condition'], tree); },
     get consequence() { return drillIn(data.fields?.['consequence'], tree); },
     get alternative() { return drillIn(data.fields?.['alternative'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -933,7 +933,7 @@ export function wrapLetCondition(data: AnyNodeData, tree: TreeHandle) {
     ...data,
     get pattern() { return drillIn(data.fields?.['pattern'], tree); },
     get value() { return drillIn(data.fields?.['value'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -956,14 +956,14 @@ export function wrapMatchExpression(data: AnyNodeData, tree: TreeHandle) {
     ...data,
     get value() { return drillIn(data.fields?.['value'], tree); },
     get body() { return drillIn(data.fields?.['body'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
 export function wrapMatchBlock(data: AnyNodeData, tree: TreeHandle) {
   return {
     ...data,
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -972,7 +972,7 @@ export function wrapMatchArm(data: AnyNodeData, tree: TreeHandle) {
     ...data,
     get pattern() { return drillIn(data.fields?.['pattern'], tree); },
     get value() { return drillIn(data.fields?.['value'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -981,7 +981,7 @@ export function wrapLastMatchArm(data: AnyNodeData, tree: TreeHandle) {
     ...data,
     get pattern() { return drillIn(data.fields?.['pattern'], tree); },
     get value() { return drillIn(data.fields?.['value'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -990,7 +990,7 @@ export function wrapMatchPattern(data: AnyNodeData, tree: TreeHandle) {
     ...data,
     get pattern() { return drillIn(data.fields?.['pattern'], tree); },
     get condition() { return drillIn(data.fields?.['condition'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -1000,7 +1000,7 @@ export function wrapWhileExpression(data: AnyNodeData, tree: TreeHandle) {
     get label() { return drillIn(data.fields?.['label'], tree); },
     get condition() { return drillIn(data.fields?.['condition'], tree); },
     get body() { return drillIn(data.fields?.['body'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -1009,7 +1009,7 @@ export function wrapLoopExpression(data: AnyNodeData, tree: TreeHandle) {
     ...data,
     get label() { return drillIn(data.fields?.['label'], tree); },
     get body() { return drillIn(data.fields?.['body'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -1020,7 +1020,7 @@ export function wrapForExpression(data: AnyNodeData, tree: TreeHandle) {
     get pattern() { return drillIn(data.fields?.['pattern'], tree); },
     get value() { return drillIn(data.fields?.['value'], tree); },
     get body() { return drillIn(data.fields?.['body'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -1028,7 +1028,7 @@ export function wrapConstBlock(data: AnyNodeData, tree: TreeHandle) {
   return {
     ...data,
     get body() { return drillIn(data.fields?.['body'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -1037,7 +1037,7 @@ export function wrapClosureExpression(data: AnyNodeData, tree: TreeHandle) {
     ...data,
     get returnType() { return drillIn(data.fields?.['return_type'], tree); },
     get body() { return drillIn(data.fields?.['body'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -1045,7 +1045,7 @@ export function wrapClosureParameters(data: AnyNodeData, tree: TreeHandle) {
   return {
     ...data,
     get pattern() { return drillInAll(data.fields?.['pattern'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -1053,7 +1053,7 @@ export function wrapLabel(data: AnyNodeData, tree: TreeHandle) {
   return {
     ...data,
     get identifier() { return drillIn(data.fields?.['identifier'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -1062,7 +1062,7 @@ export function wrapBreakExpression(data: AnyNodeData, tree: TreeHandle) {
     ...data,
     get label() { return drillIn(data.fields?.['label'], tree); },
     get expression() { return drillIn(data.fields?.['expression'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -1070,7 +1070,7 @@ export function wrapContinueExpression(data: AnyNodeData, tree: TreeHandle) {
   return {
     ...data,
     get label() { return drillIn(data.fields?.['label'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -1079,7 +1079,7 @@ export function wrapIndexExpression(data: AnyNodeData, tree: TreeHandle) {
     ...data,
     get object() { return drillIn(data.fields?.['object'], tree); },
     get index() { return drillIn(data.fields?.['index'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -1095,7 +1095,7 @@ export function wrapFieldExpression(data: AnyNodeData, tree: TreeHandle) {
     ...data,
     get value() { return drillIn(data.fields?.['value'], tree); },
     get field() { return drillIn(data.fields?.['field'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -1103,7 +1103,7 @@ export function wrapUnsafeBlock(data: AnyNodeData, tree: TreeHandle) {
   return {
     ...data,
     get block() { return drillIn(data.fields?.['block'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -1127,7 +1127,7 @@ export function wrapTryBlock(data: AnyNodeData, tree: TreeHandle) {
   return {
     ...data,
     get block() { return drillIn(data.fields?.['block'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -1135,7 +1135,7 @@ export function wrapBlock(data: AnyNodeData, tree: TreeHandle) {
   return {
     ...data,
     get label() { return drillIn(data.fields?.['label'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -1158,7 +1158,7 @@ export function wrapTuplePattern(data: AnyNodeData, tree: TreeHandle) {
   return {
     ...data,
     get pattern() { return drillInAll(data.fields?.['pattern'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -1166,7 +1166,7 @@ export function wrapSlicePattern(data: AnyNodeData, tree: TreeHandle) {
   return {
     ...data,
     get pattern() { return drillInAll(data.fields?.['pattern'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -1175,7 +1175,7 @@ export function wrapTupleStructPattern(data: AnyNodeData, tree: TreeHandle) {
     ...data,
     get typeField() { return drillIn(data.fields?.['type'], tree); },
     get pattern() { return drillInAll(data.fields?.['pattern'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -1183,7 +1183,7 @@ export function wrapStructPattern(data: AnyNodeData, tree: TreeHandle) {
   return {
     ...data,
     get typeField() { return drillIn(data.fields?.['type'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -1192,7 +1192,7 @@ export function wrapFieldPattern(data: AnyNodeData, tree: TreeHandle) {
     ...data,
     get name() { return drillIn(data.fields?.['name'], tree); },
     get pattern() { return drillIn(data.fields?.['pattern'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -1201,7 +1201,7 @@ export function wrapMutPattern(data: AnyNodeData, tree: TreeHandle) {
     ...data,
     get mutableSpecifier() { return drillIn(data.fields?.['mutable_specifier'], tree); },
     get pattern() { return drillIn(data.fields?.['pattern'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -1210,7 +1210,7 @@ export function wrapRangePattern(data: AnyNodeData, tree: TreeHandle) {
     ...data,
     get left() { return drillIn(data.fields?.['left'], tree); },
     get right() { return drillIn(data.fields?.['right'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -1218,7 +1218,7 @@ export function wrapRefPattern(data: AnyNodeData, tree: TreeHandle) {
   return {
     ...data,
     get pattern() { return drillIn(data.fields?.['pattern'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -1227,7 +1227,7 @@ export function wrapCapturedPattern(data: AnyNodeData, tree: TreeHandle) {
     ...data,
     get identifier() { return drillIn(data.fields?.['identifier'], tree); },
     get pattern() { return drillIn(data.fields?.['pattern'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -1236,7 +1236,7 @@ export function wrapReferencePattern(data: AnyNodeData, tree: TreeHandle) {
     ...data,
     get mutableSpecifier() { return drillIn(data.fields?.['mutable_specifier'], tree); },
     get pattern() { return drillIn(data.fields?.['pattern'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -1244,7 +1244,7 @@ export function wrapOrPattern(data: AnyNodeData, tree: TreeHandle) {
   return {
     ...data,
     get pattern() { return drillIn(data.fields?.['pattern'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -1252,14 +1252,14 @@ export function wrapNegativeLiteral(data: AnyNodeData, tree: TreeHandle) {
   return {
     ...data,
     get value() { return drillIn(data.fields?.['value'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
 export function wrapStringLiteral(data: AnyNodeData, tree: TreeHandle) {
   return {
     ...data,
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -1269,7 +1269,7 @@ export function wrapRawStringLiteral(data: AnyNodeData, tree: TreeHandle) {
     get rawStringLiteralStart() { return drillIn(data.fields?.['raw_string_literal_start'], tree); },
     get stringContent() { return drillIn(data.fields?.['string_content'], tree); },
     get rawStringLiteralEnd() { return drillIn(data.fields?.['raw_string_literal_end'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -1293,7 +1293,7 @@ export function wrapHiddenLineDocCommentMarker(data: AnyNodeData, tree: TreeHand
     ...data,
     get outer() { return drillIn(data.fields?.['outer'], tree); },
     get inner() { return drillIn(data.fields?.['inner'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 
@@ -1310,7 +1310,7 @@ export function wrapHiddenBlockDocCommentMarker(data: AnyNodeData, tree: TreeHan
     ...data,
     get outer() { return drillIn(data.fields?.['outer'], tree); },
     get inner() { return drillIn(data.fields?.['inner'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },
   };
 }
 

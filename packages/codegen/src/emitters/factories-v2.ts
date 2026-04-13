@@ -80,7 +80,7 @@ export function emitFactoriesFromNodeMap(config: EmitFactoriesFromNodeMapConfig)
     }
 
     // _factoryMap — runtime dispatch table keyed by grammar kind.
-    lines.push('export const _factoryMap: Record<string, (config?: any) => unknown> = {')
+    lines.push('export const _factoryMap: Record<string, (config?: unknown) => unknown> = {')
     for (const [kind, node] of nodeMap.nodes) {
         if (!node.rawFactoryName) continue
         lines.push(`  '${kind}': ${node.rawFactoryName},`)

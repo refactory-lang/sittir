@@ -69,7 +69,7 @@ function emitResolverHelpers(lines: string[], nodeMap: import('../compiler/rule.
     // from() function. Used for branch/supertype field resolution when
     // the loose input carries a `kind` discriminator.
     lines.push('function _resolveByKind(kind: string, rest: unknown): unknown {')
-    lines.push('  const fn = (_fromMap as Record<string, (input?: any) => unknown>)[kind];')
+    lines.push('  const fn = (_fromMap as Record<string, (input?: unknown) => unknown>)[kind];')
     lines.push('  if (fn) return fn(rest);')
     lines.push('  return rest;')
     lines.push('}')
@@ -122,8 +122,8 @@ function emitResolverHelpers(lines: string[], nodeMap: import('../compiler/rule.
     lines.push('    const leaf = _resolveLeafString(v, leafKinds);')
     lines.push('    if (leaf !== undefined) return leaf;')
     lines.push('  }')
-    lines.push('  if (typeof v === "object" && v !== null && "kind" in (v as any)) {')
-    lines.push('    const { kind, ...rest } = v as any;')
+    lines.push('  if (typeof v === "object" && v !== null && "kind" in v) {')
+    lines.push('    const { kind, ...rest } = v as Record<string, unknown>;')
     lines.push('    return _resolveByKind(kind, rest);')
     lines.push('  }')
     lines.push('  // Single-branch passthrough — the loose object IS the branch.')
@@ -222,12 +222,12 @@ export function emitFromNodeMap(config: EmitFromNodeMapConfig): string {
     }
 
     // _fromMap — runtime entry for validators and dynamic dispatch.
-    lines.push('export const _fromMap: Record<string, (input?: any) => unknown> = {')
+    lines.push('export const _fromMap: Record<string, (input?: unknown) => unknown> = {')
     for (const [kind, node] of nodeMap.nodes) {
         if (!node.factoryName) continue
         if (node.modelType === 'token' || node.modelType === 'supertype' || node.modelType === 'group') continue
         if (!node.fromFunctionName) continue
-        lines.push(`  ${JSON.stringify(kind)}: ${node.fromFunctionName} as (input?: any) => unknown,`)
+        lines.push(`  ${JSON.stringify(kind)}: ${node.fromFunctionName} as (input?: unknown) => unknown,`)
     }
     lines.push('};')
     lines.push('')

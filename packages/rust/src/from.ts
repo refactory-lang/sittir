@@ -52,7 +52,7 @@ function _resolveLeafString(v: string, kinds: readonly string[]): unknown {
 }
 
 function _resolveByKind(kind: string, rest: unknown): unknown {
-  const fn = (_fromMap as Record<string, (input?: any) => unknown>)[kind];
+  const fn = (_fromMap as Record<string, (input?: unknown) => unknown>)[kind];
   if (fn) return fn(rest);
   return rest;
 }
@@ -78,8 +78,8 @@ function _resolveOne(v: unknown, leafKinds: readonly string[], branchKinds: read
     const leaf = _resolveLeafString(v, leafKinds);
     if (leaf !== undefined) return leaf;
   }
-  if (typeof v === "object" && v !== null && "kind" in (v as any)) {
-    const { kind, ...rest } = v as any;
+  if (typeof v === "object" && v !== null && "kind" in v) {
+    const { kind, ...rest } = v as Record<string, unknown>;
     return _resolveByKind(kind, rest);
   }
   // Single-branch passthrough — the loose object IS the branch.
@@ -96,63 +96,60 @@ function _resolveMany(v: unknown, leafKinds: readonly string[], branchKinds: rea
 }
 
 export function sourceFileFrom(input: SourceFileFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return sourceFile({
-    shebang: _resolveOne(f.shebang, ["shebang"], []) as any,
-    statements: _resolveOne(f.statements, [], []) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    shebang: _resolveOne(f.shebang, ["shebang"], []),
+    statements: _resolveOne(f.statements, [], []),
+    children: input?.children ?? [],
+  });
 }
 
-export function expressionStatementFrom(...input: any[]) {
+export function expressionStatementFrom(...input: unknown[]) {
   if (input.length === 1 && isNodeData(input[0])) {
-    const nd = input[0] as any;
-    return expressionStatement(...(nd.children ?? []));
+    return expressionStatement(...((input[0] as { children?: unknown[] }).children ?? []));
   }
-  return expressionStatement(...(input as any[]));
+  return expressionStatement(...input);
 }
 
 export function macroDefinitionFrom(input: MacroDefinitionFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return macroDefinition({
-    name: _resolveOne(f.name, ["identifier","_reserved_identifier"], []) as any,
-    rules: _resolveOne(f.rules, [], []) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    name: _resolveOne(f.name, ["identifier","_reserved_identifier"], []),
+    rules: _resolveOne(f.rules, [], []),
+    children: input?.children ?? [],
+  });
 }
 
 export function macroRuleFrom(input: MacroRuleFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return macroRule({
-    left: _resolveOne(f.left, [], ["token_tree_pattern"]) as any,
-    right: _resolveOne(f.right, [], ["token_tree"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    left: _resolveOne(f.left, [], ["token_tree_pattern"]),
+    right: _resolveOne(f.right, [], ["token_tree"]),
+    children: input?.children ?? [],
+  });
 }
 
-export function tokenTreePatternFrom(...input: any[]) {
+export function tokenTreePatternFrom(...input: unknown[]) {
   if (input.length === 1 && isNodeData(input[0])) {
-    const nd = input[0] as any;
-    return tokenTreePattern(...(nd.children ?? []));
+    return tokenTreePattern(...((input[0] as { children?: unknown[] }).children ?? []));
   }
-  return tokenTreePattern(...(input as any[]));
+  return tokenTreePattern(...input);
 }
 
 export function tokenBindingPatternFrom(input: TokenBindingPatternFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return tokenBindingPattern({
-    name: _resolveOne(f.name, ["metavariable"], []) as any,
-    type: _resolveOne(f.type, ["fragment_specifier"], []) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    name: _resolveOne(f.name, ["metavariable"], []),
+    type: _resolveOne(f.type, ["fragment_specifier"], []),
+    children: input?.children ?? [],
+  });
 }
 
-export function tokenRepetitionPatternFrom(...input: any[]) {
+export function tokenRepetitionPatternFrom(...input: unknown[]) {
   if (input.length === 1 && isNodeData(input[0])) {
-    const nd = input[0] as any;
-    return tokenRepetitionPattern(...(nd.children ?? []));
+    return tokenRepetitionPattern(...((input[0] as { children?: unknown[] }).children ?? []));
   }
-  return tokenRepetitionPattern(...(input as any[]));
+  return tokenRepetitionPattern(...input);
 }
 
 export function fragmentSpecifierFrom(input: string | FragmentSpecifier) {
@@ -160,535 +157,517 @@ export function fragmentSpecifierFrom(input: string | FragmentSpecifier) {
   return fragmentSpecifier(input as string);
 }
 
-export function tokenTreeFrom(...input: any[]) {
+export function tokenTreeFrom(...input: unknown[]) {
   if (input.length === 1 && isNodeData(input[0])) {
-    const nd = input[0] as any;
-    return tokenTree(...(nd.children ?? []));
+    return tokenTree(...((input[0] as { children?: unknown[] }).children ?? []));
   }
-  return tokenTree(...(input as any[]));
+  return tokenTree(...input);
 }
 
-export function tokenRepetitionFrom(...input: any[]) {
+export function tokenRepetitionFrom(...input: unknown[]) {
   if (input.length === 1 && isNodeData(input[0])) {
-    const nd = input[0] as any;
-    return tokenRepetition(...(nd.children ?? []));
+    return tokenRepetition(...((input[0] as { children?: unknown[] }).children ?? []));
   }
-  return tokenRepetition(...(input as any[]));
+  return tokenRepetition(...input);
 }
 
-export function hiddenNonSpecialTokenFrom(...input: any[]) {
+export function hiddenNonSpecialTokenFrom(...input: unknown[]) {
   if (input.length === 1 && isNodeData(input[0])) {
-    const nd = input[0] as any;
-    return hiddenNonSpecialToken(...(nd.children ?? []));
+    return hiddenNonSpecialToken(...((input[0] as { children?: unknown[] }).children ?? []));
   }
-  return hiddenNonSpecialToken(...(input as any[]));
+  return hiddenNonSpecialToken(...input);
 }
 
 export function attributeItemFrom(input: AttributeItemFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return attributeItem({
-    attribute: _resolveOne(f.attribute, [], ["attribute"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    attribute: _resolveOne(f.attribute, [], ["attribute"]),
+    children: input?.children ?? [],
+  });
 }
 
 export function innerAttributeItemFrom(input: InnerAttributeItemFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return innerAttributeItem({
-    attribute: _resolveOne(f.attribute, [], ["attribute"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    attribute: _resolveOne(f.attribute, [], ["attribute"]),
+    children: input?.children ?? [],
+  });
 }
 
 export function attributeFrom(input?: AttributeFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return attribute({
-    value: _resolveOne(f.value, [], ["_expression"]) as any,
-    arguments: _resolveOne(f.arguments, [], ["delim_token_tree"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    value: _resolveOne(f.value, [], ["_expression"]),
+    arguments: _resolveOne(f.arguments, [], ["delim_token_tree"]),
+    children: input?.children ?? [],
+  });
 }
 
 export function modItemFrom(input: ModItemFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return modItem({
-    visibilityModifier: _resolveOne(f.visibility_modifier, [], ["visibility_modifier"]) as any,
-    name: _resolveOne(f.name, ["identifier"], []) as any,
-    body: _resolveOne(f.body, [], ["declaration_list"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    visibilityModifier: _resolveOne(f.visibility_modifier, [], ["visibility_modifier"]),
+    name: _resolveOne(f.name, ["identifier"], []),
+    body: _resolveOne(f.body, [], ["declaration_list"]),
+    children: input?.children ?? [],
+  });
 }
 
 export function foreignModItemFrom(input: ForeignModItemFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return foreignModItem({
-    visibilityModifier: _resolveOne(f.visibility_modifier, [], ["visibility_modifier"]) as any,
-    externModifier: _resolveOne(f.extern_modifier, [], ["extern_modifier"]) as any,
-    body: _resolveOne(f.body, [], ["declaration_list"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    visibilityModifier: _resolveOne(f.visibility_modifier, [], ["visibility_modifier"]),
+    externModifier: _resolveOne(f.extern_modifier, [], ["extern_modifier"]),
+    body: _resolveOne(f.body, [], ["declaration_list"]),
+    children: input?.children ?? [],
+  });
 }
 
-export function declarationListFrom(...input: any[]) {
+export function declarationListFrom(...input: unknown[]) {
   if (input.length === 1 && isNodeData(input[0])) {
-    const nd = input[0] as any;
-    return declarationList(...(nd.children ?? []));
+    return declarationList(...((input[0] as { children?: unknown[] }).children ?? []));
   }
-  return declarationList(...(input as any[]));
+  return declarationList(...input);
 }
 
 export function structItemFrom(input: StructItemFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return structItem({
-    visibilityModifier: _resolveOne(f.visibility_modifier, [], ["visibility_modifier"]) as any,
-    name: _resolveOne(f.name, [], ["_type_identifier"]) as any,
-    typeParameters: _resolveOne(f.type_parameters, [], ["type_parameters"]) as any,
-    whereClause: _resolveOne(f.where_clause, [], []) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    visibilityModifier: _resolveOne(f.visibility_modifier, [], ["visibility_modifier"]),
+    name: _resolveOne(f.name, [], ["_type_identifier"]),
+    typeParameters: _resolveOne(f.type_parameters, [], ["type_parameters"]),
+    whereClause: _resolveOne(f.where_clause, [], []),
+    children: input?.children ?? [],
+  });
 }
 
 export function unionItemFrom(input: UnionItemFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return unionItem({
-    visibilityModifier: _resolveOne(f.visibility_modifier, [], ["visibility_modifier"]) as any,
-    name: _resolveOne(f.name, [], ["_type_identifier"]) as any,
-    typeParameters: _resolveOne(f.type_parameters, [], ["type_parameters"]) as any,
-    whereClause: _resolveOne(f.where_clause, [], ["where_clause"]) as any,
-    body: _resolveOne(f.body, [], ["field_declaration_list"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    visibilityModifier: _resolveOne(f.visibility_modifier, [], ["visibility_modifier"]),
+    name: _resolveOne(f.name, [], ["_type_identifier"]),
+    typeParameters: _resolveOne(f.type_parameters, [], ["type_parameters"]),
+    whereClause: _resolveOne(f.where_clause, [], ["where_clause"]),
+    body: _resolveOne(f.body, [], ["field_declaration_list"]),
+    children: input?.children ?? [],
+  });
 }
 
 export function enumItemFrom(input: EnumItemFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return enumItem({
-    visibilityModifier: _resolveOne(f.visibility_modifier, [], ["visibility_modifier"]) as any,
-    name: _resolveOne(f.name, [], ["_type_identifier"]) as any,
-    typeParameters: _resolveOne(f.type_parameters, [], ["type_parameters"]) as any,
-    whereClause: _resolveOne(f.where_clause, [], ["where_clause"]) as any,
-    body: _resolveOne(f.body, [], ["enum_variant_list"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    visibilityModifier: _resolveOne(f.visibility_modifier, [], ["visibility_modifier"]),
+    name: _resolveOne(f.name, [], ["_type_identifier"]),
+    typeParameters: _resolveOne(f.type_parameters, [], ["type_parameters"]),
+    whereClause: _resolveOne(f.where_clause, [], ["where_clause"]),
+    body: _resolveOne(f.body, [], ["enum_variant_list"]),
+    children: input?.children ?? [],
+  });
 }
 
-export function enumVariantListFrom(...input: any[]) {
+export function enumVariantListFrom(...input: unknown[]) {
   if (input.length === 1 && isNodeData(input[0])) {
-    const nd = input[0] as any;
-    return enumVariantList(...(nd.children ?? []));
+    return enumVariantList(...((input[0] as { children?: unknown[] }).children ?? []));
   }
-  return enumVariantList(...(input as any[]));
+  return enumVariantList(...input);
 }
 
 export function enumVariantFrom(input: EnumVariantFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return enumVariant({
-    visibilityModifier: _resolveOne(f.visibility_modifier, [], ["visibility_modifier"]) as any,
-    name: _resolveOne(f.name, ["identifier"], []) as any,
-    body: _resolveOne(f.body, [], ["field_declaration_list","ordered_field_declaration_list"]) as any,
-    value: _resolveOne(f.value, [], ["_expression"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    visibilityModifier: _resolveOne(f.visibility_modifier, [], ["visibility_modifier"]),
+    name: _resolveOne(f.name, ["identifier"], []),
+    body: _resolveOne(f.body, [], ["field_declaration_list","ordered_field_declaration_list"]),
+    value: _resolveOne(f.value, [], ["_expression"]),
+    children: input?.children ?? [],
+  });
 }
 
-export function fieldDeclarationListFrom(...input: any[]) {
+export function fieldDeclarationListFrom(...input: unknown[]) {
   if (input.length === 1 && isNodeData(input[0])) {
-    const nd = input[0] as any;
-    return fieldDeclarationList(...(nd.children ?? []));
+    return fieldDeclarationList(...((input[0] as { children?: unknown[] }).children ?? []));
   }
-  return fieldDeclarationList(...(input as any[]));
+  return fieldDeclarationList(...input);
 }
 
 export function fieldDeclarationFrom(input: FieldDeclarationFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return fieldDeclaration({
-    visibilityModifier: _resolveOne(f.visibility_modifier, [], ["visibility_modifier"]) as any,
-    name: _resolveOne(f.name, [], ["_field_identifier"]) as any,
-    type: _resolveOne(f.type, [], ["_type"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    visibilityModifier: _resolveOne(f.visibility_modifier, [], ["visibility_modifier"]),
+    name: _resolveOne(f.name, [], ["_field_identifier"]),
+    type: _resolveOne(f.type, [], ["_type"]),
+    children: input?.children ?? [],
+  });
 }
 
 export function orderedFieldDeclarationListFrom(input: OrderedFieldDeclarationListFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return orderedFieldDeclarationList({
-    attributes: _resolveOne(f.attributes, [], []) as any,
-    visibilityModifier: _resolveOne(f.visibility_modifier, [], []) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    attributes: _resolveOne(f.attributes, [], []),
+    visibilityModifier: _resolveOne(f.visibility_modifier, [], []),
+    children: input?.children ?? [],
+  });
 }
 
 export function externCrateDeclarationFrom(input: ExternCrateDeclarationFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return externCrateDeclaration({
-    visibilityModifier: _resolveOne(f.visibility_modifier, [], ["visibility_modifier"]) as any,
-    crate: _resolveOne(f.crate, ["crate"], []) as any,
-    name: _resolveOne(f.name, ["identifier"], []) as any,
-    alias: _resolveOne(f.alias, ["identifier"], []) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    visibilityModifier: _resolveOne(f.visibility_modifier, [], ["visibility_modifier"]),
+    crate: _resolveOne(f.crate, ["crate"], []),
+    name: _resolveOne(f.name, ["identifier"], []),
+    alias: _resolveOne(f.alias, ["identifier"], []),
+    children: input?.children ?? [],
+  });
 }
 
 export function constItemFrom(input: ConstItemFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return constItem({
-    visibilityModifier: _resolveOne(f.visibility_modifier, [], ["visibility_modifier"]) as any,
-    name: _resolveOne(f.name, ["identifier"], []) as any,
-    type: _resolveOne(f.type, [], ["_type"]) as any,
-    value: _resolveOne(f.value, [], ["_expression"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    visibilityModifier: _resolveOne(f.visibility_modifier, [], ["visibility_modifier"]),
+    name: _resolveOne(f.name, ["identifier"], []),
+    type: _resolveOne(f.type, [], ["_type"]),
+    value: _resolveOne(f.value, [], ["_expression"]),
+    children: input?.children ?? [],
+  });
 }
 
 export function staticItemFrom(input: StaticItemFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return staticItem({
-    visibilityModifier: _resolveOne(f.visibility_modifier, [], ["visibility_modifier"]) as any,
-    mutableSpecifier: _resolveOne(f.mutable_specifier, [], []) as any,
-    name: _resolveOne(f.name, ["identifier"], []) as any,
-    type: _resolveOne(f.type, [], ["_type"]) as any,
-    value: _resolveOne(f.value, [], ["_expression"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    visibilityModifier: _resolveOne(f.visibility_modifier, [], ["visibility_modifier"]),
+    mutableSpecifier: _resolveOne(f.mutable_specifier, [], []),
+    name: _resolveOne(f.name, ["identifier"], []),
+    type: _resolveOne(f.type, [], ["_type"]),
+    value: _resolveOne(f.value, [], ["_expression"]),
+    children: input?.children ?? [],
+  });
 }
 
 export function typeItemFrom(input: TypeItemFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return typeItem({
-    visibilityModifier: _resolveOne(f.visibility_modifier, [], ["visibility_modifier"]) as any,
-    name: _resolveOne(f.name, [], ["_type_identifier"]) as any,
-    typeParameters: _resolveOne(f.type_parameters, [], ["type_parameters"]) as any,
-    whereClause: _resolveOne(f.where_clause, [], ["where_clause"]) as any,
-    type: _resolveOne(f.type, [], ["_type"]) as any,
-    trailingWhereClause: _resolveOne(f.trailing_where_clause, [], ["where_clause"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    visibilityModifier: _resolveOne(f.visibility_modifier, [], ["visibility_modifier"]),
+    name: _resolveOne(f.name, [], ["_type_identifier"]),
+    typeParameters: _resolveOne(f.type_parameters, [], ["type_parameters"]),
+    whereClause: _resolveOne(f.where_clause, [], ["where_clause"]),
+    type: _resolveOne(f.type, [], ["_type"]),
+    trailingWhereClause: _resolveOne(f.trailing_where_clause, [], ["where_clause"]),
+    children: input?.children ?? [],
+  });
 }
 
 export function functionItemFrom(input: FunctionItemFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return functionItem({
-    visibilityModifier: _resolveOne(f.visibility_modifier, [], ["visibility_modifier"]) as any,
-    functionModifiers: _resolveOne(f.function_modifiers, [], ["function_modifiers"]) as any,
-    name: _resolveOne(f.name, ["identifier","metavariable"], []) as any,
-    typeParameters: _resolveOne(f.type_parameters, [], ["type_parameters"]) as any,
-    parameters: _resolveOne(f.parameters, [], ["parameters"]) as any,
-    whereClause: _resolveOne(f.where_clause, [], []) as any,
-    body: _resolveOne(f.body, [], ["block"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    visibilityModifier: _resolveOne(f.visibility_modifier, [], ["visibility_modifier"]),
+    functionModifiers: _resolveOne(f.function_modifiers, [], ["function_modifiers"]),
+    name: _resolveOne(f.name, ["identifier","metavariable"], []),
+    typeParameters: _resolveOne(f.type_parameters, [], ["type_parameters"]),
+    parameters: _resolveOne(f.parameters, [], ["parameters"]),
+    whereClause: _resolveOne(f.where_clause, [], []),
+    body: _resolveOne(f.body, [], ["block"]),
+    children: input?.children ?? [],
+  });
 }
 
 export function functionSignatureItemFrom(input: FunctionSignatureItemFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return functionSignatureItem({
-    visibilityModifier: _resolveOne(f.visibility_modifier, [], ["visibility_modifier"]) as any,
-    functionModifiers: _resolveOne(f.function_modifiers, [], ["function_modifiers"]) as any,
-    name: _resolveOne(f.name, ["identifier","metavariable"], []) as any,
-    typeParameters: _resolveOne(f.type_parameters, [], ["type_parameters"]) as any,
-    parameters: _resolveOne(f.parameters, [], ["parameters"]) as any,
-    whereClause: _resolveOne(f.where_clause, [], []) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    visibilityModifier: _resolveOne(f.visibility_modifier, [], ["visibility_modifier"]),
+    functionModifiers: _resolveOne(f.function_modifiers, [], ["function_modifiers"]),
+    name: _resolveOne(f.name, ["identifier","metavariable"], []),
+    typeParameters: _resolveOne(f.type_parameters, [], ["type_parameters"]),
+    parameters: _resolveOne(f.parameters, [], ["parameters"]),
+    whereClause: _resolveOne(f.where_clause, [], []),
+    children: input?.children ?? [],
+  });
 }
 
-export function functionModifiersFrom(...input: any[]) {
+export function functionModifiersFrom(...input: unknown[]) {
   if (input.length === 1 && isNodeData(input[0])) {
-    const nd = input[0] as any;
-    return functionModifiers(...(nd.children ?? []));
+    return functionModifiers(...((input[0] as { children?: unknown[] }).children ?? []));
   }
-  return functionModifiers(...(input as any[]));
+  return functionModifiers(...input);
 }
 
-export function whereClauseFrom(...input: any[]) {
+export function whereClauseFrom(...input: unknown[]) {
   if (input.length === 1 && isNodeData(input[0])) {
-    const nd = input[0] as any;
-    return whereClause(...(nd.children ?? []));
+    return whereClause(...((input[0] as { children?: unknown[] }).children ?? []));
   }
-  return whereClause(...(input as any[]));
+  return whereClause(...input);
 }
 
 export function wherePredicateFrom(input: WherePredicateFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return wherePredicate({
-    left: _resolveOne(f.left, ["u8","i8","u16","i16","u32","i32","u64","i64","u128","i128","isize","usize","f32","f64","bool","str","char"], ["lifetime","_type_identifier","scoped_type_identifier","generic_type","reference_type","pointer_type","tuple_type","array_type","higher_ranked_trait_bound"]) as any,
-    bounds: _resolveOne(f.bounds, [], ["trait_bounds"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    left: _resolveOne(f.left, ["u8","i8","u16","i16","u32","i32","u64","i64","u128","i128","isize","usize","f32","f64","bool","str","char"], ["lifetime","_type_identifier","scoped_type_identifier","generic_type","reference_type","pointer_type","tuple_type","array_type","higher_ranked_trait_bound"]),
+    bounds: _resolveOne(f.bounds, [], ["trait_bounds"]),
+    children: input?.children ?? [],
+  });
 }
 
 export function implItemFrom(input: ImplItemFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return implItem({
-    whereClause: _resolveOne(f.where_clause, [], []) as any,
-    typeParameters: _resolveOne(f.type_parameters, [], ["type_parameters"]) as any,
-    trait: _resolveOne(f.trait, [], ["_type_identifier","scoped_type_identifier","generic_type"]) as any,
-    type: _resolveOne(f.type, [], ["_type"]) as any,
-    body: _resolveOne(f.body, [], ["declaration_list"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    whereClause: _resolveOne(f.where_clause, [], []),
+    typeParameters: _resolveOne(f.type_parameters, [], ["type_parameters"]),
+    trait: _resolveOne(f.trait, [], ["_type_identifier","scoped_type_identifier","generic_type"]),
+    type: _resolveOne(f.type, [], ["_type"]),
+    body: _resolveOne(f.body, [], ["declaration_list"]),
+    children: input?.children ?? [],
+  });
 }
 
 export function traitItemFrom(input: TraitItemFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return traitItem({
-    visibilityModifier: _resolveOne(f.visibility_modifier, [], ["visibility_modifier"]) as any,
-    whereClause: _resolveOne(f.where_clause, [], []) as any,
-    name: _resolveOne(f.name, [], ["_type_identifier"]) as any,
-    typeParameters: _resolveOne(f.type_parameters, [], ["type_parameters"]) as any,
-    bounds: _resolveOne(f.bounds, [], ["trait_bounds"]) as any,
-    body: _resolveOne(f.body, [], ["declaration_list"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    visibilityModifier: _resolveOne(f.visibility_modifier, [], ["visibility_modifier"]),
+    whereClause: _resolveOne(f.where_clause, [], []),
+    name: _resolveOne(f.name, [], ["_type_identifier"]),
+    typeParameters: _resolveOne(f.type_parameters, [], ["type_parameters"]),
+    bounds: _resolveOne(f.bounds, [], ["trait_bounds"]),
+    body: _resolveOne(f.body, [], ["declaration_list"]),
+    children: input?.children ?? [],
+  });
 }
 
 export function associatedTypeFrom(input: AssociatedTypeFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return associatedType({
-    name: _resolveOne(f.name, [], ["_type_identifier"]) as any,
-    typeParameters: _resolveOne(f.type_parameters, [], ["type_parameters"]) as any,
-    bounds: _resolveOne(f.bounds, [], ["trait_bounds"]) as any,
-    whereClause: _resolveOne(f.where_clause, [], ["where_clause"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    name: _resolveOne(f.name, [], ["_type_identifier"]),
+    typeParameters: _resolveOne(f.type_parameters, [], ["type_parameters"]),
+    bounds: _resolveOne(f.bounds, [], ["trait_bounds"]),
+    whereClause: _resolveOne(f.where_clause, [], ["where_clause"]),
+    children: input?.children ?? [],
+  });
 }
 
-export function traitBoundsFrom(...input: any[]) {
+export function traitBoundsFrom(...input: unknown[]) {
   if (input.length === 1 && isNodeData(input[0])) {
-    const nd = input[0] as any;
-    return traitBounds(...(nd.children ?? []));
+    return traitBounds(...((input[0] as { children?: unknown[] }).children ?? []));
   }
-  return traitBounds(...(input as any[]));
+  return traitBounds(...input);
 }
 
 export function higherRankedTraitBoundFrom(input: HigherRankedTraitBoundFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return higherRankedTraitBound({
-    typeParameters: _resolveOne(f.type_parameters, [], ["type_parameters"]) as any,
-    type: _resolveOne(f.type, [], ["_type"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    typeParameters: _resolveOne(f.type_parameters, [], ["type_parameters"]),
+    type: _resolveOne(f.type, [], ["_type"]),
+    children: input?.children ?? [],
+  });
 }
 
-export function removedTraitBoundFrom(...input: any[]) {
+export function removedTraitBoundFrom(...input: unknown[]) {
   if (input.length === 1 && isNodeData(input[0])) {
-    const nd = input[0] as any;
-    return removedTraitBound(...(nd.children ?? []));
+    return removedTraitBound(...((input[0] as { children?: unknown[] }).children ?? []));
   }
-  return removedTraitBound(...(input as any[]));
+  return removedTraitBound(...input);
 }
 
-export function typeParametersFrom(...input: any[]) {
+export function typeParametersFrom(...input: unknown[]) {
   if (input.length === 1 && isNodeData(input[0])) {
-    const nd = input[0] as any;
-    return typeParameters(...(nd.children ?? []));
+    return typeParameters(...((input[0] as { children?: unknown[] }).children ?? []));
   }
-  return typeParameters(...(input as any[]));
+  return typeParameters(...input);
 }
 
 export function constParameterFrom(input: ConstParameterFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return constParameter({
-    name: _resolveOne(f.name, ["identifier"], []) as any,
-    type: _resolveOne(f.type, [], ["_type"]) as any,
-    value: _resolveOne(f.value, ["identifier"], ["block","_literal","negative_literal"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    name: _resolveOne(f.name, ["identifier"], []),
+    type: _resolveOne(f.type, [], ["_type"]),
+    value: _resolveOne(f.value, ["identifier"], ["block","_literal","negative_literal"]),
+    children: input?.children ?? [],
+  });
 }
 
 export function typeParameterFrom(input: TypeParameterFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return typeParameter({
-    name: _resolveOne(f.name, [], ["_type_identifier"]) as any,
-    bounds: _resolveOne(f.bounds, [], ["trait_bounds"]) as any,
-    defaultType: _resolveOne(f.default_type, [], ["_type"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    name: _resolveOne(f.name, [], ["_type_identifier"]),
+    bounds: _resolveOne(f.bounds, [], ["trait_bounds"]),
+    defaultType: _resolveOne(f.default_type, [], ["_type"]),
+    children: input?.children ?? [],
+  });
 }
 
 export function lifetimeParameterFrom(input: LifetimeParameterFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return lifetimeParameter({
-    name: _resolveOne(f.name, [], ["lifetime"]) as any,
-    bounds: _resolveOne(f.bounds, [], ["trait_bounds"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    name: _resolveOne(f.name, [], ["lifetime"]),
+    bounds: _resolveOne(f.bounds, [], ["trait_bounds"]),
+    children: input?.children ?? [],
+  });
 }
 
 export function letDeclarationFrom(input: LetDeclarationFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return letDeclaration({
-    mutableSpecifier: _resolveOne(f.mutable_specifier, ["mutable_specifier"], []) as any,
-    pattern: _resolveOne(f.pattern, [], ["_pattern"]) as any,
-    type: _resolveOne(f.type, [], ["_type"]) as any,
-    value: _resolveOne(f.value, [], ["_expression"]) as any,
-    alternative: _resolveOne(f.alternative, [], ["block"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    mutableSpecifier: _resolveOne(f.mutable_specifier, ["mutable_specifier"], []),
+    pattern: _resolveOne(f.pattern, [], ["_pattern"]),
+    type: _resolveOne(f.type, [], ["_type"]),
+    value: _resolveOne(f.value, [], ["_expression"]),
+    alternative: _resolveOne(f.alternative, [], ["block"]),
+    children: input?.children ?? [],
+  });
 }
 
 export function useDeclarationFrom(input: UseDeclarationFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return useDeclaration({
-    visibilityModifier: _resolveOne(f.visibility_modifier, [], ["visibility_modifier"]) as any,
-    argument: _resolveOne(f.argument, [], ["_use_clause"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    visibilityModifier: _resolveOne(f.visibility_modifier, [], ["visibility_modifier"]),
+    argument: _resolveOne(f.argument, [], ["_use_clause"]),
+    children: input?.children ?? [],
+  });
 }
 
 export function scopedUseListFrom(input: ScopedUseListFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return scopedUseList({
-    path: _resolveOne(f.path, [], ["_path"]) as any,
-    list: _resolveOne(f.list, [], ["use_list"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    path: _resolveOne(f.path, [], ["_path"]),
+    list: _resolveOne(f.list, [], ["use_list"]),
+    children: input?.children ?? [],
+  });
 }
 
-export function useListFrom(...input: any[]) {
+export function useListFrom(...input: unknown[]) {
   if (input.length === 1 && isNodeData(input[0])) {
-    const nd = input[0] as any;
-    return useList(...(nd.children ?? []));
+    return useList(...((input[0] as { children?: unknown[] }).children ?? []));
   }
-  return useList(...(input as any[]));
+  return useList(...input);
 }
 
 export function useAsClauseFrom(input: UseAsClauseFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return useAsClause({
-    path: _resolveOne(f.path, [], ["_path"]) as any,
-    alias: _resolveOne(f.alias, ["identifier"], []) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    path: _resolveOne(f.path, [], ["_path"]),
+    alias: _resolveOne(f.alias, ["identifier"], []),
+    children: input?.children ?? [],
+  });
 }
 
 export function useWildcardFrom(input: UseWildcardFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return useWildcard({
-    path: _resolveOne(f.path, [], []) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    path: _resolveOne(f.path, [], []),
+    children: input?.children ?? [],
+  });
 }
 
-export function parametersFrom(...input: any[]) {
+export function parametersFrom(...input: unknown[]) {
   if (input.length === 1 && isNodeData(input[0])) {
-    const nd = input[0] as any;
-    return parameters(...(nd.children ?? []));
+    return parameters(...((input[0] as { children?: unknown[] }).children ?? []));
   }
-  return parameters(...(input as any[]));
+  return parameters(...input);
 }
 
 export function selfParameterFrom(input: SelfParameterFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return selfParameter({
-    lifetime: _resolveOne(f.lifetime, [], []) as any,
-    mutableSpecifier: _resolveOne(f.mutable_specifier, [], ["lifetime"]) as any,
-    self: _resolveOne(f.self, ["mutable_specifier"], []) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    lifetime: _resolveOne(f.lifetime, [], []),
+    mutableSpecifier: _resolveOne(f.mutable_specifier, [], ["lifetime"]),
+    self: _resolveOne(f.self, ["mutable_specifier"], []),
+    children: input?.children ?? [],
+  });
 }
 
 export function variadicParameterFrom(input: VariadicParameterFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return variadicParameter({
-    mutableSpecifier: _resolveOne(f.mutable_specifier, ["mutable_specifier"], []) as any,
-    pattern: _resolveOne(f.pattern, [], ["_pattern"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    mutableSpecifier: _resolveOne(f.mutable_specifier, ["mutable_specifier"], []),
+    pattern: _resolveOne(f.pattern, [], ["_pattern"]),
+    children: input?.children ?? [],
+  });
 }
 
 export function parameterFrom(input: ParameterFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return parameter({
-    mutableSpecifier: _resolveOne(f.mutable_specifier, ["mutable_specifier"], []) as any,
-    pattern: _resolveOne(f.pattern, ["self"], ["_pattern"]) as any,
-    type: _resolveOne(f.type, [], ["_type"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    mutableSpecifier: _resolveOne(f.mutable_specifier, ["mutable_specifier"], []),
+    pattern: _resolveOne(f.pattern, ["self"], ["_pattern"]),
+    type: _resolveOne(f.type, [], ["_type"]),
+    children: input?.children ?? [],
+  });
 }
 
 export function externModifierFrom(input: ExternModifierFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return externModifier({
-    stringLiteral: _resolveOne(f.string_literal, [], ["string_literal"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    stringLiteral: _resolveOne(f.string_literal, [], ["string_literal"]),
+    children: input?.children ?? [],
+  });
 }
 
-export function visibilityModifierFrom(...input: any[]) {
+export function visibilityModifierFrom(...input: unknown[]) {
   if (input.length === 1 && isNodeData(input[0])) {
-    const nd = input[0] as any;
-    return visibilityModifier(...(nd.children ?? []));
+    return visibilityModifier(...((input[0] as { children?: unknown[] }).children ?? []));
   }
-  return visibilityModifier(...(input as any[]));
+  return visibilityModifier(...input);
 }
 
-export function hiddenTypeFrom(...input: any[]) {
+export function hiddenTypeFrom(...input: unknown[]) {
   if (input.length === 1 && isNodeData(input[0])) {
-    const nd = input[0] as any;
-    return hiddenType(...(nd.children ?? []));
+    return hiddenType(...((input[0] as { children?: unknown[] }).children ?? []));
   }
-  return hiddenType(...(input as any[]));
+  return hiddenType(...input);
 }
 
-export function bracketedTypeFrom(...input: any[]) {
+export function bracketedTypeFrom(...input: unknown[]) {
   if (input.length === 1 && isNodeData(input[0])) {
-    const nd = input[0] as any;
-    return bracketedType(...(nd.children ?? []));
+    return bracketedType(...((input[0] as { children?: unknown[] }).children ?? []));
   }
-  return bracketedType(...(input as any[]));
+  return bracketedType(...input);
 }
 
 export function qualifiedTypeFrom(input: QualifiedTypeFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return qualifiedType({
-    type: _resolveOne(f.type, [], ["_type"]) as any,
-    alias: _resolveOne(f.alias, [], ["_type"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    type: _resolveOne(f.type, [], ["_type"]),
+    alias: _resolveOne(f.alias, [], ["_type"]),
+    children: input?.children ?? [],
+  });
 }
 
 export function lifetimeFrom(input: LifetimeFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return lifetime({
-    identifier: _resolveOne(f.identifier, ["identifier"], []) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    identifier: _resolveOne(f.identifier, ["identifier"], []),
+    children: input?.children ?? [],
+  });
 }
 
 export function arrayTypeFrom(input: ArrayTypeFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return arrayType({
-    element: _resolveOne(f.element, [], ["_type"]) as any,
-    length: _resolveOne(f.length, [], ["_expression"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    element: _resolveOne(f.element, [], ["_type"]),
+    length: _resolveOne(f.length, [], ["_expression"]),
+    children: input?.children ?? [],
+  });
 }
 
-export function forLifetimesFrom(...input: any[]) {
+export function forLifetimesFrom(...input: unknown[]) {
   if (input.length === 1 && isNodeData(input[0])) {
-    const nd = input[0] as any;
-    return forLifetimes(...(nd.children ?? []));
+    return forLifetimes(...((input[0] as { children?: unknown[] }).children ?? []));
   }
-  return forLifetimes(...(input as any[]));
+  return forLifetimes(...input);
 }
 
 export function functionTypeFrom(input: FunctionTypeFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return functionType({
-    forLifetimes: _resolveOne(f.for_lifetimes, [], ["for_lifetimes"]) as any,
-    functionModifiers: _resolveOne(f.function_modifiers, [], []) as any,
-    returnType: _resolveOne(f.return_type, [], ["_type"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    forLifetimes: _resolveOne(f.for_lifetimes, [], ["for_lifetimes"]),
+    functionModifiers: _resolveOne(f.function_modifiers, [], []),
+    returnType: _resolveOne(f.return_type, [], ["_type"]),
+    children: input?.children ?? [],
+  });
 }
 
-export function tupleTypeFrom(...input: any[]) {
+export function tupleTypeFrom(...input: unknown[]) {
   if (input.length === 1 && isNodeData(input[0])) {
-    const nd = input[0] as any;
-    return tupleType(...(nd.children ?? []));
+    return tupleType(...((input[0] as { children?: unknown[] }).children ?? []));
   }
-  return tupleType(...(input as any[]));
+  return tupleType(...input);
 }
 
 export function unitTypeFrom(input: string | UnitType) {
@@ -697,101 +676,100 @@ export function unitTypeFrom(input: string | UnitType) {
 }
 
 export function genericFunctionFrom(input: GenericFunctionFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return genericFunction({
-    function: _resolveOne(f.function, ["identifier"], ["scoped_identifier","field_expression"]) as any,
-    typeArguments: _resolveOne(f.type_arguments, [], ["type_arguments"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    function: _resolveOne(f.function, ["identifier"], ["scoped_identifier","field_expression"]),
+    typeArguments: _resolveOne(f.type_arguments, [], ["type_arguments"]),
+    children: input?.children ?? [],
+  });
 }
 
 export function genericTypeFrom(input: GenericTypeFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return genericType({
-    type: _resolveOne(f.type, ["_reserved_identifier"], ["_type_identifier","scoped_type_identifier"]) as any,
-    typeArguments: _resolveOne(f.type_arguments, [], ["type_arguments"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    type: _resolveOne(f.type, ["_reserved_identifier"], ["_type_identifier","scoped_type_identifier"]),
+    typeArguments: _resolveOne(f.type_arguments, [], ["type_arguments"]),
+    children: input?.children ?? [],
+  });
 }
 
 export function genericTypeWithTurbofishFrom(input: GenericTypeWithTurbofishFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return genericTypeWithTurbofish({
-    type: _resolveOne(f.type, [], ["_type_identifier","scoped_identifier"]) as any,
-    typeArguments: _resolveOne(f.type_arguments, [], ["type_arguments"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    type: _resolveOne(f.type, [], ["_type_identifier","scoped_identifier"]),
+    typeArguments: _resolveOne(f.type_arguments, [], ["type_arguments"]),
+    children: input?.children ?? [],
+  });
 }
 
 export function boundedTypeFrom(input: BoundedTypeFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return boundedType({
-    left: _resolveOne(f.left, [], ["lifetime","_type","use_bounds"]) as any,
-    right: _resolveOne(f.right, [], ["lifetime","_type","use_bounds"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    left: _resolveOne(f.left, [], ["lifetime","_type","use_bounds"]),
+    right: _resolveOne(f.right, [], ["lifetime","_type","use_bounds"]),
+    children: input?.children ?? [],
+  });
 }
 
-export function useBoundsFrom(...input: any[]) {
+export function useBoundsFrom(...input: unknown[]) {
   if (input.length === 1 && isNodeData(input[0])) {
-    const nd = input[0] as any;
-    return useBounds(...(nd.children ?? []));
+    return useBounds(...((input[0] as { children?: unknown[] }).children ?? []));
   }
-  return useBounds(...(input as any[]));
+  return useBounds(...input);
 }
 
 export function typeArgumentsFrom(input?: TypeArgumentsFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return typeArguments({
-    bounds: _resolveMany(f.bounds, [], ["trait_bounds"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    bounds: _resolveMany(f.bounds, [], ["trait_bounds"]),
+    children: input?.children ?? [],
+  });
 }
 
 export function typeBindingFrom(input: TypeBindingFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return typeBinding({
-    name: _resolveOne(f.name, [], ["_type_identifier"]) as any,
-    typeArguments: _resolveOne(f.type_arguments, [], ["type_arguments"]) as any,
-    type: _resolveOne(f.type, [], ["_type"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    name: _resolveOne(f.name, [], ["_type_identifier"]),
+    typeArguments: _resolveOne(f.type_arguments, [], ["type_arguments"]),
+    type: _resolveOne(f.type, [], ["_type"]),
+    children: input?.children ?? [],
+  });
 }
 
 export function referenceTypeFrom(input: ReferenceTypeFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return referenceType({
-    lifetime: _resolveOne(f.lifetime, [], ["lifetime"]) as any,
-    mutableSpecifier: _resolveOne(f.mutable_specifier, ["mutable_specifier"], []) as any,
-    type: _resolveOne(f.type, [], ["_type"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    lifetime: _resolveOne(f.lifetime, [], ["lifetime"]),
+    mutableSpecifier: _resolveOne(f.mutable_specifier, ["mutable_specifier"], []),
+    type: _resolveOne(f.type, [], ["_type"]),
+    children: input?.children ?? [],
+  });
 }
 
 export function pointerTypeFrom(input: PointerTypeFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return pointerType({
-    mutableSpecifier: _resolveOne(f.mutable_specifier, ["mutable_specifier"], []) as any,
-    type: _resolveOne(f.type, [], ["_type"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    mutableSpecifier: _resolveOne(f.mutable_specifier, ["mutable_specifier"], []),
+    type: _resolveOne(f.type, [], ["_type"]),
+    children: input?.children ?? [],
+  });
 }
 
 export function abstractTypeFrom(input: AbstractTypeFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return abstractType({
-    typeParameters: _resolveOne(f.type_parameters, [], []) as any,
-    trait: _resolveOne(f.trait, [], ["_type_identifier","scoped_type_identifier","removed_trait_bound","generic_type","function_type","tuple_type","bounded_type"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    typeParameters: _resolveOne(f.type_parameters, [], []),
+    trait: _resolveOne(f.trait, [], ["_type_identifier","scoped_type_identifier","removed_trait_bound","generic_type","function_type","tuple_type","bounded_type"]),
+    children: input?.children ?? [],
+  });
 }
 
 export function dynamicTypeFrom(input: DynamicTypeFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return dynamicType({
-    trait: _resolveOne(f.trait, [], ["higher_ranked_trait_bound","_type_identifier","scoped_type_identifier","generic_type","function_type","tuple_type"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    trait: _resolveOne(f.trait, [], ["higher_ranked_trait_bound","_type_identifier","scoped_type_identifier","generic_type","function_type","tuple_type"]),
+    children: input?.children ?? [],
+  });
 }
 
 export function mutableSpecifierFrom(input?: MutableSpecifier) {
@@ -799,196 +777,188 @@ export function mutableSpecifierFrom(input?: MutableSpecifier) {
   return mutableSpecifier();
 }
 
-export function hiddenExpressionExceptRangeFrom(...input: any[]) {
+export function hiddenExpressionExceptRangeFrom(...input: unknown[]) {
   if (input.length === 1 && isNodeData(input[0])) {
-    const nd = input[0] as any;
-    return hiddenExpressionExceptRange(...(nd.children ?? []));
+    return hiddenExpressionExceptRange(...((input[0] as { children?: unknown[] }).children ?? []));
   }
-  return hiddenExpressionExceptRange(...(input as any[]));
+  return hiddenExpressionExceptRange(...input);
 }
 
 export function macroInvocationFrom(input: MacroInvocationFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return macroInvocation({
-    macro: _resolveOne(f.macro, ["identifier","_reserved_identifier"], ["scoped_identifier"]) as any,
-    tokenTree: _resolveOne(f.token_tree, [], ["delim_token_tree"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    macro: _resolveOne(f.macro, ["identifier","_reserved_identifier"], ["scoped_identifier"]),
+    tokenTree: _resolveOne(f.token_tree, [], ["delim_token_tree"]),
+    children: input?.children ?? [],
+  });
 }
 
-export function delimTokenTreeFrom(...input: any[]) {
+export function delimTokenTreeFrom(...input: unknown[]) {
   if (input.length === 1 && isNodeData(input[0])) {
-    const nd = input[0] as any;
-    return delimTokenTree(...(nd.children ?? []));
+    return delimTokenTree(...((input[0] as { children?: unknown[] }).children ?? []));
   }
-  return delimTokenTree(...(input as any[]));
+  return delimTokenTree(...input);
 }
 
-export function hiddenNonDelimTokenFrom(...input: any[]) {
+export function hiddenNonDelimTokenFrom(...input: unknown[]) {
   if (input.length === 1 && isNodeData(input[0])) {
-    const nd = input[0] as any;
-    return hiddenNonDelimToken(...(nd.children ?? []));
+    return hiddenNonDelimToken(...((input[0] as { children?: unknown[] }).children ?? []));
   }
-  return hiddenNonDelimToken(...(input as any[]));
+  return hiddenNonDelimToken(...input);
 }
 
 export function scopedIdentifierFrom(input: ScopedIdentifierFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return scopedIdentifier({
-    path: _resolveOne(f.path, [], ["_path","bracketed_type","generic_type_with_turbofish"]) as any,
-    name: _resolveOne(f.name, ["identifier","super"], []) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    path: _resolveOne(f.path, [], ["_path","bracketed_type","generic_type_with_turbofish"]),
+    name: _resolveOne(f.name, ["identifier","super"], []),
+    children: input?.children ?? [],
+  });
 }
 
 export function scopedTypeIdentifierInExpressionPositionFrom(input: ScopedTypeIdentifierInExpressionPositionFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return scopedTypeIdentifierInExpressionPosition({
-    path: _resolveOne(f.path, [], ["_path","generic_type_with_turbofish"]) as any,
-    name: _resolveOne(f.name, [], ["_type_identifier"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    path: _resolveOne(f.path, [], ["_path","generic_type_with_turbofish"]),
+    name: _resolveOne(f.name, [], ["_type_identifier"]),
+    children: input?.children ?? [],
+  });
 }
 
 export function scopedTypeIdentifierFrom(input: ScopedTypeIdentifierFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return scopedTypeIdentifier({
-    path: _resolveOne(f.path, [], ["_path","generic_type_with_turbofish","bracketed_type","generic_type"]) as any,
-    name: _resolveOne(f.name, [], ["_type_identifier"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    path: _resolveOne(f.path, [], ["_path","generic_type_with_turbofish","bracketed_type","generic_type"]),
+    name: _resolveOne(f.name, [], ["_type_identifier"]),
+    children: input?.children ?? [],
+  });
 }
 
-export function rangeExpressionFrom(...input: any[]) {
+export function rangeExpressionFrom(...input: unknown[]) {
   if (input.length === 1 && isNodeData(input[0])) {
-    const nd = input[0] as any;
-    return rangeExpression(...(nd.children ?? []));
+    return rangeExpression(...((input[0] as { children?: unknown[] }).children ?? []));
   }
-  return rangeExpression(...(input as any[]));
+  return rangeExpression(...input);
 }
 
 export function unaryExpressionFrom(input: UnaryExpressionFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return unaryExpression({
-    operand: _resolveOne(f.operand, [], []) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    operand: _resolveOne(f.operand, [], []),
+    children: input?.children ?? [],
+  });
 }
 
 export function tryExpressionFrom(input: TryExpressionFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return tryExpression({
-    value: _resolveOne(f.value, [], ["_expression"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    value: _resolveOne(f.value, [], ["_expression"]),
+    children: input?.children ?? [],
+  });
 }
 
 export function referenceExpressionFrom(input: ReferenceExpressionFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return referenceExpression({
-    mutableSpecifier: _resolveOne(f.mutable_specifier, ["mutable_specifier"], []) as any,
-    value: _resolveOne(f.value, [], ["_expression"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    mutableSpecifier: _resolveOne(f.mutable_specifier, ["mutable_specifier"], []),
+    value: _resolveOne(f.value, [], ["_expression"]),
+    children: input?.children ?? [],
+  });
 }
 
 export function binaryExpressionFrom(input: BinaryExpressionFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return binaryExpression({
-    left: _resolveOne(f.left, [], ["_expression"]) as any,
-    operator: _resolveOne(f.operator, [], []) as any,
-    right: _resolveOne(f.right, [], ["_expression"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    left: _resolveOne(f.left, [], ["_expression"]),
+    operator: _resolveOne(f.operator, [], []),
+    right: _resolveOne(f.right, [], ["_expression"]),
+    children: input?.children ?? [],
+  });
 }
 
 export function assignmentExpressionFrom(input: AssignmentExpressionFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return assignmentExpression({
-    left: _resolveOne(f.left, [], ["_expression"]) as any,
-    right: _resolveOne(f.right, [], ["_expression"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    left: _resolveOne(f.left, [], ["_expression"]),
+    right: _resolveOne(f.right, [], ["_expression"]),
+    children: input?.children ?? [],
+  });
 }
 
 export function compoundAssignmentExprFrom(input: CompoundAssignmentExprFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return compoundAssignmentExpr({
-    left: _resolveOne(f.left, [], ["_expression"]) as any,
-    operator: _resolveOne(f.operator, [], []) as any,
-    right: _resolveOne(f.right, [], ["_expression"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    left: _resolveOne(f.left, [], ["_expression"]),
+    operator: _resolveOne(f.operator, [], []),
+    right: _resolveOne(f.right, [], ["_expression"]),
+    children: input?.children ?? [],
+  });
 }
 
 export function typeCastExpressionFrom(input: TypeCastExpressionFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return typeCastExpression({
-    value: _resolveOne(f.value, [], ["_expression"]) as any,
-    type: _resolveOne(f.type, [], ["_type"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    value: _resolveOne(f.value, [], ["_expression"]),
+    type: _resolveOne(f.type, [], ["_type"]),
+    children: input?.children ?? [],
+  });
 }
 
-export function returnExpressionFrom(...input: any[]) {
+export function returnExpressionFrom(...input: unknown[]) {
   if (input.length === 1 && isNodeData(input[0])) {
-    const nd = input[0] as any;
-    return returnExpression(...(nd.children ?? []));
+    return returnExpression(...((input[0] as { children?: unknown[] }).children ?? []));
   }
-  return returnExpression(...(input as any[]));
+  return returnExpression(...input);
 }
 
-export function yieldExpressionFrom(...input: any[]) {
+export function yieldExpressionFrom(...input: unknown[]) {
   if (input.length === 1 && isNodeData(input[0])) {
-    const nd = input[0] as any;
-    return yieldExpression(...(nd.children ?? []));
+    return yieldExpression(...((input[0] as { children?: unknown[] }).children ?? []));
   }
-  return yieldExpression(...(input as any[]));
+  return yieldExpression(...input);
 }
 
 export function callExpressionFrom(input: CallExpressionFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return callExpression({
-    function: _resolveOne(f.function, [], ["_expression_except_range"]) as any,
-    arguments: _resolveOne(f.arguments, [], ["arguments"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    function: _resolveOne(f.function, [], ["_expression_except_range"]),
+    arguments: _resolveOne(f.arguments, [], ["arguments"]),
+    children: input?.children ?? [],
+  });
 }
 
-export function arguments_From(...input: any[]) {
+export function arguments_From(...input: unknown[]) {
   if (input.length === 1 && isNodeData(input[0])) {
-    const nd = input[0] as any;
-    return arguments_(...(nd.children ?? []));
+    return arguments_(...((input[0] as { children?: unknown[] }).children ?? []));
   }
-  return arguments_(...(input as any[]));
+  return arguments_(...input);
 }
 
 export function arrayExpressionFrom(input: ArrayExpressionFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return arrayExpression({
-    attributes: _resolveOne(f.attributes, [], []) as any,
-    elements: _resolveOne(f.elements, [], []) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    attributes: _resolveOne(f.attributes, [], []),
+    elements: _resolveOne(f.elements, [], []),
+    children: input?.children ?? [],
+  });
 }
 
-export function parenthesizedExpressionFrom(...input: any[]) {
+export function parenthesizedExpressionFrom(...input: unknown[]) {
   if (input.length === 1 && isNodeData(input[0])) {
-    const nd = input[0] as any;
-    return parenthesizedExpression(...(nd.children ?? []));
+    return parenthesizedExpression(...((input[0] as { children?: unknown[] }).children ?? []));
   }
-  return parenthesizedExpression(...(input as any[]));
+  return parenthesizedExpression(...input);
 }
 
 export function tupleExpressionFrom(input: TupleExpressionFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return tupleExpression({
-    attributes: _resolveOne(f.attributes, [], []) as any,
-    first: _resolveOne(f.first, [], []) as any,
-    rest: _resolveOne(f.rest, [], []) as any,
-    trailing: _resolveOne(f.trailing, [], ["_expression"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    attributes: _resolveOne(f.attributes, [], []),
+    first: _resolveOne(f.first, [], []),
+    rest: _resolveOne(f.rest, [], []),
+    trailing: _resolveOne(f.trailing, [], ["_expression"]),
+    children: input?.children ?? [],
+  });
 }
 
 export function unitExpressionFrom(input: string | UnitExpression) {
@@ -997,425 +967,418 @@ export function unitExpressionFrom(input: string | UnitExpression) {
 }
 
 export function structExpressionFrom(input: StructExpressionFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return structExpression({
-    name: _resolveOne(f.name, [], ["_type_identifier","scoped_type_identifier_in_expression_position","generic_type_with_turbofish"]) as any,
-    body: _resolveOne(f.body, [], ["field_initializer_list"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
-}
-
-export function fieldInitializerListFrom(...input: any[]) {
-  if (input.length === 1 && isNodeData(input[0])) {
-    const nd = input[0] as any;
-    return fieldInitializerList(...(nd.children ?? []));
-  }
-  return fieldInitializerList(...(input as any[]));
-}
-
-export function shorthandFieldInitializerFrom(input: ShorthandFieldInitializerFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
-  return shorthandFieldInitializer({
-    attributes: _resolveOne(f.attributes, [], []) as any,
-    identifier: _resolveOne(f.identifier, ["identifier"], []) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
-}
-
-export function fieldInitializerFrom(input: FieldInitializerFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
-  return fieldInitializer({
-    field: _resolveOne(f.field, ["integer_literal"], ["_field_identifier"]) as any,
-    value: _resolveOne(f.value, [], ["_expression"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
-}
-
-export function baseFieldInitializerFrom(...input: any[]) {
-  if (input.length === 1 && isNodeData(input[0])) {
-    const nd = input[0] as any;
-    return baseFieldInitializer(...(nd.children ?? []));
-  }
-  return baseFieldInitializer(...(input as any[]));
-}
-
-export function ifExpressionFrom(input: IfExpressionFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
-  return ifExpression({
-    condition: _resolveOne(f.condition, [], ["_condition"]) as any,
-    consequence: _resolveOne(f.consequence, [], ["block"]) as any,
-    alternative: _resolveOne(f.alternative, [], ["else_clause"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
-}
-
-export function letConditionFrom(input: LetConditionFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
-  return letCondition({
-    pattern: _resolveOne(f.pattern, [], ["_pattern"]) as any,
-    value: _resolveOne(f.value, [], ["_expression"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
-}
-
-export function hiddenLetChainFrom(...input: any[]) {
-  if (input.length === 1 && isNodeData(input[0])) {
-    const nd = input[0] as any;
-    return hiddenLetChain(...(nd.children ?? []));
-  }
-  return hiddenLetChain(...(input as any[]));
-}
-
-export function elseClauseFrom(...input: any[]) {
-  if (input.length === 1 && isNodeData(input[0])) {
-    const nd = input[0] as any;
-    return elseClause(...(nd.children ?? []));
-  }
-  return elseClause(...(input as any[]));
-}
-
-export function matchExpressionFrom(input: MatchExpressionFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
-  return matchExpression({
-    value: _resolveOne(f.value, [], ["_expression"]) as any,
-    body: _resolveOne(f.body, [], ["match_block"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
-}
-
-export function matchBlockFrom(...input: any[]) {
-  if (input.length === 1 && isNodeData(input[0])) {
-    const nd = input[0] as any;
-    return matchBlock(...(nd.children ?? []));
-  }
-  return matchBlock(...(input as any[]));
-}
-
-export function matchArmFrom(input: MatchArmFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
-  return matchArm({
-    pattern: _resolveOne(f.pattern, [], ["match_pattern"]) as any,
-    value: _resolveOne(f.value, [], ["_expression","_expression_ending_with_block"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
-}
-
-export function lastMatchArmFrom(input: LastMatchArmFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
-  return lastMatchArm({
-    pattern: _resolveOne(f.pattern, [], ["match_pattern"]) as any,
-    value: _resolveOne(f.value, [], ["_expression"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
-}
-
-export function matchPatternFrom(input: MatchPatternFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
-  return matchPattern({
-    pattern: _resolveOne(f.pattern, [], ["_pattern"]) as any,
-    condition: _resolveOne(f.condition, [], ["_condition"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
-}
-
-export function whileExpressionFrom(input: WhileExpressionFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
-  return whileExpression({
-    label: _resolveOne(f.label, [], []) as any,
-    condition: _resolveOne(f.condition, [], ["_condition"]) as any,
-    body: _resolveOne(f.body, [], ["block"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
-}
-
-export function loopExpressionFrom(input: LoopExpressionFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
-  return loopExpression({
-    label: _resolveOne(f.label, [], []) as any,
-    body: _resolveOne(f.body, [], ["block"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
-}
-
-export function forExpressionFrom(input: ForExpressionFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
-  return forExpression({
-    label: _resolveOne(f.label, [], []) as any,
-    pattern: _resolveOne(f.pattern, [], ["_pattern"]) as any,
-    value: _resolveOne(f.value, [], ["_expression"]) as any,
-    body: _resolveOne(f.body, [], ["block"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
-}
-
-export function constBlockFrom(input: ConstBlockFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
-  return constBlock({
-    body: _resolveOne(f.body, [], ["block"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
-}
-
-export function closureExpressionFrom(input?: ClosureExpressionFromInput) {
-  return closureExpression(input as any);
-}
-
-export function closureExpressionBodyFrom(input?: any) {
-  if (isNodeData(input)) return input;
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
-  return closureExpressionBody({
-    returnType: _resolveOne(f.return_type, [], ["_type"]) as any,
-    body: _resolveOne(f.body, [], ["block"]) as any,
+    name: _resolveOne(f.name, [], ["_type_identifier","scoped_type_identifier_in_expression_position","generic_type_with_turbofish"]),
+    body: _resolveOne(f.body, [], ["field_initializer_list"]),
+    children: input?.children ?? [],
   });
 }
 
-export function closureExpressionBody2From(input?: any) {
+export function fieldInitializerListFrom(...input: unknown[]) {
+  if (input.length === 1 && isNodeData(input[0])) {
+    return fieldInitializerList(...((input[0] as { children?: unknown[] }).children ?? []));
+  }
+  return fieldInitializerList(...input);
+}
+
+export function shorthandFieldInitializerFrom(input: ShorthandFieldInitializerFromInput) {
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
+  return shorthandFieldInitializer({
+    attributes: _resolveOne(f.attributes, [], []),
+    identifier: _resolveOne(f.identifier, ["identifier"], []),
+    children: input?.children ?? [],
+  });
+}
+
+export function fieldInitializerFrom(input: FieldInitializerFromInput) {
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
+  return fieldInitializer({
+    field: _resolveOne(f.field, ["integer_literal"], ["_field_identifier"]),
+    value: _resolveOne(f.value, [], ["_expression"]),
+    children: input?.children ?? [],
+  });
+}
+
+export function baseFieldInitializerFrom(...input: unknown[]) {
+  if (input.length === 1 && isNodeData(input[0])) {
+    return baseFieldInitializer(...((input[0] as { children?: unknown[] }).children ?? []));
+  }
+  return baseFieldInitializer(...input);
+}
+
+export function ifExpressionFrom(input: IfExpressionFromInput) {
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
+  return ifExpression({
+    condition: _resolveOne(f.condition, [], ["_condition"]),
+    consequence: _resolveOne(f.consequence, [], ["block"]),
+    alternative: _resolveOne(f.alternative, [], ["else_clause"]),
+    children: input?.children ?? [],
+  });
+}
+
+export function letConditionFrom(input: LetConditionFromInput) {
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
+  return letCondition({
+    pattern: _resolveOne(f.pattern, [], ["_pattern"]),
+    value: _resolveOne(f.value, [], ["_expression"]),
+    children: input?.children ?? [],
+  });
+}
+
+export function hiddenLetChainFrom(...input: unknown[]) {
+  if (input.length === 1 && isNodeData(input[0])) {
+    return hiddenLetChain(...((input[0] as { children?: unknown[] }).children ?? []));
+  }
+  return hiddenLetChain(...input);
+}
+
+export function elseClauseFrom(...input: unknown[]) {
+  if (input.length === 1 && isNodeData(input[0])) {
+    return elseClause(...((input[0] as { children?: unknown[] }).children ?? []));
+  }
+  return elseClause(...input);
+}
+
+export function matchExpressionFrom(input: MatchExpressionFromInput) {
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
+  return matchExpression({
+    value: _resolveOne(f.value, [], ["_expression"]),
+    body: _resolveOne(f.body, [], ["match_block"]),
+    children: input?.children ?? [],
+  });
+}
+
+export function matchBlockFrom(...input: unknown[]) {
+  if (input.length === 1 && isNodeData(input[0])) {
+    return matchBlock(...((input[0] as { children?: unknown[] }).children ?? []));
+  }
+  return matchBlock(...input);
+}
+
+export function matchArmFrom(input: MatchArmFromInput) {
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
+  return matchArm({
+    pattern: _resolveOne(f.pattern, [], ["match_pattern"]),
+    value: _resolveOne(f.value, [], ["_expression","_expression_ending_with_block"]),
+    children: input?.children ?? [],
+  });
+}
+
+export function lastMatchArmFrom(input: LastMatchArmFromInput) {
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
+  return lastMatchArm({
+    pattern: _resolveOne(f.pattern, [], ["match_pattern"]),
+    value: _resolveOne(f.value, [], ["_expression"]),
+    children: input?.children ?? [],
+  });
+}
+
+export function matchPatternFrom(input: MatchPatternFromInput) {
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
+  return matchPattern({
+    pattern: _resolveOne(f.pattern, [], ["_pattern"]),
+    condition: _resolveOne(f.condition, [], ["_condition"]),
+    children: input?.children ?? [],
+  });
+}
+
+export function whileExpressionFrom(input: WhileExpressionFromInput) {
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
+  return whileExpression({
+    label: _resolveOne(f.label, [], []),
+    condition: _resolveOne(f.condition, [], ["_condition"]),
+    body: _resolveOne(f.body, [], ["block"]),
+    children: input?.children ?? [],
+  });
+}
+
+export function loopExpressionFrom(input: LoopExpressionFromInput) {
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
+  return loopExpression({
+    label: _resolveOne(f.label, [], []),
+    body: _resolveOne(f.body, [], ["block"]),
+    children: input?.children ?? [],
+  });
+}
+
+export function forExpressionFrom(input: ForExpressionFromInput) {
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
+  return forExpression({
+    label: _resolveOne(f.label, [], []),
+    pattern: _resolveOne(f.pattern, [], ["_pattern"]),
+    value: _resolveOne(f.value, [], ["_expression"]),
+    body: _resolveOne(f.body, [], ["block"]),
+    children: input?.children ?? [],
+  });
+}
+
+export function constBlockFrom(input: ConstBlockFromInput) {
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
+  return constBlock({
+    body: _resolveOne(f.body, [], ["block"]),
+    children: input?.children ?? [],
+  });
+}
+
+export function closureExpressionFrom(input?: ClosureExpressionFromInput) {
+  return closureExpression(input);
+}
+
+export function closureExpressionBodyFrom(input?: unknown) {
   if (isNodeData(input)) return input;
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
+  return closureExpressionBody({
+    returnType: _resolveOne(f.return_type, [], ["_type"]),
+    body: _resolveOne(f.body, [], ["block"]),
+  });
+}
+
+export function closureExpressionBody2From(input?: unknown) {
+  if (isNodeData(input)) return input;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return closureExpressionBody2({
-    body: _resolveOne(f.body, [], ["_expression"]) as any,
+    body: _resolveOne(f.body, [], ["_expression"]),
   });
 }
 
 export function closureParametersFrom(input?: ClosureParametersFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return closureParameters({
-    pattern: _resolveMany(f.pattern, [], ["_pattern"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
-}
-
-export function labelFrom(input: LabelFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
-  return label({
-    identifier: _resolveOne(f.identifier, ["identifier"], []) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
-}
-
-export function breakExpressionFrom(input: BreakExpressionFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
-  return breakExpression({
-    label: _resolveOne(f.label, [], ["label"]) as any,
-    expression: _resolveOne(f.expression, [], ["_expression"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
-}
-
-export function continueExpressionFrom(input: ContinueExpressionFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
-  return continueExpression({
-    label: _resolveOne(f.label, [], ["label"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
-}
-
-export function indexExpressionFrom(input: IndexExpressionFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
-  return indexExpression({
-    object: _resolveOne(f.object, [], ["_expression"]) as any,
-    index: _resolveOne(f.index, [], ["_expression"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
-}
-
-export function awaitExpressionFrom(...input: any[]) {
-  if (input.length === 1 && isNodeData(input[0])) {
-    const nd = input[0] as any;
-    return awaitExpression(...(nd.children ?? []));
-  }
-  return awaitExpression(...(input as any[]));
-}
-
-export function fieldExpressionFrom(input: FieldExpressionFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
-  return fieldExpression({
-    value: _resolveOne(f.value, [], ["_expression"]) as any,
-    field: _resolveOne(f.field, ["integer_literal"], ["_field_identifier"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
-}
-
-export function unsafeBlockFrom(input: UnsafeBlockFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
-  return unsafeBlock({
-    block: _resolveOne(f.block, [], ["block"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
-}
-
-export function asyncBlockFrom(input: AsyncBlockFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
-  return asyncBlock({
-    block: _resolveOne(f.block, [], []) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
-}
-
-export function genBlockFrom(input: GenBlockFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
-  return genBlock({
-    block: _resolveOne(f.block, [], []) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
-}
-
-export function tryBlockFrom(input: TryBlockFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
-  return tryBlock({
-    block: _resolveOne(f.block, [], ["block"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
-}
-
-export function blockFrom(input: BlockFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
-  return block({
-    label: _resolveOne(f.label, [], []) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
-}
-
-export function hiddenPatternFrom(...input: any[]) {
-  if (input.length === 1 && isNodeData(input[0])) {
-    const nd = input[0] as any;
-    return hiddenPattern(...(nd.children ?? []));
-  }
-  return hiddenPattern(...(input as any[]));
-}
-
-export function genericPatternFrom(input: GenericPatternFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
-  return genericPattern({
-    typeArguments: _resolveOne(f.type_arguments, [], ["type_arguments"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
-}
-
-export function tuplePatternFrom(input?: TuplePatternFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
-  return tuplePattern({
-    pattern: _resolveMany(f.pattern, [], ["_pattern"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
-}
-
-export function slicePatternFrom(input?: SlicePatternFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
-  return slicePattern({
-    pattern: _resolveMany(f.pattern, [], ["_pattern"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
-}
-
-export function tupleStructPatternFrom(input: TupleStructPatternFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
-  return tupleStructPattern({
-    type: _resolveOne(f.type, ["identifier"], ["scoped_identifier","generic_type_with_turbofish"]) as any,
-    pattern: _resolveMany(f.pattern, [], ["_pattern"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
-}
-
-export function structPatternFrom(input: StructPatternFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
-  return structPattern({
-    type: _resolveOne(f.type, [], ["_type_identifier","scoped_type_identifier"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
-}
-
-export function fieldPatternFrom(input?: FieldPatternFromInput) {
-  return fieldPattern(input as any);
-}
-
-export function fieldPatternNameFrom(input?: any) {
-  if (isNodeData(input)) return input;
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
-  return fieldPatternName({
-    name: _resolveOne(f.name, ["identifier"], []) as any,
+    pattern: _resolveMany(f.pattern, [], ["_pattern"]),
+    children: input?.children ?? [],
   });
 }
 
-export function fieldPatternColonFrom(input?: any) {
+export function labelFrom(input: LabelFromInput) {
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
+  return label({
+    identifier: _resolveOne(f.identifier, ["identifier"], []),
+    children: input?.children ?? [],
+  });
+}
+
+export function breakExpressionFrom(input: BreakExpressionFromInput) {
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
+  return breakExpression({
+    label: _resolveOne(f.label, [], ["label"]),
+    expression: _resolveOne(f.expression, [], ["_expression"]),
+    children: input?.children ?? [],
+  });
+}
+
+export function continueExpressionFrom(input: ContinueExpressionFromInput) {
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
+  return continueExpression({
+    label: _resolveOne(f.label, [], ["label"]),
+    children: input?.children ?? [],
+  });
+}
+
+export function indexExpressionFrom(input: IndexExpressionFromInput) {
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
+  return indexExpression({
+    object: _resolveOne(f.object, [], ["_expression"]),
+    index: _resolveOne(f.index, [], ["_expression"]),
+    children: input?.children ?? [],
+  });
+}
+
+export function awaitExpressionFrom(...input: unknown[]) {
+  if (input.length === 1 && isNodeData(input[0])) {
+    return awaitExpression(...((input[0] as { children?: unknown[] }).children ?? []));
+  }
+  return awaitExpression(...input);
+}
+
+export function fieldExpressionFrom(input: FieldExpressionFromInput) {
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
+  return fieldExpression({
+    value: _resolveOne(f.value, [], ["_expression"]),
+    field: _resolveOne(f.field, ["integer_literal"], ["_field_identifier"]),
+    children: input?.children ?? [],
+  });
+}
+
+export function unsafeBlockFrom(input: UnsafeBlockFromInput) {
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
+  return unsafeBlock({
+    block: _resolveOne(f.block, [], ["block"]),
+    children: input?.children ?? [],
+  });
+}
+
+export function asyncBlockFrom(input: AsyncBlockFromInput) {
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
+  return asyncBlock({
+    block: _resolveOne(f.block, [], []),
+    children: input?.children ?? [],
+  });
+}
+
+export function genBlockFrom(input: GenBlockFromInput) {
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
+  return genBlock({
+    block: _resolveOne(f.block, [], []),
+    children: input?.children ?? [],
+  });
+}
+
+export function tryBlockFrom(input: TryBlockFromInput) {
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
+  return tryBlock({
+    block: _resolveOne(f.block, [], ["block"]),
+    children: input?.children ?? [],
+  });
+}
+
+export function blockFrom(input: BlockFromInput) {
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
+  return block({
+    label: _resolveOne(f.label, [], []),
+    children: input?.children ?? [],
+  });
+}
+
+export function hiddenPatternFrom(...input: unknown[]) {
+  if (input.length === 1 && isNodeData(input[0])) {
+    return hiddenPattern(...((input[0] as { children?: unknown[] }).children ?? []));
+  }
+  return hiddenPattern(...input);
+}
+
+export function genericPatternFrom(input: GenericPatternFromInput) {
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
+  return genericPattern({
+    typeArguments: _resolveOne(f.type_arguments, [], ["type_arguments"]),
+    children: input?.children ?? [],
+  });
+}
+
+export function tuplePatternFrom(input?: TuplePatternFromInput) {
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
+  return tuplePattern({
+    pattern: _resolveMany(f.pattern, [], ["_pattern"]),
+    children: input?.children ?? [],
+  });
+}
+
+export function slicePatternFrom(input?: SlicePatternFromInput) {
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
+  return slicePattern({
+    pattern: _resolveMany(f.pattern, [], ["_pattern"]),
+    children: input?.children ?? [],
+  });
+}
+
+export function tupleStructPatternFrom(input: TupleStructPatternFromInput) {
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
+  return tupleStructPattern({
+    type: _resolveOne(f.type, ["identifier"], ["scoped_identifier","generic_type_with_turbofish"]),
+    pattern: _resolveMany(f.pattern, [], ["_pattern"]),
+    children: input?.children ?? [],
+  });
+}
+
+export function structPatternFrom(input: StructPatternFromInput) {
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
+  return structPattern({
+    type: _resolveOne(f.type, [], ["_type_identifier","scoped_type_identifier"]),
+    children: input?.children ?? [],
+  });
+}
+
+export function fieldPatternFrom(input?: FieldPatternFromInput) {
+  return fieldPattern(input);
+}
+
+export function fieldPatternNameFrom(input?: unknown) {
   if (isNodeData(input)) return input;
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
+  return fieldPatternName({
+    name: _resolveOne(f.name, ["identifier"], []),
+  });
+}
+
+export function fieldPatternColonFrom(input?: unknown) {
+  if (isNodeData(input)) return input;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return fieldPatternColon({
-    name: _resolveOne(f.name, [], ["_field_identifier"]) as any,
-    pattern: _resolveOne(f.pattern, [], ["_pattern"]) as any,
+    name: _resolveOne(f.name, [], ["_field_identifier"]),
+    pattern: _resolveOne(f.pattern, [], ["_pattern"]),
   });
 }
 
 export function mutPatternFrom(input: MutPatternFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return mutPattern({
-    mutableSpecifier: _resolveOne(f.mutable_specifier, ["mutable_specifier"], []) as any,
-    pattern: _resolveOne(f.pattern, [], ["_pattern"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
-}
-
-export function rangePatternFrom(input?: RangePatternFromInput) {
-  return rangePattern(input as any);
-}
-
-export function rangePatternLeftFrom(input?: any) {
-  if (isNodeData(input)) return input;
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
-  return rangePatternLeft({
-    left: _resolveOne(f.left, [], ["_literal_pattern","_path"]) as any,
-    right: _resolveOne(f.right, [], ["_literal_pattern","_path"]) as any,
+    mutableSpecifier: _resolveOne(f.mutable_specifier, ["mutable_specifier"], []),
+    pattern: _resolveOne(f.pattern, [], ["_pattern"]),
+    children: input?.children ?? [],
   });
 }
 
-export function rangePatternRightFrom(input?: any) {
+export function rangePatternFrom(input?: RangePatternFromInput) {
+  return rangePattern(input);
+}
+
+export function rangePatternLeftFrom(input?: unknown) {
   if (isNodeData(input)) return input;
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
+  return rangePatternLeft({
+    left: _resolveOne(f.left, [], ["_literal_pattern","_path"]),
+    right: _resolveOne(f.right, [], ["_literal_pattern","_path"]),
+  });
+}
+
+export function rangePatternRightFrom(input?: unknown) {
+  if (isNodeData(input)) return input;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return rangePatternRight({
-    right: _resolveOne(f.right, [], ["_literal_pattern","_path"]) as any,
+    right: _resolveOne(f.right, [], ["_literal_pattern","_path"]),
   });
 }
 
 export function refPatternFrom(input: RefPatternFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return refPattern({
-    pattern: _resolveOne(f.pattern, [], ["_pattern"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    pattern: _resolveOne(f.pattern, [], ["_pattern"]),
+    children: input?.children ?? [],
+  });
 }
 
 export function capturedPatternFrom(input: CapturedPatternFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return capturedPattern({
-    identifier: _resolveOne(f.identifier, ["identifier"], []) as any,
-    pattern: _resolveOne(f.pattern, [], ["_pattern"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    identifier: _resolveOne(f.identifier, ["identifier"], []),
+    pattern: _resolveOne(f.pattern, [], ["_pattern"]),
+    children: input?.children ?? [],
+  });
 }
 
 export function referencePatternFrom(input: ReferencePatternFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return referencePattern({
-    mutableSpecifier: _resolveOne(f.mutable_specifier, ["mutable_specifier"], []) as any,
-    pattern: _resolveOne(f.pattern, [], ["_pattern"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    mutableSpecifier: _resolveOne(f.mutable_specifier, ["mutable_specifier"], []),
+    pattern: _resolveOne(f.pattern, [], ["_pattern"]),
+    children: input?.children ?? [],
+  });
 }
 
 export function orPatternFrom(input: OrPatternFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return orPattern({
-    pattern: _resolveOne(f.pattern, [], ["_pattern"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    pattern: _resolveOne(f.pattern, [], ["_pattern"]),
+    children: input?.children ?? [],
+  });
 }
 
 export function negativeLiteralFrom(input: NegativeLiteralFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return negativeLiteral({
-    value: _resolveOne(f.value, ["integer_literal"], ["float_literal"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    value: _resolveOne(f.value, ["integer_literal"], ["float_literal"]),
+    children: input?.children ?? [],
+  });
 }
 
 export function integerLiteralFrom(input: string | IntegerLiteral) {
@@ -1423,22 +1386,21 @@ export function integerLiteralFrom(input: string | IntegerLiteral) {
   return integerLiteral(input as string);
 }
 
-export function stringLiteralFrom(...input: any[]) {
+export function stringLiteralFrom(...input: unknown[]) {
   if (input.length === 1 && isNodeData(input[0])) {
-    const nd = input[0] as any;
-    return stringLiteral(...(nd.children ?? []));
+    return stringLiteral(...((input[0] as { children?: unknown[] }).children ?? []));
   }
-  return stringLiteral(...(input as any[]));
+  return stringLiteral(...input);
 }
 
 export function rawStringLiteralFrom(input: RawStringLiteralFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return rawStringLiteral({
-    rawStringLiteralStart: _resolveOne(f.raw_string_literal_start, [], ["_raw_string_literal_start"]) as any,
-    stringContent: _resolveOne(f.string_content, [], ["raw_string_literal_content"]) as any,
-    rawStringLiteralEnd: _resolveOne(f.raw_string_literal_end, [], ["_raw_string_literal_end"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    rawStringLiteralStart: _resolveOne(f.raw_string_literal_start, [], ["_raw_string_literal_start"]),
+    stringContent: _resolveOne(f.string_content, [], ["raw_string_literal_content"]),
+    rawStringLiteralEnd: _resolveOne(f.raw_string_literal_end, [], ["_raw_string_literal_end"]),
+    children: input?.children ?? [],
+  });
 }
 
 export function charLiteralFrom(input: string | CharLiteral) {
@@ -1456,54 +1418,52 @@ export function booleanLiteralFrom(input: string | BooleanLiteral) {
   return booleanLiteral(input as string);
 }
 
-export function commentFrom(...input: any[]) {
+export function commentFrom(...input: unknown[]) {
   if (input.length === 1 && isNodeData(input[0])) {
-    const nd = input[0] as any;
-    return comment(...(nd.children ?? []));
+    return comment(...((input[0] as { children?: unknown[] }).children ?? []));
   }
-  return comment(...(input as any[]));
+  return comment(...input);
 }
 
 export function lineCommentFrom(input: LineCommentFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return lineComment({
-    doc: _resolveOne(f.doc, [], ["_line_doc_content"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    doc: _resolveOne(f.doc, [], ["_line_doc_content"]),
+    children: input?.children ?? [],
+  });
 }
 
 export function hiddenLineDocCommentMarkerFrom(input: HiddenLineDocCommentMarkerFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return hiddenLineDocCommentMarker({
-    outer: _resolveOne(f.outer, [], []) as any,
-    inner: _resolveOne(f.inner, [], []) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    outer: _resolveOne(f.outer, [], []),
+    inner: _resolveOne(f.inner, [], []),
+    children: input?.children ?? [],
+  });
 }
 
 export function blockCommentFrom(input?: BlockCommentFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return blockComment({
-    doc: _resolveOne(f.doc, [], ["_block_comment_content"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    doc: _resolveOne(f.doc, [], ["_block_comment_content"]),
+    children: input?.children ?? [],
+  });
 }
 
 export function hiddenBlockDocCommentMarkerFrom(input: HiddenBlockDocCommentMarkerFromInput) {
-  const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
+  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return hiddenBlockDocCommentMarker({
-    outer: _resolveOne(f.outer, [], ["_outer_block_doc_comment_marker"]) as any,
-    inner: _resolveOne(f.inner, [], ["_inner_block_doc_comment_marker"]) as any,
-    children: ((input as any)?.children ?? []) as any,
-  } as any);
+    outer: _resolveOne(f.outer, [], ["_outer_block_doc_comment_marker"]),
+    inner: _resolveOne(f.inner, [], ["_inner_block_doc_comment_marker"]),
+    children: input?.children ?? [],
+  });
 }
 
-export function hiddenPathFrom(...input: any[]) {
+export function hiddenPathFrom(...input: unknown[]) {
   if (input.length === 1 && isNodeData(input[0])) {
-    const nd = input[0] as any;
-    return hiddenPath(...(nd.children ?? []));
+    return hiddenPath(...((input[0] as { children?: unknown[] }).children ?? []));
   }
-  return hiddenPath(...(input as any[]));
+  return hiddenPath(...input);
 }
 
 export function identifierFrom(input: string | Identifier) {
@@ -1521,20 +1481,18 @@ export function hiddenReservedIdentifierFrom(input: string | HiddenReservedIdent
   return hiddenReservedIdentifier(input as string);
 }
 
-export function hiddenTypeIdentifierFrom(...input: any[]) {
+export function hiddenTypeIdentifierFrom(...input: unknown[]) {
   if (input.length === 1 && isNodeData(input[0])) {
-    const nd = input[0] as any;
-    return hiddenTypeIdentifier(...(nd.children ?? []));
+    return hiddenTypeIdentifier(...((input[0] as { children?: unknown[] }).children ?? []));
   }
-  return hiddenTypeIdentifier(...(input as any[]));
+  return hiddenTypeIdentifier(...input);
 }
 
-export function hiddenFieldIdentifierFrom(...input: any[]) {
+export function hiddenFieldIdentifierFrom(...input: unknown[]) {
   if (input.length === 1 && isNodeData(input[0])) {
-    const nd = input[0] as any;
-    return hiddenFieldIdentifier(...(nd.children ?? []));
+    return hiddenFieldIdentifier(...((input[0] as { children?: unknown[] }).children ?? []));
   }
-  return hiddenFieldIdentifier(...(input as any[]));
+  return hiddenFieldIdentifier(...input);
 }
 
 export function selfFrom(input?: Self) {
@@ -1562,12 +1520,11 @@ export function primitiveTypeFrom(input: string | PrimitiveType) {
   return primitiveType(input as string);
 }
 
-export function letChainFrom(...input: any[]) {
+export function letChainFrom(...input: unknown[]) {
   if (input.length === 1 && isNodeData(input[0])) {
-    const nd = input[0] as any;
-    return letChain(...(nd.children ?? []));
+    return letChain(...((input[0] as { children?: unknown[] }).children ?? []));
   }
-  return letChain(...(input as any[]));
+  return letChain(...input);
 }
 
 export function shorthandFieldIdentifierFrom(input: string | ShorthandFieldIdentifier) {
@@ -1595,178 +1552,178 @@ export function fieldIdentifierFrom(input: string | FieldIdentifier) {
   return fieldIdentifier(input as string);
 }
 
-export const _fromMap: Record<string, (input?: any) => unknown> = {
-  "source_file": sourceFileFrom as (input?: any) => unknown,
-  "expression_statement": expressionStatementFrom as (input?: any) => unknown,
-  "macro_definition": macroDefinitionFrom as (input?: any) => unknown,
-  "macro_rule": macroRuleFrom as (input?: any) => unknown,
-  "token_tree_pattern": tokenTreePatternFrom as (input?: any) => unknown,
-  "token_binding_pattern": tokenBindingPatternFrom as (input?: any) => unknown,
-  "token_repetition_pattern": tokenRepetitionPatternFrom as (input?: any) => unknown,
-  "fragment_specifier": fragmentSpecifierFrom as (input?: any) => unknown,
-  "token_tree": tokenTreeFrom as (input?: any) => unknown,
-  "token_repetition": tokenRepetitionFrom as (input?: any) => unknown,
-  "_non_special_token": hiddenNonSpecialTokenFrom as (input?: any) => unknown,
-  "attribute_item": attributeItemFrom as (input?: any) => unknown,
-  "inner_attribute_item": innerAttributeItemFrom as (input?: any) => unknown,
-  "attribute": attributeFrom as (input?: any) => unknown,
-  "mod_item": modItemFrom as (input?: any) => unknown,
-  "foreign_mod_item": foreignModItemFrom as (input?: any) => unknown,
-  "declaration_list": declarationListFrom as (input?: any) => unknown,
-  "struct_item": structItemFrom as (input?: any) => unknown,
-  "union_item": unionItemFrom as (input?: any) => unknown,
-  "enum_item": enumItemFrom as (input?: any) => unknown,
-  "enum_variant_list": enumVariantListFrom as (input?: any) => unknown,
-  "enum_variant": enumVariantFrom as (input?: any) => unknown,
-  "field_declaration_list": fieldDeclarationListFrom as (input?: any) => unknown,
-  "field_declaration": fieldDeclarationFrom as (input?: any) => unknown,
-  "ordered_field_declaration_list": orderedFieldDeclarationListFrom as (input?: any) => unknown,
-  "extern_crate_declaration": externCrateDeclarationFrom as (input?: any) => unknown,
-  "const_item": constItemFrom as (input?: any) => unknown,
-  "static_item": staticItemFrom as (input?: any) => unknown,
-  "type_item": typeItemFrom as (input?: any) => unknown,
-  "function_item": functionItemFrom as (input?: any) => unknown,
-  "function_signature_item": functionSignatureItemFrom as (input?: any) => unknown,
-  "function_modifiers": functionModifiersFrom as (input?: any) => unknown,
-  "where_clause": whereClauseFrom as (input?: any) => unknown,
-  "where_predicate": wherePredicateFrom as (input?: any) => unknown,
-  "impl_item": implItemFrom as (input?: any) => unknown,
-  "trait_item": traitItemFrom as (input?: any) => unknown,
-  "associated_type": associatedTypeFrom as (input?: any) => unknown,
-  "trait_bounds": traitBoundsFrom as (input?: any) => unknown,
-  "higher_ranked_trait_bound": higherRankedTraitBoundFrom as (input?: any) => unknown,
-  "removed_trait_bound": removedTraitBoundFrom as (input?: any) => unknown,
-  "type_parameters": typeParametersFrom as (input?: any) => unknown,
-  "const_parameter": constParameterFrom as (input?: any) => unknown,
-  "type_parameter": typeParameterFrom as (input?: any) => unknown,
-  "lifetime_parameter": lifetimeParameterFrom as (input?: any) => unknown,
-  "let_declaration": letDeclarationFrom as (input?: any) => unknown,
-  "use_declaration": useDeclarationFrom as (input?: any) => unknown,
-  "scoped_use_list": scopedUseListFrom as (input?: any) => unknown,
-  "use_list": useListFrom as (input?: any) => unknown,
-  "use_as_clause": useAsClauseFrom as (input?: any) => unknown,
-  "use_wildcard": useWildcardFrom as (input?: any) => unknown,
-  "parameters": parametersFrom as (input?: any) => unknown,
-  "self_parameter": selfParameterFrom as (input?: any) => unknown,
-  "variadic_parameter": variadicParameterFrom as (input?: any) => unknown,
-  "parameter": parameterFrom as (input?: any) => unknown,
-  "extern_modifier": externModifierFrom as (input?: any) => unknown,
-  "visibility_modifier": visibilityModifierFrom as (input?: any) => unknown,
-  "_type": hiddenTypeFrom as (input?: any) => unknown,
-  "bracketed_type": bracketedTypeFrom as (input?: any) => unknown,
-  "qualified_type": qualifiedTypeFrom as (input?: any) => unknown,
-  "lifetime": lifetimeFrom as (input?: any) => unknown,
-  "array_type": arrayTypeFrom as (input?: any) => unknown,
-  "for_lifetimes": forLifetimesFrom as (input?: any) => unknown,
-  "function_type": functionTypeFrom as (input?: any) => unknown,
-  "tuple_type": tupleTypeFrom as (input?: any) => unknown,
-  "unit_type": unitTypeFrom as (input?: any) => unknown,
-  "generic_function": genericFunctionFrom as (input?: any) => unknown,
-  "generic_type": genericTypeFrom as (input?: any) => unknown,
-  "generic_type_with_turbofish": genericTypeWithTurbofishFrom as (input?: any) => unknown,
-  "bounded_type": boundedTypeFrom as (input?: any) => unknown,
-  "use_bounds": useBoundsFrom as (input?: any) => unknown,
-  "type_arguments": typeArgumentsFrom as (input?: any) => unknown,
-  "type_binding": typeBindingFrom as (input?: any) => unknown,
-  "reference_type": referenceTypeFrom as (input?: any) => unknown,
-  "pointer_type": pointerTypeFrom as (input?: any) => unknown,
-  "abstract_type": abstractTypeFrom as (input?: any) => unknown,
-  "dynamic_type": dynamicTypeFrom as (input?: any) => unknown,
-  "mutable_specifier": mutableSpecifierFrom as (input?: any) => unknown,
-  "_expression_except_range": hiddenExpressionExceptRangeFrom as (input?: any) => unknown,
-  "macro_invocation": macroInvocationFrom as (input?: any) => unknown,
-  "delim_token_tree": delimTokenTreeFrom as (input?: any) => unknown,
-  "_non_delim_token": hiddenNonDelimTokenFrom as (input?: any) => unknown,
-  "scoped_identifier": scopedIdentifierFrom as (input?: any) => unknown,
-  "scoped_type_identifier_in_expression_position": scopedTypeIdentifierInExpressionPositionFrom as (input?: any) => unknown,
-  "scoped_type_identifier": scopedTypeIdentifierFrom as (input?: any) => unknown,
-  "range_expression": rangeExpressionFrom as (input?: any) => unknown,
-  "unary_expression": unaryExpressionFrom as (input?: any) => unknown,
-  "try_expression": tryExpressionFrom as (input?: any) => unknown,
-  "reference_expression": referenceExpressionFrom as (input?: any) => unknown,
-  "binary_expression": binaryExpressionFrom as (input?: any) => unknown,
-  "assignment_expression": assignmentExpressionFrom as (input?: any) => unknown,
-  "compound_assignment_expr": compoundAssignmentExprFrom as (input?: any) => unknown,
-  "type_cast_expression": typeCastExpressionFrom as (input?: any) => unknown,
-  "return_expression": returnExpressionFrom as (input?: any) => unknown,
-  "yield_expression": yieldExpressionFrom as (input?: any) => unknown,
-  "call_expression": callExpressionFrom as (input?: any) => unknown,
-  "arguments": arguments_From as (input?: any) => unknown,
-  "array_expression": arrayExpressionFrom as (input?: any) => unknown,
-  "parenthesized_expression": parenthesizedExpressionFrom as (input?: any) => unknown,
-  "tuple_expression": tupleExpressionFrom as (input?: any) => unknown,
-  "unit_expression": unitExpressionFrom as (input?: any) => unknown,
-  "struct_expression": structExpressionFrom as (input?: any) => unknown,
-  "field_initializer_list": fieldInitializerListFrom as (input?: any) => unknown,
-  "shorthand_field_initializer": shorthandFieldInitializerFrom as (input?: any) => unknown,
-  "field_initializer": fieldInitializerFrom as (input?: any) => unknown,
-  "base_field_initializer": baseFieldInitializerFrom as (input?: any) => unknown,
-  "if_expression": ifExpressionFrom as (input?: any) => unknown,
-  "let_condition": letConditionFrom as (input?: any) => unknown,
-  "_let_chain": hiddenLetChainFrom as (input?: any) => unknown,
-  "else_clause": elseClauseFrom as (input?: any) => unknown,
-  "match_expression": matchExpressionFrom as (input?: any) => unknown,
-  "match_block": matchBlockFrom as (input?: any) => unknown,
-  "match_arm": matchArmFrom as (input?: any) => unknown,
-  "last_match_arm": lastMatchArmFrom as (input?: any) => unknown,
-  "match_pattern": matchPatternFrom as (input?: any) => unknown,
-  "while_expression": whileExpressionFrom as (input?: any) => unknown,
-  "loop_expression": loopExpressionFrom as (input?: any) => unknown,
-  "for_expression": forExpressionFrom as (input?: any) => unknown,
-  "const_block": constBlockFrom as (input?: any) => unknown,
-  "closure_expression": closureExpressionFrom as (input?: any) => unknown,
-  "closure_parameters": closureParametersFrom as (input?: any) => unknown,
-  "label": labelFrom as (input?: any) => unknown,
-  "break_expression": breakExpressionFrom as (input?: any) => unknown,
-  "continue_expression": continueExpressionFrom as (input?: any) => unknown,
-  "index_expression": indexExpressionFrom as (input?: any) => unknown,
-  "await_expression": awaitExpressionFrom as (input?: any) => unknown,
-  "field_expression": fieldExpressionFrom as (input?: any) => unknown,
-  "unsafe_block": unsafeBlockFrom as (input?: any) => unknown,
-  "async_block": asyncBlockFrom as (input?: any) => unknown,
-  "gen_block": genBlockFrom as (input?: any) => unknown,
-  "try_block": tryBlockFrom as (input?: any) => unknown,
-  "block": blockFrom as (input?: any) => unknown,
-  "_pattern": hiddenPatternFrom as (input?: any) => unknown,
-  "generic_pattern": genericPatternFrom as (input?: any) => unknown,
-  "tuple_pattern": tuplePatternFrom as (input?: any) => unknown,
-  "slice_pattern": slicePatternFrom as (input?: any) => unknown,
-  "tuple_struct_pattern": tupleStructPatternFrom as (input?: any) => unknown,
-  "struct_pattern": structPatternFrom as (input?: any) => unknown,
-  "field_pattern": fieldPatternFrom as (input?: any) => unknown,
-  "mut_pattern": mutPatternFrom as (input?: any) => unknown,
-  "range_pattern": rangePatternFrom as (input?: any) => unknown,
-  "ref_pattern": refPatternFrom as (input?: any) => unknown,
-  "captured_pattern": capturedPatternFrom as (input?: any) => unknown,
-  "reference_pattern": referencePatternFrom as (input?: any) => unknown,
-  "or_pattern": orPatternFrom as (input?: any) => unknown,
-  "negative_literal": negativeLiteralFrom as (input?: any) => unknown,
-  "integer_literal": integerLiteralFrom as (input?: any) => unknown,
-  "string_literal": stringLiteralFrom as (input?: any) => unknown,
-  "raw_string_literal": rawStringLiteralFrom as (input?: any) => unknown,
-  "char_literal": charLiteralFrom as (input?: any) => unknown,
-  "escape_sequence": escapeSequenceFrom as (input?: any) => unknown,
-  "boolean_literal": booleanLiteralFrom as (input?: any) => unknown,
-  "comment": commentFrom as (input?: any) => unknown,
-  "line_comment": lineCommentFrom as (input?: any) => unknown,
-  "_line_doc_comment_marker": hiddenLineDocCommentMarkerFrom as (input?: any) => unknown,
-  "block_comment": blockCommentFrom as (input?: any) => unknown,
-  "_block_doc_comment_marker": hiddenBlockDocCommentMarkerFrom as (input?: any) => unknown,
-  "_path": hiddenPathFrom as (input?: any) => unknown,
-  "identifier": identifierFrom as (input?: any) => unknown,
-  "shebang": shebangFrom as (input?: any) => unknown,
-  "_reserved_identifier": hiddenReservedIdentifierFrom as (input?: any) => unknown,
-  "_type_identifier": hiddenTypeIdentifierFrom as (input?: any) => unknown,
-  "_field_identifier": hiddenFieldIdentifierFrom as (input?: any) => unknown,
-  "self": selfFrom as (input?: any) => unknown,
-  "super": superFrom as (input?: any) => unknown,
-  "crate": crateFrom as (input?: any) => unknown,
-  "metavariable": metavariableFrom as (input?: any) => unknown,
-  "primitive_type": primitiveTypeFrom as (input?: any) => unknown,
-  "let_chain": letChainFrom as (input?: any) => unknown,
-  "shorthand_field_identifier": shorthandFieldIdentifierFrom as (input?: any) => unknown,
-  "outer_doc_comment_marker": outerDocCommentMarkerFrom as (input?: any) => unknown,
-  "inner_doc_comment_marker": innerDocCommentMarkerFrom as (input?: any) => unknown,
-  "type_identifier": typeIdentifierFrom as (input?: any) => unknown,
-  "field_identifier": fieldIdentifierFrom as (input?: any) => unknown,
+export const _fromMap: Record<string, (input?: unknown) => unknown> = {
+  "source_file": sourceFileFrom as (input?: unknown) => unknown,
+  "expression_statement": expressionStatementFrom as (input?: unknown) => unknown,
+  "macro_definition": macroDefinitionFrom as (input?: unknown) => unknown,
+  "macro_rule": macroRuleFrom as (input?: unknown) => unknown,
+  "token_tree_pattern": tokenTreePatternFrom as (input?: unknown) => unknown,
+  "token_binding_pattern": tokenBindingPatternFrom as (input?: unknown) => unknown,
+  "token_repetition_pattern": tokenRepetitionPatternFrom as (input?: unknown) => unknown,
+  "fragment_specifier": fragmentSpecifierFrom as (input?: unknown) => unknown,
+  "token_tree": tokenTreeFrom as (input?: unknown) => unknown,
+  "token_repetition": tokenRepetitionFrom as (input?: unknown) => unknown,
+  "_non_special_token": hiddenNonSpecialTokenFrom as (input?: unknown) => unknown,
+  "attribute_item": attributeItemFrom as (input?: unknown) => unknown,
+  "inner_attribute_item": innerAttributeItemFrom as (input?: unknown) => unknown,
+  "attribute": attributeFrom as (input?: unknown) => unknown,
+  "mod_item": modItemFrom as (input?: unknown) => unknown,
+  "foreign_mod_item": foreignModItemFrom as (input?: unknown) => unknown,
+  "declaration_list": declarationListFrom as (input?: unknown) => unknown,
+  "struct_item": structItemFrom as (input?: unknown) => unknown,
+  "union_item": unionItemFrom as (input?: unknown) => unknown,
+  "enum_item": enumItemFrom as (input?: unknown) => unknown,
+  "enum_variant_list": enumVariantListFrom as (input?: unknown) => unknown,
+  "enum_variant": enumVariantFrom as (input?: unknown) => unknown,
+  "field_declaration_list": fieldDeclarationListFrom as (input?: unknown) => unknown,
+  "field_declaration": fieldDeclarationFrom as (input?: unknown) => unknown,
+  "ordered_field_declaration_list": orderedFieldDeclarationListFrom as (input?: unknown) => unknown,
+  "extern_crate_declaration": externCrateDeclarationFrom as (input?: unknown) => unknown,
+  "const_item": constItemFrom as (input?: unknown) => unknown,
+  "static_item": staticItemFrom as (input?: unknown) => unknown,
+  "type_item": typeItemFrom as (input?: unknown) => unknown,
+  "function_item": functionItemFrom as (input?: unknown) => unknown,
+  "function_signature_item": functionSignatureItemFrom as (input?: unknown) => unknown,
+  "function_modifiers": functionModifiersFrom as (input?: unknown) => unknown,
+  "where_clause": whereClauseFrom as (input?: unknown) => unknown,
+  "where_predicate": wherePredicateFrom as (input?: unknown) => unknown,
+  "impl_item": implItemFrom as (input?: unknown) => unknown,
+  "trait_item": traitItemFrom as (input?: unknown) => unknown,
+  "associated_type": associatedTypeFrom as (input?: unknown) => unknown,
+  "trait_bounds": traitBoundsFrom as (input?: unknown) => unknown,
+  "higher_ranked_trait_bound": higherRankedTraitBoundFrom as (input?: unknown) => unknown,
+  "removed_trait_bound": removedTraitBoundFrom as (input?: unknown) => unknown,
+  "type_parameters": typeParametersFrom as (input?: unknown) => unknown,
+  "const_parameter": constParameterFrom as (input?: unknown) => unknown,
+  "type_parameter": typeParameterFrom as (input?: unknown) => unknown,
+  "lifetime_parameter": lifetimeParameterFrom as (input?: unknown) => unknown,
+  "let_declaration": letDeclarationFrom as (input?: unknown) => unknown,
+  "use_declaration": useDeclarationFrom as (input?: unknown) => unknown,
+  "scoped_use_list": scopedUseListFrom as (input?: unknown) => unknown,
+  "use_list": useListFrom as (input?: unknown) => unknown,
+  "use_as_clause": useAsClauseFrom as (input?: unknown) => unknown,
+  "use_wildcard": useWildcardFrom as (input?: unknown) => unknown,
+  "parameters": parametersFrom as (input?: unknown) => unknown,
+  "self_parameter": selfParameterFrom as (input?: unknown) => unknown,
+  "variadic_parameter": variadicParameterFrom as (input?: unknown) => unknown,
+  "parameter": parameterFrom as (input?: unknown) => unknown,
+  "extern_modifier": externModifierFrom as (input?: unknown) => unknown,
+  "visibility_modifier": visibilityModifierFrom as (input?: unknown) => unknown,
+  "_type": hiddenTypeFrom as (input?: unknown) => unknown,
+  "bracketed_type": bracketedTypeFrom as (input?: unknown) => unknown,
+  "qualified_type": qualifiedTypeFrom as (input?: unknown) => unknown,
+  "lifetime": lifetimeFrom as (input?: unknown) => unknown,
+  "array_type": arrayTypeFrom as (input?: unknown) => unknown,
+  "for_lifetimes": forLifetimesFrom as (input?: unknown) => unknown,
+  "function_type": functionTypeFrom as (input?: unknown) => unknown,
+  "tuple_type": tupleTypeFrom as (input?: unknown) => unknown,
+  "unit_type": unitTypeFrom as (input?: unknown) => unknown,
+  "generic_function": genericFunctionFrom as (input?: unknown) => unknown,
+  "generic_type": genericTypeFrom as (input?: unknown) => unknown,
+  "generic_type_with_turbofish": genericTypeWithTurbofishFrom as (input?: unknown) => unknown,
+  "bounded_type": boundedTypeFrom as (input?: unknown) => unknown,
+  "use_bounds": useBoundsFrom as (input?: unknown) => unknown,
+  "type_arguments": typeArgumentsFrom as (input?: unknown) => unknown,
+  "type_binding": typeBindingFrom as (input?: unknown) => unknown,
+  "reference_type": referenceTypeFrom as (input?: unknown) => unknown,
+  "pointer_type": pointerTypeFrom as (input?: unknown) => unknown,
+  "abstract_type": abstractTypeFrom as (input?: unknown) => unknown,
+  "dynamic_type": dynamicTypeFrom as (input?: unknown) => unknown,
+  "mutable_specifier": mutableSpecifierFrom as (input?: unknown) => unknown,
+  "_expression_except_range": hiddenExpressionExceptRangeFrom as (input?: unknown) => unknown,
+  "macro_invocation": macroInvocationFrom as (input?: unknown) => unknown,
+  "delim_token_tree": delimTokenTreeFrom as (input?: unknown) => unknown,
+  "_non_delim_token": hiddenNonDelimTokenFrom as (input?: unknown) => unknown,
+  "scoped_identifier": scopedIdentifierFrom as (input?: unknown) => unknown,
+  "scoped_type_identifier_in_expression_position": scopedTypeIdentifierInExpressionPositionFrom as (input?: unknown) => unknown,
+  "scoped_type_identifier": scopedTypeIdentifierFrom as (input?: unknown) => unknown,
+  "range_expression": rangeExpressionFrom as (input?: unknown) => unknown,
+  "unary_expression": unaryExpressionFrom as (input?: unknown) => unknown,
+  "try_expression": tryExpressionFrom as (input?: unknown) => unknown,
+  "reference_expression": referenceExpressionFrom as (input?: unknown) => unknown,
+  "binary_expression": binaryExpressionFrom as (input?: unknown) => unknown,
+  "assignment_expression": assignmentExpressionFrom as (input?: unknown) => unknown,
+  "compound_assignment_expr": compoundAssignmentExprFrom as (input?: unknown) => unknown,
+  "type_cast_expression": typeCastExpressionFrom as (input?: unknown) => unknown,
+  "return_expression": returnExpressionFrom as (input?: unknown) => unknown,
+  "yield_expression": yieldExpressionFrom as (input?: unknown) => unknown,
+  "call_expression": callExpressionFrom as (input?: unknown) => unknown,
+  "arguments": arguments_From as (input?: unknown) => unknown,
+  "array_expression": arrayExpressionFrom as (input?: unknown) => unknown,
+  "parenthesized_expression": parenthesizedExpressionFrom as (input?: unknown) => unknown,
+  "tuple_expression": tupleExpressionFrom as (input?: unknown) => unknown,
+  "unit_expression": unitExpressionFrom as (input?: unknown) => unknown,
+  "struct_expression": structExpressionFrom as (input?: unknown) => unknown,
+  "field_initializer_list": fieldInitializerListFrom as (input?: unknown) => unknown,
+  "shorthand_field_initializer": shorthandFieldInitializerFrom as (input?: unknown) => unknown,
+  "field_initializer": fieldInitializerFrom as (input?: unknown) => unknown,
+  "base_field_initializer": baseFieldInitializerFrom as (input?: unknown) => unknown,
+  "if_expression": ifExpressionFrom as (input?: unknown) => unknown,
+  "let_condition": letConditionFrom as (input?: unknown) => unknown,
+  "_let_chain": hiddenLetChainFrom as (input?: unknown) => unknown,
+  "else_clause": elseClauseFrom as (input?: unknown) => unknown,
+  "match_expression": matchExpressionFrom as (input?: unknown) => unknown,
+  "match_block": matchBlockFrom as (input?: unknown) => unknown,
+  "match_arm": matchArmFrom as (input?: unknown) => unknown,
+  "last_match_arm": lastMatchArmFrom as (input?: unknown) => unknown,
+  "match_pattern": matchPatternFrom as (input?: unknown) => unknown,
+  "while_expression": whileExpressionFrom as (input?: unknown) => unknown,
+  "loop_expression": loopExpressionFrom as (input?: unknown) => unknown,
+  "for_expression": forExpressionFrom as (input?: unknown) => unknown,
+  "const_block": constBlockFrom as (input?: unknown) => unknown,
+  "closure_expression": closureExpressionFrom as (input?: unknown) => unknown,
+  "closure_parameters": closureParametersFrom as (input?: unknown) => unknown,
+  "label": labelFrom as (input?: unknown) => unknown,
+  "break_expression": breakExpressionFrom as (input?: unknown) => unknown,
+  "continue_expression": continueExpressionFrom as (input?: unknown) => unknown,
+  "index_expression": indexExpressionFrom as (input?: unknown) => unknown,
+  "await_expression": awaitExpressionFrom as (input?: unknown) => unknown,
+  "field_expression": fieldExpressionFrom as (input?: unknown) => unknown,
+  "unsafe_block": unsafeBlockFrom as (input?: unknown) => unknown,
+  "async_block": asyncBlockFrom as (input?: unknown) => unknown,
+  "gen_block": genBlockFrom as (input?: unknown) => unknown,
+  "try_block": tryBlockFrom as (input?: unknown) => unknown,
+  "block": blockFrom as (input?: unknown) => unknown,
+  "_pattern": hiddenPatternFrom as (input?: unknown) => unknown,
+  "generic_pattern": genericPatternFrom as (input?: unknown) => unknown,
+  "tuple_pattern": tuplePatternFrom as (input?: unknown) => unknown,
+  "slice_pattern": slicePatternFrom as (input?: unknown) => unknown,
+  "tuple_struct_pattern": tupleStructPatternFrom as (input?: unknown) => unknown,
+  "struct_pattern": structPatternFrom as (input?: unknown) => unknown,
+  "field_pattern": fieldPatternFrom as (input?: unknown) => unknown,
+  "mut_pattern": mutPatternFrom as (input?: unknown) => unknown,
+  "range_pattern": rangePatternFrom as (input?: unknown) => unknown,
+  "ref_pattern": refPatternFrom as (input?: unknown) => unknown,
+  "captured_pattern": capturedPatternFrom as (input?: unknown) => unknown,
+  "reference_pattern": referencePatternFrom as (input?: unknown) => unknown,
+  "or_pattern": orPatternFrom as (input?: unknown) => unknown,
+  "negative_literal": negativeLiteralFrom as (input?: unknown) => unknown,
+  "integer_literal": integerLiteralFrom as (input?: unknown) => unknown,
+  "string_literal": stringLiteralFrom as (input?: unknown) => unknown,
+  "raw_string_literal": rawStringLiteralFrom as (input?: unknown) => unknown,
+  "char_literal": charLiteralFrom as (input?: unknown) => unknown,
+  "escape_sequence": escapeSequenceFrom as (input?: unknown) => unknown,
+  "boolean_literal": booleanLiteralFrom as (input?: unknown) => unknown,
+  "comment": commentFrom as (input?: unknown) => unknown,
+  "line_comment": lineCommentFrom as (input?: unknown) => unknown,
+  "_line_doc_comment_marker": hiddenLineDocCommentMarkerFrom as (input?: unknown) => unknown,
+  "block_comment": blockCommentFrom as (input?: unknown) => unknown,
+  "_block_doc_comment_marker": hiddenBlockDocCommentMarkerFrom as (input?: unknown) => unknown,
+  "_path": hiddenPathFrom as (input?: unknown) => unknown,
+  "identifier": identifierFrom as (input?: unknown) => unknown,
+  "shebang": shebangFrom as (input?: unknown) => unknown,
+  "_reserved_identifier": hiddenReservedIdentifierFrom as (input?: unknown) => unknown,
+  "_type_identifier": hiddenTypeIdentifierFrom as (input?: unknown) => unknown,
+  "_field_identifier": hiddenFieldIdentifierFrom as (input?: unknown) => unknown,
+  "self": selfFrom as (input?: unknown) => unknown,
+  "super": superFrom as (input?: unknown) => unknown,
+  "crate": crateFrom as (input?: unknown) => unknown,
+  "metavariable": metavariableFrom as (input?: unknown) => unknown,
+  "primitive_type": primitiveTypeFrom as (input?: unknown) => unknown,
+  "let_chain": letChainFrom as (input?: unknown) => unknown,
+  "shorthand_field_identifier": shorthandFieldIdentifierFrom as (input?: unknown) => unknown,
+  "outer_doc_comment_marker": outerDocCommentMarkerFrom as (input?: unknown) => unknown,
+  "inner_doc_comment_marker": innerDocCommentMarkerFrom as (input?: unknown) => unknown,
+  "type_identifier": typeIdentifierFrom as (input?: unknown) => unknown,
+  "field_identifier": fieldIdentifierFrom as (input?: unknown) => unknown,
 };

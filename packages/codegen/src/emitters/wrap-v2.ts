@@ -75,7 +75,7 @@ export function emitWrapFromNodeMap(config: EmitWrapFromNodeMapConfig): string {
         '// codegen time from NodeMap, then handed to readNode at module load.',
         `const _overrides = ${JSON.stringify(overrides)} as const;`,
         `const _supertypeExpansion = new Map<string, readonly string[]>(Object.entries(${JSON.stringify(supertypeExpansion)}));`,
-        'const _routing = buildRoutingMap(_overrides as any, _supertypeExpansion);',
+        'const _routing = buildRoutingMap(_overrides, _supertypeExpansion);',
         '',
         '// Drill-in helpers — pass _routing to readNode so override field',
         '// promotion happens during hydration, not as a wrap-time fix-up.',

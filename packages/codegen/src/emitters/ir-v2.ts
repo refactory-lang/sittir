@@ -60,9 +60,9 @@ export function emitIrFromNodeMap(config: EmitIrFromNodeMapConfig): string {
     // Helper — attaches properties via defineProperty so reserved Function
     // prototype names (name, length, arguments, caller) don't throw when
     // a polymorph has a form named `name` or similar.
-    lines.push('function _attach<T extends (...args: any[]) => any, P extends Record<string, unknown>>(fn: T, props: P): T & P {')
+    lines.push('function _attach<T extends (...args: unknown[]) => unknown, P extends Record<string, unknown>>(fn: T, props: P): T & P {')
     lines.push('  for (const key of Object.keys(props)) {')
-    lines.push('    Object.defineProperty(fn, key, { value: (props as any)[key], writable: true, configurable: true, enumerable: true });')
+    lines.push('    Object.defineProperty(fn, key, { value: props[key], writable: true, configurable: true, enumerable: true });')
     lines.push('  }')
     lines.push('  return fn as T & P;')
     lines.push('}')

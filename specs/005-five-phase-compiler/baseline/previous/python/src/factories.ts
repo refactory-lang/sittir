@@ -56,8 +56,8 @@ const RESERVED_KEYWORDS = new Set([
   'with',
 ]);
 
-export function module(..._children: NonNullable<ConfigOf<Module>['children']>) {
-  const children = _children.filter(c => c && typeof c === "object" && "type" in c);
+export function module(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: 'module' as const,
     named: true as const,
@@ -71,8 +71,8 @@ export function module(..._children: NonNullable<ConfigOf<Module>['children']>) 
   };
 }
 
-export function hiddenSimpleStatements(..._children: NonNullable<ConfigOf<HiddenSimpleStatements>['children']>) {
-  const children = _children.filter(c => c && typeof c === "object" && "type" in c);
+export function hiddenSimpleStatements(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: '_simple_statements' as const,
     named: true as const,
@@ -86,7 +86,7 @@ export function hiddenSimpleStatements(..._children: NonNullable<ConfigOf<Hidden
   };
 }
 
-export function importStatement(child?: ConfigOf<ImportStatement>['children']) {
+export function importStatement(child?: any) {
   const hasChild = child && typeof child === "object" && "type" in child;
   const children = hasChild ? [child] : [];
   return {
@@ -118,12 +118,16 @@ export function relativeImport(config: ConfigOf<RelativeImport>) {
     import_prefix: config?.importPrefix,
     dotted_name: config?.dottedName,
   };
+  const children = (config as any)?.children ?? [];
   return {
     type: 'relative_import' as const,
     named: true as const,
     fields,
-    importPrefix(importPrefix_?: ConfigOf<RelativeImport>['importPrefix']) { return importPrefix_ !== undefined ? relativeImport({ ...(config ?? {}), importPrefix: importPrefix_ }) : fields.import_prefix; },
-    dottedName(dottedName_?: ConfigOf<RelativeImport>['dottedName']) { return dottedName_ !== undefined ? relativeImport({ ...(config ?? {}), dottedName: dottedName_ }) : fields.dotted_name; },
+    children,
+    importPrefix(importPrefix_?: any) { return importPrefix_ !== undefined ? relativeImport({ ...(config as any), importPrefix: importPrefix_ } as any) : fields.import_prefix; },
+    dottedName(dottedName_?: any) { return dottedName_ !== undefined ? relativeImport({ ...(config as any), dottedName: dottedName_ } as any) : fields.dotted_name; },
+    getChildren() { return children; },
+    setChildren(...items: any[]) { return relativeImport({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -133,7 +137,7 @@ export function relativeImport(config: ConfigOf<RelativeImport>) {
   };
 }
 
-export function futureImportStatement(child?: ConfigOf<FutureImportStatement>['children']) {
+export function futureImportStatement(child?: any) {
   const hasChild = child && typeof child === "object" && "type" in child;
   const children = hasChild ? [child] : [];
   return {
@@ -154,12 +158,16 @@ export function importFromStatement(config: ConfigOf<ImportFromStatement>) {
     module_name: config?.moduleName,
     wildcard_import: config?.wildcardImport,
   };
+  const children = (config as any)?.children ?? [];
   return {
     type: 'import_from_statement' as const,
     named: true as const,
     fields,
-    moduleName(moduleName_?: ConfigOf<ImportFromStatement>['moduleName']) { return moduleName_ !== undefined ? importFromStatement({ ...(config ?? {}), moduleName: moduleName_ }) : fields.module_name; },
-    wildcardImport(wildcardImport_?: ConfigOf<ImportFromStatement>['wildcardImport']) { return wildcardImport_ !== undefined ? importFromStatement({ ...(config ?? {}), wildcardImport: wildcardImport_ }) : fields.wildcard_import; },
+    children,
+    moduleName(moduleName_?: any) { return moduleName_ !== undefined ? importFromStatement({ ...(config as any), moduleName: moduleName_ } as any) : fields.module_name; },
+    wildcardImport(wildcardImport_?: any) { return wildcardImport_ !== undefined ? importFromStatement({ ...(config as any), wildcardImport: wildcardImport_ } as any) : fields.wildcard_import; },
+    getChildren() { return children; },
+    setChildren(...items: any[]) { return importFromStatement({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -173,11 +181,15 @@ export function hiddenImportList(config: ConfigOf<HiddenImportList>) {
   const fields = {
     name: config?.name,
   };
+  const children = (config as any)?.children ?? [];
   return {
     type: '_import_list' as const,
     named: true as const,
     fields,
-    name(...name_: NonNullable<ConfigOf<HiddenImportList>['name']>) { return name_.length ? hiddenImportList({ ...(config ?? {}), name: name_ }) : fields.name; },
+    children,
+    name(...name_: any[]) { return name_.length ? hiddenImportList({ ...(config as any), name: name_ } as any) : fields.name; },
+    getChildren() { return children; },
+    setChildren(...items: any[]) { return hiddenImportList({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -192,12 +204,16 @@ export function aliasedImport(config: ConfigOf<AliasedImport>) {
     name: config?.name,
     alias: config?.alias,
   };
+  const children = (config as any)?.children ?? [];
   return {
     type: 'aliased_import' as const,
     named: true as const,
     fields,
-    name(name_?: ConfigOf<AliasedImport>['name']) { return name_ !== undefined ? aliasedImport({ ...(config ?? {}), name: name_ }) : fields.name; },
-    alias(alias_?: ConfigOf<AliasedImport>['alias']) { return alias_ !== undefined ? aliasedImport({ ...(config ?? {}), alias: alias_ }) : fields.alias; },
+    children,
+    name(name_?: any) { return name_ !== undefined ? aliasedImport({ ...(config as any), name: name_ } as any) : fields.name; },
+    alias(alias_?: any) { return alias_ !== undefined ? aliasedImport({ ...(config as any), alias: alias_ } as any) : fields.alias; },
+    getChildren() { return children; },
+    setChildren(...items: any[]) { return aliasedImport({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -211,15 +227,15 @@ export function printStatement(config: ConfigOf<PrintStatement>) {
   const fields = {
     argument: config?.argument,
   };
-  const children = config?.children ?? [];
+  const children = (config as any)?.children ?? [];
   return {
     type: 'print_statement' as const,
     named: true as const,
     fields,
     children,
-    argument(...argument_: NonNullable<ConfigOf<PrintStatement>['argument']>) { return argument_.length ? printStatement({ ...(config ?? {}), argument: argument_ }) : fields.argument; },
+    argument(...argument_: any[]) { return argument_.length ? printStatement({ ...(config as any), argument: argument_ } as any) : fields.argument; },
     getChildren() { return children; },
-    setChildren(...items: unknown[]) { return printStatement({ ...(config ?? {}), children: items }); },
+    setChildren(...items: any[]) { return printStatement({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -233,11 +249,15 @@ export function chevron(config: ConfigOf<Chevron>) {
   const fields = {
     expression: config?.expression,
   };
+  const children = (config as any)?.children ?? [];
   return {
     type: 'chevron' as const,
     named: true as const,
     fields,
-    expression(expression_?: ConfigOf<Chevron>['expression']) { return expression_ !== undefined ? chevron({ ...(config ?? {}), expression: expression_ }) : fields.expression; },
+    children,
+    expression(expression_?: any) { return expression_ !== undefined ? chevron({ ...(config as any), expression: expression_ } as any) : fields.expression; },
+    getChildren() { return children; },
+    setChildren(...items: any[]) { return chevron({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -247,8 +267,8 @@ export function chevron(config: ConfigOf<Chevron>) {
   };
 }
 
-export function assertStatement(..._children: NonNullable<ConfigOf<AssertStatement>['children']>) {
-  const children = _children.filter(c => c && typeof c === "object" && "type" in c);
+export function assertStatement(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: 'assert_statement' as const,
     named: true as const,
@@ -262,8 +282,8 @@ export function assertStatement(..._children: NonNullable<ConfigOf<AssertStateme
   };
 }
 
-export function expressionStatement(..._children: NonNullable<ConfigOf<ExpressionStatement>['children']>) {
-  const children = _children.filter(c => c && typeof c === "object" && "type" in c);
+export function expressionStatement(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: 'expression_statement' as const,
     named: true as const,
@@ -282,12 +302,16 @@ export function namedExpression(config: ConfigOf<NamedExpression>) {
     name: config?.name,
     value: config?.value,
   };
+  const children = (config as any)?.children ?? [];
   return {
     type: 'named_expression' as const,
     named: true as const,
     fields,
-    name(name_?: ConfigOf<NamedExpression>['name']) { return name_ !== undefined ? namedExpression({ ...(config ?? {}), name: name_ }) : fields.name; },
-    value(value_?: ConfigOf<NamedExpression>['value']) { return value_ !== undefined ? namedExpression({ ...(config ?? {}), value: value_ }) : fields.value; },
+    children,
+    name(name_?: any) { return name_ !== undefined ? namedExpression({ ...(config as any), name: name_ } as any) : fields.name; },
+    value(value_?: any) { return value_ !== undefined ? namedExpression({ ...(config as any), value: value_ } as any) : fields.value; },
+    getChildren() { return children; },
+    setChildren(...items: any[]) { return namedExpression({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -297,7 +321,7 @@ export function namedExpression(config: ConfigOf<NamedExpression>) {
   };
 }
 
-export function returnStatement(child?: ConfigOf<ReturnStatement>['children']) {
+export function returnStatement(child?: any) {
   const hasChild = child && typeof child === "object" && "type" in child;
   const children = hasChild ? [child] : [];
   return {
@@ -313,7 +337,7 @@ export function returnStatement(child?: ConfigOf<ReturnStatement>['children']) {
   };
 }
 
-export function deleteStatement(child?: ConfigOf<DeleteStatement>['children']) {
+export function deleteStatement(child?: any) {
   const hasChild = child && typeof child === "object" && "type" in child;
   const children = hasChild ? [child] : [];
   return {
@@ -333,15 +357,15 @@ export function raiseStatement(config?: ConfigOf<RaiseStatement>) {
   const fields = {
     cause: config?.cause,
   };
-  const children = config?.children ?? [];
+  const children = (config as any)?.children ?? [];
   return {
     type: 'raise_statement' as const,
     named: true as const,
     fields,
     children,
-    cause(cause_?: ConfigOf<RaiseStatement>['cause']) { return cause_ !== undefined ? raiseStatement({ ...(config ?? {}), cause: cause_ }) : fields.cause; },
+    cause(cause_?: any) { return cause_ !== undefined ? raiseStatement({ ...(config as any), cause: cause_ } as any) : fields.cause; },
     getChildren() { return children; },
-    setChildren(...items: unknown[]) { return raiseStatement({ ...(config ?? {}), children: items }); },
+    setChildren(...items: any[]) { return raiseStatement({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -390,13 +414,17 @@ export function ifStatement(config: ConfigOf<IfStatement>) {
     consequence: config?.consequence,
     alternative: config?.alternative,
   };
+  const children = (config as any)?.children ?? [];
   return {
     type: 'if_statement' as const,
     named: true as const,
     fields,
-    condition(condition_?: ConfigOf<IfStatement>['condition']) { return condition_ !== undefined ? ifStatement({ ...(config ?? {}), condition: condition_ }) : fields.condition; },
-    consequence(consequence_?: ConfigOf<IfStatement>['consequence']) { return consequence_ !== undefined ? ifStatement({ ...(config ?? {}), consequence: consequence_ }) : fields.consequence; },
-    alternative(...alternative_: NonNullable<ConfigOf<IfStatement>['alternative']>) { return alternative_.length ? ifStatement({ ...(config ?? {}), alternative: alternative_ }) : fields.alternative; },
+    children,
+    condition(condition_?: any) { return condition_ !== undefined ? ifStatement({ ...(config as any), condition: condition_ } as any) : fields.condition; },
+    consequence(consequence_?: any) { return consequence_ !== undefined ? ifStatement({ ...(config as any), consequence: consequence_ } as any) : fields.consequence; },
+    alternative(...alternative_: any[]) { return alternative_.length ? ifStatement({ ...(config as any), alternative: alternative_ } as any) : fields.alternative; },
+    getChildren() { return children; },
+    setChildren(...items: any[]) { return ifStatement({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -411,12 +439,16 @@ export function elifClause(config: ConfigOf<ElifClause>) {
     condition: config?.condition,
     consequence: config?.consequence,
   };
+  const children = (config as any)?.children ?? [];
   return {
     type: 'elif_clause' as const,
     named: true as const,
     fields,
-    condition(condition_?: ConfigOf<ElifClause>['condition']) { return condition_ !== undefined ? elifClause({ ...(config ?? {}), condition: condition_ }) : fields.condition; },
-    consequence(consequence_?: ConfigOf<ElifClause>['consequence']) { return consequence_ !== undefined ? elifClause({ ...(config ?? {}), consequence: consequence_ }) : fields.consequence; },
+    children,
+    condition(condition_?: any) { return condition_ !== undefined ? elifClause({ ...(config as any), condition: condition_ } as any) : fields.condition; },
+    consequence(consequence_?: any) { return consequence_ !== undefined ? elifClause({ ...(config as any), consequence: consequence_ } as any) : fields.consequence; },
+    getChildren() { return children; },
+    setChildren(...items: any[]) { return elifClause({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -430,11 +462,15 @@ export function elseClause(config: ConfigOf<ElseClause>) {
   const fields = {
     body: config?.body,
   };
+  const children = (config as any)?.children ?? [];
   return {
     type: 'else_clause' as const,
     named: true as const,
     fields,
-    body(body_?: ConfigOf<ElseClause>['body']) { return body_ !== undefined ? elseClause({ ...(config ?? {}), body: body_ }) : fields.body; },
+    children,
+    body(body_?: any) { return body_ !== undefined ? elseClause({ ...(config as any), body: body_ } as any) : fields.body; },
+    getChildren() { return children; },
+    setChildren(...items: any[]) { return elseClause({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -449,12 +485,16 @@ export function matchStatement(config: ConfigOf<MatchStatement>) {
     subject: config?.subject,
     body: config?.body,
   };
+  const children = (config as any)?.children ?? [];
   return {
     type: 'match_statement' as const,
     named: true as const,
     fields,
-    subject(...subject_: NonNullable<ConfigOf<MatchStatement>['subject']>) { return subject_.length ? matchStatement({ ...(config ?? {}), subject: subject_ }) : fields.subject; },
-    body(body_?: ConfigOf<MatchStatement>['body']) { return body_ !== undefined ? matchStatement({ ...(config ?? {}), body: body_ }) : fields.body; },
+    children,
+    subject(...subject_: any[]) { return subject_.length ? matchStatement({ ...(config as any), subject: subject_ } as any) : fields.subject; },
+    body(body_?: any) { return body_ !== undefined ? matchStatement({ ...(config as any), body: body_ } as any) : fields.body; },
+    getChildren() { return children; },
+    setChildren(...items: any[]) { return matchStatement({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -468,11 +508,15 @@ export function hiddenMatchBlock(config: ConfigOf<HiddenMatchBlock>) {
   const fields = {
     alternative: config?.alternative,
   };
+  const children = (config as any)?.children ?? [];
   return {
     type: '_match_block' as const,
     named: true as const,
     fields,
-    alternative(...alternative_: NonNullable<ConfigOf<HiddenMatchBlock>['alternative']>) { return alternative_.length ? hiddenMatchBlock({ ...(config ?? {}), alternative: alternative_ }) : fields.alternative; },
+    children,
+    alternative(...alternative_: any[]) { return alternative_.length ? hiddenMatchBlock({ ...(config as any), alternative: alternative_ } as any) : fields.alternative; },
+    getChildren() { return children; },
+    setChildren(...items: any[]) { return hiddenMatchBlock({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -487,16 +531,16 @@ export function caseClause(config: ConfigOf<CaseClause>) {
     guard: config?.guard,
     consequence: config?.consequence,
   };
-  const children = config?.children ?? [];
+  const children = (config as any)?.children ?? [];
   return {
     type: 'case_clause' as const,
     named: true as const,
     fields,
     children,
-    guard(guard_?: ConfigOf<CaseClause>['guard']) { return guard_ !== undefined ? caseClause({ ...(config ?? {}), guard: guard_ }) : fields.guard; },
-    consequence(consequence_?: ConfigOf<CaseClause>['consequence']) { return consequence_ !== undefined ? caseClause({ ...(config ?? {}), consequence: consequence_ }) : fields.consequence; },
+    guard(guard_?: any) { return guard_ !== undefined ? caseClause({ ...(config as any), guard: guard_ } as any) : fields.guard; },
+    consequence(consequence_?: any) { return consequence_ !== undefined ? caseClause({ ...(config as any), consequence: consequence_ } as any) : fields.consequence; },
     getChildren() { return children; },
-    setChildren(...items: unknown[]) { return caseClause({ ...(config ?? {}), children: items }); },
+    setChildren(...items: any[]) { return caseClause({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -513,14 +557,18 @@ export function forStatement(config: ConfigOf<ForStatement>) {
     body: config?.body,
     alternative: config?.alternative,
   };
+  const children = (config as any)?.children ?? [];
   return {
     type: 'for_statement' as const,
     named: true as const,
     fields,
-    left(left_?: ConfigOf<ForStatement>['left']) { return left_ !== undefined ? forStatement({ ...(config ?? {}), left: left_ }) : fields.left; },
-    right(right_?: ConfigOf<ForStatement>['right']) { return right_ !== undefined ? forStatement({ ...(config ?? {}), right: right_ }) : fields.right; },
-    body(body_?: ConfigOf<ForStatement>['body']) { return body_ !== undefined ? forStatement({ ...(config ?? {}), body: body_ }) : fields.body; },
-    alternative(alternative_?: ConfigOf<ForStatement>['alternative']) { return alternative_ !== undefined ? forStatement({ ...(config ?? {}), alternative: alternative_ }) : fields.alternative; },
+    children,
+    left(left_?: any) { return left_ !== undefined ? forStatement({ ...(config as any), left: left_ } as any) : fields.left; },
+    right(right_?: any) { return right_ !== undefined ? forStatement({ ...(config as any), right: right_ } as any) : fields.right; },
+    body(body_?: any) { return body_ !== undefined ? forStatement({ ...(config as any), body: body_ } as any) : fields.body; },
+    alternative(alternative_?: any) { return alternative_ !== undefined ? forStatement({ ...(config as any), alternative: alternative_ } as any) : fields.alternative; },
+    getChildren() { return children; },
+    setChildren(...items: any[]) { return forStatement({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -536,13 +584,17 @@ export function whileStatement(config: ConfigOf<WhileStatement>) {
     body: config?.body,
     alternative: config?.alternative,
   };
+  const children = (config as any)?.children ?? [];
   return {
     type: 'while_statement' as const,
     named: true as const,
     fields,
-    condition(condition_?: ConfigOf<WhileStatement>['condition']) { return condition_ !== undefined ? whileStatement({ ...(config ?? {}), condition: condition_ }) : fields.condition; },
-    body(body_?: ConfigOf<WhileStatement>['body']) { return body_ !== undefined ? whileStatement({ ...(config ?? {}), body: body_ }) : fields.body; },
-    alternative(alternative_?: ConfigOf<WhileStatement>['alternative']) { return alternative_ !== undefined ? whileStatement({ ...(config ?? {}), alternative: alternative_ }) : fields.alternative; },
+    children,
+    condition(condition_?: any) { return condition_ !== undefined ? whileStatement({ ...(config as any), condition: condition_ } as any) : fields.condition; },
+    body(body_?: any) { return body_ !== undefined ? whileStatement({ ...(config as any), body: body_ } as any) : fields.body; },
+    alternative(alternative_?: any) { return alternative_ !== undefined ? whileStatement({ ...(config as any), alternative: alternative_ } as any) : fields.alternative; },
+    getChildren() { return children; },
+    setChildren(...items: any[]) { return whileStatement({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -559,14 +611,18 @@ export function tryStatement(config: ConfigOf<TryStatement>) {
     else_clause: config?.elseClause,
     finally_clause: config?.finallyClause,
   };
+  const children = (config as any)?.children ?? [];
   return {
     type: 'try_statement' as const,
     named: true as const,
     fields,
-    body(body_?: ConfigOf<TryStatement>['body']) { return body_ !== undefined ? tryStatement({ ...(config ?? {}), body: body_ }) : fields.body; },
-    exceptClauses(exceptClauses_?: ConfigOf<TryStatement>['exceptClauses']) { return exceptClauses_ !== undefined ? tryStatement({ ...(config ?? {}), exceptClauses: exceptClauses_ }) : fields.except_clauses; },
-    elseClause(elseClause_?: ConfigOf<TryStatement>['elseClause']) { return elseClause_ !== undefined ? tryStatement({ ...(config ?? {}), elseClause: elseClause_ }) : fields.else_clause; },
-    finallyClause(finallyClause_?: ConfigOf<TryStatement>['finallyClause']) { return finallyClause_ !== undefined ? tryStatement({ ...(config ?? {}), finallyClause: finallyClause_ }) : fields.finally_clause; },
+    children,
+    body(body_?: any) { return body_ !== undefined ? tryStatement({ ...(config as any), body: body_ } as any) : fields.body; },
+    exceptClauses(exceptClauses_?: any) { return exceptClauses_ !== undefined ? tryStatement({ ...(config as any), exceptClauses: exceptClauses_ } as any) : fields.except_clauses; },
+    elseClause(elseClause_?: any) { return elseClause_ !== undefined ? tryStatement({ ...(config as any), elseClause: elseClause_ } as any) : fields.else_clause; },
+    finallyClause(finallyClause_?: any) { return finallyClause_ !== undefined ? tryStatement({ ...(config as any), finallyClause: finallyClause_ } as any) : fields.finally_clause; },
+    getChildren() { return children; },
+    setChildren(...items: any[]) { return tryStatement({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -581,16 +637,16 @@ export function exceptClause(config?: ConfigOf<ExceptClause>) {
     value: config?.value,
     alias: config?.alias,
   };
-  const children = config?.children ?? [];
+  const children = (config as any)?.children ?? [];
   return {
     type: 'except_clause' as const,
     named: true as const,
     fields,
     children,
-    value(...value_: NonNullable<ConfigOf<ExceptClause>['value']>) { return value_.length ? exceptClause({ ...(config ?? {}), value: value_ }) : fields.value; },
-    alias(alias_?: ConfigOf<ExceptClause>['alias']) { return alias_ !== undefined ? exceptClause({ ...(config ?? {}), alias: alias_ }) : fields.alias; },
+    value(...value_: any[]) { return value_.length ? exceptClause({ ...(config as any), value: value_ } as any) : fields.value; },
+    alias(alias_?: any) { return alias_ !== undefined ? exceptClause({ ...(config as any), alias: alias_ } as any) : fields.alias; },
     getChildren() { return children; },
-    setChildren(...items: unknown[]) { return exceptClause({ ...(config ?? {}), children: items }); },
+    setChildren(...items: any[]) { return exceptClause({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -604,11 +660,15 @@ export function finallyClause(config: ConfigOf<FinallyClause>) {
   const fields = {
     block: config?.block,
   };
+  const children = (config as any)?.children ?? [];
   return {
     type: 'finally_clause' as const,
     named: true as const,
     fields,
-    block(block_?: ConfigOf<FinallyClause>['block']) { return block_ !== undefined ? finallyClause({ ...(config ?? {}), block: block_ }) : fields.block; },
+    children,
+    block(block_?: any) { return block_ !== undefined ? finallyClause({ ...(config as any), block: block_ } as any) : fields.block; },
+    getChildren() { return children; },
+    setChildren(...items: any[]) { return finallyClause({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -623,16 +683,16 @@ export function withStatement(config: ConfigOf<WithStatement>) {
     with_clause: config?.withClause,
     body: config?.body,
   };
-  const children = config?.children ?? [];
+  const children = (config as any)?.children ?? [];
   return {
     type: 'with_statement' as const,
     named: true as const,
     fields,
     children,
-    withClause(withClause_?: ConfigOf<WithStatement>['withClause']) { return withClause_ !== undefined ? withStatement({ ...(config ?? {}), withClause: withClause_ }) : fields.with_clause; },
-    body(body_?: ConfigOf<WithStatement>['body']) { return body_ !== undefined ? withStatement({ ...(config ?? {}), body: body_ }) : fields.body; },
+    withClause(withClause_?: any) { return withClause_ !== undefined ? withStatement({ ...(config as any), withClause: withClause_ } as any) : fields.with_clause; },
+    body(body_?: any) { return body_ !== undefined ? withStatement({ ...(config as any), body: body_ } as any) : fields.body; },
     getChildren() { return children; },
-    setChildren(...items: unknown[]) { return withStatement({ ...(config ?? {}), children: items }); },
+    setChildren(...items: any[]) { return withStatement({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -642,8 +702,8 @@ export function withStatement(config: ConfigOf<WithStatement>) {
   };
 }
 
-export function withClause(..._children: NonNullable<ConfigOf<WithClause>['children']>) {
-  const children = _children.filter(c => c && typeof c === "object" && "type" in c);
+export function withClause(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: 'with_clause' as const,
     named: true as const,
@@ -661,11 +721,15 @@ export function withItem(config: ConfigOf<WithItem>) {
   const fields = {
     value: config?.value,
   };
+  const children = (config as any)?.children ?? [];
   return {
     type: 'with_item' as const,
     named: true as const,
     fields,
-    value(value_?: ConfigOf<WithItem>['value']) { return value_ !== undefined ? withItem({ ...(config ?? {}), value: value_ }) : fields.value; },
+    children,
+    value(value_?: any) { return value_ !== undefined ? withItem({ ...(config as any), value: value_ } as any) : fields.value; },
+    getChildren() { return children; },
+    setChildren(...items: any[]) { return withItem({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -683,15 +747,19 @@ export function functionDefinition(config: ConfigOf<FunctionDefinition>) {
     return_type: config?.returnType,
     body: config?.body,
   };
+  const children = (config as any)?.children ?? [];
   return {
     type: 'function_definition' as const,
     named: true as const,
     fields,
-    name(name_?: ConfigOf<FunctionDefinition>['name']) { return name_ !== undefined ? functionDefinition({ ...(config ?? {}), name: name_ }) : fields.name; },
-    typeParameters(typeParameters_?: ConfigOf<FunctionDefinition>['typeParameters']) { return typeParameters_ !== undefined ? functionDefinition({ ...(config ?? {}), typeParameters: typeParameters_ }) : fields.type_parameters; },
-    parameters(parameters_?: ConfigOf<FunctionDefinition>['parameters']) { return parameters_ !== undefined ? functionDefinition({ ...(config ?? {}), parameters: parameters_ }) : fields.parameters; },
-    returnType(returnType_?: ConfigOf<FunctionDefinition>['returnType']) { return returnType_ !== undefined ? functionDefinition({ ...(config ?? {}), returnType: returnType_ }) : fields.return_type; },
-    body(body_?: ConfigOf<FunctionDefinition>['body']) { return body_ !== undefined ? functionDefinition({ ...(config ?? {}), body: body_ }) : fields.body; },
+    children,
+    name(name_?: any) { return name_ !== undefined ? functionDefinition({ ...(config as any), name: name_ } as any) : fields.name; },
+    typeParameters(typeParameters_?: any) { return typeParameters_ !== undefined ? functionDefinition({ ...(config as any), typeParameters: typeParameters_ } as any) : fields.type_parameters; },
+    parameters(parameters_?: any) { return parameters_ !== undefined ? functionDefinition({ ...(config as any), parameters: parameters_ } as any) : fields.parameters; },
+    returnType(returnType_?: any) { return returnType_ !== undefined ? functionDefinition({ ...(config as any), returnType: returnType_ } as any) : fields.return_type; },
+    body(body_?: any) { return body_ !== undefined ? functionDefinition({ ...(config as any), body: body_ } as any) : fields.body; },
+    getChildren() { return children; },
+    setChildren(...items: any[]) { return functionDefinition({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -701,7 +769,7 @@ export function functionDefinition(config: ConfigOf<FunctionDefinition>) {
   };
 }
 
-export function parameters(child?: ConfigOf<Parameters>['children']) {
+export function parameters(child?: any) {
   const hasChild = child && typeof child === "object" && "type" in child;
   const children = hasChild ? [child] : [];
   return {
@@ -717,7 +785,7 @@ export function parameters(child?: ConfigOf<Parameters>['children']) {
   };
 }
 
-export function lambdaParameters(child?: ConfigOf<LambdaParameters>['children']) {
+export function lambdaParameters(child?: any) {
   const hasChild = child && typeof child === "object" && "type" in child;
   const children = hasChild ? [child] : [];
   return {
@@ -737,11 +805,15 @@ export function listSplat(config: ConfigOf<ListSplat>) {
   const fields = {
     expression: config?.expression,
   };
+  const children = (config as any)?.children ?? [];
   return {
     type: 'list_splat' as const,
     named: true as const,
     fields,
-    expression(expression_?: ConfigOf<ListSplat>['expression']) { return expression_ !== undefined ? listSplat({ ...(config ?? {}), expression: expression_ }) : fields.expression; },
+    children,
+    expression(expression_?: any) { return expression_ !== undefined ? listSplat({ ...(config as any), expression: expression_ } as any) : fields.expression; },
+    getChildren() { return children; },
+    setChildren(...items: any[]) { return listSplat({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -755,11 +827,15 @@ export function dictionarySplat(config: ConfigOf<DictionarySplat>) {
   const fields = {
     expression: config?.expression,
   };
+  const children = (config as any)?.children ?? [];
   return {
     type: 'dictionary_splat' as const,
     named: true as const,
     fields,
-    expression(expression_?: ConfigOf<DictionarySplat>['expression']) { return expression_ !== undefined ? dictionarySplat({ ...(config ?? {}), expression: expression_ }) : fields.expression; },
+    children,
+    expression(expression_?: any) { return expression_ !== undefined ? dictionarySplat({ ...(config as any), expression: expression_ } as any) : fields.expression; },
+    getChildren() { return children; },
+    setChildren(...items: any[]) { return dictionarySplat({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -769,8 +845,8 @@ export function dictionarySplat(config: ConfigOf<DictionarySplat>) {
   };
 }
 
-export function globalStatement(..._children: NonNullable<ConfigOf<GlobalStatement>['children']>) {
-  const children = _children.filter(c => c && typeof c === "object" && "type" in c);
+export function globalStatement(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: 'global_statement' as const,
     named: true as const,
@@ -784,8 +860,8 @@ export function globalStatement(..._children: NonNullable<ConfigOf<GlobalStateme
   };
 }
 
-export function nonlocalStatement(..._children: NonNullable<ConfigOf<NonlocalStatement>['children']>) {
-  const children = _children.filter(c => c && typeof c === "object" && "type" in c);
+export function nonlocalStatement(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: 'nonlocal_statement' as const,
     named: true as const,
@@ -803,15 +879,15 @@ export function execStatement(config: ConfigOf<ExecStatement>) {
   const fields = {
     code: config?.code,
   };
-  const children = config?.children ?? [];
+  const children = (config as any)?.children ?? [];
   return {
     type: 'exec_statement' as const,
     named: true as const,
     fields,
     children,
-    code(code_?: ConfigOf<ExecStatement>['code']) { return code_ !== undefined ? execStatement({ ...(config ?? {}), code: code_ }) : fields.code; },
+    code(code_?: any) { return code_ !== undefined ? execStatement({ ...(config as any), code: code_ } as any) : fields.code; },
     getChildren() { return children; },
-    setChildren(...items: unknown[]) { return execStatement({ ...(config ?? {}), children: items }); },
+    setChildren(...items: any[]) { return execStatement({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -826,12 +902,16 @@ export function typeAliasStatement(config: ConfigOf<TypeAliasStatement>) {
     left: config?.left,
     right: config?.right,
   };
+  const children = (config as any)?.children ?? [];
   return {
     type: 'type_alias_statement' as const,
     named: true as const,
     fields,
-    left(left_?: ConfigOf<TypeAliasStatement>['left']) { return left_ !== undefined ? typeAliasStatement({ ...(config ?? {}), left: left_ }) : fields.left; },
-    right(right_?: ConfigOf<TypeAliasStatement>['right']) { return right_ !== undefined ? typeAliasStatement({ ...(config ?? {}), right: right_ }) : fields.right; },
+    children,
+    left(left_?: any) { return left_ !== undefined ? typeAliasStatement({ ...(config as any), left: left_ } as any) : fields.left; },
+    right(right_?: any) { return right_ !== undefined ? typeAliasStatement({ ...(config as any), right: right_ } as any) : fields.right; },
+    getChildren() { return children; },
+    setChildren(...items: any[]) { return typeAliasStatement({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -848,14 +928,18 @@ export function classDefinition(config: ConfigOf<ClassDefinition>) {
     superclasses: config?.superclasses,
     body: config?.body,
   };
+  const children = (config as any)?.children ?? [];
   return {
     type: 'class_definition' as const,
     named: true as const,
     fields,
-    name(name_?: ConfigOf<ClassDefinition>['name']) { return name_ !== undefined ? classDefinition({ ...(config ?? {}), name: name_ }) : fields.name; },
-    typeParameters(typeParameters_?: ConfigOf<ClassDefinition>['typeParameters']) { return typeParameters_ !== undefined ? classDefinition({ ...(config ?? {}), typeParameters: typeParameters_ }) : fields.type_parameters; },
-    superclasses(superclasses_?: ConfigOf<ClassDefinition>['superclasses']) { return superclasses_ !== undefined ? classDefinition({ ...(config ?? {}), superclasses: superclasses_ }) : fields.superclasses; },
-    body(body_?: ConfigOf<ClassDefinition>['body']) { return body_ !== undefined ? classDefinition({ ...(config ?? {}), body: body_ }) : fields.body; },
+    children,
+    name(name_?: any) { return name_ !== undefined ? classDefinition({ ...(config as any), name: name_ } as any) : fields.name; },
+    typeParameters(typeParameters_?: any) { return typeParameters_ !== undefined ? classDefinition({ ...(config as any), typeParameters: typeParameters_ } as any) : fields.type_parameters; },
+    superclasses(superclasses_?: any) { return superclasses_ !== undefined ? classDefinition({ ...(config as any), superclasses: superclasses_ } as any) : fields.superclasses; },
+    body(body_?: any) { return body_ !== undefined ? classDefinition({ ...(config as any), body: body_ } as any) : fields.body; },
+    getChildren() { return children; },
+    setChildren(...items: any[]) { return classDefinition({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -865,8 +949,8 @@ export function classDefinition(config: ConfigOf<ClassDefinition>) {
   };
 }
 
-export function typeParameter(..._children: NonNullable<ConfigOf<TypeParameter>['children']>) {
-  const children = _children.filter(c => c && typeof c === "object" && "type" in c);
+export function typeParameter(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: 'type_parameter' as const,
     named: true as const,
@@ -880,7 +964,7 @@ export function typeParameter(..._children: NonNullable<ConfigOf<TypeParameter>[
   };
 }
 
-export function parenthesizedListSplat(child?: ConfigOf<ParenthesizedListSplat>['children']) {
+export function parenthesizedListSplat(child?: any) {
   const hasChild = child && typeof child === "object" && "type" in child;
   const children = hasChild ? [child] : [];
   return {
@@ -896,8 +980,8 @@ export function parenthesizedListSplat(child?: ConfigOf<ParenthesizedListSplat>[
   };
 }
 
-export function argumentList(..._children: NonNullable<ConfigOf<ArgumentList>['children']>) {
-  const children = _children.filter(c => c && typeof c === "object" && "type" in c);
+export function argumentList(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: 'argument_list' as const,
     named: true as const,
@@ -915,15 +999,15 @@ export function decoratedDefinition(config: ConfigOf<DecoratedDefinition>) {
   const fields = {
     definition: config?.definition,
   };
-  const children = config?.children ?? [];
+  const children = (config as any)?.children ?? [];
   return {
     type: 'decorated_definition' as const,
     named: true as const,
     fields,
     children,
-    definition(definition_?: ConfigOf<DecoratedDefinition>['definition']) { return definition_ !== undefined ? decoratedDefinition({ ...(config ?? {}), definition: definition_ }) : fields.definition; },
+    definition(definition_?: any) { return definition_ !== undefined ? decoratedDefinition({ ...(config as any), definition: definition_ } as any) : fields.definition; },
     getChildren() { return children; },
-    setChildren(...items: unknown[]) { return decoratedDefinition({ ...(config ?? {}), children: items }); },
+    setChildren(...items: any[]) { return decoratedDefinition({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -938,12 +1022,16 @@ export function decorator(config: ConfigOf<Decorator>) {
     expression: config?.expression,
     newline: config?.newline,
   };
+  const children = (config as any)?.children ?? [];
   return {
     type: 'decorator' as const,
     named: true as const,
     fields,
-    expression(expression_?: ConfigOf<Decorator>['expression']) { return expression_ !== undefined ? decorator({ ...(config ?? {}), expression: expression_ }) : fields.expression; },
-    newline(newline_?: ConfigOf<Decorator>['newline']) { return newline_ !== undefined ? decorator({ ...(config ?? {}), newline: newline_ }) : fields.newline; },
+    children,
+    expression(expression_?: any) { return expression_ !== undefined ? decorator({ ...(config as any), expression: expression_ } as any) : fields.expression; },
+    newline(newline_?: any) { return newline_ !== undefined ? decorator({ ...(config as any), newline: newline_ } as any) : fields.newline; },
+    getChildren() { return children; },
+    setChildren(...items: any[]) { return decorator({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -953,7 +1041,7 @@ export function decorator(config: ConfigOf<Decorator>) {
   };
 }
 
-export function hiddenSuite(child?: ConfigOf<HiddenSuite>['children']) {
+export function hiddenSuite(child?: any) {
   const hasChild = child && typeof child === "object" && "type" in child;
   const children = hasChild ? [child] : [];
   return {
@@ -969,8 +1057,8 @@ export function hiddenSuite(child?: ConfigOf<HiddenSuite>['children']) {
   };
 }
 
-export function block(..._children: NonNullable<ConfigOf<Block>['children']>) {
-  const children = _children.filter(c => c && typeof c === "object" && "type" in c);
+export function block(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: 'block' as const,
     named: true as const,
@@ -984,8 +1072,8 @@ export function block(..._children: NonNullable<ConfigOf<Block>['children']>) {
   };
 }
 
-export function expressionList(..._children: NonNullable<ConfigOf<ExpressionList>['children']>) {
-  const children = _children.filter(c => c && typeof c === "object" && "type" in c);
+export function expressionList(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: 'expression_list' as const,
     named: true as const,
@@ -999,8 +1087,8 @@ export function expressionList(..._children: NonNullable<ConfigOf<ExpressionList
   };
 }
 
-export function dottedName(..._children: NonNullable<ConfigOf<DottedName>['children']>) {
-  const children = _children.filter(c => c && typeof c === "object" && "type" in c);
+export function dottedName(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: 'dotted_name' as const,
     named: true as const,
@@ -1014,7 +1102,7 @@ export function dottedName(..._children: NonNullable<ConfigOf<DottedName>['child
   };
 }
 
-export function casePattern(child?: ConfigOf<CasePattern>['children']) {
+export function casePattern(child?: any) {
   const hasChild = child && typeof child === "object" && "type" in child;
   const children = hasChild ? [child] : [];
   return {
@@ -1030,7 +1118,7 @@ export function casePattern(child?: ConfigOf<CasePattern>['children']) {
   };
 }
 
-export function hiddenSimplePattern(child?: ConfigOf<HiddenSimplePattern>['children']) {
+export function hiddenSimplePattern(child?: any) {
   const hasChild = child && typeof child === "object" && "type" in child;
   const children = hasChild ? [child] : [];
   return {
@@ -1046,7 +1134,7 @@ export function hiddenSimplePattern(child?: ConfigOf<HiddenSimplePattern>['child
   };
 }
 
-export function hiddenAsPattern(child?: ConfigOf<HiddenAsPattern>['children']) {
+export function hiddenAsPattern(child?: any) {
   const hasChild = child && typeof child === "object" && "type" in child;
   const children = hasChild ? [child] : [];
   return {
@@ -1062,8 +1150,8 @@ export function hiddenAsPattern(child?: ConfigOf<HiddenAsPattern>['children']) {
   };
 }
 
-export function unionPattern(..._children: NonNullable<ConfigOf<UnionPattern>['children']>) {
-  const children = _children.filter(c => c && typeof c === "object" && "type" in c);
+export function unionPattern(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: 'union_pattern' as const,
     named: true as const,
@@ -1077,8 +1165,8 @@ export function unionPattern(..._children: NonNullable<ConfigOf<UnionPattern>['c
   };
 }
 
-export function hiddenListPattern(..._children: NonNullable<ConfigOf<HiddenListPattern>['children']>) {
-  const children = _children.filter(c => c && typeof c === "object" && "type" in c);
+export function hiddenListPattern(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: '_list_pattern' as const,
     named: true as const,
@@ -1092,8 +1180,8 @@ export function hiddenListPattern(..._children: NonNullable<ConfigOf<HiddenListP
   };
 }
 
-export function hiddenTuplePattern(..._children: NonNullable<ConfigOf<HiddenTuplePattern>['children']>) {
-  const children = _children.filter(c => c && typeof c === "object" && "type" in c);
+export function hiddenTuplePattern(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: '_tuple_pattern' as const,
     named: true as const,
@@ -1107,8 +1195,8 @@ export function hiddenTuplePattern(..._children: NonNullable<ConfigOf<HiddenTupl
   };
 }
 
-export function dictPattern(..._children: NonNullable<ConfigOf<DictPattern>['children']>) {
-  const children = _children.filter(c => c && typeof c === "object" && "type" in c);
+export function dictPattern(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: 'dict_pattern' as const,
     named: true as const,
@@ -1127,12 +1215,16 @@ export function keywordPattern(config: ConfigOf<KeywordPattern>) {
     identifier: config?.identifier,
     simple_pattern: config?.simplePattern,
   };
+  const children = (config as any)?.children ?? [];
   return {
     type: 'keyword_pattern' as const,
     named: true as const,
     fields,
-    identifier(identifier_?: ConfigOf<KeywordPattern>['identifier']) { return identifier_ !== undefined ? keywordPattern({ ...(config ?? {}), identifier: identifier_ }) : fields.identifier; },
-    simplePattern(simplePattern_?: ConfigOf<KeywordPattern>['simplePattern']) { return simplePattern_ !== undefined ? keywordPattern({ ...(config ?? {}), simplePattern: simplePattern_ }) : fields.simple_pattern; },
+    children,
+    identifier(identifier_?: any) { return identifier_ !== undefined ? keywordPattern({ ...(config as any), identifier: identifier_ } as any) : fields.identifier; },
+    simplePattern(simplePattern_?: any) { return simplePattern_ !== undefined ? keywordPattern({ ...(config as any), simplePattern: simplePattern_ } as any) : fields.simple_pattern; },
+    getChildren() { return children; },
+    setChildren(...items: any[]) { return keywordPattern({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1146,15 +1238,15 @@ export function splatPattern(config: ConfigOf<SplatPattern>) {
   const fields = {
     identifier: config?.identifier,
   };
-  const children = config?.children ?? [];
+  const children = (config as any)?.children ?? [];
   return {
     type: 'splat_pattern' as const,
     named: true as const,
     fields,
     children,
-    identifier(identifier_?: ConfigOf<SplatPattern>['identifier']) { return identifier_ !== undefined ? splatPattern({ ...(config ?? {}), identifier: identifier_ }) : fields.identifier; },
+    identifier(identifier_?: any) { return identifier_ !== undefined ? splatPattern({ ...(config as any), identifier: identifier_ } as any) : fields.identifier; },
     getChildren() { return children; },
-    setChildren(...items: unknown[]) { return splatPattern({ ...(config ?? {}), children: items }); },
+    setChildren(...items: any[]) { return splatPattern({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1169,12 +1261,16 @@ export function classPattern(config: ConfigOf<ClassPattern>) {
     dotted_name: config?.dottedName,
     arguments: config?.arguments,
   };
+  const children = (config as any)?.children ?? [];
   return {
     type: 'class_pattern' as const,
     named: true as const,
     fields,
-    dottedName(dottedName_?: ConfigOf<ClassPattern>['dottedName']) { return dottedName_ !== undefined ? classPattern({ ...(config ?? {}), dottedName: dottedName_ }) : fields.dotted_name; },
-    arguments(arguments_?: ConfigOf<ClassPattern>['arguments']) { return arguments_ !== undefined ? classPattern({ ...(config ?? {}), arguments: arguments_ }) : fields.arguments; },
+    children,
+    dottedName(dottedName_?: any) { return dottedName_ !== undefined ? classPattern({ ...(config as any), dottedName: dottedName_ } as any) : fields.dotted_name; },
+    arguments(arguments_?: any) { return arguments_ !== undefined ? classPattern({ ...(config as any), arguments: arguments_ } as any) : fields.arguments; },
+    getChildren() { return children; },
+    setChildren(...items: any[]) { return classPattern({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1189,16 +1285,16 @@ export function complexPattern(config: ConfigOf<ComplexPattern>) {
     real: config?.real,
     imaginary: config?.imaginary,
   };
-  const children = config?.children ?? [];
+  const children = (config as any)?.children ?? [];
   return {
     type: 'complex_pattern' as const,
     named: true as const,
     fields,
     children,
-    real(real_?: ConfigOf<ComplexPattern>['real']) { return real_ !== undefined ? complexPattern({ ...(config ?? {}), real: real_ }) : fields.real; },
-    imaginary(imaginary_?: ConfigOf<ComplexPattern>['imaginary']) { return imaginary_ !== undefined ? complexPattern({ ...(config ?? {}), imaginary: imaginary_ }) : fields.imaginary; },
+    real(real_?: any) { return real_ !== undefined ? complexPattern({ ...(config as any), real: real_ } as any) : fields.real; },
+    imaginary(imaginary_?: any) { return imaginary_ !== undefined ? complexPattern({ ...(config as any), imaginary: imaginary_ } as any) : fields.imaginary; },
     getChildren() { return children; },
-    setChildren(...items: unknown[]) { return complexPattern({ ...(config ?? {}), children: items }); },
+    setChildren(...items: any[]) { return complexPattern({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1208,8 +1304,8 @@ export function complexPattern(config: ConfigOf<ComplexPattern>) {
   };
 }
 
-export function hiddenParameters(..._children: NonNullable<ConfigOf<HiddenParameters>['children']>) {
-  const children = _children.filter(c => c && typeof c === "object" && "type" in c);
+export function hiddenParameters(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: '_parameters' as const,
     named: true as const,
@@ -1223,8 +1319,8 @@ export function hiddenParameters(..._children: NonNullable<ConfigOf<HiddenParame
   };
 }
 
-export function hiddenPatterns(..._children: NonNullable<ConfigOf<HiddenPatterns>['children']>) {
-  const children = _children.filter(c => c && typeof c === "object" && "type" in c);
+export function hiddenPatterns(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: '_patterns' as const,
     named: true as const,
@@ -1238,7 +1334,7 @@ export function hiddenPatterns(..._children: NonNullable<ConfigOf<HiddenPatterns
   };
 }
 
-export function parameter(child?: ConfigOf<Parameter>['children']) {
+export function parameter(child?: any) {
   const hasChild = child && typeof child === "object" && "type" in child;
   const children = hasChild ? [child] : [];
   return {
@@ -1254,7 +1350,7 @@ export function parameter(child?: ConfigOf<Parameter>['children']) {
   };
 }
 
-export function pattern(child?: ConfigOf<Pattern>['children']) {
+export function pattern(child?: any) {
   const hasChild = child && typeof child === "object" && "type" in child;
   const children = hasChild ? [child] : [];
   return {
@@ -1270,7 +1366,7 @@ export function pattern(child?: ConfigOf<Pattern>['children']) {
   };
 }
 
-export function tuplePattern(child?: ConfigOf<TuplePattern>['children']) {
+export function tuplePattern(child?: any) {
   const hasChild = child && typeof child === "object" && "type" in child;
   const children = hasChild ? [child] : [];
   return {
@@ -1286,7 +1382,7 @@ export function tuplePattern(child?: ConfigOf<TuplePattern>['children']) {
   };
 }
 
-export function listPattern(child?: ConfigOf<ListPattern>['children']) {
+export function listPattern(child?: any) {
   const hasChild = child && typeof child === "object" && "type" in child;
   const children = hasChild ? [child] : [];
   return {
@@ -1307,12 +1403,16 @@ export function defaultParameter(config: ConfigOf<DefaultParameter>) {
     name: config?.name,
     value: config?.value,
   };
+  const children = (config as any)?.children ?? [];
   return {
     type: 'default_parameter' as const,
     named: true as const,
     fields,
-    name(name_?: ConfigOf<DefaultParameter>['name']) { return name_ !== undefined ? defaultParameter({ ...(config ?? {}), name: name_ }) : fields.name; },
-    value(value_?: ConfigOf<DefaultParameter>['value']) { return value_ !== undefined ? defaultParameter({ ...(config ?? {}), value: value_ }) : fields.value; },
+    children,
+    name(name_?: any) { return name_ !== undefined ? defaultParameter({ ...(config as any), name: name_ } as any) : fields.name; },
+    value(value_?: any) { return value_ !== undefined ? defaultParameter({ ...(config as any), value: value_ } as any) : fields.value; },
+    getChildren() { return children; },
+    setChildren(...items: any[]) { return defaultParameter({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1328,13 +1428,17 @@ export function typedDefaultParameter(config: ConfigOf<TypedDefaultParameter>) {
     type: config?.type,
     value: config?.value,
   };
+  const children = (config as any)?.children ?? [];
   return {
     type: 'typed_default_parameter' as const,
     named: true as const,
     fields,
-    name(name_?: ConfigOf<TypedDefaultParameter>['name']) { return name_ !== undefined ? typedDefaultParameter({ ...(config ?? {}), name: name_ }) : fields.name; },
-    typeField(type?: ConfigOf<TypedDefaultParameter>['type']) { return type !== undefined ? typedDefaultParameter({ ...(config ?? {}), type: type }) : fields.type; },
-    value(value_?: ConfigOf<TypedDefaultParameter>['value']) { return value_ !== undefined ? typedDefaultParameter({ ...(config ?? {}), value: value_ }) : fields.value; },
+    children,
+    name(name_?: any) { return name_ !== undefined ? typedDefaultParameter({ ...(config as any), name: name_ } as any) : fields.name; },
+    typeField(type?: any) { return type !== undefined ? typedDefaultParameter({ ...(config as any), type: type } as any) : fields.type; },
+    value(value_?: any) { return value_ !== undefined ? typedDefaultParameter({ ...(config as any), value: value_ } as any) : fields.value; },
+    getChildren() { return children; },
+    setChildren(...items: any[]) { return typedDefaultParameter({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1344,7 +1448,7 @@ export function typedDefaultParameter(config: ConfigOf<TypedDefaultParameter>) {
   };
 }
 
-export function listSplatPattern(child?: ConfigOf<ListSplatPattern>['children']) {
+export function listSplatPattern(child?: any) {
   const hasChild = child && typeof child === "object" && "type" in child;
   const children = hasChild ? [child] : [];
   return {
@@ -1360,7 +1464,7 @@ export function listSplatPattern(child?: ConfigOf<ListSplatPattern>['children'])
   };
 }
 
-export function dictionarySplatPattern(child?: ConfigOf<DictionarySplatPattern>['children']) {
+export function dictionarySplatPattern(child?: any) {
   const hasChild = child && typeof child === "object" && "type" in child;
   const children = hasChild ? [child] : [];
   return {
@@ -1381,12 +1485,16 @@ export function asPattern(config: ConfigOf<AsPattern>) {
     expression: config?.expression,
     alias: config?.alias,
   };
+  const children = (config as any)?.children ?? [];
   return {
     type: 'as_pattern' as const,
     named: true as const,
     fields,
-    expression(expression_?: ConfigOf<AsPattern>['expression']) { return expression_ !== undefined ? asPattern({ ...(config ?? {}), expression: expression_ }) : fields.expression; },
-    alias(alias_?: ConfigOf<AsPattern>['alias']) { return alias_ !== undefined ? asPattern({ ...(config ?? {}), alias: alias_ }) : fields.alias; },
+    children,
+    expression(expression_?: any) { return expression_ !== undefined ? asPattern({ ...(config as any), expression: expression_ } as any) : fields.expression; },
+    alias(alias_?: any) { return alias_ !== undefined ? asPattern({ ...(config as any), alias: alias_ } as any) : fields.alias; },
+    getChildren() { return children; },
+    setChildren(...items: any[]) { return asPattern({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1396,7 +1504,7 @@ export function asPattern(config: ConfigOf<AsPattern>) {
   };
 }
 
-export function expression(child?: ConfigOf<Expression>['children']) {
+export function expression(child?: any) {
   const hasChild = child && typeof child === "object" && "type" in child;
   const children = hasChild ? [child] : [];
   return {
@@ -1412,7 +1520,7 @@ export function expression(child?: ConfigOf<Expression>['children']) {
   };
 }
 
-export function primaryExpression(child?: ConfigOf<PrimaryExpression>['children']) {
+export function primaryExpression(child?: any) {
   const hasChild = child && typeof child === "object" && "type" in child;
   const children = hasChild ? [child] : [];
   return {
@@ -1432,11 +1540,15 @@ export function notOperator(config: ConfigOf<NotOperator>) {
   const fields = {
     argument: config?.argument,
   };
+  const children = (config as any)?.children ?? [];
   return {
     type: 'not_operator' as const,
     named: true as const,
     fields,
-    argument(argument_?: ConfigOf<NotOperator>['argument']) { return argument_ !== undefined ? notOperator({ ...(config ?? {}), argument: argument_ }) : fields.argument; },
+    children,
+    argument(argument_?: any) { return argument_ !== undefined ? notOperator({ ...(config as any), argument: argument_ } as any) : fields.argument; },
+    getChildren() { return children; },
+    setChildren(...items: any[]) { return notOperator({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1452,13 +1564,17 @@ export function booleanOperator(config: ConfigOf<BooleanOperator>) {
     operator: config?.operator,
     right: config?.right,
   };
+  const children = (config as any)?.children ?? [];
   return {
     type: 'boolean_operator' as const,
     named: true as const,
     fields,
-    left(left_?: ConfigOf<BooleanOperator>['left']) { return left_ !== undefined ? booleanOperator({ ...(config ?? {}), left: left_ }) : fields.left; },
-    operator(operator_?: ConfigOf<BooleanOperator>['operator']) { return operator_ !== undefined ? booleanOperator({ ...(config ?? {}), operator: operator_ }) : fields.operator; },
-    right(right_?: ConfigOf<BooleanOperator>['right']) { return right_ !== undefined ? booleanOperator({ ...(config ?? {}), right: right_ }) : fields.right; },
+    children,
+    left(left_?: any) { return left_ !== undefined ? booleanOperator({ ...(config as any), left: left_ } as any) : fields.left; },
+    operator(operator_?: any) { return operator_ !== undefined ? booleanOperator({ ...(config as any), operator: operator_ } as any) : fields.operator; },
+    right(right_?: any) { return right_ !== undefined ? booleanOperator({ ...(config as any), right: right_ } as any) : fields.right; },
+    getChildren() { return children; },
+    setChildren(...items: any[]) { return booleanOperator({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1474,13 +1590,17 @@ export function binaryOperator(config: ConfigOf<BinaryOperator>) {
     operator: config?.operator,
     right: config?.right,
   };
+  const children = (config as any)?.children ?? [];
   return {
     type: 'binary_operator' as const,
     named: true as const,
     fields,
-    left(left_?: ConfigOf<BinaryOperator>['left']) { return left_ !== undefined ? binaryOperator({ ...(config ?? {}), left: left_ }) : fields.left; },
-    operator(operator_?: ConfigOf<BinaryOperator>['operator']) { return operator_ !== undefined ? binaryOperator({ ...(config ?? {}), operator: operator_ }) : fields.operator; },
-    right(right_?: ConfigOf<BinaryOperator>['right']) { return right_ !== undefined ? binaryOperator({ ...(config ?? {}), right: right_ }) : fields.right; },
+    children,
+    left(left_?: any) { return left_ !== undefined ? binaryOperator({ ...(config as any), left: left_ } as any) : fields.left; },
+    operator(operator_?: any) { return operator_ !== undefined ? binaryOperator({ ...(config as any), operator: operator_ } as any) : fields.operator; },
+    right(right_?: any) { return right_ !== undefined ? binaryOperator({ ...(config as any), right: right_ } as any) : fields.right; },
+    getChildren() { return children; },
+    setChildren(...items: any[]) { return binaryOperator({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1495,12 +1615,16 @@ export function unaryOperator(config: ConfigOf<UnaryOperator>) {
     operator: config?.operator,
     argument: config?.argument,
   };
+  const children = (config as any)?.children ?? [];
   return {
     type: 'unary_operator' as const,
     named: true as const,
     fields,
-    operator(operator_?: ConfigOf<UnaryOperator>['operator']) { return operator_ !== undefined ? unaryOperator({ ...(config ?? {}), operator: operator_ }) : fields.operator; },
-    argument(argument_?: ConfigOf<UnaryOperator>['argument']) { return argument_ !== undefined ? unaryOperator({ ...(config ?? {}), argument: argument_ }) : fields.argument; },
+    children,
+    operator(operator_?: any) { return operator_ !== undefined ? unaryOperator({ ...(config as any), operator: operator_ } as any) : fields.operator; },
+    argument(argument_?: any) { return argument_ !== undefined ? unaryOperator({ ...(config as any), argument: argument_ } as any) : fields.argument; },
+    getChildren() { return children; },
+    setChildren(...items: any[]) { return unaryOperator({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1537,12 +1661,16 @@ export function comparisonOperator(config: ConfigOf<ComparisonOperator>) {
     left: config?.left,
     comparators: config?.comparators,
   };
+  const children = (config as any)?.children ?? [];
   return {
     type: 'comparison_operator' as const,
     named: true as const,
     fields,
-    left(left_?: ConfigOf<ComparisonOperator>['left']) { return left_ !== undefined ? comparisonOperator({ ...(config ?? {}), left: left_ }) : fields.left; },
-    comparators(comparators_?: ConfigOf<ComparisonOperator>['comparators']) { return comparators_ !== undefined ? comparisonOperator({ ...(config ?? {}), comparators: comparators_ }) : fields.comparators; },
+    children,
+    left(left_?: any) { return left_ !== undefined ? comparisonOperator({ ...(config as any), left: left_ } as any) : fields.left; },
+    comparators(comparators_?: any) { return comparators_ !== undefined ? comparisonOperator({ ...(config as any), comparators: comparators_ } as any) : fields.comparators; },
+    getChildren() { return children; },
+    setChildren(...items: any[]) { return comparisonOperator({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1557,12 +1685,16 @@ export function lambda(config: ConfigOf<Lambda>) {
     parameters: config?.parameters,
     body: config?.body,
   };
+  const children = (config as any)?.children ?? [];
   return {
     type: 'lambda' as const,
     named: true as const,
     fields,
-    parameters(parameters_?: ConfigOf<Lambda>['parameters']) { return parameters_ !== undefined ? lambda({ ...(config ?? {}), parameters: parameters_ }) : fields.parameters; },
-    body(body_?: ConfigOf<Lambda>['body']) { return body_ !== undefined ? lambda({ ...(config ?? {}), body: body_ }) : fields.body; },
+    children,
+    parameters(parameters_?: any) { return parameters_ !== undefined ? lambda({ ...(config as any), parameters: parameters_ } as any) : fields.parameters; },
+    body(body_?: any) { return body_ !== undefined ? lambda({ ...(config as any), body: body_ } as any) : fields.body; },
+    getChildren() { return children; },
+    setChildren(...items: any[]) { return lambda({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1577,12 +1709,16 @@ export function lambdaWithinForInClause(config: ConfigOf<LambdaWithinForInClause
     parameters: config?.parameters,
     body: config?.body,
   };
+  const children = (config as any)?.children ?? [];
   return {
     type: 'lambda_within_for_in_clause' as const,
     named: true as const,
     fields,
-    parameters(parameters_?: ConfigOf<LambdaWithinForInClause>['parameters']) { return parameters_ !== undefined ? lambdaWithinForInClause({ ...(config ?? {}), parameters: parameters_ }) : fields.parameters; },
-    body(body_?: ConfigOf<LambdaWithinForInClause>['body']) { return body_ !== undefined ? lambdaWithinForInClause({ ...(config ?? {}), body: body_ }) : fields.body; },
+    children,
+    parameters(parameters_?: any) { return parameters_ !== undefined ? lambdaWithinForInClause({ ...(config as any), parameters: parameters_ } as any) : fields.parameters; },
+    body(body_?: any) { return body_ !== undefined ? lambdaWithinForInClause({ ...(config as any), body: body_ } as any) : fields.body; },
+    getChildren() { return children; },
+    setChildren(...items: any[]) { return lambdaWithinForInClause({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1592,20 +1728,24 @@ export function lambdaWithinForInClause(config: ConfigOf<LambdaWithinForInClause
   };
 }
 
-export function assignment(config?: ConfigOf<AssignmentEq> | ConfigOf<AssignmentColon> | ConfigOf<AssignmentColon2>) {
-  if (config && 'type' in config && 'right' in config) return assignmentColon2(config);
-  if (config && 'right' in config) return assignmentEq(config);
-  return assignmentColon(config);
+export function assignment(config?: ConfigOf<Assignment>) {
+  if (config && 'right' in config) return assignmentColon2(config as any);
+  if (config && 'right' in config) return assignmentEq(config as any);
+  return assignmentColon(config as any);
 }
 export function assignmentEq(config: ConfigOf<AssignmentEq>) {
   const fields = {
     right: config?.right,
   };
+  const children = (config as any)?.children ?? [];
   return {
     type: 'assignment' as const,
     named: true as const,
     fields,
-    right(right_?: ConfigOf<AssignmentEq>['right']) { return right_ !== undefined ? assignmentEq({ ...(config ?? {}), right: right_ }) : fields.right; },
+    children,
+    right(right_?: any) { return right_ !== undefined ? assignmentEq({ ...(config as any), right: right_ } as any) : fields.right; },
+    getChildren() { return children; },
+    setChildren(...items: any[]) { return assignmentEq({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1618,11 +1758,15 @@ export function assignmentColon(config: ConfigOf<AssignmentColon>) {
   const fields = {
     type: config?.type,
   };
+  const children = (config as any)?.children ?? [];
   return {
     type: 'assignment' as const,
     named: true as const,
     fields,
-    typeField(type?: ConfigOf<AssignmentColon>['type']) { return type !== undefined ? assignmentColon({ ...(config ?? {}), type: type }) : fields.type; },
+    children,
+    typeField(type?: any) { return type !== undefined ? assignmentColon({ ...(config as any), type: type } as any) : fields.type; },
+    getChildren() { return children; },
+    setChildren(...items: any[]) { return assignmentColon({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1636,12 +1780,16 @@ export function assignmentColon2(config: ConfigOf<AssignmentColon2>) {
     type: config?.type,
     right: config?.right,
   };
+  const children = (config as any)?.children ?? [];
   return {
     type: 'assignment' as const,
     named: true as const,
     fields,
-    typeField(type?: ConfigOf<AssignmentColon2>['type']) { return type !== undefined ? assignmentColon2({ ...(config ?? {}), type: type }) : fields.type; },
-    right(right_?: ConfigOf<AssignmentColon2>['right']) { return right_ !== undefined ? assignmentColon2({ ...(config ?? {}), right: right_ }) : fields.right; },
+    children,
+    typeField(type?: any) { return type !== undefined ? assignmentColon2({ ...(config as any), type: type } as any) : fields.type; },
+    right(right_?: any) { return right_ !== undefined ? assignmentColon2({ ...(config as any), right: right_ } as any) : fields.right; },
+    getChildren() { return children; },
+    setChildren(...items: any[]) { return assignmentColon2({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1657,13 +1805,17 @@ export function augmentedAssignment(config: ConfigOf<AugmentedAssignment>) {
     operator: config?.operator,
     right: config?.right,
   };
+  const children = (config as any)?.children ?? [];
   return {
     type: 'augmented_assignment' as const,
     named: true as const,
     fields,
-    left(left_?: ConfigOf<AugmentedAssignment>['left']) { return left_ !== undefined ? augmentedAssignment({ ...(config ?? {}), left: left_ }) : fields.left; },
-    operator(operator_?: ConfigOf<AugmentedAssignment>['operator']) { return operator_ !== undefined ? augmentedAssignment({ ...(config ?? {}), operator: operator_ }) : fields.operator; },
-    right(right_?: ConfigOf<AugmentedAssignment>['right']) { return right_ !== undefined ? augmentedAssignment({ ...(config ?? {}), right: right_ }) : fields.right; },
+    children,
+    left(left_?: any) { return left_ !== undefined ? augmentedAssignment({ ...(config as any), left: left_ } as any) : fields.left; },
+    operator(operator_?: any) { return operator_ !== undefined ? augmentedAssignment({ ...(config as any), operator: operator_ } as any) : fields.operator; },
+    right(right_?: any) { return right_ !== undefined ? augmentedAssignment({ ...(config as any), right: right_ } as any) : fields.right; },
+    getChildren() { return children; },
+    setChildren(...items: any[]) { return augmentedAssignment({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1673,8 +1825,8 @@ export function augmentedAssignment(config: ConfigOf<AugmentedAssignment>) {
   };
 }
 
-export function patternList(..._children: NonNullable<ConfigOf<PatternList>['children']>) {
-  const children = _children.filter(c => c && typeof c === "object" && "type" in c);
+export function patternList(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: 'pattern_list' as const,
     named: true as const,
@@ -1688,7 +1840,7 @@ export function patternList(..._children: NonNullable<ConfigOf<PatternList>['chi
   };
 }
 
-export function yield_(child?: ConfigOf<Yield>['children']) {
+export function yield_(child?: any) {
   const hasChild = child && typeof child === "object" && "type" in child;
   const children = hasChild ? [child] : [];
   return {
@@ -1709,12 +1861,16 @@ export function attribute(config: ConfigOf<Attribute>) {
     object: config?.object,
     attribute: config?.attribute,
   };
+  const children = (config as any)?.children ?? [];
   return {
     type: 'attribute' as const,
     named: true as const,
     fields,
-    object(object_?: ConfigOf<Attribute>['object']) { return object_ !== undefined ? attribute({ ...(config ?? {}), object: object_ }) : fields.object; },
-    attribute(attribute_?: ConfigOf<Attribute>['attribute']) { return attribute_ !== undefined ? attribute({ ...(config ?? {}), attribute: attribute_ }) : fields.attribute; },
+    children,
+    object(object_?: any) { return object_ !== undefined ? attribute({ ...(config as any), object: object_ } as any) : fields.object; },
+    attribute(attribute_?: any) { return attribute_ !== undefined ? attribute({ ...(config as any), attribute: attribute_ } as any) : fields.attribute; },
+    getChildren() { return children; },
+    setChildren(...items: any[]) { return attribute({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1729,12 +1885,16 @@ export function subscript(config: ConfigOf<Subscript>) {
     value: config?.value,
     subscript: config?.subscript,
   };
+  const children = (config as any)?.children ?? [];
   return {
     type: 'subscript' as const,
     named: true as const,
     fields,
-    value(value_?: ConfigOf<Subscript>['value']) { return value_ !== undefined ? subscript({ ...(config ?? {}), value: value_ }) : fields.value; },
-    subscript(...subscript_: NonNullable<ConfigOf<Subscript>['subscript']>) { return subscript_.length ? subscript({ ...(config ?? {}), subscript: subscript_ }) : fields.subscript; },
+    children,
+    value(value_?: any) { return value_ !== undefined ? subscript({ ...(config as any), value: value_ } as any) : fields.value; },
+    subscript(...subscript_: any[]) { return subscript_.length ? subscript({ ...(config as any), subscript: subscript_ } as any) : fields.subscript; },
+    getChildren() { return children; },
+    setChildren(...items: any[]) { return subscript({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1750,13 +1910,17 @@ export function slice(config: ConfigOf<Slice>) {
     stop: config?.stop,
     step: config?.step,
   };
+  const children = (config as any)?.children ?? [];
   return {
     type: 'slice' as const,
     named: true as const,
     fields,
-    start(start_?: ConfigOf<Slice>['start']) { return start_ !== undefined ? slice({ ...(config ?? {}), start: start_ }) : fields.start; },
-    stop(stop_?: ConfigOf<Slice>['stop']) { return stop_ !== undefined ? slice({ ...(config ?? {}), stop: stop_ }) : fields.stop; },
-    step(step_?: ConfigOf<Slice>['step']) { return step_ !== undefined ? slice({ ...(config ?? {}), step: step_ }) : fields.step; },
+    children,
+    start(start_?: any) { return start_ !== undefined ? slice({ ...(config as any), start: start_ } as any) : fields.start; },
+    stop(stop_?: any) { return stop_ !== undefined ? slice({ ...(config as any), stop: stop_ } as any) : fields.stop; },
+    step(step_?: any) { return step_ !== undefined ? slice({ ...(config as any), step: step_ } as any) : fields.step; },
+    getChildren() { return children; },
+    setChildren(...items: any[]) { return slice({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1771,12 +1935,16 @@ export function call(config: ConfigOf<Call>) {
     function: config?.function,
     arguments: config?.arguments,
   };
+  const children = (config as any)?.children ?? [];
   return {
     type: 'call' as const,
     named: true as const,
     fields,
-    function(function_?: ConfigOf<Call>['function']) { return function_ !== undefined ? call({ ...(config ?? {}), function: function_ }) : fields.function; },
-    arguments(arguments_?: ConfigOf<Call>['arguments']) { return arguments_ !== undefined ? call({ ...(config ?? {}), arguments: arguments_ }) : fields.arguments; },
+    children,
+    function(function_?: any) { return function_ !== undefined ? call({ ...(config as any), function: function_ } as any) : fields.function; },
+    arguments(arguments_?: any) { return arguments_ !== undefined ? call({ ...(config as any), arguments: arguments_ } as any) : fields.arguments; },
+    getChildren() { return children; },
+    setChildren(...items: any[]) { return call({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1790,15 +1958,15 @@ export function typedParameter(config: ConfigOf<TypedParameter>) {
   const fields = {
     type: config?.type,
   };
-  const children = config?.children ?? [];
+  const children = (config as any)?.children ?? [];
   return {
     type: 'typed_parameter' as const,
     named: true as const,
     fields,
     children,
-    typeField(type?: ConfigOf<TypedParameter>['type']) { return type !== undefined ? typedParameter({ ...(config ?? {}), type: type }) : fields.type; },
+    typeField(type?: any) { return type !== undefined ? typedParameter({ ...(config as any), type: type } as any) : fields.type; },
     getChildren() { return children; },
-    setChildren(...items: unknown[]) { return typedParameter({ ...(config ?? {}), children: items }); },
+    setChildren(...items: any[]) { return typedParameter({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1808,7 +1976,7 @@ export function typedParameter(config: ConfigOf<TypedParameter>) {
   };
 }
 
-export function type(child?: ConfigOf<Type>['children']) {
+export function type(child?: any) {
   const hasChild = child && typeof child === "object" && "type" in child;
   const children = hasChild ? [child] : [];
   return {
@@ -1828,15 +1996,15 @@ export function splatType(config: ConfigOf<SplatType>) {
   const fields = {
     identifier: config?.identifier,
   };
-  const children = config?.children ?? [];
+  const children = (config as any)?.children ?? [];
   return {
     type: 'splat_type' as const,
     named: true as const,
     fields,
     children,
-    identifier(identifier_?: ConfigOf<SplatType>['identifier']) { return identifier_ !== undefined ? splatType({ ...(config ?? {}), identifier: identifier_ }) : fields.identifier; },
+    identifier(identifier_?: any) { return identifier_ !== undefined ? splatType({ ...(config as any), identifier: identifier_ } as any) : fields.identifier; },
     getChildren() { return children; },
-    setChildren(...items: unknown[]) { return splatType({ ...(config ?? {}), children: items }); },
+    setChildren(...items: any[]) { return splatType({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1851,12 +2019,16 @@ export function genericType(config: ConfigOf<GenericType>) {
     identifier: config?.identifier,
     type_parameter: config?.typeParameter,
   };
+  const children = (config as any)?.children ?? [];
   return {
     type: 'generic_type' as const,
     named: true as const,
     fields,
-    identifier(identifier_?: ConfigOf<GenericType>['identifier']) { return identifier_ !== undefined ? genericType({ ...(config ?? {}), identifier: identifier_ }) : fields.identifier; },
-    typeParameter(typeParameter_?: ConfigOf<GenericType>['typeParameter']) { return typeParameter_ !== undefined ? genericType({ ...(config ?? {}), typeParameter: typeParameter_ }) : fields.type_parameter; },
+    children,
+    identifier(identifier_?: any) { return identifier_ !== undefined ? genericType({ ...(config as any), identifier: identifier_ } as any) : fields.identifier; },
+    typeParameter(typeParameter_?: any) { return typeParameter_ !== undefined ? genericType({ ...(config as any), typeParameter: typeParameter_ } as any) : fields.type_parameter; },
+    getChildren() { return children; },
+    setChildren(...items: any[]) { return genericType({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1871,12 +2043,16 @@ export function unionType(config: ConfigOf<UnionType>) {
     left: config?.left,
     right: config?.right,
   };
+  const children = (config as any)?.children ?? [];
   return {
     type: 'union_type' as const,
     named: true as const,
     fields,
-    left(left_?: ConfigOf<UnionType>['left']) { return left_ !== undefined ? unionType({ ...(config ?? {}), left: left_ }) : fields.left; },
-    right(right_?: ConfigOf<UnionType>['right']) { return right_ !== undefined ? unionType({ ...(config ?? {}), right: right_ }) : fields.right; },
+    children,
+    left(left_?: any) { return left_ !== undefined ? unionType({ ...(config as any), left: left_ } as any) : fields.left; },
+    right(right_?: any) { return right_ !== undefined ? unionType({ ...(config as any), right: right_ } as any) : fields.right; },
+    getChildren() { return children; },
+    setChildren(...items: any[]) { return unionType({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1891,12 +2067,16 @@ export function constrainedType(config: ConfigOf<ConstrainedType>) {
     base_type: config?.baseType,
     constraint: config?.constraint,
   };
+  const children = (config as any)?.children ?? [];
   return {
     type: 'constrained_type' as const,
     named: true as const,
     fields,
-    baseType(baseType_?: ConfigOf<ConstrainedType>['baseType']) { return baseType_ !== undefined ? constrainedType({ ...(config ?? {}), baseType: baseType_ }) : fields.base_type; },
-    constraint(constraint_?: ConfigOf<ConstrainedType>['constraint']) { return constraint_ !== undefined ? constrainedType({ ...(config ?? {}), constraint: constraint_ }) : fields.constraint; },
+    children,
+    baseType(baseType_?: any) { return baseType_ !== undefined ? constrainedType({ ...(config as any), baseType: baseType_ } as any) : fields.base_type; },
+    constraint(constraint_?: any) { return constraint_ !== undefined ? constrainedType({ ...(config as any), constraint: constraint_ } as any) : fields.constraint; },
+    getChildren() { return children; },
+    setChildren(...items: any[]) { return constrainedType({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1911,12 +2091,16 @@ export function memberType(config: ConfigOf<MemberType>) {
     base_type: config?.baseType,
     identifier: config?.identifier,
   };
+  const children = (config as any)?.children ?? [];
   return {
     type: 'member_type' as const,
     named: true as const,
     fields,
-    baseType(baseType_?: ConfigOf<MemberType>['baseType']) { return baseType_ !== undefined ? memberType({ ...(config ?? {}), baseType: baseType_ }) : fields.base_type; },
-    identifier(identifier_?: ConfigOf<MemberType>['identifier']) { return identifier_ !== undefined ? memberType({ ...(config ?? {}), identifier: identifier_ }) : fields.identifier; },
+    children,
+    baseType(baseType_?: any) { return baseType_ !== undefined ? memberType({ ...(config as any), baseType: baseType_ } as any) : fields.base_type; },
+    identifier(identifier_?: any) { return identifier_ !== undefined ? memberType({ ...(config as any), identifier: identifier_ } as any) : fields.identifier; },
+    getChildren() { return children; },
+    setChildren(...items: any[]) { return memberType({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1931,12 +2115,16 @@ export function keywordArgument(config: ConfigOf<KeywordArgument>) {
     name: config?.name,
     value: config?.value,
   };
+  const children = (config as any)?.children ?? [];
   return {
     type: 'keyword_argument' as const,
     named: true as const,
     fields,
-    name(name_?: ConfigOf<KeywordArgument>['name']) { return name_ !== undefined ? keywordArgument({ ...(config ?? {}), name: name_ }) : fields.name; },
-    value(value_?: ConfigOf<KeywordArgument>['value']) { return value_ !== undefined ? keywordArgument({ ...(config ?? {}), value: value_ }) : fields.value; },
+    children,
+    name(name_?: any) { return name_ !== undefined ? keywordArgument({ ...(config as any), name: name_ } as any) : fields.name; },
+    value(value_?: any) { return value_ !== undefined ? keywordArgument({ ...(config as any), value: value_ } as any) : fields.value; },
+    getChildren() { return children; },
+    setChildren(...items: any[]) { return keywordArgument({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1946,7 +2134,7 @@ export function keywordArgument(config: ConfigOf<KeywordArgument>) {
   };
 }
 
-export function list(child?: ConfigOf<List>['children']) {
+export function list(child?: any) {
   const hasChild = child && typeof child === "object" && "type" in child;
   const children = hasChild ? [child] : [];
   return {
@@ -1962,7 +2150,7 @@ export function list(child?: ConfigOf<List>['children']) {
   };
 }
 
-export function set(child?: ConfigOf<Set>['children']) {
+export function set(child?: any) {
   const hasChild = child && typeof child === "object" && "type" in child;
   const children = hasChild ? [child] : [];
   return {
@@ -1978,7 +2166,7 @@ export function set(child?: ConfigOf<Set>['children']) {
   };
 }
 
-export function tuple(child?: ConfigOf<Tuple>['children']) {
+export function tuple(child?: any) {
   const hasChild = child && typeof child === "object" && "type" in child;
   const children = hasChild ? [child] : [];
   return {
@@ -1994,8 +2182,8 @@ export function tuple(child?: ConfigOf<Tuple>['children']) {
   };
 }
 
-export function dictionary(..._children: NonNullable<ConfigOf<Dictionary>['children']>) {
-  const children = _children.filter(c => c && typeof c === "object" && "type" in c);
+export function dictionary(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: 'dictionary' as const,
     named: true as const,
@@ -2014,12 +2202,16 @@ export function pair(config: ConfigOf<Pair>) {
     key: config?.key,
     value: config?.value,
   };
+  const children = (config as any)?.children ?? [];
   return {
     type: 'pair' as const,
     named: true as const,
     fields,
-    key(key_?: ConfigOf<Pair>['key']) { return key_ !== undefined ? pair({ ...(config ?? {}), key: key_ }) : fields.key; },
-    value(value_?: ConfigOf<Pair>['value']) { return value_ !== undefined ? pair({ ...(config ?? {}), value: value_ }) : fields.value; },
+    children,
+    key(key_?: any) { return key_ !== undefined ? pair({ ...(config as any), key: key_ } as any) : fields.key; },
+    value(value_?: any) { return value_ !== undefined ? pair({ ...(config as any), value: value_ } as any) : fields.value; },
+    getChildren() { return children; },
+    setChildren(...items: any[]) { return pair({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2033,15 +2225,15 @@ export function listComprehension(config: ConfigOf<ListComprehension>) {
   const fields = {
     body: config?.body,
   };
-  const children = config?.children ?? [];
+  const children = (config as any)?.children ?? [];
   return {
     type: 'list_comprehension' as const,
     named: true as const,
     fields,
     children,
-    body(body_?: ConfigOf<ListComprehension>['body']) { return body_ !== undefined ? listComprehension({ ...(config ?? {}), body: body_ }) : fields.body; },
+    body(body_?: any) { return body_ !== undefined ? listComprehension({ ...(config as any), body: body_ } as any) : fields.body; },
     getChildren() { return children; },
-    setChildren(...items: unknown[]) { return listComprehension({ ...(config ?? {}), children: items }); },
+    setChildren(...items: any[]) { return listComprehension({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2055,15 +2247,15 @@ export function dictionaryComprehension(config: ConfigOf<DictionaryComprehension
   const fields = {
     body: config?.body,
   };
-  const children = config?.children ?? [];
+  const children = (config as any)?.children ?? [];
   return {
     type: 'dictionary_comprehension' as const,
     named: true as const,
     fields,
     children,
-    body(body_?: ConfigOf<DictionaryComprehension>['body']) { return body_ !== undefined ? dictionaryComprehension({ ...(config ?? {}), body: body_ }) : fields.body; },
+    body(body_?: any) { return body_ !== undefined ? dictionaryComprehension({ ...(config as any), body: body_ } as any) : fields.body; },
     getChildren() { return children; },
-    setChildren(...items: unknown[]) { return dictionaryComprehension({ ...(config ?? {}), children: items }); },
+    setChildren(...items: any[]) { return dictionaryComprehension({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2077,15 +2269,15 @@ export function setComprehension(config: ConfigOf<SetComprehension>) {
   const fields = {
     body: config?.body,
   };
-  const children = config?.children ?? [];
+  const children = (config as any)?.children ?? [];
   return {
     type: 'set_comprehension' as const,
     named: true as const,
     fields,
     children,
-    body(body_?: ConfigOf<SetComprehension>['body']) { return body_ !== undefined ? setComprehension({ ...(config ?? {}), body: body_ }) : fields.body; },
+    body(body_?: any) { return body_ !== undefined ? setComprehension({ ...(config as any), body: body_ } as any) : fields.body; },
     getChildren() { return children; },
-    setChildren(...items: unknown[]) { return setComprehension({ ...(config ?? {}), children: items }); },
+    setChildren(...items: any[]) { return setComprehension({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2099,15 +2291,15 @@ export function generatorExpression(config: ConfigOf<GeneratorExpression>) {
   const fields = {
     body: config?.body,
   };
-  const children = config?.children ?? [];
+  const children = (config as any)?.children ?? [];
   return {
     type: 'generator_expression' as const,
     named: true as const,
     fields,
     children,
-    body(body_?: ConfigOf<GeneratorExpression>['body']) { return body_ !== undefined ? generatorExpression({ ...(config ?? {}), body: body_ }) : fields.body; },
+    body(body_?: any) { return body_ !== undefined ? generatorExpression({ ...(config as any), body: body_ } as any) : fields.body; },
     getChildren() { return children; },
-    setChildren(...items: unknown[]) { return generatorExpression({ ...(config ?? {}), children: items }); },
+    setChildren(...items: any[]) { return generatorExpression({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2117,8 +2309,8 @@ export function generatorExpression(config: ConfigOf<GeneratorExpression>) {
   };
 }
 
-export function hiddenComprehensionClauses(..._children: NonNullable<ConfigOf<HiddenComprehensionClauses>['children']>) {
-  const children = _children.filter(c => c && typeof c === "object" && "type" in c);
+export function hiddenComprehensionClauses(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: '_comprehension_clauses' as const,
     named: true as const,
@@ -2132,7 +2324,7 @@ export function hiddenComprehensionClauses(..._children: NonNullable<ConfigOf<Hi
   };
 }
 
-export function parenthesizedExpression(child?: ConfigOf<ParenthesizedExpression>['children']) {
+export function parenthesizedExpression(child?: any) {
   const hasChild = child && typeof child === "object" && "type" in child;
   const children = hasChild ? [child] : [];
   return {
@@ -2148,8 +2340,8 @@ export function parenthesizedExpression(child?: ConfigOf<ParenthesizedExpression
   };
 }
 
-export function hiddenCollectionElements(..._children: NonNullable<ConfigOf<HiddenCollectionElements>['children']>) {
-  const children = _children.filter(c => c && typeof c === "object" && "type" in c);
+export function hiddenCollectionElements(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: '_collection_elements' as const,
     named: true as const,
@@ -2168,12 +2360,16 @@ export function forInClause(config: ConfigOf<ForInClause>) {
     left: config?.left,
     right: config?.right,
   };
+  const children = (config as any)?.children ?? [];
   return {
     type: 'for_in_clause' as const,
     named: true as const,
     fields,
-    left(left_?: ConfigOf<ForInClause>['left']) { return left_ !== undefined ? forInClause({ ...(config ?? {}), left: left_ }) : fields.left; },
-    right(right_?: ConfigOf<ForInClause>['right']) { return right_ !== undefined ? forInClause({ ...(config ?? {}), right: right_ }) : fields.right; },
+    children,
+    left(left_?: any) { return left_ !== undefined ? forInClause({ ...(config as any), left: left_ } as any) : fields.left; },
+    right(right_?: any) { return right_ !== undefined ? forInClause({ ...(config as any), right: right_ } as any) : fields.right; },
+    getChildren() { return children; },
+    setChildren(...items: any[]) { return forInClause({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2187,11 +2383,15 @@ export function ifClause(config: ConfigOf<IfClause>) {
   const fields = {
     expression: config?.expression,
   };
+  const children = (config as any)?.children ?? [];
   return {
     type: 'if_clause' as const,
     named: true as const,
     fields,
-    expression(expression_?: ConfigOf<IfClause>['expression']) { return expression_ !== undefined ? ifClause({ ...(config ?? {}), expression: expression_ }) : fields.expression; },
+    children,
+    expression(expression_?: any) { return expression_ !== undefined ? ifClause({ ...(config as any), expression: expression_ } as any) : fields.expression; },
+    getChildren() { return children; },
+    setChildren(...items: any[]) { return ifClause({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2207,13 +2407,17 @@ export function conditionalExpression(config: ConfigOf<ConditionalExpression>) {
     condition: config?.condition,
     alternative: config?.alternative,
   };
+  const children = (config as any)?.children ?? [];
   return {
     type: 'conditional_expression' as const,
     named: true as const,
     fields,
-    body(body_?: ConfigOf<ConditionalExpression>['body']) { return body_ !== undefined ? conditionalExpression({ ...(config ?? {}), body: body_ }) : fields.body; },
-    condition(condition_?: ConfigOf<ConditionalExpression>['condition']) { return condition_ !== undefined ? conditionalExpression({ ...(config ?? {}), condition: condition_ }) : fields.condition; },
-    alternative(alternative_?: ConfigOf<ConditionalExpression>['alternative']) { return alternative_ !== undefined ? conditionalExpression({ ...(config ?? {}), alternative: alternative_ }) : fields.alternative; },
+    children,
+    body(body_?: any) { return body_ !== undefined ? conditionalExpression({ ...(config as any), body: body_ } as any) : fields.body; },
+    condition(condition_?: any) { return condition_ !== undefined ? conditionalExpression({ ...(config as any), condition: condition_ } as any) : fields.condition; },
+    alternative(alternative_?: any) { return alternative_ !== undefined ? conditionalExpression({ ...(config as any), alternative: alternative_ } as any) : fields.alternative; },
+    getChildren() { return children; },
+    setChildren(...items: any[]) { return conditionalExpression({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2223,8 +2427,8 @@ export function conditionalExpression(config: ConfigOf<ConditionalExpression>) {
   };
 }
 
-export function concatenatedString(..._children: NonNullable<ConfigOf<ConcatenatedString>['children']>) {
-  const children = _children.filter(c => c && typeof c === "object" && "type" in c);
+export function concatenatedString(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: 'concatenated_string' as const,
     named: true as const,
@@ -2244,13 +2448,17 @@ export function string(config: ConfigOf<String>) {
     content: config?.content,
     string_end: config?.stringEnd,
   };
+  const children = (config as any)?.children ?? [];
   return {
     type: 'string' as const,
     named: true as const,
     fields,
-    stringStart(stringStart_?: ConfigOf<String>['stringStart']) { return stringStart_ !== undefined ? string({ ...(config ?? {}), stringStart: stringStart_ }) : fields.string_start; },
-    content(content_?: ConfigOf<String>['content']) { return content_ !== undefined ? string({ ...(config ?? {}), content: content_ }) : fields.content; },
-    stringEnd(stringEnd_?: ConfigOf<String>['stringEnd']) { return stringEnd_ !== undefined ? string({ ...(config ?? {}), stringEnd: stringEnd_ }) : fields.string_end; },
+    children,
+    stringStart(stringStart_?: any) { return stringStart_ !== undefined ? string({ ...(config as any), stringStart: stringStart_ } as any) : fields.string_start; },
+    content(content_?: any) { return content_ !== undefined ? string({ ...(config as any), content: content_ } as any) : fields.content; },
+    stringEnd(stringEnd_?: any) { return stringEnd_ !== undefined ? string({ ...(config as any), stringEnd: stringEnd_ } as any) : fields.string_end; },
+    getChildren() { return children; },
+    setChildren(...items: any[]) { return string({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2260,8 +2468,8 @@ export function string(config: ConfigOf<String>) {
   };
 }
 
-export function stringContent(..._children: NonNullable<ConfigOf<StringContent>['children']>) {
-  const children = _children.filter(c => c && typeof c === "object" && "type" in c);
+export function stringContent(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: 'string_content' as const,
     named: true as const,
@@ -2281,13 +2489,17 @@ export function interpolation(config: ConfigOf<Interpolation>) {
     type_conversion: config?.typeConversion,
     format_specifier: config?.formatSpecifier,
   };
+  const children = (config as any)?.children ?? [];
   return {
     type: 'interpolation' as const,
     named: true as const,
     fields,
-    expression(expression_?: ConfigOf<Interpolation>['expression']) { return expression_ !== undefined ? interpolation({ ...(config ?? {}), expression: expression_ }) : fields.expression; },
-    typeConversion(typeConversion_?: ConfigOf<Interpolation>['typeConversion']) { return typeConversion_ !== undefined ? interpolation({ ...(config ?? {}), typeConversion: typeConversion_ }) : fields.type_conversion; },
-    formatSpecifier(formatSpecifier_?: ConfigOf<Interpolation>['formatSpecifier']) { return formatSpecifier_ !== undefined ? interpolation({ ...(config ?? {}), formatSpecifier: formatSpecifier_ }) : fields.format_specifier; },
+    children,
+    expression(expression_?: any) { return expression_ !== undefined ? interpolation({ ...(config as any), expression: expression_ } as any) : fields.expression; },
+    typeConversion(typeConversion_?: any) { return typeConversion_ !== undefined ? interpolation({ ...(config as any), typeConversion: typeConversion_ } as any) : fields.type_conversion; },
+    formatSpecifier(formatSpecifier_?: any) { return formatSpecifier_ !== undefined ? interpolation({ ...(config as any), formatSpecifier: formatSpecifier_ } as any) : fields.format_specifier; },
+    getChildren() { return children; },
+    setChildren(...items: any[]) { return interpolation({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2308,8 +2520,8 @@ export function escapeSequence(text: string) {
   };
 }
 
-export function formatSpecifier(..._children: NonNullable<ConfigOf<FormatSpecifier>['children']>) {
-  const children = _children.filter(c => c && typeof c === "object" && "type" in c);
+export function formatSpecifier(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: 'format_specifier' as const,
     named: true as const,
@@ -2415,11 +2627,15 @@ export function await_(config: ConfigOf<Await>) {
   const fields = {
     primary_expression: config?.primaryExpression,
   };
+  const children = (config as any)?.children ?? [];
   return {
     type: 'await' as const,
     named: true as const,
     fields,
-    primaryExpression(primaryExpression_?: ConfigOf<Await>['primaryExpression']) { return primaryExpression_ !== undefined ? await_({ ...(config ?? {}), primaryExpression: primaryExpression_ }) : fields.primary_expression; },
+    children,
+    primaryExpression(primaryExpression_?: any) { return primaryExpression_ !== undefined ? await_({ ...(config as any), primaryExpression: primaryExpression_ } as any) : fields.primary_expression; },
+    getChildren() { return children; },
+    setChildren(...items: any[]) { return await_({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2451,7 +2667,7 @@ export function lineContinuation(text: string) {
   };
 }
 
-export function asPatternTarget(child?: ConfigOf<AsPatternTarget>['children']) {
+export function asPatternTarget(child?: any) {
   const hasChild = child && typeof child === "object" && "type" in child;
   const children = hasChild ? [child] : [];
   return {
@@ -2473,13 +2689,17 @@ export function formatExpression(config: ConfigOf<FormatExpression>) {
     type_conversion: config?.typeConversion,
     format_specifier: config?.formatSpecifier,
   };
+  const children = (config as any)?.children ?? [];
   return {
     type: 'format_expression' as const,
     named: true as const,
     fields,
-    expression(expression_?: ConfigOf<FormatExpression>['expression']) { return expression_ !== undefined ? formatExpression({ ...(config ?? {}), expression: expression_ }) : fields.expression; },
-    typeConversion(typeConversion_?: ConfigOf<FormatExpression>['typeConversion']) { return typeConversion_ !== undefined ? formatExpression({ ...(config ?? {}), typeConversion: typeConversion_ }) : fields.type_conversion; },
-    formatSpecifier(formatSpecifier_?: ConfigOf<FormatExpression>['formatSpecifier']) { return formatSpecifier_ !== undefined ? formatExpression({ ...(config ?? {}), formatSpecifier: formatSpecifier_ }) : fields.format_specifier; },
+    children,
+    expression(expression_?: any) { return expression_ !== undefined ? formatExpression({ ...(config as any), expression: expression_ } as any) : fields.expression; },
+    typeConversion(typeConversion_?: any) { return typeConversion_ !== undefined ? formatExpression({ ...(config as any), typeConversion: typeConversion_ } as any) : fields.type_conversion; },
+    formatSpecifier(formatSpecifier_?: any) { return formatSpecifier_ !== undefined ? formatExpression({ ...(config as any), formatSpecifier: formatSpecifier_ } as any) : fields.format_specifier; },
+    getChildren() { return children; },
+    setChildren(...items: any[]) { return formatExpression({ ...(config as any), children: items } as any); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2489,7 +2709,7 @@ export function formatExpression(config: ConfigOf<FormatExpression>) {
   };
 }
 
-export const _factoryMap: Record<string, (config?: unknown) => unknown> = {
+export const _factoryMap: Record<string, (config?: any) => unknown> = {
   'module': module,
   '_simple_statements': hiddenSimpleStatements,
   'import_statement': importStatement,
