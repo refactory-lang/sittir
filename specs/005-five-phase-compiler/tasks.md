@@ -57,7 +57,16 @@
 - [x] T017 Implement field annotation with provenance (`source`, `nameFrom`) and clause detection (`detectClause`) in `packages/codegen/src/compiler/link.ts`
 - [x] T018 Implement reference graph enrichment: `enrichPositions` (walk SEQ to assign position), `computeParentSets` in `packages/codegen/src/compiler/link.ts`
 - [x] T019 Implement core derivations (active): inline confidence, supertype candidate detection, dead rule detection, cycle detection in `packages/codegen/src/compiler/link.ts`
-- [ ] T020 Implement diagnostic derivations (suggested overrides): field name inference, synthetic supertype detection, override inference, naming consistency, global optionality, separator consistency, override candidate quality in `packages/codegen/src/compiler/link.ts`
+- [~] T020 Partial — three derivations live in `link.ts:deriveSuggestedOverrides` (commit `6b1b66e`):
+  - **field-name-inference** (≥5 named refs, ≥80% agreement → suggest)
+  - **global-optionality** (≥3 refs, every ref optional → flag)
+  - **naming-consistency** (≥2 distinct field names → diagnostic)
+
+  Smoke counts: rust 30 (24/4/2), typescript 92 (79/10/3), python 5 (0/5/0). Inspector at `packages/codegen/scripts/inspect-suggestions.ts`.
+
+  Also fixed a latent bug: `evaluate()` in extension mode was losing the base grammar's references because the already-evaluated rules don't go through the new `$` proxy. Now seeds `refs` from `baseGrammar.references`. Python went from 0 refs to 449.
+
+  Deferred (part of T020): synthetic-supertype-detection (needs field content overlap), override-inference / candidate-quality (needs position+role across parents), separator-consistency (separator field not on SymbolRef yet).
 - [ ] T021 Implement node-types.json validation (`validateAgainstNodeTypes`) as optional validation-only check in `packages/codegen/src/compiler/link.ts`
 - [x] T022 Write unit tests for Link phase: reference resolution, hidden rule classification, field provenance, clause detection, diagnostic derivations in `packages/codegen/src/__tests__/link.test.ts`
 - [x] T019a [P] Write test for self-referential hidden rule (cycle) — verify cycle is detected and flagged without crashing in `packages/codegen/src/__tests__/link.test.ts`

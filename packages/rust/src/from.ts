@@ -10,11 +10,96 @@ function isNodeData(v: unknown): v is AnyNodeData {
   return typeof o['type'] === 'string' && (typeof o['fields'] === 'object' || typeof o['text'] === 'string');
 }
 
+// --- Loose-input resolver helpers (see C6-prereq) ---
+interface _LeafEntry { values?: readonly string[]; pattern?: RegExp; factory: (text: string) => unknown }
+const _leafRegistry: Record<string, _LeafEntry> = {
+  "fragment_specifier": { values: ["block", "expr", "expr_2021", "ident", "item", "lifetime", "literal", "meta", "pat", "pat_param", "path", "stmt", "tt", "ty", "vis"], factory: fragmentSpecifier },
+  "unit_type": { factory: unitType },
+  "mutable_specifier": { values: ["mut"], factory: () => mutableSpecifier() },
+  "unit_expression": { factory: unitExpression },
+  "integer_literal": { factory: integerLiteral },
+  "char_literal": { factory: charLiteral },
+  "escape_sequence": { factory: escapeSequence },
+  "boolean_literal": { values: ["true", "false"], factory: booleanLiteral },
+  "identifier": { factory: identifier },
+  "shebang": { factory: shebang },
+  "_reserved_identifier": { values: ["default", "union", "gen"], factory: hiddenReservedIdentifier },
+  "self": { values: ["self"], factory: () => self() },
+  "super": { values: ["super"], factory: () => super_() },
+  "crate": { values: ["crate"], factory: () => crate() },
+  "metavariable": { factory: metavariable },
+  "primitive_type": { values: ["u8", "i8", "u16", "i16", "u32", "i32", "u64", "i64", "u128", "i128", "isize", "usize", "f32", "f64", "bool", "str", "char"], factory: primitiveType },
+  "shorthand_field_identifier": { factory: shorthandFieldIdentifier },
+  "outer_doc_comment_marker": { factory: outerDocCommentMarker },
+  "inner_doc_comment_marker": { factory: innerDocCommentMarker },
+  "type_identifier": { factory: typeIdentifier },
+  "field_identifier": { factory: fieldIdentifier },
+};
+
+function _resolveLeafString(v: string, kinds: readonly string[]): unknown {
+  for (const kind of kinds) {
+    const entry = _leafRegistry[kind];
+    if (!entry) continue;
+    if (entry.values && entry.values.includes(v)) return entry.factory(v);
+    if (entry.pattern && entry.pattern.test(v)) return entry.factory(v);
+  }
+  // Fallback: any leaf without value/pattern constraint accepts any string.
+  for (const kind of kinds) {
+    const entry = _leafRegistry[kind];
+    if (entry && !entry.values && !entry.pattern) return entry.factory(v);
+  }
+  return undefined;
+}
+
+function _resolveByKind(kind: string, rest: unknown): unknown {
+  const fn = (_fromMap as Record<string, (input?: any) => unknown>)[kind];
+  if (fn) return fn(rest);
+  return rest;
+}
+
+function _resolveScalar(v: unknown): unknown {
+  if (typeof v === "boolean") {
+    const e = _leafRegistry["boolean_literal"]; return e?.factory(v ? "true" : "false");
+  }
+  if (typeof v === "number") {
+    if (Number.isInteger(v)) { const e = _leafRegistry["integer_literal"]; return e?.factory(String(v)); }
+  }
+  return undefined;
+}
+
+function _resolveOne(v: unknown, leafKinds: readonly string[], branchKinds: readonly string[]): unknown {
+  if (v === undefined || v === null) return v;
+  if (isNodeData(v)) return v;
+  if (typeof v === "boolean" || typeof v === "number") {
+    const scalar = _resolveScalar(v);
+    if (scalar !== undefined) return scalar;
+  }
+  if (typeof v === "string" && leafKinds.length > 0) {
+    const leaf = _resolveLeafString(v, leafKinds);
+    if (leaf !== undefined) return leaf;
+  }
+  if (typeof v === "object" && v !== null && "kind" in (v as any)) {
+    const { kind, ...rest } = v as any;
+    return _resolveByKind(kind, rest);
+  }
+  // Single-branch passthrough — the loose object IS the branch.
+  if (branchKinds.length === 1 && typeof v === "object") {
+    return _resolveByKind(branchKinds[0]!, v);
+  }
+  return v;
+}
+
+function _resolveMany(v: unknown, leafKinds: readonly string[], branchKinds: readonly string[]): unknown[] {
+  if (v === undefined || v === null) return [];
+  const arr = Array.isArray(v) ? v : [v];
+  return arr.map(e => _resolveOne(e, leafKinds, branchKinds));
+}
+
 export function sourceFileFrom(input: SourceFileFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return sourceFile({
-    shebang: typeof f.shebang === 'string' ? shebang(f.shebang) : f.shebang,
-    statements: f.statements,
+    shebang: _resolveOne(f.shebang, ["shebang"], []) as any,
+    statements: _resolveOne(f.statements, [], []) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -30,8 +115,8 @@ export function expressionStatementFrom(...input: any[]) {
 export function macroDefinitionFrom(input: MacroDefinitionFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return macroDefinition({
-    name: f.name,
-    rules: f.rules,
+    name: _resolveOne(f.name, ["identifier","_reserved_identifier"], []) as any,
+    rules: _resolveOne(f.rules, [], []) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -39,8 +124,8 @@ export function macroDefinitionFrom(input: MacroDefinitionFromInput) {
 export function macroRuleFrom(input: MacroRuleFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return macroRule({
-    left: f.left,
-    right: f.right,
+    left: _resolveOne(f.left, [], ["token_tree_pattern"]) as any,
+    right: _resolveOne(f.right, [], ["token_tree"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -56,8 +141,8 @@ export function tokenTreePatternFrom(...input: any[]) {
 export function tokenBindingPatternFrom(input: TokenBindingPatternFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return tokenBindingPattern({
-    name: typeof f.name === 'string' ? metavariable(f.name) : f.name,
-    type: typeof f.type === 'string' ? fragmentSpecifier(f.type) : f.type,
+    name: _resolveOne(f.name, ["metavariable"], []) as any,
+    type: _resolveOne(f.type, ["fragment_specifier"], []) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -102,7 +187,7 @@ export function hiddenNonSpecialTokenFrom(...input: any[]) {
 export function attributeItemFrom(input: AttributeItemFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return attributeItem({
-    attribute: f.attribute,
+    attribute: _resolveOne(f.attribute, [], ["attribute"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -110,7 +195,7 @@ export function attributeItemFrom(input: AttributeItemFromInput) {
 export function innerAttributeItemFrom(input: InnerAttributeItemFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return innerAttributeItem({
-    attribute: f.attribute,
+    attribute: _resolveOne(f.attribute, [], ["attribute"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -118,8 +203,8 @@ export function innerAttributeItemFrom(input: InnerAttributeItemFromInput) {
 export function attributeFrom(input?: AttributeFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return attribute({
-    value: f.value,
-    arguments: f.arguments,
+    value: _resolveOne(f.value, [], ["_expression"]) as any,
+    arguments: _resolveOne(f.arguments, [], ["delim_token_tree"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -127,9 +212,9 @@ export function attributeFrom(input?: AttributeFromInput) {
 export function modItemFrom(input: ModItemFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return modItem({
-    visibilityModifier: f.visibility_modifier,
-    name: typeof f.name === 'string' ? identifier(f.name) : f.name,
-    body: f.body,
+    visibilityModifier: _resolveOne(f.visibility_modifier, [], ["visibility_modifier"]) as any,
+    name: _resolveOne(f.name, ["identifier"], []) as any,
+    body: _resolveOne(f.body, [], ["declaration_list"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -137,9 +222,9 @@ export function modItemFrom(input: ModItemFromInput) {
 export function foreignModItemFrom(input: ForeignModItemFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return foreignModItem({
-    visibilityModifier: f.visibility_modifier,
-    externModifier: f.extern_modifier,
-    body: f.body,
+    visibilityModifier: _resolveOne(f.visibility_modifier, [], ["visibility_modifier"]) as any,
+    externModifier: _resolveOne(f.extern_modifier, [], ["extern_modifier"]) as any,
+    body: _resolveOne(f.body, [], ["declaration_list"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -155,10 +240,10 @@ export function declarationListFrom(...input: any[]) {
 export function structItemFrom(input: StructItemFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return structItem({
-    visibilityModifier: f.visibility_modifier,
-    name: f.name,
-    typeParameters: f.type_parameters,
-    whereClause: f.where_clause,
+    visibilityModifier: _resolveOne(f.visibility_modifier, [], ["visibility_modifier"]) as any,
+    name: _resolveOne(f.name, [], ["_type_identifier"]) as any,
+    typeParameters: _resolveOne(f.type_parameters, [], ["type_parameters"]) as any,
+    whereClause: _resolveOne(f.where_clause, [], []) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -166,11 +251,11 @@ export function structItemFrom(input: StructItemFromInput) {
 export function unionItemFrom(input: UnionItemFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return unionItem({
-    visibilityModifier: f.visibility_modifier,
-    name: f.name,
-    typeParameters: f.type_parameters,
-    whereClause: f.where_clause,
-    body: f.body,
+    visibilityModifier: _resolveOne(f.visibility_modifier, [], ["visibility_modifier"]) as any,
+    name: _resolveOne(f.name, [], ["_type_identifier"]) as any,
+    typeParameters: _resolveOne(f.type_parameters, [], ["type_parameters"]) as any,
+    whereClause: _resolveOne(f.where_clause, [], ["where_clause"]) as any,
+    body: _resolveOne(f.body, [], ["field_declaration_list"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -178,11 +263,11 @@ export function unionItemFrom(input: UnionItemFromInput) {
 export function enumItemFrom(input: EnumItemFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return enumItem({
-    visibilityModifier: f.visibility_modifier,
-    name: f.name,
-    typeParameters: f.type_parameters,
-    whereClause: f.where_clause,
-    body: f.body,
+    visibilityModifier: _resolveOne(f.visibility_modifier, [], ["visibility_modifier"]) as any,
+    name: _resolveOne(f.name, [], ["_type_identifier"]) as any,
+    typeParameters: _resolveOne(f.type_parameters, [], ["type_parameters"]) as any,
+    whereClause: _resolveOne(f.where_clause, [], ["where_clause"]) as any,
+    body: _resolveOne(f.body, [], ["enum_variant_list"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -198,10 +283,10 @@ export function enumVariantListFrom(...input: any[]) {
 export function enumVariantFrom(input: EnumVariantFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return enumVariant({
-    visibilityModifier: f.visibility_modifier,
-    name: typeof f.name === 'string' ? identifier(f.name) : f.name,
-    body: f.body,
-    value: f.value,
+    visibilityModifier: _resolveOne(f.visibility_modifier, [], ["visibility_modifier"]) as any,
+    name: _resolveOne(f.name, ["identifier"], []) as any,
+    body: _resolveOne(f.body, [], ["field_declaration_list","ordered_field_declaration_list"]) as any,
+    value: _resolveOne(f.value, [], ["_expression"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -217,9 +302,9 @@ export function fieldDeclarationListFrom(...input: any[]) {
 export function fieldDeclarationFrom(input: FieldDeclarationFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return fieldDeclaration({
-    visibilityModifier: f.visibility_modifier,
-    name: f.name,
-    type: f.type,
+    visibilityModifier: _resolveOne(f.visibility_modifier, [], ["visibility_modifier"]) as any,
+    name: _resolveOne(f.name, [], ["_field_identifier"]) as any,
+    type: _resolveOne(f.type, [], ["_type"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -227,8 +312,8 @@ export function fieldDeclarationFrom(input: FieldDeclarationFromInput) {
 export function orderedFieldDeclarationListFrom(input: OrderedFieldDeclarationListFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return orderedFieldDeclarationList({
-    attributes: f.attributes,
-    visibilityModifier: f.visibility_modifier,
+    attributes: _resolveOne(f.attributes, [], []) as any,
+    visibilityModifier: _resolveOne(f.visibility_modifier, [], []) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -236,10 +321,10 @@ export function orderedFieldDeclarationListFrom(input: OrderedFieldDeclarationLi
 export function externCrateDeclarationFrom(input: ExternCrateDeclarationFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return externCrateDeclaration({
-    visibilityModifier: f.visibility_modifier,
-    crate: f.crate,
-    name: typeof f.name === 'string' ? identifier(f.name) : f.name,
-    alias: typeof f.alias === 'string' ? identifier(f.alias) : f.alias,
+    visibilityModifier: _resolveOne(f.visibility_modifier, [], ["visibility_modifier"]) as any,
+    crate: _resolveOne(f.crate, ["crate"], []) as any,
+    name: _resolveOne(f.name, ["identifier"], []) as any,
+    alias: _resolveOne(f.alias, ["identifier"], []) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -247,10 +332,10 @@ export function externCrateDeclarationFrom(input: ExternCrateDeclarationFromInpu
 export function constItemFrom(input: ConstItemFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return constItem({
-    visibilityModifier: f.visibility_modifier,
-    name: typeof f.name === 'string' ? identifier(f.name) : f.name,
-    type: f.type,
-    value: f.value,
+    visibilityModifier: _resolveOne(f.visibility_modifier, [], ["visibility_modifier"]) as any,
+    name: _resolveOne(f.name, ["identifier"], []) as any,
+    type: _resolveOne(f.type, [], ["_type"]) as any,
+    value: _resolveOne(f.value, [], ["_expression"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -258,11 +343,11 @@ export function constItemFrom(input: ConstItemFromInput) {
 export function staticItemFrom(input: StaticItemFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return staticItem({
-    visibilityModifier: f.visibility_modifier,
-    mutableSpecifier: f.mutable_specifier,
-    name: typeof f.name === 'string' ? identifier(f.name) : f.name,
-    type: f.type,
-    value: f.value,
+    visibilityModifier: _resolveOne(f.visibility_modifier, [], ["visibility_modifier"]) as any,
+    mutableSpecifier: _resolveOne(f.mutable_specifier, [], []) as any,
+    name: _resolveOne(f.name, ["identifier"], []) as any,
+    type: _resolveOne(f.type, [], ["_type"]) as any,
+    value: _resolveOne(f.value, [], ["_expression"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -270,12 +355,12 @@ export function staticItemFrom(input: StaticItemFromInput) {
 export function typeItemFrom(input: TypeItemFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return typeItem({
-    visibilityModifier: f.visibility_modifier,
-    name: f.name,
-    typeParameters: f.type_parameters,
-    whereClause: f.where_clause,
-    type: f.type,
-    trailingWhereClause: f.trailing_where_clause,
+    visibilityModifier: _resolveOne(f.visibility_modifier, [], ["visibility_modifier"]) as any,
+    name: _resolveOne(f.name, [], ["_type_identifier"]) as any,
+    typeParameters: _resolveOne(f.type_parameters, [], ["type_parameters"]) as any,
+    whereClause: _resolveOne(f.where_clause, [], ["where_clause"]) as any,
+    type: _resolveOne(f.type, [], ["_type"]) as any,
+    trailingWhereClause: _resolveOne(f.trailing_where_clause, [], ["where_clause"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -283,13 +368,13 @@ export function typeItemFrom(input: TypeItemFromInput) {
 export function functionItemFrom(input: FunctionItemFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return functionItem({
-    visibilityModifier: f.visibility_modifier,
-    functionModifiers: f.function_modifiers,
-    name: f.name,
-    typeParameters: f.type_parameters,
-    parameters: f.parameters,
-    whereClause: f.where_clause,
-    body: f.body,
+    visibilityModifier: _resolveOne(f.visibility_modifier, [], ["visibility_modifier"]) as any,
+    functionModifiers: _resolveOne(f.function_modifiers, [], ["function_modifiers"]) as any,
+    name: _resolveOne(f.name, ["identifier","metavariable"], []) as any,
+    typeParameters: _resolveOne(f.type_parameters, [], ["type_parameters"]) as any,
+    parameters: _resolveOne(f.parameters, [], ["parameters"]) as any,
+    whereClause: _resolveOne(f.where_clause, [], []) as any,
+    body: _resolveOne(f.body, [], ["block"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -297,12 +382,12 @@ export function functionItemFrom(input: FunctionItemFromInput) {
 export function functionSignatureItemFrom(input: FunctionSignatureItemFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return functionSignatureItem({
-    visibilityModifier: f.visibility_modifier,
-    functionModifiers: f.function_modifiers,
-    name: f.name,
-    typeParameters: f.type_parameters,
-    parameters: f.parameters,
-    whereClause: f.where_clause,
+    visibilityModifier: _resolveOne(f.visibility_modifier, [], ["visibility_modifier"]) as any,
+    functionModifiers: _resolveOne(f.function_modifiers, [], ["function_modifiers"]) as any,
+    name: _resolveOne(f.name, ["identifier","metavariable"], []) as any,
+    typeParameters: _resolveOne(f.type_parameters, [], ["type_parameters"]) as any,
+    parameters: _resolveOne(f.parameters, [], ["parameters"]) as any,
+    whereClause: _resolveOne(f.where_clause, [], []) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -326,8 +411,8 @@ export function whereClauseFrom(...input: any[]) {
 export function wherePredicateFrom(input: WherePredicateFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return wherePredicate({
-    left: f.left,
-    bounds: f.bounds,
+    left: _resolveOne(f.left, ["u8","i8","u16","i16","u32","i32","u64","i64","u128","i128","isize","usize","f32","f64","bool","str","char"], ["lifetime","_type_identifier","scoped_type_identifier","generic_type","reference_type","pointer_type","tuple_type","array_type","higher_ranked_trait_bound"]) as any,
+    bounds: _resolveOne(f.bounds, [], ["trait_bounds"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -335,11 +420,11 @@ export function wherePredicateFrom(input: WherePredicateFromInput) {
 export function implItemFrom(input: ImplItemFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return implItem({
-    whereClause: f.where_clause,
-    typeParameters: f.type_parameters,
-    trait: f.trait,
-    type: f.type,
-    body: f.body,
+    whereClause: _resolveOne(f.where_clause, [], []) as any,
+    typeParameters: _resolveOne(f.type_parameters, [], ["type_parameters"]) as any,
+    trait: _resolveOne(f.trait, [], ["_type_identifier","scoped_type_identifier","generic_type"]) as any,
+    type: _resolveOne(f.type, [], ["_type"]) as any,
+    body: _resolveOne(f.body, [], ["declaration_list"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -347,12 +432,12 @@ export function implItemFrom(input: ImplItemFromInput) {
 export function traitItemFrom(input: TraitItemFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return traitItem({
-    visibilityModifier: f.visibility_modifier,
-    whereClause: f.where_clause,
-    name: f.name,
-    typeParameters: f.type_parameters,
-    bounds: f.bounds,
-    body: f.body,
+    visibilityModifier: _resolveOne(f.visibility_modifier, [], ["visibility_modifier"]) as any,
+    whereClause: _resolveOne(f.where_clause, [], []) as any,
+    name: _resolveOne(f.name, [], ["_type_identifier"]) as any,
+    typeParameters: _resolveOne(f.type_parameters, [], ["type_parameters"]) as any,
+    bounds: _resolveOne(f.bounds, [], ["trait_bounds"]) as any,
+    body: _resolveOne(f.body, [], ["declaration_list"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -360,10 +445,10 @@ export function traitItemFrom(input: TraitItemFromInput) {
 export function associatedTypeFrom(input: AssociatedTypeFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return associatedType({
-    name: f.name,
-    typeParameters: f.type_parameters,
-    bounds: f.bounds,
-    whereClause: f.where_clause,
+    name: _resolveOne(f.name, [], ["_type_identifier"]) as any,
+    typeParameters: _resolveOne(f.type_parameters, [], ["type_parameters"]) as any,
+    bounds: _resolveOne(f.bounds, [], ["trait_bounds"]) as any,
+    whereClause: _resolveOne(f.where_clause, [], ["where_clause"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -379,8 +464,8 @@ export function traitBoundsFrom(...input: any[]) {
 export function higherRankedTraitBoundFrom(input: HigherRankedTraitBoundFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return higherRankedTraitBound({
-    typeParameters: f.type_parameters,
-    type: f.type,
+    typeParameters: _resolveOne(f.type_parameters, [], ["type_parameters"]) as any,
+    type: _resolveOne(f.type, [], ["_type"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -404,9 +489,9 @@ export function typeParametersFrom(...input: any[]) {
 export function constParameterFrom(input: ConstParameterFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return constParameter({
-    name: typeof f.name === 'string' ? identifier(f.name) : f.name,
-    type: f.type,
-    value: f.value,
+    name: _resolveOne(f.name, ["identifier"], []) as any,
+    type: _resolveOne(f.type, [], ["_type"]) as any,
+    value: _resolveOne(f.value, ["identifier"], ["block","_literal","negative_literal"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -414,9 +499,9 @@ export function constParameterFrom(input: ConstParameterFromInput) {
 export function typeParameterFrom(input: TypeParameterFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return typeParameter({
-    name: f.name,
-    bounds: f.bounds,
-    defaultType: f.default_type,
+    name: _resolveOne(f.name, [], ["_type_identifier"]) as any,
+    bounds: _resolveOne(f.bounds, [], ["trait_bounds"]) as any,
+    defaultType: _resolveOne(f.default_type, [], ["_type"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -424,8 +509,8 @@ export function typeParameterFrom(input: TypeParameterFromInput) {
 export function lifetimeParameterFrom(input: LifetimeParameterFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return lifetimeParameter({
-    name: f.name,
-    bounds: f.bounds,
+    name: _resolveOne(f.name, [], ["lifetime"]) as any,
+    bounds: _resolveOne(f.bounds, [], ["trait_bounds"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -433,11 +518,11 @@ export function lifetimeParameterFrom(input: LifetimeParameterFromInput) {
 export function letDeclarationFrom(input: LetDeclarationFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return letDeclaration({
-    mutableSpecifier: f.mutable_specifier,
-    pattern: f.pattern,
-    type: f.type,
-    value: f.value,
-    alternative: f.alternative,
+    mutableSpecifier: _resolveOne(f.mutable_specifier, ["mutable_specifier"], []) as any,
+    pattern: _resolveOne(f.pattern, [], ["_pattern"]) as any,
+    type: _resolveOne(f.type, [], ["_type"]) as any,
+    value: _resolveOne(f.value, [], ["_expression"]) as any,
+    alternative: _resolveOne(f.alternative, [], ["block"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -445,8 +530,8 @@ export function letDeclarationFrom(input: LetDeclarationFromInput) {
 export function useDeclarationFrom(input: UseDeclarationFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return useDeclaration({
-    visibilityModifier: f.visibility_modifier,
-    argument: f.argument,
+    visibilityModifier: _resolveOne(f.visibility_modifier, [], ["visibility_modifier"]) as any,
+    argument: _resolveOne(f.argument, [], ["_use_clause"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -454,8 +539,8 @@ export function useDeclarationFrom(input: UseDeclarationFromInput) {
 export function scopedUseListFrom(input: ScopedUseListFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return scopedUseList({
-    path: f.path,
-    list: f.list,
+    path: _resolveOne(f.path, [], ["_path"]) as any,
+    list: _resolveOne(f.list, [], ["use_list"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -471,8 +556,8 @@ export function useListFrom(...input: any[]) {
 export function useAsClauseFrom(input: UseAsClauseFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return useAsClause({
-    path: f.path,
-    alias: typeof f.alias === 'string' ? identifier(f.alias) : f.alias,
+    path: _resolveOne(f.path, [], ["_path"]) as any,
+    alias: _resolveOne(f.alias, ["identifier"], []) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -480,7 +565,7 @@ export function useAsClauseFrom(input: UseAsClauseFromInput) {
 export function useWildcardFrom(input: UseWildcardFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return useWildcard({
-    path: f.path,
+    path: _resolveOne(f.path, [], []) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -496,9 +581,9 @@ export function parametersFrom(...input: any[]) {
 export function selfParameterFrom(input: SelfParameterFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return selfParameter({
-    lifetime: f.lifetime,
-    mutableSpecifier: f.mutable_specifier,
-    self: f.self,
+    lifetime: _resolveOne(f.lifetime, [], []) as any,
+    mutableSpecifier: _resolveOne(f.mutable_specifier, [], ["lifetime"]) as any,
+    self: _resolveOne(f.self, ["mutable_specifier"], []) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -506,8 +591,8 @@ export function selfParameterFrom(input: SelfParameterFromInput) {
 export function variadicParameterFrom(input: VariadicParameterFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return variadicParameter({
-    mutableSpecifier: f.mutable_specifier,
-    pattern: f.pattern,
+    mutableSpecifier: _resolveOne(f.mutable_specifier, ["mutable_specifier"], []) as any,
+    pattern: _resolveOne(f.pattern, [], ["_pattern"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -515,9 +600,9 @@ export function variadicParameterFrom(input: VariadicParameterFromInput) {
 export function parameterFrom(input: ParameterFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return parameter({
-    mutableSpecifier: f.mutable_specifier,
-    pattern: f.pattern,
-    type: f.type,
+    mutableSpecifier: _resolveOne(f.mutable_specifier, ["mutable_specifier"], []) as any,
+    pattern: _resolveOne(f.pattern, ["self"], ["_pattern"]) as any,
+    type: _resolveOne(f.type, [], ["_type"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -525,7 +610,7 @@ export function parameterFrom(input: ParameterFromInput) {
 export function externModifierFrom(input: ExternModifierFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return externModifier({
-    stringLiteral: f.string_literal,
+    stringLiteral: _resolveOne(f.string_literal, [], ["string_literal"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -557,8 +642,8 @@ export function bracketedTypeFrom(...input: any[]) {
 export function qualifiedTypeFrom(input: QualifiedTypeFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return qualifiedType({
-    type: f.type,
-    alias: f.alias,
+    type: _resolveOne(f.type, [], ["_type"]) as any,
+    alias: _resolveOne(f.alias, [], ["_type"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -566,7 +651,7 @@ export function qualifiedTypeFrom(input: QualifiedTypeFromInput) {
 export function lifetimeFrom(input: LifetimeFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return lifetime({
-    identifier: typeof f.identifier === 'string' ? identifier(f.identifier) : f.identifier,
+    identifier: _resolveOne(f.identifier, ["identifier"], []) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -574,8 +659,8 @@ export function lifetimeFrom(input: LifetimeFromInput) {
 export function arrayTypeFrom(input: ArrayTypeFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return arrayType({
-    element: f.element,
-    length: f.length,
+    element: _resolveOne(f.element, [], ["_type"]) as any,
+    length: _resolveOne(f.length, [], ["_expression"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -591,9 +676,9 @@ export function forLifetimesFrom(...input: any[]) {
 export function functionTypeFrom(input: FunctionTypeFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return functionType({
-    forLifetimes: f.for_lifetimes,
-    functionModifiers: f.function_modifiers,
-    returnType: f.return_type,
+    forLifetimes: _resolveOne(f.for_lifetimes, [], ["for_lifetimes"]) as any,
+    functionModifiers: _resolveOne(f.function_modifiers, [], []) as any,
+    returnType: _resolveOne(f.return_type, [], ["_type"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -614,8 +699,8 @@ export function unitTypeFrom(input: string | UnitType) {
 export function genericFunctionFrom(input: GenericFunctionFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return genericFunction({
-    function: f.function,
-    typeArguments: f.type_arguments,
+    function: _resolveOne(f.function, ["identifier"], ["scoped_identifier","field_expression"]) as any,
+    typeArguments: _resolveOne(f.type_arguments, [], ["type_arguments"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -623,8 +708,8 @@ export function genericFunctionFrom(input: GenericFunctionFromInput) {
 export function genericTypeFrom(input: GenericTypeFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return genericType({
-    type: f.type,
-    typeArguments: f.type_arguments,
+    type: _resolveOne(f.type, ["_reserved_identifier"], ["_type_identifier","scoped_type_identifier"]) as any,
+    typeArguments: _resolveOne(f.type_arguments, [], ["type_arguments"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -632,8 +717,8 @@ export function genericTypeFrom(input: GenericTypeFromInput) {
 export function genericTypeWithTurbofishFrom(input: GenericTypeWithTurbofishFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return genericTypeWithTurbofish({
-    type: f.type,
-    typeArguments: f.type_arguments,
+    type: _resolveOne(f.type, [], ["_type_identifier","scoped_identifier"]) as any,
+    typeArguments: _resolveOne(f.type_arguments, [], ["type_arguments"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -641,8 +726,8 @@ export function genericTypeWithTurbofishFrom(input: GenericTypeWithTurbofishFrom
 export function boundedTypeFrom(input: BoundedTypeFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return boundedType({
-    left: f.left,
-    right: f.right,
+    left: _resolveOne(f.left, [], ["lifetime","_type","use_bounds"]) as any,
+    right: _resolveOne(f.right, [], ["lifetime","_type","use_bounds"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -666,9 +751,9 @@ export function typeArgumentsFrom(...input: any[]) {
 export function typeBindingFrom(input: TypeBindingFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return typeBinding({
-    name: f.name,
-    typeArguments: f.type_arguments,
-    type: f.type,
+    name: _resolveOne(f.name, [], ["_type_identifier"]) as any,
+    typeArguments: _resolveOne(f.type_arguments, [], ["type_arguments"]) as any,
+    type: _resolveOne(f.type, [], ["_type"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -676,9 +761,9 @@ export function typeBindingFrom(input: TypeBindingFromInput) {
 export function referenceTypeFrom(input: ReferenceTypeFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return referenceType({
-    lifetime: f.lifetime,
-    mutableSpecifier: f.mutable_specifier,
-    type: f.type,
+    lifetime: _resolveOne(f.lifetime, [], ["lifetime"]) as any,
+    mutableSpecifier: _resolveOne(f.mutable_specifier, ["mutable_specifier"], []) as any,
+    type: _resolveOne(f.type, [], ["_type"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -686,8 +771,8 @@ export function referenceTypeFrom(input: ReferenceTypeFromInput) {
 export function pointerTypeFrom(input: PointerTypeFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return pointerType({
-    mutableSpecifier: f.mutable_specifier,
-    type: f.type,
+    mutableSpecifier: _resolveOne(f.mutable_specifier, ["mutable_specifier"], []) as any,
+    type: _resolveOne(f.type, [], ["_type"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -695,8 +780,8 @@ export function pointerTypeFrom(input: PointerTypeFromInput) {
 export function abstractTypeFrom(input: AbstractTypeFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return abstractType({
-    typeParameters: f.type_parameters,
-    trait: f.trait,
+    typeParameters: _resolveOne(f.type_parameters, [], []) as any,
+    trait: _resolveOne(f.trait, [], ["_type_identifier","scoped_type_identifier","removed_trait_bound","generic_type","function_type","tuple_type","bounded_type"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -704,7 +789,7 @@ export function abstractTypeFrom(input: AbstractTypeFromInput) {
 export function dynamicTypeFrom(input: DynamicTypeFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return dynamicType({
-    trait: f.trait,
+    trait: _resolveOne(f.trait, [], ["higher_ranked_trait_bound","_type_identifier","scoped_type_identifier","generic_type","function_type","tuple_type"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -725,8 +810,8 @@ export function hiddenExpressionExceptRangeFrom(...input: any[]) {
 export function macroInvocationFrom(input: MacroInvocationFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return macroInvocation({
-    macro: f.macro,
-    tokenTree: f.token_tree,
+    macro: _resolveOne(f.macro, ["identifier","_reserved_identifier"], ["scoped_identifier"]) as any,
+    tokenTree: _resolveOne(f.token_tree, [], ["delim_token_tree"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -750,8 +835,8 @@ export function hiddenNonDelimTokenFrom(...input: any[]) {
 export function scopedIdentifierFrom(input: ScopedIdentifierFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return scopedIdentifier({
-    path: f.path,
-    name: f.name,
+    path: _resolveOne(f.path, [], ["_path","bracketed_type","generic_type_with_turbofish"]) as any,
+    name: _resolveOne(f.name, ["identifier","super"], []) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -759,8 +844,8 @@ export function scopedIdentifierFrom(input: ScopedIdentifierFromInput) {
 export function scopedTypeIdentifierInExpressionPositionFrom(input: ScopedTypeIdentifierInExpressionPositionFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return scopedTypeIdentifierInExpressionPosition({
-    path: f.path,
-    name: f.name,
+    path: _resolveOne(f.path, [], ["_path","generic_type_with_turbofish"]) as any,
+    name: _resolveOne(f.name, [], ["_type_identifier"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -768,8 +853,8 @@ export function scopedTypeIdentifierInExpressionPositionFrom(input: ScopedTypeId
 export function scopedTypeIdentifierFrom(input: ScopedTypeIdentifierFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return scopedTypeIdentifier({
-    path: f.path,
-    name: f.name,
+    path: _resolveOne(f.path, [], ["_path","generic_type_with_turbofish","bracketed_type","generic_type"]) as any,
+    name: _resolveOne(f.name, [], ["_type_identifier"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -785,7 +870,7 @@ export function rangeExpressionFrom(...input: any[]) {
 export function unaryExpressionFrom(input: UnaryExpressionFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return unaryExpression({
-    operand: f.operand,
+    operand: _resolveOne(f.operand, [], []) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -793,7 +878,7 @@ export function unaryExpressionFrom(input: UnaryExpressionFromInput) {
 export function tryExpressionFrom(input: TryExpressionFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return tryExpression({
-    value: f.value,
+    value: _resolveOne(f.value, [], ["_expression"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -801,8 +886,8 @@ export function tryExpressionFrom(input: TryExpressionFromInput) {
 export function referenceExpressionFrom(input: ReferenceExpressionFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return referenceExpression({
-    mutableSpecifier: f.mutable_specifier,
-    value: f.value,
+    mutableSpecifier: _resolveOne(f.mutable_specifier, ["mutable_specifier"], []) as any,
+    value: _resolveOne(f.value, [], ["_expression"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -810,9 +895,9 @@ export function referenceExpressionFrom(input: ReferenceExpressionFromInput) {
 export function binaryExpressionFrom(input: BinaryExpressionFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return binaryExpression({
-    left: f.left,
-    operator: f.operator,
-    right: f.right,
+    left: _resolveOne(f.left, [], ["_expression"]) as any,
+    operator: _resolveOne(f.operator, [], []) as any,
+    right: _resolveOne(f.right, [], ["_expression"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -820,8 +905,8 @@ export function binaryExpressionFrom(input: BinaryExpressionFromInput) {
 export function assignmentExpressionFrom(input: AssignmentExpressionFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return assignmentExpression({
-    left: f.left,
-    right: f.right,
+    left: _resolveOne(f.left, [], ["_expression"]) as any,
+    right: _resolveOne(f.right, [], ["_expression"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -829,9 +914,9 @@ export function assignmentExpressionFrom(input: AssignmentExpressionFromInput) {
 export function compoundAssignmentExprFrom(input: CompoundAssignmentExprFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return compoundAssignmentExpr({
-    left: f.left,
-    operator: f.operator,
-    right: f.right,
+    left: _resolveOne(f.left, [], ["_expression"]) as any,
+    operator: _resolveOne(f.operator, [], []) as any,
+    right: _resolveOne(f.right, [], ["_expression"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -839,8 +924,8 @@ export function compoundAssignmentExprFrom(input: CompoundAssignmentExprFromInpu
 export function typeCastExpressionFrom(input: TypeCastExpressionFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return typeCastExpression({
-    value: f.value,
-    type: f.type,
+    value: _resolveOne(f.value, [], ["_expression"]) as any,
+    type: _resolveOne(f.type, [], ["_type"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -864,8 +949,8 @@ export function yieldExpressionFrom(...input: any[]) {
 export function callExpressionFrom(input: CallExpressionFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return callExpression({
-    function: f.function,
-    arguments: f.arguments,
+    function: _resolveOne(f.function, [], ["_expression_except_range"]) as any,
+    arguments: _resolveOne(f.arguments, [], ["arguments"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -881,8 +966,8 @@ export function arguments_From(...input: any[]) {
 export function arrayExpressionFrom(input: ArrayExpressionFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return arrayExpression({
-    attributes: f.attributes,
-    elements: f.elements,
+    attributes: _resolveOne(f.attributes, [], []) as any,
+    elements: _resolveOne(f.elements, [], []) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -898,10 +983,10 @@ export function parenthesizedExpressionFrom(...input: any[]) {
 export function tupleExpressionFrom(input: TupleExpressionFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return tupleExpression({
-    attributes: f.attributes,
-    first: f.first,
-    rest: f.rest,
-    trailing: f.trailing,
+    attributes: _resolveOne(f.attributes, [], []) as any,
+    first: _resolveOne(f.first, [], []) as any,
+    rest: _resolveOne(f.rest, [], []) as any,
+    trailing: _resolveOne(f.trailing, [], ["_expression"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -914,8 +999,8 @@ export function unitExpressionFrom(input: string | UnitExpression) {
 export function structExpressionFrom(input: StructExpressionFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return structExpression({
-    name: f.name,
-    body: f.body,
+    name: _resolveOne(f.name, [], ["_type_identifier","scoped_type_identifier_in_expression_position","generic_type_with_turbofish"]) as any,
+    body: _resolveOne(f.body, [], ["field_initializer_list"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -931,8 +1016,8 @@ export function fieldInitializerListFrom(...input: any[]) {
 export function shorthandFieldInitializerFrom(input: ShorthandFieldInitializerFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return shorthandFieldInitializer({
-    attributes: f.attributes,
-    identifier: typeof f.identifier === 'string' ? identifier(f.identifier) : f.identifier,
+    attributes: _resolveOne(f.attributes, [], []) as any,
+    identifier: _resolveOne(f.identifier, ["identifier"], []) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -940,8 +1025,8 @@ export function shorthandFieldInitializerFrom(input: ShorthandFieldInitializerFr
 export function fieldInitializerFrom(input: FieldInitializerFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return fieldInitializer({
-    field: f.field,
-    value: f.value,
+    field: _resolveOne(f.field, ["integer_literal"], ["_field_identifier"]) as any,
+    value: _resolveOne(f.value, [], ["_expression"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -957,9 +1042,9 @@ export function baseFieldInitializerFrom(...input: any[]) {
 export function ifExpressionFrom(input: IfExpressionFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return ifExpression({
-    condition: f.condition,
-    consequence: f.consequence,
-    alternative: f.alternative,
+    condition: _resolveOne(f.condition, [], ["_condition"]) as any,
+    consequence: _resolveOne(f.consequence, [], ["block"]) as any,
+    alternative: _resolveOne(f.alternative, [], ["else_clause"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -967,8 +1052,8 @@ export function ifExpressionFrom(input: IfExpressionFromInput) {
 export function letConditionFrom(input: LetConditionFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return letCondition({
-    pattern: f.pattern,
-    value: f.value,
+    pattern: _resolveOne(f.pattern, [], ["_pattern"]) as any,
+    value: _resolveOne(f.value, [], ["_expression"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -992,8 +1077,8 @@ export function elseClauseFrom(...input: any[]) {
 export function matchExpressionFrom(input: MatchExpressionFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return matchExpression({
-    value: f.value,
-    body: f.body,
+    value: _resolveOne(f.value, [], ["_expression"]) as any,
+    body: _resolveOne(f.body, [], ["match_block"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -1009,8 +1094,8 @@ export function matchBlockFrom(...input: any[]) {
 export function matchArmFrom(input: MatchArmFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return matchArm({
-    pattern: f.pattern,
-    value: f.value,
+    pattern: _resolveOne(f.pattern, [], ["match_pattern"]) as any,
+    value: _resolveOne(f.value, [], ["_expression","_expression_ending_with_block"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -1018,8 +1103,8 @@ export function matchArmFrom(input: MatchArmFromInput) {
 export function lastMatchArmFrom(input: LastMatchArmFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return lastMatchArm({
-    pattern: f.pattern,
-    value: f.value,
+    pattern: _resolveOne(f.pattern, [], ["match_pattern"]) as any,
+    value: _resolveOne(f.value, [], ["_expression"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -1027,7 +1112,7 @@ export function lastMatchArmFrom(input: LastMatchArmFromInput) {
 export function matchPatternFrom(input?: MatchPatternFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return matchPattern({
-    condition: f.condition,
+    condition: _resolveOne(f.condition, [], ["_condition"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -1035,9 +1120,9 @@ export function matchPatternFrom(input?: MatchPatternFromInput) {
 export function whileExpressionFrom(input: WhileExpressionFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return whileExpression({
-    label: f.label,
-    condition: f.condition,
-    body: f.body,
+    label: _resolveOne(f.label, [], []) as any,
+    condition: _resolveOne(f.condition, [], ["_condition"]) as any,
+    body: _resolveOne(f.body, [], ["block"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -1045,8 +1130,8 @@ export function whileExpressionFrom(input: WhileExpressionFromInput) {
 export function loopExpressionFrom(input: LoopExpressionFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return loopExpression({
-    label: f.label,
-    body: f.body,
+    label: _resolveOne(f.label, [], []) as any,
+    body: _resolveOne(f.body, [], ["block"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -1054,10 +1139,10 @@ export function loopExpressionFrom(input: LoopExpressionFromInput) {
 export function forExpressionFrom(input: ForExpressionFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return forExpression({
-    label: f.label,
-    pattern: f.pattern,
-    value: f.value,
-    body: f.body,
+    label: _resolveOne(f.label, [], []) as any,
+    pattern: _resolveOne(f.pattern, [], ["_pattern"]) as any,
+    value: _resolveOne(f.value, [], ["_expression"]) as any,
+    body: _resolveOne(f.body, [], ["block"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -1065,7 +1150,7 @@ export function forExpressionFrom(input: ForExpressionFromInput) {
 export function constBlockFrom(input: ConstBlockFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return constBlock({
-    body: f.body,
+    body: _resolveOne(f.body, [], ["block"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -1078,8 +1163,8 @@ export function closureExpressionBodyFrom(input?: any) {
   if (isNodeData(input)) return input;
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return closureExpressionBody({
-    returnType: f.return_type,
-    body: f.body,
+    returnType: _resolveOne(f.return_type, [], ["_type"]) as any,
+    body: _resolveOne(f.body, [], ["block"]) as any,
   });
 }
 
@@ -1087,7 +1172,7 @@ export function closureExpressionBody2From(input?: any) {
   if (isNodeData(input)) return input;
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return closureExpressionBody2({
-    body: f.body,
+    body: _resolveOne(f.body, [], ["_expression"]) as any,
   });
 }
 
@@ -1102,7 +1187,7 @@ export function closureParametersFrom(...input: any[]) {
 export function labelFrom(input: LabelFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return label({
-    identifier: typeof f.identifier === 'string' ? identifier(f.identifier) : f.identifier,
+    identifier: _resolveOne(f.identifier, ["identifier"], []) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -1110,8 +1195,8 @@ export function labelFrom(input: LabelFromInput) {
 export function breakExpressionFrom(input: BreakExpressionFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return breakExpression({
-    label: f.label,
-    expression: f.expression,
+    label: _resolveOne(f.label, [], ["label"]) as any,
+    expression: _resolveOne(f.expression, [], ["_expression"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -1119,7 +1204,7 @@ export function breakExpressionFrom(input: BreakExpressionFromInput) {
 export function continueExpressionFrom(input: ContinueExpressionFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return continueExpression({
-    label: f.label,
+    label: _resolveOne(f.label, [], ["label"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -1127,8 +1212,8 @@ export function continueExpressionFrom(input: ContinueExpressionFromInput) {
 export function indexExpressionFrom(input: IndexExpressionFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return indexExpression({
-    object: f.object,
-    index: f.index,
+    object: _resolveOne(f.object, [], ["_expression"]) as any,
+    index: _resolveOne(f.index, [], ["_expression"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -1144,8 +1229,8 @@ export function awaitExpressionFrom(...input: any[]) {
 export function fieldExpressionFrom(input: FieldExpressionFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return fieldExpression({
-    value: f.value,
-    field: f.field,
+    value: _resolveOne(f.value, [], ["_expression"]) as any,
+    field: _resolveOne(f.field, ["integer_literal"], ["_field_identifier"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -1153,7 +1238,7 @@ export function fieldExpressionFrom(input: FieldExpressionFromInput) {
 export function unsafeBlockFrom(input: UnsafeBlockFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return unsafeBlock({
-    block: f.block,
+    block: _resolveOne(f.block, [], ["block"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -1161,7 +1246,7 @@ export function unsafeBlockFrom(input: UnsafeBlockFromInput) {
 export function asyncBlockFrom(input: AsyncBlockFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return asyncBlock({
-    block: f.block,
+    block: _resolveOne(f.block, [], []) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -1169,7 +1254,7 @@ export function asyncBlockFrom(input: AsyncBlockFromInput) {
 export function genBlockFrom(input: GenBlockFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return genBlock({
-    block: f.block,
+    block: _resolveOne(f.block, [], []) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -1177,7 +1262,7 @@ export function genBlockFrom(input: GenBlockFromInput) {
 export function tryBlockFrom(input: TryBlockFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return tryBlock({
-    block: f.block,
+    block: _resolveOne(f.block, [], ["block"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -1185,7 +1270,7 @@ export function tryBlockFrom(input: TryBlockFromInput) {
 export function blockFrom(input: BlockFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return block({
-    label: f.label,
+    label: _resolveOne(f.label, [], []) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -1201,7 +1286,7 @@ export function hiddenPatternFrom(...input: any[]) {
 export function genericPatternFrom(input: GenericPatternFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return genericPattern({
-    typeArguments: f.type_arguments,
+    typeArguments: _resolveOne(f.type_arguments, [], ["type_arguments"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -1225,7 +1310,7 @@ export function slicePatternFrom(...input: any[]) {
 export function tupleStructPatternFrom(input: TupleStructPatternFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return tupleStructPattern({
-    type: f.type,
+    type: _resolveOne(f.type, ["identifier"], ["scoped_identifier","generic_type_with_turbofish"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -1233,7 +1318,7 @@ export function tupleStructPatternFrom(input: TupleStructPatternFromInput) {
 export function structPatternFrom(input: StructPatternFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return structPattern({
-    type: f.type,
+    type: _resolveOne(f.type, [], ["_type_identifier","scoped_type_identifier"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -1246,7 +1331,7 @@ export function fieldPatternNameFrom(input?: any) {
   if (isNodeData(input)) return input;
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return fieldPatternName({
-    name: typeof f.name === 'string' ? identifier(f.name) : f.name,
+    name: _resolveOne(f.name, ["identifier"], []) as any,
   });
 }
 
@@ -1254,16 +1339,16 @@ export function fieldPatternColonFrom(input?: any) {
   if (isNodeData(input)) return input;
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return fieldPatternColon({
-    name: f.name,
-    pattern: f.pattern,
+    name: _resolveOne(f.name, [], ["_field_identifier"]) as any,
+    pattern: _resolveOne(f.pattern, [], ["_pattern"]) as any,
   });
 }
 
 export function mutPatternFrom(input: MutPatternFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return mutPattern({
-    mutableSpecifier: f.mutable_specifier,
-    pattern: f.pattern,
+    mutableSpecifier: _resolveOne(f.mutable_specifier, ["mutable_specifier"], []) as any,
+    pattern: _resolveOne(f.pattern, [], ["_pattern"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -1276,8 +1361,8 @@ export function rangePatternLeftFrom(input?: any) {
   if (isNodeData(input)) return input;
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return rangePatternLeft({
-    left: f.left,
-    right: f.right,
+    left: _resolveOne(f.left, [], ["_literal_pattern","_path"]) as any,
+    right: _resolveOne(f.right, [], ["_literal_pattern","_path"]) as any,
   });
 }
 
@@ -1285,7 +1370,7 @@ export function rangePatternRightFrom(input?: any) {
   if (isNodeData(input)) return input;
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return rangePatternRight({
-    right: f.right,
+    right: _resolveOne(f.right, [], ["_literal_pattern","_path"]) as any,
   });
 }
 
@@ -1300,8 +1385,8 @@ export function refPatternFrom(...input: any[]) {
 export function capturedPatternFrom(input: CapturedPatternFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return capturedPattern({
-    identifier: typeof f.identifier === 'string' ? identifier(f.identifier) : f.identifier,
-    pattern: f.pattern,
+    identifier: _resolveOne(f.identifier, ["identifier"], []) as any,
+    pattern: _resolveOne(f.pattern, [], ["_pattern"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -1309,8 +1394,8 @@ export function capturedPatternFrom(input: CapturedPatternFromInput) {
 export function referencePatternFrom(input: ReferencePatternFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return referencePattern({
-    mutableSpecifier: f.mutable_specifier,
-    pattern: f.pattern,
+    mutableSpecifier: _resolveOne(f.mutable_specifier, ["mutable_specifier"], []) as any,
+    pattern: _resolveOne(f.pattern, [], ["_pattern"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -1326,7 +1411,7 @@ export function orPatternFrom(...input: any[]) {
 export function negativeLiteralFrom(input: NegativeLiteralFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return negativeLiteral({
-    value: f.value,
+    value: _resolveOne(f.value, ["integer_literal"], ["float_literal"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -1347,9 +1432,9 @@ export function stringLiteralFrom(...input: any[]) {
 export function rawStringLiteralFrom(input: RawStringLiteralFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return rawStringLiteral({
-    rawStringLiteralStart: f.raw_string_literal_start,
-    stringContent: f.string_content,
-    rawStringLiteralEnd: f.raw_string_literal_end,
+    rawStringLiteralStart: _resolveOne(f.raw_string_literal_start, [], ["_raw_string_literal_start"]) as any,
+    stringContent: _resolveOne(f.string_content, [], ["raw_string_literal_content"]) as any,
+    rawStringLiteralEnd: _resolveOne(f.raw_string_literal_end, [], ["_raw_string_literal_end"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -1380,7 +1465,7 @@ export function commentFrom(...input: any[]) {
 export function lineCommentFrom(input: LineCommentFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return lineComment({
-    doc: f.doc,
+    doc: _resolveOne(f.doc, [], ["_line_doc_content"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -1388,8 +1473,8 @@ export function lineCommentFrom(input: LineCommentFromInput) {
 export function hiddenLineDocCommentMarkerFrom(input: HiddenLineDocCommentMarkerFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return hiddenLineDocCommentMarker({
-    outer: f.outer,
-    inner: f.inner,
+    outer: _resolveOne(f.outer, [], []) as any,
+    inner: _resolveOne(f.inner, [], []) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -1397,7 +1482,7 @@ export function hiddenLineDocCommentMarkerFrom(input: HiddenLineDocCommentMarker
 export function blockCommentFrom(input?: BlockCommentFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return blockComment({
-    doc: f.doc,
+    doc: _resolveOne(f.doc, [], ["_block_comment_content"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
@@ -1405,8 +1490,8 @@ export function blockCommentFrom(input?: BlockCommentFromInput) {
 export function hiddenBlockDocCommentMarkerFrom(input: HiddenBlockDocCommentMarkerFromInput) {
   const f = ((input as any)?.fields ?? input ?? {}) as Record<string, any>;
   return hiddenBlockDocCommentMarker({
-    outer: f.outer,
-    inner: f.inner,
+    outer: _resolveOne(f.outer, [], ["_outer_block_doc_comment_marker"]) as any,
+    inner: _resolveOne(f.inner, [], ["_inner_block_doc_comment_marker"]) as any,
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }

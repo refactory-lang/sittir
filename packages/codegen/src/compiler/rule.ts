@@ -1246,30 +1246,56 @@ function emitStringLikeFrom(node: AssembledNodeBase): string {
  * (built once at the top of the from function as
  * `((input as any).fields ?? input)`). Per-field accesses become
  * `f.X` instead of repeating the dual-shape cast at every site.
+ *
+ * Emits a call to one of the loose-input resolver helpers (defined
+ * at the top of from.ts by `emitResolverHelpers`):
+ *
+ *   _resolveOne(f.field, [leafKinds], [branchKinds])     // single
+ *   _resolveMany(f.field, [leafKinds], [branchKinds])    // multiple
+ *
+ * The helpers handle: NodeData passthrough, primitive coercion via
+ * `_resolveScalar`, string→leaf via `_resolveLeafString`, kind-tagged
+ * objects via `_resolveByKind`, and single-branch passthrough.
  */
 function resolveFieldFromView(field: AssembledField, nodeMap: NodeMap): string {
     const prop = `f.${field.name}`
-    const allLeaves = field.contentTypes.every(t => {
+    const types = field.contentTypes
+
+    // Classify content types into leaves vs branches.
+    const leafKinds: string[] = []
+    const branchKinds: string[] = []
+    for (const t of types) {
         const n = nodeMap.nodes.get(t)
-        return n && (n.modelType === 'leaf' || n.modelType === 'keyword' || n.modelType === 'enum')
-    })
-    if (allLeaves && field.contentTypes.length === 1) {
-        const leafKind = field.contentTypes[0]!
-        const leafNode = nodeMap.nodes.get(leafKind)
-        if (leafNode?.modelType === 'keyword') {
-            if (field.multiple) return `(${prop} ?? [])`
-            return `${prop}`
+        if (!n) {
+            // Unknown kind — treat as branch so it goes through _resolveByKind
+            branchKinds.push(t)
+            continue
         }
-        const leafFactory = leafNode?.rawFactoryName ?? leafKind
-        if (field.multiple) {
-            return `(${prop} ?? []).map((v: any) => typeof v === 'string' ? ${leafFactory}(v) : v)`
+        switch (n.modelType) {
+            case 'leaf':
+            case 'enum':
+            case 'keyword':
+                leafKinds.push(t)
+                break
+            case 'token':
+                // Anonymous tokens have no factory binding — skip.
+                break
+            case 'supertype':
+            case 'branch':
+            case 'container':
+            case 'polymorph':
+            case 'group':
+                branchKinds.push(t)
+                break
         }
-        return `typeof ${prop} === 'string' ? ${leafFactory}(${prop}) : ${prop}`
     }
-    if (field.multiple) {
-        return `(${prop} ?? [])`
-    }
-    return `${prop}`
+
+    const leafArr = JSON.stringify(leafKinds)
+    const branchArr = JSON.stringify(branchKinds)
+    const helper = field.multiple ? '_resolveMany' : '_resolveOne'
+    // The helper returns `unknown` (single) or `unknown[]` (many);
+    // widen with `as any` so the factory's typed Config slot accepts it.
+    return `${helper}(${prop}, ${leafArr}, ${branchArr}) as any`
 }
 
 export class AssembledSupertype extends AssembledNodeBase {
