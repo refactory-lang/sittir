@@ -81,14 +81,58 @@ export type RoutingMap = ReadonlyMap<string, NodeRoutingMaps>;
 /** @deprecated Use RoutingMap instead */
 export type FieldPromotionMap = RoutingMap;
 
-function buildNodeRoutingMaps(nodeOverrides: NodeOverrides): NodeRoutingMaps {
+/**
+ * Expand a single type entry to the concrete kinds it represents at parse
+ * time. If `type` is a supertype (declared in node-types.json with a
+ * `subtypes` list), the expansion returns every concrete subtype. Plain
+ * kinds return themselves.
+ */
+function expandTypes(
+	types: readonly { type: string; named: boolean }[],
+	supertypes: ReadonlyMap<string, readonly string[]> | undefined,
+): { type: string; named: boolean }[] {
+	if (!supertypes) return [...types];
+	const out: { type: string; named: boolean }[] = [];
+	const seen = new Set<string>();
+	const queue = [...types];
+	while (queue.length > 0) {
+		const entry = queue.shift()!;
+		if (seen.has(entry.type)) continue;
+		seen.add(entry.type);
+		const subs = supertypes.get(entry.type);
+		if (subs && subs.length > 0) {
+			for (const s of subs) {
+				if (!seen.has(s)) queue.push({ type: s, named: true });
+			}
+		} else {
+			out.push(entry);
+		}
+	}
+	return out;
+}
+
+function buildNodeRoutingMaps(
+	nodeOverrides: NodeOverrides,
+	supertypes: ReadonlyMap<string, readonly string[]> | undefined,
+): NodeRoutingMaps {
 	const unambiguous = new Map<string, FieldPromotion>();
 	const ambiguousKinds = new Set<string>();
 	const ambiguousSlots: [string, OverrideFieldSpec][] = [];
 
+	// Expand supertypes in each field spec so routing uses concrete parse-tree
+	// kinds (e.g. `binary_operator`, `call`) rather than abstract names
+	// (`_expression`). An override field declared as "value: _expression"
+	// matches every concrete expression kind at runtime.
+	const expandedFields: Array<[string, OverrideFieldSpec]> = Object.entries(
+		nodeOverrides.fields,
+	).map(([name, spec]) => [
+		name,
+		{ ...spec, types: expandTypes(spec.types, supertypes) },
+	]);
+
 	// First pass: detect which kinds appear in multiple slots
 	const kindToSlots = new Map<string, string[]>();
-	for (const [fieldName, spec] of Object.entries(nodeOverrides.fields)) {
+	for (const [fieldName, spec] of expandedFields) {
 		for (const t of spec.types) {
 			const existing = kindToSlots.get(t.type) ?? [];
 			existing.push(fieldName);
@@ -101,7 +145,7 @@ function buildNodeRoutingMaps(nodeOverrides: NodeOverrides): NodeRoutingMaps {
 	}
 
 	// Second pass: build maps
-	for (const [fieldName, spec] of Object.entries(nodeOverrides.fields)) {
+	for (const [fieldName, spec] of expandedFields) {
 		const hasAmbiguous = spec.types.some(t => ambiguousKinds.has(t.type));
 		if (hasAmbiguous) {
 			ambiguousSlots.push([fieldName, spec]);
@@ -117,14 +161,22 @@ function buildNodeRoutingMaps(nodeOverrides: NodeOverrides): NodeRoutingMaps {
 }
 
 /**
- * Build a RoutingMap from an OverridesConfig.
+ * Build a RoutingMap from an OverridesConfig. Optionally accepts a
+ * supertype expansion map ({ '_expression': ['binary_operator', ...], … })
+ * so override field type declarations like `types: [{type: '_expression'}]`
+ * route every concrete subtype at parse time, not just a non-existent
+ * `_expression` token.
+ *
  * Call once at startup; pass the result to readNode.
  */
-export function buildRoutingMap(overrides: OverridesConfig): RoutingMap {
+export function buildRoutingMap(
+	overrides: OverridesConfig,
+	supertypes?: ReadonlyMap<string, readonly string[]>,
+): RoutingMap {
 	const map = new Map<string, NodeRoutingMaps>();
 	for (const [nodeKind, nodeSpec] of Object.entries(overrides)) {
 		if (Object.keys(nodeSpec.fields).length > 0) {
-			map.set(nodeKind, buildNodeRoutingMaps(nodeSpec));
+			map.set(nodeKind, buildNodeRoutingMaps(nodeSpec, supertypes));
 		}
 	}
 	return map;

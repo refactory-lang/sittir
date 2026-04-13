@@ -34,21 +34,21 @@ import { validateRenderable } from '../validate-renderable.ts'
  */
 const FLOORS = {
     python: {
-        factoryPass: 90,
+        factoryPass: 91,
         factoryTotal: 100,
-        fromPass: 103,
+        fromPass: 109,
         fromTotal: 114,
     },
     rust: {
-        factoryPass: 109,
+        factoryPass: 113,
         factoryTotal: 135,
-        fromPass: 138,
+        fromPass: 139,
         fromTotal: 149,
     },
     typescript: {
-        factoryPass: 113,
+        factoryPass: 116,
         factoryTotal: 126,
-        fromPass: 115,
+        fromPass: 127,
         fromTotal: 142,
     },
 } as const

@@ -186,6 +186,18 @@ function buildKindToSupertypes(rawEntries: { type: string; named: boolean; subty
 	return result;
 }
 
+/** Build supertype → subtype[] map from node-types.json. Used by
+ *  buildRoutingMap so override field type specs written against a
+ *  supertype (e.g. `_expression`) route every concrete subtype. */
+function buildSupertypeExpansion(rawEntries: { type: string; named: boolean; subtypes?: { type: string }[] }[]): Map<string, string[]> {
+	const result = new Map<string, string[]>();
+	for (const entry of rawEntries) {
+		if (!entry.subtypes || entry.subtypes.length === 0) continue;
+		result.set(entry.type, entry.subtypes.map(s => s.type));
+	}
+	return result;
+}
+
 /** Per-grammar wrapper functions: supertype → wrapping context. */
 const REPARSE_WRAPPERS: Record<string, Record<string, (r: string) => string>> = {
 	rust: {
@@ -265,10 +277,12 @@ export async function validateFactoryRoundTrip(
 
 	const config = parseYaml(templatesYaml) as RulesConfig;
 	const overrides = loadOverrides(grammar);
-	const routing = buildRoutingMap(overrides);
+	const rawEntries = loadRawEntries(grammar);
+	const supertypeExpansion = buildSupertypeExpansion(rawEntries);
+	const routing = buildRoutingMap(overrides, supertypeExpansion);
 	const ruleKinds = new Set(Object.keys(config.rules));
 	const { render } = createRenderer(config);
-	const kindToSupertypes = buildKindToSupertypes(loadRawEntries(grammar));
+	const kindToSupertypes = buildKindToSupertypes(rawEntries);
 
 	// Dynamically import the generated _factoryMap for this grammar
 	const factoryModulePath = FACTORY_MODULE_PATHS[grammar];

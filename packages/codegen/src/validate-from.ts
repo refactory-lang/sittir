@@ -14,6 +14,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { parse as parseYaml } from 'yaml';
 import { readNode, buildRoutingMap } from '@sittir/core';
+import { loadRawEntries } from './grammar-reader.ts';
 import type { AnyNodeData, AnyTreeNode, RulesConfig } from '@sittir/types';
 import { loadOverrides } from './overrides.ts';
 
@@ -223,7 +224,16 @@ export async function validateFrom(
 
 	const config = parseYaml(templatesYaml) as RulesConfig;
 	const overrides = loadOverrides(grammar);
-	const routing = buildRoutingMap(overrides);
+	// Expand override field supertype specs (e.g. `_expression`) to the
+	// concrete subtype list from node-types.json so routing matches the
+	// kinds that actually show up at parse time.
+	const supertypeExpansion = new Map<string, string[]>();
+	for (const entry of loadRawEntries(grammar)) {
+		if (entry.subtypes && entry.subtypes.length > 0) {
+			supertypeExpansion.set(entry.type, entry.subtypes.map(s => s.type));
+		}
+	}
+	const routing = buildRoutingMap(overrides, supertypeExpansion);
 
 	// Import from() and factory maps
 	let fromMap: Record<string, (input: object) => unknown> = {};
