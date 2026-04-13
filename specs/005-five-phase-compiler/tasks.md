@@ -385,11 +385,9 @@ rather than recomputing via free functions.
   from emitters. `(config as any)?.${propertyName}` can become typed
   access now that `ConfigOf<T>` is fully defined. Fluent getters/
   setters should return concrete field types.
-- [ ] **C19** Full type-check across all generated packages. Tracked
-  under **T052**. Residual errors: stale supertype Tree names, missing
-  leaf interfaces for external tokens, kinds referenced in field type
-  unions without emitted interfaces. Needs completion of `types-v2`
-  stub interface emission.
+- [x] **C19** Full type-check across all generated packages — done as
+  part of **T052**. All three generated packages type-clean via
+  `tsgo --noEmit`. Commit `a77f94b`.
 
 ### Apples-to-apples v1-vs-v2 comparison (recorded 2026-04-12)
 
