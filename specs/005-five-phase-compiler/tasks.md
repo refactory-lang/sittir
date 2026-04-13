@@ -57,7 +57,7 @@
 - [x] T017 Implement field annotation with provenance (`source`, `nameFrom`) and clause detection (`detectClause`) in `packages/codegen/src/compiler/link.ts`
 - [x] T018 Implement reference graph enrichment: `enrichPositions` (walk SEQ to assign position), `computeParentSets` in `packages/codegen/src/compiler/link.ts`
 - [x] T019 Implement core derivations (active): inline confidence, supertype candidate detection, dead rule detection, cycle detection in `packages/codegen/src/compiler/link.ts`
-- [~] T020 Partial — three derivations live in `link.ts:deriveSuggestedOverrides` (commit `6b1b66e`):
+- [~] T020 Partial — field-name-inference, terminal promotion, polymorph promotion, enum/supertype promotion live in `link.ts`. Inference rewrites the rule tree with `source: 'inferred'`; rule-level classifications are tagged `source: 'promoted'`. Every derivation is recorded in `DerivationLog` and gated by `IncludeFilter` (T025). Still missing: synthetic-supertype-detection, override-inference / candidate-quality, separator-consistency. See below for the original three-derivation prototype:
   - **field-name-inference** (≥5 named refs, ≥80% agreement → suggest)
   - **global-optionality** (≥3 refs, every ref optional → flag)
   - **naming-consistency** (≥2 distinct field names → diagnostic)
@@ -151,7 +151,7 @@ Each emitter's entry point changes from `emitX(config: { grammar, nodes: Hydrate
 - [x] T042c [P] Rewrite `emitters/test-new.ts`: entry `emitTests(nodeMap: NodeMap) → string`. Per-kind test generation using `AssembledNode.modelType`. Remove imports from `node-model.ts` and `naming.ts`.
 - [x] T042d [P] Rewrite `emitters/type-test.ts`: entry `emitTypeTests(nodeMap: NodeMap) → string`. Type assertion tests. Remove imports from `node-model.ts` and `naming.ts`.
 - [x] T042e [P] `emitters/config.ts` — already NodeMap-compatible (takes only `{ grammar }`, never imported from `node-model.ts`). No rewrite needed.
-- [ ] T042f Create `emitters/suggested.ts`: entry `emitSuggestedOverrides(linked: LinkedGrammar) → string`. Emit `overrides.suggested.ts` as a grammar extension from `linked.suggestedOverrides`. Each entry includes derivation source and confidence in comments.
+- [x] T042f `emitters/suggested-v2.ts` — emits `overrides.suggested.ts` per grammar from `NodeMap.derivations`. Documentation file (not runnable): rule-promotion summary grouped by classification, field-name-inference grouped by target symbol with copy-paste `transform(original, { N: field('...') })` snippets per affected parent. Each entry tagged `[applied]` / `[held]` based on `IncludeFilter`. Wired into `generateV2()` and written to `packages/<grammar>/overrides.suggested.ts` by `cli.ts`. Commit `2fbcf7f`.
 
 ### Phase 2g-verify: Emitter NodeMap-only enforcement
 
