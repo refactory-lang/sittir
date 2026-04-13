@@ -907,19 +907,29 @@ function emitFieldCarryingFactory(
     if (hasChildren) lines.push('    children,')
 
     // Fluent field getters/setters. Param name must not shadow the
-    // outer factory function — suffix when needed.
+    // outer factory function — suffix when needed. The setter path
+    // uses `ConfigOf<T>['field']` for the parameter type so callers
+    // get proper IntelliSense on replacement values, and spreads
+    // `config ?? {}` so the rebuild works regardless of whether the
+    // outer `config` is typed optional.
     for (const f of fields) {
         const method = f.propertyName === 'type' ? 'typeField' : f.propertyName
         let param = f.paramName
         if (param === fn || param === method) param = `${param}_`
+        const paramType = `ConfigOf<${node.typeName}>['${f.propertyName}']`
         if (f.multiple) {
-            lines.push(`    ${method}(...${param}: any[]) { return ${param}.length ? ${fn}({ ...(config as any), ${f.propertyName}: ${param} } as any) : fields.${f.name}; },`)
+            lines.push(`    ${method}(...${param}: NonNullable<${paramType}>) { return ${param}.length ? ${fn}({ ...(config ?? {} as ConfigOf<${node.typeName}>), ${f.propertyName}: ${param} }) : fields.${f.name}; },`)
         } else {
-            lines.push(`    ${method}(${param}?: any) { return ${param} !== undefined ? ${fn}({ ...(config as any), ${f.propertyName}: ${param} } as any) : fields.${f.name}; },`)
+            lines.push(`    ${method}(${param}?: ${paramType}) { return ${param} !== undefined ? ${fn}({ ...(config ?? {} as ConfigOf<${node.typeName}>), ${f.propertyName}: ${param} }) : fields.${f.name}; },`)
         }
     }
 
     if (hasChildren) {
+        // Rest-parameter type stays `any[]` because `ConfigOf<T>['children']`
+        // can be a single-element type rather than an array, and some
+        // polymorph-form interfaces drop the `children` slot entirely
+        // even when the structural rule has one. Keep the full-object
+        // cast on the recursive call so setChildren always typechecks.
         lines.push('    getChildren() { return children; },')
         lines.push(`    setChildren(...items: any[]) { return ${fn}({ ...(config as any), children: items } as any); },`)
     }

@@ -113,7 +113,7 @@ export function createProxy(currentRule: string, refs: SymbolRef[]): Record<stri
             return {
                 type: 'symbol' as const,
                 name,
-                hidden: name.startsWith('_'),
+                hidden: name.startsWith('_'), //TODO: better hidden convention
                 _ref: ref,
             }
         },

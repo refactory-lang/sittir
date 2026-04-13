@@ -502,6 +502,118 @@ files. Counts below are **after** the enum `factoryName` fix in
 
 ---
 
+## Phase 11: Optimize substance + emitter follow-ups
+
+Surfaced by the T022 classification move — Optimize is now a
+near-passthrough (just threads the DerivationLog) because variant
+tagging and polymorph promotion live in Link. The fan-out / factoring
+helpers are exported but never called. These tasks give Optimize
+actual work and clean up the emitter TODOs surfaced while reviewing
+the generated `factories.ts` output.
+
+### Optimize passes (T060-series)
+
+- [ ] **T060** Implement CHOICE fan-out pass. `fanOutChoices(rule)` is
+  exported from `optimize.ts` but never called. Convert
+  `seq(a, choice(b, c), d)` into `choice(seq(a, b, d), seq(a, c, d))`
+  so downstream classification sees fully-expanded choices. Wire as
+  the first pass in `optimize()`. Consider interaction with Link's
+  existing `tagVariants` / `promotePolymorph`: run fan-out first so
+  Link only sees top-level choices.
+
+- [ ] **T061** Implement seq prefix/suffix factoring. `factorSeqChoice`
+  is exported but never called. Detect
+  `choice(seq(a, b, x), seq(a, b, y), seq(a, b, z))` and rewrite to
+  `seq(a, b, choice(x, y, z))`. Non-lossy — use `findCommonPrefix` /
+  `findCommonSuffix` helpers that already exist. Shrinks variant forms
+  when many branches share a common prefix (the parenthesized-
+  expression pattern in every language).
+
+- [ ] **T062** Collapse chained wrappers. Noop simplifications that
+  make the rule tree less deep: `optional(optional(x))` → `optional(x)`,
+  `repeat(repeat(x))` → `repeat(x)`, `optional(repeat(x))` →
+  `repeat(x)` (repeat already matches zero occurrences),
+  `seq(x)` → `x` (single-member seq). Non-lossy. Makes downstream
+  walks cheaper and readable rule dumps shorter.
+
+- [ ] **T063** Inline single-use hidden seq rules. Per the spec's
+  inline-confidence derivation: hidden rules referenced from exactly
+  one parent should be inlined into that parent, and the inlined
+  fields should carry `source: 'inlined'`. Today no inlining happens
+  — Link classifies hidden seqs as `group` kinds that stay visible
+  in the NodeMap. Adding inlining in Optimize:
+  1. Gives the `inlined` field-source tag a trigger site (pairs with
+     T024's `inferred` tag — both surface via suggested.ts).
+  2. Pulls single-use hidden helpers (`_call_signature` etc.) into
+     their consumer so emitters see a flat field list.
+  Gated by `IncludeFilter.fields` — held back when excluded.
+
+- [ ] **T064** Dedupe structurally identical seq members. Adjacent
+  duplicates like `seq(x, x)` → `seq(x)` are almost always a grammar
+  bug. Use `rulesEqual` (already exported). Emit a warning when
+  a dedupe fires. Non-lossy for terminals; for symbols, gate behind
+  an "obvious copy-paste" heuristic to avoid changing parser semantics.
+
+### Assemble classifier (T065)
+
+- [ ] **T065** Add a shape-inspection fallback to `classifyNode`.
+  Today the classifier assumes Link has wrapped rules in
+  `TerminalRule` / `PolymorphRule` where appropriate — throws when
+  those wrappers are absent (as happens with
+  `IncludeFilter.rules = []` strict mode). A fallback that inspects
+  the rule's own tree (all text + no refs → leaf; choice of seqs
+  with heterogeneous fields → polymorph; etc.) unlocks the strict-
+  rules debug path. Not required for correctness but removes a
+  sharp edge.
+
+### Factory emitter follow-ups (T066-T068)
+
+Surfaced by TODOs in `packages/rust/src/factories copy.ts` (the
+scratch file you annotated to track regressions).
+
+- [ ] **T066** Remove remaining `(config as any)` casts. C18 dropped
+  ~968 of them; after the setter-spread narrowing landed in this
+  session they're down another ~1300 across the three grammars.
+  Still outstanding: the `children` slot read
+  (`const children = (config as any)?.children ?? []` — requires
+  `ConfigOf<T>['children']` narrowing for branches with a children
+  slot), polymorph dispatcher fallback (`config as any` when calling
+  form factories — narrow via discriminated check), and the
+  `setChildren` rest-parameter type (still `any[]` because
+  `ConfigOf<T>['children']` isn't always an array).
+
+- [ ] **T067** Runtime terminal verification in leaf / keyword / enum
+  factories. Per the scratch-file TODO: "all terminals need to be
+  verified at run". Tier the enforcement:
+  - **keyword** (baked text): already enforced, no arg
+  - **enum** (closed set): type-level string-literal union already
+    enforces at compile time
+  - **leaf with pattern**: runtime validate the string against the
+    regex, throw a descriptive error on mismatch
+  - **leaf with no constraint**: accept any string
+
+  Gate behind a codegen option `strict: boolean` so hot-path callers
+  don't pay the regex cost unconditionally.
+
+- [ ] **T068** Factory return types. Fluent getter/setter methods
+  currently return `any`. Narrow them to the concrete field type via
+  `ConfigOf<T>['field']` (same mechanism the setter-spread narrowing
+  uses for parameters). IDE completions and type-checked chains
+  (`ir.foo(...).bar(...).baz(...)`) would become usable.
+
+### Evaluate follow-up (T069)
+
+- [ ] **T069** Better hidden-convention handling in `createProxy`.
+  Current rule: `name.startsWith('_')` → hidden. Noted as a TODO in
+  `evaluate.ts:116`. Consider: (a) an explicit `hidden: true` flag
+  on the symbol ref when tree-sitter's own `inline` list references
+  the kind; (b) a configurable naming convention (not every grammar
+  uses leading underscore); (c) consulting the raw grammar's
+  `inline: []` array at evaluate time. Low urgency — the current
+  convention works for all three shipped grammars.
+
+---
+
 ## Dependencies & Execution Order
 
 ### Phase Dependencies
