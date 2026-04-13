@@ -125,12 +125,15 @@ files. Counts below are **after** the enum-factoryName fix in
 - `index.ts` — identical for all three grammars
 
 **v2 strictly leaner (v2 smaller, same or more coverage):**
-- `from.ts` — v1 4528/4738/2926 lines → v2 1555/1877/1203 (v2
-  inlines resolution, v1 had per-grammar stamped helpers)
 - `factories.ts` — v1 slightly larger due to trailing-underscore
   naming convention (`abstract_type_(…)` vs `abstractType(…)`).
   Same semantic coverage after the enum fix.
 - `utils.ts` — v1 78 → v2 50 (shared helper consolidation)
+
+**v2 leaner-but-less-capable (real capability regression):**
+- `from.ts` — v1 4528/4738/2926 lines → v2 1555/1877/1203. v2's
+  size drop is **not** purely dedup: v2 is missing substantial
+  resolver logic that v1 had. See "from.ts resolver gap" below.
 
 **v2 strictly broader (more coverage, more emitted types):**
 - `types.ts` — v2 +145 rust / +179 ts / +97 python interfaces. v2
@@ -176,15 +179,80 @@ files. Counts below are **after** the enum-factoryName fix in
    for all of python. This is a v1 regex/detection bug, not a v2
    gap — noted here for the record.
 
-**Conclusion for C6.** v2 can replace v1 as the canonical generator
-for every file. The integration test's `RT_CEILINGS` table is the
-only thing still semantically tied to v1 (ceilings were calibrated
-against v1-generated templates on disk), and the authoritative guard
-is already `corpus-validation.test.ts`. C6 is **unblocked**: delete
-`generate()`, migrate `validate-all.test.ts` to `generateV2`, and
-drop `RT_CEILINGS` once the suite runs clean against v2 output.
-After that, C4 (delete v1 source files) and C16 (delete ceilings
-file) can follow in sequence.
+4. **from.ts resolver gap (needs implementation).** v1 emits 258
+   private `_resolve*` / `_r*` helpers (per unique field content-
+   type signature) plus a `_leafRegistry`, `_resolveByKind`,
+   `_resolveScalar`, and `_resolveLeafString` dispatch table. v2
+   emits **zero** private resolvers — `resolveField()` in
+   `rule.ts` inlines a minimal passthrough. Consequences:
+
+   | Capability | v1 | v2 |
+   |---|---|---|
+   | Loose string → leaf wrap (single content type) | ✓ | ✓ |
+   | Loose string → leaf wrap (pick leaf by value/regex) | ✓ | ✗ |
+   | Array field → map each loose element through resolver | ✓ | ✗ (raw passthrough) |
+   | Supertype field → dispatch nested loose input by kind | ✓ (`_resolveByKind`) | ✗ |
+   | Branch inference (object without kind) | ✓ (errors helpfully when ambiguous) | ✗ (silent passthrough) |
+   | JS primitives → leaf (`true` → `boolean_literal`, `42` → `integer_literal`) | ✓ (`_resolveScalar`) | ✗ |
+   | Variadic children via `...args` (containers) | ✓ (array unwrap) | partial (only when single NodeData arg) |
+
+   Example — v1 `blockFrom`:
+   ```ts
+   return block_({
+     label: _r1akhrs2(obj.label),
+     children: obj.children !== undefined
+       ? (Array.isArray(obj.children) ? obj.children : [obj.children])
+           .map(_resolveStatement2)
+       : undefined,
+   });
+   ```
+   v2 `blockFrom`:
+   ```ts
+   return block({
+     label: ((input as any)?.label ?? (input as any)?.fields?.label),
+     children: ((input as any)?.children ?? []) as any,
+   } as any);
+   ```
+   v2 silently passes unresolved loose values through — callers
+   get a `NodeData` with the wrong field shape instead of a
+   properly-constructed AST.
+
+   This is a real capability regression that the corpus validators
+   don't catch because they feed fully-materialized `NodeData` in
+   both directions. The from() contract from the v1 era (accept
+   loose strings/objects/arrays and coerce) is unfulfilled in v2.
+
+   **Scope of fix:** give `AssembledNode.emitFromFunction` the
+   ability to emit (or reference) per-content-signature resolvers.
+   T042i in `tasks.md` already tracks the dedup side of this —
+   but the feature side (supertype dispatch, array mapping,
+   primitive coercion) is the prerequisite. Proposed work order:
+   (a) add `_fromMap` runtime dispatch wiring (already done),
+   (b) emit `_resolveByKind(kind, rest) → _fromMap[kind](rest)`
+   helper, (c) teach `resolveField` to emit array map calls for
+   `multiple` branch fields, (d) emit per-signature resolver
+   helpers deduped by content-type signature (T042i), (e) teach
+   polymorph `from` to call `_resolveScalar` before falling back.
+
+**Conclusion for C6 (revised).** v2 can replace v1 for every
+emitter *except `from.ts`*. The from() resolver gap (finding 4
+above) is a real capability regression, not a stylistic drift.
+Before C6 can land:
+
+1. Land the from.ts resolver work (sketch in finding 4) so that
+   v2's `from.ts` at least matches v1's loose-input contract —
+   leaf-by-value/pattern, array mapping, supertype `kind`
+   dispatch, and primitive scalar coercion.
+2. Run the comparison script again to confirm v2's from.ts is
+   now behavior-compatible with v1's. The line count will grow
+   substantially (dedup will keep it below v1's total, but not
+   by much).
+3. Migrate `validate-all.test.ts` to `generateV2`, drop
+   `RT_CEILINGS`, delete v1 `generate()`, then C4 and C16.
+
+Until then: v2 remains the canonical generator on disk and in
+`corpus-validation.test.ts`, but v1's `generate()` must stay for
+anyone relying on the richer from() surface.
 
 ---
 
