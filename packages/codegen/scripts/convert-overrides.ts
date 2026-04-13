@@ -1,16 +1,22 @@
 /**
  * convert-overrides.ts — one-shot script to convert overrides.json → overrides.ts
  *
- * Usage: npx tsx packages/codegen/src/compiler/convert-overrides.ts <grammar-name> <grammar-js-path>
+ * Usage: npx tsx packages/codegen/scripts/convert-overrides.ts <grammar-name> <grammar-js-path>
  *
  * Reads packages/<grammar>/overrides.json, produces packages/<grammar>/overrides.ts
  * as a grammar extension with transform() calls.
+ *
+ * Historical: this was used once to migrate the v1 overrides.json seed
+ * files (with tree-sitter structural field positions) into hand-curated
+ * overrides.ts grammar extensions (with raw positions). It is preserved
+ * here for reference — the overrides.ts files are now hand-edited and
+ * this script should not need to run again.
  */
 
 import { readFileSync, writeFileSync } from 'node:fs'
 import { resolve, relative } from 'node:path'
-import { evaluate } from './evaluate.ts'
-import type { Rule } from './rule.ts'
+import { evaluate } from '../src/compiler/evaluate.ts'
+import type { Rule } from '../src/compiler/rule.ts'
 
 interface OverrideField {
     types: { type: string; named: boolean }[]
