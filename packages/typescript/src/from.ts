@@ -23,13 +23,10 @@ export function hashBangLineFrom(input: string | HashBangLine) {
   return hashBangLine(input as string);
 }
 
-
-
-
-
 export function exportStatementFrom(input?: ExportStatementFromInput) {
   return exportStatement(input as any);
 }
+
 export function exportStatementForm0From(input?: any) {
   if (isNodeData(input)) return input;
   return exportStatementForm0({
@@ -38,14 +35,17 @@ export function exportStatementForm0From(input?: any) {
     value: ((input as any)?.value ?? (input as any)?.fields?.value),
   });
 }
+
 export function exportStatementExportFrom(input?: any) {
   if (isNodeData(input)) return input;
   return exportStatementExport(input);
 }
+
 export function exportStatementExport2From(input?: any) {
   if (isNodeData(input)) return input;
   return exportStatementExport2(input);
 }
+
 export function exportStatementExport3From(input?: any) {
   if (isNodeData(input)) return input;
   return exportStatementExport3(input);
@@ -121,17 +121,17 @@ export function namedImportsFrom(...input: any[]) {
   return namedImports(...(input as any[]));
 }
 
-
-
 export function importSpecifierFrom(input?: ImportSpecifierFromInput) {
   return importSpecifier(input as any);
 }
+
 export function importSpecifierNameFrom(input?: any) {
   if (isNodeData(input)) return input;
   return importSpecifierName({
     name: ((input as any)?.name ?? (input as any)?.fields?.name),
   });
 }
+
 export function importSpecifierAsFrom(input?: any) {
   if (isNodeData(input)) return input;
   return importSpecifierAs({
@@ -355,17 +355,17 @@ export function finallyClauseFrom(input: FinallyClauseFromInput) {
   } as any);
 }
 
-
-
 export function parenthesizedExpressionFrom(input?: ParenthesizedExpressionFromInput) {
   return parenthesizedExpression(input as any);
 }
+
 export function parenthesizedExpressionExpressionFrom(input?: any) {
   if (isNodeData(input)) return input;
   return parenthesizedExpressionExpression({
     type: ((input as any)?.type ?? (input as any)?.fields?.type),
   });
 }
+
 export function parenthesizedExpressionSequenceExpressionFrom(input?: any) {
   if (isNodeData(input)) return input;
   return parenthesizedExpressionSequenceExpression(input);
@@ -594,28 +594,26 @@ export function generatorFunctionDeclarationFrom(input: GeneratorFunctionDeclara
   } as any);
 }
 
-
-
 export function arrowFunctionFrom(input?: ArrowFunctionFromInput) {
   return arrowFunction(input as any);
 }
+
 export function arrowFunctionParameterFrom(input?: any) {
   if (isNodeData(input)) return input;
   return arrowFunctionParameter({
     parameter: ((input as any)?.parameter ?? (input as any)?.fields?.parameter),
   });
 }
+
 export function arrowFunctionUCallSignatureFrom(input?: any) {
   if (isNodeData(input)) return input;
   return arrowFunctionUCallSignature(input);
 }
 
-
-
-
 export function callExpressionFrom(input?: CallExpressionFromInput) {
   return callExpression(input as any);
 }
+
 export function callExpressionFunctionFrom(input?: any) {
   if (isNodeData(input)) return input;
   return callExpressionFunction({
@@ -624,6 +622,7 @@ export function callExpressionFunctionFrom(input?: any) {
     arguments: ((input as any)?.arguments ?? (input as any)?.fields?.arguments),
   });
 }
+
 export function callExpressionFunction2From(input?: any) {
   if (isNodeData(input)) return input;
   return callExpressionFunction2({
@@ -631,6 +630,7 @@ export function callExpressionFunction2From(input?: any) {
     arguments: ((input as any)?.arguments ?? (input as any)?.fields?.arguments),
   });
 }
+
 export function callExpressionTokQDotFrom(input?: any) {
   if (isNodeData(input)) return input;
   return callExpressionTokQDot({
@@ -1544,11 +1544,10 @@ export function constructSignatureFrom(input: ConstructSignatureFromInput) {
   } as any);
 }
 
-
-
 export function indexSignatureFrom(input?: IndexSignatureFromInput) {
   return indexSignature(input as any);
 }
+
 export function indexSignatureColonFrom(input?: any) {
   if (isNodeData(input)) return input;
   return indexSignatureColon({
@@ -1556,6 +1555,7 @@ export function indexSignatureColonFrom(input?: any) {
     indexType: ((input as any)?.index_type ?? (input as any)?.fields?.index_type),
   });
 }
+
 export function indexSignatureMappedTypeClauseFrom(input?: any) {
   if (isNodeData(input)) return input;
   return indexSignatureMappedTypeClause(input);

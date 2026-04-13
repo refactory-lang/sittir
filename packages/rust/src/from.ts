@@ -987,11 +987,10 @@ export function constBlockFrom(input: ConstBlockFromInput) {
   } as any);
 }
 
-
-
 export function closureExpressionFrom(input?: ClosureExpressionFromInput) {
   return closureExpression(input as any);
 }
+
 export function closureExpressionBodyFrom(input?: any) {
   if (isNodeData(input)) return input;
   return closureExpressionBody({
@@ -999,6 +998,7 @@ export function closureExpressionBodyFrom(input?: any) {
     body: ((input as any)?.body ?? (input as any)?.fields?.body),
   });
 }
+
 export function closureExpressionBody2From(input?: any) {
   if (isNodeData(input)) return input;
   return closureExpressionBody2({
@@ -1140,17 +1140,17 @@ export function structPatternFrom(input: StructPatternFromInput) {
   } as any);
 }
 
-
-
 export function fieldPatternFrom(input?: FieldPatternFromInput) {
   return fieldPattern(input as any);
 }
+
 export function fieldPatternNameFrom(input?: any) {
   if (isNodeData(input)) return input;
   return fieldPatternName({
     name: typeof ((input as any)?.name ?? (input as any)?.fields?.name) === 'string' ? identifier(((input as any)?.name ?? (input as any)?.fields?.name)) : ((input as any)?.name ?? (input as any)?.fields?.name),
   });
 }
+
 export function fieldPatternColonFrom(input?: any) {
   if (isNodeData(input)) return input;
   return fieldPatternColon({
@@ -1167,11 +1167,10 @@ export function mutPatternFrom(input: MutPatternFromInput) {
   } as any);
 }
 
-
-
 export function rangePatternFrom(input?: RangePatternFromInput) {
   return rangePattern(input as any);
 }
+
 export function rangePatternLeftFrom(input?: any) {
   if (isNodeData(input)) return input;
   return rangePatternLeft({
@@ -1179,6 +1178,7 @@ export function rangePatternLeftFrom(input?: any) {
     right: ((input as any)?.right ?? (input as any)?.fields?.right),
   });
 }
+
 export function rangePatternRightFrom(input?: any) {
   if (isNodeData(input)) return input;
   return rangePatternRight({

@@ -601,6 +601,17 @@ export abstract class AssembledNodeBase {
     emitFactory(): string | undefined {
         return undefined
     }
+
+    /**
+     * Emit the `from()` resolver export for this node. Takes the full
+     * NodeMap because branch/form resolvers need to look up field-
+     * content types (leaves vs branches) to decide whether a string
+     * input should be wrapped in a leaf factory call. Returns
+     * `undefined` for nodes that don't produce a from() binding.
+     */
+    emitFromFunction(_nodeMap: NodeMap): string | undefined {
+        return undefined
+    }
 }
 
 /** Escape a string literal value for embedding in single-quoted TS source. */
@@ -693,6 +704,28 @@ export class AssembledBranch extends AssembledNodeBase {
     emitFactory(): string | undefined {
         if (!this.rawFactoryName) return undefined
         return emitFieldCarryingFactory(this, this.fields)
+    }
+
+    emitFromFunction(nodeMap: NodeMap): string | undefined {
+        if (!this.rawFactoryName) return undefined
+        const fn = this.fromFunctionName!
+        const factory = this.rawFactoryName
+        const fields = this.fields
+        const opt = fields.some(f => f.required) ? '' : '?'
+        const lines: string[] = []
+        lines.push(`export function ${fn}(input${opt}: ${this.fromInputTypeName}) {`)
+        if (fields.length > 0) {
+            lines.push(`  return ${factory}({`)
+            for (const f of fields) {
+                lines.push(`    ${f.propertyName}: ${resolveField(f, nodeMap)},`)
+            }
+            lines.push(`    children: ((input as any)?.children ?? []) as any,`)
+            lines.push('  } as any);')
+        } else {
+            lines.push(`  return ${factory}(input as any);`)
+        }
+        lines.push('}')
+        return lines.join('\n')
     }
 }
 
@@ -810,6 +843,21 @@ export class AssembledContainer extends AssembledNodeBase {
         lines.push('}')
         return lines.join('\n')
     }
+
+    emitFromFunction(_nodeMap: NodeMap): string | undefined {
+        if (!this.rawFactoryName) return undefined
+        const fn = this.fromFunctionName!
+        const factory = this.rawFactoryName
+        return [
+            `export function ${fn}(...input: any[]) {`,
+            `  if (input.length === 1 && isNodeData(input[0])) {`,
+            `    const nd = input[0] as any;`,
+            `    return ${factory}(...(nd.children ?? []));`,
+            `  }`,
+            `  return ${factory}(...(input as any[]));`,
+            '}',
+        ].join('\n')
+    }
 }
 
 export class AssembledPolymorph extends AssembledNodeBase {
@@ -898,6 +946,38 @@ export class AssembledPolymorph extends AssembledNodeBase {
         for (const form of forms) parts.push(form.emitFactory()!)
         return parts.join('\n')
     }
+
+    emitFromFunction(nodeMap: NodeMap): string | undefined {
+        if (!this.rawFactoryName) return undefined
+        const fn = this.fromFunctionName!
+        const factory = this.rawFactoryName
+        const dispatcher = [
+            `export function ${fn}(input?: ${this.fromInputTypeName}) {`,
+            `  return ${factory}(input as any);`,
+            '}',
+        ].join('\n')
+        const parts = [dispatcher]
+        for (const form of this.#forms) {
+            // Form-specific naming: lowercased form type name + 'From'.
+            const formFn = `${form.typeName.charAt(0).toLowerCase()}${form.typeName.slice(1)}From`
+            const formFactory = form.rawFactoryName!
+            const fLines: string[] = []
+            fLines.push(`export function ${formFn}(input?: any) {`)
+            fLines.push(`  if (isNodeData(input)) return input;`)
+            if (form.fields.length > 0) {
+                fLines.push(`  return ${formFactory}({`)
+                for (const f of form.fields) {
+                    fLines.push(`    ${f.propertyName}: ${resolveField(f, nodeMap)},`)
+                }
+                fLines.push('  });')
+            } else {
+                fLines.push(`  return ${formFactory}(input);`)
+            }
+            fLines.push('}')
+            parts.push(fLines.join('\n'))
+        }
+        return parts.join('\n\n')
+    }
 }
 
 export class AssembledLeaf extends AssembledNodeBase {
@@ -917,6 +997,11 @@ export class AssembledLeaf extends AssembledNodeBase {
     emitFactory(): string | undefined {
         if (!this.rawFactoryName) return undefined
         return emitTextFactory(this, '(text: string)', 'text')
+    }
+
+    emitFromFunction(_nodeMap: NodeMap): string | undefined {
+        if (!this.rawFactoryName) return undefined
+        return emitStringLikeFrom(this)
     }
 }
 
@@ -941,6 +1026,18 @@ export class AssembledKeyword extends AssembledNodeBase {
         // Keyword factories carry a fixed text literal; callers don't
         // pass an argument.
         return emitTextFactory(this, '()', `'${escForSource(this.#text)}'`)
+    }
+
+    emitFromFunction(_nodeMap: NodeMap): string | undefined {
+        if (!this.rawFactoryName) return undefined
+        const fn = this.fromFunctionName!
+        const factory = this.rawFactoryName
+        return [
+            `export function ${fn}(input?: ${this.typeName}) {`,
+            `  if (isNodeData(input)) return input;`,
+            `  return ${factory}();`,
+            '}',
+        ].join('\n')
     }
 }
 
@@ -973,6 +1070,11 @@ export class AssembledEnum extends AssembledNodeBase {
         if (!this.rawFactoryName) return undefined
         return emitTextFactory(this, '(text: string)', 'text')
     }
+
+    emitFromFunction(_nodeMap: NodeMap): string | undefined {
+        if (!this.rawFactoryName) return undefined
+        return emitStringLikeFrom(this)
+    }
 }
 
 /**
@@ -999,6 +1101,49 @@ function emitTextFactory(
         '  };',
         '}',
     ].join('\n')
+}
+
+/**
+ * Shared body for leaf/enum `from()` — accept `string | NodeData`,
+ * pass through NodeData unchanged, otherwise wrap the string via
+ * the leaf factory.
+ */
+function emitStringLikeFrom(node: AssembledNodeBase): string {
+    const fn = node.fromFunctionName!
+    const factory = node.rawFactoryName!
+    return [
+        `export function ${fn}(input: string | ${node.typeName}) {`,
+        `  if (isNodeData(input)) return input;`,
+        `  return ${factory}(input as string);`,
+        '}',
+    ].join('\n')
+}
+
+/**
+ * Resolve a factory field's value from loose `from()` input. Accepts
+ * either top-level shape (`input.field_name`) or NodeData wrap shape
+ * (`input.fields.field_name`). If the field is leaf-only, wrap bare
+ * string inputs via the leaf factory.
+ */
+function resolveField(field: AssembledField, nodeMap: NodeMap): string {
+    const prop = `((input as any)?.${field.name} ?? (input as any)?.fields?.${field.name})`
+    const allLeaves = field.contentTypes.every(t => {
+        const n = nodeMap.nodes.get(t)
+        return n && (n.modelType === 'leaf' || n.modelType === 'keyword' || n.modelType === 'enum')
+    })
+    if (allLeaves && field.contentTypes.length === 1) {
+        const leafKind = field.contentTypes[0]!
+        const leafNode = nodeMap.nodes.get(leafKind)
+        const leafFactory = leafNode?.rawFactoryName ?? leafKind
+        if (field.multiple) {
+            return `(${prop} ?? []).map((v: any) => typeof v === 'string' ? ${leafFactory}(v) : v)`
+        }
+        return `typeof ${prop} === 'string' ? ${leafFactory}(${prop}) : ${prop}`
+    }
+    if (field.multiple) {
+        return `(${prop} ?? [])`
+    }
+    return `${prop}`
 }
 
 export class AssembledSupertype extends AssembledNodeBase {
@@ -1063,6 +1208,13 @@ export class AssembledGroup extends AssembledNodeBase {
     emitFactory(): string | undefined {
         if (!this.rawFactoryName) return undefined // hidden group
         return emitFieldCarryingFactory(this, this.fields)
+    }
+
+    emitFromFunction(_nodeMap: NodeMap): string | undefined {
+        // Polymorph forms are emitted inline by their parent polymorph's
+        // emitFromFunction — top-level group from() bindings aren't needed.
+        // Non-form groups are hidden and have no factory binding anyway.
+        return undefined
     }
 }
 

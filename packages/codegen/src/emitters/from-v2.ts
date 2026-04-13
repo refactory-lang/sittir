@@ -1,17 +1,12 @@
 /**
- * Emits from.ts — .from() resolution functions.
- * Consumes NodeMap directly. Derives from factory signatures.
+ * Emits from.ts — thin dispatch over AssembledNode.emitFromFunction().
  *
- * For each field, picks a resolver based on contentTypes:
- * - Leaf content → accept string, wrap in leaf factory
- * - Branch content → accept object with `kind`, delegate to branch.from()
- * - Mixed → try each resolver in order
+ * Every node subclass owns its own `from()` emission as a class method.
+ * This file is preamble (factory imports, type imports, isNodeData
+ * helper) + loop over the NodeMap + the _fromMap dispatch table.
  */
 
-import type {
-    NodeMap, AssembledNode, AssembledField, AssembledForm,
-    AssembledBranch, AssembledContainer, AssembledPolymorph,
-} from '../compiler/rule.ts'
+import type { NodeMap } from '../compiler/rule.ts'
 
 export interface EmitFromNodeMapConfig {
     grammar: string
@@ -26,21 +21,21 @@ export function emitFromNodeMap(config: EmitFromNodeMapConfig): string {
         '',
     ]
 
-    // Collect imports
+    // Collect imports — factories + types for every node that will emit
+    // a from() binding. Polymorph forms contribute their own factories/
+    // types because they're inlined by the parent polymorph's emission.
     const factoryImports = new Set<string>()
     const typeImports = new Set<string>()
 
-    for (const [kind, node] of nodeMap.nodes) {
+    for (const [, node] of nodeMap.nodes) {
         if (!node.factoryName) continue
         if (node.modelType === 'branch' || node.modelType === 'container' || node.modelType === 'polymorph') {
             factoryImports.add(node.rawFactoryName!)
             typeImports.add(node.typeName)
-            typeImports.add(`${node.configTypeName}`)
-            typeImports.add(`${node.fromInputTypeName}`)
-
+            typeImports.add(node.configTypeName)
+            typeImports.add(node.fromInputTypeName)
             if (node.modelType === 'polymorph') {
                 for (const form of node.forms) {
-                    // Form factories are now named by their own kind (consistent with _factoryMap)
                     factoryImports.add(form.rawFactoryName!)
                     typeImports.add(form.typeName)
                 }
@@ -57,7 +52,7 @@ export function emitFromNodeMap(config: EmitFromNodeMapConfig): string {
     lines.push("import type { AnyNodeData, ConfigOf, FromInputOf } from '@sittir/types';")
     lines.push('')
 
-    // isNodeData helper
+    // isNodeData helper — referenced by the emitted per-kind bodies.
     lines.push("function isNodeData(v: unknown): v is AnyNodeData {")
     lines.push("  if (v === null || typeof v !== 'object') return false;")
     lines.push("  const o = v as Record<string, unknown>;")
@@ -65,199 +60,26 @@ export function emitFromNodeMap(config: EmitFromNodeMapConfig): string {
     lines.push('}')
     lines.push('')
 
-    // Track which (kind → fromFn) pairs to include in _fromMap.
-    const fromMapEntries: { kind: string; fn: string }[] = []
-
-    // Per-kind from functions
-    for (const [kind, node] of nodeMap.nodes) {
-        if (!node.factoryName) continue
-
-        switch (node.modelType) {
-            case 'branch':
-                lines.push(emitBranchFrom(node, nodeMap))
-                fromMapEntries.push({ kind, fn: node.fromFunctionName! })
-                break
-            case 'container':
-                lines.push(emitContainerFrom(node, nodeMap))
-                fromMapEntries.push({ kind, fn: node.fromFunctionName! })
-                break
-            case 'polymorph':
-                lines.push(emitPolymorphFrom(node, nodeMap))
-                for (const form of node.forms) {
-                    lines.push(emitFormFrom(node, form, nodeMap))
-                }
-                fromMapEntries.push({ kind, fn: node.fromFunctionName! })
-                break
-            case 'leaf':
-            case 'enum':
-                lines.push(emitLeafFrom(node))
-                fromMapEntries.push({ kind, fn: node.fromFunctionName! })
-                break
-            case 'keyword':
-                lines.push(emitKeywordFrom(node))
-                fromMapEntries.push({ kind, fn: node.fromFunctionName! })
-                break
-        }
+    // Per-node from emission via class method. Polymorph forms are
+    // inlined by their parent polymorph's emitFromFunction, so we skip
+    // them at the top level — same pattern as emitFactory.
+    for (const [, node] of nodeMap.nodes) {
+        const source = node.emitFromFunction(nodeMap)
+        if (source === undefined) continue
+        lines.push(source)
         lines.push('')
     }
 
-    // _fromMap — runtime entry for validators and dynamic dispatch
+    // _fromMap — runtime entry for validators and dynamic dispatch.
     lines.push('export const _fromMap: Record<string, (input?: any) => unknown> = {')
-    for (const { kind, fn } of fromMapEntries) {
-        lines.push(`  ${JSON.stringify(kind)}: ${fn} as (input?: any) => unknown,`)
+    for (const [kind, node] of nodeMap.nodes) {
+        if (!node.factoryName) continue
+        if (node.modelType === 'token' || node.modelType === 'supertype' || node.modelType === 'group') continue
+        if (!node.fromFunctionName) continue
+        lines.push(`  ${JSON.stringify(kind)}: ${node.fromFunctionName} as (input?: any) => unknown,`)
     }
     lines.push('};')
     lines.push('')
 
     return lines.join('\n')
 }
-
-// ---------------------------------------------------------------------------
-// Per-model from emitters
-// ---------------------------------------------------------------------------
-
-function emitBranchFrom(node: AssembledBranch, nodeMap: NodeMap): string {
-    const fn = node.fromFunctionName!
-    const factory = node.rawFactoryName!
-    const fields = node.fields
-    const opt = fields.some(f => f.required) ? '' : '?'
-
-    const lines: string[] = []
-    lines.push(`export function ${fn}(input${opt}: ${node.fromInputTypeName}) {`)
-
-    if (fields.length > 0) {
-        lines.push(`  return ${factory}({`)
-        for (const f of fields) {
-            lines.push(`    ${f.propertyName}: ${resolveField(f, nodeMap)},`)
-        }
-        // Always forward children: tree-sitter may surface children that
-        // aren't represented in the rule's explicit symbol refs (supertype
-        // expansions, anonymous children etc.). The factory ignores this
-        // key if it has no children slot.
-        lines.push(`    children: ((input as any)?.children ?? []) as any,`)
-        lines.push('  } as any);')
-    } else {
-        lines.push(`  return ${factory}(input as any);`)
-    }
-
-    lines.push('}')
-    return lines.join('\n')
-}
-
-function emitContainerFrom(node: AssembledContainer, nodeMap: NodeMap): string {
-    const fn = node.fromFunctionName!
-    const factory = node.rawFactoryName!
-
-    // Containers are called variadically. If a single NodeData-shaped input
-    // arrived, unwrap its .children so we pass them as positional args —
-    // matching how the factory accepts them. This makes from() structurally
-    // equivalent to factoryMap[kind](config).
-    return [
-        `export function ${fn}(...input: any[]) {`,
-        `  if (input.length === 1 && isNodeData(input[0])) {`,
-        `    const nd = input[0] as any;`,
-        `    return ${factory}(...(nd.children ?? []));`,
-        `  }`,
-        `  return ${factory}(...(input as any[]));`,
-        '}',
-    ].join('\n')
-}
-
-function emitPolymorphFrom(node: AssembledPolymorph, nodeMap: NodeMap): string {
-    const fn = node.fromFunctionName!
-    const factory = node.rawFactoryName!
-
-    // Always route through the factory — even when input is a NodeData —
-    // so the result shape matches what factoryMap produces. Otherwise
-    // from() returns `input` unchanged which retains readNode metadata
-    // (span, id, etc.) that a direct factory call would strip, causing
-    // structural divergence with validateFrom.
-    return [
-        `export function ${fn}(input?: ${node.fromInputTypeName}) {`,
-        `  return ${factory}(input as any);`,
-        '}',
-    ].join('\n')
-}
-
-function emitFormFrom(node: AssembledPolymorph, form: AssembledForm, nodeMap: NodeMap): string {
-    // Use the form's own full typeName (already disambiguated for collisions).
-    const fn = `${form.typeName.charAt(0).toLowerCase()}${form.typeName.slice(1)}From`
-    // Form factories are named by their own kind (consistent with _factoryMap)
-    const factory = form.rawFactoryName!
-
-    const lines: string[] = []
-    lines.push(`export function ${fn}(input?: any) {`)
-    lines.push(`  if (isNodeData(input)) return input;`)
-
-    if (form.fields.length > 0) {
-        lines.push(`  return ${factory}({`)
-        for (const f of form.fields) {
-            lines.push(`    ${f.propertyName}: ${resolveField(f, nodeMap)},`)
-        }
-        lines.push('  });')
-    } else {
-        lines.push(`  return ${factory}(input);`)
-    }
-
-    lines.push('}')
-    return lines.join('\n')
-}
-
-function emitLeafFrom(node: AssembledNode): string {
-    const fn = node.fromFunctionName!
-    const factory = node.rawFactoryName!
-
-    return [
-        `export function ${fn}(input: string | ${node.typeName}) {`,
-        `  if (isNodeData(input)) return input;`,
-        `  return ${factory}(input as string);`,
-        '}',
-    ].join('\n')
-}
-
-function emitKeywordFrom(node: AssembledNode): string {
-    const fn = node.fromFunctionName!
-    const factory = node.rawFactoryName!
-
-    return [
-        `export function ${fn}(input?: ${node.typeName}) {`,
-        `  if (isNodeData(input)) return input;`,
-        `  return ${factory}();`,
-        '}',
-    ].join('\n')
-}
-
-// ---------------------------------------------------------------------------
-// Field resolution
-// ---------------------------------------------------------------------------
-
-function resolveField(field: AssembledField, nodeMap: NodeMap): string {
-    // Input may come in two shapes:
-    //   - Loose FromInput: top-level { field_name: ... }  (developer-facing)
-    //   - Raw NodeData:    { fields: { field_name: ... } } (readNode output)
-    // Accept both by checking top-level first, then fields-wrapper.
-    const prop = `((input as any)?.${field.name} ?? (input as any)?.fields?.${field.name})`
-
-    // Check content types — if all are leaves, resolve as string → leaf
-    const allLeaves = field.contentTypes.every(t => {
-        const n = nodeMap.nodes.get(t)
-        return n && (n.modelType === 'leaf' || n.modelType === 'keyword' || n.modelType === 'enum')
-    })
-
-    if (allLeaves && field.contentTypes.length === 1) {
-        const leafKind = field.contentTypes[0]!
-        const leafNode = nodeMap.nodes.get(leafKind)
-        const leafFactory = leafNode?.rawFactoryName ?? leafKind
-        if (field.multiple) {
-            return `(${prop} ?? []).map((v: any) => typeof v === 'string' ? ${leafFactory}(v) : v)`
-        }
-        return `typeof ${prop} === 'string' ? ${leafFactory}(${prop}) : ${prop}`
-    }
-
-    // Mixed or branch-only — pass through (NodeData or resolve via kind)
-    if (field.multiple) {
-        return `(${prop} ?? [])`
-    }
-    return `${prop}`
-}
-

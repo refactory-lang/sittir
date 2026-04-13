@@ -680,24 +680,24 @@ export function lambdaWithinForInClauseFrom(input: LambdaWithinForInClauseFromIn
   } as any);
 }
 
-
-
-
 export function assignmentFrom(input?: AssignmentFromInput) {
   return assignment(input as any);
 }
+
 export function assignmentEqFrom(input?: any) {
   if (isNodeData(input)) return input;
   return assignmentEq({
     right: ((input as any)?.right ?? (input as any)?.fields?.right),
   });
 }
+
 export function assignmentColonFrom(input?: any) {
   if (isNodeData(input)) return input;
   return assignmentColon({
     type: ((input as any)?.type ?? (input as any)?.fields?.type),
   });
 }
+
 export function assignmentColon2From(input?: any) {
   if (isNodeData(input)) return input;
   return assignmentColon2({
