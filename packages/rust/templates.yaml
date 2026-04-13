@@ -42,13 +42,13 @@ rules:
   enum_item:
     template: $VISIBILITY_MODIFIER enum $NAME $TYPE_PARAMETERS $WHERE_CLAUSE $BODY
   enum_variant_list:
-    template: "{$$$CHILDREN,}"
+    template: "{$$$CHILDREN}"
     joinBy: ","
   enum_variant:
     template: $VISIBILITY_MODIFIER $NAME $BODY $VALUE_CLAUSE
     value: =$VALUE
   field_declaration_list:
-    template: "{$$$CHILDREN,}"
+    template: "{$$$CHILDREN}"
     joinBy: ","
   field_declaration:
     template: "$VISIBILITY_MODIFIER $NAME:$TYPE"
@@ -73,13 +73,13 @@ rules:
   function_modifiers:
     template: $$$CHILDREN
   where_clause:
-    template: where $$$CHILDREN,
+    template: where $$$CHILDREN
     joinBy: ","
   where_predicate:
     template: $LEFT $BOUNDS
   impl_item:
     template: $WHERE_CLAUSE impl $TYPE_PARAMETERS $TRAIT_CLAUSE $TYPE $$$CHILDREN $BODY
-    trait: "!$TRAIT for"
+    trait: $TRAIT for
   trait_item:
     template: $VISIBILITY_MODIFIER $WHERE_CLAUSE trait $NAME $TYPE_PARAMETERS $BOUNDS $$$CHILDREN $BODY
   associated_type:
@@ -92,7 +92,7 @@ rules:
   removed_trait_bound:
     template: "?$$$CHILDREN"
   type_parameters:
-    template: <$$$CHILDREN,>
+    template: <$$$CHILDREN>
     joinBy: ","
   const_parameter:
     template: "const $NAME:$TYPE $VALUE_CLAUSE"
@@ -112,14 +112,14 @@ rules:
   scoped_use_list:
     template: "$PATH::$LIST"
   use_list:
-    template: "{$$$CHILDREN,}"
+    template: "{$$$CHILDREN}"
     joinBy: ","
   use_as_clause:
     template: $PATH as $ALIAS
   use_wildcard:
     template: $PATH*
   parameters:
-    template: ($$$CHILDREN _,)
+    template: ($$$CHILDREN _)
     joinBy: ","
   self_parameter:
     template: $LIFETIME $MUTABLE_SPECIFIER $SELF $$$CHILDREN
@@ -144,13 +144,13 @@ rules:
     template: "[$ELEMENT $LENGTH_CLAUSE]"
     length: ;$LENGTH
   for_lifetimes:
-    template: for<$$$CHILDREN,>
+    template: for<$$$CHILDREN>
     joinBy: ","
   function_type:
     template: $FOR_LIFETIMES $FUNCTION_MODIFIERS $RETURN_TYPE_CLAUSE
     return_type: "->$RETURN_TYPE"
   tuple_type:
-    template: ($$$CHILDREN,)
+    template: ($$$CHILDREN)
     joinBy: ","
   generic_function:
     template: "$FUNCTION::$TYPE_ARGUMENTS"
@@ -161,10 +161,10 @@ rules:
   bounded_type:
     template: $LEFT+$RIGHT
   use_bounds:
-    template: use<$$$CHILDREN,>
+    template: use<$$$CHILDREN>
     joinBy: ","
   type_arguments:
-    template: <$$$CHILDREN,>
+    template: <$$$CHILDREN>
     joinBy: ","
   type_binding:
     template: $NAME $TYPE_ARGUMENTS=$TYPE
@@ -213,7 +213,7 @@ rules:
   call_expression:
     template: $FUNCTION $ARGUMENTS
   arguments:
-    template: ($$$CHILDREN,)
+    template: ($$$CHILDREN)
     joinBy: ","
   array_expression:
     template: "[$ATTRIBUTES $ELEMENTS]"
@@ -226,7 +226,7 @@ rules:
   struct_expression:
     template: $NAME $BODY
   field_initializer_list:
-    template: "{$$$CHILDREN,}"
+    template: "{$$$CHILDREN}"
     joinBy: ","
   shorthand_field_initializer:
     template: $ATTRIBUTES $IDENTIFIER
@@ -249,7 +249,7 @@ rules:
   match_arm:
     template: $$$CHILDREN $PATTERN=>$VALUE,
   last_match_arm:
-    template: $$$CHILDREN $PATTERN=>$VALUE,
+    template: $$$CHILDREN $PATTERN=>$VALUE
   match_pattern:
     template: $$$CHILDREN $CONDITION_CLAUSE
     condition: if $CONDITION
@@ -301,16 +301,16 @@ rules:
   generic_pattern:
     template: "$$$CHILDREN::$TYPE_ARGUMENTS"
   tuple_pattern:
-    template: ($$$CHILDREN,)
+    template: ($$$CHILDREN)
     joinBy: ","
   slice_pattern:
-    template: "[$$$CHILDREN,]"
+    template: "[$$$CHILDREN]"
     joinBy: ","
   tuple_struct_pattern:
-    template: $TYPE($$$CHILDREN,)
+    template: $TYPE($$$CHILDREN)
     joinBy: ","
   struct_pattern:
-    template: "$TYPE{$$$CHILDREN,}"
+    template: "$TYPE{$$$CHILDREN}"
     joinBy: ","
   field_pattern_name:
     template: $NAME
@@ -341,13 +341,13 @@ rules:
   negative_literal:
     template: "-$VALUE"
   string_literal:
-    template: $$$CHILDREN"
+    template: "\"$$$CHILDREN\""
   raw_string_literal:
     template: $RAW_STRING_LITERAL_START $STRING_CONTENT $RAW_STRING_LITERAL_END
   comment:
     template: $$$CHILDREN
   line_comment:
-    template: //$$$CHILDREN $DOC
+    template: ////
   _line_doc_comment_marker:
     template: $OUTER
   block_comment:

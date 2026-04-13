@@ -21,7 +21,7 @@ rules:
   namespace_export:
     template: "*as $$$CHILDREN"
   export_clause:
-    template: "{$$$CHILDREN,}"
+    template: "{$$$CHILDREN}"
     joinBy: ","
   export_specifier:
     template: type $NAME $ALIAS_CLAUSE
@@ -37,7 +37,7 @@ rules:
   namespace_import:
     template: "*as $IDENTIFIER"
   named_imports:
-    template: "{$$$CHILDREN,}"
+    template: "{$$$CHILDREN}"
     joinBy: ","
   import_specifier_name:
     template: $NAME
@@ -72,7 +72,7 @@ rules:
   for_statement:
     template: for($INITIALIZER $CONDITION $INCREMENT)$BODY
   for_in_statement:
-    template: for await $$$CHILDREN $BODY
+    template: for $$$CHILDREN $BODY
   _for_header:
     template: ($LEFT $OPERATOR $RIGHT)
   while_statement:
@@ -161,13 +161,13 @@ rules:
   class_heritage:
     template: $$$CHILDREN
   function_expression:
-    template: async function $NAME $$$CHILDREN $BODY
+    template: function $NAME $$$CHILDREN $BODY
   function_declaration:
-    template: async function $NAME $$$CHILDREN $BODY
+    template: function $NAME $$$CHILDREN $BODY
   generator_function:
-    template: async function*$NAME $$$CHILDREN $BODY
+    template: function*$NAME $$$CHILDREN $BODY
   generator_function_declaration:
-    template: async function*$NAME $$$CHILDREN $BODY
+    template: function*$NAME $$$CHILDREN $BODY
   arrow_function_parameter:
     template: $PARAMETER
   arrow_function__call_signature:
@@ -200,7 +200,7 @@ rules:
   _lhs_expression:
     template: $$$CHILDREN
   assignment_expression:
-    template: using $LEFT=$RIGHT
+    template: $LEFT=$RIGHT
   _augmented_assignment_lhs:
     template: $$$CHILDREN
   augmented_assignment_expression:
@@ -238,11 +238,11 @@ rules:
   decorator_call_expression:
     template: $FUNCTION $TYPE_ARGUMENTS $ARGUMENTS
   class_body:
-    template: "{$DECORATOR $$$CHILDREN}"
+    template: "{$$$DECORATOR $$$CHILDREN}"
   field_definition:
-    template: $DECORATOR static $PROPERTY $$$CHILDREN
+    template: $$$DECORATOR $PROPERTY $$$CHILDREN
   formal_parameters:
-    template: ($$$CHILDREN,)
+    template: ($$$CHILDREN)
     joinBy: ","
   class_static_block:
     template: static $$$CHILDREN $BODY
@@ -251,7 +251,7 @@ rules:
   rest_pattern:
     template: ...$$$CHILDREN
   method_definition:
-    template: $ACCESSIBILITY_MODIFIER $OVERRIDE_MODIFIER $$$CHILDREN readonly async get $NAME?$BODY
+    template: $ACCESSIBILITY_MODIFIER $OVERRIDE_MODIFIER $$$CHILDREN get $NAME $BODY
   pair:
     template: "$KEY:$VALUE"
   pair_pattern:
@@ -265,17 +265,17 @@ rules:
   public_field_definition:
     template: $ACCESSIBILITY_MODIFIER $OVERRIDE_MODIFIER $INITIALIZER $NAME?$TYPE $$$CHILDREN
   _jsx_start_opening_element:
-    template: <$NAME $ATTRIBUTE
+    template: <$NAME $$$ATTRIBUTE
   _import_identifier:
     template: $$$CHILDREN
   non_null_expression:
     template: $EXPRESSION!
   method_signature:
-    template: $ACCESSIBILITY_MODIFIER $OVERRIDE_MODIFIER $$$CHILDREN readonly async get $NAME?
+    template: $ACCESSIBILITY_MODIFIER $OVERRIDE_MODIFIER $$$CHILDREN get $NAME
   abstract_method_signature:
-    template: $ACCESSIBILITY_MODIFIER abstract $OVERRIDE_MODIFIER get $NAME?$$$CHILDREN
+    template: $ACCESSIBILITY_MODIFIER abstract $OVERRIDE_MODIFIER get $NAME $$$CHILDREN
   function_signature:
-    template: async function $NAME $$$CHILDREN
+    template: function $NAME $$$CHILDREN
   decorator_parenthesized_expression:
     template: ($$$CHILDREN)
   type_assertion:
@@ -316,7 +316,7 @@ rules:
     template: extends $TYPE
     joinBy: ","
   enum_declaration:
-    template: const enum $NAME $BODY
+    template: enum $NAME $BODY
   enum_body:
     template: "{$OPENING}"
     joinBy: ","
@@ -329,7 +329,7 @@ rules:
   optional_parameter:
     template: $PARAMETER_NAME?$TYPE $INITIALIZER
   _parameter_name:
-    template: $DECORATOR $$$CHILDREN readonly $PATTERN
+    template: $$$DECORATOR $$$CHILDREN $PATTERN
   omitting_type_annotation:
     template: "-?:$$$CHILDREN"
   adding_type_annotation:
@@ -357,7 +357,7 @@ rules:
   rest_type:
     template: ...$$$CHILDREN
   constructor_type:
-    template: abstract new $TYPE_PARAMETERS $PARAMETERS=>$TYPE
+    template: new $TYPE_PARAMETERS $PARAMETERS=>$TYPE
   primary_type:
     template: $$$CHILDREN
   template_type:
@@ -377,7 +377,7 @@ rules:
   _type_query_member_expression:
     template: $OBJECT.$PROPERTY
   _type_query_subscript_expression:
-    template: "$OBJECT?.[$INDEX]"
+    template: "$OBJECT[$INDEX]"
   _type_query_call_expression:
     template: $FUNCTION $ARGUMENTS
   _type_query_instantiation_expression:
@@ -400,25 +400,25 @@ rules:
   parenthesized_type:
     template: ($$$CHILDREN)
   type_arguments:
-    template: <$$$CHILDREN,>
+    template: <$$$CHILDREN>
     joinBy: ","
   object_type:
     template: $OPENING $MEMBERS $CLOSING
   call_signature:
     template: $$$CHILDREN
   property_signature:
-    template: $ACCESSIBILITY_MODIFIER $OVERRIDE_MODIFIER $$$CHILDREN readonly $NAME?$TYPE
+    template: $ACCESSIBILITY_MODIFIER $OVERRIDE_MODIFIER $$$CHILDREN $NAME $TYPE
   type_parameters:
-    template: <$$$CHILDREN,>
+    template: <$$$CHILDREN>
     joinBy: ","
   type_parameter:
-    template: const $NAME $CONSTRAINT $VALUE
+    template: $NAME $CONSTRAINT $VALUE
   default_type:
     template: =$$$CHILDREN
   constraint:
     template: extends $$$CHILDREN
   construct_signature:
-    template: abstract new $TYPE_PARAMETERS $PARAMETERS $TYPE
+    template: new $TYPE_PARAMETERS $PARAMETERS $TYPE
   index_signature_colon:
     template: "$NAME:$INDEX_TYPE"
   index_signature_mapped_type_clause:
@@ -430,7 +430,7 @@ rules:
   array_type:
     template: "$PRIMARY_TYPE[]"
   tuple_type:
-    template: "[$$$CHILDREN,]"
+    template: "[$$$CHILDREN]"
     joinBy: ","
   readonly_type:
     template: readonly $$$CHILDREN

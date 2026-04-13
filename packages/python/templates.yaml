@@ -5,7 +5,7 @@ rules:
   module:
     template: $$$CHILDREN
   _simple_statements:
-    template: "$$$CHILDREN;\n"
+    template: "$$$CHILDREN\n"
     joinBy: ";"
   import_statement:
     template: import $$$CHILDREN
@@ -16,12 +16,12 @@ rules:
   import_from_statement:
     template: from $MODULE_NAME import $WILDCARD_IMPORT
   _import_list:
-    template: $NAME,
+    template: $NAME
     joinBy: ","
   aliased_import:
     template: $NAME as $ALIAS
   print_statement:
-    template: print $$$CHILDREN $ARGUMENT,
+    template: print $$$CHILDREN $$$ARGUMENT
     joinBy: ","
   chevron:
     template: ">>$EXPRESSION"
@@ -41,27 +41,27 @@ rules:
     template: raise $$$CHILDREN $CAUSE_CLAUSE
     cause: from $CAUSE
   if_statement:
-    template: "if $CONDITION:$CONSEQUENCE $ALTERNATIVE"
+    template: "if $CONDITION:$CONSEQUENCE $$$ALTERNATIVE"
   elif_clause:
     template: "elif $CONDITION:$CONSEQUENCE"
   else_clause:
     template: "else:$BODY"
   match_statement:
-    template: "match $SUBJECT,:$BODY"
+    template: "match $SUBJECT:$BODY"
     joinBy: ","
   _match_block:
-    template: "\n  $ALTERNATIVE\n"
+    template: "\n  $$$ALTERNATIVE\n"
   case_clause:
-    template: "case $$$CHILDREN,$GUARD:$CONSEQUENCE"
+    template: "case $$$CHILDREN $GUARD:$CONSEQUENCE"
     joinBy: ","
   for_statement:
-    template: "async for $LEFT in $RIGHT:$BODY $ALTERNATIVE"
+    template: "for $LEFT in $RIGHT:$BODY $ALTERNATIVE"
   while_statement:
     template: "while $CONDITION:$BODY $ALTERNATIVE"
   try_statement:
     template: "try:$BODY $EXCEPT_CLAUSES $ELSE_CLAUSE $FINALLY_CLAUSE"
   except_clause:
-    template: "except*$VALUE $ALIAS_CLAUSE:$$$CHILDREN"
+    template: "except $VALUE $ALIAS_CLAUSE:$$$CHILDREN"
     alias: as $ALIAS
     joinBy: ","
   finally_clause:
@@ -69,12 +69,12 @@ rules:
   with_statement:
     template: "$WITH_CLAUSE with $$$CHILDREN:$BODY"
   with_clause:
-    template: $$$CHILDREN,
+    template: $$$CHILDREN
     joinBy: ","
   with_item:
     template: $VALUE
   function_definition:
-    template: "async def $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE_CLAUSE:$BODY"
+    template: "def $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE_CLAUSE:$BODY"
     return_type: "->$RETURN_TYPE"
   parameters:
     template: ($$$CHILDREN)
@@ -98,12 +98,12 @@ rules:
   class_definition:
     template: "class $NAME $TYPE_PARAMETERS $SUPERCLASSES:$BODY"
   type_parameter:
-    template: "[$$$CHILDREN,]"
+    template: "[$$$CHILDREN]"
     joinBy: ","
   parenthesized_list_splat:
     template: ($$$CHILDREN)
   argument_list:
-    template: ($$$CHILDREN,)
+    template: ($$$CHILDREN)
     joinBy: ","
   decorated_definition:
     template: $$$CHILDREN $DEFINITION
@@ -127,13 +127,13 @@ rules:
   union_pattern:
     template: $$$CHILDREN
   _list_pattern:
-    template: "[$$$CHILDREN,]"
+    template: "[$$$CHILDREN]"
     joinBy: ","
   _tuple_pattern:
-    template: ($$$CHILDREN,)
+    template: ($$$CHILDREN)
     joinBy: ","
   dict_pattern:
-    template: "{$$$CHILDREN,}"
+    template: "{$$$CHILDREN}"
     joinBy: ","
   _key_value_pattern:
     template: "$KEY:$VALUE"
@@ -147,10 +147,10 @@ rules:
   complex_pattern:
     template: $REAL $IMAGINARY+$$$CHILDREN
   _parameters:
-    template: $$$CHILDREN,
+    template: $$$CHILDREN
     joinBy: ","
   _patterns:
-    template: $$$CHILDREN,
+    template: $$$CHILDREN
     joinBy: ","
   parameter:
     template: $$$CHILDREN
@@ -208,7 +208,7 @@ rules:
   attribute:
     template: $OBJECT.$ATTRIBUTE
   subscript:
-    template: "$VALUE[$SUBSCRIPT,]"
+    template: "$VALUE[$SUBSCRIPT]"
     joinBy: ","
   slice:
     template: "$START:$STOP $STEP"
@@ -237,7 +237,7 @@ rules:
   tuple:
     template: ($$$CHILDREN)
   dictionary:
-    template: "{$$$CHILDREN,}"
+    template: "{$$$CHILDREN}"
     joinBy: ","
   pair:
     template: "$KEY:$VALUE"
@@ -254,10 +254,10 @@ rules:
   parenthesized_expression:
     template: ($$$CHILDREN)
   _collection_elements:
-    template: $$$CHILDREN,
+    template: $$$CHILDREN
     joinBy: ","
   for_in_clause:
-    template: async for $LEFT in $RIGHT,
+    template: for $LEFT in $RIGHT
     joinBy: ","
   if_clause:
     template: if $EXPRESSION
@@ -270,7 +270,7 @@ rules:
   string_content:
     template: $$$CHILDREN
   interpolation:
-    template: "{$EXPRESSION=$TYPE_CONVERSION $FORMAT_SPECIFIER}"
+    template: "{$EXPRESSION $TYPE_CONVERSION $FORMAT_SPECIFIER}"
   format_specifier:
     template: ":$$$CHILDREN"
   await:
@@ -278,4 +278,4 @@ rules:
   as_pattern_target:
     template: $$$CHILDREN
   format_expression:
-    template: "{$EXPRESSION=$TYPE_CONVERSION $FORMAT_SPECIFIER}"
+    template: "{$EXPRESSION $TYPE_CONVERSION $FORMAT_SPECIFIER}"

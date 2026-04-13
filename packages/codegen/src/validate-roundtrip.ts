@@ -274,10 +274,20 @@ export async function validateRoundTrip(
 
 	const config = parseYaml(templatesYaml) as RulesConfig;
 	const overrides = loadOverrides(grammar);
-	const routing = buildRoutingMap(overrides);
+	const rawEntries = loadRawEntries(grammar);
+	// Expand override field supertype specs (e.g. `_expression`) to the
+	// concrete subtype list from node-types.json so routing matches the
+	// kinds that actually show up at parse time.
+	const supertypeExpansion = new Map<string, string[]>();
+	for (const entry of rawEntries) {
+		if (entry.subtypes && entry.subtypes.length > 0) {
+			supertypeExpansion.set(entry.type, entry.subtypes.map(s => s.type));
+		}
+	}
+	const routing = buildRoutingMap(overrides, supertypeExpansion);
 	const { render } = createRenderer(config);
 	const ruleKinds = new Set(Object.keys(config.rules));
-	const kindToSupertypes = buildKindToSupertypes(loadRawEntries(grammar));
+	const kindToSupertypes = buildKindToSupertypes(rawEntries);
 
 	const entries = loadCorpusEntries(grammar);
 	const errors: { name: string; message: string }[] = [];

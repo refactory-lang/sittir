@@ -145,8 +145,16 @@ function walkRule(
             return []
         }
 
-        case 'optional':
+        case 'optional': {
+            // Optional wrappers around pure-punctuation (e.g. a trailing
+            // comma `optional(',')`) should emit nothing in the template —
+            // the punctuation is context-dependent and including it
+            // unconditionally produces invalid syntax for the common case
+            // (python: `match X,:` instead of `match X:`). Optionals with
+            // a field/symbol/structural body are walked normally.
+            if (containsOnlyPunctuation(rule.content)) return []
             return walkRule(rule.content, seen, inRepeat, clauses)
+        }
 
         case 'repeat':
             return walkRule(rule.content, seen, true, clauses)
@@ -155,8 +163,10 @@ function walkRule(
             if (seen.has(rule.name)) return []
             seen.add(rule.name)
             const varName = rule.name.toUpperCase()
-            // Check if multiple via walking the content? For now assume single
-            return [`$${varName}`]
+            // Inside a repeat, the field is multi-valued — emit `$$$NAME`
+            // so the renderer joins with the rule's joinBy separator.
+            // Outside, it's single-valued: `$NAME`.
+            return [inRepeat ? `$$$${varName}` : `$${varName}`]
         }
 
         case 'symbol':
@@ -171,8 +181,16 @@ function walkRule(
             if (inRepeat) return [] // joinBy handles separators
             return [rule.value]
 
-        case 'pattern':
-            return []
+        case 'pattern': {
+            // Extract a representative literal from the regex. Patterns
+            // showing up in structural templates are usually delimiter
+            // tokens like `[bc]?"` (rust string_literal prefix+quote) or
+            // `r"#*"` (raw string marker) where the literal tail is what
+            // matters for round-trip reparse. If we can't find a literal
+            // tail, emit nothing — there's no good default to render.
+            const lit = representativeLiteral(rule.value)
+            return lit ? [lit] : []
+        }
 
         case 'enum':
             // Emit first value as representative
@@ -228,6 +246,67 @@ function joinParts(parts: string[]): string {
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
+
+/**
+ * True if the rule tree contains only string/pattern/whitespace
+ * terminals — no fields, no symbols, no enum/supertype refs. Used by
+ * the `optional` walker to decide whether an `optional(...)` should
+ * emit nothing (pure punctuation, context-dependent) or walk normally
+ * (has structural content that belongs in the template).
+ */
+function containsOnlyPunctuation(rule: Rule): boolean {
+    switch (rule.type) {
+        case 'string':
+        case 'pattern':
+        case 'indent':
+        case 'dedent':
+        case 'newline':
+            return true
+        case 'field':
+        case 'symbol':
+        case 'supertype':
+        case 'enum':
+            return false
+        case 'seq':
+        case 'choice':
+            return rule.members.every(containsOnlyPunctuation)
+        case 'optional':
+        case 'repeat':
+        case 'repeat1':
+        case 'variant':
+        case 'clause':
+        case 'group':
+            return containsOnlyPunctuation(rule.content)
+        default:
+            return false
+    }
+}
+
+/**
+ * Extract a representative literal from a regex pattern for template
+ * emission. Strips character classes, quantifiers, escapes, and
+ * alternations; returns the longest literal-tail that remains.
+ *
+ *   `[bc]?"`   → `"`     (rust string_literal prefix+quote)
+ *   `r"#*"`    → `r"`    (raw string marker — the `#*` quantifier drops)
+ *   `/\d+/`    → ``      (pure regex content, no literal tail)
+ *   `0[xX]`    → `0`     (literal head, class tail)
+ *
+ * This is a best-effort heuristic; grammar authors with unusual tokens
+ * can always add an override to supply a template.
+ */
+function representativeLiteral(regex: string): string {
+    // Strip regex escapes: `\\"` → `"`, `\\n` → empty (drop). Strip
+    // character classes `[...]` and their optional quantifier, and any
+    // trailing `*`, `+`, `?`.
+    let s = regex
+    s = s.replace(/\\(.)/g, (_, c) => (/[dwWsSbBnrtfv0]/.test(c) ? '' : c))
+    s = s.replace(/\[[^\]]*\][*+?]?/g, '')
+    s = s.replace(/\([^)]*\)[*+?]?/g, '')
+    s = s.replace(/\{\d+(,\d*)?\}/g, '')
+    s = s.replace(/[.*+?|^$]/g, '')
+    return s
+}
 
 /**
  * Walk a rule tree looking for the first repeat-with-separator and
