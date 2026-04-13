@@ -221,7 +221,7 @@ export function orderedFieldDeclarationListFrom(input: OrderedFieldDeclarationLi
 export function externCrateDeclarationFrom(input: ExternCrateDeclarationFromInput) {
   return externCrateDeclaration({
     visibilityModifier: ((input as any)?.visibility_modifier ?? (input as any)?.fields?.visibility_modifier),
-    crate: typeof ((input as any)?.crate ?? (input as any)?.fields?.crate) === 'string' ? crate(((input as any)?.crate ?? (input as any)?.fields?.crate)) : ((input as any)?.crate ?? (input as any)?.fields?.crate),
+    crate: ((input as any)?.crate ?? (input as any)?.fields?.crate),
     name: typeof ((input as any)?.name ?? (input as any)?.fields?.name) === 'string' ? identifier(((input as any)?.name ?? (input as any)?.fields?.name)) : ((input as any)?.name ?? (input as any)?.fields?.name),
     alias: typeof ((input as any)?.alias ?? (input as any)?.fields?.alias) === 'string' ? identifier(((input as any)?.alias ?? (input as any)?.fields?.alias)) : ((input as any)?.alias ?? (input as any)?.fields?.alias),
     children: ((input as any)?.children ?? []) as any,
@@ -403,7 +403,7 @@ export function lifetimeParameterFrom(input: LifetimeParameterFromInput) {
 
 export function letDeclarationFrom(input: LetDeclarationFromInput) {
   return letDeclaration({
-    mutableSpecifier: typeof ((input as any)?.mutable_specifier ?? (input as any)?.fields?.mutable_specifier) === 'string' ? mutableSpecifier(((input as any)?.mutable_specifier ?? (input as any)?.fields?.mutable_specifier)) : ((input as any)?.mutable_specifier ?? (input as any)?.fields?.mutable_specifier),
+    mutableSpecifier: ((input as any)?.mutable_specifier ?? (input as any)?.fields?.mutable_specifier),
     pattern: ((input as any)?.pattern ?? (input as any)?.fields?.pattern),
     type: ((input as any)?.type ?? (input as any)?.fields?.type),
     value: ((input as any)?.value ?? (input as any)?.fields?.value),
@@ -463,14 +463,14 @@ export function selfParameterFrom(input: SelfParameterFromInput) {
   return selfParameter({
     lifetime: ((input as any)?.lifetime ?? (input as any)?.fields?.lifetime),
     mutableSpecifier: ((input as any)?.mutable_specifier ?? (input as any)?.fields?.mutable_specifier),
-    self: typeof ((input as any)?.self ?? (input as any)?.fields?.self) === 'string' ? mutableSpecifier(((input as any)?.self ?? (input as any)?.fields?.self)) : ((input as any)?.self ?? (input as any)?.fields?.self),
+    self: ((input as any)?.self ?? (input as any)?.fields?.self),
     children: ((input as any)?.children ?? []) as any,
   } as any);
 }
 
 export function variadicParameterFrom(input: VariadicParameterFromInput) {
   return variadicParameter({
-    mutableSpecifier: typeof ((input as any)?.mutable_specifier ?? (input as any)?.fields?.mutable_specifier) === 'string' ? mutableSpecifier(((input as any)?.mutable_specifier ?? (input as any)?.fields?.mutable_specifier)) : ((input as any)?.mutable_specifier ?? (input as any)?.fields?.mutable_specifier),
+    mutableSpecifier: ((input as any)?.mutable_specifier ?? (input as any)?.fields?.mutable_specifier),
     pattern: ((input as any)?.pattern ?? (input as any)?.fields?.pattern),
     children: ((input as any)?.children ?? []) as any,
   } as any);
@@ -478,7 +478,7 @@ export function variadicParameterFrom(input: VariadicParameterFromInput) {
 
 export function parameterFrom(input: ParameterFromInput) {
   return parameter({
-    mutableSpecifier: typeof ((input as any)?.mutable_specifier ?? (input as any)?.fields?.mutable_specifier) === 'string' ? mutableSpecifier(((input as any)?.mutable_specifier ?? (input as any)?.fields?.mutable_specifier)) : ((input as any)?.mutable_specifier ?? (input as any)?.fields?.mutable_specifier),
+    mutableSpecifier: ((input as any)?.mutable_specifier ?? (input as any)?.fields?.mutable_specifier),
     pattern: ((input as any)?.pattern ?? (input as any)?.fields?.pattern),
     type: ((input as any)?.type ?? (input as any)?.fields?.type),
     children: ((input as any)?.children ?? []) as any,
@@ -629,7 +629,7 @@ export function typeBindingFrom(input: TypeBindingFromInput) {
 export function referenceTypeFrom(input: ReferenceTypeFromInput) {
   return referenceType({
     lifetime: ((input as any)?.lifetime ?? (input as any)?.fields?.lifetime),
-    mutableSpecifier: typeof ((input as any)?.mutable_specifier ?? (input as any)?.fields?.mutable_specifier) === 'string' ? mutableSpecifier(((input as any)?.mutable_specifier ?? (input as any)?.fields?.mutable_specifier)) : ((input as any)?.mutable_specifier ?? (input as any)?.fields?.mutable_specifier),
+    mutableSpecifier: ((input as any)?.mutable_specifier ?? (input as any)?.fields?.mutable_specifier),
     type: ((input as any)?.type ?? (input as any)?.fields?.type),
     children: ((input as any)?.children ?? []) as any,
   } as any);
@@ -637,7 +637,7 @@ export function referenceTypeFrom(input: ReferenceTypeFromInput) {
 
 export function pointerTypeFrom(input: PointerTypeFromInput) {
   return pointerType({
-    mutableSpecifier: typeof ((input as any)?.mutable_specifier ?? (input as any)?.fields?.mutable_specifier) === 'string' ? mutableSpecifier(((input as any)?.mutable_specifier ?? (input as any)?.fields?.mutable_specifier)) : ((input as any)?.mutable_specifier ?? (input as any)?.fields?.mutable_specifier),
+    mutableSpecifier: ((input as any)?.mutable_specifier ?? (input as any)?.fields?.mutable_specifier),
     type: ((input as any)?.type ?? (input as any)?.fields?.type),
     children: ((input as any)?.children ?? []) as any,
   } as any);
@@ -743,7 +743,7 @@ export function tryExpressionFrom(input: TryExpressionFromInput) {
 
 export function referenceExpressionFrom(input: ReferenceExpressionFromInput) {
   return referenceExpression({
-    mutableSpecifier: typeof ((input as any)?.mutable_specifier ?? (input as any)?.fields?.mutable_specifier) === 'string' ? mutableSpecifier(((input as any)?.mutable_specifier ?? (input as any)?.fields?.mutable_specifier)) : ((input as any)?.mutable_specifier ?? (input as any)?.fields?.mutable_specifier),
+    mutableSpecifier: ((input as any)?.mutable_specifier ?? (input as any)?.fields?.mutable_specifier),
     value: ((input as any)?.value ?? (input as any)?.fields?.value),
     children: ((input as any)?.children ?? []) as any,
   } as any);
@@ -1166,7 +1166,7 @@ export function fieldPatternColonFrom(input?: any) {
 
 export function mutPatternFrom(input: MutPatternFromInput) {
   return mutPattern({
-    mutableSpecifier: typeof ((input as any)?.mutable_specifier ?? (input as any)?.fields?.mutable_specifier) === 'string' ? mutableSpecifier(((input as any)?.mutable_specifier ?? (input as any)?.fields?.mutable_specifier)) : ((input as any)?.mutable_specifier ?? (input as any)?.fields?.mutable_specifier),
+    mutableSpecifier: ((input as any)?.mutable_specifier ?? (input as any)?.fields?.mutable_specifier),
     pattern: ((input as any)?.pattern ?? (input as any)?.fields?.pattern),
     children: ((input as any)?.children ?? []) as any,
   } as any);
@@ -1209,7 +1209,7 @@ export function capturedPatternFrom(input: CapturedPatternFromInput) {
 
 export function referencePatternFrom(input: ReferencePatternFromInput) {
   return referencePattern({
-    mutableSpecifier: typeof ((input as any)?.mutable_specifier ?? (input as any)?.fields?.mutable_specifier) === 'string' ? mutableSpecifier(((input as any)?.mutable_specifier ?? (input as any)?.fields?.mutable_specifier)) : ((input as any)?.mutable_specifier ?? (input as any)?.fields?.mutable_specifier),
+    mutableSpecifier: ((input as any)?.mutable_specifier ?? (input as any)?.fields?.mutable_specifier),
     pattern: ((input as any)?.pattern ?? (input as any)?.fields?.pattern),
     children: ((input as any)?.children ?? []) as any,
   } as any);

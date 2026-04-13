@@ -55,7 +55,7 @@ export function emitTypeTestsFromNodeMap(config: EmitTypeTestsFromNodeMapConfig)
     lines.push('')
 
     // Helpers
-    lines.push('type Extends<A, B> = A extends B ? true : false;')
+    lines.push('type _TypeExtends<A, B> = A extends B ? true : false;')
     lines.push('type _TypeAssert<T extends true> = T;')
     lines.push('')
 
@@ -73,12 +73,12 @@ export function emitTypeTestsFromNodeMap(config: EmitTypeTestsFromNodeMapConfig)
     for (const s of structuralKinds) {
         if (seenType.has(s.typeName)) continue
         seenType.add(s.typeName)
-        lines.push(`export type _Type_${s.typeName} = _TypeAssert<Extends<${s.typeName}['type'], '${s.kind}'>>;`)
+        lines.push(`export type _Type_${s.typeName} = _TypeAssert<_TypeExtends<${s.typeName}['type'], '${s.kind}'>>;`)
     }
     for (const l of leafKinds) {
         if (seenType.has(l.typeName)) continue
         seenType.add(l.typeName)
-        lines.push(`export type _Type_${l.typeName} = _TypeAssert<Extends<${l.typeName}['type'], '${l.kind}'>>;`)
+        lines.push(`export type _Type_${l.typeName} = _TypeAssert<_TypeExtends<${l.typeName}['type'], '${l.kind}'>>;`)
     }
     lines.push('')
 
@@ -88,7 +88,7 @@ export function emitTypeTestsFromNodeMap(config: EmitTypeTestsFromNodeMapConfig)
         if (s.hasVariants) continue
         if (seenConfig.has(s.typeName)) continue
         seenConfig.add(s.typeName)
-        lines.push(`export type _Config_${s.typeName} = _TypeAssert<Extends<ConfigOf<${s.typeName}>, ${s.typeName}Config>>;`)
+        lines.push(`export type _Config_${s.typeName} = _TypeAssert<_TypeExtends<ConfigOf<${s.typeName}>, ${s.typeName}Config>>;`)
     }
     lines.push('')
 
@@ -97,12 +97,12 @@ export function emitTypeTestsFromNodeMap(config: EmitTypeTestsFromNodeMapConfig)
     for (const s of structuralKinds) {
         if (seenTree.has(s.typeName)) continue
         seenTree.add(s.typeName)
-        lines.push(`export type _Tree_${s.typeName} = _TypeAssert<Extends<${s.typeName}Tree['type'], '${s.kind}'>>;`)
+        lines.push(`export type _Tree_${s.typeName} = _TypeAssert<_TypeExtends<${s.typeName}Tree['type'], '${s.kind}'>>;`)
     }
     for (const l of leafKinds) {
         if (seenTree.has(l.typeName)) continue
         seenTree.add(l.typeName)
-        lines.push(`export type _Tree_${l.typeName} = _TypeAssert<Extends<${l.typeName}Tree['type'], '${l.kind}'>>;`)
+        lines.push(`export type _Tree_${l.typeName} = _TypeAssert<_TypeExtends<${l.typeName}Tree['type'], '${l.kind}'>>;`)
     }
     lines.push('')
 

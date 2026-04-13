@@ -1048,7 +1048,7 @@ export function methodSignatureFrom(input: MethodSignatureFromInput) {
 export function abstractMethodSignatureFrom(input: AbstractMethodSignatureFromInput) {
   return abstractMethodSignature({
     accessibilityModifier: typeof ((input as any)?.accessibility_modifier ?? (input as any)?.fields?.accessibility_modifier) === 'string' ? accessibilityModifier(((input as any)?.accessibility_modifier ?? (input as any)?.fields?.accessibility_modifier)) : ((input as any)?.accessibility_modifier ?? (input as any)?.fields?.accessibility_modifier),
-    overrideModifier: typeof ((input as any)?.override_modifier ?? (input as any)?.fields?.override_modifier) === 'string' ? overrideModifier(((input as any)?.override_modifier ?? (input as any)?.fields?.override_modifier)) : ((input as any)?.override_modifier ?? (input as any)?.fields?.override_modifier),
+    overrideModifier: ((input as any)?.override_modifier ?? (input as any)?.fields?.override_modifier),
     name: ((input as any)?.name ?? (input as any)?.fields?.name),
     children: ((input as any)?.children ?? []) as any,
   } as any);

@@ -167,7 +167,13 @@ export function emitTypesFromNodeMap(config: EmitTypesFromNodeMapConfig): string
         if (node.modelType === 'polymorph' && node.forms.length > 1) {
             const formTypeNames: string[] = []
             for (const form of node.forms) {
-                const ftn = `${node.typeName}${toPascal(form.name)}`
+                // Use the form's own typeName (already computed by
+                // assemble.ts via nameNode, so the `_U_` double-underscore
+                // disambiguator lands consistently with what factories.ts
+                // and from.ts import). Reconstructing from
+                // `node.typeName + toPascal(form.name)` loses the
+                // disambiguator and produces dangling imports.
+                const ftn = form.typeName
                 formTypeNames.push(ftn)
                 emitFormInterface(lines, node, form, ftn, nodeMap)
             }
@@ -233,10 +239,21 @@ export function emitTypesFromNodeMap(config: EmitTypesFromNodeMapConfig): string
         const isAnon = node.modelType === 'keyword' || node.modelType === 'token'
         const candidate = isAnon ? `_anonymous_${kind}` : kind
         const grammarKey = grammarKeys.has(candidate) ? candidate : null
-        if (grammarKey) {
+        if (grammarKey && !isAnon) {
             lines.push(`export interface ${node.typeName}Tree extends TreeNode<'${grammarKey}'> {}`)
+        } else if (isAnon) {
+            // Anonymous kinds carry the raw kind string (e.g. `'import'`,
+            // not `'_anonymous_import'`) as `type` at runtime. Don't
+            // extend TreeNode<'_anonymous_X'> — its `type` literal is
+            // incompatible with the raw kind we want to expose. Declare
+            // a minimal tree stub with the raw type literal directly.
+            lines.push(`export interface ${node.typeName}Tree extends AnyTreeNode { readonly type: ${JSON.stringify(kind)}; }`)
         } else {
-            lines.push(`export interface ${node.typeName}Tree extends AnyTreeNode {}`)
+            // Not in grammar.ts — hidden/unmodelled kind. Emit a
+            // stub with an explicit type literal so type-level
+            // assertions like `Tree['type'] extends 'kind'` narrow
+            // correctly instead of landing on the wide NodeKind union.
+            lines.push(`export interface ${node.typeName}Tree extends AnyTreeNode { readonly type: ${JSON.stringify(kind)}; }`)
         }
         // Per-form Tree aliases for polymorphs (so factories can reference them)
         const ptn = polymorphTypeNames.get(kind)
@@ -267,12 +284,22 @@ export function emitTypesFromNodeMap(config: EmitTypesFromNodeMapConfig): string
     }
     lines.push('')
 
-    // 5. Supertype unions
+    // 5. Supertype unions — must emit under the AssembledNode's typeName
+    // (e.g. `HiddenFExpression` for `_f_expression`), matching what
+    // fieldTypeExpr references in the structural interfaces above.
+    // Using a local `toPascal(kind.replace(/^_/, ''))` would produce
+    // `FExpression`, leaving field references dangling.
     if (supertypes.length > 0) {
         lines.push('// Supertype unions')
         for (const st of supertypes) {
-            const cleanName = st.kind.replace(/^_/, '')
-            const typeName = toPascal(cleanName)
+            if (st.subtypes.length === 0) {
+                throw new Error(
+                    `emitTypesFromNodeMap: supertype '${st.kind}' has zero subtypes. ` +
+                    `Link's classifyHiddenRule promoted a non-symbol-choice as supertype — fix it there.`,
+                )
+            }
+            const stNode = nodeMap.nodes.get(st.kind)
+            const typeName = stNode?.typeName ?? toPascal(st.kind.replace(/^_/, ''))
             if (generatedTypes.has(typeName)) continue
             generatedTypes.add(typeName)
 
@@ -284,18 +311,12 @@ export function emitTypesFromNodeMap(config: EmitTypesFromNodeMapConfig): string
                 for (const m of members) lines.push(`  | ${m}`)
                 lines.push(';')
                 lines.push('')
-            }
-
-            if (st.subtypes.length === 0) {
-                // A supertype without subtypes is semantic nonsense — it
-                // means Link classified a hidden rule as supertype despite
-                // having nothing to project a union over. That's a bug in
-                // classifyHiddenRule; surface it here instead of emitting
-                // a degenerate type alias.
-                throw new Error(
-                    `emitTypesFromNodeMap: supertype '${st.kind}' has zero subtypes. ` +
-                    `Link's classifyHiddenRule promoted a non-symbol-choice as supertype — fix it there.`,
-                )
+            } else {
+                // Every subtype is itself hidden/unemitted — still declare
+                // the type so references resolve. Use AnyNodeData as the
+                // lowest-common-denominator fallback.
+                lines.push(`export type ${typeName} = import('@sittir/types').AnyNodeData;`)
+                lines.push('')
             }
             // Config/Tree/FromInput unions
             const branchSet = new Set(nodeKinds)
@@ -307,6 +328,66 @@ export function emitTypesFromNodeMap(config: EmitTypesFromNodeMapConfig): string
             lines.push(`export type ${typeName}Tree = ${st.subtypes.map(sub => `${nodeMap.nodes.get(sub)?.typeName ?? toPascal(sub)}Tree`).join(' | ')};`)
             lines.push('')
         }
+    }
+
+    // 5b. Token/unmodelled stub interfaces — tree-sitter anonymous
+    // operator tokens and external terminals show up in field/child
+    // unions but don't get their own emission above. Declare a minimal
+    // `{ type, text }` interface so references resolve.
+    lines.push('// Token stubs — anonymous operators and externals')
+    for (const [kind, node] of nodeMap.nodes) {
+        if (node.modelType !== 'token') continue
+        if (generatedTypes.has(node.typeName)) continue
+        if (!/^[A-Za-z_$][\w$]*$/.test(node.typeName)) continue
+        generatedTypes.add(node.typeName)
+        lines.push(`export interface ${node.typeName} { readonly type: ${JSON.stringify(kind)}; readonly text: string; }`)
+        if (!treeEmitted.has(node.typeName)) {
+            treeEmitted.add(node.typeName)
+            lines.push(`export interface ${node.typeName}Tree extends AnyTreeNode { readonly type: ${JSON.stringify(kind)}; }`)
+        }
+    }
+    lines.push('')
+
+    // 5c. Leftover-reference stubs — any typeName appearing in a field
+    // or child content-type union that hasn't been declared yet (e.g. a
+    // hidden rule that Link inlined but whose kind name still leaks into
+    // contentTypes). Declare each as `AnyNodeData` so references resolve
+    // without promising a specific shape.
+    const referenced = new Set<string>()
+    const collect = (kinds: readonly string[]) => {
+        for (const t of kinds) {
+            const n = nodeMap.nodes.get(t)
+            const name = n?.typeName ?? toPascal(t)
+            if (/^[A-Za-z_$][\w$]*$/.test(name)) referenced.add(name)
+        }
+    }
+    for (const [, node] of nodeMap.nodes) {
+        if (node instanceof AssembledBranch) {
+            for (const f of node.fields) collect(f.contentTypes)
+            for (const c of (node.children ?? [])) collect(c.contentTypes)
+        } else if (node instanceof AssembledContainer) {
+            for (const c of node.children) collect(c.contentTypes)
+        } else if (node instanceof AssembledPolymorph) {
+            for (const form of node.forms) {
+                for (const f of form.fields) collect(f.contentTypes)
+                for (const c of form.children) collect(c.contentTypes)
+            }
+        } else if (node instanceof AssembledGroup) {
+            for (const f of node.fields) collect(f.contentTypes)
+            for (const c of node.children) collect(c.contentTypes)
+        }
+    }
+    // Supertypes reference every subtype in their Tree union.
+    for (const st of supertypes) collect(st.subtypes)
+    const leftovers = [...referenced].filter(n => !generatedTypes.has(n)).sort()
+    if (leftovers.length > 0) {
+        lines.push('// Leftover reference stubs — kinds inlined by Link whose names still leak into field unions')
+        for (const name of leftovers) {
+            generatedTypes.add(name)
+            lines.push(`export type ${name} = import('@sittir/types').AnyNodeData;`)
+            lines.push(`export type ${name}Tree = import('@sittir/types').AnyTreeNodeOf;`)
+        }
+        lines.push('')
     }
 
     // 6. Discriminated union + maps

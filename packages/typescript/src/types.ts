@@ -912,11 +912,11 @@ export interface ArrowFunctionParameter {
   };
 }
 
-export interface ArrowFunctionCallSignature {
+export interface ArrowFunctionUCallSignature {
   readonly type: 'arrow_function';
 }
 
-export type ArrowFunction = ArrowFunctionParameter | ArrowFunctionCallSignature;
+export type ArrowFunction = ArrowFunctionParameter | ArrowFunctionUCallSignature;
 export interface CallExpressionFunction {
   readonly type: 'call_expression';
   readonly fields: {
@@ -2247,8 +2247,8 @@ export type FunctionDeclarationConfig = ConfigOf<FunctionDeclaration>;
 export type GeneratorFunctionConfig = ConfigOf<GeneratorFunction>;
 export type GeneratorFunctionDeclarationConfig = ConfigOf<GeneratorFunctionDeclaration>;
 export type ArrowFunctionParameterConfig = ConfigOf<ArrowFunctionParameter>;
-export type ArrowFunctionCallSignatureConfig = ConfigOf<ArrowFunctionCallSignature>;
-export type ArrowFunctionConfig = ArrowFunctionParameterConfig | ArrowFunctionCallSignatureConfig;
+export type ArrowFunctionUCallSignatureConfig = ConfigOf<ArrowFunctionUCallSignature>;
+export type ArrowFunctionConfig = ArrowFunctionParameterConfig | ArrowFunctionUCallSignatureConfig;
 export type CallExpressionFunctionConfig = ConfigOf<CallExpressionFunction>;
 export type CallExpressionFunction2Config = ConfigOf<CallExpressionFunction2>;
 export type CallExpressionTokQDotConfig = ConfigOf<CallExpressionTokQDot>;
@@ -2423,15 +2423,15 @@ export interface AssignmentPatternTree extends TreeNode<'assignment_pattern'> {}
 export interface ObjectAssignmentPatternTree extends TreeNode<'object_assignment_pattern'> {}
 export interface ArrayTree extends TreeNode<'array'> {}
 export interface ArrayPatternTree extends TreeNode<'array_pattern'> {}
-export interface JsxElementTree extends AnyTreeNode {}
-export interface JsxExpressionTree extends AnyTreeNode {}
-export interface JsxOpeningElementTree extends AnyTreeNode {}
+export interface JsxElementTree extends AnyTreeNode { readonly type: "jsx_element"; }
+export interface JsxExpressionTree extends AnyTreeNode { readonly type: "jsx_expression"; }
+export interface JsxOpeningElementTree extends AnyTreeNode { readonly type: "jsx_opening_element"; }
 export interface NestedIdentifierTree extends TreeNode<'nested_identifier'> {}
-export interface JsxNamespaceNameTree extends AnyTreeNode {}
-export interface JsxClosingElementTree extends AnyTreeNode {}
-export interface JsxSelfClosingElementTree extends AnyTreeNode {}
-export interface JsxAttributeTree extends AnyTreeNode {}
-export interface HiddenJsxStringTree extends AnyTreeNode {}
+export interface JsxNamespaceNameTree extends AnyTreeNode { readonly type: "jsx_namespace_name"; }
+export interface JsxClosingElementTree extends AnyTreeNode { readonly type: "jsx_closing_element"; }
+export interface JsxSelfClosingElementTree extends AnyTreeNode { readonly type: "jsx_self_closing_element"; }
+export interface JsxAttributeTree extends AnyTreeNode { readonly type: "jsx_attribute"; }
+export interface HiddenJsxStringTree extends AnyTreeNode { readonly type: "_jsx_string"; }
 export interface ClassTree extends TreeNode<'class'> {}
 export interface ClassDeclarationTree extends TreeNode<'class_declaration'> {}
 export interface ClassHeritageTree extends TreeNode<'class_heritage'> {}
@@ -2441,7 +2441,7 @@ export interface GeneratorFunctionTree extends TreeNode<'generator_function'> {}
 export interface GeneratorFunctionDeclarationTree extends TreeNode<'generator_function_declaration'> {}
 export interface ArrowFunctionTree extends TreeNode<'arrow_function'> {}
 export interface ArrowFunctionParameterTree extends TreeNode<'arrow_function'> {}
-export interface ArrowFunctionCallSignatureTree extends TreeNode<'arrow_function'> {}
+export interface ArrowFunctionUCallSignatureTree extends TreeNode<'arrow_function'> {}
 export interface CallExpressionTree extends TreeNode<'call_expression'> {}
 export interface CallExpressionFunctionTree extends TreeNode<'call_expression'> {}
 export interface CallExpressionFunction2Tree extends TreeNode<'call_expression'> {}
@@ -2450,9 +2450,9 @@ export interface NewExpressionTree extends TreeNode<'new_expression'> {}
 export interface AwaitExpressionTree extends TreeNode<'await_expression'> {}
 export interface MemberExpressionTree extends TreeNode<'member_expression'> {}
 export interface SubscriptExpressionTree extends TreeNode<'subscript_expression'> {}
-export interface HiddenLhsExpressionTree extends AnyTreeNode {}
+export interface HiddenLhsExpressionTree extends AnyTreeNode { readonly type: "_lhs_expression"; }
 export interface AssignmentExpressionTree extends TreeNode<'assignment_expression'> {}
-export interface HiddenAugmentedAssignmentLhsTree extends AnyTreeNode {}
+export interface HiddenAugmentedAssignmentLhsTree extends AnyTreeNode { readonly type: "_augmented_assignment_lhs"; }
 export interface AugmentedAssignmentExpressionTree extends TreeNode<'augmented_assignment_expression'> {}
 export interface SpreadElementTree extends TreeNode<'spread_element'> {}
 export interface TernaryExpressionTree extends TreeNode<'ternary_expression'> {}
@@ -2466,10 +2466,10 @@ export interface TemplateSubstitutionTree extends TreeNode<'template_substitutio
 export interface RegexTree extends TreeNode<'regex'> {}
 export interface ArgumentsTree extends TreeNode<'arguments'> {}
 export interface DecoratorTree extends TreeNode<'decorator'> {}
-export interface DecoratorMemberExpressionTree extends AnyTreeNode {}
-export interface DecoratorCallExpressionTree extends AnyTreeNode {}
+export interface DecoratorMemberExpressionTree extends AnyTreeNode { readonly type: "decorator_member_expression"; }
+export interface DecoratorCallExpressionTree extends AnyTreeNode { readonly type: "decorator_call_expression"; }
 export interface ClassBodyTree extends TreeNode<'class_body'> {}
-export interface FieldDefinitionTree extends AnyTreeNode {}
+export interface FieldDefinitionTree extends AnyTreeNode { readonly type: "field_definition"; }
 export interface FormalParametersTree extends TreeNode<'formal_parameters'> {}
 export interface ClassStaticBlockTree extends TreeNode<'class_static_block'> {}
 export interface PatternTree extends TreeNode<'pattern'> {}
@@ -2477,17 +2477,17 @@ export interface RestPatternTree extends TreeNode<'rest_pattern'> {}
 export interface MethodDefinitionTree extends TreeNode<'method_definition'> {}
 export interface PairTree extends TreeNode<'pair'> {}
 export interface PairPatternTree extends TreeNode<'pair_pattern'> {}
-export interface HiddenPropertyNameTree extends AnyTreeNode {}
+export interface HiddenPropertyNameTree extends AnyTreeNode { readonly type: "_property_name"; }
 export interface ComputedPropertyNameTree extends TreeNode<'computed_property_name'> {}
-export interface HiddenSemicolonTree extends AnyTreeNode {}
+export interface HiddenSemicolonTree extends AnyTreeNode { readonly type: "_semicolon"; }
 export interface PublicFieldDefinitionTree extends TreeNode<'public_field_definition'> {}
-export interface HiddenJsxStartOpeningElementTree extends AnyTreeNode {}
-export interface HiddenImportIdentifierTree extends AnyTreeNode {}
+export interface HiddenJsxStartOpeningElementTree extends AnyTreeNode { readonly type: "_jsx_start_opening_element"; }
+export interface HiddenImportIdentifierTree extends AnyTreeNode { readonly type: "_import_identifier"; }
 export interface NonNullExpressionTree extends TreeNode<'non_null_expression'> {}
 export interface MethodSignatureTree extends TreeNode<'method_signature'> {}
 export interface AbstractMethodSignatureTree extends TreeNode<'abstract_method_signature'> {}
 export interface FunctionSignatureTree extends TreeNode<'function_signature'> {}
-export interface DecoratorParenthesizedExpressionTree extends AnyTreeNode {}
+export interface DecoratorParenthesizedExpressionTree extends AnyTreeNode { readonly type: "decorator_parenthesized_expression"; }
 export interface TypeAssertionTree extends TreeNode<'type_assertion'> {}
 export interface AsExpressionTree extends TreeNode<'as_expression'> {}
 export interface SatisfiesExpressionTree extends TreeNode<'satisfies_expression'> {}
@@ -2516,8 +2516,8 @@ export interface TypeAnnotationTree extends TreeNode<'type_annotation'> {}
 export interface AssertsTree extends TreeNode<'asserts'> {}
 export interface AssertsAnnotationTree extends TreeNode<'asserts_annotation'> {}
 export interface TypeTree extends TreeNode<'type'> {}
-export interface TupleParameterTree extends AnyTreeNode {}
-export interface OptionalTupleParameterTree extends AnyTreeNode {}
+export interface TupleParameterTree extends AnyTreeNode { readonly type: "tuple_parameter"; }
+export interface OptionalTupleParameterTree extends AnyTreeNode { readonly type: "optional_tuple_parameter"; }
 export interface OptionalTypeTree extends TreeNode<'optional_type'> {}
 export interface RestTypeTree extends TreeNode<'rest_type'> {}
 export interface ConstructorTypeTree extends TreeNode<'constructor_type'> {}
@@ -2554,18 +2554,18 @@ export interface ReadonlyTypeTree extends TreeNode<'readonly_type'> {}
 export interface UnionTypeTree extends TreeNode<'union_type'> {}
 export interface IntersectionTypeTree extends TreeNode<'intersection_type'> {}
 export interface FunctionTypeTree extends TreeNode<'function_type'> {}
-export interface HiddenTypeIdentifierTree extends AnyTreeNode {}
+export interface HiddenTypeIdentifierTree extends AnyTreeNode { readonly type: "_type_identifier"; }
 export interface ShorthandPropertyIdentifierTree extends TreeNode<'shorthand_property_identifier'> {}
 export interface ShorthandPropertyIdentifierPatternTree extends TreeNode<'shorthand_property_identifier_pattern'> {}
 export interface InterfaceBodyTree extends TreeNode<'interface_body'> {}
 export interface HashBangLineTree extends TreeNode<'hash_bang_line'> {}
-export interface ImportTree extends TreeNode<'_anonymous_import'> {}
-export interface HtmlCharacterReferenceTree extends AnyTreeNode {}
-export interface JsxIdentifierTree extends AnyTreeNode {}
-export interface UnescapedDoubleJsxStringFragmentTree extends AnyTreeNode {}
-export interface UnescapedSingleJsxStringFragmentTree extends AnyTreeNode {}
-export interface UnescapedDoubleStringFragmentTree extends AnyTreeNode {}
-export interface UnescapedSingleStringFragmentTree extends AnyTreeNode {}
+export interface ImportTree extends AnyTreeNode { readonly type: "import"; }
+export interface HtmlCharacterReferenceTree extends AnyTreeNode { readonly type: "html_character_reference"; }
+export interface JsxIdentifierTree extends AnyTreeNode { readonly type: "jsx_identifier"; }
+export interface UnescapedDoubleJsxStringFragmentTree extends AnyTreeNode { readonly type: "unescaped_double_jsx_string_fragment"; }
+export interface UnescapedSingleJsxStringFragmentTree extends AnyTreeNode { readonly type: "unescaped_single_jsx_string_fragment"; }
+export interface UnescapedDoubleStringFragmentTree extends AnyTreeNode { readonly type: "unescaped_double_string_fragment"; }
+export interface UnescapedSingleStringFragmentTree extends AnyTreeNode { readonly type: "unescaped_single_string_fragment"; }
 export interface EscapeSequenceTree extends TreeNode<'escape_sequence'> {}
 export interface CommentTree extends TreeNode<'comment'> {}
 export interface RegexPatternTree extends TreeNode<'regex_pattern'> {}
@@ -2574,78 +2574,78 @@ export interface NumberTree extends TreeNode<'number'> {}
 export interface IdentifierTree extends TreeNode<'identifier'> {}
 export interface PrivatePropertyIdentifierTree extends TreeNode<'private_property_identifier'> {}
 export interface MetaPropertyTree extends TreeNode<'meta_property'> {}
-export interface ThisTree extends AnyTreeNode {}
-export interface SuperTree extends AnyTreeNode {}
-export interface TrueTree extends AnyTreeNode {}
-export interface FalseTree extends AnyTreeNode {}
-export interface NullTree extends AnyTreeNode {}
-export interface UndefinedTree extends AnyTreeNode {}
-export interface HiddenReservedIdentifierTree extends AnyTreeNode {}
+export interface ThisTree extends AnyTreeNode { readonly type: "this"; }
+export interface SuperTree extends AnyTreeNode { readonly type: "super"; }
+export interface TrueTree extends AnyTreeNode { readonly type: "true"; }
+export interface FalseTree extends AnyTreeNode { readonly type: "false"; }
+export interface NullTree extends AnyTreeNode { readonly type: "null"; }
+export interface UndefinedTree extends AnyTreeNode { readonly type: "undefined"; }
+export interface HiddenReservedIdentifierTree extends AnyTreeNode { readonly type: "_reserved_identifier"; }
 export interface AccessibilityModifierTree extends TreeNode<'accessibility_modifier'> {}
-export interface OverrideModifierTree extends AnyTreeNode {}
+export interface OverrideModifierTree extends AnyTreeNode { readonly type: "override_modifier"; }
 export interface PredefinedTypeTree extends TreeNode<'predefined_type'> {}
 export interface StatementIdentifierTree extends TreeNode<'statement_identifier'> {}
 export interface PropertyIdentifierTree extends TreeNode<'property_identifier'> {}
 export interface StringFragmentTree extends TreeNode<'string_fragment'> {}
-export interface ThisTypeTree extends AnyTreeNode {}
+export interface ThisTypeTree extends AnyTreeNode { readonly type: "this_type"; }
 export interface TypeIdentifierTree extends TreeNode<'type_identifier'> {}
-export interface AsTree extends TreeNode<'_anonymous_as'> {}
-export interface TypeofTree extends TreeNode<'_anonymous_typeof'> {}
-export interface FromTree extends TreeNode<'_anonymous_from'> {}
-export interface WithTree extends TreeNode<'_anonymous_with'> {}
-export interface AssertTree extends TreeNode<'_anonymous_assert'> {}
-export interface VarTree extends TreeNode<'_anonymous_var'> {}
-export interface LetTree extends TreeNode<'_anonymous_let'> {}
-export interface ConstTree extends TreeNode<'_anonymous_const'> {}
-export interface ElseTree extends TreeNode<'_anonymous_else'> {}
-export interface IfTree extends TreeNode<'_anonymous_if'> {}
-export interface SwitchTree extends TreeNode<'_anonymous_switch'> {}
-export interface ForTree extends TreeNode<'_anonymous_for'> {}
-export interface AwaitTree extends TreeNode<'_anonymous_await'> {}
-export interface InTree extends TreeNode<'_anonymous_in'> {}
-export interface OfTree extends TreeNode<'_anonymous_of'> {}
-export interface WhileTree extends TreeNode<'_anonymous_while'> {}
-export interface DoTree extends TreeNode<'_anonymous_do'> {}
-export interface TryTree extends TreeNode<'_anonymous_try'> {}
-export interface BreakTree extends TreeNode<'_anonymous_break'> {}
-export interface ContinueTree extends TreeNode<'_anonymous_continue'> {}
-export interface DebuggerTree extends TreeNode<'_anonymous_debugger'> {}
-export interface ReturnTree extends TreeNode<'_anonymous_return'> {}
-export interface ThrowTree extends TreeNode<'_anonymous_throw'> {}
-export interface CaseTree extends TreeNode<'_anonymous_case'> {}
-export interface DefaultTree extends TreeNode<'_anonymous_default'> {}
-export interface CatchTree extends TreeNode<'_anonymous_catch'> {}
-export interface FinallyTree extends TreeNode<'_anonymous_finally'> {}
-export interface YieldTree extends TreeNode<'_anonymous_yield'> {}
-export interface AsyncTree extends TreeNode<'_anonymous_async'> {}
-export interface FunctionTree extends TreeNode<'_anonymous_function'> {}
-export interface NewTree extends TreeNode<'_anonymous_new'> {}
-export interface UsingTree extends TreeNode<'_anonymous_using'> {}
-export interface InstanceofTree extends TreeNode<'_anonymous_instanceof'> {}
-export interface VoidTree extends TreeNode<'_anonymous_void'> {}
-export interface DeleteTree extends TreeNode<'_anonymous_delete'> {}
-export interface StaticTree extends TreeNode<'_anonymous_static'> {}
-export interface ReadonlyTree extends TreeNode<'_anonymous_readonly'> {}
-export interface GetTree extends TreeNode<'_anonymous_get'> {}
-export interface SetTree extends TreeNode<'_anonymous_set'> {}
-export interface DeclareTree extends TreeNode<'_anonymous_declare'> {}
-export interface AbstractTree extends TreeNode<'_anonymous_abstract'> {}
-export interface AccessorTree extends TreeNode<'_anonymous_accessor'> {}
-export interface SatisfiesTree extends TreeNode<'_anonymous_satisfies'> {}
-export interface RequireTree extends TreeNode<'_anonymous_require'> {}
-export interface ExtendsTree extends TreeNode<'_anonymous_extends'> {}
-export interface ImplementsTree extends TreeNode<'_anonymous_implements'> {}
-export interface GlobalTree extends TreeNode<'_anonymous_global'> {}
-export interface NamespaceTree extends TreeNode<'_anonymous_namespace'> {}
-export interface InterfaceTree extends TreeNode<'_anonymous_interface'> {}
-export interface EnumTree extends TreeNode<'_anonymous_enum'> {}
-export interface PublicTree extends TreeNode<'_anonymous_public'> {}
-export interface PrivateTree extends TreeNode<'_anonymous_private'> {}
-export interface ProtectedTree extends TreeNode<'_anonymous_protected'> {}
-export interface OverrideTree extends TreeNode<'_anonymous_override'> {}
-export interface InferTree extends TreeNode<'_anonymous_infer'> {}
-export interface IsTree extends TreeNode<'_anonymous_is'> {}
-export interface KeyofTree extends TreeNode<'_anonymous_keyof'> {}
+export interface AsTree extends AnyTreeNode { readonly type: "as"; }
+export interface TypeofTree extends AnyTreeNode { readonly type: "typeof"; }
+export interface FromTree extends AnyTreeNode { readonly type: "from"; }
+export interface WithTree extends AnyTreeNode { readonly type: "with"; }
+export interface AssertTree extends AnyTreeNode { readonly type: "assert"; }
+export interface VarTree extends AnyTreeNode { readonly type: "var"; }
+export interface LetTree extends AnyTreeNode { readonly type: "let"; }
+export interface ConstTree extends AnyTreeNode { readonly type: "const"; }
+export interface ElseTree extends AnyTreeNode { readonly type: "else"; }
+export interface IfTree extends AnyTreeNode { readonly type: "if"; }
+export interface SwitchTree extends AnyTreeNode { readonly type: "switch"; }
+export interface ForTree extends AnyTreeNode { readonly type: "for"; }
+export interface AwaitTree extends AnyTreeNode { readonly type: "await"; }
+export interface InTree extends AnyTreeNode { readonly type: "in"; }
+export interface OfTree extends AnyTreeNode { readonly type: "of"; }
+export interface WhileTree extends AnyTreeNode { readonly type: "while"; }
+export interface DoTree extends AnyTreeNode { readonly type: "do"; }
+export interface TryTree extends AnyTreeNode { readonly type: "try"; }
+export interface BreakTree extends AnyTreeNode { readonly type: "break"; }
+export interface ContinueTree extends AnyTreeNode { readonly type: "continue"; }
+export interface DebuggerTree extends AnyTreeNode { readonly type: "debugger"; }
+export interface ReturnTree extends AnyTreeNode { readonly type: "return"; }
+export interface ThrowTree extends AnyTreeNode { readonly type: "throw"; }
+export interface CaseTree extends AnyTreeNode { readonly type: "case"; }
+export interface DefaultTree extends AnyTreeNode { readonly type: "default"; }
+export interface CatchTree extends AnyTreeNode { readonly type: "catch"; }
+export interface FinallyTree extends AnyTreeNode { readonly type: "finally"; }
+export interface YieldTree extends AnyTreeNode { readonly type: "yield"; }
+export interface AsyncTree extends AnyTreeNode { readonly type: "async"; }
+export interface FunctionTree extends AnyTreeNode { readonly type: "function"; }
+export interface NewTree extends AnyTreeNode { readonly type: "new"; }
+export interface UsingTree extends AnyTreeNode { readonly type: "using"; }
+export interface InstanceofTree extends AnyTreeNode { readonly type: "instanceof"; }
+export interface VoidTree extends AnyTreeNode { readonly type: "void"; }
+export interface DeleteTree extends AnyTreeNode { readonly type: "delete"; }
+export interface StaticTree extends AnyTreeNode { readonly type: "static"; }
+export interface ReadonlyTree extends AnyTreeNode { readonly type: "readonly"; }
+export interface GetTree extends AnyTreeNode { readonly type: "get"; }
+export interface SetTree extends AnyTreeNode { readonly type: "set"; }
+export interface DeclareTree extends AnyTreeNode { readonly type: "declare"; }
+export interface AbstractTree extends AnyTreeNode { readonly type: "abstract"; }
+export interface AccessorTree extends AnyTreeNode { readonly type: "accessor"; }
+export interface SatisfiesTree extends AnyTreeNode { readonly type: "satisfies"; }
+export interface RequireTree extends AnyTreeNode { readonly type: "require"; }
+export interface ExtendsTree extends AnyTreeNode { readonly type: "extends"; }
+export interface ImplementsTree extends AnyTreeNode { readonly type: "implements"; }
+export interface GlobalTree extends AnyTreeNode { readonly type: "global"; }
+export interface NamespaceTree extends AnyTreeNode { readonly type: "namespace"; }
+export interface InterfaceTree extends AnyTreeNode { readonly type: "interface"; }
+export interface EnumTree extends AnyTreeNode { readonly type: "enum"; }
+export interface PublicTree extends AnyTreeNode { readonly type: "public"; }
+export interface PrivateTree extends AnyTreeNode { readonly type: "private"; }
+export interface ProtectedTree extends AnyTreeNode { readonly type: "protected"; }
+export interface OverrideTree extends AnyTreeNode { readonly type: "override"; }
+export interface InferTree extends AnyTreeNode { readonly type: "infer"; }
+export interface IsTree extends AnyTreeNode { readonly type: "is"; }
+export interface KeyofTree extends AnyTreeNode { readonly type: "keyof"; }
 
 // FromInput types
 export type ProgramFromInput = FromInputOf<Program, LeafScalarMap, LeafStringMap>;
@@ -2712,7 +2712,7 @@ export type FunctionExpressionFromInput = FromInputOf<FunctionExpression, LeafSc
 export type FunctionDeclarationFromInput = FromInputOf<FunctionDeclaration, LeafScalarMap, LeafStringMap>;
 export type GeneratorFunctionFromInput = FromInputOf<GeneratorFunction, LeafScalarMap, LeafStringMap>;
 export type GeneratorFunctionDeclarationFromInput = FromInputOf<GeneratorFunctionDeclaration, LeafScalarMap, LeafStringMap>;
-export type ArrowFunctionFromInput = FromInputOf<ArrowFunctionParameter, LeafScalarMap, LeafStringMap> | FromInputOf<ArrowFunctionCallSignature, LeafScalarMap, LeafStringMap>;
+export type ArrowFunctionFromInput = FromInputOf<ArrowFunctionParameter, LeafScalarMap, LeafStringMap> | FromInputOf<ArrowFunctionUCallSignature, LeafScalarMap, LeafStringMap>;
 export type CallExpressionFromInput = FromInputOf<CallExpressionFunction, LeafScalarMap, LeafStringMap> | FromInputOf<CallExpressionFunction2, LeafScalarMap, LeafStringMap> | FromInputOf<CallExpressionTokQDot, LeafScalarMap, LeafStringMap>;
 export type NewExpressionFromInput = FromInputOf<NewExpression, LeafScalarMap, LeafStringMap>;
 export type AwaitExpressionFromInput = FromInputOf<AwaitExpression, LeafScalarMap, LeafStringMap>;
@@ -2826,78 +2826,114 @@ export type ShorthandPropertyIdentifierPatternFromInput = FromInputOf<ShorthandP
 export type InterfaceBodyFromInput = FromInputOf<InterfaceBody, LeafScalarMap, LeafStringMap>;
 
 // Supertype unions
-export type ModuleExportName =
+export type HiddenModuleExportName =
   | Identifier
   | String
 ;
 
-export type ModuleExportNameConfig = StringConfig;
-export type ModuleExportNameFromInput = StringFromInput;
-export type ModuleExportNameTree = IdentifierTree | StringTree;
+export type HiddenModuleExportNameConfig = StringConfig;
+export type HiddenModuleExportNameFromInput = StringFromInput;
+export type HiddenModuleExportNameTree = IdentifierTree | StringTree;
 
-export type Expressions =
+export type HiddenExpressions =
   | Expression
   | SequenceExpression
 ;
 
-export type ExpressionsConfig = ExpressionConfig | SequenceExpressionConfig;
-export type ExpressionsFromInput = ExpressionFromInput | SequenceExpressionFromInput;
-export type ExpressionsTree = ExpressionTree | SequenceExpressionTree;
+export type HiddenExpressionsConfig = ExpressionConfig | SequenceExpressionConfig;
+export type HiddenExpressionsFromInput = ExpressionFromInput | SequenceExpressionFromInput;
+export type HiddenExpressionsTree = ExpressionTree | SequenceExpressionTree;
 
-export type JsxChild =
+export type HiddenJsxElement =
+  | JsxElement
+  | JsxSelfClosingElement
+;
+
+export type HiddenJsxElementConfig = JsxElementConfig | JsxSelfClosingElementConfig;
+export type HiddenJsxElementFromInput = JsxElementFromInput | JsxSelfClosingElementFromInput;
+export type HiddenJsxElementTree = JsxElementTree | JsxSelfClosingElementTree;
+
+export type HiddenJsxChild =
   | HtmlCharacterReference
+  | HiddenJsxElement
   | JsxExpression
 ;
 
-export type JsxChildConfig = JsxExpressionConfig;
-export type JsxChildFromInput = JsxExpressionFromInput;
-export type JsxChildTree = JsxTextTree | HtmlCharacterReferenceTree | HiddenJsxElementTree | JsxExpressionTree;
+export type HiddenJsxChildConfig = JsxExpressionConfig;
+export type HiddenJsxChildFromInput = JsxExpressionFromInput;
+export type HiddenJsxChildTree = JsxTextTree | HtmlCharacterReferenceTree | HiddenJsxElementTree | JsxExpressionTree;
 
-export type JsxElementName =
+export type HiddenJsxIdentifier =
+  | JsxIdentifier
+  | Identifier
+;
+
+export type HiddenJsxIdentifierTree = JsxIdentifierTree | IdentifierTree;
+
+export type HiddenJsxElementName =
+  | HiddenJsxIdentifier
   | NestedIdentifier
   | JsxNamespaceName
 ;
 
-export type JsxElementNameConfig = NestedIdentifierConfig | JsxNamespaceNameConfig;
-export type JsxElementNameFromInput = NestedIdentifierFromInput | JsxNamespaceNameFromInput;
-export type JsxElementNameTree = HiddenJsxIdentifierTree | NestedIdentifierTree | JsxNamespaceNameTree;
+export type HiddenJsxElementNameConfig = NestedIdentifierConfig | JsxNamespaceNameConfig;
+export type HiddenJsxElementNameFromInput = NestedIdentifierFromInput | JsxNamespaceNameFromInput;
+export type HiddenJsxElementNameTree = HiddenJsxIdentifierTree | NestedIdentifierTree | JsxNamespaceNameTree;
 
-export type JsxAttributeName =
-  | JsxNamespaceName
-;
-
-export type JsxAttributeNameConfig = JsxNamespaceNameConfig;
-export type JsxAttributeNameFromInput = JsxNamespaceNameFromInput;
-export type JsxAttributeNameTree = HiddenJsxIdentifierTree | JsxNamespaceNameTree;
-
-export type JsxAttributeValue =
-  | HiddenJsxString
+export type HiddenJsxAttribute =
+  | JsxAttribute
   | JsxExpression
 ;
 
-export type JsxAttributeValueConfig = HiddenJsxStringConfig | JsxExpressionConfig;
-export type JsxAttributeValueFromInput = HiddenJsxStringFromInput | JsxExpressionFromInput;
-export type JsxAttributeValueTree = HiddenJsxStringTree | JsxExpressionTree | HiddenJsxElementTree;
+export type HiddenJsxAttributeConfig = JsxAttributeConfig | JsxExpressionConfig;
+export type HiddenJsxAttributeFromInput = JsxAttributeFromInput | JsxExpressionFromInput;
+export type HiddenJsxAttributeTree = JsxAttributeTree | JsxExpressionTree;
 
-export type FormalParameter =
+export type HiddenJsxAttributeName =
+  | HiddenJsxIdentifier
+  | JsxNamespaceName
+;
+
+export type HiddenJsxAttributeNameConfig = JsxNamespaceNameConfig;
+export type HiddenJsxAttributeNameFromInput = JsxNamespaceNameFromInput;
+export type HiddenJsxAttributeNameTree = HiddenJsxIdentifierTree | JsxNamespaceNameTree;
+
+export type HiddenJsxAttributeValue =
+  | HiddenJsxString
+  | JsxExpression
+  | HiddenJsxElement
+;
+
+export type HiddenJsxAttributeValueConfig = HiddenJsxStringConfig | JsxExpressionConfig;
+export type HiddenJsxAttributeValueFromInput = HiddenJsxStringFromInput | JsxExpressionFromInput;
+export type HiddenJsxAttributeValueTree = HiddenJsxStringTree | JsxExpressionTree | HiddenJsxElementTree;
+
+export type HiddenFormalParameter =
   | RequiredParameter
   | OptionalParameter
 ;
 
-export type FormalParameterConfig = RequiredParameterConfig | OptionalParameterConfig;
-export type FormalParameterFromInput = RequiredParameterFromInput | OptionalParameterFromInput;
-export type FormalParameterTree = RequiredParameterTree | OptionalParameterTree;
+export type HiddenFormalParameterConfig = RequiredParameterConfig | OptionalParameterConfig;
+export type HiddenFormalParameterFromInput = RequiredParameterFromInput | OptionalParameterFromInput;
+export type HiddenFormalParameterTree = RequiredParameterTree | OptionalParameterTree;
 
-export type DestructuringPattern =
+export type HiddenDestructuringPattern =
   | ObjectPattern
   | ArrayPattern
 ;
 
-export type DestructuringPatternConfig = ObjectPatternConfig | ArrayPatternConfig;
-export type DestructuringPatternFromInput = ObjectPatternFromInput | ArrayPatternFromInput;
-export type DestructuringPatternTree = ObjectPatternTree | ArrayPatternTree;
+export type HiddenDestructuringPatternConfig = ObjectPatternConfig | ArrayPatternConfig;
+export type HiddenDestructuringPatternFromInput = ObjectPatternFromInput | ArrayPatternFromInput;
+export type HiddenDestructuringPatternTree = ObjectPatternTree | ArrayPatternTree;
 
-export type TupleTypeMember =
+export type HiddenIdentifier =
+  | Undefined
+  | Identifier
+;
+
+export type HiddenIdentifierTree = UndefinedTree | IdentifierTree;
+
+export type HiddenTupleTypeMember =
   | TupleParameter
   | OptionalTupleParameter
   | OptionalType
@@ -2905,9 +2941,195 @@ export type TupleTypeMember =
   | Type
 ;
 
-export type TupleTypeMemberConfig = TupleParameterConfig | OptionalTupleParameterConfig | OptionalTypeConfig | RestTypeConfig | TypeConfig;
-export type TupleTypeMemberFromInput = TupleParameterFromInput | OptionalTupleParameterFromInput | OptionalTypeFromInput | RestTypeFromInput | TypeFromInput;
-export type TupleTypeMemberTree = TupleParameterTree | OptionalTupleParameterTree | OptionalTypeTree | RestTypeTree | TypeTree;
+export type HiddenTupleTypeMemberConfig = TupleParameterConfig | OptionalTupleParameterConfig | OptionalTypeConfig | RestTypeConfig | TypeConfig;
+export type HiddenTupleTypeMemberFromInput = TupleParameterFromInput | OptionalTupleParameterFromInput | OptionalTypeFromInput | RestTypeFromInput | TypeFromInput;
+export type HiddenTupleTypeMemberTree = TupleParameterTree | OptionalTupleParameterTree | OptionalTypeTree | RestTypeTree | TypeTree;
+
+// Token stubs — anonymous operators and externals
+export interface EmptyStatement { readonly type: "empty_statement"; readonly text: string; }
+export interface EmptyStatementTree extends AnyTreeNode { readonly type: "empty_statement"; }
+export interface OptionalChain { readonly type: "optional_chain"; readonly text: string; }
+export interface OptionalChainTree extends AnyTreeNode { readonly type: "optional_chain"; }
+export interface ExistentialType { readonly type: "existential_type"; readonly text: string; }
+export interface ExistentialTypeTree extends AnyTreeNode { readonly type: "existential_type"; }
+export interface Star { readonly type: "*"; readonly text: string; }
+export interface StarTree extends AnyTreeNode { readonly type: "*"; }
+export interface Brace { readonly type: "{"; readonly text: string; }
+export interface BraceTree extends AnyTreeNode { readonly type: "{"; }
+export interface Comma { readonly type: ","; readonly text: string; }
+export interface CommaTree extends AnyTreeNode { readonly type: ","; }
+export interface CloseBrace { readonly type: "}"; readonly text: string; }
+export interface CloseBraceTree extends AnyTreeNode { readonly type: "}"; }
+export interface Bang { readonly type: "!"; readonly text: string; }
+export interface BangTree extends AnyTreeNode { readonly type: "!"; }
+export interface Paren { readonly type: "("; readonly text: string; }
+export interface ParenTree extends AnyTreeNode { readonly type: "("; }
+export interface Semi { readonly type: ";"; readonly text: string; }
+export interface SemiTree extends AnyTreeNode { readonly type: ";"; }
+export interface CloseParen { readonly type: ")"; readonly text: string; }
+export interface CloseParenTree extends AnyTreeNode { readonly type: ")"; }
+export interface Colon { readonly type: ":"; readonly text: string; }
+export interface ColonTree extends AnyTreeNode { readonly type: ":"; }
+export interface Eq { readonly type: "="; readonly text: string; }
+export interface EqTree extends AnyTreeNode { readonly type: "="; }
+export interface Bracket { readonly type: "["; readonly text: string; }
+export interface BracketTree extends AnyTreeNode { readonly type: "["; }
+export interface CloseBracket { readonly type: "]"; readonly text: string; }
+export interface CloseBracketTree extends AnyTreeNode { readonly type: "]"; }
+export interface Gt { readonly type: ">"; readonly text: string; }
+export interface GtTree extends AnyTreeNode { readonly type: ">"; }
+export interface Dot { readonly type: "."; readonly text: string; }
+export interface DotTree extends AnyTreeNode { readonly type: "."; }
+export interface TokLtSlash { readonly type: "</"; readonly text: string; }
+export interface TokLtSlashTree extends AnyTreeNode { readonly type: "</"; }
+export interface TokSlashGt { readonly type: "/>"; readonly text: string; }
+export interface TokSlashGtTree extends AnyTreeNode { readonly type: "/>"; }
+export interface TokDq { readonly type: "\""; readonly text: string; }
+export interface TokDqTree extends AnyTreeNode { readonly type: "\""; }
+export interface TokSq { readonly type: "'"; readonly text: string; }
+export interface TokSqTree extends AnyTreeNode { readonly type: "'"; }
+export interface TokQDot { readonly type: "?."; readonly text: string; }
+export interface TokQDotTree extends AnyTreeNode { readonly type: "?."; }
+export interface Pluseq { readonly type: "+="; readonly text: string; }
+export interface PluseqTree extends AnyTreeNode { readonly type: "+="; }
+export interface Minuseq { readonly type: "-="; readonly text: string; }
+export interface MinuseqTree extends AnyTreeNode { readonly type: "-="; }
+export interface Stareq { readonly type: "*="; readonly text: string; }
+export interface StareqTree extends AnyTreeNode { readonly type: "*="; }
+export interface Slasheq { readonly type: "/="; readonly text: string; }
+export interface SlasheqTree extends AnyTreeNode { readonly type: "/="; }
+export interface Percenteq { readonly type: "%="; readonly text: string; }
+export interface PercenteqTree extends AnyTreeNode { readonly type: "%="; }
+export interface Careteq { readonly type: "^="; readonly text: string; }
+export interface CareteqTree extends AnyTreeNode { readonly type: "^="; }
+export interface Ampeq { readonly type: "&="; readonly text: string; }
+export interface AmpeqTree extends AnyTreeNode { readonly type: "&="; }
+export interface Pipeeq { readonly type: "|="; readonly text: string; }
+export interface PipeeqTree extends AnyTreeNode { readonly type: "|="; }
+export interface Shreq { readonly type: ">>="; readonly text: string; }
+export interface ShreqTree extends AnyTreeNode { readonly type: ">>="; }
+export interface TokGtGtGtEq { readonly type: ">>>="; readonly text: string; }
+export interface TokGtGtGtEqTree extends AnyTreeNode { readonly type: ">>>="; }
+export interface Shleq { readonly type: "<<="; readonly text: string; }
+export interface ShleqTree extends AnyTreeNode { readonly type: "<<="; }
+export interface Starstareq { readonly type: "**="; readonly text: string; }
+export interface StarstareqTree extends AnyTreeNode { readonly type: "**="; }
+export interface TokAmpAmpEq { readonly type: "&&="; readonly text: string; }
+export interface TokAmpAmpEqTree extends AnyTreeNode { readonly type: "&&="; }
+export interface TokPipePipeEq { readonly type: "||="; readonly text: string; }
+export interface TokPipePipeEqTree extends AnyTreeNode { readonly type: "||="; }
+export interface TokQQEq { readonly type: "??="; readonly text: string; }
+export interface TokQQEqTree extends AnyTreeNode { readonly type: "??="; }
+export interface Ellipsis { readonly type: "..."; readonly text: string; }
+export interface EllipsisTree extends AnyTreeNode { readonly type: "..."; }
+export interface Andand { readonly type: "&&"; readonly text: string; }
+export interface AndandTree extends AnyTreeNode { readonly type: "&&"; }
+export interface Oror { readonly type: "||"; readonly text: string; }
+export interface OrorTree extends AnyTreeNode { readonly type: "||"; }
+export interface Shr { readonly type: ">>"; readonly text: string; }
+export interface ShrTree extends AnyTreeNode { readonly type: ">>"; }
+export interface TokGtGtGt { readonly type: ">>>"; readonly text: string; }
+export interface TokGtGtGtTree extends AnyTreeNode { readonly type: ">>>"; }
+export interface Shl { readonly type: "<<"; readonly text: string; }
+export interface ShlTree extends AnyTreeNode { readonly type: "<<"; }
+export interface Amp { readonly type: "&"; readonly text: string; }
+export interface AmpTree extends AnyTreeNode { readonly type: "&"; }
+export interface Caret { readonly type: "^"; readonly text: string; }
+export interface CaretTree extends AnyTreeNode { readonly type: "^"; }
+export interface Pipe { readonly type: "|"; readonly text: string; }
+export interface PipeTree extends AnyTreeNode { readonly type: "|"; }
+export interface Plus { readonly type: "+"; readonly text: string; }
+export interface PlusTree extends AnyTreeNode { readonly type: "+"; }
+export interface Minus { readonly type: "-"; readonly text: string; }
+export interface MinusTree extends AnyTreeNode { readonly type: "-"; }
+export interface Slash { readonly type: "/"; readonly text: string; }
+export interface SlashTree extends AnyTreeNode { readonly type: "/"; }
+export interface Percent { readonly type: "%"; readonly text: string; }
+export interface PercentTree extends AnyTreeNode { readonly type: "%"; }
+export interface Starstar { readonly type: "**"; readonly text: string; }
+export interface StarstarTree extends AnyTreeNode { readonly type: "**"; }
+export interface Lt { readonly type: "<"; readonly text: string; }
+export interface LtTree extends AnyTreeNode { readonly type: "<"; }
+export interface Le { readonly type: "<="; readonly text: string; }
+export interface LeTree extends AnyTreeNode { readonly type: "<="; }
+export interface Eqeq { readonly type: "=="; readonly text: string; }
+export interface EqeqTree extends AnyTreeNode { readonly type: "=="; }
+export interface TokEqEqEq { readonly type: "==="; readonly text: string; }
+export interface TokEqEqEqTree extends AnyTreeNode { readonly type: "==="; }
+export interface Neq { readonly type: "!="; readonly text: string; }
+export interface NeqTree extends AnyTreeNode { readonly type: "!="; }
+export interface TokBangEqEq { readonly type: "!=="; readonly text: string; }
+export interface TokBangEqEqTree extends AnyTreeNode { readonly type: "!=="; }
+export interface Ge { readonly type: ">="; readonly text: string; }
+export interface GeTree extends AnyTreeNode { readonly type: ">="; }
+export interface TokQQ { readonly type: "??"; readonly text: string; }
+export interface TokQQTree extends AnyTreeNode { readonly type: "??"; }
+export interface Tilde { readonly type: "~"; readonly text: string; }
+export interface TildeTree extends AnyTreeNode { readonly type: "~"; }
+export interface Plusplus { readonly type: "++"; readonly text: string; }
+export interface PlusplusTree extends AnyTreeNode { readonly type: "++"; }
+export interface Minusminus { readonly type: "--"; readonly text: string; }
+export interface MinusminusTree extends AnyTreeNode { readonly type: "--"; }
+export interface TokBt { readonly type: "`"; readonly text: string; }
+export interface TokBtTree extends AnyTreeNode { readonly type: "`"; }
+export interface TokDollarLbr { readonly type: "${"; readonly text: string; }
+export interface TokDollarLbrTree extends AnyTreeNode { readonly type: "${"; }
+export interface At { readonly type: "@"; readonly text: string; }
+export interface AtTree extends AnyTreeNode { readonly type: "@"; }
+export interface Question { readonly type: "?"; readonly text: string; }
+export interface QuestionTree extends AnyTreeNode { readonly type: "?"; }
+export interface TokMinusQColon { readonly type: "-?:"; readonly text: string; }
+export interface TokMinusQColonTree extends AnyTreeNode { readonly type: "-?:"; }
+export interface TokPlusQColon { readonly type: "+?:"; readonly text: string; }
+export interface TokPlusQColonTree extends AnyTreeNode { readonly type: "+?:"; }
+export interface TokQColon { readonly type: "?:"; readonly text: string; }
+export interface TokQColonTree extends AnyTreeNode { readonly type: "?:"; }
+export interface FatArrow { readonly type: "=>"; readonly text: string; }
+export interface FatArrowTree extends AnyTreeNode { readonly type: "=>"; }
+export interface TokLbrPipe { readonly type: "{|"; readonly text: string; }
+export interface TokLbrPipeTree extends AnyTreeNode { readonly type: "{|"; }
+export interface TokPipeRbr { readonly type: "|}"; readonly text: string; }
+export interface TokPipeRbrTree extends AnyTreeNode { readonly type: "|}"; }
+
+// Leftover reference stubs — kinds inlined by Link whose names still leak into field unions
+export type AutomaticSemicolon = import('@sittir/types').AnyNodeData;
+export type AutomaticSemicolonTree = import('@sittir/types').AnyTreeNodeOf;
+export type FunctionSignatureAutomaticSemicolon = import('@sittir/types').AnyNodeData;
+export type FunctionSignatureAutomaticSemicolonTree = import('@sittir/types').AnyTreeNodeOf;
+export type HiddenCallSignature = import('@sittir/types').AnyNodeData;
+export type HiddenCallSignatureTree = import('@sittir/types').AnyTreeNodeOf;
+export type HiddenExtendsClauseSingle = import('@sittir/types').AnyNodeData;
+export type HiddenExtendsClauseSingleTree = import('@sittir/types').AnyTreeNodeOf;
+export type HiddenForHeader = import('@sittir/types').AnyNodeData;
+export type HiddenForHeaderTree = import('@sittir/types').AnyTreeNodeOf;
+export type HiddenFromClause = import('@sittir/types').AnyNodeData;
+export type HiddenFromClauseTree = import('@sittir/types').AnyTreeNodeOf;
+export type HiddenInitializer = import('@sittir/types').AnyNodeData;
+export type HiddenInitializerTree = import('@sittir/types').AnyTreeNodeOf;
+export type HiddenModule = import('@sittir/types').AnyNodeData;
+export type HiddenModuleTree = import('@sittir/types').AnyTreeNodeOf;
+export type HiddenNumber = import('@sittir/types').AnyNodeData;
+export type HiddenNumberTree = import('@sittir/types').AnyTreeNodeOf;
+export type HiddenParameterName = import('@sittir/types').AnyNodeData;
+export type HiddenParameterNameTree = import('@sittir/types').AnyTreeNodeOf;
+export type HiddenTypeQueryCallExpression = import('@sittir/types').AnyNodeData;
+export type HiddenTypeQueryCallExpressionTree = import('@sittir/types').AnyTreeNodeOf;
+export type HiddenTypeQueryCallExpressionInTypeAnnotation = import('@sittir/types').AnyNodeData;
+export type HiddenTypeQueryCallExpressionInTypeAnnotationTree = import('@sittir/types').AnyTreeNodeOf;
+export type HiddenTypeQueryInstantiationExpression = import('@sittir/types').AnyNodeData;
+export type HiddenTypeQueryInstantiationExpressionTree = import('@sittir/types').AnyTreeNodeOf;
+export type HiddenTypeQueryMemberExpression = import('@sittir/types').AnyNodeData;
+export type HiddenTypeQueryMemberExpressionTree = import('@sittir/types').AnyTreeNodeOf;
+export type HiddenTypeQueryMemberExpressionInTypeAnnotation = import('@sittir/types').AnyNodeData;
+export type HiddenTypeQueryMemberExpressionInTypeAnnotationTree = import('@sittir/types').AnyTreeNodeOf;
+export type HiddenTypeQuerySubscriptExpression = import('@sittir/types').AnyNodeData;
+export type HiddenTypeQuerySubscriptExpressionTree = import('@sittir/types').AnyTreeNodeOf;
+export type JsxText = import('@sittir/types').AnyNodeData;
+export type JsxTextTree = import('@sittir/types').AnyTreeNodeOf;
+export type TemplateChars = import('@sittir/types').AnyNodeData;
+export type TemplateCharsTree = import('@sittir/types').AnyTreeNodeOf;
+export type TernaryQmark = import('@sittir/types').AnyNodeData;
+export type TernaryQmarkTree = import('@sittir/types').AnyTreeNodeOf;
 
 export type TypescriptNode =
   | Program
@@ -3359,7 +3581,7 @@ export interface VariantMap {
   'export_statement': { form_0: ExportStatementForm0; export: ExportStatementExport; export2: ExportStatementExport2; export3: ExportStatementExport3 };
   'import_specifier': { name: ImportSpecifierName; as: ImportSpecifierAs };
   'parenthesized_expression': { expression: ParenthesizedExpressionExpression; sequence_expression: ParenthesizedExpressionSequenceExpression };
-  'arrow_function': { parameter: ArrowFunctionParameter; _call_signature: ArrowFunctionCallSignature };
+  'arrow_function': { parameter: ArrowFunctionParameter; _call_signature: ArrowFunctionUCallSignature };
   'call_expression': { function: CallExpressionFunction; function2: CallExpressionFunction2; tok_q_dot: CallExpressionTokQDot };
   'index_signature': { colon: IndexSignatureColon; mapped_type_clause: IndexSignatureMappedTypeClause };
 }

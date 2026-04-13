@@ -2227,7 +2227,7 @@ export interface TokenBindingPatternTree extends TreeNode<'token_binding_pattern
 export interface TokenRepetitionPatternTree extends TreeNode<'token_repetition_pattern'> {}
 export interface TokenTreeTree extends TreeNode<'token_tree'> {}
 export interface TokenRepetitionTree extends TreeNode<'token_repetition'> {}
-export interface HiddenNonSpecialTokenTree extends AnyTreeNode {}
+export interface HiddenNonSpecialTokenTree extends AnyTreeNode { readonly type: "_non_special_token"; }
 export interface AttributeItemTree extends TreeNode<'attribute_item'> {}
 export interface InnerAttributeItemTree extends TreeNode<'inner_attribute_item'> {}
 export interface AttributeTree extends TreeNode<'attribute'> {}
@@ -2292,12 +2292,12 @@ export interface ReferenceTypeTree extends TreeNode<'reference_type'> {}
 export interface PointerTypeTree extends TreeNode<'pointer_type'> {}
 export interface AbstractTypeTree extends TreeNode<'abstract_type'> {}
 export interface DynamicTypeTree extends TreeNode<'dynamic_type'> {}
-export interface HiddenExpressionExceptRangeTree extends AnyTreeNode {}
+export interface HiddenExpressionExceptRangeTree extends AnyTreeNode { readonly type: "_expression_except_range"; }
 export interface MacroInvocationTree extends TreeNode<'macro_invocation'> {}
-export interface DelimTokenTreeTree extends AnyTreeNode {}
-export interface HiddenNonDelimTokenTree extends AnyTreeNode {}
+export interface DelimTokenTreeTree extends AnyTreeNode { readonly type: "delim_token_tree"; }
+export interface HiddenNonDelimTokenTree extends AnyTreeNode { readonly type: "_non_delim_token"; }
 export interface ScopedIdentifierTree extends TreeNode<'scoped_identifier'> {}
-export interface ScopedTypeIdentifierInExpressionPositionTree extends AnyTreeNode {}
+export interface ScopedTypeIdentifierInExpressionPositionTree extends AnyTreeNode { readonly type: "scoped_type_identifier_in_expression_position"; }
 export interface ScopedTypeIdentifierTree extends TreeNode<'scoped_type_identifier'> {}
 export interface RangeExpressionTree extends TreeNode<'range_expression'> {}
 export interface UnaryExpressionTree extends TreeNode<'unary_expression'> {}
@@ -2321,12 +2321,12 @@ export interface FieldInitializerTree extends TreeNode<'field_initializer'> {}
 export interface BaseFieldInitializerTree extends TreeNode<'base_field_initializer'> {}
 export interface IfExpressionTree extends TreeNode<'if_expression'> {}
 export interface LetConditionTree extends TreeNode<'let_condition'> {}
-export interface HiddenLetChainTree extends AnyTreeNode {}
+export interface HiddenLetChainTree extends AnyTreeNode { readonly type: "_let_chain"; }
 export interface ElseClauseTree extends TreeNode<'else_clause'> {}
 export interface MatchExpressionTree extends TreeNode<'match_expression'> {}
 export interface MatchBlockTree extends TreeNode<'match_block'> {}
 export interface MatchArmTree extends TreeNode<'match_arm'> {}
-export interface LastMatchArmTree extends AnyTreeNode {}
+export interface LastMatchArmTree extends AnyTreeNode { readonly type: "last_match_arm"; }
 export interface MatchPatternTree extends TreeNode<'match_pattern'> {}
 export interface WhileExpressionTree extends TreeNode<'while_expression'> {}
 export interface LoopExpressionTree extends TreeNode<'loop_expression'> {}
@@ -2367,18 +2367,18 @@ export interface OrPatternTree extends TreeNode<'or_pattern'> {}
 export interface NegativeLiteralTree extends TreeNode<'negative_literal'> {}
 export interface StringLiteralTree extends TreeNode<'string_literal'> {}
 export interface RawStringLiteralTree extends TreeNode<'raw_string_literal'> {}
-export interface CommentTree extends AnyTreeNode {}
+export interface CommentTree extends AnyTreeNode { readonly type: "comment"; }
 export interface LineCommentTree extends TreeNode<'line_comment'> {}
-export interface HiddenLineDocCommentMarkerTree extends AnyTreeNode {}
+export interface HiddenLineDocCommentMarkerTree extends AnyTreeNode { readonly type: "_line_doc_comment_marker"; }
 export interface BlockCommentTree extends TreeNode<'block_comment'> {}
-export interface HiddenBlockDocCommentMarkerTree extends AnyTreeNode {}
-export interface HiddenPathTree extends AnyTreeNode {}
-export interface HiddenTypeIdentifierTree extends AnyTreeNode {}
-export interface HiddenFieldIdentifierTree extends AnyTreeNode {}
+export interface HiddenBlockDocCommentMarkerTree extends AnyTreeNode { readonly type: "_block_doc_comment_marker"; }
+export interface HiddenPathTree extends AnyTreeNode { readonly type: "_path"; }
+export interface HiddenTypeIdentifierTree extends AnyTreeNode { readonly type: "_type_identifier"; }
+export interface HiddenFieldIdentifierTree extends AnyTreeNode { readonly type: "_field_identifier"; }
 export interface LetChainTree extends TreeNode<'let_chain'> {}
 export interface FragmentSpecifierTree extends TreeNode<'fragment_specifier'> {}
 export interface UnitTypeTree extends TreeNode<'unit_type'> {}
-export interface MutableSpecifierTree extends AnyTreeNode {}
+export interface MutableSpecifierTree extends AnyTreeNode { readonly type: "mutable_specifier"; }
 export interface UnitExpressionTree extends TreeNode<'unit_expression'> {}
 export interface IntegerLiteralTree extends TreeNode<'integer_literal'> {}
 export interface CharLiteralTree extends TreeNode<'char_literal'> {}
@@ -2386,10 +2386,10 @@ export interface EscapeSequenceTree extends TreeNode<'escape_sequence'> {}
 export interface BooleanLiteralTree extends TreeNode<'boolean_literal'> {}
 export interface IdentifierTree extends TreeNode<'identifier'> {}
 export interface ShebangTree extends TreeNode<'shebang'> {}
-export interface HiddenReservedIdentifierTree extends AnyTreeNode {}
-export interface SelfTree extends AnyTreeNode {}
-export interface SuperTree extends AnyTreeNode {}
-export interface CrateTree extends AnyTreeNode {}
+export interface HiddenReservedIdentifierTree extends AnyTreeNode { readonly type: "_reserved_identifier"; }
+export interface SelfTree extends AnyTreeNode { readonly type: "self"; }
+export interface SuperTree extends AnyTreeNode { readonly type: "super"; }
+export interface CrateTree extends AnyTreeNode { readonly type: "crate"; }
 export interface MetavariableTree extends TreeNode<'metavariable'> {}
 export interface PrimitiveTypeTree extends TreeNode<'primitive_type'> {}
 export interface ShorthandFieldIdentifierTree extends TreeNode<'shorthand_field_identifier'> {}
@@ -2397,77 +2397,77 @@ export interface OuterDocCommentMarkerTree extends TreeNode<'outer_doc_comment_m
 export interface InnerDocCommentMarkerTree extends TreeNode<'inner_doc_comment_marker'> {}
 export interface TypeIdentifierTree extends TreeNode<'type_identifier'> {}
 export interface FieldIdentifierTree extends TreeNode<'field_identifier'> {}
-export interface ExprTree extends TreeNode<'_anonymous_expr'> {}
-export interface Expr2021Tree extends TreeNode<'_anonymous_expr_2021'> {}
-export interface IdentTree extends TreeNode<'_anonymous_ident'> {}
-export interface ItemTree extends TreeNode<'_anonymous_item'> {}
-export interface LiteralTree extends TreeNode<'_anonymous_literal'> {}
-export interface MetaTree extends TreeNode<'_anonymous_meta'> {}
-export interface PatTree extends TreeNode<'_anonymous_pat'> {}
-export interface PatParamTree extends TreeNode<'_anonymous_pat_param'> {}
-export interface PathTree extends TreeNode<'_anonymous_path'> {}
-export interface StmtTree extends TreeNode<'_anonymous_stmt'> {}
-export interface TtTree extends TreeNode<'_anonymous_tt'> {}
-export interface TyTree extends TreeNode<'_anonymous_ty'> {}
-export interface VisTree extends TreeNode<'_anonymous_vis'> {}
-export interface U8Tree extends AnyTreeNode {}
-export interface I8Tree extends AnyTreeNode {}
-export interface U16Tree extends AnyTreeNode {}
-export interface I16Tree extends AnyTreeNode {}
-export interface U32Tree extends AnyTreeNode {}
-export interface I32Tree extends AnyTreeNode {}
-export interface U64Tree extends AnyTreeNode {}
-export interface I64Tree extends AnyTreeNode {}
-export interface U128Tree extends AnyTreeNode {}
-export interface I128Tree extends AnyTreeNode {}
-export interface IsizeTree extends AnyTreeNode {}
-export interface UsizeTree extends AnyTreeNode {}
-export interface F32Tree extends AnyTreeNode {}
-export interface F64Tree extends AnyTreeNode {}
-export interface BoolTree extends AnyTreeNode {}
-export interface StrTree extends AnyTreeNode {}
-export interface CharTree extends AnyTreeNode {}
-export interface HiddenTree extends TreeNode<'_anonymous__'> {}
-export interface AsTree extends TreeNode<'_anonymous_as'> {}
-export interface AsyncTree extends TreeNode<'_anonymous_async'> {}
-export interface AwaitTree extends TreeNode<'_anonymous_await'> {}
-export interface BreakTree extends TreeNode<'_anonymous_break'> {}
-export interface ConstTree extends TreeNode<'_anonymous_const'> {}
-export interface ContinueTree extends TreeNode<'_anonymous_continue'> {}
-export interface DefaultTree extends TreeNode<'_anonymous_default'> {}
-export interface EnumTree extends TreeNode<'_anonymous_enum'> {}
-export interface FnTree extends TreeNode<'_anonymous_fn'> {}
-export interface ForTree extends TreeNode<'_anonymous_for'> {}
-export interface GenTree extends TreeNode<'_anonymous_gen'> {}
-export interface IfTree extends TreeNode<'_anonymous_if'> {}
-export interface ImplTree extends TreeNode<'_anonymous_impl'> {}
-export interface LetTree extends TreeNode<'_anonymous_let'> {}
-export interface LoopTree extends TreeNode<'_anonymous_loop'> {}
-export interface MatchTree extends TreeNode<'_anonymous_match'> {}
-export interface ModTree extends TreeNode<'_anonymous_mod'> {}
-export interface PubTree extends TreeNode<'_anonymous_pub'> {}
-export interface ReturnTree extends TreeNode<'_anonymous_return'> {}
-export interface StaticTree extends TreeNode<'_anonymous_static'> {}
-export interface StructTree extends TreeNode<'_anonymous_struct'> {}
-export interface TraitTree extends TreeNode<'_anonymous_trait'> {}
-export interface TypeTree extends TreeNode<'_anonymous_type'> {}
-export interface UnionTree extends TreeNode<'_anonymous_union'> {}
-export interface UnsafeTree extends TreeNode<'_anonymous_unsafe'> {}
-export interface UseTree extends TreeNode<'_anonymous_use'> {}
-export interface WhereTree extends TreeNode<'_anonymous_where'> {}
-export interface WhileTree extends TreeNode<'_anonymous_while'> {}
-export interface ExternTree extends TreeNode<'_anonymous_extern'> {}
-export interface RefTree extends TreeNode<'_anonymous_ref'> {}
-export interface ElseTree extends TreeNode<'_anonymous_else'> {}
-export interface InTree extends TreeNode<'_anonymous_in'> {}
-export interface DynTree extends TreeNode<'_anonymous_dyn'> {}
-export interface MutTree extends AnyTreeNode {}
-export interface RawTree extends TreeNode<'_anonymous_raw'> {}
-export interface YieldTree extends TreeNode<'_anonymous_yield'> {}
-export interface MoveTree extends TreeNode<'_anonymous_move'> {}
-export interface TryTree extends TreeNode<'_anonymous_try'> {}
-export interface TrueTree extends TreeNode<'_anonymous_true'> {}
-export interface FalseTree extends TreeNode<'_anonymous_false'> {}
+export interface ExprTree extends AnyTreeNode { readonly type: "expr"; }
+export interface Expr2021Tree extends AnyTreeNode { readonly type: "expr_2021"; }
+export interface IdentTree extends AnyTreeNode { readonly type: "ident"; }
+export interface ItemTree extends AnyTreeNode { readonly type: "item"; }
+export interface LiteralTree extends AnyTreeNode { readonly type: "literal"; }
+export interface MetaTree extends AnyTreeNode { readonly type: "meta"; }
+export interface PatTree extends AnyTreeNode { readonly type: "pat"; }
+export interface PatParamTree extends AnyTreeNode { readonly type: "pat_param"; }
+export interface PathTree extends AnyTreeNode { readonly type: "path"; }
+export interface StmtTree extends AnyTreeNode { readonly type: "stmt"; }
+export interface TtTree extends AnyTreeNode { readonly type: "tt"; }
+export interface TyTree extends AnyTreeNode { readonly type: "ty"; }
+export interface VisTree extends AnyTreeNode { readonly type: "vis"; }
+export interface U8Tree extends AnyTreeNode { readonly type: "u8"; }
+export interface I8Tree extends AnyTreeNode { readonly type: "i8"; }
+export interface U16Tree extends AnyTreeNode { readonly type: "u16"; }
+export interface I16Tree extends AnyTreeNode { readonly type: "i16"; }
+export interface U32Tree extends AnyTreeNode { readonly type: "u32"; }
+export interface I32Tree extends AnyTreeNode { readonly type: "i32"; }
+export interface U64Tree extends AnyTreeNode { readonly type: "u64"; }
+export interface I64Tree extends AnyTreeNode { readonly type: "i64"; }
+export interface U128Tree extends AnyTreeNode { readonly type: "u128"; }
+export interface I128Tree extends AnyTreeNode { readonly type: "i128"; }
+export interface IsizeTree extends AnyTreeNode { readonly type: "isize"; }
+export interface UsizeTree extends AnyTreeNode { readonly type: "usize"; }
+export interface F32Tree extends AnyTreeNode { readonly type: "f32"; }
+export interface F64Tree extends AnyTreeNode { readonly type: "f64"; }
+export interface BoolTree extends AnyTreeNode { readonly type: "bool"; }
+export interface StrTree extends AnyTreeNode { readonly type: "str"; }
+export interface CharTree extends AnyTreeNode { readonly type: "char"; }
+export interface HiddenTree extends AnyTreeNode { readonly type: "_"; }
+export interface AsTree extends AnyTreeNode { readonly type: "as"; }
+export interface AsyncTree extends AnyTreeNode { readonly type: "async"; }
+export interface AwaitTree extends AnyTreeNode { readonly type: "await"; }
+export interface BreakTree extends AnyTreeNode { readonly type: "break"; }
+export interface ConstTree extends AnyTreeNode { readonly type: "const"; }
+export interface ContinueTree extends AnyTreeNode { readonly type: "continue"; }
+export interface DefaultTree extends AnyTreeNode { readonly type: "default"; }
+export interface EnumTree extends AnyTreeNode { readonly type: "enum"; }
+export interface FnTree extends AnyTreeNode { readonly type: "fn"; }
+export interface ForTree extends AnyTreeNode { readonly type: "for"; }
+export interface GenTree extends AnyTreeNode { readonly type: "gen"; }
+export interface IfTree extends AnyTreeNode { readonly type: "if"; }
+export interface ImplTree extends AnyTreeNode { readonly type: "impl"; }
+export interface LetTree extends AnyTreeNode { readonly type: "let"; }
+export interface LoopTree extends AnyTreeNode { readonly type: "loop"; }
+export interface MatchTree extends AnyTreeNode { readonly type: "match"; }
+export interface ModTree extends AnyTreeNode { readonly type: "mod"; }
+export interface PubTree extends AnyTreeNode { readonly type: "pub"; }
+export interface ReturnTree extends AnyTreeNode { readonly type: "return"; }
+export interface StaticTree extends AnyTreeNode { readonly type: "static"; }
+export interface StructTree extends AnyTreeNode { readonly type: "struct"; }
+export interface TraitTree extends AnyTreeNode { readonly type: "trait"; }
+export interface TypeTree extends AnyTreeNode { readonly type: "type"; }
+export interface UnionTree extends AnyTreeNode { readonly type: "union"; }
+export interface UnsafeTree extends AnyTreeNode { readonly type: "unsafe"; }
+export interface UseTree extends AnyTreeNode { readonly type: "use"; }
+export interface WhereTree extends AnyTreeNode { readonly type: "where"; }
+export interface WhileTree extends AnyTreeNode { readonly type: "while"; }
+export interface ExternTree extends AnyTreeNode { readonly type: "extern"; }
+export interface RefTree extends AnyTreeNode { readonly type: "ref"; }
+export interface ElseTree extends AnyTreeNode { readonly type: "else"; }
+export interface InTree extends AnyTreeNode { readonly type: "in"; }
+export interface DynTree extends AnyTreeNode { readonly type: "dyn"; }
+export interface MutTree extends AnyTreeNode { readonly type: "mut"; }
+export interface RawTree extends AnyTreeNode { readonly type: "raw"; }
+export interface YieldTree extends AnyTreeNode { readonly type: "yield"; }
+export interface MoveTree extends AnyTreeNode { readonly type: "move"; }
+export interface TryTree extends AnyTreeNode { readonly type: "try"; }
+export interface TrueTree extends AnyTreeNode { readonly type: "true"; }
+export interface FalseTree extends AnyTreeNode { readonly type: "false"; }
 
 // FromInput types
 export type SourceFileFromInput = FromInputOf<SourceFile, LeafScalarMap, LeafStringMap>;
@@ -2624,15 +2624,15 @@ export type HiddenFieldIdentifierFromInput = FromInputOf<HiddenFieldIdentifier, 
 export type LetChainFromInput = FromInputOf<LetChain, LeafScalarMap, LeafStringMap>;
 
 // Supertype unions
-export type Statement =
+export type HiddenStatement =
   | ExpressionStatement
 ;
 
-export type StatementConfig = ExpressionStatementConfig;
-export type StatementFromInput = ExpressionStatementFromInput;
-export type StatementTree = ExpressionStatementTree | HiddenDeclarationStatementTree;
+export type HiddenStatementConfig = ExpressionStatementConfig;
+export type HiddenStatementFromInput = ExpressionStatementFromInput;
+export type HiddenStatementTree = ExpressionStatementTree | HiddenDeclarationStatementTree;
 
-export type DeclarationStatement =
+export type HiddenDeclarationStatement =
   | ConstItem
   | MacroInvocation
   | MacroDefinition
@@ -2655,11 +2655,11 @@ export type DeclarationStatement =
   | StaticItem
 ;
 
-export type DeclarationStatementConfig = ConstItemConfig | MacroInvocationConfig | MacroDefinitionConfig | AttributeItemConfig | InnerAttributeItemConfig | ModItemConfig | ForeignModItemConfig | StructItemConfig | UnionItemConfig | EnumItemConfig | TypeItemConfig | FunctionItemConfig | FunctionSignatureItemConfig | ImplItemConfig | TraitItemConfig | AssociatedTypeConfig | LetDeclarationConfig | UseDeclarationConfig | ExternCrateDeclarationConfig | StaticItemConfig;
-export type DeclarationStatementFromInput = ConstItemFromInput | MacroInvocationFromInput | MacroDefinitionFromInput | AttributeItemFromInput | InnerAttributeItemFromInput | ModItemFromInput | ForeignModItemFromInput | StructItemFromInput | UnionItemFromInput | EnumItemFromInput | TypeItemFromInput | FunctionItemFromInput | FunctionSignatureItemFromInput | ImplItemFromInput | TraitItemFromInput | AssociatedTypeFromInput | LetDeclarationFromInput | UseDeclarationFromInput | ExternCrateDeclarationFromInput | StaticItemFromInput;
-export type DeclarationStatementTree = ConstItemTree | MacroInvocationTree | MacroDefinitionTree | EmptyStatementTree | AttributeItemTree | InnerAttributeItemTree | ModItemTree | ForeignModItemTree | StructItemTree | UnionItemTree | EnumItemTree | TypeItemTree | FunctionItemTree | FunctionSignatureItemTree | ImplItemTree | TraitItemTree | AssociatedTypeTree | LetDeclarationTree | UseDeclarationTree | ExternCrateDeclarationTree | StaticItemTree;
+export type HiddenDeclarationStatementConfig = ConstItemConfig | MacroInvocationConfig | MacroDefinitionConfig | AttributeItemConfig | InnerAttributeItemConfig | ModItemConfig | ForeignModItemConfig | StructItemConfig | UnionItemConfig | EnumItemConfig | TypeItemConfig | FunctionItemConfig | FunctionSignatureItemConfig | ImplItemConfig | TraitItemConfig | AssociatedTypeConfig | LetDeclarationConfig | UseDeclarationConfig | ExternCrateDeclarationConfig | StaticItemConfig;
+export type HiddenDeclarationStatementFromInput = ConstItemFromInput | MacroInvocationFromInput | MacroDefinitionFromInput | AttributeItemFromInput | InnerAttributeItemFromInput | ModItemFromInput | ForeignModItemFromInput | StructItemFromInput | UnionItemFromInput | EnumItemFromInput | TypeItemFromInput | FunctionItemFromInput | FunctionSignatureItemFromInput | ImplItemFromInput | TraitItemFromInput | AssociatedTypeFromInput | LetDeclarationFromInput | UseDeclarationFromInput | ExternCrateDeclarationFromInput | StaticItemFromInput;
+export type HiddenDeclarationStatementTree = ConstItemTree | MacroInvocationTree | MacroDefinitionTree | EmptyStatementTree | AttributeItemTree | InnerAttributeItemTree | ModItemTree | ForeignModItemTree | StructItemTree | UnionItemTree | EnumItemTree | TypeItemTree | FunctionItemTree | FunctionSignatureItemTree | ImplItemTree | TraitItemTree | AssociatedTypeTree | LetDeclarationTree | UseDeclarationTree | ExternCrateDeclarationTree | StaticItemTree;
 
-export type TokenPattern =
+export type HiddenTokenPattern =
   | TokenTreePattern
   | TokenRepetitionPattern
   | TokenBindingPattern
@@ -2667,22 +2667,22 @@ export type TokenPattern =
   | HiddenNonSpecialToken
 ;
 
-export type TokenPatternConfig = TokenTreePatternConfig | TokenRepetitionPatternConfig | TokenBindingPatternConfig | HiddenNonSpecialTokenConfig;
-export type TokenPatternFromInput = TokenTreePatternFromInput | TokenRepetitionPatternFromInput | TokenBindingPatternFromInput | HiddenNonSpecialTokenFromInput;
-export type TokenPatternTree = TokenTreePatternTree | TokenRepetitionPatternTree | TokenBindingPatternTree | MetavariableTree | HiddenNonSpecialTokenTree;
+export type HiddenTokenPatternConfig = TokenTreePatternConfig | TokenRepetitionPatternConfig | TokenBindingPatternConfig | HiddenNonSpecialTokenConfig;
+export type HiddenTokenPatternFromInput = TokenTreePatternFromInput | TokenRepetitionPatternFromInput | TokenBindingPatternFromInput | HiddenNonSpecialTokenFromInput;
+export type HiddenTokenPatternTree = TokenTreePatternTree | TokenRepetitionPatternTree | TokenBindingPatternTree | MetavariableTree | HiddenNonSpecialTokenTree;
 
-export type Tokens =
+export type HiddenTokens =
   | TokenTree
   | TokenRepetition
   | Metavariable
   | HiddenNonSpecialToken
 ;
 
-export type TokensConfig = TokenTreeConfig | TokenRepetitionConfig | HiddenNonSpecialTokenConfig;
-export type TokensFromInput = TokenTreeFromInput | TokenRepetitionFromInput | HiddenNonSpecialTokenFromInput;
-export type TokensTree = TokenTreeTree | TokenRepetitionTree | MetavariableTree | HiddenNonSpecialTokenTree;
+export type HiddenTokensConfig = TokenTreeConfig | TokenRepetitionConfig | HiddenNonSpecialTokenConfig;
+export type HiddenTokensFromInput = TokenTreeFromInput | TokenRepetitionFromInput | HiddenNonSpecialTokenFromInput;
+export type HiddenTokensTree = TokenTreeTree | TokenRepetitionTree | MetavariableTree | HiddenNonSpecialTokenTree;
 
-export type UseClause =
+export type HiddenUseClause =
   | HiddenPath
   | UseAsClause
   | UseList
@@ -2690,20 +2690,20 @@ export type UseClause =
   | UseWildcard
 ;
 
-export type UseClauseConfig = HiddenPathConfig | UseAsClauseConfig | UseListConfig | ScopedUseListConfig | UseWildcardConfig;
-export type UseClauseFromInput = HiddenPathFromInput | UseAsClauseFromInput | UseListFromInput | ScopedUseListFromInput | UseWildcardFromInput;
-export type UseClauseTree = HiddenPathTree | UseAsClauseTree | UseListTree | ScopedUseListTree | UseWildcardTree;
+export type HiddenUseClauseConfig = HiddenPathConfig | UseAsClauseConfig | UseListConfig | ScopedUseListConfig | UseWildcardConfig;
+export type HiddenUseClauseFromInput = HiddenPathFromInput | UseAsClauseFromInput | UseListFromInput | ScopedUseListFromInput | UseWildcardFromInput;
+export type HiddenUseClauseTree = HiddenPathTree | UseAsClauseTree | UseListTree | ScopedUseListTree | UseWildcardTree;
 
-export type Expression =
+export type HiddenExpression =
   | HiddenExpressionExceptRange
   | RangeExpression
 ;
 
-export type ExpressionConfig = HiddenExpressionExceptRangeConfig | RangeExpressionConfig;
-export type ExpressionFromInput = HiddenExpressionExceptRangeFromInput | RangeExpressionFromInput;
-export type ExpressionTree = HiddenExpressionExceptRangeTree | RangeExpressionTree;
+export type HiddenExpressionConfig = HiddenExpressionExceptRangeConfig | RangeExpressionConfig;
+export type HiddenExpressionFromInput = HiddenExpressionExceptRangeFromInput | RangeExpressionFromInput;
+export type HiddenExpressionTree = HiddenExpressionExceptRangeTree | RangeExpressionTree;
 
-export type ExpressionEndingWithBlock =
+export type HiddenExpressionEndingWithBlock =
   | UnsafeBlock
   | AsyncBlock
   | GenBlock
@@ -2717,29 +2717,42 @@ export type ExpressionEndingWithBlock =
   | ConstBlock
 ;
 
-export type ExpressionEndingWithBlockConfig = UnsafeBlockConfig | AsyncBlockConfig | GenBlockConfig | TryBlockConfig | BlockConfig | IfExpressionConfig | MatchExpressionConfig | WhileExpressionConfig | LoopExpressionConfig | ForExpressionConfig | ConstBlockConfig;
-export type ExpressionEndingWithBlockFromInput = UnsafeBlockFromInput | AsyncBlockFromInput | GenBlockFromInput | TryBlockFromInput | BlockFromInput | IfExpressionFromInput | MatchExpressionFromInput | WhileExpressionFromInput | LoopExpressionFromInput | ForExpressionFromInput | ConstBlockFromInput;
-export type ExpressionEndingWithBlockTree = UnsafeBlockTree | AsyncBlockTree | GenBlockTree | TryBlockTree | BlockTree | IfExpressionTree | MatchExpressionTree | WhileExpressionTree | LoopExpressionTree | ForExpressionTree | ConstBlockTree;
+export type HiddenExpressionEndingWithBlockConfig = UnsafeBlockConfig | AsyncBlockConfig | GenBlockConfig | TryBlockConfig | BlockConfig | IfExpressionConfig | MatchExpressionConfig | WhileExpressionConfig | LoopExpressionConfig | ForExpressionConfig | ConstBlockConfig;
+export type HiddenExpressionEndingWithBlockFromInput = UnsafeBlockFromInput | AsyncBlockFromInput | GenBlockFromInput | TryBlockFromInput | BlockFromInput | IfExpressionFromInput | MatchExpressionFromInput | WhileExpressionFromInput | LoopExpressionFromInput | ForExpressionFromInput | ConstBlockFromInput;
+export type HiddenExpressionEndingWithBlockTree = UnsafeBlockTree | AsyncBlockTree | GenBlockTree | TryBlockTree | BlockTree | IfExpressionTree | MatchExpressionTree | WhileExpressionTree | LoopExpressionTree | ForExpressionTree | ConstBlockTree;
 
-export type DelimTokens =
+export type HiddenDelimTokens =
   | HiddenNonDelimToken
   | DelimTokenTree
 ;
 
-export type DelimTokensConfig = HiddenNonDelimTokenConfig | DelimTokenTreeConfig;
-export type DelimTokensFromInput = HiddenNonDelimTokenFromInput | DelimTokenTreeFromInput;
-export type DelimTokensTree = HiddenNonDelimTokenTree | DelimTokenTreeTree;
+export type HiddenDelimTokensConfig = HiddenNonDelimTokenConfig | DelimTokenTreeConfig;
+export type HiddenDelimTokensFromInput = HiddenNonDelimTokenFromInput | DelimTokenTreeFromInput;
+export type HiddenDelimTokensTree = HiddenNonDelimTokenTree | DelimTokenTreeTree;
 
-export type Condition =
+export type HiddenCondition =
+  | HiddenExpression
   | LetCondition
   | HiddenLetChain
 ;
 
-export type ConditionConfig = LetConditionConfig | HiddenLetChainConfig;
-export type ConditionFromInput = LetConditionFromInput | HiddenLetChainFromInput;
-export type ConditionTree = HiddenExpressionTree | LetConditionTree | HiddenLetChainTree;
+export type HiddenConditionConfig = LetConditionConfig | HiddenLetChainConfig;
+export type HiddenConditionFromInput = LetConditionFromInput | HiddenLetChainFromInput;
+export type HiddenConditionTree = HiddenExpressionTree | LetConditionTree | HiddenLetChainTree;
 
-export type LiteralPattern =
+export type HiddenLiteral =
+  | StringLiteral
+  | RawStringLiteral
+  | CharLiteral
+  | BooleanLiteral
+  | IntegerLiteral
+;
+
+export type HiddenLiteralConfig = StringLiteralConfig | RawStringLiteralConfig;
+export type HiddenLiteralFromInput = StringLiteralFromInput | RawStringLiteralFromInput;
+export type HiddenLiteralTree = StringLiteralTree | RawStringLiteralTree | CharLiteralTree | BooleanLiteralTree | IntegerLiteralTree | FloatLiteralTree;
+
+export type HiddenLiteralPattern =
   | StringLiteral
   | RawStringLiteral
   | CharLiteral
@@ -2748,9 +2761,151 @@ export type LiteralPattern =
   | NegativeLiteral
 ;
 
-export type LiteralPatternConfig = StringLiteralConfig | RawStringLiteralConfig | NegativeLiteralConfig;
-export type LiteralPatternFromInput = StringLiteralFromInput | RawStringLiteralFromInput | NegativeLiteralFromInput;
-export type LiteralPatternTree = StringLiteralTree | RawStringLiteralTree | CharLiteralTree | BooleanLiteralTree | IntegerLiteralTree | FloatLiteralTree | NegativeLiteralTree;
+export type HiddenLiteralPatternConfig = StringLiteralConfig | RawStringLiteralConfig | NegativeLiteralConfig;
+export type HiddenLiteralPatternFromInput = StringLiteralFromInput | RawStringLiteralFromInput | NegativeLiteralFromInput;
+export type HiddenLiteralPatternTree = StringLiteralTree | RawStringLiteralTree | CharLiteralTree | BooleanLiteralTree | IntegerLiteralTree | FloatLiteralTree | NegativeLiteralTree;
+
+// Token stubs — anonymous operators and externals
+export interface EmptyStatement { readonly type: "empty_statement"; readonly text: string; }
+export interface EmptyStatementTree extends AnyTreeNode { readonly type: "empty_statement"; }
+export interface NeverType { readonly type: "never_type"; readonly text: string; }
+export interface NeverTypeTree extends AnyTreeNode { readonly type: "never_type"; }
+export interface RemainingFieldPattern { readonly type: "remaining_field_pattern"; readonly text: string; }
+export interface RemainingFieldPatternTree extends AnyTreeNode { readonly type: "remaining_field_pattern"; }
+export interface HiddenInnerLineDocCommentMarker { readonly type: "_inner_line_doc_comment_marker"; readonly text: string; }
+export interface HiddenInnerLineDocCommentMarkerTree extends AnyTreeNode { readonly type: "_inner_line_doc_comment_marker"; }
+export interface HiddenOuterLineDocCommentMarker { readonly type: "_outer_line_doc_comment_marker"; readonly text: string; }
+export interface HiddenOuterLineDocCommentMarkerTree extends AnyTreeNode { readonly type: "_outer_line_doc_comment_marker"; }
+export interface Semi { readonly type: ";"; readonly text: string; }
+export interface SemiTree extends AnyTreeNode { readonly type: ";"; }
+export interface TokMACROURULESBang { readonly type: "macro_rules!"; readonly text: string; }
+export interface TokMACROURULESBangTree extends AnyTreeNode { readonly type: "macro_rules!"; }
+export interface Paren { readonly type: "("; readonly text: string; }
+export interface ParenTree extends AnyTreeNode { readonly type: "("; }
+export interface CloseParen { readonly type: ")"; readonly text: string; }
+export interface CloseParenTree extends AnyTreeNode { readonly type: ")"; }
+export interface Bracket { readonly type: "["; readonly text: string; }
+export interface BracketTree extends AnyTreeNode { readonly type: "["; }
+export interface CloseBracket { readonly type: "]"; readonly text: string; }
+export interface CloseBracketTree extends AnyTreeNode { readonly type: "]"; }
+export interface Brace { readonly type: "{"; readonly text: string; }
+export interface BraceTree extends AnyTreeNode { readonly type: "{"; }
+export interface CloseBrace { readonly type: "}"; readonly text: string; }
+export interface CloseBraceTree extends AnyTreeNode { readonly type: "}"; }
+export interface FatArrow { readonly type: "=>"; readonly text: string; }
+export interface FatArrowTree extends AnyTreeNode { readonly type: "=>"; }
+export interface Colon { readonly type: ":"; readonly text: string; }
+export interface ColonTree extends AnyTreeNode { readonly type: ":"; }
+export interface TokDollar { readonly type: "$"; readonly text: string; }
+export interface TokDollarTree extends AnyTreeNode { readonly type: "$"; }
+export interface Plus { readonly type: "+"; readonly text: string; }
+export interface PlusTree extends AnyTreeNode { readonly type: "+"; }
+export interface Star { readonly type: "*"; readonly text: string; }
+export interface StarTree extends AnyTreeNode { readonly type: "*"; }
+export interface Question { readonly type: "?"; readonly text: string; }
+export interface QuestionTree extends AnyTreeNode { readonly type: "?"; }
+export interface Minus { readonly type: "-"; readonly text: string; }
+export interface MinusTree extends AnyTreeNode { readonly type: "-"; }
+export interface Slash { readonly type: "/"; readonly text: string; }
+export interface SlashTree extends AnyTreeNode { readonly type: "/"; }
+export interface Percent { readonly type: "%"; readonly text: string; }
+export interface PercentTree extends AnyTreeNode { readonly type: "%"; }
+export interface Caret { readonly type: "^"; readonly text: string; }
+export interface CaretTree extends AnyTreeNode { readonly type: "^"; }
+export interface Bang { readonly type: "!"; readonly text: string; }
+export interface BangTree extends AnyTreeNode { readonly type: "!"; }
+export interface Amp { readonly type: "&"; readonly text: string; }
+export interface AmpTree extends AnyTreeNode { readonly type: "&"; }
+export interface Pipe { readonly type: "|"; readonly text: string; }
+export interface PipeTree extends AnyTreeNode { readonly type: "|"; }
+export interface Andand { readonly type: "&&"; readonly text: string; }
+export interface AndandTree extends AnyTreeNode { readonly type: "&&"; }
+export interface Oror { readonly type: "||"; readonly text: string; }
+export interface OrorTree extends AnyTreeNode { readonly type: "||"; }
+export interface Shl { readonly type: "<<"; readonly text: string; }
+export interface ShlTree extends AnyTreeNode { readonly type: "<<"; }
+export interface Shr { readonly type: ">>"; readonly text: string; }
+export interface ShrTree extends AnyTreeNode { readonly type: ">>"; }
+export interface Pluseq { readonly type: "+="; readonly text: string; }
+export interface PluseqTree extends AnyTreeNode { readonly type: "+="; }
+export interface Minuseq { readonly type: "-="; readonly text: string; }
+export interface MinuseqTree extends AnyTreeNode { readonly type: "-="; }
+export interface Stareq { readonly type: "*="; readonly text: string; }
+export interface StareqTree extends AnyTreeNode { readonly type: "*="; }
+export interface Slasheq { readonly type: "/="; readonly text: string; }
+export interface SlasheqTree extends AnyTreeNode { readonly type: "/="; }
+export interface Percenteq { readonly type: "%="; readonly text: string; }
+export interface PercenteqTree extends AnyTreeNode { readonly type: "%="; }
+export interface Careteq { readonly type: "^="; readonly text: string; }
+export interface CareteqTree extends AnyTreeNode { readonly type: "^="; }
+export interface Ampeq { readonly type: "&="; readonly text: string; }
+export interface AmpeqTree extends AnyTreeNode { readonly type: "&="; }
+export interface Pipeeq { readonly type: "|="; readonly text: string; }
+export interface PipeeqTree extends AnyTreeNode { readonly type: "|="; }
+export interface Shleq { readonly type: "<<="; readonly text: string; }
+export interface ShleqTree extends AnyTreeNode { readonly type: "<<="; }
+export interface Shreq { readonly type: ">>="; readonly text: string; }
+export interface ShreqTree extends AnyTreeNode { readonly type: ">>="; }
+export interface Eq { readonly type: "="; readonly text: string; }
+export interface EqTree extends AnyTreeNode { readonly type: "="; }
+export interface Eqeq { readonly type: "=="; readonly text: string; }
+export interface EqeqTree extends AnyTreeNode { readonly type: "=="; }
+export interface Neq { readonly type: "!="; readonly text: string; }
+export interface NeqTree extends AnyTreeNode { readonly type: "!="; }
+export interface Gt { readonly type: ">"; readonly text: string; }
+export interface GtTree extends AnyTreeNode { readonly type: ">"; }
+export interface Lt { readonly type: "<"; readonly text: string; }
+export interface LtTree extends AnyTreeNode { readonly type: "<"; }
+export interface Ge { readonly type: ">="; readonly text: string; }
+export interface GeTree extends AnyTreeNode { readonly type: ">="; }
+export interface Le { readonly type: "<="; readonly text: string; }
+export interface LeTree extends AnyTreeNode { readonly type: "<="; }
+export interface At { readonly type: "@"; readonly text: string; }
+export interface AtTree extends AnyTreeNode { readonly type: "@"; }
+export interface Dot { readonly type: "."; readonly text: string; }
+export interface DotTree extends AnyTreeNode { readonly type: "."; }
+export interface Dotdot { readonly type: ".."; readonly text: string; }
+export interface DotdotTree extends AnyTreeNode { readonly type: ".."; }
+export interface Ellipsis { readonly type: "..."; readonly text: string; }
+export interface EllipsisTree extends AnyTreeNode { readonly type: "..."; }
+export interface Dotdoteq { readonly type: "..="; readonly text: string; }
+export interface DotdoteqTree extends AnyTreeNode { readonly type: "..="; }
+export interface Comma { readonly type: ","; readonly text: string; }
+export interface CommaTree extends AnyTreeNode { readonly type: ","; }
+export interface Arrow { readonly type: "->"; readonly text: string; }
+export interface ArrowTree extends AnyTreeNode { readonly type: "->"; }
+export interface Hash { readonly type: "#"; readonly text: string; }
+export interface HashTree extends AnyTreeNode { readonly type: "#"; }
+export interface TokSq { readonly type: "'"; readonly text: string; }
+export interface TokSqTree extends AnyTreeNode { readonly type: "'"; }
+export interface TokDq { readonly type: "\""; readonly text: string; }
+export interface TokDqTree extends AnyTreeNode { readonly type: "\""; }
+export interface Slashslash { readonly type: "//"; readonly text: string; }
+export interface SlashslashTree extends AnyTreeNode { readonly type: "//"; }
+export interface TokSlashStar { readonly type: "/*"; readonly text: string; }
+export interface TokSlashStarTree extends AnyTreeNode { readonly type: "/*"; }
+export interface TokStarSlash { readonly type: "*/"; readonly text: string; }
+export interface TokStarSlashTree extends AnyTreeNode { readonly type: "*/"; }
+
+// Leftover reference stubs — kinds inlined by Link whose names still leak into field unions
+export type BlockCommentContent = import('@sittir/types').AnyNodeData;
+export type BlockCommentContentTree = import('@sittir/types').AnyTreeNodeOf;
+export type FloatLiteral = import('@sittir/types').AnyNodeData;
+export type FloatLiteralTree = import('@sittir/types').AnyTreeNodeOf;
+export type InnerBlockDocCommentMarker = import('@sittir/types').AnyNodeData;
+export type InnerBlockDocCommentMarkerTree = import('@sittir/types').AnyTreeNodeOf;
+export type LineDocContent = import('@sittir/types').AnyNodeData;
+export type LineDocContentTree = import('@sittir/types').AnyTreeNodeOf;
+export type OuterBlockDocCommentMarker = import('@sittir/types').AnyNodeData;
+export type OuterBlockDocCommentMarkerTree = import('@sittir/types').AnyTreeNodeOf;
+export type RawStringLiteralContent = import('@sittir/types').AnyNodeData;
+export type RawStringLiteralContentTree = import('@sittir/types').AnyTreeNodeOf;
+export type RawStringLiteralEnd = import('@sittir/types').AnyNodeData;
+export type RawStringLiteralEndTree = import('@sittir/types').AnyTreeNodeOf;
+export type RawStringLiteralStart = import('@sittir/types').AnyNodeData;
+export type RawStringLiteralStartTree = import('@sittir/types').AnyTreeNodeOf;
+export type StringContent = import('@sittir/types').AnyNodeData;
+export type StringContentTree = import('@sittir/types').AnyTreeNodeOf;
 
 export type RustNode =
   | SourceFile

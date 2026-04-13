@@ -1138,6 +1138,12 @@ function resolveField(field: AssembledField, nodeMap: NodeMap): string {
     if (allLeaves && field.contentTypes.length === 1) {
         const leafKind = field.contentTypes[0]!
         const leafNode = nodeMap.nodes.get(leafKind)
+        // Keywords have 0-arg factories (text is baked in) — don't emit
+        // a string-wrap call for them; pass the value through unchanged.
+        if (leafNode?.modelType === 'keyword') {
+            if (field.multiple) return `(${prop} ?? [])`
+            return `${prop}`
+        }
         const leafFactory = leafNode?.rawFactoryName ?? leafKind
         if (field.multiple) {
             return `(${prop} ?? []).map((v: any) => typeof v === 'string' ? ${leafFactory}(v) : v)`
