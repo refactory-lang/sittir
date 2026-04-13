@@ -13,6 +13,7 @@ import { validateRoundTrip, formatRoundTripReport } from './validate-roundtrip.t
 import { validateFactoryRoundTrip, formatFactoryRoundTripReport } from './validate-factory-roundtrip.ts';
 import { validateFrom, formatFromReport } from './validate-from.ts';
 import { validateRenderable, formatRenderableReport } from './validate-renderable.ts';
+import { validateReadNodeRoundTrip, formatReadNodeRoundTripReport } from './validate-readnode-roundtrip.ts';
 import { join, dirname } from 'node:path';
 import { generateV2 } from './compiler/generate.ts';
 
@@ -165,6 +166,14 @@ if (renderable.missing.length > 0) {
 // --- Round-trip validation (optional, requires web-tree-sitter) ---
 if (cliArgs.roundtrip) {
 	console.log('\nRunning round-trip validation...');
+
+	// readNode round-trip (structural) — upstream of render/factory.
+	// A regression here means readNode is losing content between
+	// tree-sitter's parse tree and the NodeData shape, so every
+	// downstream validator will mis-report.
+	const rnResult = await validateReadNodeRoundTrip(config.grammar);
+	console.log(formatReadNodeRoundTripReport(rnResult));
+
 	const rtResult = await validateRoundTrip(config.grammar, result.templatesYaml);
 	console.log(formatRoundTripReport(rtResult));
 

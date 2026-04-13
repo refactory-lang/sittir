@@ -27,6 +27,7 @@ import { generateV2 } from '../compiler/generate.ts'
 import { validateFactoryRoundTrip } from '../validate-factory-roundtrip.ts'
 import { validateFrom } from '../validate-from.ts'
 import { validateRenderable } from '../validate-renderable.ts'
+import { validateReadNodeRoundTrip } from '../validate-readnode-roundtrip.ts'
 
 /**
  * v2 current floors — asserted. When a fix lands, raise these in the
@@ -143,6 +144,30 @@ describe('corpus validation — v1 baseline gap report', () => {
             expect(v2.factoryPass).toBeGreaterThanOrEqual(0)
             expect(v2.fromPass).toBeGreaterThanOrEqual(0)
         },
+    )
+})
+
+describe('readNode round-trip — structural', () => {
+    // readNode must surface every tree-sitter field and named child
+    // into the NodeData shape. 100% pass is mandatory — any lost
+    // content upstream corrupts every downstream validator.
+    it.each(['python', 'rust', 'typescript'] as const)(
+        '%s: every kind in the corpus passes the structural check',
+        async (grammar) => {
+            const result = await validateReadNodeRoundTrip(grammar)
+            if (result.issues.length > 0) {
+                const lines = result.issues
+                    .slice(0, 10)
+                    .map(i => `  - ${i.kind} [${i.instance}]: ${i.message}`)
+                    .join('\n')
+                throw new Error(
+                    `readNode lost content on ${result.issues.length} kind(s) in ${grammar}:\n${lines}`,
+                )
+            }
+            expect(result.pass).toBe(result.total)
+            expect(result.total).toBeGreaterThan(0)
+        },
+        60000,
     )
 })
 
