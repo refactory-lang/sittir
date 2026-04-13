@@ -9,6 +9,7 @@ function makeOptimized(rules: Record<string, Rule>, overrides?: Partial<Optimize
         rules,
         supertypes: new Set(),
         word: null,
+        derivations: { inferredFields: [], promotedRules: [] },
         ...overrides,
     }
 }

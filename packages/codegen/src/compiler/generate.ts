@@ -27,6 +27,7 @@ import { emitConfig } from '../emitters/config.ts'
 // v2 emitters — consume NodeMap directly
 import { emitConstsFromNodeMap } from '../emitters/consts-v2.ts'
 import { emitIndexFromNodeMap } from '../emitters/index-file-v2.ts'
+import { emitSuggestedFromNodeMap } from '../emitters/suggested-v2.ts'
 
 import type { NodeMap } from './rule.ts'
 
@@ -45,6 +46,8 @@ export interface GeneratedFilesV2 {
     typeTests: string
     config: string
     nodeModel: string
+    /** overrides.suggested.ts — human-readable derivation log (T042f). */
+    suggested: string
     /** The intermediate NodeMap — available for inspection */
     nodeMap: NodeMap
 }
@@ -53,6 +56,29 @@ export interface GenerateConfigV2 {
     grammar: string
     nodes?: string[]
     outputDir: string
+    /**
+     * Which derived source tags are accepted into the rule tree.
+     * Defaults to all derived sources (permissive). `grammar` and
+     * `override` are always-on and can't be filtered out — this
+     * controls which DERIVATIONS Link's inference / promotion passes
+     * mutate the rule tree with.
+     *
+     * Entries EXCLUDED from this filter still appear in the
+     * `derivations` log (and therefore in `overrides.suggested.ts`)
+     * so you can review what Link inferred and either adopt it into
+     * overrides.ts or leave it in the log.
+     *
+     * @example
+     * // Strict base pipeline — no inference / promotion:
+     * { include: { rules: [], fields: [] } }
+     *
+     * // Accept promotion, review inference:
+     * { include: { rules: ['promoted'], fields: [] } }
+     *
+     * // Default (permissive): everything applied.
+     * { include: undefined }
+     */
+    include?: import('./rule.ts').IncludeFilter
 }
 
 /**
@@ -71,8 +97,9 @@ export async function generateV2(cfg: GenerateConfigV2): Promise<GeneratedFilesV
     // Phase 1: Evaluate
     const raw = await evaluate(entryPath)
 
-    // Phase 2: Link
-    const linked = link(raw)
+    // Phase 2: Link — pass the include filter so derivation passes
+    // know whether to mutate the rule tree or only log to the sidecar.
+    const linked = link(raw, cfg.include)
 
     // Phase 3: Optimize
     const optimized = optimize(linked)
@@ -99,6 +126,7 @@ export async function generateV2(cfg: GenerateConfigV2): Promise<GeneratedFilesV
         typeTests: emitTypeTestsFromNodeMap({ nodeMap }),
         config: emitConfig({ grammar: cfg.grammar }),
         nodeModel: JSON.stringify({ name: nodeMap.name, nodeCount: nodeMap.nodes.size }, null, 2),
+        suggested: emitSuggestedFromNodeMap({ grammar: cfg.grammar, nodeMap }),
         nodeMap,
     }
 }

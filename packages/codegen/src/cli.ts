@@ -133,6 +133,10 @@ writeFile(join(dirname(outDir), 'templates.yaml'), result.templatesYaml);
 // Write node model
 writeFile(join(outDir, 'node-model.json5'), result.nodeModel);
 
+// Write suggested overrides log (T042f) next to overrides.ts at the
+// package root. This is a documentation file — not runnable.
+writeFile(join(dirname(outDir), 'overrides.suggested.ts'), result.suggested);
+
 // Write tests
 const testsDir = cliArgs.testsDir ?? join(dirname(outDir), 'tests');
 writeFile(join(testsDir, 'nodes.test.ts'), result.tests);

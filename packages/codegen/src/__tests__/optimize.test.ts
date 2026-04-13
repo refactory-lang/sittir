@@ -10,6 +10,7 @@ function makeLinked(rules: Record<string, Rule>, overrides?: Partial<LinkedGramm
         externalRoles: new Map<string, ExternalRole>(),
         word: null,
         references: [],
+        derivations: { inferredFields: [], promotedRules: [] },
         ...overrides,
     }
 }

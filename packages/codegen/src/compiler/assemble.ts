@@ -145,6 +145,7 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
         nodes,
         signatures: computeSignatures(nodes),
         projections: buildProjections(nodes),
+        derivations: optimized.derivations,
     }
 }
 

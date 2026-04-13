@@ -27,6 +27,7 @@ export function optimize(linked: LinkedGrammar): OptimizedGrammar {
         rules: linked.rules,
         supertypes: linked.supertypes,
         word: linked.word,
+        derivations: linked.derivations,
     }
 }
 

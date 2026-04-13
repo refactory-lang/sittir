@@ -8,6 +8,7 @@ function makeNodeMap(nodes: [string, any][]): NodeMap {
         nodes: new Map(nodes),
         signatures: { signatures: new Map() },
         projections: { projections: new Map() },
+        derivations: { inferredFields: [], promotedRules: [] },
     }
 }
 

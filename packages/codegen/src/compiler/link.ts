@@ -12,7 +12,8 @@
 
 import type {
     Rule, RawGrammar, LinkedGrammar,
-    SymbolRef, ExternalRole,
+    SymbolRef, ExternalRole, IncludeFilter, DerivationLog,
+    InferredFieldEntry, PromotedRuleEntry,
     FieldRule, SupertypeRule, EnumRule, ClauseRule, GroupRule,
     SeqRule, ChoiceRule, VariantRule, PolymorphRule,
 } from './rule.ts'
@@ -22,10 +23,24 @@ import { deriveFields, hasAnyField, hasAnyChild } from './rule.ts'
 // link() — main entry point
 // ---------------------------------------------------------------------------
 
-export function link(raw: RawGrammar): LinkedGrammar {
+export function link(raw: RawGrammar, include?: IncludeFilter): LinkedGrammar {
     const supertypes = new Set(raw.supertypes)
     const externalRoles = new Map<string, ExternalRole>()
     const references = [...raw.references]
+
+    // Resolve include defaults: undefined means "include everything".
+    // Explicit empty arrays mean "include nothing of this category".
+    const includeRules = new Set(include?.rules ?? (['promoted'] as const))
+    const includeFields = new Set(include?.fields ?? (['inferred', 'inlined'] as const))
+    const applyInferred = includeFields.has('inferred')
+    const applyPromotedRules = includeRules.has('promoted')
+
+    // Derivation log — populated unconditionally; each entry records
+    // whether the mutation was also applied.
+    const derivations: DerivationLog = {
+        inferredFields: [],
+        promotedRules: [],
+    }
 
     // Resolve all rules
     const rules: Record<string, Rule> = {}
@@ -47,32 +62,56 @@ export function link(raw: RawGrammar): LinkedGrammar {
     // Walk all rules to find alias references and create entries for alias targets
     collectAliasTargets(raw.rules, rules)
 
-    // Classify hidden rules that weren't already resolved
+    // Classify hidden rules that weren't already resolved. Log every
+    // `promoted` classification (enum / supertype) so the suggested.ts
+    // emitter can surface it. Hold back the mutation if `include.rules`
+    // excludes `promoted`.
     for (const [name, rule] of Object.entries(rules)) {
         if (name.startsWith('_')) {
-            rules[name] = classifyHiddenRule(name, rule, supertypes, references)
+            const classified = classifyHiddenRule(name, rule, supertypes, references)
+            if (classified !== rule
+                && (classified.type === 'enum' || classified.type === 'supertype')
+                && (classified as any).source === 'promoted') {
+                derivations.promotedRules.push({
+                    kind: name,
+                    classification: classified.type,
+                    applied: applyPromotedRules,
+                })
+                if (applyPromotedRules) rules[name] = classified
+            } else {
+                rules[name] = classified
+            }
         }
     }
 
     // Promote pure-terminal rules (no fields, no symbol references) to
-    // TerminalRule. This eliminates content-inspection classification
-    // downstream — Assemble just dispatches on rule.type.
+    // TerminalRule. Always logged; applied only when `include.rules`
+    // permits `promoted`.
     for (const [name, rule] of Object.entries(rules)) {
         if (isTerminalShape(rule)) {
-            rules[name] = { type: 'terminal', content: rule, source: 'promoted' } as Rule
+            derivations.promotedRules.push({
+                kind: name,
+                classification: 'terminal',
+                applied: applyPromotedRules,
+            })
+            if (applyPromotedRules) {
+                rules[name] = { type: 'terminal', content: rule, source: 'promoted' } as Rule
+            }
         }
     }
 
     // Field name inference — rewrite bare symbol refs into field(X, $.Y)
     // wrappers tagged with source: 'inferred' when cross-parent usage
-    // shows high agreement. The emitter (suggested.ts) picks up every
-    // field with source !== 'grammar' && source !== 'override' and
-    // surfaces it for the curator to either accept into overrides.ts
-    // or reject. Runs BEFORE tagVariants so the new field() wrappers
-    // are visible to nested-symbol walks during variant tagging.
+    // shows high agreement. Runs BEFORE tagVariants so the new field()
+    // wrappers are visible to nested-symbol walks during variant tagging.
+    // Each inference is logged; the rule tree is mutated only when
+    // `include.fields` permits `inferred`.
     const inferredFieldNames = inferFieldNames(references)
     for (const [name, rule] of Object.entries(rules)) {
-        rules[name] = applyInferredFields(rule, name, inferredFieldNames)
+        const { rule: rewritten, applied } = applyInferredFields(
+            rule, name, inferredFieldNames, applyInferred, derivations.inferredFields, applyInferred,
+        )
+        if (applied) rules[name] = rewritten
     }
 
     // Tag visible choices with `variant` wrappers — names every branch
@@ -83,12 +122,18 @@ export function link(raw: RawGrammar): LinkedGrammar {
     }
 
     // Promote choice-of-variants with heterogeneous field shapes to
-    // PolymorphRule. Reads the `variant` tags placed by tagVariants.
-    // This is the last classification pass — every kind now has its
-    // structural classification baked into rule.type, so Assemble can
-    // dispatch on rule.type alone.
+    // PolymorphRule. Always logged; applied only when `include.rules`
+    // permits `promoted`.
     for (const [name, rule] of Object.entries(rules)) {
-        rules[name] = promotePolymorph(rule)
+        const result = promotePolymorph(rule)
+        if (result !== rule) {
+            derivations.promotedRules.push({
+                kind: name,
+                classification: 'polymorph',
+                applied: applyPromotedRules,
+            })
+            if (applyPromotedRules) rules[name] = result
+        }
     }
 
     return {
@@ -98,6 +143,7 @@ export function link(raw: RawGrammar): LinkedGrammar {
         externalRoles,
         word: raw.word,
         references,
+        derivations,
     }
 }
 
@@ -821,6 +867,8 @@ function detectClause(content: Rule, currentName: string): Rule {
 interface InferredName {
     readonly name: string
     readonly confidence: 'high' | 'medium' | 'low'
+    readonly agreement: number
+    readonly sampleSize: number
 }
 
 function inferFieldNames(references: SymbolRef[]): Map<string, InferredName> {
@@ -854,80 +902,100 @@ function inferFieldNames(references: SymbolRef[]): Map<string, InferredName> {
         const confidence: InferredName['confidence'] =
             agreement >= 0.95 ? 'high' :
             agreement >= 0.85 ? 'medium' : 'low'
-        inferred.set(to, { name: bestName, confidence })
+        inferred.set(to, { name: bestName, confidence, agreement, sampleSize: namedRefs.length })
     }
     return inferred
 }
 
 /**
- * Walk a rule tree and wrap bare symbol references in `field()` wrappers
- * when the symbol has an inferred name. Stops descending into existing
- * `field()` / `alias` boundaries — those already own their field name.
+ * Walk a rule tree and, for every bare symbol reference whose target
+ * has an inferred name:
  *
- * The `_insideField` flag tracks whether the current recursion context
- * is under an existing field wrapper; bare symbols inside one inherit
- * that wrapper's name and are NOT re-wrapped.
+ *   1. Append a DerivationLog entry recording the finding.
+ *   2. If `apply` is true, wrap the bare ref in `field('name', $.Y)`
+ *      with source: 'inferred'. Otherwise leave the rule tree alone.
+ *
+ * Stops descending into existing `field()` / `alias` boundaries — those
+ * already own their field name. The returned `applied` flag reflects
+ * whether the walker actually mutated anything (always false when
+ * `apply` is false, true only when at least one wrap happened).
  */
 function applyInferredFields(
     rule: Rule,
-    _ruleName: string,
+    ruleName: string,
     inferred: Map<string, InferredName>,
+    apply: boolean,
+    log: InferredFieldEntry[],
+    _apply: boolean,
     _insideField = false,
-): Rule {
+): { rule: Rule; applied: boolean } {
     switch (rule.type) {
         case 'symbol': {
-            // Already inside a field wrapper? Leave alone.
-            if (_insideField) return rule
+            if (_insideField) return { rule, applied: false }
             const inf = inferred.get(rule.name)
-            if (!inf) return rule
-            // Wrap: field('name', $.symbol) with source: 'inferred'
+            if (!inf) return { rule, applied: false }
+            // Log unconditionally.
+            log.push({
+                kind: ruleName,
+                fieldName: inf.name,
+                targetSymbol: rule.name,
+                confidence: inf.confidence,
+                agreement: inf.agreement,
+                sampleSize: inf.sampleSize,
+                applied: apply,
+            })
+            if (!apply) return { rule, applied: false }
             return {
-                type: 'field',
-                name: inf.name,
-                content: rule,
-                source: 'inferred',
-            } satisfies FieldRule
+                rule: {
+                    type: 'field',
+                    name: inf.name,
+                    content: rule,
+                    source: 'inferred',
+                } satisfies FieldRule,
+                applied: true,
+            }
         }
 
         case 'field':
-            // Stop descending — inner wrappers own their own names.
-            return rule
-
         case 'alias':
-            // Alias creates a new kind; its inner ref doesn't inherit.
-            return rule
+            return { rule, applied: false }
 
-        case 'seq':
-            return {
-                type: 'seq',
-                members: rule.members.map(m => applyInferredFields(m, _ruleName, inferred, _insideField)),
+        case 'seq': {
+            const members: Rule[] = []
+            let any = false
+            for (const m of rule.members) {
+                const r = applyInferredFields(m, ruleName, inferred, apply, log, _apply, _insideField)
+                members.push(r.rule)
+                any = any || r.applied
             }
+            return { rule: any ? { type: 'seq', members } : rule, applied: any }
+        }
 
-        case 'choice':
-            return {
-                type: 'choice',
-                members: rule.members.map(m => applyInferredFields(m, _ruleName, inferred, _insideField)),
+        case 'choice': {
+            const members: Rule[] = []
+            let any = false
+            for (const m of rule.members) {
+                const r = applyInferredFields(m, ruleName, inferred, apply, log, _apply, _insideField)
+                members.push(r.rule)
+                any = any || r.applied
             }
+            return { rule: any ? { type: 'choice', members } : rule, applied: any }
+        }
 
         case 'optional':
-            return { type: 'optional', content: applyInferredFields(rule.content, _ruleName, inferred, _insideField) }
-
         case 'repeat':
-            return { ...rule, content: applyInferredFields(rule.content, _ruleName, inferred, _insideField) }
-
         case 'repeat1':
-            return { ...rule, content: applyInferredFields(rule.content, _ruleName, inferred, _insideField) }
-
         case 'variant':
-            return { ...rule, content: applyInferredFields(rule.content, _ruleName, inferred, _insideField) }
-
         case 'clause':
-            return { ...rule, content: applyInferredFields(rule.content, _ruleName, inferred, _insideField) }
-
-        case 'group':
-            return { ...rule, content: applyInferredFields(rule.content, _ruleName, inferred, _insideField) }
+        case 'group': {
+            const r = applyInferredFields(rule.content, ruleName, inferred, apply, log, _apply, _insideField)
+            return {
+                rule: r.applied ? { ...rule, content: r.rule } as Rule : rule,
+                applied: r.applied,
+            }
+        }
 
         default:
-            return rule
+            return { rule, applied: false }
     }
 }

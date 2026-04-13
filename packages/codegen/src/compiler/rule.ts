@@ -284,6 +284,51 @@ export interface SuggestedOverride {
     readonly confidence: 'high' | 'medium' | 'low'
 }
 
+/**
+ * DerivationLog — sidecar record of everything Link inferred / promoted.
+ *
+ * Populated unconditionally by Link's derivation passes. The emitter for
+ * `overrides.suggested.ts` (T042f) reads this to surface every finding
+ * as a reviewable suggestion, regardless of whether Link actually
+ * applied the mutation to the rule tree.
+ *
+ * Whether a derivation is ALSO applied (mutating the rule tree) is
+ * governed by `GenerateConfigV2.include` — excluded sources still
+ * appear in the log but don't land in the generated packages.
+ */
+export interface DerivationLog {
+    /** Field-name inferences: parent wants a bare symbol wrapped in field(). */
+    readonly inferredFields: InferredFieldEntry[]
+    /** Rule-level promotions: enum, supertype, terminal, polymorph classifications. */
+    readonly promotedRules: PromotedRuleEntry[]
+}
+
+export interface InferredFieldEntry {
+    /** The parent rule kind that contains the bare reference. */
+    readonly kind: string
+    /** Name of the field to wrap the reference in. */
+    readonly fieldName: string
+    /** Symbol being wrapped (the `to` in `field('name', $.to)`). */
+    readonly targetSymbol: string
+    /** Confidence tier based on cross-parent agreement ratio. */
+    readonly confidence: 'high' | 'medium' | 'low'
+    /** Numeric agreement — e.g. 10/10 → 1.0, 6/7 → ~0.857. */
+    readonly agreement: number
+    /** Total named refs that the inference was measured against. */
+    readonly sampleSize: number
+    /** True if Link mutated the rule tree; false if held back by `include`. */
+    readonly applied: boolean
+}
+
+export interface PromotedRuleEntry {
+    /** Kind whose rule was classified via promotion. */
+    readonly kind: string
+    /** What it was promoted to. */
+    readonly classification: 'enum' | 'supertype' | 'terminal' | 'polymorph'
+    /** True if Link kept the promotion; false if held back by `include`. */
+    readonly applied: boolean
+}
+
 export interface LinkedGrammar {
     readonly name: string
     readonly rules: Record<string, Rule>
@@ -291,6 +336,22 @@ export interface LinkedGrammar {
     readonly externalRoles: Map<string, ExternalRole>
     readonly word: string | null
     readonly references: SymbolRef[]
+    readonly derivations: DerivationLog
+}
+
+/**
+ * Derived source tags that can be toggled via GenerateConfigV2.include.
+ * `grammar` and `override` are always-on — user-authored content cannot
+ * be filtered out.
+ */
+export type DerivedRuleSource = 'promoted'
+export type DerivedFieldSource = 'inferred' | 'inlined'
+
+export interface IncludeFilter {
+    /** Derived rule classifications to KEEP. Defaults to all. */
+    readonly rules?: readonly DerivedRuleSource[]
+    /** Derived field provenances to KEEP. Defaults to all. */
+    readonly fields?: readonly DerivedFieldSource[]
 }
 
 export interface OptimizedGrammar {
@@ -298,6 +359,7 @@ export interface OptimizedGrammar {
     readonly rules: Record<string, Rule>
     readonly supertypes: Set<string>
     readonly word: string | null
+    readonly derivations: DerivationLog
 }
 
 // ---------------------------------------------------------------------------
@@ -568,13 +630,23 @@ export abstract class AssembledNodeBase {
      * effectively immutable.
      */
     irKey?: string
+    /**
+     * Rule-level provenance. Mirrors the `source` field on the
+     * underlying Rule (EnumRule, SupertypeRule, TerminalRule,
+     * PolymorphRule). Undefined for branches/containers/groups, which
+     * don't have a rule-level classification. The suggested.ts emitter
+     * surfaces nodes whose source is `'promoted'` as rule-level
+     * override candidates.
+     */
+    readonly source?: RuleSource
     abstract readonly modelType: string
 
-    constructor(init: { kind: string; typeName: string; factoryName?: string; irKey?: string }) {
+    constructor(init: { kind: string; typeName: string; factoryName?: string; irKey?: string; source?: RuleSource }) {
         this.kind = init.kind
         this.typeName = init.typeName
         this.factoryName = init.factoryName
         this.irKey = init.irKey
+        this.source = init.source
     }
 
     /** A node is hidden when it has no factory (supertype, group, token). */
@@ -1443,6 +1515,12 @@ export interface NodeMap {
     readonly nodes: Map<string, AssembledNode>
     readonly signatures: SignaturePool
     readonly projections: ProjectionContext
+    /**
+     * Sidecar log of every derivation Link produced. Emitters read
+     * this to surface suggestions regardless of whether the mutation
+     * was applied to the rule tree (governed by IncludeFilter).
+     */
+    readonly derivations: DerivationLog
 }
 
 // ---------------------------------------------------------------------------
