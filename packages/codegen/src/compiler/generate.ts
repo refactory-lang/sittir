@@ -2,7 +2,7 @@
  * compiler/generate.ts — New pipeline entry point
  *
  * Replaces the old generate() in index.ts.
- * Pipeline: evaluate → link → optimize → assemble → adapter → emitters
+ * Pipeline: evaluate → link → optimize → assemble → emitters
  */
 
 import { existsSync } from 'node:fs'
@@ -10,14 +10,13 @@ import { evaluate } from './evaluate.ts'
 import { link } from './link.ts'
 import { optimize } from './optimize.ts'
 import { assemble } from './assemble.ts'
-import { toHydratedModels } from './adapter.ts'
 import { resolveGrammarJsPath, resolveOverridesPath } from './resolve-grammar.ts'
 
 import { emitGrammar } from '../emitters/grammar.ts'
 import { emitTypesFromNodeMap } from '../emitters/types-v2.ts'
 import { emitTemplatesFromNodeMap } from '../emitters/templates-v2.ts'
 import { emitFactoriesFromNodeMap } from '../emitters/factories-v2.ts'
-import { emitWrap } from '../emitters/wrap.ts'
+import { emitWrapFromNodeMap } from '../emitters/wrap-v2.ts'
 import { emitFromNodeMap } from '../emitters/from-v2.ts'
 import { emitClientUtilsFromNodeMap } from '../emitters/client-utils-v2.ts'
 import { emitIrFromNodeMap } from '../emitters/ir-v2.ts'
@@ -81,23 +80,16 @@ export async function generateV2(cfg: GenerateConfigV2): Promise<GeneratedFilesV
     // Phase 4: Assemble
     const nodeMap = assemble(optimized)
 
-    // Adapter: NodeMap → HydratedNodeModel[] for the wrap emitter.
-    // wrap.ts is the only remaining adapter consumer — it will be rewritten
-    // to derive from the override projection (not NodeMap) in a future pass.
-    const allModels = toHydratedModels(nodeMap)
-    const nodes = cfg.nodes && cfg.nodes.length > 0
-        ? allModels.filter(n => cfg.nodes!.includes(n.kind))
-        : allModels
-
-    // Phase 5: Emit — ir-namespace keys are populated on each
-    // AssembledNode during assemble() (see resolveIrKeys), so emitters
-    // read node.irKey directly. No side-channel map plumbing.
+    // Phase 5: Emit — every emitter consumes NodeMap directly. The
+    // ir-namespace keys are populated on each AssembledNode during
+    // assemble() (see resolveIrKeys), so emitters read node.irKey
+    // directly. No side-channel map plumbing, no NodeMap→Hydrated adapter.
     return {
         grammar: emitGrammar({ grammar: cfg.grammar }),
         types: emitTypesFromNodeMap({ grammar: cfg.grammar, nodeMap }),
         templatesYaml: emitTemplatesFromNodeMap({ grammar: cfg.grammar, nodeMap }),
         factories: emitFactoriesFromNodeMap({ grammar: cfg.grammar, nodeMap }),
-        wrap: emitWrap({ grammar: cfg.grammar, nodes: nodes as any }),
+        wrap: emitWrapFromNodeMap({ grammar: cfg.grammar, nodeMap }),
         utils: emitClientUtilsFromNodeMap({ nodeMap }),
         from: emitFromNodeMap({ grammar: cfg.grammar, nodeMap }),
         irNamespace: emitIrFromNodeMap({ grammar: cfg.grammar, nodeMap }),

@@ -3,7 +3,6 @@ import { evaluate } from '../compiler/evaluate.ts'
 import { link } from '../compiler/link.ts'
 import { optimize } from '../compiler/optimize.ts'
 import { assemble } from '../compiler/assemble.ts'
-import { toHydratedModels } from '../compiler/adapter.ts'
 import { resolveGrammarJsPath } from '../compiler/resolve-grammar.ts'
 import { resolve } from 'node:path'
 
@@ -88,18 +87,4 @@ describe('Full pipeline — evaluate → link → optimize → assemble', () => 
         expect(nodeMap.nodes.size).toBeGreaterThan(100)
     })
 
-    it('adapter produces models from NodeMap', async () => {
-        const raw = await evaluate(pythonGrammar)
-        const linked = link(raw)
-        const optimized = optimize(linked)
-        const nodeMap = assemble(optimized)
-        const models = toHydratedModels(nodeMap)
-
-        expect(models.length).toBeGreaterThan(50)
-        // Every model has a kind and modelType
-        for (const m of models) {
-            expect(m.kind).toBeTruthy()
-            expect(m.modelType).toBeTruthy()
-        }
-    })
 })

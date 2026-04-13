@@ -612,6 +612,21 @@ export abstract class AssembledNodeBase {
     emitFromFunction(_nodeMap: NodeMap): string | undefined {
         return undefined
     }
+
+    /**
+     * Emit the `wrap${TypeName}(data, tree)` read-only view function
+     * for this node. Mirrors the factory's field set but with lazy
+     * `drillIn`/`drillInAll` getters instead of fluent accessors.
+     * No setters, no render/toEdit/replace — wrap is strictly a
+     * read-only lazy projection of parsed NodeData.
+     *
+     * Returns `undefined` for non-structural nodes (leaves, keywords,
+     * enums, tokens, supertypes) — those are pass-through in the
+     * `_wrapTable` dispatcher.
+     */
+    emitWrap(_nodeMap: NodeMap): string | undefined {
+        return undefined
+    }
 }
 
 /** Escape a string literal value for embedding in single-quoted TS source. */
@@ -727,6 +742,11 @@ export class AssembledBranch extends AssembledNodeBase {
         lines.push('}')
         return lines.join('\n')
     }
+
+    emitWrap(_nodeMap: NodeMap): string | undefined {
+        if (!this.rawFactoryName) return undefined
+        return emitFieldCarryingWrap(this, this.fields, this.children ?? [])
+    }
 }
 
 /**
@@ -780,6 +800,57 @@ function emitFieldCarryingFactory(
     lines.push('    getChildren() { return children; },')
     lines.push(`    setChildren(...items: any[]) { return ${fn}({ ...(config as any), children: items } as any); },`)
     lines.push(...factorySuffix(node.treeTypeName))
+    lines.push('  };')
+    lines.push('}')
+    return lines.join('\n')
+}
+
+/**
+ * Shared body for the `wrap${TypeName}(data, tree)` read-only view
+ * function. Mirrors `emitFieldCarryingFactory` but with lazy drillIn
+ * getters instead of fluent getter/setter methods, and no
+ * render/toEdit/replace suffix. Used by AssembledBranch, AssembledGroup
+ * (polymorph forms are emitted inline by the parent polymorph),
+ * AssembledContainer, and AssembledPolymorph.
+ */
+function emitFieldCarryingWrap(
+    node: AssembledNodeBase & { kind: string; typeName: string },
+    fields: readonly AssembledField[],
+    children: readonly AssembledChild[],
+): string {
+    const fn = `wrap${node.typeName}`
+    const lines: string[] = []
+    lines.push(`export function ${fn}(data: AnyNodeData, tree: TreeHandle) {`)
+    lines.push('  return {')
+    lines.push('    ...data,')
+
+    for (const f of fields) {
+        // Avoid shadowing built-in property names on the returned view.
+        const method = f.propertyName === 'type' ? 'typeField' : f.propertyName
+        if (f.multiple) {
+            lines.push(`    get ${method}() { return drillInAll(data.fields?.['${f.name}'], tree); },`)
+        } else {
+            lines.push(`    get ${method}() { return drillIn(data.fields?.['${f.name}'], tree); },`)
+        }
+    }
+
+    // Children slot — always project through drillIn so nested subtrees
+    // hydrate lazily. A node with a default children array always exposes
+    // `children`; specialised single-child containers expose `child`.
+    if (children.length > 0) {
+        const anyMultiple = children.some(c => c.multiple)
+        if (anyMultiple) {
+            lines.push(`    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },`)
+        } else {
+            lines.push(`    get child() { return drillIn(data.children?.[0], tree); },`)
+        }
+    } else {
+        // Even nodes without a declared child slot may receive
+        // supertype-dispatched children from tree-sitter. Expose them
+        // anyway so callers can walk the full tree.
+        lines.push(`    get children() { return (data.children ?? []).map((c: any) => drillIn(c, tree)); },`)
+    }
+
     lines.push('  };')
     lines.push('}')
     return lines.join('\n')
@@ -861,6 +932,12 @@ export class AssembledContainer extends AssembledNodeBase {
             `  return ${factory}(...(input as any[]));`,
             '}',
         ].join('\n')
+    }
+
+    emitWrap(_nodeMap: NodeMap): string | undefined {
+        if (!this.rawFactoryName) return undefined
+        // Containers carry no fields — just the children slot.
+        return emitFieldCarryingWrap(this, [], this.children)
     }
 }
 
@@ -949,6 +1026,31 @@ export class AssembledPolymorph extends AssembledNodeBase {
         const parts = [lines.join('\n')]
         for (const form of forms) parts.push(form.emitFactory()!)
         return parts.join('\n')
+    }
+
+    emitWrap(_nodeMap: NodeMap): string | undefined {
+        if (!this.rawFactoryName) return undefined
+        // Polymorph wraps under the parent kind — union every form's
+        // fields so the lazy view exposes any field that might be
+        // populated at runtime. First-occurrence wins on duplicate
+        // field names (forms with the same field name share semantics).
+        const allFields = new Map<string, AssembledField>()
+        for (const form of this.#forms) {
+            for (const f of form.fields) {
+                if (!allFields.has(f.name)) allFields.set(f.name, f)
+            }
+        }
+        // Children: union across forms; if any form has a multiple
+        // children slot, expose `children` (mapped via drillIn).
+        const allChildren: AssembledChild[] = []
+        for (const form of this.#forms) {
+            for (const c of form.children) {
+                if (!allChildren.some(existing => existing.name === c.name)) {
+                    allChildren.push(c)
+                }
+            }
+        }
+        return emitFieldCarryingWrap(this, [...allFields.values()], allChildren)
     }
 
     emitFromFunction(nodeMap: NodeMap): string | undefined {
