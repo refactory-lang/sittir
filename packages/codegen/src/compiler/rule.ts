@@ -871,6 +871,13 @@ function emitFieldCarryingFactory(
 ): string {
     const fn = node.rawFactoryName!
     const hasFields = fields.length > 0
+    // Only emit children threading when the node actually has a child
+    // slot. For field-only branches (e.g. inner_attribute_item), the
+    // types.ts interface has no `children:` member and the factory
+    // should mirror that — no `children` property, no `getChildren()`
+    // / `setChildren()` methods.
+    const children = node.children ?? []
+    const hasChildren = children.length > 0
     const opt = fields.some(f => f.required) ? '' : '?'
     // Polymorph forms emit their parent's kind as the NodeData type so the
     // runtime value matches what tree-sitter produces. Non-form nodes
@@ -889,16 +896,15 @@ function emitFieldCarryingFactory(
         }
         lines.push('  };')
     }
-    // Always thread children — tree-sitter surfaces supertype-dispatched
-    // children that the rule doesn't reference explicitly. ConfigOf<T>
-    // includes a `children` slot via ChildSlotsOf<T>.
-    lines.push('  const children = (config as any)?.children ?? [];')
+    if (hasChildren) {
+        lines.push('  const children = (config as any)?.children ?? [];')
+    }
 
     lines.push('  return {')
     lines.push(`    type: '${typeKind}' as const,`)
     lines.push('    named: true as const,')
     if (hasFields) lines.push('    fields,')
-    lines.push('    children,')
+    if (hasChildren) lines.push('    children,')
 
     // Fluent field getters/setters. Param name must not shadow the
     // outer factory function — suffix when needed.
@@ -913,8 +919,10 @@ function emitFieldCarryingFactory(
         }
     }
 
-    lines.push('    getChildren() { return children; },')
-    lines.push(`    setChildren(...items: any[]) { return ${fn}({ ...(config as any), children: items } as any); },`)
+    if (hasChildren) {
+        lines.push('    getChildren() { return children; },')
+        lines.push(`    setChildren(...items: any[]) { return ${fn}({ ...(config as any), children: items } as any); },`)
+    }
     lines.push(...factorySuffix(node.treeTypeName))
     lines.push('  };')
     lines.push('}')

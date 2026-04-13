@@ -79,7 +79,7 @@
 // statement_block → field('body')  [high, 100% agreement, 13 parents]
 //   [applied]  statement
 //
-//   Override snippet (one per affected parent):
+//   Override snippet (one per affected parent — pick a position):
 //     statement: ($, original) => transform(original, {
 //       N: field('body'),  // TODO: pick position N for $.statement_block
 //     }),
@@ -87,7 +87,7 @@
 // _type_identifier → field('name')  [medium, 90% agreement, 10 parents]
 //   [applied]  primary_type
 //
-//   Override snippet (one per affected parent):
+//   Override snippet (one per affected parent — pick a position):
 //     primary_type: ($, original) => transform(original, {
 //       N: field('name'),  // TODO: pick position N for $._type_identifier
 //     }),
