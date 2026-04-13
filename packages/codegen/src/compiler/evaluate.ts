@@ -73,15 +73,13 @@ export function choice(...members: Input[]): ChoiceRule | EnumRule {
 
 export function optional(content: Input): OptionalRule {
     const resolved = normalize(content)
-    const ref = getRef(resolved)
-    if (ref) ref.optional = true
+    walkRefs(resolved, ref => { ref.optional = true })
     return { type: 'optional', content: resolved }
 }
 
 export function repeat(content: Input): RepeatRule {
     const resolved = normalize(content)
-    const ref = getRef(resolved)
-    if (ref) ref.repeated = true
+    walkRefs(resolved, ref => { ref.repeated = true })
 
     // Detect separator pattern in seq(STRING, x) or seq(x, STRING)
     if (resolved.type === 'seq' && resolved.members.length === 2) {
@@ -99,8 +97,7 @@ export function repeat(content: Input): RepeatRule {
 
 export function repeat1(content: Input): Repeat1Rule {
     const resolved = normalize(content)
-    const ref = getRef(resolved)
-    if (ref) ref.repeated = true
+    walkRefs(resolved, ref => { ref.repeated = true })
     return { type: 'repeat1', content: resolved }
 }
 
@@ -124,11 +121,47 @@ export function createProxy(currentRule: string, refs: SymbolRef[]): Record<stri
 }
 
 // ---------------------------------------------------------------------------
-// Ref enrichment helper
+// Ref enrichment helpers
 // ---------------------------------------------------------------------------
 
 function getRef(rule: Rule): SymbolRef | undefined {
     return (rule as SymbolRuleWithRef)._ref
+}
+
+/**
+ * Walk a rule tree and call `visit` on every direct symbol reference
+ * (`_ref`-bearing SymbolRule), including refs nested inside `seq`,
+ * `choice`, `optional`, `repeat`, `repeat1`, and `prec` wrappers.
+ *
+ * Stops at nested `field` boundaries: a `field('y', $.foo)` inside a
+ * `field('x', seq(..., field('y', $.foo)))` keeps its own field name
+ * — `x` does not propagate over the inner `field`.
+ *
+ * Also stops at `alias` boundaries — an alias creates a distinct kind
+ * with its own surface, so the inner reference doesn't inherit the
+ * outer wrapper's modifiers.
+ */
+function walkRefs(rule: Rule, visit: (ref: SymbolRef) => void): void {
+    const ref = getRef(rule)
+    if (ref) visit(ref)
+    switch (rule.type) {
+        case 'seq':
+        case 'choice':
+            for (const m of (rule as { members: Rule[] }).members) walkRefs(m, visit)
+            return
+        case 'optional':
+        case 'repeat':
+        case 'repeat1':
+        case 'prec' as never: // prec wrappers are stripped by normalize but defensive
+            walkRefs((rule as { content: Rule }).content, visit)
+            return
+        case 'field':
+        case 'alias':
+            // Stop — inner refs belong to the inner wrapper.
+            return
+        default:
+            return
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -141,8 +174,12 @@ export function field(name: string, content?: Input): FieldRule {
         return { type: 'field', name, content: { type: 'string', value: '' } as any, _needsContent: true } as any
     }
     const resolved = normalize(content)
-    const ref = getRef(resolved)
-    if (ref) ref.fieldName = name
+    // Propagate the field name to every nested symbol ref. Stops at
+    // inner field/alias boundaries — those own their own field name.
+    // Don't overwrite a field name set by an inner wrapper.
+    walkRefs(resolved, ref => {
+        if (ref.fieldName === undefined) ref.fieldName = name
+    })
     return { type: 'field', name, content: resolved }
 }
 

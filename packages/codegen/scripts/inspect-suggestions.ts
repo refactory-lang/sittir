@@ -38,16 +38,17 @@ for (const s of sug) {
 console.log('By derivation:', byKind)
 console.log()
 
+const limit = parseInt(process.argv[4] ?? '10', 10)
 const groups: Array<[string, string]> = [
     ['field-name-inference', 'field-name-inference'],
     ['global-optionality', 'global-optionality'],
     ['naming-consistency', 'naming-consistency'],
 ]
 for (const [tag, label] of groups) {
-    console.log(`--- ${label} (first 5) ---`)
+    console.log(`--- ${label} (first ${limit}) ---`)
     let n = 0
     for (const s of sug) {
-        if (n >= 5) break
+        if (n >= limit) break
         if (!s.derivation.startsWith(tag)) continue
         console.log(' ', s.kind, JSON.stringify(s.path), '-', s.confidence)
         console.log('     ', s.derivation)

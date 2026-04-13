@@ -207,9 +207,9 @@ These are the critical acceptance tests. Generated code must actually work at ru
 - [x] T052b [US1] Factory round-trip — `validateFactoryRoundTrip` runs against all three grammars in `corpus-validation.test.ts`. Same validator is exposed via `sittir --roundtrip`.
 - [x] T052c [US1] Render round-trip — `validateRenderable` runs against all three grammars in `corpus-validation.test.ts`. (The render → re-parse step is what `validateFactoryRoundTrip` does end-to-end, so T052c is covered both ways.)
 - [x] T052d [US1] from() round-trip (NodeData input path) — `validateFrom` runs against all three grammars in `corpus-validation.test.ts`. Floor assertions in place.
-- [ ] T052d-i [US1] from() with string inputs for leaf-typed fields — **deferred to C6-prereq**. v2 `from.ts` lacks the loose-string→leaf dispatch for multi-leaf-content fields. corpus-validation only feeds materialized `NodeData`, so this gap isn't exercised today.
-- [ ] T052d-ii [US1] from() with mixed objects/nodes — **deferred to C6-prereq**. Same reason: the `_resolveByKind` dispatch isn't emitted in v2.
-- [ ] T052d-iii [US1] from() with supertype inputs — **deferred to C6-prereq**. Same reason.
+- [x] T052d-i [US1] from() with string inputs for leaf-typed fields — covered by `packages/python/tests/from-loose.test.ts` after C6-prereq. Commit `5737e76`.
+- [x] T052d-ii [US1] from() with mixed objects/nodes — kind-tagged objects route through `_resolveByKind`. Same test file.
+- [x] T052d-iii [US1] from() with supertype inputs — supertype subtype dispatch via `_resolveByKind`. Same test file.
 - [x] T052e [US1] CLI `--roundtrip` flag wires all four validators (`validateReadNodeRoundTrip`, `validateRoundTrip`, `validateFactoryRoundTrip`, `validateFrom`). See `packages/codegen/src/cli.ts:165-191`.
 - [x] T052f [US1] `corpus-validation.test.ts` is the canonical vitest entry point for round-trip validation across all three grammars. The placeholder `roundtrip.test.ts` is a generator-output smoke test (separate purpose) — kept as the "does generateV2 produce non-empty files" sanity layer.
 
@@ -480,32 +480,25 @@ files. Counts below are **after** the enum `factoryName` fix in
 3. **Python from() coverage.** v1 emitted a single `from` function
    for all of python — a v1 regex/detection bug, not a v2 gap.
 
-- [ ] **C6-prereq** **from.ts resolver emission (v1 parity + dedup).**
-  v1 emits 258 private `_resolve*` / `_r*` helpers plus `_leafRegistry`,
-  `_resolveByKind`, `_resolveScalar`, `_resolveLeafString` dispatch
-  infrastructure. v2 emits zero private resolvers — `resolveField()`
-  inlines a minimal passthrough.
+- [x] **C6-prereq** Done in commit `5737e76`. v2 from.ts now emits a
+  per-grammar resolver helper block at module scope:
+  `_leafRegistry`, `_resolveLeafString`, `_resolveByKind`,
+  `_resolveScalar`, `_resolveOne`, `_resolveMany`. Per-field
+  resolvers in `resolveFieldFromView` emit
+  `_resolveOne(f.field, [leaves], [branches]) as any`. Closes the
+  capability gap from the v1↔v2 comparison:
+  - Loose string → leaf-by-value/pattern dispatch ✓
+  - Array field → map each loose element ✓
+  - Supertype field → dispatch by object `kind` ✓
+  - JS primitive → leaf (true → boolean_literal etc) ✓
+  - Single-branch passthrough ✓
 
-  | Capability | v1 | v2 |
-  |---|---|---|
-  | Loose string → single-leaf wrap | ✓ | ✓ |
-  | Loose string → leaf-by-value/pattern dispatch | ✓ | ✗ |
-  | Array field → map each loose element | ✓ | ✗ (raw passthrough) |
-  | Supertype field → dispatch by object `kind` | ✓ | ✗ |
-  | Branch inference (object without kind) | ✓ (helpful error) | ✗ (silent passthrough) |
-  | JS primitive → leaf (`true` → boolean_literal) | ✓ | ✗ |
-  | Variadic container children | ✓ (array unwrap) | partial |
-
-  Example — v1 `blockFrom` maps each child through a typed resolver;
-  v2 `blockFrom` passes `input.children` straight through as-is.
-  Corpus validators don't catch this because they feed materialized
-  NodeData, not loose developer input. **Proposed work order:**
-  (a) `_fromMap` runtime dispatch wiring — already done,
-  (b) emit shared `_resolveByKind(kind, rest) → _fromMap[kind](rest)`,
-  (c) teach `resolveField` to emit array map calls for `multiple`
-  branch fields, (d) emit per-signature resolver helpers deduped
-  by content-type signature (supersedes T042i), (e) emit
-  `_resolveScalar` for primitive coercion. Unblocks C6.
+  Loose-input tests at `packages/python/tests/from-loose.test.ts`
+  (5 tests) exercise the new path. Branch-inference-by-shape (object
+  without `kind`, infer the branch from field names) is the one v1
+  capability NOT carried over — v1 emitted helpful ambiguity errors
+  for the multi-branch case; v2 silently passes through. Defer if
+  needed.
 
 ---
 
