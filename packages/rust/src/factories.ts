@@ -112,7 +112,8 @@ export function sourceFile(config: ConfigOf<SourceFile>) {
 }
 
 export function expressionStatement(child?: any) {
-  const children = child ? [child] : [];
+  const hasChild = child && typeof child === "object" && "type" in child;
+  const children = hasChild ? [child] : [];
   return {
     type: 'expression_statement' as const,
     named: true as const,
@@ -174,7 +175,8 @@ export function macroRule(config: ConfigOf<MacroRule>) {
   };
 }
 
-export function tokenTreePattern(...children: any[]) {
+export function tokenTreePattern(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: 'token_tree_pattern' as const,
     named: true as const,
@@ -212,7 +214,8 @@ export function tokenBindingPattern(config: ConfigOf<TokenBindingPattern>) {
   };
 }
 
-export function tokenRepetitionPattern(...children: any[]) {
+export function tokenRepetitionPattern(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: 'token_repetition_pattern' as const,
     named: true as const,
@@ -226,7 +229,8 @@ export function tokenRepetitionPattern(...children: any[]) {
   };
 }
 
-export function tokenTree(...children: any[]) {
+export function tokenTree(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: 'token_tree' as const,
     named: true as const,
@@ -240,7 +244,8 @@ export function tokenTree(...children: any[]) {
   };
 }
 
-export function tokenRepetition(...children: any[]) {
+export function tokenRepetition(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: 'token_repetition' as const,
     named: true as const,
@@ -374,7 +379,8 @@ export function foreignModItem(config: ConfigOf<ForeignModItem>) {
   };
 }
 
-export function declarationList(...children: any[]) {
+export function declarationList(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: 'declaration_list' as const,
     named: true as const,
@@ -476,7 +482,8 @@ export function enumItem(config: ConfigOf<EnumItem>) {
   };
 }
 
-export function enumVariantList(...children: any[]) {
+export function enumVariantList(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: 'enum_variant_list' as const,
     named: true as const,
@@ -518,7 +525,8 @@ export function enumVariant(config: ConfigOf<EnumVariant>) {
   };
 }
 
-export function fieldDeclarationList(...children: any[]) {
+export function fieldDeclarationList(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: 'field_declaration_list' as const,
     named: true as const,
@@ -766,7 +774,8 @@ export function functionSignatureItem(config: ConfigOf<FunctionSignatureItem>) {
   };
 }
 
-export function functionModifiers(...children: any[]) {
+export function functionModifiers(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: 'function_modifiers' as const,
     named: true as const,
@@ -780,7 +789,8 @@ export function functionModifiers(...children: any[]) {
   };
 }
 
-export function whereClause(...children: any[]) {
+export function whereClause(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: 'where_clause' as const,
     named: true as const,
@@ -908,7 +918,8 @@ export function associatedType(config: ConfigOf<AssociatedType>) {
   };
 }
 
-export function traitBounds(...children: any[]) {
+export function traitBounds(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: 'trait_bounds' as const,
     named: true as const,
@@ -947,7 +958,8 @@ export function higherRankedTraitBound(config: ConfigOf<HigherRankedTraitBound>)
 }
 
 export function removedTraitBound(child?: any) {
-  const children = child ? [child] : [];
+  const hasChild = child && typeof child === "object" && "type" in child;
+  const children = hasChild ? [child] : [];
   return {
     type: 'removed_trait_bound' as const,
     named: true as const,
@@ -961,7 +973,8 @@ export function removedTraitBound(child?: any) {
   };
 }
 
-export function typeParameters(...children: any[]) {
+export function typeParameters(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: 'type_parameters' as const,
     named: true as const,
@@ -1129,7 +1142,8 @@ export function scopedUseList(config: ConfigOf<ScopedUseList>) {
   };
 }
 
-export function useList(...children: any[]) {
+export function useList(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: 'use_list' as const,
     named: true as const,
@@ -1189,7 +1203,8 @@ export function useWildcard(config: ConfigOf<UseWildcard>) {
   };
 }
 
-export function parameters(...children: any[]) {
+export function parameters(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: 'parameters' as const,
     named: true as const,
@@ -1302,7 +1317,8 @@ export function externModifier(config: ConfigOf<ExternModifier>) {
 }
 
 export function visibilityModifier(child?: any) {
-  const children = child ? [child] : [];
+  const hasChild = child && typeof child === "object" && "type" in child;
+  const children = hasChild ? [child] : [];
   return {
     type: 'visibility_modifier' as const,
     named: true as const,
@@ -1317,7 +1333,8 @@ export function visibilityModifier(child?: any) {
 }
 
 export function bracketedType(child?: any) {
-  const children = child ? [child] : [];
+  const hasChild = child && typeof child === "object" && "type" in child;
+  const children = hasChild ? [child] : [];
   return {
     type: 'bracketed_type' as const,
     named: true as const,
@@ -1401,7 +1418,8 @@ export function arrayType(config: ConfigOf<ArrayType>) {
   };
 }
 
-export function forLifetimes(...children: any[]) {
+export function forLifetimes(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: 'for_lifetimes' as const,
     named: true as const,
@@ -1441,7 +1459,8 @@ export function functionType(config: ConfigOf<FunctionType>) {
   };
 }
 
-export function tupleType(...children: any[]) {
+export function tupleType(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: 'tuple_type' as const,
     named: true as const,
@@ -1562,7 +1581,8 @@ export function boundedType(config: ConfigOf<BoundedType>) {
   };
 }
 
-export function useBounds(...children: any[]) {
+export function useBounds(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: 'use_bounds' as const,
     named: true as const,
@@ -1576,7 +1596,8 @@ export function useBounds(...children: any[]) {
   };
 }
 
-export function typeArguments(...children: any[]) {
+export function typeArguments(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: 'type_arguments' as const,
     named: true as const,
@@ -1747,7 +1768,8 @@ export function macroInvocation(config: ConfigOf<MacroInvocation>) {
   };
 }
 
-export function delimTokenTree(...children: any[]) {
+export function delimTokenTree(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: 'delim_token_tree' as const,
     named: true as const,
@@ -1834,7 +1856,8 @@ export function scopedTypeIdentifier(config: ConfigOf<ScopedTypeIdentifier>) {
 }
 
 export function rangeExpression(child?: any) {
-  const children = child ? [child] : [];
+  const hasChild = child && typeof child === "object" && "type" in child;
+  const children = hasChild ? [child] : [];
   return {
     type: 'range_expression' as const,
     named: true as const,
@@ -2017,7 +2040,8 @@ export function typeCastExpression(config: ConfigOf<TypeCastExpression>) {
 }
 
 export function returnExpression(child?: any) {
-  const children = child ? [child] : [];
+  const hasChild = child && typeof child === "object" && "type" in child;
+  const children = hasChild ? [child] : [];
   return {
     type: 'return_expression' as const,
     named: true as const,
@@ -2032,7 +2056,8 @@ export function returnExpression(child?: any) {
 }
 
 export function yieldExpression(child?: any) {
-  const children = child ? [child] : [];
+  const hasChild = child && typeof child === "object" && "type" in child;
+  const children = hasChild ? [child] : [];
   return {
     type: 'yield_expression' as const,
     named: true as const,
@@ -2070,7 +2095,8 @@ export function callExpression(config: ConfigOf<CallExpression>) {
   };
 }
 
-export function arguments_(...children: any[]) {
+export function arguments_(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: 'arguments' as const,
     named: true as const,
@@ -2109,7 +2135,8 @@ export function arrayExpression(config: ConfigOf<ArrayExpression>) {
 }
 
 export function parenthesizedExpression(child?: any) {
-  const children = child ? [child] : [];
+  const hasChild = child && typeof child === "object" && "type" in child;
+  const children = hasChild ? [child] : [];
   return {
     type: 'parenthesized_expression' as const,
     named: true as const,
@@ -2186,7 +2213,8 @@ export function structExpression(config: ConfigOf<StructExpression>) {
   };
 }
 
-export function fieldInitializerList(...children: any[]) {
+export function fieldInitializerList(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: 'field_initializer_list' as const,
     named: true as const,
@@ -2249,7 +2277,8 @@ export function fieldInitializer(config: ConfigOf<FieldInitializer>) {
 }
 
 export function baseFieldInitializer(child?: any) {
-  const children = child ? [child] : [];
+  const hasChild = child && typeof child === "object" && "type" in child;
+  const children = hasChild ? [child] : [];
   return {
     type: 'base_field_initializer' as const,
     named: true as const,
@@ -2314,7 +2343,8 @@ export function letCondition(config: ConfigOf<LetCondition>) {
 }
 
 export function elseClause(child?: any) {
-  const children = child ? [child] : [];
+  const hasChild = child && typeof child === "object" && "type" in child;
+  const children = hasChild ? [child] : [];
   return {
     type: 'else_clause' as const,
     named: true as const,
@@ -2352,7 +2382,8 @@ export function matchExpression(config: ConfigOf<MatchExpression>) {
   };
 }
 
-export function matchBlock(...children: any[]) {
+export function matchBlock(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: 'match_block' as const,
     named: true as const,
@@ -2587,7 +2618,8 @@ export function closureExpressionBody2(config: ConfigOf<ClosureExpressionBody2>)
   };
 }
 
-export function closureParameters(...children: any[]) {
+export function closureParameters(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: 'closure_parameters' as const,
     named: true as const,
@@ -2694,7 +2726,8 @@ export function indexExpression(config: ConfigOf<IndexExpression>) {
 }
 
 export function awaitExpression(child?: any) {
-  const children = child ? [child] : [];
+  const hasChild = child && typeof child === "object" && "type" in child;
+  const children = hasChild ? [child] : [];
   return {
     type: 'await_expression' as const,
     named: true as const,
@@ -2864,7 +2897,8 @@ export function genericPattern(config: ConfigOf<GenericPattern>) {
   };
 }
 
-export function tuplePattern(...children: any[]) {
+export function tuplePattern(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: 'tuple_pattern' as const,
     named: true as const,
@@ -2878,7 +2912,8 @@ export function tuplePattern(...children: any[]) {
   };
 }
 
-export function slicePattern(...children: any[]) {
+export function slicePattern(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: 'slice_pattern' as const,
     named: true as const,
@@ -3063,7 +3098,8 @@ export function rangePatternRight(config: ConfigOf<RangePatternRight>) {
 }
 
 export function refPattern(child?: any) {
-  const children = child ? [child] : [];
+  const hasChild = child && typeof child === "object" && "type" in child;
+  const children = hasChild ? [child] : [];
   return {
     type: 'ref_pattern' as const,
     named: true as const,
@@ -3126,7 +3162,8 @@ export function referencePattern(config: ConfigOf<ReferencePattern>) {
 }
 
 export function orPattern(child?: any) {
-  const children = child ? [child] : [];
+  const hasChild = child && typeof child === "object" && "type" in child;
+  const children = hasChild ? [child] : [];
   return {
     type: 'or_pattern' as const,
     named: true as const,
@@ -3173,7 +3210,8 @@ export function integerLiteral(text: string) {
   };
 }
 
-export function stringLiteral(...children: any[]) {
+export function stringLiteral(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: 'string_literal' as const,
     named: true as const,
@@ -3236,7 +3274,8 @@ export function escapeSequence(text: string) {
 }
 
 export function comment(child?: any) {
-  const children = child ? [child] : [];
+  const hasChild = child && typeof child === "object" && "type" in child;
+  const children = hasChild ? [child] : [];
   return {
     type: 'comment' as const,
     named: true as const,
@@ -3317,7 +3356,8 @@ export function shebang(text: string) {
 }
 
 export function hiddenTypeIdentifier(child?: any) {
-  const children = child ? [child] : [];
+  const hasChild = child && typeof child === "object" && "type" in child;
+  const children = hasChild ? [child] : [];
   return {
     type: '_type_identifier' as const,
     named: true as const,
@@ -3332,7 +3372,8 @@ export function hiddenTypeIdentifier(child?: any) {
 }
 
 export function hiddenFieldIdentifier(child?: any) {
-  const children = child ? [child] : [];
+  const hasChild = child && typeof child === "object" && "type" in child;
+  const children = hasChild ? [child] : [];
   return {
     type: '_field_identifier' as const,
     named: true as const,
@@ -3391,7 +3432,8 @@ export function metavariable(text: string) {
 }
 
 export function letChain(child?: any) {
-  const children = child ? [child] : [];
+  const hasChild = child && typeof child === "object" && "type" in child;
+  const children = hasChild ? [child] : [];
   return {
     type: 'let_chain' as const,
     named: true as const,

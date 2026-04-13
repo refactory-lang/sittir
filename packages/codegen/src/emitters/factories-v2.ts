@@ -175,10 +175,16 @@ function emitContainerFactory(node: AssembledContainer): string {
 
     const lines: string[] = []
     if (child?.multiple) {
-        lines.push(`export function ${fn}(...children: any[]) {`)
+        lines.push(`export function ${fn}(..._children: any[]) {`)
+        // Filter out non-NodeData args (empty objects, undefined).
+        lines.push('  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);')
     } else {
         lines.push(`export function ${fn}(child?: any) {`)
-        lines.push('  const children = child ? [child] : [];')
+        // Treat an empty/non-NodeData arg as "no child". Validator paths
+        // may pass `{}` when a parent has fields but no children and we
+        // don't want that to become a fake child wrapping undefined.
+        lines.push('  const hasChild = child && typeof child === "object" && "type" in child;')
+        lines.push('  const children = hasChild ? [child] : [];')
     }
 
     lines.push('  return {')

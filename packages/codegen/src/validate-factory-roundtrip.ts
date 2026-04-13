@@ -322,14 +322,21 @@ export async function validateFactoryRoundTrip(
 			const readData = readNode(handle, node1.id, routing);
 
 			// Direct factory call with readNode fields — no from() resolver.
-			// Children-only factories take positional rest-params; spread
-			// NAMED children only, otherwise the first anonymous delimiter
-			// (`(`, `[`, etc.) binds to the first positional slot and the
-			// real child never reaches the factory.
+			// If readData has neither fields nor children, the node is a
+			// pure text leaf at the tree-sitter level (e.g. identifier,
+			// shorthand_property_identifier). Don't round-trip through a
+			// factory at all — factories for container-shaped wrappers
+			// that tree-sitter surfaces as leaves would produce garbage.
 			const factory = factoryMap[kind];
 			let factoryData: AnyNodeData;
-			if (factory) {
+			if (!readData.fields && !readData.children) {
+				// Leaf — render its text directly by preserving the original.
+				factoryData = readData;
+			} else if (factory) {
 				try {
+					// Children-only factories take positional rest-params;
+					// spread NAMED children only, otherwise the first
+					// anonymous delimiter binds the first positional slot.
 					if (!readData.fields && readData.children) {
 						const namedChildren = (readData.children ?? []).filter(
 							(c: any) => c?.named !== false,
@@ -339,7 +346,6 @@ export async function validateFactoryRoundTrip(
 						factoryData = factory(readData.fields ?? {}) as AnyNodeData;
 					}
 				} catch {
-					// Factory may fail on raw readNode fields — fall back to strip
 					factoryData = stripToFactory(readData);
 				}
 			} else {

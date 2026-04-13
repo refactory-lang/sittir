@@ -196,7 +196,8 @@ export function exportStatementExport3(config?: ConfigOf<ExportStatementExport3>
 }
 
 export function namespaceExport(child?: any) {
-  const children = child ? [child] : [];
+  const hasChild = child && typeof child === "object" && "type" in child;
+  const children = hasChild ? [child] : [];
   return {
     type: 'namespace_export' as const,
     named: true as const,
@@ -210,7 +211,8 @@ export function namespaceExport(child?: any) {
   };
 }
 
-export function exportClause(...children: any[]) {
+export function exportClause(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: 'export_clause' as const,
     named: true as const,
@@ -249,7 +251,8 @@ export function exportSpecifier(config: ConfigOf<ExportSpecifier>) {
 }
 
 export function declaration(child?: any) {
-  const children = child ? [child] : [];
+  const hasChild = child && typeof child === "object" && "type" in child;
+  const children = hasChild ? [child] : [];
   return {
     type: 'declaration' as const,
     named: true as const,
@@ -303,7 +306,8 @@ export function importStatement(config: ConfigOf<ImportStatement>) {
 }
 
 export function importClause(child?: any) {
-  const children = child ? [child] : [];
+  const hasChild = child && typeof child === "object" && "type" in child;
+  const children = hasChild ? [child] : [];
   return {
     type: 'import_clause' as const,
     named: true as const,
@@ -339,7 +343,8 @@ export function namespaceImport(config: ConfigOf<NamespaceImport>) {
   };
 }
 
-export function namedImports(...children: any[]) {
+export function namedImports(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: 'named_imports' as const,
     named: true as const,
@@ -427,7 +432,8 @@ export function importAttribute(config: ConfigOf<ImportAttribute>) {
 }
 
 export function statement(child?: any) {
-  const children = child ? [child] : [];
+  const hasChild = child && typeof child === "object" && "type" in child;
+  const children = hasChild ? [child] : [];
   return {
     type: 'statement' as const,
     named: true as const,
@@ -442,7 +448,8 @@ export function statement(child?: any) {
 }
 
 export function expressionStatement(child?: any) {
-  const children = child ? [child] : [];
+  const hasChild = child && typeof child === "object" && "type" in child;
+  const children = hasChild ? [child] : [];
   return {
     type: 'expression_statement' as const,
     named: true as const,
@@ -819,7 +826,8 @@ export function continueStatement(config: ConfigOf<ContinueStatement>) {
 }
 
 export function debuggerStatement(child?: any) {
-  const children = child ? [child] : [];
+  const hasChild = child && typeof child === "object" && "type" in child;
+  const children = hasChild ? [child] : [];
   return {
     type: 'debugger_statement' as const,
     named: true as const,
@@ -834,7 +842,8 @@ export function debuggerStatement(child?: any) {
 }
 
 export function returnStatement(child?: any) {
-  const children = child ? [child] : [];
+  const hasChild = child && typeof child === "object" && "type" in child;
+  const children = hasChild ? [child] : [];
   return {
     type: 'return_statement' as const,
     named: true as const,
@@ -849,7 +858,8 @@ export function returnStatement(child?: any) {
 }
 
 export function throwStatement(child?: any) {
-  const children = child ? [child] : [];
+  const hasChild = child && typeof child === "object" && "type" in child;
+  const children = hasChild ? [child] : [];
   return {
     type: 'throw_statement' as const,
     named: true as const,
@@ -887,7 +897,8 @@ export function labeledStatement(config: ConfigOf<LabeledStatement>) {
   };
 }
 
-export function switchBody(...children: any[]) {
+export function switchBody(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: 'switch_body' as const,
     named: true as const,
@@ -1040,7 +1051,8 @@ export function parenthesizedExpressionSequenceExpression(config?: ConfigOf<Pare
 }
 
 export function expression(child?: any) {
-  const children = child ? [child] : [];
+  const hasChild = child && typeof child === "object" && "type" in child;
+  const children = hasChild ? [child] : [];
   return {
     type: 'expression' as const,
     named: true as const,
@@ -1055,7 +1067,8 @@ export function expression(child?: any) {
 }
 
 export function primaryExpression(child?: any) {
-  const children = child ? [child] : [];
+  const hasChild = child && typeof child === "object" && "type" in child;
+  const children = hasChild ? [child] : [];
   return {
     type: 'primary_expression' as const,
     named: true as const,
@@ -1091,7 +1104,8 @@ export function yieldExpression(config: ConfigOf<YieldExpression>) {
   };
 }
 
-export function object(...children: any[]) {
+export function object(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: 'object' as const,
     named: true as const,
@@ -1105,7 +1119,8 @@ export function object(...children: any[]) {
   };
 }
 
-export function objectPattern(...children: any[]) {
+export function objectPattern(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: 'object_pattern' as const,
     named: true as const,
@@ -1167,7 +1182,8 @@ export function objectAssignmentPattern(config: ConfigOf<ObjectAssignmentPattern
   };
 }
 
-export function array(...children: any[]) {
+export function array(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: 'array' as const,
     named: true as const,
@@ -1181,7 +1197,8 @@ export function array(...children: any[]) {
   };
 }
 
-export function arrayPattern(...children: any[]) {
+export function arrayPattern(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: 'array_pattern' as const,
     named: true as const,
@@ -1231,7 +1248,8 @@ export function htmlCharacterReference(text: string) {
 }
 
 export function jsxExpression(child?: any) {
-  const children = child ? [child] : [];
+  const hasChild = child && typeof child === "object" && "type" in child;
+  const children = hasChild ? [child] : [];
   return {
     type: 'jsx_expression' as const,
     named: true as const,
@@ -1246,7 +1264,8 @@ export function jsxExpression(child?: any) {
 }
 
 export function jsxOpeningElement(child?: any) {
-  const children = child ? [child] : [];
+  const hasChild = child && typeof child === "object" && "type" in child;
+  const children = hasChild ? [child] : [];
   return {
     type: 'jsx_opening_element' as const,
     named: true as const,
@@ -1296,7 +1315,8 @@ export function nestedIdentifier(config: ConfigOf<NestedIdentifier>) {
 }
 
 export function jsxNamespaceName(child?: any) {
-  const children = child ? [child] : [];
+  const hasChild = child && typeof child === "object" && "type" in child;
+  const children = hasChild ? [child] : [];
   return {
     type: 'jsx_namespace_name' as const,
     named: true as const,
@@ -1333,7 +1353,8 @@ export function jsxClosingElement(config?: ConfigOf<JsxClosingElement>) {
 }
 
 export function jsxSelfClosingElement(child?: any) {
-  const children = child ? [child] : [];
+  const hasChild = child && typeof child === "object" && "type" in child;
+  const children = hasChild ? [child] : [];
   return {
     type: 'jsx_self_closing_element' as const,
     named: true as const,
@@ -1348,7 +1369,8 @@ export function jsxSelfClosingElement(child?: any) {
 }
 
 export function jsxAttribute(child?: any) {
-  const children = child ? [child] : [];
+  const hasChild = child && typeof child === "object" && "type" in child;
+  const children = hasChild ? [child] : [];
   return {
     type: 'jsx_attribute' as const,
     named: true as const,
@@ -1443,7 +1465,8 @@ export function classDeclaration(config: ConfigOf<ClassDeclaration>) {
 }
 
 export function classHeritage(child?: any) {
-  const children = child ? [child] : [];
+  const hasChild = child && typeof child === "object" && "type" in child;
+  const children = hasChild ? [child] : [];
   return {
     type: 'class_heritage' as const,
     named: true as const,
@@ -1951,7 +1974,8 @@ export function updateExpression(config: ConfigOf<UpdateExpression>) {
   };
 }
 
-export function sequenceExpression(...children: any[]) {
+export function sequenceExpression(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: 'sequence_expression' as const,
     named: true as const,
@@ -1965,7 +1989,8 @@ export function sequenceExpression(...children: any[]) {
   };
 }
 
-export function string(...children: any[]) {
+export function string(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: 'string' as const,
     named: true as const,
@@ -2023,7 +2048,8 @@ export function comment(text: string) {
   };
 }
 
-export function templateString(...children: any[]) {
+export function templateString(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: 'template_string' as const,
     named: true as const,
@@ -2038,7 +2064,8 @@ export function templateString(...children: any[]) {
 }
 
 export function templateSubstitution(child?: any) {
-  const children = child ? [child] : [];
+  const hasChild = child && typeof child === "object" && "type" in child;
+  const children = hasChild ? [child] : [];
   return {
     type: 'template_substitution' as const,
     named: true as const,
@@ -2208,7 +2235,8 @@ export function undefined_() {
   };
 }
 
-export function arguments_(...children: any[]) {
+export function arguments_(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: 'arguments' as const,
     named: true as const,
@@ -2223,7 +2251,8 @@ export function arguments_(...children: any[]) {
 }
 
 export function decorator(child?: any) {
-  const children = child ? [child] : [];
+  const hasChild = child && typeof child === "object" && "type" in child;
+  const children = hasChild ? [child] : [];
   return {
     type: 'decorator' as const,
     named: true as const,
@@ -2333,7 +2362,8 @@ export function fieldDefinition(config: ConfigOf<FieldDefinition>) {
   };
 }
 
-export function formalParameters(...children: any[]) {
+export function formalParameters(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: 'formal_parameters' as const,
     named: true as const,
@@ -2370,7 +2400,8 @@ export function classStaticBlock(config: ConfigOf<ClassStaticBlock>) {
 }
 
 export function pattern(child?: any) {
-  const children = child ? [child] : [];
+  const hasChild = child && typeof child === "object" && "type" in child;
+  const children = hasChild ? [child] : [];
   return {
     type: 'pattern' as const,
     named: true as const,
@@ -2385,7 +2416,8 @@ export function pattern(child?: any) {
 }
 
 export function restPattern(child?: any) {
-  const children = child ? [child] : [];
+  const hasChild = child && typeof child === "object" && "type" in child;
+  const children = hasChild ? [child] : [];
   return {
     type: 'rest_pattern' as const,
     named: true as const,
@@ -2650,7 +2682,8 @@ export function functionSignature(config: ConfigOf<FunctionSignature>) {
 }
 
 export function decoratorParenthesizedExpression(child?: any) {
-  const children = child ? [child] : [];
+  const hasChild = child && typeof child === "object" && "type" in child;
+  const children = hasChild ? [child] : [];
   return {
     type: 'decorator_parenthesized_expression' as const,
     named: true as const,
@@ -2784,7 +2817,8 @@ export function importRequireClause(config: ConfigOf<ImportRequireClause>) {
   };
 }
 
-export function extendsClause(...children: any[]) {
+export function extendsClause(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: 'extends_clause' as const,
     named: true as const,
@@ -2798,7 +2832,8 @@ export function extendsClause(...children: any[]) {
   };
 }
 
-export function implementsClause(...children: any[]) {
+export function implementsClause(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: 'implements_clause' as const,
     named: true as const,
@@ -2863,7 +2898,8 @@ export function abstractClassDeclaration(config: ConfigOf<AbstractClassDeclarati
 }
 
 export function module_(child?: any) {
-  const children = child ? [child] : [];
+  const hasChild = child && typeof child === "object" && "type" in child;
+  const children = hasChild ? [child] : [];
   return {
     type: 'module' as const,
     named: true as const,
@@ -2878,7 +2914,8 @@ export function module_(child?: any) {
 }
 
 export function internalModule(child?: any) {
-  const children = child ? [child] : [];
+  const hasChild = child && typeof child === "object" && "type" in child;
+  const children = hasChild ? [child] : [];
   return {
     type: 'internal_module' as const,
     named: true as const,
@@ -3150,7 +3187,8 @@ export function optionalParameter(config: ConfigOf<OptionalParameter>) {
 }
 
 export function omittingTypeAnnotation(child?: any) {
-  const children = child ? [child] : [];
+  const hasChild = child && typeof child === "object" && "type" in child;
+  const children = hasChild ? [child] : [];
   return {
     type: 'omitting_type_annotation' as const,
     named: true as const,
@@ -3165,7 +3203,8 @@ export function omittingTypeAnnotation(child?: any) {
 }
 
 export function addingTypeAnnotation(child?: any) {
-  const children = child ? [child] : [];
+  const hasChild = child && typeof child === "object" && "type" in child;
+  const children = hasChild ? [child] : [];
   return {
     type: 'adding_type_annotation' as const,
     named: true as const,
@@ -3180,7 +3219,8 @@ export function addingTypeAnnotation(child?: any) {
 }
 
 export function optingTypeAnnotation(child?: any) {
-  const children = child ? [child] : [];
+  const hasChild = child && typeof child === "object" && "type" in child;
+  const children = hasChild ? [child] : [];
   return {
     type: 'opting_type_annotation' as const,
     named: true as const,
@@ -3195,7 +3235,8 @@ export function optingTypeAnnotation(child?: any) {
 }
 
 export function typeAnnotation(child?: any) {
-  const children = child ? [child] : [];
+  const hasChild = child && typeof child === "object" && "type" in child;
+  const children = hasChild ? [child] : [];
   return {
     type: 'type_annotation' as const,
     named: true as const,
@@ -3210,7 +3251,8 @@ export function typeAnnotation(child?: any) {
 }
 
 export function asserts(child?: any) {
-  const children = child ? [child] : [];
+  const hasChild = child && typeof child === "object" && "type" in child;
+  const children = hasChild ? [child] : [];
   return {
     type: 'asserts' as const,
     named: true as const,
@@ -3247,7 +3289,8 @@ export function assertsAnnotation(config: ConfigOf<AssertsAnnotation>) {
 }
 
 export function type_(child?: any) {
-  const children = child ? [child] : [];
+  const hasChild = child && typeof child === "object" && "type" in child;
+  const children = hasChild ? [child] : [];
   return {
     type: 'type' as const,
     named: true as const,
@@ -3310,7 +3353,8 @@ export function optionalTupleParameter(config: ConfigOf<OptionalTupleParameter>)
 }
 
 export function optionalType(child?: any) {
-  const children = child ? [child] : [];
+  const hasChild = child && typeof child === "object" && "type" in child;
+  const children = hasChild ? [child] : [];
   return {
     type: 'optional_type' as const,
     named: true as const,
@@ -3325,7 +3369,8 @@ export function optionalType(child?: any) {
 }
 
 export function restType(child?: any) {
-  const children = child ? [child] : [];
+  const hasChild = child && typeof child === "object" && "type" in child;
+  const children = hasChild ? [child] : [];
   return {
     type: 'rest_type' as const,
     named: true as const,
@@ -3366,7 +3411,8 @@ export function constructorType(config: ConfigOf<ConstructorType>) {
 }
 
 export function primaryType(child?: any) {
-  const children = child ? [child] : [];
+  const hasChild = child && typeof child === "object" && "type" in child;
+  const children = hasChild ? [child] : [];
   return {
     type: 'primary_type' as const,
     named: true as const,
@@ -3381,7 +3427,8 @@ export function primaryType(child?: any) {
 }
 
 export function templateType(child?: any) {
-  const children = child ? [child] : [];
+  const hasChild = child && typeof child === "object" && "type" in child;
+  const children = hasChild ? [child] : [];
   return {
     type: 'template_type' as const,
     named: true as const,
@@ -3395,7 +3442,8 @@ export function templateType(child?: any) {
   };
 }
 
-export function templateLiteralType(...children: any[]) {
+export function templateLiteralType(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: 'template_literal_type' as const,
     named: true as const,
@@ -3532,7 +3580,8 @@ export function typePredicateAnnotation(config: ConfigOf<TypePredicateAnnotation
 }
 
 export function typeQuery(child?: any) {
-  const children = child ? [child] : [];
+  const hasChild = child && typeof child === "object" && "type" in child;
+  const children = hasChild ? [child] : [];
   return {
     type: 'type_query' as const,
     named: true as const,
@@ -3619,7 +3668,8 @@ export function mappedTypeClause(config: ConfigOf<MappedTypeClause>) {
 }
 
 export function literalType(child?: any) {
-  const children = child ? [child] : [];
+  const hasChild = child && typeof child === "object" && "type" in child;
+  const children = hasChild ? [child] : [];
   return {
     type: 'literal_type' as const,
     named: true as const,
@@ -3656,7 +3706,8 @@ export function flowMaybeType(config: ConfigOf<FlowMaybeType>) {
 }
 
 export function parenthesizedType(child?: any) {
-  const children = child ? [child] : [];
+  const hasChild = child && typeof child === "object" && "type" in child;
+  const children = hasChild ? [child] : [];
   return {
     type: 'parenthesized_type' as const,
     named: true as const,
@@ -3681,7 +3732,8 @@ export function predefinedType(text: string) {
   };
 }
 
-export function typeArguments(...children: any[]) {
+export function typeArguments(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: 'type_arguments' as const,
     named: true as const,
@@ -3722,7 +3774,8 @@ export function objectType(config: ConfigOf<ObjectType>) {
 }
 
 export function callSignature(child?: any) {
-  const children = child ? [child] : [];
+  const hasChild = child && typeof child === "object" && "type" in child;
+  const children = hasChild ? [child] : [];
   return {
     type: 'call_signature' as const,
     named: true as const,
@@ -3764,7 +3817,8 @@ export function propertySignature(config: ConfigOf<PropertySignature>) {
   };
 }
 
-export function typeParameters(...children: any[]) {
+export function typeParameters(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: 'type_parameters' as const,
     named: true as const,
@@ -3805,7 +3859,8 @@ export function typeParameter(config: ConfigOf<TypeParameter>) {
 }
 
 export function defaultType(child?: any) {
-  const children = child ? [child] : [];
+  const hasChild = child && typeof child === "object" && "type" in child;
+  const children = hasChild ? [child] : [];
   return {
     type: 'default_type' as const,
     named: true as const,
@@ -3820,7 +3875,8 @@ export function defaultType(child?: any) {
 }
 
 export function constraint(child?: any) {
-  const children = child ? [child] : [];
+  const hasChild = child && typeof child === "object" && "type" in child;
+  const children = hasChild ? [child] : [];
   return {
     type: 'constraint' as const,
     named: true as const,
@@ -3928,7 +3984,8 @@ export function arrayType(config: ConfigOf<ArrayType>) {
   };
 }
 
-export function tupleType(...children: any[]) {
+export function tupleType(..._children: any[]) {
+  const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
   return {
     type: 'tuple_type' as const,
     named: true as const,
@@ -3943,7 +4000,8 @@ export function tupleType(...children: any[]) {
 }
 
 export function readonlyType(child?: any) {
-  const children = child ? [child] : [];
+  const hasChild = child && typeof child === "object" && "type" in child;
+  const children = hasChild ? [child] : [];
   return {
     type: 'readonly_type' as const,
     named: true as const,
@@ -4032,7 +4090,8 @@ export function functionType(config: ConfigOf<FunctionType>) {
 }
 
 export function hiddenTypeIdentifier(child?: any) {
-  const children = child ? [child] : [];
+  const hasChild = child && typeof child === "object" && "type" in child;
+  const children = hasChild ? [child] : [];
   return {
     type: '_type_identifier' as const,
     named: true as const,
@@ -4058,7 +4117,8 @@ export function statementIdentifier(text: string) {
 }
 
 export function shorthandPropertyIdentifier(child?: any) {
-  const children = child ? [child] : [];
+  const hasChild = child && typeof child === "object" && "type" in child;
+  const children = hasChild ? [child] : [];
   return {
     type: 'shorthand_property_identifier' as const,
     named: true as const,
@@ -4073,7 +4133,8 @@ export function shorthandPropertyIdentifier(child?: any) {
 }
 
 export function shorthandPropertyIdentifierPattern(child?: any) {
-  const children = child ? [child] : [];
+  const hasChild = child && typeof child === "object" && "type" in child;
+  const children = hasChild ? [child] : [];
   return {
     type: 'shorthand_property_identifier_pattern' as const,
     named: true as const,
