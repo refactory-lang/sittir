@@ -42,7 +42,7 @@ export function emitFactoriesFromNodeMap(config: EmitFactoriesFromNodeMapConfig)
         }
     }
     lines.push(`import type { ${[...typeImports].sort().join(', ')} } from './types.js';`)
-    lines.push("import type { Edit, AnyNodeData, ConfigOf } from '@sittir/types';")
+    lines.push("import type { Edit, ConfigOf } from '@sittir/types';")
     lines.push("import { createRenderer } from '@sittir/core';")
     lines.push("import { join, dirname } from 'node:path';")
     lines.push("import { fileURLToPath } from 'node:url';")

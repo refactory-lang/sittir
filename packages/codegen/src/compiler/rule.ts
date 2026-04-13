@@ -834,19 +834,20 @@ export class AssembledBranch extends AssembledNodeBase {
         const factory = this.rawFactoryName
         const fields = this.fields
         const opt = fields.some(f => f.required) ? '' : '?'
+        const typeName = this.typeName
         const lines: string[] = []
         lines.push(`export function ${fn}(input${opt}: ${this.fromInputTypeName}) {`)
         if (fields.length > 0) {
-            // Normalize loose input vs NodeData passthrough into a single
-            // `f` view at the top of the function. Per-field accesses
-            // become `f.X` instead of repeating the dual-shape cast on
-            // every field site.
-            lines.push('  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;')
+            // Input is FromInputOf<T> — each field is already typed to
+            // the widened accept shape (strings for leaves, kind-tagged
+            // objects for branches, nested NodeData). Hand each field
+            // straight through _resolveOne with the slot's ConfigOf<T>
+            // type parameter; no passthrough branch or structural casts.
             lines.push(`  return ${factory}({`)
             for (const f of fields) {
-                lines.push(`    ${f.propertyName}: ${resolveFieldFromView(f, nodeMap)},`)
+                lines.push(`    ${f.propertyName}: ${resolveFieldFromLooseInput(f, nodeMap, typeName, 'input')},`)
             }
-            lines.push(`    children: input?.children ?? [],`)
+            lines.push(`    children: input.children ?? [],`)
             lines.push('  });')
         } else {
             lines.push(`  return ${factory}(input);`)
@@ -948,7 +949,7 @@ function emitFieldCarryingWrap(
 ): string {
     const fn = `wrap${node.typeName}`
     const lines: string[] = []
-    lines.push(`export function ${fn}(data: AnyNodeData, tree: TreeHandle) {`)
+    lines.push(`export function ${fn}(data: _NodeData, tree: TreeHandle) {`)
     lines.push('  return {')
     lines.push('    ...data,')
 
@@ -1221,13 +1222,11 @@ export class AssembledPolymorph extends AssembledNodeBase {
             const formFn = `${form.typeName.charAt(0).toLowerCase()}${form.typeName.slice(1)}From`
             const formFactory = form.rawFactoryName!
             const fLines: string[] = []
-            fLines.push(`export function ${formFn}(input?: unknown) {`)
-            fLines.push(`  if (isNodeData(input)) return input;`)
+            fLines.push(`export function ${formFn}(input?: ConfigOf<${form.typeName}>) {`)
             if (form.fields.length > 0) {
-                fLines.push('  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;')
                 fLines.push(`  return ${formFactory}({`)
                 for (const f of form.fields) {
-                    fLines.push(`    ${f.propertyName}: ${resolveFieldFromView(f, nodeMap)},`)
+                    fLines.push(`    ${f.propertyName}: ${resolveFieldFromLooseInput(f, nodeMap, form.typeName, 'input')},`)
                 }
                 fLines.push('  });')
             } else {
@@ -1401,8 +1400,18 @@ function emitStringLikeFrom(node: AssembledNodeBase): string {
  * `_resolveScalar`, string→leaf via `_resolveLeafString`, kind-tagged
  * objects via `_resolveByKind`, and single-branch passthrough.
  */
-function resolveFieldFromView(field: AssembledField, nodeMap: NodeMap): string {
-    const prop = `f.${field.name}`
+/**
+ * Emit a typed resolver call that reads from `${sourceVar}.${fieldName}`.
+ * Supplies `ConfigOf<${parentTypeName}>['${propertyName}']` as the T
+ * parameter so the helper's return type matches the factory's expected
+ * slot — no `as any` or `as unknown` needed at the call site.
+ */
+function resolveFieldFromLooseInput(field: AssembledField, nodeMap: NodeMap, parentTypeName: string, sourceVar = 'loose'): string {
+    const typeParam = `NonNullable<ConfigOf<${parentTypeName}>['${field.propertyName}']>`
+    return resolveFieldCall(`${sourceVar}.${field.propertyName}`, field, nodeMap, typeParam)
+}
+
+function resolveFieldCall(prop: string, field: AssembledField, nodeMap: NodeMap, typeParam: string | undefined): string {
     const types = field.contentTypes
 
     // Classify content types into leaves vs branches.
@@ -1437,7 +1446,8 @@ function resolveFieldFromView(field: AssembledField, nodeMap: NodeMap): string {
     const leafArr = JSON.stringify(leafKinds)
     const branchArr = JSON.stringify(branchKinds)
     const helper = field.multiple ? '_resolveMany' : '_resolveOne'
-    return `${helper}(${prop}, ${leafArr}, ${branchArr})`
+    const generic = typeParam ? `<${typeParam}>` : ''
+    return `${helper}${generic}(${prop}, ${leafArr}, ${branchArr})`
 }
 
 export class AssembledSupertype extends AssembledNodeBase {

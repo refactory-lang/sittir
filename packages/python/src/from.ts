@@ -2,12 +2,13 @@
 
 import { aliasedImport, argumentList, asPattern, asPatternTarget, assertStatement, assignment, assignmentColon, assignmentColon2, assignmentEq, attribute, augmentedAssignment, await_, binaryOperator, block, booleanOperator, breakStatement, call, caseClause, casePattern, chevron, classDefinition, classPattern, comment, comparisonOperator, complexPattern, concatenatedString, conditionalExpression, constrainedType, continueStatement, decoratedDefinition, decorator, defaultParameter, deleteStatement, dictPattern, dictionary, dictionaryComprehension, dictionarySplat, dictionarySplatPattern, dottedName, elifClause, elseClause, escapeSequence, exceptClause, execStatement, expression, expressionList, expressionStatement, false_, finallyClause, float, forInClause, forStatement, formatExpression, formatSpecifier, functionDefinition, futureImportStatement, generatorExpression, genericType, globalStatement, hiddenAsPattern, hiddenCollectionElements, hiddenComprehensionClauses, hiddenImportList, hiddenIsNot, hiddenListPattern, hiddenMatchBlock, hiddenNotIn, hiddenParameters, hiddenPatterns, hiddenSimplePattern, hiddenSimpleStatements, hiddenSuite, hiddenTuplePattern, identifier, ifClause, ifStatement, importFromStatement, importPrefix, importStatement, integer, interpolation, keywordArgument, keywordIdentifier, keywordPattern, lambda, lambdaParameters, lambdaWithinForInClause, lineContinuation, list, listComprehension, listPattern, listSplat, listSplatPattern, matchStatement, memberType, module, namedExpression, none, nonlocalStatement, notOperator, pair, parameter, parameters, parenthesizedExpression, parenthesizedListSplat, passStatement, pattern, patternList, primaryExpression, printStatement, raiseStatement, relativeImport, returnStatement, set, setComprehension, slice, splatPattern, splatType, string, stringContent, subscript, true_, tryStatement, tuple, tuplePattern, type, typeAliasStatement, typeConversion, typeParameter, typedDefaultParameter, typedParameter, unaryOperator, unionPattern, unionType, whileStatement, withClause, withItem, withStatement, yield_ } from './factories.js';
 import type { AliasedImport, AliasedImportConfig, AliasedImportFromInput, ArgumentList, ArgumentListConfig, ArgumentListFromInput, AsPattern, AsPatternConfig, AsPatternFromInput, AsPatternTarget, AsPatternTargetConfig, AsPatternTargetFromInput, AssertStatement, AssertStatementConfig, AssertStatementFromInput, Assignment, AssignmentColon, AssignmentColon2, AssignmentConfig, AssignmentEq, AssignmentFromInput, Attribute, AttributeConfig, AttributeFromInput, AugmentedAssignment, AugmentedAssignmentConfig, AugmentedAssignmentFromInput, Await, AwaitConfig, AwaitFromInput, BinaryOperator, BinaryOperatorConfig, BinaryOperatorFromInput, Block, BlockConfig, BlockFromInput, BooleanOperator, BooleanOperatorConfig, BooleanOperatorFromInput, BreakStatement, Call, CallConfig, CallFromInput, CaseClause, CaseClauseConfig, CaseClauseFromInput, CasePattern, CasePatternConfig, CasePatternFromInput, Chevron, ChevronConfig, ChevronFromInput, ClassDefinition, ClassDefinitionConfig, ClassDefinitionFromInput, ClassPattern, ClassPatternConfig, ClassPatternFromInput, Comment, ComparisonOperator, ComparisonOperatorConfig, ComparisonOperatorFromInput, ComplexPattern, ComplexPatternConfig, ComplexPatternFromInput, ConcatenatedString, ConcatenatedStringConfig, ConcatenatedStringFromInput, ConditionalExpression, ConditionalExpressionConfig, ConditionalExpressionFromInput, ConstrainedType, ConstrainedTypeConfig, ConstrainedTypeFromInput, ContinueStatement, DecoratedDefinition, DecoratedDefinitionConfig, DecoratedDefinitionFromInput, Decorator, DecoratorConfig, DecoratorFromInput, DefaultParameter, DefaultParameterConfig, DefaultParameterFromInput, DeleteStatement, DeleteStatementConfig, DeleteStatementFromInput, DictPattern, DictPatternConfig, DictPatternFromInput, Dictionary, DictionaryComprehension, DictionaryComprehensionConfig, DictionaryComprehensionFromInput, DictionaryConfig, DictionaryFromInput, DictionarySplat, DictionarySplatConfig, DictionarySplatFromInput, DictionarySplatPattern, DictionarySplatPatternConfig, DictionarySplatPatternFromInput, DottedName, DottedNameConfig, DottedNameFromInput, ElifClause, ElifClauseConfig, ElifClauseFromInput, ElseClause, ElseClauseConfig, ElseClauseFromInput, EscapeSequence, ExceptClause, ExceptClauseConfig, ExceptClauseFromInput, ExecStatement, ExecStatementConfig, ExecStatementFromInput, Expression, ExpressionConfig, ExpressionFromInput, ExpressionList, ExpressionListConfig, ExpressionListFromInput, ExpressionStatement, ExpressionStatementConfig, ExpressionStatementFromInput, False, FinallyClause, FinallyClauseConfig, FinallyClauseFromInput, Float, ForInClause, ForInClauseConfig, ForInClauseFromInput, ForStatement, ForStatementConfig, ForStatementFromInput, FormatExpression, FormatExpressionConfig, FormatExpressionFromInput, FormatSpecifier, FormatSpecifierConfig, FormatSpecifierFromInput, FunctionDefinition, FunctionDefinitionConfig, FunctionDefinitionFromInput, FutureImportStatement, FutureImportStatementConfig, FutureImportStatementFromInput, GeneratorExpression, GeneratorExpressionConfig, GeneratorExpressionFromInput, GenericType, GenericTypeConfig, GenericTypeFromInput, GlobalStatement, GlobalStatementConfig, GlobalStatementFromInput, HiddenAsPattern, HiddenAsPatternConfig, HiddenAsPatternFromInput, HiddenCollectionElements, HiddenCollectionElementsConfig, HiddenCollectionElementsFromInput, HiddenComprehensionClauses, HiddenComprehensionClausesConfig, HiddenComprehensionClausesFromInput, HiddenImportList, HiddenImportListConfig, HiddenImportListFromInput, HiddenIsNot, HiddenListPattern, HiddenListPatternConfig, HiddenListPatternFromInput, HiddenMatchBlock, HiddenMatchBlockConfig, HiddenMatchBlockFromInput, HiddenNotIn, HiddenParameters, HiddenParametersConfig, HiddenParametersFromInput, HiddenPatterns, HiddenPatternsConfig, HiddenPatternsFromInput, HiddenSimplePattern, HiddenSimplePatternConfig, HiddenSimplePatternFromInput, HiddenSimpleStatements, HiddenSimpleStatementsConfig, HiddenSimpleStatementsFromInput, HiddenSuite, HiddenSuiteConfig, HiddenSuiteFromInput, HiddenTuplePattern, HiddenTuplePatternConfig, HiddenTuplePatternFromInput, Identifier, IfClause, IfClauseConfig, IfClauseFromInput, IfStatement, IfStatementConfig, IfStatementFromInput, ImportFromStatement, ImportFromStatementConfig, ImportFromStatementFromInput, ImportPrefix, ImportStatement, ImportStatementConfig, ImportStatementFromInput, Integer, Interpolation, InterpolationConfig, InterpolationFromInput, KeywordArgument, KeywordArgumentConfig, KeywordArgumentFromInput, KeywordIdentifier, KeywordPattern, KeywordPatternConfig, KeywordPatternFromInput, Lambda, LambdaConfig, LambdaFromInput, LambdaParameters, LambdaParametersConfig, LambdaParametersFromInput, LambdaWithinForInClause, LambdaWithinForInClauseConfig, LambdaWithinForInClauseFromInput, LineContinuation, List, ListComprehension, ListComprehensionConfig, ListComprehensionFromInput, ListConfig, ListFromInput, ListPattern, ListPatternConfig, ListPatternFromInput, ListSplat, ListSplatConfig, ListSplatFromInput, ListSplatPattern, ListSplatPatternConfig, ListSplatPatternFromInput, MatchStatement, MatchStatementConfig, MatchStatementFromInput, MemberType, MemberTypeConfig, MemberTypeFromInput, Module, ModuleConfig, ModuleFromInput, NamedExpression, NamedExpressionConfig, NamedExpressionFromInput, None, NonlocalStatement, NonlocalStatementConfig, NonlocalStatementFromInput, NotOperator, NotOperatorConfig, NotOperatorFromInput, Pair, PairConfig, PairFromInput, Parameter, ParameterConfig, ParameterFromInput, Parameters, ParametersConfig, ParametersFromInput, ParenthesizedExpression, ParenthesizedExpressionConfig, ParenthesizedExpressionFromInput, ParenthesizedListSplat, ParenthesizedListSplatConfig, ParenthesizedListSplatFromInput, PassStatement, Pattern, PatternConfig, PatternFromInput, PatternList, PatternListConfig, PatternListFromInput, PrimaryExpression, PrimaryExpressionConfig, PrimaryExpressionFromInput, PrintStatement, PrintStatementConfig, PrintStatementFromInput, RaiseStatement, RaiseStatementConfig, RaiseStatementFromInput, RelativeImport, RelativeImportConfig, RelativeImportFromInput, ReturnStatement, ReturnStatementConfig, ReturnStatementFromInput, Set, SetComprehension, SetComprehensionConfig, SetComprehensionFromInput, SetConfig, SetFromInput, Slice, SliceConfig, SliceFromInput, SplatPattern, SplatPatternConfig, SplatPatternFromInput, SplatType, SplatTypeConfig, SplatTypeFromInput, String, StringConfig, StringContent, StringContentConfig, StringContentFromInput, StringFromInput, Subscript, SubscriptConfig, SubscriptFromInput, True, TryStatement, TryStatementConfig, TryStatementFromInput, Tuple, TupleConfig, TupleFromInput, TuplePattern, TuplePatternConfig, TuplePatternFromInput, Type, TypeAliasStatement, TypeAliasStatementConfig, TypeAliasStatementFromInput, TypeConfig, TypeConversion, TypeFromInput, TypeParameter, TypeParameterConfig, TypeParameterFromInput, TypedDefaultParameter, TypedDefaultParameterConfig, TypedDefaultParameterFromInput, TypedParameter, TypedParameterConfig, TypedParameterFromInput, UnaryOperator, UnaryOperatorConfig, UnaryOperatorFromInput, UnionPattern, UnionPatternConfig, UnionPatternFromInput, UnionType, UnionTypeConfig, UnionTypeFromInput, WhileStatement, WhileStatementConfig, WhileStatementFromInput, WithClause, WithClauseConfig, WithClauseFromInput, WithItem, WithItemConfig, WithItemFromInput, WithStatement, WithStatementConfig, WithStatementFromInput, Yield, YieldConfig, YieldFromInput } from './types.js';
-import type { AnyNodeData, ConfigOf, FromInputOf } from '@sittir/types';
+import type { ConfigOf, FromInputOf } from '@sittir/types';
 
-function isNodeData(v: unknown): v is AnyNodeData {
+interface _NodeDataLike { readonly type: string; readonly fields?: object; readonly text?: string }
+function isNodeData(v: unknown): v is _NodeDataLike {
   if (v === null || typeof v !== 'object') return false;
-  const o = v as Record<string, unknown>;
-  return typeof o['type'] === 'string' && (typeof o['fields'] === 'object' || typeof o['text'] === 'string');
+  const o = v as { type?: unknown; fields?: unknown; text?: unknown };
+  return typeof o.type === 'string' && (typeof o.fields === 'object' || typeof o.text === 'string');
 }
 
 // --- Loose-input resolver helpers (see C6-prereq) ---
@@ -61,32 +62,32 @@ function _resolveScalar(v: unknown): unknown {
   return undefined;
 }
 
-function _resolveOne(v: unknown, leafKinds: readonly string[], branchKinds: readonly string[]): unknown {
-  if (v === undefined || v === null) return v;
-  if (isNodeData(v)) return v;
+function _resolveOne<T>(v: unknown, leafKinds: readonly string[], branchKinds: readonly string[]): T {
+  if (v === undefined || v === null) return v as T;
+  if (isNodeData(v)) return v as T;
   if (typeof v === "boolean" || typeof v === "number") {
     const scalar = _resolveScalar(v);
-    if (scalar !== undefined) return scalar;
+    if (scalar !== undefined) return scalar as T;
   }
   if (typeof v === "string" && leafKinds.length > 0) {
     const leaf = _resolveLeafString(v, leafKinds);
-    if (leaf !== undefined) return leaf;
+    if (leaf !== undefined) return leaf as T;
   }
   if (typeof v === "object" && v !== null && "kind" in v) {
-    const { kind, ...rest } = v as Record<string, unknown>;
-    return _resolveByKind(kind, rest);
+    const { kind, ...rest } = v as { kind: string } & Record<string, unknown>;
+    return _resolveByKind(kind, rest) as T;
   }
   // Single-branch passthrough — the loose object IS the branch.
   if (branchKinds.length === 1 && typeof v === "object") {
-    return _resolveByKind(branchKinds[0]!, v);
+    return _resolveByKind(branchKinds[0]!, v) as T;
   }
-  return v;
+  return v as T;
 }
 
-function _resolveMany(v: unknown, leafKinds: readonly string[], branchKinds: readonly string[]): unknown[] {
+function _resolveMany<T>(v: unknown, leafKinds: readonly string[], branchKinds: readonly string[]): readonly T[] {
   if (v === undefined || v === null) return [];
   const arr = Array.isArray(v) ? v : [v];
-  return arr.map(e => _resolveOne(e, leafKinds, branchKinds));
+  return arr.map(e => _resolveOne<T>(e, leafKinds, branchKinds));
 }
 
 export function moduleFrom(...input: unknown[]) {
@@ -116,11 +117,10 @@ export function importPrefixFrom(input: string | ImportPrefix) {
 }
 
 export function relativeImportFrom(input: RelativeImportFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return relativeImport({
-    importPrefix: _resolveOne(f.import_prefix, ["import_prefix"], []),
-    dottedName: _resolveOne(f.dotted_name, [], ["dotted_name"]),
-    children: input?.children ?? [],
+    importPrefix: _resolveOne<NonNullable<ConfigOf<RelativeImport>['importPrefix']>>(input.importPrefix, ["import_prefix"], []),
+    dottedName: _resolveOne<NonNullable<ConfigOf<RelativeImport>['dottedName']>>(input.dottedName, [], ["dotted_name"]),
+    children: input.children ?? [],
   });
 }
 
@@ -132,44 +132,39 @@ export function futureImportStatementFrom(...input: unknown[]) {
 }
 
 export function importFromStatementFrom(input: ImportFromStatementFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return importFromStatement({
-    moduleName: _resolveOne(f.module_name, [], ["relative_import","dotted_name"]),
-    wildcardImport: _resolveOne(f.wildcard_import, [], ["_import_list"]),
-    children: input?.children ?? [],
+    moduleName: _resolveOne<NonNullable<ConfigOf<ImportFromStatement>['moduleName']>>(input.moduleName, [], ["relative_import","dotted_name"]),
+    wildcardImport: _resolveOne<NonNullable<ConfigOf<ImportFromStatement>['wildcardImport']>>(input.wildcardImport, [], ["_import_list"]),
+    children: input.children ?? [],
   });
 }
 
 export function hiddenImportListFrom(input: HiddenImportListFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return hiddenImportList({
-    name: _resolveMany(f.name, [], ["dotted_name","aliased_import"]),
-    children: input?.children ?? [],
+    name: _resolveMany<NonNullable<ConfigOf<HiddenImportList>['name']>>(input.name, [], ["dotted_name","aliased_import"]),
+    children: input.children ?? [],
   });
 }
 
 export function aliasedImportFrom(input: AliasedImportFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return aliasedImport({
-    name: _resolveOne(f.name, [], ["dotted_name"]),
-    alias: _resolveOne(f.alias, ["identifier"], []),
-    children: input?.children ?? [],
+    name: _resolveOne<NonNullable<ConfigOf<AliasedImport>['name']>>(input.name, [], ["dotted_name"]),
+    alias: _resolveOne<NonNullable<ConfigOf<AliasedImport>['alias']>>(input.alias, ["identifier"], []),
+    children: input.children ?? [],
   });
 }
 
 export function printStatementFrom(input: PrintStatementFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return printStatement({
-    argument: _resolveMany(f.argument, [], ["expression"]),
-    children: input?.children ?? [],
+    argument: _resolveMany<NonNullable<ConfigOf<PrintStatement>['argument']>>(input.argument, [], ["expression"]),
+    children: input.children ?? [],
   });
 }
 
 export function chevronFrom(input: ChevronFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return chevron({
-    expression: _resolveOne(f.expression, [], ["expression"]),
-    children: input?.children ?? [],
+    expression: _resolveOne<NonNullable<ConfigOf<Chevron>['expression']>>(input.expression, [], ["expression"]),
+    children: input.children ?? [],
   });
 }
 
@@ -188,11 +183,10 @@ export function expressionStatementFrom(...input: unknown[]) {
 }
 
 export function namedExpressionFrom(input: NamedExpressionFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return namedExpression({
-    name: _resolveOne(f.name, [], ["_named_expression_lhs"]),
-    value: _resolveOne(f.value, [], ["expression"]),
-    children: input?.children ?? [],
+    name: _resolveOne<NonNullable<ConfigOf<NamedExpression>['name']>>(input.name, [], ["_named_expression_lhs"]),
+    value: _resolveOne<NonNullable<ConfigOf<NamedExpression>['value']>>(input.value, [], ["expression"]),
+    children: input.children ?? [],
   });
 }
 
@@ -211,10 +205,9 @@ export function deleteStatementFrom(...input: unknown[]) {
 }
 
 export function raiseStatementFrom(input?: RaiseStatementFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return raiseStatement({
-    cause: _resolveOne(f.cause, [], ["expression"]),
-    children: input?.children ?? [],
+    cause: _resolveOne<NonNullable<ConfigOf<RaiseStatement>['cause']>>(input.cause, [], ["expression"]),
+    children: input.children ?? [],
   });
 }
 
@@ -234,113 +227,101 @@ export function continueStatementFrom(input?: ContinueStatement) {
 }
 
 export function ifStatementFrom(input: IfStatementFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return ifStatement({
-    condition: _resolveOne(f.condition, [], ["expression"]),
-    consequence: _resolveOne(f.consequence, [], ["_suite"]),
-    alternative: _resolveMany(f.alternative, [], ["elif_clause","else_clause"]),
-    children: input?.children ?? [],
+    condition: _resolveOne<NonNullable<ConfigOf<IfStatement>['condition']>>(input.condition, [], ["expression"]),
+    consequence: _resolveOne<NonNullable<ConfigOf<IfStatement>['consequence']>>(input.consequence, [], ["_suite"]),
+    alternative: _resolveMany<NonNullable<ConfigOf<IfStatement>['alternative']>>(input.alternative, [], ["elif_clause","else_clause"]),
+    children: input.children ?? [],
   });
 }
 
 export function elifClauseFrom(input: ElifClauseFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return elifClause({
-    condition: _resolveOne(f.condition, [], ["expression"]),
-    consequence: _resolveOne(f.consequence, [], ["_suite"]),
-    children: input?.children ?? [],
+    condition: _resolveOne<NonNullable<ConfigOf<ElifClause>['condition']>>(input.condition, [], ["expression"]),
+    consequence: _resolveOne<NonNullable<ConfigOf<ElifClause>['consequence']>>(input.consequence, [], ["_suite"]),
+    children: input.children ?? [],
   });
 }
 
 export function elseClauseFrom(input: ElseClauseFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return elseClause({
-    body: _resolveOne(f.body, [], ["_suite"]),
-    children: input?.children ?? [],
+    body: _resolveOne<NonNullable<ConfigOf<ElseClause>['body']>>(input.body, [], ["_suite"]),
+    children: input.children ?? [],
   });
 }
 
 export function matchStatementFrom(input: MatchStatementFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return matchStatement({
-    subject: _resolveMany(f.subject, [], ["expression"]),
-    body: _resolveOne(f.body, [], ["_match_block"]),
-    children: input?.children ?? [],
+    subject: _resolveMany<NonNullable<ConfigOf<MatchStatement>['subject']>>(input.subject, [], ["expression"]),
+    body: _resolveOne<NonNullable<ConfigOf<MatchStatement>['body']>>(input.body, [], ["_match_block"]),
+    children: input.children ?? [],
   });
 }
 
 export function hiddenMatchBlockFrom(input: HiddenMatchBlockFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return hiddenMatchBlock({
-    alternative: _resolveMany(f.alternative, [], ["case_clause"]),
-    children: input?.children ?? [],
+    alternative: _resolveMany<NonNullable<ConfigOf<HiddenMatchBlock>['alternative']>>(input.alternative, [], ["case_clause"]),
+    children: input.children ?? [],
   });
 }
 
 export function caseClauseFrom(input: CaseClauseFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return caseClause({
-    guard: _resolveOne(f.guard, [], ["if_clause"]),
-    consequence: _resolveOne(f.consequence, [], ["_suite"]),
-    children: input?.children ?? [],
+    guard: _resolveOne<NonNullable<ConfigOf<CaseClause>['guard']>>(input.guard, [], ["if_clause"]),
+    consequence: _resolveOne<NonNullable<ConfigOf<CaseClause>['consequence']>>(input.consequence, [], ["_suite"]),
+    children: input.children ?? [],
   });
 }
 
 export function forStatementFrom(input: ForStatementFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return forStatement({
-    left: _resolveOne(f.left, [], ["_left_hand_side"]),
-    right: _resolveOne(f.right, [], ["_expressions"]),
-    body: _resolveOne(f.body, [], ["_suite"]),
-    alternative: _resolveOne(f.alternative, [], ["else_clause"]),
-    children: input?.children ?? [],
+    left: _resolveOne<NonNullable<ConfigOf<ForStatement>['left']>>(input.left, [], ["_left_hand_side"]),
+    right: _resolveOne<NonNullable<ConfigOf<ForStatement>['right']>>(input.right, [], ["_expressions"]),
+    body: _resolveOne<NonNullable<ConfigOf<ForStatement>['body']>>(input.body, [], ["_suite"]),
+    alternative: _resolveOne<NonNullable<ConfigOf<ForStatement>['alternative']>>(input.alternative, [], ["else_clause"]),
+    children: input.children ?? [],
   });
 }
 
 export function whileStatementFrom(input: WhileStatementFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return whileStatement({
-    condition: _resolveOne(f.condition, [], ["expression"]),
-    body: _resolveOne(f.body, [], ["_suite"]),
-    alternative: _resolveOne(f.alternative, [], ["else_clause"]),
-    children: input?.children ?? [],
+    condition: _resolveOne<NonNullable<ConfigOf<WhileStatement>['condition']>>(input.condition, [], ["expression"]),
+    body: _resolveOne<NonNullable<ConfigOf<WhileStatement>['body']>>(input.body, [], ["_suite"]),
+    alternative: _resolveOne<NonNullable<ConfigOf<WhileStatement>['alternative']>>(input.alternative, [], ["else_clause"]),
+    children: input.children ?? [],
   });
 }
 
 export function tryStatementFrom(input: TryStatementFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return tryStatement({
-    body: _resolveOne(f.body, [], ["_suite"]),
-    exceptClauses: _resolveOne(f.except_clauses, [], []),
-    elseClause: _resolveOne(f.else_clause, [], ["else_clause"]),
-    finallyClause: _resolveOne(f.finally_clause, [], ["finally_clause"]),
-    children: input?.children ?? [],
+    body: _resolveOne<NonNullable<ConfigOf<TryStatement>['body']>>(input.body, [], ["_suite"]),
+    exceptClauses: _resolveOne<NonNullable<ConfigOf<TryStatement>['exceptClauses']>>(input.exceptClauses, [], []),
+    elseClause: _resolveOne<NonNullable<ConfigOf<TryStatement>['elseClause']>>(input.elseClause, [], ["else_clause"]),
+    finallyClause: _resolveOne<NonNullable<ConfigOf<TryStatement>['finallyClause']>>(input.finallyClause, [], ["finally_clause"]),
+    children: input.children ?? [],
   });
 }
 
 export function exceptClauseFrom(input?: ExceptClauseFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return exceptClause({
-    value: _resolveMany(f.value, [], ["expression"]),
-    alias: _resolveOne(f.alias, [], ["expression"]),
-    children: input?.children ?? [],
+    value: _resolveMany<NonNullable<ConfigOf<ExceptClause>['value']>>(input.value, [], ["expression"]),
+    alias: _resolveOne<NonNullable<ConfigOf<ExceptClause>['alias']>>(input.alias, [], ["expression"]),
+    children: input.children ?? [],
   });
 }
 
 export function finallyClauseFrom(input: FinallyClauseFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return finallyClause({
-    block: _resolveOne(f.block, [], ["_suite"]),
-    children: input?.children ?? [],
+    block: _resolveOne<NonNullable<ConfigOf<FinallyClause>['block']>>(input.block, [], ["_suite"]),
+    children: input.children ?? [],
   });
 }
 
 export function withStatementFrom(input: WithStatementFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return withStatement({
-    withClause: _resolveOne(f.with_clause, [], []),
-    body: _resolveOne(f.body, [], ["_suite"]),
-    children: input?.children ?? [],
+    withClause: _resolveOne<NonNullable<ConfigOf<WithStatement>['withClause']>>(input.withClause, [], []),
+    body: _resolveOne<NonNullable<ConfigOf<WithStatement>['body']>>(input.body, [], ["_suite"]),
+    children: input.children ?? [],
   });
 }
 
@@ -352,22 +333,20 @@ export function withClauseFrom(...input: unknown[]) {
 }
 
 export function withItemFrom(input: WithItemFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return withItem({
-    value: _resolveOne(f.value, [], ["expression"]),
-    children: input?.children ?? [],
+    value: _resolveOne<NonNullable<ConfigOf<WithItem>['value']>>(input.value, [], ["expression"]),
+    children: input.children ?? [],
   });
 }
 
 export function functionDefinitionFrom(input: FunctionDefinitionFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return functionDefinition({
-    name: _resolveOne(f.name, ["identifier"], []),
-    typeParameters: _resolveOne(f.type_parameters, [], ["type_parameter"]),
-    parameters: _resolveOne(f.parameters, [], ["parameters"]),
-    returnType: _resolveOne(f.return_type, [], ["type"]),
-    body: _resolveOne(f.body, [], ["_suite"]),
-    children: input?.children ?? [],
+    name: _resolveOne<NonNullable<ConfigOf<FunctionDefinition>['name']>>(input.name, ["identifier"], []),
+    typeParameters: _resolveOne<NonNullable<ConfigOf<FunctionDefinition>['typeParameters']>>(input.typeParameters, [], ["type_parameter"]),
+    parameters: _resolveOne<NonNullable<ConfigOf<FunctionDefinition>['parameters']>>(input.parameters, [], ["parameters"]),
+    returnType: _resolveOne<NonNullable<ConfigOf<FunctionDefinition>['returnType']>>(input.returnType, [], ["type"]),
+    body: _resolveOne<NonNullable<ConfigOf<FunctionDefinition>['body']>>(input.body, [], ["_suite"]),
+    children: input.children ?? [],
   });
 }
 
@@ -386,18 +365,16 @@ export function lambdaParametersFrom(...input: unknown[]) {
 }
 
 export function listSplatFrom(input: ListSplatFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return listSplat({
-    expression: _resolveOne(f.expression, [], ["expression"]),
-    children: input?.children ?? [],
+    expression: _resolveOne<NonNullable<ConfigOf<ListSplat>['expression']>>(input.expression, [], ["expression"]),
+    children: input.children ?? [],
   });
 }
 
 export function dictionarySplatFrom(input: DictionarySplatFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return dictionarySplat({
-    expression: _resolveOne(f.expression, [], ["expression"]),
-    children: input?.children ?? [],
+    expression: _resolveOne<NonNullable<ConfigOf<DictionarySplat>['expression']>>(input.expression, [], ["expression"]),
+    children: input.children ?? [],
   });
 }
 
@@ -416,30 +393,27 @@ export function nonlocalStatementFrom(...input: unknown[]) {
 }
 
 export function execStatementFrom(input: ExecStatementFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return execStatement({
-    code: _resolveOne(f.code, ["identifier"], ["string"]),
-    children: input?.children ?? [],
+    code: _resolveOne<NonNullable<ConfigOf<ExecStatement>['code']>>(input.code, ["identifier"], ["string"]),
+    children: input.children ?? [],
   });
 }
 
 export function typeAliasStatementFrom(input: TypeAliasStatementFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return typeAliasStatement({
-    left: _resolveOne(f.left, [], ["type"]),
-    right: _resolveOne(f.right, [], ["type"]),
-    children: input?.children ?? [],
+    left: _resolveOne<NonNullable<ConfigOf<TypeAliasStatement>['left']>>(input.left, [], ["type"]),
+    right: _resolveOne<NonNullable<ConfigOf<TypeAliasStatement>['right']>>(input.right, [], ["type"]),
+    children: input.children ?? [],
   });
 }
 
 export function classDefinitionFrom(input: ClassDefinitionFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return classDefinition({
-    name: _resolveOne(f.name, ["identifier"], []),
-    typeParameters: _resolveOne(f.type_parameters, [], ["type_parameter"]),
-    superclasses: _resolveOne(f.superclasses, [], ["argument_list"]),
-    body: _resolveOne(f.body, [], ["_suite"]),
-    children: input?.children ?? [],
+    name: _resolveOne<NonNullable<ConfigOf<ClassDefinition>['name']>>(input.name, ["identifier"], []),
+    typeParameters: _resolveOne<NonNullable<ConfigOf<ClassDefinition>['typeParameters']>>(input.typeParameters, [], ["type_parameter"]),
+    superclasses: _resolveOne<NonNullable<ConfigOf<ClassDefinition>['superclasses']>>(input.superclasses, [], ["argument_list"]),
+    body: _resolveOne<NonNullable<ConfigOf<ClassDefinition>['body']>>(input.body, [], ["_suite"]),
+    children: input.children ?? [],
   });
 }
 
@@ -465,19 +439,17 @@ export function argumentListFrom(...input: unknown[]) {
 }
 
 export function decoratedDefinitionFrom(input: DecoratedDefinitionFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return decoratedDefinition({
-    definition: _resolveOne(f.definition, [], ["class_definition","function_definition"]),
-    children: input?.children ?? [],
+    definition: _resolveOne<NonNullable<ConfigOf<DecoratedDefinition>['definition']>>(input.definition, [], ["class_definition","function_definition"]),
+    children: input.children ?? [],
   });
 }
 
 export function decoratorFrom(input: DecoratorFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return decorator({
-    expression: _resolveOne(f.expression, [], ["expression"]),
-    newline: _resolveOne(f.newline, [], []),
-    children: input?.children ?? [],
+    expression: _resolveOne<NonNullable<ConfigOf<Decorator>['expression']>>(input.expression, [], ["expression"]),
+    newline: _resolveOne<NonNullable<ConfigOf<Decorator>['newline']>>(input.newline, [], []),
+    children: input.children ?? [],
   });
 }
 
@@ -559,37 +531,33 @@ export function dictPatternFrom(...input: unknown[]) {
 }
 
 export function keywordPatternFrom(input: KeywordPatternFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return keywordPattern({
-    identifier: _resolveOne(f.identifier, ["identifier"], []),
-    simplePattern: _resolveOne(f.simple_pattern, [], ["_simple_pattern"]),
-    children: input?.children ?? [],
+    identifier: _resolveOne<NonNullable<ConfigOf<KeywordPattern>['identifier']>>(input.identifier, ["identifier"], []),
+    simplePattern: _resolveOne<NonNullable<ConfigOf<KeywordPattern>['simplePattern']>>(input.simplePattern, [], ["_simple_pattern"]),
+    children: input.children ?? [],
   });
 }
 
 export function splatPatternFrom(input: SplatPatternFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return splatPattern({
-    identifier: _resolveOne(f.identifier, [], []),
-    children: input?.children ?? [],
+    identifier: _resolveOne<NonNullable<ConfigOf<SplatPattern>['identifier']>>(input.identifier, [], []),
+    children: input.children ?? [],
   });
 }
 
 export function classPatternFrom(input: ClassPatternFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return classPattern({
-    dottedName: _resolveOne(f.dotted_name, [], ["dotted_name"]),
-    arguments: _resolveOne(f.arguments, [], []),
-    children: input?.children ?? [],
+    dottedName: _resolveOne<NonNullable<ConfigOf<ClassPattern>['dottedName']>>(input.dottedName, [], ["dotted_name"]),
+    arguments: _resolveOne<NonNullable<ConfigOf<ClassPattern>['arguments']>>(input.arguments, [], []),
+    children: input.children ?? [],
   });
 }
 
 export function complexPatternFrom(input: ComplexPatternFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return complexPattern({
-    real: _resolveOne(f.real, [], []),
-    imaginary: _resolveOne(f.imaginary, ["integer","float"], []),
-    children: input?.children ?? [],
+    real: _resolveOne<NonNullable<ConfigOf<ComplexPattern>['real']>>(input.real, [], []),
+    imaginary: _resolveOne<NonNullable<ConfigOf<ComplexPattern>['imaginary']>>(input.imaginary, ["integer","float"], []),
+    children: input.children ?? [],
   });
 }
 
@@ -636,21 +604,19 @@ export function listPatternFrom(...input: unknown[]) {
 }
 
 export function defaultParameterFrom(input: DefaultParameterFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return defaultParameter({
-    name: _resolveOne(f.name, ["identifier"], ["tuple_pattern"]),
-    value: _resolveOne(f.value, [], ["expression"]),
-    children: input?.children ?? [],
+    name: _resolveOne<NonNullable<ConfigOf<DefaultParameter>['name']>>(input.name, ["identifier"], ["tuple_pattern"]),
+    value: _resolveOne<NonNullable<ConfigOf<DefaultParameter>['value']>>(input.value, [], ["expression"]),
+    children: input.children ?? [],
   });
 }
 
 export function typedDefaultParameterFrom(input: TypedDefaultParameterFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return typedDefaultParameter({
-    name: _resolveOne(f.name, ["identifier"], []),
-    type: _resolveOne(f.type, [], ["type"]),
-    value: _resolveOne(f.value, [], ["expression"]),
-    children: input?.children ?? [],
+    name: _resolveOne<NonNullable<ConfigOf<TypedDefaultParameter>['name']>>(input.name, ["identifier"], []),
+    type: _resolveOne<NonNullable<ConfigOf<TypedDefaultParameter>['type']>>(input.type, [], ["type"]),
+    value: _resolveOne<NonNullable<ConfigOf<TypedDefaultParameter>['value']>>(input.value, [], ["expression"]),
+    children: input.children ?? [],
   });
 }
 
@@ -669,11 +635,10 @@ export function dictionarySplatPatternFrom(...input: unknown[]) {
 }
 
 export function asPatternFrom(input: AsPatternFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return asPattern({
-    expression: _resolveOne(f.expression, [], ["expression"]),
-    alias: _resolveOne(f.alias, [], ["expression"]),
-    children: input?.children ?? [],
+    expression: _resolveOne<NonNullable<ConfigOf<AsPattern>['expression']>>(input.expression, [], ["expression"]),
+    alias: _resolveOne<NonNullable<ConfigOf<AsPattern>['alias']>>(input.alias, [], ["expression"]),
+    children: input.children ?? [],
   });
 }
 
@@ -692,39 +657,35 @@ export function primaryExpressionFrom(...input: unknown[]) {
 }
 
 export function notOperatorFrom(input: NotOperatorFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return notOperator({
-    argument: _resolveOne(f.argument, [], ["expression"]),
-    children: input?.children ?? [],
+    argument: _resolveOne<NonNullable<ConfigOf<NotOperator>['argument']>>(input.argument, [], ["expression"]),
+    children: input.children ?? [],
   });
 }
 
 export function booleanOperatorFrom(input: BooleanOperatorFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return booleanOperator({
-    left: _resolveOne(f.left, [], ["expression"]),
-    operator: _resolveOne(f.operator, [], []),
-    right: _resolveOne(f.right, [], ["expression"]),
-    children: input?.children ?? [],
+    left: _resolveOne<NonNullable<ConfigOf<BooleanOperator>['left']>>(input.left, [], ["expression"]),
+    operator: _resolveOne<NonNullable<ConfigOf<BooleanOperator>['operator']>>(input.operator, [], []),
+    right: _resolveOne<NonNullable<ConfigOf<BooleanOperator>['right']>>(input.right, [], ["expression"]),
+    children: input.children ?? [],
   });
 }
 
 export function binaryOperatorFrom(input: BinaryOperatorFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return binaryOperator({
-    left: _resolveOne(f.left, [], ["primary_expression"]),
-    operator: _resolveOne(f.operator, [], []),
-    right: _resolveOne(f.right, [], ["primary_expression"]),
-    children: input?.children ?? [],
+    left: _resolveOne<NonNullable<ConfigOf<BinaryOperator>['left']>>(input.left, [], ["primary_expression"]),
+    operator: _resolveOne<NonNullable<ConfigOf<BinaryOperator>['operator']>>(input.operator, [], []),
+    right: _resolveOne<NonNullable<ConfigOf<BinaryOperator>['right']>>(input.right, [], ["primary_expression"]),
+    children: input.children ?? [],
   });
 }
 
 export function unaryOperatorFrom(input: UnaryOperatorFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return unaryOperator({
-    operator: _resolveOne(f.operator, [], []),
-    argument: _resolveOne(f.argument, [], ["primary_expression"]),
-    children: input?.children ?? [],
+    operator: _resolveOne<NonNullable<ConfigOf<UnaryOperator>['operator']>>(input.operator, [], []),
+    argument: _resolveOne<NonNullable<ConfigOf<UnaryOperator>['argument']>>(input.argument, [], ["primary_expression"]),
+    children: input.children ?? [],
   });
 }
 
@@ -739,29 +700,26 @@ export function hiddenIsNotFrom(input: string | HiddenIsNot) {
 }
 
 export function comparisonOperatorFrom(input: ComparisonOperatorFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return comparisonOperator({
-    left: _resolveOne(f.left, [], ["primary_expression"]),
-    comparators: _resolveOne(f.comparators, [], []),
-    children: input?.children ?? [],
+    left: _resolveOne<NonNullable<ConfigOf<ComparisonOperator>['left']>>(input.left, [], ["primary_expression"]),
+    comparators: _resolveOne<NonNullable<ConfigOf<ComparisonOperator>['comparators']>>(input.comparators, [], []),
+    children: input.children ?? [],
   });
 }
 
 export function lambdaFrom(input: LambdaFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return lambda({
-    parameters: _resolveOne(f.parameters, [], ["lambda_parameters"]),
-    body: _resolveOne(f.body, [], ["expression"]),
-    children: input?.children ?? [],
+    parameters: _resolveOne<NonNullable<ConfigOf<Lambda>['parameters']>>(input.parameters, [], ["lambda_parameters"]),
+    body: _resolveOne<NonNullable<ConfigOf<Lambda>['body']>>(input.body, [], ["expression"]),
+    children: input.children ?? [],
   });
 }
 
 export function lambdaWithinForInClauseFrom(input: LambdaWithinForInClauseFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return lambdaWithinForInClause({
-    parameters: _resolveOne(f.parameters, [], ["lambda_parameters"]),
-    body: _resolveOne(f.body, [], ["_expression_within_for_in_clause"]),
-    children: input?.children ?? [],
+    parameters: _resolveOne<NonNullable<ConfigOf<LambdaWithinForInClause>['parameters']>>(input.parameters, [], ["lambda_parameters"]),
+    body: _resolveOne<NonNullable<ConfigOf<LambdaWithinForInClause>['body']>>(input.body, [], ["_expression_within_for_in_clause"]),
+    children: input.children ?? [],
   });
 }
 
@@ -769,38 +727,31 @@ export function assignmentFrom(input?: AssignmentFromInput) {
   return assignment(input);
 }
 
-export function assignmentEqFrom(input?: unknown) {
-  if (isNodeData(input)) return input;
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
+export function assignmentEqFrom(input?: ConfigOf<AssignmentEq>) {
   return assignmentEq({
-    right: _resolveOne(f.right, [], ["_right_hand_side"]),
+    right: _resolveOne<NonNullable<ConfigOf<AssignmentEq>['right']>>(input.right, [], ["_right_hand_side"]),
   });
 }
 
-export function assignmentColonFrom(input?: unknown) {
-  if (isNodeData(input)) return input;
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
+export function assignmentColonFrom(input?: ConfigOf<AssignmentColon>) {
   return assignmentColon({
-    type: _resolveOne(f.type, [], ["type"]),
+    type: _resolveOne<NonNullable<ConfigOf<AssignmentColon>['type']>>(input.type, [], ["type"]),
   });
 }
 
-export function assignmentColon2From(input?: unknown) {
-  if (isNodeData(input)) return input;
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
+export function assignmentColon2From(input?: ConfigOf<AssignmentColon2>) {
   return assignmentColon2({
-    type: _resolveOne(f.type, [], ["type"]),
-    right: _resolveOne(f.right, [], ["_right_hand_side"]),
+    type: _resolveOne<NonNullable<ConfigOf<AssignmentColon2>['type']>>(input.type, [], ["type"]),
+    right: _resolveOne<NonNullable<ConfigOf<AssignmentColon2>['right']>>(input.right, [], ["_right_hand_side"]),
   });
 }
 
 export function augmentedAssignmentFrom(input: AugmentedAssignmentFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return augmentedAssignment({
-    left: _resolveOne(f.left, [], ["_left_hand_side"]),
-    operator: _resolveOne(f.operator, [], []),
-    right: _resolveOne(f.right, [], ["_right_hand_side"]),
-    children: input?.children ?? [],
+    left: _resolveOne<NonNullable<ConfigOf<AugmentedAssignment>['left']>>(input.left, [], ["_left_hand_side"]),
+    operator: _resolveOne<NonNullable<ConfigOf<AugmentedAssignment>['operator']>>(input.operator, [], []),
+    right: _resolveOne<NonNullable<ConfigOf<AugmentedAssignment>['right']>>(input.right, [], ["_right_hand_side"]),
+    children: input.children ?? [],
   });
 }
 
@@ -819,47 +770,42 @@ export function yield_From(...input: unknown[]) {
 }
 
 export function attributeFrom(input: AttributeFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return attribute({
-    object: _resolveOne(f.object, [], ["primary_expression"]),
-    attribute: _resolveOne(f.attribute, ["identifier"], []),
-    children: input?.children ?? [],
+    object: _resolveOne<NonNullable<ConfigOf<Attribute>['object']>>(input.object, [], ["primary_expression"]),
+    attribute: _resolveOne<NonNullable<ConfigOf<Attribute>['attribute']>>(input.attribute, ["identifier"], []),
+    children: input.children ?? [],
   });
 }
 
 export function subscriptFrom(input: SubscriptFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return subscript({
-    value: _resolveOne(f.value, [], ["primary_expression"]),
-    subscript: _resolveMany(f.subscript, [], ["expression","slice"]),
-    children: input?.children ?? [],
+    value: _resolveOne<NonNullable<ConfigOf<Subscript>['value']>>(input.value, [], ["primary_expression"]),
+    subscript: _resolveMany<NonNullable<ConfigOf<Subscript>['subscript']>>(input.subscript, [], ["expression","slice"]),
+    children: input.children ?? [],
   });
 }
 
 export function sliceFrom(input: SliceFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return slice({
-    start: _resolveOne(f.start, [], ["expression"]),
-    stop: _resolveOne(f.stop, [], ["expression"]),
-    step: _resolveOne(f.step, [], []),
-    children: input?.children ?? [],
+    start: _resolveOne<NonNullable<ConfigOf<Slice>['start']>>(input.start, [], ["expression"]),
+    stop: _resolveOne<NonNullable<ConfigOf<Slice>['stop']>>(input.stop, [], ["expression"]),
+    step: _resolveOne<NonNullable<ConfigOf<Slice>['step']>>(input.step, [], []),
+    children: input.children ?? [],
   });
 }
 
 export function callFrom(input: CallFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return call({
-    function: _resolveOne(f.function, [], ["primary_expression"]),
-    arguments: _resolveOne(f.arguments, [], ["generator_expression","argument_list"]),
-    children: input?.children ?? [],
+    function: _resolveOne<NonNullable<ConfigOf<Call>['function']>>(input.function, [], ["primary_expression"]),
+    arguments: _resolveOne<NonNullable<ConfigOf<Call>['arguments']>>(input.arguments, [], ["generator_expression","argument_list"]),
+    children: input.children ?? [],
   });
 }
 
 export function typedParameterFrom(input: TypedParameterFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return typedParameter({
-    type: _resolveOne(f.type, [], ["type"]),
-    children: input?.children ?? [],
+    type: _resolveOne<NonNullable<ConfigOf<TypedParameter>['type']>>(input.type, [], ["type"]),
+    children: input.children ?? [],
   });
 }
 
@@ -871,55 +817,49 @@ export function typeFrom(...input: unknown[]) {
 }
 
 export function splatTypeFrom(input: SplatTypeFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return splatType({
-    identifier: _resolveOne(f.identifier, [], []),
-    children: input?.children ?? [],
+    identifier: _resolveOne<NonNullable<ConfigOf<SplatType>['identifier']>>(input.identifier, [], []),
+    children: input.children ?? [],
   });
 }
 
 export function genericTypeFrom(input: GenericTypeFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return genericType({
-    identifier: _resolveOne(f.identifier, ["identifier"], []),
-    typeParameter: _resolveOne(f.type_parameter, [], ["type_parameter"]),
-    children: input?.children ?? [],
+    identifier: _resolveOne<NonNullable<ConfigOf<GenericType>['identifier']>>(input.identifier, ["identifier"], []),
+    typeParameter: _resolveOne<NonNullable<ConfigOf<GenericType>['typeParameter']>>(input.typeParameter, [], ["type_parameter"]),
+    children: input.children ?? [],
   });
 }
 
 export function unionTypeFrom(input: UnionTypeFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return unionType({
-    left: _resolveOne(f.left, [], ["type"]),
-    right: _resolveOne(f.right, [], ["type"]),
-    children: input?.children ?? [],
+    left: _resolveOne<NonNullable<ConfigOf<UnionType>['left']>>(input.left, [], ["type"]),
+    right: _resolveOne<NonNullable<ConfigOf<UnionType>['right']>>(input.right, [], ["type"]),
+    children: input.children ?? [],
   });
 }
 
 export function constrainedTypeFrom(input: ConstrainedTypeFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return constrainedType({
-    baseType: _resolveOne(f.base_type, [], ["type"]),
-    constraint: _resolveOne(f.constraint, [], ["type"]),
-    children: input?.children ?? [],
+    baseType: _resolveOne<NonNullable<ConfigOf<ConstrainedType>['baseType']>>(input.baseType, [], ["type"]),
+    constraint: _resolveOne<NonNullable<ConfigOf<ConstrainedType>['constraint']>>(input.constraint, [], ["type"]),
+    children: input.children ?? [],
   });
 }
 
 export function memberTypeFrom(input: MemberTypeFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return memberType({
-    baseType: _resolveOne(f.base_type, [], ["type"]),
-    identifier: _resolveOne(f.identifier, ["identifier"], []),
-    children: input?.children ?? [],
+    baseType: _resolveOne<NonNullable<ConfigOf<MemberType>['baseType']>>(input.baseType, [], ["type"]),
+    identifier: _resolveOne<NonNullable<ConfigOf<MemberType>['identifier']>>(input.identifier, ["identifier"], []),
+    children: input.children ?? [],
   });
 }
 
 export function keywordArgumentFrom(input: KeywordArgumentFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return keywordArgument({
-    name: _resolveOne(f.name, ["identifier","keyword_identifier"], []),
-    value: _resolveOne(f.value, [], ["expression"]),
-    children: input?.children ?? [],
+    name: _resolveOne<NonNullable<ConfigOf<KeywordArgument>['name']>>(input.name, ["identifier","keyword_identifier"], []),
+    value: _resolveOne<NonNullable<ConfigOf<KeywordArgument>['value']>>(input.value, [], ["expression"]),
+    children: input.children ?? [],
   });
 }
 
@@ -952,43 +892,38 @@ export function dictionaryFrom(...input: unknown[]) {
 }
 
 export function pairFrom(input: PairFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return pair({
-    key: _resolveOne(f.key, [], ["expression"]),
-    value: _resolveOne(f.value, [], ["expression"]),
-    children: input?.children ?? [],
+    key: _resolveOne<NonNullable<ConfigOf<Pair>['key']>>(input.key, [], ["expression"]),
+    value: _resolveOne<NonNullable<ConfigOf<Pair>['value']>>(input.value, [], ["expression"]),
+    children: input.children ?? [],
   });
 }
 
 export function listComprehensionFrom(input: ListComprehensionFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return listComprehension({
-    body: _resolveOne(f.body, [], ["expression"]),
-    children: input?.children ?? [],
+    body: _resolveOne<NonNullable<ConfigOf<ListComprehension>['body']>>(input.body, [], ["expression"]),
+    children: input.children ?? [],
   });
 }
 
 export function dictionaryComprehensionFrom(input: DictionaryComprehensionFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return dictionaryComprehension({
-    body: _resolveOne(f.body, [], ["pair"]),
-    children: input?.children ?? [],
+    body: _resolveOne<NonNullable<ConfigOf<DictionaryComprehension>['body']>>(input.body, [], ["pair"]),
+    children: input.children ?? [],
   });
 }
 
 export function setComprehensionFrom(input: SetComprehensionFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return setComprehension({
-    body: _resolveOne(f.body, [], ["expression"]),
-    children: input?.children ?? [],
+    body: _resolveOne<NonNullable<ConfigOf<SetComprehension>['body']>>(input.body, [], ["expression"]),
+    children: input.children ?? [],
   });
 }
 
 export function generatorExpressionFrom(input: GeneratorExpressionFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return generatorExpression({
-    body: _resolveOne(f.body, [], ["expression"]),
-    children: input?.children ?? [],
+    body: _resolveOne<NonNullable<ConfigOf<GeneratorExpression>['body']>>(input.body, [], ["expression"]),
+    children: input.children ?? [],
   });
 }
 
@@ -1014,29 +949,26 @@ export function hiddenCollectionElementsFrom(...input: unknown[]) {
 }
 
 export function forInClauseFrom(input: ForInClauseFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return forInClause({
-    left: _resolveOne(f.left, [], ["_left_hand_side"]),
-    right: _resolveOne(f.right, [], []),
-    children: input?.children ?? [],
+    left: _resolveOne<NonNullable<ConfigOf<ForInClause>['left']>>(input.left, [], ["_left_hand_side"]),
+    right: _resolveOne<NonNullable<ConfigOf<ForInClause>['right']>>(input.right, [], []),
+    children: input.children ?? [],
   });
 }
 
 export function ifClauseFrom(input: IfClauseFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return ifClause({
-    expression: _resolveOne(f.expression, [], ["expression"]),
-    children: input?.children ?? [],
+    expression: _resolveOne<NonNullable<ConfigOf<IfClause>['expression']>>(input.expression, [], ["expression"]),
+    children: input.children ?? [],
   });
 }
 
 export function conditionalExpressionFrom(input: ConditionalExpressionFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return conditionalExpression({
-    body: _resolveOne(f.body, [], ["expression"]),
-    condition: _resolveOne(f.condition, [], ["expression"]),
-    alternative: _resolveOne(f.alternative, [], ["expression"]),
-    children: input?.children ?? [],
+    body: _resolveOne<NonNullable<ConfigOf<ConditionalExpression>['body']>>(input.body, [], ["expression"]),
+    condition: _resolveOne<NonNullable<ConfigOf<ConditionalExpression>['condition']>>(input.condition, [], ["expression"]),
+    alternative: _resolveOne<NonNullable<ConfigOf<ConditionalExpression>['alternative']>>(input.alternative, [], ["expression"]),
+    children: input.children ?? [],
   });
 }
 
@@ -1048,12 +980,11 @@ export function concatenatedStringFrom(...input: unknown[]) {
 }
 
 export function stringFrom(input: StringFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return string({
-    stringStart: _resolveOne(f.string_start, [], ["string_start"]),
-    content: _resolveOne(f.content, [], []),
-    stringEnd: _resolveOne(f.string_end, [], ["string_end"]),
-    children: input?.children ?? [],
+    stringStart: _resolveOne<NonNullable<ConfigOf<String>['stringStart']>>(input.stringStart, [], ["string_start"]),
+    content: _resolveOne<NonNullable<ConfigOf<String>['content']>>(input.content, [], []),
+    stringEnd: _resolveOne<NonNullable<ConfigOf<String>['stringEnd']>>(input.stringEnd, [], ["string_end"]),
+    children: input.children ?? [],
   });
 }
 
@@ -1065,12 +996,11 @@ export function stringContentFrom(...input: unknown[]) {
 }
 
 export function interpolationFrom(input: InterpolationFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return interpolation({
-    expression: _resolveOne(f.expression, [], ["_f_expression"]),
-    typeConversion: _resolveOne(f.type_conversion, ["type_conversion"], []),
-    formatSpecifier: _resolveOne(f.format_specifier, [], ["format_specifier"]),
-    children: input?.children ?? [],
+    expression: _resolveOne<NonNullable<ConfigOf<Interpolation>['expression']>>(input.expression, [], ["_f_expression"]),
+    typeConversion: _resolveOne<NonNullable<ConfigOf<Interpolation>['typeConversion']>>(input.typeConversion, ["type_conversion"], []),
+    formatSpecifier: _resolveOne<NonNullable<ConfigOf<Interpolation>['formatSpecifier']>>(input.formatSpecifier, [], ["format_specifier"]),
+    children: input.children ?? [],
   });
 }
 
@@ -1127,10 +1057,9 @@ export function noneFrom(input?: None) {
 }
 
 export function await_From(input: AwaitFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return await_({
-    primaryExpression: _resolveOne(f.primary_expression, [], ["primary_expression"]),
-    children: input?.children ?? [],
+    primaryExpression: _resolveOne<NonNullable<ConfigOf<Await>['primaryExpression']>>(input.primaryExpression, [], ["primary_expression"]),
+    children: input.children ?? [],
   });
 }
 
@@ -1152,12 +1081,11 @@ export function asPatternTargetFrom(...input: unknown[]) {
 }
 
 export function formatExpressionFrom(input: FormatExpressionFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return formatExpression({
-    expression: _resolveOne(f.expression, [], ["_f_expression"]),
-    typeConversion: _resolveOne(f.type_conversion, ["type_conversion"], []),
-    formatSpecifier: _resolveOne(f.format_specifier, [], ["format_specifier"]),
-    children: input?.children ?? [],
+    expression: _resolveOne<NonNullable<ConfigOf<FormatExpression>['expression']>>(input.expression, [], ["_f_expression"]),
+    typeConversion: _resolveOne<NonNullable<ConfigOf<FormatExpression>['typeConversion']>>(input.typeConversion, ["type_conversion"], []),
+    formatSpecifier: _resolveOne<NonNullable<ConfigOf<FormatExpression>['formatSpecifier']>>(input.formatSpecifier, [], ["format_specifier"]),
+    children: input.children ?? [],
   });
 }
 

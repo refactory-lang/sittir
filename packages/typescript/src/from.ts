@@ -2,12 +2,13 @@
 
 import { abstractClassDeclaration, abstractMethodSignature, accessibilityModifier, addingTypeAnnotation, ambientDeclaration, arguments_, array, arrayPattern, arrayType, arrowFunction, arrowFunctionParameter, arrowFunctionUCallSignature, asExpression, asserts, assertsAnnotation, assignmentExpression, assignmentPattern, augmentedAssignmentExpression, awaitExpression, binaryExpression, breakStatement, callExpression, callExpressionFunction, callExpressionFunction2, callExpressionTokQDot, callSignature, catchClause, classBody, classDeclaration, classHeritage, classStaticBlock, class_, comment, computedPropertyName, conditionalType, constraint, constructSignature, constructorType, continueStatement, debuggerStatement, declaration, decorator, decoratorCallExpression, decoratorMemberExpression, decoratorParenthesizedExpression, defaultType, doStatement, elseClause, enumAssignment, enumBody, enumDeclaration, escapeSequence, exportClause, exportSpecifier, exportStatement, exportStatementExport, exportStatementExport2, exportStatementExport3, exportStatementForm0, expression, expressionStatement, extendsClause, extendsTypeClause, false_, fieldDefinition, finallyClause, flowMaybeType, forInStatement, forStatement, formalParameters, functionDeclaration, functionExpression, functionSignature, functionType, generatorFunction, generatorFunctionDeclaration, genericType, hashBangLine, hiddenAugmentedAssignmentLhs, hiddenImportIdentifier, hiddenJsxStartOpeningElement, hiddenJsxString, hiddenLhsExpression, hiddenPropertyName, hiddenReservedIdentifier, hiddenSemicolon, hiddenTypeIdentifier, htmlCharacterReference, identifier, ifStatement, implementsClause, importAlias, importAttribute, importClause, importRequireClause, importSpecifier, importSpecifierAs, importSpecifierName, importStatement, import_, indexSignature, indexSignatureColon, indexSignatureMappedTypeClause, indexTypeQuery, inferType, instantiationExpression, interfaceBody, interfaceDeclaration, internalModule, intersectionType, jsxAttribute, jsxClosingElement, jsxElement, jsxExpression, jsxIdentifier, jsxNamespaceName, jsxOpeningElement, jsxSelfClosingElement, labeledStatement, lexicalDeclaration, literalType, lookupType, mappedTypeClause, memberExpression, metaProperty, methodDefinition, methodSignature, module, namedImports, namespaceExport, namespaceImport, nestedIdentifier, nestedTypeIdentifier, newExpression, nonNullExpression, null_, number, object, objectAssignmentPattern, objectPattern, objectType, omittingTypeAnnotation, optingTypeAnnotation, optionalParameter, optionalTupleParameter, optionalType, overrideModifier, pair, pairPattern, parenthesizedExpression, parenthesizedExpressionExpression, parenthesizedExpressionSequenceExpression, parenthesizedType, pattern, predefinedType, primaryExpression, primaryType, privatePropertyIdentifier, program, propertyIdentifier, propertySignature, publicFieldDefinition, readonlyType, regex, regexFlags, regexPattern, requiredParameter, restPattern, restType, returnStatement, satisfiesExpression, sequenceExpression, shorthandPropertyIdentifier, shorthandPropertyIdentifierPattern, spreadElement, statement, statementBlock, statementBody, statementBreakStatement, statementContinueStatement, statementDebuggerStatement, statementDeclaration, statementDoStatement, statementEmptyStatement, statementExportStatement, statementExpressionStatement, statementForInStatement, statementForStatement, statementIdentifier, statementIfStatement, statementImportStatement, statementLabeledStatement, statementReturnStatement, statementSwitchStatement, statementThrowStatement, statementTryStatement, statementWhileStatement, statementWithStatement, string, stringFragment, subscriptExpression, super_, switchBody, switchCase, switchDefault, switchStatement, templateLiteralType, templateString, templateSubstitution, templateType, ternaryExpression, thisType, this_, throwStatement, true_, tryStatement, tupleParameter, tupleType, type, typeAliasDeclaration, typeAnnotation, typeArguments, typeAssertion, typeIdentifier, typeParameter, typeParameters, typePredicate, typePredicateAnnotation, typeQuery, unaryExpression, undefined_, unescapedDoubleJsxStringFragment, unescapedDoubleStringFragment, unescapedSingleJsxStringFragment, unescapedSingleStringFragment, unionType, updateExpression, variableDeclaration, variableDeclarator, whileStatement, withStatement, yieldExpression } from './factories.js';
 import type { AbstractClassDeclaration, AbstractClassDeclarationConfig, AbstractClassDeclarationFromInput, AbstractMethodSignature, AbstractMethodSignatureConfig, AbstractMethodSignatureFromInput, AccessibilityModifier, AddingTypeAnnotation, AddingTypeAnnotationConfig, AddingTypeAnnotationFromInput, AmbientDeclaration, AmbientDeclarationConfig, AmbientDeclarationFromInput, Arguments, ArgumentsConfig, ArgumentsFromInput, Array, ArrayConfig, ArrayFromInput, ArrayPattern, ArrayPatternConfig, ArrayPatternFromInput, ArrayType, ArrayTypeConfig, ArrayTypeFromInput, ArrowFunction, ArrowFunctionConfig, ArrowFunctionFromInput, ArrowFunctionParameter, ArrowFunctionUCallSignature, AsExpression, AsExpressionConfig, AsExpressionFromInput, Asserts, AssertsAnnotation, AssertsAnnotationConfig, AssertsAnnotationFromInput, AssertsConfig, AssertsFromInput, AssignmentExpression, AssignmentExpressionConfig, AssignmentExpressionFromInput, AssignmentPattern, AssignmentPatternConfig, AssignmentPatternFromInput, AugmentedAssignmentExpression, AugmentedAssignmentExpressionConfig, AugmentedAssignmentExpressionFromInput, AwaitExpression, AwaitExpressionConfig, AwaitExpressionFromInput, BinaryExpression, BinaryExpressionConfig, BinaryExpressionFromInput, BreakStatement, BreakStatementConfig, BreakStatementFromInput, CallExpression, CallExpressionConfig, CallExpressionFromInput, CallExpressionFunction, CallExpressionFunction2, CallExpressionTokQDot, CallSignature, CallSignatureConfig, CallSignatureFromInput, CatchClause, CatchClauseConfig, CatchClauseFromInput, Class, ClassBody, ClassBodyConfig, ClassBodyFromInput, ClassConfig, ClassDeclaration, ClassDeclarationConfig, ClassDeclarationFromInput, ClassFromInput, ClassHeritage, ClassHeritageConfig, ClassHeritageFromInput, ClassStaticBlock, ClassStaticBlockConfig, ClassStaticBlockFromInput, Comment, ComputedPropertyName, ComputedPropertyNameConfig, ComputedPropertyNameFromInput, ConditionalType, ConditionalTypeConfig, ConditionalTypeFromInput, Constraint, ConstraintConfig, ConstraintFromInput, ConstructSignature, ConstructSignatureConfig, ConstructSignatureFromInput, ConstructorType, ConstructorTypeConfig, ConstructorTypeFromInput, ContinueStatement, ContinueStatementConfig, ContinueStatementFromInput, DebuggerStatement, DebuggerStatementConfig, DebuggerStatementFromInput, Declaration, DeclarationConfig, DeclarationFromInput, Decorator, DecoratorCallExpression, DecoratorCallExpressionConfig, DecoratorCallExpressionFromInput, DecoratorConfig, DecoratorFromInput, DecoratorMemberExpression, DecoratorMemberExpressionConfig, DecoratorMemberExpressionFromInput, DecoratorParenthesizedExpression, DecoratorParenthesizedExpressionConfig, DecoratorParenthesizedExpressionFromInput, DefaultType, DefaultTypeConfig, DefaultTypeFromInput, DoStatement, DoStatementConfig, DoStatementFromInput, ElseClause, ElseClauseConfig, ElseClauseFromInput, EnumAssignment, EnumAssignmentConfig, EnumAssignmentFromInput, EnumBody, EnumBodyConfig, EnumBodyFromInput, EnumDeclaration, EnumDeclarationConfig, EnumDeclarationFromInput, EscapeSequence, ExportClause, ExportClauseConfig, ExportClauseFromInput, ExportSpecifier, ExportSpecifierConfig, ExportSpecifierFromInput, ExportStatement, ExportStatementConfig, ExportStatementExport, ExportStatementExport2, ExportStatementExport3, ExportStatementForm0, ExportStatementFromInput, Expression, ExpressionConfig, ExpressionFromInput, ExpressionStatement, ExpressionStatementConfig, ExpressionStatementFromInput, ExtendsClause, ExtendsClauseConfig, ExtendsClauseFromInput, ExtendsTypeClause, ExtendsTypeClauseConfig, ExtendsTypeClauseFromInput, False, FieldDefinition, FieldDefinitionConfig, FieldDefinitionFromInput, FinallyClause, FinallyClauseConfig, FinallyClauseFromInput, FlowMaybeType, FlowMaybeTypeConfig, FlowMaybeTypeFromInput, ForInStatement, ForInStatementConfig, ForInStatementFromInput, ForStatement, ForStatementConfig, ForStatementFromInput, FormalParameters, FormalParametersConfig, FormalParametersFromInput, FunctionDeclaration, FunctionDeclarationConfig, FunctionDeclarationFromInput, FunctionExpression, FunctionExpressionConfig, FunctionExpressionFromInput, FunctionSignature, FunctionSignatureConfig, FunctionSignatureFromInput, FunctionType, FunctionTypeConfig, FunctionTypeFromInput, GeneratorFunction, GeneratorFunctionConfig, GeneratorFunctionDeclaration, GeneratorFunctionDeclarationConfig, GeneratorFunctionDeclarationFromInput, GeneratorFunctionFromInput, GenericType, GenericTypeConfig, GenericTypeFromInput, HashBangLine, HiddenAugmentedAssignmentLhs, HiddenAugmentedAssignmentLhsConfig, HiddenAugmentedAssignmentLhsFromInput, HiddenImportIdentifier, HiddenImportIdentifierConfig, HiddenImportIdentifierFromInput, HiddenJsxStartOpeningElement, HiddenJsxStartOpeningElementConfig, HiddenJsxStartOpeningElementFromInput, HiddenJsxString, HiddenJsxStringConfig, HiddenJsxStringFromInput, HiddenLhsExpression, HiddenLhsExpressionConfig, HiddenLhsExpressionFromInput, HiddenPropertyName, HiddenPropertyNameConfig, HiddenPropertyNameFromInput, HiddenReservedIdentifier, HiddenSemicolon, HiddenSemicolonConfig, HiddenSemicolonFromInput, HiddenTypeIdentifier, HiddenTypeIdentifierConfig, HiddenTypeIdentifierFromInput, HtmlCharacterReference, Identifier, IfStatement, IfStatementConfig, IfStatementFromInput, ImplementsClause, ImplementsClauseConfig, ImplementsClauseFromInput, Import, ImportAlias, ImportAliasConfig, ImportAliasFromInput, ImportAttribute, ImportAttributeConfig, ImportAttributeFromInput, ImportClause, ImportClauseConfig, ImportClauseFromInput, ImportRequireClause, ImportRequireClauseConfig, ImportRequireClauseFromInput, ImportSpecifier, ImportSpecifierAs, ImportSpecifierConfig, ImportSpecifierFromInput, ImportSpecifierName, ImportStatement, ImportStatementConfig, ImportStatementFromInput, IndexSignature, IndexSignatureColon, IndexSignatureConfig, IndexSignatureFromInput, IndexSignatureMappedTypeClause, IndexTypeQuery, IndexTypeQueryConfig, IndexTypeQueryFromInput, InferType, InferTypeConfig, InferTypeFromInput, InstantiationExpression, InstantiationExpressionConfig, InstantiationExpressionFromInput, InterfaceBody, InterfaceBodyConfig, InterfaceBodyFromInput, InterfaceDeclaration, InterfaceDeclarationConfig, InterfaceDeclarationFromInput, InternalModule, InternalModuleConfig, InternalModuleFromInput, IntersectionType, IntersectionTypeConfig, IntersectionTypeFromInput, JsxAttribute, JsxAttributeConfig, JsxAttributeFromInput, JsxClosingElement, JsxClosingElementConfig, JsxClosingElementFromInput, JsxElement, JsxElementConfig, JsxElementFromInput, JsxExpression, JsxExpressionConfig, JsxExpressionFromInput, JsxIdentifier, JsxNamespaceName, JsxNamespaceNameConfig, JsxNamespaceNameFromInput, JsxOpeningElement, JsxOpeningElementConfig, JsxOpeningElementFromInput, JsxSelfClosingElement, JsxSelfClosingElementConfig, JsxSelfClosingElementFromInput, LabeledStatement, LabeledStatementConfig, LabeledStatementFromInput, LexicalDeclaration, LexicalDeclarationConfig, LexicalDeclarationFromInput, LiteralType, LiteralTypeConfig, LiteralTypeFromInput, LookupType, LookupTypeConfig, LookupTypeFromInput, MappedTypeClause, MappedTypeClauseConfig, MappedTypeClauseFromInput, MemberExpression, MemberExpressionConfig, MemberExpressionFromInput, MetaProperty, MethodDefinition, MethodDefinitionConfig, MethodDefinitionFromInput, MethodSignature, MethodSignatureConfig, MethodSignatureFromInput, Module, ModuleConfig, ModuleFromInput, NamedImports, NamedImportsConfig, NamedImportsFromInput, NamespaceExport, NamespaceExportConfig, NamespaceExportFromInput, NamespaceImport, NamespaceImportConfig, NamespaceImportFromInput, NestedIdentifier, NestedIdentifierConfig, NestedIdentifierFromInput, NestedTypeIdentifier, NestedTypeIdentifierConfig, NestedTypeIdentifierFromInput, NewExpression, NewExpressionConfig, NewExpressionFromInput, NonNullExpression, NonNullExpressionConfig, NonNullExpressionFromInput, Null, Number, Object, ObjectAssignmentPattern, ObjectAssignmentPatternConfig, ObjectAssignmentPatternFromInput, ObjectConfig, ObjectFromInput, ObjectPattern, ObjectPatternConfig, ObjectPatternFromInput, ObjectType, ObjectTypeConfig, ObjectTypeFromInput, OmittingTypeAnnotation, OmittingTypeAnnotationConfig, OmittingTypeAnnotationFromInput, OptingTypeAnnotation, OptingTypeAnnotationConfig, OptingTypeAnnotationFromInput, OptionalParameter, OptionalParameterConfig, OptionalParameterFromInput, OptionalTupleParameter, OptionalTupleParameterConfig, OptionalTupleParameterFromInput, OptionalType, OptionalTypeConfig, OptionalTypeFromInput, OverrideModifier, Pair, PairConfig, PairFromInput, PairPattern, PairPatternConfig, PairPatternFromInput, ParenthesizedExpression, ParenthesizedExpressionConfig, ParenthesizedExpressionExpression, ParenthesizedExpressionFromInput, ParenthesizedExpressionSequenceExpression, ParenthesizedType, ParenthesizedTypeConfig, ParenthesizedTypeFromInput, Pattern, PatternConfig, PatternFromInput, PredefinedType, PrimaryExpression, PrimaryExpressionConfig, PrimaryExpressionFromInput, PrimaryType, PrimaryTypeConfig, PrimaryTypeFromInput, PrivatePropertyIdentifier, Program, ProgramConfig, ProgramFromInput, PropertyIdentifier, PropertySignature, PropertySignatureConfig, PropertySignatureFromInput, PublicFieldDefinition, PublicFieldDefinitionConfig, PublicFieldDefinitionFromInput, ReadonlyType, ReadonlyTypeConfig, ReadonlyTypeFromInput, Regex, RegexConfig, RegexFlags, RegexFromInput, RegexPattern, RequiredParameter, RequiredParameterConfig, RequiredParameterFromInput, RestPattern, RestPatternConfig, RestPatternFromInput, RestType, RestTypeConfig, RestTypeFromInput, ReturnStatement, ReturnStatementConfig, ReturnStatementFromInput, SatisfiesExpression, SatisfiesExpressionConfig, SatisfiesExpressionFromInput, SequenceExpression, SequenceExpressionConfig, SequenceExpressionFromInput, ShorthandPropertyIdentifier, ShorthandPropertyIdentifierConfig, ShorthandPropertyIdentifierFromInput, ShorthandPropertyIdentifierPattern, ShorthandPropertyIdentifierPatternConfig, ShorthandPropertyIdentifierPatternFromInput, SpreadElement, SpreadElementConfig, SpreadElementFromInput, Statement, StatementBlock, StatementBlockConfig, StatementBlockFromInput, StatementBody, StatementBreakStatement, StatementConfig, StatementContinueStatement, StatementDebuggerStatement, StatementDeclaration, StatementDoStatement, StatementEmptyStatement, StatementExportStatement, StatementExpressionStatement, StatementForInStatement, StatementForStatement, StatementFromInput, StatementIdentifier, StatementIfStatement, StatementImportStatement, StatementLabeledStatement, StatementReturnStatement, StatementSwitchStatement, StatementThrowStatement, StatementTryStatement, StatementWhileStatement, StatementWithStatement, String, StringConfig, StringFragment, StringFromInput, SubscriptExpression, SubscriptExpressionConfig, SubscriptExpressionFromInput, Super, SwitchBody, SwitchBodyConfig, SwitchBodyFromInput, SwitchCase, SwitchCaseConfig, SwitchCaseFromInput, SwitchDefault, SwitchDefaultConfig, SwitchDefaultFromInput, SwitchStatement, SwitchStatementConfig, SwitchStatementFromInput, TemplateLiteralType, TemplateLiteralTypeConfig, TemplateLiteralTypeFromInput, TemplateString, TemplateStringConfig, TemplateStringFromInput, TemplateSubstitution, TemplateSubstitutionConfig, TemplateSubstitutionFromInput, TemplateType, TemplateTypeConfig, TemplateTypeFromInput, TernaryExpression, TernaryExpressionConfig, TernaryExpressionFromInput, This, ThisType, ThrowStatement, ThrowStatementConfig, ThrowStatementFromInput, True, TryStatement, TryStatementConfig, TryStatementFromInput, TupleParameter, TupleParameterConfig, TupleParameterFromInput, TupleType, TupleTypeConfig, TupleTypeFromInput, Type, TypeAliasDeclaration, TypeAliasDeclarationConfig, TypeAliasDeclarationFromInput, TypeAnnotation, TypeAnnotationConfig, TypeAnnotationFromInput, TypeArguments, TypeArgumentsConfig, TypeArgumentsFromInput, TypeAssertion, TypeAssertionConfig, TypeAssertionFromInput, TypeConfig, TypeFromInput, TypeIdentifier, TypeParameter, TypeParameterConfig, TypeParameterFromInput, TypeParameters, TypeParametersConfig, TypeParametersFromInput, TypePredicate, TypePredicateAnnotation, TypePredicateAnnotationConfig, TypePredicateAnnotationFromInput, TypePredicateConfig, TypePredicateFromInput, TypeQuery, TypeQueryConfig, TypeQueryFromInput, UnaryExpression, UnaryExpressionConfig, UnaryExpressionFromInput, Undefined, UnescapedDoubleJsxStringFragment, UnescapedDoubleStringFragment, UnescapedSingleJsxStringFragment, UnescapedSingleStringFragment, UnionType, UnionTypeConfig, UnionTypeFromInput, UpdateExpression, UpdateExpressionConfig, UpdateExpressionFromInput, VariableDeclaration, VariableDeclarationConfig, VariableDeclarationFromInput, VariableDeclarator, VariableDeclaratorConfig, VariableDeclaratorFromInput, WhileStatement, WhileStatementConfig, WhileStatementFromInput, WithStatement, WithStatementConfig, WithStatementFromInput, YieldExpression, YieldExpressionConfig, YieldExpressionFromInput } from './types.js';
-import type { AnyNodeData, ConfigOf, FromInputOf } from '@sittir/types';
+import type { ConfigOf, FromInputOf } from '@sittir/types';
 
-function isNodeData(v: unknown): v is AnyNodeData {
+interface _NodeDataLike { readonly type: string; readonly fields?: object; readonly text?: string }
+function isNodeData(v: unknown): v is _NodeDataLike {
   if (v === null || typeof v !== 'object') return false;
-  const o = v as Record<string, unknown>;
-  return typeof o['type'] === 'string' && (typeof o['fields'] === 'object' || typeof o['text'] === 'string');
+  const o = v as { type?: unknown; fields?: unknown; text?: unknown };
+  return typeof o.type === 'string' && (typeof o.fields === 'object' || typeof o.text === 'string');
 }
 
 // --- Loose-input resolver helpers (see C6-prereq) ---
@@ -71,40 +72,39 @@ function _resolveScalar(v: unknown): unknown {
   return undefined;
 }
 
-function _resolveOne(v: unknown, leafKinds: readonly string[], branchKinds: readonly string[]): unknown {
-  if (v === undefined || v === null) return v;
-  if (isNodeData(v)) return v;
+function _resolveOne<T>(v: unknown, leafKinds: readonly string[], branchKinds: readonly string[]): T {
+  if (v === undefined || v === null) return v as T;
+  if (isNodeData(v)) return v as T;
   if (typeof v === "boolean" || typeof v === "number") {
     const scalar = _resolveScalar(v);
-    if (scalar !== undefined) return scalar;
+    if (scalar !== undefined) return scalar as T;
   }
   if (typeof v === "string" && leafKinds.length > 0) {
     const leaf = _resolveLeafString(v, leafKinds);
-    if (leaf !== undefined) return leaf;
+    if (leaf !== undefined) return leaf as T;
   }
   if (typeof v === "object" && v !== null && "kind" in v) {
-    const { kind, ...rest } = v as Record<string, unknown>;
-    return _resolveByKind(kind, rest);
+    const { kind, ...rest } = v as { kind: string } & Record<string, unknown>;
+    return _resolveByKind(kind, rest) as T;
   }
   // Single-branch passthrough — the loose object IS the branch.
   if (branchKinds.length === 1 && typeof v === "object") {
-    return _resolveByKind(branchKinds[0]!, v);
+    return _resolveByKind(branchKinds[0]!, v) as T;
   }
-  return v;
+  return v as T;
 }
 
-function _resolveMany(v: unknown, leafKinds: readonly string[], branchKinds: readonly string[]): unknown[] {
+function _resolveMany<T>(v: unknown, leafKinds: readonly string[], branchKinds: readonly string[]): readonly T[] {
   if (v === undefined || v === null) return [];
   const arr = Array.isArray(v) ? v : [v];
-  return arr.map(e => _resolveOne(e, leafKinds, branchKinds));
+  return arr.map(e => _resolveOne<T>(e, leafKinds, branchKinds));
 }
 
 export function programFrom(input: ProgramFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return program({
-    hashBangLine: _resolveOne(f.hash_bang_line, ["hash_bang_line"], []),
-    statements: _resolveOne(f.statements, [], []),
-    children: input?.children ?? [],
+    hashBangLine: _resolveOne<NonNullable<ConfigOf<Program>['hashBangLine']>>(input.hashBangLine, ["hash_bang_line"], []),
+    statements: _resolveOne<NonNullable<ConfigOf<Program>['statements']>>(input.statements, [], []),
+    children: input.children ?? [],
   });
 }
 
@@ -117,28 +117,23 @@ export function exportStatementFrom(input?: ExportStatementFromInput) {
   return exportStatement(input);
 }
 
-export function exportStatementForm0From(input?: unknown) {
-  if (isNodeData(input)) return input;
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
+export function exportStatementForm0From(input?: ConfigOf<ExportStatementForm0>) {
   return exportStatementForm0({
-    decorator: _resolveMany(f.decorator, [], ["decorator"]),
-    declaration: _resolveOne(f.declaration, [], ["declaration"]),
-    value: _resolveOne(f.value, [], ["expression"]),
+    decorator: _resolveMany<NonNullable<ConfigOf<ExportStatementForm0>['decorator']>>(input.decorator, [], ["decorator"]),
+    declaration: _resolveOne<NonNullable<ConfigOf<ExportStatementForm0>['declaration']>>(input.declaration, [], ["declaration"]),
+    value: _resolveOne<NonNullable<ConfigOf<ExportStatementForm0>['value']>>(input.value, [], ["expression"]),
   });
 }
 
-export function exportStatementExportFrom(input?: unknown) {
-  if (isNodeData(input)) return input;
+export function exportStatementExportFrom(input?: ConfigOf<ExportStatementExport>) {
   return exportStatementExport(input);
 }
 
-export function exportStatementExport2From(input?: unknown) {
-  if (isNodeData(input)) return input;
+export function exportStatementExport2From(input?: ConfigOf<ExportStatementExport2>) {
   return exportStatementExport2(input);
 }
 
-export function exportStatementExport3From(input?: unknown) {
-  if (isNodeData(input)) return input;
+export function exportStatementExport3From(input?: ConfigOf<ExportStatementExport3>) {
   return exportStatementExport3(input);
 }
 
@@ -157,11 +152,10 @@ export function exportClauseFrom(...input: unknown[]) {
 }
 
 export function exportSpecifierFrom(input: ExportSpecifierFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return exportSpecifier({
-    name: _resolveOne(f.name, [], ["_module_export_name"]),
-    alias: _resolveOne(f.alias, [], ["_module_export_name"]),
-    children: input?.children ?? [],
+    name: _resolveOne<NonNullable<ConfigOf<ExportSpecifier>['name']>>(input.name, [], ["_module_export_name"]),
+    alias: _resolveOne<NonNullable<ConfigOf<ExportSpecifier>['alias']>>(input.alias, [], ["_module_export_name"]),
+    children: input.children ?? [],
   });
 }
 
@@ -178,13 +172,12 @@ export function import_From(input?: Import) {
 }
 
 export function importStatementFrom(input: ImportStatementFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return importStatement({
-    importClause: _resolveOne(f.import_clause, ["typeof"], ["type"]),
-    fromClause: _resolveOne(f.from_clause, [], ["import_require_clause","string"]),
-    importAttribute: _resolveOne(f.import_attribute, [], ["import_attribute"]),
-    semicolon: _resolveOne(f.semicolon, [], ["_semicolon"]),
-    children: input?.children ?? [],
+    importClause: _resolveOne<NonNullable<ConfigOf<ImportStatement>['importClause']>>(input.importClause, ["typeof"], ["type"]),
+    fromClause: _resolveOne<NonNullable<ConfigOf<ImportStatement>['fromClause']>>(input.fromClause, [], ["import_require_clause","string"]),
+    importAttribute: _resolveOne<NonNullable<ConfigOf<ImportStatement>['importAttribute']>>(input.importAttribute, [], ["import_attribute"]),
+    semicolon: _resolveOne<NonNullable<ConfigOf<ImportStatement>['semicolon']>>(input.semicolon, [], ["_semicolon"]),
+    children: input.children ?? [],
   });
 }
 
@@ -196,10 +189,9 @@ export function importClauseFrom(...input: unknown[]) {
 }
 
 export function namespaceImportFrom(input: NamespaceImportFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return namespaceImport({
-    identifier: _resolveOne(f.identifier, ["identifier"], []),
-    children: input?.children ?? [],
+    identifier: _resolveOne<NonNullable<ConfigOf<NamespaceImport>['identifier']>>(input.identifier, ["identifier"], []),
+    children: input.children ?? [],
   });
 }
 
@@ -214,28 +206,23 @@ export function importSpecifierFrom(input?: ImportSpecifierFromInput) {
   return importSpecifier(input);
 }
 
-export function importSpecifierNameFrom(input?: unknown) {
-  if (isNodeData(input)) return input;
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
+export function importSpecifierNameFrom(input?: ConfigOf<ImportSpecifierName>) {
   return importSpecifierName({
-    name: _resolveOne(f.name, [], ["_import_identifier"]),
+    name: _resolveOne<NonNullable<ConfigOf<ImportSpecifierName>['name']>>(input.name, [], ["_import_identifier"]),
   });
 }
 
-export function importSpecifierAsFrom(input?: unknown) {
-  if (isNodeData(input)) return input;
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
+export function importSpecifierAsFrom(input?: ConfigOf<ImportSpecifierAs>) {
   return importSpecifierAs({
-    name: _resolveOne(f.name, [], ["_module_export_name"]),
-    alias: _resolveOne(f.alias, [], ["_import_identifier"]),
+    name: _resolveOne<NonNullable<ConfigOf<ImportSpecifierAs>['name']>>(input.name, [], ["_module_export_name"]),
+    alias: _resolveOne<NonNullable<ConfigOf<ImportSpecifierAs>['alias']>>(input.alias, [], ["_import_identifier"]),
   });
 }
 
 export function importAttributeFrom(input: ImportAttributeFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return importAttribute({
-    object: _resolveOne(f.object, ["with","assert"], []),
-    children: input?.children ?? [],
+    object: _resolveOne<NonNullable<ConfigOf<ImportAttribute>['object']>>(input.object, ["with","assert"], []),
+    children: input.children ?? [],
   });
 }
 
@@ -243,106 +230,85 @@ export function statementFrom(input?: StatementFromInput) {
   return statement(input);
 }
 
-export function statementExportStatementFrom(input?: unknown) {
-  if (isNodeData(input)) return input;
+export function statementExportStatementFrom(input?: ConfigOf<StatementExportStatement>) {
   return statementExportStatement(input);
 }
 
-export function statementImportStatementFrom(input?: unknown) {
-  if (isNodeData(input)) return input;
+export function statementImportStatementFrom(input?: ConfigOf<StatementImportStatement>) {
   return statementImportStatement(input);
 }
 
-export function statementDebuggerStatementFrom(input?: unknown) {
-  if (isNodeData(input)) return input;
+export function statementDebuggerStatementFrom(input?: ConfigOf<StatementDebuggerStatement>) {
   return statementDebuggerStatement(input);
 }
 
-export function statementExpressionStatementFrom(input?: unknown) {
-  if (isNodeData(input)) return input;
+export function statementExpressionStatementFrom(input?: ConfigOf<StatementExpressionStatement>) {
   return statementExpressionStatement(input);
 }
 
-export function statementDeclarationFrom(input?: unknown) {
-  if (isNodeData(input)) return input;
+export function statementDeclarationFrom(input?: ConfigOf<StatementDeclaration>) {
   return statementDeclaration(input);
 }
 
-export function statementBodyFrom(input?: unknown) {
-  if (isNodeData(input)) return input;
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
+export function statementBodyFrom(input?: ConfigOf<StatementBody>) {
   return statementBody({
-    body: _resolveOne(f.body, [], ["statement_block"]),
+    body: _resolveOne<NonNullable<ConfigOf<StatementBody>['body']>>(input.body, [], ["statement_block"]),
   });
 }
 
-export function statementIfStatementFrom(input?: unknown) {
-  if (isNodeData(input)) return input;
+export function statementIfStatementFrom(input?: ConfigOf<StatementIfStatement>) {
   return statementIfStatement(input);
 }
 
-export function statementSwitchStatementFrom(input?: unknown) {
-  if (isNodeData(input)) return input;
+export function statementSwitchStatementFrom(input?: ConfigOf<StatementSwitchStatement>) {
   return statementSwitchStatement(input);
 }
 
-export function statementForStatementFrom(input?: unknown) {
-  if (isNodeData(input)) return input;
+export function statementForStatementFrom(input?: ConfigOf<StatementForStatement>) {
   return statementForStatement(input);
 }
 
-export function statementForInStatementFrom(input?: unknown) {
-  if (isNodeData(input)) return input;
+export function statementForInStatementFrom(input?: ConfigOf<StatementForInStatement>) {
   return statementForInStatement(input);
 }
 
-export function statementWhileStatementFrom(input?: unknown) {
-  if (isNodeData(input)) return input;
+export function statementWhileStatementFrom(input?: ConfigOf<StatementWhileStatement>) {
   return statementWhileStatement(input);
 }
 
-export function statementDoStatementFrom(input?: unknown) {
-  if (isNodeData(input)) return input;
+export function statementDoStatementFrom(input?: ConfigOf<StatementDoStatement>) {
   return statementDoStatement(input);
 }
 
-export function statementTryStatementFrom(input?: unknown) {
-  if (isNodeData(input)) return input;
+export function statementTryStatementFrom(input?: ConfigOf<StatementTryStatement>) {
   return statementTryStatement(input);
 }
 
-export function statementWithStatementFrom(input?: unknown) {
-  if (isNodeData(input)) return input;
+export function statementWithStatementFrom(input?: ConfigOf<StatementWithStatement>) {
   return statementWithStatement(input);
 }
 
-export function statementBreakStatementFrom(input?: unknown) {
-  if (isNodeData(input)) return input;
+export function statementBreakStatementFrom(input?: ConfigOf<StatementBreakStatement>) {
   return statementBreakStatement(input);
 }
 
-export function statementContinueStatementFrom(input?: unknown) {
-  if (isNodeData(input)) return input;
+export function statementContinueStatementFrom(input?: ConfigOf<StatementContinueStatement>) {
   return statementContinueStatement(input);
 }
 
-export function statementReturnStatementFrom(input?: unknown) {
-  if (isNodeData(input)) return input;
+export function statementReturnStatementFrom(input?: ConfigOf<StatementReturnStatement>) {
   return statementReturnStatement(input);
 }
 
-export function statementThrowStatementFrom(input?: unknown) {
-  if (isNodeData(input)) return input;
+export function statementThrowStatementFrom(input?: ConfigOf<StatementThrowStatement>) {
   return statementThrowStatement(input);
 }
 
-export function statementEmptyStatementFrom(input?: unknown) {
-  if (isNodeData(input)) return input;
+export function statementEmptyStatementFrom(input?: ConfigOf<StatementEmptyStatement>) {
   return statementEmptyStatement(input);
 }
 
-export function statementLabeledStatementFrom(input?: unknown) {
-  if (isNodeData(input)) return input;
+export function statementLabeledStatementFrom(input?: ConfigOf<StatementLabeledStatement>) {
   return statementLabeledStatement(input);
 }
 
@@ -354,138 +320,123 @@ export function expressionStatementFrom(...input: unknown[]) {
 }
 
 export function variableDeclarationFrom(input: VariableDeclarationFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return variableDeclaration({
-    declarators: _resolveOne(f.declarators, [], []),
-    semicolon: _resolveOne(f.semicolon, [], ["_semicolon"]),
-    children: input?.children ?? [],
+    declarators: _resolveOne<NonNullable<ConfigOf<VariableDeclaration>['declarators']>>(input.declarators, [], []),
+    semicolon: _resolveOne<NonNullable<ConfigOf<VariableDeclaration>['semicolon']>>(input.semicolon, [], ["_semicolon"]),
+    children: input.children ?? [],
   });
 }
 
 export function lexicalDeclarationFrom(input: LexicalDeclarationFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return lexicalDeclaration({
-    kind: _resolveOne(f.kind, ["let","const"], []),
-    declarators: _resolveOne(f.declarators, [], []),
-    semicolon: _resolveOne(f.semicolon, [], ["_semicolon"]),
-    children: input?.children ?? [],
+    kind: _resolveOne<NonNullable<ConfigOf<LexicalDeclaration>['kind']>>(input.kind, ["let","const"], []),
+    declarators: _resolveOne<NonNullable<ConfigOf<LexicalDeclaration>['declarators']>>(input.declarators, [], []),
+    semicolon: _resolveOne<NonNullable<ConfigOf<LexicalDeclaration>['semicolon']>>(input.semicolon, [], ["_semicolon"]),
+    children: input.children ?? [],
   });
 }
 
 export function variableDeclaratorFrom(input: VariableDeclaratorFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return variableDeclarator({
-    name: _resolveOne(f.name, ["identifier"], ["_destructuring_pattern"]),
-    type: _resolveOne(f.type, [], ["type_annotation"]),
-    children: input?.children ?? [],
+    name: _resolveOne<NonNullable<ConfigOf<VariableDeclarator>['name']>>(input.name, ["identifier"], ["_destructuring_pattern"]),
+    type: _resolveOne<NonNullable<ConfigOf<VariableDeclarator>['type']>>(input.type, [], ["type_annotation"]),
+    children: input.children ?? [],
   });
 }
 
 export function statementBlockFrom(input: StatementBlockFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return statementBlock({
-    statements: _resolveOne(f.statements, [], []),
-    automaticSemicolon: _resolveOne(f.automatic_semicolon, [], ["_automatic_semicolon"]),
-    children: input?.children ?? [],
+    statements: _resolveOne<NonNullable<ConfigOf<StatementBlock>['statements']>>(input.statements, [], []),
+    automaticSemicolon: _resolveOne<NonNullable<ConfigOf<StatementBlock>['automaticSemicolon']>>(input.automaticSemicolon, [], ["_automatic_semicolon"]),
+    children: input.children ?? [],
   });
 }
 
 export function elseClauseFrom(input: ElseClauseFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return elseClause({
-    statement: _resolveOne(f.statement, [], ["statement"]),
-    children: input?.children ?? [],
+    statement: _resolveOne<NonNullable<ConfigOf<ElseClause>['statement']>>(input.statement, [], ["statement"]),
+    children: input.children ?? [],
   });
 }
 
 export function ifStatementFrom(input: IfStatementFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return ifStatement({
-    condition: _resolveOne(f.condition, [], ["parenthesized_expression"]),
-    consequence: _resolveOne(f.consequence, [], ["statement"]),
-    alternative: _resolveOne(f.alternative, [], ["else_clause"]),
-    children: input?.children ?? [],
+    condition: _resolveOne<NonNullable<ConfigOf<IfStatement>['condition']>>(input.condition, [], ["parenthesized_expression"]),
+    consequence: _resolveOne<NonNullable<ConfigOf<IfStatement>['consequence']>>(input.consequence, [], ["statement"]),
+    alternative: _resolveOne<NonNullable<ConfigOf<IfStatement>['alternative']>>(input.alternative, [], ["else_clause"]),
+    children: input.children ?? [],
   });
 }
 
 export function switchStatementFrom(input: SwitchStatementFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return switchStatement({
-    value: _resolveOne(f.value, [], ["parenthesized_expression"]),
-    body: _resolveOne(f.body, [], ["switch_body"]),
-    children: input?.children ?? [],
+    value: _resolveOne<NonNullable<ConfigOf<SwitchStatement>['value']>>(input.value, [], ["parenthesized_expression"]),
+    body: _resolveOne<NonNullable<ConfigOf<SwitchStatement>['body']>>(input.body, [], ["switch_body"]),
+    children: input.children ?? [],
   });
 }
 
 export function forStatementFrom(input: ForStatementFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return forStatement({
-    initializer: _resolveOne(f.initializer, [], ["lexical_declaration","variable_declaration","_expressions"]),
-    condition: _resolveOne(f.condition, [], []),
-    increment: _resolveOne(f.increment, [], ["_expressions"]),
-    body: _resolveOne(f.body, [], ["statement"]),
-    children: input?.children ?? [],
+    initializer: _resolveOne<NonNullable<ConfigOf<ForStatement>['initializer']>>(input.initializer, [], ["lexical_declaration","variable_declaration","_expressions"]),
+    condition: _resolveOne<NonNullable<ConfigOf<ForStatement>['condition']>>(input.condition, [], []),
+    increment: _resolveOne<NonNullable<ConfigOf<ForStatement>['increment']>>(input.increment, [], ["_expressions"]),
+    body: _resolveOne<NonNullable<ConfigOf<ForStatement>['body']>>(input.body, [], ["statement"]),
+    children: input.children ?? [],
   });
 }
 
 export function forInStatementFrom(input: ForInStatementFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return forInStatement({
-    body: _resolveOne(f.body, [], ["statement"]),
-    children: input?.children ?? [],
+    body: _resolveOne<NonNullable<ConfigOf<ForInStatement>['body']>>(input.body, [], ["statement"]),
+    children: input.children ?? [],
   });
 }
 
 export function whileStatementFrom(input: WhileStatementFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return whileStatement({
-    condition: _resolveOne(f.condition, [], ["parenthesized_expression"]),
-    body: _resolveOne(f.body, [], ["statement"]),
-    children: input?.children ?? [],
+    condition: _resolveOne<NonNullable<ConfigOf<WhileStatement>['condition']>>(input.condition, [], ["parenthesized_expression"]),
+    body: _resolveOne<NonNullable<ConfigOf<WhileStatement>['body']>>(input.body, [], ["statement"]),
+    children: input.children ?? [],
   });
 }
 
 export function doStatementFrom(input: DoStatementFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return doStatement({
-    body: _resolveOne(f.body, [], ["statement"]),
-    condition: _resolveOne(f.condition, [], ["parenthesized_expression"]),
-    children: input?.children ?? [],
+    body: _resolveOne<NonNullable<ConfigOf<DoStatement>['body']>>(input.body, [], ["statement"]),
+    condition: _resolveOne<NonNullable<ConfigOf<DoStatement>['condition']>>(input.condition, [], ["parenthesized_expression"]),
+    children: input.children ?? [],
   });
 }
 
 export function tryStatementFrom(input: TryStatementFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return tryStatement({
-    body: _resolveOne(f.body, [], ["statement_block"]),
-    handler: _resolveOne(f.handler, [], ["catch_clause"]),
-    finalizer: _resolveOne(f.finalizer, [], ["finally_clause"]),
-    children: input?.children ?? [],
+    body: _resolveOne<NonNullable<ConfigOf<TryStatement>['body']>>(input.body, [], ["statement_block"]),
+    handler: _resolveOne<NonNullable<ConfigOf<TryStatement>['handler']>>(input.handler, [], ["catch_clause"]),
+    finalizer: _resolveOne<NonNullable<ConfigOf<TryStatement>['finalizer']>>(input.finalizer, [], ["finally_clause"]),
+    children: input.children ?? [],
   });
 }
 
 export function withStatementFrom(input: WithStatementFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return withStatement({
-    object: _resolveOne(f.object, [], ["parenthesized_expression"]),
-    body: _resolveOne(f.body, [], ["statement"]),
-    children: input?.children ?? [],
+    object: _resolveOne<NonNullable<ConfigOf<WithStatement>['object']>>(input.object, [], ["parenthesized_expression"]),
+    body: _resolveOne<NonNullable<ConfigOf<WithStatement>['body']>>(input.body, [], ["statement"]),
+    children: input.children ?? [],
   });
 }
 
 export function breakStatementFrom(input: BreakStatementFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return breakStatement({
-    label: _resolveOne(f.label, ["identifier"], []),
-    children: input?.children ?? [],
+    label: _resolveOne<NonNullable<ConfigOf<BreakStatement>['label']>>(input.label, ["identifier"], []),
+    children: input.children ?? [],
   });
 }
 
 export function continueStatementFrom(input: ContinueStatementFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return continueStatement({
-    label: _resolveOne(f.label, ["identifier"], []),
-    children: input?.children ?? [],
+    label: _resolveOne<NonNullable<ConfigOf<ContinueStatement>['label']>>(input.label, ["identifier"], []),
+    children: input.children ?? [],
   });
 }
 
@@ -511,11 +462,10 @@ export function throwStatementFrom(...input: unknown[]) {
 }
 
 export function labeledStatementFrom(input: LabeledStatementFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return labeledStatement({
-    label: _resolveOne(f.label, ["identifier","_reserved_identifier"], []),
-    body: _resolveOne(f.body, [], ["statement"]),
-    children: input?.children ?? [],
+    label: _resolveOne<NonNullable<ConfigOf<LabeledStatement>['label']>>(input.label, ["identifier","_reserved_identifier"], []),
+    body: _resolveOne<NonNullable<ConfigOf<LabeledStatement>['body']>>(input.body, [], ["statement"]),
+    children: input.children ?? [],
   });
 }
 
@@ -527,37 +477,33 @@ export function switchBodyFrom(...input: unknown[]) {
 }
 
 export function switchCaseFrom(input: SwitchCaseFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return switchCase({
-    value: _resolveOne(f.value, [], ["_expressions"]),
-    body: _resolveOne(f.body, [], []),
-    children: input?.children ?? [],
+    value: _resolveOne<NonNullable<ConfigOf<SwitchCase>['value']>>(input.value, [], ["_expressions"]),
+    body: _resolveOne<NonNullable<ConfigOf<SwitchCase>['body']>>(input.body, [], []),
+    children: input.children ?? [],
   });
 }
 
 export function switchDefaultFrom(input: SwitchDefaultFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return switchDefault({
-    body: _resolveOne(f.body, [], []),
-    children: input?.children ?? [],
+    body: _resolveOne<NonNullable<ConfigOf<SwitchDefault>['body']>>(input.body, [], []),
+    children: input.children ?? [],
   });
 }
 
 export function catchClauseFrom(input: CatchClauseFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return catchClause({
-    parameter: _resolveOne(f.parameter, ["identifier"], ["_destructuring_pattern"]),
-    type: _resolveOne(f.type, [], ["type_annotation"]),
-    body: _resolveOne(f.body, [], ["statement_block"]),
-    children: input?.children ?? [],
+    parameter: _resolveOne<NonNullable<ConfigOf<CatchClause>['parameter']>>(input.parameter, ["identifier"], ["_destructuring_pattern"]),
+    type: _resolveOne<NonNullable<ConfigOf<CatchClause>['type']>>(input.type, [], ["type_annotation"]),
+    body: _resolveOne<NonNullable<ConfigOf<CatchClause>['body']>>(input.body, [], ["statement_block"]),
+    children: input.children ?? [],
   });
 }
 
 export function finallyClauseFrom(input: FinallyClauseFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return finallyClause({
-    body: _resolveOne(f.body, [], ["statement_block"]),
-    children: input?.children ?? [],
+    body: _resolveOne<NonNullable<ConfigOf<FinallyClause>['body']>>(input.body, [], ["statement_block"]),
+    children: input.children ?? [],
   });
 }
 
@@ -565,16 +511,13 @@ export function parenthesizedExpressionFrom(input?: ParenthesizedExpressionFromI
   return parenthesizedExpression(input);
 }
 
-export function parenthesizedExpressionExpressionFrom(input?: unknown) {
-  if (isNodeData(input)) return input;
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
+export function parenthesizedExpressionExpressionFrom(input?: ConfigOf<ParenthesizedExpressionExpression>) {
   return parenthesizedExpressionExpression({
-    type: _resolveOne(f.type, [], ["type_annotation"]),
+    type: _resolveOne<NonNullable<ConfigOf<ParenthesizedExpressionExpression>['type']>>(input.type, [], ["type_annotation"]),
   });
 }
 
-export function parenthesizedExpressionSequenceExpressionFrom(input?: unknown) {
-  if (isNodeData(input)) return input;
+export function parenthesizedExpressionSequenceExpressionFrom(input?: ConfigOf<ParenthesizedExpressionSequenceExpression>) {
   return parenthesizedExpressionSequenceExpression(input);
 }
 
@@ -593,10 +536,9 @@ export function primaryExpressionFrom(...input: unknown[]) {
 }
 
 export function yieldExpressionFrom(input: YieldExpressionFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return yieldExpression({
-    expression: _resolveOne(f.expression, [], ["expression"]),
-    children: input?.children ?? [],
+    expression: _resolveOne<NonNullable<ConfigOf<YieldExpression>['expression']>>(input.expression, [], ["expression"]),
+    children: input.children ?? [],
   });
 }
 
@@ -615,20 +557,18 @@ export function objectPatternFrom(...input: unknown[]) {
 }
 
 export function assignmentPatternFrom(input: AssignmentPatternFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return assignmentPattern({
-    left: _resolveOne(f.left, [], ["pattern"]),
-    right: _resolveOne(f.right, [], ["expression"]),
-    children: input?.children ?? [],
+    left: _resolveOne<NonNullable<ConfigOf<AssignmentPattern>['left']>>(input.left, [], ["pattern"]),
+    right: _resolveOne<NonNullable<ConfigOf<AssignmentPattern>['right']>>(input.right, [], ["expression"]),
+    children: input.children ?? [],
   });
 }
 
 export function objectAssignmentPatternFrom(input: ObjectAssignmentPatternFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return objectAssignmentPattern({
-    left: _resolveOne(f.left, ["_reserved_identifier","identifier"], ["_destructuring_pattern"]),
-    right: _resolveOne(f.right, [], ["expression"]),
-    children: input?.children ?? [],
+    left: _resolveOne<NonNullable<ConfigOf<ObjectAssignmentPattern>['left']>>(input.left, ["_reserved_identifier","identifier"], ["_destructuring_pattern"]),
+    right: _resolveOne<NonNullable<ConfigOf<ObjectAssignmentPattern>['right']>>(input.right, [], ["expression"]),
+    children: input.children ?? [],
   });
 }
 
@@ -647,11 +587,10 @@ export function arrayPatternFrom(...input: unknown[]) {
 }
 
 export function jsxElementFrom(input: JsxElementFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return jsxElement({
-    openTag: _resolveOne(f.open_tag, [], ["jsx_opening_element"]),
-    closeTag: _resolveOne(f.close_tag, [], ["jsx_closing_element"]),
-    children: input?.children ?? [],
+    openTag: _resolveOne<NonNullable<ConfigOf<JsxElement>['openTag']>>(input.openTag, [], ["jsx_opening_element"]),
+    closeTag: _resolveOne<NonNullable<ConfigOf<JsxElement>['closeTag']>>(input.closeTag, [], ["jsx_closing_element"]),
+    children: input.children ?? [],
   });
 }
 
@@ -680,11 +619,10 @@ export function jsxIdentifierFrom(input: string | JsxIdentifier) {
 }
 
 export function nestedIdentifierFrom(input: NestedIdentifierFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return nestedIdentifier({
-    object: _resolveOne(f.object, ["identifier"], ["nested_identifier"]),
-    property: _resolveOne(f.property, ["identifier"], []),
-    children: input?.children ?? [],
+    object: _resolveOne<NonNullable<ConfigOf<NestedIdentifier>['object']>>(input.object, ["identifier"], ["nested_identifier"]),
+    property: _resolveOne<NonNullable<ConfigOf<NestedIdentifier>['property']>>(input.property, ["identifier"], []),
+    children: input.children ?? [],
   });
 }
 
@@ -696,10 +634,9 @@ export function jsxNamespaceNameFrom(...input: unknown[]) {
 }
 
 export function jsxClosingElementFrom(input?: JsxClosingElementFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return jsxClosingElement({
-    name: _resolveOne(f.name, [], ["_jsx_element_name"]),
-    children: input?.children ?? [],
+    name: _resolveOne<NonNullable<ConfigOf<JsxClosingElement>['name']>>(input.name, [], ["_jsx_element_name"]),
+    children: input.children ?? [],
   });
 }
 
@@ -735,25 +672,23 @@ export function unescapedSingleJsxStringFragmentFrom(input: string | UnescapedSi
 }
 
 export function class_From(input: ClassFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return class_({
-    classHeritage: _resolveOne(f.class_heritage, [], []),
-    name: _resolveOne(f.name, [], ["_type_identifier"]),
-    typeParameters: _resolveOne(f.type_parameters, [], ["type_parameters"]),
-    body: _resolveOne(f.body, [], ["class_body"]),
-    children: input?.children ?? [],
+    classHeritage: _resolveOne<NonNullable<ConfigOf<Class>['classHeritage']>>(input.classHeritage, [], []),
+    name: _resolveOne<NonNullable<ConfigOf<Class>['name']>>(input.name, [], ["_type_identifier"]),
+    typeParameters: _resolveOne<NonNullable<ConfigOf<Class>['typeParameters']>>(input.typeParameters, [], ["type_parameters"]),
+    body: _resolveOne<NonNullable<ConfigOf<Class>['body']>>(input.body, [], ["class_body"]),
+    children: input.children ?? [],
   });
 }
 
 export function classDeclarationFrom(input: ClassDeclarationFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return classDeclaration({
-    classHeritage: _resolveOne(f.class_heritage, [], []),
-    name: _resolveOne(f.name, [], ["_type_identifier"]),
-    typeParameters: _resolveOne(f.type_parameters, [], ["type_parameters"]),
-    automaticSemicolon: _resolveOne(f.automatic_semicolon, [], ["class_heritage"]),
-    body: _resolveOne(f.body, [], ["class_body"]),
-    children: input?.children ?? [],
+    classHeritage: _resolveOne<NonNullable<ConfigOf<ClassDeclaration>['classHeritage']>>(input.classHeritage, [], []),
+    name: _resolveOne<NonNullable<ConfigOf<ClassDeclaration>['name']>>(input.name, [], ["_type_identifier"]),
+    typeParameters: _resolveOne<NonNullable<ConfigOf<ClassDeclaration>['typeParameters']>>(input.typeParameters, [], ["type_parameters"]),
+    automaticSemicolon: _resolveOne<NonNullable<ConfigOf<ClassDeclaration>['automaticSemicolon']>>(input.automaticSemicolon, [], ["class_heritage"]),
+    body: _resolveOne<NonNullable<ConfigOf<ClassDeclaration>['body']>>(input.body, [], ["class_body"]),
+    children: input.children ?? [],
   });
 }
 
@@ -765,38 +700,34 @@ export function classHeritageFrom(...input: unknown[]) {
 }
 
 export function functionExpressionFrom(input: FunctionExpressionFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return functionExpression({
-    name: _resolveOne(f.name, ["identifier"], []),
-    body: _resolveOne(f.body, [], ["statement_block"]),
-    children: input?.children ?? [],
+    name: _resolveOne<NonNullable<ConfigOf<FunctionExpression>['name']>>(input.name, ["identifier"], []),
+    body: _resolveOne<NonNullable<ConfigOf<FunctionExpression>['body']>>(input.body, [], ["statement_block"]),
+    children: input.children ?? [],
   });
 }
 
 export function functionDeclarationFrom(input: FunctionDeclarationFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return functionDeclaration({
-    name: _resolveOne(f.name, ["identifier"], []),
-    body: _resolveOne(f.body, [], ["statement_block"]),
-    children: input?.children ?? [],
+    name: _resolveOne<NonNullable<ConfigOf<FunctionDeclaration>['name']>>(input.name, ["identifier"], []),
+    body: _resolveOne<NonNullable<ConfigOf<FunctionDeclaration>['body']>>(input.body, [], ["statement_block"]),
+    children: input.children ?? [],
   });
 }
 
 export function generatorFunctionFrom(input: GeneratorFunctionFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return generatorFunction({
-    name: _resolveOne(f.name, ["identifier"], []),
-    body: _resolveOne(f.body, [], ["statement_block"]),
-    children: input?.children ?? [],
+    name: _resolveOne<NonNullable<ConfigOf<GeneratorFunction>['name']>>(input.name, ["identifier"], []),
+    body: _resolveOne<NonNullable<ConfigOf<GeneratorFunction>['body']>>(input.body, [], ["statement_block"]),
+    children: input.children ?? [],
   });
 }
 
 export function generatorFunctionDeclarationFrom(input: GeneratorFunctionDeclarationFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return generatorFunctionDeclaration({
-    name: _resolveOne(f.name, ["identifier"], []),
-    body: _resolveOne(f.body, [], ["statement_block"]),
-    children: input?.children ?? [],
+    name: _resolveOne<NonNullable<ConfigOf<GeneratorFunctionDeclaration>['name']>>(input.name, ["identifier"], []),
+    body: _resolveOne<NonNullable<ConfigOf<GeneratorFunctionDeclaration>['body']>>(input.body, [], ["statement_block"]),
+    children: input.children ?? [],
   });
 }
 
@@ -804,16 +735,13 @@ export function arrowFunctionFrom(input?: ArrowFunctionFromInput) {
   return arrowFunction(input);
 }
 
-export function arrowFunctionParameterFrom(input?: unknown) {
-  if (isNodeData(input)) return input;
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
+export function arrowFunctionParameterFrom(input?: ConfigOf<ArrowFunctionParameter>) {
   return arrowFunctionParameter({
-    parameter: _resolveOne(f.parameter, ["_reserved_identifier","identifier"], []),
+    parameter: _resolveOne<NonNullable<ConfigOf<ArrowFunctionParameter>['parameter']>>(input.parameter, ["_reserved_identifier","identifier"], []),
   });
 }
 
-export function arrowFunctionUCallSignatureFrom(input?: unknown) {
-  if (isNodeData(input)) return input;
+export function arrowFunctionUCallSignatureFrom(input?: ConfigOf<ArrowFunctionUCallSignature>) {
   return arrowFunctionUCallSignature(input);
 }
 
@@ -821,70 +749,60 @@ export function callExpressionFrom(input?: CallExpressionFromInput) {
   return callExpression(input);
 }
 
-export function callExpressionFunctionFrom(input?: unknown) {
-  if (isNodeData(input)) return input;
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
+export function callExpressionFunctionFrom(input?: ConfigOf<CallExpressionFunction>) {
   return callExpressionFunction({
-    function: _resolveOne(f.function, ["import"], ["expression"]),
-    typeArguments: _resolveOne(f.type_arguments, [], ["type_arguments"]),
-    arguments: _resolveOne(f.arguments, [], ["arguments"]),
+    function: _resolveOne<NonNullable<ConfigOf<CallExpressionFunction>['function']>>(input.function, ["import"], ["expression"]),
+    typeArguments: _resolveOne<NonNullable<ConfigOf<CallExpressionFunction>['typeArguments']>>(input.typeArguments, [], ["type_arguments"]),
+    arguments: _resolveOne<NonNullable<ConfigOf<CallExpressionFunction>['arguments']>>(input.arguments, [], ["arguments"]),
   });
 }
 
-export function callExpressionFunction2From(input?: unknown) {
-  if (isNodeData(input)) return input;
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
+export function callExpressionFunction2From(input?: ConfigOf<CallExpressionFunction2>) {
   return callExpressionFunction2({
-    function: _resolveOne(f.function, [], ["primary_expression","new_expression"]),
-    arguments: _resolveOne(f.arguments, [], ["template_string"]),
+    function: _resolveOne<NonNullable<ConfigOf<CallExpressionFunction2>['function']>>(input.function, [], ["primary_expression","new_expression"]),
+    arguments: _resolveOne<NonNullable<ConfigOf<CallExpressionFunction2>['arguments']>>(input.arguments, [], ["template_string"]),
   });
 }
 
-export function callExpressionTokQDotFrom(input?: unknown) {
-  if (isNodeData(input)) return input;
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
+export function callExpressionTokQDotFrom(input?: ConfigOf<CallExpressionTokQDot>) {
   return callExpressionTokQDot({
-    function: _resolveOne(f.function, [], ["primary_expression"]),
-    typeArguments: _resolveOne(f.type_arguments, [], ["type_arguments"]),
-    arguments: _resolveOne(f.arguments, [], ["arguments"]),
+    function: _resolveOne<NonNullable<ConfigOf<CallExpressionTokQDot>['function']>>(input.function, [], ["primary_expression"]),
+    typeArguments: _resolveOne<NonNullable<ConfigOf<CallExpressionTokQDot>['typeArguments']>>(input.typeArguments, [], ["type_arguments"]),
+    arguments: _resolveOne<NonNullable<ConfigOf<CallExpressionTokQDot>['arguments']>>(input.arguments, [], ["arguments"]),
   });
 }
 
 export function newExpressionFrom(input: NewExpressionFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return newExpression({
-    constructor: _resolveOne(f.constructor, [], ["primary_expression"]),
-    typeArguments: _resolveOne(f.type_arguments, [], ["type_arguments"]),
-    arguments: _resolveOne(f.arguments, [], ["arguments"]),
-    children: input?.children ?? [],
+    constructor: _resolveOne<NonNullable<ConfigOf<NewExpression>['constructor']>>(input.constructor, [], ["primary_expression"]),
+    typeArguments: _resolveOne<NonNullable<ConfigOf<NewExpression>['typeArguments']>>(input.typeArguments, [], ["type_arguments"]),
+    arguments: _resolveOne<NonNullable<ConfigOf<NewExpression>['arguments']>>(input.arguments, [], ["arguments"]),
+    children: input.children ?? [],
   });
 }
 
 export function awaitExpressionFrom(input: AwaitExpressionFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return awaitExpression({
-    expression: _resolveOne(f.expression, [], ["expression"]),
-    children: input?.children ?? [],
+    expression: _resolveOne<NonNullable<ConfigOf<AwaitExpression>['expression']>>(input.expression, [], ["expression"]),
+    children: input.children ?? [],
   });
 }
 
 export function memberExpressionFrom(input: MemberExpressionFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return memberExpression({
-    object: _resolveOne(f.object, ["import"], ["expression","primary_expression"]),
-    optionalChain: _resolveOne(f.optional_chain, [], []),
-    property: _resolveOne(f.property, ["private_property_identifier","identifier"], []),
-    children: input?.children ?? [],
+    object: _resolveOne<NonNullable<ConfigOf<MemberExpression>['object']>>(input.object, ["import"], ["expression","primary_expression"]),
+    optionalChain: _resolveOne<NonNullable<ConfigOf<MemberExpression>['optionalChain']>>(input.optionalChain, [], []),
+    property: _resolveOne<NonNullable<ConfigOf<MemberExpression>['property']>>(input.property, ["private_property_identifier","identifier"], []),
+    children: input.children ?? [],
   });
 }
 
 export function subscriptExpressionFrom(input: SubscriptExpressionFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return subscriptExpression({
-    object: _resolveOne(f.object, [], ["expression","primary_expression"]),
-    optionalChain: _resolveOne(f.optional_chain, [], []),
-    index: _resolveOne(f.index, [], ["_expressions"]),
-    children: input?.children ?? [],
+    object: _resolveOne<NonNullable<ConfigOf<SubscriptExpression>['object']>>(input.object, [], ["expression","primary_expression"]),
+    optionalChain: _resolveOne<NonNullable<ConfigOf<SubscriptExpression>['optionalChain']>>(input.optionalChain, [], []),
+    index: _resolveOne<NonNullable<ConfigOf<SubscriptExpression>['index']>>(input.index, [], ["_expressions"]),
+    children: input.children ?? [],
   });
 }
 
@@ -896,11 +814,10 @@ export function hiddenLhsExpressionFrom(...input: unknown[]) {
 }
 
 export function assignmentExpressionFrom(input: AssignmentExpressionFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return assignmentExpression({
-    left: _resolveOne(f.left, [], ["parenthesized_expression","_lhs_expression"]),
-    right: _resolveOne(f.right, [], ["expression"]),
-    children: input?.children ?? [],
+    left: _resolveOne<NonNullable<ConfigOf<AssignmentExpression>['left']>>(input.left, [], ["parenthesized_expression","_lhs_expression"]),
+    right: _resolveOne<NonNullable<ConfigOf<AssignmentExpression>['right']>>(input.right, [], ["expression"]),
+    children: input.children ?? [],
   });
 }
 
@@ -912,58 +829,52 @@ export function hiddenAugmentedAssignmentLhsFrom(...input: unknown[]) {
 }
 
 export function augmentedAssignmentExpressionFrom(input: AugmentedAssignmentExpressionFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return augmentedAssignmentExpression({
-    left: _resolveOne(f.left, [], ["_augmented_assignment_lhs"]),
-    operator: _resolveOne(f.operator, [], []),
-    right: _resolveOne(f.right, [], ["expression"]),
-    children: input?.children ?? [],
+    left: _resolveOne<NonNullable<ConfigOf<AugmentedAssignmentExpression>['left']>>(input.left, [], ["_augmented_assignment_lhs"]),
+    operator: _resolveOne<NonNullable<ConfigOf<AugmentedAssignmentExpression>['operator']>>(input.operator, [], []),
+    right: _resolveOne<NonNullable<ConfigOf<AugmentedAssignmentExpression>['right']>>(input.right, [], ["expression"]),
+    children: input.children ?? [],
   });
 }
 
 export function spreadElementFrom(input: SpreadElementFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return spreadElement({
-    expression: _resolveOne(f.expression, [], ["expression"]),
-    children: input?.children ?? [],
+    expression: _resolveOne<NonNullable<ConfigOf<SpreadElement>['expression']>>(input.expression, [], ["expression"]),
+    children: input.children ?? [],
   });
 }
 
 export function ternaryExpressionFrom(input: TernaryExpressionFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return ternaryExpression({
-    condition: _resolveOne(f.condition, [], ["expression"]),
-    consequence: _resolveOne(f.consequence, [], ["expression"]),
-    alternative: _resolveOne(f.alternative, [], ["expression"]),
-    children: input?.children ?? [],
+    condition: _resolveOne<NonNullable<ConfigOf<TernaryExpression>['condition']>>(input.condition, [], ["expression"]),
+    consequence: _resolveOne<NonNullable<ConfigOf<TernaryExpression>['consequence']>>(input.consequence, [], ["expression"]),
+    alternative: _resolveOne<NonNullable<ConfigOf<TernaryExpression>['alternative']>>(input.alternative, [], ["expression"]),
+    children: input.children ?? [],
   });
 }
 
 export function binaryExpressionFrom(input: BinaryExpressionFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return binaryExpression({
-    left: _resolveOne(f.left, ["private_property_identifier"], ["expression"]),
-    operator: _resolveOne(f.operator, [], []),
-    right: _resolveOne(f.right, [], ["expression"]),
-    children: input?.children ?? [],
+    left: _resolveOne<NonNullable<ConfigOf<BinaryExpression>['left']>>(input.left, ["private_property_identifier"], ["expression"]),
+    operator: _resolveOne<NonNullable<ConfigOf<BinaryExpression>['operator']>>(input.operator, [], []),
+    right: _resolveOne<NonNullable<ConfigOf<BinaryExpression>['right']>>(input.right, [], ["expression"]),
+    children: input.children ?? [],
   });
 }
 
 export function unaryExpressionFrom(input: UnaryExpressionFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return unaryExpression({
-    operator: _resolveOne(f.operator, ["typeof","void","delete"], []),
-    argument: _resolveOne(f.argument, [], ["expression"]),
-    children: input?.children ?? [],
+    operator: _resolveOne<NonNullable<ConfigOf<UnaryExpression>['operator']>>(input.operator, ["typeof","void","delete"], []),
+    argument: _resolveOne<NonNullable<ConfigOf<UnaryExpression>['argument']>>(input.argument, [], ["expression"]),
+    children: input.children ?? [],
   });
 }
 
 export function updateExpressionFrom(input: UpdateExpressionFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return updateExpression({
-    argument: _resolveOne(f.argument, [], ["expression"]),
-    operator: _resolveOne(f.operator, [], []),
-    children: input?.children ?? [],
+    argument: _resolveOne<NonNullable<ConfigOf<UpdateExpression>['argument']>>(input.argument, [], ["expression"]),
+    operator: _resolveOne<NonNullable<ConfigOf<UpdateExpression>['operator']>>(input.operator, [], []),
+    children: input.children ?? [],
   });
 }
 
@@ -1016,11 +927,10 @@ export function templateSubstitutionFrom(...input: unknown[]) {
 }
 
 export function regexFrom(input: RegexFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return regex({
-    pattern: _resolveOne(f.pattern, ["regex_pattern"], []),
-    flags: _resolveOne(f.flags, ["regex_flags"], []),
-    children: input?.children ?? [],
+    pattern: _resolveOne<NonNullable<ConfigOf<Regex>['pattern']>>(input.pattern, ["regex_pattern"], []),
+    flags: _resolveOne<NonNullable<ConfigOf<Regex>['flags']>>(input.flags, ["regex_flags"], []),
+    children: input.children ?? [],
   });
 }
 
@@ -1099,38 +1009,34 @@ export function decoratorFrom(...input: unknown[]) {
 }
 
 export function decoratorMemberExpressionFrom(input: DecoratorMemberExpressionFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return decoratorMemberExpression({
-    object: _resolveOne(f.object, ["identifier"], ["decorator_member_expression"]),
-    property: _resolveOne(f.property, ["identifier"], []),
-    children: input?.children ?? [],
+    object: _resolveOne<NonNullable<ConfigOf<DecoratorMemberExpression>['object']>>(input.object, ["identifier"], ["decorator_member_expression"]),
+    property: _resolveOne<NonNullable<ConfigOf<DecoratorMemberExpression>['property']>>(input.property, ["identifier"], []),
+    children: input.children ?? [],
   });
 }
 
 export function decoratorCallExpressionFrom(input: DecoratorCallExpressionFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return decoratorCallExpression({
-    function: _resolveOne(f.function, ["identifier"], ["decorator_member_expression"]),
-    typeArguments: _resolveOne(f.type_arguments, [], ["type_arguments"]),
-    arguments: _resolveOne(f.arguments, [], ["arguments"]),
-    children: input?.children ?? [],
+    function: _resolveOne<NonNullable<ConfigOf<DecoratorCallExpression>['function']>>(input.function, ["identifier"], ["decorator_member_expression"]),
+    typeArguments: _resolveOne<NonNullable<ConfigOf<DecoratorCallExpression>['typeArguments']>>(input.typeArguments, [], ["type_arguments"]),
+    arguments: _resolveOne<NonNullable<ConfigOf<DecoratorCallExpression>['arguments']>>(input.arguments, [], ["arguments"]),
+    children: input.children ?? [],
   });
 }
 
 export function classBodyFrom(input: ClassBodyFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return classBody({
-    decorator: _resolveMany(f.decorator, [], ["decorator"]),
-    children: input?.children ?? [],
+    decorator: _resolveMany<NonNullable<ConfigOf<ClassBody>['decorator']>>(input.decorator, [], ["decorator"]),
+    children: input.children ?? [],
   });
 }
 
 export function fieldDefinitionFrom(input: FieldDefinitionFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return fieldDefinition({
-    decorator: _resolveMany(f.decorator, [], ["decorator"]),
-    property: _resolveOne(f.property, [], ["_property_name"]),
-    children: input?.children ?? [],
+    decorator: _resolveMany<NonNullable<ConfigOf<FieldDefinition>['decorator']>>(input.decorator, [], ["decorator"]),
+    property: _resolveOne<NonNullable<ConfigOf<FieldDefinition>['property']>>(input.property, [], ["_property_name"]),
+    children: input.children ?? [],
   });
 }
 
@@ -1142,10 +1048,9 @@ export function formalParametersFrom(...input: unknown[]) {
 }
 
 export function classStaticBlockFrom(input: ClassStaticBlockFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return classStaticBlock({
-    body: _resolveOne(f.body, [], ["statement_block"]),
-    children: input?.children ?? [],
+    body: _resolveOne<NonNullable<ConfigOf<ClassStaticBlock>['body']>>(input.body, [], ["statement_block"]),
+    children: input.children ?? [],
   });
 }
 
@@ -1164,31 +1069,28 @@ export function restPatternFrom(...input: unknown[]) {
 }
 
 export function methodDefinitionFrom(input: MethodDefinitionFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return methodDefinition({
-    accessibilityModifier: _resolveOne(f.accessibility_modifier, ["accessibility_modifier"], []),
-    overrideModifier: _resolveOne(f.override_modifier, [], []),
-    name: _resolveOne(f.name, [], ["_property_name"]),
-    body: _resolveOne(f.body, [], ["statement_block"]),
-    children: input?.children ?? [],
+    accessibilityModifier: _resolveOne<NonNullable<ConfigOf<MethodDefinition>['accessibilityModifier']>>(input.accessibilityModifier, ["accessibility_modifier"], []),
+    overrideModifier: _resolveOne<NonNullable<ConfigOf<MethodDefinition>['overrideModifier']>>(input.overrideModifier, [], []),
+    name: _resolveOne<NonNullable<ConfigOf<MethodDefinition>['name']>>(input.name, [], ["_property_name"]),
+    body: _resolveOne<NonNullable<ConfigOf<MethodDefinition>['body']>>(input.body, [], ["statement_block"]),
+    children: input.children ?? [],
   });
 }
 
 export function pairFrom(input: PairFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return pair({
-    key: _resolveOne(f.key, [], ["_property_name"]),
-    value: _resolveOne(f.value, [], ["expression"]),
-    children: input?.children ?? [],
+    key: _resolveOne<NonNullable<ConfigOf<Pair>['key']>>(input.key, [], ["_property_name"]),
+    value: _resolveOne<NonNullable<ConfigOf<Pair>['value']>>(input.value, [], ["expression"]),
+    children: input.children ?? [],
   });
 }
 
 export function pairPatternFrom(input: PairPatternFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return pairPattern({
-    key: _resolveOne(f.key, [], ["_property_name"]),
-    value: _resolveOne(f.value, [], ["pattern","assignment_pattern"]),
-    children: input?.children ?? [],
+    key: _resolveOne<NonNullable<ConfigOf<PairPattern>['key']>>(input.key, [], ["_property_name"]),
+    value: _resolveOne<NonNullable<ConfigOf<PairPattern>['value']>>(input.value, [], ["pattern","assignment_pattern"]),
+    children: input.children ?? [],
   });
 }
 
@@ -1200,10 +1102,9 @@ export function hiddenPropertyNameFrom(...input: unknown[]) {
 }
 
 export function computedPropertyNameFrom(input: ComputedPropertyNameFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return computedPropertyName({
-    expression: _resolveOne(f.expression, [], ["expression"]),
-    children: input?.children ?? [],
+    expression: _resolveOne<NonNullable<ConfigOf<ComputedPropertyName>['expression']>>(input.expression, [], ["expression"]),
+    children: input.children ?? [],
   });
 }
 
@@ -1220,24 +1121,22 @@ export function hiddenSemicolonFrom(...input: unknown[]) {
 }
 
 export function publicFieldDefinitionFrom(input: PublicFieldDefinitionFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return publicFieldDefinition({
-    accessibilityModifier: _resolveOne(f.accessibility_modifier, [], []),
-    overrideModifier: _resolveOne(f.override_modifier, [], []),
-    initializer: _resolveOne(f.initializer, [], []),
-    name: _resolveOne(f.name, [], ["_property_name"]),
-    type: _resolveOne(f.type, [], ["type_annotation"]),
-    children: input?.children ?? [],
+    accessibilityModifier: _resolveOne<NonNullable<ConfigOf<PublicFieldDefinition>['accessibilityModifier']>>(input.accessibilityModifier, [], []),
+    overrideModifier: _resolveOne<NonNullable<ConfigOf<PublicFieldDefinition>['overrideModifier']>>(input.overrideModifier, [], []),
+    initializer: _resolveOne<NonNullable<ConfigOf<PublicFieldDefinition>['initializer']>>(input.initializer, [], []),
+    name: _resolveOne<NonNullable<ConfigOf<PublicFieldDefinition>['name']>>(input.name, [], ["_property_name"]),
+    type: _resolveOne<NonNullable<ConfigOf<PublicFieldDefinition>['type']>>(input.type, [], ["type_annotation"]),
+    children: input.children ?? [],
   });
 }
 
 export function hiddenJsxStartOpeningElementFrom(input?: HiddenJsxStartOpeningElementFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return hiddenJsxStartOpeningElement({
-    name: _resolveOne(f.name, ["identifier"], ["_jsx_identifier","jsx_namespace_name","nested_identifier"]),
-    typeArguments: _resolveOne(f.type_arguments, [], ["type_arguments"]),
-    attribute: _resolveMany(f.attribute, [], ["_jsx_attribute"]),
-    children: input?.children ?? [],
+    name: _resolveOne<NonNullable<ConfigOf<HiddenJsxStartOpeningElement>['name']>>(input.name, ["identifier"], ["_jsx_identifier","jsx_namespace_name","nested_identifier"]),
+    typeArguments: _resolveOne<NonNullable<ConfigOf<HiddenJsxStartOpeningElement>['typeArguments']>>(input.typeArguments, [], ["type_arguments"]),
+    attribute: _resolveMany<NonNullable<ConfigOf<HiddenJsxStartOpeningElement>['attribute']>>(input.attribute, [], ["_jsx_attribute"]),
+    children: input.children ?? [],
   });
 }
 
@@ -1249,38 +1148,34 @@ export function hiddenImportIdentifierFrom(...input: unknown[]) {
 }
 
 export function nonNullExpressionFrom(input: NonNullExpressionFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return nonNullExpression({
-    expression: _resolveOne(f.expression, [], ["expression"]),
-    children: input?.children ?? [],
+    expression: _resolveOne<NonNullable<ConfigOf<NonNullExpression>['expression']>>(input.expression, [], ["expression"]),
+    children: input.children ?? [],
   });
 }
 
 export function methodSignatureFrom(input: MethodSignatureFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return methodSignature({
-    accessibilityModifier: _resolveOne(f.accessibility_modifier, ["accessibility_modifier"], []),
-    overrideModifier: _resolveOne(f.override_modifier, [], []),
-    name: _resolveOne(f.name, [], ["_property_name"]),
-    children: input?.children ?? [],
+    accessibilityModifier: _resolveOne<NonNullable<ConfigOf<MethodSignature>['accessibilityModifier']>>(input.accessibilityModifier, ["accessibility_modifier"], []),
+    overrideModifier: _resolveOne<NonNullable<ConfigOf<MethodSignature>['overrideModifier']>>(input.overrideModifier, [], []),
+    name: _resolveOne<NonNullable<ConfigOf<MethodSignature>['name']>>(input.name, [], ["_property_name"]),
+    children: input.children ?? [],
   });
 }
 
 export function abstractMethodSignatureFrom(input: AbstractMethodSignatureFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return abstractMethodSignature({
-    accessibilityModifier: _resolveOne(f.accessibility_modifier, ["accessibility_modifier"], []),
-    overrideModifier: _resolveOne(f.override_modifier, ["override_modifier"], []),
-    name: _resolveOne(f.name, [], ["_property_name"]),
-    children: input?.children ?? [],
+    accessibilityModifier: _resolveOne<NonNullable<ConfigOf<AbstractMethodSignature>['accessibilityModifier']>>(input.accessibilityModifier, ["accessibility_modifier"], []),
+    overrideModifier: _resolveOne<NonNullable<ConfigOf<AbstractMethodSignature>['overrideModifier']>>(input.overrideModifier, ["override_modifier"], []),
+    name: _resolveOne<NonNullable<ConfigOf<AbstractMethodSignature>['name']>>(input.name, [], ["_property_name"]),
+    children: input.children ?? [],
   });
 }
 
 export function functionSignatureFrom(input: FunctionSignatureFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return functionSignature({
-    name: _resolveOne(f.name, ["identifier"], []),
-    children: input?.children ?? [],
+    name: _resolveOne<NonNullable<ConfigOf<FunctionSignature>['name']>>(input.name, ["identifier"], []),
+    children: input.children ?? [],
   });
 }
 
@@ -1292,47 +1187,42 @@ export function decoratorParenthesizedExpressionFrom(...input: unknown[]) {
 }
 
 export function typeAssertionFrom(input: TypeAssertionFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return typeAssertion({
-    typeArguments: _resolveOne(f.type_arguments, [], ["type_arguments"]),
-    expression: _resolveOne(f.expression, [], ["expression"]),
-    children: input?.children ?? [],
+    typeArguments: _resolveOne<NonNullable<ConfigOf<TypeAssertion>['typeArguments']>>(input.typeArguments, [], ["type_arguments"]),
+    expression: _resolveOne<NonNullable<ConfigOf<TypeAssertion>['expression']>>(input.expression, [], ["expression"]),
+    children: input.children ?? [],
   });
 }
 
 export function asExpressionFrom(input: AsExpressionFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return asExpression({
-    expression: _resolveOne(f.expression, [], ["expression"]),
-    typeAnnotation: _resolveOne(f.type_annotation, [], ["type"]),
-    children: input?.children ?? [],
+    expression: _resolveOne<NonNullable<ConfigOf<AsExpression>['expression']>>(input.expression, [], ["expression"]),
+    typeAnnotation: _resolveOne<NonNullable<ConfigOf<AsExpression>['typeAnnotation']>>(input.typeAnnotation, [], ["type"]),
+    children: input.children ?? [],
   });
 }
 
 export function satisfiesExpressionFrom(input: SatisfiesExpressionFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return satisfiesExpression({
-    expression: _resolveOne(f.expression, [], ["expression"]),
-    typeAnnotation: _resolveOne(f.type_annotation, [], ["type"]),
-    children: input?.children ?? [],
+    expression: _resolveOne<NonNullable<ConfigOf<SatisfiesExpression>['expression']>>(input.expression, [], ["expression"]),
+    typeAnnotation: _resolveOne<NonNullable<ConfigOf<SatisfiesExpression>['typeAnnotation']>>(input.typeAnnotation, [], ["type"]),
+    children: input.children ?? [],
   });
 }
 
 export function instantiationExpressionFrom(input: InstantiationExpressionFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return instantiationExpression({
-    expression: _resolveOne(f.expression, [], ["expression"]),
-    typeArguments: _resolveOne(f.type_arguments, [], ["type_arguments"]),
-    children: input?.children ?? [],
+    expression: _resolveOne<NonNullable<ConfigOf<InstantiationExpression>['expression']>>(input.expression, [], ["expression"]),
+    typeArguments: _resolveOne<NonNullable<ConfigOf<InstantiationExpression>['typeArguments']>>(input.typeArguments, [], ["type_arguments"]),
+    children: input.children ?? [],
   });
 }
 
 export function importRequireClauseFrom(input: ImportRequireClauseFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return importRequireClause({
-    identifier: _resolveOne(f.identifier, ["identifier"], []),
-    source: _resolveOne(f.source, [], ["string"]),
-    children: input?.children ?? [],
+    identifier: _resolveOne<NonNullable<ConfigOf<ImportRequireClause>['identifier']>>(input.identifier, ["identifier"], []),
+    source: _resolveOne<NonNullable<ConfigOf<ImportRequireClause>['source']>>(input.source, [], ["string"]),
+    children: input.children ?? [],
   });
 }
 
@@ -1351,21 +1241,19 @@ export function implementsClauseFrom(...input: unknown[]) {
 }
 
 export function ambientDeclarationFrom(input: AmbientDeclarationFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return ambientDeclaration({
-    declaration: _resolveOne(f.declaration, [], ["declaration"]),
-    children: input?.children ?? [],
+    declaration: _resolveOne<NonNullable<ConfigOf<AmbientDeclaration>['declaration']>>(input.declaration, [], ["declaration"]),
+    children: input.children ?? [],
   });
 }
 
 export function abstractClassDeclarationFrom(input: AbstractClassDeclarationFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return abstractClassDeclaration({
-    classHeritage: _resolveOne(f.class_heritage, [], []),
-    name: _resolveOne(f.name, [], ["_type_identifier"]),
-    typeParameters: _resolveOne(f.type_parameters, [], ["type_parameters"]),
-    body: _resolveOne(f.body, [], ["class_body"]),
-    children: input?.children ?? [],
+    classHeritage: _resolveOne<NonNullable<ConfigOf<AbstractClassDeclaration>['classHeritage']>>(input.classHeritage, [], []),
+    name: _resolveOne<NonNullable<ConfigOf<AbstractClassDeclaration>['name']>>(input.name, [], ["_type_identifier"]),
+    typeParameters: _resolveOne<NonNullable<ConfigOf<AbstractClassDeclaration>['typeParameters']>>(input.typeParameters, [], ["type_parameters"]),
+    body: _resolveOne<NonNullable<ConfigOf<AbstractClassDeclaration>['body']>>(input.body, [], ["class_body"]),
+    children: input.children ?? [],
   });
 }
 
@@ -1384,75 +1272,67 @@ export function internalModuleFrom(...input: unknown[]) {
 }
 
 export function importAliasFrom(input: ImportAliasFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return importAlias({
-    name: _resolveOne(f.name, ["identifier"], []),
-    value: _resolveOne(f.value, ["identifier"], ["nested_identifier"]),
-    semicolon: _resolveOne(f.semicolon, [], ["_semicolon"]),
-    children: input?.children ?? [],
+    name: _resolveOne<NonNullable<ConfigOf<ImportAlias>['name']>>(input.name, ["identifier"], []),
+    value: _resolveOne<NonNullable<ConfigOf<ImportAlias>['value']>>(input.value, ["identifier"], ["nested_identifier"]),
+    semicolon: _resolveOne<NonNullable<ConfigOf<ImportAlias>['semicolon']>>(input.semicolon, [], ["_semicolon"]),
+    children: input.children ?? [],
   });
 }
 
 export function nestedTypeIdentifierFrom(input: NestedTypeIdentifierFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return nestedTypeIdentifier({
-    module: _resolveOne(f.module, ["identifier"], ["nested_identifier"]),
-    name: _resolveOne(f.name, [], ["_type_identifier"]),
-    children: input?.children ?? [],
+    module: _resolveOne<NonNullable<ConfigOf<NestedTypeIdentifier>['module']>>(input.module, ["identifier"], ["nested_identifier"]),
+    name: _resolveOne<NonNullable<ConfigOf<NestedTypeIdentifier>['name']>>(input.name, [], ["_type_identifier"]),
+    children: input.children ?? [],
   });
 }
 
 export function interfaceDeclarationFrom(input: InterfaceDeclarationFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return interfaceDeclaration({
-    name: _resolveOne(f.name, [], ["_type_identifier"]),
-    typeParameters: _resolveOne(f.type_parameters, [], ["type_parameters"]),
-    extendsTypeClause: _resolveOne(f.extends_type_clause, [], ["extends_type_clause"]),
-    body: _resolveOne(f.body, [], ["object_type"]),
-    children: input?.children ?? [],
+    name: _resolveOne<NonNullable<ConfigOf<InterfaceDeclaration>['name']>>(input.name, [], ["_type_identifier"]),
+    typeParameters: _resolveOne<NonNullable<ConfigOf<InterfaceDeclaration>['typeParameters']>>(input.typeParameters, [], ["type_parameters"]),
+    extendsTypeClause: _resolveOne<NonNullable<ConfigOf<InterfaceDeclaration>['extendsTypeClause']>>(input.extendsTypeClause, [], ["extends_type_clause"]),
+    body: _resolveOne<NonNullable<ConfigOf<InterfaceDeclaration>['body']>>(input.body, [], ["object_type"]),
+    children: input.children ?? [],
   });
 }
 
 export function extendsTypeClauseFrom(input: ExtendsTypeClauseFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return extendsTypeClause({
-    type: _resolveMany(f.type, [], ["_type_identifier","nested_type_identifier","generic_type"]),
-    children: input?.children ?? [],
+    type: _resolveMany<NonNullable<ConfigOf<ExtendsTypeClause>['type']>>(input.type, [], ["_type_identifier","nested_type_identifier","generic_type"]),
+    children: input.children ?? [],
   });
 }
 
 export function enumDeclarationFrom(input: EnumDeclarationFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return enumDeclaration({
-    name: _resolveOne(f.name, ["identifier"], []),
-    body: _resolveOne(f.body, [], ["enum_body"]),
-    children: input?.children ?? [],
+    name: _resolveOne<NonNullable<ConfigOf<EnumDeclaration>['name']>>(input.name, ["identifier"], []),
+    body: _resolveOne<NonNullable<ConfigOf<EnumDeclaration>['body']>>(input.body, [], ["enum_body"]),
+    children: input.children ?? [],
   });
 }
 
 export function enumBodyFrom(input: EnumBodyFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return enumBody({
-    opening: _resolveOne(f.opening, [], []),
-    children: input?.children ?? [],
+    opening: _resolveOne<NonNullable<ConfigOf<EnumBody>['opening']>>(input.opening, [], []),
+    children: input.children ?? [],
   });
 }
 
 export function enumAssignmentFrom(input: EnumAssignmentFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return enumAssignment({
-    name: _resolveOne(f.name, [], ["_property_name"]),
-    children: input?.children ?? [],
+    name: _resolveOne<NonNullable<ConfigOf<EnumAssignment>['name']>>(input.name, [], ["_property_name"]),
+    children: input.children ?? [],
   });
 }
 
 export function typeAliasDeclarationFrom(input: TypeAliasDeclarationFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return typeAliasDeclaration({
-    name: _resolveOne(f.name, [], ["_type_identifier"]),
-    typeParameters: _resolveOne(f.type_parameters, [], ["type_parameters"]),
-    value: _resolveOne(f.value, [], ["type"]),
-    children: input?.children ?? [],
+    name: _resolveOne<NonNullable<ConfigOf<TypeAliasDeclaration>['name']>>(input.name, [], ["_type_identifier"]),
+    typeParameters: _resolveOne<NonNullable<ConfigOf<TypeAliasDeclaration>['typeParameters']>>(input.typeParameters, [], ["type_parameters"]),
+    value: _resolveOne<NonNullable<ConfigOf<TypeAliasDeclaration>['value']>>(input.value, [], ["type"]),
+    children: input.children ?? [],
   });
 }
 
@@ -1467,22 +1347,20 @@ export function overrideModifierFrom(input?: OverrideModifier) {
 }
 
 export function requiredParameterFrom(input: RequiredParameterFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return requiredParameter({
-    parameterName: _resolveOne(f.parameter_name, [], ["_parameter_name"]),
-    type: _resolveOne(f.type, [], ["type_annotation"]),
-    initializer: _resolveOne(f.initializer, [], ["_initializer"]),
-    children: input?.children ?? [],
+    parameterName: _resolveOne<NonNullable<ConfigOf<RequiredParameter>['parameterName']>>(input.parameterName, [], ["_parameter_name"]),
+    type: _resolveOne<NonNullable<ConfigOf<RequiredParameter>['type']>>(input.type, [], ["type_annotation"]),
+    initializer: _resolveOne<NonNullable<ConfigOf<RequiredParameter>['initializer']>>(input.initializer, [], ["_initializer"]),
+    children: input.children ?? [],
   });
 }
 
 export function optionalParameterFrom(input: OptionalParameterFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return optionalParameter({
-    parameterName: _resolveOne(f.parameter_name, [], ["_parameter_name"]),
-    type: _resolveOne(f.type, [], ["type_annotation"]),
-    initializer: _resolveOne(f.initializer, [], ["_initializer"]),
-    children: input?.children ?? [],
+    parameterName: _resolveOne<NonNullable<ConfigOf<OptionalParameter>['parameterName']>>(input.parameterName, [], ["_parameter_name"]),
+    type: _resolveOne<NonNullable<ConfigOf<OptionalParameter>['type']>>(input.type, [], ["type_annotation"]),
+    initializer: _resolveOne<NonNullable<ConfigOf<OptionalParameter>['initializer']>>(input.initializer, [], ["_initializer"]),
+    children: input.children ?? [],
   });
 }
 
@@ -1522,10 +1400,9 @@ export function assertsFrom(...input: unknown[]) {
 }
 
 export function assertsAnnotationFrom(input: AssertsAnnotationFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return assertsAnnotation({
-    asserts: _resolveOne(f.asserts, [], []),
-    children: input?.children ?? [],
+    asserts: _resolveOne<NonNullable<ConfigOf<AssertsAnnotation>['asserts']>>(input.asserts, [], []),
+    children: input.children ?? [],
   });
 }
 
@@ -1537,20 +1414,18 @@ export function typeFrom(...input: unknown[]) {
 }
 
 export function tupleParameterFrom(input: TupleParameterFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return tupleParameter({
-    name: _resolveOne(f.name, ["identifier"], ["rest_pattern"]),
-    type: _resolveOne(f.type, [], ["type_annotation"]),
-    children: input?.children ?? [],
+    name: _resolveOne<NonNullable<ConfigOf<TupleParameter>['name']>>(input.name, ["identifier"], ["rest_pattern"]),
+    type: _resolveOne<NonNullable<ConfigOf<TupleParameter>['type']>>(input.type, [], ["type_annotation"]),
+    children: input.children ?? [],
   });
 }
 
 export function optionalTupleParameterFrom(input: OptionalTupleParameterFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return optionalTupleParameter({
-    name: _resolveOne(f.name, ["identifier"], []),
-    type: _resolveOne(f.type, [], ["type_annotation"]),
-    children: input?.children ?? [],
+    name: _resolveOne<NonNullable<ConfigOf<OptionalTupleParameter>['name']>>(input.name, ["identifier"], []),
+    type: _resolveOne<NonNullable<ConfigOf<OptionalTupleParameter>['type']>>(input.type, [], ["type_annotation"]),
+    children: input.children ?? [],
   });
 }
 
@@ -1569,20 +1444,18 @@ export function restTypeFrom(...input: unknown[]) {
 }
 
 export function constructorTypeFrom(input: ConstructorTypeFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return constructorType({
-    typeParameters: _resolveOne(f.type_parameters, [], ["type_parameters"]),
-    parameters: _resolveOne(f.parameters, [], ["formal_parameters"]),
-    type: _resolveOne(f.type, [], ["type"]),
-    children: input?.children ?? [],
+    typeParameters: _resolveOne<NonNullable<ConfigOf<ConstructorType>['typeParameters']>>(input.typeParameters, [], ["type_parameters"]),
+    parameters: _resolveOne<NonNullable<ConfigOf<ConstructorType>['parameters']>>(input.parameters, [], ["formal_parameters"]),
+    type: _resolveOne<NonNullable<ConfigOf<ConstructorType>['type']>>(input.type, [], ["type"]),
+    children: input.children ?? [],
   });
 }
 
 export function primaryTypeFrom(input: PrimaryTypeFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return primaryType({
-    name: _resolveOne(f.name, [], ["_type_identifier"]),
-    children: input?.children ?? [],
+    name: _resolveOne<NonNullable<ConfigOf<PrimaryType>['name']>>(input.name, [], ["_type_identifier"]),
+    children: input.children ?? [],
   });
 }
 
@@ -1601,48 +1474,43 @@ export function templateLiteralTypeFrom(...input: unknown[]) {
 }
 
 export function inferTypeFrom(input: InferTypeFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return inferType({
-    typeIdentifier: _resolveOne(f.type_identifier, [], ["_type_identifier"]),
-    constraint: _resolveOne(f.constraint, [], []),
-    children: input?.children ?? [],
+    typeIdentifier: _resolveOne<NonNullable<ConfigOf<InferType>['typeIdentifier']>>(input.typeIdentifier, [], ["_type_identifier"]),
+    constraint: _resolveOne<NonNullable<ConfigOf<InferType>['constraint']>>(input.constraint, [], []),
+    children: input.children ?? [],
   });
 }
 
 export function conditionalTypeFrom(input: ConditionalTypeFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return conditionalType({
-    left: _resolveOne(f.left, [], ["type"]),
-    right: _resolveOne(f.right, [], ["type"]),
-    consequence: _resolveOne(f.consequence, [], ["type"]),
-    alternative: _resolveOne(f.alternative, [], ["type"]),
-    children: input?.children ?? [],
+    left: _resolveOne<NonNullable<ConfigOf<ConditionalType>['left']>>(input.left, [], ["type"]),
+    right: _resolveOne<NonNullable<ConfigOf<ConditionalType>['right']>>(input.right, [], ["type"]),
+    consequence: _resolveOne<NonNullable<ConfigOf<ConditionalType>['consequence']>>(input.consequence, [], ["type"]),
+    alternative: _resolveOne<NonNullable<ConfigOf<ConditionalType>['alternative']>>(input.alternative, [], ["type"]),
+    children: input.children ?? [],
   });
 }
 
 export function genericTypeFrom(input: GenericTypeFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return genericType({
-    name: _resolveOne(f.name, [], ["_type_identifier","nested_type_identifier"]),
-    typeArguments: _resolveOne(f.type_arguments, [], ["type_arguments"]),
-    children: input?.children ?? [],
+    name: _resolveOne<NonNullable<ConfigOf<GenericType>['name']>>(input.name, [], ["_type_identifier","nested_type_identifier"]),
+    typeArguments: _resolveOne<NonNullable<ConfigOf<GenericType>['typeArguments']>>(input.typeArguments, [], ["type_arguments"]),
+    children: input.children ?? [],
   });
 }
 
 export function typePredicateFrom(input: TypePredicateFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return typePredicate({
-    name: _resolveOne(f.name, ["identifier","this","predefined_type"], []),
-    type: _resolveOne(f.type, [], ["type"]),
-    children: input?.children ?? [],
+    name: _resolveOne<NonNullable<ConfigOf<TypePredicate>['name']>>(input.name, ["identifier","this","predefined_type"], []),
+    type: _resolveOne<NonNullable<ConfigOf<TypePredicate>['type']>>(input.type, [], ["type"]),
+    children: input.children ?? [],
   });
 }
 
 export function typePredicateAnnotationFrom(input: TypePredicateAnnotationFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return typePredicateAnnotation({
-    typePredicate: _resolveOne(f.type_predicate, [], []),
-    children: input?.children ?? [],
+    typePredicate: _resolveOne<NonNullable<ConfigOf<TypePredicateAnnotation>['typePredicate']>>(input.typePredicate, [], []),
+    children: input.children ?? [],
   });
 }
 
@@ -1654,29 +1522,26 @@ export function typeQueryFrom(...input: unknown[]) {
 }
 
 export function indexTypeQueryFrom(input: IndexTypeQueryFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return indexTypeQuery({
-    primaryType: _resolveOne(f.primary_type, [], ["primary_type"]),
-    children: input?.children ?? [],
+    primaryType: _resolveOne<NonNullable<ConfigOf<IndexTypeQuery>['primaryType']>>(input.primaryType, [], ["primary_type"]),
+    children: input.children ?? [],
   });
 }
 
 export function lookupTypeFrom(input: LookupTypeFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return lookupType({
-    primaryType: _resolveOne(f.primary_type, [], ["primary_type"]),
-    indexType: _resolveOne(f.index_type, [], ["type"]),
-    children: input?.children ?? [],
+    primaryType: _resolveOne<NonNullable<ConfigOf<LookupType>['primaryType']>>(input.primaryType, [], ["primary_type"]),
+    indexType: _resolveOne<NonNullable<ConfigOf<LookupType>['indexType']>>(input.indexType, [], ["type"]),
+    children: input.children ?? [],
   });
 }
 
 export function mappedTypeClauseFrom(input: MappedTypeClauseFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return mappedTypeClause({
-    name: _resolveOne(f.name, [], ["_type_identifier"]),
-    type: _resolveOne(f.type, [], ["type"]),
-    alias: _resolveOne(f.alias, [], ["type"]),
-    children: input?.children ?? [],
+    name: _resolveOne<NonNullable<ConfigOf<MappedTypeClause>['name']>>(input.name, [], ["_type_identifier"]),
+    type: _resolveOne<NonNullable<ConfigOf<MappedTypeClause>['type']>>(input.type, [], ["type"]),
+    alias: _resolveOne<NonNullable<ConfigOf<MappedTypeClause>['alias']>>(input.alias, [], ["type"]),
+    children: input.children ?? [],
   });
 }
 
@@ -1688,10 +1553,9 @@ export function literalTypeFrom(...input: unknown[]) {
 }
 
 export function flowMaybeTypeFrom(input: FlowMaybeTypeFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return flowMaybeType({
-    primaryType: _resolveOne(f.primary_type, [], ["primary_type"]),
-    children: input?.children ?? [],
+    primaryType: _resolveOne<NonNullable<ConfigOf<FlowMaybeType>['primaryType']>>(input.primaryType, [], ["primary_type"]),
+    children: input.children ?? [],
   });
 }
 
@@ -1715,12 +1579,11 @@ export function typeArgumentsFrom(...input: unknown[]) {
 }
 
 export function objectTypeFrom(input: ObjectTypeFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return objectType({
-    opening: _resolveOne(f.opening, [], []),
-    members: _resolveOne(f.members, [], []),
-    closing: _resolveOne(f.closing, [], []),
-    children: input?.children ?? [],
+    opening: _resolveOne<NonNullable<ConfigOf<ObjectType>['opening']>>(input.opening, [], []),
+    members: _resolveOne<NonNullable<ConfigOf<ObjectType>['members']>>(input.members, [], []),
+    closing: _resolveOne<NonNullable<ConfigOf<ObjectType>['closing']>>(input.closing, [], []),
+    children: input.children ?? [],
   });
 }
 
@@ -1732,13 +1595,12 @@ export function callSignatureFrom(...input: unknown[]) {
 }
 
 export function propertySignatureFrom(input: PropertySignatureFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return propertySignature({
-    accessibilityModifier: _resolveOne(f.accessibility_modifier, ["accessibility_modifier"], []),
-    overrideModifier: _resolveOne(f.override_modifier, [], []),
-    name: _resolveOne(f.name, [], ["_property_name"]),
-    type: _resolveOne(f.type, [], ["type_annotation"]),
-    children: input?.children ?? [],
+    accessibilityModifier: _resolveOne<NonNullable<ConfigOf<PropertySignature>['accessibilityModifier']>>(input.accessibilityModifier, ["accessibility_modifier"], []),
+    overrideModifier: _resolveOne<NonNullable<ConfigOf<PropertySignature>['overrideModifier']>>(input.overrideModifier, [], []),
+    name: _resolveOne<NonNullable<ConfigOf<PropertySignature>['name']>>(input.name, [], ["_property_name"]),
+    type: _resolveOne<NonNullable<ConfigOf<PropertySignature>['type']>>(input.type, [], ["type_annotation"]),
+    children: input.children ?? [],
   });
 }
 
@@ -1750,12 +1612,11 @@ export function typeParametersFrom(...input: unknown[]) {
 }
 
 export function typeParameterFrom(input: TypeParameterFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return typeParameter({
-    name: _resolveOne(f.name, [], ["_type_identifier"]),
-    constraint: _resolveOne(f.constraint, [], ["constraint"]),
-    value: _resolveOne(f.value, [], ["default_type"]),
-    children: input?.children ?? [],
+    name: _resolveOne<NonNullable<ConfigOf<TypeParameter>['name']>>(input.name, [], ["_type_identifier"]),
+    constraint: _resolveOne<NonNullable<ConfigOf<TypeParameter>['constraint']>>(input.constraint, [], ["constraint"]),
+    value: _resolveOne<NonNullable<ConfigOf<TypeParameter>['value']>>(input.value, [], ["default_type"]),
+    children: input.children ?? [],
   });
 }
 
@@ -1774,12 +1635,11 @@ export function constraintFrom(...input: unknown[]) {
 }
 
 export function constructSignatureFrom(input: ConstructSignatureFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return constructSignature({
-    typeParameters: _resolveOne(f.type_parameters, [], ["type_parameters"]),
-    parameters: _resolveOne(f.parameters, [], ["formal_parameters"]),
-    type: _resolveOne(f.type, [], ["type_annotation"]),
-    children: input?.children ?? [],
+    typeParameters: _resolveOne<NonNullable<ConfigOf<ConstructSignature>['typeParameters']>>(input.typeParameters, [], ["type_parameters"]),
+    parameters: _resolveOne<NonNullable<ConfigOf<ConstructSignature>['parameters']>>(input.parameters, [], ["formal_parameters"]),
+    type: _resolveOne<NonNullable<ConfigOf<ConstructSignature>['type']>>(input.type, [], ["type_annotation"]),
+    children: input.children ?? [],
   });
 }
 
@@ -1787,25 +1647,21 @@ export function indexSignatureFrom(input?: IndexSignatureFromInput) {
   return indexSignature(input);
 }
 
-export function indexSignatureColonFrom(input?: unknown) {
-  if (isNodeData(input)) return input;
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
+export function indexSignatureColonFrom(input?: ConfigOf<IndexSignatureColon>) {
   return indexSignatureColon({
-    name: _resolveOne(f.name, ["identifier","_reserved_identifier"], []),
-    indexType: _resolveOne(f.index_type, [], ["type"]),
+    name: _resolveOne<NonNullable<ConfigOf<IndexSignatureColon>['name']>>(input.name, ["identifier","_reserved_identifier"], []),
+    indexType: _resolveOne<NonNullable<ConfigOf<IndexSignatureColon>['indexType']>>(input.indexType, [], ["type"]),
   });
 }
 
-export function indexSignatureMappedTypeClauseFrom(input?: unknown) {
-  if (isNodeData(input)) return input;
+export function indexSignatureMappedTypeClauseFrom(input?: ConfigOf<IndexSignatureMappedTypeClause>) {
   return indexSignatureMappedTypeClause(input);
 }
 
 export function arrayTypeFrom(input: ArrayTypeFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return arrayType({
-    primaryType: _resolveOne(f.primary_type, [], ["primary_type"]),
-    children: input?.children ?? [],
+    primaryType: _resolveOne<NonNullable<ConfigOf<ArrayType>['primaryType']>>(input.primaryType, [], ["primary_type"]),
+    children: input.children ?? [],
   });
 }
 
@@ -1824,30 +1680,27 @@ export function readonlyTypeFrom(...input: unknown[]) {
 }
 
 export function unionTypeFrom(input: UnionTypeFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return unionType({
-    left: _resolveOne(f.left, [], ["type"]),
-    right: _resolveOne(f.right, [], ["type"]),
-    children: input?.children ?? [],
+    left: _resolveOne<NonNullable<ConfigOf<UnionType>['left']>>(input.left, [], ["type"]),
+    right: _resolveOne<NonNullable<ConfigOf<UnionType>['right']>>(input.right, [], ["type"]),
+    children: input.children ?? [],
   });
 }
 
 export function intersectionTypeFrom(input: IntersectionTypeFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return intersectionType({
-    left: _resolveOne(f.left, [], ["type"]),
-    right: _resolveOne(f.right, [], ["type"]),
-    children: input?.children ?? [],
+    left: _resolveOne<NonNullable<ConfigOf<IntersectionType>['left']>>(input.left, [], ["type"]),
+    right: _resolveOne<NonNullable<ConfigOf<IntersectionType>['right']>>(input.right, [], ["type"]),
+    children: input.children ?? [],
   });
 }
 
 export function functionTypeFrom(input: FunctionTypeFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return functionType({
-    typeParameters: _resolveOne(f.type_parameters, [], ["type_parameters"]),
-    parameters: _resolveOne(f.parameters, [], ["formal_parameters"]),
-    returnType: _resolveOne(f.return_type, [], ["type","asserts","type_predicate"]),
-    children: input?.children ?? [],
+    typeParameters: _resolveOne<NonNullable<ConfigOf<FunctionType>['typeParameters']>>(input.typeParameters, [], ["type_parameters"]),
+    parameters: _resolveOne<NonNullable<ConfigOf<FunctionType>['parameters']>>(input.parameters, [], ["formal_parameters"]),
+    returnType: _resolveOne<NonNullable<ConfigOf<FunctionType>['returnType']>>(input.returnType, [], ["type","asserts","type_predicate"]),
+    children: input.children ?? [],
   });
 }
 
@@ -1888,12 +1741,11 @@ export function stringFragmentFrom(input: string | StringFragment) {
 }
 
 export function interfaceBodyFrom(input: InterfaceBodyFromInput) {
-  const f = (input?.fields ?? input ?? {}) as Record<string, unknown>;
   return interfaceBody({
-    opening: _resolveOne(f.opening, [], []),
-    members: _resolveOne(f.members, [], []),
-    closing: _resolveOne(f.closing, [], []),
-    children: input?.children ?? [],
+    opening: _resolveOne<NonNullable<ConfigOf<InterfaceBody>['opening']>>(input.opening, [], []),
+    members: _resolveOne<NonNullable<ConfigOf<InterfaceBody>['members']>>(input.members, [], []),
+    closing: _resolveOne<NonNullable<ConfigOf<InterfaceBody>['closing']>>(input.closing, [], []),
+    children: input.children ?? [],
   });
 }
 

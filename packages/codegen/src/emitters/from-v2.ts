@@ -111,34 +111,34 @@ function emitResolverHelpers(lines: string[], nodeMap: import('../compiler/rule.
     //   4. Object with `kind` discriminator → _resolveByKind
     //   5. Single-branch passthrough (the loose object IS already shaped right)
     //   6. Otherwise undefined
-    lines.push('function _resolveOne(v: unknown, leafKinds: readonly string[], branchKinds: readonly string[]): unknown {')
-    lines.push('  if (v === undefined || v === null) return v;')
-    lines.push('  if (isNodeData(v)) return v;')
+    lines.push('function _resolveOne<T>(v: unknown, leafKinds: readonly string[], branchKinds: readonly string[]): T {')
+    lines.push('  if (v === undefined || v === null) return v as T;')
+    lines.push('  if (isNodeData(v)) return v as T;')
     lines.push('  if (typeof v === "boolean" || typeof v === "number") {')
     lines.push('    const scalar = _resolveScalar(v);')
-    lines.push('    if (scalar !== undefined) return scalar;')
+    lines.push('    if (scalar !== undefined) return scalar as T;')
     lines.push('  }')
     lines.push('  if (typeof v === "string" && leafKinds.length > 0) {')
     lines.push('    const leaf = _resolveLeafString(v, leafKinds);')
-    lines.push('    if (leaf !== undefined) return leaf;')
+    lines.push('    if (leaf !== undefined) return leaf as T;')
     lines.push('  }')
     lines.push('  if (typeof v === "object" && v !== null && "kind" in v) {')
-    lines.push('    const { kind, ...rest } = v as Record<string, unknown>;')
-    lines.push('    return _resolveByKind(kind, rest);')
+    lines.push('    const { kind, ...rest } = v as { kind: string } & Record<string, unknown>;')
+    lines.push('    return _resolveByKind(kind, rest) as T;')
     lines.push('  }')
     lines.push('  // Single-branch passthrough — the loose object IS the branch.')
     lines.push('  if (branchKinds.length === 1 && typeof v === "object") {')
-    lines.push('    return _resolveByKind(branchKinds[0]!, v);')
+    lines.push('    return _resolveByKind(branchKinds[0]!, v) as T;')
     lines.push('  }')
-    lines.push('  return v;')
+    lines.push('  return v as T;')
     lines.push('}')
     lines.push('')
 
     // _resolveMany — array variant. Wraps each element through _resolveOne.
-    lines.push('function _resolveMany(v: unknown, leafKinds: readonly string[], branchKinds: readonly string[]): unknown[] {')
+    lines.push('function _resolveMany<T>(v: unknown, leafKinds: readonly string[], branchKinds: readonly string[]): readonly T[] {')
     lines.push('  if (v === undefined || v === null) return [];')
     lines.push('  const arr = Array.isArray(v) ? v : [v];')
-    lines.push('  return arr.map(e => _resolveOne(e, leafKinds, branchKinds));')
+    lines.push('  return arr.map(e => _resolveOne<T>(e, leafKinds, branchKinds));')
     lines.push('}')
 }
 
@@ -193,14 +193,19 @@ export function emitFromNodeMap(config: EmitFromNodeMapConfig): string {
 
     lines.push(`import { ${[...factoryImports].sort().join(', ')} } from './factories.js';`)
     lines.push(`import type { ${[...typeImports].sort().join(', ')} } from './types.js';`)
-    lines.push("import type { AnyNodeData, ConfigOf, FromInputOf } from '@sittir/types';")
+    lines.push("import type { ConfigOf, FromInputOf } from '@sittir/types';")
     lines.push('')
 
     // isNodeData helper — referenced by the emitted per-kind bodies.
-    lines.push("function isNodeData(v: unknown): v is AnyNodeData {")
+    // Structural guard: has a string `type` plus either a `fields`
+    // object or a `text` string. We keep the shape local to this file
+    // instead of importing a named type from @sittir/types so every
+    // grammar package stays self-contained at the type level.
+    lines.push("interface _NodeDataLike { readonly type: string; readonly fields?: object; readonly text?: string }")
+    lines.push("function isNodeData(v: unknown): v is _NodeDataLike {")
     lines.push("  if (v === null || typeof v !== 'object') return false;")
-    lines.push("  const o = v as Record<string, unknown>;")
-    lines.push("  return typeof o['type'] === 'string' && (typeof o['fields'] === 'object' || typeof o['text'] === 'string');")
+    lines.push("  const o = v as { type?: unknown; fields?: unknown; text?: unknown };")
+    lines.push("  return typeof o.type === 'string' && (typeof o.fields === 'object' || typeof o.text === 'string');")
     lines.push('}')
     lines.push('')
 
