@@ -2,7 +2,7 @@
  * compiler/link.ts — Phase 2: Link
  *
  * Resolves what nodes ARE.
- * After Link: no symbol, alias, token, repeat1.
+ * After Link: no symbol, alias, token. `repeat1` is preserved — see rule.ts header.
  * Terminals (string, pattern) and structural whitespace (indent, dedent, newline) survive.
  * All field nodes enriched with provenance. Clauses detected.
  *
@@ -71,11 +71,18 @@ export function link(raw: RawGrammar, include?: IncludeFilter): LinkedGrammar {
     // with `_` OR appears in the grammar's `inline:` array — the
     // latter catches grammars that don't follow the convention.
     for (const [name, rule] of Object.entries(rules)) {
-        if (isHiddenKind(name, raw.inline)) {
+        // Classify hidden kinds (underscore-prefixed / inlined) AND
+        // rules the grammar explicitly declares in its `supertypes:`
+        // list. Tree-sitter's supertype feature marks visible rules
+        // whose CST node never appears — the subtypes surface directly.
+        // Without this, a visible supertype like ts `primary_type` falls
+        // through to the polymorph promoter and gets a bogus 20-form
+        // variants map when it should be a single SupertypeRule.
+        if (isHiddenKind(name, raw.inline) || supertypes.has(name)) {
             const classified = classifyHiddenRule(name, rule, supertypes, references)
             if (classified !== rule
                 && (classified.type === 'enum' || classified.type === 'supertype')
-                && classified.source === 'promoted') {
+                && (classified.source === 'promoted' || classified.source === 'grammar')) {
                 derivations.promotedRules.push({
                     kind: name,
                     classification: classified.type,
@@ -362,9 +369,10 @@ function rulesEqualForVariant(a: Rule, b: Rule): boolean {
 // "Top level" means: the outermost choice reachable through anonymous
 // delimiter seq wrappers (e.g. `seq('(', choice, ')')`).
 
-function promotePolymorph(rule: Rule): Rule {
-    const choice = findVariantChoice(rule)
-    if (!choice) return rule
+export function promotePolymorph(rule: Rule): Rule {
+    const found = findVariantChoice(rule)
+    if (!found) return rule
+    const { choice, prefix, suffix } = found
 
     // Every variant must be structurally non-empty.
     const contents = choice.members.map(m => m.type === 'variant' ? m.content : m)
@@ -377,23 +385,52 @@ function promotePolymorph(rule: Rule): Rule {
     const allSame = fieldSets.every(s => setsEqual(s, fieldSets[0]!))
     if (allSame) return rule
 
+    // Fuse non-variant prefix/suffix members (e.g. an outer `field('left')`
+    // that sits before a `seq(field('left'), choice(...))`) into each form's
+    // content so every form renders a complete shape. Without this, python's
+    // `assignment` polymorph drops $LEFT from all three variants.
+    const fuse = (inner: Rule): Rule => {
+        if (prefix.length === 0 && suffix.length === 0) return inner
+        const members = [...prefix, inner, ...suffix]
+        return { type: 'seq', members }
+    }
     const forms: PolymorphRule['forms'] = choice.members.map((m, i) => ({
         name: m.type === 'variant' ? m.name : `form_${i}`,
-        content: m.type === 'variant' ? m.content : m,
+        content: fuse(m.type === 'variant' ? m.content : m),
     }))
     return { type: 'polymorph', forms, source: 'promoted' }
 }
 
-function findVariantChoice(rule: Rule): ChoiceRule | null {
+interface VariantChoiceLocation {
+    choice: ChoiceRule
+    /** Members of the outer seq that appear before the choice. */
+    prefix: Rule[]
+    /** Members of the outer seq that appear after the choice. */
+    suffix: Rule[]
+}
+
+function findVariantChoice(rule: Rule): VariantChoiceLocation | null {
     if (rule.type === 'choice' && rule.members.some(m => m.type === 'variant')) {
-        return rule
+        return { choice: rule, prefix: [], suffix: [] }
     }
-    // Walk through anonymous-delimiter wrappers (seq of string + choice + string).
+    // A seq containing exactly one variant-choice. The other members
+    // (anonymous delimiters, field wrappers, symbol refs) travel along
+    // with each form so the polymorph faithfully renders the whole rule.
     if (rule.type === 'seq') {
-        const choices = rule.members.filter(m =>
+        const choiceIdx = rule.members.findIndex(m =>
             m.type === 'choice' && m.members.some(mm => mm.type === 'variant'),
         )
-        if (choices.length === 1) return choices[0] as ChoiceRule
+        if (choiceIdx === -1) return null
+        // More than one variant-choice in the seq is ambiguous — bail.
+        const more = rule.members.findIndex(
+            (m, i) => i !== choiceIdx && m.type === 'choice' && m.members.some(mm => mm.type === 'variant'),
+        )
+        if (more !== -1) return null
+        return {
+            choice: rule.members[choiceIdx] as ChoiceRule,
+            prefix: rule.members.slice(0, choiceIdx),
+            suffix: rule.members.slice(choiceIdx + 1),
+        }
     }
     return null
 }
@@ -638,11 +675,15 @@ function resolveRule(
             }
 
         case 'repeat1':
-            // Normalize repeat1 → repeat
+            // Preserve repeat1 through Link — downstream derivation
+            // reads the `repeat1` type to stamp `nonEmpty: true` on
+            // the resulting AssembledField / AssembledChild so the
+            // emitter can render non-empty tuple types for those
+            // slots. (Earlier builds collapsed repeat1 → repeat here
+            // unconditionally, which erased the non-empty signal.)
             return {
-                type: 'repeat',
+                ...rule,
                 content: resolveRule(rule.content, currentName, allRules, supertypes, externalRoles),
-                separator: rule.separator,
             }
 
         case 'field':
@@ -741,8 +782,25 @@ function classifyHiddenRule(
             } satisfies EnumRule
         }
 
-        const allSymbols = rule.members.every(m => m.type === 'symbol')
-        if (allSymbols || supertypes.has(name)) {
+        // A choice member is "supertype-compatible" when it's either:
+        //   - a bare `symbol` ($.foo) — contributes `foo` as a subtype
+        //   - a named `alias(..., $.foo)` — contributes `foo`
+        //   - an `enum` / `string` — surfaces as text content under
+        //     the supertype umbrella, contributes no subtype name
+        //     but doesn't disqualify the choice (the enum is the
+        //     post-Link residue of an `alias(choice(strings),
+        //     $.foo)` whose alias wrapper got stripped — `foo` is
+        //     usually already in the subtype list as a bare symbol).
+        // Mixed structural members (seq with multiple parts, field,
+        // nested choice/optional/repeat) DO disqualify — those
+        // describe parse-time structure, not abstract dispatch.
+        const supertypeCompatible = (m: Rule): boolean =>
+            m.type === 'symbol'
+            || (m.type === 'alias' && m.named)
+            || m.type === 'enum'
+            || m.type === 'string'
+        const allCompatible = rule.members.every(supertypeCompatible)
+        if (allCompatible || supertypes.has(name)) {
             const subtypes = collectSubtypeNames(rule)
             // Only promote if we actually resolved subtype names. An empty
             // subtypes list means the choice members aren't symbols and we
@@ -778,13 +836,23 @@ function classifyHiddenRule(
     return rule
 }
 
-/** Extract concrete kind names from a choice for supertype subtypes */
+/**
+ * Extract concrete kind names from a choice for supertype subtypes.
+ * Handles bare `symbol` members directly and `alias(_, $.foo)`
+ * members by emitting the alias's target name (the synthetic kind
+ * tree-sitter produces for aliased nodes). `seq` members are walked
+ * for the rare hybrid case where a supertype branch wraps a single
+ * symbol in a seq.
+ */
 function collectSubtypeNames(rule: Rule): string[] {
     const names: string[] = []
     if (rule.type === 'choice') {
         for (const m of rule.members) {
-            if (m.type === 'symbol') names.push(m.name)
-            else if (m.type === 'seq') {
+            if (m.type === 'symbol') {
+                names.push(m.name)
+            } else if (m.type === 'alias' && m.named) {
+                names.push(m.value)
+            } else if (m.type === 'seq') {
                 // Mixed content — extract symbol references
                 for (const s of m.members) {
                     if (s.type === 'symbol') names.push(s.name)
@@ -1224,9 +1292,30 @@ function applyInferredFields(
             return { rule, applied: false }
 
         case 'seq': {
+            // Skip inference for any symbol that appears more than once
+            // as a direct sibling in this seq — wrapping them in `field`
+            // would collide on the same inferred name, losing all but
+            // the first. These patterns (e.g. rust or_pattern's two
+            // `_pattern` refs separated by `|`) are tree-sitter's "multi
+            // children" shape and belong in the `$$$CHILDREN` slot, not
+            // as fields.
+            const symCounts = new Map<string, number>()
+            const unwrapSym = (r: Rule): string | null => {
+                if (r.type === 'symbol') return r.name
+                if (r.type === 'optional' || r.type === 'variant' || r.type === 'clause' || r.type === 'group') return unwrapSym(r.content)
+                return null
+            }
+            for (const m of rule.members) {
+                const sn = unwrapSym(m)
+                if (sn) symCounts.set(sn, (symCounts.get(sn) ?? 0) + 1)
+            }
+            const siblingDups = new Set<string>()
+            for (const [sn, cnt] of symCounts) if (cnt > 1) siblingDups.add(sn)
             const members: Rule[] = []
             let any = false
             for (const m of rule.members) {
+                const sn = unwrapSym(m)
+                if (sn && siblingDups.has(sn)) { members.push(m); continue }
                 const r = applyInferredFields(m, ruleName, inferred, apply, log, _apply, _insideField)
                 members.push(r.rule)
                 any = any || r.applied

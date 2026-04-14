@@ -49,7 +49,7 @@ function resolveTemplate(rule: TemplateRule, node: AnyNodeData, varPattern: RegE
 	const obj = rule as TemplateRuleObject;
 
 	if (obj.variants) {
-		// 1. Explicit variant field (set by factory)
+		// 1. Explicit variant field (set by form factories)
 		if (node.variant && obj.variants[node.variant]) {
 			return obj.variants[node.variant]!;
 		}
@@ -64,7 +64,14 @@ function resolveTemplate(rule: TemplateRule, node: AnyNodeData, varPattern: RegE
 				}
 			}
 		}
-		// 3. Fallback: first variant
+		// 3. Field-resolution dispatch (mirrors pickTemplate for string[]
+		//    templates). For parse→render round-trips readNode doesn't set
+		//    node.variant, so we pick the variant whose $VAR placeholders
+		//    all resolve against the incoming node. Prefers the variant
+		//    with the MOST resolved variables when several partially match,
+		//    falling back to the first entry otherwise.
+		const picked = pickTemplate(Object.values(obj.variants), node, varPattern);
+		if (picked !== null) return picked;
 		return Object.values(obj.variants)[0]!;
 	}
 
@@ -235,9 +242,10 @@ function pickTemplate(
 	node: AnyNodeData,
 	varPattern: RegExp,
 ): string | null {
-	// Sort by specificity: more variables = more specific, try first.
-	// This ensures variant templates with more fields are preferred
-	// over fallback templates with fewer fields.
+	// Score each template by variable resolution against the node.
+	// Lower `unresolved` is better — a template with all variables
+	// resolved beats one with any phantoms. On ties, prefer more total
+	// variables (more specific).
 	const scored = templates.map(tmpl => {
 		let total = 0;
 		let resolved = 0;
@@ -246,27 +254,21 @@ function pickTemplate(
 			const fieldKey = name.toLowerCase();
 			total++;
 			if (node.fields?.[fieldKey] !== undefined) { resolved++; return ''; }
-			if (fieldKey === 'children' && node.children) { resolved++; return ''; }
+			if (fieldKey === 'children' && node.children && node.children.length > 0) { resolved++; return ''; }
 			if (node.children && Array.isArray(node.children)) {
 				if (node.children.some((c: any) => c?.type === fieldKey)) { resolved++; return ''; }
 			}
 			return '';
 		});
-		return { tmpl, total, resolved };
+		return { tmpl, total, resolved, unresolved: total - resolved };
 	});
 
-	// Sort: fully resolved first, then by total variable count descending (most specific first)
+	// Sort: fewest unresolved variables first, then most total (specificity).
 	scored.sort((a, b) => {
-		const aFull = a.total > 0 && a.resolved === a.total ? 1 : 0;
-		const bFull = b.total > 0 && b.resolved === b.total ? 1 : 0;
-		if (aFull !== bFull) return bFull - aFull;
+		if (a.unresolved !== b.unresolved) return a.unresolved - b.unresolved;
 		return b.total - a.total;
 	});
 
-	// Return first fully resolved, or best partial
-	for (const s of scored) {
-		if (s.total > 0 && s.resolved === s.total) return s.tmpl;
-	}
 	return scored[0]?.tmpl ?? null;
 }
 

@@ -48,6 +48,22 @@ export type {
 export type Simplify<T> = { [K in keyof T]: T[K] } & {};
 
 /**
+ * Non-empty array — used for `repeat1`-sourced list slots in
+ * generated interfaces, factory configs, and from-inputs. The type
+ * guarantees the array has at least one element (tuple `[T, ...T[]]`),
+ * so consumers don't need runtime null-checks for the first entry.
+ *
+ * Inherently `readonly` — TypeScript refuses the `readonly <alias>`
+ * prefix at use sites (TS1354), so the readonly-ness lives inside
+ * the alias to mirror the `readonly T[]` shape on plain
+ * (`repeat`-sourced) list fields.
+ *
+ * Runtime enforcement lives in the generated `_assertNonEmpty` helper
+ * emitted by factories / from() resolvers.
+ */
+export type NonEmptyArray<T> = readonly [T, ...(readonly T[])];
+
+/**
  * Terminal node shape — shared by every leaf, keyword, and enum.
  * `K` pins the `type` discriminant; `V` narrows `text` to a specific
  * literal or literal union (defaulting to `string` for open-valued leaves).
@@ -499,10 +515,10 @@ export type TreeNodeOf<T> = T extends { readonly type: infer K extends string }
 export type FromInputOf<T, Scalars = {}, Strings = {}, Depth extends number[] = []> = Simplify<
 	Depth['length'] extends 3 ? T
 	: {
-		readonly [K in keyof FieldsOf<T> as K extends RequiredKeys<FieldsOf<T>> ? K : never]:
+		readonly [K in keyof FieldsOf<T> as K extends RequiredKeys<FieldsOf<T>> ? CamelCase<K> : never]:
 			WidenValue<FieldsOf<T>[K], Scalars, Strings, [...Depth, 0]>;
 	} & {
-		readonly [K in keyof FieldsOf<T> as K extends RequiredKeys<FieldsOf<T>> ? never : K]?:
+		readonly [K in keyof FieldsOf<T> as K extends RequiredKeys<FieldsOf<T>> ? never : CamelCase<K>]?:
 			WidenValue<FieldsOf<T>[K], Scalars, Strings, [...Depth, 0]>;
 	} & {
 		readonly [K in keyof ChildSlotsOf<T>]?:
@@ -530,7 +546,15 @@ type IsSingleType<T> = [T] extends [{ readonly type: infer K }]
  */
 type WidenValue<T, Scalars = {}, Strings = {}, Depth extends number[] = []> =
 	Depth['length'] extends 3 ? T
-	: T extends readonly (infer E)[] ? (WidenValue<E, Scalars, Strings, Depth>)[] | WidenValue<E, Scalars, Strings, Depth>
+	: T extends readonly (infer E)[]
+		// Non-empty tuple check: `[readonly []] extends [T]` asks
+		// "can an empty array be assigned to T?". Plain arrays say
+		// yes; `NonEmptyArray<E>` says no. The square-bracket
+		// wrappers prevent distributive-conditional pitfalls over
+		// union element types.
+		? [readonly []] extends [T]
+			? (WidenValue<E, Scalars, Strings, Depth>)[] | WidenValue<E, Scalars, Strings, Depth>
+			: NonEmptyArray<WidenValue<E, Scalars, Strings, Depth>> | WidenValue<E, Scalars, Strings, Depth>
 	: T extends { readonly type: infer K extends string; readonly text: string }
 		// Leaf: accept node + narrowed string (or fallback to string) + matching scalar
 		? T | (K extends keyof Strings ? Strings[K] : string) | (K extends keyof Scalars ? Scalars[K] : never)
@@ -550,5 +574,7 @@ type WidenValue<T, Scalars = {}, Strings = {}, Depth extends number[] = []> =
 /** Widen a child slot type for FromInput (applies WidenValue to arrays and single values). */
 type WidenChildSlot<T, Scalars = {}, Strings = {}, Depth extends number[] = []> =
 	T extends readonly (infer E)[]
-		? WidenValue<E, Scalars, Strings, Depth>[] | WidenValue<E, Scalars, Strings, Depth>
+		? [readonly []] extends [T]
+			? WidenValue<E, Scalars, Strings, Depth>[] | WidenValue<E, Scalars, Strings, Depth>
+			: NonEmptyArray<WidenValue<E, Scalars, Strings, Depth>> | WidenValue<E, Scalars, Strings, Depth>
 		: WidenValue<T, Scalars, Strings, Depth>;

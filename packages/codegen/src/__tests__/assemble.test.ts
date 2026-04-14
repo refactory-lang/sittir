@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { assemble, classifyNode, simplifyRule, nameNode, nameField } from '../compiler/assemble.ts'
+import { simplifyRules } from '../compiler/simplify.ts'
 import { deriveFields } from '../compiler/rule.ts'
 import type { Rule, OptimizedGrammar, NodeMap, AssembledNode } from '../compiler/rule.ts'
 
@@ -7,6 +8,7 @@ function makeOptimized(rules: Record<string, Rule>, overrides?: Partial<Optimize
     return {
         name: 'test',
         rules,
+        simplifiedRules: simplifyRules(rules),
         supertypes: new Set(),
         word: null,
         derivations: { inferredFields: [], promotedRules: [], repeatedShapes: [] },

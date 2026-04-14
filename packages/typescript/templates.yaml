@@ -6,20 +6,12 @@ rules:
     template: $HASH_BANG_LINE $$$STATEMENTS
     joinByField:
       statements: "\n"
-  export_statement_form_0:
-    template: export*from $SOURCE $$$CHILDREN
-  export_statement_export:
-    template: export type $$$CHILDREN from $SOURCE;
-  export_statement_export2:
-    template: export=$$$CHILDREN;
-  export_statement_export3:
-    template: export as namespace $$$CHILDREN;
   export_statement:
     variants:
-      form_0: export*from $SOURCE $$$CHILDREN
-      export: export type $$$CHILDREN from $SOURCE;
-      export2: export=$$$CHILDREN;
-      export3: export as namespace $$$CHILDREN;
+      form_0: export*from $SOURCE$$$CHILDREN$$$DECORATOR$DECLARATION$VALUE
+      export: export type $$$CHILDREN from $SOURCE
+      export2: export=$$$CHILDREN
+      export3: export as namespace $$$CHILDREN
   namespace_export:
     template: "*as $$$CHILDREN"
   export_clause:
@@ -27,70 +19,28 @@ rules:
     joinBy: ","
   export_specifier:
     template: type $NAME $ALIAS_CLAUSE
-    alias: as $ALIAS
+    alias_clause: as $ALIAS
   declaration:
     template: $$$CHILDREN
   import_statement:
     template: import $IMPORT_CLAUSE $FROM_CLAUSE $IMPORT_ATTRIBUTE $SEMICOLON
   import_clause:
-    template: $$$CHILDREN
-  _from_clause:
-    template: from $SOURCE
+    variants:
+      namespace_import: $$$CHILDREN
+      named_imports: $$$CHILDREN
+      default_import: $DEFAULT_IMPORT $NAMED_IMPORTS_CLAUSE
+    named_imports_clause: ",$NAMED_IMPORTS"
   namespace_import:
     template: "*as $IDENTIFIER"
   named_imports:
     template: "{$$$CHILDREN}"
     joinBy: ","
-  import_specifier_name:
-    template: $NAME
-  import_specifier_as:
-    template: $NAME as $ALIAS
   import_specifier:
     variants:
-      name: $NAME
-      as: $NAME as $ALIAS
+      name: type $NAME
+      as: type $NAME as $ALIAS
   import_attribute:
     template: $OBJECT $$$CHILDREN
-  statement_export_statement:
-    template: $$$CHILDREN
-  statement_import_statement:
-    template: $$$CHILDREN
-  statement_debugger_statement:
-    template: $$$CHILDREN
-  statement_expression_statement:
-    template: $$$CHILDREN
-  statement_declaration:
-    template: $$$CHILDREN
-  statement_body:
-    template: $BODY
-  statement_if_statement:
-    template: $$$CHILDREN
-  statement_switch_statement:
-    template: $$$CHILDREN
-  statement_for_statement:
-    template: $$$CHILDREN
-  statement_for_in_statement:
-    template: $$$CHILDREN
-  statement_while_statement:
-    template: $$$CHILDREN
-  statement_do_statement:
-    template: $$$CHILDREN
-  statement_try_statement:
-    template: $$$CHILDREN
-  statement_with_statement:
-    template: $$$CHILDREN
-  statement_break_statement:
-    template: $$$CHILDREN
-  statement_continue_statement:
-    template: $$$CHILDREN
-  statement_return_statement:
-    template: $$$CHILDREN
-  statement_throw_statement:
-    template: $$$CHILDREN
-  statement_empty_statement:
-    template: $$$CHILDREN
-  statement_labeled_statement:
-    template: $$$CHILDREN
   statement:
     variants:
       export_statement: $$$CHILDREN
@@ -114,13 +64,17 @@ rules:
       empty_statement: $$$CHILDREN
       labeled_statement: $$$CHILDREN
   expression_statement:
-    template: $$$CHILDREN;
+    template: $$$CHILDREN
   variable_declaration:
-    template: var $DECLARATORS $SEMICOLON
+    template: var $$$DECLARATORS $SEMICOLON
     joinBy: ","
+    joinByField:
+      declarators: ","
   lexical_declaration:
-    template: $KIND $DECLARATORS $SEMICOLON
+    template: $KIND $$$DECLARATORS $SEMICOLON
     joinBy: ","
+    joinByField:
+      declarators: ","
   variable_declarator:
     template: $NAME $TYPE=$VALUE
   statement_block:
@@ -136,9 +90,7 @@ rules:
   for_statement:
     template: for($INITIALIZER $CONDITION $INCREMENT)$BODY
   for_in_statement:
-    template: for($LEFT $OPERATOR $RIGHT)$BODY
-  _for_header:
-    template: ($LEFT $OPERATOR $RIGHT)
+    template: for($LEFT$KIND$VALUE$$$CHILDREN $OPERATOR $RIGHT)$BODY
   while_statement:
     template: while $CONDITION $BODY
   do_statement:
@@ -154,9 +106,9 @@ rules:
   debugger_statement:
     template: debugger $$$CHILDREN
   return_statement:
-    template: return $$$CHILDREN;
+    template: return $$$CHILDREN
   throw_statement:
-    template: throw $$$CHILDREN;
+    template: throw $$$CHILDREN
   labeled_statement:
     template: "$LABEL:$BODY"
   switch_body:
@@ -171,17 +123,13 @@ rules:
       body: "\n"
   catch_clause:
     template: catch $PARAMETER_CLAUSE $BODY
-    parameter: ($PARAMETER $TYPE)
+    parameter_clause: ($PARAMETER $TYPE)
   finally_clause:
     template: finally $BODY
-  parenthesized_expression_expression:
-    template: $$$CHILDREN $TYPE
-  parenthesized_expression_sequence_expression:
-    template: $$$CHILDREN
   parenthesized_expression:
     variants:
-      expression: $$$CHILDREN $TYPE
-      sequence_expression: $$$CHILDREN
+      expression: ($$$CHILDREN $TYPE)
+      sequence_expression: ($$$CHILDREN)
   expression:
     template: $$$CHILDREN
   primary_expression:
@@ -189,10 +137,10 @@ rules:
   yield_expression:
     template: yield $EXPRESSION
   object:
-    template: "{$$$CHILDREN get}"
+    template: "{$$$CHILDREN}"
     joinBy: ","
   object_pattern:
-    template: "{$$$CHILDREN get}"
+    template: "{$$$CHILDREN}"
     joinBy: ","
   assignment_pattern:
     template: $LEFT=$RIGHT
@@ -209,29 +157,27 @@ rules:
   jsx_expression:
     template: "{$$$CHILDREN}"
   jsx_opening_element:
-    template: <$NAME $$$ATTRIBUTE>
+    template: <$NAME$TYPE_ARGUMENTS $$$ATTRIBUTE>
   nested_identifier:
     template: $OBJECT.$PROPERTY
   jsx_namespace_name:
-    template: "$$$CHILDREN:"
+    template: $$$CHILDREN
+    joinByField:
+      children: ":"
   jsx_closing_element:
     template: </$NAME>
   jsx_self_closing_element:
-    template: <$NAME $$$ATTRIBUTE/>
+    template: <$NAME$TYPE_ARGUMENTS $$$ATTRIBUTE/>
   jsx_attribute:
     template: $$$CHILDREN=
-  _jsx_string:
-    template: "\"$$$CHILDREN\""
   class:
-    template: $$$CLASS_HERITAGE class $NAME $TYPE_PARAMETERS $$$CHILDREN $BODY
-    joinByField:
-      class_heritage: "\n"
+    template: $$$DECORATOR class $NAME $TYPE_PARAMETERS $CLASS_HERITAGE $BODY
   class_declaration:
-    template: $$$CLASS_HERITAGE class $NAME $TYPE_PARAMETERS $AUTOMATIC_SEMICOLON $BODY $$$CHILDREN
-    joinByField:
-      class_heritage: "\n"
+    template: $$$DECORATOR class $NAME $TYPE_PARAMETERS $CLASS_HERITAGE $BODY $AUTOMATIC_SEMICOLON
   class_heritage:
-    template: $$$CHILDREN
+    variants:
+      extends_clause: $EXTENDS_CLAUSE $IMPLEMENTS_CLAUSE
+      implements_clause: $$$CHILDREN
   function_expression:
     template: function $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $BODY
   function_declaration:
@@ -240,22 +186,10 @@ rules:
     template: function*$NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $BODY
   generator_function_declaration:
     template: function*$NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $BODY $$$CHILDREN
-  arrow_function_parameter:
-    template: $PARAMETER
-  arrow_function__call_signature:
-    template: $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE
   arrow_function:
     variants:
-      parameter: $PARAMETER
-      _call_signature: $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE
-  _call_signature:
-    template: $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE
-  call_expression_function:
-    template: $FUNCTION $TYPE_ARGUMENTS $ARGUMENTS
-  call_expression_function2:
-    template: $FUNCTION $ARGUMENTS
-  call_expression_tok_q_dot:
-    template: $FUNCTION?.$TYPE_ARGUMENTS $ARGUMENTS
+      parameter: $PARAMETER=>$BODY
+      _call_signature: $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE=>$BODY
   call_expression:
     variants:
       function: $FUNCTION $TYPE_ARGUMENTS $ARGUMENTS
@@ -266,17 +200,15 @@ rules:
   await_expression:
     template: await $EXPRESSION
   member_expression:
-    template: $OBJECT.$PROPERTY
+    variants:
+      dot: $OBJECT.$PROPERTY
+      optional_chain: $OBJECT $OPTIONAL_CHAIN $PROPERTY
   subscript_expression:
     template: "$OBJECT $OPTIONAL_CHAIN[$INDEX]"
-  _lhs_expression:
-    template: $$$CHILDREN
   assignment_expression:
     template: $LEFT=$RIGHT
   augmented_assignment_expression:
     template: $LEFT $OPERATOR $RIGHT
-  _initializer:
-    template: =$VALUE
   spread_element:
     template: ...$EXPRESSION
   ternary_expression:
@@ -326,20 +258,10 @@ rules:
     template: "$KEY:$VALUE"
   pair_pattern:
     template: "$KEY:$VALUE"
-  _property_name:
-    template: $$$CHILDREN
   computed_property_name:
     template: "[$EXPRESSION]"
-  _semicolon:
-    template: $$$CHILDREN
   public_field_definition:
-    template: $$$ACCESSIBILITY_MODIFIER $OVERRIDE_MODIFIER $INITIALIZER $NAME?$TYPE=$VALUE
-    joinByField:
-      accessibility_modifier: "\n"
-  _jsx_start_opening_element:
-    template: <$NAME $$$ATTRIBUTE
-  _import_identifier:
-    template: $$$CHILDREN
+    template: $$$DECORATOR declare $$$CHILDREN $NAME?$TYPE=$VALUE
   non_null_expression:
     template: $EXPRESSION!
   method_signature:
@@ -361,25 +283,19 @@ rules:
   import_require_clause:
     template: $IDENTIFIER=require($SOURCE)
   extends_clause:
-    template: extends $$$VALUE $$$TYPE_ARGUMENTS $$$CHILDREN
+    template: extends $$$VALUE $$$TYPE_ARGUMENTS
     joinBy: ","
-  _extends_clause_single:
-    template: $VALUE $TYPE_ARGUMENTS
   implements_clause:
     template: implements $$$CHILDREN
     joinBy: ","
   ambient_declaration:
     template: declare $DECLARATION
   abstract_class_declaration:
-    template: $$$CLASS_HERITAGE abstract class $NAME $TYPE_PARAMETERS $$$CHILDREN $BODY
-    joinByField:
-      class_heritage: "\n"
+    template: $$$DECORATOR abstract class $NAME $TYPE_PARAMETERS $CLASS_HERITAGE $BODY
   module:
     template: module $NAME $BODY
   internal_module:
     template: namespace $NAME $BODY
-  _module:
-    template: $NAME $BODY
   import_alias:
     template: import $NAME=$VALUE $SEMICOLON
   nested_type_identifier:
@@ -392,18 +308,18 @@ rules:
   enum_declaration:
     template: enum $NAME $BODY
   enum_body:
-    template: "{$OPENING}"
+    template: "{$$$OPENING}"
     joinBy: ","
+    joinByField:
+      opening: ","
   enum_assignment:
     template: $NAME=$VALUE
   type_alias_declaration:
     template: type $NAME $TYPE_PARAMETERS=$VALUE $$$CHILDREN
   required_parameter:
-    template: $PARAMETER_NAME $TYPE $INITIALIZER
+    template: $$$DECORATOR $$$CHILDREN $PATTERN $TYPE=$VALUE
   optional_parameter:
-    template: $PARAMETER_NAME?$TYPE $INITIALIZER
-  _parameter_name:
-    template: $$$DECORATOR $$$CHILDREN $PATTERN
+    template: $$$DECORATOR $$$CHILDREN $PATTERN?$TYPE=$VALUE
   omitting_type_annotation:
     template: "-?:$$$CHILDREN"
   adding_type_annotation:
@@ -412,16 +328,10 @@ rules:
     template: "?:$$$CHILDREN"
   type_annotation:
     template: ":$$$CHILDREN"
-  _type_query_member_expression_in_type_annotation:
-    template: $OBJECT.$PROPERTY
-  _type_query_call_expression_in_type_annotation:
-    template: $FUNCTION $ARGUMENTS
   asserts:
     template: asserts $$$CHILDREN
   asserts_annotation:
-    template: ":$ASSERTS"
-  type:
-    template: $$$CHILDREN
+    template: $ASSERTS $$$CHILDREN
   tuple_parameter:
     template: $NAME $TYPE
   optional_tuple_parameter:
@@ -432,74 +342,13 @@ rules:
     template: ...$$$CHILDREN
   constructor_type:
     template: new $TYPE_PARAMETERS $PARAMETERS=>$TYPE
-  primary_type_form0:
-    template: $$$CHILDREN
-  primary_type_form1:
-    template: $$$CHILDREN
-  primary_type_form2:
-    template: $NAME
-  primary_type_form3:
-    template: $$$CHILDREN
-  primary_type_form4:
-    template: $$$CHILDREN
-  primary_type_form5:
-    template: $$$CHILDREN
-  primary_type_form6:
-    template: $$$CHILDREN
-  primary_type_form7:
-    template: $$$CHILDREN
-  primary_type_form8:
-    template: $$$CHILDREN
-  primary_type_form9:
-    template: $$$CHILDREN
-  primary_type_form10:
-    template: $$$CHILDREN
-  primary_type_form11:
-    template: $$$CHILDREN
-  primary_type_form12:
-    template: $$$CHILDREN
-  primary_type_form13:
-    template: $$$CHILDREN
-  primary_type_form14:
-    template: $$$CHILDREN
-  primary_type_form15:
-    template: $$$CHILDREN
-  primary_type_form16:
-    template: $$$CHILDREN
-  primary_type_form17:
-    template: $$$CHILDREN
-  primary_type_form18:
-    template: $$$CHILDREN
-  primary_type_form19:
-    template: const
-  primary_type:
-    variants:
-      form0: $$$CHILDREN
-      form1: $$$CHILDREN
-      form2: $NAME
-      form3: $$$CHILDREN
-      form4: $$$CHILDREN
-      form5: $$$CHILDREN
-      form6: $$$CHILDREN
-      form7: $$$CHILDREN
-      form8: $$$CHILDREN
-      form9: $$$CHILDREN
-      form10: $$$CHILDREN
-      form11: $$$CHILDREN
-      form12: $$$CHILDREN
-      form13: $$$CHILDREN
-      form14: $$$CHILDREN
-      form15: $$$CHILDREN
-      form16: $$$CHILDREN
-      form17: $$$CHILDREN
-      form18: $$$CHILDREN
-      form19: const
   template_type:
     template: "${$$$CHILDREN}"
   template_literal_type:
     template: "`$$$CHILDREN`"
   infer_type:
-    template: infer $TYPE_IDENTIFIER $CONSTRAINT
+    template: infer $TYPE_IDENTIFIER $CONSTRAINT_CLAUSE
+    constraint_clause: extends$CONSTRAINT
   conditional_type:
     template: "$LEFT extends $RIGHT?$CONSEQUENCE:$ALTERNATIVE"
   generic_type:
@@ -507,28 +356,18 @@ rules:
   type_predicate:
     template: $NAME is $TYPE
   type_predicate_annotation:
-    template: ":$TYPE_PREDICATE"
-  _type_query_member_expression:
-    template: $OBJECT.$PROPERTY
-  _type_query_subscript_expression:
-    template: "$OBJECT[$INDEX]"
-  _type_query_call_expression:
-    template: $FUNCTION $ARGUMENTS
-  _type_query_instantiation_expression:
-    template: $FUNCTION $TYPE_ARGUMENTS
+    template: $TYPE_PREDICATE $$$CHILDREN
   type_query:
-    template: "typeof $OBJECT[$INDEX]"
+    template: "typeof $OBJECT[$INDEX]$PROPERTY$FUNCTION$ARGUMENTS$TYPE_ARGUMENTS$$$CHILDREN"
   index_type_query:
     template: keyof $PRIMARY_TYPE
   lookup_type:
     template: "$PRIMARY_TYPE[$INDEX_TYPE]"
   mapped_type_clause:
     template: $NAME in $TYPE $ALIAS_CLAUSE
-    alias: as $ALIAS
+    alias_clause: as $ALIAS
   literal_type:
-    template: $OPERATOR $ARGUMENT
-  _number:
-    template: $OPERATOR $ARGUMENT
+    template: $OPERATOR $ARGUMENT$$$CHILDREN
   flow_maybe_type:
     template: "?$PRIMARY_TYPE"
   parenthesized_type:
@@ -553,14 +392,10 @@ rules:
     template: extends $$$CHILDREN
   construct_signature:
     template: new $TYPE_PARAMETERS $PARAMETERS $TYPE
-  index_signature_colon:
-    template: "$NAME:$INDEX_TYPE"
-  index_signature_mapped_type_clause:
-    template: $$$CHILDREN
   index_signature:
     variants:
-      colon: "$NAME:$INDEX_TYPE"
-      mapped_type_clause: $$$CHILDREN
+      colon: "$MAPPED_TYPE_CLAUSE[$NAME:$INDEX_TYPE]$TYPE"
+      mapped_type_clause: "$MAPPED_TYPE_CLAUSE[$$$CHILDREN]$TYPE"
   array_type:
     template: "$PRIMARY_TYPE[]"
   tuple_type:
@@ -574,8 +409,6 @@ rules:
     template: $LEFT&$RIGHT
   function_type:
     template: $TYPE_PARAMETERS $PARAMETERS=>$RETURN_TYPE
-  _type_identifier:
-    template: $$$CHILDREN
   shorthand_property_identifier:
     template: $$$CHILDREN
   shorthand_property_identifier_pattern:

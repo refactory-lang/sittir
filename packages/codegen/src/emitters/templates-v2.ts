@@ -8,7 +8,7 @@
  * compiler/rule.ts next to the class hierarchy that consumes it.
  */
 
-import type { NodeMap } from '../compiler/rule.ts'
+import { AssembledGroup, type NodeMap } from '../compiler/rule.ts'
 
 export interface EmitTemplatesFromNodeMapConfig {
     grammar: string
@@ -21,6 +21,15 @@ export function emitTemplatesFromNodeMap(config: EmitTemplatesFromNodeMapConfig)
 
     const rules: Record<string, unknown> = {}
     for (const [kind, node] of nodeMap.nodes) {
+        // Hidden kinds (`_`-prefixed) don't appear as node.type at runtime
+        // in tree-sitter CSTs, so they don't need render templates.
+        if (kind.startsWith('_')) continue
+        // Polymorph forms are `AssembledGroup` nodes registered at the top
+        // level so factories/types emitters can produce code for them, but
+        // their templates are already surfaced inside the parent polymorph's
+        // `variants:` map. Emitting them as top-level entries too is
+        // duplicate noise — skip them here.
+        if (node instanceof AssembledGroup && node.parentKind) continue
         const entry = node.renderTemplate(nodeMap.rules)
         if (entry !== undefined) rules[kind] = entry
     }
@@ -46,7 +55,7 @@ function yamlStringify(obj: unknown, indent = 0): string {
         // punctuation values (joinBy separators like `;`, `,`, `|`) are
         // always quoted — they read as flow-indicator tokens in some
         // scalar contexts.
-        const reservedLead = /^[`@!*&|>%'"#?\s-]|^---$|^\.\.\.$/
+        const reservedLead = /^[`@!*&|>%'"#?\s,\-]|^---$|^\.\.\.$/
         if (
             reservedLead.test(obj) ||
             /[:#{}\[\]\n`]/.test(obj) ||

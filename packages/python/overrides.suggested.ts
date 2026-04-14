@@ -15,7 +15,7 @@
 // Summary
 // ---------------------------------------------------------------
 // Field inferences: 0  (0 applied, 0 held)
-// Rule promotions:  17  (17 applied, 0 held)
+// Rule promotions:  23  (23 applied, 0 held)
 // Repeated shapes:  0  (advisory — suggested supertypes/groups)
 
 // ---------------------------------------------------------------
@@ -29,13 +29,31 @@ export const suggestedRules = {
   "_statement": $ => choice($._simple_statements, $._compound_statement),
 
   // [applied] promoted supertype
+  "_simple_statement": $ => choice($.future_import_statement, $.import_statement, $.import_from_statement, $.print_statement, $.assert_statement, $.expression_statement, $.return_statement, $.delete_statement, $.raise_statement, $.pass_statement, $.break_statement, $.continue_statement, $.global_statement, $.nonlocal_statement, $.exec_statement, $.type_alias_statement),
+
+  // [applied] promoted supertype
   "_named_expression_lhs": $ => choice($.identifier, $.keyword_identifier),
 
   // [applied] promoted supertype
   "_expressions": $ => choice($.expression, $.expression_list),
 
   // [applied] promoted supertype
+  "_compound_statement": $ => choice($.if_statement, $.for_statement, $.while_statement, $.try_statement, $.with_statement, $.function_definition, $.class_definition, $.decorated_definition, $.match_statement),
+
+  // [applied] promoted supertype
+  "parameter": $ => choice($.identifier, $.typed_parameter, $.default_parameter, $.typed_default_parameter, $.list_splat_pattern, $.tuple_pattern, $.keyword_separator, $.positional_separator, $.dictionary_splat_pattern),
+
+  // [applied] promoted supertype
+  "pattern": $ => choice($.identifier, $.keyword_identifier, $.subscript, $.attribute, $.list_splat_pattern, $.tuple_pattern, $.list_pattern),
+
+  // [applied] promoted supertype
   "_expression_within_for_in_clause": $ => choice($.expression, $.lambda_within_for_in_clause),
+
+  // [applied] promoted supertype
+  "expression": $ => choice($.comparison_operator, $.not_operator, $.boolean_operator, $.lambda, $.primary_expression, $.conditional_expression, $.named_expression, $.as_pattern),
+
+  // [applied] promoted supertype
+  "primary_expression": $ => choice($.await, $.binary_operator, $.identifier, $.keyword_identifier, $.string, $.concatenated_string, $.integer, $.float, $.true, $.false, $.none, $.unary_operator, $.attribute, $.subscript, $.call, $.list, $.list_comprehension, $.dictionary, $.dictionary_comprehension, $.set, $.set_comprehension, $.tuple, $.parenthesized_expression, $.generator_expression, $.ellipsis, $.list_splat_pattern),
 
   // [applied] promoted supertype
   "_left_hand_side": $ => choice($.pattern, $.pattern_list),
@@ -57,13 +75,19 @@ export interface PromotedRule {
   readonly applied: boolean;
 }
 export const promotedRules: readonly PromotedRule[] = [
+  { kind: "_compound_statement", classification: "supertype", applied: true },
   { kind: "_expression_within_for_in_clause", classification: "supertype", applied: true },
   { kind: "_expressions", classification: "supertype", applied: true },
   { kind: "_f_expression", classification: "supertype", applied: true },
   { kind: "_left_hand_side", classification: "supertype", applied: true },
   { kind: "_named_expression_lhs", classification: "supertype", applied: true },
   { kind: "_right_hand_side", classification: "supertype", applied: true },
+  { kind: "_simple_statement", classification: "supertype", applied: true },
   { kind: "_statement", classification: "supertype", applied: true },
+  { kind: "expression", classification: "supertype", applied: true },
+  { kind: "parameter", classification: "supertype", applied: true },
+  { kind: "pattern", classification: "supertype", applied: true },
+  { kind: "primary_expression", classification: "supertype", applied: true },
   { kind: "_is_not", classification: "terminal", applied: true },
   { kind: "_not_in", classification: "terminal", applied: true },
   { kind: "comment", classification: "terminal", applied: true },

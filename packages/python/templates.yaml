@@ -4,20 +4,14 @@ grammarSha: ""
 rules:
   module:
     template: $$$CHILDREN
-  _simple_statements:
-    template: "$$$CHILDREN\n"
-    joinBy: ";"
   import_statement:
     template: import $$$NAME
   relative_import:
     template: $IMPORT_PREFIX $DOTTED_NAME
   future_import_statement:
-    template: from __future__ import $$$NAME
+    template: from __future__ import $$$NAME$$$CHILDREN
   import_from_statement:
     template: from $MODULE_NAME import $WILDCARD_IMPORT
-  _import_list:
-    template: $$$NAME
-    joinBy: ","
   aliased_import:
     template: $NAME as $ALIAS
   print_statement:
@@ -39,7 +33,7 @@ rules:
     template: del $$$CHILDREN
   raise_statement:
     template: raise $$$CHILDREN $CAUSE_CLAUSE
-    cause: from $CAUSE
+    cause_clause: from $CAUSE
   if_statement:
     template: "if $CONDITION:\n  $CONSEQUENCE\n$$$ALTERNATIVE"
   elif_clause:
@@ -62,7 +56,7 @@ rules:
       except_clauses: "\n"
   except_clause:
     template: "except $$$VALUE $ALIAS_CLAUSE:$$$CHILDREN\n"
-    alias: as $ALIAS
+    alias_clause: as $ALIAS
     joinBy: ","
   finally_clause:
     template: "finally:\n  $BLOCK\n"
@@ -75,7 +69,7 @@ rules:
     template: $VALUE
   function_definition:
     template: "def $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE_CLAUSE:\n  $BODY\n"
-    return_type: "->$RETURN_TYPE"
+    return_type_clause: "->$RETURN_TYPE"
   parameters:
     template: ($$$CHILDREN)
   lambda_parameters:
@@ -109,47 +103,34 @@ rules:
     template: $$$CHILDREN $DEFINITION
   decorator:
     template: "@$EXPRESSION $NEWLINE"
-  _suite:
-    template: "$$$CHILDREN\n"
   block:
     template: "$$$CHILDREN\n"
     joinBy: "\n"
   expression_list:
     template: $$$CHILDREN,
+    joinBy: ","
   dotted_name:
     template: $$$CHILDREN
     joinBy: .
   case_pattern:
     template: $$$CHILDREN as
-  _simple_pattern:
-    template: $$$CHILDREN
-    joinBy: ","
   union_pattern:
     template: $$$CHILDREN
+    joinBy: "|"
   dict_pattern:
-    template: "{$$$KEY:$$$VALUE $$$CHILDREN}"
+    template: "{$$$KEY $$$VALUE$$$CHILDREN}"
     joinBy: ","
-  _key_value_pattern:
-    template: "$KEY:$VALUE"
   keyword_pattern:
     template: $IDENTIFIER=$SIMPLE_PATTERN
   splat_pattern:
     template: $IDENTIFIER $$$CHILDREN
   class_pattern:
-    template: $DOTTED_NAME($ARGUMENTS)
+    template: $DOTTED_NAME($$$ARGUMENTS)
     joinBy: ","
+    joinByField:
+      arguments: ","
   complex_pattern:
     template: $REAL $IMAGINARY+$$$CHILDREN
-  _parameters:
-    template: $$$CHILDREN
-    joinBy: ","
-  _patterns:
-    template: $$$CHILDREN
-    joinBy: ","
-  parameter:
-    template: $$$CHILDREN
-  pattern:
-    template: $$$CHILDREN
   tuple_pattern:
     template: ($$$CHILDREN)
   list_pattern:
@@ -164,10 +145,6 @@ rules:
     template: "**$$$CHILDREN"
   as_pattern:
     template: $EXPRESSION as $ALIAS
-  expression:
-    template: $$$CHILDREN
-  primary_expression:
-    template: $$$CHILDREN
   not_operator:
     template: not $ARGUMENT
   boolean_operator:
@@ -177,28 +154,21 @@ rules:
   unary_operator:
     template: $OPERATOR $ARGUMENT
   comparison_operator:
-    template: $LEFT $$$COMPARATORS
-    joinByField:
-      comparators: "\n"
+    template: $LEFT $$$OPERATORS $$$CHILDREN
   lambda:
     template: "lambda $PARAMETERS:$BODY"
   lambda_within_for_in_clause:
     template: "lambda $PARAMETERS:$BODY"
-  assignment_eq:
-    template: =$RIGHT
-  assignment_colon:
-    template: ":$TYPE"
-  assignment_colon2:
-    template: ":$TYPE=$RIGHT"
   assignment:
     variants:
-      eq: =$RIGHT
-      colon: ":$TYPE"
-      colon2: ":$TYPE=$RIGHT"
+      eq: $LEFT=$RIGHT
+      colon: "$LEFT:$TYPE"
+      colon2: "$LEFT:$TYPE=$RIGHT"
   augmented_assignment:
     template: $LEFT $OPERATOR $RIGHT
   pattern_list:
     template: $$$CHILDREN,
+    joinBy: ","
   yield:
     template: yield from $$$CHILDREN
   attribute:
@@ -207,7 +177,8 @@ rules:
     template: "$VALUE[$$$SUBSCRIPT]"
     joinBy: ","
   slice:
-    template: "$START:$STOP $STEP"
+    template: "$START:$STOP $STEP_CLAUSE"
+    step_clause: ":$STEP"
   call:
     template: $FUNCTION $ARGUMENTS
   typed_parameter:
@@ -245,16 +216,13 @@ rules:
     template: "{$BODY $$$CHILDREN}"
   generator_expression:
     template: ($BODY $$$CHILDREN)
-  _comprehension_clauses:
-    template: $$$CHILDREN
   parenthesized_expression:
     template: ($$$CHILDREN)
-  _collection_elements:
-    template: $$$CHILDREN
-    joinBy: ","
   for_in_clause:
-    template: for $LEFT in $RIGHT
+    template: for $LEFT in $$$RIGHT
     joinBy: ","
+    joinByField:
+      right: ","
   if_clause:
     template: if $EXPRESSION
   conditional_expression:

@@ -116,8 +116,13 @@ export function emitWrapFromNodeMap(config: EmitWrapFromNodeMapConfig): string {
         if (!isValidIdent(node.typeName)) continue
         typeImports.add(node.typeName)
     }
+    // Multi-line import for readability — see factories-v2.ts.
     const typeImportLine = typeImports.size > 0
-        ? `import type { ${[...typeImports].sort().join(', ')} } from './types.js';`
+        ? [
+            'import type {',
+            ...[...typeImports].sort().map(name => `  ${name},`),
+            "} from './types.js';",
+        ].join('\n')
         : undefined
 
     // ------------------------------------------------------------------

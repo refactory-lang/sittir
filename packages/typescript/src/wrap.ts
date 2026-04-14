@@ -13,7 +13,179 @@ interface _NodeData {
 }
 import { readNode, buildRoutingMap, type TreeHandle } from '@sittir/core';
 import type { WrappedNode } from '@sittir/types';
-import type { AbstractClassDeclaration, AbstractMethodSignature, AddingTypeAnnotation, AmbientDeclaration, Arguments, Array, ArrayPattern, ArrayType, ArrowFunction, AsExpression, Asserts, AssertsAnnotation, AssignmentExpression, AssignmentPattern, AugmentedAssignmentExpression, AwaitExpression, BinaryExpression, BreakStatement, CallExpression, CallSignature, CatchClause, Class, ClassBody, ClassDeclaration, ClassHeritage, ClassStaticBlock, ComputedPropertyName, ConditionalType, Constraint, ConstructSignature, ConstructorType, ContinueStatement, DebuggerStatement, Declaration, Decorator, DecoratorCallExpression, DecoratorMemberExpression, DecoratorParenthesizedExpression, DefaultType, DoStatement, ElseClause, EnumAssignment, EnumBody, EnumDeclaration, ExportClause, ExportSpecifier, ExportStatement, Expression, ExpressionStatement, ExtendsClause, ExtendsTypeClause, FieldDefinition, FinallyClause, FlowMaybeType, ForInStatement, ForStatement, FormalParameters, FunctionDeclaration, FunctionExpression, FunctionSignature, FunctionType, GeneratorFunction, GeneratorFunctionDeclaration, GenericType, HiddenTypeIdentifier, IfStatement, ImplementsClause, ImportAlias, ImportAttribute, ImportClause, ImportIdentifier, ImportRequireClause, ImportSpecifier, ImportStatement, IndexSignature, IndexTypeQuery, InferType, InstantiationExpression, InterfaceBody, InterfaceDeclaration, InternalModule, IntersectionType, JsxAttribute, JsxClosingElement, JsxElement, JsxExpression, JsxNamespaceName, JsxOpeningElement, JsxSelfClosingElement, JsxStartOpeningElement, JsxString, LabeledStatement, LexicalDeclaration, LhsExpression, LiteralType, LookupType, MappedTypeClause, MemberExpression, MethodDefinition, MethodSignature, Module, NamedImports, NamespaceExport, NamespaceImport, NestedIdentifier, NestedTypeIdentifier, NewExpression, NonNullExpression, Object, ObjectAssignmentPattern, ObjectPattern, ObjectType, OmittingTypeAnnotation, OptingTypeAnnotation, OptionalParameter, OptionalTupleParameter, OptionalType, Pair, PairPattern, ParenthesizedExpression, ParenthesizedType, Pattern, PrimaryExpression, PrimaryType, Program, PropertyName, PropertySignature, PublicFieldDefinition, ReadonlyType, Regex, RequiredParameter, RestPattern, RestType, ReturnStatement, SatisfiesExpression, Semicolon, SequenceExpression, ShorthandPropertyIdentifier, ShorthandPropertyIdentifierPattern, SpreadElement, Statement, StatementBlock, String, SubscriptExpression, SwitchBody, SwitchCase, SwitchDefault, SwitchStatement, TemplateLiteralType, TemplateString, TemplateSubstitution, TemplateType, TernaryExpression, ThrowStatement, TryStatement, TupleParameter, TupleType, Type, TypeAliasDeclaration, TypeAnnotation, TypeArguments, TypeAssertion, TypeParameter, TypeParameters, TypePredicate, TypePredicateAnnotation, TypeQuery, UnaryExpression, UnionType, UpdateExpression, VariableDeclaration, VariableDeclarator, WhileStatement, WithStatement, YieldExpression } from './types.js';
+import type {
+  AbstractClassDeclaration,
+  AbstractMethodSignature,
+  AddingTypeAnnotation,
+  AmbientDeclaration,
+  Arguments,
+  Array,
+  ArrayPattern,
+  ArrayType,
+  ArrowFunction,
+  AsExpression,
+  Asserts,
+  AssertsAnnotation,
+  AssignmentExpression,
+  AssignmentPattern,
+  AugmentedAssignmentExpression,
+  AwaitExpression,
+  BinaryExpression,
+  BreakStatement,
+  CallExpression,
+  CallSignature,
+  CatchClause,
+  Class,
+  ClassBody,
+  ClassDeclaration,
+  ClassHeritage,
+  ClassStaticBlock,
+  ComputedPropertyName,
+  ConditionalType,
+  Constraint,
+  ConstructSignature,
+  ConstructorType,
+  ContinueStatement,
+  DebuggerStatement,
+  Declaration,
+  Decorator,
+  DecoratorCallExpression,
+  DecoratorMemberExpression,
+  DecoratorParenthesizedExpression,
+  DefaultType,
+  DoStatement,
+  ElseClause,
+  EnumAssignment,
+  EnumBody,
+  EnumDeclaration,
+  ExportClause,
+  ExportSpecifier,
+  ExportStatement,
+  Expression,
+  ExpressionStatement,
+  ExtendsClause,
+  ExtendsTypeClause,
+  FieldDefinition,
+  FinallyClause,
+  FlowMaybeType,
+  ForInStatement,
+  ForStatement,
+  FormalParameters,
+  FunctionDeclaration,
+  FunctionExpression,
+  FunctionSignature,
+  FunctionType,
+  GeneratorFunction,
+  GeneratorFunctionDeclaration,
+  GenericType,
+  IfStatement,
+  ImplementsClause,
+  ImportAlias,
+  ImportAttribute,
+  ImportClause,
+  ImportRequireClause,
+  ImportSpecifier,
+  ImportStatement,
+  IndexSignature,
+  IndexTypeQuery,
+  InferType,
+  InstantiationExpression,
+  InterfaceBody,
+  InterfaceDeclaration,
+  InternalModule,
+  IntersectionType,
+  JsxAttribute,
+  JsxClosingElement,
+  JsxElement,
+  JsxExpression,
+  JsxNamespaceName,
+  JsxOpeningElement,
+  JsxSelfClosingElement,
+  JsxStartOpeningElement,
+  JsxString,
+  LabeledStatement,
+  LexicalDeclaration,
+  LhsExpression,
+  LiteralType,
+  LookupType,
+  MappedTypeClause,
+  MemberExpression,
+  MethodDefinition,
+  MethodSignature,
+  Module,
+  NamedImports,
+  NamespaceExport,
+  NamespaceImport,
+  NestedIdentifier,
+  NestedTypeIdentifier,
+  NewExpression,
+  NonNullExpression,
+  Object,
+  ObjectAssignmentPattern,
+  ObjectPattern,
+  ObjectType,
+  OmittingTypeAnnotation,
+  OptingTypeAnnotation,
+  OptionalParameter,
+  OptionalTupleParameter,
+  OptionalType,
+  Pair,
+  PairPattern,
+  ParenthesizedExpression,
+  ParenthesizedType,
+  Pattern,
+  PrimaryExpression,
+  Program,
+  PropertyName,
+  PropertySignature,
+  PublicFieldDefinition,
+  ReadonlyType,
+  Regex,
+  RequiredParameter,
+  RestPattern,
+  RestType,
+  ReturnStatement,
+  SatisfiesExpression,
+  SequenceExpression,
+  ShorthandPropertyIdentifier,
+  ShorthandPropertyIdentifierPattern,
+  SpreadElement,
+  Statement,
+  StatementBlock,
+  String,
+  SubscriptExpression,
+  SwitchBody,
+  SwitchCase,
+  SwitchDefault,
+  SwitchStatement,
+  TemplateLiteralType,
+  TemplateString,
+  TemplateSubstitution,
+  TemplateType,
+  TernaryExpression,
+  ThrowStatement,
+  TryStatement,
+  TupleParameter,
+  TupleType,
+  TypeAliasDeclaration,
+  TypeAnnotation,
+  TypeArguments,
+  TypeAssertion,
+  TypeParameter,
+  TypeParameters,
+  TypePredicate,
+  TypePredicateAnnotation,
+  TypeQuery,
+  UnaryExpression,
+  UnionType,
+  UpdateExpression,
+  VariableDeclaration,
+  VariableDeclarator,
+  WhileStatement,
+  WithStatement,
+  YieldExpression,
+  _TypeIdentifier,
+} from './types.js';
 
 // Routing data — overrides + supertype expansion reconstructed at
 // codegen time from NodeMap, then handed to readNode at module load.
@@ -21,20 +193,23 @@ import type { AbstractClassDeclaration, AbstractMethodSignature, AddingTypeAnnot
 const _overrides = {
   "program": {"fields":{"hash_bang_line":{"types":[{"type":"hash_bang_line","named":true}],"multiple":false,"required":false,"position":0},"statements":{"types":[{"type":"statement","named":true}],"multiple":true,"required":true,"position":1}}},
   "import_statement": {"fields":{"import_clause":{"types":[],"multiple":false,"required":false,"position":0},"from_clause":{"types":[{"type":"import_clause","named":true},{"type":"_from_clause","named":true},{"type":"import_require_clause","named":true},{"type":"string","named":true}],"multiple":false,"required":true,"position":1},"import_attribute":{"types":[{"type":"import_attribute","named":true}],"multiple":false,"required":false,"position":2},"semicolon":{"types":[{"type":"_semicolon","named":true}],"multiple":false,"required":true,"position":3}}},
+  "import_clause_default_import": {"fields":{"default_import":{"types":[{"type":"_import_identifier","named":true}],"multiple":false,"required":true,"position":0},"named_imports":{"types":[{"type":"namespace_import","named":true},{"type":"named_imports","named":true}],"multiple":false,"required":false,"position":1}}},
+  "import_clause": {"fields":{"default_import":{"types":[{"type":"_import_identifier","named":true}],"multiple":false,"required":true,"position":0},"named_imports":{"types":[{"type":"namespace_import","named":true},{"type":"named_imports","named":true}],"multiple":false,"required":false,"position":1}}},
   "namespace_import": {"fields":{"identifier":{"types":[{"type":"identifier","named":true}],"multiple":false,"required":true,"position":0}}},
   "import_attribute": {"fields":{"object":{"types":[],"multiple":false,"required":true,"position":0}}},
-  "variable_declaration": {"fields":{"declarators":{"types":[{"type":"variable_declarator","named":true}],"multiple":false,"required":true,"position":0},"semicolon":{"types":[{"type":"_semicolon","named":true}],"multiple":false,"required":true,"position":1}}},
-  "lexical_declaration": {"fields":{"declarators":{"types":[{"type":"variable_declarator","named":true}],"multiple":false,"required":true,"position":1},"semicolon":{"types":[{"type":"_semicolon","named":true}],"multiple":false,"required":true,"position":2}}},
+  "variable_declaration": {"fields":{"declarators":{"types":[],"multiple":true,"required":true,"position":0},"semicolon":{"types":[{"type":"_semicolon","named":true}],"multiple":false,"required":true,"position":1}}},
+  "lexical_declaration": {"fields":{"declarators":{"types":[],"multiple":true,"required":true,"position":1},"semicolon":{"types":[{"type":"_semicolon","named":true}],"multiple":false,"required":true,"position":2}}},
   "statement_block": {"fields":{"statements":{"types":[{"type":"statement","named":true}],"multiple":true,"required":true,"position":0},"automatic_semicolon":{"types":[{"type":"_automatic_semicolon","named":true}],"multiple":false,"required":false,"position":1}}},
   "else_clause": {"fields":{"statement":{"types":[{"type":"statement","named":true}],"multiple":false,"required":true,"position":0}}},
   "yield_expression": {"fields":{"expression":{"types":[{"type":"expression","named":true}],"multiple":false,"required":true,"position":0}}},
-  "class": {"fields":{"class_heritage":{"types":[{"type":"decorator","named":true}],"multiple":true,"required":true,"position":0}}},
-  "class_declaration": {"fields":{"class_heritage":{"types":[{"type":"decorator","named":true}],"multiple":true,"required":true,"position":0},"automatic_semicolon":{"types":[{"type":"class_heritage","named":true}],"multiple":false,"required":false,"position":3}}},
+  "class": {"fields":{"class_heritage":{"types":[{"type":"class_heritage","named":true}],"multiple":false,"required":false,"position":3}}},
+  "class_declaration": {"fields":{"class_heritage":{"types":[{"type":"class_heritage","named":true}],"multiple":false,"required":false,"position":3},"automatic_semicolon":{"types":[{"type":"_automatic_semicolon","named":true}],"multiple":false,"required":false,"position":5}}},
+  "class_heritage_extends_clause": {"fields":{"extends_clause":{"types":[{"type":"extends_clause","named":true}],"multiple":false,"required":true,"position":0},"implements_clause":{"types":[{"type":"implements_clause","named":true}],"multiple":false,"required":false,"position":1}}},
+  "class_heritage": {"fields":{"extends_clause":{"types":[{"type":"extends_clause","named":true}],"multiple":false,"required":true,"position":0},"implements_clause":{"types":[{"type":"implements_clause","named":true}],"multiple":false,"required":false,"position":1}}},
   "await_expression": {"fields":{"expression":{"types":[{"type":"expression","named":true}],"multiple":false,"required":true,"position":0}}},
   "spread_element": {"fields":{"expression":{"types":[{"type":"expression","named":true}],"multiple":false,"required":true,"position":0}}},
   "method_definition": {"fields":{"accessibility_modifier":{"types":[{"type":"accessibility_modifier","named":true}],"multiple":false,"required":false,"position":0},"override_modifier":{"types":[],"multiple":false,"required":false,"position":1}}},
   "computed_property_name": {"fields":{"expression":{"types":[{"type":"expression","named":true}],"multiple":false,"required":true,"position":0}}},
-  "public_field_definition": {"fields":{"accessibility_modifier":{"types":[{"type":"decorator","named":true}],"multiple":true,"required":true,"position":0},"override_modifier":{"types":[{"type":"accessibility_modifier","named":true}],"multiple":false,"required":false,"position":1},"initializer":{"types":[{"type":"override_modifier","named":true}],"multiple":false,"required":true,"position":2}}},
   "non_null_expression": {"fields":{"expression":{"types":[{"type":"expression","named":true}],"multiple":false,"required":true,"position":0}}},
   "method_signature": {"fields":{"accessibility_modifier":{"types":[{"type":"accessibility_modifier","named":true}],"multiple":false,"required":false,"position":0},"override_modifier":{"types":[],"multiple":false,"required":false,"position":1}}},
   "abstract_method_signature": {"fields":{"accessibility_modifier":{"types":[{"type":"accessibility_modifier","named":true}],"multiple":false,"required":false,"position":0},"override_modifier":{"types":[{"type":"override_modifier","named":true}],"multiple":false,"required":false,"position":1}}},
@@ -44,20 +219,21 @@ const _overrides = {
   "instantiation_expression": {"fields":{"expression":{"types":[{"type":"expression","named":true}],"multiple":false,"required":true,"position":0}}},
   "import_require_clause": {"fields":{"identifier":{"types":[{"type":"identifier","named":true}],"multiple":false,"required":true,"position":0}}},
   "ambient_declaration": {"fields":{"declaration":{"types":[{"type":"declaration","named":true},{"type":"statement_block","named":true},{"type":"identifier","named":true},{"type":"type","named":true},{"type":"_semicolon","named":true}],"multiple":false,"required":true,"position":0}}},
-  "abstract_class_declaration": {"fields":{"class_heritage":{"types":[{"type":"decorator","named":true}],"multiple":true,"required":true,"position":0}}},
+  "abstract_class_declaration": {"fields":{"class_heritage":{"types":[{"type":"class_heritage","named":true}],"multiple":false,"required":false,"position":3}}},
   "import_alias": {"fields":{"name":{"types":[{"type":"identifier","named":true}],"multiple":false,"required":true,"position":0},"value":{"types":[{"type":"identifier","named":true},{"type":"nested_identifier","named":true}],"multiple":false,"required":true,"position":1},"semicolon":{"types":[{"type":"_semicolon","named":true}],"multiple":false,"required":true,"position":2}}},
   "interface_declaration": {"fields":{"extends_type_clause":{"types":[{"type":"extends_type_clause","named":true}],"multiple":false,"required":false,"position":2}}},
-  "enum_body": {"fields":{"opening":{"types":[{"type":"_property_name","named":true},{"type":"enum_assignment","named":true}],"multiple":false,"required":false,"position":0}}},
-  "required_parameter": {"fields":{"parameter_name":{"types":[{"type":"_parameter_name","named":true}],"multiple":false,"required":true,"position":0},"initializer":{"types":[{"type":"_initializer","named":true}],"multiple":false,"required":false,"position":2}}},
-  "optional_parameter": {"fields":{"parameter_name":{"types":[{"type":"_parameter_name","named":true}],"multiple":false,"required":true,"position":0},"initializer":{"types":[{"type":"_initializer","named":true}],"multiple":false,"required":false,"position":2}}},
-  "asserts_annotation": {"fields":{"asserts":{"types":[{"type":"asserts","named":true}],"multiple":false,"required":true,"position":0}}},
+  "enum_body": {"fields":{"opening":{"types":[],"multiple":true,"required":false,"position":0}}},
+  "asserts_annotation": {"fields":{"asserts":{"types":[],"multiple":false,"required":true,"position":0}}},
   "infer_type": {"fields":{"type_identifier":{"types":[{"type":"_type_identifier","named":true}],"multiple":false,"required":true,"position":0},"constraint":{"types":[{"type":"type","named":true}],"multiple":false,"required":false,"position":1}}},
-  "type_predicate_annotation": {"fields":{"type_predicate":{"types":[{"type":"type_predicate","named":true}],"multiple":false,"required":true,"position":0}}},
+  "type_predicate_annotation": {"fields":{"type_predicate":{"types":[],"multiple":false,"required":true,"position":0}}},
   "index_type_query": {"fields":{"primary_type":{"types":[{"type":"primary_type","named":true}],"multiple":false,"required":true,"position":0}}},
   "lookup_type": {"fields":{"primary_type":{"types":[{"type":"primary_type","named":true}],"multiple":false,"required":true,"position":0},"index_type":{"types":[{"type":"type","named":true}],"multiple":false,"required":true,"position":1}}},
   "flow_maybe_type": {"fields":{"primary_type":{"types":[{"type":"primary_type","named":true}],"multiple":false,"required":true,"position":0}}},
   "object_type": {"fields":{"opening":{"types":[],"multiple":false,"required":true,"position":0},"members":{"types":[{"type":"export_statement","named":true},{"type":"_semicolon","named":true},{"type":"property_signature","named":true},{"type":"call_signature","named":true},{"type":"construct_signature","named":true},{"type":"index_signature","named":true},{"type":"method_signature","named":true}],"multiple":false,"required":false,"position":1},"closing":{"types":[],"multiple":false,"required":true,"position":2}}},
   "property_signature": {"fields":{"accessibility_modifier":{"types":[{"type":"accessibility_modifier","named":true}],"multiple":false,"required":false,"position":0},"override_modifier":{"types":[],"multiple":false,"required":false,"position":1}}},
+  "index_signature_colon": {"fields":{"mapped_type_clause":{"types":[],"multiple":false,"required":true,"position":0}}},
+  "index_signature_mapped_type_clause": {"fields":{"mapped_type_clause":{"types":[],"multiple":false,"required":true,"position":0}}},
+  "index_signature": {"fields":{"mapped_type_clause":{"types":[],"multiple":false,"required":true,"position":0}}},
   "array_type": {"fields":{"primary_type":{"types":[{"type":"primary_type","named":true}],"multiple":false,"required":true,"position":0}}},
   "union_type": {"fields":{"left":{"types":[{"type":"type","named":true}],"multiple":false,"required":false,"position":0},"right":{"types":[{"type":"type","named":true}],"multiple":false,"required":true,"position":1}}},
   "intersection_type": {"fields":{"left":{"types":[{"type":"type","named":true}],"multiple":false,"required":false,"position":0},"right":{"types":[{"type":"type","named":true}],"multiple":false,"required":true,"position":1}}},
@@ -76,7 +252,11 @@ const _supertypeExpansion = new Map<string, readonly string[]>(Object.entries({
   "_formal_parameter": ["required_parameter","optional_parameter"],
   "_destructuring_pattern": ["object_pattern","array_pattern"],
   "_identifier": ["undefined","identifier"],
+  "_semicolon": ["_automatic_semicolon"],
+  "_import_identifier": ["identifier"],
+  "type": ["primary_type","function_type","readonly_type","constructor_type","infer_type","_type_query_member_expression_in_type_annotation","_type_query_call_expression_in_type_annotation"],
   "_tuple_type_member": ["tuple_parameter","optional_tuple_parameter","optional_type","rest_type","type"],
+  "primary_type": ["parenthesized_type","predefined_type","_type_identifier","nested_type_identifier","generic_type","object_type","array_type","tuple_type","flow_maybe_type","type_query","index_type_query","this","existential_type","literal_type","lookup_type","conditional_type","template_literal_type","intersection_type","union_type"],
 }));
 const _routing = buildRoutingMap(_overrides, _supertypeExpansion);
 
@@ -159,6 +339,8 @@ export function wrapImportStatement(data: _NodeData, tree: TreeHandle): WrappedN
 export function wrapImportClause(data: _NodeData, tree: TreeHandle): WrappedNode<ImportClause> {
   return {
     ...data,
+    get defaultImport() { return drillIn(data.fields?.['default_import'], tree); },
+    get namedImports() { return drillIn(data.fields?.['named_imports'], tree); },
     get child() { return drillIn(data.children?.[0], tree); },
   } as unknown as WrappedNode<ImportClause>;
 }
@@ -213,7 +395,7 @@ export function wrapExpressionStatement(data: _NodeData, tree: TreeHandle): Wrap
 export function wrapVariableDeclaration(data: _NodeData, tree: TreeHandle): WrappedNode<VariableDeclaration> {
   return {
     ...data,
-    get declarators() { return drillIn(data.fields?.['declarators'], tree); },
+    get declarators() { return drillInAll(data.fields?.['declarators'], tree); },
     get semicolon() { return drillIn(data.fields?.['semicolon'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<VariableDeclaration>;
@@ -223,7 +405,7 @@ export function wrapLexicalDeclaration(data: _NodeData, tree: TreeHandle): Wrapp
   return {
     ...data,
     get kind() { return drillIn(data.fields?.['kind'], tree); },
-    get declarators() { return drillIn(data.fields?.['declarators'], tree); },
+    get declarators() { return drillInAll(data.fields?.['declarators'], tree); },
     get semicolon() { return drillIn(data.fields?.['semicolon'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<LexicalDeclaration>;
@@ -529,7 +711,7 @@ export function wrapNestedIdentifier(data: _NodeData, tree: TreeHandle): Wrapped
 export function wrapJsxNamespaceName(data: _NodeData, tree: TreeHandle): WrappedNode<JsxNamespaceName> {
   return {
     ...data,
-    get child() { return drillIn(data.children?.[0], tree); },
+    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<JsxNamespaceName>;
 }
 
@@ -565,29 +747,33 @@ export function wrapJsxString(data: _NodeData, tree: TreeHandle): WrappedNode<Js
 export function wrapClass(data: _NodeData, tree: TreeHandle): WrappedNode<Class> {
   return {
     ...data,
-    get classHeritage() { return drillInAll(data.fields?.['class_heritage'], tree); },
+    get decorator() { return drillInAll(data.fields?.['decorator'], tree); },
     get name() { return drillIn(data.fields?.['name'], tree); },
     get typeParameters() { return drillIn(data.fields?.['type_parameters'], tree); },
+    get classHeritage() { return drillIn(data.fields?.['class_heritage'], tree); },
     get body() { return drillIn(data.fields?.['body'], tree); },
-    get child() { return drillIn(data.children?.[0], tree); },
+    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<Class>;
 }
 
 export function wrapClassDeclaration(data: _NodeData, tree: TreeHandle): WrappedNode<ClassDeclaration> {
   return {
     ...data,
-    get classHeritage() { return drillInAll(data.fields?.['class_heritage'], tree); },
+    get decorator() { return drillInAll(data.fields?.['decorator'], tree); },
     get name() { return drillIn(data.fields?.['name'], tree); },
     get typeParameters() { return drillIn(data.fields?.['type_parameters'], tree); },
-    get automaticSemicolon() { return drillIn(data.fields?.['automatic_semicolon'], tree); },
+    get classHeritage() { return drillIn(data.fields?.['class_heritage'], tree); },
     get body() { return drillIn(data.fields?.['body'], tree); },
-    get child() { return drillIn(data.children?.[0], tree); },
+    get automaticSemicolon() { return drillIn(data.fields?.['automatic_semicolon'], tree); },
+    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<ClassDeclaration>;
 }
 
 export function wrapClassHeritage(data: _NodeData, tree: TreeHandle): WrappedNode<ClassHeritage> {
   return {
     ...data,
+    get extendsClause() { return drillIn(data.fields?.['extends_clause'], tree); },
+    get implementsClause() { return drillIn(data.fields?.['implements_clause'], tree); },
     get child() { return drillIn(data.children?.[0], tree); },
   } as unknown as WrappedNode<ClassHeritage>;
 }
@@ -632,6 +818,7 @@ export function wrapArrowFunction(data: _NodeData, tree: TreeHandle): WrappedNod
   return {
     ...data,
     get parameter() { return drillIn(data.fields?.['parameter'], tree); },
+    get body() { return drillIn(data.fields?.['body'], tree); },
     get child() { return drillIn(data.children?.[0], tree); },
   } as unknown as WrappedNode<ArrowFunction>;
 }
@@ -668,8 +855,8 @@ export function wrapMemberExpression(data: _NodeData, tree: TreeHandle): Wrapped
   return {
     ...data,
     get object() { return drillIn(data.fields?.['object'], tree); },
-    get optionalChain() { return drillIn(data.fields?.['optional_chain'], tree); },
     get property() { return drillIn(data.fields?.['property'], tree); },
+    get optionalChain() { return drillIn(data.fields?.['optional_chain'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<MemberExpression>;
 }
@@ -916,19 +1103,10 @@ export function wrapComputedPropertyName(data: _NodeData, tree: TreeHandle): Wra
   } as unknown as WrappedNode<ComputedPropertyName>;
 }
 
-export function wrapSemicolon(data: _NodeData, tree: TreeHandle): WrappedNode<Semicolon> {
-  return {
-    ...data,
-    get child() { return drillIn(data.children?.[0], tree); },
-  } as unknown as WrappedNode<Semicolon>;
-}
-
 export function wrapPublicFieldDefinition(data: _NodeData, tree: TreeHandle): WrappedNode<PublicFieldDefinition> {
   return {
     ...data,
-    get accessibilityModifier() { return drillInAll(data.fields?.['accessibility_modifier'], tree); },
-    get overrideModifier() { return drillIn(data.fields?.['override_modifier'], tree); },
-    get initializer() { return drillIn(data.fields?.['initializer'], tree); },
+    get decorator() { return drillInAll(data.fields?.['decorator'], tree); },
     get name() { return drillIn(data.fields?.['name'], tree); },
     get typeField() { return drillIn(data.fields?.['type'], tree); },
     get child() { return drillIn(data.children?.[0], tree); },
@@ -943,13 +1121,6 @@ export function wrapJsxStartOpeningElement(data: _NodeData, tree: TreeHandle): W
     get attribute() { return drillInAll(data.fields?.['attribute'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<JsxStartOpeningElement>;
-}
-
-export function wrapImportIdentifier(data: _NodeData, tree: TreeHandle): WrappedNode<ImportIdentifier> {
-  return {
-    ...data,
-    get child() { return drillIn(data.children?.[0], tree); },
-  } as unknown as WrappedNode<ImportIdentifier>;
 }
 
 export function wrapNonNullExpression(data: _NodeData, tree: TreeHandle): WrappedNode<NonNullExpression> {
@@ -1065,11 +1236,12 @@ export function wrapAmbientDeclaration(data: _NodeData, tree: TreeHandle): Wrapp
 export function wrapAbstractClassDeclaration(data: _NodeData, tree: TreeHandle): WrappedNode<AbstractClassDeclaration> {
   return {
     ...data,
-    get classHeritage() { return drillInAll(data.fields?.['class_heritage'], tree); },
+    get decorator() { return drillInAll(data.fields?.['decorator'], tree); },
     get name() { return drillIn(data.fields?.['name'], tree); },
     get typeParameters() { return drillIn(data.fields?.['type_parameters'], tree); },
+    get classHeritage() { return drillIn(data.fields?.['class_heritage'], tree); },
     get body() { return drillIn(data.fields?.['body'], tree); },
-    get child() { return drillIn(data.children?.[0], tree); },
+    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<AbstractClassDeclaration>;
 }
 
@@ -1137,7 +1309,7 @@ export function wrapEnumDeclaration(data: _NodeData, tree: TreeHandle): WrappedN
 export function wrapEnumBody(data: _NodeData, tree: TreeHandle): WrappedNode<EnumBody> {
   return {
     ...data,
-    get opening() { return drillIn(data.fields?.['opening'], tree); },
+    get opening() { return drillInAll(data.fields?.['opening'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<EnumBody>;
 }
@@ -1163,20 +1335,16 @@ export function wrapTypeAliasDeclaration(data: _NodeData, tree: TreeHandle): Wra
 export function wrapRequiredParameter(data: _NodeData, tree: TreeHandle): WrappedNode<RequiredParameter> {
   return {
     ...data,
-    get parameterName() { return drillIn(data.fields?.['parameter_name'], tree); },
     get typeField() { return drillIn(data.fields?.['type'], tree); },
-    get initializer() { return drillIn(data.fields?.['initializer'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get child() { return drillIn(data.children?.[0], tree); },
   } as unknown as WrappedNode<RequiredParameter>;
 }
 
 export function wrapOptionalParameter(data: _NodeData, tree: TreeHandle): WrappedNode<OptionalParameter> {
   return {
     ...data,
-    get parameterName() { return drillIn(data.fields?.['parameter_name'], tree); },
     get typeField() { return drillIn(data.fields?.['type'], tree); },
-    get initializer() { return drillIn(data.fields?.['initializer'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get child() { return drillIn(data.children?.[0], tree); },
   } as unknown as WrappedNode<OptionalParameter>;
 }
 
@@ -1219,15 +1387,8 @@ export function wrapAssertsAnnotation(data: _NodeData, tree: TreeHandle): Wrappe
   return {
     ...data,
     get asserts() { return drillIn(data.fields?.['asserts'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  } as unknown as WrappedNode<AssertsAnnotation>;
-}
-
-export function wrapType(data: _NodeData, tree: TreeHandle): WrappedNode<Type> {
-  return {
-    ...data,
     get child() { return drillIn(data.children?.[0], tree); },
-  } as unknown as WrappedNode<Type>;
+  } as unknown as WrappedNode<AssertsAnnotation>;
 }
 
 export function wrapTupleParameter(data: _NodeData, tree: TreeHandle): WrappedNode<TupleParameter> {
@@ -1270,14 +1431,6 @@ export function wrapConstructorType(data: _NodeData, tree: TreeHandle): WrappedN
     get typeField() { return drillIn(data.fields?.['type'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<ConstructorType>;
-}
-
-export function wrapPrimaryType(data: _NodeData, tree: TreeHandle): WrappedNode<PrimaryType> {
-  return {
-    ...data,
-    get name() { return drillIn(data.fields?.['name'], tree); },
-    get child() { return drillIn(data.children?.[0], tree); },
-  } as unknown as WrappedNode<PrimaryType>;
 }
 
 export function wrapTemplateType(data: _NodeData, tree: TreeHandle): WrappedNode<TemplateType> {
@@ -1336,7 +1489,7 @@ export function wrapTypePredicateAnnotation(data: _NodeData, tree: TreeHandle): 
   return {
     ...data,
     get typePredicate() { return drillIn(data.fields?.['type_predicate'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get child() { return drillIn(data.children?.[0], tree); },
   } as unknown as WrappedNode<TypePredicateAnnotation>;
 }
 
@@ -1475,8 +1628,10 @@ export function wrapConstructSignature(data: _NodeData, tree: TreeHandle): Wrapp
 export function wrapIndexSignature(data: _NodeData, tree: TreeHandle): WrappedNode<IndexSignature> {
   return {
     ...data,
+    get mappedTypeClause() { return drillIn(data.fields?.['mapped_type_clause'], tree); },
     get name() { return drillIn(data.fields?.['name'], tree); },
     get indexType() { return drillIn(data.fields?.['index_type'], tree); },
+    get typeField() { return drillIn(data.fields?.['type'], tree); },
     get child() { return drillIn(data.children?.[0], tree); },
   } as unknown as WrappedNode<IndexSignature>;
 }
@@ -1531,11 +1686,11 @@ export function wrapFunctionType(data: _NodeData, tree: TreeHandle): WrappedNode
   } as unknown as WrappedNode<FunctionType>;
 }
 
-export function wrapHiddenTypeIdentifier(data: _NodeData, tree: TreeHandle): WrappedNode<HiddenTypeIdentifier> {
+export function wrap_TypeIdentifier(data: _NodeData, tree: TreeHandle): WrappedNode<_TypeIdentifier> {
   return {
     ...data,
     get child() { return drillIn(data.children?.[0], tree); },
-  } as unknown as WrappedNode<HiddenTypeIdentifier>;
+  } as unknown as WrappedNode<_TypeIdentifier>;
 }
 
 export function wrapShorthandPropertyIdentifier(data: _NodeData, tree: TreeHandle): WrappedNode<ShorthandPropertyIdentifier> {
@@ -1684,10 +1839,8 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_property_name': (d, t) => wrapPropertyName(d, t),
   'computed_property_name': (d, t) => wrapComputedPropertyName(d, t),
   '_reserved_identifier': (d) => d,
-  '_semicolon': (d, t) => wrapSemicolon(d, t),
   'public_field_definition': (d, t) => wrapPublicFieldDefinition(d, t),
   '_jsx_start_opening_element': (d, t) => wrapJsxStartOpeningElement(d, t),
-  '_import_identifier': (d, t) => wrapImportIdentifier(d, t),
   'non_null_expression': (d, t) => wrapNonNullExpression(d, t),
   'method_signature': (d, t) => wrapMethodSignature(d, t),
   'abstract_method_signature': (d, t) => wrapAbstractMethodSignature(d, t),
@@ -1722,13 +1875,11 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'type_annotation': (d, t) => wrapTypeAnnotation(d, t),
   'asserts': (d, t) => wrapAsserts(d, t),
   'asserts_annotation': (d, t) => wrapAssertsAnnotation(d, t),
-  'type': (d, t) => wrapType(d, t),
   'tuple_parameter': (d, t) => wrapTupleParameter(d, t),
   'optional_tuple_parameter': (d, t) => wrapOptionalTupleParameter(d, t),
   'optional_type': (d, t) => wrapOptionalType(d, t),
   'rest_type': (d, t) => wrapRestType(d, t),
   'constructor_type': (d, t) => wrapConstructorType(d, t),
-  'primary_type': (d, t) => wrapPrimaryType(d, t),
   'template_type': (d, t) => wrapTemplateType(d, t),
   'template_literal_type': (d, t) => wrapTemplateLiteralType(d, t),
   'infer_type': (d, t) => wrapInferType(d, t),
@@ -1760,7 +1911,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'union_type': (d, t) => wrapUnionType(d, t),
   'intersection_type': (d, t) => wrapIntersectionType(d, t),
   'function_type': (d, t) => wrapFunctionType(d, t),
-  '_type_identifier': (d, t) => wrapHiddenTypeIdentifier(d, t),
+  '_type_identifier': (d, t) => wrap_TypeIdentifier(d, t),
   '_automatic_semicolon': (d) => d,
   '_template_chars': (d) => d,
   'html_comment': (d) => d,

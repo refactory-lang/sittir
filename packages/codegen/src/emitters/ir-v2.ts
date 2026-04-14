@@ -25,7 +25,8 @@ export function emitIrFromNodeMap(config: EmitIrFromNodeMapConfig): string {
     const factoryImports = new Set<string>()
     const fromImports = new Set<string>()
 
-    for (const [, node] of nodeMap.nodes) {
+    for (const [kind, node] of nodeMap.nodes) {
+        if (kind.startsWith('_')) continue
         if (!node.rawFactoryName) continue // supertype, token, hidden — no factory
         // Skip synthesised polymorph form groups here — they are imported
         // via their parent polymorph's form list below to avoid duplicates.
@@ -77,7 +78,8 @@ export function emitIrFromNodeMap(config: EmitIrFromNodeMapConfig): string {
 
     // Branch/container/polymorph factories — combined with .from()
     lines.push('  // Node factories')
-    for (const [, node] of nodeMap.nodes) {
+    for (const [kind, node] of nodeMap.nodes) {
+        if (kind.startsWith('_')) continue
         if (!node.irKey || !node.rawFactoryName || !node.fromFunctionName) continue
         if (!/^[A-Za-z_$][\w$]*$/.test(node.irKey)) continue
         if (node.modelType !== 'branch' && node.modelType !== 'container' && node.modelType !== 'polymorph') continue
@@ -96,7 +98,8 @@ export function emitIrFromNodeMap(config: EmitIrFromNodeMapConfig): string {
 
     // Keyword factories
     lines.push('  // Keyword factories')
-    for (const [, node] of nodeMap.nodes) {
+    for (const [kind, node] of nodeMap.nodes) {
+        if (kind.startsWith('_')) continue
         if (node.modelType !== 'keyword') continue
         if (!node.irKey || !node.rawFactoryName) continue
         if (!/^[A-Za-z_$][\w$]*$/.test(node.irKey)) continue
@@ -107,7 +110,8 @@ export function emitIrFromNodeMap(config: EmitIrFromNodeMapConfig): string {
 
     // Leaf factories
     lines.push('  // Leaf node factories')
-    for (const [, node] of nodeMap.nodes) {
+    for (const [kind, node] of nodeMap.nodes) {
+        if (kind.startsWith('_')) continue
         if (node.modelType !== 'leaf' && node.modelType !== 'enum') continue
         if (!node.irKey || !node.rawFactoryName) continue
         if (!/^[A-Za-z_$][\w$]*$/.test(node.irKey)) continue

@@ -13,7 +13,119 @@ interface _NodeData {
 }
 import { readNode, buildRoutingMap, type TreeHandle } from '@sittir/core';
 import type { WrappedNode } from '@sittir/types';
-import type { AliasedImport, ArgumentList, AsPattern, AsPatternTarget, AssertStatement, Assignment, Attribute, AugmentedAssignment, Await, BinaryOperator, Block, BooleanOperator, Call, CaseClause, CasePattern, Chevron, ClassDefinition, ClassPattern, CollectionElements, ComparisonOperator, ComplexPattern, ComprehensionClauses, ConcatenatedString, ConditionalExpression, ConstrainedType, DecoratedDefinition, Decorator, DefaultParameter, DeleteStatement, DictPattern, Dictionary, DictionaryComprehension, DictionarySplat, DictionarySplatPattern, DottedName, ElifClause, ElseClause, ExceptClause, ExecStatement, Expression, ExpressionList, ExpressionStatement, FinallyClause, ForInClause, ForStatement, FormatExpression, FormatSpecifier, FunctionDefinition, FutureImportStatement, GeneratorExpression, GenericType, GlobalStatement, HiddenParameters, IfClause, IfStatement, ImportFromStatement, ImportList, ImportStatement, Interpolation, KeywordArgument, KeywordPattern, Lambda, LambdaParameters, LambdaWithinForInClause, List, ListComprehension, ListPattern, ListSplat, ListSplatPattern, MatchStatement, MemberType, Module, NamedExpression, NonlocalStatement, NotOperator, Pair, Parameter, Parameters, ParenthesizedExpression, ParenthesizedListSplat, Pattern, PatternList, Patterns, PrimaryExpression, PrintStatement, RaiseStatement, RelativeImport, ReturnStatement, Set, SetComprehension, SimplePattern, SimpleStatements, Slice, SplatPattern, SplatType, String, StringContent, Subscript, Suite, TryStatement, Tuple, TuplePattern, Type, TypeAliasStatement, TypeParameter, TypedDefaultParameter, TypedParameter, UnaryOperator, UnionPattern, UnionType, WhileStatement, WithClause, WithItem, WithStatement, Yield } from './types.js';
+import type {
+  AliasedImport,
+  ArgumentList,
+  AsPattern,
+  AsPatternTarget,
+  AssertStatement,
+  Assignment,
+  Attribute,
+  AugmentedAssignment,
+  Await,
+  BinaryOperator,
+  Block,
+  BooleanOperator,
+  Call,
+  CaseClause,
+  CasePattern,
+  Chevron,
+  ClassDefinition,
+  ClassPattern,
+  CollectionElements,
+  ComparisonOperator,
+  ComplexPattern,
+  ComprehensionClauses,
+  ConcatenatedString,
+  ConditionalExpression,
+  ConstrainedType,
+  DecoratedDefinition,
+  Decorator,
+  DefaultParameter,
+  DeleteStatement,
+  DictPattern,
+  Dictionary,
+  DictionaryComprehension,
+  DictionarySplat,
+  DictionarySplatPattern,
+  DottedName,
+  ElifClause,
+  ElseClause,
+  ExceptClause,
+  ExecStatement,
+  ExpressionList,
+  ExpressionStatement,
+  FinallyClause,
+  ForInClause,
+  ForStatement,
+  FormatExpression,
+  FormatSpecifier,
+  FunctionDefinition,
+  FutureImportStatement,
+  GeneratorExpression,
+  GenericType,
+  GlobalStatement,
+  IfClause,
+  IfStatement,
+  ImportFromStatement,
+  ImportList,
+  ImportStatement,
+  Interpolation,
+  KeywordArgument,
+  KeywordPattern,
+  Lambda,
+  LambdaParameters,
+  LambdaWithinForInClause,
+  List,
+  ListComprehension,
+  ListPattern,
+  ListSplat,
+  ListSplatPattern,
+  MatchStatement,
+  MemberType,
+  Module,
+  NamedExpression,
+  NonlocalStatement,
+  NotOperator,
+  Pair,
+  Parameters,
+  ParenthesizedExpression,
+  ParenthesizedListSplat,
+  PatternList,
+  Patterns,
+  PrintStatement,
+  RaiseStatement,
+  RelativeImport,
+  ReturnStatement,
+  Set,
+  SetComprehension,
+  SimplePattern,
+  SimpleStatements,
+  Slice,
+  SplatPattern,
+  SplatType,
+  String,
+  StringContent,
+  Subscript,
+  Suite,
+  TryStatement,
+  Tuple,
+  TuplePattern,
+  Type,
+  TypeAliasStatement,
+  TypeParameter,
+  TypedDefaultParameter,
+  TypedParameter,
+  UnaryOperator,
+  UnionPattern,
+  UnionType,
+  WhileStatement,
+  WithClause,
+  WithItem,
+  WithStatement,
+  Yield,
+  _Parameters,
+} from './types.js';
 
 // Routing data — overrides + supertype expansion reconstructed at
 // codegen time from NodeMap, then handed to readNode at module load.
@@ -29,10 +141,10 @@ const _overrides = {
   "decorator": {"fields":{"expression":{"types":[{"type":"expression","named":true}],"multiple":false,"required":true,"position":0},"newline":{"types":[],"multiple":false,"required":true,"position":1}}},
   "keyword_pattern": {"fields":{"identifier":{"types":[{"type":"identifier","named":true}],"multiple":false,"required":true,"position":0},"simple_pattern":{"types":[{"type":"_simple_pattern","named":true}],"multiple":false,"required":true,"position":1}}},
   "splat_pattern": {"fields":{"identifier":{"types":[],"multiple":false,"required":true,"position":0}}},
-  "class_pattern": {"fields":{"dotted_name":{"types":[{"type":"dotted_name","named":true}],"multiple":false,"required":true,"position":0},"arguments":{"types":[{"type":"case_pattern","named":true}],"multiple":false,"required":false,"position":1}}},
-  "complex_pattern": {"fields":{"real":{"types":[],"multiple":false,"required":false,"position":0},"imaginary":{"types":[{"type":"integer","named":true},{"type":"float","named":true}],"multiple":false,"required":true,"position":1}}},
+  "class_pattern": {"fields":{"dotted_name":{"types":[{"type":"dotted_name","named":true}],"multiple":false,"required":true,"position":0},"arguments":{"types":[],"multiple":true,"required":false,"position":1}}},
+  "complex_pattern": {"fields":{"real":{"types":[],"multiple":false,"required":true,"position":0},"imaginary":{"types":[{"type":"integer","named":true},{"type":"float","named":true}],"multiple":false,"required":true,"position":1}}},
   "as_pattern": {"fields":{"expression":{"types":[{"type":"expression","named":true}],"multiple":false,"required":true,"position":0}}},
-  "comparison_operator": {"fields":{"left":{"types":[{"type":"primary_expression","named":true}],"multiple":false,"required":true,"position":0},"comparators":{"types":[{"type":"_not_in","named":true},{"type":"_is_not","named":true},{"type":"primary_expression","named":true}],"multiple":true,"required":true,"position":1}}},
+  "comparison_operator": {"fields":{"left":{"types":[{"type":"primary_expression","named":true}],"multiple":false,"required":true,"position":0}}},
   "slice": {"fields":{"start":{"types":[{"type":"expression","named":true}],"multiple":false,"required":false,"position":0},"stop":{"types":[{"type":"expression","named":true}],"multiple":false,"required":false,"position":1},"step":{"types":[{"type":"expression","named":true}],"multiple":false,"required":false,"position":2}}},
   "splat_type": {"fields":{"identifier":{"types":[],"multiple":false,"required":true,"position":0}}},
   "generic_type": {"fields":{"identifier":{"types":[{"type":"identifier","named":true}],"multiple":false,"required":true,"position":0},"type_parameter":{"types":[{"type":"type_parameter","named":true}],"multiple":false,"required":true,"position":1}}},
@@ -50,7 +162,11 @@ const _supertypeExpansion = new Map<string, readonly string[]>(Object.entries({
   "_named_expression_lhs": ["identifier","keyword_identifier"],
   "_expressions": ["expression","expression_list"],
   "_compound_statement": ["if_statement","for_statement","while_statement","try_statement","with_statement","function_definition","class_definition","decorated_definition","match_statement"],
+  "parameter": ["identifier","typed_parameter","default_parameter","typed_default_parameter","list_splat_pattern","tuple_pattern","keyword_separator","positional_separator","dictionary_splat_pattern"],
+  "pattern": ["identifier","keyword_identifier","subscript","attribute","list_splat_pattern","tuple_pattern","list_pattern"],
   "_expression_within_for_in_clause": ["expression","lambda_within_for_in_clause"],
+  "expression": ["comparison_operator","not_operator","boolean_operator","lambda","primary_expression","conditional_expression","named_expression","as_pattern"],
+  "primary_expression": ["await","binary_operator","identifier","keyword_identifier","string","concatenated_string","integer","float","true","false","none","unary_operator","attribute","subscript","call","list","list_comprehension","dictionary","dictionary_comprehension","set","set_comprehension","tuple","parenthesized_expression","generator_expression","ellipsis","list_splat_pattern"],
   "_left_hand_side": ["pattern","pattern_list"],
   "_right_hand_side": ["expression","expression_list","assignment","augmented_assignment","pattern_list","yield"],
   "_f_expression": ["expression","expression_list","pattern_list","yield"],
@@ -513,7 +629,7 @@ export function wrapClassPattern(data: _NodeData, tree: TreeHandle): WrappedNode
   return {
     ...data,
     get dottedName() { return drillIn(data.fields?.['dotted_name'], tree); },
-    get arguments() { return drillIn(data.fields?.['arguments'], tree); },
+    get arguments() { return drillInAll(data.fields?.['arguments'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<ClassPattern>;
 }
@@ -527,11 +643,11 @@ export function wrapComplexPattern(data: _NodeData, tree: TreeHandle): WrappedNo
   } as unknown as WrappedNode<ComplexPattern>;
 }
 
-export function wrapHiddenParameters(data: _NodeData, tree: TreeHandle): WrappedNode<HiddenParameters> {
+export function wrap_Parameters(data: _NodeData, tree: TreeHandle): WrappedNode<_Parameters> {
   return {
     ...data,
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  } as unknown as WrappedNode<HiddenParameters>;
+  } as unknown as WrappedNode<_Parameters>;
 }
 
 export function wrapPatterns(data: _NodeData, tree: TreeHandle): WrappedNode<Patterns> {
@@ -539,20 +655,6 @@ export function wrapPatterns(data: _NodeData, tree: TreeHandle): WrappedNode<Pat
     ...data,
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<Patterns>;
-}
-
-export function wrapParameter(data: _NodeData, tree: TreeHandle): WrappedNode<Parameter> {
-  return {
-    ...data,
-    get child() { return drillIn(data.children?.[0], tree); },
-  } as unknown as WrappedNode<Parameter>;
-}
-
-export function wrapPattern(data: _NodeData, tree: TreeHandle): WrappedNode<Pattern> {
-  return {
-    ...data,
-    get child() { return drillIn(data.children?.[0], tree); },
-  } as unknown as WrappedNode<Pattern>;
 }
 
 export function wrapTuplePattern(data: _NodeData, tree: TreeHandle): WrappedNode<TuplePattern> {
@@ -611,20 +713,6 @@ export function wrapAsPattern(data: _NodeData, tree: TreeHandle): WrappedNode<As
   } as unknown as WrappedNode<AsPattern>;
 }
 
-export function wrapExpression(data: _NodeData, tree: TreeHandle): WrappedNode<Expression> {
-  return {
-    ...data,
-    get child() { return drillIn(data.children?.[0], tree); },
-  } as unknown as WrappedNode<Expression>;
-}
-
-export function wrapPrimaryExpression(data: _NodeData, tree: TreeHandle): WrappedNode<PrimaryExpression> {
-  return {
-    ...data,
-    get child() { return drillIn(data.children?.[0], tree); },
-  } as unknown as WrappedNode<PrimaryExpression>;
-}
-
 export function wrapNotOperator(data: _NodeData, tree: TreeHandle): WrappedNode<NotOperator> {
   return {
     ...data,
@@ -666,7 +754,7 @@ export function wrapComparisonOperator(data: _NodeData, tree: TreeHandle): Wrapp
   return {
     ...data,
     get left() { return drillIn(data.fields?.['left'], tree); },
-    get comparators() { return drillInAll(data.fields?.['comparators'], tree); },
+    get operators() { return drillInAll(data.fields?.['operators'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<ComparisonOperator>;
 }
@@ -692,6 +780,7 @@ export function wrapLambdaWithinForInClause(data: _NodeData, tree: TreeHandle): 
 export function wrapAssignment(data: _NodeData, tree: TreeHandle): WrappedNode<Assignment> {
   return {
     ...data,
+    get left() { return drillIn(data.fields?.['left'], tree); },
     get right() { return drillIn(data.fields?.['right'], tree); },
     get typeField() { return drillIn(data.fields?.['type'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
@@ -921,7 +1010,7 @@ export function wrapForInClause(data: _NodeData, tree: TreeHandle): WrappedNode<
   return {
     ...data,
     get left() { return drillIn(data.fields?.['left'], tree); },
-    get right() { return drillIn(data.fields?.['right'], tree); },
+    get right() { return drillInAll(data.fields?.['right'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<ForInClause>;
 }
@@ -1071,10 +1160,8 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'splat_pattern': (d, t) => wrapSplatPattern(d, t),
   'class_pattern': (d, t) => wrapClassPattern(d, t),
   'complex_pattern': (d, t) => wrapComplexPattern(d, t),
-  '_parameters': (d, t) => wrapHiddenParameters(d, t),
+  '_parameters': (d, t) => wrap_Parameters(d, t),
   '_patterns': (d, t) => wrapPatterns(d, t),
-  'parameter': (d, t) => wrapParameter(d, t),
-  'pattern': (d, t) => wrapPattern(d, t),
   'tuple_pattern': (d, t) => wrapTuplePattern(d, t),
   'list_pattern': (d, t) => wrapListPattern(d, t),
   'default_parameter': (d, t) => wrapDefaultParameter(d, t),
@@ -1082,8 +1169,6 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'list_splat_pattern': (d, t) => wrapListSplatPattern(d, t),
   'dictionary_splat_pattern': (d, t) => wrapDictionarySplatPattern(d, t),
   'as_pattern': (d, t) => wrapAsPattern(d, t),
-  'expression': (d, t) => wrapExpression(d, t),
-  'primary_expression': (d, t) => wrapPrimaryExpression(d, t),
   'not_operator': (d, t) => wrapNotOperator(d, t),
   'boolean_operator': (d, t) => wrapBooleanOperator(d, t),
   'binary_operator': (d, t) => wrapBinaryOperator(d, t),
@@ -1145,6 +1230,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_indent': (d) => d,
   '_dedent': (d) => d,
   'string_start': (d) => d,
+  '_string_content': (d) => d,
   'escape_interpolation': (d) => d,
   'string_end': (d) => d,
   ']': (d) => d,

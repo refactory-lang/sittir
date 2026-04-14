@@ -14,8 +14,8 @@
 // ---------------------------------------------------------------
 // Summary
 // ---------------------------------------------------------------
-// Field inferences: 15  (15 applied, 0 held)
-// Rule promotions:  17  (17 applied, 0 held)
+// Field inferences: 1  (1 applied, 0 held)
+// Rule promotions:  29  (29 applied, 0 held)
 // Repeated shapes:  3  (advisory — suggested supertypes/groups)
 
 // ---------------------------------------------------------------
@@ -24,49 +24,7 @@
 // that mirrors the shape you'd hand-write yourself.
 // ---------------------------------------------------------------
 export const suggestedRules = {
-  // closure_parameters: 2 inferred field(s)
-  "closure_parameters": ($, original) => transform(original, {
-    // [applied] 100% agreement, 6 parents
-    N: field("pattern"),  // TODO: pick position N for $._pattern
-  }),
-
-  // match_pattern: 1 inferred field(s)
-  "match_pattern": ($, original) => transform(original, {
-    // [applied] 100% agreement, 6 parents
-    N: field("pattern"),  // TODO: pick position N for $._pattern
-  }),
-
-  // or_pattern: 3 inferred field(s)
-  "or_pattern": ($, original) => transform(original, {
-    // [applied] 100% agreement, 6 parents
-    N: field("pattern"),  // TODO: pick position N for $._pattern
-  }),
-
-  // ref_pattern: 1 inferred field(s)
-  "ref_pattern": ($, original) => transform(original, {
-    // [applied] 100% agreement, 6 parents
-    N: field("pattern"),  // TODO: pick position N for $._pattern
-  }),
-
-  // slice_pattern: 2 inferred field(s)
-  "slice_pattern": ($, original) => transform(original, {
-    // [applied] 100% agreement, 6 parents
-    N: field("pattern"),  // TODO: pick position N for $._pattern
-  }),
-
-  // tuple_pattern: 2 inferred field(s)
-  "tuple_pattern": ($, original) => transform(original, {
-    // [applied] 100% agreement, 6 parents
-    N: field("pattern"),  // TODO: pick position N for $._pattern
-  }),
-
-  // tuple_struct_pattern: 2 inferred field(s)
-  "tuple_struct_pattern": ($, original) => transform(original, {
-    // [applied] 100% agreement, 6 parents
-    N: field("pattern"),  // TODO: pick position N for $._pattern
-  }),
-
-  // type_arguments: 2 inferred field(s)
+  // type_arguments: 1 inferred field(s)
   "type_arguments": ($, original) => transform(original, {
     // [applied] 100% agreement, 5 parents
     N: field("bounds"),  // TODO: pick position N for $.trait_bounds
@@ -75,6 +33,9 @@ export const suggestedRules = {
   // --- Promoted supertypes (add matching names to grammar.supertypes) ---
   // [applied] promoted supertype
   "_statement": $ => choice($.expression_statement, $._declaration_statement),
+
+  // [applied] promoted supertype
+  "_declaration_statement": $ => choice($.const_item, $.macro_invocation, $.macro_definition, $.empty_statement, $.attribute_item, $.inner_attribute_item, $.mod_item, $.foreign_mod_item, $.struct_item, $.union_item, $.enum_item, $.type_item, $.function_item, $.function_signature_item, $.impl_item, $.trait_item, $.associated_type, $.let_declaration, $.use_declaration, $.extern_crate_declaration, $.static_item),
 
   // [applied] promoted supertype
   "_token_pattern": $ => choice($.token_tree_pattern, $.token_repetition_pattern, $.token_binding_pattern, $.metavariable, $._non_special_token),
@@ -86,13 +47,37 @@ export const suggestedRules = {
   "_use_clause": $ => choice($._path, $.use_as_clause, $.use_list, $.scoped_use_list, $.use_wildcard),
 
   // [applied] promoted supertype
+  "_type": $ => choice($.abstract_type, $.reference_type, $.metavariable, $.pointer_type, $.generic_type, $.scoped_type_identifier, $.tuple_type, $.unit_type, $.array_type, $.function_type, $._type_identifier, $.macro_invocation, $.never_type, $.dynamic_type, $.bounded_type, $.removed_trait_bound),
+
+  // [applied] promoted supertype
+  "_expression_except_range": $ => choice($.unary_expression, $.reference_expression, $.try_expression, $.binary_expression, $.assignment_expression, $.compound_assignment_expr, $.type_cast_expression, $.call_expression, $.return_expression, $.yield_expression, $._literal, $.identifier, $._reserved_identifier, $.self, $.scoped_identifier, $.generic_function, $.await_expression, $.field_expression, $.array_expression, $.tuple_expression, $.macro_invocation, $.unit_expression, $.break_expression, $.continue_expression, $.index_expression, $.metavariable, $.closure_expression, $.parenthesized_expression, $.struct_expression, $._expression_ending_with_block),
+
+  // [applied] promoted supertype
+  "_expression": $ => choice($._expression_except_range, $.range_expression),
+
+  // [applied] promoted supertype
   "_expression_ending_with_block": $ => choice($.unsafe_block, $.async_block, $.gen_block, $.try_block, $.block, $.if_expression, $.match_expression, $.while_expression, $.loop_expression, $.for_expression, $.const_block),
 
   // [applied] promoted supertype
   "_delim_tokens": $ => choice($._non_delim_token, $.delim_token_tree),
 
   // [applied] promoted supertype
+  "_non_delim_token": $ => choice($._non_special_token),
+
+  // [applied] promoted supertype
   "_condition": $ => choice($._expression, $.let_condition, $._let_chain),
+
+  // [applied] promoted supertype
+  "_pattern": $ => choice($._literal_pattern, $.identifier, $.scoped_identifier, $.generic_pattern, $.tuple_pattern, $.tuple_struct_pattern, $.struct_pattern, $._reserved_identifier, $.ref_pattern, $.slice_pattern, $.captured_pattern, $.reference_pattern, $.remaining_field_pattern, $.mut_pattern, $.range_pattern, $.or_pattern, $.const_block, $.macro_invocation),
+
+  // [applied] promoted supertype
+  "_literal": $ => choice($.string_literal, $.raw_string_literal, $.char_literal, $.boolean_literal, $.integer_literal, $.float_literal),
+
+  // [applied] promoted supertype
+  "_literal_pattern": $ => choice($.string_literal, $.raw_string_literal, $.char_literal, $.boolean_literal, $.integer_literal, $.float_literal, $.negative_literal),
+
+  // [applied] promoted supertype
+  "_path": $ => choice($.self, $.metavariable, $.super, $.crate, $.identifier, $.scoped_identifier, $._reserved_identifier),
 
   // --- Repeated-shape candidates (reused across ≥2 parents) ---
   // parents: function_item, function_signature_item
@@ -113,11 +98,20 @@ export interface PromotedRule {
 }
 export const promotedRules: readonly PromotedRule[] = [
   { kind: "_condition", classification: "supertype", applied: true },
+  { kind: "_declaration_statement", classification: "supertype", applied: true },
   { kind: "_delim_tokens", classification: "supertype", applied: true },
+  { kind: "_expression", classification: "supertype", applied: true },
   { kind: "_expression_ending_with_block", classification: "supertype", applied: true },
+  { kind: "_expression_except_range", classification: "supertype", applied: true },
+  { kind: "_literal", classification: "supertype", applied: true },
+  { kind: "_literal_pattern", classification: "supertype", applied: true },
+  { kind: "_non_delim_token", classification: "supertype", applied: true },
+  { kind: "_path", classification: "supertype", applied: true },
+  { kind: "_pattern", classification: "supertype", applied: true },
   { kind: "_statement", classification: "supertype", applied: true },
   { kind: "_token_pattern", classification: "supertype", applied: true },
   { kind: "_tokens", classification: "supertype", applied: true },
+  { kind: "_type", classification: "supertype", applied: true },
   { kind: "_use_clause", classification: "supertype", applied: true },
   { kind: "char_literal", classification: "terminal", applied: true },
   { kind: "escape_sequence", classification: "terminal", applied: true },
@@ -128,7 +122,10 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "unit_type", classification: "terminal", applied: true },
   { kind: "closure_expression", classification: "polymorph", applied: true },
   { kind: "field_pattern", classification: "polymorph", applied: true },
+  { kind: "or_pattern", classification: "polymorph", applied: true },
+  { kind: "range_expression", classification: "polymorph", applied: true },
   { kind: "range_pattern", classification: "polymorph", applied: true },
+  { kind: "visibility_modifier", classification: "polymorph", applied: true },
 ];
 
 export interface InferredField {
@@ -141,20 +138,6 @@ export interface InferredField {
   readonly applied: boolean;
 }
 export const inferredFields: readonly InferredField[] = [
-  { kind: "closure_parameters", fieldName: "pattern", targetSymbol: "_pattern", confidence: "high", agreement: 1.000, sampleSize: 6, applied: true },
-  { kind: "closure_parameters", fieldName: "pattern", targetSymbol: "_pattern", confidence: "high", agreement: 1.000, sampleSize: 6, applied: true },
-  { kind: "match_pattern", fieldName: "pattern", targetSymbol: "_pattern", confidence: "high", agreement: 1.000, sampleSize: 6, applied: true },
-  { kind: "or_pattern", fieldName: "pattern", targetSymbol: "_pattern", confidence: "high", agreement: 1.000, sampleSize: 6, applied: true },
-  { kind: "or_pattern", fieldName: "pattern", targetSymbol: "_pattern", confidence: "high", agreement: 1.000, sampleSize: 6, applied: true },
-  { kind: "or_pattern", fieldName: "pattern", targetSymbol: "_pattern", confidence: "high", agreement: 1.000, sampleSize: 6, applied: true },
-  { kind: "ref_pattern", fieldName: "pattern", targetSymbol: "_pattern", confidence: "high", agreement: 1.000, sampleSize: 6, applied: true },
-  { kind: "slice_pattern", fieldName: "pattern", targetSymbol: "_pattern", confidence: "high", agreement: 1.000, sampleSize: 6, applied: true },
-  { kind: "slice_pattern", fieldName: "pattern", targetSymbol: "_pattern", confidence: "high", agreement: 1.000, sampleSize: 6, applied: true },
-  { kind: "tuple_pattern", fieldName: "pattern", targetSymbol: "_pattern", confidence: "high", agreement: 1.000, sampleSize: 6, applied: true },
-  { kind: "tuple_pattern", fieldName: "pattern", targetSymbol: "_pattern", confidence: "high", agreement: 1.000, sampleSize: 6, applied: true },
-  { kind: "tuple_struct_pattern", fieldName: "pattern", targetSymbol: "_pattern", confidence: "high", agreement: 1.000, sampleSize: 6, applied: true },
-  { kind: "tuple_struct_pattern", fieldName: "pattern", targetSymbol: "_pattern", confidence: "high", agreement: 1.000, sampleSize: 6, applied: true },
-  { kind: "type_arguments", fieldName: "bounds", targetSymbol: "trait_bounds", confidence: "high", agreement: 1.000, sampleSize: 5, applied: true },
   { kind: "type_arguments", fieldName: "bounds", targetSymbol: "trait_bounds", confidence: "high", agreement: 1.000, sampleSize: 5, applied: true },
 ];
 

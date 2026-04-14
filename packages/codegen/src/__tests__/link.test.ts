@@ -41,7 +41,7 @@ describe('Link — reference resolution', () => {
         expect(linked.rules['statement']).toBeDefined()
     })
 
-    it('produces a LinkedGrammar with no alias, token, or repeat1 nodes', () => {
+    it('produces a LinkedGrammar with no alias or token nodes', () => {
         const raw = makeRaw({
             root: {
                 type: 'seq',
@@ -57,7 +57,10 @@ describe('Link — reference resolution', () => {
             if ('type' in rule) {
                 expect(rule.type).not.toBe('alias')
                 expect(rule.type).not.toBe('token')
-                expect(rule.type).not.toBe('repeat1')
+                // NOTE: `repeat1` is intentionally preserved through
+                // Link so the downstream field / child derivation can
+                // stamp `nonEmpty: true` on the resulting slot and the
+                // types emitter can render a non-empty tuple type.
             }
             if ('content' in rule && rule.content) assertNoRefTypes(rule.content as Rule)
             if ('members' in rule && Array.isArray((rule as any).members)) {
@@ -70,17 +73,16 @@ describe('Link — reference resolution', () => {
         }
     })
 
-    it('normalizes repeat1 to repeat', () => {
+    it('preserves repeat1 through Link for non-empty signal', () => {
         const raw = makeRaw({
             items: { type: 'repeat1', content: { type: 'string', value: 'x' } },
         })
         const linked = link(raw)
         // `items` is a pure-terminal subtree (only string literals) so Link
-        // also wraps it as TerminalRule; unwrap to verify the repeat1→repeat
-        // normalization inside.
+        // wraps it as TerminalRule; unwrap to verify the repeat1 survived.
         const rule = linked.rules['items']
         const inner = rule!.type === 'terminal' ? (rule as any).content : rule
-        expect(inner.type).toBe('repeat')
+        expect(inner.type).toBe('repeat1')
     })
 
     it('flattens token to its content', () => {

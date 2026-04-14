@@ -14,8 +14,8 @@
 // ---------------------------------------------------------------
 // Summary
 // ---------------------------------------------------------------
-// Field inferences: 2  (2 applied, 0 held)
-// Rule promotions:  33  (33 applied, 0 held)
+// Field inferences: 1  (1 applied, 0 held)
+// Rule promotions:  39  (39 applied, 0 held)
 // Repeated shapes:  7  (advisory — suggested supertypes/groups)
 
 // ---------------------------------------------------------------
@@ -24,12 +24,6 @@
 // that mirrors the shape you'd hand-write yourself.
 // ---------------------------------------------------------------
 export const suggestedRules = {
-  // primary_type: 1 inferred field(s)
-  "primary_type": ($, original) => transform(original, {
-    // [applied] 90% agreement, 10 parents
-    N: field("name"),  // TODO: pick position N for $._type_identifier
-  }),
-
   // statement: 1 inferred field(s)
   "statement": ($, original) => transform(original, {
     // [applied] 100% agreement, 13 parents
@@ -74,7 +68,19 @@ export const suggestedRules = {
   "_identifier": $ => choice($.undefined, $.identifier),
 
   // [applied] promoted supertype
+  "_semicolon": $ => choice($._automatic_semicolon),
+
+  // [applied] promoted supertype
+  "_import_identifier": $ => choice($.identifier),
+
+  // [applied] promoted supertype
+  "type": $ => choice($.primary_type, $.function_type, $.readonly_type, $.constructor_type, $.infer_type, $._type_query_member_expression_in_type_annotation, $._type_query_call_expression_in_type_annotation),
+
+  // [applied] promoted supertype
   "_tuple_type_member": $ => choice($.tuple_parameter, $.optional_tuple_parameter, $.optional_type, $.rest_type, $.type),
+
+  // [applied] promoted supertype
+  "primary_type": $ => choice($.parenthesized_type, $.predefined_type, $._type_identifier, $.nested_type_identifier, $.generic_type, $.object_type, $.array_type, $.tuple_type, $.flow_maybe_type, $.type_query, $.index_type_query, $.this, $.existential_type, $.literal_type, $.lookup_type, $.conditional_type, $.template_literal_type, $.intersection_type, $.union_type),
 
   // --- Repeated-shape candidates (reused across ≥2 parents) ---
   // parents: _for_header, catch_clause, variable_declarator
@@ -104,6 +110,7 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "_expressions", classification: "supertype", applied: true },
   { kind: "_formal_parameter", classification: "supertype", applied: true },
   { kind: "_identifier", classification: "supertype", applied: true },
+  { kind: "_import_identifier", classification: "supertype", applied: true },
   { kind: "_jsx_attribute", classification: "supertype", applied: true },
   { kind: "_jsx_attribute_name", classification: "supertype", applied: true },
   { kind: "_jsx_attribute_value", classification: "supertype", applied: true },
@@ -112,7 +119,10 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "_jsx_element_name", classification: "supertype", applied: true },
   { kind: "_jsx_identifier", classification: "supertype", applied: true },
   { kind: "_module_export_name", classification: "supertype", applied: true },
+  { kind: "_semicolon", classification: "supertype", applied: true },
   { kind: "_tuple_type_member", classification: "supertype", applied: true },
+  { kind: "primary_type", classification: "supertype", applied: true },
+  { kind: "type", classification: "supertype", applied: true },
   { kind: "_reserved_identifier", classification: "terminal", applied: true },
   { kind: "comment", classification: "terminal", applied: true },
   { kind: "escape_sequence", classification: "terminal", applied: true },
@@ -128,7 +138,9 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "type_identifier", classification: "terminal", applied: true },
   { kind: "arrow_function", classification: "polymorph", applied: true },
   { kind: "call_expression", classification: "polymorph", applied: true },
+  { kind: "class_heritage", classification: "polymorph", applied: true },
   { kind: "export_statement", classification: "polymorph", applied: true },
+  { kind: "import_clause", classification: "polymorph", applied: true },
   { kind: "import_specifier", classification: "polymorph", applied: true },
   { kind: "index_signature", classification: "polymorph", applied: true },
   { kind: "parenthesized_expression", classification: "polymorph", applied: true },
@@ -146,7 +158,6 @@ export interface InferredField {
 }
 export const inferredFields: readonly InferredField[] = [
   { kind: "statement", fieldName: "body", targetSymbol: "statement_block", confidence: "high", agreement: 1.000, sampleSize: 13, applied: true },
-  { kind: "primary_type", fieldName: "name", targetSymbol: "_type_identifier", confidence: "medium", agreement: 0.900, sampleSize: 10, applied: true },
 ];
 
 export interface RepeatedShape {

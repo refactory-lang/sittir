@@ -18,6 +18,7 @@ import {
     hasAnyField, hasAnyChild,
 } from './rule.ts'
 import { tokenToName } from './optimize.ts'
+import { simplifyRule } from './simplify.ts'
 
 // ---------------------------------------------------------------------------
 // assemble() — main entry point
@@ -29,17 +30,23 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
     for (const [kind, rule] of Object.entries(optimized.rules)) {
         const modelType = classifyNode(kind, rule)
         const { typeName, factoryName, irKey } = nameNode(kind)
+        // The `simplifiedRules` map is guaranteed to carry an entry
+        // for every kind in `rules` — `optimize()` populates it via
+        // `simplifyRules(rules)` at the end of its pass.
+        const simplifiedRule = optimized.simplifiedRules[kind]!
 
         switch (modelType) {
             case 'branch': {
                 nodes.set(kind, new AssembledBranch({
                     kind, typeName, factoryName, irKey, rule,
+                    simplifiedRule,
                 }))
                 break
             }
             case 'container': {
                 nodes.set(kind, new AssembledContainer({
                     kind, typeName, factoryName, irKey, rule,
+                    simplifiedRule,
                 }))
                 break
             }
@@ -76,12 +83,18 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
                     const disambiguated = seen === 0 ? form.name : `${form.name}${seen + 1}`
                     const formKind = `${kind}_${disambiguated}`
                     const formNames = nameNode(formKind)
+                    // Form content is a sub-rule synthesised by
+                    // Optimize's polymorph promotion — it isn't a
+                    // top-level kind in `optimized.rules`, so it has
+                    // no pre-computed simplified view. Compute on
+                    // the fly; forms are few per polymorph.
                     return new AssembledGroup({
                         kind: formKind,
                         typeName: formNames.typeName,
                         factoryName: formNames.factoryName,
                         irKey: formNames.irKey,
                         rule: form.content,
+                        simplifiedRule: simplifyRule(form.content),
                         name: disambiguated,
                         parentKind: kind,
                     })
@@ -135,10 +148,19 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
                 break
             }
             case 'group': {
-                // Unwrap GroupRule to its inner content (the seq-with-fields)
+                // Unwrap GroupRule to its inner content (the seq-with-fields).
+                // When the rule is already a GroupRule the pre-computed
+                // `simplifiedRule` applies to the outer group; we want
+                // the inner content's simplified view to match what
+                // we're passing as `rule`. For the wrapper case
+                // simplify the unwrapped content directly.
                 const groupRule = rule.type === 'group' ? rule.content : rule
+                const groupSimplified = rule.type === 'group'
+                    ? simplifyRule(groupRule)
+                    : simplifiedRule
                 nodes.set(kind, new AssembledGroup({
                     kind, typeName, rule: groupRule,
+                    simplifiedRule: groupSimplified,
                 }))
                 break
             }
@@ -169,6 +191,7 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
         projections: buildProjections(nodes),
         derivations: optimized.derivations,
         rules: optimized.rules,
+        word: optimized.word,
     }
 }
 
@@ -202,16 +225,28 @@ function resolveCollidingNames(nodes: Map<string, AssembledNode>): void {
         const visible = group.filter(n => !n.kind.startsWith('_'))
         const hidden = group.filter(n => n.kind.startsWith('_'))
         if (visible.length >= 1 && hidden.length >= 1) {
-            // Visible wins. Rename each hidden with `Hidden` prefix.
+            // Only rename when a visible sibling actually gets an
+            // exported TypeScript declaration. Token nodes (`modelType
+            // === 'token'`) are anonymous structural delimiters that
+            // only appear as exported type aliases if they're referenced
+            // in a field/child union — many aren't. If ALL visible
+            // siblings are tokens, there's no actual TypeScript collision
+            // and we leave the hidden kind's name unchanged.
+            const hasNonTokenVisible = visible.some(n => n.modelType !== 'token')
+            if (!hasNonTokenVisible) continue
+            // Visible wins. Rename each hidden with `_` prefix to
+            // preserve the tree-sitter convention that hidden/internal
+            // kinds start with an underscore.
             for (const h of hidden) {
-                const newType = `Hidden${typeName}`
+                const newType = `_${typeName}`
                 console.warn(
                     `[assemble] typeName collision: kind '${h.kind}' renamed ` +
                     `'${typeName}' → '${newType}' (visible sibling(s): ${visible.map(v => `'${v.kind}'`).join(', ')})`,
                 )
                 h.typeName = newType
                 if (h.factoryName !== undefined) {
-                    h.factoryName = newType.charAt(0).toLowerCase() + newType.slice(1)
+                    // _TypeName → _typeName (camelCase with leading _)
+                    h.factoryName = `_${typeName.charAt(0).toLowerCase()}${typeName.slice(1)}`
                 }
             }
         } else if (visible.length >= 2) {
@@ -264,6 +299,14 @@ function resolveIrKeys(nodes: Map<string, AssembledNode>): void {
     // Within each phase, hidden (`_`-prefixed) kinds sort after non-hidden
     // so visible kinds claim the short key and hidden ones get `hiddenX`.
     const claimed = new Set<string>()
+    // Supertypes don't get factories but they DO occupy a name in the
+    // ir namespace (as a type alias). Pre-claim their short form so that
+    // a factoryless supertype like python `expression` still blocks
+    // `expression_statement` from collapsing its irKey onto `expression`.
+    for (const node of nodes.values()) {
+        if (node.modelType !== 'supertype') continue
+        claimed.add(shortenIrKey(node.kind))
+    }
     const phase1: AssembledNode[] = []
     const phase2: AssembledNode[] = []
     for (const node of nodes.values()) {
@@ -551,41 +594,12 @@ function isAllTextShape(rule: Rule): boolean {
 }
 
 // ---------------------------------------------------------------------------
-// simplifyRule — strip anonymous tokens, collapse trivial seq/choice
+// simplifyRule lives in compiler/simplify.ts and now runs as a
+// dedicated pipeline stage at the end of `optimize()`. Re-exported
+// here so the existing assemble.test.ts import site keeps working.
 // ---------------------------------------------------------------------------
 
-export function simplifyRule(rule: Rule): Rule {
-    switch (rule.type) {
-        case 'seq': {
-            // Remove non-alphanumeric string nodes (anonymous tokens)
-            const members = rule.members
-                .map(m => simplifyRule(m))
-                .filter(m => {
-                    if (m.type === 'string' && !/^\w+$/.test(m.value)) return false
-                    return true
-                })
-            if (members.length === 0) return { type: 'seq', members: [] }
-            if (members.length === 1) return members[0]!
-            return { type: 'seq', members }
-        }
-        case 'choice': {
-            // Collapse all-identical branches
-            const members = rule.members.map(m =>
-                m.type === 'variant' ? simplifyRule(m.content) : simplifyRule(m)
-            )
-            if (members.length === 1) return members[0]!
-            return { type: 'choice', members }
-        }
-        case 'optional':
-            return simplifyRule(rule.content)
-        case 'variant':
-            return simplifyRule(rule.content)
-        case 'clause':
-            return simplifyRule(rule.content)
-        default:
-            return rule
-    }
-}
+export { simplifyRule }
 
 // ---------------------------------------------------------------------------
 // extractFields — walk rule tree, collect fields with derived metadata

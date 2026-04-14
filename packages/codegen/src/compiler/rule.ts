@@ -4,7 +4,9 @@
  * One type throughout the pipeline. Defined once, never extended.
  * Rule type presence varies by phase:
  *   - After Evaluate: symbol, alias, token, repeat1 present
- *   - After Link: symbol, alias, token, repeat1 gone; clause, group, indent/dedent/newline added
+ *   - After Link: symbol, alias, token gone; clause, group, indent/dedent/newline added.
+ *     `repeat1` is preserved so downstream field/child derivation can stamp the
+ *     `nonEmpty` flag on the resulting slot for emitter tuple-type rendering.
  *   - After Optimize: variant added; structural grouping may be restructured
  *
  * @generated — do not add derived metadata (required, multiple, contentTypes, etc.)
@@ -71,12 +73,15 @@ export interface RepeatRule {
     readonly content: Rule
     readonly separator?: string
     readonly trailing?: boolean
+    readonly leading?: boolean
 }
 
 export interface Repeat1Rule {
     readonly type: 'repeat1'
     readonly content: Rule
     readonly separator?: string
+    readonly trailing?: boolean
+    readonly leading?: boolean
 }
 
 // ---------------------------------------------------------------------------
@@ -273,6 +278,14 @@ export interface RawGrammar {
     readonly conflicts: string[][]
     readonly word: string | null
     readonly references: SymbolRef[]
+    /**
+     * Rule names explicitly defined in the grammar/override call
+     * (not inherited from a base grammar). Used by derive-overrides-json
+     * to identify full-replacement override rules whose fields don't
+     * carry `source: 'override'` (which `transform()` sets, but direct
+     * `field()` calls in full-replacement rules don't).
+     */
+    readonly overrideRuleNames?: string[]
 }
 
 export type ExternalRole = { role: 'indent' | 'dedent' | 'newline' }
@@ -393,6 +406,15 @@ export interface IncludeFilter {
 export interface OptimizedGrammar {
     readonly name: string
     readonly rules: Record<string, Rule>
+    /**
+     * Derivation-only view of every rule in `rules`, produced by
+     * `simplifyRule` as the final pass in `optimize()`. Downstream
+     * consumers (`assemble` → `AssembledBranch/Container/Group`) read
+     * from this map instead of re-simplifying per-node. Raw
+     * templates still read `rules` because they need anonymous
+     * delimiters to surface as template literals.
+     */
+    readonly simplifiedRules: Record<string, Rule>
     readonly supertypes: Set<string>
     readonly word: string | null
     readonly derivations: DerivationLog
@@ -480,7 +502,7 @@ export function hasAnyChild(rule: Rule): boolean {
 }
 
 export function deriveFields(rule: Rule, isOptional = false, isRepeated = false): AssembledField[] {
-    const raw = deriveFieldsRaw(rule, isOptional, isRepeated)
+    const raw = deriveFieldsRaw(rule, isOptional, isRepeated, false)
     // Deduplicate by field name. If the same name appears multiple times
     // (e.g. once as single, once as repeat), merge into a multiple/optional
     // field with the union of content types.
@@ -495,6 +517,11 @@ export function deriveFields(rule: Rule, isOptional = false, isRepeated = false)
             ...existing,
             required: existing.required && f.required,
             multiple: existing.multiple || f.multiple,
+            // nonEmpty survives only when every merged occurrence was
+            // itself non-empty AND the merged shape is still multi.
+            // A mixed "once as single, once as repeat1" field drops
+            // to plain repeat semantics.
+            nonEmpty: Boolean(existing.nonEmpty) && Boolean(f.nonEmpty),
             contentTypes: Array.from(new Set([...existing.contentTypes, ...f.contentTypes])),
             literalValues: (existing.literalValues || f.literalValues)
                 ? Array.from(new Set([...(existing.literalValues ?? []), ...(f.literalValues ?? [])]))
@@ -509,7 +536,12 @@ export function deriveFields(rule: Rule, isOptional = false, isRepeated = false)
     return Array.from(byName.values())
 }
 
-function deriveFieldsRaw(rule: Rule, isOptional: boolean, isRepeated: boolean): AssembledField[] {
+function deriveFieldsRaw(
+    rule: Rule,
+    isOptional: boolean,
+    isRepeated: boolean,
+    isNonEmpty: boolean,
+): AssembledField[] {
     switch (rule.type) {
         case 'field': {
             // Synthetic outer-field wrapper: the autogen wraps a multi-
@@ -520,7 +552,7 @@ function deriveFieldsRaw(rule: Rule, isOptional: boolean, isRepeated: boolean): 
             // match so factories don't emit phantom parameters that the
             // template can't reference.
             if (isSyntheticFieldWrapper(rule.content)) {
-                return deriveFieldsRaw(rule.content, isOptional, isRepeated)
+                return deriveFieldsRaw(rule.content, isOptional, isRepeated, isNonEmpty)
             }
             // Dedupe at the field boundary — inner walks via `flatMap`
             // over seq/choice members can legitimately produce duplicate
@@ -535,12 +567,24 @@ function deriveFieldsRaw(rule: Rule, isOptional: boolean, isRepeated: boolean): 
             // itself — `field('statements', repeat($._statement))` means
             // one field named `statements` whose value is many statements.
             const innerShape = fieldInnerShape(rule.content)
+            const multiple = isRepeated || innerShape.repeated
+            // Non-empty survives only when there's no outer `optional`
+            // wrapper swallowing the empty case. `field('x',
+            // optional(repeat1(...)))` is collapsed to
+            // `field('x', repeat(...))` at evaluate anyway, so by the
+            // time we get here the optional+repeat1 mix shouldn't
+            // appear — but the guard keeps the derivation honest.
+            const nonEmpty = multiple
+                && !isOptional
+                && !innerShape.optional
+                && (isNonEmpty || innerShape.nonEmpty)
             return [{
                 name: rule.name,
                 propertyName,
                 paramName: safeParamName(propertyName),
                 required: !isOptional && !innerShape.optional,
-                multiple: isRepeated || innerShape.repeated,
+                multiple,
+                nonEmpty: nonEmpty || undefined,
                 contentTypes,
                 literalValues: literalValues.length > 0 ? literalValues : undefined,
                 source: rule.source ?? 'grammar',
@@ -548,19 +592,21 @@ function deriveFieldsRaw(rule: Rule, isOptional: boolean, isRepeated: boolean): 
             }]
         }
         case 'seq':
-            return rule.members.flatMap(m => deriveFieldsRaw(m, isOptional, isRepeated))
+            return rule.members.flatMap(m => deriveFieldsRaw(m, isOptional, isRepeated, isNonEmpty))
         case 'optional':
-            return deriveFieldsRaw(rule.content, true, isRepeated)
+            return deriveFieldsRaw(rule.content, true, isRepeated, isNonEmpty)
         case 'repeat':
-            return deriveFieldsRaw(rule.content, isOptional, true)
+            return deriveFieldsRaw(rule.content, isOptional, true, false)
+        case 'repeat1':
+            return deriveFieldsRaw(rule.content, isOptional, true, true)
         case 'choice':
-            return rule.members.flatMap(m => deriveFieldsRaw(m, isOptional, isRepeated))
+            return rule.members.flatMap(m => deriveFieldsRaw(m, isOptional, isRepeated, isNonEmpty))
         case 'clause':
-            return deriveFieldsRaw(rule.content, true, isRepeated)
+            return deriveFieldsRaw(rule.content, true, isRepeated, isNonEmpty)
         case 'variant':
-            return deriveFieldsRaw(rule.content, isOptional, isRepeated)
+            return deriveFieldsRaw(rule.content, isOptional, isRepeated, isNonEmpty)
         case 'group':
-            return deriveFieldsRaw(rule.content, isOptional, isRepeated)
+            return deriveFieldsRaw(rule.content, isOptional, isRepeated, isNonEmpty)
         default:
             return []
     }
@@ -568,7 +614,7 @@ function deriveFieldsRaw(rule: Rule, isOptional: boolean, isRepeated: boolean): 
 
 export function deriveChildren(rule: Rule): AssembledChild[] {
     const raw: AssembledChild[] = []
-    walkForChildren(rule, raw, false, false)
+    walkForChildren(rule, raw, false, false, false)
     // Deduplicate by child name; merge single+multiple into multiple.
     const byName = new Map<string, AssembledChild>()
     for (const c of raw) {
@@ -581,13 +627,20 @@ export function deriveChildren(rule: Rule): AssembledChild[] {
             ...existing,
             required: existing.required && c.required,
             multiple: existing.multiple || c.multiple,
+            nonEmpty: Boolean(existing.nonEmpty) && Boolean(c.nonEmpty),
             contentTypes: Array.from(new Set([...existing.contentTypes, ...c.contentTypes])),
         })
     }
     return Array.from(byName.values())
 }
 
-function walkForChildren(rule: Rule, out: AssembledChild[], isOptional: boolean, isRepeated: boolean): void {
+function walkForChildren(
+    rule: Rule,
+    out: AssembledChild[],
+    isOptional: boolean,
+    isRepeated: boolean,
+    isNonEmpty: boolean,
+): void {
     switch (rule.type) {
         case 'symbol':
             // Both visible and hidden symbols contribute to the runtime child
@@ -603,6 +656,7 @@ function walkForChildren(rule: Rule, out: AssembledChild[], isOptional: boolean,
                     propertyName: snakeToCamel(cleanName),
                     required: !isOptional,
                     multiple: isRepeated,
+                    nonEmpty: (isRepeated && !isOptional && isNonEmpty) || undefined,
                     contentTypes: [rule.name],
                 })
             }
@@ -615,29 +669,53 @@ function walkForChildren(rule: Rule, out: AssembledChild[], isOptional: boolean,
                 propertyName: snakeToCamel(rule.name.replace(/^_+/, '') || rule.name),
                 required: !isOptional,
                 multiple: isRepeated,
+                nonEmpty: (isRepeated && !isOptional && isNonEmpty) || undefined,
                 contentTypes: rule.subtypes,
             })
             break
-        case 'seq':
-            for (const m of rule.members) walkForChildren(m, out, isOptional, isRepeated)
+        case 'seq': {
+            // Sibling-duplicate symbol/supertype refs with the same
+            // target (rust or_pattern: two `_pattern` refs) represent
+            // the multi-children shape. Mark those occurrences as
+            // multi so downstream merge keeps `multiple: true`.
+            const targetCounts = new Map<string, number>()
+            const childTarget = (r: Rule): string | null => {
+                if (r.type === 'symbol') return r.name
+                if (r.type === 'supertype') return r.name
+                if (r.type === 'optional' || r.type === 'variant' || r.type === 'clause' || r.type === 'group') return childTarget(r.content)
+                return null
+            }
+            for (const m of rule.members) {
+                const t = childTarget(m)
+                if (t) targetCounts.set(t, (targetCounts.get(t) ?? 0) + 1)
+            }
+            for (const m of rule.members) {
+                const t = childTarget(m)
+                const dup = t !== null && (targetCounts.get(t) ?? 0) > 1
+                walkForChildren(m, out, isOptional, isRepeated || dup, isNonEmpty)
+            }
             break
+        }
         case 'optional':
-            walkForChildren(rule.content, out, true, isRepeated)
+            walkForChildren(rule.content, out, true, isRepeated, isNonEmpty)
             break
         case 'repeat':
-            walkForChildren(rule.content, out, isOptional, true)
+            walkForChildren(rule.content, out, isOptional, true, false)
+            break
+        case 'repeat1':
+            walkForChildren(rule.content, out, isOptional, true, true)
             break
         case 'choice':
-            for (const m of rule.members) walkForChildren(m, out, isOptional, isRepeated)
+            for (const m of rule.members) walkForChildren(m, out, isOptional, isRepeated, isNonEmpty)
             break
         case 'field':
             // Fields are handled by deriveFields, not children
             break
         case 'variant':
-            walkForChildren(rule.content, out, isOptional, isRepeated)
+            walkForChildren(rule.content, out, isOptional, isRepeated, isNonEmpty)
             break
         case 'clause':
-            walkForChildren(rule.content, out, true, isRepeated)
+            walkForChildren(rule.content, out, true, isRepeated, isNonEmpty)
             break
     }
 }
@@ -676,14 +754,15 @@ function deriveContentTypes(rule: Rule): string[] {
  * directly in a field — the outer `deriveFieldsRaw` walker only sees
  * the field wrapper and doesn't know its body's shape.
  */
-function fieldInnerShape(rule: Rule): { optional: boolean; repeated: boolean } {
+function fieldInnerShape(rule: Rule): { optional: boolean; repeated: boolean; nonEmpty: boolean } {
     switch (rule.type) {
-        case 'repeat': return { optional: false, repeated: true }
+        case 'repeat': return { optional: false, repeated: true, nonEmpty: false }
+        case 'repeat1': return { optional: false, repeated: true, nonEmpty: true }
         case 'optional': {
             const inner = fieldInnerShape(rule.content)
-            return { optional: true, repeated: inner.repeated }
+            return { optional: true, repeated: inner.repeated, nonEmpty: inner.nonEmpty }
         }
-        default: return { optional: false, repeated: false }
+        default: return { optional: false, repeated: false, nonEmpty: false }
     }
 }
 
@@ -702,6 +781,9 @@ function fieldInnerShape(rule: Rule): { optional: boolean; repeated: boolean } {
  * that tree-sitter populates at parse time.
  */
 function isSyntheticFieldWrapper(content: Rule): boolean {
+    if (content.type === 'repeat' || content.type === 'repeat1') {
+        return isSyntheticFieldWrapper(content.content)
+    }
     if (content.type !== 'seq') return false
     return content.members.some(m => m.type === 'field')
 }
@@ -896,6 +978,15 @@ export interface AssembledField {
     readonly paramName: string
     readonly required: boolean
     readonly multiple: boolean
+    /**
+     * True when the field originates from `repeat1(...)` — a list
+     * with a grammar-enforced `length >= 1` guarantee. Emitters use
+     * this to render the field type as a non-empty tuple
+     * `readonly [T, ...(readonly T[])]` in interfaces/config, and
+     * `T | [T, ...T[]]` in from-input (single-value sugar). Only
+     * meaningful when `multiple` is true.
+     */
+    readonly nonEmpty?: boolean
     readonly contentTypes: string[]
     /**
      * Literal values when the field's content is an inline enum
@@ -913,6 +1004,8 @@ export interface AssembledChild {
     readonly propertyName: string
     readonly required: boolean
     readonly multiple: boolean
+    /** See `AssembledField.nonEmpty`. */
+    readonly nonEmpty?: boolean
     readonly contentTypes: string[]
 }
 
@@ -928,6 +1021,16 @@ export type AssembledForm = AssembledGroup
 export class AssembledBranch extends AssembledNodeBase {
     readonly modelType = 'branch' as const
     readonly rule: Rule
+    /**
+     * Rule with anonymous tokens / structural wrappers stripped.
+     * Computed once by assemble() via `simplifyRule(init.rule)` and
+     * stored here so derivation walks (`deriveFields`, `deriveChildren`,
+     * separator discovery) don't have to re-navigate past delimiter
+     * literals on every call. Template emission still reads the raw
+     * `rule` because templates need the literals to surface as
+     * template text. Stage 1: populated but not yet read.
+     */
+    readonly simplifiedRule: Rule
 
     // Cached derivations — lazy, computed on first access
     #fields?: AssembledField[]
@@ -936,20 +1039,25 @@ export class AssembledBranch extends AssembledNodeBase {
     constructor(init: {
         kind: string; typeName: string; factoryName?: string; irKey?: string
         rule: Rule
+        simplifiedRule: Rule
     }) {
         super(init)
         this.rule = init.rule
+        this.simplifiedRule = init.simplifiedRule
     }
 
     get fields(): AssembledField[] {
-        return this.#fields ??= deriveFields(this.rule)
+        return this.#fields ??= deriveFields(this.simplifiedRule)
     }
 
     get children(): AssembledChild[] | undefined {
-        return this.#children ??= deriveChildren(this.rule)
+        return this.#children ??= deriveChildren(this.simplifiedRule)
     }
 
     renderTemplate(rules?: Record<string, Rule>): Record<string, unknown> {
+        // Template walking stays on the RAW rule — templates need the
+        // anonymous delimiters ('(', '{', ';', etc.) to surface as
+        // template text. Only derivations use simplifiedRule.
         const { template, clauses, joinByField } = renderRuleTemplate(this.rule, false, rules)
         if (!template) {
             throw new Error(
@@ -958,7 +1066,10 @@ export class AssembledBranch extends AssembledNodeBase {
             )
         }
         const entry: Record<string, unknown> = { template, ...clauses }
-        const sep = findRepeatSeparator(this.rule)
+        // Separator discovery runs on simplifiedRule — the anonymous
+        // delimiter layer is gone, so any remaining repeat/repeat1 is
+        // reachable without navigating past literals.
+        const sep = findRepeatSeparator(this.simplifiedRule)
         if (sep) entry.joinBy = sep
         if (Object.keys(joinByField).length > 0) entry.joinByField = joinByField
         return entry
@@ -968,27 +1079,40 @@ export class AssembledBranch extends AssembledNodeBase {
 export class AssembledContainer extends AssembledNodeBase {
     readonly modelType = 'container' as const
     readonly rule: Rule
+    /** See `AssembledBranch.simplifiedRule`. */
+    readonly simplifiedRule: Rule
 
     #children?: AssembledChild[]
 
     constructor(init: {
         kind: string; typeName: string; factoryName?: string; irKey?: string
         rule: Rule
+        simplifiedRule: Rule
     }) {
         super(init)
         this.rule = init.rule
+        this.simplifiedRule = init.simplifiedRule
     }
 
     get children(): AssembledChild[] {
-        return this.#children ??= deriveChildren(this.rule)
+        return this.#children ??= deriveChildren(this.simplifiedRule)
     }
 
     get separator(): string | undefined {
-        // Separator is captured on the repeat rule by Evaluate
-        return this.rule.type === 'repeat' ? this.rule.separator : undefined
+        // Separator is captured on the repeat / repeat1 rule by Evaluate.
+        // Read from the simplified rule — if an anonymous-delimiter seq
+        // wrapped the repeat in the raw form, it's gone now and the
+        // repeat is at the root.
+        const r = this.simplifiedRule
+        if (r.type === 'repeat' || r.type === 'repeat1') {
+            return r.separator
+        }
+        return undefined
     }
 
     renderTemplate(rules?: Record<string, Rule>): Record<string, unknown> {
+        // Template walking stays on RAW rule (needs literals); derivations
+        // and separator discovery use simplifiedRule.
         const { template, clauses, joinByField } = renderRuleTemplate(this.rule, false, rules)
         if (!template) {
             throw new Error(
@@ -997,7 +1121,7 @@ export class AssembledContainer extends AssembledNodeBase {
             )
         }
         const entry: Record<string, unknown> = { template, ...clauses }
-        const sep = this.separator ?? findRepeatSeparator(this.rule)
+        const sep = this.separator ?? findRepeatSeparator(this.simplifiedRule)
         if (sep) entry.joinBy = sep
         if (Object.keys(joinByField).length > 0) entry.joinByField = joinByField
         return entry
@@ -1033,8 +1157,9 @@ export class AssembledPolymorph extends AssembledNodeBase {
         const variants: Record<string, string> = {}
         const detect: Record<string, string> = {}
         const mergedClauses: Record<string, string> = {}
+        const mergedJoinByField: Record<string, string> = {}
         for (const form of this.#forms) {
-            const { template, clauses } = renderRuleTemplate(form.rule, false, rules)
+            const { template, clauses, joinByField } = renderRuleTemplate(form.rule, false, rules)
             if (!template) {
                 throw new Error(
                     `AssembledPolymorph.renderTemplate: '${this.kind}' form '${form.name}' ` +
@@ -1044,9 +1169,11 @@ export class AssembledPolymorph extends AssembledNodeBase {
             variants[form.name] = template
             if (form.detectToken) detect[form.name] = form.detectToken
             Object.assign(mergedClauses, clauses)
+            Object.assign(mergedJoinByField, joinByField)
         }
         const entry: Record<string, unknown> = { variants, ...mergedClauses }
         if (Object.keys(detect).length > 0) entry.detect = detect
+        if (Object.keys(mergedJoinByField).length > 0) entry.joinByField = mergedJoinByField
         return entry
     }
 
@@ -1126,6 +1253,8 @@ export class AssembledSupertype extends AssembledNodeBase {
 export class AssembledGroup extends AssembledNodeBase {
     readonly modelType = 'group' as const
     readonly rule: Rule
+    /** See `AssembledBranch.simplifiedRule`. */
+    readonly simplifiedRule: Rule
     readonly detectToken?: string
     /** Short label (e.g., variant name like 'pub' or 'tuple'). Defaults to kind. */
     readonly name: string
@@ -1144,26 +1273,30 @@ export class AssembledGroup extends AssembledNodeBase {
     constructor(init: {
         kind: string; typeName: string; factoryName?: string; irKey?: string
         rule: Rule
+        simplifiedRule: Rule
         detectToken?: string
         name?: string
         parentKind?: string
     }) {
         super(init)
         this.rule = init.rule
+        this.simplifiedRule = init.simplifiedRule
         this.detectToken = init.detectToken
         this.name = init.name ?? init.kind
         this.parentKind = init.parentKind
     }
 
     get fields(): AssembledField[] {
-        return this.#fields ??= deriveFields(this.rule)
+        return this.#fields ??= deriveFields(this.simplifiedRule)
     }
 
     get children(): AssembledChild[] {
-        return this.#children ??= deriveChildren(this.rule)
+        return this.#children ??= deriveChildren(this.simplifiedRule)
     }
 
     renderTemplate(rules?: Record<string, Rule>): Record<string, unknown> {
+        // Template walking stays on RAW rule (needs literals); derivations
+        // and separator discovery use simplifiedRule.
         const { template, clauses, joinByField } = renderRuleTemplate(this.rule, false, rules)
         if (!template) {
             throw new Error(
@@ -1172,7 +1305,7 @@ export class AssembledGroup extends AssembledNodeBase {
             )
         }
         const entry: Record<string, unknown> = { template, ...clauses }
-        const sep = findRepeatSeparator(this.rule)
+        const sep = findRepeatSeparator(this.simplifiedRule)
         if (sep) entry.joinBy = sep
         if (Object.keys(joinByField).length > 0) entry.joinByField = joinByField
         return entry
@@ -1222,6 +1355,16 @@ export interface NodeMap {
      * helpers whose fields get promoted onto the parent node.
      */
     readonly rules?: Record<string, Rule>
+    /**
+     * Grammar's `word` rule kind — the lexer's word-recognition
+     * production. Tree-sitter uses this to disambiguate keywords
+     * from identifiers at parse time: anything that lexes as the
+     * word rule and matches a keyword string becomes the keyword
+     * instead. Factories for this kind reject text that's a
+     * registered keyword, since constructing such a node would
+     * round-trip back to the keyword and lose the kind.
+     */
+    readonly word?: string | null
 }
 
 // ---------------------------------------------------------------------------
@@ -1329,9 +1472,102 @@ function walkRuleForTemplate(
 ): string[] {
     switch (rule.type) {
         case 'seq': {
+            // Sibling-repeated-field detection. When `inferFields` has
+            // wrapped two (or more) symbol references in the same seq
+            // with the SAME field name (rust or_pattern: two _pattern
+            // refs both tagged `field('pattern', ...)`), `seen.add`
+            // would dedup the second slot and drop it. Instead, detect
+            // the duplication, augment `repeatedFields` so the field
+            // emits as `$$$NAME`, and capture the literal between the
+            // first and second occurrence as the joinBy separator.
+            const unwrapField = (r: Rule): string | null => {
+                if (r.type === 'field') return r.name
+                if (r.type === 'optional' || r.type === 'variant' || r.type === 'clause' || r.type === 'group') return unwrapField(r.content)
+                return null
+            }
+            const unwrapChildTarget = (r: Rule): string | null => {
+                if (r.type === 'symbol') return r.name
+                if (r.type === 'supertype') return r.name
+                if (r.type === 'optional' || r.type === 'variant' || r.type === 'clause' || r.type === 'group') return unwrapChildTarget(r.content)
+                return null
+            }
+            const fieldCounts = new Map<string, number>()
+            const childTargetCounts = new Map<string, number>()
+            for (const m of rule.members) {
+                const fn = unwrapField(m)
+                if (fn) {
+                    fieldCounts.set(fn, (fieldCounts.get(fn) ?? 0) + 1)
+                    continue
+                }
+                const tgt = unwrapChildTarget(m)
+                if (tgt) childTargetCounts.set(tgt, (childTargetCounts.get(tgt) ?? 0) + 1)
+            }
+            // Sibling-duplicate symbol references with the SAME target
+            // (e.g. rust or_pattern: two `_pattern` refs separated by
+            // `|`) share the single `children` slot. Capture the literal
+            // between them as the children-slot joinBy so the renderer
+            // uses it instead of emitting a trailing separator.
+            const hasChildDup = [...childTargetCounts.values()].some(c => c > 1)
+            if (hasChildDup && joinByField && !('children' in joinByField)) {
+                let seenFirst = false
+                for (const m of rule.members) {
+                    const tgt = unwrapChildTarget(m)
+                    if (tgt && (childTargetCounts.get(tgt) ?? 0) > 1) {
+                        if (!seenFirst) { seenFirst = true; continue }
+                        break
+                    }
+                    if (seenFirst && m.type === 'string') { joinByField['children'] = m.value; break }
+                }
+            }
+            let augmentedRepeatedFields = repeatedFields
+            for (const [fname, cnt] of fieldCounts) {
+                if (cnt <= 1) continue
+                if (!augmentedRepeatedFields) augmentedRepeatedFields = new Set<string>()
+                const set = augmentedRepeatedFields as Set<string>
+                if (!set.has(fname)) set.add(fname)
+                // Find the first non-field member between two occurrences
+                // of the field and capture it as the per-slot joinBy.
+                if (joinByField && !(fname in joinByField)) {
+                    let seenFirst = false
+                    for (const m of rule.members) {
+                        const mField = unwrapField(m)
+                        const isThisField = mField === fname
+                        if (isThisField && !seenFirst) { seenFirst = true; continue }
+                        if (seenFirst && m.type === 'string') { joinByField[fname] = m.value; break }
+                        if (isThisField && seenFirst) break
+                    }
+                }
+            }
+            // Skip separator strings that match a sibling-multi field's
+            // captured joinBy — those belong INSIDE the `$$$NAME` slot
+            // rendering, not as standalone template text.
+            const skipSeps = new Set<string>()
+            if (joinByField) {
+                for (const [fname, cnt] of fieldCounts) {
+                    if (cnt > 1 && joinByField[fname]) skipSeps.add(joinByField[fname])
+                }
+                if (hasChildDup && joinByField['children']) skipSeps.add(joinByField['children'])
+            }
             const out: string[] = []
             for (const m of rule.members) {
-                const parts = walkRuleForTemplate(m, seen, inRepeat, clauses, rules, repeatedFields, joinByField)
+                if (m.type === 'string' && skipSeps.has(m.value)) continue
+                const parts = walkRuleForTemplate(m, seen, inRepeat, clauses, rules, augmentedRepeatedFields, joinByField)
+                // Drop a leading literal from `parts` that duplicates the
+                // trailing literal already in `out`. This collapses cases
+                // like rust line_comment where an outer `'//'` token is
+                // followed by a choice whose primary branch emits another
+                // `'//'` (from a pattern lookahead disambiguator), producing
+                // `////` in the template. Only applied to non-placeholder
+                // literals — `$NAME`/`$$$CHILDREN` slots are distinct.
+                while (parts.length > 0 && out.length > 0) {
+                    const head = parts[0]!
+                    const tail = out[out.length - 1]!
+                    if (!head.startsWith('$') && head === tail) {
+                        parts.shift()
+                        continue
+                    }
+                    break
+                }
                 if (out.length > 0 && parts.length > 0) {
                     const lastChar = out[out.length - 1]!.slice(-1)
                     const firstChar = parts[0]!.charAt(0)
@@ -1342,13 +1578,31 @@ function walkRuleForTemplate(
             return out
         }
 
-        case 'choice':
-            // For choice in a template, emit the first non-empty member.
+        case 'choice': {
+            // For choice in a template, start with the first non-empty
+            // member's parts. Then walk remaining members with the SHARED
+            // `seen` set to surface any NEW field/symbol placeholders that
+            // only appear in other branches (e.g. function_item's
+            // return_type, attribute's arguments variant). Only placeholder
+            // tokens (`$...`) from subsequent branches are appended —
+            // literals from alternative branches would otherwise leak into
+            // the template unconditionally (`////`, `=value` etc.).
+            const out: string[] = []
+            let primaryTaken = false
             for (const m of rule.members) {
                 const parts = walkRuleForTemplate(m, seen, inRepeat, clauses, rules, repeatedFields, joinByField)
-                if (parts.length > 0) return parts
+                if (parts.length === 0) continue
+                if (!primaryTaken) {
+                    out.push(...parts)
+                    primaryTaken = true
+                    continue
+                }
+                for (const p of parts) {
+                    if (p.startsWith('$')) out.push(p)
+                }
             }
-            return []
+            return out
+        }
 
         case 'optional':
             // `optional(',')` and friends — pure punctuation in an optional
@@ -1406,6 +1660,23 @@ function walkRuleForTemplate(
             // INSIDE the field; without this extraction the comma is lost
             // and the rendered output joins `$FIRST $$$REST` with no
             // separator. By emitting `$FIRST,` instead, the comma stays.
+            // Optional wrapping flanks: `field('label', optional(seq(label,
+            // ':')))` from rust's loop_expression. The trailing `:` must
+            // only render when the label slot is populated — otherwise an
+            // unlabelled `loop { }` becomes `: loop { }`. Lifting into a
+            // clause makes the whole group conditional.
+            if (rule.content.type === 'optional') {
+                const inner = rule.content.content
+                const optFlank = extractFlankingLiterals(inner)
+                if (optFlank.leading || optFlank.trailing) {
+                    const clauseTmpl = optFlank.leading + slot + optFlank.trailing
+                    clauses[`${rule.name}_clause`] = clauseTmpl
+                    const placeholder = `$${varName}_CLAUSE`
+                    return rule.blockBearer
+                        ? ['\n  ', placeholder, '\n']
+                        : [placeholder]
+                }
+            }
             const flank = extractFlankingLiterals(rule.content)
             // Block-bearer fields render as an indented block (python
             // `class X:\n  body`). Link annotates the field when its
@@ -1470,7 +1741,9 @@ function walkRuleForTemplate(
             const clauseSeen = new Set<string>()
             const clauseParts = walkRuleForTemplate(rule.content, clauseSeen, inRepeat, clauses, rules, repeatedFields, joinByField)
             const clauseTemplate = clauseParts.join('')
-            if (clauseTemplate) clauses[rule.name] = clauseTemplate
+            // Clause key mirrors the emitted var (`$NAME_CLAUSE` →
+            // `name_clause`) so the renderer's clauseKey lookup matches.
+            if (clauseTemplate) clauses[`${rule.name}_clause`] = clauseTemplate
             return [`$${rule.name.toUpperCase()}_CLAUSE`]
         }
 
@@ -1571,6 +1844,7 @@ function representativeLiteral(regex: string): string {
 export function findRepeatSeparator(rule: Rule): string | undefined {
     switch (rule.type) {
         case 'repeat':
+        case 'repeat1':
             if (rule.separator) return rule.separator
             return findRepeatSeparator(rule.content)
         case 'seq':

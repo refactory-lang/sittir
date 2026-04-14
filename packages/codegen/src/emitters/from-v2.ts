@@ -11,6 +11,11 @@ import type {
     NodeMap, AssembledNode, AssembledField, AssembledGroup,
 } from '../compiler/rule.ts'
 
+/** Escape a string for safe inclusion inside a single-quoted TS string literal. */
+function escForSource(s: string): string {
+    return s.replace(/\\/g, '\\\\').replace(/'/g, "\\'")
+}
+
 export interface EmitFromNodeMapConfig {
     grammar: string
     nodeMap: NodeMap
@@ -78,7 +83,8 @@ export function emitFromNodeMap(config: EmitFromNodeMapConfig): string {
     const factoryImports = new Set<string>()
     const typeImports = new Set<string>()
 
-    for (const [, node] of nodeMap.nodes) {
+    for (const [kind, node] of nodeMap.nodes) {
+        if (kind.startsWith('_')) continue
         if (!node.factoryName) continue
         if (node.modelType === 'branch' || node.modelType === 'container' || node.modelType === 'polymorph') {
             factoryImports.add(node.rawFactoryName!)
@@ -99,7 +105,14 @@ export function emitFromNodeMap(config: EmitFromNodeMapConfig): string {
     }
 
     lines.push(`import { ${[...factoryImports].sort().join(', ')} } from './factories.js';`)
-    lines.push(`import type { ${[...typeImports].sort().join(', ')} } from './types.js';`)
+    // Multi-line import — see factories-v2.ts for rationale (a single
+    // ~10kB line is unreadable in the generated file).
+    const sortedImports = [...typeImports].sort()
+    lines.push(`import type {`)
+    for (const name of sortedImports) {
+        lines.push(`  ${name},`)
+    }
+    lines.push(`} from './types.js';`)
     lines.push("import type { ConfigOf, FromInputOf } from '@sittir/types';")
     lines.push('')
 
@@ -120,7 +133,8 @@ export function emitFromNodeMap(config: EmitFromNodeMapConfig): string {
     // passed down so every field resolver call registers its kind
     // list through the same dedup table.
     const perNodeBlocks: string[] = []
-    for (const [, node] of nodeMap.nodes) {
+    for (const [kind, node] of nodeMap.nodes) {
+        if (kind.startsWith('_')) continue
         const source = renderFromForNode(node, nodeMap, internKinds)
         if (source === undefined) continue
         perNodeBlocks.push(source)
@@ -146,6 +160,7 @@ export function emitFromNodeMap(config: EmitFromNodeMapConfig): string {
     // _fromMap — runtime entry for validators and dynamic dispatch.
     lines.push('export const _fromMap: Record<string, (input?: unknown) => unknown> = {')
     for (const [kind, node] of nodeMap.nodes) {
+        if (kind.startsWith('_')) continue
         if (!node.factoryName) continue
         if (node.modelType === 'token' || node.modelType === 'supertype' || node.modelType === 'group') continue
         if (!node.fromFunctionName) continue
@@ -171,8 +186,14 @@ function renderFromForNode(node: AssembledNode, nodeMap: NodeMap, intern: KindIn
         case 'polymorph':
             return emitPolymorphFrom(node, nodeMap, intern)
         case 'leaf':
-        case 'enum':
             return emitStringLikeFrom(node)
+        case 'enum':
+            return emitStringLikeFrom({
+                typeName: node.typeName,
+                rawFactoryName: node.rawFactoryName,
+                fromFunctionName: node.fromFunctionName,
+                enumValues: node.values,
+            })
         case 'keyword':
             return emitKeywordFrom(node)
         default:
@@ -211,9 +232,30 @@ function emitBranchFrom(node: BranchLikeNode, nodeMap: NodeMap, intern: KindInte
         // per-field resolver tries each in order.
         lines.push(`  const _fields = (input as { fields?: Record<string, unknown> })?.fields;`)
         lines.push(`  const _f = _fields ?? (input as Record<string, unknown>) ?? {};`)
+        // Non-empty fields (repeat1-sourced) get hoisted to a local
+        // binding so `_assertNonEmpty` can narrow the static type
+        // before the binding is spread into the factory's config
+        // object. The binding is prefixed with `_ne_` so it can't
+        // collide with the factory function name (e.g. python's
+        // `subscript` field on the `subscript` factory) — the
+        // unprefixed name would shadow the imported factory and
+        // break the subsequent factory call. Plain fields stay
+        // inline for compact output.
+        const neName = (f: AssembledField) => `_ne_${f.propertyName}`
+        for (const f of fields) {
+            if (f.nonEmpty && f.multiple) {
+                const call = resolveFieldFromLooseInput(f, nodeMap, typeName, intern, '_f')
+                lines.push(`  const ${neName(f)} = ${call};`)
+                lines.push(`  _assertNonEmpty(${neName(f)}, '${node.kind}.${f.propertyName}');`)
+            }
+        }
         lines.push(`  return ${factory}({`)
         for (const f of fields) {
-            lines.push(`    ${f.propertyName}: ${resolveFieldFromLooseInput(f, nodeMap, typeName, intern, '_f')},`)
+            if (f.nonEmpty && f.multiple) {
+                lines.push(`    ${f.propertyName}: ${neName(f)},`)
+            } else {
+                lines.push(`    ${f.propertyName}: ${resolveFieldFromLooseInput(f, nodeMap, typeName, intern, '_f')},`)
+            }
         }
         // Only pass-through children for branches that actually declare
         // a children slot — field-only branches have no `children` in
@@ -354,15 +396,26 @@ interface LeafFromNode {
     readonly typeName: string
     readonly rawFactoryName?: string
     readonly fromFunctionName?: string
+    /** Enum value list when the underlying node is an enum. */
+    readonly enumValues?: readonly string[]
 }
 
 function emitStringLikeFrom(node: LeafFromNode): string {
     const fn = node.fromFunctionName!
     const factory = node.rawFactoryName!
+    // Enum factories declare their parameter as a literal union;
+    // plain leaves take `string`. Cast `input` to the right shape
+    // before calling. The literal union is inlined here because
+    // `Parameters<typeof X>` would collide with grammar kinds named
+    // `parameters` (rust has one) — TypeScript's built-in
+    // `Parameters<T>` gets shadowed and emits TS2315.
+    const cast = node.enumValues && node.enumValues.length > 0
+        ? `input as ${node.enumValues.map(v => `'${escForSource(v)}'`).join(' | ')}`
+        : `input as string`
     return [
         `export function ${fn}(input: string | ${node.typeName}) {`,
         `  if (isNodeData(input)) return input;`,
-        `  return ${factory}(input as string);`,
+        `  return ${factory}(${cast});`,
         '}',
     ].join('\n')
 }
@@ -504,13 +557,23 @@ function resolveFieldCall(
 
 function emitResolverHelpers(lines: string[], nodeMap: NodeMap): void {
     // Build the leaf registry from NodeMap leaves/keywords/enums.
+    // Enum factories now declare their parameter as a literal union
+    // (compile-time validation) — the registry slot wants
+    // `(text: string) => unknown` so the narrower function isn't
+    // assignable directly. Wrap the call in a thin closure that
+    // accepts a wide string and casts to the enum's literal union
+    // (inlined here because grammar kinds named `parameters` would
+    // shadow TypeScript's built-in `Parameters<T>` utility). The
+    // factory's runtime guard still catches invalid values.
     const registryEntries: string[] = []
     for (const [kind, node] of nodeMap.nodes) {
+        if (kind.startsWith('_')) continue
         if (!node.rawFactoryName) continue
         const factory = node.rawFactoryName
         if (node.modelType === 'enum') {
             const values = node.values.map(v => JSON.stringify(v)).join(', ')
-            registryEntries.push(`  ${JSON.stringify(kind)}: { values: [${values}], factory: ${factory} },`)
+            const literalUnion = node.values.map(v => `'${escForSource(v)}'`).join(' | ')
+            registryEntries.push(`  ${JSON.stringify(kind)}: { values: [${values}], factory: (text: string) => ${factory}(text as ${literalUnion}) },`)
         } else if (node.modelType === 'keyword') {
             registryEntries.push(`  ${JSON.stringify(kind)}: { values: [${JSON.stringify(node.text)}], factory: () => ${factory}() },`)
         } else if (node.modelType === 'leaf') {
@@ -648,5 +711,20 @@ function emitResolverHelpers(lines: string[], nodeMap: NodeMap): void {
     lines.push('  if (v === undefined || v === null) return [];')
     lines.push('  const arr = Array.isArray(v) ? v : [v];')
     lines.push('  return arr.map(e => _resolveOneBranch<T>(e, kind));')
+    lines.push('}')
+    lines.push('')
+    // _assertNonEmpty — runtime guard + static narrowing helper for
+    // repeat1-sourced list fields. from() resolves a loose input to a
+    // `readonly T[]` via _resolveMany*, but the factory's config slot
+    // is the non-empty tuple `readonly [T, ...T[]]`. Calling this
+    // assertion on the resolver result narrows the static type to
+    // the tuple shape AND throws at runtime if the input was empty.
+    lines.push('function _assertNonEmpty<T>(')
+    lines.push('  arr: readonly T[],')
+    lines.push('  label: string,')
+    lines.push('): asserts arr is readonly [T, ...(readonly T[])] {')
+    lines.push('  if (arr.length === 0) {')
+    lines.push('    throw new Error(`${label}: requires at least one element`);')
+    lines.push('  }')
     lines.push('}')
 }

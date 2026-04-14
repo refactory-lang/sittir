@@ -27,15 +27,31 @@ export function emitFactoriesFromNodeMap(config: EmitFactoriesFromNodeMapConfig)
     ]
 
     // Collect type imports — only for nodes that will emit a factory
-    // and whose typeName is a valid TS identifier. Polymorph forms
-    // contribute their own type + Config alias.
+    // and whose typeName is a valid TS identifier. Each contributes
+    // the concrete interface (`<TypeName>`), the tree-node alias
+    // (`<TypeName>Tree`), and the config alias (`<TypeName>Config`)
+    // — emitter call sites use the named alias rather than the
+    // generic `ConfigOf<T>` for readability. Polymorph forms add
+    // their own per-form interfaces and Config aliases.
     const typeImports = new Set<string>()
     const isValidIdent = (s: string) => /^[A-Za-z_$][\w$]*$/.test(s)
-    for (const [, node] of nodeMap.nodes) {
+    for (const [kind, node] of nodeMap.nodes) {
+        if (kind.startsWith('_')) continue
         if (!node.factoryName) continue
         if (!node.typeName || !isValidIdent(node.typeName)) continue
         typeImports.add(node.typeName)
         typeImports.add(node.treeTypeName)
+        // Branches / containers / polymorphs / groups carry a Config
+        // alias the factory references. Leaves / keywords / enums
+        // / supertypes / tokens don't have one.
+        if (
+            node.modelType === 'branch'
+            || node.modelType === 'container'
+            || node.modelType === 'polymorph'
+            || node.modelType === 'group'
+        ) {
+            typeImports.add(node.configTypeName)
+        }
         if (node.modelType === 'polymorph') {
             for (const form of node.forms) {
                 if (isValidIdent(form.typeName)) {
@@ -45,10 +61,68 @@ export function emitFactoriesFromNodeMap(config: EmitFactoriesFromNodeMapConfig)
             }
         }
     }
+    // Collect element types referenced by multi-valued fields on
+    // factory nodes. These may resolve to supertypes or hidden kinds
+    // that don't have factories (and therefore aren't captured above)
+    // but whose TypeName appears directly in the setter signatures now
+    // that we emit concrete element types instead of
+    // `NonNullable<Config['field']>`.
+    for (const [kind, node] of nodeMap.nodes) {
+        if (kind.startsWith('_')) continue
+        if (!node.factoryName) continue
+        const fields =
+            node.modelType === 'branch' ? node.fields :
+            node.modelType === 'group' ? node.fields :
+            node.modelType === 'polymorph' ? node.forms.flatMap(f => f.fields) :
+            []
+        for (const f of fields) {
+            // Both multi-valued and singular fields now emit the concrete
+            // element type in setter signatures (e.g. `LineComment.outer`
+            // → `"/"`, `FunctionItem.body` → `Block`). Any referenced
+            // TypeName — including hidden kinds that no longer have their
+            // own factory — must be imported.
+            for (const t of f.contentTypes) {
+                const refNode = nodeMap.nodes.get(t)
+                if (refNode && isValidIdent(refNode.typeName)) {
+                    typeImports.add(refNode.typeName)
+                }
+            }
+        }
+        // Also collect element types for children slots — container
+        // factories now emit the concrete element type union instead
+        // of `ChildOf<X>`.
+        const childrenSlots =
+            node.modelType === 'branch' ? (node.children ?? []) :
+            node.modelType === 'container' ? node.children :
+            node.modelType === 'group' ? node.children :
+            node.modelType === 'polymorph' ? node.forms.flatMap(f => f.children) :
+            []
+        for (const c of childrenSlots) {
+            for (const t of c.contentTypes) {
+                const refNode = nodeMap.nodes.get(t)
+                if (refNode && isValidIdent(refNode.typeName)) {
+                    typeImports.add(refNode.typeName)
+                }
+            }
+        }
+    }
     typeImports.add('ConfigMap')
     typeImports.add('KindMap')
-    lines.push(`import type { ${[...typeImports].sort().join(', ')} } from './types.js';`)
-    lines.push("import type { Edit, ConfigOf, ChildOf, FluentNode } from '@sittir/types';")
+    // Emit the type import multi-line so the file isn't dominated by
+    // a single ~10kB line. One name per line (sorted) keeps diffs
+    // and reviews readable; tsgo / tsc treat multi-line and inline
+    // imports identically.
+    const sortedImports = [...typeImports].sort()
+    lines.push(`import type {`)
+    for (const name of sortedImports) {
+        lines.push(`  ${name},`)
+    }
+    lines.push(`} from './types.js';`)
+    // `ConfigOf<T>` and `ChildOf<T>` are no longer needed at use sites —
+    // factories reference generated `${typeName}Config` aliases and emit
+    // concrete element type unions directly. `NonEmptyArray<T>` and
+    // `FluentNode` still appear in the emitted code.
+    lines.push("import type { Edit, ByteRange, NonEmptyArray, FluentNode } from '@sittir/types';")
     lines.push("import { createRenderer } from '@sittir/core';")
     lines.push("import { join, dirname } from 'node:path';")
     lines.push("import { fileURLToPath } from 'node:url';")
@@ -90,29 +164,96 @@ export function emitFactoriesFromNodeMap(config: EmitFactoriesFromNodeMapConfig)
     lines.push('): T[K] | R | undefined {')
     lines.push('  return v.length ? fn({ ...((cfg ?? {}) as T), [key]: v } as T) : cur;')
     lines.push('}')
+    // _assertNonEmpty — runtime guard + static narrowing helper for
+    // repeat1-sourced list slots. Callers get `readonly T[]` from
+    // input collection (_children.filter(...), _resolveMany(...), etc.)
+    // but the factory's stored shape is the non-empty tuple
+    // `readonly [T, ...T[]]`. This assertion function throws on empty
+    // input AND narrows the static type of the argument so the
+    // subsequent assignment / spread type-checks without a cast.
+    lines.push('function _assertNonEmpty<T>(')
+    lines.push('  arr: readonly T[],')
+    lines.push('  label: string,')
+    lines.push('): asserts arr is readonly [T, ...(readonly T[])] {')
+    lines.push('  if (arr.length === 0) {')
+    lines.push('    throw new Error(`${label}: requires at least one element`);')
+    lines.push('  }')
+    lines.push('}')
     lines.push('')
 
-    // RESERVED_KEYWORDS — exported for runtime consumers that need to
-    // know which bare identifiers collide with grammar keywords.
-    const keywords: string[] = []
+    // RESERVED_KEYWORDS — set of every keyword's lexeme text, used
+    // by the word-kind leaf factory to reject identifier-shaped
+    // input that would lex as a keyword. Each entry is the keyword's
+    // text (e.g. 'if', 'return', 'pub'), NOT the kind name —
+    // tree-sitter's lexer matches on the text, so we have to too.
+    // Always emitted (even if empty) so the keyword-exclusion guard
+    // in the word-kind factory has something to reference.
+    const keywordTexts = new Set<string>()
+    for (const [, node] of nodeMap.nodes) {
+        if (node.modelType === 'keyword') keywordTexts.add(node.text)
+    }
+    lines.push('const RESERVED_KEYWORDS: ReadonlySet<string> = new Set([')
+    for (const kw of [...keywordTexts].sort()) {
+        lines.push(`  '${kw.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}',`)
+    }
+    lines.push(']);')
+    lines.push('')
+
+    // Leaf pattern RegExps — hoisted to module scope so they're compiled
+    // once at load time rather than per-call. For each patterned leaf, we
+    // try to compile with the Unicode flag ('u') first (needed for
+    // \p{...} property escapes), then fall back to no-flag. If neither
+    // works at codegen time the pattern is skipped. The constant name is
+    // `_leafRe_<camelKind>`; the leaf factory references it instead of
+    // the previous inline try/catch block.
+    const leafReConsts = new Map<string, string>() // kind → const name
     for (const [kind, node] of nodeMap.nodes) {
-        if (node.modelType === 'keyword') keywords.push(kind)
+        if (kind.startsWith('_')) continue
+        if (node.modelType !== 'leaf' || !node.pattern) continue
+        const fn = node.rawFactoryName!
+        const constName = `_leafRe_${fn}`
+        const fullPattern = `^(?:${node.pattern})$`
+        // Try to compile at codegen time to decide which flag to use.
+        let flag: 'u' | '' = 'u'
+        try { new RegExp(fullPattern, 'u') }
+        catch { try { new RegExp(fullPattern); flag = '' } catch { continue } }
+        // Prefer a regex literal when the pattern has no unescaped `/`
+        // (which would break the literal delimiter). Escape `/` if present.
+        const escapedForLiteral = node.pattern.replace(/\//g, '\\/')
+        const literal = flag === 'u'
+            ? `/${`^(?:${escapedForLiteral})`}/u`
+            : `/${`^(?:${escapedForLiteral})`}/`
+        leafReConsts.set(kind, constName)
+        lines.push(`const ${constName} = ${literal};`)
     }
-    if (keywords.length > 0) {
-        lines.push('const RESERVED_KEYWORDS = new Set([')
-        for (const kw of keywords.sort()) {
-            lines.push(`  '${kw.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}',`)
-        }
-        lines.push(']);')
-        lines.push('')
+
+    // _wordRe — the grammar's word-rule pattern. Tree-sitter checks EVERY
+    // scanned token that matches the word pattern against the keyword list
+    // at parse time. Our factories mirror this: any leaf whose text matches
+    // the word pattern is also rejected if it's a reserved keyword.
+    const wordKind = nodeMap.word ?? null
+    const wordNode = wordKind ? nodeMap.nodes.get(wordKind) : null
+    const wordPattern = wordNode?.modelType === 'leaf' ? wordNode.pattern : undefined
+    if (wordPattern) {
+        const fullWordPattern = `^(?:${wordPattern})$`
+        let wordFlag: 'u' | '' = 'u'
+        try { new RegExp(fullWordPattern, 'u') }
+        catch { try { new RegExp(fullWordPattern); wordFlag = '' } catch { /* can't compile */ }  }
+        const escapedWord = wordPattern.replace(/\//g, '\\/')
+        const wordLiteral = wordFlag === 'u'
+            ? `/${`^(?:${escapedWord})`}/u`
+            : `/${`^(?:${escapedWord})`}/`
+        lines.push(`const _wordRe = ${wordLiteral};`)
     }
+    if (leafReConsts.size > 0 || wordPattern) lines.push('')
 
     // Per-node factory emission. Dispatch on modelType — polymorph
     // form groups are skipped at the top level because the polymorph
     // dispatcher emits its forms inline.
-    for (const [, node] of nodeMap.nodes) {
-        if (node.modelType === 'group' && isPolymorphForm(node.kind, nodeMap)) continue
-        const source = renderFactoryForNode(node, strict)
+    for (const [kind, node] of nodeMap.nodes) {
+        if (kind.startsWith('_')) continue
+        if (node.modelType === 'group' && isPolymorphForm(kind, nodeMap)) continue
+        const source = renderFactoryForNode(node, strict, !!wordPattern, nodeMap, leafReConsts)
         if (source === undefined) continue
         lines.push(source)
         lines.push('')
@@ -132,6 +273,7 @@ export function emitFactoriesFromNodeMap(config: EmitFactoriesFromNodeMapConfig)
     }
     const mapEntries: MapEntry[] = []
     for (const [kind, node] of nodeMap.nodes) {
+        if (kind.startsWith('_')) continue
         if (!node.rawFactoryName) continue
         if (isPolymorphForm(kind, nodeMap)) continue
         const fluent = node.modelType === 'branch' ||
@@ -147,7 +289,7 @@ export function emitFactoriesFromNodeMap(config: EmitFactoriesFromNodeMapConfig)
     lines.push('export type FluentKindMap = {')
     for (const { kind, typeName, fluent } of mapEntries) {
         if (fluent) {
-            lines.push(`  ${JSON.stringify(kind)}: FluentNode<${JSON.stringify(kind)}, ConfigOf<${typeName}>>;`)
+            lines.push(`  ${JSON.stringify(kind)}: FluentNode<${JSON.stringify(kind)}, ${typeName}Config>;`)
         } else {
             lines.push(`  ${JSON.stringify(kind)}: ${typeName};`)
         }
@@ -175,39 +317,70 @@ export function emitFactoriesFromNodeMap(config: EmitFactoriesFromNodeMapConfig)
 // Dispatch
 // ---------------------------------------------------------------------------
 
-function renderFactoryForNode(node: AssembledNode, strict: boolean): string | undefined {
+function renderFactoryForNode(
+    node: AssembledNode,
+    _strict: boolean,
+    hasWordRe: boolean,
+    nodeMap: NodeMap,
+    leafReConsts: Map<string, string>,
+): string | undefined {
     if (!node.rawFactoryName) return undefined
     switch (node.modelType) {
         case 'branch':
-            return emitFieldCarryingFactory(node, node.fields, node.children ?? [])
+            return emitFieldCarryingFactory(node, node.fields, node.children ?? [], nodeMap)
         case 'group':
-            return emitFieldCarryingFactory(node, node.fields, node.children)
+            return emitFieldCarryingFactory(node, node.fields, node.children, nodeMap)
         case 'container':
-            return emitContainerFactory(node)
+            return emitContainerFactory(node, nodeMap)
         case 'polymorph':
-            return emitPolymorphFactory(node)
+            return emitPolymorphFactory(node, nodeMap)
         case 'leaf': {
-            // Leaves accept arbitrary text. When strict mode is on
-            // AND the leaf declares a grammar pattern, emit a runtime
-            // regex guard. Tree-sitter patterns commonly use Unicode
-            // property escapes (`\p{XID_Start}`) which require the
-            // `u` flag; try with `u` first, fall back to no-flag
-            // compilation, and skip the check if neither parses.
-            const guard = (strict && node.pattern)
-                ? `{ let __re: RegExp | null = null; try { __re = new RegExp('^(?:' + ${JSON.stringify(node.pattern)} + ')$', 'u'); } catch { try { __re = new RegExp('^(?:' + ${JSON.stringify(node.pattern)} + ')$'); } catch {} } if (__re && !__re.test(text)) throw new Error(\`${node.kind}: text does not match pattern: \${text}\`); }`
-                : undefined
+            // Leaves accept arbitrary text but get runtime guards for
+            // anything TypeScript can't verify at compile time:
+            //
+            //   1. Pattern: the module-level `_leafRe_*` const (hoisted
+            //      for zero per-call regex compilation cost) is used
+            //      directly if available.
+            //
+            //   2. Keyword exclusion: when the leaf IS the grammar's
+            //      `word` kind (the lexer's identifier production),
+            //      reject text that matches a registered keyword.
+            const guards: string[] = []
+            const reConst = leafReConsts.get(node.kind)
+            if (reConst) {
+                guards.push(
+                    `if (!${reConst}.test(text)) throw new Error(\`${node.kind}: text does not match pattern: \${text}\`);`,
+                )
+            }
+            // Tree-sitter semantics: any token that matches the word
+            // pattern is checked against the keyword list at parse time.
+            // Apply the same rule here: if the grammar has a word pattern
+            // and this text matches it, reject reserved keywords.
+            if (hasWordRe) {
+                guards.push(
+                    `if (_wordRe.test(text) && RESERVED_KEYWORDS.has(text)) throw new Error(\`${node.kind}: text '\${text}' is a reserved keyword\`);`,
+                )
+            }
+            // Every leaf gets a non-empty guard — a named terminal always
+            // has at least one character of content in the parse tree, so
+            // an empty string is always semantically invalid regardless of
+            // pattern, word-kind, or enum constraints.
+            guards.unshift(
+                `if (text.length === 0) throw new Error(\`${node.kind}: text must be non-empty\`);`,
+            )
+            const guard = guards.join(' ')
             return emitTextFactory(node, '(text: string)', 'text', guard)
         }
         case 'keyword':
             return emitTextFactory(node, '()', `'${escForSource(node.text)}' as const`)
         case 'enum': {
-            // Enums always validate against their closed value set
-            // at runtime — paired with the compile-time literal-union
-            // typing, catches both casting mistakes and loose string
-            // inputs. Cheap: one Array.includes call per factory call.
-            const valueList = `[${node.values.map(v => `'${escForSource(v)}'`).join(', ')}] as const`
-            const guard = `if (!(${valueList} as readonly string[]).includes(text)) throw new Error(\`${node.kind}: text '\${text}' is not one of ${node.values.map(v => escForSource(v)).join('|')}\`);`
-            return emitTextFactory(node, '(text: string)', 'text', guard)
+            // Enums use compile-time literal-union typing on the parameter —
+            // the type system enforces the valid set, so no runtime
+            // `.includes()` guard is emitted. The `from()` resolvers
+            // that call enum factories via `Parameters<>` cast are
+            // trusted paths that do their own validation.
+            const literalUnion = node.values.map(v => `'${escForSource(v)}'`).join(' | ')
+            return emitTextFactory(node, `(text: ${literalUnion})`, 'text')
         }
         default:
             return undefined
@@ -242,10 +415,42 @@ interface FieldCarryingNode {
     readonly parentKind?: string
 }
 
+/** Resolve a container node's children element type to a concrete TS type expression. */
+function childElementType(node: { children: readonly AssembledChild[] }, nodeMap: NodeMap): string {
+    const parts = new Set<string>()
+    for (const c of node.children) {
+        for (const t of c.contentTypes) {
+            const ref = nodeMap.nodes.get(t)
+            if (!ref) { parts.add(JSON.stringify(t)); continue }
+            const name = ref.typeName
+            parts.add(/^[A-Za-z_$][\w$]*$/.test(name) ? name : JSON.stringify(t))
+        }
+    }
+    if (parts.size === 0) return 'never'
+    const union = [...parts].join(' | ')
+    return parts.size > 1 ? `(${union})` : union
+}
+
+/** Resolve an AssembledField's element type to a concrete TS type expression. */
+function fieldElementType(f: AssembledField, nodeMap: NodeMap): string {
+    if (f.literalValues && f.literalValues.length > 0) {
+        return f.literalValues.map(v => JSON.stringify(v)).join(' | ')
+    }
+    if (f.contentTypes.length === 0) return 'string'
+    const parts = f.contentTypes.map(t => {
+        const node = nodeMap.nodes.get(t)
+        if (!node) return JSON.stringify(t)
+        const name = node.typeName
+        return /^[A-Za-z_$][\w$]*$/.test(name) ? name : JSON.stringify(t)
+    })
+    return [...new Set(parts)].join(' | ')
+}
+
 function emitFieldCarryingFactory(
     node: FieldCarryingNode,
     fields: readonly AssembledField[],
     children: readonly AssembledChild[],
+    nodeMap: NodeMap,
 ): string {
     const fn = node.rawFactoryName!
     const hasFields = fields.length > 0
@@ -264,7 +469,7 @@ function emitFieldCarryingFactory(
     // runtime value matches what tree-sitter produces.
     const typeKind = node.parentKind ?? node.kind
     const lines: string[] = []
-    lines.push(`export function ${fn}(config${opt}: ConfigOf<${node.typeName}>) {`)
+    lines.push(`export function ${fn}(config${opt}: ${node.typeName}Config) {`)
 
     if (hasFields) {
         lines.push('  const fields = {')
@@ -277,9 +482,18 @@ function emitFieldCarryingFactory(
         lines.push(`  const children = config?.children ?? [];`)
     }
 
+    // Polymorph form factories tag their output with `variant: '<name>'`
+    // so the renderer's variant dispatch (path 1) can discriminate forms
+    // whose templates differ only by literal tokens (e.g. rust
+    // struct_item body vs semi — same $VARS, differ by trailing `;`).
+    // The variant name is the form-kind suffix after the parent kind.
+    const variantName = node.parentKind && node.kind.startsWith(node.parentKind + '_')
+        ? node.kind.slice(node.parentKind.length + 1)
+        : undefined
     lines.push('  return {')
     lines.push(`    type: '${typeKind}' as const,`)
     lines.push('    named: true as const,')
+    if (variantName) lines.push(`    variant: '${variantName}' as const,`)
     if (hasFields) lines.push('    fields,')
     if (hasChildren) lines.push('    children,')
 
@@ -293,23 +507,48 @@ function emitFieldCarryingFactory(
         const method = f.propertyName === 'type' ? 'typeField' : f.propertyName
         let param = f.paramName
         if (param === fn || param === method) param = `${param}_`
-        const paramType = `ConfigOf<${node.typeName}>['${f.propertyName}']`
         if (f.multiple) {
-            lines.push(`    ${method}(...${param}: NonNullable<${paramType}>) { return _fsm(config, ${fn}, '${f.propertyName}', ${param}, fields.${f.name}); },`)
+            // Emit the concrete element type directly instead of
+            // `NonNullable<Config['field']>` — the latter requires a
+            // utility-type transformation while the concrete type is
+            // immediately readable (e.g. `Statement` vs
+            // `NonNullable<SourceFileConfig['statements']>`).
+            const elemType = fieldElementType(f, nodeMap)
+            // Rest params can't be `readonly T[]` (TS2370) so plain
+            // mutable arrays are used. NonEmptyArray<T> is a tuple
+            // alias `readonly [T, ...(readonly T[])]` which TS does
+            // accept as a valid rest type.
+            // When elemType is a union (`A | B`), wrap in parens to
+            // avoid `A | B[]` being parsed as `A | (B[])`.
+            const elemForArray = elemType.includes(' | ') ? `(${elemType})` : elemType
+            const restType = f.nonEmpty ? `NonEmptyArray<${elemType}>` : `${elemForArray}[]`
+            lines.push(`    ${method}(...${param}: ${restType}) { return _fsm(config, ${fn}, '${f.propertyName}', ${param}, fields.${f.name}); },`)
         } else {
+            // Emit the concrete element type for singular fields too —
+            // `LineCommentConfig['outer']` → `"/"`, etc. Matches the
+            // approach used for multi-valued fields above.
+            const elemType = fieldElementType(f, nodeMap)
+            const paramType = f.required ? elemType : `${elemType} | undefined`
             lines.push(`    ${method}(${param}?: ${paramType}) { return _fs(config, ${fn}, '${f.propertyName}', ${param}, fields.${f.name}); },`)
         }
     }
 
     if (hasChildren) {
+        const childElem = childElementType({ children }, nodeMap)
         if (childrenMultiple) {
             lines.push('    getChildren() { return children; },')
-            const elementType = `ChildOf<${node.typeName}>`
-            lines.push(`    setChildren(...items: ${elementType}[]) { return ${fn}({ ...(config ?? {}), children: items }); },`)
+            const childrenNonEmpty = children.some(c => c.nonEmpty)
+            if (childrenNonEmpty) {
+                lines.push(`    setChildren(...items: ${childElem}[]) {`)
+                lines.push(`      _assertNonEmpty(items, '${node.kind}.children');`)
+                lines.push(`      return ${fn}({ ...(config ?? {}), children: items });`)
+                lines.push('    },')
+            } else {
+                lines.push(`    setChildren(...items: ${childElem}[]) { return ${fn}({ ...(config ?? {}), children: items }); },`)
+            }
         } else {
-            const elementType = `ChildOf<${node.typeName}>`
             lines.push(`    getChild() { return children[0]; },`)
-            lines.push(`    setChild(child: ${elementType}) { return ${fn}({ ...(config ?? {}), children: [child] }); },`)
+            lines.push(`    setChild(child: ${childElem}) { return ${fn}({ ...(config ?? {}), children: [child] }); },`)
         }
     }
 
@@ -331,7 +570,7 @@ interface ContainerNode {
     readonly children: readonly AssembledChild[]
 }
 
-function emitContainerFactory(node: ContainerNode): string {
+function emitContainerFactory(node: ContainerNode, nodeMap: NodeMap): string {
     const fn = node.rawFactoryName!
     const lines: string[] = []
     // Containers are "multiple-shaped" when ANY child entry is
@@ -339,26 +578,29 @@ function emitContainerFactory(node: ContainerNode): string {
     // helpers into a mixed list of single + repeated entries, so
     // checking only `children[0]` misses the repeated signal.
     const anyMultiple = node.children.some(c => c.multiple)
-    // Parameter is typed as the element type, not the tuple/array
-    // type. Singular containers take one element positionally;
-    // repeated / mixed containers take them as rest args. Internally
-    // the factory always stores `children` as an array to match
-    // the runtime shape. The stored value is cast to the interface's
-    // tuple/array type so downstream consumers see the precise shape.
-    const elementType = `ChildOf<${node.typeName}>`
-    const storedType = `ConfigOf<${node.typeName}>['children']`
+    const anyNonEmpty = node.children.some(c => c.nonEmpty)
+    // Use the concrete element type union (e.g. `FunctionItem | Block`)
+    // instead of the generic `ChildOf<X>` alias so consumers see
+    // the actual types in hover/autocomplete with no indirection.
+    // The element type is the union of all children's contentTypes
+    // mapped through the NodeMap to their generated TypeNames.
+    const elementType = childElementType(node, nodeMap)
     if (anyMultiple) {
-        lines.push(`export function ${fn}(..._children: ${elementType}[]) {`)
-        // Filter out non-NodeData args (empty objects, undefined).
-        lines.push(`  const children = _children.filter(c => c && typeof c === "object" && "type" in c) as ${storedType};`)
+        lines.push(`export function ${fn}(...children: ${elementType}[]) {`)
+        if (anyNonEmpty) {
+            lines.push(`  _assertNonEmpty(children, '${node.kind}.children');`)
+        }
     } else {
         const firstChild = node.children[0]
-        const optMark = firstChild?.required ? '' : '?'
+        const required = firstChild?.required ?? false
+        const optMark = required ? '' : '?'
         lines.push(`export function ${fn}(child${optMark}: ${elementType}) {`)
-        // Treat an empty/non-NodeData arg as "no child" so validator
-        // paths passing `{}` don't wrap a typeless object as a child.
-        lines.push('  const hasChild = child && typeof child === "object" && "type" in child;')
-        lines.push(`  const children = (hasChild ? [child] : []) as ${storedType};`)
+        // Required child: type guarantees non-null, wrap directly.
+        // Optional child: null/undefined is valid → wrap only if present.
+        lines.push(required
+            ? `  const children = [child];`
+            : `  const children = child != null ? [child] : [];`
+        )
     }
     lines.push('  return {')
     lines.push(`    type: '${node.kind}' as const,`)
@@ -382,21 +624,21 @@ interface PolymorphNode {
     readonly forms: AssembledGroup[]
 }
 
-function emitPolymorphFactory(node: PolymorphNode): string {
+function emitPolymorphFactory(node: PolymorphNode, nodeMap: NodeMap): string {
     const fn = node.rawFactoryName!
     const forms = node.forms
 
     if (forms.length === 0) {
         // Defensive stub — shouldn't happen after classifier fix.
-        return `export function ${fn}(_config?: unknown) { return { type: '${node.kind}' as const, named: true as const, render() { return render(this); }, toEdit(s: number | { start: { index: number }; end: { index: number } }, e?: number) { return typeof s === 'number' ? toEdit(this, s, e!) : toEdit(this, s); }, replace(t: ${node.treeTypeName}) { const r = t.range(); return toEdit(this, r); } }; }`
+        return `export function ${fn}(_config?: unknown) { return { type: '${node.kind}' as const, named: true as const, render() { return render(this); }, toEdit(s: number | ByteRange, e?: number) { return typeof s === 'number' ? toEdit(this, s, e!) : toEdit(this, s); }, replace(t: ${node.treeTypeName}) { const r = t.range(); return toEdit(this, r); } }; }`
     }
 
     const lines: string[] = []
-    // Signature: union of per-form ConfigOf types. The inline union
-    // (rather than ConfigOf<T> over a union T) is what lets TypeScript
-    // narrow via `'field' in config` — distributive ConfigOf over
-    // union members doesn't narrow the same way.
-    const configUnion = forms.map(f => `ConfigOf<${f.typeName}>`).join(' | ')
+    // Signature: union of per-form `${typeName}Config` aliases. The
+    // inline union (rather than `ConfigOf<T>` over a union T) is what
+    // lets TypeScript narrow via `'field' in config` — distributive
+    // `ConfigOf` over union members doesn't narrow the same way.
+    const configUnion = forms.map(f => `${f.typeName}Config`).join(' | ')
     // `config` is only optional when EVERY form has every field AND
     // every child slot optional.
     const anyFormHasRequired = forms.some(f =>
@@ -425,9 +667,9 @@ function emitPolymorphFactory(node: PolymorphNode): string {
             const checks = form.fields
                 .map(f => `'${f.propertyName}' in config`)
                 .join(' && ')
-            lines.push(`  if (config && ${checks}) return ${form.rawFactoryName!}(config as ConfigOf<${form.typeName}>);`)
+            lines.push(`  if (config && ${checks}) return ${form.rawFactoryName!}(config as ${form.typeName}Config);`)
         }
-        lines.push(`  return ${fallback.rawFactoryName!}(config as ConfigOf<${fallback.typeName}>);`)
+        lines.push(`  return ${fallback.rawFactoryName!}(config as ${fallback.typeName}Config);`)
     } else {
         lines.push(`  return ${forms[0]!.rawFactoryName!}(config);`)
     }
@@ -436,7 +678,7 @@ function emitPolymorphFactory(node: PolymorphNode): string {
     // Emit each form factory inline after the dispatcher.
     const parts = [lines.join('\n')]
     for (const form of forms) {
-        parts.push(emitFieldCarryingFactory(form, form.fields, form.children))
+        parts.push(emitFieldCarryingFactory(form, form.fields, form.children, nodeMap))
     }
     return parts.join('\n')
 }
@@ -466,7 +708,7 @@ function emitTextFactory(
         '    named: true as const,',
         `    text: ${textExpr},`,
         `    render: () => ${textExpr},`,
-        `    toEdit: (s: number | { start: { index: number }; end: { index: number } }, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: ${textExpr} } : { startPos: s.start.index, endPos: s.end.index, insertedText: ${textExpr} },`,
+        `    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: ${textExpr} } : { startPos: s.start.index, endPos: s.end.index, insertedText: ${textExpr} },`,
         `    replace: (t: ${node.treeTypeName}) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: ${textExpr} }; },`,
         '  };',
         '}',
@@ -489,7 +731,7 @@ function escForSource(s: string): string {
 function factorySuffix(treeTypeName: string): string[] {
     return [
         `    render() { return render(this); },`,
-        `    toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {`,
+        `    toEdit(startOrRange: number | ByteRange, endPos?: number) {`,
         `      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);`,
         `      return toEdit(this, startOrRange);`,
         `    },`,

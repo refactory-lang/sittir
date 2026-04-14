@@ -13,9 +13,11 @@ import base from '../../node_modules/.pnpm/tree-sitter-typescript@0.23.2/node_mo
 export default grammar(base, {
     name: 'typescript',
     rules: {
-        // abstract_class_declaration: 1 field(s)
+        // abstract_class_declaration: wrap pos 5 (class_heritage choice).
+        // pos 0 is REPEAT(field('decorator')) — don't touch it, it's a real
+        // base-grammar field and the original override clobbered it.
         abstract_class_declaration: ($, original) => transform(original, {
-            0: field('class_heritage'), // class_heritage [struct=0]
+            5: field('class_heritage'),
         }),
 
         // abstract_method_signature: 2 field(s)
@@ -50,15 +52,26 @@ export default grammar(base, {
             1: field('expression'), // expression [struct=0]
         }),
 
-        // class: 1 field(s)
+        // class: wrap pos 4 (class_heritage choice). pos 0 is decorator repeat.
         class: ($, original) => transform(original, {
-            0: field('class_heritage'), // class_heritage [struct=0]
+            4: field('class_heritage'),
         }),
 
-        // class_declaration: 2 field(s)
+        // class_declaration: wrap pos 4 (class_heritage choice) and pos 6
+        // (automatic_semicolon choice). pos 0 is decorator repeat — leave it
+        // alone so the base 'decorator' field survives.
         class_declaration: ($, original) => transform(original, {
-            0: field('class_heritage'), // class_heritage [struct=0]
-            4: field('automatic_semicolon'), //  [struct=1]
+            4: field('class_heritage'),
+            6: field('automatic_semicolon'),
+        }),
+
+        // class_heritage: choice(seq(extends_clause, optional(implements_clause)), implements_clause).
+        // transform recurses into the choice; raw pos 0/1 in the first seq
+        // branch match the json's named-slot positions. The second branch
+        // (bare implements_clause) is not a seq and is unaffected.
+        class_heritage: ($, original) => transform(original, {
+            0: field('extends_clause'), // extends_clause | implements_clause [struct=0]
+            1: field('implements_clause'), // implements_clause [struct=1]
         }),
 
         // computed_property_name: 1 field(s)
@@ -91,6 +104,16 @@ export default grammar(base, {
         // import_attribute: 1 field(s)
         import_attribute: ($, original) => transform(original, {
             0: field('object'), // object [struct=0]
+        }),
+
+        // import_clause: choice(namespace_import, named_imports,
+        //   seq(_import_identifier, optional(seq(',', choice(namespace_import, named_imports))))).
+        // transform recurses into the choice; raw pos 0/1 match the json's
+        // named-slot positions inside the third (seq) branch. The bare
+        // namespace_import/named_imports branches are unaffected.
+        import_clause: ($, original) => transform(original, {
+            0: field('default_import'), // namespace_import | named_imports | _import_identifier | identifier [struct=0]
+            1: field('named_imports'), // namespace_import | named_imports | identifier [struct=1]
         }),
 
         // import_require_clause: 1 field(s)
@@ -179,11 +202,14 @@ export default grammar(base, {
             2: field('closing'), //  [struct=2]
         }),
 
-        // optional_parameter: 2 field(s)
-        optional_parameter: ($, original) => transform(original, {
-            0: field('parameter_name'), // _parameter_name | accessibility_modifier | override_modifier [struct=0]
-            3: field('initializer'), // accessibility_modifier | override_modifier [struct=1]
-        }),
+        // optional_parameter: position 0 is the hidden `_parameter_name`
+        // helper which tree-sitter inlines — its `decorator`, `pattern`, and
+        // `name` fields promote onto the parent at parse time. The former
+        // override wrapped pos 0 as a synthetic `parameter_name` slot that
+        // doesn't exist at runtime, clobbering all five declared fields.
+        // Positions 1/2/3 (the `?`, the type field, and the initializer)
+        // are already correctly structured in the base rule.
+        optional_parameter: ($, original) => original,
 
         // program: 2 field(s)
         program: ($, original) => transform(original, {
@@ -197,18 +223,17 @@ export default grammar(base, {
             1: field('override_modifier'), // override_modifier [struct=1]
         }),
 
-        // public_field_definition: 3 field(s)
-        public_field_definition: ($, original) => transform(original, {
-            0: field('accessibility_modifier'), // accessibility_modifier [struct=0]
-            1: field('override_modifier'), // override_modifier [struct=1]
-            2: field('initializer'), //  [struct=2]
-        }),
+        // public_field_definition: pos 0 is decorator repeat (real base
+        // field). The original override labeled pos 0 as
+        // accessibility_modifier, clobbering decorator. Dropped entirely —
+        // the internal accessibility/override-modifier slots are deep inside
+        // nested choices and don't have stable raw positions.
+        public_field_definition: ($, original) => original,
 
-        // required_parameter: 2 field(s)
-        required_parameter: ($, original) => transform(original, {
-            0: field('parameter_name'), // _parameter_name | accessibility_modifier | override_modifier [struct=0]
-            2: field('initializer'), // accessibility_modifier | override_modifier [struct=1]
-        }),
+        // required_parameter: same shape as optional_parameter modulo the
+        // `?` — drop the synthetic `parameter_name` wrapper override and
+        // let the walker inline the `_parameter_name` helper's fields.
+        required_parameter: ($, original) => original,
 
         // satisfies_expression: 2 field(s)
         satisfies_expression: ($, original) => transform(original, {

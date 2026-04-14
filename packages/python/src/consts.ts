@@ -47,7 +47,6 @@ export const NODE_KINDS = [
   'else_clause',
   'except_clause',
   'exec_statement',
-  'expression',
   'expression_list',
   'expression_statement',
   'finally_clause',
@@ -82,13 +81,10 @@ export const NODE_KINDS = [
   'nonlocal_statement',
   'not_operator',
   'pair',
-  'parameter',
   'parameters',
   'parenthesized_expression',
   'parenthesized_list_splat',
-  'pattern',
   'pattern_list',
-  'primary_expression',
   'print_statement',
   'raise_statement',
   'relative_import',
@@ -133,6 +129,7 @@ export const LEAF_KINDS = [
   '_is_not',
   '_newline',
   '_not_in',
+  '_string_content',
   'and',
   'as',
   'assert',
@@ -164,7 +161,6 @@ export const LEAF_KINDS = [
   'import_prefix',
   'in',
   'integer',
-  'is',
   'keyword_identifier',
   'line_continuation',
   'match',
@@ -197,6 +193,7 @@ export const KEYWORDS = [
   'True',
   '_',
   '__future__',
+  '_not_escape_sequence',
   'and',
   'as',
   'assert',
@@ -221,7 +218,6 @@ export const KEYWORDS = [
   'if',
   'import',
   'in',
-  'is',
   'keyword_separator',
   'match',
   'none',
@@ -243,7 +239,6 @@ export const KEYWORDS = [
 
 /** Operator/punctuation tokens. */
 export const OPERATORS = [
-  "!=",
   "%",
   "&",
   "(",
@@ -259,15 +254,8 @@ export const OPERATORS = [
   "//",
   ":",
   ":=",
-  ";",
-  "<",
   "<<",
-  "<=",
-  "<>",
   "=",
-  "==",
-  ">",
-  ">=",
   ">>",
   "@",
   "[",
@@ -321,6 +309,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'assert_statement': [
   ],
   'assignment': [
+    { name: 'left', required: true, multiple: false },
     { name: 'right', required: true, multiple: false },
     { name: 'type', required: true, multiple: false },
   ],
@@ -369,14 +358,14 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'class_pattern': [
     { name: 'dottedName', required: true, multiple: false },
-    { name: 'arguments', required: false, multiple: false },
+    { name: 'arguments', required: false, multiple: true },
   ],
   'comparison_operator': [
     { name: 'left', required: true, multiple: false },
-    { name: 'comparators', required: true, multiple: true },
+    { name: 'operators', required: true, multiple: true },
   ],
   'complex_pattern': [
-    { name: 'real', required: false, multiple: false },
+    { name: 'real', required: true, multiple: false },
     { name: 'imaginary', required: true, multiple: false },
   ],
   'concatenated_string': [
@@ -431,8 +420,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'exec_statement': [
     { name: 'code', required: true, multiple: false },
   ],
-  'expression': [
-  ],
   'expression_list': [
   ],
   'expression_statement': [
@@ -442,7 +429,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'for_in_clause': [
     { name: 'left', required: true, multiple: false },
-    { name: 'right', required: true, multiple: false },
+    { name: 'right', required: true, multiple: true },
   ],
   'for_statement': [
     { name: 'left', required: true, multiple: false },
@@ -547,19 +534,13 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'key', required: true, multiple: false },
     { name: 'value', required: true, multiple: false },
   ],
-  'parameter': [
-  ],
   'parameters': [
   ],
   'parenthesized_expression': [
   ],
   'parenthesized_list_splat': [
   ],
-  'pattern': [
-  ],
   'pattern_list': [
-  ],
-  'primary_expression': [
   ],
   'print_statement': [
     { name: 'argument', required: true, multiple: true },

@@ -15,6 +15,8 @@
 import type {
     Rule, LinkedGrammar, OptimizedGrammar,
 } from './rule.ts'
+import { promotePolymorph } from './link.ts'
+import { simplifyRules } from './simplify.ts'
 
 // ---------------------------------------------------------------------------
 // optimize() — currently a passthrough
@@ -33,6 +35,18 @@ export function optimize(linked: LinkedGrammar): OptimizedGrammar {
     }
     for (const name of Object.keys(rules)) {
         rules[name] = fanOutSeqChoices(rules[name]!)    // T060
+    }
+    // Re-run polymorph promotion now that fan-out has lifted every
+    // inner choice to the top level of its enclosing rule. Link's
+    // earlier pass only catches choices that were already top-level;
+    // rules like rust's `struct_item` / `impl_item` / `function_type`
+    // had their choices buried inside a seq, and their terminal
+    // variants looked empty before fan-out distributed the prefix/
+    // suffix members into each branch. Running promotePolymorph here
+    // sees the canonical fanned-out shape where every branch carries
+    // its complete structural context.
+    for (const name of Object.keys(rules)) {
+        rules[name] = promotePolymorph(rules[name]!)
     }
     for (const name of Object.keys(rules)) {
         rules[name] = factorChoiceBranches(rules[name]!)// T061
@@ -53,9 +67,15 @@ export function optimize(linked: LinkedGrammar): OptimizedGrammar {
     for (const name of Object.keys(rules)) {
         rules[name] = collapseWrappers(rules[name]!)
     }
+    // Final pass: compute the derivation-only view for every rule.
+    // Downstream (`assemble` → AssembledBranch/Container/Group) reads
+    // from `simplifiedRules` instead of re-running `simplifyRule` in
+    // every constructor. Template emission still reads raw `rules`.
+    const simplifiedRules = simplifyRules(rules)
     return {
         name: linked.name,
         rules,
+        simplifiedRules,
         supertypes: linked.supertypes,
         word: linked.word,
         derivations: linked.derivations,

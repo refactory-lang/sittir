@@ -18,10 +18,15 @@ export default grammar(base, {
             1: field('type_parameters'), // type_parameters [struct=0]
         }),
 
-        // array_expression: 2 field(s)
+        // array_expression: pos 1 is the outer attribute_item repeat. Pos 2
+        // is a choice between `[expr; length]` and `[elem1, elem2, ...]`
+        // shapes. Wrapping pos 2 as a single `elements` field carries the
+        // list-shape joinBy but clobbers `field('length', ...)` in the
+        // semi form. Open gap: promotePolymorph would splice in both
+        // shapes but loses the list-form ',' separator from the repeat.
         array_expression: ($, original) => transform(original, {
-            1: field('attributes'), // attribute_item [struct=0]
-            2: field('elements'), // _expression | attribute_item [struct=1]
+            1: field('attributes'), // attribute_item
+            2: field('elements'), // _expression | attribute_item
         }),
 
         // associated_type: 1 field(s)
@@ -100,8 +105,10 @@ export default grammar(base, {
         }),
 
         // field_pattern: 1 field(s)
+        // Grammar: seq(optional('ref'), optional(mutable_specifier), choice(...))
+        // Position 0 = optional('ref') [anonymous], position 1 = optional(mutable_specifier)
         field_pattern: ($, original) => transform(original, {
-            0: field('mutable_specifier'), // mutable_specifier [struct=0]
+            1: field('mutable_specifier'), // mutable_specifier [struct=0]
         }),
 
         // for_expression: 1 field(s)
@@ -115,18 +122,22 @@ export default grammar(base, {
             1: field('extern_modifier'), // extern_modifier [struct=1]
         }),
 
-        // function_item: 3 field(s)
+        // function_item: pos 6 is optional(seq('->', field('return_type', ..))) —
+        // don't touch it, return_type is already a base-grammar field. The
+        // where_clause symbol lives at pos 7. Pos 8 is the body block (also
+        // already a base field).
         function_item: ($, original) => transform(original, {
-            0: field('visibility_modifier'), // visibility_modifier [struct=0]
-            1: field('function_modifiers'), // function_modifiers [struct=1]
-            6: field('where_clause'), // where_clause [struct=2]
+            0: field('visibility_modifier'), // visibility_modifier
+            1: field('function_modifiers'), // function_modifiers
+            7: field('where_clause'), // where_clause
         }),
 
-        // function_signature_item: 3 field(s)
+        // function_signature_item: same shape as function_item but ends in
+        // ';' instead of a body block — pos 7 is where_clause here too.
         function_signature_item: ($, original) => transform(original, {
-            0: field('visibility_modifier'), // visibility_modifier [struct=0]
-            1: field('function_modifiers'), // function_modifiers [struct=1]
-            6: field('where_clause'), // where_clause [struct=2]
+            0: field('visibility_modifier'), // visibility_modifier
+            1: field('function_modifiers'), // function_modifiers
+            7: field('where_clause'), // where_clause
         }),
 
         // function_type: 2 field(s)
@@ -202,10 +213,16 @@ export default grammar(base, {
             1: field('value'), // integer_literal | float_literal [struct=0]
         }),
 
-        // ordered_field_declaration_list: 3 field(s)
+        // ordered_field_declaration_list: 1 field(s)
+        // The original override had position 2 for `visibility_modifier`
+        // targeting `optional(',')` (trailing comma). After evaluate's
+        // `absorbTrailingSeparator` collapses the trailing comma into the
+        // repeat's `trailing: true` flag, position 2 becomes `)` — wrong.
+        // Also `visibility_modifier` is inside the per-element seq, not at
+        // the outer level, so the position 2 override was structurally
+        // incorrect. Only wrapping position 1 (the per-element group).
         ordered_field_declaration_list: ($, original) => transform(original, {
-            1: field('attributes'), // attribute_item [struct=0]
-            2: field('visibility_modifier'), // visibility_modifier [struct=1]
+            1: field('attributes'), // per-element group [struct=0]
         }),
 
         // parameter: 1 field(s)
@@ -213,10 +230,12 @@ export default grammar(base, {
             0: field('mutable_specifier'), // mutable_specifier [struct=0]
         }),
 
-        // pointer_type: 1 field(s)
-        pointer_type: ($, original) => transform(original, {
-            1: field('mutable_specifier'), // mutable_specifier [struct=0]
-        }),
+        // pointer_type: override removed. Autogen wrapped position 1
+        // (`choice('const', $.mutable_specifier)`) in
+        // `field('mutable_specifier')` but `const` is not a
+        // `mutable_specifier` — it's a literal token. Letting the walker
+        // see the raw choice emits `*const ...` via the walker's choice
+        // case picking the first variant.
 
         // raw_string_literal: 3 field(s)
         raw_string_literal: ($, original) => transform(original, {
@@ -306,10 +325,13 @@ export default grammar(base, {
             7: field('trailing_where_clause'), // where_clause [struct=2]
         }),
 
-        // unary_expression: 2 field(s)
-        unary_expression: ($, original) => transform(original, {
-            0: field('operand'), // _expression [struct=0]
-        }),
+        // unary_expression: override removed. Autogen wrapped position
+        // 0 (the `choice('-','*','!')` operator) in `field('operand')`
+        // but that position is the OPERATOR, not the operand. Letting
+        // the walker see the raw enum emits `-$$$CHILDREN`. Note:
+        // overrides.json still has `operator`/`operand` fields, so
+        // readNode at runtime produces field data — but the walker
+        // no longer masks the operator as an "operand" slot.
 
         // union_item: 2 field(s)
         union_item: ($, original) => transform(original, {
@@ -341,6 +363,76 @@ export default grammar(base, {
         while_expression: ($, original) => transform(original, {
             0: field('label'), // label [struct=0]
         }),
+
+        // ---------------------------------------------------------------------------
+        // New overrides — expressing field routing previously only in overrides.json
+        // ---------------------------------------------------------------------------
+
+        // closure_expression — label the three optional modifiers so readNode
+        // can route `async`, `move`, `static` tokens to named fields instead
+        // of leaving them as anonymous children.
+        closure_expression: ($, original) => transform(original, {
+            0: field('static'),  // optional 'static'
+            1: field('async'),   // optional 'async'
+            2: field('move'),    // optional 'move'
+        }),
+
+        // function_modifiers — full replacement: label each choice alternative
+        // so readNode can route `async`, `const`, `default`, `unsafe` tokens.
+        function_modifiers: ($) => repeat1(choice(
+            field('async', 'async'),
+            field('default', 'default'),
+            field('const', 'const'),
+            field('unsafe', 'unsafe'),
+            $.extern_modifier,
+        )),
+
+        // or_pattern — label the pattern children as `left`/`right` for
+        // readNode positional routing. Fields live INSIDE the seq branches
+        // (not wrapping the whole branch) so evaluate doesn't retype them
+        // to variants.
+        or_pattern: ($) => choice(
+            seq(field('left', $._pattern), '|', field('right', $._pattern)),
+            seq('|', field('right', $._pattern)),
+        ),
+
+        // range_expression — four forms with an explicit operator field so
+        // readNode can route the `..`/`...`/`..=` token to a named slot.
+        range_expression: ($) => choice(
+            seq(field('start', $._expression), field('operator', choice('..', '...', '..=')), field('end', $._expression)),
+            seq(field('start', $._expression), field('operator', '..')),
+            seq(field('operator', '..'), field('end', $._expression)),
+            field('operator', '..'),
+        ),
+
+        // unary_expression — label both the operator token (pos 0) and
+        // the operand expression (pos 1). overrides.json promotes both
+        // to fields at readNode time; the walker needs matching IR
+        // fields so the template emits `$OPERATOR$OPERAND` instead of
+        // `$OPERATOR $$$CHILDREN` (which reads empty after field promotion).
+        unary_expression: ($, original) => transform(original, {
+            0: field('operator'), // choice('-', '*', '!')
+            1: field('operand'),  // $._expression
+        }),
+
+        // visibility_modifier — label the `pub` keyword and the `in` keyword
+        // (inside `pub(in path)`) so readNode can route them to named fields.
+        visibility_modifier: ($) => choice(
+            $.crate,
+            seq(
+                field('pub', 'pub'),
+                optional(seq(
+                    '(',
+                    choice(
+                        $.self,
+                        $.super,
+                        $.crate,
+                        seq(field('in', 'in'), $._path),
+                    ),
+                    ')',
+                )),
+            ),
+        ),
 
     },
 })

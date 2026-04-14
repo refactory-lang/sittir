@@ -28,6 +28,8 @@ import { validateFactoryRoundTrip } from '../validate-factory-roundtrip.ts'
 import { validateFrom } from '../validate-from.ts'
 import { validateRenderable } from '../validate-renderable.ts'
 import { validateReadNodeRoundTrip } from '../validate-readnode-roundtrip.ts'
+import { validateRoundTrip } from '../validate-roundtrip.ts'
+import { validateTemplateCoverage } from '../validate-template-coverage.ts'
 
 /**
  * v2 current floors — asserted. When a fix lands, raise these in the
@@ -35,22 +37,39 @@ import { validateReadNodeRoundTrip } from '../validate-readnode-roundtrip.ts'
  */
 const FLOORS = {
     python: {
-        factoryPass: 92,
+        factoryPass: 93,
         factoryTotal: 100,
-        fromPass: 112,
-        fromTotal: 114,
+        fromPass: 110,
+        fromTotal: 117,
+        // Full round-trip: corpus → readNode → render → re-parse → compare.
+        // Toughest validator — catches template bugs invisible to
+        // factory/from validation.
+        rtPass: 109,
+        rtTotal: 115,
+        // Template coverage: every declared field reachable in template.
+        // Structural check, independent of corpus contents.
+        covPass: 99,
+        covTotal: 101,
     },
     rust: {
-        factoryPass: 114,
+        factoryPass: 127,
         factoryTotal: 135,
-        fromPass: 143,
-        fromTotal: 149,
+        fromPass: 142,
+        fromTotal: 154,
+        rtPass: 121,
+        rtTotal: 136,
+        covPass: 136,
+        covTotal: 137,
     },
     typescript: {
-        factoryPass: 120,
+        factoryPass: 121,
         factoryTotal: 126,
-        fromPass: 134,
-        fromTotal: 142,
+        fromPass: 132,
+        fromTotal: 143,
+        rtPass: 110,
+        rtTotal: 112,
+        covPass: 139,
+        covTotal: 145,
     },
 } as const
 
@@ -112,6 +131,22 @@ describe.each(Object.keys(FLOORS) as GrammarName[])(
             expect(result.total).toBeGreaterThanOrEqual(floors.fromTotal)
             expect(result.pass).toBeGreaterThanOrEqual(floors.fromPass)
         }, 60000)
+
+        it(`full round-trip (render → reparse) passes at least ${floors.rtPass}/${floors.rtTotal}`, async () => {
+            const yaml = await loadTemplates(grammar)
+            const result = await validateRoundTrip(grammar, yaml)
+
+            expect(result.total).toBeGreaterThanOrEqual(floors.rtTotal)
+            expect(result.pass).toBeGreaterThanOrEqual(floors.rtPass)
+        }, 60000)
+
+        it(`template coverage passes at least ${floors.covPass}/${floors.covTotal}`, async () => {
+            const yaml = await loadTemplates(grammar)
+            const result = validateTemplateCoverage(grammar, yaml)
+
+            expect(result.total).toBeGreaterThanOrEqual(floors.covTotal)
+            expect(result.pass).toBeGreaterThanOrEqual(floors.covPass)
+        })
     },
 )
 

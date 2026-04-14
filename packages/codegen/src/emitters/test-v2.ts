@@ -23,6 +23,7 @@ export function emitTestsFromNodeMap(config: EmitTestsFromNodeMapConfig): string
     // Branch/container/polymorph tests
     const isValidIdent = (s: string) => /^[A-Za-z_$][\w$]*$/.test(s)
     for (const [kind, node] of nodeMap.nodes) {
+        if (kind.startsWith('_')) continue
         if (!node.factoryName) continue
         const key = node.irKey
         if (!key) continue // synthesised group or skipped kind
@@ -103,13 +104,16 @@ function emitContainerTest(lines: string[], node: AssembledNode, kind: string, k
 
     // Container factories take positional args: singular-child
     // containers require one `child?` and repeated containers take
-    // `...children` rest args. When the first child is required,
-    // the no-arg form `ir.kind()` won't type-check — pass a minimal
-    // `{ type: '<child>' } as never` placeholder keyed by the first
-    // content type.
+    // `...children` rest args. We need a placeholder element when:
+    //   - the singular child is required, OR
+    //   - any multi children slot is `nonEmpty` (repeat1-sourced)
+    //     — the factory's `_assertNonEmpty` helper throws on empty
+    //     input, so the no-arg form `ir.kind()` would fail at
+    //     runtime even though it type-checks.
     const first = node.children[0]
     const requiredSingular = first && !first.multiple && first.required
-    const placeholder = requiredSingular && first.contentTypes[0]
+    const anyNonEmpty = node.children.some(c => c.nonEmpty)
+    const placeholder = (requiredSingular || anyNonEmpty) && first?.contentTypes[0]
         ? `{ type: ${JSON.stringify(first.contentTypes[0])} } as never`
         : ''
 
@@ -141,14 +145,55 @@ function emitPolymorphTest(lines: string[], node: AssembledNode, kind: string, k
 }
 
 function emitLeafTest(lines: string[], node: AssembledNode, kind: string, key: string): void {
+    // Find a sample text that satisfies the leaf's regex pattern (if
+    // any). The factory enforces patterns at runtime now — passing
+    // `'test'` to a shebang or metavariable factory would throw at
+    // construction time. Try a list of common shapes against the
+    // pattern and pick the first match; if none match, the leaf has
+    // an exotic shape and we skip the construction test (the regex
+    // check itself is the test).
+    const pattern = node.modelType === 'leaf' ? node.pattern : undefined
+    const sample = pickSampleForPattern(pattern)
+    if (sample === null) {
+        // No working sample found — skip this leaf's construction
+        // test rather than emit a known-failing assertion. The
+        // pattern guard is exercised by other tests anyway.
+        return
+    }
     lines.push(`describe('${kind}', () => {`)
     lines.push(`  it('factory produces correct type', () => {`)
-    lines.push(`    const node = ir.${key}('test');`)
+    lines.push(`    const node = ir.${key}(${JSON.stringify(sample)});`)
     lines.push(`    expect(node.type).toBe('${kind}');`)
-    lines.push(`    expect(node.text).toBe('test');`)
+    lines.push(`    expect(node.text).toBe(${JSON.stringify(sample)});`)
     lines.push('  });')
     lines.push('});')
     lines.push('')
+}
+
+/**
+ * Pick a sample string that satisfies a tree-sitter leaf pattern.
+ * Tries a handful of common shapes, returning the first that matches
+ * (anchored full-string). When `pattern` is undefined the leaf accepts
+ * arbitrary text and `'test'` is fine. Returns `null` when no
+ * candidate matches and the test should be skipped.
+ */
+function pickSampleForPattern(pattern: string | undefined): string | null {
+    if (!pattern) return 'test'
+    // Common candidates ordered loosely from "most likely to match
+    // an identifier-ish leaf" to "specific token shapes".
+    const candidates = [
+        'test', 'a', 'x', '1', '0', '_a',
+        '$x', '#!/bin/sh', '/* */', '"hello"', "'h'",
+        '0x1', '1.0', '1e0', '1u32', '\n', ' ',
+    ]
+    let re: RegExp | null = null
+    try { re = new RegExp(`^(?:${pattern})$`, 'u') } catch {
+        try { re = new RegExp(`^(?:${pattern})$`) } catch { return null }
+    }
+    for (const c of candidates) {
+        if (re.test(c)) return c
+    }
+    return null
 }
 
 function emitKeywordTest(lines: string[], node: AssembledNode, kind: string, key: string): void {

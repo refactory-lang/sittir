@@ -13,7 +13,153 @@ interface _NodeData {
 }
 import { readNode, buildRoutingMap, type TreeHandle } from '@sittir/core';
 import type { WrappedNode } from '@sittir/types';
-import type { AbstractType, Arguments, ArrayExpression, ArrayType, AssignmentExpression, AssociatedType, AsyncBlock, Attribute, AttributeItem, AwaitExpression, BaseFieldInitializer, BinaryExpression, Block, BlockComment, BoundedType, BracketedType, BreakExpression, CallExpression, CapturedPattern, ClosureExpression, ClosureParameters, Comment, CompoundAssignmentExpr, ConstBlock, ConstItem, ConstParameter, ContinueExpression, DeclarationList, DelimTokenTree, DynamicType, ElseClause, EnumItem, EnumVariant, EnumVariantList, ExpressionExceptRange, ExpressionStatement, ExternCrateDeclaration, ExternModifier, FieldDeclaration, FieldDeclarationList, FieldExpression, FieldInitializer, FieldInitializerList, FieldPattern, ForExpression, ForLifetimes, ForeignModItem, FunctionItem, FunctionModifiers, FunctionSignatureItem, FunctionType, GenBlock, GenericFunction, GenericPattern, GenericType, GenericTypeWithTurbofish, HiddenFieldIdentifier, HiddenLetChain, HiddenPath, HiddenTypeIdentifier, HigherRankedTraitBound, IfExpression, ImplItem, IndexExpression, InnerAttributeItem, Label, LastMatchArm, LetChain, LetCondition, LetDeclaration, Lifetime, LifetimeParameter, LineComment, LoopExpression, MacroDefinition, MacroInvocation, MacroRule, MatchArm, MatchBlock, MatchExpression, MatchPattern, ModItem, MutPattern, NegativeLiteral, NonDelimToken, NonSpecialToken, OrPattern, OrderedFieldDeclarationList, Parameter, Parameters, ParenthesizedExpression, PointerType, QualifiedType, RangeExpression, RangePattern, RawStringLiteral, RefPattern, ReferenceExpression, ReferencePattern, ReferenceType, RemovedTraitBound, ReturnExpression, ScopedIdentifier, ScopedTypeIdentifier, ScopedTypeIdentifierInExpressionPosition, ScopedUseList, SelfParameter, ShorthandFieldInitializer, SlicePattern, SourceFile, StaticItem, StringLiteral, StructExpression, StructItem, StructPattern, TokenBindingPattern, TokenRepetition, TokenRepetitionPattern, TokenTree, TokenTreePattern, TraitBounds, TraitItem, TryBlock, TryExpression, TupleExpression, TuplePattern, TupleStructPattern, TupleType, TypeArguments, TypeBinding, TypeCastExpression, TypeItem, TypeParameter, TypeParameters, UnaryExpression, UnionItem, UnsafeBlock, UseAsClause, UseBounds, UseDeclaration, UseList, UseWildcard, VariadicParameter, VisibilityModifier, WhereClause, WherePredicate, WhileExpression, YieldExpression } from './types.js';
+import type {
+  AbstractType,
+  Arguments,
+  ArrayExpression,
+  ArrayType,
+  AssignmentExpression,
+  AssociatedType,
+  AsyncBlock,
+  Attribute,
+  AttributeItem,
+  AwaitExpression,
+  BaseFieldInitializer,
+  BinaryExpression,
+  Block,
+  BlockComment,
+  BoundedType,
+  BracketedType,
+  BreakExpression,
+  CallExpression,
+  CapturedPattern,
+  ClosureExpression,
+  ClosureParameters,
+  Comment,
+  CompoundAssignmentExpr,
+  ConstBlock,
+  ConstItem,
+  ConstParameter,
+  ContinueExpression,
+  DeclarationList,
+  DelimTokenTree,
+  DynamicType,
+  ElseClause,
+  EnumItem,
+  EnumVariant,
+  EnumVariantList,
+  ExpressionStatement,
+  ExternCrateDeclaration,
+  ExternModifier,
+  FieldDeclaration,
+  FieldDeclarationList,
+  FieldExpression,
+  FieldInitializer,
+  FieldInitializerList,
+  FieldPattern,
+  ForExpression,
+  ForLifetimes,
+  ForeignModItem,
+  FunctionItem,
+  FunctionModifiers,
+  FunctionSignatureItem,
+  FunctionType,
+  GenBlock,
+  GenericFunction,
+  GenericPattern,
+  GenericType,
+  GenericTypeWithTurbofish,
+  HigherRankedTraitBound,
+  IfExpression,
+  ImplItem,
+  IndexExpression,
+  InnerAttributeItem,
+  Label,
+  LastMatchArm,
+  LetChain,
+  LetCondition,
+  LetDeclaration,
+  Lifetime,
+  LifetimeParameter,
+  LineComment,
+  LoopExpression,
+  MacroDefinition,
+  MacroInvocation,
+  MacroRule,
+  MatchArm,
+  MatchBlock,
+  MatchExpression,
+  MatchPattern,
+  ModItem,
+  MutPattern,
+  NegativeLiteral,
+  NonSpecialToken,
+  OrPattern,
+  OrderedFieldDeclarationList,
+  Parameter,
+  Parameters,
+  ParenthesizedExpression,
+  PointerType,
+  QualifiedType,
+  RangeExpression,
+  RangePattern,
+  RawStringLiteral,
+  RefPattern,
+  ReferenceExpression,
+  ReferencePattern,
+  ReferenceType,
+  RemovedTraitBound,
+  ReturnExpression,
+  ScopedIdentifier,
+  ScopedTypeIdentifier,
+  ScopedTypeIdentifierInExpressionPosition,
+  ScopedUseList,
+  SelfParameter,
+  ShorthandFieldInitializer,
+  SlicePattern,
+  SourceFile,
+  StaticItem,
+  StringLiteral,
+  StructExpression,
+  StructItem,
+  StructPattern,
+  TokenBindingPattern,
+  TokenRepetition,
+  TokenRepetitionPattern,
+  TokenTree,
+  TokenTreePattern,
+  TraitBounds,
+  TraitItem,
+  TryBlock,
+  TryExpression,
+  TupleExpression,
+  TuplePattern,
+  TupleStructPattern,
+  TupleType,
+  TypeArguments,
+  TypeBinding,
+  TypeCastExpression,
+  TypeItem,
+  TypeParameter,
+  TypeParameters,
+  UnaryExpression,
+  UnionItem,
+  UnsafeBlock,
+  UseAsClause,
+  UseBounds,
+  UseDeclaration,
+  UseList,
+  UseWildcard,
+  VariadicParameter,
+  VisibilityModifier,
+  WhereClause,
+  WherePredicate,
+  WhileExpression,
+  YieldExpression,
+  _FieldIdentifier,
+  _LetChain,
+  _TypeIdentifier,
+} from './types.js';
 
 // Routing data — overrides + supertype expansion reconstructed at
 // codegen time from NodeMap, then handed to readNode at module load.
@@ -23,24 +169,27 @@ const _overrides = {
   "macro_definition": {"fields":{"rules":{"types":[{"type":"macro_rule","named":true}],"multiple":false,"required":true,"position":1}}},
   "attribute_item": {"fields":{"attribute":{"types":[{"type":"attribute","named":true}],"multiple":false,"required":true,"position":0}}},
   "inner_attribute_item": {"fields":{"attribute":{"types":[{"type":"attribute","named":true}],"multiple":false,"required":true,"position":0}}},
+  "mod_item_semi": {"fields":{"visibility_modifier":{"types":[{"type":"visibility_modifier","named":true}],"multiple":false,"required":false,"position":0}}},
+  "mod_item_body": {"fields":{"visibility_modifier":{"types":[{"type":"visibility_modifier","named":true}],"multiple":false,"required":false,"position":0}}},
   "mod_item": {"fields":{"visibility_modifier":{"types":[{"type":"visibility_modifier","named":true}],"multiple":false,"required":false,"position":0}}},
+  "foreign_mod_item_semi": {"fields":{"visibility_modifier":{"types":[{"type":"visibility_modifier","named":true}],"multiple":false,"required":false,"position":0},"extern_modifier":{"types":[{"type":"extern_modifier","named":true}],"multiple":false,"required":true,"position":1}}},
+  "foreign_mod_item_body": {"fields":{"visibility_modifier":{"types":[{"type":"visibility_modifier","named":true}],"multiple":false,"required":false,"position":0},"extern_modifier":{"types":[{"type":"extern_modifier","named":true}],"multiple":false,"required":true,"position":1}}},
   "foreign_mod_item": {"fields":{"visibility_modifier":{"types":[{"type":"visibility_modifier","named":true}],"multiple":false,"required":false,"position":0},"extern_modifier":{"types":[{"type":"extern_modifier","named":true}],"multiple":false,"required":true,"position":1}}},
   "union_item": {"fields":{"visibility_modifier":{"types":[{"type":"visibility_modifier","named":true}],"multiple":false,"required":false,"position":0},"where_clause":{"types":[{"type":"where_clause","named":true}],"multiple":false,"required":false,"position":3}}},
   "enum_item": {"fields":{"visibility_modifier":{"types":[{"type":"visibility_modifier","named":true}],"multiple":false,"required":false,"position":0},"where_clause":{"types":[{"type":"where_clause","named":true}],"multiple":false,"required":false,"position":3}}},
   "enum_variant": {"fields":{"visibility_modifier":{"types":[{"type":"visibility_modifier","named":true}],"multiple":false,"required":false,"position":0}}},
   "field_declaration": {"fields":{"visibility_modifier":{"types":[{"type":"visibility_modifier","named":true}],"multiple":false,"required":false,"position":0}}},
-  "ordered_field_declaration_list": {"fields":{"attributes":{"types":[{"type":"attribute_item","named":true},{"type":"visibility_modifier","named":true},{"type":"_type","named":true}],"multiple":false,"required":false,"position":0},"visibility_modifier":{"types":[],"multiple":false,"required":false,"position":1}}},
   "extern_crate_declaration": {"fields":{"visibility_modifier":{"types":[{"type":"visibility_modifier","named":true}],"multiple":false,"required":false,"position":0},"crate":{"types":[{"type":"crate","named":true}],"multiple":false,"required":true,"position":1}}},
   "const_item": {"fields":{"visibility_modifier":{"types":[{"type":"visibility_modifier","named":true}],"multiple":false,"required":false,"position":0}}},
   "static_item": {"fields":{"visibility_modifier":{"types":[{"type":"visibility_modifier","named":true}],"multiple":false,"required":false,"position":0},"mutable_specifier":{"types":[],"multiple":false,"required":false,"position":1}}},
   "type_item": {"fields":{"visibility_modifier":{"types":[{"type":"visibility_modifier","named":true}],"multiple":false,"required":false,"position":0},"where_clause":{"types":[{"type":"where_clause","named":true}],"multiple":false,"required":false,"position":3},"trailing_where_clause":{"types":[{"type":"where_clause","named":true}],"multiple":false,"required":false,"position":5}}},
-  "function_item": {"fields":{"visibility_modifier":{"types":[{"type":"visibility_modifier","named":true}],"multiple":false,"required":false,"position":0},"function_modifiers":{"types":[{"type":"function_modifiers","named":true}],"multiple":false,"required":false,"position":1},"where_clause":{"types":[{"type":"_type","named":true}],"multiple":false,"required":true,"position":5}}},
-  "function_signature_item": {"fields":{"visibility_modifier":{"types":[{"type":"visibility_modifier","named":true}],"multiple":false,"required":false,"position":0},"function_modifiers":{"types":[{"type":"function_modifiers","named":true}],"multiple":false,"required":false,"position":1},"where_clause":{"types":[{"type":"_type","named":true}],"multiple":false,"required":true,"position":5}}},
+  "function_item": {"fields":{"visibility_modifier":{"types":[{"type":"visibility_modifier","named":true}],"multiple":false,"required":false,"position":0},"function_modifiers":{"types":[{"type":"function_modifiers","named":true}],"multiple":false,"required":false,"position":1},"where_clause":{"types":[{"type":"where_clause","named":true}],"multiple":false,"required":false,"position":6}}},
+  "function_signature_item": {"fields":{"visibility_modifier":{"types":[{"type":"visibility_modifier","named":true}],"multiple":false,"required":false,"position":0},"function_modifiers":{"types":[{"type":"function_modifiers","named":true}],"multiple":false,"required":false,"position":1},"where_clause":{"types":[{"type":"where_clause","named":true}],"multiple":false,"required":false,"position":6}}},
   "associated_type": {"fields":{"where_clause":{"types":[{"type":"where_clause","named":true}],"multiple":false,"required":false,"position":3}}},
   "let_declaration": {"fields":{"mutable_specifier":{"types":[{"type":"mutable_specifier","named":true}],"multiple":false,"required":false,"position":0}}},
   "use_declaration": {"fields":{"visibility_modifier":{"types":[{"type":"visibility_modifier","named":true}],"multiple":false,"required":false,"position":0}}},
   "use_wildcard": {"fields":{"path":{"types":[{"type":"_path","named":true}],"multiple":false,"required":false,"position":0}}},
-  "self_parameter": {"fields":{"lifetime":{"types":[],"multiple":false,"required":false,"position":0},"mutable_specifier":{"types":[{"type":"lifetime","named":true}],"multiple":false,"required":false,"position":1},"self":{"types":[{"type":"mutable_specifier","named":true}],"multiple":false,"required":false,"position":2}}},
+  "self_parameter": {"fields":{"lifetime":{"types":[],"multiple":false,"required":true,"position":0},"mutable_specifier":{"types":[{"type":"lifetime","named":true}],"multiple":false,"required":false,"position":1},"self":{"types":[{"type":"mutable_specifier","named":true}],"multiple":false,"required":false,"position":2}}},
   "variadic_parameter": {"fields":{"mutable_specifier":{"types":[{"type":"mutable_specifier","named":true}],"multiple":false,"required":false,"position":0}}},
   "parameter": {"fields":{"mutable_specifier":{"types":[{"type":"mutable_specifier","named":true}],"multiple":false,"required":false,"position":0}}},
   "extern_modifier": {"fields":{"string_literal":{"types":[{"type":"string_literal","named":true}],"multiple":false,"required":false,"position":0}}},
@@ -48,10 +197,9 @@ const _overrides = {
   "function_type": {"fields":{"for_lifetimes":{"types":[{"type":"for_lifetimes","named":true}],"multiple":false,"required":false,"position":0}}},
   "bounded_type": {"fields":{"left":{"types":[{"type":"lifetime","named":true},{"type":"_type","named":true},{"type":"use_bounds","named":true}],"multiple":false,"required":true,"position":0},"right":{"types":[{"type":"lifetime","named":true},{"type":"_type","named":true},{"type":"use_bounds","named":true}],"multiple":false,"required":true,"position":1}}},
   "reference_type": {"fields":{"lifetime":{"types":[{"type":"lifetime","named":true}],"multiple":false,"required":false,"position":0},"mutable_specifier":{"types":[{"type":"mutable_specifier","named":true}],"multiple":false,"required":false,"position":1}}},
-  "pointer_type": {"fields":{"mutable_specifier":{"types":[{"type":"mutable_specifier","named":true}],"multiple":false,"required":true,"position":0}}},
   "abstract_type": {"fields":{"type_parameters":{"types":[{"type":"type_parameters","named":true}],"multiple":false,"required":false,"position":0}}},
   "macro_invocation": {"fields":{"token_tree":{"types":[{"type":"delim_token_tree","named":true}],"multiple":false,"required":true,"position":1}}},
-  "unary_expression": {"fields":{"operand":{"types":[],"multiple":false,"required":true,"position":0}}},
+  "unary_expression": {"fields":{"operator":{"types":[],"multiple":false,"required":true,"position":0},"operand":{"types":[{"type":"_expression","named":true}],"multiple":false,"required":true,"position":1}}},
   "try_expression": {"fields":{"value":{"types":[{"type":"_expression","named":true}],"multiple":false,"required":true,"position":0}}},
   "reference_expression": {"fields":{"mutable_specifier":{"types":[{"type":"mutable_specifier","named":true}],"multiple":false,"required":true,"position":0}}},
   "array_expression": {"fields":{"attributes":{"types":[{"type":"attribute_item","named":true}],"multiple":true,"required":true,"position":0},"elements":{"types":[{"type":"_expression","named":true},{"type":"attribute_item","named":true}],"multiple":false,"required":true,"position":1}}},
@@ -60,6 +208,9 @@ const _overrides = {
   "while_expression": {"fields":{"label":{"types":[{"type":"label","named":true}],"multiple":false,"required":false,"position":0}}},
   "loop_expression": {"fields":{"label":{"types":[{"type":"label","named":true}],"multiple":false,"required":false,"position":0}}},
   "for_expression": {"fields":{"label":{"types":[{"type":"label","named":true}],"multiple":false,"required":false,"position":0}}},
+  "closure_expression_body": {"fields":{"static":{"types":[],"multiple":false,"required":false,"position":0},"async":{"types":[],"multiple":false,"required":false,"position":1},"move":{"types":[],"multiple":false,"required":false,"position":2}}},
+  "closure_expression_body2": {"fields":{"static":{"types":[],"multiple":false,"required":false,"position":0},"async":{"types":[],"multiple":false,"required":false,"position":1},"move":{"types":[],"multiple":false,"required":false,"position":2}}},
+  "closure_expression": {"fields":{"static":{"types":[],"multiple":false,"required":false,"position":0},"async":{"types":[],"multiple":false,"required":false,"position":1},"move":{"types":[],"multiple":false,"required":false,"position":2}}},
   "label": {"fields":{"identifier":{"types":[{"type":"identifier","named":true}],"multiple":false,"required":true,"position":0}}},
   "break_expression": {"fields":{"label":{"types":[{"type":"label","named":true}],"multiple":false,"required":false,"position":0},"expression":{"types":[{"type":"_expression","named":true}],"multiple":false,"required":false,"position":1}}},
   "continue_expression": {"fields":{"label":{"types":[{"type":"label","named":true}],"multiple":false,"required":false,"position":0}}},
@@ -69,6 +220,9 @@ const _overrides = {
   "gen_block": {"fields":{"block":{"types":[],"multiple":false,"required":false,"position":0}}},
   "try_block": {"fields":{"block":{"types":[{"type":"block","named":true}],"multiple":false,"required":true,"position":0}}},
   "block": {"fields":{"label":{"types":[{"type":"label","named":true}],"multiple":false,"required":false,"position":0}}},
+  "field_pattern_name": {"fields":{"mutable_specifier":{"types":[{"type":"mutable_specifier","named":true}],"multiple":false,"required":false,"position":0}}},
+  "field_pattern_colon": {"fields":{"mutable_specifier":{"types":[{"type":"mutable_specifier","named":true}],"multiple":false,"required":false,"position":0}}},
+  "field_pattern": {"fields":{"mutable_specifier":{"types":[{"type":"mutable_specifier","named":true}],"multiple":false,"required":false,"position":0}}},
   "mut_pattern": {"fields":{"mutable_specifier":{"types":[{"type":"mutable_specifier","named":true}],"multiple":false,"required":true,"position":0},"pattern":{"types":[{"type":"_pattern","named":true}],"multiple":false,"required":true,"position":1}}},
   "captured_pattern": {"fields":{"identifier":{"types":[{"type":"identifier","named":true}],"multiple":false,"required":true,"position":0},"pattern":{"types":[{"type":"_pattern","named":true}],"multiple":false,"required":true,"position":1}}},
   "reference_pattern": {"fields":{"mutable_specifier":{"types":[{"type":"mutable_specifier","named":true}],"multiple":false,"required":false,"position":0},"pattern":{"types":[{"type":"_pattern","named":true}],"multiple":false,"required":true,"position":1}}},
@@ -82,13 +236,16 @@ const _supertypeExpansion = new Map<string, readonly string[]>(Object.entries({
   "_tokens": ["token_tree","token_repetition","metavariable","_non_special_token"],
   "_use_clause": ["_path","use_as_clause","use_list","scoped_use_list","use_wildcard"],
   "_type": ["abstract_type","reference_type","metavariable","pointer_type","generic_type","scoped_type_identifier","tuple_type","unit_type","array_type","function_type","_type_identifier","macro_invocation","never_type","dynamic_type","bounded_type","removed_trait_bound"],
+  "_expression_except_range": ["unary_expression","reference_expression","try_expression","binary_expression","assignment_expression","compound_assignment_expr","type_cast_expression","call_expression","return_expression","yield_expression","_literal","identifier","_reserved_identifier","self","scoped_identifier","generic_function","await_expression","field_expression","array_expression","tuple_expression","macro_invocation","unit_expression","break_expression","continue_expression","index_expression","metavariable","closure_expression","parenthesized_expression","struct_expression","_expression_ending_with_block"],
   "_expression": ["_expression_except_range","range_expression"],
   "_expression_ending_with_block": ["unsafe_block","async_block","gen_block","try_block","block","if_expression","match_expression","while_expression","loop_expression","for_expression","const_block"],
   "_delim_tokens": ["_non_delim_token","delim_token_tree"],
+  "_non_delim_token": ["_non_special_token"],
   "_condition": ["_expression","let_condition","_let_chain"],
   "_pattern": ["_literal_pattern","identifier","scoped_identifier","generic_pattern","tuple_pattern","tuple_struct_pattern","struct_pattern","_reserved_identifier","ref_pattern","slice_pattern","captured_pattern","reference_pattern","remaining_field_pattern","mut_pattern","range_pattern","or_pattern","const_block","macro_invocation"],
   "_literal": ["string_literal","raw_string_literal","char_literal","boolean_literal","integer_literal","float_literal"],
   "_literal_pattern": ["string_literal","raw_string_literal","char_literal","boolean_literal","integer_literal","float_literal","negative_literal"],
+  "_path": ["self","metavariable","super","crate","identifier","scoped_identifier","_reserved_identifier"],
 }));
 const _routing = buildRoutingMap(_overrides, _supertypeExpansion);
 
@@ -310,8 +467,7 @@ export function wrapFieldDeclaration(data: _NodeData, tree: TreeHandle): Wrapped
 export function wrapOrderedFieldDeclarationList(data: _NodeData, tree: TreeHandle): WrappedNode<OrderedFieldDeclarationList> {
   return {
     ...data,
-    get attributes() { return drillIn(data.fields?.['attributes'], tree); },
-    get visibilityModifier() { return drillIn(data.fields?.['visibility_modifier'], tree); },
+    get typeField() { return drillInAll(data.fields?.['type'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<OrderedFieldDeclarationList>;
 }
@@ -371,9 +527,10 @@ export function wrapFunctionItem(data: _NodeData, tree: TreeHandle): WrappedNode
     get name() { return drillIn(data.fields?.['name'], tree); },
     get typeParameters() { return drillIn(data.fields?.['type_parameters'], tree); },
     get parameters() { return drillIn(data.fields?.['parameters'], tree); },
+    get returnType() { return drillIn(data.fields?.['return_type'], tree); },
     get whereClause() { return drillIn(data.fields?.['where_clause'], tree); },
     get body() { return drillIn(data.fields?.['body'], tree); },
-    get child() { return drillIn(data.children?.[0], tree); },
+    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<FunctionItem>;
 }
 
@@ -385,14 +542,19 @@ export function wrapFunctionSignatureItem(data: _NodeData, tree: TreeHandle): Wr
     get name() { return drillIn(data.fields?.['name'], tree); },
     get typeParameters() { return drillIn(data.fields?.['type_parameters'], tree); },
     get parameters() { return drillIn(data.fields?.['parameters'], tree); },
+    get returnType() { return drillIn(data.fields?.['return_type'], tree); },
     get whereClause() { return drillIn(data.fields?.['where_clause'], tree); },
-    get child() { return drillIn(data.children?.[0], tree); },
+    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<FunctionSignatureItem>;
 }
 
 export function wrapFunctionModifiers(data: _NodeData, tree: TreeHandle): WrappedNode<FunctionModifiers> {
   return {
     ...data,
+    get async() { return drillInAll(data.fields?.['async'], tree); },
+    get default() { return drillInAll(data.fields?.['default'], tree); },
+    get const() { return drillInAll(data.fields?.['const'], tree); },
+    get unsafe() { return drillInAll(data.fields?.['unsafe'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<FunctionModifiers>;
 }
@@ -606,6 +768,8 @@ export function wrapExternModifier(data: _NodeData, tree: TreeHandle): WrappedNo
 export function wrapVisibilityModifier(data: _NodeData, tree: TreeHandle): WrappedNode<VisibilityModifier> {
   return {
     ...data,
+    get pub() { return drillIn(data.fields?.['pub'], tree); },
+    get in() { return drillIn(data.fields?.['in'], tree); },
     get child() { return drillIn(data.children?.[0], tree); },
   } as unknown as WrappedNode<VisibilityModifier>;
 }
@@ -742,9 +906,8 @@ export function wrapReferenceType(data: _NodeData, tree: TreeHandle): WrappedNod
 export function wrapPointerType(data: _NodeData, tree: TreeHandle): WrappedNode<PointerType> {
   return {
     ...data,
-    get mutableSpecifier() { return drillIn(data.fields?.['mutable_specifier'], tree); },
     get typeField() { return drillIn(data.fields?.['type'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get child() { return drillIn(data.children?.[0], tree); },
   } as unknown as WrappedNode<PointerType>;
 }
 
@@ -765,13 +928,6 @@ export function wrapDynamicType(data: _NodeData, tree: TreeHandle): WrappedNode<
   } as unknown as WrappedNode<DynamicType>;
 }
 
-export function wrapExpressionExceptRange(data: _NodeData, tree: TreeHandle): WrappedNode<ExpressionExceptRange> {
-  return {
-    ...data,
-    get child() { return drillIn(data.children?.[0], tree); },
-  } as unknown as WrappedNode<ExpressionExceptRange>;
-}
-
 export function wrapMacroInvocation(data: _NodeData, tree: TreeHandle): WrappedNode<MacroInvocation> {
   return {
     ...data,
@@ -786,13 +942,6 @@ export function wrapDelimTokenTree(data: _NodeData, tree: TreeHandle): WrappedNo
     ...data,
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<DelimTokenTree>;
-}
-
-export function wrapNonDelimToken(data: _NodeData, tree: TreeHandle): WrappedNode<NonDelimToken> {
-  return {
-    ...data,
-    get child() { return drillIn(data.children?.[0], tree); },
-  } as unknown as WrappedNode<NonDelimToken>;
 }
 
 export function wrapScopedIdentifier(data: _NodeData, tree: TreeHandle): WrappedNode<ScopedIdentifier> {
@@ -825,15 +974,19 @@ export function wrapScopedTypeIdentifier(data: _NodeData, tree: TreeHandle): Wra
 export function wrapRangeExpression(data: _NodeData, tree: TreeHandle): WrappedNode<RangeExpression> {
   return {
     ...data,
-    get child() { return drillIn(data.children?.[0], tree); },
+    get start() { return drillIn(data.fields?.['start'], tree); },
+    get operator() { return drillIn(data.fields?.['operator'], tree); },
+    get end() { return drillIn(data.fields?.['end'], tree); },
+    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<RangeExpression>;
 }
 
 export function wrapUnaryExpression(data: _NodeData, tree: TreeHandle): WrappedNode<UnaryExpression> {
   return {
     ...data,
+    get operator() { return drillIn(data.fields?.['operator'], tree); },
     get operand() { return drillIn(data.fields?.['operand'], tree); },
-    get child() { return drillIn(data.children?.[0], tree); },
+    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<UnaryExpression>;
 }
 
@@ -1009,11 +1162,11 @@ export function wrapLetCondition(data: _NodeData, tree: TreeHandle): WrappedNode
   } as unknown as WrappedNode<LetCondition>;
 }
 
-export function wrapHiddenLetChain(data: _NodeData, tree: TreeHandle): WrappedNode<HiddenLetChain> {
+export function wrap_LetChain(data: _NodeData, tree: TreeHandle): WrappedNode<_LetChain> {
   return {
     ...data,
-    get child() { return drillIn(data.children?.[0], tree); },
-  } as unknown as WrappedNode<HiddenLetChain>;
+    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<_LetChain>;
 }
 
 export function wrapElseClause(data: _NodeData, tree: TreeHandle): WrappedNode<ElseClause> {
@@ -1060,9 +1213,8 @@ export function wrapLastMatchArm(data: _NodeData, tree: TreeHandle): WrappedNode
 export function wrapMatchPattern(data: _NodeData, tree: TreeHandle): WrappedNode<MatchPattern> {
   return {
     ...data,
-    get pattern() { return drillIn(data.fields?.['pattern'], tree); },
     get condition() { return drillIn(data.fields?.['condition'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get child() { return drillIn(data.children?.[0], tree); },
   } as unknown as WrappedNode<MatchPattern>;
 }
 
@@ -1107,6 +1259,10 @@ export function wrapConstBlock(data: _NodeData, tree: TreeHandle): WrappedNode<C
 export function wrapClosureExpression(data: _NodeData, tree: TreeHandle): WrappedNode<ClosureExpression> {
   return {
     ...data,
+    get static() { return drillIn(data.fields?.['static'], tree); },
+    get async() { return drillIn(data.fields?.['async'], tree); },
+    get move() { return drillIn(data.fields?.['move'], tree); },
+    get parameters() { return drillIn(data.fields?.['parameters'], tree); },
     get returnType() { return drillIn(data.fields?.['return_type'], tree); },
     get body() { return drillIn(data.fields?.['body'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
@@ -1116,7 +1272,6 @@ export function wrapClosureExpression(data: _NodeData, tree: TreeHandle): Wrappe
 export function wrapClosureParameters(data: _NodeData, tree: TreeHandle): WrappedNode<ClosureParameters> {
   return {
     ...data,
-    get pattern() { return drillInAll(data.fields?.['pattern'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<ClosureParameters>;
 }
@@ -1222,7 +1377,6 @@ export function wrapGenericPattern(data: _NodeData, tree: TreeHandle): WrappedNo
 export function wrapTuplePattern(data: _NodeData, tree: TreeHandle): WrappedNode<TuplePattern> {
   return {
     ...data,
-    get pattern() { return drillInAll(data.fields?.['pattern'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<TuplePattern>;
 }
@@ -1230,7 +1384,6 @@ export function wrapTuplePattern(data: _NodeData, tree: TreeHandle): WrappedNode
 export function wrapSlicePattern(data: _NodeData, tree: TreeHandle): WrappedNode<SlicePattern> {
   return {
     ...data,
-    get pattern() { return drillInAll(data.fields?.['pattern'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<SlicePattern>;
 }
@@ -1239,7 +1392,6 @@ export function wrapTupleStructPattern(data: _NodeData, tree: TreeHandle): Wrapp
   return {
     ...data,
     get typeField() { return drillIn(data.fields?.['type'], tree); },
-    get pattern() { return drillInAll(data.fields?.['pattern'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<TupleStructPattern>;
 }
@@ -1255,6 +1407,7 @@ export function wrapStructPattern(data: _NodeData, tree: TreeHandle): WrappedNod
 export function wrapFieldPattern(data: _NodeData, tree: TreeHandle): WrappedNode<FieldPattern> {
   return {
     ...data,
+    get mutableSpecifier() { return drillIn(data.fields?.['mutable_specifier'], tree); },
     get name() { return drillIn(data.fields?.['name'], tree); },
     get pattern() { return drillIn(data.fields?.['pattern'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
@@ -1282,8 +1435,7 @@ export function wrapRangePattern(data: _NodeData, tree: TreeHandle): WrappedNode
 export function wrapRefPattern(data: _NodeData, tree: TreeHandle): WrappedNode<RefPattern> {
   return {
     ...data,
-    get pattern() { return drillIn(data.fields?.['pattern'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get child() { return drillIn(data.children?.[0], tree); },
   } as unknown as WrappedNode<RefPattern>;
 }
 
@@ -1308,7 +1460,8 @@ export function wrapReferencePattern(data: _NodeData, tree: TreeHandle): Wrapped
 export function wrapOrPattern(data: _NodeData, tree: TreeHandle): WrappedNode<OrPattern> {
   return {
     ...data,
-    get pattern() { return drillIn(data.fields?.['pattern'], tree); },
+    get left() { return drillIn(data.fields?.['left'], tree); },
+    get right() { return drillIn(data.fields?.['right'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<OrPattern>;
 }
@@ -1365,31 +1518,24 @@ export function wrapBlockComment(data: _NodeData, tree: TreeHandle): WrappedNode
   } as unknown as WrappedNode<BlockComment>;
 }
 
-export function wrapHiddenPath(data: _NodeData, tree: TreeHandle): WrappedNode<HiddenPath> {
+export function wrap_TypeIdentifier(data: _NodeData, tree: TreeHandle): WrappedNode<_TypeIdentifier> {
   return {
     ...data,
     get child() { return drillIn(data.children?.[0], tree); },
-  } as unknown as WrappedNode<HiddenPath>;
+  } as unknown as WrappedNode<_TypeIdentifier>;
 }
 
-export function wrapHiddenTypeIdentifier(data: _NodeData, tree: TreeHandle): WrappedNode<HiddenTypeIdentifier> {
+export function wrap_FieldIdentifier(data: _NodeData, tree: TreeHandle): WrappedNode<_FieldIdentifier> {
   return {
     ...data,
     get child() { return drillIn(data.children?.[0], tree); },
-  } as unknown as WrappedNode<HiddenTypeIdentifier>;
-}
-
-export function wrapHiddenFieldIdentifier(data: _NodeData, tree: TreeHandle): WrappedNode<HiddenFieldIdentifier> {
-  return {
-    ...data,
-    get child() { return drillIn(data.children?.[0], tree); },
-  } as unknown as WrappedNode<HiddenFieldIdentifier>;
+  } as unknown as WrappedNode<_FieldIdentifier>;
 }
 
 export function wrapLetChain(data: _NodeData, tree: TreeHandle): WrappedNode<LetChain> {
   return {
     ...data,
-    get child() { return drillIn(data.children?.[0], tree); },
+    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<LetChain>;
 }
 
@@ -1470,10 +1616,8 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'abstract_type': (d, t) => wrapAbstractType(d, t),
   'dynamic_type': (d, t) => wrapDynamicType(d, t),
   'mutable_specifier': (d) => d,
-  '_expression_except_range': (d, t) => wrapExpressionExceptRange(d, t),
   'macro_invocation': (d, t) => wrapMacroInvocation(d, t),
   'delim_token_tree': (d, t) => wrapDelimTokenTree(d, t),
-  '_non_delim_token': (d, t) => wrapNonDelimToken(d, t),
   'scoped_identifier': (d, t) => wrapScopedIdentifier(d, t),
   'scoped_type_identifier_in_expression_position': (d, t) => wrapScopedTypeIdentifierInExpressionPosition(d, t),
   'scoped_type_identifier': (d, t) => wrapScopedTypeIdentifier(d, t),
@@ -1500,7 +1644,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'base_field_initializer': (d, t) => wrapBaseFieldInitializer(d, t),
   'if_expression': (d, t) => wrapIfExpression(d, t),
   'let_condition': (d, t) => wrapLetCondition(d, t),
-  '_let_chain': (d, t) => wrapHiddenLetChain(d, t),
+  '_let_chain': (d, t) => wrap_LetChain(d, t),
   'else_clause': (d, t) => wrapElseClause(d, t),
   'match_expression': (d, t) => wrapMatchExpression(d, t),
   'match_block': (d, t) => wrapMatchBlock(d, t),
@@ -1546,12 +1690,11 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'comment': (d, t) => wrapComment(d, t),
   'line_comment': (d, t) => wrapLineComment(d, t),
   'block_comment': (d, t) => wrapBlockComment(d, t),
-  '_path': (d, t) => wrapHiddenPath(d, t),
   'identifier': (d) => d,
   'shebang': (d) => d,
   '_reserved_identifier': (d) => d,
-  '_type_identifier': (d, t) => wrapHiddenTypeIdentifier(d, t),
-  '_field_identifier': (d, t) => wrapHiddenFieldIdentifier(d, t),
+  '_type_identifier': (d, t) => wrap_TypeIdentifier(d, t),
+  '_field_identifier': (d, t) => wrap_FieldIdentifier(d, t),
   'self': (d) => d,
   'super': (d) => d,
   'crate': (d) => d,
