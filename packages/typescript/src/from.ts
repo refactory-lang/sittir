@@ -576,18 +576,34 @@ import type {
   YieldExpressionConfig,
   YieldExpressionFromInput,
 } from './types.js';
-import type { ConfigOf, FromInputOf } from '@sittir/types';
+import type { AnyNodeData, ConfigOf, FromInputOf, NodeFieldValue } from '@sittir/types';
 
-interface _NodeDataLike { readonly type: string; readonly fields?: object; readonly text?: string }
-function isNodeData(v: unknown): v is _NodeDataLike {
-  if (v === null || typeof v !== 'object') return false;
-  const o = v as { type?: unknown; fields?: unknown; text?: unknown };
-  return typeof o.type === 'string' && (typeof o.fields === 'object' || typeof o.text === 'string');
+/** Closed union of every shape a loose-from() field value can hold. */
+type _FromFieldInput =
+  | AnyNodeData
+  | string
+  | number
+  | boolean
+  | null
+  | undefined
+  | { readonly [key: string]: _FromFieldInput }
+  | readonly _FromFieldInput[];
+
+function isNodeData(v: unknown): v is AnyNodeData {
+  if (v === null || v === undefined || typeof v !== 'object') return false;
+  if (Array.isArray(v)) return false;
+  const o = v as { readonly type?: unknown; readonly fields?: unknown; readonly text?: unknown };
+  return typeof o.type === 'string'
+    && (typeof o.fields === 'object' || typeof o.text === 'string');
 }
 
 // --- Loose-input resolver helpers (see C6-prereq) ---
-interface _LeafEntry { values?: readonly string[]; pattern?: RegExp; factory: (text: string) => unknown }
-const _leafRegistry: Record<string, _LeafEntry> = {
+interface _LeafEntry {
+  readonly values?: readonly string[];
+  readonly pattern?: RegExp;
+  readonly factory: (text: string) => AnyNodeData;
+}
+const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
   "hash_bang_line": { factory: hashBangLine },
   "import": { values: ["import"], factory: () => import_() },
   "html_character_reference": { factory: htmlCharacterReference },
@@ -623,7 +639,7 @@ const _leafRegistry: Record<string, _LeafEntry> = {
   "type_identifier": { factory: typeIdentifier },
 };
 
-function _resolveLeafString(v: string, kinds: readonly string[]): unknown {
+function _resolveLeafString(v: string, kinds: readonly string[]): AnyNodeData | undefined {
   for (const kind of kinds) {
     const entry = _leafRegistry[kind];
     if (!entry) continue;
@@ -637,17 +653,21 @@ function _resolveLeafString(v: string, kinds: readonly string[]): unknown {
   return undefined;
 }
 
-function _resolveByKind(kind: string, rest: unknown): unknown {
-  const fn = (_fromMap as Record<string, (input?: unknown) => unknown>)[kind];
+function _resolveByKind(kind: string, rest: _FromFieldInput): AnyNodeData | _FromFieldInput {
+  const fn = (_fromMap as { readonly [k: string]: (input?: _FromFieldInput) => AnyNodeData })[kind];
   if (fn) return fn(rest);
   return rest;
 }
 
-function _resolveScalar(v: unknown): unknown {
+function _resolveScalar(v: boolean | number): AnyNodeData | undefined {
   return undefined;
 }
 
-function _resolveOne<T>(v: unknown, leafKinds: readonly string[], branchKinds: readonly string[]): T {
+function _resolveOne<T>(
+  v: _FromFieldInput,
+  leafKinds: readonly string[],
+  branchKinds: readonly string[],
+): T {
   if (v === undefined || v === null) return v as T;
   if (isNodeData(v)) return v as T;
   if (typeof v === "boolean" || typeof v === "number") {
@@ -658,23 +678,27 @@ function _resolveOne<T>(v: unknown, leafKinds: readonly string[], branchKinds: r
     const leaf = _resolveLeafString(v, leafKinds);
     if (leaf !== undefined) return leaf as T;
   }
-  if (typeof v === "object" && v !== null && "kind" in v) {
-    const { kind, ...rest } = v as { kind: string } & Record<string, unknown>;
-    return _resolveByKind(kind, rest) as T;
+  if (typeof v === "object" && !Array.isArray(v) && "kind" in v) {
+    const { kind, ...rest } = v;
+    if (typeof kind === "string") return _resolveByKind(kind, rest) as T;
   }
-  if (branchKinds.length === 1 && typeof v === "object") {
+  if (branchKinds.length === 1 && typeof v === "object" && !Array.isArray(v)) {
     return _resolveByKind(branchKinds[0]!, v) as T;
   }
   return v as T;
 }
 
-function _resolveMany<T>(v: unknown, leafKinds: readonly string[], branchKinds: readonly string[]): readonly T[] {
+function _resolveMany<T>(
+  v: _FromFieldInput,
+  leafKinds: readonly string[],
+  branchKinds: readonly string[],
+): readonly T[] {
   if (v === undefined || v === null) return [];
-  const arr = Array.isArray(v) ? v : [v];
+  const arr: readonly _FromFieldInput[] = Array.isArray(v) ? v : [v];
   return arr.map(e => _resolveOne<T>(e, leafKinds, branchKinds));
 }
 
-function _resolveOneLeaf<T>(v: unknown, kind: string): T {
+function _resolveOneLeaf<T>(v: _FromFieldInput, kind: string): T {
   if (v === undefined || v === null) return v as T;
   if (isNodeData(v)) return v as T;
   if (typeof v === "boolean" || typeof v === "number") {
@@ -685,35 +709,35 @@ function _resolveOneLeaf<T>(v: unknown, kind: string): T {
     const e = _leafRegistry[kind];
     if (e !== undefined) return e.factory(v) as T;
   }
-  if (typeof v === "object" && v !== null && "kind" in v) {
-    const { kind: k, ...rest } = v as { kind: string } & Record<string, unknown>;
+  if (typeof v === "object" && !Array.isArray(v) && "kind" in v) {
+    const { kind: k, ...rest } = v;
     return _resolveByKind(k, rest) as T;
   }
   return v as T;
 }
 
-function _resolveOneBranch<T>(v: unknown, kind: string): T {
+function _resolveOneBranch<T>(v: _FromFieldInput, kind: string): T {
   if (v === undefined || v === null) return v as T;
   if (isNodeData(v)) return v as T;
-  if (typeof v === "object" && v !== null) {
+  if (typeof v === "object" && !Array.isArray(v)) {
     if ("kind" in v) {
-      const { kind: k, ...rest } = v as { kind: string } & Record<string, unknown>;
-      return _resolveByKind(k, rest) as T;
+      const { kind: k, ...rest } = v;
+      if (typeof k === "string") return _resolveByKind(k, rest) as T;
     }
     return _resolveByKind(kind, v) as T;
   }
   return v as T;
 }
 
-function _resolveManyLeaf<T>(v: unknown, kind: string): readonly T[] {
+function _resolveManyLeaf<T>(v: _FromFieldInput, kind: string): readonly T[] {
   if (v === undefined || v === null) return [];
-  const arr = Array.isArray(v) ? v : [v];
+  const arr: readonly _FromFieldInput[] = Array.isArray(v) ? v : [v];
   return arr.map(e => _resolveOneLeaf<T>(e, kind));
 }
 
-function _resolveManyBranch<T>(v: unknown, kind: string): readonly T[] {
+function _resolveManyBranch<T>(v: _FromFieldInput, kind: string): readonly T[] {
   if (v === undefined || v === null) return [];
-  const arr = Array.isArray(v) ? v : [v];
+  const arr: readonly _FromFieldInput[] = Array.isArray(v) ? v : [v];
   return arr.map(e => _resolveOneBranch<T>(e, kind));
 }
 
@@ -764,9 +788,9 @@ const _K27: readonly string[] = ["export_statement","property_signature","call_s
 const _K28: readonly string[] = ["type_annotation","omitting_type_annotation","adding_type_annotation","opting_type_annotation"];
 const _K29: readonly string[] = ["primary_type","function_type","readonly_type","constructor_type","infer_type","_type_query_member_expression_in_type_annotation","_type_query_call_expression_in_type_annotation","asserts","type_predicate"];
 
-export function programFrom(input: ProgramFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function programFrom(input: ProgramFromInput): Program {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return program({
     hashBangLine: _resolveOneLeaf<NonNullable<ConfigOf<Program>['hashBangLine']>>((_f.hash_bang_line ?? _f.hashBangLine), "hash_bang_line"),
     statements: _resolveManyBranch<NonNullable<ConfigOf<Program>['statements']>[number]>(_f.statements, "statement"),
@@ -779,7 +803,7 @@ export function hashBangLineFrom(input: string | HashBangLine) {
 }
 
 export function exportStatementFrom(input?: ExportStatementFromInput) {
-  return exportStatement(input as unknown as ConfigOf<ExportStatementForm0> | ConfigOf<ExportStatementExport> | ConfigOf<ExportStatementExport2> | ConfigOf<ExportStatementExport3>);
+  return exportStatement(input as ConfigOf<ExportStatementForm0> | ConfigOf<ExportStatementExport> | ConfigOf<ExportStatementExport2> | ConfigOf<ExportStatementExport3>);
 }
 
 export function exportStatementForm0From(input: ConfigOf<ExportStatementForm0>) {
@@ -820,9 +844,9 @@ export function exportClauseFrom(...input: readonly (NonNullable<ConfigOf<Export
   return exportClause(...(input as NonNullable<ConfigOf<ExportClause>['children']>));
 }
 
-export function exportSpecifierFrom(input: ExportSpecifierFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function exportSpecifierFrom(input: ExportSpecifierFromInput): ExportSpecifier {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return exportSpecifier({
     name: _resolveOne<NonNullable<ConfigOf<ExportSpecifier>['name']>>(_f.name, _super_import_identifier, _K0),
     alias: _resolveOne<NonNullable<ConfigOf<ExportSpecifier>['alias']>>(_f.alias, _super_import_identifier, _K0),
@@ -842,9 +866,9 @@ export function import_From(input?: Import) {
   return import_();
 }
 
-export function importStatementFrom(input: ImportStatementFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function importStatementFrom(input: ImportStatementFromInput): ImportStatement {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return importStatement({
     importClause: _resolveOne<NonNullable<ConfigOf<ImportStatement>['importClause']>>((_f.import_clause ?? _f.importClause), _K1, _K1),
     fromClause: _resolveOne<NonNullable<ConfigOf<ImportStatement>['fromClause']>>((_f.from_clause ?? _f.fromClause), _K1, _K2),
@@ -854,7 +878,7 @@ export function importStatementFrom(input: ImportStatementFromInput) {
 }
 
 export function importClauseFrom(input?: ImportClauseFromInput) {
-  return importClause(input as unknown as ConfigOf<ImportClauseNamespaceImport> | ConfigOf<ImportClauseNamedImports> | ConfigOf<ImportClauseDefaultImport>);
+  return importClause(input as ConfigOf<ImportClauseNamespaceImport> | ConfigOf<ImportClauseNamedImports> | ConfigOf<ImportClauseDefaultImport>);
 }
 
 export function importClauseNamespaceImportFrom(input: ConfigOf<ImportClauseNamespaceImport>) {
@@ -874,9 +898,9 @@ export function importClauseDefaultImportFrom(input: ConfigOf<ImportClauseDefaul
   });
 }
 
-export function namespaceImportFrom(input: NamespaceImportFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function namespaceImportFrom(input: NamespaceImportFromInput): NamespaceImport {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return namespaceImport({
     identifier: _resolveOneLeaf<NonNullable<ConfigOf<NamespaceImport>['identifier']>>(_f.identifier, "identifier"),
   });
@@ -891,7 +915,7 @@ export function namedImportsFrom(...input: readonly (NonNullable<ConfigOf<NamedI
 }
 
 export function importSpecifierFrom(input?: ImportSpecifierFromInput) {
-  return importSpecifier(input as unknown as ConfigOf<ImportSpecifierName> | ConfigOf<ImportSpecifierAs>);
+  return importSpecifier(input as ConfigOf<ImportSpecifierName> | ConfigOf<ImportSpecifierAs>);
 }
 
 export function importSpecifierNameFrom(input: ConfigOf<ImportSpecifierName>) {
@@ -911,9 +935,9 @@ export function importSpecifierAsFrom(input: ConfigOf<ImportSpecifierAs>) {
   });
 }
 
-export function importAttributeFrom(input: ImportAttributeFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function importAttributeFrom(input: ImportAttributeFromInput): ImportAttribute {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return importAttribute({
     object: _resolveOne<NonNullable<ConfigOf<ImportAttribute>['object']>>(_f.object, _K1, _K1),
     children: ((input as { children?: NonNullable<ConfigOf<ImportAttribute>['children']> })?.children ?? []) as NonNullable<ConfigOf<ImportAttribute>['children']>,
@@ -921,7 +945,7 @@ export function importAttributeFrom(input: ImportAttributeFromInput) {
 }
 
 export function statementFrom(input?: StatementFromInput) {
-  return statement(input as unknown as ConfigOf<StatementExportStatement> | ConfigOf<StatementImportStatement> | ConfigOf<StatementDebuggerStatement> | ConfigOf<StatementExpressionStatement> | ConfigOf<StatementDeclaration> | ConfigOf<StatementBody> | ConfigOf<StatementIfStatement> | ConfigOf<StatementSwitchStatement> | ConfigOf<StatementForStatement> | ConfigOf<StatementForInStatement> | ConfigOf<StatementWhileStatement> | ConfigOf<StatementDoStatement> | ConfigOf<StatementTryStatement> | ConfigOf<StatementWithStatement> | ConfigOf<StatementBreakStatement> | ConfigOf<StatementContinueStatement> | ConfigOf<StatementReturnStatement> | ConfigOf<StatementThrowStatement> | ConfigOf<StatementEmptyStatement> | ConfigOf<StatementLabeledStatement>);
+  return statement(input as ConfigOf<StatementExportStatement> | ConfigOf<StatementImportStatement> | ConfigOf<StatementDebuggerStatement> | ConfigOf<StatementExpressionStatement> | ConfigOf<StatementDeclaration> | ConfigOf<StatementBody> | ConfigOf<StatementIfStatement> | ConfigOf<StatementSwitchStatement> | ConfigOf<StatementForStatement> | ConfigOf<StatementForInStatement> | ConfigOf<StatementWhileStatement> | ConfigOf<StatementDoStatement> | ConfigOf<StatementTryStatement> | ConfigOf<StatementWithStatement> | ConfigOf<StatementBreakStatement> | ConfigOf<StatementContinueStatement> | ConfigOf<StatementReturnStatement> | ConfigOf<StatementThrowStatement> | ConfigOf<StatementEmptyStatement> | ConfigOf<StatementLabeledStatement>);
 }
 
 export function statementExportStatementFrom(input: ConfigOf<StatementExportStatement>) {
@@ -1016,9 +1040,9 @@ export function expressionStatementFrom(input?: NonNullable<ConfigOf<ExpressionS
   return expressionStatement(input as NonNullable<ConfigOf<ExpressionStatement>['children']>[number]);
 }
 
-export function variableDeclarationFrom(input: VariableDeclarationFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function variableDeclarationFrom(input: VariableDeclarationFromInput): VariableDeclaration {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   const _ne_declarators = _resolveMany<NonNullable<ConfigOf<VariableDeclaration>['declarators']>[number]>(_f.declarators, _K1, _K1);
   _assertNonEmpty(_ne_declarators, 'variable_declaration.declarators');
   return variableDeclaration({
@@ -1027,9 +1051,9 @@ export function variableDeclarationFrom(input: VariableDeclarationFromInput) {
   });
 }
 
-export function lexicalDeclarationFrom(input: LexicalDeclarationFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function lexicalDeclarationFrom(input: LexicalDeclarationFromInput): LexicalDeclaration {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   const _ne_declarators = _resolveMany<NonNullable<ConfigOf<LexicalDeclaration>['declarators']>[number]>(_f.declarators, _K1, _K1);
   _assertNonEmpty(_ne_declarators, 'lexical_declaration.declarators');
   return lexicalDeclaration({
@@ -1039,9 +1063,9 @@ export function lexicalDeclarationFrom(input: LexicalDeclarationFromInput) {
   });
 }
 
-export function variableDeclaratorFrom(input: VariableDeclaratorFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function variableDeclaratorFrom(input: VariableDeclaratorFromInput): VariableDeclarator {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return variableDeclarator({
     name: _resolveOne<NonNullable<ConfigOf<VariableDeclarator>['name']>>(_f.name, _super_import_identifier, _super_destructuring_pattern),
     type: _resolveOneBranch<NonNullable<ConfigOf<VariableDeclarator>['type']>>(_f.type, "type_annotation"),
@@ -1049,26 +1073,26 @@ export function variableDeclaratorFrom(input: VariableDeclaratorFromInput) {
   });
 }
 
-export function statementBlockFrom(input: StatementBlockFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function statementBlockFrom(input: StatementBlockFromInput): StatementBlock {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return statementBlock({
     statements: _resolveManyBranch<NonNullable<ConfigOf<StatementBlock>['statements']>[number]>(_f.statements, "statement"),
     automaticSemicolon: _resolveOneLeaf<NonNullable<ConfigOf<StatementBlock>['automaticSemicolon']>>((_f.automatic_semicolon ?? _f.automaticSemicolon), "_automatic_semicolon"),
   });
 }
 
-export function elseClauseFrom(input: ElseClauseFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function elseClauseFrom(input: ElseClauseFromInput): ElseClause {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return elseClause({
     statement: _resolveOneBranch<NonNullable<ConfigOf<ElseClause>['statement']>>(_f.statement, "statement"),
   });
 }
 
-export function ifStatementFrom(input: IfStatementFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function ifStatementFrom(input: IfStatementFromInput): IfStatement {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return ifStatement({
     condition: _resolveOneBranch<NonNullable<ConfigOf<IfStatement>['condition']>>(_f.condition, "parenthesized_expression"),
     consequence: _resolveOneBranch<NonNullable<ConfigOf<IfStatement>['consequence']>>(_f.consequence, "statement"),
@@ -1076,18 +1100,18 @@ export function ifStatementFrom(input: IfStatementFromInput) {
   });
 }
 
-export function switchStatementFrom(input: SwitchStatementFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function switchStatementFrom(input: SwitchStatementFromInput): SwitchStatement {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return switchStatement({
     value: _resolveOneBranch<NonNullable<ConfigOf<SwitchStatement>['value']>>(_f.value, "parenthesized_expression"),
     body: _resolveOneBranch<NonNullable<ConfigOf<SwitchStatement>['body']>>(_f.body, "switch_body"),
   });
 }
 
-export function forStatementFrom(input: ForStatementFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function forStatementFrom(input: ForStatementFromInput): ForStatement {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return forStatement({
     initializer: _resolveOne<NonNullable<ConfigOf<ForStatement>['initializer']>>(_f.initializer, _K1, _K4),
     condition: _resolveOne<NonNullable<ConfigOf<ForStatement>['condition']>>(_f.condition, _K1, _super_expressions),
@@ -1096,27 +1120,27 @@ export function forStatementFrom(input: ForStatementFromInput) {
   });
 }
 
-export function forInStatementFrom(input: ForInStatementFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function forInStatementFrom(input: ForInStatementFromInput): ForInStatement {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return forInStatement({
     body: _resolveOneBranch<NonNullable<ConfigOf<ForInStatement>['body']>>(_f.body, "statement"),
     children: ((input as { children?: NonNullable<ConfigOf<ForInStatement>['children']> })?.children ?? []) as NonNullable<ConfigOf<ForInStatement>['children']>,
   });
 }
 
-export function whileStatementFrom(input: WhileStatementFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function whileStatementFrom(input: WhileStatementFromInput): WhileStatement {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return whileStatement({
     condition: _resolveOneBranch<NonNullable<ConfigOf<WhileStatement>['condition']>>(_f.condition, "parenthesized_expression"),
     body: _resolveOneBranch<NonNullable<ConfigOf<WhileStatement>['body']>>(_f.body, "statement"),
   });
 }
 
-export function doStatementFrom(input: DoStatementFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function doStatementFrom(input: DoStatementFromInput): DoStatement {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return doStatement({
     body: _resolveOneBranch<NonNullable<ConfigOf<DoStatement>['body']>>(_f.body, "statement"),
     condition: _resolveOneBranch<NonNullable<ConfigOf<DoStatement>['condition']>>(_f.condition, "parenthesized_expression"),
@@ -1124,9 +1148,9 @@ export function doStatementFrom(input: DoStatementFromInput) {
   });
 }
 
-export function tryStatementFrom(input: TryStatementFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function tryStatementFrom(input: TryStatementFromInput): TryStatement {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return tryStatement({
     body: _resolveOneBranch<NonNullable<ConfigOf<TryStatement>['body']>>(_f.body, "statement_block"),
     handler: _resolveOneBranch<NonNullable<ConfigOf<TryStatement>['handler']>>(_f.handler, "catch_clause"),
@@ -1134,27 +1158,27 @@ export function tryStatementFrom(input: TryStatementFromInput) {
   });
 }
 
-export function withStatementFrom(input: WithStatementFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function withStatementFrom(input: WithStatementFromInput): WithStatement {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return withStatement({
     object: _resolveOneBranch<NonNullable<ConfigOf<WithStatement>['object']>>(_f.object, "parenthesized_expression"),
     body: _resolveOneBranch<NonNullable<ConfigOf<WithStatement>['body']>>(_f.body, "statement"),
   });
 }
 
-export function breakStatementFrom(input: BreakStatementFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function breakStatementFrom(input: BreakStatementFromInput): BreakStatement {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return breakStatement({
     label: _resolveOneLeaf<NonNullable<ConfigOf<BreakStatement>['label']>>(_f.label, "identifier"),
     children: ((input as { children?: NonNullable<ConfigOf<BreakStatement>['children']> })?.children ?? []) as NonNullable<ConfigOf<BreakStatement>['children']>,
   });
 }
 
-export function continueStatementFrom(input: ContinueStatementFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function continueStatementFrom(input: ContinueStatementFromInput): ContinueStatement {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return continueStatement({
     label: _resolveOneLeaf<NonNullable<ConfigOf<ContinueStatement>['label']>>(_f.label, "identifier"),
     children: ((input as { children?: NonNullable<ConfigOf<ContinueStatement>['children']> })?.children ?? []) as NonNullable<ConfigOf<ContinueStatement>['children']>,
@@ -1185,9 +1209,9 @@ export function throwStatementFrom(input?: NonNullable<ConfigOf<ThrowStatement>[
   return throwStatement(input as NonNullable<ConfigOf<ThrowStatement>['children']>[number]);
 }
 
-export function labeledStatementFrom(input: LabeledStatementFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function labeledStatementFrom(input: LabeledStatementFromInput): LabeledStatement {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return labeledStatement({
     label: _resolveOne<NonNullable<ConfigOf<LabeledStatement>['label']>>(_f.label, _K5, _K1),
     body: _resolveOneBranch<NonNullable<ConfigOf<LabeledStatement>['body']>>(_f.body, "statement"),
@@ -1202,26 +1226,26 @@ export function switchBodyFrom(...input: readonly (NonNullable<ConfigOf<SwitchBo
   return switchBody(...(input as NonNullable<ConfigOf<SwitchBody>['children']>));
 }
 
-export function switchCaseFrom(input: SwitchCaseFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function switchCaseFrom(input: SwitchCaseFromInput): SwitchCase {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return switchCase({
     value: _resolveOne<NonNullable<ConfigOf<SwitchCase>['value']>>(_f.value, _K1, _super_expressions),
     body: _resolveManyBranch<NonNullable<ConfigOf<SwitchCase>['body']>[number]>(_f.body, "statement"),
   });
 }
 
-export function switchDefaultFrom(input: SwitchDefaultFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function switchDefaultFrom(input: SwitchDefaultFromInput): SwitchDefault {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return switchDefault({
     body: _resolveManyBranch<NonNullable<ConfigOf<SwitchDefault>['body']>[number]>(_f.body, "statement"),
   });
 }
 
-export function catchClauseFrom(input: CatchClauseFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function catchClauseFrom(input: CatchClauseFromInput): CatchClause {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return catchClause({
     parameter: _resolveOne<NonNullable<ConfigOf<CatchClause>['parameter']>>(_f.parameter, _super_import_identifier, _super_destructuring_pattern),
     type: _resolveOneBranch<NonNullable<ConfigOf<CatchClause>['type']>>(_f.type, "type_annotation"),
@@ -1229,16 +1253,16 @@ export function catchClauseFrom(input: CatchClauseFromInput) {
   });
 }
 
-export function finallyClauseFrom(input: FinallyClauseFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function finallyClauseFrom(input: FinallyClauseFromInput): FinallyClause {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return finallyClause({
     body: _resolveOneBranch<NonNullable<ConfigOf<FinallyClause>['body']>>(_f.body, "statement_block"),
   });
 }
 
 export function parenthesizedExpressionFrom(input?: ParenthesizedExpressionFromInput) {
-  return parenthesizedExpression(input as unknown as ConfigOf<ParenthesizedExpressionExpression> | ConfigOf<ParenthesizedExpressionSequenceExpression>);
+  return parenthesizedExpression(input as ConfigOf<ParenthesizedExpressionExpression> | ConfigOf<ParenthesizedExpressionSequenceExpression>);
 }
 
 export function parenthesizedExpressionExpressionFrom(input: ConfigOf<ParenthesizedExpressionExpression>) {
@@ -1269,9 +1293,9 @@ export function primaryExpressionFrom(input?: NonNullable<ConfigOf<PrimaryExpres
   return primaryExpression(input as NonNullable<ConfigOf<PrimaryExpression>['children']>[number]);
 }
 
-export function yieldExpressionFrom(input: YieldExpressionFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function yieldExpressionFrom(input: YieldExpressionFromInput): YieldExpression {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return yieldExpression({
     expression: _resolveOneBranch<NonNullable<ConfigOf<YieldExpression>['expression']>>(_f.expression, "expression"),
   });
@@ -1293,18 +1317,18 @@ export function objectPatternFrom(...input: readonly (NonNullable<ConfigOf<Objec
   return objectPattern(...(input as NonNullable<ConfigOf<ObjectPattern>['children']>));
 }
 
-export function assignmentPatternFrom(input: AssignmentPatternFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function assignmentPatternFrom(input: AssignmentPatternFromInput): AssignmentPattern {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return assignmentPattern({
     left: _resolveOneBranch<NonNullable<ConfigOf<AssignmentPattern>['left']>>(_f.left, "pattern"),
     right: _resolveOneBranch<NonNullable<ConfigOf<AssignmentPattern>['right']>>(_f.right, "expression"),
   });
 }
 
-export function objectAssignmentPatternFrom(input: ObjectAssignmentPatternFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function objectAssignmentPatternFrom(input: ObjectAssignmentPatternFromInput): ObjectAssignmentPattern {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return objectAssignmentPattern({
     left: _resolveOne<NonNullable<ConfigOf<ObjectAssignmentPattern>['left']>>(_f.left, _K6, _super_destructuring_pattern),
     right: _resolveOneBranch<NonNullable<ConfigOf<ObjectAssignmentPattern>['right']>>(_f.right, "expression"),
@@ -1327,9 +1351,9 @@ export function arrayPatternFrom(...input: readonly (NonNullable<ConfigOf<ArrayP
   return arrayPattern(...(input as NonNullable<ConfigOf<ArrayPattern>['children']>));
 }
 
-export function jsxElementFrom(input: JsxElementFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function jsxElementFrom(input: JsxElementFromInput): JsxElement {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return jsxElement({
     openTag: _resolveOneBranch<NonNullable<ConfigOf<JsxElement>['openTag']>>((_f.open_tag ?? _f.openTag), "jsx_opening_element"),
     closeTag: _resolveOneBranch<NonNullable<ConfigOf<JsxElement>['closeTag']>>((_f.close_tag ?? _f.closeTag), "jsx_closing_element"),
@@ -1363,9 +1387,9 @@ export function jsxIdentifierFrom(input: string | JsxIdentifier) {
   return jsxIdentifier(input as string);
 }
 
-export function nestedIdentifierFrom(input: NestedIdentifierFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function nestedIdentifierFrom(input: NestedIdentifierFromInput): NestedIdentifier {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return nestedIdentifier({
     object: _resolveOne<NonNullable<ConfigOf<NestedIdentifier>['object']>>(_f.object, _super_import_identifier, _K7),
     property: _resolveOneLeaf<NonNullable<ConfigOf<NestedIdentifier>['property']>>(_f.property, "identifier"),
@@ -1380,9 +1404,9 @@ export function jsxNamespaceNameFrom(...input: readonly (NonNullable<ConfigOf<Js
   return jsxNamespaceName(...(input as NonNullable<ConfigOf<JsxNamespaceName>['children']>));
 }
 
-export function jsxClosingElementFrom(input?: JsxClosingElementFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function jsxClosingElementFrom(input?: JsxClosingElementFromInput): JsxClosingElement {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return jsxClosingElement({
     name: _resolveOne<NonNullable<ConfigOf<JsxClosingElement>['name']>>(_f.name, _K1, _super_jsx_element_name),
   });
@@ -1414,9 +1438,9 @@ export function unescapedSingleJsxStringFragmentFrom(input: string | UnescapedSi
   return unescapedSingleJsxStringFragment(input as string);
 }
 
-export function class_From(input: ClassFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function class_From(input: ClassFromInput): Class {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return class_({
     decorator: _resolveManyBranch<NonNullable<ConfigOf<Class>['decorator']>[number]>(_f.decorator, "decorator"),
     name: _resolveOneBranch<NonNullable<ConfigOf<Class>['name']>>(_f.name, "_type_identifier"),
@@ -1426,9 +1450,9 @@ export function class_From(input: ClassFromInput) {
   });
 }
 
-export function classDeclarationFrom(input: ClassDeclarationFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function classDeclarationFrom(input: ClassDeclarationFromInput): ClassDeclaration {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return classDeclaration({
     decorator: _resolveManyBranch<NonNullable<ConfigOf<ClassDeclaration>['decorator']>[number]>(_f.decorator, "decorator"),
     name: _resolveOneBranch<NonNullable<ConfigOf<ClassDeclaration>['name']>>(_f.name, "_type_identifier"),
@@ -1440,7 +1464,7 @@ export function classDeclarationFrom(input: ClassDeclarationFromInput) {
 }
 
 export function classHeritageFrom(input?: ClassHeritageFromInput) {
-  return classHeritage(input as unknown as ConfigOf<ClassHeritageExtendsClause> | ConfigOf<ClassHeritageImplementsClause>);
+  return classHeritage(input as ConfigOf<ClassHeritageExtendsClause> | ConfigOf<ClassHeritageImplementsClause>);
 }
 
 export function classHeritageExtendsClauseFrom(input: ConfigOf<ClassHeritageExtendsClause>) {
@@ -1456,9 +1480,9 @@ export function classHeritageImplementsClauseFrom(input: ConfigOf<ClassHeritageI
   return classHeritageImplementsClause(input);
 }
 
-export function functionExpressionFrom(input: FunctionExpressionFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function functionExpressionFrom(input: FunctionExpressionFromInput): FunctionExpression {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return functionExpression({
     name: _resolveOneLeaf<NonNullable<ConfigOf<FunctionExpression>['name']>>(_f.name, "identifier"),
     body: _resolveOneBranch<NonNullable<ConfigOf<FunctionExpression>['body']>>(_f.body, "statement_block"),
@@ -1466,9 +1490,9 @@ export function functionExpressionFrom(input: FunctionExpressionFromInput) {
   });
 }
 
-export function functionDeclarationFrom(input: FunctionDeclarationFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function functionDeclarationFrom(input: FunctionDeclarationFromInput): FunctionDeclaration {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return functionDeclaration({
     name: _resolveOneLeaf<NonNullable<ConfigOf<FunctionDeclaration>['name']>>(_f.name, "identifier"),
     body: _resolveOneBranch<NonNullable<ConfigOf<FunctionDeclaration>['body']>>(_f.body, "statement_block"),
@@ -1476,9 +1500,9 @@ export function functionDeclarationFrom(input: FunctionDeclarationFromInput) {
   });
 }
 
-export function generatorFunctionFrom(input: GeneratorFunctionFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function generatorFunctionFrom(input: GeneratorFunctionFromInput): GeneratorFunction {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return generatorFunction({
     name: _resolveOneLeaf<NonNullable<ConfigOf<GeneratorFunction>['name']>>(_f.name, "identifier"),
     body: _resolveOneBranch<NonNullable<ConfigOf<GeneratorFunction>['body']>>(_f.body, "statement_block"),
@@ -1486,9 +1510,9 @@ export function generatorFunctionFrom(input: GeneratorFunctionFromInput) {
   });
 }
 
-export function generatorFunctionDeclarationFrom(input: GeneratorFunctionDeclarationFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function generatorFunctionDeclarationFrom(input: GeneratorFunctionDeclarationFromInput): GeneratorFunctionDeclaration {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return generatorFunctionDeclaration({
     name: _resolveOneLeaf<NonNullable<ConfigOf<GeneratorFunctionDeclaration>['name']>>(_f.name, "identifier"),
     body: _resolveOneBranch<NonNullable<ConfigOf<GeneratorFunctionDeclaration>['body']>>(_f.body, "statement_block"),
@@ -1497,7 +1521,7 @@ export function generatorFunctionDeclarationFrom(input: GeneratorFunctionDeclara
 }
 
 export function arrowFunctionFrom(input?: ArrowFunctionFromInput) {
-  return arrowFunction(input as unknown as ConfigOf<ArrowFunctionParameter> | ConfigOf<ArrowFunctionUCallSignature>);
+  return arrowFunction(input as ConfigOf<ArrowFunctionParameter> | ConfigOf<ArrowFunctionUCallSignature>);
 }
 
 export function arrowFunctionParameterFrom(input: ConfigOf<ArrowFunctionParameter>) {
@@ -1518,7 +1542,7 @@ export function arrowFunctionUCallSignatureFrom(input: ConfigOf<ArrowFunctionUCa
 }
 
 export function callExpressionFrom(input?: CallExpressionFromInput) {
-  return callExpression(input as unknown as ConfigOf<CallExpressionFunction> | ConfigOf<CallExpressionFunction2> | ConfigOf<CallExpressionTokQDot>);
+  return callExpression(input as ConfigOf<CallExpressionFunction> | ConfigOf<CallExpressionFunction2> | ConfigOf<CallExpressionTokQDot>);
 }
 
 export function callExpressionFunctionFrom(input: ConfigOf<CallExpressionFunction>) {
@@ -1550,9 +1574,9 @@ export function callExpressionTokQDotFrom(input: ConfigOf<CallExpressionTokQDot>
   });
 }
 
-export function newExpressionFrom(input: NewExpressionFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function newExpressionFrom(input: NewExpressionFromInput): NewExpression {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return newExpression({
     constructor: _resolveOneBranch<NonNullable<ConfigOf<NewExpression>['constructor']>>(_f.constructor, "primary_expression"),
     typeArguments: _resolveOneBranch<NonNullable<ConfigOf<NewExpression>['typeArguments']>>((_f.type_arguments ?? _f.typeArguments), "type_arguments"),
@@ -1560,16 +1584,16 @@ export function newExpressionFrom(input: NewExpressionFromInput) {
   });
 }
 
-export function awaitExpressionFrom(input: AwaitExpressionFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function awaitExpressionFrom(input: AwaitExpressionFromInput): AwaitExpression {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return awaitExpression({
     expression: _resolveOneBranch<NonNullable<ConfigOf<AwaitExpression>['expression']>>(_f.expression, "expression"),
   });
 }
 
 export function memberExpressionFrom(input?: MemberExpressionFromInput) {
-  return memberExpression(input as unknown as ConfigOf<MemberExpressionDot> | ConfigOf<MemberExpressionOptionalChain>);
+  return memberExpression(input as ConfigOf<MemberExpressionDot> | ConfigOf<MemberExpressionOptionalChain>);
 }
 
 export function memberExpressionDotFrom(input: ConfigOf<MemberExpressionDot>) {
@@ -1591,9 +1615,9 @@ export function memberExpressionOptionalChainFrom(input: ConfigOf<MemberExpressi
   });
 }
 
-export function subscriptExpressionFrom(input: SubscriptExpressionFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function subscriptExpressionFrom(input: SubscriptExpressionFromInput): SubscriptExpression {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return subscriptExpression({
     object: _resolveOne<NonNullable<ConfigOf<SubscriptExpression>['object']>>(_f.object, _K1, _K12),
     optionalChain: _resolveOne<NonNullable<ConfigOf<SubscriptExpression>['optionalChain']>>((_f.optional_chain ?? _f.optionalChain), _K1, _K1),
@@ -1601,18 +1625,18 @@ export function subscriptExpressionFrom(input: SubscriptExpressionFromInput) {
   });
 }
 
-export function assignmentExpressionFrom(input: AssignmentExpressionFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function assignmentExpressionFrom(input: AssignmentExpressionFromInput): AssignmentExpression {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return assignmentExpression({
     left: _resolveOne<NonNullable<ConfigOf<AssignmentExpression>['left']>>(_f.left, _K1, _K14),
     right: _resolveOneBranch<NonNullable<ConfigOf<AssignmentExpression>['right']>>(_f.right, "expression"),
   });
 }
 
-export function augmentedAssignmentExpressionFrom(input: AugmentedAssignmentExpressionFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function augmentedAssignmentExpressionFrom(input: AugmentedAssignmentExpressionFromInput): AugmentedAssignmentExpression {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return augmentedAssignmentExpression({
     left: _resolveOne<NonNullable<ConfigOf<AugmentedAssignmentExpression>['left']>>(_f.left, _K6, _K15),
     operator: _resolveOne<NonNullable<ConfigOf<AugmentedAssignmentExpression>['operator']>>(_f.operator, _K1, _K1),
@@ -1620,17 +1644,17 @@ export function augmentedAssignmentExpressionFrom(input: AugmentedAssignmentExpr
   });
 }
 
-export function spreadElementFrom(input: SpreadElementFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function spreadElementFrom(input: SpreadElementFromInput): SpreadElement {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return spreadElement({
     expression: _resolveOneBranch<NonNullable<ConfigOf<SpreadElement>['expression']>>(_f.expression, "expression"),
   });
 }
 
-export function ternaryExpressionFrom(input: TernaryExpressionFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function ternaryExpressionFrom(input: TernaryExpressionFromInput): TernaryExpression {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return ternaryExpression({
     condition: _resolveOneBranch<NonNullable<ConfigOf<TernaryExpression>['condition']>>(_f.condition, "expression"),
     consequence: _resolveOneBranch<NonNullable<ConfigOf<TernaryExpression>['consequence']>>(_f.consequence, "expression"),
@@ -1638,9 +1662,9 @@ export function ternaryExpressionFrom(input: TernaryExpressionFromInput) {
   });
 }
 
-export function binaryExpressionFrom(input: BinaryExpressionFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function binaryExpressionFrom(input: BinaryExpressionFromInput): BinaryExpression {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return binaryExpression({
     left: _resolveOne<NonNullable<ConfigOf<BinaryExpression>['left']>>(_f.left, _K16, _K10),
     operator: _resolveOne<NonNullable<ConfigOf<BinaryExpression>['operator']>>(_f.operator, _K1, _K1),
@@ -1648,18 +1672,18 @@ export function binaryExpressionFrom(input: BinaryExpressionFromInput) {
   });
 }
 
-export function unaryExpressionFrom(input: UnaryExpressionFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function unaryExpressionFrom(input: UnaryExpressionFromInput): UnaryExpression {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return unaryExpression({
     operator: _resolveOne<NonNullable<ConfigOf<UnaryExpression>['operator']>>(_f.operator, _K1, _K1),
     argument: _resolveOneBranch<NonNullable<ConfigOf<UnaryExpression>['argument']>>(_f.argument, "expression"),
   });
 }
 
-export function updateExpressionFrom(input: UpdateExpressionFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function updateExpressionFrom(input: UpdateExpressionFromInput): UpdateExpression {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return updateExpression({
     argument: _resolveOneBranch<NonNullable<ConfigOf<UpdateExpression>['argument']>>(_f.argument, "expression"),
     operator: _resolveOne<NonNullable<ConfigOf<UpdateExpression>['operator']>>(_f.operator, _K1, _K1),
@@ -1718,9 +1742,9 @@ export function templateSubstitutionFrom(input?: NonNullable<ConfigOf<TemplateSu
   return templateSubstitution(input as NonNullable<ConfigOf<TemplateSubstitution>['children']>[number]);
 }
 
-export function regexFrom(input: RegexFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function regexFrom(input: RegexFromInput): Regex {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return regex({
     pattern: _resolveOneLeaf<NonNullable<ConfigOf<Regex>['pattern']>>(_f.pattern, "regex_pattern"),
     flags: _resolveOneLeaf<NonNullable<ConfigOf<Regex>['flags']>>(_f.flags, "regex_flags"),
@@ -1803,18 +1827,18 @@ export function decoratorFrom(input?: NonNullable<ConfigOf<Decorator>['children'
   return decorator(input as NonNullable<ConfigOf<Decorator>['children']>[number]);
 }
 
-export function decoratorMemberExpressionFrom(input: DecoratorMemberExpressionFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function decoratorMemberExpressionFrom(input: DecoratorMemberExpressionFromInput): DecoratorMemberExpression {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return decoratorMemberExpression({
     object: _resolveOne<NonNullable<ConfigOf<DecoratorMemberExpression>['object']>>(_f.object, _super_import_identifier, _K17),
     property: _resolveOneLeaf<NonNullable<ConfigOf<DecoratorMemberExpression>['property']>>(_f.property, "identifier"),
   });
 }
 
-export function decoratorCallExpressionFrom(input: DecoratorCallExpressionFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function decoratorCallExpressionFrom(input: DecoratorCallExpressionFromInput): DecoratorCallExpression {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return decoratorCallExpression({
     function: _resolveOne<NonNullable<ConfigOf<DecoratorCallExpression>['function']>>(_f.function, _super_import_identifier, _K17),
     typeArguments: _resolveOneBranch<NonNullable<ConfigOf<DecoratorCallExpression>['typeArguments']>>((_f.type_arguments ?? _f.typeArguments), "type_arguments"),
@@ -1822,18 +1846,18 @@ export function decoratorCallExpressionFrom(input: DecoratorCallExpressionFromIn
   });
 }
 
-export function classBodyFrom(input: ClassBodyFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function classBodyFrom(input: ClassBodyFromInput): ClassBody {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return classBody({
     decorator: _resolveManyBranch<NonNullable<ConfigOf<ClassBody>['decorator']>[number]>(_f.decorator, "decorator"),
     children: ((input as { children?: NonNullable<ConfigOf<ClassBody>['children']> })?.children ?? []) as NonNullable<ConfigOf<ClassBody>['children']>,
   });
 }
 
-export function fieldDefinitionFrom(input: FieldDefinitionFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function fieldDefinitionFrom(input: FieldDefinitionFromInput): FieldDefinition {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return fieldDefinition({
     decorator: _resolveManyBranch<NonNullable<ConfigOf<FieldDefinition>['decorator']>[number]>(_f.decorator, "decorator"),
     property: _resolveOneBranch<NonNullable<ConfigOf<FieldDefinition>['property']>>(_f.property, "_property_name"),
@@ -1849,9 +1873,9 @@ export function formalParametersFrom(...input: readonly (NonNullable<ConfigOf<Fo
   return formalParameters(...(input as NonNullable<ConfigOf<FormalParameters>['children']>));
 }
 
-export function classStaticBlockFrom(input: ClassStaticBlockFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function classStaticBlockFrom(input: ClassStaticBlockFromInput): ClassStaticBlock {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return classStaticBlock({
     body: _resolveOneBranch<NonNullable<ConfigOf<ClassStaticBlock>['body']>>(_f.body, "statement_block"),
     children: ((input as { children?: NonNullable<ConfigOf<ClassStaticBlock>['children']> })?.children ?? []) as NonNullable<ConfigOf<ClassStaticBlock>['children']>,
@@ -1874,9 +1898,9 @@ export function restPatternFrom(input?: NonNullable<ConfigOf<RestPattern>['child
   return restPattern(input as NonNullable<ConfigOf<RestPattern>['children']>[number]);
 }
 
-export function methodDefinitionFrom(input: MethodDefinitionFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function methodDefinitionFrom(input: MethodDefinitionFromInput): MethodDefinition {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return methodDefinition({
     accessibilityModifier: _resolveOneLeaf<NonNullable<ConfigOf<MethodDefinition>['accessibilityModifier']>>((_f.accessibility_modifier ?? _f.accessibilityModifier), "accessibility_modifier"),
     overrideModifier: _resolveOne<NonNullable<ConfigOf<MethodDefinition>['overrideModifier']>>((_f.override_modifier ?? _f.overrideModifier), _K1, _K1),
@@ -1886,35 +1910,35 @@ export function methodDefinitionFrom(input: MethodDefinitionFromInput) {
   });
 }
 
-export function pairFrom(input: PairFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function pairFrom(input: PairFromInput): Pair {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return pair({
     key: _resolveOneBranch<NonNullable<ConfigOf<Pair>['key']>>(_f.key, "_property_name"),
     value: _resolveOneBranch<NonNullable<ConfigOf<Pair>['value']>>(_f.value, "expression"),
   });
 }
 
-export function pairPatternFrom(input: PairPatternFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function pairPatternFrom(input: PairPatternFromInput): PairPattern {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return pairPattern({
     key: _resolveOneBranch<NonNullable<ConfigOf<PairPattern>['key']>>(_f.key, "_property_name"),
     value: _resolveOne<NonNullable<ConfigOf<PairPattern>['value']>>(_f.value, _K1, _K18),
   });
 }
 
-export function computedPropertyNameFrom(input: ComputedPropertyNameFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function computedPropertyNameFrom(input: ComputedPropertyNameFromInput): ComputedPropertyName {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return computedPropertyName({
     expression: _resolveOneBranch<NonNullable<ConfigOf<ComputedPropertyName>['expression']>>(_f.expression, "expression"),
   });
 }
 
-export function publicFieldDefinitionFrom(input: PublicFieldDefinitionFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function publicFieldDefinitionFrom(input: PublicFieldDefinitionFromInput): PublicFieldDefinition {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return publicFieldDefinition({
     decorator: _resolveManyBranch<NonNullable<ConfigOf<PublicFieldDefinition>['decorator']>[number]>(_f.decorator, "decorator"),
     name: _resolveOneBranch<NonNullable<ConfigOf<PublicFieldDefinition>['name']>>(_f.name, "_property_name"),
@@ -1923,17 +1947,17 @@ export function publicFieldDefinitionFrom(input: PublicFieldDefinitionFromInput)
   });
 }
 
-export function nonNullExpressionFrom(input: NonNullExpressionFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function nonNullExpressionFrom(input: NonNullExpressionFromInput): NonNullExpression {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return nonNullExpression({
     expression: _resolveOneBranch<NonNullable<ConfigOf<NonNullExpression>['expression']>>(_f.expression, "expression"),
   });
 }
 
-export function methodSignatureFrom(input: MethodSignatureFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function methodSignatureFrom(input: MethodSignatureFromInput): MethodSignature {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return methodSignature({
     accessibilityModifier: _resolveOneLeaf<NonNullable<ConfigOf<MethodSignature>['accessibilityModifier']>>((_f.accessibility_modifier ?? _f.accessibilityModifier), "accessibility_modifier"),
     overrideModifier: _resolveOne<NonNullable<ConfigOf<MethodSignature>['overrideModifier']>>((_f.override_modifier ?? _f.overrideModifier), _K1, _K1),
@@ -1942,9 +1966,9 @@ export function methodSignatureFrom(input: MethodSignatureFromInput) {
   });
 }
 
-export function abstractMethodSignatureFrom(input: AbstractMethodSignatureFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function abstractMethodSignatureFrom(input: AbstractMethodSignatureFromInput): AbstractMethodSignature {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return abstractMethodSignature({
     accessibilityModifier: _resolveOneLeaf<NonNullable<ConfigOf<AbstractMethodSignature>['accessibilityModifier']>>((_f.accessibility_modifier ?? _f.accessibilityModifier), "accessibility_modifier"),
     overrideModifier: _resolveOneLeaf<NonNullable<ConfigOf<AbstractMethodSignature>['overrideModifier']>>((_f.override_modifier ?? _f.overrideModifier), "override_modifier"),
@@ -1953,9 +1977,9 @@ export function abstractMethodSignatureFrom(input: AbstractMethodSignatureFromIn
   });
 }
 
-export function functionSignatureFrom(input: FunctionSignatureFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function functionSignatureFrom(input: FunctionSignatureFromInput): FunctionSignature {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return functionSignature({
     name: _resolveOneLeaf<NonNullable<ConfigOf<FunctionSignature>['name']>>(_f.name, "identifier"),
     children: ((input as { children?: NonNullable<ConfigOf<FunctionSignature>['children']> })?.children ?? []) as NonNullable<ConfigOf<FunctionSignature>['children']>,
@@ -1970,45 +1994,45 @@ export function decoratorParenthesizedExpressionFrom(input?: NonNullable<ConfigO
   return decoratorParenthesizedExpression(input as NonNullable<ConfigOf<DecoratorParenthesizedExpression>['children']>[number]);
 }
 
-export function typeAssertionFrom(input: TypeAssertionFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function typeAssertionFrom(input: TypeAssertionFromInput): TypeAssertion {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return typeAssertion({
     typeArguments: _resolveOneBranch<NonNullable<ConfigOf<TypeAssertion>['typeArguments']>>((_f.type_arguments ?? _f.typeArguments), "type_arguments"),
     expression: _resolveOneBranch<NonNullable<ConfigOf<TypeAssertion>['expression']>>(_f.expression, "expression"),
   });
 }
 
-export function asExpressionFrom(input: AsExpressionFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function asExpressionFrom(input: AsExpressionFromInput): AsExpression {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return asExpression({
     expression: _resolveOneBranch<NonNullable<ConfigOf<AsExpression>['expression']>>(_f.expression, "expression"),
     typeAnnotation: _resolveOne<NonNullable<ConfigOf<AsExpression>['typeAnnotation']>>((_f.type_annotation ?? _f.typeAnnotation), _K1, _super_type),
   });
 }
 
-export function satisfiesExpressionFrom(input: SatisfiesExpressionFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function satisfiesExpressionFrom(input: SatisfiesExpressionFromInput): SatisfiesExpression {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return satisfiesExpression({
     expression: _resolveOneBranch<NonNullable<ConfigOf<SatisfiesExpression>['expression']>>(_f.expression, "expression"),
     typeAnnotation: _resolveOne<NonNullable<ConfigOf<SatisfiesExpression>['typeAnnotation']>>((_f.type_annotation ?? _f.typeAnnotation), _K1, _super_type),
   });
 }
 
-export function instantiationExpressionFrom(input: InstantiationExpressionFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function instantiationExpressionFrom(input: InstantiationExpressionFromInput): InstantiationExpression {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return instantiationExpression({
     expression: _resolveOneBranch<NonNullable<ConfigOf<InstantiationExpression>['expression']>>(_f.expression, "expression"),
     typeArguments: _resolveOneBranch<NonNullable<ConfigOf<InstantiationExpression>['typeArguments']>>((_f.type_arguments ?? _f.typeArguments), "type_arguments"),
   });
 }
 
-export function importRequireClauseFrom(input: ImportRequireClauseFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function importRequireClauseFrom(input: ImportRequireClauseFromInput): ImportRequireClause {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return importRequireClause({
     identifier: _resolveOneLeaf<NonNullable<ConfigOf<ImportRequireClause>['identifier']>>(_f.identifier, "identifier"),
     source: _resolveOneBranch<NonNullable<ConfigOf<ImportRequireClause>['source']>>(_f.source, "string"),
@@ -2031,17 +2055,17 @@ export function implementsClauseFrom(...input: readonly (NonNullable<ConfigOf<Im
   return implementsClause(...(input as NonNullable<ConfigOf<ImplementsClause>['children']>));
 }
 
-export function ambientDeclarationFrom(input: AmbientDeclarationFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function ambientDeclarationFrom(input: AmbientDeclarationFromInput): AmbientDeclaration {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return ambientDeclaration({
     declaration: _resolveOne<NonNullable<ConfigOf<AmbientDeclaration>['declaration']>>(_f.declaration, _K19, _K20),
   });
 }
 
-export function abstractClassDeclarationFrom(input: AbstractClassDeclarationFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function abstractClassDeclarationFrom(input: AbstractClassDeclarationFromInput): AbstractClassDeclaration {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return abstractClassDeclaration({
     decorator: _resolveManyBranch<NonNullable<ConfigOf<AbstractClassDeclaration>['decorator']>[number]>(_f.decorator, "decorator"),
     name: _resolveOneBranch<NonNullable<ConfigOf<AbstractClassDeclaration>['name']>>(_f.name, "_type_identifier"),
@@ -2067,9 +2091,9 @@ export function internalModuleFrom(input?: NonNullable<ConfigOf<InternalModule>[
   return internalModule(input as NonNullable<ConfigOf<InternalModule>['children']>[number]);
 }
 
-export function importAliasFrom(input: ImportAliasFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function importAliasFrom(input: ImportAliasFromInput): ImportAlias {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return importAlias({
     name: _resolveOneLeaf<NonNullable<ConfigOf<ImportAlias>['name']>>(_f.name, "identifier"),
     value: _resolveOne<NonNullable<ConfigOf<ImportAlias>['value']>>(_f.value, _super_import_identifier, _K7),
@@ -2077,18 +2101,18 @@ export function importAliasFrom(input: ImportAliasFromInput) {
   });
 }
 
-export function nestedTypeIdentifierFrom(input: NestedTypeIdentifierFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function nestedTypeIdentifierFrom(input: NestedTypeIdentifierFromInput): NestedTypeIdentifier {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return nestedTypeIdentifier({
     module: _resolveOne<NonNullable<ConfigOf<NestedTypeIdentifier>['module']>>(_f.module, _super_import_identifier, _K7),
     name: _resolveOneBranch<NonNullable<ConfigOf<NestedTypeIdentifier>['name']>>(_f.name, "_type_identifier"),
   });
 }
 
-export function interfaceDeclarationFrom(input: InterfaceDeclarationFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function interfaceDeclarationFrom(input: InterfaceDeclarationFromInput): InterfaceDeclaration {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return interfaceDeclaration({
     name: _resolveOneBranch<NonNullable<ConfigOf<InterfaceDeclaration>['name']>>(_f.name, "_type_identifier"),
     typeParameters: _resolveOneBranch<NonNullable<ConfigOf<InterfaceDeclaration>['typeParameters']>>((_f.type_parameters ?? _f.typeParameters), "type_parameters"),
@@ -2097,9 +2121,9 @@ export function interfaceDeclarationFrom(input: InterfaceDeclarationFromInput) {
   });
 }
 
-export function extendsTypeClauseFrom(input: ExtendsTypeClauseFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function extendsTypeClauseFrom(input: ExtendsTypeClauseFromInput): ExtendsTypeClause {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   const _ne_type = _resolveMany<NonNullable<ConfigOf<ExtendsTypeClause>['type']>[number]>(_f.type, _K1, _K21);
   _assertNonEmpty(_ne_type, 'extends_type_clause.type');
   return extendsTypeClause({
@@ -2107,35 +2131,35 @@ export function extendsTypeClauseFrom(input: ExtendsTypeClauseFromInput) {
   });
 }
 
-export function enumDeclarationFrom(input: EnumDeclarationFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function enumDeclarationFrom(input: EnumDeclarationFromInput): EnumDeclaration {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return enumDeclaration({
     name: _resolveOneLeaf<NonNullable<ConfigOf<EnumDeclaration>['name']>>(_f.name, "identifier"),
     body: _resolveOneBranch<NonNullable<ConfigOf<EnumDeclaration>['body']>>(_f.body, "enum_body"),
   });
 }
 
-export function enumBodyFrom(input?: EnumBodyFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function enumBodyFrom(input?: EnumBodyFromInput): EnumBody {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return enumBody({
     opening: _resolveMany<NonNullable<ConfigOf<EnumBody>['opening']>[number]>(_f.opening, _K1, _K1),
   });
 }
 
-export function enumAssignmentFrom(input: EnumAssignmentFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function enumAssignmentFrom(input: EnumAssignmentFromInput): EnumAssignment {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return enumAssignment({
     name: _resolveOneBranch<NonNullable<ConfigOf<EnumAssignment>['name']>>(_f.name, "_property_name"),
     children: ((input as { children?: NonNullable<ConfigOf<EnumAssignment>['children']> })?.children ?? []) as NonNullable<ConfigOf<EnumAssignment>['children']>,
   });
 }
 
-export function typeAliasDeclarationFrom(input: TypeAliasDeclarationFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function typeAliasDeclarationFrom(input: TypeAliasDeclarationFromInput): TypeAliasDeclaration {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return typeAliasDeclaration({
     name: _resolveOneBranch<NonNullable<ConfigOf<TypeAliasDeclaration>['name']>>(_f.name, "_type_identifier"),
     typeParameters: _resolveOneBranch<NonNullable<ConfigOf<TypeAliasDeclaration>['typeParameters']>>((_f.type_parameters ?? _f.typeParameters), "type_parameters"),
@@ -2154,18 +2178,18 @@ export function overrideModifierFrom(input?: OverrideModifier) {
   return overrideModifier();
 }
 
-export function requiredParameterFrom(input: RequiredParameterFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function requiredParameterFrom(input: RequiredParameterFromInput): RequiredParameter {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return requiredParameter({
     type: _resolveOneBranch<NonNullable<ConfigOf<RequiredParameter>['type']>>(_f.type, "type_annotation"),
     children: ((input as { children?: NonNullable<ConfigOf<RequiredParameter>['children']> })?.children ?? []) as NonNullable<ConfigOf<RequiredParameter>['children']>,
   });
 }
 
-export function optionalParameterFrom(input: OptionalParameterFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function optionalParameterFrom(input: OptionalParameterFromInput): OptionalParameter {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return optionalParameter({
     type: _resolveOneBranch<NonNullable<ConfigOf<OptionalParameter>['type']>>(_f.type, "type_annotation"),
     children: ((input as { children?: NonNullable<ConfigOf<OptionalParameter>['children']> })?.children ?? []) as NonNullable<ConfigOf<OptionalParameter>['children']>,
@@ -2212,27 +2236,27 @@ export function assertsFrom(input?: NonNullable<ConfigOf<Asserts>['children']>[n
   return asserts(input as NonNullable<ConfigOf<Asserts>['children']>[number]);
 }
 
-export function assertsAnnotationFrom(input: AssertsAnnotationFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function assertsAnnotationFrom(input: AssertsAnnotationFromInput): AssertsAnnotation {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return assertsAnnotation({
     asserts: _resolveOne<NonNullable<ConfigOf<AssertsAnnotation>['asserts']>>(_f.asserts, _K1, _K1),
     children: ((input as { children?: NonNullable<ConfigOf<AssertsAnnotation>['children']> })?.children ?? []) as NonNullable<ConfigOf<AssertsAnnotation>['children']>,
   });
 }
 
-export function tupleParameterFrom(input: TupleParameterFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function tupleParameterFrom(input: TupleParameterFromInput): TupleParameter {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return tupleParameter({
     name: _resolveOne<NonNullable<ConfigOf<TupleParameter>['name']>>(_f.name, _super_import_identifier, _K22),
     type: _resolveOneBranch<NonNullable<ConfigOf<TupleParameter>['type']>>(_f.type, "type_annotation"),
   });
 }
 
-export function optionalTupleParameterFrom(input: OptionalTupleParameterFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function optionalTupleParameterFrom(input: OptionalTupleParameterFromInput): OptionalTupleParameter {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return optionalTupleParameter({
     name: _resolveOneLeaf<NonNullable<ConfigOf<OptionalTupleParameter>['name']>>(_f.name, "identifier"),
     type: _resolveOneBranch<NonNullable<ConfigOf<OptionalTupleParameter>['type']>>(_f.type, "type_annotation"),
@@ -2255,9 +2279,9 @@ export function restTypeFrom(input?: NonNullable<ConfigOf<RestType>['children']>
   return restType(input as NonNullable<ConfigOf<RestType>['children']>[number]);
 }
 
-export function constructorTypeFrom(input: ConstructorTypeFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function constructorTypeFrom(input: ConstructorTypeFromInput): ConstructorType {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return constructorType({
     typeParameters: _resolveOneBranch<NonNullable<ConfigOf<ConstructorType>['typeParameters']>>((_f.type_parameters ?? _f.typeParameters), "type_parameters"),
     parameters: _resolveOneBranch<NonNullable<ConfigOf<ConstructorType>['parameters']>>(_f.parameters, "formal_parameters"),
@@ -2281,18 +2305,18 @@ export function templateLiteralTypeFrom(...input: readonly (NonNullable<ConfigOf
   return templateLiteralType(...(input as NonNullable<ConfigOf<TemplateLiteralType>['children']>));
 }
 
-export function inferTypeFrom(input: InferTypeFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function inferTypeFrom(input: InferTypeFromInput): InferType {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return inferType({
     typeIdentifier: _resolveOneBranch<NonNullable<ConfigOf<InferType>['typeIdentifier']>>((_f.type_identifier ?? _f.typeIdentifier), "_type_identifier"),
     constraint: _resolveOne<NonNullable<ConfigOf<InferType>['constraint']>>(_f.constraint, _K1, _super_type),
   });
 }
 
-export function conditionalTypeFrom(input: ConditionalTypeFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function conditionalTypeFrom(input: ConditionalTypeFromInput): ConditionalType {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return conditionalType({
     left: _resolveOne<NonNullable<ConfigOf<ConditionalType>['left']>>(_f.left, _K1, _super_type),
     right: _resolveOne<NonNullable<ConfigOf<ConditionalType>['right']>>(_f.right, _K1, _super_type),
@@ -2301,27 +2325,27 @@ export function conditionalTypeFrom(input: ConditionalTypeFromInput) {
   });
 }
 
-export function genericTypeFrom(input: GenericTypeFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function genericTypeFrom(input: GenericTypeFromInput): GenericType {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return genericType({
     name: _resolveOne<NonNullable<ConfigOf<GenericType>['name']>>(_f.name, _K1, _K23),
     typeArguments: _resolveOneBranch<NonNullable<ConfigOf<GenericType>['typeArguments']>>((_f.type_arguments ?? _f.typeArguments), "type_arguments"),
   });
 }
 
-export function typePredicateFrom(input: TypePredicateFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function typePredicateFrom(input: TypePredicateFromInput): TypePredicate {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return typePredicate({
     name: _resolveOne<NonNullable<ConfigOf<TypePredicate>['name']>>(_f.name, _K24, _K1),
     type: _resolveOne<NonNullable<ConfigOf<TypePredicate>['type']>>(_f.type, _K1, _super_type),
   });
 }
 
-export function typePredicateAnnotationFrom(input: TypePredicateAnnotationFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function typePredicateAnnotationFrom(input: TypePredicateAnnotationFromInput): TypePredicateAnnotation {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return typePredicateAnnotation({
     typePredicate: _resolveOne<NonNullable<ConfigOf<TypePredicateAnnotation>['typePredicate']>>((_f.type_predicate ?? _f.typePredicate), _K1, _K1),
     children: ((input as { children?: NonNullable<ConfigOf<TypePredicateAnnotation>['children']> })?.children ?? []) as NonNullable<ConfigOf<TypePredicateAnnotation>['children']>,
@@ -2336,26 +2360,26 @@ export function typeQueryFrom(input?: NonNullable<ConfigOf<TypeQuery>['children'
   return typeQuery(input as NonNullable<ConfigOf<TypeQuery>['children']>[number]);
 }
 
-export function indexTypeQueryFrom(input: IndexTypeQueryFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function indexTypeQueryFrom(input: IndexTypeQueryFromInput): IndexTypeQuery {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return indexTypeQuery({
     primaryType: _resolveOne<NonNullable<ConfigOf<IndexTypeQuery>['primaryType']>>((_f.primary_type ?? _f.primaryType), _K25, _K26),
   });
 }
 
-export function lookupTypeFrom(input: LookupTypeFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function lookupTypeFrom(input: LookupTypeFromInput): LookupType {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return lookupType({
     primaryType: _resolveOne<NonNullable<ConfigOf<LookupType>['primaryType']>>((_f.primary_type ?? _f.primaryType), _K25, _K26),
     indexType: _resolveOne<NonNullable<ConfigOf<LookupType>['indexType']>>((_f.index_type ?? _f.indexType), _K1, _super_type),
   });
 }
 
-export function mappedTypeClauseFrom(input: MappedTypeClauseFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function mappedTypeClauseFrom(input: MappedTypeClauseFromInput): MappedTypeClause {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return mappedTypeClause({
     name: _resolveOneBranch<NonNullable<ConfigOf<MappedTypeClause>['name']>>(_f.name, "_type_identifier"),
     type: _resolveOne<NonNullable<ConfigOf<MappedTypeClause>['type']>>(_f.type, _K1, _super_type),
@@ -2371,9 +2395,9 @@ export function literalTypeFrom(input?: NonNullable<ConfigOf<LiteralType>['child
   return literalType(input as NonNullable<ConfigOf<LiteralType>['children']>[number]);
 }
 
-export function flowMaybeTypeFrom(input: FlowMaybeTypeFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function flowMaybeTypeFrom(input: FlowMaybeTypeFromInput): FlowMaybeType {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return flowMaybeType({
     primaryType: _resolveOne<NonNullable<ConfigOf<FlowMaybeType>['primaryType']>>((_f.primary_type ?? _f.primaryType), _K25, _K26),
   });
@@ -2400,9 +2424,9 @@ export function typeArgumentsFrom(...input: readonly (NonNullable<ConfigOf<TypeA
   return typeArguments(...(input as NonNullable<ConfigOf<TypeArguments>['children']>));
 }
 
-export function objectTypeFrom(input: ObjectTypeFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function objectTypeFrom(input: ObjectTypeFromInput): ObjectType {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return objectType({
     opening: _resolveOne<NonNullable<ConfigOf<ObjectType>['opening']>>(_f.opening, _K1, _K1),
     members: _resolveOne<NonNullable<ConfigOf<ObjectType>['members']>>(_f.members, _super_semicolon, _K27),
@@ -2418,9 +2442,9 @@ export function callSignatureFrom(input?: NonNullable<ConfigOf<CallSignature>['c
   return callSignature(input as NonNullable<ConfigOf<CallSignature>['children']>[number]);
 }
 
-export function propertySignatureFrom(input: PropertySignatureFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function propertySignatureFrom(input: PropertySignatureFromInput): PropertySignature {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return propertySignature({
     accessibilityModifier: _resolveOneLeaf<NonNullable<ConfigOf<PropertySignature>['accessibilityModifier']>>((_f.accessibility_modifier ?? _f.accessibilityModifier), "accessibility_modifier"),
     overrideModifier: _resolveOne<NonNullable<ConfigOf<PropertySignature>['overrideModifier']>>((_f.override_modifier ?? _f.overrideModifier), _K1, _K1),
@@ -2438,9 +2462,9 @@ export function typeParametersFrom(...input: readonly (NonNullable<ConfigOf<Type
   return typeParameters(...(input as NonNullable<ConfigOf<TypeParameters>['children']>));
 }
 
-export function typeParameterFrom(input: TypeParameterFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function typeParameterFrom(input: TypeParameterFromInput): TypeParameter {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return typeParameter({
     name: _resolveOneBranch<NonNullable<ConfigOf<TypeParameter>['name']>>(_f.name, "_type_identifier"),
     constraint: _resolveOneBranch<NonNullable<ConfigOf<TypeParameter>['constraint']>>(_f.constraint, "constraint"),
@@ -2464,9 +2488,9 @@ export function constraintFrom(input?: NonNullable<ConfigOf<Constraint>['childre
   return constraint(input as NonNullable<ConfigOf<Constraint>['children']>[number]);
 }
 
-export function constructSignatureFrom(input: ConstructSignatureFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function constructSignatureFrom(input: ConstructSignatureFromInput): ConstructSignature {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return constructSignature({
     typeParameters: _resolveOneBranch<NonNullable<ConfigOf<ConstructSignature>['typeParameters']>>((_f.type_parameters ?? _f.typeParameters), "type_parameters"),
     parameters: _resolveOneBranch<NonNullable<ConfigOf<ConstructSignature>['parameters']>>(_f.parameters, "formal_parameters"),
@@ -2475,7 +2499,7 @@ export function constructSignatureFrom(input: ConstructSignatureFromInput) {
 }
 
 export function indexSignatureFrom(input?: IndexSignatureFromInput) {
-  return indexSignature(input as unknown as ConfigOf<IndexSignatureColon> | ConfigOf<IndexSignatureMappedTypeClause>);
+  return indexSignature(input as ConfigOf<IndexSignatureColon> | ConfigOf<IndexSignatureMappedTypeClause>);
 }
 
 export function indexSignatureColonFrom(input: ConfigOf<IndexSignatureColon>) {
@@ -2498,9 +2522,9 @@ export function indexSignatureMappedTypeClauseFrom(input: ConfigOf<IndexSignatur
   });
 }
 
-export function arrayTypeFrom(input: ArrayTypeFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function arrayTypeFrom(input: ArrayTypeFromInput): ArrayType {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return arrayType({
     primaryType: _resolveOne<NonNullable<ConfigOf<ArrayType>['primaryType']>>((_f.primary_type ?? _f.primaryType), _K25, _K26),
   });
@@ -2522,27 +2546,27 @@ export function readonlyTypeFrom(input?: NonNullable<ConfigOf<ReadonlyType>['chi
   return readonlyType(input as NonNullable<ConfigOf<ReadonlyType>['children']>[number]);
 }
 
-export function unionTypeFrom(input: UnionTypeFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function unionTypeFrom(input: UnionTypeFromInput): UnionType {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return unionType({
     left: _resolveOne<NonNullable<ConfigOf<UnionType>['left']>>(_f.left, _K1, _super_type),
     right: _resolveOne<NonNullable<ConfigOf<UnionType>['right']>>(_f.right, _K1, _super_type),
   });
 }
 
-export function intersectionTypeFrom(input: IntersectionTypeFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function intersectionTypeFrom(input: IntersectionTypeFromInput): IntersectionType {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return intersectionType({
     left: _resolveOne<NonNullable<ConfigOf<IntersectionType>['left']>>(_f.left, _K1, _super_type),
     right: _resolveOne<NonNullable<ConfigOf<IntersectionType>['right']>>(_f.right, _K1, _super_type),
   });
 }
 
-export function functionTypeFrom(input: FunctionTypeFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function functionTypeFrom(input: FunctionTypeFromInput): FunctionType {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return functionType({
     typeParameters: _resolveOneBranch<NonNullable<ConfigOf<FunctionType>['typeParameters']>>((_f.type_parameters ?? _f.typeParameters), "type_parameters"),
     parameters: _resolveOneBranch<NonNullable<ConfigOf<FunctionType>['parameters']>>(_f.parameters, "formal_parameters"),
@@ -2596,9 +2620,9 @@ export function stringFragmentFrom(input: string | StringFragment) {
   return stringFragment(input as string);
 }
 
-export function interfaceBodyFrom(input: InterfaceBodyFromInput) {
-  const _fields = (input as { fields?: Record<string, unknown> })?.fields;
-  const _f = _fields ?? (input as Record<string, unknown>) ?? {};
+export function interfaceBodyFrom(input: InterfaceBodyFromInput): InterfaceBody {
+  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
+  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return interfaceBody({
     opening: _resolveOne<NonNullable<ConfigOf<InterfaceBody>['opening']>>(_f.opening, _K1, _K1),
     members: _resolveOne<NonNullable<ConfigOf<InterfaceBody>['members']>>(_f.members, _super_semicolon, _K27),
@@ -2616,204 +2640,205 @@ export function typeIdentifierFrom(input: string | TypeIdentifier) {
   return typeIdentifier(input as string);
 }
 
-export const _fromMap: Record<string, (input?: unknown) => unknown> = {
-  "program": programFrom as (input?: unknown) => unknown,
-  "hash_bang_line": hashBangLineFrom as (input?: unknown) => unknown,
-  "export_statement": exportStatementFrom as (input?: unknown) => unknown,
-  "namespace_export": namespaceExportFrom as (input?: unknown) => unknown,
-  "export_clause": exportClauseFrom as (input?: unknown) => unknown,
-  "export_specifier": exportSpecifierFrom as (input?: unknown) => unknown,
-  "declaration": declarationFrom as (input?: unknown) => unknown,
-  "import": import_From as (input?: unknown) => unknown,
-  "import_statement": importStatementFrom as (input?: unknown) => unknown,
-  "import_clause": importClauseFrom as (input?: unknown) => unknown,
-  "namespace_import": namespaceImportFrom as (input?: unknown) => unknown,
-  "named_imports": namedImportsFrom as (input?: unknown) => unknown,
-  "import_specifier": importSpecifierFrom as (input?: unknown) => unknown,
-  "import_attribute": importAttributeFrom as (input?: unknown) => unknown,
-  "statement": statementFrom as (input?: unknown) => unknown,
-  "expression_statement": expressionStatementFrom as (input?: unknown) => unknown,
-  "variable_declaration": variableDeclarationFrom as (input?: unknown) => unknown,
-  "lexical_declaration": lexicalDeclarationFrom as (input?: unknown) => unknown,
-  "variable_declarator": variableDeclaratorFrom as (input?: unknown) => unknown,
-  "statement_block": statementBlockFrom as (input?: unknown) => unknown,
-  "else_clause": elseClauseFrom as (input?: unknown) => unknown,
-  "if_statement": ifStatementFrom as (input?: unknown) => unknown,
-  "switch_statement": switchStatementFrom as (input?: unknown) => unknown,
-  "for_statement": forStatementFrom as (input?: unknown) => unknown,
-  "for_in_statement": forInStatementFrom as (input?: unknown) => unknown,
-  "while_statement": whileStatementFrom as (input?: unknown) => unknown,
-  "do_statement": doStatementFrom as (input?: unknown) => unknown,
-  "try_statement": tryStatementFrom as (input?: unknown) => unknown,
-  "with_statement": withStatementFrom as (input?: unknown) => unknown,
-  "break_statement": breakStatementFrom as (input?: unknown) => unknown,
-  "continue_statement": continueStatementFrom as (input?: unknown) => unknown,
-  "debugger_statement": debuggerStatementFrom as (input?: unknown) => unknown,
-  "return_statement": returnStatementFrom as (input?: unknown) => unknown,
-  "throw_statement": throwStatementFrom as (input?: unknown) => unknown,
-  "labeled_statement": labeledStatementFrom as (input?: unknown) => unknown,
-  "switch_body": switchBodyFrom as (input?: unknown) => unknown,
-  "switch_case": switchCaseFrom as (input?: unknown) => unknown,
-  "switch_default": switchDefaultFrom as (input?: unknown) => unknown,
-  "catch_clause": catchClauseFrom as (input?: unknown) => unknown,
-  "finally_clause": finallyClauseFrom as (input?: unknown) => unknown,
-  "parenthesized_expression": parenthesizedExpressionFrom as (input?: unknown) => unknown,
-  "expression": expressionFrom as (input?: unknown) => unknown,
-  "primary_expression": primaryExpressionFrom as (input?: unknown) => unknown,
-  "yield_expression": yieldExpressionFrom as (input?: unknown) => unknown,
-  "object": objectFrom as (input?: unknown) => unknown,
-  "object_pattern": objectPatternFrom as (input?: unknown) => unknown,
-  "assignment_pattern": assignmentPatternFrom as (input?: unknown) => unknown,
-  "object_assignment_pattern": objectAssignmentPatternFrom as (input?: unknown) => unknown,
-  "array": arrayFrom as (input?: unknown) => unknown,
-  "array_pattern": arrayPatternFrom as (input?: unknown) => unknown,
-  "jsx_element": jsxElementFrom as (input?: unknown) => unknown,
-  "html_character_reference": htmlCharacterReferenceFrom as (input?: unknown) => unknown,
-  "jsx_expression": jsxExpressionFrom as (input?: unknown) => unknown,
-  "jsx_opening_element": jsxOpeningElementFrom as (input?: unknown) => unknown,
-  "jsx_identifier": jsxIdentifierFrom as (input?: unknown) => unknown,
-  "nested_identifier": nestedIdentifierFrom as (input?: unknown) => unknown,
-  "jsx_namespace_name": jsxNamespaceNameFrom as (input?: unknown) => unknown,
-  "jsx_closing_element": jsxClosingElementFrom as (input?: unknown) => unknown,
-  "jsx_self_closing_element": jsxSelfClosingElementFrom as (input?: unknown) => unknown,
-  "jsx_attribute": jsxAttributeFrom as (input?: unknown) => unknown,
-  "unescaped_double_jsx_string_fragment": unescapedDoubleJsxStringFragmentFrom as (input?: unknown) => unknown,
-  "unescaped_single_jsx_string_fragment": unescapedSingleJsxStringFragmentFrom as (input?: unknown) => unknown,
-  "class": class_From as (input?: unknown) => unknown,
-  "class_declaration": classDeclarationFrom as (input?: unknown) => unknown,
-  "class_heritage": classHeritageFrom as (input?: unknown) => unknown,
-  "function_expression": functionExpressionFrom as (input?: unknown) => unknown,
-  "function_declaration": functionDeclarationFrom as (input?: unknown) => unknown,
-  "generator_function": generatorFunctionFrom as (input?: unknown) => unknown,
-  "generator_function_declaration": generatorFunctionDeclarationFrom as (input?: unknown) => unknown,
-  "arrow_function": arrowFunctionFrom as (input?: unknown) => unknown,
-  "call_expression": callExpressionFrom as (input?: unknown) => unknown,
-  "new_expression": newExpressionFrom as (input?: unknown) => unknown,
-  "await_expression": awaitExpressionFrom as (input?: unknown) => unknown,
-  "member_expression": memberExpressionFrom as (input?: unknown) => unknown,
-  "subscript_expression": subscriptExpressionFrom as (input?: unknown) => unknown,
-  "assignment_expression": assignmentExpressionFrom as (input?: unknown) => unknown,
-  "augmented_assignment_expression": augmentedAssignmentExpressionFrom as (input?: unknown) => unknown,
-  "spread_element": spreadElementFrom as (input?: unknown) => unknown,
-  "ternary_expression": ternaryExpressionFrom as (input?: unknown) => unknown,
-  "binary_expression": binaryExpressionFrom as (input?: unknown) => unknown,
-  "unary_expression": unaryExpressionFrom as (input?: unknown) => unknown,
-  "update_expression": updateExpressionFrom as (input?: unknown) => unknown,
-  "sequence_expression": sequenceExpressionFrom as (input?: unknown) => unknown,
-  "string": stringFrom as (input?: unknown) => unknown,
-  "unescaped_double_string_fragment": unescapedDoubleStringFragmentFrom as (input?: unknown) => unknown,
-  "unescaped_single_string_fragment": unescapedSingleStringFragmentFrom as (input?: unknown) => unknown,
-  "escape_sequence": escapeSequenceFrom as (input?: unknown) => unknown,
-  "comment": commentFrom as (input?: unknown) => unknown,
-  "template_string": templateStringFrom as (input?: unknown) => unknown,
-  "template_substitution": templateSubstitutionFrom as (input?: unknown) => unknown,
-  "regex": regexFrom as (input?: unknown) => unknown,
-  "regex_pattern": regexPatternFrom as (input?: unknown) => unknown,
-  "regex_flags": regexFlagsFrom as (input?: unknown) => unknown,
-  "number": numberFrom as (input?: unknown) => unknown,
-  "identifier": identifierFrom as (input?: unknown) => unknown,
-  "private_property_identifier": privatePropertyIdentifierFrom as (input?: unknown) => unknown,
-  "meta_property": metaPropertyFrom as (input?: unknown) => unknown,
-  "this": thisFrom as (input?: unknown) => unknown,
-  "super": superFrom as (input?: unknown) => unknown,
-  "true": true_From as (input?: unknown) => unknown,
-  "false": false_From as (input?: unknown) => unknown,
-  "null": null_From as (input?: unknown) => unknown,
-  "undefined": undefined_From as (input?: unknown) => unknown,
-  "arguments": arguments_From as (input?: unknown) => unknown,
-  "decorator": decoratorFrom as (input?: unknown) => unknown,
-  "decorator_member_expression": decoratorMemberExpressionFrom as (input?: unknown) => unknown,
-  "decorator_call_expression": decoratorCallExpressionFrom as (input?: unknown) => unknown,
-  "class_body": classBodyFrom as (input?: unknown) => unknown,
-  "field_definition": fieldDefinitionFrom as (input?: unknown) => unknown,
-  "formal_parameters": formalParametersFrom as (input?: unknown) => unknown,
-  "class_static_block": classStaticBlockFrom as (input?: unknown) => unknown,
-  "pattern": patternFrom as (input?: unknown) => unknown,
-  "rest_pattern": restPatternFrom as (input?: unknown) => unknown,
-  "method_definition": methodDefinitionFrom as (input?: unknown) => unknown,
-  "pair": pairFrom as (input?: unknown) => unknown,
-  "pair_pattern": pairPatternFrom as (input?: unknown) => unknown,
-  "computed_property_name": computedPropertyNameFrom as (input?: unknown) => unknown,
-  "public_field_definition": publicFieldDefinitionFrom as (input?: unknown) => unknown,
-  "non_null_expression": nonNullExpressionFrom as (input?: unknown) => unknown,
-  "method_signature": methodSignatureFrom as (input?: unknown) => unknown,
-  "abstract_method_signature": abstractMethodSignatureFrom as (input?: unknown) => unknown,
-  "function_signature": functionSignatureFrom as (input?: unknown) => unknown,
-  "decorator_parenthesized_expression": decoratorParenthesizedExpressionFrom as (input?: unknown) => unknown,
-  "type_assertion": typeAssertionFrom as (input?: unknown) => unknown,
-  "as_expression": asExpressionFrom as (input?: unknown) => unknown,
-  "satisfies_expression": satisfiesExpressionFrom as (input?: unknown) => unknown,
-  "instantiation_expression": instantiationExpressionFrom as (input?: unknown) => unknown,
-  "import_require_clause": importRequireClauseFrom as (input?: unknown) => unknown,
-  "extends_clause": extendsClauseFrom as (input?: unknown) => unknown,
-  "implements_clause": implementsClauseFrom as (input?: unknown) => unknown,
-  "ambient_declaration": ambientDeclarationFrom as (input?: unknown) => unknown,
-  "abstract_class_declaration": abstractClassDeclarationFrom as (input?: unknown) => unknown,
-  "module": moduleFrom as (input?: unknown) => unknown,
-  "internal_module": internalModuleFrom as (input?: unknown) => unknown,
-  "import_alias": importAliasFrom as (input?: unknown) => unknown,
-  "nested_type_identifier": nestedTypeIdentifierFrom as (input?: unknown) => unknown,
-  "interface_declaration": interfaceDeclarationFrom as (input?: unknown) => unknown,
-  "extends_type_clause": extendsTypeClauseFrom as (input?: unknown) => unknown,
-  "enum_declaration": enumDeclarationFrom as (input?: unknown) => unknown,
-  "enum_body": enumBodyFrom as (input?: unknown) => unknown,
-  "enum_assignment": enumAssignmentFrom as (input?: unknown) => unknown,
-  "type_alias_declaration": typeAliasDeclarationFrom as (input?: unknown) => unknown,
-  "accessibility_modifier": accessibilityModifierFrom as (input?: unknown) => unknown,
-  "override_modifier": overrideModifierFrom as (input?: unknown) => unknown,
-  "required_parameter": requiredParameterFrom as (input?: unknown) => unknown,
-  "optional_parameter": optionalParameterFrom as (input?: unknown) => unknown,
-  "omitting_type_annotation": omittingTypeAnnotationFrom as (input?: unknown) => unknown,
-  "adding_type_annotation": addingTypeAnnotationFrom as (input?: unknown) => unknown,
-  "opting_type_annotation": optingTypeAnnotationFrom as (input?: unknown) => unknown,
-  "type_annotation": typeAnnotationFrom as (input?: unknown) => unknown,
-  "asserts": assertsFrom as (input?: unknown) => unknown,
-  "asserts_annotation": assertsAnnotationFrom as (input?: unknown) => unknown,
-  "tuple_parameter": tupleParameterFrom as (input?: unknown) => unknown,
-  "optional_tuple_parameter": optionalTupleParameterFrom as (input?: unknown) => unknown,
-  "optional_type": optionalTypeFrom as (input?: unknown) => unknown,
-  "rest_type": restTypeFrom as (input?: unknown) => unknown,
-  "constructor_type": constructorTypeFrom as (input?: unknown) => unknown,
-  "template_type": templateTypeFrom as (input?: unknown) => unknown,
-  "template_literal_type": templateLiteralTypeFrom as (input?: unknown) => unknown,
-  "infer_type": inferTypeFrom as (input?: unknown) => unknown,
-  "conditional_type": conditionalTypeFrom as (input?: unknown) => unknown,
-  "generic_type": genericTypeFrom as (input?: unknown) => unknown,
-  "type_predicate": typePredicateFrom as (input?: unknown) => unknown,
-  "type_predicate_annotation": typePredicateAnnotationFrom as (input?: unknown) => unknown,
-  "type_query": typeQueryFrom as (input?: unknown) => unknown,
-  "index_type_query": indexTypeQueryFrom as (input?: unknown) => unknown,
-  "lookup_type": lookupTypeFrom as (input?: unknown) => unknown,
-  "mapped_type_clause": mappedTypeClauseFrom as (input?: unknown) => unknown,
-  "literal_type": literalTypeFrom as (input?: unknown) => unknown,
-  "flow_maybe_type": flowMaybeTypeFrom as (input?: unknown) => unknown,
-  "parenthesized_type": parenthesizedTypeFrom as (input?: unknown) => unknown,
-  "predefined_type": predefinedTypeFrom as (input?: unknown) => unknown,
-  "type_arguments": typeArgumentsFrom as (input?: unknown) => unknown,
-  "object_type": objectTypeFrom as (input?: unknown) => unknown,
-  "call_signature": callSignatureFrom as (input?: unknown) => unknown,
-  "property_signature": propertySignatureFrom as (input?: unknown) => unknown,
-  "type_parameters": typeParametersFrom as (input?: unknown) => unknown,
-  "type_parameter": typeParameterFrom as (input?: unknown) => unknown,
-  "default_type": defaultTypeFrom as (input?: unknown) => unknown,
-  "constraint": constraintFrom as (input?: unknown) => unknown,
-  "construct_signature": constructSignatureFrom as (input?: unknown) => unknown,
-  "index_signature": indexSignatureFrom as (input?: unknown) => unknown,
-  "array_type": arrayTypeFrom as (input?: unknown) => unknown,
-  "tuple_type": tupleTypeFrom as (input?: unknown) => unknown,
-  "readonly_type": readonlyTypeFrom as (input?: unknown) => unknown,
-  "union_type": unionTypeFrom as (input?: unknown) => unknown,
-  "intersection_type": intersectionTypeFrom as (input?: unknown) => unknown,
-  "function_type": functionTypeFrom as (input?: unknown) => unknown,
-  "html_comment": htmlCommentFrom as (input?: unknown) => unknown,
-  "||": ororFrom as (input?: unknown) => unknown,
-  "jsx_text": jsxTextFrom as (input?: unknown) => unknown,
-  "statement_identifier": statementIdentifierFrom as (input?: unknown) => unknown,
-  "shorthand_property_identifier": shorthandPropertyIdentifierFrom as (input?: unknown) => unknown,
-  "shorthand_property_identifier_pattern": shorthandPropertyIdentifierPatternFrom as (input?: unknown) => unknown,
-  "property_identifier": propertyIdentifierFrom as (input?: unknown) => unknown,
-  "string_fragment": stringFragmentFrom as (input?: unknown) => unknown,
-  "interface_body": interfaceBodyFrom as (input?: unknown) => unknown,
-  "this_type": thisTypeFrom as (input?: unknown) => unknown,
-  "type_identifier": typeIdentifierFrom as (input?: unknown) => unknown,
-};
+export const _fromMap = {
+  "program": programFrom,
+  "hash_bang_line": hashBangLineFrom,
+  "export_statement": exportStatementFrom,
+  "namespace_export": namespaceExportFrom,
+  "export_clause": exportClauseFrom,
+  "export_specifier": exportSpecifierFrom,
+  "declaration": declarationFrom,
+  "import": import_From,
+  "import_statement": importStatementFrom,
+  "import_clause": importClauseFrom,
+  "namespace_import": namespaceImportFrom,
+  "named_imports": namedImportsFrom,
+  "import_specifier": importSpecifierFrom,
+  "import_attribute": importAttributeFrom,
+  "statement": statementFrom,
+  "expression_statement": expressionStatementFrom,
+  "variable_declaration": variableDeclarationFrom,
+  "lexical_declaration": lexicalDeclarationFrom,
+  "variable_declarator": variableDeclaratorFrom,
+  "statement_block": statementBlockFrom,
+  "else_clause": elseClauseFrom,
+  "if_statement": ifStatementFrom,
+  "switch_statement": switchStatementFrom,
+  "for_statement": forStatementFrom,
+  "for_in_statement": forInStatementFrom,
+  "while_statement": whileStatementFrom,
+  "do_statement": doStatementFrom,
+  "try_statement": tryStatementFrom,
+  "with_statement": withStatementFrom,
+  "break_statement": breakStatementFrom,
+  "continue_statement": continueStatementFrom,
+  "debugger_statement": debuggerStatementFrom,
+  "return_statement": returnStatementFrom,
+  "throw_statement": throwStatementFrom,
+  "labeled_statement": labeledStatementFrom,
+  "switch_body": switchBodyFrom,
+  "switch_case": switchCaseFrom,
+  "switch_default": switchDefaultFrom,
+  "catch_clause": catchClauseFrom,
+  "finally_clause": finallyClauseFrom,
+  "parenthesized_expression": parenthesizedExpressionFrom,
+  "expression": expressionFrom,
+  "primary_expression": primaryExpressionFrom,
+  "yield_expression": yieldExpressionFrom,
+  "object": objectFrom,
+  "object_pattern": objectPatternFrom,
+  "assignment_pattern": assignmentPatternFrom,
+  "object_assignment_pattern": objectAssignmentPatternFrom,
+  "array": arrayFrom,
+  "array_pattern": arrayPatternFrom,
+  "jsx_element": jsxElementFrom,
+  "html_character_reference": htmlCharacterReferenceFrom,
+  "jsx_expression": jsxExpressionFrom,
+  "jsx_opening_element": jsxOpeningElementFrom,
+  "jsx_identifier": jsxIdentifierFrom,
+  "nested_identifier": nestedIdentifierFrom,
+  "jsx_namespace_name": jsxNamespaceNameFrom,
+  "jsx_closing_element": jsxClosingElementFrom,
+  "jsx_self_closing_element": jsxSelfClosingElementFrom,
+  "jsx_attribute": jsxAttributeFrom,
+  "unescaped_double_jsx_string_fragment": unescapedDoubleJsxStringFragmentFrom,
+  "unescaped_single_jsx_string_fragment": unescapedSingleJsxStringFragmentFrom,
+  "class": class_From,
+  "class_declaration": classDeclarationFrom,
+  "class_heritage": classHeritageFrom,
+  "function_expression": functionExpressionFrom,
+  "function_declaration": functionDeclarationFrom,
+  "generator_function": generatorFunctionFrom,
+  "generator_function_declaration": generatorFunctionDeclarationFrom,
+  "arrow_function": arrowFunctionFrom,
+  "call_expression": callExpressionFrom,
+  "new_expression": newExpressionFrom,
+  "await_expression": awaitExpressionFrom,
+  "member_expression": memberExpressionFrom,
+  "subscript_expression": subscriptExpressionFrom,
+  "assignment_expression": assignmentExpressionFrom,
+  "augmented_assignment_expression": augmentedAssignmentExpressionFrom,
+  "spread_element": spreadElementFrom,
+  "ternary_expression": ternaryExpressionFrom,
+  "binary_expression": binaryExpressionFrom,
+  "unary_expression": unaryExpressionFrom,
+  "update_expression": updateExpressionFrom,
+  "sequence_expression": sequenceExpressionFrom,
+  "string": stringFrom,
+  "unescaped_double_string_fragment": unescapedDoubleStringFragmentFrom,
+  "unescaped_single_string_fragment": unescapedSingleStringFragmentFrom,
+  "escape_sequence": escapeSequenceFrom,
+  "comment": commentFrom,
+  "template_string": templateStringFrom,
+  "template_substitution": templateSubstitutionFrom,
+  "regex": regexFrom,
+  "regex_pattern": regexPatternFrom,
+  "regex_flags": regexFlagsFrom,
+  "number": numberFrom,
+  "identifier": identifierFrom,
+  "private_property_identifier": privatePropertyIdentifierFrom,
+  "meta_property": metaPropertyFrom,
+  "this": thisFrom,
+  "super": superFrom,
+  "true": true_From,
+  "false": false_From,
+  "null": null_From,
+  "undefined": undefined_From,
+  "arguments": arguments_From,
+  "decorator": decoratorFrom,
+  "decorator_member_expression": decoratorMemberExpressionFrom,
+  "decorator_call_expression": decoratorCallExpressionFrom,
+  "class_body": classBodyFrom,
+  "field_definition": fieldDefinitionFrom,
+  "formal_parameters": formalParametersFrom,
+  "class_static_block": classStaticBlockFrom,
+  "pattern": patternFrom,
+  "rest_pattern": restPatternFrom,
+  "method_definition": methodDefinitionFrom,
+  "pair": pairFrom,
+  "pair_pattern": pairPatternFrom,
+  "computed_property_name": computedPropertyNameFrom,
+  "public_field_definition": publicFieldDefinitionFrom,
+  "non_null_expression": nonNullExpressionFrom,
+  "method_signature": methodSignatureFrom,
+  "abstract_method_signature": abstractMethodSignatureFrom,
+  "function_signature": functionSignatureFrom,
+  "decorator_parenthesized_expression": decoratorParenthesizedExpressionFrom,
+  "type_assertion": typeAssertionFrom,
+  "as_expression": asExpressionFrom,
+  "satisfies_expression": satisfiesExpressionFrom,
+  "instantiation_expression": instantiationExpressionFrom,
+  "import_require_clause": importRequireClauseFrom,
+  "extends_clause": extendsClauseFrom,
+  "implements_clause": implementsClauseFrom,
+  "ambient_declaration": ambientDeclarationFrom,
+  "abstract_class_declaration": abstractClassDeclarationFrom,
+  "module": moduleFrom,
+  "internal_module": internalModuleFrom,
+  "import_alias": importAliasFrom,
+  "nested_type_identifier": nestedTypeIdentifierFrom,
+  "interface_declaration": interfaceDeclarationFrom,
+  "extends_type_clause": extendsTypeClauseFrom,
+  "enum_declaration": enumDeclarationFrom,
+  "enum_body": enumBodyFrom,
+  "enum_assignment": enumAssignmentFrom,
+  "type_alias_declaration": typeAliasDeclarationFrom,
+  "accessibility_modifier": accessibilityModifierFrom,
+  "override_modifier": overrideModifierFrom,
+  "required_parameter": requiredParameterFrom,
+  "optional_parameter": optionalParameterFrom,
+  "omitting_type_annotation": omittingTypeAnnotationFrom,
+  "adding_type_annotation": addingTypeAnnotationFrom,
+  "opting_type_annotation": optingTypeAnnotationFrom,
+  "type_annotation": typeAnnotationFrom,
+  "asserts": assertsFrom,
+  "asserts_annotation": assertsAnnotationFrom,
+  "tuple_parameter": tupleParameterFrom,
+  "optional_tuple_parameter": optionalTupleParameterFrom,
+  "optional_type": optionalTypeFrom,
+  "rest_type": restTypeFrom,
+  "constructor_type": constructorTypeFrom,
+  "template_type": templateTypeFrom,
+  "template_literal_type": templateLiteralTypeFrom,
+  "infer_type": inferTypeFrom,
+  "conditional_type": conditionalTypeFrom,
+  "generic_type": genericTypeFrom,
+  "type_predicate": typePredicateFrom,
+  "type_predicate_annotation": typePredicateAnnotationFrom,
+  "type_query": typeQueryFrom,
+  "index_type_query": indexTypeQueryFrom,
+  "lookup_type": lookupTypeFrom,
+  "mapped_type_clause": mappedTypeClauseFrom,
+  "literal_type": literalTypeFrom,
+  "flow_maybe_type": flowMaybeTypeFrom,
+  "parenthesized_type": parenthesizedTypeFrom,
+  "predefined_type": predefinedTypeFrom,
+  "type_arguments": typeArgumentsFrom,
+  "object_type": objectTypeFrom,
+  "call_signature": callSignatureFrom,
+  "property_signature": propertySignatureFrom,
+  "type_parameters": typeParametersFrom,
+  "type_parameter": typeParameterFrom,
+  "default_type": defaultTypeFrom,
+  "constraint": constraintFrom,
+  "construct_signature": constructSignatureFrom,
+  "index_signature": indexSignatureFrom,
+  "array_type": arrayTypeFrom,
+  "tuple_type": tupleTypeFrom,
+  "readonly_type": readonlyTypeFrom,
+  "union_type": unionTypeFrom,
+  "intersection_type": intersectionTypeFrom,
+  "function_type": functionTypeFrom,
+  "html_comment": htmlCommentFrom,
+  "||": ororFrom,
+  "jsx_text": jsxTextFrom,
+  "statement_identifier": statementIdentifierFrom,
+  "shorthand_property_identifier": shorthandPropertyIdentifierFrom,
+  "shorthand_property_identifier_pattern": shorthandPropertyIdentifierPatternFrom,
+  "property_identifier": propertyIdentifierFrom,
+  "string_fragment": stringFragmentFrom,
+  "interface_body": interfaceBodyFrom,
+  "this_type": thisTypeFrom,
+  "type_identifier": typeIdentifierFrom,
+} as const;
+export type _FromMap = typeof _fromMap;

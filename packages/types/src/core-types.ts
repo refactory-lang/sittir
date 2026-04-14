@@ -10,6 +10,33 @@
 // ---------------------------------------------------------------------------
 
 /**
+ * A value that can appear as a field entry on `AnyNodeData.fields` or as a
+ * child slot on `AnyNodeData.children`. Runtime observed shapes:
+ *
+ *   - a nested `AnyNodeData` (the most common case: sub-node drilling)
+ *   - a `string` (factory input for a leaf like `identifier('foo')`)
+ *   - a `number` (numeric leaf input, occasionally used in templates)
+ *   - an array of any of the above (multi-valued fields / children slots)
+ *   - `undefined` (absent optional field)
+ *
+ * Union-typed so downstream consumers don't have to cast through `unknown`
+ * to reach a NodeData shape. `AnyNodeData` is recursive via this alias.
+ */
+export type NodeFieldValue =
+	| AnyNodeData
+	| string
+	| number
+	| readonly (AnyNodeData | string | number)[]
+	| undefined;
+
+/**
+ * A child slot entry — same shape as a field value but without the
+ * optional/array wrappers (children are already listed in a readonly array
+ * on the parent).
+ */
+export type NodeChildValue = AnyNodeData | string | number;
+
+/**
  * Runtime node shape — grammar-agnostic. Used by @sittir/core functions
  * that accept any node regardless of grammar.
  *
@@ -20,15 +47,17 @@ export interface AnyNodeData {
 	type: string;
 	/** Variant subtype name — set by factory, absent on readNode output. */
 	variant?: string;
-	fields?: Record<string, unknown>;
-	children?: readonly unknown[];
+	fields?: { readonly [key: string]: NodeFieldValue };
+	children?: readonly NodeChildValue[];
 	text?: string;
 	/** Byte offset span in source. */
 	span?: { start: number; end: number };
 	/** Tree-sitter node id for O(1) drill-in via tree.nodeById(). */
 	nodeId?: number;
-	/** Whether this is a named (vs anonymous) node in the grammar. */
-	named: boolean;
+	/** Whether this is a named (vs anonymous) node in the grammar.
+	 * Optional at the type level because generated kind interfaces
+	 * omit it by convention (factory output always sets it at runtime). */
+	named?: boolean;
 }
 
 // ---------------------------------------------------------------------------

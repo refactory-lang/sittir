@@ -27,6 +27,8 @@ import type {
 
 export type {
 	AnyNodeData,
+	NodeFieldValue,
+	NodeChildValue,
 	AnyTreeNode,
 	TemplateRule,
 	TemplateRuleObject,
