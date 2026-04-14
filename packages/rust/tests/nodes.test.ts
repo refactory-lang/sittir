@@ -159,11 +159,11 @@ describe('declaration_list', () => {
 
 describe('struct_item', () => {
   it('factory produces correct type', () => {
-    const node = ir.struct({ name: { type: '_type_identifier', text: 'test' } as any, whereClause: { type: 'where_clause', text: 'test' } as any });
+    const node = ir.struct({ name: { type: '_type_identifier', text: 'test' } as any, body: { type: 'field_declaration_list', text: 'test' } as any, children: [{ type: 'visibility_modifier', text: 'test' } as any] as any });
     expect(node.type).toBe('struct_item');
   });
   it('render produces non-empty string', () => {
-    const node = ir.struct({ name: { type: '_type_identifier', text: 'test' } as any, whereClause: { type: 'where_clause', text: 'test' } as any });
+    const node = ir.struct({ name: { type: '_type_identifier', text: 'test' } as any, body: { type: 'field_declaration_list', text: 'test' } as any, children: [{ type: 'visibility_modifier', text: 'test' } as any] as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });

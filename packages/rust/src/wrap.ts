@@ -25,7 +25,6 @@ const _overrides = {
   "inner_attribute_item": {"fields":{"attribute":{"types":[{"type":"attribute","named":true}],"multiple":false,"required":true,"position":0}}},
   "mod_item": {"fields":{"visibility_modifier":{"types":[{"type":"visibility_modifier","named":true}],"multiple":false,"required":false,"position":0}}},
   "foreign_mod_item": {"fields":{"visibility_modifier":{"types":[{"type":"visibility_modifier","named":true}],"multiple":false,"required":false,"position":0},"extern_modifier":{"types":[{"type":"extern_modifier","named":true}],"multiple":false,"required":true,"position":1}}},
-  "struct_item": {"fields":{"visibility_modifier":{"types":[{"type":"visibility_modifier","named":true}],"multiple":false,"required":false,"position":0},"where_clause":{"types":[{"type":"where_clause","named":true},{"type":"field_declaration_list","named":true},{"type":"ordered_field_declaration_list","named":true}],"multiple":false,"required":true,"position":3}}},
   "union_item": {"fields":{"visibility_modifier":{"types":[{"type":"visibility_modifier","named":true}],"multiple":false,"required":false,"position":0},"where_clause":{"types":[{"type":"where_clause","named":true}],"multiple":false,"required":false,"position":3}}},
   "enum_item": {"fields":{"visibility_modifier":{"types":[{"type":"visibility_modifier","named":true}],"multiple":false,"required":false,"position":0},"where_clause":{"types":[{"type":"where_clause","named":true}],"multiple":false,"required":false,"position":3}}},
   "enum_variant": {"fields":{"visibility_modifier":{"types":[{"type":"visibility_modifier","named":true}],"multiple":false,"required":false,"position":0}}},
@@ -244,11 +243,10 @@ export function wrapDeclarationList(data: _NodeData, tree: TreeHandle): WrappedN
 export function wrapStructItem(data: _NodeData, tree: TreeHandle): WrappedNode<StructItem> {
   return {
     ...data,
-    get visibilityModifier() { return drillIn(data.fields?.['visibility_modifier'], tree); },
     get name() { return drillIn(data.fields?.['name'], tree); },
     get typeParameters() { return drillIn(data.fields?.['type_parameters'], tree); },
-    get whereClause() { return drillIn(data.fields?.['where_clause'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get body() { return drillIn(data.fields?.['body'], tree); },
+    get child() { return drillIn(data.children?.[0], tree); },
   } as unknown as WrappedNode<StructItem>;
 }
 

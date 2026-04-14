@@ -751,10 +751,9 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'body', required: true, multiple: false },
   ],
   'struct_item': [
-    { name: 'visibilityModifier', required: false, multiple: false },
     { name: 'name', required: true, multiple: false },
     { name: 'typeParameters', required: false, multiple: false },
-    { name: 'whereClause', required: true, multiple: false },
+    { name: 'body', required: true, multiple: false },
   ],
   'struct_pattern': [
     { name: 'type', required: true, multiple: false },

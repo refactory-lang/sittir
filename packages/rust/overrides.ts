@@ -267,11 +267,15 @@ export default grammar(base, {
             2: field('mutable_specifier'), // mutable_specifier [struct=1]
         }),
 
-        // struct_item: 2 field(s)
-        struct_item: ($, original) => transform(original, {
-            0: field('visibility_modifier'), // visibility_modifier [struct=0]
-            4: field('where_clause'), // where_clause [struct=1]
-        }),
+        // struct_item: override removed. Position 0 (visibility_modifier)
+        // and position 4 (the top-level body/semi/unit choice) were both
+        // wrapped in `field(...)` by the autogen from node-types.json.
+        // Top-level seq members aren't fields in tree-sitter's sense —
+        // they're structural positions. The visibility_modifier wrapper
+        // was redundant (or worse, redundant + mislabel), and the
+        // where_clause wrapper prevented polymorph promotion for the
+        // body/semi/unit variants. Letting the original rule through
+        // lets Link's promotePolymorph classify the variants properly.
 
         // trait_item: 2 field(s)
         trait_item: ($, original) => transform(original, {

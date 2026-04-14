@@ -38,7 +38,7 @@ rules:
   declaration_list:
     template: "{$$$CHILDREN}"
   struct_item:
-    template: $VISIBILITY_MODIFIER struct $NAME $TYPE_PARAMETERS $WHERE_CLAUSE
+    template: $$$CHILDREN struct $NAME $TYPE_PARAMETERS $BODY
   union_item:
     template: $VISIBILITY_MODIFIER union $NAME $TYPE_PARAMETERS $WHERE_CLAUSE $BODY
   enum_item:

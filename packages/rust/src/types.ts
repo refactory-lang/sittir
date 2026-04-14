@@ -422,6 +422,7 @@ export const enum LiteralPatternKind {
 
 // Node types — concrete interfaces
 // Repeated field/child unions (T042k dedup)
+export type _union_FieldDeclarationList_OrderedFieldDeclarationList = FieldDeclarationList | OrderedFieldDeclarationList;
 export type _union_HiddenFieldIdentifier_IntegerLiteral = HiddenFieldIdentifier | IntegerLiteral;
 export type _union_HiddenPath_LiteralPattern = HiddenPath | LiteralPattern;
 export type _union_HiddenType_Lifetime_UseBounds = HiddenType | Lifetime | UseBounds;
@@ -538,11 +539,11 @@ export interface DeclarationList {
 export interface StructItem {
   readonly type: 'struct_item';
   readonly fields: {
-    readonly visibility_modifier?: VisibilityModifier;
     readonly name: HiddenTypeIdentifier;
     readonly type_parameters?: TypeParameters;
-    readonly where_clause: WhereClause | FieldDeclarationList | OrderedFieldDeclarationList;
+    readonly body: _union_FieldDeclarationList_OrderedFieldDeclarationList;
   };
+  readonly children: readonly [VisibilityModifier | WhereClause];
 }
 
 export interface UnionItem {
@@ -577,7 +578,7 @@ export interface EnumVariant {
   readonly fields: {
     readonly visibility_modifier?: VisibilityModifier;
     readonly name: Identifier;
-    readonly body?: FieldDeclarationList | OrderedFieldDeclarationList;
+    readonly body?: _union_FieldDeclarationList_OrderedFieldDeclarationList;
     readonly value?: Expression;
   };
 }

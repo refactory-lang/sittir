@@ -379,19 +379,21 @@ export function declarationList(..._children: ChildOf<DeclarationList>[]) {
 
 export function structItem(config: ConfigOf<StructItem>) {
   const fields = {
-    visibility_modifier: config?.visibilityModifier,
     name: config?.name,
     type_parameters: config?.typeParameters,
-    where_clause: config?.whereClause,
+    body: config?.body,
   };
+  const children = config?.children ?? [];
   return {
     type: 'struct_item' as const,
     named: true as const,
     fields,
-    visibilityModifier(visibilityModifier_?: ConfigOf<StructItem>['visibilityModifier']) { return _fs(config, structItem, 'visibilityModifier', visibilityModifier_, fields.visibility_modifier); },
+    children,
     name(name_?: ConfigOf<StructItem>['name']) { return _fs(config, structItem, 'name', name_, fields.name); },
     typeParameters(typeParameters_?: ConfigOf<StructItem>['typeParameters']) { return _fs(config, structItem, 'typeParameters', typeParameters_, fields.type_parameters); },
-    whereClause(whereClause_?: ConfigOf<StructItem>['whereClause']) { return _fs(config, structItem, 'whereClause', whereClause_, fields.where_clause); },
+    body(body_?: ConfigOf<StructItem>['body']) { return _fs(config, structItem, 'body', body_, fields.body); },
+    getChild() { return children[0]; },
+    setChild(child: ChildOf<StructItem>) { return structItem({ ...(config ?? {}), children: [child] }); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
