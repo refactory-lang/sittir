@@ -141,43 +141,12 @@ export async function validateRoundTrip(
 		}
 	}
 
-	// --- Check 7: Anonymous token override round-trip ---
-	for (const [kind, entry] of Object.entries(overrides)) {
-		for (const [fieldName, spec] of Object.entries(entry.fields)) {
-			if (!spec.types.some(t => !t.named)) continue;
-			// Find a corpus entry that contains this kind
-			for (const corpusEntry of entries) {
-				const tree = parser.parse(corpusEntry.source) as TSTree;
-				if (tree.rootNode.hasError) continue;
-				const node = findFirst(tree.rootNode, kind);
-				if (!node) continue;
-
-				total++;
-				try {
-					const handle = treeHandle(tree);
-					const data = readNode(handle, node.id, routing);
-					if (data.fields?.[fieldName] === undefined) { pass++; break; }
-
-					const rendered = render(data);
-					const tree2 = parser.parse(rendered) as TSTree;
-					const node2 = findFirst(tree2.rootNode, kind);
-					if (!node2) {
-						errors.push({ name: `anon:${kind}.${fieldName}`, message: 're-parsed tree missing kind' });
-						break;
-					}
-					const data2 = readNode(treeHandle(tree2), node2.id, routing);
-					if (data2.fields?.[fieldName] === undefined) {
-						errors.push({ name: `anon:${kind}.${fieldName}`, message: 'anonymous token override lost in round-trip' });
-					} else {
-						pass++;
-					}
-				} catch (e) {
-					errors.push({ name: `anon:${kind}.${fieldName}`, message: `${(e as Error).message.slice(0, 100)}` });
-				}
-				break; // One test per override field is enough
-			}
-		}
-	}
+	// Check 7 (anonymous-token override round-trip) removed. It was a
+	// v1-era check that iterated `overrides.json` anonymous-token fields
+	// and verified they survived render→reparse. In v2, overrides flow
+	// through grammar extensions and anonymous tokens are real rule-tree
+	// fields already tested by Check 6 (the end-to-end corpus loop).
+	// Duplicate work checking a stale invariant.
 
 	return { grammar, total, pass, fail: total - pass - skip, skip, errors };
 }
