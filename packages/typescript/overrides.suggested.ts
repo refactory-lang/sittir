@@ -24,6 +24,9 @@
 // that mirrors the shape you'd hand-write yourself.
 // ---------------------------------------------------------------
 export const suggestedRules = {
+  // statement: 1 inferred field(s)
+  // [applied] "statement" field 'body' on $.statement_block — 100% agreement, 13 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
+
   // --- Promoted supertypes (add matching names to grammar.supertypes) ---
   // [applied] promoted supertype
   "_module_export_name": $ => choice($.identifier, $.string),

@@ -16,7 +16,46 @@
  * curator can import either, or pull specific entries out by hand.
  */
 
-import type { NodeMap, DerivationLog, InferredFieldEntry, PromotedRuleEntry, RepeatedShapeEntry } from '../compiler/rule.ts'
+import type { NodeMap, DerivationLog, InferredFieldEntry, PromotedRuleEntry, RepeatedShapeEntry, Rule } from '../compiler/rule.ts'
+
+/**
+ * Find the position index of `targetSymbol` within a top-level SEQ rule.
+ * Matches both the bare symbol (held inference — pipeline didn't rewrite)
+ * and the already-wrapped `field(fieldName, symbol(targetSymbol))` shape
+ * (applied inference). Returns null when the rule is not a SEQ at the
+ * top level or the target can't be located as a direct member.
+ */
+function findSymbolPosition(
+    rule: Rule,
+    targetSymbol: string,
+    fieldName: string,
+): number | null {
+    if (rule.type !== 'seq') return null
+    const unwrap = (r: Rule): Rule => {
+        switch (r.type) {
+            case 'optional':
+            case 'variant':
+            case 'group':
+            case 'clause':
+                return unwrap(r.content)
+            default:
+                return r
+        }
+    }
+    for (let i = 0; i < rule.members.length; i++) {
+        const m = unwrap(rule.members[i]!)
+        if (m.type === 'symbol' && m.name === targetSymbol) return i
+        if (
+            m.type === 'field'
+            && m.name === fieldName
+            && unwrap(m.content).type === 'symbol'
+            && (unwrap(m.content) as { name: string }).name === targetSymbol
+        ) {
+            return i
+        }
+    }
+    return null
+}
 
 export interface EmitSuggestedFromNodeMapConfig {
     grammar: string
@@ -84,13 +123,14 @@ export function emitSuggestedFromNodeMap(config: EmitSuggestedFromNodeMapConfig)
 
     // Group field-inference entries by parent kind so each rule
     // entry carries every inference Link would apply to it in one
-    // shot. Only held inferences need a copy-paste suggestion —
-    // applied ones are already woven into the grammar and would
-    // leave a stale `N: field(...)` placeholder begging for the
-    // position the pipeline has already resolved.
+    // shot. Every entry's position is resolved from the post-Optimize
+    // rule tree so the emitted `transform(original, { POS: field(...) })`
+    // snippet is a straight copy-paste (no `N:` TODO stub). Entries
+    // on non-SEQ rules (e.g. ts `statement`, which is a CHOICE) don't
+    // have a positional slot — those are emitted as a comment-only
+    // block since `transform()` can't target a CHOICE arm.
     const inferredByKind = new Map<string, InferredFieldEntry[]>()
     for (const entry of log.inferredFields) {
-        if (entry.applied) continue
         const list = inferredByKind.get(entry.kind) ?? []
         list.push(entry)
         inferredByKind.set(entry.kind, list)
@@ -98,19 +138,43 @@ export function emitSuggestedFromNodeMap(config: EmitSuggestedFromNodeMapConfig)
     const sortedKinds = [...inferredByKind.keys()].sort()
     for (const kind of sortedKinds) {
         const entries = inferredByKind.get(kind)!
+        const parentRule = nodeMap.rules[kind]
+        const resolved: Array<{ e: InferredFieldEntry; pos: number | null }> = []
+        for (const e of entries) {
+            const pos = parentRule
+                ? findSymbolPosition(parentRule, e.targetSymbol, e.fieldName)
+                : null
+            resolved.push({ e, pos })
+        }
+        const positional = resolved.filter(r => r.pos !== null)
+        const nonPositional = resolved.filter(r => r.pos === null)
+
         emit(kind, () => {
             lines.push(`  // ${kind}: ${entries.length} inferred field(s)`)
-            lines.push(`  ${quoteKey(kind)}: ($, original) => transform(original, {`)
-            const seen = new Set<string>()
-            for (const e of entries) {
-                const dkey = `${e.fieldName}::${e.targetSymbol}`
-                if (seen.has(dkey)) continue
-                seen.add(dkey)
-                const pct = (e.agreement * 100).toFixed(0)
-                lines.push(`    // [held] ${pct}% agreement, ${e.sampleSize} parents`)
-                lines.push(`    N: field(${JSON.stringify(e.fieldName)}),  // TODO: pick position N for $.${e.targetSymbol}`)
+            if (positional.length > 0) {
+                lines.push(`  ${quoteKey(kind)}: ($, original) => transform(original, {`)
+                const seen = new Set<string>()
+                for (const { e, pos } of positional) {
+                    const dkey = `${e.fieldName}::${e.targetSymbol}`
+                    if (seen.has(dkey)) continue
+                    seen.add(dkey)
+                    const tag = e.applied ? 'applied' : 'held'
+                    const pct = (e.agreement * 100).toFixed(0)
+                    lines.push(`    // [${tag}] ${pct}% agreement, ${e.sampleSize} parents`)
+                    lines.push(`    ${pos}: field(${JSON.stringify(e.fieldName)}),  // $.${e.targetSymbol}`)
+                }
+                lines.push('  }),')
             }
-            lines.push('  }),')
+            for (const { e } of nonPositional) {
+                const tag = e.applied ? 'applied' : 'held'
+                const pct = (e.agreement * 100).toFixed(0)
+                lines.push(
+                    `  // [${tag}] ${quoteKey(kind)} field '${e.fieldName}' on $.${e.targetSymbol}` +
+                    ` — ${pct}% agreement, ${e.sampleSize} parents. Parent rule is not a top-level` +
+                    ` SEQ so transform() can't target a position; inference is applied inside Link's` +
+                    ` applyInferredFields pass (tree rewrite) rather than via overrides.ts.`,
+                )
+            }
             lines.push('')
         })
     }
