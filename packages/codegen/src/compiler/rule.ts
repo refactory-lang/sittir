@@ -512,7 +512,13 @@ export function deriveFields(rule: Rule, isOptional = false, isRepeated = false)
 function deriveFieldsRaw(rule: Rule, isOptional: boolean, isRepeated: boolean): AssembledField[] {
     switch (rule.type) {
         case 'field': {
-            const contentTypes = deriveContentTypes(rule.content)
+            // Dedupe at the field boundary — inner walks via `flatMap`
+            // over seq/choice members can legitimately produce duplicate
+            // kind names when multiple variants reference the same
+            // target (macro_definition's `rules: $$$MACRO_RULE` repeats
+            // macro_rule across 6 variants; supertype expansions can
+            // overlap with concrete sibling kinds).
+            const contentTypes = [...new Set(deriveContentTypes(rule.content))]
             const literalValues = deriveLiteralValues(rule.content)
             const propertyName = snakeToCamel(rule.name)
             // A field wrapping a repeat/optional carries that shape on

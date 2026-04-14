@@ -20,7 +20,7 @@ import type { AliasedImport, ArgumentList, AsPattern, AsPatternTarget, AssertSta
 // Emitted one entry per line so PR diffs show only the changed kind.
 const _overrides = {
   "relative_import": {"fields":{"import_prefix":{"types":[{"type":"import_prefix","named":true}],"multiple":false,"required":true,"position":0},"dotted_name":{"types":[{"type":"dotted_name","named":true}],"multiple":false,"required":false,"position":1}}},
-  "import_from_statement": {"fields":{"wildcard_import":{"types":[{"type":"wildcard_import","named":false},{"type":"_import_list","named":true},{"type":"_import_list","named":true}],"multiple":false,"required":true,"position":1}}},
+  "import_from_statement": {"fields":{"wildcard_import":{"types":[{"type":"wildcard_import","named":false},{"type":"_import_list","named":true}],"multiple":false,"required":true,"position":1}}},
   "chevron": {"fields":{"expression":{"types":[{"type":"expression","named":true}],"multiple":false,"required":true,"position":0}}},
   "try_statement": {"fields":{"except_clauses":{"types":[{"type":"except_clause","named":true}],"multiple":true,"required":true,"position":1},"else_clause":{"types":[{"type":"else_clause","named":true}],"multiple":false,"required":false,"position":2},"finally_clause":{"types":[{"type":"finally_clause","named":true}],"multiple":false,"required":false,"position":3}}},
   "finally_clause": {"fields":{"block":{"types":[{"type":"_suite","named":true}],"multiple":false,"required":true,"position":0}}},
@@ -29,7 +29,7 @@ const _overrides = {
   "decorator": {"fields":{"expression":{"types":[{"type":"expression","named":true}],"multiple":false,"required":true,"position":0},"newline":{"types":[],"multiple":false,"required":true,"position":1}}},
   "keyword_pattern": {"fields":{"identifier":{"types":[{"type":"identifier","named":true}],"multiple":false,"required":true,"position":0},"simple_pattern":{"types":[{"type":"_simple_pattern","named":true}],"multiple":false,"required":true,"position":1}}},
   "splat_pattern": {"fields":{"identifier":{"types":[],"multiple":false,"required":true,"position":0}}},
-  "class_pattern": {"fields":{"dotted_name":{"types":[{"type":"dotted_name","named":true}],"multiple":false,"required":true,"position":0},"arguments":{"types":[{"type":"case_pattern","named":true},{"type":"case_pattern","named":true}],"multiple":false,"required":false,"position":1}}},
+  "class_pattern": {"fields":{"dotted_name":{"types":[{"type":"dotted_name","named":true}],"multiple":false,"required":true,"position":0},"arguments":{"types":[{"type":"case_pattern","named":true}],"multiple":false,"required":false,"position":1}}},
   "complex_pattern": {"fields":{"real":{"types":[],"multiple":false,"required":false,"position":0},"imaginary":{"types":[{"type":"integer","named":true},{"type":"float","named":true}],"multiple":false,"required":true,"position":1}}},
   "as_pattern": {"fields":{"expression":{"types":[{"type":"expression","named":true}],"multiple":false,"required":true,"position":0}}},
   "comparison_operator": {"fields":{"left":{"types":[{"type":"primary_expression","named":true}],"multiple":false,"required":true,"position":0},"comparators":{"types":[{"type":"_not_in","named":true},{"type":"_is_not","named":true},{"type":"primary_expression","named":true}],"multiple":true,"required":true,"position":1}}},

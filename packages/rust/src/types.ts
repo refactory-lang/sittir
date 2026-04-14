@@ -444,7 +444,7 @@ export interface MacroDefinition {
   readonly type: 'macro_definition';
   readonly fields: {
     readonly name: Identifier | ReservedIdentifier;
-    readonly rules: MacroRule | MacroRule | MacroRule | MacroRule | MacroRule | MacroRule;
+    readonly rules: MacroRule;
   };
 }
 
@@ -541,7 +541,7 @@ export interface StructItem {
     readonly visibility_modifier?: VisibilityModifier;
     readonly name: HiddenTypeIdentifier;
     readonly type_parameters?: TypeParameters;
-    readonly where_clause: WhereClause | FieldDeclarationList | OrderedFieldDeclarationList | WhereClause;
+    readonly where_clause: WhereClause | FieldDeclarationList | OrderedFieldDeclarationList;
   };
 }
 
@@ -599,7 +599,7 @@ export interface FieldDeclaration {
 export interface OrderedFieldDeclarationList {
   readonly type: 'ordered_field_declaration_list';
   readonly fields: {
-    readonly attributes?: AttributeItem | VisibilityModifier | HiddenType | AttributeItem | VisibilityModifier | HiddenType;
+    readonly attributes?: AttributeItem | VisibilityModifier | HiddenType;
     readonly visibility_modifier?: ",";
   };
 }
@@ -1071,7 +1071,7 @@ export interface TryExpression {
 export interface ReferenceExpression {
   readonly type: 'reference_expression';
   readonly fields: {
-    readonly mutable_specifier: MutableSpecifier | MutableSpecifier;
+    readonly mutable_specifier: MutableSpecifier;
     readonly value: Expression;
   };
 }
@@ -1137,7 +1137,7 @@ export interface ArrayExpression {
   readonly type: 'array_expression';
   readonly fields: {
     readonly attributes: readonly (AttributeItem)[];
-    readonly elements: Expression | Expression | AttributeItem | Expression | AttributeItem | Expression;
+    readonly elements: Expression | AttributeItem;
   };
 }
 

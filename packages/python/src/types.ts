@@ -347,7 +347,7 @@ export interface ImportFromStatement {
   readonly type: 'import_from_statement';
   readonly fields: {
     readonly module_name: RelativeImport | DottedName;
-    readonly wildcard_import: WildcardImport | ImportList | ImportList;
+    readonly wildcard_import: WildcardImport | ImportList;
   };
 }
 
@@ -689,7 +689,7 @@ export interface ClassPattern {
   readonly type: 'class_pattern';
   readonly fields: {
     readonly dotted_name: DottedName;
-    readonly arguments?: CasePattern | CasePattern;
+    readonly arguments?: CasePattern;
   };
 }
 
@@ -1049,7 +1049,7 @@ export interface ForInClause {
   readonly type: 'for_in_clause';
   readonly fields: {
     readonly left: LeftHandSide;
-    readonly right: ExpressionWithinForInClause | ExpressionWithinForInClause;
+    readonly right: ExpressionWithinForInClause;
   };
 }
 

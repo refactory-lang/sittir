@@ -427,13 +427,20 @@ function resolveFieldCall(
     // literal would never match anything. Expansion also lets
     // T042i reach for the named `_super_<name>` dedup entry since
     // the interner keys on the full subtype set.
+    //
+    // Dedupe after expansion: contentTypes may legitimately contain
+    // a supertype AND one of its concrete subtypes (e.g. `_expression`
+    // and `range_expression` can both appear on the same field), and
+    // the expansion would otherwise surface the concrete kind twice.
+    const seen = new Set<string>()
     const expanded: string[] = []
     for (const t of field.contentTypes) {
         const n = nodeMap.nodes.get(t)
-        if (n?.modelType === 'supertype') {
-            expanded.push(...n.subtypes)
-        } else {
-            expanded.push(t)
+        const items = n?.modelType === 'supertype' ? n.subtypes : [t]
+        for (const item of items) {
+            if (seen.has(item)) continue
+            seen.add(item)
+            expanded.push(item)
         }
     }
 
@@ -466,6 +473,21 @@ function resolveFieldCall(
         }
     }
 
+    // Single-kind fast path: when dispatch reduces to exactly one
+    // possible target, skip the generic `_resolveOne`/`_resolveMany`
+    // entry point (which iterates the leafKinds / branchKinds arrays)
+    // and emit a direct specialized call. Removes one function-call
+    // layer + array-iteration dispatch per field read at runtime.
+    const total = leafKinds.length + branchKinds.length
+    const generic = typeParam ? `<${typeParam}>` : ''
+    if (total === 1) {
+        const kindName = leafKinds[0] ?? branchKinds[0]!
+        const isLeaf = leafKinds.length === 1
+        const specialized = field.multiple
+            ? (isLeaf ? '_resolveManyLeaf' : '_resolveManyBranch')
+            : (isLeaf ? '_resolveOneLeaf' : '_resolveOneBranch')
+        return `${specialized}${generic}(${prop}, ${JSON.stringify(kindName)})`
+    }
     // T042i: refer to interned kind-list constants instead of
     // repeating the literal arrays at every call site. Duplicated
     // entries collapse to a single module-scoped `_KN = [...]` decl
@@ -473,7 +495,6 @@ function resolveFieldCall(
     const leafArr = intern(leafKinds)
     const branchArr = intern(branchKinds)
     const helper = field.multiple ? '_resolveMany' : '_resolveOne'
-    const generic = typeParam ? `<${typeParam}>` : ''
     return `${helper}${generic}(${prop}, ${leafArr}, ${branchArr})`
 }
 
@@ -577,5 +598,55 @@ function emitResolverHelpers(lines: string[], nodeMap: NodeMap): void {
     lines.push('  if (v === undefined || v === null) return [];')
     lines.push('  const arr = Array.isArray(v) ? v : [v];')
     lines.push('  return arr.map(e => _resolveOne<T>(e, leafKinds, branchKinds));')
+    lines.push('}')
+    lines.push('')
+
+    // Single-kind fast paths — resolver call sites with only one
+    // possible target dispatch here directly, skipping the leafKinds
+    // / branchKinds iteration in _resolveOne.
+    lines.push('function _resolveOneLeaf<T>(v: unknown, kind: string): T {')
+    lines.push('  if (v === undefined || v === null) return v as T;')
+    lines.push('  if (isNodeData(v)) return v as T;')
+    lines.push('  if (typeof v === "boolean" || typeof v === "number") {')
+    lines.push('    const scalar = _resolveScalar(v);')
+    lines.push('    if (scalar !== undefined) return scalar as T;')
+    lines.push('  }')
+    lines.push('  if (typeof v === "string") {')
+    lines.push('    const e = _leafRegistry[kind];')
+    lines.push('    if (e !== undefined) return e.factory(v) as T;')
+    lines.push('  }')
+    lines.push('  if (typeof v === "object" && v !== null && "kind" in v) {')
+    lines.push('    const { kind: k, ...rest } = v as { kind: string } & Record<string, unknown>;')
+    lines.push('    return _resolveByKind(k, rest) as T;')
+    lines.push('  }')
+    lines.push('  return v as T;')
+    lines.push('}')
+    lines.push('')
+
+    lines.push('function _resolveOneBranch<T>(v: unknown, kind: string): T {')
+    lines.push('  if (v === undefined || v === null) return v as T;')
+    lines.push('  if (isNodeData(v)) return v as T;')
+    lines.push('  if (typeof v === "object" && v !== null) {')
+    lines.push('    if ("kind" in v) {')
+    lines.push('      const { kind: k, ...rest } = v as { kind: string } & Record<string, unknown>;')
+    lines.push('      return _resolveByKind(k, rest) as T;')
+    lines.push('    }')
+    lines.push('    return _resolveByKind(kind, v) as T;')
+    lines.push('  }')
+    lines.push('  return v as T;')
+    lines.push('}')
+    lines.push('')
+
+    lines.push('function _resolveManyLeaf<T>(v: unknown, kind: string): readonly T[] {')
+    lines.push('  if (v === undefined || v === null) return [];')
+    lines.push('  const arr = Array.isArray(v) ? v : [v];')
+    lines.push('  return arr.map(e => _resolveOneLeaf<T>(e, kind));')
+    lines.push('}')
+    lines.push('')
+
+    lines.push('function _resolveManyBranch<T>(v: unknown, kind: string): readonly T[] {')
+    lines.push('  if (v === undefined || v === null) return [];')
+    lines.push('  const arr = Array.isArray(v) ? v : [v];')
+    lines.push('  return arr.map(e => _resolveOneBranch<T>(e, kind));')
     lines.push('}')
 }

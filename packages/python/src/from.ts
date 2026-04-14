@@ -98,6 +98,49 @@ function _resolveMany<T>(v: unknown, leafKinds: readonly string[], branchKinds: 
   return arr.map(e => _resolveOne<T>(e, leafKinds, branchKinds));
 }
 
+function _resolveOneLeaf<T>(v: unknown, kind: string): T {
+  if (v === undefined || v === null) return v as T;
+  if (isNodeData(v)) return v as T;
+  if (typeof v === "boolean" || typeof v === "number") {
+    const scalar = _resolveScalar(v);
+    if (scalar !== undefined) return scalar as T;
+  }
+  if (typeof v === "string") {
+    const e = _leafRegistry[kind];
+    if (e !== undefined) return e.factory(v) as T;
+  }
+  if (typeof v === "object" && v !== null && "kind" in v) {
+    const { kind: k, ...rest } = v as { kind: string } & Record<string, unknown>;
+    return _resolveByKind(k, rest) as T;
+  }
+  return v as T;
+}
+
+function _resolveOneBranch<T>(v: unknown, kind: string): T {
+  if (v === undefined || v === null) return v as T;
+  if (isNodeData(v)) return v as T;
+  if (typeof v === "object" && v !== null) {
+    if ("kind" in v) {
+      const { kind: k, ...rest } = v as { kind: string } & Record<string, unknown>;
+      return _resolveByKind(k, rest) as T;
+    }
+    return _resolveByKind(kind, v) as T;
+  }
+  return v as T;
+}
+
+function _resolveManyLeaf<T>(v: unknown, kind: string): readonly T[] {
+  if (v === undefined || v === null) return [];
+  const arr = Array.isArray(v) ? v : [v];
+  return arr.map(e => _resolveOneLeaf<T>(e, kind));
+}
+
+function _resolveManyBranch<T>(v: unknown, kind: string): readonly T[] {
+  if (v === undefined || v === null) return [];
+  const arr = Array.isArray(v) ? v : [v];
+  return arr.map(e => _resolveOneBranch<T>(e, kind));
+}
+
 // Interned resolver kind lists (T042i dedup)
 const _super_named_expression_lhs: readonly string[] = ["identifier","keyword_identifier"];
 const _super_left_hand_side: readonly string[] = ["pattern","pattern_list"];
@@ -105,43 +148,20 @@ const _super_expressions: readonly string[] = ["expression","expression_list"];
 const _super_expression_within_for_in_clause: readonly string[] = ["expression","lambda_within_for_in_clause"];
 const _super_right_hand_side: readonly string[] = ["expression","expression_list","assignment","augmented_assignment","pattern_list","yield"];
 const _super_f_expression: readonly string[] = ["expression","expression_list","pattern_list","yield"];
-const _K0: readonly string[] = ["import_prefix"];
-const _K1: readonly string[] = [];
-const _K2: readonly string[] = ["dotted_name"];
-const _K3: readonly string[] = ["relative_import","dotted_name"];
-const _K4: readonly string[] = ["_import_list","_import_list"];
-const _K5: readonly string[] = ["dotted_name","aliased_import"];
-const _K6: readonly string[] = ["identifier"];
-const _K7: readonly string[] = ["expression"];
-const _K8: readonly string[] = ["_suite"];
-const _K9: readonly string[] = ["elif_clause","else_clause"];
-const _K10: readonly string[] = ["case_clause"];
-const _K11: readonly string[] = ["if_clause"];
-const _K12: readonly string[] = ["else_clause"];
-const _K13: readonly string[] = ["except_clause"];
-const _K14: readonly string[] = ["finally_clause"];
-const _K15: readonly string[] = ["type_parameter"];
-const _K16: readonly string[] = ["parameters"];
-const _K17: readonly string[] = ["type"];
-const _K18: readonly string[] = ["string"];
-const _K19: readonly string[] = ["argument_list"];
-const _K20: readonly string[] = ["class_definition","function_definition"];
-const _K21: readonly string[] = ["_simple_pattern"];
-const _K22: readonly string[] = ["case_pattern","case_pattern"];
-const _K23: readonly string[] = ["integer","float"];
-const _K24: readonly string[] = ["tuple_pattern"];
-const _K25: readonly string[] = ["primary_expression"];
-const _K26: readonly string[] = ["_not_in","_is_not"];
-const _K27: readonly string[] = ["lambda_parameters"];
-const _K28: readonly string[] = ["expression","slice"];
-const _K29: readonly string[] = ["generator_expression","argument_list"];
-const _K30: readonly string[] = ["pair"];
-const _K31: readonly string[] = ["expression","lambda_within_for_in_clause","expression","lambda_within_for_in_clause"];
-const _K32: readonly string[] = ["string_start"];
-const _K33: readonly string[] = ["interpolation","string_content"];
-const _K34: readonly string[] = ["string_end"];
-const _K35: readonly string[] = ["type_conversion"];
-const _K36: readonly string[] = ["format_specifier"];
+const _K0: readonly string[] = [];
+const _K1: readonly string[] = ["relative_import","dotted_name"];
+const _K2: readonly string[] = ["dotted_name","aliased_import"];
+const _K3: readonly string[] = ["elif_clause","else_clause"];
+const _K4: readonly string[] = ["identifier"];
+const _K5: readonly string[] = ["string"];
+const _K6: readonly string[] = ["class_definition","function_definition"];
+const _K7: readonly string[] = ["integer","float"];
+const _K8: readonly string[] = ["tuple_pattern"];
+const _K9: readonly string[] = ["_not_in","_is_not"];
+const _K10: readonly string[] = ["primary_expression"];
+const _K11: readonly string[] = ["expression","slice"];
+const _K12: readonly string[] = ["generator_expression","argument_list"];
+const _K13: readonly string[] = ["interpolation","string_content"];
 
 export function moduleFrom(...input: readonly (NonNullable<ConfigOf<Module>['children']>[number] | Module)[]) {
   if (input.length === 1 && isNodeData(input[0]) && input[0].type === 'module') {
@@ -176,8 +196,8 @@ export function relativeImportFrom(input: RelativeImportFromInput) {
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return relativeImport({
-    importPrefix: _resolveOne<NonNullable<ConfigOf<RelativeImport>['importPrefix']>>((_f.import_prefix ?? _f.importPrefix), _K0, _K1),
-    dottedName: _resolveOne<NonNullable<ConfigOf<RelativeImport>['dottedName']>>((_f.dotted_name ?? _f.dottedName), _K1, _K2),
+    importPrefix: _resolveOneLeaf<NonNullable<ConfigOf<RelativeImport>['importPrefix']>>((_f.import_prefix ?? _f.importPrefix), "import_prefix"),
+    dottedName: _resolveOneBranch<NonNullable<ConfigOf<RelativeImport>['dottedName']>>((_f.dotted_name ?? _f.dottedName), "dotted_name"),
   });
 }
 
@@ -193,8 +213,8 @@ export function importFromStatementFrom(input: ImportFromStatementFromInput) {
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return importFromStatement({
-    moduleName: _resolveOne<NonNullable<ConfigOf<ImportFromStatement>['moduleName']>>((_f.module_name ?? _f.moduleName), _K1, _K3),
-    wildcardImport: _resolveOne<NonNullable<ConfigOf<ImportFromStatement>['wildcardImport']>>((_f.wildcard_import ?? _f.wildcardImport), _K1, _K4),
+    moduleName: _resolveOne<NonNullable<ConfigOf<ImportFromStatement>['moduleName']>>((_f.module_name ?? _f.moduleName), _K0, _K1),
+    wildcardImport: _resolveOneBranch<NonNullable<ConfigOf<ImportFromStatement>['wildcardImport']>>((_f.wildcard_import ?? _f.wildcardImport), "_import_list"),
   });
 }
 
@@ -202,7 +222,7 @@ export function importListFrom(input: ImportListFromInput) {
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return importList({
-    name: _resolveMany<NonNullable<ConfigOf<ImportList>['name']>[number]>(_f.name, _K1, _K5),
+    name: _resolveMany<NonNullable<ConfigOf<ImportList>['name']>[number]>(_f.name, _K0, _K2),
   });
 }
 
@@ -210,8 +230,8 @@ export function aliasedImportFrom(input: AliasedImportFromInput) {
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return aliasedImport({
-    name: _resolveOne<NonNullable<ConfigOf<AliasedImport>['name']>>(_f.name, _K1, _K2),
-    alias: _resolveOne<NonNullable<ConfigOf<AliasedImport>['alias']>>(_f.alias, _K6, _K1),
+    name: _resolveOneBranch<NonNullable<ConfigOf<AliasedImport>['name']>>(_f.name, "dotted_name"),
+    alias: _resolveOneLeaf<NonNullable<ConfigOf<AliasedImport>['alias']>>(_f.alias, "identifier"),
   });
 }
 
@@ -219,7 +239,7 @@ export function printStatementFrom(input: PrintStatementFromInput) {
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return printStatement({
-    argument: _resolveMany<NonNullable<ConfigOf<PrintStatement>['argument']>[number]>(_f.argument, _K1, _K7),
+    argument: _resolveManyBranch<NonNullable<ConfigOf<PrintStatement>['argument']>[number]>(_f.argument, "expression"),
     children: ((input as { children?: NonNullable<ConfigOf<PrintStatement>['children']> })?.children ?? []) as NonNullable<ConfigOf<PrintStatement>['children']>,
   });
 }
@@ -228,7 +248,7 @@ export function chevronFrom(input: ChevronFromInput) {
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return chevron({
-    expression: _resolveOne<NonNullable<ConfigOf<Chevron>['expression']>>(_f.expression, _K1, _K7),
+    expression: _resolveOneBranch<NonNullable<ConfigOf<Chevron>['expression']>>(_f.expression, "expression"),
   });
 }
 
@@ -252,8 +272,8 @@ export function namedExpressionFrom(input: NamedExpressionFromInput) {
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return namedExpression({
-    name: _resolveOne<NonNullable<ConfigOf<NamedExpression>['name']>>(_f.name, _super_named_expression_lhs, _K1),
-    value: _resolveOne<NonNullable<ConfigOf<NamedExpression>['value']>>(_f.value, _K1, _K7),
+    name: _resolveOne<NonNullable<ConfigOf<NamedExpression>['name']>>(_f.name, _super_named_expression_lhs, _K0),
+    value: _resolveOneBranch<NonNullable<ConfigOf<NamedExpression>['value']>>(_f.value, "expression"),
   });
 }
 
@@ -277,7 +297,7 @@ export function raiseStatementFrom(input?: RaiseStatementFromInput) {
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return raiseStatement({
-    cause: _resolveOne<NonNullable<ConfigOf<RaiseStatement>['cause']>>(_f.cause, _K1, _K7),
+    cause: _resolveOneBranch<NonNullable<ConfigOf<RaiseStatement>['cause']>>(_f.cause, "expression"),
     children: ((input as { children?: NonNullable<ConfigOf<RaiseStatement>['children']> })?.children ?? []) as NonNullable<ConfigOf<RaiseStatement>['children']>,
   });
 }
@@ -301,9 +321,9 @@ export function ifStatementFrom(input: IfStatementFromInput) {
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return ifStatement({
-    condition: _resolveOne<NonNullable<ConfigOf<IfStatement>['condition']>>(_f.condition, _K1, _K7),
-    consequence: _resolveOne<NonNullable<ConfigOf<IfStatement>['consequence']>>(_f.consequence, _K1, _K8),
-    alternative: _resolveMany<NonNullable<ConfigOf<IfStatement>['alternative']>[number]>(_f.alternative, _K1, _K9),
+    condition: _resolveOneBranch<NonNullable<ConfigOf<IfStatement>['condition']>>(_f.condition, "expression"),
+    consequence: _resolveOneBranch<NonNullable<ConfigOf<IfStatement>['consequence']>>(_f.consequence, "_suite"),
+    alternative: _resolveMany<NonNullable<ConfigOf<IfStatement>['alternative']>[number]>(_f.alternative, _K0, _K3),
   });
 }
 
@@ -311,8 +331,8 @@ export function elifClauseFrom(input: ElifClauseFromInput) {
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return elifClause({
-    condition: _resolveOne<NonNullable<ConfigOf<ElifClause>['condition']>>(_f.condition, _K1, _K7),
-    consequence: _resolveOne<NonNullable<ConfigOf<ElifClause>['consequence']>>(_f.consequence, _K1, _K8),
+    condition: _resolveOneBranch<NonNullable<ConfigOf<ElifClause>['condition']>>(_f.condition, "expression"),
+    consequence: _resolveOneBranch<NonNullable<ConfigOf<ElifClause>['consequence']>>(_f.consequence, "_suite"),
   });
 }
 
@@ -320,7 +340,7 @@ export function elseClauseFrom(input: ElseClauseFromInput) {
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return elseClause({
-    body: _resolveOne<NonNullable<ConfigOf<ElseClause>['body']>>(_f.body, _K1, _K8),
+    body: _resolveOneBranch<NonNullable<ConfigOf<ElseClause>['body']>>(_f.body, "_suite"),
   });
 }
 
@@ -328,8 +348,8 @@ export function matchStatementFrom(input: MatchStatementFromInput) {
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return matchStatement({
-    subject: _resolveMany<NonNullable<ConfigOf<MatchStatement>['subject']>[number]>(_f.subject, _K1, _K7),
-    body: _resolveOne<NonNullable<ConfigOf<MatchStatement>['body']>>(_f.body, _K1, _K10),
+    subject: _resolveManyBranch<NonNullable<ConfigOf<MatchStatement>['subject']>[number]>(_f.subject, "expression"),
+    body: _resolveOneBranch<NonNullable<ConfigOf<MatchStatement>['body']>>(_f.body, "case_clause"),
   });
 }
 
@@ -337,8 +357,8 @@ export function caseClauseFrom(input: CaseClauseFromInput) {
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return caseClause({
-    guard: _resolveOne<NonNullable<ConfigOf<CaseClause>['guard']>>(_f.guard, _K1, _K11),
-    consequence: _resolveOne<NonNullable<ConfigOf<CaseClause>['consequence']>>(_f.consequence, _K1, _K8),
+    guard: _resolveOneBranch<NonNullable<ConfigOf<CaseClause>['guard']>>(_f.guard, "if_clause"),
+    consequence: _resolveOneBranch<NonNullable<ConfigOf<CaseClause>['consequence']>>(_f.consequence, "_suite"),
     children: ((input as { children?: NonNullable<ConfigOf<CaseClause>['children']> })?.children ?? []) as NonNullable<ConfigOf<CaseClause>['children']>,
   });
 }
@@ -347,10 +367,10 @@ export function forStatementFrom(input: ForStatementFromInput) {
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return forStatement({
-    left: _resolveOne<NonNullable<ConfigOf<ForStatement>['left']>>(_f.left, _K1, _super_left_hand_side),
-    right: _resolveOne<NonNullable<ConfigOf<ForStatement>['right']>>(_f.right, _K1, _super_expressions),
-    body: _resolveOne<NonNullable<ConfigOf<ForStatement>['body']>>(_f.body, _K1, _K8),
-    alternative: _resolveOne<NonNullable<ConfigOf<ForStatement>['alternative']>>(_f.alternative, _K1, _K12),
+    left: _resolveOne<NonNullable<ConfigOf<ForStatement>['left']>>(_f.left, _K0, _super_left_hand_side),
+    right: _resolveOne<NonNullable<ConfigOf<ForStatement>['right']>>(_f.right, _K0, _super_expressions),
+    body: _resolveOneBranch<NonNullable<ConfigOf<ForStatement>['body']>>(_f.body, "_suite"),
+    alternative: _resolveOneBranch<NonNullable<ConfigOf<ForStatement>['alternative']>>(_f.alternative, "else_clause"),
   });
 }
 
@@ -358,9 +378,9 @@ export function whileStatementFrom(input: WhileStatementFromInput) {
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return whileStatement({
-    condition: _resolveOne<NonNullable<ConfigOf<WhileStatement>['condition']>>(_f.condition, _K1, _K7),
-    body: _resolveOne<NonNullable<ConfigOf<WhileStatement>['body']>>(_f.body, _K1, _K8),
-    alternative: _resolveOne<NonNullable<ConfigOf<WhileStatement>['alternative']>>(_f.alternative, _K1, _K12),
+    condition: _resolveOneBranch<NonNullable<ConfigOf<WhileStatement>['condition']>>(_f.condition, "expression"),
+    body: _resolveOneBranch<NonNullable<ConfigOf<WhileStatement>['body']>>(_f.body, "_suite"),
+    alternative: _resolveOneBranch<NonNullable<ConfigOf<WhileStatement>['alternative']>>(_f.alternative, "else_clause"),
   });
 }
 
@@ -368,10 +388,10 @@ export function tryStatementFrom(input: TryStatementFromInput) {
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return tryStatement({
-    body: _resolveOne<NonNullable<ConfigOf<TryStatement>['body']>>(_f.body, _K1, _K8),
-    exceptClauses: _resolveMany<NonNullable<ConfigOf<TryStatement>['exceptClauses']>[number]>((_f.except_clauses ?? _f.exceptClauses), _K1, _K13),
-    elseClause: _resolveOne<NonNullable<ConfigOf<TryStatement>['elseClause']>>((_f.else_clause ?? _f.elseClause), _K1, _K12),
-    finallyClause: _resolveOne<NonNullable<ConfigOf<TryStatement>['finallyClause']>>((_f.finally_clause ?? _f.finallyClause), _K1, _K14),
+    body: _resolveOneBranch<NonNullable<ConfigOf<TryStatement>['body']>>(_f.body, "_suite"),
+    exceptClauses: _resolveManyBranch<NonNullable<ConfigOf<TryStatement>['exceptClauses']>[number]>((_f.except_clauses ?? _f.exceptClauses), "except_clause"),
+    elseClause: _resolveOneBranch<NonNullable<ConfigOf<TryStatement>['elseClause']>>((_f.else_clause ?? _f.elseClause), "else_clause"),
+    finallyClause: _resolveOneBranch<NonNullable<ConfigOf<TryStatement>['finallyClause']>>((_f.finally_clause ?? _f.finallyClause), "finally_clause"),
   });
 }
 
@@ -379,8 +399,8 @@ export function exceptClauseFrom(input: ExceptClauseFromInput) {
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return exceptClause({
-    value: _resolveMany<NonNullable<ConfigOf<ExceptClause>['value']>[number]>(_f.value, _K1, _K7),
-    alias: _resolveOne<NonNullable<ConfigOf<ExceptClause>['alias']>>(_f.alias, _K1, _K7),
+    value: _resolveManyBranch<NonNullable<ConfigOf<ExceptClause>['value']>[number]>(_f.value, "expression"),
+    alias: _resolveOneBranch<NonNullable<ConfigOf<ExceptClause>['alias']>>(_f.alias, "expression"),
     children: ((input as { children?: NonNullable<ConfigOf<ExceptClause>['children']> })?.children ?? []) as NonNullable<ConfigOf<ExceptClause>['children']>,
   });
 }
@@ -389,7 +409,7 @@ export function finallyClauseFrom(input: FinallyClauseFromInput) {
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return finallyClause({
-    block: _resolveOne<NonNullable<ConfigOf<FinallyClause>['block']>>(_f.block, _K1, _K8),
+    block: _resolveOneBranch<NonNullable<ConfigOf<FinallyClause>['block']>>(_f.block, "_suite"),
   });
 }
 
@@ -397,7 +417,7 @@ export function withStatementFrom(input: WithStatementFromInput) {
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return withStatement({
-    body: _resolveOne<NonNullable<ConfigOf<WithStatement>['body']>>(_f.body, _K1, _K8),
+    body: _resolveOneBranch<NonNullable<ConfigOf<WithStatement>['body']>>(_f.body, "_suite"),
     children: ((input as { children?: NonNullable<ConfigOf<WithStatement>['children']> })?.children ?? []) as NonNullable<ConfigOf<WithStatement>['children']>,
   });
 }
@@ -414,7 +434,7 @@ export function withItemFrom(input: WithItemFromInput) {
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return withItem({
-    value: _resolveOne<NonNullable<ConfigOf<WithItem>['value']>>(_f.value, _K1, _K7),
+    value: _resolveOneBranch<NonNullable<ConfigOf<WithItem>['value']>>(_f.value, "expression"),
   });
 }
 
@@ -422,11 +442,11 @@ export function functionDefinitionFrom(input: FunctionDefinitionFromInput) {
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return functionDefinition({
-    name: _resolveOne<NonNullable<ConfigOf<FunctionDefinition>['name']>>(_f.name, _K6, _K1),
-    typeParameters: _resolveOne<NonNullable<ConfigOf<FunctionDefinition>['typeParameters']>>((_f.type_parameters ?? _f.typeParameters), _K1, _K15),
-    parameters: _resolveOne<NonNullable<ConfigOf<FunctionDefinition>['parameters']>>(_f.parameters, _K1, _K16),
-    returnType: _resolveOne<NonNullable<ConfigOf<FunctionDefinition>['returnType']>>((_f.return_type ?? _f.returnType), _K1, _K17),
-    body: _resolveOne<NonNullable<ConfigOf<FunctionDefinition>['body']>>(_f.body, _K1, _K8),
+    name: _resolveOneLeaf<NonNullable<ConfigOf<FunctionDefinition>['name']>>(_f.name, "identifier"),
+    typeParameters: _resolveOneBranch<NonNullable<ConfigOf<FunctionDefinition>['typeParameters']>>((_f.type_parameters ?? _f.typeParameters), "type_parameter"),
+    parameters: _resolveOneBranch<NonNullable<ConfigOf<FunctionDefinition>['parameters']>>(_f.parameters, "parameters"),
+    returnType: _resolveOneBranch<NonNullable<ConfigOf<FunctionDefinition>['returnType']>>((_f.return_type ?? _f.returnType), "type"),
+    body: _resolveOneBranch<NonNullable<ConfigOf<FunctionDefinition>['body']>>(_f.body, "_suite"),
   });
 }
 
@@ -450,7 +470,7 @@ export function listSplatFrom(input: ListSplatFromInput) {
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return listSplat({
-    expression: _resolveOne<NonNullable<ConfigOf<ListSplat>['expression']>>(_f.expression, _K1, _K7),
+    expression: _resolveOneBranch<NonNullable<ConfigOf<ListSplat>['expression']>>(_f.expression, "expression"),
   });
 }
 
@@ -458,7 +478,7 @@ export function dictionarySplatFrom(input: DictionarySplatFromInput) {
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return dictionarySplat({
-    expression: _resolveOne<NonNullable<ConfigOf<DictionarySplat>['expression']>>(_f.expression, _K1, _K7),
+    expression: _resolveOneBranch<NonNullable<ConfigOf<DictionarySplat>['expression']>>(_f.expression, "expression"),
   });
 }
 
@@ -482,7 +502,7 @@ export function execStatementFrom(input: ExecStatementFromInput) {
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return execStatement({
-    code: _resolveOne<NonNullable<ConfigOf<ExecStatement>['code']>>(_f.code, _K6, _K18),
+    code: _resolveOne<NonNullable<ConfigOf<ExecStatement>['code']>>(_f.code, _K4, _K5),
     children: ((input as { children?: NonNullable<ConfigOf<ExecStatement>['children']> })?.children ?? []) as NonNullable<ConfigOf<ExecStatement>['children']>,
   });
 }
@@ -491,8 +511,8 @@ export function typeAliasStatementFrom(input: TypeAliasStatementFromInput) {
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return typeAliasStatement({
-    left: _resolveOne<NonNullable<ConfigOf<TypeAliasStatement>['left']>>(_f.left, _K1, _K17),
-    right: _resolveOne<NonNullable<ConfigOf<TypeAliasStatement>['right']>>(_f.right, _K1, _K17),
+    left: _resolveOneBranch<NonNullable<ConfigOf<TypeAliasStatement>['left']>>(_f.left, "type"),
+    right: _resolveOneBranch<NonNullable<ConfigOf<TypeAliasStatement>['right']>>(_f.right, "type"),
   });
 }
 
@@ -500,10 +520,10 @@ export function classDefinitionFrom(input: ClassDefinitionFromInput) {
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return classDefinition({
-    name: _resolveOne<NonNullable<ConfigOf<ClassDefinition>['name']>>(_f.name, _K6, _K1),
-    typeParameters: _resolveOne<NonNullable<ConfigOf<ClassDefinition>['typeParameters']>>((_f.type_parameters ?? _f.typeParameters), _K1, _K15),
-    superclasses: _resolveOne<NonNullable<ConfigOf<ClassDefinition>['superclasses']>>(_f.superclasses, _K1, _K19),
-    body: _resolveOne<NonNullable<ConfigOf<ClassDefinition>['body']>>(_f.body, _K1, _K8),
+    name: _resolveOneLeaf<NonNullable<ConfigOf<ClassDefinition>['name']>>(_f.name, "identifier"),
+    typeParameters: _resolveOneBranch<NonNullable<ConfigOf<ClassDefinition>['typeParameters']>>((_f.type_parameters ?? _f.typeParameters), "type_parameter"),
+    superclasses: _resolveOneBranch<NonNullable<ConfigOf<ClassDefinition>['superclasses']>>(_f.superclasses, "argument_list"),
+    body: _resolveOneBranch<NonNullable<ConfigOf<ClassDefinition>['body']>>(_f.body, "_suite"),
   });
 }
 
@@ -535,7 +555,7 @@ export function decoratedDefinitionFrom(input: DecoratedDefinitionFromInput) {
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return decoratedDefinition({
-    definition: _resolveOne<NonNullable<ConfigOf<DecoratedDefinition>['definition']>>(_f.definition, _K1, _K20),
+    definition: _resolveOne<NonNullable<ConfigOf<DecoratedDefinition>['definition']>>(_f.definition, _K0, _K6),
     children: ((input as { children?: NonNullable<ConfigOf<DecoratedDefinition>['children']> })?.children ?? []) as NonNullable<ConfigOf<DecoratedDefinition>['children']>,
   });
 }
@@ -544,8 +564,8 @@ export function decoratorFrom(input: DecoratorFromInput) {
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return decorator({
-    expression: _resolveOne<NonNullable<ConfigOf<Decorator>['expression']>>(_f.expression, _K1, _K7),
-    newline: _resolveOne<NonNullable<ConfigOf<Decorator>['newline']>>(_f.newline, _K1, _K1),
+    expression: _resolveOneBranch<NonNullable<ConfigOf<Decorator>['expression']>>(_f.expression, "expression"),
+    newline: _resolveOne<NonNullable<ConfigOf<Decorator>['newline']>>(_f.newline, _K0, _K0),
   });
 }
 
@@ -617,8 +637,8 @@ export function keywordPatternFrom(input: KeywordPatternFromInput) {
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return keywordPattern({
-    identifier: _resolveOne<NonNullable<ConfigOf<KeywordPattern>['identifier']>>(_f.identifier, _K6, _K1),
-    simplePattern: _resolveOne<NonNullable<ConfigOf<KeywordPattern>['simplePattern']>>((_f.simple_pattern ?? _f.simplePattern), _K1, _K21),
+    identifier: _resolveOneLeaf<NonNullable<ConfigOf<KeywordPattern>['identifier']>>(_f.identifier, "identifier"),
+    simplePattern: _resolveOneBranch<NonNullable<ConfigOf<KeywordPattern>['simplePattern']>>((_f.simple_pattern ?? _f.simplePattern), "_simple_pattern"),
   });
 }
 
@@ -626,7 +646,7 @@ export function splatPatternFrom(input: SplatPatternFromInput) {
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return splatPattern({
-    identifier: _resolveOne<NonNullable<ConfigOf<SplatPattern>['identifier']>>(_f.identifier, _K1, _K1),
+    identifier: _resolveOne<NonNullable<ConfigOf<SplatPattern>['identifier']>>(_f.identifier, _K0, _K0),
     children: ((input as { children?: NonNullable<ConfigOf<SplatPattern>['children']> })?.children ?? []) as NonNullable<ConfigOf<SplatPattern>['children']>,
   });
 }
@@ -635,8 +655,8 @@ export function classPatternFrom(input: ClassPatternFromInput) {
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return classPattern({
-    dottedName: _resolveOne<NonNullable<ConfigOf<ClassPattern>['dottedName']>>((_f.dotted_name ?? _f.dottedName), _K1, _K2),
-    arguments: _resolveOne<NonNullable<ConfigOf<ClassPattern>['arguments']>>(_f.arguments, _K1, _K22),
+    dottedName: _resolveOneBranch<NonNullable<ConfigOf<ClassPattern>['dottedName']>>((_f.dotted_name ?? _f.dottedName), "dotted_name"),
+    arguments: _resolveOneBranch<NonNullable<ConfigOf<ClassPattern>['arguments']>>(_f.arguments, "case_pattern"),
   });
 }
 
@@ -644,8 +664,8 @@ export function complexPatternFrom(input: ComplexPatternFromInput) {
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return complexPattern({
-    real: _resolveOne<NonNullable<ConfigOf<ComplexPattern>['real']>>(_f.real, _K1, _K1),
-    imaginary: _resolveOne<NonNullable<ConfigOf<ComplexPattern>['imaginary']>>(_f.imaginary, _K23, _K1),
+    real: _resolveOne<NonNullable<ConfigOf<ComplexPattern>['real']>>(_f.real, _K0, _K0),
+    imaginary: _resolveOne<NonNullable<ConfigOf<ComplexPattern>['imaginary']>>(_f.imaginary, _K7, _K0),
     children: ((input as { children?: NonNullable<ConfigOf<ComplexPattern>['children']> })?.children ?? []) as NonNullable<ConfigOf<ComplexPattern>['children']>,
   });
 }
@@ -702,8 +722,8 @@ export function defaultParameterFrom(input: DefaultParameterFromInput) {
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return defaultParameter({
-    name: _resolveOne<NonNullable<ConfigOf<DefaultParameter>['name']>>(_f.name, _K6, _K24),
-    value: _resolveOne<NonNullable<ConfigOf<DefaultParameter>['value']>>(_f.value, _K1, _K7),
+    name: _resolveOne<NonNullable<ConfigOf<DefaultParameter>['name']>>(_f.name, _K4, _K8),
+    value: _resolveOneBranch<NonNullable<ConfigOf<DefaultParameter>['value']>>(_f.value, "expression"),
   });
 }
 
@@ -711,9 +731,9 @@ export function typedDefaultParameterFrom(input: TypedDefaultParameterFromInput)
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return typedDefaultParameter({
-    name: _resolveOne<NonNullable<ConfigOf<TypedDefaultParameter>['name']>>(_f.name, _K6, _K1),
-    type: _resolveOne<NonNullable<ConfigOf<TypedDefaultParameter>['type']>>(_f.type, _K1, _K17),
-    value: _resolveOne<NonNullable<ConfigOf<TypedDefaultParameter>['value']>>(_f.value, _K1, _K7),
+    name: _resolveOneLeaf<NonNullable<ConfigOf<TypedDefaultParameter>['name']>>(_f.name, "identifier"),
+    type: _resolveOneBranch<NonNullable<ConfigOf<TypedDefaultParameter>['type']>>(_f.type, "type"),
+    value: _resolveOneBranch<NonNullable<ConfigOf<TypedDefaultParameter>['value']>>(_f.value, "expression"),
   });
 }
 
@@ -737,8 +757,8 @@ export function asPatternFrom(input: AsPatternFromInput) {
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return asPattern({
-    expression: _resolveOne<NonNullable<ConfigOf<AsPattern>['expression']>>(_f.expression, _K1, _K7),
-    alias: _resolveOne<NonNullable<ConfigOf<AsPattern>['alias']>>(_f.alias, _K1, _K7),
+    expression: _resolveOneBranch<NonNullable<ConfigOf<AsPattern>['expression']>>(_f.expression, "expression"),
+    alias: _resolveOneBranch<NonNullable<ConfigOf<AsPattern>['alias']>>(_f.alias, "expression"),
   });
 }
 
@@ -762,7 +782,7 @@ export function notOperatorFrom(input: NotOperatorFromInput) {
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return notOperator({
-    argument: _resolveOne<NonNullable<ConfigOf<NotOperator>['argument']>>(_f.argument, _K1, _K7),
+    argument: _resolveOneBranch<NonNullable<ConfigOf<NotOperator>['argument']>>(_f.argument, "expression"),
   });
 }
 
@@ -770,9 +790,9 @@ export function booleanOperatorFrom(input: BooleanOperatorFromInput) {
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return booleanOperator({
-    left: _resolveOne<NonNullable<ConfigOf<BooleanOperator>['left']>>(_f.left, _K1, _K7),
-    operator: _resolveOne<NonNullable<ConfigOf<BooleanOperator>['operator']>>(_f.operator, _K1, _K1),
-    right: _resolveOne<NonNullable<ConfigOf<BooleanOperator>['right']>>(_f.right, _K1, _K7),
+    left: _resolveOneBranch<NonNullable<ConfigOf<BooleanOperator>['left']>>(_f.left, "expression"),
+    operator: _resolveOne<NonNullable<ConfigOf<BooleanOperator>['operator']>>(_f.operator, _K0, _K0),
+    right: _resolveOneBranch<NonNullable<ConfigOf<BooleanOperator>['right']>>(_f.right, "expression"),
   });
 }
 
@@ -780,9 +800,9 @@ export function binaryOperatorFrom(input: BinaryOperatorFromInput) {
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return binaryOperator({
-    left: _resolveOne<NonNullable<ConfigOf<BinaryOperator>['left']>>(_f.left, _K1, _K25),
-    operator: _resolveOne<NonNullable<ConfigOf<BinaryOperator>['operator']>>(_f.operator, _K1, _K1),
-    right: _resolveOne<NonNullable<ConfigOf<BinaryOperator>['right']>>(_f.right, _K1, _K25),
+    left: _resolveOneBranch<NonNullable<ConfigOf<BinaryOperator>['left']>>(_f.left, "primary_expression"),
+    operator: _resolveOne<NonNullable<ConfigOf<BinaryOperator>['operator']>>(_f.operator, _K0, _K0),
+    right: _resolveOneBranch<NonNullable<ConfigOf<BinaryOperator>['right']>>(_f.right, "primary_expression"),
   });
 }
 
@@ -790,8 +810,8 @@ export function unaryOperatorFrom(input: UnaryOperatorFromInput) {
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return unaryOperator({
-    operator: _resolveOne<NonNullable<ConfigOf<UnaryOperator>['operator']>>(_f.operator, _K1, _K1),
-    argument: _resolveOne<NonNullable<ConfigOf<UnaryOperator>['argument']>>(_f.argument, _K1, _K25),
+    operator: _resolveOne<NonNullable<ConfigOf<UnaryOperator>['operator']>>(_f.operator, _K0, _K0),
+    argument: _resolveOneBranch<NonNullable<ConfigOf<UnaryOperator>['argument']>>(_f.argument, "primary_expression"),
   });
 }
 
@@ -809,8 +829,8 @@ export function comparisonOperatorFrom(input: ComparisonOperatorFromInput) {
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return comparisonOperator({
-    left: _resolveOne<NonNullable<ConfigOf<ComparisonOperator>['left']>>(_f.left, _K1, _K25),
-    comparators: _resolveMany<NonNullable<ConfigOf<ComparisonOperator>['comparators']>[number]>(_f.comparators, _K26, _K25),
+    left: _resolveOneBranch<NonNullable<ConfigOf<ComparisonOperator>['left']>>(_f.left, "primary_expression"),
+    comparators: _resolveMany<NonNullable<ConfigOf<ComparisonOperator>['comparators']>[number]>(_f.comparators, _K9, _K10),
   });
 }
 
@@ -818,8 +838,8 @@ export function lambdaFrom(input: LambdaFromInput) {
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return lambda({
-    parameters: _resolveOne<NonNullable<ConfigOf<Lambda>['parameters']>>(_f.parameters, _K1, _K27),
-    body: _resolveOne<NonNullable<ConfigOf<Lambda>['body']>>(_f.body, _K1, _K7),
+    parameters: _resolveOneBranch<NonNullable<ConfigOf<Lambda>['parameters']>>(_f.parameters, "lambda_parameters"),
+    body: _resolveOneBranch<NonNullable<ConfigOf<Lambda>['body']>>(_f.body, "expression"),
   });
 }
 
@@ -827,8 +847,8 @@ export function lambdaWithinForInClauseFrom(input: LambdaWithinForInClauseFromIn
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return lambdaWithinForInClause({
-    parameters: _resolveOne<NonNullable<ConfigOf<LambdaWithinForInClause>['parameters']>>(_f.parameters, _K1, _K27),
-    body: _resolveOne<NonNullable<ConfigOf<LambdaWithinForInClause>['body']>>(_f.body, _K1, _super_expression_within_for_in_clause),
+    parameters: _resolveOneBranch<NonNullable<ConfigOf<LambdaWithinForInClause>['parameters']>>(_f.parameters, "lambda_parameters"),
+    body: _resolveOne<NonNullable<ConfigOf<LambdaWithinForInClause>['body']>>(_f.body, _K0, _super_expression_within_for_in_clause),
   });
 }
 
@@ -840,7 +860,7 @@ export function assignmentEqFrom(input: ConfigOf<AssignmentEq>) {
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return assignmentEq({
-    right: _resolveOne<NonNullable<ConfigOf<AssignmentEq>['right']>>(_f.right, _K1, _super_right_hand_side),
+    right: _resolveOne<NonNullable<ConfigOf<AssignmentEq>['right']>>(_f.right, _K0, _super_right_hand_side),
   });
 }
 
@@ -848,7 +868,7 @@ export function assignmentColonFrom(input: ConfigOf<AssignmentColon>) {
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return assignmentColon({
-    type: _resolveOne<NonNullable<ConfigOf<AssignmentColon>['type']>>(_f.type, _K1, _K17),
+    type: _resolveOneBranch<NonNullable<ConfigOf<AssignmentColon>['type']>>(_f.type, "type"),
   });
 }
 
@@ -856,8 +876,8 @@ export function assignmentColon2From(input: ConfigOf<AssignmentColon2>) {
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return assignmentColon2({
-    type: _resolveOne<NonNullable<ConfigOf<AssignmentColon2>['type']>>(_f.type, _K1, _K17),
-    right: _resolveOne<NonNullable<ConfigOf<AssignmentColon2>['right']>>(_f.right, _K1, _super_right_hand_side),
+    type: _resolveOneBranch<NonNullable<ConfigOf<AssignmentColon2>['type']>>(_f.type, "type"),
+    right: _resolveOne<NonNullable<ConfigOf<AssignmentColon2>['right']>>(_f.right, _K0, _super_right_hand_side),
   });
 }
 
@@ -865,9 +885,9 @@ export function augmentedAssignmentFrom(input: AugmentedAssignmentFromInput) {
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return augmentedAssignment({
-    left: _resolveOne<NonNullable<ConfigOf<AugmentedAssignment>['left']>>(_f.left, _K1, _super_left_hand_side),
-    operator: _resolveOne<NonNullable<ConfigOf<AugmentedAssignment>['operator']>>(_f.operator, _K1, _K1),
-    right: _resolveOne<NonNullable<ConfigOf<AugmentedAssignment>['right']>>(_f.right, _K1, _super_right_hand_side),
+    left: _resolveOne<NonNullable<ConfigOf<AugmentedAssignment>['left']>>(_f.left, _K0, _super_left_hand_side),
+    operator: _resolveOne<NonNullable<ConfigOf<AugmentedAssignment>['operator']>>(_f.operator, _K0, _K0),
+    right: _resolveOne<NonNullable<ConfigOf<AugmentedAssignment>['right']>>(_f.right, _K0, _super_right_hand_side),
   });
 }
 
@@ -891,8 +911,8 @@ export function attributeFrom(input: AttributeFromInput) {
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return attribute({
-    object: _resolveOne<NonNullable<ConfigOf<Attribute>['object']>>(_f.object, _K1, _K25),
-    attribute: _resolveOne<NonNullable<ConfigOf<Attribute>['attribute']>>(_f.attribute, _K6, _K1),
+    object: _resolveOneBranch<NonNullable<ConfigOf<Attribute>['object']>>(_f.object, "primary_expression"),
+    attribute: _resolveOneLeaf<NonNullable<ConfigOf<Attribute>['attribute']>>(_f.attribute, "identifier"),
   });
 }
 
@@ -900,8 +920,8 @@ export function subscriptFrom(input: SubscriptFromInput) {
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return subscript({
-    value: _resolveOne<NonNullable<ConfigOf<Subscript>['value']>>(_f.value, _K1, _K25),
-    subscript: _resolveMany<NonNullable<ConfigOf<Subscript>['subscript']>[number]>(_f.subscript, _K1, _K28),
+    value: _resolveOneBranch<NonNullable<ConfigOf<Subscript>['value']>>(_f.value, "primary_expression"),
+    subscript: _resolveMany<NonNullable<ConfigOf<Subscript>['subscript']>[number]>(_f.subscript, _K0, _K11),
   });
 }
 
@@ -909,9 +929,9 @@ export function sliceFrom(input?: SliceFromInput) {
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return slice({
-    start: _resolveOne<NonNullable<ConfigOf<Slice>['start']>>(_f.start, _K1, _K7),
-    stop: _resolveOne<NonNullable<ConfigOf<Slice>['stop']>>(_f.stop, _K1, _K7),
-    step: _resolveOne<NonNullable<ConfigOf<Slice>['step']>>(_f.step, _K1, _K7),
+    start: _resolveOneBranch<NonNullable<ConfigOf<Slice>['start']>>(_f.start, "expression"),
+    stop: _resolveOneBranch<NonNullable<ConfigOf<Slice>['stop']>>(_f.stop, "expression"),
+    step: _resolveOneBranch<NonNullable<ConfigOf<Slice>['step']>>(_f.step, "expression"),
   });
 }
 
@@ -919,8 +939,8 @@ export function callFrom(input: CallFromInput) {
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return call({
-    function: _resolveOne<NonNullable<ConfigOf<Call>['function']>>(_f.function, _K1, _K25),
-    arguments: _resolveOne<NonNullable<ConfigOf<Call>['arguments']>>(_f.arguments, _K1, _K29),
+    function: _resolveOneBranch<NonNullable<ConfigOf<Call>['function']>>(_f.function, "primary_expression"),
+    arguments: _resolveOne<NonNullable<ConfigOf<Call>['arguments']>>(_f.arguments, _K0, _K12),
   });
 }
 
@@ -928,7 +948,7 @@ export function typedParameterFrom(input: TypedParameterFromInput) {
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return typedParameter({
-    type: _resolveOne<NonNullable<ConfigOf<TypedParameter>['type']>>(_f.type, _K1, _K17),
+    type: _resolveOneBranch<NonNullable<ConfigOf<TypedParameter>['type']>>(_f.type, "type"),
     children: ((input as { children?: NonNullable<ConfigOf<TypedParameter>['children']> })?.children ?? []) as NonNullable<ConfigOf<TypedParameter>['children']>,
   });
 }
@@ -945,7 +965,7 @@ export function splatTypeFrom(input: SplatTypeFromInput) {
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return splatType({
-    identifier: _resolveOne<NonNullable<ConfigOf<SplatType>['identifier']>>(_f.identifier, _K1, _K1),
+    identifier: _resolveOne<NonNullable<ConfigOf<SplatType>['identifier']>>(_f.identifier, _K0, _K0),
     children: ((input as { children?: NonNullable<ConfigOf<SplatType>['children']> })?.children ?? []) as NonNullable<ConfigOf<SplatType>['children']>,
   });
 }
@@ -954,8 +974,8 @@ export function genericTypeFrom(input: GenericTypeFromInput) {
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return genericType({
-    identifier: _resolveOne<NonNullable<ConfigOf<GenericType>['identifier']>>(_f.identifier, _K6, _K1),
-    typeParameter: _resolveOne<NonNullable<ConfigOf<GenericType>['typeParameter']>>((_f.type_parameter ?? _f.typeParameter), _K1, _K15),
+    identifier: _resolveOneLeaf<NonNullable<ConfigOf<GenericType>['identifier']>>(_f.identifier, "identifier"),
+    typeParameter: _resolveOneBranch<NonNullable<ConfigOf<GenericType>['typeParameter']>>((_f.type_parameter ?? _f.typeParameter), "type_parameter"),
   });
 }
 
@@ -963,8 +983,8 @@ export function unionTypeFrom(input: UnionTypeFromInput) {
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return unionType({
-    left: _resolveOne<NonNullable<ConfigOf<UnionType>['left']>>(_f.left, _K1, _K17),
-    right: _resolveOne<NonNullable<ConfigOf<UnionType>['right']>>(_f.right, _K1, _K17),
+    left: _resolveOneBranch<NonNullable<ConfigOf<UnionType>['left']>>(_f.left, "type"),
+    right: _resolveOneBranch<NonNullable<ConfigOf<UnionType>['right']>>(_f.right, "type"),
   });
 }
 
@@ -972,8 +992,8 @@ export function constrainedTypeFrom(input: ConstrainedTypeFromInput) {
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return constrainedType({
-    baseType: _resolveOne<NonNullable<ConfigOf<ConstrainedType>['baseType']>>((_f.base_type ?? _f.baseType), _K1, _K17),
-    constraint: _resolveOne<NonNullable<ConfigOf<ConstrainedType>['constraint']>>(_f.constraint, _K1, _K17),
+    baseType: _resolveOneBranch<NonNullable<ConfigOf<ConstrainedType>['baseType']>>((_f.base_type ?? _f.baseType), "type"),
+    constraint: _resolveOneBranch<NonNullable<ConfigOf<ConstrainedType>['constraint']>>(_f.constraint, "type"),
   });
 }
 
@@ -981,8 +1001,8 @@ export function memberTypeFrom(input: MemberTypeFromInput) {
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return memberType({
-    baseType: _resolveOne<NonNullable<ConfigOf<MemberType>['baseType']>>((_f.base_type ?? _f.baseType), _K1, _K17),
-    identifier: _resolveOne<NonNullable<ConfigOf<MemberType>['identifier']>>(_f.identifier, _K6, _K1),
+    baseType: _resolveOneBranch<NonNullable<ConfigOf<MemberType>['baseType']>>((_f.base_type ?? _f.baseType), "type"),
+    identifier: _resolveOneLeaf<NonNullable<ConfigOf<MemberType>['identifier']>>(_f.identifier, "identifier"),
   });
 }
 
@@ -990,8 +1010,8 @@ export function keywordArgumentFrom(input: KeywordArgumentFromInput) {
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return keywordArgument({
-    name: _resolveOne<NonNullable<ConfigOf<KeywordArgument>['name']>>(_f.name, _super_named_expression_lhs, _K1),
-    value: _resolveOne<NonNullable<ConfigOf<KeywordArgument>['value']>>(_f.value, _K1, _K7),
+    name: _resolveOne<NonNullable<ConfigOf<KeywordArgument>['name']>>(_f.name, _super_named_expression_lhs, _K0),
+    value: _resolveOneBranch<NonNullable<ConfigOf<KeywordArgument>['value']>>(_f.value, "expression"),
   });
 }
 
@@ -1031,8 +1051,8 @@ export function pairFrom(input: PairFromInput) {
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return pair({
-    key: _resolveOne<NonNullable<ConfigOf<Pair>['key']>>(_f.key, _K1, _K7),
-    value: _resolveOne<NonNullable<ConfigOf<Pair>['value']>>(_f.value, _K1, _K7),
+    key: _resolveOneBranch<NonNullable<ConfigOf<Pair>['key']>>(_f.key, "expression"),
+    value: _resolveOneBranch<NonNullable<ConfigOf<Pair>['value']>>(_f.value, "expression"),
   });
 }
 
@@ -1040,7 +1060,7 @@ export function listComprehensionFrom(input: ListComprehensionFromInput) {
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return listComprehension({
-    body: _resolveOne<NonNullable<ConfigOf<ListComprehension>['body']>>(_f.body, _K1, _K7),
+    body: _resolveOneBranch<NonNullable<ConfigOf<ListComprehension>['body']>>(_f.body, "expression"),
     children: ((input as { children?: NonNullable<ConfigOf<ListComprehension>['children']> })?.children ?? []) as NonNullable<ConfigOf<ListComprehension>['children']>,
   });
 }
@@ -1049,7 +1069,7 @@ export function dictionaryComprehensionFrom(input: DictionaryComprehensionFromIn
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return dictionaryComprehension({
-    body: _resolveOne<NonNullable<ConfigOf<DictionaryComprehension>['body']>>(_f.body, _K1, _K30),
+    body: _resolveOneBranch<NonNullable<ConfigOf<DictionaryComprehension>['body']>>(_f.body, "pair"),
     children: ((input as { children?: NonNullable<ConfigOf<DictionaryComprehension>['children']> })?.children ?? []) as NonNullable<ConfigOf<DictionaryComprehension>['children']>,
   });
 }
@@ -1058,7 +1078,7 @@ export function setComprehensionFrom(input: SetComprehensionFromInput) {
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return setComprehension({
-    body: _resolveOne<NonNullable<ConfigOf<SetComprehension>['body']>>(_f.body, _K1, _K7),
+    body: _resolveOneBranch<NonNullable<ConfigOf<SetComprehension>['body']>>(_f.body, "expression"),
     children: ((input as { children?: NonNullable<ConfigOf<SetComprehension>['children']> })?.children ?? []) as NonNullable<ConfigOf<SetComprehension>['children']>,
   });
 }
@@ -1067,7 +1087,7 @@ export function generatorExpressionFrom(input: GeneratorExpressionFromInput) {
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return generatorExpression({
-    body: _resolveOne<NonNullable<ConfigOf<GeneratorExpression>['body']>>(_f.body, _K1, _K7),
+    body: _resolveOneBranch<NonNullable<ConfigOf<GeneratorExpression>['body']>>(_f.body, "expression"),
     children: ((input as { children?: NonNullable<ConfigOf<GeneratorExpression>['children']> })?.children ?? []) as NonNullable<ConfigOf<GeneratorExpression>['children']>,
   });
 }
@@ -1100,8 +1120,8 @@ export function forInClauseFrom(input: ForInClauseFromInput) {
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return forInClause({
-    left: _resolveOne<NonNullable<ConfigOf<ForInClause>['left']>>(_f.left, _K1, _super_left_hand_side),
-    right: _resolveOne<NonNullable<ConfigOf<ForInClause>['right']>>(_f.right, _K1, _K31),
+    left: _resolveOne<NonNullable<ConfigOf<ForInClause>['left']>>(_f.left, _K0, _super_left_hand_side),
+    right: _resolveOne<NonNullable<ConfigOf<ForInClause>['right']>>(_f.right, _K0, _super_expression_within_for_in_clause),
   });
 }
 
@@ -1109,7 +1129,7 @@ export function ifClauseFrom(input: IfClauseFromInput) {
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return ifClause({
-    expression: _resolveOne<NonNullable<ConfigOf<IfClause>['expression']>>(_f.expression, _K1, _K7),
+    expression: _resolveOneBranch<NonNullable<ConfigOf<IfClause>['expression']>>(_f.expression, "expression"),
   });
 }
 
@@ -1117,9 +1137,9 @@ export function conditionalExpressionFrom(input: ConditionalExpressionFromInput)
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return conditionalExpression({
-    body: _resolveOne<NonNullable<ConfigOf<ConditionalExpression>['body']>>(_f.body, _K1, _K7),
-    condition: _resolveOne<NonNullable<ConfigOf<ConditionalExpression>['condition']>>(_f.condition, _K1, _K7),
-    alternative: _resolveOne<NonNullable<ConfigOf<ConditionalExpression>['alternative']>>(_f.alternative, _K1, _K7),
+    body: _resolveOneBranch<NonNullable<ConfigOf<ConditionalExpression>['body']>>(_f.body, "expression"),
+    condition: _resolveOneBranch<NonNullable<ConfigOf<ConditionalExpression>['condition']>>(_f.condition, "expression"),
+    alternative: _resolveOneBranch<NonNullable<ConfigOf<ConditionalExpression>['alternative']>>(_f.alternative, "expression"),
   });
 }
 
@@ -1135,9 +1155,9 @@ export function stringFrom(input: StringFromInput) {
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return string({
-    stringStart: _resolveOne<NonNullable<ConfigOf<String>['stringStart']>>((_f.string_start ?? _f.stringStart), _K32, _K1),
-    content: _resolveMany<NonNullable<ConfigOf<String>['content']>[number]>(_f.content, _K1, _K33),
-    stringEnd: _resolveOne<NonNullable<ConfigOf<String>['stringEnd']>>((_f.string_end ?? _f.stringEnd), _K34, _K1),
+    stringStart: _resolveOneLeaf<NonNullable<ConfigOf<String>['stringStart']>>((_f.string_start ?? _f.stringStart), "string_start"),
+    content: _resolveMany<NonNullable<ConfigOf<String>['content']>[number]>(_f.content, _K0, _K13),
+    stringEnd: _resolveOneLeaf<NonNullable<ConfigOf<String>['stringEnd']>>((_f.string_end ?? _f.stringEnd), "string_end"),
   });
 }
 
@@ -1153,9 +1173,9 @@ export function interpolationFrom(input: InterpolationFromInput) {
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return interpolation({
-    expression: _resolveOne<NonNullable<ConfigOf<Interpolation>['expression']>>(_f.expression, _K1, _super_f_expression),
-    typeConversion: _resolveOne<NonNullable<ConfigOf<Interpolation>['typeConversion']>>((_f.type_conversion ?? _f.typeConversion), _K35, _K1),
-    formatSpecifier: _resolveOne<NonNullable<ConfigOf<Interpolation>['formatSpecifier']>>((_f.format_specifier ?? _f.formatSpecifier), _K1, _K36),
+    expression: _resolveOne<NonNullable<ConfigOf<Interpolation>['expression']>>(_f.expression, _K0, _super_f_expression),
+    typeConversion: _resolveOneLeaf<NonNullable<ConfigOf<Interpolation>['typeConversion']>>((_f.type_conversion ?? _f.typeConversion), "type_conversion"),
+    formatSpecifier: _resolveOneBranch<NonNullable<ConfigOf<Interpolation>['formatSpecifier']>>((_f.format_specifier ?? _f.formatSpecifier), "format_specifier"),
   });
 }
 
@@ -1216,7 +1236,7 @@ export function await_From(input: AwaitFromInput) {
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return await_({
-    primaryExpression: _resolveOne<NonNullable<ConfigOf<Await>['primaryExpression']>>((_f.primary_expression ?? _f.primaryExpression), _K1, _K25),
+    primaryExpression: _resolveOneBranch<NonNullable<ConfigOf<Await>['primaryExpression']>>((_f.primary_expression ?? _f.primaryExpression), "primary_expression"),
   });
 }
 
@@ -1292,9 +1312,9 @@ export function formatExpressionFrom(input: FormatExpressionFromInput) {
   const _fields = (input as { fields?: Record<string, unknown> })?.fields;
   const _f = _fields ?? (input as Record<string, unknown>) ?? {};
   return formatExpression({
-    expression: _resolveOne<NonNullable<ConfigOf<FormatExpression>['expression']>>(_f.expression, _K1, _super_f_expression),
-    typeConversion: _resolveOne<NonNullable<ConfigOf<FormatExpression>['typeConversion']>>((_f.type_conversion ?? _f.typeConversion), _K35, _K1),
-    formatSpecifier: _resolveOne<NonNullable<ConfigOf<FormatExpression>['formatSpecifier']>>((_f.format_specifier ?? _f.formatSpecifier), _K1, _K36),
+    expression: _resolveOne<NonNullable<ConfigOf<FormatExpression>['expression']>>(_f.expression, _K0, _super_f_expression),
+    typeConversion: _resolveOneLeaf<NonNullable<ConfigOf<FormatExpression>['typeConversion']>>((_f.type_conversion ?? _f.typeConversion), "type_conversion"),
+    formatSpecifier: _resolveOneBranch<NonNullable<ConfigOf<FormatExpression>['formatSpecifier']>>((_f.format_specifier ?? _f.formatSpecifier), "format_specifier"),
   });
 }
 

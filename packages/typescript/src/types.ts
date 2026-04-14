@@ -424,12 +424,11 @@ export const enum TupleTypeMemberKind {
 
 // Node types — concrete interfaces
 // Repeated field/child unions (T042k dedup)
-export type _union_CallSignature_CallSignature_CallSignature = CallSignature | CallSignature | CallSignature | CallSignature | CallSignature | CallSignature | CallSignature | ConstructSignature | ConstructSignature | ConstructSignature | ConstructSignature | ConstructSignature | ConstructSignature | ConstructSignature | ExportStatement | ExportStatement | ExportStatement | ExportStatement | ExportStatement | ExportStatement | ExportStatement | IndexSignature | IndexSignature | IndexSignature | IndexSignature | IndexSignature | IndexSignature | IndexSignature | MethodSignature | MethodSignature | MethodSignature | MethodSignature | MethodSignature | MethodSignature | MethodSignature | PropertySignature | PropertySignature | PropertySignature | PropertySignature | PropertySignature | PropertySignature | PropertySignature | Semicolon | Semicolon | Semicolon | Semicolon | Semicolon | Semicolon | Semicolon;
+export type _union_CallSignature_ConstructSignature_ExportStatement = CallSignature | ConstructSignature | ExportStatement | IndexSignature | MethodSignature | PropertySignature | Semicolon;
 export type _union_DecoratorMemberExpression_Identifier = DecoratorMemberExpression | Identifier;
 export type _union_DestructuringPattern_Identifier = DestructuringPattern | Identifier;
 export type _union_Identifier_NestedIdentifier = Identifier | NestedIdentifier;
 export type _union_Identifier_ReservedIdentifier = Identifier | ReservedIdentifier;
-export type _union_VariableDeclarator_VariableDeclarator = VariableDeclarator | VariableDeclarator;
 
 export interface Program {
   readonly type: 'program';
@@ -654,7 +653,7 @@ export interface ExpressionStatement {
 export interface VariableDeclaration {
   readonly type: 'variable_declaration';
   readonly fields: {
-    readonly declarators: _union_VariableDeclarator_VariableDeclarator;
+    readonly declarators: VariableDeclarator;
     readonly semicolon: Semicolon;
   };
 }
@@ -663,7 +662,7 @@ export interface LexicalDeclaration {
   readonly type: 'lexical_declaration';
   readonly fields: {
     readonly kind: "let" | "const";
-    readonly declarators: _union_VariableDeclarator_VariableDeclarator;
+    readonly declarators: VariableDeclarator;
     readonly semicolon: Semicolon;
   };
 }
@@ -868,7 +867,7 @@ export interface PrimaryExpression {
 export interface YieldExpression {
   readonly type: 'yield_expression';
   readonly fields: {
-    readonly expression: Expression | Expression;
+    readonly expression: Expression;
   };
 }
 
@@ -1314,7 +1313,7 @@ export interface PublicFieldDefinition {
   readonly type: 'public_field_definition';
   readonly fields: {
     readonly accessibility_modifier: readonly (Decorator)[];
-    readonly override_modifier?: AccessibilityModifier | AccessibilityModifier;
+    readonly override_modifier?: AccessibilityModifier;
     readonly initializer: OverrideModifier;
     readonly name: PropertyName;
     readonly type?: TypeAnnotation;
@@ -1507,7 +1506,7 @@ export interface EnumDeclaration {
 export interface EnumBody {
   readonly type: 'enum_body';
   readonly fields: {
-    readonly opening?: PropertyName | PropertyName | EnumAssignment | EnumAssignment | PropertyName | EnumAssignment;
+    readonly opening?: PropertyName | EnumAssignment;
   };
 }
 
@@ -1860,7 +1859,7 @@ export interface ObjectType {
   readonly type: 'object_type';
   readonly fields: {
     readonly opening: "{" | "{|";
-    readonly members?: _union_CallSignature_CallSignature_CallSignature;
+    readonly members?: _union_CallSignature_ConstructSignature_ExportStatement;
     readonly closing: "}" | "|}";
   };
 }
@@ -1989,7 +1988,7 @@ export interface InterfaceBody {
   readonly type: 'interface_body';
   readonly fields: {
     readonly opening: "{" | "{|";
-    readonly members?: _union_CallSignature_CallSignature_CallSignature;
+    readonly members?: _union_CallSignature_ConstructSignature_ExportStatement;
     readonly closing: "}" | "|}";
   };
 }
