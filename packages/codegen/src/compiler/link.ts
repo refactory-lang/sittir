@@ -872,10 +872,10 @@ function walkForIndentHoist(rule: Rule, rules: Record<string, Rule>): void {
         case 'choice':
             for (const m of rule.members) walkForIndentHoist(m, rules)
             return
+        case 'field':
         case 'optional':
         case 'repeat':
         case 'repeat1':
-        case 'field':
         case 'variant':
         case 'clause':
         case 'group':

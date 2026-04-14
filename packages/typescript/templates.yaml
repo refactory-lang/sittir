@@ -3,7 +3,9 @@ grammar: typescript
 grammarSha: ""
 rules:
   program:
-    template: $HASH_BANG_LINE $STATEMENTS
+    template: $HASH_BANG_LINE $$$STATEMENTS
+    joinByField:
+      statements: "\n"
   export_statement_form_0:
     template: export*from $SOURCE $$$CHILDREN
   export_statement_export:
@@ -122,7 +124,9 @@ rules:
   variable_declarator:
     template: $NAME $TYPE=$VALUE
   statement_block:
-    template: "{$STATEMENTS}$AUTOMATIC_SEMICOLON"
+    template: "{$$$STATEMENTS}$AUTOMATIC_SEMICOLON"
+    joinByField:
+      statements: "\n"
   else_clause:
     template: else $STATEMENT
   if_statement:
@@ -158,9 +162,13 @@ rules:
   switch_body:
     template: "{$$$CHILDREN}"
   switch_case:
-    template: "case $VALUE:$BODY"
+    template: "case $VALUE:$$$BODY"
+    joinByField:
+      body: "\n"
   switch_default:
-    template: "default:$BODY"
+    template: "default:$$$BODY"
+    joinByField:
+      body: "\n"
   catch_clause:
     template: catch $PARAMETER_CLAUSE $BODY
     parameter: ($PARAMETER $TYPE)
@@ -215,9 +223,13 @@ rules:
   _jsx_string:
     template: "\"$$$CHILDREN\""
   class:
-    template: $CLASS_HERITAGE class $NAME $TYPE_PARAMETERS $$$CHILDREN $BODY
+    template: $$$CLASS_HERITAGE class $NAME $TYPE_PARAMETERS $$$CHILDREN $BODY
+    joinByField:
+      class_heritage: "\n"
   class_declaration:
-    template: $CLASS_HERITAGE class $NAME $TYPE_PARAMETERS $AUTOMATIC_SEMICOLON $BODY $$$CHILDREN
+    template: $$$CLASS_HERITAGE class $NAME $TYPE_PARAMETERS $AUTOMATIC_SEMICOLON $BODY $$$CHILDREN
+    joinByField:
+      class_heritage: "\n"
   class_heritage:
     template: $$$CHILDREN
   function_expression:
@@ -321,7 +333,9 @@ rules:
   _semicolon:
     template: $$$CHILDREN
   public_field_definition:
-    template: $ACCESSIBILITY_MODIFIER $OVERRIDE_MODIFIER $INITIALIZER $NAME?$TYPE=$VALUE
+    template: $$$ACCESSIBILITY_MODIFIER $OVERRIDE_MODIFIER $INITIALIZER $NAME?$TYPE=$VALUE
+    joinByField:
+      accessibility_modifier: "\n"
   _jsx_start_opening_element:
     template: <$NAME $$$ATTRIBUTE
   _import_identifier:
@@ -357,7 +371,9 @@ rules:
   ambient_declaration:
     template: declare $DECLARATION
   abstract_class_declaration:
-    template: $CLASS_HERITAGE abstract class $NAME $TYPE_PARAMETERS $$$CHILDREN $BODY
+    template: $$$CLASS_HERITAGE abstract class $NAME $TYPE_PARAMETERS $$$CHILDREN $BODY
+    joinByField:
+      class_heritage: "\n"
   module:
     template: module $NAME $BODY
   internal_module:
@@ -403,7 +419,7 @@ rules:
   asserts:
     template: asserts $$$CHILDREN
   asserts_annotation:
-    template: $ASSERTS
+    template: ":$ASSERTS"
   type:
     template: $$$CHILDREN
   tuple_parameter:
@@ -491,7 +507,7 @@ rules:
   type_predicate:
     template: $NAME is $TYPE
   type_predicate_annotation:
-    template: $TYPE_PREDICATE
+    template: ":$TYPE_PREDICATE"
   _type_query_member_expression:
     template: $OBJECT.$PROPERTY
   _type_query_subscript_expression:

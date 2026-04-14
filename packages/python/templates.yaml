@@ -57,7 +57,9 @@ rules:
   while_statement:
     template: "while $CONDITION:\n  $BODY\n$ALTERNATIVE"
   try_statement:
-    template: "try:\n  $BODY\n$EXCEPT_CLAUSES $ELSE_CLAUSE $FINALLY_CLAUSE"
+    template: "try:\n  $BODY\n$$$EXCEPT_CLAUSES $ELSE_CLAUSE $FINALLY_CLAUSE"
+    joinByField:
+      except_clauses: "\n"
   except_clause:
     template: "except $$$VALUE $ALIAS_CLAUSE:$$$CHILDREN\n"
     alias: as $ALIAS
@@ -175,7 +177,9 @@ rules:
   unary_operator:
     template: $OPERATOR $ARGUMENT
   comparison_operator:
-    template: $LEFT $COMPARATORS
+    template: $LEFT $$$COMPARATORS
+    joinByField:
+      comparators: "\n"
   lambda:
     template: "lambda $PARAMETERS:$BODY"
   lambda_within_for_in_clause:
@@ -258,7 +262,9 @@ rules:
   concatenated_string:
     template: $$$CHILDREN
   string:
-    template: $STRING_START $CONTENT $STRING_END
+    template: $STRING_START $$$CONTENT $STRING_END
+    joinByField:
+      content: "\n"
   string_content:
     template: $$$CHILDREN
   interpolation:

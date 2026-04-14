@@ -3,7 +3,9 @@ grammar: rust
 grammarSha: ""
 rules:
   source_file:
-    template: $SHEBANG $STATEMENTS
+    template: $SHEBANG $$$STATEMENTS
+    joinByField:
+      statements: "\n"
   expression_statement:
     template: $$$CHILDREN;
   macro_definition:
@@ -214,20 +216,27 @@ rules:
     template: ($$$CHILDREN)
     joinBy: ","
   array_expression:
-    template: "[$ATTRIBUTES $ELEMENTS]"
+    template: "[$$$ATTRIBUTES $ELEMENTS]"
     joinBy: ","
+    joinByField:
+      attributes: "\n"
   parenthesized_expression:
     template: ($$$CHILDREN)
   tuple_expression:
-    template: ($ATTRIBUTES $FIRST $REST $TRAILING)
+    template: ($$$ATTRIBUTES $FIRST,$$$REST $TRAILING)
     joinBy: ","
+    joinByField:
+      attributes: "\n"
+      rest: ","
   struct_expression:
     template: $NAME $BODY
   field_initializer_list:
     template: "{$$$CHILDREN}"
     joinBy: ","
   shorthand_field_initializer:
-    template: $ATTRIBUTES $IDENTIFIER
+    template: $$$ATTRIBUTES $IDENTIFIER
+    joinByField:
+      attributes: "\n"
   field_initializer:
     template: "$$$CHILDREN $FIELD:$VALUE"
   base_field_initializer:

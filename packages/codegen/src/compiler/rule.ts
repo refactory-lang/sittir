@@ -671,6 +671,61 @@ function fieldInnerShape(rule: Rule): { optional: boolean; repeated: boolean } {
     }
 }
 
+/**
+ * Extract anonymous-string literals flanking the main content of a field
+ * rule. The override pattern `field('first', seq(_expression, ','))`
+ * from rust tuple_expression embeds a trailing comma inside the field;
+ * without lifting it, the walker's slot emission `$FIRST` loses the
+ * comma entirely. By extracting `leading: '', trailing: ','` here, the
+ * walker can emit `$FIRST,` and preserve the override author's intent.
+ *
+ * Only single anonymous strings at the start/end of a `seq` are lifted;
+ * complex flanking content stays inside the field's value at runtime.
+ */
+function extractFlankingLiterals(content: Rule): { leading: string; trailing: string } {
+    if (content.type !== 'seq' || content.members.length < 2) {
+        return { leading: '', trailing: '' }
+    }
+    let leading = ''
+    let trailing = ''
+    const first = content.members[0]
+    const last = content.members[content.members.length - 1]
+    // A leading literal is only valid if there's at least one non-literal
+    // member after it; same logic for trailing. We don't lift a literal
+    // out of a single-member seq.
+    if (first?.type === 'string' && content.members.length >= 2) {
+        leading = first.value
+    }
+    if (last?.type === 'string' && content.members.length >= 2 && last !== first) {
+        trailing = last.value
+    }
+    return { leading, trailing }
+}
+
+/**
+ * If a field's content is (or transitively wraps) a `repeat` rule, return
+ * its separator. Defaults to `\n` for repeats that have no explicit
+ * separator — `field('items', repeat(symbol))` patterns in tree-sitter
+ * grammars are almost always statement-like lists where each element
+ * lives on its own line (struct attributes, try.except_clauses, etc.).
+ *
+ * Returns `null` when the content does not wrap a repeat at all.
+ */
+function wrappedRepeatSeparator(content: Rule): string | null {
+    switch (content.type) {
+        case 'repeat':
+        case 'repeat1':
+            return content.separator ?? '\n'
+        case 'optional':
+        case 'group':
+        case 'variant':
+        case 'clause':
+            return wrappedRepeatSeparator(content.content)
+        default:
+            return null
+    }
+}
+
 function deriveLiteralValues(rule: Rule): string[] {
     switch (rule.type) {
         case 'enum': return rule.values
@@ -860,7 +915,7 @@ export class AssembledBranch extends AssembledNodeBase {
     }
 
     renderTemplate(rules?: Record<string, Rule>): Record<string, unknown> {
-        const { template, clauses } = renderRuleTemplate(this.rule, false, rules)
+        const { template, clauses, joinByField } = renderRuleTemplate(this.rule, false, rules)
         if (!template) {
             throw new Error(
                 `AssembledBranch.renderTemplate: '${this.kind}' produced an empty template. ` +
@@ -870,6 +925,7 @@ export class AssembledBranch extends AssembledNodeBase {
         const entry: Record<string, unknown> = { template, ...clauses }
         const sep = findRepeatSeparator(this.rule)
         if (sep) entry.joinBy = sep
+        if (Object.keys(joinByField).length > 0) entry.joinByField = joinByField
         return entry
     }
 }
@@ -898,7 +954,7 @@ export class AssembledContainer extends AssembledNodeBase {
     }
 
     renderTemplate(rules?: Record<string, Rule>): Record<string, unknown> {
-        const { template, clauses } = renderRuleTemplate(this.rule, false, rules)
+        const { template, clauses, joinByField } = renderRuleTemplate(this.rule, false, rules)
         if (!template) {
             throw new Error(
                 `AssembledContainer.renderTemplate: '${this.kind}' produced an empty template. ` +
@@ -908,6 +964,7 @@ export class AssembledContainer extends AssembledNodeBase {
         const entry: Record<string, unknown> = { template, ...clauses }
         const sep = this.separator ?? findRepeatSeparator(this.rule)
         if (sep) entry.joinBy = sep
+        if (Object.keys(joinByField).length > 0) entry.joinByField = joinByField
         return entry
     }
 
@@ -1072,7 +1129,7 @@ export class AssembledGroup extends AssembledNodeBase {
     }
 
     renderTemplate(rules?: Record<string, Rule>): Record<string, unknown> {
-        const { template, clauses } = renderRuleTemplate(this.rule, false, rules)
+        const { template, clauses, joinByField } = renderRuleTemplate(this.rule, false, rules)
         if (!template) {
             throw new Error(
                 `AssembledGroup.renderTemplate: '${this.kind}' produced an empty template. ` +
@@ -1082,6 +1139,7 @@ export class AssembledGroup extends AssembledNodeBase {
         const entry: Record<string, unknown> = { template, ...clauses }
         const sep = findRepeatSeparator(this.rule)
         if (sep) entry.joinBy = sep
+        if (Object.keys(joinByField).length > 0) entry.joinByField = joinByField
         return entry
     }
 
@@ -1144,6 +1202,15 @@ export interface NodeMap {
 interface WalkResult {
     template: string
     clauses: Record<string, string>
+    /**
+     * Per-field-name separator captured from `field('x', repeat(y, separator=','))`
+     * patterns. The template emitter merges these into the rule entry as
+     * `joinByField: { x: ',' }` so the renderer can pick the right join
+     * for each `$$$X` slot when a single rule has multiple multi-valued
+     * fields with different separators (e.g. rust's tuple_expression has
+     * `attributes` joined by newline and `rest` joined by comma).
+     */
+    joinByField: Record<string, string>
 }
 
 export function renderRuleTemplate(
@@ -1152,6 +1219,7 @@ export function renderRuleTemplate(
     rules?: Record<string, Rule>,
 ): WalkResult {
     const clauses: Record<string, string> = {}
+    const joinByField: Record<string, string> = {}
     // Pre-compute field names that appear in any `repeat` subtree so
     // the walker can emit `$$$NAME` even for the *first* occurrence of a
     // repeated field — the commaSep1 pattern `seq(field(X), repeat(seq(',',
@@ -1159,8 +1227,8 @@ export function renderRuleTemplate(
     // position, but both should render as the same multi-valued slot.
     const repeatedFields = new Set<string>()
     collectRepeatedFields(rule, false, repeatedFields, rules, new Set())
-    const parts = walkRuleForTemplate(rule, new Set(), inRepeat, clauses, rules, repeatedFields)
-    return { template: parts.join(''), clauses }
+    const parts = walkRuleForTemplate(rule, new Set(), inRepeat, clauses, rules, repeatedFields, joinByField)
+    return { template: parts.join(''), clauses, joinByField }
 }
 
 function collectRepeatedFields(
@@ -1222,12 +1290,13 @@ function walkRuleForTemplate(
     clauses: Record<string, string>,
     rules?: Record<string, Rule>,
     repeatedFields?: ReadonlySet<string>,
+    joinByField?: Record<string, string>,
 ): string[] {
     switch (rule.type) {
         case 'seq': {
             const out: string[] = []
             for (const m of rule.members) {
-                const parts = walkRuleForTemplate(m, seen, inRepeat, clauses, rules, repeatedFields)
+                const parts = walkRuleForTemplate(m, seen, inRepeat, clauses, rules, repeatedFields, joinByField)
                 if (out.length > 0 && parts.length > 0) {
                     const lastChar = out[out.length - 1]!.slice(-1)
                     const firstChar = parts[0]!.charAt(0)
@@ -1241,7 +1310,7 @@ function walkRuleForTemplate(
         case 'choice':
             // For choice in a template, emit the first non-empty member.
             for (const m of rule.members) {
-                const parts = walkRuleForTemplate(m, seen, inRepeat, clauses, rules, repeatedFields)
+                const parts = walkRuleForTemplate(m, seen, inRepeat, clauses, rules, repeatedFields, joinByField)
                 if (parts.length > 0) return parts
             }
             return []
@@ -1252,7 +1321,7 @@ function walkRuleForTemplate(
             // produces invalid output (python: `match X,:`). Skip the
             // whole optional when its content has no field/symbol ref.
             if (containsOnlyPunctuation(rule.content)) return []
-            return walkRuleForTemplate(rule.content, seen, inRepeat, clauses, rules, repeatedFields)
+            return walkRuleForTemplate(rule.content, seen, inRepeat, clauses, rules, repeatedFields, joinByField)
 
         case 'repeat':
         case 'repeat1':
@@ -1262,19 +1331,41 @@ function walkRuleForTemplate(
             if (seen.has(rule.name)) return []
             seen.add(rule.name)
             const varName = rule.name.toUpperCase()
-            // Fields inside a repeat are multi-valued — emit `$$$NAME` so
-            // the renderer joins instances with the rule's joinBy separator.
-            // `repeatedFields` also catches the first occurrence of a
-            // commaSep1 pattern (non-repeat position + same field inside
-            // a trailing repeat) so both slots render with $$$.
-            const multi = inRepeat || (repeatedFields?.has(rule.name) ?? false)
+            // A field is multi-valued in three situations:
+            //   1. it's nested inside a repeat (`inRepeat`)
+            //   2. another occurrence of the same field name appears inside a
+            //      repeat — the commaSep1 pattern `field(X) ... repeat(field(X))`
+            //      where the first slot is non-repeat (caught by repeatedFields)
+            //   3. its OWN content is a repeat — the override pattern
+            //      `field('rest', repeat(expr, separator=','))` where the field
+            //      sits at non-repeat position but wraps a repeat directly
+            const wrappedSep = wrappedRepeatSeparator(rule.content)
+            const multi = inRepeat
+                || (repeatedFields?.has(rule.name) ?? false)
+                || wrappedSep !== null
+            // Capture per-slot joinBy when the wrapped repeat carries a
+            // separator. A single rule with multiple multi-valued fields
+            // can then have distinct separators (rust tuple_expression's
+            // attributes joins with `\n`, rest with `,`).
+            if (joinByField && wrappedSep) joinByField[rule.name] = wrappedSep
             const slot = multi ? `$$$${varName}` : `$${varName}`
+            // Extract anonymous-string literals flanking the field's main
+            // content. The override pattern `field('first', seq(_expression,
+            // ','))` from rust's tuple_expression bundles the trailing comma
+            // INSIDE the field; without this extraction the comma is lost
+            // and the rendered output joins `$FIRST $$$REST` with no
+            // separator. By emitting `$FIRST,` instead, the comma stays.
+            const flank = extractFlankingLiterals(rule.content)
             // Block-bearer fields render as an indented block (python
             // `class X:\n  body`). Link annotates the field when its
             // content resolves to a subtree containing an `indent` node.
             // Trailing newline restores the outer column so whatever
             // follows the block (e.g. `else_clause`) lands flush-left.
-            return rule.blockBearer ? ['\n  ', slot, '\n'] : [slot]
+            const wrapped: string[] = []
+            if (flank.leading) wrapped.push(flank.leading)
+            wrapped.push(slot)
+            if (flank.trailing) wrapped.push(flank.trailing)
+            return rule.blockBearer ? ['\n  ', ...wrapped, '\n'] : wrapped
         }
 
         case 'symbol': {
@@ -1290,7 +1381,7 @@ function walkRuleForTemplate(
                 const target = rules[symName]
                 if (target && !seen.has(`@${symName}`)) {
                     seen.add(`@${symName}`)
-                    const parts = walkRuleForTemplate(target, seen, inRepeat, clauses, rules, repeatedFields)
+                    const parts = walkRuleForTemplate(target, seen, inRepeat, clauses, rules, repeatedFields, joinByField)
                     if (parts.length > 0) return parts
                 }
             }
@@ -1317,7 +1408,7 @@ function walkRuleForTemplate(
             return rule.values.length > 0 ? [rule.values[0]!] : []
 
         case 'variant':
-            return walkRuleForTemplate(rule.content, seen, inRepeat, clauses, rules, repeatedFields)
+            return walkRuleForTemplate(rule.content, seen, inRepeat, clauses, rules, repeatedFields, joinByField)
 
         case 'clause': {
             // Emit a separate sub-template and reference it from the main
@@ -1326,14 +1417,14 @@ function walkRuleForTemplate(
             if (seen.has(rule.name)) return []
             seen.add(rule.name)
             const clauseSeen = new Set<string>()
-            const clauseParts = walkRuleForTemplate(rule.content, clauseSeen, inRepeat, clauses, rules, repeatedFields)
+            const clauseParts = walkRuleForTemplate(rule.content, clauseSeen, inRepeat, clauses, rules, repeatedFields, joinByField)
             const clauseTemplate = clauseParts.join('')
             if (clauseTemplate) clauses[rule.name] = clauseTemplate
             return [`$${rule.name.toUpperCase()}_CLAUSE`]
         }
 
         case 'group':
-            return walkRuleForTemplate(rule.content, seen, inRepeat, clauses, rules, repeatedFields)
+            return walkRuleForTemplate(rule.content, seen, inRepeat, clauses, rules, repeatedFields, joinByField)
 
         case 'supertype':
             if (seen.has('children')) return []
@@ -1348,7 +1439,7 @@ function walkRuleForTemplate(
             return ['\n']
 
         case 'terminal':
-            return walkRuleForTemplate(rule.content, seen, inRepeat, clauses, rules, repeatedFields)
+            return walkRuleForTemplate(rule.content, seen, inRepeat, clauses, rules, repeatedFields, joinByField)
 
         case 'polymorph':
             // Polymorphs are dispatched by AssembledPolymorph.renderTemplate

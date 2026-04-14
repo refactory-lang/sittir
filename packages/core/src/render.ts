@@ -318,9 +318,18 @@ function renderClause(
 	});
 }
 
-/** Resolve joinBy for a $$$ variable. */
-function resolveJoinBy(ruleObj: Record<string, unknown> | undefined, _varName: string): string {
+/** Resolve joinBy for a $$$ variable. Per-field overrides take precedence
+ * over the rule-level default. The walker emits `joinByField: { name: sep }`
+ * when a single rule has multiple multi-valued slots with different
+ * separators (e.g. rust tuple_expression: `attributes` joins with `\n`,
+ * `rest` joins with `,`). */
+function resolveJoinBy(ruleObj: Record<string, unknown> | undefined, varName: string): string {
 	if (!ruleObj) return ' ';
+	const joinByField = ruleObj['joinByField'] as Record<string, string> | undefined;
+	if (joinByField) {
+		const fieldKey = varName.toLowerCase();
+		if (fieldKey in joinByField) return joinByField[fieldKey]!;
+	}
 	const joinBy = ruleObj['joinBy'] as string | undefined;
 	return joinBy ?? ' ';
 }
