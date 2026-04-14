@@ -775,7 +775,6 @@ export function wherePredicate(config: ConfigOf<WherePredicate>) {
 
 export function implItem(config: ConfigOf<ImplItem>) {
   const fields = {
-    where_clause: config?.whereClause,
     type_parameters: config?.typeParameters,
     trait: config?.trait,
     type: config?.type,
@@ -787,7 +786,6 @@ export function implItem(config: ConfigOf<ImplItem>) {
     named: true as const,
     fields,
     children,
-    whereClause(whereClause_?: ConfigOf<ImplItem>['whereClause']) { return _fs(config, implItem, 'whereClause', whereClause_, fields.where_clause); },
     typeParameters(typeParameters_?: ConfigOf<ImplItem>['typeParameters']) { return _fs(config, implItem, 'typeParameters', typeParameters_, fields.type_parameters); },
     trait(trait_?: ConfigOf<ImplItem>['trait']) { return _fs(config, implItem, 'trait', trait_, fields.trait); },
     typeField(type?: ConfigOf<ImplItem>['type']) { return _fs(config, implItem, 'type', type, fields.type); },
@@ -805,8 +803,6 @@ export function implItem(config: ConfigOf<ImplItem>) {
 
 export function traitItem(config: ConfigOf<TraitItem>) {
   const fields = {
-    visibility_modifier: config?.visibilityModifier,
-    where_clause: config?.whereClause,
     name: config?.name,
     type_parameters: config?.typeParameters,
     bounds: config?.bounds,
@@ -818,8 +814,6 @@ export function traitItem(config: ConfigOf<TraitItem>) {
     named: true as const,
     fields,
     children,
-    visibilityModifier(visibilityModifier_?: ConfigOf<TraitItem>['visibilityModifier']) { return _fs(config, traitItem, 'visibilityModifier', visibilityModifier_, fields.visibility_modifier); },
-    whereClause(whereClause_?: ConfigOf<TraitItem>['whereClause']) { return _fs(config, traitItem, 'whereClause', whereClause_, fields.where_clause); },
     name(name_?: ConfigOf<TraitItem>['name']) { return _fs(config, traitItem, 'name', name_, fields.name); },
     typeParameters(typeParameters_?: ConfigOf<TraitItem>['typeParameters']) { return _fs(config, traitItem, 'typeParameters', typeParameters_, fields.type_parameters); },
     bounds(bounds_?: ConfigOf<TraitItem>['bounds']) { return _fs(config, traitItem, 'bounds', bounds_, fields.bounds); },
@@ -1317,7 +1311,8 @@ export function forLifetimes(..._children: ChildOf<ForLifetimes>[]) {
 export function functionType(config: ConfigOf<FunctionType>) {
   const fields = {
     for_lifetimes: config?.forLifetimes,
-    function_modifiers: config?.functionModifiers,
+    trait: config?.trait,
+    parameters: config?.parameters,
     return_type: config?.returnType,
   };
   return {
@@ -1325,7 +1320,8 @@ export function functionType(config: ConfigOf<FunctionType>) {
     named: true as const,
     fields,
     forLifetimes(forLifetimes_?: ConfigOf<FunctionType>['forLifetimes']) { return _fs(config, functionType, 'forLifetimes', forLifetimes_, fields.for_lifetimes); },
-    functionModifiers(functionModifiers_?: ConfigOf<FunctionType>['functionModifiers']) { return _fs(config, functionType, 'functionModifiers', functionModifiers_, fields.function_modifiers); },
+    trait(trait_?: ConfigOf<FunctionType>['trait']) { return _fs(config, functionType, 'trait', trait_, fields.trait); },
+    parameters(parameters_?: ConfigOf<FunctionType>['parameters']) { return _fs(config, functionType, 'parameters', parameters_, fields.parameters); },
     returnType(returnType_?: ConfigOf<FunctionType>['returnType']) { return _fs(config, functionType, 'returnType', returnType_, fields.return_type); },
     render() { return render(this); },
     toEdit(startOrRange: number | { start: { index: number }; end: { index: number } }, endPos?: number) {

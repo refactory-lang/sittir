@@ -426,6 +426,7 @@ export type _union_FieldDeclarationList_OrderedFieldDeclarationList = FieldDecla
 export type _union_HiddenFieldIdentifier_IntegerLiteral = HiddenFieldIdentifier | IntegerLiteral;
 export type _union_HiddenPath_LiteralPattern = HiddenPath | LiteralPattern;
 export type _union_HiddenType_Lifetime_UseBounds = HiddenType | Lifetime | UseBounds;
+export type _union_HiddenTypeIdentifier_ScopedTypeIdentifier = HiddenTypeIdentifier | ScopedTypeIdentifier;
 export type _union_Identifier_Metavariable = Identifier | Metavariable;
 
 export interface SourceFile {
@@ -697,7 +698,6 @@ export interface WherePredicate {
 export interface ImplItem {
   readonly type: 'impl_item';
   readonly fields: {
-    readonly where_clause?: "unsafe";
     readonly type_parameters?: TypeParameters;
     readonly trait?: HiddenTypeIdentifier | ScopedTypeIdentifier | GenericType;
     readonly type: HiddenType;
@@ -709,14 +709,12 @@ export interface ImplItem {
 export interface TraitItem {
   readonly type: 'trait_item';
   readonly fields: {
-    readonly visibility_modifier?: VisibilityModifier;
-    readonly where_clause?: "unsafe";
     readonly name: HiddenTypeIdentifier;
     readonly type_parameters?: TypeParameters;
     readonly bounds?: TraitBounds;
     readonly body: DeclarationList;
   };
-  readonly children: readonly [WhereClause];
+  readonly children: readonly [VisibilityModifier | WhereClause];
 }
 
 export interface AssociatedType {
@@ -906,7 +904,8 @@ export interface FunctionType {
   readonly type: 'function_type';
   readonly fields: {
     readonly for_lifetimes?: ForLifetimes;
-    readonly function_modifiers: HiddenTypeIdentifier | ScopedTypeIdentifier | FunctionModifiers | Parameters;
+    readonly trait: _union_HiddenTypeIdentifier_ScopedTypeIdentifier;
+    readonly parameters: Parameters;
     readonly return_type?: HiddenType;
   };
 }
@@ -1431,7 +1430,7 @@ export interface TupleStructPattern {
 export interface StructPattern {
   readonly type: 'struct_pattern';
   readonly fields: {
-    readonly type: HiddenTypeIdentifier | ScopedTypeIdentifier;
+    readonly type: _union_HiddenTypeIdentifier_ScopedTypeIdentifier;
   };
   readonly children: readonly (FieldPattern | RemainingFieldPattern)[];
 }

@@ -140,10 +140,10 @@ export default grammar(base, {
             1: field('block'), // block [struct=0]
         }),
 
-        // impl_item: 1 field(s)
-        impl_item: ($, original) => transform(original, {
-            0: field('where_clause'), // where_clause [struct=0]
-        }),
+        // impl_item: override removed. Same autogen mistake as struct_item —
+        // position 0 was labeled `field('where_clause')` but it's the
+        // unsafe/impl header start, not a where_clause. The where_clause
+        // is buried deeper in the rule's seq.
 
         // index_expression: 2 field(s)
         index_expression: ($, original) => transform(original, {
@@ -277,11 +277,9 @@ export default grammar(base, {
         // body/semi/unit variants. Letting the original rule through
         // lets Link's promotePolymorph classify the variants properly.
 
-        // trait_item: 2 field(s)
-        trait_item: ($, original) => transform(original, {
-            0: field('visibility_modifier'), // visibility_modifier [struct=0]
-            1: field('where_clause'), // where_clause [struct=1]
-        }),
+        // trait_item: override removed. Same autogen mistake as
+        // struct_item / impl_item — top-level positions labeled as
+        // fields that don't correspond to real tree-sitter fields.
 
         // try_block: 1 field(s)
         try_block: ($, original) => transform(original, {

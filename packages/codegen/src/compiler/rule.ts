@@ -512,6 +512,16 @@ export function deriveFields(rule: Rule, isOptional = false, isRepeated = false)
 function deriveFieldsRaw(rule: Rule, isOptional: boolean, isRepeated: boolean): AssembledField[] {
     switch (rule.type) {
         case 'field': {
+            // Synthetic outer-field wrapper: the autogen wraps a multi-
+            // member seq containing inner fields in `field('x', seq(...))`.
+            // Tree-sitter doesn't produce a single runtime value for such
+            // wrappers — the inner fields are the real data. The template
+            // walker already descends into these; field derivation has to
+            // match so factories don't emit phantom parameters that the
+            // template can't reference.
+            if (isSyntheticFieldWrapper(rule.content)) {
+                return deriveFieldsRaw(rule.content, isOptional, isRepeated)
+            }
             // Dedupe at the field boundary — inner walks via `flatMap`
             // over seq/choice members can legitimately produce duplicate
             // kind names when multiple variants reference the same
@@ -675,6 +685,25 @@ function fieldInnerShape(rule: Rule): { optional: boolean; repeated: boolean } {
         }
         default: return { optional: false, repeated: false }
     }
+}
+
+/**
+ * Detect an override-synthesized "outer field wrapper" that has no
+ * corresponding runtime data. The autogen produced by v1's extractor
+ * sometimes wraps a multi-member seq directly in an outer
+ * `field('name', seq(...))` where the seq's TOP level contains another
+ * named field. Tree-sitter doesn't produce a single node value for
+ * such wrappers — the inner fields are the real runtime data.
+ *
+ * The check is deliberately narrow: only direct `field('x', seq(...))`
+ * where the top-level seq contains an inner `field('y', ...)`. Deeper
+ * nestings (`field('body', symbol(block))` where block's rule definition
+ * contains fields) are NOT synthetic — those have real field values
+ * that tree-sitter populates at parse time.
+ */
+function isSyntheticFieldWrapper(content: Rule): boolean {
+    if (content.type !== 'seq') return false
+    return content.members.some(m => m.type === 'field')
 }
 
 /**
@@ -1335,6 +1364,22 @@ function walkRuleForTemplate(
 
         case 'field': {
             if (seen.has(rule.name)) return []
+            // Synthetic outer-field wrapper detection. Autogen overrides
+            // sometimes wrap a complex seq (containing inner fields, a
+            // choice with variants, literal tokens) in an outer
+            // `field('name', seq(...))`. Tree-sitter doesn't produce a
+            // single node value for such wrappers at parse time — the
+            // inner fields are the real runtime data. When we detect this
+            // shape, walk INTO the content and let the inner fields /
+            // literals surface as their own template slots. Skipping the
+            // outer slot avoids emitting a `$NAME` placeholder that the
+            // renderer can't resolve to anything meaningful.
+            if (isSyntheticFieldWrapper(rule.content)) {
+                // Don't add rule.name to `seen` — we're not emitting
+                // that slot, so inner fields may legitimately reuse the
+                // same name (rare but possible).
+                return walkRuleForTemplate(rule.content, seen, inRepeat, clauses, rules, repeatedFields, joinByField)
+            }
             seen.add(rule.name)
             const varName = rule.name.toUpperCase()
             // A field is multi-valued in three situations:

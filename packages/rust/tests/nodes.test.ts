@@ -341,11 +341,11 @@ describe('impl_item', () => {
 
 describe('trait_item', () => {
   it('factory produces correct type', () => {
-    const node = ir.trait({ name: { type: '_type_identifier', text: 'test' } as any, body: { type: 'declaration_list', text: 'test' } as any, children: [{ type: 'where_clause', text: 'test' } as any] as any });
+    const node = ir.trait({ name: { type: '_type_identifier', text: 'test' } as any, body: { type: 'declaration_list', text: 'test' } as any, children: [{ type: 'visibility_modifier', text: 'test' } as any] as any });
     expect(node.type).toBe('trait_item');
   });
   it('render produces non-empty string', () => {
-    const node = ir.trait({ name: { type: '_type_identifier', text: 'test' } as any, body: { type: 'declaration_list', text: 'test' } as any, children: [{ type: 'where_clause', text: 'test' } as any] as any });
+    const node = ir.trait({ name: { type: '_type_identifier', text: 'test' } as any, body: { type: 'declaration_list', text: 'test' } as any, children: [{ type: 'visibility_modifier', text: 'test' } as any] as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -595,11 +595,11 @@ describe('for_lifetimes', () => {
 
 describe('function_type', () => {
   it('factory produces correct type', () => {
-    const node = ir.functionType({ functionModifiers: { type: '_type_identifier', text: 'test' } as any });
+    const node = ir.functionType({ trait: { type: '_type_identifier', text: 'test' } as any, parameters: { type: 'parameters', text: 'test' } as any });
     expect(node.type).toBe('function_type');
   });
   it('render produces non-empty string', () => {
-    const node = ir.functionType({ functionModifiers: { type: '_type_identifier', text: 'test' } as any });
+    const node = ir.functionType({ trait: { type: '_type_identifier', text: 'test' } as any, parameters: { type: 'parameters', text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });

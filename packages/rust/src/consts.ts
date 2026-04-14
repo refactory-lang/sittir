@@ -532,7 +532,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'function_type': [
     { name: 'forLifetimes', required: false, multiple: false },
-    { name: 'functionModifiers', required: true, multiple: false },
+    { name: 'trait', required: true, multiple: false },
+    { name: 'parameters', required: true, multiple: false },
     { name: 'returnType', required: false, multiple: false },
   ],
   'gen_block': [
@@ -563,7 +564,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'alternative', required: false, multiple: false },
   ],
   'impl_item': [
-    { name: 'whereClause', required: false, multiple: false },
     { name: 'typeParameters', required: false, multiple: false },
     { name: 'trait', required: false, multiple: false },
     { name: 'type', required: true, multiple: false },
@@ -773,8 +773,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'trait_bounds': [
   ],
   'trait_item': [
-    { name: 'visibilityModifier', required: false, multiple: false },
-    { name: 'whereClause', required: false, multiple: false },
     { name: 'name', required: true, multiple: false },
     { name: 'typeParameters', required: false, multiple: false },
     { name: 'bounds', required: false, multiple: false },

@@ -80,10 +80,10 @@ rules:
   where_predicate:
     template: $LEFT $BOUNDS
   impl_item:
-    template: $WHERE_CLAUSE impl $TYPE_PARAMETERS $TRAIT_CLAUSE $TYPE $$$CHILDREN $BODY
+    template: impl $TYPE_PARAMETERS $TRAIT_CLAUSE $TYPE $$$CHILDREN $BODY
     trait: $TRAIT for
   trait_item:
-    template: $VISIBILITY_MODIFIER $WHERE_CLAUSE trait $NAME $TYPE_PARAMETERS $BOUNDS $$$CHILDREN $BODY
+    template: $$$CHILDREN trait $NAME $TYPE_PARAMETERS $BOUNDS $BODY
   associated_type:
     template: type $NAME $TYPE_PARAMETERS $BOUNDS $WHERE_CLAUSE;
   trait_bounds:
@@ -147,7 +147,7 @@ rules:
     template: for<$$$CHILDREN>
     joinBy: ","
   function_type:
-    template: $FOR_LIFETIMES $FUNCTION_MODIFIERS $RETURN_TYPE_CLAUSE
+    template: $FOR_LIFETIMES $TRAIT $PARAMETERS $RETURN_TYPE_CLAUSE
     return_type: "->$RETURN_TYPE"
   tuple_type:
     template: ($$$CHILDREN)

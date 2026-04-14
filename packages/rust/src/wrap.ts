@@ -36,8 +36,6 @@ const _overrides = {
   "type_item": {"fields":{"visibility_modifier":{"types":[{"type":"visibility_modifier","named":true}],"multiple":false,"required":false,"position":0},"where_clause":{"types":[{"type":"where_clause","named":true}],"multiple":false,"required":false,"position":3},"trailing_where_clause":{"types":[{"type":"where_clause","named":true}],"multiple":false,"required":false,"position":5}}},
   "function_item": {"fields":{"visibility_modifier":{"types":[{"type":"visibility_modifier","named":true}],"multiple":false,"required":false,"position":0},"function_modifiers":{"types":[{"type":"function_modifiers","named":true}],"multiple":false,"required":false,"position":1},"where_clause":{"types":[{"type":"_type","named":true}],"multiple":false,"required":true,"position":5}}},
   "function_signature_item": {"fields":{"visibility_modifier":{"types":[{"type":"visibility_modifier","named":true}],"multiple":false,"required":false,"position":0},"function_modifiers":{"types":[{"type":"function_modifiers","named":true}],"multiple":false,"required":false,"position":1},"where_clause":{"types":[{"type":"_type","named":true}],"multiple":false,"required":true,"position":5}}},
-  "impl_item": {"fields":{"where_clause":{"types":[],"multiple":false,"required":false,"position":0}}},
-  "trait_item": {"fields":{"visibility_modifier":{"types":[{"type":"visibility_modifier","named":true}],"multiple":false,"required":false,"position":0},"where_clause":{"types":[],"multiple":false,"required":false,"position":1}}},
   "associated_type": {"fields":{"where_clause":{"types":[{"type":"where_clause","named":true}],"multiple":false,"required":false,"position":3}}},
   "let_declaration": {"fields":{"mutable_specifier":{"types":[{"type":"mutable_specifier","named":true}],"multiple":false,"required":false,"position":0}}},
   "use_declaration": {"fields":{"visibility_modifier":{"types":[{"type":"visibility_modifier","named":true}],"multiple":false,"required":false,"position":0}}},
@@ -47,7 +45,7 @@ const _overrides = {
   "parameter": {"fields":{"mutable_specifier":{"types":[{"type":"mutable_specifier","named":true}],"multiple":false,"required":false,"position":0}}},
   "extern_modifier": {"fields":{"string_literal":{"types":[{"type":"string_literal","named":true}],"multiple":false,"required":false,"position":0}}},
   "lifetime": {"fields":{"identifier":{"types":[{"type":"identifier","named":true}],"multiple":false,"required":true,"position":0}}},
-  "function_type": {"fields":{"for_lifetimes":{"types":[{"type":"for_lifetimes","named":true}],"multiple":false,"required":false,"position":0},"function_modifiers":{"types":[{"type":"_type_identifier","named":true},{"type":"scoped_type_identifier","named":true},{"type":"function_modifiers","named":true},{"type":"parameters","named":true}],"multiple":false,"required":true,"position":1}}},
+  "function_type": {"fields":{"for_lifetimes":{"types":[{"type":"for_lifetimes","named":true}],"multiple":false,"required":false,"position":0}}},
   "bounded_type": {"fields":{"left":{"types":[{"type":"lifetime","named":true},{"type":"_type","named":true},{"type":"use_bounds","named":true}],"multiple":false,"required":true,"position":0},"right":{"types":[{"type":"lifetime","named":true},{"type":"_type","named":true},{"type":"use_bounds","named":true}],"multiple":false,"required":true,"position":1}}},
   "reference_type": {"fields":{"lifetime":{"types":[{"type":"lifetime","named":true}],"multiple":false,"required":false,"position":0},"mutable_specifier":{"types":[{"type":"mutable_specifier","named":true}],"multiple":false,"required":false,"position":1}}},
   "pointer_type": {"fields":{"mutable_specifier":{"types":[{"type":"mutable_specifier","named":true}],"multiple":false,"required":true,"position":0}}},
@@ -418,7 +416,6 @@ export function wrapWherePredicate(data: _NodeData, tree: TreeHandle): WrappedNo
 export function wrapImplItem(data: _NodeData, tree: TreeHandle): WrappedNode<ImplItem> {
   return {
     ...data,
-    get whereClause() { return drillIn(data.fields?.['where_clause'], tree); },
     get typeParameters() { return drillIn(data.fields?.['type_parameters'], tree); },
     get trait() { return drillIn(data.fields?.['trait'], tree); },
     get typeField() { return drillIn(data.fields?.['type'], tree); },
@@ -430,8 +427,6 @@ export function wrapImplItem(data: _NodeData, tree: TreeHandle): WrappedNode<Imp
 export function wrapTraitItem(data: _NodeData, tree: TreeHandle): WrappedNode<TraitItem> {
   return {
     ...data,
-    get visibilityModifier() { return drillIn(data.fields?.['visibility_modifier'], tree); },
-    get whereClause() { return drillIn(data.fields?.['where_clause'], tree); },
     get name() { return drillIn(data.fields?.['name'], tree); },
     get typeParameters() { return drillIn(data.fields?.['type_parameters'], tree); },
     get bounds() { return drillIn(data.fields?.['bounds'], tree); },
@@ -659,7 +654,8 @@ export function wrapFunctionType(data: _NodeData, tree: TreeHandle): WrappedNode
   return {
     ...data,
     get forLifetimes() { return drillIn(data.fields?.['for_lifetimes'], tree); },
-    get functionModifiers() { return drillIn(data.fields?.['function_modifiers'], tree); },
+    get trait() { return drillIn(data.fields?.['trait'], tree); },
+    get parameters() { return drillIn(data.fields?.['parameters'], tree); },
     get returnType() { return drillIn(data.fields?.['return_type'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<FunctionType>;
