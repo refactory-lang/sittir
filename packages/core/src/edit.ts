@@ -40,9 +40,12 @@ export function bindRange<T extends { readonly type: string; render(): string }>
 		endPos: range.end.index,
 		insertedText: factoryOutput.render(),
 	});
-	// Override toEdit and replace to use the bound range when called with no args
-	(factoryOutput as any).toEdit = boundEdit;
-	(factoryOutput as any).replace = boundEdit;
+	// Override toEdit and replace to use the bound range when called with no args.
+	// `factoryOutput` is typed as the caller's generic T; we're monkey-patching
+	// two methods onto it, which requires writing through an indexable shape.
+	const bag = factoryOutput as unknown as Record<string, () => Edit>;
+	bag.toEdit = boundEdit;
+	bag.replace = boundEdit;
 	return factoryOutput as T & { toEdit(): Edit; replace(): Edit };
 }
 

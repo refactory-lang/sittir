@@ -8,14 +8,14 @@ function makeNodeMap(nodes: [string, any][]): NodeMap {
         nodes: new Map(nodes),
         signatures: { signatures: new Map() },
         projections: { projections: new Map() },
-        derivations: { inferredFields: [], promotedRules: [] },
+        derivations: { inferredFields: [], promotedRules: [], repeatedShapes: [] },
     }
 }
 
 describe('emitConstsFromNodeMap', () => {
     it('emits NODE_KINDS for branch nodes', () => {
         const nodeMap = makeNodeMap([
-            ['function_item', { kind: 'function_item', typeName: 'FunctionItem', factoryName: 'functionItem', modelType: 'branch', fields: [] } as AssembledBranch],
+            ['function_item', { kind: 'function_item', typeName: 'FunctionItem', factoryName: 'functionItem', modelType: 'branch', fields: [] } as unknown as AssembledBranch],
         ])
         const output = emitConstsFromNodeMap({ grammar: 'test', nodeMap })
         expect(output).toContain("'function_item'")
@@ -24,8 +24,8 @@ describe('emitConstsFromNodeMap', () => {
 
     it('emits LEAF_KINDS for leaf and keyword nodes', () => {
         const nodeMap = makeNodeMap([
-            ['identifier', { kind: 'identifier', typeName: 'Identifier', factoryName: 'identifier', modelType: 'leaf' } as AssembledLeaf],
-            ['true', { kind: 'true', typeName: 'True', factoryName: 'true_', modelType: 'keyword', text: 'true' } as AssembledKeyword],
+            ['identifier', { kind: 'identifier', typeName: 'Identifier', factoryName: 'identifier', modelType: 'leaf' } as unknown as AssembledLeaf],
+            ['true', { kind: 'true', typeName: 'True', factoryName: 'true_', modelType: 'keyword', text: 'true' } as unknown as AssembledKeyword],
         ])
         const output = emitConstsFromNodeMap({ grammar: 'test', nodeMap })
         expect(output).toContain('LEAF_KINDS')
@@ -35,8 +35,8 @@ describe('emitConstsFromNodeMap', () => {
 
     it('emits KEYWORDS and OPERATORS from token nodes', () => {
         const nodeMap = makeNodeMap([
-            ['fn', { kind: 'fn', typeName: 'Fn', modelType: 'keyword', text: 'fn' } as AssembledKeyword],
-            ['+', { kind: '+', typeName: 'Plus', modelType: 'token' } as AssembledToken],
+            ['fn', { kind: 'fn', typeName: 'Fn', modelType: 'keyword', text: 'fn' } as unknown as AssembledKeyword],
+            ['+', { kind: '+', typeName: 'Plus', modelType: 'token' } as unknown as AssembledToken],
         ])
         const output = emitConstsFromNodeMap({ grammar: 'test', nodeMap })
         expect(output).toContain('KEYWORDS')
@@ -56,7 +56,7 @@ describe('emitConstsFromNodeMap', () => {
                     { name: 'name', propertyName: 'name', paramName: 'name', required: true, multiple: false, contentTypes: ['identifier'], source: 'grammar', projection: { typeName: '', kinds: [] } },
                     { name: 'body', propertyName: 'body', paramName: 'body', required: true, multiple: false, contentTypes: ['block'], source: 'grammar', projection: { typeName: '', kinds: [] } },
                 ],
-            } as AssembledBranch],
+            } as unknown as AssembledBranch],
         ])
         const output = emitConstsFromNodeMap({ grammar: 'test', nodeMap })
         expect(output).toContain('FIELD_MAP')
@@ -66,7 +66,7 @@ describe('emitConstsFromNodeMap', () => {
 
     it('emits enum values', () => {
         const nodeMap = makeNodeMap([
-            ['visibility', { kind: 'visibility', typeName: 'Visibility', modelType: 'enum', values: ['pub', 'crate'] } as AssembledEnum],
+            ['visibility', { kind: 'visibility', typeName: 'Visibility', modelType: 'enum', values: ['pub', 'crate'] } as unknown as AssembledEnum],
         ])
         const output = emitConstsFromNodeMap({ grammar: 'test', nodeMap })
         expect(output).toContain("'pub'")

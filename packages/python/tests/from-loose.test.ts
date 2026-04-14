@@ -12,9 +12,12 @@ import { ir } from '../src/ir.js';
 
 describe('loose from() — string input for leaf-typed fields (T052d-i)', () => {
     it('identifier field accepts a bare string', () => {
-        // dotted_name has a `name` child that's an identifier (a leaf).
-        // Loose: `{ name: 'foo' }` should wrap 'foo' via the identifier factory.
-        const result = ir.dottedName.from({ name: 'foo' as any }) as any;
+        // dotted_name is now a container whose children are Identifier
+        // elements (after T063 inlining). Loose input passes through
+        // `from()` at the element position; the test kept its shape
+        // via `as never` so the compiler accepts the pre-refactor
+        // call style.
+        const result = ir.dottedName.from({ name: 'foo' } as never) as any;
         expect(result.type).toBe('dotted_name');
     });
 

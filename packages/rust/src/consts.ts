@@ -2,11 +2,9 @@
 
 /** All branch (non-leaf) node kind strings. */
 export const NODE_KINDS = [
-  '_block_doc_comment_marker',
   '_expression_except_range',
   '_field_identifier',
   '_let_chain',
-  '_line_doc_comment_marker',
   '_non_delim_token',
   '_non_special_token',
   '_path',
@@ -159,11 +157,6 @@ export const LEAF_KINDS = [
   '_',
   '_block_comment_content',
   '_error_sentinel',
-  '_inner_block_doc_comment_marker',
-  '_line_doc_content',
-  '_outer_block_doc_comment_marker',
-  '_raw_string_literal_end',
-  '_raw_string_literal_start',
   '_reserved_identifier',
   'as',
   'async',
@@ -234,8 +227,6 @@ export const ALL_KINDS = [...NODE_KINDS, ...LEAF_KINDS] as const;
 /** Language keywords (alphabetic anonymous tokens). */
 export const KEYWORDS = [
   '_',
-  '_inner_line_doc_comment_marker',
-  '_outer_line_doc_comment_marker',
   'as',
   'async',
   'await',
@@ -337,19 +328,11 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   required: boolean;
   multiple: boolean;
 }>> = {
-  '_block_doc_comment_marker': [
-    { name: 'outer', required: true, multiple: false },
-    { name: 'inner', required: true, multiple: false },
-  ],
   '_expression_except_range': [
   ],
   '_field_identifier': [
   ],
   '_let_chain': [
-  ],
-  '_line_doc_comment_marker': [
-    { name: 'outer', required: true, multiple: false },
-    { name: 'inner', required: true, multiple: false },
   ],
   '_non_delim_token': [
   ],
@@ -406,6 +389,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'label', required: false, multiple: false },
   ],
   'block_comment': [
+    { name: 'outer', required: false, multiple: false },
+    { name: 'inner', required: false, multiple: false },
     { name: 'doc', required: false, multiple: false },
   ],
   'bounded_type': [
@@ -619,6 +604,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'bounds', required: false, multiple: false },
   ],
   'line_comment': [
+    { name: 'outer', required: true, multiple: false },
+    { name: 'inner', required: true, multiple: false },
     { name: 'doc', required: true, multiple: false },
   ],
   'loop_expression': [
@@ -664,7 +651,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'value', required: true, multiple: false },
   ],
   'or_pattern': [
-    { name: 'pattern', required: true, multiple: false },
+    { name: 'pattern', required: false, multiple: false },
   ],
   'ordered_field_declaration_list': [
     { name: 'attributes', required: false, multiple: false },

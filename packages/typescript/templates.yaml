@@ -5,19 +5,19 @@ rules:
   program:
     template: $HASH_BANG_LINE $STATEMENTS
   export_statement_form_0:
-    template: export*$$$CHILDREN
+    template: export*from $SOURCE $$$CHILDREN
   export_statement_export:
-    template: export type $$$CHILDREN
+    template: export type $$$CHILDREN from $SOURCE;
   export_statement_export2:
-    template: export=$$$CHILDREN
+    template: export=$$$CHILDREN;
   export_statement_export3:
-    template: export as namespace $$$CHILDREN
+    template: export as namespace $$$CHILDREN;
   export_statement:
     variants:
-      form_0: export*$$$CHILDREN
-      export: export type $$$CHILDREN
-      export2: export=$$$CHILDREN
-      export3: export as namespace $$$CHILDREN
+      form_0: export*from $SOURCE $$$CHILDREN
+      export: export type $$$CHILDREN from $SOURCE;
+      export2: export=$$$CHILDREN;
+      export3: export as namespace $$$CHILDREN;
   namespace_export:
     template: "*as $$$CHILDREN"
   export_clause:
@@ -112,7 +112,7 @@ rules:
       empty_statement: $$$CHILDREN
       labeled_statement: $$$CHILDREN
   expression_statement:
-    template: $$$CHILDREN
+    template: $$$CHILDREN;
   variable_declaration:
     template: var $DECLARATORS $SEMICOLON
     joinBy: ","
@@ -120,7 +120,7 @@ rules:
     template: $KIND $DECLARATORS $SEMICOLON
     joinBy: ","
   variable_declarator:
-    template: $NAME $TYPE $$$CHILDREN
+    template: $NAME $TYPE=$VALUE
   statement_block:
     template: "{$STATEMENTS}$AUTOMATIC_SEMICOLON"
   else_clause:
@@ -132,7 +132,7 @@ rules:
   for_statement:
     template: for($INITIALIZER $CONDITION $INCREMENT)$BODY
   for_in_statement:
-    template: for $$$CHILDREN $BODY
+    template: for($LEFT $OPERATOR $RIGHT)$BODY
   _for_header:
     template: ($LEFT $OPERATOR $RIGHT)
   while_statement:
@@ -150,9 +150,9 @@ rules:
   debugger_statement:
     template: debugger $$$CHILDREN
   return_statement:
-    template: return $$$CHILDREN
+    template: return $$$CHILDREN;
   throw_statement:
-    template: throw $$$CHILDREN
+    template: throw $$$CHILDREN;
   labeled_statement:
     template: "$LABEL:$BODY"
   switch_body:
@@ -181,10 +181,10 @@ rules:
   yield_expression:
     template: yield $EXPRESSION
   object:
-    template: "{$$$CHILDREN}"
+    template: "{$$$CHILDREN get}"
     joinBy: ","
   object_pattern:
-    template: "{$$$CHILDREN}"
+    template: "{$$$CHILDREN get}"
     joinBy: ","
   assignment_pattern:
     template: $LEFT=$RIGHT
@@ -201,7 +201,7 @@ rules:
   jsx_expression:
     template: "{$$$CHILDREN}"
   jsx_opening_element:
-    template: $$$CHILDREN>
+    template: <$NAME $$$ATTRIBUTE>
   nested_identifier:
     template: $OBJECT.$PROPERTY
   jsx_namespace_name:
@@ -209,7 +209,7 @@ rules:
   jsx_closing_element:
     template: </$NAME>
   jsx_self_closing_element:
-    template: $$$CHILDREN/>
+    template: <$NAME $$$ATTRIBUTE/>
   jsx_attribute:
     template: $$$CHILDREN=
   _jsx_string:
@@ -221,21 +221,21 @@ rules:
   class_heritage:
     template: $$$CHILDREN
   function_expression:
-    template: function $NAME $$$CHILDREN $BODY
+    template: function $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $BODY
   function_declaration:
-    template: function $NAME $$$CHILDREN $BODY
+    template: function $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $BODY $$$CHILDREN
   generator_function:
-    template: function*$NAME $$$CHILDREN $BODY
+    template: function*$NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $BODY
   generator_function_declaration:
-    template: function*$NAME $$$CHILDREN $BODY
+    template: function*$NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $BODY $$$CHILDREN
   arrow_function_parameter:
     template: $PARAMETER
   arrow_function__call_signature:
-    template: $$$CHILDREN
+    template: $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE
   arrow_function:
     variants:
       parameter: $PARAMETER
-      _call_signature: $$$CHILDREN
+      _call_signature: $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE
   _call_signature:
     template: $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE
   call_expression_function:
@@ -261,8 +261,6 @@ rules:
     template: $$$CHILDREN
   assignment_expression:
     template: $LEFT=$RIGHT
-  _augmented_assignment_lhs:
-    template: $$$CHILDREN
   augmented_assignment_expression:
     template: $LEFT $OPERATOR $RIGHT
   _initializer:
@@ -270,7 +268,7 @@ rules:
   spread_element:
     template: ...$EXPRESSION
   ternary_expression:
-    template: "$CONDITION $$$CHILDREN $CONSEQUENCE:$ALTERNATIVE"
+    template: "$CONDITION $CONSEQUENCE:$ALTERNATIVE"
   binary_expression:
     template: $LEFT $OPERATOR $RIGHT
   unary_expression:
@@ -300,7 +298,7 @@ rules:
   class_body:
     template: "{$$$DECORATOR $$$CHILDREN}"
   field_definition:
-    template: $$$DECORATOR $PROPERTY $$$CHILDREN
+    template: $$$DECORATOR $PROPERTY=$VALUE
   formal_parameters:
     template: ($$$CHILDREN)
     joinBy: ","
@@ -311,7 +309,7 @@ rules:
   rest_pattern:
     template: ...$$$CHILDREN
   method_definition:
-    template: $ACCESSIBILITY_MODIFIER $OVERRIDE_MODIFIER $$$CHILDREN get $NAME $BODY
+    template: $ACCESSIBILITY_MODIFIER $OVERRIDE_MODIFIER $$$CHILDREN get $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $BODY
   pair:
     template: "$KEY:$VALUE"
   pair_pattern:
@@ -323,7 +321,7 @@ rules:
   _semicolon:
     template: $$$CHILDREN
   public_field_definition:
-    template: $ACCESSIBILITY_MODIFIER $OVERRIDE_MODIFIER $INITIALIZER $NAME?$TYPE $$$CHILDREN
+    template: $ACCESSIBILITY_MODIFIER $OVERRIDE_MODIFIER $INITIALIZER $NAME?$TYPE=$VALUE
   _jsx_start_opening_element:
     template: <$NAME $$$ATTRIBUTE
   _import_identifier:
@@ -331,11 +329,11 @@ rules:
   non_null_expression:
     template: $EXPRESSION!
   method_signature:
-    template: $ACCESSIBILITY_MODIFIER $OVERRIDE_MODIFIER $$$CHILDREN get $NAME
+    template: $ACCESSIBILITY_MODIFIER $OVERRIDE_MODIFIER $$$CHILDREN get $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE
   abstract_method_signature:
-    template: $ACCESSIBILITY_MODIFIER abstract $OVERRIDE_MODIFIER get $NAME $$$CHILDREN
+    template: $ACCESSIBILITY_MODIFIER abstract $OVERRIDE_MODIFIER get $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE
   function_signature:
-    template: function $NAME $$$CHILDREN
+    template: function $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $$$CHILDREN
   decorator_parenthesized_expression:
     template: ($$$CHILDREN)
   type_assertion:
@@ -349,7 +347,7 @@ rules:
   import_require_clause:
     template: $IDENTIFIER=require($SOURCE)
   extends_clause:
-    template: extends $$$CHILDREN
+    template: extends $$$VALUE $$$TYPE_ARGUMENTS $$$CHILDREN
     joinBy: ","
   _extends_clause_single:
     template: $VALUE $TYPE_ARGUMENTS
@@ -361,9 +359,9 @@ rules:
   abstract_class_declaration:
     template: $CLASS_HERITAGE abstract class $NAME $TYPE_PARAMETERS $$$CHILDREN $BODY
   module:
-    template: module $$$CHILDREN
+    template: module $NAME $BODY
   internal_module:
-    template: namespace $$$CHILDREN
+    template: namespace $NAME $BODY
   _module:
     template: $NAME $BODY
   import_alias:
@@ -373,7 +371,7 @@ rules:
   interface_declaration:
     template: interface $NAME $TYPE_PARAMETERS $EXTENDS_TYPE_CLAUSE $BODY
   extends_type_clause:
-    template: extends $TYPE
+    template: extends $$$TYPE
     joinBy: ","
   enum_declaration:
     template: enum $NAME $BODY
@@ -381,7 +379,7 @@ rules:
     template: "{$OPENING}"
     joinBy: ","
   enum_assignment:
-    template: $NAME $$$CHILDREN
+    template: $NAME=$VALUE
   type_alias_declaration:
     template: type $NAME $TYPE_PARAMETERS=$VALUE $$$CHILDREN
   required_parameter:
@@ -418,8 +416,68 @@ rules:
     template: ...$$$CHILDREN
   constructor_type:
     template: new $TYPE_PARAMETERS $PARAMETERS=>$TYPE
-  primary_type:
+  primary_type_form0:
     template: $$$CHILDREN
+  primary_type_form1:
+    template: $$$CHILDREN
+  primary_type_form2:
+    template: $NAME
+  primary_type_form3:
+    template: $$$CHILDREN
+  primary_type_form4:
+    template: $$$CHILDREN
+  primary_type_form5:
+    template: $$$CHILDREN
+  primary_type_form6:
+    template: $$$CHILDREN
+  primary_type_form7:
+    template: $$$CHILDREN
+  primary_type_form8:
+    template: $$$CHILDREN
+  primary_type_form9:
+    template: $$$CHILDREN
+  primary_type_form10:
+    template: $$$CHILDREN
+  primary_type_form11:
+    template: $$$CHILDREN
+  primary_type_form12:
+    template: $$$CHILDREN
+  primary_type_form13:
+    template: $$$CHILDREN
+  primary_type_form14:
+    template: $$$CHILDREN
+  primary_type_form15:
+    template: $$$CHILDREN
+  primary_type_form16:
+    template: $$$CHILDREN
+  primary_type_form17:
+    template: $$$CHILDREN
+  primary_type_form18:
+    template: $$$CHILDREN
+  primary_type_form19:
+    template: const
+  primary_type:
+    variants:
+      form0: $$$CHILDREN
+      form1: $$$CHILDREN
+      form2: $NAME
+      form3: $$$CHILDREN
+      form4: $$$CHILDREN
+      form5: $$$CHILDREN
+      form6: $$$CHILDREN
+      form7: $$$CHILDREN
+      form8: $$$CHILDREN
+      form9: $$$CHILDREN
+      form10: $$$CHILDREN
+      form11: $$$CHILDREN
+      form12: $$$CHILDREN
+      form13: $$$CHILDREN
+      form14: $$$CHILDREN
+      form15: $$$CHILDREN
+      form16: $$$CHILDREN
+      form17: $$$CHILDREN
+      form18: $$$CHILDREN
+      form19: const
   template_type:
     template: "${$$$CHILDREN}"
   template_literal_type:
@@ -443,7 +501,7 @@ rules:
   _type_query_instantiation_expression:
     template: $FUNCTION $TYPE_ARGUMENTS
   type_query:
-    template: typeof $$$CHILDREN
+    template: "typeof $OBJECT[$INDEX]"
   index_type_query:
     template: keyof $PRIMARY_TYPE
   lookup_type:
@@ -452,7 +510,7 @@ rules:
     template: $NAME in $TYPE $ALIAS_CLAUSE
     alias: as $ALIAS
   literal_type:
-    template: $$$CHILDREN
+    template: $OPERATOR $ARGUMENT
   _number:
     template: $OPERATOR $ARGUMENT
   flow_maybe_type:
@@ -465,7 +523,7 @@ rules:
   object_type:
     template: $OPENING $MEMBERS $CLOSING
   call_signature:
-    template: $$$CHILDREN
+    template: $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE
   property_signature:
     template: $ACCESSIBILITY_MODIFIER $OVERRIDE_MODIFIER $$$CHILDREN $NAME $TYPE
   type_parameters:

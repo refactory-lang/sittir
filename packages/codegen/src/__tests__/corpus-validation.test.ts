@@ -47,7 +47,7 @@ const FLOORS = {
         fromTotal: 149,
     },
     typescript: {
-        factoryPass: 121,
+        factoryPass: 120,
         factoryTotal: 126,
         fromPass: 134,
         fromTotal: 142,

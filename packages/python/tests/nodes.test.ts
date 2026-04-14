@@ -18,7 +18,7 @@ describe('_simple_statements', () => {
 
 describe('import_statement', () => {
   it('factory produces correct type', () => {
-    const node = ir.importStatement();
+    const node = ir.importStatement({ type: "_import_list" } as never);
     expect(node.type).toBe('import_statement');
   });
 });
@@ -44,7 +44,7 @@ describe('relative_import', () => {
 
 describe('future_import_statement', () => {
   it('factory produces correct type', () => {
-    const node = ir.futureImport();
+    const node = ir.futureImport({ type: "_import_list" } as never);
     expect(node.type).toBe('future_import_statement');
   });
 });
@@ -138,7 +138,7 @@ describe('return_statement', () => {
 
 describe('delete_statement', () => {
   it('factory produces correct type', () => {
-    const node = ir.deleteStatement();
+    const node = ir.deleteStatement({ type: "_expressions" } as never);
     expect(node.type).toBe('delete_statement');
   });
 });
@@ -154,27 +154,27 @@ describe('raise_statement', () => {
   });
 });
 
-describe('pass_statement', () => {
+describe("pass_statement", () => {
   it('factory produces keyword', () => {
     const node = ir.pass();
-    expect(node.type).toBe('pass_statement');
-    expect(node.text).toBe('pass');
+    expect(node.type).toBe("pass_statement");
+    expect(node.text).toBe("pass");
   });
 });
 
-describe('break_statement', () => {
+describe("break_statement", () => {
   it('factory produces keyword', () => {
     const node = ir.breakStatement();
-    expect(node.type).toBe('break_statement');
-    expect(node.text).toBe('break');
+    expect(node.type).toBe("break_statement");
+    expect(node.text).toBe("break");
   });
 });
 
-describe('continue_statement', () => {
+describe("continue_statement", () => {
   it('factory produces keyword', () => {
     const node = ir.continueStatement();
-    expect(node.type).toBe('continue_statement');
-    expect(node.text).toBe('continue');
+    expect(node.type).toBe("continue_statement");
+    expect(node.text).toBe("continue");
   });
 });
 
@@ -213,22 +213,11 @@ describe('else_clause', () => {
 
 describe('match_statement', () => {
   it('factory produces correct type', () => {
-    const node = ir.match({ subject: [{ type: 'expression', text: 'test' } as any], body: { type: '_match_block', text: 'test' } as any });
+    const node = ir.match({ subject: [{ type: 'expression', text: 'test' } as any], body: { type: 'case_clause', text: 'test' } as any });
     expect(node.type).toBe('match_statement');
   });
   it('render produces non-empty string', () => {
-    const node = ir.match({ subject: [{ type: 'expression', text: 'test' } as any], body: { type: '_match_block', text: 'test' } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('_match_block', () => {
-  it('factory produces correct type', () => {
-    const node = ir.matchBlock({ alternative: [{ type: 'case_clause', text: 'test' } as any] });
-    expect(node.type).toBe('_match_block');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.matchBlock({ alternative: [{ type: 'case_clause', text: 'test' } as any] });
+    const node = ir.match({ subject: [{ type: 'expression', text: 'test' } as any], body: { type: 'case_clause', text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -348,7 +337,7 @@ describe('parameters', () => {
 
 describe('lambda_parameters', () => {
   it('factory produces correct type', () => {
-    const node = ir.lambdaParameters();
+    const node = ir.lambdaParameters({ type: "_parameters" } as never);
     expect(node.type).toBe('lambda_parameters');
   });
 });
@@ -431,7 +420,7 @@ describe('type_parameter', () => {
 
 describe('parenthesized_list_splat', () => {
   it('factory produces correct type', () => {
-    const node = ir.parenthesizedListSplat();
+    const node = ir.parenthesizedListSplat({ type: "parenthesized_list_splat" } as never);
     expect(node.type).toBe('parenthesized_list_splat');
   });
 });
@@ -467,7 +456,7 @@ describe('decorator', () => {
 
 describe('_suite', () => {
   it('factory produces correct type', () => {
-    const node = ir.suite();
+    const node = ir.suite({ type: "_simple_statements" } as never);
     expect(node.type).toBe('_suite');
   });
 });
@@ -495,22 +484,15 @@ describe('dotted_name', () => {
 
 describe('case_pattern', () => {
   it('factory produces correct type', () => {
-    const node = ir.casePattern();
+    const node = ir.casePattern({ type: "case_pattern" } as never);
     expect(node.type).toBe('case_pattern');
   });
 });
 
 describe('_simple_pattern', () => {
   it('factory produces correct type', () => {
-    const node = ir.simplePattern();
+    const node = ir.simplePattern({ type: "class_pattern" } as never);
     expect(node.type).toBe('_simple_pattern');
-  });
-});
-
-describe('_as_pattern', () => {
-  it('factory produces correct type', () => {
-    const node = ir.hiddenAsPattern();
-    expect(node.type).toBe('_as_pattern');
   });
 });
 
@@ -518,20 +500,6 @@ describe('union_pattern', () => {
   it('factory produces correct type', () => {
     const node = ir.unionPattern();
     expect(node.type).toBe('union_pattern');
-  });
-});
-
-describe('_list_pattern', () => {
-  it('factory produces correct type', () => {
-    const node = ir.hiddenListPattern();
-    expect(node.type).toBe('_list_pattern');
-  });
-});
-
-describe('_tuple_pattern', () => {
-  it('factory produces correct type', () => {
-    const node = ir.hiddenTuplePattern();
-    expect(node.type).toBe('_tuple_pattern');
   });
 });
 
@@ -602,14 +570,14 @@ describe('_patterns', () => {
 
 describe('parameter', () => {
   it('factory produces correct type', () => {
-    const node = ir.parameter();
+    const node = ir.parameter({ type: "identifier" } as never);
     expect(node.type).toBe('parameter');
   });
 });
 
 describe('pattern', () => {
   it('factory produces correct type', () => {
-    const node = ir.pattern();
+    const node = ir.pattern({ type: "identifier" } as never);
     expect(node.type).toBe('pattern');
   });
 });
@@ -652,14 +620,14 @@ describe('typed_default_parameter', () => {
 
 describe('list_splat_pattern', () => {
   it('factory produces correct type', () => {
-    const node = ir.listSplatPattern();
+    const node = ir.listSplatPattern({ type: "identifier" } as never);
     expect(node.type).toBe('list_splat_pattern');
   });
 });
 
 describe('dictionary_splat_pattern', () => {
   it('factory produces correct type', () => {
-    const node = ir.dictionarySplatPattern();
+    const node = ir.dictionarySplatPattern({ type: "identifier" } as never);
     expect(node.type).toBe('dictionary_splat_pattern');
   });
 });
@@ -677,14 +645,14 @@ describe('as_pattern', () => {
 
 describe('expression', () => {
   it('factory produces correct type', () => {
-    const node = ir.expression();
+    const node = ir.expression({ type: "comparison_operator" } as never);
     expect(node.type).toBe('expression');
   });
 });
 
 describe('primary_expression', () => {
   it('factory produces correct type', () => {
-    const node = ir.primary();
+    const node = ir.primary({ type: "await" } as never);
     expect(node.type).toBe('primary_expression');
   });
 });
@@ -817,7 +785,7 @@ describe('pattern_list', () => {
 
 describe('yield', () => {
   it('factory produces correct type', () => {
-    const node = ir.yield_();
+    const node = ir.yield_({ type: "expression" } as never);
     expect(node.type).toBe('yield');
   });
 });
@@ -879,7 +847,7 @@ describe('typed_parameter', () => {
 
 describe('type', () => {
   it('factory produces correct type', () => {
-    const node = ir.type();
+    const node = ir.type({ type: "expression" } as never);
     expect(node.type).toBe('type');
   });
 });
@@ -959,7 +927,7 @@ describe('list', () => {
 
 describe('set', () => {
   it('factory produces correct type', () => {
-    const node = ir.set();
+    const node = ir.set({ type: "_collection_elements" } as never);
     expect(node.type).toBe('set');
   });
 });
@@ -1042,7 +1010,7 @@ describe('_comprehension_clauses', () => {
 
 describe('parenthesized_expression', () => {
   it('factory produces correct type', () => {
-    const node = ir.parenthesized();
+    const node = ir.parenthesized({ type: "expression" } as never);
     expect(node.type).toBe('parenthesized_expression');
   });
 });
@@ -1178,27 +1146,27 @@ describe('keyword_identifier', () => {
   });
 });
 
-describe('true', () => {
+describe("true", () => {
   it('factory produces keyword', () => {
     const node = ir.true_();
-    expect(node.type).toBe('true');
-    expect(node.text).toBe('True');
+    expect(node.type).toBe("true");
+    expect(node.text).toBe("True");
   });
 });
 
-describe('false', () => {
+describe("false", () => {
   it('factory produces keyword', () => {
     const node = ir.false_();
-    expect(node.type).toBe('false');
-    expect(node.text).toBe('False');
+    expect(node.type).toBe("false");
+    expect(node.text).toBe("False");
   });
 });
 
-describe('none', () => {
+describe("none", () => {
   it('factory produces keyword', () => {
     const node = ir.none();
-    expect(node.type).toBe('none');
-    expect(node.text).toBe('None');
+    expect(node.type).toBe("none");
+    expect(node.text).toBe("None");
   });
 });
 
@@ -1261,14 +1229,6 @@ describe('string_start', () => {
   });
 });
 
-describe('_string_content', () => {
-  it('factory produces correct type', () => {
-    const node = ir.hiddenStringContent('test');
-    expect(node.type).toBe('_string_content');
-    expect(node.text).toBe('test');
-  });
-});
-
 describe('escape_interpolation', () => {
   it('factory produces correct type', () => {
     const node = ir.escapeInterpolation('test');
@@ -1295,7 +1255,7 @@ describe('except', () => {
 
 describe('as_pattern_target', () => {
   it('factory produces correct type', () => {
-    const node = ir.asPatternTarget();
+    const node = ir.asPatternTarget({ type: "comparison_operator" } as never);
     expect(node.type).toBe('as_pattern_target');
   });
 });

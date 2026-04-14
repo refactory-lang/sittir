@@ -83,7 +83,8 @@ export function repeat(content: Input): RepeatRule {
 
     // Detect separator pattern in seq(STRING, x) or seq(x, STRING)
     if (resolved.type === 'seq' && resolved.members.length === 2) {
-        const [first, second] = resolved.members
+        const first = resolved.members[0]!
+        const second = resolved.members[1]!
         if (first.type === 'string' && second.type !== 'string') {
             return { type: 'repeat', content: second, separator: first.value }
         }
@@ -108,16 +109,39 @@ export function repeat1(content: Input): Repeat1Rule {
 export function createProxy(currentRule: string, refs: SymbolRef[]): Record<string, SymbolRuleWithRef> {
     return new Proxy({} as Record<string, SymbolRuleWithRef>, {
         get(_target, name: string): SymbolRuleWithRef {
-            const ref: SymbolRef = { from: currentRule, to: name }
+            const ref: SymbolRef = { refType: 'symbol', from: currentRule, to: name }
             refs.push(ref)
             return {
                 type: 'symbol' as const,
                 name,
-                hidden: name.startsWith('_'), //TODO: better hidden convention
+                // `hidden` on the symbol ref is a hint for downstream
+                // passes only — Link recomputes the authoritative
+                // visibility decision via `isHiddenKind()` below,
+                // consulting both the leading-underscore convention
+                // and tree-sitter's explicit `inline` list.
+                hidden: name.startsWith('_'),
                 _ref: ref,
             }
         },
     })
+}
+
+/**
+ * Authoritative "is this kind hidden?" check shared by Link and
+ * downstream passes. Tree-sitter treats a rule as hidden when:
+ *
+ *   (a) its name begins with `_` (convention), OR
+ *   (b) its name appears in the grammar's `inline:` array (explicit).
+ *
+ * Grammars that don't follow the leading-underscore convention can
+ * still mark rules hidden via `inline`. Passing `undefined` for
+ * `inlineList` falls back to convention-only, which is the safe
+ * default when Link doesn't have grammar metadata at hand.
+ */
+export function isHiddenKind(name: string, inlineList?: readonly string[]): boolean {
+    if (name.startsWith('_')) return true
+    if (inlineList && inlineList.includes(name)) return true
+    return false
 }
 
 // ---------------------------------------------------------------------------
@@ -170,8 +194,10 @@ function walkRefs(rule: Rule, visit: (ref: SymbolRef) => void): void {
 
 export function field(name: string, content?: Input): FieldRule {
     if (content === undefined) {
-        // No content — used in transform() patches where the content comes from the original member
-        return { type: 'field', name, content: { type: 'string', value: '' } as any, _needsContent: true } as any
+        // No content — used in transform() patches where the content
+        // comes from the original member. `_needsContent` flags this
+        // placeholder for `resolvePatch` to swap out.
+        return { type: 'field', name, content: { type: 'string', value: '' }, _needsContent: true }
     }
     const resolved = normalize(content)
     // Propagate the field name to every nested symbol ref. Stops at
@@ -231,7 +257,7 @@ export function transform(original: Rule, patches: Record<number | string, Rule>
 }
 
 function resolvePatch(patch: Rule, originalMember: Rule): Rule {
-    if (patch.type === 'field' && (patch as any)._needsContent) {
+    if (patch.type === 'field' && patch._needsContent) {
         return { type: 'field', name: patch.name, content: originalMember, source: 'override' as const }
     }
     if (patch.type === 'field') {
@@ -254,7 +280,7 @@ export function insert(original: Rule, position: number, wrapper: (content: Rule
         throw new Error(`insert(): position ${position} out of bounds (rule has ${members.length} members)`)
     }
 
-    const wrapped = wrapper(members[position])
+    const wrapped = wrapper(members[position]!)
     members[position] = wrapped.type === 'field'
         ? { ...wrapped, source: 'override' as const }
         : wrapped
@@ -362,14 +388,18 @@ export function blank(): Rule {
 
 interface GrammarOptions {
     name: string
-    rules: Record<string, ($: Record<string, SymbolRuleWithRef>) => Input>
-    extras?: ($: Record<string, SymbolRuleWithRef>) => Input[]
-    externals?: ($: Record<string, SymbolRuleWithRef>) => Input[]
-    supertypes?: ($: Record<string, SymbolRuleWithRef>) => Input[]
-    inline?: ($: Record<string, SymbolRuleWithRef>) => Input[]
-    conflicts?: ($: Record<string, SymbolRuleWithRef>) => Input[][]
-    word?: ($: Record<string, SymbolRuleWithRef>) => SymbolRuleWithRef
-    precedences?: ($: Record<string, SymbolRuleWithRef>) => Input[][]
+    // tree-sitter's DSL passes `($, previous)` to every rule / metadata
+    // callback — `previous` is the base grammar's version in
+    // extension mode. We type the second arg loosely so extension
+    // callbacks that forward it (`previous.concat([...])`) compile.
+    rules: Record<string, ($: Record<string, SymbolRuleWithRef>, previous?: unknown) => Input>
+    extras?: ($: Record<string, SymbolRuleWithRef>, previous?: unknown) => Input[]
+    externals?: ($: Record<string, SymbolRuleWithRef>, previous?: unknown) => Input[]
+    supertypes?: ($: Record<string, SymbolRuleWithRef>, previous?: unknown) => Input[]
+    inline?: ($: Record<string, SymbolRuleWithRef>, previous?: unknown) => Input[]
+    conflicts?: ($: Record<string, SymbolRuleWithRef>, previous?: unknown) => Input[][]
+    word?: ($: Record<string, SymbolRuleWithRef>, previous?: unknown) => SymbolRuleWithRef
+    precedences?: ($: Record<string, SymbolRuleWithRef>, previous?: unknown) => Input[][]
 }
 
 /**
@@ -410,8 +440,11 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
     for (const [name, ruleFn] of Object.entries(opts.rules)) {
         const $ = createProxy(name, refs)
         const baseRule = baseRules[name]
-        // tree-sitter passes ($, original) — original is the base rule for extensions
-        const result = ruleFn.call($, $, baseRule as any)
+        // tree-sitter passes ($, original) — original is the base rule for extensions.
+        // `baseRule` is typed as `Rule` from our map but the DSL callback's
+        // `previous` is `unknown` (tree-sitter permits arbitrary pass-through
+        // shapes). The call-site treats it as opaque.
+        const result = ruleFn.call($, $, baseRule)
         rules[name] = normalize(result)
     }
 
@@ -538,10 +571,13 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
  * Tree-sitter's grammar(base, { rules }) handles extension merging natively.
  */
 export async function evaluate(entryPath: string): Promise<RawGrammar> {
-    // Inject DSL functions into globalThis
-    const g = globalThis as any
-    const savedGlobals: Record<string, any> = {}
-    const dslFunctions: Record<string, any> = {
+    // Inject DSL functions into globalThis. `globalThis` is typed as
+    // `typeof globalThis`, which doesn't include our DSL props —
+    // `Record<string, unknown>` is the honest shape for the bag we
+    // mutate inside this scope.
+    const g = globalThis as unknown as Record<string, unknown>
+    const savedGlobals: Record<string, unknown> = {}
+    const dslFunctions: Record<string, unknown> = {
         grammar: grammarFn,
         seq,
         choice,
@@ -566,14 +602,11 @@ export async function evaluate(entryPath: string): Promise<RawGrammar> {
 
     try {
         // Import the grammar module
-        const mod = await import(entryPath)
-        const result = mod.default ?? mod
-
-        // Extract the grammar from the result
+        const mod = await import(entryPath) as { default?: unknown; grammar?: unknown }
+        const result = (mod.default ?? mod) as { grammar?: unknown }
         const grammarObj = result.grammar ?? result
         return grammarObj as RawGrammar
     } finally {
-        // Restore globals
         for (const [name, original] of Object.entries(savedGlobals)) {
             if (original === undefined) {
                 delete g[name]

@@ -32,7 +32,8 @@ import { join } from 'node:path'
 import { readNode, buildRoutingMap } from '@sittir/core'
 import type { AnyNodeData, AnyTreeNode } from '@sittir/types'
 import { loadOverrides } from './overrides.ts'
-import { loadRawEntries } from './grammar-reader.ts'
+import { loadRawEntries } from './validators/node-types.ts'
+import { loadWebTreeSitter } from './validators/common.ts'
 
 const require = createRequire(import.meta.url)
 
@@ -289,14 +290,10 @@ export interface ReadNodeRoundTripResult {
 export async function validateReadNodeRoundTrip(
     grammar: string,
 ): Promise<ReadNodeRoundTripResult> {
-    const mod = await import('web-tree-sitter') as any
-    const ParserClass = mod.Parser ?? mod.default?.Parser ?? mod.default
-    const LanguageClass = mod.Language ?? mod.default?.Language
-    await ParserClass.init()
-
+    const { Parser, Language } = await loadWebTreeSitter()
     const wasmPath = require.resolve(WASM_PATHS[grammar]!)
-    const lang = await LanguageClass.load(wasmPath)
-    const parser = new ParserClass() as { parse(s: string): TSTree; setLanguage(l: unknown): void }
+    const lang = await Language.load(wasmPath)
+    const parser = new Parser()
     parser.setLanguage(lang)
 
     const rawEntries = loadRawEntries(grammar)

@@ -89,6 +89,21 @@ export interface FieldRule {
     readonly content: Rule
     readonly source?: 'grammar' | 'override' | 'inlined' | 'inferred'
     readonly nameFrom?: 'grammar' | 'kind' | 'override' | 'usage'
+    /**
+     * True if the field's value is rendered as an indented block — its
+     * content resolves (through symbol refs) to a subtree containing an
+     * `indent` Rule node. The template walker prefixes `\n  ` to the
+     * field slot so `class X:$BODY` renders as `class X:\n  $BODY`.
+     * Set by Link's `annotateBlockBearerFields` pass.
+     */
+    readonly blockBearer?: boolean
+    /**
+     * Internal marker used by Evaluate's `transform()` DSL: a `field()`
+     * call with no content is a placeholder patch that takes its content
+     * from the original rule at patch-resolve time. Never survives past
+     * `resolvePatch` — if this shows up anywhere else, it's a bug.
+     */
+    readonly _needsContent?: boolean
 }
 
 export interface VariantRule {
@@ -234,6 +249,8 @@ export interface TokenRule {
 // ---------------------------------------------------------------------------
 
 export interface SymbolRef {
+
+	refType: 'symbol' | 'alias' | 'token'
     from: string
     to: string
     fieldName?: string
@@ -301,6 +318,14 @@ export interface DerivationLog {
     readonly inferredFields: InferredFieldEntry[]
     /** Rule-level promotions: enum, supertype, terminal, polymorph classifications. */
     readonly promotedRules: PromotedRuleEntry[]
+    /**
+     * Repeated-shape candidates — sets of kinds that appear as field
+     * content unions in ≥2 distinct parent rules. Suggested as either
+     * a grammar-level supertype (choice-of-symbols) or a shared group
+     * so the grammar author can collapse the repetition with a single
+     * named rule. Non-mutating — these are suggestions only.
+     */
+    readonly repeatedShapes: RepeatedShapeEntry[]
 }
 
 export interface InferredFieldEntry {
@@ -318,6 +343,17 @@ export interface InferredFieldEntry {
     readonly sampleSize: number
     /** True if Link mutated the rule tree; false if held back by `include`. */
     readonly applied: boolean
+}
+
+export interface RepeatedShapeEntry {
+    /** Suggested name for the shared supertype/group (readable stub). */
+    readonly suggestedName: string
+    /** The kind set — sorted, canonicalized. */
+    readonly kinds: readonly string[]
+    /** Parent rules whose fields carry this exact kind set. */
+    readonly parents: readonly string[]
+    /** Suggested shape: 'supertype' for choice-of-named, 'group' for heterogeneous. */
+    readonly shape: 'supertype' | 'group'
 }
 
 export interface PromotedRuleEntry {
@@ -759,7 +795,7 @@ export abstract class AssembledNodeBase {
      * AssembledContainer, AssembledGroup, AssembledPolymorph) override
      * this to walk their rule tree and produce the right shape.
      */
-    renderTemplate(): Record<string, unknown> | undefined {
+    renderTemplate(_rules?: Record<string, Rule>): Record<string, unknown> | undefined {
         return undefined
     }
 }
@@ -823,8 +859,8 @@ export class AssembledBranch extends AssembledNodeBase {
         return this.#children ??= deriveChildren(this.rule)
     }
 
-    renderTemplate(): Record<string, unknown> {
-        const { template, clauses } = renderRuleTemplate(this.rule)
+    renderTemplate(rules?: Record<string, Rule>): Record<string, unknown> {
+        const { template, clauses } = renderRuleTemplate(this.rule, false, rules)
         if (!template) {
             throw new Error(
                 `AssembledBranch.renderTemplate: '${this.kind}' produced an empty template. ` +
@@ -861,8 +897,8 @@ export class AssembledContainer extends AssembledNodeBase {
         return this.rule.type === 'repeat' ? this.rule.separator : undefined
     }
 
-    renderTemplate(): Record<string, unknown> {
-        const { template, clauses } = renderRuleTemplate(this.rule)
+    renderTemplate(rules?: Record<string, Rule>): Record<string, unknown> {
+        const { template, clauses } = renderRuleTemplate(this.rule, false, rules)
         if (!template) {
             throw new Error(
                 `AssembledContainer.renderTemplate: '${this.kind}' produced an empty template. ` +
@@ -892,7 +928,7 @@ export class AssembledPolymorph extends AssembledNodeBase {
     /** A polymorph's forms are hidden groups synthesized from the choice branches. */
     get forms(): AssembledGroup[] { return this.#forms }
 
-    renderTemplate(): Record<string, unknown> {
+    renderTemplate(rules?: Record<string, Rule>): Record<string, unknown> {
         if (this.#forms.length === 0) {
             throw new Error(
                 `AssembledPolymorph.renderTemplate: '${this.kind}' has zero synthesised forms. ` +
@@ -906,7 +942,7 @@ export class AssembledPolymorph extends AssembledNodeBase {
         const detect: Record<string, string> = {}
         const mergedClauses: Record<string, string> = {}
         for (const form of this.#forms) {
-            const { template, clauses } = renderRuleTemplate(form.rule)
+            const { template, clauses } = renderRuleTemplate(form.rule, false, rules)
             if (!template) {
                 throw new Error(
                     `AssembledPolymorph.renderTemplate: '${this.kind}' form '${form.name}' ` +
@@ -1035,8 +1071,8 @@ export class AssembledGroup extends AssembledNodeBase {
         return this.#children ??= deriveChildren(this.rule)
     }
 
-    renderTemplate(): Record<string, unknown> {
-        const { template, clauses } = renderRuleTemplate(this.rule)
+    renderTemplate(rules?: Record<string, Rule>): Record<string, unknown> {
+        const { template, clauses } = renderRuleTemplate(this.rule, false, rules)
         if (!template) {
             throw new Error(
                 `AssembledGroup.renderTemplate: '${this.kind}' produced an empty template. ` +
@@ -1085,6 +1121,14 @@ export interface NodeMap {
      * was applied to the rule tree (governed by IncludeFilter).
      */
     readonly derivations: DerivationLog
+    /**
+     * Post-Optimize rule map — the template walker needs this so its
+     * `symbol` case can inline hidden helper rules (e.g. python's
+     * `_import_list`) directly into the emitted template. Without it
+     * the walker falls back to `$$$CHILDREN` which is wrong for hidden
+     * helpers whose fields get promoted onto the parent node.
+     */
+    readonly rules?: Record<string, Rule>
 }
 
 // ---------------------------------------------------------------------------
@@ -1102,10 +1146,73 @@ interface WalkResult {
     clauses: Record<string, string>
 }
 
-export function renderRuleTemplate(rule: Rule, inRepeat = false): WalkResult {
+export function renderRuleTemplate(
+    rule: Rule,
+    inRepeat = false,
+    rules?: Record<string, Rule>,
+): WalkResult {
     const clauses: Record<string, string> = {}
-    const parts = walkRuleForTemplate(rule, new Set(), inRepeat, clauses)
+    // Pre-compute field names that appear in any `repeat` subtree so
+    // the walker can emit `$$$NAME` even for the *first* occurrence of a
+    // repeated field — the commaSep1 pattern `seq(field(X), repeat(seq(',',
+    // field(X))))` has X at non-repeat position first, then at repeat
+    // position, but both should render as the same multi-valued slot.
+    const repeatedFields = new Set<string>()
+    collectRepeatedFields(rule, false, repeatedFields, rules, new Set())
+    const parts = walkRuleForTemplate(rule, new Set(), inRepeat, clauses, rules, repeatedFields)
     return { template: parts.join(''), clauses }
+}
+
+function collectRepeatedFields(
+    rule: Rule,
+    inRepeat: boolean,
+    out: Set<string>,
+    rules: Record<string, Rule> | undefined,
+    visiting: Set<string>,
+): void {
+    switch (rule.type) {
+        case 'seq':
+        case 'choice':
+            for (const m of rule.members) collectRepeatedFields(m, inRepeat, out, rules, visiting)
+            return
+        case 'repeat':
+        case 'repeat1':
+            collectRepeatedFields(rule.content, true, out, rules, visiting)
+            return
+        case 'optional':
+        case 'variant':
+        case 'clause':
+        case 'group':
+        case 'token':
+        case 'alias':
+        case 'terminal':
+            collectRepeatedFields((rule as { content: Rule }).content, inRepeat, out, rules, visiting)
+            return
+        case 'field':
+            if (inRepeat) out.add(rule.name)
+            collectRepeatedFields(rule.content, inRepeat, out, rules, visiting)
+            return
+        case 'symbol': {
+            // Follow hidden symbols once — their content will be inlined
+            // during template emission, so any repeated fields inside
+            // must be counted at the caller site as well.
+            const name = (rule as { name: string }).name
+            if (!name.startsWith('_') || !rules || visiting.has(name)) return
+            const target = rules[name]
+            if (!target) return
+            visiting.add(name)
+            collectRepeatedFields(target, inRepeat, out, rules, visiting)
+            visiting.delete(name)
+            return
+        }
+        case 'polymorph':
+            for (const form of rule.forms) {
+                collectRepeatedFields(form.content, inRepeat, out, rules, visiting)
+            }
+            return
+        default:
+            return
+    }
 }
 
 function walkRuleForTemplate(
@@ -1113,12 +1220,14 @@ function walkRuleForTemplate(
     seen: Set<string>,
     inRepeat: boolean,
     clauses: Record<string, string>,
+    rules?: Record<string, Rule>,
+    repeatedFields?: ReadonlySet<string>,
 ): string[] {
     switch (rule.type) {
         case 'seq': {
             const out: string[] = []
             for (const m of rule.members) {
-                const parts = walkRuleForTemplate(m, seen, inRepeat, clauses)
+                const parts = walkRuleForTemplate(m, seen, inRepeat, clauses, rules, repeatedFields)
                 if (out.length > 0 && parts.length > 0) {
                     const lastChar = out[out.length - 1]!.slice(-1)
                     const firstChar = parts[0]!.charAt(0)
@@ -1132,7 +1241,7 @@ function walkRuleForTemplate(
         case 'choice':
             // For choice in a template, emit the first non-empty member.
             for (const m of rule.members) {
-                const parts = walkRuleForTemplate(m, seen, inRepeat, clauses)
+                const parts = walkRuleForTemplate(m, seen, inRepeat, clauses, rules, repeatedFields)
                 if (parts.length > 0) return parts
             }
             return []
@@ -1143,10 +1252,11 @@ function walkRuleForTemplate(
             // produces invalid output (python: `match X,:`). Skip the
             // whole optional when its content has no field/symbol ref.
             if (containsOnlyPunctuation(rule.content)) return []
-            return walkRuleForTemplate(rule.content, seen, inRepeat, clauses)
+            return walkRuleForTemplate(rule.content, seen, inRepeat, clauses, rules, repeatedFields)
 
         case 'repeat':
-            return walkRuleForTemplate(rule.content, seen, true, clauses)
+        case 'repeat1':
+            return walkRuleForTemplate(rule.content, seen, true, clauses, rules, repeatedFields)
 
         case 'field': {
             if (seen.has(rule.name)) return []
@@ -1154,16 +1264,42 @@ function walkRuleForTemplate(
             const varName = rule.name.toUpperCase()
             // Fields inside a repeat are multi-valued — emit `$$$NAME` so
             // the renderer joins instances with the rule's joinBy separator.
-            return [inRepeat ? `$$$${varName}` : `$${varName}`]
+            // `repeatedFields` also catches the first occurrence of a
+            // commaSep1 pattern (non-repeat position + same field inside
+            // a trailing repeat) so both slots render with $$$.
+            const multi = inRepeat || (repeatedFields?.has(rule.name) ?? false)
+            const slot = multi ? `$$$${varName}` : `$${varName}`
+            // Block-bearer fields render as an indented block (python
+            // `class X:\n  body`). Link annotates the field when its
+            // content resolves to a subtree containing an `indent` node.
+            // Trailing newline restores the outer column so whatever
+            // follows the block (e.g. `else_clause`) lands flush-left.
+            return rule.blockBearer ? ['\n  ', slot, '\n'] : [slot]
         }
 
-        case 'symbol':
-            // Hidden symbols (supertype refs) dispatch to concrete children
-            // at parse time, so they still contribute to the template as
-            // a children-reference placeholder.
+        case 'symbol': {
+            // Hidden helper rules (e.g. python's `_import_list`) are
+            // inlined by tree-sitter at parse time — their fields get
+            // promoted onto the parent node. To render correctly we
+            // mirror that by walking into the referenced rule's body
+            // right here, so the hidden helper's fields appear as real
+            // slots in the caller's template. Guards against recursion
+            // via the rule-name seen-set key.
+            const symName = (rule as { name: string }).name
+            if (symName.startsWith('_') && rules) {
+                const target = rules[symName]
+                if (target && !seen.has(`@${symName}`)) {
+                    seen.add(`@${symName}`)
+                    const parts = walkRuleForTemplate(target, seen, inRepeat, clauses, rules, repeatedFields)
+                    if (parts.length > 0) return parts
+                }
+            }
+            // Visible symbols (and hidden ones we can't expand) render
+            // as unconsumed named children.
             if (seen.has('children')) return []
             seen.add('children')
             return ['$$$CHILDREN']
+        }
 
         case 'string':
             if (inRepeat) return [] // joinBy handles separators
@@ -1181,7 +1317,7 @@ function walkRuleForTemplate(
             return rule.values.length > 0 ? [rule.values[0]!] : []
 
         case 'variant':
-            return walkRuleForTemplate(rule.content, seen, inRepeat, clauses)
+            return walkRuleForTemplate(rule.content, seen, inRepeat, clauses, rules, repeatedFields)
 
         case 'clause': {
             // Emit a separate sub-template and reference it from the main
@@ -1190,14 +1326,14 @@ function walkRuleForTemplate(
             if (seen.has(rule.name)) return []
             seen.add(rule.name)
             const clauseSeen = new Set<string>()
-            const clauseParts = walkRuleForTemplate(rule.content, clauseSeen, inRepeat, clauses)
+            const clauseParts = walkRuleForTemplate(rule.content, clauseSeen, inRepeat, clauses, rules, repeatedFields)
             const clauseTemplate = clauseParts.join('')
             if (clauseTemplate) clauses[rule.name] = clauseTemplate
             return [`$${rule.name.toUpperCase()}_CLAUSE`]
         }
 
         case 'group':
-            return walkRuleForTemplate(rule.content, seen, inRepeat, clauses)
+            return walkRuleForTemplate(rule.content, seen, inRepeat, clauses, rules, repeatedFields)
 
         case 'supertype':
             if (seen.has('children')) return []
@@ -1210,6 +1346,20 @@ function walkRuleForTemplate(
             return ['\n']
         case 'newline':
             return ['\n']
+
+        case 'terminal':
+            return walkRuleForTemplate(rule.content, seen, inRepeat, clauses, rules, repeatedFields)
+
+        case 'polymorph':
+            // Polymorphs are dispatched by AssembledPolymorph.renderTemplate
+            // which walks each form separately. Reaching this case means a
+            // PolymorphRule appears nested inside another rule's body, which
+            // the classifier is supposed to prevent — treat as a bug rather
+            // than silently emitting nothing.
+            throw new Error(
+                `walkRuleForTemplate: nested PolymorphRule should have been promoted by Link. ` +
+                `forms=${rule.forms.map(f => f.name).join(',')}`,
+            )
 
         default:
             return []

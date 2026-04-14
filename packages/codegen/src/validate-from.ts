@@ -10,104 +10,22 @@
  */
 
 import { createRequire } from 'node:module';
-import { readFileSync, readdirSync } from 'node:fs';
-import { join } from 'node:path';
 import { parse as parseYaml } from 'yaml';
 import { readNode, buildRoutingMap } from '@sittir/core';
-import { loadRawEntries } from './grammar-reader.ts';
-import type { AnyNodeData, AnyTreeNode, RulesConfig } from '@sittir/types';
+import { loadRawEntries } from './validators/node-types.ts';
+import type { AnyNodeData, RulesConfig } from '@sittir/types';
 import { loadOverrides } from './overrides.ts';
+import {
+	loadCorpusEntries,
+	loadWebTreeSitter,
+	treeHandle,
+	findFirst,
+	collectKinds,
+	WASM_PATHS,
+	type TSTree,
+} from './validators/common.ts';
 
 const require = createRequire(import.meta.url);
-
-// ---------------------------------------------------------------------------
-// Tree-sitter adapter (shared with other validators)
-// ---------------------------------------------------------------------------
-
-interface TSNode {
-	type: string; text: string; startIndex: number; endIndex: number;
-	isNamed: boolean; childCount: number; children: TSNode[];
-	child(i: number): TSNode | null; fieldNameForChild(i: number): string | null;
-	childForFieldName(name: string): TSNode | null; id: number; hasError: boolean;
-}
-
-interface TSTree { rootNode: TSNode; }
-
-function adaptNode(node: TSNode): AnyTreeNode {
-	return {
-		type: node.type, id: () => node.id, text: () => node.text,
-		isNamed: () => node.isNamed,
-		field: (name: string) => { const c = node.childForFieldName(name); return c ? adaptNode(c) : null; },
-		fieldChildren: (name: string) => {
-			const r: AnyTreeNode[] = [];
-			for (let i = 0; i < node.childCount; i++) {
-				if (node.fieldNameForChild(i) === name) { const c = node.child(i); if (c) r.push(adaptNode(c)); }
-			}
-			return r;
-		},
-		fieldNameForChild: (i: number) => node.fieldNameForChild(i),
-		children: () => node.children.map(adaptNode),
-		range: () => ({ start: { index: node.startIndex }, end: { index: node.endIndex } }),
-	};
-}
-
-function treeHandle(tree: TSTree) {
-	const m = new Map<number, TSNode>();
-	function collect(n: TSNode) { m.set(n.id, n); for (const c of n.children) collect(c); }
-	collect(tree.rootNode);
-	return {
-		rootNode: adaptNode(tree.rootNode),
-		nodeById: (id: number) => { const n = m.get(id); if (!n) throw new Error(`Node ${id} not found`); return adaptNode(n); },
-	};
-}
-
-function findFirst(node: TSNode, kind: string): TSNode | null {
-	if (node.type === kind) return node;
-	for (const c of node.children) { const f = findFirst(c, kind); if (f) return f; }
-	return null;
-}
-
-function collectKinds(node: TSNode): Set<string> {
-	const kinds = new Set<string>();
-	function walk(n: TSNode) { if (n.isNamed) kinds.add(n.type); for (const c of n.children) walk(c); }
-	walk(node);
-	return kinds;
-}
-
-// ---------------------------------------------------------------------------
-// Corpus parser
-// ---------------------------------------------------------------------------
-
-interface CorpusEntry { name: string; source: string; }
-
-function parseCorpus(content: string): CorpusEntry[] {
-	const entries: CorpusEntry[] = [];
-	const lines = content.split('\n');
-	let i = 0;
-	while (i < lines.length) {
-		if (!lines[i]!.startsWith('====')) { i++; continue; }
-		i++;
-		const name = lines[i]?.trim() ?? '';
-		i++;
-		while (i < lines.length && lines[i]!.startsWith('====')) i++;
-		const sourceLines: string[] = [];
-		while (i < lines.length && !lines[i]!.match(/^-{3,}$/)) { sourceLines.push(lines[i]!); i++; }
-		while (i < lines.length && !lines[i]!.startsWith('====')) i++;
-		const source = sourceLines.join('\n').trim();
-		if (source) entries.push({ name, source });
-	}
-	return entries;
-}
-
-// ---------------------------------------------------------------------------
-// WASM & module paths
-// ---------------------------------------------------------------------------
-
-const WASM_PATHS: Record<string, string> = {
-	rust: 'tree-sitter-rust/tree-sitter-rust.wasm',
-	typescript: 'tree-sitter-typescript/tree-sitter-typescript.wasm',
-	python: 'tree-sitter-python/tree-sitter-python.wasm',
-};
 
 const FROM_MODULE_PATHS: Record<string, string> = {
 	rust: '../../rust/src/from.ts',
@@ -120,17 +38,6 @@ const FACTORY_MODULE_PATHS: Record<string, string> = {
 	typescript: '../../typescript/src/factories.ts',
 	python: '../../python/src/factories.ts',
 };
-
-const FIXTURES_DIR = new URL('../fixtures', import.meta.url).pathname;
-
-function loadCorpusEntries(grammar: string): CorpusEntry[] {
-	const entries: CorpusEntry[] = [];
-	const files = readdirSync(FIXTURES_DIR).filter(f => f.startsWith(`${grammar}-`) && f.endsWith('.txt'));
-	for (const file of files) {
-		entries.push(...parseCorpus(readFileSync(join(FIXTURES_DIR, file), 'utf-8')));
-	}
-	return entries;
-}
 
 // ---------------------------------------------------------------------------
 // Structural analysis
@@ -212,14 +119,10 @@ export async function validateFrom(
 	grammar: string,
 	templatesYaml: string,
 ): Promise<FromValidationResult> {
-	const mod = await import('web-tree-sitter') as any;
-	const ParserClass = mod.Parser ?? mod.default?.Parser ?? mod.default;
-	const LanguageClass = mod.Language ?? mod.default?.Language;
-	await ParserClass.init();
-
+	const { Parser, Language } = await loadWebTreeSitter();
 	const wasmPath = require.resolve(WASM_PATHS[grammar]!);
-	const lang = await LanguageClass.load(wasmPath);
-	const parser = new ParserClass() as { parse(s: string): TSTree; setLanguage(l: unknown): void };
+	const lang = await Language.load(wasmPath);
+	const parser = new Parser();
 	parser.setLanguage(lang);
 
 	const config = parseYaml(templatesYaml) as RulesConfig;

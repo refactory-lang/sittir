@@ -79,7 +79,6 @@ export const enum SyntaxKind {
   ElifClause = 'elif_clause',
   ElseClause = 'else_clause',
   MatchStatement = 'match_statement',
-  MatchBlock = '_match_block',
   CaseClause = 'case_clause',
   ForStatement = 'for_statement',
   WhileStatement = 'while_statement',
@@ -110,10 +109,7 @@ export const enum SyntaxKind {
   DottedName = 'dotted_name',
   CasePattern = 'case_pattern',
   SimplePattern = '_simple_pattern',
-  HiddenAsPattern = '_as_pattern',
   UnionPattern = 'union_pattern',
-  HiddenListPattern = '_list_pattern',
-  HiddenTuplePattern = '_tuple_pattern',
   DictPattern = 'dict_pattern',
   KeyValuePattern = '_key_value_pattern',
   KeywordPattern = 'keyword_pattern',
@@ -200,7 +196,6 @@ export const enum SyntaxKind {
   Indent = '_indent',
   Dedent = '_dedent',
   StringStart = 'string_start',
-  HiddenStringContent = '_string_content',
   EscapeInterpolation = 'escape_interpolation',
   StringEnd = 'string_end',
   CloseBracket = ']',
@@ -450,14 +445,7 @@ export interface MatchStatement {
   readonly type: 'match_statement';
   readonly fields: {
     readonly subject: readonly (Expression)[];
-    readonly body: MatchBlock;
-  };
-}
-
-export interface MatchBlock {
-  readonly type: '_match_block';
-  readonly fields: {
-    readonly alternative: readonly (CaseClause)[];
+    readonly body: CaseClause;
   };
 }
 
@@ -518,7 +506,6 @@ export interface FinallyClause {
 export interface WithStatement {
   readonly type: 'with_statement';
   readonly fields: {
-    readonly with_clause?: "async";
     readonly body: Suite;
   };
   readonly children: readonly [WithClause];
@@ -660,32 +647,17 @@ export interface DottedName {
 
 export interface CasePattern {
   readonly type: 'case_pattern';
-  readonly children: readonly [HiddenAsPattern | KeywordPattern | SimplePattern];
+  readonly children: readonly [CasePattern | Identifier | KeywordPattern | SimplePattern];
 }
 
 export interface SimplePattern {
   readonly type: '_simple_pattern';
-  readonly children: readonly [ClassPattern | SplatPattern | UnionPattern | HiddenListPattern | HiddenTuplePattern | DictPattern | String | ConcatenatedString | True | False | None | Integer | Float | ComplexPattern | DottedName];
-}
-
-export interface HiddenAsPattern {
-  readonly type: '_as_pattern';
-  readonly children: readonly [CasePattern | Identifier];
+  readonly children: readonly (ClassPattern | SplatPattern | UnionPattern | CasePattern | DictPattern | String | ConcatenatedString | True | False | None | Integer | Float | ComplexPattern | DottedName)[];
 }
 
 export interface UnionPattern {
   readonly type: 'union_pattern';
   readonly children: readonly (SimplePattern)[];
-}
-
-export interface HiddenListPattern {
-  readonly type: '_list_pattern';
-  readonly children: readonly (CasePattern)[];
-}
-
-export interface HiddenTuplePattern {
-  readonly type: '_tuple_pattern';
-  readonly children: readonly (CasePattern)[];
 }
 
 export interface DictPattern {
@@ -1113,7 +1085,7 @@ export interface String {
 
 export interface StringContent {
   readonly type: 'string_content';
-  readonly children: readonly (EscapeInterpolation | EscapeSequence | NotEscapeSequence | HiddenStringContent)[];
+  readonly children: readonly (EscapeInterpolation | EscapeSequence)[];
 }
 
 export interface Interpolation {
@@ -1174,50 +1146,12 @@ export type Newline = Terminal<"_newline", string>;
 export type Indent = Terminal<"_indent", string>;
 export type Dedent = Terminal<"_dedent", string>;
 export type StringStart = Terminal<"string_start", string>;
-export type HiddenStringContent = Terminal<"_string_content", string>;
 export type EscapeInterpolation = Terminal<"escape_interpolation", string>;
 export type StringEnd = Terminal<"string_end", string>;
 export type CloseBracket = Terminal<"]", string>;
 export type CloseParen = Terminal<")", string>;
 export type CloseBrace = Terminal<"}", string>;
 export type Except = Terminal<"except", string>;
-export type Import = Terminal<"import", "import">;
-export type From = Terminal<"from", "from">;
-export type FutureU = Terminal<"__future__", "__future__">;
-export type As = Terminal<"as", "as">;
-export type Print = Terminal<"print", "print">;
-export type Assert = Terminal<"assert", "assert">;
-export type Return = Terminal<"return", "return">;
-export type Del = Terminal<"del", "del">;
-export type Raise = Terminal<"raise", "raise">;
-export type Pass = Terminal<"pass", "pass">;
-export type Break = Terminal<"break", "break">;
-export type Continue = Terminal<"continue", "continue">;
-export type If = Terminal<"if", "if">;
-export type Elif = Terminal<"elif", "elif">;
-export type Else = Terminal<"else", "else">;
-export type Match = Terminal<"match", "match">;
-export type Case = Terminal<"case", "case">;
-export type Async = Terminal<"async", "async">;
-export type For = Terminal<"for", "for">;
-export type In = Terminal<"in", "in">;
-export type While = Terminal<"while", "while">;
-export type Try = Terminal<"try", "try">;
-export type Finally = Terminal<"finally", "finally">;
-export type With = Terminal<"with", "with">;
-export type Def = Terminal<"def", "def">;
-export type Global = Terminal<"global", "global">;
-export type Nonlocal = Terminal<"nonlocal", "nonlocal">;
-export type Exec = Terminal<"exec", "exec">;
-export type Class = Terminal<"class", "class">;
-export type Anonymous = Terminal<"_", "_">;
-export type Not = Terminal<"not", "not">;
-export type And = Terminal<"and", "and">;
-export type Or = Terminal<"or", "or">;
-export type Is = Terminal<"is", "is">;
-export type True2 = Terminal<"True", "True">;
-export type False2 = Terminal<"False", "False">;
-export type None2 = Terminal<"None", "None">;
 
 // Config types
 export type ModuleConfig = ConfigOf<Module>;
@@ -1240,7 +1174,6 @@ export type IfStatementConfig = ConfigOf<IfStatement>;
 export type ElifClauseConfig = ConfigOf<ElifClause>;
 export type ElseClauseConfig = ConfigOf<ElseClause>;
 export type MatchStatementConfig = ConfigOf<MatchStatement>;
-export type MatchBlockConfig = ConfigOf<MatchBlock>;
 export type CaseClauseConfig = ConfigOf<CaseClause>;
 export type ForStatementConfig = ConfigOf<ForStatement>;
 export type WhileStatementConfig = ConfigOf<WhileStatement>;
@@ -1271,10 +1204,7 @@ export type ExpressionListConfig = ConfigOf<ExpressionList>;
 export type DottedNameConfig = ConfigOf<DottedName>;
 export type CasePatternConfig = ConfigOf<CasePattern>;
 export type SimplePatternConfig = ConfigOf<SimplePattern>;
-export type HiddenAsPatternConfig = ConfigOf<HiddenAsPattern>;
 export type UnionPatternConfig = ConfigOf<UnionPattern>;
-export type HiddenListPatternConfig = ConfigOf<HiddenListPattern>;
-export type HiddenTuplePatternConfig = ConfigOf<HiddenTuplePattern>;
 export type DictPatternConfig = ConfigOf<DictPattern>;
 export type KeyValuePatternConfig = ConfigOf<KeyValuePattern>;
 export type KeywordPatternConfig = ConfigOf<KeywordPattern>;
@@ -1365,7 +1295,6 @@ export interface IfStatementTree extends TreeNode<'if_statement'> {}
 export interface ElifClauseTree extends TreeNode<'elif_clause'> {}
 export interface ElseClauseTree extends TreeNode<'else_clause'> {}
 export interface MatchStatementTree extends TreeNode<'match_statement'> {}
-export interface MatchBlockTree extends AnyTreeNode { readonly type: "_match_block"; }
 export interface CaseClauseTree extends TreeNode<'case_clause'> {}
 export interface ForStatementTree extends TreeNode<'for_statement'> {}
 export interface WhileStatementTree extends TreeNode<'while_statement'> {}
@@ -1396,10 +1325,7 @@ export interface ExpressionListTree extends TreeNode<'expression_list'> {}
 export interface DottedNameTree extends TreeNode<'dotted_name'> {}
 export interface CasePatternTree extends TreeNode<'case_pattern'> {}
 export interface SimplePatternTree extends AnyTreeNode { readonly type: "_simple_pattern"; }
-export interface HiddenAsPatternTree extends AnyTreeNode { readonly type: "_as_pattern"; }
 export interface UnionPatternTree extends TreeNode<'union_pattern'> {}
-export interface HiddenListPatternTree extends AnyTreeNode { readonly type: "_list_pattern"; }
-export interface HiddenTuplePatternTree extends AnyTreeNode { readonly type: "_tuple_pattern"; }
 export interface DictPatternTree extends TreeNode<'dict_pattern'> {}
 export interface KeyValuePatternTree extends AnyTreeNode { readonly type: "_key_value_pattern"; }
 export interface KeywordPatternTree extends TreeNode<'keyword_pattern'> {}
@@ -1489,7 +1415,6 @@ export interface NewlineTree extends AnyTreeNode { readonly type: "_newline"; }
 export interface IndentTree extends AnyTreeNode { readonly type: "_indent"; }
 export interface DedentTree extends AnyTreeNode { readonly type: "_dedent"; }
 export interface StringStartTree extends TreeNode<'string_start'> {}
-export interface HiddenStringContentTree extends AnyTreeNode { readonly type: "_string_content"; }
 export interface EscapeInterpolationTree extends TreeNode<'escape_interpolation'> {}
 export interface StringEndTree extends TreeNode<'string_end'> {}
 export interface CloseBracketTree extends AnyTreeNode { readonly type: "]"; }
@@ -1555,7 +1480,6 @@ export type IfStatementFromInput = FromInputOf<IfStatement, LeafScalarMap, LeafS
 export type ElifClauseFromInput = FromInputOf<ElifClause, LeafScalarMap, LeafStringMap>;
 export type ElseClauseFromInput = FromInputOf<ElseClause, LeafScalarMap, LeafStringMap>;
 export type MatchStatementFromInput = FromInputOf<MatchStatement, LeafScalarMap, LeafStringMap>;
-export type MatchBlockFromInput = FromInputOf<MatchBlock, LeafScalarMap, LeafStringMap>;
 export type CaseClauseFromInput = FromInputOf<CaseClause, LeafScalarMap, LeafStringMap>;
 export type ForStatementFromInput = FromInputOf<ForStatement, LeafScalarMap, LeafStringMap>;
 export type WhileStatementFromInput = FromInputOf<WhileStatement, LeafScalarMap, LeafStringMap>;
@@ -1586,10 +1510,7 @@ export type ExpressionListFromInput = FromInputOf<ExpressionList, LeafScalarMap,
 export type DottedNameFromInput = FromInputOf<DottedName, LeafScalarMap, LeafStringMap>;
 export type CasePatternFromInput = FromInputOf<CasePattern, LeafScalarMap, LeafStringMap>;
 export type SimplePatternFromInput = FromInputOf<SimplePattern, LeafScalarMap, LeafStringMap>;
-export type HiddenAsPatternFromInput = FromInputOf<HiddenAsPattern, LeafScalarMap, LeafStringMap>;
 export type UnionPatternFromInput = FromInputOf<UnionPattern, LeafScalarMap, LeafStringMap>;
-export type HiddenListPatternFromInput = FromInputOf<HiddenListPattern, LeafScalarMap, LeafStringMap>;
-export type HiddenTuplePatternFromInput = FromInputOf<HiddenTuplePattern, LeafScalarMap, LeafStringMap>;
 export type DictPatternFromInput = FromInputOf<DictPattern, LeafScalarMap, LeafStringMap>;
 export type KeyValuePatternFromInput = FromInputOf<KeyValuePattern, LeafScalarMap, LeafStringMap>;
 export type KeywordPatternFromInput = FromInputOf<KeywordPattern, LeafScalarMap, LeafStringMap>;
@@ -1767,8 +1688,6 @@ export interface WildcardImport { readonly type: "wildcard_import"; readonly tex
 export interface WildcardImportTree extends AnyTreeNode { readonly type: "wildcard_import"; }
 export interface Ellipsis2 { readonly type: "ellipsis"; readonly text: string; }
 export interface Ellipsis2Tree extends AnyTreeNode { readonly type: "ellipsis"; }
-export interface NotEscapeSequence { readonly type: "_not_escape_sequence"; readonly text: string; }
-export interface NotEscapeSequenceTree extends AnyTreeNode { readonly type: "_not_escape_sequence"; }
 export interface PositionalSeparator { readonly type: "positional_separator"; readonly text: string; }
 export interface PositionalSeparatorTree extends AnyTreeNode { readonly type: "positional_separator"; }
 export interface KeywordSeparator { readonly type: "keyword_separator"; readonly text: string; }
@@ -1859,7 +1778,6 @@ export type PythonNode =
   | ElifClause
   | ElseClause
   | MatchStatement
-  | MatchBlock
   | CaseClause
   | ForStatement
   | WhileStatement
@@ -1890,10 +1808,7 @@ export type PythonNode =
   | DottedName
   | CasePattern
   | SimplePattern
-  | HiddenAsPattern
   | UnionPattern
-  | HiddenListPattern
-  | HiddenTuplePattern
   | DictPattern
   | KeyValuePattern
   | KeywordPattern
@@ -1982,7 +1897,6 @@ export interface KindMap {
   'elif_clause': ElifClause;
   'else_clause': ElseClause;
   'match_statement': MatchStatement;
-  '_match_block': MatchBlock;
   'case_clause': CaseClause;
   'for_statement': ForStatement;
   'while_statement': WhileStatement;
@@ -2013,10 +1927,7 @@ export interface KindMap {
   'dotted_name': DottedName;
   'case_pattern': CasePattern;
   '_simple_pattern': SimplePattern;
-  '_as_pattern': HiddenAsPattern;
   'union_pattern': UnionPattern;
-  '_list_pattern': HiddenListPattern;
-  '_tuple_pattern': HiddenTuplePattern;
   'dict_pattern': DictPattern;
   '_key_value_pattern': KeyValuePattern;
   'keyword_pattern': KeywordPattern;
@@ -2103,50 +2014,12 @@ export interface KindMap {
   '_indent': Indent;
   '_dedent': Dedent;
   'string_start': StringStart;
-  '_string_content': HiddenStringContent;
   'escape_interpolation': EscapeInterpolation;
   'string_end': StringEnd;
   ']': CloseBracket;
   ')': CloseParen;
   '}': CloseBrace;
   'except': Except;
-  'import': Import;
-  'from': From;
-  '__future__': FutureU;
-  'as': As;
-  'print': Print;
-  'assert': Assert;
-  'return': Return;
-  'del': Del;
-  'raise': Raise;
-  'pass': Pass;
-  'break': Break;
-  'continue': Continue;
-  'if': If;
-  'elif': Elif;
-  'else': Else;
-  'match': Match;
-  'case': Case;
-  'async': Async;
-  'for': For;
-  'in': In;
-  'while': While;
-  'try': Try;
-  'finally': Finally;
-  'with': With;
-  'def': Def;
-  'global': Global;
-  'nonlocal': Nonlocal;
-  'exec': Exec;
-  'class': Class;
-  '_': Anonymous;
-  'not': Not;
-  'and': And;
-  'or': Or;
-  'is': Is;
-  'True': True2;
-  'False': False2;
-  'None': None2;
 }
 
 export interface VariantMap {
@@ -2174,7 +2047,6 @@ export interface ConfigMap {
   'elif_clause': ElifClauseConfig;
   'else_clause': ElseClauseConfig;
   'match_statement': MatchStatementConfig;
-  '_match_block': MatchBlockConfig;
   'case_clause': CaseClauseConfig;
   'for_statement': ForStatementConfig;
   'while_statement': WhileStatementConfig;
@@ -2205,10 +2077,7 @@ export interface ConfigMap {
   'dotted_name': DottedNameConfig;
   'case_pattern': CasePatternConfig;
   '_simple_pattern': SimplePatternConfig;
-  '_as_pattern': HiddenAsPatternConfig;
   'union_pattern': UnionPatternConfig;
-  '_list_pattern': HiddenListPatternConfig;
-  '_tuple_pattern': HiddenTuplePatternConfig;
   'dict_pattern': DictPatternConfig;
   '_key_value_pattern': KeyValuePatternConfig;
   'keyword_pattern': KeywordPatternConfig;
@@ -2297,7 +2166,6 @@ export interface FromInputMap {
   'elif_clause': ElifClauseFromInput;
   'else_clause': ElseClauseFromInput;
   'match_statement': MatchStatementFromInput;
-  '_match_block': MatchBlockFromInput;
   'case_clause': CaseClauseFromInput;
   'for_statement': ForStatementFromInput;
   'while_statement': WhileStatementFromInput;
@@ -2328,10 +2196,7 @@ export interface FromInputMap {
   'dotted_name': DottedNameFromInput;
   'case_pattern': CasePatternFromInput;
   '_simple_pattern': SimplePatternFromInput;
-  '_as_pattern': HiddenAsPatternFromInput;
   'union_pattern': UnionPatternFromInput;
-  '_list_pattern': HiddenListPatternFromInput;
-  '_tuple_pattern': HiddenTuplePatternFromInput;
   'dict_pattern': DictPatternFromInput;
   '_key_value_pattern': KeyValuePatternFromInput;
   'keyword_pattern': KeywordPatternFromInput;

@@ -104,7 +104,7 @@ function render(node: AnyNodeData, ctx: InternalRenderContext): string {
 	// $$$CHILDREN renders only the unconsumed remainder.
 	const consumed = new Set<number>();
 
-	const result = tmpl.replace(varPattern, (_match: string, pfx: string, name: string) => {
+	const resolveSlot = (pfx: string, name: string): string => {
 		const fieldKey = name.toLowerCase();
 		const clauseKey = `${fieldKey}`;
 
@@ -188,11 +188,42 @@ function render(node: AnyNodeData, ctx: InternalRenderContext): string {
 
 		// 6. Absent → empty
 		return '';
-	});
+	};
 
-	// FR-017: Absent-field space absorption — collapse runs of spaces left by
-	// empty variable interpolations into single spaces, and trim edges.
-	return result.replace(/ {2,}/g, ' ').trim();
+	// Substitute with column-aware re-indentation. For each `$VAR` we look
+	// at the characters since the previous newline in `result`; if they
+	// are all spaces (line-leading indentation), we insert that same
+	// indentation after every `\n` inside the substituted value. This
+	// lets nested blocks compound their indent levels without baking
+	// depth into templates or joinBy strings — block joinBy is just `\n`
+	// and each outer substitution re-indents the joined content.
+	let result = '';
+	let lastIdx = 0;
+	// Capture matches up-front: `matchAll` returns an independent iterator,
+	// so recursive sub-renders (which reuse the same varPattern) cannot
+	// interfere with the outer iteration's `lastIndex`.
+	for (const match of tmpl.matchAll(varPattern)) {
+		const idx = match.index!;
+		result += tmpl.slice(lastIdx, idx);
+		const slot = resolveSlot(match[1]!, match[2]!);
+		const lastNl = result.lastIndexOf('\n');
+		const lineLead = lastNl === -1 ? result : result.slice(lastNl + 1);
+		const indented = lineLead.length > 0 && /^ +$/.test(lineLead)
+			? slot.replace(/\n/g, '\n' + lineLead)
+			: slot;
+		result += indented;
+		lastIdx = idx + match[0].length;
+	}
+	result += tmpl.slice(lastIdx);
+
+	// FR-017: Absent-field space absorption — collapse runs of 2+ spaces
+	// left by empty variable interpolations. The negative lookbehind skips
+	// runs whose immediately-preceding character is a newline OR another
+	// space, so line-leading indentation (any depth) is preserved verbatim.
+	// No trim here: recursive sub-renders may legitimately start/end with
+	// whitespace (block-bearer fields emit `\n  …\n`). The top-level
+	// `boundRender` wrapper trims once at the end of the render tree.
+	return result.replace(/(?<![\n ]) {2,}/g, ' ');
 }
 
 /**
@@ -340,7 +371,7 @@ export function createRenderer(pathOrConfig: string | RulesConfig): BoundRendere
 	const ctx = buildRenderContext(config);
 
 	function boundRender(node: AnyNodeData): string {
-		return render(node, ctx);
+		return render(node, ctx).trim();
 	}
 
 	function boundToEdit(node: AnyNodeData, startOrRange: number | ByteRange, end?: number): Edit {

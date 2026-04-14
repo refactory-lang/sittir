@@ -9,7 +9,7 @@ function makeOptimized(rules: Record<string, Rule>, overrides?: Partial<Optimize
         rules,
         supertypes: new Set(),
         word: null,
-        derivations: { inferredFields: [], promotedRules: [] },
+        derivations: { inferredFields: [], promotedRules: [], repeatedShapes: [] },
         ...overrides,
     }
 }
@@ -182,8 +182,8 @@ describe('Rule — deriveFields', () => {
         }
         const fields = deriveFields(rule)
         expect(fields).toHaveLength(2)
-        expect(fields[0].name).toBe('name')
-        expect(fields[1].name).toBe('body')
+        expect(fields[0]!.name).toBe('name')
+        expect(fields[1]!.name).toBe('body')
     })
 
     it('derives required=true for non-optional fields', () => {
@@ -194,7 +194,7 @@ describe('Rule — deriveFields', () => {
             ],
         }
         const fields = deriveFields(rule)
-        expect(fields[0].required).toBe(true)
+        expect(fields[0]!.required).toBe(true)
     })
 
     it('derives required=false for optional fields', () => {
@@ -203,7 +203,7 @@ describe('Rule — deriveFields', () => {
             content: { type: 'field', name: 'x', content: { type: 'symbol', name: 'y' } },
         }
         const fields = deriveFields(rule)
-        expect(fields[0].required).toBe(false)
+        expect(fields[0]!.required).toBe(false)
     })
 
     it('derives multiple=true for repeated fields', () => {
@@ -212,7 +212,7 @@ describe('Rule — deriveFields', () => {
             content: { type: 'field', name: 'items', content: { type: 'symbol', name: 'item' } },
         }
         const fields = deriveFields(rule)
-        expect(fields[0].multiple).toBe(true)
+        expect(fields[0]!.multiple).toBe(true)
     })
 })
 

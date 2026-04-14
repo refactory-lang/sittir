@@ -13,11 +13,12 @@
 import type {
     Rule, RawGrammar, LinkedGrammar,
     SymbolRef, ExternalRole, IncludeFilter, DerivationLog,
-    InferredFieldEntry, PromotedRuleEntry,
+    InferredFieldEntry, PromotedRuleEntry, RepeatedShapeEntry,
     FieldRule, SupertypeRule, EnumRule, ClauseRule, GroupRule,
     SeqRule, ChoiceRule, VariantRule, PolymorphRule,
 } from './rule.ts'
 import { deriveFields, hasAnyField, hasAnyChild } from './rule.ts'
+import { isHiddenKind } from './evaluate.ts'
 
 // ---------------------------------------------------------------------------
 // link() — main entry point
@@ -40,6 +41,7 @@ export function link(raw: RawGrammar, include?: IncludeFilter): LinkedGrammar {
     const derivations: DerivationLog = {
         inferredFields: [],
         promotedRules: [],
+        repeatedShapes: [],
     }
 
     // Resolve all rules
@@ -65,13 +67,15 @@ export function link(raw: RawGrammar, include?: IncludeFilter): LinkedGrammar {
     // Classify hidden rules that weren't already resolved. Log every
     // `promoted` classification (enum / supertype) so the suggested.ts
     // emitter can surface it. Hold back the mutation if `include.rules`
-    // excludes `promoted`.
+    // excludes `promoted`. A kind is "hidden" when its name starts
+    // with `_` OR appears in the grammar's `inline:` array — the
+    // latter catches grammars that don't follow the convention.
     for (const [name, rule] of Object.entries(rules)) {
-        if (name.startsWith('_')) {
+        if (isHiddenKind(name, raw.inline)) {
             const classified = classifyHiddenRule(name, rule, supertypes, references)
             if (classified !== rule
                 && (classified.type === 'enum' || classified.type === 'supertype')
-                && (classified as any).source === 'promoted') {
+                && classified.source === 'promoted') {
                 derivations.promotedRules.push({
                     kind: name,
                     classification: classified.type,
@@ -118,7 +122,7 @@ export function link(raw: RawGrammar, include?: IncludeFilter): LinkedGrammar {
     // and dedupes structurally identical ones. Hidden choices already
     // resolved into supertype/enum/inline by `classifyHiddenRule`.
     for (const [name, rule] of Object.entries(rules)) {
-        rules[name] = tagVariants(rule, name)
+        rules[name] = tagVariants(rule, name, raw.inline)
     }
 
     // Promote choice-of-variants with heterogeneous field shapes to
@@ -135,6 +139,32 @@ export function link(raw: RawGrammar, include?: IncludeFilter): LinkedGrammar {
             if (applyPromotedRules) rules[name] = result
         }
     }
+
+    // Hoist `indent` markers into their sibling/target repeats as
+    // `separator: '\n  '`. The python suite/block pair illustrates:
+    //     _suite = choice(_simple_statements, seq(indent, block))
+    //     block  = seq(repeat(_statement), dedent)
+    // The `indent` lives in _suite but the `repeat` lives in block.
+    // At template-emit time we need the repeat to carry a joinBy so
+    // consecutive statements render as `\n  stmt1\n  stmt2`. Runs
+    // before block-bearer annotation so the separator is visible to
+    // downstream template emission.
+    hoistIndentIntoRepeat(rules)
+
+    // Annotate field wrappers whose content transitively reaches an
+    // `indent` Rule node — these render as indented blocks. The
+    // template walker prepends `\n  ` to the field slot so python's
+    // `class X:$BODY` renders as `class X:\n  $BODY`. Runs after all
+    // structural rewrites so symbol refs are stable.
+    annotateBlockBearerFields(rules)
+
+    // Repeated-shape detection: collect every field's content-type
+    // set and find sets that appear in ≥2 distinct parent rules. Each
+    // such set is a hint that the grammar author could declare a
+    // shared supertype (or group) to collapse the repetition. Emits
+    // an entry per unique set to `derivations.repeatedShapes`; the
+    // suggested.ts emitter surfaces it as a review candidate.
+    collectRepeatedShapes(rules, derivations.repeatedShapes)
 
     return {
         name: raw.name,
@@ -162,33 +192,35 @@ export function link(raw: RawGrammar, include?: IncludeFilter): LinkedGrammar {
 // (fan-out, factoring, prefix/suffix extraction).
 // ---------------------------------------------------------------------------
 
-function tagVariants(rule: Rule, name: string): Rule {
+function tagVariants(rule: Rule, name: string, inline?: readonly string[]): Rule {
     switch (rule.type) {
         case 'seq':
-            return { type: 'seq', members: rule.members.map(m => tagVariants(m, name)) }
+            return { type: 'seq', members: rule.members.map(m => tagVariants(m, name, inline)) }
 
         case 'choice': {
-            // Wrap visible choice members in variants.
-            if (!name.startsWith('_')) {
+            // Wrap visible choice members in variants. Hidden is the
+            // authoritative `isHiddenKind` check — convention + the
+            // `inline:` list.
+            if (!isHiddenKind(name, inline)) {
                 return wrapVariants(rule)
             }
-            return { type: 'choice', members: rule.members.map(m => tagVariants(m, name)) }
+            return { type: 'choice', members: rule.members.map(m => tagVariants(m, name, inline)) }
         }
 
         case 'optional':
-            return { type: 'optional', content: tagVariants(rule.content, name) }
+            return { type: 'optional', content: tagVariants(rule.content, name, inline) }
 
         case 'repeat':
-            return { ...rule, content: tagVariants(rule.content, name) }
+            return { ...rule, content: tagVariants(rule.content, name, inline) }
 
         case 'field':
-            return { ...rule, content: tagVariants(rule.content, name) }
+            return { ...rule, content: tagVariants(rule.content, name, inline) }
 
         case 'clause':
-            return { ...rule, content: tagVariants(rule.content, name) }
+            return { ...rule, content: tagVariants(rule.content, name, inline) }
 
         case 'group':
-            return { ...rule, content: tagVariants(rule.content, name) }
+            return { ...rule, content: tagVariants(rule.content, name, inline) }
 
         default:
             return rule
@@ -275,26 +307,40 @@ function findDetectSymbol(rule: Rule): string | null {
 // wrappers to their content.
 function rulesEqualForVariant(a: Rule, b: Rule): boolean {
     if (a.type !== b.type) return false
+    // `a.type === b.type` narrows `a` via the switch below, but TS can't
+    // propagate that narrowing to `b`. One cast-to-`typeof a` per case
+    // gives us discriminated access to `b`'s fields without a raw `any`.
     switch (a.type) {
         case 'string':
-        case 'pattern':
-            return (a as any).value === (b as any).value
-        case 'symbol':
-            return (a as any).name === (b as any).name
+        case 'pattern': {
+            const bn = b as typeof a
+            return a.value === bn.value
+        }
+        case 'symbol': {
+            const bn = b as typeof a
+            return a.name === bn.name
+        }
         case 'seq':
-        case 'choice':
-            return (a as any).members.length === (b as any).members.length
-                && (a as any).members.every((m: Rule, i: number) =>
-                    rulesEqualForVariant(m, (b as any).members[i]))
+        case 'choice': {
+            const bn = b as typeof a
+            return a.members.length === bn.members.length
+                && a.members.every((m, i) => rulesEqualForVariant(m, bn.members[i]!))
+        }
         case 'optional':
         case 'repeat':
-        case 'repeat1':
-            return rulesEqualForVariant((a as any).content, (b as any).content)
-        case 'field':
-            return (a as any).name === (b as any).name
-                && rulesEqualForVariant((a as any).content, (b as any).content)
-        case 'variant':
-            return rulesEqualForVariant((a as any).content, (b as any).content)
+        case 'repeat1': {
+            const bn = b as typeof a
+            return rulesEqualForVariant(a.content, bn.content)
+        }
+        case 'field': {
+            const bn = b as typeof a
+            return a.name === bn.name
+                && rulesEqualForVariant(a.content, bn.content)
+        }
+        case 'variant': {
+            const bn = b as typeof a
+            return rulesEqualForVariant(a.content, bn.content)
+        }
         default:
             return false
     }
@@ -610,7 +656,16 @@ function resolveRule(
             return resolveRule(rule.content, currentName, allRules, supertypes, externalRoles)
 
         case 'alias':
-            // Resolve: treat as its content for now
+            // TODO(alias): Named aliases rename the tree-sitter node kind
+            // at parse time (`alias($.original, $.renamed)`), but Link
+            // currently collapses the alias to its content and the
+            // parent's rule tree references `original`'s shape — so
+            // templates/factories reference the pre-rename symbol while
+            // the real tree produces `renamed`. Rewriting the alias to
+            // `symbol(renamed)` would match the tree but requires
+            // `collectAliasTargets`'s synthetic `rules[renamed]` entry
+            // to flow through Link's classification + Assemble's
+            // reference-liveness check. Needs a proper design pass.
             return resolveRule(rule.content, currentName, allRules, supertypes, externalRoles)
 
         case 'symbol':
@@ -678,11 +733,10 @@ function classifyHiddenRule(
     // _jsx_string, …). Those are real alternatives with fields/seqs,
     // not abstract kind unions.
     if (rule.type === 'choice') {
-        const allStrings = rule.members.every(m => m.type === 'string')
-        if (allStrings) {
+        if (rule.members.every((m): m is import('./rule.ts').StringRule => m.type === 'string')) {
             return {
                 type: 'enum',
-                values: rule.members.map(m => (m as any).value),
+                values: rule.members.map(m => m.value),
                 source: 'promoted',
             } satisfies EnumRule
         }
@@ -754,7 +808,7 @@ export function enrichPositions(rules: Record<string, Rule>, refs: SymbolRef[]):
         const rule = rules[ref.from]
         if (!rule || rule.type !== 'seq') continue
         const idx = rule.members.findIndex(m =>
-            m.type === 'symbol' && (m as any).name === ref.to
+            m.type === 'symbol' && m.name === ref.to
         )
         if (idx >= 0) ref.position = idx
     }
@@ -775,6 +829,215 @@ export function computeParentSets(refs: SymbolRef[]): Map<string, SymbolRef[]> {
         }
     }
     return parents
+}
+
+// ---------------------------------------------------------------------------
+// hoistIndentIntoRepeat — push `indent` siblings into repeat.separator
+// ---------------------------------------------------------------------------
+//
+// Rewrites `seq(..., indent, X, ...)` where X is a `repeat` (directly, via
+// symbol ref, or through a wrapping seq in the referenced rule) so that
+// the repeat carries `separator: '\n  '`. This is the rule-level encoding
+// of "each element of this block appears on its own indented line". The
+// template emitter's existing joinBy path then renders multi-statement
+// blocks as `stmt1\n  stmt2\n  stmt3` without any template-side hacks.
+
+// Raw newline separator. The renderer re-indents substituted values
+// based on the placeholder's column in the surrounding template, so
+// joinBy carries no whitespace — nested blocks compound indent levels
+// automatically without baking depth into the rule tree.
+const BLOCK_SEPARATOR = '\n'
+
+function hoistIndentIntoRepeat(rules: Record<string, Rule>): void {
+    for (const [, rule] of Object.entries(rules)) {
+        walkForIndentHoist(rule, rules)
+    }
+}
+
+function walkForIndentHoist(rule: Rule, rules: Record<string, Rule>): void {
+    switch (rule.type) {
+        case 'seq': {
+            // Find every `indent` member; for each, promote the nearest
+            // following repeat-bearing member by setting its separator.
+            for (let i = 0; i < rule.members.length; i++) {
+                if (rule.members[i]!.type !== 'indent') continue
+                for (let j = i + 1; j < rule.members.length; j++) {
+                    if (assignRepeatSeparator(rule.members[j]!, rules, new Set())) break
+                    if (rule.members[j]!.type === 'dedent') break
+                }
+            }
+            for (const m of rule.members) walkForIndentHoist(m, rules)
+            return
+        }
+        case 'choice':
+            for (const m of rule.members) walkForIndentHoist(m, rules)
+            return
+        case 'optional':
+        case 'repeat':
+        case 'repeat1':
+        case 'field':
+        case 'variant':
+        case 'clause':
+        case 'group':
+        case 'token':
+        case 'alias':
+        case 'terminal':
+            walkForIndentHoist(rule.content, rules)
+            return
+        default:
+            return
+    }
+}
+
+/**
+ * Try to set `separator: '\n'` on the repeat reachable from `rule`.
+ * Returns true if a repeat was found and updated. Follows symbol refs
+ * (into the referenced rule) and descends through structural wrappers
+ * (seq/optional/group/field). `visited` guards against recursive hidden
+ * chains so a left-recursive helper doesn't stack-overflow. Idempotent.
+ */
+function assignRepeatSeparator(
+    rule: Rule,
+    rules: Record<string, Rule>,
+    visited: Set<string>,
+): boolean {
+    if (rule.type === 'repeat' || rule.type === 'repeat1') {
+        if (!rule.separator) (rule as { separator?: string }).separator = BLOCK_SEPARATOR
+        return true
+    }
+    if (rule.type === 'symbol') {
+        if (visited.has(rule.name)) return false
+        const target = rules[rule.name]
+        if (!target) return false
+        visited.add(rule.name)
+        const found = assignRepeatSeparator(target, rules, visited)
+        visited.delete(rule.name)
+        return found
+    }
+    if (rule.type === 'seq') {
+        for (const m of rule.members) {
+            if (assignRepeatSeparator(m, rules, visited)) return true
+        }
+        return false
+    }
+    if (rule.type === 'optional' || rule.type === 'group' || rule.type === 'field') {
+        return assignRepeatSeparator(rule.content, rules, visited)
+    }
+    return false
+}
+
+// ---------------------------------------------------------------------------
+// annotateBlockBearerFields — mark fields whose content reaches `indent`
+// ---------------------------------------------------------------------------
+//
+// Python-style `class X:\n  body` requires a newline + indent before the
+// block's rendered content. The template walker emits `\n  $BODY` for a
+// field whose content resolves (via symbol deref) to a subtree containing
+// an `indent` Rule node. This pass computes the set of "block-bearer"
+// kinds by reachability and tags every matching field with `blockBearer: true`.
+
+function annotateBlockBearerFields(rules: Record<string, Rule>): void {
+    // Bearer = hidden rule whose content directly contains an `indent`
+    // node OR transitively references another bearer via symbols that
+    // only pass through hidden rules. Visible intermediate rules break
+    // the chain — e.g. `else_clause` transitively reaches indent through
+    // its body, but it's visible, so consumers of `else_clause` are
+    // NOT block-bearers themselves (the else_clause renders flush-left).
+    const bearers = new Set<string>()
+    for (const [name, rule] of Object.entries(rules)) {
+        if (name.startsWith('_') && containsIndent(rule)) bearers.add(name)
+    }
+    let changed = true
+    while (changed) {
+        changed = false
+        for (const [name, rule] of Object.entries(rules)) {
+            if (!name.startsWith('_')) continue
+            if (bearers.has(name)) continue
+            if (referencesBearer(rule, bearers)) {
+                bearers.add(name)
+                changed = true
+            }
+        }
+    }
+
+    // Mutate fields whose content reaches a bearer through hidden-only
+    // intermediates. `markBlockBearerFields` recurses so nested visible
+    // rules get their own fields inspected independently.
+    for (const [, rule] of Object.entries(rules)) {
+        markBlockBearerFields(rule, bearers)
+    }
+}
+
+function containsIndent(rule: Rule): boolean {
+    switch (rule.type) {
+        case 'indent': return true
+        case 'seq':
+        case 'choice':
+            return rule.members.some(containsIndent)
+        case 'optional':
+        case 'repeat':
+        case 'repeat1':
+        case 'field':
+        case 'variant':
+        case 'clause':
+        case 'group':
+        case 'token':
+        case 'alias':
+        case 'terminal':
+            return containsIndent(rule.content)
+        default:
+            return false
+    }
+}
+
+function referencesBearer(rule: Rule, bearers: ReadonlySet<string>): boolean {
+    switch (rule.type) {
+        case 'symbol': return bearers.has(rule.name)
+        case 'seq':
+        case 'choice':
+            return rule.members.some(m => referencesBearer(m, bearers))
+        case 'optional':
+        case 'repeat':
+        case 'repeat1':
+        case 'field':
+        case 'variant':
+        case 'clause':
+        case 'group':
+        case 'token':
+        case 'alias':
+        case 'terminal':
+            return referencesBearer(rule.content, bearers)
+        default:
+            return false
+    }
+}
+
+function markBlockBearerFields(rule: Rule, bearers: ReadonlySet<string>): void {
+    switch (rule.type) {
+        case 'field':
+            if (referencesBearer(rule.content, bearers)) {
+                (rule as { blockBearer?: boolean }).blockBearer = true
+            }
+            markBlockBearerFields(rule.content, bearers)
+            return
+        case 'seq':
+        case 'choice':
+            for (const m of rule.members) markBlockBearerFields(m, bearers)
+            return
+        case 'optional':
+        case 'repeat':
+        case 'repeat1':
+        case 'variant':
+        case 'clause':
+        case 'group':
+        case 'token':
+        case 'alias':
+        case 'terminal':
+            markBlockBearerFields(rule.content, bearers)
+            return
+        default:
+            return
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -998,4 +1261,150 @@ function applyInferredFields(
         default:
             return { rule, applied: false }
     }
+}
+
+// ---------------------------------------------------------------------------
+// collectRepeatedShapes — suggestion pass for shared supertypes/groups
+// ---------------------------------------------------------------------------
+
+/**
+ * Walk every rule's field content-type unions and flag kind sets
+ * that appear in ≥2 distinct parent rules. Each unique set becomes
+ * a `RepeatedShapeEntry` that the suggested.ts emitter surfaces as
+ * a review candidate — the grammar author can then declare a shared
+ * supertype (choice of the kinds) or a group and replace the
+ * repeated union with a single reference.
+ *
+ * Non-mutating: purely additive to `derivations.repeatedShapes`.
+ * Doesn't reshape `rules`, so downstream classification is
+ * unaffected regardless of include filter.
+ *
+ * Heuristics:
+ *   - Kind sets smaller than 2 are skipped (single-type fields
+ *     don't benefit from a supertype).
+ *   - Sets that already match an existing supertype's subtypes are
+ *     skipped — no value in suggesting what's already declared.
+ *   - Shape is tagged `supertype` when every kind in the set is a
+ *     named visible rule (candidates for a choice-of-symbols),
+ *     `group` otherwise.
+ */
+function collectRepeatedShapes(
+    rules: Record<string, Rule>,
+    out: RepeatedShapeEntry[],
+): void {
+    // Build the set of already-declared supertype signatures so we
+    // don't duplicate-suggest what the grammar author already wrote.
+    const existingSupertypeKeys = new Set<string>()
+    for (const rule of Object.values(rules)) {
+        if (rule.type === 'supertype') {
+            existingSupertypeKeys.add([...rule.subtypes].sort().join('\n'))
+        }
+    }
+
+    // Parent map: sorted kind key → set of parent rule names that
+    // host a field with exactly this content-type set.
+    const parentsByKey = new Map<string, Set<string>>()
+    for (const [parentName, rule] of Object.entries(rules)) {
+        collectFieldKindSets(rule, (kinds) => {
+            if (kinds.length < 2) return
+            const key = [...kinds].sort().join('\n')
+            let bucket = parentsByKey.get(key)
+            if (!bucket) {
+                bucket = new Set<string>()
+                parentsByKey.set(key, bucket)
+            }
+            bucket.add(parentName)
+        })
+    }
+
+    for (const [key, parents] of parentsByKey) {
+        if (parents.size < 2) continue
+        if (existingSupertypeKeys.has(key)) continue
+        const kinds = key.split('\n')
+        // Suggest a `supertype` when every kind looks like a named
+        // rule kind (letters/underscores/digits, not operator
+        // punctuation). Otherwise fall back to `group`.
+        const shape: 'supertype' | 'group' = kinds.every(k => /^[\w]+$/.test(k))
+            ? 'supertype'
+            : 'group'
+        out.push({
+            suggestedName: suggestSharedName(kinds),
+            kinds,
+            parents: [...parents].sort(),
+            shape,
+        })
+    }
+}
+
+/**
+ * Walk a rule tree and invoke `yield_` for every `field` node's
+ * content-type set. Strips supertype references to their subtypes
+ * before yielding, matching the way the from emitter classifies
+ * resolver kind lists.
+ */
+function collectFieldKindSets(rule: Rule, yield_: (kinds: readonly string[]) => void): void {
+    switch (rule.type) {
+        case 'field': {
+            const kinds = directContentKinds(rule.content)
+            if (kinds.length > 0) yield_(kinds)
+            // Walk into the content too — nested fields get yielded
+            // on their own.
+            collectFieldKindSets(rule.content, yield_)
+            return
+        }
+        case 'seq':
+        case 'choice':
+            for (const m of rule.members) collectFieldKindSets(m, yield_)
+            return
+        case 'optional':
+        case 'repeat':
+        case 'token':
+        case 'variant':
+        case 'clause':
+        case 'group':
+            collectFieldKindSets(rule.content, yield_)
+            return
+    }
+}
+
+/**
+ * Extract the immediate concrete kind set a rule expression
+ * resolves to. Unwraps seq/choice/optional/repeat/variant but
+ * stops at field/symbol boundaries.
+ */
+function directContentKinds(rule: Rule): string[] {
+    switch (rule.type) {
+        case 'symbol': return [rule.name]
+        case 'supertype': return [...rule.subtypes]
+        case 'choice': return rule.members.flatMap(directContentKinds)
+        case 'optional':
+        case 'repeat':
+        case 'token':
+        case 'variant':
+        case 'clause':
+        case 'group':
+            return directContentKinds(rule.content)
+        default:
+            return []
+    }
+}
+
+/** Suggest a readable shared name from the kind set. */
+function suggestSharedName(kinds: readonly string[]): string {
+    // Longest common suffix works surprisingly well for grammars —
+    // `binary_expression` / `call_expression` / `field_expression`
+    // all share `_expression`. Fall back to the kinds count when
+    // nothing common sticks out.
+    const words = kinds.map(k => k.split('_').filter(Boolean))
+    if (words.length === 0) return '_shared'
+    const first = words[0]!
+    let suffix: string[] = []
+    for (let i = 1; i <= first.length; i++) {
+        const tail = first.slice(first.length - i)
+        if (words.every(w => w.length >= i && w.slice(w.length - i).join('_') === tail.join('_'))) {
+            suffix = tail
+        } else break
+    }
+    if (suffix.length > 0) return '_' + suffix.join('_')
+    return `_shared_${kinds.length}`
 }

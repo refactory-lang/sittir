@@ -151,10 +151,5 @@ export default grammar(base, {
             2: field('right'), // type [struct=1]
         }),
 
-        // with_statement: 1 field(s)
-        with_statement: ($, original) => transform(original, {
-            0: field('with_clause'), // with_clause [struct=0]
-        }),
-
     },
 })

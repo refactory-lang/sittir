@@ -8,11 +8,10 @@
  */
 
 import { mkdirSync, writeFileSync } from 'node:fs';
-import { validateTemplates, formatValidationReport } from './validate-templates.ts';
 import { validateRoundTrip, formatRoundTripReport } from './validate-roundtrip.ts';
 import { validateFactoryRoundTrip, formatFactoryRoundTripReport } from './validate-factory-roundtrip.ts';
 import { validateFrom, formatFromReport } from './validate-from.ts';
-import { validateRenderable, formatRenderableReport } from './validate-renderable.ts';
+import { validateRenderableFromNodeMap, formatRenderableReport } from './validate-renderable.ts';
 import { validateReadNodeRoundTrip, formatReadNodeRoundTripReport } from './validate-readnode-roundtrip.ts';
 import { join, dirname } from 'node:path';
 import { generateV2 } from './compiler/generate.ts';
@@ -147,23 +146,19 @@ writeFile(join(outDir, 'type-test.ts'), result.typeTests);
 // Write vitest config
 writeFile(join(dirname(outDir), 'vitest.config.ts'), result.config);
 
-// --- Post-generation validation ---
-const validation = validateTemplates(config.grammar, result.templatesYaml);
-console.log('');
-console.log(formatValidationReport(validation));
-
-if (validation.errors.length > 0) {
-	console.error(`\n${validation.errors.length} validation error(s) — see above.`);
-}
-
 // --- Renderability check: every named kind in node-types.json must be
 // reachable by @sittir/core's render() function (supertype, leaf, or rule).
-const renderable = validateRenderable(config.grammar, result.templatesYaml);
+// Uses the NodeMap directly for a structural truth check.
+const renderable = validateRenderableFromNodeMap(config.grammar, result.nodeMap);
 console.log('');
 console.log(formatRenderableReport(renderable));
 if (renderable.missing.length > 0) {
-	console.error(
-		`\n${renderable.missing.length} un-renderable kind(s) — render() will throw for instances.`,
+	// Warning-only: these are typically anonymous / alias-target kinds that
+	// never get rendered as top-level nodes (e.g. `empty_statement`,
+	// `doc_comment`). If user code DOES call render() on them, it will
+	// throw — but that's a real consumer bug, not a codegen failure.
+	console.warn(
+		`\n${renderable.missing.length} un-renderable kind(s) — render() will throw if called on these instances.`,
 	);
 }
 
@@ -192,11 +187,16 @@ if (cliArgs.roundtrip) {
 	const totalFail = rtResult.fail + frtResult.fail;
 	if (totalFail > 0) {
 		console.error(`\n${totalFail} round-trip failure(s) — see above.`);
+		process.exitCode = 1;
 	}
 }
 
-console.log(`
+if (process.exitCode) {
+	console.error(`\nFailed. Generated files were written, but validation reported errors.`);
+} else {
+	console.log(`
 Done! Generated:
   templates.yaml, grammar.ts, types.ts, factories.ts, utils.ts, from.ts, consts.ts, index.ts
   vitest.config.ts
 `);
+}

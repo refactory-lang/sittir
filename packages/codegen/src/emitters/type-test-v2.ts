@@ -15,6 +15,27 @@ export function emitTypeTestsFromNodeMap(config: EmitTypeTestsFromNodeMapConfig)
     const structuralKinds: { kind: string; typeName: string; hasVariants: boolean }[] = []
     const leafKinds: { kind: string; typeName: string }[] = []
 
+    // Mirror the T073 liveness check from types-v2: a terminal is
+    // only emitted when it has a factory OR is referenced by another
+    // structural node. Anything type-test would reference but
+    // types-v2 skipped becomes a dangling import, so filter here too.
+    const referenced = new Set<string>()
+    for (const [, n] of nodeMap.nodes) {
+        if (n.modelType === 'branch' || n.modelType === 'group') {
+            for (const f of n.fields) for (const t of f.contentTypes) referenced.add(t)
+            for (const c of (n.children ?? [])) for (const t of c.contentTypes) referenced.add(t)
+        } else if (n.modelType === 'container') {
+            for (const c of n.children) for (const t of c.contentTypes) referenced.add(t)
+        } else if (n.modelType === 'polymorph') {
+            for (const form of n.forms) {
+                for (const f of form.fields) for (const t of f.contentTypes) referenced.add(t)
+                for (const c of form.children) for (const t of c.contentTypes) referenced.add(t)
+            }
+        } else if (n.modelType === 'supertype') {
+            for (const t of n.subtypes) referenced.add(t)
+        }
+    }
+
     for (const [kind, node] of nodeMap.nodes) {
         switch (node.modelType) {
             case 'branch':
@@ -27,6 +48,8 @@ export function emitTypeTestsFromNodeMap(config: EmitTypeTestsFromNodeMapConfig)
             case 'leaf':
             case 'keyword':
             case 'enum':
+                // Only test leaves that actually made it into types.ts.
+                if (!node.rawFactoryName && !referenced.has(kind)) continue
                 leafKinds.push({ kind, typeName: node.typeName })
                 break
         }

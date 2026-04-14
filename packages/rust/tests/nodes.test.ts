@@ -15,7 +15,7 @@ describe('source_file', () => {
 
 describe('expression_statement', () => {
   it('factory produces correct type', () => {
-    const node = ir.expression();
+    const node = ir.expression({ type: "_expression" } as never);
     expect(node.type).toBe('expression_statement');
   });
 });
@@ -90,7 +90,7 @@ describe('token_repetition', () => {
 
 describe('_non_special_token', () => {
   it('factory produces correct type', () => {
-    const node = ir.nonSpecialToken();
+    const node = ir.nonSpecialToken({ type: "_literal" } as never);
     expect(node.type).toBe('_non_special_token');
   });
 });
@@ -381,7 +381,7 @@ describe('higher_ranked_trait_bound', () => {
 
 describe('removed_trait_bound', () => {
   it('factory produces correct type', () => {
-    const node = ir.removedTraitBound();
+    const node = ir.removedTraitBound({ type: "_type" } as never);
     expect(node.type).toBe('removed_trait_bound');
   });
 });
@@ -548,7 +548,7 @@ describe('visibility_modifier', () => {
 
 describe('bracketed_type', () => {
   it('factory produces correct type', () => {
-    const node = ir.bracketedType();
+    const node = ir.bracketedType({ type: "_type" } as never);
     expect(node.type).toBe('bracketed_type');
   });
 });
@@ -736,17 +736,17 @@ describe('dynamic_type', () => {
   });
 });
 
-describe('mutable_specifier', () => {
+describe("mutable_specifier", () => {
   it('factory produces keyword', () => {
     const node = ir.mutableSpecifier();
-    expect(node.type).toBe('mutable_specifier');
-    expect(node.text).toBe('mut');
+    expect(node.type).toBe("mutable_specifier");
+    expect(node.text).toBe("mut");
   });
 });
 
 describe('_expression_except_range', () => {
   it('factory produces correct type', () => {
-    const node = ir.expressionExceptRange();
+    const node = ir.expressionExceptRange({ type: "unary_expression" } as never);
     expect(node.type).toBe('_expression_except_range');
   });
 });
@@ -771,7 +771,7 @@ describe('delim_token_tree', () => {
 
 describe('_non_delim_token', () => {
   it('factory produces correct type', () => {
-    const node = ir.nonDelimToken();
+    const node = ir.nonDelimToken({ type: "_non_special_token" } as never);
     expect(node.type).toBe('_non_delim_token');
   });
 });
@@ -811,7 +811,7 @@ describe('scoped_type_identifier', () => {
 
 describe('range_expression', () => {
   it('factory produces correct type', () => {
-    const node = ir.range();
+    const node = ir.range({ type: "_expression" } as never);
     expect(node.type).toBe('range_expression');
   });
 });
@@ -895,14 +895,14 @@ describe('type_cast_expression', () => {
 
 describe('return_expression', () => {
   it('factory produces correct type', () => {
-    const node = ir.returnExpression();
+    const node = ir.returnExpression({ type: "_expression" } as never);
     expect(node.type).toBe('return_expression');
   });
 });
 
 describe('yield_expression', () => {
   it('factory produces correct type', () => {
-    const node = ir.yieldExpression();
+    const node = ir.yieldExpression({ type: "_expression" } as never);
     expect(node.type).toBe('yield_expression');
   });
 });
@@ -938,7 +938,7 @@ describe('array_expression', () => {
 
 describe('parenthesized_expression', () => {
   it('factory produces correct type', () => {
-    const node = ir.parenthesized();
+    const node = ir.parenthesized({ type: "_expression" } as never);
     expect(node.type).toBe('parenthesized_expression');
   });
 });
@@ -1004,7 +1004,7 @@ describe('field_initializer', () => {
 
 describe('base_field_initializer', () => {
   it('factory produces correct type', () => {
-    const node = ir.baseFieldInitializer();
+    const node = ir.baseFieldInitializer({ type: "_expression" } as never);
     expect(node.type).toBe('base_field_initializer');
   });
 });
@@ -1033,14 +1033,14 @@ describe('let_condition', () => {
 
 describe('_let_chain', () => {
   it('factory produces correct type', () => {
-    const node = ir.hiddenLetChain();
+    const node = ir.hiddenLetChain({ type: "_let_chain" } as never);
     expect(node.type).toBe('_let_chain');
   });
 });
 
 describe('else_clause', () => {
   it('factory produces correct type', () => {
-    const node = ir.elseClause();
+    const node = ir.elseClause({ type: "block" } as never);
     expect(node.type).toBe('else_clause');
   });
 });
@@ -1208,7 +1208,7 @@ describe('index_expression', () => {
 
 describe('await_expression', () => {
   it('factory produces correct type', () => {
-    const node = ir.awaitExpression();
+    const node = ir.awaitExpression({ type: "_expression" } as never);
     expect(node.type).toBe('await_expression');
   });
 });
@@ -1402,11 +1402,11 @@ describe('reference_pattern', () => {
 
 describe('or_pattern', () => {
   it('factory produces correct type', () => {
-    const node = ir.orPattern({ pattern: { type: '_pattern', text: 'test' } as any });
+    const node = ir.orPattern({});
     expect(node.type).toBe('or_pattern');
   });
   it('render produces non-empty string', () => {
-    const node = ir.orPattern({ pattern: { type: '_pattern', text: 'test' } as any });
+    const node = ir.orPattern({});
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -1439,11 +1439,11 @@ describe('string_literal', () => {
 
 describe('raw_string_literal', () => {
   it('factory produces correct type', () => {
-    const node = ir.rawStringLiteral({ rawStringLiteralStart: { type: '_raw_string_literal_start', text: 'test' } as any, stringContent: { type: 'raw_string_literal_content', text: 'test' } as any, rawStringLiteralEnd: { type: '_raw_string_literal_end', text: 'test' } as any });
+    const node = ir.rawStringLiteral({ rawStringLiteralStart: 'test' as any, stringContent: { type: 'raw_string_literal_content', text: 'test' } as any, rawStringLiteralEnd: 'test' as any });
     expect(node.type).toBe('raw_string_literal');
   });
   it('render produces non-empty string', () => {
-    const node = ir.rawStringLiteral({ rawStringLiteralStart: { type: '_raw_string_literal_start', text: 'test' } as any, stringContent: { type: 'raw_string_literal_content', text: 'test' } as any, rawStringLiteralEnd: { type: '_raw_string_literal_end', text: 'test' } as any });
+    const node = ir.rawStringLiteral({ rawStringLiteralStart: 'test' as any, stringContent: { type: 'raw_string_literal_content', text: 'test' } as any, rawStringLiteralEnd: 'test' as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -1473,58 +1473,36 @@ describe('boolean_literal', () => {
 
 describe('comment', () => {
   it('factory produces correct type', () => {
-    const node = ir.comment();
+    const node = ir.comment({ type: "line_comment" } as never);
     expect(node.type).toBe('comment');
   });
 });
 
 describe('line_comment', () => {
   it('factory produces correct type', () => {
-    const node = ir.lineComment({ doc: { type: '_line_doc_content', text: 'test' } as any, children: [{ type: '_line_doc_comment_marker', text: 'test' } as any] as any });
+    const node = ir.lineComment({ outer: 'test' as any, inner: 'test' as any, doc: 'test' as any });
     expect(node.type).toBe('line_comment');
   });
   it('render produces non-empty string', () => {
-    const node = ir.lineComment({ doc: { type: '_line_doc_content', text: 'test' } as any, children: [{ type: '_line_doc_comment_marker', text: 'test' } as any] as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('_line_doc_comment_marker', () => {
-  it('factory produces correct type', () => {
-    const node = ir.lineDocCommentMarker({ outer: { type: '_outer_line_doc_comment_marker', text: 'test' } as any, inner: { type: '_inner_line_doc_comment_marker', text: 'test' } as any });
-    expect(node.type).toBe('_line_doc_comment_marker');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.lineDocCommentMarker({ outer: { type: '_outer_line_doc_comment_marker', text: 'test' } as any, inner: { type: '_inner_line_doc_comment_marker', text: 'test' } as any });
+    const node = ir.lineComment({ outer: 'test' as any, inner: 'test' as any, doc: 'test' as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
 describe('block_comment', () => {
   it('factory produces correct type', () => {
-    const node = ir.blockComment({ children: [{ type: '_block_doc_comment_marker', text: 'test' } as any] as any });
+    const node = ir.blockComment({ children: [{ type: '_block_comment_content', text: 'test' } as any] as any });
     expect(node.type).toBe('block_comment');
   });
   it('render produces non-empty string', () => {
-    const node = ir.blockComment({ children: [{ type: '_block_doc_comment_marker', text: 'test' } as any] as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('_block_doc_comment_marker', () => {
-  it('factory produces correct type', () => {
-    const node = ir.blockDocCommentMarker({ outer: { type: '_outer_block_doc_comment_marker', text: 'test' } as any, inner: { type: '_inner_block_doc_comment_marker', text: 'test' } as any });
-    expect(node.type).toBe('_block_doc_comment_marker');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.blockDocCommentMarker({ outer: { type: '_outer_block_doc_comment_marker', text: 'test' } as any, inner: { type: '_inner_block_doc_comment_marker', text: 'test' } as any });
+    const node = ir.blockComment({ children: [{ type: '_block_comment_content', text: 'test' } as any] as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
 describe('_path', () => {
   it('factory produces correct type', () => {
-    const node = ir.path();
+    const node = ir.path({ type: "self" } as never);
     expect(node.type).toBe('_path');
   });
 });
@@ -1554,39 +1532,39 @@ describe('_reserved_identifier', () => {
 
 describe('_type_identifier', () => {
   it('factory produces correct type', () => {
-    const node = ir.hiddenTypeIdentifier();
+    const node = ir.hiddenTypeIdentifier({ type: "identifier" } as never);
     expect(node.type).toBe('_type_identifier');
   });
 });
 
 describe('_field_identifier', () => {
   it('factory produces correct type', () => {
-    const node = ir.hiddenFieldIdentifier();
+    const node = ir.hiddenFieldIdentifier({ type: "identifier" } as never);
     expect(node.type).toBe('_field_identifier');
   });
 });
 
-describe('self', () => {
+describe("self", () => {
   it('factory produces keyword', () => {
     const node = ir.self();
-    expect(node.type).toBe('self');
-    expect(node.text).toBe('self');
+    expect(node.type).toBe("self");
+    expect(node.text).toBe("self");
   });
 });
 
-describe('super', () => {
+describe("super", () => {
   it('factory produces keyword', () => {
     const node = ir.super();
-    expect(node.type).toBe('super');
-    expect(node.text).toBe('super');
+    expect(node.type).toBe("super");
+    expect(node.text).toBe("super");
   });
 });
 
-describe('crate', () => {
+describe("crate", () => {
   it('factory produces keyword', () => {
     const node = ir.crate();
-    expect(node.type).toBe('crate');
-    expect(node.text).toBe('crate');
+    expect(node.type).toBe("crate");
+    expect(node.text).toBe("crate");
   });
 });
 
@@ -1606,26 +1584,10 @@ describe('string_content', () => {
   });
 });
 
-describe('_raw_string_literal_start', () => {
-  it('factory produces correct type', () => {
-    const node = ir.rawStringLiteralStart('test');
-    expect(node.type).toBe('_raw_string_literal_start');
-    expect(node.text).toBe('test');
-  });
-});
-
 describe('raw_string_literal_content', () => {
   it('factory produces correct type', () => {
     const node = ir.rawStringLiteralContent('test');
     expect(node.type).toBe('raw_string_literal_content');
-    expect(node.text).toBe('test');
-  });
-});
-
-describe('_raw_string_literal_end', () => {
-  it('factory produces correct type', () => {
-    const node = ir.rawStringLiteralEnd('test');
-    expect(node.type).toBe('_raw_string_literal_end');
     expect(node.text).toBe('test');
   });
 });
@@ -1638,34 +1600,10 @@ describe('float_literal', () => {
   });
 });
 
-describe('_outer_block_doc_comment_marker', () => {
-  it('factory produces correct type', () => {
-    const node = ir.outerBlockDocCommentMarker('test');
-    expect(node.type).toBe('_outer_block_doc_comment_marker');
-    expect(node.text).toBe('test');
-  });
-});
-
-describe('_inner_block_doc_comment_marker', () => {
-  it('factory produces correct type', () => {
-    const node = ir.innerBlockDocCommentMarker('test');
-    expect(node.type).toBe('_inner_block_doc_comment_marker');
-    expect(node.text).toBe('test');
-  });
-});
-
 describe('_block_comment_content', () => {
   it('factory produces correct type', () => {
     const node = ir.blockCommentContent('test');
     expect(node.type).toBe('_block_comment_content');
-    expect(node.text).toBe('test');
-  });
-});
-
-describe('_line_doc_content', () => {
-  it('factory produces correct type', () => {
-    const node = ir.lineDocContent('test');
-    expect(node.type).toBe('_line_doc_content');
     expect(node.text).toBe('test');
   });
 });
@@ -1687,7 +1625,7 @@ describe('primitive_type', () => {
 
 describe('let_chain', () => {
   it('factory produces correct type', () => {
-    const node = ir.letChain();
+    const node = ir.letChain({ type: "_let_chain" } as never);
     expect(node.type).toBe('let_chain');
   });
 });

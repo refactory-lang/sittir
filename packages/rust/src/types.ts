@@ -206,9 +206,7 @@ export const enum SyntaxKind {
   RawStringLiteral = 'raw_string_literal',
   Comment = 'comment',
   LineComment = 'line_comment',
-  LineDocCommentMarker = '_line_doc_comment_marker',
   BlockComment = 'block_comment',
-  BlockDocCommentMarker = '_block_doc_comment_marker',
   HiddenPath = '_path',
   HiddenTypeIdentifier = '_type_identifier',
   HiddenFieldIdentifier = '_field_identifier',
@@ -229,14 +227,9 @@ export const enum SyntaxKind {
   Crate = 'crate',
   Metavariable = 'metavariable',
   StringContent = 'string_content',
-  RawStringLiteralStart = '_raw_string_literal_start',
   RawStringLiteralContent = 'raw_string_literal_content',
-  RawStringLiteralEnd = '_raw_string_literal_end',
   FloatLiteral = 'float_literal',
-  OuterBlockDocCommentMarker = '_outer_block_doc_comment_marker',
-  InnerBlockDocCommentMarker = '_inner_block_doc_comment_marker',
   BlockCommentContent = '_block_comment_content',
-  LineDocContent = '_line_doc_content',
   ErrorSentinel = '_error_sentinel',
   PrimitiveType = 'primitive_type',
   ShorthandFieldIdentifier = 'shorthand_field_identifier',
@@ -428,6 +421,12 @@ export const enum LiteralPatternKind {
 }
 
 // Node types — concrete interfaces
+// Repeated field/child unions (T042k dedup)
+export type _union_HiddenFieldIdentifier_IntegerLiteral = HiddenFieldIdentifier | IntegerLiteral;
+export type _union_HiddenPath_LiteralPattern = HiddenPath | LiteralPattern;
+export type _union_HiddenType_Lifetime_UseBounds = HiddenType | Lifetime | UseBounds;
+export type _union_Identifier_Metavariable = Identifier | Metavariable;
+
 export interface SourceFile {
   readonly type: 'source_file';
   readonly fields: {
@@ -654,7 +653,7 @@ export interface FunctionItem {
   readonly fields: {
     readonly visibility_modifier?: VisibilityModifier;
     readonly function_modifiers?: FunctionModifiers;
-    readonly name: Identifier | Metavariable;
+    readonly name: _union_Identifier_Metavariable;
     readonly type_parameters?: TypeParameters;
     readonly parameters: Parameters;
     readonly where_clause: HiddenType;
@@ -668,7 +667,7 @@ export interface FunctionSignatureItem {
   readonly fields: {
     readonly visibility_modifier?: VisibilityModifier;
     readonly function_modifiers?: FunctionModifiers;
-    readonly name: Identifier | Metavariable;
+    readonly name: _union_Identifier_Metavariable;
     readonly type_parameters?: TypeParameters;
     readonly parameters: Parameters;
     readonly where_clause: HiddenType;
@@ -943,8 +942,8 @@ export interface GenericTypeWithTurbofish {
 export interface BoundedType {
   readonly type: 'bounded_type';
   readonly fields: {
-    readonly left: Lifetime | HiddenType | UseBounds;
-    readonly right: Lifetime | HiddenType | UseBounds;
+    readonly left: _union_HiddenType_Lifetime_UseBounds;
+    readonly right: _union_HiddenType_Lifetime_UseBounds;
   };
 }
 
@@ -1181,7 +1180,7 @@ export interface ShorthandFieldInitializer {
 export interface FieldInitializer {
   readonly type: 'field_initializer';
   readonly fields: {
-    readonly field: HiddenFieldIdentifier | IntegerLiteral;
+    readonly field: _union_HiddenFieldIdentifier_IntegerLiteral;
     readonly value: Expression;
   };
   readonly children: readonly (AttributeItem)[];
@@ -1355,7 +1354,7 @@ export interface FieldExpression {
   readonly type: 'field_expression';
   readonly fields: {
     readonly value: Expression;
-    readonly field: HiddenFieldIdentifier | IntegerLiteral;
+    readonly field: _union_HiddenFieldIdentifier_IntegerLiteral;
   };
 }
 
@@ -1463,15 +1462,15 @@ export interface MutPattern {
 export interface RangePatternLeft {
   readonly type: 'range_pattern';
   readonly fields: {
-    readonly left: LiteralPattern | HiddenPath;
-    readonly right: LiteralPattern | HiddenPath;
+    readonly left: _union_HiddenPath_LiteralPattern;
+    readonly right: _union_HiddenPath_LiteralPattern;
   };
 }
 
 export interface RangePatternRight {
   readonly type: 'range_pattern';
   readonly fields: {
-    readonly right: LiteralPattern | HiddenPath;
+    readonly right: _union_HiddenPath_LiteralPattern;
   };
 }
 
@@ -1502,7 +1501,7 @@ export interface ReferencePattern {
 export interface OrPattern {
   readonly type: 'or_pattern';
   readonly fields: {
-    readonly pattern: Pattern;
+    readonly pattern?: Pattern;
   };
 }
 
@@ -1521,9 +1520,9 @@ export interface StringLiteral {
 export interface RawStringLiteral {
   readonly type: 'raw_string_literal';
   readonly fields: {
-    readonly raw_string_literal_start: RawStringLiteralStart;
+    readonly raw_string_literal_start: string;
     readonly string_content: RawStringLiteralContent;
-    readonly raw_string_literal_end: RawStringLiteralEnd;
+    readonly raw_string_literal_end: string;
   };
 }
 
@@ -1535,33 +1534,20 @@ export interface Comment {
 export interface LineComment {
   readonly type: 'line_comment';
   readonly fields: {
-    readonly doc: LineDocContent;
-  };
-  readonly children: readonly [LineDocCommentMarker];
-}
-
-export interface LineDocCommentMarker {
-  readonly type: '_line_doc_comment_marker';
-  readonly fields: {
-    readonly outer: OuterLineDocCommentMarker;
-    readonly inner: InnerLineDocCommentMarker;
+    readonly outer: "/";
+    readonly inner: "!";
+    readonly doc: string;
   };
 }
 
 export interface BlockComment {
   readonly type: 'block_comment';
   readonly fields: {
+    readonly outer?: string;
+    readonly inner?: string;
     readonly doc?: BlockCommentContent;
   };
-  readonly children: readonly [BlockDocCommentMarker | BlockCommentContent];
-}
-
-export interface BlockDocCommentMarker {
-  readonly type: '_block_doc_comment_marker';
-  readonly fields: {
-    readonly outer: OuterBlockDocCommentMarker;
-    readonly inner: InnerBlockDocCommentMarker;
-  };
+  readonly children: readonly [BlockCommentContent];
 }
 
 export interface HiddenPath {
@@ -1602,14 +1588,9 @@ export type Super = Terminal<"super", "super">;
 export type Crate = Terminal<"crate", "crate">;
 export type Metavariable = Terminal<"metavariable", string>;
 export type StringContent = Terminal<"string_content", string>;
-export type RawStringLiteralStart = Terminal<"_raw_string_literal_start", string>;
 export type RawStringLiteralContent = Terminal<"raw_string_literal_content", string>;
-export type RawStringLiteralEnd = Terminal<"_raw_string_literal_end", string>;
 export type FloatLiteral = Terminal<"float_literal", string>;
-export type OuterBlockDocCommentMarker = Terminal<"_outer_block_doc_comment_marker", string>;
-export type InnerBlockDocCommentMarker = Terminal<"_inner_block_doc_comment_marker", string>;
 export type BlockCommentContent = Terminal<"_block_comment_content", string>;
-export type LineDocContent = Terminal<"_line_doc_content", string>;
 export type ErrorSentinel = Terminal<"_error_sentinel", string>;
 export type PrimitiveType = Terminal<"primitive_type", "u8" | "i8" | "u16" | "i16" | "u32" | "i32" | "u64" | "i64" | "u128" | "i128" | "isize" | "usize" | "f32" | "f64" | "bool" | "str" | "char">;
 export type ShorthandFieldIdentifier = Terminal<"shorthand_field_identifier", string>;
@@ -1617,45 +1598,6 @@ export type OuterDocCommentMarker = Terminal<"outer_doc_comment_marker", string>
 export type InnerDocCommentMarker = Terminal<"inner_doc_comment_marker", string>;
 export type TypeIdentifier = Terminal<"type_identifier", string>;
 export type FieldIdentifier = Terminal<"field_identifier", string>;
-export type As = Terminal<"as", "as">;
-export type Async = Terminal<"async", "async">;
-export type Await = Terminal<"await", "await">;
-export type Break = Terminal<"break", "break">;
-export type Const = Terminal<"const", "const">;
-export type Continue = Terminal<"continue", "continue">;
-export type Default = Terminal<"default", "default">;
-export type Enum = Terminal<"enum", "enum">;
-export type Fn = Terminal<"fn", "fn">;
-export type For = Terminal<"for", "for">;
-export type Gen = Terminal<"gen", "gen">;
-export type If = Terminal<"if", "if">;
-export type Impl = Terminal<"impl", "impl">;
-export type Let = Terminal<"let", "let">;
-export type Loop = Terminal<"loop", "loop">;
-export type Match = Terminal<"match", "match">;
-export type Mod = Terminal<"mod", "mod">;
-export type Pub = Terminal<"pub", "pub">;
-export type Return = Terminal<"return", "return">;
-export type Static = Terminal<"static", "static">;
-export type Struct = Terminal<"struct", "struct">;
-export type Trait = Terminal<"trait", "trait">;
-export type Type = Terminal<"type", "type">;
-export type Union = Terminal<"union", "union">;
-export type Unsafe = Terminal<"unsafe", "unsafe">;
-export type Use = Terminal<"use", "use">;
-export type Where = Terminal<"where", "where">;
-export type While = Terminal<"while", "while">;
-export type Extern = Terminal<"extern", "extern">;
-export type Ref = Terminal<"ref", "ref">;
-export type Else = Terminal<"else", "else">;
-export type Anonymous = Terminal<"_", "_">;
-export type In = Terminal<"in", "in">;
-export type Dyn = Terminal<"dyn", "dyn">;
-export type Mut = Terminal<"mut", "mut">;
-export type Raw = Terminal<"raw", "raw">;
-export type Yield = Terminal<"yield", "yield">;
-export type Move = Terminal<"move", "move">;
-export type Try = Terminal<"try", "try">;
 
 // Config types
 export type SourceFileConfig = ConfigOf<SourceFile>;
@@ -1807,9 +1749,7 @@ export type StringLiteralConfig = ConfigOf<StringLiteral>;
 export type RawStringLiteralConfig = ConfigOf<RawStringLiteral>;
 export type CommentConfig = ConfigOf<Comment>;
 export type LineCommentConfig = ConfigOf<LineComment>;
-export type LineDocCommentMarkerConfig = ConfigOf<LineDocCommentMarker>;
 export type BlockCommentConfig = ConfigOf<BlockComment>;
-export type BlockDocCommentMarkerConfig = ConfigOf<BlockDocCommentMarker>;
 export type HiddenPathConfig = ConfigOf<HiddenPath>;
 export type HiddenTypeIdentifierConfig = ConfigOf<HiddenTypeIdentifier>;
 export type HiddenFieldIdentifierConfig = ConfigOf<HiddenFieldIdentifier>;
@@ -1965,9 +1905,7 @@ export interface StringLiteralTree extends TreeNode<'string_literal'> {}
 export interface RawStringLiteralTree extends TreeNode<'raw_string_literal'> {}
 export interface CommentTree extends AnyTreeNode { readonly type: "comment"; }
 export interface LineCommentTree extends TreeNode<'line_comment'> {}
-export interface LineDocCommentMarkerTree extends AnyTreeNode { readonly type: "_line_doc_comment_marker"; }
 export interface BlockCommentTree extends TreeNode<'block_comment'> {}
-export interface BlockDocCommentMarkerTree extends AnyTreeNode { readonly type: "_block_doc_comment_marker"; }
 export interface HiddenPathTree extends AnyTreeNode { readonly type: "_path"; }
 export interface HiddenTypeIdentifierTree extends AnyTreeNode { readonly type: "_type_identifier"; }
 export interface HiddenFieldIdentifierTree extends AnyTreeNode { readonly type: "_field_identifier"; }
@@ -1988,14 +1926,9 @@ export interface SuperTree extends AnyTreeNode { readonly type: "super"; }
 export interface CrateTree extends AnyTreeNode { readonly type: "crate"; }
 export interface MetavariableTree extends TreeNode<'metavariable'> {}
 export interface StringContentTree extends TreeNode<'string_content'> {}
-export interface RawStringLiteralStartTree extends AnyTreeNode { readonly type: "_raw_string_literal_start"; }
 export interface RawStringLiteralContentTree extends AnyTreeNode { readonly type: "raw_string_literal_content"; }
-export interface RawStringLiteralEndTree extends AnyTreeNode { readonly type: "_raw_string_literal_end"; }
 export interface FloatLiteralTree extends TreeNode<'float_literal'> {}
-export interface OuterBlockDocCommentMarkerTree extends AnyTreeNode { readonly type: "_outer_block_doc_comment_marker"; }
-export interface InnerBlockDocCommentMarkerTree extends AnyTreeNode { readonly type: "_inner_block_doc_comment_marker"; }
 export interface BlockCommentContentTree extends AnyTreeNode { readonly type: "_block_comment_content"; }
-export interface LineDocContentTree extends AnyTreeNode { readonly type: "_line_doc_content"; }
 export interface ErrorSentinelTree extends AnyTreeNode { readonly type: "_error_sentinel"; }
 export interface PrimitiveTypeTree extends TreeNode<'primitive_type'> {}
 export interface ShorthandFieldIdentifierTree extends TreeNode<'shorthand_field_identifier'> {}
@@ -2187,9 +2120,7 @@ export type StringLiteralFromInput = FromInputOf<StringLiteral, LeafScalarMap, L
 export type RawStringLiteralFromInput = FromInputOf<RawStringLiteral, LeafScalarMap, LeafStringMap>;
 export type CommentFromInput = FromInputOf<Comment, LeafScalarMap, LeafStringMap>;
 export type LineCommentFromInput = FromInputOf<LineComment, LeafScalarMap, LeafStringMap>;
-export type LineDocCommentMarkerFromInput = FromInputOf<LineDocCommentMarker, LeafScalarMap, LeafStringMap>;
 export type BlockCommentFromInput = FromInputOf<BlockComment, LeafScalarMap, LeafStringMap>;
-export type BlockDocCommentMarkerFromInput = FromInputOf<BlockDocCommentMarker, LeafScalarMap, LeafStringMap>;
 export type HiddenPathFromInput = FromInputOf<HiddenPath, LeafScalarMap, LeafStringMap>;
 export type HiddenTypeIdentifierFromInput = FromInputOf<HiddenTypeIdentifier, LeafScalarMap, LeafStringMap>;
 export type HiddenFieldIdentifierFromInput = FromInputOf<HiddenFieldIdentifier, LeafScalarMap, LeafStringMap>;
@@ -2391,10 +2322,6 @@ export interface NeverType { readonly type: "never_type"; readonly text: string;
 export interface NeverTypeTree extends AnyTreeNode { readonly type: "never_type"; }
 export interface RemainingFieldPattern { readonly type: "remaining_field_pattern"; readonly text: string; }
 export interface RemainingFieldPatternTree extends AnyTreeNode { readonly type: "remaining_field_pattern"; }
-export interface InnerLineDocCommentMarker { readonly type: "_inner_line_doc_comment_marker"; readonly text: string; }
-export interface InnerLineDocCommentMarkerTree extends AnyTreeNode { readonly type: "_inner_line_doc_comment_marker"; }
-export interface OuterLineDocCommentMarker { readonly type: "_outer_line_doc_comment_marker"; readonly text: string; }
-export interface OuterLineDocCommentMarkerTree extends AnyTreeNode { readonly type: "_outer_line_doc_comment_marker"; }
 export interface Semi { readonly type: ";"; readonly text: string; }
 export interface SemiTree extends AnyTreeNode { readonly type: ";"; }
 export interface TokMACROURULESBang { readonly type: "macro_rules!"; readonly text: string; }
@@ -2616,9 +2543,7 @@ export type RustNode =
   | RawStringLiteral
   | Comment
   | LineComment
-  | LineDocCommentMarker
   | BlockComment
-  | BlockDocCommentMarker
   | HiddenPath
   | HiddenTypeIdentifier
   | HiddenFieldIdentifier
@@ -2769,9 +2694,7 @@ export interface KindMap {
   'raw_string_literal': RawStringLiteral;
   'comment': Comment;
   'line_comment': LineComment;
-  '_line_doc_comment_marker': LineDocCommentMarker;
   'block_comment': BlockComment;
-  '_block_doc_comment_marker': BlockDocCommentMarker;
   '_path': HiddenPath;
   '_type_identifier': HiddenTypeIdentifier;
   '_field_identifier': HiddenFieldIdentifier;
@@ -2792,14 +2715,9 @@ export interface KindMap {
   'crate': Crate;
   'metavariable': Metavariable;
   'string_content': StringContent;
-  '_raw_string_literal_start': RawStringLiteralStart;
   'raw_string_literal_content': RawStringLiteralContent;
-  '_raw_string_literal_end': RawStringLiteralEnd;
   'float_literal': FloatLiteral;
-  '_outer_block_doc_comment_marker': OuterBlockDocCommentMarker;
-  '_inner_block_doc_comment_marker': InnerBlockDocCommentMarker;
   '_block_comment_content': BlockCommentContent;
-  '_line_doc_content': LineDocContent;
   '_error_sentinel': ErrorSentinel;
   'primitive_type': PrimitiveType;
   'shorthand_field_identifier': ShorthandFieldIdentifier;
@@ -2807,45 +2725,6 @@ export interface KindMap {
   'inner_doc_comment_marker': InnerDocCommentMarker;
   'type_identifier': TypeIdentifier;
   'field_identifier': FieldIdentifier;
-  'as': As;
-  'async': Async;
-  'await': Await;
-  'break': Break;
-  'const': Const;
-  'continue': Continue;
-  'default': Default;
-  'enum': Enum;
-  'fn': Fn;
-  'for': For;
-  'gen': Gen;
-  'if': If;
-  'impl': Impl;
-  'let': Let;
-  'loop': Loop;
-  'match': Match;
-  'mod': Mod;
-  'pub': Pub;
-  'return': Return;
-  'static': Static;
-  'struct': Struct;
-  'trait': Trait;
-  'type': Type;
-  'union': Union;
-  'unsafe': Unsafe;
-  'use': Use;
-  'where': Where;
-  'while': While;
-  'extern': Extern;
-  'ref': Ref;
-  'else': Else;
-  '_': Anonymous;
-  'in': In;
-  'dyn': Dyn;
-  'mut': Mut;
-  'raw': Raw;
-  'yield': Yield;
-  'move': Move;
-  'try': Try;
 }
 
 export interface VariantMap {
@@ -2998,9 +2877,7 @@ export interface ConfigMap {
   'raw_string_literal': RawStringLiteralConfig;
   'comment': CommentConfig;
   'line_comment': LineCommentConfig;
-  '_line_doc_comment_marker': LineDocCommentMarkerConfig;
   'block_comment': BlockCommentConfig;
-  '_block_doc_comment_marker': BlockDocCommentMarkerConfig;
   '_path': HiddenPathConfig;
   '_type_identifier': HiddenTypeIdentifierConfig;
   '_field_identifier': HiddenFieldIdentifierConfig;
@@ -3151,9 +3028,7 @@ export interface FromInputMap {
   'raw_string_literal': RawStringLiteralFromInput;
   'comment': CommentFromInput;
   'line_comment': LineCommentFromInput;
-  '_line_doc_comment_marker': LineDocCommentMarkerFromInput;
   'block_comment': BlockCommentFromInput;
-  '_block_doc_comment_marker': BlockDocCommentMarkerFromInput;
   '_path': HiddenPathFromInput;
   '_type_identifier': HiddenTypeIdentifierFromInput;
   '_field_identifier': HiddenFieldIdentifierFromInput;

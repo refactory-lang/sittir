@@ -21,7 +21,7 @@ export function emitTemplatesFromNodeMap(config: EmitTemplatesFromNodeMapConfig)
 
     const rules: Record<string, unknown> = {}
     for (const [kind, node] of nodeMap.nodes) {
-        const entry = node.renderTemplate()
+        const entry = node.renderTemplate(nodeMap.rules)
         if (entry !== undefined) rules[kind] = entry
     }
 

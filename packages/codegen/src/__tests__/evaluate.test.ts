@@ -188,29 +188,29 @@ describe('Evaluate — DSL functions', () => {
             $.block
             $.parameters
             expect(refs).toHaveLength(2)
-            expect(refs[0]).toEqual({ from: 'function_item', to: 'block' })
-            expect(refs[1]).toEqual({ from: 'function_item', to: 'parameters' })
+            expect(refs[0]).toEqual({ refType: 'symbol', from: 'function_item', to: 'block' })
+            expect(refs[1]).toEqual({ refType: 'symbol', from: 'function_item', to: 'parameters' })
         })
 
         it('enriches ref with fieldName when used inside field()', () => {
             const refs: SymbolRef[] = []
             const $ = createProxy('function_item', refs)
             field('body', $.block)
-            expect(refs[0].fieldName).toBe('body')
+            expect(refs[0]!.fieldName).toBe('body')
         })
 
         it('enriches ref with optional when used inside optional()', () => {
             const refs: SymbolRef[] = []
             const $ = createProxy('function_item', refs)
-            optional($.block)
-            expect(refs[0].optional).toBe(true)
+            optional($.block!)
+            expect(refs[0]!.optional).toBe(true)
         })
 
         it('enriches ref with repeated when used inside repeat()', () => {
             const refs: SymbolRef[] = []
             const $ = createProxy('function_item', refs)
-            repeat($.block)
-            expect(refs[0].repeated).toBe(true)
+            repeat($.block!)
+            expect(refs[0]!.repeated).toBe(true)
         })
     })
 
@@ -436,7 +436,7 @@ describe('Evaluate — evaluate()', () => {
         const raw = await evaluate(fixture('test-grammar.js'))
         // binary_expression has field('operator', choice('+', '-', '*', '/'))
         const binExpr = raw.rules['binary_expression']
-        expect(binExpr.type).toBe('seq')
+        expect(binExpr!.type).toBe('seq')
         const operatorField = (binExpr as any).members.find(
             (m: any) => m.type === 'field' && m.name === 'operator'
         )

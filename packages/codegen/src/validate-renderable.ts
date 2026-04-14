@@ -20,9 +20,11 @@
  * want surfaced as a first-class validation error.
  */
 
-import { loadRawEntries, type RawNodeEntry } from './grammar-reader.ts'
+import { loadRawEntries, type RawNodeEntry } from './validators/node-types.ts'
 import { parse as parseYaml } from 'yaml'
 import type { RulesConfig, TemplateRule } from '@sittir/types'
+import type { NodeMap } from './compiler/rule.ts'
+import { buildRuleLookup } from './validators/rule-lookup.ts'
 
 // ---------------------------------------------------------------------------
 // Result shape
@@ -76,6 +78,40 @@ export function validateRenderable(grammar: string, templatesYaml: string): Rend
             })
         } else {
             renderable++
+        }
+    }
+
+    return { grammar, total, renderable, missing }
+}
+
+/**
+ * C12: NodeMap-sourced variant. Skips the templates.yaml round-trip
+ * entirely — renderability is a structural property, and the
+ * shared `buildRuleLookup()` answers it directly from NodeMap.
+ * Prefer this when you already have a NodeMap in hand (generateV2
+ * returns one).
+ */
+export function validateRenderableFromNodeMap(grammar: string, nodeMap: NodeMap): RenderableResult {
+    const rawEntries = loadRawEntries(grammar)
+    const lookup = buildRuleLookup(nodeMap)
+
+    const missing: MissingKind[] = []
+    let renderable = 0
+    let total = 0
+
+    for (const entry of rawEntries) {
+        if (!entry.named) continue
+        total++
+
+        if (lookup.renderable.has(entry.type)) {
+            renderable++
+        } else {
+            missing.push({
+                kind: entry.type,
+                reason: `no NodeMap render path for '${entry.type}' (kind is `
+                    + (lookup.kinds.has(entry.type) ? `modelType=${lookup.path.get(entry.type) ?? 'none'}` : `absent from NodeMap`)
+                    + ')',
+            })
         }
     }
 

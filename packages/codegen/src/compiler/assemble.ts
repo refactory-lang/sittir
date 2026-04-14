@@ -44,17 +44,31 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
                 break
             }
             case 'polymorph': {
-                // PolymorphRule is Optimize's output: already has forms in
-                // declaration order. Build one AssembledGroup per form and
-                // insert into the NodeMap; the polymorph references them.
-                if (rule.type !== 'polymorph') {
-                    throw new Error(
-                        `assemble: kind '${kind}' classified as polymorph but rule.type=${rule.type}. ` +
-                        `promotePolymorph in Optimize should have wrapped it.`,
-                    )
-                }
+                // PolymorphRule is Link/Optimize's output — normally
+                // already has forms in declaration order. Under T065
+                // the classifier may tag a raw `choice` as polymorph
+                // when promotion was held back (strict debug mode) —
+                // in that case we synthesize forms from the choice
+                // members here so Assemble still produces a
+                // functional AssembledPolymorph. Synthetic forms get
+                // numerical names (`'0'`, `'1'`, …) rather than any
+                // variant label that might have been attached by
+                // `tagVariants`, so the form kinds stay collision-
+                // free and obviously-generated.
+                const polyForms: import('./rule.ts').PolymorphRule['forms'] =
+                    rule.type === 'polymorph'
+                        ? rule.forms
+                        : rule.type === 'choice'
+                            ? rule.members.map((m, i) => ({
+                                name: `form${i}`,
+                                content: m.type === 'variant' ? m.content : m,
+                            }))
+                            : (() => { throw new Error(
+                                `assemble: kind '${kind}' classified as polymorph but rule.type=${rule.type}. ` +
+                                `promotePolymorph in Optimize should have wrapped it.`,
+                            ) })()
                 const nameCounts = new Map<string, number>()
-                const forms: AssembledGroup[] = rule.forms.map((form) => {
+                const forms: AssembledGroup[] = polyForms.map((form) => {
                     // Disambiguate duplicate form names (two `expression` variants
                     // over different shapes — e.g. python's expression_statement).
                     const seen = nameCounts.get(form.name) ?? 0
@@ -112,8 +126,8 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
                 } else if (rule.type === 'choice') {
                     subtypes = rule.members
                         .map(m => m.type === 'variant' ? m.content : m)
-                        .filter(m => m.type === 'symbol')
-                        .map(m => (m as any).name)
+                        .filter((m): m is import('./rule.ts').SymbolRule => m.type === 'symbol')
+                        .map(m => m.name)
                 } else {
                     subtypes = []
                 }
@@ -154,6 +168,7 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
         signatures: computeSignatures(nodes),
         projections: buildProjections(nodes),
         derivations: optimized.derivations,
+        rules: optimized.rules,
     }
 }
 
@@ -409,7 +424,7 @@ function allVariantsHaveSameFieldSet(rule: Rule): boolean {
 
     if (fieldSets.length < 2) return false
 
-    const first = fieldSets[0]
+    const first = fieldSets[0]!
     // Must have at least one field — empty field sets mean children-based, not field-based
     if (first.size === 0) return false
 
@@ -477,6 +492,17 @@ export function classifyNode(kind: string, rule: Rule): ModelType {
         case 'string':    return /^\w+$/.test(rule.value) ? 'keyword' : 'token'
     }
 
+    // T065 — polymorph shape fallback. Fires when `IncludeFilter.rules`
+    // held back `promoted`, leaving a raw `choice` whose variants
+    // carry heterogeneous field sets. Link's `promotePolymorph`
+    // would normally wrap this in a `PolymorphRule`; under strict
+    // debug mode we detect the shape here so the node still gets
+    // treated as a polymorph instead of collapsing into a flat
+    // branch with union-ed fields.
+    if (rule.type === 'choice' && hasAnyField(rule) && !allVariantsHaveSameFieldSet(rule)) {
+        return 'polymorph'
+    }
+
     // seq/choice/optional/repeat/field/... — distinguish branch from container.
     // Only need existence checks, not full extraction. The class getters
     // (AssembledBranch.fields, AssembledContainer.children) do the full walk
@@ -484,11 +510,44 @@ export function classifyNode(kind: string, rule: Rule): ModelType {
     if (hasAnyField(rule)) return 'branch'
     if (hasAnyChild(rule)) return 'container'
 
-    // No fields, no children — Link should have wrapped this as TerminalRule.
+    // T065 — terminal fallback. All-text subtree → leaf; pure
+    // choice-of-strings → enum. Anything still unclassifiable after
+    // this is a real error and falls through to the throw.
+    if (isAllTextShape(rule)) return 'leaf'
+    if (rule.type === 'choice' && rule.members.every(m => m.type === 'string')) return 'enum'
     throw new Error(
         `classifyNode: '${kind}' has no fields, no children, and no rule-type ` +
         `classification. Link should have wrapped it as TerminalRule. rule.type=${rule.type}`,
     )
+}
+
+/**
+ * Shape-inspection helper for the classifier fallback. A rule is
+ * "all text" when every leaf is a string or pattern and there are
+ * no symbol references. Walked recursively through seq/choice/
+ * optional/repeat/token/variant/clause/group wrappers.
+ */
+function isAllTextShape(rule: Rule): boolean {
+    switch (rule.type) {
+        case 'string':
+        case 'pattern':
+            return true
+        case 'symbol':
+        case 'field':
+            return false
+        case 'seq':
+        case 'choice':
+            return rule.members.length > 0 && rule.members.every(isAllTextShape)
+        case 'optional':
+        case 'repeat':
+        case 'token':
+        case 'variant':
+        case 'clause':
+        case 'group':
+            return isAllTextShape(rule.content)
+        default:
+            return false
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -506,7 +565,7 @@ export function simplifyRule(rule: Rule): Rule {
                     return true
                 })
             if (members.length === 0) return { type: 'seq', members: [] }
-            if (members.length === 1) return members[0]
+            if (members.length === 1) return members[0]!
             return { type: 'seq', members }
         }
         case 'choice': {
@@ -514,7 +573,7 @@ export function simplifyRule(rule: Rule): Rule {
             const members = rule.members.map(m =>
                 m.type === 'variant' ? simplifyRule(m.content) : simplifyRule(m)
             )
-            if (members.length === 1) return members[0]
+            if (members.length === 1) return members[0]!
             return { type: 'choice', members }
         }
         case 'optional':

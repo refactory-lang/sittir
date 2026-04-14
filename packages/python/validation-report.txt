@@ -1,24 +1,57 @@
 Generating python IR...
-[overrides] conditional_expression: needs synthetic names — same-kind positional children: expression
-[overrides] constrained_type: needs synthetic names — same-kind positional children: type
-[overrides] pair: needs synthetic names — same-kind positional children: expression
-[overrides] type_alias_statement: needs synthetic names — same-kind positional children: type
-[overrides] union_type: needs synthetic names — same-kind positional children: type
-[overrides] with_clause: discriminator token detected — CHOICE branches identical after token removal
 
-@sittir/python: 101 kinds
-  v 101/101 variable resolution
-  v 101/101 field coverage
+@sittir/python: 119 kinds
+  x 110/119 variable resolution
+  x 115/119 field coverage
   v 26/26 override consistency (26 nodes with overrides)
-  v 101/101 template structure
-  v 1/1 variant subtypes
+  x 114/119 template structure
+  x 0/1 variant subtypes
 
-  Warnings (2):
+  Errors (22):
+    import_from_statement: [field-coverage] tree-sitter FIELD 'name' not referenced in template
+    _import_list: [variable-resolution] $NAME resolves to nothing (not a field, override, or clause)
+    _import_list: [template-structure] joinBy defined but no $$$ variable in template
+    raise_statement: [variable-resolution] $CAUSE_CLAUSE resolves to nothing (not a field, override, or clause)
+    match_statement: [template-structure] joinBy defined but no $$$ variable in template
+    except_clause: [variable-resolution] $ALIAS_CLAUSE resolves to nothing (not a field, override, or clause)
+    function_definition: [variable-resolution] $RETURN_TYPE_CLAUSE resolves to nothing (not a field, override, or clause)
+    function_definition: [field-coverage] tree-sitter FIELD 'return_type' not referenced in template
+    _key_value_pattern: [variable-resolution] $KEY resolves to nothing (not a field, override, or clause)
+    _key_value_pattern: [variable-resolution] $VALUE resolves to nothing (not a field, override, or clause)
+    class_pattern: [template-structure] joinBy defined but no $$$ variable in template
+    comparison_operator: [field-coverage] tree-sitter FIELD 'operators' not referenced in template
+    lambda_within_for_in_clause: [variable-resolution] $PARAMETERS resolves to nothing (not a field, override, or clause)
+    lambda_within_for_in_clause: [variable-resolution] $BODY resolves to nothing (not a field, override, or clause)
+    assignment_eq: [variable-resolution] $RIGHT resolves to nothing (not a field, override, or clause)
+    assignment_colon: [variable-resolution] $TYPE resolves to nothing (not a field, override, or clause)
+    assignment_colon2: [variable-resolution] $TYPE resolves to nothing (not a field, override, or clause)
+    assignment_colon2: [variable-resolution] $RIGHT resolves to nothing (not a field, override, or clause)
+    assignment: [field-coverage] tree-sitter FIELD 'left' not referenced in template
+    assignment: [variant-subtypes] variants defined but no detect block
+    subscript: [template-structure] joinBy defined but no $$$ variable in template
+    for_in_clause: [template-structure] joinBy defined but no $$$ variable in template
+
+  Warnings (8):
+    import_statement: [field-coverage] tree-sitter FIELD 'name' not explicitly in template (covered by $$$CHILDREN)
+    future_import_statement: [field-coverage] tree-sitter FIELD 'name' not explicitly in template (covered by $$$CHILDREN)
+    raise_statement: [field-coverage] tree-sitter FIELD 'cause' not explicitly in template (covered by $$$CHILDREN)
+    except_clause: [field-coverage] tree-sitter FIELD 'alias' not explicitly in template (covered by $$$CHILDREN)
+    block: [field-coverage] tree-sitter FIELD 'alternative' not explicitly in template (covered by $$$CHILDREN)
     dict_pattern: [field-coverage] tree-sitter FIELD 'key' not explicitly in template (covered by $$$CHILDREN)
     dict_pattern: [field-coverage] tree-sitter FIELD 'value' not explicitly in template (covered by $$$CHILDREN)
+    print_statement: [override-consistency] override 'chevron' not referenced in template
+
+  x 124/128 kinds renderable (4 un-renderable)
+    x keyword_separator: no NodeMap render path for 'keyword_separator' (kind is modelType=none)
+    x positional_separator: no NodeMap render path for 'positional_separator' (kind is modelType=none)
+    x wildcard_import: no NodeMap render path for 'wildcard_import' (kind is modelType=none)
+    x ellipsis: no NodeMap render path for 'ellipsis' (kind is modelType=none)
 
 Running round-trip validation...
-  x 91/115 round-trip (0 skipped, 24 errors)
+  v 121/121 readNode round-trip (0 skipped, 0 issues)
+  x 81/115 round-trip (0 skipped, 34 errors)
+    x Async context managers and iterators [with_statement]: re-parse error: "a as b with :async for c in d:
+ [e async for f in g]"
     x Matching specific values [match_statement]: re-parse error: "match command.split():
  case ["quit"]:
  print("Goodbye!")
@@ -70,13 +103,11 @@ Running round-trip validation...
  handle_click_at(x, y)"
     x Constants and enums [match_statement]: re-parse error: "match event.get():
  case Click((x, y), button=Button.LEFT): # This is a left cli"
-    x Dict mappings [for_statement]: re-parse error: "for action in actions:
- match action:
+    x Dict mappings [for_statement]: re-parse error: "for action in actions:match action:
  case {"text": message, "color": c}:
- ui.s"
-    x Builtin classes [for_statement]: re-parse error: "for action in actions:
- match action:
- case {"text": str(message), "color": str("
+ ui.set"
+    x Builtin classes [for_statement]: re-parse error: "for action in actions:match action:
+ case {"text": str(message), "color": str(c)"
     x Complex case patterns on classes [match_statement]: re-parse error: "match x:
  case Something(): # no args
  foo1()
@@ -90,25 +121,27 @@ Running round-trip validation...
     x Maybe sequence pattern right hand side precedence validation [match_statement]: re-parse error: "match x:
  case a1, *a2, a3:
  pass"
-    x If else statements [if_statement]: re-parse error: "if a:
- b
-
- else:
+    x Import statements [import_statement]: re-parse error: "import"
+    x Import-from statements [import_from_statement]: re-parse error: "from a import"
+    x Future import statements [future_import_statement]: re-parse error: "from __future__ import"
+    x Print statements with redirection [print_statement]: kind not found in re-parsed tree
+    x If else statements [if_statement]: re-parse error: "if a:b else:
  f"
-    x Nested if statements [if_statement]: re-parse error: "if a:
- if b:
+    x Nested if statements [if_statement]: re-parse error: "if a:if b:
  c
  else:
  if e:
  f"
-    x Try statements [try_statement]: re-parse error: "try:
- a
-
- except b:
- c except d as e:
- f except g, h:
- i except:
- j"
+    x For statements [for_statement]: re-parse error: "for line, i in lines:print line
+ for character, j in line:
+ print character else"
+    x Try statements [try_statement]: re-parse error: "try:a except b:
+ c"
+    x With statements [with_statement]: re-parse error: "a as b with :c"
+    x Class definitions [class_definition]: re-parse error: "class A :def b(self):
+ return c"
+    x Class definitions with superclasses [class_definition]: re-parse error: "class A (B, C):def d():
+ e"
     x Decorated definitions [decorated_definition]: re-parse error: "@a.b class C:
  @d(1)
  @e[2].f.g
@@ -118,26 +151,26 @@ Running round-trip validation...
  @f()
  async def f():
  g"
-    x Raise statements [raise_statement]: re-parse error: "raise raise"
-  x 92/99 factory round-trip (2 skipped, 5 errors)
-    x with_statement: re-parse error: "with :
- async for c in d:
+    x Comments at the ends of indented blocks [function_definition]: re-parse error: "def a () :if b:
+ b # comment
+ b # comment"
+    x Exec statements [exec_statement]: re-parse error: "exec '1+1' in"
+  x 92/100 factory round-trip (1 skipped, 7 errors)
+    x with_statement: re-parse error: "with :async for c in d:
  [e async for f in g]"
     x match_statement: re-parse error: "match command.split():
  case ["quit"]:
  print("Goodbye!")
  q"
-    x dict_pattern: Node 'undefined' has no 'fields' or 'children' — did you mean to set 'text' for 
-    x import_from_statement: re-parse error: "from import b"
-    x delete_statement: re-parse error: "del"
-  x 92/99 from() correctness (0 undefined, 7 divergent, 0 skipped)
-    ! block: from() diverges: named children: 1 vs 0
-    ! generator_expression: from() diverges: named children: 0 vs 1
-    ! list_comprehension: from() diverges: named children: 0 vs 1
-    ! dictionary_comprehension: from() diverges: named children: 0 vs 1
-    ! set_comprehension: from() diverges: named children: 0 vs 1
-    ! dict_pattern: from() diverges: named children: 0 vs 1
-    ! except_clause: from() diverges: named children: 0 vs 1
+    x import_statement: re-parse error: "import"
+    x import_from_statement: re-parse error: "from import"
+    x future_import_statement: re-parse error: "from __future__ import"
+    x class_definition: re-parse error: "class A :def b(self):
+ return c"
+    x exec_statement: re-parse error: "exec '1+1' in"
+  x 115/117 from() correctness (0 undefined, 2 divergent, 0 skipped)
+    ! assignment: from() diverges: from() has extra fields: type; factory has extra fields: right
+    ! raise_statement: from() diverges: named children: 1 vs 0
 
 Done! Generated:
   templates.yaml, grammar.ts, types.ts, factories.ts, utils.ts, from.ts, consts.ts, index.ts

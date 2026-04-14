@@ -99,10 +99,23 @@ function emitBranchTest(lines: string[], node: AssembledNode, kind: string, key:
 }
 
 function emitContainerTest(lines: string[], node: AssembledNode, kind: string, key: string): void {
+    if (node.modelType !== 'container') return
+
+    // Container factories take positional args: singular-child
+    // containers require one `child?` and repeated containers take
+    // `...children` rest args. When the first child is required,
+    // the no-arg form `ir.kind()` won't type-check — pass a minimal
+    // `{ type: '<child>' } as never` placeholder keyed by the first
+    // content type.
+    const first = node.children[0]
+    const requiredSingular = first && !first.multiple && first.required
+    const placeholder = requiredSingular && first.contentTypes[0]
+        ? `{ type: ${JSON.stringify(first.contentTypes[0])} } as never`
+        : ''
 
     lines.push(`describe('${kind}', () => {`)
     lines.push(`  it('factory produces correct type', () => {`)
-    lines.push(`    const node = ir.${key}();`)
+    lines.push(`    const node = ir.${key}(${placeholder});`)
     lines.push(`    expect(node.type).toBe('${kind}');`)
     lines.push('  });')
     lines.push('});')
@@ -140,11 +153,11 @@ function emitLeafTest(lines: string[], node: AssembledNode, kind: string, key: s
 
 function emitKeywordTest(lines: string[], node: AssembledNode, kind: string, key: string): void {
     if (node.modelType !== 'keyword') return
-    lines.push(`describe('${kind}', () => {`)
+    lines.push(`describe(${JSON.stringify(kind)}, () => {`)
     lines.push(`  it('factory produces keyword', () => {`)
     lines.push(`    const node = ir.${key}();`)
-    lines.push(`    expect(node.type).toBe('${kind}');`)
-    lines.push(`    expect(node.text).toBe('${node.text}');`)
+    lines.push(`    expect(node.type).toBe(${JSON.stringify(kind)});`)
+    lines.push(`    expect(node.text).toBe(${JSON.stringify(node.text)});`)
     lines.push('  });')
     lines.push('});')
     lines.push('')

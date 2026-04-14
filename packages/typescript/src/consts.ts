@@ -2,7 +2,6 @@
 
 /** All branch (non-leaf) node kind strings. */
 export const NODE_KINDS = [
-  '_augmented_assignment_lhs',
   '_import_identifier',
   '_jsx_start_opening_element',
   '_jsx_string',
@@ -187,7 +186,6 @@ export const LEAF_KINDS = [
   '_function_signature_automatic_semicolon',
   '_reserved_identifier',
   '_template_chars',
-  '_ternary_qmark',
   'abstract',
   'accessibility_modifier',
   'accessor',
@@ -400,8 +398,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   required: boolean;
   multiple: boolean;
 }>> = {
-  '_augmented_assignment_lhs': [
-  ],
   '_import_identifier': [
   ],
   '_jsx_start_opening_element': [

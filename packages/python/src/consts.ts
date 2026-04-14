@@ -2,18 +2,14 @@
 
 /** All branch (non-leaf) node kind strings. */
 export const NODE_KINDS = [
-  '_as_pattern',
   '_collection_elements',
   '_comprehension_clauses',
   '_import_list',
-  '_list_pattern',
-  '_match_block',
   '_parameters',
   '_patterns',
   '_simple_pattern',
   '_simple_statements',
   '_suite',
-  '_tuple_pattern',
   'aliased_import',
   'argument_list',
   'as_pattern',
@@ -137,7 +133,6 @@ export const LEAF_KINDS = [
   '_is_not',
   '_newline',
   '_not_in',
-  '_string_content',
   'and',
   'as',
   'assert',
@@ -202,7 +197,6 @@ export const KEYWORDS = [
   'True',
   '_',
   '__future__',
-  '_not_escape_sequence',
   'and',
   'as',
   'assert',
@@ -295,19 +289,12 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   required: boolean;
   multiple: boolean;
 }>> = {
-  '_as_pattern': [
-  ],
   '_collection_elements': [
   ],
   '_comprehension_clauses': [
   ],
   '_import_list': [
     { name: 'name', required: true, multiple: true },
-  ],
-  '_list_pattern': [
-  ],
-  '_match_block': [
-    { name: 'alternative', required: true, multiple: true },
   ],
   '_parameters': [
   ],
@@ -318,8 +305,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   '_simple_statements': [
   ],
   '_suite': [
-  ],
-  '_tuple_pattern': [
   ],
   'aliased_import': [
     { name: 'name', required: true, multiple: false },
@@ -662,7 +647,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'value', required: true, multiple: false },
   ],
   'with_statement': [
-    { name: 'withClause', required: false, multiple: false },
     { name: 'body', required: true, multiple: false },
   ],
   'yield': [

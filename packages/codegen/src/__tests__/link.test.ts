@@ -79,7 +79,7 @@ describe('Link — reference resolution', () => {
         // also wraps it as TerminalRule; unwrap to verify the repeat1→repeat
         // normalization inside.
         const rule = linked.rules['items']
-        const inner = rule.type === 'terminal' ? (rule as any).content : rule
+        const inner = rule!.type === 'terminal' ? (rule as any).content : rule
         expect(inner.type).toBe('repeat')
     })
 
@@ -128,7 +128,7 @@ describe('Link — hidden rule classification', () => {
         const linked = link(raw)
         // Hidden choice of strings → already an enum from Evaluate
         // But if it arrives as a choice, Link should detect it
-        expect(linked.rules['_visibility'].type).toBe('enum')
+        expect(linked.rules['_visibility']!.type).toBe('enum')
     })
 })
 
@@ -215,19 +215,19 @@ describe('Link — reference graph enrichment', () => {
             },
         }
         const refs: SymbolRef[] = [
-            { from: 'item', to: 'name' },
-            { from: 'item', to: 'body' },
+            { refType: 'symbol', from: 'item', to: 'name' },
+            { refType: 'symbol', from: 'item', to: 'body' },
         ]
         enrichPositions(rules, refs)
-        expect(refs[0].position).toBe(1)
-        expect(refs[1].position).toBe(2)
+        expect(refs[0]!.position).toBe(1)
+        expect(refs[1]!.position).toBe(2)
     })
 
     it('computeParentSets groups refs by target symbol', () => {
         const refs: SymbolRef[] = [
-            { from: 'a', to: 'block' },
-            { from: 'b', to: 'block' },
-            { from: 'a', to: 'expr' },
+            { refType: 'symbol', from: 'a', to: 'block' },
+            { refType: 'symbol', from: 'b', to: 'block' },
+            { refType: 'symbol', from: 'a', to: 'expr' },
         ]
         const parents = computeParentSets(refs)
         expect(parents.get('block')).toHaveLength(2)
@@ -257,9 +257,9 @@ describe('Link — T016a hidden choice classification', () => {
 
     it('classifies hidden choice of symbols as supertype', () => {
         const refs: SymbolRef[] = [
-            { from: 'a', to: '_helper' },
-            { from: 'b', to: '_helper' },
-            { from: 'c', to: '_helper' },
+            { refType: 'symbol', from: 'a', to: '_helper' },
+            { refType: 'symbol', from: 'b', to: '_helper' },
+            { refType: 'symbol', from: 'c', to: '_helper' },
         ]
         const raw = makeRaw({
             _helper: {
@@ -277,7 +277,7 @@ describe('Link — T016a hidden choice classification', () => {
         }, { references: refs })
         const linked = link(raw)
         // All hidden choices → supertype (Link classifies, Assemble passes through)
-        expect(linked.rules['_helper'].type).toBe('supertype')
+        expect(linked.rules['_helper']!.type).toBe('supertype')
     })
 })
 

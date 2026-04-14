@@ -3,8 +3,12 @@
  * derived from tree-sitter's node-types.json.
  */
 
-import { toGrammarTypeName } from '../naming.ts';
-import { loadRawEntries } from '../grammar-reader.ts';
+import { loadRawEntries } from '../validators/node-types.ts';
+
+function toGrammarTypeName(grammar: string): string {
+  const camel = grammar.replace(/_([a-z])/g, (_, c: string) => c.toUpperCase());
+  return camel.charAt(0).toUpperCase() + camel.slice(1) + 'Types';
+}
 
 export interface EmitGrammarConfig {
   grammar: string;

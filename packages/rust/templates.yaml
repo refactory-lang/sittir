@@ -119,7 +119,7 @@ rules:
   use_wildcard:
     template: $PATH*
   parameters:
-    template: ($$$CHILDREN _)
+    template: ($$$CHILDREN)
     joinBy: ","
   self_parameter:
     template: $LIFETIME $MUTABLE_SPECIFIER $SELF $$$CHILDREN
@@ -162,7 +162,7 @@ rules:
     template: use<$$$CHILDREN>
     joinBy: ","
   type_arguments:
-    template: <$$$CHILDREN $BOUNDS>
+    template: <$$$CHILDREN $$$BOUNDS>
     joinBy: ","
   type_binding:
     template: $NAME $TYPE_ARGUMENTS=$TYPE
@@ -237,7 +237,7 @@ rules:
   let_condition:
     template: let $PATTERN=$VALUE
   _let_chain:
-    template: $$$CHILDREN&&
+    template: $$$CHILDREN&&&&
   else_clause:
     template: else $$$CHILDREN
   match_expression:
@@ -270,7 +270,7 @@ rules:
       body2: $BODY
     return_type: "->$RETURN_TYPE"
   closure_parameters:
-    template: "|$PATTERN $$$CHILDREN|"
+    template: "|$$$PATTERN $$$CHILDREN|"
     joinBy: ","
   label:
     template: "'$IDENTIFIER"
@@ -297,13 +297,13 @@ rules:
   generic_pattern:
     template: "$$$CHILDREN::$TYPE_ARGUMENTS"
   tuple_pattern:
-    template: ($PATTERN $$$CHILDREN)
+    template: ($$$PATTERN $$$CHILDREN)
     joinBy: ","
   slice_pattern:
-    template: "[$PATTERN]"
+    template: "[$$$PATTERN]"
     joinBy: ","
   tuple_struct_pattern:
-    template: $TYPE($PATTERN)
+    template: $TYPE($$$PATTERN)
     joinBy: ","
   struct_pattern:
     template: "$TYPE{$$$CHILDREN}"
@@ -344,12 +344,8 @@ rules:
     template: $$$CHILDREN
   line_comment:
     template: ////
-  _line_doc_comment_marker:
-    template: $OUTER
   block_comment:
-    template: /*$$$CHILDREN $DOC*/
-  _block_doc_comment_marker:
-    template: $OUTER
+    template: /*$OUTER $DOC*/
   _path:
     template: $$$CHILDREN
   _type_identifier:
@@ -357,4 +353,4 @@ rules:
   _field_identifier:
     template: $$$CHILDREN
   let_chain:
-    template: $$$CHILDREN&&
+    template: $$$CHILDREN&&&&

@@ -79,6 +79,15 @@ export interface GenerateConfigV2 {
      * { include: undefined }
      */
     include?: import('./rule.ts').IncludeFilter
+    /**
+     * Emit runtime validation in leaf factories (regex check against
+     * the grammar's declared pattern). Default `false` — enum
+     * factories always validate, keywords have nothing to check, but
+     * leaf patterns can diverge from JS RegExp syntax (Unicode
+     * property escapes without the `u` flag, PCRE-only features) so
+     * opt-in avoids surprising the non-strict call sites.
+     */
+    strict?: boolean
 }
 
 /**
@@ -115,7 +124,7 @@ export async function generateV2(cfg: GenerateConfigV2): Promise<GeneratedFilesV
         grammar: emitGrammar({ grammar: cfg.grammar }),
         types: emitTypesFromNodeMap({ grammar: cfg.grammar, nodeMap }),
         templatesYaml: emitTemplatesFromNodeMap({ grammar: cfg.grammar, nodeMap }),
-        factories: emitFactoriesFromNodeMap({ grammar: cfg.grammar, nodeMap }),
+        factories: emitFactoriesFromNodeMap({ grammar: cfg.grammar, nodeMap, strict: cfg.strict }),
         wrap: emitWrapFromNodeMap({ grammar: cfg.grammar, nodeMap }),
         utils: emitClientUtilsFromNodeMap({ nodeMap }),
         from: emitFromNodeMap({ grammar: cfg.grammar, nodeMap }),

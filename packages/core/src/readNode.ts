@@ -218,7 +218,7 @@ export function readNode(tree: TreeHandle, nodeId?: number, routing?: RoutingMap
 			named: child.isNamed(),
 		};
 
-		const fname = (node as any).fieldNameForChild?.(i) as string | null | undefined;
+		const fname = node.fieldNameForChild?.(i);
 		if (fname) {
 			fields[fname] = entry;
 		} else if (maps?.unambiguous.has(child.type)) {
