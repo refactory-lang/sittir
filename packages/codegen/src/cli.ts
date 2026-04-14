@@ -184,9 +184,9 @@ if (cliArgs.roundtrip) {
 	const fromResult = await validateFrom(config.grammar, result.templatesYaml);
 	console.log(formatFromReport(fromResult));
 
-	const totalFail = rtResult.fail + frtResult.fail;
+	const totalFail = rtResult.fail + frtResult.fail + fromResult.fail;
 	if (totalFail > 0) {
-		console.error(`\n${totalFail} round-trip failure(s) — see above.`);
+		console.error(`\n${totalFail} round-trip / from() failure(s) — see above.`);
 		process.exitCode = 1;
 	}
 }

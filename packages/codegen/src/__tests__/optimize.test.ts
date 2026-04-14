@@ -260,6 +260,65 @@ describe('Optimize — factorChoiceBranches (T061)', () => {
         const out = factorChoiceBranches(rule)
         expect(out.type).toBe('choice')
     })
+
+    it('wraps the differing middle in optional when one branch omits it', () => {
+        // choice(seq(a,b,c), seq(a,c)) — common prefix 'a', common suffix 'c',
+        // middle differs (one branch has 'b', the other is empty). The empty
+        // branch represents "this slot is optional", so the factored result
+        // should be `seq(a, optional(b), c)` — NOT a choice that drops the
+        // empty branch and emits `seq(a, b, c)`.
+        const rule: Rule = {
+            type: 'choice',
+            members: [
+                { type: 'seq', members: [
+                    { type: 'string', value: 'a' },
+                    { type: 'string', value: 'b' },
+                    { type: 'string', value: 'c' },
+                ]},
+                { type: 'seq', members: [
+                    { type: 'string', value: 'a' },
+                    { type: 'string', value: 'c' },
+                ]},
+            ],
+        }
+        const out = factorChoiceBranches(rule) as any
+        expect(out.type).toBe('seq')
+        expect(out.members).toHaveLength(3)
+        expect(out.members[0]).toEqual({ type: 'string', value: 'a' })
+        expect(out.members[1].type).toBe('optional')
+        expect(out.members[1].content).toEqual({ type: 'string', value: 'b' })
+        expect(out.members[2]).toEqual({ type: 'string', value: 'c' })
+    })
+
+    it('wraps a choice in optional when one branch is empty and others differ', () => {
+        // choice(seq(a,b,c), seq(a,d,c), seq(a,c)) — prefix 'a', suffix 'c',
+        // middle is choice(b,d) plus an empty body. Expected:
+        // seq(a, optional(choice(b, d)), c)
+        const rule: Rule = {
+            type: 'choice',
+            members: [
+                { type: 'seq', members: [
+                    { type: 'string', value: 'a' },
+                    { type: 'string', value: 'b' },
+                    { type: 'string', value: 'c' },
+                ]},
+                { type: 'seq', members: [
+                    { type: 'string', value: 'a' },
+                    { type: 'string', value: 'd' },
+                    { type: 'string', value: 'c' },
+                ]},
+                { type: 'seq', members: [
+                    { type: 'string', value: 'a' },
+                    { type: 'string', value: 'c' },
+                ]},
+            ],
+        }
+        const out = factorChoiceBranches(rule) as any
+        expect(out.type).toBe('seq')
+        expect(out.members[1].type).toBe('optional')
+        expect(out.members[1].content.type).toBe('choice')
+        expect(out.members[1].content.members.map((m: any) => m.value)).toEqual(['b', 'd'])
+    })
 })
 
 // ---------------------------------------------------------------------------

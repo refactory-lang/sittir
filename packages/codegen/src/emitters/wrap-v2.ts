@@ -24,6 +24,46 @@ export interface EmitWrapFromNodeMapConfig {
     nodeMap: NodeMap
 }
 
+/**
+ * Emit `const NAME = { "key1": <value>, "key2": <value>, … }` with one
+ * key per line so PR diffs only highlight the changed entry. The
+ * value is JSON-stringified compactly — entries are typically routing
+ * shape data, so per-key compaction is fine.
+ */
+function emitObjectPerLine(
+    name: string,
+    obj: Record<string, unknown>,
+    suffix: string = '',
+): string[] {
+    const keys = Object.keys(obj)
+    if (keys.length === 0) return [`const ${name} = {}${suffix};`]
+    const lines: string[] = [`const ${name} = {`]
+    for (const key of keys) {
+        lines.push(`  ${JSON.stringify(key)}: ${JSON.stringify(obj[key])},`)
+    }
+    lines.push(`}${suffix};`)
+    return lines
+}
+
+/**
+ * Same per-line layout for a `Map`-shaped const built via
+ * `Object.entries({...})`.
+ */
+function emitMapPerLine(name: string, obj: Record<string, unknown>): string[] {
+    const keys = Object.keys(obj)
+    if (keys.length === 0) {
+        return [`const ${name} = new Map<string, readonly string[]>();`]
+    }
+    const lines: string[] = [
+        `const ${name} = new Map<string, readonly string[]>(Object.entries({`,
+    ]
+    for (const key of keys) {
+        lines.push(`  ${JSON.stringify(key)}: ${JSON.stringify(obj[key])},`)
+    }
+    lines.push('}));')
+    return lines
+}
+
 export function emitWrapFromNodeMap(config: EmitWrapFromNodeMapConfig): string {
     const { nodeMap } = config
 
@@ -103,8 +143,9 @@ export function emitWrapFromNodeMap(config: EmitWrapFromNodeMapConfig): string {
         '',
         '// Routing data — overrides + supertype expansion reconstructed at',
         '// codegen time from NodeMap, then handed to readNode at module load.',
-        `const _overrides = ${JSON.stringify(overrides)} as const;`,
-        `const _supertypeExpansion = new Map<string, readonly string[]>(Object.entries(${JSON.stringify(supertypeExpansion)}));`,
+        '// Emitted one entry per line so PR diffs show only the changed kind.',
+        ...emitObjectPerLine('_overrides', overrides as Record<string, unknown>, ' as const'),
+        ...emitMapPerLine('_supertypeExpansion', supertypeExpansion as Record<string, unknown>),
         'const _routing = buildRoutingMap(_overrides, _supertypeExpansion);',
         '',
         '// Drill-in helpers — pass _routing to readNode so override field',
