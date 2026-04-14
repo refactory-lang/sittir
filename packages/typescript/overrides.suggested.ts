@@ -24,12 +24,6 @@
 // that mirrors the shape you'd hand-write yourself.
 // ---------------------------------------------------------------
 export const suggestedRules = {
-  // statement: 1 inferred field(s)
-  "statement": ($, original) => transform(original, {
-    // [applied] 100% agreement, 13 parents
-    N: field("body"),  // TODO: pick position N for $.statement_block
-  }),
-
   // --- Promoted supertypes (add matching names to grammar.supertypes) ---
   // [applied] promoted supertype
   "_module_export_name": $ => choice($.identifier, $.string),

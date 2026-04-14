@@ -24,12 +24,6 @@
 // that mirrors the shape you'd hand-write yourself.
 // ---------------------------------------------------------------
 export const suggestedRules = {
-  // type_arguments: 1 inferred field(s)
-  "type_arguments": ($, original) => transform(original, {
-    // [applied] 100% agreement, 5 parents
-    N: field("bounds"),  // TODO: pick position N for $.trait_bounds
-  }),
-
   // --- Promoted supertypes (add matching names to grammar.supertypes) ---
   // [applied] promoted supertype
   "_statement": $ => choice($.expression_statement, $._declaration_statement),

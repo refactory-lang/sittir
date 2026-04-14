@@ -84,9 +84,13 @@ export function emitSuggestedFromNodeMap(config: EmitSuggestedFromNodeMapConfig)
 
     // Group field-inference entries by parent kind so each rule
     // entry carries every inference Link would apply to it in one
-    // shot. Rules without a position hint get a `N:` placeholder.
+    // shot. Only held inferences need a copy-paste suggestion —
+    // applied ones are already woven into the grammar and would
+    // leave a stale `N: field(...)` placeholder begging for the
+    // position the pipeline has already resolved.
     const inferredByKind = new Map<string, InferredFieldEntry[]>()
     for (const entry of log.inferredFields) {
+        if (entry.applied) continue
         const list = inferredByKind.get(entry.kind) ?? []
         list.push(entry)
         inferredByKind.set(entry.kind, list)
@@ -102,9 +106,8 @@ export function emitSuggestedFromNodeMap(config: EmitSuggestedFromNodeMapConfig)
                 const dkey = `${e.fieldName}::${e.targetSymbol}`
                 if (seen.has(dkey)) continue
                 seen.add(dkey)
-                const tag = e.applied ? 'applied' : 'held'
                 const pct = (e.agreement * 100).toFixed(0)
-                lines.push(`    // [${tag}] ${pct}% agreement, ${e.sampleSize} parents`)
+                lines.push(`    // [held] ${pct}% agreement, ${e.sampleSize} parents`)
                 lines.push(`    N: field(${JSON.stringify(e.fieldName)}),  // TODO: pick position N for $.${e.targetSymbol}`)
             }
             lines.push('  }),')
