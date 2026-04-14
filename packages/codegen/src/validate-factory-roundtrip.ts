@@ -13,7 +13,7 @@
 import { createRequire } from 'node:module';
 import { parse as parseYaml } from 'yaml';
 import { readNode, buildRoutingMap, createRenderer } from '@sittir/core';
-import type { AnyNodeData, RulesConfig } from '@sittir/types';
+import type { AnyNodeData, NodeFieldValue, RulesConfig } from '@sittir/types';
 import { loadOverrides } from './overrides.ts';
 import { loadRawEntries } from './validators/node-types.ts';
 import {
@@ -46,14 +46,14 @@ function stripToFactory(data: AnyNodeData): AnyNodeData {
 	if (data.variant !== undefined) result.variant = data.variant;
 
 	if (data.fields) {
-		const fields: Record<string, unknown> = {};
+		const fields: { [key: string]: NodeFieldValue } = {};
 		for (const [key, value] of Object.entries(data.fields)) {
 			if (Array.isArray(value)) {
-				fields[key] = value.map(v => typeof v === 'object' && v !== null ? stripToFactory(v as AnyNodeData) : v);
+				fields[key] = value.map(v => typeof v === 'object' && v !== null ? stripToFactory(v as AnyNodeData) : v) as readonly (AnyNodeData | string | number)[];
 			} else if (typeof value === 'object' && value !== null) {
 				fields[key] = stripToFactory(value as AnyNodeData);
 			} else {
-				fields[key] = value;
+				fields[key] = value as NodeFieldValue;
 			}
 		}
 		result.fields = fields;

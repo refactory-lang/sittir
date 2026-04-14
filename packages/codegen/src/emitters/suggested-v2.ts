@@ -138,7 +138,7 @@ export function emitSuggestedFromNodeMap(config: EmitSuggestedFromNodeMapConfig)
     const sortedKinds = [...inferredByKind.keys()].sort()
     for (const kind of sortedKinds) {
         const entries = inferredByKind.get(kind)!
-        const parentRule = nodeMap.rules[kind]
+        const parentRule = nodeMap.rules?.[kind]
         const resolved: Array<{ e: InferredFieldEntry; pos: number | null }> = []
         for (const e of entries) {
             const pos = parentRule

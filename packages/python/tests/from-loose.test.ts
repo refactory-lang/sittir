@@ -41,8 +41,9 @@ describe('loose from() — kind-tagged object dispatch (T052d-ii)', () => {
         // should detect the `kind` discriminator and dispatch to the
         // matching factory.
         const result = ir.assignment.eq({
+            left: 'x',
             right: { kind: 'integer', text: '42' } as any,
-        }) as any;
+        } as any) as any;
         expect(result.type).toBe('assignment');
     });
 });
@@ -62,7 +63,7 @@ describe('loose from() — supertype subtype (T052d-iii)', () => {
 describe('loose from() — NodeData passthrough still works', () => {
     it('pre-built NodeData is passed through unchanged', () => {
         const nodeData = ir.integer('42') as any;
-        const result = ir.assignment.eq({ right: nodeData }) as any;
+        const result = ir.assignment.eq({ left: 'x', right: nodeData } as any) as any;
         expect(result.type).toBe('assignment');
         expect(result.fields?.right?.type).toBe('integer');
     });

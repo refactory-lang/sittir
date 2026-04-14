@@ -154,10 +154,6 @@ export function emitFromNodeMap(config: EmitFromNodeMapConfig): string {
     lines.push('}')
     lines.push('')
 
-    // Loose-input resolver scaffolding.
-    emitResolverHelpers(lines, nodeMap)
-    lines.push('')
-
     // Per-node from emission via local dispatch. The interner is
     // passed down so every field resolver call registers its kind
     // list through the same dedup table.
@@ -168,6 +164,35 @@ export function emitFromNodeMap(config: EmitFromNodeMapConfig): string {
         if (source === undefined) continue
         perNodeBlocks.push(source)
     }
+
+    // _fromMap — runtime dispatch table. Same pattern as `_factoryMap`
+    // in factories.ts: declared as a plain `as const` object so every
+    // entry's type is inferred from the per-kind `fromX` signature.
+    // `_FromMap = typeof _fromMap` gives consumers the precise per-slot
+    // type without duplicating the kind→function mapping.
+    //
+    // Declared BEFORE the resolver helpers so `_resolveByKind<K>` can
+    // reference `_FromMap[K]` / `_fromMap[kind]` in its signature — the
+    // per-kind function declarations it points at are hoisted at both
+    // the TS type level and the runtime level, so forward references
+    // across the per-node blocks below resolve cleanly.
+    lines.push('export const _fromMap = {')
+    for (const [kind, node] of nodeMap.nodes) {
+        if (kind.startsWith('_')) continue
+        if (!node.factoryName) continue
+        if (node.modelType === 'token' || node.modelType === 'supertype' || node.modelType === 'group') continue
+        if (!node.fromFunctionName) continue
+        lines.push(`  ${JSON.stringify(kind)}: ${node.fromFunctionName},`)
+    }
+    lines.push('} as const;')
+    lines.push('export type _FromMap = typeof _fromMap;')
+    lines.push('')
+
+    // Loose-input resolver scaffolding — references `_fromMap` /
+    // `_FromMap` above and every per-kind `fromX` defined below.
+    emitResolverHelpers(lines, nodeMap)
+    lines.push('')
+
     // Emit the dedup table BEFORE the per-node blocks so every
     // `_KN` / `_super_X` identifier is declared by the time it's
     // referenced.
@@ -185,24 +210,6 @@ export function emitFromNodeMap(config: EmitFromNodeMapConfig): string {
         lines.push(block)
         lines.push('')
     }
-
-    // _fromMap — runtime dispatch table. Same pattern as `_factoryMap`
-    // in factories.ts: declared as a plain `as const` object so every
-    // entry's type is inferred from the per-kind `fromX` signature.
-    // `_FromMap = typeof _fromMap` gives consumers the precise per-slot
-    // type without duplicating the kind→function mapping, and keeps the
-    // declaration free of any unifying cast.
-    lines.push('export const _fromMap = {')
-    for (const [kind, node] of nodeMap.nodes) {
-        if (kind.startsWith('_')) continue
-        if (!node.factoryName) continue
-        if (node.modelType === 'token' || node.modelType === 'supertype' || node.modelType === 'group') continue
-        if (!node.fromFunctionName) continue
-        lines.push(`  ${JSON.stringify(kind)}: ${node.fromFunctionName},`)
-    }
-    lines.push('} as const;')
-    lines.push('export type _FromMap = typeof _fromMap;')
-    lines.push('')
 
     return lines.join('\n')
 }
@@ -259,7 +266,11 @@ function emitBranchFrom(node: BranchLikeNode, nodeMap: NodeMap, intern: KindInte
         fields.some(f => f.required) || childSlots.some(c => c.required) ? '' : '?'
     const typeName = node.typeName
     const lines: string[] = []
-    lines.push(`export function ${fn}(input${opt}: ${node.fromInputTypeName}): ${typeName} {`)
+    // Return type is inferred from the factory call so the fluent
+    // accessor methods (render, toEdit, replace, per-field getters/
+    // setters) flow through. Annotating with the bare interface name
+    // `${typeName}` loses the methods and fails assignability.
+    lines.push(`export function ${fn}(input${opt}: ${node.fromInputTypeName}) {`)
     if (fields.length > 0) {
         // `input` may be either loose ConfigOf-style (camelCase top-level
         // keys) or a parsed NodeData (snake_case keys under `fields`).
@@ -419,10 +430,9 @@ function emitPolymorphFrom(node: PolymorphFromNode, nodeMap: NodeMap, intern: Ki
         fLines.push(`export function ${formFn}(input${formOpt}: ConfigOf<${form.typeName}>) {`)
         if (form.fields.length > 0) {
             // Same dual-shape reader as branch from — see comment in
-            // emitBranchFrom for why Record<string, unknown> is the
-            // pragmatic widening here.
-            fLines.push(`  const _fields = (input as { fields?: Record<string, unknown> })?.fields;`)
-            fLines.push(`  const _f = _fields ?? (input as Record<string, unknown>) ?? {};`)
+            // emitBranchFrom for the `object` widening rationale.
+            fLines.push(`  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;`)
+            fLines.push(`  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};`)
             fLines.push(`  return ${formFactory}({`)
             for (const f of form.fields) {
                 fLines.push(`    ${f.propertyName}: ${resolveFieldFromLooseInput(f, nodeMap, form.typeName, intern, '_f')},`)
@@ -507,11 +517,17 @@ function resolveFieldFromLooseInput(
     // Accept both shapes for every field read: raw (snake_case) name
     // when the caller passed a parsed NodeData's `fields`, and
     // camelCase when they passed a loose ConfigOf-style input.
+    //
+    // Bracket notation instead of dot access — field names that collide
+    // with Object.prototype members (`constructor`, `toString`, ...)
+    // otherwise get typed as the prototype's shape (Function) rather
+    // than the index signature's `_FromFieldInput`. Bracket access
+    // flows through the index signature cleanly.
     const rawKey = field.name
     const camelKey = field.propertyName
-    const access = rawKey === camelKey
-        ? `${sourceVar}.${rawKey}`
-        : `(${sourceVar}.${rawKey} ?? ${sourceVar}.${camelKey})`
+    const raw = `${sourceVar}[${JSON.stringify(rawKey)}]`
+    const camel = `${sourceVar}[${JSON.stringify(camelKey)}]`
+    const access = rawKey === camelKey ? raw : `(${raw} ?? ${camel})`
     return resolveFieldCall(access, field, nodeMap, typeParam, intern)
 }
 
@@ -656,17 +672,19 @@ function emitResolverHelpers(lines: string[], nodeMap: NodeMap): void {
     lines.push('}')
     lines.push('')
 
-    // _fromMap is a plain `as const` object so each entry keeps its
-    // precise per-kind signature. Dynamic dispatch by string key needs
-    // a lookup that sidesteps the strict parameter variance of the
-    // union-of-functions — delegate through a local helper that takes
-    // the generic loose input and forwards it via a single sideways
-    // cast. Only happens at the _resolveByKind boundary; per-kind
-    // fromX call sites retain their full typed signatures.
-    lines.push('function _resolveByKind(kind: string, rest: _FromFieldInput): AnyNodeData | _FromFieldInput {')
-    lines.push('  const fn = (_fromMap as { readonly [k: string]: (input?: _FromFieldInput) => AnyNodeData })[kind];')
-    lines.push('  if (fn) return fn(rest);')
-    lines.push('  return rest;')
+    // Generic over the kind literal so the return type is the precise
+    // `ReturnType<_FromMap[K]>` — each per-kind factory's output flows
+    // through, not a widened `AnyNodeData` union. Callers pass a narrow
+    // kind (string-literal from the field's content types or narrowed
+    // via an `in`-check against `_fromMap`) to get the specific return
+    // shape back. The internal sideways cast routes around per-slot
+    // parameter variance without going through `unknown`/`any`.
+    lines.push('function _resolveByKind<K extends keyof _FromMap>(')
+    lines.push('  kind: K,')
+    lines.push('  rest: _FromFieldInput,')
+    lines.push('): ReturnType<_FromMap[K]> {')
+    lines.push('  const fn = _fromMap[kind];')
+    lines.push('  return (fn as (input?: _FromFieldInput) => ReturnType<_FromMap[K]>)(rest);')
     lines.push('}')
     lines.push('')
 
@@ -724,10 +742,11 @@ function emitResolverHelpers(lines: string[], nodeMap: NodeMap): void {
     lines.push('  }')
     lines.push('  if (typeof v === "object" && !Array.isArray(v) && "kind" in v) {')
     lines.push('    const { kind, ...rest } = v;')
-    lines.push('    if (typeof kind === "string") return _resolveByKind(kind, rest) as T;')
+    lines.push('    if (typeof kind === "string" && kind in _fromMap) return _resolveByKind(kind as keyof _FromMap, rest) as T;')
     lines.push('  }')
     lines.push('  if (branchKinds.length === 1 && typeof v === "object" && !Array.isArray(v)) {')
-    lines.push('    return _resolveByKind(branchKinds[0]!, v) as T;')
+    lines.push('    const bk = branchKinds[0]!;')
+    lines.push('    if (bk in _fromMap) return _resolveByKind(bk as keyof _FromMap, v) as T;')
     lines.push('  }')
     lines.push('  return v as T;')
     lines.push('}')
@@ -760,7 +779,7 @@ function emitResolverHelpers(lines: string[], nodeMap: NodeMap): void {
     lines.push('  }')
     lines.push('  if (typeof v === "object" && !Array.isArray(v) && "kind" in v) {')
     lines.push('    const { kind: k, ...rest } = v;')
-    lines.push('    return _resolveByKind(k, rest) as T;')
+    lines.push('    if (typeof k === "string" && k in _fromMap) return _resolveByKind(k as keyof _FromMap, rest) as T;')
     lines.push('  }')
     lines.push('  return v as T;')
     lines.push('}')
@@ -772,9 +791,9 @@ function emitResolverHelpers(lines: string[], nodeMap: NodeMap): void {
     lines.push('  if (typeof v === "object" && !Array.isArray(v)) {')
     lines.push('    if ("kind" in v) {')
     lines.push('      const { kind: k, ...rest } = v;')
-    lines.push('      if (typeof k === "string") return _resolveByKind(k, rest) as T;')
+    lines.push('      if (typeof k === "string" && k in _fromMap) return _resolveByKind(k as keyof _FromMap, rest) as T;')
     lines.push('    }')
-    lines.push('    return _resolveByKind(kind, v) as T;')
+    lines.push('    if (kind in _fromMap) return _resolveByKind(kind as keyof _FromMap, v) as T;')
     lines.push('  }')
     lines.push('  return v as T;')
     lines.push('}')
