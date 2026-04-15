@@ -67,7 +67,7 @@ const PASSES: readonly Pass[] = [
     // Restore this pass after the root cause is identified.
 ]
 
-export function enrich(base: GrammarResult | unknown): GrammarResult | unknown {
+export function enrich(base: GrammarResult): GrammarResult {
     if (!base || typeof base !== 'object') {
         throw new Error('enrich(): expected a grammar object, got ' + typeof base)
     }
@@ -91,15 +91,14 @@ export function enrich(base: GrammarResult | unknown): GrammarResult | unknown {
     // this gap; a future follow-up can make enrich shape-aware so the
     // same transformations apply in both runtimes.
     if (!('grammar' in base)) {
-        return base
+        return base as GrammarResult
     }
 
-    const sittirBase = base as GrammarResult
-    if (!sittirBase.grammar || typeof sittirBase.grammar.rules !== 'object') {
+    if (!base.grammar || typeof base.grammar.rules !== 'object') {
         throw new Error('enrich(): grammar is missing a rules record')
     }
 
-    let result = sittirBase
+    let result = base
     for (const pass of PASSES) {
         result = pass(result)
     }
