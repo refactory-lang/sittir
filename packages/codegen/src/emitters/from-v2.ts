@@ -294,6 +294,11 @@ function emitBranchFrom(node: BranchLikeNode, nodeMap: NodeMap, intern: KindInte
             }
         }
         if (childSlots.length > 0) {
+            // The LooseFoo shape widens children's element types (see
+            // WidenChildSlot in @sittir/types) so the strict factory
+            // config isn't directly assignable — a single narrowing
+            // `as` bridges to `ConfigOf<Foo>['children']`. The runtime
+            // shape is already correct by the time from() hands off.
             const childType = `NonNullable<T.${typeName}Config['children']>`
             const childAccess = inputOptional ? 'input?.children' : 'input.children'
             lines.push(`    children: (${childAccess} ?? []) as ${childType},`)
