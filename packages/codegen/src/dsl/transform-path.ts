@@ -148,7 +148,7 @@ export function applyPath(
  * native ensures the result has the correct rule-type case and
  * inherits any normalization the runtime applies.
  */
-function reconstructContainer(rule: SeqRule | ChoiceRule, members: Rule[]): Rule {
+export function reconstructContainer(rule: SeqRule | ChoiceRule, members: Rule[]): Rule {
     const t = rule.type as string
     if (t === 'seq' || t === 'SEQ') return nativeRequired('seq')(...members) as Rule
     if (t === 'choice' || t === 'CHOICE') return nativeRequired('choice')(...members) as Rule
@@ -163,7 +163,7 @@ function reconstructContainer(rule: SeqRule | ChoiceRule, members: Rule[]): Rule
  * call — applyPath should not be used to patch under repeat wrappers
  * with non-default options. (No current overrides hit that case.)
  */
-function reconstructWrapper(rule: Rule, newContent: Rule): Rule {
+export function reconstructWrapper(rule: Rule, newContent: Rule): Rule {
     const t = rule.type as string
     if (t === 'optional') return nativeRequired('optional')(newContent) as Rule
     if (t === 'repeat' || t === 'REPEAT') return nativeRequired('repeat')(newContent) as Rule
@@ -190,7 +190,7 @@ const PREC_VARIANT_MAP = {
     prec_dynamic: 'dynamic',
 } as const
 
-function reconstructPrec(rule: Rule, newContent: Rule): Rule {
+export function reconstructPrec(rule: Rule, newContent: Rule): Rule {
     const t = (rule.type as string).toLowerCase()
     const value = (rule as { value?: number | unknown }).value
     const prec = nativeRequired('prec')
@@ -203,10 +203,23 @@ function reconstructPrec(rule: Rule, newContent: Rule): Rule {
     return prec(value as number, newContent) as Rule
 }
 
-function isPrecWrapper(rule: Rule): boolean {
+export function isPrecWrapper(rule: Rule): boolean {
     const t = rule.type as string
     return t === 'prec' || t === 'PREC'
         || t === 'PREC_LEFT' || t === 'PREC_RIGHT' || t === 'PREC_DYNAMIC'
+}
+
+export function isContainerType(t: string): boolean {
+    return t === 'seq' || t === 'SEQ' || t === 'choice' || t === 'CHOICE'
+}
+
+export function isWrapperType(t: string): boolean {
+    return t === 'optional'
+        || t === 'repeat' || t === 'REPEAT'
+        || t === 'repeat1' || t === 'REPEAT1'
+        || t === 'field' || t === 'FIELD'
+        || t === 'TOKEN' || t === 'IMMEDIATE_TOKEN'
+        || t === 'BLANK'
 }
 
 function applyToMembers(

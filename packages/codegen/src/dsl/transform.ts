@@ -13,8 +13,8 @@
  * are still injected as globals by `evaluate.ts` — don't import those.
  */
 
-import type { Rule, FieldRule } from '../compiler/rule.ts'
-import { parsePath, applyPath } from './transform-path.ts'
+import type { Rule, FieldRule, SeqRule, ChoiceRule } from '../compiler/rule.ts'
+import { parsePath, applyPath, reconstructWrapper, reconstructPrec, reconstructContainer, isPrecWrapper, isContainerType, isWrapperType } from './transform-path.ts'
 import { isFieldPlaceholder, type FieldPlaceholder } from './field.ts'
 
 type FieldLike = { type: 'field' | 'FIELD'; name: string; content: unknown; source?: string }
@@ -72,13 +72,13 @@ function applyPathPatches(original: Rule, patches: Record<number | string, Rule 
 }
 
 function applyFlatPatches(original: Rule, patches: Record<number | string, Rule>): Rule {
-    // For seq: apply patches to members by RAW position. The override
-    // author sees the rule tree as-is, including anonymous string
-    // delimiters and already-labeled field wrappers, and can wrap any
-    // position with a field() — that's the whole point of the primitive
-    // being "add a name to an unnamed entry." No hidden remapping.
-    if (original.type === 'seq') {
-        const members = [...original.members]
+    // Seq: apply patches to members by RAW position. Accepts both
+    // sittir lowercase 'seq' and tree-sitter uppercase 'SEQ' so the
+    // same transform call works in both runtimes. Reconstructed via
+    // native dsl so the result has the runtime-correct rule shape.
+    const t = original.type as string
+    if (t === 'seq' || t === 'SEQ') {
+        const members = [...(original as SeqRule).members]
         for (const [key, patch] of Object.entries(patches)) {
             const index = Number(key)
             if (isNaN(index) || index < 0 || index >= members.length) {
@@ -88,20 +88,30 @@ function applyFlatPatches(original: Rule, patches: Record<number | string, Rule>
             }
             members[index] = resolvePatch(patch, members[index]!)
         }
-        return { type: 'seq', members }
+        return reconstructContainer(original as SeqRule, members)
     }
 
-    // For choice: apply transform to each member recursively
-    if (original.type === 'choice') {
-        return {
-            type: 'choice',
-            members: original.members.map(m => applyFlatPatches(m, patches)),
-        }
+    // Choice: apply transform to each member recursively. Reconstruct
+    // via native dsl so the choice keeps its runtime-correct shape.
+    if (t === 'choice' || t === 'CHOICE') {
+        const newMembers = (original as ChoiceRule).members.map(m => applyFlatPatches(m, patches))
+        return reconstructContainer(original as ChoiceRule, newMembers)
     }
 
-    // For prec-like wrappers that were already stripped — just apply to content
-    if ('content' in original && original.content) {
-        return { ...original, content: applyFlatPatches(original.content as Rule, patches) } as Rule
+    // Precedence wrappers — descend into content and reconstruct via
+    // native prec to preserve the precedence value (critical for
+    // tree-sitter's parser-generator to resolve conflicts the same way
+    // as the base grammar).
+    if (isPrecWrapper(original)) {
+        const newContent = applyFlatPatches((original as { content: Rule }).content, patches)
+        return reconstructPrec(original, newContent)
+    }
+
+    // Single-content wrappers (optional/repeat/repeat1/field) — descend
+    // and reconstruct via native dsl.
+    if (isWrapperType(t)) {
+        const newContent = applyFlatPatches((original as { content: Rule }).content, patches)
+        return reconstructWrapper(original, newContent)
     }
 
     // For other types, return as-is (patches don't apply)

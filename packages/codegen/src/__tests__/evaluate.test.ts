@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, beforeAll, afterAll } from 'vitest'
 import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import {
@@ -9,6 +9,25 @@ import {
 } from '../compiler/evaluate.ts'
 import { transform, insert, replace } from '../dsl/transform.ts'
 import type { SymbolRef, RawGrammar } from '../compiler/rule.ts'
+
+// Install sittir's lowercase DSL primitives as globals so transform()'s
+// native-dsl delegation paths can reach them when this test imports
+// transform directly (bypassing evaluate.ts's runtime injection).
+const g = globalThis as Record<string, unknown>
+const savedGlobals: Record<string, unknown> = {}
+beforeAll(() => {
+    const fns = { seq, choice, optional, repeat, repeat1, field, token, prec }
+    for (const [k, v] of Object.entries(fns)) {
+        savedGlobals[k] = g[k]
+        g[k] = v
+    }
+})
+afterAll(() => {
+    for (const [k, v] of Object.entries(savedGlobals)) {
+        if (v === undefined) delete g[k]
+        else g[k] = v
+    }
+})
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url))
 const fixture = (name: string) => resolve(__dirname, 'fixtures', name)
@@ -338,11 +357,17 @@ describe('Evaluate — DSL functions', () => {
 describe('Evaluate — edge cases', () => {
     describe('T008a — transform out of bounds', () => {
         it('skips out-of-bounds positions without crashing', () => {
-            const original: any = { type: 'seq', members: [{ type: 'string', value: 'a' }] }
+            // Two-member seq so sittir's seq() doesn't collapse it to
+            // a single rule on reconstruction.
+            const original: any = { type: 'seq', members: [
+                { type: 'string', value: 'a' },
+                { type: 'string', value: 'b' },
+            ] }
             const result = transform(original, { 99: field('x', 'y') })
             // Out-of-bounds patches are silently skipped
-            expect((result as any).members).toHaveLength(1)
+            expect((result as any).members).toHaveLength(2)
             expect((result as any).members[0]).toEqual({ type: 'string', value: 'a' })
+            expect((result as any).members[1]).toEqual({ type: 'string', value: 'b' })
         })
     })
 

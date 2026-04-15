@@ -165,11 +165,18 @@ function externalizeTreeSitterBases(): esbuild.Plugin {
     return {
         name: 'externalize-tree-sitter-bases',
         setup(build) {
+            // Match ANY tree-sitter-<lang> package import — including
+            // transitive ones (e.g., typescript's grammar internally
+            // requires tree-sitter-javascript). Without this, esbuild
+            // bundles the whole grammar dependency chain, which loses
+            // the runtime grammar() global and breaks tree-sitter's
+            // parser-generator (it processes the bundled tree as if
+            // sittir's overrides had replaced it).
             build.onResolve({ filter: /tree-sitter-[a-z]+(\/|$)/ }, (args) => {
-                // Extract package name from either form.
-                // Package-name form: 'tree-sitter-python/grammar.js'
-                // Relative pnpm form: '../../node_modules/.pnpm/tree-sitter-python@0.25.0/node_modules/tree-sitter-python/grammar.js'
-                const match = args.path.match(/(?:^|\/)(tree-sitter-[a-z]+)(\/[^/]+)?$/)
+                // Strip any leading path components down to the
+                // tree-sitter-<lang> package segment, then keep the
+                // sub-path (or default to /grammar.js).
+                const match = args.path.match(/(?:^|\/)(tree-sitter-[a-z]+)(\/.+)?$/)
                 if (!match) return null
                 const pkg = match[1]!
                 const sub = match[2] ?? '/grammar.js'
