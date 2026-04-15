@@ -22,6 +22,7 @@
 - [ ] T003 [P] Add `packages/*/\.sittir/` to `.gitignore` at repo root
 - [ ] T004 [P] Create empty directory structure `packages/codegen/src/dsl/` and `packages/codegen/src/transpile/`
 - [ ] T005 [P] Create empty directory `packages/codegen/src/compiler/pre-evaluate/` (will hold enrich + transform runner)
+- [ ] T005a Pin `tree-sitter-cli` version in `packages/codegen/package.json` devDependencies (resolves research.md R-002 deferred sub-question). Record the chosen version in `specs/006-override-dsl-enrich/research.md` R-002. The CI step (T058) must install the same pinned version
 
 ---
 
@@ -76,7 +77,7 @@
 - [ ] T030 [P] [US3] Unit test `packages/codegen/src/dsl/__tests__/role.test.ts` — single `role()` call captured, nested `grammar(grammar(base), config)` doesn't leak between scopes, top-level `role()` throws
 - [ ] T031 [US3] Update `packages/codegen/src/compiler/link.ts` to read `grammar.sittirRoles` from its input instead of any prior mechanism — resolve each role name against `externals` to find the tagged token
 - [ ] T032 [US3] Export `role` from `packages/codegen/src/dsl/index.ts`
-- [ ] T033 [US3] Update `packages/python/overrides.ts` to use `role('indent')` / `role('dedent')` / `role('newline')` inline in `externals` — replace any prior sidecar role declarations
+- [ ] T033 [US3] Update `packages/python/overrides.ts` to import `role` from `@sittir/codegen/dsl` (alongside any other DSL primitives already in use) and use `role('indent')` / `role('dedent')` / `role('newline')` inline in `externals` — replace any prior sidecar role declarations. The explicit-import requirement is shared with T054 (Phase 7); doing it here keeps the file in a valid state between phases
 - [ ] T034 [US3] Run python fidelity check; confirm indent/dedent/newline rendering still works and ceilings hold
 
 **Checkpoint**: `role()` is a shipping primitive. Python uses it. Link reads the accumulator.
@@ -135,6 +136,7 @@
 - [ ] T056 [US1] Manually run `cd packages/rust && npx tree-sitter generate` against the transpiled output and confirm exit code 0
 - [ ] T057 [US1] Repeat T055/T056 for typescript and python
 - [ ] T058 [US1] Add a CI step to `.github/workflows/ci.yml` — for each grammar, run `pnpm sittir codegen --grammar <lang>` then `cd packages/<lang> && npx tree-sitter generate`. Fail the build on any non-zero exit
+- [ ] T058a [US1] Verify the existing fidelity-ceiling CI job in `.github/workflows/ci.yml` still runs `corpus-validation.test.ts` (or the equivalent fidelity-gate test) and still fails the build on ceiling regressions after the Phase 7 wiring changes. This is a structural check — no code change expected, but Link-pass migration (T020/T021) has a non-zero chance of disturbing upstream CI assumptions. Resolves FR-023
 
 **Checkpoint**: override files are now single-source-of-truth artifacts readable by both sittir and tree-sitter. CI enforces the dual compatibility.
 
@@ -217,16 +219,16 @@ Each ship point is a usable increment — no big-bang merge required.
 
 ## Task count summary
 
-- Setup: 5 tasks (T001–T005)
+- Setup: 6 tasks (T001–T005, T005a)
 - Foundational: 5 tasks (T006–T010)
 - US2 (enrich): 16 tasks (T011–T026)
 - US3 (role): 8 tasks (T027–T034)
 - US4 (transform): 10 tasks (T035–T044)
 - US6 (merge): 4 tasks (T045–T048)
-- US1 (transpile): 10 tasks (T049–T058)
+- US1 (transpile): 11 tasks (T049–T058, T058a)
 - US5 (invariant): 2 tasks (T059–T060)
 - Polish: 7 tasks (T061–T067)
-- **Total: 67 tasks**
+- **Total: 69 tasks**
 
 ## Independent test criteria recap
 
