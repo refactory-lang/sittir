@@ -787,6 +787,15 @@ function evaluateMetadataCallbacks(
     },
     setWord: (w: string) => void,
 ): void {
+    // Helper: append entries to a sink array, deduping by string value.
+    // Spec FR-019a: when an override does `[...prev, $._foo]` and the
+    // base already has `$._foo`, collapse to a single entry. Symbol
+    // refs from `$.foo` are NEW objects on each access (createProxy
+    // doesn't cache), so reference equality fails — dedupe by name.
+    const appendDedup = (sink: string[], value: string): void => {
+        if (!sink.includes(value)) sink.push(value)
+    }
+
     if (opts.extras) {
         const $ = createProxy('_extras_', refs)
         const baseExtras = baseGrammar?.extras ?? []
@@ -794,8 +803,8 @@ function evaluateMetadataCallbacks(
         if (Array.isArray(result)) {
             for (const e of result) {
                 const n = normalize(e)
-                if (n.type === 'symbol') sinks.extras.push(n.name)
-                else if (n.type === 'pattern') sinks.extras.push(n.value)
+                if (n.type === 'symbol') appendDedup(sinks.extras, n.name)
+                else if (n.type === 'pattern') appendDedup(sinks.extras, n.value)
             }
         }
     }
@@ -807,8 +816,8 @@ function evaluateMetadataCallbacks(
         if (Array.isArray(result)) {
             for (const e of result) {
                 const n = normalize(e)
-                if (n.type === 'symbol') sinks.externals.push(n.name)
-                else if (n.type === 'string') sinks.externals.push(n.value)
+                if (n.type === 'symbol') appendDedup(sinks.externals, n.name)
+                else if (n.type === 'string') appendDedup(sinks.externals, n.value)
             }
         }
     }
@@ -820,7 +829,7 @@ function evaluateMetadataCallbacks(
         if (Array.isArray(result)) {
             for (const s of result) {
                 const n = normalize(s)
-                if (n.type === 'symbol') sinks.supertypes.push(n.name)
+                if (n.type === 'symbol') appendDedup(sinks.supertypes, n.name)
             }
         }
     }
@@ -832,7 +841,7 @@ function evaluateMetadataCallbacks(
         if (Array.isArray(result)) {
             for (const i of result) {
                 const n = normalize(i)
-                if (n.type === 'symbol') sinks.inline.push(n.name)
+                if (n.type === 'symbol') appendDedup(sinks.inline, n.name)
             }
         }
     }
