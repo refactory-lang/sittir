@@ -18,12 +18,18 @@ export default grammar(enrich(base), {
     // unchanged (so externals still receives a valid token reference)
     // and records the binding on a per-grammar accumulator that Link
     // reads to drive symbol resolution. No more dummy `_indent` rules.
-    externals: ($, prev) => [
-        ...prev,
-        role($._indent,  'indent'),
-        role($._dedent,  'dedent'),
-        role($._newline, 'newline'),
-    ],
+    externals: ($, prev) => {
+        // Mark existing base externals with sittir roles. role() records
+        // the binding as a side-effect (sittir runtime) and returns the
+        // symbol unchanged. Returning `prev` directly avoids duplicating
+        // the externals list — tree-sitter's grammar() doesn't dedupe,
+        // so spreading prev plus role() returns would emit each token
+        // twice and the generated parser.c would fail to compile.
+        role($._indent,  'indent')
+        role($._dedent,  'dedent')
+        role($._newline, 'newline')
+        return prev
+    },
     rules: {
         // as_pattern: 1 field(s)
         as_pattern: ($, original) => transform(original, {
