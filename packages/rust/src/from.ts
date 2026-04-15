@@ -392,6 +392,7 @@ const _K34: readonly string[] = ["string_literal","raw_string_literal","negative
 const _K35: readonly string[] = ["integer_literal","float_literal"];
 
 export function sourceFileFrom(input: T.SourceFileFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return sourceFile({
@@ -409,6 +410,7 @@ export function expressionStatementFrom(input?: NonNullable<T.ExpressionStatemen
 }
 
 export function macroDefinitionFrom(input: T.MacroDefinitionFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return macroDefinition({
@@ -418,6 +420,7 @@ export function macroDefinitionFrom(input: T.MacroDefinitionFromInput) {
 }
 
 export function macroRuleFrom(input: T.MacroRuleFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return macroRule({
@@ -435,6 +438,7 @@ export function tokenTreePatternFrom(...input: readonly (NonNullable<T.TokenTree
 }
 
 export function tokenBindingPatternFrom(input: T.TokenBindingPatternFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return tokenBindingPattern({
@@ -473,6 +477,7 @@ export function tokenRepetitionFrom(...input: readonly (NonNullable<T.TokenRepet
 }
 
 export function attributeItemFrom(input: T.AttributeItemFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return attributeItem({
@@ -481,6 +486,7 @@ export function attributeItemFrom(input: T.AttributeItemFromInput) {
 }
 
 export function innerAttributeItemFrom(input: T.InnerAttributeItemFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return innerAttributeItem({
@@ -489,6 +495,7 @@ export function innerAttributeItemFrom(input: T.InnerAttributeItemFromInput) {
 }
 
 export function attributeFrom(input: T.AttributeFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return attribute({
@@ -586,6 +593,7 @@ export function structItemSemi2From(input: T.StructItemSemi2Config) {
 }
 
 export function unionItemFrom(input: T.UnionItemFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return unionItem({
@@ -598,6 +606,7 @@ export function unionItemFrom(input: T.UnionItemFromInput) {
 }
 
 export function enumItemFrom(input: T.EnumItemFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return enumItem({
@@ -618,6 +627,7 @@ export function enumVariantListFrom(...input: readonly (NonNullable<T.EnumVarian
 }
 
 export function enumVariantFrom(input: T.EnumVariantFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return enumVariant({
@@ -637,6 +647,7 @@ export function fieldDeclarationListFrom(...input: readonly (NonNullable<T.Field
 }
 
 export function fieldDeclarationFrom(input: T.FieldDeclarationFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return fieldDeclaration({
@@ -647,6 +658,7 @@ export function fieldDeclarationFrom(input: T.FieldDeclarationFromInput) {
 }
 
 export function orderedFieldDeclarationListFrom(input: T.OrderedFieldDeclarationListFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return orderedFieldDeclarationList({
@@ -655,6 +667,7 @@ export function orderedFieldDeclarationListFrom(input: T.OrderedFieldDeclaration
 }
 
 export function externCrateDeclarationFrom(input: T.ExternCrateDeclarationFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return externCrateDeclaration({
@@ -666,6 +679,7 @@ export function externCrateDeclarationFrom(input: T.ExternCrateDeclarationFromIn
 }
 
 export function constItemFrom(input: T.ConstItemFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return constItem({
@@ -677,6 +691,7 @@ export function constItemFrom(input: T.ConstItemFromInput) {
 }
 
 export function staticItemFrom(input: T.StaticItemFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return staticItem({
@@ -690,6 +705,7 @@ export function staticItemFrom(input: T.StaticItemFromInput) {
 }
 
 export function typeItemFrom(input: T.TypeItemFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return typeItem({
@@ -703,6 +719,7 @@ export function typeItemFrom(input: T.TypeItemFromInput) {
 }
 
 export function functionItemFrom(input: T.FunctionItemFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return functionItem({
@@ -718,6 +735,7 @@ export function functionItemFrom(input: T.FunctionItemFromInput) {
 }
 
 export function functionSignatureItemFrom(input: T.FunctionSignatureItemFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return functionSignatureItem({
@@ -732,6 +750,7 @@ export function functionSignatureItemFrom(input: T.FunctionSignatureItemFromInpu
 }
 
 export function functionModifiersFrom(input: T.FunctionModifiersFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   const _ne_async = _resolveMany<NonNullable<T.FunctionModifiersConfig['async']>[number]>(_f["async"], _K0, _K0);
@@ -760,6 +779,7 @@ export function whereClauseFrom(...input: readonly (NonNullable<T.WhereClauseCon
 }
 
 export function wherePredicateFrom(input: T.WherePredicateFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return wherePredicate({
@@ -794,6 +814,7 @@ export function implItemSemiFrom(input: T.ImplItemSemiConfig) {
 }
 
 export function traitItemFrom(input: T.TraitItemFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return traitItem({
@@ -806,6 +827,7 @@ export function traitItemFrom(input: T.TraitItemFromInput) {
 }
 
 export function associatedTypeFrom(input: T.AssociatedTypeFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return associatedType({
@@ -825,6 +847,7 @@ export function traitBoundsFrom(...input: readonly (NonNullable<T.TraitBoundsCon
 }
 
 export function higherRankedTraitBoundFrom(input: T.HigherRankedTraitBoundFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return higherRankedTraitBound({
@@ -850,6 +873,7 @@ export function typeParametersFrom(...input: readonly (NonNullable<T.TypeParamet
 }
 
 export function constParameterFrom(input: T.ConstParameterFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return constParameter({
@@ -860,6 +884,7 @@ export function constParameterFrom(input: T.ConstParameterFromInput) {
 }
 
 export function typeParameterFrom(input: T.TypeParameterFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return typeParameter({
@@ -870,6 +895,7 @@ export function typeParameterFrom(input: T.TypeParameterFromInput) {
 }
 
 export function lifetimeParameterFrom(input: T.LifetimeParameterFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return lifetimeParameter({
@@ -879,6 +905,7 @@ export function lifetimeParameterFrom(input: T.LifetimeParameterFromInput) {
 }
 
 export function letDeclarationFrom(input: T.LetDeclarationFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return letDeclaration({
@@ -891,6 +918,7 @@ export function letDeclarationFrom(input: T.LetDeclarationFromInput) {
 }
 
 export function useDeclarationFrom(input: T.UseDeclarationFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return useDeclaration({
@@ -900,6 +928,7 @@ export function useDeclarationFrom(input: T.UseDeclarationFromInput) {
 }
 
 export function scopedUseListFrom(input: T.ScopedUseListFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return scopedUseList({
@@ -917,6 +946,7 @@ export function useListFrom(...input: readonly (NonNullable<T.UseListConfig['chi
 }
 
 export function useAsClauseFrom(input: T.UseAsClauseFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return useAsClause({
@@ -926,6 +956,7 @@ export function useAsClauseFrom(input: T.UseAsClauseFromInput) {
 }
 
 export function useWildcardFrom(input?: T.UseWildcardFromInput) {
+  if (input !== undefined && 'render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return useWildcard({
@@ -942,6 +973,7 @@ export function parametersFrom(...input: readonly (NonNullable<T.ParametersConfi
 }
 
 export function selfParameterFrom(input: T.SelfParameterFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return selfParameter({
@@ -953,6 +985,7 @@ export function selfParameterFrom(input: T.SelfParameterFromInput) {
 }
 
 export function variadicParameterFrom(input?: T.VariadicParameterFromInput) {
+  if (input !== undefined && 'render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return variadicParameter({
@@ -962,6 +995,7 @@ export function variadicParameterFrom(input?: T.VariadicParameterFromInput) {
 }
 
 export function parameterFrom(input: T.ParameterFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return parameter({
@@ -972,6 +1006,7 @@ export function parameterFrom(input: T.ParameterFromInput) {
 }
 
 export function externModifierFrom(input?: T.ExternModifierFromInput) {
+  if (input !== undefined && 'render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return externModifier({
@@ -1005,6 +1040,7 @@ export function bracketedTypeFrom(input?: NonNullable<T.BracketedTypeConfig['chi
 }
 
 export function qualifiedTypeFrom(input: T.QualifiedTypeFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return qualifiedType({
@@ -1014,6 +1050,7 @@ export function qualifiedTypeFrom(input: T.QualifiedTypeFromInput) {
 }
 
 export function lifetimeFrom(input: T.LifetimeFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return lifetime({
@@ -1022,6 +1059,7 @@ export function lifetimeFrom(input: T.LifetimeFromInput) {
 }
 
 export function arrayTypeFrom(input: T.ArrayTypeFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return arrayType({
@@ -1039,6 +1077,7 @@ export function forLifetimesFrom(...input: readonly (NonNullable<T.ForLifetimesC
 }
 
 export function functionTypeFrom(input: T.FunctionTypeFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return functionType({
@@ -1063,6 +1102,7 @@ export function unitTypeFrom(input: string | T.UnitType) {
 }
 
 export function genericFunctionFrom(input: T.GenericFunctionFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return genericFunction({
@@ -1072,6 +1112,7 @@ export function genericFunctionFrom(input: T.GenericFunctionFromInput) {
 }
 
 export function genericTypeFrom(input: T.GenericTypeFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return genericType({
@@ -1081,6 +1122,7 @@ export function genericTypeFrom(input: T.GenericTypeFromInput) {
 }
 
 export function genericTypeWithTurbofishFrom(input: T.GenericTypeWithTurbofishFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return genericTypeWithTurbofish({
@@ -1090,6 +1132,7 @@ export function genericTypeWithTurbofishFrom(input: T.GenericTypeWithTurbofishFr
 }
 
 export function boundedTypeFrom(input: T.BoundedTypeFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return boundedType({
@@ -1107,6 +1150,7 @@ export function useBoundsFrom(...input: readonly (NonNullable<T.UseBoundsConfig[
 }
 
 export function typeArgumentsFrom(input: T.TypeArgumentsFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return typeArguments({
@@ -1116,6 +1160,7 @@ export function typeArgumentsFrom(input: T.TypeArgumentsFromInput) {
 }
 
 export function typeBindingFrom(input: T.TypeBindingFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return typeBinding({
@@ -1126,6 +1171,7 @@ export function typeBindingFrom(input: T.TypeBindingFromInput) {
 }
 
 export function referenceTypeFrom(input: T.ReferenceTypeFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return referenceType({
@@ -1136,6 +1182,7 @@ export function referenceTypeFrom(input: T.ReferenceTypeFromInput) {
 }
 
 export function pointerTypeFrom(input: T.PointerTypeFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return pointerType({
@@ -1145,6 +1192,7 @@ export function pointerTypeFrom(input: T.PointerTypeFromInput) {
 }
 
 export function abstractTypeFrom(input: T.AbstractTypeFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return abstractType({
@@ -1154,6 +1202,7 @@ export function abstractTypeFrom(input: T.AbstractTypeFromInput) {
 }
 
 export function dynamicTypeFrom(input: T.DynamicTypeFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return dynamicType({
@@ -1167,6 +1216,7 @@ export function mutableSpecifierFrom(input?: T.MutableSpecifier) {
 }
 
 export function macroInvocationFrom(input: T.MacroInvocationFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return macroInvocation({
@@ -1184,6 +1234,7 @@ export function delimTokenTreeFrom(...input: readonly (NonNullable<T.DelimTokenT
 }
 
 export function scopedIdentifierFrom(input: T.ScopedIdentifierFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return scopedIdentifier({
@@ -1193,6 +1244,7 @@ export function scopedIdentifierFrom(input: T.ScopedIdentifierFromInput) {
 }
 
 export function scopedTypeIdentifierInExpressionPositionFrom(input: T.ScopedTypeIdentifierInExpressionPositionFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return scopedTypeIdentifierInExpressionPosition({
@@ -1202,6 +1254,7 @@ export function scopedTypeIdentifierInExpressionPositionFrom(input: T.ScopedType
 }
 
 export function scopedTypeIdentifierFrom(input: T.ScopedTypeIdentifierFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return scopedTypeIdentifier({
@@ -1251,6 +1304,7 @@ export function rangeExpressionOperator2From(input: T.RangeExpressionOperator2Co
 }
 
 export function unaryExpressionFrom(input: T.UnaryExpressionFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return unaryExpression({
@@ -1260,6 +1314,7 @@ export function unaryExpressionFrom(input: T.UnaryExpressionFromInput) {
 }
 
 export function tryExpressionFrom(input: T.TryExpressionFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return tryExpression({
@@ -1268,6 +1323,7 @@ export function tryExpressionFrom(input: T.TryExpressionFromInput) {
 }
 
 export function referenceExpressionFrom(input: T.ReferenceExpressionFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return referenceExpression({
@@ -1277,6 +1333,7 @@ export function referenceExpressionFrom(input: T.ReferenceExpressionFromInput) {
 }
 
 export function binaryExpressionFrom(input: T.BinaryExpressionFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return binaryExpression({
@@ -1287,6 +1344,7 @@ export function binaryExpressionFrom(input: T.BinaryExpressionFromInput) {
 }
 
 export function assignmentExpressionFrom(input: T.AssignmentExpressionFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return assignmentExpression({
@@ -1296,6 +1354,7 @@ export function assignmentExpressionFrom(input: T.AssignmentExpressionFromInput)
 }
 
 export function compoundAssignmentExprFrom(input: T.CompoundAssignmentExprFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return compoundAssignmentExpr({
@@ -1306,6 +1365,7 @@ export function compoundAssignmentExprFrom(input: T.CompoundAssignmentExprFromIn
 }
 
 export function typeCastExpressionFrom(input: T.TypeCastExpressionFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return typeCastExpression({
@@ -1331,6 +1391,7 @@ export function yieldExpressionFrom(input?: NonNullable<T.YieldExpressionConfig[
 }
 
 export function callExpressionFrom(input: T.CallExpressionFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return callExpression({
@@ -1348,6 +1409,7 @@ export function arguments_From(...input: readonly (NonNullable<T.ArgumentsConfig
 }
 
 export function arrayExpressionFrom(input: T.ArrayExpressionFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return arrayExpression({
@@ -1365,6 +1427,7 @@ export function parenthesizedExpressionFrom(input?: NonNullable<T.ParenthesizedE
 }
 
 export function tupleExpressionFrom(input: T.TupleExpressionFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return tupleExpression({
@@ -1381,6 +1444,7 @@ export function unitExpressionFrom(input: string | T.UnitExpression) {
 }
 
 export function structExpressionFrom(input: T.StructExpressionFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return structExpression({
@@ -1398,6 +1462,7 @@ export function fieldInitializerListFrom(...input: readonly (NonNullable<T.Field
 }
 
 export function shorthandFieldInitializerFrom(input: T.ShorthandFieldInitializerFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return shorthandFieldInitializer({
@@ -1407,6 +1472,7 @@ export function shorthandFieldInitializerFrom(input: T.ShorthandFieldInitializer
 }
 
 export function fieldInitializerFrom(input: T.FieldInitializerFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return fieldInitializer({
@@ -1425,6 +1491,7 @@ export function baseFieldInitializerFrom(input?: NonNullable<T.BaseFieldInitiali
 }
 
 export function ifExpressionFrom(input: T.IfExpressionFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return ifExpression({
@@ -1435,6 +1502,7 @@ export function ifExpressionFrom(input: T.IfExpressionFromInput) {
 }
 
 export function letConditionFrom(input: T.LetConditionFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return letCondition({
@@ -1452,6 +1520,7 @@ export function elseClauseFrom(input?: NonNullable<T.ElseClauseConfig['children'
 }
 
 export function matchExpressionFrom(input: T.MatchExpressionFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return matchExpression({
@@ -1469,6 +1538,7 @@ export function matchBlockFrom(...input: readonly (NonNullable<T.MatchBlockConfi
 }
 
 export function matchArmFrom(input: T.MatchArmFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return matchArm({
@@ -1479,6 +1549,7 @@ export function matchArmFrom(input: T.MatchArmFromInput) {
 }
 
 export function lastMatchArmFrom(input: T.LastMatchArmFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return lastMatchArm({
@@ -1489,6 +1560,7 @@ export function lastMatchArmFrom(input: T.LastMatchArmFromInput) {
 }
 
 export function matchPatternFrom(input: T.MatchPatternFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return matchPattern({
@@ -1498,6 +1570,7 @@ export function matchPatternFrom(input: T.MatchPatternFromInput) {
 }
 
 export function whileExpressionFrom(input: T.WhileExpressionFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return whileExpression({
@@ -1508,6 +1581,7 @@ export function whileExpressionFrom(input: T.WhileExpressionFromInput) {
 }
 
 export function loopExpressionFrom(input: T.LoopExpressionFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return loopExpression({
@@ -1517,6 +1591,7 @@ export function loopExpressionFrom(input: T.LoopExpressionFromInput) {
 }
 
 export function forExpressionFrom(input: T.ForExpressionFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return forExpression({
@@ -1528,6 +1603,7 @@ export function forExpressionFrom(input: T.ForExpressionFromInput) {
 }
 
 export function constBlockFrom(input: T.ConstBlockFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return constBlock({
@@ -1573,6 +1649,7 @@ export function closureParametersFrom(...input: readonly (NonNullable<T.ClosureP
 }
 
 export function labelFrom(input: T.LabelFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return label({
@@ -1581,6 +1658,7 @@ export function labelFrom(input: T.LabelFromInput) {
 }
 
 export function breakExpressionFrom(input?: T.BreakExpressionFromInput) {
+  if (input !== undefined && 'render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return breakExpression({
@@ -1590,6 +1668,7 @@ export function breakExpressionFrom(input?: T.BreakExpressionFromInput) {
 }
 
 export function continueExpressionFrom(input?: T.ContinueExpressionFromInput) {
+  if (input !== undefined && 'render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return continueExpression({
@@ -1598,6 +1677,7 @@ export function continueExpressionFrom(input?: T.ContinueExpressionFromInput) {
 }
 
 export function indexExpressionFrom(input: T.IndexExpressionFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return indexExpression({
@@ -1615,6 +1695,7 @@ export function awaitExpressionFrom(input?: NonNullable<T.AwaitExpressionConfig[
 }
 
 export function fieldExpressionFrom(input: T.FieldExpressionFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return fieldExpression({
@@ -1624,6 +1705,7 @@ export function fieldExpressionFrom(input: T.FieldExpressionFromInput) {
 }
 
 export function unsafeBlockFrom(input: T.UnsafeBlockFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return unsafeBlock({
@@ -1632,6 +1714,7 @@ export function unsafeBlockFrom(input: T.UnsafeBlockFromInput) {
 }
 
 export function asyncBlockFrom(input: T.AsyncBlockFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return asyncBlock({
@@ -1641,6 +1724,7 @@ export function asyncBlockFrom(input: T.AsyncBlockFromInput) {
 }
 
 export function genBlockFrom(input: T.GenBlockFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return genBlock({
@@ -1650,6 +1734,7 @@ export function genBlockFrom(input: T.GenBlockFromInput) {
 }
 
 export function tryBlockFrom(input: T.TryBlockFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return tryBlock({
@@ -1658,6 +1743,7 @@ export function tryBlockFrom(input: T.TryBlockFromInput) {
 }
 
 export function blockFrom(input: T.BlockFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return block({
@@ -1667,6 +1753,7 @@ export function blockFrom(input: T.BlockFromInput) {
 }
 
 export function genericPatternFrom(input: T.GenericPatternFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return genericPattern({
@@ -1692,6 +1779,7 @@ export function slicePatternFrom(...input: readonly (NonNullable<T.SlicePatternC
 }
 
 export function tupleStructPatternFrom(input: T.TupleStructPatternFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return tupleStructPattern({
@@ -1701,6 +1789,7 @@ export function tupleStructPatternFrom(input: T.TupleStructPatternFromInput) {
 }
 
 export function structPatternFrom(input: T.StructPatternFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return structPattern({
@@ -1733,6 +1822,7 @@ export function fieldPatternColonFrom(input: T.FieldPatternColonConfig) {
 }
 
 export function mutPatternFrom(input: T.MutPatternFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return mutPattern({
@@ -1771,6 +1861,7 @@ export function refPatternFrom(input?: NonNullable<T.RefPatternConfig['children'
 }
 
 export function capturedPatternFrom(input: T.CapturedPatternFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return capturedPattern({
@@ -1780,6 +1871,7 @@ export function capturedPatternFrom(input: T.CapturedPatternFromInput) {
 }
 
 export function referencePatternFrom(input: T.ReferencePatternFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return referencePattern({
@@ -1810,6 +1902,7 @@ export function orPatternPipe2From(input: T.OrPatternPipe2Config) {
 }
 
 export function negativeLiteralFrom(input: T.NegativeLiteralFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return negativeLiteral({
@@ -1831,6 +1924,7 @@ export function stringLiteralFrom(...input: readonly (NonNullable<T.StringLitera
 }
 
 export function rawStringLiteralFrom(input: T.RawStringLiteralFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return rawStringLiteral({
@@ -1864,6 +1958,7 @@ export function commentFrom(input?: NonNullable<T.CommentConfig['children']>[num
 }
 
 export function lineCommentFrom(input: T.LineCommentFromInput) {
+  if ('render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return lineComment({
@@ -1874,6 +1969,7 @@ export function lineCommentFrom(input: T.LineCommentFromInput) {
 }
 
 export function blockCommentFrom(input?: T.BlockCommentFromInput) {
+  if (input !== undefined && 'render' in input) return input;
   const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;
   const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};
   return blockComment({

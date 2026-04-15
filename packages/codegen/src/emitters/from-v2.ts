@@ -260,27 +260,33 @@ function emitBranchFrom(node: BranchLikeNode, nodeMap: NodeMap, intern: KindInte
     // accessor methods (render, toEdit, replace, per-field getters/
     // setters) flow through. Annotating with the bare interface name
     // `${typeName}` loses the methods and fails assignability.
+    const inputOptional = opt === '?'
     lines.push(`export function ${fn}(input${opt}: T.${node.fromInputTypeName}) {`)
     if (fields.length > 0) {
+        // Fluent-node passthrough: if the caller already holds a
+        // factory-built node (fluent accessors + `render`/`toEdit`/
+        // `replace` methods), return it unchanged. The `'render' in
+        // input` check uniquely identifies fluent outputs — bare
+        // readNode NodeData has no method, so validators and
+        // parser-driven callers fall through to the factory
+        // reconstruction path below.
+        const renderGuard = inputOptional ? 'input !== undefined && ' : ''
+        lines.push(`  if (${renderGuard}'render' in input) return input;`)
         // `input` may be either loose ConfigOf-style (camelCase top-level
         // keys) or a parsed NodeData (snake_case keys under `fields`).
         // Normalise to a single indexable view `_f` exposing both shapes.
-        // `object` is the right widening target — it captures any
-        // non-primitive without using `unknown` or `Record<string, unknown>`;
-        // the sideways `as` from FromInputOf / NodeData to the
-        // `{ [key: string]: _FromFieldInput }` indexer is TS-legal
-        // because `object` has no declared properties to conflict with.
+        // `object` is the widening target — it captures any non-primitive
+        // without using `unknown` or `Record<string, unknown>`; the
+        // sideways cast to `{ [key: string]: _FromFieldInput }` is
+        // TS-legal because `object` has no declared properties to
+        // conflict with.
         lines.push(`  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;`)
         lines.push(`  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};`)
         // Non-empty fields (repeat1-sourced) get hoisted to a local
         // binding so `_assertNonEmpty` can narrow the static type
         // before the binding is spread into the factory's config
         // object. The binding is prefixed with `_ne_` so it can't
-        // collide with the factory function name (e.g. python's
-        // `subscript` field on the `subscript` factory) — the
-        // unprefixed name would shadow the imported factory and
-        // break the subsequent factory call. Plain fields stay
-        // inline for compact output.
+        // collide with the factory function name.
         const neName = (f: AssembledField) => `_ne_${f.propertyName}`
         for (const f of fields) {
             if (f.nonEmpty && f.multiple) {
@@ -299,10 +305,7 @@ function emitBranchFrom(node: BranchLikeNode, nodeMap: NodeMap, intern: KindInte
         }
         // Only pass-through children for branches that actually declare
         // a children slot — field-only branches have no `children` in
-        // their ConfigOf and get a TS2353 error if we include it. The
-        // pass-through is cast to the slot type so the resulting
-        // `children` value narrows to match `ConfigOf<T>['children']`
-        // rather than widening to `readonly unknown[]`.
+        // their ConfigOf and get a TS2353 error if we include it.
         if (childSlots.length > 0) {
             const childType = `NonNullable<T.${typeName}Config['children']>`
             lines.push(`    children: ((input as { children?: ${childType} })?.children ?? []) as ${childType},`)
@@ -419,7 +422,7 @@ function emitPolymorphFrom(node: PolymorphFromNode, nodeMap: NodeMap, intern: Ki
         const fLines: string[] = []
         fLines.push(`export function ${formFn}(input${formOpt}: T.${form.typeName}Config) {`)
         if (form.fields.length > 0) {
-            // Same dual-shape reader as branch from — see comment in
+            // Same dual-shape reader as branch from — see
             // emitBranchFrom for the `object` widening rationale.
             fLines.push(`  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;`)
             fLines.push(`  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};`)
@@ -490,6 +493,33 @@ function emitKeywordFrom(node: LeafFromNode): string {
 
 /** Interner signature passed through the resolver emitter calls. */
 type KindInterner = (kinds: readonly string[]) => string
+
+/**
+ * Build a field-resolver call that reads a single camelCase property
+ * directly off a typed FromInput bag (`input?.fieldName`). Typed
+ * access flows the FromInput's per-field type into the resolver's
+ * generic slot — no `_f` normalize, no index-signature widening. Used
+ * by branch / polymorph-form `fromX` bodies after the top-level kind
+ * discriminator has already handed back any pre-built node.
+ */
+function resolveFieldFromTypedInput(
+    field: AssembledField,
+    nodeMap: NodeMap,
+    parentTypeName: string,
+    intern: KindInterner,
+    sourceVar: string,
+    inputOptional: boolean,
+): string {
+    const slotType = `NonNullable<T.${parentTypeName}Config['${field.propertyName}']>`
+    const typeParam = field.multiple ? `${slotType}[number]` : slotType
+    // Optional-chain the read only when the param itself is optional —
+    // a required input is never undefined at runtime and TS narrows it
+    // to the non-undefined arm, so `input.name` is the right access.
+    const access = inputOptional
+        ? `${sourceVar}?.${field.propertyName}`
+        : `${sourceVar}.${field.propertyName}`
+    return resolveFieldCall(access, field, nodeMap, typeParam, intern)
+}
 
 function resolveFieldFromLooseInput(
     field: AssembledField,
