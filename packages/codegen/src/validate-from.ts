@@ -39,28 +39,6 @@ const FACTORY_MODULE_PATHS: Record<string, string> = {
 	python: '../../python/src/factories.ts',
 };
 
-/**
- * Runtime camelCase adapter for readNode output. from() accepts either
- * a pre-built NodeData (distinguished by the `'fields' in input`
- * passthrough) OR a pure camelCase bag that flows through the factory
- * reconstruction path. The validator wants the reconstruction path
- * (so it can structurally compare the from() output against a fresh
- * factory result), so the adapter emits a BAG — no `type`, no
- * `fields`, no NodeData metadata — just camelCase field keys and an
- * optional `children` slot. That ensures `'fields' in bag` is false.
- */
-function toCamelCaseAdapter(data: AnyNodeData): Record<string, unknown> {
-	const bag: Record<string, unknown> = {};
-	if (data.fields) {
-		for (const [k, v] of Object.entries(data.fields)) {
-			const camel = k.replace(/_([a-z])/g, (_, c: string) => c.toUpperCase());
-			bag[camel] = v;
-		}
-	}
-	if (data.children) bag.children = data.children;
-	return bag;
-}
-
 // ---------------------------------------------------------------------------
 // Structural analysis
 // ---------------------------------------------------------------------------
@@ -147,11 +125,8 @@ export async function validateFrom(
 	const parser = new Parser();
 	parser.setLanguage(lang);
 
-	const config = parseYaml(templatesYaml) as RulesConfig;
+	parseYaml(templatesYaml) as RulesConfig;
 	const overrides = loadOverrides(grammar);
-	// Expand override field supertype specs (e.g. `_expression`) to the
-	// concrete subtype list from node-types.json so routing matches the
-	// kinds that actually show up at parse time.
 	const supertypeExpansion = new Map<string, string[]>();
 	for (const entry of loadRawEntries(grammar)) {
 		if (entry.subtypes && entry.subtypes.length > 0) {
@@ -201,32 +176,19 @@ export async function validateFrom(
 			const readData = readNode(handle, node1.id, routing);
 
 			try {
-				// Dispatch by node shape to the right call convention:
-				//   - leaf (text, no fields) → pass the text string
-				//   - container (children, no fields) → spread children
-				//     as rest params (factories take `(...kids: T[])`)
-				//   - branch / polymorph (fields) → pass a camelCase bag
-				// Both fromMap and factoryMap receive the same shape.
-				let adapted: unknown;
-				let isContainer = false;
-				if (readData.fields) {
-					adapted = toCamelCaseAdapter(readData);
-				} else if (readData.text !== undefined) {
-					adapted = readData.text;
-				} else if (readData.children) {
-					adapted = readData.children;
-					isContainer = true;
-				} else {
-					adapted = toCamelCaseAdapter(readData);
-				}
-				const fromResult = (isContainer
-					? (fromMap[kind]! as (...args: unknown[]) => AnyNodeData)(...(adapted as unknown[]))
-					: fromMap[kind]!(adapted as object) as AnyNodeData);
+				const fromResult = fromMap[kind]!(readData) as AnyNodeData;
 				let factoryResult: AnyNodeData;
 				try {
-					factoryResult = (isContainer
-						? (factoryMap[kind]! as (...args: unknown[]) => AnyNodeData)(...(adapted as unknown[]))
-						: factoryMap[kind]!(adapted as never) as AnyNodeData);
+					if (!readData.fields && readData.children) {
+						factoryResult = (factoryMap[kind]! as (...args: unknown[]) => AnyNodeData)(...readData.children);
+					} else {
+						const config = { ...(readData.fields ?? {}) } as Record<string, unknown>;
+						const namedChildren = (readData.children ?? []).filter((c: any) => c?.named !== false);
+						if (namedChildren.length) {
+							config.children = namedChildren;
+						}
+						factoryResult = factoryMap[kind]!(config) as AnyNodeData;
+					}
 				} catch {
 					skip++;
 					continue;

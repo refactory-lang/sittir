@@ -602,30 +602,32 @@ export interface DeclarationList {
 export interface StructItemBody {
   readonly type: 'struct_item';
   readonly fields: {
+    readonly visibility_modifier?: VisibilityModifier;
     readonly name: _TypeIdentifier;
     readonly type_parameters?: TypeParameters;
     readonly body: FieldDeclarationList;
   };
-  readonly children: readonly [VisibilityModifier | WhereClause];
+  readonly children: readonly [WhereClause];
 }
 
 export interface StructItemSemi {
   readonly type: 'struct_item';
   readonly fields: {
+    readonly visibility_modifier?: VisibilityModifier;
     readonly name: _TypeIdentifier;
     readonly type_parameters?: TypeParameters;
     readonly body: OrderedFieldDeclarationList;
   };
-  readonly children: readonly [VisibilityModifier | WhereClause];
+  readonly children: readonly [WhereClause];
 }
 
 export interface StructItemSemi2 {
   readonly type: 'struct_item';
   readonly fields: {
+    readonly visibility_modifier?: VisibilityModifier;
     readonly name: _TypeIdentifier;
     readonly type_parameters?: TypeParameters;
   };
-  readonly children: readonly [VisibilityModifier];
 }
 
 export type StructItem = StructItemBody | StructItemSemi | StructItemSemi2;
@@ -807,12 +809,13 @@ export type ImplItem = ImplItemBody | ImplItemSemi;
 export interface TraitItem {
   readonly type: 'trait_item';
   readonly fields: {
+    readonly visibility_modifier?: VisibilityModifier;
     readonly name: _TypeIdentifier;
     readonly type_parameters?: TypeParameters;
     readonly bounds?: TraitBounds;
     readonly body: DeclarationList;
   };
-  readonly children: readonly [VisibilityModifier | WhereClause];
+  readonly children: readonly [WhereClause];
 }
 
 export interface AssociatedType {
@@ -1499,17 +1502,15 @@ export interface UnsafeBlock {
 export interface AsyncBlock {
   readonly type: 'async_block';
   readonly fields: {
-    readonly block?: "move";
+    readonly block: Block;
   };
-  readonly children: readonly [Block];
 }
 
 export interface GenBlock {
   readonly type: 'gen_block';
   readonly fields: {
-    readonly block?: "move";
+    readonly block: Block;
   };
-  readonly children: readonly [Block];
 }
 
 export interface TryBlock {

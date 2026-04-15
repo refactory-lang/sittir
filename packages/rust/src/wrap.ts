@@ -175,6 +175,10 @@ const _overrides = {
   "foreign_mod_item_semi": {"fields":{"visibility_modifier":{"types":[{"type":"visibility_modifier","named":true}],"multiple":false,"required":false,"position":0},"extern_modifier":{"types":[{"type":"extern_modifier","named":true}],"multiple":false,"required":true,"position":1}}},
   "foreign_mod_item_body": {"fields":{"visibility_modifier":{"types":[{"type":"visibility_modifier","named":true}],"multiple":false,"required":false,"position":0},"extern_modifier":{"types":[{"type":"extern_modifier","named":true}],"multiple":false,"required":true,"position":1}}},
   "foreign_mod_item": {"fields":{"visibility_modifier":{"types":[{"type":"visibility_modifier","named":true}],"multiple":false,"required":false,"position":0},"extern_modifier":{"types":[{"type":"extern_modifier","named":true}],"multiple":false,"required":true,"position":1}}},
+  "struct_item_body": {"fields":{"visibility_modifier":{"types":[{"type":"visibility_modifier","named":true}],"multiple":false,"required":false,"position":0}}},
+  "struct_item_semi": {"fields":{"visibility_modifier":{"types":[{"type":"visibility_modifier","named":true}],"multiple":false,"required":false,"position":0}}},
+  "struct_item_semi2": {"fields":{"visibility_modifier":{"types":[{"type":"visibility_modifier","named":true}],"multiple":false,"required":false,"position":0}}},
+  "struct_item": {"fields":{"visibility_modifier":{"types":[{"type":"visibility_modifier","named":true}],"multiple":false,"required":false,"position":0}}},
   "union_item": {"fields":{"visibility_modifier":{"types":[{"type":"visibility_modifier","named":true}],"multiple":false,"required":false,"position":0},"where_clause":{"types":[{"type":"where_clause","named":true}],"multiple":false,"required":false,"position":3}}},
   "enum_item": {"fields":{"visibility_modifier":{"types":[{"type":"visibility_modifier","named":true}],"multiple":false,"required":false,"position":0},"where_clause":{"types":[{"type":"where_clause","named":true}],"multiple":false,"required":false,"position":3}}},
   "enum_variant": {"fields":{"visibility_modifier":{"types":[{"type":"visibility_modifier","named":true}],"multiple":false,"required":false,"position":0}}},
@@ -185,6 +189,7 @@ const _overrides = {
   "type_item": {"fields":{"visibility_modifier":{"types":[{"type":"visibility_modifier","named":true}],"multiple":false,"required":false,"position":0},"where_clause":{"types":[{"type":"where_clause","named":true}],"multiple":false,"required":false,"position":3},"trailing_where_clause":{"types":[{"type":"where_clause","named":true}],"multiple":false,"required":false,"position":5}}},
   "function_item": {"fields":{"visibility_modifier":{"types":[{"type":"visibility_modifier","named":true}],"multiple":false,"required":false,"position":0},"function_modifiers":{"types":[{"type":"function_modifiers","named":true}],"multiple":false,"required":false,"position":1},"where_clause":{"types":[{"type":"where_clause","named":true}],"multiple":false,"required":false,"position":6}}},
   "function_signature_item": {"fields":{"visibility_modifier":{"types":[{"type":"visibility_modifier","named":true}],"multiple":false,"required":false,"position":0},"function_modifiers":{"types":[{"type":"function_modifiers","named":true}],"multiple":false,"required":false,"position":1},"where_clause":{"types":[{"type":"where_clause","named":true}],"multiple":false,"required":false,"position":6}}},
+  "trait_item": {"fields":{"visibility_modifier":{"types":[{"type":"visibility_modifier","named":true}],"multiple":false,"required":false,"position":0}}},
   "associated_type": {"fields":{"where_clause":{"types":[{"type":"where_clause","named":true}],"multiple":false,"required":false,"position":3}}},
   "let_declaration": {"fields":{"mutable_specifier":{"types":[{"type":"mutable_specifier","named":true}],"multiple":false,"required":false,"position":0}}},
   "use_declaration": {"fields":{"visibility_modifier":{"types":[{"type":"visibility_modifier","named":true}],"multiple":false,"required":false,"position":0}}},
@@ -216,8 +221,8 @@ const _overrides = {
   "continue_expression": {"fields":{"label":{"types":[{"type":"label","named":true}],"multiple":false,"required":false,"position":0}}},
   "index_expression": {"fields":{"object":{"types":[{"type":"_expression","named":true}],"multiple":false,"required":true,"position":0},"index":{"types":[{"type":"_expression","named":true}],"multiple":false,"required":true,"position":1}}},
   "unsafe_block": {"fields":{"block":{"types":[{"type":"block","named":true}],"multiple":false,"required":true,"position":0}}},
-  "async_block": {"fields":{"block":{"types":[],"multiple":false,"required":false,"position":0}}},
-  "gen_block": {"fields":{"block":{"types":[],"multiple":false,"required":false,"position":0}}},
+  "async_block": {"fields":{"block":{"types":[{"type":"block","named":true}],"multiple":false,"required":true,"position":0}}},
+  "gen_block": {"fields":{"block":{"types":[{"type":"block","named":true}],"multiple":false,"required":true,"position":0}}},
   "try_block": {"fields":{"block":{"types":[{"type":"block","named":true}],"multiple":false,"required":true,"position":0}}},
   "block": {"fields":{"label":{"types":[{"type":"label","named":true}],"multiple":false,"required":false,"position":0}}},
   "field_pattern_name": {"fields":{"mutable_specifier":{"types":[{"type":"mutable_specifier","named":true}],"multiple":false,"required":false,"position":0}}},
@@ -229,6 +234,7 @@ const _overrides = {
   "negative_literal": {"fields":{"value":{"types":[{"type":"integer_literal","named":true},{"type":"float_literal","named":true}],"multiple":false,"required":true,"position":0}}},
   "raw_string_literal": {"fields":{"raw_string_literal_start":{"types":[],"multiple":false,"required":true,"position":0},"string_content":{"types":[{"type":"raw_string_literal_content","named":true}],"multiple":false,"required":true,"position":1},"raw_string_literal_end":{"types":[],"multiple":false,"required":true,"position":2}}},
 } as const;
+export { _overrides };
 const _supertypeExpansion = new Map<string, readonly string[]>(Object.entries({
   "_statement": ["expression_statement","_declaration_statement"],
   "_declaration_statement": ["const_item","macro_invocation","macro_definition","empty_statement","attribute_item","inner_attribute_item","mod_item","foreign_mod_item","struct_item","union_item","enum_item","type_item","function_item","function_signature_item","impl_item","trait_item","associated_type","let_declaration","use_declaration","extern_crate_declaration","static_item"],
@@ -247,7 +253,11 @@ const _supertypeExpansion = new Map<string, readonly string[]>(Object.entries({
   "_literal_pattern": ["string_literal","raw_string_literal","char_literal","boolean_literal","integer_literal","float_literal","negative_literal"],
   "_path": ["self","metavariable","super","crate","identifier","scoped_identifier","_reserved_identifier"],
 }));
-const _routing = buildRoutingMap(_overrides, _supertypeExpansion);
+export { _supertypeExpansion };
+// Exported so validators / runtime consumers can use the same
+// routing the generated wrap/readNode path uses, instead of
+// re-reading the legacy `overrides.json` file.
+export const _routing = buildRoutingMap(_overrides, _supertypeExpansion);
 
 // Drill-in helpers — pass _routing to readNode so override field
 // promotion happens during hydration, not as a wrap-time fix-up.
@@ -398,6 +408,7 @@ export function wrapDeclarationList(data: _NodeData, tree: TreeHandle): WrappedN
 export function wrapStructItem(data: _NodeData, tree: TreeHandle): WrappedNode<StructItem> {
   return {
     ...data,
+    get visibilityModifier() { return drillIn(data.fields?.['visibility_modifier'], tree); },
     get name() { return drillIn(data.fields?.['name'], tree); },
     get typeParameters() { return drillIn(data.fields?.['type_parameters'], tree); },
     get body() { return drillIn(data.fields?.['body'], tree); },
@@ -589,6 +600,7 @@ export function wrapImplItem(data: _NodeData, tree: TreeHandle): WrappedNode<Imp
 export function wrapTraitItem(data: _NodeData, tree: TreeHandle): WrappedNode<TraitItem> {
   return {
     ...data,
+    get visibilityModifier() { return drillIn(data.fields?.['visibility_modifier'], tree); },
     get name() { return drillIn(data.fields?.['name'], tree); },
     get typeParameters() { return drillIn(data.fields?.['type_parameters'], tree); },
     get bounds() { return drillIn(data.fields?.['bounds'], tree); },
@@ -1338,7 +1350,7 @@ export function wrapAsyncBlock(data: _NodeData, tree: TreeHandle): WrappedNode<A
   return {
     ...data,
     get block() { return drillIn(data.fields?.['block'], tree); },
-    get child() { return drillIn(data.children?.[0], tree); },
+    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<AsyncBlock>;
 }
 
@@ -1346,7 +1358,7 @@ export function wrapGenBlock(data: _NodeData, tree: TreeHandle): WrappedNode<Gen
   return {
     ...data,
     get block() { return drillIn(data.fields?.['block'], tree); },
-    get child() { return drillIn(data.children?.[0], tree); },
+    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<GenBlock>;
 }
 

@@ -41,9 +41,9 @@ rules:
     template: "{$$$CHILDREN}"
   struct_item:
     variants:
-      body: $$$CHILDREN struct $NAME $TYPE_PARAMETERS $BODY
-      semi: $$$CHILDREN struct $NAME $TYPE_PARAMETERS $BODY;
-      semi2: $$$CHILDREN struct $NAME $TYPE_PARAMETERS;
+      body: $VISIBILITY_MODIFIER struct $NAME $TYPE_PARAMETERS $$$CHILDREN $BODY
+      semi: $VISIBILITY_MODIFIER struct $NAME $TYPE_PARAMETERS $BODY $$$CHILDREN;
+      semi2: $VISIBILITY_MODIFIER struct $NAME $TYPE_PARAMETERS;
   union_item:
     template: $VISIBILITY_MODIFIER union $NAME $TYPE_PARAMETERS $WHERE_CLAUSE $BODY
   enum_item:
@@ -92,7 +92,7 @@ rules:
       semi: impl $TYPE_PARAMETERS $TRAIT_CLAUSE $TYPE $$$CHILDREN;
     trait_clause: $TRAIT for
   trait_item:
-    template: $$$CHILDREN trait $NAME $TYPE_PARAMETERS $BOUNDS $BODY
+    template: $VISIBILITY_MODIFIER trait $NAME $TYPE_PARAMETERS $BOUNDS $$$CHILDREN $BODY
   associated_type:
     template: type $NAME $TYPE_PARAMETERS $BOUNDS $WHERE_CLAUSE;
   trait_bounds:
@@ -305,9 +305,9 @@ rules:
   unsafe_block:
     template: unsafe $BLOCK
   async_block:
-    template: async $BLOCK $$$CHILDREN
+    template: async $BLOCK
   gen_block:
-    template: gen $BLOCK $$$CHILDREN
+    template: gen $BLOCK
   try_block:
     template: try $BLOCK
   block:

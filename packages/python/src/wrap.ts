@@ -156,6 +156,7 @@ const _overrides = {
   "string": {"fields":{"string_start":{"types":[{"type":"string_start","named":true}],"multiple":false,"required":true,"position":0},"content":{"types":[{"type":"interpolation","named":true},{"type":"string_content","named":true}],"multiple":true,"required":true,"position":1},"string_end":{"types":[{"type":"string_end","named":true}],"multiple":false,"required":true,"position":2}}},
   "await": {"fields":{"primary_expression":{"types":[{"type":"primary_expression","named":true}],"multiple":false,"required":true,"position":0}}},
 } as const;
+export { _overrides };
 const _supertypeExpansion = new Map<string, readonly string[]>(Object.entries({
   "_statement": ["_simple_statements","_compound_statement"],
   "_simple_statement": ["future_import_statement","import_statement","import_from_statement","print_statement","assert_statement","expression_statement","return_statement","delete_statement","raise_statement","pass_statement","break_statement","continue_statement","global_statement","nonlocal_statement","exec_statement","type_alias_statement"],
@@ -171,7 +172,11 @@ const _supertypeExpansion = new Map<string, readonly string[]>(Object.entries({
   "_right_hand_side": ["expression","expression_list","assignment","augmented_assignment","pattern_list","yield"],
   "_f_expression": ["expression","expression_list","pattern_list","yield"],
 }));
-const _routing = buildRoutingMap(_overrides, _supertypeExpansion);
+export { _supertypeExpansion };
+// Exported so validators / runtime consumers can use the same
+// routing the generated wrap/readNode path uses, instead of
+// re-reading the legacy `overrides.json` file.
+export const _routing = buildRoutingMap(_overrides, _supertypeExpansion);
 
 // Drill-in helpers — pass _routing to readNode so override field
 // promotion happens during hydration, not as a wrap-time fix-up.

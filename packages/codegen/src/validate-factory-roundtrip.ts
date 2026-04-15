@@ -76,9 +76,7 @@ const FACTORY_MODULE_PATHS: Record<string, string> = {
 	python: '../../python/src/factories.ts',
 };
 
-/** Build supertype → subtype[] map from node-types.json. Used by
- *  buildRoutingMap so override field type specs written against a
- *  supertype (e.g. `_expression`) route every concrete subtype. */
+/** Build supertype → subtype[] map from node-types.json. */
 function buildSupertypeExpansion(rawEntries: { type: string; named: boolean; subtypes?: { type: string }[] }[]): Map<string, string[]> {
 	const result = new Map<string, string[]>();
 	for (const entry of rawEntries) {

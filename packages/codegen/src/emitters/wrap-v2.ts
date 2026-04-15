@@ -18,10 +18,22 @@
 import type {
     NodeMap, AssembledField, AssembledChild, AssembledNode,
 } from '../compiler/rule.ts'
+import type { DerivedOverridesConfig } from '../compiler/derive-overrides-json.ts'
 
 export interface EmitWrapFromNodeMapConfig {
     grammar: string
     nodeMap: NodeMap
+    /**
+     * Pre-derived runtime OverridesConfig (same shape as the legacy
+     * `overrides.json`) produced by `deriveOverridesConfig` against the
+     * post-Link rule tree. Inlined into the generated `_overrides` so
+     * `readNode` sees exactly the routing the compiler computed —
+     * including full-replacement override rules and kind-projected
+     * (`position: -1`) entries that the narrow `f.source === 'override'`
+     * filter would miss. Optional for back-compat; when absent the
+     * emitter falls back to the AssembledField-based extraction.
+     */
+    derivedOverrides?: DerivedOverridesConfig
 }
 
 /**
@@ -65,32 +77,54 @@ function emitMapPerLine(name: string, obj: Record<string, unknown>): string[] {
 }
 
 export function emitWrapFromNodeMap(config: EmitWrapFromNodeMapConfig): string {
-    const { nodeMap } = config
+    const { nodeMap, derivedOverrides } = config
 
     // ------------------------------------------------------------------
     // Reconstruct routing inputs from NodeMap
     // ------------------------------------------------------------------
-    // OverridesConfig: { kind: { fields: { name: { types, multiple, required, position } } } }
-    // Position = field index in node.fields (declaration order via deriveFields).
+    // Prefer the pre-derived OverridesConfig produced via the shared
+    // `deriveOverridesConfig` walker — it captures full-replacement
+    // override rules, kind-projected (position: -1) entries, and
+    // merged-across-variants field specs that the naive
+    // `f.source === 'override'` filter below cannot see. Fall back to
+    // the AssembledField extraction when no derived config is provided
+    // (older callers; direct unit tests).
     const overrides: Record<string, { fields: Record<string, OverrideFieldSpec> }> = {}
-    for (const [kind, node] of nodeMap.nodes) {
-        const fields = getNodeFields(node)
-        if (fields.length === 0) continue
-        const overrideFields: Record<string, OverrideFieldSpec> = {}
-        fields.forEach((f, idx) => {
-            if (f.source !== 'override') return
-            overrideFields[f.name] = {
-                types: f.contentTypes.map(t => ({
-                    type: t,
-                    named: isNamedKind(t, nodeMap),
-                })),
-                multiple: f.multiple,
-                required: f.required,
-                position: idx,
+    if (derivedOverrides) {
+        for (const [kind, spec] of Object.entries(derivedOverrides)) {
+            const overrideFields: Record<string, OverrideFieldSpec> = {}
+            for (const [fieldName, fs] of Object.entries(spec.fields)) {
+                overrideFields[fieldName] = {
+                    types: [...fs.types],
+                    multiple: fs.multiple,
+                    required: fs.required,
+                    position: fs.position,
+                }
             }
-        })
-        if (Object.keys(overrideFields).length > 0) {
-            overrides[kind] = { fields: overrideFields }
+            if (Object.keys(overrideFields).length > 0) {
+                overrides[kind] = { fields: overrideFields }
+            }
+        }
+    } else {
+        for (const [kind, node] of nodeMap.nodes) {
+            const fields = getNodeFields(node)
+            if (fields.length === 0) continue
+            const overrideFields: Record<string, OverrideFieldSpec> = {}
+            fields.forEach((f, idx) => {
+                if (f.source !== 'override') return
+                overrideFields[f.name] = {
+                    types: f.contentTypes.map(t => ({
+                        type: t,
+                        named: isNamedKind(t, nodeMap),
+                    })),
+                    multiple: f.multiple,
+                    required: f.required,
+                    position: idx,
+                }
+            })
+            if (Object.keys(overrideFields).length > 0) {
+                overrides[kind] = { fields: overrideFields }
+            }
         }
     }
 
@@ -150,8 +184,13 @@ export function emitWrapFromNodeMap(config: EmitWrapFromNodeMapConfig): string {
         '// codegen time from NodeMap, then handed to readNode at module load.',
         '// Emitted one entry per line so PR diffs show only the changed kind.',
         ...emitObjectPerLine('_overrides', overrides as Record<string, unknown>, ' as const'),
+        'export { _overrides };',
         ...emitMapPerLine('_supertypeExpansion', supertypeExpansion as Record<string, unknown>),
-        'const _routing = buildRoutingMap(_overrides, _supertypeExpansion);',
+        'export { _supertypeExpansion };',
+        '// Exported so validators / runtime consumers can use the same',
+        '// routing the generated wrap/readNode path uses, instead of',
+        "// re-reading the legacy `overrides.json` file.",
+        'export const _routing = buildRoutingMap(_overrides, _supertypeExpansion);',
         '',
         '// Drill-in helpers — pass _routing to readNode so override field',
         '// promotion happens during hydration, not as a wrap-time fix-up.',

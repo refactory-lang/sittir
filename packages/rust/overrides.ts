@@ -34,9 +34,12 @@ export default grammar(base, {
             4: field('where_clause'), // where_clause [struct=0]
         }),
 
-        // async_block: 1 field(s)
+        // async_block: position 2 is the `block` symbol (position 1 is
+        // the optional `move` choice). Autogen placed the override at
+        // position 1, which wrapped the move choice and dropped the
+        // block routing entirely.
         async_block: ($, original) => transform(original, {
-            1: field('block'), // block [struct=0]
+            2: field('block'),
         }),
 
         // attribute_item: 1 field(s)
@@ -146,9 +149,10 @@ export default grammar(base, {
             1: field('function_modifiers'), // function_modifiers [struct=1]
         }),
 
-        // gen_block: 1 field(s)
+        // gen_block: same fix as async_block — the block symbol is
+        // at position 2, position 1 is the optional `move` choice.
         gen_block: ($, original) => transform(original, {
-            1: field('block'), // block [struct=0]
+            2: field('block'),
         }),
 
         // impl_item: override removed. Same autogen mistake as struct_item —
@@ -286,19 +290,23 @@ export default grammar(base, {
             2: field('mutable_specifier'), // mutable_specifier [struct=1]
         }),
 
-        // struct_item: override removed. Position 0 (visibility_modifier)
-        // and position 4 (the top-level body/semi/unit choice) were both
-        // wrapped in `field(...)` by the autogen from node-types.json.
-        // Top-level seq members aren't fields in tree-sitter's sense —
-        // they're structural positions. The visibility_modifier wrapper
-        // was redundant (or worse, redundant + mislabel), and the
-        // where_clause wrapper prevented polymorph promotion for the
-        // body/semi/unit variants. Letting the original rule through
-        // lets Link's promotePolymorph classify the variants properly.
+        // struct_item: position 0 is `choice(visibility_modifier, BLANK)`
+        // — wrap it as `field('visibility_modifier')` so readNode
+        // routes the modifier child onto the named slot. Position 4
+        // (the body/semi/unit polymorph choice) is intentionally NOT
+        // wrapped — that's what lets Link's promotePolymorph classify
+        // the body/semi/unit variants.
+        struct_item: ($, original) => transform(original, {
+            0: field('visibility_modifier'),
+        }),
 
-        // trait_item: override removed. Same autogen mistake as
-        // struct_item / impl_item — top-level positions labeled as
-        // fields that don't correspond to real tree-sitter fields.
+        // trait_item: position 0 is the same visibility_modifier
+        // optional choice as struct_item. The where_clause at
+        // position 6 and the body field at position 7 stay as
+        // declared in the base grammar.
+        trait_item: ($, original) => transform(original, {
+            0: field('visibility_modifier'),
+        }),
 
         // try_block: 1 field(s)
         try_block: ($, original) => transform(original, {

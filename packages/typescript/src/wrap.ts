@@ -239,6 +239,7 @@ const _overrides = {
   "intersection_type": {"fields":{"left":{"types":[{"type":"type","named":true}],"multiple":false,"required":false,"position":0},"right":{"types":[{"type":"type","named":true}],"multiple":false,"required":true,"position":1}}},
   "interface_body": {"fields":{"opening":{"types":[],"multiple":false,"required":true,"position":0},"members":{"types":[{"type":"export_statement","named":true},{"type":"_semicolon","named":true},{"type":"property_signature","named":true},{"type":"call_signature","named":true},{"type":"construct_signature","named":true},{"type":"index_signature","named":true},{"type":"method_signature","named":true}],"multiple":false,"required":false,"position":1},"closing":{"types":[],"multiple":false,"required":true,"position":2}}},
 } as const;
+export { _overrides };
 const _supertypeExpansion = new Map<string, readonly string[]>(Object.entries({
   "_module_export_name": ["identifier","string"],
   "_expressions": ["expression","sequence_expression"],
@@ -258,7 +259,11 @@ const _supertypeExpansion = new Map<string, readonly string[]>(Object.entries({
   "_tuple_type_member": ["tuple_parameter","optional_tuple_parameter","optional_type","rest_type","type"],
   "primary_type": ["parenthesized_type","predefined_type","_type_identifier","nested_type_identifier","generic_type","object_type","array_type","tuple_type","flow_maybe_type","type_query","index_type_query","this","existential_type","literal_type","lookup_type","conditional_type","template_literal_type","intersection_type","union_type"],
 }));
-const _routing = buildRoutingMap(_overrides, _supertypeExpansion);
+export { _supertypeExpansion };
+// Exported so validators / runtime consumers can use the same
+// routing the generated wrap/readNode path uses, instead of
+// re-reading the legacy `overrides.json` file.
+export const _routing = buildRoutingMap(_overrides, _supertypeExpansion);
 
 // Drill-in helpers — pass _routing to readNode so override field
 // promotion happens during hydration, not as a wrap-time fix-up.

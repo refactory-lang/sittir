@@ -420,11 +420,12 @@ export function declarationList(...children: T.DeclarationStatement[]) {
 }
 
 export function structItem(config: T.StructItemBodyConfig | T.StructItemSemiConfig | T.StructItemSemi2Config) {
-  if (config && 'name' in config && 'typeParameters' in config && 'body' in config) return structItemBody(config as T.StructItemBodyConfig);
+  if (config && 'visibilityModifier' in config && 'name' in config && 'typeParameters' in config && 'body' in config) return structItemBody(config as T.StructItemBodyConfig);
   return structItemSemi2(config as T.StructItemSemi2Config);
 }
 export function structItemBody(config: T.StructItemBodyConfig) {
   const fields = {
+    visibility_modifier: config?.visibilityModifier,
     name: config?.name,
     type_parameters: config?.typeParameters,
     body: config?.body,
@@ -436,11 +437,12 @@ export function structItemBody(config: T.StructItemBodyConfig) {
     variant: 'body' as const,
     fields,
     children,
+    visibilityModifier(visibilityModifier_?: T.VisibilityModifier | undefined) { return _fs(config, structItemBody, 'visibilityModifier', visibilityModifier_, fields.visibility_modifier); },
     name(name_?: T._TypeIdentifier) { return _fs(config, structItemBody, 'name', name_, fields.name); },
     typeParameters(typeParameters_?: T.TypeParameters | undefined) { return _fs(config, structItemBody, 'typeParameters', typeParameters_, fields.type_parameters); },
     body(body_?: T.FieldDeclarationList) { return _fs(config, structItemBody, 'body', body_, fields.body); },
     getChild() { return children[0]; },
-    setChild(child: (T.VisibilityModifier | T.WhereClause)) { return structItemBody({ ...(config ?? {}), children: [child] }); },
+    setChild(child: T.WhereClause) { return structItemBody({ ...(config ?? {}), children: [child] }); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -451,6 +453,7 @@ export function structItemBody(config: T.StructItemBodyConfig) {
 }
 export function structItemSemi(config: T.StructItemSemiConfig) {
   const fields = {
+    visibility_modifier: config?.visibilityModifier,
     name: config?.name,
     type_parameters: config?.typeParameters,
     body: config?.body,
@@ -462,11 +465,12 @@ export function structItemSemi(config: T.StructItemSemiConfig) {
     variant: 'semi' as const,
     fields,
     children,
+    visibilityModifier(visibilityModifier_?: T.VisibilityModifier | undefined) { return _fs(config, structItemSemi, 'visibilityModifier', visibilityModifier_, fields.visibility_modifier); },
     name(name_?: T._TypeIdentifier) { return _fs(config, structItemSemi, 'name', name_, fields.name); },
     typeParameters(typeParameters_?: T.TypeParameters | undefined) { return _fs(config, structItemSemi, 'typeParameters', typeParameters_, fields.type_parameters); },
     body(body_?: T.OrderedFieldDeclarationList) { return _fs(config, structItemSemi, 'body', body_, fields.body); },
     getChild() { return children[0]; },
-    setChild(child: (T.VisibilityModifier | T.WhereClause)) { return structItemSemi({ ...(config ?? {}), children: [child] }); },
+    setChild(child: T.WhereClause) { return structItemSemi({ ...(config ?? {}), children: [child] }); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -477,20 +481,18 @@ export function structItemSemi(config: T.StructItemSemiConfig) {
 }
 export function structItemSemi2(config: T.StructItemSemi2Config) {
   const fields = {
+    visibility_modifier: config?.visibilityModifier,
     name: config?.name,
     type_parameters: config?.typeParameters,
   };
-  const children = config?.children ?? [];
   return {
     type: 'struct_item' as const,
     named: true as const,
     variant: 'semi2' as const,
     fields,
-    children,
+    visibilityModifier(visibilityModifier_?: T.VisibilityModifier | undefined) { return _fs(config, structItemSemi2, 'visibilityModifier', visibilityModifier_, fields.visibility_modifier); },
     name(name_?: T._TypeIdentifier) { return _fs(config, structItemSemi2, 'name', name_, fields.name); },
     typeParameters(typeParameters_?: T.TypeParameters | undefined) { return _fs(config, structItemSemi2, 'typeParameters', typeParameters_, fields.type_parameters); },
-    getChild() { return children[0]; },
-    setChild(child: T.VisibilityModifier) { return structItemSemi2({ ...(config ?? {}), children: [child] }); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -938,6 +940,7 @@ export function implItemSemi(config: T.ImplItemSemiConfig) {
 
 export function traitItem(config: T.TraitItemConfig) {
   const fields = {
+    visibility_modifier: config?.visibilityModifier,
     name: config?.name,
     type_parameters: config?.typeParameters,
     bounds: config?.bounds,
@@ -949,12 +952,13 @@ export function traitItem(config: T.TraitItemConfig) {
     named: true as const,
     fields,
     children,
+    visibilityModifier(visibilityModifier_?: T.VisibilityModifier | undefined) { return _fs(config, traitItem, 'visibilityModifier', visibilityModifier_, fields.visibility_modifier); },
     name(name_?: T._TypeIdentifier) { return _fs(config, traitItem, 'name', name_, fields.name); },
     typeParameters(typeParameters_?: T.TypeParameters | undefined) { return _fs(config, traitItem, 'typeParameters', typeParameters_, fields.type_parameters); },
     bounds(bounds_?: T.TraitBounds | undefined) { return _fs(config, traitItem, 'bounds', bounds_, fields.bounds); },
     body(body_?: T.DeclarationList) { return _fs(config, traitItem, 'body', body_, fields.body); },
     getChild() { return children[0]; },
-    setChild(child: (T.VisibilityModifier | T.WhereClause)) { return traitItem({ ...(config ?? {}), children: [child] }); },
+    setChild(child: T.WhereClause) { return traitItem({ ...(config ?? {}), children: [child] }); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2756,15 +2760,11 @@ export function asyncBlock(config: T.AsyncBlockConfig) {
   const fields = {
     block: config?.block,
   };
-  const children = config?.children ?? [];
   return {
     type: 'async_block' as const,
     named: true as const,
     fields,
-    children,
-    block(block_?: "move" | undefined) { return _fs(config, asyncBlock, 'block', block_, fields.block); },
-    getChild() { return children[0]; },
-    setChild(child: T.Block) { return asyncBlock({ ...(config ?? {}), children: [child] }); },
+    block(block_?: T.Block) { return _fs(config, asyncBlock, 'block', block_, fields.block); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2778,15 +2778,11 @@ export function genBlock(config: T.GenBlockConfig) {
   const fields = {
     block: config?.block,
   };
-  const children = config?.children ?? [];
   return {
     type: 'gen_block' as const,
     named: true as const,
     fields,
-    children,
-    block(block_?: "move" | undefined) { return _fs(config, genBlock, 'block', block_, fields.block); },
-    getChild() { return children[0]; },
-    setChild(child: T.Block) { return genBlock({ ...(config ?? {}), children: [child] }); },
+    block(block_?: T.Block) { return _fs(config, genBlock, 'block', block_, fields.block); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);

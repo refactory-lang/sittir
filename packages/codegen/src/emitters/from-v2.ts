@@ -269,14 +269,16 @@ function emitBranchFrom(node: BranchLikeNode, nodeMap: NodeMap, intern: KindInte
     const inputType = `T.${node.typeName} | T.${node.fromInputTypeName}`
     lines.push(`export function ${fn}(input${opt}: ${inputType}) {`)
     if (fields.length > 0) {
-        // NodeData passthrough: Foo has a required `fields` property,
-        // the FromInput bag never declares one, so `'fields' in input`
-        // uniquely narrows the union — no generic type-guard needed.
-        // Pre-built NodeData (factory output, parsed readNode output,
-        // camelCase adapter output) is returned unchanged; fall-through
-        // is strictly the bag arm with typed camelCase field reads.
+        // Fluent-node passthrough: catches factory outputs (which carry
+        // `render()`/`toEdit()`/`replace()` methods) and short-circuits
+        // the reconstruction. `'render' in input` is the runtime marker
+        // that distinguishes a fluent factory output from a bare
+        // readNode NodeData — both have `.fields`, but only factory
+        // outputs have the method accessors. Bare readNode output
+        // falls through so validators / parser-driven callers can
+        // rebuild it through the factory.
         const passGuard = inputOptional ? 'input !== undefined && ' : ''
-        lines.push(`  if (${passGuard}'fields' in input) return input;`)
+        lines.push(`  if (${passGuard}'render' in input) return input;`)
         const neName = (f: AssembledField) => `_ne_${f.propertyName}`
         for (const f of fields) {
             if (f.nonEmpty && f.multiple) {
@@ -411,7 +413,7 @@ function emitPolymorphFrom(node: PolymorphFromNode, nodeMap: NodeMap, intern: Ki
     const inputType = `T.${node.typeName} | T.${node.fromInputTypeName}`
     const dispatcher = [
         `export function ${fn}(input?: ${inputType}) {`,
-        `  if (input !== undefined && 'fields' in input) return input;`,
+        `  if (input !== undefined && 'render' in input) return input;`,
         `  return ${factory}(input as ${configUnion});`,
         '}',
     ].join('\n')
@@ -520,12 +522,22 @@ function resolveFieldFromTypedInput(
 ): string {
     const slotType = `NonNullable<T.${parentTypeName}Config['${field.propertyName}']>`
     const typeParam = field.multiple ? `${slotType}[number]` : slotType
-    // Optional-chain the read only when the param itself is optional —
-    // a required input is never undefined at runtime and TS narrows it
-    // to the non-undefined arm, so `input.name` is the right access.
-    const access = inputOptional
-        ? `${sourceVar}?.${field.propertyName}`
-        : `${sourceVar}.${field.propertyName}`
+    // The input union `T.Foo | T.LooseFoo` has two structurally
+    // distinct shapes: a NodeData with `.fields[rawName]` (snake_case)
+    // and a loose bag with `.camelName` at the top level. Every field
+    // read emits a dual-access that tries the NodeData path first,
+    // then falls back to the camelCase bag property — BUT only when
+    // the field name doesn't collide with `AnyNodeData` metadata
+    // (`type`, `named`, `fields`, `children`, `text`). A field named
+    // `type` would otherwise resolve `input.type` to the NodeData
+    // discriminator string on the Foo arm.
+    const nodeDataShadowed = new Set(['type', 'named', 'fields', 'children', 'text'])
+    const optChain = inputOptional ? '?' : ''
+    const rawAccess = `(${sourceVar} as { readonly fields?: { readonly [k: string]: _FromFieldInput } })${optChain}.fields?.['${field.name}']`
+    const camelAccess = `(${sourceVar} as { readonly ${field.propertyName}?: _FromFieldInput })${optChain}.${field.propertyName}`
+    const access = nodeDataShadowed.has(field.propertyName)
+        ? rawAccess
+        : `(${rawAccess} ?? ${camelAccess})`
     return resolveFieldCall(access, field, nodeMap, typeParam, intern)
 }
 

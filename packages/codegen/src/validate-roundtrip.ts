@@ -58,9 +58,6 @@ export async function validateRoundTrip(
 	const config = parseYaml(templatesYaml) as RulesConfig;
 	const overrides = loadOverrides(grammar);
 	const rawEntries = loadRawEntries(grammar);
-	// Expand override field supertype specs (e.g. `_expression`) to the
-	// concrete subtype list from node-types.json so routing matches the
-	// kinds that actually show up at parse time.
 	const supertypeExpansion = new Map<string, string[]>();
 	for (const entry of rawEntries) {
 		if (entry.subtypes && entry.subtypes.length > 0) {

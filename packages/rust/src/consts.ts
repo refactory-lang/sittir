@@ -358,7 +358,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'whereClause', required: false, multiple: false },
   ],
   'async_block': [
-    { name: 'block', required: false, multiple: false },
+    { name: 'block', required: true, multiple: false },
   ],
   'attribute': [
     { name: 'value', required: false, multiple: false },
@@ -538,7 +538,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'returnType', required: false, multiple: false },
   ],
   'gen_block': [
-    { name: 'block', required: false, multiple: false },
+    { name: 'block', required: true, multiple: false },
   ],
   'generic_function': [
     { name: 'function', required: true, multiple: false },
@@ -751,6 +751,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'body', required: true, multiple: false },
   ],
   'struct_item': [
+    { name: 'visibilityModifier', required: false, multiple: false },
     { name: 'name', required: true, multiple: false },
     { name: 'typeParameters', required: false, multiple: false },
     { name: 'body', required: true, multiple: false },
@@ -773,6 +774,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'trait_bounds': [
   ],
   'trait_item': [
+    { name: 'visibilityModifier', required: false, multiple: false },
     { name: 'name', required: true, multiple: false },
     { name: 'typeParameters', required: false, multiple: false },
     { name: 'bounds', required: false, multiple: false },
