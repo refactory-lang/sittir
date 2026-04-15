@@ -158,14 +158,13 @@ export function link(raw: RawGrammar, include?: IncludeFilter): LinkedGrammar {
     // dropping it as an anonymous child the factory signature doesn't
     // know about.
     //
-    // Only runs when field inference is enabled — same gate as symbol
-    // name inference above. Skipped when the rule already carries a
-    // field with the same name (override pre-empts auto-promotion).
-    if (applyInferred) {
-        for (const [name, rule] of Object.entries(rules)) {
-            rules[name] = promoteOptionalKeywordFields(rule)
-        }
-    }
+    // Optional keyword-prefix promotion has moved to dsl/enrich.ts as
+    // an opt-in pre-Evaluate pass (spec 006). The generation runs
+    // earlier in the pipeline and produces the same field shape, so
+    // there's no work to do here. Override files that wrap their base
+    // grammar in `enrich(base)` get the promotion automatically;
+    // those that don't get the original un-promoted shape (the same
+    // behavior the legacy include filter `applyInferred=false` gave).
 
     // Tag visible choices with `variant` wrappers — names every branch
     // and dedupes structurally identical ones. Hidden choices already
@@ -1320,75 +1319,6 @@ function inferFieldNames(references: SymbolRef[]): Map<string, InferredName> {
  * whether the walker actually mutated anything (always false when
  * `apply` is false, true only when at least one wrap happened).
  */
-/**
- * Walk a rule tree and wrap `optional(keywordString)` seq members as
- * `field(keyword, 'keyword', source: 'inferred')`. This turns
- * anonymous prefix keywords (python's `async`, rust's `move`, etc.)
- * into first-class fields so factories carry them through the
- * camelCase config surface. The word-shape check isn't applied here
- * because Link doesn't have the grammar's `word` matcher available —
- * instead we gate on `/^[A-Za-z_][A-Za-z0-9_]*$/` (an identifier-shape
- * screen that matches keywords cross-grammar). Non-identifier-shape
- * strings like `,` / `;` / `::` stay as anonymous delimiters.
- *
- * Skips seq members inside an existing `field()` wrapper (the outer
- * field already owns the slot) and avoids name collisions with other
- * fields in the same seq.
- */
-function promoteOptionalKeywordFields(rule: Rule): Rule {
-    const isKeywordShape = (s: string): boolean => /^[A-Za-z_][A-Za-z0-9_]*$/.test(s)
-
-    const walk = (r: Rule, insideField: boolean): Rule => {
-        switch (r.type) {
-            case 'seq': {
-                // First pass: collect names already claimed by existing
-                // field() wrappers so auto-promotion doesn't clash.
-                const claimed = new Set<string>()
-                for (const m of r.members) {
-                    if (m.type === 'field') claimed.add(m.name)
-                }
-                const members = r.members.map(m => {
-                    // optional(keywordString) at a seq position →
-                    // field(keyword, keywordString, source: inferred)
-                    if (m.type === 'optional' && m.content.type === 'string') {
-                        const kw = m.content.value
-                        if (isKeywordShape(kw) && !claimed.has(kw)) {
-                            claimed.add(kw)
-                            return {
-                                type: 'optional',
-                                content: {
-                                    type: 'field',
-                                    name: kw,
-                                    content: { type: 'string', value: kw },
-                                    source: 'inferred',
-                                },
-                            } as Rule
-                        }
-                    }
-                    return walk(m, insideField)
-                })
-                return { ...r, members }
-            }
-            case 'choice':
-                return { ...r, members: r.members.map(m => walk(m, insideField)) }
-            case 'optional':
-            case 'repeat':
-            case 'repeat1':
-            case 'variant':
-            case 'clause':
-            case 'group':
-            case 'token':
-            case 'terminal':
-                return { ...r, content: walk((r as { content: Rule }).content, insideField) }
-            case 'field':
-                return { ...r, content: walk(r.content, true) }
-            default:
-                return r
-        }
-    }
-    return walk(rule, false)
-}
-
 function applyInferredFields(
     rule: Rule,
     ruleName: string,

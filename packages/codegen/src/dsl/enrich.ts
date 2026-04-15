@@ -19,11 +19,16 @@
  *      once in its parent rule and does not collide with an existing
  *      field name, wraps it as `field('kind', $.kind, source: 'inferred')`.
  *
- *   2. Keyword-prefix field promotion (both leading-string and
- *      optional(string) variants) — when a top-level seq member is an
- *      identifier-shaped string literal (or an `optional(...)` wrapper
- *      around one), wraps it as a named field using the literal text.
- *      Subsumes Link's `promoteOptionalKeywordFields`.
+ *   2. Optional keyword-prefix field promotion — when an
+ *      `optional(stringLiteral)` appears at any seq position (including
+ *      nested inside choice/optional/repeat wrappers) and the literal
+ *      is identifier-shaped, wraps it as `optional(field(kw, kw))`.
+ *      Subsumes Link's `promoteOptionalKeywordFields` exactly —
+ *      the bare leading-keyword case is intentionally NOT handled
+ *      because tree-sitter's parser-generator and sittir's
+ *      readNode/wrap pipeline both rely on the keyword being a plain
+ *      anonymous token (wrapping bare leading literals causes
+ *      cascading round-trip regressions).
  *
  * All passes are collision-aware: skip (with a stderr notification)
  * when the promotion would shadow an existing field name on the same
@@ -38,10 +43,11 @@
  *     promotion, usage thresholds) — violate mechanical-only principle.
  *   - Hidden-kind references (names starting with `_`) — those are
  *     sittir's alias/supertype convention and are resolved by Link.
+ *   - Bare leading string literals — see comment on pass 2 above.
  */
 
 import type {
-    Rule, SeqRule, SymbolRule, FieldRule, OptionalRule, StringRule,
+    Rule, SeqRule, SymbolRule, FieldRule, OptionalRule, StringRule, ChoiceRule,
 } from '../compiler/rule.ts'
 
 // Shape of the tree-sitter grammar result that our grammarFn produces.
@@ -59,12 +65,7 @@ type Pass = (g: GrammarResult) => GrammarResult
 
 const PASSES: readonly Pass[] = [
     kindToNamePass,
-    // keywordPrefixPass — disabled pending fidelity investigation.
-    // When enabled, rust regresses from ~50 to 99 round-trip failures
-    // and python from ~40 to 58. The wrapper produces field('async',
-    // 'async') shapes that downstream passes apparently don't handle
-    // as well as Link's post-Evaluate promoteOptionalKeywordFields.
-    // Restore this pass after the root cause is identified.
+    optionalKeywordPrefixPass,
 ]
 
 export function enrich(base: GrammarResult): GrammarResult {
@@ -154,57 +155,78 @@ function applyKindToName(ruleName: string, rule: Rule): Rule {
 }
 
 // ---------------------------------------------------------------------------
-// Pass 2 — keyword-prefix field promotion
+// Pass 2 — optional keyword-prefix field promotion
+//
+// 1:1 port of Link's promoteOptionalKeywordFields. Recursively walks
+// the rule tree; at every seq, looks for `optional(stringLiteral)`
+// members where the literal is identifier-shaped, and wraps the
+// literal as `field(kw, stringLiteral)`. The optional wrapper is
+// preserved so the field stays optional. Existing field names on
+// the same seq block the promotion (collision-aware).
+//
+// Why ONLY the optional variant? Wrapping bare leading string
+// literals (e.g. `seq('async', $.body)`) was tried and caused 99
+// round-trip regressions on rust + 58 on python — the cascading
+// effect on Link/Optimize/Assemble/Emit is non-trivial and the
+// resulting parse trees diverge from what tree-sitter's base parser
+// produces. The optional variant is the conservative subset that
+// matches Link's pre-existing behavior exactly.
 // ---------------------------------------------------------------------------
 
-function keywordPrefixPass(g: GrammarResult): GrammarResult {
-    return mapRules(g, applyKeywordPrefix)
+function optionalKeywordPrefixPass(g: GrammarResult): GrammarResult {
+    return mapRules(g, (ruleName, rule) => walkOptionalKeyword(ruleName, rule))
 }
 
-function applyKeywordPrefix(ruleName: string, rule: Rule): Rule {
-    if (rule.type !== 'seq') return rule
-
-    const existingFields = collectFieldNames(rule)
-    let changed = false
-
-    const newMembers = rule.members.map((m): Rule => {
-        // Case A: bare string literal `seq('async', ...)`
-        if (m.type === 'string') {
-            const s = m as StringRule
-            if (!isIdentifierShaped(s.value)) return m
-            if (existingFields.has(s.value)) {
-                reportSkip('keyword-prefix', ruleName, `field '${s.value}' already exists`)
-                return m
+function walkOptionalKeyword(ruleName: string, rule: Rule): Rule {
+    switch (rule.type) {
+        case 'seq': {
+            const seq = rule as SeqRule
+            // First pass: collect names already claimed by existing
+            // field() wrappers so promotion doesn't clash.
+            const claimed = new Set<string>()
+            for (const m of seq.members) {
+                if (m.type === 'field') claimed.add(m.name)
             }
-            existingFields.add(s.value)
-            changed = true
-            return wrapAsField(s.value, s)
+            const members = seq.members.map((m): Rule => {
+                // optional(stringLiteral) → optional(field(kw, stringLiteral))
+                if (m.type === 'optional') {
+                    const inner = (m as OptionalRule).content
+                    if (inner.type === 'string') {
+                        const kw = (inner as StringRule).value
+                        if (isIdentifierShaped(kw)) {
+                            if (claimed.has(kw)) {
+                                reportSkip('optional-keyword-prefix', ruleName, `field '${kw}' already exists`)
+                                return m
+                            }
+                            claimed.add(kw)
+                            return {
+                                type: 'optional',
+                                content: wrapAsField(kw, inner),
+                            } satisfies OptionalRule
+                        }
+                    }
+                }
+                return walkOptionalKeyword(ruleName, m)
+            })
+            return { type: 'seq', members } satisfies SeqRule
         }
-
-        // Case B: `optional(stringLiteral)` — subsumes Link's
-        // promoteOptionalKeywordFields.
-        if (m.type === 'optional') {
-            const inner = (m as OptionalRule).content
-            if (inner.type !== 'string') return m
-            const s = inner as StringRule
-            if (!isIdentifierShaped(s.value)) return m
-            if (existingFields.has(s.value)) {
-                reportSkip('optional-keyword-prefix', ruleName, `field '${s.value}' already exists`)
-                return m
-            }
-            existingFields.add(s.value)
-            changed = true
+        case 'choice': {
+            const ch = rule as ChoiceRule
             return {
-                type: 'optional',
-                content: wrapAsField(s.value, s),
-            } satisfies OptionalRule
+                type: 'choice',
+                members: ch.members.map(m => walkOptionalKeyword(ruleName, m)),
+            } satisfies ChoiceRule
         }
-
-        return m
-    })
-
-    if (!changed) return rule
-    return { type: 'seq', members: newMembers } satisfies SeqRule
+        case 'optional':
+        case 'repeat':
+        case 'repeat1':
+        case 'field': {
+            const r = rule as { content: Rule }
+            return { ...rule, content: walkOptionalKeyword(ruleName, r.content) } as Rule
+        }
+        default:
+            return rule
+    }
 }
 
 // ---------------------------------------------------------------------------
