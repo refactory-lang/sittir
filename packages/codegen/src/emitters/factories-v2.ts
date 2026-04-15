@@ -27,97 +27,11 @@ export function emitFactoriesFromNodeMap(config: EmitFactoriesFromNodeMapConfig)
     ]
 
     // Collect type imports — only for nodes that will emit a factory
-    // and whose typeName is a valid TS identifier. Each contributes
-    // the concrete interface (`<TypeName>`), the tree-node alias
-    // (`<TypeName>Tree`), and the config alias (`<TypeName>Config`)
-    // — emitter call sites use the named alias rather than the
-    // generic `ConfigOf<T>` for readability. Polymorph forms add
-    // their own per-form interfaces and Config aliases.
-    const typeImports = new Set<string>()
-    const isValidIdent = (s: string) => /^[A-Za-z_$][\w$]*$/.test(s)
-    for (const [kind, node] of nodeMap.nodes) {
-        if (kind.startsWith('_')) continue
-        if (!node.factoryName) continue
-        if (!node.typeName || !isValidIdent(node.typeName)) continue
-        typeImports.add(node.typeName)
-        typeImports.add(node.treeTypeName)
-        // Branches / containers / polymorphs / groups carry a Config
-        // alias the factory references. Leaves / keywords / enums
-        // / supertypes / tokens don't have one.
-        if (
-            node.modelType === 'branch'
-            || node.modelType === 'container'
-            || node.modelType === 'polymorph'
-            || node.modelType === 'group'
-        ) {
-            typeImports.add(node.configTypeName)
-        }
-        if (node.modelType === 'polymorph') {
-            for (const form of node.forms) {
-                if (isValidIdent(form.typeName)) {
-                    typeImports.add(form.typeName)
-                    typeImports.add(form.configTypeName)
-                }
-            }
-        }
-    }
-    // Collect element types referenced by multi-valued fields on
-    // factory nodes. These may resolve to supertypes or hidden kinds
-    // that don't have factories (and therefore aren't captured above)
-    // but whose TypeName appears directly in the setter signatures now
-    // that we emit concrete element types instead of
-    // `NonNullable<Config['field']>`.
-    for (const [kind, node] of nodeMap.nodes) {
-        if (kind.startsWith('_')) continue
-        if (!node.factoryName) continue
-        const fields =
-            node.modelType === 'branch' ? node.fields :
-            node.modelType === 'group' ? node.fields :
-            node.modelType === 'polymorph' ? node.forms.flatMap(f => f.fields) :
-            []
-        for (const f of fields) {
-            // Both multi-valued and singular fields now emit the concrete
-            // element type in setter signatures (e.g. `LineComment.outer`
-            // → `"/"`, `FunctionItem.body` → `Block`). Any referenced
-            // TypeName — including hidden kinds that no longer have their
-            // own factory — must be imported.
-            for (const t of f.contentTypes) {
-                const refNode = nodeMap.nodes.get(t)
-                if (refNode && isValidIdent(refNode.typeName)) {
-                    typeImports.add(refNode.typeName)
-                }
-            }
-        }
-        // Also collect element types for children slots — container
-        // factories now emit the concrete element type union instead
-        // of `ChildOf<X>`.
-        const childrenSlots =
-            node.modelType === 'branch' ? (node.children ?? []) :
-            node.modelType === 'container' ? node.children :
-            node.modelType === 'group' ? node.children :
-            node.modelType === 'polymorph' ? node.forms.flatMap(f => f.children) :
-            []
-        for (const c of childrenSlots) {
-            for (const t of c.contentTypes) {
-                const refNode = nodeMap.nodes.get(t)
-                if (refNode && isValidIdent(refNode.typeName)) {
-                    typeImports.add(refNode.typeName)
-                }
-            }
-        }
-    }
-    typeImports.add('ConfigMap')
-    typeImports.add('KindMap')
-    // Emit the type import multi-line so the file isn't dominated by
-    // a single ~10kB line. One name per line (sorted) keeps diffs
-    // and reviews readable; tsgo / tsc treat multi-line and inline
-    // imports identically.
-    const sortedImports = [...typeImports].sort()
-    lines.push(`import type {`)
-    for (const name of sortedImports) {
-        lines.push(`  ${name},`)
-    }
-    lines.push(`} from './types.js';`)
+    // Types are pulled in through a single namespace-type import —
+    // every reference in the emitted body is written as `T.<TypeName>`,
+    // `T.<TypeName>Config`, `T.<TypeName>Tree`, `T.ConfigMap`, etc.
+    // One line replaces what used to be hundreds of per-symbol entries.
+    lines.push(`import type * as T from './types.js';`)
     // `ConfigOf<T>` and `ChildOf<T>` are no longer needed at use sites —
     // factories reference generated `${typeName}Config` aliases and emit
     // concrete element type unions directly. `NonEmptyArray<T>` and
@@ -289,9 +203,9 @@ export function emitFactoriesFromNodeMap(config: EmitFactoriesFromNodeMapConfig)
     lines.push('export type FluentKindMap = {')
     for (const { kind, typeName, fluent } of mapEntries) {
         if (fluent) {
-            lines.push(`  ${JSON.stringify(kind)}: FluentNode<${JSON.stringify(kind)}, ${typeName}Config>;`)
+            lines.push(`  ${JSON.stringify(kind)}: FluentNode<${JSON.stringify(kind)}, T.${typeName}Config>;`)
         } else {
-            lines.push(`  ${JSON.stringify(kind)}: ${typeName};`)
+            lines.push(`  ${JSON.stringify(kind)}: T.${typeName};`)
         }
     }
     lines.push('};')
@@ -423,7 +337,7 @@ function childElementType(node: { children: readonly AssembledChild[] }, nodeMap
             const ref = nodeMap.nodes.get(t)
             if (!ref) { parts.add(JSON.stringify(t)); continue }
             const name = ref.typeName
-            parts.add(/^[A-Za-z_$][\w$]*$/.test(name) ? name : JSON.stringify(t))
+            parts.add(/^[A-Za-z_$][\w$]*$/.test(name) ? `T.${name}` : JSON.stringify(t))
         }
     }
     if (parts.size === 0) return 'never'
@@ -441,7 +355,7 @@ function fieldElementType(f: AssembledField, nodeMap: NodeMap): string {
         const node = nodeMap.nodes.get(t)
         if (!node) return JSON.stringify(t)
         const name = node.typeName
-        return /^[A-Za-z_$][\w$]*$/.test(name) ? name : JSON.stringify(t)
+        return /^[A-Za-z_$][\w$]*$/.test(name) ? `T.${name}` : JSON.stringify(t)
     })
     return [...new Set(parts)].join(' | ')
 }
@@ -469,7 +383,7 @@ function emitFieldCarryingFactory(
     // runtime value matches what tree-sitter produces.
     const typeKind = node.parentKind ?? node.kind
     const lines: string[] = []
-    lines.push(`export function ${fn}(config${opt}: ${node.typeName}Config) {`)
+    lines.push(`export function ${fn}(config${opt}: T.${node.typeName}Config) {`)
 
     if (hasFields) {
         lines.push('  const fields = {')
@@ -630,7 +544,7 @@ function emitPolymorphFactory(node: PolymorphNode, nodeMap: NodeMap): string {
 
     if (forms.length === 0) {
         // Defensive stub — shouldn't happen after classifier fix.
-        return `export function ${fn}(_config?: unknown) { return { type: '${node.kind}' as const, named: true as const, render() { return render(this); }, toEdit(s: number | ByteRange, e?: number) { return typeof s === 'number' ? toEdit(this, s, e!) : toEdit(this, s); }, replace(t: ${node.treeTypeName}) { const r = t.range(); return toEdit(this, r); } }; }`
+        return `export function ${fn}(_config?: unknown) { return { type: '${node.kind}' as const, named: true as const, render() { return render(this); }, toEdit(s: number | ByteRange, e?: number) { return typeof s === 'number' ? toEdit(this, s, e!) : toEdit(this, s); }, replace(t: T.${node.treeTypeName}) { const r = t.range(); return toEdit(this, r); } }; }`
     }
 
     const lines: string[] = []
@@ -638,7 +552,7 @@ function emitPolymorphFactory(node: PolymorphNode, nodeMap: NodeMap): string {
     // inline union (rather than `ConfigOf<T>` over a union T) is what
     // lets TypeScript narrow via `'field' in config` — distributive
     // `ConfigOf` over union members doesn't narrow the same way.
-    const configUnion = forms.map(f => `${f.typeName}Config`).join(' | ')
+    const configUnion = forms.map(f => `T.${f.typeName}Config`).join(' | ')
     // `config` is only optional when EVERY form has every field AND
     // every child slot optional.
     const anyFormHasRequired = forms.some(f =>
@@ -667,9 +581,9 @@ function emitPolymorphFactory(node: PolymorphNode, nodeMap: NodeMap): string {
             const checks = form.fields
                 .map(f => `'${f.propertyName}' in config`)
                 .join(' && ')
-            lines.push(`  if (config && ${checks}) return ${form.rawFactoryName!}(config as ${form.typeName}Config);`)
+            lines.push(`  if (config && ${checks}) return ${form.rawFactoryName!}(config as T.${form.typeName}Config);`)
         }
-        lines.push(`  return ${fallback.rawFactoryName!}(config as ${fallback.typeName}Config);`)
+        lines.push(`  return ${fallback.rawFactoryName!}(config as T.${fallback.typeName}Config);`)
     } else {
         lines.push(`  return ${forms[0]!.rawFactoryName!}(config);`)
     }
@@ -709,7 +623,7 @@ function emitTextFactory(
         `    text: ${textExpr},`,
         `    render: () => ${textExpr},`,
         `    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: ${textExpr} } : { startPos: s.start.index, endPos: s.end.index, insertedText: ${textExpr} },`,
-        `    replace: (t: ${node.treeTypeName}) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: ${textExpr} }; },`,
+        `    replace: (t: T.${node.treeTypeName}) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: ${textExpr} }; },`,
         '  };',
         '}',
     )
@@ -735,6 +649,6 @@ function factorySuffix(treeTypeName: string): string[] {
         `      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);`,
         `      return toEdit(this, startOrRange);`,
         `    },`,
-        `    replace(target: ${treeTypeName}) { const r = target.range(); return toEdit(this, r); },`,
+        `    replace(target: T.${treeTypeName}) { const r = target.range(); return toEdit(this, r); },`,
     ]
 }

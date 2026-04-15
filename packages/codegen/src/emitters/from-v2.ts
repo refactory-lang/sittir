@@ -77,43 +77,33 @@ export function emitFromNodeMap(config: EmitFromNodeMapConfig): string {
         '',
     ]
 
-    // Collect imports — factories + types for every node that will emit
-    // a from() binding. Polymorph forms contribute their own factories/
-    // types because they're inlined by the parent polymorph's emission.
+    // Collect factory imports — types come in through a single
+    // namespace-type import (`import type * as T from './types.js'`)
+    // below, so per-name type listing isn't needed. Every type
+    // reference in the emitted body is prefixed with `T.`.
     const factoryImports = new Set<string>()
-    const typeImports = new Set<string>()
 
     for (const [kind, node] of nodeMap.nodes) {
         if (kind.startsWith('_')) continue
         if (!node.factoryName) continue
         if (node.modelType === 'branch' || node.modelType === 'container' || node.modelType === 'polymorph') {
             factoryImports.add(node.rawFactoryName!)
-            typeImports.add(node.typeName)
-            typeImports.add(node.configTypeName)
-            typeImports.add(node.fromInputTypeName)
             if (node.modelType === 'polymorph') {
                 for (const form of node.forms) {
                     factoryImports.add(form.rawFactoryName!)
-                    typeImports.add(form.typeName)
                 }
             }
         }
         if (node.modelType === 'leaf' || node.modelType === 'keyword' || node.modelType === 'enum') {
             factoryImports.add(node.rawFactoryName!)
-            typeImports.add(node.typeName)
         }
     }
 
     lines.push(`import { ${[...factoryImports].sort().join(', ')} } from './factories.js';`)
-    // Multi-line import — see factories-v2.ts for rationale (a single
-    // ~10kB line is unreadable in the generated file).
-    const sortedImports = [...typeImports].sort()
-    lines.push(`import type {`)
-    for (const name of sortedImports) {
-        lines.push(`  ${name},`)
-    }
-    lines.push(`} from './types.js';`)
-    lines.push("import type { AnyNodeData, ConfigOf, FromInputOf, NodeFieldValue } from '@sittir/types';")
+    // Namespace import collapses hundreds of per-type lines into one.
+    // Every type reference in the emitted body uses the `T.` prefix.
+    lines.push(`import type * as T from './types.js';`)
+    lines.push("import type { AnyNodeData, FromInputOf, NodeFieldValue } from '@sittir/types';")
     lines.push('')
 
     // ------------------------------------------------------------------
@@ -270,7 +260,7 @@ function emitBranchFrom(node: BranchLikeNode, nodeMap: NodeMap, intern: KindInte
     // accessor methods (render, toEdit, replace, per-field getters/
     // setters) flow through. Annotating with the bare interface name
     // `${typeName}` loses the methods and fails assignability.
-    lines.push(`export function ${fn}(input${opt}: ${node.fromInputTypeName}) {`)
+    lines.push(`export function ${fn}(input${opt}: T.${node.fromInputTypeName}) {`)
     if (fields.length > 0) {
         // `input` may be either loose ConfigOf-style (camelCase top-level
         // keys) or a parsed NodeData (snake_case keys under `fields`).
@@ -314,7 +304,7 @@ function emitBranchFrom(node: BranchLikeNode, nodeMap: NodeMap, intern: KindInte
         // `children` value narrows to match `ConfigOf<T>['children']`
         // rather than widening to `readonly unknown[]`.
         if (childSlots.length > 0) {
-            const childType = `NonNullable<ConfigOf<${typeName}>['children']>`
+            const childType = `NonNullable<T.${typeName}Config['children']>`
             lines.push(`    children: ((input as { children?: ${childType} })?.children ?? []) as ${childType},`)
         }
         lines.push('  });')
@@ -340,8 +330,8 @@ interface ContainerFromNode {
 function emitContainerFrom(node: ContainerFromNode): string {
     const fn = node.fromFunctionName!
     const factory = node.rawFactoryName!
-    const typeName = node.typeName
-    const childType = `NonNullable<ConfigOf<${typeName}>['children']>`
+    const tName = `T.${node.typeName}`
+    const childType = `NonNullable<T.${node.typeName}Config['children']>`
     const elementType = `${childType}[number]`
     // Singular-child containers take one positional arg (`child?: T`);
     // repeated-child containers take `...children: T[]`. The from
@@ -350,9 +340,9 @@ function emitContainerFrom(node: ContainerFromNode): string {
     const childrenMultiple = node.children.some(c => c.multiple)
     if (childrenMultiple) {
         return [
-            `export function ${fn}(...input: readonly (${elementType} | ${typeName})[]) {`,
+            `export function ${fn}(...input: readonly (${elementType} | ${tName})[]) {`,
             `  if (input.length === 1 && isNodeData(input[0]) && input[0].type === '${node.kind}') {`,
-            `    const data = input[0] as ${typeName};`,
+            `    const data = input[0] as ${tName};`,
             `    return ${factory}(...(data.children as ${childType}));`,
             `  }`,
             `  return ${factory}(...(input as ${childType}));`,
@@ -365,9 +355,9 @@ function emitContainerFrom(node: ContainerFromNode): string {
     // "indexed access on a non-null tuple" through ConfigOf without
     // pushing casts downstream.
     return [
-        `export function ${fn}(input?: ${elementType} | ${typeName}) {`,
+        `export function ${fn}(input?: ${elementType} | ${tName}) {`,
         `  if (isNodeData(input) && input.type === '${node.kind}') {`,
-        `    const data = input as ${typeName};`,
+        `    const data = input as ${tName};`,
         `    return ${factory}((data.children as ${childType})[0] as ${elementType});`,
         `  }`,
         `  return ${factory}(input as ${elementType});`,
@@ -400,7 +390,7 @@ function emitPolymorphFrom(node: PolymorphFromNode, nodeMap: NodeMap, intern: Ki
     // `ConfigOf<FormN> | ...` union rather than `Parameters<typeof fn>[0]`
     // because grammar kinds named `Parameters` would shadow TypeScript's
     // built-in `Parameters<T>`.
-    const configUnion = node.forms.map(f => `ConfigOf<${f.typeName}>`).join(' | ')
+    const configUnion = node.forms.map(f => `T.${f.typeName}Config`).join(' | ')
     // The polymorph factory takes the strict config-union but `input` is
     // a FromInputOf (loose widening). A runtime field-presence check
     // inside the factory handles the dispatch. The config-union cast is
@@ -409,7 +399,7 @@ function emitPolymorphFrom(node: PolymorphFromNode, nodeMap: NodeMap, intern: Ki
     // `Parameters<typeof fn>[0]` because grammar kinds named `Parameters`
     // would shadow TypeScript's built-in `Parameters<T>`.
     const dispatcher = [
-        `export function ${fn}(input?: ${node.fromInputTypeName}) {`,
+        `export function ${fn}(input?: T.${node.fromInputTypeName}) {`,
         `  return ${factory}(input as ${configUnion});`,
         '}',
     ].join('\n')
@@ -427,7 +417,7 @@ function emitPolymorphFrom(node: PolymorphFromNode, nodeMap: NodeMap, intern: Ki
             form.fields.some(fd => fd.required) ||
             form.children.some(c => c.required) ? '' : '?'
         const fLines: string[] = []
-        fLines.push(`export function ${formFn}(input${formOpt}: ConfigOf<${form.typeName}>) {`)
+        fLines.push(`export function ${formFn}(input${formOpt}: T.${form.typeName}Config) {`)
         if (form.fields.length > 0) {
             // Same dual-shape reader as branch from — see comment in
             // emitBranchFrom for the `object` widening rationale.
@@ -472,7 +462,7 @@ function emitStringLikeFrom(node: LeafFromNode): string {
         ? `input as ${node.enumValues.map(v => `'${escForSource(v)}'`).join(' | ')}`
         : `input as string`
     return [
-        `export function ${fn}(input: string | ${node.typeName}) {`,
+        `export function ${fn}(input: string | T.${node.typeName}) {`,
         `  if (isNodeData(input)) return input;`,
         `  return ${factory}(${cast});`,
         '}',
@@ -487,7 +477,7 @@ function emitKeywordFrom(node: LeafFromNode): string {
     const fn = node.fromFunctionName!
     const factory = node.rawFactoryName!
     return [
-        `export function ${fn}(input?: ${node.typeName}) {`,
+        `export function ${fn}(input?: T.${node.typeName}) {`,
         `  if (isNodeData(input)) return input;`,
         `  return ${factory}();`,
         '}',
@@ -512,7 +502,7 @@ function resolveFieldFromLooseInput(
     // For `_resolveMany<T>` (repeated fields) the slot is already an
     // array, so T must be the element type — otherwise the return
     // shape is `readonly (readonly T[])[]`, an array of arrays.
-    const slotType = `NonNullable<ConfigOf<${parentTypeName}>['${field.propertyName}']>`
+    const slotType = `NonNullable<T.${parentTypeName}Config['${field.propertyName}']>`
     const typeParam = field.multiple ? `${slotType}[number]` : slotType
     // Accept both shapes for every field read: raw (snake_case) name
     // when the caller passed a parsed NodeData's `fields`, and
