@@ -67,7 +67,7 @@ export function emitTypeTestsFromNodeMap(config: EmitTypeTestsFromNodeMapConfig)
         typeImports.add(s.typeName)
         typeImports.add(`${s.typeName}Config`)
         typeImports.add(`${s.typeName}Tree`)
-        typeImports.add(`${s.typeName}FromInput`)
+        typeImports.add(`Loose${s.typeName}`)
     }
     for (const l of leafKinds) {
         typeImports.add(l.typeName)

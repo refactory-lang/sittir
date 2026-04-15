@@ -40,22 +40,25 @@ const FACTORY_MODULE_PATHS: Record<string, string> = {
 };
 
 /**
- * Runtime camelCase adapter for readNode output. from() emits typed
- * camelCase field reads (`input.returnType`), but readNode returns
- * NodeData with snake_case keys under `.fields.return_type`. This
- * adapter spreads each `.fields` entry as a top-level camelCase key
- * so the typed bag reads resolve. Kept in the validator (not in from)
- * because from() otherwise stays a clean per-kind typed function.
+ * Runtime camelCase adapter for readNode output. from() accepts either
+ * a pre-built NodeData (distinguished by the `'fields' in input`
+ * passthrough) OR a pure camelCase bag that flows through the factory
+ * reconstruction path. The validator wants the reconstruction path
+ * (so it can structurally compare the from() output against a fresh
+ * factory result), so the adapter emits a BAG — no `type`, no
+ * `fields`, no NodeData metadata — just camelCase field keys and an
+ * optional `children` slot. That ensures `'fields' in bag` is false.
  */
-function toCamelCaseAdapter(data: AnyNodeData): AnyNodeData & Record<string, unknown> {
-	const camelFields: Record<string, unknown> = {};
+function toCamelCaseAdapter(data: AnyNodeData): Record<string, unknown> {
+	const bag: Record<string, unknown> = {};
 	if (data.fields) {
 		for (const [k, v] of Object.entries(data.fields)) {
 			const camel = k.replace(/_([a-z])/g, (_, c: string) => c.toUpperCase());
-			camelFields[camel] = v;
+			bag[camel] = v;
 		}
 	}
-	return { ...data, ...camelFields };
+	if (data.children) bag.children = data.children;
+	return bag;
 }
 
 // ---------------------------------------------------------------------------
@@ -198,20 +201,32 @@ export async function validateFrom(
 			const readData = readNode(handle, node1.id, routing);
 
 			try {
-				// Adapt readNode output by spreading `.fields` entries
-				// as top-level camelCase keys — satisfies from()'s typed
-				// field reads AND the factory's config reads in one
-				// small runtime transform. No wrap module, no getters,
-				// no tree-handle dependency.
-				const adapted = toCamelCaseAdapter(readData);
-				const fromResult = fromMap[kind]!(adapted) as AnyNodeData;
+				// Dispatch by node shape to the right call convention:
+				//   - leaf (text, no fields) → pass the text string
+				//   - container (children, no fields) → spread children
+				//     as rest params (factories take `(...kids: T[])`)
+				//   - branch / polymorph (fields) → pass a camelCase bag
+				// Both fromMap and factoryMap receive the same shape.
+				let adapted: unknown;
+				let isContainer = false;
+				if (readData.fields) {
+					adapted = toCamelCaseAdapter(readData);
+				} else if (readData.text !== undefined) {
+					adapted = readData.text;
+				} else if (readData.children) {
+					adapted = readData.children;
+					isContainer = true;
+				} else {
+					adapted = toCamelCaseAdapter(readData);
+				}
+				const fromResult = (isContainer
+					? (fromMap[kind]! as (...args: unknown[]) => AnyNodeData)(...(adapted as unknown[]))
+					: fromMap[kind]!(adapted as object) as AnyNodeData);
 				let factoryResult: AnyNodeData;
 				try {
-					if (!readData.fields && readData.children) {
-						factoryResult = (factoryMap[kind]! as (...args: unknown[]) => AnyNodeData)(...readData.children);
-					} else {
-						factoryResult = factoryMap[kind]!(adapted) as AnyNodeData;
-					}
+					factoryResult = (isContainer
+						? (factoryMap[kind]! as (...args: unknown[]) => AnyNodeData)(...(adapted as unknown[]))
+						: factoryMap[kind]!(adapted as never) as AnyNodeData);
 				} catch {
 					skip++;
 					continue;

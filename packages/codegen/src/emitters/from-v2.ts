@@ -261,22 +261,22 @@ function emitBranchFrom(node: BranchLikeNode, nodeMap: NodeMap, intern: KindInte
     // setters) flow through. Annotating with the bare interface name
     // `${typeName}` loses the methods and fails assignability.
     const inputOptional = opt === '?'
-    lines.push(`export function ${fn}(input${opt}: T.${node.fromInputTypeName}) {`)
+    // Accept either a pre-built NodeData (`T.Foo`, with snake_case
+    // `.fields`) or the loose camelCase FromInput bag. The top-level
+    // `FromInputOf<T>` alias itself never includes the node arm —
+    // only nested branch-slot values do via WidenValue — so we add
+    // the union explicitly at the public signature.
+    const inputType = `T.${node.typeName} | T.${node.fromInputTypeName}`
+    lines.push(`export function ${fn}(input${opt}: ${inputType}) {`)
     if (fields.length > 0) {
-        // Fluent-node passthrough: if the caller already holds a
-        // factory-built node (fluent accessors + `render`/`toEdit`/
-        // `replace` methods), return it unchanged. The `'render' in
-        // input` check uniquely identifies fluent outputs — bare
-        // readNode NodeData has no method, so validators and
-        // parser-driven callers fall through to the factory
-        // reconstruction path below.
-        const renderGuard = inputOptional ? 'input !== undefined && ' : ''
-        lines.push(`  if (${renderGuard}'render' in input) return input;`)
-        // After the fluent passthrough, `input` is the FromInputOf
-        // camelCase bag arm. Read field properties directly — typed,
-        // no widening cast needed. Bare readNode NodeData must be
-        // wrapped (via `wrapNode`) before reaching here; wrapped nodes
-        // expose camelCase getters that structurally satisfy this bag.
+        // NodeData passthrough: Foo has a required `fields` property,
+        // the FromInput bag never declares one, so `'fields' in input`
+        // uniquely narrows the union — no generic type-guard needed.
+        // Pre-built NodeData (factory output, parsed readNode output,
+        // camelCase adapter output) is returned unchanged; fall-through
+        // is strictly the bag arm with typed camelCase field reads.
+        const passGuard = inputOptional ? 'input !== undefined && ' : ''
+        lines.push(`  if (${passGuard}'fields' in input) return input;`)
         const neName = (f: AssembledField) => `_ne_${f.propertyName}`
         for (const f of fields) {
             if (f.nonEmpty && f.multiple) {
@@ -362,6 +362,7 @@ function emitContainerFrom(node: ContainerFromNode): string {
 
 interface PolymorphFromNode {
     readonly kind: string
+    readonly typeName: string
     readonly fromInputTypeName: string
     readonly rawFactoryName?: string
     readonly fromFunctionName?: string
@@ -382,15 +383,18 @@ function emitPolymorphFrom(node: PolymorphFromNode, nodeMap: NodeMap, intern: Ki
     // because grammar kinds named `Parameters` would shadow TypeScript's
     // built-in `Parameters<T>`.
     const configUnion = node.forms.map(f => `T.${f.typeName}Config`).join(' | ')
-    // The polymorph factory takes the strict config-union but `input` is
-    // a FromInputOf (loose widening). A runtime field-presence check
-    // inside the factory handles the dispatch. The config-union cast is
-    // a single direct `as` — no `unknown` bridge required. We spell the
-    // target as the literal `ConfigOf<FormN> | ...` union rather than
-    // `Parameters<typeof fn>[0]` because grammar kinds named `Parameters`
-    // would shadow TypeScript's built-in `Parameters<T>`.
+    // Same NodeData-or-bag union as branches — polymorph forms are
+    // node interfaces with `fields`, so `'fields' in input` narrows
+    // to a pre-built form and short-circuits the factory dispatch.
+    // The config-union cast on the fall-through path is a direct `as`
+    // — no `unknown` bridge. We spell the union as the literal
+    // `ConfigOf<FormN> | ...` rather than `Parameters<typeof fn>[0]`
+    // because grammar kinds named `Parameters` would shadow
+    // TypeScript's built-in `Parameters<T>`.
+    const inputType = `T.${node.typeName} | T.${node.fromInputTypeName}`
     const dispatcher = [
-        `export function ${fn}(input?: T.${node.fromInputTypeName}) {`,
+        `export function ${fn}(input?: ${inputType}) {`,
+        `  if (input !== undefined && 'fields' in input) return input;`,
         `  return ${factory}(input as ${configUnion});`,
         '}',
     ].join('\n')

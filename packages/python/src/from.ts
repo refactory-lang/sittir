@@ -349,8 +349,8 @@ export function importPrefixFrom(input: string | T.ImportPrefix) {
   return importPrefix(input as string);
 }
 
-export function relativeImportFrom(input: T.RelativeImportFromInput) {
-  if ('render' in input) return input;
+export function relativeImportFrom(input: T.RelativeImport | T.LooseRelativeImport) {
+  if ('fields' in input) return input;
   return relativeImport({
     importPrefix: _resolveOneLeaf<NonNullable<T.RelativeImportConfig['importPrefix']>>(input.importPrefix, "import_prefix"),
     dottedName: _resolveOneBranch<NonNullable<T.RelativeImportConfig['dottedName']>>(input.dottedName, "dotted_name"),
@@ -365,32 +365,32 @@ export function futureImportStatementFrom(input?: NonNullable<T.FutureImportStat
   return futureImportStatement(input as NonNullable<T.FutureImportStatementConfig['children']>[number]);
 }
 
-export function importFromStatementFrom(input: T.ImportFromStatementFromInput) {
-  if ('render' in input) return input;
+export function importFromStatementFrom(input: T.ImportFromStatement | T.LooseImportFromStatement) {
+  if ('fields' in input) return input;
   return importFromStatement({
     moduleName: _resolveOne<NonNullable<T.ImportFromStatementConfig['moduleName']>>(input.moduleName, _K0, _K1),
     wildcardImport: _resolveOneBranch<NonNullable<T.ImportFromStatementConfig['wildcardImport']>>(input.wildcardImport, "_import_list"),
   });
 }
 
-export function aliasedImportFrom(input: T.AliasedImportFromInput) {
-  if ('render' in input) return input;
+export function aliasedImportFrom(input: T.AliasedImport | T.LooseAliasedImport) {
+  if ('fields' in input) return input;
   return aliasedImport({
     name: _resolveOneBranch<NonNullable<T.AliasedImportConfig['name']>>(input.name, "dotted_name"),
     alias: _resolveOneLeaf<NonNullable<T.AliasedImportConfig['alias']>>(input.alias, "identifier"),
   });
 }
 
-export function printStatementFrom(input: T.PrintStatementFromInput) {
-  if ('render' in input) return input;
+export function printStatementFrom(input: T.PrintStatement | T.LoosePrintStatement) {
+  if ('fields' in input) return input;
   return printStatement({
     argument: _resolveMany<NonNullable<T.PrintStatementConfig['argument']>[number]>(input.argument, _K0, _super_expression),
     children: (input.children ?? []) as NonNullable<T.PrintStatementConfig['children']>,
   });
 }
 
-export function chevronFrom(input: T.ChevronFromInput) {
-  if ('render' in input) return input;
+export function chevronFrom(input: T.Chevron | T.LooseChevron) {
+  if ('fields' in input) return input;
   return chevron({
     expression: _resolveOne<NonNullable<T.ChevronConfig['expression']>>(input.expression, _K0, _super_expression),
   });
@@ -412,8 +412,8 @@ export function expressionStatementFrom(...input: readonly (NonNullable<T.Expres
   return expressionStatement(...(input as NonNullable<T.ExpressionStatementConfig['children']>));
 }
 
-export function namedExpressionFrom(input: T.NamedExpressionFromInput) {
-  if ('render' in input) return input;
+export function namedExpressionFrom(input: T.NamedExpression | T.LooseNamedExpression) {
+  if ('fields' in input) return input;
   return namedExpression({
     name: _resolveOne<NonNullable<T.NamedExpressionConfig['name']>>(input.name, _super_named_expression_lhs, _K0),
     value: _resolveOne<NonNullable<T.NamedExpressionConfig['value']>>(input.value, _K0, _super_expression),
@@ -436,8 +436,8 @@ export function deleteStatementFrom(input?: NonNullable<T.DeleteStatementConfig[
   return deleteStatement(input as NonNullable<T.DeleteStatementConfig['children']>[number]);
 }
 
-export function raiseStatementFrom(input?: T.RaiseStatementFromInput) {
-  if (input !== undefined && 'render' in input) return input;
+export function raiseStatementFrom(input?: T.RaiseStatement | T.LooseRaiseStatement) {
+  if (input !== undefined && 'fields' in input) return input;
   return raiseStatement({
     cause: _resolveOne<NonNullable<T.RaiseStatementConfig['cause']>>(input?.cause, _K0, _super_expression),
     children: (input?.children ?? []) as NonNullable<T.RaiseStatementConfig['children']>,
@@ -459,8 +459,8 @@ export function continueStatementFrom(input?: T.ContinueStatement) {
   return continueStatement();
 }
 
-export function ifStatementFrom(input: T.IfStatementFromInput) {
-  if ('render' in input) return input;
+export function ifStatementFrom(input: T.IfStatement | T.LooseIfStatement) {
+  if ('fields' in input) return input;
   return ifStatement({
     condition: _resolveOne<NonNullable<T.IfStatementConfig['condition']>>(input.condition, _K0, _super_expression),
     consequence: _resolveOneBranch<NonNullable<T.IfStatementConfig['consequence']>>(input.consequence, "_suite"),
@@ -468,23 +468,23 @@ export function ifStatementFrom(input: T.IfStatementFromInput) {
   });
 }
 
-export function elifClauseFrom(input: T.ElifClauseFromInput) {
-  if ('render' in input) return input;
+export function elifClauseFrom(input: T.ElifClause | T.LooseElifClause) {
+  if ('fields' in input) return input;
   return elifClause({
     condition: _resolveOne<NonNullable<T.ElifClauseConfig['condition']>>(input.condition, _K0, _super_expression),
     consequence: _resolveOneBranch<NonNullable<T.ElifClauseConfig['consequence']>>(input.consequence, "_suite"),
   });
 }
 
-export function elseClauseFrom(input: T.ElseClauseFromInput) {
-  if ('render' in input) return input;
+export function elseClauseFrom(input: T.ElseClause | T.LooseElseClause) {
+  if ('fields' in input) return input;
   return elseClause({
     body: _resolveOneBranch<NonNullable<T.ElseClauseConfig['body']>>(input.body, "_suite"),
   });
 }
 
-export function matchStatementFrom(input: T.MatchStatementFromInput) {
-  if ('render' in input) return input;
+export function matchStatementFrom(input: T.MatchStatement | T.LooseMatchStatement) {
+  if ('fields' in input) return input;
   const _ne_subject = _resolveMany<NonNullable<T.MatchStatementConfig['subject']>[number]>(input.subject, _K0, _super_expression);
   _assertNonEmpty(_ne_subject, 'match_statement.subject');
   return matchStatement({
@@ -493,8 +493,8 @@ export function matchStatementFrom(input: T.MatchStatementFromInput) {
   });
 }
 
-export function caseClauseFrom(input: T.CaseClauseFromInput) {
-  if ('render' in input) return input;
+export function caseClauseFrom(input: T.CaseClause | T.LooseCaseClause) {
+  if ('fields' in input) return input;
   return caseClause({
     guard: _resolveOneBranch<NonNullable<T.CaseClauseConfig['guard']>>(input.guard, "if_clause"),
     consequence: _resolveOneBranch<NonNullable<T.CaseClauseConfig['consequence']>>(input.consequence, "_suite"),
@@ -502,8 +502,8 @@ export function caseClauseFrom(input: T.CaseClauseFromInput) {
   });
 }
 
-export function forStatementFrom(input: T.ForStatementFromInput) {
-  if ('render' in input) return input;
+export function forStatementFrom(input: T.ForStatement | T.LooseForStatement) {
+  if ('fields' in input) return input;
   return forStatement({
     left: _resolveOne<NonNullable<T.ForStatementConfig['left']>>(input.left, _K0, _super_left_hand_side),
     right: _resolveOne<NonNullable<T.ForStatementConfig['right']>>(input.right, _K0, _super_expressions),
@@ -512,8 +512,8 @@ export function forStatementFrom(input: T.ForStatementFromInput) {
   });
 }
 
-export function whileStatementFrom(input: T.WhileStatementFromInput) {
-  if ('render' in input) return input;
+export function whileStatementFrom(input: T.WhileStatement | T.LooseWhileStatement) {
+  if ('fields' in input) return input;
   return whileStatement({
     condition: _resolveOne<NonNullable<T.WhileStatementConfig['condition']>>(input.condition, _K0, _super_expression),
     body: _resolveOneBranch<NonNullable<T.WhileStatementConfig['body']>>(input.body, "_suite"),
@@ -521,8 +521,8 @@ export function whileStatementFrom(input: T.WhileStatementFromInput) {
   });
 }
 
-export function tryStatementFrom(input: T.TryStatementFromInput) {
-  if ('render' in input) return input;
+export function tryStatementFrom(input: T.TryStatement | T.LooseTryStatement) {
+  if ('fields' in input) return input;
   return tryStatement({
     body: _resolveOneBranch<NonNullable<T.TryStatementConfig['body']>>(input.body, "_suite"),
     exceptClauses: _resolveManyBranch<NonNullable<T.TryStatementConfig['exceptClauses']>[number]>(input.exceptClauses, "except_clause"),
@@ -531,8 +531,8 @@ export function tryStatementFrom(input: T.TryStatementFromInput) {
   });
 }
 
-export function exceptClauseFrom(input: T.ExceptClauseFromInput) {
-  if ('render' in input) return input;
+export function exceptClauseFrom(input: T.ExceptClause | T.LooseExceptClause) {
+  if ('fields' in input) return input;
   return exceptClause({
     value: _resolveMany<NonNullable<T.ExceptClauseConfig['value']>[number]>(input.value, _K0, _super_expression),
     alias: _resolveOne<NonNullable<T.ExceptClauseConfig['alias']>>(input.alias, _K0, _super_expression),
@@ -540,15 +540,15 @@ export function exceptClauseFrom(input: T.ExceptClauseFromInput) {
   });
 }
 
-export function finallyClauseFrom(input: T.FinallyClauseFromInput) {
-  if ('render' in input) return input;
+export function finallyClauseFrom(input: T.FinallyClause | T.LooseFinallyClause) {
+  if ('fields' in input) return input;
   return finallyClause({
     block: _resolveOneBranch<NonNullable<T.FinallyClauseConfig['block']>>(input.block, "_suite"),
   });
 }
 
-export function withStatementFrom(input: T.WithStatementFromInput) {
-  if ('render' in input) return input;
+export function withStatementFrom(input: T.WithStatement | T.LooseWithStatement) {
+  if ('fields' in input) return input;
   return withStatement({
     body: _resolveOneBranch<NonNullable<T.WithStatementConfig['body']>>(input.body, "_suite"),
     children: (input.children ?? []) as NonNullable<T.WithStatementConfig['children']>,
@@ -563,15 +563,15 @@ export function withClauseFrom(...input: readonly (NonNullable<T.WithClauseConfi
   return withClause(...(input as NonNullable<T.WithClauseConfig['children']>));
 }
 
-export function withItemFrom(input: T.WithItemFromInput) {
-  if ('render' in input) return input;
+export function withItemFrom(input: T.WithItem | T.LooseWithItem) {
+  if ('fields' in input) return input;
   return withItem({
     value: _resolveOne<NonNullable<T.WithItemConfig['value']>>(input.value, _K0, _super_expression),
   });
 }
 
-export function functionDefinitionFrom(input: T.FunctionDefinitionFromInput) {
-  if ('render' in input) return input;
+export function functionDefinitionFrom(input: T.FunctionDefinition | T.LooseFunctionDefinition) {
+  if ('fields' in input) return input;
   return functionDefinition({
     name: _resolveOneLeaf<NonNullable<T.FunctionDefinitionConfig['name']>>(input.name, "identifier"),
     typeParameters: _resolveOneBranch<NonNullable<T.FunctionDefinitionConfig['typeParameters']>>(input.typeParameters, "type_parameter"),
@@ -597,15 +597,15 @@ export function lambdaParametersFrom(input?: NonNullable<T.LambdaParametersConfi
   return lambdaParameters(input as NonNullable<T.LambdaParametersConfig['children']>[number]);
 }
 
-export function listSplatFrom(input: T.ListSplatFromInput) {
-  if ('render' in input) return input;
+export function listSplatFrom(input: T.ListSplat | T.LooseListSplat) {
+  if ('fields' in input) return input;
   return listSplat({
     expression: _resolveOne<NonNullable<T.ListSplatConfig['expression']>>(input.expression, _K0, _super_expression),
   });
 }
 
-export function dictionarySplatFrom(input: T.DictionarySplatFromInput) {
-  if ('render' in input) return input;
+export function dictionarySplatFrom(input: T.DictionarySplat | T.LooseDictionarySplat) {
+  if ('fields' in input) return input;
   return dictionarySplat({
     expression: _resolveOne<NonNullable<T.DictionarySplatConfig['expression']>>(input.expression, _K0, _super_expression),
   });
@@ -627,24 +627,24 @@ export function nonlocalStatementFrom(...input: readonly (NonNullable<T.Nonlocal
   return nonlocalStatement(...(input as NonNullable<T.NonlocalStatementConfig['children']>));
 }
 
-export function execStatementFrom(input: T.ExecStatementFromInput) {
-  if ('render' in input) return input;
+export function execStatementFrom(input: T.ExecStatement | T.LooseExecStatement) {
+  if ('fields' in input) return input;
   return execStatement({
     code: _resolveOne<NonNullable<T.ExecStatementConfig['code']>>(input.code, _K3, _K4),
     children: (input.children ?? []) as NonNullable<T.ExecStatementConfig['children']>,
   });
 }
 
-export function typeAliasStatementFrom(input: T.TypeAliasStatementFromInput) {
-  if ('render' in input) return input;
+export function typeAliasStatementFrom(input: T.TypeAliasStatement | T.LooseTypeAliasStatement) {
+  if ('fields' in input) return input;
   return typeAliasStatement({
     left: _resolveOneBranch<NonNullable<T.TypeAliasStatementConfig['left']>>(input.left, "type"),
     right: _resolveOneBranch<NonNullable<T.TypeAliasStatementConfig['right']>>(input.right, "type"),
   });
 }
 
-export function classDefinitionFrom(input: T.ClassDefinitionFromInput) {
-  if ('render' in input) return input;
+export function classDefinitionFrom(input: T.ClassDefinition | T.LooseClassDefinition) {
+  if ('fields' in input) return input;
   return classDefinition({
     name: _resolveOneLeaf<NonNullable<T.ClassDefinitionConfig['name']>>(input.name, "identifier"),
     typeParameters: _resolveOneBranch<NonNullable<T.ClassDefinitionConfig['typeParameters']>>(input.typeParameters, "type_parameter"),
@@ -677,16 +677,16 @@ export function argumentListFrom(...input: readonly (NonNullable<T.ArgumentListC
   return argumentList(...(input as NonNullable<T.ArgumentListConfig['children']>));
 }
 
-export function decoratedDefinitionFrom(input: T.DecoratedDefinitionFromInput) {
-  if ('render' in input) return input;
+export function decoratedDefinitionFrom(input: T.DecoratedDefinition | T.LooseDecoratedDefinition) {
+  if ('fields' in input) return input;
   return decoratedDefinition({
     definition: _resolveOne<NonNullable<T.DecoratedDefinitionConfig['definition']>>(input.definition, _K0, _K5),
     children: (input.children ?? []) as NonNullable<T.DecoratedDefinitionConfig['children']>,
   });
 }
 
-export function decoratorFrom(input: T.DecoratorFromInput) {
-  if ('render' in input) return input;
+export function decoratorFrom(input: T.Decorator | T.LooseDecorator) {
+  if ('fields' in input) return input;
   return decorator({
     expression: _resolveOne<NonNullable<T.DecoratorConfig['expression']>>(input.expression, _K0, _super_expression),
     newline: _resolveOne<NonNullable<T.DecoratorConfig['newline']>>(input.newline, _K0, _K0),
@@ -741,32 +741,32 @@ export function dictPatternFrom(...input: readonly (NonNullable<T.DictPatternCon
   return dictPattern(...(input as NonNullable<T.DictPatternConfig['children']>));
 }
 
-export function keywordPatternFrom(input: T.KeywordPatternFromInput) {
-  if ('render' in input) return input;
+export function keywordPatternFrom(input: T.KeywordPattern | T.LooseKeywordPattern) {
+  if ('fields' in input) return input;
   return keywordPattern({
     identifier: _resolveOneLeaf<NonNullable<T.KeywordPatternConfig['identifier']>>(input.identifier, "identifier"),
     simplePattern: _resolveOneBranch<NonNullable<T.KeywordPatternConfig['simplePattern']>>(input.simplePattern, "_simple_pattern"),
   });
 }
 
-export function splatPatternFrom(input: T.SplatPatternFromInput) {
-  if ('render' in input) return input;
+export function splatPatternFrom(input: T.SplatPattern | T.LooseSplatPattern) {
+  if ('fields' in input) return input;
   return splatPattern({
     identifier: _resolveOne<NonNullable<T.SplatPatternConfig['identifier']>>(input.identifier, _K0, _K0),
     children: (input.children ?? []) as NonNullable<T.SplatPatternConfig['children']>,
   });
 }
 
-export function classPatternFrom(input: T.ClassPatternFromInput) {
-  if ('render' in input) return input;
+export function classPatternFrom(input: T.ClassPattern | T.LooseClassPattern) {
+  if ('fields' in input) return input;
   return classPattern({
     dottedName: _resolveOneBranch<NonNullable<T.ClassPatternConfig['dottedName']>>(input.dottedName, "dotted_name"),
     arguments: _resolveMany<NonNullable<T.ClassPatternConfig['arguments']>[number]>(input.arguments, _K0, _K0),
   });
 }
 
-export function complexPatternFrom(input: T.ComplexPatternFromInput) {
-  if ('render' in input) return input;
+export function complexPatternFrom(input: T.ComplexPattern | T.LooseComplexPattern) {
+  if ('fields' in input) return input;
   return complexPattern({
     real: _resolveOne<NonNullable<T.ComplexPatternConfig['real']>>(input.real, _K0, _K0),
     imaginary: _resolveOne<NonNullable<T.ComplexPatternConfig['imaginary']>>(input.imaginary, _K6, _K0),
@@ -790,16 +790,16 @@ export function listPatternFrom(input?: NonNullable<T.ListPatternConfig['childre
   return listPattern(input as NonNullable<T.ListPatternConfig['children']>[number]);
 }
 
-export function defaultParameterFrom(input: T.DefaultParameterFromInput) {
-  if ('render' in input) return input;
+export function defaultParameterFrom(input: T.DefaultParameter | T.LooseDefaultParameter) {
+  if ('fields' in input) return input;
   return defaultParameter({
     name: _resolveOne<NonNullable<T.DefaultParameterConfig['name']>>(input.name, _K3, _K7),
     value: _resolveOne<NonNullable<T.DefaultParameterConfig['value']>>(input.value, _K0, _super_expression),
   });
 }
 
-export function typedDefaultParameterFrom(input: T.TypedDefaultParameterFromInput) {
-  if ('render' in input) return input;
+export function typedDefaultParameterFrom(input: T.TypedDefaultParameter | T.LooseTypedDefaultParameter) {
+  if ('fields' in input) return input;
   return typedDefaultParameter({
     name: _resolveOneLeaf<NonNullable<T.TypedDefaultParameterConfig['name']>>(input.name, "identifier"),
     type: _resolveOneBranch<NonNullable<T.TypedDefaultParameterConfig['type']>>(input.type, "type"),
@@ -823,23 +823,23 @@ export function dictionarySplatPatternFrom(input?: NonNullable<T.DictionarySplat
   return dictionarySplatPattern(input as NonNullable<T.DictionarySplatPatternConfig['children']>[number]);
 }
 
-export function asPatternFrom(input: T.AsPatternFromInput) {
-  if ('render' in input) return input;
+export function asPatternFrom(input: T.AsPattern | T.LooseAsPattern) {
+  if ('fields' in input) return input;
   return asPattern({
     expression: _resolveOne<NonNullable<T.AsPatternConfig['expression']>>(input.expression, _K0, _super_expression),
     alias: _resolveOne<NonNullable<T.AsPatternConfig['alias']>>(input.alias, _K0, _super_expression),
   });
 }
 
-export function notOperatorFrom(input: T.NotOperatorFromInput) {
-  if ('render' in input) return input;
+export function notOperatorFrom(input: T.NotOperator | T.LooseNotOperator) {
+  if ('fields' in input) return input;
   return notOperator({
     argument: _resolveOne<NonNullable<T.NotOperatorConfig['argument']>>(input.argument, _K0, _super_expression),
   });
 }
 
-export function booleanOperatorFrom(input: T.BooleanOperatorFromInput) {
-  if ('render' in input) return input;
+export function booleanOperatorFrom(input: T.BooleanOperator | T.LooseBooleanOperator) {
+  if ('fields' in input) return input;
   return booleanOperator({
     left: _resolveOne<NonNullable<T.BooleanOperatorConfig['left']>>(input.left, _K0, _super_expression),
     operator: _resolveOne<NonNullable<T.BooleanOperatorConfig['operator']>>(input.operator, _K0, _K0),
@@ -847,8 +847,8 @@ export function booleanOperatorFrom(input: T.BooleanOperatorFromInput) {
   });
 }
 
-export function binaryOperatorFrom(input: T.BinaryOperatorFromInput) {
-  if ('render' in input) return input;
+export function binaryOperatorFrom(input: T.BinaryOperator | T.LooseBinaryOperator) {
+  if ('fields' in input) return input;
   return binaryOperator({
     left: _resolveOne<NonNullable<T.BinaryOperatorConfig['left']>>(input.left, _K8, _K9),
     operator: _resolveOne<NonNullable<T.BinaryOperatorConfig['operator']>>(input.operator, _K0, _K0),
@@ -856,16 +856,16 @@ export function binaryOperatorFrom(input: T.BinaryOperatorFromInput) {
   });
 }
 
-export function unaryOperatorFrom(input: T.UnaryOperatorFromInput) {
-  if ('render' in input) return input;
+export function unaryOperatorFrom(input: T.UnaryOperator | T.LooseUnaryOperator) {
+  if ('fields' in input) return input;
   return unaryOperator({
     operator: _resolveOne<NonNullable<T.UnaryOperatorConfig['operator']>>(input.operator, _K0, _K0),
     argument: _resolveOne<NonNullable<T.UnaryOperatorConfig['argument']>>(input.argument, _K8, _K9),
   });
 }
 
-export function comparisonOperatorFrom(input: T.ComparisonOperatorFromInput) {
-  if ('render' in input) return input;
+export function comparisonOperatorFrom(input: T.ComparisonOperator | T.LooseComparisonOperator) {
+  if ('fields' in input) return input;
   const _ne_operators = _resolveMany<NonNullable<T.ComparisonOperatorConfig['operators']>[number]>(input.operators, _K10, _K0);
   _assertNonEmpty(_ne_operators, 'comparison_operator.operators');
   return comparisonOperator({
@@ -874,23 +874,24 @@ export function comparisonOperatorFrom(input: T.ComparisonOperatorFromInput) {
   });
 }
 
-export function lambdaFrom(input: T.LambdaFromInput) {
-  if ('render' in input) return input;
+export function lambdaFrom(input: T.Lambda | T.LooseLambda) {
+  if ('fields' in input) return input;
   return lambda({
     parameters: _resolveOneBranch<NonNullable<T.LambdaConfig['parameters']>>(input.parameters, "lambda_parameters"),
     body: _resolveOne<NonNullable<T.LambdaConfig['body']>>(input.body, _K0, _super_expression),
   });
 }
 
-export function lambdaWithinForInClauseFrom(input: T.LambdaWithinForInClauseFromInput) {
-  if ('render' in input) return input;
+export function lambdaWithinForInClauseFrom(input: T.LambdaWithinForInClause | T.LooseLambdaWithinForInClause) {
+  if ('fields' in input) return input;
   return lambdaWithinForInClause({
     parameters: _resolveOneBranch<NonNullable<T.LambdaWithinForInClauseConfig['parameters']>>(input.parameters, "lambda_parameters"),
     body: _resolveOne<NonNullable<T.LambdaWithinForInClauseConfig['body']>>(input.body, _K0, _super_expression_within_for_in_clause),
   });
 }
 
-export function assignmentFrom(input?: T.AssignmentFromInput) {
+export function assignmentFrom(input?: T.Assignment | T.LooseAssignment) {
+  if (input !== undefined && 'fields' in input) return input;
   return assignment(input as T.AssignmentEqConfig | T.AssignmentColonConfig | T.AssignmentColon2Config);
 }
 
@@ -916,8 +917,8 @@ export function assignmentColon2From(input: T.AssignmentColon2Config) {
   });
 }
 
-export function augmentedAssignmentFrom(input: T.AugmentedAssignmentFromInput) {
-  if ('render' in input) return input;
+export function augmentedAssignmentFrom(input: T.AugmentedAssignment | T.LooseAugmentedAssignment) {
+  if ('fields' in input) return input;
   return augmentedAssignment({
     left: _resolveOne<NonNullable<T.AugmentedAssignmentConfig['left']>>(input.left, _K0, _super_left_hand_side),
     operator: _resolveOne<NonNullable<T.AugmentedAssignmentConfig['operator']>>(input.operator, _K0, _K0),
@@ -941,16 +942,16 @@ export function yield_From(input?: NonNullable<T.YieldConfig['children']>[number
   return yield_(input as NonNullable<T.YieldConfig['children']>[number]);
 }
 
-export function attributeFrom(input: T.AttributeFromInput) {
-  if ('render' in input) return input;
+export function attributeFrom(input: T.Attribute | T.LooseAttribute) {
+  if ('fields' in input) return input;
   return attribute({
     object: _resolveOne<NonNullable<T.AttributeConfig['object']>>(input.object, _K8, _K9),
     attribute: _resolveOneLeaf<NonNullable<T.AttributeConfig['attribute']>>(input.attribute, "identifier"),
   });
 }
 
-export function subscriptFrom(input: T.SubscriptFromInput) {
-  if ('render' in input) return input;
+export function subscriptFrom(input: T.Subscript | T.LooseSubscript) {
+  if ('fields' in input) return input;
   const _ne_subscript = _resolveMany<NonNullable<T.SubscriptConfig['subscript']>[number]>(input.subscript, _K0, _K11);
   _assertNonEmpty(_ne_subscript, 'subscript.subscript');
   return subscript({
@@ -959,8 +960,8 @@ export function subscriptFrom(input: T.SubscriptFromInput) {
   });
 }
 
-export function sliceFrom(input?: T.SliceFromInput) {
-  if (input !== undefined && 'render' in input) return input;
+export function sliceFrom(input?: T.Slice | T.LooseSlice) {
+  if (input !== undefined && 'fields' in input) return input;
   return slice({
     start: _resolveOne<NonNullable<T.SliceConfig['start']>>(input?.start, _K0, _super_expression),
     stop: _resolveOne<NonNullable<T.SliceConfig['stop']>>(input?.stop, _K0, _super_expression),
@@ -968,16 +969,16 @@ export function sliceFrom(input?: T.SliceFromInput) {
   });
 }
 
-export function callFrom(input: T.CallFromInput) {
-  if ('render' in input) return input;
+export function callFrom(input: T.Call | T.LooseCall) {
+  if ('fields' in input) return input;
   return call({
     function: _resolveOne<NonNullable<T.CallConfig['function']>>(input.function, _K8, _K9),
     arguments: _resolveOne<NonNullable<T.CallConfig['arguments']>>(input.arguments, _K0, _K12),
   });
 }
 
-export function typedParameterFrom(input: T.TypedParameterFromInput) {
-  if ('render' in input) return input;
+export function typedParameterFrom(input: T.TypedParameter | T.LooseTypedParameter) {
+  if ('fields' in input) return input;
   return typedParameter({
     type: _resolveOneBranch<NonNullable<T.TypedParameterConfig['type']>>(input.type, "type"),
     children: (input.children ?? []) as NonNullable<T.TypedParameterConfig['children']>,
@@ -992,48 +993,48 @@ export function typeFrom(input?: NonNullable<T.TypeConfig['children']>[number] |
   return type(input as NonNullable<T.TypeConfig['children']>[number]);
 }
 
-export function splatTypeFrom(input: T.SplatTypeFromInput) {
-  if ('render' in input) return input;
+export function splatTypeFrom(input: T.SplatType | T.LooseSplatType) {
+  if ('fields' in input) return input;
   return splatType({
     identifier: _resolveOne<NonNullable<T.SplatTypeConfig['identifier']>>(input.identifier, _K0, _K0),
     children: (input.children ?? []) as NonNullable<T.SplatTypeConfig['children']>,
   });
 }
 
-export function genericTypeFrom(input: T.GenericTypeFromInput) {
-  if ('render' in input) return input;
+export function genericTypeFrom(input: T.GenericType | T.LooseGenericType) {
+  if ('fields' in input) return input;
   return genericType({
     identifier: _resolveOneLeaf<NonNullable<T.GenericTypeConfig['identifier']>>(input.identifier, "identifier"),
     typeParameter: _resolveOneBranch<NonNullable<T.GenericTypeConfig['typeParameter']>>(input.typeParameter, "type_parameter"),
   });
 }
 
-export function unionTypeFrom(input: T.UnionTypeFromInput) {
-  if ('render' in input) return input;
+export function unionTypeFrom(input: T.UnionType | T.LooseUnionType) {
+  if ('fields' in input) return input;
   return unionType({
     left: _resolveOneBranch<NonNullable<T.UnionTypeConfig['left']>>(input.left, "type"),
     right: _resolveOneBranch<NonNullable<T.UnionTypeConfig['right']>>(input.right, "type"),
   });
 }
 
-export function constrainedTypeFrom(input: T.ConstrainedTypeFromInput) {
-  if ('render' in input) return input;
+export function constrainedTypeFrom(input: T.ConstrainedType | T.LooseConstrainedType) {
+  if ('fields' in input) return input;
   return constrainedType({
     baseType: _resolveOneBranch<NonNullable<T.ConstrainedTypeConfig['baseType']>>(input.baseType, "type"),
     constraint: _resolveOneBranch<NonNullable<T.ConstrainedTypeConfig['constraint']>>(input.constraint, "type"),
   });
 }
 
-export function memberTypeFrom(input: T.MemberTypeFromInput) {
-  if ('render' in input) return input;
+export function memberTypeFrom(input: T.MemberType | T.LooseMemberType) {
+  if ('fields' in input) return input;
   return memberType({
     baseType: _resolveOneBranch<NonNullable<T.MemberTypeConfig['baseType']>>(input.baseType, "type"),
     identifier: _resolveOneLeaf<NonNullable<T.MemberTypeConfig['identifier']>>(input.identifier, "identifier"),
   });
 }
 
-export function keywordArgumentFrom(input: T.KeywordArgumentFromInput) {
-  if ('render' in input) return input;
+export function keywordArgumentFrom(input: T.KeywordArgument | T.LooseKeywordArgument) {
+  if ('fields' in input) return input;
   return keywordArgument({
     name: _resolveOne<NonNullable<T.KeywordArgumentConfig['name']>>(input.name, _super_named_expression_lhs, _K0),
     value: _resolveOne<NonNullable<T.KeywordArgumentConfig['value']>>(input.value, _K0, _super_expression),
@@ -1072,40 +1073,40 @@ export function dictionaryFrom(...input: readonly (NonNullable<T.DictionaryConfi
   return dictionary(...(input as NonNullable<T.DictionaryConfig['children']>));
 }
 
-export function pairFrom(input: T.PairFromInput) {
-  if ('render' in input) return input;
+export function pairFrom(input: T.Pair | T.LoosePair) {
+  if ('fields' in input) return input;
   return pair({
     key: _resolveOne<NonNullable<T.PairConfig['key']>>(input.key, _K0, _super_expression),
     value: _resolveOne<NonNullable<T.PairConfig['value']>>(input.value, _K0, _super_expression),
   });
 }
 
-export function listComprehensionFrom(input: T.ListComprehensionFromInput) {
-  if ('render' in input) return input;
+export function listComprehensionFrom(input: T.ListComprehension | T.LooseListComprehension) {
+  if ('fields' in input) return input;
   return listComprehension({
     body: _resolveOne<NonNullable<T.ListComprehensionConfig['body']>>(input.body, _K0, _super_expression),
     children: (input.children ?? []) as NonNullable<T.ListComprehensionConfig['children']>,
   });
 }
 
-export function dictionaryComprehensionFrom(input: T.DictionaryComprehensionFromInput) {
-  if ('render' in input) return input;
+export function dictionaryComprehensionFrom(input: T.DictionaryComprehension | T.LooseDictionaryComprehension) {
+  if ('fields' in input) return input;
   return dictionaryComprehension({
     body: _resolveOneBranch<NonNullable<T.DictionaryComprehensionConfig['body']>>(input.body, "pair"),
     children: (input.children ?? []) as NonNullable<T.DictionaryComprehensionConfig['children']>,
   });
 }
 
-export function setComprehensionFrom(input: T.SetComprehensionFromInput) {
-  if ('render' in input) return input;
+export function setComprehensionFrom(input: T.SetComprehension | T.LooseSetComprehension) {
+  if ('fields' in input) return input;
   return setComprehension({
     body: _resolveOne<NonNullable<T.SetComprehensionConfig['body']>>(input.body, _K0, _super_expression),
     children: (input.children ?? []) as NonNullable<T.SetComprehensionConfig['children']>,
   });
 }
 
-export function generatorExpressionFrom(input: T.GeneratorExpressionFromInput) {
-  if ('render' in input) return input;
+export function generatorExpressionFrom(input: T.GeneratorExpression | T.LooseGeneratorExpression) {
+  if ('fields' in input) return input;
   return generatorExpression({
     body: _resolveOne<NonNullable<T.GeneratorExpressionConfig['body']>>(input.body, _K0, _super_expression),
     children: (input.children ?? []) as NonNullable<T.GeneratorExpressionConfig['children']>,
@@ -1120,8 +1121,8 @@ export function parenthesizedExpressionFrom(input?: NonNullable<T.ParenthesizedE
   return parenthesizedExpression(input as NonNullable<T.ParenthesizedExpressionConfig['children']>[number]);
 }
 
-export function forInClauseFrom(input: T.ForInClauseFromInput) {
-  if ('render' in input) return input;
+export function forInClauseFrom(input: T.ForInClause | T.LooseForInClause) {
+  if ('fields' in input) return input;
   const _ne_right = _resolveMany<NonNullable<T.ForInClauseConfig['right']>[number]>(input.right, _K0, _K0);
   _assertNonEmpty(_ne_right, 'for_in_clause.right');
   return forInClause({
@@ -1130,15 +1131,15 @@ export function forInClauseFrom(input: T.ForInClauseFromInput) {
   });
 }
 
-export function ifClauseFrom(input: T.IfClauseFromInput) {
-  if ('render' in input) return input;
+export function ifClauseFrom(input: T.IfClause | T.LooseIfClause) {
+  if ('fields' in input) return input;
   return ifClause({
     expression: _resolveOne<NonNullable<T.IfClauseConfig['expression']>>(input.expression, _K0, _super_expression),
   });
 }
 
-export function conditionalExpressionFrom(input: T.ConditionalExpressionFromInput) {
-  if ('render' in input) return input;
+export function conditionalExpressionFrom(input: T.ConditionalExpression | T.LooseConditionalExpression) {
+  if ('fields' in input) return input;
   return conditionalExpression({
     body: _resolveOne<NonNullable<T.ConditionalExpressionConfig['body']>>(input.body, _K0, _super_expression),
     condition: _resolveOne<NonNullable<T.ConditionalExpressionConfig['condition']>>(input.condition, _K0, _super_expression),
@@ -1154,8 +1155,8 @@ export function concatenatedStringFrom(...input: readonly (NonNullable<T.Concate
   return concatenatedString(...(input as NonNullable<T.ConcatenatedStringConfig['children']>));
 }
 
-export function stringFrom(input: T.StringFromInput) {
-  if ('render' in input) return input;
+export function stringFrom(input: T.String | T.LooseString) {
+  if ('fields' in input) return input;
   return string({
     stringStart: _resolveOneLeaf<NonNullable<T.StringConfig['stringStart']>>(input.stringStart, "string_start"),
     content: _resolveMany<NonNullable<T.StringConfig['content']>[number]>(input.content, _K0, _K13),
@@ -1171,8 +1172,8 @@ export function stringContentFrom(...input: readonly (NonNullable<T.StringConten
   return stringContent(...(input as NonNullable<T.StringContentConfig['children']>));
 }
 
-export function interpolationFrom(input: T.InterpolationFromInput) {
-  if ('render' in input) return input;
+export function interpolationFrom(input: T.Interpolation | T.LooseInterpolation) {
+  if ('fields' in input) return input;
   return interpolation({
     expression: _resolveOne<NonNullable<T.InterpolationConfig['expression']>>(input.expression, _K0, _super_f_expression),
     typeConversion: _resolveOneLeaf<NonNullable<T.InterpolationConfig['typeConversion']>>(input.typeConversion, "type_conversion"),
@@ -1233,8 +1234,8 @@ export function noneFrom(input?: T.None) {
   return none();
 }
 
-export function await_From(input: T.AwaitFromInput) {
-  if ('render' in input) return input;
+export function await_From(input: T.Await | T.LooseAwait) {
+  if ('fields' in input) return input;
   return await_({
     primaryExpression: _resolveOne<NonNullable<T.AwaitConfig['primaryExpression']>>(input.primaryExpression, _K8, _K9),
   });
@@ -1293,8 +1294,8 @@ export function asPatternTargetFrom(input?: NonNullable<T.AsPatternTargetConfig[
   return asPatternTarget(input as NonNullable<T.AsPatternTargetConfig['children']>[number]);
 }
 
-export function formatExpressionFrom(input: T.FormatExpressionFromInput) {
-  if ('render' in input) return input;
+export function formatExpressionFrom(input: T.FormatExpression | T.LooseFormatExpression) {
+  if ('fields' in input) return input;
   return formatExpression({
     expression: _resolveOne<NonNullable<T.FormatExpressionConfig['expression']>>(input.expression, _K0, _super_f_expression),
     typeConversion: _resolveOneLeaf<NonNullable<T.FormatExpressionConfig['typeConversion']>>(input.typeConversion, "type_conversion"),

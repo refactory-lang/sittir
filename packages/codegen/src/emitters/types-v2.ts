@@ -351,15 +351,19 @@ export function emitTypesFromNodeMap(config: EmitTypesFromNodeMapConfig): string
     }
     lines.push('')
 
-    lines.push('// FromInput types')
+    // Loose-input aliases — the camelCase bag shape accepted by
+    // `from()` for programmatic construction. Named `Loose<TypeName>`
+    // to read naturally alongside the concrete node type (`LooseFoo`
+    // = "a loose version of `Foo`").
+    lines.push('// Loose-input type aliases (for from() construction)')
     for (const kind of nodeKinds) {
         const node = nodeMap.nodes.get(kind)!
         const ptn = polymorphTypeNames.get(kind)
         if (ptn) {
             const fromNames = ptn.map(vtn => `FromInputOf<${vtn}, LeafScalarMap, LeafStringMap>`)
-            lines.push(`export type ${node.typeName}FromInput = ${fromNames.join(' | ')};`)
+            lines.push(`export type Loose${node.typeName} = ${fromNames.join(' | ')};`)
         } else {
-            lines.push(`export type ${node.typeName}FromInput = FromInputOf<${node.typeName}, LeafScalarMap, LeafStringMap>;`)
+            lines.push(`export type Loose${node.typeName} = FromInputOf<${node.typeName}, LeafScalarMap, LeafStringMap>;`)
         }
     }
     lines.push('')
@@ -410,7 +414,7 @@ export function emitTypesFromNodeMap(config: EmitTypesFromNodeMapConfig): string
             const branchMembers = resolvedSubs.filter(r => branchSet.has(r.sub))
             if (branchMembers.length > 0) {
                 lines.push(`export type ${typeName}Config = ${branchMembers.map(r => `${r.typeName}Config`).join(' | ')};`)
-                lines.push(`export type ${typeName}FromInput = ${branchMembers.map(r => `${r.typeName}FromInput`).join(' | ')};`)
+                lines.push(`export type Loose${typeName} = ${branchMembers.map(r => `Loose${r.typeName}`).join(' | ')};`)
             }
             lines.push(`export type ${typeName}Tree = ${resolvedSubs.map(r => `${r.typeName}Tree`).join(' | ')};`)
             lines.push('')
@@ -507,10 +511,10 @@ export function emitTypesFromNodeMap(config: EmitTypesFromNodeMapConfig): string
     lines.push('}')
     lines.push('')
 
-    lines.push('export interface FromInputMap {')
+    lines.push('export interface LooseMap {')
     for (const kind of nodeKinds) {
         const node = nodeMap.nodes.get(kind)!
-        lines.push(`  '${kind}': ${node.typeName}FromInput;`)
+        lines.push(`  '${kind}': Loose${node.typeName};`)
     }
     lines.push('}')
     lines.push('')

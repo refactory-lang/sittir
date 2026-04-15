@@ -2,13 +2,13 @@
 // Shared client-side resolution utilities for .from() and factories
 
 import type { AnyNodeData, AnyTreeNodeOf, RuntimeNodeOf, FluentNodeOf, TreeNodeOf } from '@sittir/types';
-import type { KindMap, ConfigMap, FromInputMap } from './types.js';
+import type { KindMap, ConfigMap, LooseMap } from './types.js';
 
 /**
  * Type guard: returns true if `v` is a NodeData (has `type` + `fields` or `text`).
  */
-export function isNodeData<K extends keyof KindMap & keyof FromInputMap>(
-  v: RuntimeNodeOf<KindMap[K]> | FromInputMap[K] | TreeNodeOf<KindMap[K]>
+export function isNodeData<K extends keyof KindMap & keyof LooseMap>(
+  v: RuntimeNodeOf<KindMap[K]> | LooseMap[K] | TreeNodeOf<KindMap[K]>
 ): v is RuntimeNodeOf<KindMap[K]>;
 export function isNodeData(v: unknown): v is AnyNodeData;
 export function isNodeData(v: unknown): v is AnyNodeData {
@@ -21,7 +21,7 @@ export function isNodeData(v: unknown): v is AnyNodeData {
 /**
  * Type guard: returns true if `v` is a TreeNode (SgNode-compatible).
  */
-export function isTreeNode<K extends keyof KindMap & keyof FromInputMap>(
+export function isTreeNode<K extends keyof KindMap & keyof LooseMap>(
   v: TreeNodeOf<KindMap[K]> | RuntimeNodeOf<KindMap[K]>
 ): v is TreeNodeOf<KindMap[K]>;
 export function isTreeNode(v: unknown): v is AnyTreeNodeOf;
@@ -42,9 +42,9 @@ export function isNodeOfKind<K extends keyof KindMap>(
   return isNodeData(v) && v.type === kind;
 }
 
-export function hasKindOf<K extends keyof FromInputMap>(
+export function hasKindOf<K extends keyof LooseMap>(
   v: object,
   kind: K,
-): v is { kind: K } & FromInputMap[K] {
+): v is { kind: K } & LooseMap[K] {
   return 'kind' in v && (v as Record<string, unknown>).kind === kind;
 }

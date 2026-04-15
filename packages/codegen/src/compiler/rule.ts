@@ -948,9 +948,10 @@ export abstract class AssembledNodeBase {
         return `${this.typeName}Config`
     }
 
-    /** FromInput type alias: `${typeName}FromInput`. */
+    /** Loose-input type alias: `Loose${typeName}` — the camelCase
+     *  bag shape accepted by `from()` for programmatic construction. */
     get fromInputTypeName(): string {
-        return `${this.typeName}FromInput`
+        return `Loose${this.typeName}`
     }
 
     /** `from()` resolver function name: `${factoryName}From` for non-hidden nodes. */

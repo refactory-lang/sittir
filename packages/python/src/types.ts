@@ -1492,119 +1492,119 @@ export interface True2Tree extends AnyTreeNode { readonly type: "True"; }
 export interface False2Tree extends AnyTreeNode { readonly type: "False"; }
 export interface None2Tree extends AnyTreeNode { readonly type: "None"; }
 
-// FromInput types
-export type ModuleFromInput = FromInputOf<Module, LeafScalarMap, LeafStringMap>;
-export type SimpleStatementsFromInput = FromInputOf<SimpleStatements, LeafScalarMap, LeafStringMap>;
-export type ImportStatementFromInput = FromInputOf<ImportStatement, LeafScalarMap, LeafStringMap>;
-export type RelativeImportFromInput = FromInputOf<RelativeImport, LeafScalarMap, LeafStringMap>;
-export type FutureImportStatementFromInput = FromInputOf<FutureImportStatement, LeafScalarMap, LeafStringMap>;
-export type ImportFromStatementFromInput = FromInputOf<ImportFromStatement, LeafScalarMap, LeafStringMap>;
-export type ImportListFromInput = FromInputOf<ImportList, LeafScalarMap, LeafStringMap>;
-export type AliasedImportFromInput = FromInputOf<AliasedImport, LeafScalarMap, LeafStringMap>;
-export type PrintStatementFromInput = FromInputOf<PrintStatement, LeafScalarMap, LeafStringMap>;
-export type ChevronFromInput = FromInputOf<Chevron, LeafScalarMap, LeafStringMap>;
-export type AssertStatementFromInput = FromInputOf<AssertStatement, LeafScalarMap, LeafStringMap>;
-export type ExpressionStatementFromInput = FromInputOf<ExpressionStatement, LeafScalarMap, LeafStringMap>;
-export type NamedExpressionFromInput = FromInputOf<NamedExpression, LeafScalarMap, LeafStringMap>;
-export type ReturnStatementFromInput = FromInputOf<ReturnStatement, LeafScalarMap, LeafStringMap>;
-export type DeleteStatementFromInput = FromInputOf<DeleteStatement, LeafScalarMap, LeafStringMap>;
-export type RaiseStatementFromInput = FromInputOf<RaiseStatement, LeafScalarMap, LeafStringMap>;
-export type IfStatementFromInput = FromInputOf<IfStatement, LeafScalarMap, LeafStringMap>;
-export type ElifClauseFromInput = FromInputOf<ElifClause, LeafScalarMap, LeafStringMap>;
-export type ElseClauseFromInput = FromInputOf<ElseClause, LeafScalarMap, LeafStringMap>;
-export type MatchStatementFromInput = FromInputOf<MatchStatement, LeafScalarMap, LeafStringMap>;
-export type CaseClauseFromInput = FromInputOf<CaseClause, LeafScalarMap, LeafStringMap>;
-export type ForStatementFromInput = FromInputOf<ForStatement, LeafScalarMap, LeafStringMap>;
-export type WhileStatementFromInput = FromInputOf<WhileStatement, LeafScalarMap, LeafStringMap>;
-export type TryStatementFromInput = FromInputOf<TryStatement, LeafScalarMap, LeafStringMap>;
-export type ExceptClauseFromInput = FromInputOf<ExceptClause, LeafScalarMap, LeafStringMap>;
-export type FinallyClauseFromInput = FromInputOf<FinallyClause, LeafScalarMap, LeafStringMap>;
-export type WithStatementFromInput = FromInputOf<WithStatement, LeafScalarMap, LeafStringMap>;
-export type WithClauseFromInput = FromInputOf<WithClause, LeafScalarMap, LeafStringMap>;
-export type WithItemFromInput = FromInputOf<WithItem, LeafScalarMap, LeafStringMap>;
-export type FunctionDefinitionFromInput = FromInputOf<FunctionDefinition, LeafScalarMap, LeafStringMap>;
-export type ParametersFromInput = FromInputOf<Parameters, LeafScalarMap, LeafStringMap>;
-export type LambdaParametersFromInput = FromInputOf<LambdaParameters, LeafScalarMap, LeafStringMap>;
-export type ListSplatFromInput = FromInputOf<ListSplat, LeafScalarMap, LeafStringMap>;
-export type DictionarySplatFromInput = FromInputOf<DictionarySplat, LeafScalarMap, LeafStringMap>;
-export type GlobalStatementFromInput = FromInputOf<GlobalStatement, LeafScalarMap, LeafStringMap>;
-export type NonlocalStatementFromInput = FromInputOf<NonlocalStatement, LeafScalarMap, LeafStringMap>;
-export type ExecStatementFromInput = FromInputOf<ExecStatement, LeafScalarMap, LeafStringMap>;
-export type TypeAliasStatementFromInput = FromInputOf<TypeAliasStatement, LeafScalarMap, LeafStringMap>;
-export type ClassDefinitionFromInput = FromInputOf<ClassDefinition, LeafScalarMap, LeafStringMap>;
-export type TypeParameterFromInput = FromInputOf<TypeParameter, LeafScalarMap, LeafStringMap>;
-export type ParenthesizedListSplatFromInput = FromInputOf<ParenthesizedListSplat, LeafScalarMap, LeafStringMap>;
-export type ArgumentListFromInput = FromInputOf<ArgumentList, LeafScalarMap, LeafStringMap>;
-export type DecoratedDefinitionFromInput = FromInputOf<DecoratedDefinition, LeafScalarMap, LeafStringMap>;
-export type DecoratorFromInput = FromInputOf<Decorator, LeafScalarMap, LeafStringMap>;
-export type SuiteFromInput = FromInputOf<Suite, LeafScalarMap, LeafStringMap>;
-export type BlockFromInput = FromInputOf<Block, LeafScalarMap, LeafStringMap>;
-export type ExpressionListFromInput = FromInputOf<ExpressionList, LeafScalarMap, LeafStringMap>;
-export type DottedNameFromInput = FromInputOf<DottedName, LeafScalarMap, LeafStringMap>;
-export type CasePatternFromInput = FromInputOf<CasePattern, LeafScalarMap, LeafStringMap>;
-export type SimplePatternFromInput = FromInputOf<SimplePattern, LeafScalarMap, LeafStringMap>;
-export type UnionPatternFromInput = FromInputOf<UnionPattern, LeafScalarMap, LeafStringMap>;
-export type DictPatternFromInput = FromInputOf<DictPattern, LeafScalarMap, LeafStringMap>;
-export type KeyValuePatternFromInput = FromInputOf<KeyValuePattern, LeafScalarMap, LeafStringMap>;
-export type KeywordPatternFromInput = FromInputOf<KeywordPattern, LeafScalarMap, LeafStringMap>;
-export type SplatPatternFromInput = FromInputOf<SplatPattern, LeafScalarMap, LeafStringMap>;
-export type ClassPatternFromInput = FromInputOf<ClassPattern, LeafScalarMap, LeafStringMap>;
-export type ComplexPatternFromInput = FromInputOf<ComplexPattern, LeafScalarMap, LeafStringMap>;
-export type _ParametersFromInput = FromInputOf<_Parameters, LeafScalarMap, LeafStringMap>;
-export type PatternsFromInput = FromInputOf<Patterns, LeafScalarMap, LeafStringMap>;
-export type TuplePatternFromInput = FromInputOf<TuplePattern, LeafScalarMap, LeafStringMap>;
-export type ListPatternFromInput = FromInputOf<ListPattern, LeafScalarMap, LeafStringMap>;
-export type DefaultParameterFromInput = FromInputOf<DefaultParameter, LeafScalarMap, LeafStringMap>;
-export type TypedDefaultParameterFromInput = FromInputOf<TypedDefaultParameter, LeafScalarMap, LeafStringMap>;
-export type ListSplatPatternFromInput = FromInputOf<ListSplatPattern, LeafScalarMap, LeafStringMap>;
-export type DictionarySplatPatternFromInput = FromInputOf<DictionarySplatPattern, LeafScalarMap, LeafStringMap>;
-export type AsPatternFromInput = FromInputOf<AsPattern, LeafScalarMap, LeafStringMap>;
-export type NotOperatorFromInput = FromInputOf<NotOperator, LeafScalarMap, LeafStringMap>;
-export type BooleanOperatorFromInput = FromInputOf<BooleanOperator, LeafScalarMap, LeafStringMap>;
-export type BinaryOperatorFromInput = FromInputOf<BinaryOperator, LeafScalarMap, LeafStringMap>;
-export type UnaryOperatorFromInput = FromInputOf<UnaryOperator, LeafScalarMap, LeafStringMap>;
-export type ComparisonOperatorFromInput = FromInputOf<ComparisonOperator, LeafScalarMap, LeafStringMap>;
-export type LambdaFromInput = FromInputOf<Lambda, LeafScalarMap, LeafStringMap>;
-export type LambdaWithinForInClauseFromInput = FromInputOf<LambdaWithinForInClause, LeafScalarMap, LeafStringMap>;
-export type AssignmentFromInput = FromInputOf<AssignmentEq, LeafScalarMap, LeafStringMap> | FromInputOf<AssignmentColon, LeafScalarMap, LeafStringMap> | FromInputOf<AssignmentColon2, LeafScalarMap, LeafStringMap>;
-export type AugmentedAssignmentFromInput = FromInputOf<AugmentedAssignment, LeafScalarMap, LeafStringMap>;
-export type PatternListFromInput = FromInputOf<PatternList, LeafScalarMap, LeafStringMap>;
-export type YieldFromInput = FromInputOf<Yield, LeafScalarMap, LeafStringMap>;
-export type AttributeFromInput = FromInputOf<Attribute, LeafScalarMap, LeafStringMap>;
-export type SubscriptFromInput = FromInputOf<Subscript, LeafScalarMap, LeafStringMap>;
-export type SliceFromInput = FromInputOf<Slice, LeafScalarMap, LeafStringMap>;
-export type CallFromInput = FromInputOf<Call, LeafScalarMap, LeafStringMap>;
-export type TypedParameterFromInput = FromInputOf<TypedParameter, LeafScalarMap, LeafStringMap>;
-export type TypeFromInput = FromInputOf<Type, LeafScalarMap, LeafStringMap>;
-export type SplatTypeFromInput = FromInputOf<SplatType, LeafScalarMap, LeafStringMap>;
-export type GenericTypeFromInput = FromInputOf<GenericType, LeafScalarMap, LeafStringMap>;
-export type UnionTypeFromInput = FromInputOf<UnionType, LeafScalarMap, LeafStringMap>;
-export type ConstrainedTypeFromInput = FromInputOf<ConstrainedType, LeafScalarMap, LeafStringMap>;
-export type MemberTypeFromInput = FromInputOf<MemberType, LeafScalarMap, LeafStringMap>;
-export type KeywordArgumentFromInput = FromInputOf<KeywordArgument, LeafScalarMap, LeafStringMap>;
-export type ListFromInput = FromInputOf<List, LeafScalarMap, LeafStringMap>;
-export type SetFromInput = FromInputOf<Set, LeafScalarMap, LeafStringMap>;
-export type TupleFromInput = FromInputOf<Tuple, LeafScalarMap, LeafStringMap>;
-export type DictionaryFromInput = FromInputOf<Dictionary, LeafScalarMap, LeafStringMap>;
-export type PairFromInput = FromInputOf<Pair, LeafScalarMap, LeafStringMap>;
-export type ListComprehensionFromInput = FromInputOf<ListComprehension, LeafScalarMap, LeafStringMap>;
-export type DictionaryComprehensionFromInput = FromInputOf<DictionaryComprehension, LeafScalarMap, LeafStringMap>;
-export type SetComprehensionFromInput = FromInputOf<SetComprehension, LeafScalarMap, LeafStringMap>;
-export type GeneratorExpressionFromInput = FromInputOf<GeneratorExpression, LeafScalarMap, LeafStringMap>;
-export type ComprehensionClausesFromInput = FromInputOf<ComprehensionClauses, LeafScalarMap, LeafStringMap>;
-export type ParenthesizedExpressionFromInput = FromInputOf<ParenthesizedExpression, LeafScalarMap, LeafStringMap>;
-export type CollectionElementsFromInput = FromInputOf<CollectionElements, LeafScalarMap, LeafStringMap>;
-export type ForInClauseFromInput = FromInputOf<ForInClause, LeafScalarMap, LeafStringMap>;
-export type IfClauseFromInput = FromInputOf<IfClause, LeafScalarMap, LeafStringMap>;
-export type ConditionalExpressionFromInput = FromInputOf<ConditionalExpression, LeafScalarMap, LeafStringMap>;
-export type ConcatenatedStringFromInput = FromInputOf<ConcatenatedString, LeafScalarMap, LeafStringMap>;
-export type StringFromInput = FromInputOf<String, LeafScalarMap, LeafStringMap>;
-export type StringContentFromInput = FromInputOf<StringContent, LeafScalarMap, LeafStringMap>;
-export type InterpolationFromInput = FromInputOf<Interpolation, LeafScalarMap, LeafStringMap>;
-export type FormatSpecifierFromInput = FromInputOf<FormatSpecifier, LeafScalarMap, LeafStringMap>;
-export type AwaitFromInput = FromInputOf<Await, LeafScalarMap, LeafStringMap>;
-export type AsPatternTargetFromInput = FromInputOf<AsPatternTarget, LeafScalarMap, LeafStringMap>;
-export type FormatExpressionFromInput = FromInputOf<FormatExpression, LeafScalarMap, LeafStringMap>;
+// Loose-input type aliases (for from() construction)
+export type LooseModule = FromInputOf<Module, LeafScalarMap, LeafStringMap>;
+export type LooseSimpleStatements = FromInputOf<SimpleStatements, LeafScalarMap, LeafStringMap>;
+export type LooseImportStatement = FromInputOf<ImportStatement, LeafScalarMap, LeafStringMap>;
+export type LooseRelativeImport = FromInputOf<RelativeImport, LeafScalarMap, LeafStringMap>;
+export type LooseFutureImportStatement = FromInputOf<FutureImportStatement, LeafScalarMap, LeafStringMap>;
+export type LooseImportFromStatement = FromInputOf<ImportFromStatement, LeafScalarMap, LeafStringMap>;
+export type LooseImportList = FromInputOf<ImportList, LeafScalarMap, LeafStringMap>;
+export type LooseAliasedImport = FromInputOf<AliasedImport, LeafScalarMap, LeafStringMap>;
+export type LoosePrintStatement = FromInputOf<PrintStatement, LeafScalarMap, LeafStringMap>;
+export type LooseChevron = FromInputOf<Chevron, LeafScalarMap, LeafStringMap>;
+export type LooseAssertStatement = FromInputOf<AssertStatement, LeafScalarMap, LeafStringMap>;
+export type LooseExpressionStatement = FromInputOf<ExpressionStatement, LeafScalarMap, LeafStringMap>;
+export type LooseNamedExpression = FromInputOf<NamedExpression, LeafScalarMap, LeafStringMap>;
+export type LooseReturnStatement = FromInputOf<ReturnStatement, LeafScalarMap, LeafStringMap>;
+export type LooseDeleteStatement = FromInputOf<DeleteStatement, LeafScalarMap, LeafStringMap>;
+export type LooseRaiseStatement = FromInputOf<RaiseStatement, LeafScalarMap, LeafStringMap>;
+export type LooseIfStatement = FromInputOf<IfStatement, LeafScalarMap, LeafStringMap>;
+export type LooseElifClause = FromInputOf<ElifClause, LeafScalarMap, LeafStringMap>;
+export type LooseElseClause = FromInputOf<ElseClause, LeafScalarMap, LeafStringMap>;
+export type LooseMatchStatement = FromInputOf<MatchStatement, LeafScalarMap, LeafStringMap>;
+export type LooseCaseClause = FromInputOf<CaseClause, LeafScalarMap, LeafStringMap>;
+export type LooseForStatement = FromInputOf<ForStatement, LeafScalarMap, LeafStringMap>;
+export type LooseWhileStatement = FromInputOf<WhileStatement, LeafScalarMap, LeafStringMap>;
+export type LooseTryStatement = FromInputOf<TryStatement, LeafScalarMap, LeafStringMap>;
+export type LooseExceptClause = FromInputOf<ExceptClause, LeafScalarMap, LeafStringMap>;
+export type LooseFinallyClause = FromInputOf<FinallyClause, LeafScalarMap, LeafStringMap>;
+export type LooseWithStatement = FromInputOf<WithStatement, LeafScalarMap, LeafStringMap>;
+export type LooseWithClause = FromInputOf<WithClause, LeafScalarMap, LeafStringMap>;
+export type LooseWithItem = FromInputOf<WithItem, LeafScalarMap, LeafStringMap>;
+export type LooseFunctionDefinition = FromInputOf<FunctionDefinition, LeafScalarMap, LeafStringMap>;
+export type LooseParameters = FromInputOf<Parameters, LeafScalarMap, LeafStringMap>;
+export type LooseLambdaParameters = FromInputOf<LambdaParameters, LeafScalarMap, LeafStringMap>;
+export type LooseListSplat = FromInputOf<ListSplat, LeafScalarMap, LeafStringMap>;
+export type LooseDictionarySplat = FromInputOf<DictionarySplat, LeafScalarMap, LeafStringMap>;
+export type LooseGlobalStatement = FromInputOf<GlobalStatement, LeafScalarMap, LeafStringMap>;
+export type LooseNonlocalStatement = FromInputOf<NonlocalStatement, LeafScalarMap, LeafStringMap>;
+export type LooseExecStatement = FromInputOf<ExecStatement, LeafScalarMap, LeafStringMap>;
+export type LooseTypeAliasStatement = FromInputOf<TypeAliasStatement, LeafScalarMap, LeafStringMap>;
+export type LooseClassDefinition = FromInputOf<ClassDefinition, LeafScalarMap, LeafStringMap>;
+export type LooseTypeParameter = FromInputOf<TypeParameter, LeafScalarMap, LeafStringMap>;
+export type LooseParenthesizedListSplat = FromInputOf<ParenthesizedListSplat, LeafScalarMap, LeafStringMap>;
+export type LooseArgumentList = FromInputOf<ArgumentList, LeafScalarMap, LeafStringMap>;
+export type LooseDecoratedDefinition = FromInputOf<DecoratedDefinition, LeafScalarMap, LeafStringMap>;
+export type LooseDecorator = FromInputOf<Decorator, LeafScalarMap, LeafStringMap>;
+export type LooseSuite = FromInputOf<Suite, LeafScalarMap, LeafStringMap>;
+export type LooseBlock = FromInputOf<Block, LeafScalarMap, LeafStringMap>;
+export type LooseExpressionList = FromInputOf<ExpressionList, LeafScalarMap, LeafStringMap>;
+export type LooseDottedName = FromInputOf<DottedName, LeafScalarMap, LeafStringMap>;
+export type LooseCasePattern = FromInputOf<CasePattern, LeafScalarMap, LeafStringMap>;
+export type LooseSimplePattern = FromInputOf<SimplePattern, LeafScalarMap, LeafStringMap>;
+export type LooseUnionPattern = FromInputOf<UnionPattern, LeafScalarMap, LeafStringMap>;
+export type LooseDictPattern = FromInputOf<DictPattern, LeafScalarMap, LeafStringMap>;
+export type LooseKeyValuePattern = FromInputOf<KeyValuePattern, LeafScalarMap, LeafStringMap>;
+export type LooseKeywordPattern = FromInputOf<KeywordPattern, LeafScalarMap, LeafStringMap>;
+export type LooseSplatPattern = FromInputOf<SplatPattern, LeafScalarMap, LeafStringMap>;
+export type LooseClassPattern = FromInputOf<ClassPattern, LeafScalarMap, LeafStringMap>;
+export type LooseComplexPattern = FromInputOf<ComplexPattern, LeafScalarMap, LeafStringMap>;
+export type Loose_Parameters = FromInputOf<_Parameters, LeafScalarMap, LeafStringMap>;
+export type LoosePatterns = FromInputOf<Patterns, LeafScalarMap, LeafStringMap>;
+export type LooseTuplePattern = FromInputOf<TuplePattern, LeafScalarMap, LeafStringMap>;
+export type LooseListPattern = FromInputOf<ListPattern, LeafScalarMap, LeafStringMap>;
+export type LooseDefaultParameter = FromInputOf<DefaultParameter, LeafScalarMap, LeafStringMap>;
+export type LooseTypedDefaultParameter = FromInputOf<TypedDefaultParameter, LeafScalarMap, LeafStringMap>;
+export type LooseListSplatPattern = FromInputOf<ListSplatPattern, LeafScalarMap, LeafStringMap>;
+export type LooseDictionarySplatPattern = FromInputOf<DictionarySplatPattern, LeafScalarMap, LeafStringMap>;
+export type LooseAsPattern = FromInputOf<AsPattern, LeafScalarMap, LeafStringMap>;
+export type LooseNotOperator = FromInputOf<NotOperator, LeafScalarMap, LeafStringMap>;
+export type LooseBooleanOperator = FromInputOf<BooleanOperator, LeafScalarMap, LeafStringMap>;
+export type LooseBinaryOperator = FromInputOf<BinaryOperator, LeafScalarMap, LeafStringMap>;
+export type LooseUnaryOperator = FromInputOf<UnaryOperator, LeafScalarMap, LeafStringMap>;
+export type LooseComparisonOperator = FromInputOf<ComparisonOperator, LeafScalarMap, LeafStringMap>;
+export type LooseLambda = FromInputOf<Lambda, LeafScalarMap, LeafStringMap>;
+export type LooseLambdaWithinForInClause = FromInputOf<LambdaWithinForInClause, LeafScalarMap, LeafStringMap>;
+export type LooseAssignment = FromInputOf<AssignmentEq, LeafScalarMap, LeafStringMap> | FromInputOf<AssignmentColon, LeafScalarMap, LeafStringMap> | FromInputOf<AssignmentColon2, LeafScalarMap, LeafStringMap>;
+export type LooseAugmentedAssignment = FromInputOf<AugmentedAssignment, LeafScalarMap, LeafStringMap>;
+export type LoosePatternList = FromInputOf<PatternList, LeafScalarMap, LeafStringMap>;
+export type LooseYield = FromInputOf<Yield, LeafScalarMap, LeafStringMap>;
+export type LooseAttribute = FromInputOf<Attribute, LeafScalarMap, LeafStringMap>;
+export type LooseSubscript = FromInputOf<Subscript, LeafScalarMap, LeafStringMap>;
+export type LooseSlice = FromInputOf<Slice, LeafScalarMap, LeafStringMap>;
+export type LooseCall = FromInputOf<Call, LeafScalarMap, LeafStringMap>;
+export type LooseTypedParameter = FromInputOf<TypedParameter, LeafScalarMap, LeafStringMap>;
+export type LooseType = FromInputOf<Type, LeafScalarMap, LeafStringMap>;
+export type LooseSplatType = FromInputOf<SplatType, LeafScalarMap, LeafStringMap>;
+export type LooseGenericType = FromInputOf<GenericType, LeafScalarMap, LeafStringMap>;
+export type LooseUnionType = FromInputOf<UnionType, LeafScalarMap, LeafStringMap>;
+export type LooseConstrainedType = FromInputOf<ConstrainedType, LeafScalarMap, LeafStringMap>;
+export type LooseMemberType = FromInputOf<MemberType, LeafScalarMap, LeafStringMap>;
+export type LooseKeywordArgument = FromInputOf<KeywordArgument, LeafScalarMap, LeafStringMap>;
+export type LooseList = FromInputOf<List, LeafScalarMap, LeafStringMap>;
+export type LooseSet = FromInputOf<Set, LeafScalarMap, LeafStringMap>;
+export type LooseTuple = FromInputOf<Tuple, LeafScalarMap, LeafStringMap>;
+export type LooseDictionary = FromInputOf<Dictionary, LeafScalarMap, LeafStringMap>;
+export type LoosePair = FromInputOf<Pair, LeafScalarMap, LeafStringMap>;
+export type LooseListComprehension = FromInputOf<ListComprehension, LeafScalarMap, LeafStringMap>;
+export type LooseDictionaryComprehension = FromInputOf<DictionaryComprehension, LeafScalarMap, LeafStringMap>;
+export type LooseSetComprehension = FromInputOf<SetComprehension, LeafScalarMap, LeafStringMap>;
+export type LooseGeneratorExpression = FromInputOf<GeneratorExpression, LeafScalarMap, LeafStringMap>;
+export type LooseComprehensionClauses = FromInputOf<ComprehensionClauses, LeafScalarMap, LeafStringMap>;
+export type LooseParenthesizedExpression = FromInputOf<ParenthesizedExpression, LeafScalarMap, LeafStringMap>;
+export type LooseCollectionElements = FromInputOf<CollectionElements, LeafScalarMap, LeafStringMap>;
+export type LooseForInClause = FromInputOf<ForInClause, LeafScalarMap, LeafStringMap>;
+export type LooseIfClause = FromInputOf<IfClause, LeafScalarMap, LeafStringMap>;
+export type LooseConditionalExpression = FromInputOf<ConditionalExpression, LeafScalarMap, LeafStringMap>;
+export type LooseConcatenatedString = FromInputOf<ConcatenatedString, LeafScalarMap, LeafStringMap>;
+export type LooseString = FromInputOf<String, LeafScalarMap, LeafStringMap>;
+export type LooseStringContent = FromInputOf<StringContent, LeafScalarMap, LeafStringMap>;
+export type LooseInterpolation = FromInputOf<Interpolation, LeafScalarMap, LeafStringMap>;
+export type LooseFormatSpecifier = FromInputOf<FormatSpecifier, LeafScalarMap, LeafStringMap>;
+export type LooseAwait = FromInputOf<Await, LeafScalarMap, LeafStringMap>;
+export type LooseAsPatternTarget = FromInputOf<AsPatternTarget, LeafScalarMap, LeafStringMap>;
+export type LooseFormatExpression = FromInputOf<FormatExpression, LeafScalarMap, LeafStringMap>;
 
 // Supertype unions
 export type Statement =
@@ -1612,7 +1612,7 @@ export type Statement =
 ;
 
 export type StatementConfig = SimpleStatementsConfig;
-export type StatementFromInput = SimpleStatementsFromInput;
+export type LooseStatement = LooseSimpleStatements;
 export type StatementTree = SimpleStatementsTree | CompoundStatementTree;
 
 export type SimpleStatement =
@@ -1635,7 +1635,7 @@ export type SimpleStatement =
 ;
 
 export type SimpleStatementConfig = FutureImportStatementConfig | ImportStatementConfig | ImportFromStatementConfig | PrintStatementConfig | AssertStatementConfig | ExpressionStatementConfig | ReturnStatementConfig | DeleteStatementConfig | RaiseStatementConfig | GlobalStatementConfig | NonlocalStatementConfig | ExecStatementConfig | TypeAliasStatementConfig;
-export type SimpleStatementFromInput = FutureImportStatementFromInput | ImportStatementFromInput | ImportFromStatementFromInput | PrintStatementFromInput | AssertStatementFromInput | ExpressionStatementFromInput | ReturnStatementFromInput | DeleteStatementFromInput | RaiseStatementFromInput | GlobalStatementFromInput | NonlocalStatementFromInput | ExecStatementFromInput | TypeAliasStatementFromInput;
+export type LooseSimpleStatement = LooseFutureImportStatement | LooseImportStatement | LooseImportFromStatement | LoosePrintStatement | LooseAssertStatement | LooseExpressionStatement | LooseReturnStatement | LooseDeleteStatement | LooseRaiseStatement | LooseGlobalStatement | LooseNonlocalStatement | LooseExecStatement | LooseTypeAliasStatement;
 export type SimpleStatementTree = FutureImportStatementTree | ImportStatementTree | ImportFromStatementTree | PrintStatementTree | AssertStatementTree | ExpressionStatementTree | ReturnStatementTree | DeleteStatementTree | RaiseStatementTree | PassStatementTree | BreakStatementTree | ContinueStatementTree | GlobalStatementTree | NonlocalStatementTree | ExecStatementTree | TypeAliasStatementTree;
 
 export type NamedExpressionLhs =
@@ -1650,7 +1650,7 @@ export type Expressions =
 ;
 
 export type ExpressionsConfig = ExpressionListConfig;
-export type ExpressionsFromInput = ExpressionListFromInput;
+export type LooseExpressions = LooseExpressionList;
 export type ExpressionsTree = ExpressionTree | ExpressionListTree;
 
 export type CompoundStatement =
@@ -1666,7 +1666,7 @@ export type CompoundStatement =
 ;
 
 export type CompoundStatementConfig = IfStatementConfig | ForStatementConfig | WhileStatementConfig | TryStatementConfig | WithStatementConfig | FunctionDefinitionConfig | ClassDefinitionConfig | DecoratedDefinitionConfig | MatchStatementConfig;
-export type CompoundStatementFromInput = IfStatementFromInput | ForStatementFromInput | WhileStatementFromInput | TryStatementFromInput | WithStatementFromInput | FunctionDefinitionFromInput | ClassDefinitionFromInput | DecoratedDefinitionFromInput | MatchStatementFromInput;
+export type LooseCompoundStatement = LooseIfStatement | LooseForStatement | LooseWhileStatement | LooseTryStatement | LooseWithStatement | LooseFunctionDefinition | LooseClassDefinition | LooseDecoratedDefinition | LooseMatchStatement;
 export type CompoundStatementTree = IfStatementTree | ForStatementTree | WhileStatementTree | TryStatementTree | WithStatementTree | FunctionDefinitionTree | ClassDefinitionTree | DecoratedDefinitionTree | MatchStatementTree;
 
 export type Parameter =
@@ -1680,7 +1680,7 @@ export type Parameter =
 ;
 
 export type ParameterConfig = TypedParameterConfig | DefaultParameterConfig | TypedDefaultParameterConfig | ListSplatPatternConfig | TuplePatternConfig | DictionarySplatPatternConfig;
-export type ParameterFromInput = TypedParameterFromInput | DefaultParameterFromInput | TypedDefaultParameterFromInput | ListSplatPatternFromInput | TuplePatternFromInput | DictionarySplatPatternFromInput;
+export type LooseParameter = LooseTypedParameter | LooseDefaultParameter | LooseTypedDefaultParameter | LooseListSplatPattern | LooseTuplePattern | LooseDictionarySplatPattern;
 export type ParameterTree = IdentifierTree | TypedParameterTree | DefaultParameterTree | TypedDefaultParameterTree | ListSplatPatternTree | TuplePatternTree | KeywordSeparatorTree | PositionalSeparatorTree | DictionarySplatPatternTree;
 
 export type Pattern =
@@ -1694,7 +1694,7 @@ export type Pattern =
 ;
 
 export type PatternConfig = SubscriptConfig | AttributeConfig | ListSplatPatternConfig | TuplePatternConfig | ListPatternConfig;
-export type PatternFromInput = SubscriptFromInput | AttributeFromInput | ListSplatPatternFromInput | TuplePatternFromInput | ListPatternFromInput;
+export type LoosePattern = LooseSubscript | LooseAttribute | LooseListSplatPattern | LooseTuplePattern | LooseListPattern;
 export type PatternTree = IdentifierTree | KeywordIdentifierTree | SubscriptTree | AttributeTree | ListSplatPatternTree | TuplePatternTree | ListPatternTree;
 
 export type ExpressionWithinForInClause =
@@ -1702,7 +1702,7 @@ export type ExpressionWithinForInClause =
 ;
 
 export type ExpressionWithinForInClauseConfig = LambdaWithinForInClauseConfig;
-export type ExpressionWithinForInClauseFromInput = LambdaWithinForInClauseFromInput;
+export type LooseExpressionWithinForInClause = LooseLambdaWithinForInClause;
 export type ExpressionWithinForInClauseTree = ExpressionTree | LambdaWithinForInClauseTree;
 
 export type Expression =
@@ -1716,7 +1716,7 @@ export type Expression =
 ;
 
 export type ExpressionConfig = ComparisonOperatorConfig | NotOperatorConfig | BooleanOperatorConfig | LambdaConfig | ConditionalExpressionConfig | NamedExpressionConfig | AsPatternConfig;
-export type ExpressionFromInput = ComparisonOperatorFromInput | NotOperatorFromInput | BooleanOperatorFromInput | LambdaFromInput | ConditionalExpressionFromInput | NamedExpressionFromInput | AsPatternFromInput;
+export type LooseExpression = LooseComparisonOperator | LooseNotOperator | LooseBooleanOperator | LooseLambda | LooseConditionalExpression | LooseNamedExpression | LooseAsPattern;
 export type ExpressionTree = ComparisonOperatorTree | NotOperatorTree | BooleanOperatorTree | LambdaTree | PrimaryExpressionTree | ConditionalExpressionTree | NamedExpressionTree | AsPatternTree;
 
 export type PrimaryExpression =
@@ -1748,7 +1748,7 @@ export type PrimaryExpression =
 ;
 
 export type PrimaryExpressionConfig = AwaitConfig | BinaryOperatorConfig | StringConfig | ConcatenatedStringConfig | UnaryOperatorConfig | AttributeConfig | SubscriptConfig | CallConfig | ListConfig | ListComprehensionConfig | DictionaryConfig | DictionaryComprehensionConfig | SetConfig | SetComprehensionConfig | TupleConfig | ParenthesizedExpressionConfig | GeneratorExpressionConfig | ListSplatPatternConfig;
-export type PrimaryExpressionFromInput = AwaitFromInput | BinaryOperatorFromInput | StringFromInput | ConcatenatedStringFromInput | UnaryOperatorFromInput | AttributeFromInput | SubscriptFromInput | CallFromInput | ListFromInput | ListComprehensionFromInput | DictionaryFromInput | DictionaryComprehensionFromInput | SetFromInput | SetComprehensionFromInput | TupleFromInput | ParenthesizedExpressionFromInput | GeneratorExpressionFromInput | ListSplatPatternFromInput;
+export type LoosePrimaryExpression = LooseAwait | LooseBinaryOperator | LooseString | LooseConcatenatedString | LooseUnaryOperator | LooseAttribute | LooseSubscript | LooseCall | LooseList | LooseListComprehension | LooseDictionary | LooseDictionaryComprehension | LooseSet | LooseSetComprehension | LooseTuple | LooseParenthesizedExpression | LooseGeneratorExpression | LooseListSplatPattern;
 export type PrimaryExpressionTree = AwaitTree | BinaryOperatorTree | IdentifierTree | KeywordIdentifierTree | StringTree | ConcatenatedStringTree | IntegerTree | FloatTree | TrueTree | FalseTree | NoneTree | UnaryOperatorTree | AttributeTree | SubscriptTree | CallTree | ListTree | ListComprehensionTree | DictionaryTree | DictionaryComprehensionTree | SetTree | SetComprehensionTree | TupleTree | ParenthesizedExpressionTree | GeneratorExpressionTree | Ellipsis2Tree | ListSplatPatternTree;
 
 export type LeftHandSide =
@@ -1757,7 +1757,7 @@ export type LeftHandSide =
 ;
 
 export type LeftHandSideConfig = PatternListConfig;
-export type LeftHandSideFromInput = PatternListFromInput;
+export type LooseLeftHandSide = LoosePatternList;
 export type LeftHandSideTree = PatternTree | PatternListTree;
 
 export type RightHandSide =
@@ -1770,7 +1770,7 @@ export type RightHandSide =
 ;
 
 export type RightHandSideConfig = ExpressionListConfig | AssignmentConfig | AugmentedAssignmentConfig | PatternListConfig | YieldConfig;
-export type RightHandSideFromInput = ExpressionListFromInput | AssignmentFromInput | AugmentedAssignmentFromInput | PatternListFromInput | YieldFromInput;
+export type LooseRightHandSide = LooseExpressionList | LooseAssignment | LooseAugmentedAssignment | LoosePatternList | LooseYield;
 export type RightHandSideTree = ExpressionTree | ExpressionListTree | AssignmentTree | AugmentedAssignmentTree | PatternListTree | YieldTree;
 
 export type FExpression =
@@ -1781,7 +1781,7 @@ export type FExpression =
 ;
 
 export type FExpressionConfig = ExpressionListConfig | PatternListConfig | YieldConfig;
-export type FExpressionFromInput = ExpressionListFromInput | PatternListFromInput | YieldFromInput;
+export type LooseFExpression = LooseExpressionList | LoosePatternList | LooseYield;
 export type FExpressionTree = ExpressionTree | ExpressionListTree | PatternListTree | YieldTree;
 
 // Token type aliases (only tokens referenced in field/child unions)
@@ -2173,117 +2173,117 @@ export interface ConfigMap {
   'format_expression': FormatExpressionConfig;
 }
 
-export interface FromInputMap {
-  'module': ModuleFromInput;
-  '_simple_statements': SimpleStatementsFromInput;
-  'import_statement': ImportStatementFromInput;
-  'relative_import': RelativeImportFromInput;
-  'future_import_statement': FutureImportStatementFromInput;
-  'import_from_statement': ImportFromStatementFromInput;
-  '_import_list': ImportListFromInput;
-  'aliased_import': AliasedImportFromInput;
-  'print_statement': PrintStatementFromInput;
-  'chevron': ChevronFromInput;
-  'assert_statement': AssertStatementFromInput;
-  'expression_statement': ExpressionStatementFromInput;
-  'named_expression': NamedExpressionFromInput;
-  'return_statement': ReturnStatementFromInput;
-  'delete_statement': DeleteStatementFromInput;
-  'raise_statement': RaiseStatementFromInput;
-  'if_statement': IfStatementFromInput;
-  'elif_clause': ElifClauseFromInput;
-  'else_clause': ElseClauseFromInput;
-  'match_statement': MatchStatementFromInput;
-  'case_clause': CaseClauseFromInput;
-  'for_statement': ForStatementFromInput;
-  'while_statement': WhileStatementFromInput;
-  'try_statement': TryStatementFromInput;
-  'except_clause': ExceptClauseFromInput;
-  'finally_clause': FinallyClauseFromInput;
-  'with_statement': WithStatementFromInput;
-  'with_clause': WithClauseFromInput;
-  'with_item': WithItemFromInput;
-  'function_definition': FunctionDefinitionFromInput;
-  'parameters': ParametersFromInput;
-  'lambda_parameters': LambdaParametersFromInput;
-  'list_splat': ListSplatFromInput;
-  'dictionary_splat': DictionarySplatFromInput;
-  'global_statement': GlobalStatementFromInput;
-  'nonlocal_statement': NonlocalStatementFromInput;
-  'exec_statement': ExecStatementFromInput;
-  'type_alias_statement': TypeAliasStatementFromInput;
-  'class_definition': ClassDefinitionFromInput;
-  'type_parameter': TypeParameterFromInput;
-  'parenthesized_list_splat': ParenthesizedListSplatFromInput;
-  'argument_list': ArgumentListFromInput;
-  'decorated_definition': DecoratedDefinitionFromInput;
-  'decorator': DecoratorFromInput;
-  '_suite': SuiteFromInput;
-  'block': BlockFromInput;
-  'expression_list': ExpressionListFromInput;
-  'dotted_name': DottedNameFromInput;
-  'case_pattern': CasePatternFromInput;
-  '_simple_pattern': SimplePatternFromInput;
-  'union_pattern': UnionPatternFromInput;
-  'dict_pattern': DictPatternFromInput;
-  '_key_value_pattern': KeyValuePatternFromInput;
-  'keyword_pattern': KeywordPatternFromInput;
-  'splat_pattern': SplatPatternFromInput;
-  'class_pattern': ClassPatternFromInput;
-  'complex_pattern': ComplexPatternFromInput;
-  '_parameters': _ParametersFromInput;
-  '_patterns': PatternsFromInput;
-  'tuple_pattern': TuplePatternFromInput;
-  'list_pattern': ListPatternFromInput;
-  'default_parameter': DefaultParameterFromInput;
-  'typed_default_parameter': TypedDefaultParameterFromInput;
-  'list_splat_pattern': ListSplatPatternFromInput;
-  'dictionary_splat_pattern': DictionarySplatPatternFromInput;
-  'as_pattern': AsPatternFromInput;
-  'not_operator': NotOperatorFromInput;
-  'boolean_operator': BooleanOperatorFromInput;
-  'binary_operator': BinaryOperatorFromInput;
-  'unary_operator': UnaryOperatorFromInput;
-  'comparison_operator': ComparisonOperatorFromInput;
-  'lambda': LambdaFromInput;
-  'lambda_within_for_in_clause': LambdaWithinForInClauseFromInput;
-  'assignment': AssignmentFromInput;
-  'augmented_assignment': AugmentedAssignmentFromInput;
-  'pattern_list': PatternListFromInput;
-  'yield': YieldFromInput;
-  'attribute': AttributeFromInput;
-  'subscript': SubscriptFromInput;
-  'slice': SliceFromInput;
-  'call': CallFromInput;
-  'typed_parameter': TypedParameterFromInput;
-  'type': TypeFromInput;
-  'splat_type': SplatTypeFromInput;
-  'generic_type': GenericTypeFromInput;
-  'union_type': UnionTypeFromInput;
-  'constrained_type': ConstrainedTypeFromInput;
-  'member_type': MemberTypeFromInput;
-  'keyword_argument': KeywordArgumentFromInput;
-  'list': ListFromInput;
-  'set': SetFromInput;
-  'tuple': TupleFromInput;
-  'dictionary': DictionaryFromInput;
-  'pair': PairFromInput;
-  'list_comprehension': ListComprehensionFromInput;
-  'dictionary_comprehension': DictionaryComprehensionFromInput;
-  'set_comprehension': SetComprehensionFromInput;
-  'generator_expression': GeneratorExpressionFromInput;
-  '_comprehension_clauses': ComprehensionClausesFromInput;
-  'parenthesized_expression': ParenthesizedExpressionFromInput;
-  '_collection_elements': CollectionElementsFromInput;
-  'for_in_clause': ForInClauseFromInput;
-  'if_clause': IfClauseFromInput;
-  'conditional_expression': ConditionalExpressionFromInput;
-  'concatenated_string': ConcatenatedStringFromInput;
-  'string': StringFromInput;
-  'string_content': StringContentFromInput;
-  'interpolation': InterpolationFromInput;
-  'format_specifier': FormatSpecifierFromInput;
-  'await': AwaitFromInput;
-  'as_pattern_target': AsPatternTargetFromInput;
-  'format_expression': FormatExpressionFromInput;
+export interface LooseMap {
+  'module': LooseModule;
+  '_simple_statements': LooseSimpleStatements;
+  'import_statement': LooseImportStatement;
+  'relative_import': LooseRelativeImport;
+  'future_import_statement': LooseFutureImportStatement;
+  'import_from_statement': LooseImportFromStatement;
+  '_import_list': LooseImportList;
+  'aliased_import': LooseAliasedImport;
+  'print_statement': LoosePrintStatement;
+  'chevron': LooseChevron;
+  'assert_statement': LooseAssertStatement;
+  'expression_statement': LooseExpressionStatement;
+  'named_expression': LooseNamedExpression;
+  'return_statement': LooseReturnStatement;
+  'delete_statement': LooseDeleteStatement;
+  'raise_statement': LooseRaiseStatement;
+  'if_statement': LooseIfStatement;
+  'elif_clause': LooseElifClause;
+  'else_clause': LooseElseClause;
+  'match_statement': LooseMatchStatement;
+  'case_clause': LooseCaseClause;
+  'for_statement': LooseForStatement;
+  'while_statement': LooseWhileStatement;
+  'try_statement': LooseTryStatement;
+  'except_clause': LooseExceptClause;
+  'finally_clause': LooseFinallyClause;
+  'with_statement': LooseWithStatement;
+  'with_clause': LooseWithClause;
+  'with_item': LooseWithItem;
+  'function_definition': LooseFunctionDefinition;
+  'parameters': LooseParameters;
+  'lambda_parameters': LooseLambdaParameters;
+  'list_splat': LooseListSplat;
+  'dictionary_splat': LooseDictionarySplat;
+  'global_statement': LooseGlobalStatement;
+  'nonlocal_statement': LooseNonlocalStatement;
+  'exec_statement': LooseExecStatement;
+  'type_alias_statement': LooseTypeAliasStatement;
+  'class_definition': LooseClassDefinition;
+  'type_parameter': LooseTypeParameter;
+  'parenthesized_list_splat': LooseParenthesizedListSplat;
+  'argument_list': LooseArgumentList;
+  'decorated_definition': LooseDecoratedDefinition;
+  'decorator': LooseDecorator;
+  '_suite': LooseSuite;
+  'block': LooseBlock;
+  'expression_list': LooseExpressionList;
+  'dotted_name': LooseDottedName;
+  'case_pattern': LooseCasePattern;
+  '_simple_pattern': LooseSimplePattern;
+  'union_pattern': LooseUnionPattern;
+  'dict_pattern': LooseDictPattern;
+  '_key_value_pattern': LooseKeyValuePattern;
+  'keyword_pattern': LooseKeywordPattern;
+  'splat_pattern': LooseSplatPattern;
+  'class_pattern': LooseClassPattern;
+  'complex_pattern': LooseComplexPattern;
+  '_parameters': Loose_Parameters;
+  '_patterns': LoosePatterns;
+  'tuple_pattern': LooseTuplePattern;
+  'list_pattern': LooseListPattern;
+  'default_parameter': LooseDefaultParameter;
+  'typed_default_parameter': LooseTypedDefaultParameter;
+  'list_splat_pattern': LooseListSplatPattern;
+  'dictionary_splat_pattern': LooseDictionarySplatPattern;
+  'as_pattern': LooseAsPattern;
+  'not_operator': LooseNotOperator;
+  'boolean_operator': LooseBooleanOperator;
+  'binary_operator': LooseBinaryOperator;
+  'unary_operator': LooseUnaryOperator;
+  'comparison_operator': LooseComparisonOperator;
+  'lambda': LooseLambda;
+  'lambda_within_for_in_clause': LooseLambdaWithinForInClause;
+  'assignment': LooseAssignment;
+  'augmented_assignment': LooseAugmentedAssignment;
+  'pattern_list': LoosePatternList;
+  'yield': LooseYield;
+  'attribute': LooseAttribute;
+  'subscript': LooseSubscript;
+  'slice': LooseSlice;
+  'call': LooseCall;
+  'typed_parameter': LooseTypedParameter;
+  'type': LooseType;
+  'splat_type': LooseSplatType;
+  'generic_type': LooseGenericType;
+  'union_type': LooseUnionType;
+  'constrained_type': LooseConstrainedType;
+  'member_type': LooseMemberType;
+  'keyword_argument': LooseKeywordArgument;
+  'list': LooseList;
+  'set': LooseSet;
+  'tuple': LooseTuple;
+  'dictionary': LooseDictionary;
+  'pair': LoosePair;
+  'list_comprehension': LooseListComprehension;
+  'dictionary_comprehension': LooseDictionaryComprehension;
+  'set_comprehension': LooseSetComprehension;
+  'generator_expression': LooseGeneratorExpression;
+  '_comprehension_clauses': LooseComprehensionClauses;
+  'parenthesized_expression': LooseParenthesizedExpression;
+  '_collection_elements': LooseCollectionElements;
+  'for_in_clause': LooseForInClause;
+  'if_clause': LooseIfClause;
+  'conditional_expression': LooseConditionalExpression;
+  'concatenated_string': LooseConcatenatedString;
+  'string': LooseString;
+  'string_content': LooseStringContent;
+  'interpolation': LooseInterpolation;
+  'format_specifier': LooseFormatSpecifier;
+  'await': LooseAwait;
+  'as_pattern_target': LooseAsPatternTarget;
+  'format_expression': LooseFormatExpression;
 }

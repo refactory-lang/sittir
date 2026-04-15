@@ -2134,152 +2134,152 @@ export interface InTree extends AnyTreeNode { readonly type: "in"; }
 export interface MoveTree extends AnyTreeNode { readonly type: "move"; }
 export interface TryTree extends AnyTreeNode { readonly type: "try"; }
 
-// FromInput types
-export type SourceFileFromInput = FromInputOf<SourceFile, LeafScalarMap, LeafStringMap>;
-export type ExpressionStatementFromInput = FromInputOf<ExpressionStatement, LeafScalarMap, LeafStringMap>;
-export type MacroDefinitionFromInput = FromInputOf<MacroDefinition, LeafScalarMap, LeafStringMap>;
-export type MacroRuleFromInput = FromInputOf<MacroRule, LeafScalarMap, LeafStringMap>;
-export type TokenTreePatternFromInput = FromInputOf<TokenTreePattern, LeafScalarMap, LeafStringMap>;
-export type TokenBindingPatternFromInput = FromInputOf<TokenBindingPattern, LeafScalarMap, LeafStringMap>;
-export type TokenRepetitionPatternFromInput = FromInputOf<TokenRepetitionPattern, LeafScalarMap, LeafStringMap>;
-export type TokenTreeFromInput = FromInputOf<TokenTree, LeafScalarMap, LeafStringMap>;
-export type TokenRepetitionFromInput = FromInputOf<TokenRepetition, LeafScalarMap, LeafStringMap>;
-export type NonSpecialTokenFromInput = FromInputOf<NonSpecialToken, LeafScalarMap, LeafStringMap>;
-export type AttributeItemFromInput = FromInputOf<AttributeItem, LeafScalarMap, LeafStringMap>;
-export type InnerAttributeItemFromInput = FromInputOf<InnerAttributeItem, LeafScalarMap, LeafStringMap>;
-export type AttributeFromInput = FromInputOf<Attribute, LeafScalarMap, LeafStringMap>;
-export type ModItemFromInput = FromInputOf<ModItemSemi, LeafScalarMap, LeafStringMap> | FromInputOf<ModItemBody, LeafScalarMap, LeafStringMap>;
-export type ForeignModItemFromInput = FromInputOf<ForeignModItemSemi, LeafScalarMap, LeafStringMap> | FromInputOf<ForeignModItemBody, LeafScalarMap, LeafStringMap>;
-export type DeclarationListFromInput = FromInputOf<DeclarationList, LeafScalarMap, LeafStringMap>;
-export type StructItemFromInput = FromInputOf<StructItemBody, LeafScalarMap, LeafStringMap> | FromInputOf<StructItemSemi, LeafScalarMap, LeafStringMap> | FromInputOf<StructItemSemi2, LeafScalarMap, LeafStringMap>;
-export type UnionItemFromInput = FromInputOf<UnionItem, LeafScalarMap, LeafStringMap>;
-export type EnumItemFromInput = FromInputOf<EnumItem, LeafScalarMap, LeafStringMap>;
-export type EnumVariantListFromInput = FromInputOf<EnumVariantList, LeafScalarMap, LeafStringMap>;
-export type EnumVariantFromInput = FromInputOf<EnumVariant, LeafScalarMap, LeafStringMap>;
-export type FieldDeclarationListFromInput = FromInputOf<FieldDeclarationList, LeafScalarMap, LeafStringMap>;
-export type FieldDeclarationFromInput = FromInputOf<FieldDeclaration, LeafScalarMap, LeafStringMap>;
-export type OrderedFieldDeclarationListFromInput = FromInputOf<OrderedFieldDeclarationList, LeafScalarMap, LeafStringMap>;
-export type ExternCrateDeclarationFromInput = FromInputOf<ExternCrateDeclaration, LeafScalarMap, LeafStringMap>;
-export type ConstItemFromInput = FromInputOf<ConstItem, LeafScalarMap, LeafStringMap>;
-export type StaticItemFromInput = FromInputOf<StaticItem, LeafScalarMap, LeafStringMap>;
-export type TypeItemFromInput = FromInputOf<TypeItem, LeafScalarMap, LeafStringMap>;
-export type FunctionItemFromInput = FromInputOf<FunctionItem, LeafScalarMap, LeafStringMap>;
-export type FunctionSignatureItemFromInput = FromInputOf<FunctionSignatureItem, LeafScalarMap, LeafStringMap>;
-export type FunctionModifiersFromInput = FromInputOf<FunctionModifiers, LeafScalarMap, LeafStringMap>;
-export type WhereClauseFromInput = FromInputOf<WhereClause, LeafScalarMap, LeafStringMap>;
-export type WherePredicateFromInput = FromInputOf<WherePredicate, LeafScalarMap, LeafStringMap>;
-export type ImplItemFromInput = FromInputOf<ImplItemBody, LeafScalarMap, LeafStringMap> | FromInputOf<ImplItemSemi, LeafScalarMap, LeafStringMap>;
-export type TraitItemFromInput = FromInputOf<TraitItem, LeafScalarMap, LeafStringMap>;
-export type AssociatedTypeFromInput = FromInputOf<AssociatedType, LeafScalarMap, LeafStringMap>;
-export type TraitBoundsFromInput = FromInputOf<TraitBounds, LeafScalarMap, LeafStringMap>;
-export type HigherRankedTraitBoundFromInput = FromInputOf<HigherRankedTraitBound, LeafScalarMap, LeafStringMap>;
-export type RemovedTraitBoundFromInput = FromInputOf<RemovedTraitBound, LeafScalarMap, LeafStringMap>;
-export type TypeParametersFromInput = FromInputOf<TypeParameters, LeafScalarMap, LeafStringMap>;
-export type ConstParameterFromInput = FromInputOf<ConstParameter, LeafScalarMap, LeafStringMap>;
-export type TypeParameterFromInput = FromInputOf<TypeParameter, LeafScalarMap, LeafStringMap>;
-export type LifetimeParameterFromInput = FromInputOf<LifetimeParameter, LeafScalarMap, LeafStringMap>;
-export type LetDeclarationFromInput = FromInputOf<LetDeclaration, LeafScalarMap, LeafStringMap>;
-export type UseDeclarationFromInput = FromInputOf<UseDeclaration, LeafScalarMap, LeafStringMap>;
-export type ScopedUseListFromInput = FromInputOf<ScopedUseList, LeafScalarMap, LeafStringMap>;
-export type UseListFromInput = FromInputOf<UseList, LeafScalarMap, LeafStringMap>;
-export type UseAsClauseFromInput = FromInputOf<UseAsClause, LeafScalarMap, LeafStringMap>;
-export type UseWildcardFromInput = FromInputOf<UseWildcard, LeafScalarMap, LeafStringMap>;
-export type ParametersFromInput = FromInputOf<Parameters, LeafScalarMap, LeafStringMap>;
-export type SelfParameterFromInput = FromInputOf<SelfParameter, LeafScalarMap, LeafStringMap>;
-export type VariadicParameterFromInput = FromInputOf<VariadicParameter, LeafScalarMap, LeafStringMap>;
-export type ParameterFromInput = FromInputOf<Parameter, LeafScalarMap, LeafStringMap>;
-export type ExternModifierFromInput = FromInputOf<ExternModifier, LeafScalarMap, LeafStringMap>;
-export type VisibilityModifierFromInput = FromInputOf<VisibilityModifierCrate, LeafScalarMap, LeafStringMap> | FromInputOf<VisibilityModifierPub, LeafScalarMap, LeafStringMap>;
-export type BracketedTypeFromInput = FromInputOf<BracketedType, LeafScalarMap, LeafStringMap>;
-export type QualifiedTypeFromInput = FromInputOf<QualifiedType, LeafScalarMap, LeafStringMap>;
-export type LifetimeFromInput = FromInputOf<Lifetime, LeafScalarMap, LeafStringMap>;
-export type ArrayTypeFromInput = FromInputOf<ArrayType, LeafScalarMap, LeafStringMap>;
-export type ForLifetimesFromInput = FromInputOf<ForLifetimes, LeafScalarMap, LeafStringMap>;
-export type FunctionTypeFromInput = FromInputOf<FunctionType, LeafScalarMap, LeafStringMap>;
-export type TupleTypeFromInput = FromInputOf<TupleType, LeafScalarMap, LeafStringMap>;
-export type GenericFunctionFromInput = FromInputOf<GenericFunction, LeafScalarMap, LeafStringMap>;
-export type GenericTypeFromInput = FromInputOf<GenericType, LeafScalarMap, LeafStringMap>;
-export type GenericTypeWithTurbofishFromInput = FromInputOf<GenericTypeWithTurbofish, LeafScalarMap, LeafStringMap>;
-export type BoundedTypeFromInput = FromInputOf<BoundedType, LeafScalarMap, LeafStringMap>;
-export type UseBoundsFromInput = FromInputOf<UseBounds, LeafScalarMap, LeafStringMap>;
-export type TypeArgumentsFromInput = FromInputOf<TypeArguments, LeafScalarMap, LeafStringMap>;
-export type TypeBindingFromInput = FromInputOf<TypeBinding, LeafScalarMap, LeafStringMap>;
-export type ReferenceTypeFromInput = FromInputOf<ReferenceType, LeafScalarMap, LeafStringMap>;
-export type PointerTypeFromInput = FromInputOf<PointerType, LeafScalarMap, LeafStringMap>;
-export type AbstractTypeFromInput = FromInputOf<AbstractType, LeafScalarMap, LeafStringMap>;
-export type DynamicTypeFromInput = FromInputOf<DynamicType, LeafScalarMap, LeafStringMap>;
-export type MacroInvocationFromInput = FromInputOf<MacroInvocation, LeafScalarMap, LeafStringMap>;
-export type DelimTokenTreeFromInput = FromInputOf<DelimTokenTree, LeafScalarMap, LeafStringMap>;
-export type ScopedIdentifierFromInput = FromInputOf<ScopedIdentifier, LeafScalarMap, LeafStringMap>;
-export type ScopedTypeIdentifierInExpressionPositionFromInput = FromInputOf<ScopedTypeIdentifierInExpressionPosition, LeafScalarMap, LeafStringMap>;
-export type ScopedTypeIdentifierFromInput = FromInputOf<ScopedTypeIdentifier, LeafScalarMap, LeafStringMap>;
-export type RangeExpressionFromInput = FromInputOf<RangeExpressionStart, LeafScalarMap, LeafStringMap> | FromInputOf<RangeExpressionStart2, LeafScalarMap, LeafStringMap> | FromInputOf<RangeExpressionOperator, LeafScalarMap, LeafStringMap> | FromInputOf<RangeExpressionOperator2, LeafScalarMap, LeafStringMap>;
-export type UnaryExpressionFromInput = FromInputOf<UnaryExpression, LeafScalarMap, LeafStringMap>;
-export type TryExpressionFromInput = FromInputOf<TryExpression, LeafScalarMap, LeafStringMap>;
-export type ReferenceExpressionFromInput = FromInputOf<ReferenceExpression, LeafScalarMap, LeafStringMap>;
-export type BinaryExpressionFromInput = FromInputOf<BinaryExpression, LeafScalarMap, LeafStringMap>;
-export type AssignmentExpressionFromInput = FromInputOf<AssignmentExpression, LeafScalarMap, LeafStringMap>;
-export type CompoundAssignmentExprFromInput = FromInputOf<CompoundAssignmentExpr, LeafScalarMap, LeafStringMap>;
-export type TypeCastExpressionFromInput = FromInputOf<TypeCastExpression, LeafScalarMap, LeafStringMap>;
-export type ReturnExpressionFromInput = FromInputOf<ReturnExpression, LeafScalarMap, LeafStringMap>;
-export type YieldExpressionFromInput = FromInputOf<YieldExpression, LeafScalarMap, LeafStringMap>;
-export type CallExpressionFromInput = FromInputOf<CallExpression, LeafScalarMap, LeafStringMap>;
-export type ArgumentsFromInput = FromInputOf<Arguments, LeafScalarMap, LeafStringMap>;
-export type ArrayExpressionFromInput = FromInputOf<ArrayExpression, LeafScalarMap, LeafStringMap>;
-export type ParenthesizedExpressionFromInput = FromInputOf<ParenthesizedExpression, LeafScalarMap, LeafStringMap>;
-export type TupleExpressionFromInput = FromInputOf<TupleExpression, LeafScalarMap, LeafStringMap>;
-export type StructExpressionFromInput = FromInputOf<StructExpression, LeafScalarMap, LeafStringMap>;
-export type FieldInitializerListFromInput = FromInputOf<FieldInitializerList, LeafScalarMap, LeafStringMap>;
-export type ShorthandFieldInitializerFromInput = FromInputOf<ShorthandFieldInitializer, LeafScalarMap, LeafStringMap>;
-export type FieldInitializerFromInput = FromInputOf<FieldInitializer, LeafScalarMap, LeafStringMap>;
-export type BaseFieldInitializerFromInput = FromInputOf<BaseFieldInitializer, LeafScalarMap, LeafStringMap>;
-export type IfExpressionFromInput = FromInputOf<IfExpression, LeafScalarMap, LeafStringMap>;
-export type LetConditionFromInput = FromInputOf<LetCondition, LeafScalarMap, LeafStringMap>;
-export type _LetChainFromInput = FromInputOf<_LetChain, LeafScalarMap, LeafStringMap>;
-export type ElseClauseFromInput = FromInputOf<ElseClause, LeafScalarMap, LeafStringMap>;
-export type MatchExpressionFromInput = FromInputOf<MatchExpression, LeafScalarMap, LeafStringMap>;
-export type MatchBlockFromInput = FromInputOf<MatchBlock, LeafScalarMap, LeafStringMap>;
-export type MatchArmFromInput = FromInputOf<MatchArm, LeafScalarMap, LeafStringMap>;
-export type LastMatchArmFromInput = FromInputOf<LastMatchArm, LeafScalarMap, LeafStringMap>;
-export type MatchPatternFromInput = FromInputOf<MatchPattern, LeafScalarMap, LeafStringMap>;
-export type WhileExpressionFromInput = FromInputOf<WhileExpression, LeafScalarMap, LeafStringMap>;
-export type LoopExpressionFromInput = FromInputOf<LoopExpression, LeafScalarMap, LeafStringMap>;
-export type ForExpressionFromInput = FromInputOf<ForExpression, LeafScalarMap, LeafStringMap>;
-export type ConstBlockFromInput = FromInputOf<ConstBlock, LeafScalarMap, LeafStringMap>;
-export type ClosureExpressionFromInput = FromInputOf<ClosureExpressionBody, LeafScalarMap, LeafStringMap> | FromInputOf<ClosureExpressionBody2, LeafScalarMap, LeafStringMap>;
-export type ClosureParametersFromInput = FromInputOf<ClosureParameters, LeafScalarMap, LeafStringMap>;
-export type LabelFromInput = FromInputOf<Label, LeafScalarMap, LeafStringMap>;
-export type BreakExpressionFromInput = FromInputOf<BreakExpression, LeafScalarMap, LeafStringMap>;
-export type ContinueExpressionFromInput = FromInputOf<ContinueExpression, LeafScalarMap, LeafStringMap>;
-export type IndexExpressionFromInput = FromInputOf<IndexExpression, LeafScalarMap, LeafStringMap>;
-export type AwaitExpressionFromInput = FromInputOf<AwaitExpression, LeafScalarMap, LeafStringMap>;
-export type FieldExpressionFromInput = FromInputOf<FieldExpression, LeafScalarMap, LeafStringMap>;
-export type UnsafeBlockFromInput = FromInputOf<UnsafeBlock, LeafScalarMap, LeafStringMap>;
-export type AsyncBlockFromInput = FromInputOf<AsyncBlock, LeafScalarMap, LeafStringMap>;
-export type GenBlockFromInput = FromInputOf<GenBlock, LeafScalarMap, LeafStringMap>;
-export type TryBlockFromInput = FromInputOf<TryBlock, LeafScalarMap, LeafStringMap>;
-export type BlockFromInput = FromInputOf<Block, LeafScalarMap, LeafStringMap>;
-export type GenericPatternFromInput = FromInputOf<GenericPattern, LeafScalarMap, LeafStringMap>;
-export type TuplePatternFromInput = FromInputOf<TuplePattern, LeafScalarMap, LeafStringMap>;
-export type SlicePatternFromInput = FromInputOf<SlicePattern, LeafScalarMap, LeafStringMap>;
-export type TupleStructPatternFromInput = FromInputOf<TupleStructPattern, LeafScalarMap, LeafStringMap>;
-export type StructPatternFromInput = FromInputOf<StructPattern, LeafScalarMap, LeafStringMap>;
-export type FieldPatternFromInput = FromInputOf<FieldPatternName, LeafScalarMap, LeafStringMap> | FromInputOf<FieldPatternColon, LeafScalarMap, LeafStringMap>;
-export type MutPatternFromInput = FromInputOf<MutPattern, LeafScalarMap, LeafStringMap>;
-export type RangePatternFromInput = FromInputOf<RangePatternLeft, LeafScalarMap, LeafStringMap> | FromInputOf<RangePatternRight, LeafScalarMap, LeafStringMap>;
-export type RefPatternFromInput = FromInputOf<RefPattern, LeafScalarMap, LeafStringMap>;
-export type CapturedPatternFromInput = FromInputOf<CapturedPattern, LeafScalarMap, LeafStringMap>;
-export type ReferencePatternFromInput = FromInputOf<ReferencePattern, LeafScalarMap, LeafStringMap>;
-export type OrPatternFromInput = FromInputOf<OrPatternPipe, LeafScalarMap, LeafStringMap> | FromInputOf<OrPatternPipe2, LeafScalarMap, LeafStringMap>;
-export type NegativeLiteralFromInput = FromInputOf<NegativeLiteral, LeafScalarMap, LeafStringMap>;
-export type StringLiteralFromInput = FromInputOf<StringLiteral, LeafScalarMap, LeafStringMap>;
-export type RawStringLiteralFromInput = FromInputOf<RawStringLiteral, LeafScalarMap, LeafStringMap>;
-export type CommentFromInput = FromInputOf<Comment, LeafScalarMap, LeafStringMap>;
-export type LineCommentFromInput = FromInputOf<LineComment, LeafScalarMap, LeafStringMap>;
-export type BlockCommentFromInput = FromInputOf<BlockComment, LeafScalarMap, LeafStringMap>;
-export type _TypeIdentifierFromInput = FromInputOf<_TypeIdentifier, LeafScalarMap, LeafStringMap>;
-export type _FieldIdentifierFromInput = FromInputOf<_FieldIdentifier, LeafScalarMap, LeafStringMap>;
-export type LetChainFromInput = FromInputOf<LetChain, LeafScalarMap, LeafStringMap>;
+// Loose-input type aliases (for from() construction)
+export type LooseSourceFile = FromInputOf<SourceFile, LeafScalarMap, LeafStringMap>;
+export type LooseExpressionStatement = FromInputOf<ExpressionStatement, LeafScalarMap, LeafStringMap>;
+export type LooseMacroDefinition = FromInputOf<MacroDefinition, LeafScalarMap, LeafStringMap>;
+export type LooseMacroRule = FromInputOf<MacroRule, LeafScalarMap, LeafStringMap>;
+export type LooseTokenTreePattern = FromInputOf<TokenTreePattern, LeafScalarMap, LeafStringMap>;
+export type LooseTokenBindingPattern = FromInputOf<TokenBindingPattern, LeafScalarMap, LeafStringMap>;
+export type LooseTokenRepetitionPattern = FromInputOf<TokenRepetitionPattern, LeafScalarMap, LeafStringMap>;
+export type LooseTokenTree = FromInputOf<TokenTree, LeafScalarMap, LeafStringMap>;
+export type LooseTokenRepetition = FromInputOf<TokenRepetition, LeafScalarMap, LeafStringMap>;
+export type LooseNonSpecialToken = FromInputOf<NonSpecialToken, LeafScalarMap, LeafStringMap>;
+export type LooseAttributeItem = FromInputOf<AttributeItem, LeafScalarMap, LeafStringMap>;
+export type LooseInnerAttributeItem = FromInputOf<InnerAttributeItem, LeafScalarMap, LeafStringMap>;
+export type LooseAttribute = FromInputOf<Attribute, LeafScalarMap, LeafStringMap>;
+export type LooseModItem = FromInputOf<ModItemSemi, LeafScalarMap, LeafStringMap> | FromInputOf<ModItemBody, LeafScalarMap, LeafStringMap>;
+export type LooseForeignModItem = FromInputOf<ForeignModItemSemi, LeafScalarMap, LeafStringMap> | FromInputOf<ForeignModItemBody, LeafScalarMap, LeafStringMap>;
+export type LooseDeclarationList = FromInputOf<DeclarationList, LeafScalarMap, LeafStringMap>;
+export type LooseStructItem = FromInputOf<StructItemBody, LeafScalarMap, LeafStringMap> | FromInputOf<StructItemSemi, LeafScalarMap, LeafStringMap> | FromInputOf<StructItemSemi2, LeafScalarMap, LeafStringMap>;
+export type LooseUnionItem = FromInputOf<UnionItem, LeafScalarMap, LeafStringMap>;
+export type LooseEnumItem = FromInputOf<EnumItem, LeafScalarMap, LeafStringMap>;
+export type LooseEnumVariantList = FromInputOf<EnumVariantList, LeafScalarMap, LeafStringMap>;
+export type LooseEnumVariant = FromInputOf<EnumVariant, LeafScalarMap, LeafStringMap>;
+export type LooseFieldDeclarationList = FromInputOf<FieldDeclarationList, LeafScalarMap, LeafStringMap>;
+export type LooseFieldDeclaration = FromInputOf<FieldDeclaration, LeafScalarMap, LeafStringMap>;
+export type LooseOrderedFieldDeclarationList = FromInputOf<OrderedFieldDeclarationList, LeafScalarMap, LeafStringMap>;
+export type LooseExternCrateDeclaration = FromInputOf<ExternCrateDeclaration, LeafScalarMap, LeafStringMap>;
+export type LooseConstItem = FromInputOf<ConstItem, LeafScalarMap, LeafStringMap>;
+export type LooseStaticItem = FromInputOf<StaticItem, LeafScalarMap, LeafStringMap>;
+export type LooseTypeItem = FromInputOf<TypeItem, LeafScalarMap, LeafStringMap>;
+export type LooseFunctionItem = FromInputOf<FunctionItem, LeafScalarMap, LeafStringMap>;
+export type LooseFunctionSignatureItem = FromInputOf<FunctionSignatureItem, LeafScalarMap, LeafStringMap>;
+export type LooseFunctionModifiers = FromInputOf<FunctionModifiers, LeafScalarMap, LeafStringMap>;
+export type LooseWhereClause = FromInputOf<WhereClause, LeafScalarMap, LeafStringMap>;
+export type LooseWherePredicate = FromInputOf<WherePredicate, LeafScalarMap, LeafStringMap>;
+export type LooseImplItem = FromInputOf<ImplItemBody, LeafScalarMap, LeafStringMap> | FromInputOf<ImplItemSemi, LeafScalarMap, LeafStringMap>;
+export type LooseTraitItem = FromInputOf<TraitItem, LeafScalarMap, LeafStringMap>;
+export type LooseAssociatedType = FromInputOf<AssociatedType, LeafScalarMap, LeafStringMap>;
+export type LooseTraitBounds = FromInputOf<TraitBounds, LeafScalarMap, LeafStringMap>;
+export type LooseHigherRankedTraitBound = FromInputOf<HigherRankedTraitBound, LeafScalarMap, LeafStringMap>;
+export type LooseRemovedTraitBound = FromInputOf<RemovedTraitBound, LeafScalarMap, LeafStringMap>;
+export type LooseTypeParameters = FromInputOf<TypeParameters, LeafScalarMap, LeafStringMap>;
+export type LooseConstParameter = FromInputOf<ConstParameter, LeafScalarMap, LeafStringMap>;
+export type LooseTypeParameter = FromInputOf<TypeParameter, LeafScalarMap, LeafStringMap>;
+export type LooseLifetimeParameter = FromInputOf<LifetimeParameter, LeafScalarMap, LeafStringMap>;
+export type LooseLetDeclaration = FromInputOf<LetDeclaration, LeafScalarMap, LeafStringMap>;
+export type LooseUseDeclaration = FromInputOf<UseDeclaration, LeafScalarMap, LeafStringMap>;
+export type LooseScopedUseList = FromInputOf<ScopedUseList, LeafScalarMap, LeafStringMap>;
+export type LooseUseList = FromInputOf<UseList, LeafScalarMap, LeafStringMap>;
+export type LooseUseAsClause = FromInputOf<UseAsClause, LeafScalarMap, LeafStringMap>;
+export type LooseUseWildcard = FromInputOf<UseWildcard, LeafScalarMap, LeafStringMap>;
+export type LooseParameters = FromInputOf<Parameters, LeafScalarMap, LeafStringMap>;
+export type LooseSelfParameter = FromInputOf<SelfParameter, LeafScalarMap, LeafStringMap>;
+export type LooseVariadicParameter = FromInputOf<VariadicParameter, LeafScalarMap, LeafStringMap>;
+export type LooseParameter = FromInputOf<Parameter, LeafScalarMap, LeafStringMap>;
+export type LooseExternModifier = FromInputOf<ExternModifier, LeafScalarMap, LeafStringMap>;
+export type LooseVisibilityModifier = FromInputOf<VisibilityModifierCrate, LeafScalarMap, LeafStringMap> | FromInputOf<VisibilityModifierPub, LeafScalarMap, LeafStringMap>;
+export type LooseBracketedType = FromInputOf<BracketedType, LeafScalarMap, LeafStringMap>;
+export type LooseQualifiedType = FromInputOf<QualifiedType, LeafScalarMap, LeafStringMap>;
+export type LooseLifetime = FromInputOf<Lifetime, LeafScalarMap, LeafStringMap>;
+export type LooseArrayType = FromInputOf<ArrayType, LeafScalarMap, LeafStringMap>;
+export type LooseForLifetimes = FromInputOf<ForLifetimes, LeafScalarMap, LeafStringMap>;
+export type LooseFunctionType = FromInputOf<FunctionType, LeafScalarMap, LeafStringMap>;
+export type LooseTupleType = FromInputOf<TupleType, LeafScalarMap, LeafStringMap>;
+export type LooseGenericFunction = FromInputOf<GenericFunction, LeafScalarMap, LeafStringMap>;
+export type LooseGenericType = FromInputOf<GenericType, LeafScalarMap, LeafStringMap>;
+export type LooseGenericTypeWithTurbofish = FromInputOf<GenericTypeWithTurbofish, LeafScalarMap, LeafStringMap>;
+export type LooseBoundedType = FromInputOf<BoundedType, LeafScalarMap, LeafStringMap>;
+export type LooseUseBounds = FromInputOf<UseBounds, LeafScalarMap, LeafStringMap>;
+export type LooseTypeArguments = FromInputOf<TypeArguments, LeafScalarMap, LeafStringMap>;
+export type LooseTypeBinding = FromInputOf<TypeBinding, LeafScalarMap, LeafStringMap>;
+export type LooseReferenceType = FromInputOf<ReferenceType, LeafScalarMap, LeafStringMap>;
+export type LoosePointerType = FromInputOf<PointerType, LeafScalarMap, LeafStringMap>;
+export type LooseAbstractType = FromInputOf<AbstractType, LeafScalarMap, LeafStringMap>;
+export type LooseDynamicType = FromInputOf<DynamicType, LeafScalarMap, LeafStringMap>;
+export type LooseMacroInvocation = FromInputOf<MacroInvocation, LeafScalarMap, LeafStringMap>;
+export type LooseDelimTokenTree = FromInputOf<DelimTokenTree, LeafScalarMap, LeafStringMap>;
+export type LooseScopedIdentifier = FromInputOf<ScopedIdentifier, LeafScalarMap, LeafStringMap>;
+export type LooseScopedTypeIdentifierInExpressionPosition = FromInputOf<ScopedTypeIdentifierInExpressionPosition, LeafScalarMap, LeafStringMap>;
+export type LooseScopedTypeIdentifier = FromInputOf<ScopedTypeIdentifier, LeafScalarMap, LeafStringMap>;
+export type LooseRangeExpression = FromInputOf<RangeExpressionStart, LeafScalarMap, LeafStringMap> | FromInputOf<RangeExpressionStart2, LeafScalarMap, LeafStringMap> | FromInputOf<RangeExpressionOperator, LeafScalarMap, LeafStringMap> | FromInputOf<RangeExpressionOperator2, LeafScalarMap, LeafStringMap>;
+export type LooseUnaryExpression = FromInputOf<UnaryExpression, LeafScalarMap, LeafStringMap>;
+export type LooseTryExpression = FromInputOf<TryExpression, LeafScalarMap, LeafStringMap>;
+export type LooseReferenceExpression = FromInputOf<ReferenceExpression, LeafScalarMap, LeafStringMap>;
+export type LooseBinaryExpression = FromInputOf<BinaryExpression, LeafScalarMap, LeafStringMap>;
+export type LooseAssignmentExpression = FromInputOf<AssignmentExpression, LeafScalarMap, LeafStringMap>;
+export type LooseCompoundAssignmentExpr = FromInputOf<CompoundAssignmentExpr, LeafScalarMap, LeafStringMap>;
+export type LooseTypeCastExpression = FromInputOf<TypeCastExpression, LeafScalarMap, LeafStringMap>;
+export type LooseReturnExpression = FromInputOf<ReturnExpression, LeafScalarMap, LeafStringMap>;
+export type LooseYieldExpression = FromInputOf<YieldExpression, LeafScalarMap, LeafStringMap>;
+export type LooseCallExpression = FromInputOf<CallExpression, LeafScalarMap, LeafStringMap>;
+export type LooseArguments = FromInputOf<Arguments, LeafScalarMap, LeafStringMap>;
+export type LooseArrayExpression = FromInputOf<ArrayExpression, LeafScalarMap, LeafStringMap>;
+export type LooseParenthesizedExpression = FromInputOf<ParenthesizedExpression, LeafScalarMap, LeafStringMap>;
+export type LooseTupleExpression = FromInputOf<TupleExpression, LeafScalarMap, LeafStringMap>;
+export type LooseStructExpression = FromInputOf<StructExpression, LeafScalarMap, LeafStringMap>;
+export type LooseFieldInitializerList = FromInputOf<FieldInitializerList, LeafScalarMap, LeafStringMap>;
+export type LooseShorthandFieldInitializer = FromInputOf<ShorthandFieldInitializer, LeafScalarMap, LeafStringMap>;
+export type LooseFieldInitializer = FromInputOf<FieldInitializer, LeafScalarMap, LeafStringMap>;
+export type LooseBaseFieldInitializer = FromInputOf<BaseFieldInitializer, LeafScalarMap, LeafStringMap>;
+export type LooseIfExpression = FromInputOf<IfExpression, LeafScalarMap, LeafStringMap>;
+export type LooseLetCondition = FromInputOf<LetCondition, LeafScalarMap, LeafStringMap>;
+export type Loose_LetChain = FromInputOf<_LetChain, LeafScalarMap, LeafStringMap>;
+export type LooseElseClause = FromInputOf<ElseClause, LeafScalarMap, LeafStringMap>;
+export type LooseMatchExpression = FromInputOf<MatchExpression, LeafScalarMap, LeafStringMap>;
+export type LooseMatchBlock = FromInputOf<MatchBlock, LeafScalarMap, LeafStringMap>;
+export type LooseMatchArm = FromInputOf<MatchArm, LeafScalarMap, LeafStringMap>;
+export type LooseLastMatchArm = FromInputOf<LastMatchArm, LeafScalarMap, LeafStringMap>;
+export type LooseMatchPattern = FromInputOf<MatchPattern, LeafScalarMap, LeafStringMap>;
+export type LooseWhileExpression = FromInputOf<WhileExpression, LeafScalarMap, LeafStringMap>;
+export type LooseLoopExpression = FromInputOf<LoopExpression, LeafScalarMap, LeafStringMap>;
+export type LooseForExpression = FromInputOf<ForExpression, LeafScalarMap, LeafStringMap>;
+export type LooseConstBlock = FromInputOf<ConstBlock, LeafScalarMap, LeafStringMap>;
+export type LooseClosureExpression = FromInputOf<ClosureExpressionBody, LeafScalarMap, LeafStringMap> | FromInputOf<ClosureExpressionBody2, LeafScalarMap, LeafStringMap>;
+export type LooseClosureParameters = FromInputOf<ClosureParameters, LeafScalarMap, LeafStringMap>;
+export type LooseLabel = FromInputOf<Label, LeafScalarMap, LeafStringMap>;
+export type LooseBreakExpression = FromInputOf<BreakExpression, LeafScalarMap, LeafStringMap>;
+export type LooseContinueExpression = FromInputOf<ContinueExpression, LeafScalarMap, LeafStringMap>;
+export type LooseIndexExpression = FromInputOf<IndexExpression, LeafScalarMap, LeafStringMap>;
+export type LooseAwaitExpression = FromInputOf<AwaitExpression, LeafScalarMap, LeafStringMap>;
+export type LooseFieldExpression = FromInputOf<FieldExpression, LeafScalarMap, LeafStringMap>;
+export type LooseUnsafeBlock = FromInputOf<UnsafeBlock, LeafScalarMap, LeafStringMap>;
+export type LooseAsyncBlock = FromInputOf<AsyncBlock, LeafScalarMap, LeafStringMap>;
+export type LooseGenBlock = FromInputOf<GenBlock, LeafScalarMap, LeafStringMap>;
+export type LooseTryBlock = FromInputOf<TryBlock, LeafScalarMap, LeafStringMap>;
+export type LooseBlock = FromInputOf<Block, LeafScalarMap, LeafStringMap>;
+export type LooseGenericPattern = FromInputOf<GenericPattern, LeafScalarMap, LeafStringMap>;
+export type LooseTuplePattern = FromInputOf<TuplePattern, LeafScalarMap, LeafStringMap>;
+export type LooseSlicePattern = FromInputOf<SlicePattern, LeafScalarMap, LeafStringMap>;
+export type LooseTupleStructPattern = FromInputOf<TupleStructPattern, LeafScalarMap, LeafStringMap>;
+export type LooseStructPattern = FromInputOf<StructPattern, LeafScalarMap, LeafStringMap>;
+export type LooseFieldPattern = FromInputOf<FieldPatternName, LeafScalarMap, LeafStringMap> | FromInputOf<FieldPatternColon, LeafScalarMap, LeafStringMap>;
+export type LooseMutPattern = FromInputOf<MutPattern, LeafScalarMap, LeafStringMap>;
+export type LooseRangePattern = FromInputOf<RangePatternLeft, LeafScalarMap, LeafStringMap> | FromInputOf<RangePatternRight, LeafScalarMap, LeafStringMap>;
+export type LooseRefPattern = FromInputOf<RefPattern, LeafScalarMap, LeafStringMap>;
+export type LooseCapturedPattern = FromInputOf<CapturedPattern, LeafScalarMap, LeafStringMap>;
+export type LooseReferencePattern = FromInputOf<ReferencePattern, LeafScalarMap, LeafStringMap>;
+export type LooseOrPattern = FromInputOf<OrPatternPipe, LeafScalarMap, LeafStringMap> | FromInputOf<OrPatternPipe2, LeafScalarMap, LeafStringMap>;
+export type LooseNegativeLiteral = FromInputOf<NegativeLiteral, LeafScalarMap, LeafStringMap>;
+export type LooseStringLiteral = FromInputOf<StringLiteral, LeafScalarMap, LeafStringMap>;
+export type LooseRawStringLiteral = FromInputOf<RawStringLiteral, LeafScalarMap, LeafStringMap>;
+export type LooseComment = FromInputOf<Comment, LeafScalarMap, LeafStringMap>;
+export type LooseLineComment = FromInputOf<LineComment, LeafScalarMap, LeafStringMap>;
+export type LooseBlockComment = FromInputOf<BlockComment, LeafScalarMap, LeafStringMap>;
+export type Loose_TypeIdentifier = FromInputOf<_TypeIdentifier, LeafScalarMap, LeafStringMap>;
+export type Loose_FieldIdentifier = FromInputOf<_FieldIdentifier, LeafScalarMap, LeafStringMap>;
+export type LooseLetChain = FromInputOf<LetChain, LeafScalarMap, LeafStringMap>;
 
 // Supertype unions
 export type Statement =
@@ -2287,7 +2287,7 @@ export type Statement =
 ;
 
 export type StatementConfig = ExpressionStatementConfig;
-export type StatementFromInput = ExpressionStatementFromInput;
+export type LooseStatement = LooseExpressionStatement;
 export type StatementTree = ExpressionStatementTree | DeclarationStatementTree;
 
 export type DeclarationStatement =
@@ -2314,7 +2314,7 @@ export type DeclarationStatement =
 ;
 
 export type DeclarationStatementConfig = ConstItemConfig | MacroInvocationConfig | MacroDefinitionConfig | AttributeItemConfig | InnerAttributeItemConfig | ModItemConfig | ForeignModItemConfig | StructItemConfig | UnionItemConfig | EnumItemConfig | TypeItemConfig | FunctionItemConfig | FunctionSignatureItemConfig | ImplItemConfig | TraitItemConfig | AssociatedTypeConfig | LetDeclarationConfig | UseDeclarationConfig | ExternCrateDeclarationConfig | StaticItemConfig;
-export type DeclarationStatementFromInput = ConstItemFromInput | MacroInvocationFromInput | MacroDefinitionFromInput | AttributeItemFromInput | InnerAttributeItemFromInput | ModItemFromInput | ForeignModItemFromInput | StructItemFromInput | UnionItemFromInput | EnumItemFromInput | TypeItemFromInput | FunctionItemFromInput | FunctionSignatureItemFromInput | ImplItemFromInput | TraitItemFromInput | AssociatedTypeFromInput | LetDeclarationFromInput | UseDeclarationFromInput | ExternCrateDeclarationFromInput | StaticItemFromInput;
+export type LooseDeclarationStatement = LooseConstItem | LooseMacroInvocation | LooseMacroDefinition | LooseAttributeItem | LooseInnerAttributeItem | LooseModItem | LooseForeignModItem | LooseStructItem | LooseUnionItem | LooseEnumItem | LooseTypeItem | LooseFunctionItem | LooseFunctionSignatureItem | LooseImplItem | LooseTraitItem | LooseAssociatedType | LooseLetDeclaration | LooseUseDeclaration | LooseExternCrateDeclaration | LooseStaticItem;
 export type DeclarationStatementTree = ConstItemTree | MacroInvocationTree | MacroDefinitionTree | EmptyStatementTree | AttributeItemTree | InnerAttributeItemTree | ModItemTree | ForeignModItemTree | StructItemTree | UnionItemTree | EnumItemTree | TypeItemTree | FunctionItemTree | FunctionSignatureItemTree | ImplItemTree | TraitItemTree | AssociatedTypeTree | LetDeclarationTree | UseDeclarationTree | ExternCrateDeclarationTree | StaticItemTree;
 
 export type TokenPattern =
@@ -2326,7 +2326,7 @@ export type TokenPattern =
 ;
 
 export type TokenPatternConfig = TokenTreePatternConfig | TokenRepetitionPatternConfig | TokenBindingPatternConfig | NonSpecialTokenConfig;
-export type TokenPatternFromInput = TokenTreePatternFromInput | TokenRepetitionPatternFromInput | TokenBindingPatternFromInput | NonSpecialTokenFromInput;
+export type LooseTokenPattern = LooseTokenTreePattern | LooseTokenRepetitionPattern | LooseTokenBindingPattern | LooseNonSpecialToken;
 export type TokenPatternTree = TokenTreePatternTree | TokenRepetitionPatternTree | TokenBindingPatternTree | MetavariableTree | NonSpecialTokenTree;
 
 export type Tokens =
@@ -2337,7 +2337,7 @@ export type Tokens =
 ;
 
 export type TokensConfig = TokenTreeConfig | TokenRepetitionConfig | NonSpecialTokenConfig;
-export type TokensFromInput = TokenTreeFromInput | TokenRepetitionFromInput | NonSpecialTokenFromInput;
+export type LooseTokens = LooseTokenTree | LooseTokenRepetition | LooseNonSpecialToken;
 export type TokensTree = TokenTreeTree | TokenRepetitionTree | MetavariableTree | NonSpecialTokenTree;
 
 export type UseClause =
@@ -2348,7 +2348,7 @@ export type UseClause =
 ;
 
 export type UseClauseConfig = UseAsClauseConfig | UseListConfig | ScopedUseListConfig | UseWildcardConfig;
-export type UseClauseFromInput = UseAsClauseFromInput | UseListFromInput | ScopedUseListFromInput | UseWildcardFromInput;
+export type LooseUseClause = LooseUseAsClause | LooseUseList | LooseScopedUseList | LooseUseWildcard;
 export type UseClauseTree = PathTree | UseAsClauseTree | UseListTree | ScopedUseListTree | UseWildcardTree;
 
 export type _Type =
@@ -2370,7 +2370,7 @@ export type _Type =
 ;
 
 export type _TypeConfig = AbstractTypeConfig | ReferenceTypeConfig | PointerTypeConfig | GenericTypeConfig | ScopedTypeIdentifierConfig | TupleTypeConfig | ArrayTypeConfig | FunctionTypeConfig | _TypeIdentifierConfig | MacroInvocationConfig | DynamicTypeConfig | BoundedTypeConfig | RemovedTraitBoundConfig;
-export type _TypeFromInput = AbstractTypeFromInput | ReferenceTypeFromInput | PointerTypeFromInput | GenericTypeFromInput | ScopedTypeIdentifierFromInput | TupleTypeFromInput | ArrayTypeFromInput | FunctionTypeFromInput | _TypeIdentifierFromInput | MacroInvocationFromInput | DynamicTypeFromInput | BoundedTypeFromInput | RemovedTraitBoundFromInput;
+export type Loose_Type = LooseAbstractType | LooseReferenceType | LoosePointerType | LooseGenericType | LooseScopedTypeIdentifier | LooseTupleType | LooseArrayType | LooseFunctionType | Loose_TypeIdentifier | LooseMacroInvocation | LooseDynamicType | LooseBoundedType | LooseRemovedTraitBound;
 export type _TypeTree = AbstractTypeTree | ReferenceTypeTree | MetavariableTree | PointerTypeTree | GenericTypeTree | ScopedTypeIdentifierTree | TupleTypeTree | UnitTypeTree | ArrayTypeTree | FunctionTypeTree | _TypeIdentifierTree | MacroInvocationTree | NeverTypeTree | DynamicTypeTree | BoundedTypeTree | RemovedTraitBoundTree;
 
 export type ExpressionExceptRange =
@@ -2405,7 +2405,7 @@ export type ExpressionExceptRange =
 ;
 
 export type ExpressionExceptRangeConfig = UnaryExpressionConfig | ReferenceExpressionConfig | TryExpressionConfig | BinaryExpressionConfig | AssignmentExpressionConfig | CompoundAssignmentExprConfig | TypeCastExpressionConfig | CallExpressionConfig | ReturnExpressionConfig | YieldExpressionConfig | ScopedIdentifierConfig | GenericFunctionConfig | AwaitExpressionConfig | FieldExpressionConfig | ArrayExpressionConfig | TupleExpressionConfig | MacroInvocationConfig | BreakExpressionConfig | ContinueExpressionConfig | IndexExpressionConfig | ClosureExpressionConfig | ParenthesizedExpressionConfig | StructExpressionConfig;
-export type ExpressionExceptRangeFromInput = UnaryExpressionFromInput | ReferenceExpressionFromInput | TryExpressionFromInput | BinaryExpressionFromInput | AssignmentExpressionFromInput | CompoundAssignmentExprFromInput | TypeCastExpressionFromInput | CallExpressionFromInput | ReturnExpressionFromInput | YieldExpressionFromInput | ScopedIdentifierFromInput | GenericFunctionFromInput | AwaitExpressionFromInput | FieldExpressionFromInput | ArrayExpressionFromInput | TupleExpressionFromInput | MacroInvocationFromInput | BreakExpressionFromInput | ContinueExpressionFromInput | IndexExpressionFromInput | ClosureExpressionFromInput | ParenthesizedExpressionFromInput | StructExpressionFromInput;
+export type LooseExpressionExceptRange = LooseUnaryExpression | LooseReferenceExpression | LooseTryExpression | LooseBinaryExpression | LooseAssignmentExpression | LooseCompoundAssignmentExpr | LooseTypeCastExpression | LooseCallExpression | LooseReturnExpression | LooseYieldExpression | LooseScopedIdentifier | LooseGenericFunction | LooseAwaitExpression | LooseFieldExpression | LooseArrayExpression | LooseTupleExpression | LooseMacroInvocation | LooseBreakExpression | LooseContinueExpression | LooseIndexExpression | LooseClosureExpression | LooseParenthesizedExpression | LooseStructExpression;
 export type ExpressionExceptRangeTree = UnaryExpressionTree | ReferenceExpressionTree | TryExpressionTree | BinaryExpressionTree | AssignmentExpressionTree | CompoundAssignmentExprTree | TypeCastExpressionTree | CallExpressionTree | ReturnExpressionTree | YieldExpressionTree | LiteralTree | IdentifierTree | ReservedIdentifierTree | SelfTree | ScopedIdentifierTree | GenericFunctionTree | AwaitExpressionTree | FieldExpressionTree | ArrayExpressionTree | TupleExpressionTree | MacroInvocationTree | UnitExpressionTree | BreakExpressionTree | ContinueExpressionTree | IndexExpressionTree | MetavariableTree | ClosureExpressionTree | ParenthesizedExpressionTree | StructExpressionTree | ExpressionEndingWithBlockTree;
 
 export type Expression =
@@ -2414,7 +2414,7 @@ export type Expression =
 ;
 
 export type ExpressionConfig = RangeExpressionConfig;
-export type ExpressionFromInput = RangeExpressionFromInput;
+export type LooseExpression = LooseRangeExpression;
 export type ExpressionTree = ExpressionExceptRangeTree | RangeExpressionTree;
 
 export type ExpressionEndingWithBlock =
@@ -2432,7 +2432,7 @@ export type ExpressionEndingWithBlock =
 ;
 
 export type ExpressionEndingWithBlockConfig = UnsafeBlockConfig | AsyncBlockConfig | GenBlockConfig | TryBlockConfig | BlockConfig | IfExpressionConfig | MatchExpressionConfig | WhileExpressionConfig | LoopExpressionConfig | ForExpressionConfig | ConstBlockConfig;
-export type ExpressionEndingWithBlockFromInput = UnsafeBlockFromInput | AsyncBlockFromInput | GenBlockFromInput | TryBlockFromInput | BlockFromInput | IfExpressionFromInput | MatchExpressionFromInput | WhileExpressionFromInput | LoopExpressionFromInput | ForExpressionFromInput | ConstBlockFromInput;
+export type LooseExpressionEndingWithBlock = LooseUnsafeBlock | LooseAsyncBlock | LooseGenBlock | LooseTryBlock | LooseBlock | LooseIfExpression | LooseMatchExpression | LooseWhileExpression | LooseLoopExpression | LooseForExpression | LooseConstBlock;
 export type ExpressionEndingWithBlockTree = UnsafeBlockTree | AsyncBlockTree | GenBlockTree | TryBlockTree | BlockTree | IfExpressionTree | MatchExpressionTree | WhileExpressionTree | LoopExpressionTree | ForExpressionTree | ConstBlockTree;
 
 export type DelimTokens =
@@ -2440,7 +2440,7 @@ export type DelimTokens =
 ;
 
 export type DelimTokensConfig = DelimTokenTreeConfig;
-export type DelimTokensFromInput = DelimTokenTreeFromInput;
+export type LooseDelimTokens = LooseDelimTokenTree;
 export type DelimTokensTree = NonDelimTokenTree | DelimTokenTreeTree;
 
 export type NonDelimToken =
@@ -2448,7 +2448,7 @@ export type NonDelimToken =
 ;
 
 export type NonDelimTokenConfig = NonSpecialTokenConfig;
-export type NonDelimTokenFromInput = NonSpecialTokenFromInput;
+export type LooseNonDelimToken = LooseNonSpecialToken;
 export type NonDelimTokenTree = NonSpecialTokenTree;
 
 export type Condition =
@@ -2458,7 +2458,7 @@ export type Condition =
 ;
 
 export type ConditionConfig = LetConditionConfig | _LetChainConfig;
-export type ConditionFromInput = LetConditionFromInput | _LetChainFromInput;
+export type LooseCondition = LooseLetCondition | Loose_LetChain;
 export type ConditionTree = ExpressionTree | LetConditionTree | _LetChainTree;
 
 export type Pattern =
@@ -2481,7 +2481,7 @@ export type Pattern =
 ;
 
 export type PatternConfig = ScopedIdentifierConfig | GenericPatternConfig | TuplePatternConfig | TupleStructPatternConfig | StructPatternConfig | RefPatternConfig | SlicePatternConfig | CapturedPatternConfig | ReferencePatternConfig | MutPatternConfig | RangePatternConfig | OrPatternConfig | ConstBlockConfig | MacroInvocationConfig;
-export type PatternFromInput = ScopedIdentifierFromInput | GenericPatternFromInput | TuplePatternFromInput | TupleStructPatternFromInput | StructPatternFromInput | RefPatternFromInput | SlicePatternFromInput | CapturedPatternFromInput | ReferencePatternFromInput | MutPatternFromInput | RangePatternFromInput | OrPatternFromInput | ConstBlockFromInput | MacroInvocationFromInput;
+export type LoosePattern = LooseScopedIdentifier | LooseGenericPattern | LooseTuplePattern | LooseTupleStructPattern | LooseStructPattern | LooseRefPattern | LooseSlicePattern | LooseCapturedPattern | LooseReferencePattern | LooseMutPattern | LooseRangePattern | LooseOrPattern | LooseConstBlock | LooseMacroInvocation;
 export type PatternTree = LiteralPatternTree | IdentifierTree | ScopedIdentifierTree | GenericPatternTree | TuplePatternTree | TupleStructPatternTree | StructPatternTree | ReservedIdentifierTree | RefPatternTree | SlicePatternTree | CapturedPatternTree | ReferencePatternTree | RemainingFieldPatternTree | MutPatternTree | RangePatternTree | OrPatternTree | ConstBlockTree | MacroInvocationTree;
 
 export type Literal =
@@ -2494,7 +2494,7 @@ export type Literal =
 ;
 
 export type LiteralConfig = StringLiteralConfig | RawStringLiteralConfig;
-export type LiteralFromInput = StringLiteralFromInput | RawStringLiteralFromInput;
+export type LooseLiteral = LooseStringLiteral | LooseRawStringLiteral;
 export type LiteralTree = StringLiteralTree | RawStringLiteralTree | CharLiteralTree | BooleanLiteralTree | IntegerLiteralTree | FloatLiteralTree;
 
 export type LiteralPattern =
@@ -2508,7 +2508,7 @@ export type LiteralPattern =
 ;
 
 export type LiteralPatternConfig = StringLiteralConfig | RawStringLiteralConfig | NegativeLiteralConfig;
-export type LiteralPatternFromInput = StringLiteralFromInput | RawStringLiteralFromInput | NegativeLiteralFromInput;
+export type LooseLiteralPattern = LooseStringLiteral | LooseRawStringLiteral | LooseNegativeLiteral;
 export type LiteralPatternTree = StringLiteralTree | RawStringLiteralTree | CharLiteralTree | BooleanLiteralTree | IntegerLiteralTree | FloatLiteralTree | NegativeLiteralTree;
 
 export type Path =
@@ -2522,7 +2522,7 @@ export type Path =
 ;
 
 export type PathConfig = ScopedIdentifierConfig;
-export type PathFromInput = ScopedIdentifierFromInput;
+export type LoosePath = LooseScopedIdentifier;
 export type PathTree = SelfTree | MetavariableTree | SuperTree | CrateTree | IdentifierTree | ScopedIdentifierTree | ReservedIdentifierTree;
 
 // Token type aliases (only tokens referenced in field/child unions)
@@ -3016,150 +3016,150 @@ export interface ConfigMap {
   'let_chain': LetChainConfig;
 }
 
-export interface FromInputMap {
-  'source_file': SourceFileFromInput;
-  'expression_statement': ExpressionStatementFromInput;
-  'macro_definition': MacroDefinitionFromInput;
-  'macro_rule': MacroRuleFromInput;
-  'token_tree_pattern': TokenTreePatternFromInput;
-  'token_binding_pattern': TokenBindingPatternFromInput;
-  'token_repetition_pattern': TokenRepetitionPatternFromInput;
-  'token_tree': TokenTreeFromInput;
-  'token_repetition': TokenRepetitionFromInput;
-  '_non_special_token': NonSpecialTokenFromInput;
-  'attribute_item': AttributeItemFromInput;
-  'inner_attribute_item': InnerAttributeItemFromInput;
-  'attribute': AttributeFromInput;
-  'mod_item': ModItemFromInput;
-  'foreign_mod_item': ForeignModItemFromInput;
-  'declaration_list': DeclarationListFromInput;
-  'struct_item': StructItemFromInput;
-  'union_item': UnionItemFromInput;
-  'enum_item': EnumItemFromInput;
-  'enum_variant_list': EnumVariantListFromInput;
-  'enum_variant': EnumVariantFromInput;
-  'field_declaration_list': FieldDeclarationListFromInput;
-  'field_declaration': FieldDeclarationFromInput;
-  'ordered_field_declaration_list': OrderedFieldDeclarationListFromInput;
-  'extern_crate_declaration': ExternCrateDeclarationFromInput;
-  'const_item': ConstItemFromInput;
-  'static_item': StaticItemFromInput;
-  'type_item': TypeItemFromInput;
-  'function_item': FunctionItemFromInput;
-  'function_signature_item': FunctionSignatureItemFromInput;
-  'function_modifiers': FunctionModifiersFromInput;
-  'where_clause': WhereClauseFromInput;
-  'where_predicate': WherePredicateFromInput;
-  'impl_item': ImplItemFromInput;
-  'trait_item': TraitItemFromInput;
-  'associated_type': AssociatedTypeFromInput;
-  'trait_bounds': TraitBoundsFromInput;
-  'higher_ranked_trait_bound': HigherRankedTraitBoundFromInput;
-  'removed_trait_bound': RemovedTraitBoundFromInput;
-  'type_parameters': TypeParametersFromInput;
-  'const_parameter': ConstParameterFromInput;
-  'type_parameter': TypeParameterFromInput;
-  'lifetime_parameter': LifetimeParameterFromInput;
-  'let_declaration': LetDeclarationFromInput;
-  'use_declaration': UseDeclarationFromInput;
-  'scoped_use_list': ScopedUseListFromInput;
-  'use_list': UseListFromInput;
-  'use_as_clause': UseAsClauseFromInput;
-  'use_wildcard': UseWildcardFromInput;
-  'parameters': ParametersFromInput;
-  'self_parameter': SelfParameterFromInput;
-  'variadic_parameter': VariadicParameterFromInput;
-  'parameter': ParameterFromInput;
-  'extern_modifier': ExternModifierFromInput;
-  'visibility_modifier': VisibilityModifierFromInput;
-  'bracketed_type': BracketedTypeFromInput;
-  'qualified_type': QualifiedTypeFromInput;
-  'lifetime': LifetimeFromInput;
-  'array_type': ArrayTypeFromInput;
-  'for_lifetimes': ForLifetimesFromInput;
-  'function_type': FunctionTypeFromInput;
-  'tuple_type': TupleTypeFromInput;
-  'generic_function': GenericFunctionFromInput;
-  'generic_type': GenericTypeFromInput;
-  'generic_type_with_turbofish': GenericTypeWithTurbofishFromInput;
-  'bounded_type': BoundedTypeFromInput;
-  'use_bounds': UseBoundsFromInput;
-  'type_arguments': TypeArgumentsFromInput;
-  'type_binding': TypeBindingFromInput;
-  'reference_type': ReferenceTypeFromInput;
-  'pointer_type': PointerTypeFromInput;
-  'abstract_type': AbstractTypeFromInput;
-  'dynamic_type': DynamicTypeFromInput;
-  'macro_invocation': MacroInvocationFromInput;
-  'delim_token_tree': DelimTokenTreeFromInput;
-  'scoped_identifier': ScopedIdentifierFromInput;
-  'scoped_type_identifier_in_expression_position': ScopedTypeIdentifierInExpressionPositionFromInput;
-  'scoped_type_identifier': ScopedTypeIdentifierFromInput;
-  'range_expression': RangeExpressionFromInput;
-  'unary_expression': UnaryExpressionFromInput;
-  'try_expression': TryExpressionFromInput;
-  'reference_expression': ReferenceExpressionFromInput;
-  'binary_expression': BinaryExpressionFromInput;
-  'assignment_expression': AssignmentExpressionFromInput;
-  'compound_assignment_expr': CompoundAssignmentExprFromInput;
-  'type_cast_expression': TypeCastExpressionFromInput;
-  'return_expression': ReturnExpressionFromInput;
-  'yield_expression': YieldExpressionFromInput;
-  'call_expression': CallExpressionFromInput;
-  'arguments': ArgumentsFromInput;
-  'array_expression': ArrayExpressionFromInput;
-  'parenthesized_expression': ParenthesizedExpressionFromInput;
-  'tuple_expression': TupleExpressionFromInput;
-  'struct_expression': StructExpressionFromInput;
-  'field_initializer_list': FieldInitializerListFromInput;
-  'shorthand_field_initializer': ShorthandFieldInitializerFromInput;
-  'field_initializer': FieldInitializerFromInput;
-  'base_field_initializer': BaseFieldInitializerFromInput;
-  'if_expression': IfExpressionFromInput;
-  'let_condition': LetConditionFromInput;
-  '_let_chain': _LetChainFromInput;
-  'else_clause': ElseClauseFromInput;
-  'match_expression': MatchExpressionFromInput;
-  'match_block': MatchBlockFromInput;
-  'match_arm': MatchArmFromInput;
-  'last_match_arm': LastMatchArmFromInput;
-  'match_pattern': MatchPatternFromInput;
-  'while_expression': WhileExpressionFromInput;
-  'loop_expression': LoopExpressionFromInput;
-  'for_expression': ForExpressionFromInput;
-  'const_block': ConstBlockFromInput;
-  'closure_expression': ClosureExpressionFromInput;
-  'closure_parameters': ClosureParametersFromInput;
-  'label': LabelFromInput;
-  'break_expression': BreakExpressionFromInput;
-  'continue_expression': ContinueExpressionFromInput;
-  'index_expression': IndexExpressionFromInput;
-  'await_expression': AwaitExpressionFromInput;
-  'field_expression': FieldExpressionFromInput;
-  'unsafe_block': UnsafeBlockFromInput;
-  'async_block': AsyncBlockFromInput;
-  'gen_block': GenBlockFromInput;
-  'try_block': TryBlockFromInput;
-  'block': BlockFromInput;
-  'generic_pattern': GenericPatternFromInput;
-  'tuple_pattern': TuplePatternFromInput;
-  'slice_pattern': SlicePatternFromInput;
-  'tuple_struct_pattern': TupleStructPatternFromInput;
-  'struct_pattern': StructPatternFromInput;
-  'field_pattern': FieldPatternFromInput;
-  'mut_pattern': MutPatternFromInput;
-  'range_pattern': RangePatternFromInput;
-  'ref_pattern': RefPatternFromInput;
-  'captured_pattern': CapturedPatternFromInput;
-  'reference_pattern': ReferencePatternFromInput;
-  'or_pattern': OrPatternFromInput;
-  'negative_literal': NegativeLiteralFromInput;
-  'string_literal': StringLiteralFromInput;
-  'raw_string_literal': RawStringLiteralFromInput;
-  'comment': CommentFromInput;
-  'line_comment': LineCommentFromInput;
-  'block_comment': BlockCommentFromInput;
-  '_type_identifier': _TypeIdentifierFromInput;
-  '_field_identifier': _FieldIdentifierFromInput;
-  'let_chain': LetChainFromInput;
+export interface LooseMap {
+  'source_file': LooseSourceFile;
+  'expression_statement': LooseExpressionStatement;
+  'macro_definition': LooseMacroDefinition;
+  'macro_rule': LooseMacroRule;
+  'token_tree_pattern': LooseTokenTreePattern;
+  'token_binding_pattern': LooseTokenBindingPattern;
+  'token_repetition_pattern': LooseTokenRepetitionPattern;
+  'token_tree': LooseTokenTree;
+  'token_repetition': LooseTokenRepetition;
+  '_non_special_token': LooseNonSpecialToken;
+  'attribute_item': LooseAttributeItem;
+  'inner_attribute_item': LooseInnerAttributeItem;
+  'attribute': LooseAttribute;
+  'mod_item': LooseModItem;
+  'foreign_mod_item': LooseForeignModItem;
+  'declaration_list': LooseDeclarationList;
+  'struct_item': LooseStructItem;
+  'union_item': LooseUnionItem;
+  'enum_item': LooseEnumItem;
+  'enum_variant_list': LooseEnumVariantList;
+  'enum_variant': LooseEnumVariant;
+  'field_declaration_list': LooseFieldDeclarationList;
+  'field_declaration': LooseFieldDeclaration;
+  'ordered_field_declaration_list': LooseOrderedFieldDeclarationList;
+  'extern_crate_declaration': LooseExternCrateDeclaration;
+  'const_item': LooseConstItem;
+  'static_item': LooseStaticItem;
+  'type_item': LooseTypeItem;
+  'function_item': LooseFunctionItem;
+  'function_signature_item': LooseFunctionSignatureItem;
+  'function_modifiers': LooseFunctionModifiers;
+  'where_clause': LooseWhereClause;
+  'where_predicate': LooseWherePredicate;
+  'impl_item': LooseImplItem;
+  'trait_item': LooseTraitItem;
+  'associated_type': LooseAssociatedType;
+  'trait_bounds': LooseTraitBounds;
+  'higher_ranked_trait_bound': LooseHigherRankedTraitBound;
+  'removed_trait_bound': LooseRemovedTraitBound;
+  'type_parameters': LooseTypeParameters;
+  'const_parameter': LooseConstParameter;
+  'type_parameter': LooseTypeParameter;
+  'lifetime_parameter': LooseLifetimeParameter;
+  'let_declaration': LooseLetDeclaration;
+  'use_declaration': LooseUseDeclaration;
+  'scoped_use_list': LooseScopedUseList;
+  'use_list': LooseUseList;
+  'use_as_clause': LooseUseAsClause;
+  'use_wildcard': LooseUseWildcard;
+  'parameters': LooseParameters;
+  'self_parameter': LooseSelfParameter;
+  'variadic_parameter': LooseVariadicParameter;
+  'parameter': LooseParameter;
+  'extern_modifier': LooseExternModifier;
+  'visibility_modifier': LooseVisibilityModifier;
+  'bracketed_type': LooseBracketedType;
+  'qualified_type': LooseQualifiedType;
+  'lifetime': LooseLifetime;
+  'array_type': LooseArrayType;
+  'for_lifetimes': LooseForLifetimes;
+  'function_type': LooseFunctionType;
+  'tuple_type': LooseTupleType;
+  'generic_function': LooseGenericFunction;
+  'generic_type': LooseGenericType;
+  'generic_type_with_turbofish': LooseGenericTypeWithTurbofish;
+  'bounded_type': LooseBoundedType;
+  'use_bounds': LooseUseBounds;
+  'type_arguments': LooseTypeArguments;
+  'type_binding': LooseTypeBinding;
+  'reference_type': LooseReferenceType;
+  'pointer_type': LoosePointerType;
+  'abstract_type': LooseAbstractType;
+  'dynamic_type': LooseDynamicType;
+  'macro_invocation': LooseMacroInvocation;
+  'delim_token_tree': LooseDelimTokenTree;
+  'scoped_identifier': LooseScopedIdentifier;
+  'scoped_type_identifier_in_expression_position': LooseScopedTypeIdentifierInExpressionPosition;
+  'scoped_type_identifier': LooseScopedTypeIdentifier;
+  'range_expression': LooseRangeExpression;
+  'unary_expression': LooseUnaryExpression;
+  'try_expression': LooseTryExpression;
+  'reference_expression': LooseReferenceExpression;
+  'binary_expression': LooseBinaryExpression;
+  'assignment_expression': LooseAssignmentExpression;
+  'compound_assignment_expr': LooseCompoundAssignmentExpr;
+  'type_cast_expression': LooseTypeCastExpression;
+  'return_expression': LooseReturnExpression;
+  'yield_expression': LooseYieldExpression;
+  'call_expression': LooseCallExpression;
+  'arguments': LooseArguments;
+  'array_expression': LooseArrayExpression;
+  'parenthesized_expression': LooseParenthesizedExpression;
+  'tuple_expression': LooseTupleExpression;
+  'struct_expression': LooseStructExpression;
+  'field_initializer_list': LooseFieldInitializerList;
+  'shorthand_field_initializer': LooseShorthandFieldInitializer;
+  'field_initializer': LooseFieldInitializer;
+  'base_field_initializer': LooseBaseFieldInitializer;
+  'if_expression': LooseIfExpression;
+  'let_condition': LooseLetCondition;
+  '_let_chain': Loose_LetChain;
+  'else_clause': LooseElseClause;
+  'match_expression': LooseMatchExpression;
+  'match_block': LooseMatchBlock;
+  'match_arm': LooseMatchArm;
+  'last_match_arm': LooseLastMatchArm;
+  'match_pattern': LooseMatchPattern;
+  'while_expression': LooseWhileExpression;
+  'loop_expression': LooseLoopExpression;
+  'for_expression': LooseForExpression;
+  'const_block': LooseConstBlock;
+  'closure_expression': LooseClosureExpression;
+  'closure_parameters': LooseClosureParameters;
+  'label': LooseLabel;
+  'break_expression': LooseBreakExpression;
+  'continue_expression': LooseContinueExpression;
+  'index_expression': LooseIndexExpression;
+  'await_expression': LooseAwaitExpression;
+  'field_expression': LooseFieldExpression;
+  'unsafe_block': LooseUnsafeBlock;
+  'async_block': LooseAsyncBlock;
+  'gen_block': LooseGenBlock;
+  'try_block': LooseTryBlock;
+  'block': LooseBlock;
+  'generic_pattern': LooseGenericPattern;
+  'tuple_pattern': LooseTuplePattern;
+  'slice_pattern': LooseSlicePattern;
+  'tuple_struct_pattern': LooseTupleStructPattern;
+  'struct_pattern': LooseStructPattern;
+  'field_pattern': LooseFieldPattern;
+  'mut_pattern': LooseMutPattern;
+  'range_pattern': LooseRangePattern;
+  'ref_pattern': LooseRefPattern;
+  'captured_pattern': LooseCapturedPattern;
+  'reference_pattern': LooseReferencePattern;
+  'or_pattern': LooseOrPattern;
+  'negative_literal': LooseNegativeLiteral;
+  'string_literal': LooseStringLiteral;
+  'raw_string_literal': LooseRawStringLiteral;
+  'comment': LooseComment;
+  'line_comment': LooseLineComment;
+  'block_comment': LooseBlockComment;
+  '_type_identifier': Loose_TypeIdentifier;
+  '_field_identifier': Loose_FieldIdentifier;
+  'let_chain': LooseLetChain;
 }
