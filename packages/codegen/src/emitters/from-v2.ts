@@ -272,25 +272,15 @@ function emitBranchFrom(node: BranchLikeNode, nodeMap: NodeMap, intern: KindInte
         // reconstruction path below.
         const renderGuard = inputOptional ? 'input !== undefined && ' : ''
         lines.push(`  if (${renderGuard}'render' in input) return input;`)
-        // `input` may be either loose ConfigOf-style (camelCase top-level
-        // keys) or a parsed NodeData (snake_case keys under `fields`).
-        // Normalise to a single indexable view `_f` exposing both shapes.
-        // `object` is the widening target — it captures any non-primitive
-        // without using `unknown` or `Record<string, unknown>`; the
-        // sideways cast to `{ [key: string]: _FromFieldInput }` is
-        // TS-legal because `object` has no declared properties to
-        // conflict with.
-        lines.push(`  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;`)
-        lines.push(`  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};`)
-        // Non-empty fields (repeat1-sourced) get hoisted to a local
-        // binding so `_assertNonEmpty` can narrow the static type
-        // before the binding is spread into the factory's config
-        // object. The binding is prefixed with `_ne_` so it can't
-        // collide with the factory function name.
+        // After the fluent passthrough, `input` is the FromInputOf
+        // camelCase bag arm. Read field properties directly — typed,
+        // no widening cast needed. Bare readNode NodeData must be
+        // wrapped (via `wrapNode`) before reaching here; wrapped nodes
+        // expose camelCase getters that structurally satisfy this bag.
         const neName = (f: AssembledField) => `_ne_${f.propertyName}`
         for (const f of fields) {
             if (f.nonEmpty && f.multiple) {
-                const call = resolveFieldFromLooseInput(f, nodeMap, typeName, intern, '_f')
+                const call = resolveFieldFromTypedInput(f, nodeMap, typeName, intern, 'input', inputOptional)
                 lines.push(`  const ${neName(f)} = ${call};`)
                 lines.push(`  _assertNonEmpty(${neName(f)}, '${node.kind}.${f.propertyName}');`)
             }
@@ -300,15 +290,13 @@ function emitBranchFrom(node: BranchLikeNode, nodeMap: NodeMap, intern: KindInte
             if (f.nonEmpty && f.multiple) {
                 lines.push(`    ${f.propertyName}: ${neName(f)},`)
             } else {
-                lines.push(`    ${f.propertyName}: ${resolveFieldFromLooseInput(f, nodeMap, typeName, intern, '_f')},`)
+                lines.push(`    ${f.propertyName}: ${resolveFieldFromTypedInput(f, nodeMap, typeName, intern, 'input', inputOptional)},`)
             }
         }
-        // Only pass-through children for branches that actually declare
-        // a children slot — field-only branches have no `children` in
-        // their ConfigOf and get a TS2353 error if we include it.
         if (childSlots.length > 0) {
             const childType = `NonNullable<T.${typeName}Config['children']>`
-            lines.push(`    children: ((input as { children?: ${childType} })?.children ?? []) as ${childType},`)
+            const childAccess = inputOptional ? 'input?.children' : 'input.children'
+            lines.push(`    children: (${childAccess} ?? []) as ${childType},`)
         }
         lines.push('  });')
     } else {
@@ -420,15 +408,14 @@ function emitPolymorphFrom(node: PolymorphFromNode, nodeMap: NodeMap, intern: Ki
             form.fields.some(fd => fd.required) ||
             form.children.some(c => c.required) ? '' : '?'
         const fLines: string[] = []
+        const formInputOptional = formOpt === '?'
         fLines.push(`export function ${formFn}(input${formOpt}: T.${form.typeName}Config) {`)
         if (form.fields.length > 0) {
-            // Same dual-shape reader as branch from — see
-            // emitBranchFrom for the `object` widening rationale.
-            fLines.push(`  const _fields = (input as { fields?: object } | undefined)?.fields as { readonly [key: string]: _FromFieldInput } | undefined;`)
-            fLines.push(`  const _f: { readonly [key: string]: _FromFieldInput } = _fields ?? (input as object as { readonly [key: string]: _FromFieldInput }) ?? {};`)
+            // Typed direct reads — `input` is the strict form-config
+            // alias, every field property is already typed correctly.
             fLines.push(`  return ${formFactory}({`)
             for (const f of form.fields) {
-                fLines.push(`    ${f.propertyName}: ${resolveFieldFromLooseInput(f, nodeMap, form.typeName, intern, '_f')},`)
+                fLines.push(`    ${f.propertyName}: ${resolveFieldFromTypedInput(f, nodeMap, form.typeName, intern, 'input', formInputOptional)},`)
             }
             fLines.push('  });')
         } else {
@@ -518,36 +505,6 @@ function resolveFieldFromTypedInput(
     const access = inputOptional
         ? `${sourceVar}?.${field.propertyName}`
         : `${sourceVar}.${field.propertyName}`
-    return resolveFieldCall(access, field, nodeMap, typeParam, intern)
-}
-
-function resolveFieldFromLooseInput(
-    field: AssembledField,
-    nodeMap: NodeMap,
-    parentTypeName: string,
-    intern: KindInterner,
-    sourceVar = 'loose',
-): string {
-    // For `_resolveOne<T>` the type parameter T is the slot's own type.
-    // For `_resolveMany<T>` (repeated fields) the slot is already an
-    // array, so T must be the element type — otherwise the return
-    // shape is `readonly (readonly T[])[]`, an array of arrays.
-    const slotType = `NonNullable<T.${parentTypeName}Config['${field.propertyName}']>`
-    const typeParam = field.multiple ? `${slotType}[number]` : slotType
-    // Accept both shapes for every field read: raw (snake_case) name
-    // when the caller passed a parsed NodeData's `fields`, and
-    // camelCase when they passed a loose ConfigOf-style input.
-    //
-    // Bracket notation instead of dot access — field names that collide
-    // with Object.prototype members (`constructor`, `toString`, ...)
-    // otherwise get typed as the prototype's shape (Function) rather
-    // than the index signature's `_FromFieldInput`. Bracket access
-    // flows through the index signature cleanly.
-    const rawKey = field.name
-    const camelKey = field.propertyName
-    const raw = `${sourceVar}[${JSON.stringify(rawKey)}]`
-    const camel = `${sourceVar}[${JSON.stringify(camelKey)}]`
-    const access = rawKey === camelKey ? raw : `(${raw} ?? ${camel})`
     return resolveFieldCall(access, field, nodeMap, typeParam, intern)
 }
 

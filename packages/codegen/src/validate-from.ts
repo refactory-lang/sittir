@@ -39,6 +39,25 @@ const FACTORY_MODULE_PATHS: Record<string, string> = {
 	python: '../../python/src/factories.ts',
 };
 
+/**
+ * Runtime camelCase adapter for readNode output. from() emits typed
+ * camelCase field reads (`input.returnType`), but readNode returns
+ * NodeData with snake_case keys under `.fields.return_type`. This
+ * adapter spreads each `.fields` entry as a top-level camelCase key
+ * so the typed bag reads resolve. Kept in the validator (not in from)
+ * because from() otherwise stays a clean per-kind typed function.
+ */
+function toCamelCaseAdapter(data: AnyNodeData): AnyNodeData & Record<string, unknown> {
+	const camelFields: Record<string, unknown> = {};
+	if (data.fields) {
+		for (const [k, v] of Object.entries(data.fields)) {
+			const camel = k.replace(/_([a-z])/g, (_, c: string) => c.toUpperCase());
+			camelFields[camel] = v;
+		}
+	}
+	return { ...data, ...camelFields };
+}
+
 // ---------------------------------------------------------------------------
 // Structural analysis
 // ---------------------------------------------------------------------------
@@ -138,7 +157,10 @@ export async function validateFrom(
 	}
 	const routing = buildRoutingMap(overrides, supertypeExpansion);
 
-	// Import from() and factory maps
+	// Import from() and factory maps. from() expects either a fluent
+	// factory output or a camelCase bag; bare readNode NodeData is
+	// fed through `toCamelCaseAdapter` before being handed in so the
+	// typed field reads resolve.
 	let fromMap: Record<string, (input: object) => unknown> = {};
 	let factoryMap: Record<string, (config?: any) => unknown> = {};
 	try {
@@ -176,19 +198,19 @@ export async function validateFrom(
 			const readData = readNode(handle, node1.id, routing);
 
 			try {
-				const fromResult = fromMap[kind]!(readData) as AnyNodeData;
+				// Adapt readNode output by spreading `.fields` entries
+				// as top-level camelCase keys — satisfies from()'s typed
+				// field reads AND the factory's config reads in one
+				// small runtime transform. No wrap module, no getters,
+				// no tree-handle dependency.
+				const adapted = toCamelCaseAdapter(readData);
+				const fromResult = fromMap[kind]!(adapted) as AnyNodeData;
 				let factoryResult: AnyNodeData;
 				try {
-					// Children-only factories use rest params — spread children directly
 					if (!readData.fields && readData.children) {
 						factoryResult = (factoryMap[kind]! as (...args: unknown[]) => AnyNodeData)(...readData.children);
 					} else {
-						const config = { ...(readData.fields ?? {}) } as Record<string, unknown>;
-						const namedChildren = (readData.children ?? []).filter((c: any) => c?.named !== false);
-						if (namedChildren.length) {
-							config.children = namedChildren;
-						}
-						factoryResult = factoryMap[kind]!(config) as AnyNodeData;
+						factoryResult = factoryMap[kind]!(adapted) as AnyNodeData;
 					}
 				} catch {
 					skip++;
