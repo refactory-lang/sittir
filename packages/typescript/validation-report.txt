@@ -1,0 +1,200 @@
+Generating typescript IR...
+
+@sittir/typescript: 244 kinds
+  x 206/244 variable resolution
+  x 235/244 field coverage
+  v 46/46 override consistency (46 nodes with overrides)
+  x 240/244 template structure
+  x 0/8 variant subtypes
+
+  Errors (97):
+    export_statement: [variant-subtypes] variants defined but no detect block
+    export_specifier: [variable-resolution] $ALIAS_CLAUSE resolves to nothing (not a field, override, or clause)
+    export_specifier: [field-coverage] tree-sitter FIELD 'alias' not referenced in template
+    import_statement: [field-coverage] tree-sitter FIELD 'source' not referenced in template
+    _from_clause: [variable-resolution] $SOURCE resolves to nothing (not a field, override, or clause)
+    import_specifier_name: [variable-resolution] $NAME resolves to nothing (not a field, override, or clause)
+    import_specifier_as: [variable-resolution] $NAME resolves to nothing (not a field, override, or clause)
+    import_specifier_as: [variable-resolution] $ALIAS resolves to nothing (not a field, override, or clause)
+    import_specifier: [variant-subtypes] variants defined but no detect block
+    statement_body: [variable-resolution] $BODY resolves to nothing (not a field, override, or clause)
+    statement: [variable-resolution] $BODY resolves to nothing (not a field, override, or clause)
+    statement: [variant-subtypes] variants defined but no detect block
+    variable_declaration: [template-structure] joinBy defined but no $$$ variable in template
+    lexical_declaration: [template-structure] joinBy defined but no $$$ variable in template
+    _for_header: [variable-resolution] $LEFT resolves to nothing (not a field, override, or clause)
+    _for_header: [variable-resolution] $OPERATOR resolves to nothing (not a field, override, or clause)
+    _for_header: [variable-resolution] $RIGHT resolves to nothing (not a field, override, or clause)
+    catch_clause: [variable-resolution] $PARAMETER_CLAUSE resolves to nothing (not a field, override, or clause)
+    catch_clause: [field-coverage] tree-sitter FIELD 'parameter' not referenced in template
+    catch_clause: [field-coverage] tree-sitter FIELD 'type' not referenced in template
+    parenthesized_expression_expression: [variable-resolution] $TYPE resolves to nothing (not a field, override, or clause)
+    parenthesized_expression: [variant-subtypes] variants defined but no detect block
+    jsx_element: [variable-resolution] $OPEN_TAG resolves to nothing (not a field, override, or clause)
+    jsx_element: [variable-resolution] $CLOSE_TAG resolves to nothing (not a field, override, or clause)
+    jsx_closing_element: [variable-resolution] $NAME resolves to nothing (not a field, override, or clause)
+    arrow_function_parameter: [variable-resolution] $PARAMETER resolves to nothing (not a field, override, or clause)
+    arrow_function: [variant-subtypes] variants defined but no detect block
+    _call_signature: [variable-resolution] $TYPE_PARAMETERS resolves to nothing (not a field, override, or clause)
+    _call_signature: [variable-resolution] $PARAMETERS resolves to nothing (not a field, override, or clause)
+    _call_signature: [variable-resolution] $RETURN_TYPE resolves to nothing (not a field, override, or clause)
+    call_expression_function: [variable-resolution] $FUNCTION resolves to nothing (not a field, override, or clause)
+    call_expression_function: [variable-resolution] $TYPE_ARGUMENTS resolves to nothing (not a field, override, or clause)
+    call_expression_function: [variable-resolution] $ARGUMENTS resolves to nothing (not a field, override, or clause)
+    call_expression_function2: [variable-resolution] $FUNCTION resolves to nothing (not a field, override, or clause)
+    call_expression_function2: [variable-resolution] $ARGUMENTS resolves to nothing (not a field, override, or clause)
+    call_expression_tok_q_dot: [variable-resolution] $FUNCTION resolves to nothing (not a field, override, or clause)
+    call_expression_tok_q_dot: [variable-resolution] $TYPE_ARGUMENTS resolves to nothing (not a field, override, or clause)
+    call_expression_tok_q_dot: [variable-resolution] $ARGUMENTS resolves to nothing (not a field, override, or clause)
+    call_expression: [variant-subtypes] variants defined but no detect block
+    member_expression: [field-coverage] tree-sitter FIELD 'optional_chain' not referenced in template
+    _initializer: [variable-resolution] $VALUE resolves to nothing (not a field, override, or clause)
+    decorator_member_expression: [variable-resolution] $OBJECT resolves to nothing (not a field, override, or clause)
+    decorator_member_expression: [variable-resolution] $PROPERTY resolves to nothing (not a field, override, or clause)
+    decorator_call_expression: [variable-resolution] $FUNCTION resolves to nothing (not a field, override, or clause)
+    decorator_call_expression: [variable-resolution] $TYPE_ARGUMENTS resolves to nothing (not a field, override, or clause)
+    decorator_call_expression: [variable-resolution] $ARGUMENTS resolves to nothing (not a field, override, or clause)
+    field_definition: [variable-resolution] $DECORATOR resolves to nothing (not a field, override, or clause)
+    field_definition: [variable-resolution] $PROPERTY resolves to nothing (not a field, override, or clause)
+    _jsx_start_opening_element: [variable-resolution] $NAME resolves to nothing (not a field, override, or clause)
+    _jsx_start_opening_element: [variable-resolution] $ATTRIBUTE resolves to nothing (not a field, override, or clause)
+    instantiation_expression: [field-coverage] tree-sitter FIELD 'function' not referenced in template
+    _extends_clause_single: [variable-resolution] $VALUE resolves to nothing (not a field, override, or clause)
+    _extends_clause_single: [variable-resolution] $TYPE_ARGUMENTS resolves to nothing (not a field, override, or clause)
+    _module: [variable-resolution] $NAME resolves to nothing (not a field, override, or clause)
+    _module: [variable-resolution] $BODY resolves to nothing (not a field, override, or clause)
+    extends_type_clause: [template-structure] joinBy defined but no $$$ variable in template
+    enum_body: [field-coverage] tree-sitter FIELD 'name' not referenced in template
+    enum_body: [template-structure] joinBy defined but no $$$ variable in template
+    required_parameter: [field-coverage] tree-sitter FIELD 'decorator' not referenced in template
+    required_parameter: [field-coverage] tree-sitter FIELD 'name' not referenced in template
+    required_parameter: [field-coverage] tree-sitter FIELD 'pattern' not referenced in template
+    required_parameter: [field-coverage] tree-sitter FIELD 'value' not referenced in template
+    optional_parameter: [field-coverage] tree-sitter FIELD 'decorator' not referenced in template
+    optional_parameter: [field-coverage] tree-sitter FIELD 'name' not referenced in template
+    optional_parameter: [field-coverage] tree-sitter FIELD 'pattern' not referenced in template
+    optional_parameter: [field-coverage] tree-sitter FIELD 'value' not referenced in template
+    _parameter_name: [variable-resolution] $DECORATOR resolves to nothing (not a field, override, or clause)
+    _parameter_name: [variable-resolution] $PATTERN resolves to nothing (not a field, override, or clause)
+    _type_query_member_expression_in_type_annotation: [variable-resolution] $OBJECT resolves to nothing (not a field, override, or clause)
+    _type_query_member_expression_in_type_annotation: [variable-resolution] $PROPERTY resolves to nothing (not a field, override, or clause)
+    _type_query_call_expression_in_type_annotation: [variable-resolution] $FUNCTION resolves to nothing (not a field, override, or clause)
+    _type_query_call_expression_in_type_annotation: [variable-resolution] $ARGUMENTS resolves to nothing (not a field, override, or clause)
+    tuple_parameter: [variable-resolution] $NAME resolves to nothing (not a field, override, or clause)
+    tuple_parameter: [variable-resolution] $TYPE resolves to nothing (not a field, override, or clause)
+    optional_tuple_parameter: [variable-resolution] $NAME resolves to nothing (not a field, override, or clause)
+    optional_tuple_parameter: [variable-resolution] $TYPE resolves to nothing (not a field, override, or clause)
+    primary_type_form2: [variable-resolution] $NAME resolves to nothing (not a field, override, or clause)
+    primary_type: [variable-resolution] $NAME resolves to nothing (not a field, override, or clause)
+    primary_type: [variant-subtypes] variants defined but no detect block
+    _type_query_member_expression: [variable-resolution] $OBJECT resolves to nothing (not a field, override, or clause)
+    _type_query_member_expression: [variable-resolution] $PROPERTY resolves to nothing (not a field, override, or clause)
+    _type_query_subscript_expression: [variable-resolution] $OBJECT resolves to nothing (not a field, override, or clause)
+    _type_query_subscript_expression: [variable-resolution] $INDEX resolves to nothing (not a field, override, or clause)
+    _type_query_call_expression: [variable-resolution] $FUNCTION resolves to nothing (not a field, override, or clause)
+    _type_query_call_expression: [variable-resolution] $ARGUMENTS resolves to nothing (not a field, override, or clause)
+    _type_query_instantiation_expression: [variable-resolution] $FUNCTION resolves to nothing (not a field, override, or clause)
+    _type_query_instantiation_expression: [variable-resolution] $TYPE_ARGUMENTS resolves to nothing (not a field, override, or clause)
+    mapped_type_clause: [variable-resolution] $ALIAS_CLAUSE resolves to nothing (not a field, override, or clause)
+    mapped_type_clause: [field-coverage] tree-sitter FIELD 'alias' not referenced in template
+    _number: [variable-resolution] $OPERATOR resolves to nothing (not a field, override, or clause)
+    _number: [variable-resolution] $ARGUMENT resolves to nothing (not a field, override, or clause)
+    index_signature_colon: [variable-resolution] $NAME resolves to nothing (not a field, override, or clause)
+    index_signature_colon: [variable-resolution] $INDEX_TYPE resolves to nothing (not a field, override, or clause)
+    index_signature: [variant-subtypes] variants defined but no detect block
+    interface_body: [variable-resolution] $OPENING resolves to nothing (not a field, override, or clause)
+    interface_body: [variable-resolution] $MEMBERS resolves to nothing (not a field, override, or clause)
+    interface_body: [variable-resolution] $CLOSING resolves to nothing (not a field, override, or clause)
+
+  Warnings (67):
+    export_statement: [field-coverage] tree-sitter FIELD 'declaration' not explicitly in template (covered by $$$CHILDREN)
+    export_statement: [field-coverage] tree-sitter FIELD 'decorator' not explicitly in template (covered by $$$CHILDREN)
+    export_statement: [field-coverage] tree-sitter FIELD 'source' not explicitly in template (covered by $$$CHILDREN)
+    export_statement: [field-coverage] tree-sitter FIELD 'value' not explicitly in template (covered by $$$CHILDREN)
+    variable_declarator: [field-coverage] tree-sitter FIELD 'value' not explicitly in template (covered by $$$CHILDREN)
+    for_in_statement: [field-coverage] tree-sitter FIELD 'kind' not explicitly in template (covered by $$$CHILDREN)
+    for_in_statement: [field-coverage] tree-sitter FIELD 'left' not explicitly in template (covered by $$$CHILDREN)
+    for_in_statement: [field-coverage] tree-sitter FIELD 'operator' not explicitly in template (covered by $$$CHILDREN)
+    for_in_statement: [field-coverage] tree-sitter FIELD 'right' not explicitly in template (covered by $$$CHILDREN)
+    for_in_statement: [field-coverage] tree-sitter FIELD 'value' not explicitly in template (covered by $$$CHILDREN)
+    class: [field-coverage] tree-sitter FIELD 'decorator' not explicitly in template (covered by $$$CHILDREN)
+    class_declaration: [field-coverage] tree-sitter FIELD 'decorator' not explicitly in template (covered by $$$CHILDREN)
+    function_expression: [field-coverage] tree-sitter FIELD 'parameters' not explicitly in template (covered by $$$CHILDREN)
+    function_expression: [field-coverage] tree-sitter FIELD 'return_type' not explicitly in template (covered by $$$CHILDREN)
+    function_expression: [field-coverage] tree-sitter FIELD 'type_parameters' not explicitly in template (covered by $$$CHILDREN)
+    function_declaration: [field-coverage] tree-sitter FIELD 'parameters' not explicitly in template (covered by $$$CHILDREN)
+    function_declaration: [field-coverage] tree-sitter FIELD 'return_type' not explicitly in template (covered by $$$CHILDREN)
+    function_declaration: [field-coverage] tree-sitter FIELD 'type_parameters' not explicitly in template (covered by $$$CHILDREN)
+    generator_function: [field-coverage] tree-sitter FIELD 'parameters' not explicitly in template (covered by $$$CHILDREN)
+    generator_function: [field-coverage] tree-sitter FIELD 'return_type' not explicitly in template (covered by $$$CHILDREN)
+    generator_function: [field-coverage] tree-sitter FIELD 'type_parameters' not explicitly in template (covered by $$$CHILDREN)
+    generator_function_declaration: [field-coverage] tree-sitter FIELD 'parameters' not explicitly in template (covered by $$$CHILDREN)
+    generator_function_declaration: [field-coverage] tree-sitter FIELD 'return_type' not explicitly in template (covered by $$$CHILDREN)
+    generator_function_declaration: [field-coverage] tree-sitter FIELD 'type_parameters' not explicitly in template (covered by $$$CHILDREN)
+    arrow_function: [field-coverage] tree-sitter FIELD 'body' not explicitly in template (covered by $$$CHILDREN)
+    arrow_function: [field-coverage] tree-sitter FIELD 'parameters' not explicitly in template (covered by $$$CHILDREN)
+    arrow_function: [field-coverage] tree-sitter FIELD 'return_type' not explicitly in template (covered by $$$CHILDREN)
+    arrow_function: [field-coverage] tree-sitter FIELD 'type_parameters' not explicitly in template (covered by $$$CHILDREN)
+    method_definition: [field-coverage] tree-sitter FIELD 'parameters' not explicitly in template (covered by $$$CHILDREN)
+    method_definition: [field-coverage] tree-sitter FIELD 'return_type' not explicitly in template (covered by $$$CHILDREN)
+    method_definition: [field-coverage] tree-sitter FIELD 'type_parameters' not explicitly in template (covered by $$$CHILDREN)
+    public_field_definition: [field-coverage] tree-sitter FIELD 'decorator' not explicitly in template (covered by $$$CHILDREN)
+    public_field_definition: [field-coverage] tree-sitter FIELD 'value' not explicitly in template (covered by $$$CHILDREN)
+    method_signature: [field-coverage] tree-sitter FIELD 'parameters' not explicitly in template (covered by $$$CHILDREN)
+    method_signature: [field-coverage] tree-sitter FIELD 'return_type' not explicitly in template (covered by $$$CHILDREN)
+    method_signature: [field-coverage] tree-sitter FIELD 'type_parameters' not explicitly in template (covered by $$$CHILDREN)
+    abstract_method_signature: [field-coverage] tree-sitter FIELD 'parameters' not explicitly in template (covered by $$$CHILDREN)
+    abstract_method_signature: [field-coverage] tree-sitter FIELD 'return_type' not explicitly in template (covered by $$$CHILDREN)
+    abstract_method_signature: [field-coverage] tree-sitter FIELD 'type_parameters' not explicitly in template (covered by $$$CHILDREN)
+    function_signature: [field-coverage] tree-sitter FIELD 'parameters' not explicitly in template (covered by $$$CHILDREN)
+    function_signature: [field-coverage] tree-sitter FIELD 'return_type' not explicitly in template (covered by $$$CHILDREN)
+    function_signature: [field-coverage] tree-sitter FIELD 'type_parameters' not explicitly in template (covered by $$$CHILDREN)
+    extends_clause: [field-coverage] tree-sitter FIELD 'type_arguments' not explicitly in template (covered by $$$CHILDREN)
+    extends_clause: [field-coverage] tree-sitter FIELD 'value' not explicitly in template (covered by $$$CHILDREN)
+    abstract_class_declaration: [field-coverage] tree-sitter FIELD 'decorator' not explicitly in template (covered by $$$CHILDREN)
+    module: [field-coverage] tree-sitter FIELD 'body' not explicitly in template (covered by $$$CHILDREN)
+    module: [field-coverage] tree-sitter FIELD 'name' not explicitly in template (covered by $$$CHILDREN)
+    internal_module: [field-coverage] tree-sitter FIELD 'body' not explicitly in template (covered by $$$CHILDREN)
+    internal_module: [field-coverage] tree-sitter FIELD 'name' not explicitly in template (covered by $$$CHILDREN)
+    enum_assignment: [field-coverage] tree-sitter FIELD 'value' not explicitly in template (covered by $$$CHILDREN)
+    call_signature: [field-coverage] tree-sitter FIELD 'parameters' not explicitly in template (covered by $$$CHILDREN)
+    call_signature: [field-coverage] tree-sitter FIELD 'return_type' not explicitly in template (covered by $$$CHILDREN)
+    call_signature: [field-coverage] tree-sitter FIELD 'type_parameters' not explicitly in template (covered by $$$CHILDREN)
+    index_signature: [field-coverage] tree-sitter FIELD 'sign' not explicitly in template (covered by $$$CHILDREN)
+    index_signature: [field-coverage] tree-sitter FIELD 'type' not explicitly in template (covered by $$$CHILDREN)
+    ambient_declaration: [override-consistency] override 'type_annotation' not referenced in template
+    ambient_declaration: [override-consistency] override 'semicolon' not referenced in template
+    class_heritage: [override-consistency] override 'extends_clause' not referenced in template
+    class_heritage: [override-consistency] override 'implements_clause' not referenced in template
+    enum_body: [override-consistency] override 'members' not referenced in template
+    export_statement: [override-consistency] override 'declaration' not referenced in template
+    export_statement: [override-consistency] override 'declaration' collides with tree-sitter FIELD
+    export_statement: [override-consistency] override 'source' not referenced in template
+    export_statement: [override-consistency] override 'source' collides with tree-sitter FIELD
+    import_clause: [override-consistency] override 'default_import' not referenced in template
+    import_clause: [override-consistency] override 'named_imports' not referenced in template
+    index_signature: [override-consistency] override 'mapped_type_clause' not referenced in template
+
+  x 180/183 kinds renderable (3 un-renderable)
+    x empty_statement: no NodeMap render path for 'empty_statement' (kind is modelType=none)
+    x existential_type: no NodeMap render path for 'existential_type' (kind is modelType=none)
+    x optional_chain: no NodeMap render path for 'optional_chain' (kind is modelType=none)
+
+Running round-trip validation...
+  v 145/145 readNode round-trip (0 skipped, 0 issues)
+  v 110/112 round-trip (2 skipped, 0 errors)
+  v 121/126 factory round-trip (5 skipped, 0 errors)
+  x 134/143 from() correctness (2 undefined, 2 divergent, 1 skipped)
+    ! class_body: from() diverges: named children: 1 vs 0
+    ! parenthesized_expression: from() diverges: named children: 1 vs 0
+    x shorthand_property_identifier: from() throws: Cannot read properties of undefined (reading '0')
+    x literal_type: from() produces undefined nodes at: .children[0]
+    x undefined: from() produces undefined nodes at: root
+    x call_signature: from() throws: Cannot read properties of undefined (reading '0')
+    x shorthand_property_identifier_pattern: from() throws: Cannot read properties of undefined (reading '0')
+    x import_clause: from() throws: Cannot read properties of undefined (reading '0')
+
+Done! Generated:
+  templates.yaml, grammar.ts, types.ts, factories.ts, utils.ts, from.ts, consts.ts, index.ts
+  vitest.config.ts
+

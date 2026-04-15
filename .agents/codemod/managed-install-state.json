@@ -1,0 +1,35 @@
+{
+  "schema_version": "1",
+  "harness": "antigravity",
+  "scope": "project",
+  "components": [
+    {
+      "id": "discovery-guide:AGENTS.md",
+      "kind": "discovery_guide",
+      "path": "/Users/pmouli/GitHub.nosync/refactory-python-to-rust-phase0/refactory-python-to-rust/AGENTS.md",
+      "version": null,
+      "fingerprint": "9867c2100d8600e1622deab894eb66dd7cb7ef6fc710b41a7a1e92e8e97e401e"
+    },
+    {
+      "id": "periodic-trigger:CODEMOD_PERIODIC_UPDATE.md",
+      "kind": "discovery_guide",
+      "path": "/Users/pmouli/GitHub.nosync/refactory-python-to-rust-phase0/refactory-python-to-rust/.agents/CODEMOD_PERIODIC_UPDATE.md",
+      "version": null,
+      "fingerprint": "e9bbfd3dea9fe689c38c39617ee9c035b542d10b73bb9b5b85ebc39c833801b8"
+    },
+    {
+      "id": "periodic-trigger:check-updates.sh",
+      "kind": "discovery_guide",
+      "path": "/Users/pmouli/GitHub.nosync/refactory-python-to-rust-phase0/refactory-python-to-rust/.agents/codemod/periodic-update/check-updates.sh",
+      "version": null,
+      "fingerprint": "9b7452620b126cf55ae142a074368960680e36cfa38207cc61d674943131666c"
+    },
+    {
+      "id": "codemod",
+      "kind": "skill",
+      "path": "/Users/pmouli/GitHub.nosync/refactory-python-to-rust-phase0/refactory-python-to-rust/.agents/skills/codemod/SKILL.md",
+      "version": "1.0.0",
+      "fingerprint": "1eb2edd30d202f574230f122bee700dae7c0236594a8b127c014541b78f4375b"
+    }
+  ]
+}

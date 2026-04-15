@@ -1,0 +1,150 @@
+Generating rust IR...
+  'token_repetition': node-types=container, grammar=leaf
+  'token_repetition_pattern': node-types=container, grammar=leaf
+  'token_tree': node-types=container, grammar=leaf
+  'token_tree_pattern': node-types=container, grammar=leaf
+  'use_list': node-types=container, grammar=leaf
+  'use_wildcard': node-types=branch, grammar=leaf
+
+@sittir/rust: 137 kinds
+  v 137/137 variable resolution
+  v 137/137 field coverage
+  v 64/64 override consistency (64 nodes with overrides)
+  v 137/137 template structure
+  v 2/2 variant subtypes
+
+Running round-trip validation...
+  x 91/149 round-trip (2 skipped, 56 errors)
+    x Async function [try_expression]: re-parse error: "?"
+    x Await expression [try_expression]: re-parse error: "?"
+    x Function declarations [array_expression]: re-parse error: "[ ; 1 2]"
+    x Impl with lifetimes first [bounded_type]: re-parse error: "'a+"
+    x Functions with precise capture syntax [bounded_type]: re-parse error: "use<'_, T>+"
+    x Functions with empty precise capture syntax [bounded_type]: re-parse error: "use<>+"
+    x Let-else Statements [try_expression]: re-parse error: "?"
+    x Structs [struct_item]: re-parse error: "struct Proton"
+    x Functions with destructured parameters [reference_pattern]: re-parse error: "&"
+    x Type aliases [bounded_type]: re-parse error: "+"
+    x Attributes [struct_item]: re-parse error: "struct Baz"
+    x Attributes and Expressions [array_expression]: re-parse error: "[#[hello] ; 2 7 8]"
+    x Trait impls [impl_item]: re-parse error: "impl <'a> iter::Iterator Self::Iter<'a> {
+}"
+    x Disable automatically derived trait impls [impl_item]: re-parse error: "impl Send Foo {}"
+    x Impl dyn with parentheses [impl_item]: re-parse error: "impl Trait dyn (::std::any::Any) + Send { }"
+    x Trait impl signature [impl_item]: re-parse error: "impl <K: Debug + Ord> Debug OccupiedError<K>"
+    x Impls with default functions [block]: re-parse error: "{// Make 'default' still works as an identifier default.bar();}"
+    x Unsized types in trait bounds [removed_trait_bound]: re-parse error: "??"
+    x Trait bounds in type arguments in trait [impl_item]: re-parse error: "impl <T: AstDeref<Target: HasNodeId>> HasNodeId T {}"
+    x Associated Type Definitions [impl_item]: re-parse error: "impl Trait T {
+ type Associated = T where 'static: 'static;
+}"
+    x Generic Associated Types [impl_item]: re-parse error: "impl Database Foo {
+ type F<'a, D> = DatabaseFuture<'a, D>;
+}"
+    x Higher-ranked types [bounded_type]: re-parse error: "'b+"
+    x Where clauses [impl_item]: re-parse error: "impl <'a, T: 'a + Item> Iterator Iter<'a, T> where Self: 'a {
+}"
+    x Crate visibility [struct_item]: re-parse error: "crate struct Foo (crate crate::Bar)"
+    x Const generics with default [struct_item]: re-parse error: "pub struct Loaf <T: Sized, const N: usize = 1> ([T; N])"
+    x Raw identifiers [parenthesized_expression]: re-parse error: "(()"
+    x Unary operator expressions [unary_expression]: re-parse error: "-"
+    x Try expressions [try_expression]: re-parse error: "?"
+    x Grouped expressions [parenthesized_expression]: re-parse error: "(()"
+    x Range expressions [parenthesized_expression]: re-parse error: "(()"
+    x Type cast expressions [unary_expression]: re-parse error: "-"
+    x Array expressions [array_expression]: re-parse error: "[ ; ]"
+    x Tuple expressions [tuple_expression]: re-parse error: "( , )"
+    x Match expressions [or_pattern]: re-parse error: "|"
+    x While expressions [unary_expression]: re-parse error: "!"
+    x Index expressions [index_expression]: kind not found in re-parsed tree
+    x Closures [mut_pattern]: re-parse error: "mut"
+    x Inline const or Const blocks as expression [unary_expression]: re-parse error: "*"
+    x Raw string literals [raw_string_literal]: kind not found in re-parsed tree
+    x Raw byte string literals [raw_string_literal]: kind not found in re-parsed tree
+    x Raw C string literals [raw_string_literal]: kind not found in re-parsed tree
+    x Reference patterns [ref_pattern]: re-parse error: "ref ref"
+    x Struct patterns [tuple_expression]: re-parse error: "( , )"
+    x Captured patterns [or_pattern]: re-parse error: "|"
+    x Or patterns [or_pattern]: re-parse error: "|"
+    x Raw pointer types [pointer_type]: re-parse error: "*const mut B"
+    x Function types [function_type]: kind not found in re-parsed tree
+    x Unsafe and extern function types [function_type]: re-parse error: "extern "C" (*mut c_void)"
+    x Trait objects [bounded_type]: re-parse error: "'a+"
+    x Type cast expressions with generics [pointer_type]: re-parse error: "*const mut E<<F as E>::G>"
+    x anon:function_modifiers.async: re-parsed tree missing kind
+    x anon:negative_literal.operator: re-parsed tree missing kind
+    x anon:range_expression.operator: re-parsed tree missing kind
+    x anon:try_expression.operator: re-parsed tree missing kind
+    x anon:unary_expression.operator: re-parsed tree missing kind
+    x anon:visibility_modifier.pub: re-parsed tree missing kind
+  x 109/135 factory round-trip (7 skipped, 19 errors)
+    x try_expression: re-parse error: "?"
+    x await_expression: re-parse error: ".await"
+    x macro_invocation: re-parse error: "println!"
+    x array_expression: re-parse error: "[ ; ]"
+    x tuple_type: kind not found in re-parse (rendered: "()")
+    x tuple_expression: re-parse error: "( , )"
+    x generic_type: kind not found in re-parse (rendered: "result::Result")
+    x bounded_type: re-parse error: "'a+"
+    x struct_item: re-parse error: "struct Proton"
+    x reference_pattern: re-parse error: "&"
+    x unary_expression: re-parse error: "*"
+    x removed_trait_bound: re-parse error: "?"
+    x parenthesized_expression: kind not found in re-parse (rendered: "()")
+    x or_pattern: re-parse error: "|"
+    x index_expression: kind not found in re-parse (rendered: "[]")
+    x generic_function: re-parse error: "std::sizeof::"
+    x ref_pattern: re-parse error: "ref"
+    x captured_pattern: re-parse error: "a@"
+    x generic_pattern: re-parse error: "::"
+  x 92/135 from() correctness (0 undefined, 43 divergent, 0 skipped)
+    ! parameters: from() diverges: children: 2 vs 0
+    ! block: from() diverges: children: 2 vs 0
+    ! await_expression: from() diverges: children: 1 vs 0
+    ! expression_statement: from() diverges: children: 1 vs 0
+    ! arguments: from() diverges: children: 2 vs 0
+    ! closure_parameters: from() diverges: children: 2 vs 0
+    ! yield_expression: from() diverges: children: 1 vs 0
+    ! declaration_list: from() diverges: children: 2 vs 0
+    ! return_expression: from() diverges: children: 1 vs 0
+    ! token_tree: from() diverges: children: 5 vs 0
+    ! string_literal: from() diverges: children: 3 vs 0
+    ! tuple_type: from() diverges: children: 5 vs 0
+    ! type_arguments: from() diverges: children: 5 vs 0
+    ! attribute: from() diverges: children: 1 vs 0
+    ! type_parameters: from() diverges: children: 3 vs 0
+    ! use_bounds: from() diverges: children: 6 vs 0
+    ! use_list: from() diverges: children: 5 vs 0
+    ! use_wildcard: from() diverges: children: 1 vs 0
+    ! struct_pattern: from() diverges: children: 6 vs 0
+    ! tuple_struct_pattern: from() diverges: children: 3 vs 0
+    ! else_clause: from() diverges: children: 1 vs 0
+    ! field_declaration_list: from() diverges: children: 2 vs 0
+    ! enum_variant_list: from() diverges: children: 6 vs 0
+    ! trait_bounds: from() diverges: children: 2 vs 0
+    ! slice_pattern: from() diverges: children: 5 vs 0
+    ! tuple_pattern: from() diverges: children: 5 vs 0
+    ! where_clause: from() diverges: children: 2 vs 0
+    ! match_block: from() diverges: children: 3 vs 0
+    ! match_arm: from() diverges: children: 3 vs 0
+    ! match_pattern: from() diverges: children: 1 vs 0
+    ! removed_trait_bound: from() diverges: children: 1 vs 0
+    ! parenthesized_expression: from() diverges: children: 1 vs 0
+    ! field_initializer_list: from() diverges: children: 2 vs 0
+    ! field_initializer: from() diverges: children: 1 vs 0
+    ! base_field_initializer: from() diverges: children: 1 vs 0
+    ! let_chain: from() diverges: children: 7 vs 0
+    ! bracketed_type: from() diverges: children: 1 vs 0
+    ! token_tree_pattern: from() diverges: children: 2 vs 0
+    ! token_repetition_pattern: from() diverges: children: 7 vs 0
+    ! token_repetition: from() diverges: children: 5 vs 0
+    ! ref_pattern: from() diverges: children: 1 vs 0
+    ! generic_pattern: from() diverges: children: 1 vs 0
+    ! for_lifetimes: from() diverges: children: 6 vs 0
+
+75 round-trip failure(s) — see above.
+
+Done! Generated:
+  templates.yaml, grammar.ts, types.ts, factories.ts, utils.ts, from.ts, consts.ts, index.ts
+  vitest.config.ts
+

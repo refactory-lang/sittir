@@ -1,0 +1,427 @@
+// @generated-header: false (hand-written core — preserved across regeneration)
+import * as fs from 'node:fs';
+import { parse as parseYaml } from 'yaml';
+import type { AnyNodeData, Edit, ByteRange, RulesConfig, TemplateRule, TemplateRuleObject } from './types.ts';
+
+export type { RulesConfig };
+
+// ---------------------------------------------------------------------------
+// Variable scanner regex
+// ---------------------------------------------------------------------------
+
+// Matches $$$NAME, $$NAME, $_NAME, $NAME (longest prefix first)
+// Captures: [1] prefix ($$$, $$, $_, $), [2] NAME
+const DEFAULT_VAR_RE = /(\$\$\$|\$\$|\$_|\$)([A-Z][A-Z0-9_]*)/g;
+
+// ---------------------------------------------------------------------------
+// Render context — precomputed once per createRenderer call
+// ---------------------------------------------------------------------------
+
+interface InternalRenderContext {
+	config: RulesConfig;
+	varPattern: RegExp;
+	prefix: string;
+}
+
+function buildRenderContext(config: RulesConfig): InternalRenderContext {
+	const prefix = config.expandoChar ?? '$';
+	const varPattern = prefix === '$'
+		? DEFAULT_VAR_RE
+		: new RegExp(`(${escapeRegex(prefix)}{3}|${escapeRegex(prefix)}{2}|${escapeRegex(prefix)}_|${escapeRegex(prefix)})([A-Z][A-Z0-9_]*)`, 'g');
+	return { config, varPattern, prefix };
+}
+
+// ---------------------------------------------------------------------------
+// Template resolution
+// ---------------------------------------------------------------------------
+
+/**
+ * Resolve the template string for a node. TemplateRule is either:
+ * - `string`: a single template, returned directly
+ * - `{ template: string }`: the standard object form
+ * - `{ variants: { <name>: template, … }, detect?: … }`: named variants,
+ *   dispatched from `node.variant`, anonymous-token `detect` entries,
+ *   or a field-presence fallback across the variant values.
+ */
+function resolveTemplate(rule: TemplateRule, node: AnyNodeData, varPattern: RegExp): string {
+	if (typeof rule === 'string') return rule;
+
+	const obj = rule as TemplateRuleObject;
+
+	if (obj.variants) {
+		// 1. Explicit variant field (set by form factories)
+		if (node.variant && obj.variants[node.variant]) {
+			return obj.variants[node.variant]!;
+		}
+		// 2. Detect from anonymous tokens in children
+		if (obj.detect && node.children) {
+			for (const child of node.children) {
+				const c = child as AnyNodeData;
+				if (c.named === false) {
+					for (const [subtype, token] of Object.entries(obj.detect)) {
+						if (c.text === token) return obj.variants[subtype]!;
+					}
+				}
+			}
+		}
+		// 3. Field-presence fallback — pick the variant whose `$VAR`
+		//    placeholders all resolve against the incoming node.
+		//    Prefers the variant with the MOST resolved variables when
+		//    several partially match, falling back to the first entry.
+		const picked = pickTemplate(Object.values(obj.variants), node, varPattern);
+		if (picked !== null) return picked;
+		return Object.values(obj.variants)[0]!;
+	}
+
+	const tmpl = obj.template;
+	if (!tmpl) throw new Error(`Rule for '${node.type}' has neither template nor variants`);
+	return tmpl;
+}
+
+// ---------------------------------------------------------------------------
+// Render engine
+// ---------------------------------------------------------------------------
+
+function render(node: AnyNodeData, ctx: InternalRenderContext): string {
+	if (node.text !== undefined && !node.fields && !node.children) return node.text;
+
+	if (!node.fields && !node.children) {
+		throw new Error(`Node '${node.type}' has no 'fields' or 'children' — did you mean to set 'text' for a leaf node?`);
+	}
+
+	const rule = ctx.config.rules[node.type];
+	if (!rule) throw new Error(`No render rule for '${node.type}'`);
+
+	const ruleObj = typeof rule === 'string' ? undefined : rule as unknown as Record<string, unknown>;
+
+	const { varPattern, prefix } = ctx;
+
+	// Resolve template — handles simple and named-variant forms.
+	const rawTemplate = resolveTemplate(rule, node, varPattern);
+
+	// Trim trailing newline from YAML | block scalar
+	const tmpl = rawTemplate.endsWith('\n') ? rawTemplate.slice(0, -1) : rawTemplate;
+
+	// Consumption model: track which children indices have been used.
+	// $$$CHILDREN renders only the unconsumed remainder.
+	const consumed = new Set<number>();
+
+	const resolveSlot = (pfx: string, name: string): string => {
+		const fieldKey = name.toLowerCase();
+		const clauseKey = `${fieldKey}`;
+
+		// 1. Clause reference (e.g., $RETURN_TYPE_CLAUSE → return_type_clause key in rule)
+		// Exclude rule-object meta keys and require the value be a string template.
+		if (
+			ruleObj
+			&& clauseKey in ruleObj
+			&& clauseKey !== 'template'
+			&& clauseKey !== 'joinBy'
+			&& clauseKey !== 'variants'
+			&& clauseKey !== 'detect'
+			&& typeof ruleObj[clauseKey] === 'string'
+		) {
+			const clauseTemplate = ruleObj[clauseKey] as string;
+			return renderClause(clauseTemplate, node, ctx, consumed);
+		}
+
+		// 2. Fields (tree-sitter FIELDs + promoted overrides)
+		if (node.fields?.[fieldKey] !== undefined) {
+			const value = node.fields[fieldKey];
+			if (pfx.length === 3 || pfx === `${prefix}${prefix}${prefix}`) {
+				const items = Array.isArray(value) ? value : [value];
+				const sep = resolveJoinBy(ruleObj, name);
+				return items.map(item => renderValue(item as AnyNodeData | string | number, ctx)).join(sep);
+			}
+			if (Array.isArray(value)) {
+				return value.length > 0 ? renderValue(value[0] as AnyNodeData | string | number, ctx) : '';
+			}
+			return renderValue(value as AnyNodeData | string | number, ctx);
+		}
+
+		// 3. $$$CHILDREN — unconsumed named children only
+		// Anonymous tokens (delimiters, separators, keywords) are template-structural:
+		// delimiters are in template text, separators are in joinBy, keywords are
+		// in override fields. Only named children carry user content.
+		if ((pfx.length === 3 || pfx === `${prefix}${prefix}${prefix}`) && fieldKey === 'children') {
+			if (!node.children) return '';
+			const remaining = node.children.filter((c, i) =>
+				!consumed.has(i) && (c as AnyNodeData).named !== false
+			);
+			const sep = resolveJoinBy(ruleObj, name);
+			return remaining.map(c => renderValue(c as AnyNodeData | string | number, ctx)).join(sep);
+		}
+
+		// 4. Named child by kind — consume first unconsumed named match
+		if (node.children && Array.isArray(node.children)) {
+			const idx = node.children.findIndex((c: any, i: number) =>
+				!consumed.has(i) && c?.type === fieldKey && (c as AnyNodeData).named !== false
+			);
+			if (idx >= 0) {
+				consumed.add(idx);
+				const child = node.children[idx];
+				if (pfx.length === 3 || pfx === `${prefix}${prefix}${prefix}`) {
+					// $$$ on a single matched child — collect all unconsumed named of this type
+					const items: unknown[] = [child];
+					for (let i = idx + 1; i < node.children.length; i++) {
+						const c = node.children[i] as AnyNodeData;
+						if (!consumed.has(i) && c?.type === fieldKey && c.named !== false) {
+							consumed.add(i);
+							items.push(node.children[i]);
+						}
+					}
+					const sep = resolveJoinBy(ruleObj, name);
+					return items.map(item => renderValue(item as AnyNodeData | string | number, ctx)).join(sep);
+				}
+				return renderValue(child as AnyNodeData | string | number, ctx);
+			}
+		}
+
+		// 5. $CHILDREN (single) — first unconsumed named child
+		if (fieldKey === 'children' && node.children) {
+			for (let i = 0; i < node.children.length; i++) {
+				const c = node.children[i] as AnyNodeData;
+				if (!consumed.has(i) && c.named !== false) {
+					consumed.add(i);
+					return renderValue(c as AnyNodeData | string | number, ctx);
+				}
+			}
+		}
+
+		// 6. Absent → empty
+		return '';
+	};
+
+	// Substitute with column-aware re-indentation. For each `$VAR` we look
+	// at the characters since the previous newline in `result`; if they
+	// are all spaces (line-leading indentation), we insert that same
+	// indentation after every `\n` inside the substituted value. This
+	// lets nested blocks compound their indent levels without baking
+	// depth into templates or joinBy strings — block joinBy is just `\n`
+	// and each outer substitution re-indents the joined content.
+	let result = '';
+	let lastIdx = 0;
+	// Capture matches up-front: `matchAll` returns an independent iterator,
+	// so recursive sub-renders (which reuse the same varPattern) cannot
+	// interfere with the outer iteration's `lastIndex`.
+	for (const match of tmpl.matchAll(varPattern)) {
+		const idx = match.index!;
+		result += tmpl.slice(lastIdx, idx);
+		const slot = resolveSlot(match[1]!, match[2]!);
+		const lastNl = result.lastIndexOf('\n');
+		const lineLead = lastNl === -1 ? result : result.slice(lastNl + 1);
+		const indented = lineLead.length > 0 && /^ +$/.test(lineLead)
+			? slot.replace(/\n/g, '\n' + lineLead)
+			: slot;
+		result += indented;
+		lastIdx = idx + match[0].length;
+	}
+	result += tmpl.slice(lastIdx);
+
+	// FR-017: Absent-field space absorption — collapse runs of 2+ spaces
+	// left by empty variable interpolations. The negative lookbehind skips
+	// runs whose immediately-preceding character is a newline OR another
+	// space, so line-leading indentation (any depth) is preserved verbatim.
+	// No trim here: recursive sub-renders may legitimately start/end with
+	// whitespace (block-bearer fields emit `\n  …\n`). The top-level
+	// `boundRender` wrapper trims once at the end of the render tree.
+	return result.replace(/(?<![\n ]) {2,}/g, ' ');
+}
+
+/**
+ * Pick the best variant template: the first where all $VARIABLES resolve.
+ * Falls back to the first template with the most resolved variables.
+ */
+function pickTemplate(
+	templates: string[],
+	node: AnyNodeData,
+	varPattern: RegExp,
+): string | null {
+	// Score each template by variable resolution against the node.
+	// Lower `unresolved` is better — a template with all variables
+	// resolved beats one with any phantoms. On ties, prefer more total
+	// variables (more specific).
+	const scored = templates.map(tmpl => {
+		let total = 0;
+		let resolved = 0;
+		const tpl = tmpl.endsWith('\n') ? tmpl.slice(0, -1) : tmpl;
+		tpl.replace(varPattern, (_match: string, _pfx: string, name: string) => {
+			const fieldKey = name.toLowerCase();
+			total++;
+			if (node.fields?.[fieldKey] !== undefined) { resolved++; return ''; }
+			if (fieldKey === 'children' && node.children && node.children.length > 0) { resolved++; return ''; }
+			if (node.children && Array.isArray(node.children)) {
+				if (node.children.some((c: any) => c?.type === fieldKey)) { resolved++; return ''; }
+			}
+			return '';
+		});
+		return { tmpl, total, resolved, unresolved: total - resolved };
+	});
+
+	// Sort: fewest unresolved variables first, then most total (specificity).
+	scored.sort((a, b) => {
+		if (a.unresolved !== b.unresolved) return a.unresolved - b.unresolved;
+		return b.total - a.total;
+	});
+
+	return scored[0]?.tmpl ?? null;
+}
+
+/** Render a clause sub-template. If any variable is absent, omit the entire clause. */
+function renderClause(
+	clauseTemplate: string,
+	node: AnyNodeData,
+	ctx: InternalRenderContext,
+	consumed: Set<number>,
+): string {
+	const { varPattern } = ctx;
+
+	// Bare-literal clauses (no `$VAR` placeholders) are anonymous-token
+	// presence checks. A walker that wants to round-trip an
+	// `optional(',')` / `optional(';')` / `optional('::')` emits a
+	// clause whose body IS the literal string; this branch fires the
+	// clause only when readNode captured an unconsumed anonymous child
+	// with exactly that text. Consuming the child keeps `$$$CHILDREN`
+	// from double-emitting it later in the same template.
+	if (!varPattern.test(clauseTemplate)) {
+		// Reset stateful regex — .test() advances lastIndex when global.
+		varPattern.lastIndex = 0;
+		if (node.children && Array.isArray(node.children)) {
+			const idx = node.children.findIndex((c: any, i: number) =>
+				!consumed.has(i) && c?.type === clauseTemplate
+			);
+			if (idx >= 0) {
+				consumed.add(idx);
+				return clauseTemplate;
+			}
+		}
+		return '';
+	}
+	varPattern.lastIndex = 0;
+
+	// First pass: check if all variables resolve
+	let allPresent = true;
+	clauseTemplate.replace(varPattern, (_match: string, _pfx: string, name: string) => {
+		const fieldKey = name.toLowerCase();
+		if (node.fields?.[fieldKey] !== undefined) return '';
+		// Also check children by kind
+		if (node.children && Array.isArray(node.children)) {
+			const idx = node.children.findIndex((c: any, i: number) =>
+				!consumed.has(i) && c?.type === fieldKey
+			);
+			if (idx >= 0) return '';
+		}
+		allPresent = false;
+		return '';
+	});
+
+	if (!allPresent) return '';
+
+	// Second pass: actually render (consuming children)
+	return clauseTemplate.replace(varPattern, (_match: string, _pfx: string, name: string) => {
+		const fieldKey = name.toLowerCase();
+		if (node.fields?.[fieldKey] !== undefined) {
+			const value = node.fields[fieldKey] as AnyNodeData | string | number;
+			return renderValue(value, ctx);
+		}
+		// Children by kind fallback
+		if (node.children && Array.isArray(node.children)) {
+			const idx = node.children.findIndex((c: any, i: number) =>
+				!consumed.has(i) && c?.type === fieldKey
+			);
+			if (idx >= 0) {
+				consumed.add(idx);
+				return renderValue(node.children[idx] as AnyNodeData | string | number, ctx);
+			}
+		}
+		return '';
+	});
+}
+
+/** Resolve joinBy for a $$$ variable. Per-field overrides take precedence
+ * over the rule-level default. The walker emits `joinByField: { name: sep }`
+ * when a single rule has multiple multi-valued slots with different
+ * separators (e.g. rust tuple_expression: `attributes` joins with `\n`,
+ * `rest` joins with `,`). */
+function resolveJoinBy(ruleObj: Record<string, unknown> | undefined, varName: string): string {
+	if (!ruleObj) return ' ';
+	const joinByField = ruleObj['joinByField'] as Record<string, string> | undefined;
+	if (joinByField) {
+		const fieldKey = varName.toLowerCase();
+		if (fieldKey in joinByField) return joinByField[fieldKey]!;
+	}
+	const joinBy = ruleObj['joinBy'] as string | undefined;
+	return joinBy ?? ' ';
+}
+
+/** Render a field value — handles AnyNodeData, string, and number. */
+function renderValue(value: AnyNodeData | string | number, ctx: InternalRenderContext): string {
+	if (typeof value === 'string') return value;
+	if (typeof value === 'number') return String(value);
+	return render(value, ctx);
+}
+
+/** Escape a string for use in a RegExp. */
+function escapeRegex(s: string): string {
+	return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+// ---------------------------------------------------------------------------
+// YAML loading
+// ---------------------------------------------------------------------------
+
+/** Load and parse a templates.yaml file into a RulesConfig. */
+export function loadTemplates(yamlPath: string): RulesConfig {
+	const content = fs.readFileSync(yamlPath, 'utf-8');
+	return parseYaml(content) as RulesConfig;
+}
+
+// ---------------------------------------------------------------------------
+// createRenderer — close over rules once, return bound helpers
+// ---------------------------------------------------------------------------
+
+export interface BoundRenderer {
+	render(node: AnyNodeData): string;
+	toEdit(node: AnyNodeData, start: number, end: number): Edit;
+	toEdit(node: AnyNodeData, range: ByteRange): Edit;
+}
+
+/**
+ * Create a renderer bound to a specific YAML templates file.
+ * Loads and parses the YAML once — no need to pass config on every render() call.
+ */
+export function createRenderer(yamlPath: string): BoundRenderer;
+/**
+ * Create a renderer from a pre-parsed RulesConfig.
+ */
+export function createRenderer(config: RulesConfig): BoundRenderer;
+export function createRenderer(pathOrConfig: string | RulesConfig): BoundRenderer {
+	const config = typeof pathOrConfig === 'string' ? loadTemplates(pathOrConfig) : pathOrConfig;
+	const ctx = buildRenderContext(config);
+
+	function boundRender(node: AnyNodeData): string {
+		return render(node, ctx).trim();
+	}
+
+	function boundToEdit(node: AnyNodeData, startOrRange: number | ByteRange, end?: number): Edit {
+		if (typeof startOrRange === 'number') {
+			if (typeof end !== 'number') {
+				throw new Error('endPos is required when startPos is a number');
+			}
+			if (startOrRange < 0 || end < 0) {
+				throw new Error(`Edit positions must be non-negative (got start=${startOrRange}, end=${end})`);
+			}
+			if (startOrRange > end) {
+				throw new Error(`Edit startPos (${startOrRange}) must not exceed endPos (${end})`);
+			}
+			return { startPos: startOrRange, endPos: end, insertedText: boundRender(node) };
+		}
+		return {
+			startPos: startOrRange.start.index,
+			endPos: startOrRange.end.index,
+			insertedText: boundRender(node),
+		};
+	}
+
+	return { render: boundRender, toEdit: boundToEdit as BoundRenderer['toEdit'] };
+}

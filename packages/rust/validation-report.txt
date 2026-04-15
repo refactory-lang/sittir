@@ -1,0 +1,203 @@
+Generating rust IR...
+
+@sittir/rust: 154 kinds
+  x 126/154 variable resolution
+  x 136/154 field coverage
+  v 64/64 override consistency (64 nodes with overrides)
+  x 148/154 template structure
+  x 0/3 variant subtypes
+
+  Errors (70):
+    macro_definition: [template-structure] joinBy defined but no $$$ variable in template
+    mod_item: [field-coverage] tree-sitter FIELD 'body' not referenced in template
+    foreign_mod_item: [field-coverage] tree-sitter FIELD 'body' not referenced in template
+    struct_item: [field-coverage] tree-sitter FIELD 'body' not referenced in template
+    enum_variant: [variable-resolution] $VALUE_CLAUSE resolves to nothing (not a field, override, or clause)
+    enum_variant: [field-coverage] tree-sitter FIELD 'value' not referenced in template
+    ordered_field_declaration_list: [field-coverage] tree-sitter FIELD 'type' not referenced in template
+    ordered_field_declaration_list: [template-structure] joinBy defined but no $$$ variable in template
+    extern_crate_declaration: [variable-resolution] $ALIAS_CLAUSE resolves to nothing (not a field, override, or clause)
+    extern_crate_declaration: [field-coverage] tree-sitter FIELD 'alias' not referenced in template
+    const_item: [variable-resolution] $VALUE_CLAUSE resolves to nothing (not a field, override, or clause)
+    const_item: [field-coverage] tree-sitter FIELD 'value' not referenced in template
+    static_item: [variable-resolution] $VALUE_CLAUSE resolves to nothing (not a field, override, or clause)
+    impl_item: [variable-resolution] $TRAIT_CLAUSE resolves to nothing (not a field, override, or clause)
+    const_parameter: [variable-resolution] $VALUE_CLAUSE resolves to nothing (not a field, override, or clause)
+    const_parameter: [field-coverage] tree-sitter FIELD 'value' not referenced in template
+    type_parameter: [variable-resolution] $DEFAULT_TYPE_CLAUSE resolves to nothing (not a field, override, or clause)
+    type_parameter: [field-coverage] tree-sitter FIELD 'default_type' not referenced in template
+    let_declaration: [variable-resolution] $TYPE_CLAUSE resolves to nothing (not a field, override, or clause)
+    let_declaration: [variable-resolution] $VALUE_CLAUSE resolves to nothing (not a field, override, or clause)
+    let_declaration: [variable-resolution] $ALTERNATIVE_CLAUSE resolves to nothing (not a field, override, or clause)
+    let_declaration: [field-coverage] tree-sitter FIELD 'alternative' not referenced in template
+    let_declaration: [field-coverage] tree-sitter FIELD 'type' not referenced in template
+    let_declaration: [field-coverage] tree-sitter FIELD 'value' not referenced in template
+    variadic_parameter: [variable-resolution] $PATTERN_CLAUSE resolves to nothing (not a field, override, or clause)
+    variadic_parameter: [field-coverage] tree-sitter FIELD 'pattern' not referenced in template
+    array_type: [variable-resolution] $LENGTH_CLAUSE resolves to nothing (not a field, override, or clause)
+    array_type: [field-coverage] tree-sitter FIELD 'length' not referenced in template
+    function_type: [variable-resolution] $RETURN_TYPE_CLAUSE resolves to nothing (not a field, override, or clause)
+    function_type: [field-coverage] tree-sitter FIELD 'parameters' not referenced in template
+    function_type: [field-coverage] tree-sitter FIELD 'return_type' not referenced in template
+    function_type: [field-coverage] tree-sitter FIELD 'trait' not referenced in template
+    type_arguments: [variable-resolution] $BOUNDS resolves to nothing (not a field, override, or clause)
+    scoped_type_identifier_in_expression_position: [variable-resolution] $PATH resolves to nothing (not a field, override, or clause)
+    scoped_type_identifier_in_expression_position: [variable-resolution] $NAME resolves to nothing (not a field, override, or clause)
+    array_expression: [field-coverage] tree-sitter FIELD 'length' not referenced in template
+    array_expression: [template-structure] joinBy defined but no $$$ variable in template
+    tuple_expression: [template-structure] joinBy defined but no $$$ variable in template
+    last_match_arm: [variable-resolution] $PATTERN resolves to nothing (not a field, override, or clause)
+    last_match_arm: [variable-resolution] $VALUE resolves to nothing (not a field, override, or clause)
+    match_pattern: [variable-resolution] $PATTERN resolves to nothing (not a field, override, or clause)
+    match_pattern: [variable-resolution] $CONDITION_CLAUSE resolves to nothing (not a field, override, or clause)
+    match_pattern: [field-coverage] tree-sitter FIELD 'condition' not referenced in template
+    closure_expression_body: [variable-resolution] $RETURN_TYPE_CLAUSE resolves to nothing (not a field, override, or clause)
+    closure_expression_body: [variable-resolution] $BODY resolves to nothing (not a field, override, or clause)
+    closure_expression_body2: [variable-resolution] $BODY resolves to nothing (not a field, override, or clause)
+    closure_expression: [variable-resolution] $RETURN_TYPE_CLAUSE resolves to nothing (not a field, override, or clause)
+    closure_expression: [field-coverage] tree-sitter FIELD 'parameters' not referenced in template
+    closure_expression: [field-coverage] tree-sitter FIELD 'return_type' not referenced in template
+    closure_expression: [variant-subtypes] variants defined but no detect block
+    closure_parameters: [variable-resolution] $PATTERN resolves to nothing (not a field, override, or clause)
+    tuple_pattern: [variable-resolution] $PATTERN resolves to nothing (not a field, override, or clause)
+    slice_pattern: [variable-resolution] $PATTERN resolves to nothing (not a field, override, or clause)
+    slice_pattern: [template-structure] joinBy defined but no $$$ variable in template
+    tuple_struct_pattern: [variable-resolution] $PATTERN resolves to nothing (not a field, override, or clause)
+    tuple_struct_pattern: [template-structure] joinBy defined but no $$$ variable in template
+    field_pattern_name: [variable-resolution] $NAME resolves to nothing (not a field, override, or clause)
+    field_pattern_colon: [variable-resolution] $NAME resolves to nothing (not a field, override, or clause)
+    field_pattern_colon: [variable-resolution] $PATTERN resolves to nothing (not a field, override, or clause)
+    field_pattern: [variant-subtypes] variants defined but no detect block
+    range_pattern_left: [variable-resolution] $LEFT resolves to nothing (not a field, override, or clause)
+    range_pattern_left: [variable-resolution] $RIGHT resolves to nothing (not a field, override, or clause)
+    range_pattern_right: [variable-resolution] $RIGHT resolves to nothing (not a field, override, or clause)
+    range_pattern: [variant-subtypes] variants defined but no detect block
+    ref_pattern: [variable-resolution] $PATTERN resolves to nothing (not a field, override, or clause)
+    or_pattern: [variable-resolution] $PATTERN resolves to nothing (not a field, override, or clause)
+    line_comment: [field-coverage] tree-sitter FIELD 'doc' not referenced in template
+    line_comment: [field-coverage] tree-sitter FIELD 'inner' not referenced in template
+    line_comment: [field-coverage] tree-sitter FIELD 'outer' not referenced in template
+    block_comment: [field-coverage] tree-sitter FIELD 'inner' not referenced in template
+
+  Warnings (24):
+    attribute: [field-coverage] tree-sitter FIELD 'arguments' not explicitly in template (covered by $$$CHILDREN)
+    static_item: [field-coverage] tree-sitter FIELD 'value' not explicitly in template (covered by $$$CHILDREN)
+    function_item: [field-coverage] tree-sitter FIELD 'return_type' not explicitly in template (covered by $$$CHILDREN)
+    function_signature_item: [field-coverage] tree-sitter FIELD 'return_type' not explicitly in template (covered by $$$CHILDREN)
+    impl_item: [field-coverage] tree-sitter FIELD 'trait' not explicitly in template (covered by $$$CHILDREN)
+    closure_expression: [override-consistency] override 'async' not referenced in template
+    closure_expression: [override-consistency] override 'move' not referenced in template
+    closure_expression: [override-consistency] override 'static' not referenced in template
+    field_pattern: [override-consistency] override 'mutable_specifier' not referenced in template
+    function_modifiers: [override-consistency] override 'async' not referenced in template
+    function_modifiers: [override-consistency] override 'default' not referenced in template
+    function_modifiers: [override-consistency] override 'const' not referenced in template
+    function_modifiers: [override-consistency] override 'unsafe' not referenced in template
+    negative_literal: [override-consistency] override 'operator' not referenced in template
+    or_pattern: [override-consistency] override 'left' not referenced in template
+    or_pattern: [override-consistency] override 'right' not referenced in template
+    ordered_field_declaration_list: [override-consistency] override 'declarations' not referenced in template
+    range_expression: [override-consistency] override 'start' not referenced in template
+    range_expression: [override-consistency] override 'operator' not referenced in template
+    range_expression: [override-consistency] override 'end' not referenced in template
+    try_expression: [override-consistency] override 'operator' not referenced in template
+    unary_expression: [override-consistency] override 'operator' not referenced in template
+    visibility_modifier: [override-consistency] override 'pub' not referenced in template
+    visibility_modifier: [override-consistency] override 'in' not referenced in template
+
+  x 165/169 kinds renderable (4 un-renderable)
+    x empty_statement: no NodeMap render path for 'empty_statement' (kind is modelType=none)
+    x never_type: no NodeMap render path for 'never_type' (kind is modelType=none)
+    x remaining_field_pattern: no NodeMap render path for 'remaining_field_pattern' (kind is modelType=none)
+    x doc_comment: no NodeMap render path for 'doc_comment' (kind is absent from NodeMap)
+
+Running round-trip validation...
+  v 157/157 readNode round-trip (0 skipped, 0 issues)
+  x 102/149 round-trip (2 skipped, 45 errors)
+    x Async closure [closure_expression]: kind not found in re-parsed tree
+    x Async move async move closure [closure_expression]: kind not found in re-parsed tree
+    x Function declarations [tuple_expression]: re-parse error: "( 1 2 )"
+    x Extern function declarations [pointer_type]: re-parse error: "* c_char"
+    x Structs [struct_item]: re-parse error: "struct Proton"
+    x Generic structs [struct_item]: re-parse error: "struct A <B>"
+    x Type aliases [function_type]: re-parse error: ""
+    x Attributes [struct_item]: re-parse error: "struct Baz"
+    x Attributes and Expressions [tuple_expression]: re-parse error: "(#[hello] 2 7 )"
+    x Trait impls [unary_expression]: kind not found in re-parsed tree
+    x Trait impl signature [impl_item]: re-parse error: "impl <K: Debug + Ord> OccupiedError<K>"
+    x Impls with default functions [block]: re-parse error: "{// Make 'default' still works as an identifier default.bar();}"
+    x Function parameter names that match built-in type names [pointer_type]: re-parse error: "* c_char"
+    x Where clauses [function_type]: re-parse error: ""
+    x Crate visibility [struct_item]: re-parse error: "crate struct Foo"
+    x Reserved keywords in path [struct_item]: re-parse error: "struct A"
+    x Const generics with default [struct_item]: re-parse error: "pub struct Loaf <T: Sized, const N: usize = 1>"
+    x Unary operator expressions [unary_expression]: kind not found in re-parsed tree
+    x Type cast expressions [unary_expression]: kind not found in re-parsed tree
+    x Tuple expressions [tuple_expression]: kind not found in re-parsed tree
+    x If let expressions [closure_expression]: kind not found in re-parsed tree
+    x Match expressions [or_pattern]: re-parse error: "|"
+    x While expressions [unary_expression]: kind not found in re-parsed tree
+    x Loop expressions [loop_expression]: re-parse error: "'outer loop {
+ 'inner: loop {
+ break 'outer;
+ break true;
+ }
+}"
+    x Closures [closure_expression]: kind not found in re-parsed tree
+    x Closures with typed parameteres [closure_expression]: kind not found in re-parsed tree
+    x Generators [closure_expression]: kind not found in re-parsed tree
+    x Inline const or Const blocks as expression [unary_expression]: kind not found in re-parsed tree
+    x Raw string literals [raw_string_literal]: kind not found in re-parsed tree
+    x Raw byte string literals [raw_string_literal]: kind not found in re-parsed tree
+    x Raw C string literals [raw_string_literal]: kind not found in re-parsed tree
+    x Macro definition [macro_definition]: re-parse error: "macro_rules!say_hello () => (
+ println!("Hello!");
+ )"
+    x Reference patterns [ref_pattern]: re-parse error: "ref"
+    x Struct patterns [tuple_expression]: re-parse error: "( "toddler" name )"
+    x Captured patterns [or_pattern]: re-parse error: "|"
+    x Or patterns [or_pattern]: re-parse error: "|"
+    x Function types [function_type]: re-parse error: ""
+    x Unsafe and extern function types [function_type]: re-parse error: "extern "C""
+    x Trait objects [function_type]: re-parse error: ""
+    x anon:closure_expression.async: re-parsed tree missing kind
+    x anon:function_modifiers.async: re-parsed tree missing kind
+    x anon:negative_literal.operator: re-parsed tree missing kind
+    x anon:range_expression.operator: re-parsed tree missing kind
+    x anon:unary_expression.operator: re-parsed tree missing kind
+    x anon:visibility_modifier.pub: re-parsed tree missing kind
+  x 114/135 factory round-trip (6 skipped, 15 errors)
+    x closure_expression: kind not found in re-parse (rendered: "()")
+    x macro_invocation: re-parse error: "println!"
+    x tuple_expression: re-parse error: "( 1 2 )"
+    x generic_type: kind not found in re-parse (rendered: "result::Result")
+    x pointer_type: re-parse error: "* c_char"
+    x struct_item: re-parse error: "struct Proton"
+    x unary_expression: kind not found in re-parse (rendered: "self")
+    x or_pattern: re-parse error: "|"
+    x loop_expression: re-parse error: "'outer loop {
+ 'inner: loop {
+ break 'outer;
+ break true;
+ }"
+    x generic_function: re-parse error: "std::sizeof::"
+    x mut_pattern: kind not found in re-parse (rendered: "e")
+    x macro_definition: re-parse error: "macro_rules!say_hello () => (
+ println!("Hello!");
+ )"
+    x ref_pattern: re-parse error: "ref"
+    x captured_pattern: re-parse error: "a@"
+    x generic_pattern: re-parse error: "::"
+  x 144/154 from() correctness (0 undefined, 4 divergent, 3 skipped)
+    x function_modifiers: from() throws: data.children is not iterable (cannot read property undefined)
+    x visibility_modifier: from() throws: Cannot read properties of undefined (reading '0')
+    ! type_arguments: from() diverges: named children: 2 vs 0
+    ! attribute: from() diverges: named children: 1 vs 0
+    ! tuple_pattern: from() diverges: named children: 2 vs 0
+    x range_expression: from() throws: Cannot read properties of undefined (reading '0')
+    ! range_pattern: from() diverges: factory has extra fields: left
+
+Done! Generated:
+  templates.yaml, grammar.ts, types.ts, factories.ts, utils.ts, from.ts, consts.ts, index.ts
+  vitest.config.ts
+

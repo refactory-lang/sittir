@@ -1,61 +1,767 @@
 /**
- * Emits a complete TypeScript source string for a `types.ts` file
- * containing node types, config types, and a discriminated union
- * for all IR node kinds in a given grammar.
+ * Emits types.ts — all type aliases derived from the grammar.
+ * Consumes NodeMap directly. No imports from node-model.ts or naming.ts.
+ *
+ * Sections:
+ *   1. const enum SyntaxKind
+ *   2. Scoped const enums per supertype
+ *   3. Concrete node interfaces
+ *   4. Config/Tree/FromInput type aliases
+ *   5. Supertype unions
+ *   6. Discriminated union + KindMap/ConfigMap/FromInputMap
  */
 
-import { toTypeName, toGrammarTypeName } from '../naming.ts';
+import type {
+    NodeMap, AssembledNode, AssembledField, AssembledForm, AssembledChild,
+} from '../compiler/rule.ts'
+import {
+    AssembledBranch, AssembledContainer, AssembledPolymorph, AssembledGroup,
+    AssembledSupertype,
+} from '../compiler/rule.ts'
+import { loadRawEntries } from '../validators/node-types.ts'
+
+type StructuralNode = AssembledBranch | AssembledContainer | AssembledPolymorph
 
 export interface EmitTypesConfig {
-  grammar: string;       // e.g. 'rust'
-  nodeKinds: string[];   // e.g. ['struct_item', 'function_item']
+    grammar: string
+    nodeMap: NodeMap
 }
 
 export function emitTypes(config: EmitTypesConfig): string {
-  const { grammar, nodeKinds } = config;
-  const grammarTypeName = toGrammarTypeName(grammar); // e.g. RustTypes
-  // Derive PascalCase grammar prefix by stripping 'Types' suffix
-  const grammarPrefix = grammarTypeName.slice(0, -5); // e.g. Rust
-  const grammarAlias = `${grammarPrefix}Grammar`; // e.g. RustGrammar
+    const { grammar, nodeMap } = config
+    // Build the set of kinds known to grammar.ts (the PythonGrammar/
+    // RustGrammar type literal). Tree type interfaces can only use
+    // NodeKind<Grammar> as their discriminator, so kinds absent from
+    // grammar.ts (hidden rules, promoted terminals, synthesised forms)
+    // must fall back to a generic `AnyTreeNode`.
+    const grammarKeys = new Set<string>()
+    try {
+        for (const entry of loadRawEntries(grammar)) {
+            const key = entry.named ? entry.type : `_anonymous_${entry.type}`
+            grammarKeys.add(key)
+        }
+    } catch {
+        // No node-types.json available — emit all Tree interfaces as AnyTreeNode.
+    }
+    // Collect nodes by category — no utility functions needed, just iterate
+    const structNodes: StructuralNode[] = []
+    const leafKinds: string[] = []
+    const supertypes: { kind: string; subtypes: string[] }[] = []
+    const keywordKinds = new Map<string, string>()
+    const leafValueMap = new Map<string, string[]>()
 
-  const typeNames = nodeKinds.map(toTypeName);
+    // Groups that act as standalone inlined hidden rules (e.g.
+    // python's `_key_value_pattern`) need an interface emitted so
+    // field/child content-type unions referencing their typeName
+    // resolve. Polymorph form groups are skipped here — their parent
+    // polymorph emits the form interface inline.
+    const isPolymorphFormKind = (k: string): boolean => {
+        for (const [, n] of nodeMap.nodes) {
+            if (n.modelType !== 'polymorph') continue
+            for (const f of n.forms) if (f.kind === k) return true
+        }
+        return false
+    }
+    for (const [kind, node] of nodeMap.nodes) {
+        switch (node.modelType) {
+            case 'branch':
+            case 'container':
+            case 'polymorph':
+                structNodes.push(node as StructuralNode)
+                break
+            case 'group':
+                if (!isPolymorphFormKind(kind)) {
+                    // Standalone group — treat like a branch for type emission.
+                    structNodes.push(node as unknown as StructuralNode)
+                }
+                break
+            case 'leaf':
+                leafKinds.push(kind)
+                break
+            case 'keyword':
+                leafKinds.push(kind)
+                keywordKinds.set(kind, node.text)
+                break
+            case 'enum':
+                leafKinds.push(kind)
+                leafValueMap.set(kind, node.values)
+                break
+            case 'supertype':
+                supertypes.push({ kind, subtypes: node.subtypes })
+                break
+        }
+    }
 
-  const lines: string[] = [];
+    const grammarPrefix = grammar.charAt(0).toUpperCase() + grammar.slice(1)
+    const grammarAlias = `${grammarPrefix}Grammar`
 
-  // 1. Import grammar type
-  lines.push(`import type ${grammarTypeName} from '@codemod.com/jssg-types/langs/${grammar}';`);
+    const nodeKinds = structNodes.map(n => n.kind)
+    const allKinds = [...nodeKinds, ...leafKinds]
+    const generatedTypes = new Set<string>()
 
-  // 2. Import from @sittir/types
-  lines.push(`import type { NodeType, BuilderConfig, ValidationResult } from '@sittir/types';`);
+    const lines: string[] = []
+    lines.push('// Auto-generated by @sittir/codegen — do not edit')
+    lines.push('')
+    lines.push(`import type { ${grammarAlias} } from './grammar.js';`)
+    lines.push("import type { NodeData as BaseNodeData, NodeConfig as BaseNodeConfig, TreeNode as BaseTreeNode, ConfigOf, FromInputOf, NodeKind, AnyTreeNodeOf as AnyTreeNode, Terminal, NonEmptyArray } from '@sittir/types';")
+    lines.push('')
+    lines.push(`export type { ${grammarAlias} };`)
+    lines.push('')
+    lines.push(`export type NodeData<K extends NodeKind<${grammarAlias}>> = BaseNodeData<${grammarAlias}, K>;`)
+    lines.push(`export type NodeConfig<K extends NodeKind<${grammarAlias}>> = BaseNodeConfig<${grammarAlias}, K>;`)
+    lines.push(`export type TreeNode<K extends NodeKind<${grammarAlias}>> = BaseTreeNode<${grammarAlias}, K>;`)
+    lines.push('')
 
-  lines.push('');
+    // LeafScalarMap
+    lines.push('export type LeafScalarMap = {')
+    for (const kind of leafKinds) {
+        const node = nodeMap.nodes.get(kind)
+        if (node?.modelType === 'enum' && node.values.every(v => /^\d+$/.test(v))) {
+            lines.push(`  ${quoteKey(kind)}: number;`)
+        }
+    }
+    lines.push('};')
+    lines.push('')
 
-  // 3. Grammar type alias
-  lines.push(`export type ${grammarAlias} = ${grammarTypeName};`);
+    // LeafStringMap
+    lines.push('export type LeafStringMap = {')
+    for (const kind of leafKinds) {
+        const kw = keywordKinds.get(kind)
+        if (kw) {
+            lines.push(`  ${quoteKey(kind)}: ${JSON.stringify(kw)};`)
+            continue
+        }
+        const values = leafValueMap.get(kind)
+        if (values && values.length > 0) {
+            lines.push(`  ${quoteKey(kind)}: ${values.map(v => JSON.stringify(v)).join(' | ')};`)
+        }
+    }
+    lines.push('};')
+    lines.push('')
 
-  lines.push('');
+    // 1. SyntaxKind enum — dedup on member name. Two kinds can resolve
+    // to the same typeName (e.g. python's `true` and `'True'` string
+    // literal keyword both → `True`); keep the first and skip the rest
+    // to avoid a `const enum` duplicate-member error.
+    lines.push('export const enum SyntaxKind {')
+    const seenEnumMembers = new Set<string>()
+    for (const kind of allKinds) {
+        const node = nodeMap.nodes.get(kind)
+        const member = node?.typeName ?? toPascal(kind)
+        if (seenEnumMembers.has(member)) continue
+        seenEnumMembers.add(member)
+        lines.push(`  ${member} = '${kind}',`)
+    }
+    lines.push('}')
+    lines.push('')
 
-  // 4 & 5. For each node kind: NodeType and BuilderConfig
-  for (let i = 0; i < nodeKinds.length; i++) {
-    const kind = nodeKinds[i];
-    const typeName = typeNames[i];
-    lines.push(`export type ${typeName} = NodeType<${grammarAlias}, '${kind}'>;`);
-    lines.push(`export type ${typeName}Config = BuilderConfig<${grammarAlias}, ${typeName}>;`);
-    lines.push('');
-  }
+    // 2. Scoped enums per supertype
+    if (supertypes.length > 0) {
+        lines.push('// Scoped enums per supertype')
+        for (const st of supertypes) {
+            const stNode = nodeMap.nodes.get(st.kind)
+            const cleanName = st.kind.replace(/^_/, '')
+            const enumName = toPascal(cleanName) + 'Kind'
+            lines.push(`export const enum ${enumName} {`)
+            const seenSubMembers = new Set<string>()
+            for (const sub of st.subtypes) {
+                const subNode = nodeMap.nodes.get(sub)
+                const member = subNode?.typeName ?? toPascal(sub)
+                if (seenSubMembers.has(member)) continue
+                seenSubMembers.add(member)
+                lines.push(`  ${member} = '${sub}',`)
+            }
+            lines.push('}')
+            lines.push('')
+        }
+    }
 
-  // 6. Discriminated union
-  lines.push(`export type ${grammarPrefix}IrNode =`);
-  for (const typeName of typeNames) {
-    lines.push(`  | ${typeName}`);
-  }
-  lines.push(';');
+    // 3. Concrete interfaces
+    lines.push('// Node types — concrete interfaces')
+    const polymorphTypeNames = new Map<string, string[]>()
 
-  lines.push('');
+    // T042k: dedupe repeated multi-type unions into named aliases.
+    // Pre-pass — collect every field / child union expression that
+    // appears ≥2 times. Each repeated union gets hoisted to a
+    // `_union_<name>` alias at the top of the interfaces block,
+    // and the per-interface emission then references the alias.
+    const unionCounts = new Map<string, number>()
+    const countUnion = (parts: readonly string[]): void => {
+        if (parts.length < 2) return
+        const key = [...parts].sort().join('|')
+        unionCounts.set(key, (unionCounts.get(key) ?? 0) + 1)
+    }
+    for (const node of structNodes) {
+        if (node.modelType === 'polymorph' && node.forms.length > 1) {
+            for (const form of node.forms) {
+                for (const f of form.fields) countUnion(fieldTypeParts(f, nodeMap))
+            }
+        } else {
+            for (const f of fieldsOf(node)) countUnion(fieldTypeParts(f, nodeMap))
+            for (const c of childrenOf(node)) countUnion(childContentParts(c, nodeMap))
+        }
+    }
+    const unionAliases = new Map<string, string>()
+    let aliasCounter = 0
+    for (const [key, count] of unionCounts) {
+        if (count < 2) continue
+        // Build an alias name from the parts. First parts win;
+        // fallback to a numeric suffix if the name would explode.
+        const parts = key.split('|')
+        const hint = parts.slice(0, 3).map(p => p.replace(/[^\w]/g, '')).join('_')
+        const name = hint.length <= 60 ? `_union_${hint}` : `_union_${aliasCounter}`
+        aliasCounter++
+        unionAliases.set(key, name)
+    }
+    // Emit the alias declarations before any interface so downstream
+    // references resolve. Sort for stable output.
+    const aliasEntries = [...unionAliases.entries()].sort((a, b) => a[1].localeCompare(b[1]))
+    if (aliasEntries.length > 0) {
+        lines.push('// Repeated field/child unions (T042k dedup)')
+        for (const [key, name] of aliasEntries) {
+            lines.push(`export type ${name} = ${key.split('|').join(' | ')};`)
+        }
+        lines.push('')
+    }
+    const lookupUnion = (parts: readonly string[]): string | undefined => {
+        if (parts.length < 2) return undefined
+        const key = [...parts].sort().join('|')
+        return unionAliases.get(key)
+    }
 
-  // 7. Re-export ValidationResult
-  lines.push(`export type { ValidationResult };`);
-  lines.push('');
+    for (const node of structNodes) {
+        generatedTypes.add(node.typeName)
 
-  return lines.join('\n');
+        if (node.modelType === 'polymorph' && node.forms.length > 1) {
+            const formTypeNames: string[] = []
+            for (const form of node.forms) {
+                // Use the form's own typeName (already computed by
+                // assemble.ts via nameNode, so the `_U_` double-underscore
+                // disambiguator lands consistently with what factories.ts
+                // and from.ts import). Reconstructing from
+                // `node.typeName + toPascal(form.name)` loses the
+                // disambiguator and produces dangling imports.
+                const ftn = form.typeName
+                formTypeNames.push(ftn)
+                emitFormInterface(lines, node, form, ftn, nodeMap, lookupUnion)
+            }
+            lines.push(`export type ${node.typeName} = ${formTypeNames.join(' | ')};`)
+            polymorphTypeNames.set(node.kind, formTypeNames)
+        } else {
+            emitInterface(lines, node, nodeMap, lookupUnion)
+        }
+    }
+    lines.push('')
+
+    // Leaf node aliases — every leaf/keyword/enum is a `Terminal<K, V>`
+    // so all terminal shapes share one shared shape from @sittir/types.
+    //
+    // T073: skip terminals that are completely unreferenced. A
+    // terminal is "referenced" when any of these is true:
+    //   - It has a factory binding (`rawFactoryName`) — downstream
+    //     factories.ts imports the type
+    //   - It appears in some structural field/child content union
+    //   - It's listed as a supertype member
+    // Truly orphaned terminals (hidden tokens that survived link,
+    // no factory, no references) get dropped.
+    const referencedKinds = computeReferencedKinds(nodeMap)
+    lines.push('// Leaf node types')
+    for (const kind of leafKinds) {
+        const node = nodeMap.nodes.get(kind)!
+        if (generatedTypes.has(node.typeName)) continue
+        // Drop truly-unreferenced terminal aliases.
+        if (!node.rawFactoryName && !referencedKinds.has(kind)) continue
+        generatedTypes.add(node.typeName)
+
+        let textType: string
+        if (node.modelType === 'keyword') {
+            textType = JSON.stringify(node.text)
+        } else if (node.modelType === 'enum') {
+            textType = node.values.map(v => JSON.stringify(v)).join(' | ')
+        } else {
+            textType = 'string'
+        }
+        lines.push(`export type ${node.typeName} = Terminal<${JSON.stringify(kind)}, ${textType}>;`)
+    }
+    lines.push('')
+
+    // 4. Config/Tree/FromInput
+    lines.push('// Config types')
+    for (const kind of nodeKinds) {
+        const node = nodeMap.nodes.get(kind)!
+        const ptn = polymorphTypeNames.get(kind)
+        if (ptn) {
+            // Per-form Config aliases
+            for (const ftn of ptn) {
+                lines.push(`export type ${ftn}Config = ConfigOf<${ftn}>;`)
+            }
+            // Umbrella Config union
+            lines.push(`export type ${node.typeName}Config = ${ptn.map(ftn => `${ftn}Config`).join(' | ')};`)
+        } else {
+            lines.push(`export type ${node.typeName}Config = ConfigOf<${node.typeName}>;`)
+        }
+    }
+    lines.push('')
+
+    lines.push('// Tree types')
+    const treeEmitted = new Set<string>()
+    for (const kind of [...nodeKinds, ...leafKinds]) {
+        const node = nodeMap.nodes.get(kind)!
+        // Dedupe by typeName — two kinds may share one PascalCase name
+        // (e.g. `true` and `True` both → `True`), and the grammar type
+        // only has one of them as a key.
+        if (treeEmitted.has(node.typeName)) continue
+        treeEmitted.add(node.typeName)
+        // Look the kind up in grammar.ts with the same `_anonymous_` prefix
+        // convention emitGrammar uses. If the kind isn't present, fall back
+        // to AnyTreeNode — the type is still importable, just without the
+        // NodeKind-indexed field projections.
+        const isAnon = node.modelType === 'keyword' || node.modelType === 'token'
+        const candidate = isAnon ? `_anonymous_${kind}` : kind
+        const grammarKey = grammarKeys.has(candidate) ? candidate : null
+        if (grammarKey && !isAnon) {
+            lines.push(`export interface ${node.typeName}Tree extends TreeNode<'${grammarKey}'> {}`)
+        } else if (isAnon) {
+            // Anonymous kinds carry the raw kind string (e.g. `'import'`,
+            // not `'_anonymous_import'`) as `type` at runtime. Don't
+            // extend TreeNode<'_anonymous_X'> — its `type` literal is
+            // incompatible with the raw kind we want to expose. Declare
+            // a minimal tree stub with the raw type literal directly.
+            lines.push(`export interface ${node.typeName}Tree extends AnyTreeNode { readonly type: ${JSON.stringify(kind)}; }`)
+        } else {
+            // Not in grammar.ts — hidden/unmodelled kind. Emit a
+            // stub with an explicit type literal so type-level
+            // assertions like `Tree['type'] extends 'kind'` narrow
+            // correctly instead of landing on the wide NodeKind union.
+            lines.push(`export interface ${node.typeName}Tree extends AnyTreeNode { readonly type: ${JSON.stringify(kind)}; }`)
+        }
+        // Per-form Tree aliases for polymorphs (so factories can reference them)
+        const ptn = polymorphTypeNames.get(kind)
+        if (ptn) {
+            for (const ftn of ptn) {
+                if (treeEmitted.has(ftn)) continue
+                treeEmitted.add(ftn)
+                if (grammarKey) {
+                    lines.push(`export interface ${ftn}Tree extends TreeNode<'${grammarKey}'> {}`)
+                } else {
+                    lines.push(`export interface ${ftn}Tree extends AnyTreeNode {}`)
+                }
+            }
+        }
+    }
+    lines.push('')
+
+    // Loose-input aliases — the camelCase bag shape accepted by
+    // `from()` for programmatic construction. Named `Loose<TypeName>`
+    // to read naturally alongside the concrete node type (`LooseFoo`
+    // = "a loose version of `Foo`").
+    lines.push('// Loose-input type aliases (for from() construction)')
+    for (const kind of nodeKinds) {
+        const node = nodeMap.nodes.get(kind)!
+        const ptn = polymorphTypeNames.get(kind)
+        if (ptn) {
+            const fromNames = ptn.map(vtn => `FromInputOf<${vtn}, LeafScalarMap, LeafStringMap>`)
+            lines.push(`export type Loose${node.typeName} = ${fromNames.join(' | ')};`)
+        } else {
+            lines.push(`export type Loose${node.typeName} = FromInputOf<${node.typeName}, LeafScalarMap, LeafStringMap>;`)
+        }
+    }
+    lines.push('')
+
+    // 5. Supertype unions — must emit under the AssembledNode's typeName
+    // (e.g. `HiddenFExpression` for `_f_expression`), matching what
+    // fieldTypeExpr references in the structural interfaces above.
+    // Using a local `toPascal(kind.replace(/^_/, ''))` would produce
+    // `FExpression`, leaving field references dangling.
+    if (supertypes.length > 0) {
+        lines.push('// Supertype unions')
+        for (const st of supertypes) {
+            if (st.subtypes.length === 0) {
+                throw new Error(
+                    `emitTypes: supertype '${st.kind}' has zero subtypes. ` +
+                    `Link's classifyHiddenRule promoted a non-symbol-choice as supertype — fix it there.`,
+                )
+            }
+            const stNode = nodeMap.nodes.get(st.kind)
+            const typeName = stNode?.typeName ?? toPascal(st.kind.replace(/^_/, ''))
+            if (generatedTypes.has(typeName)) continue
+            generatedTypes.add(typeName)
+
+            const resolvedSubs = st.subtypes.map(sub => {
+                const n = nodeMap.nodes.get(sub)
+                if (!n) {
+                    throw new Error(
+                        `types: supertype '${st.kind}' references subtype '${sub}' which is not in NodeMap.`,
+                    )
+                }
+                return { sub, typeName: n.typeName }
+            })
+            const members = resolvedSubs
+                .map(r => r.typeName)
+                .filter(t => generatedTypes.has(t))
+            if (members.length === 0) {
+                throw new Error(
+                    `types: supertype '${st.kind}' has no resolvable member types after filtering. ` +
+                    `This means every subtype declares a typeName not declared as an interface. Fix upstream.`,
+                )
+            }
+            lines.push(`export type ${typeName} =`)
+            for (const m of members) lines.push(`  | ${m}`)
+            lines.push(';')
+            lines.push('')
+            // Config/Tree/FromInput unions — filtered to branch members.
+            const branchSet = new Set(nodeKinds)
+            const branchMembers = resolvedSubs.filter(r => branchSet.has(r.sub))
+            if (branchMembers.length > 0) {
+                lines.push(`export type ${typeName}Config = ${branchMembers.map(r => `${r.typeName}Config`).join(' | ')};`)
+                lines.push(`export type Loose${typeName} = ${branchMembers.map(r => `Loose${r.typeName}`).join(' | ')};`)
+            }
+            lines.push(`export type ${typeName}Tree = ${resolvedSubs.map(r => `${r.typeName}Tree`).join(' | ')};`)
+            lines.push('')
+        }
+    }
+
+    // 5b. Token stubs — only for tokens that ARE actually referenced in
+    // field/child content-type lists of structured nodes. Pure punctuation
+    // delimiters (e.g. `...`, `;`, `->`) never appear as typed union
+    // members — they're surfaced only as `named: false` anonymous children
+    // and produce unreferenced dead exports if emitted.
+    //
+    // Emit as `type` aliases over `Terminal<kind>` rather than verbose
+    // `interface` declarations — semantically identical, much shorter.
+    const referencedTokenTypeNames = new Set<string>()
+    for (const [, n] of nodeMap.nodes) {
+        const checkKind = (t: string): void => {
+            const ref = nodeMap.nodes.get(t)
+            if (ref?.modelType === 'token') referencedTokenTypeNames.add(ref.typeName)
+        }
+        if (n instanceof AssembledBranch || n instanceof AssembledGroup) {
+            for (const f of n.fields) f.contentTypes.forEach(checkKind)
+            for (const c of n.children ?? []) c.contentTypes.forEach(checkKind)
+        } else if (n instanceof AssembledContainer) {
+            for (const c of n.children) c.contentTypes.forEach(checkKind)
+        } else if (n instanceof AssembledPolymorph) {
+            for (const form of n.forms) {
+                for (const f of form.fields) f.contentTypes.forEach(checkKind)
+                for (const c of form.children) c.contentTypes.forEach(checkKind)
+            }
+        } else if (n instanceof AssembledSupertype) {
+            // Supertypes emit Tree union types referencing each subtype's
+            // Tree interface (e.g. `NeverTypeTree` in `_TypeTree`).
+            // Token-node subtypes need their Tree interface emitted too.
+            n.subtypes.forEach(checkKind)
+        }
+    }
+    lines.push('// Token type aliases (only tokens referenced in field/child unions)')
+    for (const [kind, node] of nodeMap.nodes) {
+        if (node.modelType !== 'token') continue
+        if (!referencedTokenTypeNames.has(node.typeName)) continue
+        if (!/^[A-Za-z_$][\w$]*$/.test(node.typeName)) continue
+        if (generatedTypes.has(node.typeName)) continue
+        generatedTypes.add(node.typeName)
+        lines.push(`export type ${node.typeName} = Terminal<${JSON.stringify(kind)}>;`)
+        if (!treeEmitted.has(node.typeName)) {
+            treeEmitted.add(node.typeName)
+            lines.push(`export interface ${node.typeName}Tree extends AnyTreeNode { readonly type: ${JSON.stringify(kind)}; }`)
+        }
+    }
+    lines.push('')
+
+    // Leftover-reference stubs intentionally omitted: if a typeName is
+    // referenced but never defined, that is a bug in the pipeline (Link
+    // should have rewritten the reference, or the filter in fieldTypeExpr
+    // should have dropped it). We do not paper over dangling references.
+
+    // 6. Discriminated union + maps
+    lines.push(`export type ${grammarPrefix}Node =`)
+    for (const kind of nodeKinds) {
+        const node = nodeMap.nodes.get(kind)!
+        lines.push(`  | ${node.typeName}`)
+    }
+    lines.push(';')
+    lines.push('')
+
+    lines.push('export interface KindMap {')
+    for (const kind of allKinds) {
+        const node = nodeMap.nodes.get(kind)
+        if (node && generatedTypes.has(node.typeName)) {
+            lines.push(`  '${kind}': ${node.typeName};`)
+        }
+    }
+    lines.push('}')
+    lines.push('')
+
+    if (polymorphTypeNames.size > 0) {
+        lines.push('export interface VariantMap {')
+        for (const [kind, formNames] of polymorphTypeNames) {
+            const node = nodeMap.nodes.get(kind)
+            if (node?.modelType !== 'polymorph') continue
+            const entries = node.forms.map((f, i) => `${f.name}: ${formNames[i]}`)
+            lines.push(`  '${kind}': { ${entries.join('; ')} };`)
+        }
+        lines.push('}')
+        lines.push('')
+    }
+
+    lines.push('export interface ConfigMap {')
+    for (const kind of nodeKinds) {
+        const node = nodeMap.nodes.get(kind)!
+        lines.push(`  '${kind}': ${node.typeName}Config;`)
+    }
+    lines.push('}')
+    lines.push('')
+
+    lines.push('export interface LooseMap {')
+    for (const kind of nodeKinds) {
+        const node = nodeMap.nodes.get(kind)!
+        lines.push(`  '${kind}': Loose${node.typeName};`)
+    }
+    lines.push('}')
+    lines.push('')
+
+    return lines.join('\n')
+}
+
+// ---------------------------------------------------------------------------
+// Interface emitters
+// ---------------------------------------------------------------------------
+
+function fieldsOf(node: AssembledNode): readonly AssembledField[] {
+    if (node.modelType === 'branch') return node.fields
+    if (node.modelType === 'polymorph') {
+        const seen = new Set<string>()
+        const fields: AssembledField[] = []
+        for (const form of node.forms) {
+            for (const f of form.fields) {
+                if (!seen.has(f.name)) { seen.add(f.name); fields.push(f) }
+            }
+        }
+        return fields
+    }
+    return []
+}
+
+type LookupUnion = (parts: readonly string[]) => string | undefined
+
+function emitInterface(
+    lines: string[],
+    node: StructuralNode,
+    nodeMap: NodeMap,
+    lookupUnion?: LookupUnion,
+): void {
+    const fields = fieldsOf(node)
+    const children = childrenOf(node)
+    lines.push(`export interface ${node.typeName} {`)
+    lines.push(`  readonly type: '${node.kind}';`)
+
+    if (fields.length > 0) {
+        lines.push('  readonly fields: {')
+        for (const f of fields) {
+            const typeExpr = fieldTypeExpr(f, nodeMap, lookupUnion)
+            const opt = f.required ? '' : '?'
+            if (f.multiple) {
+                // repeat1 fields carry a grammar-enforced `length >= 1`
+                // guarantee. Emit as `NonEmptyArray<T>` — the alias
+                // is inherently `readonly` (TS1354 forbids prefixing
+                // a type-alias reference with `readonly`, so the
+                // readonly lives inside the alias definition). Plain
+                // `repeat` fields stay `readonly T[]`.
+                if (f.nonEmpty) {
+                    lines.push(`    readonly ${f.name}${opt}: NonEmptyArray<${typeExpr}>;`)
+                } else {
+                    lines.push(`    readonly ${f.name}${opt}: readonly (${typeExpr})[];`)
+                }
+            } else {
+                lines.push(`    readonly ${f.name}${opt}: ${typeExpr};`)
+            }
+        }
+        lines.push('  };')
+    }
+
+    if (children && children.length > 0) {
+        const perChildParts = children.map(c => childContentParts(c, nodeMap))
+        const allPartsFlat = perChildParts.flat()
+        const aliased = lookupUnion?.(allPartsFlat)
+        const childTypes = perChildParts.map(parts => parts.join(' | ')).filter(Boolean)
+        if (childTypes.length > 0) {
+            const union = aliased ?? childTypes.join(' | ')
+            const anyMultiple = children.some(c => c.multiple)
+            const anyNonEmpty = children.some(c => c.nonEmpty)
+            if (anyMultiple) {
+                // Same `repeat1` treatment for children slots — a
+                // non-empty children list gets a NonEmptyArray head.
+                if (anyNonEmpty) {
+                    lines.push(`  readonly children: NonEmptyArray<${union}>;`)
+                } else {
+                    lines.push(`  readonly children: readonly (${union})[];`)
+                }
+            } else {
+                lines.push(`  readonly children: readonly [${union}];`)
+            }
+        }
+    }
+
+    lines.push('}')
+    lines.push('')
+}
+
+/**
+ * Expand a field's content types into the identifier parts that
+ * would form its type union. Used by both the dedup pre-pass and
+ * the emission pass. Literal-value enums and empty unions return
+ * `[]` — they don't get aliased because they don't produce a
+ * multi-type union.
+ */
+function fieldTypeParts(field: AssembledField, nodeMap?: NodeMap): string[] {
+    if (field.literalValues && field.literalValues.length > 0) return []
+    if (field.contentTypes.length === 0) return []
+    return field.contentTypes.map(t => {
+        const node = nodeMap?.nodes.get(t)
+        if (!node) return JSON.stringify(t)
+        const name = node.typeName
+        return /^[A-Za-z_$][\w$]*$/.test(name) ? name : JSON.stringify(t)
+    })
+}
+
+/**
+ * T073 helper — collect every kind that's referenced by another
+ * node's field / child content type or by a supertype's subtype
+ * list. Used to decide which terminal aliases can be safely skipped
+ * from emission (unreferenced leaves with no factory binding are
+ * dead weight).
+ */
+function computeReferencedKinds(nodeMap: NodeMap): Set<string> {
+    const referenced = new Set<string>()
+    for (const [, node] of nodeMap.nodes) {
+        if (node instanceof AssembledBranch) {
+            for (const f of node.fields) for (const t of f.contentTypes) referenced.add(t)
+            for (const c of (node.children ?? [])) for (const t of c.contentTypes) referenced.add(t)
+        } else if (node instanceof AssembledContainer) {
+            for (const c of node.children) for (const t of c.contentTypes) referenced.add(t)
+        } else if (node instanceof AssembledPolymorph) {
+            for (const form of node.forms) {
+                for (const f of form.fields) for (const t of f.contentTypes) referenced.add(t)
+                for (const c of form.children) for (const t of c.contentTypes) referenced.add(t)
+            }
+        } else if (node instanceof AssembledGroup) {
+            for (const f of node.fields) for (const t of f.contentTypes) referenced.add(t)
+            for (const c of node.children) for (const t of c.contentTypes) referenced.add(t)
+        } else if (node.modelType === 'supertype') {
+            for (const t of node.subtypes) referenced.add(t)
+        }
+    }
+    return referenced
+}
+
+function childContentParts(child: AssembledChild, nodeMap: NodeMap): string[] {
+    return child.contentTypes.map(t => {
+        const n = nodeMap.nodes.get(t)
+        if (!n) {
+            throw new Error(
+                `types: child references kind '${t}' which is not in NodeMap.`,
+            )
+        }
+        const name = n.typeName
+        return /^[A-Za-z_$][\w$]*$/.test(name) ? name : JSON.stringify(t)
+    })
+}
+
+function childrenOf(node: AssembledNode): readonly AssembledChild[] {
+    if (node instanceof AssembledBranch || node instanceof AssembledContainer || node instanceof AssembledGroup) {
+        return node.children ?? []
+    }
+    return []
+}
+
+function emitFormInterface(
+    lines: string[],
+    node: AssembledNode,
+    form: AssembledForm,
+    typeName: string,
+    nodeMap: NodeMap,
+    lookupUnion?: LookupUnion,
+): void {
+    lines.push(`export interface ${typeName} {`)
+    lines.push(`  readonly type: '${node.kind}';`)
+
+    if (form.fields.length > 0) {
+        lines.push('  readonly fields: {')
+        for (const f of form.fields) {
+            const typeExpr = fieldTypeExpr(f, nodeMap, lookupUnion)
+            const opt = f.required ? '' : '?'
+            if (f.multiple) {
+                lines.push(`    readonly ${f.name}${opt}: readonly (${typeExpr})[];`)
+            } else {
+                lines.push(`    readonly ${f.name}${opt}: ${typeExpr};`)
+            }
+        }
+        lines.push('  };')
+    }
+
+    // T063 inlining can introduce children slots on polymorph forms
+    // that weren't there in the original grammar rule. Mirror the
+    // branch emitter so factories can reach `config?.children`
+    // without tripping the type checker.
+    if (form.children && form.children.length > 0) {
+        const parts = form.children
+            .map(c => c.contentTypes.map(t => {
+                const n = nodeMap.nodes.get(t)
+                if (!n) return JSON.stringify(t)
+                const name = n.typeName
+                return /^[A-Za-z_$][\w$]*$/.test(name) ? name : JSON.stringify(t)
+            }))
+        const flatParts = parts.flat()
+        const aliased = lookupUnion?.(flatParts)
+        const union = aliased ?? parts.map(p => p.join(' | ')).filter(Boolean).join(' | ')
+        if (union) {
+            const anyMultiple = form.children.some(c => c.multiple)
+            if (anyMultiple) {
+                lines.push(`  readonly children: readonly (${union})[];`)
+            } else {
+                lines.push(`  readonly children: readonly [${union}];`)
+            }
+        }
+    }
+
+    lines.push('}')
+    lines.push('')
+}
+
+function fieldTypeExpr(
+    field: AssembledField,
+    nodeMap?: NodeMap,
+    lookupUnion?: LookupUnion,
+): string {
+    // Inline enum: a field whose content is a choice-of-strings.
+    // Emit a string-literal union so consumers see the real alphabet
+    // (e.g. `operator: "==" | "!=" | "<" | ...`) instead of `string`.
+    if (field.literalValues && field.literalValues.length > 0) {
+        return field.literalValues.map(v => JSON.stringify(v)).join(' | ')
+    }
+    if (field.contentTypes.length === 0) return 'string'
+    const parts = field.contentTypes.map(t => {
+        const node = nodeMap?.nodes.get(t)
+        if (!node) {
+            throw new Error(
+                `types: field '${field.name}' references kind '${t}' which is not in NodeMap. ` +
+                `Fix the pipeline — every referenced kind must be present.`,
+            )
+        }
+        const name = node.typeName
+        if (/^[A-Za-z_$][\w$]*$/.test(name)) return name
+        return JSON.stringify(t)
+    })
+    // Dedup repeated multi-type unions via the lookup (T042k).
+    const alias = lookupUnion?.(parts)
+    if (alias) return alias
+    return parts.join(' | ')
+}
+
+function toPascal(kind: string): string {
+    return kind.replace(/^_/, '').split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('')
+}
+
+/** Quote a type/object key if it is not a plain identifier. */
+function quoteKey(key: string): string {
+    return /^[A-Za-z_$][\w$]*$/.test(key) ? key : JSON.stringify(key)
 }
