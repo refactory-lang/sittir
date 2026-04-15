@@ -14,13 +14,58 @@
  */
 
 import type { Rule, FieldRule } from '../compiler/rule.ts'
+import { parsePath, applyPath } from './transform-path.ts'
 
 /**
- * Apply positional patches to a rule's members.
- * Patches are keyed by numeric index. Each patch value replaces the member
- * at that position. Field patches are marked with `source: 'override'`.
+ * A path-addressed patch. The path is a forward-slash-delimited string
+ * with numeric segments and `*` wildcards (see transform-path.ts).
  */
-export function transform(original: Rule, patches: Record<number | string, Rule>): Rule {
+export interface PathPatch {
+    readonly path: string
+    readonly value: Rule
+}
+
+/**
+ * Apply patches to a rule. Two input forms are supported:
+ *
+ * 1. **Flat positional** (backward-compatible) — patches keyed by numeric
+ *    index, each patch replacing the seq member at that position:
+ *
+ *        transform(original, { 0: field('name'), 2: field('body') })
+ *
+ * 2. **Path-addressed** — array of `{path, value}` objects, where the
+ *    path string can reach into nested structures via `'0/1/2'`,
+ *    apply to every branch via `'0/*\/1'`, etc.:
+ *
+ *        transform(original, [
+ *            { path: '0',     value: field('name') },
+ *            { path: '0/1',   value: field('inner') },
+ *            { path: '0/*\/0', value: field('items') },
+ *        ])
+ *
+ * Field patches are marked `source: 'override'` so derive-overrides-json
+ * recognizes them. The `_needsContent` placeholder (from a one-arg
+ * `field('name')` call) is filled in from the original member at the
+ * target position; if the original is already an enrich-inferred field
+ * wrapper, it's unwrapped before re-wrapping to avoid nested fields.
+ */
+export function transform(original: Rule, patches: Record<number | string, Rule> | readonly PathPatch[]): Rule {
+    if (Array.isArray(patches)) {
+        return applyPathPatches(original, patches)
+    }
+    return applyFlatPatches(original, patches as Record<number | string, Rule>)
+}
+
+function applyPathPatches(original: Rule, patches: readonly PathPatch[]): Rule {
+    let rule = original
+    for (const patch of patches) {
+        const segments = parsePath(patch.path)
+        rule = applyPath(rule, segments, (member) => resolvePatch(patch.value, member))
+    }
+    return rule
+}
+
+function applyFlatPatches(original: Rule, patches: Record<number | string, Rule>): Rule {
     // For seq: apply patches to members by RAW position. The override
     // author sees the rule tree as-is, including anonymous string
     // delimiters and already-labeled field wrappers, and can wrap any
@@ -44,13 +89,13 @@ export function transform(original: Rule, patches: Record<number | string, Rule>
     if (original.type === 'choice') {
         return {
             type: 'choice',
-            members: original.members.map(m => transform(m, patches)),
+            members: original.members.map(m => applyFlatPatches(m, patches)),
         }
     }
 
     // For prec-like wrappers that were already stripped — just apply to content
     if ('content' in original && original.content) {
-        return { ...original, content: transform(original.content as Rule, patches) } as Rule
+        return { ...original, content: applyFlatPatches(original.content as Rule, patches) } as Rule
     }
 
     // For other types, return as-is (patches don't apply)

@@ -15,5 +15,7 @@
  */
 
 export { transform, insert, replace } from './transform.ts'
+export type { PathPatch } from './transform.ts'
 export { role } from './role.ts'
 export { enrich } from './enrich.ts'
+export { alias } from './alias.ts'
