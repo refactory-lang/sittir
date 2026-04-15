@@ -8,7 +8,7 @@
  */
 
 import type {
-    NodeMap, AssembledNode, AssembledField, AssembledGroup,
+    NodeMap, AssembledNode, AssembledField, AssembledChild, AssembledGroup,
 } from '../compiler/rule.ts'
 
 /** Escape a string for safe inclusion inside a single-quoted TS string literal. */
@@ -244,7 +244,7 @@ interface BranchLikeNode {
     readonly rawFactoryName?: string
     readonly fromFunctionName?: string
     readonly fields: readonly AssembledField[]
-    readonly children?: readonly { readonly required: boolean }[]
+    readonly children?: readonly AssembledChild[]
 }
 
 function emitBranchFrom(node: BranchLikeNode, nodeMap: NodeMap, intern: KindInterner): string {
@@ -285,6 +285,15 @@ function emitBranchFrom(node: BranchLikeNode, nodeMap: NodeMap, intern: KindInte
                 lines.push(`  _assertNonEmpty(${neName(f)}, '${node.kind}.${f.propertyName}');`)
             }
         }
+        // Non-empty children hoist to a local binding so _assertNonEmpty
+        // can narrow the resolved `readonly T[]` to `[T, ...T[]]` before
+        // the factory call — same pattern as non-empty fields.
+        const childrenNonEmpty = childSlots.some(c => c.nonEmpty)
+        if (childSlots.length > 0 && childrenNonEmpty) {
+            const call = resolveChildrenFromTypedInput(childSlots, nodeMap, typeName, intern, 'input', inputOptional)
+            lines.push(`  const _ne_children = ${call};`)
+            lines.push(`  _assertNonEmpty(_ne_children, '${node.kind}.children');`)
+        }
         lines.push(`  return ${factory}({`)
         for (const f of fields) {
             if (f.nonEmpty && f.multiple) {
@@ -294,14 +303,17 @@ function emitBranchFrom(node: BranchLikeNode, nodeMap: NodeMap, intern: KindInte
             }
         }
         if (childSlots.length > 0) {
-            // The LooseFoo shape widens children's element types (see
-            // WidenChildSlot in @sittir/types) so the strict factory
-            // config isn't directly assignable — a single narrowing
-            // `as` bridges to `ConfigOf<Foo>['children']`. The runtime
-            // shape is already correct by the time from() hands off.
-            const childType = `NonNullable<T.${typeName}Config['children']>`
-            const childAccess = inputOptional ? 'input?.children' : 'input.children'
-            lines.push(`    children: (${childAccess} ?? []) as ${childType},`)
+            // Children coerce through the same resolver pipeline as
+            // field values — `_resolveMany` turns loose strings,
+            // `{kind,...}` bags, and nested configs into typed
+            // NodeData at runtime, which keeps the compile-time type
+            // (`readonly [T, ...]`) honest. No sideways cast.
+            if (childrenNonEmpty) {
+                lines.push(`    children: _ne_children,`)
+            } else {
+                const call = resolveChildrenFromTypedInput(childSlots, nodeMap, typeName, intern, 'input', inputOptional)
+                lines.push(`    children: ${call},`)
+            }
         }
         lines.push('  });')
     } else {
@@ -515,6 +527,44 @@ function resolveFieldFromTypedInput(
         ? `${sourceVar}?.${field.propertyName}`
         : `${sourceVar}.${field.propertyName}`
     return resolveFieldCall(access, field, nodeMap, typeParam, intern)
+}
+
+/**
+ * Build a resolver call for a branch's `children` slot. Each loose
+ * child element is pushed through the same `_resolveMany` /
+ * `_resolveOne` pipeline as field values — strings get factoried,
+ * `{kind,...}` objects get dispatched, nested config bags get
+ * reconstructed. Produces a typed `readonly T[]` that the factory
+ * can accept directly, no sideways cast.
+ */
+function resolveChildrenFromTypedInput(
+    childSlots: readonly AssembledChild[],
+    nodeMap: NodeMap,
+    parentTypeName: string,
+    intern: KindInterner,
+    sourceVar: string,
+    inputOptional: boolean,
+): string {
+    const seenTypes = new Set<string>()
+    const contentTypes: string[] = []
+    let anyMultiple = false
+    for (const c of childSlots) {
+        if (c.multiple) anyMultiple = true
+        for (const t of c.contentTypes) {
+            if (!seenTypes.has(t)) {
+                seenTypes.add(t)
+                contentTypes.push(t)
+            }
+        }
+    }
+    // resolveFieldCall only reads `contentTypes` and `multiple` off the
+    // passed AssembledField — construct a minimal shape that satisfies
+    // that contract rather than wiring a parallel children-resolver.
+    const pseudo = { contentTypes, multiple: anyMultiple } as unknown as AssembledField
+    const slotType = `NonNullable<T.${parentTypeName}Config['children']>`
+    const typeParam = anyMultiple ? `${slotType}[number]` : slotType
+    const access = inputOptional ? `${sourceVar}?.children` : `${sourceVar}.children`
+    return resolveFieldCall(access, pseudo, nodeMap, typeParam, intern)
 }
 
 function resolveFieldCall(

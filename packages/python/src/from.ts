@@ -308,8 +308,8 @@ function _assertNonEmpty<T>(
 // Interned resolver kind lists (T042i dedup)
 const _super_expression: readonly string[] = ["comparison_operator","not_operator","boolean_operator","lambda","primary_expression","conditional_expression","named_expression","as_pattern"];
 const _super_named_expression_lhs: readonly string[] = ["identifier","keyword_identifier"];
-const _super_left_hand_side: readonly string[] = ["pattern","pattern_list"];
 const _super_expressions: readonly string[] = ["expression","expression_list"];
+const _super_left_hand_side: readonly string[] = ["pattern","pattern_list"];
 const _super_expression_within_for_in_clause: readonly string[] = ["expression","lambda_within_for_in_clause"];
 const _super_right_hand_side: readonly string[] = ["expression","expression_list","assignment","augmented_assignment","pattern_list","yield"];
 const _super_f_expression: readonly string[] = ["expression","expression_list","pattern_list","yield"];
@@ -326,7 +326,8 @@ const _K9: readonly string[] = ["await","binary_operator","string","concatenated
 const _K10: readonly string[] = ["_not_in","_is_not"];
 const _K11: readonly string[] = ["comparison_operator","not_operator","boolean_operator","lambda","primary_expression","conditional_expression","named_expression","as_pattern","slice"];
 const _K12: readonly string[] = ["generator_expression","argument_list"];
-const _K13: readonly string[] = ["interpolation","string_content"];
+const _K13: readonly string[] = ["list_splat_pattern","dictionary_splat_pattern"];
+const _K14: readonly string[] = ["interpolation","string_content"];
 
 export function moduleFrom(...input: readonly (NonNullable<T.ModuleConfig['children']>[number] | T.Module)[]) {
   if (input.length === 1 && isNodeData(input[0]) && input[0].type === 'module') {
@@ -385,7 +386,7 @@ export function printStatementFrom(input: T.PrintStatement | T.LoosePrintStateme
   if ('fields' in input) return input;
   return printStatement({
     argument: _resolveMany<NonNullable<T.PrintStatementConfig['argument']>[number]>(input.argument, _K0, _super_expression),
-    children: (input.children ?? []) as NonNullable<T.PrintStatementConfig['children']>,
+    children: _resolveOneBranch<NonNullable<T.PrintStatementConfig['children']>>(input.children, "chevron"),
   });
 }
 
@@ -440,7 +441,7 @@ export function raiseStatementFrom(input?: T.RaiseStatement | T.LooseRaiseStatem
   if (input !== undefined && 'fields' in input) return input;
   return raiseStatement({
     cause: _resolveOne<NonNullable<T.RaiseStatementConfig['cause']>>(input?.cause, _K0, _super_expression),
-    children: (input?.children ?? []) as NonNullable<T.RaiseStatementConfig['children']>,
+    children: _resolveOne<NonNullable<T.RaiseStatementConfig['children']>>(input?.children, _K0, _super_expressions),
   });
 }
 
@@ -495,10 +496,12 @@ export function matchStatementFrom(input: T.MatchStatement | T.LooseMatchStateme
 
 export function caseClauseFrom(input: T.CaseClause | T.LooseCaseClause) {
   if ('fields' in input) return input;
+  const _ne_children = _resolveManyBranch<NonNullable<T.CaseClauseConfig['children']>[number]>(input.children, "case_pattern");
+  _assertNonEmpty(_ne_children, 'case_clause.children');
   return caseClause({
     guard: _resolveOneBranch<NonNullable<T.CaseClauseConfig['guard']>>(input.guard, "if_clause"),
     consequence: _resolveOneBranch<NonNullable<T.CaseClauseConfig['consequence']>>(input.consequence, "_suite"),
-    children: (input.children ?? []) as NonNullable<T.CaseClauseConfig['children']>,
+    children: _ne_children,
   });
 }
 
@@ -536,7 +539,7 @@ export function exceptClauseFrom(input: T.ExceptClause | T.LooseExceptClause) {
   return exceptClause({
     value: _resolveMany<NonNullable<T.ExceptClauseConfig['value']>[number]>(input.value, _K0, _super_expression),
     alias: _resolveOne<NonNullable<T.ExceptClauseConfig['alias']>>(input.alias, _K0, _super_expression),
-    children: (input.children ?? []) as NonNullable<T.ExceptClauseConfig['children']>,
+    children: _resolveOneBranch<NonNullable<T.ExceptClauseConfig['children']>>(input.children, "_suite"),
   });
 }
 
@@ -551,7 +554,7 @@ export function withStatementFrom(input: T.WithStatement | T.LooseWithStatement)
   if ('fields' in input) return input;
   return withStatement({
     body: _resolveOneBranch<NonNullable<T.WithStatementConfig['body']>>(input.body, "_suite"),
-    children: (input.children ?? []) as NonNullable<T.WithStatementConfig['children']>,
+    children: _resolveOneBranch<NonNullable<T.WithStatementConfig['children']>>(input.children, "with_clause"),
   });
 }
 
@@ -631,7 +634,7 @@ export function execStatementFrom(input: T.ExecStatement | T.LooseExecStatement)
   if ('fields' in input) return input;
   return execStatement({
     code: _resolveOne<NonNullable<T.ExecStatementConfig['code']>>(input.code, _K3, _K4),
-    children: (input.children ?? []) as NonNullable<T.ExecStatementConfig['children']>,
+    children: _resolveMany<NonNullable<T.ExecStatementConfig['children']>[number]>(input.children, _K0, _super_expression),
   });
 }
 
@@ -679,9 +682,11 @@ export function argumentListFrom(...input: readonly (NonNullable<T.ArgumentListC
 
 export function decoratedDefinitionFrom(input: T.DecoratedDefinition | T.LooseDecoratedDefinition) {
   if ('fields' in input) return input;
+  const _ne_children = _resolveManyBranch<NonNullable<T.DecoratedDefinitionConfig['children']>[number]>(input.children, "decorator");
+  _assertNonEmpty(_ne_children, 'decorated_definition.children');
   return decoratedDefinition({
     definition: _resolveOne<NonNullable<T.DecoratedDefinitionConfig['definition']>>(input.definition, _K0, _K5),
-    children: (input.children ?? []) as NonNullable<T.DecoratedDefinitionConfig['children']>,
+    children: _ne_children,
   });
 }
 
@@ -753,7 +758,7 @@ export function splatPatternFrom(input: T.SplatPattern | T.LooseSplatPattern) {
   if ('fields' in input) return input;
   return splatPattern({
     identifier: _resolveOne<NonNullable<T.SplatPatternConfig['identifier']>>(input.identifier, _K0, _K0),
-    children: (input.children ?? []) as NonNullable<T.SplatPatternConfig['children']>,
+    children: _resolveOneLeaf<NonNullable<T.SplatPatternConfig['children']>>(input.children, "identifier"),
   });
 }
 
@@ -770,7 +775,7 @@ export function complexPatternFrom(input: T.ComplexPattern | T.LooseComplexPatte
   return complexPattern({
     real: _resolveOne<NonNullable<T.ComplexPatternConfig['real']>>(input.real, _K0, _K0),
     imaginary: _resolveOne<NonNullable<T.ComplexPatternConfig['imaginary']>>(input.imaginary, _K6, _K0),
-    children: (input.children ?? []) as NonNullable<T.ComplexPatternConfig['children']>,
+    children: _resolveOne<NonNullable<T.ComplexPatternConfig['children']>>(input.children, _K6, _K0),
   });
 }
 
@@ -981,7 +986,7 @@ export function typedParameterFrom(input: T.TypedParameter | T.LooseTypedParamet
   if ('fields' in input) return input;
   return typedParameter({
     type: _resolveOneBranch<NonNullable<T.TypedParameterConfig['type']>>(input.type, "type"),
-    children: (input.children ?? []) as NonNullable<T.TypedParameterConfig['children']>,
+    children: _resolveOne<NonNullable<T.TypedParameterConfig['children']>>(input.children, _K3, _K13),
   });
 }
 
@@ -997,7 +1002,7 @@ export function splatTypeFrom(input: T.SplatType | T.LooseSplatType) {
   if ('fields' in input) return input;
   return splatType({
     identifier: _resolveOne<NonNullable<T.SplatTypeConfig['identifier']>>(input.identifier, _K0, _K0),
-    children: (input.children ?? []) as NonNullable<T.SplatTypeConfig['children']>,
+    children: _resolveOneLeaf<NonNullable<T.SplatTypeConfig['children']>>(input.children, "identifier"),
   });
 }
 
@@ -1085,7 +1090,7 @@ export function listComprehensionFrom(input: T.ListComprehension | T.LooseListCo
   if ('fields' in input) return input;
   return listComprehension({
     body: _resolveOne<NonNullable<T.ListComprehensionConfig['body']>>(input.body, _K0, _super_expression),
-    children: (input.children ?? []) as NonNullable<T.ListComprehensionConfig['children']>,
+    children: _resolveOneBranch<NonNullable<T.ListComprehensionConfig['children']>>(input.children, "_comprehension_clauses"),
   });
 }
 
@@ -1093,7 +1098,7 @@ export function dictionaryComprehensionFrom(input: T.DictionaryComprehension | T
   if ('fields' in input) return input;
   return dictionaryComprehension({
     body: _resolveOneBranch<NonNullable<T.DictionaryComprehensionConfig['body']>>(input.body, "pair"),
-    children: (input.children ?? []) as NonNullable<T.DictionaryComprehensionConfig['children']>,
+    children: _resolveOneBranch<NonNullable<T.DictionaryComprehensionConfig['children']>>(input.children, "_comprehension_clauses"),
   });
 }
 
@@ -1101,7 +1106,7 @@ export function setComprehensionFrom(input: T.SetComprehension | T.LooseSetCompr
   if ('fields' in input) return input;
   return setComprehension({
     body: _resolveOne<NonNullable<T.SetComprehensionConfig['body']>>(input.body, _K0, _super_expression),
-    children: (input.children ?? []) as NonNullable<T.SetComprehensionConfig['children']>,
+    children: _resolveOneBranch<NonNullable<T.SetComprehensionConfig['children']>>(input.children, "_comprehension_clauses"),
   });
 }
 
@@ -1109,7 +1114,7 @@ export function generatorExpressionFrom(input: T.GeneratorExpression | T.LooseGe
   if ('fields' in input) return input;
   return generatorExpression({
     body: _resolveOne<NonNullable<T.GeneratorExpressionConfig['body']>>(input.body, _K0, _super_expression),
-    children: (input.children ?? []) as NonNullable<T.GeneratorExpressionConfig['children']>,
+    children: _resolveOneBranch<NonNullable<T.GeneratorExpressionConfig['children']>>(input.children, "_comprehension_clauses"),
   });
 }
 
@@ -1159,7 +1164,7 @@ export function stringFrom(input: T.String | T.LooseString) {
   if ('fields' in input) return input;
   return string({
     stringStart: _resolveOneLeaf<NonNullable<T.StringConfig['stringStart']>>(input.stringStart, "string_start"),
-    content: _resolveMany<NonNullable<T.StringConfig['content']>[number]>(input.content, _K0, _K13),
+    content: _resolveMany<NonNullable<T.StringConfig['content']>[number]>(input.content, _K0, _K14),
     stringEnd: _resolveOneLeaf<NonNullable<T.StringConfig['stringEnd']>>(input.stringEnd, "string_end"),
   });
 }
