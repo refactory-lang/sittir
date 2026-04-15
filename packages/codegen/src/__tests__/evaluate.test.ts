@@ -4,9 +4,10 @@ import { fileURLToPath } from 'node:url'
 import {
     seq, choice, optional, repeat, repeat1,
     field, token, prec, normalize,
-    createProxy, transform, insert, replace,
+    createProxy,
     evaluate,
 } from '../compiler/evaluate.ts'
+import { transform, insert, replace } from '../dsl/transform.ts'
 import type { SymbolRef, RawGrammar } from '../compiler/rule.ts'
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url))

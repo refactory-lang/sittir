@@ -556,105 +556,11 @@ export function field(name: string, content?: Input): FieldRule {
 }
 
 // ---------------------------------------------------------------------------
-// Override primitives — transform, insert, replace
-// Operate on the `original` rule passed by tree-sitter's grammar(base) mechanism.
+// Override primitives — transform/insert/replace/role have moved to
+// packages/codegen/src/dsl/. Override files import them explicitly
+// from '@sittir/codegen/dsl'. They are no longer injected as globals
+// here because they are sittir extensions, not tree-sitter baseline.
 // ---------------------------------------------------------------------------
-
-/**
- * Apply positional patches to a rule's members.
- * Patches are keyed by numeric index. Each patch value replaces the member
- * at that position. Field patches are marked with source: 'override'.
- */
-export function transform(original: Rule, patches: Record<number | string, Rule>): Rule {
-    // For seq: apply patches to members by RAW position. The override
-    // author sees the rule tree as-is, including anonymous string
-    // delimiters and already-labeled field wrappers, and can wrap any
-    // position with a field() — that's the whole point of the primitive
-    // being "add a name to an unnamed entry." No hidden remapping.
-    if (original.type === 'seq') {
-        const members = [...original.members]
-        for (const [key, patch] of Object.entries(patches)) {
-            const index = Number(key)
-            if (isNaN(index) || index < 0 || index >= members.length) {
-                // Skip out-of-bounds patches — the position may have been
-                // computed against a different view of the rule.
-                continue
-            }
-            members[index] = resolvePatch(patch, members[index]!)
-        }
-        return { type: 'seq', members }
-    }
-
-    // For choice: apply transform to each member recursively
-    if (original.type === 'choice') {
-        return {
-            type: 'choice',
-            members: original.members.map(m => transform(m, patches)),
-        }
-    }
-
-    // For prec-like wrappers that were already stripped — just apply to content
-    if ('content' in original && original.content) {
-        return { ...original, content: transform(original.content as Rule, patches) } as Rule
-    }
-
-    // For other types, return as-is (patches don't apply)
-    return original
-}
-
-function resolvePatch(patch: Rule, originalMember: Rule): Rule {
-    if (patch.type === 'field' && patch._needsContent) {
-        return { type: 'field', name: patch.name, content: originalMember, source: 'override' as const }
-    }
-    if (patch.type === 'field') {
-        return { ...patch, source: 'override' as const }
-    }
-    return patch
-}
-
-/**
- * Wrap a member at a position using a wrapper function that receives
- * the original content. The wrapper's result is marked source: 'override'.
- */
-export function insert(original: Rule, position: number, wrapper: (content: Rule) => Rule): Rule {
-    if (original.type !== 'seq') {
-        throw new Error(`insert() expects a seq rule, got '${original.type}'`)
-    }
-
-    const members = [...original.members]
-    if (position < 0 || position >= members.length) {
-        throw new Error(`insert(): position ${position} out of bounds (rule has ${members.length} members)`)
-    }
-
-    const wrapped = wrapper(members[position]!)
-    members[position] = wrapped.type === 'field'
-        ? { ...wrapped, source: 'override' as const }
-        : wrapped
-
-    return { type: 'seq', members }
-}
-
-/**
- * Replace content at a position. Pass null to suppress (remove the member).
- */
-export function replace(original: Rule, position: number, replacement: Rule | null): Rule {
-    if (original.type !== 'seq') {
-        throw new Error(`replace() expects a seq rule, got '${original.type}'`)
-    }
-
-    const members = [...original.members]
-    if (position < 0 || position >= members.length) {
-        throw new Error(`replace(): position ${position} out of bounds (rule has ${members.length} members)`)
-    }
-
-    if (replacement === null) {
-        members.splice(position, 1)
-    } else {
-        members[position] = replacement
-    }
-
-    return { type: 'seq', members }
-}
 
 // ---------------------------------------------------------------------------
 // Token
@@ -726,27 +632,6 @@ export function alias(rule: Input, value: string | Rule): AliasRule {
 export function blank(): Rule {
     // BLANK is represented as choice() with no members — absorbed by choice()
     return { type: 'choice', members: [] }
-}
-
-/**
- * Structural-whitespace role primitive for grammar overrides. Indent-
- * sensitive grammars declare the mapping from their external token
- * names to the three canonical structural roles (`indent`, `dedent`,
- * `newline`) by defining rules whose body is the role node directly:
- *
- *     _indent: ($) => role('indent'),
- *     _dedent: ($) => role('dedent'),
- *     _newline: ($) => role('newline'),
- *
- * Link's symbol resolution picks up these role-annotated rules by
- * structural shape (the body IS the role node) — no name matching,
- * so a grammar can use any naming convention it likes.
- */
-export function role(name: 'indent' | 'dedent' | 'newline'): Rule {
-    if (name === 'indent') return { type: 'indent' } as Rule
-    if (name === 'dedent') return { type: 'dedent' } as Rule
-    if (name === 'newline') return { type: 'newline' } as Rule
-    throw new Error(`role(): unknown role '${name}'`)
 }
 
 // ---------------------------------------------------------------------------
@@ -951,6 +836,9 @@ export async function evaluate(entryPath: string): Promise<RawGrammar> {
     // mutate inside this scope.
     const g = globalThis as unknown as Record<string, unknown>
     const savedGlobals: Record<string, unknown> = {}
+    // Only inject tree-sitter baseline DSL shadows as globals.
+    // Sittir extensions (transform/insert/replace/role/enrich) are
+    // explicitly imported from '@sittir/codegen/dsl' by override files.
     const dslFunctions: Record<string, unknown> = {
         grammar: grammarFn,
         seq,
@@ -963,10 +851,6 @@ export async function evaluate(entryPath: string): Promise<RawGrammar> {
         prec,
         alias,
         blank,
-        transform,
-        insert,
-        replace,
-        role,
     }
 
     // Save existing globals and inject ours
