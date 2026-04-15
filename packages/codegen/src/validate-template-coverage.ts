@@ -175,15 +175,9 @@ interface NamedTemplate {
  */
 function collectTemplates(rule: TemplateRule): NamedTemplate[] {
     if (typeof rule === 'string') return [{ label: '', template: rule }]
-    if (Array.isArray(rule)) {
-        return rule.map((t, i) => ({ label: `[${i}]`, template: t }))
-    }
     const out: NamedTemplate[] = []
     const obj = rule as TemplateRuleObject
     if (typeof obj.template === 'string') out.push({ label: '', template: obj.template })
-    else if (Array.isArray(obj.template)) {
-        obj.template.forEach((t, i) => out.push({ label: `[${i}]`, template: t }))
-    }
     if (obj.variants && typeof obj.variants === 'object') {
         for (const [name, tmpl] of Object.entries(obj.variants)) {
             if (typeof tmpl === 'string') out.push({ label: name, template: tmpl })

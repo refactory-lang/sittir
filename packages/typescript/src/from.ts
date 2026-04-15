@@ -427,8 +427,8 @@ const _K34: readonly string[] = ["export_statement","property_signature","call_s
 const _K35: readonly string[] = ["type_annotation","omitting_type_annotation","adding_type_annotation","opting_type_annotation"];
 const _K36: readonly string[] = ["primary_type","function_type","readonly_type","constructor_type","infer_type","_type_query_member_expression_in_type_annotation","_type_query_call_expression_in_type_annotation","asserts","type_predicate"];
 
-export function programFrom(input: T.Program | T.LooseProgram) {
-  if ('render' in input) return input;
+export function programFrom(input: T.Program | T.LooseProgram): ReturnType<typeof program> {
+  if ('render' in input) return input as ReturnType<typeof program>;
   return program({
     hashBangLine: _resolveOneLeaf<NonNullable<T.ProgramConfig['hashBangLine']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['hash_bang_line'] ?? (input as { readonly hashBangLine?: _FromFieldInput }).hashBangLine), "hash_bang_line"),
     statements: _resolveManyBranch<NonNullable<T.ProgramConfig['statements']>[number]>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['statements'] ?? (input as { readonly statements?: _FromFieldInput }).statements), "statement"),
@@ -481,8 +481,8 @@ export function exportClauseFrom(...input: readonly (NonNullable<T.ExportClauseC
   return exportClause(...(input as NonNullable<T.ExportClauseConfig['children']>));
 }
 
-export function exportSpecifierFrom(input: T.ExportSpecifier | T.LooseExportSpecifier) {
-  if ('render' in input) return input;
+export function exportSpecifierFrom(input: T.ExportSpecifier | T.LooseExportSpecifier): ReturnType<typeof exportSpecifier> {
+  if ('render' in input) return input as ReturnType<typeof exportSpecifier>;
   return exportSpecifier({
     name: _resolveOne<NonNullable<T.ExportSpecifierConfig['name']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['name'] ?? (input as { readonly name?: _FromFieldInput }).name), _super_import_identifier, _K0),
     alias: _resolveOne<NonNullable<T.ExportSpecifierConfig['alias']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['alias'] ?? (input as { readonly alias?: _FromFieldInput }).alias), _super_import_identifier, _K0),
@@ -502,8 +502,8 @@ export function import_From(input?: T.Import) {
   return import_();
 }
 
-export function importStatementFrom(input: T.ImportStatement | T.LooseImportStatement) {
-  if ('render' in input) return input;
+export function importStatementFrom(input: T.ImportStatement | T.LooseImportStatement): ReturnType<typeof importStatement> {
+  if ('render' in input) return input as ReturnType<typeof importStatement>;
   return importStatement({
     importClause: _resolveOne<NonNullable<T.ImportStatementConfig['importClause']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['import_clause'] ?? (input as { readonly importClause?: _FromFieldInput }).importClause), _K1, _K1),
     fromClause: _resolveOne<NonNullable<T.ImportStatementConfig['fromClause']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['from_clause'] ?? (input as { readonly fromClause?: _FromFieldInput }).fromClause), _K1, _K2),
@@ -532,8 +532,8 @@ export function importClauseDefaultImportFrom(input: T.ImportClauseDefaultImport
   });
 }
 
-export function namespaceImportFrom(input: T.NamespaceImport | T.LooseNamespaceImport) {
-  if ('render' in input) return input;
+export function namespaceImportFrom(input: T.NamespaceImport | T.LooseNamespaceImport): ReturnType<typeof namespaceImport> {
+  if ('render' in input) return input as ReturnType<typeof namespaceImport>;
   return namespaceImport({
     identifier: _resolveOneLeaf<NonNullable<T.NamespaceImportConfig['identifier']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['identifier'] ?? (input as { readonly identifier?: _FromFieldInput }).identifier), "identifier"),
   });
@@ -565,8 +565,8 @@ export function importSpecifierAsFrom(input: T.ImportSpecifierAsConfig) {
   });
 }
 
-export function importAttributeFrom(input: T.ImportAttribute | T.LooseImportAttribute) {
-  if ('render' in input) return input;
+export function importAttributeFrom(input: T.ImportAttribute | T.LooseImportAttribute): ReturnType<typeof importAttribute> {
+  if ('render' in input) return input as ReturnType<typeof importAttribute>;
   return importAttribute({
     object: _resolveOne<NonNullable<T.ImportAttributeConfig['object']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['object'] ?? (input as { readonly object?: _FromFieldInput }).object), _K1, _K1),
     children: _resolveOneBranch<NonNullable<T.ImportAttributeConfig['children']>>(input.children, "object"),
@@ -668,8 +668,8 @@ export function expressionStatementFrom(input?: NonNullable<T.ExpressionStatemen
   return expressionStatement(input as NonNullable<T.ExpressionStatementConfig['children']>[number]);
 }
 
-export function variableDeclarationFrom(input: T.VariableDeclaration | T.LooseVariableDeclaration) {
-  if ('render' in input) return input;
+export function variableDeclarationFrom(input: T.VariableDeclaration | T.LooseVariableDeclaration): ReturnType<typeof variableDeclaration> {
+  if ('render' in input) return input as ReturnType<typeof variableDeclaration>;
   const _ne_declarators = _resolveMany<NonNullable<T.VariableDeclarationConfig['declarators']>[number]>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['declarators'] ?? (input as { readonly declarators?: _FromFieldInput }).declarators), _K1, _K1);
   _assertNonEmpty(_ne_declarators, 'variable_declaration.declarators');
   return variableDeclaration({
@@ -678,8 +678,8 @@ export function variableDeclarationFrom(input: T.VariableDeclaration | T.LooseVa
   });
 }
 
-export function lexicalDeclarationFrom(input: T.LexicalDeclaration | T.LooseLexicalDeclaration) {
-  if ('render' in input) return input;
+export function lexicalDeclarationFrom(input: T.LexicalDeclaration | T.LooseLexicalDeclaration): ReturnType<typeof lexicalDeclaration> {
+  if ('render' in input) return input as ReturnType<typeof lexicalDeclaration>;
   const _ne_declarators = _resolveMany<NonNullable<T.LexicalDeclarationConfig['declarators']>[number]>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['declarators'] ?? (input as { readonly declarators?: _FromFieldInput }).declarators), _K1, _K1);
   _assertNonEmpty(_ne_declarators, 'lexical_declaration.declarators');
   return lexicalDeclaration({
@@ -689,8 +689,8 @@ export function lexicalDeclarationFrom(input: T.LexicalDeclaration | T.LooseLexi
   });
 }
 
-export function variableDeclaratorFrom(input: T.VariableDeclarator | T.LooseVariableDeclarator) {
-  if ('render' in input) return input;
+export function variableDeclaratorFrom(input: T.VariableDeclarator | T.LooseVariableDeclarator): ReturnType<typeof variableDeclarator> {
+  if ('render' in input) return input as ReturnType<typeof variableDeclarator>;
   return variableDeclarator({
     name: _resolveOne<NonNullable<T.VariableDeclaratorConfig['name']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['name'] ?? (input as { readonly name?: _FromFieldInput }).name), _super_import_identifier, _super_destructuring_pattern),
     type: _resolveOneBranch<NonNullable<T.VariableDeclaratorConfig['type']>>((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['type'], "type_annotation"),
@@ -698,23 +698,23 @@ export function variableDeclaratorFrom(input: T.VariableDeclarator | T.LooseVari
   });
 }
 
-export function statementBlockFrom(input: T.StatementBlock | T.LooseStatementBlock) {
-  if ('render' in input) return input;
+export function statementBlockFrom(input: T.StatementBlock | T.LooseStatementBlock): ReturnType<typeof statementBlock> {
+  if ('render' in input) return input as ReturnType<typeof statementBlock>;
   return statementBlock({
     statements: _resolveManyBranch<NonNullable<T.StatementBlockConfig['statements']>[number]>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['statements'] ?? (input as { readonly statements?: _FromFieldInput }).statements), "statement"),
     automaticSemicolon: _resolveOneLeaf<NonNullable<T.StatementBlockConfig['automaticSemicolon']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['automatic_semicolon'] ?? (input as { readonly automaticSemicolon?: _FromFieldInput }).automaticSemicolon), "_automatic_semicolon"),
   });
 }
 
-export function elseClauseFrom(input: T.ElseClause | T.LooseElseClause) {
-  if ('render' in input) return input;
+export function elseClauseFrom(input: T.ElseClause | T.LooseElseClause): ReturnType<typeof elseClause> {
+  if ('render' in input) return input as ReturnType<typeof elseClause>;
   return elseClause({
     statement: _resolveOneBranch<NonNullable<T.ElseClauseConfig['statement']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['statement'] ?? (input as { readonly statement?: _FromFieldInput }).statement), "statement"),
   });
 }
 
-export function ifStatementFrom(input: T.IfStatement | T.LooseIfStatement) {
-  if ('render' in input) return input;
+export function ifStatementFrom(input: T.IfStatement | T.LooseIfStatement): ReturnType<typeof ifStatement> {
+  if ('render' in input) return input as ReturnType<typeof ifStatement>;
   return ifStatement({
     condition: _resolveOneBranch<NonNullable<T.IfStatementConfig['condition']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['condition'] ?? (input as { readonly condition?: _FromFieldInput }).condition), "parenthesized_expression"),
     consequence: _resolveOneBranch<NonNullable<T.IfStatementConfig['consequence']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['consequence'] ?? (input as { readonly consequence?: _FromFieldInput }).consequence), "statement"),
@@ -722,16 +722,16 @@ export function ifStatementFrom(input: T.IfStatement | T.LooseIfStatement) {
   });
 }
 
-export function switchStatementFrom(input: T.SwitchStatement | T.LooseSwitchStatement) {
-  if ('render' in input) return input;
+export function switchStatementFrom(input: T.SwitchStatement | T.LooseSwitchStatement): ReturnType<typeof switchStatement> {
+  if ('render' in input) return input as ReturnType<typeof switchStatement>;
   return switchStatement({
     value: _resolveOneBranch<NonNullable<T.SwitchStatementConfig['value']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['value'] ?? (input as { readonly value?: _FromFieldInput }).value), "parenthesized_expression"),
     body: _resolveOneBranch<NonNullable<T.SwitchStatementConfig['body']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['body'] ?? (input as { readonly body?: _FromFieldInput }).body), "switch_body"),
   });
 }
 
-export function forStatementFrom(input: T.ForStatement | T.LooseForStatement) {
-  if ('render' in input) return input;
+export function forStatementFrom(input: T.ForStatement | T.LooseForStatement): ReturnType<typeof forStatement> {
+  if ('render' in input) return input as ReturnType<typeof forStatement>;
   return forStatement({
     initializer: _resolveOne<NonNullable<T.ForStatementConfig['initializer']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['initializer'] ?? (input as { readonly initializer?: _FromFieldInput }).initializer), _K1, _K4),
     condition: _resolveOne<NonNullable<T.ForStatementConfig['condition']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['condition'] ?? (input as { readonly condition?: _FromFieldInput }).condition), _K1, _super_expressions),
@@ -740,8 +740,8 @@ export function forStatementFrom(input: T.ForStatement | T.LooseForStatement) {
   });
 }
 
-export function forInStatementFrom(input: T.ForInStatement | T.LooseForInStatement) {
-  if ('render' in input) return input;
+export function forInStatementFrom(input: T.ForInStatement | T.LooseForInStatement): ReturnType<typeof forInStatement> {
+  if ('render' in input) return input as ReturnType<typeof forInStatement>;
   return forInStatement({
     await: _resolveOne<NonNullable<T.ForInStatementConfig['await']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['await'] ?? (input as { readonly await?: _FromFieldInput }).await), _K1, _K1),
     body: _resolveOneBranch<NonNullable<T.ForInStatementConfig['body']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['body'] ?? (input as { readonly body?: _FromFieldInput }).body), "statement"),
@@ -749,16 +749,16 @@ export function forInStatementFrom(input: T.ForInStatement | T.LooseForInStateme
   });
 }
 
-export function whileStatementFrom(input: T.WhileStatement | T.LooseWhileStatement) {
-  if ('render' in input) return input;
+export function whileStatementFrom(input: T.WhileStatement | T.LooseWhileStatement): ReturnType<typeof whileStatement> {
+  if ('render' in input) return input as ReturnType<typeof whileStatement>;
   return whileStatement({
     condition: _resolveOneBranch<NonNullable<T.WhileStatementConfig['condition']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['condition'] ?? (input as { readonly condition?: _FromFieldInput }).condition), "parenthesized_expression"),
     body: _resolveOneBranch<NonNullable<T.WhileStatementConfig['body']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['body'] ?? (input as { readonly body?: _FromFieldInput }).body), "statement"),
   });
 }
 
-export function doStatementFrom(input: T.DoStatement | T.LooseDoStatement) {
-  if ('render' in input) return input;
+export function doStatementFrom(input: T.DoStatement | T.LooseDoStatement): ReturnType<typeof doStatement> {
+  if ('render' in input) return input as ReturnType<typeof doStatement>;
   return doStatement({
     body: _resolveOneBranch<NonNullable<T.DoStatementConfig['body']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['body'] ?? (input as { readonly body?: _FromFieldInput }).body), "statement"),
     condition: _resolveOneBranch<NonNullable<T.DoStatementConfig['condition']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['condition'] ?? (input as { readonly condition?: _FromFieldInput }).condition), "parenthesized_expression"),
@@ -766,8 +766,8 @@ export function doStatementFrom(input: T.DoStatement | T.LooseDoStatement) {
   });
 }
 
-export function tryStatementFrom(input: T.TryStatement | T.LooseTryStatement) {
-  if ('render' in input) return input;
+export function tryStatementFrom(input: T.TryStatement | T.LooseTryStatement): ReturnType<typeof tryStatement> {
+  if ('render' in input) return input as ReturnType<typeof tryStatement>;
   return tryStatement({
     body: _resolveOneBranch<NonNullable<T.TryStatementConfig['body']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['body'] ?? (input as { readonly body?: _FromFieldInput }).body), "statement_block"),
     handler: _resolveOneBranch<NonNullable<T.TryStatementConfig['handler']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['handler'] ?? (input as { readonly handler?: _FromFieldInput }).handler), "catch_clause"),
@@ -775,24 +775,24 @@ export function tryStatementFrom(input: T.TryStatement | T.LooseTryStatement) {
   });
 }
 
-export function withStatementFrom(input: T.WithStatement | T.LooseWithStatement) {
-  if ('render' in input) return input;
+export function withStatementFrom(input: T.WithStatement | T.LooseWithStatement): ReturnType<typeof withStatement> {
+  if ('render' in input) return input as ReturnType<typeof withStatement>;
   return withStatement({
     object: _resolveOneBranch<NonNullable<T.WithStatementConfig['object']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['object'] ?? (input as { readonly object?: _FromFieldInput }).object), "parenthesized_expression"),
     body: _resolveOneBranch<NonNullable<T.WithStatementConfig['body']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['body'] ?? (input as { readonly body?: _FromFieldInput }).body), "statement"),
   });
 }
 
-export function breakStatementFrom(input: T.BreakStatement | T.LooseBreakStatement) {
-  if ('render' in input) return input;
+export function breakStatementFrom(input: T.BreakStatement | T.LooseBreakStatement): ReturnType<typeof breakStatement> {
+  if ('render' in input) return input as ReturnType<typeof breakStatement>;
   return breakStatement({
     label: _resolveOneLeaf<NonNullable<T.BreakStatementConfig['label']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['label'] ?? (input as { readonly label?: _FromFieldInput }).label), "identifier"),
     children: _resolveOneLeaf<NonNullable<T.BreakStatementConfig['children']>>(input.children, "_automatic_semicolon"),
   });
 }
 
-export function continueStatementFrom(input: T.ContinueStatement | T.LooseContinueStatement) {
-  if ('render' in input) return input;
+export function continueStatementFrom(input: T.ContinueStatement | T.LooseContinueStatement): ReturnType<typeof continueStatement> {
+  if ('render' in input) return input as ReturnType<typeof continueStatement>;
   return continueStatement({
     label: _resolveOneLeaf<NonNullable<T.ContinueStatementConfig['label']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['label'] ?? (input as { readonly label?: _FromFieldInput }).label), "identifier"),
     children: _resolveOneLeaf<NonNullable<T.ContinueStatementConfig['children']>>(input.children, "_automatic_semicolon"),
@@ -823,8 +823,8 @@ export function throwStatementFrom(input?: NonNullable<T.ThrowStatementConfig['c
   return throwStatement(input as NonNullable<T.ThrowStatementConfig['children']>[number]);
 }
 
-export function labeledStatementFrom(input: T.LabeledStatement | T.LooseLabeledStatement) {
-  if ('render' in input) return input;
+export function labeledStatementFrom(input: T.LabeledStatement | T.LooseLabeledStatement): ReturnType<typeof labeledStatement> {
+  if ('render' in input) return input as ReturnType<typeof labeledStatement>;
   return labeledStatement({
     label: _resolveOne<NonNullable<T.LabeledStatementConfig['label']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['label'] ?? (input as { readonly label?: _FromFieldInput }).label), _K5, _K1),
     body: _resolveOneBranch<NonNullable<T.LabeledStatementConfig['body']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['body'] ?? (input as { readonly body?: _FromFieldInput }).body), "statement"),
@@ -839,23 +839,23 @@ export function switchBodyFrom(...input: readonly (NonNullable<T.SwitchBodyConfi
   return switchBody(...(input as NonNullable<T.SwitchBodyConfig['children']>));
 }
 
-export function switchCaseFrom(input: T.SwitchCase | T.LooseSwitchCase) {
-  if ('render' in input) return input;
+export function switchCaseFrom(input: T.SwitchCase | T.LooseSwitchCase): ReturnType<typeof switchCase> {
+  if ('render' in input) return input as ReturnType<typeof switchCase>;
   return switchCase({
     value: _resolveOne<NonNullable<T.SwitchCaseConfig['value']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['value'] ?? (input as { readonly value?: _FromFieldInput }).value), _K1, _super_expressions),
     body: _resolveManyBranch<NonNullable<T.SwitchCaseConfig['body']>[number]>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['body'] ?? (input as { readonly body?: _FromFieldInput }).body), "statement"),
   });
 }
 
-export function switchDefaultFrom(input: T.SwitchDefault | T.LooseSwitchDefault) {
-  if ('render' in input) return input;
+export function switchDefaultFrom(input: T.SwitchDefault | T.LooseSwitchDefault): ReturnType<typeof switchDefault> {
+  if ('render' in input) return input as ReturnType<typeof switchDefault>;
   return switchDefault({
     body: _resolveManyBranch<NonNullable<T.SwitchDefaultConfig['body']>[number]>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['body'] ?? (input as { readonly body?: _FromFieldInput }).body), "statement"),
   });
 }
 
-export function catchClauseFrom(input: T.CatchClause | T.LooseCatchClause) {
-  if ('render' in input) return input;
+export function catchClauseFrom(input: T.CatchClause | T.LooseCatchClause): ReturnType<typeof catchClause> {
+  if ('render' in input) return input as ReturnType<typeof catchClause>;
   return catchClause({
     parameter: _resolveOne<NonNullable<T.CatchClauseConfig['parameter']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['parameter'] ?? (input as { readonly parameter?: _FromFieldInput }).parameter), _super_import_identifier, _super_destructuring_pattern),
     type: _resolveOneBranch<NonNullable<T.CatchClauseConfig['type']>>((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['type'], "type_annotation"),
@@ -863,8 +863,8 @@ export function catchClauseFrom(input: T.CatchClause | T.LooseCatchClause) {
   });
 }
 
-export function finallyClauseFrom(input: T.FinallyClause | T.LooseFinallyClause) {
-  if ('render' in input) return input;
+export function finallyClauseFrom(input: T.FinallyClause | T.LooseFinallyClause): ReturnType<typeof finallyClause> {
+  if ('render' in input) return input as ReturnType<typeof finallyClause>;
   return finallyClause({
     body: _resolveOneBranch<NonNullable<T.FinallyClauseConfig['body']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['body'] ?? (input as { readonly body?: _FromFieldInput }).body), "statement_block"),
   });
@@ -901,8 +901,8 @@ export function primaryExpressionFrom(input?: NonNullable<T.PrimaryExpressionCon
   return primaryExpression(input as NonNullable<T.PrimaryExpressionConfig['children']>[number]);
 }
 
-export function yieldExpressionFrom(input: T.YieldExpression | T.LooseYieldExpression) {
-  if ('render' in input) return input;
+export function yieldExpressionFrom(input: T.YieldExpression | T.LooseYieldExpression): ReturnType<typeof yieldExpression> {
+  if ('render' in input) return input as ReturnType<typeof yieldExpression>;
   return yieldExpression({
     expression: _resolveOneBranch<NonNullable<T.YieldExpressionConfig['expression']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['expression'] ?? (input as { readonly expression?: _FromFieldInput }).expression), "expression"),
   });
@@ -924,16 +924,16 @@ export function objectPatternFrom(...input: readonly (NonNullable<T.ObjectPatter
   return objectPattern(...(input as NonNullable<T.ObjectPatternConfig['children']>));
 }
 
-export function assignmentPatternFrom(input: T.AssignmentPattern | T.LooseAssignmentPattern) {
-  if ('render' in input) return input;
+export function assignmentPatternFrom(input: T.AssignmentPattern | T.LooseAssignmentPattern): ReturnType<typeof assignmentPattern> {
+  if ('render' in input) return input as ReturnType<typeof assignmentPattern>;
   return assignmentPattern({
     left: _resolveOneBranch<NonNullable<T.AssignmentPatternConfig['left']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['left'] ?? (input as { readonly left?: _FromFieldInput }).left), "pattern"),
     right: _resolveOneBranch<NonNullable<T.AssignmentPatternConfig['right']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['right'] ?? (input as { readonly right?: _FromFieldInput }).right), "expression"),
   });
 }
 
-export function objectAssignmentPatternFrom(input: T.ObjectAssignmentPattern | T.LooseObjectAssignmentPattern) {
-  if ('render' in input) return input;
+export function objectAssignmentPatternFrom(input: T.ObjectAssignmentPattern | T.LooseObjectAssignmentPattern): ReturnType<typeof objectAssignmentPattern> {
+  if ('render' in input) return input as ReturnType<typeof objectAssignmentPattern>;
   return objectAssignmentPattern({
     left: _resolveOne<NonNullable<T.ObjectAssignmentPatternConfig['left']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['left'] ?? (input as { readonly left?: _FromFieldInput }).left), _K6, _super_destructuring_pattern),
     right: _resolveOneBranch<NonNullable<T.ObjectAssignmentPatternConfig['right']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['right'] ?? (input as { readonly right?: _FromFieldInput }).right), "expression"),
@@ -956,8 +956,8 @@ export function arrayPatternFrom(...input: readonly (NonNullable<T.ArrayPatternC
   return arrayPattern(...(input as NonNullable<T.ArrayPatternConfig['children']>));
 }
 
-export function jsxElementFrom(input: T.JsxElement | T.LooseJsxElement) {
-  if ('render' in input) return input;
+export function jsxElementFrom(input: T.JsxElement | T.LooseJsxElement): ReturnType<typeof jsxElement> {
+  if ('render' in input) return input as ReturnType<typeof jsxElement>;
   return jsxElement({
     openTag: _resolveOneBranch<NonNullable<T.JsxElementConfig['openTag']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['open_tag'] ?? (input as { readonly openTag?: _FromFieldInput }).openTag), "jsx_opening_element"),
     closeTag: _resolveOneBranch<NonNullable<T.JsxElementConfig['closeTag']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['close_tag'] ?? (input as { readonly closeTag?: _FromFieldInput }).closeTag), "jsx_closing_element"),
@@ -991,8 +991,8 @@ export function jsxIdentifierFrom(input: string | T.JsxIdentifier) {
   return jsxIdentifier(input as string);
 }
 
-export function nestedIdentifierFrom(input: T.NestedIdentifier | T.LooseNestedIdentifier) {
-  if ('render' in input) return input;
+export function nestedIdentifierFrom(input: T.NestedIdentifier | T.LooseNestedIdentifier): ReturnType<typeof nestedIdentifier> {
+  if ('render' in input) return input as ReturnType<typeof nestedIdentifier>;
   return nestedIdentifier({
     object: _resolveOne<NonNullable<T.NestedIdentifierConfig['object']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['object'] ?? (input as { readonly object?: _FromFieldInput }).object), _super_import_identifier, _K9),
     property: _resolveOneLeaf<NonNullable<T.NestedIdentifierConfig['property']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['property'] ?? (input as { readonly property?: _FromFieldInput }).property), "identifier"),
@@ -1007,8 +1007,8 @@ export function jsxNamespaceNameFrom(...input: readonly (NonNullable<T.JsxNamesp
   return jsxNamespaceName(...(input as NonNullable<T.JsxNamespaceNameConfig['children']>));
 }
 
-export function jsxClosingElementFrom(input?: T.JsxClosingElement | T.LooseJsxClosingElement) {
-  if (input !== undefined && 'render' in input) return input;
+export function jsxClosingElementFrom(input?: T.JsxClosingElement | T.LooseJsxClosingElement): ReturnType<typeof jsxClosingElement> {
+  if (input !== undefined && 'render' in input) return input as ReturnType<typeof jsxClosingElement>;
   return jsxClosingElement({
     name: _resolveOne<NonNullable<T.JsxClosingElementConfig['name']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } })?.fields?.['name'] ?? (input as { readonly name?: _FromFieldInput })?.name), _super_jsx_identifier, _K10),
   });
@@ -1040,8 +1040,8 @@ export function unescapedSingleJsxStringFragmentFrom(input: string | T.Unescaped
   return unescapedSingleJsxStringFragment(input as string);
 }
 
-export function class_From(input: T.Class | T.LooseClass) {
-  if ('render' in input) return input;
+export function class_From(input: T.Class | T.LooseClass): ReturnType<typeof class_> {
+  if ('render' in input) return input as ReturnType<typeof class_>;
   return class_({
     decorator: _resolveManyBranch<NonNullable<T.ClassConfig['decorator']>[number]>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['decorator'] ?? (input as { readonly decorator?: _FromFieldInput }).decorator), "decorator"),
     name: _resolveOneBranch<NonNullable<T.ClassConfig['name']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['name'] ?? (input as { readonly name?: _FromFieldInput }).name), "_type_identifier"),
@@ -1051,8 +1051,8 @@ export function class_From(input: T.Class | T.LooseClass) {
   });
 }
 
-export function classDeclarationFrom(input: T.ClassDeclaration | T.LooseClassDeclaration) {
-  if ('render' in input) return input;
+export function classDeclarationFrom(input: T.ClassDeclaration | T.LooseClassDeclaration): ReturnType<typeof classDeclaration> {
+  if ('render' in input) return input as ReturnType<typeof classDeclaration>;
   return classDeclaration({
     decorator: _resolveManyBranch<NonNullable<T.ClassDeclarationConfig['decorator']>[number]>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['decorator'] ?? (input as { readonly decorator?: _FromFieldInput }).decorator), "decorator"),
     name: _resolveOneBranch<NonNullable<T.ClassDeclarationConfig['name']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['name'] ?? (input as { readonly name?: _FromFieldInput }).name), "_type_identifier"),
@@ -1079,8 +1079,8 @@ export function classHeritageImplementsClauseFrom(input: T.ClassHeritageImplemen
   return classHeritageImplementsClause(input);
 }
 
-export function functionExpressionFrom(input: T.FunctionExpression | T.LooseFunctionExpression) {
-  if ('render' in input) return input;
+export function functionExpressionFrom(input: T.FunctionExpression | T.LooseFunctionExpression): ReturnType<typeof functionExpression> {
+  if ('render' in input) return input as ReturnType<typeof functionExpression>;
   return functionExpression({
     async: _resolveOne<NonNullable<T.FunctionExpressionConfig['async']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['async'] ?? (input as { readonly async?: _FromFieldInput }).async), _K1, _K1),
     name: _resolveOneLeaf<NonNullable<T.FunctionExpressionConfig['name']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['name'] ?? (input as { readonly name?: _FromFieldInput }).name), "identifier"),
@@ -1089,8 +1089,8 @@ export function functionExpressionFrom(input: T.FunctionExpression | T.LooseFunc
   });
 }
 
-export function functionDeclarationFrom(input: T.FunctionDeclaration | T.LooseFunctionDeclaration) {
-  if ('render' in input) return input;
+export function functionDeclarationFrom(input: T.FunctionDeclaration | T.LooseFunctionDeclaration): ReturnType<typeof functionDeclaration> {
+  if ('render' in input) return input as ReturnType<typeof functionDeclaration>;
   return functionDeclaration({
     async: _resolveOne<NonNullable<T.FunctionDeclarationConfig['async']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['async'] ?? (input as { readonly async?: _FromFieldInput }).async), _K1, _K1),
     name: _resolveOneLeaf<NonNullable<T.FunctionDeclarationConfig['name']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['name'] ?? (input as { readonly name?: _FromFieldInput }).name), "identifier"),
@@ -1099,8 +1099,8 @@ export function functionDeclarationFrom(input: T.FunctionDeclaration | T.LooseFu
   });
 }
 
-export function generatorFunctionFrom(input: T.GeneratorFunction | T.LooseGeneratorFunction) {
-  if ('render' in input) return input;
+export function generatorFunctionFrom(input: T.GeneratorFunction | T.LooseGeneratorFunction): ReturnType<typeof generatorFunction> {
+  if ('render' in input) return input as ReturnType<typeof generatorFunction>;
   return generatorFunction({
     async: _resolveOne<NonNullable<T.GeneratorFunctionConfig['async']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['async'] ?? (input as { readonly async?: _FromFieldInput }).async), _K1, _K1),
     name: _resolveOneLeaf<NonNullable<T.GeneratorFunctionConfig['name']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['name'] ?? (input as { readonly name?: _FromFieldInput }).name), "identifier"),
@@ -1109,8 +1109,8 @@ export function generatorFunctionFrom(input: T.GeneratorFunction | T.LooseGenera
   });
 }
 
-export function generatorFunctionDeclarationFrom(input: T.GeneratorFunctionDeclaration | T.LooseGeneratorFunctionDeclaration) {
-  if ('render' in input) return input;
+export function generatorFunctionDeclarationFrom(input: T.GeneratorFunctionDeclaration | T.LooseGeneratorFunctionDeclaration): ReturnType<typeof generatorFunctionDeclaration> {
+  if ('render' in input) return input as ReturnType<typeof generatorFunctionDeclaration>;
   return generatorFunctionDeclaration({
     async: _resolveOne<NonNullable<T.GeneratorFunctionDeclarationConfig['async']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['async'] ?? (input as { readonly async?: _FromFieldInput }).async), _K1, _K1),
     name: _resolveOneLeaf<NonNullable<T.GeneratorFunctionDeclarationConfig['name']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['name'] ?? (input as { readonly name?: _FromFieldInput }).name), "identifier"),
@@ -1167,8 +1167,8 @@ export function callExpressionTokQDotFrom(input: T.CallExpressionTokQDotConfig) 
   });
 }
 
-export function newExpressionFrom(input: T.NewExpression | T.LooseNewExpression) {
-  if ('render' in input) return input;
+export function newExpressionFrom(input: T.NewExpression | T.LooseNewExpression): ReturnType<typeof newExpression> {
+  if ('render' in input) return input as ReturnType<typeof newExpression>;
   return newExpression({
     constructor: _resolveOneBranch<NonNullable<T.NewExpressionConfig['constructor']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['constructor'] ?? (input as { readonly constructor?: _FromFieldInput }).constructor), "primary_expression"),
     typeArguments: _resolveOneBranch<NonNullable<T.NewExpressionConfig['typeArguments']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['type_arguments'] ?? (input as { readonly typeArguments?: _FromFieldInput }).typeArguments), "type_arguments"),
@@ -1176,8 +1176,8 @@ export function newExpressionFrom(input: T.NewExpression | T.LooseNewExpression)
   });
 }
 
-export function awaitExpressionFrom(input: T.AwaitExpression | T.LooseAwaitExpression) {
-  if ('render' in input) return input;
+export function awaitExpressionFrom(input: T.AwaitExpression | T.LooseAwaitExpression): ReturnType<typeof awaitExpression> {
+  if ('render' in input) return input as ReturnType<typeof awaitExpression>;
   return awaitExpression({
     expression: _resolveOneBranch<NonNullable<T.AwaitExpressionConfig['expression']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['expression'] ?? (input as { readonly expression?: _FromFieldInput }).expression), "expression"),
   });
@@ -1203,8 +1203,8 @@ export function memberExpressionOptionalChainFrom(input: T.MemberExpressionOptio
   });
 }
 
-export function subscriptExpressionFrom(input: T.SubscriptExpression | T.LooseSubscriptExpression) {
-  if ('render' in input) return input;
+export function subscriptExpressionFrom(input: T.SubscriptExpression | T.LooseSubscriptExpression): ReturnType<typeof subscriptExpression> {
+  if ('render' in input) return input as ReturnType<typeof subscriptExpression>;
   return subscriptExpression({
     object: _resolveOne<NonNullable<T.SubscriptExpressionConfig['object']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['object'] ?? (input as { readonly object?: _FromFieldInput }).object), _K1, _K16),
     optionalChain: _resolveOne<NonNullable<T.SubscriptExpressionConfig['optionalChain']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['optional_chain'] ?? (input as { readonly optionalChain?: _FromFieldInput }).optionalChain), _K1, _K1),
@@ -1212,8 +1212,8 @@ export function subscriptExpressionFrom(input: T.SubscriptExpression | T.LooseSu
   });
 }
 
-export function assignmentExpressionFrom(input: T.AssignmentExpression | T.LooseAssignmentExpression) {
-  if ('render' in input) return input;
+export function assignmentExpressionFrom(input: T.AssignmentExpression | T.LooseAssignmentExpression): ReturnType<typeof assignmentExpression> {
+  if ('render' in input) return input as ReturnType<typeof assignmentExpression>;
   return assignmentExpression({
     using: _resolveOne<NonNullable<T.AssignmentExpressionConfig['using']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['using'] ?? (input as { readonly using?: _FromFieldInput }).using), _K1, _K1),
     left: _resolveOne<NonNullable<T.AssignmentExpressionConfig['left']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['left'] ?? (input as { readonly left?: _FromFieldInput }).left), _K1, _K18),
@@ -1221,8 +1221,8 @@ export function assignmentExpressionFrom(input: T.AssignmentExpression | T.Loose
   });
 }
 
-export function augmentedAssignmentExpressionFrom(input: T.AugmentedAssignmentExpression | T.LooseAugmentedAssignmentExpression) {
-  if ('render' in input) return input;
+export function augmentedAssignmentExpressionFrom(input: T.AugmentedAssignmentExpression | T.LooseAugmentedAssignmentExpression): ReturnType<typeof augmentedAssignmentExpression> {
+  if ('render' in input) return input as ReturnType<typeof augmentedAssignmentExpression>;
   return augmentedAssignmentExpression({
     left: _resolveOne<NonNullable<T.AugmentedAssignmentExpressionConfig['left']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['left'] ?? (input as { readonly left?: _FromFieldInput }).left), _K6, _K19),
     operator: _resolveOne<NonNullable<T.AugmentedAssignmentExpressionConfig['operator']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['operator'] ?? (input as { readonly operator?: _FromFieldInput }).operator), _K1, _K1),
@@ -1230,15 +1230,15 @@ export function augmentedAssignmentExpressionFrom(input: T.AugmentedAssignmentEx
   });
 }
 
-export function spreadElementFrom(input: T.SpreadElement | T.LooseSpreadElement) {
-  if ('render' in input) return input;
+export function spreadElementFrom(input: T.SpreadElement | T.LooseSpreadElement): ReturnType<typeof spreadElement> {
+  if ('render' in input) return input as ReturnType<typeof spreadElement>;
   return spreadElement({
     expression: _resolveOneBranch<NonNullable<T.SpreadElementConfig['expression']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['expression'] ?? (input as { readonly expression?: _FromFieldInput }).expression), "expression"),
   });
 }
 
-export function ternaryExpressionFrom(input: T.TernaryExpression | T.LooseTernaryExpression) {
-  if ('render' in input) return input;
+export function ternaryExpressionFrom(input: T.TernaryExpression | T.LooseTernaryExpression): ReturnType<typeof ternaryExpression> {
+  if ('render' in input) return input as ReturnType<typeof ternaryExpression>;
   return ternaryExpression({
     condition: _resolveOneBranch<NonNullable<T.TernaryExpressionConfig['condition']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['condition'] ?? (input as { readonly condition?: _FromFieldInput }).condition), "expression"),
     consequence: _resolveOneBranch<NonNullable<T.TernaryExpressionConfig['consequence']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['consequence'] ?? (input as { readonly consequence?: _FromFieldInput }).consequence), "expression"),
@@ -1246,8 +1246,8 @@ export function ternaryExpressionFrom(input: T.TernaryExpression | T.LooseTernar
   });
 }
 
-export function binaryExpressionFrom(input: T.BinaryExpression | T.LooseBinaryExpression) {
-  if ('render' in input) return input;
+export function binaryExpressionFrom(input: T.BinaryExpression | T.LooseBinaryExpression): ReturnType<typeof binaryExpression> {
+  if ('render' in input) return input as ReturnType<typeof binaryExpression>;
   return binaryExpression({
     left: _resolveOneBranch<NonNullable<T.BinaryExpressionConfig['left']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['left'] ?? (input as { readonly left?: _FromFieldInput }).left), "expression"),
     operator: _resolveOne<NonNullable<T.BinaryExpressionConfig['operator']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['operator'] ?? (input as { readonly operator?: _FromFieldInput }).operator), _K1, _K1),
@@ -1255,16 +1255,16 @@ export function binaryExpressionFrom(input: T.BinaryExpression | T.LooseBinaryEx
   });
 }
 
-export function unaryExpressionFrom(input: T.UnaryExpression | T.LooseUnaryExpression) {
-  if ('render' in input) return input;
+export function unaryExpressionFrom(input: T.UnaryExpression | T.LooseUnaryExpression): ReturnType<typeof unaryExpression> {
+  if ('render' in input) return input as ReturnType<typeof unaryExpression>;
   return unaryExpression({
     operator: _resolveOne<NonNullable<T.UnaryExpressionConfig['operator']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['operator'] ?? (input as { readonly operator?: _FromFieldInput }).operator), _K1, _K1),
     argument: _resolveOneBranch<NonNullable<T.UnaryExpressionConfig['argument']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['argument'] ?? (input as { readonly argument?: _FromFieldInput }).argument), "expression"),
   });
 }
 
-export function updateExpressionFrom(input: T.UpdateExpression | T.LooseUpdateExpression) {
-  if ('render' in input) return input;
+export function updateExpressionFrom(input: T.UpdateExpression | T.LooseUpdateExpression): ReturnType<typeof updateExpression> {
+  if ('render' in input) return input as ReturnType<typeof updateExpression>;
   return updateExpression({
     argument: _resolveOneBranch<NonNullable<T.UpdateExpressionConfig['argument']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['argument'] ?? (input as { readonly argument?: _FromFieldInput }).argument), "expression"),
     operator: _resolveOne<NonNullable<T.UpdateExpressionConfig['operator']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['operator'] ?? (input as { readonly operator?: _FromFieldInput }).operator), _K1, _K1),
@@ -1323,8 +1323,8 @@ export function templateSubstitutionFrom(input?: NonNullable<T.TemplateSubstitut
   return templateSubstitution(input as NonNullable<T.TemplateSubstitutionConfig['children']>[number]);
 }
 
-export function regexFrom(input: T.Regex | T.LooseRegex) {
-  if ('render' in input) return input;
+export function regexFrom(input: T.Regex | T.LooseRegex): ReturnType<typeof regex> {
+  if ('render' in input) return input as ReturnType<typeof regex>;
   return regex({
     pattern: _resolveOneLeaf<NonNullable<T.RegexConfig['pattern']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['pattern'] ?? (input as { readonly pattern?: _FromFieldInput }).pattern), "regex_pattern"),
     flags: _resolveOneLeaf<NonNullable<T.RegexConfig['flags']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['flags'] ?? (input as { readonly flags?: _FromFieldInput }).flags), "regex_flags"),
@@ -1407,16 +1407,16 @@ export function decoratorFrom(input?: NonNullable<T.DecoratorConfig['children']>
   return decorator(input as NonNullable<T.DecoratorConfig['children']>[number]);
 }
 
-export function decoratorMemberExpressionFrom(input: T.DecoratorMemberExpression | T.LooseDecoratorMemberExpression) {
-  if ('render' in input) return input;
+export function decoratorMemberExpressionFrom(input: T.DecoratorMemberExpression | T.LooseDecoratorMemberExpression): ReturnType<typeof decoratorMemberExpression> {
+  if ('render' in input) return input as ReturnType<typeof decoratorMemberExpression>;
   return decoratorMemberExpression({
     object: _resolveOne<NonNullable<T.DecoratorMemberExpressionConfig['object']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['object'] ?? (input as { readonly object?: _FromFieldInput }).object), _super_import_identifier, _K20),
     property: _resolveOneLeaf<NonNullable<T.DecoratorMemberExpressionConfig['property']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['property'] ?? (input as { readonly property?: _FromFieldInput }).property), "identifier"),
   });
 }
 
-export function decoratorCallExpressionFrom(input: T.DecoratorCallExpression | T.LooseDecoratorCallExpression) {
-  if ('render' in input) return input;
+export function decoratorCallExpressionFrom(input: T.DecoratorCallExpression | T.LooseDecoratorCallExpression): ReturnType<typeof decoratorCallExpression> {
+  if ('render' in input) return input as ReturnType<typeof decoratorCallExpression>;
   return decoratorCallExpression({
     function: _resolveOne<NonNullable<T.DecoratorCallExpressionConfig['function']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['function'] ?? (input as { readonly function?: _FromFieldInput }).function), _super_import_identifier, _K20),
     typeArguments: _resolveOneBranch<NonNullable<T.DecoratorCallExpressionConfig['typeArguments']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['type_arguments'] ?? (input as { readonly typeArguments?: _FromFieldInput }).typeArguments), "type_arguments"),
@@ -1424,16 +1424,16 @@ export function decoratorCallExpressionFrom(input: T.DecoratorCallExpression | T
   });
 }
 
-export function classBodyFrom(input?: T.ClassBody | T.LooseClassBody) {
-  if (input !== undefined && 'render' in input) return input;
+export function classBodyFrom(input?: T.ClassBody | T.LooseClassBody): ReturnType<typeof classBody> {
+  if (input !== undefined && 'render' in input) return input as ReturnType<typeof classBody>;
   return classBody({
     decorator: _resolveManyBranch<NonNullable<T.ClassBodyConfig['decorator']>[number]>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } })?.fields?.['decorator'] ?? (input as { readonly decorator?: _FromFieldInput })?.decorator), "decorator"),
     children: _resolveMany<NonNullable<T.ClassBodyConfig['children']>[number]>(input?.children, _K21, _K22),
   });
 }
 
-export function fieldDefinitionFrom(input: T.FieldDefinition | T.LooseFieldDefinition) {
-  if ('render' in input) return input;
+export function fieldDefinitionFrom(input: T.FieldDefinition | T.LooseFieldDefinition): ReturnType<typeof fieldDefinition> {
+  if ('render' in input) return input as ReturnType<typeof fieldDefinition>;
   return fieldDefinition({
     decorator: _resolveManyBranch<NonNullable<T.FieldDefinitionConfig['decorator']>[number]>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['decorator'] ?? (input as { readonly decorator?: _FromFieldInput }).decorator), "decorator"),
     static: _resolveOne<NonNullable<T.FieldDefinitionConfig['static']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['static'] ?? (input as { readonly static?: _FromFieldInput }).static), _K1, _K1),
@@ -1450,8 +1450,8 @@ export function formalParametersFrom(...input: readonly (NonNullable<T.FormalPar
   return formalParameters(...(input as NonNullable<T.FormalParametersConfig['children']>));
 }
 
-export function classStaticBlockFrom(input: T.ClassStaticBlock | T.LooseClassStaticBlock) {
-  if ('render' in input) return input;
+export function classStaticBlockFrom(input: T.ClassStaticBlock | T.LooseClassStaticBlock): ReturnType<typeof classStaticBlock> {
+  if ('render' in input) return input as ReturnType<typeof classStaticBlock>;
   return classStaticBlock({
     body: _resolveOneBranch<NonNullable<T.ClassStaticBlockConfig['body']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['body'] ?? (input as { readonly body?: _FromFieldInput }).body), "statement_block"),
     children: _resolveOneLeaf<NonNullable<T.ClassStaticBlockConfig['children']>>(input.children, "_automatic_semicolon"),
@@ -1474,8 +1474,8 @@ export function restPatternFrom(input?: NonNullable<T.RestPatternConfig['childre
   return restPattern(input as NonNullable<T.RestPatternConfig['children']>[number]);
 }
 
-export function methodDefinitionFrom(input: T.MethodDefinition | T.LooseMethodDefinition) {
-  if ('render' in input) return input;
+export function methodDefinitionFrom(input: T.MethodDefinition | T.LooseMethodDefinition): ReturnType<typeof methodDefinition> {
+  if ('render' in input) return input as ReturnType<typeof methodDefinition>;
   return methodDefinition({
     accessibilityModifier: _resolveOneLeaf<NonNullable<T.MethodDefinitionConfig['accessibilityModifier']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['accessibility_modifier'] ?? (input as { readonly accessibilityModifier?: _FromFieldInput }).accessibilityModifier), "accessibility_modifier"),
     overrideModifier: _resolveOne<NonNullable<T.MethodDefinitionConfig['overrideModifier']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['override_modifier'] ?? (input as { readonly overrideModifier?: _FromFieldInput }).overrideModifier), _K1, _K1),
@@ -1487,24 +1487,24 @@ export function methodDefinitionFrom(input: T.MethodDefinition | T.LooseMethodDe
   });
 }
 
-export function pairFrom(input: T.Pair | T.LoosePair) {
-  if ('render' in input) return input;
+export function pairFrom(input: T.Pair | T.LoosePair): ReturnType<typeof pair> {
+  if ('render' in input) return input as ReturnType<typeof pair>;
   return pair({
     key: _resolveOneBranch<NonNullable<T.PairConfig['key']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['key'] ?? (input as { readonly key?: _FromFieldInput }).key), "_property_name"),
     value: _resolveOneBranch<NonNullable<T.PairConfig['value']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['value'] ?? (input as { readonly value?: _FromFieldInput }).value), "expression"),
   });
 }
 
-export function pairPatternFrom(input: T.PairPattern | T.LoosePairPattern) {
-  if ('render' in input) return input;
+export function pairPatternFrom(input: T.PairPattern | T.LoosePairPattern): ReturnType<typeof pairPattern> {
+  if ('render' in input) return input as ReturnType<typeof pairPattern>;
   return pairPattern({
     key: _resolveOneBranch<NonNullable<T.PairPatternConfig['key']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['key'] ?? (input as { readonly key?: _FromFieldInput }).key), "_property_name"),
     value: _resolveOne<NonNullable<T.PairPatternConfig['value']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['value'] ?? (input as { readonly value?: _FromFieldInput }).value), _K1, _K24),
   });
 }
 
-export function computedPropertyNameFrom(input: T.ComputedPropertyName | T.LooseComputedPropertyName) {
-  if ('render' in input) return input;
+export function computedPropertyNameFrom(input: T.ComputedPropertyName | T.LooseComputedPropertyName): ReturnType<typeof computedPropertyName> {
+  if ('render' in input) return input as ReturnType<typeof computedPropertyName>;
   return computedPropertyName({
     expression: _resolveOneBranch<NonNullable<T.ComputedPropertyNameConfig['expression']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['expression'] ?? (input as { readonly expression?: _FromFieldInput }).expression), "expression"),
   });
@@ -1557,15 +1557,15 @@ export function publicFieldDefinitionForm3From(input: T.PublicFieldDefinitionFor
   });
 }
 
-export function nonNullExpressionFrom(input: T.NonNullExpression | T.LooseNonNullExpression) {
-  if ('render' in input) return input;
+export function nonNullExpressionFrom(input: T.NonNullExpression | T.LooseNonNullExpression): ReturnType<typeof nonNullExpression> {
+  if ('render' in input) return input as ReturnType<typeof nonNullExpression>;
   return nonNullExpression({
     expression: _resolveOneBranch<NonNullable<T.NonNullExpressionConfig['expression']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['expression'] ?? (input as { readonly expression?: _FromFieldInput }).expression), "expression"),
   });
 }
 
-export function methodSignatureFrom(input: T.MethodSignature | T.LooseMethodSignature) {
-  if ('render' in input) return input;
+export function methodSignatureFrom(input: T.MethodSignature | T.LooseMethodSignature): ReturnType<typeof methodSignature> {
+  if ('render' in input) return input as ReturnType<typeof methodSignature>;
   return methodSignature({
     accessibilityModifier: _resolveOneLeaf<NonNullable<T.MethodSignatureConfig['accessibilityModifier']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['accessibility_modifier'] ?? (input as { readonly accessibilityModifier?: _FromFieldInput }).accessibilityModifier), "accessibility_modifier"),
     overrideModifier: _resolveOne<NonNullable<T.MethodSignatureConfig['overrideModifier']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['override_modifier'] ?? (input as { readonly overrideModifier?: _FromFieldInput }).overrideModifier), _K1, _K1),
@@ -1576,8 +1576,8 @@ export function methodSignatureFrom(input: T.MethodSignature | T.LooseMethodSign
   });
 }
 
-export function abstractMethodSignatureFrom(input: T.AbstractMethodSignature | T.LooseAbstractMethodSignature) {
-  if ('render' in input) return input;
+export function abstractMethodSignatureFrom(input: T.AbstractMethodSignature | T.LooseAbstractMethodSignature): ReturnType<typeof abstractMethodSignature> {
+  if ('render' in input) return input as ReturnType<typeof abstractMethodSignature>;
   return abstractMethodSignature({
     accessibilityModifier: _resolveOneLeaf<NonNullable<T.AbstractMethodSignatureConfig['accessibilityModifier']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['accessibility_modifier'] ?? (input as { readonly accessibilityModifier?: _FromFieldInput }).accessibilityModifier), "accessibility_modifier"),
     overrideModifier: _resolveOneLeaf<NonNullable<T.AbstractMethodSignatureConfig['overrideModifier']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['override_modifier'] ?? (input as { readonly overrideModifier?: _FromFieldInput }).overrideModifier), "override_modifier"),
@@ -1586,8 +1586,8 @@ export function abstractMethodSignatureFrom(input: T.AbstractMethodSignature | T
   });
 }
 
-export function functionSignatureFrom(input: T.FunctionSignature | T.LooseFunctionSignature) {
-  if ('render' in input) return input;
+export function functionSignatureFrom(input: T.FunctionSignature | T.LooseFunctionSignature): ReturnType<typeof functionSignature> {
+  if ('render' in input) return input as ReturnType<typeof functionSignature>;
   return functionSignature({
     async: _resolveOne<NonNullable<T.FunctionSignatureConfig['async']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['async'] ?? (input as { readonly async?: _FromFieldInput }).async), _K1, _K1),
     name: _resolveOneLeaf<NonNullable<T.FunctionSignatureConfig['name']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['name'] ?? (input as { readonly name?: _FromFieldInput }).name), "identifier"),
@@ -1603,40 +1603,40 @@ export function decoratorParenthesizedExpressionFrom(input?: NonNullable<T.Decor
   return decoratorParenthesizedExpression(input as NonNullable<T.DecoratorParenthesizedExpressionConfig['children']>[number]);
 }
 
-export function typeAssertionFrom(input: T.TypeAssertion | T.LooseTypeAssertion) {
-  if ('render' in input) return input;
+export function typeAssertionFrom(input: T.TypeAssertion | T.LooseTypeAssertion): ReturnType<typeof typeAssertion> {
+  if ('render' in input) return input as ReturnType<typeof typeAssertion>;
   return typeAssertion({
     typeArguments: _resolveOneBranch<NonNullable<T.TypeAssertionConfig['typeArguments']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['type_arguments'] ?? (input as { readonly typeArguments?: _FromFieldInput }).typeArguments), "type_arguments"),
     expression: _resolveOneBranch<NonNullable<T.TypeAssertionConfig['expression']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['expression'] ?? (input as { readonly expression?: _FromFieldInput }).expression), "expression"),
   });
 }
 
-export function asExpressionFrom(input: T.AsExpression | T.LooseAsExpression) {
-  if ('render' in input) return input;
+export function asExpressionFrom(input: T.AsExpression | T.LooseAsExpression): ReturnType<typeof asExpression> {
+  if ('render' in input) return input as ReturnType<typeof asExpression>;
   return asExpression({
     expression: _resolveOneBranch<NonNullable<T.AsExpressionConfig['expression']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['expression'] ?? (input as { readonly expression?: _FromFieldInput }).expression), "expression"),
     typeAnnotation: _resolveOne<NonNullable<T.AsExpressionConfig['typeAnnotation']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['type_annotation'] ?? (input as { readonly typeAnnotation?: _FromFieldInput }).typeAnnotation), _K1, _super_type),
   });
 }
 
-export function satisfiesExpressionFrom(input: T.SatisfiesExpression | T.LooseSatisfiesExpression) {
-  if ('render' in input) return input;
+export function satisfiesExpressionFrom(input: T.SatisfiesExpression | T.LooseSatisfiesExpression): ReturnType<typeof satisfiesExpression> {
+  if ('render' in input) return input as ReturnType<typeof satisfiesExpression>;
   return satisfiesExpression({
     expression: _resolveOneBranch<NonNullable<T.SatisfiesExpressionConfig['expression']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['expression'] ?? (input as { readonly expression?: _FromFieldInput }).expression), "expression"),
     typeAnnotation: _resolveOne<NonNullable<T.SatisfiesExpressionConfig['typeAnnotation']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['type_annotation'] ?? (input as { readonly typeAnnotation?: _FromFieldInput }).typeAnnotation), _K1, _super_type),
   });
 }
 
-export function instantiationExpressionFrom(input: T.InstantiationExpression | T.LooseInstantiationExpression) {
-  if ('render' in input) return input;
+export function instantiationExpressionFrom(input: T.InstantiationExpression | T.LooseInstantiationExpression): ReturnType<typeof instantiationExpression> {
+  if ('render' in input) return input as ReturnType<typeof instantiationExpression>;
   return instantiationExpression({
     expression: _resolveOneBranch<NonNullable<T.InstantiationExpressionConfig['expression']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['expression'] ?? (input as { readonly expression?: _FromFieldInput }).expression), "expression"),
     typeArguments: _resolveOneBranch<NonNullable<T.InstantiationExpressionConfig['typeArguments']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['type_arguments'] ?? (input as { readonly typeArguments?: _FromFieldInput }).typeArguments), "type_arguments"),
   });
 }
 
-export function importRequireClauseFrom(input: T.ImportRequireClause | T.LooseImportRequireClause) {
-  if ('render' in input) return input;
+export function importRequireClauseFrom(input: T.ImportRequireClause | T.LooseImportRequireClause): ReturnType<typeof importRequireClause> {
+  if ('render' in input) return input as ReturnType<typeof importRequireClause>;
   return importRequireClause({
     identifier: _resolveOneLeaf<NonNullable<T.ImportRequireClauseConfig['identifier']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['identifier'] ?? (input as { readonly identifier?: _FromFieldInput }).identifier), "identifier"),
     source: _resolveOneBranch<NonNullable<T.ImportRequireClauseConfig['source']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['source'] ?? (input as { readonly source?: _FromFieldInput }).source), "string"),
@@ -1659,15 +1659,15 @@ export function implementsClauseFrom(...input: readonly (NonNullable<T.Implement
   return implementsClause(...(input as NonNullable<T.ImplementsClauseConfig['children']>));
 }
 
-export function ambientDeclarationFrom(input: T.AmbientDeclaration | T.LooseAmbientDeclaration) {
-  if ('render' in input) return input;
+export function ambientDeclarationFrom(input: T.AmbientDeclaration | T.LooseAmbientDeclaration): ReturnType<typeof ambientDeclaration> {
+  if ('render' in input) return input as ReturnType<typeof ambientDeclaration>;
   return ambientDeclaration({
     declaration: _resolveOne<NonNullable<T.AmbientDeclarationConfig['declaration']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['declaration'] ?? (input as { readonly declaration?: _FromFieldInput }).declaration), _K25, _K26),
   });
 }
 
-export function abstractClassDeclarationFrom(input: T.AbstractClassDeclaration | T.LooseAbstractClassDeclaration) {
-  if ('render' in input) return input;
+export function abstractClassDeclarationFrom(input: T.AbstractClassDeclaration | T.LooseAbstractClassDeclaration): ReturnType<typeof abstractClassDeclaration> {
+  if ('render' in input) return input as ReturnType<typeof abstractClassDeclaration>;
   return abstractClassDeclaration({
     decorator: _resolveManyBranch<NonNullable<T.AbstractClassDeclarationConfig['decorator']>[number]>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['decorator'] ?? (input as { readonly decorator?: _FromFieldInput }).decorator), "decorator"),
     name: _resolveOneBranch<NonNullable<T.AbstractClassDeclarationConfig['name']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['name'] ?? (input as { readonly name?: _FromFieldInput }).name), "_type_identifier"),
@@ -1693,8 +1693,8 @@ export function internalModuleFrom(input?: NonNullable<T.InternalModuleConfig['c
   return internalModule(input as NonNullable<T.InternalModuleConfig['children']>[number]);
 }
 
-export function importAliasFrom(input: T.ImportAlias | T.LooseImportAlias) {
-  if ('render' in input) return input;
+export function importAliasFrom(input: T.ImportAlias | T.LooseImportAlias): ReturnType<typeof importAlias> {
+  if ('render' in input) return input as ReturnType<typeof importAlias>;
   return importAlias({
     name: _resolveOneLeaf<NonNullable<T.ImportAliasConfig['name']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['name'] ?? (input as { readonly name?: _FromFieldInput }).name), "identifier"),
     value: _resolveOne<NonNullable<T.ImportAliasConfig['value']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['value'] ?? (input as { readonly value?: _FromFieldInput }).value), _super_import_identifier, _K9),
@@ -1702,16 +1702,16 @@ export function importAliasFrom(input: T.ImportAlias | T.LooseImportAlias) {
   });
 }
 
-export function nestedTypeIdentifierFrom(input: T.NestedTypeIdentifier | T.LooseNestedTypeIdentifier) {
-  if ('render' in input) return input;
+export function nestedTypeIdentifierFrom(input: T.NestedTypeIdentifier | T.LooseNestedTypeIdentifier): ReturnType<typeof nestedTypeIdentifier> {
+  if ('render' in input) return input as ReturnType<typeof nestedTypeIdentifier>;
   return nestedTypeIdentifier({
     module: _resolveOne<NonNullable<T.NestedTypeIdentifierConfig['module']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['module'] ?? (input as { readonly module?: _FromFieldInput }).module), _super_import_identifier, _K9),
     name: _resolveOneBranch<NonNullable<T.NestedTypeIdentifierConfig['name']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['name'] ?? (input as { readonly name?: _FromFieldInput }).name), "_type_identifier"),
   });
 }
 
-export function interfaceDeclarationFrom(input: T.InterfaceDeclaration | T.LooseInterfaceDeclaration) {
-  if ('render' in input) return input;
+export function interfaceDeclarationFrom(input: T.InterfaceDeclaration | T.LooseInterfaceDeclaration): ReturnType<typeof interfaceDeclaration> {
+  if ('render' in input) return input as ReturnType<typeof interfaceDeclaration>;
   return interfaceDeclaration({
     name: _resolveOneBranch<NonNullable<T.InterfaceDeclarationConfig['name']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['name'] ?? (input as { readonly name?: _FromFieldInput }).name), "_type_identifier"),
     typeParameters: _resolveOneBranch<NonNullable<T.InterfaceDeclarationConfig['typeParameters']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['type_parameters'] ?? (input as { readonly typeParameters?: _FromFieldInput }).typeParameters), "type_parameters"),
@@ -1720,8 +1720,8 @@ export function interfaceDeclarationFrom(input: T.InterfaceDeclaration | T.Loose
   });
 }
 
-export function extendsTypeClauseFrom(input: T.ExtendsTypeClause | T.LooseExtendsTypeClause) {
-  if ('render' in input) return input;
+export function extendsTypeClauseFrom(input: T.ExtendsTypeClause | T.LooseExtendsTypeClause): ReturnType<typeof extendsTypeClause> {
+  if ('render' in input) return input as ReturnType<typeof extendsTypeClause>;
   const _ne_type = _resolveMany<NonNullable<T.ExtendsTypeClauseConfig['type']>[number]>((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['type'], _K1, _K27);
   _assertNonEmpty(_ne_type, 'extends_type_clause.type');
   return extendsTypeClause({
@@ -1729,8 +1729,8 @@ export function extendsTypeClauseFrom(input: T.ExtendsTypeClause | T.LooseExtend
   });
 }
 
-export function enumDeclarationFrom(input: T.EnumDeclaration | T.LooseEnumDeclaration) {
-  if ('render' in input) return input;
+export function enumDeclarationFrom(input: T.EnumDeclaration | T.LooseEnumDeclaration): ReturnType<typeof enumDeclaration> {
+  if ('render' in input) return input as ReturnType<typeof enumDeclaration>;
   return enumDeclaration({
     const: _resolveOne<NonNullable<T.EnumDeclarationConfig['const']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['const'] ?? (input as { readonly const?: _FromFieldInput }).const), _K1, _K1),
     name: _resolveOneLeaf<NonNullable<T.EnumDeclarationConfig['name']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['name'] ?? (input as { readonly name?: _FromFieldInput }).name), "identifier"),
@@ -1738,23 +1738,23 @@ export function enumDeclarationFrom(input: T.EnumDeclaration | T.LooseEnumDeclar
   });
 }
 
-export function enumBodyFrom(input?: T.EnumBody | T.LooseEnumBody) {
-  if (input !== undefined && 'render' in input) return input;
+export function enumBodyFrom(input?: T.EnumBody | T.LooseEnumBody): ReturnType<typeof enumBody> {
+  if (input !== undefined && 'render' in input) return input as ReturnType<typeof enumBody>;
   return enumBody({
     opening: _resolveMany<NonNullable<T.EnumBodyConfig['opening']>[number]>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } })?.fields?.['opening'] ?? (input as { readonly opening?: _FromFieldInput })?.opening), _K1, _K1),
   });
 }
 
-export function enumAssignmentFrom(input: T.EnumAssignment | T.LooseEnumAssignment) {
-  if ('render' in input) return input;
+export function enumAssignmentFrom(input: T.EnumAssignment | T.LooseEnumAssignment): ReturnType<typeof enumAssignment> {
+  if ('render' in input) return input as ReturnType<typeof enumAssignment>;
   return enumAssignment({
     name: _resolveOneBranch<NonNullable<T.EnumAssignmentConfig['name']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['name'] ?? (input as { readonly name?: _FromFieldInput }).name), "_property_name"),
     children: _resolveOneBranch<NonNullable<T.EnumAssignmentConfig['children']>>(input.children, "_initializer"),
   });
 }
 
-export function typeAliasDeclarationFrom(input: T.TypeAliasDeclaration | T.LooseTypeAliasDeclaration) {
-  if ('render' in input) return input;
+export function typeAliasDeclarationFrom(input: T.TypeAliasDeclaration | T.LooseTypeAliasDeclaration): ReturnType<typeof typeAliasDeclaration> {
+  if ('render' in input) return input as ReturnType<typeof typeAliasDeclaration>;
   return typeAliasDeclaration({
     name: _resolveOneBranch<NonNullable<T.TypeAliasDeclarationConfig['name']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['name'] ?? (input as { readonly name?: _FromFieldInput }).name), "_type_identifier"),
     typeParameters: _resolveOneBranch<NonNullable<T.TypeAliasDeclarationConfig['typeParameters']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['type_parameters'] ?? (input as { readonly typeParameters?: _FromFieldInput }).typeParameters), "type_parameters"),
@@ -1773,16 +1773,16 @@ export function overrideModifierFrom(input?: T.OverrideModifier) {
   return overrideModifier();
 }
 
-export function requiredParameterFrom(input: T.RequiredParameter | T.LooseRequiredParameter) {
-  if ('render' in input) return input;
+export function requiredParameterFrom(input: T.RequiredParameter | T.LooseRequiredParameter): ReturnType<typeof requiredParameter> {
+  if ('render' in input) return input as ReturnType<typeof requiredParameter>;
   return requiredParameter({
     type: _resolveOneBranch<NonNullable<T.RequiredParameterConfig['type']>>((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['type'], "type_annotation"),
     children: _resolveOne<NonNullable<T.RequiredParameterConfig['children']>>(input.children, _K1, _K28),
   });
 }
 
-export function optionalParameterFrom(input: T.OptionalParameter | T.LooseOptionalParameter) {
-  if ('render' in input) return input;
+export function optionalParameterFrom(input: T.OptionalParameter | T.LooseOptionalParameter): ReturnType<typeof optionalParameter> {
+  if ('render' in input) return input as ReturnType<typeof optionalParameter>;
   return optionalParameter({
     type: _resolveOneBranch<NonNullable<T.OptionalParameterConfig['type']>>((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['type'], "type_annotation"),
     children: _resolveOne<NonNullable<T.OptionalParameterConfig['children']>>(input.children, _K1, _K28),
@@ -1829,24 +1829,24 @@ export function assertsFrom(input?: NonNullable<T.AssertsConfig['children']>[num
   return asserts(input as NonNullable<T.AssertsConfig['children']>[number]);
 }
 
-export function assertsAnnotationFrom(input: T.AssertsAnnotation | T.LooseAssertsAnnotation) {
-  if ('render' in input) return input;
+export function assertsAnnotationFrom(input: T.AssertsAnnotation | T.LooseAssertsAnnotation): ReturnType<typeof assertsAnnotation> {
+  if ('render' in input) return input as ReturnType<typeof assertsAnnotation>;
   return assertsAnnotation({
     asserts: _resolveOne<NonNullable<T.AssertsAnnotationConfig['asserts']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['asserts'] ?? (input as { readonly asserts?: _FromFieldInput }).asserts), _K1, _K1),
     children: _resolveOneBranch<NonNullable<T.AssertsAnnotationConfig['children']>>(input.children, "asserts"),
   });
 }
 
-export function tupleParameterFrom(input: T.TupleParameter | T.LooseTupleParameter) {
-  if ('render' in input) return input;
+export function tupleParameterFrom(input: T.TupleParameter | T.LooseTupleParameter): ReturnType<typeof tupleParameter> {
+  if ('render' in input) return input as ReturnType<typeof tupleParameter>;
   return tupleParameter({
     name: _resolveOne<NonNullable<T.TupleParameterConfig['name']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['name'] ?? (input as { readonly name?: _FromFieldInput }).name), _super_import_identifier, _K29),
     type: _resolveOneBranch<NonNullable<T.TupleParameterConfig['type']>>((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['type'], "type_annotation"),
   });
 }
 
-export function optionalTupleParameterFrom(input: T.OptionalTupleParameter | T.LooseOptionalTupleParameter) {
-  if ('render' in input) return input;
+export function optionalTupleParameterFrom(input: T.OptionalTupleParameter | T.LooseOptionalTupleParameter): ReturnType<typeof optionalTupleParameter> {
+  if ('render' in input) return input as ReturnType<typeof optionalTupleParameter>;
   return optionalTupleParameter({
     name: _resolveOneLeaf<NonNullable<T.OptionalTupleParameterConfig['name']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['name'] ?? (input as { readonly name?: _FromFieldInput }).name), "identifier"),
     type: _resolveOneBranch<NonNullable<T.OptionalTupleParameterConfig['type']>>((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['type'], "type_annotation"),
@@ -1869,8 +1869,8 @@ export function restTypeFrom(input?: NonNullable<T.RestTypeConfig['children']>[n
   return restType(input as NonNullable<T.RestTypeConfig['children']>[number]);
 }
 
-export function constructorTypeFrom(input: T.ConstructorType | T.LooseConstructorType) {
-  if ('render' in input) return input;
+export function constructorTypeFrom(input: T.ConstructorType | T.LooseConstructorType): ReturnType<typeof constructorType> {
+  if ('render' in input) return input as ReturnType<typeof constructorType>;
   return constructorType({
     abstract: _resolveOne<NonNullable<T.ConstructorTypeConfig['abstract']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['abstract'] ?? (input as { readonly abstract?: _FromFieldInput }).abstract), _K1, _K1),
     typeParameters: _resolveOneBranch<NonNullable<T.ConstructorTypeConfig['typeParameters']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['type_parameters'] ?? (input as { readonly typeParameters?: _FromFieldInput }).typeParameters), "type_parameters"),
@@ -1895,16 +1895,16 @@ export function templateLiteralTypeFrom(...input: readonly (NonNullable<T.Templa
   return templateLiteralType(...(input as NonNullable<T.TemplateLiteralTypeConfig['children']>));
 }
 
-export function inferTypeFrom(input: T.InferType | T.LooseInferType) {
-  if ('render' in input) return input;
+export function inferTypeFrom(input: T.InferType | T.LooseInferType): ReturnType<typeof inferType> {
+  if ('render' in input) return input as ReturnType<typeof inferType>;
   return inferType({
     typeIdentifier: _resolveOneBranch<NonNullable<T.InferTypeConfig['typeIdentifier']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['type_identifier'] ?? (input as { readonly typeIdentifier?: _FromFieldInput }).typeIdentifier), "_type_identifier"),
     constraint: _resolveOne<NonNullable<T.InferTypeConfig['constraint']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['constraint'] ?? (input as { readonly constraint?: _FromFieldInput }).constraint), _K1, _super_type),
   });
 }
 
-export function conditionalTypeFrom(input: T.ConditionalType | T.LooseConditionalType) {
-  if ('render' in input) return input;
+export function conditionalTypeFrom(input: T.ConditionalType | T.LooseConditionalType): ReturnType<typeof conditionalType> {
+  if ('render' in input) return input as ReturnType<typeof conditionalType>;
   return conditionalType({
     left: _resolveOne<NonNullable<T.ConditionalTypeConfig['left']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['left'] ?? (input as { readonly left?: _FromFieldInput }).left), _K1, _super_type),
     right: _resolveOne<NonNullable<T.ConditionalTypeConfig['right']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['right'] ?? (input as { readonly right?: _FromFieldInput }).right), _K1, _super_type),
@@ -1913,24 +1913,24 @@ export function conditionalTypeFrom(input: T.ConditionalType | T.LooseConditiona
   });
 }
 
-export function genericTypeFrom(input: T.GenericType | T.LooseGenericType) {
-  if ('render' in input) return input;
+export function genericTypeFrom(input: T.GenericType | T.LooseGenericType): ReturnType<typeof genericType> {
+  if ('render' in input) return input as ReturnType<typeof genericType>;
   return genericType({
     name: _resolveOne<NonNullable<T.GenericTypeConfig['name']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['name'] ?? (input as { readonly name?: _FromFieldInput }).name), _K1, _K30),
     typeArguments: _resolveOneBranch<NonNullable<T.GenericTypeConfig['typeArguments']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['type_arguments'] ?? (input as { readonly typeArguments?: _FromFieldInput }).typeArguments), "type_arguments"),
   });
 }
 
-export function typePredicateFrom(input: T.TypePredicate | T.LooseTypePredicate) {
-  if ('render' in input) return input;
+export function typePredicateFrom(input: T.TypePredicate | T.LooseTypePredicate): ReturnType<typeof typePredicate> {
+  if ('render' in input) return input as ReturnType<typeof typePredicate>;
   return typePredicate({
     name: _resolveOne<NonNullable<T.TypePredicateConfig['name']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['name'] ?? (input as { readonly name?: _FromFieldInput }).name), _K31, _K1),
     type: _resolveOne<NonNullable<T.TypePredicateConfig['type']>>((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['type'], _K1, _super_type),
   });
 }
 
-export function typePredicateAnnotationFrom(input: T.TypePredicateAnnotation | T.LooseTypePredicateAnnotation) {
-  if ('render' in input) return input;
+export function typePredicateAnnotationFrom(input: T.TypePredicateAnnotation | T.LooseTypePredicateAnnotation): ReturnType<typeof typePredicateAnnotation> {
+  if ('render' in input) return input as ReturnType<typeof typePredicateAnnotation>;
   return typePredicateAnnotation({
     typePredicate: _resolveOne<NonNullable<T.TypePredicateAnnotationConfig['typePredicate']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['type_predicate'] ?? (input as { readonly typePredicate?: _FromFieldInput }).typePredicate), _K1, _K1),
     children: _resolveOneBranch<NonNullable<T.TypePredicateAnnotationConfig['children']>>(input.children, "type_predicate"),
@@ -1945,23 +1945,23 @@ export function typeQueryFrom(input?: NonNullable<T.TypeQueryConfig['children']>
   return typeQuery(input as NonNullable<T.TypeQueryConfig['children']>[number]);
 }
 
-export function indexTypeQueryFrom(input: T.IndexTypeQuery | T.LooseIndexTypeQuery) {
-  if ('render' in input) return input;
+export function indexTypeQueryFrom(input: T.IndexTypeQuery | T.LooseIndexTypeQuery): ReturnType<typeof indexTypeQuery> {
+  if ('render' in input) return input as ReturnType<typeof indexTypeQuery>;
   return indexTypeQuery({
     primaryType: _resolveOne<NonNullable<T.IndexTypeQueryConfig['primaryType']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['primary_type'] ?? (input as { readonly primaryType?: _FromFieldInput }).primaryType), _K32, _K33),
   });
 }
 
-export function lookupTypeFrom(input: T.LookupType | T.LooseLookupType) {
-  if ('render' in input) return input;
+export function lookupTypeFrom(input: T.LookupType | T.LooseLookupType): ReturnType<typeof lookupType> {
+  if ('render' in input) return input as ReturnType<typeof lookupType>;
   return lookupType({
     primaryType: _resolveOne<NonNullable<T.LookupTypeConfig['primaryType']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['primary_type'] ?? (input as { readonly primaryType?: _FromFieldInput }).primaryType), _K32, _K33),
     indexType: _resolveOne<NonNullable<T.LookupTypeConfig['indexType']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['index_type'] ?? (input as { readonly indexType?: _FromFieldInput }).indexType), _K1, _super_type),
   });
 }
 
-export function mappedTypeClauseFrom(input: T.MappedTypeClause | T.LooseMappedTypeClause) {
-  if ('render' in input) return input;
+export function mappedTypeClauseFrom(input: T.MappedTypeClause | T.LooseMappedTypeClause): ReturnType<typeof mappedTypeClause> {
+  if ('render' in input) return input as ReturnType<typeof mappedTypeClause>;
   return mappedTypeClause({
     name: _resolveOneBranch<NonNullable<T.MappedTypeClauseConfig['name']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['name'] ?? (input as { readonly name?: _FromFieldInput }).name), "_type_identifier"),
     type: _resolveOne<NonNullable<T.MappedTypeClauseConfig['type']>>((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['type'], _K1, _super_type),
@@ -1977,8 +1977,8 @@ export function literalTypeFrom(input?: NonNullable<T.LiteralTypeConfig['childre
   return literalType(input as NonNullable<T.LiteralTypeConfig['children']>[number]);
 }
 
-export function flowMaybeTypeFrom(input: T.FlowMaybeType | T.LooseFlowMaybeType) {
-  if ('render' in input) return input;
+export function flowMaybeTypeFrom(input: T.FlowMaybeType | T.LooseFlowMaybeType): ReturnType<typeof flowMaybeType> {
+  if ('render' in input) return input as ReturnType<typeof flowMaybeType>;
   return flowMaybeType({
     primaryType: _resolveOne<NonNullable<T.FlowMaybeTypeConfig['primaryType']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['primary_type'] ?? (input as { readonly primaryType?: _FromFieldInput }).primaryType), _K32, _K33),
   });
@@ -2005,8 +2005,8 @@ export function typeArgumentsFrom(...input: readonly (NonNullable<T.TypeArgument
   return typeArguments(...(input as NonNullable<T.TypeArgumentsConfig['children']>));
 }
 
-export function objectTypeFrom(input: T.ObjectType | T.LooseObjectType) {
-  if ('render' in input) return input;
+export function objectTypeFrom(input: T.ObjectType | T.LooseObjectType): ReturnType<typeof objectType> {
+  if ('render' in input) return input as ReturnType<typeof objectType>;
   return objectType({
     opening: _resolveOne<NonNullable<T.ObjectTypeConfig['opening']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['opening'] ?? (input as { readonly opening?: _FromFieldInput }).opening), _K1, _K1),
     members: _resolveOne<NonNullable<T.ObjectTypeConfig['members']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['members'] ?? (input as { readonly members?: _FromFieldInput }).members), _super_semicolon, _K34),
@@ -2022,8 +2022,8 @@ export function callSignatureFrom(input?: NonNullable<T.CallSignatureConfig['chi
   return callSignature(input as NonNullable<T.CallSignatureConfig['children']>[number]);
 }
 
-export function propertySignatureFrom(input: T.PropertySignature | T.LoosePropertySignature) {
-  if ('render' in input) return input;
+export function propertySignatureFrom(input: T.PropertySignature | T.LoosePropertySignature): ReturnType<typeof propertySignature> {
+  if ('render' in input) return input as ReturnType<typeof propertySignature>;
   return propertySignature({
     accessibilityModifier: _resolveOneLeaf<NonNullable<T.PropertySignatureConfig['accessibilityModifier']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['accessibility_modifier'] ?? (input as { readonly accessibilityModifier?: _FromFieldInput }).accessibilityModifier), "accessibility_modifier"),
     overrideModifier: _resolveOne<NonNullable<T.PropertySignatureConfig['overrideModifier']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['override_modifier'] ?? (input as { readonly overrideModifier?: _FromFieldInput }).overrideModifier), _K1, _K1),
@@ -2042,8 +2042,8 @@ export function typeParametersFrom(...input: readonly (NonNullable<T.TypeParamet
   return typeParameters(...(input as NonNullable<T.TypeParametersConfig['children']>));
 }
 
-export function typeParameterFrom(input: T.TypeParameter | T.LooseTypeParameter) {
-  if ('render' in input) return input;
+export function typeParameterFrom(input: T.TypeParameter | T.LooseTypeParameter): ReturnType<typeof typeParameter> {
+  if ('render' in input) return input as ReturnType<typeof typeParameter>;
   return typeParameter({
     const: _resolveOne<NonNullable<T.TypeParameterConfig['const']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['const'] ?? (input as { readonly const?: _FromFieldInput }).const), _K1, _K1),
     name: _resolveOneBranch<NonNullable<T.TypeParameterConfig['name']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['name'] ?? (input as { readonly name?: _FromFieldInput }).name), "_type_identifier"),
@@ -2068,8 +2068,8 @@ export function constraintFrom(input?: NonNullable<T.ConstraintConfig['children'
   return constraint(input as NonNullable<T.ConstraintConfig['children']>[number]);
 }
 
-export function constructSignatureFrom(input: T.ConstructSignature | T.LooseConstructSignature) {
-  if ('render' in input) return input;
+export function constructSignatureFrom(input: T.ConstructSignature | T.LooseConstructSignature): ReturnType<typeof constructSignature> {
+  if ('render' in input) return input as ReturnType<typeof constructSignature>;
   return constructSignature({
     abstract: _resolveOne<NonNullable<T.ConstructSignatureConfig['abstract']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['abstract'] ?? (input as { readonly abstract?: _FromFieldInput }).abstract), _K1, _K1),
     typeParameters: _resolveOneBranch<NonNullable<T.ConstructSignatureConfig['typeParameters']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['type_parameters'] ?? (input as { readonly typeParameters?: _FromFieldInput }).typeParameters), "type_parameters"),
@@ -2099,8 +2099,8 @@ export function indexSignatureMappedTypeClauseFrom(input: T.IndexSignatureMapped
   });
 }
 
-export function arrayTypeFrom(input: T.ArrayType | T.LooseArrayType) {
-  if ('render' in input) return input;
+export function arrayTypeFrom(input: T.ArrayType | T.LooseArrayType): ReturnType<typeof arrayType> {
+  if ('render' in input) return input as ReturnType<typeof arrayType>;
   return arrayType({
     primaryType: _resolveOne<NonNullable<T.ArrayTypeConfig['primaryType']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['primary_type'] ?? (input as { readonly primaryType?: _FromFieldInput }).primaryType), _K32, _K33),
   });
@@ -2122,24 +2122,24 @@ export function readonlyTypeFrom(input?: NonNullable<T.ReadonlyTypeConfig['child
   return readonlyType(input as NonNullable<T.ReadonlyTypeConfig['children']>[number]);
 }
 
-export function unionTypeFrom(input: T.UnionType | T.LooseUnionType) {
-  if ('render' in input) return input;
+export function unionTypeFrom(input: T.UnionType | T.LooseUnionType): ReturnType<typeof unionType> {
+  if ('render' in input) return input as ReturnType<typeof unionType>;
   return unionType({
     left: _resolveOne<NonNullable<T.UnionTypeConfig['left']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['left'] ?? (input as { readonly left?: _FromFieldInput }).left), _K1, _super_type),
     right: _resolveOne<NonNullable<T.UnionTypeConfig['right']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['right'] ?? (input as { readonly right?: _FromFieldInput }).right), _K1, _super_type),
   });
 }
 
-export function intersectionTypeFrom(input: T.IntersectionType | T.LooseIntersectionType) {
-  if ('render' in input) return input;
+export function intersectionTypeFrom(input: T.IntersectionType | T.LooseIntersectionType): ReturnType<typeof intersectionType> {
+  if ('render' in input) return input as ReturnType<typeof intersectionType>;
   return intersectionType({
     left: _resolveOne<NonNullable<T.IntersectionTypeConfig['left']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['left'] ?? (input as { readonly left?: _FromFieldInput }).left), _K1, _super_type),
     right: _resolveOne<NonNullable<T.IntersectionTypeConfig['right']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['right'] ?? (input as { readonly right?: _FromFieldInput }).right), _K1, _super_type),
   });
 }
 
-export function functionTypeFrom(input: T.FunctionType | T.LooseFunctionType) {
-  if ('render' in input) return input;
+export function functionTypeFrom(input: T.FunctionType | T.LooseFunctionType): ReturnType<typeof functionType> {
+  if ('render' in input) return input as ReturnType<typeof functionType>;
   return functionType({
     typeParameters: _resolveOneBranch<NonNullable<T.FunctionTypeConfig['typeParameters']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['type_parameters'] ?? (input as { readonly typeParameters?: _FromFieldInput }).typeParameters), "type_parameters"),
     parameters: _resolveOneBranch<NonNullable<T.FunctionTypeConfig['parameters']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['parameters'] ?? (input as { readonly parameters?: _FromFieldInput }).parameters), "formal_parameters"),
@@ -2193,8 +2193,8 @@ export function stringFragmentFrom(input: string | T.StringFragment) {
   return stringFragment(input as string);
 }
 
-export function interfaceBodyFrom(input: T.InterfaceBody | T.LooseInterfaceBody) {
-  if ('render' in input) return input;
+export function interfaceBodyFrom(input: T.InterfaceBody | T.LooseInterfaceBody): ReturnType<typeof interfaceBody> {
+  if ('render' in input) return input as ReturnType<typeof interfaceBody>;
   return interfaceBody({
     opening: _resolveOne<NonNullable<T.InterfaceBodyConfig['opening']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['opening'] ?? (input as { readonly opening?: _FromFieldInput }).opening), _K1, _K1),
     members: _resolveOne<NonNullable<T.InterfaceBodyConfig['members']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['members'] ?? (input as { readonly members?: _FromFieldInput }).members), _super_semicolon, _K34),

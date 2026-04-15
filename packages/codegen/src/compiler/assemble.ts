@@ -152,7 +152,7 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
                 // their branches via the post-Link rule tree. Unresolved
                 // hidden symbols drop through as-is.
                 subtypes = resolveHiddenSubtypes(
-                    subtypes, optimized.rules, optimized.aliasedHiddenKinds,
+                    subtypes, optimized.rules, optimized.aliasedHiddenKinds ?? new Map(),
                 )
                 nodes.set(kind, new AssembledSupertype({ kind, typeName, subtypes }))
                 break

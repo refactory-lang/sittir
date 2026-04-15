@@ -404,9 +404,10 @@ export interface LinkedGrammar {
      * rename — the name tree-sitter actually emits at parse time —
      * would be lost. This map records those collapses so Assemble
      * can rewrite supertype subtype lists from `_type_identifier` to
-     * `type_identifier`.
+     * `type_identifier`. Optional so unit tests that construct a
+     * LinkedGrammar directly don't have to fill in an empty map.
      */
-    readonly aliasedHiddenKinds: Map<string, string>
+    readonly aliasedHiddenKinds?: Map<string, string>
 }
 
 /**
@@ -427,7 +428,7 @@ export interface IncludeFilter {
 export interface OptimizedGrammar {
     readonly name: string
     readonly rules: Record<string, Rule>
-    readonly aliasedHiddenKinds: Map<string, string>
+    readonly aliasedHiddenKinds?: Map<string, string>
     /**
      * Derivation-only view of every rule in `rules`, produced by
      * `simplifyRule` as the final pass in `optimize()`. Downstream

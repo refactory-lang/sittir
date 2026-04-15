@@ -267,7 +267,11 @@ function emitBranchFrom(node: BranchLikeNode, nodeMap: NodeMap, intern: KindInte
     // only nested branch-slot values do via WidenValue — so we add
     // the union explicitly at the public signature.
     const inputType = `T.${node.typeName} | T.${node.fromInputTypeName}`
-    lines.push(`export function ${fn}(input${opt}: ${inputType}) {`)
+    // Explicit return type — tsgo's TS7056 "inferred type too large
+    // to serialize" fires on big fluent factory return shapes when
+    // the arrow isn't annotated. `ReturnType<typeof factory>` keeps
+    // the full method surface while collapsing the declaration.
+    lines.push(`export function ${fn}(input${opt}: ${inputType}): ReturnType<typeof ${factory}> {`)
     if (fields.length > 0) {
         // Fluent-node passthrough: catches factory outputs (which carry
         // `render()`/`toEdit()`/`replace()` methods) and short-circuits
@@ -278,7 +282,11 @@ function emitBranchFrom(node: BranchLikeNode, nodeMap: NodeMap, intern: KindInte
         // falls through so validators / parser-driven callers can
         // rebuild it through the factory.
         const passGuard = inputOptional ? 'input !== undefined && ' : ''
-        lines.push(`  if (${passGuard}'render' in input) return input;`)
+        // Passthrough cast: the fluent factory output (`ReturnType<typeof
+        // factory>`) is structurally identical to the `T.Foo` interface
+        // arm plus `render`, but TS can't collapse the two. Cast to the
+        // declared return type so the explicit annotation above compiles.
+        lines.push(`  if (${passGuard}'render' in input) return input as ReturnType<typeof ${factory}>;`)
         const neName = (f: AssembledField) => `_ne_${f.propertyName}`
         for (const f of fields) {
             if (f.nonEmpty && f.multiple) {
