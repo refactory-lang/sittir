@@ -11,7 +11,7 @@
 import base from '../../node_modules/.pnpm/tree-sitter-rust@0.24.0/node_modules/tree-sitter-rust/grammar.js'
 import { transform, role, insert, replace, enrich } from '../codegen/src/dsl/index.ts'
 
-export default grammar(base, {
+export default grammar(enrich(base), {
     name: 'rust',
     rules: {
         // abstract_type: 1 field(s)

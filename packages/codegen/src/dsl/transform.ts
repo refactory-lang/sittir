@@ -59,7 +59,14 @@ export function transform(original: Rule, patches: Record<number | string, Rule>
 
 function resolvePatch(patch: Rule, originalMember: Rule): Rule {
     if (patch.type === 'field' && (patch as FieldRule & { _needsContent?: boolean })._needsContent) {
-        return { type: 'field', name: patch.name, content: originalMember, source: 'override' as const }
+        // Unwrap any enrich-inferred field wrapper on the original
+        // member — otherwise we'd produce `field('override-name',
+        // field('inferred-name', inner))` which Link treats as nested
+        // and loses the original symbol binding.
+        const content = originalMember.type === 'field' && (originalMember as FieldRule).source === 'inferred'
+            ? (originalMember as FieldRule).content
+            : originalMember
+        return { type: 'field', name: patch.name, content, source: 'override' as const }
     }
     if (patch.type === 'field') {
         return { ...patch, source: 'override' as const }

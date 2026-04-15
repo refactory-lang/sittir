@@ -11,7 +11,7 @@
 import base from '../../node_modules/.pnpm/tree-sitter-python@0.25.0/node_modules/tree-sitter-python/grammar.js'
 import { transform, role, enrich } from '../codegen/src/dsl/index.ts'
 
-export default grammar(base, {
+export default grammar(enrich(base), {
     name: 'python',
     rules: {
         // Structural-whitespace roles — the three tree-sitter-python

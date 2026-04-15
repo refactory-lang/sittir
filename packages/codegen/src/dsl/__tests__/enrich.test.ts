@@ -16,9 +16,14 @@ describe('enrich()', () => {
     describe('purity & non-mutation', () => {
         it('does not mutate the input grammar', () => {
             const input = mkGrammar({
-                foo: {
+                call: {
                     type: 'seq',
-                    members: [{ type: 'string', value: 'hello' }],
+                    members: [
+                        { type: 'symbol', name: 'function' },
+                        { type: 'string', value: '(' },
+                        { type: 'symbol', name: 'arguments' },
+                        { type: 'string', value: ')' },
+                    ],
                 },
             })
             const snapshot = JSON.stringify(input)
@@ -28,11 +33,13 @@ describe('enrich()', () => {
 
         it('is idempotent — enrich(enrich(g)) ≡ enrich(g)', () => {
             const input = mkGrammar({
-                async_fn: {
+                call: {
                     type: 'seq',
                     members: [
-                        { type: 'string', value: 'async' },
-                        { type: 'symbol', name: 'fn_body' },
+                        { type: 'symbol', name: 'function' },
+                        { type: 'string', value: '(' },
+                        { type: 'symbol', name: 'arguments' },
+                        { type: 'string', value: ')' },
                     ],
                 },
             })
@@ -42,93 +49,119 @@ describe('enrich()', () => {
         })
     })
 
-    describe('keyword-prefix field promotion', () => {
-        it('promotes a leading string literal to a named field', () => {
+    describe('kind-to-name field wrapping', () => {
+        it('wraps unambiguous symbol references as named fields', () => {
             const input = mkGrammar({
-                async_fn: {
+                call: {
                     type: 'seq',
                     members: [
-                        { type: 'string', value: 'async' },
-                        { type: 'symbol', name: 'fn_body' },
+                        { type: 'symbol', name: 'function' },
+                        { type: 'string', value: '(' },
+                        { type: 'symbol', name: 'arguments' },
+                        { type: 'string', value: ')' },
                     ],
                 },
             })
             const out = enrich(input)
-            const rule = out.grammar.rules.async_fn as { type: 'seq', members: Rule[] }
+            const rule = out.grammar.rules.call as { type: 'seq', members: Rule[] }
             expect(rule.members[0]).toMatchObject({
                 type: 'field',
-                name: 'async',
-                content: { type: 'string', value: 'async' },
+                name: 'function',
+                content: { type: 'symbol', name: 'function' },
                 source: 'inferred',
             })
+            expect(rule.members[2]).toMatchObject({
+                type: 'field',
+                name: 'arguments',
+                content: { type: 'symbol', name: 'arguments' },
+                source: 'inferred',
+            })
+            // String delimiters untouched
+            expect(rule.members[1]).toMatchObject({ type: 'string', value: '(' })
+            expect(rule.members[3]).toMatchObject({ type: 'string', value: ')' })
         })
 
-        it('skips promotion when a field with the same name already exists', () => {
+        it('skips when a field with the same name already exists', () => {
             const stderrSpy = vi.spyOn(process.stderr, 'write').mockImplementation(() => true)
             const input = mkGrammar({
-                async_fn: {
+                foo: {
                     type: 'seq',
                     members: [
-                        { type: 'string', value: 'async' },
                         {
                             type: 'field',
-                            name: 'async',
-                            content: { type: 'symbol', name: 'fn_body' },
+                            name: 'expression',
+                            content: { type: 'string', value: '(' },
                         },
+                        { type: 'symbol', name: 'expression' },
                     ],
                 },
             })
             const out = enrich(input)
-            const rule = out.grammar.rules.async_fn as { type: 'seq', members: Rule[] }
-            // Original string still in place — not promoted
-            expect(rule.members[0]).toMatchObject({ type: 'string', value: 'async' })
-            // Skip reported to stderr
-            const calls = stderrSpy.mock.calls.map(c => c[0])
-            expect(calls.some(c => String(c).includes("skipped keyword-prefix on async_fn"))).toBe(true)
+            const rule = out.grammar.rules.foo as { type: 'seq', members: Rule[] }
+            // Second member (bare symbol) stays bare — already-taken name
+            expect(rule.members[1]).toMatchObject({ type: 'symbol', name: 'expression' })
+            const calls = stderrSpy.mock.calls.map(c => String(c[0]))
+            expect(calls.some(c => c.includes("skipped kind-to-name on foo"))).toBe(true)
         })
 
-        it('does not promote non-identifier-shaped literals', () => {
+        it('skips ambiguous references — same kind appears multiple times', () => {
             const input = mkGrammar({
-                assignment: {
+                binary_expr: {
                     type: 'seq',
                     members: [
-                        { type: 'symbol', name: 'lhs' },
+                        { type: 'symbol', name: 'expression' },
+                        { type: 'string', value: '+' },
+                        { type: 'symbol', name: 'expression' },
+                    ],
+                },
+            })
+            const out = enrich(input)
+            const rule = out.grammar.rules.binary_expr as { type: 'seq', members: Rule[] }
+            // Both stays bare — ambiguous which is THE expression
+            expect(rule.members[0]).toMatchObject({ type: 'symbol', name: 'expression' })
+            expect(rule.members[2]).toMatchObject({ type: 'symbol', name: 'expression' })
+        })
+
+        it('skips hidden-kind references (leading underscore)', () => {
+            const input = mkGrammar({
+                foo: {
+                    type: 'seq',
+                    members: [
+                        { type: 'symbol', name: '_statement' },
+                        { type: 'string', value: ';' },
+                    ],
+                },
+            })
+            const out = enrich(input)
+            const rule = out.grammar.rules.foo as { type: 'seq', members: Rule[] }
+            // Hidden kind stays bare — sittir Link handles alias resolution
+            expect(rule.members[0]).toMatchObject({ type: 'symbol', name: '_statement' })
+        })
+
+        it('leaves existing field wrappers in place', () => {
+            const input = mkGrammar({
+                assign: {
+                    type: 'seq',
+                    members: [
+                        {
+                            type: 'field',
+                            name: 'left',
+                            content: { type: 'symbol', name: 'expression' },
+                        },
                         { type: 'string', value: '=' },
                         { type: 'symbol', name: 'rhs' },
                     ],
                 },
             })
             const out = enrich(input)
-            const rule = out.grammar.rules.assignment as { type: 'seq', members: Rule[] }
-            // '=' is punctuation, not identifier-shaped — untouched
-            expect(rule.members[1]).toMatchObject({ type: 'string', value: '=' })
-        })
-    })
-
-    describe('optional keyword-prefix field promotion (replaces Link.promoteOptionalKeywordFields)', () => {
-        it('promotes optional(stringLiteral) to optional(field(...))', () => {
-            const input = mkGrammar({
-                decl: {
-                    type: 'seq',
-                    members: [
-                        {
-                            type: 'optional',
-                            content: { type: 'string', value: 'pub' },
-                        },
-                        { type: 'symbol', name: 'name' },
-                    ],
-                },
-            })
-            const out = enrich(input)
-            const rule = out.grammar.rules.decl as { type: 'seq', members: Rule[] }
-            expect(rule.members[0]).toMatchObject({
-                type: 'optional',
-                content: {
-                    type: 'field',
-                    name: 'pub',
-                    content: { type: 'string', value: 'pub' },
-                    source: 'inferred',
-                },
+            const rule = out.grammar.rules.assign as { type: 'seq', members: Rule[] }
+            // Existing field preserved
+            expect(rule.members[0]).toMatchObject({ type: 'field', name: 'left' })
+            // rhs promoted
+            expect(rule.members[2]).toMatchObject({
+                type: 'field',
+                name: 'rhs',
+                source: 'inferred',
             })
         })
     })
