@@ -53,8 +53,8 @@
 - [ ] T017 [P] [US2] Unit test for each pass in `packages/codegen/src/dsl/__tests__/enrich-passes.test.ts` — positive case (transformation applies) and skip case (collision detected + skip reported)
 - [ ] T018 [US2] Export `enrich` from `packages/codegen/src/dsl/index.ts`
 - [ ] T019 [US2] Wire `enrich()` into the pre-evaluate phase in `packages/codegen/src/compiler/generate.ts` — if the override file wraps base in `enrich(...)`, the function has already run; pre-evaluate just passes the result through. (enrich is author-invoked, not pipeline-invoked.)
-- [ ] T020 [US2] Identify ported passes from `packages/codegen/src/compiler/link.ts` — enumerate `promoteOptionalKeywordFields` and any other mechanical passes per research.md R-001. Record the list in a commit message comment for traceability
-- [ ] T021 [US2] Remove the enumerated passes from `packages/codegen/src/compiler/link.ts`. Link continues to run its heuristic passes (frequency-based suggestions, `aliasedHiddenKinds` construction)
+- [ ] T020 [US2] Add an `optional(keywordString)` detection variant to the keyword-prefix promotion pass (T012) so it handles the `optional(...)` wrapper case. This subsumes Link's `promoteOptionalKeywordFields` at `packages/codegen/src/compiler/link.ts:1328`. Verify with a unit test fixture exercising `optional(literal)` at the top level of a `seq`
+- [ ] T021 [US2] Remove `promoteOptionalKeywordFields` from `packages/codegen/src/compiler/link.ts` and update the Link phase's main loop at `link.ts:27–221` to drop the pass invocation. Do NOT remove any other Link passes — they operate on sittir's post-Evaluate model and are out of scope per FR-020b
 - [ ] T022 [US2] Update `packages/python/overrides.ts` to wrap its base import in `enrich()` — replace hand-written overrides that duplicate what enrich now covers. Preserve the `@ts-nocheck` header
 - [ ] T023 [US2] Run `pnpm test` and confirm python's fidelity ceilings (40/30) hold. Roll back T021 if Link's heuristic passes were accidentally removed
 - [ ] T024 [US2] Update `packages/rust/overrides.ts` to wrap base in `enrich()` — apply the same cleanup as T022

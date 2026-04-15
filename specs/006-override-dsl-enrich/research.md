@@ -7,25 +7,30 @@ This document resolves the `NEEDS CLARIFICATION` items identified in `plan.md` P
 
 ---
 
-## R-001 — Link-phase passes to port into enrich
+## R-001 — enrich() passes and relationship to Link
 
-**Decision**: Port exactly these passes from `packages/codegen/src/compiler/link.ts` to `packages/codegen/src/compiler/enrich.ts`:
+**Revised after recon of `link.ts`**. Initial assumption (that all three enrich passes corresponded to existing Link passes) was wrong. Link operates on sittir's post-Evaluate internal grammar model; enrich operates on tree-sitter grammar shapes (pre-Evaluate). They are different abstraction levels.
 
-1. **`promoteOptionalKeywordFields`** — wraps `optional(keywordString)` as `optional(field(kw, kw, source: 'inferred'))`. Added during session fixing python async handling.
-2. **Keyword-prefix promotion** — when a rule begins with a literal keyword, expose as a field using the keyword text.
-3. **Unambiguous kind-to-name field wrapping** — wrap a sole child of a given kind as a named field when no naming collision exists.
-4. **`seq(X, repeat(X))` → `repeat1(X)` normalization** — semantic-preserving shape cleanup.
+**Decision**: `enrich(base)` implements three mechanical passes on tree-sitter grammar rule shapes. One of them subsumes an existing Link pass; two are new work with no Link equivalent.
 
-**Rationale**: Each of these is deterministic, local, and collision-aware. They satisfy the mechanical-only rule (ADR-0002). All four currently run inside Link where maintainers cannot see them by reading `overrides.ts`.
+1. **Keyword-prefix field promotion** — NEW. When a rule begins with a literal string token (e.g., `seq('async', ...)`), wraps the literal as `field(kw, kw)`. No pre-existing Link implementation.
+2. **Unambiguous kind-to-name field wrapping** — NEW. When a rule references a single kind (e.g., `seq('(', $.expression, ')')`) with no field-name collision, wraps `$.expression` as `field('expression', $.expression)`. Similar intent to Link's `inferFieldNames`, but `inferFieldNames` is **heuristic** (5-reference + 80% agreement threshold) — it does not belong in mechanical enrich. Our pre-Evaluate pass is strictly local and collision-aware.
+3. **`seq(X, repeat(X))` → `repeat1(X)` normalization** — NEW. No pre-existing Link implementation.
 
-**Explicitly staying in Link (heuristic, not ported)**:
-- Frequency-based field-name suggestions (drives `suggested-overrides.ts` output)
-- Threshold-based hidden-kind promotion (`aliasedHiddenKinds` map construction)
-- Any pass that consults usage counts across multiple rules
+**Link migration (FR-020a)**: `promoteOptionalKeywordFields` at `packages/codegen/src/compiler/link.ts:1328` is the one Link pass with a mechanical pattern detectable at the tree-sitter grammar level. It wraps `optional(keywordString)` as `optional(field(kw, keywordString, source: 'inferred'))`, skipping on name collision. We will:
+- Re-implement the same detection at the tree-sitter grammar level inside `enrich()` (effectively a variant of pass #1 that handles the `optional(...)` wrapper case).
+- Remove the pass from Link once the fidelity ceilings confirm no regression.
+
+**Explicitly staying in Link (FR-020b)**:
+- `resolveRule`, `classifyHiddenRule`, `tagVariants`, `wrapVariants`, `deduplicateVariants`, `nameVariant`, `hoistIndentIntoRepeat`, `annotateBlockBearerFields`, `detectClause` — post-Evaluate transformations operating on sittir's internal grammar model. Cannot run at the tree-sitter grammar level.
+- `inferFieldNames` — heuristic (thresholds), violates mechanical-only principle.
+- `promotePolymorph` — heuristic (field-set heterogeneity check).
+- `collectRepeatedShapes` — suggestion-only, drives `suggested-overrides.ts`.
 
 **Alternatives considered**:
-- **Port everything from Link**: violates mechanical-only principle (ADR-0002).
-- **Port only pass #1**: underdelivers on FR-020 — the other three are equally mechanical and equally invisible.
+- **Port more Link passes into enrich**: impossible — they operate on different abstraction levels. Would require re-running Evaluate or duplicating its logic inside enrich.
+- **Skip Link migration entirely and leave `promoteOptionalKeywordFields` in place**: acceptable fallback, but then enrich would fail to subsume a pattern that's clearly detectable at its level.
+- **Port `inferFieldNames` into enrich**: violates mechanical-only principle (ADR-0002) — it uses frequency thresholds.
 
 ---
 

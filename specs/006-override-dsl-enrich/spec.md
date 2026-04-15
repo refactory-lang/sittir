@@ -159,10 +159,12 @@ A maintainer wants guarantees that after all `transform` / `enrich` / effect cal
 - **FR-019b**: Override files MUST be able to replace the base grammar's `word` rule by declaring their own `word` value; sittir MUST treat this as scalar replacement — equivalent to `overrides.word ?? base.word` — because `word` is a single rule reference, not an array.
 - **FR-019c**: When an override file does not declare a value for `supertypes`, `externals`, `extras`, or `word`, sittir MUST leave the base grammar's value unchanged for that field.
 
-#### Migration from Link
+#### Pipeline placement and Link relationship
 
-- **FR-020**: Any mechanical auto-inference pass currently implemented inside sittir's Link phase MUST be moved into `enrich`, so the maintainer can see it reflected in the authored grammar rather than hidden in a compiler phase.
-- **FR-021**: After migration, the three currently-supported grammars (rust, typescript, python) MUST continue to pass their existing fidelity ceilings for round-trip and factory-round-trip validation.
+- **FR-020**: `enrich()` MUST operate at the tree-sitter grammar level (pre-Evaluate), not on sittir's internal post-Evaluate grammar model. Its three mechanical passes (FR-005/006/007) are new work, not direct ports of Link passes, because Link runs on a different abstraction level.
+- **FR-020a**: Where an existing Link-phase pass has a semantically equivalent pattern detectable at the tree-sitter grammar level, that pass SHOULD be re-implemented in `enrich()` and removed from Link, so the maintainer sees the transformation reflected in the authored grammar rather than hidden in a compiler phase. Specifically: `promoteOptionalKeywordFields` (Link's `optional(keywordString)` → `field(kw, keywordString)` promotion) is a candidate for this migration because the same pattern is detectable on the pre-Evaluate tree-sitter rule shape.
+- **FR-020b**: Most of Link's existing passes (`resolveRule`, `classifyHiddenRule`, `tagVariants`, `wrapVariants`, `hoistIndentIntoRepeat`, `detectClause`, etc.) are inherently post-Evaluate — they require sittir's parsed internal grammar model as input and cannot run on raw tree-sitter grammar shapes. They stay in Link and are explicitly out of scope for migration.
+- **FR-021**: After any Link migration performed under FR-020a, the three currently-supported grammars (rust, typescript, python) MUST continue to pass their existing fidelity ceilings for round-trip and factory-round-trip validation.
 
 #### Validation
 
