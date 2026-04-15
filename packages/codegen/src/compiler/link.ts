@@ -26,7 +26,12 @@ import { isHiddenKind } from './evaluate.ts'
 
 export function link(raw: RawGrammar, include?: IncludeFilter): LinkedGrammar {
     const supertypes = new Set(raw.supertypes)
-    const externalRoles = new Map<string, ExternalRole>()
+    // Seed from raw.externalRoles — populated by `evaluate.ts`'s
+    // grammarFn from `role()` calls inside the override file's
+    // externals/rules callbacks. Falls back to the legacy
+    // structural-detection path in `resolveRule` for grammars that
+    // still declare `_indent: ($) => role('indent')` style dummy rules.
+    const externalRoles = new Map<string, ExternalRole>(raw.externalRoles ?? [])
     const references = [...raw.references]
 
     // Resolve include defaults: undefined means "include everything".
@@ -771,14 +776,19 @@ function resolveRule(
             return resolveRule(rule.content, currentName, allRules, supertypes, externalRoles)
 
         case 'symbol': {
-            // Role-annotated rules: when a grammar (or its overrides)
-            // declares `_foo: ($) => role('indent')`, the rule body is
-            // a direct `indent`/`dedent`/`newline` node. Any reference
-            // to `$._foo` should inline that structural-whitespace
-            // directive so the template emitter renders real newlines/
-            // indents. This replaces the earlier name-match on
-            // `_indent` / `_dedent` / `_newline` — grammars can use any
-            // naming convention, the mapping flows through overrides.
+            // Pre-bound role lookup: when the override declared the
+            // role inline via `role($._indent, 'indent')` in externals,
+            // raw.externalRoles seeded the map with the binding before
+            // resolveRule ran. Inline a role node so template emitters
+            // render real newlines/indents.
+            const preBound = externalRoles.get(rule.name)
+            if (preBound) {
+                return { type: preBound.role } as Rule
+            }
+            // Legacy structural detection: when a grammar declares a
+            // dummy rule like `_foo: ($) => role('indent')`, the rule
+            // body is a direct `indent`/`dedent`/`newline` node.
+            // Inline it and record the binding for downstream consumers.
             const target = allRules[rule.name]
             if (target && (target.type === 'indent' || target.type === 'dedent' || target.type === 'newline')) {
                 externalRoles.set(rule.name, { role: target.type })

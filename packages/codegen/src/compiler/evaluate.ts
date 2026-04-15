@@ -10,8 +10,9 @@ import { readFileSync } from 'node:fs'
 import type {
     Rule, SeqRule, ChoiceRule, OptionalRule, RepeatRule, Repeat1Rule,
     FieldRule, TokenRule, StringRule, PatternRule, SymbolRule, AliasRule,
-    EnumRule, SymbolRef, RawGrammar,
+    EnumRule, SymbolRef, RawGrammar, ExternalRole,
 } from './rule.ts'
+import { withRoleScope } from '../dsl/role.ts'
 
 // ---------------------------------------------------------------------------
 // Input type — anything the DSL functions accept
@@ -688,18 +689,6 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
         ...Object.keys(baseRules),
     ])
 
-    // Evaluate each rule function
-    for (const [name, ruleFn] of Object.entries(opts.rules)) {
-        const $ = createProxy(name, refs)
-        const baseRule = baseRules[name]
-        // tree-sitter passes ($, original) — original is the base rule for extensions.
-        // `baseRule` is typed as `Rule` from our map but the DSL callback's
-        // `previous` is `unknown` (tree-sitter permits arbitrary pass-through
-        // shapes). The call-site treats it as opaque.
-        const result = ruleFn.call($, $, baseRule)
-        rules[name] = normalize(result)
-    }
-
     // Extract metadata
     const extras: string[] = []
     const externals: string[] = []
@@ -708,83 +697,31 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
     const conflicts: string[][] = []
     let word: string | null = null
 
-    // All callbacks follow tree-sitter's pattern: fn($, baseValue)
-    // where baseValue is the base grammar's version of that property
-
-    if (opts.extras) {
-        const $ = createProxy('_extras_', refs)
-        const baseExtras = baseGrammar?.extras ?? []
-        const result = opts.extras.call($, $, baseExtras)
-        if (Array.isArray(result)) {
-            for (const e of result) {
-                const n = normalize(e)
-                if (n.type === 'symbol') extras.push(n.name)
-                else if (n.type === 'pattern') extras.push(n.value)
-            }
+    // Run the entire option-callback evaluation inside a fresh role
+    // accumulator scope so any `role()` calls inside externals/rules
+    // get attached to THIS grammar invocation. Save/restore in
+    // withRoleScope guarantees nested grammar() calls (e.g. via
+    // grammar(enrich(base), {...})) stay isolated.
+    const { roles: collectedRoles } = withRoleScope(() => {
+        // Evaluate each rule function
+        for (const [name, ruleFn] of Object.entries(opts.rules)) {
+            const $ = createProxy(name, refs)
+            const baseRule = baseRules[name]
+            // tree-sitter passes ($, original) — original is the base rule for extensions.
+            // `baseRule` is typed as `Rule` from our map but the DSL callback's
+            // `previous` is `unknown` (tree-sitter permits arbitrary pass-through
+            // shapes). The call-site treats it as opaque.
+            const result = ruleFn.call($, $, baseRule)
+            rules[name] = normalize(result)
         }
-    }
 
-    if (opts.externals) {
-        const $ = createProxy('_externals_', refs)
-        // Pass the base externals (already resolved to strings) so the
-        // override callback's `previous.concat([...])` pattern preserves
-        // them. Wrap each as a string rule so `normalize` round-trips.
-        const baseExternals = baseGrammar?.externals ?? []
-        const result = opts.externals.call($, $, baseExternals)
-        if (Array.isArray(result)) {
-            for (const e of result) {
-                const n = normalize(e)
-                if (n.type === 'symbol') externals.push(n.name)
-                else if (n.type === 'string') externals.push(n.value)
-            }
-        }
-    }
-
-    if (opts.supertypes) {
-        const $ = createProxy('_supertypes_', refs)
-        const baseSupertypes = baseGrammar?.supertypes ?? []
-        const result = opts.supertypes.call($, $, baseSupertypes)
-        if (Array.isArray(result)) {
-            for (const s of result) {
-                const n = normalize(s)
-                if (n.type === 'symbol') supertypes.push(n.name)
-            }
-        }
-    }
-
-    if (opts.inline) {
-        const $ = createProxy('_inline_', refs)
-        const baseInline = baseGrammar?.inline ?? []
-        const result = opts.inline.call($, $, baseInline)
-        if (Array.isArray(result)) {
-            for (const i of result) {
-                const n = normalize(i)
-                if (n.type === 'symbol') inline.push(n.name)
-            }
-        }
-    }
-
-    if (opts.conflicts) {
-        const $ = createProxy('_conflicts_', refs)
-        const baseConflicts = baseGrammar?.conflicts ?? []
-        const result = opts.conflicts.call($, $, baseConflicts)
-        if (Array.isArray(result)) {
-            for (const c of result) {
-                if (Array.isArray(c)) {
-                    conflicts.push(c.map(r => {
-                        const n = normalize(r)
-                        return n.type === 'symbol' ? n.name : ''
-                    }).filter(Boolean))
-                }
-            }
-        }
-    }
-
-    if (opts.word) {
-        const $ = createProxy('_word_', refs)
-        const w = opts.word.call($, $)
-        word = w.name
-    }
+        // The rest of the callbacks (extras, externals, supertypes,
+        // inline, conflicts, word) stay inside this same role scope so
+        // any role() calls in them attach to THIS grammar's accumulator.
+        evaluateMetadataCallbacks(opts, baseGrammar, refs, {
+            extras, externals, supertypes, inline, conflicts,
+        }, (w) => { word = w })
+    })
 
     // Extension inheritance — when extending a base grammar, inherit
     // metadata lists the override didn't explicitly re-declare. Tree-sitter
@@ -819,7 +756,107 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
             word,
             references: refs,
             overrideRuleNames,
+            // Per-grammar role bindings collected from inline `role()`
+            // calls inside externals/rules. Empty when the grammar
+            // declares no roles.
+            externalRoles: collectedRoles.size > 0 ? collectedRoles : undefined,
         } satisfies RawGrammar,
+    }
+}
+
+/**
+ * Run all the metadata callbacks (extras, externals, supertypes,
+ * inline, conflicts, word) and write their results into the supplied
+ * accumulators. Pulled out of grammarFn so the call site can wrap it
+ * in `withRoleScope` cleanly.
+ *
+ * tree-sitter's pattern: each callback receives `($, baseValue)`
+ * where `$` is a fresh proxy and `baseValue` is the base grammar's
+ * version of that property.
+ */
+function evaluateMetadataCallbacks(
+    opts: GrammarOptions,
+    baseGrammar: any,
+    refs: SymbolRef[],
+    sinks: {
+        extras: string[]
+        externals: string[]
+        supertypes: string[]
+        inline: string[]
+        conflicts: string[][]
+    },
+    setWord: (w: string) => void,
+): void {
+    if (opts.extras) {
+        const $ = createProxy('_extras_', refs)
+        const baseExtras = baseGrammar?.extras ?? []
+        const result = opts.extras.call($, $, baseExtras)
+        if (Array.isArray(result)) {
+            for (const e of result) {
+                const n = normalize(e)
+                if (n.type === 'symbol') sinks.extras.push(n.name)
+                else if (n.type === 'pattern') sinks.extras.push(n.value)
+            }
+        }
+    }
+
+    if (opts.externals) {
+        const $ = createProxy('_externals_', refs)
+        const baseExternals = baseGrammar?.externals ?? []
+        const result = opts.externals.call($, $, baseExternals)
+        if (Array.isArray(result)) {
+            for (const e of result) {
+                const n = normalize(e)
+                if (n.type === 'symbol') sinks.externals.push(n.name)
+                else if (n.type === 'string') sinks.externals.push(n.value)
+            }
+        }
+    }
+
+    if (opts.supertypes) {
+        const $ = createProxy('_supertypes_', refs)
+        const baseSupertypes = baseGrammar?.supertypes ?? []
+        const result = opts.supertypes.call($, $, baseSupertypes)
+        if (Array.isArray(result)) {
+            for (const s of result) {
+                const n = normalize(s)
+                if (n.type === 'symbol') sinks.supertypes.push(n.name)
+            }
+        }
+    }
+
+    if (opts.inline) {
+        const $ = createProxy('_inline_', refs)
+        const baseInline = baseGrammar?.inline ?? []
+        const result = opts.inline.call($, $, baseInline)
+        if (Array.isArray(result)) {
+            for (const i of result) {
+                const n = normalize(i)
+                if (n.type === 'symbol') sinks.inline.push(n.name)
+            }
+        }
+    }
+
+    if (opts.conflicts) {
+        const $ = createProxy('_conflicts_', refs)
+        const baseConflicts = baseGrammar?.conflicts ?? []
+        const result = opts.conflicts.call($, $, baseConflicts)
+        if (Array.isArray(result)) {
+            for (const c of result) {
+                if (Array.isArray(c)) {
+                    sinks.conflicts.push(c.map(r => {
+                        const n = normalize(r)
+                        return n.type === 'symbol' ? n.name : ''
+                    }).filter(Boolean))
+                }
+            }
+        }
+    }
+
+    if (opts.word) {
+        const $ = createProxy('_word_', refs)
+        const w = opts.word.call($, $)
+        setWord(w.name)
     }
 }
 
