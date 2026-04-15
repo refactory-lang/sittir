@@ -5,20 +5,20 @@
 
 import type { NodeMap } from '../compiler/rule.ts'
 
-export interface EmitTypeTestsFromNodeMapConfig {
+export interface EmitTypeTestsConfig {
     nodeMap: NodeMap
 }
 
-export function emitTypeTestsFromNodeMap(config: EmitTypeTestsFromNodeMapConfig): string {
+export function emitTypeTests(config: EmitTypeTestsConfig): string {
     const { nodeMap } = config
 
     const structuralKinds: { kind: string; typeName: string; hasVariants: boolean }[] = []
     const leafKinds: { kind: string; typeName: string }[] = []
 
-    // Mirror the T073 liveness check from types-v2: a terminal is
+    // Mirror the T073 liveness check from types: a terminal is
     // only emitted when it has a factory OR is referenced by another
     // structural node. Anything type-test would reference but
-    // types-v2 skipped becomes a dangling import, so filter here too.
+    // types skipped becomes a dangling import, so filter here too.
     const referenced = new Set<string>()
     for (const [, n] of nodeMap.nodes) {
         if (n.modelType === 'branch' || n.modelType === 'group') {

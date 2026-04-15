@@ -29,43 +29,43 @@ export const suggestedRules = {
 
   // --- Promoted supertypes (add matching names to grammar.supertypes) ---
   // [applied] promoted supertype
-  "_statement": $ => choice($.expression_statement, $._declaration_statement),
+  "_statement": $ => choice($.expression_statement, $.const_item, $.macro_invocation, $.macro_definition, $.empty_statement, $.attribute_item, $.inner_attribute_item, $.mod_item, $.foreign_mod_item, $.struct_item, $.union_item, $.enum_item, $.type_item, $.function_item, $.function_signature_item, $.impl_item, $.trait_item, $.associated_type, $.let_declaration, $.use_declaration, $.extern_crate_declaration, $.static_item),
 
   // [applied] promoted supertype
   "_declaration_statement": $ => choice($.const_item, $.macro_invocation, $.macro_definition, $.empty_statement, $.attribute_item, $.inner_attribute_item, $.mod_item, $.foreign_mod_item, $.struct_item, $.union_item, $.enum_item, $.type_item, $.function_item, $.function_signature_item, $.impl_item, $.trait_item, $.associated_type, $.let_declaration, $.use_declaration, $.extern_crate_declaration, $.static_item),
 
   // [applied] promoted supertype
-  "_token_pattern": $ => choice($.token_tree_pattern, $.token_repetition_pattern, $.token_binding_pattern, $.metavariable, $._non_special_token),
+  "_token_pattern": $ => choice($.token_tree_pattern, $.token_repetition_pattern, $.token_binding_pattern, $.metavariable, $.string_literal, $.raw_string_literal, $.char_literal, $.boolean_literal, $.integer_literal, $.float_literal, $.identifier, $.mutable_specifier, $.self, $.super, $.crate),
 
   // [applied] promoted supertype
-  "_tokens": $ => choice($.token_tree, $.token_repetition, $.metavariable, $._non_special_token),
+  "_tokens": $ => choice($.token_tree, $.token_repetition, $.metavariable, $.string_literal, $.raw_string_literal, $.char_literal, $.boolean_literal, $.integer_literal, $.float_literal, $.identifier, $.mutable_specifier, $.self, $.super, $.crate),
 
   // [applied] promoted supertype
-  "_use_clause": $ => choice($._path, $.use_as_clause, $.use_list, $.scoped_use_list, $.use_wildcard),
+  "_use_clause": $ => choice($.self, $.metavariable, $.super, $.crate, $.identifier, $.scoped_identifier, $.use_as_clause, $.use_list, $.scoped_use_list, $.use_wildcard),
 
   // [applied] promoted supertype
-  "_type": $ => choice($.abstract_type, $.reference_type, $.metavariable, $.pointer_type, $.generic_type, $.scoped_type_identifier, $.tuple_type, $.unit_type, $.array_type, $.function_type, $._type_identifier, $.macro_invocation, $.never_type, $.dynamic_type, $.bounded_type, $.removed_trait_bound),
+  "_type": $ => choice($.abstract_type, $.reference_type, $.metavariable, $.pointer_type, $.generic_type, $.scoped_type_identifier, $.tuple_type, $.unit_type, $.array_type, $.function_type, $.type_identifier, $.macro_invocation, $.never_type, $.dynamic_type, $.bounded_type, $.removed_trait_bound),
 
   // [applied] promoted supertype
-  "_expression_except_range": $ => choice($.unary_expression, $.reference_expression, $.try_expression, $.binary_expression, $.assignment_expression, $.compound_assignment_expr, $.type_cast_expression, $.call_expression, $.return_expression, $.yield_expression, $._literal, $.identifier, $._reserved_identifier, $.self, $.scoped_identifier, $.generic_function, $.await_expression, $.field_expression, $.array_expression, $.tuple_expression, $.macro_invocation, $.unit_expression, $.break_expression, $.continue_expression, $.index_expression, $.metavariable, $.closure_expression, $.parenthesized_expression, $.struct_expression, $._expression_ending_with_block),
+  "_expression_except_range": $ => choice($.unary_expression, $.reference_expression, $.try_expression, $.binary_expression, $.assignment_expression, $.compound_assignment_expr, $.type_cast_expression, $.call_expression, $.return_expression, $.yield_expression, $.string_literal, $.raw_string_literal, $.char_literal, $.boolean_literal, $.integer_literal, $.float_literal, $.identifier, $.self, $.scoped_identifier, $.generic_function, $.await_expression, $.field_expression, $.array_expression, $.tuple_expression, $.macro_invocation, $.unit_expression, $.break_expression, $.continue_expression, $.index_expression, $.metavariable, $.closure_expression, $.parenthesized_expression, $.struct_expression, $.unsafe_block, $.async_block, $.gen_block, $.try_block, $.block, $.if_expression, $.match_expression, $.while_expression, $.loop_expression, $.for_expression, $.const_block),
 
   // [applied] promoted supertype
-  "_expression": $ => choice($._expression_except_range, $.range_expression),
+  "_expression": $ => choice($.unary_expression, $.reference_expression, $.try_expression, $.binary_expression, $.assignment_expression, $.compound_assignment_expr, $.type_cast_expression, $.call_expression, $.return_expression, $.yield_expression, $.string_literal, $.raw_string_literal, $.char_literal, $.boolean_literal, $.integer_literal, $.float_literal, $.identifier, $.self, $.scoped_identifier, $.generic_function, $.await_expression, $.field_expression, $.array_expression, $.tuple_expression, $.macro_invocation, $.unit_expression, $.break_expression, $.continue_expression, $.index_expression, $.metavariable, $.closure_expression, $.parenthesized_expression, $.struct_expression, $.unsafe_block, $.async_block, $.gen_block, $.try_block, $.block, $.if_expression, $.match_expression, $.while_expression, $.loop_expression, $.for_expression, $.const_block, $.range_expression),
 
   // [applied] promoted supertype
   "_expression_ending_with_block": $ => choice($.unsafe_block, $.async_block, $.gen_block, $.try_block, $.block, $.if_expression, $.match_expression, $.while_expression, $.loop_expression, $.for_expression, $.const_block),
 
   // [applied] promoted supertype
-  "_delim_tokens": $ => choice($._non_delim_token, $.delim_token_tree),
+  "_delim_tokens": $ => choice($.string_literal, $.raw_string_literal, $.char_literal, $.boolean_literal, $.integer_literal, $.float_literal, $.identifier, $.mutable_specifier, $.self, $.super, $.crate, $.delim_token_tree),
 
   // [applied] promoted supertype
-  "_non_delim_token": $ => choice($._non_special_token),
+  "_non_delim_token": $ => choice($.string_literal, $.raw_string_literal, $.char_literal, $.boolean_literal, $.integer_literal, $.float_literal, $.identifier, $.mutable_specifier, $.self, $.super, $.crate),
 
   // [applied] promoted supertype
-  "_condition": $ => choice($._expression, $.let_condition, $._let_chain),
+  "_condition": $ => choice($.unary_expression, $.reference_expression, $.try_expression, $.binary_expression, $.assignment_expression, $.compound_assignment_expr, $.type_cast_expression, $.call_expression, $.return_expression, $.yield_expression, $.string_literal, $.raw_string_literal, $.char_literal, $.boolean_literal, $.integer_literal, $.float_literal, $.identifier, $.self, $.scoped_identifier, $.generic_function, $.await_expression, $.field_expression, $.array_expression, $.tuple_expression, $.macro_invocation, $.unit_expression, $.break_expression, $.continue_expression, $.index_expression, $.metavariable, $.closure_expression, $.parenthesized_expression, $.struct_expression, $.unsafe_block, $.async_block, $.gen_block, $.try_block, $.block, $.if_expression, $.match_expression, $.while_expression, $.loop_expression, $.for_expression, $.const_block, $.range_expression, $.let_condition, $._let_chain),
 
   // [applied] promoted supertype
-  "_pattern": $ => choice($._literal_pattern, $.identifier, $.scoped_identifier, $.generic_pattern, $.tuple_pattern, $.tuple_struct_pattern, $.struct_pattern, $._reserved_identifier, $.ref_pattern, $.slice_pattern, $.captured_pattern, $.reference_pattern, $.remaining_field_pattern, $.mut_pattern, $.range_pattern, $.or_pattern, $.const_block, $.macro_invocation),
+  "_pattern": $ => choice($.string_literal, $.raw_string_literal, $.char_literal, $.boolean_literal, $.integer_literal, $.float_literal, $.negative_literal, $.identifier, $.scoped_identifier, $.generic_pattern, $.tuple_pattern, $.tuple_struct_pattern, $.struct_pattern, $.ref_pattern, $.slice_pattern, $.captured_pattern, $.reference_pattern, $.remaining_field_pattern, $.mut_pattern, $.range_pattern, $.or_pattern, $.const_block, $.macro_invocation),
 
   // [applied] promoted supertype
   "_literal": $ => choice($.string_literal, $.raw_string_literal, $.char_literal, $.boolean_literal, $.integer_literal, $.float_literal),
@@ -74,7 +74,7 @@ export const suggestedRules = {
   "_literal_pattern": $ => choice($.string_literal, $.raw_string_literal, $.char_literal, $.boolean_literal, $.integer_literal, $.float_literal, $.negative_literal),
 
   // [applied] promoted supertype
-  "_path": $ => choice($.self, $.metavariable, $.super, $.crate, $.identifier, $.scoped_identifier, $._reserved_identifier),
+  "_path": $ => choice($.self, $.metavariable, $.super, $.crate, $.identifier, $.scoped_identifier),
 
   // --- Repeated-shape candidates (reused across ≥2 parents) ---
   // parents: function_item, function_signature_item

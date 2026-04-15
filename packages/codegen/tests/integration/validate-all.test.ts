@@ -1,14 +1,14 @@
 import { describe, it, expect, beforeAll } from 'vitest';
-import { generateV2 } from '../../src/compiler/generate.ts';
+import { generate } from '../../src/compiler/generate.ts';
 import { validateRoundTrip } from '../../src/validate-roundtrip.ts';
 import { validateFactoryRoundTrip } from '../../src/validate-factory-roundtrip.ts';
 
 const GRAMMARS = ['rust', 'typescript', 'python'] as const;
 
-// Round-trip failure ceilings for v2 output — asserted ceilings can
-// only go DOWN over time. The authoritative guard is
+// Round-trip failure ceilings — asserted ceilings can only go DOWN
+// over time. The authoritative guard is
 // `src/__tests__/corpus-validation.test.ts`; this smoke-test file
-// exercises the same validators against fresh v2 generator output.
+// exercises the same validators against fresh generator output.
 const RT_CEILINGS: Record<string, { roundTrip: number; factoryRoundTrip: number }> = {
   rust:       { roundTrip: 50, factoryRoundTrip: 40 },
   typescript: { roundTrip: 10, factoryRoundTrip: 10 },
@@ -17,9 +17,9 @@ const RT_CEILINGS: Record<string, { roundTrip: number; factoryRoundTrip: number 
 
 for (const grammar of GRAMMARS) {
   describe(`${grammar} e2e validation`, () => {
-    let result: Awaited<ReturnType<typeof generateV2>>;
+    let result: Awaited<ReturnType<typeof generate>>;
     beforeAll(async () => {
-      result = await generateV2({ grammar, outputDir: 'src' });
+      result = await generate({ grammar, outputDir: 'src' });
     });
 
     it('generates without errors', () => {

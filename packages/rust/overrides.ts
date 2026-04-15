@@ -234,12 +234,14 @@ export default grammar(base, {
             0: field('mutable_specifier'), // mutable_specifier [struct=0]
         }),
 
-        // pointer_type: override removed. Autogen wrapped position 1
-        // (`choice('const', $.mutable_specifier)`) in
-        // `field('mutable_specifier')` but `const` is not a
-        // `mutable_specifier` — it's a literal token. Letting the walker
-        // see the raw choice emits `*const ...` via the walker's choice
-        // case picking the first variant.
+        // pointer_type: position 1 is `choice('const', $.mutable_specifier)`.
+        // Wrapping the choice as `field('mutable_specifier')` makes BOTH
+        // the `const` string and the `mutable_specifier` symbol route to
+        // the named slot at readNode time, so the template can emit the
+        // actual qualifier text instead of hardcoding "const".
+        pointer_type: ($, original) => transform(original, {
+            1: field('mutable_specifier'),
+        }),
 
         // raw_string_literal: 3 field(s)
         raw_string_literal: ($, original) => transform(original, {

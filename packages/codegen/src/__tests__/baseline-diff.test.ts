@@ -1,5 +1,5 @@
 /**
- * Baseline diff — compare generateV2 output against golden snapshots.
+ * Baseline diff — compare generate output against golden snapshots.
  *
  * This is the primary correctness validation (T048-T050).
  * Output should be functionally equivalent, not necessarily byte-identical.
@@ -8,7 +8,7 @@
 import { describe, it, expect } from 'vitest'
 import { readFileSync, existsSync } from 'node:fs'
 import { resolve } from 'node:path'
-import { generateV2 } from '../compiler/generate.ts'
+import { generate } from '../compiler/generate.ts'
 
 const baselineDir = resolve(import.meta.dirname!, '../../../../specs/005-five-phase-compiler/baseline')
 
@@ -44,10 +44,10 @@ function diffSummary(baseline: string, generated: string): { same: boolean; base
 
 for (const grammar of ['python', 'rust', 'typescript']) {
     describe(`Baseline diff — ${grammar}`, () => {
-        let result: Awaited<ReturnType<typeof generateV2>>
+        let result: Awaited<ReturnType<typeof generate>>
 
         it(`generates output for ${grammar}`, async () => {
-            result = await generateV2({
+            result = await generate({
                 grammar,
                 outputDir: `/tmp/sittir-baseline-${grammar}`,
             })

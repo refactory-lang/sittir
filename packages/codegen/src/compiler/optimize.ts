@@ -16,7 +16,7 @@ import type {
     Rule, LinkedGrammar, OptimizedGrammar,
 } from './rule.ts'
 import { promotePolymorph } from './link.ts'
-import { simplifyRules } from './simplify.ts'
+import { simplifyRules, compileWordMatcher } from './simplify.ts'
 
 // ---------------------------------------------------------------------------
 // optimize() — currently a passthrough
@@ -71,7 +71,11 @@ export function optimize(linked: LinkedGrammar): OptimizedGrammar {
     // Downstream (`assemble` → AssembledBranch/Container/Group) reads
     // from `simplifiedRules` instead of re-running `simplifyRule` in
     // every constructor. Template emission still reads raw `rules`.
-    const simplifiedRules = simplifyRules(rules)
+    // Pass the grammar's own word-rule pattern so keyword-shape
+    // detection uses tree-sitter's lexical convention rather than
+    // `/^\w+$/`.
+    const wordMatcher = compileWordMatcher(linked.word, rules)
+    const simplifiedRules = simplifyRules(rules, wordMatcher)
     return {
         name: linked.name,
         rules,
@@ -79,6 +83,7 @@ export function optimize(linked: LinkedGrammar): OptimizedGrammar {
         supertypes: linked.supertypes,
         word: linked.word,
         derivations: linked.derivations,
+        aliasedHiddenKinds: linked.aliasedHiddenKinds,
     }
 }
 

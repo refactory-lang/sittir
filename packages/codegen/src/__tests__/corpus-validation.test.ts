@@ -8,22 +8,25 @@
  *
  * Two sets of numbers per grammar:
  *
- *   FLOORS   — the minimum the v2 pipeline must achieve today. These are
- *              asserted; lowering them fails CI without justification.
+ *   FLOORS   — the minimum the current pipeline must achieve today.
+ *              Asserted; lowering them fails CI without justification.
  *
- *   V1_BASELINE — the numbers the v1 pipeline hit in the final validation
- *              reports checked in at packages/{g}/validation-report.txt
- *              (2026-04-09). v2 must eventually match or beat these; the
- *              gap between FLOORS and V1_BASELINE is the outstanding debt.
+ *   LEGACY_BASELINE — the numbers the pre-refactor pipeline hit in the
+ *              final validation reports checked in at
+ *              `packages/{g}/validation-report.txt` (2026-04-09). The
+ *              current pipeline must eventually match or beat these;
+ *              the gap between FLOORS and LEGACY_BASELINE is the
+ *              outstanding debt.
  *
- * The test ALSO asserts that FLOORS never drops below V1_BASELINE, which
- * means any PR closing the gap must raise FLOORS in the same commit.
+ * The test ALSO asserts that FLOORS never drops below LEGACY_BASELINE,
+ * which means any PR closing the gap must raise FLOORS in the same
+ * commit.
  */
 
 import { describe, it, expect } from 'vitest'
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
-import { generateV2 } from '../compiler/generate.ts'
+import { generate } from '../compiler/generate.ts'
 import { validateFactoryRoundTrip } from '../validate-factory-roundtrip.ts'
 import { validateFrom } from '../validate-from.ts'
 import { validateRenderable } from '../validate-renderable.ts'
@@ -32,12 +35,13 @@ import { validateRoundTrip } from '../validate-roundtrip.ts'
 import { validateTemplateCoverage } from '../validate-template-coverage.ts'
 
 /**
- * v2 current floors — asserted. When a fix lands, raise these in the
- * same commit so the gap to V1_BASELINE stays visible.
+ * Current floors — asserted. When a fix lands, raise these in the
+ * same commit so the gap to LEGACY_BASELINE stays visible.
  */
 const FLOORS = {
     python: {
-        factoryPass: 93,
+        factoryPass: 94,
+        factoryAstMatchPass: 91,
         factoryTotal: 100,
         fromPass: 110,
         fromTotal: 117,
@@ -46,6 +50,12 @@ const FLOORS = {
         // factory/from validation.
         rtPass: 109,
         rtTotal: 115,
+        // Strict structural match — the reparsed AST must equal the
+        // original parse tree on every anonymous token and every
+        // named child. Subset of `rtPass`. Catches silently dropped
+        // content (stray `;` / `,` / `async` keyword) the weaker
+        // kind-found check misses.
+        rtAstMatchPass: 106,
         // Template coverage: every declared field reachable in template.
         // Structural check, independent of corpus contents.
         covPass: 99,
@@ -53,32 +63,37 @@ const FLOORS = {
     },
     rust: {
         factoryPass: 127,
+        factoryAstMatchPass: 123,
         factoryTotal: 135,
         fromPass: 142,
         fromTotal: 154,
         rtPass: 121,
         rtTotal: 136,
+        rtAstMatchPass: 112,
         covPass: 136,
         covTotal: 137,
     },
     typescript: {
         factoryPass: 121,
+        factoryAstMatchPass: 121,
         factoryTotal: 126,
         fromPass: 132,
         fromTotal: 143,
         rtPass: 110,
         rtTotal: 112,
+        rtAstMatchPass: 110,
         covPass: 139,
         covTotal: 145,
     },
 } as const
 
 /**
- * v1 baseline — the target. Source: packages/{g}/validation-report.txt
- * committed at 2026-04-09 (commit b85075b). The v2 pipeline must eventually
- * match or exceed these numbers before the rewrite is considered complete.
+ * Legacy baseline — the target. Source:
+ * packages/{g}/validation-report.txt committed at 2026-04-09 (commit
+ * b85075b). The current pipeline must eventually match or exceed
+ * these numbers before the rewrite is considered complete.
  */
-const V1_BASELINE = {
+const LEGACY_BASELINE = {
     python: {
         factoryPass: 92,
         factoryTotal: 99,
@@ -116,6 +131,18 @@ describe.each(Object.keys(FLOORS) as GrammarName[])(
     (grammar) => {
         const floors = FLOORS[grammar]
 
+        it(`factory build fidelity (AST match) passes at least ${floors.factoryAstMatchPass}/${floors.factoryTotal}`, async () => {
+            // Strict structural equality on the factory-build round-trip.
+            // Catches factory API gaps the weaker kind-found check misses:
+            // dropped anonymous children (e.g. python `async` prefix),
+            // missing field surface, children slot not plumbed through
+            // the factory signature.
+            const yaml = await loadTemplates(grammar)
+            const result = await validateFactoryRoundTrip(grammar, yaml)
+
+            expect(result.astMatchPass).toBeGreaterThanOrEqual(floors.factoryAstMatchPass)
+        }, 60000)
+
         it(`factory round-trip passes at least ${floors.factoryPass}/${floors.factoryTotal}`, async () => {
             const yaml = await loadTemplates(grammar)
             const result = await validateFactoryRoundTrip(grammar, yaml)
@@ -140,6 +167,19 @@ describe.each(Object.keys(FLOORS) as GrammarName[])(
             expect(result.pass).toBeGreaterThanOrEqual(floors.rtPass)
         }, 60000)
 
+        it(`round-trip AST match passes at least ${floors.rtAstMatchPass}/${floors.rtTotal}`, async () => {
+            // Strict structural equality between the original parse and
+            // the reparsed tree — anonymous tokens included. Tightens
+            // `rtPass` (which only checks that the kind survives) so
+            // regressions that silently drop content like `;` / `,` /
+            // keyword tokens fail CI. The gap between `rtAstMatchPass`
+            // and `rtPass` is the outstanding fidelity debt.
+            const yaml = await loadTemplates(grammar)
+            const result = await validateRoundTrip(grammar, yaml)
+
+            expect(result.astMatchPass).toBeGreaterThanOrEqual(floors.rtAstMatchPass)
+        }, 60000)
+
         it(`template coverage passes at least ${floors.covPass}/${floors.covTotal}`, async () => {
             const yaml = await loadTemplates(grammar)
             const result = validateTemplateCoverage(grammar, yaml)
@@ -150,34 +190,34 @@ describe.each(Object.keys(FLOORS) as GrammarName[])(
     },
 )
 
-describe('corpus validation — v1 baseline gap report', () => {
-    // These tests document the delta between v2's current floor and the
-    // v1 baseline. They are always-passing snapshots, not assertions —
-    // the goal is visibility. When the gap closes, bump FLOORS.
+describe('corpus validation — legacy baseline gap report', () => {
+    // These tests document the delta between the current floor and the
+    // legacy baseline. They are always-passing snapshots, not assertions
+    // — the goal is visibility. When the gap closes, bump FLOORS.
     it.each(Object.keys(FLOORS) as GrammarName[])(
         '%s gap report',
         (grammar) => {
-            const v2 = FLOORS[grammar]
-            const v1 = V1_BASELINE[grammar]
-            const gapFactory = v1.factoryPass - v2.factoryPass
-            const gapFrom = v1.fromPass - v2.fromPass
-            const gapFactoryTotal = v1.factoryTotal - v2.factoryTotal
-            const gapFromTotal = v1.fromTotal - v2.fromTotal
+            const current = FLOORS[grammar]
+            const baseline = LEGACY_BASELINE[grammar]
+            const gapFactory = baseline.factoryPass - current.factoryPass
+            const gapFrom = baseline.fromPass - current.fromPass
+            const gapFactoryTotal = baseline.factoryTotal - current.factoryTotal
+            const gapFromTotal = baseline.fromTotal - current.fromTotal
 
             // Print the gap so it shows up in test output even when passing.
             // eslint-disable-next-line no-console
             console.log(
-                `  [${grammar}] factory: v2 ${v2.factoryPass}/${v2.factoryTotal}` +
-                ` vs v1 ${v1.factoryPass}/${v1.factoryTotal}` +
+                `  [${grammar}] factory: current ${current.factoryPass}/${current.factoryTotal}` +
+                ` vs baseline ${baseline.factoryPass}/${baseline.factoryTotal}` +
                 ` (gap ${gapFactory} passes, ${gapFactoryTotal} kinds)\n` +
-                `  [${grammar}] from():  v2 ${v2.fromPass}/${v2.fromTotal}` +
-                ` vs v1 ${v1.fromPass}/${v1.fromTotal}` +
+                `  [${grammar}] from():  current ${current.fromPass}/${current.fromTotal}` +
+                ` vs baseline ${baseline.fromPass}/${baseline.fromTotal}` +
                 ` (gap ${gapFrom} passes, ${gapFromTotal} kinds)`
             )
 
             // Floors must never be negative (nonsensical)
-            expect(v2.factoryPass).toBeGreaterThanOrEqual(0)
-            expect(v2.fromPass).toBeGreaterThanOrEqual(0)
+            expect(current.factoryPass).toBeGreaterThanOrEqual(0)
+            expect(current.fromPass).toBeGreaterThanOrEqual(0)
         },
     )
 })
@@ -234,9 +274,9 @@ describe('renderability — every node-types.json kind must be reachable', () =>
 
 describe('corpus validation — generator produces usable output', () => {
     it.each(Object.keys(FLOORS) as GrammarName[])(
-        '%s generateV2 emits all files + sane NodeMap',
+        '%s generate emits all files + sane NodeMap',
         async (grammar) => {
-            const result = await generateV2({
+            const result = await generate({
                 grammar,
                 outputDir: `/tmp/sittir-floor-${grammar}/src`,
             })

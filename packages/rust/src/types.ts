@@ -278,7 +278,27 @@ export const enum SyntaxKind {
 // Scoped enums per supertype
 export const enum StatementKind {
   ExpressionStatement = 'expression_statement',
-  DeclarationStatement = '_declaration_statement',
+  ConstItem = 'const_item',
+  MacroInvocation = 'macro_invocation',
+  MacroDefinition = 'macro_definition',
+  EmptyStatement = 'empty_statement',
+  AttributeItem = 'attribute_item',
+  InnerAttributeItem = 'inner_attribute_item',
+  ModItem = 'mod_item',
+  ForeignModItem = 'foreign_mod_item',
+  StructItem = 'struct_item',
+  UnionItem = 'union_item',
+  EnumItem = 'enum_item',
+  TypeItem = 'type_item',
+  FunctionItem = 'function_item',
+  FunctionSignatureItem = 'function_signature_item',
+  ImplItem = 'impl_item',
+  TraitItem = 'trait_item',
+  AssociatedType = 'associated_type',
+  LetDeclaration = 'let_declaration',
+  UseDeclaration = 'use_declaration',
+  ExternCrateDeclaration = 'extern_crate_declaration',
+  StaticItem = 'static_item',
 }
 
 export const enum DeclarationStatementKind {
@@ -310,18 +330,43 @@ export const enum TokenPatternKind {
   TokenRepetitionPattern = 'token_repetition_pattern',
   TokenBindingPattern = 'token_binding_pattern',
   Metavariable = 'metavariable',
-  NonSpecialToken = '_non_special_token',
+  StringLiteral = 'string_literal',
+  RawStringLiteral = 'raw_string_literal',
+  CharLiteral = 'char_literal',
+  BooleanLiteral = 'boolean_literal',
+  IntegerLiteral = 'integer_literal',
+  FloatLiteral = 'float_literal',
+  Identifier = 'identifier',
+  MutableSpecifier = 'mutable_specifier',
+  Self = 'self',
+  Super = 'super',
+  Crate = 'crate',
 }
 
 export const enum TokensKind {
   TokenTree = 'token_tree',
   TokenRepetition = 'token_repetition',
   Metavariable = 'metavariable',
-  NonSpecialToken = '_non_special_token',
+  StringLiteral = 'string_literal',
+  RawStringLiteral = 'raw_string_literal',
+  CharLiteral = 'char_literal',
+  BooleanLiteral = 'boolean_literal',
+  IntegerLiteral = 'integer_literal',
+  FloatLiteral = 'float_literal',
+  Identifier = 'identifier',
+  MutableSpecifier = 'mutable_specifier',
+  Self = 'self',
+  Super = 'super',
+  Crate = 'crate',
 }
 
 export const enum UseClauseKind {
-  Path = '_path',
+  Self = 'self',
+  Metavariable = 'metavariable',
+  Super = 'super',
+  Crate = 'crate',
+  Identifier = 'identifier',
+  ScopedIdentifier = 'scoped_identifier',
   UseAsClause = 'use_as_clause',
   UseList = 'use_list',
   ScopedUseList = 'scoped_use_list',
@@ -339,7 +384,7 @@ export const enum TypeKind {
   UnitType = 'unit_type',
   ArrayType = 'array_type',
   FunctionType = 'function_type',
-  _TypeIdentifier = '_type_identifier',
+  TypeIdentifier = 'type_identifier',
   MacroInvocation = 'macro_invocation',
   NeverType = 'never_type',
   DynamicType = 'dynamic_type',
@@ -358,9 +403,13 @@ export const enum ExpressionExceptRangeKind {
   CallExpression = 'call_expression',
   ReturnExpression = 'return_expression',
   YieldExpression = 'yield_expression',
-  Literal = '_literal',
+  StringLiteral = 'string_literal',
+  RawStringLiteral = 'raw_string_literal',
+  CharLiteral = 'char_literal',
+  BooleanLiteral = 'boolean_literal',
+  IntegerLiteral = 'integer_literal',
+  FloatLiteral = 'float_literal',
   Identifier = 'identifier',
-  ReservedIdentifier = '_reserved_identifier',
   Self = 'self',
   ScopedIdentifier = 'scoped_identifier',
   GenericFunction = 'generic_function',
@@ -377,11 +426,64 @@ export const enum ExpressionExceptRangeKind {
   ClosureExpression = 'closure_expression',
   ParenthesizedExpression = 'parenthesized_expression',
   StructExpression = 'struct_expression',
-  ExpressionEndingWithBlock = '_expression_ending_with_block',
+  UnsafeBlock = 'unsafe_block',
+  AsyncBlock = 'async_block',
+  GenBlock = 'gen_block',
+  TryBlock = 'try_block',
+  Block = 'block',
+  IfExpression = 'if_expression',
+  MatchExpression = 'match_expression',
+  WhileExpression = 'while_expression',
+  LoopExpression = 'loop_expression',
+  ForExpression = 'for_expression',
+  ConstBlock = 'const_block',
 }
 
 export const enum ExpressionKind {
-  ExpressionExceptRange = '_expression_except_range',
+  UnaryExpression = 'unary_expression',
+  ReferenceExpression = 'reference_expression',
+  TryExpression = 'try_expression',
+  BinaryExpression = 'binary_expression',
+  AssignmentExpression = 'assignment_expression',
+  CompoundAssignmentExpr = 'compound_assignment_expr',
+  TypeCastExpression = 'type_cast_expression',
+  CallExpression = 'call_expression',
+  ReturnExpression = 'return_expression',
+  YieldExpression = 'yield_expression',
+  StringLiteral = 'string_literal',
+  RawStringLiteral = 'raw_string_literal',
+  CharLiteral = 'char_literal',
+  BooleanLiteral = 'boolean_literal',
+  IntegerLiteral = 'integer_literal',
+  FloatLiteral = 'float_literal',
+  Identifier = 'identifier',
+  Self = 'self',
+  ScopedIdentifier = 'scoped_identifier',
+  GenericFunction = 'generic_function',
+  AwaitExpression = 'await_expression',
+  FieldExpression = 'field_expression',
+  ArrayExpression = 'array_expression',
+  TupleExpression = 'tuple_expression',
+  MacroInvocation = 'macro_invocation',
+  UnitExpression = 'unit_expression',
+  BreakExpression = 'break_expression',
+  ContinueExpression = 'continue_expression',
+  IndexExpression = 'index_expression',
+  Metavariable = 'metavariable',
+  ClosureExpression = 'closure_expression',
+  ParenthesizedExpression = 'parenthesized_expression',
+  StructExpression = 'struct_expression',
+  UnsafeBlock = 'unsafe_block',
+  AsyncBlock = 'async_block',
+  GenBlock = 'gen_block',
+  TryBlock = 'try_block',
+  Block = 'block',
+  IfExpression = 'if_expression',
+  MatchExpression = 'match_expression',
+  WhileExpression = 'while_expression',
+  LoopExpression = 'loop_expression',
+  ForExpression = 'for_expression',
+  ConstBlock = 'const_block',
   RangeExpression = 'range_expression',
 }
 
@@ -400,29 +502,98 @@ export const enum ExpressionEndingWithBlockKind {
 }
 
 export const enum DelimTokensKind {
-  NonDelimToken = '_non_delim_token',
+  StringLiteral = 'string_literal',
+  RawStringLiteral = 'raw_string_literal',
+  CharLiteral = 'char_literal',
+  BooleanLiteral = 'boolean_literal',
+  IntegerLiteral = 'integer_literal',
+  FloatLiteral = 'float_literal',
+  Identifier = 'identifier',
+  MutableSpecifier = 'mutable_specifier',
+  Self = 'self',
+  Super = 'super',
+  Crate = 'crate',
   DelimTokenTree = 'delim_token_tree',
 }
 
 export const enum NonDelimTokenKind {
-  NonSpecialToken = '_non_special_token',
+  StringLiteral = 'string_literal',
+  RawStringLiteral = 'raw_string_literal',
+  CharLiteral = 'char_literal',
+  BooleanLiteral = 'boolean_literal',
+  IntegerLiteral = 'integer_literal',
+  FloatLiteral = 'float_literal',
+  Identifier = 'identifier',
+  MutableSpecifier = 'mutable_specifier',
+  Self = 'self',
+  Super = 'super',
+  Crate = 'crate',
 }
 
 export const enum ConditionKind {
-  Expression = '_expression',
+  UnaryExpression = 'unary_expression',
+  ReferenceExpression = 'reference_expression',
+  TryExpression = 'try_expression',
+  BinaryExpression = 'binary_expression',
+  AssignmentExpression = 'assignment_expression',
+  CompoundAssignmentExpr = 'compound_assignment_expr',
+  TypeCastExpression = 'type_cast_expression',
+  CallExpression = 'call_expression',
+  ReturnExpression = 'return_expression',
+  YieldExpression = 'yield_expression',
+  StringLiteral = 'string_literal',
+  RawStringLiteral = 'raw_string_literal',
+  CharLiteral = 'char_literal',
+  BooleanLiteral = 'boolean_literal',
+  IntegerLiteral = 'integer_literal',
+  FloatLiteral = 'float_literal',
+  Identifier = 'identifier',
+  Self = 'self',
+  ScopedIdentifier = 'scoped_identifier',
+  GenericFunction = 'generic_function',
+  AwaitExpression = 'await_expression',
+  FieldExpression = 'field_expression',
+  ArrayExpression = 'array_expression',
+  TupleExpression = 'tuple_expression',
+  MacroInvocation = 'macro_invocation',
+  UnitExpression = 'unit_expression',
+  BreakExpression = 'break_expression',
+  ContinueExpression = 'continue_expression',
+  IndexExpression = 'index_expression',
+  Metavariable = 'metavariable',
+  ClosureExpression = 'closure_expression',
+  ParenthesizedExpression = 'parenthesized_expression',
+  StructExpression = 'struct_expression',
+  UnsafeBlock = 'unsafe_block',
+  AsyncBlock = 'async_block',
+  GenBlock = 'gen_block',
+  TryBlock = 'try_block',
+  Block = 'block',
+  IfExpression = 'if_expression',
+  MatchExpression = 'match_expression',
+  WhileExpression = 'while_expression',
+  LoopExpression = 'loop_expression',
+  ForExpression = 'for_expression',
+  ConstBlock = 'const_block',
+  RangeExpression = 'range_expression',
   LetCondition = 'let_condition',
   _LetChain = '_let_chain',
 }
 
 export const enum PatternKind {
-  LiteralPattern = '_literal_pattern',
+  StringLiteral = 'string_literal',
+  RawStringLiteral = 'raw_string_literal',
+  CharLiteral = 'char_literal',
+  BooleanLiteral = 'boolean_literal',
+  IntegerLiteral = 'integer_literal',
+  FloatLiteral = 'float_literal',
+  NegativeLiteral = 'negative_literal',
   Identifier = 'identifier',
   ScopedIdentifier = 'scoped_identifier',
   GenericPattern = 'generic_pattern',
   TuplePattern = 'tuple_pattern',
   TupleStructPattern = 'tuple_struct_pattern',
   StructPattern = 'struct_pattern',
-  ReservedIdentifier = '_reserved_identifier',
   RefPattern = 'ref_pattern',
   SlicePattern = 'slice_pattern',
   CapturedPattern = 'captured_pattern',
@@ -461,7 +632,6 @@ export const enum PathKind {
   Crate = 'crate',
   Identifier = 'identifier',
   ScopedIdentifier = 'scoped_identifier',
-  ReservedIdentifier = '_reserved_identifier',
 }
 
 // Node types — concrete interfaces
@@ -763,12 +933,12 @@ export interface FunctionSignatureItem {
 export interface FunctionModifiers {
   readonly type: 'function_modifiers';
   readonly fields: {
-    readonly async: NonEmptyArray<"async">;
-    readonly default: NonEmptyArray<"default">;
-    readonly const: NonEmptyArray<"const">;
-    readonly unsafe: NonEmptyArray<"unsafe">;
+    readonly async?: readonly ("async")[];
+    readonly default?: readonly ("default")[];
+    readonly const?: readonly ("const")[];
+    readonly unsafe?: readonly ("unsafe")[];
   };
-  readonly children: NonEmptyArray<ExternModifier>;
+  readonly children: readonly (ExternModifier)[];
 }
 
 export interface WhereClause {
@@ -787,6 +957,7 @@ export interface WherePredicate {
 export interface ImplItemBody {
   readonly type: 'impl_item';
   readonly fields: {
+    readonly unsafe?: "unsafe";
     readonly type_parameters?: TypeParameters;
     readonly trait?: _union_GenericType_ScopedTypeIdentifier__TypeIdentifier;
     readonly type: _Type;
@@ -798,6 +969,7 @@ export interface ImplItemBody {
 export interface ImplItemSemi {
   readonly type: 'impl_item';
   readonly fields: {
+    readonly unsafe?: "unsafe";
     readonly type_parameters?: TypeParameters;
     readonly trait?: _union_GenericType_ScopedTypeIdentifier__TypeIdentifier;
     readonly type: _Type;
@@ -810,6 +982,7 @@ export interface TraitItem {
   readonly type: 'trait_item';
   readonly fields: {
     readonly visibility_modifier?: VisibilityModifier;
+    readonly unsafe?: "unsafe";
     readonly name: _TypeIdentifier;
     readonly type_parameters?: TypeParameters;
     readonly bounds?: TraitBounds;
@@ -830,7 +1003,7 @@ export interface AssociatedType {
 
 export interface TraitBounds {
   readonly type: 'trait_bounds';
-  readonly children: NonEmptyArray<_Type | Lifetime | HigherRankedTraitBound>;
+  readonly children: readonly (_Type | Lifetime | HigherRankedTraitBound)[];
 }
 
 export interface HigherRankedTraitBound {
@@ -848,7 +1021,7 @@ export interface RemovedTraitBound {
 
 export interface TypeParameters {
   readonly type: 'type_parameters';
-  readonly children: NonEmptyArray<AttributeItem | Metavariable | TypeParameter | LifetimeParameter | ConstParameter>;
+  readonly children: readonly (AttributeItem | Metavariable | TypeParameter | LifetimeParameter | ConstParameter)[];
 }
 
 export interface ConstParameter {
@@ -1015,7 +1188,7 @@ export interface FunctionType {
   readonly type: 'function_type';
   readonly fields: {
     readonly for_lifetimes?: ForLifetimes;
-    readonly trait: _union_ScopedTypeIdentifier__TypeIdentifier;
+    readonly trait?: _union_ScopedTypeIdentifier__TypeIdentifier;
     readonly parameters: Parameters;
     readonly return_type?: _Type;
   };
@@ -1068,7 +1241,7 @@ export interface TypeArguments {
   readonly fields: {
     readonly bounds?: readonly (TraitBounds)[];
   };
-  readonly children: NonEmptyArray<_Type | TypeBinding | Lifetime | Literal | Block>;
+  readonly children: readonly (_Type | TypeBinding | Lifetime | Literal | Block)[];
 }
 
 export interface TypeBinding {
@@ -1092,9 +1265,9 @@ export interface ReferenceType {
 export interface PointerType {
   readonly type: 'pointer_type';
   readonly fields: {
+    readonly mutable_specifier: MutableSpecifier;
     readonly type: _Type;
   };
-  readonly children: readonly [MutableSpecifier];
 }
 
 export interface AbstractType {
@@ -1209,7 +1382,7 @@ export interface BinaryExpression {
   readonly type: 'binary_expression';
   readonly fields: {
     readonly left: Expression;
-    readonly operator: "&&" | "||" | "&" | "|" | "^" | "==" | "!=" | "<" | "<=" | ">" | ">=" | "<<" | ">>" | "+" | "-" | "*" | "/" | "%";
+    readonly operator: "&&";
     readonly right: Expression;
   };
 }
@@ -1339,7 +1512,7 @@ export interface LetCondition {
 
 export interface _LetChain {
   readonly type: '_let_chain';
-  readonly children: readonly (_LetChain | LetCondition | Expression)[];
+  readonly children: readonly [_LetChain | LetCondition | Expression];
 }
 
 export interface ElseClause {
@@ -1364,7 +1537,7 @@ export interface MatchArm {
   readonly type: 'match_arm';
   readonly fields: {
     readonly pattern: MatchPattern;
-    readonly value: Expression | ExpressionEndingWithBlock;
+    readonly value: Expression;
   };
   readonly children: readonly (AttributeItem | InnerAttributeItem)[];
 }
@@ -1502,6 +1675,7 @@ export interface UnsafeBlock {
 export interface AsyncBlock {
   readonly type: 'async_block';
   readonly fields: {
+    readonly move?: "move";
     readonly block: Block;
   };
 }
@@ -1509,6 +1683,7 @@ export interface AsyncBlock {
 export interface GenBlock {
   readonly type: 'gen_block';
   readonly fields: {
+    readonly move?: "move";
     readonly block: Block;
   };
 }
@@ -1565,6 +1740,7 @@ export interface StructPattern {
 export interface FieldPatternName {
   readonly type: 'field_pattern';
   readonly fields: {
+    readonly ref?: "ref";
     readonly mutable_specifier?: MutableSpecifier;
     readonly name: Identifier;
   };
@@ -1573,6 +1749,7 @@ export interface FieldPatternName {
 export interface FieldPatternColon {
   readonly type: 'field_pattern';
   readonly fields: {
+    readonly ref?: "ref";
     readonly mutable_specifier?: MutableSpecifier;
     readonly name: _FieldIdentifier;
     readonly pattern: Pattern;
@@ -1592,7 +1769,7 @@ export interface RangePatternLeft {
   readonly type: 'range_pattern';
   readonly fields: {
     readonly left: _union_LiteralPattern_Path;
-    readonly right: _union_LiteralPattern_Path;
+    readonly right?: _union_LiteralPattern_Path;
   };
 }
 
@@ -1670,9 +1847,9 @@ export interface Comment {
 export interface LineComment {
   readonly type: 'line_comment';
   readonly fields: {
-    readonly outer: "/";
-    readonly inner: "!";
-    readonly doc: string;
+    readonly outer?: "/";
+    readonly inner?: "!";
+    readonly doc?: string;
   };
 }
 
@@ -1698,7 +1875,7 @@ export interface _FieldIdentifier {
 
 export interface LetChain {
   readonly type: 'let_chain';
-  readonly children: readonly (_LetChain | LetCondition | Expression)[];
+  readonly children: readonly [_LetChain | LetCondition | Expression];
 }
 
 
@@ -2285,11 +2462,31 @@ export type LooseLetChain = FromInputOf<LetChain, LeafScalarMap, LeafStringMap>;
 // Supertype unions
 export type Statement =
   | ExpressionStatement
+  | ConstItem
+  | MacroInvocation
+  | MacroDefinition
+  | AttributeItem
+  | InnerAttributeItem
+  | ModItem
+  | ForeignModItem
+  | StructItem
+  | UnionItem
+  | EnumItem
+  | TypeItem
+  | FunctionItem
+  | FunctionSignatureItem
+  | ImplItem
+  | TraitItem
+  | AssociatedType
+  | LetDeclaration
+  | UseDeclaration
+  | ExternCrateDeclaration
+  | StaticItem
 ;
 
-export type StatementConfig = ExpressionStatementConfig;
-export type LooseStatement = LooseExpressionStatement;
-export type StatementTree = ExpressionStatementTree | DeclarationStatementTree;
+export type StatementConfig = ExpressionStatementConfig | ConstItemConfig | MacroInvocationConfig | MacroDefinitionConfig | AttributeItemConfig | InnerAttributeItemConfig | ModItemConfig | ForeignModItemConfig | StructItemConfig | UnionItemConfig | EnumItemConfig | TypeItemConfig | FunctionItemConfig | FunctionSignatureItemConfig | ImplItemConfig | TraitItemConfig | AssociatedTypeConfig | LetDeclarationConfig | UseDeclarationConfig | ExternCrateDeclarationConfig | StaticItemConfig;
+export type LooseStatement = LooseExpressionStatement | LooseConstItem | LooseMacroInvocation | LooseMacroDefinition | LooseAttributeItem | LooseInnerAttributeItem | LooseModItem | LooseForeignModItem | LooseStructItem | LooseUnionItem | LooseEnumItem | LooseTypeItem | LooseFunctionItem | LooseFunctionSignatureItem | LooseImplItem | LooseTraitItem | LooseAssociatedType | LooseLetDeclaration | LooseUseDeclaration | LooseExternCrateDeclaration | LooseStaticItem;
+export type StatementTree = ExpressionStatementTree | ConstItemTree | MacroInvocationTree | MacroDefinitionTree | EmptyStatementTree | AttributeItemTree | InnerAttributeItemTree | ModItemTree | ForeignModItemTree | StructItemTree | UnionItemTree | EnumItemTree | TypeItemTree | FunctionItemTree | FunctionSignatureItemTree | ImplItemTree | TraitItemTree | AssociatedTypeTree | LetDeclarationTree | UseDeclarationTree | ExternCrateDeclarationTree | StaticItemTree;
 
 export type DeclarationStatement =
   | ConstItem
@@ -2323,34 +2520,60 @@ export type TokenPattern =
   | TokenRepetitionPattern
   | TokenBindingPattern
   | Metavariable
-  | NonSpecialToken
+  | StringLiteral
+  | RawStringLiteral
+  | CharLiteral
+  | BooleanLiteral
+  | IntegerLiteral
+  | FloatLiteral
+  | Identifier
+  | MutableSpecifier
+  | Self
+  | Super
+  | Crate
 ;
 
-export type TokenPatternConfig = TokenTreePatternConfig | TokenRepetitionPatternConfig | TokenBindingPatternConfig | NonSpecialTokenConfig;
-export type LooseTokenPattern = LooseTokenTreePattern | LooseTokenRepetitionPattern | LooseTokenBindingPattern | LooseNonSpecialToken;
-export type TokenPatternTree = TokenTreePatternTree | TokenRepetitionPatternTree | TokenBindingPatternTree | MetavariableTree | NonSpecialTokenTree;
+export type TokenPatternConfig = TokenTreePatternConfig | TokenRepetitionPatternConfig | TokenBindingPatternConfig | StringLiteralConfig | RawStringLiteralConfig;
+export type LooseTokenPattern = LooseTokenTreePattern | LooseTokenRepetitionPattern | LooseTokenBindingPattern | LooseStringLiteral | LooseRawStringLiteral;
+export type TokenPatternTree = TokenTreePatternTree | TokenRepetitionPatternTree | TokenBindingPatternTree | MetavariableTree | StringLiteralTree | RawStringLiteralTree | CharLiteralTree | BooleanLiteralTree | IntegerLiteralTree | FloatLiteralTree | IdentifierTree | MutableSpecifierTree | SelfTree | SuperTree | CrateTree;
 
 export type Tokens =
   | TokenTree
   | TokenRepetition
   | Metavariable
-  | NonSpecialToken
+  | StringLiteral
+  | RawStringLiteral
+  | CharLiteral
+  | BooleanLiteral
+  | IntegerLiteral
+  | FloatLiteral
+  | Identifier
+  | MutableSpecifier
+  | Self
+  | Super
+  | Crate
 ;
 
-export type TokensConfig = TokenTreeConfig | TokenRepetitionConfig | NonSpecialTokenConfig;
-export type LooseTokens = LooseTokenTree | LooseTokenRepetition | LooseNonSpecialToken;
-export type TokensTree = TokenTreeTree | TokenRepetitionTree | MetavariableTree | NonSpecialTokenTree;
+export type TokensConfig = TokenTreeConfig | TokenRepetitionConfig | StringLiteralConfig | RawStringLiteralConfig;
+export type LooseTokens = LooseTokenTree | LooseTokenRepetition | LooseStringLiteral | LooseRawStringLiteral;
+export type TokensTree = TokenTreeTree | TokenRepetitionTree | MetavariableTree | StringLiteralTree | RawStringLiteralTree | CharLiteralTree | BooleanLiteralTree | IntegerLiteralTree | FloatLiteralTree | IdentifierTree | MutableSpecifierTree | SelfTree | SuperTree | CrateTree;
 
 export type UseClause =
+  | Self
+  | Metavariable
+  | Super
+  | Crate
+  | Identifier
+  | ScopedIdentifier
   | UseAsClause
   | UseList
   | ScopedUseList
   | UseWildcard
 ;
 
-export type UseClauseConfig = UseAsClauseConfig | UseListConfig | ScopedUseListConfig | UseWildcardConfig;
-export type LooseUseClause = LooseUseAsClause | LooseUseList | LooseScopedUseList | LooseUseWildcard;
-export type UseClauseTree = PathTree | UseAsClauseTree | UseListTree | ScopedUseListTree | UseWildcardTree;
+export type UseClauseConfig = ScopedIdentifierConfig | UseAsClauseConfig | UseListConfig | ScopedUseListConfig | UseWildcardConfig;
+export type LooseUseClause = LooseScopedIdentifier | LooseUseAsClause | LooseUseList | LooseScopedUseList | LooseUseWildcard;
+export type UseClauseTree = SelfTree | MetavariableTree | SuperTree | CrateTree | IdentifierTree | ScopedIdentifierTree | UseAsClauseTree | UseListTree | ScopedUseListTree | UseWildcardTree;
 
 export type _Type =
   | AbstractType
@@ -2363,16 +2586,16 @@ export type _Type =
   | UnitType
   | ArrayType
   | FunctionType
-  | _TypeIdentifier
+  | TypeIdentifier
   | MacroInvocation
   | DynamicType
   | BoundedType
   | RemovedTraitBound
 ;
 
-export type _TypeConfig = AbstractTypeConfig | ReferenceTypeConfig | PointerTypeConfig | GenericTypeConfig | ScopedTypeIdentifierConfig | TupleTypeConfig | ArrayTypeConfig | FunctionTypeConfig | _TypeIdentifierConfig | MacroInvocationConfig | DynamicTypeConfig | BoundedTypeConfig | RemovedTraitBoundConfig;
-export type Loose_Type = LooseAbstractType | LooseReferenceType | LoosePointerType | LooseGenericType | LooseScopedTypeIdentifier | LooseTupleType | LooseArrayType | LooseFunctionType | Loose_TypeIdentifier | LooseMacroInvocation | LooseDynamicType | LooseBoundedType | LooseRemovedTraitBound;
-export type _TypeTree = AbstractTypeTree | ReferenceTypeTree | MetavariableTree | PointerTypeTree | GenericTypeTree | ScopedTypeIdentifierTree | TupleTypeTree | UnitTypeTree | ArrayTypeTree | FunctionTypeTree | _TypeIdentifierTree | MacroInvocationTree | NeverTypeTree | DynamicTypeTree | BoundedTypeTree | RemovedTraitBoundTree;
+export type _TypeConfig = AbstractTypeConfig | ReferenceTypeConfig | PointerTypeConfig | GenericTypeConfig | ScopedTypeIdentifierConfig | TupleTypeConfig | ArrayTypeConfig | FunctionTypeConfig | MacroInvocationConfig | DynamicTypeConfig | BoundedTypeConfig | RemovedTraitBoundConfig;
+export type Loose_Type = LooseAbstractType | LooseReferenceType | LoosePointerType | LooseGenericType | LooseScopedTypeIdentifier | LooseTupleType | LooseArrayType | LooseFunctionType | LooseMacroInvocation | LooseDynamicType | LooseBoundedType | LooseRemovedTraitBound;
+export type _TypeTree = AbstractTypeTree | ReferenceTypeTree | MetavariableTree | PointerTypeTree | GenericTypeTree | ScopedTypeIdentifierTree | TupleTypeTree | UnitTypeTree | ArrayTypeTree | FunctionTypeTree | TypeIdentifierTree | MacroInvocationTree | NeverTypeTree | DynamicTypeTree | BoundedTypeTree | RemovedTraitBoundTree;
 
 export type ExpressionExceptRange =
   | UnaryExpression
@@ -2385,8 +2608,13 @@ export type ExpressionExceptRange =
   | CallExpression
   | ReturnExpression
   | YieldExpression
+  | StringLiteral
+  | RawStringLiteral
+  | CharLiteral
+  | BooleanLiteral
+  | IntegerLiteral
+  | FloatLiteral
   | Identifier
-  | ReservedIdentifier
   | Self
   | ScopedIdentifier
   | GenericFunction
@@ -2403,20 +2631,74 @@ export type ExpressionExceptRange =
   | ClosureExpression
   | ParenthesizedExpression
   | StructExpression
+  | UnsafeBlock
+  | AsyncBlock
+  | GenBlock
+  | TryBlock
+  | Block
+  | IfExpression
+  | MatchExpression
+  | WhileExpression
+  | LoopExpression
+  | ForExpression
+  | ConstBlock
 ;
 
-export type ExpressionExceptRangeConfig = UnaryExpressionConfig | ReferenceExpressionConfig | TryExpressionConfig | BinaryExpressionConfig | AssignmentExpressionConfig | CompoundAssignmentExprConfig | TypeCastExpressionConfig | CallExpressionConfig | ReturnExpressionConfig | YieldExpressionConfig | ScopedIdentifierConfig | GenericFunctionConfig | AwaitExpressionConfig | FieldExpressionConfig | ArrayExpressionConfig | TupleExpressionConfig | MacroInvocationConfig | BreakExpressionConfig | ContinueExpressionConfig | IndexExpressionConfig | ClosureExpressionConfig | ParenthesizedExpressionConfig | StructExpressionConfig;
-export type LooseExpressionExceptRange = LooseUnaryExpression | LooseReferenceExpression | LooseTryExpression | LooseBinaryExpression | LooseAssignmentExpression | LooseCompoundAssignmentExpr | LooseTypeCastExpression | LooseCallExpression | LooseReturnExpression | LooseYieldExpression | LooseScopedIdentifier | LooseGenericFunction | LooseAwaitExpression | LooseFieldExpression | LooseArrayExpression | LooseTupleExpression | LooseMacroInvocation | LooseBreakExpression | LooseContinueExpression | LooseIndexExpression | LooseClosureExpression | LooseParenthesizedExpression | LooseStructExpression;
-export type ExpressionExceptRangeTree = UnaryExpressionTree | ReferenceExpressionTree | TryExpressionTree | BinaryExpressionTree | AssignmentExpressionTree | CompoundAssignmentExprTree | TypeCastExpressionTree | CallExpressionTree | ReturnExpressionTree | YieldExpressionTree | LiteralTree | IdentifierTree | ReservedIdentifierTree | SelfTree | ScopedIdentifierTree | GenericFunctionTree | AwaitExpressionTree | FieldExpressionTree | ArrayExpressionTree | TupleExpressionTree | MacroInvocationTree | UnitExpressionTree | BreakExpressionTree | ContinueExpressionTree | IndexExpressionTree | MetavariableTree | ClosureExpressionTree | ParenthesizedExpressionTree | StructExpressionTree | ExpressionEndingWithBlockTree;
+export type ExpressionExceptRangeConfig = UnaryExpressionConfig | ReferenceExpressionConfig | TryExpressionConfig | BinaryExpressionConfig | AssignmentExpressionConfig | CompoundAssignmentExprConfig | TypeCastExpressionConfig | CallExpressionConfig | ReturnExpressionConfig | YieldExpressionConfig | StringLiteralConfig | RawStringLiteralConfig | ScopedIdentifierConfig | GenericFunctionConfig | AwaitExpressionConfig | FieldExpressionConfig | ArrayExpressionConfig | TupleExpressionConfig | MacroInvocationConfig | BreakExpressionConfig | ContinueExpressionConfig | IndexExpressionConfig | ClosureExpressionConfig | ParenthesizedExpressionConfig | StructExpressionConfig | UnsafeBlockConfig | AsyncBlockConfig | GenBlockConfig | TryBlockConfig | BlockConfig | IfExpressionConfig | MatchExpressionConfig | WhileExpressionConfig | LoopExpressionConfig | ForExpressionConfig | ConstBlockConfig;
+export type LooseExpressionExceptRange = LooseUnaryExpression | LooseReferenceExpression | LooseTryExpression | LooseBinaryExpression | LooseAssignmentExpression | LooseCompoundAssignmentExpr | LooseTypeCastExpression | LooseCallExpression | LooseReturnExpression | LooseYieldExpression | LooseStringLiteral | LooseRawStringLiteral | LooseScopedIdentifier | LooseGenericFunction | LooseAwaitExpression | LooseFieldExpression | LooseArrayExpression | LooseTupleExpression | LooseMacroInvocation | LooseBreakExpression | LooseContinueExpression | LooseIndexExpression | LooseClosureExpression | LooseParenthesizedExpression | LooseStructExpression | LooseUnsafeBlock | LooseAsyncBlock | LooseGenBlock | LooseTryBlock | LooseBlock | LooseIfExpression | LooseMatchExpression | LooseWhileExpression | LooseLoopExpression | LooseForExpression | LooseConstBlock;
+export type ExpressionExceptRangeTree = UnaryExpressionTree | ReferenceExpressionTree | TryExpressionTree | BinaryExpressionTree | AssignmentExpressionTree | CompoundAssignmentExprTree | TypeCastExpressionTree | CallExpressionTree | ReturnExpressionTree | YieldExpressionTree | StringLiteralTree | RawStringLiteralTree | CharLiteralTree | BooleanLiteralTree | IntegerLiteralTree | FloatLiteralTree | IdentifierTree | SelfTree | ScopedIdentifierTree | GenericFunctionTree | AwaitExpressionTree | FieldExpressionTree | ArrayExpressionTree | TupleExpressionTree | MacroInvocationTree | UnitExpressionTree | BreakExpressionTree | ContinueExpressionTree | IndexExpressionTree | MetavariableTree | ClosureExpressionTree | ParenthesizedExpressionTree | StructExpressionTree | UnsafeBlockTree | AsyncBlockTree | GenBlockTree | TryBlockTree | BlockTree | IfExpressionTree | MatchExpressionTree | WhileExpressionTree | LoopExpressionTree | ForExpressionTree | ConstBlockTree;
 
 export type Expression =
-  | ExpressionExceptRange
+  | UnaryExpression
+  | ReferenceExpression
+  | TryExpression
+  | BinaryExpression
+  | AssignmentExpression
+  | CompoundAssignmentExpr
+  | TypeCastExpression
+  | CallExpression
+  | ReturnExpression
+  | YieldExpression
+  | StringLiteral
+  | RawStringLiteral
+  | CharLiteral
+  | BooleanLiteral
+  | IntegerLiteral
+  | FloatLiteral
+  | Identifier
+  | Self
+  | ScopedIdentifier
+  | GenericFunction
+  | AwaitExpression
+  | FieldExpression
+  | ArrayExpression
+  | TupleExpression
+  | MacroInvocation
+  | UnitExpression
+  | BreakExpression
+  | ContinueExpression
+  | IndexExpression
+  | Metavariable
+  | ClosureExpression
+  | ParenthesizedExpression
+  | StructExpression
+  | UnsafeBlock
+  | AsyncBlock
+  | GenBlock
+  | TryBlock
+  | Block
+  | IfExpression
+  | MatchExpression
+  | WhileExpression
+  | LoopExpression
+  | ForExpression
+  | ConstBlock
   | RangeExpression
 ;
 
-export type ExpressionConfig = RangeExpressionConfig;
-export type LooseExpression = LooseRangeExpression;
-export type ExpressionTree = ExpressionExceptRangeTree | RangeExpressionTree;
+export type ExpressionConfig = UnaryExpressionConfig | ReferenceExpressionConfig | TryExpressionConfig | BinaryExpressionConfig | AssignmentExpressionConfig | CompoundAssignmentExprConfig | TypeCastExpressionConfig | CallExpressionConfig | ReturnExpressionConfig | YieldExpressionConfig | StringLiteralConfig | RawStringLiteralConfig | ScopedIdentifierConfig | GenericFunctionConfig | AwaitExpressionConfig | FieldExpressionConfig | ArrayExpressionConfig | TupleExpressionConfig | MacroInvocationConfig | BreakExpressionConfig | ContinueExpressionConfig | IndexExpressionConfig | ClosureExpressionConfig | ParenthesizedExpressionConfig | StructExpressionConfig | UnsafeBlockConfig | AsyncBlockConfig | GenBlockConfig | TryBlockConfig | BlockConfig | IfExpressionConfig | MatchExpressionConfig | WhileExpressionConfig | LoopExpressionConfig | ForExpressionConfig | ConstBlockConfig | RangeExpressionConfig;
+export type LooseExpression = LooseUnaryExpression | LooseReferenceExpression | LooseTryExpression | LooseBinaryExpression | LooseAssignmentExpression | LooseCompoundAssignmentExpr | LooseTypeCastExpression | LooseCallExpression | LooseReturnExpression | LooseYieldExpression | LooseStringLiteral | LooseRawStringLiteral | LooseScopedIdentifier | LooseGenericFunction | LooseAwaitExpression | LooseFieldExpression | LooseArrayExpression | LooseTupleExpression | LooseMacroInvocation | LooseBreakExpression | LooseContinueExpression | LooseIndexExpression | LooseClosureExpression | LooseParenthesizedExpression | LooseStructExpression | LooseUnsafeBlock | LooseAsyncBlock | LooseGenBlock | LooseTryBlock | LooseBlock | LooseIfExpression | LooseMatchExpression | LooseWhileExpression | LooseLoopExpression | LooseForExpression | LooseConstBlock | LooseRangeExpression;
+export type ExpressionTree = UnaryExpressionTree | ReferenceExpressionTree | TryExpressionTree | BinaryExpressionTree | AssignmentExpressionTree | CompoundAssignmentExprTree | TypeCastExpressionTree | CallExpressionTree | ReturnExpressionTree | YieldExpressionTree | StringLiteralTree | RawStringLiteralTree | CharLiteralTree | BooleanLiteralTree | IntegerLiteralTree | FloatLiteralTree | IdentifierTree | SelfTree | ScopedIdentifierTree | GenericFunctionTree | AwaitExpressionTree | FieldExpressionTree | ArrayExpressionTree | TupleExpressionTree | MacroInvocationTree | UnitExpressionTree | BreakExpressionTree | ContinueExpressionTree | IndexExpressionTree | MetavariableTree | ClosureExpressionTree | ParenthesizedExpressionTree | StructExpressionTree | UnsafeBlockTree | AsyncBlockTree | GenBlockTree | TryBlockTree | BlockTree | IfExpressionTree | MatchExpressionTree | WhileExpressionTree | LoopExpressionTree | ForExpressionTree | ConstBlockTree | RangeExpressionTree;
 
 export type ExpressionEndingWithBlock =
   | UnsafeBlock
@@ -2437,39 +2719,110 @@ export type LooseExpressionEndingWithBlock = LooseUnsafeBlock | LooseAsyncBlock 
 export type ExpressionEndingWithBlockTree = UnsafeBlockTree | AsyncBlockTree | GenBlockTree | TryBlockTree | BlockTree | IfExpressionTree | MatchExpressionTree | WhileExpressionTree | LoopExpressionTree | ForExpressionTree | ConstBlockTree;
 
 export type DelimTokens =
+  | StringLiteral
+  | RawStringLiteral
+  | CharLiteral
+  | BooleanLiteral
+  | IntegerLiteral
+  | FloatLiteral
+  | Identifier
+  | MutableSpecifier
+  | Self
+  | Super
+  | Crate
   | DelimTokenTree
 ;
 
-export type DelimTokensConfig = DelimTokenTreeConfig;
-export type LooseDelimTokens = LooseDelimTokenTree;
-export type DelimTokensTree = NonDelimTokenTree | DelimTokenTreeTree;
+export type DelimTokensConfig = StringLiteralConfig | RawStringLiteralConfig | DelimTokenTreeConfig;
+export type LooseDelimTokens = LooseStringLiteral | LooseRawStringLiteral | LooseDelimTokenTree;
+export type DelimTokensTree = StringLiteralTree | RawStringLiteralTree | CharLiteralTree | BooleanLiteralTree | IntegerLiteralTree | FloatLiteralTree | IdentifierTree | MutableSpecifierTree | SelfTree | SuperTree | CrateTree | DelimTokenTreeTree;
 
 export type NonDelimToken =
-  | NonSpecialToken
+  | StringLiteral
+  | RawStringLiteral
+  | CharLiteral
+  | BooleanLiteral
+  | IntegerLiteral
+  | FloatLiteral
+  | Identifier
+  | MutableSpecifier
+  | Self
+  | Super
+  | Crate
 ;
 
-export type NonDelimTokenConfig = NonSpecialTokenConfig;
-export type LooseNonDelimToken = LooseNonSpecialToken;
-export type NonDelimTokenTree = NonSpecialTokenTree;
+export type NonDelimTokenConfig = StringLiteralConfig | RawStringLiteralConfig;
+export type LooseNonDelimToken = LooseStringLiteral | LooseRawStringLiteral;
+export type NonDelimTokenTree = StringLiteralTree | RawStringLiteralTree | CharLiteralTree | BooleanLiteralTree | IntegerLiteralTree | FloatLiteralTree | IdentifierTree | MutableSpecifierTree | SelfTree | SuperTree | CrateTree;
 
 export type Condition =
-  | Expression
+  | UnaryExpression
+  | ReferenceExpression
+  | TryExpression
+  | BinaryExpression
+  | AssignmentExpression
+  | CompoundAssignmentExpr
+  | TypeCastExpression
+  | CallExpression
+  | ReturnExpression
+  | YieldExpression
+  | StringLiteral
+  | RawStringLiteral
+  | CharLiteral
+  | BooleanLiteral
+  | IntegerLiteral
+  | FloatLiteral
+  | Identifier
+  | Self
+  | ScopedIdentifier
+  | GenericFunction
+  | AwaitExpression
+  | FieldExpression
+  | ArrayExpression
+  | TupleExpression
+  | MacroInvocation
+  | UnitExpression
+  | BreakExpression
+  | ContinueExpression
+  | IndexExpression
+  | Metavariable
+  | ClosureExpression
+  | ParenthesizedExpression
+  | StructExpression
+  | UnsafeBlock
+  | AsyncBlock
+  | GenBlock
+  | TryBlock
+  | Block
+  | IfExpression
+  | MatchExpression
+  | WhileExpression
+  | LoopExpression
+  | ForExpression
+  | ConstBlock
+  | RangeExpression
   | LetCondition
   | _LetChain
 ;
 
-export type ConditionConfig = LetConditionConfig | _LetChainConfig;
-export type LooseCondition = LooseLetCondition | Loose_LetChain;
-export type ConditionTree = ExpressionTree | LetConditionTree | _LetChainTree;
+export type ConditionConfig = UnaryExpressionConfig | ReferenceExpressionConfig | TryExpressionConfig | BinaryExpressionConfig | AssignmentExpressionConfig | CompoundAssignmentExprConfig | TypeCastExpressionConfig | CallExpressionConfig | ReturnExpressionConfig | YieldExpressionConfig | StringLiteralConfig | RawStringLiteralConfig | ScopedIdentifierConfig | GenericFunctionConfig | AwaitExpressionConfig | FieldExpressionConfig | ArrayExpressionConfig | TupleExpressionConfig | MacroInvocationConfig | BreakExpressionConfig | ContinueExpressionConfig | IndexExpressionConfig | ClosureExpressionConfig | ParenthesizedExpressionConfig | StructExpressionConfig | UnsafeBlockConfig | AsyncBlockConfig | GenBlockConfig | TryBlockConfig | BlockConfig | IfExpressionConfig | MatchExpressionConfig | WhileExpressionConfig | LoopExpressionConfig | ForExpressionConfig | ConstBlockConfig | RangeExpressionConfig | LetConditionConfig | _LetChainConfig;
+export type LooseCondition = LooseUnaryExpression | LooseReferenceExpression | LooseTryExpression | LooseBinaryExpression | LooseAssignmentExpression | LooseCompoundAssignmentExpr | LooseTypeCastExpression | LooseCallExpression | LooseReturnExpression | LooseYieldExpression | LooseStringLiteral | LooseRawStringLiteral | LooseScopedIdentifier | LooseGenericFunction | LooseAwaitExpression | LooseFieldExpression | LooseArrayExpression | LooseTupleExpression | LooseMacroInvocation | LooseBreakExpression | LooseContinueExpression | LooseIndexExpression | LooseClosureExpression | LooseParenthesizedExpression | LooseStructExpression | LooseUnsafeBlock | LooseAsyncBlock | LooseGenBlock | LooseTryBlock | LooseBlock | LooseIfExpression | LooseMatchExpression | LooseWhileExpression | LooseLoopExpression | LooseForExpression | LooseConstBlock | LooseRangeExpression | LooseLetCondition | Loose_LetChain;
+export type ConditionTree = UnaryExpressionTree | ReferenceExpressionTree | TryExpressionTree | BinaryExpressionTree | AssignmentExpressionTree | CompoundAssignmentExprTree | TypeCastExpressionTree | CallExpressionTree | ReturnExpressionTree | YieldExpressionTree | StringLiteralTree | RawStringLiteralTree | CharLiteralTree | BooleanLiteralTree | IntegerLiteralTree | FloatLiteralTree | IdentifierTree | SelfTree | ScopedIdentifierTree | GenericFunctionTree | AwaitExpressionTree | FieldExpressionTree | ArrayExpressionTree | TupleExpressionTree | MacroInvocationTree | UnitExpressionTree | BreakExpressionTree | ContinueExpressionTree | IndexExpressionTree | MetavariableTree | ClosureExpressionTree | ParenthesizedExpressionTree | StructExpressionTree | UnsafeBlockTree | AsyncBlockTree | GenBlockTree | TryBlockTree | BlockTree | IfExpressionTree | MatchExpressionTree | WhileExpressionTree | LoopExpressionTree | ForExpressionTree | ConstBlockTree | RangeExpressionTree | LetConditionTree | _LetChainTree;
 
 export type Pattern =
+  | StringLiteral
+  | RawStringLiteral
+  | CharLiteral
+  | BooleanLiteral
+  | IntegerLiteral
+  | FloatLiteral
+  | NegativeLiteral
   | Identifier
   | ScopedIdentifier
   | GenericPattern
   | TuplePattern
   | TupleStructPattern
   | StructPattern
-  | ReservedIdentifier
   | RefPattern
   | SlicePattern
   | CapturedPattern
@@ -2481,9 +2834,9 @@ export type Pattern =
   | MacroInvocation
 ;
 
-export type PatternConfig = ScopedIdentifierConfig | GenericPatternConfig | TuplePatternConfig | TupleStructPatternConfig | StructPatternConfig | RefPatternConfig | SlicePatternConfig | CapturedPatternConfig | ReferencePatternConfig | MutPatternConfig | RangePatternConfig | OrPatternConfig | ConstBlockConfig | MacroInvocationConfig;
-export type LoosePattern = LooseScopedIdentifier | LooseGenericPattern | LooseTuplePattern | LooseTupleStructPattern | LooseStructPattern | LooseRefPattern | LooseSlicePattern | LooseCapturedPattern | LooseReferencePattern | LooseMutPattern | LooseRangePattern | LooseOrPattern | LooseConstBlock | LooseMacroInvocation;
-export type PatternTree = LiteralPatternTree | IdentifierTree | ScopedIdentifierTree | GenericPatternTree | TuplePatternTree | TupleStructPatternTree | StructPatternTree | ReservedIdentifierTree | RefPatternTree | SlicePatternTree | CapturedPatternTree | ReferencePatternTree | RemainingFieldPatternTree | MutPatternTree | RangePatternTree | OrPatternTree | ConstBlockTree | MacroInvocationTree;
+export type PatternConfig = StringLiteralConfig | RawStringLiteralConfig | NegativeLiteralConfig | ScopedIdentifierConfig | GenericPatternConfig | TuplePatternConfig | TupleStructPatternConfig | StructPatternConfig | RefPatternConfig | SlicePatternConfig | CapturedPatternConfig | ReferencePatternConfig | MutPatternConfig | RangePatternConfig | OrPatternConfig | ConstBlockConfig | MacroInvocationConfig;
+export type LoosePattern = LooseStringLiteral | LooseRawStringLiteral | LooseNegativeLiteral | LooseScopedIdentifier | LooseGenericPattern | LooseTuplePattern | LooseTupleStructPattern | LooseStructPattern | LooseRefPattern | LooseSlicePattern | LooseCapturedPattern | LooseReferencePattern | LooseMutPattern | LooseRangePattern | LooseOrPattern | LooseConstBlock | LooseMacroInvocation;
+export type PatternTree = StringLiteralTree | RawStringLiteralTree | CharLiteralTree | BooleanLiteralTree | IntegerLiteralTree | FloatLiteralTree | NegativeLiteralTree | IdentifierTree | ScopedIdentifierTree | GenericPatternTree | TuplePatternTree | TupleStructPatternTree | StructPatternTree | RefPatternTree | SlicePatternTree | CapturedPatternTree | ReferencePatternTree | RemainingFieldPatternTree | MutPatternTree | RangePatternTree | OrPatternTree | ConstBlockTree | MacroInvocationTree;
 
 export type Literal =
   | StringLiteral
@@ -2519,12 +2872,11 @@ export type Path =
   | Crate
   | Identifier
   | ScopedIdentifier
-  | ReservedIdentifier
 ;
 
 export type PathConfig = ScopedIdentifierConfig;
 export type LoosePath = LooseScopedIdentifier;
-export type PathTree = SelfTree | MetavariableTree | SuperTree | CrateTree | IdentifierTree | ScopedIdentifierTree | ReservedIdentifierTree;
+export type PathTree = SelfTree | MetavariableTree | SuperTree | CrateTree | IdentifierTree | ScopedIdentifierTree;
 
 // Token type aliases (only tokens referenced in field/child unions)
 export type EmptyStatement = Terminal<"empty_statement">;

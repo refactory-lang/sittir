@@ -38,22 +38,22 @@ export const suggestedRules = {
   "_jsx_element": $ => choice($.jsx_element, $.jsx_self_closing_element),
 
   // [applied] promoted supertype
-  "_jsx_child": $ => choice($.jsx_text, $.html_character_reference, $._jsx_element, $.jsx_expression),
+  "_jsx_child": $ => choice($.jsx_text, $.html_character_reference, $.jsx_element, $.jsx_self_closing_element, $.jsx_expression),
 
   // [applied] promoted supertype
   "_jsx_identifier": $ => choice($.jsx_identifier, $.identifier),
 
   // [applied] promoted supertype
-  "_jsx_element_name": $ => choice($._jsx_identifier, $.nested_identifier, $.jsx_namespace_name),
+  "_jsx_element_name": $ => choice($.jsx_identifier, $.identifier, $.nested_identifier, $.jsx_namespace_name),
 
   // [applied] promoted supertype
   "_jsx_attribute": $ => choice($.jsx_attribute, $.jsx_expression),
 
   // [applied] promoted supertype
-  "_jsx_attribute_name": $ => choice($._jsx_identifier, $.jsx_namespace_name),
+  "_jsx_attribute_name": $ => choice($.jsx_identifier, $.identifier, $.jsx_namespace_name),
 
   // [applied] promoted supertype
-  "_jsx_attribute_value": $ => choice($._jsx_string, $.jsx_expression, $._jsx_element),
+  "_jsx_attribute_value": $ => choice($._jsx_string, $.jsx_expression, $.jsx_element, $.jsx_self_closing_element),
 
   // [applied] promoted supertype
   "_formal_parameter": $ => choice($.required_parameter, $.optional_parameter),
@@ -77,7 +77,7 @@ export const suggestedRules = {
   "_tuple_type_member": $ => choice($.tuple_parameter, $.optional_tuple_parameter, $.optional_type, $.rest_type, $.type),
 
   // [applied] promoted supertype
-  "primary_type": $ => choice($.parenthesized_type, $.predefined_type, $._type_identifier, $.nested_type_identifier, $.generic_type, $.object_type, $.array_type, $.tuple_type, $.flow_maybe_type, $.type_query, $.index_type_query, $.this, $.existential_type, $.literal_type, $.lookup_type, $.conditional_type, $.template_literal_type, $.intersection_type, $.union_type),
+  "primary_type": $ => choice($.parenthesized_type, $.predefined_type, $.type_identifier, $.nested_type_identifier, $.generic_type, $.object_type, $.array_type, $.tuple_type, $.flow_maybe_type, $.type_query, $.index_type_query, $.this, $.existential_type, $.literal_type, $.lookup_type, $.conditional_type, $.template_literal_type, $.intersection_type, $.union_type),
 
   // --- Repeated-shape candidates (reused across ≥2 parents) ---
   // parents: _for_header, catch_clause, variable_declarator

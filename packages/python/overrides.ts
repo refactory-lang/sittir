@@ -13,6 +13,17 @@ import base from '../../node_modules/.pnpm/tree-sitter-python@0.25.0/node_module
 export default grammar(base, {
     name: 'python',
     rules: {
+        // Structural-whitespace roles — the three tree-sitter-python
+        // external tokens that drive indent-sensitive parsing. Declaring
+        // them as `role(...)` tells Link's symbol resolver to inline
+        // references as structural-whitespace directives (real newlines
+        // / indents in the render templates). The pipeline no longer
+        // hardcodes `_indent` / `_dedent` / `_newline` — a grammar with
+        // different external names just declares the mapping here.
+        _indent: ($) => role('indent'),
+        _dedent: ($) => role('dedent'),
+        _newline: ($) => role('newline'),
+
         // as_pattern: 1 field(s)
         as_pattern: ($, original) => transform(original, {
             0: field('expression'), // expression | case_pattern | identifier [struct=0]

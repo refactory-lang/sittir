@@ -1,7 +1,7 @@
 /**
  * Emits wrap.ts — read-only lazy view layer over readNode output.
  *
- * Mirrors the factory emitter (factories-v2.ts) one-for-one, except
+ * Mirrors the factory emitter (factories.ts) one-for-one, except
  * each field accessor is a `get` returning `drillIn(data.fields[raw], tree)`
  * instead of a fluent getter/setter method. Nodes returned from `wrap*`
  * are read-only — there are no setters and no render/toEdit/replace
@@ -20,7 +20,7 @@ import type {
 } from '../compiler/rule.ts'
 import type { DerivedOverridesConfig } from '../compiler/derive-overrides-json.ts'
 
-export interface EmitWrapFromNodeMapConfig {
+export interface EmitWrapConfig {
     grammar: string
     nodeMap: NodeMap
     /**
@@ -76,7 +76,7 @@ function emitMapPerLine(name: string, obj: Record<string, unknown>): string[] {
     return lines
 }
 
-export function emitWrapFromNodeMap(config: EmitWrapFromNodeMapConfig): string {
+export function emitWrap(config: EmitWrapConfig): string {
     const { nodeMap, derivedOverrides } = config
 
     // ------------------------------------------------------------------
@@ -128,7 +128,11 @@ export function emitWrapFromNodeMap(config: EmitWrapFromNodeMapConfig): string {
         }
     }
 
-    // Supertype expansion: { '_expression': ['binary_expression', ...] }
+    // Supertype expansion from NodeMap. `assemble()` resolves hidden
+    // rule references (`_type_identifier` → `type_identifier`) and
+    // alias targets while building each supertype's subtype list, so
+    // the names recorded here already match what tree-sitter reports
+    // at parse time. No node-types.json needed.
     const supertypeExpansion: Record<string, string[]> = {}
     for (const [kind, node] of nodeMap.nodes) {
         if (node.modelType !== 'supertype') continue
@@ -150,7 +154,7 @@ export function emitWrapFromNodeMap(config: EmitWrapFromNodeMapConfig): string {
         if (!isValidIdent(node.typeName)) continue
         typeImports.add(node.typeName)
     }
-    // Multi-line import for readability — see factories-v2.ts.
+    // Multi-line import for readability — see factories.ts.
     const typeImportLine = typeImports.size > 0
         ? [
             'import type {',

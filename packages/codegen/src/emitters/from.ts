@@ -16,12 +16,12 @@ function escForSource(s: string): string {
     return s.replace(/\\/g, '\\\\').replace(/'/g, "\\'")
 }
 
-export interface EmitFromNodeMapConfig {
+export interface EmitFromConfig {
     grammar: string
     nodeMap: NodeMap
 }
 
-export function emitFromNodeMap(config: EmitFromNodeMapConfig): string {
+export function emitFrom(config: EmitFromConfig): string {
     const { nodeMap } = config
 
     // T042i — dedup state. Each unique resolver kind list gets a

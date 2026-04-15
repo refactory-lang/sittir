@@ -2,17 +2,17 @@
  * US6 — overrides.suggested.ts verification (T067-T070).
  *
  * Exercises the derivation log that Link accumulates and
- * `suggested-v2.ts` renders. These checks run against the *real*
+ * `suggested.ts` renders. These checks run against the *real*
  * grammar packages so we see every inference / promotion the
  * pipeline makes on the shipped rust / typescript / python inputs.
  */
 
 import { describe, it, expect } from 'vitest'
-import { generateV2 } from '../compiler/generate.ts'
+import { generate } from '../compiler/generate.ts'
 
 describe('US6 — overrides.suggested.ts (T067)', () => {
     it('rust suggested file contains field-inference entries', async () => {
-        const result = await generateV2({
+        const result = await generate({
             grammar: 'rust',
             outputDir: '/tmp/rust-suggested',
         })
@@ -29,7 +29,7 @@ describe('US6 — overrides.suggested.ts (T067)', () => {
 
 describe('US6 — supertype promotion candidates (T068)', () => {
     it('rust suggested file surfaces promoted supertypes', async () => {
-        const result = await generateV2({
+        const result = await generate({
             grammar: 'rust',
             outputDir: '/tmp/rust-super',
         })
@@ -40,7 +40,7 @@ describe('US6 — supertype promotion candidates (T068)', () => {
     })
 
     it('typescript suggested file surfaces promoted supertypes', async () => {
-        const result = await generateV2({
+        const result = await generate({
             grammar: 'typescript',
             outputDir: '/tmp/ts-super',
         })
@@ -50,7 +50,7 @@ describe('US6 — supertype promotion candidates (T068)', () => {
 
 describe('US6 — manual overrides win over inference (T069 / T069a)', () => {
     it('omits entries already present in overrides.ts', async () => {
-        const result = await generateV2({
+        const result = await generate({
             grammar: 'rust',
             outputDir: '/tmp/rust-manual',
         })
@@ -80,7 +80,7 @@ describe('US6 — manual overrides win over inference (T069 / T069a)', () => {
 
 describe('US6 — suggested.ts is valid TypeScript (T070)', () => {
     it('rust suggested file is a runnable module with real exports', async () => {
-        const result = await generateV2({
+        const result = await generate({
             grammar: 'rust',
             outputDir: '/tmp/rust-parse',
         })

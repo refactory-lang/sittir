@@ -308,7 +308,6 @@ export type _Config_Pair = _TypeAssert<_TypeExtends<ConfigOf<Pair>, PairConfig>>
 export type _Config_PairPattern = _TypeAssert<_TypeExtends<ConfigOf<PairPattern>, PairPatternConfig>>;
 export type _Config_PropertyName = _TypeAssert<_TypeExtends<ConfigOf<PropertyName>, PropertyNameConfig>>;
 export type _Config_ComputedPropertyName = _TypeAssert<_TypeExtends<ConfigOf<ComputedPropertyName>, ComputedPropertyNameConfig>>;
-export type _Config_PublicFieldDefinition = _TypeAssert<_TypeExtends<ConfigOf<PublicFieldDefinition>, PublicFieldDefinitionConfig>>;
 export type _Config_JsxStartOpeningElement = _TypeAssert<_TypeExtends<ConfigOf<JsxStartOpeningElement>, JsxStartOpeningElementConfig>>;
 export type _Config_NonNullExpression = _TypeAssert<_TypeExtends<ConfigOf<NonNullExpression>, NonNullExpressionConfig>>;
 export type _Config_MethodSignature = _TypeAssert<_TypeExtends<ConfigOf<MethodSignature>, MethodSignatureConfig>>;

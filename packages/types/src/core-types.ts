@@ -85,12 +85,11 @@ export interface AnyNodeData {
  */
 export type TemplateRule =
 	| string
-	| string[]
 	| TemplateRuleObject;
 
 export interface TemplateRuleObject {
 	/** Standard template — mutually exclusive with `variants`. */
-	template?: string | string[];
+	template?: string;
 	/** Named subtype templates — mutually exclusive with `template`. */
 	variants?: Record<string, string>;
 	/** Discriminator tokens for detecting variant from anonymous children. */

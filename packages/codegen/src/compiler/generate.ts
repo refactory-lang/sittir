@@ -1,8 +1,7 @@
 /**
- * compiler/generate.ts — New pipeline entry point
+ * compiler/generate.ts — pipeline entry point.
  *
- * Replaces the old generate() in index.ts.
- * Pipeline: evaluate → link → optimize → assemble → emitters
+ * Pipeline: evaluate → link → optimize → assemble → emitters.
  */
 
 import { existsSync } from 'node:fs'
@@ -13,25 +12,24 @@ import { assemble } from './assemble.ts'
 import { resolveGrammarJsPath, resolveOverridesPath } from './resolve-grammar.ts'
 
 import { emitGrammar } from '../emitters/grammar.ts'
-import { emitTypesFromNodeMap } from '../emitters/types-v2.ts'
-import { emitTemplatesFromNodeMap } from '../emitters/templates-v2.ts'
-import { emitFactoriesFromNodeMap } from '../emitters/factories-v2.ts'
-import { emitWrapFromNodeMap } from '../emitters/wrap-v2.ts'
-import { emitFromNodeMap } from '../emitters/from-v2.ts'
-import { emitClientUtilsFromNodeMap } from '../emitters/client-utils-v2.ts'
-import { emitIrFromNodeMap } from '../emitters/ir-v2.ts'
-import { emitTestsFromNodeMap } from '../emitters/test-v2.ts'
-import { emitTypeTestsFromNodeMap } from '../emitters/type-test-v2.ts'
+import { emitTypes } from '../emitters/types.ts'
+import { emitTemplates } from '../emitters/templates.ts'
+import { emitFactories } from '../emitters/factories.ts'
+import { emitWrap } from '../emitters/wrap.ts'
+import { deriveOverridesConfig } from './derive-overrides-json.ts'
+import { emitFrom } from '../emitters/from.ts'
+import { emitClientUtils } from '../emitters/client-utils.ts'
+import { emitIr } from '../emitters/ir.ts'
+import { emitTests } from '../emitters/test.ts'
+import { emitTypeTests } from '../emitters/type-test.ts'
 import { emitConfig } from '../emitters/config.ts'
-
-// v2 emitters — consume NodeMap directly
-import { emitConstsFromNodeMap } from '../emitters/consts-v2.ts'
-import { emitIndexFromNodeMap } from '../emitters/index-file-v2.ts'
-import { emitSuggestedFromNodeMap } from '../emitters/suggested-v2.ts'
+import { emitConsts } from '../emitters/consts.ts'
+import { emitIndex } from '../emitters/index-file.ts'
+import { emitSuggested } from '../emitters/suggested.ts'
 
 import type { NodeMap } from './rule.ts'
 
-export interface GeneratedFilesV2 {
+export interface GeneratedFiles {
     grammar: string
     types: string
     templatesYaml: string
@@ -52,7 +50,7 @@ export interface GeneratedFilesV2 {
     nodeMap: NodeMap
 }
 
-export interface GenerateConfigV2 {
+export interface GenerateConfig {
     grammar: string
     nodes?: string[]
     outputDir: string
@@ -95,7 +93,7 @@ export interface GenerateConfigV2 {
  *
  * evaluate(grammar.js) → link → optimize → assemble → adapter → emitters
  */
-export async function generateV2(cfg: GenerateConfigV2): Promise<GeneratedFilesV2> {
+export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
     // Resolve grammar.js path
     const grammarJsPath = resolveGrammarJsPath(cfg.grammar)
 
@@ -116,26 +114,33 @@ export async function generateV2(cfg: GenerateConfigV2): Promise<GeneratedFilesV
     // Phase 4: Assemble
     const nodeMap = assemble(optimized)
 
+    // Derive the runtime OverridesConfig from the post-Link rule tree.
+    // Used by wrap to inline `_overrides` + `_routing` matching
+    // what overrides.ts / grammar.js specify — the deprecation target
+    // for the legacy `overrides.json` file.
+    const overrideKinds = new Set(raw.overrideRuleNames ?? [])
+    const derivedOverrides = deriveOverridesConfig(linked.rules, overrideKinds, raw.rules)
+
     // Phase 5: Emit — every emitter consumes NodeMap directly. The
     // ir-namespace keys are populated on each AssembledNode during
     // assemble() (see resolveIrKeys), so emitters read node.irKey
     // directly. No side-channel map plumbing, no NodeMap→Hydrated adapter.
     return {
         grammar: emitGrammar({ grammar: cfg.grammar }),
-        types: emitTypesFromNodeMap({ grammar: cfg.grammar, nodeMap }),
-        templatesYaml: emitTemplatesFromNodeMap({ grammar: cfg.grammar, nodeMap }),
-        factories: emitFactoriesFromNodeMap({ grammar: cfg.grammar, nodeMap, strict: cfg.strict }),
-        wrap: emitWrapFromNodeMap({ grammar: cfg.grammar, nodeMap }),
-        utils: emitClientUtilsFromNodeMap({ nodeMap }),
-        from: emitFromNodeMap({ grammar: cfg.grammar, nodeMap }),
-        irNamespace: emitIrFromNodeMap({ grammar: cfg.grammar, nodeMap }),
-        consts: emitConstsFromNodeMap({ grammar: cfg.grammar, nodeMap }),
-        index: emitIndexFromNodeMap({ grammar: cfg.grammar, nodeMap }),
-        tests: emitTestsFromNodeMap({ grammar: cfg.grammar, nodeMap }),
-        typeTests: emitTypeTestsFromNodeMap({ nodeMap }),
+        types: emitTypes({ grammar: cfg.grammar, nodeMap }),
+        templatesYaml: emitTemplates({ grammar: cfg.grammar, nodeMap }),
+        factories: emitFactories({ grammar: cfg.grammar, nodeMap, strict: cfg.strict }),
+        wrap: emitWrap({ grammar: cfg.grammar, nodeMap, derivedOverrides }),
+        utils: emitClientUtils({ nodeMap }),
+        from: emitFrom({ grammar: cfg.grammar, nodeMap }),
+        irNamespace: emitIr({ grammar: cfg.grammar, nodeMap }),
+        consts: emitConsts({ grammar: cfg.grammar, nodeMap }),
+        index: emitIndex({ grammar: cfg.grammar, nodeMap }),
+        tests: emitTests({ grammar: cfg.grammar, nodeMap }),
+        typeTests: emitTypeTests({ nodeMap }),
         config: emitConfig({ grammar: cfg.grammar }),
         nodeModel: JSON.stringify({ name: nodeMap.name, nodeCount: nodeMap.nodes.size }, null, 2),
-        suggested: emitSuggestedFromNodeMap({ grammar: cfg.grammar, nodeMap }),
+        suggested: emitSuggested({ grammar: cfg.grammar, nodeMap }),
         nodeMap,
     }
 }

@@ -1,9 +1,9 @@
 /**
- * Round-trip validation: v2 pipeline → generated output → runtime validation.
+ * Round-trip validation: generated output → runtime validation.
  *
  * This is the critical acceptance test for the five-phase rewrite.
  * It exercises the generated code at runtime:
- *   1. Generate output via generateV2()
+ *   1. Generate output via generate()
  *   2. Write templates.yaml (factory round-trip uses this directly)
  *   3. Run validateFactoryRoundTrip against the output
  *   4. Report pass/fail
@@ -17,11 +17,11 @@
 import { describe, it, expect } from 'vitest'
 import { writeFileSync, mkdirSync, existsSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
-import { generateV2 } from '../compiler/generate.ts'
+import { generate } from '../compiler/generate.ts'
 
-describe('v2 round-trip validation', () => {
+describe('round-trip validation', () => {
     it('generates all output files for python without crashing', async () => {
-        const result = await generateV2({
+        const result = await generate({
             grammar: 'python',
             outputDir: '/tmp/sittir-rt-python/src',
         })
@@ -32,7 +32,7 @@ describe('v2 round-trip validation', () => {
     }, 30000)
 
     it('generates all output files for rust without crashing', async () => {
-        const result = await generateV2({
+        const result = await generate({
             grammar: 'rust',
             outputDir: '/tmp/sittir-rt-rust/src',
         })
@@ -41,7 +41,7 @@ describe('v2 round-trip validation', () => {
     }, 30000)
 
     it('generates all output files for typescript without crashing', async () => {
-        const result = await generateV2({
+        const result = await generate({
             grammar: 'typescript',
             outputDir: '/tmp/sittir-rt-typescript/src',
         })
@@ -50,7 +50,7 @@ describe('v2 round-trip validation', () => {
     }, 30000)
 
     it('produces valid-looking templates.yaml for python', async () => {
-        const result = await generateV2({
+        const result = await generate({
             grammar: 'python',
             outputDir: '/tmp/sittir-rt-python/src',
         })
@@ -60,7 +60,7 @@ describe('v2 round-trip validation', () => {
     }, 30000)
 
     it('factory round-trip is valid: NodeMap → factories reference correct types', async () => {
-        const result = await generateV2({
+        const result = await generate({
             grammar: 'python',
             outputDir: '/tmp/sittir-rt-python/src',
         })
@@ -73,9 +73,9 @@ describe('v2 round-trip validation', () => {
     }, 30000)
 })
 
-describe('v2 NodeMap structure', () => {
+describe('NodeMap structure', () => {
     it('polymorph forms are synthesized into the NodeMap as groups', async () => {
-        const result = await generateV2({
+        const result = await generate({
             grammar: 'python',
             outputDir: '/tmp/sittir-rt-python/src',
         })
@@ -92,7 +92,7 @@ describe('v2 NodeMap structure', () => {
     }, 30000)
 
     it('every branch node has a rule attached', async () => {
-        const result = await generateV2({
+        const result = await generate({
             grammar: 'python',
             outputDir: '/tmp/sittir-rt-python/src',
         })

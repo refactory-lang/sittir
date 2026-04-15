@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest'
-import { generateV2 } from '../compiler/generate.ts'
+import { generate } from '../compiler/generate.ts'
 
-describe('generateV2 — new pipeline end-to-end', () => {
+describe('generate — new pipeline end-to-end', () => {
 
     it('generates all output files for Python', async () => {
-        const result = await generateV2({
+        const result = await generate({
             grammar: 'python',
             outputDir: '/tmp/sittir-test-python',
         })
@@ -21,7 +21,7 @@ describe('generateV2 — new pipeline end-to-end', () => {
     }, 30000)
 
     it('generates all output files for Rust', async () => {
-        const result = await generateV2({
+        const result = await generate({
             grammar: 'rust',
             outputDir: '/tmp/sittir-test-rust',
         })
@@ -33,7 +33,7 @@ describe('generateV2 — new pipeline end-to-end', () => {
     }, 30000)
 
     it('generates all output files for TypeScript', async () => {
-        const result = await generateV2({
+        const result = await generate({
             grammar: 'typescript',
             outputDir: '/tmp/sittir-test-typescript',
         })

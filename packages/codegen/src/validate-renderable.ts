@@ -88,7 +88,7 @@ export function validateRenderable(grammar: string, templatesYaml: string): Rend
  * C12: NodeMap-sourced variant. Skips the templates.yaml round-trip
  * entirely — renderability is a structural property, and the
  * shared `buildRuleLookup()` answers it directly from NodeMap.
- * Prefer this when you already have a NodeMap in hand (generateV2
+ * Prefer this when you already have a NodeMap in hand (generate
  * returns one).
  */
 export function validateRenderableFromNodeMap(grammar: string, nodeMap: NodeMap): RenderableResult {

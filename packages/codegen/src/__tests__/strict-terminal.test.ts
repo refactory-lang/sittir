@@ -13,11 +13,11 @@
  */
 
 import { describe, it, expect } from 'vitest'
-import { generateV2 } from '../compiler/generate.ts'
+import { generate } from '../compiler/generate.ts'
 
 describe('leaf factory guards', () => {
     it('hoists leaf pattern checks to module-level regex consts', async () => {
-        const result = await generateV2({
+        const result = await generate({
             grammar: 'rust',
             outputDir: '/tmp/rust-leaf-pattern',
         })
@@ -29,7 +29,7 @@ describe('leaf factory guards', () => {
     })
 
     it('enum factories use compile-time literal union, no runtime includes check', async () => {
-        const result = await generateV2({
+        const result = await generate({
             grammar: 'rust',
             outputDir: '/tmp/rust-enum-check',
         })
@@ -39,7 +39,7 @@ describe('leaf factory guards', () => {
     })
 
     it('emits keyword exclusion on the word-kind leaf factory', async () => {
-        const result = await generateV2({
+        const result = await generate({
             grammar: 'rust',
             outputDir: '/tmp/rust-word-kind',
         })

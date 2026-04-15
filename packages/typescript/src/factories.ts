@@ -38,7 +38,6 @@ function _assertNonEmpty<T>(
 
 const RESERVED_KEYWORDS: ReadonlySet<string> = new Set([
   'abstract',
-  'accessor',
   'as',
   'async',
   'await',
@@ -152,8 +151,8 @@ export function exportStatementForm0(config: T.ExportStatementForm0Config) {
     fields,
     children,
     decorator(...decorator_: T.Decorator[]) { return _fsm(config, exportStatementForm0, 'decorator', decorator_, fields.decorator); },
-    declaration(declaration_?: T.Declaration) { return _fs(config, exportStatementForm0, 'declaration', declaration_, fields.declaration); },
-    value(value_?: T.Expression) { return _fs(config, exportStatementForm0, 'value', value_, fields.value); },
+    declaration(declaration_?: T.Declaration | undefined) { return _fs(config, exportStatementForm0, 'declaration', declaration_, fields.declaration); },
+    value(value_?: T.Expression | undefined) { return _fs(config, exportStatementForm0, 'value', value_, fields.value); },
     getChild() { return children[0]; },
     setChild(child: (T.FromClause | T.NamespaceExport | T.ExportClause | T.Semicolon)) { return exportStatementForm0({ ...(config ?? {}), children: [child] }); },
     render() { return render(this); },
@@ -265,8 +264,8 @@ export function exportSpecifier(config: T.ExportSpecifierConfig) {
   };
 }
 
-export function declaration(child: (T.FunctionDeclaration | T.GeneratorFunctionDeclaration | T.ClassDeclaration | T.LexicalDeclaration | T.VariableDeclaration | T.FunctionSignature | T.AbstractClassDeclaration | T.Module | T.InternalModule | T.TypeAliasDeclaration | T.EnumDeclaration | T.InterfaceDeclaration | T.ImportAlias | T.AmbientDeclaration)) {
-  const children = [child];
+export function declaration(child?: (T.FunctionDeclaration | T.GeneratorFunctionDeclaration | T.ClassDeclaration | T.LexicalDeclaration | T.VariableDeclaration | T.FunctionSignature | T.AbstractClassDeclaration | T.Module | T.InternalModule | T.TypeAliasDeclaration | T.EnumDeclaration | T.InterfaceDeclaration | T.ImportAlias | T.AmbientDeclaration)) {
+  const children = child != null ? [child] : [];
   return {
     type: 'declaration' as const,
     named: true as const,
@@ -989,7 +988,7 @@ export function forStatement(config: T.ForStatementConfig) {
     type: 'for_statement' as const,
     named: true as const,
     fields,
-    initializer(initializer_?: T.LexicalDeclaration | T.VariableDeclaration | T.Expressions | T.EmptyStatement) { return _fs(config, forStatement, 'initializer', initializer_, fields.initializer); },
+    initializer(initializer_?: T.LexicalDeclaration | T.VariableDeclaration) { return _fs(config, forStatement, 'initializer', initializer_, fields.initializer); },
     condition(condition_?: T.Expressions | T.EmptyStatement) { return _fs(config, forStatement, 'condition', condition_, fields.condition); },
     increment(increment_?: T.Expressions | undefined) { return _fs(config, forStatement, 'increment', increment_, fields.increment); },
     body(body_?: T.Statement) { return _fs(config, forStatement, 'body', body_, fields.body); },
@@ -1004,6 +1003,7 @@ export function forStatement(config: T.ForStatementConfig) {
 
 export function forInStatement(config: T.ForInStatementConfig) {
   const fields = {
+    await: config?.await,
     body: config?.body,
   };
   const children = config?.children ?? [];
@@ -1012,6 +1012,7 @@ export function forInStatement(config: T.ForInStatementConfig) {
     named: true as const,
     fields,
     children,
+    await(await_?: "await" | undefined) { return _fs(config, forInStatement, 'await', await_, fields.await); },
     body(body_?: T.Statement) { return _fs(config, forInStatement, 'body', body_, fields.body); },
     getChild() { return children[0]; },
     setChild(child: T.ForHeader) { return forInStatement({ ...(config ?? {}), children: [child] }); },
@@ -1355,8 +1356,8 @@ export function parenthesizedExpressionSequenceExpression(config: T.Parenthesize
   };
 }
 
-export function expression(child: (T.AsExpression | T.SatisfiesExpression | T.InstantiationExpression | T.InternalModule | T.PrimaryExpression | T._JsxElement | T.AssignmentExpression | T.AugmentedAssignmentExpression | T.AwaitExpression | T.UnaryExpression | T.BinaryExpression | T.TernaryExpression | T.UpdateExpression | T.NewExpression | T.YieldExpression)) {
-  const children = [child];
+export function expression(child?: (T.AsExpression | T.SatisfiesExpression | T.InstantiationExpression | T.InternalModule | T.PrimaryExpression | T._JsxElement | T.AssignmentExpression | T.AugmentedAssignmentExpression | T.AwaitExpression | T.UnaryExpression | T.BinaryExpression | T.TernaryExpression | T.UpdateExpression | T.NewExpression | T.YieldExpression)) {
+  const children = child != null ? [child] : [];
   return {
     type: 'expression' as const,
     named: true as const,
@@ -1370,8 +1371,8 @@ export function expression(child: (T.AsExpression | T.SatisfiesExpression | T.In
   };
 }
 
-export function primaryExpression(child: (T.SubscriptExpression | T.MemberExpression | T.ParenthesizedExpression | T._Identifier | T.ReservedIdentifier | T.This | T.Super | T.Number | T.String | T.TemplateString | T.Regex | T.True | T.False | T.Null | T.Object | T.Array | T.FunctionExpression | T.ArrowFunction | T.GeneratorFunction | T.Class | T.MetaProperty | T.CallExpression | T.NonNullExpression)) {
-  const children = [child];
+export function primaryExpression(child?: (T.SubscriptExpression | T.MemberExpression | T.ParenthesizedExpression | T._Identifier | T.ReservedIdentifier | T.This | T.Super | T.Number | T.String | T.TemplateString | T.Regex | T.True | T.False | T.Null | T.Object | T.Array | T.FunctionExpression | T.ArrowFunction | T.GeneratorFunction | T.Class | T.MetaProperty | T.CallExpression | T.NonNullExpression)) {
+  const children = child != null ? [child] : [];
   return {
     type: 'primary_expression' as const,
     named: true as const,
@@ -1781,6 +1782,7 @@ export function classHeritageImplementsClause(config: T.ClassHeritageImplementsC
 
 export function functionExpression(config: T.FunctionExpressionConfig) {
   const fields = {
+    async: config?.async,
     name: config?.name,
     body: config?.body,
   };
@@ -1790,6 +1792,7 @@ export function functionExpression(config: T.FunctionExpressionConfig) {
     named: true as const,
     fields,
     children,
+    async(async_?: "async" | undefined) { return _fs(config, functionExpression, 'async', async_, fields.async); },
     name(name_?: T.Identifier | undefined) { return _fs(config, functionExpression, 'name', name_, fields.name); },
     body(body_?: T.StatementBlock) { return _fs(config, functionExpression, 'body', body_, fields.body); },
     getChild() { return children[0]; },
@@ -1805,6 +1808,7 @@ export function functionExpression(config: T.FunctionExpressionConfig) {
 
 export function functionDeclaration(config: T.FunctionDeclarationConfig) {
   const fields = {
+    async: config?.async,
     name: config?.name,
     body: config?.body,
   };
@@ -1814,6 +1818,7 @@ export function functionDeclaration(config: T.FunctionDeclarationConfig) {
     named: true as const,
     fields,
     children,
+    async(async_?: "async" | undefined) { return _fs(config, functionDeclaration, 'async', async_, fields.async); },
     name(name_?: T.Identifier) { return _fs(config, functionDeclaration, 'name', name_, fields.name); },
     body(body_?: T.StatementBlock) { return _fs(config, functionDeclaration, 'body', body_, fields.body); },
     getChild() { return children[0]; },
@@ -1829,6 +1834,7 @@ export function functionDeclaration(config: T.FunctionDeclarationConfig) {
 
 export function generatorFunction(config: T.GeneratorFunctionConfig) {
   const fields = {
+    async: config?.async,
     name: config?.name,
     body: config?.body,
   };
@@ -1838,6 +1844,7 @@ export function generatorFunction(config: T.GeneratorFunctionConfig) {
     named: true as const,
     fields,
     children,
+    async(async_?: "async" | undefined) { return _fs(config, generatorFunction, 'async', async_, fields.async); },
     name(name_?: T.Identifier | undefined) { return _fs(config, generatorFunction, 'name', name_, fields.name); },
     body(body_?: T.StatementBlock) { return _fs(config, generatorFunction, 'body', body_, fields.body); },
     getChild() { return children[0]; },
@@ -1853,6 +1860,7 @@ export function generatorFunction(config: T.GeneratorFunctionConfig) {
 
 export function generatorFunctionDeclaration(config: T.GeneratorFunctionDeclarationConfig) {
   const fields = {
+    async: config?.async,
     name: config?.name,
     body: config?.body,
   };
@@ -1862,6 +1870,7 @@ export function generatorFunctionDeclaration(config: T.GeneratorFunctionDeclarat
     named: true as const,
     fields,
     children,
+    async(async_?: "async" | undefined) { return _fs(config, generatorFunctionDeclaration, 'async', async_, fields.async); },
     name(name_?: T.Identifier) { return _fs(config, generatorFunctionDeclaration, 'name', name_, fields.name); },
     body(body_?: T.StatementBlock) { return _fs(config, generatorFunctionDeclaration, 'body', body_, fields.body); },
     getChild() { return children[0]; },
@@ -1876,11 +1885,12 @@ export function generatorFunctionDeclaration(config: T.GeneratorFunctionDeclarat
 }
 
 export function arrowFunction(config: T.ArrowFunctionParameterConfig | T.ArrowFunctionUCallSignatureConfig) {
-  if (config && 'parameter' in config && 'body' in config) return arrowFunctionParameter(config as T.ArrowFunctionParameterConfig);
+  if (config && 'async' in config && 'parameter' in config && 'body' in config) return arrowFunctionParameter(config as T.ArrowFunctionParameterConfig);
   return arrowFunctionUCallSignature(config as T.ArrowFunctionUCallSignatureConfig);
 }
 export function arrowFunctionParameter(config: T.ArrowFunctionParameterConfig) {
   const fields = {
+    async: config?.async,
     parameter: config?.parameter,
     body: config?.body,
   };
@@ -1889,6 +1899,7 @@ export function arrowFunctionParameter(config: T.ArrowFunctionParameterConfig) {
     named: true as const,
     variant: 'parameter' as const,
     fields,
+    async(async_?: "async" | undefined) { return _fs(config, arrowFunctionParameter, 'async', async_, fields.async); },
     parameter(parameter_?: T.ReservedIdentifier | T.Identifier) { return _fs(config, arrowFunctionParameter, 'parameter', parameter_, fields.parameter); },
     body(body_?: T.Expression | T.StatementBlock) { return _fs(config, arrowFunctionParameter, 'body', body_, fields.body); },
     render() { return render(this); },
@@ -1901,6 +1912,7 @@ export function arrowFunctionParameter(config: T.ArrowFunctionParameterConfig) {
 }
 export function arrowFunctionUCallSignature(config: T.ArrowFunctionUCallSignatureConfig) {
   const fields = {
+    async: config?.async,
     body: config?.body,
   };
   const children = config?.children ?? [];
@@ -1910,6 +1922,7 @@ export function arrowFunctionUCallSignature(config: T.ArrowFunctionUCallSignatur
     variant: '_call_signature' as const,
     fields,
     children,
+    async(async_?: "async" | undefined) { return _fs(config, arrowFunctionUCallSignature, 'async', async_, fields.async); },
     body(body_?: T.Expression | T.StatementBlock) { return _fs(config, arrowFunctionUCallSignature, 'body', body_, fields.body); },
     getChild() { return children[0]; },
     setChild(child: T._CallSignature) { return arrowFunctionUCallSignature({ ...(config ?? {}), children: [child] }); },
@@ -2102,6 +2115,7 @@ export function subscriptExpression(config: T.SubscriptExpressionConfig) {
 
 export function assignmentExpression(config: T.AssignmentExpressionConfig) {
   const fields = {
+    using: config?.using,
     left: config?.left,
     right: config?.right,
   };
@@ -2109,6 +2123,7 @@ export function assignmentExpression(config: T.AssignmentExpressionConfig) {
     type: 'assignment_expression' as const,
     named: true as const,
     fields,
+    using(using_?: "using" | undefined) { return _fs(config, assignmentExpression, 'using', using_, fields.using); },
     left(left_?: T.ParenthesizedExpression | T.LhsExpression) { return _fs(config, assignmentExpression, 'left', left_, fields.left); },
     right(right_?: T.Expression) { return _fs(config, assignmentExpression, 'right', right_, fields.right); },
     render() { return render(this); },
@@ -2192,8 +2207,8 @@ export function binaryExpression(config: T.BinaryExpressionConfig) {
     type: 'binary_expression' as const,
     named: true as const,
     fields,
-    left(left_?: T.Expression | T.PrivatePropertyIdentifier) { return _fs(config, binaryExpression, 'left', left_, fields.left); },
-    operator(operator_?: "&&" | "||" | ">>" | ">>>" | "<<" | "&" | "^" | "|" | "+" | "-" | "*" | "/" | "%" | "**" | "<" | "<=" | "==" | "===" | "!=" | "!==" | ">=" | ">" | "??" | "instanceof" | "in") { return _fs(config, binaryExpression, 'operator', operator_, fields.operator); },
+    left(left_?: T.Expression) { return _fs(config, binaryExpression, 'left', left_, fields.left); },
+    operator(operator_?: "&&") { return _fs(config, binaryExpression, 'operator', operator_, fields.operator); },
     right(right_?: T.Expression) { return _fs(config, binaryExpression, 'right', right_, fields.right); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -2522,8 +2537,8 @@ export function arguments_(...children: (T.Expression | T.SpreadElement)[]) {
   };
 }
 
-export function decorator(child: (T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression | T.DecoratorParenthesizedExpression)) {
-  const children = [child];
+export function decorator(child?: (T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression | T.DecoratorParenthesizedExpression)) {
+  const children = child != null ? [child] : [];
   return {
     type: 'decorator' as const,
     named: true as const,
@@ -2579,7 +2594,7 @@ export function decoratorCallExpression(config: T.DecoratorCallExpressionConfig)
   };
 }
 
-export function classBody(config: T.ClassBodyConfig) {
+export function classBody(config?: T.ClassBodyConfig) {
   const fields = {
     decorator: config?.decorator,
   };
@@ -2604,6 +2619,7 @@ export function classBody(config: T.ClassBodyConfig) {
 export function fieldDefinition(config: T.FieldDefinitionConfig) {
   const fields = {
     decorator: config?.decorator,
+    static: config?.static,
     property: config?.property,
   };
   const children = config?.children ?? [];
@@ -2613,6 +2629,7 @@ export function fieldDefinition(config: T.FieldDefinitionConfig) {
     fields,
     children,
     decorator(...decorator_: T.Decorator[]) { return _fsm(config, fieldDefinition, 'decorator', decorator_, fields.decorator); },
+    static(static_?: "static" | undefined) { return _fs(config, fieldDefinition, 'static', static_, fields.static); },
     property(property_?: T.PropertyName) { return _fs(config, fieldDefinition, 'property', property_, fields.property); },
     getChild() { return children[0]; },
     setChild(child: T.Initializer) { return fieldDefinition({ ...(config ?? {}), children: [child] }); },
@@ -2661,8 +2678,8 @@ export function classStaticBlock(config: T.ClassStaticBlockConfig) {
   };
 }
 
-export function pattern(child: (T.LhsExpression | T.RestPattern)) {
-  const children = [child];
+export function pattern(child?: (T.LhsExpression | T.RestPattern)) {
+  const children = child != null ? [child] : [];
   return {
     type: 'pattern' as const,
     named: true as const,
@@ -2695,6 +2712,8 @@ export function methodDefinition(config: T.MethodDefinitionConfig) {
   const fields = {
     accessibility_modifier: config?.accessibilityModifier,
     override_modifier: config?.overrideModifier,
+    readonly: config?.readonly,
+    async: config?.async,
     name: config?.name,
     body: config?.body,
   };
@@ -2706,6 +2725,8 @@ export function methodDefinition(config: T.MethodDefinitionConfig) {
     children,
     accessibilityModifier(accessibilityModifier_?: T.AccessibilityModifier | undefined) { return _fs(config, methodDefinition, 'accessibilityModifier', accessibilityModifier_, fields.accessibility_modifier); },
     overrideModifier(overrideModifier_?: "static" | undefined) { return _fs(config, methodDefinition, 'overrideModifier', overrideModifier_, fields.override_modifier); },
+    readonly(readonly_?: "readonly" | undefined) { return _fs(config, methodDefinition, 'readonly', readonly_, fields.readonly); },
+    async(async_?: "async" | undefined) { return _fs(config, methodDefinition, 'async', async_, fields.async); },
     name(name_?: T.PropertyName) { return _fs(config, methodDefinition, 'name', name_, fields.name); },
     body(body_?: T.StatementBlock) { return _fs(config, methodDefinition, 'body', body_, fields.body); },
     getChild() { return children[0]; },
@@ -2777,9 +2798,17 @@ export function computedPropertyName(config: T.ComputedPropertyNameConfig) {
   };
 }
 
-export function publicFieldDefinition(config: T.PublicFieldDefinitionConfig) {
+export function publicFieldDefinition(config: T.PublicFieldDefinitionForm0Config | T.PublicFieldDefinitionForm1Config | T.PublicFieldDefinitionForm2Config | T.PublicFieldDefinitionForm3Config) {
+  if (config && 'decorator' in config && 'declare' in config && 'static' in config && 'readonly' in config && 'name' in config && 'type' in config) return publicFieldDefinitionForm0(config as T.PublicFieldDefinitionForm0Config);
+  if (config && 'decorator' in config && 'declare' in config && 'abstract' in config && 'readonly' in config && 'name' in config && 'type' in config) return publicFieldDefinitionForm1(config as T.PublicFieldDefinitionForm1Config);
+  return publicFieldDefinitionForm3(config as T.PublicFieldDefinitionForm3Config);
+}
+export function publicFieldDefinitionForm0(config: T.PublicFieldDefinitionForm0Config) {
   const fields = {
     decorator: config?.decorator,
+    declare: config?.declare,
+    static: config?.static,
+    readonly: config?.readonly,
     name: config?.name,
     type: config?.type,
   };
@@ -2787,19 +2816,115 @@ export function publicFieldDefinition(config: T.PublicFieldDefinitionConfig) {
   return {
     type: 'public_field_definition' as const,
     named: true as const,
+    variant: 'form_0' as const,
     fields,
     children,
-    decorator(...decorator_: T.Decorator[]) { return _fsm(config, publicFieldDefinition, 'decorator', decorator_, fields.decorator); },
-    name(name_?: T.PropertyName) { return _fs(config, publicFieldDefinition, 'name', name_, fields.name); },
-    typeField(type?: T.TypeAnnotation | undefined) { return _fs(config, publicFieldDefinition, 'type', type, fields.type); },
+    decorator(...decorator_: T.Decorator[]) { return _fsm(config, publicFieldDefinitionForm0, 'decorator', decorator_, fields.decorator); },
+    declare(declare_?: "declare" | undefined) { return _fs(config, publicFieldDefinitionForm0, 'declare', declare_, fields.declare); },
+    static(static_?: "static" | undefined) { return _fs(config, publicFieldDefinitionForm0, 'static', static_, fields.static); },
+    readonly(readonly_?: "readonly" | undefined) { return _fs(config, publicFieldDefinitionForm0, 'readonly', readonly_, fields.readonly); },
+    name(name_?: T.PropertyName) { return _fs(config, publicFieldDefinitionForm0, 'name', name_, fields.name); },
+    typeField(type?: T.TypeAnnotation | undefined) { return _fs(config, publicFieldDefinitionForm0, 'type', type, fields.type); },
     getChild() { return children[0]; },
-    setChild(child: (T.AccessibilityModifier | T.OverrideModifier | T.Initializer)) { return publicFieldDefinition({ ...(config ?? {}), children: [child] }); },
+    setChild(child: (T.AccessibilityModifier | T.OverrideModifier | T.Initializer)) { return publicFieldDefinitionForm0({ ...(config ?? {}), children: [child] }); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(target: T.PublicFieldDefinitionTree) { const r = target.range(); return toEdit(this, r); },
+    replace(target: T.PublicFieldDefinitionForm0Tree) { const r = target.range(); return toEdit(this, r); },
+  };
+}
+export function publicFieldDefinitionForm1(config: T.PublicFieldDefinitionForm1Config) {
+  const fields = {
+    decorator: config?.decorator,
+    declare: config?.declare,
+    abstract: config?.abstract,
+    readonly: config?.readonly,
+    name: config?.name,
+    type: config?.type,
+  };
+  const children = config?.children ?? [];
+  return {
+    type: 'public_field_definition' as const,
+    named: true as const,
+    variant: 'form_1' as const,
+    fields,
+    children,
+    decorator(...decorator_: T.Decorator[]) { return _fsm(config, publicFieldDefinitionForm1, 'decorator', decorator_, fields.decorator); },
+    declare(declare_?: "declare" | undefined) { return _fs(config, publicFieldDefinitionForm1, 'declare', declare_, fields.declare); },
+    abstract(abstract_?: "abstract" | undefined) { return _fs(config, publicFieldDefinitionForm1, 'abstract', abstract_, fields.abstract); },
+    readonly(readonly_?: "readonly" | undefined) { return _fs(config, publicFieldDefinitionForm1, 'readonly', readonly_, fields.readonly); },
+    name(name_?: T.PropertyName) { return _fs(config, publicFieldDefinitionForm1, 'name', name_, fields.name); },
+    typeField(type?: T.TypeAnnotation | undefined) { return _fs(config, publicFieldDefinitionForm1, 'type', type, fields.type); },
+    getChild() { return children[0]; },
+    setChild(child: (T.AccessibilityModifier | T.Initializer)) { return publicFieldDefinitionForm1({ ...(config ?? {}), children: [child] }); },
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.PublicFieldDefinitionForm1Tree) { const r = target.range(); return toEdit(this, r); },
+  };
+}
+export function publicFieldDefinitionForm2(config: T.PublicFieldDefinitionForm2Config) {
+  const fields = {
+    decorator: config?.decorator,
+    declare: config?.declare,
+    readonly: config?.readonly,
+    abstract: config?.abstract,
+    name: config?.name,
+    type: config?.type,
+  };
+  const children = config?.children ?? [];
+  return {
+    type: 'public_field_definition' as const,
+    named: true as const,
+    variant: 'form_2' as const,
+    fields,
+    children,
+    decorator(...decorator_: T.Decorator[]) { return _fsm(config, publicFieldDefinitionForm2, 'decorator', decorator_, fields.decorator); },
+    declare(declare_?: "declare" | undefined) { return _fs(config, publicFieldDefinitionForm2, 'declare', declare_, fields.declare); },
+    readonly(readonly_?: "readonly" | undefined) { return _fs(config, publicFieldDefinitionForm2, 'readonly', readonly_, fields.readonly); },
+    abstract(abstract_?: "abstract" | undefined) { return _fs(config, publicFieldDefinitionForm2, 'abstract', abstract_, fields.abstract); },
+    name(name_?: T.PropertyName) { return _fs(config, publicFieldDefinitionForm2, 'name', name_, fields.name); },
+    typeField(type?: T.TypeAnnotation | undefined) { return _fs(config, publicFieldDefinitionForm2, 'type', type, fields.type); },
+    getChild() { return children[0]; },
+    setChild(child: (T.AccessibilityModifier | T.Initializer)) { return publicFieldDefinitionForm2({ ...(config ?? {}), children: [child] }); },
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.PublicFieldDefinitionForm2Tree) { const r = target.range(); return toEdit(this, r); },
+  };
+}
+export function publicFieldDefinitionForm3(config: T.PublicFieldDefinitionForm3Config) {
+  const fields = {
+    decorator: config?.decorator,
+    declare: config?.declare,
+    name: config?.name,
+    type: config?.type,
+  };
+  const children = config?.children ?? [];
+  return {
+    type: 'public_field_definition' as const,
+    named: true as const,
+    variant: 'form_3' as const,
+    fields,
+    children,
+    decorator(...decorator_: T.Decorator[]) { return _fsm(config, publicFieldDefinitionForm3, 'decorator', decorator_, fields.decorator); },
+    declare(declare_?: "declare" | undefined) { return _fs(config, publicFieldDefinitionForm3, 'declare', declare_, fields.declare); },
+    name(name_?: T.PropertyName) { return _fs(config, publicFieldDefinitionForm3, 'name', name_, fields.name); },
+    typeField(type?: T.TypeAnnotation | undefined) { return _fs(config, publicFieldDefinitionForm3, 'type', type, fields.type); },
+    getChild() { return children[0]; },
+    setChild(child: (T.AccessibilityModifier | T.Initializer)) { return publicFieldDefinitionForm3({ ...(config ?? {}), children: [child] }); },
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.PublicFieldDefinitionForm3Tree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2825,6 +2950,8 @@ export function methodSignature(config: T.MethodSignatureConfig) {
   const fields = {
     accessibility_modifier: config?.accessibilityModifier,
     override_modifier: config?.overrideModifier,
+    readonly: config?.readonly,
+    async: config?.async,
     name: config?.name,
   };
   const children = config?.children ?? [];
@@ -2835,6 +2962,8 @@ export function methodSignature(config: T.MethodSignatureConfig) {
     children,
     accessibilityModifier(accessibilityModifier_?: T.AccessibilityModifier | undefined) { return _fs(config, methodSignature, 'accessibilityModifier', accessibilityModifier_, fields.accessibility_modifier); },
     overrideModifier(overrideModifier_?: "static" | undefined) { return _fs(config, methodSignature, 'overrideModifier', overrideModifier_, fields.override_modifier); },
+    readonly(readonly_?: "readonly" | undefined) { return _fs(config, methodSignature, 'readonly', readonly_, fields.readonly); },
+    async(async_?: "async" | undefined) { return _fs(config, methodSignature, 'async', async_, fields.async); },
     name(name_?: T.PropertyName) { return _fs(config, methodSignature, 'name', name_, fields.name); },
     getChild() { return children[0]; },
     setChild(child: (T.OverrideModifier | T._CallSignature)) { return methodSignature({ ...(config ?? {}), children: [child] }); },
@@ -2875,6 +3004,7 @@ export function abstractMethodSignature(config: T.AbstractMethodSignatureConfig)
 
 export function functionSignature(config: T.FunctionSignatureConfig) {
   const fields = {
+    async: config?.async,
     name: config?.name,
   };
   const children = config?.children ?? [];
@@ -2883,6 +3013,7 @@ export function functionSignature(config: T.FunctionSignatureConfig) {
     named: true as const,
     fields,
     children,
+    async(async_?: "async" | undefined) { return _fs(config, functionSignature, 'async', async_, fields.async); },
     name(name_?: T.Identifier) { return _fs(config, functionSignature, 'name', name_, fields.name); },
     getChild() { return children[0]; },
     setChild(child: (T._CallSignature | T.Semicolon | T.FunctionSignatureAutomaticSemicolon)) { return functionSignature({ ...(config ?? {}), children: [child] }); },
@@ -2895,8 +3026,8 @@ export function functionSignature(config: T.FunctionSignatureConfig) {
   };
 }
 
-export function decoratorParenthesizedExpression(child: (T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression)) {
-  const children = [child];
+export function decoratorParenthesizedExpression(child?: (T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression)) {
+  const children = child != null ? [child] : [];
   return {
     type: 'decorator_parenthesized_expression' as const,
     named: true as const,
@@ -3200,6 +3331,7 @@ export function extendsTypeClause(config: T.ExtendsTypeClauseConfig) {
 
 export function enumDeclaration(config: T.EnumDeclarationConfig) {
   const fields = {
+    const: config?.const,
     name: config?.name,
     body: config?.body,
   };
@@ -3207,6 +3339,7 @@ export function enumDeclaration(config: T.EnumDeclarationConfig) {
     type: 'enum_declaration' as const,
     named: true as const,
     fields,
+    const(const_?: "const" | undefined) { return _fs(config, enumDeclaration, 'const', const_, fields.const); },
     name(name_?: T.Identifier) { return _fs(config, enumDeclaration, 'name', name_, fields.name); },
     body(body_?: T.EnumBody) { return _fs(config, enumDeclaration, 'body', body_, fields.body); },
     render() { return render(this); },
@@ -3410,8 +3543,8 @@ export function typeAnnotation(child: T.Type) {
   };
 }
 
-export function asserts(child: (T.TypePredicate | T.Identifier | T.This)) {
-  const children = [child];
+export function asserts(child?: (T.TypePredicate | T.Identifier | T.This)) {
+  const children = child != null ? [child] : [];
   return {
     type: 'asserts' as const,
     named: true as const,
@@ -3519,6 +3652,7 @@ export function restType(child: T.Type) {
 
 export function constructorType(config: T.ConstructorTypeConfig) {
   const fields = {
+    abstract: config?.abstract,
     type_parameters: config?.typeParameters,
     parameters: config?.parameters,
     type: config?.type,
@@ -3527,6 +3661,7 @@ export function constructorType(config: T.ConstructorTypeConfig) {
     type: 'constructor_type' as const,
     named: true as const,
     fields,
+    abstract(abstract_?: "abstract" | undefined) { return _fs(config, constructorType, 'abstract', abstract_, fields.abstract); },
     typeParameters(typeParameters_?: T.TypeParameters | undefined) { return _fs(config, constructorType, 'typeParameters', typeParameters_, fields.type_parameters); },
     parameters(parameters_?: T.FormalParameters) { return _fs(config, constructorType, 'parameters', parameters_, fields.parameters); },
     typeField(type?: T.Type) { return _fs(config, constructorType, 'type', type, fields.type); },
@@ -3539,8 +3674,8 @@ export function constructorType(config: T.ConstructorTypeConfig) {
   };
 }
 
-export function templateType(child: (T.PrimaryType | T.InferType)) {
-  const children = [child];
+export function templateType(child?: (T.PrimaryType | T.InferType)) {
+  const children = child != null ? [child] : [];
   return {
     type: 'template_type' as const,
     named: true as const,
@@ -3674,8 +3809,8 @@ export function typePredicateAnnotation(config: T.TypePredicateAnnotationConfig)
   };
 }
 
-export function typeQuery(child: (T.TypeQuerySubscriptExpression | T.TypeQueryMemberExpression | T.TypeQueryCallExpression | T.TypeQueryInstantiationExpression | T.Identifier | T.This)) {
-  const children = [child];
+export function typeQuery(child?: (T.TypeQuerySubscriptExpression | T.TypeQueryMemberExpression | T.TypeQueryCallExpression | T.TypeQueryInstantiationExpression | T.Identifier | T.This)) {
+  const children = child != null ? [child] : [];
   return {
     type: 'type_query' as const,
     named: true as const,
@@ -3749,8 +3884,8 @@ export function mappedTypeClause(config: T.MappedTypeClauseConfig) {
   };
 }
 
-export function literalType(child: (T._Number | T.Number | T.String | T.True | T.False | T.Null | T.Undefined)) {
-  const children = [child];
+export function literalType(child?: (T._Number | T.String | T.True | T.False | T.Null | T.Undefined)) {
+  const children = child != null ? [child] : [];
   return {
     type: 'literal_type' as const,
     named: true as const,
@@ -3865,6 +4000,7 @@ export function propertySignature(config: T.PropertySignatureConfig) {
   const fields = {
     accessibility_modifier: config?.accessibilityModifier,
     override_modifier: config?.overrideModifier,
+    readonly: config?.readonly,
     name: config?.name,
     type: config?.type,
   };
@@ -3876,6 +4012,7 @@ export function propertySignature(config: T.PropertySignatureConfig) {
     children,
     accessibilityModifier(accessibilityModifier_?: T.AccessibilityModifier | undefined) { return _fs(config, propertySignature, 'accessibilityModifier', accessibilityModifier_, fields.accessibility_modifier); },
     overrideModifier(overrideModifier_?: "static" | undefined) { return _fs(config, propertySignature, 'overrideModifier', overrideModifier_, fields.override_modifier); },
+    readonly(readonly_?: "readonly" | undefined) { return _fs(config, propertySignature, 'readonly', readonly_, fields.readonly); },
     name(name_?: T.PropertyName) { return _fs(config, propertySignature, 'name', name_, fields.name); },
     typeField(type?: T.TypeAnnotation | undefined) { return _fs(config, propertySignature, 'type', type, fields.type); },
     getChild() { return children[0]; },
@@ -3906,6 +4043,7 @@ export function typeParameters(...children: T.TypeParameter[]) {
 
 export function typeParameter(config: T.TypeParameterConfig) {
   const fields = {
+    const: config?.const,
     name: config?.name,
     constraint: config?.constraint,
     value: config?.value,
@@ -3914,6 +4052,7 @@ export function typeParameter(config: T.TypeParameterConfig) {
     type: 'type_parameter' as const,
     named: true as const,
     fields,
+    const(const_?: "const" | undefined) { return _fs(config, typeParameter, 'const', const_, fields.const); },
     name(name_?: T._TypeIdentifier) { return _fs(config, typeParameter, 'name', name_, fields.name); },
     constraint(constraint_?: T.Constraint | undefined) { return _fs(config, typeParameter, 'constraint', constraint_, fields.constraint); },
     value(value_?: T.DefaultType | undefined) { return _fs(config, typeParameter, 'value', value_, fields.value); },
@@ -3958,6 +4097,7 @@ export function constraint(child: T.Type) {
 
 export function constructSignature(config: T.ConstructSignatureConfig) {
   const fields = {
+    abstract: config?.abstract,
     type_parameters: config?.typeParameters,
     parameters: config?.parameters,
     type: config?.type,
@@ -3966,6 +4106,7 @@ export function constructSignature(config: T.ConstructSignatureConfig) {
     type: 'construct_signature' as const,
     named: true as const,
     fields,
+    abstract(abstract_?: "abstract" | undefined) { return _fs(config, constructSignature, 'abstract', abstract_, fields.abstract); },
     typeParameters(typeParameters_?: T.TypeParameters | undefined) { return _fs(config, constructSignature, 'typeParameters', typeParameters_, fields.type_parameters); },
     parameters(parameters_?: T.FormalParameters) { return _fs(config, constructSignature, 'parameters', parameters_, fields.parameters); },
     typeField(type?: T.TypeAnnotation | undefined) { return _fs(config, constructSignature, 'type', type, fields.type); },
@@ -4188,8 +4329,8 @@ export function statementIdentifier(text: string) {
   };
 }
 
-export function shorthandPropertyIdentifier(child: (T.Identifier | T.ReservedIdentifier)) {
-  const children = [child];
+export function shorthandPropertyIdentifier(child?: (T.Identifier | T.ReservedIdentifier)) {
+  const children = child != null ? [child] : [];
   return {
     type: 'shorthand_property_identifier' as const,
     named: true as const,
@@ -4203,8 +4344,8 @@ export function shorthandPropertyIdentifier(child: (T.Identifier | T.ReservedIde
   };
 }
 
-export function shorthandPropertyIdentifierPattern(child: (T.Identifier | T.ReservedIdentifier)) {
-  const children = [child];
+export function shorthandPropertyIdentifierPattern(child?: (T.Identifier | T.ReservedIdentifier)) {
+  const children = child != null ? [child] : [];
   return {
     type: 'shorthand_property_identifier_pattern' as const,
     named: true as const,

@@ -9,15 +9,22 @@
  */
 
 import { AssembledGroup, type NodeMap } from '../compiler/rule.ts'
+import { compileWordMatcher } from '../compiler/simplify.ts'
 
-export interface EmitTemplatesFromNodeMapConfig {
+export interface EmitTemplatesConfig {
     grammar: string
     nodeMap: NodeMap
     grammarSha?: string
 }
 
-export function emitTemplatesFromNodeMap(config: EmitTemplatesFromNodeMapConfig): string {
+export function emitTemplates(config: EmitTemplatesConfig): string {
     const { grammar, nodeMap, grammarSha } = config
+
+    // Compile the grammar's word-rule pattern once. The template walker
+    // uses it for adjacency spacing and keyword-shape detection so the
+    // generated `$PREV $NEXT` vs `$PREV$NEXT` choice is driven by
+    // tree-sitter's own lexical convention, not a hardcoded `/\w/`.
+    const wordMatcher = compileWordMatcher(nodeMap.word, nodeMap.rules ?? {})
 
     const rules: Record<string, unknown> = {}
     for (const [kind, node] of nodeMap.nodes) {
@@ -30,8 +37,23 @@ export function emitTemplatesFromNodeMap(config: EmitTemplatesFromNodeMapConfig)
         // `variants:` map. Emitting them as top-level entries too is
         // duplicate noise — skip them here.
         if (node instanceof AssembledGroup && node.parentKind) continue
-        const entry = node.renderTemplate(nodeMap.rules)
-        if (entry !== undefined) rules[kind] = entry
+        const entry = node.renderTemplate(nodeMap.rules, wordMatcher)
+        if (entry === undefined) continue
+        // Shorthand: collapse `{ template: "..." }` to a bare string when
+        // that's the only key. Runtime's `resolveTemplate` already accepts
+        // the string arm, and the emitter is the only producer of these
+        // files — so every regen re-normalizes to the canonical shape.
+        // Keeps the object form for entries that carry `joinBy`, clauses,
+        // or `variants:` so their structure stays visible in diffs.
+        if (
+            entry !== null && typeof entry === 'object' && !Array.isArray(entry)
+            && Object.keys(entry).length === 1
+            && typeof (entry as { template?: unknown }).template === 'string'
+        ) {
+            rules[kind] = (entry as { template: string }).template
+        } else {
+            rules[kind] = entry
+        }
     }
 
     const output = {

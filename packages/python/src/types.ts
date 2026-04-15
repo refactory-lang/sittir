@@ -239,7 +239,15 @@ export const enum SyntaxKind {
 // Scoped enums per supertype
 export const enum StatementKind {
   SimpleStatements = '_simple_statements',
-  CompoundStatement = '_compound_statement',
+  IfStatement = 'if_statement',
+  ForStatement = 'for_statement',
+  WhileStatement = 'while_statement',
+  TryStatement = 'try_statement',
+  WithStatement = 'with_statement',
+  FunctionDefinition = 'function_definition',
+  ClassDefinition = 'class_definition',
+  DecoratedDefinition = 'decorated_definition',
+  MatchStatement = 'match_statement',
 }
 
 export const enum SimpleStatementKind {
@@ -445,7 +453,7 @@ export interface AssertStatement {
 
 export interface ExpressionStatement {
   readonly type: 'expression_statement';
-  readonly children: readonly (Expression | Assignment | AugmentedAssignment | Yield)[];
+  readonly children: readonly [Expression | Assignment | AugmentedAssignment | Yield];
 }
 
 export interface NamedExpression {
@@ -518,6 +526,7 @@ export interface CaseClause {
 export interface ForStatement {
   readonly type: 'for_statement';
   readonly fields: {
+    readonly async?: "async";
     readonly left: LeftHandSide;
     readonly right: Expressions;
     readonly body: Suite;
@@ -547,7 +556,7 @@ export interface TryStatement {
 export interface ExceptClause {
   readonly type: 'except_clause';
   readonly fields: {
-    readonly value?: readonly (Expression)[];
+    readonly value?: Expression;
     readonly alias?: Expression;
   };
   readonly children: readonly [Suite];
@@ -563,6 +572,7 @@ export interface FinallyClause {
 export interface WithStatement {
   readonly type: 'with_statement';
   readonly fields: {
+    readonly async?: "async";
     readonly body: Suite;
   };
   readonly children: readonly [WithClause];
@@ -583,6 +593,7 @@ export interface WithItem {
 export interface FunctionDefinition {
   readonly type: 'function_definition';
   readonly fields: {
+    readonly async?: "async";
     readonly name: Identifier;
     readonly type_parameters?: TypeParameter;
     readonly parameters: Parameters;
@@ -825,7 +836,7 @@ export interface BooleanOperator {
   readonly type: 'boolean_operator';
   readonly fields: {
     readonly left: Expression;
-    readonly operator: "and" | "or";
+    readonly operator: "and";
     readonly right: Expression;
   };
 }
@@ -834,7 +845,7 @@ export interface BinaryOperator {
   readonly type: 'binary_operator';
   readonly fields: {
     readonly left: PrimaryExpression;
-    readonly operator: "+" | "-" | "*" | "@" | "/" | "%" | "//" | "**" | "|" | "&" | "^" | "<<" | ">>";
+    readonly operator: "+";
     readonly right: PrimaryExpression;
   };
 }
@@ -1082,12 +1093,13 @@ export interface ParenthesizedExpression {
 
 export interface CollectionElements {
   readonly type: '_collection_elements';
-  readonly children: NonEmptyArray<Expression | Yield | ListSplat | ParenthesizedListSplat>;
+  readonly children: readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[];
 }
 
 export interface ForInClause {
   readonly type: 'for_in_clause';
   readonly fields: {
+    readonly async?: "async";
     readonly left: LeftHandSide;
     readonly right: NonEmptyArray<string>;
   };
@@ -1125,7 +1137,7 @@ export interface String {
 
 export interface StringContent {
   readonly type: 'string_content';
-  readonly children: NonEmptyArray<EscapeInterpolation | EscapeSequence | NotEscapeSequence | _StringContent>;
+  readonly children: readonly (EscapeInterpolation | EscapeSequence | NotEscapeSequence | _StringContent)[];
 }
 
 export interface Interpolation {
@@ -1609,11 +1621,20 @@ export type LooseFormatExpression = FromInputOf<FormatExpression, LeafScalarMap,
 // Supertype unions
 export type Statement =
   | SimpleStatements
+  | IfStatement
+  | ForStatement
+  | WhileStatement
+  | TryStatement
+  | WithStatement
+  | FunctionDefinition
+  | ClassDefinition
+  | DecoratedDefinition
+  | MatchStatement
 ;
 
-export type StatementConfig = SimpleStatementsConfig;
-export type LooseStatement = LooseSimpleStatements;
-export type StatementTree = SimpleStatementsTree | CompoundStatementTree;
+export type StatementConfig = SimpleStatementsConfig | IfStatementConfig | ForStatementConfig | WhileStatementConfig | TryStatementConfig | WithStatementConfig | FunctionDefinitionConfig | ClassDefinitionConfig | DecoratedDefinitionConfig | MatchStatementConfig;
+export type LooseStatement = LooseSimpleStatements | LooseIfStatement | LooseForStatement | LooseWhileStatement | LooseTryStatement | LooseWithStatement | LooseFunctionDefinition | LooseClassDefinition | LooseDecoratedDefinition | LooseMatchStatement;
+export type StatementTree = SimpleStatementsTree | IfStatementTree | ForStatementTree | WhileStatementTree | TryStatementTree | WithStatementTree | FunctionDefinitionTree | ClassDefinitionTree | DecoratedDefinitionTree | MatchStatementTree;
 
 export type SimpleStatement =
   | FutureImportStatement

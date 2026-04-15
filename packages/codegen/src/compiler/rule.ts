@@ -286,6 +286,16 @@ export interface RawGrammar {
      * `field()` calls in full-replacement rules don't).
      */
     readonly overrideRuleNames?: string[]
+    /**
+     * External-symbol → structural-whitespace role mapping. Populated
+     * by the overrides extension via the `role()` DSL primitive —
+     * e.g. `_indent: ($) => role('indent')` in python's overrides.ts.
+     * Link reads this when resolving symbol references so indent-
+     * sensitive grammars surface their externals as `indent`/`dedent`/
+     * `newline` Rule nodes without the pipeline having to pattern-
+     * match on external names.
+     */
+    readonly externalRoles?: Map<string, ExternalRole>
 }
 
 export type ExternalRole = { role: 'indent' | 'dedent' | 'newline' }
@@ -323,7 +333,7 @@ export interface SuggestedOverride {
  * applied the mutation to the rule tree.
  *
  * Whether a derivation is ALSO applied (mutating the rule tree) is
- * governed by `GenerateConfigV2.include` — excluded sources still
+ * governed by `GenerateConfig.include` — excluded sources still
  * appear in the log but don't land in the generated packages.
  */
 export interface DerivationLog {
@@ -386,10 +396,21 @@ export interface LinkedGrammar {
     readonly word: string | null
     readonly references: SymbolRef[]
     readonly derivations: DerivationLog
+    /**
+     * Hidden-rule → alias-target mapping. When a hidden rule like
+     * `_type_identifier: $ => alias($.identifier, $.type_identifier)`
+     * is collapsed by Link (the alias wrapper is stripped so the rule
+     * tree downstream sees just `symbol('identifier')`), the alias's
+     * rename — the name tree-sitter actually emits at parse time —
+     * would be lost. This map records those collapses so Assemble
+     * can rewrite supertype subtype lists from `_type_identifier` to
+     * `type_identifier`.
+     */
+    readonly aliasedHiddenKinds: Map<string, string>
 }
 
 /**
- * Derived source tags that can be toggled via GenerateConfigV2.include.
+ * Derived source tags that can be toggled via GenerateConfig.include.
  * `grammar` and `override` are always-on — user-authored content cannot
  * be filtered out.
  */
@@ -406,6 +427,7 @@ export interface IncludeFilter {
 export interface OptimizedGrammar {
     readonly name: string
     readonly rules: Record<string, Rule>
+    readonly aliasedHiddenKinds: Map<string, string>
     /**
      * Derivation-only view of every rule in `rules`, produced by
      * `simplifyRule` as the final pass in `optimize()`. Downstream
@@ -599,8 +621,36 @@ function deriveFieldsRaw(
             return deriveFieldsRaw(rule.content, isOptional, true, false)
         case 'repeat1':
             return deriveFieldsRaw(rule.content, isOptional, true, true)
-        case 'choice':
-            return rule.members.flatMap(m => deriveFieldsRaw(m, isOptional, isRepeated, isNonEmpty))
+        case 'choice': {
+            // Walk each branch independently, then merge: a field is
+            // required (and non-empty) only if it appears in EVERY
+            // branch. Fields present in only some branches are
+            // optional from the parent's perspective — another branch
+            // could be taken instead — so `required` / `nonEmpty` drop.
+            // This distinguishes `update_expression`-style choices
+            // (every branch contributes the same fields, all required)
+            // from `function_modifiers`-style choices (each branch
+            // contributes a different field, each optional).
+            const perBranch = rule.members.map(m =>
+                deriveFieldsRaw(m, isOptional, isRepeated, isNonEmpty),
+            )
+            const inAll = (name: string) =>
+                perBranch.every(branch => branch.some(f => f.name === name))
+            const result: AssembledField[] = []
+            const seen = new Set<string>()
+            for (const branch of perBranch) {
+                for (const f of branch) {
+                    if (seen.has(f.name)) continue
+                    seen.add(f.name)
+                    if (inAll(f.name)) {
+                        result.push(f)
+                    } else {
+                        result.push({ ...f, required: false, nonEmpty: undefined })
+                    }
+                }
+            }
+            return result
+        }
         case 'clause':
             return deriveFieldsRaw(rule.content, true, isRepeated, isNonEmpty)
         case 'variant':
@@ -705,9 +755,34 @@ function walkForChildren(
         case 'repeat1':
             walkForChildren(rule.content, out, isOptional, true, true)
             break
-        case 'choice':
-            for (const m of rule.members) walkForChildren(m, out, isOptional, isRepeated, isNonEmpty)
+        case 'choice': {
+            // Walk each branch into a scratch bucket, then merge into
+            // `out`: a child slot is only required / non-empty if it
+            // appears in EVERY branch of the choice. Children in only
+            // some branches are optional (another branch could be
+            // taken) and lose their nonEmpty flag — matches how
+            // `deriveFieldsRaw` handles choice-bound fields.
+            const perBranch: AssembledChild[][] = rule.members.map(m => {
+                const bucket: AssembledChild[] = []
+                walkForChildren(m, bucket, isOptional, isRepeated, isNonEmpty)
+                return bucket
+            })
+            const inAll = (name: string) =>
+                perBranch.every(branch => branch.some(c => c.name === name))
+            const seen = new Set<string>()
+            for (const branch of perBranch) {
+                for (const c of branch) {
+                    if (seen.has(c.name)) continue
+                    seen.add(c.name)
+                    if (inAll(c.name)) {
+                        out.push(c)
+                    } else {
+                        out.push({ ...c, required: false, nonEmpty: undefined })
+                    }
+                }
+            }
             break
+        }
         case 'field':
             // Fields are handled by deriveFields, not children
             break
@@ -745,7 +820,7 @@ function deriveContentTypes(rule: Rule): string[] {
 /**
  * Collect inline-enum string values from a field's content. Returns
  * `[]` if the content is anything other than a pure choice-of-strings
- * (or an already-classified EnumRule). Used by types-v2 to emit
+ * (or an already-classified EnumRule). Used by types to emit
  * string-literal unions instead of a fallback `string` type.
  */
 /**
@@ -968,7 +1043,7 @@ export abstract class AssembledNodeBase {
      * AssembledContainer, AssembledGroup, AssembledPolymorph) override
      * this to walk their rule tree and produce the right shape.
      */
-    renderTemplate(_rules?: Record<string, Rule>): Record<string, unknown> | undefined {
+    renderTemplate(_rules?: Record<string, Rule>, _wordMatcher?: RegExp): Record<string, unknown> | undefined {
         return undefined
     }
 }
@@ -992,7 +1067,7 @@ export interface AssembledField {
     /**
      * Literal values when the field's content is an inline enum
      * (choice-of-strings). Empty for normal fields. When populated,
-     * types-v2 emits the field as a string-literal union instead of
+     * types emits the field as a string-literal union instead of
      * a kind-reference union.
      */
     readonly literalValues?: readonly string[]
@@ -1055,11 +1130,11 @@ export class AssembledBranch extends AssembledNodeBase {
         return this.#children ??= deriveChildren(this.simplifiedRule)
     }
 
-    renderTemplate(rules?: Record<string, Rule>): Record<string, unknown> {
+    renderTemplate(rules?: Record<string, Rule>, wordMatcher?: RegExp): Record<string, unknown> {
         // Template walking stays on the RAW rule — templates need the
         // anonymous delimiters ('(', '{', ';', etc.) to surface as
         // template text. Only derivations use simplifiedRule.
-        const { template, clauses, joinByField } = renderRuleTemplate(this.rule, false, rules)
+        const { template, clauses, joinByField } = renderRuleTemplate(this.rule, false, rules, wordMatcher)
         if (!template) {
             throw new Error(
                 `AssembledBranch.renderTemplate: '${this.kind}' produced an empty template. ` +
@@ -1111,10 +1186,10 @@ export class AssembledContainer extends AssembledNodeBase {
         return undefined
     }
 
-    renderTemplate(rules?: Record<string, Rule>): Record<string, unknown> {
+    renderTemplate(rules?: Record<string, Rule>, wordMatcher?: RegExp): Record<string, unknown> {
         // Template walking stays on RAW rule (needs literals); derivations
         // and separator discovery use simplifiedRule.
-        const { template, clauses, joinByField } = renderRuleTemplate(this.rule, false, rules)
+        const { template, clauses, joinByField } = renderRuleTemplate(this.rule, false, rules, wordMatcher)
         if (!template) {
             throw new Error(
                 `AssembledContainer.renderTemplate: '${this.kind}' produced an empty template. ` +
@@ -1145,7 +1220,7 @@ export class AssembledPolymorph extends AssembledNodeBase {
     /** A polymorph's forms are hidden groups synthesized from the choice branches. */
     get forms(): AssembledGroup[] { return this.#forms }
 
-    renderTemplate(rules?: Record<string, Rule>): Record<string, unknown> {
+    renderTemplate(rules?: Record<string, Rule>, wordMatcher?: RegExp): Record<string, unknown> {
         if (this.#forms.length === 0) {
             throw new Error(
                 `AssembledPolymorph.renderTemplate: '${this.kind}' has zero synthesised forms. ` +
@@ -1160,7 +1235,7 @@ export class AssembledPolymorph extends AssembledNodeBase {
         const mergedClauses: Record<string, string> = {}
         const mergedJoinByField: Record<string, string> = {}
         for (const form of this.#forms) {
-            const { template, clauses, joinByField } = renderRuleTemplate(form.rule, false, rules)
+            const { template, clauses, joinByField } = renderRuleTemplate(form.rule, false, rules, wordMatcher)
             if (!template) {
                 throw new Error(
                     `AssembledPolymorph.renderTemplate: '${this.kind}' form '${form.name}' ` +
@@ -1295,10 +1370,10 @@ export class AssembledGroup extends AssembledNodeBase {
         return this.#children ??= deriveChildren(this.simplifiedRule)
     }
 
-    renderTemplate(rules?: Record<string, Rule>): Record<string, unknown> {
+    renderTemplate(rules?: Record<string, Rule>, wordMatcher?: RegExp): Record<string, unknown> {
         // Template walking stays on RAW rule (needs literals); derivations
         // and separator discovery use simplifiedRule.
-        const { template, clauses, joinByField } = renderRuleTemplate(this.rule, false, rules)
+        const { template, clauses, joinByField } = renderRuleTemplate(this.rule, false, rules, wordMatcher)
         if (!template) {
             throw new Error(
                 `AssembledGroup.renderTemplate: '${this.kind}' produced an empty template. ` +
@@ -1396,6 +1471,7 @@ export function renderRuleTemplate(
     rule: Rule,
     inRepeat = false,
     rules?: Record<string, Rule>,
+    wordMatcher?: RegExp,
 ): WalkResult {
     const clauses: Record<string, string> = {}
     const joinByField: Record<string, string> = {}
@@ -1406,7 +1482,7 @@ export function renderRuleTemplate(
     // position, but both should render as the same multi-valued slot.
     const repeatedFields = new Set<string>()
     collectRepeatedFields(rule, false, repeatedFields, rules, new Set())
-    const parts = walkRuleForTemplate(rule, new Set(), inRepeat, clauses, rules, repeatedFields, joinByField)
+    const parts = walkRuleForTemplate(rule, new Set(), inRepeat, clauses, rules, repeatedFields, joinByField, wordMatcher)
     return { template: parts.join(''), clauses, joinByField }
 }
 
@@ -1470,6 +1546,7 @@ function walkRuleForTemplate(
     rules?: Record<string, Rule>,
     repeatedFields?: ReadonlySet<string>,
     joinByField?: Record<string, string>,
+    wordMatcher?: RegExp,
 ): string[] {
     switch (rule.type) {
         case 'seq': {
@@ -1552,7 +1629,7 @@ function walkRuleForTemplate(
             const out: string[] = []
             for (const m of rule.members) {
                 if (m.type === 'string' && skipSeps.has(m.value)) continue
-                const parts = walkRuleForTemplate(m, seen, inRepeat, clauses, rules, augmentedRepeatedFields, joinByField)
+                const parts = walkRuleForTemplate(m, seen, inRepeat, clauses, rules, augmentedRepeatedFields, joinByField, wordMatcher)
                 // Drop a leading literal from `parts` that duplicates the
                 // trailing literal already in `out`. This collapses cases
                 // like rust line_comment where an outer `'//'` token is
@@ -1572,7 +1649,7 @@ function walkRuleForTemplate(
                 if (out.length > 0 && parts.length > 0) {
                     const lastChar = out[out.length - 1]!.slice(-1)
                     const firstChar = parts[0]!.charAt(0)
-                    if (needsSpace(lastChar, firstChar)) out.push(' ')
+                    if (needsSpace(lastChar, firstChar, wordMatcher)) out.push(' ')
                 }
                 out.push(...parts)
             }
@@ -1591,7 +1668,7 @@ function walkRuleForTemplate(
             const out: string[] = []
             let primaryTaken = false
             for (const m of rule.members) {
-                const parts = walkRuleForTemplate(m, seen, inRepeat, clauses, rules, repeatedFields, joinByField)
+                const parts = walkRuleForTemplate(m, seen, inRepeat, clauses, rules, repeatedFields, joinByField, wordMatcher)
                 if (parts.length === 0) continue
                 if (!primaryTaken) {
                     out.push(...parts)
@@ -1605,17 +1682,48 @@ function walkRuleForTemplate(
             return out
         }
 
-        case 'optional':
+        case 'optional': {
+            // Optional of a single keyword-shape literal (`async`,
+            // `move`, `pub`, `static`, `unsafe`, …) — emit a clause
+            // whose body is a `$KW` placeholder. The renderer's
+            // children-by-kind-name fallback fires only when
+            // readNode captured an anonymous child with that text,
+            // so the token round-trips: absent on parse → absent on
+            // render, present on parse → present on render.
+            //
+            // Non-word punctuation (`,`, `;`, `::`, …) is a bigger
+            // problem — the existing seq walker already emits those
+            // literals unconditionally via other paths, so intercepting
+            // them here double-emits or eats children out from under
+            // sibling slots. Left for a follow-up that reworks the
+            // seq/optional interaction.
+            //
+            // The word matcher is the grammar's own `word` rule.
+            // Grammars without a word rule fall back to `/^\w+$/`.
+            const kwString = extractSingleKeywordString(rule.content)
+            if (kwString !== null) {
+                const matches = wordMatcher
+                    ? wordMatcher.test(kwString)
+                    : /^\w+$/.test(kwString)
+                if (matches) {
+                    const clauseKey = `${kwString}_clause`
+                    if (!(clauseKey in clauses)) {
+                        clauses[clauseKey] = `$${kwString.toUpperCase()}`
+                    }
+                    return [`$${kwString.toUpperCase()}_CLAUSE`]
+                }
+            }
             // `optional(',')` and friends — pure punctuation in an optional
             // wrapper is context-dependent and including it unconditionally
             // produces invalid output (python: `match X,:`). Skip the
             // whole optional when its content has no field/symbol ref.
             if (containsOnlyPunctuation(rule.content)) return []
-            return walkRuleForTemplate(rule.content, seen, inRepeat, clauses, rules, repeatedFields, joinByField)
+            return walkRuleForTemplate(rule.content, seen, inRepeat, clauses, rules, repeatedFields, joinByField, wordMatcher)
+        }
 
         case 'repeat':
         case 'repeat1':
-            return walkRuleForTemplate(rule.content, seen, true, clauses, rules, repeatedFields)
+            return walkRuleForTemplate(rule.content, seen, true, clauses, rules, repeatedFields, undefined, wordMatcher)
 
         case 'field': {
             if (seen.has(rule.name)) return []
@@ -1633,7 +1741,7 @@ function walkRuleForTemplate(
                 // Don't add rule.name to `seen` — we're not emitting
                 // that slot, so inner fields may legitimately reuse the
                 // same name (rare but possible).
-                return walkRuleForTemplate(rule.content, seen, inRepeat, clauses, rules, repeatedFields, joinByField)
+                return walkRuleForTemplate(rule.content, seen, inRepeat, clauses, rules, repeatedFields, joinByField, wordMatcher)
             }
             seen.add(rule.name)
             const varName = rule.name.toUpperCase()
@@ -1704,7 +1812,7 @@ function walkRuleForTemplate(
                 const target = rules[symName]
                 if (target && !seen.has(`@${symName}`)) {
                     seen.add(`@${symName}`)
-                    const parts = walkRuleForTemplate(target, seen, inRepeat, clauses, rules, repeatedFields, joinByField)
+                    const parts = walkRuleForTemplate(target, seen, inRepeat, clauses, rules, repeatedFields, joinByField, wordMatcher)
                     if (parts.length > 0) return parts
                 }
             }
@@ -1731,7 +1839,7 @@ function walkRuleForTemplate(
             return rule.values.length > 0 ? [rule.values[0]!] : []
 
         case 'variant':
-            return walkRuleForTemplate(rule.content, seen, inRepeat, clauses, rules, repeatedFields, joinByField)
+            return walkRuleForTemplate(rule.content, seen, inRepeat, clauses, rules, repeatedFields, joinByField, wordMatcher)
 
         case 'clause': {
             // Emit a separate sub-template and reference it from the main
@@ -1740,7 +1848,7 @@ function walkRuleForTemplate(
             if (seen.has(rule.name)) return []
             seen.add(rule.name)
             const clauseSeen = new Set<string>()
-            const clauseParts = walkRuleForTemplate(rule.content, clauseSeen, inRepeat, clauses, rules, repeatedFields, joinByField)
+            const clauseParts = walkRuleForTemplate(rule.content, clauseSeen, inRepeat, clauses, rules, repeatedFields, joinByField, wordMatcher)
             const clauseTemplate = clauseParts.join('')
             // Clause key mirrors the emitted var (`$NAME_CLAUSE` →
             // `name_clause`) so the renderer's clauseKey lookup matches.
@@ -1749,7 +1857,7 @@ function walkRuleForTemplate(
         }
 
         case 'group':
-            return walkRuleForTemplate(rule.content, seen, inRepeat, clauses, rules, repeatedFields, joinByField)
+            return walkRuleForTemplate(rule.content, seen, inRepeat, clauses, rules, repeatedFields, joinByField, wordMatcher)
 
         case 'supertype':
             if (seen.has('children')) return []
@@ -1764,7 +1872,7 @@ function walkRuleForTemplate(
             return ['\n']
 
         case 'terminal':
-            return walkRuleForTemplate(rule.content, seen, inRepeat, clauses, rules, repeatedFields, joinByField)
+            return walkRuleForTemplate(rule.content, seen, inRepeat, clauses, rules, repeatedFields, joinByField, wordMatcher)
 
         case 'polymorph':
             // Polymorphs are dispatched by AssembledPolymorph.renderTemplate
@@ -1779,6 +1887,26 @@ function walkRuleForTemplate(
 
         default:
             return []
+    }
+}
+
+/**
+ * Peel wrappers off a rule and return its string value if the inner
+ * content is a single literal. Used by the template walker's optional
+ * case to detect `optional('async')`-style keyword annotations.
+ */
+function extractSingleKeywordString(rule: Rule): string | null {
+    switch (rule.type) {
+        case 'string':
+            return rule.value
+        case 'token':
+        case 'terminal':
+        case 'group':
+        case 'variant':
+        case 'clause':
+            return extractSingleKeywordString((rule as { content: Rule }).content)
+        default:
+            return null
     }
 }
 
@@ -1870,13 +1998,29 @@ const TEMPLATE_WORD = /\w/
 
 /**
  * Should we insert a space separator between two adjacent template
- * fragments? Placeholders (`$FOO`, `$$$CHILDREN`) are treated as
- * word-like on the `$`-starting side — they WILL render to user
- * content at runtime and the common case is word content. Without a
- * space we'd merge two tokens (`mod english` → `modenglish`).
+ * fragments? The decision uses the boundary chars — the last char of
+ * `prev` and the first char of `next` — and asks "would these two
+ * characters form a valid two-char slice of a word under the
+ * grammar's `word` rule?" If yes, the adjacent tokens would merge
+ * into one lexeme at parse time and we need a space.
+ *
+ * Placeholders (`$FOO`, `$$$CHILDREN`) count as word-like on the
+ * `$`-starting side — they WILL render to user content at runtime
+ * and the common case is word content. We substitute a representative
+ * word character (`a`) for the placeholder when probing the word
+ * pattern, so `\p{XID_Continue}`-style regexes work.
+ *
+ * Falls back to a generic `/\w/` heuristic when no word matcher is
+ * available (grammar has no `word` rule, or the rule isn't a direct
+ * pattern).
  */
-function needsSpace(prev: string, next: string): boolean {
+function needsSpace(prev: string, next: string, wordMatcher?: RegExp): boolean {
     if (!prev || !next) return false
+    const lastChar = prev[prev.length - 1]!
+    const firstChar = next[0] === '$' ? 'a' : next[0]!
+    if (wordMatcher) {
+        return wordMatcher.test(lastChar + firstChar)
+    }
     const prevIsWordLike = TEMPLATE_WORD.test(prev)
     const nextIsWordLike = TEMPLATE_WORD.test(next) || next === '$'
     return prevIsWordLike && nextIsWordLike

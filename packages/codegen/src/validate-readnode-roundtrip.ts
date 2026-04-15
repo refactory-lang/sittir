@@ -29,11 +29,12 @@
 import { createRequire } from 'node:module'
 import { readFileSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
-import { readNode, buildRoutingMap } from '@sittir/core'
+import { readNode } from '@sittir/core'
+import type { RoutingMap } from '@sittir/core'
 import type { AnyNodeData, AnyTreeNode } from '@sittir/types'
-import { loadOverrides } from './overrides.ts'
 import { loadRawEntries } from './validators/node-types.ts'
 import { loadWebTreeSitter } from './validators/common.ts'
+import { loadRouting } from './validators/load-routing.ts'
 
 const require = createRequire(import.meta.url)
 
@@ -180,17 +181,17 @@ function buildKindFieldMap(
 
 /**
  * Build `kind → Set<overrideFieldName>` — field names the routing map
- * adds (virtual fields projected from children by kind matching). These
- * augment the tree-sitter field list for the "expected fields"
- * comparison.
+ * adds (virtual fields projected from children by kind matching).
+ * Derived directly from the runtime RoutingMap so overrides.json is
+ * out of the loop.
  */
-function buildKindOverrideMap(
-    overrides: Record<string, { fields?: Record<string, unknown> }>,
-): Map<string, Set<string>> {
+function buildKindOverrideMap(routing: RoutingMap): Map<string, Set<string>> {
     const result = new Map<string, Set<string>>()
-    for (const [kind, spec] of Object.entries(overrides)) {
-        const fields = spec.fields ?? {}
-        result.set(kind, new Set(Object.keys(fields)))
+    for (const [kind, maps] of routing) {
+        const names = new Set<string>()
+        for (const promo of maps.unambiguous.values()) names.add(promo.fieldName)
+        for (const [fname] of maps.ambiguousSlots) names.add(fname)
+        result.set(kind, names)
     }
     return result
 }
@@ -297,16 +298,9 @@ export async function validateReadNodeRoundTrip(
     parser.setLanguage(lang)
 
     const rawEntries = loadRawEntries(grammar)
-    const overrides = loadOverrides(grammar)
-    const supertypeExpansion = new Map<string, string[]>()
-    for (const entry of rawEntries) {
-        if (entry.subtypes && entry.subtypes.length > 0) {
-            supertypeExpansion.set(entry.type, entry.subtypes.map(s => s.type))
-        }
-    }
-    const routing = buildRoutingMap(overrides, supertypeExpansion)
+    const routing = await loadRouting(grammar)
     const kindFields = buildKindFieldMap(rawEntries)
-    const kindOverrides = buildKindOverrideMap(overrides)
+    const kindOverrides = buildKindOverrideMap(routing)
 
     const entries = loadCorpusEntries(grammar)
     const issues: NodeIssue[] = []

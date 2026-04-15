@@ -5,12 +5,12 @@
 
 import type { NodeMap, AssembledNode, AssembledField } from '../compiler/rule.ts'
 
-export interface EmitTestsFromNodeMapConfig {
+export interface EmitTestsConfig {
     grammar: string
     nodeMap: NodeMap
 }
 
-export function emitTestsFromNodeMap(config: EmitTestsFromNodeMapConfig): string {
+export function emitTests(config: EmitTestsConfig): string {
     const { grammar, nodeMap } = config
 
     const lines: string[] = [

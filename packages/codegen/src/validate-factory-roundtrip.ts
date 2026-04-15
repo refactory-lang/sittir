@@ -12,10 +12,10 @@
 
 import { createRequire } from 'node:module';
 import { parse as parseYaml } from 'yaml';
-import { readNode, buildRoutingMap, createRenderer } from '@sittir/core';
+import { readNode, createRenderer } from '@sittir/core';
 import type { AnyNodeData, NodeFieldValue, RulesConfig } from '@sittir/types';
-import { loadOverrides } from './overrides.ts';
 import { loadRawEntries } from './validators/node-types.ts';
+import { loadRouting } from './validators/load-routing.ts';
 import {
 	loadCorpusEntries,
 	loadWebTreeSitter,
@@ -25,8 +25,61 @@ import {
 	buildKindToSupertypes,
 	wrapForReparse,
 	WASM_PATHS,
+	type TSNode,
 	type TSTree,
 } from './validators/common.ts';
+
+/**
+ * Strict AST structural equality — same shape as validate-roundtrip.
+ * Anonymous tokens compared byte-exactly so silently dropped content
+ * (commas, operators, terminators) fails the check.
+ */
+function astStructuralDiff(a: TSNode, b: TSNode, path: string = ''): string | null {
+	if (a.type !== b.type) {
+		return `${path || 'root'}: type ${a.type} ≠ ${b.type}`;
+	}
+	if (a.childCount !== b.childCount) {
+		const aChildren = Array.from({ length: a.childCount }, (_, i) => {
+			const c = a.child(i);
+			return c ? (c.isNamed ? c.type : JSON.stringify(c.text)) : '?';
+		}).join(',');
+		const bChildren = Array.from({ length: b.childCount }, (_, i) => {
+			const c = b.child(i);
+			return c ? (c.isNamed ? c.type : JSON.stringify(c.text)) : '?';
+		}).join(',');
+		return `${path || a.type}: childCount ${a.childCount} ≠ ${b.childCount} [${aChildren}] vs [${bChildren}]`;
+	}
+	for (let i = 0; i < a.childCount; i++) {
+		const ac = a.child(i);
+		const bc = b.child(i);
+		if (!ac || !bc) return `${path || a.type}[${i}]: missing child`;
+		if (ac.isNamed !== bc.isNamed) {
+			return `${path || a.type}[${i}]: named flag ${ac.isNamed} ≠ ${bc.isNamed}`;
+		}
+		if (!ac.isNamed) {
+			if (ac.text !== bc.text) {
+				return `${path || a.type}[${i}]: anon ${JSON.stringify(ac.text)} ≠ ${JSON.stringify(bc.text)}`;
+			}
+			continue;
+		}
+		const sub = astStructuralDiff(ac, bc, `${path || a.type}[${i}].${ac.type}`);
+		if (sub) return sub;
+	}
+	return null;
+}
+
+/** Find the first node of `kind` whose `startIndex` equals `offset`. */
+function findNodeAt(node: TSNode, kind: string, offset: number): TSNode | null {
+	if (node.type === kind && node.startIndex === offset) return node;
+	for (let i = 0; i < node.childCount; i++) {
+		const c = node.child(i);
+		if (!c) continue;
+		if (offset < c.startIndex || offset >= c.endIndex) continue;
+		const hit = findNodeAt(c, kind, offset);
+		if (hit) return hit;
+	}
+	return null;
+}
 
 const require = createRequire(import.meta.url);
 
@@ -76,16 +129,6 @@ const FACTORY_MODULE_PATHS: Record<string, string> = {
 	python: '../../python/src/factories.ts',
 };
 
-/** Build supertype → subtype[] map from node-types.json. */
-function buildSupertypeExpansion(rawEntries: { type: string; named: boolean; subtypes?: { type: string }[] }[]): Map<string, string[]> {
-	const result = new Map<string, string[]>();
-	for (const entry of rawEntries) {
-		if (!entry.subtypes || entry.subtypes.length === 0) continue;
-		result.set(entry.type, entry.subtypes.map(s => s.type));
-	}
-	return result;
-}
-
 // ---------------------------------------------------------------------------
 // Validation
 // ---------------------------------------------------------------------------
@@ -96,7 +139,16 @@ export interface FactoryRoundTripResult {
 	pass: number;
 	fail: number;
 	skip: number;
+	/**
+	 * Strict-structural pass count. A factory build round-trips with
+	 * full fidelity when the reparsed tree matches the original parse
+	 * byte-exactly on anonymous tokens. Subset of `pass` (kind-found
+	 * is weaker). Surfaces factory API gaps that kind-found misses —
+	 * missing field surface, dropped children slots, wrong defaults.
+	 */
+	astMatchPass: number;
 	errors: { kind: string; message: string }[];
+	astMismatches: { kind: string; message: string }[];
 }
 
 export async function validateFactoryRoundTrip(
@@ -110,10 +162,8 @@ export async function validateFactoryRoundTrip(
 	parser.setLanguage(lang);
 
 	const config = parseYaml(templatesYaml) as RulesConfig;
-	const overrides = loadOverrides(grammar);
 	const rawEntries = loadRawEntries(grammar);
-	const supertypeExpansion = buildSupertypeExpansion(rawEntries);
-	const routing = buildRoutingMap(overrides, supertypeExpansion);
+	const routing = await loadRouting(grammar);
 	const ruleKinds = new Set(Object.keys(config.rules));
 	const { render } = createRenderer(config);
 	const kindToSupertypes = buildKindToSupertypes(rawEntries);
@@ -132,8 +182,10 @@ export async function validateFactoryRoundTrip(
 
 	const entries = loadCorpusEntries(grammar);
 	const errors: { kind: string; message: string }[] = [];
+	const astMismatches: { kind: string; message: string }[] = [];
 	const testedKinds = new Set<string>(); // one test per kind
 	let pass = 0;
+	let astMatchPass = 0;
 	let skip = 0;
 	let total = 0;
 
@@ -211,38 +263,71 @@ export async function validateFactoryRoundTrip(
 				const wrapped = wrapForReparse(rendered, kind, grammar, kindToSupertypes);
 				if (wrapped === null) {
 					pass++; // no supertype → can't determine context → skip reparse
+					astMatchPass++;
 					continue;
 				}
 
-				const tree2 = parser.parse(wrapped) as TSTree;
+				const tree2 = parser.parse(wrapped.text) as TSTree;
 				if (tree2.rootNode.hasError) {
 					errors.push({ kind, message: `re-parse error: "${rendered.slice(0, 60)}"` });
 					continue;
 				}
 
-				const node2 = findFirst(tree2.rootNode, kind);
+				// Locate the rendered fragment at the exact wrapper
+				// offset — avoids matching a wrapper-emitted outer
+				// block/let/etc. of the same kind.
+				const node2 = findNodeAt(tree2.rootNode, kind, wrapped.offset) ?? findFirst(tree2.rootNode, kind);
 				if (!node2) {
 					errors.push({ kind, message: `kind not found in re-parse (rendered: "${rendered.slice(0, 60)}")` });
 					continue;
 				}
 
 				pass++;
+
+				// Strict AST structural check — catches factory API
+				// gaps where a field or children slot is missing.
+				// Recorded separately so the existing kind-found count
+				// stays a stable floor; ast-match tightens it.
+				const diff = astStructuralDiff(node1, node2);
+				if (diff) {
+					astMismatches.push({ kind, message: diff.slice(0, 160) });
+				} else {
+					astMatchPass++;
+				}
 			} catch (e) {
 				errors.push({ kind, message: `${(e as Error).message.slice(0, 80)}` });
 			}
 		}
 	}
 
-	return { grammar, total, pass, fail: total - pass - skip, skip, errors };
+	return {
+		grammar,
+		total,
+		pass,
+		fail: total - pass - skip,
+		skip,
+		astMatchPass,
+		errors,
+		astMismatches,
+	};
 }
 
 export function formatFactoryRoundTripReport(result: FactoryRoundTripResult): string {
 	const lines: string[] = [];
 	const icon = result.fail === 0 ? 'v' : 'x';
 	lines.push(`  ${icon} ${result.pass}/${result.total} factory round-trip (${result.skip} skipped, ${result.errors.length} errors)`);
+	lines.push(`    ast-match ${result.astMatchPass}/${result.total} (${result.astMismatches.length} structural mismatches)`);
 	if (result.errors.length > 0) {
 		for (const e of result.errors) {
 			lines.push(`    x ${e.kind}: ${e.message}`);
+		}
+	}
+	if (result.astMismatches.length > 0) {
+		for (const e of result.astMismatches.slice(0, 20)) {
+			lines.push(`    ~ ${e.kind}: ${e.message}`);
+		}
+		if (result.astMismatches.length > 20) {
+			lines.push(`    … and ${result.astMismatches.length - 20} more`);
 		}
 	}
 	return lines.join('\n');

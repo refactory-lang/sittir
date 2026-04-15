@@ -728,6 +728,27 @@ export function blank(): Rule {
     return { type: 'choice', members: [] }
 }
 
+/**
+ * Structural-whitespace role primitive for grammar overrides. Indent-
+ * sensitive grammars declare the mapping from their external token
+ * names to the three canonical structural roles (`indent`, `dedent`,
+ * `newline`) by defining rules whose body is the role node directly:
+ *
+ *     _indent: ($) => role('indent'),
+ *     _dedent: ($) => role('dedent'),
+ *     _newline: ($) => role('newline'),
+ *
+ * Link's symbol resolution picks up these role-annotated rules by
+ * structural shape (the body IS the role node) — no name matching,
+ * so a grammar can use any naming convention it likes.
+ */
+export function role(name: 'indent' | 'dedent' | 'newline'): Rule {
+    if (name === 'indent') return { type: 'indent' } as Rule
+    if (name === 'dedent') return { type: 'dedent' } as Rule
+    if (name === 'newline') return { type: 'newline' } as Rule
+    throw new Error(`role(): unknown role '${name}'`)
+}
+
 // ---------------------------------------------------------------------------
 // evaluate() — execute grammar.js and produce RawGrammar
 // ---------------------------------------------------------------------------
@@ -945,6 +966,7 @@ export async function evaluate(entryPath: string): Promise<RawGrammar> {
         transform,
         insert,
         replace,
+        role,
     }
 
     // Save existing globals and inject ours

@@ -36,15 +36,15 @@ function buildRenderContext(config: RulesConfig): InternalRenderContext {
 // ---------------------------------------------------------------------------
 
 /**
- * Resolve the template string for a node, handling all TemplateRule forms:
- * - string: return directly
- * - string[]: pick best variant by field presence (existing heuristic)
- * - object with `variants`: detect subtype from node.variant or anonymous tokens
- * - object with `template`: standard object form, may be string or string[]
+ * Resolve the template string for a node. TemplateRule is either:
+ * - `string`: a single template, returned directly
+ * - `{ template: string }`: the standard object form
+ * - `{ variants: { <name>: template, … }, detect?: … }`: named variants,
+ *   dispatched from `node.variant`, anonymous-token `detect` entries,
+ *   or a field-presence fallback across the variant values.
  */
 function resolveTemplate(rule: TemplateRule, node: AnyNodeData, varPattern: RegExp): string {
 	if (typeof rule === 'string') return rule;
-	if (Array.isArray(rule)) return pickTemplate(rule, node, varPattern) ?? rule[0]!;
 
 	const obj = rule as TemplateRuleObject;
 
@@ -64,21 +64,17 @@ function resolveTemplate(rule: TemplateRule, node: AnyNodeData, varPattern: RegE
 				}
 			}
 		}
-		// 3. Field-resolution dispatch (mirrors pickTemplate for string[]
-		//    templates). For parse→render round-trips readNode doesn't set
-		//    node.variant, so we pick the variant whose $VAR placeholders
-		//    all resolve against the incoming node. Prefers the variant
-		//    with the MOST resolved variables when several partially match,
-		//    falling back to the first entry otherwise.
+		// 3. Field-presence fallback — pick the variant whose `$VAR`
+		//    placeholders all resolve against the incoming node.
+		//    Prefers the variant with the MOST resolved variables when
+		//    several partially match, falling back to the first entry.
 		const picked = pickTemplate(Object.values(obj.variants), node, varPattern);
 		if (picked !== null) return picked;
 		return Object.values(obj.variants)[0]!;
 	}
 
-	// Standard template (string or string[])
 	const tmpl = obj.template;
 	if (!tmpl) throw new Error(`Rule for '${node.type}' has neither template nor variants`);
-	if (Array.isArray(tmpl)) return pickTemplate(tmpl, node, varPattern) ?? tmpl[0]!;
 	return tmpl;
 }
 
@@ -96,12 +92,11 @@ function render(node: AnyNodeData, ctx: InternalRenderContext): string {
 	const rule = ctx.config.rules[node.type];
 	if (!rule) throw new Error(`No render rule for '${node.type}'`);
 
-	const isObject = typeof rule !== 'string' && !Array.isArray(rule);
-	const ruleObj = isObject ? rule as unknown as Record<string, unknown> : undefined;
+	const ruleObj = typeof rule === 'string' ? undefined : rule as unknown as Record<string, unknown>;
 
 	const { varPattern, prefix } = ctx;
 
-	// Resolve template — handles simple, string[], and variant subtypes
+	// Resolve template — handles simple and named-variant forms.
 	const rawTemplate = resolveTemplate(rule, node, varPattern);
 
 	// Trim trailing newline from YAML | block scalar
@@ -280,6 +275,29 @@ function renderClause(
 	consumed: Set<number>,
 ): string {
 	const { varPattern } = ctx;
+
+	// Bare-literal clauses (no `$VAR` placeholders) are anonymous-token
+	// presence checks. A walker that wants to round-trip an
+	// `optional(',')` / `optional(';')` / `optional('::')` emits a
+	// clause whose body IS the literal string; this branch fires the
+	// clause only when readNode captured an unconsumed anonymous child
+	// with exactly that text. Consuming the child keeps `$$$CHILDREN`
+	// from double-emitting it later in the same template.
+	if (!varPattern.test(clauseTemplate)) {
+		// Reset stateful regex — .test() advances lastIndex when global.
+		varPattern.lastIndex = 0;
+		if (node.children && Array.isArray(node.children)) {
+			const idx = node.children.findIndex((c: any, i: number) =>
+				!consumed.has(i) && c?.type === clauseTemplate
+			);
+			if (idx >= 0) {
+				consumed.add(idx);
+				return clauseTemplate;
+			}
+		}
+		return '';
+	}
+	varPattern.lastIndex = 0;
 
 	// First pass: check if all variables resolve
 	let allPresent = true;

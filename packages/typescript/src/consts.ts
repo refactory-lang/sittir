@@ -184,7 +184,6 @@ export const LEAF_KINDS = [
   '_template_chars',
   'abstract',
   'accessibility_modifier',
-  'accessor',
   'as',
   'async',
   'await',
@@ -270,7 +269,6 @@ export const ALL_KINDS = [...NODE_KINDS, ...LEAF_KINDS] as const;
 /** Language keywords (alphabetic anonymous tokens). */
 export const KEYWORDS = [
   'abstract',
-  'accessor',
   'as',
   'async',
   'await',
@@ -434,6 +432,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'primaryType', required: true, multiple: false },
   ],
   'arrow_function': [
+    { name: 'async', required: false, multiple: false },
     { name: 'parameter', required: true, multiple: false },
     { name: 'body', required: true, multiple: false },
   ],
@@ -447,6 +446,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'asserts', required: true, multiple: false },
   ],
   'assignment_expression': [
+    { name: 'using', required: false, multiple: false },
     { name: 'left', required: true, multiple: false },
     { name: 'right', required: true, multiple: false },
   ],
@@ -490,7 +490,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'body', required: true, multiple: false },
   ],
   'class_body': [
-    { name: 'decorator', required: true, multiple: true },
+    { name: 'decorator', required: false, multiple: true },
   ],
   'class_declaration': [
     { name: 'decorator', required: true, multiple: true },
@@ -519,11 +519,13 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'constraint': [
   ],
   'construct_signature': [
+    { name: 'abstract', required: false, multiple: false },
     { name: 'typeParameters', required: false, multiple: false },
     { name: 'parameters', required: true, multiple: false },
     { name: 'type', required: false, multiple: false },
   ],
   'constructor_type': [
+    { name: 'abstract', required: false, multiple: false },
     { name: 'typeParameters', required: false, multiple: false },
     { name: 'parameters', required: true, multiple: false },
     { name: 'type', required: true, multiple: false },
@@ -564,6 +566,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'opening', required: false, multiple: true },
   ],
   'enum_declaration': [
+    { name: 'const', required: false, multiple: false },
     { name: 'name', required: true, multiple: false },
     { name: 'body', required: true, multiple: false },
   ],
@@ -574,9 +577,9 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'alias', required: false, multiple: false },
   ],
   'export_statement': [
-    { name: 'decorator', required: true, multiple: true },
-    { name: 'declaration', required: true, multiple: false },
-    { name: 'value', required: true, multiple: false },
+    { name: 'decorator', required: false, multiple: true },
+    { name: 'declaration', required: false, multiple: false },
+    { name: 'value', required: false, multiple: false },
   ],
   'expression': [
   ],
@@ -589,6 +592,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'field_definition': [
     { name: 'decorator', required: true, multiple: true },
+    { name: 'static', required: false, multiple: false },
     { name: 'property', required: true, multiple: false },
   ],
   'finally_clause': [
@@ -598,6 +602,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'primaryType', required: true, multiple: false },
   ],
   'for_in_statement': [
+    { name: 'await', required: false, multiple: false },
     { name: 'body', required: true, multiple: false },
   ],
   'for_statement': [
@@ -609,14 +614,17 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'formal_parameters': [
   ],
   'function_declaration': [
+    { name: 'async', required: false, multiple: false },
     { name: 'name', required: true, multiple: false },
     { name: 'body', required: true, multiple: false },
   ],
   'function_expression': [
+    { name: 'async', required: false, multiple: false },
     { name: 'name', required: false, multiple: false },
     { name: 'body', required: true, multiple: false },
   ],
   'function_signature': [
+    { name: 'async', required: false, multiple: false },
     { name: 'name', required: true, multiple: false },
   ],
   'function_type': [
@@ -625,10 +633,12 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'returnType', required: true, multiple: false },
   ],
   'generator_function': [
+    { name: 'async', required: false, multiple: false },
     { name: 'name', required: false, multiple: false },
     { name: 'body', required: true, multiple: false },
   ],
   'generator_function_declaration': [
+    { name: 'async', required: false, multiple: false },
     { name: 'name', required: true, multiple: false },
     { name: 'body', required: true, multiple: false },
   ],
@@ -748,12 +758,16 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'method_definition': [
     { name: 'accessibilityModifier', required: false, multiple: false },
     { name: 'overrideModifier', required: false, multiple: false },
+    { name: 'readonly', required: false, multiple: false },
+    { name: 'async', required: false, multiple: false },
     { name: 'name', required: true, multiple: false },
     { name: 'body', required: true, multiple: false },
   ],
   'method_signature': [
     { name: 'accessibilityModifier', required: false, multiple: false },
     { name: 'overrideModifier', required: false, multiple: false },
+    { name: 'readonly', required: false, multiple: false },
+    { name: 'async', required: false, multiple: false },
     { name: 'name', required: true, multiple: false },
   ],
   'module': [
@@ -831,13 +845,18 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'property_signature': [
     { name: 'accessibilityModifier', required: false, multiple: false },
     { name: 'overrideModifier', required: false, multiple: false },
+    { name: 'readonly', required: false, multiple: false },
     { name: 'name', required: true, multiple: false },
     { name: 'type', required: false, multiple: false },
   ],
   'public_field_definition': [
     { name: 'decorator', required: true, multiple: true },
+    { name: 'declare', required: false, multiple: false },
+    { name: 'static', required: false, multiple: false },
+    { name: 'readonly', required: false, multiple: false },
     { name: 'name', required: true, multiple: false },
     { name: 'type', required: false, multiple: false },
+    { name: 'abstract', required: false, multiple: false },
   ],
   'readonly_type': [
   ],
@@ -934,6 +953,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'expression', required: true, multiple: false },
   ],
   'type_parameter': [
+    { name: 'const', required: false, multiple: false },
     { name: 'name', required: true, multiple: false },
     { name: 'constraint', required: false, multiple: false },
     { name: 'value', required: false, multiple: false },

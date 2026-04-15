@@ -250,7 +250,8 @@ export function assertStatement(...children: T.Expression[]) {
   };
 }
 
-export function expressionStatement(...children: (T.Expression | T.Assignment | T.AugmentedAssignment | T.Yield)[]) {
+export function expressionStatement(child?: (T.Expression | T.Assignment | T.AugmentedAssignment | T.Yield)) {
+  const children = child != null ? [child] : [];
   return {
     type: 'expression_statement' as const,
     named: true as const,
@@ -478,6 +479,7 @@ export function caseClause(config: T.CaseClauseConfig) {
 
 export function forStatement(config: T.ForStatementConfig) {
   const fields = {
+    async: config?.async,
     left: config?.left,
     right: config?.right,
     body: config?.body,
@@ -487,6 +489,7 @@ export function forStatement(config: T.ForStatementConfig) {
     type: 'for_statement' as const,
     named: true as const,
     fields,
+    async(async_?: "async" | undefined) { return _fs(config, forStatement, 'async', async_, fields.async); },
     left(left_?: T.LeftHandSide) { return _fs(config, forStatement, 'left', left_, fields.left); },
     right(right_?: T.Expressions) { return _fs(config, forStatement, 'right', right_, fields.right); },
     body(body_?: T.Suite) { return _fs(config, forStatement, 'body', body_, fields.body); },
@@ -557,7 +560,7 @@ export function exceptClause(config: T.ExceptClauseConfig) {
     named: true as const,
     fields,
     children,
-    value(...value_: T.Expression[]) { return _fsm(config, exceptClause, 'value', value_, fields.value); },
+    value(value_?: T.Expression | undefined) { return _fs(config, exceptClause, 'value', value_, fields.value); },
     alias(alias_?: T.Expression | undefined) { return _fs(config, exceptClause, 'alias', alias_, fields.alias); },
     getChild() { return children[0]; },
     setChild(child: T.Suite) { return exceptClause({ ...(config ?? {}), children: [child] }); },
@@ -590,6 +593,7 @@ export function finallyClause(config: T.FinallyClauseConfig) {
 
 export function withStatement(config: T.WithStatementConfig) {
   const fields = {
+    async: config?.async,
     body: config?.body,
   };
   const children = config?.children ?? [];
@@ -598,6 +602,7 @@ export function withStatement(config: T.WithStatementConfig) {
     named: true as const,
     fields,
     children,
+    async(async_?: "async" | undefined) { return _fs(config, withStatement, 'async', async_, fields.async); },
     body(body_?: T.Suite) { return _fs(config, withStatement, 'body', body_, fields.body); },
     getChild() { return children[0]; },
     setChild(child: T.WithClause) { return withStatement({ ...(config ?? {}), children: [child] }); },
@@ -645,6 +650,7 @@ export function withItem(config: T.WithItemConfig) {
 
 export function functionDefinition(config: T.FunctionDefinitionConfig) {
   const fields = {
+    async: config?.async,
     name: config?.name,
     type_parameters: config?.typeParameters,
     parameters: config?.parameters,
@@ -655,6 +661,7 @@ export function functionDefinition(config: T.FunctionDefinitionConfig) {
     type: 'function_definition' as const,
     named: true as const,
     fields,
+    async(async_?: "async" | undefined) { return _fs(config, functionDefinition, 'async', async_, fields.async); },
     name(name_?: T.Identifier) { return _fs(config, functionDefinition, 'name', name_, fields.name); },
     typeParameters(typeParameters_?: T.TypeParameter | undefined) { return _fs(config, functionDefinition, 'typeParameters', typeParameters_, fields.type_parameters); },
     parameters(parameters_?: T.Parameters) { return _fs(config, functionDefinition, 'parameters', parameters_, fields.parameters); },
@@ -846,8 +853,8 @@ export function typeParameter(...children: T.Type[]) {
   };
 }
 
-export function parenthesizedListSplat(child: (T.ParenthesizedListSplat | T.ListSplat)) {
-  const children = [child];
+export function parenthesizedListSplat(child?: (T.ParenthesizedListSplat | T.ListSplat)) {
+  const children = child != null ? [child] : [];
   return {
     type: 'parenthesized_list_splat' as const,
     named: true as const,
@@ -963,8 +970,8 @@ export function dottedName(...children: T.Identifier[]) {
   };
 }
 
-export function casePattern(child: (T.CasePattern | T.Identifier | T.KeywordPattern | T.SimplePattern)) {
-  const children = [child];
+export function casePattern(child?: (T.CasePattern | T.Identifier | T.KeywordPattern | T.SimplePattern)) {
+  const children = child != null ? [child] : [];
   return {
     type: 'case_pattern' as const,
     named: true as const,
@@ -1164,8 +1171,8 @@ export function typedDefaultParameter(config: T.TypedDefaultParameterConfig) {
   };
 }
 
-export function listSplatPattern(child: (T.Identifier | T.KeywordIdentifier | T.Subscript | T.Attribute)) {
-  const children = [child];
+export function listSplatPattern(child?: (T.Identifier | T.KeywordIdentifier | T.Subscript | T.Attribute)) {
+  const children = child != null ? [child] : [];
   return {
     type: 'list_splat_pattern' as const,
     named: true as const,
@@ -1179,8 +1186,8 @@ export function listSplatPattern(child: (T.Identifier | T.KeywordIdentifier | T.
   };
 }
 
-export function dictionarySplatPattern(child: (T.Identifier | T.KeywordIdentifier | T.Subscript | T.Attribute)) {
-  const children = [child];
+export function dictionarySplatPattern(child?: (T.Identifier | T.KeywordIdentifier | T.Subscript | T.Attribute)) {
+  const children = child != null ? [child] : [];
   return {
     type: 'dictionary_splat_pattern' as const,
     named: true as const,
@@ -1243,7 +1250,7 @@ export function booleanOperator(config: T.BooleanOperatorConfig) {
     named: true as const,
     fields,
     left(left_?: T.Expression) { return _fs(config, booleanOperator, 'left', left_, fields.left); },
-    operator(operator_?: "and" | "or") { return _fs(config, booleanOperator, 'operator', operator_, fields.operator); },
+    operator(operator_?: "and") { return _fs(config, booleanOperator, 'operator', operator_, fields.operator); },
     right(right_?: T.Expression) { return _fs(config, booleanOperator, 'right', right_, fields.right); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -1265,7 +1272,7 @@ export function binaryOperator(config: T.BinaryOperatorConfig) {
     named: true as const,
     fields,
     left(left_?: T.PrimaryExpression) { return _fs(config, binaryOperator, 'left', left_, fields.left); },
-    operator(operator_?: "+" | "-" | "*" | "@" | "/" | "%" | "//" | "**" | "|" | "&" | "^" | "<<" | ">>") { return _fs(config, binaryOperator, 'operator', operator_, fields.operator); },
+    operator(operator_?: "+") { return _fs(config, binaryOperator, 'operator', operator_, fields.operator); },
     right(right_?: T.PrimaryExpression) { return _fs(config, binaryOperator, 'right', right_, fields.right); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -1460,8 +1467,8 @@ export function patternList(...children: T.Pattern[]) {
   };
 }
 
-export function yield_(child: (T.Expression | T.Expressions)) {
-  const children = [child];
+export function yield_(child?: (T.Expression | T.Expressions)) {
+  const children = child != null ? [child] : [];
   return {
     type: 'yield' as const,
     named: true as const,
@@ -1579,8 +1586,8 @@ export function typedParameter(config: T.TypedParameterConfig) {
   };
 }
 
-export function type(child: (T.Expression | T.SplatType | T.GenericType | T.UnionType | T.ConstrainedType | T.MemberType)) {
-  const children = [child];
+export function type(child?: (T.Expression | T.SplatType | T.GenericType | T.UnionType | T.ConstrainedType | T.MemberType)) {
+  const children = child != null ? [child] : [];
   return {
     type: 'type' as const,
     named: true as const,
@@ -1883,8 +1890,8 @@ export function generatorExpression(config: T.GeneratorExpressionConfig) {
   };
 }
 
-export function parenthesizedExpression(child: (T.Expression | T.Yield)) {
-  const children = [child];
+export function parenthesizedExpression(child?: (T.Expression | T.Yield)) {
+  const children = child != null ? [child] : [];
   return {
     type: 'parenthesized_expression' as const,
     named: true as const,
@@ -1900,6 +1907,7 @@ export function parenthesizedExpression(child: (T.Expression | T.Yield)) {
 
 export function forInClause(config: T.ForInClauseConfig) {
   const fields = {
+    async: config?.async,
     left: config?.left,
     right: config?.right,
   };
@@ -1907,6 +1915,7 @@ export function forInClause(config: T.ForInClauseConfig) {
     type: 'for_in_clause' as const,
     named: true as const,
     fields,
+    async(async_?: "async" | undefined) { return _fs(config, forInClause, 'async', async_, fields.async); },
     left(left_?: T.LeftHandSide) { return _fs(config, forInClause, 'left', left_, fields.left); },
     right(...right_: NonEmptyArray<string>) { return _fsm(config, forInClause, 'right', right_, fields.right); },
     render() { return render(this); },
@@ -1995,7 +2004,6 @@ export function string(config: T.StringConfig) {
 }
 
 export function stringContent(...children: (T.EscapeInterpolation | T.EscapeSequence | T.NotEscapeSequence | T._StringContent)[]) {
-  _assertNonEmpty(children, 'string_content.children');
   return {
     type: 'string_content' as const,
     named: true as const,
@@ -2276,8 +2284,8 @@ export function except(text: string) {
   };
 }
 
-export function asPatternTarget(child: (T.ComparisonOperator | T.NotOperator | T.BooleanOperator | T.Lambda | T.PrimaryExpression | T.ConditionalExpression | T.NamedExpression | T.AsPattern)) {
-  const children = [child];
+export function asPatternTarget(child?: (T.ComparisonOperator | T.NotOperator | T.BooleanOperator | T.Lambda | T.PrimaryExpression | T.ConditionalExpression | T.NamedExpression | T.AsPattern)) {
+  const children = child != null ? [child] : [];
   return {
     type: 'as_pattern_target' as const,
     named: true as const,

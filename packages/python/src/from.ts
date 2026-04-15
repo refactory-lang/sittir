@@ -405,12 +405,12 @@ export function assertStatementFrom(...input: readonly (NonNullable<T.AssertStat
   return assertStatement(...(input as NonNullable<T.AssertStatementConfig['children']>));
 }
 
-export function expressionStatementFrom(...input: readonly (NonNullable<T.ExpressionStatementConfig['children']>[number] | T.ExpressionStatement)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].type === 'expression_statement') {
-    const data = input[0] as T.ExpressionStatement;
-    return expressionStatement(...(data.children as NonNullable<T.ExpressionStatementConfig['children']>));
+export function expressionStatementFrom(input?: NonNullable<T.ExpressionStatementConfig['children']>[number] | T.ExpressionStatement) {
+  if (isNodeData(input) && input.type === 'expression_statement') {
+    const data = input as T.ExpressionStatement;
+    return expressionStatement((data.children as NonNullable<T.ExpressionStatementConfig['children']>)[0] as NonNullable<T.ExpressionStatementConfig['children']>[number]);
   }
-  return expressionStatement(...(input as NonNullable<T.ExpressionStatementConfig['children']>));
+  return expressionStatement(input as NonNullable<T.ExpressionStatementConfig['children']>[number]);
 }
 
 export function namedExpressionFrom(input: T.NamedExpression | T.LooseNamedExpression) {
@@ -508,6 +508,7 @@ export function caseClauseFrom(input: T.CaseClause | T.LooseCaseClause) {
 export function forStatementFrom(input: T.ForStatement | T.LooseForStatement) {
   if ('render' in input) return input;
   return forStatement({
+    async: _resolveOne<NonNullable<T.ForStatementConfig['async']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['async'] ?? (input as { readonly async?: _FromFieldInput }).async), _K0, _K0),
     left: _resolveOne<NonNullable<T.ForStatementConfig['left']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['left'] ?? (input as { readonly left?: _FromFieldInput }).left), _K0, _super_left_hand_side),
     right: _resolveOne<NonNullable<T.ForStatementConfig['right']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['right'] ?? (input as { readonly right?: _FromFieldInput }).right), _K0, _super_expressions),
     body: _resolveOneBranch<NonNullable<T.ForStatementConfig['body']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['body'] ?? (input as { readonly body?: _FromFieldInput }).body), "_suite"),
@@ -537,7 +538,7 @@ export function tryStatementFrom(input: T.TryStatement | T.LooseTryStatement) {
 export function exceptClauseFrom(input: T.ExceptClause | T.LooseExceptClause) {
   if ('render' in input) return input;
   return exceptClause({
-    value: _resolveMany<NonNullable<T.ExceptClauseConfig['value']>[number]>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['value'] ?? (input as { readonly value?: _FromFieldInput }).value), _K0, _super_expression),
+    value: _resolveOne<NonNullable<T.ExceptClauseConfig['value']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['value'] ?? (input as { readonly value?: _FromFieldInput }).value), _K0, _super_expression),
     alias: _resolveOne<NonNullable<T.ExceptClauseConfig['alias']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['alias'] ?? (input as { readonly alias?: _FromFieldInput }).alias), _K0, _super_expression),
     children: _resolveOneBranch<NonNullable<T.ExceptClauseConfig['children']>>(input.children, "_suite"),
   });
@@ -553,6 +554,7 @@ export function finallyClauseFrom(input: T.FinallyClause | T.LooseFinallyClause)
 export function withStatementFrom(input: T.WithStatement | T.LooseWithStatement) {
   if ('render' in input) return input;
   return withStatement({
+    async: _resolveOne<NonNullable<T.WithStatementConfig['async']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['async'] ?? (input as { readonly async?: _FromFieldInput }).async), _K0, _K0),
     body: _resolveOneBranch<NonNullable<T.WithStatementConfig['body']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['body'] ?? (input as { readonly body?: _FromFieldInput }).body), "_suite"),
     children: _resolveOneBranch<NonNullable<T.WithStatementConfig['children']>>(input.children, "with_clause"),
   });
@@ -576,6 +578,7 @@ export function withItemFrom(input: T.WithItem | T.LooseWithItem) {
 export function functionDefinitionFrom(input: T.FunctionDefinition | T.LooseFunctionDefinition) {
   if ('render' in input) return input;
   return functionDefinition({
+    async: _resolveOne<NonNullable<T.FunctionDefinitionConfig['async']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['async'] ?? (input as { readonly async?: _FromFieldInput }).async), _K0, _K0),
     name: _resolveOneLeaf<NonNullable<T.FunctionDefinitionConfig['name']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['name'] ?? (input as { readonly name?: _FromFieldInput }).name), "identifier"),
     typeParameters: _resolveOneBranch<NonNullable<T.FunctionDefinitionConfig['typeParameters']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['type_parameters'] ?? (input as { readonly typeParameters?: _FromFieldInput }).typeParameters), "type_parameter"),
     parameters: _resolveOneBranch<NonNullable<T.FunctionDefinitionConfig['parameters']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['parameters'] ?? (input as { readonly parameters?: _FromFieldInput }).parameters), "parameters"),
@@ -1131,6 +1134,7 @@ export function forInClauseFrom(input: T.ForInClause | T.LooseForInClause) {
   const _ne_right = _resolveMany<NonNullable<T.ForInClauseConfig['right']>[number]>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['right'] ?? (input as { readonly right?: _FromFieldInput }).right), _K0, _K0);
   _assertNonEmpty(_ne_right, 'for_in_clause.right');
   return forInClause({
+    async: _resolveOne<NonNullable<T.ForInClauseConfig['async']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['async'] ?? (input as { readonly async?: _FromFieldInput }).async), _K0, _K0),
     left: _resolveOne<NonNullable<T.ForInClauseConfig['left']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['left'] ?? (input as { readonly left?: _FromFieldInput }).left), _K0, _super_left_hand_side),
     right: _ne_right,
   });

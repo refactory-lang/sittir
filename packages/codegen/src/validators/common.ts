@@ -249,19 +249,35 @@ const REPARSE_WRAPPERS: Record<string, Record<string, (r: string) => string>> = 
     },
 }
 
+export interface WrapForReparseResult {
+    /** The rendered fragment spliced into the supertype wrapper template. */
+    readonly text: string
+    /** Byte offset where the rendered fragment begins in `text`. */
+    readonly offset: number
+}
+
 export function wrapForReparse(
     rendered: string,
     kind: string,
     grammar: string,
     kindToSupertypes: Map<string, string[]>,
-): string | null {
+): WrapForReparseResult | null {
     const supertypes = kindToSupertypes.get(kind)
     if (!supertypes || supertypes.length === 0) return null
     const wrappers = REPARSE_WRAPPERS[grammar]
     if (!wrappers) return null
     for (const st of supertypes) {
         const wrapper = wrappers[st]
-        if (wrapper) return wrapper(rendered)
+        if (!wrapper) continue
+        const text = wrapper(rendered)
+        // Compute the insertion offset by wrapping a sentinel and
+        // locating it in the output. This is more robust than
+        // re-deriving the prefix from the template — some wrappers
+        // use helpers and we don't want to duplicate their logic.
+        const SENTINEL = '\u0001SITTIR_SENTINEL\u0001'
+        const sentinelText = wrapper(SENTINEL)
+        const offset = sentinelText.indexOf(SENTINEL)
+        return { text, offset: offset >= 0 ? offset : 0 }
     }
     return null
 }

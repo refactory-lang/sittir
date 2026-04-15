@@ -57,12 +57,12 @@ function findSymbolPosition(
     return null
 }
 
-export interface EmitSuggestedFromNodeMapConfig {
+export interface EmitSuggestedConfig {
     grammar: string
     nodeMap: NodeMap
 }
 
-export function emitSuggestedFromNodeMap(config: EmitSuggestedFromNodeMapConfig): string {
+export function emitSuggested(config: EmitSuggestedConfig): string {
     const { grammar, nodeMap } = config
     const log: DerivationLog = nodeMap.derivations
     const lines: string[] = []

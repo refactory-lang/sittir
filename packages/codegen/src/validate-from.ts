@@ -11,10 +11,9 @@
 
 import { createRequire } from 'node:module';
 import { parse as parseYaml } from 'yaml';
-import { readNode, buildRoutingMap } from '@sittir/core';
-import { loadRawEntries } from './validators/node-types.ts';
+import { readNode } from '@sittir/core';
+import { loadRouting } from './validators/load-routing.ts';
 import type { AnyNodeData, RulesConfig } from '@sittir/types';
-import { loadOverrides } from './overrides.ts';
 import {
 	loadCorpusEntries,
 	loadWebTreeSitter,
@@ -126,14 +125,7 @@ export async function validateFrom(
 	parser.setLanguage(lang);
 
 	parseYaml(templatesYaml) as RulesConfig;
-	const overrides = loadOverrides(grammar);
-	const supertypeExpansion = new Map<string, string[]>();
-	for (const entry of loadRawEntries(grammar)) {
-		if (entry.subtypes && entry.subtypes.length > 0) {
-			supertypeExpansion.set(entry.type, entry.subtypes.map(s => s.type));
-		}
-	}
-	const routing = buildRoutingMap(overrides, supertypeExpansion);
+	const routing = await loadRouting(grammar);
 
 	// Import from() and factory maps. from() expects either a fluent
 	// factory output or a camelCase bag; bare readNode NodeData is

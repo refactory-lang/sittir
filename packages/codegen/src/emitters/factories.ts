@@ -11,14 +11,14 @@ import type {
     NodeMap, AssembledNode, AssembledField, AssembledChild, AssembledGroup,
 } from '../compiler/rule.ts'
 
-export interface EmitFactoriesFromNodeMapConfig {
+export interface EmitFactoriesConfig {
     grammar: string
     nodeMap: NodeMap
     /** Emit runtime leaf pattern validation — see T067. Default `false`. */
     strict?: boolean
 }
 
-export function emitFactoriesFromNodeMap(config: EmitFactoriesFromNodeMapConfig): string {
+export function emitFactories(config: EmitFactoriesConfig): string {
     const { nodeMap, strict = false } = config
 
     const lines: string[] = [
@@ -370,7 +370,7 @@ function emitFieldCarryingFactory(
     const hasFields = fields.length > 0
     const hasChildren = children.length > 0
     // `children` slot is a single child when no child entry is repeated
-    // — matches the shape `readonly [T]` emitted by types-v2.
+    // — matches the shape `readonly [T]` emitted by types.
     const childrenMultiple = children.some(c => c.multiple)
     // `config` is optional only when EVERY field and EVERY child slot
     // is optional. A required field or child means the caller must

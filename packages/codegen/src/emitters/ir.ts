@@ -7,12 +7,12 @@
 
 import type { NodeMap, AssembledNode, AssembledPolymorph } from '../compiler/rule.ts'
 
-export interface EmitIrFromNodeMapConfig {
+export interface EmitIrConfig {
     grammar: string
     nodeMap: NodeMap
 }
 
-export function emitIrFromNodeMap(config: EmitIrFromNodeMapConfig): string {
+export function emitIr(config: EmitIrConfig): string {
     const { nodeMap } = config
 
     const lines: string[] = [

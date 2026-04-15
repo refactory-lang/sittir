@@ -1,9 +1,9 @@
 /**
  * validators/node-types.ts — thin loader for tree-sitter node-types.json.
  *
- * Replaces the 1000-line `grammar-reader.ts` module. The v2 pipeline only
- * needs the raw entry array for validation (FR-010 permits node-types.json
- * as a validation source, not a primary data source). Consumers pass the
+ * The pipeline only needs the raw entry array for validation (FR-010
+ * permits node-types.json as a validation source, not a primary data
+ * source). Consumers pass the
  * grammar name; the loader resolves to the npm package path and returns
  * the parsed array. No caches, no mutable state (FR-022).
  *

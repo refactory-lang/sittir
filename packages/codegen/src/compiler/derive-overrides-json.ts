@@ -89,7 +89,18 @@ function collectFields(
             // in overrides.json. Full-replacement override rules (not using
             // `transform()`) produce fields with no source; those are
             // allowed when `ctx.inOverrideRule` is set.
-            const isForeignField = rule.source !== 'override' && !ctx.inOverrideRule
+            // `override` — explicit transform() wrapping. Always picked up.
+            // `inferred` — Link's auto-promotion of `optional(keyword)` prefixes
+            //   (python `async`, rust `move`, etc.) to first-class fields.
+            //   These need runtime routing so readNode promotes the anonymous
+            //   keyword token into the field at parse time.
+            // Everything else (`grammar`, undefined) — native grammar field,
+            //   already routed by tree-sitter's fieldNameForChild, skipped.
+            const isFirstPartyField =
+                rule.source === 'override'
+                || rule.source === 'inferred'
+                || ctx.inOverrideRule
+            const isForeignField = !isFirstPartyField
             if (isForeignField) {
                 collectFields(rule.content, ctx, out)
                 return
@@ -125,8 +136,16 @@ function collectFields(
             // Members of a choice are alternative shapes. A field that
             // only appears in some alternatives is `required: false`.
             // Position becomes -1 because the index is branch-dependent.
+            // Reset `repeated` — a branch's field isn't multi just
+            // because an outer repeat cycles the whole choice; each
+            // cycle still picks one branch with one instance of each
+            // inner field.
             for (const m of rule.members) {
-                collectFields(m, { ...ctx, optional: true, position: -1 }, out)
+                collectFields(
+                    m,
+                    { ...ctx, optional: true, position: -1, repeated: false },
+                    out,
+                )
             }
             return
         }
@@ -166,7 +185,10 @@ function collectTypes(
 ): Array<{ type: string; named: boolean }> {
     switch (rule.type) {
         case 'symbol':
-            return [{ type: rule.name, named: !rule.name.startsWith('_') }]
+            // Hidden (`_`-prefixed) symbols are still NAMED types — tree-sitter's
+            // node-types.json lists them under fields.types with `named: true`.
+            // `named: false` is reserved for anonymous literal tokens.
+            return [{ type: rule.name, named: true }]
 
         case 'supertype':
             return [{ type: rule.name, named: true }]
@@ -178,7 +200,11 @@ function collectTypes(
             return rule.values.map(v => ({ type: v, named: false }))
 
         case 'choice':
-            // Flatten alternatives; dedupe by (type, named).
+            // Each branch is a real alternative — keep both named symbols
+            // AND anonymous literals so routing can promote either kind
+            // to the field slot. e.g. `field('mutable_specifier',
+            // choice('const', $.mutable_specifier))` must promote BOTH the
+            // `const` token and the `mutable_specifier` symbol.
             return dedupeTypes(rule.members.flatMap(m => collectTypes(m, hint)))
 
         case 'optional':
@@ -196,12 +222,17 @@ function collectTypes(
             // shows up in the parse tree, so emit that.
             return [{ type: rule.value, named: rule.named }]
 
-        case 'seq':
-            // A seq inside a field collapses to its last symbolic-like
-            // content — tree-sitter does the same for fields.types.
-            // Fall back to flattening every member and letting dedupe
-            // catch the sensible ones.
-            return dedupeTypes(rule.members.flatMap(m => collectTypes(m, hint)))
+        case 'seq': {
+            // A seq inside a field slot — tree-sitter's node-types.json
+            // lists only NAMED children under fields.types; anonymous
+            // delimiters (`,`, `::`, `:`, `for`, etc.) never appear.
+            // Descend into members that can contribute a named type and
+            // drop pure anonymous ones. Fall back to the raw flattened
+            // list if nothing named exists.
+            const all = dedupeTypes(rule.members.flatMap(m => collectTypes(m, hint)))
+            const named = all.filter(t => t.named)
+            return named.length > 0 ? named : all
+        }
 
         default:
             return []
@@ -234,7 +265,21 @@ function isOptionalShape(rule: Rule): boolean {
 
 function isRepeatedShape(rule: Rule): boolean {
     if (rule.type === 'repeat' || rule.type === 'repeat1') return true
-    if (rule.type === 'optional') return isRepeatedShape(rule.content)
+    if (rule.type === 'optional' || rule.type === 'variant' ||
+        rule.type === 'clause' || rule.type === 'group' ||
+        rule.type === 'token' || rule.type === 'terminal') {
+        return isRepeatedShape((rule as { content: Rule }).content)
+    }
+    if (rule.type === 'seq') {
+        // sep-style patterns (`seq(elem, repeat(seq(',', elem)))`) are
+        // repeated even though the seq itself isn't a repeat node.
+        return rule.members.some(m => isRepeatedShape(m))
+    }
+    // Don't propagate repetition through `choice` alternatives. Each
+    // branch is an independent shape that occurs once per choice match —
+    // a `repeat1(choice(field('async','async'), …))` makes the CHOICE
+    // repeatable, not any single branch's field. Tree-sitter's own
+    // node-types.json marks these as single-valued.
     return false
 }
 
@@ -332,6 +377,7 @@ function hasOverrideSourceField(rule: Rule): boolean {
 export function deriveOverridesConfig(
     rules: Record<string, Rule>,
     overrideKinds?: ReadonlySet<string>,
+    rawRules?: Record<string, Rule>,
 ): DerivedOverridesConfig {
     const out: DerivedOverridesConfig = {}
     for (const [kind, rule] of Object.entries(rules)) {
@@ -344,7 +390,78 @@ export function deriveOverridesConfig(
         const collected: Array<{ name: string; spec: DerivedFieldSpec }> = []
         collectFields(rule, { optional: false, repeated: false, position: 0, inOverrideRule: isFullReplacement }, collected)
         if (collected.length === 0) continue
-        out[kind] = { fields: mergeFieldOccurrences(collected) }
+        const merged = mergeFieldOccurrences(collected)
+
+        // Inline-alias rewrite: tree-sitter renames nodes at parse time
+        // via `alias($.x, $.y)`. Link collapses the alias wrapper so the
+        // linked rule tree surfaces `symbol('x')` where the parse tree
+        // will actually produce `y`. Walk the pre-Link `rawRules[kind]`
+        // rule looking for `field(fieldName, …alias($.*, $.y)…)` pairs
+        // and rewrite the collected `types` lists to match runtime.
+        if (rawRules && rawRules[kind]) {
+            const fieldAliases = collectFieldAliasTargets(rawRules[kind])
+            for (const [fieldName, targets] of fieldAliases) {
+                const spec = merged[fieldName]
+                if (!spec) continue
+                // Replace any type that matches a raw-content symbol in
+                // the alias. Prefer the alias targets when the current
+                // types list contains only names that were aliased.
+                const aliasTargetEntries = targets.map(t => ({ type: t, named: true }))
+                spec.types = dedupeTypes([
+                    ...spec.types.filter(t => !targets.includes(t.type) || !t.named),
+                    ...aliasTargetEntries,
+                ])
+            }
+        }
+
+        out[kind] = { fields: merged }
     }
     return out
+}
+
+/**
+ * Walk a raw (pre-Link) rule looking for every `field(name, …alias(x, y)…)`
+ * pair. Returns `fieldName → [aliasTargetName, ...]`. Used to patch
+ * post-Link type lists where the alias wrapper has been collapsed.
+ */
+function collectFieldAliasTargets(rule: Rule): Map<string, string[]> {
+    const out = new Map<string, string[]>()
+    walkForFieldAliases(rule, out, null)
+    return out
+}
+
+function walkForFieldAliases(
+    rule: Rule,
+    out: Map<string, string[]>,
+    currentField: string | null,
+): void {
+    switch (rule.type) {
+        case 'field':
+            walkForFieldAliases(rule.content, out, rule.name)
+            return
+        case 'alias':
+            if (rule.named && currentField) {
+                const existing = out.get(currentField) ?? []
+                if (!existing.includes(rule.value)) existing.push(rule.value)
+                out.set(currentField, existing)
+            }
+            walkForFieldAliases(rule.content, out, currentField)
+            return
+        case 'seq':
+        case 'choice':
+            for (const m of rule.members) walkForFieldAliases(m, out, currentField)
+            return
+        case 'optional':
+        case 'repeat':
+        case 'repeat1':
+        case 'variant':
+        case 'clause':
+        case 'group':
+        case 'token':
+        case 'terminal':
+            walkForFieldAliases((rule as { content: Rule }).content, out, currentField)
+            return
+        default:
+            return
+    }
 }

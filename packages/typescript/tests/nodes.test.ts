@@ -23,7 +23,7 @@ describe('hash_bang_line', () => {
 
 describe('export_statement', () => {
   it('form_0 form produces correct type', () => {
-    const node = ir.exportStatement.form_0({ decorator: [{ type: 'decorator', text: 'test' } as any], declaration: { type: 'declaration', text: 'test' } as any, value: { type: 'expression', text: 'test' } as any });
+    const node = ir.exportStatement.form_0({});
     expect(node.type).toBe('export_statement');
   });
   it('export form produces correct type', () => {
@@ -67,7 +67,7 @@ describe('export_specifier', () => {
 
 describe('declaration', () => {
   it('factory produces correct type', () => {
-    const node = ir.declaration({ type: "function_declaration" } as never);
+    const node = ir.declaration();
     expect(node.type).toBe('declaration');
   });
 });
@@ -497,14 +497,14 @@ describe('parenthesized_expression', () => {
 
 describe('expression', () => {
   it('factory produces correct type', () => {
-    const node = ir.expression({ type: "as_expression" } as never);
+    const node = ir.expression();
     expect(node.type).toBe('expression');
   });
 });
 
 describe('primary_expression', () => {
   it('factory produces correct type', () => {
-    const node = ir.primary({ type: "subscript_expression" } as never);
+    const node = ir.primary();
     expect(node.type).toBe('primary_expression');
   });
 });
@@ -1054,7 +1054,7 @@ describe('arguments', () => {
 
 describe('decorator', () => {
   it('factory produces correct type', () => {
-    const node = ir.decorator({ type: "identifier" } as never);
+    const node = ir.decorator();
     expect(node.type).toBe('decorator');
   });
 });
@@ -1083,11 +1083,11 @@ describe('decorator_call_expression', () => {
 
 describe('class_body', () => {
   it('factory produces correct type', () => {
-    const node = ir.classBody({ decorator: [{ type: 'decorator', text: 'test' } as any], children: [{ type: 'method_definition', text: 'test' } as any] as any });
+    const node = ir.classBody({ children: [{ type: 'method_definition', text: 'test' } as any] as any });
     expect(node.type).toBe('class_body');
   });
   it('render produces non-empty string', () => {
-    const node = ir.classBody({ decorator: [{ type: 'decorator', text: 'test' } as any], children: [{ type: 'method_definition', text: 'test' } as any] as any });
+    const node = ir.classBody({ children: [{ type: 'method_definition', text: 'test' } as any] as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -1123,7 +1123,7 @@ describe('class_static_block', () => {
 
 describe('pattern', () => {
   it('factory produces correct type', () => {
-    const node = ir.pattern({ type: "_lhs_expression" } as never);
+    const node = ir.pattern();
     expect(node.type).toBe('pattern');
   });
 });
@@ -1180,13 +1180,21 @@ describe('computed_property_name', () => {
 });
 
 describe('public_field_definition', () => {
-  it('factory produces correct type', () => {
-    const node = ir.publicField({ decorator: [{ type: 'decorator', text: 'test' } as any], name: { type: '_property_name', text: 'test' } as any, children: [{ type: 'accessibility_modifier', text: 'test' } as any] as any });
+  it('form_0 form produces correct type', () => {
+    const node = ir.publicField.form_0({ decorator: [{ type: 'decorator', text: 'test' } as any], name: { type: '_property_name', text: 'test' } as any });
     expect(node.type).toBe('public_field_definition');
   });
-  it('render produces non-empty string', () => {
-    const node = ir.publicField({ decorator: [{ type: 'decorator', text: 'test' } as any], name: { type: '_property_name', text: 'test' } as any, children: [{ type: 'accessibility_modifier', text: 'test' } as any] as any });
-    expect(node.render().length).toBeGreaterThan(0);
+  it('form_1 form produces correct type', () => {
+    const node = ir.publicField.form_1({ decorator: [{ type: 'decorator', text: 'test' } as any], name: { type: '_property_name', text: 'test' } as any });
+    expect(node.type).toBe('public_field_definition');
+  });
+  it('form_2 form produces correct type', () => {
+    const node = ir.publicField.form_2({ decorator: [{ type: 'decorator', text: 'test' } as any], name: { type: '_property_name', text: 'test' } as any });
+    expect(node.type).toBe('public_field_definition');
+  });
+  it('form_3 form produces correct type', () => {
+    const node = ir.publicField.form_3({ decorator: [{ type: 'decorator', text: 'test' } as any], name: { type: '_property_name', text: 'test' } as any });
+    expect(node.type).toBe('public_field_definition');
   });
 });
 
@@ -1236,7 +1244,7 @@ describe('function_signature', () => {
 
 describe('decorator_parenthesized_expression', () => {
   it('factory produces correct type', () => {
-    const node = ir.decoratorParenthesized({ type: "identifier" } as never);
+    const node = ir.decoratorParenthesized();
     expect(node.type).toBe('decorator_parenthesized_expression');
   });
 });
@@ -1501,7 +1509,7 @@ describe('type_annotation', () => {
 
 describe('asserts', () => {
   it('factory produces correct type', () => {
-    const node = ir.asserts({ type: "type_predicate" } as never);
+    const node = ir.asserts();
     expect(node.type).toBe('asserts');
   });
 });
@@ -1566,7 +1574,7 @@ describe('constructor_type', () => {
 
 describe('template_type', () => {
   it('factory produces correct type', () => {
-    const node = ir.templateType({ type: "primary_type" } as never);
+    const node = ir.templateType();
     expect(node.type).toBe('template_type');
   });
 });
@@ -1635,7 +1643,7 @@ describe('type_predicate_annotation', () => {
 
 describe('type_query', () => {
   it('factory produces correct type', () => {
-    const node = ir.typeQuery({ type: "_type_query_subscript_expression" } as never);
+    const node = ir.typeQuery();
     expect(node.type).toBe('type_query');
   });
 });
@@ -1675,7 +1683,7 @@ describe('mapped_type_clause', () => {
 
 describe('literal_type', () => {
   it('factory produces correct type', () => {
-    const node = ir.literalType({ type: "_number" } as never);
+    const node = ir.literalType();
     expect(node.type).toBe('literal_type');
   });
 });
@@ -1880,14 +1888,14 @@ describe('statement_identifier', () => {
 
 describe('shorthand_property_identifier', () => {
   it('factory produces correct type', () => {
-    const node = ir.shorthandPropertyIdentifier({ type: "identifier" } as never);
+    const node = ir.shorthandPropertyIdentifier();
     expect(node.type).toBe('shorthand_property_identifier');
   });
 });
 
 describe('shorthand_property_identifier_pattern', () => {
   it('factory produces correct type', () => {
-    const node = ir.shorthandPropertyIdentifierPattern({ type: "identifier" } as never);
+    const node = ir.shorthandPropertyIdentifierPattern();
     expect(node.type).toBe('shorthand_property_identifier_pattern');
   });
 });

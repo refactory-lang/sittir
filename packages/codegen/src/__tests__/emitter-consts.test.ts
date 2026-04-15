@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { emitConstsFromNodeMap } from '../emitters/consts-v2.ts'
+import { emitConsts } from '../emitters/consts.ts'
 import type { NodeMap, AssembledBranch, AssembledLeaf, AssembledKeyword, AssembledToken, AssembledEnum } from '../compiler/rule.ts'
 
 function makeNodeMap(nodes: [string, any][]): NodeMap {
@@ -12,12 +12,12 @@ function makeNodeMap(nodes: [string, any][]): NodeMap {
     }
 }
 
-describe('emitConstsFromNodeMap', () => {
+describe('emitConsts', () => {
     it('emits NODE_KINDS for branch nodes', () => {
         const nodeMap = makeNodeMap([
             ['function_item', { kind: 'function_item', typeName: 'FunctionItem', factoryName: 'functionItem', modelType: 'branch', fields: [] } as unknown as AssembledBranch],
         ])
-        const output = emitConstsFromNodeMap({ grammar: 'test', nodeMap })
+        const output = emitConsts({ grammar: 'test', nodeMap })
         expect(output).toContain("'function_item'")
         expect(output).toContain('NODE_KINDS')
     })
@@ -27,7 +27,7 @@ describe('emitConstsFromNodeMap', () => {
             ['identifier', { kind: 'identifier', typeName: 'Identifier', factoryName: 'identifier', modelType: 'leaf' } as unknown as AssembledLeaf],
             ['true', { kind: 'true', typeName: 'True', factoryName: 'true_', modelType: 'keyword', text: 'true' } as unknown as AssembledKeyword],
         ])
-        const output = emitConstsFromNodeMap({ grammar: 'test', nodeMap })
+        const output = emitConsts({ grammar: 'test', nodeMap })
         expect(output).toContain('LEAF_KINDS')
         expect(output).toContain("'identifier'")
         expect(output).toContain("'true'")
@@ -38,7 +38,7 @@ describe('emitConstsFromNodeMap', () => {
             ['fn', { kind: 'fn', typeName: 'Fn', modelType: 'keyword', text: 'fn' } as unknown as AssembledKeyword],
             ['+', { kind: '+', typeName: 'Plus', modelType: 'token' } as unknown as AssembledToken],
         ])
-        const output = emitConstsFromNodeMap({ grammar: 'test', nodeMap })
+        const output = emitConsts({ grammar: 'test', nodeMap })
         expect(output).toContain('KEYWORDS')
         expect(output).toContain("'fn'")
         expect(output).toContain('OPERATORS')
@@ -58,7 +58,7 @@ describe('emitConstsFromNodeMap', () => {
                 ],
             } as unknown as AssembledBranch],
         ])
-        const output = emitConstsFromNodeMap({ grammar: 'test', nodeMap })
+        const output = emitConsts({ grammar: 'test', nodeMap })
         expect(output).toContain('FIELD_MAP')
         expect(output).toContain("name: 'name'")
         expect(output).toContain("name: 'body'")
@@ -68,7 +68,7 @@ describe('emitConstsFromNodeMap', () => {
         const nodeMap = makeNodeMap([
             ['visibility', { kind: 'visibility', typeName: 'Visibility', modelType: 'enum', values: ['pub', 'crate'] } as unknown as AssembledEnum],
         ])
-        const output = emitConstsFromNodeMap({ grammar: 'test', nodeMap })
+        const output = emitConsts({ grammar: 'test', nodeMap })
         expect(output).toContain("'pub'")
         expect(output).toContain("'crate'")
     })

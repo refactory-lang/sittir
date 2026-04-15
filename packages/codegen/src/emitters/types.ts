@@ -22,12 +22,12 @@ import { loadRawEntries } from '../validators/node-types.ts'
 
 type StructuralNode = AssembledBranch | AssembledContainer | AssembledPolymorph
 
-export interface EmitTypesFromNodeMapConfig {
+export interface EmitTypesConfig {
     grammar: string
     nodeMap: NodeMap
 }
 
-export function emitTypesFromNodeMap(config: EmitTypesFromNodeMapConfig): string {
+export function emitTypes(config: EmitTypesConfig): string {
     const { grammar, nodeMap } = config
     // Build the set of kinds known to grammar.ts (the PythonGrammar/
     // RustGrammar type literal). Tree type interfaces can only use
@@ -378,7 +378,7 @@ export function emitTypesFromNodeMap(config: EmitTypesFromNodeMapConfig): string
         for (const st of supertypes) {
             if (st.subtypes.length === 0) {
                 throw new Error(
-                    `emitTypesFromNodeMap: supertype '${st.kind}' has zero subtypes. ` +
+                    `emitTypes: supertype '${st.kind}' has zero subtypes. ` +
                     `Link's classifyHiddenRule promoted a non-symbol-choice as supertype — fix it there.`,
                 )
             }
@@ -391,7 +391,7 @@ export function emitTypesFromNodeMap(config: EmitTypesFromNodeMapConfig): string
                 const n = nodeMap.nodes.get(sub)
                 if (!n) {
                     throw new Error(
-                        `types-v2: supertype '${st.kind}' references subtype '${sub}' which is not in NodeMap.`,
+                        `types: supertype '${st.kind}' references subtype '${sub}' which is not in NodeMap.`,
                     )
                 }
                 return { sub, typeName: n.typeName }
@@ -401,7 +401,7 @@ export function emitTypesFromNodeMap(config: EmitTypesFromNodeMapConfig): string
                 .filter(t => generatedTypes.has(t))
             if (members.length === 0) {
                 throw new Error(
-                    `types-v2: supertype '${st.kind}' has no resolvable member types after filtering. ` +
+                    `types: supertype '${st.kind}' has no resolvable member types after filtering. ` +
                     `This means every subtype declares a typeName not declared as an interface. Fix upstream.`,
                 )
             }
@@ -658,7 +658,7 @@ function childContentParts(child: AssembledChild, nodeMap: NodeMap): string[] {
         const n = nodeMap.nodes.get(t)
         if (!n) {
             throw new Error(
-                `types-v2: child references kind '${t}' which is not in NodeMap.`,
+                `types: child references kind '${t}' which is not in NodeMap.`,
             )
         }
         const name = n.typeName
@@ -743,7 +743,7 @@ function fieldTypeExpr(
         const node = nodeMap?.nodes.get(t)
         if (!node) {
             throw new Error(
-                `types-v2: field '${field.name}' references kind '${t}' which is not in NodeMap. ` +
+                `types: field '${field.name}' references kind '${t}' which is not in NodeMap. ` +
                 `Fix the pipeline — every referenced kind must be present.`,
             )
         }

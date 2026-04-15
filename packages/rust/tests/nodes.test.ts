@@ -15,7 +15,7 @@ describe('source_file', () => {
 
 describe('expression_statement', () => {
   it('factory produces correct type', () => {
-    const node = ir.expressionStatement({ type: "_expression" } as never);
+    const node = ir.expressionStatement();
     expect(node.type).toBe('expression_statement');
   });
 });
@@ -302,11 +302,11 @@ describe('function_signature_item', () => {
 
 describe('function_modifiers', () => {
   it('factory produces correct type', () => {
-    const node = ir.functionModifiers({ async: ['test' as any], default: ['test' as any], const: ['test' as any], unsafe: ['test' as any], children: [{ type: 'extern_modifier', text: 'test' } as any] as any });
+    const node = ir.functionModifiers({ children: [{ type: 'extern_modifier', text: 'test' } as any] as any });
     expect(node.type).toBe('function_modifiers');
   });
   it('render produces non-empty string', () => {
-    const node = ir.functionModifiers({ async: ['test' as any], default: ['test' as any], const: ['test' as any], unsafe: ['test' as any], children: [{ type: 'extern_modifier', text: 'test' } as any] as any });
+    const node = ir.functionModifiers({ children: [{ type: 'extern_modifier', text: 'test' } as any] as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -364,7 +364,7 @@ describe('associated_type', () => {
 
 describe('trait_bounds', () => {
   it('factory produces correct type', () => {
-    const node = ir.traitBounds({ type: "_type" } as never);
+    const node = ir.traitBounds();
     expect(node.type).toBe('trait_bounds');
   });
 });
@@ -389,7 +389,7 @@ describe('removed_trait_bound', () => {
 
 describe('type_parameters', () => {
   it('factory produces correct type', () => {
-    const node = ir.typeParameters({ type: "attribute_item" } as never);
+    const node = ir.typeParameters();
     expect(node.type).toBe('type_parameters');
   });
 });
@@ -553,7 +553,7 @@ describe('visibility_modifier', () => {
 
 describe('bracketed_type', () => {
   it('factory produces correct type', () => {
-    const node = ir.bracketedType({ type: "_type" } as never);
+    const node = ir.bracketedType();
     expect(node.type).toBe('bracketed_type');
   });
 });
@@ -600,11 +600,11 @@ describe('for_lifetimes', () => {
 
 describe('function_type', () => {
   it('factory produces correct type', () => {
-    const node = ir.functionType({ trait: { type: '_type_identifier', text: 'test' } as any, parameters: { type: 'parameters', text: 'test' } as any });
+    const node = ir.functionType({ parameters: { type: 'parameters', text: 'test' } as any });
     expect(node.type).toBe('function_type');
   });
   it('render produces non-empty string', () => {
-    const node = ir.functionType({ trait: { type: '_type_identifier', text: 'test' } as any, parameters: { type: 'parameters', text: 'test' } as any });
+    const node = ir.functionType({ parameters: { type: 'parameters', text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -710,11 +710,11 @@ describe('reference_type', () => {
 
 describe('pointer_type', () => {
   it('factory produces correct type', () => {
-    const node = ir.pointerType({ type: { type: '_type', text: 'test' } as any, children: [{ type: 'mutable_specifier', text: 'test' } as any] as any });
+    const node = ir.pointerType({ mutableSpecifier: { type: 'mutable_specifier', text: 'test' } as any, type: { type: '_type', text: 'test' } as any });
     expect(node.type).toBe('pointer_type');
   });
   it('render produces non-empty string', () => {
-    const node = ir.pointerType({ type: { type: '_type', text: 'test' } as any, children: [{ type: 'mutable_specifier', text: 'test' } as any] as any });
+    const node = ir.pointerType({ mutableSpecifier: { type: 'mutable_specifier', text: 'test' } as any, type: { type: '_type', text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -898,14 +898,14 @@ describe('type_cast_expression', () => {
 
 describe('return_expression', () => {
   it('factory produces correct type', () => {
-    const node = ir.returnExpression({ type: "_expression" } as never);
+    const node = ir.returnExpression();
     expect(node.type).toBe('return_expression');
   });
 });
 
 describe('yield_expression', () => {
   it('factory produces correct type', () => {
-    const node = ir.yieldExpression({ type: "_expression" } as never);
+    const node = ir.yieldExpression();
     expect(node.type).toBe('yield_expression');
   });
 });
@@ -1036,7 +1036,7 @@ describe('let_condition', () => {
 
 describe('else_clause', () => {
   it('factory produces correct type', () => {
-    const node = ir.elseClause({ type: "block" } as never);
+    const node = ir.elseClause();
     expect(node.type).toBe('else_clause');
   });
 });
@@ -1342,7 +1342,7 @@ describe('mut_pattern', () => {
 
 describe('range_pattern', () => {
   it('left form produces correct type', () => {
-    const node = ir.rangePattern.left({ left: { type: '_literal_pattern', text: 'test' } as any, right: { type: '_literal_pattern', text: 'test' } as any });
+    const node = ir.rangePattern.left({ left: { type: '_literal_pattern', text: 'test' } as any });
     expect(node.type).toBe('range_pattern');
   });
   it('right form produces correct type', () => {
@@ -1453,18 +1453,18 @@ describe('boolean_literal', () => {
 
 describe('comment', () => {
   it('factory produces correct type', () => {
-    const node = ir.comment({ type: "line_comment" } as never);
+    const node = ir.comment();
     expect(node.type).toBe('comment');
   });
 });
 
 describe('line_comment', () => {
   it('factory produces correct type', () => {
-    const node = ir.lineComment({ outer: 'test' as any, inner: 'test' as any, doc: 'test' as any });
+    const node = ir.lineComment({});
     expect(node.type).toBe('line_comment');
   });
   it('render produces non-empty string', () => {
-    const node = ir.lineComment({ outer: 'test' as any, inner: 'test' as any, doc: 'test' as any });
+    const node = ir.lineComment({});
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -1553,7 +1553,7 @@ describe('primitive_type', () => {
 
 describe('let_chain', () => {
   it('factory produces correct type', () => {
-    const node = ir.letChain({ type: "_let_chain" } as never);
+    const node = ir.letChain();
     expect(node.type).toBe('let_chain');
   });
 });

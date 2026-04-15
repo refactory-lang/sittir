@@ -50,6 +50,17 @@ export function link(raw: RawGrammar, include?: IncludeFilter): LinkedGrammar {
         rules[name] = resolveRule(rule, name, raw.rules, supertypes, externalRoles)
     }
 
+    // Role-annotated rules (`_indent: ($) => role('indent')`) have done
+    // their job: every `$._indent` reference in the rule tree was
+    // inlined to an `indent` node by `resolveRule`. Strip the top-level
+    // entries so Assemble doesn't try to classify them as real kinds.
+    for (const name of Object.keys(rules)) {
+        const r = rules[name]!
+        if (r.type === 'indent' || r.type === 'dedent' || r.type === 'newline') {
+            delete rules[name]
+        }
+    }
+
     // Create synthetic rules for external tokens that have no grammar rule
     // These are declared in grammar.externals but have no rule body
     // Per design doc: externals are grammar-level declarations — Link creates leaf rules for them
@@ -63,6 +74,14 @@ export function link(raw: RawGrammar, include?: IncludeFilter): LinkedGrammar {
     // alias($.x, $.y) creates a node with kind 'y' that mirrors 'x's structure
     // Walk all rules to find alias references and create entries for alias targets
     collectAliasTargets(raw.rules, rules)
+
+    // Build the hidden-rule → alias-target map BEFORE `resolveRule` has
+    // fully collapsed every alias. We walk the raw grammar (pre-link)
+    // looking for hidden rules whose body IS an alias at the top level
+    // — e.g. `_type_identifier: $ => alias($.identifier, $.type_identifier)`.
+    // These are the collapses that strip the rename; downstream passes
+    // (assemble) use this map to rewrite supertype subtype lists.
+    const aliasedHiddenKinds = collectAliasedHiddenKinds(raw.rules)
 
     // Classify hidden rules that weren't already resolved. Log every
     // `promoted` classification (enum / supertype) so the suggested.ts
@@ -125,6 +144,24 @@ export function link(raw: RawGrammar, include?: IncludeFilter): LinkedGrammar {
         if (applied) rules[name] = rewritten
     }
 
+    // Keyword-prefix promotion — `optional(keywordString)` sitting as a
+    // seq member becomes `field(keyword, 'keyword', source: 'inferred')`.
+    // This surfaces things like python's `optional('async')` on
+    // `function_definition` / `for_statement` / `with_statement`, rust's
+    // `optional('move')` on `async_block`, etc. as first-class factory
+    // parameters so factories can round-trip the prefix instead of
+    // dropping it as an anonymous child the factory signature doesn't
+    // know about.
+    //
+    // Only runs when field inference is enabled — same gate as symbol
+    // name inference above. Skipped when the rule already carries a
+    // field with the same name (override pre-empts auto-promotion).
+    if (applyInferred) {
+        for (const [name, rule] of Object.entries(rules)) {
+            rules[name] = promoteOptionalKeywordFields(rule)
+        }
+    }
+
     // Tag visible choices with `variant` wrappers — names every branch
     // and dedupes structurally identical ones. Hidden choices already
     // resolved into supertype/enum/inline by `classifyHiddenRule`.
@@ -181,7 +218,35 @@ export function link(raw: RawGrammar, include?: IncludeFilter): LinkedGrammar {
         word: raw.word,
         references,
         derivations,
+        aliasedHiddenKinds,
     }
+}
+
+/**
+ * Walk the raw (pre-Link) rule tree and return a map of
+ * `hiddenRuleName → aliasTargetName` for every rule whose body is a
+ * top-level named alias. Tree-sitter's `alias($.x, $.y)` emits a
+ * parse-tree node typed `y` for every match of `x`; without this map
+ * Link's alias-collapse would leave downstream passes thinking the
+ * hidden rule still produces the original kind.
+ */
+function collectAliasedHiddenKinds(rawRules: Record<string, Rule>): Map<string, string> {
+    const out = new Map<string, string>()
+    for (const [name, rule] of Object.entries(rawRules)) {
+        if (!name.startsWith('_')) continue
+        const target = extractTopLevelAliasTarget(rule)
+        if (target) out.set(name, target)
+    }
+    return out
+}
+
+function extractTopLevelAliasTarget(rule: Rule): string | undefined {
+    if (rule.type === 'alias' && rule.named) return rule.value
+    if (rule.type === 'group' || rule.type === 'variant' ||
+        rule.type === 'clause' || rule.type === 'token' || rule.type === 'terminal') {
+        return extractTopLevelAliasTarget((rule as { content: Rule }).content)
+    }
+    return undefined
 }
 
 // ---------------------------------------------------------------------------
@@ -697,38 +762,32 @@ function resolveRule(
             return resolveRule(rule.content, currentName, allRules, supertypes, externalRoles)
 
         case 'alias':
-            // TODO(alias): Named aliases rename the tree-sitter node kind
-            // at parse time (`alias($.original, $.renamed)`), but Link
-            // currently collapses the alias to its content and the
-            // parent's rule tree references `original`'s shape — so
-            // templates/factories reference the pre-rename symbol while
-            // the real tree produces `renamed`. Rewriting the alias to
-            // `symbol(renamed)` would match the tree but requires
-            // `collectAliasTargets`'s synthetic `rules[renamed]` entry
-            // to flow through Link's classification + Assemble's
-            // reference-liveness check. Needs a proper design pass.
+            // TODO(alias): Named aliases rename the tree-sitter node
+            // kind at parse time (`alias($.original, $.renamed)`), but
+            // Link currently collapses to content. Downstream passes
+            // that need the runtime name use `aliasedHiddenKinds` (for
+            // rule-level top-level aliases) or the
+            // `collectAllAliasTargets` map (for inline aliases).
             return resolveRule(rule.content, currentName, allRules, supertypes, externalRoles)
 
-        case 'symbol':
-            // Externals with canonical structural-whitespace names are
-            // converted to their dedicated rule types so the template
-            // emitter renders real newlines/indents. Grammar-side naming
-            // convention: `_indent`, `_dedent`, `_newline`.
-            if (rule.name === '_indent') {
-                externalRoles.set('_indent', { role: 'indent' })
-                return { type: 'indent' } as Rule
-            }
-            if (rule.name === '_dedent') {
-                externalRoles.set('_dedent', { role: 'dedent' })
-                return { type: 'dedent' } as Rule
-            }
-            if (rule.name === '_newline') {
-                externalRoles.set('_newline', { role: 'newline' })
-                return { type: 'newline' } as Rule
+        case 'symbol': {
+            // Role-annotated rules: when a grammar (or its overrides)
+            // declares `_foo: ($) => role('indent')`, the rule body is
+            // a direct `indent`/`dedent`/`newline` node. Any reference
+            // to `$._foo` should inline that structural-whitespace
+            // directive so the template emitter renders real newlines/
+            // indents. This replaces the earlier name-match on
+            // `_indent` / `_dedent` / `_newline` — grammars can use any
+            // naming convention, the mapping flows through overrides.
+            const target = allRules[rule.name]
+            if (target && (target.type === 'indent' || target.type === 'dedent' || target.type === 'newline')) {
+                externalRoles.set(rule.name, { role: target.type })
+                return target
             }
             // Visible symbols stay as symbols (they're named children)
             // Hidden symbols: check for inline/supertype/enum/group
             return rule
+        }
 
         // These pass through unchanged
         case 'string':
@@ -1251,6 +1310,75 @@ function inferFieldNames(references: SymbolRef[]): Map<string, InferredName> {
  * whether the walker actually mutated anything (always false when
  * `apply` is false, true only when at least one wrap happened).
  */
+/**
+ * Walk a rule tree and wrap `optional(keywordString)` seq members as
+ * `field(keyword, 'keyword', source: 'inferred')`. This turns
+ * anonymous prefix keywords (python's `async`, rust's `move`, etc.)
+ * into first-class fields so factories carry them through the
+ * camelCase config surface. The word-shape check isn't applied here
+ * because Link doesn't have the grammar's `word` matcher available —
+ * instead we gate on `/^[A-Za-z_][A-Za-z0-9_]*$/` (an identifier-shape
+ * screen that matches keywords cross-grammar). Non-identifier-shape
+ * strings like `,` / `;` / `::` stay as anonymous delimiters.
+ *
+ * Skips seq members inside an existing `field()` wrapper (the outer
+ * field already owns the slot) and avoids name collisions with other
+ * fields in the same seq.
+ */
+function promoteOptionalKeywordFields(rule: Rule): Rule {
+    const isKeywordShape = (s: string): boolean => /^[A-Za-z_][A-Za-z0-9_]*$/.test(s)
+
+    const walk = (r: Rule, insideField: boolean): Rule => {
+        switch (r.type) {
+            case 'seq': {
+                // First pass: collect names already claimed by existing
+                // field() wrappers so auto-promotion doesn't clash.
+                const claimed = new Set<string>()
+                for (const m of r.members) {
+                    if (m.type === 'field') claimed.add(m.name)
+                }
+                const members = r.members.map(m => {
+                    // optional(keywordString) at a seq position →
+                    // field(keyword, keywordString, source: inferred)
+                    if (m.type === 'optional' && m.content.type === 'string') {
+                        const kw = m.content.value
+                        if (isKeywordShape(kw) && !claimed.has(kw)) {
+                            claimed.add(kw)
+                            return {
+                                type: 'optional',
+                                content: {
+                                    type: 'field',
+                                    name: kw,
+                                    content: { type: 'string', value: kw },
+                                    source: 'inferred',
+                                },
+                            } as Rule
+                        }
+                    }
+                    return walk(m, insideField)
+                })
+                return { ...r, members }
+            }
+            case 'choice':
+                return { ...r, members: r.members.map(m => walk(m, insideField)) }
+            case 'optional':
+            case 'repeat':
+            case 'repeat1':
+            case 'variant':
+            case 'clause':
+            case 'group':
+            case 'token':
+            case 'terminal':
+                return { ...r, content: walk((r as { content: Rule }).content, insideField) }
+            case 'field':
+                return { ...r, content: walk(r.content, true) }
+            default:
+                return r
+        }
+    }
+    return walk(rule, false)
+}
+
 function applyInferredFields(
     rule: Rule,
     ruleName: string,

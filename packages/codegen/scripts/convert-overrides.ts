@@ -95,7 +95,7 @@ for (const [kind, entry] of Object.entries(overrides)) {
 
     // Build the patches object: { rawIndex: field(name) }. overrides.json
     // positions are the v1 "structural" view; translate each to a raw
-    // member index against the v2 rule tree before emitting.
+    // member index against the rule tree before emitting.
     const patches: string[] = []
     for (const [fieldName, info] of Object.entries(fields)) {
         // Skip position -1 (anonymous-only overrides — these match tokens,

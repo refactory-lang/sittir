@@ -6,12 +6,12 @@
 
 import type { NodeMap, AssembledNode, AssembledBranch, AssembledContainer } from '../compiler/rule.ts'
 
-export interface EmitConstsFromNodeMapConfig {
+export interface EmitConstsConfig {
     grammar: string
     nodeMap: NodeMap
 }
 
-export function emitConstsFromNodeMap(config: EmitConstsFromNodeMapConfig): string {
+export function emitConsts(config: EmitConstsConfig): string {
     const { nodeMap } = config
 
     const nodeKinds: string[] = []      // branch + container + polymorph

@@ -6,29 +6,19 @@ rules:
     template: $SHEBANG $$$STATEMENTS
     joinByField:
       statements: "\n"
-  expression_statement:
-    template: $$$CHILDREN;
+  expression_statement: $$$CHILDREN;
   macro_definition:
     template: macro_rules!$NAME $RULES
     joinBy: ";"
-  macro_rule:
-    template: $LEFT=>$RIGHT
-  token_tree_pattern:
-    template: ($$$CHILDREN)
-  token_binding_pattern:
-    template: "$NAME:$TYPE"
-  token_repetition_pattern:
-    template: $($$$CHILDREN)+
-  token_tree:
-    template: ($$$CHILDREN)
-  token_repetition:
-    template: $($$$CHILDREN)+
-  attribute_item:
-    template: "#[$ATTRIBUTE]"
-  inner_attribute_item:
-    template: "#![$ATTRIBUTE]"
-  attribute:
-    template: $$$CHILDREN=$VALUE$ARGUMENTS
+  macro_rule: $LEFT=>$RIGHT
+  token_tree_pattern: ($$$CHILDREN)
+  token_binding_pattern: "$NAME:$TYPE"
+  token_repetition_pattern: $($$$CHILDREN)+
+  token_tree: ($$$CHILDREN)
+  token_repetition: $($$$CHILDREN)+
+  attribute_item: "#[$ATTRIBUTE]"
+  inner_attribute_item: "#![$ATTRIBUTE]"
+  attribute: $$$CHILDREN=$VALUE$ARGUMENTS
   mod_item:
     variants:
       semi: $VISIBILITY_MODIFIER mod $NAME;
@@ -37,17 +27,14 @@ rules:
     variants:
       semi: $VISIBILITY_MODIFIER $EXTERN_MODIFIER;
       body: $VISIBILITY_MODIFIER $EXTERN_MODIFIER $BODY
-  declaration_list:
-    template: "{$$$CHILDREN}"
+  declaration_list: "{$$$CHILDREN}"
   struct_item:
     variants:
       body: $VISIBILITY_MODIFIER struct $NAME $TYPE_PARAMETERS $$$CHILDREN $BODY
       semi: $VISIBILITY_MODIFIER struct $NAME $TYPE_PARAMETERS $BODY $$$CHILDREN;
       semi2: $VISIBILITY_MODIFIER struct $NAME $TYPE_PARAMETERS;
-  union_item:
-    template: $VISIBILITY_MODIFIER union $NAME $TYPE_PARAMETERS $WHERE_CLAUSE $BODY
-  enum_item:
-    template: $VISIBILITY_MODIFIER enum $NAME $TYPE_PARAMETERS $WHERE_CLAUSE $BODY
+  union_item: $VISIBILITY_MODIFIER union $NAME $TYPE_PARAMETERS $WHERE_CLAUSE $BODY
+  enum_item: $VISIBILITY_MODIFIER enum $NAME $TYPE_PARAMETERS $WHERE_CLAUSE $BODY
   enum_variant_list:
     template: "{$$$CHILDREN}"
     joinBy: ","
@@ -57,8 +44,7 @@ rules:
   field_declaration_list:
     template: "{$$$CHILDREN}"
     joinBy: ","
-  field_declaration:
-    template: "$VISIBILITY_MODIFIER $NAME:$TYPE"
+  field_declaration: "$VISIBILITY_MODIFIER $NAME:$TYPE"
   ordered_field_declaration_list:
     template: ($$$CHILDREN $$$TYPE)
     joinBy: ","
@@ -71,37 +57,30 @@ rules:
   static_item:
     template: "$VISIBILITY_MODIFIER static $MUTABLE_SPECIFIER $$$CHILDREN $NAME:$TYPE $VALUE_CLAUSE;"
     value_clause: =$VALUE
-  type_item:
-    template: $VISIBILITY_MODIFIER type $NAME $TYPE_PARAMETERS $WHERE_CLAUSE=$TYPE $TRAILING_WHERE_CLAUSE;
+  type_item: $VISIBILITY_MODIFIER type $NAME $TYPE_PARAMETERS $WHERE_CLAUSE=$TYPE $TRAILING_WHERE_CLAUSE;
   function_item:
     template: $VISIBILITY_MODIFIER $FUNCTION_MODIFIERS fn $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE_CLAUSE $WHERE_CLAUSE $BODY
     return_type_clause: "->$RETURN_TYPE"
   function_signature_item:
     template: $VISIBILITY_MODIFIER $FUNCTION_MODIFIERS fn $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE_CLAUSE $WHERE_CLAUSE;
     return_type_clause: "->$RETURN_TYPE"
-  function_modifiers:
-    template: $$$ASYNC$$$DEFAULT$$$CONST$$$UNSAFE$$$CHILDREN
+  function_modifiers: $$$ASYNC$$$DEFAULT$$$CONST$$$UNSAFE$$$CHILDREN
   where_clause:
     template: where $$$CHILDREN
     joinBy: ","
-  where_predicate:
-    template: $LEFT $BOUNDS
+  where_predicate: $LEFT $BOUNDS
   impl_item:
     variants:
-      body: impl $TYPE_PARAMETERS $TRAIT_CLAUSE $TYPE $$$CHILDREN $BODY
-      semi: impl $TYPE_PARAMETERS $TRAIT_CLAUSE $TYPE $$$CHILDREN;
+      body: $UNSAFE impl $TYPE_PARAMETERS $TRAIT_CLAUSE $TYPE $$$CHILDREN $BODY
+      semi: $UNSAFE impl $TYPE_PARAMETERS $TRAIT_CLAUSE $TYPE $$$CHILDREN;
     trait_clause: $TRAIT for
-  trait_item:
-    template: $VISIBILITY_MODIFIER trait $NAME $TYPE_PARAMETERS $BOUNDS $$$CHILDREN $BODY
-  associated_type:
-    template: type $NAME $TYPE_PARAMETERS $BOUNDS $WHERE_CLAUSE;
+  trait_item: $VISIBILITY_MODIFIER $UNSAFE trait $NAME $TYPE_PARAMETERS $BOUNDS $$$CHILDREN $BODY
+  associated_type: type $NAME $TYPE_PARAMETERS $BOUNDS $WHERE_CLAUSE;
   trait_bounds:
     template: ":$$$CHILDREN"
     joinBy: +
-  higher_ranked_trait_bound:
-    template: for $TYPE_PARAMETERS $TYPE
-  removed_trait_bound:
-    template: "?$$$CHILDREN"
+  higher_ranked_trait_bound: for $TYPE_PARAMETERS $TYPE
+  removed_trait_bound: "?$$$CHILDREN"
   type_parameters:
     template: <$$$CHILDREN>
     joinBy: ","
@@ -111,47 +90,37 @@ rules:
   type_parameter:
     template: $NAME $BOUNDS $DEFAULT_TYPE_CLAUSE
     default_type_clause: =$DEFAULT_TYPE
-  lifetime_parameter:
-    template: $NAME $BOUNDS
+  lifetime_parameter: $NAME $BOUNDS
   let_declaration:
     template: let $MUTABLE_SPECIFIER $PATTERN $TYPE_CLAUSE $VALUE_CLAUSE $ALTERNATIVE_CLAUSE;
     type_clause: ":$TYPE"
     value_clause: =$VALUE
     alternative_clause: else $ALTERNATIVE
-  use_declaration:
-    template: $VISIBILITY_MODIFIER use $ARGUMENT;
-  scoped_use_list:
-    template: "$PATH::$LIST"
+  use_declaration: $VISIBILITY_MODIFIER use $ARGUMENT;
+  scoped_use_list: "$PATH::$LIST"
   use_list:
     template: "{$$$CHILDREN}"
     joinBy: ","
-  use_as_clause:
-    template: $PATH as $ALIAS
+  use_as_clause: $PATH as $ALIAS
   use_wildcard:
     template: $PATH_CLAUSE*
     path_clause: "$PATH::"
   parameters:
     template: ($$$CHILDREN)
     joinBy: ","
-  self_parameter:
-    template: $LIFETIME $MUTABLE_SPECIFIER $SELF $$$CHILDREN
+  self_parameter: $LIFETIME $MUTABLE_SPECIFIER $SELF $$$CHILDREN
   variadic_parameter:
     template: $MUTABLE_SPECIFIER $PATTERN_CLAUSE...
     pattern_clause: "$PATTERN:"
-  parameter:
-    template: "$MUTABLE_SPECIFIER $PATTERN:$TYPE"
-  extern_modifier:
-    template: extern $STRING_LITERAL
+  parameter: "$MUTABLE_SPECIFIER $PATTERN:$TYPE"
+  extern_modifier: extern $STRING_LITERAL
   visibility_modifier:
     variants:
       crate: $$$CHILDREN
       pub: $PUB($$$CHILDREN$IN)
-  bracketed_type:
-    template: <$$$CHILDREN>
-  qualified_type:
-    template: $TYPE as $ALIAS
-  lifetime:
-    template: "'$IDENTIFIER"
+  bracketed_type: <$$$CHILDREN>
+  qualified_type: $TYPE as $ALIAS
+  lifetime: "'$IDENTIFIER"
   array_type:
     template: "[$ELEMENT $LENGTH_CLAUSE]"
     length_clause: ;$LENGTH
@@ -164,67 +133,44 @@ rules:
   tuple_type:
     template: ($$$CHILDREN)
     joinBy: ","
-  generic_function:
-    template: "$FUNCTION::$TYPE_ARGUMENTS"
-  generic_type:
-    template: $TYPE $TYPE_ARGUMENTS
-  generic_type_with_turbofish:
-    template: "$TYPE::$TYPE_ARGUMENTS"
-  bounded_type:
-    template: $LEFT+$RIGHT
+  generic_function: "$FUNCTION::$TYPE_ARGUMENTS"
+  generic_type: $TYPE $TYPE_ARGUMENTS
+  generic_type_with_turbofish: "$TYPE::$TYPE_ARGUMENTS"
+  bounded_type: $LEFT+$RIGHT
   use_bounds:
     template: use<$$$CHILDREN>
     joinBy: ","
   type_arguments:
     template: <$$$CHILDREN $$$BOUNDS>
     joinBy: ","
-  type_binding:
-    template: $NAME $TYPE_ARGUMENTS=$TYPE
-  reference_type:
-    template: "&$LIFETIME $MUTABLE_SPECIFIER $TYPE"
-  pointer_type:
-    template: "*const$$$CHILDREN $TYPE"
+  type_binding: $NAME $TYPE_ARGUMENTS=$TYPE
+  reference_type: "&$LIFETIME $MUTABLE_SPECIFIER $TYPE"
+  pointer_type: "*$MUTABLE_SPECIFIER $TYPE"
   abstract_type:
     template: impl $TYPE_PARAMETERS_CLAUSE $TRAIT
     type_parameters_clause: for$TYPE_PARAMETERS
-  dynamic_type:
-    template: dyn $TRAIT
-  macro_invocation:
-    template: $MACRO!$TOKEN_TREE
-  delim_token_tree:
-    template: ($$$CHILDREN)
-  scoped_identifier:
-    template: "$PATH::$NAME"
-  scoped_type_identifier_in_expression_position:
-    template: "$PATH::$NAME"
-  scoped_type_identifier:
-    template: "$PATH::$NAME"
+  dynamic_type: dyn $TRAIT
+  macro_invocation: $MACRO!$TOKEN_TREE
+  delim_token_tree: ($$$CHILDREN)
+  scoped_identifier: "$PATH::$NAME"
+  scoped_type_identifier_in_expression_position: "$PATH::$NAME"
+  scoped_type_identifier: "$PATH::$NAME"
   range_expression:
     variants:
       start: $START $OPERATOR $END
       start2: $START $OPERATOR
       operator: $OPERATOR $END
       operator2: $OPERATOR
-  unary_expression:
-    template: $OPERATOR $OPERAND
-  try_expression:
-    template: $VALUE?
-  reference_expression:
-    template: "&$MUTABLE_SPECIFIER $VALUE"
-  binary_expression:
-    template: $LEFT $OPERATOR $RIGHT
-  assignment_expression:
-    template: $LEFT=$RIGHT
-  compound_assignment_expr:
-    template: $LEFT $OPERATOR $RIGHT
-  type_cast_expression:
-    template: $VALUE as $TYPE
-  return_expression:
-    template: return $$$CHILDREN
-  yield_expression:
-    template: yield $$$CHILDREN
-  call_expression:
-    template: $FUNCTION $ARGUMENTS
+  unary_expression: $OPERATOR $OPERAND
+  try_expression: $VALUE?
+  reference_expression: "&$MUTABLE_SPECIFIER $VALUE"
+  binary_expression: $LEFT $OPERATOR $RIGHT
+  assignment_expression: $LEFT=$RIGHT
+  compound_assignment_expr: $LEFT $OPERATOR $RIGHT
+  type_cast_expression: $VALUE as $TYPE
+  return_expression: return $$$CHILDREN
+  yield_expression: yield $$$CHILDREN
+  call_expression: $FUNCTION $ARGUMENTS
   arguments:
     template: ($$$CHILDREN)
     joinBy: ","
@@ -233,16 +179,14 @@ rules:
     joinBy: ","
     joinByField:
       attributes: "\n"
-  parenthesized_expression:
-    template: ($$$CHILDREN)
+  parenthesized_expression: ($$$CHILDREN)
   tuple_expression:
     template: ($$$ATTRIBUTES $FIRST,$$$REST $TRAILING)
     joinBy: ","
     joinByField:
       attributes: "\n"
       rest: ","
-  struct_expression:
-    template: $NAME $BODY
+  struct_expression: $NAME $BODY
   field_initializer_list:
     template: "{$$$CHILDREN}"
     joinBy: ","
@@ -250,24 +194,15 @@ rules:
     template: $$$ATTRIBUTES $IDENTIFIER
     joinByField:
       attributes: "\n"
-  field_initializer:
-    template: "$$$CHILDREN $FIELD:$VALUE"
-  base_field_initializer:
-    template: ..$$$CHILDREN
-  if_expression:
-    template: if $CONDITION $CONSEQUENCE $ALTERNATIVE
-  let_condition:
-    template: let $PATTERN=$VALUE
-  else_clause:
-    template: else $$$CHILDREN
-  match_expression:
-    template: match $VALUE $BODY
-  match_block:
-    template: "{$$$CHILDREN}"
-  match_arm:
-    template: $$$CHILDREN $PATTERN=>$VALUE,
-  last_match_arm:
-    template: $$$CHILDREN $PATTERN=>$VALUE
+  field_initializer: "$$$CHILDREN $FIELD:$VALUE"
+  base_field_initializer: ..$$$CHILDREN
+  if_expression: if $CONDITION $CONSEQUENCE $ALTERNATIVE
+  let_condition: let $PATTERN=$VALUE
+  else_clause: else $$$CHILDREN
+  match_expression: match $VALUE $BODY
+  match_block: "{$$$CHILDREN}"
+  match_arm: $$$CHILDREN $PATTERN=>$VALUE,
+  last_match_arm: $$$CHILDREN $PATTERN=>$VALUE
   match_pattern:
     template: $$$CHILDREN $CONDITION_CLAUSE
     condition_clause: if $CONDITION
@@ -280,8 +215,7 @@ rules:
   for_expression:
     template: $LABEL_CLAUSE for $PATTERN in $VALUE $BODY
     label_clause: "$LABEL:"
-  const_block:
-    template: const $BODY
+  const_block: const $BODY
   closure_expression:
     variants:
       body: $STATIC $ASYNC $MOVE $PARAMETERS $RETURN_TYPE_CLAUSE $BODY
@@ -290,31 +224,20 @@ rules:
   closure_parameters:
     template: "|$$$CHILDREN|"
     joinBy: ","
-  label:
-    template: "'$IDENTIFIER"
-  break_expression:
-    template: break $LABEL $EXPRESSION
-  continue_expression:
-    template: continue $LABEL
-  index_expression:
-    template: "$OBJECT[$INDEX]"
-  await_expression:
-    template: $$$CHILDREN.await
-  field_expression:
-    template: $VALUE.$FIELD
-  unsafe_block:
-    template: unsafe $BLOCK
-  async_block:
-    template: async $BLOCK
-  gen_block:
-    template: gen $BLOCK
-  try_block:
-    template: try $BLOCK
+  label: "'$IDENTIFIER"
+  break_expression: break $LABEL $EXPRESSION
+  continue_expression: continue $LABEL
+  index_expression: "$OBJECT[$INDEX]"
+  await_expression: $$$CHILDREN.await
+  field_expression: $VALUE.$FIELD
+  unsafe_block: unsafe $BLOCK
+  async_block: async $MOVE $BLOCK
+  gen_block: gen $MOVE $BLOCK
+  try_block: try $BLOCK
   block:
     template: "$LABEL_CLAUSE{$$$CHILDREN}"
     label_clause: "$LABEL:"
-  generic_pattern:
-    template: "$$$CHILDREN::$TYPE_ARGUMENTS"
+  generic_pattern: "$$$CHILDREN::$TYPE_ARGUMENTS"
   tuple_pattern:
     template: ($$$CHILDREN)
     joinBy: ","
@@ -329,36 +252,26 @@ rules:
     joinBy: ","
   field_pattern:
     variants:
-      name: $MUTABLE_SPECIFIER $NAME
-      colon: "$MUTABLE_SPECIFIER $NAME:$PATTERN"
-  mut_pattern:
-    template: $MUTABLE_SPECIFIER $PATTERN
+      name: $REF $MUTABLE_SPECIFIER $NAME
+      colon: "$REF $MUTABLE_SPECIFIER $NAME:$PATTERN"
+  mut_pattern: $MUTABLE_SPECIFIER $PATTERN
   range_pattern:
     variants:
       left: $LEFT...$RIGHT
       right: ..=$RIGHT
-  ref_pattern:
-    template: ref $$$CHILDREN
-  captured_pattern:
-    template: $IDENTIFIER@$PATTERN
-  reference_pattern:
-    template: "&$MUTABLE_SPECIFIER $PATTERN"
+  ref_pattern: ref $$$CHILDREN
+  captured_pattern: $IDENTIFIER@$PATTERN
+  reference_pattern: "&$MUTABLE_SPECIFIER $PATTERN"
   or_pattern:
     variants:
       pipe: $LEFT|$RIGHT
       pipe2: "|$RIGHT"
-  negative_literal:
-    template: "-$VALUE"
-  string_literal:
-    template: "\"$$$CHILDREN\""
-  raw_string_literal:
-    template: $RAW_STRING_LITERAL_START $STRING_CONTENT $RAW_STRING_LITERAL_END
-  comment:
-    template: $$$CHILDREN
-  line_comment:
-    template: //$OUTER$INNER$DOC
-  block_comment:
-    template: /*$OUTER$INNER $DOC$$$CHILDREN*/
+  negative_literal: "-$VALUE"
+  string_literal: "\"$$$CHILDREN\""
+  raw_string_literal: $RAW_STRING_LITERAL_START $STRING_CONTENT $RAW_STRING_LITERAL_END
+  comment: $$$CHILDREN
+  line_comment: //$OUTER$INNER$DOC
+  block_comment: /*$OUTER$INNER $DOC$$$CHILDREN*/
   let_chain:
     template: $$$CHILDREN&&
     joinByField:

@@ -1,7 +1,7 @@
-import { generateV2 } from '../src/compiler/generate.ts'
+import { generate } from '../src/compiler/generate.ts'
 
 // Fields-only strict — inference held back, promotion still applied
-const strict = await generateV2({
+const strict = await generate({
     grammar: 'rust',
     outputDir: '/tmp/ignored',
     include: { fields: [] },
@@ -13,7 +13,7 @@ console.log('  promoted entries:', strict.nodeMap.derivations.promotedRules.leng
 console.log('  applied promoted:', strict.nodeMap.derivations.promotedRules.filter(e => e.applied).length)
 
 // Permissive (default)
-const perm = await generateV2({
+const perm = await generate({
     grammar: 'rust',
     outputDir: '/tmp/ignored',
 })

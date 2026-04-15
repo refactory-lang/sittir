@@ -14,7 +14,7 @@ import { validateFrom, formatFromReport } from './validate-from.ts';
 import { validateRenderableFromNodeMap, formatRenderableReport } from './validate-renderable.ts';
 import { validateReadNodeRoundTrip, formatReadNodeRoundTripReport } from './validate-readnode-roundtrip.ts';
 import { join, dirname } from 'node:path';
-import { generateV2 } from './compiler/generate.ts';
+import { generate } from './compiler/generate.ts';
 
 interface CodegenConfig {
 	grammar: string;
@@ -30,7 +30,6 @@ interface CliArgs {
 	testsDir?: string;
 	roundtrip?: boolean;
 	help?: boolean;
-	v2?: boolean;
 }
 
 function parseArgs(argv: string[]): CliArgs {
@@ -59,9 +58,6 @@ function parseArgs(argv: string[]): CliArgs {
 				break;
 			case '--roundtrip':
 				args.roundtrip = true;
-				break;
-			case '--v2':
-				args.v2 = true;
 				break;
 			case '--help':
 			case '-h':
@@ -111,7 +107,7 @@ const config: CodegenConfig = {
 };
 
 console.log(`Generating ${config.grammar} IR...`);
-const result = await generateV2({ grammar: config.grammar, nodes: config.nodes, outputDir: config.outputDir });
+const result = await generate({ grammar: config.grammar, nodes: config.nodes, outputDir: config.outputDir });
 
 const outDir = cliArgs.outputDir;
 

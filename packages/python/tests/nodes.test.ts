@@ -402,7 +402,7 @@ describe('type_parameter', () => {
 
 describe('parenthesized_list_splat', () => {
   it('factory produces correct type', () => {
-    const node = ir.parenthesizedListSplat({ type: "parenthesized_list_splat" } as never);
+    const node = ir.parenthesizedListSplat();
     expect(node.type).toBe('parenthesized_list_splat');
   });
 });
@@ -459,7 +459,7 @@ describe('dotted_name', () => {
 
 describe('case_pattern', () => {
   it('factory produces correct type', () => {
-    const node = ir.casePattern({ type: "case_pattern" } as never);
+    const node = ir.casePattern();
     expect(node.type).toBe('case_pattern');
   });
 });
@@ -560,14 +560,14 @@ describe('typed_default_parameter', () => {
 
 describe('list_splat_pattern', () => {
   it('factory produces correct type', () => {
-    const node = ir.listSplatPattern({ type: "identifier" } as never);
+    const node = ir.listSplatPattern();
     expect(node.type).toBe('list_splat_pattern');
   });
 });
 
 describe('dictionary_splat_pattern', () => {
   it('factory produces correct type', () => {
-    const node = ir.dictionarySplatPattern({ type: "identifier" } as never);
+    const node = ir.dictionarySplatPattern();
     expect(node.type).toBe('dictionary_splat_pattern');
   });
 });
@@ -695,7 +695,7 @@ describe('pattern_list', () => {
 
 describe('yield', () => {
   it('factory produces correct type', () => {
-    const node = ir.yield_({ type: "expression" } as never);
+    const node = ir.yield_();
     expect(node.type).toBe('yield');
   });
 });
@@ -757,7 +757,7 @@ describe('typed_parameter', () => {
 
 describe('type', () => {
   it('factory produces correct type', () => {
-    const node = ir.type({ type: "expression" } as never);
+    const node = ir.type();
     expect(node.type).toBe('type');
   });
 });
@@ -913,7 +913,7 @@ describe('generator_expression', () => {
 
 describe('parenthesized_expression', () => {
   it('factory produces correct type', () => {
-    const node = ir.parenthesized({ type: "expression" } as never);
+    const node = ir.parenthesized();
     expect(node.type).toBe('parenthesized_expression');
   });
 });
@@ -971,7 +971,7 @@ describe('string', () => {
 
 describe('string_content', () => {
   it('factory produces correct type', () => {
-    const node = ir.stringContent({ type: "escape_interpolation" } as never);
+    const node = ir.stringContent();
     expect(node.type).toBe('string_content');
   });
 });
@@ -1119,7 +1119,7 @@ describe('except', () => {
 
 describe('as_pattern_target', () => {
   it('factory produces correct type', () => {
-    const node = ir.asPatternTarget({ type: "comparison_operator" } as never);
+    const node = ir.asPatternTarget();
     expect(node.type).toBe('as_pattern_target');
   });
 });

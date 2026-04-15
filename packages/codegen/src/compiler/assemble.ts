@@ -18,7 +18,7 @@ import {
     hasAnyField, hasAnyChild,
 } from './rule.ts'
 import { tokenToName } from './optimize.ts'
-import { simplifyRule } from './simplify.ts'
+import { simplifyRule, compileWordMatcher } from './simplify.ts'
 
 // ---------------------------------------------------------------------------
 // assemble() — main entry point
@@ -144,6 +144,16 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
                 } else {
                     subtypes = []
                 }
+                // Resolve hidden subtypes (`_foo`) to the concrete kinds
+                // tree-sitter actually surfaces at runtime. Hidden rules
+                // defined as `alias(x, y)` are looked up in the
+                // pre-Link alias map (Link collapses the alias wrapper);
+                // hidden rules defined as `choice(a, b, ...)` expand to
+                // their branches via the post-Link rule tree. Unresolved
+                // hidden symbols drop through as-is.
+                subtypes = resolveHiddenSubtypes(
+                    subtypes, optimized.rules, optimized.aliasedHiddenKinds,
+                )
                 nodes.set(kind, new AssembledSupertype({ kind, typeName, subtypes }))
                 break
             }
@@ -167,9 +177,14 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
         }
     }
 
-    // Part A: Collect anonymous tokens/keywords from the rule tree
-    // Tree-sitter promotes string literals to named node-types entries
-    collectAnonymousNodes(optimized.rules, nodes)
+    // Part A: Collect anonymous tokens/keywords from the rule tree.
+    // Tree-sitter promotes string literals to named node-types entries.
+    // The grammar's own `word` rule determines keyword-shape: any string
+    // whose text matches the word pattern lexes as a word at parse time
+    // and becomes an `AssembledKeyword`; non-word strings are
+    // `AssembledToken` (punctuation/operators).
+    const wordMatcher = compileWordMatcher(optimized.word, optimized.rules)
+    collectAnonymousNodes(optimized.rules, nodes, wordMatcher)
 
     // Part B: Resolve typeName/factoryName collisions between hidden
     // and visible kinds. `nameNode` drops the leading `_` (so users
@@ -212,6 +227,95 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
  * names. Emits a warning for every rename so the run log surfaces
  * which grammar rules are sharing names.
  */
+/**
+ * Resolve hidden rule names (`_foo`) referenced as subtypes to the
+ * concrete kinds that actually appear in the parse tree. Tree-sitter
+ * inlines hidden rules at parse time — a `_type_identifier` defined as
+ * `alias($.identifier, $.type_identifier)` shows up as `type_identifier`
+ * at runtime, never as `_type_identifier`. Supertype expansion maps
+ * built from raw rule-tree names would miss those kinds and the
+ * runtime routing map would fail to promote them.
+ *
+ * Handled shapes:
+ * - `alias(x, y)` → `y` (the alias label)
+ * - `symbol(target)` → recurse on target (follow chains)
+ * - `choice(a, b, …)` → flatten each branch
+ * - everything else → keep the hidden name as-is (best-effort)
+ *
+ * Non-hidden names pass through unchanged.
+ */
+function resolveHiddenSubtypes(
+    names: readonly string[],
+    rules: Record<string, Rule>,
+    aliasedHiddenKinds: ReadonlyMap<string, string>,
+): string[] {
+    const out: string[] = []
+    const seen = new Set<string>()
+    const visit = (name: string): void => {
+        if (seen.has(name)) return
+        seen.add(name)
+        if (!name.startsWith('_')) { out.push(name); return }
+        // Aliased hidden rule (`_foo: $ => alias($.bar, $.baz)`) — the
+        // parse tree surfaces `baz`, recorded by Link before the alias
+        // was collapsed.
+        const aliasTarget = aliasedHiddenKinds.get(name)
+        if (aliasTarget) {
+            if (!seen.has(aliasTarget)) { seen.add(aliasTarget); out.push(aliasTarget) }
+            return
+        }
+        const rule = rules[name]
+        if (!rule) { out.push(name); return }
+        const resolved = resolveHiddenRuleContent(rule, rules, new Set([name]))
+        if (resolved.length === 0) {
+            out.push(name)
+            return
+        }
+        for (const r of resolved) {
+            // Recurse in case a hidden rule resolves to another hidden rule.
+            if (r.startsWith('_')) { visit(r); continue }
+            if (!seen.has(r)) { seen.add(r); out.push(r) }
+        }
+    }
+    for (const n of names) visit(n)
+    return out
+}
+
+function resolveHiddenRuleContent(
+    rule: Rule,
+    rules: Record<string, Rule>,
+    seen: Set<string>,
+): string[] {
+    switch (rule.type) {
+        case 'alias':
+            return [rule.value]
+        case 'symbol': {
+            if (!rule.name.startsWith('_')) return [rule.name]
+            if (seen.has(rule.name)) return []
+            seen.add(rule.name)
+            const target = rules[rule.name]
+            return target ? resolveHiddenRuleContent(target, rules, seen) : [rule.name]
+        }
+        case 'supertype':
+            return rule.subtypes.flatMap(s => {
+                if (seen.has(s)) return []
+                seen.add(s)
+                if (!s.startsWith('_')) return [s]
+                const target = rules[s]
+                return target ? resolveHiddenRuleContent(target, rules, seen) : [s]
+            })
+        case 'choice':
+            return rule.members.flatMap(m => resolveHiddenRuleContent(m, rules, seen))
+        case 'variant':
+        case 'clause':
+        case 'group':
+        case 'token':
+        case 'terminal':
+            return resolveHiddenRuleContent((rule as { content: Rule }).content, rules, seen)
+        default:
+            return []
+    }
+}
+
 function resolveCollidingNames(nodes: Map<string, AssembledNode>): void {
     // Group nodes by typeName. Preferred winner: the non-hidden kind.
     const byType = new Map<string, AssembledNode[]>()
@@ -379,7 +483,11 @@ const IR_KEY_RESERVED = new Set([
 // collectAnonymousNodes — extract string literals from rules as token/keyword entries
 // ---------------------------------------------------------------------------
 
-function collectAnonymousNodes(rules: Record<string, Rule>, nodes: Map<string, AssembledNode>): void {
+function collectAnonymousNodes(
+    rules: Record<string, Rule>,
+    nodes: Map<string, AssembledNode>,
+    wordMatcher: RegExp | undefined,
+): void {
     const seen = new Set<string>()
 
     for (const rule of Object.values(rules)) {
@@ -390,10 +498,13 @@ function collectAnonymousNodes(rules: Record<string, Rule>, nodes: Map<string, A
         if (nodes.has(value)) continue // Already classified as a named rule
         if (value === '' || /^\s+$/.test(value)) continue // Skip whitespace/empty
 
-        const isAlphanumeric = /^\w+$/.test(value)
+        // Keyword-shape is "lexes as a word under the grammar's `word`
+        // rule". When the grammar declares no `word` (or we can't
+        // extract its pattern), fall back to `/^\w+$/`.
+        const isWordShape = wordMatcher ? wordMatcher.test(value) : /^\w+$/.test(value)
         const { typeName } = nameNode(value)
 
-        if (isAlphanumeric) {
+        if (isWordShape) {
             // Keyword token (e.g., "if", "class", "pub")
             // Anonymous keywords from grammar — no factory (hidden)
             nodes.set(value, new AssembledKeyword({
