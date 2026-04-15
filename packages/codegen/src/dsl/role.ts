@@ -36,29 +36,41 @@ import type { Rule, ExternalRole } from '../compiler/rule.ts'
 // have no scope to attach the binding to.
 let currentRoles: Map<string, ExternalRole> | null = null
 
-type SymbolLike = { type: 'symbol'; name: string } & Record<string, unknown>
+// Accept both sittir's lowercase `type: 'symbol'` AND tree-sitter's
+// native uppercase `type: 'SYMBOL'` shape — `$._indent` returns
+// different types depending on which grammar() runtime is loaded
+// (sittir's grammarFn vs. tree-sitter CLI's native).
+type SymbolLike = { type: 'symbol' | 'SYMBOL'; name: string } & Record<string, unknown>
+
+function isSymbolLike(v: unknown): v is SymbolLike {
+    return !!v && typeof v === 'object'
+        && ((v as { type?: unknown }).type === 'symbol' || (v as { type?: unknown }).type === 'SYMBOL')
+        && typeof (v as { name?: unknown }).name === 'string'
+}
 
 /**
  * Mark an external token symbol with a structural-whitespace role.
  * Returns the symbol unchanged so the call site can be a transparent
  * member of the externals array.
  *
- * Throws if called outside a `grammar(...)` scope (no accumulator
- * available to push into).
+ * **Tree-sitter compatibility**: when `role()` is called outside any
+ * sittir-managed scope (e.g. when tree-sitter's CLI loads the
+ * transpiled `.sittir/grammar.js` and runs `grammar()` natively),
+ * the binding is silently dropped and only the symbol passthrough
+ * runs. Tree-sitter doesn't read role bindings — they only matter
+ * to sittir's Link phase, which always evaluates the override file
+ * inside a `withRoleScope` block. This keeps the same call site valid
+ * for both consumers without runtime feature detection.
  */
 export function role(symbol: Rule, roleName: 'indent' | 'dedent' | 'newline'): Rule {
-    if (currentRoles === null) {
-        throw new Error(
-            'role(): called outside a grammar() scope — role() must be called from inside an externals/rules callback during grammar evaluation',
-        )
-    }
-    if (!symbol || typeof symbol !== 'object' || (symbol as SymbolLike).type !== 'symbol') {
+    if (!isSymbolLike(symbol)) {
         throw new Error(
             `role(): first argument must be a symbol reference (e.g. $._indent), got ${JSON.stringify(symbol)}`,
         )
     }
-    const name = (symbol as SymbolLike).name
-    currentRoles.set(name, { role: roleName })
+    if (currentRoles !== null) {
+        currentRoles.set(symbol.name, { role: roleName })
+    }
     return symbol
 }
 

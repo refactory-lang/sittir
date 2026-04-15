@@ -15,52 +15,58 @@
 
 import type { Rule, FieldRule } from '../compiler/rule.ts'
 import { parsePath, applyPath } from './transform-path.ts'
+import { isFieldPlaceholder, type FieldPlaceholder } from './field.ts'
 
-/**
- * A path-addressed patch. The path is a forward-slash-delimited string
- * with numeric segments and `*` wildcards (see transform-path.ts).
- */
-export interface PathPatch {
-    readonly path: string
-    readonly value: Rule
+type FieldLike = { type: 'field' | 'FIELD'; name: string; content: unknown; source?: string }
+function isFieldLike(v: unknown): v is FieldLike {
+    if (!v || typeof v !== 'object') return false
+    const t = (v as { type?: unknown }).type
+    return (t === 'field' || t === 'FIELD') && typeof (v as { name?: unknown }).name === 'string'
 }
 
 /**
- * Apply patches to a rule. Two input forms are supported:
+ * Apply patches to a rule. Patches are an object with path-string keys
+ * and Rule (or one-arg field placeholder) values:
  *
- * 1. **Flat positional** (backward-compatible) — patches keyed by numeric
- *    index, each patch replacing the seq member at that position:
+ *     transform(original, {
+ *         0:       field('name'),       // flat numeric — single-segment path
+ *         '0/1':   field('inner'),      // nested path
+ *         '0/*\/0': field('items'),     // wildcard
+ *     })
  *
- *        transform(original, { 0: field('name'), 2: field('body') })
+ * Two evaluation modes, auto-detected by key shape:
  *
- * 2. **Path-addressed** — array of `{path, value}` objects, where the
- *    path string can reach into nested structures via `'0/1/2'`,
- *    apply to every branch via `'0/*\/1'`, etc.:
+ * 1. **Flat positional** — every key is a pure numeric string. Patches
+ *    apply to seq members at that position, recursively descending
+ *    through choice alternatives and content wrappers (preserves
+ *    legacy override behavior on rules where the original is a choice
+ *    of equal-shape alternatives).
  *
- *        transform(original, [
- *            { path: '0',     value: field('name') },
- *            { path: '0/1',   value: field('inner') },
- *            { path: '0/*\/0', value: field('items') },
- *        ])
+ * 2. **Path-addressed** — at least one key contains `/` or `*`. Each
+ *    key is parsed as a path and applied to exactly the position(s) it
+ *    addresses. Precedence wrappers (prec/PREC_LEFT/...) are
+ *    transparent so the same paths work in both sittir and tree-sitter
+ *    runtimes.
  *
  * Field patches are marked `source: 'override'` so derive-overrides-json
- * recognizes them. The `_needsContent` placeholder (from a one-arg
- * `field('name')` call) is filled in from the original member at the
- * target position; if the original is already an enrich-inferred field
- * wrapper, it's unwrapped before re-wrapping to avoid nested fields.
+ * recognizes them. One-arg `field('name')` placeholders are filled in
+ * from the original member at the target position; an enrich-inferred
+ * field wrapper on the original is unwrapped before re-wrapping to
+ * avoid nested fields.
  */
-export function transform(original: Rule, patches: Record<number | string, Rule> | readonly PathPatch[]): Rule {
-    if (Array.isArray(patches)) {
+export function transform(original: Rule, patches: Record<number | string, Rule | FieldPlaceholder>): Rule {
+    const usesPaths = Object.keys(patches).some(k => k.includes('/') || k.includes('*'))
+    if (usesPaths) {
         return applyPathPatches(original, patches)
     }
     return applyFlatPatches(original, patches as Record<number | string, Rule>)
 }
 
-function applyPathPatches(original: Rule, patches: readonly PathPatch[]): Rule {
+function applyPathPatches(original: Rule, patches: Record<number | string, Rule | FieldPlaceholder>): Rule {
     let rule = original
-    for (const patch of patches) {
-        const segments = parsePath(patch.path)
-        rule = applyPath(rule, segments, (member) => resolvePatch(patch.value, member))
+    for (const [key, value] of Object.entries(patches)) {
+        const segments = parsePath(String(key))
+        rule = applyPath(rule, segments, (member) => resolvePatch(value, member))
     }
     return rule
 }
@@ -102,21 +108,31 @@ function applyFlatPatches(original: Rule, patches: Record<number | string, Rule>
     return original
 }
 
-function resolvePatch(patch: Rule, originalMember: Rule): Rule {
-    if (patch.type === 'field' && (patch as FieldRule & { _needsContent?: boolean })._needsContent) {
-        // Unwrap any enrich-inferred field wrapper on the original
-        // member — otherwise we'd produce `field('override-name',
-        // field('inferred-name', inner))` which Link treats as nested
-        // and loses the original symbol binding.
-        const content = originalMember.type === 'field' && (originalMember as FieldRule).source === 'inferred'
-            ? (originalMember as FieldRule).content
-            : originalMember
-        return { type: 'field', name: patch.name, content, source: 'override' as const }
+function resolvePatch(patch: Rule | FieldPlaceholder, originalMember: Rule): Rule {
+    // One-arg `field('name')` placeholder — wrap the original member
+    // using the runtime's native field() so the resulting rule's type
+    // case matches whatever runtime is loading us (sittir lowercase
+    // 'field' vs tree-sitter uppercase 'FIELD').
+    if (isFieldPlaceholder(patch)) {
+        // Unwrap an enrich-inferred field on the original member to
+        // avoid nested field('override', field('inferred', inner)).
+        let content: unknown = originalMember
+        if (isFieldLike(content) && content.source === 'inferred') {
+            content = content.content
+        }
+        const native = (globalThis as { field?: (n: string, c: unknown) => unknown }).field
+        if (typeof native !== 'function') {
+            throw new Error('transform: no global field() found — patches that use the one-arg field() form require a runtime that injects field() (sittir evaluate.ts or tree-sitter CLI)')
+        }
+        // Mark as override so derive-overrides-json sees it. Spread to
+        // preserve whatever shape (lowercase/uppercase) the native produced.
+        return { ...(native(patch.name, content) as object), source: 'override' as const } as Rule
     }
-    if (patch.type === 'field') {
-        return { ...patch, source: 'override' as const }
+    // Two-arg field passed through directly — accept either case.
+    if (isFieldLike(patch)) {
+        return { ...patch, source: 'override' as const } as unknown as Rule
     }
-    return patch
+    return patch as Rule
 }
 
 /**

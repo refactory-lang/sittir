@@ -9,7 +9,7 @@
 
 // @ts-nocheck — grammar.js is untyped
 import base from '../../node_modules/.pnpm/tree-sitter-python@0.25.0/node_modules/tree-sitter-python/grammar.js'
-import { transform, role, enrich } from '../codegen/src/dsl/index.ts'
+import { transform, role, enrich, field } from '../codegen/src/dsl/index.ts'
 
 export default grammar(enrich(base), {
     name: 'python',

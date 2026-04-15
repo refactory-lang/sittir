@@ -1,0 +1,11 @@
+{
+    "$schema": "https://tree-sitter.github.io/tree-sitter/assets/schemas/config.schema.json",
+    "grammars": [
+        {
+            "name": "typescript",
+            "path": "./.sittir",
+            "scope": "source.ts",
+            "file-types": ["ts", "tsx"]
+        }
+    ]
+}

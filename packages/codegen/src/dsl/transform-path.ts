@@ -21,6 +21,40 @@ import type {
     Rule, SeqRule, ChoiceRule, OptionalRule, RepeatRule, Repeat1Rule, FieldRule,
 } from '../compiler/rule.ts'
 
+// ---------------------------------------------------------------------------
+// Native DSL accessors — we call the runtime-injected DSL functions
+// (sittir's grammarFn-injected globals OR tree-sitter CLI's native
+// globals) instead of reconstructing rule objects directly. This keeps
+// the rule shape consistent with whichever runtime is processing the
+// transform call, and runs whatever normalization the runtime does.
+// ---------------------------------------------------------------------------
+
+interface RuntimeDsl {
+    seq?: (...members: unknown[]) => unknown
+    choice?: (...members: unknown[]) => unknown
+    optional?: (content: unknown) => unknown
+    repeat?: (content: unknown) => unknown
+    repeat1?: (content: unknown) => unknown
+    field?: (name: string, content: unknown) => unknown
+    prec?: ((value: number | unknown, content?: unknown) => unknown) & {
+        left?: (value: number | unknown, content?: unknown) => unknown
+        right?: (value: number | unknown, content?: unknown) => unknown
+        dynamic?: (value: number | unknown, content?: unknown) => unknown
+    }
+}
+
+function dsl(): RuntimeDsl {
+    return globalThis as unknown as RuntimeDsl
+}
+
+function nativeRequired<K extends keyof RuntimeDsl>(name: K): NonNullable<RuntimeDsl[K]> {
+    const fn = dsl()[name]
+    if (typeof fn !== 'function') {
+        throw new Error(`transform: no global ${String(name)}() found — must be called inside a runtime that injects ${String(name)}() (sittir evaluate.ts or tree-sitter CLI)`)
+    }
+    return fn as NonNullable<RuntimeDsl[K]>
+}
+
 export type PathSegment = { kind: 'index'; value: number } | { kind: 'wildcard' }
 
 /**
@@ -67,18 +101,38 @@ export function applyPath(
         return typeof patch === 'function' ? patch(rule) : patch
     }
 
-    const [head, ...rest] = segments
-
-    // Containers we can descend into. Each has a `members` array
-    // (seq/choice) or a `content` rule (optional/repeat/repeat1/field).
-    if (rule.type === 'seq' || rule.type === 'choice') {
-        return applyToMembers(rule, head!, rest, patch)
+    // Precedence wrappers are TRANSPARENT to path addressing. Sittir's
+    // pipeline strips them; tree-sitter's CLI preserves them. Path
+    // segments target the underlying structure, not the wrapper. We
+    // descend into the wrapper without consuming a segment, and
+    // reconstruct it on the way back so tree-sitter still sees the
+    // precedence info. Both lowercase (sittir) and uppercase
+    // (tree-sitter native) variants are handled.
+    if (isPrecWrapper(rule)) {
+        const newContent = applyPath(
+            (rule as { content: Rule }).content,
+            segments,
+            patch,
+        )
+        return reconstructPrec(rule, newContent)
     }
-    if (rule.type === 'optional' || rule.type === 'repeat' || rule.type === 'repeat1' || rule.type === 'field') {
+
+    const [head, ...rest] = segments
+    const t = rule.type as string
+
+    // Containers we can descend into. Type checks accept both sittir
+    // (lowercase) and tree-sitter (uppercase) naming because tree-sitter
+    // CLI runtime evaluates the bundled output with uppercase rule types.
+    if (t === 'seq' || t === 'SEQ' || t === 'choice' || t === 'CHOICE') {
+        return applyToMembers(rule as SeqRule | ChoiceRule, head!, rest, patch)
+    }
+    if (t === 'optional' || t === 'repeat' || t === 'repeat1' || t === 'field'
+        || t === 'REPEAT' || t === 'REPEAT1' || t === 'FIELD' || t === 'BLANK'
+        || t === 'IMMEDIATE_TOKEN' || t === 'TOKEN') {
         // For wrappers, position 0 is the wrapped content.
         if (head!.kind === 'wildcard' || (head!.kind === 'index' && head!.value === 0)) {
             const newContent = applyPath((rule as { content: Rule }).content, rest, patch)
-            return { ...rule, content: newContent } as Rule
+            return reconstructWrapper(rule, newContent)
         }
         throw new Error(
             `applyPath: index ${head!.kind === 'index' ? head!.value : '*'} out of bounds — '${rule.type}' wraps a single content rule (only index 0 is valid)`,
@@ -86,6 +140,73 @@ export function applyPath(
     }
 
     throw new Error(`applyPath: cannot descend into '${rule.type}' rule (path has ${segments.length} segments left)`)
+}
+
+/**
+ * Reconstruct a container rule (seq or choice) by calling the
+ * runtime's native dsl function with the new members. Delegating to
+ * native ensures the result has the correct rule-type case and
+ * inherits any normalization the runtime applies.
+ */
+function reconstructContainer(rule: SeqRule | ChoiceRule, members: Rule[]): Rule {
+    const t = rule.type as string
+    if (t === 'seq' || t === 'SEQ') return nativeRequired('seq')(...members) as Rule
+    if (t === 'choice' || t === 'CHOICE') return nativeRequired('choice')(...members) as Rule
+    throw new Error(`reconstructContainer: unknown container type '${t}'`)
+}
+
+/**
+ * Reconstruct a single-content wrapper rule (optional/repeat/repeat1/field)
+ * via the runtime's native dsl. Field wrappers delegate to native field
+ * which handles the (name, content) signature; repeat wrappers don't
+ * preserve the separator/trailing/leading metadata in the native
+ * call — applyPath should not be used to patch under repeat wrappers
+ * with non-default options. (No current overrides hit that case.)
+ */
+function reconstructWrapper(rule: Rule, newContent: Rule): Rule {
+    const t = rule.type as string
+    if (t === 'optional') return nativeRequired('optional')(newContent) as Rule
+    if (t === 'repeat' || t === 'REPEAT') return nativeRequired('repeat')(newContent) as Rule
+    if (t === 'repeat1' || t === 'REPEAT1') return nativeRequired('repeat1')(newContent) as Rule
+    if (t === 'field' || t === 'FIELD') {
+        const fld = rule as FieldRule
+        return nativeRequired('field')(fld.name, newContent) as Rule
+    }
+    // BLANK / IMMEDIATE_TOKEN / TOKEN — fall through; these don't
+    // normally have user-addressable content via path, but keep the
+    // shape if we somehow descended into one.
+    return { ...rule, content: newContent } as Rule
+}
+
+/**
+ * Reconstruct a precedence wrapper via the runtime's native prec.left/
+ * prec.right/prec.dynamic/prec function. Preserves the precedence
+ * value so tree-sitter's parser-generator can resolve conflicts the
+ * same way as the base grammar.
+ */
+const PREC_VARIANT_MAP = {
+    prec_left: 'left',
+    prec_right: 'right',
+    prec_dynamic: 'dynamic',
+} as const
+
+function reconstructPrec(rule: Rule, newContent: Rule): Rule {
+    const t = (rule.type as string).toLowerCase()
+    const value = (rule as { value?: number | unknown }).value
+    const prec = nativeRequired('prec')
+    const variant = PREC_VARIANT_MAP[t as keyof typeof PREC_VARIANT_MAP]
+    if (variant) {
+        const fn = prec[variant]
+        if (typeof fn !== 'function') throw new Error(`transform: native prec.${variant} not available`)
+        return fn(value as number, newContent) as Rule
+    }
+    return prec(value as number, newContent) as Rule
+}
+
+function isPrecWrapper(rule: Rule): boolean {
+    const t = rule.type as string
+    return t === 'prec' || t === 'PREC'
+        || t === 'PREC_LEFT' || t === 'PREC_RIGHT' || t === 'PREC_DYNAMIC'
 }
 
 function applyToMembers(
@@ -103,7 +224,7 @@ function applyToMembers(
             )
         }
         members[head.value] = applyPath(members[head.value]!, rest, patch)
-        return { type: rule.type, members } as SeqRule | ChoiceRule
+        return reconstructContainer(rule, members) as SeqRule | ChoiceRule
     }
 
     // Wildcard — apply to every member that successfully descends. A
@@ -126,5 +247,5 @@ function applyToMembers(
     if (!anyApplied) {
         throw new Error(`applyPath: wildcard matched zero members successfully in ${rule.type} of length ${members.length}`)
     }
-    return { type: rule.type, members } as SeqRule | ChoiceRule
+    return reconstructContainer(rule, members) as SeqRule | ChoiceRule
 }

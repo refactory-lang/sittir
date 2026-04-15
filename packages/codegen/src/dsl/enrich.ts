@@ -67,15 +67,39 @@ const PASSES: readonly Pass[] = [
     // Restore this pass after the root cause is identified.
 ]
 
-export function enrich(base: GrammarResult): GrammarResult {
-    if (!base || typeof base !== 'object' || !('grammar' in base)) {
-        throw new Error('enrich(): expected a tree-sitter grammar result (shape { grammar: { rules } })')
+export function enrich(base: GrammarResult | unknown): GrammarResult | unknown {
+    if (!base || typeof base !== 'object') {
+        throw new Error('enrich(): expected a grammar object, got ' + typeof base)
     }
-    if (!base.grammar || typeof base.grammar.rules !== 'object') {
+
+    // Tree-sitter CLI compatibility path: when this code runs inside
+    // tree-sitter's parser-generator runtime (loading the transpiled
+    // .sittir/grammar.js), `base` has tree-sitter's native shape —
+    // `{ name, rules, ... }` directly, with rules using uppercase
+    // types (`SEQ`, `SYMBOL`, etc.). Sittir's enrich passes are
+    // written for the sittir shape (`{ grammar: { rules } }` with
+    // lowercase types) so they can't apply here. Pass through
+    // unchanged — tree-sitter will compile the un-enriched grammar.
+    //
+    // Sittir's own pipeline still applies enrich properly because its
+    // evaluate.ts injects sittir's grammarFn before importing the
+    // override file, so `base` arrives in sittir's shape.
+    //
+    // The trade-off: the field wrappers enrich would add are present
+    // when sittir generates its consumer code, but absent in
+    // tree-sitter's compiled parser. Sittir's fidelity ceilings cover
+    // this gap; a future follow-up can make enrich shape-aware so the
+    // same transformations apply in both runtimes.
+    if (!('grammar' in base)) {
+        return base
+    }
+
+    const sittirBase = base as GrammarResult
+    if (!sittirBase.grammar || typeof sittirBase.grammar.rules !== 'object') {
         throw new Error('enrich(): grammar is missing a rules record')
     }
 
-    let result = base
+    let result = sittirBase
     for (const pass of PASSES) {
         result = pass(result)
     }

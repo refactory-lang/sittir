@@ -9,7 +9,7 @@
 
 // @ts-nocheck — grammar.js is untyped; overrides use sittir DSL
 import base from '../../node_modules/.pnpm/tree-sitter-rust@0.24.0/node_modules/tree-sitter-rust/grammar.js'
-import { transform, role, insert, replace, enrich } from '../codegen/src/dsl/index.ts'
+import { transform, role, insert, replace, enrich, field, alias } from '../codegen/src/dsl/index.ts'
 
 export default grammar(enrich(base), {
     name: 'rust',
@@ -398,23 +398,35 @@ export default grammar(enrich(base), {
             $.extern_modifier,
         )),
 
-        // or_pattern — label the pattern children as `left`/`right` for
-        // readNode positional routing. Fields live INSIDE the seq branches
-        // (not wrapping the whole branch) so evaluate doesn't retype them
-        // to variants.
-        or_pattern: ($) => choice(
-            seq(field('left', $._pattern), '|', field('right', $._pattern)),
-            seq('|', field('right', $._pattern)),
-        ),
+        // or_pattern — patches the BASE rule's prec.left(-2, ...)
+        // structure to add field labels. Base shape:
+        //   choice(seq(_pattern, '|', _pattern), seq('|', _pattern))
+        or_pattern: ($, original) => transform(original, {
+            '0/0': field('left'),
+            '0/2': field('right'),
+            '1/1': field('right'),
+        }),
 
-        // range_expression — four forms with an explicit operator field so
-        // readNode can route the `..`/`...`/`..=` token to a named slot.
-        range_expression: ($) => choice(
-            seq(field('start', $._expression), field('operator', choice('..', '...', '..=')), field('end', $._expression)),
-            seq(field('start', $._expression), field('operator', '..')),
-            seq(field('operator', '..'), field('end', $._expression)),
-            field('operator', '..'),
-        ),
+        // range_expression — patches the BASE rule's choice alternatives
+        // by position so the prec.left(1, ...) wrapper survives. The
+        // base shape (after path addressing's prec-transparency) is:
+        //   choice(
+        //     seq(expr, choice('..','...','..='), expr),  // alt 0 — binary
+        //     seq(expr, '..'),                            // alt 1 — postfix
+        //     seq('..', expr),                            // alt 2 — prefix
+        //     '..',                                       // alt 3 — bare
+        //   )
+        // Each {path,value} below labels one position in one alternative.
+        range_expression: ($, original) => transform(original, {
+            '0/0': field('start'),
+            '0/1': field('operator'),
+            '0/2': field('end'),
+            '1/0': field('start'),
+            '1/1': field('operator'),
+            '2/0': field('operator'),
+            '2/1': field('end'),
+            '3':   field('operator'),
+        }),
 
         // unary_expression — label both the operator token (pos 0) and
         // the operand expression (pos 1). overrides.json promotes both

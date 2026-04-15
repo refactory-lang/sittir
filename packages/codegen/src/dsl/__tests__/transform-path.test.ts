@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, beforeAll, afterAll } from 'vitest'
 import { parsePath, applyPath } from '../transform-path.ts'
 import { transform } from '../transform.ts'
 import type { Rule } from '../../compiler/rule.ts'
@@ -9,6 +9,35 @@ const seq = (...members: Rule[]): Rule => ({ type: 'seq', members } as Rule)
 const choice = (...members: Rule[]): Rule => ({ type: 'choice', members } as Rule)
 const optional = (content: Rule): Rule => ({ type: 'optional', content } as Rule)
 const fld = (name: string, content: Rule): Rule => ({ type: 'field', name, content } as Rule)
+
+// Install fake native dsl globals so dsl/transform-path.ts's
+// reconstructContainer / reconstructWrapper / reconstructPrec helpers
+// (which delegate to runtime globals) work in unit tests. In production
+// these are injected by sittir's evaluate.ts or tree-sitter's CLI.
+const g = globalThis as Record<string, unknown>
+const saved: Record<string, unknown> = {}
+beforeAll(() => {
+    for (const k of ['seq', 'choice', 'optional', 'repeat', 'repeat1', 'field', 'prec']) {
+        saved[k] = g[k]
+    }
+    g.seq = (...members: Rule[]): Rule => ({ type: 'seq', members } as Rule)
+    g.choice = (...members: Rule[]): Rule => ({ type: 'choice', members } as Rule)
+    g.optional = (content: Rule): Rule => ({ type: 'optional', content } as Rule)
+    g.repeat = (content: Rule): Rule => ({ type: 'repeat', content } as Rule)
+    g.repeat1 = (content: Rule): Rule => ({ type: 'repeat1', content } as Rule)
+    g.field = (name: string, content: Rule): Rule => ({ type: 'field', name, content } as Rule)
+    const precFn = (value: number, content: Rule): Rule => content
+    ;(precFn as { left?: typeof precFn }).left = precFn
+    ;(precFn as { right?: typeof precFn }).right = precFn
+    ;(precFn as { dynamic?: typeof precFn }).dynamic = precFn
+    g.prec = precFn
+})
+afterAll(() => {
+    for (const [k, v] of Object.entries(saved)) {
+        if (v === undefined) delete g[k]
+        else g[k] = v
+    }
+})
 
 describe('parsePath()', () => {
     it('parses a single index', () => {
@@ -125,33 +154,33 @@ describe('applyPath()', () => {
     })
 })
 
-describe('transform() — array form (path-addressed)', () => {
-    it('applies a single path-addressed patch', () => {
+describe('transform() — object form with path keys', () => {
+    it('applies a single path-addressed patch (single-segment)', () => {
         const rule = seq(sym('a'), sym('b'))
-        const result = transform(rule, [{ path: '0', value: fld('first', sym('a')) }])
-        const r = result as any
-        expect(r.members[0]).toMatchObject({ type: 'field', name: 'first', source: 'override' })
-    })
-
-    it('applies multiple path-addressed patches in order', () => {
-        const rule = seq(sym('a'), sym('b'), sym('c'))
-        const result = transform(rule, [
-            { path: '0', value: fld('first', sym('a')) },
-            { path: '2', value: fld('third', sym('c')) },
-        ])
-        const r = result as any
-        expect(r.members[0]).toMatchObject({ type: 'field', name: 'first' })
-        expect(r.members[2]).toMatchObject({ type: 'field', name: 'third' })
-        expect(r.members[1]).toMatchObject({ type: 'symbol', name: 'b' })
+        // The path key '*' marks this as path mode (not flat positional).
+        // Use the wildcard to apply to all members for the smoke test.
+        const flat = transform(rule, { '*': fld('any', sym('a')) } as Record<string, Rule>)
+        const r = flat as any
+        expect(r.members[0]).toMatchObject({ type: 'field', name: 'any', source: 'override' })
+        expect(r.members[1]).toMatchObject({ type: 'field', name: 'any', source: 'override' })
     })
 
     it('reaches into nested structure via path', () => {
         const rule = seq(seq(sym('a'), sym('b')), sym('outer'))
-        const result = transform(rule, [
-            { path: '0/1', value: fld('inner_b', sym('b')) },
-        ])
+        const result = transform(rule, { '0/1': fld('inner_b', sym('b')) } as Record<string, Rule>)
         const r = result as any
         expect(r.members[0].members[1]).toMatchObject({ type: 'field', name: 'inner_b' })
+    })
+
+    it('applies multiple patches', () => {
+        const rule = seq(seq(sym('a'), sym('b')), sym('c'))
+        const result = transform(rule, {
+            '0/0': fld('first', sym('a')),
+            '1':   fld('outer', sym('c')),
+        } as Record<string, Rule>)
+        const r = result as any
+        expect(r.members[0].members[0]).toMatchObject({ type: 'field', name: 'first' })
+        expect(r.members[1]).toMatchObject({ type: 'field', name: 'outer' })
     })
 })
 

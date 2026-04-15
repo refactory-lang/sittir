@@ -24,8 +24,14 @@ describe('role()', () => {
         expect(roles.get('_newline')).toEqual({ role: 'newline' })
     })
 
-    it('throws when called outside any grammar scope', () => {
-        expect(() => role(sym('_indent'), 'indent')).toThrow(/outside a grammar\(\) scope/)
+    it('returns the symbol unchanged when called outside any scope (tree-sitter CLI compat)', () => {
+        // No withRoleScope wrapper — simulating tree-sitter CLI
+        // loading the transpiled grammar.js. The binding is silently
+        // dropped (tree-sitter doesn't need it), but the symbol
+        // passthrough still works so externals receives a valid token.
+        const ref = sym('_indent')
+        const result = role(ref, 'indent')
+        expect(result).toBe(ref)
     })
 
     it('throws when first arg is not a symbol reference', () => {

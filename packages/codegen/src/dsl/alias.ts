@@ -6,51 +6,48 @@
  *     alias(rule, valueOrName)
  *
  * The most common authoring case is `alias($.name, $.name)` — aliasing
- * a symbol to itself with `named: true`. The shorthand collapses that
- * to:
+ * a symbol to itself with `named: true`. The shorthand collapses that to:
  *
  *     alias($.name)
  *
- * which is treated as identical to `alias($.name, $.name)`.
+ * Both forms delegate to the runtime's native `alias()` (provided as
+ * a global by sittir's grammarFn injection in sittir's pipeline, or
+ * by tree-sitter's CLI when the transpiled grammar.js loads). This
+ * means the resulting rule shape matches whatever runtime is processing
+ * the call — sittir lowercase `{type:'alias'}` or tree-sitter uppercase
+ * `{type:'ALIAS'}` — without case-conversion shims here.
  *
- * Two-arg calls pass through unchanged so this is a strict superset of
- * tree-sitter's behavior. Override files that import the sittir alias
- * shadow it within their module scope; grammar.js base files keep
- * using the global injection.
- *
- * Import explicitly when you want the shorthand:
+ * Import explicitly when you want the one-arg form:
  *
  *     import { alias } from '@sittir/codegen/dsl'
  */
 
-import type { Rule, AliasRule, SymbolRule } from '../compiler/rule.ts'
+import type { Rule } from '../compiler/rule.ts'
 
-type SymbolLike = { type: 'symbol'; name: string } & Record<string, unknown>
+type SymbolLike = { type: 'symbol' | 'SYMBOL'; name: string } & Record<string, unknown>
 
-export function alias(rule: Rule, value?: string | Rule): AliasRule {
+function isSymbolLike(v: unknown): v is SymbolLike {
+    return !!v && typeof v === 'object'
+        && ((v as { type?: unknown }).type === 'symbol' || (v as { type?: unknown }).type === 'SYMBOL')
+        && typeof (v as { name?: unknown }).name === 'string'
+}
+
+export function alias(rule: Rule, value?: string | Rule): unknown {
+    const native = (globalThis as { alias?: (r: unknown, v: unknown) => unknown }).alias
+    if (typeof native !== 'function') {
+        throw new Error('alias(): no global alias() found — must be called inside a runtime that injects alias() (sittir evaluate.ts or tree-sitter CLI)')
+    }
+
     // One-arg shorthand: alias($.name) ≡ alias($.name, $.name).
-    // Only valid when `rule` is a symbol reference — otherwise we
-    // can't synthesize the second arg, which must name something.
     if (value === undefined) {
-        if (!rule || typeof rule !== 'object' || (rule as SymbolLike).type !== 'symbol') {
+        if (!isSymbolLike(rule)) {
             throw new Error(
                 `alias(): one-argument form requires a symbol reference (e.g. $.name), got ${JSON.stringify(rule)}`,
             )
         }
-        return {
-            type: 'alias',
-            content: rule,
-            named: true,
-            value: (rule as SymbolLike).name,
-        }
+        return native(rule, rule)
     }
 
-    // Two-arg form — match the baseline tree-sitter alias semantics.
-    if (typeof value === 'string') {
-        return { type: 'alias', content: rule, named: false, value }
-    }
-    if (typeof value === 'object' && 'type' in value && value.type === 'symbol') {
-        return { type: 'alias', content: rule, named: true, value: (value as SymbolRule).name }
-    }
-    throw new Error(`alias(): invalid second argument ${JSON.stringify(value)}`)
+    // Two-arg form — delegate to native alias.
+    return native(rule, value)
 }

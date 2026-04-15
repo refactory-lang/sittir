@@ -1,8 +1,31 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, beforeAll, afterAll } from 'vitest'
 import { alias } from '../alias.ts'
 import type { Rule } from '../../compiler/rule.ts'
 
 const sym = (name: string): Rule => ({ type: 'symbol', name } as Rule)
+
+// Install a minimal fake global alias() so dsl/alias.ts can delegate
+// to it. In production sittir/tree-sitter both inject globals before
+// the DSL is reachable; tests have to mimic that.
+const g = globalThis as { alias?: (r: unknown, v: unknown) => unknown }
+let savedAlias: typeof g.alias
+beforeAll(() => {
+    savedAlias = g.alias
+    g.alias = (rule, value) => {
+        if (typeof value === 'string') {
+            return { type: 'alias', content: rule, named: false, value }
+        }
+        const symValue = value as { type?: string; name?: string }
+        if (symValue && (symValue.type === 'symbol' || symValue.type === 'SYMBOL')) {
+            return { type: 'alias', content: rule, named: true, value: symValue.name }
+        }
+        throw new Error('fake alias: invalid value')
+    }
+})
+afterAll(() => {
+    if (savedAlias === undefined) delete (g as Record<string, unknown>).alias
+    else g.alias = savedAlias
+})
 
 describe('alias()', () => {
     describe('one-arg shorthand', () => {
@@ -43,9 +66,9 @@ describe('alias()', () => {
             })
         })
 
-        it('throws on invalid second arg', () => {
+        it('throws on invalid second arg via the fake native', () => {
             expect(() => alias(sym('foo'), 42 as unknown as string))
-                .toThrow(/invalid second argument/)
+                .toThrow(/invalid value/)
         })
     })
 })
