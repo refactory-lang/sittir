@@ -1,151 +1,176 @@
 # sittir
 
-Generate typed IR builders from [tree-sitter](https://tree-sitter.github.io/) grammars.
+Generate typed factory functions and S-expression render templates from [tree-sitter](https://tree-sitter.github.io/) grammars.
 
 Given any tree-sitter grammar, sittir generates:
-- **Typed IR nodes** — grammar-derived TypeScript types for every node kind
-- **Self-contained builders** — each builder owns its render logic, no central switch
-- **Fluent + declarative APIs** — `ir.fn(id).body(block)` or `ir.fn.from({ name: 'main' })`
-- **Leaf + branch builders** — `LeafBuilder` for terminals, generated builders for branches
-- **CST round-trip** — `fromCST()` hydrates tree-sitter nodes into builders, `edit()` for codemods
-- **Test scaffolds** — one test file per node kind
+- **Typed factories** — one per node kind, producing `NodeData` plain objects with fluent getters/setters
+- **S-expression templates** — tree-sitter query syntax for rendering, parsed once and cached
+- **`.from()` resolution** — ergonomic input with string/number/object coercion, fully tree-shakeable
+- **`readNode()` hydration** — wraps tree-sitter parse trees into `NodeData` for round-trip editing
+- **Const enums + navigation types** — `SyntaxKind`, operator/keyword maps, supertype unions
+- **Generated tests** — per-kind factory + render + round-trip validation
+
+## Key Features
+
+- **Grammar-agnostic pipeline** — works with any tree-sitter grammar without modification. All language-specific knowledge flows through override configuration.
+- **Five-phase compiler** — Evaluate → Link → Optimize → Assemble → Emit. Each phase has a single responsibility and produces a well-defined intermediate representation.
+- **Override DSL** — `transform()`, `enrich()`, `role()` primitives let grammar maintainers patch field labels, add mechanical promotions, and declare structural roles without rewriting rules.
+- **Zero runtime dependencies** — generated packages depend only on `@sittir/core` and `@sittir/types`. No third-party runtime deps.
+- **Deterministic output** — same grammar version produces byte-identical generated code. No timestamps, random identifiers, or order-dependent iteration.
 
 ## Packages
 
-| Package | Description | npm |
-|---------|-------------|-----|
-| [`@sittir/types`](packages/types) | `Builder<N>`, `LeafBuilder`, `RenderContext`, `Edit`, type projections | [![npm](https://img.shields.io/npm/v/@sittir/types)](https://www.npmjs.com/package/@sittir/types) |
-| [`@sittir/codegen`](packages/codegen) | Reads `tree-sitter-{lang}/src/node-types.json`, generates everything | [![npm](https://img.shields.io/npm/v/@sittir/codegen)](https://www.npmjs.com/package/@sittir/codegen) |
-| [`@sittir/rust`](packages/rust) | 135 generated Rust IR node kinds + builders | [![npm](https://img.shields.io/npm/v/@sittir/rust)](https://www.npmjs.com/package/@sittir/rust) |
-| [`@sittir/typescript`](packages/typescript) | 140 TypeScript + 146 TSX IR node kinds + builders | [![npm](https://img.shields.io/npm/v/@sittir/typescript)](https://www.npmjs.com/package/@sittir/typescript) |
-| [`@sittir/python`](packages/python) | 97 generated Python IR node kinds + builders | [![npm](https://img.shields.io/npm/v/@sittir/python)](https://www.npmjs.com/package/@sittir/python) |
+| Package | Description |
+|---------|-------------|
+| [`@sittir/core`](packages/core) | Grammar-driven render engine, validation, CST, Edit creation |
+| [`@sittir/types`](packages/types) | Pure TypeScript types (zero runtime) — `AnyNodeData`, `ConfigOf<T>`, `TreeNodeOf<T>` |
+| [`@sittir/codegen`](packages/codegen) | Five-phase compiler: reads grammar.json + node-types.json, emits everything |
+| [`@sittir/rust`](packages/rust) | 210 generated Rust node kinds |
+| [`@sittir/typescript`](packages/typescript) | 269 generated TypeScript node kinds |
+| [`@sittir/python`](packages/python) | 176 generated Python node kinds |
 
 ## Quick Start
 
-### Fluent API
+### Factory API
 
 ```ts
-import { ir } from '@sittir/rust';
+import { ir } from '@sittir/rust'
 
-const node = ir.fn(ir.identifier('main'))
-  .parameters(ir.parameters())
-  .body(ir.block(
-    ir.expressionStatement(ir.macro_invocation(ir.identifier('println')))
-  ));
+const node = ir.functionItem({
+  name: ir.identifier({ text: 'main' }),
+  parameters: ir.parameters({}),
+  body: ir.block({})
+})
 
-node.render('skip');   // sync, no validation
-node.render('fast');   // sync, brace/paren matching
-node.render('full', { parser });  // async, tree-sitter
+console.log(node.type)        // 'function_item'
+console.log(node.name().text) // 'main' (fluent getter)
 ```
 
-### Declarative API (`.from()`)
+### `.from()` API
 
 ```ts
-import { ir } from '@sittir/typescript';
+import { ir } from '@sittir/typescript'
 
-// Strings auto-resolve to LeafBuilder for leaf-typed fields
-const fn = ir.function_.from({
-  name: 'greet',                          // string → LeafBuilder('identifier', 'greet')
-  parameters: ir.formalParameters(),
-  body: ir.statementBlock(
-    ir.return_().children(ir.identifier('hello'))
-  ),
-});
-
-fn.renderImpl();  // "function greet ( ) { return hello }"
+const fn = ir.functionDeclaration.from({
+  name: 'greet',           // string auto-resolves to leaf node
+  parameters: ir.formalParameters.from({}),
+  returnType: 'void',
+  body: ir.statementBlock.from({})
+})
 ```
 
-### CST Round-Trip (Codemods)
+### Render
 
 ```ts
-import { fromCST, edit } from '@sittir/rust';
+import { render } from '@sittir/core'
+import { rules } from '@sittir/rust'
 
-// Hydrate a tree-sitter CST node into a builder
-const builder = fromCST(treeSitterNode);
-
-// Or use edit() for codemod-compatible text edits
-const patch = edit(treeSitterNode, (b) => {
-  return b.body(ir.block());  // transform must return a builder
-});
-// patch = { startPos, endPos, insertedText }
+const source = render(node, rules)  // S-expression template expansion
 ```
 
-## How It Works
-
-```
-tree-sitter-{lang}/src/node-types.json    (from tree-sitter grammar)
-tree-sitter-{lang}/src/grammar.json       (for render order + keywords)
-        ↓
-  @sittir/codegen                          (reads JSON, generates everything)
-        ↓
-  @sittir/{lang}/src/
-    ├── nodes/*.ts     Self-contained builders (render + CST + .from())
-    ├── builder.ts     ir namespace (fluent + leaf + fromCST + edit)
-    ├── types.ts       Grammar-derived types + leaf types + supertype unions
-    └── tests/*.ts     Per-node test scaffolds
-```
-
-The codegen reads `node-types.json` and `grammar.json` directly from tree-sitter grammar packages — no intermediary dependencies. The generated types are structurally compatible with `@codemod.com/jssg-types` for codemod consumers.
-
-## Generate a New Language IR
+### Round-Trip (Codemods)
 
 ```ts
-import { generate } from '@sittir/codegen';
+import { wrap, edit } from '@sittir/rust'
 
-const files = generate({ grammar: 'go' });
-// files.builders — Map<string, string> of node builder files
-// files.types — grammar-derived types
-// files.builder — ir namespace (fluent + leaf + fromCST + edit)
-```
+// Hydrate a tree-sitter parse tree node into NodeData
+const nodeData = wrap(treeSitterNode)
 
-Or via CLI:
-
-```bash
-sittir --grammar go --all --output packages/go/src/
-```
-
-## Development
-
-```bash
-pnpm install          # install dependencies
-pnpm -r run test      # run all tests (1,121 passing)
-pnpm -r run type-check  # typecheck all packages
-pnpm -r run build     # build all packages
+// Create a text edit
+const patch = edit(treeSitterNode, (nd) => {
+  return nd.body(ir.block({}))
+})
+// patch = { startIndex, endIndex, newText }
 ```
 
 ## Architecture
 
 ```
-@sittir/types          Builder<N>, LeafBuilder, RenderContext, Edit
-    ↑                  NodeType<G,K>, BuilderConfig<G,T> (type-level)
-    │
-@sittir/codegen        Grammar reader + emitters (types, builders, fluent, tests)
-    │                  Reads node-types.json + grammar.json
-    ↓
-@sittir/rust           135 self-contained Rust builders
-@sittir/typescript     140 self-contained TypeScript builders (+146 TSX)
-@sittir/python         97 self-contained Python builders
+                    ┌──────────────────────────────────────────────┐
+                    │              @sittir/codegen                  │
+                    │                                              │
+  grammar.json ───▶ │  Evaluate → Link → Optimize → Assemble → Emit│
+  node-types.json ─▶ │                                              │
+  overrides.ts ────▶ │  DSL: transform() / enrich() / role()        │
+                    └──────────────┬───────────────────────────────┘
+                                   │
+              ┌────────────────────┼────────────────────┐
+              ▼                    ▼                     ▼
+       @sittir/rust         @sittir/typescript     @sittir/python
+       ├── types.ts         ├── types.ts           ├── types.ts
+       ├── factories.ts     ├── factories.ts       ├── factories.ts
+       ├── from.ts          ├── from.ts            ├── from.ts
+       ├── wrap.ts          ├── wrap.ts            ├── wrap.ts
+       ├── rules.ts         ├── rules.ts           ├── rules.ts
+       ├── ir.ts            ├── ir.ts              ├── ir.ts
+       ├── consts.ts        ├── consts.ts          ├── consts.ts
+       └── utils.ts         └── utils.ts           └── utils.ts
+
+  @sittir/core ─── render(), validate(), readNode(), edit(), CST
+  @sittir/types ── AnyNodeData, ConfigOf<T>, TreeNodeOf<T>, ByteRange, Edit
 ```
 
-### Builder Architecture
+### Compiler Pipeline
 
-Every field holds a `Builder` instance — no strings. Rendering is lazy and owned by each builder:
+| Phase | Input | Output | Purpose |
+|-------|-------|--------|---------|
+| **Evaluate** | `grammar.json` + `overrides.ts` | Raw grammar with resolved rules | Parse grammar, apply DSL transforms, collect roles |
+| **Link** | Raw grammar + `node-types.json` | Linked `NodeMap` with field specs | Resolve symbols, classify kinds, detect polymorphs |
+| **Optimize** | Linked NodeMap | Optimized NodeMap | Merge variants, collapse repeated shapes |
+| **Assemble** | Optimized NodeMap | Assembly with render templates | Walk rules → S-expression templates, join separators |
+| **Emit** | Assembly | Generated `.ts` + `.yaml` files | Produce types, factories, from, wrap, rules, consts |
+
+### Data Flow
 
 ```
-Builder<N>                     Abstract base (renderImpl, build, toCST, render)
-  ├── LeafBuilder<K>           Terminal nodes (identifiers, literals, keywords)
-  └── FunctionBuilder          Generated per-node (owns render logic, field setters)
-      StructBuilder
-      ...
+Factory input (Config, camelCase) ──▶ Factory output (NodeData, raw fields)
+From input (strings, numbers) ──────▶ Factory (via resolution) ──▶ NodeData
+readNode input (SgNode/TreeNode) ───▶ NodeData (direct field mapping)
+Render input (AnyNodeData) ─────────▶ Source text (template expansion)
 ```
 
-Each generated builder provides:
-- **Fluent setters** — `builder.body(value).returnType(value)`
-- **Rest params** for array fields — `ir.block(stmt1, stmt2)` not `ir.block([stmt1, stmt2])`
-- **`.from()` declarative API** — `ir.fn.from({ name: 'main', body: block })` with precise types
-- **`renderImpl(ctx?)`** — grammar-rule-driven rendering
-- **`build(ctx?)`** — produces plain-object IR node
-- **`toCST(offset?, ctx?)`** — produces lightweight CST with positions
+## Override DSL
+
+Grammar maintainers author `packages/<lang>/overrides.ts` to patch field labels and declare structural roles:
+
+```ts
+// packages/python/overrides.ts
+import base from 'tree-sitter-python/grammar.js'
+import { transform, role, enrich, field } from '../codegen/src/dsl/index.ts'
+
+export default grammar(enrich(base), {
+  name: 'python',
+  rules: {
+    _indent: ($) => role($._indent, 'indent'),
+    _dedent: ($) => role($._dedent, 'dedent'),
+
+    conditional_expression: ($, original) => transform(original, {
+      0: field('body'),
+      2: field('condition'),
+      4: field('alternative'),
+    }),
+  },
+})
+```
+
+## Development
+
+```bash
+pnpm install                 # install dependencies
+pnpm test                    # run all tests (1,121 passing)
+pnpm -r run type-check       # type-check all packages
+
+# Generate a language package
+npx tsx packages/codegen/src/cli.ts --grammar rust --all --output packages/rust/src
+npx tsx packages/codegen/src/cli.ts --grammar python --all --output packages/python/src
+npx tsx packages/codegen/src/cli.ts --grammar typescript --all --output packages/typescript/src
+```
+
+## Planned Work
+
+- **Override-compiled parser** (spec 007) — compile override grammars to WASM parsers so parse trees carry all field labels natively, eliminating runtime field-promotion heuristics
+- **Nested-alias polymorphs** — express polymorphic rules as nested aliases via `transform()`, enabling parse-tree-level variant discrimination
+- **Link cleanup** — delete `inferFieldNames` mutation and `promotePolymorph` from Link once the override-compiled parser carries all field information
 
 ## License
 

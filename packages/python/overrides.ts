@@ -9,21 +9,28 @@
 
 // @ts-nocheck — grammar.js is untyped
 import base from '../../node_modules/.pnpm/tree-sitter-python@0.25.0/node_modules/tree-sitter-python/grammar.js'
+import { transform, role, enrich, field } from '../codegen/src/dsl/index.ts'
 
-export default grammar(base, {
+export default grammar(enrich(base), {
     name: 'python',
+    // Structural-whitespace role bindings — declared inline in the
+    // externals callback. `role(symbolRef, name)` returns the symbol
+    // unchanged (so externals still receives a valid token reference)
+    // and records the binding on a per-grammar accumulator that Link
+    // reads to drive symbol resolution. No more dummy `_indent` rules.
+    externals: ($, prev) => {
+        // Mark existing base externals with sittir roles. role() records
+        // the binding as a side-effect (sittir runtime) and returns the
+        // symbol unchanged. Returning `prev` directly avoids duplicating
+        // the externals list — tree-sitter's grammar() doesn't dedupe,
+        // so spreading prev plus role() returns would emit each token
+        // twice and the generated parser.c would fail to compile.
+        role($._indent,  'indent')
+        role($._dedent,  'dedent')
+        role($._newline, 'newline')
+        return prev
+    },
     rules: {
-        // Structural-whitespace roles — the three tree-sitter-python
-        // external tokens that drive indent-sensitive parsing. Declaring
-        // them as `role(...)` tells Link's symbol resolver to inline
-        // references as structural-whitespace directives (real newlines
-        // / indents in the render templates). The pipeline no longer
-        // hardcodes `_indent` / `_dedent` / `_newline` — a grammar with
-        // different external names just declares the mapping here.
-        _indent: ($) => role('indent'),
-        _dedent: ($) => role('dedent'),
-        _newline: ($) => role('newline'),
-
         // as_pattern: 1 field(s)
         as_pattern: ($, original) => transform(original, {
             0: field('expression'), // expression | case_pattern | identifier [struct=0]

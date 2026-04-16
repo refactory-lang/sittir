@@ -1,13 +1,33 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, beforeAll, afterAll } from 'vitest'
 import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import {
     seq, choice, optional, repeat, repeat1,
     field, token, prec, normalize,
-    createProxy, transform, insert, replace,
+    createProxy,
     evaluate,
 } from '../compiler/evaluate.ts'
+import { transform, insert, replace } from '../dsl/transform.ts'
 import type { SymbolRef, RawGrammar } from '../compiler/rule.ts'
+
+// Install sittir's lowercase DSL primitives as globals so transform()'s
+// native-dsl delegation paths can reach them when this test imports
+// transform directly (bypassing evaluate.ts's runtime injection).
+const g = globalThis as Record<string, unknown>
+const savedGlobals: Record<string, unknown> = {}
+beforeAll(() => {
+    const fns = { seq, choice, optional, repeat, repeat1, field, token, prec }
+    for (const [k, v] of Object.entries(fns)) {
+        savedGlobals[k] = g[k]
+        g[k] = v
+    }
+})
+afterAll(() => {
+    for (const [k, v] of Object.entries(savedGlobals)) {
+        if (v === undefined) delete g[k]
+        else g[k] = v
+    }
+})
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url))
 const fixture = (name: string) => resolve(__dirname, 'fixtures', name)
@@ -299,7 +319,7 @@ describe('Evaluate — DSL functions', () => {
         }
 
         it('replaces content at a position', () => {
-            const result = replace(original, 2, { type: 'string', value: '.' })
+            const result = replace(original, 2, { type: 'string', value: '.' } as any)
             expect((result as any).members[2]).toEqual({ type: 'string', value: '.' })
         })
 
@@ -336,12 +356,24 @@ describe('Evaluate — DSL functions', () => {
 
 describe('Evaluate — edge cases', () => {
     describe('T008a — transform out of bounds', () => {
-        it('skips out-of-bounds positions without crashing', () => {
-            const original: any = { type: 'seq', members: [{ type: 'string', value: 'a' }] }
-            const result = transform(original, { 99: field('x', 'y') })
-            // Out-of-bounds patches are silently skipped
-            expect((result as any).members).toHaveLength(1)
-            expect((result as any).members[0]).toEqual({ type: 'string', value: 'a' })
+        it('throws on out-of-bounds positions (matches path-mode strictness)', () => {
+            // Post-review fix: flat mode used to silently skip OOB,
+            // which was a footgun when path mode throws. Now both
+            // modes throw so typos surface immediately.
+            const original: any = { type: 'seq', members: [
+                { type: 'string', value: 'a' },
+                { type: 'string', value: 'b' },
+            ] }
+            expect(() => transform(original, { 99: field('x', 'y') }))
+                .toThrow(/index 99 out of bounds/)
+        })
+
+        it('throws on non-numeric flat keys', () => {
+            const original: any = { type: 'seq', members: [
+                { type: 'string', value: 'a' },
+            ] }
+            expect(() => transform(original, { '1a': field('x', 'y') }))
+                .toThrow(/invalid flat-positional key/)
         })
     })
 
@@ -393,7 +425,7 @@ describe('Evaluate — edge cases', () => {
         })
 
         it('replace substitutes content entirely', () => {
-            const result = replace(original, 1, { type: 'symbol', name: 'new_body' })
+            const result = replace(original, 1, { type: 'symbol', name: 'new_body' } as any)
             expect((result as any).members[1]).toEqual({ type: 'symbol', name: 'new_body' })
         })
 

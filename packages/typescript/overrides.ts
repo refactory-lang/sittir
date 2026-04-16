@@ -9,8 +9,9 @@
 
 // @ts-nocheck — grammar.js is untyped
 import base from '../../node_modules/.pnpm/tree-sitter-typescript@0.23.2/node_modules/tree-sitter-typescript/tsx/grammar.js'
+import { transform, enrich, field } from '../codegen/src/dsl/index.ts'
 
-export default grammar(base, {
+export default grammar(enrich(base), {
     name: 'typescript',
     rules: {
         // abstract_class_declaration: wrap pos 5 (class_heritage choice).

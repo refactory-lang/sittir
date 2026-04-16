@@ -26,7 +26,12 @@ import { isHiddenKind } from './evaluate.ts'
 
 export function link(raw: RawGrammar, include?: IncludeFilter): LinkedGrammar {
     const supertypes = new Set(raw.supertypes)
-    const externalRoles = new Map<string, ExternalRole>()
+    // Seed from raw.externalRoles — populated by `evaluate.ts`'s
+    // grammarFn from `role()` calls inside the override file's
+    // externals/rules callbacks. Falls back to the legacy
+    // structural-detection path in `resolveRule` for grammars that
+    // still declare `_indent: ($) => role('indent')` style dummy rules.
+    const externalRoles = new Map<string, ExternalRole>(raw.externalRoles ?? [])
     const references = [...raw.references]
 
     // Resolve include defaults: undefined means "include everything".
@@ -144,23 +149,14 @@ export function link(raw: RawGrammar, include?: IncludeFilter): LinkedGrammar {
         if (applied) rules[name] = rewritten
     }
 
-    // Keyword-prefix promotion — `optional(keywordString)` sitting as a
-    // seq member becomes `field(keyword, 'keyword', source: 'inferred')`.
-    // This surfaces things like python's `optional('async')` on
-    // `function_definition` / `for_statement` / `with_statement`, rust's
-    // `optional('move')` on `async_block`, etc. as first-class factory
-    // parameters so factories can round-trip the prefix instead of
-    // dropping it as an anonymous child the factory signature doesn't
-    // know about.
-    //
-    // Only runs when field inference is enabled — same gate as symbol
-    // name inference above. Skipped when the rule already carries a
-    // field with the same name (override pre-empts auto-promotion).
-    if (applyInferred) {
-        for (const [name, rule] of Object.entries(rules)) {
-            rules[name] = promoteOptionalKeywordFields(rule)
-        }
-    }
+    // Keyword-prefix promotion moved to dsl/enrich.ts (spec 006).
+    // Previously this phase wrapped `optional(keywordString)` seq
+    // members in `field(keyword, ...)` to surface prefixes like
+    // python's `optional('async')` as first-class factory parameters.
+    // The same transformation now runs as enrich's
+    // `optionalKeywordPrefixPass` at pre-Evaluate time — override
+    // files that wrap their base in `enrich(base)` get it automatically,
+    // and the Link phase no longer mutates rules for this purpose.
 
     // Tag visible choices with `variant` wrappers — names every branch
     // and dedupes structurally identical ones. Hidden choices already
@@ -771,14 +767,19 @@ function resolveRule(
             return resolveRule(rule.content, currentName, allRules, supertypes, externalRoles)
 
         case 'symbol': {
-            // Role-annotated rules: when a grammar (or its overrides)
-            // declares `_foo: ($) => role('indent')`, the rule body is
-            // a direct `indent`/`dedent`/`newline` node. Any reference
-            // to `$._foo` should inline that structural-whitespace
-            // directive so the template emitter renders real newlines/
-            // indents. This replaces the earlier name-match on
-            // `_indent` / `_dedent` / `_newline` — grammars can use any
-            // naming convention, the mapping flows through overrides.
+            // Pre-bound role lookup: when the override declared the
+            // role inline via `role($._indent, 'indent')` in externals,
+            // raw.externalRoles seeded the map with the binding before
+            // resolveRule ran. Inline a role node so template emitters
+            // render real newlines/indents.
+            const preBound = externalRoles.get(rule.name)
+            if (preBound) {
+                return { type: preBound.role } as Rule
+            }
+            // Legacy structural detection: when a grammar declares a
+            // dummy rule like `_foo: ($) => role('indent')`, the rule
+            // body is a direct `indent`/`dedent`/`newline` node.
+            // Inline it and record the binding for downstream consumers.
             const target = allRules[rule.name]
             if (target && (target.type === 'indent' || target.type === 'dedent' || target.type === 'newline')) {
                 externalRoles.set(rule.name, { role: target.type })
@@ -1310,75 +1311,6 @@ function inferFieldNames(references: SymbolRef[]): Map<string, InferredName> {
  * whether the walker actually mutated anything (always false when
  * `apply` is false, true only when at least one wrap happened).
  */
-/**
- * Walk a rule tree and wrap `optional(keywordString)` seq members as
- * `field(keyword, 'keyword', source: 'inferred')`. This turns
- * anonymous prefix keywords (python's `async`, rust's `move`, etc.)
- * into first-class fields so factories carry them through the
- * camelCase config surface. The word-shape check isn't applied here
- * because Link doesn't have the grammar's `word` matcher available —
- * instead we gate on `/^[A-Za-z_][A-Za-z0-9_]*$/` (an identifier-shape
- * screen that matches keywords cross-grammar). Non-identifier-shape
- * strings like `,` / `;` / `::` stay as anonymous delimiters.
- *
- * Skips seq members inside an existing `field()` wrapper (the outer
- * field already owns the slot) and avoids name collisions with other
- * fields in the same seq.
- */
-function promoteOptionalKeywordFields(rule: Rule): Rule {
-    const isKeywordShape = (s: string): boolean => /^[A-Za-z_][A-Za-z0-9_]*$/.test(s)
-
-    const walk = (r: Rule, insideField: boolean): Rule => {
-        switch (r.type) {
-            case 'seq': {
-                // First pass: collect names already claimed by existing
-                // field() wrappers so auto-promotion doesn't clash.
-                const claimed = new Set<string>()
-                for (const m of r.members) {
-                    if (m.type === 'field') claimed.add(m.name)
-                }
-                const members = r.members.map(m => {
-                    // optional(keywordString) at a seq position →
-                    // field(keyword, keywordString, source: inferred)
-                    if (m.type === 'optional' && m.content.type === 'string') {
-                        const kw = m.content.value
-                        if (isKeywordShape(kw) && !claimed.has(kw)) {
-                            claimed.add(kw)
-                            return {
-                                type: 'optional',
-                                content: {
-                                    type: 'field',
-                                    name: kw,
-                                    content: { type: 'string', value: kw },
-                                    source: 'inferred',
-                                },
-                            } as Rule
-                        }
-                    }
-                    return walk(m, insideField)
-                })
-                return { ...r, members }
-            }
-            case 'choice':
-                return { ...r, members: r.members.map(m => walk(m, insideField)) }
-            case 'optional':
-            case 'repeat':
-            case 'repeat1':
-            case 'variant':
-            case 'clause':
-            case 'group':
-            case 'token':
-            case 'terminal':
-                return { ...r, content: walk((r as { content: Rule }).content, insideField) }
-            case 'field':
-                return { ...r, content: walk(r.content, true) }
-            default:
-                return r
-        }
-    }
-    return walk(rule, false)
-}
-
 function applyInferredFields(
     rule: Rule,
     ruleName: string,
