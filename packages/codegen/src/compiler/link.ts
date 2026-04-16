@@ -19,6 +19,7 @@ import type {
 } from './rule.ts'
 import { deriveFields, hasAnyField, hasAnyChild } from './rule.ts'
 import { isHiddenKind } from './evaluate.ts'
+import type { PolymorphVariant } from '../dsl/synthetic-rules.ts'
 
 // ---------------------------------------------------------------------------
 // link() — main entry point
@@ -176,6 +177,15 @@ export function link(raw: RawGrammar, include?: IncludeFilter): LinkedGrammar {
                 applied: false,
             })
         }
+    }
+
+    // Override-source polymorph classification — variant() metadata.
+    // Per feedback (memory: feedback_polymorph_in_link): classification
+    // belongs in Link, not Optimize. variant() in transform patches
+    // produces PolymorphVariant entries during evaluate; here we wrap
+    // the parent rule as a PolymorphRule with `source: 'override'`.
+    if (raw.polymorphVariants?.length) {
+        applyOverridePolymorphs(rules, raw.polymorphVariants, derivations)
     }
 
     // Hoist `indent` markers into their sibling/target repeats as
@@ -467,6 +477,72 @@ export interface VariantChoiceLocation {
     prefix: Rule[]
     /** Members of the outer seq that appear after the choice. */
     suffix: Rule[]
+}
+
+// ---------------------------------------------------------------------------
+// applyOverridePolymorphs — variant() metadata → PolymorphRule(source:'override')
+// ---------------------------------------------------------------------------
+//
+// variant() in transform patches registers (parent, child) entries during
+// evaluate. Here we look up the parent rule, find the choice with
+// alias-symbol members matching `${parentKind}_${child}`, and wrap as
+// PolymorphRule with `source: 'override'`.
+//
+// Form names use the SHORT child suffix from variant() — not the
+// tagVariants-derived names — so generated factories/types align with
+// what the user wrote. Mutates `rules` in place; logs to derivations.
+
+export function applyOverridePolymorphs(
+    rules: Record<string, Rule>,
+    variants: PolymorphVariant[],
+    derivations: DerivationLog,
+): void {
+    const parentToChildren = new Map<string, string[]>()
+    for (const pv of variants) {
+        const existing = parentToChildren.get(pv.parent) ?? []
+        existing.push(pv.child)
+        parentToChildren.set(pv.parent, existing)
+    }
+
+    for (const [parentKind, children] of parentToChildren) {
+        const rule = rules[parentKind]
+        if (!rule || rule.type === 'polymorph') continue
+
+        const found = findVariantChoice(rule)
+        if (!found) continue
+
+        const forms = children.map(child => {
+            const fullName = `${parentKind}_${child}`
+            const variantMember = found.choice.members.find(m => {
+                if (m.type === 'variant') {
+                    const sym = m.content
+                    return sym.type === 'symbol' && sym.name === fullName
+                }
+                return m.type === 'symbol' && m.name === fullName
+            })
+
+            const content = variantMember?.type === 'variant'
+                ? variantMember.content
+                : variantMember ?? ({ type: 'symbol', name: fullName } as Rule)
+            const fused = found.prefix.length > 0 || found.suffix.length > 0
+                ? { type: 'seq' as const, members: [...found.prefix, content, ...found.suffix] } as Rule
+                : content
+
+            return { name: child, content: fused }
+        })
+
+        rules[parentKind] = {
+            type: 'polymorph',
+            forms,
+            source: 'override',
+        } satisfies PolymorphRule
+
+        derivations.promotedRules.push({
+            kind: parentKind,
+            classification: 'polymorph',
+            applied: true,
+        })
+    }
 }
 
 export function findVariantChoice(rule: Rule): VariantChoiceLocation | null {

@@ -74,6 +74,7 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
                                 `assemble: kind '${kind}' classified as polymorph but rule.type=${rule.type}. ` +
                                 `promotePolymorph in Optimize should have wrapped it.`,
                             ) })()
+                const polySource = rule.type === 'polymorph' ? (rule.source === 'override' ? 'override' : 'promoted') : 'promoted'
                 const nameCounts = new Map<string, number>()
                 const forms: AssembledGroup[] = polyForms.map((form) => {
                     // Disambiguate duplicate form names (two `expression` variants
@@ -81,7 +82,15 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
                     const seen = nameCounts.get(form.name) ?? 0
                     nameCounts.set(form.name, seen + 1)
                     const disambiguated = seen === 0 ? form.name : `${form.name}${seen + 1}`
-                    const formKind = `${kind}_${disambiguated}`
+                    // For source='override' polymorphs, the form kind
+                    // `${kind}_${variant}` collides with the real visible
+                    // variant child kind (e.g., 'assignment_eq' is a real
+                    // node in the parse tree). Disambiguate the form's
+                    // symbolic names with a 'Form' suffix so factories.ts /
+                    // types.ts don't collide with the variant child interface.
+                    const formKind = polySource === 'override'
+                        ? `${kind}__form_${disambiguated}`
+                        : `${kind}_${disambiguated}`
                     const formNames = nameNode(formKind)
                     // Form content is a sub-rule synthesised by
                     // Optimize's polymorph promotion — it isn't a
@@ -100,8 +109,18 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
                     })
                 })
                 for (const form of forms) nodes.set(form.kind, form)
+                // For source='override' polymorphs, extract the variant
+                // child kinds from form contents (each form's content has
+                // a $.variant_child_kind symbol reference inside the
+                // fused seq). These are the real visible kinds the
+                // children union on the parent polymorph references.
+                const variantChildKinds = polySource === 'override'
+                    ? polyForms.map(f => extractVariantChildSymbol(f.content)).filter((s): s is string => !!s)
+                    : []
                 nodes.set(kind, new AssembledPolymorph({
                     kind, typeName, factoryName, irKey, forms,
+                    source: polySource,
+                    variantChildKinds,
                 }))
                 break
             }
@@ -780,6 +799,25 @@ export function nameField(fieldName: string): { propertyName: string; paramName:
     let paramName = propertyName
     if (TS_RESERVED_WORDS.has(paramName)) paramName = `${paramName}_`
     return { propertyName, paramName }
+}
+
+// ---------------------------------------------------------------------------
+// extractVariantChildSymbol — recover the variant child kind name from a
+// source='override' polymorph form's content. Each form's content is
+// `seq(prefix..., $.variant_child_kind, suffix...)` (after Link's fuse)
+// or just `$.variant_child_kind` directly. Returns the symbol's name.
+// ---------------------------------------------------------------------------
+
+function extractVariantChildSymbol(rule: Rule): string | null {
+    if (rule.type === 'symbol') return rule.name
+    if (rule.type === 'seq') {
+        for (const m of rule.members) {
+            if (m.type === 'symbol') return m.name
+            if (m.type === 'variant' && m.content.type === 'symbol') return m.content.name
+        }
+    }
+    if (rule.type === 'variant' && rule.content.type === 'symbol') return rule.content.name
+    return null
 }
 
 // ---------------------------------------------------------------------------

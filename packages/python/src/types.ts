@@ -138,9 +138,6 @@ export const enum SyntaxKind {
   ComparisonOperator = 'comparison_operator',
   Lambda = 'lambda',
   LambdaWithinForInClause = 'lambda_within_for_in_clause',
-  AssignmentEq = 'assignment_eq',
-  AssignmentType = 'assignment_type',
-  AssignmentTyped = 'assignment_typed',
   Assignment = 'assignment',
   AugmentedAssignment = 'augmented_assignment',
   PatternList = 'pattern_list',
@@ -182,6 +179,9 @@ export const enum SyntaxKind {
   _AssignmentType = '_assignment_type',
   _AssignmentTyped = '_assignment_typed',
   AsPatternTarget = 'as_pattern_target',
+  AssignmentEq = 'assignment_eq',
+  AssignmentType = 'assignment_type',
+  AssignmentTyped = 'assignment_typed',
   FormatExpression = 'format_expression',
   ImportPrefix = 'import_prefix',
   PassStatement = 'pass_statement',
@@ -972,29 +972,7 @@ export interface LambdaWithinForInClause {
   };
 }
 
-export interface AssignmentEq {
-  readonly type: 'assignment_eq';
-  readonly fields: {
-    readonly right: RightHandSide;
-  };
-}
-
-export interface AssignmentType {
-  readonly type: 'assignment_type';
-  readonly fields: {
-    readonly type: Type;
-  };
-}
-
-export interface AssignmentTyped {
-  readonly type: 'assignment_typed';
-  readonly fields: {
-    readonly type: Type;
-    readonly right: RightHandSide;
-  };
-}
-
-export interface AssignmentEq {
+export interface AssignmentUFormEq {
   readonly type: 'assignment';
   readonly fields: {
     readonly left: LeftHandSide;
@@ -1002,7 +980,7 @@ export interface AssignmentEq {
   readonly children: readonly [AssignmentEq];
 }
 
-export interface AssignmentType {
+export interface AssignmentUFormType {
   readonly type: 'assignment';
   readonly fields: {
     readonly left: LeftHandSide;
@@ -1010,7 +988,7 @@ export interface AssignmentType {
   readonly children: readonly [AssignmentType];
 }
 
-export interface AssignmentTyped {
+export interface AssignmentUFormTyped {
   readonly type: 'assignment';
   readonly fields: {
     readonly left: LeftHandSide;
@@ -1018,7 +996,7 @@ export interface AssignmentTyped {
   readonly children: readonly [AssignmentTyped];
 }
 
-export type Assignment = AssignmentEq | AssignmentType | AssignmentTyped;
+export type Assignment = AssignmentUFormEq | AssignmentUFormType | AssignmentUFormTyped;
 export interface AugmentedAssignment {
   readonly type: 'augmented_assignment';
   readonly fields: {
@@ -1299,6 +1277,28 @@ export interface AsPatternTarget {
   readonly children: readonly [ComparisonOperator | NotOperator | BooleanOperator | Lambda | PrimaryExpression | ConditionalExpression | NamedExpression | AsPattern];
 }
 
+export interface AssignmentEq {
+  readonly type: 'assignment_eq';
+  readonly fields: {
+    readonly right: RightHandSide;
+  };
+}
+
+export interface AssignmentType {
+  readonly type: 'assignment_type';
+  readonly fields: {
+    readonly type: Type;
+  };
+}
+
+export interface AssignmentTyped {
+  readonly type: 'assignment_typed';
+  readonly fields: {
+    readonly type: Type;
+    readonly right: RightHandSide;
+  };
+}
+
 export interface FormatExpression {
   readonly type: 'format_expression';
   readonly fields: {
@@ -1418,13 +1418,10 @@ export type IsNotConfig = ConfigOf<IsNot>;
 export type ComparisonOperatorConfig = ConfigOf<ComparisonOperator>;
 export type LambdaConfig = ConfigOf<Lambda>;
 export type LambdaWithinForInClauseConfig = ConfigOf<LambdaWithinForInClause>;
-export type AssignmentEqConfig = ConfigOf<AssignmentEq>;
-export type AssignmentTypeConfig = ConfigOf<AssignmentType>;
-export type AssignmentTypedConfig = ConfigOf<AssignmentTyped>;
-export type AssignmentEqConfig = ConfigOf<AssignmentEq>;
-export type AssignmentTypeConfig = ConfigOf<AssignmentType>;
-export type AssignmentTypedConfig = ConfigOf<AssignmentTyped>;
-export type AssignmentConfig = AssignmentEqConfig | AssignmentTypeConfig | AssignmentTypedConfig;
+export type AssignmentUFormEqConfig = ConfigOf<AssignmentUFormEq>;
+export type AssignmentUFormTypeConfig = ConfigOf<AssignmentUFormType>;
+export type AssignmentUFormTypedConfig = ConfigOf<AssignmentUFormTyped>;
+export type AssignmentConfig = AssignmentUFormEqConfig | AssignmentUFormTypeConfig | AssignmentUFormTypedConfig;
 export type AugmentedAssignmentConfig = ConfigOf<AugmentedAssignment>;
 export type PatternListConfig = ConfigOf<PatternList>;
 export type YieldConfig = ConfigOf<Yield>;
@@ -1465,6 +1462,9 @@ export type _AssignmentEqConfig = ConfigOf<_AssignmentEq>;
 export type _AssignmentTypeConfig = ConfigOf<_AssignmentType>;
 export type _AssignmentTypedConfig = ConfigOf<_AssignmentTyped>;
 export type AsPatternTargetConfig = ConfigOf<AsPatternTarget>;
+export type AssignmentEqConfig = ConfigOf<AssignmentEq>;
+export type AssignmentTypeConfig = ConfigOf<AssignmentType>;
+export type AssignmentTypedConfig = ConfigOf<AssignmentTyped>;
 export type FormatExpressionConfig = ConfigOf<FormatExpression>;
 
 // Tree types
@@ -1549,10 +1549,10 @@ export interface IsNotTree extends AnyTreeNode { readonly type: "_is_not"; }
 export interface ComparisonOperatorTree extends TreeNode<'comparison_operator'> {}
 export interface LambdaTree extends TreeNode<'lambda'> {}
 export interface LambdaWithinForInClauseTree extends AnyTreeNode { readonly type: "lambda_within_for_in_clause"; }
-export interface AssignmentEqTree extends TreeNode<'assignment_eq'> {}
-export interface AssignmentTypeTree extends TreeNode<'assignment_type'> {}
-export interface AssignmentTypedTree extends TreeNode<'assignment_typed'> {}
 export interface AssignmentTree extends TreeNode<'assignment'> {}
+export interface AssignmentUFormEqTree extends TreeNode<'assignment'> {}
+export interface AssignmentUFormTypeTree extends TreeNode<'assignment'> {}
+export interface AssignmentUFormTypedTree extends TreeNode<'assignment'> {}
 export interface AugmentedAssignmentTree extends TreeNode<'augmented_assignment'> {}
 export interface PatternListTree extends TreeNode<'pattern_list'> {}
 export interface YieldTree extends TreeNode<'yield'> {}
@@ -1593,6 +1593,9 @@ export interface _AssignmentEqTree extends AnyTreeNode { readonly type: "_assign
 export interface _AssignmentTypeTree extends AnyTreeNode { readonly type: "_assignment_type"; }
 export interface _AssignmentTypedTree extends AnyTreeNode { readonly type: "_assignment_typed"; }
 export interface AsPatternTargetTree extends AnyTreeNode { readonly type: "as_pattern_target"; }
+export interface AssignmentEqTree extends TreeNode<'assignment_eq'> {}
+export interface AssignmentTypeTree extends TreeNode<'assignment_type'> {}
+export interface AssignmentTypedTree extends TreeNode<'assignment_typed'> {}
 export interface FormatExpressionTree extends TreeNode<'format_expression'> {}
 export interface ImportPrefixTree extends TreeNode<'import_prefix'> {}
 export interface PassStatementTree extends AnyTreeNode { readonly type: "pass_statement"; }
@@ -1737,10 +1740,7 @@ export type LooseIsNot = FromInputOf<IsNot, LeafScalarMap, LeafStringMap>;
 export type LooseComparisonOperator = FromInputOf<ComparisonOperator, LeafScalarMap, LeafStringMap>;
 export type LooseLambda = FromInputOf<Lambda, LeafScalarMap, LeafStringMap>;
 export type LooseLambdaWithinForInClause = FromInputOf<LambdaWithinForInClause, LeafScalarMap, LeafStringMap>;
-export type LooseAssignmentEq = FromInputOf<AssignmentEq, LeafScalarMap, LeafStringMap>;
-export type LooseAssignmentType = FromInputOf<AssignmentType, LeafScalarMap, LeafStringMap>;
-export type LooseAssignmentTyped = FromInputOf<AssignmentTyped, LeafScalarMap, LeafStringMap>;
-export type LooseAssignment = FromInputOf<AssignmentEq, LeafScalarMap, LeafStringMap> | FromInputOf<AssignmentType, LeafScalarMap, LeafStringMap> | FromInputOf<AssignmentTyped, LeafScalarMap, LeafStringMap>;
+export type LooseAssignment = FromInputOf<AssignmentUFormEq, LeafScalarMap, LeafStringMap> | FromInputOf<AssignmentUFormType, LeafScalarMap, LeafStringMap> | FromInputOf<AssignmentUFormTyped, LeafScalarMap, LeafStringMap>;
 export type LooseAugmentedAssignment = FromInputOf<AugmentedAssignment, LeafScalarMap, LeafStringMap>;
 export type LoosePatternList = FromInputOf<PatternList, LeafScalarMap, LeafStringMap>;
 export type LooseYield = FromInputOf<Yield, LeafScalarMap, LeafStringMap>;
@@ -1781,6 +1781,9 @@ export type Loose_AssignmentEq = FromInputOf<_AssignmentEq, LeafScalarMap, LeafS
 export type Loose_AssignmentType = FromInputOf<_AssignmentType, LeafScalarMap, LeafStringMap>;
 export type Loose_AssignmentTyped = FromInputOf<_AssignmentTyped, LeafScalarMap, LeafStringMap>;
 export type LooseAsPatternTarget = FromInputOf<AsPatternTarget, LeafScalarMap, LeafStringMap>;
+export type LooseAssignmentEq = FromInputOf<AssignmentEq, LeafScalarMap, LeafStringMap>;
+export type LooseAssignmentType = FromInputOf<AssignmentType, LeafScalarMap, LeafStringMap>;
+export type LooseAssignmentTyped = FromInputOf<AssignmentTyped, LeafScalarMap, LeafStringMap>;
 export type LooseFormatExpression = FromInputOf<FormatExpression, LeafScalarMap, LeafStringMap>;
 
 // Supertype unions
@@ -2065,9 +2068,6 @@ export type PythonNode =
   | ComparisonOperator
   | Lambda
   | LambdaWithinForInClause
-  | AssignmentEq
-  | AssignmentType
-  | AssignmentTyped
   | Assignment
   | AugmentedAssignment
   | PatternList
@@ -2109,6 +2109,9 @@ export type PythonNode =
   | _AssignmentType
   | _AssignmentTyped
   | AsPatternTarget
+  | AssignmentEq
+  | AssignmentType
+  | AssignmentTyped
   | FormatExpression
 ;
 
@@ -2192,9 +2195,6 @@ export interface KindMap {
   'comparison_operator': ComparisonOperator;
   'lambda': Lambda;
   'lambda_within_for_in_clause': LambdaWithinForInClause;
-  'assignment_eq': AssignmentEq;
-  'assignment_type': AssignmentType;
-  'assignment_typed': AssignmentTyped;
   'assignment': Assignment;
   'augmented_assignment': AugmentedAssignment;
   'pattern_list': PatternList;
@@ -2236,6 +2236,9 @@ export interface KindMap {
   '_assignment_type': _AssignmentType;
   '_assignment_typed': _AssignmentTyped;
   'as_pattern_target': AsPatternTarget;
+  'assignment_eq': AssignmentEq;
+  'assignment_type': AssignmentType;
+  'assignment_typed': AssignmentTyped;
   'format_expression': FormatExpression;
   'import_prefix': ImportPrefix;
   'pass_statement': PassStatement;
@@ -2266,7 +2269,7 @@ export interface KindMap {
 
 export interface VariantMap {
   '_match_block': { form0: MatchBlockForm0; form1: MatchBlockForm1 };
-  'assignment': { eq: AssignmentEq; type: AssignmentType; typed: AssignmentTyped };
+  'assignment': { eq: AssignmentUFormEq; type: AssignmentUFormType; typed: AssignmentUFormTyped };
 }
 
 export interface ConfigMap {
@@ -2349,9 +2352,6 @@ export interface ConfigMap {
   'comparison_operator': ComparisonOperatorConfig;
   'lambda': LambdaConfig;
   'lambda_within_for_in_clause': LambdaWithinForInClauseConfig;
-  'assignment_eq': AssignmentEqConfig;
-  'assignment_type': AssignmentTypeConfig;
-  'assignment_typed': AssignmentTypedConfig;
   'assignment': AssignmentConfig;
   'augmented_assignment': AugmentedAssignmentConfig;
   'pattern_list': PatternListConfig;
@@ -2393,6 +2393,9 @@ export interface ConfigMap {
   '_assignment_type': _AssignmentTypeConfig;
   '_assignment_typed': _AssignmentTypedConfig;
   'as_pattern_target': AsPatternTargetConfig;
+  'assignment_eq': AssignmentEqConfig;
+  'assignment_type': AssignmentTypeConfig;
+  'assignment_typed': AssignmentTypedConfig;
   'format_expression': FormatExpressionConfig;
 }
 
@@ -2476,9 +2479,6 @@ export interface LooseMap {
   'comparison_operator': LooseComparisonOperator;
   'lambda': LooseLambda;
   'lambda_within_for_in_clause': LooseLambdaWithinForInClause;
-  'assignment_eq': LooseAssignmentEq;
-  'assignment_type': LooseAssignmentType;
-  'assignment_typed': LooseAssignmentTyped;
   'assignment': LooseAssignment;
   'augmented_assignment': LooseAugmentedAssignment;
   'pattern_list': LoosePatternList;
@@ -2520,5 +2520,8 @@ export interface LooseMap {
   '_assignment_type': Loose_AssignmentType;
   '_assignment_typed': Loose_AssignmentTyped;
   'as_pattern_target': LooseAsPatternTarget;
+  'assignment_eq': LooseAssignmentEq;
+  'assignment_type': LooseAssignmentType;
+  'assignment_typed': LooseAssignmentTyped;
   'format_expression': LooseFormatExpression;
 }

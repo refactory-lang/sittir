@@ -1220,13 +1220,26 @@ export class AssembledContainer extends AssembledNodeBase {
 export class AssembledPolymorph extends AssembledNodeBase {
     readonly modelType = 'polymorph' as const
     readonly #forms: AssembledGroup[]
+    readonly source: 'promoted' | 'override'
+    /**
+     * For source='override' polymorphs: the visible variant child kinds
+     * (e.g., ['assignment_eq', 'assignment_type', 'assignment_typed']).
+     * These are real kinds in the parse tree (created by the alias() in
+     * transform patches) and need to appear as the children union on
+     * the parent polymorph's interface. Empty for source='promoted'.
+     */
+    readonly variantChildKinds: readonly string[]
 
     constructor(init: {
         kind: string; typeName: string; factoryName?: string; irKey?: string
         forms: AssembledGroup[]
+        source?: 'promoted' | 'override'
+        variantChildKinds?: readonly string[]
     }) {
         super(init)
         this.#forms = init.forms
+        this.source = init.source ?? 'promoted'
+        this.variantChildKinds = init.variantChildKinds ?? []
     }
 
     /** A polymorph's forms are hidden groups synthesized from the choice branches. */
@@ -1459,9 +1472,14 @@ export interface NodeMap {
 export function computePolymorphFormKinds(nodes: Map<string, AssembledNode>): Set<string> {
     const result = new Set<string>()
     for (const [, node] of nodes) {
-        if (node.modelType === 'polymorph') {
-            for (const form of node.forms) result.add(form.kind)
-        }
+        if (node.modelType !== 'polymorph') continue
+        // All polymorph form kinds need to be skipped from direct kind
+        // iteration — both promoted (synthesized `${parent}_${variant}`)
+        // and override (disambiguated `${parent}__form_${variant}`).
+        // The variant child kinds for source='override' polymorphs are
+        // distinct from form kinds (after disambiguation) and remain
+        // in nodes Map for normal branch emission.
+        for (const form of node.forms) result.add(form.kind)
     }
     return result
 }

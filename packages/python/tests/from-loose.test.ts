@@ -36,10 +36,13 @@ describe('loose from() — string input for leaf-typed fields (T052d-i)', () => 
 
 describe('loose from() — kind-tagged object dispatch (T052d-ii)', () => {
     it('object with `kind` field routes through _resolveByKind', () => {
-        const result = ir.assignmentEq({
+        // ir.assignment.eq → polymorph form factory (variant 'eq' on parent
+        // 'assignment'). Returns NodeData with type='assignment' wrapping a
+        // variant child of type='assignment_eq'.
+        const result = (ir.assignment as any).eq({
             left: 'x' as any,
             children: [{ type: 'assignment_eq', fields: { right: { kind: 'integer', text: '42' } } }] as any,
-        } as any) as any;
+        }) as any;
         expect(result.type).toBe('assignment');
     });
 });
@@ -60,7 +63,8 @@ describe('loose from() — NodeData passthrough still works', () => {
     it('pre-built NodeData is passed through unchanged', () => {
         const nodeData = ir.integer('42') as any;
         const child = { type: 'assignment_eq', fields: { right: nodeData } } as any;
-        const result = ir.assignmentEq({ left: 'x' as any, children: [child] } as any) as any;
+        // ir.assignment.eq → polymorph form factory (see T052d-ii test above).
+        const result = (ir.assignment as any).eq({ left: 'x' as any, children: [child] }) as any;
         expect(result.type).toBe('assignment');
     });
 });

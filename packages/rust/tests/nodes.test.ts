@@ -1567,10 +1567,142 @@ describe('primitive_type', () => {
   });
 });
 
+describe('range_expression_binary', () => {
+  it('factory produces correct type', () => {
+    const node = ir.rangeExpressionBinary({ start: { type: '_expression', text: 'test' } as any, operator: 'test' as any, end: { type: '_expression', text: 'test' } as any });
+    expect(node.type).toBe('range_expression_binary');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.rangeExpressionBinary({ start: { type: '_expression', text: 'test' } as any, operator: 'test' as any, end: { type: '_expression', text: 'test' } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('range_expression_postfix', () => {
+  it('factory produces correct type', () => {
+    const node = ir.rangeExpressionPostfix({ start: { type: '_expression', text: 'test' } as any, operator: 'test' as any });
+    expect(node.type).toBe('range_expression_postfix');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.rangeExpressionPostfix({ start: { type: '_expression', text: 'test' } as any, operator: 'test' as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('range_expression_prefix', () => {
+  it('factory produces correct type', () => {
+    const node = ir.rangeExpressionPrefix({ operator: 'test' as any, end: { type: '_expression', text: 'test' } as any });
+    expect(node.type).toBe('range_expression_prefix');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.rangeExpressionPrefix({ operator: 'test' as any, end: { type: '_expression', text: 'test' } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('range_expression_bare', () => {
+  it('factory produces correct type', () => {
+    const node = ir.rangeExpressionBare({ operator: 'test' as any });
+    expect(node.type).toBe('range_expression_bare');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.rangeExpressionBare({ operator: 'test' as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
 describe('let_chain', () => {
   it('factory produces correct type', () => {
     const node = ir.letChain();
     expect(node.type).toBe('let_chain');
+  });
+});
+
+describe('closure_expression_block', () => {
+  it('factory produces correct type', () => {
+    const node = ir.closureExpressionBlock({ body: { type: 'block', text: 'test' } as any });
+    expect(node.type).toBe('closure_expression_block');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.closureExpressionBlock({ body: { type: 'block', text: 'test' } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('closure_expression_expr', () => {
+  it('factory produces correct type', () => {
+    const node = ir.closureExpressionExpr({ body: { type: '_expression', text: 'test' } as any });
+    expect(node.type).toBe('closure_expression_expr');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.closureExpressionExpr({ body: { type: '_expression', text: 'test' } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('field_pattern_shorthand', () => {
+  it('factory produces correct type', () => {
+    const node = ir.fieldPatternShorthand({ name: 'test' as any });
+    expect(node.type).toBe('field_pattern_shorthand');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.fieldPatternShorthand({ name: 'test' as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('field_pattern_named', () => {
+  it('factory produces correct type', () => {
+    const node = ir.fieldPatternNamed({ name: { type: '_field_identifier', text: 'test' } as any, pattern: { type: '_pattern', text: 'test' } as any });
+    expect(node.type).toBe('field_pattern_named');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.fieldPatternNamed({ name: { type: '_field_identifier', text: 'test' } as any, pattern: { type: '_pattern', text: 'test' } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('range_pattern_left', () => {
+  it('right form produces correct type', () => {
+    const node = ir.rangePatternLeft.right({ left: { type: '_literal_pattern', text: 'test' } as any, right: { type: '_literal_pattern', text: 'test' } as any });
+    expect(node.type).toBe('range_pattern_left');
+  });
+  it('dotdot form produces correct type', () => {
+    const node = ir.rangePatternLeft.dotdot({ left: { type: '_literal_pattern', text: 'test' } as any });
+    expect(node.type).toBe('range_pattern_left');
+  });
+});
+
+describe('range_pattern_prefix', () => {
+  it('factory produces correct type', () => {
+    const node = ir.rangePatternPrefix({ right: { type: '_literal_pattern', text: 'test' } as any });
+    expect(node.type).toBe('range_pattern_prefix');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.rangePatternPrefix({ right: { type: '_literal_pattern', text: 'test' } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('or_pattern_binary', () => {
+  it('factory produces correct type', () => {
+    const node = ir.orPatternBinary({ left: { type: '_pattern', text: 'test' } as any, right: { type: '_pattern', text: 'test' } as any });
+    expect(node.type).toBe('or_pattern_binary');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.orPatternBinary({ left: { type: '_pattern', text: 'test' } as any, right: { type: '_pattern', text: 'test' } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('or_pattern_prefix', () => {
+  it('factory produces correct type', () => {
+    const node = ir.orPatternPrefix({ right: { type: '_pattern', text: 'test' } as any });
+    expect(node.type).toBe('or_pattern_prefix');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.orPatternPrefix({ right: { type: '_pattern', text: 'test' } as any });
+    expect(node.render().length).toBeGreaterThan(0);
   });
 });
 

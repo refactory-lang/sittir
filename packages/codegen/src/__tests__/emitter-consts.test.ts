@@ -9,6 +9,7 @@ function makeNodeMap(nodes: [string, any][]): NodeMap {
         signatures: { signatures: new Map() },
         projections: { projections: new Map() },
         derivations: { inferredFields: [], promotedRules: [], repeatedShapes: [] },
+        polymorphFormKinds: new Set(),
     }
 }
 

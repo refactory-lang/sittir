@@ -178,7 +178,7 @@ const _overrides = {
   "comparison_operator": {"fields":{"left":{"types":[{"type":"primary_expression","named":true}],"multiple":false,"required":true,"position":0},"comparators":{"types":[{"type":"primary_expression","named":true}],"multiple":true,"required":true,"position":1}}},
   "lambda": {"fields":{"lambda":{"types":[{"type":"lambda","named":false}],"multiple":false,"required":true,"position":0}}},
   "lambda_within_for_in_clause": {"fields":{"lambda":{"types":[{"type":"lambda","named":false}],"multiple":false,"required":true,"position":0}}},
-  "assignment": {"fields":{"left":{"types":[{"type":"_left_hand_side","named":true}],"multiple":false,"required":true,"position":0}}},
+  "assignment": {"fields":{"left":{"types":[{"type":"_left_hand_side","named":true}],"multiple":false,"required":false,"position":-1}}},
   "pattern_list": {"fields":{"pattern":{"types":[{"type":"pattern","named":true}],"multiple":false,"required":true,"position":0}}},
   "yield": {"fields":{"yield":{"types":[{"type":"yield","named":false}],"multiple":false,"required":true,"position":0}}},
   "slice": {"fields":{"start":{"types":[{"type":"expression","named":true}],"multiple":false,"required":false,"position":0},"stop":{"types":[{"type":"expression","named":true}],"multiple":false,"required":false,"position":1},"step":{"types":[{"type":"expression","named":true}],"multiple":false,"required":false,"position":2}}},
@@ -873,31 +873,6 @@ export function wrapLambdaWithinForInClause(data: _NodeData, tree: TreeHandle): 
   } as unknown as WrappedNode<LambdaWithinForInClause>;
 }
 
-export function wrapAssignmentEq(data: _NodeData, tree: TreeHandle): WrappedNode<AssignmentEq> {
-  return {
-    ...data,
-    get right() { return drillIn(data.fields?.['right'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  } as unknown as WrappedNode<AssignmentEq>;
-}
-
-export function wrapAssignmentType(data: _NodeData, tree: TreeHandle): WrappedNode<AssignmentType> {
-  return {
-    ...data,
-    get typeField() { return drillIn(data.fields?.['type'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  } as unknown as WrappedNode<AssignmentType>;
-}
-
-export function wrapAssignmentTyped(data: _NodeData, tree: TreeHandle): WrappedNode<AssignmentTyped> {
-  return {
-    ...data,
-    get typeField() { return drillIn(data.fields?.['type'], tree); },
-    get right() { return drillIn(data.fields?.['right'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  } as unknown as WrappedNode<AssignmentTyped>;
-}
-
 export function wrapAssignment(data: _NodeData, tree: TreeHandle): WrappedNode<Assignment> {
   return {
     ...data,
@@ -1207,6 +1182,31 @@ export function wrapAsPatternTarget(data: _NodeData, tree: TreeHandle): WrappedN
   } as unknown as WrappedNode<AsPatternTarget>;
 }
 
+export function wrapAssignmentEq(data: _NodeData, tree: TreeHandle): WrappedNode<AssignmentEq> {
+  return {
+    ...data,
+    get right() { return drillIn(data.fields?.['right'], tree); },
+    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<AssignmentEq>;
+}
+
+export function wrapAssignmentType(data: _NodeData, tree: TreeHandle): WrappedNode<AssignmentType> {
+  return {
+    ...data,
+    get typeField() { return drillIn(data.fields?.['type'], tree); },
+    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<AssignmentType>;
+}
+
+export function wrapAssignmentTyped(data: _NodeData, tree: TreeHandle): WrappedNode<AssignmentTyped> {
+  return {
+    ...data,
+    get typeField() { return drillIn(data.fields?.['type'], tree); },
+    get right() { return drillIn(data.fields?.['right'], tree); },
+    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<AssignmentTyped>;
+}
+
 export function wrapFormatExpression(data: _NodeData, tree: TreeHandle): WrappedNode<FormatExpression> {
   return {
     ...data,
@@ -1297,9 +1297,6 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'comparison_operator': (d, t) => wrapComparisonOperator(d, t),
   'lambda': (d, t) => wrapLambda(d, t),
   'lambda_within_for_in_clause': (d, t) => wrapLambdaWithinForInClause(d, t),
-  'assignment_eq': (d, t) => wrapAssignmentEq(d, t),
-  'assignment_type': (d, t) => wrapAssignmentType(d, t),
-  'assignment_typed': (d, t) => wrapAssignmentTyped(d, t),
   'assignment': (d, t) => wrapAssignment(d, t),
   'augmented_assignment': (d, t) => wrapAugmentedAssignment(d, t),
   'pattern_list': (d, t) => wrapPatternList(d, t),
@@ -1358,6 +1355,9 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '}': (d) => d,
   'except': (d) => d,
   'as_pattern_target': (d, t) => wrapAsPatternTarget(d, t),
+  'assignment_eq': (d, t) => wrapAssignmentEq(d, t),
+  'assignment_type': (d, t) => wrapAssignmentType(d, t),
+  'assignment_typed': (d, t) => wrapAssignmentTyped(d, t),
   'format_expression': (d, t) => wrapFormatExpression(d, t),
 };
 

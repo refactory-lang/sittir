@@ -238,7 +238,7 @@ const _overrides = {
   "loop_expression": {"fields":{"label":{"types":[{"type":"label","named":true}],"multiple":false,"required":false,"position":0}}},
   "for_expression": {"fields":{"label":{"types":[{"type":"label","named":true}],"multiple":false,"required":false,"position":0}}},
   "const_block": {"fields":{"const":{"types":[{"type":"const","named":false}],"multiple":false,"required":true,"position":0}}},
-  "closure_expression": {"fields":{"static":{"types":[],"multiple":false,"required":false,"position":0},"async":{"types":[],"multiple":false,"required":false,"position":1},"move":{"types":[],"multiple":false,"required":false,"position":2}}},
+  "closure_expression": {"fields":{"static":{"types":[],"multiple":false,"required":false,"position":-1},"async":{"types":[],"multiple":false,"required":false,"position":-1},"move":{"types":[],"multiple":false,"required":false,"position":-1}}},
   "label": {"fields":{"identifier":{"types":[{"type":"identifier","named":true}],"multiple":false,"required":true,"position":0}}},
   "break_expression": {"fields":{"break":{"types":[{"type":"break","named":false}],"multiple":false,"required":true,"position":0},"label":{"types":[{"type":"label","named":true}],"multiple":false,"required":false,"position":1},"expression":{"types":[{"type":"_expression","named":true}],"multiple":false,"required":false,"position":2}}},
   "continue_expression": {"fields":{"continue":{"types":[{"type":"continue","named":false}],"multiple":false,"required":true,"position":0},"label":{"types":[{"type":"label","named":true}],"multiple":false,"required":false,"position":1}}},
@@ -248,7 +248,7 @@ const _overrides = {
   "gen_block": {"fields":{"gen":{"types":[{"type":"gen","named":false}],"multiple":false,"required":true,"position":0},"move":{"types":[{"type":"move","named":false}],"multiple":false,"required":false,"position":1},"block":{"types":[{"type":"block","named":true}],"multiple":false,"required":true,"position":2}}},
   "try_block": {"fields":{"try":{"types":[{"type":"try","named":false}],"multiple":false,"required":true,"position":0},"block":{"types":[{"type":"block","named":true}],"multiple":false,"required":true,"position":1}}},
   "block": {"fields":{"label":{"types":[{"type":"label","named":true}],"multiple":false,"required":false,"position":0}}},
-  "field_pattern": {"fields":{"ref":{"types":[{"type":"ref","named":false}],"multiple":false,"required":false,"position":0},"mutable_specifier":{"types":[{"type":"mutable_specifier","named":true}],"multiple":false,"required":false,"position":1}}},
+  "field_pattern": {"fields":{"ref":{"types":[{"type":"ref","named":false}],"multiple":false,"required":false,"position":-1},"mutable_specifier":{"types":[{"type":"mutable_specifier","named":true}],"multiple":false,"required":false,"position":-1}}},
   "mut_pattern": {"fields":{"mutable_specifier":{"types":[{"type":"mutable_specifier","named":true}],"multiple":false,"required":true,"position":0},"pattern":{"types":[{"type":"_pattern","named":true}],"multiple":false,"required":true,"position":1}}},
   "ref_pattern": {"fields":{"ref":{"types":[{"type":"ref","named":false}],"multiple":false,"required":true,"position":0}}},
   "captured_pattern": {"fields":{"identifier":{"types":[{"type":"identifier","named":true}],"multiple":false,"required":true,"position":0},"pattern":{"types":[{"type":"_pattern","named":true}],"multiple":false,"required":true,"position":1}}},
@@ -1029,42 +1029,6 @@ export function wrapScopedTypeIdentifier(data: _NodeData, tree: TreeHandle): Wra
   } as unknown as WrappedNode<ScopedTypeIdentifier>;
 }
 
-export function wrapRangeExpressionBinary(data: _NodeData, tree: TreeHandle): WrappedNode<RangeExpressionBinary> {
-  return {
-    ...data,
-    get start() { return drillIn(data.fields?.['start'], tree); },
-    get operator() { return drillIn(data.fields?.['operator'], tree); },
-    get end() { return drillIn(data.fields?.['end'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  } as unknown as WrappedNode<RangeExpressionBinary>;
-}
-
-export function wrapRangeExpressionPostfix(data: _NodeData, tree: TreeHandle): WrappedNode<RangeExpressionPostfix> {
-  return {
-    ...data,
-    get start() { return drillIn(data.fields?.['start'], tree); },
-    get operator() { return drillIn(data.fields?.['operator'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  } as unknown as WrappedNode<RangeExpressionPostfix>;
-}
-
-export function wrapRangeExpressionPrefix(data: _NodeData, tree: TreeHandle): WrappedNode<RangeExpressionPrefix> {
-  return {
-    ...data,
-    get operator() { return drillIn(data.fields?.['operator'], tree); },
-    get end() { return drillIn(data.fields?.['end'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  } as unknown as WrappedNode<RangeExpressionPrefix>;
-}
-
-export function wrapRangeExpressionBare(data: _NodeData, tree: TreeHandle): WrappedNode<RangeExpressionBare> {
-  return {
-    ...data,
-    get operator() { return drillIn(data.fields?.['operator'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  } as unknown as WrappedNode<RangeExpressionBare>;
-}
-
 export function wrapRangeExpression(data: _NodeData, tree: TreeHandle): WrappedNode<RangeExpression> {
   return {
     ...data,
@@ -1352,23 +1316,6 @@ export function wrapConstBlock(data: _NodeData, tree: TreeHandle): WrappedNode<C
   } as unknown as WrappedNode<ConstBlock>;
 }
 
-export function wrapClosureExpressionBlock(data: _NodeData, tree: TreeHandle): WrappedNode<ClosureExpressionBlock> {
-  return {
-    ...data,
-    get returnType() { return drillIn(data.fields?.['return_type'], tree); },
-    get body() { return drillIn(data.fields?.['body'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  } as unknown as WrappedNode<ClosureExpressionBlock>;
-}
-
-export function wrapClosureExpressionExpr(data: _NodeData, tree: TreeHandle): WrappedNode<ClosureExpressionExpr> {
-  return {
-    ...data,
-    get body() { return drillIn(data.fields?.['body'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  } as unknown as WrappedNode<ClosureExpressionExpr>;
-}
-
 export function wrapClosureExpression(data: _NodeData, tree: TreeHandle): WrappedNode<ClosureExpression> {
   return {
     ...data,
@@ -1523,23 +1470,6 @@ export function wrapStructPattern(data: _NodeData, tree: TreeHandle): WrappedNod
   } as unknown as WrappedNode<StructPattern>;
 }
 
-export function wrapFieldPatternShorthand(data: _NodeData, tree: TreeHandle): WrappedNode<FieldPatternShorthand> {
-  return {
-    ...data,
-    get name() { return drillIn(data.fields?.['name'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  } as unknown as WrappedNode<FieldPatternShorthand>;
-}
-
-export function wrapFieldPatternNamed(data: _NodeData, tree: TreeHandle): WrappedNode<FieldPatternNamed> {
-  return {
-    ...data,
-    get name() { return drillIn(data.fields?.['name'], tree); },
-    get pattern() { return drillIn(data.fields?.['pattern'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  } as unknown as WrappedNode<FieldPatternNamed>;
-}
-
 export function wrapFieldPattern(data: _NodeData, tree: TreeHandle): WrappedNode<FieldPattern> {
   return {
     ...data,
@@ -1556,23 +1486,6 @@ export function wrapMutPattern(data: _NodeData, tree: TreeHandle): WrappedNode<M
     get pattern() { return drillIn(data.fields?.['pattern'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<MutPattern>;
-}
-
-export function wrapRangePatternLeft(data: _NodeData, tree: TreeHandle): WrappedNode<RangePatternLeft> {
-  return {
-    ...data,
-    get left() { return drillIn(data.fields?.['left'], tree); },
-    get right() { return drillIn(data.fields?.['right'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  } as unknown as WrappedNode<RangePatternLeft>;
-}
-
-export function wrapRangePatternPrefix(data: _NodeData, tree: TreeHandle): WrappedNode<RangePatternPrefix> {
-  return {
-    ...data,
-    get right() { return drillIn(data.fields?.['right'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  } as unknown as WrappedNode<RangePatternPrefix>;
 }
 
 export function wrapRangePattern(data: _NodeData, tree: TreeHandle): WrappedNode<RangePattern> {
@@ -1606,23 +1519,6 @@ export function wrapReferencePattern(data: _NodeData, tree: TreeHandle): Wrapped
     get pattern() { return drillIn(data.fields?.['pattern'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<ReferencePattern>;
-}
-
-export function wrapOrPatternBinary(data: _NodeData, tree: TreeHandle): WrappedNode<OrPatternBinary> {
-  return {
-    ...data,
-    get left() { return drillIn(data.fields?.['left'], tree); },
-    get right() { return drillIn(data.fields?.['right'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  } as unknown as WrappedNode<OrPatternBinary>;
-}
-
-export function wrapOrPatternPrefix(data: _NodeData, tree: TreeHandle): WrappedNode<OrPatternPrefix> {
-  return {
-    ...data,
-    get right() { return drillIn(data.fields?.['right'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
-  } as unknown as WrappedNode<OrPatternPrefix>;
 }
 
 export function wrapOrPattern(data: _NodeData, tree: TreeHandle): WrappedNode<OrPattern> {
@@ -1729,11 +1625,115 @@ export function wrap_RangeExpressionBare(data: _NodeData, tree: TreeHandle): Wra
   } as unknown as WrappedNode<_RangeExpressionBare>;
 }
 
+export function wrapRangeExpressionBinary(data: _NodeData, tree: TreeHandle): WrappedNode<RangeExpressionBinary> {
+  return {
+    ...data,
+    get start() { return drillIn(data.fields?.['start'], tree); },
+    get operator() { return drillIn(data.fields?.['operator'], tree); },
+    get end() { return drillIn(data.fields?.['end'], tree); },
+    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<RangeExpressionBinary>;
+}
+
+export function wrapRangeExpressionPostfix(data: _NodeData, tree: TreeHandle): WrappedNode<RangeExpressionPostfix> {
+  return {
+    ...data,
+    get start() { return drillIn(data.fields?.['start'], tree); },
+    get operator() { return drillIn(data.fields?.['operator'], tree); },
+    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<RangeExpressionPostfix>;
+}
+
+export function wrapRangeExpressionPrefix(data: _NodeData, tree: TreeHandle): WrappedNode<RangeExpressionPrefix> {
+  return {
+    ...data,
+    get operator() { return drillIn(data.fields?.['operator'], tree); },
+    get end() { return drillIn(data.fields?.['end'], tree); },
+    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<RangeExpressionPrefix>;
+}
+
+export function wrapRangeExpressionBare(data: _NodeData, tree: TreeHandle): WrappedNode<RangeExpressionBare> {
+  return {
+    ...data,
+    get operator() { return drillIn(data.fields?.['operator'], tree); },
+    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<RangeExpressionBare>;
+}
+
 export function wrapLetChain(data: _NodeData, tree: TreeHandle): WrappedNode<LetChain> {
   return {
     ...data,
     get child() { return drillIn(data.children?.[0], tree); },
   } as unknown as WrappedNode<LetChain>;
+}
+
+export function wrapClosureExpressionBlock(data: _NodeData, tree: TreeHandle): WrappedNode<ClosureExpressionBlock> {
+  return {
+    ...data,
+    get returnType() { return drillIn(data.fields?.['return_type'], tree); },
+    get body() { return drillIn(data.fields?.['body'], tree); },
+    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<ClosureExpressionBlock>;
+}
+
+export function wrapClosureExpressionExpr(data: _NodeData, tree: TreeHandle): WrappedNode<ClosureExpressionExpr> {
+  return {
+    ...data,
+    get body() { return drillIn(data.fields?.['body'], tree); },
+    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<ClosureExpressionExpr>;
+}
+
+export function wrapFieldPatternShorthand(data: _NodeData, tree: TreeHandle): WrappedNode<FieldPatternShorthand> {
+  return {
+    ...data,
+    get name() { return drillIn(data.fields?.['name'], tree); },
+    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<FieldPatternShorthand>;
+}
+
+export function wrapFieldPatternNamed(data: _NodeData, tree: TreeHandle): WrappedNode<FieldPatternNamed> {
+  return {
+    ...data,
+    get name() { return drillIn(data.fields?.['name'], tree); },
+    get pattern() { return drillIn(data.fields?.['pattern'], tree); },
+    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<FieldPatternNamed>;
+}
+
+export function wrapRangePatternLeft(data: _NodeData, tree: TreeHandle): WrappedNode<RangePatternLeft> {
+  return {
+    ...data,
+    get left() { return drillIn(data.fields?.['left'], tree); },
+    get right() { return drillIn(data.fields?.['right'], tree); },
+    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<RangePatternLeft>;
+}
+
+export function wrapRangePatternPrefix(data: _NodeData, tree: TreeHandle): WrappedNode<RangePatternPrefix> {
+  return {
+    ...data,
+    get right() { return drillIn(data.fields?.['right'], tree); },
+    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<RangePatternPrefix>;
+}
+
+export function wrapOrPatternBinary(data: _NodeData, tree: TreeHandle): WrappedNode<OrPatternBinary> {
+  return {
+    ...data,
+    get left() { return drillIn(data.fields?.['left'], tree); },
+    get right() { return drillIn(data.fields?.['right'], tree); },
+    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<OrPatternBinary>;
+}
+
+export function wrapOrPatternPrefix(data: _NodeData, tree: TreeHandle): WrappedNode<OrPatternPrefix> {
+  return {
+    ...data,
+    get right() { return drillIn(data.fields?.['right'], tree); },
+    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<OrPatternPrefix>;
 }
 
 const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown> = {
@@ -1818,10 +1818,6 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'scoped_identifier': (d, t) => wrapScopedIdentifier(d, t),
   'scoped_type_identifier_in_expression_position': (d, t) => wrapScopedTypeIdentifierInExpressionPosition(d, t),
   'scoped_type_identifier': (d, t) => wrapScopedTypeIdentifier(d, t),
-  'range_expression_binary': (d, t) => wrapRangeExpressionBinary(d, t),
-  'range_expression_postfix': (d, t) => wrapRangeExpressionPostfix(d, t),
-  'range_expression_prefix': (d, t) => wrapRangeExpressionPrefix(d, t),
-  'range_expression_bare': (d, t) => wrapRangeExpressionBare(d, t),
   'range_expression': (d, t) => wrapRangeExpression(d, t),
   'unary_expression': (d, t) => wrapUnaryExpression(d, t),
   'try_expression': (d, t) => wrapTryExpression(d, t),
@@ -1856,8 +1852,6 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'loop_expression': (d, t) => wrapLoopExpression(d, t),
   'for_expression': (d, t) => wrapForExpression(d, t),
   'const_block': (d, t) => wrapConstBlock(d, t),
-  'closure_expression_block': (d, t) => wrapClosureExpressionBlock(d, t),
-  'closure_expression_expr': (d, t) => wrapClosureExpressionExpr(d, t),
   'closure_expression': (d, t) => wrapClosureExpression(d, t),
   'closure_parameters': (d, t) => wrapClosureParameters(d, t),
   'label': (d, t) => wrapLabel(d, t),
@@ -1876,18 +1870,12 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'slice_pattern': (d, t) => wrapSlicePattern(d, t),
   'tuple_struct_pattern': (d, t) => wrapTupleStructPattern(d, t),
   'struct_pattern': (d, t) => wrapStructPattern(d, t),
-  'field_pattern_shorthand': (d, t) => wrapFieldPatternShorthand(d, t),
-  'field_pattern_named': (d, t) => wrapFieldPatternNamed(d, t),
   'field_pattern': (d, t) => wrapFieldPattern(d, t),
   'mut_pattern': (d, t) => wrapMutPattern(d, t),
-  'range_pattern_left': (d, t) => wrapRangePatternLeft(d, t),
-  'range_pattern_prefix': (d, t) => wrapRangePatternPrefix(d, t),
   'range_pattern': (d, t) => wrapRangePattern(d, t),
   'ref_pattern': (d, t) => wrapRefPattern(d, t),
   'captured_pattern': (d, t) => wrapCapturedPattern(d, t),
   'reference_pattern': (d, t) => wrapReferencePattern(d, t),
-  'or_pattern_binary': (d, t) => wrapOrPatternBinary(d, t),
-  'or_pattern_prefix': (d, t) => wrapOrPatternPrefix(d, t),
   'or_pattern': (d, t) => wrapOrPattern(d, t),
   'negative_literal': (d, t) => wrapNegativeLiteral(d, t),
   'integer_literal': (d) => d,
@@ -1919,7 +1907,19 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_line_doc_content': (d) => d,
   '_error_sentinel': (d) => d,
   'primitive_type': (d) => d,
+  'range_expression_binary': (d, t) => wrapRangeExpressionBinary(d, t),
+  'range_expression_postfix': (d, t) => wrapRangeExpressionPostfix(d, t),
+  'range_expression_prefix': (d, t) => wrapRangeExpressionPrefix(d, t),
+  'range_expression_bare': (d, t) => wrapRangeExpressionBare(d, t),
   'let_chain': (d, t) => wrapLetChain(d, t),
+  'closure_expression_block': (d, t) => wrapClosureExpressionBlock(d, t),
+  'closure_expression_expr': (d, t) => wrapClosureExpressionExpr(d, t),
+  'field_pattern_shorthand': (d, t) => wrapFieldPatternShorthand(d, t),
+  'field_pattern_named': (d, t) => wrapFieldPatternNamed(d, t),
+  'range_pattern_left': (d, t) => wrapRangePatternLeft(d, t),
+  'range_pattern_prefix': (d, t) => wrapRangePatternPrefix(d, t),
+  'or_pattern_binary': (d, t) => wrapOrPatternBinary(d, t),
+  'or_pattern_prefix': (d, t) => wrapOrPatternPrefix(d, t),
   'outer_doc_comment_marker': (d) => d,
   'inner_doc_comment_marker': (d) => d,
   'type_identifier': (d) => d,
