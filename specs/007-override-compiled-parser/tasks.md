@@ -127,7 +127,7 @@
 
 - [x] T033 [US5] Delete `promoteOptionalKeywordFields` function and its call site from `packages/codegen/src/compiler/link.ts` (already deleted in spec 006)
 - [x] T034 [US5] Convert `inferFieldNames` in `packages/codegen/src/compiler/link.ts` from mutating to suggestion-only: pass `false` for apply flags, keep analysis for suggested-overrides.ts
-- [x] T035 [US5] Convert `promotePolymorph` to suggestion-only (deferred full deletion pending nested-alias follow-up): still detects polymorphs for suggested-overrides.ts but no longer mutates rules
+- [x] T035 [US5] Convert Link's `promotePolymorph` call to suggestion-only (pre-fan-out detection). Note: Optimize phase still runs `promotePolymorph` post-fan-out — this is the authoritative call that produces correct polymorph shapes. Full deletion requires nested-alias follow-up (deferred)
 - [x] T036 [US5] suggested.ts already consumes the suggestion-only output — no changes needed (promotedRules entries have `applied: false`)
 - [x] T037 [US5] wrap.ts emitter has no promotion heuristics — routing is derived from node-types.json (now override version). readNode reads fields directly from the parse tree via the OverridesConfig routing map. No changes needed.
 - [x] T038 [US5] Run full fidelity suite for all three grammars after Link cleanup. All ceilings hold (1,133 tests passing)
