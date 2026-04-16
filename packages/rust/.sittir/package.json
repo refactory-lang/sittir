@@ -1,0 +1,10 @@
+{
+  "name": "tree-sitter-rust",
+  "type": "commonjs",
+  "tree-sitter": [
+    {
+      "scope": "source.rust",
+      "file-types": []
+    }
+  ]
+}

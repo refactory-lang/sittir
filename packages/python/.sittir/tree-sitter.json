@@ -1,0 +1,23 @@
+{
+    "$schema": "https://tree-sitter.github.io/tree-sitter/assets/schemas/config.schema.json",
+    "grammars": [
+        {
+            "name": "python",
+            "camelcase": "Python",
+            "scope": "source.python",
+            "path": ".",
+            "file-types": []
+        }
+    ],
+    "metadata": {
+        "version": "0.0.1",
+        "license": "MIT",
+        "description": "Sittir-bundled python grammar",
+        "authors": [
+            {
+                "name": "sittir",
+                "email": "noreply@example.com"
+            }
+        ]
+    }
+}

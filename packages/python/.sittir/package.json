@@ -1,0 +1,10 @@
+{
+  "name": "tree-sitter-python",
+  "type": "commonjs",
+  "tree-sitter": [
+    {
+      "scope": "source.python",
+      "file-types": []
+    }
+  ]
+}

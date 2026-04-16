@@ -1,0 +1,10 @@
+{
+  "name": "tree-sitter-typescript",
+  "type": "commonjs",
+  "tree-sitter": [
+    {
+      "scope": "source.typescript",
+      "file-types": []
+    }
+  ]
+}

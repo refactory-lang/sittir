@@ -1,0 +1,712 @@
+"use strict";
+var __create = Object.create;
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+// packages/typescript/overrides.ts
+var overrides_exports = {};
+__export(overrides_exports, {
+  default: () => overrides_default
+});
+module.exports = __toCommonJS(overrides_exports);
+var import_grammar = __toESM(require("tree-sitter-typescript/tsx/grammar.js"), 1);
+
+// packages/codegen/src/dsl/runtime-shapes.ts
+function isFieldLike(v) {
+  if (!v || typeof v !== "object") return false;
+  const t = v.type;
+  return (t === "field" || t === "FIELD") && typeof v.name === "string";
+}
+function isContainerType(t) {
+  return t === "seq" || t === "SEQ" || t === "choice" || t === "CHOICE";
+}
+function isWrapperType(t) {
+  return t === "optional" || t === "repeat" || t === "REPEAT" || t === "repeat1" || t === "REPEAT1" || t === "field" || t === "FIELD" || t === "TOKEN" || t === "IMMEDIATE_TOKEN" || t === "BLANK";
+}
+function isPrecWrapper(rule) {
+  const t = rule.type;
+  return t === "prec" || t === "PREC" || t === "PREC_LEFT" || t === "PREC_RIGHT" || t === "PREC_DYNAMIC";
+}
+
+// packages/codegen/src/dsl/transform-path.ts
+function dsl() {
+  return globalThis;
+}
+function nativeRequired(name) {
+  const fn = dsl()[name];
+  if (typeof fn !== "function") {
+    throw new Error(`transform: no global ${String(name)}() found \u2014 must be called inside a runtime that injects ${String(name)}() (sittir evaluate.ts or tree-sitter CLI)`);
+  }
+  return fn;
+}
+var ApplyPathSkip = class extends Error {
+  constructor(message) {
+    super(message);
+    this.name = "ApplyPathSkip";
+  }
+};
+function parsePath(pathStr) {
+  if (typeof pathStr !== "string" || pathStr.length === 0) {
+    throw new Error(`parsePath: path must be a non-empty string, got ${JSON.stringify(pathStr)}`);
+  }
+  if (pathStr.startsWith("/") || pathStr.endsWith("/")) {
+    throw new Error(`parsePath: leading/trailing slash not allowed in path '${pathStr}'`);
+  }
+  const parts = pathStr.split("/");
+  const segments = [];
+  for (const part of parts) {
+    if (part === "*") {
+      segments.push({ kind: "wildcard" });
+    } else if (/^\d+$/.test(part)) {
+      segments.push({ kind: "index", value: Number(part) });
+    } else {
+      throw new Error(`parsePath: invalid segment '${part}' in path '${pathStr}' \u2014 must be a numeric index or '*'`);
+    }
+  }
+  return segments;
+}
+var membersOf = (r) => r.members;
+var contentOf = (r) => r.content;
+function applyPath(rule, segments, patch) {
+  if (segments.length === 0) {
+    return typeof patch === "function" ? patch(rule) : patch;
+  }
+  if (isPrecWrapper(rule)) {
+    const newContent = applyPath(contentOf(rule), segments, patch);
+    return reconstructPrec(rule, newContent);
+  }
+  const [head, ...rest] = segments;
+  const t = rule.type;
+  if (isContainerType(t)) {
+    return applyToMembers(rule, head, rest, patch);
+  }
+  if (isWrapperType(t)) {
+    if (head.kind === "wildcard" || head.kind === "index" && head.value === 0) {
+      const newContent = applyPath(contentOf(rule), rest, patch);
+      return reconstructWrapper(rule, newContent);
+    }
+    throw new ApplyPathSkip(
+      `applyPath: index ${head.kind === "index" ? head.value : "*"} out of bounds \u2014 '${rule.type}' wraps a single content rule (only index 0 is valid)`
+    );
+  }
+  throw new ApplyPathSkip(`applyPath: cannot descend into '${rule.type}' rule (path has ${segments.length} segments left)`);
+}
+function reconstructContainer(rule, members) {
+  const t = rule.type;
+  if (t === "seq" || t === "SEQ") return nativeRequired("seq")(...members);
+  if (t === "choice" || t === "CHOICE") return nativeRequired("choice")(...members);
+  throw new Error(`reconstructContainer: unknown container type '${t}'`);
+}
+function reconstructWrapper(rule, newContent) {
+  const t = rule.type;
+  if (t === "optional") return nativeRequired("optional")(newContent);
+  if (t === "repeat" || t === "REPEAT" || t === "repeat1" || t === "REPEAT1") {
+    const r = rule;
+    if (r.separator !== void 0 || r.leading !== void 0 || r.trailing !== void 0) {
+      throw new Error(
+        `reconstructWrapper: cannot path-address under a '${rule.type}' rule with separator/leading/trailing metadata \u2014 native repeat() can't round-trip those fields. Use flat positional transform or restructure the override.`
+      );
+    }
+    return nativeRequired(t === "repeat" || t === "REPEAT" ? "repeat" : "repeat1")(newContent);
+  }
+  if (t === "field" || t === "FIELD") {
+    const name = rule.name;
+    return nativeRequired("field")(name, newContent);
+  }
+  throw new Error(
+    `reconstructWrapper: no native dsl reconstruction for wrapper type '${rule.type}' \u2014 this is a bug in the path-descent logic.`
+  );
+}
+var PREC_VARIANT_MAP = {
+  prec_left: "left",
+  prec_right: "right",
+  prec_dynamic: "dynamic"
+};
+function reconstructPrec(rule, newContent) {
+  const t = rule.type.toLowerCase();
+  const value = rule.value ?? 0;
+  const prec = nativeRequired("prec");
+  const variant = PREC_VARIANT_MAP[t];
+  if (variant) {
+    const fn = prec[variant];
+    if (typeof fn !== "function") throw new Error(`transform: native prec.${variant} not available`);
+    return fn(value, newContent);
+  }
+  return prec(value, newContent);
+}
+function applyToMembers(rule, head, rest, patch) {
+  const members = [...membersOf(rule)];
+  if (head.kind === "index") {
+    if (head.value < 0 || head.value >= members.length) {
+      throw new ApplyPathSkip(
+        `applyPath: index ${head.value} out of bounds in ${rule.type} of length ${members.length}`
+      );
+    }
+    members[head.value] = applyPath(members[head.value], rest, patch);
+    return reconstructContainer(rule, members);
+  }
+  if (members.length === 0) {
+    throw new ApplyPathSkip(`applyPath: wildcard matched zero members in empty ${rule.type}`);
+  }
+  let anyApplied = false;
+  for (let i = 0; i < members.length; i++) {
+    try {
+      members[i] = applyPath(members[i], rest, patch);
+      anyApplied = true;
+    } catch (e) {
+      if (e instanceof ApplyPathSkip) continue;
+      throw e;
+    }
+  }
+  if (!anyApplied) {
+    throw new ApplyPathSkip(`applyPath: wildcard matched zero members successfully in ${rule.type} of length ${members.length}`);
+  }
+  return reconstructContainer(rule, members);
+}
+
+// packages/codegen/src/dsl/field.ts
+function isFieldPlaceholder(v) {
+  return !!v && typeof v === "object" && v.__sittirPlaceholder === "field";
+}
+function field(name, content) {
+  if (content === void 0) {
+    return { __sittirPlaceholder: "field", name };
+  }
+  const native = globalThis.field;
+  if (typeof native !== "function") {
+    throw new Error("field(): no global field() found \u2014 must be called inside a runtime that injects field() (sittir evaluate.ts or tree-sitter CLI)");
+  }
+  return native(name, content);
+}
+
+// packages/codegen/src/dsl/transform.ts
+function transform(original, patches) {
+  const usesPaths = Object.keys(patches).some((k) => k.includes("/") || k.includes("*"));
+  if (usesPaths) {
+    return applyPathPatches(original, patches);
+  }
+  return applyFlatPatches(original, patches);
+}
+function applyPathPatches(original, patches) {
+  let rule = original;
+  for (const [key, value] of Object.entries(patches)) {
+    const segments = parsePath(String(key));
+    rule = applyPath(rule, segments, (member) => resolvePatch(value, member));
+  }
+  return rule;
+}
+var membersOf2 = (r) => r.members;
+var contentOf2 = (r) => r.content;
+function applyFlatPatches(original, patches) {
+  const t = original.type;
+  if (t === "seq" || t === "SEQ") {
+    const members = [...membersOf2(original)];
+    for (const [key, patch] of Object.entries(patches)) {
+      if (!/^\d+$/.test(key)) {
+        throw new Error(
+          `transform: invalid flat-positional key '${key}' \u2014 keys must be non-negative integers. Use path syntax ('0/1', '*') for nested addressing.`
+        );
+      }
+      const index = Number(key);
+      if (index >= members.length) {
+        throw new Error(
+          `transform: index ${index} out of bounds in ${original.type} of length ${members.length}`
+        );
+      }
+      members[index] = resolvePatch(patch, members[index]);
+    }
+    return reconstructContainer(original, members);
+  }
+  if (t === "choice" || t === "CHOICE") {
+    const newMembers = membersOf2(original).map((m) => applyFlatPatches(m, patches));
+    return reconstructContainer(original, newMembers);
+  }
+  if (isPrecWrapper(original)) {
+    const newContent = applyFlatPatches(contentOf2(original), patches);
+    return reconstructPrec(original, newContent);
+  }
+  if (isWrapperType(t)) {
+    const newContent = applyFlatPatches(contentOf2(original), patches);
+    return reconstructWrapper(original, newContent);
+  }
+  return original;
+}
+function resolvePatch(patch, originalMember) {
+  if (isFieldPlaceholder(patch)) {
+    let content = originalMember;
+    if (isFieldLike(content) && content.source === "inferred") {
+      content = content.content;
+    }
+    const native = globalThis.field;
+    if (typeof native !== "function") {
+      throw new Error("transform: no global field() found \u2014 patches that use the one-arg field() form require a runtime that injects field() (sittir evaluate.ts or tree-sitter CLI)");
+    }
+    const reconstructed = native(patch.name, content);
+    return { ...reconstructed, source: "override" };
+  }
+  if (isFieldLike(patch)) {
+    return { ...patch, source: "override" };
+  }
+  return patch;
+}
+
+// packages/codegen/src/dsl/enrich.ts
+var PASSES = [
+  kindToNamePass,
+  optionalKeywordPrefixPass
+];
+function enrich(base2) {
+  if (!base2 || typeof base2 !== "object") {
+    throw new Error("enrich(): expected a grammar object, got " + typeof base2);
+  }
+  if (!("grammar" in base2)) {
+    return base2;
+  }
+  if (!base2.grammar || typeof base2.grammar.rules !== "object") {
+    throw new Error("enrich(): grammar is missing a rules record");
+  }
+  let result = base2;
+  for (const pass of PASSES) {
+    result = pass(result);
+  }
+  return result;
+}
+function kindToNamePass(g) {
+  return mapRules(g, applyKindToName);
+}
+function applyKindToName(ruleName, rule) {
+  if (rule.type !== "seq") return rule;
+  const kindCounts = /* @__PURE__ */ new Map();
+  for (const m of rule.members) {
+    if (m.type === "symbol") {
+      kindCounts.set(m.name, (kindCounts.get(m.name) ?? 0) + 1);
+    }
+  }
+  const existingFields = collectFieldNames(rule);
+  let changed = false;
+  const newMembers = rule.members.map((m) => {
+    if (m.type !== "symbol") return m;
+    const sym = m;
+    const kindName = sym.name;
+    if (kindName.startsWith("_")) return m;
+    if ((kindCounts.get(kindName) ?? 0) > 1) return m;
+    if (existingFields.has(kindName)) {
+      reportSkip("kind-to-name", ruleName, `field '${kindName}' already exists`);
+      return m;
+    }
+    existingFields.add(kindName);
+    changed = true;
+    return wrapAsField(kindName, sym);
+  });
+  if (!changed) return rule;
+  return { type: "seq", members: newMembers };
+}
+function optionalKeywordPrefixPass(g) {
+  return mapRules(g, (ruleName, rule) => walkOptionalKeyword(ruleName, rule));
+}
+function walkOptionalKeyword(ruleName, rule) {
+  switch (rule.type) {
+    case "seq": {
+      const seq = rule;
+      const claimed = /* @__PURE__ */ new Set();
+      for (const m of seq.members) {
+        if (m.type === "field") claimed.add(m.name);
+      }
+      const members = seq.members.map((m) => {
+        if (m.type === "optional") {
+          const inner = m.content;
+          if (inner.type === "string") {
+            const kw = inner.value;
+            if (isIdentifierShaped(kw)) {
+              if (claimed.has(kw)) {
+                reportSkip("optional-keyword-prefix", ruleName, `field '${kw}' already exists`);
+                return m;
+              }
+              claimed.add(kw);
+              return {
+                type: "optional",
+                content: wrapAsField(kw, inner)
+              };
+            }
+          }
+        }
+        return walkOptionalKeyword(ruleName, m);
+      });
+      return { type: "seq", members };
+    }
+    case "choice": {
+      const ch = rule;
+      return {
+        type: "choice",
+        members: ch.members.map((m) => walkOptionalKeyword(ruleName, m))
+      };
+    }
+    case "optional":
+    case "repeat":
+    case "repeat1":
+    case "field": {
+      const r = rule;
+      return { ...rule, content: walkOptionalKeyword(ruleName, r.content) };
+    }
+    default:
+      return rule;
+  }
+}
+function mapRules(g, fn) {
+  const newRules = {};
+  for (const [name, rule] of Object.entries(g.grammar.rules)) {
+    newRules[name] = fn(name, rule);
+  }
+  return {
+    ...g,
+    grammar: {
+      ...g.grammar,
+      rules: newRules
+    }
+  };
+}
+function wrapAsField(name, content) {
+  return {
+    type: "field",
+    name,
+    content,
+    source: "inferred"
+  };
+}
+function collectFieldNames(rule) {
+  const names = /* @__PURE__ */ new Set();
+  if (rule.type !== "seq") return names;
+  for (const m of rule.members) {
+    if (m.type === "field") {
+      names.add(m.name);
+    } else if (m.type === "optional" && m.content.type === "field") {
+      names.add(m.content.name);
+    }
+  }
+  return names;
+}
+function isIdentifierShaped(value) {
+  return /^[A-Za-z_][A-Za-z0-9_]*$/.test(value);
+}
+function reportSkip(pass, ruleName, reason) {
+  if (process.env.SITTIR_QUIET) return;
+  process.stderr.write(`enrich: skipped ${pass} on ${ruleName} (${reason})
+`);
+}
+
+// packages/typescript/overrides.ts
+var overrides_default = grammar(enrich(import_grammar.default), {
+  name: "typescript",
+  rules: {
+    // abstract_class_declaration: wrap pos 5 (class_heritage choice).
+    // pos 0 is REPEAT(field('decorator')) — don't touch it, it's a real
+    // base-grammar field and the original override clobbered it.
+    abstract_class_declaration: ($, original) => transform(original, {
+      5: field("class_heritage")
+    }),
+    // abstract_method_signature: 2 field(s)
+    abstract_method_signature: ($, original) => transform(original, {
+      0: field("accessibility_modifier"),
+      // accessibility_modifier [struct=0]
+      2: field("override_modifier")
+      // override_modifier [struct=1]
+    }),
+    // ambient_declaration: 3 field(s)
+    ambient_declaration: ($, original) => transform(original, {
+      1: field("declaration")
+      // declaration | statement_block | property_identifier [struct=0]
+    }),
+    // array_type: 1 field(s)
+    array_type: ($, original) => transform(original, {
+      0: field("primary_type")
+      // primary_type [struct=0]
+    }),
+    // as_expression: 2 field(s)
+    as_expression: ($, original) => transform(original, {
+      0: field("expression"),
+      // expression [struct=0]
+      2: field("type_annotation")
+      // type [struct=1]
+    }),
+    // asserts_annotation: 1 field(s)
+    asserts_annotation: ($, original) => transform(original, {
+      0: field("asserts")
+      // asserts [struct=0]
+    }),
+    // await_expression: 1 field(s)
+    await_expression: ($, original) => transform(original, {
+      1: field("expression")
+      // expression [struct=0]
+    }),
+    // class: wrap pos 4 (class_heritage choice). pos 0 is decorator repeat.
+    class: ($, original) => transform(original, {
+      4: field("class_heritage")
+    }),
+    // class_declaration: wrap pos 4 (class_heritage choice) and pos 6
+    // (automatic_semicolon choice). pos 0 is decorator repeat — leave it
+    // alone so the base 'decorator' field survives.
+    class_declaration: ($, original) => transform(original, {
+      4: field("class_heritage"),
+      6: field("automatic_semicolon")
+    }),
+    // class_heritage: choice(seq(extends_clause, optional(implements_clause)), implements_clause).
+    // transform recurses into the choice; raw pos 0/1 in the first seq
+    // branch match the json's named-slot positions. The second branch
+    // (bare implements_clause) is not a seq and is unaffected.
+    class_heritage: ($, original) => transform(original, {
+      0: field("extends_clause"),
+      // extends_clause | implements_clause [struct=0]
+      1: field("implements_clause")
+      // implements_clause [struct=1]
+    }),
+    // computed_property_name: 1 field(s)
+    computed_property_name: ($, original) => transform(original, {
+      1: field("expression")
+      // expression [struct=0]
+    }),
+    // else_clause: 1 field(s)
+    else_clause: ($, original) => transform(original, {
+      1: field("statement")
+      // statement [struct=0]
+    }),
+    // enum_body: 2 field(s)
+    enum_body: ($, original) => transform(original, {
+      1: field("opening")
+      // enum_assignment [struct=0]
+    }),
+    // flow_maybe_type: 1 field(s)
+    flow_maybe_type: ($, original) => transform(original, {
+      1: field("primary_type")
+      // primary_type [struct=0]
+    }),
+    // import_alias: 3 field(s)
+    import_alias: ($, original) => transform(original, {
+      1: field("name"),
+      // identifier [struct=0]
+      3: field("value"),
+      // identifier | nested_identifier [struct=1]
+      4: field("semicolon")
+      //  [struct=2]
+    }),
+    // import_attribute: 1 field(s)
+    import_attribute: ($, original) => transform(original, {
+      0: field("object")
+      // object [struct=0]
+    }),
+    // import_clause: choice(namespace_import, named_imports,
+    //   seq(_import_identifier, optional(seq(',', choice(namespace_import, named_imports))))).
+    // transform recurses into the choice; raw pos 0/1 match the json's
+    // named-slot positions inside the third (seq) branch. The bare
+    // namespace_import/named_imports branches are unaffected.
+    import_clause: ($, original) => transform(original, {
+      0: field("default_import"),
+      // namespace_import | named_imports | _import_identifier | identifier [struct=0]
+      1: field("named_imports")
+      // namespace_import | named_imports | identifier [struct=1]
+    }),
+    // import_require_clause: 1 field(s)
+    import_require_clause: ($, original) => transform(original, {
+      0: field("identifier")
+      // identifier [struct=0]
+    }),
+    // import_statement: 4 field(s)
+    import_statement: ($, original) => transform(original, {
+      1: field("import_clause"),
+      // import_clause | import_require_clause [struct=0]
+      2: field("from_clause"),
+      //  [struct=1]
+      3: field("import_attribute"),
+      // import_attribute [struct=2]
+      4: field("semicolon")
+      //  [struct=3]
+    }),
+    // index_signature: 1 field(s)
+    index_signature: ($, original) => transform(original, {
+      0: field("mapped_type_clause")
+      // mapped_type_clause [struct=0]
+    }),
+    // index_type_query: 1 field(s)
+    index_type_query: ($, original) => transform(original, {
+      1: field("primary_type")
+      // primary_type [struct=0]
+    }),
+    // infer_type: 2 field(s)
+    infer_type: ($, original) => transform(original, {
+      1: field("type_identifier"),
+      // _type_identifier | type_identifier [struct=0]
+      2: field("constraint")
+      // type | type_identifier [struct=1]
+    }),
+    // instantiation_expression: 1 field(s)
+    instantiation_expression: ($, original) => transform(original, {
+      0: field("expression")
+      // expression [struct=0]
+    }),
+    // interface_declaration: 1 field(s)
+    interface_declaration: ($, original) => transform(original, {
+      3: field("extends_type_clause")
+      // extends_type_clause [struct=0]
+    }),
+    // intersection_type: 2 field(s)
+    intersection_type: ($, original) => transform(original, {
+      0: field("left"),
+      // type [struct=0]
+      2: field("right")
+      // type [struct=1]
+    }),
+    // lexical_declaration: 2 field(s)
+    lexical_declaration: ($, original) => transform(original, {
+      1: field("declarators"),
+      // variable_declarator [struct=0]
+      2: field("semicolon")
+      //  [struct=1]
+    }),
+    // lookup_type: 2 field(s)
+    lookup_type: ($, original) => transform(original, {
+      0: field("primary_type"),
+      // primary_type [struct=0]
+      2: field("index_type")
+      // type [struct=1]
+    }),
+    // method_definition: 2 field(s)
+    method_definition: ($, original) => transform(original, {
+      0: field("accessibility_modifier"),
+      // accessibility_modifier [struct=0]
+      1: field("override_modifier")
+      // override_modifier [struct=1]
+    }),
+    // method_signature: 2 field(s)
+    method_signature: ($, original) => transform(original, {
+      0: field("accessibility_modifier"),
+      // accessibility_modifier [struct=0]
+      1: field("override_modifier")
+      // override_modifier [struct=1]
+    }),
+    // namespace_import: 1 field(s)
+    namespace_import: ($, original) => transform(original, {
+      2: field("identifier")
+      // identifier [struct=0]
+    }),
+    // non_null_expression: 1 field(s)
+    non_null_expression: ($, original) => transform(original, {
+      0: field("expression")
+      // expression [struct=0]
+    }),
+    // object_type: 3 field(s)
+    object_type: ($, original) => transform(original, {
+      0: field("opening"),
+      // export_statement | property_signature | call_signature | construct_signature | index_signature | method_signature [struct=0]
+      1: field("members"),
+      // export_statement | property_signature | call_signature | construct_signature | index_signature | method_signature [struct=1]
+      2: field("closing")
+      //  [struct=2]
+    }),
+    // optional_parameter: position 0 is the hidden `_parameter_name`
+    // helper which tree-sitter inlines — its `decorator`, `pattern`, and
+    // `name` fields promote onto the parent at parse time. The former
+    // override wrapped pos 0 as a synthetic `parameter_name` slot that
+    // doesn't exist at runtime, clobbering all five declared fields.
+    // Positions 1/2/3 (the `?`, the type field, and the initializer)
+    // are already correctly structured in the base rule.
+    optional_parameter: ($, original) => original,
+    // program: 2 field(s)
+    program: ($, original) => transform(original, {
+      0: field("hash_bang_line"),
+      // hash_bang_line [struct=0]
+      1: field("statements")
+      // statement [struct=1]
+    }),
+    // property_signature: 2 field(s)
+    property_signature: ($, original) => transform(original, {
+      0: field("accessibility_modifier"),
+      // accessibility_modifier [struct=0]
+      1: field("override_modifier")
+      // override_modifier [struct=1]
+    }),
+    // public_field_definition: pos 0 is decorator repeat (real base
+    // field). The original override labeled pos 0 as
+    // accessibility_modifier, clobbering decorator. Dropped entirely —
+    // the internal accessibility/override-modifier slots are deep inside
+    // nested choices and don't have stable raw positions.
+    public_field_definition: ($, original) => original,
+    // required_parameter: same shape as optional_parameter modulo the
+    // `?` — drop the synthetic `parameter_name` wrapper override and
+    // let the walker inline the `_parameter_name` helper's fields.
+    required_parameter: ($, original) => original,
+    // satisfies_expression: 2 field(s)
+    satisfies_expression: ($, original) => transform(original, {
+      0: field("expression"),
+      // expression [struct=0]
+      2: field("type_annotation")
+      // type [struct=1]
+    }),
+    // spread_element: 1 field(s)
+    spread_element: ($, original) => transform(original, {
+      1: field("expression")
+      // expression [struct=0]
+    }),
+    // statement_block: 2 field(s)
+    statement_block: ($, original) => transform(original, {
+      1: field("statements"),
+      // statement [struct=0]
+      3: field("automatic_semicolon")
+      //  [struct=1]
+    }),
+    // type_assertion: 2 field(s)
+    type_assertion: ($, original) => transform(original, {
+      0: field("type_arguments"),
+      // type_arguments [struct=0]
+      1: field("expression")
+      // expression [struct=1]
+    }),
+    // type_predicate_annotation: 1 field(s)
+    type_predicate_annotation: ($, original) => transform(original, {
+      0: field("type_predicate")
+      // type_predicate [struct=0]
+    }),
+    // union_type: 2 field(s)
+    union_type: ($, original) => transform(original, {
+      0: field("left"),
+      // type [struct=0]
+      2: field("right")
+      // type [struct=1]
+    }),
+    // variable_declaration: 2 field(s)
+    variable_declaration: ($, original) => transform(original, {
+      1: field("declarators"),
+      // variable_declarator [struct=0]
+      2: field("semicolon")
+      //  [struct=1]
+    }),
+    // yield_expression: 1 field(s)
+    yield_expression: ($, original) => transform(original, {
+      1: field("expression")
+      // expression [struct=0]
+    })
+  }
+});
+if (module.exports && module.exports.default) module.exports = module.exports.default;
