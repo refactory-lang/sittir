@@ -1,10 +1,10 @@
 # sittir
 
-Generate typed factory functions and S-expression render templates from [tree-sitter](https://tree-sitter.github.io/) grammars.
+Generate typed factory functions and YAML render templates from [tree-sitter](https://tree-sitter.github.io/) grammars.
 
 Given any tree-sitter grammar, sittir generates:
 - **Typed factories** — one per node kind, producing `NodeData` plain objects with fluent getters/setters
-- **S-expression templates** — tree-sitter query syntax for rendering, parsed once and cached
+- **YAML render templates** — `$FIELD_NAME` placeholder syntax with `joinBy` separators and polymorph variants, stored in `templates.yaml`
 - **`.from()` resolution** — ergonomic input with string/number/object coercion, fully tree-shakeable
 - **`readNode()` hydration** — wraps tree-sitter parse trees into `NodeData` for round-trip editing
 - **Const enums + navigation types** — `SyntaxKind`, operator/keyword maps, supertype unions
@@ -65,7 +65,7 @@ const fn = ir.functionDeclaration.from({
 import { render } from '@sittir/core'
 import { rules } from '@sittir/rust'
 
-const source = render(node, rules)  // S-expression template expansion
+const source = render(node, rules)  // YAML template expansion
 ```
 
 ### Round-Trip (Codemods)
@@ -117,7 +117,7 @@ const patch = edit(treeSitterNode, (nd) => {
 | **Evaluate** | `grammar.json` + `overrides.ts` | Raw grammar with resolved rules | Parse grammar, apply DSL transforms, collect roles |
 | **Link** | Raw grammar + `node-types.json` | Linked `NodeMap` with field specs | Resolve symbols, classify kinds, detect polymorphs |
 | **Optimize** | Linked NodeMap | Optimized NodeMap | Merge variants, collapse repeated shapes |
-| **Assemble** | Optimized NodeMap | Assembly with render templates | Walk rules → S-expression templates, join separators |
+| **Assemble** | Optimized NodeMap | Assembly with render templates | Walk rules → YAML templates with `$FIELD` placeholders, `joinBy` separators |
 | **Emit** | Assembly | Generated `.ts` + `.yaml` files | Produce types, factories, from, wrap, rules, consts |
 
 ### Data Flow
