@@ -24,6 +24,7 @@
  */
 
 import type { Rule } from '../compiler/rule.ts'
+import type { FieldLike } from './runtime-shapes.ts'
 
 type Input = string | RegExp | Rule
 
@@ -40,8 +41,13 @@ export function isFieldPlaceholder(v: unknown): v is FieldPlaceholder {
 /**
  * Two-arg form delegates to the runtime's native field. One-arg form
  * returns a placeholder for transform patches.
+ *
+ * Return type is a discriminated union: the one-arg placeholder has
+ * a readable `__sittirPlaceholder` brand; the two-arg result matches
+ * whatever shape the runtime-injected `field()` produces (sittir
+ * lowercase `type: 'field'` or tree-sitter uppercase `type: 'FIELD'`).
  */
-export function field(name: string, content?: Input): unknown {
+export function field(name: string, content?: Input): FieldPlaceholder | FieldLike {
     if (content === undefined) {
         return { __sittirPlaceholder: 'field' as const, name } satisfies FieldPlaceholder
     }
@@ -49,5 +55,5 @@ export function field(name: string, content?: Input): unknown {
     if (typeof native !== 'function') {
         throw new Error('field(): no global field() found — must be called inside a runtime that injects field() (sittir evaluate.ts or tree-sitter CLI)')
     }
-    return native(name, content)
+    return native(name, content) as FieldLike
 }

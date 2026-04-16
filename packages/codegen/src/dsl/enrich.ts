@@ -286,6 +286,13 @@ function isIdentifierShaped(value: string): boolean {
     return /^[A-Za-z_][A-Za-z0-9_]*$/.test(value)
 }
 
+/**
+ * Report a skipped promotion to stderr. Suppressed when the
+ * `SITTIR_QUIET` environment variable is set to any truthy value —
+ * useful in test suites and library-embedding contexts that don't
+ * want to pollute stderr with pipeline diagnostics.
+ */
 function reportSkip(pass: string, ruleName: string, reason: string): void {
+    if (process.env.SITTIR_QUIET) return
     process.stderr.write(`enrich: skipped ${pass} on ${ruleName} (${reason})\n`)
 }

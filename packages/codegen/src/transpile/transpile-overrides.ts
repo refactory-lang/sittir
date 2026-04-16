@@ -152,8 +152,14 @@ export async function transpileOverrides(opts: TranspileOptions): Promise<Transp
     }
 
     const meta = result.metafile!
-    const inputMeta = Object.values(meta.inputs)[0]
-    const outputMeta = Object.values(meta.outputs)[0]
+    // Look up by explicit path keys instead of `Object.values(...)[0]`.
+    // esbuild's metafile uses path strings (relative to cwd) as keys
+    // and doesn't guarantee that the entry point is the first entry —
+    // synthesized helpers and re-exports can precede it.
+    const inputKey = Object.keys(meta.inputs).find(k => k.endsWith('overrides.ts'))
+    const outputKey = Object.keys(meta.outputs).find(k => k.endsWith('grammar.js'))
+    const inputMeta = inputKey ? meta.inputs[inputKey] : undefined
+    const outputMeta = outputKey ? meta.outputs[outputKey] : undefined
 
     return {
         outputPath,
@@ -174,8 +180,12 @@ function copyExternalScannerSources(grammar: string, outputDir: string): void {
     let basePkgPath: string
     try {
         basePkgPath = dirname(requireFromHere.resolve(`tree-sitter-${grammar}/package.json`))
-    } catch {
-        return
+    } catch (e) {
+        // Narrow to MODULE_NOT_FOUND — we expect "package doesn't exist"
+        // (grammar has no external scanner) but NOT permission errors,
+        // malformed package.json, or anything else. Let those surface.
+        if ((e as NodeJS.ErrnoException).code === 'MODULE_NOT_FOUND') return
+        throw e
     }
     const baseSrc = join(basePkgPath, 'src')
     if (!existsSync(baseSrc)) return
@@ -216,11 +226,15 @@ function externalizeTreeSitterBases(): esbuild.Plugin {
             // the runtime grammar() global and breaks tree-sitter's
             // parser-generator (it processes the bundled tree as if
             // sittir's overrides had replaced it).
-            build.onResolve({ filter: /tree-sitter-[a-z]+(\/|$)/ }, (args) => {
+            // Widened from `[a-z]+` to `[a-z][a-z0-9-]*` so names with
+            // hyphens/digits also match (tree-sitter-c-sharp,
+            // tree-sitter-typescript-tsx, tree-sitter-julia-ts, ...).
+            const pkgPattern = /tree-sitter-[a-z][a-z0-9-]*(\/|$)/
+            build.onResolve({ filter: pkgPattern }, (args) => {
                 // Strip any leading path components down to the
                 // tree-sitter-<lang> package segment, then keep the
                 // sub-path (or default to /grammar.js).
-                const match = args.path.match(/(?:^|\/)(tree-sitter-[a-z]+)(\/.+)?$/)
+                const match = args.path.match(/(?:^|\/)(tree-sitter-[a-z][a-z0-9-]*)(\/.+)?$/)
                 if (!match) return null
                 const pkg = match[1]!
                 const sub = match[2] ?? '/grammar.js'

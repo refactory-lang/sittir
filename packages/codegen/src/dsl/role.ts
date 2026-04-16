@@ -51,10 +51,20 @@ let currentRoles: Map<string, ExternalRole> | null = null
  * inside a `withRoleScope` block. This keeps the same call site valid
  * for both consumers without runtime feature detection.
  */
+const VALID_ROLE_NAMES = new Set(['indent', 'dedent', 'newline'] as const)
+
 export function role(symbol: Rule, roleName: 'indent' | 'dedent' | 'newline'): Rule {
     if (!isSymbolLike(symbol)) {
         throw new Error(
             `role(): first argument must be a symbol reference (e.g. $._indent), got ${JSON.stringify(symbol)}`,
+        )
+    }
+    // Runtime validation — the TS type parameter doesn't flow through
+    // override files' @ts-nocheck imports, so a typo like 'indet' would
+    // otherwise silently store a wrong binding.
+    if (!VALID_ROLE_NAMES.has(roleName as 'indent' | 'dedent' | 'newline')) {
+        throw new Error(
+            `role(): second argument must be one of 'indent' | 'dedent' | 'newline', got ${JSON.stringify(roleName)}`,
         )
     }
     if (currentRoles !== null) {

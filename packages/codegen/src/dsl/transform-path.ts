@@ -20,8 +20,7 @@
 import type {
     Rule, SeqRule, ChoiceRule, OptionalRule, RepeatRule, Repeat1Rule, FieldRule,
 } from '../compiler/rule.ts'
-import { isPrecWrapper as isPrecWrapperShape } from './runtime-shapes.ts'
-export { isPrecWrapper, isContainerType, isWrapperType } from './runtime-shapes.ts'
+import { isPrecWrapper as isPrecWrapperShape, isContainerType, isWrapperType } from './runtime-shapes.ts'
 
 // ---------------------------------------------------------------------------
 // Native DSL accessors — we call the runtime-injected DSL functions
@@ -137,15 +136,12 @@ export function applyPath(
     const [head, ...rest] = segments
     const t = rule.type as string
 
-    // Containers we can descend into. Type checks accept both sittir
-    // (lowercase) and tree-sitter (uppercase) naming because tree-sitter
-    // CLI runtime evaluates the bundled output with uppercase rule types.
-    if (t === 'seq' || t === 'SEQ' || t === 'choice' || t === 'CHOICE') {
+    // Containers we can descend into — predicates in runtime-shapes.ts
+    // accept both sittir lowercase and tree-sitter uppercase naming.
+    if (isContainerType(t)) {
         return applyToMembers(rule as SeqRule | ChoiceRule, head!, rest, patch)
     }
-    if (t === 'optional' || t === 'repeat' || t === 'repeat1' || t === 'field'
-        || t === 'REPEAT' || t === 'REPEAT1' || t === 'FIELD' || t === 'BLANK'
-        || t === 'IMMEDIATE_TOKEN' || t === 'TOKEN') {
+    if (isWrapperType(t)) {
         // For wrappers, position 0 is the wrapped content.
         if (head!.kind === 'wildcard' || (head!.kind === 'index' && head!.value === 0)) {
             const newContent = applyPath((rule as { content: Rule }).content, rest, patch)
@@ -230,6 +226,10 @@ export function reconstructPrec(rule: Rule, newContent: Rule): Rule {
     }
     return prec(value as number, newContent) as Rule
 }
+
+// Re-export so transform.ts's `applyFlatPatches` can reach the
+// shared predicates through the canonical path-related module.
+export { isContainerType, isWrapperType, isPrecWrapperShape as isPrecWrapper }
 
 function applyToMembers(
     rule: SeqRule | ChoiceRule,

@@ -166,4 +166,32 @@ describe('transform() — object form (flat positional, backward-compat)', () =>
         const r = result as any
         expect(r.members[0]).toMatchObject({ type: 'field', name: 'first', source: 'override' })
     })
+
+    it('unwraps an enrich-inferred field on the original member before re-wrapping', async () => {
+        // This is the explicit fix for enrich+override nested-field
+        // bugs. When enrich has already wrapped a seq member as
+        // `field('xxx', $.sym, source: 'inferred')` and the override's
+        // transform patches that position with a one-arg `field('new')`
+        // placeholder, resolvePatch must unwrap the inferred layer so
+        // the result is `field('new', $.sym, source: 'override')`, NOT
+        // `field('new', field('xxx', $.sym), source: 'override')`.
+        const { field: oneArgField } = await import('../field.ts')
+        const rule = seq(
+            // Simulate enrich-inferred field wrapper on position 0.
+            { type: 'field', name: 'inferred_name', content: sym('expr'), source: 'inferred' } as Rule,
+            sym('rhs'),
+        )
+        // One-arg field placeholder + flat positional transform.
+        const result = transform(rule, { 0: oneArgField('override_name') as Rule })
+        const r = result as any
+        expect(r.members[0]).toMatchObject({
+            type: 'field',
+            name: 'override_name',
+            source: 'override',
+            // Inner content is the original symbol, NOT a nested field.
+            content: { type: 'symbol', name: 'expr' },
+        })
+        // Belt-and-suspenders: the inner content must not itself be a field.
+        expect(r.members[0].content.type).not.toBe('field')
+    })
 })
