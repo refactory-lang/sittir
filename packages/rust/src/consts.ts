@@ -2,9 +2,13 @@
 
 /** All branch (non-leaf) node kind strings. */
 export const NODE_KINDS = [
+  '_closure_expression_expr',
   '_field_identifier',
+  '_field_pattern_shorthand',
   '_let_chain',
   '_non_special_token',
+  '_range_expression_bare',
+  '_reserved_identifier',
   '_type_identifier',
   'abstract_type',
   'arguments',
@@ -26,6 +30,8 @@ export const NODE_KINDS = [
   'call_expression',
   'captured_pattern',
   'closure_expression',
+  'closure_expression_block',
+  'closure_expression_expr',
   'closure_parameters',
   'comment',
   'compound_assignment_expr',
@@ -49,6 +55,8 @@ export const NODE_KINDS = [
   'field_initializer',
   'field_initializer_list',
   'field_pattern',
+  'field_pattern_named',
+  'field_pattern_shorthand',
   'for_expression',
   'for_lifetimes',
   'foreign_mod_item',
@@ -86,6 +94,8 @@ export const NODE_KINDS = [
   'mut_pattern',
   'negative_literal',
   'or_pattern',
+  'or_pattern_binary',
+  'or_pattern_prefix',
   'ordered_field_declaration_list',
   'parameter',
   'parameters',
@@ -93,7 +103,13 @@ export const NODE_KINDS = [
   'pointer_type',
   'qualified_type',
   'range_expression',
+  'range_expression_bare',
+  'range_expression_binary',
+  'range_expression_postfix',
+  'range_expression_prefix',
   'range_pattern',
+  'range_pattern_left',
+  'range_pattern_prefix',
   'raw_string_literal',
   'ref_pattern',
   'reference_expression',
@@ -152,9 +168,10 @@ export const NODE_KINDS = [
 /** All leaf/terminal node kind strings. */
 export const LEAF_KINDS = [
   '_',
-  '_block_comment_content',
   '_error_sentinel',
-  '_reserved_identifier',
+  '_inner_block_doc_comment_marker',
+  '_line_doc_content',
+  '_outer_block_doc_comment_marker',
   'as',
   'async',
   'await',
@@ -224,6 +241,8 @@ export const ALL_KINDS = [...NODE_KINDS, ...LEAF_KINDS] as const;
 /** Language keywords (alphabetic anonymous tokens). */
 export const KEYWORDS = [
   '_',
+  '_inner_line_doc_comment_marker',
+  '_outer_line_doc_comment_marker',
   'as',
   'async',
   'await',
@@ -325,15 +344,27 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   required: boolean;
   multiple: boolean;
 }>> = {
+  '_closure_expression_expr': [
+    { name: 'body', required: true, multiple: false },
+  ],
   '_field_identifier': [
+  ],
+  '_field_pattern_shorthand': [
+    { name: 'name', required: true, multiple: false },
   ],
   '_let_chain': [
   ],
   '_non_special_token': [
   ],
+  '_range_expression_bare': [
+    { name: 'operator', required: true, multiple: false },
+  ],
+  '_reserved_identifier': [
+  ],
   '_type_identifier': [
   ],
   'abstract_type': [
+    { name: 'impl', required: true, multiple: false },
     { name: 'typeParameters', required: false, multiple: false },
     { name: 'trait', required: true, multiple: false },
   ],
@@ -352,12 +383,14 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'right', required: true, multiple: false },
   ],
   'associated_type': [
+    { name: 'type', required: true, multiple: false },
     { name: 'name', required: true, multiple: false },
     { name: 'typeParameters', required: false, multiple: false },
     { name: 'bounds', required: false, multiple: false },
     { name: 'whereClause', required: false, multiple: false },
   ],
   'async_block': [
+    { name: 'async', required: true, multiple: false },
     { name: 'move', required: false, multiple: false },
     { name: 'block', required: true, multiple: false },
   ],
@@ -392,6 +425,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'bracketed_type': [
   ],
   'break_expression': [
+    { name: 'break', required: true, multiple: false },
     { name: 'label', required: false, multiple: false },
     { name: 'expression', required: false, multiple: false },
   ],
@@ -408,7 +442,12 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'async', required: false, multiple: false },
     { name: 'move', required: false, multiple: false },
     { name: 'parameters', required: true, multiple: false },
+  ],
+  'closure_expression_block': [
     { name: 'returnType', required: false, multiple: false },
+    { name: 'body', required: true, multiple: false },
+  ],
+  'closure_expression_expr': [
     { name: 'body', required: true, multiple: false },
   ],
   'closure_parameters': [
@@ -421,6 +460,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'right', required: true, multiple: false },
   ],
   'const_block': [
+    { name: 'const', required: true, multiple: false },
     { name: 'body', required: true, multiple: false },
   ],
   'const_item': [
@@ -430,11 +470,13 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'value', required: false, multiple: false },
   ],
   'const_parameter': [
+    { name: 'const', required: true, multiple: false },
     { name: 'name', required: true, multiple: false },
     { name: 'type', required: true, multiple: false },
     { name: 'value', required: false, multiple: false },
   ],
   'continue_expression': [
+    { name: 'continue', required: true, multiple: false },
     { name: 'label', required: false, multiple: false },
   ],
   'declaration_list': [
@@ -442,9 +484,11 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'delim_token_tree': [
   ],
   'dynamic_type': [
+    { name: 'dyn', required: true, multiple: false },
     { name: 'trait', required: true, multiple: false },
   ],
   'else_clause': [
+    { name: 'else', required: true, multiple: false },
   ],
   'enum_item': [
     { name: 'visibilityModifier', required: false, multiple: false },
@@ -470,6 +514,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'alias', required: false, multiple: false },
   ],
   'extern_modifier': [
+    { name: 'extern', required: true, multiple: false },
     { name: 'stringLiteral', required: false, multiple: false },
   ],
   'field_declaration': [
@@ -492,8 +537,13 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'field_pattern': [
     { name: 'ref', required: false, multiple: false },
     { name: 'mutableSpecifier', required: false, multiple: false },
+  ],
+  'field_pattern_named': [
     { name: 'name', required: true, multiple: false },
     { name: 'pattern', required: true, multiple: false },
+  ],
+  'field_pattern_shorthand': [
+    { name: 'name', required: true, multiple: false },
   ],
   'for_expression': [
     { name: 'label', required: false, multiple: false },
@@ -502,6 +552,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'body', required: true, multiple: false },
   ],
   'for_lifetimes': [
+    { name: 'for', required: true, multiple: false },
   ],
   'foreign_mod_item': [
     { name: 'visibilityModifier', required: false, multiple: false },
@@ -540,6 +591,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'returnType', required: false, multiple: false },
   ],
   'gen_block': [
+    { name: 'gen', required: true, multiple: false },
     { name: 'move', required: false, multiple: false },
     { name: 'block', required: true, multiple: false },
   ],
@@ -559,10 +611,12 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'typeArguments', required: true, multiple: false },
   ],
   'higher_ranked_trait_bound': [
+    { name: 'for', required: true, multiple: false },
     { name: 'typeParameters', required: true, multiple: false },
     { name: 'type', required: true, multiple: false },
   ],
   'if_expression': [
+    { name: 'if', required: true, multiple: false },
     { name: 'condition', required: true, multiple: false },
     { name: 'consequence', required: true, multiple: false },
     { name: 'alternative', required: false, multiple: false },
@@ -591,10 +645,12 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'let_chain': [
   ],
   'let_condition': [
+    { name: 'let', required: true, multiple: false },
     { name: 'pattern', required: true, multiple: false },
     { name: 'value', required: true, multiple: false },
   ],
   'let_declaration': [
+    { name: 'let', required: true, multiple: false },
     { name: 'mutableSpecifier', required: false, multiple: false },
     { name: 'pattern', required: true, multiple: false },
     { name: 'type', required: false, multiple: false },
@@ -636,6 +692,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'match_block': [
   ],
   'match_expression': [
+    { name: 'match', required: true, multiple: false },
     { name: 'value', required: true, multiple: false },
     { name: 'body', required: true, multiple: false },
   ],
@@ -655,7 +712,12 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'value', required: true, multiple: false },
   ],
   'or_pattern': [
+  ],
+  'or_pattern_binary': [
     { name: 'left', required: true, multiple: false },
+    { name: 'right', required: true, multiple: false },
+  ],
+  'or_pattern_prefix': [
     { name: 'right', required: true, multiple: false },
   ],
   'ordered_field_declaration_list': [
@@ -679,13 +741,31 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'alias', required: true, multiple: false },
   ],
   'range_expression': [
+  ],
+  'range_expression_bare': [
+    { name: 'operator', required: true, multiple: false },
+  ],
+  'range_expression_binary': [
     { name: 'start', required: true, multiple: false },
     { name: 'operator', required: true, multiple: false },
     { name: 'end', required: true, multiple: false },
   ],
+  'range_expression_postfix': [
+    { name: 'start', required: true, multiple: false },
+    { name: 'operator', required: true, multiple: false },
+  ],
+  'range_expression_prefix': [
+    { name: 'operator', required: true, multiple: false },
+    { name: 'end', required: true, multiple: false },
+  ],
   'range_pattern': [
+  ],
+  'range_pattern_left': [
     { name: 'left', required: true, multiple: false },
-    { name: 'right', required: false, multiple: false },
+    { name: 'right', required: true, multiple: false },
+  ],
+  'range_pattern_prefix': [
+    { name: 'right', required: true, multiple: false },
   ],
   'raw_string_literal': [
     { name: 'rawStringLiteralStart', required: true, multiple: false },
@@ -693,6 +773,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'rawStringLiteralEnd', required: true, multiple: false },
   ],
   'ref_pattern': [
+    { name: 'ref', required: true, multiple: false },
   ],
   'reference_expression': [
     { name: 'mutableSpecifier', required: true, multiple: false },
@@ -787,6 +868,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'body', required: true, multiple: false },
   ],
   'try_block': [
+    { name: 'try', required: true, multiple: false },
     { name: 'block', required: true, multiple: false },
   ],
   'try_expression': [
@@ -806,7 +888,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'tuple_type': [
   ],
   'type_arguments': [
-    { name: 'bounds', required: false, multiple: true },
   ],
   'type_binding': [
     { name: 'name', required: true, multiple: false },
@@ -844,6 +925,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'body', required: true, multiple: false },
   ],
   'unsafe_block': [
+    { name: 'unsafe', required: true, multiple: false },
     { name: 'block', required: true, multiple: false },
   ],
   'use_as_clause': [
@@ -851,6 +933,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'alias', required: true, multiple: false },
   ],
   'use_bounds': [
+    { name: 'use', required: true, multiple: false },
   ],
   'use_declaration': [
     { name: 'visibilityModifier', required: false, multiple: false },
@@ -870,6 +953,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'in', required: false, multiple: false },
   ],
   'where_clause': [
+    { name: 'where', required: true, multiple: false },
   ],
   'where_predicate': [
     { name: 'left', required: true, multiple: false },
@@ -883,14 +967,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'yield_expression': [
   ],
 };
-
-/** Valid values for `_reserved_identifier` nodes. */
-export const _RESERVED_IDENTIFIERS = [
-  'default',
-  'union',
-  'gen',
-] as const;
-export type ReservedIdentifierValue = (typeof _RESERVED_IDENTIFIERS)[number];
 
 /** Valid values for `boolean_literal` nodes. */
 export const BOOLEAN_LITERALS = [

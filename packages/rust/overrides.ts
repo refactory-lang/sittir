@@ -9,7 +9,7 @@
 
 // @ts-nocheck — grammar.js is untyped; overrides use sittir DSL
 import base from '../../node_modules/.pnpm/tree-sitter-rust@0.24.0/node_modules/tree-sitter-rust/grammar.js'
-import { transform, enrich, field } from '../codegen/src/dsl/index.ts'
+import { transform, enrich, field, variant } from '../codegen/src/dsl/index.ts'
 
 export default grammar(enrich(base), {
     name: 'rust',
@@ -113,6 +113,9 @@ export default grammar(enrich(base), {
         // Position 0 = optional('ref') [anonymous], position 1 = optional(mutable_specifier)
         field_pattern: ($, original) => transform(original, {
             1: field('mutable_specifier'), // mutable_specifier [struct=0]
+        }, {
+            '2/0': variant('shorthand'), // name only (shorthand)
+            '2/1': variant('named'),     // name: pattern
         }),
 
         // for_expression: 1 field(s)
@@ -382,11 +385,10 @@ export default grammar(enrich(base), {
         // closure_expression — label the three optional modifiers so readNode
         // can route `async`, `move`, `static` tokens to named fields instead
         // of leaving them as anonymous children.
-        closure_expression: ($, original) => transform(original, {
-            0: field('static'),  // optional 'static'
-            1: field('async'),   // optional 'async'
-            2: field('move'),    // optional 'move'
-        }),
+        closure_expression: ($, original) => transform(original,
+            { 0: field('static'), 1: field('async'), 2: field('move') },
+            { '4/0': variant('block'), '4/1': variant('expr') },
+        ),
 
         // function_modifiers — full replacement: label each choice alternative
         // so readNode can route `async`, `const`, `default`, `unsafe` tokens.
@@ -401,11 +403,10 @@ export default grammar(enrich(base), {
         // or_pattern — patches the BASE rule's prec.left(-2, ...)
         // structure to add field labels. Base shape:
         //   choice(seq(_pattern, '|', _pattern), seq('|', _pattern))
-        or_pattern: ($, original) => transform(original, {
-            '0/0': field('left'),
-            '0/2': field('right'),
-            '1/1': field('right'),
-        }),
+        or_pattern: ($, original) => transform(original,
+            { '0/0': field('left'), '0/2': field('right'), '1/1': field('right') },
+            { '0': variant('binary'), '1': variant('prefix') },
+        ),
 
         // range_expression — patches the BASE rule's choice alternatives
         // by position so the prec.left(1, ...) wrapper survives. The
@@ -417,15 +418,25 @@ export default grammar(enrich(base), {
         //     '..',                                       // alt 3 — bare
         //   )
         // Each {path,value} below labels one position in one alternative.
-        range_expression: ($, original) => transform(original, {
-            '0/0': field('start'),
-            '0/1': field('operator'),
-            '0/2': field('end'),
-            '1/0': field('start'),
-            '1/1': field('operator'),
-            '2/0': field('operator'),
-            '2/1': field('end'),
-            '3':   field('operator'),
+        range_expression: ($, original) => transform(original,
+            {
+                '0/0': field('start'), '0/1': field('operator'), '0/2': field('end'),
+                '1/0': field('start'), '1/1': field('operator'),
+                '2/0': field('operator'), '2/1': field('end'),
+                '3': field('operator'),
+            },
+            {
+                '0': variant('binary'), '1': variant('postfix'),
+                '2': variant('prefix'), '3': variant('bare'),
+            },
+        ),
+
+        // range_pattern — two variants: left-bounded (has field 'left') vs
+        // prefix form (just operator + right). Base grammar already carries
+        // 'left' and 'right' field labels.
+        range_pattern: ($, original) => transform(original, {
+            '0': variant('left'),    // seq(left, choice(seq(op,right), '..'))
+            '1': variant('prefix'),  // seq(op, right)
         }),
 
         // unary_expression — label both the operator token (pos 0) and

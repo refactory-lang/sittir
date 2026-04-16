@@ -18,6 +18,7 @@
 import type {
     NodeMap, AssembledField, AssembledChild, AssembledNode,
 } from '../compiler/rule.ts'
+import type { PolymorphVariant } from '../dsl/synthetic-rules.ts'
 import type { DerivedOverridesConfig } from '../compiler/derive-overrides-json.ts'
 
 export interface EmitWrapConfig {
@@ -218,7 +219,7 @@ export function emitWrap(config: EmitWrapConfig): string {
     // Per-kind wrap functions — local dispatch on modelType.
     // ------------------------------------------------------------------
     for (const [, node] of nodeMap.nodes) {
-        const source = renderWrapForNode(node)
+        const source = renderWrapForNode(node, nodeMap)
         if (source === undefined) continue
         lines.push(source)
         lines.push('')
@@ -306,8 +307,14 @@ function isNamedKind(kind: string, nodeMap: NodeMap): boolean {
 // Per-node wrap dispatch
 // ---------------------------------------------------------------------------
 
-function renderWrapForNode(node: AssembledNode): string | undefined {
+function renderWrapForNode(node: AssembledNode, nodeMap: NodeMap): string | undefined {
     if (!node.rawFactoryName) return undefined
+
+    const variants = nodeMap.polymorphVariants?.filter(v => v.parent === node.kind)
+    if (variants?.length) {
+        return emitNestedAliasWrap(node, variants, nodeMap)
+    }
+
     switch (node.modelType) {
         case 'branch':
             return emitFieldCarryingWrap(node, node.fields, node.children ?? [])
@@ -337,6 +344,50 @@ function renderWrapForNode(node: AssembledNode): string | undefined {
         default:
             return undefined
     }
+}
+
+// ---------------------------------------------------------------------------
+// Nested-alias wrap — flat getters for parent + variant child fields
+// ---------------------------------------------------------------------------
+
+function emitNestedAliasWrap(
+    parentNode: AssembledNode,
+    polymorphVariants: PolymorphVariant[],
+    nodeMap: NodeMap,
+): string {
+    const fn = `wrap${parentNode.typeName}`
+    const parentFields = 'fields' in parentNode ? (parentNode as { fields: readonly AssembledField[] }).fields : []
+    const lines: string[] = []
+
+    lines.push(`export function ${fn}(data: _NodeData, tree: TreeHandle): WrappedNode<${parentNode.typeName}> {`)
+    lines.push('  return {')
+    lines.push('    ...data,')
+
+    for (const f of parentFields) {
+        const method = f.propertyName === 'type' ? 'typeField' : f.propertyName
+        lines.push(`    get ${method}() { return drillIn(data.fields?.['${f.name}'], tree); },`)
+    }
+
+    // Variant field getters — drill into the first child's fields
+    const seenMethods = new Set(parentFields.map(f => f.propertyName === 'type' ? 'typeField' : f.propertyName))
+    for (const pv of polymorphVariants) {
+        const fullName = `${pv.parent}_${pv.child}`
+        const vNode = nodeMap.nodes.get(fullName)
+        if (!vNode) continue
+        const vFields = 'fields' in vNode ? (vNode as { fields: readonly AssembledField[] }).fields : []
+        for (const vf of vFields) {
+            const method = vf.propertyName === 'type' ? 'typeField' : vf.propertyName
+            if (seenMethods.has(method)) continue
+            seenMethods.add(method)
+            lines.push(`    get ${method}() { const c = data.children?.[0]; return c && typeof c === 'object' && 'fields' in (c as Record<string, unknown>) ? drillIn((c as any).fields?.['${vf.name}'], tree) : undefined; },`)
+        }
+    }
+
+    lines.push(`    get variant() { return drillIn(data.children?.[0], tree); },`)
+    lines.push(`    get child() { return drillIn(data.children?.[0], tree); },`)
+    lines.push(`  } as unknown as WrappedNode<${parentNode.typeName}>;`)
+    lines.push('}')
+    return lines.join('\n')
 }
 
 // ---------------------------------------------------------------------------

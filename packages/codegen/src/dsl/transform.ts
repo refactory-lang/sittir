@@ -24,7 +24,8 @@
 import { parsePath, applyPath, reconstructWrapper, reconstructPrec, reconstructContainer } from './transform-path.ts'
 import { isFieldPlaceholder, type FieldPlaceholder } from './field.ts'
 import { isAliasPlaceholder, type AliasPlaceholder } from './alias.ts'
-import { registerSyntheticRule } from './synthetic-rules.ts'
+import { isVariantPlaceholder, type VariantPlaceholder } from './variant.ts'
+import { registerSyntheticRule, getCurrentRuleKind, registerPolymorphVariant } from './synthetic-rules.ts'
 import { isFieldLike, isPrecWrapper, isWrapperType, type RuntimeRule } from './runtime-shapes.ts'
 
 /**
@@ -57,25 +58,33 @@ import { isFieldLike, isPrecWrapper, isWrapperType, type RuntimeRule } from './r
  * field wrapper on the original is unwrapped before re-wrapping to
  * avoid nested fields.
  */
+type PatchSet = Record<number | string, RuntimeRule | FieldPlaceholder | AliasPlaceholder | VariantPlaceholder>
+
 export function transform(
     original: RuntimeRule,
-    patches: Record<number | string, RuntimeRule | FieldPlaceholder | AliasPlaceholder>,
+    ...patchSets: PatchSet[]
 ): RuntimeRule {
-    const usesPaths = Object.keys(patches).some(k => k.includes('/') || k.includes('*'))
-    if (usesPaths) {
-        return applyPathPatches(original, patches)
+    let rule = original
+    for (const patches of patchSets) {
+        const hasPathKeys = Object.keys(patches).some(k => k.includes('/') || k.includes('*'))
+        const hasPlaceholderAlias = Object.values(patches).some(v => isAliasPlaceholder(v) || isVariantPlaceholder(v))
+        if (hasPathKeys || hasPlaceholderAlias) {
+            rule = applyPathPatches(rule, patches)
+        } else {
+            rule = applyFlatPatches(rule, patches as Record<number | string, RuntimeRule>)
+        }
     }
-    return applyFlatPatches(original, patches as Record<number | string, RuntimeRule>)
+    return rule
 }
 
 function applyPathPatches(
     original: RuntimeRule,
-    patches: Record<number | string, RuntimeRule | FieldPlaceholder | AliasPlaceholder>,
+    patches: Record<number | string, RuntimeRule | FieldPlaceholder | AliasPlaceholder | VariantPlaceholder>,
 ): RuntimeRule {
     let rule = original
     for (const [key, value] of Object.entries(patches)) {
         const segments = parsePath(String(key))
-        rule = applyPath(rule, segments, (member) => resolvePatch(value, member))
+        rule = applyPath(rule, segments, (member, precStack) => resolvePatch(value, member, precStack))
     }
     return rule
 }
@@ -150,9 +159,19 @@ function applyFlatPatches(
     return original
 }
 
+function wrapInPrec(content: RuntimeRule, precStack?: readonly RuntimeRule[]): RuntimeRule {
+    if (!precStack?.length) return content
+    let result = content
+    for (let i = precStack.length - 1; i >= 0; i--) {
+        result = reconstructPrec(precStack[i]!, result)
+    }
+    return result
+}
+
 function resolvePatch(
-    patch: RuntimeRule | FieldPlaceholder,
+    patch: RuntimeRule | FieldPlaceholder | AliasPlaceholder | VariantPlaceholder,
     originalMember: RuntimeRule,
+    precStack?: readonly RuntimeRule[],
 ): RuntimeRule {
     // One-arg `field('name')` placeholder — wrap the original member
     // using the runtime's native field() so the resulting rule's type
@@ -178,13 +197,32 @@ function resolvePatch(
     if (isFieldLike(patch)) {
         return { ...patch, source: 'override' as const } as unknown as RuntimeRule
     }
+    // Variant placeholder — variant('suffix'): auto-prefix with current
+    // rule kind → alias('parentKind_suffix'). Registers polymorph metadata.
+    if (isVariantPlaceholder(patch)) {
+        const parentKind = getCurrentRuleKind()
+        if (!parentKind) {
+            throw new Error(`variant('${patch.name}'): no current rule kind — variant() must be used inside a rule callback`)
+        }
+        const fullName = `${parentKind}_${patch.name}`
+        const hiddenName = '_' + fullName
+        registerSyntheticRule(hiddenName, wrapInPrec(originalMember, precStack))
+        registerPolymorphVariant(parentKind, patch.name)
+        const isUpperCase = originalMember.type === originalMember.type.toUpperCase()
+        return {
+            type: isUpperCase ? 'ALIAS' : 'alias',
+            content: { type: isUpperCase ? 'SYMBOL' : 'symbol', name: hiddenName },
+            named: true,
+            value: fullName,
+        } as unknown as RuntimeRule
+    }
     // Alias placeholder — alias('variant_name'): register a hidden
     // rule with the original content and return alias($._hidden, $.visible).
     // The hidden rule is picked up by evaluate.ts (sittir) or the
     // grammar wrapper (tree-sitter CLI) after all callbacks run.
     if (isAliasPlaceholder(patch)) {
         const hiddenName = '_' + patch.name
-        registerSyntheticRule(hiddenName, originalMember)
+        registerSyntheticRule(hiddenName, wrapInPrec(originalMember, precStack))
         const isUpperCase = originalMember.type === originalMember.type.toUpperCase()
         return {
             type: isUpperCase ? 'ALIAS' : 'alias',

@@ -115,11 +115,12 @@ const contentOf = (r: RuntimeRule): RuntimeRule =>
 export function applyPath(
     rule: RuntimeRule,
     segments: readonly PathSegment[],
-    patch: RuntimeRule | ((member: RuntimeRule) => RuntimeRule),
+    patch: RuntimeRule | ((member: RuntimeRule, precStack?: readonly RuntimeRule[]) => RuntimeRule),
+    precStack?: readonly RuntimeRule[],
 ): RuntimeRule {
     if (segments.length === 0) {
         // Reached the target position — apply the patch.
-        return typeof patch === 'function' ? patch(rule) : patch
+        return typeof patch === 'function' ? patch(rule, precStack) : patch
     }
 
     // Precedence wrappers are TRANSPARENT to path addressing. Sittir's
@@ -127,10 +128,11 @@ export function applyPath(
     // segments target the underlying structure, not the wrapper. We
     // descend into the wrapper without consuming a segment, and
     // reconstruct it on the way back so tree-sitter still sees the
-    // precedence info. Both lowercase (sittir) and uppercase
-    // (tree-sitter native) variants are handled.
+    // precedence info. Accumulated prec wrappers are passed to the
+    // patch callback so alias/variant hidden rules can inherit context.
     if (isPrecWrapperShape(rule)) {
-        const newContent = applyPath(contentOf(rule), segments, patch)
+        const newStack = precStack ? [...precStack, rule] : [rule]
+        const newContent = applyPath(contentOf(rule), segments, patch, newStack)
         return reconstructPrec(rule, newContent)
     }
 
@@ -140,12 +142,12 @@ export function applyPath(
     // Containers we can descend into — predicates in runtime-shapes.ts
     // accept both sittir lowercase and tree-sitter uppercase naming.
     if (isContainerType(t)) {
-        return applyToMembers(rule, head!, rest, patch)
+        return applyToMembers(rule, head!, rest, patch, precStack)
     }
     if (isWrapperType(t)) {
         // For wrappers, position 0 is the wrapped content.
         if (head!.kind === 'wildcard' || (head!.kind === 'index' && head!.value === 0)) {
-            const newContent = applyPath(contentOf(rule), rest, patch)
+            const newContent = applyPath(contentOf(rule), rest, patch, precStack)
             return reconstructWrapper(rule, newContent)
         }
         throw new ApplyPathSkip(
@@ -236,7 +238,8 @@ function applyToMembers(
     rule: RuntimeRule,
     head: PathSegment,
     rest: readonly PathSegment[],
-    patch: RuntimeRule | ((member: RuntimeRule) => RuntimeRule),
+    patch: RuntimeRule | ((member: RuntimeRule, precStack?: readonly RuntimeRule[]) => RuntimeRule),
+    precStack?: readonly RuntimeRule[],
 ): RuntimeRule {
     const members = [...membersOf(rule)]
 
@@ -246,7 +249,7 @@ function applyToMembers(
                 `applyPath: index ${head.value} out of bounds in ${rule.type} of length ${members.length}`,
             )
         }
-        members[head.value] = applyPath(members[head.value]!, rest, patch)
+        members[head.value] = applyPath(members[head.value]!, rest, patch, precStack)
         return reconstructContainer(rule, members)
     }
 
@@ -263,7 +266,7 @@ function applyToMembers(
     let anyApplied = false
     for (let i = 0; i < members.length; i++) {
         try {
-            members[i] = applyPath(members[i]!, rest, patch)
+            members[i] = applyPath(members[i]!, rest, patch, precStack)
             anyApplied = true
         } catch (e) {
             if (e instanceof ApplyPathSkip) continue

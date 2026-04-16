@@ -756,12 +756,9 @@ function resolveRule(
             return resolveRule(rule.content, currentName, allRules, supertypes, externalRoles)
 
         case 'alias':
-            // TODO(alias): Named aliases rename the tree-sitter node
-            // kind at parse time (`alias($.original, $.renamed)`), but
-            // Link currently collapses to content. Downstream passes
-            // that need the runtime name use `aliasedHiddenKinds` (for
-            // rule-level top-level aliases) or the
-            // `collectAllAliasTargets` map (for inline aliases).
+            if (rule.named && rule.value && !rule.value.startsWith('_')) {
+                return { type: 'symbol', name: rule.value } as unknown as Rule
+            }
             return resolveRule(rule.content, currentName, allRules, supertypes, externalRoles)
 
         case 'symbol': {

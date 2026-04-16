@@ -66,7 +66,7 @@ rules:
     return_type_clause: "->$RETURN_TYPE"
   function_modifiers: $$$ASYNC$$$DEFAULT$$$CONST$$$UNSAFE$$$CHILDREN
   where_clause:
-    template: where $$$CHILDREN
+    template: $WHERE $$$CHILDREN
     joinBy: ","
   where_predicate: $LEFT $BOUNDS
   impl_item:
@@ -75,24 +75,24 @@ rules:
       semi: $UNSAFE impl $TYPE_PARAMETERS $TRAIT_CLAUSE $TYPE $$$CHILDREN;
     trait_clause: $TRAIT for
   trait_item: $VISIBILITY_MODIFIER $UNSAFE trait $NAME $TYPE_PARAMETERS $BOUNDS $$$CHILDREN $BODY
-  associated_type: type $NAME $TYPE_PARAMETERS $BOUNDS $WHERE_CLAUSE;
+  associated_type: $TYPE $NAME $TYPE_PARAMETERS $BOUNDS $WHERE_CLAUSE;
   trait_bounds:
     template: ":$$$CHILDREN"
     joinBy: +
-  higher_ranked_trait_bound: for $TYPE_PARAMETERS $TYPE
+  higher_ranked_trait_bound: $FOR $TYPE_PARAMETERS $TYPE
   removed_trait_bound: "?$$$CHILDREN"
   type_parameters:
     template: <$$$CHILDREN>
     joinBy: ","
   const_parameter:
-    template: "const $NAME:$TYPE $VALUE_CLAUSE"
+    template: "$CONST $NAME:$TYPE $VALUE_CLAUSE"
     value_clause: =$VALUE
   type_parameter:
     template: $NAME $BOUNDS $DEFAULT_TYPE_CLAUSE
     default_type_clause: =$DEFAULT_TYPE
   lifetime_parameter: $NAME $BOUNDS
   let_declaration:
-    template: let $MUTABLE_SPECIFIER $PATTERN $TYPE_CLAUSE $VALUE_CLAUSE $ALTERNATIVE_CLAUSE;
+    template: $LET $MUTABLE_SPECIFIER $PATTERN $TYPE_CLAUSE $VALUE_CLAUSE $ALTERNATIVE_CLAUSE;
     type_clause: ":$TYPE"
     value_clause: =$VALUE
     alternative_clause: else $ALTERNATIVE
@@ -108,12 +108,12 @@ rules:
   parameters:
     template: ($$$CHILDREN)
     joinBy: ","
-  self_parameter: $LIFETIME $MUTABLE_SPECIFIER $SELF $$$CHILDREN
+  self_parameter: $LIFETIME $MUTABLE_SPECIFIER $$$SELF
   variadic_parameter:
     template: $MUTABLE_SPECIFIER $PATTERN_CLAUSE...
     pattern_clause: "$PATTERN:"
   parameter: "$MUTABLE_SPECIFIER $PATTERN:$TYPE"
-  extern_modifier: extern $STRING_LITERAL
+  extern_modifier: $EXTERN $STRING_LITERAL
   visibility_modifier:
     variants:
       crate: $$$CHILDREN
@@ -125,7 +125,7 @@ rules:
     template: "[$ELEMENT $LENGTH_CLAUSE]"
     length_clause: ;$LENGTH
   for_lifetimes:
-    template: for<$$$CHILDREN>
+    template: $FOR<$$$CHILDREN>
     joinBy: ","
   function_type:
     template: $FOR_LIFETIMES $TRAIT$$$CHILDREN $PARAMETERS $RETURN_TYPE_CLAUSE
@@ -138,29 +138,24 @@ rules:
   generic_type_with_turbofish: "$TYPE::$TYPE_ARGUMENTS"
   bounded_type: $LEFT+$RIGHT
   use_bounds:
-    template: use<$$$CHILDREN>
+    template: $USE<$$$CHILDREN>
     joinBy: ","
   type_arguments:
-    template: <$$$CHILDREN $$$BOUNDS>
+    template: <$$$CHILDREN>
     joinBy: ","
   type_binding: $NAME $TYPE_ARGUMENTS=$TYPE
   reference_type: "&$LIFETIME $MUTABLE_SPECIFIER $TYPE"
   pointer_type: "*$MUTABLE_SPECIFIER $TYPE"
   abstract_type:
-    template: impl $TYPE_PARAMETERS_CLAUSE $TRAIT
+    template: $IMPL $TYPE_PARAMETERS_CLAUSE $TRAIT
     type_parameters_clause: for$TYPE_PARAMETERS
-  dynamic_type: dyn $TRAIT
+  dynamic_type: $DYN $TRAIT
   macro_invocation: $MACRO!$TOKEN_TREE
   delim_token_tree: ($$$CHILDREN)
   scoped_identifier: "$PATH::$NAME"
   scoped_type_identifier_in_expression_position: "$PATH::$NAME"
   scoped_type_identifier: "$PATH::$NAME"
-  range_expression:
-    variants:
-      start: $START $OPERATOR $END
-      start2: $START $OPERATOR
-      operator: $OPERATOR $END
-      operator2: $OPERATOR
+  range_expression: $$$CHILDREN
   unary_expression: $OPERATOR $OPERAND
   try_expression: $VALUE?
   reference_expression: "&$MUTABLE_SPECIFIER $VALUE"
@@ -196,10 +191,10 @@ rules:
       attributes: "\n"
   field_initializer: "$$$CHILDREN $FIELD:$VALUE"
   base_field_initializer: ..$$$CHILDREN
-  if_expression: if $CONDITION $CONSEQUENCE $ALTERNATIVE
-  let_condition: let $PATTERN=$VALUE
-  else_clause: else $$$CHILDREN
-  match_expression: match $VALUE $BODY
+  if_expression: $IF $CONDITION $CONSEQUENCE $ALTERNATIVE
+  let_condition: $LET $PATTERN=$VALUE
+  else_clause: $ELSE $$$CHILDREN
+  match_expression: $MATCH $VALUE $BODY
   match_block: "{$$$CHILDREN}"
   match_arm: $$$CHILDREN $PATTERN=>$VALUE,
   last_match_arm: $$$CHILDREN $PATTERN=>$VALUE
@@ -215,25 +210,21 @@ rules:
   for_expression:
     template: $LABEL_CLAUSE for $PATTERN in $VALUE $BODY
     label_clause: "$LABEL:"
-  const_block: const $BODY
-  closure_expression:
-    variants:
-      body: $STATIC $ASYNC $MOVE $PARAMETERS $RETURN_TYPE_CLAUSE $BODY
-      body2: $STATIC $ASYNC $MOVE $PARAMETERS $BODY
-    return_type_clause: "->$RETURN_TYPE"
+  const_block: $CONST $BODY
+  closure_expression: $STATIC $ASYNC $MOVE $PARAMETERS $$$CHILDREN
   closure_parameters:
     template: "|$$$CHILDREN|"
     joinBy: ","
   label: "'$IDENTIFIER"
-  break_expression: break $LABEL $EXPRESSION
-  continue_expression: continue $LABEL
+  break_expression: $BREAK $LABEL $EXPRESSION
+  continue_expression: $CONTINUE $LABEL
   index_expression: "$OBJECT[$INDEX]"
   await_expression: $$$CHILDREN.await
   field_expression: $VALUE.$FIELD
-  unsafe_block: unsafe $BLOCK
-  async_block: async $MOVE $BLOCK
-  gen_block: gen $MOVE $BLOCK
-  try_block: try $BLOCK
+  unsafe_block: $UNSAFE $BLOCK
+  async_block: $ASYNC $MOVE $BLOCK
+  gen_block: $GEN $MOVE $BLOCK
+  try_block: $TRY $BLOCK
   block:
     template: "$LABEL_CLAUSE{$$$CHILDREN}"
     label_clause: "$LABEL:"
@@ -250,29 +241,35 @@ rules:
   struct_pattern:
     template: "$TYPE{$$$CHILDREN}"
     joinBy: ","
-  field_pattern:
-    variants:
-      name: $REF $MUTABLE_SPECIFIER $NAME
-      colon: "$REF $MUTABLE_SPECIFIER $NAME:$PATTERN"
+  field_pattern: $REF $MUTABLE_SPECIFIER $$$CHILDREN
   mut_pattern: $MUTABLE_SPECIFIER $PATTERN
-  range_pattern:
-    variants:
-      left: $LEFT...$RIGHT
-      right: ..=$RIGHT
-  ref_pattern: ref $$$CHILDREN
+  range_pattern: $$$CHILDREN
+  ref_pattern: $REF $$$CHILDREN
   captured_pattern: $IDENTIFIER@$PATTERN
   reference_pattern: "&$MUTABLE_SPECIFIER $PATTERN"
-  or_pattern:
-    variants:
-      pipe: $LEFT|$RIGHT
-      pipe2: "|$RIGHT"
+  or_pattern: $$$CHILDREN
   negative_literal: "-$VALUE"
   string_literal: "\"$$$CHILDREN\""
   raw_string_literal: $RAW_STRING_LITERAL_START $STRING_CONTENT $RAW_STRING_LITERAL_END
   comment: $$$CHILDREN
   line_comment: //$OUTER$INNER$DOC
-  block_comment: /*$OUTER$INNER $DOC$$$CHILDREN*/
+  block_comment: /*$OUTER$INNER $DOC*/
+  range_expression_binary: $START $OPERATOR $END
+  range_expression_postfix: $START $OPERATOR
+  range_expression_prefix: $OPERATOR $END
+  range_expression_bare: $OPERATOR
   let_chain:
     template: $$$CHILDREN&&
     joinByField:
       children: "&&"
+  closure_expression_block: "->$RETURN_TYPE $BODY"
+  closure_expression_expr: $BODY
+  field_pattern_shorthand: $NAME
+  field_pattern_named: "$NAME:$PATTERN"
+  range_pattern_left:
+    variants:
+      right: $LEFT...$RIGHT
+      dotdot: $LEFT..
+  range_pattern_prefix: ..=$RIGHT
+  or_pattern_binary: $LEFT|$RIGHT
+  or_pattern_prefix: "|$RIGHT"

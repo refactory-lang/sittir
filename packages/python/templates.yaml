@@ -3,48 +3,48 @@ grammar: python
 grammarSha: ""
 rules:
   module: $$$CHILDREN
-  import_statement: import $$$NAME
+  import_statement: $IMPORT $$$NAME
   relative_import: $IMPORT_PREFIX $DOTTED_NAME
-  future_import_statement: from __future__ import $$$NAME$$$CHILDREN
-  import_from_statement: from $MODULE_NAME import $WILDCARD_IMPORT
+  future_import_statement: $FROM __future__ import $$$NAME$$$CHILDREN
+  import_from_statement: $FROM $MODULE_NAME import $WILDCARD_IMPORT
   aliased_import: $NAME as $ALIAS
   print_statement:
     template: print $$$CHILDREN $$$ARGUMENT
     joinBy: ","
   chevron: ">>$EXPRESSION"
   assert_statement:
-    template: assert $$$CHILDREN
+    template: $ASSERT $$$CHILDREN
     joinBy: ","
   expression_statement:
     template: $$$CHILDREN
     joinBy: ","
   named_expression: "$NAME:=$VALUE"
-  return_statement: return $$$CHILDREN
-  delete_statement: del $$$CHILDREN
+  return_statement: $RETURN $$$CHILDREN
+  delete_statement: $DEL $$$CHILDREN
   raise_statement:
-    template: raise $$$CHILDREN $CAUSE_CLAUSE
+    template: $RAISE $$$CHILDREN $CAUSE_CLAUSE
     cause_clause: from $CAUSE
-  if_statement: "if $CONDITION:\n  $CONSEQUENCE\n$$$ALTERNATIVE"
-  elif_clause: "elif $CONDITION:\n  $CONSEQUENCE\n"
-  else_clause: "else:\n  $BODY\n"
+  if_statement: "$IF $CONDITION:\n  $CONSEQUENCE\n$$$ALTERNATIVE"
+  elif_clause: "$ELIF $CONDITION:\n  $CONSEQUENCE\n"
+  else_clause: "$ELSE:\n  $BODY\n"
   match_statement:
-    template: "match $$$SUBJECT:\n  $BODY\n"
+    template: "$MATCH $$$SUBJECT:$BODY"
     joinBy: ","
   case_clause:
-    template: "case $$$CHILDREN $GUARD:\n  $CONSEQUENCE\n"
+    template: "$CASE $$$CHILDREN $GUARD:\n  $CONSEQUENCE\n"
     joinBy: ","
   for_statement: "$ASYNC for $LEFT in $RIGHT:\n  $BODY\n$ALTERNATIVE"
-  while_statement: "while $CONDITION:\n  $BODY\n$ALTERNATIVE"
+  while_statement: "$WHILE $CONDITION:\n  $BODY\n$ALTERNATIVE"
   try_statement:
-    template: "try:\n  $BODY\n$$$EXCEPT_CLAUSES $ELSE_CLAUSE $FINALLY_CLAUSE"
+    template: "$TRY:\n  $BODY\n$$$EXCEPT_CLAUSES $ELSE_CLAUSE $FINALLY_CLAUSE"
     joinByField:
       except_clauses: "\n"
   except_clause:
-    template: "except $$$VALUE $ALIAS_CLAUSE:$$$CHILDREN\n"
+    template: "$EXCEPT $$$VALUE $ALIAS_CLAUSE:$$$CHILDREN"
     alias_clause: as $ALIAS
     joinBy: ","
-  finally_clause: "finally:\n  $BLOCK\n"
-  with_statement: "$ASYNC with $$$CHILDREN:\n  $BODY\n"
+  finally_clause: "$FINALLY:\n  $BLOCK\n"
+  with_statement: "$ASYNC with $WITH_CLAUSE:\n  $BODY\n"
   with_clause:
     template: $$$CHILDREN
     joinBy: ","
@@ -57,16 +57,16 @@ rules:
   list_splat: "*$EXPRESSION"
   dictionary_splat: "**$EXPRESSION"
   global_statement:
-    template: global $$$CHILDREN
+    template: $GLOBAL $$$CHILDREN
     joinBy: ","
   nonlocal_statement:
-    template: nonlocal $$$CHILDREN
+    template: $NONLOCAL $$$CHILDREN
     joinBy: ","
   exec_statement:
-    template: exec $CODE in $$$CHILDREN
+    template: $EXEC $CODE in $$$CHILDREN
     joinBy: ","
-  type_alias_statement: type $LEFT=$RIGHT
-  class_definition: "class $NAME $TYPE_PARAMETERS $SUPERCLASSES:\n  $BODY\n"
+  type_alias_statement: $TYPE $LEFT=$RIGHT
+  class_definition: "$CLASS $NAME $TYPE_PARAMETERS $SUPERCLASSES:\n  $BODY\n"
   type_parameter:
     template: "[$$$CHILDREN]"
     joinBy: ","
@@ -80,12 +80,12 @@ rules:
     template: "$$$CHILDREN\n"
     joinBy: "\n"
   expression_list:
-    template: $$$CHILDREN,
+    template: $EXPRESSION,$$$CHILDREN
     joinBy: ","
   dotted_name:
     template: $$$CHILDREN
     joinBy: .
-  case_pattern: $$$CHILDREN as
+  case_pattern: $$$CHILDREN
   union_pattern:
     template: $$$CHILDREN
     joinBy: "|"
@@ -107,23 +107,19 @@ rules:
   list_splat_pattern: "*$$$CHILDREN"
   dictionary_splat_pattern: "**$$$CHILDREN"
   as_pattern: $EXPRESSION as $ALIAS
-  not_operator: not $ARGUMENT
+  not_operator: $NOT $ARGUMENT
   boolean_operator: $LEFT $OPERATOR $RIGHT
   binary_operator: $LEFT $OPERATOR $RIGHT
   unary_operator: $OPERATOR $ARGUMENT
   comparison_operator: $LEFT $$$OPERATORS $$$CHILDREN
-  lambda: "lambda $PARAMETERS:$BODY"
-  lambda_within_for_in_clause: "lambda $PARAMETERS:$BODY"
-  assignment:
-    variants:
-      eq: $LEFT=$RIGHT
-      colon: "$LEFT:$TYPE"
-      colon2: "$LEFT:$TYPE=$RIGHT"
+  lambda: "$LAMBDA $PARAMETERS:$BODY"
+  lambda_within_for_in_clause: "$LAMBDA $PARAMETERS:$BODY"
+  assignment: $LEFT $$$CHILDREN
   augmented_assignment: $LEFT $OPERATOR $RIGHT
   pattern_list:
-    template: $$$CHILDREN,
+    template: $PATTERN,$$$CHILDREN
     joinBy: ","
-  yield: yield from $$$CHILDREN
+  yield: $YIELD from $$$CHILDREN
   attribute: $OBJECT.$ATTRIBUTE
   subscript:
     template: "$VALUE[$$$SUBSCRIPT]"
@@ -134,7 +130,7 @@ rules:
   call: $FUNCTION $ARGUMENTS
   typed_parameter: "$$$CHILDREN:$TYPE"
   type: $$$CHILDREN
-  splat_type: $IDENTIFIER $$$CHILDREN
+  splat_type: $$$IDENTIFIER
   generic_type: $IDENTIFIER $TYPE_PARAMETER
   union_type: $LEFT|$RIGHT
   constrained_type: "$BASE_TYPE:$CONSTRAINT"
@@ -147,19 +143,19 @@ rules:
     template: "{$$$CHILDREN}"
     joinBy: ","
   pair: "$KEY:$VALUE"
-  list_comprehension: "[$BODY $$$CHILDREN]"
-  dictionary_comprehension: "{$BODY $$$CHILDREN}"
-  set_comprehension: "{$BODY $$$CHILDREN}"
-  generator_expression: ($BODY $$$CHILDREN)
+  list_comprehension: "[$BODY $FOR_IN_CLAUSE $$$CHILDREN]"
+  dictionary_comprehension: "{$BODY $FOR_IN_CLAUSE $$$CHILDREN}"
+  set_comprehension: "{$BODY $FOR_IN_CLAUSE $$$CHILDREN}"
+  generator_expression: ($BODY $FOR_IN_CLAUSE $$$CHILDREN)
   parenthesized_expression: ($$$CHILDREN)
   for_in_clause:
     template: $ASYNC for $LEFT in $$$RIGHT
     joinBy: ","
     joinByField:
       right: ","
-  if_clause: if $EXPRESSION
+  if_clause: $IF $EXPRESSION
   conditional_expression: $BODY if $CONDITION else $ALTERNATIVE
-  concatenated_string: $$$CHILDREN
+  concatenated_string: $STRING $$$CHILDREN
   string:
     template: $STRING_START $$$CONTENT $STRING_END
     joinByField:
@@ -167,6 +163,9 @@ rules:
   string_content: $$$CHILDREN
   interpolation: "{$EXPRESSION $TYPE_CONVERSION $FORMAT_SPECIFIER}"
   format_specifier: ":$$$CHILDREN"
-  await: await $PRIMARY_EXPRESSION
+  await: $AWAIT $PRIMARY_EXPRESSION
   as_pattern_target: $$$CHILDREN
+  assignment_eq: =$RIGHT
+  assignment_type: ":$TYPE"
+  assignment_typed: ":$TYPE=$RIGHT"
   format_expression: "{$EXPRESSION $TYPE_CONVERSION $FORMAT_SPECIFIER}"

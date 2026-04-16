@@ -15,7 +15,7 @@
 // Summary
 // ---------------------------------------------------------------
 // Field inferences: 0  (0 applied, 0 held)
-// Rule promotions:  23  (23 applied, 0 held)
+// Rule promotions:  20  (20 applied, 0 held)
 // Repeated shapes:  0  (advisory — suggested supertypes/groups)
 
 // ---------------------------------------------------------------
@@ -47,13 +47,13 @@ export const suggestedRules = {
   "pattern": $ => choice($.identifier, $.keyword_identifier, $.subscript, $.attribute, $.list_splat_pattern, $.tuple_pattern, $.list_pattern),
 
   // [applied] promoted supertype
-  "_expression_within_for_in_clause": $ => choice($.expression, $.lambda_within_for_in_clause),
+  "_expression_within_for_in_clause": $ => choice($.expression, $.lambda),
 
   // [applied] promoted supertype
   "expression": $ => choice($.comparison_operator, $.not_operator, $.boolean_operator, $.lambda, $.primary_expression, $.conditional_expression, $.named_expression, $.as_pattern),
 
   // [applied] promoted supertype
-  "primary_expression": $ => choice($.await, $.binary_operator, $.identifier, $.keyword_identifier, $.string, $.concatenated_string, $.integer, $.float, $.true, $.false, $.none, $.unary_operator, $.attribute, $.subscript, $.call, $.list, $.list_comprehension, $.dictionary, $.dictionary_comprehension, $.set, $.set_comprehension, $.tuple, $.parenthesized_expression, $.generator_expression, $.ellipsis, $.list_splat_pattern),
+  "primary_expression": $ => choice($.await, $.binary_operator, $.identifier, $.keyword_identifier, $.string, $.concatenated_string, $.integer, $.float, $.true, $.false, $.none, $.unary_operator, $.attribute, $.subscript, $.call, $.list, $.list_comprehension, $.dictionary, $.dictionary_comprehension, $.set, $.set_comprehension, $.tuple, $.parenthesized_expression, $.generator_expression, $.ellipsis, $.list_splat),
 
   // [applied] promoted supertype
   "_left_hand_side": $ => choice($.pattern, $.pattern_list),
@@ -63,6 +63,9 @@ export const suggestedRules = {
 
   // [applied] promoted supertype
   "_f_expression": $ => choice($.expression, $.expression_list, $.pattern_list, $.yield),
+
+  // [applied] promoted supertype
+  "keyword_identifier": $ => choice($.identifier),
 
 };
 
@@ -85,19 +88,16 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "_simple_statement", classification: "supertype", applied: true },
   { kind: "_statement", classification: "supertype", applied: true },
   { kind: "expression", classification: "supertype", applied: true },
+  { kind: "keyword_identifier", classification: "supertype", applied: true },
   { kind: "parameter", classification: "supertype", applied: true },
   { kind: "pattern", classification: "supertype", applied: true },
   { kind: "primary_expression", classification: "supertype", applied: true },
-  { kind: "_is_not", classification: "terminal", applied: true },
-  { kind: "_not_in", classification: "terminal", applied: true },
   { kind: "comment", classification: "terminal", applied: true },
   { kind: "escape_sequence", classification: "terminal", applied: true },
   { kind: "float", classification: "terminal", applied: true },
   { kind: "import_prefix", classification: "terminal", applied: true },
   { kind: "integer", classification: "terminal", applied: true },
-  { kind: "keyword_identifier", classification: "terminal", applied: true },
   { kind: "line_continuation", classification: "terminal", applied: true },
-  { kind: "assignment", classification: "polymorph", applied: true },
 ];
 
 export interface InferredField {

@@ -13,7 +13,7 @@ import type {
     EnumRule, SymbolRef, RawGrammar, ExternalRole,
 } from './rule.ts'
 import { withRoleScope } from '../dsl/role.ts'
-import { withSyntheticRuleScope } from '../dsl/synthetic-rules.ts'
+import { withSyntheticRuleScope, setCurrentRuleKind, drainPolymorphVariants } from '../dsl/synthetic-rules.ts'
 
 // ---------------------------------------------------------------------------
 // Input type — anything the DSL functions accept
@@ -709,7 +709,9 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
             for (const [name, ruleFn] of Object.entries(opts.rules)) {
                 const $ = createProxy(name, refs)
                 const baseRule = baseRules[name]
+                setCurrentRuleKind(name)
                 const result = ruleFn.call($, $, baseRule)
+                setCurrentRuleKind(null)
                 rules[name] = normalize(result)
             }
         })
@@ -750,6 +752,8 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
     // `source: 'override'` (set only by `transform()`).
     const overrideRuleNames = Object.keys(opts.rules ?? {})
 
+    const polymorphVariants = drainPolymorphVariants()
+
     return {
         grammar: {
             name: opts.name,
@@ -766,6 +770,7 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
             // calls inside externals/rules. Empty when the grammar
             // declares no roles.
             externalRoles: collectedRoles.size > 0 ? collectedRoles : undefined,
+            polymorphVariants: polymorphVariants.length > 0 ? polymorphVariants : undefined,
         } satisfies RawGrammar,
     }
 }

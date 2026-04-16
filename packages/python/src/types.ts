@@ -52,6 +52,7 @@ export type LeafStringMap = {
   not: "not";
   and: "and";
   or: "or";
+  is: "is";
   True: "True";
   False: "False";
   None: "None";
@@ -78,6 +79,7 @@ export const enum SyntaxKind {
   ElifClause = 'elif_clause',
   ElseClause = 'else_clause',
   MatchStatement = 'match_statement',
+  MatchBlock = '_match_block',
   CaseClause = 'case_clause',
   ForStatement = 'for_statement',
   WhileStatement = 'while_statement',
@@ -108,7 +110,10 @@ export const enum SyntaxKind {
   DottedName = 'dotted_name',
   CasePattern = 'case_pattern',
   SimplePattern = '_simple_pattern',
+  _AsPattern = '_as_pattern',
   UnionPattern = 'union_pattern',
+  _ListPattern = '_list_pattern',
+  _TuplePattern = '_tuple_pattern',
   DictPattern = 'dict_pattern',
   KeyValuePattern = '_key_value_pattern',
   KeywordPattern = 'keyword_pattern',
@@ -128,6 +133,8 @@ export const enum SyntaxKind {
   BooleanOperator = 'boolean_operator',
   BinaryOperator = 'binary_operator',
   UnaryOperator = 'unary_operator',
+  NotIn = '_not_in',
+  IsNot = '_is_not',
   ComparisonOperator = 'comparison_operator',
   Lambda = 'lambda',
   LambdaWithinForInClause = 'lambda_within_for_in_clause',
@@ -168,20 +175,23 @@ export const enum SyntaxKind {
   Interpolation = 'interpolation',
   FormatSpecifier = 'format_specifier',
   Await = 'await',
+  _AssignmentEq = '_assignment_eq',
+  _AssignmentType = '_assignment_type',
+  _AssignmentTyped = '_assignment_typed',
   AsPatternTarget = 'as_pattern_target',
+  AssignmentEq = 'assignment_eq',
+  AssignmentType = 'assignment_type',
+  AssignmentTyped = 'assignment_typed',
   FormatExpression = 'format_expression',
   ImportPrefix = 'import_prefix',
   PassStatement = 'pass_statement',
   BreakStatement = 'break_statement',
   ContinueStatement = 'continue_statement',
-  NotIn = '_not_in',
-  IsNot = '_is_not',
   EscapeSequence = 'escape_sequence',
   TypeConversion = 'type_conversion',
   Integer = 'integer',
   Float = 'float',
   Identifier = 'identifier',
-  KeywordIdentifier = 'keyword_identifier',
   True = 'true',
   False = 'false',
   None = 'none',
@@ -231,6 +241,7 @@ export const enum SyntaxKind {
   Not = 'not',
   And = 'and',
   Or = 'or',
+  Is = 'is',
   True2 = 'True',
   False2 = 'False',
   None2 = 'None',
@@ -315,7 +326,7 @@ export const enum PatternKind {
 
 export const enum ExpressionWithinForInClauseKind {
   Expression = 'expression',
-  LambdaWithinForInClause = 'lambda_within_for_in_clause',
+  Lambda = 'lambda',
 }
 
 export const enum ExpressionKind {
@@ -355,7 +366,7 @@ export const enum PrimaryExpressionKind {
   ParenthesizedExpression = 'parenthesized_expression',
   GeneratorExpression = 'generator_expression',
   Ellipsis2 = 'ellipsis',
-  ListSplatPattern = 'list_splat_pattern',
+  ListSplat = 'list_splat',
 }
 
 export const enum LeftHandSideKind {
@@ -379,6 +390,10 @@ export const enum FExpressionKind {
   Yield = 'yield',
 }
 
+export const enum KeywordIdentifierKind {
+  Identifier = 'identifier',
+}
+
 // Node types — concrete interfaces
 export interface Module {
   readonly type: 'module';
@@ -392,6 +407,9 @@ export interface SimpleStatements {
 
 export interface ImportStatement {
   readonly type: 'import_statement';
+  readonly fields: {
+    readonly import: "import";
+  };
   readonly children: readonly [ImportList];
 }
 
@@ -405,12 +423,16 @@ export interface RelativeImport {
 
 export interface FutureImportStatement {
   readonly type: 'future_import_statement';
+  readonly fields: {
+    readonly from: "from";
+  };
   readonly children: readonly [ImportList];
 }
 
 export interface ImportFromStatement {
   readonly type: 'import_from_statement';
   readonly fields: {
+    readonly from: "from";
     readonly module_name: RelativeImport | DottedName;
     readonly wildcard_import: WildcardImport | ImportList;
   };
@@ -448,6 +470,9 @@ export interface Chevron {
 
 export interface AssertStatement {
   readonly type: 'assert_statement';
+  readonly fields: {
+    readonly assert: "assert";
+  };
   readonly children: NonEmptyArray<Expression>;
 }
 
@@ -466,17 +491,24 @@ export interface NamedExpression {
 
 export interface ReturnStatement {
   readonly type: 'return_statement';
+  readonly fields: {
+    readonly return: "return";
+  };
   readonly children: readonly [Expressions];
 }
 
 export interface DeleteStatement {
   readonly type: 'delete_statement';
+  readonly fields: {
+    readonly del: "del";
+  };
   readonly children: readonly [Expressions];
 }
 
 export interface RaiseStatement {
   readonly type: 'raise_statement';
   readonly fields: {
+    readonly raise: "raise";
     readonly cause?: Expression;
   };
   readonly children: readonly [Expressions];
@@ -485,6 +517,7 @@ export interface RaiseStatement {
 export interface IfStatement {
   readonly type: 'if_statement';
   readonly fields: {
+    readonly if: "if";
     readonly condition: Expression;
     readonly consequence: Suite;
     readonly alternative?: readonly (ElifClause | ElseClause)[];
@@ -494,6 +527,7 @@ export interface IfStatement {
 export interface ElifClause {
   readonly type: 'elif_clause';
   readonly fields: {
+    readonly elif: "elif";
     readonly condition: Expression;
     readonly consequence: Suite;
   };
@@ -502,6 +536,7 @@ export interface ElifClause {
 export interface ElseClause {
   readonly type: 'else_clause';
   readonly fields: {
+    readonly else: "else";
     readonly body: Suite;
   };
 }
@@ -509,14 +544,28 @@ export interface ElseClause {
 export interface MatchStatement {
   readonly type: 'match_statement';
   readonly fields: {
+    readonly match: "match";
     readonly subject: NonEmptyArray<Expression>;
-    readonly body: CaseClause;
+    readonly body: Block;
   };
 }
 
+export interface MatchBlockForm0 {
+  readonly type: '_match_block';
+  readonly fields: {
+    readonly alternative: readonly (CaseClause)[];
+  };
+}
+
+export interface MatchBlockForm1 {
+  readonly type: '_match_block';
+}
+
+export type MatchBlock = MatchBlockForm0 | MatchBlockForm1;
 export interface CaseClause {
   readonly type: 'case_clause';
   readonly fields: {
+    readonly case: "case";
     readonly guard?: IfClause;
     readonly consequence: Suite;
   };
@@ -537,6 +586,7 @@ export interface ForStatement {
 export interface WhileStatement {
   readonly type: 'while_statement';
   readonly fields: {
+    readonly while: "while";
     readonly condition: Expression;
     readonly body: Suite;
     readonly alternative?: ElseClause;
@@ -546,6 +596,7 @@ export interface WhileStatement {
 export interface TryStatement {
   readonly type: 'try_statement';
   readonly fields: {
+    readonly try: "try";
     readonly body: Suite;
     readonly except_clauses: readonly (ExceptClause)[];
     readonly else_clause?: ElseClause;
@@ -556,6 +607,7 @@ export interface TryStatement {
 export interface ExceptClause {
   readonly type: 'except_clause';
   readonly fields: {
+    readonly except: "except";
     readonly value?: Expression;
     readonly alias?: Expression;
   };
@@ -565,6 +617,7 @@ export interface ExceptClause {
 export interface FinallyClause {
   readonly type: 'finally_clause';
   readonly fields: {
+    readonly finally: "finally";
     readonly block: Suite;
   };
 }
@@ -573,9 +626,9 @@ export interface WithStatement {
   readonly type: 'with_statement';
   readonly fields: {
     readonly async?: "async";
+    readonly with_clause: WithClause;
     readonly body: Suite;
   };
-  readonly children: readonly [WithClause];
 }
 
 export interface WithClause {
@@ -628,17 +681,24 @@ export interface DictionarySplat {
 
 export interface GlobalStatement {
   readonly type: 'global_statement';
+  readonly fields: {
+    readonly global: "global";
+  };
   readonly children: NonEmptyArray<Identifier>;
 }
 
 export interface NonlocalStatement {
   readonly type: 'nonlocal_statement';
+  readonly fields: {
+    readonly nonlocal: "nonlocal";
+  };
   readonly children: NonEmptyArray<Identifier>;
 }
 
 export interface ExecStatement {
   readonly type: 'exec_statement';
   readonly fields: {
+    readonly exec: "exec";
     readonly code: String | Identifier;
   };
   readonly children: readonly (Expression)[];
@@ -647,6 +707,7 @@ export interface ExecStatement {
 export interface TypeAliasStatement {
   readonly type: 'type_alias_statement';
   readonly fields: {
+    readonly type: "type";
     readonly left: Type;
     readonly right: Type;
   };
@@ -655,6 +716,7 @@ export interface TypeAliasStatement {
 export interface ClassDefinition {
   readonly type: 'class_definition';
   readonly fields: {
+    readonly class: "class";
     readonly name: Identifier;
     readonly type_parameters?: TypeParameter;
     readonly superclasses?: ArgumentList;
@@ -669,12 +731,12 @@ export interface TypeParameter {
 
 export interface ParenthesizedListSplat {
   readonly type: 'parenthesized_list_splat';
-  readonly children: readonly [ParenthesizedListSplat | ListSplat];
+  readonly children: readonly [ParenthesizedExpression | ListSplat];
 }
 
 export interface ArgumentList {
   readonly type: 'argument_list';
-  readonly children: readonly (Expression | ListSplat | DictionarySplat | ParenthesizedListSplat | KeywordArgument)[];
+  readonly children: readonly (Expression | ListSplat | DictionarySplat | ParenthesizedExpression | KeywordArgument)[];
 }
 
 export interface DecoratedDefinition {
@@ -695,7 +757,7 @@ export interface Decorator {
 
 export interface Suite {
   readonly type: '_suite';
-  readonly children: readonly [SimpleStatements | Block];
+  readonly children: readonly [Block];
 }
 
 export interface Block {
@@ -705,6 +767,9 @@ export interface Block {
 
 export interface ExpressionList {
   readonly type: 'expression_list';
+  readonly fields: {
+    readonly expression: Expression;
+  };
   readonly children: readonly (Expression)[];
 }
 
@@ -715,17 +780,31 @@ export interface DottedName {
 
 export interface CasePattern {
   readonly type: 'case_pattern';
-  readonly children: readonly [CasePattern | Identifier | KeywordPattern | SimplePattern];
+  readonly children: readonly [AsPattern | KeywordPattern | SimplePattern];
 }
 
 export interface SimplePattern {
   readonly type: '_simple_pattern';
-  readonly children: readonly (ClassPattern | SplatPattern | UnionPattern | CasePattern | DictPattern | String | ConcatenatedString | True | False | None | Integer | Float | ComplexPattern | DottedName)[];
+  readonly children: readonly [ClassPattern | SplatPattern | UnionPattern | ListPattern | TuplePattern | DictPattern | String | ConcatenatedString | True | False | None | Integer | Float | ComplexPattern | DottedName];
+}
+
+export interface _AsPattern {
+  readonly type: '_as_pattern';
 }
 
 export interface UnionPattern {
   readonly type: 'union_pattern';
   readonly children: readonly (SimplePattern)[];
+}
+
+export interface _ListPattern {
+  readonly type: '_list_pattern';
+  readonly children: readonly (CasePattern)[];
+}
+
+export interface _TuplePattern {
+  readonly type: '_tuple_pattern';
+  readonly children: readonly (CasePattern)[];
 }
 
 export interface DictPattern {
@@ -821,13 +900,14 @@ export interface AsPattern {
   readonly type: 'as_pattern';
   readonly fields: {
     readonly expression: Expression;
-    readonly alias: Expression;
+    readonly alias: AsPatternTarget;
   };
 }
 
 export interface NotOperator {
   readonly type: 'not_operator';
   readonly fields: {
+    readonly not: "not";
     readonly argument: Expression;
   };
 }
@@ -858,6 +938,14 @@ export interface UnaryOperator {
   };
 }
 
+export interface NotIn {
+  readonly type: '_not_in';
+}
+
+export interface IsNot {
+  readonly type: '_is_not';
+}
+
 export interface ComparisonOperator {
   readonly type: 'comparison_operator';
   readonly fields: {
@@ -869,6 +957,7 @@ export interface ComparisonOperator {
 export interface Lambda {
   readonly type: 'lambda';
   readonly fields: {
+    readonly lambda: "lambda";
     readonly parameters?: LambdaParameters;
     readonly body: Expression;
   };
@@ -877,37 +966,20 @@ export interface Lambda {
 export interface LambdaWithinForInClause {
   readonly type: 'lambda_within_for_in_clause';
   readonly fields: {
+    readonly lambda: "lambda";
     readonly parameters?: LambdaParameters;
     readonly body: ExpressionWithinForInClause;
   };
 }
 
-export interface AssignmentEq {
+export interface Assignment {
   readonly type: 'assignment';
   readonly fields: {
     readonly left: LeftHandSide;
-    readonly right: RightHandSide;
   };
+  readonly children: readonly [AssignmentEq | AssignmentType | AssignmentTyped];
 }
 
-export interface AssignmentColon {
-  readonly type: 'assignment';
-  readonly fields: {
-    readonly left: LeftHandSide;
-    readonly type: Type;
-  };
-}
-
-export interface AssignmentColon2 {
-  readonly type: 'assignment';
-  readonly fields: {
-    readonly left: LeftHandSide;
-    readonly type: Type;
-    readonly right: RightHandSide;
-  };
-}
-
-export type Assignment = AssignmentEq | AssignmentColon | AssignmentColon2;
 export interface AugmentedAssignment {
   readonly type: 'augmented_assignment';
   readonly fields: {
@@ -919,11 +991,17 @@ export interface AugmentedAssignment {
 
 export interface PatternList {
   readonly type: 'pattern_list';
+  readonly fields: {
+    readonly pattern: Pattern;
+  };
   readonly children: readonly (Pattern)[];
 }
 
 export interface Yield {
   readonly type: 'yield';
+  readonly fields: {
+    readonly yield: "yield";
+  };
   readonly children: readonly [Expression | Expressions];
 }
 
@@ -978,7 +1056,6 @@ export interface SplatType {
   readonly fields: {
     readonly identifier: "*" | "**";
   };
-  readonly children: readonly [Identifier];
 }
 
 export interface GenericType {
@@ -1108,6 +1185,7 @@ export interface ForInClause {
 export interface IfClause {
   readonly type: 'if_clause';
   readonly fields: {
+    readonly if: "if";
     readonly expression: Expression;
   };
 }
@@ -1123,7 +1201,10 @@ export interface ConditionalExpression {
 
 export interface ConcatenatedString {
   readonly type: 'concatenated_string';
-  readonly children: readonly (String)[];
+  readonly fields: {
+    readonly string: String;
+  };
+  readonly children: NonEmptyArray<String>;
 }
 
 export interface String {
@@ -1151,19 +1232,54 @@ export interface Interpolation {
 
 export interface FormatSpecifier {
   readonly type: 'format_specifier';
-  readonly children: readonly (Interpolation)[];
+  readonly children: readonly (FormatExpression)[];
 }
 
 export interface Await {
   readonly type: 'await';
   readonly fields: {
+    readonly await: "await";
     readonly primary_expression: PrimaryExpression;
   };
+}
+
+export interface _AssignmentEq {
+  readonly type: '_assignment_eq';
+}
+
+export interface _AssignmentType {
+  readonly type: '_assignment_type';
+}
+
+export interface _AssignmentTyped {
+  readonly type: '_assignment_typed';
 }
 
 export interface AsPatternTarget {
   readonly type: 'as_pattern_target';
   readonly children: readonly [ComparisonOperator | NotOperator | BooleanOperator | Lambda | PrimaryExpression | ConditionalExpression | NamedExpression | AsPattern];
+}
+
+export interface AssignmentEq {
+  readonly type: 'assignment_eq';
+  readonly fields: {
+    readonly right: RightHandSide;
+  };
+}
+
+export interface AssignmentType {
+  readonly type: 'assignment_type';
+  readonly fields: {
+    readonly type: Type;
+  };
+}
+
+export interface AssignmentTyped {
+  readonly type: 'assignment_typed';
+  readonly fields: {
+    readonly type: Type;
+    readonly right: RightHandSide;
+  };
 }
 
 export interface FormatExpression {
@@ -1181,14 +1297,11 @@ export type ImportPrefix = Terminal<"import_prefix", string>;
 export type PassStatement = Terminal<"pass_statement", "pass">;
 export type BreakStatement = Terminal<"break_statement", "break">;
 export type ContinueStatement = Terminal<"continue_statement", "continue">;
-export type NotIn = Terminal<"_not_in", string>;
-export type IsNot = Terminal<"_is_not", string>;
 export type EscapeSequence = Terminal<"escape_sequence", string>;
 export type TypeConversion = Terminal<"type_conversion", string>;
 export type Integer = Terminal<"integer", string>;
 export type Float = Terminal<"float", string>;
 export type Identifier = Terminal<"identifier", string>;
-export type KeywordIdentifier = Terminal<"keyword_identifier", string>;
 export type True = Terminal<"true", "True">;
 export type False = Terminal<"false", "False">;
 export type None = Terminal<"none", "None">;
@@ -1227,6 +1340,9 @@ export type IfStatementConfig = ConfigOf<IfStatement>;
 export type ElifClauseConfig = ConfigOf<ElifClause>;
 export type ElseClauseConfig = ConfigOf<ElseClause>;
 export type MatchStatementConfig = ConfigOf<MatchStatement>;
+export type MatchBlockForm0Config = ConfigOf<MatchBlockForm0>;
+export type MatchBlockForm1Config = ConfigOf<MatchBlockForm1>;
+export type MatchBlockConfig = MatchBlockForm0Config | MatchBlockForm1Config;
 export type CaseClauseConfig = ConfigOf<CaseClause>;
 export type ForStatementConfig = ConfigOf<ForStatement>;
 export type WhileStatementConfig = ConfigOf<WhileStatement>;
@@ -1257,7 +1373,10 @@ export type ExpressionListConfig = ConfigOf<ExpressionList>;
 export type DottedNameConfig = ConfigOf<DottedName>;
 export type CasePatternConfig = ConfigOf<CasePattern>;
 export type SimplePatternConfig = ConfigOf<SimplePattern>;
+export type _AsPatternConfig = ConfigOf<_AsPattern>;
 export type UnionPatternConfig = ConfigOf<UnionPattern>;
+export type _ListPatternConfig = ConfigOf<_ListPattern>;
+export type _TuplePatternConfig = ConfigOf<_TuplePattern>;
 export type DictPatternConfig = ConfigOf<DictPattern>;
 export type KeyValuePatternConfig = ConfigOf<KeyValuePattern>;
 export type KeywordPatternConfig = ConfigOf<KeywordPattern>;
@@ -1277,13 +1396,17 @@ export type NotOperatorConfig = ConfigOf<NotOperator>;
 export type BooleanOperatorConfig = ConfigOf<BooleanOperator>;
 export type BinaryOperatorConfig = ConfigOf<BinaryOperator>;
 export type UnaryOperatorConfig = ConfigOf<UnaryOperator>;
+export type NotInConfig = ConfigOf<NotIn>;
+export type IsNotConfig = ConfigOf<IsNot>;
 export type ComparisonOperatorConfig = ConfigOf<ComparisonOperator>;
 export type LambdaConfig = ConfigOf<Lambda>;
 export type LambdaWithinForInClauseConfig = ConfigOf<LambdaWithinForInClause>;
-export type AssignmentEqConfig = ConfigOf<AssignmentEq>;
-export type AssignmentColonConfig = ConfigOf<AssignmentColon>;
-export type AssignmentColon2Config = ConfigOf<AssignmentColon2>;
-export type AssignmentConfig = AssignmentEqConfig | AssignmentColonConfig | AssignmentColon2Config;
+export interface AssignmentConfig {
+  readonly left: LeftHandSide;
+  readonly right?: RightHandSide;
+  readonly type?: Type;
+  readonly variant?: 'eq' | 'type' | 'typed';
+}
 export type AugmentedAssignmentConfig = ConfigOf<AugmentedAssignment>;
 export type PatternListConfig = ConfigOf<PatternList>;
 export type YieldConfig = ConfigOf<Yield>;
@@ -1320,7 +1443,13 @@ export type StringContentConfig = ConfigOf<StringContent>;
 export type InterpolationConfig = ConfigOf<Interpolation>;
 export type FormatSpecifierConfig = ConfigOf<FormatSpecifier>;
 export type AwaitConfig = ConfigOf<Await>;
+export type _AssignmentEqConfig = ConfigOf<_AssignmentEq>;
+export type _AssignmentTypeConfig = ConfigOf<_AssignmentType>;
+export type _AssignmentTypedConfig = ConfigOf<_AssignmentTyped>;
 export type AsPatternTargetConfig = ConfigOf<AsPatternTarget>;
+export type AssignmentEqConfig = ConfigOf<AssignmentEq>;
+export type AssignmentTypeConfig = ConfigOf<AssignmentType>;
+export type AssignmentTypedConfig = ConfigOf<AssignmentTyped>;
 export type FormatExpressionConfig = ConfigOf<FormatExpression>;
 
 // Tree types
@@ -1344,6 +1473,9 @@ export interface IfStatementTree extends TreeNode<'if_statement'> {}
 export interface ElifClauseTree extends TreeNode<'elif_clause'> {}
 export interface ElseClauseTree extends TreeNode<'else_clause'> {}
 export interface MatchStatementTree extends TreeNode<'match_statement'> {}
+export interface MatchBlockTree extends AnyTreeNode { readonly type: "_match_block"; }
+export interface MatchBlockForm0Tree extends AnyTreeNode {}
+export interface MatchBlockForm1Tree extends AnyTreeNode {}
 export interface CaseClauseTree extends TreeNode<'case_clause'> {}
 export interface ForStatementTree extends TreeNode<'for_statement'> {}
 export interface WhileStatementTree extends TreeNode<'while_statement'> {}
@@ -1374,7 +1506,10 @@ export interface ExpressionListTree extends TreeNode<'expression_list'> {}
 export interface DottedNameTree extends TreeNode<'dotted_name'> {}
 export interface CasePatternTree extends TreeNode<'case_pattern'> {}
 export interface SimplePatternTree extends AnyTreeNode { readonly type: "_simple_pattern"; }
+export interface _AsPatternTree extends AnyTreeNode { readonly type: "_as_pattern"; }
 export interface UnionPatternTree extends TreeNode<'union_pattern'> {}
+export interface _ListPatternTree extends AnyTreeNode { readonly type: "_list_pattern"; }
+export interface _TuplePatternTree extends AnyTreeNode { readonly type: "_tuple_pattern"; }
 export interface DictPatternTree extends TreeNode<'dict_pattern'> {}
 export interface KeyValuePatternTree extends AnyTreeNode { readonly type: "_key_value_pattern"; }
 export interface KeywordPatternTree extends TreeNode<'keyword_pattern'> {}
@@ -1394,13 +1529,12 @@ export interface NotOperatorTree extends TreeNode<'not_operator'> {}
 export interface BooleanOperatorTree extends TreeNode<'boolean_operator'> {}
 export interface BinaryOperatorTree extends TreeNode<'binary_operator'> {}
 export interface UnaryOperatorTree extends TreeNode<'unary_operator'> {}
+export interface NotInTree extends AnyTreeNode { readonly type: "_not_in"; }
+export interface IsNotTree extends AnyTreeNode { readonly type: "_is_not"; }
 export interface ComparisonOperatorTree extends TreeNode<'comparison_operator'> {}
 export interface LambdaTree extends TreeNode<'lambda'> {}
 export interface LambdaWithinForInClauseTree extends AnyTreeNode { readonly type: "lambda_within_for_in_clause"; }
 export interface AssignmentTree extends TreeNode<'assignment'> {}
-export interface AssignmentEqTree extends TreeNode<'assignment'> {}
-export interface AssignmentColonTree extends TreeNode<'assignment'> {}
-export interface AssignmentColon2Tree extends TreeNode<'assignment'> {}
 export interface AugmentedAssignmentTree extends TreeNode<'augmented_assignment'> {}
 export interface PatternListTree extends TreeNode<'pattern_list'> {}
 export interface YieldTree extends TreeNode<'yield'> {}
@@ -1437,20 +1571,23 @@ export interface StringContentTree extends TreeNode<'string_content'> {}
 export interface InterpolationTree extends TreeNode<'interpolation'> {}
 export interface FormatSpecifierTree extends TreeNode<'format_specifier'> {}
 export interface AwaitTree extends TreeNode<'await'> {}
+export interface _AssignmentEqTree extends AnyTreeNode { readonly type: "_assignment_eq"; }
+export interface _AssignmentTypeTree extends AnyTreeNode { readonly type: "_assignment_type"; }
+export interface _AssignmentTypedTree extends AnyTreeNode { readonly type: "_assignment_typed"; }
 export interface AsPatternTargetTree extends AnyTreeNode { readonly type: "as_pattern_target"; }
+export interface AssignmentEqTree extends TreeNode<'assignment_eq'> {}
+export interface AssignmentTypeTree extends TreeNode<'assignment_type'> {}
+export interface AssignmentTypedTree extends TreeNode<'assignment_typed'> {}
 export interface FormatExpressionTree extends TreeNode<'format_expression'> {}
 export interface ImportPrefixTree extends TreeNode<'import_prefix'> {}
 export interface PassStatementTree extends AnyTreeNode { readonly type: "pass_statement"; }
 export interface BreakStatementTree extends AnyTreeNode { readonly type: "break_statement"; }
 export interface ContinueStatementTree extends AnyTreeNode { readonly type: "continue_statement"; }
-export interface NotInTree extends AnyTreeNode { readonly type: "_not_in"; }
-export interface IsNotTree extends AnyTreeNode { readonly type: "_is_not"; }
 export interface EscapeSequenceTree extends TreeNode<'escape_sequence'> {}
 export interface TypeConversionTree extends TreeNode<'type_conversion'> {}
 export interface IntegerTree extends TreeNode<'integer'> {}
 export interface FloatTree extends TreeNode<'float'> {}
 export interface IdentifierTree extends TreeNode<'identifier'> {}
-export interface KeywordIdentifierTree extends AnyTreeNode { readonly type: "keyword_identifier"; }
 export interface TrueTree extends AnyTreeNode { readonly type: "true"; }
 export interface FalseTree extends AnyTreeNode { readonly type: "false"; }
 export interface NoneTree extends AnyTreeNode { readonly type: "none"; }
@@ -1500,6 +1637,7 @@ export interface AnonymousTree extends AnyTreeNode { readonly type: "_"; }
 export interface NotTree extends AnyTreeNode { readonly type: "not"; }
 export interface AndTree extends AnyTreeNode { readonly type: "and"; }
 export interface OrTree extends AnyTreeNode { readonly type: "or"; }
+export interface IsTree extends AnyTreeNode { readonly type: "is"; }
 export interface True2Tree extends AnyTreeNode { readonly type: "True"; }
 export interface False2Tree extends AnyTreeNode { readonly type: "False"; }
 export interface None2Tree extends AnyTreeNode { readonly type: "None"; }
@@ -1525,6 +1663,7 @@ export type LooseIfStatement = FromInputOf<IfStatement, LeafScalarMap, LeafStrin
 export type LooseElifClause = FromInputOf<ElifClause, LeafScalarMap, LeafStringMap>;
 export type LooseElseClause = FromInputOf<ElseClause, LeafScalarMap, LeafStringMap>;
 export type LooseMatchStatement = FromInputOf<MatchStatement, LeafScalarMap, LeafStringMap>;
+export type LooseMatchBlock = FromInputOf<MatchBlockForm0, LeafScalarMap, LeafStringMap> | FromInputOf<MatchBlockForm1, LeafScalarMap, LeafStringMap>;
 export type LooseCaseClause = FromInputOf<CaseClause, LeafScalarMap, LeafStringMap>;
 export type LooseForStatement = FromInputOf<ForStatement, LeafScalarMap, LeafStringMap>;
 export type LooseWhileStatement = FromInputOf<WhileStatement, LeafScalarMap, LeafStringMap>;
@@ -1555,7 +1694,10 @@ export type LooseExpressionList = FromInputOf<ExpressionList, LeafScalarMap, Lea
 export type LooseDottedName = FromInputOf<DottedName, LeafScalarMap, LeafStringMap>;
 export type LooseCasePattern = FromInputOf<CasePattern, LeafScalarMap, LeafStringMap>;
 export type LooseSimplePattern = FromInputOf<SimplePattern, LeafScalarMap, LeafStringMap>;
+export type Loose_AsPattern = FromInputOf<_AsPattern, LeafScalarMap, LeafStringMap>;
 export type LooseUnionPattern = FromInputOf<UnionPattern, LeafScalarMap, LeafStringMap>;
+export type Loose_ListPattern = FromInputOf<_ListPattern, LeafScalarMap, LeafStringMap>;
+export type Loose_TuplePattern = FromInputOf<_TuplePattern, LeafScalarMap, LeafStringMap>;
 export type LooseDictPattern = FromInputOf<DictPattern, LeafScalarMap, LeafStringMap>;
 export type LooseKeyValuePattern = FromInputOf<KeyValuePattern, LeafScalarMap, LeafStringMap>;
 export type LooseKeywordPattern = FromInputOf<KeywordPattern, LeafScalarMap, LeafStringMap>;
@@ -1575,10 +1717,12 @@ export type LooseNotOperator = FromInputOf<NotOperator, LeafScalarMap, LeafStrin
 export type LooseBooleanOperator = FromInputOf<BooleanOperator, LeafScalarMap, LeafStringMap>;
 export type LooseBinaryOperator = FromInputOf<BinaryOperator, LeafScalarMap, LeafStringMap>;
 export type LooseUnaryOperator = FromInputOf<UnaryOperator, LeafScalarMap, LeafStringMap>;
+export type LooseNotIn = FromInputOf<NotIn, LeafScalarMap, LeafStringMap>;
+export type LooseIsNot = FromInputOf<IsNot, LeafScalarMap, LeafStringMap>;
 export type LooseComparisonOperator = FromInputOf<ComparisonOperator, LeafScalarMap, LeafStringMap>;
 export type LooseLambda = FromInputOf<Lambda, LeafScalarMap, LeafStringMap>;
 export type LooseLambdaWithinForInClause = FromInputOf<LambdaWithinForInClause, LeafScalarMap, LeafStringMap>;
-export type LooseAssignment = FromInputOf<AssignmentEq, LeafScalarMap, LeafStringMap> | FromInputOf<AssignmentColon, LeafScalarMap, LeafStringMap> | FromInputOf<AssignmentColon2, LeafScalarMap, LeafStringMap>;
+export type LooseAssignment = FromInputOf<Assignment, LeafScalarMap, LeafStringMap>;
 export type LooseAugmentedAssignment = FromInputOf<AugmentedAssignment, LeafScalarMap, LeafStringMap>;
 export type LoosePatternList = FromInputOf<PatternList, LeafScalarMap, LeafStringMap>;
 export type LooseYield = FromInputOf<Yield, LeafScalarMap, LeafStringMap>;
@@ -1615,7 +1759,13 @@ export type LooseStringContent = FromInputOf<StringContent, LeafScalarMap, LeafS
 export type LooseInterpolation = FromInputOf<Interpolation, LeafScalarMap, LeafStringMap>;
 export type LooseFormatSpecifier = FromInputOf<FormatSpecifier, LeafScalarMap, LeafStringMap>;
 export type LooseAwait = FromInputOf<Await, LeafScalarMap, LeafStringMap>;
+export type Loose_AssignmentEq = FromInputOf<_AssignmentEq, LeafScalarMap, LeafStringMap>;
+export type Loose_AssignmentType = FromInputOf<_AssignmentType, LeafScalarMap, LeafStringMap>;
+export type Loose_AssignmentTyped = FromInputOf<_AssignmentTyped, LeafScalarMap, LeafStringMap>;
 export type LooseAsPatternTarget = FromInputOf<AsPatternTarget, LeafScalarMap, LeafStringMap>;
+export type LooseAssignmentEq = FromInputOf<AssignmentEq, LeafScalarMap, LeafStringMap>;
+export type LooseAssignmentType = FromInputOf<AssignmentType, LeafScalarMap, LeafStringMap>;
+export type LooseAssignmentTyped = FromInputOf<AssignmentTyped, LeafScalarMap, LeafStringMap>;
 export type LooseFormatExpression = FromInputOf<FormatExpression, LeafScalarMap, LeafStringMap>;
 
 // Supertype unions
@@ -1661,7 +1811,6 @@ export type SimpleStatementTree = FutureImportStatementTree | ImportStatementTre
 
 export type NamedExpressionLhs =
   | Identifier
-  | KeywordIdentifier
 ;
 
 export type NamedExpressionLhsTree = IdentifierTree | KeywordIdentifierTree;
@@ -1706,7 +1855,6 @@ export type ParameterTree = IdentifierTree | TypedParameterTree | DefaultParamet
 
 export type Pattern =
   | Identifier
-  | KeywordIdentifier
   | Subscript
   | Attribute
   | ListSplatPattern
@@ -1719,12 +1867,12 @@ export type LoosePattern = LooseSubscript | LooseAttribute | LooseListSplatPatte
 export type PatternTree = IdentifierTree | KeywordIdentifierTree | SubscriptTree | AttributeTree | ListSplatPatternTree | TuplePatternTree | ListPatternTree;
 
 export type ExpressionWithinForInClause =
-  | LambdaWithinForInClause
+  | Lambda
 ;
 
-export type ExpressionWithinForInClauseConfig = LambdaWithinForInClauseConfig;
-export type LooseExpressionWithinForInClause = LooseLambdaWithinForInClause;
-export type ExpressionWithinForInClauseTree = ExpressionTree | LambdaWithinForInClauseTree;
+export type ExpressionWithinForInClauseConfig = LambdaConfig;
+export type LooseExpressionWithinForInClause = LooseLambda;
+export type ExpressionWithinForInClauseTree = ExpressionTree | LambdaTree;
 
 export type Expression =
   | ComparisonOperator
@@ -1744,7 +1892,6 @@ export type PrimaryExpression =
   | Await
   | BinaryOperator
   | Identifier
-  | KeywordIdentifier
   | String
   | ConcatenatedString
   | Integer
@@ -1765,12 +1912,12 @@ export type PrimaryExpression =
   | Tuple
   | ParenthesizedExpression
   | GeneratorExpression
-  | ListSplatPattern
+  | ListSplat
 ;
 
-export type PrimaryExpressionConfig = AwaitConfig | BinaryOperatorConfig | StringConfig | ConcatenatedStringConfig | UnaryOperatorConfig | AttributeConfig | SubscriptConfig | CallConfig | ListConfig | ListComprehensionConfig | DictionaryConfig | DictionaryComprehensionConfig | SetConfig | SetComprehensionConfig | TupleConfig | ParenthesizedExpressionConfig | GeneratorExpressionConfig | ListSplatPatternConfig;
-export type LoosePrimaryExpression = LooseAwait | LooseBinaryOperator | LooseString | LooseConcatenatedString | LooseUnaryOperator | LooseAttribute | LooseSubscript | LooseCall | LooseList | LooseListComprehension | LooseDictionary | LooseDictionaryComprehension | LooseSet | LooseSetComprehension | LooseTuple | LooseParenthesizedExpression | LooseGeneratorExpression | LooseListSplatPattern;
-export type PrimaryExpressionTree = AwaitTree | BinaryOperatorTree | IdentifierTree | KeywordIdentifierTree | StringTree | ConcatenatedStringTree | IntegerTree | FloatTree | TrueTree | FalseTree | NoneTree | UnaryOperatorTree | AttributeTree | SubscriptTree | CallTree | ListTree | ListComprehensionTree | DictionaryTree | DictionaryComprehensionTree | SetTree | SetComprehensionTree | TupleTree | ParenthesizedExpressionTree | GeneratorExpressionTree | Ellipsis2Tree | ListSplatPatternTree;
+export type PrimaryExpressionConfig = AwaitConfig | BinaryOperatorConfig | StringConfig | ConcatenatedStringConfig | UnaryOperatorConfig | AttributeConfig | SubscriptConfig | CallConfig | ListConfig | ListComprehensionConfig | DictionaryConfig | DictionaryComprehensionConfig | SetConfig | SetComprehensionConfig | TupleConfig | ParenthesizedExpressionConfig | GeneratorExpressionConfig | ListSplatConfig;
+export type LoosePrimaryExpression = LooseAwait | LooseBinaryOperator | LooseString | LooseConcatenatedString | LooseUnaryOperator | LooseAttribute | LooseSubscript | LooseCall | LooseList | LooseListComprehension | LooseDictionary | LooseDictionaryComprehension | LooseSet | LooseSetComprehension | LooseTuple | LooseParenthesizedExpression | LooseGeneratorExpression | LooseListSplat;
+export type PrimaryExpressionTree = AwaitTree | BinaryOperatorTree | IdentifierTree | KeywordIdentifierTree | StringTree | ConcatenatedStringTree | IntegerTree | FloatTree | TrueTree | FalseTree | NoneTree | UnaryOperatorTree | AttributeTree | SubscriptTree | CallTree | ListTree | ListComprehensionTree | DictionaryTree | DictionaryComprehensionTree | SetTree | SetComprehensionTree | TupleTree | ParenthesizedExpressionTree | GeneratorExpressionTree | Ellipsis2Tree | ListSplatTree;
 
 export type LeftHandSide =
   | Pattern
@@ -1805,6 +1952,12 @@ export type FExpressionConfig = ExpressionListConfig | PatternListConfig | Yield
 export type LooseFExpression = LooseExpressionList | LoosePatternList | LooseYield;
 export type FExpressionTree = ExpressionTree | ExpressionListTree | PatternListTree | YieldTree;
 
+export type KeywordIdentifier =
+  | Identifier
+;
+
+export type KeywordIdentifierTree = IdentifierTree;
+
 // Token type aliases (only tokens referenced in field/child unions)
 export type WildcardImport = Terminal<"wildcard_import">;
 export interface WildcardImportTree extends AnyTreeNode { readonly type: "wildcard_import"; }
@@ -1838,6 +1991,7 @@ export type PythonNode =
   | ElifClause
   | ElseClause
   | MatchStatement
+  | MatchBlock
   | CaseClause
   | ForStatement
   | WhileStatement
@@ -1868,7 +2022,10 @@ export type PythonNode =
   | DottedName
   | CasePattern
   | SimplePattern
+  | _AsPattern
   | UnionPattern
+  | _ListPattern
+  | _TuplePattern
   | DictPattern
   | KeyValuePattern
   | KeywordPattern
@@ -1888,6 +2045,8 @@ export type PythonNode =
   | BooleanOperator
   | BinaryOperator
   | UnaryOperator
+  | NotIn
+  | IsNot
   | ComparisonOperator
   | Lambda
   | LambdaWithinForInClause
@@ -1928,7 +2087,13 @@ export type PythonNode =
   | Interpolation
   | FormatSpecifier
   | Await
+  | _AssignmentEq
+  | _AssignmentType
+  | _AssignmentTyped
   | AsPatternTarget
+  | AssignmentEq
+  | AssignmentType
+  | AssignmentTyped
   | FormatExpression
 ;
 
@@ -1953,6 +2118,7 @@ export interface KindMap {
   'elif_clause': ElifClause;
   'else_clause': ElseClause;
   'match_statement': MatchStatement;
+  '_match_block': MatchBlock;
   'case_clause': CaseClause;
   'for_statement': ForStatement;
   'while_statement': WhileStatement;
@@ -1983,7 +2149,10 @@ export interface KindMap {
   'dotted_name': DottedName;
   'case_pattern': CasePattern;
   '_simple_pattern': SimplePattern;
+  '_as_pattern': _AsPattern;
   'union_pattern': UnionPattern;
+  '_list_pattern': _ListPattern;
+  '_tuple_pattern': _TuplePattern;
   'dict_pattern': DictPattern;
   '_key_value_pattern': KeyValuePattern;
   'keyword_pattern': KeywordPattern;
@@ -2003,6 +2172,8 @@ export interface KindMap {
   'boolean_operator': BooleanOperator;
   'binary_operator': BinaryOperator;
   'unary_operator': UnaryOperator;
+  '_not_in': NotIn;
+  '_is_not': IsNot;
   'comparison_operator': ComparisonOperator;
   'lambda': Lambda;
   'lambda_within_for_in_clause': LambdaWithinForInClause;
@@ -2043,20 +2214,23 @@ export interface KindMap {
   'interpolation': Interpolation;
   'format_specifier': FormatSpecifier;
   'await': Await;
+  '_assignment_eq': _AssignmentEq;
+  '_assignment_type': _AssignmentType;
+  '_assignment_typed': _AssignmentTyped;
   'as_pattern_target': AsPatternTarget;
+  'assignment_eq': AssignmentEq;
+  'assignment_type': AssignmentType;
+  'assignment_typed': AssignmentTyped;
   'format_expression': FormatExpression;
   'import_prefix': ImportPrefix;
   'pass_statement': PassStatement;
   'break_statement': BreakStatement;
   'continue_statement': ContinueStatement;
-  '_not_in': NotIn;
-  '_is_not': IsNot;
   'escape_sequence': EscapeSequence;
   'type_conversion': TypeConversion;
   'integer': Integer;
   'float': Float;
   'identifier': Identifier;
-  'keyword_identifier': KeywordIdentifier;
   'true': True;
   'false': False;
   'none': None;
@@ -2076,7 +2250,7 @@ export interface KindMap {
 }
 
 export interface VariantMap {
-  'assignment': { eq: AssignmentEq; colon: AssignmentColon; colon2: AssignmentColon2 };
+  '_match_block': { form0: MatchBlockForm0; form1: MatchBlockForm1 };
 }
 
 export interface ConfigMap {
@@ -2100,6 +2274,7 @@ export interface ConfigMap {
   'elif_clause': ElifClauseConfig;
   'else_clause': ElseClauseConfig;
   'match_statement': MatchStatementConfig;
+  '_match_block': MatchBlockConfig;
   'case_clause': CaseClauseConfig;
   'for_statement': ForStatementConfig;
   'while_statement': WhileStatementConfig;
@@ -2130,7 +2305,10 @@ export interface ConfigMap {
   'dotted_name': DottedNameConfig;
   'case_pattern': CasePatternConfig;
   '_simple_pattern': SimplePatternConfig;
+  '_as_pattern': _AsPatternConfig;
   'union_pattern': UnionPatternConfig;
+  '_list_pattern': _ListPatternConfig;
+  '_tuple_pattern': _TuplePatternConfig;
   'dict_pattern': DictPatternConfig;
   '_key_value_pattern': KeyValuePatternConfig;
   'keyword_pattern': KeywordPatternConfig;
@@ -2150,6 +2328,8 @@ export interface ConfigMap {
   'boolean_operator': BooleanOperatorConfig;
   'binary_operator': BinaryOperatorConfig;
   'unary_operator': UnaryOperatorConfig;
+  '_not_in': NotInConfig;
+  '_is_not': IsNotConfig;
   'comparison_operator': ComparisonOperatorConfig;
   'lambda': LambdaConfig;
   'lambda_within_for_in_clause': LambdaWithinForInClauseConfig;
@@ -2190,7 +2370,13 @@ export interface ConfigMap {
   'interpolation': InterpolationConfig;
   'format_specifier': FormatSpecifierConfig;
   'await': AwaitConfig;
+  '_assignment_eq': _AssignmentEqConfig;
+  '_assignment_type': _AssignmentTypeConfig;
+  '_assignment_typed': _AssignmentTypedConfig;
   'as_pattern_target': AsPatternTargetConfig;
+  'assignment_eq': AssignmentEqConfig;
+  'assignment_type': AssignmentTypeConfig;
+  'assignment_typed': AssignmentTypedConfig;
   'format_expression': FormatExpressionConfig;
 }
 
@@ -2215,6 +2401,7 @@ export interface LooseMap {
   'elif_clause': LooseElifClause;
   'else_clause': LooseElseClause;
   'match_statement': LooseMatchStatement;
+  '_match_block': LooseMatchBlock;
   'case_clause': LooseCaseClause;
   'for_statement': LooseForStatement;
   'while_statement': LooseWhileStatement;
@@ -2245,7 +2432,10 @@ export interface LooseMap {
   'dotted_name': LooseDottedName;
   'case_pattern': LooseCasePattern;
   '_simple_pattern': LooseSimplePattern;
+  '_as_pattern': Loose_AsPattern;
   'union_pattern': LooseUnionPattern;
+  '_list_pattern': Loose_ListPattern;
+  '_tuple_pattern': Loose_TuplePattern;
   'dict_pattern': LooseDictPattern;
   '_key_value_pattern': LooseKeyValuePattern;
   'keyword_pattern': LooseKeywordPattern;
@@ -2265,6 +2455,8 @@ export interface LooseMap {
   'boolean_operator': LooseBooleanOperator;
   'binary_operator': LooseBinaryOperator;
   'unary_operator': LooseUnaryOperator;
+  '_not_in': LooseNotIn;
+  '_is_not': LooseIsNot;
   'comparison_operator': LooseComparisonOperator;
   'lambda': LooseLambda;
   'lambda_within_for_in_clause': LooseLambdaWithinForInClause;
@@ -2305,6 +2497,12 @@ export interface LooseMap {
   'interpolation': LooseInterpolation;
   'format_specifier': LooseFormatSpecifier;
   'await': LooseAwait;
+  '_assignment_eq': Loose_AssignmentEq;
+  '_assignment_type': Loose_AssignmentType;
+  '_assignment_typed': Loose_AssignmentTyped;
   'as_pattern_target': LooseAsPatternTarget;
+  'assignment_eq': LooseAssignmentEq;
+  'assignment_type': LooseAssignmentType;
+  'assignment_typed': LooseAssignmentTyped;
   'format_expression': LooseFormatExpression;
 }

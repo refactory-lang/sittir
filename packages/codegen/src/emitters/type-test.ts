@@ -39,8 +39,10 @@ export function emitTypeTests(config: EmitTypeTestsConfig): string {
     for (const [kind, node] of nodeMap.nodes) {
         switch (node.modelType) {
             case 'branch':
-            case 'container':
-                structuralKinds.push({ kind, typeName: node.typeName, hasVariants: false })
+            case 'container': {
+                const isVariantParent = nodeMap.polymorphVariants?.some(v => v.parent === kind) ?? false
+                structuralKinds.push({ kind, typeName: node.typeName, hasVariants: isVariantParent })
+            }
                 break
             case 'polymorph':
                 structuralKinds.push({ kind, typeName: node.typeName, hasVariants: node.forms.length > 1 })

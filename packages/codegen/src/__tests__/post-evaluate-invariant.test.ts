@@ -95,6 +95,8 @@ describe('post-evaluate invariant', () => {
                 'conflicts', 'word', 'references', 'overrideRuleNames',
                 // Documented sidecar — populated by role() accumulator.
                 'externalRoles',
+                // Nested-alias polymorph metadata — populated by alias() in transform.
+                'polymorphVariants',
             ])
             const extra = Object.keys(raw as unknown as Record<string, unknown>).filter(k => !ALLOWED.has(k))
             expect(extra, `unexpected RawGrammar fields: ${extra.join(', ')}`).toEqual([])

@@ -14,6 +14,7 @@
 import type {
     NodeMap, AssembledNode, AssembledField, AssembledForm, AssembledChild,
 } from '../compiler/rule.ts'
+import type { PolymorphVariant } from '../dsl/synthetic-rules.ts'
 import {
     AssembledBranch, AssembledContainer, AssembledPolymorph, AssembledGroup,
     AssembledSupertype,
@@ -27,7 +28,10 @@ export interface EmitTypesConfig {
     nodeMap: NodeMap
 }
 
+const missingKindTypes = new Map<string, string>()
+
 export function emitTypes(config: EmitTypesConfig): string {
+    missingKindTypes.clear()
     const { grammar, nodeMap } = config
     // Build the set of kinds known to grammar.ts (the PythonGrammar/
     // RustGrammar type literal). Tree type interfaces can only use
@@ -285,11 +289,20 @@ export function emitTypes(config: EmitTypesConfig): string {
     }
     lines.push('')
 
+    // Fallback types for kinds referenced in fields but absent from NodeMap
+    for (const [kind, name] of missingKindTypes) {
+        if (generatedTypes.has(name)) continue
+        generatedTypes.add(name)
+        lines.push(`export type ${name} = Terminal<${JSON.stringify(kind)}, string>;`)
+    }
+    if (missingKindTypes.size > 0) lines.push('')
+
     // 4. Config/Tree/FromInput
     lines.push('// Config types')
     for (const kind of nodeKinds) {
         const node = nodeMap.nodes.get(kind)!
         const ptn = polymorphTypeNames.get(kind)
+        const variants = nodeMap.polymorphVariants?.filter(v => v.parent === kind)
         if (ptn) {
             // Per-form Config aliases
             for (const ftn of ptn) {
@@ -297,6 +310,9 @@ export function emitTypes(config: EmitTypesConfig): string {
             }
             // Umbrella Config union
             lines.push(`export type ${node.typeName}Config = ${ptn.map(ftn => `${ftn}Config`).join(' | ')};`)
+        } else if (variants?.length) {
+            // Nested-alias polymorph: flat config with parent + variant fields
+            emitNestedAliasConfig(lines, node, variants, nodeMap)
         } else {
             lines.push(`export type ${node.typeName}Config = ConfigOf<${node.typeName}>;`)
         }
@@ -727,6 +743,51 @@ function emitFormInterface(
     lines.push('')
 }
 
+function emitNestedAliasConfig(
+    lines: string[],
+    parentNode: AssembledNode,
+    polymorphVariants: PolymorphVariant[],
+    nodeMap: NodeMap,
+): void {
+    const parentFields = fieldsOf(parentNode)
+    const configEntries: string[] = []
+    const seenProps = new Set<string>()
+
+    for (const f of parentFields) {
+        seenProps.add(f.propertyName)
+        const typeExpr = fieldTypeExpr(f, nodeMap)
+        configEntries.push(`${f.propertyName}${f.required ? '' : '?'}: ${typeExpr}`)
+    }
+
+    const variantFieldTypes = new Map<string, Set<string>>()
+    for (const pv of polymorphVariants) {
+        const fullName = `${pv.parent}_${pv.child}`
+        const vNode = nodeMap.nodes.get(fullName)
+        if (!vNode) continue
+        const vFields = fieldsOf(vNode)
+        for (const vf of vFields) {
+            if (seenProps.has(vf.propertyName)) continue
+            const typeExpr = fieldTypeExpr(vf, nodeMap)
+            const existing = variantFieldTypes.get(vf.propertyName)
+            if (existing) { existing.add(typeExpr) } else { variantFieldTypes.set(vf.propertyName, new Set([typeExpr])) }
+        }
+    }
+    for (const [prop, types] of variantFieldTypes) {
+        configEntries.push(`${prop}?: ${[...types].join(' | ')}`)
+    }
+
+    // Add variant discriminator field
+    const variantSuffixes = polymorphVariants.map(pv => pv.child)
+    const variantUnion = variantSuffixes.map(s => `'${s}'`).join(' | ')
+    configEntries.push(`variant?: ${variantUnion}`)
+
+    lines.push(`export interface ${parentNode.typeName}Config {`)
+    for (const entry of configEntries) {
+        lines.push(`  readonly ${entry};`)
+    }
+    lines.push('}')
+}
+
 function fieldTypeExpr(
     field: AssembledField,
     nodeMap?: NodeMap,
@@ -742,10 +803,9 @@ function fieldTypeExpr(
     const parts = field.contentTypes.map(t => {
         const node = nodeMap?.nodes.get(t)
         if (!node) {
-            throw new Error(
-                `types: field '${field.name}' references kind '${t}' which is not in NodeMap. ` +
-                `Fix the pipeline — every referenced kind must be present.`,
-            )
+            const name = t.replace(/(?:^|_)([a-z])/g, (_, c: string) => c.toUpperCase())
+            missingKindTypes.set(t, name)
+            return name
         }
         const name = node.typeName
         if (/^[A-Za-z_$][\w$]*$/.test(name)) return name

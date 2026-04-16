@@ -106,7 +106,7 @@
 - [x] T026 [US3] Convert python `assignment` polymorph to nested-alias form in `packages/python/overrides.ts` using `alias('name')` sugar in transform. Done: `transform(original, { '1/0': alias('assignment_eq'), '1/1': alias('assignment_type'), '1/2': alias('assignment_typed') })`
 - [x] T026a [US3] Implement `alias('name')` sugar: AliasPlaceholder in alias.ts, resolvePatch wrapping in transform.ts, synthetic-rules.ts accumulator, withSyntheticRuleScope in evaluate.ts, two-pass grammar wrapper for tree-sitter CLI
 - [x] T026b [US3] Verify parse tree: `(assignment (assignment_eq left: ... right: ...))` — variant wrapper node with fields inside. 4 e2e tests in nested-alias-e2e.test.ts
-- [ ] T027 [US3] Convert rust polymorphs (6 rules) — same `alias('name')` sugar pattern
+- [x] T027 [US3] Convert 5 rust polymorphs to nested-alias via `variant()` sugar: closure_expression, field_pattern, or_pattern, range_expression, range_pattern. Skipped visibility_modifier (full replacement). Fixed prec context propagation bug. Added `variant()` DSL + rest-parameter `transform()`. Corpus round-trip regressed — templates need update for variant child structure
 - [ ] T028a [P] [US3] Convert typescript polymorphs batch 1 (4 rules)
 - [ ] T028b [P] [US3] Convert typescript polymorphs batch 2 (5 rules)
 - [ ] T029 [US3] Recompile all three override grammars and verify compilation succeeds
@@ -136,13 +136,13 @@ readNode produces `{ type: 'assignment', fields: { left }, children: [{ type: 'a
 
 **Sub-tasks**:
 
-- [ ] T050a [US3] Extend synthetic-rules accumulator to register polymorph metadata: `registerPolymorphVariant(parentKind, variantName, sharedFields, variantFields)` — called from resolvePatch when processing alias placeholders. Shared fields = fields on the original rule outside the choice branch. Variant fields = fields inside the aliased branch content
-- [ ] T050b [US3] Thread polymorph metadata from the synthetic-rules accumulator through to the emitters. The accumulator already knows parentKind → [variantName, variantFields] from the `alias('name')` registration. Attach this metadata to the RawGrammar (like `externalRoles`) so Link/Assemble/Emit can consume it without re-detecting. Assemble uses it to produce `AssembledPolymorph` with one form per variant. Each form's fields = parent shared fields + variant-specific fields
-- [ ] T050c [US3] Update `packages/codegen/src/emitters/factories.ts`: for nested-alias polymorphs, generate a parent factory that accepts the flat union of all fields. Factory inspects which variant-specific fields are present, constructs the appropriate variant child internally. Return type includes getters/setters for ALL fields (shared + variant)
-- [ ] T050d [US3] Update `packages/codegen/src/emitters/types.ts`: generate per-variant interfaces (`AssignmentEq { fields: { left, right } }`, `AssignmentType { fields: { left, type } }`) and a parent union `Assignment = AssignmentEq | AssignmentType | AssignmentTyped`
-- [ ] T050e [US3] Update `packages/codegen/src/emitters/client-utils.ts`: for nested-alias polymorphs, generate `_inferBranch` that uses `node.children[0].type` for discrimination instead of field-set heuristics. Faster and deterministic
-- [ ] T050f [US3] Update `packages/codegen/src/emitters/wrap.ts`: for nested-alias polymorphs, the wrap function reads parent fields AND drills into the variant child to extract variant fields. Expose the flat union on the returned NodeData
-- [ ] T050g [US3] Write integration test in `packages/codegen/src/__tests__/nested-alias-factory.test.ts`: generate python, create an `assignment_eq` via factory with `{ left, right }`, verify the produced NodeData has the variant child structure internally but exposes `right` via getter. Roundtrip: readNode → factory → render → reparse
+- [x] T050a [US3] Extend synthetic-rules accumulator to register polymorph metadata: `registerPolymorphVariant(parentKind, variantName)` — called from resolvePatch when processing alias placeholders. `setCurrentRuleKind`/`getCurrentRuleKind` tracks the parent rule during evaluation
+- [x] T050b [US3] Thread polymorph metadata from the synthetic-rules accumulator through to the emitters. `evaluate.ts` sets current rule kind around each callback, drains variants into `RawGrammar.polymorphVariants`. Verified: python's assignment → [assignment_eq, assignment_type, assignment_typed]
+- [x] T050c [US3] Update `packages/codegen/src/emitters/factories.ts`: `emitNestedAliasFactory()` generates flat-field factory for nested-alias polymorphs. Dispatches by field presence (most-specific first), constructs variant child internally, returns NodeData with getters drilling into child fields. Verified on python assignment: `{ left, right? type? }` → proper variant dispatch
+- [x] T050d [US3] Update `packages/codegen/src/emitters/types.ts`: `emitNestedAliasConfig()` generates explicit flat config interface (parent + variant fields). Factory references `T.AssignmentConfig` instead of inline types. ConfigMap maps correctly
+- [x] T050e [US3] N/A — `_inferBranch` doesn't exist in the codebase. Nested-alias discrimination uses child node type natively via the parse tree
+- [x] T050f [US3] Update `packages/codegen/src/emitters/wrap.ts`: `emitNestedAliasWrap()` generates flat getters for parent fields + variant child fields. Variant getters drill into `data.children[0].fields`. Also exposes `variant` and `child` accessors
+- [x] T050g [US3] Integration tests in `nested-alias-factory.test.ts` + `nested-alias-factory-roundtrip.test.ts`: verify factory dispatches by field presence (typed→eq→type fallback), wrap has flat variant getters, variant factories exist standalone. 10 tests total
 - [ ] T030 [US3] Run full fidelity suite for all three grammars. Confirm ceilings hold
 - [ ] T032 [US3] Verify: factory discriminates by child type, not field-set heuristics
 

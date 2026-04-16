@@ -13,12 +13,37 @@
 import type { RuntimeRule } from './runtime-shapes.ts'
 
 let currentSyntheticRules: Map<string, RuntimeRule> | null = null
+let currentRuleKind: string | null = null
+export interface PolymorphVariant {
+    readonly parent: string
+    readonly child: string
+}
+
+let currentPolymorphVariants: PolymorphVariant[] = []
+
+export function setCurrentRuleKind(kind: string | null): void {
+    currentRuleKind = kind
+}
+
+export function getCurrentRuleKind(): string | null {
+    return currentRuleKind
+}
 
 export function registerSyntheticRule(name: string, content: RuntimeRule): void {
     if (!currentSyntheticRules) {
         currentSyntheticRules = new Map()
     }
     currentSyntheticRules.set(name, content)
+}
+
+export function registerPolymorphVariant(parentKind: string, childSuffix: string): void {
+    currentPolymorphVariants.push({ parent: parentKind, child: childSuffix })
+}
+
+export function drainPolymorphVariants(): PolymorphVariant[] {
+    const variants = currentPolymorphVariants
+    currentPolymorphVariants = []
+    return variants
 }
 
 export function drainSyntheticRules(): Map<string, RuntimeRule> {
@@ -68,9 +93,11 @@ export function installGrammarWrapper(): void {
                     return { type: 'SYMBOL', name }
                 },
             })
-            for (const [, ruleFn] of Object.entries(opts.rules)) {
+            for (const [name, ruleFn] of Object.entries(opts.rules)) {
                 if (typeof ruleFn === 'function') {
+                    currentRuleKind = name
                     try { ruleFn.call(permissive, permissive, undefined) } catch { /* ignore */ }
+                    finally { currentRuleKind = null }
                 }
             }
         }
@@ -78,6 +105,20 @@ export function installGrammarWrapper(): void {
         // Collect names discovered in pass 1
         const discoveredNames = new Map(currentSyntheticRules)
         currentSyntheticRules = new Map()
+
+        // Wrap rule functions to track currentRuleKind during pass 2.
+        // tree-sitter's native grammar() calls each rule fn — we need
+        // the rule name context for variant() auto-prefixing.
+        if (opts?.rules) {
+            for (const [name, ruleFn] of Object.entries(opts.rules)) {
+                if (typeof ruleFn !== 'function') continue
+                opts.rules[name] = function(this: unknown, ...a: unknown[]) {
+                    currentRuleKind = name
+                    try { return ruleFn.apply(this, a) }
+                    finally { currentRuleKind = null }
+                }
+            }
+        }
 
         // Pass 2: add hidden rules as blank() entries to opts.rules
         // so tree-sitter's RuleBuilder includes them in the ruleMap

@@ -10,6 +10,7 @@
 import type {
     NodeMap, AssembledNode, AssembledField, AssembledChild, AssembledGroup,
 } from '../compiler/rule.ts'
+import type { PolymorphVariant } from '../dsl/synthetic-rules.ts'
 
 /** Escape a string for safe inclusion inside a single-quoted TS string literal. */
 function escForSource(s: string): string {
@@ -210,6 +211,10 @@ export function emitFrom(config: EmitFromConfig): string {
 
 function renderFromForNode(node: AssembledNode, nodeMap: NodeMap, intern: KindInterner): string | undefined {
     if (!node.rawFactoryName || !node.fromFunctionName) return undefined
+    const variants = nodeMap.polymorphVariants?.filter(v => v.parent === node.kind)
+    if (variants?.length) {
+        return emitVariantFrom(node, variants, nodeMap, intern)
+    }
     switch (node.modelType) {
         case 'branch':
             return emitBranchFrom(node, nodeMap, intern)
@@ -245,6 +250,49 @@ interface BranchLikeNode {
     readonly fromFunctionName?: string
     readonly fields: readonly AssembledField[]
     readonly children?: readonly AssembledChild[]
+}
+
+function emitVariantFrom(
+    node: AssembledNode,
+    polymorphVariants: PolymorphVariant[],
+    nodeMap: NodeMap,
+    intern: KindInterner,
+): string {
+    const fn = node.fromFunctionName!
+    const factory = node.rawFactoryName!
+    const typeName = node.typeName
+    const inputType = `T.${typeName} | T.${node.fromInputTypeName}`
+    const lines: string[] = []
+    lines.push(`export function ${fn}(input: ${inputType}): ReturnType<typeof ${factory}> {`)
+    lines.push(`  if ('render' in input) return input as T.${typeName} & ReturnType<typeof ${factory}>;`)
+
+    const parentFields = 'fields' in node ? (node as { fields: readonly AssembledField[] }).fields : []
+    const configParts: string[] = []
+    for (const f of parentFields) {
+        const call = resolveFieldFromTypedInput(f, nodeMap, typeName, intern, 'input', false)
+        configParts.push(`    ${f.propertyName}: ${call},`)
+    }
+
+    // Collect all variant field names for the config
+    const seenProps = new Set(parentFields.map(f => f.propertyName))
+    for (const pv of polymorphVariants) {
+        const fullName = `${pv.parent}_${pv.child}`
+        const vNode = nodeMap.nodes.get(fullName)
+        if (!vNode) continue
+        const vFields = 'fields' in vNode ? (vNode as { fields: readonly AssembledField[] }).fields : []
+        for (const vf of vFields) {
+            if (seenProps.has(vf.propertyName)) continue
+            seenProps.add(vf.propertyName)
+            const call = resolveFieldFromTypedInput(vf, nodeMap, typeName, intern, 'input', true)
+            configParts.push(`    ${vf.propertyName}: ${call},`)
+        }
+    }
+
+    lines.push(`  return ${factory}({`)
+    lines.push(...configParts)
+    lines.push('  });')
+    lines.push('}')
+    return lines.join('\n')
 }
 
 function emitBranchFrom(node: BranchLikeNode, nodeMap: NodeMap, intern: KindInterner): string {
