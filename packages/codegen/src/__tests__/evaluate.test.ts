@@ -319,7 +319,7 @@ describe('Evaluate — DSL functions', () => {
         }
 
         it('replaces content at a position', () => {
-            const result = replace(original, 2, { type: 'string', value: '.' })
+            const result = replace(original, 2, { type: 'string', value: '.' } as any)
             expect((result as any).members[2]).toEqual({ type: 'string', value: '.' })
         })
 
@@ -425,7 +425,7 @@ describe('Evaluate — edge cases', () => {
         })
 
         it('replace substitutes content entirely', () => {
-            const result = replace(original, 1, { type: 'symbol', name: 'new_body' })
+            const result = replace(original, 1, { type: 'symbol', name: 'new_body' } as any)
             expect((result as any).members[1]).toEqual({ type: 'symbol', name: 'new_body' })
         })
 

@@ -17,10 +17,7 @@
  *   apply time (with the path + actual rule shape in the message).
  */
 
-import type {
-    Rule, SeqRule, ChoiceRule, OptionalRule, RepeatRule, Repeat1Rule, FieldRule,
-} from '../compiler/rule.ts'
-import { isPrecWrapper as isPrecWrapperShape, isContainerType, isWrapperType } from './runtime-shapes.ts'
+import { isPrecWrapper as isPrecWrapperShape, isContainerType, isWrapperType, type RuntimeRule } from './runtime-shapes.ts'
 
 // ---------------------------------------------------------------------------
 // Native DSL accessors — we call the runtime-injected DSL functions
@@ -31,16 +28,16 @@ import { isPrecWrapper as isPrecWrapperShape, isContainerType, isWrapperType } f
 // ---------------------------------------------------------------------------
 
 interface RuntimeDsl {
-    seq?: (...members: unknown[]) => unknown
-    choice?: (...members: unknown[]) => unknown
-    optional?: (content: unknown) => unknown
-    repeat?: (content: unknown) => unknown
-    repeat1?: (content: unknown) => unknown
-    field?: (name: string, content: unknown) => unknown
-    prec?: ((value: number | unknown, content?: unknown) => unknown) & {
-        left?: (value: number | unknown, content?: unknown) => unknown
-        right?: (value: number | unknown, content?: unknown) => unknown
-        dynamic?: (value: number | unknown, content?: unknown) => unknown
+    seq?: (...members: RuntimeRule[]) => RuntimeRule
+    choice?: (...members: RuntimeRule[]) => RuntimeRule
+    optional?: (content: RuntimeRule) => RuntimeRule
+    repeat?: (content: RuntimeRule) => RuntimeRule
+    repeat1?: (content: RuntimeRule) => RuntimeRule
+    field?: (name: string, content: RuntimeRule) => RuntimeRule
+    prec?: ((value: number, content: RuntimeRule) => RuntimeRule) & {
+        left?: (value: number, content: RuntimeRule) => RuntimeRule
+        right?: (value: number, content: RuntimeRule) => RuntimeRule
+        dynamic?: (value: number, content: RuntimeRule) => RuntimeRule
     }
 }
 
@@ -107,11 +104,19 @@ export function parsePath(pathStr: string): PathSegment[] {
  *
  * Throws on out-of-bounds indices or zero-match wildcards.
  */
+// Local accessors for the container/wrapper field shapes RuntimeRule
+// doesn't expose structurally. Consolidated so the casts live in one
+// spot rather than scattered through applyPath's branches.
+const membersOf = (r: RuntimeRule): RuntimeRule[] =>
+    (r as unknown as { members: RuntimeRule[] }).members
+const contentOf = (r: RuntimeRule): RuntimeRule =>
+    (r as unknown as { content: RuntimeRule }).content
+
 export function applyPath(
-    rule: Rule,
+    rule: RuntimeRule,
     segments: readonly PathSegment[],
-    patch: Rule | ((member: Rule) => Rule),
-): Rule {
+    patch: RuntimeRule | ((member: RuntimeRule) => RuntimeRule),
+): RuntimeRule {
     if (segments.length === 0) {
         // Reached the target position — apply the patch.
         return typeof patch === 'function' ? patch(rule) : patch
@@ -125,26 +130,22 @@ export function applyPath(
     // precedence info. Both lowercase (sittir) and uppercase
     // (tree-sitter native) variants are handled.
     if (isPrecWrapperShape(rule)) {
-        const newContent = applyPath(
-            (rule as { content: Rule }).content,
-            segments,
-            patch,
-        )
+        const newContent = applyPath(contentOf(rule), segments, patch)
         return reconstructPrec(rule, newContent)
     }
 
     const [head, ...rest] = segments
-    const t = rule.type as string
+    const t = rule.type
 
     // Containers we can descend into — predicates in runtime-shapes.ts
     // accept both sittir lowercase and tree-sitter uppercase naming.
     if (isContainerType(t)) {
-        return applyToMembers(rule as SeqRule | ChoiceRule, head!, rest, patch)
+        return applyToMembers(rule, head!, rest, patch)
     }
     if (isWrapperType(t)) {
         // For wrappers, position 0 is the wrapped content.
         if (head!.kind === 'wildcard' || (head!.kind === 'index' && head!.value === 0)) {
-            const newContent = applyPath((rule as { content: Rule }).content, rest, patch)
+            const newContent = applyPath(contentOf(rule), rest, patch)
             return reconstructWrapper(rule, newContent)
         }
         throw new ApplyPathSkip(
@@ -161,10 +162,10 @@ export function applyPath(
  * native ensures the result has the correct rule-type case and
  * inherits any normalization the runtime applies.
  */
-export function reconstructContainer(rule: SeqRule | ChoiceRule, members: Rule[]): Rule {
-    const t = rule.type as string
-    if (t === 'seq' || t === 'SEQ') return nativeRequired('seq')(...members) as Rule
-    if (t === 'choice' || t === 'CHOICE') return nativeRequired('choice')(...members) as Rule
+export function reconstructContainer(rule: RuntimeRule, members: RuntimeRule[]): RuntimeRule {
+    const t = rule.type
+    if (t === 'seq' || t === 'SEQ') return nativeRequired('seq')(...members)
+    if (t === 'choice' || t === 'CHOICE') return nativeRequired('choice')(...members)
     throw new Error(`reconstructContainer: unknown container type '${t}'`)
 }
 
@@ -181,9 +182,9 @@ export function reconstructContainer(rule: SeqRule | ChoiceRule, members: Rule[]
  *   - Unknown wrapper types — safer to throw than silently emit a
  *     hand-rolled shape that may be wrong-case in tree-sitter runtime.
  */
-export function reconstructWrapper(rule: Rule, newContent: Rule): Rule {
-    const t = rule.type as string
-    if (t === 'optional') return nativeRequired('optional')(newContent) as Rule
+export function reconstructWrapper(rule: RuntimeRule, newContent: RuntimeRule): RuntimeRule {
+    const t = rule.type
+    if (t === 'optional') return nativeRequired('optional')(newContent)
     if (t === 'repeat' || t === 'REPEAT' || t === 'repeat1' || t === 'REPEAT1') {
         const r = rule as { separator?: unknown; leading?: unknown; trailing?: unknown }
         if (r.separator !== undefined || r.leading !== undefined || r.trailing !== undefined) {
@@ -191,11 +192,11 @@ export function reconstructWrapper(rule: Rule, newContent: Rule): Rule {
                 `reconstructWrapper: cannot path-address under a '${rule.type}' rule with separator/leading/trailing metadata — native repeat() can't round-trip those fields. Use flat positional transform or restructure the override.`,
             )
         }
-        return nativeRequired(t === 'repeat' || t === 'REPEAT' ? 'repeat' : 'repeat1')(newContent) as Rule
+        return nativeRequired(t === 'repeat' || t === 'REPEAT' ? 'repeat' : 'repeat1')(newContent)
     }
     if (t === 'field' || t === 'FIELD') {
-        const fld = rule as FieldRule
-        return nativeRequired('field')(fld.name, newContent) as Rule
+        const name = (rule as unknown as { name: string }).name
+        return nativeRequired('field')(name, newContent)
     }
     throw new Error(
         `reconstructWrapper: no native dsl reconstruction for wrapper type '${rule.type}' — this is a bug in the path-descent logic.`,
@@ -214,17 +215,17 @@ const PREC_VARIANT_MAP = {
     prec_dynamic: 'dynamic',
 } as const
 
-export function reconstructPrec(rule: Rule, newContent: Rule): Rule {
-    const t = (rule.type as string).toLowerCase()
-    const value = (rule as { value?: number | unknown }).value
+export function reconstructPrec(rule: RuntimeRule, newContent: RuntimeRule): RuntimeRule {
+    const t = rule.type.toLowerCase()
+    const value = (rule as { value?: number }).value ?? 0
     const prec = nativeRequired('prec')
     const variant = PREC_VARIANT_MAP[t as keyof typeof PREC_VARIANT_MAP]
     if (variant) {
         const fn = prec[variant]
         if (typeof fn !== 'function') throw new Error(`transform: native prec.${variant} not available`)
-        return fn(value as number, newContent) as Rule
+        return fn(value, newContent)
     }
-    return prec(value as number, newContent) as Rule
+    return prec(value, newContent)
 }
 
 // Re-export so transform.ts's `applyFlatPatches` can reach the
@@ -232,12 +233,12 @@ export function reconstructPrec(rule: Rule, newContent: Rule): Rule {
 export { isContainerType, isWrapperType, isPrecWrapperShape as isPrecWrapper }
 
 function applyToMembers(
-    rule: SeqRule | ChoiceRule,
+    rule: RuntimeRule,
     head: PathSegment,
     rest: readonly PathSegment[],
-    patch: Rule | ((member: Rule) => Rule),
-): SeqRule | ChoiceRule {
-    const members = [...rule.members]
+    patch: RuntimeRule | ((member: RuntimeRule) => RuntimeRule),
+): RuntimeRule {
+    const members = [...membersOf(rule)]
 
     if (head.kind === 'index') {
         if (head.value < 0 || head.value >= members.length) {
@@ -246,7 +247,7 @@ function applyToMembers(
             )
         }
         members[head.value] = applyPath(members[head.value]!, rest, patch)
-        return reconstructContainer(rule, members) as SeqRule | ChoiceRule
+        return reconstructContainer(rule, members)
     }
 
     // Wildcard — apply to every member that can accept the remaining
@@ -272,5 +273,5 @@ function applyToMembers(
     if (!anyApplied) {
         throw new ApplyPathSkip(`applyPath: wildcard matched zero members successfully in ${rule.type} of length ${members.length}`)
     }
-    return reconstructContainer(rule, members) as SeqRule | ChoiceRule
+    return reconstructContainer(rule, members)
 }

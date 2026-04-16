@@ -4,12 +4,16 @@ import { transform } from '../transform.ts'
 import type { Rule } from '../../compiler/rule.ts'
 import { installFakeDsl, restoreFakeDsl } from './_test-helpers.ts'
 
-const sym = (name: string): Rule => ({ type: 'symbol', name } as Rule)
-const str = (value: string): Rule => ({ type: 'string', value } as Rule)
-const seq = (...members: Rule[]): Rule => ({ type: 'seq', members } as Rule)
-const choice = (...members: Rule[]): Rule => ({ type: 'choice', members } as Rule)
-const optional = (content: Rule): Rule => ({ type: 'optional', content } as Rule)
-const fld = (name: string, content: Rule): Rule => ({ type: 'field', name, content } as Rule)
+// Helpers return `any` so tests can mix them freely with the
+// transform path-helpers, which operate on the `RuntimeRule` supertype
+// (narrower than sittir's `Rule`). Casting here avoids `as any`
+// boilerplate at every call site.
+const sym = (name: string): any => ({ type: 'symbol', name })
+const str = (value: string): any => ({ type: 'string', value })
+const seq = (...members: any[]): any => ({ type: 'seq', members })
+const choice = (...members: any[]): any => ({ type: 'choice', members })
+const optional = (content: any): any => ({ type: 'optional', content })
+const fld = (name: string, content: any): any => ({ type: 'field', name, content })
 
 beforeAll(() => { installFakeDsl() })
 afterAll(() => { restoreFakeDsl() })

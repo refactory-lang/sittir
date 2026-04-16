@@ -20,6 +20,33 @@
  * every file, consolidate the predicates + type guards here.
  */
 
+/**
+ * The honest return/input type for DSL functions that accept or
+ * produce rules without knowing which runtime they're running in.
+ *
+ * Broader than sittir's `Rule` union: any object with a string
+ * `type` discriminator is a `RuntimeRule`. Consumers that need to
+ * access runtime-specific fields (`members`, `content`, `name`,
+ * ...) must narrow via the guards in this module (`isContainerType`,
+ * `isWrapperType`, `isPrecWrapper`, `isFieldLike`, `isSymbolLike`)
+ * or by pattern-matching on `type` literals.
+ *
+ * Why a supertype rather than a precise union? Sittir's `Rule` union
+ * commits to lowercase literals and specific interface shapes. Under
+ * tree-sitter's CLI runtime the same DSL code receives uppercase
+ * tree-sitter natives with subtly different shapes (e.g. `PREC_LEFT`
+ * carries `value` as `number`, sittir's `prec` is stripped entirely).
+ * Typing `transform()` as returning `Rule` would lie to consumers;
+ * typing it as `RuntimeRule` forces an honest narrowing at every
+ * inspection point.
+ *
+ * Intentionally shape-minimal (no index signature) so sittir's Rule
+ * interfaces — which don't declare `[k: string]: unknown` — are
+ * structurally assignable via the `type` field alone. Consumers cast
+ * at property-access sites (e.g. `(r as SeqRule).members`).
+ */
+export type RuntimeRule = { readonly type: string }
+
 export type SymbolLike = { type: 'symbol' | 'SYMBOL'; name: string }
 
 export type FieldLike = {

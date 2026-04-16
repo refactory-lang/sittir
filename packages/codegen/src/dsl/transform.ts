@@ -11,12 +11,19 @@
  *
  * The baseline shadow functions (`grammar`, `seq`, `choice`, `field`, ...)
  * are still injected as globals by `evaluate.ts` — don't import those.
+ *
+ * Types are deliberately `RuntimeRule` (not sittir's `Rule` union).
+ * The `original` argument comes from tree-sitter's extension mechanism
+ * at runtime — that's sittir-shaped under sittir's pipeline but
+ * tree-sitter-native (uppercase types) under the CLI runtime. Typing
+ * as `RuntimeRule` is honest in both directions and forces callers
+ * that inspect the result to narrow via guards in `runtime-shapes.ts`.
+ * Override files are `@ts-nocheck` so they're unaffected.
  */
 
-import type { Rule, FieldRule, SeqRule, ChoiceRule } from '../compiler/rule.ts'
 import { parsePath, applyPath, reconstructWrapper, reconstructPrec, reconstructContainer } from './transform-path.ts'
 import { isFieldPlaceholder, type FieldPlaceholder } from './field.ts'
-import { isFieldLike, isPrecWrapper, isWrapperType } from './runtime-shapes.ts'
+import { isFieldLike, isPrecWrapper, isWrapperType, type RuntimeRule } from './runtime-shapes.ts'
 
 /**
  * Apply patches to a rule. Patches are an object with path-string keys
@@ -48,15 +55,21 @@ import { isFieldLike, isPrecWrapper, isWrapperType } from './runtime-shapes.ts'
  * field wrapper on the original is unwrapped before re-wrapping to
  * avoid nested fields.
  */
-export function transform(original: Rule, patches: Record<number | string, Rule | FieldPlaceholder>): Rule {
+export function transform(
+    original: RuntimeRule,
+    patches: Record<number | string, RuntimeRule | FieldPlaceholder>,
+): RuntimeRule {
     const usesPaths = Object.keys(patches).some(k => k.includes('/') || k.includes('*'))
     if (usesPaths) {
         return applyPathPatches(original, patches)
     }
-    return applyFlatPatches(original, patches as Record<number | string, Rule>)
+    return applyFlatPatches(original, patches as Record<number | string, RuntimeRule>)
 }
 
-function applyPathPatches(original: Rule, patches: Record<number | string, Rule | FieldPlaceholder>): Rule {
+function applyPathPatches(
+    original: RuntimeRule,
+    patches: Record<number | string, RuntimeRule | FieldPlaceholder>,
+): RuntimeRule {
     let rule = original
     for (const [key, value] of Object.entries(patches)) {
         const segments = parsePath(String(key))
@@ -65,14 +78,25 @@ function applyPathPatches(original: Rule, patches: Record<number | string, Rule 
     return rule
 }
 
-function applyFlatPatches(original: Rule, patches: Record<number | string, Rule>): Rule {
+// Local accessors for the container/wrapper field shapes RuntimeRule
+// doesn't expose structurally. Consolidated so the casts live in one
+// spot rather than scattered through the function body.
+const membersOf = (r: RuntimeRule): RuntimeRule[] =>
+    (r as unknown as { members: RuntimeRule[] }).members
+const contentOf = (r: RuntimeRule): RuntimeRule =>
+    (r as unknown as { content: RuntimeRule }).content
+
+function applyFlatPatches(
+    original: RuntimeRule,
+    patches: Record<number | string, RuntimeRule>,
+): RuntimeRule {
     // Seq: apply patches to members by RAW position. Accepts both
     // sittir lowercase 'seq' and tree-sitter uppercase 'SEQ' so the
     // same transform call works in both runtimes. Reconstructed via
     // native dsl so the result has the runtime-correct rule shape.
-    const t = original.type as string
+    const t = original.type
     if (t === 'seq' || t === 'SEQ') {
-        const members = [...(original as SeqRule).members]
+        const members = [...membersOf(original)]
         for (const [key, patch] of Object.entries(patches)) {
             // Reject non-pure-numeric keys up front — `Number('foo')` is
             // NaN and `Number('-0')` is 0. Typos like `'1a'` or `',0'`
@@ -94,14 +118,14 @@ function applyFlatPatches(original: Rule, patches: Record<number | string, Rule>
             }
             members[index] = resolvePatch(patch, members[index]!)
         }
-        return reconstructContainer(original as SeqRule, members)
+        return reconstructContainer(original, members)
     }
 
     // Choice: apply transform to each member recursively. Reconstruct
     // via native dsl so the choice keeps its runtime-correct shape.
     if (t === 'choice' || t === 'CHOICE') {
-        const newMembers = (original as ChoiceRule).members.map(m => applyFlatPatches(m, patches))
-        return reconstructContainer(original as ChoiceRule, newMembers)
+        const newMembers = membersOf(original).map(m => applyFlatPatches(m, patches))
+        return reconstructContainer(original, newMembers)
     }
 
     // Precedence wrappers — descend into content and reconstruct via
@@ -109,14 +133,14 @@ function applyFlatPatches(original: Rule, patches: Record<number | string, Rule>
     // tree-sitter's parser-generator to resolve conflicts the same way
     // as the base grammar).
     if (isPrecWrapper(original)) {
-        const newContent = applyFlatPatches((original as { content: Rule }).content, patches)
+        const newContent = applyFlatPatches(contentOf(original), patches)
         return reconstructPrec(original, newContent)
     }
 
     // Single-content wrappers (optional/repeat/repeat1/field) — descend
     // and reconstruct via native dsl.
     if (isWrapperType(t)) {
-        const newContent = applyFlatPatches((original as { content: Rule }).content, patches)
+        const newContent = applyFlatPatches(contentOf(original), patches)
         return reconstructWrapper(original, newContent)
     }
 
@@ -124,7 +148,10 @@ function applyFlatPatches(original: Rule, patches: Record<number | string, Rule>
     return original
 }
 
-function resolvePatch(patch: Rule | FieldPlaceholder, originalMember: Rule): Rule {
+function resolvePatch(
+    patch: RuntimeRule | FieldPlaceholder,
+    originalMember: RuntimeRule,
+): RuntimeRule {
     // One-arg `field('name')` placeholder — wrap the original member
     // using the runtime's native field() so the resulting rule's type
     // case matches whatever runtime is loading us (sittir lowercase
@@ -142,13 +169,14 @@ function resolvePatch(patch: Rule | FieldPlaceholder, originalMember: Rule): Rul
         }
         // Mark as override so derive-overrides-json sees it. Spread to
         // preserve whatever shape (lowercase/uppercase) the native produced.
-        return { ...(native(patch.name, content) as object), source: 'override' as const } as Rule
+        const reconstructed = native(patch.name, content) as object
+        return { ...reconstructed, source: 'override' as const } as unknown as RuntimeRule
     }
     // Two-arg field passed through directly — accept either case.
     if (isFieldLike(patch)) {
-        return { ...patch, source: 'override' as const } as unknown as Rule
+        return { ...patch, source: 'override' as const } as unknown as RuntimeRule
     }
-    return patch as Rule
+    return patch as RuntimeRule
 }
 
 /**
@@ -159,38 +187,44 @@ function resolvePatch(patch: Rule | FieldPlaceholder, originalMember: Rule): Rul
  * runtime-correct rule shape (sittir lowercase vs tree-sitter
  * uppercase) — same cross-runtime contract as `transform()`.
  */
-export function insert(original: Rule, position: number, wrapper: (content: Rule) => Rule): Rule {
-    const t = original.type as string
+export function insert(
+    original: RuntimeRule,
+    position: number,
+    wrapper: (content: RuntimeRule) => RuntimeRule,
+): RuntimeRule {
+    const t = original.type
     if (t !== 'seq' && t !== 'SEQ') {
         throw new Error(`insert() expects a seq rule, got '${original.type}'`)
     }
-    const seq = original as SeqRule
 
-    const members = [...seq.members]
+    const members = [...membersOf(original)]
     if (position < 0 || position >= members.length) {
         throw new Error(`insert(): position ${position} out of bounds (rule has ${members.length} members)`)
     }
 
     const wrapped = wrapper(members[position]!)
     members[position] = isFieldLike(wrapped)
-        ? { ...wrapped, source: 'override' as const } as unknown as Rule
+        ? { ...wrapped, source: 'override' as const } as unknown as RuntimeRule
         : wrapped
 
-    return reconstructContainer(seq, members)
+    return reconstructContainer(original, members)
 }
 
 /**
  * Replace content at a position. Pass `null` to suppress (remove the
  * member). Reconstructs via the runtime's native `seq()`.
  */
-export function replace(original: Rule, position: number, replacement: Rule | null): Rule {
-    const t = original.type as string
+export function replace(
+    original: RuntimeRule,
+    position: number,
+    replacement: RuntimeRule | null,
+): RuntimeRule {
+    const t = original.type
     if (t !== 'seq' && t !== 'SEQ') {
         throw new Error(`replace() expects a seq rule, got '${original.type}'`)
     }
-    const seq = original as SeqRule
 
-    const members = [...seq.members]
+    const members = [...membersOf(original)]
     if (position < 0 || position >= members.length) {
         throw new Error(`replace(): position ${position} out of bounds (rule has ${members.length} members)`)
     }
@@ -201,5 +235,5 @@ export function replace(original: Rule, position: number, replacement: Rule | nu
         members[position] = replacement
     }
 
-    return reconstructContainer(seq, members)
+    return reconstructContainer(original, members)
 }
