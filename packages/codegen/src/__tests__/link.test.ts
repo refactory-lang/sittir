@@ -308,7 +308,7 @@ describe('Link — variant tagging + polymorph promotion', () => {
         expect(stmt.members[1].name).toBe('while')
     })
 
-    it('promotePolymorph wraps heterogeneous-field choices', () => {
+    it('promotePolymorph detects heterogeneous-field choices (suggestion-only, no mutation)', () => {
         const raw = makeRaw({
             assignment: {
                 type: 'choice',
@@ -327,10 +327,10 @@ describe('Link — variant tagging + polymorph promotion', () => {
         })
         const linked = link(raw)
         const assignment = linked.rules['assignment'] as any
-        expect(assignment.type).toBe('polymorph')
-        expect(assignment.forms).toHaveLength(2)
-        expect(assignment.forms[0].name).toBe('eq')
-        expect(assignment.forms[1].name).toBe('colon')
+        expect(assignment.type).not.toBe('polymorph')
+        expect(linked.derivations.promotedRules.some(
+            (p: any) => p.kind === 'assignment' && p.classification === 'polymorph' && !p.applied
+        )).toBe(true)
     })
 
     it('homogeneous-field choices stay as choice + variants (not polymorph)', () => {

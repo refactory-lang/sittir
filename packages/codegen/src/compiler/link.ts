@@ -38,7 +38,6 @@ export function link(raw: RawGrammar, include?: IncludeFilter): LinkedGrammar {
     // Explicit empty arrays mean "include nothing of this category".
     const includeRules = new Set(include?.rules ?? (['promoted'] as const))
     const includeFields = new Set(include?.fields ?? (['inferred', 'inlined'] as const))
-    const applyInferred = includeFields.has('inferred')
     const applyPromotedRules = includeRules.has('promoted')
 
     // Derivation log — populated unconditionally; each entry records
@@ -135,18 +134,17 @@ export function link(raw: RawGrammar, include?: IncludeFilter): LinkedGrammar {
         }
     }
 
-    // Field name inference — rewrite bare symbol refs into field(X, $.Y)
-    // wrappers tagged with source: 'inferred' when cross-parent usage
-    // shows high agreement. Runs BEFORE tagVariants so the new field()
-    // wrappers are visible to nested-symbol walks during variant tagging.
-    // Each inference is logged; the rule tree is mutated only when
-    // `include.fields` permits `inferred`.
+    // Field name inference — analysis only (suggestion surface).
+    // Previously this phase mutated rules by wrapping bare symbol refs
+    // as field(X, $.Y) wrappers. Spec 007 moved field coverage to the
+    // override-compiled parser: transform() patches in overrides.ts +
+    // enrich() mechanical passes now carry all field labels natively.
+    // The analysis is preserved for suggested-overrides.ts output.
     const inferredFieldNames = inferFieldNames(references)
     for (const [name, rule] of Object.entries(rules)) {
-        const { rule: rewritten, applied } = applyInferredFields(
-            rule, name, inferredFieldNames, applyInferred, derivations.inferredFields, applyInferred,
+        applyInferredFields(
+            rule, name, inferredFieldNames, false, derivations.inferredFields, false,
         )
-        if (applied) rules[name] = rewritten
     }
 
     // Keyword-prefix promotion moved to dsl/enrich.ts (spec 006).
@@ -165,18 +163,18 @@ export function link(raw: RawGrammar, include?: IncludeFilter): LinkedGrammar {
         rules[name] = tagVariants(rule, name, raw.inline)
     }
 
-    // Promote choice-of-variants with heterogeneous field shapes to
-    // PolymorphRule. Always logged; applied only when `include.rules`
-    // permits `promoted`.
+    // Polymorph detection — suggestion-only (spec 007).
+    // Previously mutated rules by wrapping heterogeneous-field choices
+    // in PolymorphRule. Now kept as analysis for suggested-overrides.ts.
+    // Nested-alias conversion will be a follow-up spec.
     for (const [name, rule] of Object.entries(rules)) {
         const result = promotePolymorph(rule)
         if (result !== rule) {
             derivations.promotedRules.push({
                 kind: name,
                 classification: 'polymorph',
-                applied: applyPromotedRules,
+                applied: false,
             })
-            if (applyPromotedRules) rules[name] = result
         }
     }
 
