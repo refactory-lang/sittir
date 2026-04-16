@@ -86,6 +86,14 @@ export interface GenerateConfig {
      * opt-in avoids surprising the non-strict call sites.
      */
     strict?: boolean
+    /**
+     * Round-trip failure diagnostics to surface in overrides.suggested.ts.
+     * Collected by the CLI `--roundtrip` flag; when absent, the suggested
+     * emitter skips the round-trip section. Passing empty or omitting
+     * produces the same output — the emitter only adds the section
+     * when at least one diagnostic exists.
+     */
+    roundTripFailures?: readonly import('../emitters/suggested.ts').RoundTripDiagnostic[]
 }
 
 /**
@@ -140,7 +148,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
         typeTests: emitTypeTests({ nodeMap }),
         config: emitConfig({ grammar: cfg.grammar }),
         nodeModel: JSON.stringify({ name: nodeMap.name, nodeCount: nodeMap.nodes.size }, null, 2),
-        suggested: emitSuggested({ grammar: cfg.grammar, nodeMap }),
+        suggested: emitSuggested({ grammar: cfg.grammar, nodeMap, roundTripFailures: cfg.roundTripFailures }),
         nodeMap,
     }
 }

@@ -14,9 +14,9 @@
 // ---------------------------------------------------------------
 // Summary
 // ---------------------------------------------------------------
-// Field inferences: 1  (0 applied, 1 held)
-// Rule promotions:  39  (31 applied, 8 held)
-// Repeated shapes:  7  (advisory — suggested supertypes/groups)
+// Field inferences:  1  (0 applied, 1 held)
+// Rule promotions:   39  (31 applied, 8 held)
+// Repeated shapes:   7  (advisory — suggested supertypes/groups)
 
 // ---------------------------------------------------------------
 // suggestedRules — drop entries into your overrides.ts rules map.

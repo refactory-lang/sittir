@@ -57,13 +57,39 @@ function findSymbolPosition(
     return null
 }
 
+/**
+ * Round-trip diagnostic captured by corpus validation. One entry per
+ * corpus case that failed parse → readNode → render → reparse: we
+ * surface the offending rule kind plus an input/output diff so the
+ * user can spot the drop (typically a missing `joinBy` separator, a
+ * `transform()` patch that would wrap a repeated slot, or a render
+ * template gap). Emitted as a dedicated section at the top of
+ * overrides.suggested.ts.
+ */
+export interface RoundTripDiagnostic {
+    /** Corpus entry name (e.g., "Async / await used as identifiers"). */
+    readonly entry: string
+    /** Rule kind the validator was testing. */
+    readonly kind: string
+    /** What broke — 'parse-error' (rendered text unparseable) or 'ast-mismatch' (structural drift). */
+    readonly category: 'parse-error' | 'ast-mismatch'
+    /** Input source text. */
+    readonly input?: string
+    /** Rendered text (what the renderer emitted). Absent when parse-error occurs before render. */
+    readonly rendered?: string
+    /** Human-readable message from the validator. */
+    readonly message: string
+}
+
 export interface EmitSuggestedConfig {
     grammar: string
     nodeMap: NodeMap
+    /** Corpus round-trip diagnostics, collected by CLI --roundtrip. */
+    roundTripFailures?: readonly RoundTripDiagnostic[]
 }
 
 export function emitSuggested(config: EmitSuggestedConfig): string {
-    const { grammar, nodeMap } = config
+    const { grammar, nodeMap, roundTripFailures = [] } = config
     const log: DerivationLog = nodeMap.derivations
     const lines: string[] = []
 
@@ -92,10 +118,63 @@ export function emitSuggested(config: EmitSuggestedConfig): string {
     lines.push('// ---------------------------------------------------------------')
     lines.push('// Summary')
     lines.push('// ---------------------------------------------------------------')
-    lines.push(`// Field inferences: ${log.inferredFields.length}  (${inferredApplied} applied, ${inferredHeld} held)`)
-    lines.push(`// Rule promotions:  ${log.promotedRules.length}  (${promotedApplied} applied, ${promotedHeld} held)`)
-    lines.push(`// Repeated shapes:  ${log.repeatedShapes.length}  (advisory — suggested supertypes/groups)`)
+    lines.push(`// Field inferences:  ${log.inferredFields.length}  (${inferredApplied} applied, ${inferredHeld} held)`)
+    lines.push(`// Rule promotions:   ${log.promotedRules.length}  (${promotedApplied} applied, ${promotedHeld} held)`)
+    lines.push(`// Repeated shapes:   ${log.repeatedShapes.length}  (advisory — suggested supertypes/groups)`)
+    if (roundTripFailures.length > 0) {
+        const parseErrors = roundTripFailures.filter(f => f.category === 'parse-error').length
+        const astMismatches = roundTripFailures.filter(f => f.category === 'ast-mismatch').length
+        lines.push(`// Round-trip fails: ${roundTripFailures.length}  (${parseErrors} parse errors, ${astMismatches} AST mismatches)`)
+    }
     lines.push('')
+
+    // ---------------------------------------------------------------
+    // Round-trip failures (corpus diagnostics)
+    // ---------------------------------------------------------------
+    if (roundTripFailures.length > 0) {
+        lines.push('// ---------------------------------------------------------------')
+        lines.push('// Round-trip failures — corpus cases that didn\'t survive')
+        lines.push('// parse → readNode → render → reparse. Each entry shows the')
+        lines.push('// input and rendered text so you can spot what the renderer')
+        lines.push('// dropped. Common causes:')
+        lines.push('//   - Repeated slot missing a `joinBy` separator (renders only')
+        lines.push('//     the first occurrence of a multi-valued field)')
+        lines.push('//   - Missing `transform()` patch wrapping an anonymous token')
+        lines.push('//     that should be a named field')
+        lines.push('//   - Template gap — rule content has no renderable slot for')
+        lines.push('//     some structural position')
+        lines.push('// ---------------------------------------------------------------')
+        // Group by rule kind so related failures cluster.
+        const byKind = new Map<string, RoundTripDiagnostic[]>()
+        for (const f of roundTripFailures) {
+            const arr = byKind.get(f.kind) ?? []
+            arr.push(f)
+            byKind.set(f.kind, arr)
+        }
+        lines.push('export const roundTripFailures: Array<{')
+        lines.push('  readonly entry: string;')
+        lines.push('  readonly kind: string;')
+        lines.push('  readonly category: "parse-error" | "ast-mismatch";')
+        lines.push('  readonly input?: string;')
+        lines.push('  readonly rendered?: string;')
+        lines.push('  readonly message: string;')
+        lines.push('}> = [')
+        for (const [kind, failures] of byKind) {
+            lines.push(`  // --- ${kind} (${failures.length}) ---`)
+            for (const f of failures) {
+                lines.push(`  {`)
+                lines.push(`    entry: ${JSON.stringify(f.entry)},`)
+                lines.push(`    kind: ${JSON.stringify(kind)},`)
+                lines.push(`    category: ${JSON.stringify(f.category)},`)
+                if (f.input !== undefined) lines.push(`    input:    ${JSON.stringify(f.input)},`)
+                if (f.rendered !== undefined) lines.push(`    rendered: ${JSON.stringify(f.rendered)},`)
+                lines.push(`    message: ${JSON.stringify(f.message)},`)
+                lines.push(`  },`)
+            }
+        }
+        lines.push('];')
+        lines.push('')
+    }
 
     // ---------------------------------------------------------------
     // Copy-paste ready rules block

@@ -14,9 +14,311 @@
 // ---------------------------------------------------------------
 // Summary
 // ---------------------------------------------------------------
-// Field inferences: 15  (0 applied, 15 held)
-// Rule promotions:  41  (40 applied, 1 held)
-// Repeated shapes:  5  (advisory — suggested supertypes/groups)
+// Field inferences:  15  (0 applied, 15 held)
+// Rule promotions:   41  (40 applied, 1 held)
+// Repeated shapes:   5  (advisory — suggested supertypes/groups)
+// Round-trip fails: 33  (26 parse errors, 7 AST mismatches)
+
+// ---------------------------------------------------------------
+// Round-trip failures — corpus cases that didn't survive
+// parse → readNode → render → reparse. Each entry shows the
+// input and rendered text so you can spot what the renderer
+// dropped. Common causes:
+//   - Repeated slot missing a `joinBy` separator (renders only
+//     the first occurrence of a multi-valued field)
+//   - Missing `transform()` patch wrapping an anonymous token
+//     that should be a named field
+//   - Template gap — rule content has no renderable slot for
+//     some structural position
+// ---------------------------------------------------------------
+export const roundTripFailures: Array<{
+  readonly entry: string;
+  readonly kind: string;
+  readonly category: "parse-error" | "ast-mismatch";
+  readonly input?: string;
+  readonly rendered?: string;
+  readonly message: string;
+}> = [
+  // --- if_expression (8) ---
+  {
+    entry: "Let declarations with if expressions as the value",
+    kind: "if_expression",
+    category: "parse-error",
+    input:    "if b {\n    c\n} else {\n    d\n}",
+    rendered: "b {\n    c\n} else {\n    d\n}",
+    message: "kind not found at rendered offset 18",
+  },
+  {
+    entry: "If expressions",
+    kind: "if_expression",
+    category: "parse-error",
+    input:    "if n == 1 {\n  } else if n == 2 {\n  } else {\n  }",
+    rendered: "n == 1 {\n  } else if n == 2 {\n  } else {\n  }",
+    message: "re-parse error: \"n == 1 {\n  } else if n == 2 {\n  } else {\n  }\"",
+  },
+  {
+    entry: "Basic if let expressions",
+    kind: "if_expression",
+    category: "parse-error",
+    input:    "if let Some(a) = b\n    && c\n    && d\n    && let Some(e) = f\n{\n}",
+    rendered: "let Some(a) = b\n     && c\n     && d\n     && let Some(e) = f {\n}",
+    message: "re-parse error: \"let Some(a) = b\n     && c\n     && d\n     && let Some(e) = f {\n}\"",
+  },
+  {
+    entry: "If let expressions",
+    kind: "if_expression",
+    category: "parse-error",
+    input:    "if let (\"Bacon\", b) = dish {\n}",
+    rendered: "let (\"Bacon\", b) = dish {\n}",
+    message: "kind not found at rendered offset 18",
+  },
+  {
+    entry: "Match expressions",
+    kind: "if_expression",
+    category: "parse-error",
+    input:    "if a {\n        \"200 (but this is not very stylish)\"\n      }",
+    rendered: "a {\n        \"200 (but this is not very stylish)\"\n      }",
+    message: "re-parse error: \"a {\n        \"200 (but this is not very stylish)\"\n      }\"",
+  },
+  {
+    entry: "For expressions",
+    kind: "if_expression",
+    category: "parse-error",
+    input:    "if x % 2 == 0 { continue 'outer; }",
+    rendered: "x % 2 == 0 { continue 'outer; }",
+    message: "re-parse error: \"x % 2 == 0 { continue 'outer; }\"",
+  },
+  {
+    entry: "Inline const or Const blocks as expression",
+    kind: "if_expression",
+    category: "parse-error",
+    input:    "if *x < 0 { const { &4i32.pow(4) } } else { x }",
+    rendered: "*x < 0 { const { &4i32.pow(4) } } else { x }",
+    message: "re-parse error: \"*x < 0 { const { &4i32.pow(4) } } else { x }\"",
+  },
+  {
+    entry: "Or patterns",
+    kind: "if_expression",
+    category: "parse-error",
+    input:    "if let A(x) | B(x) = expr {\n    do_stuff_with(x);\n}",
+    rendered: "let A(x) | B(x) = expr {\n    do_stuff_with(x);\n}",
+    message: "re-parse error: \"let A(x) | B(x) = expr {\n    do_stuff_with(x);\n}\"",
+  },
+  // --- struct_item (4) ---
+  {
+    entry: "Structs",
+    kind: "struct_item",
+    category: "parse-error",
+    input:    "struct Proton;",
+    rendered: "struct Proton",
+    message: "re-parse error: \"struct Proton\"",
+  },
+  {
+    entry: "Attributes",
+    kind: "struct_item",
+    category: "parse-error",
+    input:    "struct Baz;",
+    rendered: "struct Baz",
+    message: "re-parse error: \"struct Baz\"",
+  },
+  {
+    entry: "Crate visibility",
+    kind: "struct_item",
+    category: "parse-error",
+    input:    "crate struct Foo(crate crate::Bar);",
+    rendered: "crate struct Foo (crate crate::Bar)",
+    message: "re-parse error: \"crate struct Foo (crate crate::Bar)\"",
+  },
+  {
+    entry: "Const generics with default",
+    kind: "struct_item",
+    category: "parse-error",
+    input:    "pub struct Loaf<T: Sized, const N: usize = 1>([T; N]);",
+    rendered: "pub struct Loaf <T: Sized, const N: usize = 1> ([T; N])",
+    message: "re-parse error: \"pub struct Loaf <T: Sized, const N: usize = 1> ([T; N])\"",
+  },
+  // --- tuple_expression (3) ---
+  {
+    entry: "Attributes and Expressions",
+    kind: "tuple_expression",
+    category: "parse-error",
+    input:    "(#[hello] 2, 7, 8)",
+    rendered: "(#[hello] ,,, 8)",
+    message: "re-parse error: \"(#[hello] ,,, 8)\"",
+  },
+  {
+    entry: "Tuple expressions",
+    kind: "tuple_expression",
+    category: "parse-error",
+    input:    "(0,)",
+    rendered: "( ,, )",
+    message: "re-parse error: \"( ,, )\"",
+  },
+  {
+    entry: "Struct patterns",
+    kind: "tuple_expression",
+    category: "parse-error",
+    input:    "(\"toddler\", name)",
+    rendered: "( ,, name)",
+    message: "re-parse error: \"( ,, name)\"",
+  },
+  // --- impl_item (2) ---
+  {
+    entry: "Trait impl signature",
+    kind: "impl_item",
+    category: "parse-error",
+    input:    "impl<K: Debug + Ord> Debug for OccupiedError<K>;",
+    rendered: "impl <K: Debug + Ord> Debug for OccupiedError<K>",
+    message: "re-parse error: \"impl <K: Debug + Ord> Debug for OccupiedError<K>\"",
+  },
+  {
+    entry: "Disable automatically derived trait impls",
+    kind: "impl_item",
+    category: "ast-mismatch",
+    input:    "impl !Send for Foo {}",
+    rendered: "impl Send for Foo {}",
+    message: "impl_item: childCount 6 ≠ 5 [\"impl\",\"!\",type_identifier,\"for\",type_identifier,declaration_list] vs [\"impl\",type_identifier,\"for\",type_identifier,declaration_lis",
+  },
+  // --- block (1) ---
+  {
+    entry: "Impls with default functions",
+    kind: "block",
+    category: "parse-error",
+    input:    "{\n    // Make 'default' still works as an identifier\n    default.bar();\n  }",
+    rendered: "{// Make 'default' still works as an identifier default.bar();}",
+    message: "re-parse error: \"{// Make 'default' still works as an identifier default.bar();}\"",
+  },
+  // --- loop_expression (1) ---
+  {
+    entry: "Loop expressions",
+    kind: "loop_expression",
+    category: "parse-error",
+    input:    "'outer: loop {\n  'inner: loop {\n    break 'outer;\n    break true;\n  }\n}",
+    rendered: ":: loop {\n  'inner: loop {\n    break 'outer;\n    break true;\n  }\n}",
+    message: "re-parse error: \":: loop {\n  'inner: loop {\n    break 'outer;\n    break true;\n  }\n}\"",
+  },
+  // --- mut_pattern (2) ---
+  {
+    entry: "Closures",
+    kind: "mut_pattern",
+    category: "parse-error",
+    input:    "mut e",
+    rendered: "mut e",
+    message: "kind not found at rendered offset 14",
+  },
+  {
+    entry: "Reference patterns",
+    kind: "mut_pattern",
+    category: "parse-error",
+    input:    "mut y",
+    rendered: "mut y",
+    message: "kind not found at rendered offset 14",
+  },
+  // --- raw_string_literal (3) ---
+  {
+    entry: "Raw string literals",
+    kind: "raw_string_literal",
+    category: "parse-error",
+    input:    "r#\"abc\"#",
+    rendered: "abc",
+    message: "kind not found at rendered offset 18",
+  },
+  {
+    entry: "Raw byte string literals",
+    kind: "raw_string_literal",
+    category: "parse-error",
+    input:    "br#\"abc\"#",
+    rendered: "abc",
+    message: "kind not found at rendered offset 18",
+  },
+  {
+    entry: "Raw C string literals",
+    kind: "raw_string_literal",
+    category: "parse-error",
+    input:    "cr#\"abc\"#",
+    rendered: "abc",
+    message: "kind not found at rendered offset 18",
+  },
+  // --- macro_definition (1) ---
+  {
+    entry: "Macro definition",
+    kind: "macro_definition",
+    category: "parse-error",
+    input:    "macro_rules! say_hello {\n    () => (\n        println!(\"Hello!\");\n    )\n}",
+    rendered: "macro_rules!say_hello }",
+    message: "re-parse error: \"macro_rules!say_hello }\"",
+  },
+  // --- function_type (2) ---
+  {
+    entry: "Function types",
+    kind: "function_type",
+    category: "parse-error",
+    input:    "fn(i32)",
+    rendered: "(i32)",
+    message: "kind not found at rendered offset 10",
+  },
+  {
+    entry: "Unsafe and extern function types",
+    kind: "function_type",
+    category: "parse-error",
+    input:    "extern \"C\" fn(*mut c_void)",
+    rendered: "(*mut c_void)",
+    message: "kind not found at rendered offset 10",
+  },
+  // --- struct_pattern (1) ---
+  {
+    entry: "Let-else Statements",
+    kind: "struct_pattern",
+    category: "ast-mismatch",
+    input:    "Foo::Bar {\n    texts,\n    values,\n}",
+    rendered: "Foo::Bar{texts,values}",
+    message: "struct_pattern: childCount 7 ≠ 6 [scoped_type_identifier,\"{\",field_pattern,\",\",field_pattern,\",\",\"}\"] vs [scoped_type_identifier,\"{\",field_pattern,\",\",field_pat",
+  },
+  // --- mod_item (1) ---
+  {
+    entry: "Inner attributes",
+    kind: "mod_item",
+    category: "ast-mismatch",
+    input:    "mod macos_only {\n  #![cfg(target_os = \"macos\")]\n}",
+    rendered: "mod macos_only;{\n  #![cfg(target_os = \"macos\")]\n}",
+    message: "mod_item[2]: named flag true ≠ false",
+  },
+  // --- array_expression (2) ---
+  {
+    entry: "Attributes and Expressions",
+    kind: "array_expression",
+    category: "ast-mismatch",
+    input:    "[#[hello] 2, 7, 8]",
+    rendered: "[#[hello] 8]",
+    message: "array_expression: childCount 8 ≠ 4 [\"[\",attribute_item,integer_literal,\",\",integer_literal,\",\",integer_literal,\"]\"] vs [\"[\",attribute_item,integer_literal,\"]\"]",
+  },
+  {
+    entry: "Index expressions",
+    kind: "array_expression",
+    category: "ast-mismatch",
+    input:    "[1, 2, 3, 4]",
+    rendered: "[ 4]",
+    message: "array_expression: childCount 9 ≠ 3 [\"[\",integer_literal,\",\",integer_literal,\",\",integer_literal,\",\",integer_literal,\"]\"] vs [\"[\",integer_literal,\"]\"]",
+  },
+  // --- generic_type (1) ---
+  {
+    entry: "Scoped functions",
+    kind: "generic_type",
+    category: "ast-mismatch",
+    input:    "C::<D>",
+    rendered: "C <D>",
+    message: "generic_type: childCount 3 ≠ 2 [type_identifier,\"::\",type_arguments] vs [type_identifier,type_arguments]",
+  },
+  // --- tuple_struct_pattern (1) ---
+  {
+    entry: "Captured patterns",
+    kind: "tuple_struct_pattern",
+    category: "ast-mismatch",
+    input:    "A(_)",
+    rendered: "A()",
+    message: "tuple_struct_pattern: childCount 4 ≠ 3 [identifier,\"(\",\"_\",\")\"] vs [identifier,\"(\",\")\"]",
+  },
+];
 
 // ---------------------------------------------------------------
 // suggestedRules — drop entries into your overrides.ts rules map.

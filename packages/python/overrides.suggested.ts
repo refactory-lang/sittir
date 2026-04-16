@@ -14,9 +14,137 @@
 // ---------------------------------------------------------------
 // Summary
 // ---------------------------------------------------------------
-// Field inferences: 0  (0 applied, 0 held)
-// Rule promotions:  24  (24 applied, 0 held)
-// Repeated shapes:  0  (advisory — suggested supertypes/groups)
+// Field inferences:  0  (0 applied, 0 held)
+// Rule promotions:   24  (24 applied, 0 held)
+// Repeated shapes:   0  (advisory — suggested supertypes/groups)
+// Round-trip fails: 12  (5 parse errors, 7 AST mismatches)
+
+// ---------------------------------------------------------------
+// Round-trip failures — corpus cases that didn't survive
+// parse → readNode → render → reparse. Each entry shows the
+// input and rendered text so you can spot what the renderer
+// dropped. Common causes:
+//   - Repeated slot missing a `joinBy` separator (renders only
+//     the first occurrence of a multi-valued field)
+//   - Missing `transform()` patch wrapping an anonymous token
+//     that should be a named field
+//   - Template gap — rule content has no renderable slot for
+//     some structural position
+// ---------------------------------------------------------------
+export const roundTripFailures: Array<{
+  readonly entry: string;
+  readonly kind: string;
+  readonly category: "parse-error" | "ast-mismatch";
+  readonly input?: string;
+  readonly rendered?: string;
+  readonly message: string;
+}> = [
+  // --- import_from_statement (1) ---
+  {
+    entry: "Import-from statements",
+    kind: "import_from_statement",
+    category: "parse-error",
+    input:    "from a import b",
+    rendered: "from a import",
+    message: "re-parse error: \"from a import\"",
+  },
+  // --- decorated_definition (1) ---
+  {
+    entry: "Decorated definitions",
+    kind: "decorated_definition",
+    category: "parse-error",
+    input:    "@a.b\nclass C:\n  @d(1)\n  @e[2].f.g\n  def f():\n    g\n\n  @f()\n  async def f():\n    g",
+    rendered: "@a.b class C:\n  @d(1)\n  @e[2].f.g\n  def f():\n    g\n\n  @f()\n  async def f():\n    g",
+    message: "re-parse error: \"@a.b class C:\n  @d(1)\n  @e[2].f.g\n  def f():\n    g\n\n  @f()\n  async def f():\n    \"",
+  },
+  // --- exec_statement (1) ---
+  {
+    entry: "Exec statements",
+    kind: "exec_statement",
+    category: "parse-error",
+    input:    "exec '1+1'",
+    rendered: "exec '1+1' in",
+    message: "re-parse error: \"exec '1+1' in\"",
+  },
+  // --- type_alias_statement (2) ---
+  {
+    entry: "Type Alias Statements",
+    kind: "type_alias_statement",
+    category: "parse-error",
+    input:    "type Point = tuple[float, float]",
+    rendered: "Point=tuple[float, float]",
+    message: "kind not found at rendered offset 0",
+  },
+  {
+    entry: "Generic Function Definitions",
+    kind: "type_alias_statement",
+    category: "parse-error",
+    input:    "type TA[T2, *Ts2, **P2] = tuple[Callable[P, tuple[T, *Ts]], Callable[P2, tuple[T2, *Ts2]]]",
+    rendered: "TA[T2, *Ts2, **P2]=tuple[Callable[P, tuple[T, *Ts]], Callable[P2, tuple[T2, *Ts2]]]",
+    message: "re-parse error: \"TA[T2, *Ts2, **P2]=tuple[Callable[P, tuple[T, *Ts]], Callable[P2, tuple[T2, *Ts2\"",
+  },
+  // --- print_statement (1) ---
+  {
+    entry: "Async / await used as identifiers",
+    kind: "print_statement",
+    category: "ast-mismatch",
+    input:    "print async, await",
+    rendered: "print await",
+    message: "print_statement: childCount 4 ≠ 2 [\"print\",identifier,\",\",identifier] vs [\"print\",identifier]",
+  },
+  // --- match_statement (2) ---
+  {
+    entry: "Case terminating in comma",
+    kind: "match_statement",
+    category: "ast-mismatch",
+    input:    "match x,:\n    case *x,:\n        y = 0",
+    rendered: "match x:\n    case *x,:\n        y = 0",
+    message: "match_statement: childCount 5 ≠ 4 [\"match\",identifier,\",\",\":\",block] vs [\"match\",identifier,\":\",block]",
+  },
+  {
+    entry: "Multiple match patterns",
+    kind: "match_statement",
+    category: "ast-mismatch",
+    input:    "match ..., ...:\n    case a, b:\n        return locals()",
+    rendered: "match ...:\n    case a, b:\n        return locals()",
+    message: "match_statement: childCount 6 ≠ 4 [\"match\",ellipsis,\",\",ellipsis,\":\",block] vs [\"match\",ellipsis,\":\",block]",
+  },
+  // --- import_statement (1) ---
+  {
+    entry: "Import statements",
+    kind: "import_statement",
+    category: "ast-mismatch",
+    input:    "import a, b",
+    rendered: "import b",
+    message: "import_statement: childCount 4 ≠ 2 [\"import\",dotted_name,\",\",dotted_name] vs [\"import\",dotted_name]",
+  },
+  // --- if_statement (2) ---
+  {
+    entry: "If else statements",
+    kind: "if_statement",
+    category: "ast-mismatch",
+    input:    "if a:\n  b\nelif c:\n  d\nelse:\n  f",
+    rendered: "if a:\n  b\nelse:\n  f",
+    message: "if_statement: childCount 6 ≠ 5 [\"if\",identifier,\":\",block,elif_clause,else_clause] vs [\"if\",identifier,\":\",block,else_clause]",
+  },
+  {
+    entry: "Comments at different indentation levels",
+    kind: "if_statement",
+    category: "ast-mismatch",
+    input:    "if a:\n  # one\n# two\n    # three\n  b\n    # four\n  c",
+    rendered: "if a:\n  b\n      # four\n    c",
+    message: "if_statement: childCount 7 ≠ 4 [\"if\",identifier,\":\",comment,comment,comment,block] vs [\"if\",identifier,\":\",block]",
+  },
+  // --- try_statement (1) ---
+  {
+    entry: "Try statements",
+    kind: "try_statement",
+    category: "ast-mismatch",
+    input:    "try:\n  a\nexcept b:\n  c\nexcept d as e:\n  f\nexcept g, h:\n  i\nexcept:\n  j",
+    rendered: "try:\n  a\nexcept:\n  j",
+    message: "try_statement: childCount 7 ≠ 4 [\"try\",\":\",block,except_clause,except_clause,except_clause,except_clause] vs [\"try\",\":\",block,except_clause]",
+  },
+];
 
 // ---------------------------------------------------------------
 // suggestedRules — drop entries into your overrides.ts rules map.

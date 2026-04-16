@@ -15,6 +15,7 @@ import { validateRenderableFromNodeMap, formatRenderableReport } from './validat
 import { validateReadNodeRoundTrip, formatReadNodeRoundTripReport } from './validate-readnode-roundtrip.ts';
 import { join, dirname, resolve } from 'node:path';
 import { generate } from './compiler/generate.ts';
+import { emitSuggested, type RoundTripDiagnostic } from './emitters/suggested.ts';
 import { compileParser } from './transpile/compile-parser.ts';
 import { transpileOverrides } from './transpile/transpile-overrides.ts';
 
@@ -212,6 +213,46 @@ if (cliArgs.roundtrip) {
 	// from() correctness (structural comparison: from() vs factory())
 	const fromResult = await validateFrom(config.grammar, result.templatesYaml);
 	console.log(formatFromReport(fromResult));
+
+	// Collect round-trip failures into a structured diagnostic list and
+	// re-emit overrides.suggested.ts with the new section. Gives the
+	// user a copy-pasteable record of input-vs-rendered for every
+	// corpus case that didn't survive the round-trip — useful for
+	// spotting missing joinBy / transform patches.
+	const parseFrag = (name: string): { entry: string; kind: string } => {
+		const m = name.match(/^(.+)\s+\[([^\]]+)\]$/);
+		return m ? { entry: m[1]!, kind: m[2]! } : { entry: name, kind: 'unknown' };
+	};
+	const diagnostics: RoundTripDiagnostic[] = [];
+	for (const e of rtResult.errors ?? []) {
+		const { entry, kind } = parseFrag(e.name);
+		diagnostics.push({
+			entry, kind,
+			category: 'parse-error',
+			message: String(e.message),
+			rendered: e.rendered,
+			input: e.input,
+		});
+	}
+	for (const m of rtResult.astMismatches ?? []) {
+		const { entry, kind } = parseFrag(m.name);
+		diagnostics.push({
+			entry, kind,
+			category: 'ast-mismatch',
+			message: String(m.message),
+			rendered: m.rendered,
+			input: m.input,
+		});
+	}
+	if (diagnostics.length > 0) {
+		const suggestedWithFailures = emitSuggested({
+			grammar: config.grammar,
+			nodeMap: result.nodeMap,
+			roundTripFailures: diagnostics,
+		});
+		writeFile(join(dirname(outDir), 'overrides.suggested.ts'), suggestedWithFailures);
+		console.log(`  → overrides.suggested.ts updated with ${diagnostics.length} round-trip diagnostic(s)`);
+	}
 
 	const totalFail = rtResult.fail + frtResult.fail + fromResult.fail;
 	if (totalFail > 0) {
