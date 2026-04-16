@@ -675,6 +675,15 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
         opts = options
     }
 
+    // Capture USER-AUTHORED override rule names. installGrammarWrapper
+    // stashes this on opts as a non-enumerable property BEFORE merging
+    // enrich-injected overrides. If absent (e.g., grammarFn called
+    // outside the installGrammarWrapper pipeline), fall back to the
+    // current opts.rules keys.
+    const userOverrideRuleNames =
+        (opts as unknown as { __userOverrideRuleNames__?: string[] }).__userOverrideRuleNames__
+        ?? Object.keys(opts.rules ?? {})
+
     // Merge enrich-generated override callbacks from the base grammar's
     // __enrichOverrides__ side-channel (set by enrich() in dsl/enrich.ts)
     // into opts.rules — mirrors what wrappedGrammar does under tree-
@@ -759,11 +768,13 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
         if (!opts.word && inherited.word) word = inherited.word
     }
 
-    // Expose which rule names were explicitly defined in this grammar/
-    // override call — used by derive-overrides-json to detect full-
-    // replacement override rules whose fields don't carry
-    // `source: 'override'` (set only by `transform()`).
-    const overrideRuleNames = Object.keys(opts.rules ?? {})
+    // Expose which rule names were explicitly defined by the user in
+    // overrides.ts — used by derive-overrides-json to detect
+    // full-replacement override rules whose fields don't carry
+    // `source: 'override'` (set only by `transform()`). Captured
+    // BEFORE the enrich-override merge so auto-generated enrich
+    // overrides don't inflate the set.
+    const overrideRuleNames = userOverrideRuleNames
 
     const polymorphVariants = drainPolymorphVariants()
 

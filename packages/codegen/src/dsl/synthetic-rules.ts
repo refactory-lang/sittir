@@ -108,6 +108,20 @@ export function installGrammarWrapper(): void {
         // them into the override bag so pass 1 dry-run sees them and
         // discovers synthetic rules registered during transform().
         // User overrides (already in opts.rules) win on name collisions.
+        //
+        // Capture the USER-AUTHORED override names BEFORE the merge so
+        // downstream (derive-overrides-json via raw.overrideRuleNames)
+        // doesn't treat enrich-injected rules as full-replacement
+        // overrides. Stashed as a non-enumerable property on opts.
+        if (opts) {
+            const userNames = Object.keys(opts.rules ?? {})
+            Object.defineProperty(opts, '__userOverrideRuleNames__', {
+                value: userNames,
+                enumerable: false,
+                configurable: true,
+                writable: false,
+            })
+        }
         if (base?.__enrichOverrides__ && opts) {
             if (!opts.rules) opts.rules = {}
             for (const [name, fn] of Object.entries(base.__enrichOverrides__)) {
