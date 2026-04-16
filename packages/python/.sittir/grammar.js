@@ -468,7 +468,7 @@ function enrich(base2) {
   }
   const isTreeSitterShape = !("grammar" in base2) && "rules" in base2;
   if (isTreeSitterShape) {
-    return base2;
+    return wrapTreeSitterRules(base2);
   }
   if (!base2.grammar || typeof base2.grammar.rules !== "object") {
     throw new Error("enrich(): grammar is missing a rules record");
@@ -478,6 +478,20 @@ function enrich(base2) {
     result = pass(result);
   }
   return result;
+}
+function wrapTreeSitterRules(base2) {
+  const wrappedRules = {};
+  for (const [name, ruleFn] of Object.entries(base2.rules)) {
+    if (typeof ruleFn !== "function") {
+      wrappedRules[name] = ruleFn;
+      continue;
+    }
+    wrappedRules[name] = function(...a) {
+      const evaluated = ruleFn.apply(this, a);
+      return applyEnrichPasses(name, evaluated);
+    };
+  }
+  return { ...base2, rules: wrappedRules };
 }
 function kindToNamePass(g) {
   return mapRules(g, applyKindToName);
@@ -533,7 +547,7 @@ function walkOptionalKeyword(ruleName, rule) {
               claimed.add(kw);
               return {
                 type: "optional",
-                content: wrapAsField(kw, inner)
+                content: wrapAsField(kw, inner, "inferred")
               };
             }
           }
@@ -577,8 +591,100 @@ function applyBareKeywordPrefix(ruleName, rule) {
   }
   return {
     type: "seq",
-    members: [wrapAsField(kw, first), ...seq.members.slice(1)]
+    members: [wrapAsField(kw, first, "inferred"), ...seq.members.slice(1)]
   };
+}
+function applyEnrichPasses(ruleName, rule) {
+  let r = rule;
+  r = applyKindToNameViaTransform(ruleName, r);
+  return r;
+}
+function typeEq(t, lower) {
+  return typeof t === "string" && (t === lower || t === lower.toUpperCase());
+}
+function isSeqType(t) {
+  return typeEq(t, "seq");
+}
+function isSymbolType(t) {
+  return typeEq(t, "symbol");
+}
+function isFieldType(t) {
+  return typeEq(t, "field");
+}
+function isOptionalType(t) {
+  return typeEq(t, "optional");
+}
+function isChoiceType(t) {
+  return typeEq(t, "choice");
+}
+function normalizeMember(m) {
+  if (typeof m === "string") return { type: "STRING", value: m };
+  if (m instanceof RegExp) return { type: "PATTERN", value: m.source };
+  return m ?? { type: "UNKNOWN" };
+}
+function collectFieldNamesRuntime(rule) {
+  const names = /* @__PURE__ */ new Set();
+  if (!isSeqType(rule.type)) return names;
+  const members = rule.members;
+  for (const raw of members) {
+    const m = normalizeMember(raw);
+    if (isFieldType(m.type) && typeof m.name === "string") {
+      names.add(m.name);
+      continue;
+    }
+    const peeled = peelOptional(m);
+    if (peeled.isOptional) {
+      const innerN = normalizeMember(peeled.inner);
+      if (isFieldType(innerN.type) && typeof innerN.name === "string") {
+        names.add(innerN.name);
+      }
+    }
+  }
+  return names;
+}
+function applyKindToNameViaTransform(ruleName, rule) {
+  if (!isSeqType(rule.type)) return rule;
+  const raw = rule.members;
+  const members = raw.map(normalizeMember);
+  const kindCounts = /* @__PURE__ */ new Map();
+  for (const m of members) {
+    if (isSymbolType(m.type) && typeof m.name === "string") {
+      kindCounts.set(m.name, (kindCounts.get(m.name) ?? 0) + 1);
+    }
+  }
+  const existing = collectFieldNamesRuntime(rule);
+  const patches = {};
+  for (let i = 0; i < members.length; i++) {
+    const m = members[i];
+    if (!isSymbolType(m.type) || typeof m.name !== "string") continue;
+    const k = m.name;
+    if (k.startsWith("_")) continue;
+    if ((kindCounts.get(k) ?? 0) > 1) continue;
+    if (existing.has(k)) {
+      reportSkip("kind-to-name", ruleName, `field '${k}' already exists`);
+      continue;
+    }
+    existing.add(k);
+    patches[String(i)] = field(k);
+  }
+  if (Object.keys(patches).length === 0) return rule;
+  return transform(rule, patches);
+}
+function peelOptional(rule) {
+  if (isOptionalType(rule.type)) {
+    return { inner: rule.content, isOptional: true };
+  }
+  if (isChoiceType(rule.type)) {
+    const members = rule.members;
+    if (members.length === 2) {
+      const blankIdx = members.findIndex((m) => m.type === "BLANK" || m.type === "blank");
+      if (blankIdx !== -1) {
+        const inner = members[1 - blankIdx];
+        return { inner, isOptional: true };
+      }
+    }
+  }
+  return { inner: rule, isOptional: false };
 }
 function mapRules(g, fn) {
   const newRules = {};
@@ -593,12 +699,12 @@ function mapRules(g, fn) {
     }
   };
 }
-function wrapAsField(name, content) {
+function wrapAsField(name, content, source = "override") {
   return {
     type: "field",
     name,
     content,
-    source: "inferred"
+    source
   };
 }
 function collectFieldNames(rule) {

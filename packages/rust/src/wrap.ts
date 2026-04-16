@@ -190,7 +190,6 @@ const _overrides = {
   "higher_ranked_trait_bound": {"fields":{"for":{"types":[{"type":"for","named":false}],"multiple":false,"required":true,"position":0}}},
   "const_parameter": {"fields":{"const":{"types":[{"type":"const","named":false}],"multiple":false,"required":true,"position":0}}},
   "let_declaration": {"fields":{"let":{"types":[{"type":"let","named":false}],"multiple":false,"required":true,"position":0}}},
-  "self_parameter": {"fields":{"self":{"types":[{"type":"self","named":true}],"multiple":false,"required":true,"position":3}}},
   "extern_modifier": {"fields":{"extern":{"types":[{"type":"extern","named":false}],"multiple":false,"required":true,"position":0}}},
   "visibility_modifier": {"fields":{"pub":{"types":[{"type":"pub","named":false}],"multiple":false,"required":false,"position":-1},"in":{"types":[{"type":"in","named":false}],"multiple":false,"required":false,"position":-1}}},
   "for_lifetimes": {"fields":{"for":{"types":[{"type":"for","named":false}],"multiple":false,"required":true,"position":0}}},

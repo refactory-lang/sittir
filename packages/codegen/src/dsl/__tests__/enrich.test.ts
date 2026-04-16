@@ -71,13 +71,13 @@ describe('enrich()', () => {
                 type: 'field',
                 name: 'function',
                 content: { type: 'symbol', name: 'function' },
-                source: 'inferred',
+                source: 'override',
             })
             expect(rule.members[2]).toMatchObject({
                 type: 'field',
                 name: 'arguments',
                 content: { type: 'symbol', name: 'arguments' },
-                source: 'inferred',
+                source: 'override',
             })
             // String delimiters untouched
             expect(rule.members[1]).toMatchObject({ type: 'string', value: '(' })
@@ -164,7 +164,7 @@ describe('enrich()', () => {
             expect(rule.members[2]).toMatchObject({
                 type: 'field',
                 name: 'rhs',
-                source: 'inferred',
+                source: 'override',
             })
         })
     })
@@ -183,7 +183,10 @@ describe('enrich()', () => {
             })
             const out = enrich(input)
             const rule = out.grammar.rules.function_definition as { type: 'seq', members: Rule[] }
-            // The optional wrapper is preserved, its content is now a field
+            // The optional wrapper is preserved, its content is now a field.
+            // Tagged 'inferred' — tree-sitter strips FIELD wrappers inside
+            // CHOICE(X, BLANK), so the field stays sittir-internal and
+            // needs the runtime routing map (source='inferred' entries).
             expect(rule.members[0]).toMatchObject({
                 type: 'optional',
                 content: {
