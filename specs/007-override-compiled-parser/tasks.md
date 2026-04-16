@@ -47,9 +47,9 @@
 
 ### Implementation for User Story 2
 
-- [ ] T009 [US2] Add `bareKeywordPrefixPass` to the PASSES array in `packages/codegen/src/dsl/enrich.ts`. The pass walks each rule's top-level seq: if member[0] is a string literal that is identifier-shaped (matches `/^[a-z_][a-z0-9_]*$/i`), wrap it as `field(kw, literal)`. Skip if another field with the same name already exists on the rule. Skip non-identifier-shaped literals (punctuation, operators)
-- [ ] T010 [US2] Add unit tests for `bareKeywordPrefixPass` in `packages/codegen/src/dsl/__tests__/enrich-bare-keyword.test.ts`: test leading identifier literal is wrapped, non-identifier is skipped, collision is skipped, non-leading position is skipped
-- [ ] T011 [US2] Run codegen for all three grammars with enrich (bare keyword-prefix enabled) and verify fidelity ceilings hold in `packages/codegen/src/__tests__/corpus-validation.test.ts`. Adjust ceilings upward if field coverage improves
+- [x] T009 [US2] Add `bareKeywordPrefixPass` to the PASSES array in `packages/codegen/src/dsl/enrich.ts`. The pass walks each rule's top-level seq: if member[0] is a string literal that is identifier-shaped (matches `/^[a-z_][a-z0-9_]*$/i`), wrap it as `field(kw, literal)`. Skip if another field with the same name already exists on the rule. Skip non-identifier-shaped literals (punctuation, operators)
+- [x] T010 [US2] Add unit tests for `bareKeywordPrefixPass` in `packages/codegen/src/dsl/__tests__/enrich-bare-keyword.test.ts`: test leading identifier literal is wrapped, non-identifier is skipped, collision is skipped, non-leading position is skipped
+- [x] T011 [US2] Run codegen for all three grammars with enrich (bare keyword-prefix enabled) and verify fidelity ceilings hold in `packages/codegen/src/__tests__/corpus-validation.test.ts`. Adjust ceilings upward if field coverage improves
 - [ ] T012 [US2] Compare override `node-types.json` field coverage with `inferFieldNames` output for each grammar. For each gap (field that inferFieldNames adds but the override node-types lacks), add a targeted `transform()` patch to the grammar's `overrides.ts`. Expected: 0-5 patches per grammar based on prior field-coverage analysis in T007
 
 **Checkpoint**: All three grammars pass fidelity with bare keyword-prefix. The override-compiled node-types.json covers all fields that inferFieldNames currently infers.

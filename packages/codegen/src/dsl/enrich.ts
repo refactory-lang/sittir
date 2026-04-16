@@ -66,6 +66,7 @@ type Pass = (g: GrammarResult) => GrammarResult
 const PASSES: readonly Pass[] = [
     kindToNamePass,
     optionalKeywordPrefixPass,
+    bareKeywordPrefixPass,
 ]
 
 export function enrich(base: GrammarResult): GrammarResult {
@@ -227,6 +228,43 @@ function walkOptionalKeyword(ruleName: string, rule: Rule): Rule {
         default:
             return rule
     }
+}
+
+// ---------------------------------------------------------------------------
+// Pass 3 — bare keyword-prefix field promotion
+//
+// Wraps an identifier-shaped string literal at position 0 of a
+// top-level seq as `field(kw, literal)`. Only the leading position is
+// handled — non-leading bare keywords are left as anonymous tokens.
+// This is the conservative complement to pass 2 (optional keywords):
+// together they cover all the keyword fields that Link's
+// inferFieldNames currently adds heuristically.
+// ---------------------------------------------------------------------------
+
+function bareKeywordPrefixPass(g: GrammarResult): GrammarResult {
+    return mapRules(g, applyBareKeywordPrefix)
+}
+
+function applyBareKeywordPrefix(ruleName: string, rule: Rule): Rule {
+    if (rule.type !== 'seq') return rule
+
+    const seq = rule as SeqRule
+    const first = seq.members[0]
+    if (!first || first.type !== 'string') return rule
+
+    const kw = (first as StringRule).value
+    if (!isIdentifierShaped(kw)) return rule
+
+    const existingFields = collectFieldNames(rule)
+    if (existingFields.has(kw)) {
+        reportSkip('bare-keyword-prefix', ruleName, `field '${kw}' already exists`)
+        return rule
+    }
+
+    return {
+        type: 'seq',
+        members: [wrapAsField(kw, first), ...seq.members.slice(1)],
+    } satisfies SeqRule
 }
 
 // ---------------------------------------------------------------------------
