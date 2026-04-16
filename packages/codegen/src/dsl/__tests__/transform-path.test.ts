@@ -2,6 +2,7 @@ import { describe, it, expect, beforeAll, afterAll } from 'vitest'
 import { parsePath, applyPath } from '../transform-path.ts'
 import { transform } from '../transform.ts'
 import type { Rule } from '../../compiler/rule.ts'
+import { installFakeDsl, restoreFakeDsl } from './_test-helpers.ts'
 
 const sym = (name: string): Rule => ({ type: 'symbol', name } as Rule)
 const str = (value: string): Rule => ({ type: 'string', value } as Rule)
@@ -10,34 +11,8 @@ const choice = (...members: Rule[]): Rule => ({ type: 'choice', members } as Rul
 const optional = (content: Rule): Rule => ({ type: 'optional', content } as Rule)
 const fld = (name: string, content: Rule): Rule => ({ type: 'field', name, content } as Rule)
 
-// Install fake native dsl globals so dsl/transform-path.ts's
-// reconstructContainer / reconstructWrapper / reconstructPrec helpers
-// (which delegate to runtime globals) work in unit tests. In production
-// these are injected by sittir's evaluate.ts or tree-sitter's CLI.
-const g = globalThis as Record<string, unknown>
-const saved: Record<string, unknown> = {}
-beforeAll(() => {
-    for (const k of ['seq', 'choice', 'optional', 'repeat', 'repeat1', 'field', 'prec']) {
-        saved[k] = g[k]
-    }
-    g.seq = (...members: Rule[]): Rule => ({ type: 'seq', members } as Rule)
-    g.choice = (...members: Rule[]): Rule => ({ type: 'choice', members } as Rule)
-    g.optional = (content: Rule): Rule => ({ type: 'optional', content } as Rule)
-    g.repeat = (content: Rule): Rule => ({ type: 'repeat', content } as Rule)
-    g.repeat1 = (content: Rule): Rule => ({ type: 'repeat1', content } as Rule)
-    g.field = (name: string, content: Rule): Rule => ({ type: 'field', name, content } as Rule)
-    const precFn = (value: number, content: Rule): Rule => content
-    ;(precFn as { left?: typeof precFn }).left = precFn
-    ;(precFn as { right?: typeof precFn }).right = precFn
-    ;(precFn as { dynamic?: typeof precFn }).dynamic = precFn
-    g.prec = precFn
-})
-afterAll(() => {
-    for (const [k, v] of Object.entries(saved)) {
-        if (v === undefined) delete g[k]
-        else g[k] = v
-    }
-})
+beforeAll(() => { installFakeDsl() })
+afterAll(() => { restoreFakeDsl() })
 
 describe('parsePath()', () => {
     it('parses a single index', () => {

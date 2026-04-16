@@ -30,23 +30,12 @@
  */
 
 import type { Rule, ExternalRole } from '../compiler/rule.ts'
+import { isSymbolLike } from './runtime-shapes.ts'
 
 // Module-local accumulator. Null when no `grammar(...)` call is on
 // the stack — calling `role()` in that state is an error because we
 // have no scope to attach the binding to.
 let currentRoles: Map<string, ExternalRole> | null = null
-
-// Accept both sittir's lowercase `type: 'symbol'` AND tree-sitter's
-// native uppercase `type: 'SYMBOL'` shape — `$._indent` returns
-// different types depending on which grammar() runtime is loaded
-// (sittir's grammarFn vs. tree-sitter CLI's native).
-type SymbolLike = { type: 'symbol' | 'SYMBOL'; name: string } & Record<string, unknown>
-
-function isSymbolLike(v: unknown): v is SymbolLike {
-    return !!v && typeof v === 'object'
-        && ((v as { type?: unknown }).type === 'symbol' || (v as { type?: unknown }).type === 'SYMBOL')
-        && typeof (v as { name?: unknown }).name === 'string'
-}
 
 /**
  * Mark an external token symbol with a structural-whitespace role.

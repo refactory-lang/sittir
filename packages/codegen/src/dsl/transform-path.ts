@@ -20,6 +20,8 @@
 import type {
     Rule, SeqRule, ChoiceRule, OptionalRule, RepeatRule, Repeat1Rule, FieldRule,
 } from '../compiler/rule.ts'
+import { isPrecWrapper as isPrecWrapperShape } from './runtime-shapes.ts'
+export { isPrecWrapper, isContainerType, isWrapperType } from './runtime-shapes.ts'
 
 // ---------------------------------------------------------------------------
 // Native DSL accessors — we call the runtime-injected DSL functions
@@ -56,6 +58,21 @@ function nativeRequired<K extends keyof RuntimeDsl>(name: K): NonNullable<Runtim
 }
 
 export type PathSegment = { kind: 'index'; value: number } | { kind: 'wildcard' }
+
+/**
+ * Tagged error thrown by path-descent failure points (out-of-bounds
+ * index, "cannot descend into primitive" etc). Wildcards catch only
+ * this class — every other exception (TypeError, missing-global
+ * errors from nativeRequired, bugs in reconstruction helpers, throws
+ * from user-supplied patch functions) propagates so real bugs aren't
+ * masked as "wildcard matched zero".
+ */
+export class ApplyPathSkip extends Error {
+    constructor(message: string) {
+        super(message)
+        this.name = 'ApplyPathSkip'
+    }
+}
 
 /**
  * Parse a path string into segments. Throws on malformed input.
@@ -108,7 +125,7 @@ export function applyPath(
     // reconstruct it on the way back so tree-sitter still sees the
     // precedence info. Both lowercase (sittir) and uppercase
     // (tree-sitter native) variants are handled.
-    if (isPrecWrapper(rule)) {
+    if (isPrecWrapperShape(rule)) {
         const newContent = applyPath(
             (rule as { content: Rule }).content,
             segments,
@@ -134,12 +151,12 @@ export function applyPath(
             const newContent = applyPath((rule as { content: Rule }).content, rest, patch)
             return reconstructWrapper(rule, newContent)
         }
-        throw new Error(
+        throw new ApplyPathSkip(
             `applyPath: index ${head!.kind === 'index' ? head!.value : '*'} out of bounds — '${rule.type}' wraps a single content rule (only index 0 is valid)`,
         )
     }
 
-    throw new Error(`applyPath: cannot descend into '${rule.type}' rule (path has ${segments.length} segments left)`)
+    throw new ApplyPathSkip(`applyPath: cannot descend into '${rule.type}' rule (path has ${segments.length} segments left)`)
 }
 
 /**
@@ -158,24 +175,35 @@ export function reconstructContainer(rule: SeqRule | ChoiceRule, members: Rule[]
 /**
  * Reconstruct a single-content wrapper rule (optional/repeat/repeat1/field)
  * via the runtime's native dsl. Field wrappers delegate to native field
- * which handles the (name, content) signature; repeat wrappers don't
- * preserve the separator/trailing/leading metadata in the native
- * call — applyPath should not be used to patch under repeat wrappers
- * with non-default options. (No current overrides hit that case.)
+ * which handles the (name, content) signature.
+ *
+ * Throws on:
+ *   - Repeat wrappers with `separator`/`leading`/`trailing` metadata —
+ *     the native `repeat()` call can't round-trip those, so silently
+ *     dropping them would corrupt the rule. Path-addressing under a
+ *     delimited repeat is an authoring mistake; surface it loudly.
+ *   - Unknown wrapper types — safer to throw than silently emit a
+ *     hand-rolled shape that may be wrong-case in tree-sitter runtime.
  */
 export function reconstructWrapper(rule: Rule, newContent: Rule): Rule {
     const t = rule.type as string
     if (t === 'optional') return nativeRequired('optional')(newContent) as Rule
-    if (t === 'repeat' || t === 'REPEAT') return nativeRequired('repeat')(newContent) as Rule
-    if (t === 'repeat1' || t === 'REPEAT1') return nativeRequired('repeat1')(newContent) as Rule
+    if (t === 'repeat' || t === 'REPEAT' || t === 'repeat1' || t === 'REPEAT1') {
+        const r = rule as { separator?: unknown; leading?: unknown; trailing?: unknown }
+        if (r.separator !== undefined || r.leading !== undefined || r.trailing !== undefined) {
+            throw new Error(
+                `reconstructWrapper: cannot path-address under a '${rule.type}' rule with separator/leading/trailing metadata — native repeat() can't round-trip those fields. Use flat positional transform or restructure the override.`,
+            )
+        }
+        return nativeRequired(t === 'repeat' || t === 'REPEAT' ? 'repeat' : 'repeat1')(newContent) as Rule
+    }
     if (t === 'field' || t === 'FIELD') {
         const fld = rule as FieldRule
         return nativeRequired('field')(fld.name, newContent) as Rule
     }
-    // BLANK / IMMEDIATE_TOKEN / TOKEN — fall through; these don't
-    // normally have user-addressable content via path, but keep the
-    // shape if we somehow descended into one.
-    return { ...rule, content: newContent } as Rule
+    throw new Error(
+        `reconstructWrapper: no native dsl reconstruction for wrapper type '${rule.type}' — this is a bug in the path-descent logic.`,
+    )
 }
 
 /**
@@ -203,25 +231,6 @@ export function reconstructPrec(rule: Rule, newContent: Rule): Rule {
     return prec(value as number, newContent) as Rule
 }
 
-export function isPrecWrapper(rule: Rule): boolean {
-    const t = rule.type as string
-    return t === 'prec' || t === 'PREC'
-        || t === 'PREC_LEFT' || t === 'PREC_RIGHT' || t === 'PREC_DYNAMIC'
-}
-
-export function isContainerType(t: string): boolean {
-    return t === 'seq' || t === 'SEQ' || t === 'choice' || t === 'CHOICE'
-}
-
-export function isWrapperType(t: string): boolean {
-    return t === 'optional'
-        || t === 'repeat' || t === 'REPEAT'
-        || t === 'repeat1' || t === 'REPEAT1'
-        || t === 'field' || t === 'FIELD'
-        || t === 'TOKEN' || t === 'IMMEDIATE_TOKEN'
-        || t === 'BLANK'
-}
-
 function applyToMembers(
     rule: SeqRule | ChoiceRule,
     head: PathSegment,
@@ -232,7 +241,7 @@ function applyToMembers(
 
     if (head.kind === 'index') {
         if (head.value < 0 || head.value >= members.length) {
-            throw new Error(
+            throw new ApplyPathSkip(
                 `applyPath: index ${head.value} out of bounds in ${rule.type} of length ${members.length}`,
             )
         }
@@ -240,25 +249,28 @@ function applyToMembers(
         return reconstructContainer(rule, members) as SeqRule | ChoiceRule
     }
 
-    // Wildcard — apply to every member that successfully descends. A
-    // member that fails to descend (rest is empty AND patch can replace
-    // it) is allowed; a member that THROWS is the only failure case.
-    // Zero matches is itself an error: a wildcard that matches nothing
-    // is a typo magnet.
+    // Wildcard — apply to every member that can accept the remaining
+    // path. Members that can't descend throw `ApplyPathSkip` which we
+    // catch and skip; every OTHER exception (TypeError, missing-global
+    // error, bug in reconstruction, throw from user-supplied patch
+    // function) propagates so real bugs are never masked. Zero matches
+    // is itself an error — a wildcard that reaches nothing is a typo
+    // magnet.
     if (members.length === 0) {
-        throw new Error(`applyPath: wildcard matched zero members in empty ${rule.type}`)
+        throw new ApplyPathSkip(`applyPath: wildcard matched zero members in empty ${rule.type}`)
     }
     let anyApplied = false
     for (let i = 0; i < members.length; i++) {
         try {
             members[i] = applyPath(members[i]!, rest, patch)
             anyApplied = true
-        } catch {
-            // Member couldn't accept the path — skip it for wildcard semantics.
+        } catch (e) {
+            if (e instanceof ApplyPathSkip) continue
+            throw e
         }
     }
     if (!anyApplied) {
-        throw new Error(`applyPath: wildcard matched zero members successfully in ${rule.type} of length ${members.length}`)
+        throw new ApplyPathSkip(`applyPath: wildcard matched zero members successfully in ${rule.type} of length ${members.length}`)
     }
     return reconstructContainer(rule, members) as SeqRule | ChoiceRule
 }

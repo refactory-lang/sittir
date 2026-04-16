@@ -14,15 +14,9 @@
  */
 
 import type { Rule, FieldRule, SeqRule, ChoiceRule } from '../compiler/rule.ts'
-import { parsePath, applyPath, reconstructWrapper, reconstructPrec, reconstructContainer, isPrecWrapper, isContainerType, isWrapperType } from './transform-path.ts'
+import { parsePath, applyPath, reconstructWrapper, reconstructPrec, reconstructContainer } from './transform-path.ts'
 import { isFieldPlaceholder, type FieldPlaceholder } from './field.ts'
-
-type FieldLike = { type: 'field' | 'FIELD'; name: string; content: unknown; source?: string }
-function isFieldLike(v: unknown): v is FieldLike {
-    if (!v || typeof v !== 'object') return false
-    const t = (v as { type?: unknown }).type
-    return (t === 'field' || t === 'FIELD') && typeof (v as { name?: unknown }).name === 'string'
-}
+import { isFieldLike, isPrecWrapper, isWrapperType } from './runtime-shapes.ts'
 
 /**
  * Apply patches to a rule. Patches are an object with path-string keys
@@ -80,11 +74,23 @@ function applyFlatPatches(original: Rule, patches: Record<number | string, Rule>
     if (t === 'seq' || t === 'SEQ') {
         const members = [...(original as SeqRule).members]
         for (const [key, patch] of Object.entries(patches)) {
+            // Reject non-pure-numeric keys up front — `Number('foo')` is
+            // NaN and `Number('-0')` is 0. Typos like `'1a'` or `',0'`
+            // would otherwise silently no-op. Match parsePath's strict
+            // `/^\d+$/` gate so flat and path modes agree on validity.
+            if (!/^\d+$/.test(key)) {
+                throw new Error(
+                    `transform: invalid flat-positional key '${key}' — keys must be non-negative integers. Use path syntax ('0/1', '*') for nested addressing.`,
+                )
+            }
             const index = Number(key)
-            if (isNaN(index) || index < 0 || index >= members.length) {
-                // Skip out-of-bounds patches — the position may have been
-                // computed against a different view of the rule.
-                continue
+            if (index >= members.length) {
+                // Out-of-bounds: throw to match path mode's behavior at
+                // applyToMembers. Silently skipping was a footgun where
+                // a typo looked like a no-op in sittir runtime.
+                throw new Error(
+                    `transform: index ${index} out of bounds in ${original.type} of length ${members.length}`,
+                )
             }
             members[index] = resolvePatch(patch, members[index]!)
         }
@@ -148,34 +154,43 @@ function resolvePatch(patch: Rule | FieldPlaceholder, originalMember: Rule): Rul
 /**
  * Wrap a member at a position using a wrapper function that receives
  * the original content. The wrapper's result is marked `source: 'override'`.
+ *
+ * Reconstructs via the runtime's native `seq()` so the result has the
+ * runtime-correct rule shape (sittir lowercase vs tree-sitter
+ * uppercase) — same cross-runtime contract as `transform()`.
  */
 export function insert(original: Rule, position: number, wrapper: (content: Rule) => Rule): Rule {
-    if (original.type !== 'seq') {
+    const t = original.type as string
+    if (t !== 'seq' && t !== 'SEQ') {
         throw new Error(`insert() expects a seq rule, got '${original.type}'`)
     }
+    const seq = original as SeqRule
 
-    const members = [...original.members]
+    const members = [...seq.members]
     if (position < 0 || position >= members.length) {
         throw new Error(`insert(): position ${position} out of bounds (rule has ${members.length} members)`)
     }
 
     const wrapped = wrapper(members[position]!)
-    members[position] = wrapped.type === 'field'
-        ? { ...wrapped, source: 'override' as const }
+    members[position] = isFieldLike(wrapped)
+        ? { ...wrapped, source: 'override' as const } as unknown as Rule
         : wrapped
 
-    return { type: 'seq', members }
+    return reconstructContainer(seq, members)
 }
 
 /**
- * Replace content at a position. Pass `null` to suppress (remove the member).
+ * Replace content at a position. Pass `null` to suppress (remove the
+ * member). Reconstructs via the runtime's native `seq()`.
  */
 export function replace(original: Rule, position: number, replacement: Rule | null): Rule {
-    if (original.type !== 'seq') {
+    const t = original.type as string
+    if (t !== 'seq' && t !== 'SEQ') {
         throw new Error(`replace() expects a seq rule, got '${original.type}'`)
     }
+    const seq = original as SeqRule
 
-    const members = [...original.members]
+    const members = [...seq.members]
     if (position < 0 || position >= members.length) {
         throw new Error(`replace(): position ${position} out of bounds (rule has ${members.length} members)`)
     }
@@ -186,5 +201,5 @@ export function replace(original: Rule, position: number, replacement: Rule | nu
         members[position] = replacement
     }
 
-    return { type: 'seq', members }
+    return reconstructContainer(seq, members)
 }

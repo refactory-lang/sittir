@@ -356,18 +356,24 @@ describe('Evaluate — DSL functions', () => {
 
 describe('Evaluate — edge cases', () => {
     describe('T008a — transform out of bounds', () => {
-        it('skips out-of-bounds positions without crashing', () => {
-            // Two-member seq so sittir's seq() doesn't collapse it to
-            // a single rule on reconstruction.
+        it('throws on out-of-bounds positions (matches path-mode strictness)', () => {
+            // Post-review fix: flat mode used to silently skip OOB,
+            // which was a footgun when path mode throws. Now both
+            // modes throw so typos surface immediately.
             const original: any = { type: 'seq', members: [
                 { type: 'string', value: 'a' },
                 { type: 'string', value: 'b' },
             ] }
-            const result = transform(original, { 99: field('x', 'y') })
-            // Out-of-bounds patches are silently skipped
-            expect((result as any).members).toHaveLength(2)
-            expect((result as any).members[0]).toEqual({ type: 'string', value: 'a' })
-            expect((result as any).members[1]).toEqual({ type: 'string', value: 'b' })
+            expect(() => transform(original, { 99: field('x', 'y') }))
+                .toThrow(/index 99 out of bounds/)
+        })
+
+        it('throws on non-numeric flat keys', () => {
+            const original: any = { type: 'seq', members: [
+                { type: 'string', value: 'a' },
+            ] }
+            expect(() => transform(original, { '1a': field('x', 'y') }))
+                .toThrow(/invalid flat-positional key/)
         })
     })
 

@@ -166,6 +166,139 @@ describe('enrich()', () => {
         })
     })
 
+    describe('optional keyword-prefix promotion (pass 2)', () => {
+        it('promotes optional(identifier-shaped string) to optional(field)', () => {
+            const input = mkGrammar({
+                function_definition: {
+                    type: 'seq',
+                    members: [
+                        { type: 'optional', content: { type: 'string', value: 'async' } },
+                        { type: 'string', value: 'def' },
+                        { type: 'symbol', name: 'name' },
+                    ],
+                },
+            })
+            const out = enrich(input)
+            const rule = out.grammar.rules.function_definition as { type: 'seq', members: Rule[] }
+            // The optional wrapper is preserved, its content is now a field
+            expect(rule.members[0]).toMatchObject({
+                type: 'optional',
+                content: {
+                    type: 'field',
+                    name: 'async',
+                    content: { type: 'string', value: 'async' },
+                    source: 'inferred',
+                },
+            })
+            // 'def' is NOT promoted — bare leading literal, only the
+            // optional variant is handled (spec 006 restriction).
+            expect(rule.members[1]).toMatchObject({ type: 'string', value: 'def' })
+        })
+
+        it('does not promote non-identifier-shaped literals', () => {
+            const input = mkGrammar({
+                conditional: {
+                    type: 'seq',
+                    members: [
+                        { type: 'optional', content: { type: 'string', value: '::' } },
+                        { type: 'symbol', name: 'path' },
+                    ],
+                },
+            })
+            const out = enrich(input)
+            const rule = out.grammar.rules.conditional as { type: 'seq', members: Rule[] }
+            // '::' is punctuation — untouched
+            expect(rule.members[0]).toMatchObject({
+                type: 'optional',
+                content: { type: 'string', value: '::' },
+            })
+        })
+
+        it('skips when a field with the same name already exists, reports to stderr', () => {
+            const stderrSpy = vi.spyOn(process.stderr, 'write').mockImplementation(() => true)
+            const input = mkGrammar({
+                decorated_fn: {
+                    type: 'seq',
+                    members: [
+                        {
+                            type: 'field',
+                            name: 'async',
+                            content: { type: 'string', value: 'async' },
+                        },
+                        { type: 'optional', content: { type: 'string', value: 'async' } },
+                    ],
+                },
+            })
+            const out = enrich(input)
+            const rule = out.grammar.rules.decorated_fn as { type: 'seq', members: Rule[] }
+            // Second member stays unpromoted — collision
+            expect(rule.members[1]).toMatchObject({
+                type: 'optional',
+                content: { type: 'string', value: 'async' },
+            })
+            const calls = stderrSpy.mock.calls.map(c => String(c[0]))
+            expect(calls.some(c => c.includes('skipped optional-keyword-prefix on decorated_fn'))).toBe(true)
+        })
+
+        it('recurses into choice members', () => {
+            const input = mkGrammar({
+                stmt: {
+                    type: 'choice',
+                    members: [
+                        {
+                            type: 'seq',
+                            members: [
+                                { type: 'optional', content: { type: 'string', value: 'let' } },
+                                { type: 'symbol', name: 'binding' },
+                            ],
+                        },
+                        {
+                            type: 'seq',
+                            members: [
+                                { type: 'optional', content: { type: 'string', value: 'const' } },
+                                { type: 'symbol', name: 'binding' },
+                            ],
+                        },
+                    ],
+                },
+            })
+            const out = enrich(input)
+            const rule = out.grammar.rules.stmt as { type: 'choice', members: Array<{ type: 'seq', members: Rule[] }> }
+            // Both choice branches get the optional-keyword promotion
+            const branch0 = rule.members[0]!
+            const branch1 = rule.members[1]!
+            expect(branch0.members[0]).toMatchObject({
+                type: 'optional',
+                content: { type: 'field', name: 'let' },
+            })
+            expect(branch1.members[0]).toMatchObject({
+                type: 'optional',
+                content: { type: 'field', name: 'const' },
+            })
+        })
+
+        it('recurses into nested wrappers (optional/repeat)', () => {
+            const input = mkGrammar({
+                block: {
+                    type: 'repeat',
+                    content: {
+                        type: 'seq',
+                        members: [
+                            { type: 'optional', content: { type: 'string', value: 'pub' } },
+                            { type: 'symbol', name: 'item' },
+                        ],
+                    },
+                },
+            })
+            const out = enrich(input)
+            const rule = out.grammar.rules.block as { type: 'repeat', content: { type: 'seq', members: Rule[] } }
+            expect(rule.content.members[0]).toMatchObject({
+                type: 'optional',
+                content: { type: 'field', name: 'pub' },
+            })
+        })
+    })
+
     describe('non-seq rules', () => {
         it('passes through choice rules unchanged', () => {
             const input = mkGrammar({

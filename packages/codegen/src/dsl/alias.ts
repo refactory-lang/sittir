@@ -23,14 +23,7 @@
  */
 
 import type { Rule } from '../compiler/rule.ts'
-
-type SymbolLike = { type: 'symbol' | 'SYMBOL'; name: string } & Record<string, unknown>
-
-function isSymbolLike(v: unknown): v is SymbolLike {
-    return !!v && typeof v === 'object'
-        && ((v as { type?: unknown }).type === 'symbol' || (v as { type?: unknown }).type === 'SYMBOL')
-        && typeof (v as { name?: unknown }).name === 'string'
-}
+import { isSymbolLike } from './runtime-shapes.ts'
 
 export function alias(rule: Rule, value?: string | Rule): unknown {
     const native = (globalThis as { alias?: (r: unknown, v: unknown) => unknown }).alias

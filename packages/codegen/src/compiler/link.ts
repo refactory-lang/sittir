@@ -149,22 +149,14 @@ export function link(raw: RawGrammar, include?: IncludeFilter): LinkedGrammar {
         if (applied) rules[name] = rewritten
     }
 
-    // Keyword-prefix promotion — `optional(keywordString)` sitting as a
-    // seq member becomes `field(keyword, 'keyword', source: 'inferred')`.
-    // This surfaces things like python's `optional('async')` on
-    // `function_definition` / `for_statement` / `with_statement`, rust's
-    // `optional('move')` on `async_block`, etc. as first-class factory
-    // parameters so factories can round-trip the prefix instead of
-    // dropping it as an anonymous child the factory signature doesn't
-    // know about.
-    //
-    // Optional keyword-prefix promotion has moved to dsl/enrich.ts as
-    // an opt-in pre-Evaluate pass (spec 006). The generation runs
-    // earlier in the pipeline and produces the same field shape, so
-    // there's no work to do here. Override files that wrap their base
-    // grammar in `enrich(base)` get the promotion automatically;
-    // those that don't get the original un-promoted shape (the same
-    // behavior the legacy include filter `applyInferred=false` gave).
+    // Keyword-prefix promotion moved to dsl/enrich.ts (spec 006).
+    // Previously this phase wrapped `optional(keywordString)` seq
+    // members in `field(keyword, ...)` to surface prefixes like
+    // python's `optional('async')` as first-class factory parameters.
+    // The same transformation now runs as enrich's
+    // `optionalKeywordPrefixPass` at pre-Evaluate time — override
+    // files that wrap their base in `enrich(base)` get it automatically,
+    // and the Link phase no longer mutates rules for this purpose.
 
     // Tag visible choices with `variant` wrappers — names every branch
     // and dedupes structurally identical ones. Hidden choices already
