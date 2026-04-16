@@ -59,8 +59,26 @@ export type FieldLike = {
 export function isSymbolLike(v: unknown): v is SymbolLike {
     if (!v || typeof v !== 'object') return false
     const t = (v as { type?: unknown }).type
-    return (t === 'symbol' || t === 'SYMBOL')
-        && typeof (v as { name?: unknown }).name === 'string'
+    if ((t === 'symbol' || t === 'SYMBOL')
+        && typeof (v as { name?: unknown }).name === 'string') return true
+    return extractSymbolName(v) !== undefined
+}
+
+/**
+ * Extract the symbol name from a value that might be a symbol reference
+ * in any runtime shape. Tree-sitter CLI wraps `$` references as
+ * nested objects; this unwraps to the name string if possible.
+ */
+export function extractSymbolName(v: unknown): string | undefined {
+    if (!v || typeof v !== 'object') return undefined
+    const r = v as Record<string, unknown>
+    const t = r.type
+    if ((t === 'symbol' || t === 'SYMBOL') && typeof r.name === 'string') return r.name
+    // Tree-sitter CLI: $.name → { symbol: { type: 'SYMBOL', name: '...' } }
+    if (r.symbol && typeof r.symbol === 'object') {
+        return extractSymbolName(r.symbol)
+    }
+    return undefined
 }
 
 export function isFieldLike(v: unknown): v is FieldLike {

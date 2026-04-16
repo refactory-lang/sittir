@@ -23,6 +23,7 @@
 
 import { parsePath, applyPath, reconstructWrapper, reconstructPrec, reconstructContainer } from './transform-path.ts'
 import { isFieldPlaceholder, type FieldPlaceholder } from './field.ts'
+import { isAliasPlaceholder, type AliasPlaceholder } from './alias.ts'
 import { isFieldLike, isPrecWrapper, isWrapperType, type RuntimeRule } from './runtime-shapes.ts'
 
 /**
@@ -57,7 +58,7 @@ import { isFieldLike, isPrecWrapper, isWrapperType, type RuntimeRule } from './r
  */
 export function transform(
     original: RuntimeRule,
-    patches: Record<number | string, RuntimeRule | FieldPlaceholder>,
+    patches: Record<number | string, RuntimeRule | FieldPlaceholder | AliasPlaceholder>,
 ): RuntimeRule {
     const usesPaths = Object.keys(patches).some(k => k.includes('/') || k.includes('*'))
     if (usesPaths) {
@@ -68,7 +69,7 @@ export function transform(
 
 function applyPathPatches(
     original: RuntimeRule,
-    patches: Record<number | string, RuntimeRule | FieldPlaceholder>,
+    patches: Record<number | string, RuntimeRule | FieldPlaceholder | AliasPlaceholder>,
 ): RuntimeRule {
     let rule = original
     for (const [key, value] of Object.entries(patches)) {
@@ -175,6 +176,20 @@ function resolvePatch(
     // Two-arg field passed through directly — accept either case.
     if (isFieldLike(patch)) {
         return { ...patch, source: 'override' as const } as unknown as RuntimeRule
+    }
+    // Alias placeholder — alias('variant_name'): wrap the original
+    // member as a named alias. Used for nested-alias polymorphs where
+    // each choice branch gets wrapped to produce a named variant child
+    // in the parse tree. Constructed directly to work in both sittir
+    // (lowercase) and tree-sitter CLI (uppercase) runtimes.
+    if (isAliasPlaceholder(patch)) {
+        const isUpperCase = originalMember.type === originalMember.type.toUpperCase()
+        return {
+            type: isUpperCase ? 'ALIAS' : 'alias',
+            content: originalMember,
+            named: true,
+            value: patch.name,
+        } as unknown as RuntimeRule
     }
     return patch as RuntimeRule
 }

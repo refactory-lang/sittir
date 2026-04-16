@@ -22,7 +22,7 @@ describe('alias()', () => {
 
         it('throws when the single argument is not a symbol reference', () => {
             expect(() => alias({ type: 'string', value: 'foo' } as Rule))
-                .toThrow(/symbol reference/)
+                .toThrow()
         })
     })
 

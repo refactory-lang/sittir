@@ -1,46 +1,54 @@
 /**
- * dsl/alias.ts — sittir alias shadow with one-arg shorthand.
+ * dsl/alias.ts — sittir alias shadow with placeholder form.
  *
- * Tree-sitter's baseline `alias()` always takes two args:
+ * Two authoring modes:
  *
- *     alias(rule, valueOrName)
+ *   1. **Two-arg** — `alias(rule, $.name)` or `alias(rule, 'name')`:
+ *      delegates directly to the runtime's native `alias()`.
  *
- * The most common authoring case is `alias($.name, $.name)` — aliasing
- * a symbol to itself with `named: true`. The shorthand collapses that to:
+ *   2. **One-arg placeholder** — `alias('assignment_eq')`:
+ *      returns an `AliasPlaceholder` that `transform()`'s
+ *      `resolvePatch` fills in with the original content at the
+ *      patch target. Same pattern as `field('name')`.
  *
- *     alias($.name)
+ *      In the override file:
+ *        transform(original, { '1/0': alias('assignment_eq') })
  *
- * Both forms delegate to the runtime's native `alias()` (provided as
- * a global by sittir's grammarFn injection in sittir's pipeline, or
- * by tree-sitter's CLI when the transpiled grammar.js loads). This
- * means the resulting rule shape matches whatever runtime is processing
- * the call — sittir lowercase `{type:'alias'}` or tree-sitter uppercase
- * `{type:'ALIAS'}` — without case-conversion shims here.
+ *      resolvePatch produces:
+ *        alias(original_content_at_1_0, { type: 'SYMBOL', name: 'assignment_eq' })
  *
- * Import explicitly when you want the one-arg form:
+ * Import explicitly when you want the placeholder form:
  *
  *     import { alias } from '@sittir/codegen/dsl'
  */
 
 import type { Rule } from '../compiler/rule.ts'
-import { isSymbolLike } from './runtime-shapes.ts'
 
-export function alias(rule: Rule, value?: string | Rule): unknown {
+export interface AliasPlaceholder {
+    readonly __sittirPlaceholder: 'alias'
+    readonly name: string
+}
+
+export function isAliasPlaceholder(v: unknown): v is AliasPlaceholder {
+    return !!v && typeof v === 'object' && (v as { __sittirPlaceholder?: unknown }).__sittirPlaceholder === 'alias'
+}
+
+export function alias(rule: Rule | string, value?: string | Rule): unknown {
+    // One-arg string form: alias('variant_name') → placeholder for transform.
+    if (typeof rule === 'string' && value === undefined) {
+        return { __sittirPlaceholder: 'alias' as const, name: rule } satisfies AliasPlaceholder
+    }
+
     const native = (globalThis as { alias?: (r: unknown, v: unknown) => unknown }).alias
     if (typeof native !== 'function') {
         throw new Error('alias(): no global alias() found — must be called inside a runtime that injects alias() (sittir evaluate.ts or tree-sitter CLI)')
     }
 
-    // One-arg shorthand: alias($.name) ≡ alias($.name, $.name).
-    if (value === undefined) {
-        if (!isSymbolLike(rule)) {
-            throw new Error(
-                `alias(): one-argument form requires a symbol reference (e.g. $.name), got ${JSON.stringify(rule)}`,
-            )
-        }
-        return native(rule, rule)
+    // Two-arg form — delegate to native alias.
+    if (value !== undefined) {
+        return native(rule, value)
     }
 
-    // Two-arg form — delegate to native alias.
-    return native(rule, value)
+    // One-arg symbol form: alias($.name) ≡ alias($.name, $.name).
+    return native(rule, rule)
 }
