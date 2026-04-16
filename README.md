@@ -136,11 +136,13 @@ for (const match of matches) {
 ### Data Flow
 
 ```
-Factory input (Config, camelCase) ──▶ Factory output (NodeData, raw fields)
+Factory input (Config, camelCase) ──▶ Factory output (NodeData + fluent getters/setters)
 From input (strings, numbers) ──────▶ Factory (via resolution) ──▶ NodeData
-readNode input (SgNode/TreeNode) ───▶ NodeData (direct field mapping)
-Render input (AnyNodeData) ─────────▶ Source text (template expansion)
+SgNode/TreeNode ──▶ readNode() ──▶ NodeData ──▶ readTreeNode() ──▶ NodeData + routing + lazy getters
+Render input (AnyNodeData) ─────────▶ Source text (YAML template expansion)
 ```
+
+`readNode()` (core) maps parse tree fields to raw `NodeData`. `readTreeNode()` (generated, per-grammar) adds override routing and wires up lazy getters for child traversal — this is the client-facing entry point.
 
 ## Override DSL
 
