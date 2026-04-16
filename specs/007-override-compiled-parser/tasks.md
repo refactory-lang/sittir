@@ -103,17 +103,50 @@
 
 ### Implementation for User Story 3
 
-- [ ] T026 [US3] Convert python polymorph to nested-alias form in `packages/python/overrides.ts`: `assignment` (1 rule). Inspect the rule's choice structure via `node-types.json` to determine variant shapes, then apply `transform(original, { '0': alias($.variant_a), '1': alias($.variant_b) })` with descriptive variant names derived from the field sets
-- [ ] T027 [US3] Convert rust polymorphs to nested-alias form in `packages/rust/overrides.ts`: `closure_expression`, `field_pattern`, `or_pattern`, `range_expression`, `range_pattern`, `visibility_modifier` (6 rules)
-- [ ] T028a [P] [US3] Convert typescript polymorphs batch 1 in `packages/typescript/overrides.ts`: `arrow_function`, `call_expression`, `class_heritage`, `export_statement` (4 rules)
-- [ ] T028b [P] [US3] Convert typescript polymorphs batch 2 in `packages/typescript/overrides.ts`: `import_clause`, `import_specifier`, `index_signature`, `parenthesized_expression`, `statement` (5 rules)
-- [ ] T029 [US3] Recompile all three override grammars (tree-sitter generate + build --wasm) and verify compilation succeeds with nested-alias transforms
-- [ ] T029a [US3] Add variant-name uniqueness validation: after collecting all nested-alias variant names from `.sittir/node-types.json` for each grammar, assert no two parent kinds share a variant name. Implement in `packages/codegen/src/compiler/link.ts` or as a standalone check in `packages/codegen/src/transpile/compile-parser.ts`. Emit a clear error if collision detected
-- [ ] T030 [US3] Run full fidelity suite for all three grammars with nested-alias polymorphs. Confirm ceilings hold
-- [ ] T031 [US3] Update generated `utils.ts` to replace `_inferBranch` field-set heuristics with child-node type discrimination for nested-alias polymorphs. Modify the emitter in `packages/codegen/src/emitters/client-utils.ts` if needed
-- [ ] T032 [US3] Write a focused test in `packages/codegen/src/__tests__/nested-alias-polymorph.test.ts` verifying: parse tree has parent kind at outer level + variant kind at child level, factory discriminates by child type not field-set
+- [x] T026 [US3] Convert python `assignment` polymorph to nested-alias form in `packages/python/overrides.ts` using `alias('name')` sugar in transform. Done: `transform(original, { '1/0': alias('assignment_eq'), '1/1': alias('assignment_type'), '1/2': alias('assignment_typed') })`
+- [x] T026a [US3] Implement `alias('name')` sugar: AliasPlaceholder in alias.ts, resolvePatch wrapping in transform.ts, synthetic-rules.ts accumulator, withSyntheticRuleScope in evaluate.ts, two-pass grammar wrapper for tree-sitter CLI
+- [x] T026b [US3] Verify parse tree: `(assignment (assignment_eq left: ... right: ...))` — variant wrapper node with fields inside. 4 e2e tests in nested-alias-e2e.test.ts
+- [ ] T027 [US3] Convert rust polymorphs (6 rules) — same `alias('name')` sugar pattern
+- [ ] T028a [P] [US3] Convert typescript polymorphs batch 1 (4 rules)
+- [ ] T028b [P] [US3] Convert typescript polymorphs batch 2 (5 rules)
+- [ ] T029 [US3] Recompile all three override grammars and verify compilation succeeds
+- [ ] T029a [US3] Add variant-name uniqueness validation
 
-**Checkpoint**: All 16 polymorph rules converted to nested-alias form. Factories discriminate by child node type. ast-grep rule compatibility preserved.
+### T050 [US3] — Polymorph factory ergonomics for nested-alias kinds
+
+**Context**: With nested-alias polymorphs, the parse tree stores data in a parent+variant-child structure:
+```
+(assignment              ← parent: has field('left')
+  (assignment_eq         ← variant child: has field('right')
+    left: (identifier)
+    right: (integer)))
+```
+
+readNode produces `{ type: 'assignment', fields: { left }, children: [{ type: 'assignment_eq', fields: { right } }] }`. This is correct but the API surface is "nasty" — consumers must drill into the variant child to access `right`.
+
+**Goal**: Generate polymorph-aware factories that present a flat ergonomic surface while keeping the tree structure intact internally.
+
+**Design**:
+- readNode/wrap: **no changes** — store the tree structure as-is (parent fields + variant child)
+- Registration: `alias('name')` in transform already registers the polymorph relationship via synthetic-rules accumulator. Extend to also register `{ parentKind, variantName, variantFields }` metadata
+- Link/Assemble: detect nested-alias pattern from node-types.json — when a kind's `children.types` are ALL alias variants (visible names with hidden `_name` counterparts), classify as a nested-alias polymorph. Produce `AssembledPolymorph` with forms derived from the variants
+- Factory emitter: generate a polymorph factory for the parent kind with the UNION of all fields (parent + variant) as flat parameters. Factory internally constructs the right variant child based on which fields are provided. Each variant factory has getters/setters that drill into the child kind
+- Types emitter: generate variant-specific interfaces (e.g., `AssignmentEq`, `AssignmentType`) and a parent union type
+- Utils emitter: replace `_inferBranch` field-set heuristics with child-type discrimination for nested-alias kinds. `node.children[0].type` determines the variant
+
+**Sub-tasks**:
+
+- [ ] T050a [US3] Extend synthetic-rules accumulator to register polymorph metadata: `registerPolymorphVariant(parentKind, variantName, sharedFields, variantFields)` — called from resolvePatch when processing alias placeholders. Shared fields = fields on the original rule outside the choice branch. Variant fields = fields inside the aliased branch content
+- [ ] T050b [US3] In `packages/codegen/src/compiler/link.ts` or `packages/codegen/src/compiler/assemble.ts`: detect nested-alias polymorphs from the override node-types.json. When a kind has `children.types` that are ALL alias variant kinds (names that appear in synthetic-rules metadata or that have `_name` hidden counterparts), classify as polymorph. Produce `AssembledPolymorph` with one form per variant. Each form's fields = parent shared fields + variant-specific fields
+- [ ] T050c [US3] Update `packages/codegen/src/emitters/factories.ts`: for nested-alias polymorphs, generate a parent factory that accepts the flat union of all fields. Factory inspects which variant-specific fields are present, constructs the appropriate variant child internally. Return type includes getters/setters for ALL fields (shared + variant)
+- [ ] T050d [US3] Update `packages/codegen/src/emitters/types.ts`: generate per-variant interfaces (`AssignmentEq { fields: { left, right } }`, `AssignmentType { fields: { left, type } }`) and a parent union `Assignment = AssignmentEq | AssignmentType | AssignmentTyped`
+- [ ] T050e [US3] Update `packages/codegen/src/emitters/client-utils.ts`: for nested-alias polymorphs, generate `_inferBranch` that uses `node.children[0].type` for discrimination instead of field-set heuristics. Faster and deterministic
+- [ ] T050f [US3] Update `packages/codegen/src/emitters/wrap.ts`: for nested-alias polymorphs, the wrap function reads parent fields AND drills into the variant child to extract variant fields. Expose the flat union on the returned NodeData
+- [ ] T050g [US3] Write integration test in `packages/codegen/src/__tests__/nested-alias-factory.test.ts`: generate python, create an `assignment_eq` via factory with `{ left, right }`, verify the produced NodeData has the variant child structure internally but exposes `right` via getter. Roundtrip: readNode → factory → render → reparse
+- [ ] T030 [US3] Run full fidelity suite for all three grammars. Confirm ceilings hold
+- [ ] T032 [US3] Verify: factory discriminates by child type, not field-set heuristics
+
+**Checkpoint**: Nested-alias polymorphs have ergonomic flat-field factories. Tree structure is correct internally. API surface is clean for consumers.
 
 ---
 
