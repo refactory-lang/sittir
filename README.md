@@ -69,19 +69,31 @@ import { rules } from '@sittir/rust'
 const source = render(node, rules)  // YAML template expansion
 ```
 
-### Round-Trip (Codemods)
+### Codemod with ast-grep
+
+Find nodes with ast-grep, hydrate into typed NodeData, modify with fluent setters, emit a text edit:
 
 ```ts
-import { wrap, edit } from '@sittir/rust'
+import { parse, Lang } from '@ast-grep/napi'
+import { ir, readTreeNode } from '@sittir/rust'
 
-// Hydrate a tree-sitter parse tree node into NodeData
-const nodeData = wrap(treeSitterNode)
+// 1. Find all `pub fn` items using ast-grep
+const root = parse(Lang.Rust, source).root()
+const matches = root.findAll({ rule: { kind: 'function_item' } })
 
-// Create a text edit
-const patch = edit(treeSitterNode, (nd) => {
-  return nd.body(ir.block({ children: [] }))
-})
-// patch = { startIndex, endIndex, newText }
+for (const match of matches) {
+  // 2. Hydrate the parse tree node into typed NodeData
+  const fn = readTreeNode(match) as ReturnType<typeof ir.functionItem>
+
+  // 3. Modify — fluent setter returns a new node (immutable)
+  const updated = fn
+    .visibilityModifier(ir.visibilityModifier({ children: [] }))  // add `pub`
+    .body(fn.body())                                               // keep body
+
+  // 4. Produce a text edit: { startPos, endPos, insertedText }
+  const edit = updated.replace(match)
+  // Apply edit to source text...
+}
 ```
 
 ## Architecture
@@ -172,6 +184,7 @@ npx tsx packages/codegen/src/cli.ts --grammar typescript --all --output packages
 - **Override-compiled parser** (spec 007) — compile override grammars to WASM parsers so parse trees carry all field labels natively, eliminating runtime field-promotion heuristics
 - **Nested-alias polymorphs** — express polymorphic rules as nested aliases via `transform()`, enabling parse-tree-level variant discrimination
 - **Link cleanup** — delete `inferFieldNames` mutation and `promotePolymorph` from Link once the override-compiled parser carries all field information
+- **Rust engine port** — rewrite `@sittir/core` (render engine, readNode, validation) in Rust for native performance; expose via WASM and NAPI bindings. TypeScript types and codegen remain in TypeScript
 
 ## License
 
