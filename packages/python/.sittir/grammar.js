@@ -247,6 +247,12 @@ function registerSyntheticRule(name, content) {
   currentSyntheticRules.set(name, content);
 }
 function registerPolymorphVariant(parentKind, childSuffix) {
+  const dup = currentPolymorphVariants.find((v) => v.parent === parentKind && v.child === childSuffix);
+  if (dup) {
+    throw new Error(
+      `variant('${childSuffix}'): duplicate variant name on rule '${parentKind}'. Each variant() within a rule must have a unique name \u2014 change one or merge the patches.`
+    );
+  }
   currentPolymorphVariants.push({ parent: parentKind, child: childSuffix });
 }
 function drainSyntheticRules() {

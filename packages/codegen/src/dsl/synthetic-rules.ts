@@ -37,6 +37,18 @@ export function registerSyntheticRule(name: string, content: RuntimeRule): void 
 }
 
 export function registerPolymorphVariant(parentKind: string, childSuffix: string): void {
+    // T029a — variant-name uniqueness within a parent. Two variant('eq')
+    // calls on the same parent rule would produce duplicate alias
+    // targets in the grammar and ambiguous form names downstream.
+    // Throw at registration so the error surfaces at evaluate time
+    // with a clear message instead of as a cryptic codegen failure.
+    const dup = currentPolymorphVariants.find(v => v.parent === parentKind && v.child === childSuffix)
+    if (dup) {
+        throw new Error(
+            `variant('${childSuffix}'): duplicate variant name on rule '${parentKind}'. ` +
+            `Each variant() within a rule must have a unique name — change one or merge the patches.`,
+        )
+    }
     currentPolymorphVariants.push({ parent: parentKind, child: childSuffix })
 }
 

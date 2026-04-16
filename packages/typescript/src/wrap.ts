@@ -938,8 +938,8 @@ export function wrapMemberExpression(data: _NodeData, tree: TreeHandle): Wrapped
   return {
     ...data,
     get object() { return drillIn(data.fields?.['object'], tree); },
-    get property() { return drillIn(data.fields?.['property'], tree); },
     get optionalChain() { return drillIn(data.fields?.['optional_chain'], tree); },
+    get property() { return drillIn(data.fields?.['property'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<MemberExpression>;
 }
@@ -1191,9 +1191,9 @@ export function wrapPublicFieldDefinition(data: _NodeData, tree: TreeHandle): Wr
     get declare() { return drillIn(data.fields?.['declare'], tree); },
     get static() { return drillIn(data.fields?.['static'], tree); },
     get readonly() { return drillIn(data.fields?.['readonly'], tree); },
+    get abstract() { return drillIn(data.fields?.['abstract'], tree); },
     get name() { return drillIn(data.fields?.['name'], tree); },
     get typeField() { return drillIn(data.fields?.['type'], tree); },
-    get abstract() { return drillIn(data.fields?.['abstract'], tree); },
     get child() { return drillIn(data.children?.[0], tree); },
   } as unknown as WrappedNode<PublicFieldDefinition>;
 }

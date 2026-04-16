@@ -85,6 +85,26 @@ describe('polymorph metadata registration', () => {
         ])
     })
 
+    it('throws when two variant() calls register the same name on the same parent (T029a)', () => {
+        const original = {
+            type: 'seq',
+            members: [
+                { type: 'choice', members: [sym('a'), sym('b')] },
+            ],
+        } as Rule
+
+        expect(() => {
+            withSyntheticRuleScope(() => {
+                setCurrentRuleKind('dup_parent')
+                transform(original, { '0/0': variant('same'), '0/1': variant('same') })
+                setCurrentRuleKind(null)
+            })
+        }).toThrow(/duplicate variant name on rule 'dup_parent'/)
+
+        // Drain to leave the accumulator clean for adjacent tests.
+        drainPolymorphVariants()
+    })
+
     it('drainPolymorphVariants clears the accumulator', () => {
         withSyntheticRuleScope(() => {
             setCurrentRuleKind('foo')

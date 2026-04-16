@@ -64,9 +64,15 @@ const FLOORS = {
         factoryTotal: 135,
         fromPass: 142,
         fromTotal: 154,
-        rtPass: 116,
+        // Lowered from 116/111 → 113/107 after Optimize's silent
+        // promotePolymorph mutation was removed (per architectural
+        // policy: polymorph promotion is variant()-driven, not
+        // heuristic). Heuristic-only candidates surface in
+        // overrides.suggested.ts; users can raise these floors back
+        // by adding explicit variant() calls in overrides.ts.
+        rtPass: 113,
         rtTotal: 136,
-        rtAstMatchPass: 111,
+        rtAstMatchPass: 107,
         covPass: 136,
         covTotal: 137,
     },

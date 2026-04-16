@@ -19,20 +19,10 @@ rules:
   attribute_item: "#[$ATTRIBUTE]"
   inner_attribute_item: "#![$ATTRIBUTE]"
   attribute: $$$CHILDREN=$VALUE$ARGUMENTS
-  mod_item:
-    variants:
-      semi: $VISIBILITY_MODIFIER mod $NAME;
-      body: $VISIBILITY_MODIFIER mod $NAME $BODY
-  foreign_mod_item:
-    variants:
-      semi: $VISIBILITY_MODIFIER $EXTERN_MODIFIER;
-      body: $VISIBILITY_MODIFIER $EXTERN_MODIFIER $BODY
+  mod_item: $VISIBILITY_MODIFIER mod $NAME;$BODY
+  foreign_mod_item: $VISIBILITY_MODIFIER $EXTERN_MODIFIER;$BODY
   declaration_list: "{$$$CHILDREN}"
-  struct_item:
-    variants:
-      body: $VISIBILITY_MODIFIER struct $NAME $TYPE_PARAMETERS $$$CHILDREN $BODY
-      semi: $VISIBILITY_MODIFIER struct $NAME $TYPE_PARAMETERS $BODY $$$CHILDREN;
-      semi2: $VISIBILITY_MODIFIER struct $NAME $TYPE_PARAMETERS;
+  struct_item: $VISIBILITY_MODIFIER struct $NAME $TYPE_PARAMETERS $$$CHILDREN $BODY
   union_item: $VISIBILITY_MODIFIER union $NAME $TYPE_PARAMETERS $WHERE_CLAUSE $BODY
   enum_item: $VISIBILITY_MODIFIER enum $NAME $TYPE_PARAMETERS $WHERE_CLAUSE $BODY
   enum_variant_list:
@@ -70,9 +60,7 @@ rules:
     joinBy: ","
   where_predicate: $LEFT $BOUNDS
   impl_item:
-    variants:
-      body: $UNSAFE impl $TYPE_PARAMETERS $TRAIT_CLAUSE $TYPE $$$CHILDREN $BODY
-      semi: $UNSAFE impl $TYPE_PARAMETERS $TRAIT_CLAUSE $TYPE $$$CHILDREN;
+    template: $UNSAFE impl $TYPE_PARAMETERS $TRAIT_CLAUSE $TYPE $$$CHILDREN $BODY
     trait_clause: $TRAIT for
   trait_item: $VISIBILITY_MODIFIER $UNSAFE trait $NAME $TYPE_PARAMETERS $BOUNDS $$$CHILDREN $BODY
   associated_type: $TYPE $NAME $TYPE_PARAMETERS $BOUNDS $WHERE_CLAUSE;
@@ -116,8 +104,8 @@ rules:
   extern_modifier: $EXTERN $STRING_LITERAL
   visibility_modifier:
     variants:
-      crate: $$$CHILDREN
-      pub: $PUB($$$CHILDREN$IN)
+      form0: $$$CHILDREN
+      form1: $PUB($$$CHILDREN$IN)
   bracketed_type: <$$$CHILDREN>
   qualified_type: $TYPE as $ALIAS
   lifetime: "'$IDENTIFIER"
@@ -283,10 +271,7 @@ rules:
   closure_expression_expr: $BODY
   field_pattern_shorthand: $NAME
   field_pattern_named: "$NAME:$PATTERN"
-  range_pattern_left:
-    variants:
-      right: $LEFT...$RIGHT
-      dotdot: $LEFT..
+  range_pattern_left: $LEFT...$RIGHT
   range_pattern_prefix: ..=$RIGHT
   or_pattern_binary: $LEFT|$RIGHT
   or_pattern_prefix: "|$RIGHT"

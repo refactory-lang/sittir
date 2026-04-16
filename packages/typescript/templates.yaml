@@ -8,10 +8,10 @@ rules:
       statements: "\n"
   export_statement:
     variants:
-      form_0: export*$FROM $SOURCE$$$CHILDREN$$$DECORATOR$DECLARATION$VALUE
-      export: export type $$$CHILDREN $FROM $SOURCE
-      export2: export=$$$CHILDREN
-      export3: export as namespace $$$CHILDREN
+      form0: export*$FROM $SOURCE$$$CHILDREN$$$DECORATOR$DECLARATION$VALUE
+      form1: export type $$$CHILDREN $FROM $SOURCE
+      form2: export=$$$CHILDREN
+      form3: export as namespace $$$CHILDREN
   namespace_export: "*as $$$CHILDREN"
   export_clause:
     template: "{$$$CHILDREN}"
@@ -23,18 +23,15 @@ rules:
   import_statement: $IMPORT $IMPORT_CLAUSE $FROM_CLAUSE $IMPORT_ATTRIBUTE $SEMICOLON
   import_clause:
     variants:
-      namespace_import: $$$CHILDREN
-      named_imports: $$$CHILDREN
-      default_import: $DEFAULT_IMPORT $NAMED_IMPORTS_CLAUSE
+      form0: $$$CHILDREN
+      form1: $$$CHILDREN
+      form2: $DEFAULT_IMPORT $NAMED_IMPORTS_CLAUSE
     named_imports_clause: ",$NAMED_IMPORTS"
   namespace_import: "*as $IDENTIFIER"
   named_imports:
     template: "{$$$CHILDREN}"
     joinBy: ","
-  import_specifier:
-    variants:
-      name: type $NAME
-      as: type $NAME as $ALIAS
+  import_specifier: type $NAME$ALIAS
   import_attribute: $$$OBJECT
   statement: $$$CHILDREN
   expression_statement: $$$CHILDREN
@@ -81,10 +78,7 @@ rules:
     template: $CATCH $PARAMETER_CLAUSE $BODY
     parameter_clause: ($PARAMETER $TYPE)
   finally_clause: $FINALLY $BODY
-  parenthesized_expression:
-    variants:
-      expression: ($$$CHILDREN $TYPE)
-      sequence_expression: ($$$CHILDREN)
+  parenthesized_expression: ($$$CHILDREN $TYPE)
   expression: $$$CHILDREN
   primary_expression: $$$CHILDREN
   yield_expression: $YIELD $EXPRESSION
@@ -117,27 +111,21 @@ rules:
   class_declaration: $$$DECORATOR class $NAME $TYPE_PARAMETERS $CLASS_HERITAGE $BODY $AUTOMATIC_SEMICOLON
   class_heritage:
     variants:
-      extends_clause: $EXTENDS_CLAUSE $IMPLEMENTS_CLAUSE
-      implements_clause: $$$CHILDREN
+      form0: $EXTENDS_CLAUSE $IMPLEMENTS_CLAUSE
+      form1: $$$CHILDREN
   function_expression: $ASYNC function $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $BODY
   function_declaration: $ASYNC function $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $BODY $$$CHILDREN
   generator_function: $ASYNC function*$NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $BODY
   generator_function_declaration: $ASYNC function*$NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $BODY $$$CHILDREN
-  arrow_function:
-    variants:
-      parameter: $ASYNC $PARAMETER=>$BODY
-      _call_signature: $ASYNC $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE=>$BODY
+  arrow_function: $ASYNC $PARAMETER$TYPE_PARAMETERS$PARAMETERS$RETURN_TYPE=>$BODY
   call_expression:
     variants:
-      function: $FUNCTION $TYPE_ARGUMENTS $ARGUMENTS
-      function2: $FUNCTION $ARGUMENTS
-      tok_q_dot: $FUNCTION?.$TYPE_ARGUMENTS $ARGUMENTS
+      form0: $FUNCTION $TYPE_ARGUMENTS $ARGUMENTS
+      form1: $FUNCTION $ARGUMENTS
+      form2: $FUNCTION?.$TYPE_ARGUMENTS $ARGUMENTS
   new_expression: $NEW $CONSTRUCTOR $TYPE_ARGUMENTS $ARGUMENTS
   await_expression: $AWAIT $EXPRESSION
-  member_expression:
-    variants:
-      dot: $OBJECT.$PROPERTY
-      optional_chain: $OBJECT $OPTIONAL_CHAIN $PROPERTY
+  member_expression: $OBJECT.$OPTIONAL_CHAIN $PROPERTY
   subscript_expression: "$OBJECT $OPTIONAL_CHAIN[$INDEX]"
   assignment_expression: $USING $LEFT=$RIGHT
   augmented_assignment_expression: $LEFT $OPERATOR $RIGHT
@@ -172,11 +160,7 @@ rules:
   pair_pattern: "$KEY:$VALUE"
   computed_property_name: "[$EXPRESSION]"
   public_field_definition:
-    variants:
-      form_0: $$$DECORATOR declare $$$CHILDREN$DECLARE $STATIC $READONLY $NAME?$TYPE=$VALUE
-      form_1: $$$DECORATOR declare $$$CHILDREN$DECLARE $ABSTRACT $READONLY $NAME?$TYPE=$VALUE
-      form_2: $$$DECORATOR declare $$$CHILDREN$DECLARE $READONLY $ABSTRACT $NAME?$TYPE=$VALUE
-      form_3: $$$DECORATOR declare $$$CHILDREN$DECLARE $ACCESSOR_CLAUSE $NAME?$TYPE=$VALUE
+    template: $$$DECORATOR declare $$$CHILDREN$DECLARE $STATIC $READONLY$ABSTRACT$ACCESSOR_CLAUSE $NAME?$TYPE=$VALUE
     accessor_clause: $ACCESSOR
   non_null_expression: $EXPRESSION!
   method_signature: $ACCESSIBILITY_MODIFIER $OVERRIDE_MODIFIER $$$CHILDREN $READONLY $ASYNC get $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE
@@ -256,10 +240,7 @@ rules:
   default_type: =$TYPE
   constraint: extends $TYPE
   construct_signature: $ABSTRACT new $TYPE_PARAMETERS $PARAMETERS $TYPE
-  index_signature:
-    variants:
-      colon: "$MAPPED_TYPE_CLAUSE[$NAME:$INDEX_TYPE]$TYPE"
-      mapped_type_clause: "$MAPPED_TYPE_CLAUSE[$$$CHILDREN]$TYPE"
+  index_signature: "$MAPPED_TYPE_CLAUSE[$NAME:$INDEX_TYPE$$$CHILDREN]$TYPE"
   array_type: "$PRIMARY_TYPE[]"
   tuple_type:
     template: "[$$$CHILDREN]"

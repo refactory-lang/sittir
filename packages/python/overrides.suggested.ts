@@ -15,7 +15,7 @@
 // Summary
 // ---------------------------------------------------------------
 // Field inferences: 0  (0 applied, 0 held)
-// Rule promotions:  21  (21 applied, 0 held)
+// Rule promotions:  24  (24 applied, 0 held)
 // Repeated shapes:  0  (advisory — suggested supertypes/groups)
 
 // ---------------------------------------------------------------
@@ -99,6 +99,9 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "integer", classification: "terminal", applied: true },
   { kind: "line_continuation", classification: "terminal", applied: true },
   { kind: "assignment", classification: "polymorph", applied: true },
+  { kind: "assignment_eq", classification: "polymorph", applied: true },
+  { kind: "assignment_type", classification: "polymorph", applied: true },
+  { kind: "assignment_typed", classification: "polymorph", applied: true },
 ];
 
 export interface InferredField {

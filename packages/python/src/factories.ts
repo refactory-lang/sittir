@@ -1463,8 +1463,13 @@ export function lambdaWithinForInClause(config: T.LambdaWithinForInClauseConfig)
 }
 
 export function assignment(config: T.AssignmentUFormEqConfig | T.AssignmentUFormTypeConfig | T.AssignmentUFormTypedConfig) {
-  if (config && 'left' in config) return assignmentUFormEq(config as T.AssignmentUFormEqConfig);
-  return assignmentUFormTyped(config as T.AssignmentUFormTypedConfig);
+  if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === 'assignment_eq') return assignmentUFormEq(config as T.AssignmentUFormEqConfig);
+  if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === 'assignment_type') return assignmentUFormType(config as T.AssignmentUFormTypeConfig);
+  if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === 'assignment_typed') return assignmentUFormTyped(config as T.AssignmentUFormTypedConfig);
+  if (config && (config as any).variant === 'eq') return assignmentUFormEq(config as T.AssignmentUFormEqConfig);
+  if (config && (config as any).variant === 'type') return assignmentUFormType(config as T.AssignmentUFormTypeConfig);
+  if (config && (config as any).variant === 'typed') return assignmentUFormTyped(config as T.AssignmentUFormTypedConfig);
+  return assignmentUFormEq(config as T.AssignmentUFormEqConfig);
 }
 export function assignmentUFormEq(config: T.AssignmentUFormEqConfig) {
   const fields = {

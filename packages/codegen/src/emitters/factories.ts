@@ -540,6 +540,8 @@ interface PolymorphNode {
     readonly treeTypeName: string
     readonly rawFactoryName?: string
     readonly forms: AssembledGroup[]
+    readonly source?: 'promoted' | 'override'
+    readonly variantChildKinds?: readonly string[]
 }
 
 function emitPolymorphFactory(node: PolymorphNode, nodeMap: NodeMap): string {
@@ -566,28 +568,46 @@ function emitPolymorphFactory(node: PolymorphNode, nodeMap: NodeMap): string {
     const polyOpt = anyFormHasRequired ? '' : '?'
     lines.push(`export function ${fn}(config${polyOpt}: ${configUnion}) {`)
 
-    // Dispatch: most-specific form first (by field count). A form
-    // matches when all its fields are present in config. The smallest
-    // form is the fallback for empty or no-match cases. The call to
-    // the picked form factory is cast to that form's ConfigOf because
-    // the union type doesn't narrow across `in` checks well enough
-    // to pass structural assignability on its own.
+    // Dispatch:
+    // - source='override': forms share parent fields, so field-presence
+    //   doesn't discriminate. Use the variant child's type from
+    //   config.children[0].type, OR an explicit config.variant
+    //   discriminator (T032).
+    // - source='promoted': forms have heterogeneous field sets.
+    //   Discriminate by field-presence, most-specific first.
     if (forms.length > 1) {
-        const sorted = [...forms].sort((a, b) => b.fields.length - a.fields.length)
-        const fallback = sorted[sorted.length - 1]!
-        const seenFieldSets = new Set<string>()
-        for (const form of sorted) {
-            if (form === fallback) continue
-            if (form.fields.length === 0) continue
-            const key = [...form.fields.map(f => f.propertyName)].sort().join(',')
-            if (seenFieldSets.has(key)) continue
-            seenFieldSets.add(key)
-            const checks = form.fields
-                .map(f => `'${f.propertyName}' in config`)
-                .join(' && ')
-            lines.push(`  if (config && ${checks}) return ${form.rawFactoryName!}(config as T.${form.typeName}Config);`)
+        const isOverride = node.source === 'override'
+        if (isOverride) {
+            // Variant child kind discrimination first (most reliable —
+            // the kind on the variant child is the parse-tree truth).
+            for (const form of forms) {
+                const childKind = `${node.kind}_${form.name}`
+                lines.push(`  if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === '${childKind}') return ${form.rawFactoryName!}(config as T.${form.typeName}Config);`)
+            }
+            // Then explicit `variant` discriminator on config.
+            for (const form of forms) {
+                lines.push(`  if (config && (config as any).variant === '${form.name}') return ${form.rawFactoryName!}(config as T.${form.typeName}Config);`)
+            }
+            // Fallback to first form when nothing discriminates.
+            const fallback = forms[0]!
+            lines.push(`  return ${fallback.rawFactoryName!}(config as T.${fallback.typeName}Config);`)
+        } else {
+            const sorted = [...forms].sort((a, b) => b.fields.length - a.fields.length)
+            const fallback = sorted[sorted.length - 1]!
+            const seenFieldSets = new Set<string>()
+            for (const form of sorted) {
+                if (form === fallback) continue
+                if (form.fields.length === 0) continue
+                const key = [...form.fields.map(f => f.propertyName)].sort().join(',')
+                if (seenFieldSets.has(key)) continue
+                seenFieldSets.add(key)
+                const checks = form.fields
+                    .map(f => `'${f.propertyName}' in config`)
+                    .join(' && ')
+                lines.push(`  if (config && ${checks}) return ${form.rawFactoryName!}(config as T.${form.typeName}Config);`)
+            }
+            lines.push(`  return ${fallback.rawFactoryName!}(config as T.${fallback.typeName}Config);`)
         }
-        lines.push(`  return ${fallback.rawFactoryName!}(config as T.${fallback.typeName}Config);`)
     } else {
         lines.push(`  return ${forms[0]!.rawFactoryName!}(config);`)
     }

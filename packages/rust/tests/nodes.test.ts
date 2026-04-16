@@ -122,24 +122,24 @@ describe('attribute', () => {
 });
 
 describe('mod_item', () => {
-  it('semi form produces correct type', () => {
-    const node = ir.mod.semi({ name: { type: 'identifier', text: 'test' } as any });
+  it('factory produces correct type', () => {
+    const node = ir.mod({ name: { type: 'identifier', text: 'test' } as any });
     expect(node.type).toBe('mod_item');
   });
-  it('body form produces correct type', () => {
-    const node = ir.mod.body({ name: { type: 'identifier', text: 'test' } as any, body: { type: 'declaration_list', text: 'test' } as any });
-    expect(node.type).toBe('mod_item');
+  it('render produces non-empty string', () => {
+    const node = ir.mod({ name: { type: 'identifier', text: 'test' } as any });
+    expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
 describe('foreign_mod_item', () => {
-  it('semi form produces correct type', () => {
-    const node = ir.foreignMod.semi({ externModifier: { type: 'extern_modifier', text: 'test' } as any });
+  it('factory produces correct type', () => {
+    const node = ir.foreignMod({ externModifier: { type: 'extern_modifier', text: 'test' } as any });
     expect(node.type).toBe('foreign_mod_item');
   });
-  it('body form produces correct type', () => {
-    const node = ir.foreignMod.body({ externModifier: { type: 'extern_modifier', text: 'test' } as any, body: { type: 'declaration_list', text: 'test' } as any });
-    expect(node.type).toBe('foreign_mod_item');
+  it('render produces non-empty string', () => {
+    const node = ir.foreignMod({ externModifier: { type: 'extern_modifier', text: 'test' } as any });
+    expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
@@ -151,17 +151,13 @@ describe('declaration_list', () => {
 });
 
 describe('struct_item', () => {
-  it('body form produces correct type', () => {
-    const node = ir.struct.body({ name: { type: '_type_identifier', text: 'test' } as any, body: { type: 'field_declaration_list', text: 'test' } as any });
+  it('factory produces correct type', () => {
+    const node = ir.struct({ name: { type: '_type_identifier', text: 'test' } as any, children: [{ type: 'where_clause', text: 'test' } as any] as any });
     expect(node.type).toBe('struct_item');
   });
-  it('semi form produces correct type', () => {
-    const node = ir.struct.semi({ name: { type: '_type_identifier', text: 'test' } as any, body: { type: 'ordered_field_declaration_list', text: 'test' } as any });
-    expect(node.type).toBe('struct_item');
-  });
-  it('semi2 form produces correct type', () => {
-    const node = ir.struct.semi2({ name: { type: '_type_identifier', text: 'test' } as any });
-    expect(node.type).toBe('struct_item');
+  it('render produces non-empty string', () => {
+    const node = ir.struct({ name: { type: '_type_identifier', text: 'test' } as any, children: [{ type: 'where_clause', text: 'test' } as any] as any });
+    expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
@@ -334,13 +330,13 @@ describe('where_predicate', () => {
 });
 
 describe('impl_item', () => {
-  it('body form produces correct type', () => {
-    const node = ir.impl.body({ type: { type: '_type', text: 'test' } as any, body: { type: 'declaration_list', text: 'test' } as any });
+  it('factory produces correct type', () => {
+    const node = ir.impl({ type: { type: '_type', text: 'test' } as any, children: [{ type: 'where_clause', text: 'test' } as any] as any });
     expect(node.type).toBe('impl_item');
   });
-  it('semi form produces correct type', () => {
-    const node = ir.impl.semi({ type: { type: '_type', text: 'test' } as any });
-    expect(node.type).toBe('impl_item');
+  it('render produces non-empty string', () => {
+    const node = ir.impl({ type: { type: '_type', text: 'test' } as any, children: [{ type: 'where_clause', text: 'test' } as any] as any });
+    expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
@@ -545,12 +541,12 @@ describe('extern_modifier', () => {
 });
 
 describe('visibility_modifier', () => {
-  it('crate form produces correct type', () => {
-    const node = ir.visibilityModifier.crate({});
+  it('form0 form produces correct type', () => {
+    const node = ir.visibilityModifier.form0({});
     expect(node.type).toBe('visibility_modifier');
   });
-  it('pub form produces correct type', () => {
-    const node = ir.visibilityModifier.pub({ pub: 'test' as any });
+  it('form1 form produces correct type', () => {
+    const node = ir.visibilityModifier.form1({ pub: 'test' as any });
     expect(node.type).toBe('visibility_modifier');
   });
 });
@@ -1663,13 +1659,13 @@ describe('field_pattern_named', () => {
 });
 
 describe('range_pattern_left', () => {
-  it('right form produces correct type', () => {
-    const node = ir.rangePatternLeft.right({ left: { type: '_literal_pattern', text: 'test' } as any, right: { type: '_literal_pattern', text: 'test' } as any });
+  it('factory produces correct type', () => {
+    const node = ir.rangePatternLeft({ left: { type: '_literal_pattern', text: 'test' } as any });
     expect(node.type).toBe('range_pattern_left');
   });
-  it('dotdot form produces correct type', () => {
-    const node = ir.rangePatternLeft.dotdot({ left: { type: '_literal_pattern', text: 'test' } as any });
-    expect(node.type).toBe('range_pattern_left');
+  it('render produces non-empty string', () => {
+    const node = ir.rangePatternLeft({ left: { type: '_literal_pattern', text: 'test' } as any });
+    expect(node.render().length).toBeGreaterThan(0);
   });
 });
 

@@ -511,6 +511,25 @@ export function applyOverridePolymorphs(
         const found = findVariantChoice(rule)
         if (!found) continue
 
+        // Collision detection (T032 follow-up; user feedback 2026-04-16):
+        // The variant() naming convention produces visible kinds named
+        // `${parentKind}_${child}` (the alias target tree-sitter creates).
+        // Emit each variant child as a derivation so the suggested.ts
+        // emitter can surface them — this gives users visibility into
+        // what tree-sitter's parse tree carries vs what sittir's typed
+        // surface presents. Without this, readNode would have to infer
+        // polymorph-internal shape from grammar-specific knowledge.
+        for (const child of children) {
+            const variantChildKind = `${parentKind}_${child}`
+            // Inform downstream that this kind exists in the parse tree
+            // as the variant child for the polymorph parent.
+            derivations.promotedRules.push({
+                kind: variantChildKind,
+                classification: 'polymorph',
+                applied: true,
+            })
+        }
+
         const forms = children.map(child => {
             const fullName = `${parentKind}_${child}`
             const variantMember = found.choice.members.find(m => {

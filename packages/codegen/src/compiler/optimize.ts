@@ -15,7 +15,6 @@
 import type {
     Rule, LinkedGrammar, OptimizedGrammar,
 } from './rule.ts'
-import { promotePolymorph } from './link.ts'
 import { simplifyRules, compileWordMatcher } from './simplify.ts'
 
 // ---------------------------------------------------------------------------
@@ -36,14 +35,13 @@ export function optimize(linked: LinkedGrammar): OptimizedGrammar {
     for (const name of Object.keys(rules)) {
         rules[name] = fanOutSeqChoices(rules[name]!)    // T060
     }
-    // Re-run polymorph promotion now that fan-out has lifted every
-    // inner choice to the top level of its enclosing rule.
-    // Override-sourced polymorphs (variant() metadata) are already
-    // PolymorphRule from Link's `applyOverridePolymorphs`; promotePolymorph
-    // is a no-op on them (findVariantChoice doesn't match polymorphs).
-    for (const name of Object.keys(rules)) {
-        rules[name] = promotePolymorph(rules[name]!)
-    }
+    // Polymorph classification lives in Link (variant()-driven, with
+    // suggestion-only heuristic detection). Optimize is simplification
+    // only — it MUST NOT silently classify rules as polymorphs because
+    // tree-sitter's parser-generator doesn't see Optimize's mutations
+    // and the parse tree wouldn't match the typed surface. Heuristic
+    // candidates that need promotion are surfaced via suggested.ts;
+    // the user authors variant() in overrides.ts to make them explicit.
     for (const name of Object.keys(rules)) {
         rules[name] = factorChoiceBranches(rules[name]!)// T061
     }

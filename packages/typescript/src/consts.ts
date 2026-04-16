@@ -183,6 +183,7 @@ export const LEAF_KINDS = [
   '_template_chars',
   'abstract',
   'accessibility_modifier',
+  'accessor',
   'as',
   'async',
   'await',
@@ -199,6 +200,7 @@ export const LEAF_KINDS = [
   'else',
   'enum',
   'escape_sequence',
+  'export',
   'extends',
   'false',
   'finally',
@@ -268,6 +270,7 @@ export const ALL_KINDS = [...NODE_KINDS, ...LEAF_KINDS] as const;
 /** Language keywords (alphabetic anonymous tokens). */
 export const KEYWORDS = [
   'abstract',
+  'accessor',
   'as',
   'async',
   'await',
@@ -284,6 +287,7 @@ export const KEYWORDS = [
   'empty_statement',
   'enum',
   'existential_type',
+  'export',
   'extends',
   'false',
   'finally',
@@ -432,7 +436,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'arrow_function': [
     { name: 'async', required: false, multiple: false },
-    { name: 'parameter', required: true, multiple: false },
+    { name: 'parameter', required: false, multiple: false },
     { name: 'body', required: true, multiple: false },
   ],
   'as_expression': [
@@ -689,7 +693,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'import_specifier': [
     { name: 'name', required: true, multiple: false },
-    { name: 'alias', required: true, multiple: false },
+    { name: 'alias', required: false, multiple: false },
   ],
   'import_statement': [
     { name: 'import', required: true, multiple: false },
@@ -700,8 +704,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'index_signature': [
     { name: 'mappedTypeClause', required: true, multiple: false },
-    { name: 'name', required: true, multiple: false },
-    { name: 'indexType', required: true, multiple: false },
+    { name: 'name', required: false, multiple: false },
+    { name: 'indexType', required: false, multiple: false },
     { name: 'type', required: true, multiple: false },
   ],
   'index_type_query': [
@@ -775,8 +779,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'member_expression': [
     { name: 'object', required: true, multiple: false },
+    { name: 'optionalChain', required: false, multiple: false },
     { name: 'property', required: true, multiple: false },
-    { name: 'optionalChain', required: true, multiple: false },
   ],
   'method_definition': [
     { name: 'accessibilityModifier', required: false, multiple: false },
@@ -883,9 +887,9 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'declare', required: false, multiple: false },
     { name: 'static', required: false, multiple: false },
     { name: 'readonly', required: false, multiple: false },
+    { name: 'abstract', required: false, multiple: false },
     { name: 'name', required: true, multiple: false },
     { name: 'type', required: false, multiple: false },
-    { name: 'abstract', required: false, multiple: false },
   ],
   'readonly_type': [
     { name: 'readonly', required: true, multiple: false },

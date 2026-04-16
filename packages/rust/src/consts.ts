@@ -557,7 +557,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'foreign_mod_item': [
     { name: 'visibilityModifier', required: false, multiple: false },
     { name: 'externModifier', required: true, multiple: false },
-    { name: 'body', required: true, multiple: false },
+    { name: 'body', required: false, multiple: false },
   ],
   'function_item': [
     { name: 'visibilityModifier', required: false, multiple: false },
@@ -626,7 +626,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'typeParameters', required: false, multiple: false },
     { name: 'trait', required: false, multiple: false },
     { name: 'type', required: true, multiple: false },
-    { name: 'body', required: true, multiple: false },
+    { name: 'body', required: false, multiple: false },
   ],
   'index_expression': [
     { name: 'object', required: true, multiple: false },
@@ -702,7 +702,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'mod_item': [
     { name: 'visibilityModifier', required: false, multiple: false },
     { name: 'name', required: true, multiple: false },
-    { name: 'body', required: true, multiple: false },
+    { name: 'body', required: false, multiple: false },
   ],
   'mut_pattern': [
     { name: 'mutableSpecifier', required: true, multiple: false },
@@ -762,7 +762,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'range_pattern_left': [
     { name: 'left', required: true, multiple: false },
-    { name: 'right', required: true, multiple: false },
+    { name: 'right', required: false, multiple: false },
   ],
   'range_pattern_prefix': [
     { name: 'right', required: true, multiple: false },
@@ -840,7 +840,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'visibilityModifier', required: false, multiple: false },
     { name: 'name', required: true, multiple: false },
     { name: 'typeParameters', required: false, multiple: false },
-    { name: 'body', required: true, multiple: false },
+    { name: 'body', required: false, multiple: false },
   ],
   'struct_pattern': [
     { name: 'type', required: true, multiple: false },

@@ -15,7 +15,7 @@
 // Summary
 // ---------------------------------------------------------------
 // Field inferences: 15  (0 applied, 15 held)
-// Rule promotions:  29  (28 applied, 1 held)
+// Rule promotions:  41  (40 applied, 1 held)
 // Repeated shapes:  5  (advisory — suggested supertypes/groups)
 
 // ---------------------------------------------------------------
@@ -40,7 +40,10 @@ export const suggestedRules = {
   // [held] "field_initializer" field 'attributes' on $.attribute_item — 80% agreement, 5 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
 
   // impl_item: 1 inferred field(s)
-  // [held] "impl_item" field 'where_clause' on $.where_clause — 86% agreement, 7 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
+  "impl_item": ($, original) => transform(original, {
+    // [held] 86% agreement, 7 parents
+    5: field("where_clause"),  // $.where_clause
+  }),
 
   // last_match_arm: 1 inferred field(s)
   // [held] "last_match_arm" field 'attributes' on $.attribute_item — 80% agreement, 5 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
@@ -167,10 +170,22 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "unit_expression", classification: "terminal", applied: true },
   { kind: "unit_type", classification: "terminal", applied: true },
   { kind: "closure_expression", classification: "polymorph", applied: true },
+  { kind: "closure_expression_block", classification: "polymorph", applied: true },
+  { kind: "closure_expression_expr", classification: "polymorph", applied: true },
   { kind: "field_pattern", classification: "polymorph", applied: true },
+  { kind: "field_pattern_named", classification: "polymorph", applied: true },
+  { kind: "field_pattern_shorthand", classification: "polymorph", applied: true },
   { kind: "or_pattern", classification: "polymorph", applied: true },
+  { kind: "or_pattern_binary", classification: "polymorph", applied: true },
+  { kind: "or_pattern_prefix", classification: "polymorph", applied: true },
   { kind: "range_expression", classification: "polymorph", applied: true },
+  { kind: "range_expression_bare", classification: "polymorph", applied: true },
+  { kind: "range_expression_binary", classification: "polymorph", applied: true },
+  { kind: "range_expression_postfix", classification: "polymorph", applied: true },
+  { kind: "range_expression_prefix", classification: "polymorph", applied: true },
   { kind: "range_pattern", classification: "polymorph", applied: true },
+  { kind: "range_pattern_left", classification: "polymorph", applied: true },
+  { kind: "range_pattern_prefix", classification: "polymorph", applied: true },
   { kind: "visibility_modifier", classification: "polymorph", applied: false },
 ];
 
