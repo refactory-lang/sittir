@@ -31,14 +31,9 @@ export default grammar(enrich(base), {
         return prev
     },
     rules: {
-        // assignment: nested-alias polymorph (spec 007).
-        // Base rule: seq(field('left', _lhs), choice(
-        //   seq('=', field('right', _rhs)),           → assignment_eq
-        //   seq(':', field('type', type)),             → assignment_type
-        //   seq(':', field('type', type), '=', field('right', _rhs))  → assignment_typed
-        // ))
-        // Each choice branch is wrapped in alias to produce a named
-        // variant child node in the parse tree.
+        // assignment: nested-alias polymorph.
+        // alias('name') captures the choice branch content into a
+        // hidden rule _name and replaces with alias($._name, $.name).
         assignment: ($, original) => transform(original, {
             '1/0': alias('assignment_eq'),
             '1/1': alias('assignment_type'),

@@ -13,6 +13,7 @@ import type {
     EnumRule, SymbolRef, RawGrammar, ExternalRole,
 } from './rule.ts'
 import { withRoleScope } from '../dsl/role.ts'
+import { withSyntheticRuleScope } from '../dsl/synthetic-rules.ts'
 
 // ---------------------------------------------------------------------------
 // Input type — anything the DSL functions accept
@@ -703,16 +704,21 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
     // withRoleScope guarantees nested grammar() calls (e.g. via
     // grammar(enrich(base), {...})) stay isolated.
     const { roles: collectedRoles } = withRoleScope(() => {
-        // Evaluate each rule function
-        for (const [name, ruleFn] of Object.entries(opts.rules)) {
-            const $ = createProxy(name, refs)
-            const baseRule = baseRules[name]
-            // tree-sitter passes ($, original) — original is the base rule for extensions.
-            // `baseRule` is typed as `Rule` from our map but the DSL callback's
-            // `previous` is `unknown` (tree-sitter permits arbitrary pass-through
-            // shapes). The call-site treats it as opaque.
-            const result = ruleFn.call($, $, baseRule)
-            rules[name] = normalize(result)
+        const { syntheticRules } = withSyntheticRuleScope(() => {
+            // Evaluate each rule function
+            for (const [name, ruleFn] of Object.entries(opts.rules)) {
+                const $ = createProxy(name, refs)
+                const baseRule = baseRules[name]
+                const result = ruleFn.call($, $, baseRule)
+                rules[name] = normalize(result)
+            }
+        })
+
+        // Inject synthetic rules created by alias() placeholders in
+        // transform patches. These are hidden variant rules for
+        // nested-alias polymorphs.
+        for (const [name, content] of syntheticRules) {
+            rules[name] = content as Rule
         }
 
         // The rest of the callbacks (extras, externals, supertypes,

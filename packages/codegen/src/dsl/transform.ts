@@ -24,6 +24,7 @@
 import { parsePath, applyPath, reconstructWrapper, reconstructPrec, reconstructContainer } from './transform-path.ts'
 import { isFieldPlaceholder, type FieldPlaceholder } from './field.ts'
 import { isAliasPlaceholder, type AliasPlaceholder } from './alias.ts'
+import { registerSyntheticRule } from './synthetic-rules.ts'
 import { isFieldLike, isPrecWrapper, isWrapperType, type RuntimeRule } from './runtime-shapes.ts'
 
 /**
@@ -177,16 +178,17 @@ function resolvePatch(
     if (isFieldLike(patch)) {
         return { ...patch, source: 'override' as const } as unknown as RuntimeRule
     }
-    // Alias placeholder — alias('variant_name'): wrap the original
-    // member as a named alias. Used for nested-alias polymorphs where
-    // each choice branch gets wrapped to produce a named variant child
-    // in the parse tree. Constructed directly to work in both sittir
-    // (lowercase) and tree-sitter CLI (uppercase) runtimes.
+    // Alias placeholder — alias('variant_name'): register a hidden
+    // rule with the original content and return alias($._hidden, $.visible).
+    // The hidden rule is picked up by evaluate.ts (sittir) or the
+    // grammar wrapper (tree-sitter CLI) after all callbacks run.
     if (isAliasPlaceholder(patch)) {
+        const hiddenName = '_' + patch.name
+        registerSyntheticRule(hiddenName, originalMember)
         const isUpperCase = originalMember.type === originalMember.type.toUpperCase()
         return {
             type: isUpperCase ? 'ALIAS' : 'alias',
-            content: originalMember,
+            content: { type: isUpperCase ? 'SYMBOL' : 'symbol', name: hiddenName },
             named: true,
             value: patch.name,
         } as unknown as RuntimeRule

@@ -36,3 +36,6 @@ export { role } from './role.ts'
 export { enrich } from './enrich.ts'
 export { alias } from './alias.ts'
 export { field } from './field.ts'
+
+import { installGrammarWrapper } from './synthetic-rules.ts'
+installGrammarWrapper()
