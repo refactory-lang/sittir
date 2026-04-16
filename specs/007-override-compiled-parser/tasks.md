@@ -65,10 +65,10 @@
 ### Implementation for User Story 4
 
 - [x] T013 [US4] Create `packages/codegen/src/transpile/compile-parser.ts` implementing `compileParser(grammarDir, options?)` per contract in `specs/007-override-compiled-parser/contracts/parser-loading.md`: check `.sittir/grammar.js` exists, check mtime of `.sittir/parser.wasm` vs `grammar.js`, run `tree-sitter generate` + `tree-sitter build --wasm` if stale or missing, return wasm path
-- [ ] T014 [US4] Create `loadOverrideParser(grammarDir)` in the same file: calls `compileParser()`, then `loadWebTreeSitter()` from `validators/common.ts`, then `Language.load(wasmPath)`, returns `{ Parser, Language, lang }`
+- [x] T014 [US4] Create `loadOverrideParser(grammarDir)` in the same file: calls `compileParser()`, then `loadWebTreeSitter()` from `validators/common.ts`, then `Language.load(wasmPath)`, returns `{ Parser, Language, lang }`
 - [x] T015 [US4] Add tests for compile-parser in `packages/codegen/src/__tests__/compile-parser.test.ts`: test cold compile produces wasm, warm cache skips recompilation, stale cache recompiles, missing grammar.js throws, force option recompiles, warm-cache path completes in <100ms (SC-004), cold compile completes within 30s per grammar (SC-005)
-- [ ] T016 [US4] Integrate `compileParser` into the codegen CLI pipeline in `packages/codegen/src/cli.ts`: after transpile step, call `compileParser()` to ensure WASM is current before validation runs
-- [ ] T017 [US4] Add `--compile-parser` CLI flag to `packages/codegen/src/cli.ts` for standalone parser compilation (useful for CI pre-warming)
+- [x] T016 [US4] Integrate `compileParser` into the codegen CLI pipeline in `packages/codegen/src/cli.ts`: after transpile step, call `compileParser()` to ensure WASM is current before validation runs
+- [x] T017 [US4] Add `--compile-parser` CLI flag to `packages/codegen/src/cli.ts` for standalone parser compilation (useful for CI pre-warming)
 
 **Checkpoint**: `pnpm sittir codegen --grammar python` automatically compiles the override parser on first use and caches it.
 

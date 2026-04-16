@@ -13,8 +13,10 @@ import { validateFactoryRoundTrip, formatFactoryRoundTripReport } from './valida
 import { validateFrom, formatFromReport } from './validate-from.ts';
 import { validateRenderableFromNodeMap, formatRenderableReport } from './validate-renderable.ts';
 import { validateReadNodeRoundTrip, formatReadNodeRoundTripReport } from './validate-readnode-roundtrip.ts';
-import { join, dirname } from 'node:path';
+import { join, dirname, resolve } from 'node:path';
 import { generate } from './compiler/generate.ts';
+import { compileParser } from './transpile/compile-parser.ts';
+import { transpileOverrides } from './transpile/transpile-overrides.ts';
 
 interface CodegenConfig {
 	grammar: string;
@@ -29,6 +31,8 @@ interface CliArgs {
 	all?: boolean;
 	testsDir?: string;
 	roundtrip?: boolean;
+	compileParser?: boolean;
+	transpile?: boolean;
 	help?: boolean;
 }
 
@@ -59,6 +63,12 @@ function parseArgs(argv: string[]): CliArgs {
 			case '--roundtrip':
 				args.roundtrip = true;
 				break;
+			case '--compile-parser':
+				args.compileParser = true;
+				break;
+			case '--transpile':
+				args.transpile = true;
+				break;
 			case '--help':
 			case '-h':
 				args.help = true;
@@ -85,13 +95,36 @@ Options:
   --all, -a        Generate for all branch node kinds
   --output, -o     Output directory for generated files
   --tests-dir      Output directory for test files (default: ../tests)
+  --transpile      Transpile overrides.ts to .sittir/grammar.js
+  --compile-parser Compile override grammar to .sittir/parser.wasm
   --help, -h       Show this help
 `);
 	process.exit(0);
 }
 
-if (!cliArgs.grammar || !cliArgs.outputDir) {
-	console.error('Missing required arguments: --grammar and --output. Use --help for usage.');
+if (!cliArgs.grammar) {
+	console.error('Missing required argument: --grammar. Use --help for usage.');
+	process.exit(1);
+}
+
+// Standalone transpile/compile — doesn't require --output
+if (cliArgs.transpile || cliArgs.compileParser) {
+	const grammarDir = resolve('packages', cliArgs.grammar);
+	if (cliArgs.transpile) {
+		console.log(`Transpiling ${cliArgs.grammar} overrides...`);
+		const tr = await transpileOverrides({ grammar: cliArgs.grammar });
+		console.log(`  → ${tr.outputPath} (${tr.outputBytes} bytes)`);
+	}
+	if (cliArgs.compileParser) {
+		console.log(`Compiling ${cliArgs.grammar} parser to WASM...`);
+		const wasmPath = await compileParser(grammarDir);
+		console.log(`  → ${wasmPath}`);
+	}
+	if (!cliArgs.outputDir) process.exit(0);
+}
+
+if (!cliArgs.outputDir) {
+	console.error('Missing required argument: --output. Use --help for usage.');
 	process.exit(1);
 }
 
