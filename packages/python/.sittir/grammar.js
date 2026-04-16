@@ -415,7 +415,7 @@ function resolvePatch(patch, originalMember, precStack) {
       const isUpperCase = c.type === "STRING";
       const hiddenName = `_kw_${patch.name}`;
       const nativePrec = globalThis.prec;
-      const precBody = typeof nativePrec?.left === "function" ? nativePrec.left(1e3, content) : content;
+      const precBody = typeof nativePrec?.left === "function" ? nativePrec.left(1, content) : content;
       registerSyntheticRule(hiddenName, wrapInPrec(precBody, precStack));
       content = {
         type: isUpperCase ? "SYMBOL" : "symbol",

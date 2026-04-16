@@ -200,17 +200,33 @@ function resolvePatch(
         if (c && (c.type === 'STRING' || c.type === 'string')) {
             const isUpperCase = c.type === 'STRING'
             const hiddenName = `_kw_${patch.name}`
-            // Wrap with high-precedence prec.left via the runtime's
-            // native primitive. Tree-sitter keeps the PREC_LEFT and
-            // uses it to resolve conflicts with identifiers (soft
-            // keywords like python's `match`/`case` and typescript's
-            // `async`). Sittir's prec.left strips and returns content
-            // (sittir doesn't model precedence in the Rule union).
+            // Wrap with `prec.left(1, rule)` — minimum positive
+            // precedence to resolve LR(1) conflicts with default-0
+            // rules. Research notes:
+            //   - Bare strings in tree-sitter have implicit precedence 0.
+            //     Before wrapping, there was no rule-level conflict
+            //     because no alternative parse path existed for the
+            //     token at that position.
+            //   - Creating `_kw_<name>` as a named rule introduces a
+            //     distinct parser path. For soft keywords (python's
+            //     `match`/`case`, typescript's `async`) that also
+            //     match an identifier pattern, tree-sitter now sees
+            //     ambiguity and requires a tiebreaker.
+            //   - prec.left(1, ...) is the smallest value that wins
+            //     against default 0, aligning as closely as possible
+            //     with the original bare-string behavior without
+            //     arbitrarily overriding grammar-authored prec values
+            //     (which typically cap around 0-22).
+            //   - Tree-sitter-python uses `prec.left('pass')` with no
+            //     numeric for unambiguous keywords; we need a numeric
+            //     only because our wrapping creates potential ambiguity.
+            // Sittir's prec.left strips the wrapper (its Rule union
+            // doesn't model precedence); tree-sitter preserves it.
             const nativePrec = (globalThis as {
                 prec?: { left?: (v: number, c: unknown) => unknown }
             }).prec
             const precBody = typeof nativePrec?.left === 'function'
-                ? nativePrec.left(1000, content)
+                ? nativePrec.left(1, content)
                 : content
             registerSyntheticRule(hiddenName, wrapInPrec(precBody as RuntimeRule, precStack))
             content = {

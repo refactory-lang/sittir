@@ -15,7 +15,7 @@ function mkGrammar(rules: Record<string, Rule>) {
 // output, mirroring what grammar() does under both runtimes.
 function runEnrich(input: ReturnType<typeof mkGrammar>) {
     const out = enrich(input) as unknown as {
-        grammar: { rules: Record<string, Rule> }
+        grammar: { name: string, rules: Record<string, Rule> }
         __enrichOverrides__?: Record<string, (_$: unknown, original: Rule) => Rule>
     }
     const overrides = out.__enrichOverrides__ ?? {}

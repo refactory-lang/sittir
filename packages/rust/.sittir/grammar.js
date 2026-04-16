@@ -398,11 +398,8 @@ function resolvePatch(patch, originalMember, precStack) {
     if (c && (c.type === "STRING" || c.type === "string")) {
       const isUpperCase = c.type === "STRING";
       const hiddenName = `_kw_${patch.name}`;
-      const precBody = {
-        type: isUpperCase ? "PREC_LEFT" : "prec_left",
-        value: 1e3,
-        content
-      };
+      const nativePrec = globalThis.prec;
+      const precBody = typeof nativePrec?.left === "function" ? nativePrec.left(1, content) : content;
       registerSyntheticRule(hiddenName, wrapInPrec(precBody, precStack));
       content = {
         type: isUpperCase ? "SYMBOL" : "symbol",
