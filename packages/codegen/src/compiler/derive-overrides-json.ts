@@ -90,6 +90,11 @@ function collectFields(
             // `transform()`) produce fields with no source; those are
             // allowed when `ctx.inOverrideRule` is set.
             // `override` — explicit transform() wrapping. Always picked up.
+            //   Kept here as a defensive fallback for grammars without an
+            //   override-compiled parser (where the base parser doesn't
+            //   carry these fields). With the override-compiled parser
+            //   present, readNode reads fieldNameForChild first and only
+            //   consults this routing as a fallback — no divergence risk.
             // `inferred` — Link's auto-promotion of `optional(keyword)` prefixes
             //   (python `async`, rust `move`, etc.) to first-class fields.
             //   These need runtime routing so readNode promotes the anonymous

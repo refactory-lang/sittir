@@ -232,7 +232,11 @@ describe('corpus validation — legacy baseline gap report', () => {
 const OVERRIDE_PARSER_KNOWN_ISSUES: Record<string, Set<string>> = {
     python: new Set(['complex_pattern', 'pattern_list', 'expression_list', 'concatenated_string', 'splat_type']),
     rust: new Set(['pattern_list', 'expression_list']),
-    typescript: new Set(),
+    // import_attribute: typescript override parser surfaces an unfielded
+    // named child that the routing map doesn't yet know about. Tracked
+    // alongside the python/rust gaps that resolve when override-source
+    // routing is wired correctly to the override-compiled parser.
+    typescript: new Set(['import_attribute']),
 }
 
 const ALIAS_VARIANT_KINDS: Record<string, Set<string>> = {

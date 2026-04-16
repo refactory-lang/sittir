@@ -597,7 +597,7 @@ function wrapAsField(name, content) {
     type: "field",
     name,
     content,
-    source: "inferred"
+    source: "override"
   };
 }
 function collectFieldNames(rule) {

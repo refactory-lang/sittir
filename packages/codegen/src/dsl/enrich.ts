@@ -17,7 +17,7 @@
  *   1. Unambiguous kind-to-name field wrapping — when a top-level seq
  *      member is a bare `$.kind` symbol reference that appears exactly
  *      once in its parent rule and does not collide with an existing
- *      field name, wraps it as `field('kind', $.kind, source: 'inferred')`.
+ *      field name, wraps it as `field('kind', $.kind, source: 'override')`.
  *
  *   2. Optional keyword-prefix field promotion — when an
  *      `optional(stringLiteral)` appears at any seq position (including
@@ -286,11 +286,16 @@ function mapRules(g: GrammarResult, fn: (ruleName: string, rule: Rule) => Rule):
 }
 
 function wrapAsField(name: string, content: Rule): FieldRule {
+    // enrich() runs as part of the overrides pipeline (the user wraps
+    // their grammar with enrich(base) in overrides.ts), so its
+    // promotions are user-authored — same status as transform()-applied
+    // fields. Tag as 'override' so derive-overrides-json + the runtime
+    // routing map treat them uniformly with explicit transform() patches.
     return {
         type: 'field',
         name,
         content,
-        source: 'inferred',
+        source: 'override',
     }
 }
 

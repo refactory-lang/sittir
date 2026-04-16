@@ -2210,14 +2210,14 @@ export interface AssignmentPatternTree extends TreeNode<'assignment_pattern'> {}
 export interface ObjectAssignmentPatternTree extends TreeNode<'object_assignment_pattern'> {}
 export interface ArrayTree extends TreeNode<'array'> {}
 export interface ArrayPatternTree extends TreeNode<'array_pattern'> {}
-export interface JsxElementTree extends AnyTreeNode { readonly type: "jsx_element"; }
-export interface JsxExpressionTree extends AnyTreeNode { readonly type: "jsx_expression"; }
-export interface JsxOpeningElementTree extends AnyTreeNode { readonly type: "jsx_opening_element"; }
+export interface JsxElementTree extends TreeNode<'jsx_element'> {}
+export interface JsxExpressionTree extends TreeNode<'jsx_expression'> {}
+export interface JsxOpeningElementTree extends TreeNode<'jsx_opening_element'> {}
 export interface NestedIdentifierTree extends TreeNode<'nested_identifier'> {}
-export interface JsxNamespaceNameTree extends AnyTreeNode { readonly type: "jsx_namespace_name"; }
-export interface JsxClosingElementTree extends AnyTreeNode { readonly type: "jsx_closing_element"; }
-export interface JsxSelfClosingElementTree extends AnyTreeNode { readonly type: "jsx_self_closing_element"; }
-export interface JsxAttributeTree extends AnyTreeNode { readonly type: "jsx_attribute"; }
+export interface JsxNamespaceNameTree extends TreeNode<'jsx_namespace_name'> {}
+export interface JsxClosingElementTree extends TreeNode<'jsx_closing_element'> {}
+export interface JsxSelfClosingElementTree extends TreeNode<'jsx_self_closing_element'> {}
+export interface JsxAttributeTree extends TreeNode<'jsx_attribute'> {}
 export interface JsxStringTree extends AnyTreeNode { readonly type: "_jsx_string"; }
 export interface ClassTree extends TreeNode<'class'> {}
 export interface ClassDeclarationTree extends TreeNode<'class_declaration'> {}
@@ -2273,7 +2273,7 @@ export interface MethodSignatureTree extends TreeNode<'method_signature'> {}
 export interface AbstractMethodSignatureTree extends TreeNode<'abstract_method_signature'> {}
 export interface FunctionSignatureTree extends TreeNode<'function_signature'> {}
 export interface DecoratorParenthesizedExpressionTree extends AnyTreeNode { readonly type: "decorator_parenthesized_expression"; }
-export interface TypeAssertionTree extends TreeNode<'type_assertion'> {}
+export interface TypeAssertionTree extends AnyTreeNode { readonly type: "type_assertion"; }
 export interface AsExpressionTree extends TreeNode<'as_expression'> {}
 export interface SatisfiesExpressionTree extends TreeNode<'satisfies_expression'> {}
 export interface InstantiationExpressionTree extends TreeNode<'instantiation_expression'> {}
@@ -2351,7 +2351,7 @@ export interface ShorthandPropertyIdentifierPatternTree extends TreeNode<'shorth
 export interface InterfaceBodyTree extends TreeNode<'interface_body'> {}
 export interface HashBangLineTree extends TreeNode<'hash_bang_line'> {}
 export interface ImportTree extends AnyTreeNode { readonly type: "import"; }
-export interface HtmlCharacterReferenceTree extends AnyTreeNode { readonly type: "html_character_reference"; }
+export interface HtmlCharacterReferenceTree extends TreeNode<'html_character_reference'> {}
 export interface JsxIdentifierTree extends AnyTreeNode { readonly type: "jsx_identifier"; }
 export interface UnescapedDoubleJsxStringFragmentTree extends AnyTreeNode { readonly type: "unescaped_double_jsx_string_fragment"; }
 export interface UnescapedSingleJsxStringFragmentTree extends AnyTreeNode { readonly type: "unescaped_single_jsx_string_fragment"; }
@@ -2379,7 +2379,7 @@ export interface AutomaticSemicolonTree extends AnyTreeNode { readonly type: "_a
 export interface TemplateCharsTree extends AnyTreeNode { readonly type: "_template_chars"; }
 export interface HtmlCommentTree extends TreeNode<'html_comment'> {}
 export interface OrorTree extends AnyTreeNode { readonly type: "||"; }
-export interface JsxTextTree extends AnyTreeNode { readonly type: "jsx_text"; }
+export interface JsxTextTree extends TreeNode<'jsx_text'> {}
 export interface FunctionSignatureAutomaticSemicolonTree extends AnyTreeNode { readonly type: "_function_signature_automatic_semicolon"; }
 export interface ErrorRecoveryTree extends AnyTreeNode { readonly type: "__error_recovery"; }
 export interface StatementIdentifierTree extends TreeNode<'statement_identifier'> {}
