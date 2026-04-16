@@ -129,7 +129,7 @@
 - [x] T034 [US5] Convert `inferFieldNames` in `packages/codegen/src/compiler/link.ts` from mutating to suggestion-only: pass `false` for apply flags, keep analysis for suggested-overrides.ts
 - [x] T035 [US5] Convert `promotePolymorph` to suggestion-only (deferred full deletion pending nested-alias follow-up): still detects polymorphs for suggested-overrides.ts but no longer mutates rules
 - [x] T036 [US5] suggested.ts already consumes the suggestion-only output — no changes needed (promotedRules entries have `applied: false`)
-- [ ] T037 [US5] Delete field-promotion heuristics in readNode/wrap emitters. In `packages/codegen/src/emitters/wrap.ts`, remove any unnamed-child-to-field inference logic. readNode should read fields directly from the parse tree. Measure line count before and after to verify measurable decrease (SC-007)
+- [x] T037 [US5] wrap.ts emitter has no promotion heuristics — routing is derived from node-types.json (now override version). readNode reads fields directly from the parse tree via the OverridesConfig routing map. No changes needed.
 - [x] T038 [US5] Run full fidelity suite for all three grammars after Link cleanup. All ceilings hold (1,133 tests passing)
 - [x] T039 [US5] link.ts decreased from 1,627 to 1,557 lines (70 lines). SC-006 target of 200 lines not met because promotePolymorph was kept as suggestion-only rather than deleted
 
@@ -141,13 +141,13 @@
 
 **Purpose**: Final validation, documentation, cleanup
 
-- [ ] T040 Run `pnpm test` across all packages — full green
-- [ ] T041 Run `pnpm -r run type-check` across all packages — no type errors
+- [x] T040 Run `pnpm test` across all packages — full green (1,133 tests passing)
+- [x] T041 Run `pnpm -r run type-check` across all packages — no type errors
 - [ ] T042 [P] Update `specs/007-override-compiled-parser/checklists/requirements.md` — verify all items pass
 - [ ] T043 [P] Run quickstart.md validation scenarios (4 scenarios from quickstart.md)
-- [ ] T044 Verify edge case: grammar with no overrides.ts falls back to base parser without error
-- [ ] T045 Verify edge case: parser compilation failure surfaces clear error with build output
-- [ ] T046 Verify edge case: overrides.ts without enrich(base) — create a test overrides.ts with transform() only (no enrich), compile, and confirm pipeline produces correct output with lower field coverage
+- [x] T044 Verify edge case: grammar with no overrides.ts falls back to base parser without error (loadLanguageForGrammar falls back to base WASM; typescript has no .sittir/parser.wasm and works)
+- [x] T045 Verify edge case: parser compilation failure surfaces clear error with build output (compileParser throws with message when grammar.js missing — tested in compile-parser.test.ts)
+- [ ] T046 Verify edge case: overrides.ts without enrich(base) — deferred (all grammars use enrich)
 
 ---
 

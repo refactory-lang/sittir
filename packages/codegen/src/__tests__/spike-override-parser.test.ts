@@ -13,14 +13,14 @@ describe('spike: override-compiled parser', () => {
         const parser = new Parser()
         parser.setLanguage(lang)
 
-        const tree = parser.parse('a if b else c')
+        const tree = parser.parse('a if b else c') as any
         const root = tree.rootNode
 
         expect(root.type).toBe('module')
-        const expr = root.firstChild!
+        const expr = root.firstChild
         expect(expr.type).toBe('expression_statement')
 
-        const cond = expr.firstNamedChild!
+        const cond = expr.firstNamedChild
         expect(cond.type).toBe('conditional_expression')
 
         const bodyField = cond.childForFieldName('body')

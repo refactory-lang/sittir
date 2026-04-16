@@ -25,7 +25,7 @@ describe('enrich — bareKeywordPrefixPass', () => {
         }))
 
         const seq = topSeq(g, 'async_fn')
-        const first = seq.members[0] as FieldRule
+        const first = seq.members[0]! as FieldRule
         expect(first.type).toBe('field')
         expect(first.name).toBe('async')
         expect((first.content as StringRule).value).toBe('async')
@@ -44,7 +44,7 @@ describe('enrich — bareKeywordPrefixPass', () => {
         }))
 
         const seq = topSeq(g, 'for_loop')
-        expect(seq.members[1].type).toBe('string')
+        expect(seq.members[1]!.type).toBe('string')
     })
 
     it('does NOT wrap non-identifier-shaped literals (punctuation)', () => {
@@ -60,7 +60,7 @@ describe('enrich — bareKeywordPrefixPass', () => {
         }))
 
         const seq = topSeq(g, 'paren')
-        expect(seq.members[0].type).toBe('string')
+        expect(seq.members[0]!.type).toBe('string')
     })
 
     it('skips when field with same name already exists on the rule', () => {
@@ -77,7 +77,7 @@ describe('enrich — bareKeywordPrefixPass', () => {
         }))
 
         const seq = topSeq(g, 'pub_fn')
-        expect(seq.members[0].type).toBe('string')
+        expect(seq.members[0]!!.type).toBe('string')
         expect(stderrSpy).toHaveBeenCalledWith(
             expect.stringContaining('bare-keyword-prefix')
         )
@@ -101,7 +101,7 @@ describe('enrich — bareKeywordPrefixPass', () => {
         }))
 
         const rule = g.grammar.rules['maybe_async'] as { type: string; members: Rule[] }
-        const innerSeq = rule.members[0] as SeqRule
-        expect(innerSeq.members[0].type).toBe('string')
+        const innerSeq = rule.members[0]! as SeqRule
+        expect(innerSeq.members[0]!.type).toBe('string')
     })
 })
