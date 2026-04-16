@@ -37,13 +37,14 @@ Given any tree-sitter grammar, sittir generates:
 import { ir } from '@sittir/rust'
 
 const node = ir.functionItem({
-  name: ir.identifier({ text: 'main' }),
-  parameters: ir.parameters({}),
-  body: ir.block({})
+  name: ir.identifier('main'),       // leaf factory takes text directly
+  parameters: ir.parameters(),       // rest-params (variadic children)
+  body: ir.block({ children: [] }),
 })
 
-console.log(node.type)        // 'function_item'
-console.log(node.name().text) // 'main' (fluent getter)
+console.log(node.type)               // 'function_item'
+console.log(node.name().text)        // 'main' (fluent getter, no-arg = get)
+const withBody = node.body(newBlock)  // with-arg = setter (returns new node)
 ```
 
 ### `.from()` API
@@ -52,10 +53,10 @@ console.log(node.name().text) // 'main' (fluent getter)
 import { ir } from '@sittir/typescript'
 
 const fn = ir.functionDeclaration.from({
-  name: 'greet',           // string auto-resolves to leaf node
-  parameters: ir.formalParameters.from({}),
-  returnType: 'void',
-  body: ir.statementBlock.from({})
+  name: 'greet',             // string → identifier leaf node
+  body: ir.statementBlock.from({
+    children: [ir.returnStatement.from({ children: [ir.identifier('hello')] })],
+  }),
 })
 ```
 
@@ -78,7 +79,7 @@ const nodeData = wrap(treeSitterNode)
 
 // Create a text edit
 const patch = edit(treeSitterNode, (nd) => {
-  return nd.body(ir.block({}))
+  return nd.body(ir.block({ children: [] }))
 })
 // patch = { startIndex, endIndex, newText }
 ```
