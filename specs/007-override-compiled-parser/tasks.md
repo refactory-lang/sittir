@@ -82,11 +82,11 @@
 
 ### Implementation for User Story 1
 
-- [ ] T018 [US1] Modify `packages/codegen/src/validators/common.ts`: add `loadOverrideLanguage(grammarDir)` helper that calls `loadOverrideParser()` from compile-parser.ts, returning the override language. Validators use this instead of base WASM when the override parser exists
-- [ ] T019 [P] [US1] Update `packages/codegen/src/validate-roundtrip.ts` to use `loadOverrideLanguage()` for parsing instead of base grammar WASM
-- [ ] T020 [P] [US1] Update `packages/codegen/src/validate-factory-roundtrip.ts` to use `loadOverrideLanguage()` for parsing
-- [ ] T021 [P] [US1] Update `packages/codegen/src/validate-readnode-roundtrip.ts` to use `loadOverrideLanguage()` for parsing
-- [ ] T022 [P] [US1] Update `packages/codegen/src/validate-from.ts` to use `loadOverrideLanguage()` for parsing
+- [x] T018 [US1] Modify `packages/codegen/src/validators/common.ts`: add `loadLanguageForGrammar()` helper that prefers override WASM when present, falls back to base. Validators use this instead of manual WASM loading
+- [x] T019 [P] [US1] Update `packages/codegen/src/validate-roundtrip.ts` to use `loadLanguageForGrammar()` for parsing instead of base grammar WASM
+- [x] T020 [P] [US1] Update `packages/codegen/src/validate-factory-roundtrip.ts` to use `loadLanguageForGrammar()` for parsing
+- [x] T021 [P] [US1] Update `packages/codegen/src/validate-readnode-roundtrip.ts` to use `loadLanguageForGrammar()` for parsing
+- [x] T022 [P] [US1] Update `packages/codegen/src/validate-from.ts` to use `loadLanguageForGrammar()` for parsing
 - [ ] T023 [US1] Switch the codegen pipeline to read `node-types.json` from `.sittir/node-types.json` (override) instead of from the base grammar npm package. Update the grammar resolution logic in `packages/codegen/src/compiler/generate.ts` or the CLI entrypoint
 - [ ] T024 [US1] Run full fidelity suite for all three grammars with override parser. Update fidelity ceilings if coverage improves (expected: field coverage increases since override parser carries more fields natively)
 - [ ] T025 [US1] Verify parse-tree field validation: write a focused test in `packages/codegen/src/__tests__/override-parser-fields.test.ts` that parses specific snippets (python `conditional_expression`, rust `range_expression`) and asserts override fields are present in the web-tree-sitter parse tree

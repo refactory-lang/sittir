@@ -13,8 +13,11 @@
  * own file and imports whatever it needs from here.
  */
 
-import { readFileSync, readdirSync } from 'node:fs'
+import { readFileSync, readdirSync, existsSync } from 'node:fs'
+import { createRequire } from 'node:module'
 import { join } from 'node:path'
+
+const require = createRequire(import.meta.url)
 import type { AnyTreeNode } from '@sittir/types'
 
 // ---------------------------------------------------------------------------
@@ -290,4 +293,34 @@ export const WASM_PATHS: Record<string, string> = {
     rust: 'tree-sitter-rust/tree-sitter-rust.wasm',
     typescript: 'tree-sitter-typescript/tree-sitter-typescript.wasm',
     python: 'tree-sitter-python/tree-sitter-python.wasm',
+}
+
+/**
+ * Load the best available parser for a grammar: override-compiled
+ * WASM if it exists, otherwise the base grammar's WASM from npm.
+ *
+ * The override WASM is produced by `compileParser()` and lives at
+ * `packages/<grammar>/.sittir/parser.wasm`. When present, it carries
+ * all field labels from transform()/enrich() patches natively.
+ */
+export async function loadLanguageForGrammar(grammar: string): Promise<{
+    Parser: TSParserCtor
+    Language: TSLanguageCtor
+    lang: unknown
+    isOverride: boolean
+}> {
+    const { Parser, Language } = await loadWebTreeSitter()
+
+    const thisDir = new URL('.', import.meta.url).pathname
+    const overrideWasm = join(
+        thisDir, '..', '..', '..', grammar, '.sittir', 'parser.wasm'
+    )
+    if (existsSync(overrideWasm)) {
+        const lang = await Language.load(overrideWasm)
+        return { Parser, Language, lang, isOverride: true }
+    }
+
+    const baseWasm = require.resolve(WASM_PATHS[grammar]!)
+    const lang = await Language.load(baseWasm)
+    return { Parser, Language, lang, isOverride: false }
 }

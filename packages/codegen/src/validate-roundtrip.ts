@@ -16,13 +16,12 @@ import { loadRawEntries } from './validators/node-types.ts';
 import { loadRouting } from './validators/load-routing.ts';
 import {
 	loadCorpusEntries,
-	loadWebTreeSitter,
+	loadLanguageForGrammar,
 	treeHandle,
 	findFirst,
 	collectKinds,
 	buildKindToSupertypes,
 	wrapForReparse,
-	WASM_PATHS,
 	type TSNode,
 	type TSTree,
 } from './validators/common.ts';
@@ -133,9 +132,7 @@ export async function validateRoundTrip(
 	grammar: string,
 	templatesYaml: string,
 ): Promise<RoundTripResult> {
-	const { Parser, Language } = await loadWebTreeSitter();
-	const wasmPath = require.resolve(WASM_PATHS[grammar]!);
-	const lang = await Language.load(wasmPath);
+	const { Parser, lang } = await loadLanguageForGrammar(grammar);
 	const parser = new Parser();
 	parser.setLanguage(lang);
 

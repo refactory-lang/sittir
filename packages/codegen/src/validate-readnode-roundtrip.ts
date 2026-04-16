@@ -26,17 +26,15 @@
  * round-trip, from(), render) will be working on a corrupted view.
  */
 
-import { createRequire } from 'node:module'
 import { readFileSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 import { readNode } from '@sittir/core'
 import type { RoutingMap } from '@sittir/core'
 import type { AnyNodeData, AnyTreeNode } from '@sittir/types'
 import { loadRawEntries } from './validators/node-types.ts'
-import { loadWebTreeSitter } from './validators/common.ts'
+import { loadLanguageForGrammar } from './validators/common.ts'
 import { loadRouting } from './validators/load-routing.ts'
 
-const require = createRequire(import.meta.url)
 
 // ---------------------------------------------------------------------------
 // Minimal tree-sitter adapter — shared shape with the other validators
@@ -142,11 +140,6 @@ function parseCorpus(content: string): CorpusEntry[] {
     return entries
 }
 
-const WASM_PATHS: Record<string, string> = {
-    rust: 'tree-sitter-rust/tree-sitter-rust.wasm',
-    typescript: 'tree-sitter-typescript/tree-sitter-typescript.wasm',
-    python: 'tree-sitter-python/tree-sitter-python.wasm',
-}
 
 const FIXTURES_DIR = new URL('../fixtures', import.meta.url).pathname
 
@@ -291,9 +284,7 @@ export interface ReadNodeRoundTripResult {
 export async function validateReadNodeRoundTrip(
     grammar: string,
 ): Promise<ReadNodeRoundTripResult> {
-    const { Parser, Language } = await loadWebTreeSitter()
-    const wasmPath = require.resolve(WASM_PATHS[grammar]!)
-    const lang = await Language.load(wasmPath)
+    const { Parser, lang } = await loadLanguageForGrammar(grammar)
     const parser = new Parser()
     parser.setLanguage(lang)
 

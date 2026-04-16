@@ -16,11 +16,10 @@ import { loadRouting } from './validators/load-routing.ts';
 import type { AnyNodeData, RulesConfig } from '@sittir/types';
 import {
 	loadCorpusEntries,
-	loadWebTreeSitter,
+	loadLanguageForGrammar,
 	treeHandle,
 	findFirst,
 	collectKinds,
-	WASM_PATHS,
 	type TSTree,
 } from './validators/common.ts';
 
@@ -118,9 +117,7 @@ export async function validateFrom(
 	grammar: string,
 	templatesYaml: string,
 ): Promise<FromValidationResult> {
-	const { Parser, Language } = await loadWebTreeSitter();
-	const wasmPath = require.resolve(WASM_PATHS[grammar]!);
-	const lang = await Language.load(wasmPath);
+	const { Parser, lang } = await loadLanguageForGrammar(grammar);
 	const parser = new Parser();
 	parser.setLanguage(lang);
 
