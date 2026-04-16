@@ -353,9 +353,28 @@ function mergeFieldOccurrences(
     return merged
 }
 
-/** Return true when the rule tree contains at least one field with source 'override'. */
+/**
+ * Return true when the rule tree has evidence that the user ran a
+ * transform() with source-tagging patches:
+ * - A field wrapper explicitly tagged `source: 'override'` (from
+ *   transform's field placeholder or dsl/field.ts two-arg field()).
+ * - An `alias` node (variant() / alias() placeholder products) —
+ *   these indicate transform() patches were applied even if no
+ *   field wrapper ended up source-tagged (e.g., polymorph-only
+ *   overrides that leave base fields intact).
+ * When this returns false AND the rule is in overrideKinds, we treat
+ * it as a full-replacement rule and relax the field collector so
+ * its untagged field() calls still enter the routing map.
+ */
 function hasOverrideSourceField(rule: Rule): boolean {
     if (rule.type === 'field' && rule.source === 'override') return true
+    if (rule.type === 'alias') return true
+    // Polymorph rules produced by Link's applyOverridePolymorphs carry
+    // `source: 'override'` — variant()-driven classification from the
+    // user's transform patches. Link collapses the alias wrappers
+    // inside so no `type: 'alias'` nodes remain; the polymorph's own
+    // source tag is the surviving evidence.
+    if (rule.type === 'polymorph' && rule.source === 'override') return true
     const children: Rule[] = []
     if ('members' in rule) children.push(...(rule as any).members)
     if ('content' in rule) children.push((rule as any).content)

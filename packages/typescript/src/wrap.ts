@@ -189,11 +189,7 @@ import type {
 // Routing data — overrides + supertype expansion reconstructed at
 // codegen time from NodeMap, then handed to readNode at module load.
 // Emitted one entry per line so PR diffs show only the changed kind.
-const _overrides = {
-  "public_field_definition": {"fields":{"decorator":{"types":[{"type":"decorator","named":true}],"multiple":true,"required":true,"position":0},"name":{"types":[{"type":"_property_name","named":true}],"multiple":false,"required":true,"position":3},"type":{"types":[{"type":"type_annotation","named":true}],"multiple":false,"required":false,"position":4}}},
-  "required_parameter": {"fields":{"type":{"types":[{"type":"type_annotation","named":true}],"multiple":false,"required":false,"position":1}}},
-  "optional_parameter": {"fields":{"type":{"types":[{"type":"type_annotation","named":true}],"multiple":false,"required":false,"position":1}}},
-} as const;
+const _overrides = {} as const;
 export { _overrides };
 const _supertypeExpansion = new Map<string, readonly string[]>(Object.entries({
   "_module_export_name": ["identifier","string"],

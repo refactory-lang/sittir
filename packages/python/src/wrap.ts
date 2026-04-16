@@ -135,9 +135,7 @@ import type {
 // Routing data — overrides + supertype expansion reconstructed at
 // codegen time from NodeMap, then handed to readNode at module load.
 // Emitted one entry per line so PR diffs show only the changed kind.
-const _overrides = {
-  "assignment": {"fields":{"left":{"types":[{"type":"_left_hand_side","named":true}],"multiple":false,"required":false,"position":-1}}},
-} as const;
+const _overrides = {} as const;
 export { _overrides };
 const _supertypeExpansion = new Map<string, readonly string[]>(Object.entries({
   "_statement": ["_simple_statements","if_statement","for_statement","while_statement","try_statement","with_statement","function_definition","class_definition","decorated_definition","match_statement"],

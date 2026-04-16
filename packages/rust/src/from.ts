@@ -684,10 +684,10 @@ export function functionSignatureItemFrom(input: T.FunctionSignatureItem | T.Loo
 export function functionModifiersFrom(input?: T.FunctionModifiers | T.LooseFunctionModifiers): ReturnType<typeof functionModifiers> {
   if (input !== undefined && 'render' in input) return input as ReturnType<typeof functionModifiers>;
   return functionModifiers({
-    async: _resolveMany<NonNullable<T.FunctionModifiersConfig['async']>[number]>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } })?.fields?.['async'] ?? (input as { readonly async?: _FromFieldInput })?.async), _K0, _K0),
-    default: _resolveMany<NonNullable<T.FunctionModifiersConfig['default']>[number]>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } })?.fields?.['default'] ?? (input as { readonly default?: _FromFieldInput })?.default), _K0, _K0),
-    const: _resolveMany<NonNullable<T.FunctionModifiersConfig['const']>[number]>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } })?.fields?.['const'] ?? (input as { readonly const?: _FromFieldInput })?.const), _K0, _K0),
-    unsafe: _resolveMany<NonNullable<T.FunctionModifiersConfig['unsafe']>[number]>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } })?.fields?.['unsafe'] ?? (input as { readonly unsafe?: _FromFieldInput })?.unsafe), _K0, _K0),
+    async: _resolveManyLeaf<NonNullable<T.FunctionModifiersConfig['async']>[number]>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } })?.fields?.['async'] ?? (input as { readonly async?: _FromFieldInput })?.async), "_kw_async"),
+    default: _resolveManyLeaf<NonNullable<T.FunctionModifiersConfig['default']>[number]>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } })?.fields?.['default'] ?? (input as { readonly default?: _FromFieldInput })?.default), "_kw_default"),
+    const: _resolveManyLeaf<NonNullable<T.FunctionModifiersConfig['const']>[number]>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } })?.fields?.['const'] ?? (input as { readonly const?: _FromFieldInput })?.const), "_kw_const"),
+    unsafe: _resolveManyLeaf<NonNullable<T.FunctionModifiersConfig['unsafe']>[number]>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } })?.fields?.['unsafe'] ?? (input as { readonly unsafe?: _FromFieldInput })?.unsafe), "_kw_unsafe"),
     children: _resolveManyBranch<NonNullable<T.FunctionModifiersConfig['children']>[number]>(input?.children, "extern_modifier"),
   });
 }
@@ -711,7 +711,7 @@ export function wherePredicateFrom(input: T.WherePredicate | T.LooseWherePredica
 export function implItemFrom(input: T.ImplItem | T.LooseImplItem): ReturnType<typeof implItem> {
   if ('render' in input) return input as ReturnType<typeof implItem>;
   return implItem({
-    unsafe: _resolveOne<NonNullable<T.ImplItemConfig['unsafe']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['unsafe'] ?? (input as { readonly unsafe?: _FromFieldInput }).unsafe), _K0, _K0),
+    unsafe: _resolveOneLeaf<NonNullable<T.ImplItemConfig['unsafe']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['unsafe'] ?? (input as { readonly unsafe?: _FromFieldInput }).unsafe), "_kw_unsafe"),
     typeParameters: _resolveOneBranch<NonNullable<T.ImplItemConfig['typeParameters']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['type_parameters'] ?? (input as { readonly typeParameters?: _FromFieldInput }).typeParameters), "type_parameters"),
     trait: _resolveOne<NonNullable<T.ImplItemConfig['trait']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['trait'] ?? (input as { readonly trait?: _FromFieldInput }).trait), _K0, _K14),
     type: _resolveOne<NonNullable<T.ImplItemConfig['type']>>((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['type'], _K9, _K10),

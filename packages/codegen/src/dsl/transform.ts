@@ -25,7 +25,7 @@ import { parsePath, applyPath, reconstructWrapper, reconstructPrec, reconstructC
 import { isFieldPlaceholder, type FieldPlaceholder } from './field.ts'
 import { isAliasPlaceholder, type AliasPlaceholder } from './alias.ts'
 import { isVariantPlaceholder, type VariantPlaceholder } from './variant.ts'
-import { registerSyntheticRule, getCurrentRuleKind, registerPolymorphVariant } from './synthetic-rules.ts'
+import { registerSyntheticRule, getCurrentRuleKind, registerPolymorphVariant, maybeKeywordSymbol } from './synthetic-rules.ts'
 import { isFieldLike, isPrecWrapper, isWrapperType, type RuntimeRule } from './runtime-shapes.ts'
 
 /**
@@ -196,43 +196,19 @@ function resolvePatch(
         // identifiers) don't create parser conflicts. The precedence
         // tells tree-sitter to prefer the keyword interpretation when
         // the lexer sees this token at the position enrich promoted.
-        const c = content as { type?: string; value?: string }
-        if (c && (c.type === 'STRING' || c.type === 'string')) {
-            const isUpperCase = c.type === 'STRING'
-            const hiddenName = `_kw_${patch.name}`
-            // Wrap with `prec.left(1, rule)` — minimum positive
-            // precedence to resolve LR(1) conflicts with default-0
-            // rules. Research notes:
-            //   - Bare strings in tree-sitter have implicit precedence 0.
-            //     Before wrapping, there was no rule-level conflict
-            //     because no alternative parse path existed for the
-            //     token at that position.
-            //   - Creating `_kw_<name>` as a named rule introduces a
-            //     distinct parser path. For soft keywords (python's
-            //     `match`/`case`, typescript's `async`) that also
-            //     match an identifier pattern, tree-sitter now sees
-            //     ambiguity and requires a tiebreaker.
-            //   - prec.left(1, ...) is the smallest value that wins
-            //     against default 0, aligning as closely as possible
-            //     with the original bare-string behavior without
-            //     arbitrarily overriding grammar-authored prec values
-            //     (which typically cap around 0-22).
-            //   - Tree-sitter-python uses `prec.left('pass')` with no
-            //     numeric for unambiguous keywords; we need a numeric
-            //     only because our wrapping creates potential ambiguity.
-            // Sittir's prec.left strips the wrapper (its Rule union
-            // doesn't model precedence); tree-sitter preserves it.
-            const nativePrec = (globalThis as {
-                prec?: { left?: (v: number, c: unknown) => unknown }
-            }).prec
-            const precBody = typeof nativePrec?.left === 'function'
-                ? nativePrec.left(1, content)
-                : content
-            registerSyntheticRule(hiddenName, wrapInPrec(precBody as RuntimeRule, precStack))
-            content = {
-                type: isUpperCase ? 'SYMBOL' : 'symbol',
-                name: hiddenName,
-            }
+        // Bare STRING content: synthesize a hidden _kw_<name> rule and
+        // substitute a SYMBOL reference so tree-sitter's normalizer
+        // preserves the FIELD wrapper. Shared helper in synthetic-rules.ts
+        // — called from both here (field placeholder) and dsl/field.ts
+        // (two-arg field(name, 'literal')). Passes the prec stack so
+        // synthetic rules inherit the outer precedence context.
+        const maybeSymbolized = maybeKeywordSymbol(
+            patch.name,
+            content,
+            (body) => wrapInPrec(body, precStack),
+        )
+        if (maybeSymbolized !== content) {
+            content = maybeSymbolized
         }
         const native = (globalThis as { field?: (n: string, c: unknown) => unknown }).field
         if (typeof native !== 'function') {

@@ -205,34 +205,6 @@ function applyToMembers(rule, head, rest, patch, precStack) {
   return reconstructContainer(rule, members);
 }
 
-// packages/codegen/src/dsl/field.ts
-function isFieldPlaceholder(v) {
-  return !!v && typeof v === "object" && v.__sittirPlaceholder === "field";
-}
-function field(name, content) {
-  if (content === void 0) {
-    return { __sittirPlaceholder: "field", name };
-  }
-  const native = globalThis.field;
-  if (typeof native !== "function") {
-    throw new Error("field(): no global field() found \u2014 must be called inside a runtime that injects field() (sittir evaluate.ts or tree-sitter CLI)");
-  }
-  return native(name, content);
-}
-
-// packages/codegen/src/dsl/alias.ts
-function isAliasPlaceholder(v) {
-  return !!v && typeof v === "object" && v.__sittirPlaceholder === "alias";
-}
-
-// packages/codegen/src/dsl/variant.ts
-function isVariantPlaceholder(v) {
-  return !!v && typeof v === "object" && v.__sittirPlaceholder === "variant";
-}
-function variant(name) {
-  return { __sittirPlaceholder: "variant", name };
-}
-
 // packages/codegen/src/dsl/synthetic-rules.ts
 var currentSyntheticRules = null;
 var currentRuleKind = null;
@@ -245,6 +217,22 @@ function registerSyntheticRule(name, content) {
     currentSyntheticRules = /* @__PURE__ */ new Map();
   }
   currentSyntheticRules.set(name, content);
+}
+function maybeKeywordSymbol(fieldName, content, wrapSyntheticBody) {
+  const c = content;
+  if (!c || typeof c.type !== "string") return content;
+  const isString = c.type === "STRING" || c.type === "string";
+  if (!isString) return content;
+  const isUpperCase = c.type === "STRING";
+  const hiddenName = `_kw_${fieldName}`;
+  const nativePrec = globalThis.prec;
+  let precBody = typeof nativePrec?.left === "function" ? nativePrec.left(1, content) : content;
+  if (wrapSyntheticBody) precBody = wrapSyntheticBody(precBody);
+  registerSyntheticRule(hiddenName, precBody);
+  return {
+    type: isUpperCase ? "SYMBOL" : "symbol",
+    name: hiddenName
+  };
 }
 function registerPolymorphVariant(parentKind, childSuffix) {
   const dup = currentPolymorphVariants.find((v) => v.parent === parentKind && v.child === childSuffix);
@@ -347,6 +335,41 @@ function installGrammarWrapper() {
   };
 }
 
+// packages/codegen/src/dsl/field.ts
+function isFieldPlaceholder(v) {
+  return !!v && typeof v === "object" && v.__sittirPlaceholder === "field";
+}
+function field(name, content) {
+  if (content === void 0) {
+    return { __sittirPlaceholder: "field", name };
+  }
+  const native = globalThis.field;
+  if (typeof native !== "function") {
+    throw new Error("field(): no global field() found \u2014 must be called inside a runtime that injects field() (sittir evaluate.ts or tree-sitter CLI)");
+  }
+  const initial = native(name, content);
+  const inner = initial.content;
+  const symbolized = maybeKeywordSymbol(name, inner);
+  if (symbolized !== inner) {
+    const reconstructed = native(name, symbolized);
+    return { ...reconstructed, source: "override" };
+  }
+  return { ...initial, source: "override" };
+}
+
+// packages/codegen/src/dsl/alias.ts
+function isAliasPlaceholder(v) {
+  return !!v && typeof v === "object" && v.__sittirPlaceholder === "alias";
+}
+
+// packages/codegen/src/dsl/variant.ts
+function isVariantPlaceholder(v) {
+  return !!v && typeof v === "object" && v.__sittirPlaceholder === "variant";
+}
+function variant(name) {
+  return { __sittirPlaceholder: "variant", name };
+}
+
 // packages/codegen/src/dsl/transform.ts
 function transform(original, ...patchSets) {
   let rule = original;
@@ -419,17 +442,13 @@ function resolvePatch(patch, originalMember, precStack) {
     if (isFieldLike(content) && content.source === "inferred") {
       content = content.content;
     }
-    const c = content;
-    if (c && (c.type === "STRING" || c.type === "string")) {
-      const isUpperCase = c.type === "STRING";
-      const hiddenName = `_kw_${patch.name}`;
-      const nativePrec = globalThis.prec;
-      const precBody = typeof nativePrec?.left === "function" ? nativePrec.left(1, content) : content;
-      registerSyntheticRule(hiddenName, wrapInPrec(precBody, precStack));
-      content = {
-        type: isUpperCase ? "SYMBOL" : "symbol",
-        name: hiddenName
-      };
+    const maybeSymbolized = maybeKeywordSymbol(
+      patch.name,
+      content,
+      (body) => wrapInPrec(body, precStack)
+    );
+    if (maybeSymbolized !== content) {
+      content = maybeSymbolized;
     }
     const native = globalThis.field;
     if (typeof native !== "function") {

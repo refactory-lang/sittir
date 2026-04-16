@@ -768,13 +768,23 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
         if (!opts.word && inherited.word) word = inherited.word
     }
 
-    // Expose which rule names were explicitly defined by the user in
+    // Expose which rule names the user MEANINGFULLY overrode in
     // overrides.ts — used by derive-overrides-json to detect
     // full-replacement override rules whose fields don't carry
-    // `source: 'override'` (set only by `transform()`). Captured
-    // BEFORE the enrich-override merge so auto-generated enrich
-    // overrides don't inflate the set.
-    const overrideRuleNames = userOverrideRuleNames
+    // `source: 'override'` (set only by `transform()`).
+    //
+    // Filter out passthrough overrides (`($, original) => original`)
+    // by comparing the evaluated rule to the base. User often writes
+    // these as documentation for "intentionally not overriding this
+    // rule" — they shouldn't flag as full-replacement and keep base
+    // fields in the routing map. Compared via structural equality
+    // on the normalized shape.
+    const overrideRuleNames = userOverrideRuleNames.filter(name => {
+        const override = rules[name]
+        const base = baseRules[name]
+        if (!base) return true  // no base to compare against — user added a new rule
+        return JSON.stringify(override) !== JSON.stringify(base)
+    })
 
     const polymorphVariants = drainPolymorphVariants()
 

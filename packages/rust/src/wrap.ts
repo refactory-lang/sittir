@@ -180,10 +180,7 @@ import type {
 // Routing data — overrides + supertype expansion reconstructed at
 // codegen time from NodeMap, then handed to readNode at module load.
 // Emitted one entry per line so PR diffs show only the changed kind.
-const _overrides = {
-  "function_modifiers": {"fields":{"async":{"types":[{"type":"async","named":false}],"multiple":false,"required":false,"position":-1},"default":{"types":[{"type":"default","named":false}],"multiple":false,"required":false,"position":-1},"const":{"types":[{"type":"const","named":false}],"multiple":false,"required":false,"position":-1},"unsafe":{"types":[{"type":"unsafe","named":false}],"multiple":false,"required":false,"position":-1}}},
-  "visibility_modifier": {"fields":{"pub":{"types":[{"type":"pub","named":false}],"multiple":false,"required":false,"position":-1},"in":{"types":[{"type":"in","named":false}],"multiple":false,"required":false,"position":-1}}},
-} as const;
+const _overrides = {} as const;
 export { _overrides };
 const _supertypeExpansion = new Map<string, readonly string[]>(Object.entries({
   "_statement": ["expression_statement","const_item","macro_invocation","macro_definition","empty_statement","attribute_item","inner_attribute_item","mod_item","foreign_mod_item","struct_item","union_item","enum_item","type_item","function_item","function_signature_item","impl_item","trait_item","associated_type","let_declaration","use_declaration","extern_crate_declaration","static_item"],
@@ -1798,11 +1795,14 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'super': (d) => d,
   'crate': (d) => d,
   'metavariable': (d) => d,
+  '_kw_async': (d) => d,
+  '_kw_default': (d) => d,
+  '_kw_const': (d) => d,
+  '_kw_unsafe': (d) => d,
   '_field_pattern_shorthand': (d, t) => wrap_FieldPatternShorthand(d, t),
   '_closure_expression_expr': (d, t) => wrap_ClosureExpressionExpr(d, t),
   '_range_expression_bare': (d, t) => wrap_RangeExpressionBare(d, t),
   '_kw_for': (d) => d,
-  '_kw_const': (d) => d,
   'string_content': (d) => d,
   'raw_string_literal_content': (d) => d,
   'float_literal': (d) => d,

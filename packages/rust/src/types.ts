@@ -19,8 +19,11 @@ export type LeafStringMap = {
   self: "self";
   super: "super";
   crate: "crate";
-  _kw_for: "for";
+  _kw_async: "async";
+  _kw_default: "default";
   _kw_const: "const";
+  _kw_unsafe: "unsafe";
+  _kw_for: "for";
   primitive_type: "u8" | "i8" | "u16" | "i16" | "u32" | "i32" | "u64" | "i64" | "u128" | "i128" | "isize" | "usize" | "f32" | "f64" | "bool" | "str" | "char";
   as: "as";
   async: "async";
@@ -248,8 +251,11 @@ export const enum SyntaxKind {
   Super = 'super',
   Crate = 'crate',
   Metavariable = 'metavariable',
-  KwFor = '_kw_for',
+  KwAsync = '_kw_async',
+  KwDefault = '_kw_default',
   KwConst = '_kw_const',
+  KwUnsafe = '_kw_unsafe',
+  KwFor = '_kw_for',
   StringContent = 'string_content',
   RawStringLiteralContent = 'raw_string_literal_content',
   FloatLiteral = 'float_literal',
@@ -928,10 +934,10 @@ export interface FunctionSignatureItem {
 export interface FunctionModifiers {
   readonly type: 'function_modifiers';
   readonly fields: {
-    readonly async?: readonly ("async")[];
-    readonly default?: readonly ("default")[];
-    readonly const?: readonly ("const")[];
-    readonly unsafe?: readonly ("unsafe")[];
+    readonly async?: readonly (KwAsync)[];
+    readonly default?: readonly (KwDefault)[];
+    readonly const?: readonly (KwConst)[];
+    readonly unsafe?: readonly (KwUnsafe)[];
   };
   readonly children: readonly (ExternModifier)[];
 }
@@ -955,7 +961,7 @@ export interface WherePredicate {
 export interface ImplItem {
   readonly type: 'impl_item';
   readonly fields: {
-    readonly unsafe?: "unsafe";
+    readonly unsafe?: KwUnsafe;
     readonly type_parameters?: TypeParameters;
     readonly trait?: _TypeIdentifier | ScopedTypeIdentifier | GenericType;
     readonly type: _Type;
@@ -2020,8 +2026,11 @@ export type Self = Terminal<"self", "self">;
 export type Super = Terminal<"super", "super">;
 export type Crate = Terminal<"crate", "crate">;
 export type Metavariable = Terminal<"metavariable", string>;
-export type KwFor = Terminal<"_kw_for", "for">;
+export type KwAsync = Terminal<"_kw_async", "async">;
+export type KwDefault = Terminal<"_kw_default", "default">;
 export type KwConst = Terminal<"_kw_const", "const">;
+export type KwUnsafe = Terminal<"_kw_unsafe", "unsafe">;
+export type KwFor = Terminal<"_kw_for", "for">;
 export type StringContent = Terminal<"string_content", string>;
 export type RawStringLiteralContent = Terminal<"raw_string_literal_content", string>;
 export type FloatLiteral = Terminal<"float_literal", string>;
@@ -2423,8 +2432,11 @@ export interface SelfTree extends AnyTreeNode { readonly type: "self"; }
 export interface SuperTree extends AnyTreeNode { readonly type: "super"; }
 export interface CrateTree extends AnyTreeNode { readonly type: "crate"; }
 export interface MetavariableTree extends TreeNode<'metavariable'> {}
-export interface KwForTree extends AnyTreeNode { readonly type: "_kw_for"; }
+export interface KwAsyncTree extends AnyTreeNode { readonly type: "_kw_async"; }
+export interface KwDefaultTree extends AnyTreeNode { readonly type: "_kw_default"; }
 export interface KwConstTree extends AnyTreeNode { readonly type: "_kw_const"; }
+export interface KwUnsafeTree extends AnyTreeNode { readonly type: "_kw_unsafe"; }
+export interface KwForTree extends AnyTreeNode { readonly type: "_kw_for"; }
 export interface StringContentTree extends TreeNode<'string_content'> {}
 export interface RawStringLiteralContentTree extends AnyTreeNode { readonly type: "raw_string_literal_content"; }
 export interface FloatLiteralTree extends TreeNode<'float_literal'> {}
@@ -3442,8 +3454,11 @@ export interface KindMap {
   'super': Super;
   'crate': Crate;
   'metavariable': Metavariable;
-  '_kw_for': KwFor;
+  '_kw_async': KwAsync;
+  '_kw_default': KwDefault;
   '_kw_const': KwConst;
+  '_kw_unsafe': KwUnsafe;
+  '_kw_for': KwFor;
   'string_content': StringContent;
   'raw_string_literal_content': RawStringLiteralContent;
   'float_literal': FloatLiteral;
