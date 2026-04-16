@@ -6,7 +6,7 @@ Given any tree-sitter grammar, sittir generates:
 - **Typed factories** — one per node kind, producing `NodeData` plain objects with fluent getters/setters
 - **YAML render templates** — `$FIELD_NAME` placeholder syntax with `joinBy` separators and polymorph variants, stored in `templates.yaml`
 - **`.from()` resolution** — ergonomic input with string/number/object coercion, fully tree-shakeable
-- **`readNode()` hydration** — wraps tree-sitter parse trees into `NodeData` for round-trip editing
+- **`readNode()` round-trip** — reads tree-sitter parse trees into `NodeData` for codemod editing
 - **Const enums + navigation types** — `SyntaxKind`, operator/keyword maps, supertype unions
 - **Generated tests** — per-kind factory + render + round-trip validation
 
@@ -71,7 +71,7 @@ const source = render(node, rules)  // YAML template expansion
 
 ### Codemod with ast-grep
 
-Find nodes with ast-grep, hydrate into typed NodeData, modify with fluent setters, emit a text edit:
+Find nodes with ast-grep, read into typed NodeData, modify with fluent setters, emit a text edit:
 
 ```ts
 import { parse, Lang } from '@ast-grep/napi'
@@ -82,7 +82,7 @@ const root = parse(Lang.Rust, source).root()
 const matches = root.findAll({ rule: { kind: 'function_item' } })
 
 for (const match of matches) {
-  // 2. Hydrate the parse tree node into typed NodeData
+  // 2. Read the parse tree node into typed NodeData
   const fn = readTreeNode(match) as ReturnType<typeof ir.functionItem>
 
   // 3. Modify — fluent setter returns a new node (immutable)
