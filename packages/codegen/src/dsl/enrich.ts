@@ -49,6 +49,8 @@
 import type {
     Rule, SeqRule, SymbolRule, FieldRule, OptionalRule, StringRule, ChoiceRule,
 } from '../compiler/rule.ts'
+import { transform } from './transform.ts'
+import { field } from './field.ts'
 
 // Shape of the tree-sitter grammar result that our grammarFn produces.
 // The outer wrapper is `{ grammar: {...} }` because tree-sitter's
@@ -74,25 +76,18 @@ export function enrich(base: GrammarResult): GrammarResult {
         throw new Error('enrich(): expected a grammar object, got ' + typeof base)
     }
 
-    // Tree-sitter CLI compatibility path: when this code runs inside
-    // tree-sitter's parser-generator runtime (loading the transpiled
-    // .sittir/grammar.js), `base` has tree-sitter's native shape —
-    // `{ name, rules, ... }` directly, with rules using uppercase
-    // types (`SEQ`, `SYMBOL`, etc.). Sittir's enrich passes are
-    // written for the sittir shape (`{ grammar: { rules } }` with
-    // lowercase types) so they can't apply here. Pass through
-    // unchanged — tree-sitter will compile the un-enriched grammar.
-    //
-    // Sittir's own pipeline still applies enrich properly because its
-    // evaluate.ts injects sittir's grammarFn before importing the
-    // override file, so `base` arrives in sittir's shape.
-    //
-    // The trade-off: the field wrappers enrich would add are present
-    // when sittir generates its consumer code, but absent in
-    // tree-sitter's compiled parser. Sittir's fidelity ceilings cover
-    // this gap; a future follow-up can make enrich shape-aware so the
-    // same transformations apply in both runtimes.
-    if (!('grammar' in base)) {
+    // Tree-sitter CLI shape: `{ name, rules, ... }` where rules are
+    // FUNCTIONS (`$ => seq(...)`) — not yet-evaluated rule trees. In
+    // principle we could wrap each rule function so enrich's passes
+    // apply at evaluation time via transform() (which delegates to
+    // native field()). First attempt caused widespread corpus round-
+    // trip regressions — the added fields change parse-tree shape in
+    // ways the sittir-generated factories/wrap/render don't all handle.
+    // Leaving enrich as a no-op under tree-sitter CLI until the
+    // pipeline is reconciled end-to-end. Sittir's own evaluator runs
+    // enrich properly on its lowercase rule trees below.
+    const isTreeSitterShape = !('grammar' in base) && 'rules' in base
+    if (isTreeSitterShape) {
         return base as GrammarResult
     }
 
@@ -105,6 +100,30 @@ export function enrich(base: GrammarResult): GrammarResult {
         result = pass(result)
     }
     return result
+}
+
+/**
+ * Tree-sitter CLI path: wrap each rule function so enrich's passes
+ * apply to the rule tree after tree-sitter evaluates the function.
+ * At that point native `seq`, `field`, `optional` are available as
+ * globals — transform() handles the case-correct reconstruction.
+ */
+function wrapTreeSitterRules(base: {
+    rules: Record<string, (...args: unknown[]) => unknown>
+    [other: string]: unknown
+}): unknown {
+    const wrappedRules: Record<string, (...args: unknown[]) => unknown> = {}
+    for (const [name, ruleFn] of Object.entries(base.rules)) {
+        if (typeof ruleFn !== 'function') {
+            wrappedRules[name] = ruleFn
+            continue
+        }
+        wrappedRules[name] = function(this: unknown, ...a: unknown[]) {
+            const evaluated = ruleFn.apply(this, a) as Rule
+            return applyEnrichPasses(name, evaluated)
+        }
+    }
+    return { ...base, rules: wrappedRules }
 }
 
 // ---------------------------------------------------------------------------
@@ -268,7 +287,163 @@ function applyBareKeywordPrefix(ruleName: string, rule: Rule): Rule {
 }
 
 // ---------------------------------------------------------------------------
-// Shared helpers
+// applyEnrichPasses — unified pass pipeline via transform()
+// ---------------------------------------------------------------------------
+//
+// Detects positions each pass would wrap and batches them into a single
+// transform() call. transform.ts delegates one-arg field() placeholders
+// to the runtime's native field() in resolvePatch, so the same code
+// path works in both sittir's evaluator (lowercase rules) and
+// tree-sitter's CLI runtime (uppercase rules). The user's directive:
+// "Enrich should call the native methods… just like transform does".
+//
+// Pass order mirrors the original PASSES array: kind-to-name,
+// optional-keyword-prefix, bare-keyword-prefix. Each pass collects
+// flat-positional patches for `{ position: field('name') }`. transform()
+// reconstructs the rule in the runtime's native shape.
+
+function applyEnrichPasses(ruleName: string, rule: Rule): Rule {
+    let r = rule
+    r = applyKindToNameViaTransform(ruleName, r)
+    r = applyOptionalKeywordViaTransform(ruleName, r)
+    r = applyBareKeywordViaTransform(ruleName, r)
+    return r
+}
+
+/** Case-insensitive type checks — tree-sitter uses uppercase, sittir lowercase. */
+function typeEq(t: unknown, lower: string): boolean {
+    return typeof t === 'string' && (t === lower || t === lower.toUpperCase())
+}
+function isSeqType(t: unknown): boolean { return typeEq(t, 'seq') }
+function isStringType(t: unknown): boolean { return typeEq(t, 'string') }
+function isSymbolType(t: unknown): boolean { return typeEq(t, 'symbol') }
+function isFieldType(t: unknown): boolean { return typeEq(t, 'field') }
+function isOptionalType(t: unknown): boolean { return typeEq(t, 'optional') }
+function isChoiceType(t: unknown): boolean { return typeEq(t, 'choice') }
+function isRepeatType(t: unknown): boolean { return typeEq(t, 'repeat') || typeEq(t, 'repeat1') }
+
+/** Collect field names that already exist on the top-level seq. */
+function collectFieldNamesRuntime(rule: Rule): Set<string> {
+    const names = new Set<string>()
+    if (!isSeqType(rule.type)) return names
+    const members = (rule as unknown as { members: Array<{ type: string; name?: string; content?: { type: string; name?: string } }> }).members
+    for (const m of members) {
+        if (isFieldType(m.type) && typeof m.name === 'string') {
+            names.add(m.name)
+        } else if (m.type === 'optional' && m.content && isFieldType(m.content.type) && typeof m.content.name === 'string') {
+            names.add(m.content.name)
+        }
+    }
+    return names
+}
+
+function applyKindToNameViaTransform(ruleName: string, rule: Rule): Rule {
+    if (!isSeqType(rule.type)) return rule
+    const members = (rule as unknown as { members: Array<{ type: string; name?: string }> }).members
+
+    // Count symbol occurrences — skip ambiguous kinds.
+    const kindCounts = new Map<string, number>()
+    for (const m of members) {
+        if (isSymbolType(m.type) && typeof m.name === 'string') {
+            kindCounts.set(m.name, (kindCounts.get(m.name) ?? 0) + 1)
+        }
+    }
+    const existing = collectFieldNamesRuntime(rule)
+    const patches: Record<string, Parameters<typeof transform>[1][string]> = {}
+    for (let i = 0; i < members.length; i++) {
+        const m = members[i]!
+        if (!isSymbolType(m.type) || typeof m.name !== 'string') continue
+        const k = m.name
+        if (k.startsWith('_')) continue
+        if ((kindCounts.get(k) ?? 0) > 1) continue
+        if (existing.has(k)) {
+            reportSkip('kind-to-name', ruleName, `field '${k}' already exists`)
+            continue
+        }
+        existing.add(k)
+        patches[String(i)] = field(k) as Parameters<typeof transform>[1][string]
+    }
+    if (Object.keys(patches).length === 0) return rule
+    return transform(rule as unknown as Parameters<typeof transform>[0], patches) as Rule
+}
+
+function applyOptionalKeywordViaTransform(ruleName: string, rule: Rule): Rule {
+    // Walk the tree collecting path-addressed patches for every
+    // `optional(stringLiteral-identifier)` position where the kw
+    // doesn't collide with an existing field on the same seq.
+    type Patch = Parameters<typeof transform>[1][string]
+    const patches: Record<string, Patch> = {}
+    collectOptionalKeywordPatches(ruleName, rule, '', patches)
+    if (Object.keys(patches).length === 0) return rule
+    return transform(rule as unknown as Parameters<typeof transform>[0], patches) as Rule
+}
+
+type TransformPatch = Parameters<typeof transform>[1][string]
+
+function collectOptionalKeywordPatches(
+    ruleName: string,
+    rule: Rule,
+    prefix: string,
+    patches: Record<string, TransformPatch>,
+): void {
+    if (isSeqType(rule.type)) {
+        const members = (rule as unknown as { members: Array<{ type: string; content?: { type: string; value?: string } }> }).members
+        const claimed = collectFieldNamesRuntime(rule)
+        for (let i = 0; i < members.length; i++) {
+            const m = members[i]!
+            if (isOptionalType(m.type) && m.content && isStringType(m.content.type)) {
+                const kw = m.content.value
+                if (typeof kw === 'string' && isIdentifierShaped(kw)) {
+                    if (claimed.has(kw)) {
+                        reportSkip('optional-keyword-prefix', ruleName, `field '${kw}' already exists`)
+                        continue
+                    }
+                    claimed.add(kw)
+                    const path = prefix ? `${prefix}/${i}/0` : `${i}/0`
+                    patches[path] = field(kw) as TransformPatch
+                    continue
+                }
+            }
+            const childPrefix = prefix ? `${prefix}/${i}` : `${i}`
+            collectOptionalKeywordPatches(ruleName, m as Rule, childPrefix, patches)
+        }
+        return
+    }
+    if (isChoiceType(rule.type)) {
+        const members = (rule as unknown as { members: Rule[] }).members
+        for (let i = 0; i < members.length; i++) {
+            const childPrefix = prefix ? `${prefix}/${i}` : `${i}`
+            collectOptionalKeywordPatches(ruleName, members[i]!, childPrefix, patches)
+        }
+        return
+    }
+    if (isOptionalType(rule.type) || isRepeatType(rule.type) || isFieldType(rule.type)) {
+        const inner = (rule as unknown as { content: Rule }).content
+        const childPrefix = prefix ? `${prefix}/0` : `0`
+        collectOptionalKeywordPatches(ruleName, inner, childPrefix, patches)
+    }
+}
+
+function applyBareKeywordViaTransform(ruleName: string, rule: Rule): Rule {
+    if (!isSeqType(rule.type)) return rule
+    const members = (rule as unknown as { members: Array<{ type: string; value?: string }> }).members
+    const first = members[0]
+    if (!first || !isStringType(first.type)) return rule
+    const kw = first.value
+    if (typeof kw !== 'string' || !isIdentifierShaped(kw)) return rule
+    const existing = collectFieldNamesRuntime(rule)
+    if (existing.has(kw)) {
+        reportSkip('bare-keyword-prefix', ruleName, `field '${kw}' already exists`)
+        return rule
+    }
+    return transform(
+        rule as unknown as Parameters<typeof transform>[0],
+        { 0: field(kw) as TransformPatch },
+    ) as Rule
+}
+
+// ---------------------------------------------------------------------------
+// Shared helpers (legacy — used by sittir-shape path if we reintroduce it)
 // ---------------------------------------------------------------------------
 
 function mapRules(g: GrammarResult, fn: (ruleName: string, rule: Rule) => Rule): GrammarResult {
@@ -286,19 +461,12 @@ function mapRules(g: GrammarResult, fn: (ruleName: string, rule: Rule) => Rule):
 }
 
 function wrapAsField(name: string, content: Rule): FieldRule {
-    // enrich() promotions are user-authored (the user opts in via
-    // enrich(base) in overrides.ts), but enrich is currently a NO-OP
-    // under the tree-sitter CLI runtime (see early-return at top of
-    // enrich() above) — its passes only run in sittir's evaluator.
-    //
-    // Consequence: the override-compiled parser does NOT carry enrich-
-    // promoted fields. Until enrich is shape-aware and applies under
-    // tree-sitter CLI too, tag these as 'inferred' so derive-overrides-json
-    // keeps them in the runtime routing map (where readNode promotes
-    // them at parse time as a fallback). transform()-applied fields
-    // (source='override') flow through the field placeholder pipeline
-    // and DO appear in the override-compiled parser, so they can
-    // eventually be filtered out of the routing map.
+    // Tagged 'inferred' because enrich is currently a no-op under
+    // tree-sitter CLI (see early-return in enrich()). Enrich-promoted
+    // fields don't reach the override-compiled parser, so readNode
+    // needs them in the runtime routing map (which keeps 'inferred'
+    // entries). When enrich is reconciled with the CLI pipeline the
+    // tag can move back to 'override'.
     return {
         type: 'field',
         name,

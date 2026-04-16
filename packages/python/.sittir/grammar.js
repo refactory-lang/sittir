@@ -466,7 +466,8 @@ function enrich(base2) {
   if (!base2 || typeof base2 !== "object") {
     throw new Error("enrich(): expected a grammar object, got " + typeof base2);
   }
-  if (!("grammar" in base2)) {
+  const isTreeSitterShape = !("grammar" in base2) && "rules" in base2;
+  if (isTreeSitterShape) {
     return base2;
   }
   if (!base2.grammar || typeof base2.grammar.rules !== "object") {

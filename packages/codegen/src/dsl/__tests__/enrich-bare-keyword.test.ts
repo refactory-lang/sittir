@@ -1,6 +1,7 @@
-import { describe, it, expect, afterEach, vi } from 'vitest'
+import { describe, it, expect, afterEach, beforeAll, afterAll, vi } from 'vitest'
 import { enrich } from '../enrich.ts'
 import type { Rule, SeqRule, FieldRule, StringRule } from '../../compiler/rule.ts'
+import { installFakeDsl, restoreFakeDsl } from './_test-helpers.ts'
 
 function mkGrammar(rules: Record<string, Rule>) {
     return { grammar: { name: 'test', rules } }
@@ -11,6 +12,8 @@ function topSeq(g: ReturnType<typeof mkGrammar>, ruleName: string): SeqRule {
 }
 
 describe('enrich — bareKeywordPrefixPass', () => {
+    beforeAll(() => { installFakeDsl() })
+    afterAll(() => { restoreFakeDsl() })
     afterEach(() => { vi.restoreAllMocks() })
 
     it('wraps a leading identifier-shaped literal as field(kw, literal)', () => {

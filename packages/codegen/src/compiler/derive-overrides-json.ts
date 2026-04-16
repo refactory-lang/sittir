@@ -84,27 +84,22 @@ function collectFields(
 
         case 'field': {
             // The runtime routing map is a FALLBACK for fields the parser
-            // doesn't surface natively. With override-compiled parsers
-            // (spec 007), source='override' fields ARE in the parse tree
-            // (carried by tree-sitter's fieldNameForChild via the
-            // transpile bridge that runs transform()/field placeholders
-            // through native field()). Including them duplicates work
-            // and risks the routing diverging from the parser.
+            // doesn't surface natively. Sources:
             //
-            // Sources kept (need runtime promotion):
-            // - `inferred` — enrich() auto-promotion. enrich is a no-op
-            //                under tree-sitter CLI (see enrich.ts), so
-            //                these fields are NOT in the parser. Must
-            //                stay in the routing map until enrich is
-            //                made shape-aware.
-            // - undefined  — full-replacement override rules. Allowed
-            //                when ctx.inOverrideRule, since the user
-            //                wrote them outside the field() placeholder
-            //                pipeline that flows to native FIELD.
-            //
-            // Sources skipped (parser carries them):
-            // - `override` — transform()-applied. Native FIELD baked in.
-            // - `grammar`  — base grammar. Native FIELD by definition.
+            // - `override` — transform()-applied via field() placeholder +
+            //                 resolvePatch. The placeholder delegates to
+            //                 the runtime's native FIELD/field, so
+            //                 tree-sitter's parser-generator sees the
+            //                 wrapper. SKIPPED — parser carries it.
+            // - `inferred` — enrich()-promoted (+ Link heuristic).
+            //                 enrich is currently a no-op under tree-sitter
+            //                 CLI, so these fields are sittir-internal
+            //                 only and the parser does NOT carry them.
+            //                 KEPT — routing fallback handles them.
+            // - `grammar`  — base grammar native field. SKIPPED.
+            // - undefined  — full-replacement override rules. KEPT when
+            //                 ctx.inOverrideRule (the user wrote them
+            //                 outside the field placeholder pipeline).
             const isFirstPartyField =
                 rule.source === 'inferred'
                 || (ctx.inOverrideRule && rule.source !== 'override' && rule.source !== 'grammar')
