@@ -104,6 +104,10 @@ export const _fromMap = {
   "scoped_identifier": scopedIdentifierFrom,
   "scoped_type_identifier_in_expression_position": scopedTypeIdentifierInExpressionPositionFrom,
   "scoped_type_identifier": scopedTypeIdentifierFrom,
+  "range_expression_binary": rangeExpressionBinaryFrom,
+  "range_expression_postfix": rangeExpressionPostfixFrom,
+  "range_expression_prefix": rangeExpressionPrefixFrom,
+  "range_expression_bare": rangeExpressionBareFrom,
   "range_expression": rangeExpressionFrom,
   "unary_expression": unaryExpressionFrom,
   "try_expression": tryExpressionFrom,
@@ -137,6 +141,8 @@ export const _fromMap = {
   "loop_expression": loopExpressionFrom,
   "for_expression": forExpressionFrom,
   "const_block": constBlockFrom,
+  "closure_expression_block": closureExpressionBlockFrom,
+  "closure_expression_expr": closureExpressionExprFrom,
   "closure_expression": closureExpressionFrom,
   "closure_parameters": closureParametersFrom,
   "label": labelFrom,
@@ -155,12 +161,18 @@ export const _fromMap = {
   "slice_pattern": slicePatternFrom,
   "tuple_struct_pattern": tupleStructPatternFrom,
   "struct_pattern": structPatternFrom,
+  "field_pattern_shorthand": fieldPatternShorthandFrom,
+  "field_pattern_named": fieldPatternNamedFrom,
   "field_pattern": fieldPatternFrom,
   "mut_pattern": mutPatternFrom,
+  "range_pattern_left": rangePatternLeftFrom,
+  "range_pattern_prefix": rangePatternPrefixFrom,
   "range_pattern": rangePatternFrom,
   "ref_pattern": refPatternFrom,
   "captured_pattern": capturedPatternFrom,
   "reference_pattern": referencePatternFrom,
+  "or_pattern_binary": orPatternBinaryFrom,
+  "or_pattern_prefix": orPatternPrefixFrom,
   "or_pattern": orPatternFrom,
   "negative_literal": negativeLiteralFrom,
   "integer_literal": integerLiteralFrom,
@@ -182,19 +194,7 @@ export const _fromMap = {
   "raw_string_literal_content": rawStringLiteralContentFrom,
   "float_literal": floatLiteralFrom,
   "primitive_type": primitiveTypeFrom,
-  "range_expression_binary": rangeExpressionBinaryFrom,
-  "range_expression_postfix": rangeExpressionPostfixFrom,
-  "range_expression_prefix": rangeExpressionPrefixFrom,
-  "range_expression_bare": rangeExpressionBareFrom,
   "let_chain": letChainFrom,
-  "closure_expression_block": closureExpressionBlockFrom,
-  "closure_expression_expr": closureExpressionExprFrom,
-  "field_pattern_shorthand": fieldPatternShorthandFrom,
-  "field_pattern_named": fieldPatternNamedFrom,
-  "range_pattern_left": rangePatternLeftFrom,
-  "range_pattern_prefix": rangePatternPrefixFrom,
-  "or_pattern_binary": orPatternBinaryFrom,
-  "or_pattern_prefix": orPatternPrefixFrom,
   "outer_doc_comment_marker": outerDocCommentMarkerFrom,
   "inner_doc_comment_marker": innerDocCommentMarkerFrom,
   "type_identifier": typeIdentifierFrom,
@@ -406,9 +406,7 @@ const _K40: readonly string[] = ["unary_expression","reference_expression","try_
 const _K41: readonly string[] = ["block","if_expression"];
 const _K42: readonly string[] = ["attribute_item","inner_attribute_item"];
 const _K43: readonly string[] = ["expression_statement","const_item","macro_invocation","macro_definition","attribute_item","inner_attribute_item","mod_item","foreign_mod_item","struct_item","union_item","enum_item","type_item","function_item","function_signature_item","impl_item","trait_item","associated_type","let_declaration","use_declaration","extern_crate_declaration","static_item","unary_expression","reference_expression","try_expression","binary_expression","assignment_expression","compound_assignment_expr","type_cast_expression","call_expression","return_expression","yield_expression","string_literal","raw_string_literal","scoped_identifier","generic_function","await_expression","field_expression","array_expression","tuple_expression","break_expression","continue_expression","index_expression","closure_expression","parenthesized_expression","struct_expression","unsafe_block","async_block","gen_block","try_block","block","if_expression","match_expression","while_expression","loop_expression","for_expression","const_block","range_expression"];
-const _K44: readonly string[] = ["char_literal","boolean_literal","integer_literal","float_literal","self","identifier","metavariable","super","crate"];
-const _K45: readonly string[] = ["string_literal","raw_string_literal","negative_literal","scoped_identifier"];
-const _K46: readonly string[] = ["integer_literal","float_literal"];
+const _K44: readonly string[] = ["integer_literal","float_literal"];
 
 export function sourceFileFrom(input: T.SourceFile | T.LooseSourceFile): ReturnType<typeof sourceFile> {
   if ('render' in input) return input as ReturnType<typeof sourceFile>;
@@ -1168,13 +1166,25 @@ export function scopedTypeIdentifierFrom(input: T.ScopedTypeIdentifier | T.Loose
   });
 }
 
-export function rangeExpressionFrom(input: T.RangeExpression | T.LooseRangeExpression): ReturnType<typeof rangeExpression> {
-  if ('render' in input) return input as T.RangeExpression & ReturnType<typeof rangeExpression>;
-  return rangeExpression({
-    start: _resolveOne<NonNullable<T.RangeExpressionConfig['start']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } })?.fields?.['start'] ?? (input as { readonly start?: _FromFieldInput })?.start), _K4, _K5),
-    operator: _resolveOne<NonNullable<T.RangeExpressionConfig['operator']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } })?.fields?.['operator'] ?? (input as { readonly operator?: _FromFieldInput })?.operator), _K0, _K0),
-    end: _resolveOne<NonNullable<T.RangeExpressionConfig['end']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } })?.fields?.['end'] ?? (input as { readonly end?: _FromFieldInput })?.end), _K4, _K5),
-  });
+export function rangeExpressionFrom(input?: T.RangeExpression | T.LooseRangeExpression) {
+  if (input !== undefined && 'render' in input) return input;
+  return rangeExpression(input as T.RangeExpressionBinaryConfig | T.RangeExpressionPostfixConfig | T.RangeExpressionPrefixConfig | T.RangeExpressionBareConfig);
+}
+
+export function rangeExpressionBinaryFrom(input: T.RangeExpressionBinaryConfig) {
+  return rangeExpressionBinary(input);
+}
+
+export function rangeExpressionPostfixFrom(input: T.RangeExpressionPostfixConfig) {
+  return rangeExpressionPostfix(input);
+}
+
+export function rangeExpressionPrefixFrom(input: T.RangeExpressionPrefixConfig) {
+  return rangeExpressionPrefix(input);
+}
+
+export function rangeExpressionBareFrom(input: T.RangeExpressionBareConfig) {
+  return rangeExpressionBare(input);
 }
 
 export function unaryExpressionFrom(input: T.UnaryExpression | T.LooseUnaryExpression): ReturnType<typeof unaryExpression> {
@@ -1443,15 +1453,26 @@ export function constBlockFrom(input: T.ConstBlock | T.LooseConstBlock): ReturnT
   });
 }
 
-export function closureExpressionFrom(input: T.ClosureExpression | T.LooseClosureExpression): ReturnType<typeof closureExpression> {
-  if ('render' in input) return input as T.ClosureExpression & ReturnType<typeof closureExpression>;
-  return closureExpression({
-    static: _resolveOne<NonNullable<T.ClosureExpressionConfig['static']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['static'] ?? (input as { readonly static?: _FromFieldInput }).static), _K0, _K0),
-    async: _resolveOne<NonNullable<T.ClosureExpressionConfig['async']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['async'] ?? (input as { readonly async?: _FromFieldInput }).async), _K0, _K0),
-    move: _resolveOne<NonNullable<T.ClosureExpressionConfig['move']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['move'] ?? (input as { readonly move?: _FromFieldInput }).move), _K0, _K0),
-    parameters: _resolveOneBranch<NonNullable<T.ClosureExpressionConfig['parameters']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['parameters'] ?? (input as { readonly parameters?: _FromFieldInput }).parameters), "closure_parameters"),
-    returnType: _resolveOne<NonNullable<T.ClosureExpressionConfig['returnType']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } })?.fields?.['return_type'] ?? (input as { readonly returnType?: _FromFieldInput })?.returnType), _K9, _K10),
-    body: _resolveOneBranch<NonNullable<T.ClosureExpressionConfig['body']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } })?.fields?.['body'] ?? (input as { readonly body?: _FromFieldInput })?.body), "block"),
+export function closureExpressionFrom(input?: T.ClosureExpression | T.LooseClosureExpression) {
+  if (input !== undefined && 'render' in input) return input;
+  return closureExpression(input as T.ClosureExpressionBlockConfig | T.ClosureExpressionExprConfig);
+}
+
+export function closureExpressionBlockFrom(input: T.ClosureExpressionBlockConfig) {
+  return closureExpressionBlock({
+    static: _resolveOne<NonNullable<T.ClosureExpressionBlockConfig['static']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['static'] ?? (input as { readonly static?: _FromFieldInput }).static), _K0, _K0),
+    async: _resolveOne<NonNullable<T.ClosureExpressionBlockConfig['async']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['async'] ?? (input as { readonly async?: _FromFieldInput }).async), _K0, _K0),
+    move: _resolveOne<NonNullable<T.ClosureExpressionBlockConfig['move']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['move'] ?? (input as { readonly move?: _FromFieldInput }).move), _K0, _K0),
+    parameters: _resolveOneBranch<NonNullable<T.ClosureExpressionBlockConfig['parameters']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['parameters'] ?? (input as { readonly parameters?: _FromFieldInput }).parameters), "closure_parameters"),
+  });
+}
+
+export function closureExpressionExprFrom(input: T.ClosureExpressionExprConfig) {
+  return closureExpressionExpr({
+    static: _resolveOne<NonNullable<T.ClosureExpressionExprConfig['static']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['static'] ?? (input as { readonly static?: _FromFieldInput }).static), _K0, _K0),
+    async: _resolveOne<NonNullable<T.ClosureExpressionExprConfig['async']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['async'] ?? (input as { readonly async?: _FromFieldInput }).async), _K0, _K0),
+    move: _resolveOne<NonNullable<T.ClosureExpressionExprConfig['move']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['move'] ?? (input as { readonly move?: _FromFieldInput }).move), _K0, _K0),
+    parameters: _resolveOneBranch<NonNullable<T.ClosureExpressionExprConfig['parameters']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['parameters'] ?? (input as { readonly parameters?: _FromFieldInput }).parameters), "closure_parameters"),
   });
 }
 
@@ -1593,13 +1614,22 @@ export function structPatternFrom(input: T.StructPattern | T.LooseStructPattern)
   });
 }
 
-export function fieldPatternFrom(input: T.FieldPattern | T.LooseFieldPattern): ReturnType<typeof fieldPattern> {
-  if ('render' in input) return input as T.FieldPattern & ReturnType<typeof fieldPattern>;
-  return fieldPattern({
-    ref: _resolveOne<NonNullable<T.FieldPatternConfig['ref']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['ref'] ?? (input as { readonly ref?: _FromFieldInput }).ref), _K0, _K0),
-    mutableSpecifier: _resolveOneLeaf<NonNullable<T.FieldPatternConfig['mutableSpecifier']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['mutable_specifier'] ?? (input as { readonly mutableSpecifier?: _FromFieldInput }).mutableSpecifier), "mutable_specifier"),
-    name: _resolveOne<NonNullable<T.FieldPatternConfig['name']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } })?.fields?.['name'] ?? (input as { readonly name?: _FromFieldInput })?.name), _K0, _K0),
-    pattern: _resolveOne<NonNullable<T.FieldPatternConfig['pattern']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } })?.fields?.['pattern'] ?? (input as { readonly pattern?: _FromFieldInput })?.pattern), _K17, _K18),
+export function fieldPatternFrom(input?: T.FieldPattern | T.LooseFieldPattern) {
+  if (input !== undefined && 'render' in input) return input;
+  return fieldPattern(input as T.FieldPatternShorthandConfig | T.FieldPatternNamedConfig);
+}
+
+export function fieldPatternShorthandFrom(input: T.FieldPatternShorthandConfig) {
+  return fieldPatternShorthand({
+    ref: _resolveOne<NonNullable<T.FieldPatternShorthandConfig['ref']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['ref'] ?? (input as { readonly ref?: _FromFieldInput }).ref), _K0, _K0),
+    mutableSpecifier: _resolveOneLeaf<NonNullable<T.FieldPatternShorthandConfig['mutableSpecifier']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['mutable_specifier'] ?? (input as { readonly mutableSpecifier?: _FromFieldInput }).mutableSpecifier), "mutable_specifier"),
+  });
+}
+
+export function fieldPatternNamedFrom(input: T.FieldPatternNamedConfig) {
+  return fieldPatternNamed({
+    ref: _resolveOne<NonNullable<T.FieldPatternNamedConfig['ref']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['ref'] ?? (input as { readonly ref?: _FromFieldInput }).ref), _K0, _K0),
+    mutableSpecifier: _resolveOneLeaf<NonNullable<T.FieldPatternNamedConfig['mutableSpecifier']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['mutable_specifier'] ?? (input as { readonly mutableSpecifier?: _FromFieldInput }).mutableSpecifier), "mutable_specifier"),
   });
 }
 
@@ -1611,11 +1641,17 @@ export function mutPatternFrom(input: T.MutPattern | T.LooseMutPattern): ReturnT
   });
 }
 
-export function rangePatternFrom(input: T.RangePattern | T.LooseRangePattern): ReturnType<typeof rangePattern> {
-  if ('render' in input) return input as T.RangePattern & ReturnType<typeof rangePattern>;
-  return rangePattern({
-    right: _resolveOne<NonNullable<T.RangePatternConfig['right']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } })?.fields?.['right'] ?? (input as { readonly right?: _FromFieldInput })?.right), _K44, _K45),
-  });
+export function rangePatternFrom(input?: T.RangePattern | T.LooseRangePattern) {
+  if (input !== undefined && 'render' in input) return input;
+  return rangePattern(input as T.RangePatternLeftConfig | T.RangePatternPrefixConfig);
+}
+
+export function rangePatternLeftFrom(input: T.RangePatternLeftConfig) {
+  return rangePatternLeft(input);
+}
+
+export function rangePatternPrefixFrom(input: T.RangePatternPrefixConfig) {
+  return rangePatternPrefix(input);
 }
 
 export function refPatternFrom(input: T.RefPattern | T.LooseRefPattern): ReturnType<typeof refPattern> {
@@ -1642,18 +1678,23 @@ export function referencePatternFrom(input: T.ReferencePattern | T.LooseReferenc
   });
 }
 
-export function orPatternFrom(input: T.OrPattern | T.LooseOrPattern): ReturnType<typeof orPattern> {
-  if ('render' in input) return input as T.OrPattern & ReturnType<typeof orPattern>;
-  return orPattern({
-    left: _resolveOne<NonNullable<T.OrPatternConfig['left']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } })?.fields?.['left'] ?? (input as { readonly left?: _FromFieldInput })?.left), _K17, _K18),
-    right: _resolveOne<NonNullable<T.OrPatternConfig['right']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } })?.fields?.['right'] ?? (input as { readonly right?: _FromFieldInput })?.right), _K17, _K18),
-  });
+export function orPatternFrom(input?: T.OrPattern | T.LooseOrPattern) {
+  if (input !== undefined && 'render' in input) return input;
+  return orPattern(input as T.OrPatternBinaryConfig | T.OrPatternPrefixConfig);
+}
+
+export function orPatternBinaryFrom(input: T.OrPatternBinaryConfig) {
+  return orPatternBinary(input);
+}
+
+export function orPatternPrefixFrom(input: T.OrPatternPrefixConfig) {
+  return orPatternPrefix(input);
 }
 
 export function negativeLiteralFrom(input: T.NegativeLiteral | T.LooseNegativeLiteral): ReturnType<typeof negativeLiteral> {
   if ('render' in input) return input as ReturnType<typeof negativeLiteral>;
   return negativeLiteral({
-    value: _resolveOne<NonNullable<T.NegativeLiteralConfig['value']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['value'] ?? (input as { readonly value?: _FromFieldInput }).value), _K46, _K0),
+    value: _resolveOne<NonNullable<T.NegativeLiteralConfig['value']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['value'] ?? (input as { readonly value?: _FromFieldInput }).value), _K44, _K0),
   });
 }
 
@@ -1770,114 +1811,12 @@ export function primitiveTypeFrom(input: string | T.PrimitiveType) {
   return primitiveType(input as 'u8' | 'i8' | 'u16' | 'i16' | 'u32' | 'i32' | 'u64' | 'i64' | 'u128' | 'i128' | 'isize' | 'usize' | 'f32' | 'f64' | 'bool' | 'str' | 'char');
 }
 
-export function rangeExpressionBinaryFrom(input: T.RangeExpressionBinary | T.LooseRangeExpressionBinary): ReturnType<typeof rangeExpressionBinary> {
-  if ('render' in input) return input as ReturnType<typeof rangeExpressionBinary>;
-  return rangeExpressionBinary({
-    start: _resolveOne<NonNullable<T.RangeExpressionBinaryConfig['start']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['start'] ?? (input as { readonly start?: _FromFieldInput }).start), _K4, _K5),
-    operator: _resolveOne<NonNullable<T.RangeExpressionBinaryConfig['operator']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['operator'] ?? (input as { readonly operator?: _FromFieldInput }).operator), _K0, _K0),
-    end: _resolveOne<NonNullable<T.RangeExpressionBinaryConfig['end']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['end'] ?? (input as { readonly end?: _FromFieldInput }).end), _K4, _K5),
-  });
-}
-
-export function rangeExpressionPostfixFrom(input: T.RangeExpressionPostfix | T.LooseRangeExpressionPostfix): ReturnType<typeof rangeExpressionPostfix> {
-  if ('render' in input) return input as ReturnType<typeof rangeExpressionPostfix>;
-  return rangeExpressionPostfix({
-    start: _resolveOne<NonNullable<T.RangeExpressionPostfixConfig['start']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['start'] ?? (input as { readonly start?: _FromFieldInput }).start), _K4, _K5),
-    operator: _resolveOne<NonNullable<T.RangeExpressionPostfixConfig['operator']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['operator'] ?? (input as { readonly operator?: _FromFieldInput }).operator), _K0, _K0),
-  });
-}
-
-export function rangeExpressionPrefixFrom(input: T.RangeExpressionPrefix | T.LooseRangeExpressionPrefix): ReturnType<typeof rangeExpressionPrefix> {
-  if ('render' in input) return input as ReturnType<typeof rangeExpressionPrefix>;
-  return rangeExpressionPrefix({
-    operator: _resolveOne<NonNullable<T.RangeExpressionPrefixConfig['operator']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['operator'] ?? (input as { readonly operator?: _FromFieldInput }).operator), _K0, _K0),
-    end: _resolveOne<NonNullable<T.RangeExpressionPrefixConfig['end']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['end'] ?? (input as { readonly end?: _FromFieldInput }).end), _K4, _K5),
-  });
-}
-
-export function rangeExpressionBareFrom(input: T.RangeExpressionBare | T.LooseRangeExpressionBare): ReturnType<typeof rangeExpressionBare> {
-  if ('render' in input) return input as ReturnType<typeof rangeExpressionBare>;
-  return rangeExpressionBare({
-    operator: _resolveOne<NonNullable<T.RangeExpressionBareConfig['operator']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['operator'] ?? (input as { readonly operator?: _FromFieldInput }).operator), _K0, _K0),
-  });
-}
-
 export function letChainFrom(input?: NonNullable<T.LetChainConfig['children']>[number] | T.LetChain) {
   if (isNodeData(input) && input.type === 'let_chain') {
     const data = input as T.LetChain;
     return letChain((data.children as NonNullable<T.LetChainConfig['children']>)[0] as NonNullable<T.LetChainConfig['children']>[number]);
   }
   return letChain(input as NonNullable<T.LetChainConfig['children']>[number]);
-}
-
-export function closureExpressionBlockFrom(input: T.ClosureExpressionBlock | T.LooseClosureExpressionBlock): ReturnType<typeof closureExpressionBlock> {
-  if ('render' in input) return input as ReturnType<typeof closureExpressionBlock>;
-  return closureExpressionBlock({
-    returnType: _resolveOne<NonNullable<T.ClosureExpressionBlockConfig['returnType']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['return_type'] ?? (input as { readonly returnType?: _FromFieldInput }).returnType), _K9, _K10),
-    body: _resolveOneBranch<NonNullable<T.ClosureExpressionBlockConfig['body']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['body'] ?? (input as { readonly body?: _FromFieldInput }).body), "block"),
-  });
-}
-
-export function closureExpressionExprFrom(input: T.ClosureExpressionExpr | T.LooseClosureExpressionExpr): ReturnType<typeof closureExpressionExpr> {
-  if ('render' in input) return input as ReturnType<typeof closureExpressionExpr>;
-  return closureExpressionExpr({
-    body: _resolveOne<NonNullable<T.ClosureExpressionExprConfig['body']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['body'] ?? (input as { readonly body?: _FromFieldInput }).body), _K4, _K5),
-  });
-}
-
-export function fieldPatternShorthandFrom(input: T.FieldPatternShorthand | T.LooseFieldPatternShorthand): ReturnType<typeof fieldPatternShorthand> {
-  if ('render' in input) return input as ReturnType<typeof fieldPatternShorthand>;
-  return fieldPatternShorthand({
-    name: _resolveOne<NonNullable<T.FieldPatternShorthandConfig['name']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['name'] ?? (input as { readonly name?: _FromFieldInput }).name), _K0, _K0),
-  });
-}
-
-export function fieldPatternNamedFrom(input: T.FieldPatternNamed | T.LooseFieldPatternNamed): ReturnType<typeof fieldPatternNamed> {
-  if ('render' in input) return input as ReturnType<typeof fieldPatternNamed>;
-  return fieldPatternNamed({
-    name: _resolveOneBranch<NonNullable<T.FieldPatternNamedConfig['name']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['name'] ?? (input as { readonly name?: _FromFieldInput }).name), "_field_identifier"),
-    pattern: _resolveOne<NonNullable<T.FieldPatternNamedConfig['pattern']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['pattern'] ?? (input as { readonly pattern?: _FromFieldInput }).pattern), _K17, _K18),
-  });
-}
-
-export function rangePatternLeftFrom(input?: T.RangePatternLeft | T.LooseRangePatternLeft) {
-  if (input !== undefined && 'render' in input) return input;
-  return rangePatternLeft(input as T.RangePatternLeftRightConfig | T.RangePatternLeftDotdotConfig);
-}
-
-export function rangePatternLeftRightFrom(input: T.RangePatternLeftRightConfig) {
-  return rangePatternLeftRight({
-    left: _resolveOne<NonNullable<T.RangePatternLeftRightConfig['left']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['left'] ?? (input as { readonly left?: _FromFieldInput }).left), _K44, _K45),
-    right: _resolveOne<NonNullable<T.RangePatternLeftRightConfig['right']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['right'] ?? (input as { readonly right?: _FromFieldInput }).right), _K44, _K45),
-  });
-}
-
-export function rangePatternLeftDotdotFrom(input: T.RangePatternLeftDotdotConfig) {
-  return rangePatternLeftDotdot({
-    left: _resolveOne<NonNullable<T.RangePatternLeftDotdotConfig['left']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['left'] ?? (input as { readonly left?: _FromFieldInput }).left), _K44, _K45),
-  });
-}
-
-export function rangePatternPrefixFrom(input: T.RangePatternPrefix | T.LooseRangePatternPrefix): ReturnType<typeof rangePatternPrefix> {
-  if ('render' in input) return input as ReturnType<typeof rangePatternPrefix>;
-  return rangePatternPrefix({
-    right: _resolveOne<NonNullable<T.RangePatternPrefixConfig['right']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['right'] ?? (input as { readonly right?: _FromFieldInput }).right), _K44, _K45),
-  });
-}
-
-export function orPatternBinaryFrom(input: T.OrPatternBinary | T.LooseOrPatternBinary): ReturnType<typeof orPatternBinary> {
-  if ('render' in input) return input as ReturnType<typeof orPatternBinary>;
-  return orPatternBinary({
-    left: _resolveOne<NonNullable<T.OrPatternBinaryConfig['left']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['left'] ?? (input as { readonly left?: _FromFieldInput }).left), _K17, _K18),
-    right: _resolveOne<NonNullable<T.OrPatternBinaryConfig['right']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['right'] ?? (input as { readonly right?: _FromFieldInput }).right), _K17, _K18),
-  });
-}
-
-export function orPatternPrefixFrom(input: T.OrPatternPrefix | T.LooseOrPatternPrefix): ReturnType<typeof orPatternPrefix> {
-  if ('render' in input) return input as ReturnType<typeof orPatternPrefix>;
-  return orPatternPrefix({
-    right: _resolveOne<NonNullable<T.OrPatternPrefixConfig['right']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['right'] ?? (input as { readonly right?: _FromFieldInput }).right), _K17, _K18),
-  });
 }
 
 export function outerDocCommentMarkerFrom(input: string | T.OuterDocCommentMarker) {

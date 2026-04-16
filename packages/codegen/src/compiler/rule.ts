@@ -417,6 +417,7 @@ export interface LinkedGrammar {
      * LinkedGrammar directly don't have to fill in an empty map.
      */
     readonly aliasedHiddenKinds?: Map<string, string>
+    readonly polymorphVariants?: PolymorphVariant[]
 }
 
 /**
@@ -450,6 +451,7 @@ export interface OptimizedGrammar {
     readonly supertypes: Set<string>
     readonly word: string | null
     readonly derivations: DerivationLog
+    readonly polymorphVariants?: PolymorphVariant[]
 }
 
 // ---------------------------------------------------------------------------
@@ -1451,15 +1453,17 @@ export interface NodeMap {
      * round-trip back to the keyword and lose the kind.
      */
     readonly word?: string | null
-    /**
-     * Nested-alias polymorph metadata: each entry pairs a parent kind
-     * with a short variant suffix. The full alias name is
-     * `${parent}_${child}`. Set by generate.ts from
-     * RawGrammar.polymorphVariants — emitters use this to generate
-     * flat-field ergonomic factories for kinds whose parse tree uses
-     * variant children instead of flat fields.
-     */
-    readonly polymorphVariants?: PolymorphVariant[]
+    readonly polymorphFormKinds: ReadonlySet<string>
+}
+
+export function computePolymorphFormKinds(nodes: Map<string, AssembledNode>): Set<string> {
+    const result = new Set<string>()
+    for (const [, node] of nodes) {
+        if (node.modelType === 'polymorph') {
+            for (const form of node.forms) result.add(form.kind)
+        }
+    }
+    return result
 }
 
 // ---------------------------------------------------------------------------

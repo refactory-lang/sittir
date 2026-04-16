@@ -302,7 +302,6 @@ export function emitTypes(config: EmitTypesConfig): string {
     for (const kind of nodeKinds) {
         const node = nodeMap.nodes.get(kind)!
         const ptn = polymorphTypeNames.get(kind)
-        const variants = nodeMap.polymorphVariants?.filter(v => v.parent === kind)
         if (ptn) {
             // Per-form Config aliases
             for (const ftn of ptn) {
@@ -310,9 +309,6 @@ export function emitTypes(config: EmitTypesConfig): string {
             }
             // Umbrella Config union
             lines.push(`export type ${node.typeName}Config = ${ptn.map(ftn => `${ftn}Config`).join(' | ')};`)
-        } else if (variants?.length) {
-            // Nested-alias polymorph: flat config with parent + variant fields
-            emitNestedAliasConfig(lines, node, variants, nodeMap)
         } else {
             lines.push(`export type ${node.typeName}Config = ConfigOf<${node.typeName}>;`)
         }

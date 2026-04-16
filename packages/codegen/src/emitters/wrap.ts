@@ -310,11 +310,6 @@ function isNamedKind(kind: string, nodeMap: NodeMap): boolean {
 function renderWrapForNode(node: AssembledNode, nodeMap: NodeMap): string | undefined {
     if (!node.rawFactoryName) return undefined
 
-    const variants = nodeMap.polymorphVariants?.filter(v => v.parent === node.kind)
-    if (variants?.length) {
-        return emitNestedAliasWrap(node, variants, nodeMap)
-    }
-
     switch (node.modelType) {
         case 'branch':
             return emitFieldCarryingWrap(node, node.fields, node.children ?? [])

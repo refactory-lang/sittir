@@ -809,14 +809,21 @@ describe('scoped_type_identifier', () => {
 });
 
 describe('range_expression', () => {
-  it('factory produces correct type', () => {
-    const node = ir.range({ operator: 'test' as any });
+  it('binary form produces correct type', () => {
+    const node = ir.range.binary({});
     expect(node.type).toBe('range_expression');
   });
-  it('render produces non-empty string', () => {
-    const node = ir.range({ operator: 'test' as any });
-    const rendered = node.render();
-    expect(rendered.length).toBeGreaterThan(0);
+  it('postfix form produces correct type', () => {
+    const node = ir.range.postfix({});
+    expect(node.type).toBe('range_expression');
+  });
+  it('prefix form produces correct type', () => {
+    const node = ir.range.prefix({});
+    expect(node.type).toBe('range_expression');
+  });
+  it('bare form produces correct type', () => {
+    const node = ir.range.bare({});
+    expect(node.type).toBe('range_expression');
   });
 });
 
@@ -1142,14 +1149,13 @@ describe('const_block', () => {
 });
 
 describe('closure_expression', () => {
-  it('factory produces correct type', () => {
-    const node = ir.closure({ parameters: { type: 'closure_parameters', text: 'test' } as any, body: { type: '_expression', text: 'test' } as any });
+  it('block form produces correct type', () => {
+    const node = ir.closure.block({ parameters: { type: 'closure_parameters', text: 'test' } as any });
     expect(node.type).toBe('closure_expression');
   });
-  it('render produces non-empty string', () => {
-    const node = ir.closure({ parameters: { type: 'closure_parameters', text: 'test' } as any, body: { type: '_expression', text: 'test' } as any });
-    const rendered = node.render();
-    expect(rendered.length).toBeGreaterThan(0);
+  it('expr form produces correct type', () => {
+    const node = ir.closure.expr({ parameters: { type: 'closure_parameters', text: 'test' } as any });
+    expect(node.type).toBe('closure_expression');
   });
 });
 
@@ -1325,14 +1331,13 @@ describe('struct_pattern', () => {
 });
 
 describe('field_pattern', () => {
-  it('factory produces correct type', () => {
-    const node = ir.fieldPattern({ name: { type: '_field_identifier', text: 'test' } as any, pattern: { type: '_pattern', text: 'test' } as any });
+  it('shorthand form produces correct type', () => {
+    const node = ir.fieldPattern.shorthand({});
     expect(node.type).toBe('field_pattern');
   });
-  it('render produces non-empty string', () => {
-    const node = ir.fieldPattern({ name: { type: '_field_identifier', text: 'test' } as any, pattern: { type: '_pattern', text: 'test' } as any });
-    const rendered = node.render();
-    expect(rendered.length).toBeGreaterThan(0);
+  it('named form produces correct type', () => {
+    const node = ir.fieldPattern.named({});
+    expect(node.type).toBe('field_pattern');
   });
 });
 
@@ -1348,14 +1353,13 @@ describe('mut_pattern', () => {
 });
 
 describe('range_pattern', () => {
-  it('factory produces correct type', () => {
-    const node = ir.rangePattern({ right: { type: '_literal_pattern', text: 'test' } as any });
+  it('left form produces correct type', () => {
+    const node = ir.rangePattern.left({});
     expect(node.type).toBe('range_pattern');
   });
-  it('render produces non-empty string', () => {
-    const node = ir.rangePattern({ right: { type: '_literal_pattern', text: 'test' } as any });
-    const rendered = node.render();
-    expect(rendered.length).toBeGreaterThan(0);
+  it('prefix form produces correct type', () => {
+    const node = ir.rangePattern.prefix({});
+    expect(node.type).toBe('range_pattern');
   });
 });
 
@@ -1393,14 +1397,13 @@ describe('reference_pattern', () => {
 });
 
 describe('or_pattern', () => {
-  it('factory produces correct type', () => {
-    const node = ir.orPattern({ right: { type: '_pattern', text: 'test' } as any });
+  it('binary form produces correct type', () => {
+    const node = ir.orPattern.binary({});
     expect(node.type).toBe('or_pattern');
   });
-  it('render produces non-empty string', () => {
-    const node = ir.orPattern({ right: { type: '_pattern', text: 'test' } as any });
-    const rendered = node.render();
-    expect(rendered.length).toBeGreaterThan(0);
+  it('prefix form produces correct type', () => {
+    const node = ir.orPattern.prefix({});
+    expect(node.type).toBe('or_pattern');
   });
 });
 
@@ -1564,142 +1567,10 @@ describe('primitive_type', () => {
   });
 });
 
-describe('range_expression_binary', () => {
-  it('factory produces correct type', () => {
-    const node = ir.rangeExpressionBinary({ start: { type: '_expression', text: 'test' } as any, operator: 'test' as any, end: { type: '_expression', text: 'test' } as any });
-    expect(node.type).toBe('range_expression_binary');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.rangeExpressionBinary({ start: { type: '_expression', text: 'test' } as any, operator: 'test' as any, end: { type: '_expression', text: 'test' } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('range_expression_postfix', () => {
-  it('factory produces correct type', () => {
-    const node = ir.rangeExpressionPostfix({ start: { type: '_expression', text: 'test' } as any, operator: 'test' as any });
-    expect(node.type).toBe('range_expression_postfix');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.rangeExpressionPostfix({ start: { type: '_expression', text: 'test' } as any, operator: 'test' as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('range_expression_prefix', () => {
-  it('factory produces correct type', () => {
-    const node = ir.rangeExpressionPrefix({ operator: 'test' as any, end: { type: '_expression', text: 'test' } as any });
-    expect(node.type).toBe('range_expression_prefix');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.rangeExpressionPrefix({ operator: 'test' as any, end: { type: '_expression', text: 'test' } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('range_expression_bare', () => {
-  it('factory produces correct type', () => {
-    const node = ir.rangeExpressionBare({ operator: 'test' as any });
-    expect(node.type).toBe('range_expression_bare');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.rangeExpressionBare({ operator: 'test' as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
 describe('let_chain', () => {
   it('factory produces correct type', () => {
     const node = ir.letChain();
     expect(node.type).toBe('let_chain');
-  });
-});
-
-describe('closure_expression_block', () => {
-  it('factory produces correct type', () => {
-    const node = ir.closureExpressionBlock({ body: { type: 'block', text: 'test' } as any });
-    expect(node.type).toBe('closure_expression_block');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.closureExpressionBlock({ body: { type: 'block', text: 'test' } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('closure_expression_expr', () => {
-  it('factory produces correct type', () => {
-    const node = ir.closureExpressionExpr({ body: { type: '_expression', text: 'test' } as any });
-    expect(node.type).toBe('closure_expression_expr');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.closureExpressionExpr({ body: { type: '_expression', text: 'test' } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('field_pattern_shorthand', () => {
-  it('factory produces correct type', () => {
-    const node = ir.fieldPatternShorthand({ name: 'test' as any });
-    expect(node.type).toBe('field_pattern_shorthand');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.fieldPatternShorthand({ name: 'test' as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('field_pattern_named', () => {
-  it('factory produces correct type', () => {
-    const node = ir.fieldPatternNamed({ name: { type: '_field_identifier', text: 'test' } as any, pattern: { type: '_pattern', text: 'test' } as any });
-    expect(node.type).toBe('field_pattern_named');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.fieldPatternNamed({ name: { type: '_field_identifier', text: 'test' } as any, pattern: { type: '_pattern', text: 'test' } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('range_pattern_left', () => {
-  it('right form produces correct type', () => {
-    const node = ir.rangePatternLeft.right({ left: { type: '_literal_pattern', text: 'test' } as any, right: { type: '_literal_pattern', text: 'test' } as any });
-    expect(node.type).toBe('range_pattern_left');
-  });
-  it('dotdot form produces correct type', () => {
-    const node = ir.rangePatternLeft.dotdot({ left: { type: '_literal_pattern', text: 'test' } as any });
-    expect(node.type).toBe('range_pattern_left');
-  });
-});
-
-describe('range_pattern_prefix', () => {
-  it('factory produces correct type', () => {
-    const node = ir.rangePatternPrefix({ right: { type: '_literal_pattern', text: 'test' } as any });
-    expect(node.type).toBe('range_pattern_prefix');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.rangePatternPrefix({ right: { type: '_literal_pattern', text: 'test' } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('or_pattern_binary', () => {
-  it('factory produces correct type', () => {
-    const node = ir.orPatternBinary({ left: { type: '_pattern', text: 'test' } as any, right: { type: '_pattern', text: 'test' } as any });
-    expect(node.type).toBe('or_pattern_binary');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.orPatternBinary({ left: { type: '_pattern', text: 'test' } as any, right: { type: '_pattern', text: 'test' } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('or_pattern_prefix', () => {
-  it('factory produces correct type', () => {
-    const node = ir.orPatternPrefix({ right: { type: '_pattern', text: 'test' } as any });
-    expect(node.type).toBe('or_pattern_prefix');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.orPatternPrefix({ right: { type: '_pattern', text: 'test' } as any });
-    expect(node.render().length).toBeGreaterThan(0);
   });
 });
 

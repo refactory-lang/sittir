@@ -155,7 +155,16 @@ rules:
   scoped_identifier: "$PATH::$NAME"
   scoped_type_identifier_in_expression_position: "$PATH::$NAME"
   scoped_type_identifier: "$PATH::$NAME"
-  range_expression: $$$CHILDREN
+  range_expression_binary: $START $OPERATOR $END
+  range_expression_postfix: $START $OPERATOR
+  range_expression_prefix: $OPERATOR $END
+  range_expression_bare: $OPERATOR
+  range_expression:
+    variants:
+      binary: $$$CHILDREN
+      postfix: $$$CHILDREN
+      prefix: $$$CHILDREN
+      bare: $$$CHILDREN
   unary_expression: $OPERATOR $OPERAND
   try_expression: $VALUE?
   reference_expression: "&$MUTABLE_SPECIFIER $VALUE"
@@ -211,7 +220,12 @@ rules:
     template: $LABEL_CLAUSE for $PATTERN in $VALUE $BODY
     label_clause: "$LABEL:"
   const_block: $CONST $BODY
-  closure_expression: $STATIC $ASYNC $MOVE $PARAMETERS $$$CHILDREN
+  closure_expression_block: "->$RETURN_TYPE $BODY"
+  closure_expression_expr: $BODY
+  closure_expression:
+    variants:
+      block: $STATIC $ASYNC $MOVE $PARAMETERS $$$CHILDREN
+      expr: $STATIC $ASYNC $MOVE $PARAMETERS $$$CHILDREN
   closure_parameters:
     template: "|$$$CHILDREN|"
     joinBy: ","
@@ -241,35 +255,38 @@ rules:
   struct_pattern:
     template: "$TYPE{$$$CHILDREN}"
     joinBy: ","
-  field_pattern: $REF $MUTABLE_SPECIFIER $$$CHILDREN
+  field_pattern_shorthand: $NAME
+  field_pattern_named: "$NAME:$PATTERN"
+  field_pattern:
+    variants:
+      shorthand: $REF $MUTABLE_SPECIFIER $$$CHILDREN
+      named: $REF $MUTABLE_SPECIFIER $$$CHILDREN
   mut_pattern: $MUTABLE_SPECIFIER $PATTERN
-  range_pattern: $$$CHILDREN
+  range_pattern_left:
+    variants:
+      right: $LEFT...$RIGHT
+      dotdot: $LEFT..
+  range_pattern_prefix: ..=$RIGHT
+  range_pattern:
+    variants:
+      left: $$$CHILDREN
+      prefix: $$$CHILDREN
   ref_pattern: $REF $$$CHILDREN
   captured_pattern: $IDENTIFIER@$PATTERN
   reference_pattern: "&$MUTABLE_SPECIFIER $PATTERN"
-  or_pattern: $$$CHILDREN
+  or_pattern_binary: $LEFT|$RIGHT
+  or_pattern_prefix: "|$RIGHT"
+  or_pattern:
+    variants:
+      binary: $$$CHILDREN
+      prefix: $$$CHILDREN
   negative_literal: "-$VALUE"
   string_literal: "\"$$$CHILDREN\""
   raw_string_literal: $RAW_STRING_LITERAL_START $STRING_CONTENT $RAW_STRING_LITERAL_END
   comment: $$$CHILDREN
   line_comment: //$OUTER$INNER$DOC
   block_comment: /*$OUTER$INNER $DOC*/
-  range_expression_binary: $START $OPERATOR $END
-  range_expression_postfix: $START $OPERATOR
-  range_expression_prefix: $OPERATOR $END
-  range_expression_bare: $OPERATOR
   let_chain:
     template: $$$CHILDREN&&
     joinByField:
       children: "&&"
-  closure_expression_block: "->$RETURN_TYPE $BODY"
-  closure_expression_expr: $BODY
-  field_pattern_shorthand: $NAME
-  field_pattern_named: "$NAME:$PATTERN"
-  range_pattern_left:
-    variants:
-      right: $LEFT...$RIGHT
-      dotdot: $LEFT..
-  range_pattern_prefix: ..=$RIGHT
-  or_pattern_binary: $LEFT|$RIGHT
-  or_pattern_prefix: "|$RIGHT"

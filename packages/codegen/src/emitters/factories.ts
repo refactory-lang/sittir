@@ -167,7 +167,7 @@ export function emitFactories(config: EmitFactoriesConfig): string {
     // dispatcher emits its forms inline.
     for (const [kind, node] of nodeMap.nodes) {
         if (kind.startsWith('_')) continue
-        if (node.modelType === 'group' && isPolymorphForm(kind, nodeMap)) continue
+        if (nodeMap.polymorphFormKinds.has(kind)) continue
         const source = renderFactoryForNode(node, strict, !!wordPattern, nodeMap, leafReConsts)
         if (source === undefined) continue
         lines.push(source)
@@ -190,7 +190,7 @@ export function emitFactories(config: EmitFactoriesConfig): string {
     for (const [kind, node] of nodeMap.nodes) {
         if (kind.startsWith('_')) continue
         if (!node.rawFactoryName) continue
-        if (isPolymorphForm(kind, nodeMap)) continue
+        if (nodeMap.polymorphFormKinds.has(kind)) continue
         const fluent = node.modelType === 'branch' ||
             node.modelType === 'container' ||
             node.modelType === 'polymorph'
@@ -240,10 +240,6 @@ function renderFactoryForNode(
     leafReConsts: Map<string, string>,
 ): string | undefined {
     if (!node.rawFactoryName) return undefined
-    const variants = nodeMap.polymorphVariants?.filter(v => v.parent === node.kind)
-    if (variants?.length) {
-        return emitNestedAliasFactory(node, variants, nodeMap)
-    }
     switch (node.modelType) {
         case 'branch':
             return emitFieldCarryingFactory(node, node.fields, node.children ?? [], nodeMap)

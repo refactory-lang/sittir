@@ -149,8 +149,13 @@ export function emitFrom(config: EmitFromConfig): string {
     // passed down so every field resolver call registers its kind
     // list through the same dedup table.
     const perNodeBlocks: string[] = []
+    const polymorphFormKinds = new Set<string>()
+    for (const [, n] of nodeMap.nodes) {
+        if (n.modelType === 'polymorph') for (const f of n.forms) polymorphFormKinds.add(f.kind)
+    }
     for (const [kind, node] of nodeMap.nodes) {
         if (kind.startsWith('_')) continue
+        if (polymorphFormKinds.has(kind)) continue
         const source = renderFromForNode(node, nodeMap, internKinds)
         if (source === undefined) continue
         perNodeBlocks.push(source)
@@ -211,10 +216,6 @@ export function emitFrom(config: EmitFromConfig): string {
 
 function renderFromForNode(node: AssembledNode, nodeMap: NodeMap, intern: KindInterner): string | undefined {
     if (!node.rawFactoryName || !node.fromFunctionName) return undefined
-    const variants = nodeMap.polymorphVariants?.filter(v => v.parent === node.kind)
-    if (variants?.length) {
-        return emitVariantFrom(node, variants, nodeMap, intern)
-    }
     switch (node.modelType) {
         case 'branch':
             return emitBranchFrom(node, nodeMap, intern)

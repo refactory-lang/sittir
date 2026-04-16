@@ -1462,125 +1462,75 @@ export function lambdaWithinForInClause(config: T.LambdaWithinForInClauseConfig)
   };
 }
 
-export function assignment(config: T.AssignmentConfig) {
+export function assignment(config: T.AssignmentEqConfig | T.AssignmentTypeConfig | T.AssignmentTypedConfig) {
+  if (config && 'left' in config) return assignmentEq(config as T.AssignmentEqConfig);
+  return assignmentTyped(config as T.AssignmentTypedConfig);
+}
+export function assignmentEq(config: T.AssignmentEqConfig) {
   const fields = {
     left: config?.left,
   };
-  const v = (config as { variant?: 'eq' | 'type' | 'typed' }).variant;
-  if (v === 'eq') {
-    const _child = assignmentEq(config as T.AssignmentEqConfig);
-    return {
-      type: 'assignment' as const,
-      named: true as const,
-      fields,
-      children: [_child],
-      left() { return fields.left; },
-      right() { return (_child as any).fields?.right; },
-      typeField() { return (_child as any).fields?.type; },
-      getVariant() { return _child; },
-        render() { return render(this); },
-        toEdit(startOrRange: number | ByteRange, endPos?: number) {
-          if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-          return toEdit(this, startOrRange);
-        },
-        replace(target: T.AssignmentTree) { const r = target.range(); return toEdit(this, r); },
-    };
-  }
-  else if (v === 'type') {
-    const _child = assignmentType(config as T.AssignmentTypeConfig);
-    return {
-      type: 'assignment' as const,
-      named: true as const,
-      fields,
-      children: [_child],
-      left() { return fields.left; },
-      right() { return (_child as any).fields?.right; },
-      typeField() { return (_child as any).fields?.type; },
-      getVariant() { return _child; },
-        render() { return render(this); },
-        toEdit(startOrRange: number | ByteRange, endPos?: number) {
-          if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-          return toEdit(this, startOrRange);
-        },
-        replace(target: T.AssignmentTree) { const r = target.range(); return toEdit(this, r); },
-    };
-  }
-  else if (v === 'typed') {
-    const _child = assignmentTyped(config as T.AssignmentTypedConfig);
-    return {
-      type: 'assignment' as const,
-      named: true as const,
-      fields,
-      children: [_child],
-      left() { return fields.left; },
-      right() { return (_child as any).fields?.right; },
-      typeField() { return (_child as any).fields?.type; },
-      getVariant() { return _child; },
-        render() { return render(this); },
-        toEdit(startOrRange: number | ByteRange, endPos?: number) {
-          if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-          return toEdit(this, startOrRange);
-        },
-        replace(target: T.AssignmentTree) { const r = target.range(); return toEdit(this, r); },
-    };
-  }
-  else if (config.type !== undefined && config.right !== undefined) {
-    const _child = assignmentTyped(config as T.AssignmentTypedConfig);
-    return {
-      type: 'assignment' as const,
-      named: true as const,
-      fields,
-      children: [_child],
-      left() { return fields.left; },
-      right() { return (_child as any).fields?.right; },
-      typeField() { return (_child as any).fields?.type; },
-      getVariant() { return _child; },
-        render() { return render(this); },
-        toEdit(startOrRange: number | ByteRange, endPos?: number) {
-          if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-          return toEdit(this, startOrRange);
-        },
-        replace(target: T.AssignmentTree) { const r = target.range(); return toEdit(this, r); },
-    };
-  }
-  else if (config.right !== undefined) {
-    const _child = assignmentEq(config as T.AssignmentEqConfig);
-    return {
-      type: 'assignment' as const,
-      named: true as const,
-      fields,
-      children: [_child],
-      left() { return fields.left; },
-      right() { return (_child as any).fields?.right; },
-      typeField() { return (_child as any).fields?.type; },
-      getVariant() { return _child; },
-        render() { return render(this); },
-        toEdit(startOrRange: number | ByteRange, endPos?: number) {
-          if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-          return toEdit(this, startOrRange);
-        },
-        replace(target: T.AssignmentTree) { const r = target.range(); return toEdit(this, r); },
-    };
-  }
-  else {
-    const _child = assignmentType(config as T.AssignmentTypeConfig);
-    return {
-      type: 'assignment' as const,
-      named: true as const,
-      fields,
-      children: [_child],
-      left() { return fields.left; },
-      right() { return (_child as any).fields?.right; },
-      typeField() { return (_child as any).fields?.type; },
-      getVariant() { return _child; },
-        render() { return render(this); },
-        toEdit(startOrRange: number | ByteRange, endPos?: number) {
-          if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-          return toEdit(this, startOrRange);
-        },
-        replace(target: T.AssignmentTree) { const r = target.range(); return toEdit(this, r); },
-    };
-  }
+  const children = config?.children ?? [];
+  return {
+    type: 'assignment' as const,
+    named: true as const,
+    variant: 'eq' as const,
+    fields,
+    children,
+    left(left_?: T.LeftHandSide) { return _fs(config, assignmentEq, 'left', left_, fields.left); },
+    getChild() { return children[0]; },
+    setChild(child: T.AssignmentEq) { return assignmentEq({ ...(config ?? {}), children: [child] }); },
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.AssignmentEqTree) { const r = target.range(); return toEdit(this, r); },
+  };
+}
+export function assignmentType(config: T.AssignmentTypeConfig) {
+  const fields = {
+    left: config?.left,
+  };
+  const children = config?.children ?? [];
+  return {
+    type: 'assignment' as const,
+    named: true as const,
+    variant: 'type' as const,
+    fields,
+    children,
+    left(left_?: T.LeftHandSide) { return _fs(config, assignmentType, 'left', left_, fields.left); },
+    getChild() { return children[0]; },
+    setChild(child: T.AssignmentType) { return assignmentType({ ...(config ?? {}), children: [child] }); },
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.AssignmentTypeTree) { const r = target.range(); return toEdit(this, r); },
+  };
+}
+export function assignmentTyped(config: T.AssignmentTypedConfig) {
+  const fields = {
+    left: config?.left,
+  };
+  const children = config?.children ?? [];
+  return {
+    type: 'assignment' as const,
+    named: true as const,
+    variant: 'typed' as const,
+    fields,
+    children,
+    left(left_?: T.LeftHandSide) { return _fs(config, assignmentTyped, 'left', left_, fields.left); },
+    getChild() { return children[0]; },
+    setChild(child: T.AssignmentTyped) { return assignmentTyped({ ...(config ?? {}), children: [child] }); },
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.AssignmentTypedTree) { const r = target.range(); return toEdit(this, r); },
+  };
 }
 
 export function augmentedAssignment(config: T.AugmentedAssignmentConfig) {
@@ -2465,62 +2415,6 @@ export function asPatternTarget(child?: (T.ComparisonOperator | T.NotOperator | 
   };
 }
 
-export function assignmentEq(config: T.AssignmentEqConfig) {
-  const fields = {
-    right: config?.right,
-  };
-  return {
-    type: 'assignment_eq' as const,
-    named: true as const,
-    fields,
-    right(right_?: T.RightHandSide) { return _fs(config, assignmentEq, 'right', right_, fields.right); },
-    render() { return render(this); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(target: T.AssignmentEqTree) { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function assignmentType(config: T.AssignmentTypeConfig) {
-  const fields = {
-    type: config?.type,
-  };
-  return {
-    type: 'assignment_type' as const,
-    named: true as const,
-    fields,
-    typeField(type?: T.Type) { return _fs(config, assignmentType, 'type', type, fields.type); },
-    render() { return render(this); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(target: T.AssignmentTypeTree) { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function assignmentTyped(config: T.AssignmentTypedConfig) {
-  const fields = {
-    type: config?.type,
-    right: config?.right,
-  };
-  return {
-    type: 'assignment_typed' as const,
-    named: true as const,
-    fields,
-    typeField(type?: T.Type) { return _fs(config, assignmentTyped, 'type', type, fields.type); },
-    right(right_?: T.RightHandSide) { return _fs(config, assignmentTyped, 'right', right_, fields.right); },
-    render() { return render(this); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(target: T.AssignmentTypedTree) { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
 export function formatExpression(config: T.FormatExpressionConfig) {
   const fields = {
     expression: config?.expression,
@@ -2667,9 +2561,6 @@ export type FluentKindMap = {
   "}": T.CloseBrace;
   "except": T.Except;
   "as_pattern_target": FluentNode<"as_pattern_target", T.AsPatternTargetConfig>;
-  "assignment_eq": FluentNode<"assignment_eq", T.AssignmentEqConfig>;
-  "assignment_type": FluentNode<"assignment_type", T.AssignmentTypeConfig>;
-  "assignment_typed": FluentNode<"assignment_typed", T.AssignmentTypedConfig>;
   "format_expression": FluentNode<"format_expression", T.FormatExpressionConfig>;
 };
 
@@ -2797,9 +2688,6 @@ export const _factoryMap = {
   "}": closeBrace,
   "except": except,
   "as_pattern_target": asPatternTarget,
-  "assignment_eq": assignmentEq,
-  "assignment_type": assignmentType,
-  "assignment_typed": assignmentTyped,
   "format_expression": formatExpression,
 } as const;
 export type _FactoryMap = typeof _factoryMap;

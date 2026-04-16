@@ -15,7 +15,7 @@ import {
     AssembledBranch, AssembledContainer, AssembledPolymorph,
     AssembledLeaf, AssembledKeyword, AssembledToken, AssembledEnum,
     AssembledSupertype, AssembledGroup,
-    hasAnyField, hasAnyChild,
+    hasAnyField, hasAnyChild, computePolymorphFormKinds,
 } from './rule.ts'
 import { tokenToName } from './optimize.ts'
 import { simplifyRule, compileWordMatcher } from './simplify.ts'
@@ -207,6 +207,7 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
         derivations: optimized.derivations,
         rules: optimized.rules,
         word: optimized.word,
+        polymorphFormKinds: computePolymorphFormKinds(nodes),
     }
 }
 

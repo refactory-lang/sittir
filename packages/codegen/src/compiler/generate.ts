@@ -112,9 +112,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
     const optimized = optimize(linked)
 
     // Phase 4: Assemble
-    const nodeMap = Object.assign(assemble(optimized), {
-        polymorphVariants: raw.polymorphVariants,
-    })
+    const nodeMap = assemble(optimized)
 
     // Derive the runtime OverridesConfig from the post-Link rule tree.
     // Used by wrap to inline `_overrides` + `_routing` matching

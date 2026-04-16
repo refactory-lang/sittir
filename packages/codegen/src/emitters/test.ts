@@ -33,12 +33,8 @@ export function emitTests(config: EmitTestsConfig): string {
         // via `ir.<key>(...)` syntax. The external externals-inheritance
         // pass surfaces new such kinds for grammars that declare them.
         if (!isValidIdent(key)) continue
+        if (nodeMap.polymorphFormKinds.has(kind)) continue
 
-        const variants = nodeMap.polymorphVariants?.filter(v => v.parent === kind)
-        if (variants?.length) {
-            emitNestedAliasTest(lines, node, kind, key, variants, nodeMap)
-            continue
-        }
         switch (node.modelType) {
             case 'branch':
                 emitBranchTest(lines, node, kind, key)

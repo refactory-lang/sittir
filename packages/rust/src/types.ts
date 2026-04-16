@@ -140,6 +140,10 @@ export const enum SyntaxKind {
   ScopedIdentifier = 'scoped_identifier',
   ScopedTypeIdentifierInExpressionPosition = 'scoped_type_identifier_in_expression_position',
   ScopedTypeIdentifier = 'scoped_type_identifier',
+  RangeExpressionBinary = 'range_expression_binary',
+  RangeExpressionPostfix = 'range_expression_postfix',
+  RangeExpressionPrefix = 'range_expression_prefix',
+  RangeExpressionBare = 'range_expression_bare',
   RangeExpression = 'range_expression',
   UnaryExpression = 'unary_expression',
   TryExpression = 'try_expression',
@@ -173,6 +177,8 @@ export const enum SyntaxKind {
   LoopExpression = 'loop_expression',
   ForExpression = 'for_expression',
   ConstBlock = 'const_block',
+  ClosureExpressionBlock = 'closure_expression_block',
+  ClosureExpressionExpr = 'closure_expression_expr',
   ClosureExpression = 'closure_expression',
   ClosureParameters = 'closure_parameters',
   Label = 'label',
@@ -191,12 +197,18 @@ export const enum SyntaxKind {
   SlicePattern = 'slice_pattern',
   TupleStructPattern = 'tuple_struct_pattern',
   StructPattern = 'struct_pattern',
+  FieldPatternShorthand = 'field_pattern_shorthand',
+  FieldPatternNamed = 'field_pattern_named',
   FieldPattern = 'field_pattern',
   MutPattern = 'mut_pattern',
+  RangePatternLeft = 'range_pattern_left',
+  RangePatternPrefix = 'range_pattern_prefix',
   RangePattern = 'range_pattern',
   RefPattern = 'ref_pattern',
   CapturedPattern = 'captured_pattern',
   ReferencePattern = 'reference_pattern',
+  OrPatternBinary = 'or_pattern_binary',
+  OrPatternPrefix = 'or_pattern_prefix',
   OrPattern = 'or_pattern',
   NegativeLiteral = 'negative_literal',
   StringLiteral = 'string_literal',
@@ -219,19 +231,7 @@ export const enum SyntaxKind {
   _RangeExpressionBare = '_range_expression_bare',
   _RangePatternLeft = '_range_pattern_left',
   _RangePatternPrefix = '_range_pattern_prefix',
-  RangeExpressionBinary = 'range_expression_binary',
-  RangeExpressionPostfix = 'range_expression_postfix',
-  RangeExpressionPrefix = 'range_expression_prefix',
-  RangeExpressionBare = 'range_expression_bare',
   LetChain = 'let_chain',
-  ClosureExpressionBlock = 'closure_expression_block',
-  ClosureExpressionExpr = 'closure_expression_expr',
-  FieldPatternShorthand = 'field_pattern_shorthand',
-  FieldPatternNamed = 'field_pattern_named',
-  RangePatternLeft = 'range_pattern_left',
-  RangePatternPrefix = 'range_pattern_prefix',
-  OrPatternBinary = 'or_pattern_binary',
-  OrPatternPrefix = 'or_pattern_prefix',
   FragmentSpecifier = 'fragment_specifier',
   UnitType = 'unit_type',
   MutableSpecifier = 'mutable_specifier',
@@ -1365,11 +1365,59 @@ export interface ScopedTypeIdentifier {
   };
 }
 
-export interface RangeExpression {
-  readonly type: 'range_expression';
-  readonly children: readonly [RangeExpressionBinary | RangeExpressionPostfix | RangeExpressionPrefix | RangeExpressionBare];
+export interface RangeExpressionBinary {
+  readonly type: 'range_expression_binary';
+  readonly fields: {
+    readonly start: Expression;
+    readonly operator: ".." | "..." | "..=";
+    readonly end: Expression;
+  };
 }
 
+export interface RangeExpressionPostfix {
+  readonly type: 'range_expression_postfix';
+  readonly fields: {
+    readonly start: Expression;
+    readonly operator: "..";
+  };
+}
+
+export interface RangeExpressionPrefix {
+  readonly type: 'range_expression_prefix';
+  readonly fields: {
+    readonly operator: "..";
+    readonly end: Expression;
+  };
+}
+
+export interface RangeExpressionBare {
+  readonly type: 'range_expression_bare';
+  readonly fields: {
+    readonly operator: "..";
+  };
+}
+
+export interface RangeExpressionBinary {
+  readonly type: 'range_expression';
+  readonly children: readonly [RangeExpressionBinary];
+}
+
+export interface RangeExpressionPostfix {
+  readonly type: 'range_expression';
+  readonly children: readonly [RangeExpressionPostfix];
+}
+
+export interface RangeExpressionPrefix {
+  readonly type: 'range_expression';
+  readonly children: readonly [RangeExpressionPrefix];
+}
+
+export interface RangeExpressionBare {
+  readonly type: 'range_expression';
+  readonly children: readonly [RangeExpressionBare];
+}
+
+export type RangeExpression = RangeExpressionBinary | RangeExpressionPostfix | RangeExpressionPrefix | RangeExpressionBare;
 export interface UnaryExpression {
   readonly type: 'unary_expression';
   readonly fields: {
@@ -1615,7 +1663,22 @@ export interface ConstBlock {
   };
 }
 
-export interface ClosureExpression {
+export interface ClosureExpressionBlock {
+  readonly type: 'closure_expression_block';
+  readonly fields: {
+    readonly return_type?: _Type;
+    readonly body: Block;
+  };
+}
+
+export interface ClosureExpressionExpr {
+  readonly type: 'closure_expression_expr';
+  readonly fields: {
+    readonly body: Expression;
+  };
+}
+
+export interface ClosureExpressionBlock {
   readonly type: 'closure_expression';
   readonly fields: {
     readonly static?: "static";
@@ -1623,9 +1686,21 @@ export interface ClosureExpression {
     readonly move?: "move";
     readonly parameters: ClosureParameters;
   };
-  readonly children: readonly [ClosureExpressionBlock | ClosureExpressionExpr];
+  readonly children: readonly [ClosureExpressionBlock];
 }
 
+export interface ClosureExpressionExpr {
+  readonly type: 'closure_expression';
+  readonly fields: {
+    readonly static?: "static";
+    readonly async?: "async";
+    readonly move?: "move";
+    readonly parameters: ClosureParameters;
+  };
+  readonly children: readonly [ClosureExpressionExpr];
+}
+
+export type ClosureExpression = ClosureExpressionBlock | ClosureExpressionExpr;
 export interface ClosureParameters {
   readonly type: 'closure_parameters';
   readonly children: readonly (Pattern | Parameter)[];
@@ -1752,15 +1827,40 @@ export interface StructPattern {
   readonly children: readonly (FieldPattern | RemainingFieldPattern)[];
 }
 
-export interface FieldPattern {
+export interface FieldPatternShorthand {
+  readonly type: 'field_pattern_shorthand';
+  readonly fields: {
+    readonly name: string;
+  };
+}
+
+export interface FieldPatternNamed {
+  readonly type: 'field_pattern_named';
+  readonly fields: {
+    readonly name: _FieldIdentifier;
+    readonly pattern: Pattern;
+  };
+}
+
+export interface FieldPatternShorthand {
   readonly type: 'field_pattern';
   readonly fields: {
     readonly ref?: "ref";
     readonly mutable_specifier?: MutableSpecifier;
   };
-  readonly children: readonly [FieldPatternShorthand | FieldPatternNamed];
+  readonly children: readonly [FieldPatternShorthand];
 }
 
+export interface FieldPatternNamed {
+  readonly type: 'field_pattern';
+  readonly fields: {
+    readonly ref?: "ref";
+    readonly mutable_specifier?: MutableSpecifier;
+  };
+  readonly children: readonly [FieldPatternNamed];
+}
+
+export type FieldPattern = FieldPatternShorthand | FieldPatternNamed;
 export interface MutPattern {
   readonly type: 'mut_pattern';
   readonly fields: {
@@ -1769,11 +1869,40 @@ export interface MutPattern {
   };
 }
 
-export interface RangePattern {
-  readonly type: 'range_pattern';
-  readonly children: readonly [RangePatternLeft | RangePatternPrefix];
+export interface RangePatternLeftRight {
+  readonly type: 'range_pattern_left';
+  readonly fields: {
+    readonly left: _union_LiteralPattern_Path;
+    readonly right: _union_LiteralPattern_Path;
+  };
 }
 
+export interface RangePatternLeftDotdot {
+  readonly type: 'range_pattern_left';
+  readonly fields: {
+    readonly left: _union_LiteralPattern_Path;
+  };
+}
+
+export type RangePatternLeft = RangePatternLeftRight | RangePatternLeftDotdot;
+export interface RangePatternPrefix {
+  readonly type: 'range_pattern_prefix';
+  readonly fields: {
+    readonly right: _union_LiteralPattern_Path;
+  };
+}
+
+export interface RangePatternLeft {
+  readonly type: 'range_pattern';
+  readonly children: readonly [RangePatternLeft];
+}
+
+export interface RangePatternPrefix {
+  readonly type: 'range_pattern';
+  readonly children: readonly [RangePatternPrefix];
+}
+
+export type RangePattern = RangePatternLeft | RangePatternPrefix;
 export interface RefPattern {
   readonly type: 'ref_pattern';
   readonly fields: {
@@ -1798,11 +1927,32 @@ export interface ReferencePattern {
   };
 }
 
-export interface OrPattern {
-  readonly type: 'or_pattern';
-  readonly children: readonly [OrPatternBinary | OrPatternPrefix];
+export interface OrPatternBinary {
+  readonly type: 'or_pattern_binary';
+  readonly fields: {
+    readonly left: Pattern;
+    readonly right: Pattern;
+  };
 }
 
+export interface OrPatternPrefix {
+  readonly type: 'or_pattern_prefix';
+  readonly fields: {
+    readonly right: Pattern;
+  };
+}
+
+export interface OrPatternBinary {
+  readonly type: 'or_pattern';
+  readonly children: readonly [OrPatternBinary];
+}
+
+export interface OrPatternPrefix {
+  readonly type: 'or_pattern';
+  readonly children: readonly [OrPatternPrefix];
+}
+
+export type OrPattern = OrPatternBinary | OrPatternPrefix;
 export interface NegativeLiteral {
   readonly type: 'negative_literal';
   readonly fields: {
@@ -1919,109 +2069,9 @@ export interface _RangePatternPrefix {
   readonly type: '_range_pattern_prefix';
 }
 
-export interface RangeExpressionBinary {
-  readonly type: 'range_expression_binary';
-  readonly fields: {
-    readonly start: Expression;
-    readonly operator: ".." | "..." | "..=";
-    readonly end: Expression;
-  };
-}
-
-export interface RangeExpressionPostfix {
-  readonly type: 'range_expression_postfix';
-  readonly fields: {
-    readonly start: Expression;
-    readonly operator: "..";
-  };
-}
-
-export interface RangeExpressionPrefix {
-  readonly type: 'range_expression_prefix';
-  readonly fields: {
-    readonly operator: "..";
-    readonly end: Expression;
-  };
-}
-
-export interface RangeExpressionBare {
-  readonly type: 'range_expression_bare';
-  readonly fields: {
-    readonly operator: "..";
-  };
-}
-
 export interface LetChain {
   readonly type: 'let_chain';
   readonly children: readonly [_LetChain | LetCondition | Expression];
-}
-
-export interface ClosureExpressionBlock {
-  readonly type: 'closure_expression_block';
-  readonly fields: {
-    readonly return_type?: _Type;
-    readonly body: Block;
-  };
-}
-
-export interface ClosureExpressionExpr {
-  readonly type: 'closure_expression_expr';
-  readonly fields: {
-    readonly body: Expression;
-  };
-}
-
-export interface FieldPatternShorthand {
-  readonly type: 'field_pattern_shorthand';
-  readonly fields: {
-    readonly name: string;
-  };
-}
-
-export interface FieldPatternNamed {
-  readonly type: 'field_pattern_named';
-  readonly fields: {
-    readonly name: _FieldIdentifier;
-    readonly pattern: Pattern;
-  };
-}
-
-export interface RangePatternLeftRight {
-  readonly type: 'range_pattern_left';
-  readonly fields: {
-    readonly left: _union_LiteralPattern_Path;
-    readonly right: _union_LiteralPattern_Path;
-  };
-}
-
-export interface RangePatternLeftDotdot {
-  readonly type: 'range_pattern_left';
-  readonly fields: {
-    readonly left: _union_LiteralPattern_Path;
-  };
-}
-
-export type RangePatternLeft = RangePatternLeftRight | RangePatternLeftDotdot;
-export interface RangePatternPrefix {
-  readonly type: 'range_pattern_prefix';
-  readonly fields: {
-    readonly right: _union_LiteralPattern_Path;
-  };
-}
-
-export interface OrPatternBinary {
-  readonly type: 'or_pattern_binary';
-  readonly fields: {
-    readonly left: Pattern;
-    readonly right: Pattern;
-  };
-}
-
-export interface OrPatternPrefix {
-  readonly type: 'or_pattern_prefix';
-  readonly fields: {
-    readonly right: Pattern;
-  };
 }
 
 
@@ -2146,12 +2196,15 @@ export type DelimTokenTreeConfig = ConfigOf<DelimTokenTree>;
 export type ScopedIdentifierConfig = ConfigOf<ScopedIdentifier>;
 export type ScopedTypeIdentifierInExpressionPositionConfig = ConfigOf<ScopedTypeIdentifierInExpressionPosition>;
 export type ScopedTypeIdentifierConfig = ConfigOf<ScopedTypeIdentifier>;
-export interface RangeExpressionConfig {
-  readonly start?: Expression;
-  readonly operator?: ".." | "..." | "..=" | "..";
-  readonly end?: Expression;
-  readonly variant?: 'binary' | 'postfix' | 'prefix' | 'bare';
-}
+export type RangeExpressionBinaryConfig = ConfigOf<RangeExpressionBinary>;
+export type RangeExpressionPostfixConfig = ConfigOf<RangeExpressionPostfix>;
+export type RangeExpressionPrefixConfig = ConfigOf<RangeExpressionPrefix>;
+export type RangeExpressionBareConfig = ConfigOf<RangeExpressionBare>;
+export type RangeExpressionBinaryConfig = ConfigOf<RangeExpressionBinary>;
+export type RangeExpressionPostfixConfig = ConfigOf<RangeExpressionPostfix>;
+export type RangeExpressionPrefixConfig = ConfigOf<RangeExpressionPrefix>;
+export type RangeExpressionBareConfig = ConfigOf<RangeExpressionBare>;
+export type RangeExpressionConfig = RangeExpressionBinaryConfig | RangeExpressionPostfixConfig | RangeExpressionPrefixConfig | RangeExpressionBareConfig;
 export type UnaryExpressionConfig = ConfigOf<UnaryExpression>;
 export type TryExpressionConfig = ConfigOf<TryExpression>;
 export type ReferenceExpressionConfig = ConfigOf<ReferenceExpression>;
@@ -2184,15 +2237,11 @@ export type WhileExpressionConfig = ConfigOf<WhileExpression>;
 export type LoopExpressionConfig = ConfigOf<LoopExpression>;
 export type ForExpressionConfig = ConfigOf<ForExpression>;
 export type ConstBlockConfig = ConfigOf<ConstBlock>;
-export interface ClosureExpressionConfig {
-  readonly static?: "static";
-  readonly async?: "async";
-  readonly move?: "move";
-  readonly parameters: ClosureParameters;
-  readonly returnType?: _Type;
-  readonly body?: Block | Expression;
-  readonly variant?: 'block' | 'expr';
-}
+export type ClosureExpressionBlockConfig = ConfigOf<ClosureExpressionBlock>;
+export type ClosureExpressionExprConfig = ConfigOf<ClosureExpressionExpr>;
+export type ClosureExpressionBlockConfig = ConfigOf<ClosureExpressionBlock>;
+export type ClosureExpressionExprConfig = ConfigOf<ClosureExpressionExpr>;
+export type ClosureExpressionConfig = ClosureExpressionBlockConfig | ClosureExpressionExprConfig;
 export type ClosureParametersConfig = ConfigOf<ClosureParameters>;
 export type LabelConfig = ConfigOf<Label>;
 export type BreakExpressionConfig = ConfigOf<BreakExpression>;
@@ -2210,27 +2259,27 @@ export type TuplePatternConfig = ConfigOf<TuplePattern>;
 export type SlicePatternConfig = ConfigOf<SlicePattern>;
 export type TupleStructPatternConfig = ConfigOf<TupleStructPattern>;
 export type StructPatternConfig = ConfigOf<StructPattern>;
-export interface FieldPatternConfig {
-  readonly ref?: "ref";
-  readonly mutableSpecifier?: MutableSpecifier;
-  readonly name?: string | _FieldIdentifier;
-  readonly pattern?: Pattern;
-  readonly variant?: 'shorthand' | 'named';
-}
+export type FieldPatternShorthandConfig = ConfigOf<FieldPatternShorthand>;
+export type FieldPatternNamedConfig = ConfigOf<FieldPatternNamed>;
+export type FieldPatternShorthandConfig = ConfigOf<FieldPatternShorthand>;
+export type FieldPatternNamedConfig = ConfigOf<FieldPatternNamed>;
+export type FieldPatternConfig = FieldPatternShorthandConfig | FieldPatternNamedConfig;
 export type MutPatternConfig = ConfigOf<MutPattern>;
-export interface RangePatternConfig {
-  readonly left?: LiteralPattern | Path;
-  readonly right?: LiteralPattern | Path;
-  readonly variant?: 'left' | 'prefix';
-}
+export type RangePatternLeftRightConfig = ConfigOf<RangePatternLeftRight>;
+export type RangePatternLeftDotdotConfig = ConfigOf<RangePatternLeftDotdot>;
+export type RangePatternLeftConfig = RangePatternLeftRightConfig | RangePatternLeftDotdotConfig;
+export type RangePatternPrefixConfig = ConfigOf<RangePatternPrefix>;
+export type RangePatternLeftConfig = ConfigOf<RangePatternLeft>;
+export type RangePatternPrefixConfig = ConfigOf<RangePatternPrefix>;
+export type RangePatternConfig = RangePatternLeftConfig | RangePatternPrefixConfig;
 export type RefPatternConfig = ConfigOf<RefPattern>;
 export type CapturedPatternConfig = ConfigOf<CapturedPattern>;
 export type ReferencePatternConfig = ConfigOf<ReferencePattern>;
-export interface OrPatternConfig {
-  readonly left?: Pattern;
-  readonly right?: Pattern;
-  readonly variant?: 'binary' | 'prefix';
-}
+export type OrPatternBinaryConfig = ConfigOf<OrPatternBinary>;
+export type OrPatternPrefixConfig = ConfigOf<OrPatternPrefix>;
+export type OrPatternBinaryConfig = ConfigOf<OrPatternBinary>;
+export type OrPatternPrefixConfig = ConfigOf<OrPatternPrefix>;
+export type OrPatternConfig = OrPatternBinaryConfig | OrPatternPrefixConfig;
 export type NegativeLiteralConfig = ConfigOf<NegativeLiteral>;
 export type StringLiteralConfig = ConfigOf<StringLiteral>;
 export type RawStringLiteralConfig = ConfigOf<RawStringLiteral>;
@@ -2252,21 +2301,7 @@ export type _RangeExpressionPrefixConfig = ConfigOf<_RangeExpressionPrefix>;
 export type _RangeExpressionBareConfig = ConfigOf<_RangeExpressionBare>;
 export type _RangePatternLeftConfig = ConfigOf<_RangePatternLeft>;
 export type _RangePatternPrefixConfig = ConfigOf<_RangePatternPrefix>;
-export type RangeExpressionBinaryConfig = ConfigOf<RangeExpressionBinary>;
-export type RangeExpressionPostfixConfig = ConfigOf<RangeExpressionPostfix>;
-export type RangeExpressionPrefixConfig = ConfigOf<RangeExpressionPrefix>;
-export type RangeExpressionBareConfig = ConfigOf<RangeExpressionBare>;
 export type LetChainConfig = ConfigOf<LetChain>;
-export type ClosureExpressionBlockConfig = ConfigOf<ClosureExpressionBlock>;
-export type ClosureExpressionExprConfig = ConfigOf<ClosureExpressionExpr>;
-export type FieldPatternShorthandConfig = ConfigOf<FieldPatternShorthand>;
-export type FieldPatternNamedConfig = ConfigOf<FieldPatternNamed>;
-export type RangePatternLeftRightConfig = ConfigOf<RangePatternLeftRight>;
-export type RangePatternLeftDotdotConfig = ConfigOf<RangePatternLeftDotdot>;
-export type RangePatternLeftConfig = RangePatternLeftRightConfig | RangePatternLeftDotdotConfig;
-export type RangePatternPrefixConfig = ConfigOf<RangePatternPrefix>;
-export type OrPatternBinaryConfig = ConfigOf<OrPatternBinary>;
-export type OrPatternPrefixConfig = ConfigOf<OrPatternPrefix>;
 
 // Tree types
 export interface SourceFileTree extends TreeNode<'source_file'> {}
@@ -2358,6 +2393,10 @@ export interface DelimTokenTreeTree extends AnyTreeNode { readonly type: "delim_
 export interface ScopedIdentifierTree extends TreeNode<'scoped_identifier'> {}
 export interface ScopedTypeIdentifierInExpressionPositionTree extends AnyTreeNode { readonly type: "scoped_type_identifier_in_expression_position"; }
 export interface ScopedTypeIdentifierTree extends TreeNode<'scoped_type_identifier'> {}
+export interface RangeExpressionBinaryTree extends TreeNode<'range_expression_binary'> {}
+export interface RangeExpressionPostfixTree extends TreeNode<'range_expression_postfix'> {}
+export interface RangeExpressionPrefixTree extends TreeNode<'range_expression_prefix'> {}
+export interface RangeExpressionBareTree extends TreeNode<'range_expression_bare'> {}
 export interface RangeExpressionTree extends TreeNode<'range_expression'> {}
 export interface UnaryExpressionTree extends TreeNode<'unary_expression'> {}
 export interface TryExpressionTree extends TreeNode<'try_expression'> {}
@@ -2391,6 +2430,8 @@ export interface WhileExpressionTree extends TreeNode<'while_expression'> {}
 export interface LoopExpressionTree extends TreeNode<'loop_expression'> {}
 export interface ForExpressionTree extends TreeNode<'for_expression'> {}
 export interface ConstBlockTree extends TreeNode<'const_block'> {}
+export interface ClosureExpressionBlockTree extends TreeNode<'closure_expression_block'> {}
+export interface ClosureExpressionExprTree extends TreeNode<'closure_expression_expr'> {}
 export interface ClosureExpressionTree extends TreeNode<'closure_expression'> {}
 export interface ClosureParametersTree extends TreeNode<'closure_parameters'> {}
 export interface LabelTree extends TreeNode<'label'> {}
@@ -2409,12 +2450,20 @@ export interface TuplePatternTree extends TreeNode<'tuple_pattern'> {}
 export interface SlicePatternTree extends TreeNode<'slice_pattern'> {}
 export interface TupleStructPatternTree extends TreeNode<'tuple_struct_pattern'> {}
 export interface StructPatternTree extends TreeNode<'struct_pattern'> {}
+export interface FieldPatternShorthandTree extends TreeNode<'field_pattern_shorthand'> {}
+export interface FieldPatternNamedTree extends TreeNode<'field_pattern_named'> {}
 export interface FieldPatternTree extends TreeNode<'field_pattern'> {}
 export interface MutPatternTree extends TreeNode<'mut_pattern'> {}
+export interface RangePatternLeftTree extends TreeNode<'range_pattern_left'> {}
+export interface RangePatternLeftRightTree extends TreeNode<'range_pattern_left'> {}
+export interface RangePatternLeftDotdotTree extends TreeNode<'range_pattern_left'> {}
+export interface RangePatternPrefixTree extends TreeNode<'range_pattern_prefix'> {}
 export interface RangePatternTree extends TreeNode<'range_pattern'> {}
 export interface RefPatternTree extends TreeNode<'ref_pattern'> {}
 export interface CapturedPatternTree extends TreeNode<'captured_pattern'> {}
 export interface ReferencePatternTree extends TreeNode<'reference_pattern'> {}
+export interface OrPatternBinaryTree extends TreeNode<'or_pattern_binary'> {}
+export interface OrPatternPrefixTree extends TreeNode<'or_pattern_prefix'> {}
 export interface OrPatternTree extends TreeNode<'or_pattern'> {}
 export interface NegativeLiteralTree extends TreeNode<'negative_literal'> {}
 export interface StringLiteralTree extends TreeNode<'string_literal'> {}
@@ -2437,21 +2486,7 @@ export interface _RangeExpressionPrefixTree extends AnyTreeNode { readonly type:
 export interface _RangeExpressionBareTree extends AnyTreeNode { readonly type: "_range_expression_bare"; }
 export interface _RangePatternLeftTree extends AnyTreeNode { readonly type: "_range_pattern_left"; }
 export interface _RangePatternPrefixTree extends AnyTreeNode { readonly type: "_range_pattern_prefix"; }
-export interface RangeExpressionBinaryTree extends TreeNode<'range_expression_binary'> {}
-export interface RangeExpressionPostfixTree extends TreeNode<'range_expression_postfix'> {}
-export interface RangeExpressionPrefixTree extends TreeNode<'range_expression_prefix'> {}
-export interface RangeExpressionBareTree extends TreeNode<'range_expression_bare'> {}
 export interface LetChainTree extends TreeNode<'let_chain'> {}
-export interface ClosureExpressionBlockTree extends TreeNode<'closure_expression_block'> {}
-export interface ClosureExpressionExprTree extends TreeNode<'closure_expression_expr'> {}
-export interface FieldPatternShorthandTree extends TreeNode<'field_pattern_shorthand'> {}
-export interface FieldPatternNamedTree extends TreeNode<'field_pattern_named'> {}
-export interface RangePatternLeftTree extends TreeNode<'range_pattern_left'> {}
-export interface RangePatternLeftRightTree extends TreeNode<'range_pattern_left'> {}
-export interface RangePatternLeftDotdotTree extends TreeNode<'range_pattern_left'> {}
-export interface RangePatternPrefixTree extends TreeNode<'range_pattern_prefix'> {}
-export interface OrPatternBinaryTree extends TreeNode<'or_pattern_binary'> {}
-export interface OrPatternPrefixTree extends TreeNode<'or_pattern_prefix'> {}
 export interface FragmentSpecifierTree extends TreeNode<'fragment_specifier'> {}
 export interface UnitTypeTree extends TreeNode<'unit_type'> {}
 export interface MutableSpecifierTree extends AnyTreeNode { readonly type: "mutable_specifier"; }
@@ -2598,7 +2633,11 @@ export type LooseDelimTokenTree = FromInputOf<DelimTokenTree, LeafScalarMap, Lea
 export type LooseScopedIdentifier = FromInputOf<ScopedIdentifier, LeafScalarMap, LeafStringMap>;
 export type LooseScopedTypeIdentifierInExpressionPosition = FromInputOf<ScopedTypeIdentifierInExpressionPosition, LeafScalarMap, LeafStringMap>;
 export type LooseScopedTypeIdentifier = FromInputOf<ScopedTypeIdentifier, LeafScalarMap, LeafStringMap>;
-export type LooseRangeExpression = FromInputOf<RangeExpression, LeafScalarMap, LeafStringMap>;
+export type LooseRangeExpressionBinary = FromInputOf<RangeExpressionBinary, LeafScalarMap, LeafStringMap>;
+export type LooseRangeExpressionPostfix = FromInputOf<RangeExpressionPostfix, LeafScalarMap, LeafStringMap>;
+export type LooseRangeExpressionPrefix = FromInputOf<RangeExpressionPrefix, LeafScalarMap, LeafStringMap>;
+export type LooseRangeExpressionBare = FromInputOf<RangeExpressionBare, LeafScalarMap, LeafStringMap>;
+export type LooseRangeExpression = FromInputOf<RangeExpressionBinary, LeafScalarMap, LeafStringMap> | FromInputOf<RangeExpressionPostfix, LeafScalarMap, LeafStringMap> | FromInputOf<RangeExpressionPrefix, LeafScalarMap, LeafStringMap> | FromInputOf<RangeExpressionBare, LeafScalarMap, LeafStringMap>;
 export type LooseUnaryExpression = FromInputOf<UnaryExpression, LeafScalarMap, LeafStringMap>;
 export type LooseTryExpression = FromInputOf<TryExpression, LeafScalarMap, LeafStringMap>;
 export type LooseReferenceExpression = FromInputOf<ReferenceExpression, LeafScalarMap, LeafStringMap>;
@@ -2631,7 +2670,9 @@ export type LooseWhileExpression = FromInputOf<WhileExpression, LeafScalarMap, L
 export type LooseLoopExpression = FromInputOf<LoopExpression, LeafScalarMap, LeafStringMap>;
 export type LooseForExpression = FromInputOf<ForExpression, LeafScalarMap, LeafStringMap>;
 export type LooseConstBlock = FromInputOf<ConstBlock, LeafScalarMap, LeafStringMap>;
-export type LooseClosureExpression = FromInputOf<ClosureExpression, LeafScalarMap, LeafStringMap>;
+export type LooseClosureExpressionBlock = FromInputOf<ClosureExpressionBlock, LeafScalarMap, LeafStringMap>;
+export type LooseClosureExpressionExpr = FromInputOf<ClosureExpressionExpr, LeafScalarMap, LeafStringMap>;
+export type LooseClosureExpression = FromInputOf<ClosureExpressionBlock, LeafScalarMap, LeafStringMap> | FromInputOf<ClosureExpressionExpr, LeafScalarMap, LeafStringMap>;
 export type LooseClosureParameters = FromInputOf<ClosureParameters, LeafScalarMap, LeafStringMap>;
 export type LooseLabel = FromInputOf<Label, LeafScalarMap, LeafStringMap>;
 export type LooseBreakExpression = FromInputOf<BreakExpression, LeafScalarMap, LeafStringMap>;
@@ -2649,13 +2690,19 @@ export type LooseTuplePattern = FromInputOf<TuplePattern, LeafScalarMap, LeafStr
 export type LooseSlicePattern = FromInputOf<SlicePattern, LeafScalarMap, LeafStringMap>;
 export type LooseTupleStructPattern = FromInputOf<TupleStructPattern, LeafScalarMap, LeafStringMap>;
 export type LooseStructPattern = FromInputOf<StructPattern, LeafScalarMap, LeafStringMap>;
-export type LooseFieldPattern = FromInputOf<FieldPattern, LeafScalarMap, LeafStringMap>;
+export type LooseFieldPatternShorthand = FromInputOf<FieldPatternShorthand, LeafScalarMap, LeafStringMap>;
+export type LooseFieldPatternNamed = FromInputOf<FieldPatternNamed, LeafScalarMap, LeafStringMap>;
+export type LooseFieldPattern = FromInputOf<FieldPatternShorthand, LeafScalarMap, LeafStringMap> | FromInputOf<FieldPatternNamed, LeafScalarMap, LeafStringMap>;
 export type LooseMutPattern = FromInputOf<MutPattern, LeafScalarMap, LeafStringMap>;
-export type LooseRangePattern = FromInputOf<RangePattern, LeafScalarMap, LeafStringMap>;
+export type LooseRangePatternLeft = FromInputOf<RangePatternLeftRight, LeafScalarMap, LeafStringMap> | FromInputOf<RangePatternLeftDotdot, LeafScalarMap, LeafStringMap>;
+export type LooseRangePatternPrefix = FromInputOf<RangePatternPrefix, LeafScalarMap, LeafStringMap>;
+export type LooseRangePattern = FromInputOf<RangePatternLeft, LeafScalarMap, LeafStringMap> | FromInputOf<RangePatternPrefix, LeafScalarMap, LeafStringMap>;
 export type LooseRefPattern = FromInputOf<RefPattern, LeafScalarMap, LeafStringMap>;
 export type LooseCapturedPattern = FromInputOf<CapturedPattern, LeafScalarMap, LeafStringMap>;
 export type LooseReferencePattern = FromInputOf<ReferencePattern, LeafScalarMap, LeafStringMap>;
-export type LooseOrPattern = FromInputOf<OrPattern, LeafScalarMap, LeafStringMap>;
+export type LooseOrPatternBinary = FromInputOf<OrPatternBinary, LeafScalarMap, LeafStringMap>;
+export type LooseOrPatternPrefix = FromInputOf<OrPatternPrefix, LeafScalarMap, LeafStringMap>;
+export type LooseOrPattern = FromInputOf<OrPatternBinary, LeafScalarMap, LeafStringMap> | FromInputOf<OrPatternPrefix, LeafScalarMap, LeafStringMap>;
 export type LooseNegativeLiteral = FromInputOf<NegativeLiteral, LeafScalarMap, LeafStringMap>;
 export type LooseStringLiteral = FromInputOf<StringLiteral, LeafScalarMap, LeafStringMap>;
 export type LooseRawStringLiteral = FromInputOf<RawStringLiteral, LeafScalarMap, LeafStringMap>;
@@ -2677,19 +2724,7 @@ export type Loose_RangeExpressionPrefix = FromInputOf<_RangeExpressionPrefix, Le
 export type Loose_RangeExpressionBare = FromInputOf<_RangeExpressionBare, LeafScalarMap, LeafStringMap>;
 export type Loose_RangePatternLeft = FromInputOf<_RangePatternLeft, LeafScalarMap, LeafStringMap>;
 export type Loose_RangePatternPrefix = FromInputOf<_RangePatternPrefix, LeafScalarMap, LeafStringMap>;
-export type LooseRangeExpressionBinary = FromInputOf<RangeExpressionBinary, LeafScalarMap, LeafStringMap>;
-export type LooseRangeExpressionPostfix = FromInputOf<RangeExpressionPostfix, LeafScalarMap, LeafStringMap>;
-export type LooseRangeExpressionPrefix = FromInputOf<RangeExpressionPrefix, LeafScalarMap, LeafStringMap>;
-export type LooseRangeExpressionBare = FromInputOf<RangeExpressionBare, LeafScalarMap, LeafStringMap>;
 export type LooseLetChain = FromInputOf<LetChain, LeafScalarMap, LeafStringMap>;
-export type LooseClosureExpressionBlock = FromInputOf<ClosureExpressionBlock, LeafScalarMap, LeafStringMap>;
-export type LooseClosureExpressionExpr = FromInputOf<ClosureExpressionExpr, LeafScalarMap, LeafStringMap>;
-export type LooseFieldPatternShorthand = FromInputOf<FieldPatternShorthand, LeafScalarMap, LeafStringMap>;
-export type LooseFieldPatternNamed = FromInputOf<FieldPatternNamed, LeafScalarMap, LeafStringMap>;
-export type LooseRangePatternLeft = FromInputOf<RangePatternLeftRight, LeafScalarMap, LeafStringMap> | FromInputOf<RangePatternLeftDotdot, LeafScalarMap, LeafStringMap>;
-export type LooseRangePatternPrefix = FromInputOf<RangePatternPrefix, LeafScalarMap, LeafStringMap>;
-export type LooseOrPatternBinary = FromInputOf<OrPatternBinary, LeafScalarMap, LeafStringMap>;
-export type LooseOrPatternPrefix = FromInputOf<OrPatternPrefix, LeafScalarMap, LeafStringMap>;
 
 // Supertype unions
 export type Statement =
@@ -3202,6 +3237,10 @@ export type RustNode =
   | ScopedIdentifier
   | ScopedTypeIdentifierInExpressionPosition
   | ScopedTypeIdentifier
+  | RangeExpressionBinary
+  | RangeExpressionPostfix
+  | RangeExpressionPrefix
+  | RangeExpressionBare
   | RangeExpression
   | UnaryExpression
   | TryExpression
@@ -3235,6 +3274,8 @@ export type RustNode =
   | LoopExpression
   | ForExpression
   | ConstBlock
+  | ClosureExpressionBlock
+  | ClosureExpressionExpr
   | ClosureExpression
   | ClosureParameters
   | Label
@@ -3253,12 +3294,18 @@ export type RustNode =
   | SlicePattern
   | TupleStructPattern
   | StructPattern
+  | FieldPatternShorthand
+  | FieldPatternNamed
   | FieldPattern
   | MutPattern
+  | RangePatternLeft
+  | RangePatternPrefix
   | RangePattern
   | RefPattern
   | CapturedPattern
   | ReferencePattern
+  | OrPatternBinary
+  | OrPatternPrefix
   | OrPattern
   | NegativeLiteral
   | StringLiteral
@@ -3281,19 +3328,7 @@ export type RustNode =
   | _RangeExpressionBare
   | _RangePatternLeft
   | _RangePatternPrefix
-  | RangeExpressionBinary
-  | RangeExpressionPostfix
-  | RangeExpressionPrefix
-  | RangeExpressionBare
   | LetChain
-  | ClosureExpressionBlock
-  | ClosureExpressionExpr
-  | FieldPatternShorthand
-  | FieldPatternNamed
-  | RangePatternLeft
-  | RangePatternPrefix
-  | OrPatternBinary
-  | OrPatternPrefix
 ;
 
 export interface KindMap {
@@ -3375,6 +3410,10 @@ export interface KindMap {
   'scoped_identifier': ScopedIdentifier;
   'scoped_type_identifier_in_expression_position': ScopedTypeIdentifierInExpressionPosition;
   'scoped_type_identifier': ScopedTypeIdentifier;
+  'range_expression_binary': RangeExpressionBinary;
+  'range_expression_postfix': RangeExpressionPostfix;
+  'range_expression_prefix': RangeExpressionPrefix;
+  'range_expression_bare': RangeExpressionBare;
   'range_expression': RangeExpression;
   'unary_expression': UnaryExpression;
   'try_expression': TryExpression;
@@ -3408,6 +3447,8 @@ export interface KindMap {
   'loop_expression': LoopExpression;
   'for_expression': ForExpression;
   'const_block': ConstBlock;
+  'closure_expression_block': ClosureExpressionBlock;
+  'closure_expression_expr': ClosureExpressionExpr;
   'closure_expression': ClosureExpression;
   'closure_parameters': ClosureParameters;
   'label': Label;
@@ -3426,12 +3467,18 @@ export interface KindMap {
   'slice_pattern': SlicePattern;
   'tuple_struct_pattern': TupleStructPattern;
   'struct_pattern': StructPattern;
+  'field_pattern_shorthand': FieldPatternShorthand;
+  'field_pattern_named': FieldPatternNamed;
   'field_pattern': FieldPattern;
   'mut_pattern': MutPattern;
+  'range_pattern_left': RangePatternLeft;
+  'range_pattern_prefix': RangePatternPrefix;
   'range_pattern': RangePattern;
   'ref_pattern': RefPattern;
   'captured_pattern': CapturedPattern;
   'reference_pattern': ReferencePattern;
+  'or_pattern_binary': OrPatternBinary;
+  'or_pattern_prefix': OrPatternPrefix;
   'or_pattern': OrPattern;
   'negative_literal': NegativeLiteral;
   'string_literal': StringLiteral;
@@ -3454,19 +3501,7 @@ export interface KindMap {
   '_range_expression_bare': _RangeExpressionBare;
   '_range_pattern_left': _RangePatternLeft;
   '_range_pattern_prefix': _RangePatternPrefix;
-  'range_expression_binary': RangeExpressionBinary;
-  'range_expression_postfix': RangeExpressionPostfix;
-  'range_expression_prefix': RangeExpressionPrefix;
-  'range_expression_bare': RangeExpressionBare;
   'let_chain': LetChain;
-  'closure_expression_block': ClosureExpressionBlock;
-  'closure_expression_expr': ClosureExpressionExpr;
-  'field_pattern_shorthand': FieldPatternShorthand;
-  'field_pattern_named': FieldPatternNamed;
-  'range_pattern_left': RangePatternLeft;
-  'range_pattern_prefix': RangePatternPrefix;
-  'or_pattern_binary': OrPatternBinary;
-  'or_pattern_prefix': OrPatternPrefix;
   'fragment_specifier': FragmentSpecifier;
   'unit_type': UnitType;
   'mutable_specifier': MutableSpecifier;
@@ -3502,7 +3537,12 @@ export interface VariantMap {
   'struct_item': { body: StructItemBody; semi: StructItemSemi; semi2: StructItemSemi2 };
   'impl_item': { body: ImplItemBody; semi: ImplItemSemi };
   'visibility_modifier': { crate: VisibilityModifierCrate; pub: VisibilityModifierPub };
+  'range_expression': { binary: RangeExpressionBinary; postfix: RangeExpressionPostfix; prefix: RangeExpressionPrefix; bare: RangeExpressionBare };
+  'closure_expression': { block: ClosureExpressionBlock; expr: ClosureExpressionExpr };
+  'field_pattern': { shorthand: FieldPatternShorthand; named: FieldPatternNamed };
   'range_pattern_left': { right: RangePatternLeftRight; dotdot: RangePatternLeftDotdot };
+  'range_pattern': { left: RangePatternLeft; prefix: RangePatternPrefix };
+  'or_pattern': { binary: OrPatternBinary; prefix: OrPatternPrefix };
 }
 
 export interface ConfigMap {
@@ -3584,6 +3624,10 @@ export interface ConfigMap {
   'scoped_identifier': ScopedIdentifierConfig;
   'scoped_type_identifier_in_expression_position': ScopedTypeIdentifierInExpressionPositionConfig;
   'scoped_type_identifier': ScopedTypeIdentifierConfig;
+  'range_expression_binary': RangeExpressionBinaryConfig;
+  'range_expression_postfix': RangeExpressionPostfixConfig;
+  'range_expression_prefix': RangeExpressionPrefixConfig;
+  'range_expression_bare': RangeExpressionBareConfig;
   'range_expression': RangeExpressionConfig;
   'unary_expression': UnaryExpressionConfig;
   'try_expression': TryExpressionConfig;
@@ -3617,6 +3661,8 @@ export interface ConfigMap {
   'loop_expression': LoopExpressionConfig;
   'for_expression': ForExpressionConfig;
   'const_block': ConstBlockConfig;
+  'closure_expression_block': ClosureExpressionBlockConfig;
+  'closure_expression_expr': ClosureExpressionExprConfig;
   'closure_expression': ClosureExpressionConfig;
   'closure_parameters': ClosureParametersConfig;
   'label': LabelConfig;
@@ -3635,12 +3681,18 @@ export interface ConfigMap {
   'slice_pattern': SlicePatternConfig;
   'tuple_struct_pattern': TupleStructPatternConfig;
   'struct_pattern': StructPatternConfig;
+  'field_pattern_shorthand': FieldPatternShorthandConfig;
+  'field_pattern_named': FieldPatternNamedConfig;
   'field_pattern': FieldPatternConfig;
   'mut_pattern': MutPatternConfig;
+  'range_pattern_left': RangePatternLeftConfig;
+  'range_pattern_prefix': RangePatternPrefixConfig;
   'range_pattern': RangePatternConfig;
   'ref_pattern': RefPatternConfig;
   'captured_pattern': CapturedPatternConfig;
   'reference_pattern': ReferencePatternConfig;
+  'or_pattern_binary': OrPatternBinaryConfig;
+  'or_pattern_prefix': OrPatternPrefixConfig;
   'or_pattern': OrPatternConfig;
   'negative_literal': NegativeLiteralConfig;
   'string_literal': StringLiteralConfig;
@@ -3663,19 +3715,7 @@ export interface ConfigMap {
   '_range_expression_bare': _RangeExpressionBareConfig;
   '_range_pattern_left': _RangePatternLeftConfig;
   '_range_pattern_prefix': _RangePatternPrefixConfig;
-  'range_expression_binary': RangeExpressionBinaryConfig;
-  'range_expression_postfix': RangeExpressionPostfixConfig;
-  'range_expression_prefix': RangeExpressionPrefixConfig;
-  'range_expression_bare': RangeExpressionBareConfig;
   'let_chain': LetChainConfig;
-  'closure_expression_block': ClosureExpressionBlockConfig;
-  'closure_expression_expr': ClosureExpressionExprConfig;
-  'field_pattern_shorthand': FieldPatternShorthandConfig;
-  'field_pattern_named': FieldPatternNamedConfig;
-  'range_pattern_left': RangePatternLeftConfig;
-  'range_pattern_prefix': RangePatternPrefixConfig;
-  'or_pattern_binary': OrPatternBinaryConfig;
-  'or_pattern_prefix': OrPatternPrefixConfig;
 }
 
 export interface LooseMap {
@@ -3757,6 +3797,10 @@ export interface LooseMap {
   'scoped_identifier': LooseScopedIdentifier;
   'scoped_type_identifier_in_expression_position': LooseScopedTypeIdentifierInExpressionPosition;
   'scoped_type_identifier': LooseScopedTypeIdentifier;
+  'range_expression_binary': LooseRangeExpressionBinary;
+  'range_expression_postfix': LooseRangeExpressionPostfix;
+  'range_expression_prefix': LooseRangeExpressionPrefix;
+  'range_expression_bare': LooseRangeExpressionBare;
   'range_expression': LooseRangeExpression;
   'unary_expression': LooseUnaryExpression;
   'try_expression': LooseTryExpression;
@@ -3790,6 +3834,8 @@ export interface LooseMap {
   'loop_expression': LooseLoopExpression;
   'for_expression': LooseForExpression;
   'const_block': LooseConstBlock;
+  'closure_expression_block': LooseClosureExpressionBlock;
+  'closure_expression_expr': LooseClosureExpressionExpr;
   'closure_expression': LooseClosureExpression;
   'closure_parameters': LooseClosureParameters;
   'label': LooseLabel;
@@ -3808,12 +3854,18 @@ export interface LooseMap {
   'slice_pattern': LooseSlicePattern;
   'tuple_struct_pattern': LooseTupleStructPattern;
   'struct_pattern': LooseStructPattern;
+  'field_pattern_shorthand': LooseFieldPatternShorthand;
+  'field_pattern_named': LooseFieldPatternNamed;
   'field_pattern': LooseFieldPattern;
   'mut_pattern': LooseMutPattern;
+  'range_pattern_left': LooseRangePatternLeft;
+  'range_pattern_prefix': LooseRangePatternPrefix;
   'range_pattern': LooseRangePattern;
   'ref_pattern': LooseRefPattern;
   'captured_pattern': LooseCapturedPattern;
   'reference_pattern': LooseReferencePattern;
+  'or_pattern_binary': LooseOrPatternBinary;
+  'or_pattern_prefix': LooseOrPatternPrefix;
   'or_pattern': LooseOrPattern;
   'negative_literal': LooseNegativeLiteral;
   'string_literal': LooseStringLiteral;
@@ -3836,17 +3888,5 @@ export interface LooseMap {
   '_range_expression_bare': Loose_RangeExpressionBare;
   '_range_pattern_left': Loose_RangePatternLeft;
   '_range_pattern_prefix': Loose_RangePatternPrefix;
-  'range_expression_binary': LooseRangeExpressionBinary;
-  'range_expression_postfix': LooseRangeExpressionPostfix;
-  'range_expression_prefix': LooseRangeExpressionPrefix;
-  'range_expression_bare': LooseRangeExpressionBare;
   'let_chain': LooseLetChain;
-  'closure_expression_block': LooseClosureExpressionBlock;
-  'closure_expression_expr': LooseClosureExpressionExpr;
-  'field_pattern_shorthand': LooseFieldPatternShorthand;
-  'field_pattern_named': LooseFieldPatternNamed;
-  'range_pattern_left': LooseRangePatternLeft;
-  'range_pattern_prefix': LooseRangePatternPrefix;
-  'or_pattern_binary': LooseOrPatternBinary;
-  'or_pattern_prefix': LooseOrPatternPrefix;
 }

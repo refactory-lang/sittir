@@ -693,14 +693,17 @@ describe('lambda_within_for_in_clause', () => {
 });
 
 describe('assignment', () => {
-  it('factory produces correct type', () => {
-    const node = ir.assignment({ left: { type: '_left_hand_side', text: 'test' } as any, type: { type: 'type', text: 'test' } as any, right: { type: '_right_hand_side', text: 'test' } as any });
+  it('eq form produces correct type', () => {
+    const node = ir.assignment.eq({ left: { type: '_left_hand_side', text: 'test' } as any });
     expect(node.type).toBe('assignment');
   });
-  it('render produces non-empty string', () => {
-    const node = ir.assignment({ left: { type: '_left_hand_side', text: 'test' } as any, type: { type: 'type', text: 'test' } as any, right: { type: '_right_hand_side', text: 'test' } as any });
-    const rendered = node.render();
-    expect(rendered.length).toBeGreaterThan(0);
+  it('type form produces correct type', () => {
+    const node = ir.assignment.type({ left: { type: '_left_hand_side', text: 'test' } as any });
+    expect(node.type).toBe('assignment');
+  });
+  it('typed form produces correct type', () => {
+    const node = ir.assignment.typed({ left: { type: '_left_hand_side', text: 'test' } as any });
+    expect(node.type).toBe('assignment');
   });
 });
 
@@ -1154,39 +1157,6 @@ describe('as_pattern_target', () => {
   it('factory produces correct type', () => {
     const node = ir.asPatternTarget();
     expect(node.type).toBe('as_pattern_target');
-  });
-});
-
-describe('assignment_eq', () => {
-  it('factory produces correct type', () => {
-    const node = ir.assignmentEq({ right: { type: '_right_hand_side', text: 'test' } as any });
-    expect(node.type).toBe('assignment_eq');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.assignmentEq({ right: { type: '_right_hand_side', text: 'test' } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('assignment_type', () => {
-  it('factory produces correct type', () => {
-    const node = ir.assignmentType({ type: { type: 'type', text: 'test' } as any });
-    expect(node.type).toBe('assignment_type');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.assignmentType({ type: { type: 'type', text: 'test' } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('assignment_typed', () => {
-  it('factory produces correct type', () => {
-    const node = ir.assignmentTyped({ type: { type: 'type', text: 'test' } as any, right: { type: '_right_hand_side', text: 'test' } as any });
-    expect(node.type).toBe('assignment_typed');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.assignmentTyped({ type: { type: 'type', text: 'test' } as any, right: { type: '_right_hand_side', text: 'test' } as any });
-    expect(node.render().length).toBeGreaterThan(0);
   });
 });
 

@@ -94,6 +94,9 @@ export const _fromMap = {
   "comparison_operator": comparisonOperatorFrom,
   "lambda": lambdaFrom,
   "lambda_within_for_in_clause": lambdaWithinForInClauseFrom,
+  "assignment_eq": assignmentEqFrom,
+  "assignment_type": assignmentTypeFrom,
+  "assignment_typed": assignmentTypedFrom,
   "assignment": assignmentFrom,
   "augmented_assignment": augmentedAssignmentFrom,
   "pattern_list": patternListFrom,
@@ -147,9 +150,6 @@ export const _fromMap = {
   "}": closeBraceFrom,
   "except": exceptFrom,
   "as_pattern_target": asPatternTargetFrom,
-  "assignment_eq": assignmentEqFrom,
-  "assignment_type": assignmentTypeFrom,
-  "assignment_typed": assignmentTypedFrom,
   "format_expression": formatExpressionFrom,
 } as const;
 export type _FromMap = typeof _fromMap;
@@ -924,12 +924,26 @@ export function lambdaWithinForInClauseFrom(input: T.LambdaWithinForInClause | T
   });
 }
 
-export function assignmentFrom(input: T.Assignment | T.LooseAssignment): ReturnType<typeof assignment> {
-  if ('render' in input) return input as T.Assignment & ReturnType<typeof assignment>;
-  return assignment({
-    left: _resolveOne<NonNullable<T.AssignmentConfig['left']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['left'] ?? (input as { readonly left?: _FromFieldInput }).left), _K0, _super_left_hand_side),
-    right: _resolveOne<NonNullable<T.AssignmentConfig['right']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } })?.fields?.['right'] ?? (input as { readonly right?: _FromFieldInput })?.right), _K0, _super_right_hand_side),
-    type: _resolveOneBranch<NonNullable<T.AssignmentConfig['type']>>((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } })?.fields?.['type'], "type"),
+export function assignmentFrom(input?: T.Assignment | T.LooseAssignment) {
+  if (input !== undefined && 'render' in input) return input;
+  return assignment(input as T.AssignmentEqConfig | T.AssignmentTypeConfig | T.AssignmentTypedConfig);
+}
+
+export function assignmentEqFrom(input: T.AssignmentEqConfig) {
+  return assignmentEq({
+    left: _resolveOne<NonNullable<T.AssignmentEqConfig['left']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['left'] ?? (input as { readonly left?: _FromFieldInput }).left), _K0, _super_left_hand_side),
+  });
+}
+
+export function assignmentTypeFrom(input: T.AssignmentTypeConfig) {
+  return assignmentType({
+    left: _resolveOne<NonNullable<T.AssignmentTypeConfig['left']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['left'] ?? (input as { readonly left?: _FromFieldInput }).left), _K0, _super_left_hand_side),
+  });
+}
+
+export function assignmentTypedFrom(input: T.AssignmentTypedConfig) {
+  return assignmentTyped({
+    left: _resolveOne<NonNullable<T.AssignmentTypedConfig['left']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['left'] ?? (input as { readonly left?: _FromFieldInput }).left), _K0, _super_left_hand_side),
   });
 }
 
@@ -1307,28 +1321,6 @@ export function asPatternTargetFrom(input?: NonNullable<T.AsPatternTargetConfig[
     return asPatternTarget((data.children as NonNullable<T.AsPatternTargetConfig['children']>)[0] as NonNullable<T.AsPatternTargetConfig['children']>[number]);
   }
   return asPatternTarget(input as NonNullable<T.AsPatternTargetConfig['children']>[number]);
-}
-
-export function assignmentEqFrom(input: T.AssignmentEq | T.LooseAssignmentEq): ReturnType<typeof assignmentEq> {
-  if ('render' in input) return input as ReturnType<typeof assignmentEq>;
-  return assignmentEq({
-    right: _resolveOne<NonNullable<T.AssignmentEqConfig['right']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['right'] ?? (input as { readonly right?: _FromFieldInput }).right), _K0, _super_right_hand_side),
-  });
-}
-
-export function assignmentTypeFrom(input: T.AssignmentType | T.LooseAssignmentType): ReturnType<typeof assignmentType> {
-  if ('render' in input) return input as ReturnType<typeof assignmentType>;
-  return assignmentType({
-    type: _resolveOneBranch<NonNullable<T.AssignmentTypeConfig['type']>>((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['type'], "type"),
-  });
-}
-
-export function assignmentTypedFrom(input: T.AssignmentTyped | T.LooseAssignmentTyped): ReturnType<typeof assignmentTyped> {
-  if ('render' in input) return input as ReturnType<typeof assignmentTyped>;
-  return assignmentTyped({
-    type: _resolveOneBranch<NonNullable<T.AssignmentTypedConfig['type']>>((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['type'], "type"),
-    right: _resolveOne<NonNullable<T.AssignmentTypedConfig['right']>>(((input as { readonly fields?: { readonly [k: string]: _FromFieldInput } }).fields?.['right'] ?? (input as { readonly right?: _FromFieldInput }).right), _K0, _super_right_hand_side),
-  });
 }
 
 export function formatExpressionFrom(input: T.FormatExpression | T.LooseFormatExpression): ReturnType<typeof formatExpression> {

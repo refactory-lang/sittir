@@ -114,7 +114,14 @@ rules:
   comparison_operator: $LEFT $$$OPERATORS $$$CHILDREN
   lambda: "$LAMBDA $PARAMETERS:$BODY"
   lambda_within_for_in_clause: "$LAMBDA $PARAMETERS:$BODY"
-  assignment: $LEFT $$$CHILDREN
+  assignment_eq: =$RIGHT
+  assignment_type: ":$TYPE"
+  assignment_typed: ":$TYPE=$RIGHT"
+  assignment:
+    variants:
+      eq: $LEFT $$$CHILDREN
+      type: $LEFT $$$CHILDREN
+      typed: $LEFT $$$CHILDREN
   augmented_assignment: $LEFT $OPERATOR $RIGHT
   pattern_list:
     template: $PATTERN,$$$CHILDREN
@@ -165,7 +172,4 @@ rules:
   format_specifier: ":$$$CHILDREN"
   await: $AWAIT $PRIMARY_EXPRESSION
   as_pattern_target: $$$CHILDREN
-  assignment_eq: =$RIGHT
-  assignment_type: ":$TYPE"
-  assignment_typed: ":$TYPE=$RIGHT"
   format_expression: "{$EXPRESSION $TYPE_CONVERSION $FORMAT_SPECIFIER}"

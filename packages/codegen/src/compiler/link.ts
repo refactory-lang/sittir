@@ -213,6 +213,7 @@ export function link(raw: RawGrammar, include?: IncludeFilter): LinkedGrammar {
         references,
         derivations,
         aliasedHiddenKinds,
+        polymorphVariants: raw.polymorphVariants,
     }
 }
 
@@ -460,7 +461,7 @@ export function promotePolymorph(rule: Rule): Rule {
     return { type: 'polymorph', forms, source: 'promoted' }
 }
 
-interface VariantChoiceLocation {
+export interface VariantChoiceLocation {
     choice: ChoiceRule
     /** Members of the outer seq that appear before the choice. */
     prefix: Rule[]
@@ -468,7 +469,7 @@ interface VariantChoiceLocation {
     suffix: Rule[]
 }
 
-function findVariantChoice(rule: Rule): VariantChoiceLocation | null {
+export function findVariantChoice(rule: Rule): VariantChoiceLocation | null {
     if (rule.type === 'choice' && rule.members.some(m => m.type === 'variant')) {
         return { choice: rule, prefix: [], suffix: [] }
     }

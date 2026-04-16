@@ -28,9 +28,7 @@ export function emitIr(config: EmitIrConfig): string {
     for (const [kind, node] of nodeMap.nodes) {
         if (kind.startsWith('_')) continue
         if (!node.rawFactoryName) continue // supertype, token, hidden — no factory
-        // Skip synthesised polymorph form groups here — they are imported
-        // via their parent polymorph's form list below to avoid duplicates.
-        if (node.modelType === 'group') continue
+        if (nodeMap.polymorphFormKinds.has(kind)) continue
 
         factoryImports.add(node.rawFactoryName)
 

@@ -13,9 +13,10 @@
  */
 
 import type {
-    Rule, LinkedGrammar, OptimizedGrammar,
+    Rule, LinkedGrammar, OptimizedGrammar, PolymorphRule,
 } from './rule.ts'
-import { promotePolymorph } from './link.ts'
+import type { PolymorphVariant } from '../dsl/synthetic-rules.ts'
+import { promotePolymorph, findVariantChoice } from './link.ts'
 import { simplifyRules, compileWordMatcher } from './simplify.ts'
 
 // ---------------------------------------------------------------------------
@@ -33,19 +34,20 @@ export function optimize(linked: LinkedGrammar): OptimizedGrammar {
     for (const [name, rule] of Object.entries(linked.rules)) {
         rules[name] = collapseWrappers(rule)           // T062
     }
+    // Apply override-sourced polymorphs BEFORE fan-out so findVariantChoice
+    // sees the original seq(prefix, choice(variants)) structure.
+    const overridePolymorphs = new Set<string>()
+    if (linked.polymorphVariants?.length) {
+        applyOverridePolymorphs(rules, linked.polymorphVariants, overridePolymorphs)
+    }
     for (const name of Object.keys(rules)) {
         rules[name] = fanOutSeqChoices(rules[name]!)    // T060
     }
     // Re-run polymorph promotion now that fan-out has lifted every
-    // inner choice to the top level of its enclosing rule. Link's
-    // earlier pass only catches choices that were already top-level;
-    // rules like rust's `struct_item` / `impl_item` / `function_type`
-    // had their choices buried inside a seq, and their terminal
-    // variants looked empty before fan-out distributed the prefix/
-    // suffix members into each branch. Running promotePolymorph here
-    // sees the canonical fanned-out shape where every branch carries
-    // its complete structural context.
+    // inner choice to the top level of its enclosing rule. Skip rules
+    // already classified by override.
     for (const name of Object.keys(rules)) {
+        if (overridePolymorphs.has(name)) continue
         rules[name] = promotePolymorph(rules[name]!)
     }
     for (const name of Object.keys(rules)) {
@@ -84,6 +86,58 @@ export function optimize(linked: LinkedGrammar): OptimizedGrammar {
         word: linked.word,
         derivations: linked.derivations,
         aliasedHiddenKinds: linked.aliasedHiddenKinds,
+        polymorphVariants: linked.polymorphVariants,
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Override polymorph classification — variant() metadata → PolymorphRule
+// ---------------------------------------------------------------------------
+
+function applyOverridePolymorphs(
+    rules: Record<string, Rule>,
+    variants: PolymorphVariant[],
+    classified: Set<string>,
+): void {
+    const parentToChildren = new Map<string, string[]>()
+    for (const pv of variants) {
+        const existing = parentToChildren.get(pv.parent) ?? []
+        existing.push(pv.child)
+        parentToChildren.set(pv.parent, existing)
+    }
+
+    for (const [parentKind, children] of parentToChildren) {
+        const rule = rules[parentKind]
+        if (!rule || rule.type === 'polymorph') continue
+
+        const found = findVariantChoice(rule)
+        if (!found) continue
+
+        const forms = children.map(child => {
+            const fullName = `${parentKind}_${child}`
+            const variantMember = found.choice.members.find(m => {
+                if (m.type === 'variant') {
+                    const sym = m.content
+                    return sym.type === 'symbol' && sym.name === fullName
+                }
+                return m.type === 'symbol' && m.name === fullName
+            })
+
+            const content = variantMember?.type === 'variant' ? variantMember.content : variantMember ?? { type: 'symbol', name: fullName } as Rule
+            const fused = found.prefix.length > 0 || found.suffix.length > 0
+                ? { type: 'seq' as const, members: [...found.prefix, content, ...found.suffix] } as Rule
+                : content
+
+            return { name: child, content: fused }
+        })
+
+        rules[parentKind] = {
+            type: 'polymorph',
+            forms,
+            source: 'override',
+        } satisfies PolymorphRule
+
+        classified.add(parentKind)
     }
 }
 
