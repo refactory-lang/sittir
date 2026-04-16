@@ -19,6 +19,9 @@ export type LeafStringMap = {
   true: "True";
   false: "False";
   none: "None";
+  _kw_async: "async";
+  _kw_not: "not";
+  _kw_lambda: "lambda";
   import: "import";
   from: "from";
   __future__: "__future__";
@@ -36,7 +39,6 @@ export type LeafStringMap = {
   else: "else";
   match: "match";
   case: "case";
-  async: "async";
   for: "for";
   in: "in";
   while: "while";
@@ -49,13 +51,14 @@ export type LeafStringMap = {
   exec: "exec";
   class: "class";
   _: "_";
-  not: "not";
   and: "and";
   or: "or";
   is: "is";
+  not: "not";
   True: "True";
   False: "False";
   None: "None";
+  async: "async";
 };
 
 export const enum SyntaxKind {
@@ -197,6 +200,9 @@ export const enum SyntaxKind {
   None = 'none',
   Comment = 'comment',
   LineContinuation = 'line_continuation',
+  KwAsync = '_kw_async',
+  KwNot = '_kw_not',
+  KwLambda = '_kw_lambda',
   Newline = '_newline',
   Indent = '_indent',
   Dedent = '_dedent',
@@ -225,7 +231,6 @@ export const enum SyntaxKind {
   Else = 'else',
   Match = 'match',
   Case = 'case',
-  Async = 'async',
   For = 'for',
   In = 'in',
   While = 'while',
@@ -238,13 +243,14 @@ export const enum SyntaxKind {
   Exec = 'exec',
   Class = 'class',
   Anonymous = '_',
-  Not = 'not',
   And = 'and',
   Or = 'or',
   Is = 'is',
+  Not = 'not',
   True2 = 'True',
   False2 = 'False',
   None2 = 'None',
+  Async = 'async',
 }
 
 // Scoped enums per supertype
@@ -432,7 +438,6 @@ export interface FutureImportStatement {
 export interface ImportFromStatement {
   readonly type: 'import_from_statement';
   readonly fields: {
-    readonly from: "from";
     readonly module_name: RelativeImport | DottedName;
     readonly wildcard_import: WildcardImport | ImportList;
   };
@@ -575,7 +580,7 @@ export interface CaseClause {
 export interface ForStatement {
   readonly type: 'for_statement';
   readonly fields: {
-    readonly async?: "async";
+    readonly async?: KwAsync;
     readonly left: LeftHandSide;
     readonly right: Expressions;
     readonly body: Suite;
@@ -596,7 +601,6 @@ export interface WhileStatement {
 export interface TryStatement {
   readonly type: 'try_statement';
   readonly fields: {
-    readonly try: "try";
     readonly body: Suite;
     readonly except_clauses: readonly (ExceptClause)[];
     readonly else_clause?: ElseClause;
@@ -617,7 +621,6 @@ export interface ExceptClause {
 export interface FinallyClause {
   readonly type: 'finally_clause';
   readonly fields: {
-    readonly finally: "finally";
     readonly block: Suite;
   };
 }
@@ -625,7 +628,7 @@ export interface FinallyClause {
 export interface WithStatement {
   readonly type: 'with_statement';
   readonly fields: {
-    readonly async?: "async";
+    readonly async?: KwAsync;
     readonly with_clause: WithClause;
     readonly body: Suite;
   };
@@ -646,7 +649,7 @@ export interface WithItem {
 export interface FunctionDefinition {
   readonly type: 'function_definition';
   readonly fields: {
-    readonly async?: "async";
+    readonly async?: KwAsync;
     readonly name: Identifier;
     readonly type_parameters?: TypeParameter;
     readonly parameters: Parameters;
@@ -907,7 +910,7 @@ export interface AsPattern {
 export interface NotOperator {
   readonly type: 'not_operator';
   readonly fields: {
-    readonly not: "not";
+    readonly not: KwNot;
     readonly argument: Expression;
   };
 }
@@ -957,7 +960,7 @@ export interface ComparisonOperator {
 export interface Lambda {
   readonly type: 'lambda';
   readonly fields: {
-    readonly lambda: "lambda";
+    readonly lambda: KwLambda;
     readonly parameters?: LambdaParameters;
     readonly body: Expression;
   };
@@ -966,7 +969,7 @@ export interface Lambda {
 export interface LambdaWithinForInClause {
   readonly type: 'lambda_within_for_in_clause';
   readonly fields: {
-    readonly lambda: "lambda";
+    readonly lambda: KwLambda;
     readonly parameters?: LambdaParameters;
     readonly body: ExpressionWithinForInClause;
   };
@@ -1073,6 +1076,7 @@ export interface SplatType {
   readonly fields: {
     readonly identifier: "*" | "**";
   };
+  readonly children: readonly [Identifier];
 }
 
 export interface GenericType {
@@ -1193,7 +1197,7 @@ export interface CollectionElements {
 export interface ForInClause {
   readonly type: 'for_in_clause';
   readonly fields: {
-    readonly async?: "async";
+    readonly async?: KwAsync;
     readonly left: LeftHandSide;
     readonly right: NonEmptyArray<string>;
   };
@@ -1202,7 +1206,6 @@ export interface ForInClause {
 export interface IfClause {
   readonly type: 'if_clause';
   readonly fields: {
-    readonly if: "if";
     readonly expression: Expression;
   };
 }
@@ -1255,7 +1258,6 @@ export interface FormatSpecifier {
 export interface Await {
   readonly type: 'await';
   readonly fields: {
-    readonly await: "await";
     readonly primary_expression: PrimaryExpression;
   };
 }
@@ -1324,6 +1326,9 @@ export type False = Terminal<"false", "False">;
 export type None = Terminal<"none", "None">;
 export type Comment = Terminal<"comment", string>;
 export type LineContinuation = Terminal<"line_continuation", string>;
+export type KwAsync = Terminal<"_kw_async", "async">;
+export type KwNot = Terminal<"_kw_not", "not">;
+export type KwLambda = Terminal<"_kw_lambda", "lambda">;
 export type Newline = Terminal<"_newline", string>;
 export type Indent = Terminal<"_indent", string>;
 export type Dedent = Terminal<"_dedent", string>;
@@ -1611,6 +1616,9 @@ export interface FalseTree extends AnyTreeNode { readonly type: "false"; }
 export interface NoneTree extends AnyTreeNode { readonly type: "none"; }
 export interface CommentTree extends TreeNode<'comment'> {}
 export interface LineContinuationTree extends TreeNode<'line_continuation'> {}
+export interface KwAsyncTree extends AnyTreeNode { readonly type: "_kw_async"; }
+export interface KwNotTree extends AnyTreeNode { readonly type: "_kw_not"; }
+export interface KwLambdaTree extends AnyTreeNode { readonly type: "_kw_lambda"; }
 export interface NewlineTree extends AnyTreeNode { readonly type: "_newline"; }
 export interface IndentTree extends AnyTreeNode { readonly type: "_indent"; }
 export interface DedentTree extends AnyTreeNode { readonly type: "_dedent"; }
@@ -1639,7 +1647,6 @@ export interface ElifTree extends AnyTreeNode { readonly type: "elif"; }
 export interface ElseTree extends AnyTreeNode { readonly type: "else"; }
 export interface MatchTree extends AnyTreeNode { readonly type: "match"; }
 export interface CaseTree extends AnyTreeNode { readonly type: "case"; }
-export interface AsyncTree extends AnyTreeNode { readonly type: "async"; }
 export interface ForTree extends AnyTreeNode { readonly type: "for"; }
 export interface InTree extends AnyTreeNode { readonly type: "in"; }
 export interface WhileTree extends AnyTreeNode { readonly type: "while"; }
@@ -1652,13 +1659,14 @@ export interface NonlocalTree extends AnyTreeNode { readonly type: "nonlocal"; }
 export interface ExecTree extends AnyTreeNode { readonly type: "exec"; }
 export interface ClassTree extends AnyTreeNode { readonly type: "class"; }
 export interface AnonymousTree extends AnyTreeNode { readonly type: "_"; }
-export interface NotTree extends AnyTreeNode { readonly type: "not"; }
 export interface AndTree extends AnyTreeNode { readonly type: "and"; }
 export interface OrTree extends AnyTreeNode { readonly type: "or"; }
 export interface IsTree extends AnyTreeNode { readonly type: "is"; }
+export interface NotTree extends AnyTreeNode { readonly type: "not"; }
 export interface True2Tree extends AnyTreeNode { readonly type: "True"; }
 export interface False2Tree extends AnyTreeNode { readonly type: "False"; }
 export interface None2Tree extends AnyTreeNode { readonly type: "None"; }
+export interface AsyncTree extends AnyTreeNode { readonly type: "async"; }
 
 // Loose-input type aliases (for from() construction)
 export type LooseModule = FromInputOf<Module, LeafScalarMap, LeafStringMap>;
@@ -2254,6 +2262,9 @@ export interface KindMap {
   'none': None;
   'comment': Comment;
   'line_continuation': LineContinuation;
+  '_kw_async': KwAsync;
+  '_kw_not': KwNot;
+  '_kw_lambda': KwLambda;
   '_newline': Newline;
   '_indent': Indent;
   '_dedent': Dedent;

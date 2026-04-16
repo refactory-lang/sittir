@@ -184,6 +184,40 @@ function resolvePatch(
         if (isFieldLike(content) && content.source === 'inferred') {
             content = content.content
         }
+        // Bare STRING content: tree-sitter strips FIELD wrappers around
+        // anonymous string literals during grammar normalization (fields
+        // must label structural content, not bare tokens). Mirror
+        // variant()'s pattern below: synthesize a hidden `_kw_<name>`
+        // rule that produces the string, register it, and wrap a SYMBOL
+        // reference instead. FIELD around SYMBOL survives the normalizer.
+        //
+        // Wrap the hidden rule's body with high precedence so soft
+        // keywords (e.g. python's `match`/`case`, which are also valid
+        // identifiers) don't create parser conflicts. The precedence
+        // tells tree-sitter to prefer the keyword interpretation when
+        // the lexer sees this token at the position enrich promoted.
+        const c = content as { type?: string; value?: string }
+        if (c && (c.type === 'STRING' || c.type === 'string')) {
+            const isUpperCase = c.type === 'STRING'
+            const hiddenName = `_kw_${patch.name}`
+            // Wrap with high-precedence prec.left via the runtime's
+            // native primitive. Tree-sitter keeps the PREC_LEFT and
+            // uses it to resolve conflicts with identifiers (soft
+            // keywords like python's `match`/`case` and typescript's
+            // `async`). Sittir's prec.left strips and returns content
+            // (sittir doesn't model precedence in the Rule union).
+            const nativePrec = (globalThis as {
+                prec?: { left?: (v: number, c: unknown) => unknown }
+            }).prec
+            const precBody = typeof nativePrec?.left === 'function'
+                ? nativePrec.left(1000, content)
+                : content
+            registerSyntheticRule(hiddenName, wrapInPrec(precBody as RuntimeRule, precStack))
+            content = {
+                type: isUpperCase ? 'SYMBOL' : 'symbol',
+                name: hiddenName,
+            }
+        }
         const native = (globalThis as { field?: (n: string, c: unknown) => unknown }).field
         if (typeof native !== 'function') {
             throw new Error('transform: no global field() found — patches that use the one-arg field() form require a runtime that injects field() (sittir evaluate.ts or tree-sitter CLI)')

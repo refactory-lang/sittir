@@ -136,40 +136,32 @@ import type {
 // codegen time from NodeMap, then handed to readNode at module load.
 // Emitted one entry per line so PR diffs show only the changed kind.
 const _overrides = {
-  "import_statement": {"fields":{"import":{"types":[{"type":"import","named":false}],"multiple":false,"required":true,"position":0}}},
-  "future_import_statement": {"fields":{"from":{"types":[{"type":"from","named":false}],"multiple":false,"required":true,"position":0}}},
-  "import_from_statement": {"fields":{"from":{"types":[{"type":"from","named":false}],"multiple":false,"required":true,"position":0}}},
-  "assert_statement": {"fields":{"assert":{"types":[{"type":"assert","named":false}],"multiple":false,"required":true,"position":0}}},
-  "return_statement": {"fields":{"return":{"types":[{"type":"return","named":false}],"multiple":false,"required":true,"position":0}}},
-  "delete_statement": {"fields":{"del":{"types":[{"type":"del","named":false}],"multiple":false,"required":true,"position":0}}},
-  "raise_statement": {"fields":{"raise":{"types":[{"type":"raise","named":false}],"multiple":false,"required":true,"position":0}}},
-  "if_statement": {"fields":{"if":{"types":[{"type":"if","named":false}],"multiple":false,"required":true,"position":0}}},
-  "elif_clause": {"fields":{"elif":{"types":[{"type":"elif","named":false}],"multiple":false,"required":true,"position":0}}},
-  "else_clause": {"fields":{"else":{"types":[{"type":"else","named":false}],"multiple":false,"required":true,"position":0}}},
-  "match_statement": {"fields":{"match":{"types":[{"type":"match","named":false}],"multiple":false,"required":true,"position":0}}},
-  "case_clause": {"fields":{"case":{"types":[{"type":"case","named":false}],"multiple":false,"required":true,"position":0}}},
-  "for_statement": {"fields":{"async":{"types":[{"type":"async","named":false}],"multiple":false,"required":false,"position":0}}},
-  "while_statement": {"fields":{"while":{"types":[{"type":"while","named":false}],"multiple":false,"required":true,"position":0}}},
-  "try_statement": {"fields":{"try":{"types":[{"type":"try","named":false}],"multiple":false,"required":true,"position":0}}},
-  "except_clause": {"fields":{"except":{"types":[{"type":"except","named":false}],"multiple":false,"required":true,"position":0}}},
-  "finally_clause": {"fields":{"finally":{"types":[{"type":"finally","named":false}],"multiple":false,"required":true,"position":0}}},
-  "with_statement": {"fields":{"async":{"types":[{"type":"async","named":false}],"multiple":false,"required":false,"position":0}}},
-  "function_definition": {"fields":{"async":{"types":[{"type":"async","named":false}],"multiple":false,"required":false,"position":0}}},
-  "global_statement": {"fields":{"global":{"types":[{"type":"global","named":false}],"multiple":false,"required":true,"position":0}}},
-  "nonlocal_statement": {"fields":{"nonlocal":{"types":[{"type":"nonlocal","named":false}],"multiple":false,"required":true,"position":0}}},
-  "exec_statement": {"fields":{"exec":{"types":[{"type":"exec","named":false}],"multiple":false,"required":true,"position":0}}},
-  "type_alias_statement": {"fields":{"type":{"types":[{"type":"type","named":false}],"multiple":false,"required":true,"position":0}}},
-  "class_definition": {"fields":{"class":{"types":[{"type":"class","named":false}],"multiple":false,"required":true,"position":0}}},
-  "not_operator": {"fields":{"not":{"types":[{"type":"not","named":false}],"multiple":false,"required":true,"position":0}}},
-  "_not_in": {"fields":{"not":{"types":[{"type":"not","named":false}],"multiple":false,"required":true,"position":0}}},
-  "_is_not": {"fields":{"is":{"types":[{"type":"is","named":false}],"multiple":false,"required":true,"position":0}}},
-  "lambda": {"fields":{"lambda":{"types":[{"type":"lambda","named":false}],"multiple":false,"required":true,"position":0}}},
-  "lambda_within_for_in_clause": {"fields":{"lambda":{"types":[{"type":"lambda","named":false}],"multiple":false,"required":true,"position":0}}},
+  "_import_list": {"fields":{"name":{"types":[{"type":"dotted_name","named":true},{"type":"aliased_import","named":true}],"multiple":true,"required":true,"position":0}}},
+  "aliased_import": {"fields":{"name":{"types":[{"type":"dotted_name","named":true}],"multiple":false,"required":true,"position":0},"alias":{"types":[{"type":"identifier","named":true}],"multiple":false,"required":true,"position":1}}},
+  "print_statement": {"fields":{"argument":{"types":[{"type":"expression","named":true}],"multiple":true,"required":false,"position":-1}}},
+  "named_expression": {"fields":{"name":{"types":[{"type":"_named_expression_lhs","named":true}],"multiple":false,"required":true,"position":0},"value":{"types":[{"type":"expression","named":true}],"multiple":false,"required":true,"position":1}}},
+  "_match_block": {"fields":{"alternative":{"types":[{"type":"case_clause","named":true}],"multiple":true,"required":false,"position":-1}}},
+  "with_item": {"fields":{"value":{"types":[{"type":"expression","named":true}],"multiple":false,"required":true,"position":0}}},
+  "decorated_definition": {"fields":{"definition":{"types":[{"type":"class_definition","named":true},{"type":"function_definition","named":true}],"multiple":false,"required":true,"position":1}}},
+  "_key_value_pattern": {"fields":{"key":{"types":[{"type":"_simple_pattern","named":true}],"multiple":false,"required":true,"position":0},"value":{"types":[{"type":"case_pattern","named":true}],"multiple":false,"required":true,"position":1}}},
+  "default_parameter": {"fields":{"name":{"types":[{"type":"identifier","named":true},{"type":"tuple_pattern","named":true}],"multiple":false,"required":true,"position":0},"value":{"types":[{"type":"expression","named":true}],"multiple":false,"required":true,"position":1}}},
+  "typed_default_parameter": {"fields":{"name":{"types":[{"type":"identifier","named":true}],"multiple":false,"required":true,"position":0},"type":{"types":[{"type":"type","named":true}],"multiple":false,"required":true,"position":1},"value":{"types":[{"type":"expression","named":true}],"multiple":false,"required":true,"position":2}}},
+  "boolean_operator": {"fields":{"left":{"types":[{"type":"expression","named":true}],"multiple":false,"required":false,"position":-1},"operator":{"types":[{"type":"and","named":false},{"type":"or","named":false}],"multiple":false,"required":false,"position":-1},"right":{"types":[{"type":"expression","named":true}],"multiple":false,"required":false,"position":-1}}},
+  "binary_operator": {"fields":{"left":{"types":[{"type":"primary_expression","named":true}],"multiple":false,"required":false,"position":-1},"operator":{"types":[{"type":"+","named":false},{"type":"-","named":false},{"type":"*","named":false},{"type":"@","named":false},{"type":"/","named":false},{"type":"%","named":false},{"type":"//","named":false},{"type":"**","named":false},{"type":"|","named":false},{"type":"&","named":false},{"type":"^","named":false},{"type":"<<","named":false},{"type":">>","named":false}],"multiple":false,"required":false,"position":-1},"right":{"types":[{"type":"primary_expression","named":true}],"multiple":false,"required":false,"position":-1}}},
+  "unary_operator": {"fields":{"operator":{"types":[{"type":"+","named":false},{"type":"-","named":false},{"type":"~","named":false}],"multiple":false,"required":true,"position":0},"argument":{"types":[{"type":"primary_expression","named":true}],"multiple":false,"required":true,"position":1}}},
   "assignment": {"fields":{"left":{"types":[{"type":"_left_hand_side","named":true}],"multiple":false,"required":false,"position":-1}}},
-  "yield": {"fields":{"yield":{"types":[{"type":"yield","named":false}],"multiple":false,"required":true,"position":0}}},
-  "for_in_clause": {"fields":{"async":{"types":[{"type":"async","named":false}],"multiple":false,"required":false,"position":0}}},
-  "if_clause": {"fields":{"if":{"types":[{"type":"if","named":false}],"multiple":false,"required":true,"position":0}}},
-  "await": {"fields":{"await":{"types":[{"type":"await","named":false}],"multiple":false,"required":true,"position":0}}},
+  "augmented_assignment": {"fields":{"left":{"types":[{"type":"_left_hand_side","named":true}],"multiple":false,"required":true,"position":0},"operator":{"types":[{"type":"+=","named":false},{"type":"-=","named":false},{"type":"*=","named":false},{"type":"/=","named":false},{"type":"@=","named":false},{"type":"//=","named":false},{"type":"%=","named":false},{"type":"**=","named":false},{"type":">>=","named":false},{"type":"<<=","named":false},{"type":"&=","named":false},{"type":"^=","named":false},{"type":"|=","named":false}],"multiple":false,"required":true,"position":1},"right":{"types":[{"type":"_right_hand_side","named":true}],"multiple":false,"required":true,"position":2}}},
+  "attribute": {"fields":{"object":{"types":[{"type":"primary_expression","named":true}],"multiple":false,"required":true,"position":0},"attribute":{"types":[{"type":"identifier","named":true}],"multiple":false,"required":true,"position":1}}},
+  "subscript": {"fields":{"value":{"types":[{"type":"primary_expression","named":true}],"multiple":false,"required":true,"position":0},"subscript":{"types":[{"type":"expression","named":true},{"type":"slice","named":true}],"multiple":true,"required":true,"position":1}}},
+  "call": {"fields":{"function":{"types":[{"type":"primary_expression","named":true}],"multiple":false,"required":true,"position":0},"arguments":{"types":[{"type":"generator_expression","named":true},{"type":"argument_list","named":true}],"multiple":false,"required":true,"position":1}}},
+  "typed_parameter": {"fields":{"type":{"types":[{"type":"type","named":true}],"multiple":false,"required":true,"position":1}}},
+  "keyword_argument": {"fields":{"name":{"types":[{"type":"identifier","named":true},{"type":"keyword_identifier","named":true}],"multiple":false,"required":true,"position":0},"value":{"types":[{"type":"expression","named":true}],"multiple":false,"required":true,"position":1}}},
+  "pair": {"fields":{"key":{"types":[{"type":"expression","named":true}],"multiple":false,"required":true,"position":0},"value":{"types":[{"type":"expression","named":true}],"multiple":false,"required":true,"position":1}}},
+  "list_comprehension": {"fields":{"body":{"types":[{"type":"expression","named":true}],"multiple":false,"required":true,"position":0}}},
+  "dictionary_comprehension": {"fields":{"body":{"types":[{"type":"pair","named":true}],"multiple":false,"required":true,"position":0}}},
+  "set_comprehension": {"fields":{"body":{"types":[{"type":"expression","named":true}],"multiple":false,"required":true,"position":0}}},
+  "generator_expression": {"fields":{"body":{"types":[{"type":"expression","named":true}],"multiple":false,"required":true,"position":0}}},
+  "interpolation": {"fields":{"expression":{"types":[{"type":"_f_expression","named":true}],"multiple":false,"required":true,"position":0},"type_conversion":{"types":[{"type":"type_conversion","named":true}],"multiple":false,"required":false,"position":1},"format_specifier":{"types":[{"type":"format_specifier","named":true}],"multiple":false,"required":false,"position":2}}},
 } as const;
 export { _overrides };
 const _supertypeExpansion = new Map<string, readonly string[]>(Object.entries({
@@ -252,7 +244,6 @@ export function wrapFutureImportStatement(data: _NodeData, tree: TreeHandle): Wr
 export function wrapImportFromStatement(data: _NodeData, tree: TreeHandle): WrappedNode<ImportFromStatement> {
   return {
     ...data,
-    get from() { return drillIn(data.fields?.['from'], tree); },
     get moduleName() { return drillIn(data.fields?.['module_name'], tree); },
     get wildcardImport() { return drillIn(data.fields?.['wildcard_import'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
@@ -425,7 +416,6 @@ export function wrapWhileStatement(data: _NodeData, tree: TreeHandle): WrappedNo
 export function wrapTryStatement(data: _NodeData, tree: TreeHandle): WrappedNode<TryStatement> {
   return {
     ...data,
-    get try() { return drillIn(data.fields?.['try'], tree); },
     get body() { return drillIn(data.fields?.['body'], tree); },
     get exceptClauses() { return drillInAll(data.fields?.['except_clauses'], tree); },
     get elseClause() { return drillIn(data.fields?.['else_clause'], tree); },
@@ -447,7 +437,6 @@ export function wrapExceptClause(data: _NodeData, tree: TreeHandle): WrappedNode
 export function wrapFinallyClause(data: _NodeData, tree: TreeHandle): WrappedNode<FinallyClause> {
   return {
     ...data,
-    get finally() { return drillIn(data.fields?.['finally'], tree); },
     get block() { return drillIn(data.fields?.['block'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<FinallyClause>;
@@ -939,7 +928,7 @@ export function wrapSplatType(data: _NodeData, tree: TreeHandle): WrappedNode<Sp
   return {
     ...data,
     get identifier() { return drillIn(data.fields?.['identifier'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get child() { return drillIn(data.children?.[0], tree); },
   } as unknown as WrappedNode<SplatType>;
 }
 
@@ -1084,7 +1073,6 @@ export function wrapForInClause(data: _NodeData, tree: TreeHandle): WrappedNode<
 export function wrapIfClause(data: _NodeData, tree: TreeHandle): WrappedNode<IfClause> {
   return {
     ...data,
-    get if() { return drillIn(data.fields?.['if'], tree); },
     get expression() { return drillIn(data.fields?.['expression'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<IfClause>;
@@ -1145,7 +1133,6 @@ export function wrapFormatSpecifier(data: _NodeData, tree: TreeHandle): WrappedN
 export function wrapAwait(data: _NodeData, tree: TreeHandle): WrappedNode<Await> {
   return {
     ...data,
-    get await() { return drillIn(data.fields?.['await'], tree); },
     get primaryExpression() { return drillIn(data.fields?.['primary_expression'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<Await>;
@@ -1319,6 +1306,9 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'await': (d, t) => wrapAwait(d, t),
   'comment': (d) => d,
   'line_continuation': (d) => d,
+  '_kw_async': (d) => d,
+  '_kw_not': (d) => d,
+  '_kw_lambda': (d) => d,
   '_newline': (d) => d,
   '_indent': (d) => d,
   '_dedent': (d) => d,

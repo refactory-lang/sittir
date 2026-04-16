@@ -20,7 +20,7 @@ rules:
     template: type $NAME $ALIAS_CLAUSE
     alias_clause: as $ALIAS
   declaration: $$$CHILDREN
-  import_statement: $IMPORT $IMPORT_CLAUSE $FROM_CLAUSE $IMPORT_ATTRIBUTE $SEMICOLON
+  import_statement: import $IMPORT_CLAUSE $FROM_CLAUSE $IMPORT_ATTRIBUTE $SEMICOLON
   import_clause:
     variants:
       form0: $$$CHILDREN
@@ -32,11 +32,11 @@ rules:
     template: "{$$$CHILDREN}"
     joinBy: ","
   import_specifier: type $NAME$ALIAS
-  import_attribute: $$$OBJECT
+  import_attribute: $OBJECT $$$CHILDREN
   statement: $$$CHILDREN
   expression_statement: $$$CHILDREN
   variable_declaration:
-    template: $VAR $$$DECLARATORS $SEMICOLON
+    template: var $$$DECLARATORS $SEMICOLON
     joinBy: ","
     joinByField:
       declarators: ","
@@ -50,7 +50,7 @@ rules:
     template: "{$$$STATEMENTS}$AUTOMATIC_SEMICOLON"
     joinByField:
       statements: "\n"
-  else_clause: $ELSE $STATEMENT
+  else_clause: else $STATEMENT
   if_statement: $IF $CONDITION $CONSEQUENCE $ALTERNATIVE
   switch_statement: $SWITCH $VALUE $BODY
   for_statement: $FOR($INITIALIZER $CONDITION $INCREMENT)$BODY
@@ -81,7 +81,7 @@ rules:
   parenthesized_expression: ($$$CHILDREN $TYPE)
   expression: $$$CHILDREN
   primary_expression: $$$CHILDREN
-  yield_expression: $YIELD $EXPRESSION
+  yield_expression: yield $EXPRESSION
   object:
     template: "{$$$CHILDREN}"
     joinBy: ","
@@ -124,7 +124,7 @@ rules:
       form1: $FUNCTION $ARGUMENTS
       form2: $FUNCTION?.$TYPE_ARGUMENTS $ARGUMENTS
   new_expression: $NEW $CONSTRUCTOR $TYPE_ARGUMENTS $ARGUMENTS
-  await_expression: $AWAIT $EXPRESSION
+  await_expression: await $EXPRESSION
   member_expression: $OBJECT.$OPTIONAL_CHAIN $PROPERTY
   subscript_expression: "$OBJECT $OPTIONAL_CHAIN[$INDEX]"
   assignment_expression: $USING $LEFT=$RIGHT
@@ -155,15 +155,25 @@ rules:
   class_static_block: $STATIC $$$CHILDREN $BODY
   pattern: $$$CHILDREN
   rest_pattern: ...$$$CHILDREN
-  method_definition: $ACCESSIBILITY_MODIFIER $OVERRIDE_MODIFIER $$$CHILDREN $READONLY $ASYNC get $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $BODY
+  method_definition:
+    template: $ACCESSIBILITY_MODIFIER $OVERRIDE_MODIFIER $$$CHILDREN $READONLY_CLAUSE $ASYNC_CLAUSE get $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $BODY
+    readonly_clause: $READONLY
+    async_clause: $ASYNC
   pair: "$KEY:$VALUE"
   pair_pattern: "$KEY:$VALUE"
   computed_property_name: "[$EXPRESSION]"
   public_field_definition:
-    template: $$$DECORATOR declare $$$CHILDREN$DECLARE $STATIC $READONLY$ABSTRACT$ACCESSOR_CLAUSE $NAME?$TYPE=$VALUE
+    template: $$$DECORATOR declare $$$CHILDREN$DECLARE_CLAUSE $STATIC_CLAUSE $READONLY_CLAUSE$ABSTRACT_CLAUSE$READONLY_CLAUSE$READONLY_CLAUSE$ABSTRACT_CLAUSE$ACCESSOR_CLAUSE $NAME?$TYPE=$VALUE
+    declare_clause: $DECLARE
+    static_clause: $STATIC
+    readonly_clause: $READONLY
+    abstract_clause: $ABSTRACT
     accessor_clause: $ACCESSOR
   non_null_expression: $EXPRESSION!
-  method_signature: $ACCESSIBILITY_MODIFIER $OVERRIDE_MODIFIER $$$CHILDREN $READONLY $ASYNC get $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE
+  method_signature:
+    template: $ACCESSIBILITY_MODIFIER $OVERRIDE_MODIFIER $$$CHILDREN $READONLY_CLAUSE $ASYNC_CLAUSE get $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE
+    readonly_clause: $READONLY
+    async_clause: $ASYNC
   abstract_method_signature: $ACCESSIBILITY_MODIFIER abstract $OVERRIDE_MODIFIER get $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE
   function_signature: $ASYNC function $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $$$CHILDREN
   decorator_parenthesized_expression: ($$$CHILDREN)
@@ -178,13 +188,13 @@ rules:
   implements_clause:
     template: $IMPLEMENTS $$$CHILDREN
     joinBy: ","
-  ambient_declaration: $DECLARE $DECLARATION
+  ambient_declaration: declare $DECLARATION
   abstract_class_declaration: $$$DECORATOR abstract class $NAME $TYPE_PARAMETERS $CLASS_HERITAGE $BODY
   module: $MODULE $NAME $BODY
   internal_module: $NAMESPACE $NAME $BODY
-  import_alias: $IMPORT $NAME=$VALUE $SEMICOLON
+  import_alias: import $NAME=$VALUE $SEMICOLON
   nested_type_identifier: $MODULE.$NAME
-  interface_declaration: $INTERFACE $NAME $TYPE_PARAMETERS $EXTENDS_TYPE_CLAUSE $BODY
+  interface_declaration: interface $NAME $TYPE_PARAMETERS $EXTENDS_TYPE_CLAUSE $BODY
   extends_type_clause:
     template: $EXTENDS $$$TYPE
     joinBy: ","
@@ -203,7 +213,7 @@ rules:
   opting_type_annotation: "?:$TYPE"
   type_annotation: ":$TYPE"
   asserts: $ASSERTS $$$CHILDREN
-  asserts_annotation: $$$ASSERTS
+  asserts_annotation: $ASSERTS $$$CHILDREN
   tuple_parameter: $NAME $TYPE
   optional_tuple_parameter: $NAME?$TYPE
   optional_type: $TYPE?
@@ -212,14 +222,14 @@ rules:
   template_type: "${$$$CHILDREN}"
   template_literal_type: "`$$$CHILDREN`"
   infer_type:
-    template: $INFER $TYPE_IDENTIFIER $CONSTRAINT_CLAUSE
+    template: infer $TYPE_IDENTIFIER $CONSTRAINT_CLAUSE
     constraint_clause: extends$CONSTRAINT
   conditional_type: "$LEFT extends $RIGHT?$CONSEQUENCE:$ALTERNATIVE"
   generic_type: $NAME $TYPE_ARGUMENTS
   type_predicate: $NAME is $TYPE
-  type_predicate_annotation: $$$TYPE_PREDICATE
+  type_predicate_annotation: $TYPE_PREDICATE $$$CHILDREN
   type_query: $TYPEOF $$$CHILDREN
-  index_type_query: $KEYOF $PRIMARY_TYPE
+  index_type_query: keyof $PRIMARY_TYPE
   lookup_type: "$PRIMARY_TYPE[$INDEX_TYPE]"
   mapped_type_clause:
     template: $NAME in $TYPE $ALIAS_CLAUSE
@@ -232,7 +242,9 @@ rules:
     joinBy: ","
   object_type: $OPENING $MEMBERS $CLOSING
   call_signature: $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE
-  property_signature: $ACCESSIBILITY_MODIFIER $OVERRIDE_MODIFIER $$$CHILDREN $READONLY $NAME $TYPE
+  property_signature:
+    template: $ACCESSIBILITY_MODIFIER $OVERRIDE_MODIFIER $$$CHILDREN $READONLY_CLAUSE $NAME $TYPE
+    readonly_clause: $READONLY
   type_parameters:
     template: <$$$CHILDREN>
     joinBy: ","

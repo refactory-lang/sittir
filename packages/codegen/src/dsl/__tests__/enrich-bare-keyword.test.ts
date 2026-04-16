@@ -7,6 +7,21 @@ function mkGrammar(rules: Record<string, Rule>) {
     return { grammar: { name: 'test', rules } }
 }
 
+// enrich emits __enrichOverrides__ — helper to drive each override
+// with its original base rule and materialize the enriched output.
+function runEnrich(input: ReturnType<typeof mkGrammar>) {
+    const out = enrich(input) as unknown as {
+        grammar: { rules: Record<string, Rule> }
+        __enrichOverrides__?: Record<string, (_$: unknown, original: Rule) => Rule>
+    }
+    const overrides = out.__enrichOverrides__ ?? {}
+    const result: Record<string, Rule> = {}
+    for (const [name, rule] of Object.entries(input.grammar.rules)) {
+        result[name] = overrides[name]?.({}, rule) ?? rule
+    }
+    return { ...out, grammar: { ...out.grammar, rules: result } }
+}
+
 function topSeq(g: ReturnType<typeof mkGrammar>, ruleName: string): SeqRule {
     return g.grammar.rules[ruleName] as SeqRule
 }
@@ -17,7 +32,7 @@ describe('enrich — bareKeywordPrefixPass', () => {
     afterEach(() => { vi.restoreAllMocks() })
 
     it('wraps a leading identifier-shaped literal as field(kw, literal)', () => {
-        const g = enrich(mkGrammar({
+        const g = runEnrich(mkGrammar({
             async_fn: {
                 type: 'seq',
                 members: [
@@ -31,11 +46,14 @@ describe('enrich — bareKeywordPrefixPass', () => {
         const first = seq.members[0]! as FieldRule
         expect(first.type).toBe('field')
         expect(first.name).toBe('async')
-        expect((first.content as StringRule).value).toBe('async')
+        // FIELD wraps a SYMBOL reference to a synthesized `_kw_async`
+        // hidden rule (so tree-sitter's normalizer preserves the field).
+        expect((first.content as unknown as { type: string; name: string }).type).toBe('symbol')
+        expect((first.content as unknown as { type: string; name: string }).name).toBe('_kw_async')
     })
 
     it('does NOT wrap non-leading string literals', () => {
-        const g = enrich(mkGrammar({
+        const g = runEnrich(mkGrammar({
             for_loop: {
                 type: 'seq',
                 members: [
@@ -51,7 +69,7 @@ describe('enrich — bareKeywordPrefixPass', () => {
     })
 
     it('does NOT wrap non-identifier-shaped literals (punctuation)', () => {
-        const g = enrich(mkGrammar({
+        const g = runEnrich(mkGrammar({
             paren: {
                 type: 'seq',
                 members: [
@@ -68,7 +86,7 @@ describe('enrich — bareKeywordPrefixPass', () => {
 
     it('skips when field with same name already exists on the rule', () => {
         const stderrSpy = vi.spyOn(process.stderr, 'write').mockReturnValue(true)
-        const g = enrich(mkGrammar({
+        const g = runEnrich(mkGrammar({
             pub_fn: {
                 type: 'seq',
                 members: [
@@ -87,7 +105,7 @@ describe('enrich — bareKeywordPrefixPass', () => {
     })
 
     it('does NOT wrap when the rule is not a top-level seq', () => {
-        const g = enrich(mkGrammar({
+        const g = runEnrich(mkGrammar({
             maybe_async: {
                 type: 'choice',
                 members: [

@@ -812,7 +812,6 @@ export function implItem(config: T.ImplItemConfig) {
 export function traitItem(config: T.TraitItemConfig) {
   const fields = {
     visibility_modifier: config?.visibilityModifier,
-    unsafe: config?.unsafe,
     name: config?.name,
     type_parameters: config?.typeParameters,
     bounds: config?.bounds,
@@ -825,7 +824,6 @@ export function traitItem(config: T.TraitItemConfig) {
     fields,
     children,
     visibilityModifier(visibilityModifier_?: T.VisibilityModifier | undefined) { return _fs(config, traitItem, 'visibilityModifier', visibilityModifier_, fields.visibility_modifier); },
-    unsafe(unsafe_?: "unsafe" | undefined) { return _fs(config, traitItem, 'unsafe', unsafe_, fields.unsafe); },
     name(name_?: T._TypeIdentifier) { return _fs(config, traitItem, 'name', name_, fields.name); },
     typeParameters(typeParameters_?: T.TypeParameters | undefined) { return _fs(config, traitItem, 'typeParameters', typeParameters_, fields.type_parameters); },
     bounds(bounds_?: T.TraitBounds | undefined) { return _fs(config, traitItem, 'bounds', bounds_, fields.bounds); },
@@ -843,7 +841,6 @@ export function traitItem(config: T.TraitItemConfig) {
 
 export function associatedType(config: T.AssociatedTypeConfig) {
   const fields = {
-    type: config?.type,
     name: config?.name,
     type_parameters: config?.typeParameters,
     bounds: config?.bounds,
@@ -853,7 +850,6 @@ export function associatedType(config: T.AssociatedTypeConfig) {
     type: 'associated_type' as const,
     named: true as const,
     fields,
-    typeField(type?: "type") { return _fs(config, associatedType, 'type', type, fields.type); },
     name(name_?: T._TypeIdentifier) { return _fs(config, associatedType, 'name', name_, fields.name); },
     typeParameters(typeParameters_?: T.TypeParameters | undefined) { return _fs(config, associatedType, 'typeParameters', typeParameters_, fields.type_parameters); },
     bounds(bounds_?: T.TraitBounds | undefined) { return _fs(config, associatedType, 'bounds', bounds_, fields.bounds); },
@@ -891,7 +887,7 @@ export function higherRankedTraitBound(config: T.HigherRankedTraitBoundConfig) {
     type: 'higher_ranked_trait_bound' as const,
     named: true as const,
     fields,
-    for(for_?: "for") { return _fs(config, higherRankedTraitBound, 'for', for_, fields.for); },
+    for(for_?: T.KwFor) { return _fs(config, higherRankedTraitBound, 'for', for_, fields.for); },
     typeParameters(typeParameters_?: T.TypeParameters) { return _fs(config, higherRankedTraitBound, 'typeParameters', typeParameters_, fields.type_parameters); },
     typeField(type?: T._Type) { return _fs(config, higherRankedTraitBound, 'type', type, fields.type); },
     render() { return render(this); },
@@ -943,7 +939,7 @@ export function constParameter(config: T.ConstParameterConfig) {
     type: 'const_parameter' as const,
     named: true as const,
     fields,
-    const(const_?: "const") { return _fs(config, constParameter, 'const', const_, fields.const); },
+    const(const_?: T.KwConst) { return _fs(config, constParameter, 'const', const_, fields.const); },
     name(name_?: T.Identifier) { return _fs(config, constParameter, 'name', name_, fields.name); },
     typeField(type?: T._Type) { return _fs(config, constParameter, 'type', type, fields.type); },
     value(value_?: T.Block | T.Identifier | T.Literal | T.NegativeLiteral | undefined) { return _fs(config, constParameter, 'value', value_, fields.value); },
@@ -1000,7 +996,6 @@ export function lifetimeParameter(config: T.LifetimeParameterConfig) {
 
 export function letDeclaration(config: T.LetDeclarationConfig) {
   const fields = {
-    let: config?.let,
     mutable_specifier: config?.mutableSpecifier,
     pattern: config?.pattern,
     type: config?.type,
@@ -1011,7 +1006,6 @@ export function letDeclaration(config: T.LetDeclarationConfig) {
     type: 'let_declaration' as const,
     named: true as const,
     fields,
-    let(let_?: "let") { return _fs(config, letDeclaration, 'let', let_, fields.let); },
     mutableSpecifier(mutableSpecifier_?: T.MutableSpecifier | undefined) { return _fs(config, letDeclaration, 'mutableSpecifier', mutableSpecifier_, fields.mutable_specifier); },
     pattern(pattern_?: T.Pattern) { return _fs(config, letDeclaration, 'pattern', pattern_, fields.pattern); },
     typeField(type?: T._Type | undefined) { return _fs(config, letDeclaration, 'type', type, fields.type); },
@@ -1138,13 +1132,17 @@ export function selfParameter(config: T.SelfParameterConfig) {
     mutable_specifier: config?.mutableSpecifier,
     self: config?.self,
   };
+  const children = config?.children ?? [];
   return {
     type: 'self_parameter' as const,
     named: true as const,
     fields,
+    children,
     lifetime(lifetime_?: string) { return _fs(config, selfParameter, 'lifetime', lifetime_, fields.lifetime); },
     mutableSpecifier(mutableSpecifier_?: T.Lifetime | undefined) { return _fs(config, selfParameter, 'mutableSpecifier', mutableSpecifier_, fields.mutable_specifier); },
-    self(self_?: T.MutableSpecifier | T.Self | undefined) { return _fs(config, selfParameter, 'self', self_, fields.self); },
+    self(self_?: T.MutableSpecifier | undefined) { return _fs(config, selfParameter, 'self', self_, fields.self); },
+    getChild() { return children[0]; },
+    setChild(child: T.Self) { return selfParameter({ ...(config ?? {}), children: [child] }); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1196,16 +1194,14 @@ export function parameter(config: T.ParameterConfig) {
   };
 }
 
-export function externModifier(config: T.ExternModifierConfig) {
+export function externModifier(config?: T.ExternModifierConfig) {
   const fields = {
-    extern: config?.extern,
     string_literal: config?.stringLiteral,
   };
   return {
     type: 'extern_modifier' as const,
     named: true as const,
     fields,
-    extern(extern_?: "extern") { return _fs(config, externModifier, 'extern', extern_, fields.extern); },
     stringLiteral(stringLiteral_?: T.StringLiteral | undefined) { return _fs(config, externModifier, 'stringLiteral', stringLiteral_, fields.string_literal); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -1345,7 +1341,7 @@ export function forLifetimes(config: T.ForLifetimesConfig) {
     named: true as const,
     fields,
     children,
-    for(for_?: "for") { return _fs(config, forLifetimes, 'for', for_, fields.for); },
+    for(for_?: T.KwFor) { return _fs(config, forLifetimes, 'for', for_, fields.for); },
     getChildren() { return children; },
     setChildren(...items: T.Lifetime[]) {
       _assertNonEmpty(items, 'for_lifetimes.children');
@@ -1593,7 +1589,6 @@ export function pointerType(config: T.PointerTypeConfig) {
 
 export function abstractType(config: T.AbstractTypeConfig) {
   const fields = {
-    impl: config?.impl,
     type_parameters: config?.typeParameters,
     trait: config?.trait,
   };
@@ -1601,7 +1596,6 @@ export function abstractType(config: T.AbstractTypeConfig) {
     type: 'abstract_type' as const,
     named: true as const,
     fields,
-    impl(impl_?: "impl") { return _fs(config, abstractType, 'impl', impl_, fields.impl); },
     typeParameters(typeParameters_?: T.TypeParameters | undefined) { return _fs(config, abstractType, 'typeParameters', typeParameters_, fields.type_parameters); },
     trait(trait_?: T._TypeIdentifier | T.ScopedTypeIdentifier | T.RemovedTraitBound | T.GenericType | T.FunctionType | T.TupleType | T.BoundedType) { return _fs(config, abstractType, 'trait', trait_, fields.trait); },
     render() { return render(this); },
@@ -2437,7 +2431,7 @@ export function constBlock(config: T.ConstBlockConfig) {
     type: 'const_block' as const,
     named: true as const,
     fields,
-    const(const_?: "const") { return _fs(config, constBlock, 'const', const_, fields.const); },
+    const(const_?: T.KwConst) { return _fs(config, constBlock, 'const', const_, fields.const); },
     body(body_?: T.Block) { return _fs(config, constBlock, 'body', body_, fields.body); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -2544,9 +2538,8 @@ export function label(config: T.LabelConfig) {
   };
 }
 
-export function breakExpression(config: T.BreakExpressionConfig) {
+export function breakExpression(config?: T.BreakExpressionConfig) {
   const fields = {
-    break: config?.break,
     label: config?.label,
     expression: config?.expression,
   };
@@ -2554,7 +2547,6 @@ export function breakExpression(config: T.BreakExpressionConfig) {
     type: 'break_expression' as const,
     named: true as const,
     fields,
-    break(break_?: "break") { return _fs(config, breakExpression, 'break', break_, fields.break); },
     label(label_?: T.Label | undefined) { return _fs(config, breakExpression, 'label', label_, fields.label); },
     expression(expression_?: T.Expression | undefined) { return _fs(config, breakExpression, 'expression', expression_, fields.expression); },
     render() { return render(this); },
@@ -2566,16 +2558,14 @@ export function breakExpression(config: T.BreakExpressionConfig) {
   };
 }
 
-export function continueExpression(config: T.ContinueExpressionConfig) {
+export function continueExpression(config?: T.ContinueExpressionConfig) {
   const fields = {
-    continue: config?.continue,
     label: config?.label,
   };
   return {
     type: 'continue_expression' as const,
     named: true as const,
     fields,
-    continue(continue_?: "continue") { return _fs(config, continueExpression, 'continue', continue_, fields.continue); },
     label(label_?: T.Label | undefined) { return _fs(config, continueExpression, 'label', label_, fields.label); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -2643,14 +2633,12 @@ export function fieldExpression(config: T.FieldExpressionConfig) {
 
 export function unsafeBlock(config: T.UnsafeBlockConfig) {
   const fields = {
-    unsafe: config?.unsafe,
     block: config?.block,
   };
   return {
     type: 'unsafe_block' as const,
     named: true as const,
     fields,
-    unsafe(unsafe_?: "unsafe") { return _fs(config, unsafeBlock, 'unsafe', unsafe_, fields.unsafe); },
     block(block_?: T.Block) { return _fs(config, unsafeBlock, 'block', block_, fields.block); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -2663,16 +2651,12 @@ export function unsafeBlock(config: T.UnsafeBlockConfig) {
 
 export function asyncBlock(config: T.AsyncBlockConfig) {
   const fields = {
-    async: config?.async,
-    move: config?.move,
     block: config?.block,
   };
   return {
     type: 'async_block' as const,
     named: true as const,
     fields,
-    async(async_?: "async") { return _fs(config, asyncBlock, 'async', async_, fields.async); },
-    move(move_?: "move" | undefined) { return _fs(config, asyncBlock, 'move', move_, fields.move); },
     block(block_?: T.Block) { return _fs(config, asyncBlock, 'block', block_, fields.block); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -2685,16 +2669,12 @@ export function asyncBlock(config: T.AsyncBlockConfig) {
 
 export function genBlock(config: T.GenBlockConfig) {
   const fields = {
-    gen: config?.gen,
-    move: config?.move,
     block: config?.block,
   };
   return {
     type: 'gen_block' as const,
     named: true as const,
     fields,
-    gen(gen_?: "gen") { return _fs(config, genBlock, 'gen', gen_, fields.gen); },
-    move(move_?: "move" | undefined) { return _fs(config, genBlock, 'move', move_, fields.move); },
     block(block_?: T.Block) { return _fs(config, genBlock, 'block', block_, fields.block); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -2707,14 +2687,12 @@ export function genBlock(config: T.GenBlockConfig) {
 
 export function tryBlock(config: T.TryBlockConfig) {
   const fields = {
-    try: config?.try,
     block: config?.block,
   };
   return {
     type: 'try_block' as const,
     named: true as const,
     fields,
-    try(try_?: "try") { return _fs(config, tryBlock, 'try', try_, fields.try); },
     block(block_?: T.Block) { return _fs(config, tryBlock, 'block', block_, fields.block); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -2850,7 +2828,6 @@ export function fieldPattern(config: T.FieldPatternUFormShorthandConfig | T.Fiel
 }
 export function fieldPatternUFormShorthand(config: T.FieldPatternUFormShorthandConfig) {
   const fields = {
-    ref: config?.ref,
     mutable_specifier: config?.mutableSpecifier,
   };
   const children = config?.children ?? [];
@@ -2860,7 +2837,6 @@ export function fieldPatternUFormShorthand(config: T.FieldPatternUFormShorthandC
     variant: '_form_shorthand' as const,
     fields,
     children,
-    ref(ref_?: "ref" | undefined) { return _fs(config, fieldPatternUFormShorthand, 'ref', ref_, fields.ref); },
     mutableSpecifier(mutableSpecifier_?: T.MutableSpecifier | undefined) { return _fs(config, fieldPatternUFormShorthand, 'mutableSpecifier', mutableSpecifier_, fields.mutable_specifier); },
     getChild() { return children[0]; },
     setChild(child: T.FieldPatternShorthand) { return fieldPatternUFormShorthand({ ...(config ?? {}), children: [child] }); },
@@ -2874,7 +2850,6 @@ export function fieldPatternUFormShorthand(config: T.FieldPatternUFormShorthandC
 }
 export function fieldPatternUFormNamed(config: T.FieldPatternUFormNamedConfig) {
   const fields = {
-    ref: config?.ref,
     mutable_specifier: config?.mutableSpecifier,
   };
   const children = config?.children ?? [];
@@ -2884,7 +2859,6 @@ export function fieldPatternUFormNamed(config: T.FieldPatternUFormNamedConfig) {
     variant: '_form_named' as const,
     fields,
     children,
-    ref(ref_?: "ref" | undefined) { return _fs(config, fieldPatternUFormNamed, 'ref', ref_, fields.ref); },
     mutableSpecifier(mutableSpecifier_?: T.MutableSpecifier | undefined) { return _fs(config, fieldPatternUFormNamed, 'mutableSpecifier', mutableSpecifier_, fields.mutable_specifier); },
     getChild() { return children[0]; },
     setChild(child: T.FieldPatternNamed) { return fieldPatternUFormNamed({ ...(config ?? {}), children: [child] }); },
@@ -3371,7 +3345,7 @@ export function rangeExpressionPostfix(config: T.RangeExpressionPostfixConfig) {
     named: true as const,
     fields,
     start(start_?: T.Expression) { return _fs(config, rangeExpressionPostfix, 'start', start_, fields.start); },
-    operator(operator_?: "..") { return _fs(config, rangeExpressionPostfix, 'operator', operator_, fields.operator); },
+    operator(operator_?: T.KwOperator) { return _fs(config, rangeExpressionPostfix, 'operator', operator_, fields.operator); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -3390,7 +3364,7 @@ export function rangeExpressionPrefix(config: T.RangeExpressionPrefixConfig) {
     type: 'range_expression_prefix' as const,
     named: true as const,
     fields,
-    operator(operator_?: "..") { return _fs(config, rangeExpressionPrefix, 'operator', operator_, fields.operator); },
+    operator(operator_?: T.KwOperator) { return _fs(config, rangeExpressionPrefix, 'operator', operator_, fields.operator); },
     end(end_?: T.Expression) { return _fs(config, rangeExpressionPrefix, 'end', end_, fields.end); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -3409,7 +3383,7 @@ export function rangeExpressionBare(config: T.RangeExpressionBareConfig) {
     type: 'range_expression_bare' as const,
     named: true as const,
     fields,
-    operator(operator_?: "..") { return _fs(config, rangeExpressionBare, 'operator', operator_, fields.operator); },
+    operator(operator_?: T.KwOperator) { return _fs(config, rangeExpressionBare, 'operator', operator_, fields.operator); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);

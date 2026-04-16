@@ -131,6 +131,9 @@ export const LEAF_KINDS = [
   '__future__',
   '_dedent',
   '_indent',
+  '_kw_async',
+  '_kw_lambda',
+  '_kw_not',
   '_newline',
   '_string_content',
   'and',
@@ -196,6 +199,9 @@ export const KEYWORDS = [
   'True',
   '_',
   '__future__',
+  '_kw_async',
+  '_kw_lambda',
+  '_kw_not',
   '_not_escape_sequence',
   'and',
   'as',
@@ -341,7 +347,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'right', required: true, multiple: false },
   ],
   'await': [
-    { name: 'await', required: true, multiple: false },
     { name: 'primaryExpression', required: true, multiple: false },
   ],
   'binary_operator': [
@@ -453,7 +458,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'expression_statement': [
   ],
   'finally_clause': [
-    { name: 'finally', required: true, multiple: false },
     { name: 'block', required: true, multiple: false },
   ],
   'for_in_clause': [
@@ -497,7 +501,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'global', required: true, multiple: false },
   ],
   'if_clause': [
-    { name: 'if', required: true, multiple: false },
     { name: 'expression', required: true, multiple: false },
   ],
   'if_statement': [
@@ -507,7 +510,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'alternative', required: false, multiple: true },
   ],
   'import_from_statement': [
-    { name: 'from', required: true, multiple: false },
     { name: 'moduleName', required: true, multiple: false },
     { name: 'wildcardImport', required: true, multiple: false },
   ],
@@ -628,7 +630,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'subscript', required: true, multiple: true },
   ],
   'try_statement': [
-    { name: 'try', required: true, multiple: false },
     { name: 'body', required: true, multiple: false },
     { name: 'exceptClauses', required: true, multiple: true },
     { name: 'elseClause', required: false, multiple: false },

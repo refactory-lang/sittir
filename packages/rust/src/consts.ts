@@ -170,6 +170,8 @@ export const LEAF_KINDS = [
   '_',
   '_error_sentinel',
   '_inner_block_doc_comment_marker',
+  '_kw_const',
+  '_kw_for',
   '_line_doc_content',
   '_outer_block_doc_comment_marker',
   'as',
@@ -242,6 +244,9 @@ export const ALL_KINDS = [...NODE_KINDS, ...LEAF_KINDS] as const;
 export const KEYWORDS = [
   '_',
   '_inner_line_doc_comment_marker',
+  '_kw_const',
+  '_kw_for',
+  '_kw_operator',
   '_outer_line_doc_comment_marker',
   'as',
   'async',
@@ -364,7 +369,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   '_type_identifier': [
   ],
   'abstract_type': [
-    { name: 'impl', required: true, multiple: false },
     { name: 'typeParameters', required: false, multiple: false },
     { name: 'trait', required: true, multiple: false },
   ],
@@ -383,15 +387,12 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'right', required: true, multiple: false },
   ],
   'associated_type': [
-    { name: 'type', required: true, multiple: false },
     { name: 'name', required: true, multiple: false },
     { name: 'typeParameters', required: false, multiple: false },
     { name: 'bounds', required: false, multiple: false },
     { name: 'whereClause', required: false, multiple: false },
   ],
   'async_block': [
-    { name: 'async', required: true, multiple: false },
-    { name: 'move', required: false, multiple: false },
     { name: 'block', required: true, multiple: false },
   ],
   'attribute': [
@@ -425,7 +426,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'bracketed_type': [
   ],
   'break_expression': [
-    { name: 'break', required: true, multiple: false },
     { name: 'label', required: false, multiple: false },
     { name: 'expression', required: false, multiple: false },
   ],
@@ -476,7 +476,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'value', required: false, multiple: false },
   ],
   'continue_expression': [
-    { name: 'continue', required: true, multiple: false },
     { name: 'label', required: false, multiple: false },
   ],
   'declaration_list': [
@@ -514,7 +513,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'alias', required: false, multiple: false },
   ],
   'extern_modifier': [
-    { name: 'extern', required: true, multiple: false },
     { name: 'stringLiteral', required: false, multiple: false },
   ],
   'field_declaration': [
@@ -535,7 +533,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'field_initializer_list': [
   ],
   'field_pattern': [
-    { name: 'ref', required: false, multiple: false },
     { name: 'mutableSpecifier', required: false, multiple: false },
   ],
   'field_pattern_named': [
@@ -591,8 +588,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'returnType', required: false, multiple: false },
   ],
   'gen_block': [
-    { name: 'gen', required: true, multiple: false },
-    { name: 'move', required: false, multiple: false },
     { name: 'block', required: true, multiple: false },
   ],
   'generic_function': [
@@ -650,7 +645,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'value', required: true, multiple: false },
   ],
   'let_declaration': [
-    { name: 'let', required: true, multiple: false },
     { name: 'mutableSpecifier', required: false, multiple: false },
     { name: 'pattern', required: true, multiple: false },
     { name: 'type', required: false, multiple: false },
@@ -861,14 +855,12 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'trait_item': [
     { name: 'visibilityModifier', required: false, multiple: false },
-    { name: 'unsafe', required: false, multiple: false },
     { name: 'name', required: true, multiple: false },
     { name: 'typeParameters', required: false, multiple: false },
     { name: 'bounds', required: false, multiple: false },
     { name: 'body', required: true, multiple: false },
   ],
   'try_block': [
-    { name: 'try', required: true, multiple: false },
     { name: 'block', required: true, multiple: false },
   ],
   'try_expression': [
@@ -925,7 +917,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'body', required: true, multiple: false },
   ],
   'unsafe_block': [
-    { name: 'unsafe', required: true, multiple: false },
     { name: 'block', required: true, multiple: false },
   ],
   'use_as_clause': [

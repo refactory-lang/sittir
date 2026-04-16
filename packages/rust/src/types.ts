@@ -19,6 +19,8 @@ export type LeafStringMap = {
   self: "self";
   super: "super";
   crate: "crate";
+  _kw_for: "for";
+  _kw_const: "const";
   primitive_type: "u8" | "i8" | "u16" | "i16" | "u32" | "i32" | "u64" | "i64" | "u128" | "i128" | "isize" | "usize" | "f32" | "f64" | "bool" | "str" | "char";
   as: "as";
   async: "async";
@@ -246,6 +248,8 @@ export const enum SyntaxKind {
   Super = 'super',
   Crate = 'crate',
   Metavariable = 'metavariable',
+  KwFor = '_kw_for',
+  KwConst = '_kw_const',
   StringContent = 'string_content',
   RawStringLiteralContent = 'raw_string_literal_content',
   FloatLiteral = 'float_literal',
@@ -964,7 +968,6 @@ export interface TraitItem {
   readonly type: 'trait_item';
   readonly fields: {
     readonly visibility_modifier?: VisibilityModifier;
-    readonly unsafe?: "unsafe";
     readonly name: _TypeIdentifier;
     readonly type_parameters?: TypeParameters;
     readonly bounds?: TraitBounds;
@@ -976,7 +979,6 @@ export interface TraitItem {
 export interface AssociatedType {
   readonly type: 'associated_type';
   readonly fields: {
-    readonly type: "type";
     readonly name: _TypeIdentifier;
     readonly type_parameters?: TypeParameters;
     readonly bounds?: TraitBounds;
@@ -992,7 +994,7 @@ export interface TraitBounds {
 export interface HigherRankedTraitBound {
   readonly type: 'higher_ranked_trait_bound';
   readonly fields: {
-    readonly for: "for";
+    readonly for: KwFor;
     readonly type_parameters: TypeParameters;
     readonly type: _Type;
   };
@@ -1011,7 +1013,7 @@ export interface TypeParameters {
 export interface ConstParameter {
   readonly type: 'const_parameter';
   readonly fields: {
-    readonly const: "const";
+    readonly const: KwConst;
     readonly name: Identifier;
     readonly type: _Type;
     readonly value?: Block | Identifier | Literal | NegativeLiteral;
@@ -1038,7 +1040,6 @@ export interface LifetimeParameter {
 export interface LetDeclaration {
   readonly type: 'let_declaration';
   readonly fields: {
-    readonly let: "let";
     readonly mutable_specifier?: MutableSpecifier;
     readonly pattern: Pattern;
     readonly type?: _Type;
@@ -1093,8 +1094,9 @@ export interface SelfParameter {
   readonly fields: {
     readonly lifetime: string;
     readonly mutable_specifier?: Lifetime;
-    readonly self?: MutableSpecifier | Self;
+    readonly self?: MutableSpecifier;
   };
+  readonly children: readonly [Self];
 }
 
 export interface VariadicParameter {
@@ -1117,7 +1119,6 @@ export interface Parameter {
 export interface ExternModifier {
   readonly type: 'extern_modifier';
   readonly fields: {
-    readonly extern: "extern";
     readonly string_literal?: StringLiteral;
   };
 }
@@ -1168,7 +1169,7 @@ export interface ArrayType {
 export interface ForLifetimes {
   readonly type: 'for_lifetimes';
   readonly fields: {
-    readonly for: "for";
+    readonly for: KwFor;
   };
   readonly children: NonEmptyArray<Lifetime>;
 }
@@ -1262,7 +1263,6 @@ export interface PointerType {
 export interface AbstractType {
   readonly type: 'abstract_type';
   readonly fields: {
-    readonly impl: "impl";
     readonly type_parameters?: TypeParameters;
     readonly trait: _TypeIdentifier | ScopedTypeIdentifier | RemovedTraitBound | GenericType | FunctionType | TupleType | BoundedType;
   };
@@ -1574,7 +1574,7 @@ export interface ForExpression {
 export interface ConstBlock {
   readonly type: 'const_block';
   readonly fields: {
-    readonly const: "const";
+    readonly const: KwConst;
     readonly body: Block;
   };
 }
@@ -1617,7 +1617,6 @@ export interface Label {
 export interface BreakExpression {
   readonly type: 'break_expression';
   readonly fields: {
-    readonly break: "break";
     readonly label?: Label;
     readonly expression?: Expression;
   };
@@ -1626,7 +1625,6 @@ export interface BreakExpression {
 export interface ContinueExpression {
   readonly type: 'continue_expression';
   readonly fields: {
-    readonly continue: "continue";
     readonly label?: Label;
   };
 }
@@ -1655,7 +1653,6 @@ export interface FieldExpression {
 export interface UnsafeBlock {
   readonly type: 'unsafe_block';
   readonly fields: {
-    readonly unsafe: "unsafe";
     readonly block: Block;
   };
 }
@@ -1663,8 +1660,6 @@ export interface UnsafeBlock {
 export interface AsyncBlock {
   readonly type: 'async_block';
   readonly fields: {
-    readonly async: "async";
-    readonly move?: "move";
     readonly block: Block;
   };
 }
@@ -1672,8 +1667,6 @@ export interface AsyncBlock {
 export interface GenBlock {
   readonly type: 'gen_block';
   readonly fields: {
-    readonly gen: "gen";
-    readonly move?: "move";
     readonly block: Block;
   };
 }
@@ -1681,7 +1674,6 @@ export interface GenBlock {
 export interface TryBlock {
   readonly type: 'try_block';
   readonly fields: {
-    readonly try: "try";
     readonly block: Block;
   };
 }
@@ -1731,7 +1723,6 @@ export interface StructPattern {
 export interface FieldPatternUFormShorthand {
   readonly type: 'field_pattern';
   readonly fields: {
-    readonly ref?: "ref";
     readonly mutable_specifier?: MutableSpecifier;
   };
   readonly children: readonly [FieldPatternShorthand];
@@ -1740,7 +1731,6 @@ export interface FieldPatternUFormShorthand {
 export interface FieldPatternUFormNamed {
   readonly type: 'field_pattern';
   readonly fields: {
-    readonly ref?: "ref";
     readonly mutable_specifier?: MutableSpecifier;
   };
   readonly children: readonly [FieldPatternNamed];
@@ -1905,7 +1895,7 @@ export interface _RangeExpressionPrefix {
 export interface _RangeExpressionBare {
   readonly type: '_range_expression_bare';
   readonly fields: {
-    readonly operator: "..";
+    readonly operator: KwOperator;
   };
 }
 
@@ -1930,14 +1920,14 @@ export interface RangeExpressionPostfix {
   readonly type: 'range_expression_postfix';
   readonly fields: {
     readonly start: Expression;
-    readonly operator: "..";
+    readonly operator: KwOperator;
   };
 }
 
 export interface RangeExpressionPrefix {
   readonly type: 'range_expression_prefix';
   readonly fields: {
-    readonly operator: "..";
+    readonly operator: KwOperator;
     readonly end: Expression;
   };
 }
@@ -1945,7 +1935,7 @@ export interface RangeExpressionPrefix {
 export interface RangeExpressionBare {
   readonly type: 'range_expression_bare';
   readonly fields: {
-    readonly operator: "..";
+    readonly operator: KwOperator;
   };
 }
 
@@ -2030,6 +2020,8 @@ export type Self = Terminal<"self", "self">;
 export type Super = Terminal<"super", "super">;
 export type Crate = Terminal<"crate", "crate">;
 export type Metavariable = Terminal<"metavariable", string>;
+export type KwFor = Terminal<"_kw_for", "for">;
+export type KwConst = Terminal<"_kw_const", "const">;
 export type StringContent = Terminal<"string_content", string>;
 export type RawStringLiteralContent = Terminal<"raw_string_literal_content", string>;
 export type FloatLiteral = Terminal<"float_literal", string>;
@@ -2431,6 +2423,8 @@ export interface SelfTree extends AnyTreeNode { readonly type: "self"; }
 export interface SuperTree extends AnyTreeNode { readonly type: "super"; }
 export interface CrateTree extends AnyTreeNode { readonly type: "crate"; }
 export interface MetavariableTree extends TreeNode<'metavariable'> {}
+export interface KwForTree extends AnyTreeNode { readonly type: "_kw_for"; }
+export interface KwConstTree extends AnyTreeNode { readonly type: "_kw_const"; }
 export interface StringContentTree extends TreeNode<'string_content'> {}
 export interface RawStringLiteralContentTree extends AnyTreeNode { readonly type: "raw_string_literal_content"; }
 export interface FloatLiteralTree extends TreeNode<'float_literal'> {}
@@ -3087,6 +3081,8 @@ export type NeverType = Terminal<"never_type">;
 export interface NeverTypeTree extends AnyTreeNode { readonly type: "never_type"; }
 export type RemainingFieldPattern = Terminal<"remaining_field_pattern">;
 export interface RemainingFieldPatternTree extends AnyTreeNode { readonly type: "remaining_field_pattern"; }
+export type KwOperator = Terminal<"_kw_operator">;
+export interface KwOperatorTree extends AnyTreeNode { readonly type: "_kw_operator"; }
 
 export type RustNode =
   | SourceFile
@@ -3446,6 +3442,8 @@ export interface KindMap {
   'super': Super;
   'crate': Crate;
   'metavariable': Metavariable;
+  '_kw_for': KwFor;
+  '_kw_const': KwConst;
   'string_content': StringContent;
   'raw_string_literal_content': RawStringLiteralContent;
   'float_literal': FloatLiteral;

@@ -22,6 +22,14 @@ export type LeafStringMap = {
   undefined: "undefined";
   accessibility_modifier: "public" | "private" | "protected";
   override_modifier: "override";
+  _kw_asserts: "asserts";
+  _kw_for: "for";
+  _kw_async: "async";
+  _kw_static: "static";
+  _kw_extends: "extends";
+  _kw_const: "const";
+  _kw_readonly: "readonly";
+  _kw_abstract: "abstract";
   this_type: "this";
   export: "export";
   default: "default";
@@ -32,7 +40,6 @@ export type LeafStringMap = {
   else: "else";
   if: "if";
   switch: "switch";
-  for: "for";
   await: "await";
   while: "while";
   do: "do";
@@ -47,7 +54,6 @@ export type LeafStringMap = {
   catch: "catch";
   finally: "finally";
   yield: "yield";
-  async: "async";
   function: "function";
   new: "new";
   using: "using";
@@ -55,22 +61,24 @@ export type LeafStringMap = {
   in: "in";
   static: "static";
   readonly: "readonly";
+  async: "async";
   declare: "declare";
   abstract: "abstract";
   accessor: "accessor";
   const: "const";
   satisfies: "satisfies";
   require: "require";
-  extends: "extends";
   implements: "implements";
   global: "global";
   interface: "interface";
   enum: "enum";
   override: "override";
   infer: "infer";
+  extends: "extends";
   is: "is";
   typeof: "typeof";
   keyof: "keyof";
+  for: "for";
 };
 
 export const enum SyntaxKind {
@@ -284,6 +292,14 @@ export const enum SyntaxKind {
   AccessibilityModifier = 'accessibility_modifier',
   OverrideModifier = 'override_modifier',
   PredefinedType = 'predefined_type',
+  KwAsserts = '_kw_asserts',
+  KwFor = '_kw_for',
+  KwAsync = '_kw_async',
+  KwStatic = '_kw_static',
+  KwExtends = '_kw_extends',
+  KwConst = '_kw_const',
+  KwReadonly = '_kw_readonly',
+  KwAbstract = '_kw_abstract',
   AutomaticSemicolon = '_automatic_semicolon',
   TemplateChars = '_template_chars',
   HtmlComment = 'html_comment',
@@ -305,7 +321,6 @@ export const enum SyntaxKind {
   Else = 'else',
   If = 'if',
   Switch = 'switch',
-  For = 'for',
   Await = 'await',
   While = 'while',
   Do = 'do',
@@ -320,7 +335,6 @@ export const enum SyntaxKind {
   Catch = 'catch',
   Finally = 'finally',
   Yield = 'yield',
-  Async = 'async',
   Function = 'function',
   New = 'new',
   Using = 'using',
@@ -328,22 +342,24 @@ export const enum SyntaxKind {
   In = 'in',
   Static = 'static',
   Readonly = 'readonly',
+  Async = 'async',
   Declare = 'declare',
   Abstract = 'abstract',
   Accessor = 'accessor',
   Const = 'const',
   Satisfies = 'satisfies',
   Require = 'require',
-  Extends = 'extends',
   Implements = 'implements',
   Global = 'global',
   Interface = 'interface',
   Enum = 'enum',
   Override = 'override',
   Infer = 'infer',
+  Extends = 'extends',
   Is = 'is',
   Typeof = 'typeof',
   Keyof = 'keyof',
+  For = 'for',
 }
 
 // Scoped enums per supertype
@@ -535,7 +551,6 @@ export interface Declaration {
 export interface ImportStatement {
   readonly type: 'import_statement';
   readonly fields: {
-    readonly import: "import";
     readonly import_clause?: "type" | "typeof";
     readonly from_clause: ImportClause | FromClause | ImportRequireClause | String;
     readonly import_attribute?: ImportAttribute;
@@ -591,6 +606,7 @@ export interface ImportAttribute {
   readonly fields: {
     readonly object: "with" | "assert";
   };
+  readonly children: readonly [Object];
 }
 
 export interface Statement {
@@ -606,7 +622,6 @@ export interface ExpressionStatement {
 export interface VariableDeclaration {
   readonly type: 'variable_declaration';
   readonly fields: {
-    readonly var: "var";
     readonly declarators: NonEmptyArray<string>;
     readonly semicolon: Semicolon;
   };
@@ -641,7 +656,6 @@ export interface StatementBlock {
 export interface ElseClause {
   readonly type: 'else_clause';
   readonly fields: {
-    readonly else: "else";
     readonly statement: Statement;
   };
 }
@@ -668,7 +682,7 @@ export interface SwitchStatement {
 export interface ForStatement {
   readonly type: 'for_statement';
   readonly fields: {
-    readonly for: "for";
+    readonly for: KwFor;
     readonly initializer: LexicalDeclaration | VariableDeclaration;
     readonly condition: Expressions | EmptyStatement;
     readonly increment?: Expressions;
@@ -679,7 +693,7 @@ export interface ForStatement {
 export interface ForInStatement {
   readonly type: 'for_in_statement';
   readonly fields: {
-    readonly for: "for";
+    readonly for: KwFor;
     readonly await?: "await";
     readonly body: Statement;
   };
@@ -840,7 +854,6 @@ export interface PrimaryExpression {
 export interface YieldExpression {
   readonly type: 'yield_expression';
   readonly fields: {
-    readonly yield: "yield";
     readonly expression: Expression;
   };
 }
@@ -975,7 +988,7 @@ export type ClassHeritage = ClassHeritageForm0 | ClassHeritageForm1;
 export interface FunctionExpression {
   readonly type: 'function_expression';
   readonly fields: {
-    readonly async?: "async";
+    readonly async?: KwAsync;
     readonly name?: Identifier;
     readonly body: StatementBlock;
   };
@@ -985,7 +998,7 @@ export interface FunctionExpression {
 export interface FunctionDeclaration {
   readonly type: 'function_declaration';
   readonly fields: {
-    readonly async?: "async";
+    readonly async?: KwAsync;
     readonly name: Identifier;
     readonly body: StatementBlock;
   };
@@ -995,7 +1008,7 @@ export interface FunctionDeclaration {
 export interface GeneratorFunction {
   readonly type: 'generator_function';
   readonly fields: {
-    readonly async?: "async";
+    readonly async?: KwAsync;
     readonly name?: Identifier;
     readonly body: StatementBlock;
   };
@@ -1005,7 +1018,7 @@ export interface GeneratorFunction {
 export interface GeneratorFunctionDeclaration {
   readonly type: 'generator_function_declaration';
   readonly fields: {
-    readonly async?: "async";
+    readonly async?: KwAsync;
     readonly name: Identifier;
     readonly body: StatementBlock;
   };
@@ -1015,7 +1028,7 @@ export interface GeneratorFunctionDeclaration {
 export interface ArrowFunction {
   readonly type: 'arrow_function';
   readonly fields: {
-    readonly async?: "async";
+    readonly async?: KwAsync;
     readonly parameter?: Identifier;
     readonly body: Expression | StatementBlock;
   };
@@ -1066,7 +1079,6 @@ export interface NewExpression {
 export interface AwaitExpression {
   readonly type: 'await_expression';
   readonly fields: {
-    readonly await: "await";
     readonly expression: Expression;
   };
 }
@@ -1224,7 +1236,7 @@ export interface FieldDefinition {
   readonly type: 'field_definition';
   readonly fields: {
     readonly decorator: readonly (Decorator)[];
-    readonly static?: "static";
+    readonly static?: KwStatic;
     readonly property: PropertyName;
   };
   readonly children: readonly [Initializer];
@@ -1238,7 +1250,7 @@ export interface FormalParameters {
 export interface ClassStaticBlock {
   readonly type: 'class_static_block';
   readonly fields: {
-    readonly static: "static";
+    readonly static: KwStatic;
     readonly body: StatementBlock;
   };
   readonly children: readonly [AutomaticSemicolon];
@@ -1259,8 +1271,6 @@ export interface MethodDefinition {
   readonly fields: {
     readonly accessibility_modifier?: AccessibilityModifier;
     readonly override_modifier?: "static";
-    readonly readonly?: "readonly";
-    readonly async?: "async";
     readonly name: PropertyName;
     readonly body: StatementBlock;
   };
@@ -1294,10 +1304,6 @@ export interface PublicFieldDefinition {
   readonly type: 'public_field_definition';
   readonly fields: {
     readonly decorator: readonly (Decorator)[];
-    readonly declare?: "declare";
-    readonly static?: "static";
-    readonly readonly?: "readonly";
-    readonly abstract?: "abstract";
     readonly name: PropertyName;
     readonly type?: TypeAnnotation;
   };
@@ -1325,8 +1331,6 @@ export interface MethodSignature {
   readonly fields: {
     readonly accessibility_modifier?: AccessibilityModifier;
     readonly override_modifier?: "static";
-    readonly readonly?: "readonly";
-    readonly async?: "async";
     readonly name: PropertyName;
   };
   readonly children: readonly [OverrideModifier | _CallSignature];
@@ -1345,7 +1349,7 @@ export interface AbstractMethodSignature {
 export interface FunctionSignature {
   readonly type: 'function_signature';
   readonly fields: {
-    readonly async?: "async";
+    readonly async?: KwAsync;
     readonly name: Identifier;
   };
   readonly children: readonly [_CallSignature | Semicolon | FunctionSignatureAutomaticSemicolon];
@@ -1399,7 +1403,7 @@ export interface ImportRequireClause {
 export interface ExtendsClause {
   readonly type: 'extends_clause';
   readonly fields: {
-    readonly extends: "extends";
+    readonly extends: KwExtends;
   };
   readonly children: NonEmptyArray<ExtendsClauseSingle>;
 }
@@ -1419,7 +1423,6 @@ export interface ImplementsClause {
 export interface AmbientDeclaration {
   readonly type: 'ambient_declaration';
   readonly fields: {
-    readonly declare: "declare";
     readonly declaration: Declaration | StatementBlock | PropertyIdentifier | Type | Semicolon;
   };
 }
@@ -1458,7 +1461,6 @@ export interface _Module {
 export interface ImportAlias {
   readonly type: 'import_alias';
   readonly fields: {
-    readonly import: "import";
     readonly name: Identifier;
     readonly value: _union_Identifier_NestedIdentifier;
     readonly semicolon: Semicolon;
@@ -1476,7 +1478,6 @@ export interface NestedTypeIdentifier {
 export interface InterfaceDeclaration {
   readonly type: 'interface_declaration';
   readonly fields: {
-    readonly interface: "interface";
     readonly name: _TypeIdentifier;
     readonly type_parameters?: TypeParameters;
     readonly extends_type_clause?: ExtendsTypeClause;
@@ -1487,7 +1488,7 @@ export interface InterfaceDeclaration {
 export interface ExtendsTypeClause {
   readonly type: 'extends_type_clause';
   readonly fields: {
-    readonly extends: "extends";
+    readonly extends: KwExtends;
     readonly type: NonEmptyArray<_TypeIdentifier | NestedTypeIdentifier | GenericType>;
   };
 }
@@ -1495,7 +1496,7 @@ export interface ExtendsTypeClause {
 export interface EnumDeclaration {
   readonly type: 'enum_declaration';
   readonly fields: {
-    readonly const?: "const";
+    readonly const?: KwConst;
     readonly name: Identifier;
     readonly body: EnumBody;
   };
@@ -1587,7 +1588,7 @@ export interface TypeQueryCallExpressionInTypeAnnotation {
 export interface Asserts {
   readonly type: 'asserts';
   readonly fields: {
-    readonly asserts: "asserts";
+    readonly asserts: KwAsserts;
   };
   readonly children: readonly [TypePredicate | Identifier | This];
 }
@@ -1595,8 +1596,9 @@ export interface Asserts {
 export interface AssertsAnnotation {
   readonly type: 'asserts_annotation';
   readonly fields: {
-    readonly asserts: ":";
+    readonly asserts: KwAsserts;
   };
+  readonly children: readonly [Asserts];
 }
 
 export interface TupleParameter {
@@ -1632,7 +1634,7 @@ export interface RestType {
 export interface ConstructorType {
   readonly type: 'constructor_type';
   readonly fields: {
-    readonly abstract?: "abstract";
+    readonly abstract?: KwAbstract;
     readonly type_parameters?: TypeParameters;
     readonly parameters: FormalParameters;
     readonly type: Type;
@@ -1652,7 +1654,6 @@ export interface TemplateLiteralType {
 export interface InferType {
   readonly type: 'infer_type';
   readonly fields: {
-    readonly infer: "infer";
     readonly type_identifier: _TypeIdentifier;
     readonly constraint?: Type;
   };
@@ -1689,6 +1690,7 @@ export interface TypePredicateAnnotation {
   readonly fields: {
     readonly type_predicate: ":";
   };
+  readonly children: readonly [TypePredicate];
 }
 
 export interface TypeQueryMemberExpression {
@@ -1718,7 +1720,6 @@ export interface TypeQuery {
 export interface IndexTypeQuery {
   readonly type: 'index_type_query';
   readonly fields: {
-    readonly keyof: "keyof";
     readonly primary_type: PrimaryType;
   };
 }
@@ -1787,7 +1788,6 @@ export interface PropertySignature {
   readonly fields: {
     readonly accessibility_modifier?: AccessibilityModifier;
     readonly override_modifier?: "static";
-    readonly readonly?: "readonly";
     readonly name: PropertyName;
     readonly type?: TypeAnnotation;
   };
@@ -1802,7 +1802,7 @@ export interface TypeParameters {
 export interface TypeParameter {
   readonly type: 'type_parameter';
   readonly fields: {
-    readonly const?: "const";
+    readonly const?: KwConst;
     readonly name: _TypeIdentifier;
     readonly constraint?: Constraint;
     readonly value?: DefaultType;
@@ -1826,7 +1826,7 @@ export interface Constraint {
 export interface ConstructSignature {
   readonly type: 'construct_signature';
   readonly fields: {
-    readonly abstract?: "abstract";
+    readonly abstract?: KwAbstract;
     readonly type_parameters?: TypeParameters;
     readonly parameters: FormalParameters;
     readonly type?: TypeAnnotation;
@@ -1859,7 +1859,7 @@ export interface TupleType {
 export interface ReadonlyType {
   readonly type: 'readonly_type';
   readonly fields: {
-    readonly readonly: "readonly";
+    readonly readonly: KwReadonly;
     readonly type: Type;
   };
 }
@@ -1941,6 +1941,14 @@ export type ReservedIdentifier = Terminal<"_reserved_identifier", string>;
 export type AccessibilityModifier = Terminal<"accessibility_modifier", "public" | "private" | "protected">;
 export type OverrideModifier = Terminal<"override_modifier", "override">;
 export type PredefinedType = Terminal<"predefined_type", string>;
+export type KwAsserts = Terminal<"_kw_asserts", "asserts">;
+export type KwFor = Terminal<"_kw_for", "for">;
+export type KwAsync = Terminal<"_kw_async", "async">;
+export type KwStatic = Terminal<"_kw_static", "static">;
+export type KwExtends = Terminal<"_kw_extends", "extends">;
+export type KwConst = Terminal<"_kw_const", "const">;
+export type KwReadonly = Terminal<"_kw_readonly", "readonly">;
+export type KwAbstract = Terminal<"_kw_abstract", "abstract">;
 export type AutomaticSemicolon = Terminal<"_automatic_semicolon", string>;
 export type TemplateChars = Terminal<"_template_chars", string>;
 export type HtmlComment = Terminal<"html_comment", string>;
@@ -2375,6 +2383,14 @@ export interface ReservedIdentifierTree extends AnyTreeNode { readonly type: "_r
 export interface AccessibilityModifierTree extends TreeNode<'accessibility_modifier'> {}
 export interface OverrideModifierTree extends AnyTreeNode { readonly type: "override_modifier"; }
 export interface PredefinedTypeTree extends TreeNode<'predefined_type'> {}
+export interface KwAssertsTree extends AnyTreeNode { readonly type: "_kw_asserts"; }
+export interface KwForTree extends AnyTreeNode { readonly type: "_kw_for"; }
+export interface KwAsyncTree extends AnyTreeNode { readonly type: "_kw_async"; }
+export interface KwStaticTree extends AnyTreeNode { readonly type: "_kw_static"; }
+export interface KwExtendsTree extends AnyTreeNode { readonly type: "_kw_extends"; }
+export interface KwConstTree extends AnyTreeNode { readonly type: "_kw_const"; }
+export interface KwReadonlyTree extends AnyTreeNode { readonly type: "_kw_readonly"; }
+export interface KwAbstractTree extends AnyTreeNode { readonly type: "_kw_abstract"; }
 export interface AutomaticSemicolonTree extends AnyTreeNode { readonly type: "_automatic_semicolon"; }
 export interface TemplateCharsTree extends AnyTreeNode { readonly type: "_template_chars"; }
 export interface HtmlCommentTree extends TreeNode<'html_comment'> {}
@@ -2396,7 +2412,6 @@ export interface VarTree extends AnyTreeNode { readonly type: "var"; }
 export interface ElseTree extends AnyTreeNode { readonly type: "else"; }
 export interface IfTree extends AnyTreeNode { readonly type: "if"; }
 export interface SwitchTree extends AnyTreeNode { readonly type: "switch"; }
-export interface ForTree extends AnyTreeNode { readonly type: "for"; }
 export interface AwaitTree extends AnyTreeNode { readonly type: "await"; }
 export interface WhileTree extends AnyTreeNode { readonly type: "while"; }
 export interface DoTree extends AnyTreeNode { readonly type: "do"; }
@@ -2411,7 +2426,6 @@ export interface CaseTree extends AnyTreeNode { readonly type: "case"; }
 export interface CatchTree extends AnyTreeNode { readonly type: "catch"; }
 export interface FinallyTree extends AnyTreeNode { readonly type: "finally"; }
 export interface YieldTree extends AnyTreeNode { readonly type: "yield"; }
-export interface AsyncTree extends AnyTreeNode { readonly type: "async"; }
 export interface FunctionTree extends AnyTreeNode { readonly type: "function"; }
 export interface NewTree extends AnyTreeNode { readonly type: "new"; }
 export interface UsingTree extends AnyTreeNode { readonly type: "using"; }
@@ -2419,22 +2433,24 @@ export interface InstanceofTree extends AnyTreeNode { readonly type: "instanceof
 export interface InTree extends AnyTreeNode { readonly type: "in"; }
 export interface StaticTree extends AnyTreeNode { readonly type: "static"; }
 export interface ReadonlyTree extends AnyTreeNode { readonly type: "readonly"; }
+export interface AsyncTree extends AnyTreeNode { readonly type: "async"; }
 export interface DeclareTree extends AnyTreeNode { readonly type: "declare"; }
 export interface AbstractTree extends AnyTreeNode { readonly type: "abstract"; }
 export interface AccessorTree extends AnyTreeNode { readonly type: "accessor"; }
 export interface ConstTree extends AnyTreeNode { readonly type: "const"; }
 export interface SatisfiesTree extends AnyTreeNode { readonly type: "satisfies"; }
 export interface RequireTree extends AnyTreeNode { readonly type: "require"; }
-export interface ExtendsTree extends AnyTreeNode { readonly type: "extends"; }
 export interface ImplementsTree extends AnyTreeNode { readonly type: "implements"; }
 export interface GlobalTree extends AnyTreeNode { readonly type: "global"; }
 export interface InterfaceTree extends AnyTreeNode { readonly type: "interface"; }
 export interface EnumTree extends AnyTreeNode { readonly type: "enum"; }
 export interface OverrideTree extends AnyTreeNode { readonly type: "override"; }
 export interface InferTree extends AnyTreeNode { readonly type: "infer"; }
+export interface ExtendsTree extends AnyTreeNode { readonly type: "extends"; }
 export interface IsTree extends AnyTreeNode { readonly type: "is"; }
 export interface TypeofTree extends AnyTreeNode { readonly type: "typeof"; }
 export interface KeyofTree extends AnyTreeNode { readonly type: "keyof"; }
+export interface ForTree extends AnyTreeNode { readonly type: "for"; }
 
 // Loose-input type aliases (for from() construction)
 export type LooseProgram = FromInputOf<Program, LeafScalarMap, LeafStringMap>;
@@ -3212,6 +3228,14 @@ export interface KindMap {
   'accessibility_modifier': AccessibilityModifier;
   'override_modifier': OverrideModifier;
   'predefined_type': PredefinedType;
+  '_kw_asserts': KwAsserts;
+  '_kw_for': KwFor;
+  '_kw_async': KwAsync;
+  '_kw_static': KwStatic;
+  '_kw_extends': KwExtends;
+  '_kw_const': KwConst;
+  '_kw_readonly': KwReadonly;
+  '_kw_abstract': KwAbstract;
   '_automatic_semicolon': AutomaticSemicolon;
   '_template_chars': TemplateChars;
   'html_comment': HtmlComment;

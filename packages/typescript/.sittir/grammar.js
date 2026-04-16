@@ -91,22 +91,23 @@ function parsePath(pathStr) {
 }
 var membersOf = (r) => r.members;
 var contentOf = (r) => r.content;
-function applyPath(rule, segments, patch) {
+function applyPath(rule, segments, patch, precStack) {
   if (segments.length === 0) {
-    return typeof patch === "function" ? patch(rule) : patch;
+    return typeof patch === "function" ? patch(rule, precStack) : patch;
   }
   if (isPrecWrapper(rule)) {
-    const newContent = applyPath(contentOf(rule), segments, patch);
+    const newStack = precStack ? [...precStack, rule] : [rule];
+    const newContent = applyPath(contentOf(rule), segments, patch, newStack);
     return reconstructPrec(rule, newContent);
   }
   const [head, ...rest] = segments;
   const t = rule.type;
   if (isContainerType(t)) {
-    return applyToMembers(rule, head, rest, patch);
+    return applyToMembers(rule, head, rest, patch, precStack);
   }
   if (isWrapperType(t)) {
     if (head.kind === "wildcard" || head.kind === "index" && head.value === 0) {
-      const newContent = applyPath(contentOf(rule), rest, patch);
+      const newContent = applyPath(contentOf(rule), rest, patch, precStack);
       return reconstructWrapper(rule, newContent);
     }
     throw new ApplyPathSkip(
@@ -150,15 +151,15 @@ function reconstructPrec(rule, newContent) {
   const t = rule.type.toLowerCase();
   const value = rule.value ?? 0;
   const prec = nativeRequired("prec");
-  const variant = PREC_VARIANT_MAP[t];
-  if (variant) {
-    const fn = prec[variant];
-    if (typeof fn !== "function") throw new Error(`transform: native prec.${variant} not available`);
+  const variant2 = PREC_VARIANT_MAP[t];
+  if (variant2) {
+    const fn = prec[variant2];
+    if (typeof fn !== "function") throw new Error(`transform: native prec.${variant2} not available`);
     return fn(value, newContent);
   }
   return prec(value, newContent);
 }
-function applyToMembers(rule, head, rest, patch) {
+function applyToMembers(rule, head, rest, patch, precStack) {
   const members = [...membersOf(rule)];
   if (head.kind === "index") {
     if (head.value < 0 || head.value >= members.length) {
@@ -166,7 +167,7 @@ function applyToMembers(rule, head, rest, patch) {
         `applyPath: index ${head.value} out of bounds in ${rule.type} of length ${members.length}`
       );
     }
-    members[head.value] = applyPath(members[head.value], rest, patch);
+    members[head.value] = applyPath(members[head.value], rest, patch, precStack);
     return reconstructContainer(rule, members);
   }
   if (members.length === 0) {
@@ -175,7 +176,7 @@ function applyToMembers(rule, head, rest, patch) {
   let anyApplied = false;
   for (let i = 0; i < members.length; i++) {
     try {
-      members[i] = applyPath(members[i], rest, patch);
+      members[i] = applyPath(members[i], rest, patch, precStack);
       anyApplied = true;
     } catch (e) {
       if (e instanceof ApplyPathSkip) continue;
@@ -203,19 +204,140 @@ function field(name, content) {
   return native(name, content);
 }
 
-// packages/codegen/src/dsl/transform.ts
-function transform(original, patches) {
-  const usesPaths = Object.keys(patches).some((k) => k.includes("/") || k.includes("*"));
-  if (usesPaths) {
-    return applyPathPatches(original, patches);
+// packages/codegen/src/dsl/alias.ts
+function isAliasPlaceholder(v) {
+  return !!v && typeof v === "object" && v.__sittirPlaceholder === "alias";
+}
+
+// packages/codegen/src/dsl/variant.ts
+function isVariantPlaceholder(v) {
+  return !!v && typeof v === "object" && v.__sittirPlaceholder === "variant";
+}
+
+// packages/codegen/src/dsl/synthetic-rules.ts
+var currentSyntheticRules = null;
+var currentRuleKind = null;
+var currentPolymorphVariants = [];
+function getCurrentRuleKind() {
+  return currentRuleKind;
+}
+function registerSyntheticRule(name, content) {
+  if (!currentSyntheticRules) {
+    currentSyntheticRules = /* @__PURE__ */ new Map();
   }
-  return applyFlatPatches(original, patches);
+  currentSyntheticRules.set(name, content);
+}
+function registerPolymorphVariant(parentKind, childSuffix) {
+  const dup = currentPolymorphVariants.find((v) => v.parent === parentKind && v.child === childSuffix);
+  if (dup) {
+    throw new Error(
+      `variant('${childSuffix}'): duplicate variant name on rule '${parentKind}'. Each variant() within a rule must have a unique name \u2014 change one or merge the patches.`
+    );
+  }
+  currentPolymorphVariants.push({ parent: parentKind, child: childSuffix });
+}
+function drainSyntheticRules() {
+  const rules = currentSyntheticRules ?? /* @__PURE__ */ new Map();
+  currentSyntheticRules = null;
+  return rules;
+}
+function installGrammarWrapper() {
+  const g = globalThis;
+  const nativeGrammar = g.grammar;
+  if (typeof nativeGrammar !== "function") return;
+  g.grammar = function wrappedGrammar(...args) {
+    currentSyntheticRules = /* @__PURE__ */ new Map();
+    const base2 = args.length > 1 ? args[0] : void 0;
+    const opts = args.length > 1 ? args[1] : args[0];
+    if (base2?.__enrichOverrides__ && opts) {
+      if (!opts.rules) opts.rules = {};
+      for (const [name, fn] of Object.entries(base2.__enrichOverrides__)) {
+        if (!(name in opts.rules)) opts.rules[name] = fn;
+      }
+    }
+    if (opts?.rules) {
+      const permissive = new Proxy({}, {
+        get(_, name) {
+          return { type: "SYMBOL", name };
+        }
+      });
+      for (const [name, ruleFn] of Object.entries(opts.rules)) {
+        if (typeof ruleFn === "function") {
+          currentRuleKind = name;
+          let baseOriginal = void 0;
+          const baseFn = base2?.rules?.[name];
+          if (typeof baseFn === "function") {
+            try {
+              baseOriginal = baseFn.call(permissive, permissive, void 0);
+            } catch {
+            }
+          }
+          try {
+            ruleFn.call(permissive, permissive, baseOriginal);
+          } catch {
+          } finally {
+            currentRuleKind = null;
+          }
+        }
+      }
+    }
+    const discoveredNames = new Map(currentSyntheticRules);
+    currentSyntheticRules = /* @__PURE__ */ new Map();
+    if (opts?.rules) {
+      for (const [name, ruleFn] of Object.entries(opts.rules)) {
+        if (typeof ruleFn !== "function") continue;
+        opts.rules[name] = function(...a) {
+          currentRuleKind = name;
+          try {
+            return ruleFn.apply(this, a);
+          } finally {
+            currentRuleKind = null;
+          }
+        };
+      }
+    }
+    if (opts?.rules && discoveredNames.size > 0) {
+      const blank = g.blank;
+      for (const [name] of discoveredNames) {
+        if (!(name in opts.rules)) {
+          opts.rules[name] = () => blank ? blank() : { type: "BLANK" };
+        }
+      }
+    }
+    const result = nativeGrammar.apply(this, args);
+    const synthetic = drainSyntheticRules();
+    if (result && synthetic.size > 0 && typeof result === "object") {
+      const grammar2 = result.grammar ?? result;
+      if ("rules" in grammar2) {
+        const rules = grammar2.rules;
+        for (const [name, content] of synthetic) {
+          rules[name] = content;
+        }
+      }
+    }
+    return result;
+  };
+}
+
+// packages/codegen/src/dsl/transform.ts
+function transform(original, ...patchSets) {
+  let rule = original;
+  for (const patches of patchSets) {
+    const hasPathKeys = Object.keys(patches).some((k) => k.includes("/") || k.includes("*"));
+    const hasPlaceholderAlias = Object.values(patches).some((v) => isAliasPlaceholder(v) || isVariantPlaceholder(v));
+    if (hasPathKeys || hasPlaceholderAlias) {
+      rule = applyPathPatches(rule, patches);
+    } else {
+      rule = applyFlatPatches(rule, patches);
+    }
+  }
+  return rule;
 }
 function applyPathPatches(original, patches) {
   let rule = original;
   for (const [key, value] of Object.entries(patches)) {
     const segments = parsePath(String(key));
-    rule = applyPath(rule, segments, (member) => resolvePatch(value, member));
+    rule = applyPath(rule, segments, (member, precStack) => resolvePatch(value, member, precStack));
   }
   return rule;
 }
@@ -255,11 +377,34 @@ function applyFlatPatches(original, patches) {
   }
   return original;
 }
-function resolvePatch(patch, originalMember) {
+function wrapInPrec(content, precStack) {
+  if (!precStack?.length) return content;
+  let result = content;
+  for (let i = precStack.length - 1; i >= 0; i--) {
+    result = reconstructPrec(precStack[i], result);
+  }
+  return result;
+}
+function resolvePatch(patch, originalMember, precStack) {
   if (isFieldPlaceholder(patch)) {
     let content = originalMember;
     if (isFieldLike(content) && content.source === "inferred") {
       content = content.content;
+    }
+    const c = content;
+    if (c && (c.type === "STRING" || c.type === "string")) {
+      const isUpperCase = c.type === "STRING";
+      const hiddenName = `_kw_${patch.name}`;
+      const precBody = {
+        type: isUpperCase ? "PREC_LEFT" : "prec_left",
+        value: 1e3,
+        content
+      };
+      registerSyntheticRule(hiddenName, wrapInPrec(precBody, precStack));
+      content = {
+        type: isUpperCase ? "SYMBOL" : "symbol",
+        name: hiddenName
+      };
     }
     const native = globalThis.field;
     if (typeof native !== "function") {
@@ -271,143 +416,235 @@ function resolvePatch(patch, originalMember) {
   if (isFieldLike(patch)) {
     return { ...patch, source: "override" };
   }
+  if (isVariantPlaceholder(patch)) {
+    const parentKind = getCurrentRuleKind();
+    if (!parentKind) {
+      throw new Error(`variant('${patch.name}'): no current rule kind \u2014 variant() must be used inside a rule callback`);
+    }
+    const fullName = `${parentKind}_${patch.name}`;
+    const hiddenName = "_" + fullName;
+    registerSyntheticRule(hiddenName, wrapInPrec(originalMember, precStack));
+    registerPolymorphVariant(parentKind, patch.name);
+    const isUpperCase = originalMember.type === originalMember.type.toUpperCase();
+    return {
+      type: isUpperCase ? "ALIAS" : "alias",
+      content: { type: isUpperCase ? "SYMBOL" : "symbol", name: hiddenName },
+      named: true,
+      value: fullName
+    };
+  }
+  if (isAliasPlaceholder(patch)) {
+    const hiddenName = "_" + patch.name;
+    registerSyntheticRule(hiddenName, wrapInPrec(originalMember, precStack));
+    const isUpperCase = originalMember.type === originalMember.type.toUpperCase();
+    return {
+      type: isUpperCase ? "ALIAS" : "alias",
+      content: { type: isUpperCase ? "SYMBOL" : "symbol", name: hiddenName },
+      named: true,
+      value: patch.name
+    };
+  }
   return patch;
 }
 
 // packages/codegen/src/dsl/enrich.ts
-var PASSES = [
-  kindToNamePass,
-  optionalKeywordPrefixPass
-];
 function enrich(base2) {
   if (!base2 || typeof base2 !== "object") {
     throw new Error("enrich(): expected a grammar object, got " + typeof base2);
   }
-  if (!("grammar" in base2)) {
-    return base2;
+  const rulesBag = ("grammar" in base2 ? base2.grammar?.rules : base2.rules) ?? {};
+  const enrichOverrides = {};
+  for (const name of Object.keys(rulesBag)) {
+    enrichOverrides[name] = function(_$, original) {
+      return applyEnrichPasses(name, original);
+    };
   }
-  if (!base2.grammar || typeof base2.grammar.rules !== "object") {
-    throw new Error("enrich(): grammar is missing a rules record");
-  }
-  let result = base2;
-  for (const pass of PASSES) {
-    result = pass(result);
-  }
-  return result;
-}
-function kindToNamePass(g) {
-  return mapRules(g, applyKindToName);
-}
-function applyKindToName(ruleName, rule) {
-  if (rule.type !== "seq") return rule;
-  const kindCounts = /* @__PURE__ */ new Map();
-  for (const m of rule.members) {
-    if (m.type === "symbol") {
-      kindCounts.set(m.name, (kindCounts.get(m.name) ?? 0) + 1);
-    }
-  }
-  const existingFields = collectFieldNames(rule);
-  let changed = false;
-  const newMembers = rule.members.map((m) => {
-    if (m.type !== "symbol") return m;
-    const sym = m;
-    const kindName = sym.name;
-    if (kindName.startsWith("_")) return m;
-    if ((kindCounts.get(kindName) ?? 0) > 1) return m;
-    if (existingFields.has(kindName)) {
-      reportSkip("kind-to-name", ruleName, `field '${kindName}' already exists`);
-      return m;
-    }
-    existingFields.add(kindName);
-    changed = true;
-    return wrapAsField(kindName, sym);
+  Object.defineProperty(base2, "__enrichOverrides__", {
+    value: enrichOverrides,
+    enumerable: false,
+    configurable: true,
+    writable: false
   });
-  if (!changed) return rule;
-  return { type: "seq", members: newMembers };
+  return base2;
 }
-function optionalKeywordPrefixPass(g) {
-  return mapRules(g, (ruleName, rule) => walkOptionalKeyword(ruleName, rule));
+function applyEnrichPasses(ruleName, rule) {
+  let r = rule;
+  r = applyKindToNameViaTransform(ruleName, r);
+  r = applyBareKeywordViaTransform(ruleName, r);
+  r = applyOptionalKeywordViaTransform(ruleName, r);
+  return r;
 }
-function walkOptionalKeyword(ruleName, rule) {
-  switch (rule.type) {
-    case "seq": {
-      const seq = rule;
-      const claimed = /* @__PURE__ */ new Set();
-      for (const m of seq.members) {
-        if (m.type === "field") claimed.add(m.name);
-      }
-      const members = seq.members.map((m) => {
-        if (m.type === "optional") {
-          const inner = m.content;
-          if (inner.type === "string") {
-            const kw = inner.value;
-            if (isIdentifierShaped(kw)) {
-              if (claimed.has(kw)) {
-                reportSkip("optional-keyword-prefix", ruleName, `field '${kw}' already exists`);
-                return m;
-              }
-              claimed.add(kw);
-              return {
-                type: "optional",
-                content: wrapAsField(kw, inner)
-              };
-            }
-          }
-        }
-        return walkOptionalKeyword(ruleName, m);
-      });
-      return { type: "seq", members };
-    }
-    case "choice": {
-      const ch = rule;
-      return {
-        type: "choice",
-        members: ch.members.map((m) => walkOptionalKeyword(ruleName, m))
-      };
-    }
-    case "optional":
-    case "repeat":
-    case "repeat1":
-    case "field": {
-      const r = rule;
-      return { ...rule, content: walkOptionalKeyword(ruleName, r.content) };
-    }
-    default:
-      return rule;
-  }
+function typeEq(t, lower) {
+  return typeof t === "string" && (t === lower || t === lower.toUpperCase());
 }
-function mapRules(g, fn) {
-  const newRules = {};
-  for (const [name, rule] of Object.entries(g.grammar.rules)) {
-    newRules[name] = fn(name, rule);
-  }
-  return {
-    ...g,
-    grammar: {
-      ...g.grammar,
-      rules: newRules
-    }
-  };
+function isSeqType(t) {
+  return typeEq(t, "seq");
 }
-function wrapAsField(name, content) {
-  return {
-    type: "field",
-    name,
-    content,
-    source: "inferred"
-  };
+function isStringType(t) {
+  return typeEq(t, "string");
 }
-function collectFieldNames(rule) {
+function isSymbolType(t) {
+  return typeEq(t, "symbol");
+}
+function isFieldType(t) {
+  return typeEq(t, "field");
+}
+function isOptionalType(t) {
+  return typeEq(t, "optional");
+}
+function isChoiceType(t) {
+  return typeEq(t, "choice");
+}
+function isRepeatType(t) {
+  return typeEq(t, "repeat") || typeEq(t, "repeat1");
+}
+function normalizeMember(m) {
+  if (typeof m === "string") return { type: "STRING", value: m };
+  if (m instanceof RegExp) return { type: "PATTERN", value: m.source };
+  return m ?? { type: "UNKNOWN" };
+}
+function collectFieldNamesRuntime(rule) {
   const names = /* @__PURE__ */ new Set();
-  if (rule.type !== "seq") return names;
-  for (const m of rule.members) {
-    if (m.type === "field") {
+  if (!isSeqType(rule.type)) return names;
+  const members = rule.members;
+  for (const raw of members) {
+    const m = normalizeMember(raw);
+    if (isFieldType(m.type) && typeof m.name === "string") {
       names.add(m.name);
-    } else if (m.type === "optional" && m.content.type === "field") {
-      names.add(m.content.name);
+      continue;
+    }
+    const peeled = peelOptional(m);
+    if (peeled.isOptional) {
+      const innerN = normalizeMember(peeled.inner);
+      if (isFieldType(innerN.type) && typeof innerN.name === "string") {
+        names.add(innerN.name);
+      }
     }
   }
   return names;
+}
+function applyKindToNameViaTransform(ruleName, rule) {
+  if (!isSeqType(rule.type)) return rule;
+  const raw = rule.members;
+  const members = raw.map(normalizeMember);
+  const kindCounts = /* @__PURE__ */ new Map();
+  for (const m of members) {
+    if (isSymbolType(m.type) && typeof m.name === "string") {
+      kindCounts.set(m.name, (kindCounts.get(m.name) ?? 0) + 1);
+    }
+  }
+  const existing = collectFieldNamesRuntime(rule);
+  const patches = {};
+  for (let i = 0; i < members.length; i++) {
+    const m = members[i];
+    if (!isSymbolType(m.type) || typeof m.name !== "string") continue;
+    const k = m.name;
+    if (k.startsWith("_")) continue;
+    if ((kindCounts.get(k) ?? 0) > 1) continue;
+    if (existing.has(k)) {
+      reportSkip("kind-to-name", ruleName, `field '${k}' already exists`);
+      continue;
+    }
+    existing.add(k);
+    patches[String(i)] = field(k);
+  }
+  if (Object.keys(patches).length === 0) return rule;
+  return transform(rule, patches);
+}
+function applyOptionalKeywordViaTransform(ruleName, rule) {
+  const patches = {};
+  collectOptionalKeywordPatches(ruleName, rule, "", patches);
+  if (Object.keys(patches).length === 0) return rule;
+  return transform(rule, patches);
+}
+function peelOptional(rule) {
+  if (isOptionalType(rule.type)) {
+    return { inner: rule.content, isOptional: true };
+  }
+  if (isChoiceType(rule.type)) {
+    const members = rule.members;
+    if (members.length === 2) {
+      const blankIdx = members.findIndex((m) => m.type === "BLANK" || m.type === "blank");
+      if (blankIdx !== -1) {
+        const inner = members[1 - blankIdx];
+        return { inner, isOptional: true };
+      }
+    }
+  }
+  return { inner: rule, isOptional: false };
+}
+function collectOptionalKeywordPatches(ruleName, rule, prefix, patches) {
+  if (isSeqType(rule.type)) {
+    const raw = rule.members;
+    const claimed = collectFieldNamesRuntime(rule);
+    for (let i = 0; i < raw.length; i++) {
+      const m = normalizeMember(raw[i]);
+      const peeled = peelOptional(m);
+      if (peeled.isOptional) {
+        const innerN = normalizeMember(peeled.inner);
+        if (isStringType(innerN.type)) {
+          const kw = innerN.value;
+          if (typeof kw === "string" && isIdentifierShaped(kw)) {
+            if (claimed.has(kw)) {
+              reportSkip("optional-keyword-prefix", ruleName, `field '${kw}' already exists`);
+              continue;
+            }
+            claimed.add(kw);
+            let innerPath;
+            if (isOptionalType(m.type)) {
+              innerPath = "0";
+            } else {
+              const cm = m.members;
+              const strIdx = cm.findIndex((x) => {
+                const n = normalizeMember(x);
+                return n.type !== "BLANK" && n.type !== "blank";
+              });
+              innerPath = String(strIdx);
+            }
+            const fullPath = prefix ? `${prefix}/${i}/${innerPath}` : `${i}/${innerPath}`;
+            patches[fullPath] = field(kw);
+            continue;
+          }
+        }
+      }
+      const childPrefix = prefix ? `${prefix}/${i}` : `${i}`;
+      collectOptionalKeywordPatches(ruleName, m, childPrefix, patches);
+    }
+    return;
+  }
+  if (isChoiceType(rule.type)) {
+    const raw = rule.members;
+    for (let i = 0; i < raw.length; i++) {
+      const childPrefix = prefix ? `${prefix}/${i}` : `${i}`;
+      const m = normalizeMember(raw[i]);
+      collectOptionalKeywordPatches(ruleName, m, childPrefix, patches);
+    }
+    return;
+  }
+  if (isOptionalType(rule.type) || isRepeatType(rule.type) || isFieldType(rule.type)) {
+    const inner = normalizeMember(rule.content);
+    const childPrefix = prefix ? `${prefix}/0` : `0`;
+    collectOptionalKeywordPatches(ruleName, inner, childPrefix, patches);
+  }
+}
+function applyBareKeywordViaTransform(ruleName, rule) {
+  if (!isSeqType(rule.type)) return rule;
+  const raw = rule.members;
+  const first = raw[0];
+  if (first === void 0) return rule;
+  const normFirst = normalizeMember(first);
+  if (!isStringType(normFirst.type)) return rule;
+  const kw = normFirst.value;
+  if (typeof kw !== "string" || !isIdentifierShaped(kw)) return rule;
+  const existing = collectFieldNamesRuntime(rule);
+  if (existing.has(kw)) {
+    reportSkip("bare-keyword-prefix", ruleName, `field '${kw}' already exists`);
+    return rule;
+  }
+  return transform(
+    rule,
+    { 0: field(kw) }
+  );
 }
 function isIdentifierShaped(value) {
   return /^[A-Za-z_][A-Za-z0-9_]*$/.test(value);
@@ -417,6 +654,9 @@ function reportSkip(pass, ruleName, reason) {
   process.stderr.write(`enrich: skipped ${pass} on ${ruleName} (${reason})
 `);
 }
+
+// packages/codegen/src/dsl/index.ts
+installGrammarWrapper();
 
 // packages/typescript/overrides.ts
 var overrides_default = grammar(enrich(import_grammar.default), {

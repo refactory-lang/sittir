@@ -9,6 +9,23 @@ function mkGrammar(rules: Record<string, Rule>) {
     return { grammar: { name: 'test', rules } }
 }
 
+// enrich() now emits an `__enrichOverrides__` side-channel (callbacks
+// that grammar() invokes at rule evaluation time). For unit tests we
+// drive each override with the original base rule to get the enriched
+// output, mirroring what grammar() does under both runtimes.
+function runEnrich(input: ReturnType<typeof mkGrammar>) {
+    const out = enrich(input) as unknown as {
+        grammar: { rules: Record<string, Rule> }
+        __enrichOverrides__?: Record<string, (_$: unknown, original: Rule) => Rule>
+    }
+    const overrides = out.__enrichOverrides__ ?? {}
+    const result: Record<string, Rule> = {}
+    for (const [name, rule] of Object.entries(input.grammar.rules)) {
+        result[name] = overrides[name]?.({}, rule) ?? rule
+    }
+    return { ...out, grammar: { ...out.grammar, rules: result } }
+}
+
 describe('enrich()', () => {
     beforeAll(() => { installFakeDsl() })
     afterAll(() => { restoreFakeDsl() })
@@ -65,7 +82,7 @@ describe('enrich()', () => {
                     ],
                 },
             })
-            const out = enrich(input)
+            const out = runEnrich(input)
             const rule = out.grammar.rules.call as { type: 'seq', members: Rule[] }
             expect(rule.members[0]).toMatchObject({
                 type: 'field',
@@ -99,7 +116,7 @@ describe('enrich()', () => {
                     ],
                 },
             })
-            const out = enrich(input)
+            const out = runEnrich(input)
             const rule = out.grammar.rules.foo as { type: 'seq', members: Rule[] }
             // Second member (bare symbol) stays bare — already-taken name
             expect(rule.members[1]).toMatchObject({ type: 'symbol', name: 'expression' })
@@ -118,7 +135,7 @@ describe('enrich()', () => {
                     ],
                 },
             })
-            const out = enrich(input)
+            const out = runEnrich(input)
             const rule = out.grammar.rules.binary_expr as { type: 'seq', members: Rule[] }
             // Both stays bare — ambiguous which is THE expression
             expect(rule.members[0]).toMatchObject({ type: 'symbol', name: 'expression' })
@@ -135,7 +152,7 @@ describe('enrich()', () => {
                     ],
                 },
             })
-            const out = enrich(input)
+            const out = runEnrich(input)
             const rule = out.grammar.rules.foo as { type: 'seq', members: Rule[] }
             // Hidden kind stays bare — sittir Link handles alias resolution
             expect(rule.members[0]).toMatchObject({ type: 'symbol', name: '_statement' })
@@ -156,7 +173,7 @@ describe('enrich()', () => {
                     ],
                 },
             })
-            const out = enrich(input)
+            const out = runEnrich(input)
             const rule = out.grammar.rules.assign as { type: 'seq', members: Rule[] }
             // Existing field preserved
             expect(rule.members[0]).toMatchObject({ type: 'field', name: 'left' })
@@ -181,19 +198,19 @@ describe('enrich()', () => {
                     ],
                 },
             })
-            const out = enrich(input)
+            const out = runEnrich(input)
             const rule = out.grammar.rules.function_definition as { type: 'seq', members: Rule[] }
-            // The optional wrapper is preserved, its content is now a field.
-            // Tagged 'inferred' — tree-sitter strips FIELD wrappers inside
-            // CHOICE(X, BLANK), so the field stays sittir-internal and
-            // needs the runtime routing map (source='inferred' entries).
+            // optional(field(kw, SYMBOL(_kw_async))) — the FIELD's
+            // content is a synthesized SYMBOL reference so tree-sitter's
+            // normalizer preserves it. Tagged 'override' now that the
+            // parser carries the field natively.
             expect(rule.members[0]).toMatchObject({
                 type: 'optional',
                 content: {
                     type: 'field',
                     name: 'async',
-                    content: { type: 'string', value: 'async' },
-                    source: 'inferred',
+                    content: { type: 'symbol', name: '_kw_async' },
+                    source: 'override',
                 },
             })
             // 'def' is NOT promoted — bare leading literal, only the
@@ -211,7 +228,7 @@ describe('enrich()', () => {
                     ],
                 },
             })
-            const out = enrich(input)
+            const out = runEnrich(input)
             const rule = out.grammar.rules.conditional as { type: 'seq', members: Rule[] }
             // '::' is punctuation — untouched
             expect(rule.members[0]).toMatchObject({
@@ -235,7 +252,7 @@ describe('enrich()', () => {
                     ],
                 },
             })
-            const out = enrich(input)
+            const out = runEnrich(input)
             const rule = out.grammar.rules.decorated_fn as { type: 'seq', members: Rule[] }
             // Second member stays unpromoted — collision
             expect(rule.members[1]).toMatchObject({
@@ -268,7 +285,7 @@ describe('enrich()', () => {
                     ],
                 },
             })
-            const out = enrich(input)
+            const out = runEnrich(input)
             const rule = out.grammar.rules.stmt as { type: 'choice', members: Array<{ type: 'seq', members: Rule[] }> }
             // Both choice branches get the optional-keyword promotion
             const branch0 = rule.members[0]!
@@ -296,7 +313,7 @@ describe('enrich()', () => {
                     },
                 },
             })
-            const out = enrich(input)
+            const out = runEnrich(input)
             const rule = out.grammar.rules.block as { type: 'repeat', content: { type: 'seq', members: Rule[] } }
             expect(rule.content.members[0]).toMatchObject({
                 type: 'optional',
@@ -316,7 +333,7 @@ describe('enrich()', () => {
                     ],
                 },
             })
-            const out = enrich(input)
+            const out = runEnrich(input)
             expect(out.grammar.rules.expr).toEqual(input.grammar.rules.expr)
         })
 
@@ -324,7 +341,7 @@ describe('enrich()', () => {
             const input = mkGrammar({
                 alias_rule: { type: 'symbol', name: 'target' },
             })
-            const out = enrich(input)
+            const out = runEnrich(input)
             expect(out.grammar.rules.alias_rule).toEqual(input.grammar.rules.alias_rule)
         })
     })

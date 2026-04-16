@@ -98,7 +98,22 @@ export function installGrammarWrapper(): void {
         // doesn't throw on unknown names. alias() placeholders
         // register names via registerSyntheticRule.
         currentSyntheticRules = new Map()
+        const base = args.length > 1 ? (args[0] as {
+            rules?: Record<string, (...a: unknown[]) => unknown>
+            __enrichOverrides__?: Record<string, (...a: unknown[]) => unknown>
+        }) : undefined
         const opts = (args.length > 1 ? args[1] : args[0]) as { rules?: Record<string, (...a: unknown[]) => unknown> } | undefined
+        // Merge enrich-generated overrides from base into opts.rules.
+        // enrich() emits these as a side-channel; wrappedGrammar splices
+        // them into the override bag so pass 1 dry-run sees them and
+        // discovers synthetic rules registered during transform().
+        // User overrides (already in opts.rules) win on name collisions.
+        if (base?.__enrichOverrides__ && opts) {
+            if (!opts.rules) opts.rules = {}
+            for (const [name, fn] of Object.entries(base.__enrichOverrides__)) {
+                if (!(name in opts.rules)) opts.rules[name] = fn
+            }
+        }
         if (opts?.rules) {
             const permissive = new Proxy({}, {
                 get(_: unknown, name: string) {
@@ -108,7 +123,18 @@ export function installGrammarWrapper(): void {
             for (const [name, ruleFn] of Object.entries(opts.rules)) {
                 if (typeof ruleFn === 'function') {
                     currentRuleKind = name
-                    try { ruleFn.call(permissive, permissive, undefined) } catch { /* ignore */ }
+                    // Pre-evaluate the corresponding base rule so the
+                    // override's `original` arg is an inspectable tree.
+                    // Needed for enrich-generated overrides that call
+                    // transform(original, ...) with position-dependent
+                    // patches — without a real original they can't
+                    // register synthetic rules in pass 1.
+                    let baseOriginal: unknown = undefined
+                    const baseFn = base?.rules?.[name]
+                    if (typeof baseFn === 'function') {
+                        try { baseOriginal = baseFn.call(permissive, permissive, undefined) } catch { /* ignore */ }
+                    }
+                    try { ruleFn.call(permissive, permissive, baseOriginal) } catch { /* ignore */ }
                     finally { currentRuleKind = null }
                 }
             }

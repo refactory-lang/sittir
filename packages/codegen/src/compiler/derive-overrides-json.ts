@@ -83,23 +83,20 @@ function collectFields(
         }
 
         case 'field': {
-            // The runtime routing map is a FALLBACK for fields the parser
-            // doesn't surface natively. Sources:
-            //
-            // - `override` — transform()-applied via field() placeholder +
-            //                 resolvePatch. The placeholder delegates to
-            //                 the runtime's native FIELD/field, so
-            //                 tree-sitter's parser-generator sees the
-            //                 wrapper. SKIPPED — parser carries it.
-            // - `inferred` — enrich()-promoted (+ Link heuristic).
-            //                 enrich is currently a no-op under tree-sitter
-            //                 CLI, so these fields are sittir-internal
-            //                 only and the parser does NOT carry them.
-            //                 KEPT — routing fallback handles them.
-            // - `grammar`  — base grammar native field. SKIPPED.
+            // Routing map kept for fields the parser doesn't surface:
+            // - `override` — parser carries (transform/enrich.kindToName).
+            //                 SKIPPED.
+            // - `inferred` — enrich bareKeyword / optionalKeyword. Tree-
+            //                 sitter strips these, so the routing map
+            //                 still drives readNode's field promotion
+            //                 for them. KEPT. readNode also has an
+            //                 anonymous-token fallback (see
+            //                 promoteAnonymousKeyword) but the routing
+            //                 entries carry the canonical position/type
+            //                 metadata needed by render's field lookup.
+            // - `grammar`  — native field. SKIPPED.
             // - undefined  — full-replacement override rules. KEPT when
-            //                 ctx.inOverrideRule (the user wrote them
-            //                 outside the field placeholder pipeline).
+            //                 ctx.inOverrideRule.
             const isFirstPartyField =
                 rule.source === 'inferred'
                 || (ctx.inOverrideRule && rule.source !== 'override' && rule.source !== 'grammar')

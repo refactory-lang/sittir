@@ -675,6 +675,19 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
         opts = options
     }
 
+    // Merge enrich-generated override callbacks from the base grammar's
+    // __enrichOverrides__ side-channel (set by enrich() in dsl/enrich.ts)
+    // into opts.rules — mirrors what wrappedGrammar does under tree-
+    // sitter CLI so both runtimes process enrich identically. User
+    // overrides (already in opts.rules) win on name collisions.
+    const enrichOverrides = (optionsOrBase as { __enrichOverrides__?: Record<string, (...a: any[]) => any> }).__enrichOverrides__
+    if (enrichOverrides && opts) {
+        if (!opts.rules) opts.rules = {} as Record<string, (...a: any[]) => any>
+        for (const [name, fn] of Object.entries(enrichOverrides)) {
+            if (!(name in opts.rules)) opts.rules[name] = fn
+        }
+    }
+
     // Seed the refs array with the base grammar's references so the
     // diagnostic derivations in Link can see the full reference graph,
     // not just the handful of refs introduced by override callbacks.

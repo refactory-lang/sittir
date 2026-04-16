@@ -6,7 +6,7 @@ rules:
   import_statement: $IMPORT $$$NAME
   relative_import: $IMPORT_PREFIX $DOTTED_NAME
   future_import_statement: $FROM __future__ import $$$NAME$$$CHILDREN
-  import_from_statement: $FROM $MODULE_NAME import $WILDCARD_IMPORT
+  import_from_statement: from $MODULE_NAME import $WILDCARD_IMPORT
   aliased_import: $NAME as $ALIAS
   print_statement:
     template: print $$$CHILDREN $$$ARGUMENT
@@ -36,14 +36,14 @@ rules:
   for_statement: "$ASYNC for $LEFT in $RIGHT:\n  $BODY\n$ALTERNATIVE"
   while_statement: "$WHILE $CONDITION:\n  $BODY\n$ALTERNATIVE"
   try_statement:
-    template: "$TRY:\n  $BODY\n$$$EXCEPT_CLAUSES $ELSE_CLAUSE $FINALLY_CLAUSE"
+    template: "try:\n  $BODY\n$$$EXCEPT_CLAUSES $ELSE_CLAUSE $FINALLY_CLAUSE"
     joinByField:
       except_clauses: "\n"
   except_clause:
     template: "$EXCEPT $$$VALUE $ALIAS_CLAUSE:$$$CHILDREN"
     alias_clause: as $ALIAS
     joinBy: ","
-  finally_clause: "$FINALLY:\n  $BLOCK\n"
+  finally_clause: "finally:\n  $BLOCK\n"
   with_statement: "$ASYNC with $WITH_CLAUSE:\n  $BODY\n"
   with_clause:
     template: $$$CHILDREN
@@ -134,7 +134,7 @@ rules:
   call: $FUNCTION $ARGUMENTS
   typed_parameter: "$$$CHILDREN:$TYPE"
   type: $$$CHILDREN
-  splat_type: $$$IDENTIFIER
+  splat_type: $IDENTIFIER $$$CHILDREN
   generic_type: $IDENTIFIER $TYPE_PARAMETER
   union_type: $LEFT|$RIGHT
   constrained_type: "$BASE_TYPE:$CONSTRAINT"
@@ -157,7 +157,7 @@ rules:
     joinBy: ","
     joinByField:
       right: ","
-  if_clause: $IF $EXPRESSION
+  if_clause: if $EXPRESSION
   conditional_expression: $BODY if $CONDITION else $ALTERNATIVE
   concatenated_string: $STRING $$$CHILDREN
   string:
@@ -167,7 +167,7 @@ rules:
   string_content: $$$CHILDREN
   interpolation: "{$EXPRESSION $TYPE_CONVERSION $FORMAT_SPECIFIER}"
   format_specifier: ":$$$CHILDREN"
-  await: $AWAIT $PRIMARY_EXPRESSION
+  await: await $PRIMARY_EXPRESSION
   as_pattern_target: $$$CHILDREN
   assignment_eq: =$RIGHT
   assignment_type: ":$TYPE"

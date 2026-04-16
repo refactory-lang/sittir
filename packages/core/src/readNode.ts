@@ -197,6 +197,31 @@ export const buildFieldPromotionMap = buildRoutingMap;
  * @param nodeId - If provided, read this node; otherwise read the root
  * @param routing - Precomputed routing map (from buildRoutingMap)
  */
+/**
+ * Promote any anonymous token to a field keyed by its text. Covers the
+ * mechanical cases that tree-sitter's grammar normalizer strips — FIELD
+ * wrappers around bare STRING literals and FIELDs inside CHOICE(X, BLANK).
+ * Mirrors enrich's bareKeyword / optionalKeyword passes, applied to the
+ * live parse tree without shape-checking — any anonymous child gets a
+ * field named after its text (keywords, operators, delimiters alike).
+ * Named children have their own kind and stay in the standard placement
+ * path; anonymous collisions with an already-claimed field are skipped.
+ *
+ * Returns true when the token was promoted.
+ */
+function promoteAnonymousKeyword(
+	child: AnyTreeNode,
+	entry: AnyNodeData,
+	fields: Record<string, AnyNodeData | AnyNodeData[]>,
+): boolean {
+	if (child.isNamed()) return false;
+	const text = entry.text ?? '';
+	if (text.length === 0) return false;
+	if (fields[text] !== undefined) return false;
+	fields[text] = entry;
+	return true;
+}
+
 export function readNode(tree: TreeHandle, nodeId?: number, routing?: RoutingMap): AnyNodeData {
 	const node = nodeId != null ? tree.nodeById(nodeId) : tree.rootNode;
 
@@ -233,6 +258,8 @@ export function readNode(tree: TreeHandle, nodeId?: number, routing?: RoutingMap
 			}
 		} else if (maps?.ambiguousKinds.has(child.type)) {
 			pendingAmbiguous.push(entry);
+		} else if (promoteAnonymousKeyword(child, entry, fields)) {
+			// Promoted to a keyword field — no further placement needed.
 		} else {
 			children.push(entry);
 		}

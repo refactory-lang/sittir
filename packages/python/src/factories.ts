@@ -63,6 +63,7 @@ const RESERVED_KEYWORDS: ReadonlySet<string> = new Set([
   'import',
   'in',
   'is',
+  'lambda',
   'match',
   'nonlocal',
   'not',
@@ -172,7 +173,6 @@ export function futureImportStatement(config: T.FutureImportStatementConfig) {
 
 export function importFromStatement(config: T.ImportFromStatementConfig) {
   const fields = {
-    from: config?.from,
     module_name: config?.moduleName,
     wildcard_import: config?.wildcardImport,
   };
@@ -180,7 +180,6 @@ export function importFromStatement(config: T.ImportFromStatementConfig) {
     type: 'import_from_statement' as const,
     named: true as const,
     fields,
-    from(from_?: "from") { return _fs(config, importFromStatement, 'from', from_, fields.from); },
     moduleName(moduleName_?: T.RelativeImport | T.DottedName) { return _fs(config, importFromStatement, 'moduleName', moduleName_, fields.module_name); },
     wildcardImport(wildcardImport_?: T.WildcardImport | T.ImportList) { return _fs(config, importFromStatement, 'wildcardImport', wildcardImport_, fields.wildcard_import); },
     render() { return render(this); },
@@ -542,7 +541,7 @@ export function forStatement(config: T.ForStatementConfig) {
     type: 'for_statement' as const,
     named: true as const,
     fields,
-    async(async_?: "async" | undefined) { return _fs(config, forStatement, 'async', async_, fields.async); },
+    async(async_?: T.KwAsync | undefined) { return _fs(config, forStatement, 'async', async_, fields.async); },
     left(left_?: T.LeftHandSide) { return _fs(config, forStatement, 'left', left_, fields.left); },
     right(right_?: T.Expressions) { return _fs(config, forStatement, 'right', right_, fields.right); },
     body(body_?: T.Suite) { return _fs(config, forStatement, 'body', body_, fields.body); },
@@ -582,7 +581,6 @@ export function whileStatement(config: T.WhileStatementConfig) {
 
 export function tryStatement(config: T.TryStatementConfig) {
   const fields = {
-    try: config?.try,
     body: config?.body,
     except_clauses: config?.exceptClauses,
     else_clause: config?.elseClause,
@@ -592,7 +590,6 @@ export function tryStatement(config: T.TryStatementConfig) {
     type: 'try_statement' as const,
     named: true as const,
     fields,
-    try(try_?: "try") { return _fs(config, tryStatement, 'try', try_, fields.try); },
     body(body_?: T.Suite) { return _fs(config, tryStatement, 'body', body_, fields.body); },
     exceptClauses(...exceptClauses_: T.ExceptClause[]) { return _fsm(config, tryStatement, 'exceptClauses', exceptClauses_, fields.except_clauses); },
     elseClause(elseClause_?: T.ElseClause | undefined) { return _fs(config, tryStatement, 'elseClause', elseClause_, fields.else_clause); },
@@ -634,14 +631,12 @@ export function exceptClause(config: T.ExceptClauseConfig) {
 
 export function finallyClause(config: T.FinallyClauseConfig) {
   const fields = {
-    finally: config?.finally,
     block: config?.block,
   };
   return {
     type: 'finally_clause' as const,
     named: true as const,
     fields,
-    finally(finally_?: "finally") { return _fs(config, finallyClause, 'finally', finally_, fields.finally); },
     block(block_?: T.Suite) { return _fs(config, finallyClause, 'block', block_, fields.block); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -662,7 +657,7 @@ export function withStatement(config: T.WithStatementConfig) {
     type: 'with_statement' as const,
     named: true as const,
     fields,
-    async(async_?: "async" | undefined) { return _fs(config, withStatement, 'async', async_, fields.async); },
+    async(async_?: T.KwAsync | undefined) { return _fs(config, withStatement, 'async', async_, fields.async); },
     withClause(withClause_?: T.WithClause) { return _fs(config, withStatement, 'withClause', withClause_, fields.with_clause); },
     body(body_?: T.Suite) { return _fs(config, withStatement, 'body', body_, fields.body); },
     render() { return render(this); },
@@ -720,7 +715,7 @@ export function functionDefinition(config: T.FunctionDefinitionConfig) {
     type: 'function_definition' as const,
     named: true as const,
     fields,
-    async(async_?: "async" | undefined) { return _fs(config, functionDefinition, 'async', async_, fields.async); },
+    async(async_?: T.KwAsync | undefined) { return _fs(config, functionDefinition, 'async', async_, fields.async); },
     name(name_?: T.Identifier) { return _fs(config, functionDefinition, 'name', name_, fields.name); },
     typeParameters(typeParameters_?: T.TypeParameter | undefined) { return _fs(config, functionDefinition, 'typeParameters', typeParameters_, fields.type_parameters); },
     parameters(parameters_?: T.Parameters) { return _fs(config, functionDefinition, 'parameters', parameters_, fields.parameters); },
@@ -1323,7 +1318,7 @@ export function notOperator(config: T.NotOperatorConfig) {
     type: 'not_operator' as const,
     named: true as const,
     fields,
-    not(not_?: "not") { return _fs(config, notOperator, 'not', not_, fields.not); },
+    not(not_?: T.KwNot) { return _fs(config, notOperator, 'not', not_, fields.not); },
     argument(argument_?: T.Expression) { return _fs(config, notOperator, 'argument', argument_, fields.argument); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -1428,7 +1423,7 @@ export function lambda(config: T.LambdaConfig) {
     type: 'lambda' as const,
     named: true as const,
     fields,
-    lambda(lambda_?: "lambda") { return _fs(config, lambda, 'lambda', lambda_, fields.lambda); },
+    lambda(lambda_?: T.KwLambda) { return _fs(config, lambda, 'lambda', lambda_, fields.lambda); },
     parameters(parameters_?: T.LambdaParameters | undefined) { return _fs(config, lambda, 'parameters', parameters_, fields.parameters); },
     body(body_?: T.Expression) { return _fs(config, lambda, 'body', body_, fields.body); },
     render() { return render(this); },
@@ -1450,7 +1445,7 @@ export function lambdaWithinForInClause(config: T.LambdaWithinForInClauseConfig)
     type: 'lambda_within_for_in_clause' as const,
     named: true as const,
     fields,
-    lambda(lambda_?: "lambda") { return _fs(config, lambdaWithinForInClause, 'lambda', lambda_, fields.lambda); },
+    lambda(lambda_?: T.KwLambda) { return _fs(config, lambdaWithinForInClause, 'lambda', lambda_, fields.lambda); },
     parameters(parameters_?: T.LambdaParameters | undefined) { return _fs(config, lambdaWithinForInClause, 'parameters', parameters_, fields.parameters); },
     body(body_?: T.ExpressionWithinForInClause) { return _fs(config, lambdaWithinForInClause, 'body', body_, fields.body); },
     render() { return render(this); },
@@ -1727,11 +1722,15 @@ export function splatType(config: T.SplatTypeConfig) {
   const fields = {
     identifier: config?.identifier,
   };
+  const children = config?.children ?? [];
   return {
     type: 'splat_type' as const,
     named: true as const,
     fields,
+    children,
     identifier(identifier_?: "*" | "**") { return _fs(config, splatType, 'identifier', identifier_, fields.identifier); },
+    getChild() { return children[0]; },
+    setChild(child: T.Identifier) { return splatType({ ...(config ?? {}), children: [child] }); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2033,7 +2032,7 @@ export function forInClause(config: T.ForInClauseConfig) {
     type: 'for_in_clause' as const,
     named: true as const,
     fields,
-    async(async_?: "async" | undefined) { return _fs(config, forInClause, 'async', async_, fields.async); },
+    async(async_?: T.KwAsync | undefined) { return _fs(config, forInClause, 'async', async_, fields.async); },
     left(left_?: T.LeftHandSide) { return _fs(config, forInClause, 'left', left_, fields.left); },
     right(...right_: NonEmptyArray<string>) { return _fsm(config, forInClause, 'right', right_, fields.right); },
     render() { return render(this); },
@@ -2047,14 +2046,12 @@ export function forInClause(config: T.ForInClauseConfig) {
 
 export function ifClause(config: T.IfClauseConfig) {
   const fields = {
-    if: config?.if,
     expression: config?.expression,
   };
   return {
     type: 'if_clause' as const,
     named: true as const,
     fields,
-    if(if_?: "if") { return _fs(config, ifClause, 'if', if_, fields.if); },
     expression(expression_?: T.Expression) { return _fs(config, ifClause, 'expression', expression_, fields.expression); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -2279,14 +2276,12 @@ export function none() {
 
 export function await_(config: T.AwaitConfig) {
   const fields = {
-    await: config?.await,
     primary_expression: config?.primaryExpression,
   };
   return {
     type: 'await' as const,
     named: true as const,
     fields,
-    await(await__?: "await") { return _fs(config, await_, 'await', await__, fields.await); },
     primaryExpression(primaryExpression_?: T.PrimaryExpression) { return _fs(config, await_, 'primaryExpression', primaryExpression_, fields.primary_expression); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {

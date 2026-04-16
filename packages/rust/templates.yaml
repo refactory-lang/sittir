@@ -62,8 +62,10 @@ rules:
   impl_item:
     template: $UNSAFE impl $TYPE_PARAMETERS $TRAIT_CLAUSE $TYPE $$$CHILDREN $BODY
     trait_clause: $TRAIT for
-  trait_item: $VISIBILITY_MODIFIER $UNSAFE trait $NAME $TYPE_PARAMETERS $BOUNDS $$$CHILDREN $BODY
-  associated_type: $TYPE $NAME $TYPE_PARAMETERS $BOUNDS $WHERE_CLAUSE;
+  trait_item:
+    template: $VISIBILITY_MODIFIER $UNSAFE_CLAUSE trait $NAME $TYPE_PARAMETERS $BOUNDS $$$CHILDREN $BODY
+    unsafe_clause: $UNSAFE
+  associated_type: type $NAME $TYPE_PARAMETERS $BOUNDS $WHERE_CLAUSE;
   trait_bounds:
     template: ":$$$CHILDREN"
     joinBy: +
@@ -80,7 +82,7 @@ rules:
     default_type_clause: =$DEFAULT_TYPE
   lifetime_parameter: $NAME $BOUNDS
   let_declaration:
-    template: $LET $MUTABLE_SPECIFIER $PATTERN $TYPE_CLAUSE $VALUE_CLAUSE $ALTERNATIVE_CLAUSE;
+    template: let $MUTABLE_SPECIFIER $PATTERN $TYPE_CLAUSE $VALUE_CLAUSE $ALTERNATIVE_CLAUSE;
     type_clause: ":$TYPE"
     value_clause: =$VALUE
     alternative_clause: else $ALTERNATIVE
@@ -96,12 +98,12 @@ rules:
   parameters:
     template: ($$$CHILDREN)
     joinBy: ","
-  self_parameter: $LIFETIME $MUTABLE_SPECIFIER $$$SELF
+  self_parameter: $LIFETIME $MUTABLE_SPECIFIER $SELF $$$CHILDREN
   variadic_parameter:
     template: $MUTABLE_SPECIFIER $PATTERN_CLAUSE...
     pattern_clause: "$PATTERN:"
   parameter: "$MUTABLE_SPECIFIER $PATTERN:$TYPE"
-  extern_modifier: $EXTERN $STRING_LITERAL
+  extern_modifier: extern $STRING_LITERAL
   visibility_modifier:
     variants:
       form0: $$$CHILDREN
@@ -135,7 +137,7 @@ rules:
   reference_type: "&$LIFETIME $MUTABLE_SPECIFIER $TYPE"
   pointer_type: "*$MUTABLE_SPECIFIER $TYPE"
   abstract_type:
-    template: $IMPL $TYPE_PARAMETERS_CLAUSE $TRAIT
+    template: impl $TYPE_PARAMETERS_CLAUSE $TRAIT
     type_parameters_clause: for$TYPE_PARAMETERS
   dynamic_type: $DYN $TRAIT
   macro_invocation: $MACRO!$TOKEN_TREE
@@ -212,15 +214,19 @@ rules:
     template: "|$$$CHILDREN|"
     joinBy: ","
   label: "'$IDENTIFIER"
-  break_expression: $BREAK $LABEL $EXPRESSION
-  continue_expression: $CONTINUE $LABEL
+  break_expression: break $LABEL $EXPRESSION
+  continue_expression: continue $LABEL
   index_expression: "$OBJECT[$INDEX]"
   await_expression: $$$CHILDREN.await
   field_expression: $VALUE.$FIELD
-  unsafe_block: $UNSAFE $BLOCK
-  async_block: $ASYNC $MOVE $BLOCK
-  gen_block: $GEN $MOVE $BLOCK
-  try_block: $TRY $BLOCK
+  unsafe_block: unsafe $BLOCK
+  async_block:
+    template: async $MOVE_CLAUSE $BLOCK
+    move_clause: $MOVE
+  gen_block:
+    template: gen $MOVE_CLAUSE $BLOCK
+    move_clause: $MOVE
+  try_block: try $BLOCK
   block:
     template: "$LABEL_CLAUSE{$$$CHILDREN}"
     label_clause: "$LABEL:"
@@ -239,8 +245,9 @@ rules:
     joinBy: ","
   field_pattern:
     variants:
-      shorthand: $REF $MUTABLE_SPECIFIER $$$CHILDREN
-      named: $REF $MUTABLE_SPECIFIER $$$CHILDREN
+      shorthand: $REF_CLAUSE $MUTABLE_SPECIFIER $$$CHILDREN
+      named: $REF_CLAUSE $MUTABLE_SPECIFIER $$$CHILDREN
+    ref_clause: $REF
   mut_pattern: $MUTABLE_SPECIFIER $PATTERN
   range_pattern:
     variants:
