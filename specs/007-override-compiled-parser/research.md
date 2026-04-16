@@ -94,21 +94,21 @@ Delete 3 mutating passes from link.ts. Preserve 1 as suggestion-only. Keep 1 unc
 
 ---
 
-## R5: Emscripten / WASM Build Requirements
+## R5: WASM Build Requirements — wasi-sdk, not Emscripten
 
 ### Decision
-Document Emscripten as a build prerequisite. tree-sitter build --wasm invokes emsdk internally.
+tree-sitter-cli 0.26+ uses **wasi-sdk** (auto-downloaded to `~/.cache/tree-sitter/wasi-sdk/`) for WASM builds. No Emscripten or Docker needed.
 
 ### Rationale
-- `tree-sitter build --wasm` requires Emscripten (emsdk) installed and in PATH.
-- CI runners (GitHub Actions) need `emsdk` setup step.
-- Dev machines need Emscripten installed once.
-- Alternative: `tree-sitter build` without `--wasm` produces native .so/.dylib, but that doesn't work with web-tree-sitter's Language.load().
+- Verified: `tree-sitter build --wasm` automatically downloads wasi-sdk on first use (~106MB, cached in `~/.cache/tree-sitter/`).
+- No manual install required on dev machines or CI.
+- First build: ~10s (wasi-sdk download + compile). Subsequent builds: sub-second (wasi-sdk cached).
+- Python override parser WASM: 463KB.
 
 ### CI Impact
-- Add emsdk setup to CI workflow (if not already present).
-- WASM compilation is slower than native (~10-30s per grammar vs ~2-5s). May affect SC-005.
+- No extra setup step needed — tree-sitter-cli handles wasi-sdk download automatically.
 - WASM artifacts are platform-independent — simplifies cache strategy.
+- Cold compile well within SC-005 (30s) budget.
 
 ---
 
