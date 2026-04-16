@@ -75,9 +75,10 @@ Find nodes with ast-grep, read into typed NodeData, modify with fluent setters, 
 
 ```ts
 import { parse, Lang } from '@ast-grep/napi'
+import { replace } from '@sittir/core'
 import { ir, readTreeNode } from '@sittir/rust'
 
-// 1. Find all `pub fn` items using ast-grep
+// 1. Find all function items using ast-grep
 const root = parse(Lang.Rust, source).root()
 const matches = root.findAll({ rule: { kind: 'function_item' } })
 
@@ -87,12 +88,12 @@ for (const match of matches) {
 
   // 3. Modify — fluent setter returns a new node (immutable)
   const updated = fn
-    .visibilityModifier(ir.visibilityModifier({ children: [] }))  // add `pub`
-    .body(fn.body())                                               // keep body
+    .visibilityModifier(ir.visibilityModifier({ children: [] }))
+    .body(fn.body())
 
-  // 4. Produce a text edit: { startPos, endPos, insertedText }
-  const edit = updated.replace(match)
-  // Apply edit to source text...
+  // 4. replace() renders the node and pairs it with the target's byte range
+  const edit = replace(match, updated)
+  // edit = { startPos, endPos, insertedText }
 }
 ```
 
@@ -139,10 +140,13 @@ for (const match of matches) {
 Factory input (Config, camelCase) ──▶ Factory output (NodeData + fluent getters/setters)
 From input (strings, numbers) ──────▶ Factory (via resolution) ──▶ NodeData
 SgNode/TreeNode ──▶ readNode() ──▶ NodeData ──▶ readTreeNode() ──▶ NodeData + routing + lazy getters
+NodeData + target ──▶ replace(target, node) ──▶ Edit { startPos, endPos, insertedText }
 Render input (AnyNodeData) ─────────▶ Source text (YAML template expansion)
 ```
 
-`readNode()` (core) maps parse tree fields to raw `NodeData`. `readTreeNode()` (generated, per-grammar) adds override routing and wires up lazy getters for child traversal — this is the client-facing entry point.
+- `readNode()` (core) maps parse tree fields to raw `NodeData`.
+- `readTreeNode()` (generated, per-grammar) adds override routing and lazy getters — the client entry point.
+- `replace(target, node)` (core) renders the replacement and pairs it with the target's byte range — one call to go from NodeData to a text edit.
 
 ## Override DSL
 
