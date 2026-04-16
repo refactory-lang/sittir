@@ -75,7 +75,7 @@ Find nodes with ast-grep, read into typed NodeData, modify with fluent setters, 
 
 ```ts
 import { parse, Lang } from '@ast-grep/napi'
-import { ir, readNode } from '@sittir/rust'
+import { ir, readTreeNode } from '@sittir/rust'
 
 // 1. Find all `pub fn` items using ast-grep
 const root = parse(Lang.Rust, source).root()
@@ -83,7 +83,7 @@ const matches = root.findAll({ rule: { kind: 'function_item' } })
 
 for (const match of matches) {
   // 2. Read the parse tree node into typed NodeData
-  const fn = readNode(match) as ReturnType<typeof ir.functionItem>
+  const fn = readTreeNode(match) as ReturnType<typeof ir.functionItem>
 
   // 3. Modify — fluent setter returns a new node (immutable)
   const updated = fn
