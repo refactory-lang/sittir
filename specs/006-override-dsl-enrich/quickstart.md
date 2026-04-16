@@ -13,27 +13,19 @@ This is the canonical shape a grammar maintainer starts from when authoring or u
 // packages/python/overrides.ts
 // @ts-nocheck — grammar.js is untyped
 
-import base from '../../node_modules/.pnpm/tree-sitter-python/grammar.js'
-import {
-  grammar,
-  enrich,
-  transform,
-  field,
-  alias,
-  role,
-} from '@sittir/codegen/dsl'
+import base from '../../node_modules/.pnpm/tree-sitter-python@0.25.0/node_modules/tree-sitter-python/grammar.js'
+import { transform, role, enrich, field } from '../codegen/src/dsl/index.ts'
 
 export default grammar(enrich(base), {
   name: 'python',
 
-  // Extension points — spread-merged with base
-  externals: [
-    $._indent,  role('indent'),
-    $._dedent,  role('dedent'),
-    $._newline, role('newline'),
-  ],
-
   rules: {
+    // Role declarations — map external tokens to structural roles.
+    // role() records the binding and returns the symbol unchanged.
+    _indent: ($) => role($._indent, 'indent'),
+    _dedent: ($) => role($._dedent, 'dedent'),
+    _newline: ($) => role($._newline, 'newline'),
+
     // Transform API — patches specific positions without rewriting the rule
     comparison_operator: ($, original) => transform(original, {
       0: field('left'),
@@ -41,13 +33,10 @@ export default grammar(enrich(base), {
     }),
 
     // Path-addressed patch — reach into a nested structure
-    class_pattern: ($, original) => transform(original, [
-      { path: '0',   value: field('dotted_name') },
-      { path: '2',   value: field('arguments') },
-    ]),
-
-    // alias shorthand — single arg form
-    my_alias_rule: ($) => alias($.identifier),
+    class_pattern: ($, original) => transform(original, {
+      '0': field('dotted_name'),
+      '2': field('arguments'),
+    }),
   },
 })
 ```
@@ -56,15 +45,13 @@ export default grammar(enrich(base), {
 
 ## What this file does
 
-1. **Imports sittir DSL primitives explicitly** — tree-sitter's own `grammar()` is also imported from `@sittir/codegen/dsl`, so there's no global injection. The transpile step turns this into a CJS `grammar.js` that tree-sitter's CLI can consume.
+1. **Imports sittir DSL primitives explicitly** — `transform`, `role`, `enrich`, `field` from `../codegen/src/dsl/index.ts` (relative within the monorepo). `grammar()` is a tree-sitter global provided at runtime. The transpile step inlines the DSL code into a CJS `grammar.js` that tree-sitter's CLI can consume.
 
-2. **Wraps the base grammar in `enrich()`** — three mechanical passes (keyword-prefix promotion, kind-to-name wrapping, repeat normalization) apply automatically. If any pass can't apply on a given rule, it's logged to stderr during codegen with the reason.
+2. **Wraps the base grammar in `enrich()`** — two mechanical passes (kind-to-name wrapping, optional keyword-prefix promotion) apply automatically. If any pass can't apply on a given rule, it's logged to stderr during codegen with the reason (suppressed when `SITTIR_QUIET` is set).
 
-3. **Declares additional externals** — the override's externals are appended to the base's via spread-merge with reference-equality dedupe.
+3. **Declares roles as rule overrides** — `role($._indent, 'indent')` records the binding on the per-grammar role accumulator and returns the symbol unchanged. The call site is a valid tree-sitter rule expression. Link consumes the accumulated roles later.
 
-4. **Marks external tokens as roles inline** — `role('indent')` pushes onto a per-grammar accumulator that Link reads later; the call returns `blank()` so tree-sitter accepts it.
-
-5. **Patches rules with `transform()`** — positional or path-addressed patches apply without rewriting the whole rule.
+4. **Patches rules with `transform()`** — positional (numeric keys) or path-addressed (string keys with `/`) patches apply without rewriting the whole rule. Returns `RuntimeRule` for cross-runtime compatibility.
 
 ---
 
@@ -82,7 +69,7 @@ After this file is saved:
 ## What NOT to do
 
 - ❌ Don't import from tree-sitter's DSL globals (they aren't injected).
-- ❌ Don't call `role()` at module top-level — it must be inside a `grammar(...)` scope.
+- ❌ Don't call `role()` outside a rule definition — it must be inside a `grammar(...)` scope (silent no-op outside for tree-sitter compat).
 - ❌ Don't expect enrich to apply every possible promotion — it's mechanical-only and skips collisions. Watch stderr.
 - ❌ Don't hand-edit `.sittir/grammar.js` — it's a generated artifact.
 - ❌ Don't restate the base grammar's externals/extras when you just want to add one — use spread-merge.
@@ -91,8 +78,8 @@ After this file is saved:
 
 ## Troubleshooting
 
-**"role() called outside any grammar scope"**
-You wrote `role('x')` at module top-level or inside a helper function that runs before `grammar()` is called. Move the call inside the `grammar(...)` config object.
+**role() binding not picked up by Link**
+`role(symbol, roleName)` must be called inside a rule definition within a `grammar(...)` scope. Outside that scope, role() is a silent no-op (for tree-sitter CLI compatibility). Make sure your role declarations are inside the `rules: { ... }` block.
 
 **"enrich: skipped keyword-prefix-promotion on foo (field 'bar' already exists)"**
 Enrich detected a collision and bailed. Either the promotion was already in the base grammar or an existing override covers it. This is informational, not an error.
