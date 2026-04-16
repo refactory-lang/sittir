@@ -83,28 +83,31 @@ function collectFields(
         }
 
         case 'field': {
-            // Collect override-provided fields. Native grammar fields
-            // (`source: 'grammar'`) are already surfaced by tree-sitter's
-            // runtime `fieldNameForChild`, so readNode does NOT need them
-            // in overrides.json. Full-replacement override rules (not using
-            // `transform()`) produce fields with no source; those are
-            // allowed when `ctx.inOverrideRule` is set.
-            // `override` — explicit transform() wrapping. Always picked up.
-            //   Kept here as a defensive fallback for grammars without an
-            //   override-compiled parser (where the base parser doesn't
-            //   carry these fields). With the override-compiled parser
-            //   present, readNode reads fieldNameForChild first and only
-            //   consults this routing as a fallback — no divergence risk.
-            // `inferred` — Link's auto-promotion of `optional(keyword)` prefixes
-            //   (python `async`, rust `move`, etc.) to first-class fields.
-            //   These need runtime routing so readNode promotes the anonymous
-            //   keyword token into the field at parse time.
-            // Everything else (`grammar`, undefined) — native grammar field,
-            //   already routed by tree-sitter's fieldNameForChild, skipped.
+            // The runtime routing map is a FALLBACK for fields the parser
+            // doesn't surface natively. With override-compiled parsers
+            // (spec 007), source='override' fields ARE in the parse tree
+            // (carried by tree-sitter's fieldNameForChild via the
+            // transpile bridge that runs transform()/field placeholders
+            // through native field()). Including them duplicates work
+            // and risks the routing diverging from the parser.
+            //
+            // Sources kept (need runtime promotion):
+            // - `inferred` — enrich() auto-promotion. enrich is a no-op
+            //                under tree-sitter CLI (see enrich.ts), so
+            //                these fields are NOT in the parser. Must
+            //                stay in the routing map until enrich is
+            //                made shape-aware.
+            // - undefined  — full-replacement override rules. Allowed
+            //                when ctx.inOverrideRule, since the user
+            //                wrote them outside the field() placeholder
+            //                pipeline that flows to native FIELD.
+            //
+            // Sources skipped (parser carries them):
+            // - `override` — transform()-applied. Native FIELD baked in.
+            // - `grammar`  — base grammar. Native FIELD by definition.
             const isFirstPartyField =
-                rule.source === 'override'
-                || rule.source === 'inferred'
-                || ctx.inOverrideRule
+                rule.source === 'inferred'
+                || (ctx.inOverrideRule && rule.source !== 'override' && rule.source !== 'grammar')
             const isForeignField = !isFirstPartyField
             if (isForeignField) {
                 collectFields(rule.content, ctx, out)

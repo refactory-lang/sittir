@@ -112,7 +112,13 @@ export function emitWrap(config: EmitWrapConfig): string {
             if (fields.length === 0) continue
             const overrideFields: Record<string, OverrideFieldSpec> = {}
             fields.forEach((f, idx) => {
-                if (f.source !== 'override') return
+                // Mirror derive-overrides-json: only source='inferred'
+                // (enrich auto-promotion that doesn't reach the
+                // tree-sitter parser) needs runtime routing. Explicit
+                // transform()-applied 'override' fields are baked into
+                // the override-compiled parser via the field placeholder
+                // bridge.
+                if (f.source !== 'inferred') return
                 overrideFields[f.name] = {
                     types: f.contentTypes.map(t => ({
                         type: t,

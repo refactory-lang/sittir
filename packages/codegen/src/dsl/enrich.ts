@@ -17,7 +17,7 @@
  *   1. Unambiguous kind-to-name field wrapping — when a top-level seq
  *      member is a bare `$.kind` symbol reference that appears exactly
  *      once in its parent rule and does not collide with an existing
- *      field name, wraps it as `field('kind', $.kind, source: 'override')`.
+ *      field name, wraps it as `field('kind', $.kind, source: 'inferred')`.
  *
  *   2. Optional keyword-prefix field promotion — when an
  *      `optional(stringLiteral)` appears at any seq position (including
@@ -286,16 +286,24 @@ function mapRules(g: GrammarResult, fn: (ruleName: string, rule: Rule) => Rule):
 }
 
 function wrapAsField(name: string, content: Rule): FieldRule {
-    // enrich() runs as part of the overrides pipeline (the user wraps
-    // their grammar with enrich(base) in overrides.ts), so its
-    // promotions are user-authored — same status as transform()-applied
-    // fields. Tag as 'override' so derive-overrides-json + the runtime
-    // routing map treat them uniformly with explicit transform() patches.
+    // enrich() promotions are user-authored (the user opts in via
+    // enrich(base) in overrides.ts), but enrich is currently a NO-OP
+    // under the tree-sitter CLI runtime (see early-return at top of
+    // enrich() above) — its passes only run in sittir's evaluator.
+    //
+    // Consequence: the override-compiled parser does NOT carry enrich-
+    // promoted fields. Until enrich is shape-aware and applies under
+    // tree-sitter CLI too, tag these as 'inferred' so derive-overrides-json
+    // keeps them in the runtime routing map (where readNode promotes
+    // them at parse time as a fallback). transform()-applied fields
+    // (source='override') flow through the field placeholder pipeline
+    // and DO appear in the override-compiled parser, so they can
+    // eventually be filtered out of the routing map.
     return {
         type: 'field',
         name,
         content,
-        source: 'override',
+        source: 'inferred',
     }
 }
 
