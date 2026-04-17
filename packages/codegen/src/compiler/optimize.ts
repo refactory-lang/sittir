@@ -76,6 +76,7 @@ export function optimize(linked: LinkedGrammar): OptimizedGrammar {
         simplifiedRules,
         supertypes: linked.supertypes,
         word: linked.word,
+        externals: linked.externals,
         derivations: linked.derivations,
         aliasedHiddenKinds: linked.aliasedHiddenKinds,
         polymorphVariants: linked.polymorphVariants,

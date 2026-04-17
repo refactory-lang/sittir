@@ -219,6 +219,7 @@ export function link(raw: RawGrammar, include?: IncludeFilter): LinkedGrammar {
         rules,
         supertypes,
         externalRoles,
+        externals: raw.externals,
         word: raw.word,
         references,
         derivations,

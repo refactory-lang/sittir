@@ -226,6 +226,7 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
         derivations: optimized.derivations,
         rules: optimized.rules,
         word: optimized.word,
+        externals: optimized.externals ? new Set(optimized.externals) : undefined,
         polymorphFormKinds: computePolymorphFormKinds(nodes),
     }
 }

@@ -37,7 +37,7 @@ export function emitTemplates(config: EmitTemplatesConfig): string {
         // `variants:` map. Emitting them as top-level entries too is
         // duplicate noise — skip them here.
         if (node instanceof AssembledGroup && node.parentKind) continue
-        const entry = node.renderTemplate(nodeMap.rules, wordMatcher)
+        const entry = node.renderTemplate(nodeMap.rules, wordMatcher, nodeMap.externals)
         if (entry === undefined) continue
         // Shorthand: collapse `{ template: "..." }` to a bare string when
         // that's the only key. Runtime's `resolveTemplate` already accepts
