@@ -228,6 +228,7 @@ if (cliArgs.roundtrip) {
 		const { entry, kind } = parseFrag(e.name);
 		diagnostics.push({
 			entry, kind,
+			source: 'render',
 			category: 'parse-error',
 			message: String(e.message),
 			rendered: e.rendered,
@@ -238,6 +239,33 @@ if (cliArgs.roundtrip) {
 		const { entry, kind } = parseFrag(m.name);
 		diagnostics.push({
 			entry, kind,
+			source: 'render',
+			category: 'ast-mismatch',
+			message: String(m.message),
+			rendered: m.rendered,
+			input: m.input,
+		});
+	}
+	// Factory round-trip diagnostics — validator runs once per kind
+	// with entry/input/rendered captured from the corpus case. Surfaces
+	// factory-API gaps (missing fields, wrong defaults) that the weaker
+	// kind-found pass doesn't flag.
+	for (const e of frtResult.errors ?? []) {
+		diagnostics.push({
+			entry: e.entry ?? '(unknown)',
+			kind: e.kind,
+			source: 'factory',
+			category: 'parse-error',
+			message: String(e.message),
+			rendered: e.rendered,
+			input: e.input,
+		});
+	}
+	for (const m of frtResult.astMismatches ?? []) {
+		diagnostics.push({
+			entry: m.entry ?? '(unknown)',
+			kind: m.kind,
+			source: 'factory',
 			category: 'ast-mismatch',
 			message: String(m.message),
 			rendered: m.rendered,

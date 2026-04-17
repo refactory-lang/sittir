@@ -19,6 +19,45 @@
 import type { NodeMap, DerivationLog, InferredFieldEntry, PromotedRuleEntry, RepeatedShapeEntry, Rule } from '../compiler/rule.ts'
 
 /**
+ * Locate the first CHOICE reachable from the rule root through the
+ * transparent composition wrappers that `variant()` can target — seq
+ * members + single-content wrappers. Returns the path to that choice
+ * (joinable with `/`) plus a suggested variant name per alternative.
+ * Names come from `tagVariants` when present (`variant.name` — "semi",
+ * "form_1", ...); fall back to `form_N` for untagged choices.
+ *
+ * Returns null if no choice is reachable — the rule isn't a polymorph
+ * candidate despite Link's suggestion (rare but possible when multiple
+ * passes run; defensive).
+ */
+function locateTopLevelChoice(
+    rule: Rule,
+): { choicePath: string; arms: string[] } | null {
+    function walk(node: Rule, path: string): { choicePath: string; arms: string[] } | null {
+        if (node.type === 'choice') {
+            const arms = node.members.map((m, i) => {
+                if (m.type === 'variant') return m.name
+                return `form${i}`
+            })
+            return { choicePath: path, arms }
+        }
+        if (node.type === 'seq') {
+            for (let i = 0; i < node.members.length; i++) {
+                const m = node.members[i]!
+                const sub = walk(m, path === '' ? `${i}` : `${path}/${i}`)
+                if (sub) return sub
+            }
+            return null
+        }
+        if (node.type === 'optional' || node.type === 'variant' || node.type === 'group' || node.type === 'clause') {
+            return walk(node.content, path === '' ? '0' : `${path}/0`)
+        }
+        return null
+    }
+    return walk(rule, '')
+}
+
+/**
  * Find the position index of `targetSymbol` within a top-level SEQ rule.
  * Matches both the bare symbol (held inference — pipeline didn't rewrite)
  * and the already-wrapped `field(fieldName, symbol(targetSymbol))` shape
@@ -71,6 +110,14 @@ export interface RoundTripDiagnostic {
     readonly entry: string
     /** Rule kind the validator was testing. */
     readonly kind: string
+    /**
+     * Which validator raised the diagnostic:
+     *  - 'render' — `parse → readNode → render → reparse`
+     *    (template / routing / joinBy issues)
+     *  - 'factory' — `parse → readNode → factory() → render → reparse`
+     *    (factory API surface gaps: missing fields, wrong defaults)
+     */
+    readonly source: 'render' | 'factory'
     /** What broke — 'parse-error' (rendered text unparseable) or 'ast-mismatch' (structural drift). */
     readonly category: 'parse-error' | 'ast-mismatch'
     /** Input source text. */
@@ -124,7 +171,9 @@ export function emitSuggested(config: EmitSuggestedConfig): string {
     if (roundTripFailures.length > 0) {
         const parseErrors = roundTripFailures.filter(f => f.category === 'parse-error').length
         const astMismatches = roundTripFailures.filter(f => f.category === 'ast-mismatch').length
-        lines.push(`// Round-trip fails: ${roundTripFailures.length}  (${parseErrors} parse errors, ${astMismatches} AST mismatches)`)
+        const renderFails = roundTripFailures.filter(f => f.source === 'render').length
+        const factoryFails = roundTripFailures.filter(f => f.source === 'factory').length
+        lines.push(`// Round-trip fails: ${roundTripFailures.length}  (${parseErrors} parse errors, ${astMismatches} AST mismatches; ${renderFails} render, ${factoryFails} factory)`)
     }
     lines.push('')
 
@@ -154,6 +203,7 @@ export function emitSuggested(config: EmitSuggestedConfig): string {
         lines.push('export const roundTripFailures: Array<{')
         lines.push('  readonly entry: string;')
         lines.push('  readonly kind: string;')
+        lines.push('  readonly source: "render" | "factory";')
         lines.push('  readonly category: "parse-error" | "ast-mismatch";')
         lines.push('  readonly input?: string;')
         lines.push('  readonly rendered?: string;')
@@ -165,6 +215,7 @@ export function emitSuggested(config: EmitSuggestedConfig): string {
                 lines.push(`  {`)
                 lines.push(`    entry: ${JSON.stringify(f.entry)},`)
                 lines.push(`    kind: ${JSON.stringify(kind)},`)
+                lines.push(`    source: ${JSON.stringify(f.source)},`)
                 lines.push(`    category: ${JSON.stringify(f.category)},`)
                 if (f.input !== undefined) lines.push(`    input:    ${JSON.stringify(f.input)},`)
                 if (f.rendered !== undefined) lines.push(`    rendered: ${JSON.stringify(f.rendered)},`)
@@ -254,6 +305,35 @@ export function emitSuggested(config: EmitSuggestedConfig): string {
                     ` applyInferredFields pass (tree rewrite) rather than via overrides.ts.`,
                 )
             }
+            lines.push('')
+        })
+    }
+
+    // Polymorph suggestions — Link's `promotePolymorph` flagged these
+    // rules as "could be split into named forms" but left them alone
+    // (applied: false) because splitting only runs when the user writes
+    // `variant()` in their override. Emit a copy-pasteable snippet that
+    // wraps each choice alternative with `variant('<name>')`, so the
+    // author can drop it straight into overrides.ts.
+    const polymorphHolds = log.promotedRules.filter(
+        e => e.classification === 'polymorph' && !e.applied,
+    )
+    if (polymorphHolds.length > 0) {
+        lines.push('  // --- Polymorph candidates (wrap each choice arm in variant()) ---')
+    }
+    for (const entry of polymorphHolds) {
+        const rule = nodeMap.rules?.[entry.kind]
+        const located = rule ? locateTopLevelChoice(rule) : null
+        if (!located) continue
+        const { choicePath, arms } = located
+        emit(entry.kind, () => {
+            lines.push(`  // [held] polymorph — ${arms.length} alternative(s)`)
+            lines.push(`  ${quoteKey(entry.kind)}: ($, original) => transform(original, {`)
+            arms.forEach((armName, i) => {
+                const key = choicePath === '' ? `${i}` : `${choicePath}/${i}`
+                lines.push(`    ${JSON.stringify(key)}: variant(${JSON.stringify(armName)}),`)
+            })
+            lines.push('  }),')
             lines.push('')
         })
     }

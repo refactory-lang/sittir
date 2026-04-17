@@ -146,8 +146,8 @@ export interface FactoryRoundTripResult {
 	 * missing field surface, dropped children slots, wrong defaults.
 	 */
 	astMatchPass: number;
-	errors: { kind: string; message: string }[];
-	astMismatches: { kind: string; message: string }[];
+	errors: { kind: string; entry?: string; message: string; input?: string; rendered?: string }[];
+	astMismatches: { kind: string; entry?: string; message: string; input?: string; rendered?: string }[];
 }
 
 export async function validateFactoryRoundTrip(
@@ -178,8 +178,8 @@ export async function validateFactoryRoundTrip(
 	}
 
 	const entries = loadCorpusEntries(grammar);
-	const errors: { kind: string; message: string }[] = [];
-	const astMismatches: { kind: string; message: string }[] = [];
+	const errors: { kind: string; entry?: string; message: string; input?: string; rendered?: string }[] = [];
+	const astMismatches: { kind: string; entry?: string; message: string; input?: string; rendered?: string }[] = [];
 	const testedKinds = new Set<string>(); // one test per kind
 	let pass = 0;
 	let astMatchPass = 0;
@@ -199,6 +199,7 @@ export async function validateFactoryRoundTrip(
 
 			const node1 = findFirst(tree1.rootNode, kind);
 			if (!node1) continue;
+			const inputSource = node1.text;
 
 			// readNode → direct factory call → render → re-parse
 			const handle = treeHandle(tree1);
@@ -243,7 +244,18 @@ export async function validateFactoryRoundTrip(
 						);
 						factoryData = (factory as (...args: unknown[]) => AnyNodeData)(...namedChildren);
 					} else {
-						factoryData = factory(camelFields ?? {}) as AnyNodeData;
+						// Some rules have BOTH fields AND children —
+						// e.g. python's return_statement has a `return`
+						// keyword field plus the expression as an
+						// unrouted child. Passing camelFields alone
+						// loses the children array; factories that
+						// declare `children` in their ConfigOf merge
+						// it into the output (the generated factory
+						// body already reads `config?.children ?? []`).
+						const config = readData.children
+							? { ...camelFields, children: readData.children }
+							: camelFields ?? {};
+						factoryData = factory(config) as AnyNodeData;
 					}
 				} catch {
 					factoryData = stripToFactory(readData);
@@ -266,7 +278,7 @@ export async function validateFactoryRoundTrip(
 
 				const tree2 = parser.parse(wrapped.text) as TSTree;
 				if (tree2.rootNode.hasError) {
-					errors.push({ kind, message: `re-parse error: "${rendered.slice(0, 60)}"` });
+					errors.push({ kind, entry: entry.name, message: `re-parse error: "${rendered.slice(0, 60)}"`, input: inputSource, rendered });
 					continue;
 				}
 
@@ -275,7 +287,7 @@ export async function validateFactoryRoundTrip(
 				// block/let/etc. of the same kind.
 				const node2 = findNodeAt(tree2.rootNode, kind, wrapped.offset) ?? findFirst(tree2.rootNode, kind);
 				if (!node2) {
-					errors.push({ kind, message: `kind not found in re-parse (rendered: "${rendered.slice(0, 60)}")` });
+					errors.push({ kind, entry: entry.name, message: `kind not found in re-parse (rendered: "${rendered.slice(0, 60)}")`, input: inputSource, rendered });
 					continue;
 				}
 
@@ -287,12 +299,12 @@ export async function validateFactoryRoundTrip(
 				// stays a stable floor; ast-match tightens it.
 				const diff = astStructuralDiff(node1, node2);
 				if (diff) {
-					astMismatches.push({ kind, message: diff.slice(0, 160) });
+					astMismatches.push({ kind, entry: entry.name, message: diff.slice(0, 160), input: inputSource, rendered });
 				} else {
 					astMatchPass++;
 				}
 			} catch (e) {
-				errors.push({ kind, message: `${(e as Error).message.slice(0, 80)}` });
+				errors.push({ kind, entry: entry.name, message: `${(e as Error).message.slice(0, 80)}`, input: inputSource });
 			}
 		}
 	}
