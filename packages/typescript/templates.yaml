@@ -16,6 +16,7 @@ rules:
   export_clause:
     template: "{$$$CHILDREN}"
     joinBy: ","
+    joinByTrailing: true
   export_specifier:
     template: type $NAME $ALIAS_CLAUSE
     alias_clause: as $ALIAS
@@ -30,6 +31,7 @@ rules:
   named_imports:
     template: "{$$$CHILDREN}"
     joinBy: ","
+    joinByTrailing: true
   import_specifier:
     variants:
       name: type $$$CHILDREN
@@ -158,6 +160,7 @@ rules:
   formal_parameters:
     template: ($$$CHILDREN)
     joinBy: ","
+    joinByTrailing: true
   class_static_block: $STATIC $$$CHILDREN $BODY
   pattern: $$$CHILDREN
   rest_pattern: ...$$$CHILDREN
@@ -208,6 +211,7 @@ rules:
   enum_body:
     template: "{$$$OPENING}"
     joinBy: ","
+    joinByTrailing: true
     joinByField:
       opening: ","
   enum_assignment: $NAME=$VALUE
@@ -246,6 +250,7 @@ rules:
   type_arguments:
     template: <$$$CHILDREN>
     joinBy: ","
+    joinByTrailing: true
   object_type: $OPENING $$$MEMBERS $CLOSING
   call_signature: $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE
   property_signature:
@@ -254,6 +259,7 @@ rules:
   type_parameters:
     template: <$$$CHILDREN>
     joinBy: ","
+    joinByTrailing: true
   type_parameter: $CONST $NAME $CONSTRAINT $VALUE
   default_type: =$TYPE
   constraint: extends $TYPE
@@ -267,6 +273,7 @@ rules:
   tuple_type:
     template: "[$$$CHILDREN]"
     joinBy: ","
+    joinByTrailing: true
   readonly_type: $READONLY $TYPE
   union_type: $LEFT|$RIGHT
   intersection_type: $LEFT&$RIGHT

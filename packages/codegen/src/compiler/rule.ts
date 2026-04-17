@@ -1170,6 +1170,11 @@ export class AssembledBranch extends AssembledNodeBase {
         // reachable without navigating past literals.
         const sep = findRepeatSeparator(this.simplifiedRule)
         if (sep) entry.joinBy = sep
+        // `trailing: true` on the repeat → grammar permits a trailing
+        // separator. Render uses this to know it should look for a
+        // trailing anon-separator token in `$$$CHILDREN` and preserve
+        // it when present.
+        if (findRepeatTrailing(this.simplifiedRule)) entry.joinByTrailing = true
         if (Object.keys(joinByField).length > 0) entry.joinByField = joinByField
         return entry
     }
@@ -1310,6 +1315,7 @@ export class AssembledContainer extends AssembledNodeBase {
         const entry: Record<string, unknown> = { template, ...clauses }
         const sep = this.separator ?? findRepeatSeparator(this.simplifiedRule)
         if (sep) entry.joinBy = sep
+        if (findRepeatTrailing(this.simplifiedRule)) entry.joinByTrailing = true
         if (Object.keys(joinByField).length > 0) entry.joinByField = joinByField
         return entry
     }
@@ -1510,6 +1516,7 @@ export class AssembledGroup extends AssembledNodeBase {
         const entry: Record<string, unknown> = { template, ...clauses }
         const sep = findRepeatSeparator(this.simplifiedRule)
         if (sep) entry.joinBy = sep
+        if (findRepeatTrailing(this.simplifiedRule)) entry.joinByTrailing = true
         if (Object.keys(joinByField).length > 0) entry.joinByField = joinByField
         return entry
     }
@@ -2196,6 +2203,34 @@ export function findRepeatSeparator(rule: Rule): string | undefined {
             return findRepeatSeparator(rule.content)
         default:
             return undefined
+    }
+}
+
+/**
+ * Matches `findRepeatSeparator` but returns the `trailing: true`
+ * metadata instead of the separator. Tree-sitter allows `sepBy` with
+ * trailing separators (e.g. rust's `{ a, b, }` where the final `,`
+ * is optional); Evaluate captures that in `repeat.trailing`. Render
+ * uses this hint to know whether to look for a trailing separator
+ * token in the parse tree when emitting `$$$CHILDREN`.
+ */
+export function findRepeatTrailing(rule: Rule): boolean {
+    switch (rule.type) {
+        case 'repeat':
+        case 'repeat1':
+            if (rule.trailing) return true
+            return findRepeatTrailing(rule.content)
+        case 'seq':
+        case 'choice':
+            return rule.members.some(m => findRepeatTrailing(m))
+        case 'optional':
+        case 'variant':
+        case 'clause':
+        case 'group':
+        case 'field':
+            return findRepeatTrailing(rule.content)
+        default:
+            return false
     }
 }
 

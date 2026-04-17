@@ -177,12 +177,16 @@ function render(node: AnyNodeData, ctx: InternalRenderContext): string {
 			);
 			const sep = resolveJoinBy(ruleObj, name);
 			const joined = remaining.map(c => renderValue(c as AnyNodeData | string | number, ctx)).join(sep);
-			// Trailing-separator fidelity: if the original tree carried
-			// an anonymous separator token (matching joinBy) AFTER the
-			// last named child — e.g. rust's `{ texts, values, }` —
-			// emit it too. Dropping it produces an ast-match regression
-			// at re-parse time (child count off by one anon token).
-			if (sep && sep.length > 0 && remaining.length > 0) {
+			// Trailing-separator fidelity: the codegen emits
+			// `joinByTrailing: true` when the repeat rule captured
+			// `trailing: true` at evaluate time (i.e. the grammar
+			// permits `{ a, b, }`). In that case, look for an
+			// anonymous separator token immediately after the last
+			// named child in the parse tree and emit it when present
+			// — preserves the original's with-or-without-trailing
+			// state so ast-match stays stable.
+			const trailingAllowed = ruleObj?.['joinByTrailing'] === true;
+			if (trailingAllowed && sep && sep.length > 0 && remaining.length > 0) {
 				const lastNamedIdx = node.children.findLastIndex(
 					(c) => (c as AnyNodeData).named !== false,
 				);

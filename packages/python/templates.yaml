@@ -11,6 +11,7 @@ rules:
   print_statement:
     template: print $$$CHILDREN $$$ARGUMENT
     joinBy: ","
+    joinByTrailing: true
   chevron: ">>$EXPRESSION"
   assert_statement:
     template: $ASSERT $$$CHILDREN
@@ -18,6 +19,7 @@ rules:
   expression_statement:
     template: $$$CHILDREN
     joinBy: ","
+    joinByTrailing: true
   named_expression: "$NAME:=$VALUE"
   return_statement: $RETURN $$$CHILDREN
   delete_statement: $DEL $$$CHILDREN
@@ -30,9 +32,11 @@ rules:
   match_statement:
     template: "$MATCH $$$SUBJECT:$BODY"
     joinBy: ","
+    joinByTrailing: true
   case_clause:
     template: "$CASE $$$CHILDREN $GUARD:\n  $CONSEQUENCE\n"
     joinBy: ","
+    joinByTrailing: true
   for_statement: "$ASYNC for $LEFT in $RIGHT:\n  $BODY\n$ALTERNATIVE"
   while_statement: "$WHILE $CONDITION:\n  $BODY\n$ALTERNATIVE"
   try_statement:
@@ -48,6 +52,7 @@ rules:
   with_clause:
     template: $$$CHILDREN
     joinBy: ","
+    joinByTrailing: true
   with_item: $VALUE
   function_definition:
     template: "$ASYNC def $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE_CLAUSE:\n  $BODY\n"
@@ -70,6 +75,7 @@ rules:
   type_parameter:
     template: "[$$$CHILDREN]"
     joinBy: ","
+    joinByTrailing: true
   parenthesized_list_splat: ($$$CHILDREN)
   argument_list:
     template: ($$$CHILDREN)
@@ -82,6 +88,7 @@ rules:
   expression_list:
     template: $EXPRESSION,$$$CHILDREN
     joinBy: ","
+    joinByTrailing: true
   dotted_name:
     template: $$$CHILDREN
     joinBy: .
@@ -92,11 +99,13 @@ rules:
   dict_pattern:
     template: "{$$$KEY $$$VALUE$$$CHILDREN}"
     joinBy: ","
+    joinByTrailing: true
   keyword_pattern: $IDENTIFIER=$SIMPLE_PATTERN
   splat_pattern: $IDENTIFIER $$$CHILDREN
   class_pattern:
     template: $DOTTED_NAME($$$ARGUMENTS)
     joinBy: ","
+    joinByTrailing: true
     joinByField:
       arguments: ","
   complex_pattern: $REAL $IMAGINARY+$$$CHILDREN
@@ -123,11 +132,13 @@ rules:
   pattern_list:
     template: $PATTERN,$$$CHILDREN
     joinBy: ","
+    joinByTrailing: true
   yield: $YIELD from $$$CHILDREN
   attribute: $OBJECT.$ATTRIBUTE
   subscript:
     template: "$VALUE[$$$SUBSCRIPT]"
     joinBy: ","
+    joinByTrailing: true
   slice:
     template: "$START:$STOP $STEP_CLAUSE"
     step_clause: ":$STEP"
@@ -146,6 +157,7 @@ rules:
   dictionary:
     template: "{$$$CHILDREN}"
     joinBy: ","
+    joinByTrailing: true
   pair: "$KEY:$VALUE"
   list_comprehension: "[$BODY $FOR_IN_CLAUSE $$$CHILDREN]"
   dictionary_comprehension: "{$BODY $FOR_IN_CLAUSE $$$CHILDREN}"

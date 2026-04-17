@@ -10,6 +10,7 @@ rules:
   macro_definition:
     template: macro_rules!$NAME $$$RULES
     joinBy: ";"
+    joinByTrailing: true
   macro_rule: $LEFT=>$RIGHT
   token_tree_pattern: ($$$CHILDREN)
   token_binding_pattern: "$NAME:$TYPE"
@@ -35,16 +36,19 @@ rules:
   enum_variant_list:
     template: "{$$$CHILDREN}"
     joinBy: ","
+    joinByTrailing: true
   enum_variant:
     template: $VISIBILITY_MODIFIER $NAME $BODY $VALUE_CLAUSE
     value_clause: =$VALUE
   field_declaration_list:
     template: "{$$$CHILDREN}"
     joinBy: ","
+    joinByTrailing: true
   field_declaration: "$VISIBILITY_MODIFIER $NAME:$TYPE"
   ordered_field_declaration_list:
     template: ($$$CHILDREN $$$TYPE)
     joinBy: ","
+    joinByTrailing: true
   extern_crate_declaration:
     template: $VISIBILITY_MODIFIER extern $CRATE $NAME $ALIAS_CLAUSE;
     alias_clause: as $ALIAS
@@ -65,6 +69,7 @@ rules:
   where_clause:
     template: $WHERE $$$CHILDREN
     joinBy: ","
+    joinByTrailing: true
   where_predicate: $LEFT $BOUNDS
   impl_item:
     template: $UNSAFE impl $TYPE_PARAMETERS $TRAIT_CLAUSE $TYPE $$$CHILDREN $BODY
@@ -81,6 +86,7 @@ rules:
   type_parameters:
     template: <$$$CHILDREN>
     joinBy: ","
+    joinByTrailing: true
   const_parameter:
     template: "$CONST $NAME:$TYPE $VALUE_CLAUSE"
     value_clause: =$VALUE
@@ -98,6 +104,7 @@ rules:
   use_list:
     template: "{$$$CHILDREN}"
     joinBy: ","
+    joinByTrailing: true
   use_as_clause: $PATH as $ALIAS
   use_wildcard:
     template: $PATH_CLAUSE*
@@ -105,6 +112,7 @@ rules:
   parameters:
     template: ($$$CHILDREN)
     joinBy: ","
+    joinByTrailing: true
   self_parameter: $LIFETIME $MUTABLE_SPECIFIER $SELF $$$CHILDREN
   variadic_parameter:
     template: $MUTABLE_SPECIFIER $PATTERN_CLAUSE...
@@ -124,12 +132,14 @@ rules:
   for_lifetimes:
     template: $FOR<$$$CHILDREN>
     joinBy: ","
+    joinByTrailing: true
   function_type:
     template: $FOR_LIFETIMES $TRAIT$$$CHILDREN $PARAMETERS $RETURN_TYPE_CLAUSE
     return_type_clause: "->$RETURN_TYPE"
   tuple_type:
     template: ($$$CHILDREN)
     joinBy: ","
+    joinByTrailing: true
   generic_function: "$FUNCTION::$TYPE_ARGUMENTS"
   generic_type: $TYPE $TYPE_ARGUMENTS
   generic_type_with_turbofish: "$TYPE::$TYPE_ARGUMENTS"
@@ -137,9 +147,11 @@ rules:
   use_bounds:
     template: $USE<$$$CHILDREN>
     joinBy: ","
+    joinByTrailing: true
   type_arguments:
     template: <$$$CHILDREN>
     joinBy: ","
+    joinByTrailing: true
   type_binding: $NAME $TYPE_ARGUMENTS=$TYPE
   reference_type: "&$LIFETIME $MUTABLE_SPECIFIER $TYPE"
   pointer_type: "*$MUTABLE_SPECIFIER $TYPE"
@@ -171,6 +183,7 @@ rules:
   arguments:
     template: ($$$CHILDREN)
     joinBy: ","
+    joinByTrailing: true
   array_expression:
     variants:
       semi: $$$CHILDREN
@@ -179,12 +192,14 @@ rules:
   tuple_expression:
     template: ($$$ATTRIBUTES $$$ELEMENTS,)
     joinBy: ","
+    joinByTrailing: true
     joinByField:
       attributes: "\n"
   struct_expression: $NAME $BODY
   field_initializer_list:
     template: "{$$$CHILDREN}"
     joinBy: ","
+    joinByTrailing: true
   shorthand_field_initializer:
     template: $$$ATTRIBUTES $IDENTIFIER
     joinByField:
@@ -239,15 +254,19 @@ rules:
   tuple_pattern:
     template: ($$$CHILDREN)
     joinBy: ","
+    joinByTrailing: true
   slice_pattern:
     template: "[$$$CHILDREN]"
     joinBy: ","
+    joinByTrailing: true
   tuple_struct_pattern:
     template: $TYPE($$$CHILDREN)
     joinBy: ","
+    joinByTrailing: true
   struct_pattern:
     template: "$TYPE{$$$CHILDREN}"
     joinBy: ","
+    joinByTrailing: true
   field_pattern:
     variants:
       shorthand: $REF_CLAUSE $MUTABLE_SPECIFIER $$$CHILDREN
@@ -278,6 +297,7 @@ rules:
   array_expression_list:
     template: "[$$$ATTRIBUTES $$$CHILDREN $$$ELEMENTS]"
     joinBy: ","
+    joinByTrailing: true
     joinByField:
       attributes: "\n"
   mod_item_inline: $BODY
