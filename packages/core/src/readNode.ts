@@ -245,7 +245,25 @@ export function readNode(tree: TreeHandle, nodeId?: number, routing?: RoutingMap
 
 		const fname = node.fieldNameForChild?.(i);
 		if (fname) {
-			fields[fname] = entry;
+			// Multi-valued fields (e.g. python's `argument` in
+			// `print a, b, c` where each expression has the same
+			// field name) must accumulate into an array instead of
+			// overwriting. But collisions with an anonymous-keyword
+			// placeholder (from promoteAnonymousKeyword earlier in
+			// the loop — e.g. rust's `type_item` has an anonymous
+			// `type` keyword child AND a named `type` field for the
+			// RHS) aren't multi-value: the real field replaces the
+			// placeholder. Accumulate only between genuine fname writes.
+			const existing = fields[fname];
+			if (existing === undefined) {
+				fields[fname] = entry;
+			} else if (!Array.isArray(existing) && existing.named === false) {
+				fields[fname] = entry;
+			} else if (Array.isArray(existing)) {
+				existing.push(entry);
+			} else {
+				fields[fname] = [existing, entry];
+			}
 		} else if (maps?.unambiguous.has(child.type)) {
 			// Direct kind lookup — covers ~95% including anonymous tokens
 			const { fieldName, multiple } = maps.unambiguous.get(child.type)!;

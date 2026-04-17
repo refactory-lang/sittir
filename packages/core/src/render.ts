@@ -110,6 +110,33 @@ function render(node: AnyNodeData, ctx: InternalRenderContext): string {
 		const fieldKey = name.toLowerCase();
 		const clauseKey = `${fieldKey}`;
 
+		// `$TEXT` — emit the node's native text as captured by readNode.
+		// Used for rules whose tokens include external-scanner symbols
+		// (e.g. rust's `raw_string_literal`: `_raw_string_literal_start`
+		// and `_raw_string_literal_end` are scanner-generated and never
+		// appear as named children, so a field-by-field template can't
+		// reconstruct them). When node.text is absent (factory-built
+		// nodes don't carry a tree-sitter source span), fall back to
+		// joining all field + children values as a best-effort — lets
+		// round-trip tests for `$TEXT` rules still produce non-empty
+		// output.
+		if (fieldKey === 'text') {
+			if (node.text !== undefined && node.text !== '') return node.text;
+			const parts: string[] = [];
+			if (node.fields) {
+				for (const v of Object.values(node.fields)) {
+					const items = Array.isArray(v) ? v : [v];
+					for (const item of items) parts.push(renderValue(item as AnyNodeData | string | number, ctx));
+				}
+			}
+			if (node.children) {
+				for (const c of node.children) {
+					parts.push(renderValue(c as AnyNodeData | string | number, ctx));
+				}
+			}
+			return parts.join('');
+		}
+
 		// 1. Clause reference (e.g., $RETURN_TYPE_CLAUSE → return_type_clause key in rule)
 		// Exclude rule-object meta keys and require the value be a string template.
 		if (
