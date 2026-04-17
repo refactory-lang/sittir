@@ -252,6 +252,39 @@ export interface TokenRule {
 }
 
 // ---------------------------------------------------------------------------
+// Per-variant type guards
+//
+// Prefer these over inline `r.type === 'seq'` checks in `.filter()`,
+// `.find()`, `.some()`, `.every()`, and standalone predicates — they
+// narrow the rule type through the callback (no `as SeqRule` casts
+// downstream). Inside a `switch (rule.type)` stay with literal case
+// arms so TS exhaustiveness checking catches missing variants when
+// new Rule types are added.
+// ---------------------------------------------------------------------------
+
+export const isSeq = (r: Rule): r is SeqRule => r.type === 'seq'
+export const isChoice = (r: Rule): r is ChoiceRule => r.type === 'choice'
+export const isOptional = (r: Rule): r is OptionalRule => r.type === 'optional'
+export const isRepeat = (r: Rule): r is RepeatRule => r.type === 'repeat'
+export const isRepeat1 = (r: Rule): r is Repeat1Rule => r.type === 'repeat1'
+export const isField = (r: Rule): r is FieldRule => r.type === 'field'
+export const isVariant = (r: Rule): r is VariantRule => r.type === 'variant'
+export const isClause = (r: Rule): r is ClauseRule => r.type === 'clause'
+export const isEnum = (r: Rule): r is EnumRule => r.type === 'enum'
+export const isSupertype = (r: Rule): r is SupertypeRule => r.type === 'supertype'
+export const isGroup = (r: Rule): r is GroupRule => r.type === 'group'
+export const isTerminal = (r: Rule): r is TerminalRule => r.type === 'terminal'
+export const isPolymorph = (r: Rule): r is PolymorphRule => r.type === 'polymorph'
+export const isString = (r: Rule): r is StringRule => r.type === 'string'
+export const isPattern = (r: Rule): r is PatternRule => r.type === 'pattern'
+export const isIndent = (r: Rule): r is IndentRule => r.type === 'indent'
+export const isDedent = (r: Rule): r is DedentRule => r.type === 'dedent'
+export const isNewline = (r: Rule): r is NewlineRule => r.type === 'newline'
+export const isSymbol = (r: Rule): r is SymbolRule => r.type === 'symbol'
+export const isAlias = (r: Rule): r is AliasRule => r.type === 'alias'
+export const isToken = (r: Rule): r is TokenRule => r.type === 'token'
+
+// ---------------------------------------------------------------------------
 // Reference graph
 // ---------------------------------------------------------------------------
 
@@ -873,8 +906,8 @@ function isSyntheticFieldWrapper(content: Rule): boolean {
     if (content.type === 'repeat' || content.type === 'repeat1') {
         return isSyntheticFieldWrapper(content.content)
     }
-    if (content.type !== 'seq') return false
-    return content.members.some(m => m.type === 'field')
+    if (!isSeq(content)) return false
+    return content.members.some(isField)
 }
 
 /**

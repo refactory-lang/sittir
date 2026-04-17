@@ -17,7 +17,7 @@ import type {
     FieldRule, SupertypeRule, EnumRule, ClauseRule, GroupRule,
     SeqRule, ChoiceRule, VariantRule, PolymorphRule,
 } from './rule.ts'
-import { deriveFields, hasAnyField, hasAnyChild } from './rule.ts'
+import { deriveFields, hasAnyField, hasAnyChild, isField, isSeq, isChoice, isString, isVariant } from './rule.ts'
 import { isHiddenKind } from './evaluate.ts'
 import type { PolymorphVariant } from '../dsl/synthetic-rules.ts'
 
@@ -566,7 +566,7 @@ export function applyOverridePolymorphs(
 }
 
 export function findVariantChoice(rule: Rule): VariantChoiceLocation | null {
-    if (rule.type === 'choice' && rule.members.some(m => m.type === 'variant')) {
+    if (isChoice(rule) && rule.members.some(isVariant)) {
         return { choice: rule, prefix: [], suffix: [] }
     }
     // A seq containing exactly one variant-choice. The other members
@@ -973,8 +973,8 @@ function classifyHiddenRule(
     }
 
     // Seq with fields → group (fields promoted to parent)
-    if (rule.type === 'seq') {
-        const hasFields = rule.members.some(m => m.type === 'field')
+    if (isSeq(rule)) {
+        const hasFields = rule.members.some(isField)
         if (hasFields) {
             return {
                 type: 'group',
@@ -1311,12 +1311,12 @@ function walkForAliases(rule: Rule, rawRules: Record<string, Rule>, resolvedRule
 // ---------------------------------------------------------------------------
 
 function detectClause(content: Rule, currentName: string): Rule {
-    if (content.type === 'seq') {
-        const hasString = content.members.some(m => m.type === 'string')
-        const hasField = content.members.some(m => m.type === 'field')
+    if (isSeq(content)) {
+        const hasString = content.members.some(isString)
+        const hasField = content.members.some(isField)
         if (hasString && hasField) {
             // Name the clause from the first field
-            const firstField = content.members.find(m => m.type === 'field') as FieldRule | undefined
+            const firstField = content.members.find(isField)
             const clauseName = firstField?.name ?? currentName
             return {
                 type: 'clause',

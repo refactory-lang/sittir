@@ -23,6 +23,7 @@
  */
 
 import type { Rule } from './rule.ts'
+import { isSeq } from './rule.ts'
 
 export interface DerivedFieldSpec {
     types: Array<{ type: string; named: boolean }>
@@ -258,7 +259,7 @@ function isOptionalShape(rule: Rule): boolean {
     if (rule.type === 'choice') {
         // A choice is "optional-shaped" if any branch is a blank / empty
         // seq — tree-sitter's way of encoding `optional(x)` historically.
-        return rule.members.some(m => m.type === 'seq' && m.members.length === 0)
+        return rule.members.some(m => isSeq(m) && m.members.length === 0)
     }
     return false
 }

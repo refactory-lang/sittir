@@ -15,6 +15,7 @@
 import type {
     Rule, LinkedGrammar, OptimizedGrammar,
 } from './rule.ts'
+import { isChoice } from './rule.ts'
 import { simplifyRules, compileWordMatcher } from './simplify.ts'
 
 // ---------------------------------------------------------------------------
@@ -103,13 +104,14 @@ export function fanOutSeqChoices(rule: Rule): Rule {
     switch (rule.type) {
         case 'seq': {
             const members = rule.members.map(fanOutSeqChoices)
-            const choiceIdx = members.findIndex(m => m.type === 'choice')
+            const choiceIdx = members.findIndex(isChoice)
             if (choiceIdx < 0) return { ...rule, members }
             // Only fan out when there's exactly one inner choice.
-            if (members.filter(m => m.type === 'choice').length > 1) {
+            if (members.filter(isChoice).length > 1) {
                 return { ...rule, members }
             }
-            const choice = members[choiceIdx] as import('./rule.ts').ChoiceRule
+            const choice = members[choiceIdx]!
+            if (!isChoice(choice)) return { ...rule, members }
             const before = members.slice(0, choiceIdx)
             const after = members.slice(choiceIdx + 1)
             const branches: Rule[] = choice.members.map(branch => {

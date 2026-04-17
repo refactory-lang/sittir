@@ -74,6 +74,38 @@ npx tsx packages/codegen/src/cli.ts --grammar python --all --output packages/pyt
 - oxlint / oxfmt for linting / formatting
 - tsgo for type checking
 
+### Rule type discrimination
+
+The compiler pipeline's `Rule` union (`compiler/rule.ts`) is a discriminated
+union keyed by `type`. Prefer these patterns, in this order:
+
+1. **Switch on `rule.type`** — canonical narrowing. TS exhaustiveness
+   catches missing variants when a new `Rule` type is added. Use
+   `default: assertNever(rule)` to lock it in. Most compiler passes use
+   this form.
+
+2. **Per-variant type guards** (`isSeq`, `isChoice`, `isField`, `isSymbol`,
+   ... exported from `compiler/rule.ts`) for `.filter()`, `.find()`,
+   `.some()`, `.every()`, and standalone predicates. They narrow through
+   the callback — `.find(isField)` returns `FieldRule | undefined` with
+   no `as FieldRule` cast needed.
+
+3. **Inline `rule.type === 'seq'` checks** — fine inside a switch arm's
+   body or for one-off compound predicates that don't fit a guard. TS
+   discriminated-union narrowing already makes these type-safe; no enum
+   or const-string layer is needed (and doesn't catch any additional
+   errors over the union type itself).
+
+**Do not introduce:** enum / const mappings for type strings. The `Rule`
+union IS the single source of truth; misspellings are type errors.
+
+**DSL layer exception:** `packages/codegen/src/dsl/*` also accepts
+tree-sitter-CLI-shaped rules with uppercase discriminants (`'SEQ'`,
+`'CHOICE'`, ...). Dual-case predicates (`isSeqType`, `isChoiceType`, ...,
+plus `typeEq(t, lower)`) live in `dsl/runtime-shapes.ts` and must be used
+instead of inline `t === 'seq' || t === 'SEQ'` ladders. The case
+difference is a cross-pipeline-leak signal — don't normalize it away.
+
 ## Speckit Workflow
 
 Specs, plans, tasks under `specs/NNN-feature-name/`. Branch convention: `NNN-short-name`.
