@@ -13,11 +13,14 @@
  * own file and imports whatever it needs from here.
  */
 
-import { readFileSync, readdirSync, existsSync } from 'node:fs'
-import { createRequire } from 'node:module'
+import { readFileSync, readdirSync, existsSync, type Mode } from 'node:fs'
 import { join } from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { isChoiceType, isSeqType, isOptionalType, isStringType, isBlankType, isPlainRepeatType, type RuntimeRule } from '../dsl/runtime-shapes.ts'
+import type * as TS from 'web-tree-sitter';
+import type { SgNode, Pos, Range } from '@ast-grep/wasm'
 
-const require = createRequire(import.meta.url)
+
 import type { AnyTreeNode } from '@sittir/types'
 
 // ---------------------------------------------------------------------------
@@ -28,6 +31,9 @@ export interface CorpusEntry {
     name: string
     source: string
 }
+
+export type TSNode = TS.Node;
+export type TSTree = TS.Tree;
 
 /**
  * Parse a tree-sitter test corpus file.
@@ -78,61 +84,13 @@ export function loadCorpusEntries(grammar: string): CorpusEntry[] {
     return entries
 }
 
-// ---------------------------------------------------------------------------
-// Tree-sitter → AnyTreeNode adapter
-// ---------------------------------------------------------------------------
-
-export interface TSNode {
-    type: string
-    text: string
-    startIndex: number
-    endIndex: number
-    isNamed: boolean
-    childCount: number
-    namedChildCount: number
-    children: TSNode[]
-    child(index: number): TSNode | null
-    fieldNameForChild(index: number): string | null
-    childForFieldName(fieldName: string): TSNode | null
-    id: number
-    hasError: boolean
-}
-
-export interface TSTree {
-    rootNode: TSNode
-}
-
-// ---------------------------------------------------------------------------
-// web-tree-sitter loader — shared typed import
-// ---------------------------------------------------------------------------
-
-export interface TSParser {
-    parse(source: string): TSTree
-    setLanguage(lang: unknown): void
-}
-
-export interface TSParserCtor {
-    new (): TSParser
-    init(): Promise<void>
-}
-
-export interface TSLanguageCtor {
-    load(path: string): Promise<unknown>
-}
-
-export interface WebTreeSitterModule {
-    Parser?: TSParserCtor
-    Language?: TSLanguageCtor
-    default?: { Parser?: TSParserCtor; Language?: TSLanguageCtor } | TSParserCtor
-}
-
 /**
  * Dynamic import of web-tree-sitter. The package ships CommonJS with
  * ambiguous default-export shape depending on bundler, so we try the
  * two common locations and throw if neither carries `Parser` + `Language`.
  */
-export async function loadWebTreeSitter(): Promise<{ Parser: TSParserCtor; Language: TSLanguageCtor }> {
-    const mod = await import('web-tree-sitter') as WebTreeSitterModule
+export async function loadWebTreeSitter(): Promise<{ Parser: typeof TS.Parser; Language: typeof TS.Language }> {
+    const mod = await import('web-tree-sitter');
     const Parser = mod.Parser ?? (mod.default && 'Parser' in mod.default ? mod.default.Parser : undefined)
     const Language = mod.Language ?? (mod.default && 'Language' in mod.default ? mod.default.Language : undefined)
     if (!Parser || !Language) {
@@ -142,7 +100,7 @@ export async function loadWebTreeSitter(): Promise<{ Parser: TSParserCtor; Langu
     return { Parser, Language }
 }
 
-export function adaptNode(node: TSNode): AnyTreeNode {
+export function adaptNode(node: TS.Node) : AnyTreeNode {
     return {
         type: node.type,
         id: () => node.id,
@@ -162,18 +120,21 @@ export function adaptNode(node: TSNode): AnyTreeNode {
             }
             return result
         },
+
         fieldNameForChild: (index: number) => node.fieldNameForChild(index),
-        children: () => node.children.map(adaptNode),
+        children(): AnyTreeNode[] {
+            return node.children.map(adaptNode)
+        },
         range: () => ({
-            start: { index: node.startIndex },
-            end: { index: node.endIndex },
-        }),
+            start: { index: node.startIndex, line: node.startPosition.row, column: node.startPosition.column},
+            end: { index: node.endIndex, line: node.endPosition.row, column: node.endPosition.column },
+        } as unknown as Range),
     }
 }
 
-export function treeHandle(tree: TSTree) {
-    const nodeMap = new Map<number, TSNode>()
-    function collect(node: TSNode) {
+export function treeHandle(tree: TS.Tree) {
+    const nodeMap = new Map<number, TS.Node>()
+    function collect(node: TS.Node) {
         nodeMap.set(node.id, node)
         for (const child of node.children) collect(child)
     }
@@ -189,7 +150,7 @@ export function treeHandle(tree: TSTree) {
     }
 }
 
-export function findFirst(node: TSNode, kind: string): TSNode | null {
+export function findFirst(node: TS.Node, kind: string): TS.Node | null {
     if (node.type === kind) return node
     for (const child of node.children) {
         const found = findFirst(child, kind)
@@ -198,9 +159,11 @@ export function findFirst(node: TSNode, kind: string): TSNode | null {
     return null
 }
 
-export function collectKinds(node: TSNode): Set<string> {
+export function collectKinds(node: TS.Node): Set<string> {
+
     const kinds = new Set<string>()
-    function walk(n: TSNode) {
+
+    function walk(n: TS.Node) {
         if (n.isNamed) kinds.add(n.type)
         for (const child of n.children) walk(child)
     }
@@ -304,9 +267,9 @@ export const WASM_PATHS: Record<string, string> = {
  * all field labels from transform()/enrich() patches natively.
  */
 export async function loadLanguageForGrammar(grammar: string): Promise<{
-    Parser: TSParserCtor
-    Language: TSLanguageCtor
-    lang: unknown
+    Parser: typeof TS.Parser
+    Language: typeof TS.Language
+    lang: TS.Language
     isOverride: boolean
 }> {
     const { Parser, Language } = await loadWebTreeSitter()
@@ -320,7 +283,7 @@ export async function loadLanguageForGrammar(grammar: string): Promise<{
         return { Parser, Language, lang, isOverride: true }
     }
 
-    const baseWasm = require.resolve(WASM_PATHS[grammar]!)
+    const baseWasm = fileURLToPath(import.meta.resolve(WASM_PATHS[grammar]!))
     const lang = await Language.load(baseWasm)
     return { Parser, Language, lang, isOverride: false }
 }

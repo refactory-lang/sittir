@@ -29,89 +29,21 @@
 import { readFileSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 import { readNode } from '@sittir/core'
-import type { AnyNodeData, AnyTreeNode } from '@sittir/types'
+import type { AnyNodeData } from '@sittir/types'
 import { loadRawEntries } from './validators/node-types.ts'
-import { loadLanguageForGrammar } from './validators/common.ts'
+import {
+    loadLanguageForGrammar,
+    treeHandle,
+    findFirst,
+    collectKinds,
+    type TSNode,
+    type TSTree,
+} from './validators/common.ts'
 
 
-// ---------------------------------------------------------------------------
-// Minimal tree-sitter adapter — shared shape with the other validators
-// ---------------------------------------------------------------------------
-
-interface TSNode {
-    type: string
-    text: string
-    startIndex: number
-    endIndex: number
-    isNamed: boolean
-    childCount: number
-    children: TSNode[]
-    child(i: number): TSNode | null
-    fieldNameForChild(i: number): string | null
-    childForFieldName(name: string): TSNode | null
-    id: number
-    hasError: boolean
-}
-
-interface TSTree {
-    rootNode: TSNode
-}
-
-function adaptNode(node: TSNode): AnyTreeNode {
-    return {
-        type: node.type,
-        id: () => node.id,
-        text: () => node.text,
-        isNamed: () => node.isNamed,
-        field: (name: string) => {
-            const c = node.childForFieldName(name)
-            return c ? adaptNode(c) : null
-        },
-        fieldChildren: (name: string) => {
-            const r: AnyTreeNode[] = []
-            for (let i = 0; i < node.childCount; i++) {
-                if (node.fieldNameForChild(i) === name) {
-                    const c = node.child(i)
-                    if (c) r.push(adaptNode(c))
-                }
-            }
-            return r
-        },
-        fieldNameForChild: (i: number) => node.fieldNameForChild(i),
-        children: () => node.children.map(adaptNode),
-        range: () => ({ start: { index: node.startIndex }, end: { index: node.endIndex } }),
-    }
-}
-
-function treeHandle(tree: TSTree) {
-    const m = new Map<number, TSNode>()
-    function collect(n: TSNode) { m.set(n.id, n); for (const c of n.children) collect(c) }
-    collect(tree.rootNode)
-    return {
-        rootNode: adaptNode(tree.rootNode),
-        nodeById: (id: number) => {
-            const n = m.get(id)
-            if (!n) throw new Error(`Node ${id} not found`)
-            return adaptNode(n)
-        },
-    }
-}
-
-function findFirst(node: TSNode, kind: string): TSNode | null {
-    if (node.type === kind) return node
-    for (const c of node.children) {
-        const f = findFirst(c, kind)
-        if (f) return f
-    }
-    return null
-}
-
-function collectKinds(node: TSNode): Set<string> {
-    const kinds = new Set<string>()
-    function walk(n: TSNode) { if (n.isNamed) kinds.add(n.type); for (const c of n.children) walk(c) }
-    walk(node)
-    return kinds
-}
+// Tree-sitter adapter + tree walkers imported from validators/common.ts.
+// See that file for the canonical TSNode/TSTree shapes (backed by web-tree-sitter's
+// published TS.Node / TS.Tree types).
 
 // ---------------------------------------------------------------------------
 // Corpus parser — shared shape

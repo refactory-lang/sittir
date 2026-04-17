@@ -41,7 +41,7 @@
     "yaml": "^2.8.3"
   },
   "devDependencies": {
-    "@ast-grep/napi": "^0.42.0",
-    "@types/node": "^25.5.0"
+    "@ast-grep/napi": "^0.42.1",
+    "@types/node": "^25.6.0"
   }
 }

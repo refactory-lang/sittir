@@ -12,12 +12,15 @@
  * argument — there is no module-level path registry.
  */
 
-import { createRequire } from 'node:module'
-import { existsSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { fileURLToPath } from 'node:url'
 
-const require = createRequire(import.meta.url)
 const packagesDir = new URL('../../../', import.meta.url).pathname
+
+function loadJson(filePath: string): RawNodeEntry[] {
+    return JSON.parse(readFileSync(filePath, 'utf8')) as RawNodeEntry[]
+}
 
 export interface RawFieldEntry {
     required: boolean
@@ -47,11 +50,11 @@ export function loadRawEntries(
     grammar: string,
     explicitPath?: string,
 ): RawNodeEntry[] {
-    if (explicitPath) return require(explicitPath)
+    if (explicitPath) return loadJson(explicitPath)
 
     const overridePath = join(packagesDir, grammar, '.sittir', 'src', 'node-types.json')
-    if (existsSync(overridePath)) return require(overridePath)
+    if (existsSync(overridePath)) return loadJson(overridePath)
 
     const modulePath = GRAMMAR_PATHS[grammar] ?? `tree-sitter-${grammar}/src/node-types.json`
-    return require(require.resolve(modulePath))
+    return loadJson(fileURLToPath(import.meta.resolve(modulePath)))
 }
