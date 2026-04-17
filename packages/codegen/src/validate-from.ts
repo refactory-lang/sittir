@@ -130,6 +130,7 @@ export async function validateFrom(
 	// typed field reads resolve.
 	let fromMap: Record<string, (input: object) => unknown> = {};
 	let factoryMap: Record<string, (config?: any) => unknown> = {};
+	let factoryShapes: Record<string, 'config' | 'children' | 'text'> = {};
 	try {
 		const fromModule = await import(new URL(FROM_MODULE_PATHS[grammar]!, import.meta.url).pathname);
 		fromMap = fromModule._fromMap ?? {};
@@ -137,6 +138,7 @@ export async function validateFrom(
 	try {
 		const factoryModule = await import(new URL(FACTORY_MODULE_PATHS[grammar]!, import.meta.url).pathname);
 		factoryMap = factoryModule._factoryMap ?? {};
+		factoryShapes = factoryModule._factoryShapes ?? {};
 	} catch { /* factory module unavailable */ }
 
 	const entries = loadCorpusEntries(grammar);
@@ -168,15 +170,36 @@ export async function validateFrom(
 				const fromResult = fromMap[kind]!(readData) as AnyNodeData;
 				let factoryResult: AnyNodeData;
 				try {
-					if (!readData.fields && readData.children) {
-						factoryResult = (factoryMap[kind]! as (...args: unknown[]) => AnyNodeData)(...readData.children);
+					// Route by the shape declared at codegen time — same
+					// pattern as validate-factory-roundtrip.ts. Guessing
+					// from `readData.fields` alone mis-routes empty
+					// containers (python `()` has promoted `(`/`)` fields
+					// but `children === undefined`, yet is a children-shape
+					// factory that must dispatch as `factory()` with no args).
+					const shape = factoryShapes[kind] ?? 'config';
+					const factory = factoryMap[kind]!;
+					if (shape === 'config') {
+						const camelFields = readData.fields
+							? Object.fromEntries(
+								Object.entries(readData.fields).map(([k, v]) => [
+									k.replace(/_([a-z])/g, (_, c) => c.toUpperCase()),
+									v,
+								]),
+							)
+							: undefined;
+						const config = readData.children
+							? { ...camelFields, children: readData.children }
+							: camelFields ?? {};
+						factoryResult = factory(config) as AnyNodeData;
+					} else if (shape === 'text') {
+						factoryResult = (factory as (text: string) => AnyNodeData)(readData.text ?? '');
 					} else {
-						const config = { ...(readData.fields ?? {}) } as Record<string, unknown>;
-						const namedChildren = (readData.children ?? []).filter((c: any) => c?.named !== false);
-						if (namedChildren.length) {
-							config.children = namedChildren;
-						}
-						factoryResult = factoryMap[kind]!(config) as AnyNodeData;
+						const namedChildren = (readData.children ?? []).filter(
+							(c: any) => c?.named !== false,
+						);
+						factoryResult = (factory as (...args: unknown[]) => AnyNodeData)(
+							...namedChildren,
+						);
 					}
 				} catch {
 					skip++;

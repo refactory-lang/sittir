@@ -225,7 +225,16 @@ function promoteAnonymousKeyword(
 export function readNode(tree: TreeHandle, nodeId?: number, routing?: RoutingMap): AnyNodeData {
 	const node = nodeId != null ? tree.nodeById(nodeId) : tree.rootNode;
 
-	const fields: Record<string, AnyNodeData | AnyNodeData[]> = {};
+	// `Object.create(null)` avoids prototype pollution on field names
+	// that shadow Object.prototype members — `constructor` is the
+	// concrete case (tree-sitter-typescript's `new_expression` has a
+	// `field('constructor', ...)`), where a plain `{}` starts with
+	// `fields.constructor === Object` and the multi-value detection
+	// at existing-defined treats the prototype function as a prior
+	// entry, corrupting the accumulated array with a null-serializing
+	// function object. Others that can bite the same way: `toString`,
+	// `hasOwnProperty`, `valueOf`, `__proto__`.
+	const fields: Record<string, AnyNodeData | AnyNodeData[]> = Object.create(null);
 	const children: AnyNodeData[] = [];
 
 	const maps = routing?.get(node.type);

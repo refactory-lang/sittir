@@ -410,7 +410,13 @@ function emitContainerFrom(node: ContainerFromNode): string {
             `export function ${fn}(...input: readonly (${elementType} | ${tName})[]) {`,
             `  if (input.length === 1 && isNodeData(input[0]) && input[0].type === '${node.kind}') {`,
             `    const data = input[0] as ${tName};`,
-            `    return ${factory}(...(data.children as ${childType}));`,
+            // `data.children` is undefined for empty collections that
+            // readNode represents without a children array (e.g. python
+            // `format_specifier` for `:2` — the colon gets promoted to a
+            // field, no children). Spreading `undefined` throws; guard
+            // with `?? []` so the rebuilt factory call matches the empty
+            // form.
+            `    return ${factory}(...((data.children ?? []) as ${childType}));`,
             `  }`,
             `  return ${factory}(...(input as ${childType}));`,
             '}',
@@ -425,7 +431,13 @@ function emitContainerFrom(node: ContainerFromNode): string {
         `export function ${fn}(input?: ${elementType} | ${tName}) {`,
         `  if (isNodeData(input) && input.type === '${node.kind}') {`,
         `    const data = input as ${tName};`,
-        `    return ${factory}((data.children as ${childType})[0] as ${elementType});`,
+        // Empty collections (e.g. python `()` / `[]`) have no named
+        // children — readNode promotes `(` / `)` / `[` / `]` into
+        // fields and produces no `children`. Calling `factory(undefined)`
+        // rebuilds the empty form; indexing children[0] in that case
+        // throws "Cannot read properties of undefined (reading '0')".
+        `    const child = data.children ? (data.children as ${childType})[0] : undefined;`,
+        `    return ${factory}(child as ${elementType});`,
         `  }`,
         `  return ${factory}(input as ${elementType});`,
         '}',

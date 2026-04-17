@@ -270,20 +270,22 @@ export async function validateFactoryRoundTrip(
 							? { ...camelFields, children: readData.children }
 							: camelFields ?? {};
 						factoryData = factory(config) as AnyNodeData;
-					} else if (readData.children) {
-						// Children-only factory: spread NAMED children
-						// as positional args. Works even when fields are
-						// present — anonymous fields on container nodes
-						// are promoted punctuation the template handles
-						// structurally.
+					} else {
+						// Children-only factory (shape !== 'config'): spread
+						// NAMED children as positional args. Anonymous fields
+						// on container nodes (promoted delimiters like `(`/`)`)
+						// are template-structural — the factory's arity doesn't
+						// cover them, and passing them as config would box the
+						// whole config into children[0] via the single-param
+						// signature (`tuple(child)`). Empty collections — e.g.
+						// python's `tuple` for source `()` — have `children =
+						// undefined` AND `fieldsPresent = true` (the `(`/`)`
+						// promotions), but must still dispatch as `factory()`
+						// with no args.
 						const namedChildren = (readData.children ?? []).filter(
 							(c: any) => c?.named !== false,
 						);
 						factoryData = (factory as (...args: unknown[]) => AnyNodeData)(...namedChildren);
-					} else if (fieldsPresent) {
-						factoryData = factory(camelFields ?? {}) as AnyNodeData;
-					} else {
-						factoryData = stripToFactory(readData);
 					}
 				} catch (e) {
 					// A real factory throw (wrong argument shape,

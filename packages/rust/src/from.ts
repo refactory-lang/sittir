@@ -424,7 +424,8 @@ export function sourceFileFrom(input: T.SourceFile | T.LooseSourceFile): ReturnT
 export function expressionStatementFrom(input?: NonNullable<T.ExpressionStatementConfig['children']>[number] | T.ExpressionStatement) {
   if (isNodeData(input) && input.type === 'expression_statement') {
     const data = input as T.ExpressionStatement;
-    return expressionStatement((data.children as NonNullable<T.ExpressionStatementConfig['children']>)[0] as NonNullable<T.ExpressionStatementConfig['children']>[number]);
+    const child = data.children ? (data.children as NonNullable<T.ExpressionStatementConfig['children']>)[0] : undefined;
+    return expressionStatement(child as NonNullable<T.ExpressionStatementConfig['children']>[number]);
   }
   return expressionStatement(input as NonNullable<T.ExpressionStatementConfig['children']>[number]);
 }
@@ -448,7 +449,7 @@ export function macroRuleFrom(input: T.MacroRule | T.LooseMacroRule): ReturnType
 export function tokenTreePatternFrom(...input: readonly (NonNullable<T.TokenTreePatternConfig['children']>[number] | T.TokenTreePattern)[]) {
   if (input.length === 1 && isNodeData(input[0]) && input[0].type === 'token_tree_pattern') {
     const data = input[0] as T.TokenTreePattern;
-    return tokenTreePattern(...(data.children as NonNullable<T.TokenTreePatternConfig['children']>));
+    return tokenTreePattern(...((data.children ?? []) as NonNullable<T.TokenTreePatternConfig['children']>));
   }
   return tokenTreePattern(...(input as NonNullable<T.TokenTreePatternConfig['children']>));
 }
@@ -464,7 +465,7 @@ export function tokenBindingPatternFrom(input: T.TokenBindingPattern | T.LooseTo
 export function tokenRepetitionPatternFrom(...input: readonly (NonNullable<T.TokenRepetitionPatternConfig['children']>[number] | T.TokenRepetitionPattern)[]) {
   if (input.length === 1 && isNodeData(input[0]) && input[0].type === 'token_repetition_pattern') {
     const data = input[0] as T.TokenRepetitionPattern;
-    return tokenRepetitionPattern(...(data.children as NonNullable<T.TokenRepetitionPatternConfig['children']>));
+    return tokenRepetitionPattern(...((data.children ?? []) as NonNullable<T.TokenRepetitionPatternConfig['children']>));
   }
   return tokenRepetitionPattern(...(input as NonNullable<T.TokenRepetitionPatternConfig['children']>));
 }
@@ -477,7 +478,7 @@ export function fragmentSpecifierFrom(input: string | T.FragmentSpecifier) {
 export function tokenTreeFrom(...input: readonly (NonNullable<T.TokenTreeConfig['children']>[number] | T.TokenTree)[]) {
   if (input.length === 1 && isNodeData(input[0]) && input[0].type === 'token_tree') {
     const data = input[0] as T.TokenTree;
-    return tokenTree(...(data.children as NonNullable<T.TokenTreeConfig['children']>));
+    return tokenTree(...((data.children ?? []) as NonNullable<T.TokenTreeConfig['children']>));
   }
   return tokenTree(...(input as NonNullable<T.TokenTreeConfig['children']>));
 }
@@ -485,7 +486,7 @@ export function tokenTreeFrom(...input: readonly (NonNullable<T.TokenTreeConfig[
 export function tokenRepetitionFrom(...input: readonly (NonNullable<T.TokenRepetitionConfig['children']>[number] | T.TokenRepetition)[]) {
   if (input.length === 1 && isNodeData(input[0]) && input[0].type === 'token_repetition') {
     const data = input[0] as T.TokenRepetition;
-    return tokenRepetition(...(data.children as NonNullable<T.TokenRepetitionConfig['children']>));
+    return tokenRepetition(...((data.children ?? []) as NonNullable<T.TokenRepetitionConfig['children']>));
   }
   return tokenRepetition(...(input as NonNullable<T.TokenRepetitionConfig['children']>));
 }
@@ -544,7 +545,7 @@ export function foreignModItemFrom(input: T.ForeignModItem | T.LooseForeignModIt
 export function declarationListFrom(...input: readonly (NonNullable<T.DeclarationListConfig['children']>[number] | T.DeclarationList)[]) {
   if (input.length === 1 && isNodeData(input[0]) && input[0].type === 'declaration_list') {
     const data = input[0] as T.DeclarationList;
-    return declarationList(...(data.children as NonNullable<T.DeclarationListConfig['children']>));
+    return declarationList(...((data.children ?? []) as NonNullable<T.DeclarationListConfig['children']>));
   }
   return declarationList(...(input as NonNullable<T.DeclarationListConfig['children']>));
 }
@@ -603,7 +604,7 @@ export function enumItemFrom(input: T.EnumItem | T.LooseEnumItem): ReturnType<ty
 export function enumVariantListFrom(...input: readonly (NonNullable<T.EnumVariantListConfig['children']>[number] | T.EnumVariantList)[]) {
   if (input.length === 1 && isNodeData(input[0]) && input[0].type === 'enum_variant_list') {
     const data = input[0] as T.EnumVariantList;
-    return enumVariantList(...(data.children as NonNullable<T.EnumVariantListConfig['children']>));
+    return enumVariantList(...((data.children ?? []) as NonNullable<T.EnumVariantListConfig['children']>));
   }
   return enumVariantList(...(input as NonNullable<T.EnumVariantListConfig['children']>));
 }
@@ -621,7 +622,7 @@ export function enumVariantFrom(input: T.EnumVariant | T.LooseEnumVariant): Retu
 export function fieldDeclarationListFrom(...input: readonly (NonNullable<T.FieldDeclarationListConfig['children']>[number] | T.FieldDeclarationList)[]) {
   if (input.length === 1 && isNodeData(input[0]) && input[0].type === 'field_declaration_list') {
     const data = input[0] as T.FieldDeclarationList;
-    return fieldDeclarationList(...(data.children as NonNullable<T.FieldDeclarationListConfig['children']>));
+    return fieldDeclarationList(...((data.children ?? []) as NonNullable<T.FieldDeclarationListConfig['children']>));
   }
   return fieldDeclarationList(...(input as NonNullable<T.FieldDeclarationListConfig['children']>));
 }
@@ -777,7 +778,7 @@ export function associatedTypeFrom(input: T.AssociatedType | T.LooseAssociatedTy
 export function traitBoundsFrom(...input: readonly (NonNullable<T.TraitBoundsConfig['children']>[number] | T.TraitBounds)[]) {
   if (input.length === 1 && isNodeData(input[0]) && input[0].type === 'trait_bounds') {
     const data = input[0] as T.TraitBounds;
-    return traitBounds(...(data.children as NonNullable<T.TraitBoundsConfig['children']>));
+    return traitBounds(...((data.children ?? []) as NonNullable<T.TraitBoundsConfig['children']>));
   }
   return traitBounds(...(input as NonNullable<T.TraitBoundsConfig['children']>));
 }
@@ -794,7 +795,8 @@ export function higherRankedTraitBoundFrom(input: T.HigherRankedTraitBound | T.L
 export function removedTraitBoundFrom(input?: NonNullable<T.RemovedTraitBoundConfig['children']>[number] | T.RemovedTraitBound) {
   if (isNodeData(input) && input.type === 'removed_trait_bound') {
     const data = input as T.RemovedTraitBound;
-    return removedTraitBound((data.children as NonNullable<T.RemovedTraitBoundConfig['children']>)[0] as NonNullable<T.RemovedTraitBoundConfig['children']>[number]);
+    const child = data.children ? (data.children as NonNullable<T.RemovedTraitBoundConfig['children']>)[0] : undefined;
+    return removedTraitBound(child as NonNullable<T.RemovedTraitBoundConfig['children']>[number]);
   }
   return removedTraitBound(input as NonNullable<T.RemovedTraitBoundConfig['children']>[number]);
 }
@@ -802,7 +804,7 @@ export function removedTraitBoundFrom(input?: NonNullable<T.RemovedTraitBoundCon
 export function typeParametersFrom(...input: readonly (NonNullable<T.TypeParametersConfig['children']>[number] | T.TypeParameters)[]) {
   if (input.length === 1 && isNodeData(input[0]) && input[0].type === 'type_parameters') {
     const data = input[0] as T.TypeParameters;
-    return typeParameters(...(data.children as NonNullable<T.TypeParametersConfig['children']>));
+    return typeParameters(...((data.children ?? []) as NonNullable<T.TypeParametersConfig['children']>));
   }
   return typeParameters(...(input as NonNullable<T.TypeParametersConfig['children']>));
 }
@@ -864,7 +866,7 @@ export function scopedUseListFrom(input: T.ScopedUseList | T.LooseScopedUseList)
 export function useListFrom(...input: readonly (NonNullable<T.UseListConfig['children']>[number] | T.UseList)[]) {
   if (input.length === 1 && isNodeData(input[0]) && input[0].type === 'use_list') {
     const data = input[0] as T.UseList;
-    return useList(...(data.children as NonNullable<T.UseListConfig['children']>));
+    return useList(...((data.children ?? []) as NonNullable<T.UseListConfig['children']>));
   }
   return useList(...(input as NonNullable<T.UseListConfig['children']>));
 }
@@ -887,7 +889,7 @@ export function useWildcardFrom(input?: T.UseWildcard | T.LooseUseWildcard): Ret
 export function parametersFrom(...input: readonly (NonNullable<T.ParametersConfig['children']>[number] | T.Parameters)[]) {
   if (input.length === 1 && isNodeData(input[0]) && input[0].type === 'parameters') {
     const data = input[0] as T.Parameters;
-    return parameters(...(data.children as NonNullable<T.ParametersConfig['children']>));
+    return parameters(...((data.children ?? []) as NonNullable<T.ParametersConfig['children']>));
   }
   return parameters(...(input as NonNullable<T.ParametersConfig['children']>));
 }
@@ -945,7 +947,8 @@ export function visibilityModifierForm1From(input: T.VisibilityModifierForm1Conf
 export function bracketedTypeFrom(input?: NonNullable<T.BracketedTypeConfig['children']>[number] | T.BracketedType) {
   if (isNodeData(input) && input.type === 'bracketed_type') {
     const data = input as T.BracketedType;
-    return bracketedType((data.children as NonNullable<T.BracketedTypeConfig['children']>)[0] as NonNullable<T.BracketedTypeConfig['children']>[number]);
+    const child = data.children ? (data.children as NonNullable<T.BracketedTypeConfig['children']>)[0] : undefined;
+    return bracketedType(child as NonNullable<T.BracketedTypeConfig['children']>[number]);
   }
   return bracketedType(input as NonNullable<T.BracketedTypeConfig['children']>[number]);
 }
@@ -996,7 +999,7 @@ export function functionTypeFrom(input: T.FunctionType | T.LooseFunctionType): R
 export function tupleTypeFrom(...input: readonly (NonNullable<T.TupleTypeConfig['children']>[number] | T.TupleType)[]) {
   if (input.length === 1 && isNodeData(input[0]) && input[0].type === 'tuple_type') {
     const data = input[0] as T.TupleType;
-    return tupleType(...(data.children as NonNullable<T.TupleTypeConfig['children']>));
+    return tupleType(...((data.children ?? []) as NonNullable<T.TupleTypeConfig['children']>));
   }
   return tupleType(...(input as NonNullable<T.TupleTypeConfig['children']>));
 }
@@ -1049,7 +1052,7 @@ export function useBoundsFrom(input: T.UseBounds | T.LooseUseBounds): ReturnType
 export function typeArgumentsFrom(...input: readonly (NonNullable<T.TypeArgumentsConfig['children']>[number] | T.TypeArguments)[]) {
   if (input.length === 1 && isNodeData(input[0]) && input[0].type === 'type_arguments') {
     const data = input[0] as T.TypeArguments;
-    return typeArguments(...(data.children as NonNullable<T.TypeArgumentsConfig['children']>));
+    return typeArguments(...((data.children ?? []) as NonNullable<T.TypeArgumentsConfig['children']>));
   }
   return typeArguments(...(input as NonNullable<T.TypeArgumentsConfig['children']>));
 }
@@ -1112,7 +1115,7 @@ export function macroInvocationFrom(input: T.MacroInvocation | T.LooseMacroInvoc
 export function delimTokenTreeFrom(...input: readonly (NonNullable<T.DelimTokenTreeConfig['children']>[number] | T.DelimTokenTree)[]) {
   if (input.length === 1 && isNodeData(input[0]) && input[0].type === 'delim_token_tree') {
     const data = input[0] as T.DelimTokenTree;
-    return delimTokenTree(...(data.children as NonNullable<T.DelimTokenTreeConfig['children']>));
+    return delimTokenTree(...((data.children ?? []) as NonNullable<T.DelimTokenTreeConfig['children']>));
   }
   return delimTokenTree(...(input as NonNullable<T.DelimTokenTreeConfig['children']>));
 }
@@ -1222,7 +1225,8 @@ export function typeCastExpressionFrom(input: T.TypeCastExpression | T.LooseType
 export function returnExpressionFrom(input?: NonNullable<T.ReturnExpressionConfig['children']>[number] | T.ReturnExpression) {
   if (isNodeData(input) && input.type === 'return_expression') {
     const data = input as T.ReturnExpression;
-    return returnExpression((data.children as NonNullable<T.ReturnExpressionConfig['children']>)[0] as NonNullable<T.ReturnExpressionConfig['children']>[number]);
+    const child = data.children ? (data.children as NonNullable<T.ReturnExpressionConfig['children']>)[0] : undefined;
+    return returnExpression(child as NonNullable<T.ReturnExpressionConfig['children']>[number]);
   }
   return returnExpression(input as NonNullable<T.ReturnExpressionConfig['children']>[number]);
 }
@@ -1230,7 +1234,8 @@ export function returnExpressionFrom(input?: NonNullable<T.ReturnExpressionConfi
 export function yieldExpressionFrom(input?: NonNullable<T.YieldExpressionConfig['children']>[number] | T.YieldExpression) {
   if (isNodeData(input) && input.type === 'yield_expression') {
     const data = input as T.YieldExpression;
-    return yieldExpression((data.children as NonNullable<T.YieldExpressionConfig['children']>)[0] as NonNullable<T.YieldExpressionConfig['children']>[number]);
+    const child = data.children ? (data.children as NonNullable<T.YieldExpressionConfig['children']>)[0] : undefined;
+    return yieldExpression(child as NonNullable<T.YieldExpressionConfig['children']>[number]);
   }
   return yieldExpression(input as NonNullable<T.YieldExpressionConfig['children']>[number]);
 }
@@ -1246,7 +1251,7 @@ export function callExpressionFrom(input: T.CallExpression | T.LooseCallExpressi
 export function arguments_From(...input: readonly (NonNullable<T.ArgumentsConfig['children']>[number] | T.Arguments)[]) {
   if (input.length === 1 && isNodeData(input[0]) && input[0].type === 'arguments') {
     const data = input[0] as T.Arguments;
-    return arguments_(...(data.children as NonNullable<T.ArgumentsConfig['children']>));
+    return arguments_(...((data.children ?? []) as NonNullable<T.ArgumentsConfig['children']>));
   }
   return arguments_(...(input as NonNullable<T.ArgumentsConfig['children']>));
 }
@@ -1267,7 +1272,8 @@ export function arrayExpressionUFormListFrom(input: T.ArrayExpressionUFormListCo
 export function parenthesizedExpressionFrom(input?: NonNullable<T.ParenthesizedExpressionConfig['children']>[number] | T.ParenthesizedExpression) {
   if (isNodeData(input) && input.type === 'parenthesized_expression') {
     const data = input as T.ParenthesizedExpression;
-    return parenthesizedExpression((data.children as NonNullable<T.ParenthesizedExpressionConfig['children']>)[0] as NonNullable<T.ParenthesizedExpressionConfig['children']>[number]);
+    const child = data.children ? (data.children as NonNullable<T.ParenthesizedExpressionConfig['children']>)[0] : undefined;
+    return parenthesizedExpression(child as NonNullable<T.ParenthesizedExpressionConfig['children']>[number]);
   }
   return parenthesizedExpression(input as NonNullable<T.ParenthesizedExpressionConfig['children']>[number]);
 }
@@ -1296,7 +1302,7 @@ export function structExpressionFrom(input: T.StructExpression | T.LooseStructEx
 export function fieldInitializerListFrom(...input: readonly (NonNullable<T.FieldInitializerListConfig['children']>[number] | T.FieldInitializerList)[]) {
   if (input.length === 1 && isNodeData(input[0]) && input[0].type === 'field_initializer_list') {
     const data = input[0] as T.FieldInitializerList;
-    return fieldInitializerList(...(data.children as NonNullable<T.FieldInitializerListConfig['children']>));
+    return fieldInitializerList(...((data.children ?? []) as NonNullable<T.FieldInitializerListConfig['children']>));
   }
   return fieldInitializerList(...(input as NonNullable<T.FieldInitializerListConfig['children']>));
 }
@@ -1321,7 +1327,8 @@ export function fieldInitializerFrom(input: T.FieldInitializer | T.LooseFieldIni
 export function baseFieldInitializerFrom(input?: NonNullable<T.BaseFieldInitializerConfig['children']>[number] | T.BaseFieldInitializer) {
   if (isNodeData(input) && input.type === 'base_field_initializer') {
     const data = input as T.BaseFieldInitializer;
-    return baseFieldInitializer((data.children as NonNullable<T.BaseFieldInitializerConfig['children']>)[0] as NonNullable<T.BaseFieldInitializerConfig['children']>[number]);
+    const child = data.children ? (data.children as NonNullable<T.BaseFieldInitializerConfig['children']>)[0] : undefined;
+    return baseFieldInitializer(child as NonNullable<T.BaseFieldInitializerConfig['children']>[number]);
   }
   return baseFieldInitializer(input as NonNullable<T.BaseFieldInitializerConfig['children']>[number]);
 }
@@ -1365,7 +1372,7 @@ export function matchExpressionFrom(input: T.MatchExpression | T.LooseMatchExpre
 export function matchBlockFrom(...input: readonly (NonNullable<T.MatchBlockConfig['children']>[number] | T.MatchBlock)[]) {
   if (input.length === 1 && isNodeData(input[0]) && input[0].type === 'match_block') {
     const data = input[0] as T.MatchBlock;
-    return matchBlock(...(data.children as NonNullable<T.MatchBlockConfig['children']>));
+    return matchBlock(...((data.children ?? []) as NonNullable<T.MatchBlockConfig['children']>));
   }
   return matchBlock(...(input as NonNullable<T.MatchBlockConfig['children']>));
 }
@@ -1457,7 +1464,7 @@ export function closureExpressionUFormExprFrom(input: T.ClosureExpressionUFormEx
 export function closureParametersFrom(...input: readonly (NonNullable<T.ClosureParametersConfig['children']>[number] | T.ClosureParameters)[]) {
   if (input.length === 1 && isNodeData(input[0]) && input[0].type === 'closure_parameters') {
     const data = input[0] as T.ClosureParameters;
-    return closureParameters(...(data.children as NonNullable<T.ClosureParametersConfig['children']>));
+    return closureParameters(...((data.children ?? []) as NonNullable<T.ClosureParametersConfig['children']>));
   }
   return closureParameters(...(input as NonNullable<T.ClosureParametersConfig['children']>));
 }
@@ -1495,7 +1502,8 @@ export function indexExpressionFrom(input: T.IndexExpression | T.LooseIndexExpre
 export function awaitExpressionFrom(input?: NonNullable<T.AwaitExpressionConfig['children']>[number] | T.AwaitExpression) {
   if (isNodeData(input) && input.type === 'await_expression') {
     const data = input as T.AwaitExpression;
-    return awaitExpression((data.children as NonNullable<T.AwaitExpressionConfig['children']>)[0] as NonNullable<T.AwaitExpressionConfig['children']>[number]);
+    const child = data.children ? (data.children as NonNullable<T.AwaitExpressionConfig['children']>)[0] : undefined;
+    return awaitExpression(child as NonNullable<T.AwaitExpressionConfig['children']>[number]);
   }
   return awaitExpression(input as NonNullable<T.AwaitExpressionConfig['children']>[number]);
 }
@@ -1555,7 +1563,7 @@ export function genericPatternFrom(input: T.GenericPattern | T.LooseGenericPatte
 export function tuplePatternFrom(...input: readonly (NonNullable<T.TuplePatternConfig['children']>[number] | T.TuplePattern)[]) {
   if (input.length === 1 && isNodeData(input[0]) && input[0].type === 'tuple_pattern') {
     const data = input[0] as T.TuplePattern;
-    return tuplePattern(...(data.children as NonNullable<T.TuplePatternConfig['children']>));
+    return tuplePattern(...((data.children ?? []) as NonNullable<T.TuplePatternConfig['children']>));
   }
   return tuplePattern(...(input as NonNullable<T.TuplePatternConfig['children']>));
 }
@@ -1563,7 +1571,7 @@ export function tuplePatternFrom(...input: readonly (NonNullable<T.TuplePatternC
 export function slicePatternFrom(...input: readonly (NonNullable<T.SlicePatternConfig['children']>[number] | T.SlicePattern)[]) {
   if (input.length === 1 && isNodeData(input[0]) && input[0].type === 'slice_pattern') {
     const data = input[0] as T.SlicePattern;
-    return slicePattern(...(data.children as NonNullable<T.SlicePatternConfig['children']>));
+    return slicePattern(...((data.children ?? []) as NonNullable<T.SlicePatternConfig['children']>));
   }
   return slicePattern(...(input as NonNullable<T.SlicePatternConfig['children']>));
 }
@@ -1674,7 +1682,7 @@ export function integerLiteralFrom(input: string | T.IntegerLiteral) {
 export function stringLiteralFrom(...input: readonly (NonNullable<T.StringLiteralConfig['children']>[number] | T.StringLiteral)[]) {
   if (input.length === 1 && isNodeData(input[0]) && input[0].type === 'string_literal') {
     const data = input[0] as T.StringLiteral;
-    return stringLiteral(...(data.children as NonNullable<T.StringLiteralConfig['children']>));
+    return stringLiteral(...((data.children ?? []) as NonNullable<T.StringLiteralConfig['children']>));
   }
   return stringLiteral(...(input as NonNullable<T.StringLiteralConfig['children']>));
 }
@@ -1706,7 +1714,8 @@ export function booleanLiteralFrom(input: string | T.BooleanLiteral) {
 export function commentFrom(input?: NonNullable<T.CommentConfig['children']>[number] | T.Comment) {
   if (isNodeData(input) && input.type === 'comment') {
     const data = input as T.Comment;
-    return comment((data.children as NonNullable<T.CommentConfig['children']>)[0] as NonNullable<T.CommentConfig['children']>[number]);
+    const child = data.children ? (data.children as NonNullable<T.CommentConfig['children']>)[0] : undefined;
+    return comment(child as NonNullable<T.CommentConfig['children']>[number]);
   }
   return comment(input as NonNullable<T.CommentConfig['children']>[number]);
 }
@@ -1855,7 +1864,8 @@ export function rangeExpressionBareFrom(input: T.RangeExpressionBare | T.LooseRa
 export function letChainFrom(input?: NonNullable<T.LetChainConfig['children']>[number] | T.LetChain) {
   if (isNodeData(input) && input.type === 'let_chain') {
     const data = input as T.LetChain;
-    return letChain((data.children as NonNullable<T.LetChainConfig['children']>)[0] as NonNullable<T.LetChainConfig['children']>[number]);
+    const child = data.children ? (data.children as NonNullable<T.LetChainConfig['children']>)[0] : undefined;
+    return letChain(child as NonNullable<T.LetChainConfig['children']>[number]);
   }
   return letChain(input as NonNullable<T.LetChainConfig['children']>[number]);
 }
