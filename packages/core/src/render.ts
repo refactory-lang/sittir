@@ -177,27 +177,37 @@ function render(node: AnyNodeData, ctx: InternalRenderContext): string {
 			);
 			const sep = resolveJoinBy(ruleObj, name);
 			const joined = remaining.map(c => renderValue(c as AnyNodeData | string | number, ctx)).join(sep);
-			// Trailing-separator fidelity: the codegen emits
-			// `joinByTrailing: true` when the repeat rule captured
-			// `trailing: true` at evaluate time (i.e. the grammar
-			// permits `{ a, b, }`). In that case, look for an
-			// anonymous separator token immediately after the last
-			// named child in the parse tree and emit it when present
-			// — preserves the original's with-or-without-trailing
-			// state so ast-match stays stable.
-			const trailingAllowed = ruleObj?.['joinByTrailing'] === true;
-			if (trailingAllowed && sep && sep.length > 0 && remaining.length > 0) {
+			if (!sep || sep.length === 0 || remaining.length === 0) return joined;
+			// Leading / trailing-separator fidelity: codegen emits
+			// `joinByLeading: true` / `joinByTrailing: true` when the
+			// repeat rule captured those markers at evaluate time
+			// (e.g. rust's or_pattern `| a | b`, struct_pattern
+			// `{ a, b, }`). For each marker, probe the parse-tree
+			// children for an anonymous separator token flanking the
+			// named-child run and emit it when present — preserves
+			// the original's with-or-without-flank state so ast-match
+			// stays stable.
+			let prefix = '';
+			let suffix = '';
+			if (ruleObj?.['joinByLeading'] === true) {
+				const firstNamedIdx = node.children.findIndex(
+					(c) => (c as AnyNodeData).named !== false,
+				);
+				if (firstNamedIdx > 0) {
+					const leader = node.children[firstNamedIdx - 1] as AnyNodeData;
+					if (leader && leader.named === false && leader.text === sep) prefix = sep;
+				}
+			}
+			if (ruleObj?.['joinByTrailing'] === true) {
 				const lastNamedIdx = node.children.findLastIndex(
 					(c) => (c as AnyNodeData).named !== false,
 				);
 				if (lastNamedIdx >= 0 && lastNamedIdx < node.children.length - 1) {
 					const trailer = node.children[lastNamedIdx + 1] as AnyNodeData;
-					if (trailer && trailer.named === false && trailer.text === sep) {
-						return joined + sep;
-					}
+					if (trailer && trailer.named === false && trailer.text === sep) suffix = sep;
 				}
 			}
-			return joined;
+			return prefix + joined + suffix;
 		}
 
 		// 4. Named child by kind — consume first unconsumed named match

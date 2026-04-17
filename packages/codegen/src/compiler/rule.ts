@@ -1175,6 +1175,7 @@ export class AssembledBranch extends AssembledNodeBase {
         // trailing anon-separator token in `$$$CHILDREN` and preserve
         // it when present.
         if (findRepeatTrailing(this.simplifiedRule)) entry.joinByTrailing = true
+        if (findRepeatLeading(this.simplifiedRule)) entry.joinByLeading = true
         if (Object.keys(joinByField).length > 0) entry.joinByField = joinByField
         return entry
     }
@@ -1316,6 +1317,7 @@ export class AssembledContainer extends AssembledNodeBase {
         const sep = this.separator ?? findRepeatSeparator(this.simplifiedRule)
         if (sep) entry.joinBy = sep
         if (findRepeatTrailing(this.simplifiedRule)) entry.joinByTrailing = true
+        if (findRepeatLeading(this.simplifiedRule)) entry.joinByLeading = true
         if (Object.keys(joinByField).length > 0) entry.joinByField = joinByField
         return entry
     }
@@ -1517,6 +1519,7 @@ export class AssembledGroup extends AssembledNodeBase {
         const sep = findRepeatSeparator(this.simplifiedRule)
         if (sep) entry.joinBy = sep
         if (findRepeatTrailing(this.simplifiedRule)) entry.joinByTrailing = true
+        if (findRepeatLeading(this.simplifiedRule)) entry.joinByLeading = true
         if (Object.keys(joinByField).length > 0) entry.joinByField = joinByField
         return entry
     }
@@ -2229,6 +2232,32 @@ export function findRepeatTrailing(rule: Rule): boolean {
         case 'group':
         case 'field':
             return findRepeatTrailing(rule.content)
+        default:
+            return false
+    }
+}
+
+/**
+ * Matches `findRepeatTrailing` but for the `leading: true` marker.
+ * Leading-separator patterns are `sep, x, sep x*` — rust's or_pattern
+ * (`| a | b`) and typescript union/intersection types are the canonical
+ * examples. Evaluate's `liftCommaSep` captures this as `repeat.leading`.
+ */
+export function findRepeatLeading(rule: Rule): boolean {
+    switch (rule.type) {
+        case 'repeat':
+        case 'repeat1':
+            if (rule.leading) return true
+            return findRepeatLeading(rule.content)
+        case 'seq':
+        case 'choice':
+            return rule.members.some(m => findRepeatLeading(m))
+        case 'optional':
+        case 'variant':
+        case 'clause':
+        case 'group':
+        case 'field':
+            return findRepeatLeading(rule.content)
         default:
             return false
     }
