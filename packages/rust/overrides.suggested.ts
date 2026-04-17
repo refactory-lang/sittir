@@ -15,9 +15,9 @@
 // Summary
 // ---------------------------------------------------------------
 // Field inferences:  9  (0 applied, 9 held)
-// Rule promotions:   48  (47 applied, 1 held)
+// Rule promotions:   51  (50 applied, 1 held)
 // Repeated shapes:   5  (advisory — suggested supertypes/groups)
-// Round-trip fails: 33  (21 parse errors, 12 AST mismatches; 20 render, 13 factory)
+// Round-trip fails: 25  (17 parse errors, 8 AST mismatches; 15 render, 10 factory)
 
 // ---------------------------------------------------------------
 // Round-trip failures — corpus cases that didn't survive
@@ -40,22 +40,6 @@ export const roundTripFailures: Array<{
   readonly rendered?: string;
   readonly message: string;
 }> = [
-  // --- use_wildcard (2) ---
-  {
-    entry: "Use declarations",
-    kind: "use_wildcard",
-    source: "render",
-    category: "parse-error",
-    message: "render: Node 'undefined' has no 'fields' or 'children' — did you mean to set 'text' for a leaf node?",
-  },
-  {
-    entry: "Use declarations",
-    kind: "use_wildcard",
-    source: "factory",
-    category: "parse-error",
-    input:    "sayings::japanese::farewells::*",
-    message: "Node 'undefined' has no 'fields' or 'children' — did you mean to set 'text' for ",
-  },
   // --- impl_item (2) ---
   {
     entry: "Trait impl signature",
@@ -84,22 +68,6 @@ export const roundTripFailures: Array<{
     input:    "{\n    // Make 'default' still works as an identifier\n    default.bar();\n  }",
     rendered: "{// Make 'default' still works as an identifier default.bar();}",
     message: "re-parse error: \"{// Make 'default' still works as an identifier default.bar();}\"",
-  },
-  // --- loop_expression (2) ---
-  {
-    entry: "Loop expressions",
-    kind: "loop_expression",
-    source: "render",
-    category: "parse-error",
-    message: "render: Node 'undefined' has no 'fields' or 'children' — did you mean to set 'text' for a leaf node?",
-  },
-  {
-    entry: "Loop expressions",
-    kind: "loop_expression",
-    source: "factory",
-    category: "parse-error",
-    input:    "'outer: loop {\n  'inner: loop {\n    break 'outer;\n    break true;\n  }\n}",
-    message: "Node 'undefined' has no 'fields' or 'children' — did you mean to set 'text' for ",
   },
   // --- mut_pattern (4) ---
   {
@@ -175,44 +143,6 @@ export const roundTripFailures: Array<{
     input:    "extern \"C\" fn(*mut c_void)",
     rendered: "(*mut c_void)",
     message: "kind not found at rendered offset 10",
-  },
-  // --- struct_pattern (2) ---
-  {
-    entry: "Let-else Statements",
-    kind: "struct_pattern",
-    source: "render",
-    category: "ast-mismatch",
-    input:    "Foo::Bar {\n    texts,\n    values,\n}",
-    rendered: "Foo::Bar{texts,values}",
-    message: "struct_pattern: childCount 7 ≠ 6 [scoped_type_identifier,\"{\",field_pattern,\",\",field_pattern,\",\",\"}\"] vs [scoped_type_identifier,\"{\",field_pattern,\",\",field_pat",
-  },
-  {
-    entry: "Let-else Statements",
-    kind: "struct_pattern",
-    source: "factory",
-    category: "ast-mismatch",
-    input:    "Foo::Bar {\n    texts,\n    values,\n}",
-    rendered: "Foo::Bar{texts,values}",
-    message: "struct_pattern: childCount 7 ≠ 6 [scoped_type_identifier,\"{\",field_pattern,\",\",field_pattern,\",\",\"}\"] vs [scoped_type_identifier,\"{\",field_pattern,\",\",field_pat",
-  },
-  // --- mod_item (2) ---
-  {
-    entry: "Attributes",
-    kind: "mod_item",
-    source: "render",
-    category: "ast-mismatch",
-    input:    "mod macos_only {}",
-    rendered: "mod macos_only;{}",
-    message: "mod_item[2]: named flag true ≠ false",
-  },
-  {
-    entry: "Inner attributes",
-    kind: "mod_item",
-    source: "render",
-    category: "ast-mismatch",
-    input:    "mod macos_only {\n  #![cfg(target_os = \"macos\")]\n}",
-    rendered: "mod macos_only;{\n  #![cfg(target_os = \"macos\")]\n}",
-    message: "mod_item[2]: named flag true ≠ false",
   },
   // --- tuple_expression (3) ---
   {
@@ -502,6 +432,9 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "field_pattern", classification: "polymorph", applied: true },
   { kind: "field_pattern_named", classification: "polymorph", applied: true },
   { kind: "field_pattern_shorthand", classification: "polymorph", applied: true },
+  { kind: "mod_item", classification: "polymorph", applied: true },
+  { kind: "mod_item_external", classification: "polymorph", applied: true },
+  { kind: "mod_item_inline", classification: "polymorph", applied: true },
   { kind: "or_pattern", classification: "polymorph", applied: true },
   { kind: "or_pattern_binary", classification: "polymorph", applied: true },
   { kind: "or_pattern_prefix", classification: "polymorph", applied: true },

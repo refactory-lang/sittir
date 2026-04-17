@@ -311,25 +311,59 @@ export function attribute(config: T.AttributeConfig) {
   };
 }
 
-export function modItem(config: T.ModItemConfig) {
+export function modItem(config: T.ModItemUFormExternalConfig | T.ModItemUFormInlineConfig) {
+  if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === 'mod_item_external') return modItemUFormExternal(config as T.ModItemUFormExternalConfig);
+  if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === 'mod_item_inline') return modItemUFormInline(config as T.ModItemUFormInlineConfig);
+  if (config && (config as any).variant === 'external') return modItemUFormExternal(config as T.ModItemUFormExternalConfig);
+  if (config && (config as any).variant === 'inline') return modItemUFormInline(config as T.ModItemUFormInlineConfig);
+  return modItemUFormExternal(config as T.ModItemUFormExternalConfig);
+}
+export function modItemUFormExternal(config: T.ModItemUFormExternalConfig) {
   const fields = {
     visibility_modifier: config?.visibilityModifier,
     name: config?.name,
-    body: config?.body,
   };
+  const children = config?.children ?? [];
   return {
     type: 'mod_item' as const,
     named: true as const,
+    variant: '_form_external' as const,
     fields,
-    visibilityModifier(visibilityModifier_?: T.VisibilityModifier | undefined) { return _fs(config, modItem, 'visibilityModifier', visibilityModifier_, fields.visibility_modifier); },
-    name(name_?: T.Identifier) { return _fs(config, modItem, 'name', name_, fields.name); },
-    body(body_?: T.DeclarationList | undefined) { return _fs(config, modItem, 'body', body_, fields.body); },
+    children,
+    visibilityModifier(visibilityModifier_?: T.VisibilityModifier | undefined) { return _fs(config, modItemUFormExternal, 'visibilityModifier', visibilityModifier_, fields.visibility_modifier); },
+    name(name_?: T.Identifier) { return _fs(config, modItemUFormExternal, 'name', name_, fields.name); },
+    getChild() { return children[0]; },
+    setChild(child: T.ModItemExternal) { return modItemUFormExternal({ ...(config ?? {}), children: [child] }); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(target: T.ModItemTree) { const r = target.range(); return toEdit(this, r); },
+    replace(target: T.ModItemUFormExternalTree) { const r = target.range(); return toEdit(this, r); },
+  };
+}
+export function modItemUFormInline(config: T.ModItemUFormInlineConfig) {
+  const fields = {
+    visibility_modifier: config?.visibilityModifier,
+    name: config?.name,
+  };
+  const children = config?.children ?? [];
+  return {
+    type: 'mod_item' as const,
+    named: true as const,
+    variant: '_form_inline' as const,
+    fields,
+    children,
+    visibilityModifier(visibilityModifier_?: T.VisibilityModifier | undefined) { return _fs(config, modItemUFormInline, 'visibilityModifier', visibilityModifier_, fields.visibility_modifier); },
+    name(name_?: T.Identifier) { return _fs(config, modItemUFormInline, 'name', name_, fields.name); },
+    getChild() { return children[0]; },
+    setChild(child: T.ModItemInline) { return modItemUFormInline({ ...(config ?? {}), children: [child] }); },
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.ModItemUFormInlineTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -3437,6 +3471,24 @@ export function primitiveType(text: 'u8' | 'i8' | 'u16' | 'i16' | 'u32' | 'i32' 
   };
 }
 
+export function modItemInline(config: T.ModItemInlineConfig) {
+  const fields = {
+    body: config?.body,
+  };
+  return {
+    type: 'mod_item_inline' as const,
+    named: true as const,
+    fields,
+    body(body_?: T.DeclarationList) { return _fs(config, modItemInline, 'body', body_, fields.body); },
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.ModItemInlineTree) { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
 export function structItemBrace(config: T.StructItemBraceConfig) {
   const fields = {
     body: config?.body,
@@ -3949,6 +4001,7 @@ export type FluentKindMap = {
   "raw_string_literal_content": T.RawStringLiteralContent;
   "float_literal": T.FloatLiteral;
   "primitive_type": T.PrimitiveType;
+  "mod_item_inline": FluentNode<"mod_item_inline", T.ModItemInlineConfig>;
   "struct_item_brace": FluentNode<"struct_item_brace", T.StructItemBraceConfig>;
   "struct_item_tuple": FluentNode<"struct_item_tuple", T.StructItemTupleConfig>;
   "range_expression_binary": FluentNode<"range_expression_binary", T.RangeExpressionBinaryConfig>;
@@ -4132,6 +4185,7 @@ export const _factoryMap = {
   "raw_string_literal_content": rawStringLiteralContent,
   "float_literal": floatLiteral,
   "primitive_type": primitiveType,
+  "mod_item_inline": modItemInline,
   "struct_item_brace": structItemBrace,
   "struct_item_tuple": structItemTuple,
   "range_expression_binary": rangeExpressionBinary,
@@ -4316,6 +4370,7 @@ export const _factoryShapes = {
   "raw_string_literal_content": "text",
   "float_literal": "text",
   "primitive_type": "config",
+  "mod_item_inline": "config",
   "struct_item_brace": "config",
   "struct_item_tuple": "config",
   "range_expression_binary": "config",

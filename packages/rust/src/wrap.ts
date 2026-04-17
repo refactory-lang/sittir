@@ -97,6 +97,7 @@ import type {
   MatchExpression,
   MatchPattern,
   ModItem,
+  ModItemInline,
   MutPattern,
   NegativeLiteral,
   NonSpecialToken,
@@ -177,6 +178,7 @@ import type {
   _FieldIdentifier,
   _FieldPatternShorthand,
   _LetChain,
+  _ModItemInline,
   _RangeExpressionBare,
   _TypeIdentifier,
 } from './types.js';
@@ -334,8 +336,7 @@ export function wrapModItem(data: _NodeData, tree: TreeHandle): WrappedNode<ModI
     ...data,
     get visibilityModifier() { return drillIn(data.fields?.['visibility_modifier'], tree); },
     get name() { return drillIn(data.fields?.['name'], tree); },
-    get body() { return drillIn(data.fields?.['body'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get child() { return drillIn(data.children?.[0], tree); },
   } as unknown as WrappedNode<ModItem>;
 }
 
@@ -1526,6 +1527,14 @@ export function wrap_FieldPatternShorthand(data: _NodeData, tree: TreeHandle): W
   } as unknown as WrappedNode<_FieldPatternShorthand>;
 }
 
+export function wrap_ModItemInline(data: _NodeData, tree: TreeHandle): WrappedNode<_ModItemInline> {
+  return {
+    ...data,
+    get body() { return drillIn(data.fields?.['body'], tree); },
+    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<_ModItemInline>;
+}
+
 export function wrap_ClosureExpressionExpr(data: _NodeData, tree: TreeHandle): WrappedNode<_ClosureExpressionExpr> {
   return {
     ...data,
@@ -1540,6 +1549,14 @@ export function wrap_RangeExpressionBare(data: _NodeData, tree: TreeHandle): Wra
     get operator() { return drillIn(data.fields?.['operator'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<_RangeExpressionBare>;
+}
+
+export function wrapModItemInline(data: _NodeData, tree: TreeHandle): WrappedNode<ModItemInline> {
+  return {
+    ...data,
+    get body() { return drillIn(data.fields?.['body'], tree); },
+    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<ModItemInline>;
 }
 
 export function wrapStructItemBrace(data: _NodeData, tree: TreeHandle): WrappedNode<StructItemBrace> {
@@ -1836,6 +1853,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'array_expression_semi': (d, t) => wrapArrayExpressionSemi(d, t),
   'array_expression_list': (d, t) => wrapArrayExpressionList(d, t),
   '_field_pattern_shorthand': (d, t) => wrap_FieldPatternShorthand(d, t),
+  '_mod_item_inline': (d, t) => wrap_ModItemInline(d, t),
   '_closure_expression_expr': (d, t) => wrap_ClosureExpressionExpr(d, t),
   '_range_expression_bare': (d, t) => wrap_RangeExpressionBare(d, t),
   '_kw_for': (d) => d,
@@ -1847,6 +1865,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_line_doc_content': (d) => d,
   '_error_sentinel': (d) => d,
   'primitive_type': (d) => d,
+  'mod_item_inline': (d, t) => wrapModItemInline(d, t),
   'struct_item_brace': (d, t) => wrapStructItemBrace(d, t),
   'struct_item_tuple': (d, t) => wrapStructItemTuple(d, t),
   'range_expression_binary': (d, t) => wrapRangeExpressionBinary(d, t),

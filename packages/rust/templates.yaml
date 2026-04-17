@@ -19,7 +19,10 @@ rules:
   attribute_item: "#[$ATTRIBUTE]"
   inner_attribute_item: "#![$ATTRIBUTE]"
   attribute: $$$CHILDREN=$VALUE$ARGUMENTS
-  mod_item: $VISIBILITY_MODIFIER mod $NAME;$BODY
+  mod_item:
+    variants:
+      external: $VISIBILITY_MODIFIER mod $NAME $$$CHILDREN
+      inline: $VISIBILITY_MODIFIER mod $NAME $$$CHILDREN
   foreign_mod_item: $VISIBILITY_MODIFIER $EXTERN_MODIFIER;$BODY
   declaration_list: "{$$$CHILDREN}"
   struct_item:
@@ -277,6 +280,7 @@ rules:
     joinBy: ","
     joinByField:
       attributes: "\n"
+  mod_item_inline: $BODY
   struct_item_brace: $$$CHILDREN $BODY
   struct_item_tuple: $BODY $$$CHILDREN;
   range_expression_binary: $START $OPERATOR $END

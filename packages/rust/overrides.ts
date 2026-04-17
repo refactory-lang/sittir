@@ -204,10 +204,13 @@ export default grammar(enrich(base), {
             2: field('token_tree'), // token_tree [struct=0]
         }),
 
-        // mod_item: 1 field(s)
-        mod_item: ($, original) => transform(original, {
-            0: field('visibility_modifier'), // visibility_modifier [struct=0]
-        }),
+        // mod_item: two forms — `mod name;` (external) vs `mod name { ... }`
+        // (inline). Variant-split so each form's template emits the
+        // right terminator (trailing `;` vs `{...}` body).
+        mod_item: ($, original) => transform(original,
+            { 0: field('visibility_modifier') },
+            { '3/0': variant('external'), '3/1': variant('inline') },
+        ),
 
         // mut_pattern: 2 field(s)
         mut_pattern: ($, original) => transform(original, {

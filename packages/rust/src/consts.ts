@@ -6,6 +6,7 @@ export const NODE_KINDS = [
   '_field_identifier',
   '_field_pattern_shorthand',
   '_let_chain',
+  '_mod_item_inline',
   '_non_special_token',
   '_range_expression_bare',
   '_reserved_identifier',
@@ -93,6 +94,7 @@ export const NODE_KINDS = [
   'match_expression',
   'match_pattern',
   'mod_item',
+  'mod_item_inline',
   'mut_pattern',
   'negative_literal',
   'or_pattern',
@@ -257,6 +259,7 @@ export const KEYWORDS = [
   '_kw_for',
   '_kw_operator',
   '_kw_unsafe',
+  '_mod_item_external',
   '_outer_line_doc_comment_marker',
   '_struct_item_unit',
   'as',
@@ -282,6 +285,7 @@ export const KEYWORDS = [
   'loop',
   'match',
   'mod',
+  'mod_item_external',
   'move',
   'mut',
   'mutable_specifier',
@@ -370,6 +374,9 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'name', required: true, multiple: false },
   ],
   '_let_chain': [
+  ],
+  '_mod_item_inline': [
+    { name: 'body', required: true, multiple: false },
   ],
   '_non_special_token': [
   ],
@@ -715,7 +722,9 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'mod_item': [
     { name: 'visibilityModifier', required: false, multiple: false },
     { name: 'name', required: true, multiple: false },
-    { name: 'body', required: false, multiple: false },
+  ],
+  'mod_item_inline': [
+    { name: 'body', required: true, multiple: false },
   ],
   'mut_pattern': [
     { name: 'mutableSpecifier', required: true, multiple: false },

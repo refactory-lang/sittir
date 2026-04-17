@@ -176,7 +176,24 @@ function render(node: AnyNodeData, ctx: InternalRenderContext): string {
 				!consumed.has(i) && (c as AnyNodeData).named !== false
 			);
 			const sep = resolveJoinBy(ruleObj, name);
-			return remaining.map(c => renderValue(c as AnyNodeData | string | number, ctx)).join(sep);
+			const joined = remaining.map(c => renderValue(c as AnyNodeData | string | number, ctx)).join(sep);
+			// Trailing-separator fidelity: if the original tree carried
+			// an anonymous separator token (matching joinBy) AFTER the
+			// last named child — e.g. rust's `{ texts, values, }` —
+			// emit it too. Dropping it produces an ast-match regression
+			// at re-parse time (child count off by one anon token).
+			if (sep && sep.length > 0 && remaining.length > 0) {
+				const lastNamedIdx = node.children.findLastIndex(
+					(c) => (c as AnyNodeData).named !== false,
+				);
+				if (lastNamedIdx >= 0 && lastNamedIdx < node.children.length - 1) {
+					const trailer = node.children[lastNamedIdx + 1] as AnyNodeData;
+					if (trailer && trailer.named === false && trailer.text === sep) {
+						return joined + sep;
+					}
+				}
+			}
+			return joined;
 		}
 
 		// 4. Named child by kind — consume first unconsumed named match
@@ -348,7 +365,17 @@ function renderClause(
 	return clauseTemplate.replace(varPattern, (_match: string, _pfx: string, name: string) => {
 		const fieldKey = name.toLowerCase();
 		if (node.fields?.[fieldKey] !== undefined) {
-			const value = node.fields[fieldKey] as AnyNodeData | string | number;
+			const raw = node.fields[fieldKey];
+			// Multi-valued fields (promoted anonymous tokens +
+			// repeated slots) arrive as arrays. renderValue(array)
+			// would treat it as a node with `.type === undefined`
+			// and throw; single-value clauses just want the first
+			// entry (same convention as the `$NAME` single-slot
+			// path above in resolveSlot).
+			const value = Array.isArray(raw)
+				? (raw.length > 0 ? raw[0] as AnyNodeData | string | number : '')
+				: raw as AnyNodeData | string | number;
+			if (value === '') return '';
 			return renderValue(value, ctx);
 		}
 		// Children by kind fallback

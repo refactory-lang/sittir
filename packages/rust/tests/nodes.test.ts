@@ -122,13 +122,13 @@ describe('attribute', () => {
 });
 
 describe('mod_item', () => {
-  it('factory produces correct type', () => {
-    const node = ir.mod({ name: { type: 'identifier', text: 'test' } as any });
+  it('external form produces correct type', () => {
+    const node = ir.mod.external({ name: { type: 'identifier', text: 'test' } as any });
     expect(node.type).toBe('mod_item');
   });
-  it('render produces non-empty string', () => {
-    const node = ir.mod({ name: { type: 'identifier', text: 'test' } as any });
-    expect(node.render().length).toBeGreaterThan(0);
+  it('inline form produces correct type', () => {
+    const node = ir.mod.inline({ name: { type: 'identifier', text: 'test' } as any });
+    expect(node.type).toBe('mod_item');
   });
 });
 
@@ -1586,6 +1586,17 @@ describe('primitive_type', () => {
   it('factory accepts valid value', () => {
     const node = ir.primitiveType('u8');
     expect(node.type).toBe('primitive_type');
+  });
+});
+
+describe('mod_item_inline', () => {
+  it('factory produces correct type', () => {
+    const node = ir.modItemInline({ body: { type: 'declaration_list', text: 'test' } as any });
+    expect(node.type).toBe('mod_item_inline');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.modItemInline({ body: { type: 'declaration_list', text: 'test' } as any });
+    expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
