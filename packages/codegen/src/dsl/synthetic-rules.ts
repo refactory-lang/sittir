@@ -14,6 +14,8 @@ import type { RuntimeRule } from './runtime-shapes.ts'
 
 let currentSyntheticRules: Map<string, RuntimeRule> | null = null
 let currentRuleKind: string | null = null
+let currentOptsRules: Record<string, unknown> | null = null
+let currentBlankFn: (() => unknown) | null = null
 export interface PolymorphVariant {
     readonly parent: string
     readonly child: string
@@ -34,6 +36,15 @@ export function registerSyntheticRule(name: string, content: RuntimeRule): void 
         currentSyntheticRules = new Map()
     }
     currentSyntheticRules.set(name, content)
+    // When the grammar wrapper is active (pass 2 of tree-sitter CLI
+    // evaluation), also add a blank placeholder directly to opts.rules
+    // so tree-sitter's `$` proxy resolves the new name when subsequent
+    // options like `conflicts:` reference it. drainSyntheticRules swaps
+    // the blank for the real body after nativeGrammar returns.
+    if (currentOptsRules && !(name in currentOptsRules)) {
+        const blank = currentBlankFn
+        currentOptsRules[name] = () => blank ? blank() : ({ type: 'BLANK' })
+    }
 }
 
 /**
@@ -104,6 +115,192 @@ export function drainSyntheticRules(): Map<string, RuntimeRule> {
     const rules = currentSyntheticRules ?? new Map()
     currentSyntheticRules = null
     return rules
+}
+
+let currentConflicts: string[][] = []
+
+/**
+ * Register a tree-sitter conflict group. Each call adds one entry to
+ * the grammar's `conflicts: [[...]]` list. Used by auto-hoist to tell
+ * tree-sitter that a newly-synthesized rule may structurally overlap
+ * with an auto-generated internal helper (e.g. shared `_repeat1`
+ * factorings) — without this, the parser-generator's static analysis
+ * refuses to resolve the conflict and fails grammar compilation.
+ */
+export function registerConflict(names: readonly string[]): void {
+    if (names.length === 0) return
+    currentConflicts.push([...names])
+}
+
+export function drainConflicts(): string[][] {
+    const conflicts = currentConflicts
+    currentConflicts = []
+    return conflicts
+}
+
+// ---------------------------------------------------------------------------
+// Aliased-variant synthesis — shared between variant() and alias()
+// placeholders in transform.ts. Handles the mechanics of "extract an
+// arbitrary sub-rule into a hidden named rule, return an alias node
+// that points at it, wrap in prec where needed, and factor out empty-
+// matching content tree-sitter won't accept as a syntactic rule."
+// ---------------------------------------------------------------------------
+
+/**
+ * Wrap `content` in the accumulated prec stack collected during path
+ * descent. Each entry in `precStack` is the original prec wrapper the
+ * path crossed; we reapply them inner-first so the outer-most prec is
+ * the outermost in the result.
+ */
+export function wrapInPrecStack(
+    content: RuntimeRule,
+    precStack: readonly RuntimeRule[] | undefined,
+    reconstructPrec: (wrapper: RuntimeRule, newContent: RuntimeRule) => RuntimeRule,
+): RuntimeRule {
+    if (!precStack?.length) return content
+    let result = content
+    for (let i = precStack.length - 1; i >= 0; i--) {
+        result = reconstructPrec(precStack[i]!, result)
+    }
+    return result
+}
+
+/**
+ * Build the `alias($._hidden, $.visible)` node AND register the
+ * hidden rule's body. Shared between variant() and alias() placeholders
+ * because both need the same empty-match / prec handling.
+ *
+ * Tree-sitter refuses to compile a named syntactic rule whose body
+ * matches the empty string (it can't decide which copy-count to choose
+ * while parsing). A raw variant extraction can easily produce such a
+ * body — e.g. rust's `array_expression` list form is
+ * `repeat(elem, sep=',')` which matches zero or more, including zero.
+ *
+ * When the content is empty-matchable AND we can factor out a non-empty
+ * core, extract the core and wrap the call-site alias in `optional()`.
+ * The language is preserved (`optional(repeat1(X))` = `repeat(X)`) and
+ * the hidden rule is guaranteed non-empty so tree-sitter accepts it.
+ *
+ * Patterns handled:
+ *   - `repeat(X)`     → register `repeat1(X)`, alias wrapped in optional
+ *   - `optional(X)`   → register X, alias wrapped in optional
+ *   - `choice(X, BLANK)` or `choice(BLANK, X)` with X non-empty
+ *                     → register X, alias wrapped in optional
+ *   - `seq(A, B, ...)` with all members empty-matchable — rewrite the
+ *                     first factorable member; still wrap in optional
+ */
+export function registerAliasedVariant(
+    hiddenName: string,
+    aliasValue: string,
+    originalMember: RuntimeRule,
+    bodyWrapper: (body: RuntimeRule) => RuntimeRule,
+): RuntimeRule {
+    const isUpperCase = originalMember.type === originalMember.type.toUpperCase()
+    const wasEmpty = matchesEmpty(originalMember)
+    const factored = factorOutEmptiness(originalMember)
+    if (wasEmpty && !factored) {
+        throw new Error(
+            `variant()/alias(): can't extract '${hiddenName}' — its content matches the empty string and no non-empty core could be factored out. ` +
+            `Tree-sitter rejects syntactic rules that match empty. Restructure the parent rule (e.g. lift the empty case outside the choice) before splitting.`,
+        )
+    }
+    const body = factored ? factored.nonEmpty : originalMember
+    registerSyntheticRule(hiddenName, bodyWrapper(body as RuntimeRule))
+    const aliasNode = {
+        type: isUpperCase ? 'ALIAS' : 'alias',
+        content: { type: isUpperCase ? 'SYMBOL' : 'symbol', name: hiddenName },
+        named: true,
+        value: aliasValue,
+    } as unknown as RuntimeRule
+    if (factored) {
+        const optional = (globalThis as { optional?: (c: unknown) => unknown }).optional
+        if (typeof optional !== 'function') {
+            throw new Error('synthetic-rules: no global optional() found — variant()/alias() on empty-matching content needs runtime optional()')
+        }
+        return optional(aliasNode) as RuntimeRule
+    }
+    return aliasNode
+}
+
+/**
+ * If `rule` matches the empty string but has a factorable non-empty
+ * core, return `{ nonEmpty }` — the caller wraps the call site in
+ * `optional()` so the language stays the same. Returns null when the
+ * rule is either non-empty already or can't be factored.
+ */
+function factorOutEmptiness(rule: RuntimeRule): { nonEmpty: unknown } | null {
+    if (!matchesEmpty(rule)) return null
+    return extractNonEmpty(rule)
+}
+
+/**
+ * Recursively strip empty-matching branches from transparent
+ * composition nodes (SEQ / CHOICE / OPTIONAL / REPEAT) until the
+ * result is guaranteed non-empty. Returns null when the whole rule
+ * is unconditionally empty or the shape is too pathological to
+ * factor cleanly — caller surfaces the limitation upstream.
+ */
+function extractNonEmpty(rule: RuntimeRule): { nonEmpty: unknown } | null {
+    const t = rule.type
+    // repeat(X, ...) → repeat1(X, ...) — preserves sep / trailing /
+    // leading metadata by direct spread (native repeat1() can't take
+    // those as arguments).
+    if (t === 'repeat' || t === 'REPEAT') {
+        const r = rule as unknown as Record<string, unknown>
+        const nonEmpty: Record<string, unknown> = { ...r, type: t === 'REPEAT' ? 'REPEAT1' : 'repeat1' }
+        return { nonEmpty }
+    }
+    if (t === 'optional') {
+        const inner = (rule as unknown as { content: RuntimeRule }).content
+        return matchesEmpty(inner) ? extractNonEmpty(inner) : { nonEmpty: inner }
+    }
+    if (t === 'choice' || t === 'CHOICE') {
+        const members = (rule as unknown as { members: RuntimeRule[] }).members
+        const nonEmpty = members.filter(m => !matchesEmpty(m))
+        if (nonEmpty.length === 0) return null
+        if (nonEmpty.length === 1) return { nonEmpty: nonEmpty[0] }
+        return { nonEmpty: { type: t, members: nonEmpty } }
+    }
+    if (t === 'seq' || t === 'SEQ') {
+        // A SEQ matches empty only when EVERY member does. Replacing
+        // any one member with its non-empty core makes the whole SEQ
+        // non-empty; we rewrite members one at a time from the first
+        // factorable position. The outer `optional()` at the call
+        // site restores the original empty-path semantics.
+        const members = [...(rule as unknown as { members: RuntimeRule[] }).members]
+        for (let i = 0; i < members.length; i++) {
+            const factored = extractNonEmpty(members[i]!)
+            if (factored) {
+                members[i] = factored.nonEmpty as RuntimeRule
+                return { nonEmpty: { type: t, members } }
+            }
+        }
+        return null
+    }
+    return null
+}
+
+/**
+ * Conservative empty-match detector. Returns true when `rule` can
+ * produce a zero-length match. Used only to decide whether the
+ * factored non-empty core is actually non-empty — errs on the side of
+ * saying "true" for unknown shapes so callers don't wrongly claim a
+ * body is non-empty.
+ */
+export function matchesEmpty(rule: RuntimeRule): boolean {
+    const t = rule.type
+    if (t === 'blank' || t === 'BLANK') return true
+    if (t === 'optional') return true
+    if (t === 'repeat' || t === 'REPEAT') return true
+    if (t === 'choice' || t === 'CHOICE') {
+        const members = (rule as unknown as { members: RuntimeRule[] }).members
+        return members.some(m => matchesEmpty(m))
+    }
+    if (t === 'seq' || t === 'SEQ') {
+        const members = (rule as unknown as { members: RuntimeRule[] }).members
+        return members.every(m => matchesEmpty(m))
+    }
+    return false
 }
 
 export function withSyntheticRuleScope<T>(fn: () => T): { result: T; syntheticRules: Map<string, RuntimeRule> } {
@@ -199,6 +396,15 @@ export function installGrammarWrapper(): void {
         // Collect names discovered in pass 1
         const discoveredNames = new Map(currentSyntheticRules)
         currentSyntheticRules = new Map()
+        // Capture conflicts registered during pass 1 (if any). The
+        // post-nativeGrammar step below appends these to the result's
+        // conflicts array, alongside whatever pass 2 (real rule
+        // evaluation) contributes. We can't just wrap opts.conflicts
+        // because tree-sitter's `$` at that invocation point doesn't
+        // resolve base-scoped rule names — calling `base.conflicts($)`
+        // from the wrap produces `[null, null, …]` entries. Appending
+        // to the resolved result sidesteps that entirely.
+        const pendingConflictsAfterGrammar = drainConflicts()
 
         // Wrap rule functions to track currentRuleKind during pass 2.
         // tree-sitter's native grammar() calls each rule fn — we need
@@ -215,7 +421,11 @@ export function installGrammarWrapper(): void {
         }
 
         // Pass 2: add hidden rules as blank() entries to opts.rules
-        // so tree-sitter's RuleBuilder includes them in the ruleMap
+        // so tree-sitter's RuleBuilder includes them in the ruleMap.
+        // Warn (stderr) when pass 1 discovered zero names — usually
+        // means the dry-run's permissive proxy couldn't reach the real
+        // rule tree shape, which leaves conflicts() unable to resolve
+        // `$.variantName` symbols at grammar-gen time.
         if (opts?.rules && discoveredNames.size > 0) {
             const blank = g.blank
             for (const [name] of discoveredNames) {
@@ -225,7 +435,40 @@ export function installGrammarWrapper(): void {
             }
         }
 
+        // Expose opts.rules + blank() to registerSyntheticRule so any
+        // rule name registered during pass 2 (tree-sitter's real grammar
+        // evaluation, where hoisted variants get discovered because
+        // `original` is a real rule tree instead of a permissive proxy)
+        // is immediately backed by a blank placeholder in opts.rules.
+        // Without this, conflicts() — which runs inside nativeGrammar
+        // AFTER rule evaluation but BEFORE our drain step — would fail
+        // to resolve `$.<variantName>` references.
+        if (opts?.rules) {
+            currentOptsRules = opts.rules as Record<string, unknown>
+            currentBlankFn = g.blank ?? null
+        }
         const result = nativeGrammar.apply(this, args) as Record<string, unknown> | null
+        currentOptsRules = null
+        currentBlankFn = null
+
+        // Append hoist-registered conflicts directly to the RESULT's
+        // conflicts array. tree-sitter has already resolved base.conflicts
+        // + opts.conflicts at this point into a concrete array; we
+        // push our own entries (as SYMBOL-ref objects, which the output
+        // JSON serializer emits identically to $-proxy results).
+        // Collect conflicts registered during pass 2 AS WELL — drain
+        // once more and combine.
+        const allConflicts = [...pendingConflictsAfterGrammar, ...drainConflicts()]
+        if (result && allConflicts.length > 0 && typeof result === 'object') {
+            const grammar = (result as { grammar?: Record<string, unknown> }).grammar ?? result
+            const current = Array.isArray(grammar.conflicts) ? grammar.conflicts as unknown[] : []
+            // tree-sitter's serialized conflicts use bare rule-name
+            // strings (not SYMBOL-shaped objects), so match that shape.
+            for (const group of allConflicts) {
+                current.push([...group])
+            }
+            grammar.conflicts = current
+        }
 
         // Replace blank entries with real captured content
         const synthetic = drainSyntheticRules()

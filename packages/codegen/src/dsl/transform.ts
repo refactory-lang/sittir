@@ -25,7 +25,7 @@ import { parsePath, applyPath, reconstructWrapper, reconstructPrec, reconstructC
 import { isFieldPlaceholder, type FieldPlaceholder } from './field.ts'
 import { isAliasPlaceholder, type AliasPlaceholder } from './alias.ts'
 import { isVariantPlaceholder, type VariantPlaceholder } from './variant.ts'
-import { registerSyntheticRule, getCurrentRuleKind, registerPolymorphVariant, maybeKeywordSymbol } from './synthetic-rules.ts'
+import { getCurrentRuleKind, registerPolymorphVariant, maybeKeywordSymbol, registerAliasedVariant, registerSyntheticRule, registerConflict, wrapInPrecStack, matchesEmpty } from './synthetic-rules.ts'
 import { isFieldLike, isPrecWrapper, isWrapperType, type RuntimeRule } from './runtime-shapes.ts'
 
 /**
@@ -66,7 +66,12 @@ export function transform(
 ): RuntimeRule {
     let rule = original
     for (const patches of patchSets) {
-        const hasPathKeys = Object.keys(patches).some(k => k.includes('/') || k.includes('*'))
+        // Path mode triggers whenever a key isn't a pure non-negative
+        // integer: slashes (`0/1`), wildcards (`*`), negative indices
+        // (`-1`), or bare kind names (`_expression`) all route through
+        // parsePath + applyPath. Flat mode stays reserved for simple
+        // positional patching of seq members.
+        const hasPathKeys = Object.keys(patches).some(k => !/^\d+$/.test(k))
         const hasPlaceholderAlias = Object.values(patches).some(v => isAliasPlaceholder(v) || isVariantPlaceholder(v))
         if (hasPathKeys || hasPlaceholderAlias) {
             rule = applyPathPatches(rule, patches)
@@ -81,12 +86,121 @@ function applyPathPatches(
     original: RuntimeRule,
     patches: Record<number | string, RuntimeRule | FieldPlaceholder | AliasPlaceholder | VariantPlaceholder>,
 ): RuntimeRule {
+    // Two-phase: apply non-variant patches first so field placements bake
+    // into the original structure, then handle variant patches. If any
+    // variant would extract an empty-matching body, hoist ALL sibling
+    // variants to the nearest enclosing scaffolding (literals move into
+    // each alias body so none match empty). Sequential per-patch
+    // application can't do this because hoisting the first patch
+    // restructures the rule so the second patch's path no longer resolves.
+    const variantEntries: Array<[string, VariantPlaceholder]> = []
+    const otherEntries: Array<[string, RuntimeRule | FieldPlaceholder | AliasPlaceholder | VariantPlaceholder]> = []
+    for (const entry of Object.entries(patches)) {
+        const v = entry[1]
+        if (isVariantPlaceholder(v)) variantEntries.push([entry[0], v])
+        else otherEntries.push(entry)
+    }
     let rule = original
-    for (const [key, value] of Object.entries(patches)) {
+    for (const [key, value] of otherEntries) {
         const segments = parsePath(String(key))
         rule = applyPath(rule, segments, (member, precStack) => resolvePatch(value, member, precStack))
     }
+    if (variantEntries.length > 0) {
+        const hoisted = tryHoistSiblingVariants(rule, variantEntries)
+        if (hoisted) {
+            rule = hoisted.rule
+            for (const [key, value] of variantEntries) {
+                if (hoisted.consumed.has(key)) continue
+                const segments = parsePath(key)
+                rule = applyPath(rule, segments, (member, precStack) => resolvePatch(value, member, precStack))
+            }
+        } else {
+            for (const [key, value] of variantEntries) {
+                const segments = parsePath(key)
+                rule = applyPath(rule, segments, (member, precStack) => resolvePatch(value, member, precStack))
+            }
+        }
+    }
     return rule
+}
+
+/**
+ * Detect and apply "hoisted variant" restructuring when any variant()
+ * patch targets an empty-matching choice alternative. Without hoisting,
+ * tree-sitter rejects the extracted hidden rule (named syntactic rules
+ * can't match empty). With hoisting, the surrounding rule scaffolding
+ * (e.g. `[` and `]` literals around the choice) moves INTO each alias
+ * body — guarantees non-empty AND disambiguates from sibling rules with
+ * similar inner shapes.
+ *
+ * Only handles the common case: top-level seq containing a choice whose
+ * alternatives are the variant targets. Paths must all be `N/M` with
+ * the same `N` (the choice's position in the seq). For more complex
+ * nestings, the caller falls back to per-patch variant extraction.
+ */
+function tryHoistSiblingVariants(
+    rule: RuntimeRule,
+    variantEntries: ReadonlyArray<[string, VariantPlaceholder]>,
+): { rule: RuntimeRule; consumed: Set<string> } | null {
+    const t = rule?.type
+    if (!t) return null
+    if (t !== 'seq' && t !== 'SEQ') return null
+    const parsed: Array<{ key: string; v: VariantPlaceholder; choicePos: number; altIdx: number }> = []
+    for (const [key, v] of variantEntries) {
+        const segs = parsePath(key)
+        if (segs.length !== 2) return null
+        if (segs[0]!.kind !== 'index' || segs[1]!.kind !== 'index') return null
+        parsed.push({ key, v, choicePos: segs[0]!.value, altIdx: segs[1]!.value })
+    }
+    const choicePos = parsed[0]!.choicePos
+    if (parsed.some(p => p.choicePos !== choicePos)) return null
+    const seqMembers = [...membersOf(rule)]
+    const resolvedPos = choicePos < 0 ? seqMembers.length + choicePos : choicePos
+    const choice = seqMembers[resolvedPos]
+    if (!choice || (choice.type !== 'choice' && choice.type !== 'CHOICE')) return null
+    const choiceMembers = membersOf(choice)
+    const anyEmpty = parsed.some(p => matchesEmpty(choiceMembers[p.altIdx < 0 ? choiceMembers.length + p.altIdx : p.altIdx]!))
+    if (!anyEmpty) return null
+    const parentKind = getCurrentRuleKind()
+    if (!parentKind) return null
+    const refs: RuntimeRule[] = []
+    const isUpperCase = rule.type === rule.type.toUpperCase()
+    for (const p of parsed) {
+        const resolvedAlt = p.altIdx < 0 ? choiceMembers.length + p.altIdx : p.altIdx
+        const altContent = choiceMembers[resolvedAlt]!
+        const hoistedMembers = seqMembers.map((m, i) => i === resolvedPos ? altContent : m)
+        const hoistedBody = reconstructContainer(rule, hoistedMembers)
+        // Register as a VISIBLE rule (no underscore prefix). Each variant
+        // becomes its own top-level named rule with its own node kind.
+        // The parent rule becomes `choice($.parent_semi, $.parent_list)`
+        // — no alias node, no hidden rule. Tree-sitter's table generator
+        // sees N distinct visible rules with non-empty bodies (literals
+        // from the parent seq provide the scaffolding) and no structural
+        // collision with auto-generated _repeat1 helpers.
+        const visibleName = `${parentKind}_${p.v.name}`
+        registerPolymorphVariant(parentKind, p.v.name)
+        registerSyntheticRule(visibleName, hoistedBody)
+        refs.push({
+            type: isUpperCase ? 'SYMBOL' : 'symbol',
+            name: visibleName,
+        } as unknown as RuntimeRule)
+    }
+    // Hoisted variants inherit their parent seq's scaffolding, so they
+    // share a token prefix (e.g. `[` + attribute_item repeat) that
+    // defeats tree-sitter's LR(1) lookahead. Declare a conflict group
+    // across all variant names so the parser-generator emits a GLR
+    // state that forks on the prefix and picks the completing
+    // interpretation at parse time. Also declare each variant as a
+    // self-conflict — when the variant shares an internal repeat
+    // helper with sibling grammar rules (tree-sitter dedups identical
+    // repeat shapes across rules, producing a single `*_repeat1`),
+    // multiple reduction paths through the same shared helper still
+    // produce an unresolved state without the self-entry.
+    const variantNames = parsed.map(p => `${parentKind}_${p.v.name}`)
+    registerConflict(variantNames)
+    for (const n of variantNames) registerConflict([n])
+    const newChoice = reconstructContainer(choice, refs)
+    return { rule: newChoice, consumed: new Set(parsed.map(p => p.key)) }
 }
 
 // Local accessors for the container/wrapper field shapes RuntimeRule
@@ -159,14 +273,8 @@ function applyFlatPatches(
     return original
 }
 
-function wrapInPrec(content: RuntimeRule, precStack?: readonly RuntimeRule[]): RuntimeRule {
-    if (!precStack?.length) return content
-    let result = content
-    for (let i = precStack.length - 1; i >= 0; i--) {
-        result = reconstructPrec(precStack[i]!, result)
-    }
-    return result
-}
+const wrapInPrec = (content: RuntimeRule, precStack?: readonly RuntimeRule[]): RuntimeRule =>
+    wrapInPrecStack(content, precStack, reconstructPrec)
 
 function resolvePatch(
     patch: RuntimeRule | FieldPlaceholder | AliasPlaceholder | VariantPlaceholder,
@@ -230,17 +338,10 @@ function resolvePatch(
         if (!parentKind) {
             throw new Error(`variant('${patch.name}'): no current rule kind — variant() must be used inside a rule callback`)
         }
+        registerPolymorphVariant(parentKind, patch.name)
         const fullName = `${parentKind}_${patch.name}`
         const hiddenName = '_' + fullName
-        registerSyntheticRule(hiddenName, wrapInPrec(originalMember, precStack))
-        registerPolymorphVariant(parentKind, patch.name)
-        const isUpperCase = originalMember.type === originalMember.type.toUpperCase()
-        return {
-            type: isUpperCase ? 'ALIAS' : 'alias',
-            content: { type: isUpperCase ? 'SYMBOL' : 'symbol', name: hiddenName },
-            named: true,
-            value: fullName,
-        } as unknown as RuntimeRule
+        return registerAliasedVariant(hiddenName, fullName, originalMember, body => wrapInPrec(body, precStack))
     }
     // Alias placeholder — alias('variant_name'): register a hidden
     // rule with the original content and return alias($._hidden, $.visible).
@@ -248,14 +349,7 @@ function resolvePatch(
     // grammar wrapper (tree-sitter CLI) after all callbacks run.
     if (isAliasPlaceholder(patch)) {
         const hiddenName = '_' + patch.name
-        registerSyntheticRule(hiddenName, wrapInPrec(originalMember, precStack))
-        const isUpperCase = originalMember.type === originalMember.type.toUpperCase()
-        return {
-            type: isUpperCase ? 'ALIAS' : 'alias',
-            content: { type: isUpperCase ? 'SYMBOL' : 'symbol', name: hiddenName },
-            named: true,
-            value: patch.name,
-        } as unknown as RuntimeRule
+        return registerAliasedVariant(hiddenName, patch.name, originalMember, body => wrapInPrec(body, precStack))
     }
     return patch as RuntimeRule
 }
