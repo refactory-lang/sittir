@@ -230,32 +230,43 @@ export async function validateFactoryRoundTrip(
 				factoryData = readData;
 			} else if (factory) {
 				try {
-					// Children-only factories take positional rest-params;
-					// spread NAMED children only, otherwise the first
-					// anonymous delimiter binds the first positional slot.
-					// An empty `fields: {}` (not undefined) still means
-					// no field-shaped data — route through the
-					// children path so container factories receive
-					// their child args.
+					// Distinguish config-shaped factories from children-only
+					// ones by the declared first-param name. Codegen emits
+					// `function fooBar(config: T.FooBarConfig)` for
+					// field-bearing rules and `function fooBar(child: ...)`
+					// / `function fooBar(...children: ...)` for pure-
+					// container rules. Wrong routing produces garbage:
+					// a children-only factory given a config object boxes
+					// the whole config into children[0]; a config factory
+					// given positional args silently ignores the rest.
+					const firstParam = (factory.toString().match(/^function[^(]*\(([^,:)\s]*)/) ?? [])[1] ?? '';
+					const isConfigFactory = firstParam === 'config';
 					const fieldsPresent = readData.fields && Object.keys(readData.fields).length > 0;
-					if (!fieldsPresent && readData.children) {
-						const namedChildren = (readData.children ?? []).filter(
-							(c: any) => c?.named !== false,
-						);
-						factoryData = (factory as (...args: unknown[]) => AnyNodeData)(...namedChildren);
-					} else {
+					if (isConfigFactory) {
 						// Some rules have BOTH fields AND children —
 						// e.g. python's return_statement has a `return`
 						// keyword field plus the expression as an
-						// unrouted child. Passing camelFields alone
-						// loses the children array; factories that
-						// declare `children` in their ConfigOf merge
-						// it into the output (the generated factory
-						// body already reads `config?.children ?? []`).
+						// unrouted child. Include children in the config;
+						// factories that declare `children` in their
+						// ConfigOf merge it into the output.
 						const config = readData.children
 							? { ...camelFields, children: readData.children }
 							: camelFields ?? {};
 						factoryData = factory(config) as AnyNodeData;
+					} else if (readData.children) {
+						// Children-only factory: spread NAMED children
+						// as positional args. Works even when fields are
+						// present — anonymous fields on container nodes
+						// are promoted punctuation the template handles
+						// structurally.
+						const namedChildren = (readData.children ?? []).filter(
+							(c: any) => c?.named !== false,
+						);
+						factoryData = (factory as (...args: unknown[]) => AnyNodeData)(...namedChildren);
+					} else if (fieldsPresent) {
+						factoryData = factory(camelFields ?? {}) as AnyNodeData;
+					} else {
+						factoryData = stripToFactory(readData);
 					}
 				} catch {
 					factoryData = stripToFactory(readData);

@@ -17,7 +17,7 @@
 // Field inferences:  9  (0 applied, 9 held)
 // Rule promotions:   48  (47 applied, 1 held)
 // Repeated shapes:   5  (advisory — suggested supertypes/groups)
-// Round-trip fails: 56  (44 parse errors, 12 AST mismatches; 20 render, 36 factory)
+// Round-trip fails: 33  (21 parse errors, 12 AST mismatches; 20 render, 13 factory)
 
 // ---------------------------------------------------------------
 // Round-trip failures — corpus cases that didn't survive
@@ -289,24 +289,6 @@ export const roundTripFailures: Array<{
     input:    "()",
     message: "Node 'undefined' has no 'fields' or 'children' — did you mean to set 'text' for ",
   },
-  // --- await_expression (1) ---
-  {
-    entry: "Async function",
-    kind: "await_expression",
-    source: "factory",
-    category: "parse-error",
-    input:    "futures.await",
-    message: "No render rule for 'undefined'",
-  },
-  // --- expression_statement (1) ---
-  {
-    entry: "Await expression",
-    kind: "expression_statement",
-    source: "factory",
-    category: "parse-error",
-    input:    "futures.await;",
-    message: "No render rule for 'undefined'",
-  },
   // --- arguments (1) ---
   {
     entry: "Await expression",
@@ -315,24 +297,6 @@ export const roundTripFailures: Array<{
     category: "parse-error",
     input:    "()",
     message: "Node 'undefined' has no 'fields' or 'children' — did you mean to set 'text' for ",
-  },
-  // --- closure_parameters (1) ---
-  {
-    entry: "Async closure",
-    kind: "closure_parameters",
-    source: "factory",
-    category: "parse-error",
-    input:    "||",
-    message: "No render rule for 'undefined'",
-  },
-  // --- yield_expression (1) ---
-  {
-    entry: "Gen Block",
-    kind: "yield_expression",
-    source: "factory",
-    category: "parse-error",
-    input:    "yield ()",
-    message: "No render rule for 'undefined'",
   },
   // --- declaration_list (1) ---
   {
@@ -343,60 +307,6 @@ export const roundTripFailures: Array<{
     input:    "{}",
     message: "Node 'undefined' has no 'fields' or 'children' — did you mean to set 'text' for ",
   },
-  // --- type_arguments (1) ---
-  {
-    entry: "Functions with abstract return types",
-    kind: "type_arguments",
-    source: "factory",
-    category: "parse-error",
-    input:    "<Item=(usize)>",
-    message: "No render rule for 'undefined'",
-  },
-  // --- tuple_type (1) ---
-  {
-    entry: "Functions with abstract return types",
-    kind: "tuple_type",
-    source: "factory",
-    category: "parse-error",
-    input:    "(usize)",
-    message: "No render rule for 'undefined'",
-  },
-  // --- type_parameters (1) ---
-  {
-    entry: "Impl with lifetimes first",
-    kind: "type_parameters",
-    source: "factory",
-    category: "parse-error",
-    input:    "<'a>",
-    message: "No render rule for 'undefined'",
-  },
-  // --- string_literal (1) ---
-  {
-    entry: "Extern function declarations",
-    kind: "string_literal",
-    source: "factory",
-    category: "parse-error",
-    input:    "\"C\"",
-    message: "No render rule for 'undefined'",
-  },
-  // --- use_list (1) ---
-  {
-    entry: "Use declarations",
-    kind: "use_list",
-    source: "factory",
-    category: "parse-error",
-    input:    "{greetings,farewells}",
-    message: "No render rule for 'undefined'",
-  },
-  // --- return_expression (1) ---
-  {
-    entry: "Let-else Statements",
-    kind: "return_expression",
-    source: "factory",
-    category: "parse-error",
-    input:    "return Err(index)",
-    message: "No render rule for 'undefined'",
-  },
   // --- field_declaration_list (1) ---
   {
     entry: "Structs",
@@ -406,78 +316,6 @@ export const roundTripFailures: Array<{
     input:    "{}",
     message: "Node 'undefined' has no 'fields' or 'children' — did you mean to set 'text' for ",
   },
-  // --- enum_variant_list (1) ---
-  {
-    entry: "Enums",
-    kind: "enum_variant_list",
-    source: "factory",
-    category: "parse-error",
-    input:    "{\n    None,\n    Some(T),\n}",
-    message: "No render rule for 'undefined'",
-  },
-  // --- trait_bounds (1) ---
-  {
-    entry: "Enums",
-    kind: "trait_bounds",
-    source: "factory",
-    category: "parse-error",
-    input:    ": Item",
-    message: "No render rule for 'undefined'",
-  },
-  // --- slice_pattern (1) ---
-  {
-    entry: "Functions with destructured parameters",
-    kind: "slice_pattern",
-    source: "factory",
-    category: "parse-error",
-    input:    "[x, y]",
-    message: "No render rule for 'undefined'",
-  },
-  // --- tuple_pattern (1) ---
-  {
-    entry: "Functions with destructured parameters",
-    kind: "tuple_pattern",
-    source: "factory",
-    category: "parse-error",
-    input:    "(x, y)",
-    message: "No render rule for 'undefined'",
-  },
-  // --- token_tree (1) ---
-  {
-    entry: "Attributes",
-    kind: "token_tree",
-    source: "factory",
-    category: "parse-error",
-    input:    "(Debug)",
-    message: "No render rule for 'undefined'",
-  },
-  // --- match_block (1) ---
-  {
-    entry: "Inner attributes",
-    kind: "match_block",
-    source: "factory",
-    category: "parse-error",
-    input:    "{\n    #![cfg_attr(all(test, exhaustive), deny(non_exhaustive_omitted_patterns))]\n    syn::Type::Array(ty) => self.visit_type(&ty.elem),\n}",
-    message: "No render rule for 'undefined'",
-  },
-  // --- removed_trait_bound (1) ---
-  {
-    entry: "Unsized types in trait bounds",
-    kind: "removed_trait_bound",
-    source: "factory",
-    category: "parse-error",
-    input:    "?Sized",
-    message: "No render rule for 'undefined'",
-  },
-  // --- parenthesized_expression (1) ---
-  {
-    entry: "Raw identifiers",
-    kind: "parenthesized_expression",
-    source: "factory",
-    category: "parse-error",
-    input:    "(r#abc as r#Def)",
-    message: "No render rule for 'undefined'",
-  },
   // --- field_initializer_list (1) ---
   {
     entry: "Struct expressions",
@@ -486,33 +324,6 @@ export const roundTripFailures: Array<{
     category: "parse-error",
     input:    "{}",
     message: "Node 'undefined' has no 'fields' or 'children' — did you mean to set 'text' for ",
-  },
-  // --- base_field_initializer (1) ---
-  {
-    entry: "Struct expressions with update initializers",
-    kind: "base_field_initializer",
-    source: "factory",
-    category: "parse-error",
-    input:    "..current_user()",
-    message: "No render rule for 'undefined'",
-  },
-  // --- let_chain (1) ---
-  {
-    entry: "Basic if let expressions",
-    kind: "let_chain",
-    source: "factory",
-    category: "parse-error",
-    input:    "let Some(a) = b\n    && c\n    && d\n    && let Some(e) = f",
-    message: "No render rule for 'undefined'",
-  },
-  // --- bracketed_type (1) ---
-  {
-    entry: "Scoped functions with fully qualified syntax",
-    kind: "bracketed_type",
-    source: "factory",
-    category: "parse-error",
-    input:    "<Dog as Animal>",
-    message: "No render rule for 'undefined'",
   },
   // --- raw_string_literal (1) ---
   {
@@ -531,24 +342,6 @@ export const roundTripFailures: Array<{
     category: "parse-error",
     input:    "()",
     message: "Node 'undefined' has no 'fields' or 'children' — did you mean to set 'text' for ",
-  },
-  // --- token_repetition_pattern (1) ---
-  {
-    entry: "Macro definition",
-    kind: "token_repetition_pattern",
-    source: "factory",
-    category: "parse-error",
-    input:    "$($x:expr; [ $( $y:expr ),* ]);*",
-    message: "No render rule for 'undefined'",
-  },
-  // --- token_repetition (1) ---
-  {
-    entry: "Macro definition",
-    kind: "token_repetition",
-    source: "factory",
-    category: "parse-error",
-    input:    "$($($x + $e),*),*",
-    message: "No render rule for 'undefined'",
   },
 ];
 

@@ -53,9 +53,22 @@ describe('parsePath()', () => {
         expect(() => parsePath('0/')).toThrow(/leading\/trailing slash/)
     })
 
-    it('rejects non-numeric, non-wildcard segments', () => {
-        expect(() => parsePath('0/foo/1')).toThrow(/invalid segment 'foo'/)
-        expect(() => parsePath('0/-1')).toThrow(/invalid segment/)
+    it('accepts kind-name + negative-index segments (added post-T028)', () => {
+        // `foo` is a kind-match (recursively matches every $.foo occurrence).
+        // `-1` is a reverse index (last member).
+        expect(parsePath('0/foo/1')).toEqual([
+            { kind: 'index', value: 0 },
+            { kind: 'kind-match', name: 'foo' },
+            { kind: 'index', value: 1 },
+        ])
+        expect(parsePath('0/-1')).toEqual([
+            { kind: 'index', value: 0 },
+            { kind: 'index', value: -1 },
+        ])
+    })
+
+    it('rejects segments that match neither index/wildcard/kind-name', () => {
+        expect(() => parsePath('0/1a/1')).toThrow(/invalid segment '1a'/)
     })
 })
 

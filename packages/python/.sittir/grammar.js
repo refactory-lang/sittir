@@ -584,7 +584,13 @@ function applyPathPatches(original, patches) {
   return rule;
 }
 function tryHoistSiblingVariants(rule, variantEntries) {
-  const t = rule?.type;
+  const precStack = [];
+  let core = rule;
+  while (core && isPrecWrapper(core)) {
+    precStack.push(core);
+    core = contentOf2(core);
+  }
+  const t = core?.type;
   if (!t) return null;
   if (t !== "seq" && t !== "SEQ") return null;
   const parsed = [];
@@ -596,7 +602,7 @@ function tryHoistSiblingVariants(rule, variantEntries) {
   }
   const choicePos = parsed[0].choicePos;
   if (parsed.some((p) => p.choicePos !== choicePos)) return null;
-  const seqMembers = [...membersOf2(rule)];
+  const seqMembers = [...membersOf2(core)];
   const resolvedPos = choicePos < 0 ? seqMembers.length + choicePos : choicePos;
   const choice = seqMembers[resolvedPos];
   if (!choice || choice.type !== "choice" && choice.type !== "CHOICE") return null;
@@ -606,12 +612,20 @@ function tryHoistSiblingVariants(rule, variantEntries) {
   const parentKind = getCurrentRuleKind();
   if (!parentKind) return null;
   const refs = [];
-  const isUpperCase = rule.type === rule.type.toUpperCase();
+  const isUpperCase = core.type === core.type.toUpperCase();
+  const wrapInPrecStack2 = (body) => {
+    let wrapped = body;
+    for (let i = precStack.length - 1; i >= 0; i--) {
+      wrapped = reconstructPrec(precStack[i], wrapped);
+    }
+    return wrapped;
+  };
   for (const p of parsed) {
     const resolvedAlt = p.altIdx < 0 ? choiceMembers.length + p.altIdx : p.altIdx;
     const altContent = choiceMembers[resolvedAlt];
     const hoistedMembers = seqMembers.map((m, i) => i === resolvedPos ? altContent : m);
-    const hoistedBody = reconstructContainer(rule, hoistedMembers);
+    const hoistedSeq = reconstructContainer(core, hoistedMembers);
+    const hoistedBody = wrapInPrecStack2(hoistedSeq);
     const visibleName = `${parentKind}_${p.v.name}`;
     registerPolymorphVariant(parentKind, p.v.name);
     registerSyntheticRule(visibleName, hoistedBody);

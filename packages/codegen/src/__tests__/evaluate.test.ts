@@ -372,8 +372,11 @@ describe('Evaluate — edge cases', () => {
             const original: any = { type: 'seq', members: [
                 { type: 'string', value: 'a' },
             ] }
+            // After kind-match was added to parsePath, keys that aren't
+            // pure integers route through the path parser, which catches
+            // the malformed segment with its own error message.
             expect(() => transform(original, { '1a': field('x', 'y') }))
-                .toThrow(/invalid flat-positional key/)
+                .toThrow(/invalid segment '1a'/)
         })
     })
 
