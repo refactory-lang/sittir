@@ -92,16 +92,16 @@ describe('import_statement', () => {
 });
 
 describe('import_clause', () => {
-  it('form0 form produces correct type', () => {
-    const node = ir.importClause.form0({});
+  it('namespace_import form produces correct type', () => {
+    const node = ir.importClause.namespace_import({});
     expect(node.type).toBe('import_clause');
   });
-  it('form1 form produces correct type', () => {
-    const node = ir.importClause.form1({});
+  it('named_imports form produces correct type', () => {
+    const node = ir.importClause.named_imports({});
     expect(node.type).toBe('import_clause');
   });
-  it('form2 form produces correct type', () => {
-    const node = ir.importClause.form2({ defaultImport: { type: '_import_identifier', text: 'test' } as any });
+  it('default_import form produces correct type', () => {
+    const node = ir.importClause.default_import({});
     expect(node.type).toBe('import_clause');
   });
 });
@@ -125,13 +125,13 @@ describe('named_imports', () => {
 });
 
 describe('import_specifier', () => {
-  it('factory produces correct type', () => {
-    const node = ir.importSpecifier({ name: { type: '_import_identifier', text: 'test' } as any });
+  it('name form produces correct type', () => {
+    const node = ir.importSpecifier.name({});
     expect(node.type).toBe('import_specifier');
   });
-  it('render produces non-empty string', () => {
-    const node = ir.importSpecifier({ name: { type: '_import_identifier', text: 'test' } as any });
-    expect(node.render().length).toBeGreaterThan(0);
+  it('as form produces correct type', () => {
+    const node = ir.importSpecifier.as({});
+    expect(node.type).toBe('import_specifier');
   });
 });
 
@@ -613,12 +613,12 @@ describe('class_declaration', () => {
 });
 
 describe('class_heritage', () => {
-  it('form0 form produces correct type', () => {
-    const node = ir.classHeritage.form0({ extendsClause: { type: 'extends_clause', text: 'test' } as any });
+  it('extends_clause form produces correct type', () => {
+    const node = ir.classHeritage.extends_clause({});
     expect(node.type).toBe('class_heritage');
   });
-  it('form1 form produces correct type', () => {
-    const node = ir.classHeritage.form1({});
+  it('implements_clause form produces correct type', () => {
+    const node = ir.classHeritage.implements_clause({});
     expect(node.type).toBe('class_heritage');
   });
 });
@@ -1782,13 +1782,13 @@ describe('construct_signature', () => {
 });
 
 describe('index_signature', () => {
-  it('factory produces correct type', () => {
-    const node = ir.indexSignature({ mappedTypeClause: 'test' as any, type: { type: 'type_annotation', text: 'test' } as any, children: [{ type: 'mapped_type_clause', text: 'test' } as any] as any });
+  it('colon form produces correct type', () => {
+    const node = ir.indexSignature.colon({ type: { type: 'type_annotation', text: 'test' } as any });
     expect(node.type).toBe('index_signature');
   });
-  it('render produces non-empty string', () => {
-    const node = ir.indexSignature({ mappedTypeClause: 'test' as any, type: { type: 'type_annotation', text: 'test' } as any, children: [{ type: 'mapped_type_clause', text: 'test' } as any] as any });
-    expect(node.render().length).toBeGreaterThan(0);
+  it('mapped_type_clause form produces correct type', () => {
+    const node = ir.indexSignature.mapped_type_clause({ type: { type: 'type_annotation', text: 'test' } as any });
+    expect(node.type).toBe('index_signature');
   });
 });
 
@@ -1870,6 +1870,49 @@ describe('jsx_text', () => {
   });
 });
 
+describe('import_clause_namespace_import', () => {
+  it('factory produces correct type', () => {
+    const node = ir.importClauseNamespaceImport({ type: "namespace_import" } as never);
+    expect(node.type).toBe('import_clause_namespace_import');
+  });
+});
+
+describe('import_clause_named_imports', () => {
+  it('factory produces correct type', () => {
+    const node = ir.importClauseNamedImports({ type: "named_imports" } as never);
+    expect(node.type).toBe('import_clause_named_imports');
+  });
+});
+
+describe('import_clause_default_import', () => {
+  it('factory produces correct type', () => {
+    const node = ir.importClauseDefaultImport({ type: "_import_identifier" } as never);
+    expect(node.type).toBe('import_clause_default_import');
+  });
+});
+
+describe('import_specifier_name', () => {
+  it('factory produces correct type', () => {
+    const node = ir.importSpecifierName({ name: { type: '_import_identifier', text: 'test' } as any });
+    expect(node.type).toBe('import_specifier_name');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.importSpecifierName({ name: { type: '_import_identifier', text: 'test' } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('import_specifier_as', () => {
+  it('factory produces correct type', () => {
+    const node = ir.importSpecifierAs({ name: { type: '_module_export_name', text: 'test' } as any, alias: { type: '_import_identifier', text: 'test' } as any });
+    expect(node.type).toBe('import_specifier_as');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.importSpecifierAs({ name: { type: '_module_export_name', text: 'test' } as any, alias: { type: '_import_identifier', text: 'test' } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
 describe('statement_identifier', () => {
   it('factory produces correct type', () => {
     const node = ir.statementIdentifier("test");
@@ -1908,6 +1951,20 @@ describe('string_fragment', () => {
   });
 });
 
+describe('class_heritage_extends_clause', () => {
+  it('factory produces correct type', () => {
+    const node = ir.classHeritageExtendsClause({ type: "extends_clause" } as never);
+    expect(node.type).toBe('class_heritage_extends_clause');
+  });
+});
+
+describe('class_heritage_implements_clause', () => {
+  it('factory produces correct type', () => {
+    const node = ir.classHeritageImplementsClause({ type: "implements_clause" } as never);
+    expect(node.type).toBe('class_heritage_implements_clause');
+  });
+});
+
 describe('interface_body', () => {
   it('factory produces correct type', () => {
     const node = ir.interfaceBody({ opening: 'test' as any, closing: 'test' as any });
@@ -1924,6 +1981,24 @@ describe("this_type", () => {
     const node = ir.thisType();
     expect(node.type).toBe("this_type");
     expect(node.text).toBe("this");
+  });
+});
+
+describe('index_signature_colon', () => {
+  it('factory produces correct type', () => {
+    const node = ir.indexSignatureColon({ name: { type: 'identifier', text: 'test' } as any, indexType: { type: 'type', text: 'test' } as any });
+    expect(node.type).toBe('index_signature_colon');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.indexSignatureColon({ name: { type: 'identifier', text: 'test' } as any, indexType: { type: 'type', text: 'test' } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('index_signature_mapped_type_clause', () => {
+  it('factory produces correct type', () => {
+    const node = ir.indexSignatureMappedTypeClause({ type: "mapped_type_clause" } as never);
+    expect(node.type).toBe('index_signature_mapped_type_clause');
   });
 });
 

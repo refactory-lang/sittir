@@ -2,6 +2,13 @@
 
 /** All branch (non-leaf) node kind strings. */
 export const NODE_KINDS = [
+  '_class_heritage_extends_clause',
+  '_class_heritage_implements_clause',
+  '_import_clause_default_import',
+  '_import_clause_named_imports',
+  '_import_clause_namespace_import',
+  '_import_specifier_name',
+  '_index_signature_mapped_type_clause',
   '_jsx_start_opening_element',
   '_jsx_string',
   '_lhs_expression',
@@ -31,6 +38,8 @@ export const NODE_KINDS = [
   'class_body',
   'class_declaration',
   'class_heritage',
+  'class_heritage_extends_clause',
+  'class_heritage_implements_clause',
   'class_static_block',
   'computed_property_name',
   'conditional_type',
@@ -75,10 +84,17 @@ export const NODE_KINDS = [
   'import_alias',
   'import_attribute',
   'import_clause',
+  'import_clause_default_import',
+  'import_clause_named_imports',
+  'import_clause_namespace_import',
   'import_require_clause',
   'import_specifier',
+  'import_specifier_as',
+  'import_specifier_name',
   'import_statement',
   'index_signature',
+  'index_signature_colon',
+  'index_signature_mapped_type_clause',
   'index_type_query',
   'infer_type',
   'instantiation_expression',
@@ -411,6 +427,21 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   required: boolean;
   multiple: boolean;
 }>> = {
+  '_class_heritage_extends_clause': [
+  ],
+  '_class_heritage_implements_clause': [
+  ],
+  '_import_clause_default_import': [
+  ],
+  '_import_clause_named_imports': [
+  ],
+  '_import_clause_namespace_import': [
+  ],
+  '_import_specifier_name': [
+    { name: 'name', required: true, multiple: false },
+  ],
+  '_index_signature_mapped_type_clause': [
+  ],
   '_jsx_start_opening_element': [
     { name: 'name', required: false, multiple: false },
     { name: 'typeArguments', required: false, multiple: false },
@@ -522,8 +553,10 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'automaticSemicolon', required: false, multiple: false },
   ],
   'class_heritage': [
-    { name: 'extendsClause', required: true, multiple: false },
-    { name: 'implementsClause', required: false, multiple: false },
+  ],
+  'class_heritage_extends_clause': [
+  ],
+  'class_heritage_implements_clause': [
   ],
   'class_static_block': [
     { name: 'static', required: true, multiple: false },
@@ -696,16 +729,25 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'object', required: true, multiple: false },
   ],
   'import_clause': [
-    { name: 'defaultImport', required: true, multiple: false },
-    { name: 'namedImports', required: false, multiple: false },
+  ],
+  'import_clause_default_import': [
+  ],
+  'import_clause_named_imports': [
+  ],
+  'import_clause_namespace_import': [
   ],
   'import_require_clause': [
     { name: 'identifier', required: true, multiple: false },
     { name: 'source', required: true, multiple: false },
   ],
   'import_specifier': [
+  ],
+  'import_specifier_as': [
     { name: 'name', required: true, multiple: false },
-    { name: 'alias', required: false, multiple: false },
+    { name: 'alias', required: true, multiple: false },
+  ],
+  'import_specifier_name': [
+    { name: 'name', required: true, multiple: false },
   ],
   'import_statement': [
     { name: 'importClause', required: false, multiple: false },
@@ -714,10 +756,14 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'semicolon', required: true, multiple: false },
   ],
   'index_signature': [
-    { name: 'mappedTypeClause', required: true, multiple: false },
-    { name: 'name', required: false, multiple: false },
-    { name: 'indexType', required: false, multiple: false },
+    { name: 'sign', required: false, multiple: false },
     { name: 'type', required: true, multiple: false },
+  ],
+  'index_signature_colon': [
+    { name: 'name', required: true, multiple: false },
+    { name: 'indexType', required: true, multiple: false },
+  ],
+  'index_signature_mapped_type_clause': [
   ],
   'index_type_query': [
     { name: 'primaryType', required: true, multiple: false },

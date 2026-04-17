@@ -15,9 +15,9 @@
 // Summary
 // ---------------------------------------------------------------
 // Field inferences:  1  (0 applied, 1 held)
-// Rule promotions:   39  (31 applied, 8 held)
+// Rule promotions:   48  (44 applied, 4 held)
 // Repeated shapes:   7  (advisory — suggested supertypes/groups)
-// Round-trip fails: 19  (19 parse errors, 0 AST mismatches; 1 render, 18 factory)
+// Round-trip fails: 20  (20 parse errors, 0 AST mismatches; 1 render, 19 factory)
 
 // ---------------------------------------------------------------
 // Round-trip failures — corpus cases that didn't survive
@@ -182,6 +182,15 @@ export const roundTripFailures: Array<{
     input:    "{UserID, User}",
     message: "No render rule for 'undefined'",
   },
+  // --- import_clause_default_import (1) ---
+  {
+    entry: "Flow Import Types",
+    kind: "import_clause_default_import",
+    source: "factory",
+    category: "parse-error",
+    input:    "UserID, {addUser, removeUser}",
+    message: "No render rule for 'undefined'",
+  },
   // --- export_clause (1) ---
   {
     entry: "Type-only Export",
@@ -229,29 +238,10 @@ export const suggestedRules = {
     "3": variant("export"),
   }),
 
-  // [held] polymorph — 3 alternative(s)
-  "import_clause": ($, original) => transform(original, {
-    "0": variant("namespace_import"),
-    "1": variant("named_imports"),
-    "2": variant("default_import"),
-  }),
-
-  // [held] polymorph — 2 alternative(s)
-  "import_specifier": ($, original) => transform(original, {
-    "1/0": variant("name"),
-    "1/1": variant("as"),
-  }),
-
   // [held] polymorph — 2 alternative(s)
   "parenthesized_expression": ($, original) => transform(original, {
     "1/0": variant("expression"),
     "1/1": variant("sequence_expression"),
-  }),
-
-  // [held] polymorph — 2 alternative(s)
-  "class_heritage": ($, original) => transform(original, {
-    "0": variant("extends_clause"),
-    "1": variant("implements_clause"),
   }),
 
   // [held] polymorph — 2 alternative(s)
@@ -265,12 +255,6 @@ export const suggestedRules = {
     "0": variant("function"),
     "1": variant("function"),
     "2": variant("tok_q_dot"),
-  }),
-
-  // [held] polymorph — 2 alternative(s)
-  "index_signature": ($, original) => transform(original, {
-    "2/0": variant("colon"),
-    "2/1": variant("mapped_type_clause"),
   }),
 
   // --- Promoted supertypes (add matching names to grammar.supertypes) ---
@@ -388,11 +372,20 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "type_identifier", classification: "terminal", applied: true },
   { kind: "arrow_function", classification: "polymorph", applied: false },
   { kind: "call_expression", classification: "polymorph", applied: false },
-  { kind: "class_heritage", classification: "polymorph", applied: false },
+  { kind: "class_heritage", classification: "polymorph", applied: true },
+  { kind: "class_heritage_extends_clause", classification: "polymorph", applied: true },
+  { kind: "class_heritage_implements_clause", classification: "polymorph", applied: true },
   { kind: "export_statement", classification: "polymorph", applied: false },
-  { kind: "import_clause", classification: "polymorph", applied: false },
-  { kind: "import_specifier", classification: "polymorph", applied: false },
-  { kind: "index_signature", classification: "polymorph", applied: false },
+  { kind: "import_clause", classification: "polymorph", applied: true },
+  { kind: "import_clause_default_import", classification: "polymorph", applied: true },
+  { kind: "import_clause_named_imports", classification: "polymorph", applied: true },
+  { kind: "import_clause_namespace_import", classification: "polymorph", applied: true },
+  { kind: "import_specifier", classification: "polymorph", applied: true },
+  { kind: "import_specifier_as", classification: "polymorph", applied: true },
+  { kind: "import_specifier_name", classification: "polymorph", applied: true },
+  { kind: "index_signature", classification: "polymorph", applied: true },
+  { kind: "index_signature_colon", classification: "polymorph", applied: true },
+  { kind: "index_signature_mapped_type_clause", classification: "polymorph", applied: true },
   { kind: "parenthesized_expression", classification: "polymorph", applied: false },
 ];
 

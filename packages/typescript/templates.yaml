@@ -23,15 +23,17 @@ rules:
   import_statement: import $IMPORT_CLAUSE $FROM_CLAUSE $IMPORT_ATTRIBUTE $SEMICOLON
   import_clause:
     variants:
-      form0: $$$CHILDREN
-      form1: $$$CHILDREN
-      form2: $DEFAULT_IMPORT $NAMED_IMPORTS_CLAUSE
-    named_imports_clause: ",$NAMED_IMPORTS"
+      namespace_import: $$$CHILDREN
+      named_imports: $$$CHILDREN
+      default_import: $$$CHILDREN
   namespace_import: "*as $IDENTIFIER"
   named_imports:
     template: "{$$$CHILDREN}"
     joinBy: ","
-  import_specifier: type $NAME$ALIAS
+  import_specifier:
+    variants:
+      name: type $$$CHILDREN
+      as: type $$$CHILDREN
   import_attribute: $OBJECT $$$CHILDREN
   statement: $$$CHILDREN
   expression_statement: $$$CHILDREN
@@ -111,8 +113,8 @@ rules:
   class_declaration: $$$DECORATOR class $NAME $TYPE_PARAMETERS $CLASS_HERITAGE $BODY $AUTOMATIC_SEMICOLON
   class_heritage:
     variants:
-      form0: $EXTENDS_CLAUSE $IMPLEMENTS_CLAUSE
-      form1: $$$CHILDREN
+      extends_clause: $$$CHILDREN
+      implements_clause: $$$CHILDREN
   function_expression: $ASYNC function $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $BODY
   function_declaration: $ASYNC function $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $BODY $$$CHILDREN
   generator_function: $ASYNC function*$NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $BODY
@@ -252,7 +254,11 @@ rules:
   default_type: =$TYPE
   constraint: extends $TYPE
   construct_signature: $ABSTRACT new $TYPE_PARAMETERS $PARAMETERS $TYPE
-  index_signature: "$MAPPED_TYPE_CLAUSE[$NAME:$INDEX_TYPE$$$CHILDREN]$TYPE"
+  index_signature:
+    variants:
+      colon: "$SIGN_CLAUSE[$$$CHILDREN]$TYPE"
+      mapped_type_clause: "$SIGN_CLAUSE[$$$CHILDREN]$TYPE"
+    sign_clause: $SIGN readonly
   array_type: "$PRIMARY_TYPE[]"
   tuple_type:
     template: "[$$$CHILDREN]"
@@ -261,6 +267,15 @@ rules:
   union_type: $LEFT|$RIGHT
   intersection_type: $LEFT&$RIGHT
   function_type: $TYPE_PARAMETERS $PARAMETERS=>$RETURN_TYPE
+  import_clause_namespace_import: $$$CHILDREN
+  import_clause_named_imports: $$$CHILDREN
+  import_clause_default_import: $$$CHILDREN,
+  import_specifier_name: $NAME
+  import_specifier_as: $NAME as $ALIAS
   shorthand_property_identifier: $$$CHILDREN
   shorthand_property_identifier_pattern: $$$CHILDREN
+  class_heritage_extends_clause: $$$CHILDREN
+  class_heritage_implements_clause: $$$CHILDREN
   interface_body: $OPENING $$$MEMBERS $CLOSING
+  index_signature_colon: "$NAME:$INDEX_TYPE"
+  index_signature_mapped_type_clause: $$$CHILDREN

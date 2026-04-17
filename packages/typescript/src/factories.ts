@@ -317,62 +317,64 @@ export function importStatement(config: T.ImportStatementConfig) {
   };
 }
 
-export function importClause(config: T.ImportClauseForm0Config | T.ImportClauseForm1Config | T.ImportClauseForm2Config) {
-  if (config && 'defaultImport' in config && 'namedImports' in config) return importClauseForm2(config as T.ImportClauseForm2Config);
-  return importClauseForm1(config as T.ImportClauseForm1Config);
+export function importClause(config: T.ImportClauseUFormNamespaceImportConfig | T.ImportClauseUFormNamedImportsConfig | T.ImportClauseUFormDefaultImportConfig) {
+  if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === 'import_clause_namespace_import') return importClauseUFormNamespaceImport(config as T.ImportClauseUFormNamespaceImportConfig);
+  if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === 'import_clause_named_imports') return importClauseUFormNamedImports(config as T.ImportClauseUFormNamedImportsConfig);
+  if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === 'import_clause_default_import') return importClauseUFormDefaultImport(config as T.ImportClauseUFormDefaultImportConfig);
+  if (config && (config as any).variant === 'namespace_import') return importClauseUFormNamespaceImport(config as T.ImportClauseUFormNamespaceImportConfig);
+  if (config && (config as any).variant === 'named_imports') return importClauseUFormNamedImports(config as T.ImportClauseUFormNamedImportsConfig);
+  if (config && (config as any).variant === 'default_import') return importClauseUFormDefaultImport(config as T.ImportClauseUFormDefaultImportConfig);
+  return importClauseUFormNamespaceImport(config as T.ImportClauseUFormNamespaceImportConfig);
 }
-export function importClauseForm0(config: T.ImportClauseForm0Config) {
+export function importClauseUFormNamespaceImport(config: T.ImportClauseUFormNamespaceImportConfig) {
   const children = config?.children ?? [];
   return {
     type: 'import_clause' as const,
     named: true as const,
-    variant: 'form0' as const,
+    variant: '_form_namespace_import' as const,
     children,
     getChild() { return children[0]; },
-    setChild(child: T.NamespaceImport) { return importClauseForm0({ ...(config ?? {}), children: [child] }); },
+    setChild(child: T.ImportClauseNamespaceImport) { return importClauseUFormNamespaceImport({ ...(config ?? {}), children: [child] }); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(target: T.ImportClauseForm0Tree) { const r = target.range(); return toEdit(this, r); },
+    replace(target: T.ImportClauseUFormNamespaceImportTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
-export function importClauseForm1(config: T.ImportClauseForm1Config) {
+export function importClauseUFormNamedImports(config: T.ImportClauseUFormNamedImportsConfig) {
   const children = config?.children ?? [];
   return {
     type: 'import_clause' as const,
     named: true as const,
-    variant: 'form1' as const,
+    variant: '_form_named_imports' as const,
     children,
     getChild() { return children[0]; },
-    setChild(child: T.NamedImports) { return importClauseForm1({ ...(config ?? {}), children: [child] }); },
+    setChild(child: T.ImportClauseNamedImports) { return importClauseUFormNamedImports({ ...(config ?? {}), children: [child] }); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(target: T.ImportClauseForm1Tree) { const r = target.range(); return toEdit(this, r); },
+    replace(target: T.ImportClauseUFormNamedImportsTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
-export function importClauseForm2(config: T.ImportClauseForm2Config) {
-  const fields = {
-    default_import: config?.defaultImport,
-    named_imports: config?.namedImports,
-  };
+export function importClauseUFormDefaultImport(config: T.ImportClauseUFormDefaultImportConfig) {
+  const children = config?.children ?? [];
   return {
     type: 'import_clause' as const,
     named: true as const,
-    variant: 'form2' as const,
-    fields,
-    defaultImport(defaultImport_?: T.ImportIdentifier) { return _fs(config, importClauseForm2, 'defaultImport', defaultImport_, fields.default_import); },
-    namedImports(namedImports_?: T.NamespaceImport | T.NamedImports | undefined) { return _fs(config, importClauseForm2, 'namedImports', namedImports_, fields.named_imports); },
+    variant: '_form_default_import' as const,
+    children,
+    getChild() { return children[0]; },
+    setChild(child: T.ImportClauseDefaultImport) { return importClauseUFormDefaultImport({ ...(config ?? {}), children: [child] }); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(target: T.ImportClauseForm2Tree) { const r = target.range(); return toEdit(this, r); },
+    replace(target: T.ImportClauseUFormDefaultImportTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -408,23 +410,45 @@ export function namedImports(...children: T.ImportSpecifier[]) {
   };
 }
 
-export function importSpecifier(config: T.ImportSpecifierConfig) {
-  const fields = {
-    name: config?.name,
-    alias: config?.alias,
-  };
+export function importSpecifier(config: T.ImportSpecifierUFormNameConfig | T.ImportSpecifierUFormAsConfig) {
+  if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === 'import_specifier_name') return importSpecifierUFormName(config as T.ImportSpecifierUFormNameConfig);
+  if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === 'import_specifier_as') return importSpecifierUFormAs(config as T.ImportSpecifierUFormAsConfig);
+  if (config && (config as any).variant === 'name') return importSpecifierUFormName(config as T.ImportSpecifierUFormNameConfig);
+  if (config && (config as any).variant === 'as') return importSpecifierUFormAs(config as T.ImportSpecifierUFormAsConfig);
+  return importSpecifierUFormName(config as T.ImportSpecifierUFormNameConfig);
+}
+export function importSpecifierUFormName(config: T.ImportSpecifierUFormNameConfig) {
+  const children = config?.children ?? [];
   return {
     type: 'import_specifier' as const,
     named: true as const,
-    fields,
-    name(name_?: T.ImportIdentifier) { return _fs(config, importSpecifier, 'name', name_, fields.name); },
-    alias(alias_?: T.ImportIdentifier | undefined) { return _fs(config, importSpecifier, 'alias', alias_, fields.alias); },
+    variant: '_form_name' as const,
+    children,
+    getChild() { return children[0]; },
+    setChild(child: T.ImportSpecifierName) { return importSpecifierUFormName({ ...(config ?? {}), children: [child] }); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(target: T.ImportSpecifierTree) { const r = target.range(); return toEdit(this, r); },
+    replace(target: T.ImportSpecifierUFormNameTree) { const r = target.range(); return toEdit(this, r); },
+  };
+}
+export function importSpecifierUFormAs(config: T.ImportSpecifierUFormAsConfig) {
+  const children = config?.children ?? [];
+  return {
+    type: 'import_specifier' as const,
+    named: true as const,
+    variant: '_form_as' as const,
+    children,
+    getChild() { return children[0]; },
+    setChild(child: T.ImportSpecifierAs) { return importSpecifierUFormAs({ ...(config ?? {}), children: [child] }); },
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.ImportSpecifierUFormAsTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1414,45 +1438,45 @@ export function classDeclaration(config: T.ClassDeclarationConfig) {
   };
 }
 
-export function classHeritage(config: T.ClassHeritageForm0Config | T.ClassHeritageForm1Config) {
-  if (config && 'extendsClause' in config && 'implementsClause' in config) return classHeritageForm0(config as T.ClassHeritageForm0Config);
-  return classHeritageForm1(config as T.ClassHeritageForm1Config);
+export function classHeritage(config: T.ClassHeritageUFormExtendsClauseConfig | T.ClassHeritageUFormImplementsClauseConfig) {
+  if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === 'class_heritage_extends_clause') return classHeritageUFormExtendsClause(config as T.ClassHeritageUFormExtendsClauseConfig);
+  if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === 'class_heritage_implements_clause') return classHeritageUFormImplementsClause(config as T.ClassHeritageUFormImplementsClauseConfig);
+  if (config && (config as any).variant === 'extends_clause') return classHeritageUFormExtendsClause(config as T.ClassHeritageUFormExtendsClauseConfig);
+  if (config && (config as any).variant === 'implements_clause') return classHeritageUFormImplementsClause(config as T.ClassHeritageUFormImplementsClauseConfig);
+  return classHeritageUFormExtendsClause(config as T.ClassHeritageUFormExtendsClauseConfig);
 }
-export function classHeritageForm0(config: T.ClassHeritageForm0Config) {
-  const fields = {
-    extends_clause: config?.extendsClause,
-    implements_clause: config?.implementsClause,
-  };
-  return {
-    type: 'class_heritage' as const,
-    named: true as const,
-    variant: 'form0' as const,
-    fields,
-    extendsClause(extendsClause_?: T.ExtendsClause) { return _fs(config, classHeritageForm0, 'extendsClause', extendsClause_, fields.extends_clause); },
-    implementsClause(implementsClause_?: T.ImplementsClause | undefined) { return _fs(config, classHeritageForm0, 'implementsClause', implementsClause_, fields.implements_clause); },
-    render() { return render(this); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(target: T.ClassHeritageForm0Tree) { const r = target.range(); return toEdit(this, r); },
-  };
-}
-export function classHeritageForm1(config: T.ClassHeritageForm1Config) {
+export function classHeritageUFormExtendsClause(config: T.ClassHeritageUFormExtendsClauseConfig) {
   const children = config?.children ?? [];
   return {
     type: 'class_heritage' as const,
     named: true as const,
-    variant: 'form1' as const,
+    variant: '_form_extends_clause' as const,
     children,
     getChild() { return children[0]; },
-    setChild(child: T.ImplementsClause) { return classHeritageForm1({ ...(config ?? {}), children: [child] }); },
+    setChild(child: T.ClassHeritageExtendsClause) { return classHeritageUFormExtendsClause({ ...(config ?? {}), children: [child] }); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(target: T.ClassHeritageForm1Tree) { const r = target.range(); return toEdit(this, r); },
+    replace(target: T.ClassHeritageUFormExtendsClauseTree) { const r = target.range(); return toEdit(this, r); },
+  };
+}
+export function classHeritageUFormImplementsClause(config: T.ClassHeritageUFormImplementsClauseConfig) {
+  const children = config?.children ?? [];
+  return {
+    type: 'class_heritage' as const,
+    named: true as const,
+    variant: '_form_implements_clause' as const,
+    children,
+    getChild() { return children[0]; },
+    setChild(child: T.ClassHeritageImplementsClause) { return classHeritageUFormImplementsClause({ ...(config ?? {}), children: [child] }); },
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.ClassHeritageUFormImplementsClauseTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -3714,31 +3738,59 @@ export function constructSignature(config: T.ConstructSignatureConfig) {
   };
 }
 
-export function indexSignature(config: T.IndexSignatureConfig) {
+export function indexSignature(config: T.IndexSignatureUFormColonConfig | T.IndexSignatureUFormMappedTypeClauseConfig) {
+  if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === 'index_signature_colon') return indexSignatureUFormColon(config as T.IndexSignatureUFormColonConfig);
+  if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === 'index_signature_mapped_type_clause') return indexSignatureUFormMappedTypeClause(config as T.IndexSignatureUFormMappedTypeClauseConfig);
+  if (config && (config as any).variant === 'colon') return indexSignatureUFormColon(config as T.IndexSignatureUFormColonConfig);
+  if (config && (config as any).variant === 'mapped_type_clause') return indexSignatureUFormMappedTypeClause(config as T.IndexSignatureUFormMappedTypeClauseConfig);
+  return indexSignatureUFormColon(config as T.IndexSignatureUFormColonConfig);
+}
+export function indexSignatureUFormColon(config: T.IndexSignatureUFormColonConfig) {
   const fields = {
-    mapped_type_clause: config?.mappedTypeClause,
-    name: config?.name,
-    index_type: config?.indexType,
+    sign: config?.sign,
     type: config?.type,
   };
   const children = config?.children ?? [];
   return {
     type: 'index_signature' as const,
     named: true as const,
+    variant: '_form_colon' as const,
     fields,
     children,
-    mappedTypeClause(mappedTypeClause_?: string) { return _fs(config, indexSignature, 'mappedTypeClause', mappedTypeClause_, fields.mapped_type_clause); },
-    name(name_?: T.Identifier | undefined) { return _fs(config, indexSignature, 'name', name_, fields.name); },
-    indexType(indexType_?: T.Type | undefined) { return _fs(config, indexSignature, 'indexType', indexType_, fields.index_type); },
-    typeField(type?: T.TypeAnnotation | T.OmittingTypeAnnotation | T.AddingTypeAnnotation | T.OptingTypeAnnotation) { return _fs(config, indexSignature, 'type', type, fields.type); },
+    sign(sign_?: "-" | "+" | undefined) { return _fs(config, indexSignatureUFormColon, 'sign', sign_, fields.sign); },
+    typeField(type?: T.TypeAnnotation | T.OmittingTypeAnnotation | T.AddingTypeAnnotation | T.OptingTypeAnnotation) { return _fs(config, indexSignatureUFormColon, 'type', type, fields.type); },
     getChild() { return children[0]; },
-    setChild(child: T.MappedTypeClause) { return indexSignature({ ...(config ?? {}), children: [child] }); },
+    setChild(child: T.IndexSignatureColon) { return indexSignatureUFormColon({ ...(config ?? {}), children: [child] }); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(target: T.IndexSignatureTree) { const r = target.range(); return toEdit(this, r); },
+    replace(target: T.IndexSignatureUFormColonTree) { const r = target.range(); return toEdit(this, r); },
+  };
+}
+export function indexSignatureUFormMappedTypeClause(config: T.IndexSignatureUFormMappedTypeClauseConfig) {
+  const fields = {
+    sign: config?.sign,
+    type: config?.type,
+  };
+  const children = config?.children ?? [];
+  return {
+    type: 'index_signature' as const,
+    named: true as const,
+    variant: '_form_mapped_type_clause' as const,
+    fields,
+    children,
+    sign(sign_?: "-" | "+" | undefined) { return _fs(config, indexSignatureUFormMappedTypeClause, 'sign', sign_, fields.sign); },
+    typeField(type?: T.TypeAnnotation | T.OmittingTypeAnnotation | T.AddingTypeAnnotation | T.OptingTypeAnnotation) { return _fs(config, indexSignatureUFormMappedTypeClause, 'type', type, fields.type); },
+    getChild() { return children[0]; },
+    setChild(child: T.IndexSignatureMappedTypeClause) { return indexSignatureUFormMappedTypeClause({ ...(config ?? {}), children: [child] }); },
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.IndexSignatureUFormMappedTypeClauseTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -3892,6 +3944,89 @@ export function jsxText(text: string) {
   };
 }
 
+export function importClauseNamespaceImport(child: T.NamespaceImport) {
+  const children = [child];
+  return {
+    type: 'import_clause_namespace_import' as const,
+    named: true as const,
+    children,
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.ImportClauseNamespaceImportTree) { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function importClauseNamedImports(child: T.NamedImports) {
+  const children = [child];
+  return {
+    type: 'import_clause_named_imports' as const,
+    named: true as const,
+    children,
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.ImportClauseNamedImportsTree) { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function importClauseDefaultImport(child: (T.ImportIdentifier | T.NamespaceImport | T.NamedImports)) {
+  const children = [child];
+  return {
+    type: 'import_clause_default_import' as const,
+    named: true as const,
+    children,
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.ImportClauseDefaultImportTree) { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function importSpecifierName(config: T.ImportSpecifierNameConfig) {
+  const fields = {
+    name: config?.name,
+  };
+  return {
+    type: 'import_specifier_name' as const,
+    named: true as const,
+    fields,
+    name(name_?: T.ImportIdentifier) { return _fs(config, importSpecifierName, 'name', name_, fields.name); },
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.ImportSpecifierNameTree) { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function importSpecifierAs(config: T.ImportSpecifierAsConfig) {
+  const fields = {
+    name: config?.name,
+    alias: config?.alias,
+  };
+  return {
+    type: 'import_specifier_as' as const,
+    named: true as const,
+    fields,
+    name(name_?: T.ModuleExportName) { return _fs(config, importSpecifierAs, 'name', name_, fields.name); },
+    alias(alias_?: T.ImportIdentifier) { return _fs(config, importSpecifierAs, 'alias', alias_, fields.alias); },
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.ImportSpecifierAsTree) { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
 export function statementIdentifier(text: string) {
   if (text.length === 0) throw new Error(`statement_identifier: text must be non-empty`);
   return {
@@ -3958,6 +4093,36 @@ export function stringFragment(text: string) {
   };
 }
 
+export function classHeritageExtendsClause(child: (T.ExtendsClause | T.ImplementsClause)) {
+  const children = [child];
+  return {
+    type: 'class_heritage_extends_clause' as const,
+    named: true as const,
+    children,
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.ClassHeritageExtendsClauseTree) { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function classHeritageImplementsClause(child: T.ImplementsClause) {
+  const children = [child];
+  return {
+    type: 'class_heritage_implements_clause' as const,
+    named: true as const,
+    children,
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.ClassHeritageImplementsClauseTree) { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
 export function interfaceBody(config: T.InterfaceBodyConfig) {
   const fields = {
     opening: config?.opening,
@@ -3988,6 +4153,41 @@ export function thisType() {
     render: () => 'this' as const,
     toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: 'this' as const } : { startPos: s.start.index, endPos: s.end.index, insertedText: 'this' as const },
     replace: (t: T.ThisTypeTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: 'this' as const }; },
+  };
+}
+
+export function indexSignatureColon(config: T.IndexSignatureColonConfig) {
+  const fields = {
+    name: config?.name,
+    index_type: config?.indexType,
+  };
+  return {
+    type: 'index_signature_colon' as const,
+    named: true as const,
+    fields,
+    name(name_?: T.Identifier) { return _fs(config, indexSignatureColon, 'name', name_, fields.name); },
+    indexType(indexType_?: T.Type) { return _fs(config, indexSignatureColon, 'indexType', indexType_, fields.index_type); },
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.IndexSignatureColonTree) { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function indexSignatureMappedTypeClause(child: T.MappedTypeClause) {
+  const children = [child];
+  return {
+    type: 'index_signature_mapped_type_clause' as const,
+    named: true as const,
+    children,
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.IndexSignatureMappedTypeClauseTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -4195,13 +4395,22 @@ export type FluentKindMap = {
   "html_comment": T.HtmlComment;
   "||": T.Oror;
   "jsx_text": T.JsxText;
+  "import_clause_namespace_import": FluentNode<"import_clause_namespace_import", T.ImportClauseNamespaceImportConfig>;
+  "import_clause_named_imports": FluentNode<"import_clause_named_imports", T.ImportClauseNamedImportsConfig>;
+  "import_clause_default_import": FluentNode<"import_clause_default_import", T.ImportClauseDefaultImportConfig>;
+  "import_specifier_name": FluentNode<"import_specifier_name", T.ImportSpecifierNameConfig>;
+  "import_specifier_as": FluentNode<"import_specifier_as", T.ImportSpecifierAsConfig>;
   "statement_identifier": T.StatementIdentifier;
   "shorthand_property_identifier": FluentNode<"shorthand_property_identifier", T.ShorthandPropertyIdentifierConfig>;
   "shorthand_property_identifier_pattern": FluentNode<"shorthand_property_identifier_pattern", T.ShorthandPropertyIdentifierPatternConfig>;
   "property_identifier": T.PropertyIdentifier;
   "string_fragment": T.StringFragment;
+  "class_heritage_extends_clause": FluentNode<"class_heritage_extends_clause", T.ClassHeritageExtendsClauseConfig>;
+  "class_heritage_implements_clause": FluentNode<"class_heritage_implements_clause", T.ClassHeritageImplementsClauseConfig>;
   "interface_body": FluentNode<"interface_body", T.InterfaceBodyConfig>;
   "this_type": T.ThisType;
+  "index_signature_colon": FluentNode<"index_signature_colon", T.IndexSignatureColonConfig>;
+  "index_signature_mapped_type_clause": FluentNode<"index_signature_mapped_type_clause", T.IndexSignatureMappedTypeClauseConfig>;
   "type_identifier": T.TypeIdentifier;
 };
 
@@ -4397,13 +4606,22 @@ export const _factoryMap = {
   "html_comment": htmlComment,
   "||": oror,
   "jsx_text": jsxText,
+  "import_clause_namespace_import": importClauseNamespaceImport,
+  "import_clause_named_imports": importClauseNamedImports,
+  "import_clause_default_import": importClauseDefaultImport,
+  "import_specifier_name": importSpecifierName,
+  "import_specifier_as": importSpecifierAs,
   "statement_identifier": statementIdentifier,
   "shorthand_property_identifier": shorthandPropertyIdentifier,
   "shorthand_property_identifier_pattern": shorthandPropertyIdentifierPattern,
   "property_identifier": propertyIdentifier,
   "string_fragment": stringFragment,
+  "class_heritage_extends_clause": classHeritageExtendsClause,
+  "class_heritage_implements_clause": classHeritageImplementsClause,
   "interface_body": interfaceBody,
   "this_type": thisType,
+  "index_signature_colon": indexSignatureColon,
+  "index_signature_mapped_type_clause": indexSignatureMappedTypeClause,
   "type_identifier": typeIdentifier,
 } as const;
 export type _FactoryMap = typeof _factoryMap;

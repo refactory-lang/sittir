@@ -39,6 +39,8 @@ import type {
   ClassBody,
   ClassDeclaration,
   ClassHeritage,
+  ClassHeritageExtendsClause,
+  ClassHeritageImplementsClause,
   ClassStaticBlock,
   ComputedPropertyName,
   ConditionalType,
@@ -83,10 +85,17 @@ import type {
   ImportAlias,
   ImportAttribute,
   ImportClause,
+  ImportClauseDefaultImport,
+  ImportClauseNamedImports,
+  ImportClauseNamespaceImport,
   ImportRequireClause,
   ImportSpecifier,
+  ImportSpecifierAs,
+  ImportSpecifierName,
   ImportStatement,
   IndexSignature,
+  IndexSignatureColon,
+  IndexSignatureMappedTypeClause,
   IndexTypeQuery,
   InferType,
   InstantiationExpression,
@@ -183,6 +192,13 @@ import type {
   WhileStatement,
   WithStatement,
   YieldExpression,
+  _ClassHeritageExtendsClause,
+  _ClassHeritageImplementsClause,
+  _ImportClauseDefaultImport,
+  _ImportClauseNamedImports,
+  _ImportClauseNamespaceImport,
+  _ImportSpecifierName,
+  _IndexSignatureMappedTypeClause,
   _TypeIdentifier,
 } from './types.js';
 
@@ -296,8 +312,6 @@ export function wrapImportStatement(data: _NodeData, tree: TreeHandle): WrappedN
 export function wrapImportClause(data: _NodeData, tree: TreeHandle): WrappedNode<ImportClause> {
   return {
     ...data,
-    get defaultImport() { return drillIn(data.fields?.['default_import'], tree); },
-    get namedImports() { return drillIn(data.fields?.['named_imports'], tree); },
     get child() { return drillIn(data.children?.[0], tree); },
   } as unknown as WrappedNode<ImportClause>;
 }
@@ -320,9 +334,7 @@ export function wrapNamedImports(data: _NodeData, tree: TreeHandle): WrappedNode
 export function wrapImportSpecifier(data: _NodeData, tree: TreeHandle): WrappedNode<ImportSpecifier> {
   return {
     ...data,
-    get name() { return drillIn(data.fields?.['name'], tree); },
-    get alias() { return drillIn(data.fields?.['alias'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get child() { return drillIn(data.children?.[0], tree); },
   } as unknown as WrappedNode<ImportSpecifier>;
 }
 
@@ -746,8 +758,6 @@ export function wrapClassDeclaration(data: _NodeData, tree: TreeHandle): Wrapped
 export function wrapClassHeritage(data: _NodeData, tree: TreeHandle): WrappedNode<ClassHeritage> {
   return {
     ...data,
-    get extendsClause() { return drillIn(data.fields?.['extends_clause'], tree); },
-    get implementsClause() { return drillIn(data.fields?.['implements_clause'], tree); },
     get child() { return drillIn(data.children?.[0], tree); },
   } as unknown as WrappedNode<ClassHeritage>;
 }
@@ -1626,9 +1636,7 @@ export function wrapConstructSignature(data: _NodeData, tree: TreeHandle): Wrapp
 export function wrapIndexSignature(data: _NodeData, tree: TreeHandle): WrappedNode<IndexSignature> {
   return {
     ...data,
-    get mappedTypeClause() { return drillIn(data.fields?.['mapped_type_clause'], tree); },
-    get name() { return drillIn(data.fields?.['name'], tree); },
-    get indexType() { return drillIn(data.fields?.['index_type'], tree); },
+    get sign() { return drillIn(data.fields?.['sign'], tree); },
     get typeField() { return drillIn(data.fields?.['type'], tree); },
     get child() { return drillIn(data.children?.[0], tree); },
   } as unknown as WrappedNode<IndexSignature>;
@@ -1693,6 +1701,94 @@ export function wrap_TypeIdentifier(data: _NodeData, tree: TreeHandle): WrappedN
   } as unknown as WrappedNode<_TypeIdentifier>;
 }
 
+export function wrap_ClassHeritageExtendsClause(data: _NodeData, tree: TreeHandle): WrappedNode<_ClassHeritageExtendsClause> {
+  return {
+    ...data,
+    get child() { return drillIn(data.children?.[0], tree); },
+  } as unknown as WrappedNode<_ClassHeritageExtendsClause>;
+}
+
+export function wrap_ClassHeritageImplementsClause(data: _NodeData, tree: TreeHandle): WrappedNode<_ClassHeritageImplementsClause> {
+  return {
+    ...data,
+    get child() { return drillIn(data.children?.[0], tree); },
+  } as unknown as WrappedNode<_ClassHeritageImplementsClause>;
+}
+
+export function wrap_ImportClauseNamespaceImport(data: _NodeData, tree: TreeHandle): WrappedNode<_ImportClauseNamespaceImport> {
+  return {
+    ...data,
+    get child() { return drillIn(data.children?.[0], tree); },
+  } as unknown as WrappedNode<_ImportClauseNamespaceImport>;
+}
+
+export function wrap_ImportClauseNamedImports(data: _NodeData, tree: TreeHandle): WrappedNode<_ImportClauseNamedImports> {
+  return {
+    ...data,
+    get child() { return drillIn(data.children?.[0], tree); },
+  } as unknown as WrappedNode<_ImportClauseNamedImports>;
+}
+
+export function wrap_ImportClauseDefaultImport(data: _NodeData, tree: TreeHandle): WrappedNode<_ImportClauseDefaultImport> {
+  return {
+    ...data,
+    get child() { return drillIn(data.children?.[0], tree); },
+  } as unknown as WrappedNode<_ImportClauseDefaultImport>;
+}
+
+export function wrap_IndexSignatureMappedTypeClause(data: _NodeData, tree: TreeHandle): WrappedNode<_IndexSignatureMappedTypeClause> {
+  return {
+    ...data,
+    get child() { return drillIn(data.children?.[0], tree); },
+  } as unknown as WrappedNode<_IndexSignatureMappedTypeClause>;
+}
+
+export function wrap_ImportSpecifierName(data: _NodeData, tree: TreeHandle): WrappedNode<_ImportSpecifierName> {
+  return {
+    ...data,
+    get name() { return drillIn(data.fields?.['name'], tree); },
+    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<_ImportSpecifierName>;
+}
+
+export function wrapImportClauseNamespaceImport(data: _NodeData, tree: TreeHandle): WrappedNode<ImportClauseNamespaceImport> {
+  return {
+    ...data,
+    get child() { return drillIn(data.children?.[0], tree); },
+  } as unknown as WrappedNode<ImportClauseNamespaceImport>;
+}
+
+export function wrapImportClauseNamedImports(data: _NodeData, tree: TreeHandle): WrappedNode<ImportClauseNamedImports> {
+  return {
+    ...data,
+    get child() { return drillIn(data.children?.[0], tree); },
+  } as unknown as WrappedNode<ImportClauseNamedImports>;
+}
+
+export function wrapImportClauseDefaultImport(data: _NodeData, tree: TreeHandle): WrappedNode<ImportClauseDefaultImport> {
+  return {
+    ...data,
+    get child() { return drillIn(data.children?.[0], tree); },
+  } as unknown as WrappedNode<ImportClauseDefaultImport>;
+}
+
+export function wrapImportSpecifierName(data: _NodeData, tree: TreeHandle): WrappedNode<ImportSpecifierName> {
+  return {
+    ...data,
+    get name() { return drillIn(data.fields?.['name'], tree); },
+    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<ImportSpecifierName>;
+}
+
+export function wrapImportSpecifierAs(data: _NodeData, tree: TreeHandle): WrappedNode<ImportSpecifierAs> {
+  return {
+    ...data,
+    get name() { return drillIn(data.fields?.['name'], tree); },
+    get alias() { return drillIn(data.fields?.['alias'], tree); },
+    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<ImportSpecifierAs>;
+}
+
 export function wrapShorthandPropertyIdentifier(data: _NodeData, tree: TreeHandle): WrappedNode<ShorthandPropertyIdentifier> {
   return {
     ...data,
@@ -1707,6 +1803,20 @@ export function wrapShorthandPropertyIdentifierPattern(data: _NodeData, tree: Tr
   } as unknown as WrappedNode<ShorthandPropertyIdentifierPattern>;
 }
 
+export function wrapClassHeritageExtendsClause(data: _NodeData, tree: TreeHandle): WrappedNode<ClassHeritageExtendsClause> {
+  return {
+    ...data,
+    get child() { return drillIn(data.children?.[0], tree); },
+  } as unknown as WrappedNode<ClassHeritageExtendsClause>;
+}
+
+export function wrapClassHeritageImplementsClause(data: _NodeData, tree: TreeHandle): WrappedNode<ClassHeritageImplementsClause> {
+  return {
+    ...data,
+    get child() { return drillIn(data.children?.[0], tree); },
+  } as unknown as WrappedNode<ClassHeritageImplementsClause>;
+}
+
 export function wrapInterfaceBody(data: _NodeData, tree: TreeHandle): WrappedNode<InterfaceBody> {
   return {
     ...data,
@@ -1715,6 +1825,22 @@ export function wrapInterfaceBody(data: _NodeData, tree: TreeHandle): WrappedNod
     get closing() { return drillIn(data.fields?.['closing'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<InterfaceBody>;
+}
+
+export function wrapIndexSignatureColon(data: _NodeData, tree: TreeHandle): WrappedNode<IndexSignatureColon> {
+  return {
+    ...data,
+    get name() { return drillIn(data.fields?.['name'], tree); },
+    get indexType() { return drillIn(data.fields?.['index_type'], tree); },
+    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<IndexSignatureColon>;
+}
+
+export function wrapIndexSignatureMappedTypeClause(data: _NodeData, tree: TreeHandle): WrappedNode<IndexSignatureMappedTypeClause> {
+  return {
+    ...data,
+    get child() { return drillIn(data.children?.[0], tree); },
+  } as unknown as WrappedNode<IndexSignatureMappedTypeClause>;
 }
 
 const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown> = {
@@ -1912,6 +2038,13 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'function_type': (d, t) => wrapFunctionType(d, t),
   '_type_identifier': (d, t) => wrap_TypeIdentifier(d, t),
   '_kw_asserts': (d) => d,
+  '_class_heritage_extends_clause': (d, t) => wrap_ClassHeritageExtendsClause(d, t),
+  '_class_heritage_implements_clause': (d, t) => wrap_ClassHeritageImplementsClause(d, t),
+  '_import_clause_namespace_import': (d, t) => wrap_ImportClauseNamespaceImport(d, t),
+  '_import_clause_named_imports': (d, t) => wrap_ImportClauseNamedImports(d, t),
+  '_import_clause_default_import': (d, t) => wrap_ImportClauseDefaultImport(d, t),
+  '_index_signature_mapped_type_clause': (d, t) => wrap_IndexSignatureMappedTypeClause(d, t),
+  '_import_specifier_name': (d, t) => wrap_ImportSpecifierName(d, t),
   '_kw_for': (d) => d,
   '_kw_async': (d) => d,
   '_kw_static': (d) => d,
@@ -1926,13 +2059,22 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'jsx_text': (d) => d,
   '_function_signature_automatic_semicolon': (d) => d,
   '__error_recovery': (d) => d,
+  'import_clause_namespace_import': (d, t) => wrapImportClauseNamespaceImport(d, t),
+  'import_clause_named_imports': (d, t) => wrapImportClauseNamedImports(d, t),
+  'import_clause_default_import': (d, t) => wrapImportClauseDefaultImport(d, t),
+  'import_specifier_name': (d, t) => wrapImportSpecifierName(d, t),
+  'import_specifier_as': (d, t) => wrapImportSpecifierAs(d, t),
   'statement_identifier': (d) => d,
   'shorthand_property_identifier': (d, t) => wrapShorthandPropertyIdentifier(d, t),
   'shorthand_property_identifier_pattern': (d, t) => wrapShorthandPropertyIdentifierPattern(d, t),
   'property_identifier': (d) => d,
   'string_fragment': (d) => d,
+  'class_heritage_extends_clause': (d, t) => wrapClassHeritageExtendsClause(d, t),
+  'class_heritage_implements_clause': (d, t) => wrapClassHeritageImplementsClause(d, t),
   'interface_body': (d, t) => wrapInterfaceBody(d, t),
   'this_type': (d) => d,
+  'index_signature_colon': (d, t) => wrapIndexSignatureColon(d, t),
+  'index_signature_mapped_type_clause': (d, t) => wrapIndexSignatureMappedTypeClause(d, t),
   'type_identifier': (d) => d,
 };
 

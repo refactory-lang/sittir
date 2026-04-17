@@ -263,9 +263,27 @@ export const enum SyntaxKind {
   IntersectionType = 'intersection_type',
   FunctionType = 'function_type',
   _TypeIdentifier = '_type_identifier',
+  _ClassHeritageExtendsClause = '_class_heritage_extends_clause',
+  _ClassHeritageImplementsClause = '_class_heritage_implements_clause',
+  _ImportClauseNamespaceImport = '_import_clause_namespace_import',
+  _ImportClauseNamedImports = '_import_clause_named_imports',
+  _ImportClauseDefaultImport = '_import_clause_default_import',
+  _IndexSignatureColon = '_index_signature_colon',
+  _IndexSignatureMappedTypeClause = '_index_signature_mapped_type_clause',
+  _ImportSpecifierName = '_import_specifier_name',
+  _ImportSpecifierAs = '_import_specifier_as',
+  ImportClauseNamespaceImport = 'import_clause_namespace_import',
+  ImportClauseNamedImports = 'import_clause_named_imports',
+  ImportClauseDefaultImport = 'import_clause_default_import',
+  ImportSpecifierName = 'import_specifier_name',
+  ImportSpecifierAs = 'import_specifier_as',
   ShorthandPropertyIdentifier = 'shorthand_property_identifier',
   ShorthandPropertyIdentifierPattern = 'shorthand_property_identifier_pattern',
+  ClassHeritageExtendsClause = 'class_heritage_extends_clause',
+  ClassHeritageImplementsClause = 'class_heritage_implements_clause',
   InterfaceBody = 'interface_body',
+  IndexSignatureColon = 'index_signature_colon',
+  IndexSignatureMappedTypeClause = 'index_signature_mapped_type_clause',
   HashBangLine = 'hash_bang_line',
   Import = 'import',
   HtmlCharacterReference = 'html_character_reference',
@@ -486,6 +504,7 @@ export const enum PrimaryTypeKind {
 
 // Node types — concrete interfaces
 // Repeated field/child unions (T042k dedup)
+export type _union_4 = AddingTypeAnnotation | OmittingTypeAnnotation | OptingTypeAnnotation | TypeAnnotation;
 export type _union_CallSignature_ConstructSignature_ExportStatement = CallSignature | ConstructSignature | ExportStatement | IndexSignature | MethodSignature | PropertySignature | Semicolon;
 export type _union_DestructuringPattern_Identifier = DestructuringPattern | Identifier;
 export type _union_Identifier_MemberExpression = Identifier | MemberExpression;
@@ -558,25 +577,22 @@ export interface ImportStatement {
   };
 }
 
-export interface ImportClauseForm0 {
+export interface ImportClauseUFormNamespaceImport {
   readonly type: 'import_clause';
-  readonly children: readonly [NamespaceImport];
+  readonly children: readonly [ImportClauseNamespaceImport];
 }
 
-export interface ImportClauseForm1 {
+export interface ImportClauseUFormNamedImports {
   readonly type: 'import_clause';
-  readonly children: readonly [NamedImports];
+  readonly children: readonly [ImportClauseNamedImports];
 }
 
-export interface ImportClauseForm2 {
+export interface ImportClauseUFormDefaultImport {
   readonly type: 'import_clause';
-  readonly fields: {
-    readonly default_import: ImportIdentifier;
-    readonly named_imports?: NamespaceImport | NamedImports;
-  };
+  readonly children: readonly [ImportClauseDefaultImport];
 }
 
-export type ImportClause = ImportClauseForm0 | ImportClauseForm1 | ImportClauseForm2;
+export type ImportClause = ImportClauseUFormNamespaceImport | ImportClauseUFormNamedImports | ImportClauseUFormDefaultImport;
 export interface FromClause {
   readonly type: '_from_clause';
 }
@@ -593,14 +609,17 @@ export interface NamedImports {
   readonly children: readonly (ImportSpecifier)[];
 }
 
-export interface ImportSpecifier {
+export interface ImportSpecifierUFormName {
   readonly type: 'import_specifier';
-  readonly fields: {
-    readonly name: ImportIdentifier;
-    readonly alias?: ImportIdentifier;
-  };
+  readonly children: readonly [ImportSpecifierName];
 }
 
+export interface ImportSpecifierUFormAs {
+  readonly type: 'import_specifier';
+  readonly children: readonly [ImportSpecifierAs];
+}
+
+export type ImportSpecifier = ImportSpecifierUFormName | ImportSpecifierUFormAs;
 export interface ImportAttribute {
   readonly type: 'import_attribute';
   readonly fields: {
@@ -971,20 +990,17 @@ export interface ClassDeclaration {
   };
 }
 
-export interface ClassHeritageForm0 {
+export interface ClassHeritageUFormExtendsClause {
   readonly type: 'class_heritage';
-  readonly fields: {
-    readonly extends_clause: ExtendsClause;
-    readonly implements_clause?: ImplementsClause;
-  };
+  readonly children: readonly [ClassHeritageExtendsClause];
 }
 
-export interface ClassHeritageForm1 {
+export interface ClassHeritageUFormImplementsClause {
   readonly type: 'class_heritage';
-  readonly children: readonly [ImplementsClause];
+  readonly children: readonly [ClassHeritageImplementsClause];
 }
 
-export type ClassHeritage = ClassHeritageForm0 | ClassHeritageForm1;
+export type ClassHeritage = ClassHeritageUFormExtendsClause | ClassHeritageUFormImplementsClause;
 export interface FunctionExpression {
   readonly type: 'function_expression';
   readonly fields: {
@@ -1833,17 +1849,25 @@ export interface ConstructSignature {
   };
 }
 
-export interface IndexSignature {
+export interface IndexSignatureUFormColon {
   readonly type: 'index_signature';
   readonly fields: {
-    readonly mapped_type_clause: string;
-    readonly name?: Identifier;
-    readonly index_type?: Type;
-    readonly type: TypeAnnotation | OmittingTypeAnnotation | AddingTypeAnnotation | OptingTypeAnnotation;
+    readonly sign?: "-" | "+";
+    readonly type: _union_4;
   };
-  readonly children: readonly [MappedTypeClause];
+  readonly children: readonly [IndexSignatureColon];
 }
 
+export interface IndexSignatureUFormMappedTypeClause {
+  readonly type: 'index_signature';
+  readonly fields: {
+    readonly sign?: "-" | "+";
+    readonly type: _union_4;
+  };
+  readonly children: readonly [IndexSignatureMappedTypeClause];
+}
+
+export type IndexSignature = IndexSignatureUFormColon | IndexSignatureUFormMappedTypeClause;
 export interface ArrayType {
   readonly type: 'array_type';
   readonly fields: {
@@ -1894,6 +1918,81 @@ export interface _TypeIdentifier {
   readonly children: readonly [TypeIdentifier];
 }
 
+export interface _ClassHeritageExtendsClause {
+  readonly type: '_class_heritage_extends_clause';
+  readonly children: readonly [ExtendsClause | ImplementsClause];
+}
+
+export interface _ClassHeritageImplementsClause {
+  readonly type: '_class_heritage_implements_clause';
+  readonly children: readonly [ImplementsClause];
+}
+
+export interface _ImportClauseNamespaceImport {
+  readonly type: '_import_clause_namespace_import';
+  readonly children: readonly [NamespaceImport];
+}
+
+export interface _ImportClauseNamedImports {
+  readonly type: '_import_clause_named_imports';
+  readonly children: readonly [NamedImports];
+}
+
+export interface _ImportClauseDefaultImport {
+  readonly type: '_import_clause_default_import';
+  readonly children: readonly [ImportIdentifier | NamespaceImport | NamedImports];
+}
+
+export interface _IndexSignatureColon {
+  readonly type: '_index_signature_colon';
+}
+
+export interface _IndexSignatureMappedTypeClause {
+  readonly type: '_index_signature_mapped_type_clause';
+  readonly children: readonly [MappedTypeClause];
+}
+
+export interface _ImportSpecifierName {
+  readonly type: '_import_specifier_name';
+  readonly fields: {
+    readonly name: ImportIdentifier;
+  };
+}
+
+export interface _ImportSpecifierAs {
+  readonly type: '_import_specifier_as';
+}
+
+export interface ImportClauseNamespaceImport {
+  readonly type: 'import_clause_namespace_import';
+  readonly children: readonly [NamespaceImport];
+}
+
+export interface ImportClauseNamedImports {
+  readonly type: 'import_clause_named_imports';
+  readonly children: readonly [NamedImports];
+}
+
+export interface ImportClauseDefaultImport {
+  readonly type: 'import_clause_default_import';
+  readonly children: readonly [ImportIdentifier | NamespaceImport | NamedImports];
+}
+
+export interface ImportSpecifierName {
+  readonly type: 'import_specifier_name';
+  readonly fields: {
+    readonly name: ImportIdentifier;
+  };
+}
+
+export interface ImportSpecifierAs {
+  readonly type: 'import_specifier_as';
+  readonly fields: {
+    readonly name: ModuleExportName;
+    readonly alias: ImportIdentifier;
+  };
+}
+
 export interface ShorthandPropertyIdentifier {
   readonly type: 'shorthand_property_identifier';
   readonly children: readonly [Identifier | ReservedIdentifier];
@@ -1904,6 +2003,16 @@ export interface ShorthandPropertyIdentifierPattern {
   readonly children: readonly [Identifier | ReservedIdentifier];
 }
 
+export interface ClassHeritageExtendsClause {
+  readonly type: 'class_heritage_extends_clause';
+  readonly children: readonly [ExtendsClause | ImplementsClause];
+}
+
+export interface ClassHeritageImplementsClause {
+  readonly type: 'class_heritage_implements_clause';
+  readonly children: readonly [ImplementsClause];
+}
+
 export interface InterfaceBody {
   readonly type: 'interface_body';
   readonly fields: {
@@ -1911,6 +2020,19 @@ export interface InterfaceBody {
     readonly members?: _union_CallSignature_ConstructSignature_ExportStatement;
     readonly closing: "}" | "|}";
   };
+}
+
+export interface IndexSignatureColon {
+  readonly type: 'index_signature_colon';
+  readonly fields: {
+    readonly name: Identifier;
+    readonly index_type: Type;
+  };
+}
+
+export interface IndexSignatureMappedTypeClause {
+  readonly type: 'index_signature_mapped_type_clause';
+  readonly children: readonly [MappedTypeClause];
 }
 
 
@@ -1974,14 +2096,16 @@ export type ExportClauseConfig = ConfigOf<ExportClause>;
 export type ExportSpecifierConfig = ConfigOf<ExportSpecifier>;
 export type DeclarationConfig = ConfigOf<Declaration>;
 export type ImportStatementConfig = ConfigOf<ImportStatement>;
-export type ImportClauseForm0Config = ConfigOf<ImportClauseForm0>;
-export type ImportClauseForm1Config = ConfigOf<ImportClauseForm1>;
-export type ImportClauseForm2Config = ConfigOf<ImportClauseForm2>;
-export type ImportClauseConfig = ImportClauseForm0Config | ImportClauseForm1Config | ImportClauseForm2Config;
+export type ImportClauseUFormNamespaceImportConfig = ConfigOf<ImportClauseUFormNamespaceImport>;
+export type ImportClauseUFormNamedImportsConfig = ConfigOf<ImportClauseUFormNamedImports>;
+export type ImportClauseUFormDefaultImportConfig = ConfigOf<ImportClauseUFormDefaultImport>;
+export type ImportClauseConfig = ImportClauseUFormNamespaceImportConfig | ImportClauseUFormNamedImportsConfig | ImportClauseUFormDefaultImportConfig;
 export type FromClauseConfig = ConfigOf<FromClause>;
 export type NamespaceImportConfig = ConfigOf<NamespaceImport>;
 export type NamedImportsConfig = ConfigOf<NamedImports>;
-export type ImportSpecifierConfig = ConfigOf<ImportSpecifier>;
+export type ImportSpecifierUFormNameConfig = ConfigOf<ImportSpecifierUFormName>;
+export type ImportSpecifierUFormAsConfig = ConfigOf<ImportSpecifierUFormAs>;
+export type ImportSpecifierConfig = ImportSpecifierUFormNameConfig | ImportSpecifierUFormAsConfig;
 export type ImportAttributeConfig = ConfigOf<ImportAttribute>;
 export type StatementConfig = ConfigOf<Statement>;
 export type ExpressionStatementConfig = ConfigOf<ExpressionStatement>;
@@ -2031,9 +2155,9 @@ export type JsxAttributeConfig = ConfigOf<JsxAttribute>;
 export type JsxStringConfig = ConfigOf<JsxString>;
 export type ClassConfig = ConfigOf<Class>;
 export type ClassDeclarationConfig = ConfigOf<ClassDeclaration>;
-export type ClassHeritageForm0Config = ConfigOf<ClassHeritageForm0>;
-export type ClassHeritageForm1Config = ConfigOf<ClassHeritageForm1>;
-export type ClassHeritageConfig = ClassHeritageForm0Config | ClassHeritageForm1Config;
+export type ClassHeritageUFormExtendsClauseConfig = ConfigOf<ClassHeritageUFormExtendsClause>;
+export type ClassHeritageUFormImplementsClauseConfig = ConfigOf<ClassHeritageUFormImplementsClause>;
+export type ClassHeritageConfig = ClassHeritageUFormExtendsClauseConfig | ClassHeritageUFormImplementsClauseConfig;
 export type FunctionExpressionConfig = ConfigOf<FunctionExpression>;
 export type FunctionDeclarationConfig = ConfigOf<FunctionDeclaration>;
 export type GeneratorFunctionConfig = ConfigOf<GeneratorFunction>;
@@ -2148,7 +2272,9 @@ export type TypeParameterConfig = ConfigOf<TypeParameter>;
 export type DefaultTypeConfig = ConfigOf<DefaultType>;
 export type ConstraintConfig = ConfigOf<Constraint>;
 export type ConstructSignatureConfig = ConfigOf<ConstructSignature>;
-export type IndexSignatureConfig = ConfigOf<IndexSignature>;
+export type IndexSignatureUFormColonConfig = ConfigOf<IndexSignatureUFormColon>;
+export type IndexSignatureUFormMappedTypeClauseConfig = ConfigOf<IndexSignatureUFormMappedTypeClause>;
+export type IndexSignatureConfig = IndexSignatureUFormColonConfig | IndexSignatureUFormMappedTypeClauseConfig;
 export type ArrayTypeConfig = ConfigOf<ArrayType>;
 export type TupleTypeConfig = ConfigOf<TupleType>;
 export type ReadonlyTypeConfig = ConfigOf<ReadonlyType>;
@@ -2156,9 +2282,27 @@ export type UnionTypeConfig = ConfigOf<UnionType>;
 export type IntersectionTypeConfig = ConfigOf<IntersectionType>;
 export type FunctionTypeConfig = ConfigOf<FunctionType>;
 export type _TypeIdentifierConfig = ConfigOf<_TypeIdentifier>;
+export type _ClassHeritageExtendsClauseConfig = ConfigOf<_ClassHeritageExtendsClause>;
+export type _ClassHeritageImplementsClauseConfig = ConfigOf<_ClassHeritageImplementsClause>;
+export type _ImportClauseNamespaceImportConfig = ConfigOf<_ImportClauseNamespaceImport>;
+export type _ImportClauseNamedImportsConfig = ConfigOf<_ImportClauseNamedImports>;
+export type _ImportClauseDefaultImportConfig = ConfigOf<_ImportClauseDefaultImport>;
+export type _IndexSignatureColonConfig = ConfigOf<_IndexSignatureColon>;
+export type _IndexSignatureMappedTypeClauseConfig = ConfigOf<_IndexSignatureMappedTypeClause>;
+export type _ImportSpecifierNameConfig = ConfigOf<_ImportSpecifierName>;
+export type _ImportSpecifierAsConfig = ConfigOf<_ImportSpecifierAs>;
+export type ImportClauseNamespaceImportConfig = ConfigOf<ImportClauseNamespaceImport>;
+export type ImportClauseNamedImportsConfig = ConfigOf<ImportClauseNamedImports>;
+export type ImportClauseDefaultImportConfig = ConfigOf<ImportClauseDefaultImport>;
+export type ImportSpecifierNameConfig = ConfigOf<ImportSpecifierName>;
+export type ImportSpecifierAsConfig = ConfigOf<ImportSpecifierAs>;
 export type ShorthandPropertyIdentifierConfig = ConfigOf<ShorthandPropertyIdentifier>;
 export type ShorthandPropertyIdentifierPatternConfig = ConfigOf<ShorthandPropertyIdentifierPattern>;
+export type ClassHeritageExtendsClauseConfig = ConfigOf<ClassHeritageExtendsClause>;
+export type ClassHeritageImplementsClauseConfig = ConfigOf<ClassHeritageImplementsClause>;
 export type InterfaceBodyConfig = ConfigOf<InterfaceBody>;
+export type IndexSignatureColonConfig = ConfigOf<IndexSignatureColon>;
+export type IndexSignatureMappedTypeClauseConfig = ConfigOf<IndexSignatureMappedTypeClause>;
 
 // Tree types
 export interface ProgramTree extends TreeNode<'program'> {}
@@ -2173,13 +2317,15 @@ export interface ExportSpecifierTree extends TreeNode<'export_specifier'> {}
 export interface DeclarationTree extends TreeNode<'declaration'> {}
 export interface ImportStatementTree extends TreeNode<'import_statement'> {}
 export interface ImportClauseTree extends TreeNode<'import_clause'> {}
-export interface ImportClauseForm0Tree extends TreeNode<'import_clause'> {}
-export interface ImportClauseForm1Tree extends TreeNode<'import_clause'> {}
-export interface ImportClauseForm2Tree extends TreeNode<'import_clause'> {}
+export interface ImportClauseUFormNamespaceImportTree extends TreeNode<'import_clause'> {}
+export interface ImportClauseUFormNamedImportsTree extends TreeNode<'import_clause'> {}
+export interface ImportClauseUFormDefaultImportTree extends TreeNode<'import_clause'> {}
 export interface FromClauseTree extends AnyTreeNode { readonly type: "_from_clause"; }
 export interface NamespaceImportTree extends TreeNode<'namespace_import'> {}
 export interface NamedImportsTree extends TreeNode<'named_imports'> {}
 export interface ImportSpecifierTree extends TreeNode<'import_specifier'> {}
+export interface ImportSpecifierUFormNameTree extends TreeNode<'import_specifier'> {}
+export interface ImportSpecifierUFormAsTree extends TreeNode<'import_specifier'> {}
 export interface ImportAttributeTree extends TreeNode<'import_attribute'> {}
 export interface StatementTree extends TreeNode<'statement'> {}
 export interface ExpressionStatementTree extends TreeNode<'expression_statement'> {}
@@ -2230,8 +2376,8 @@ export interface JsxStringTree extends AnyTreeNode { readonly type: "_jsx_string
 export interface ClassTree extends TreeNode<'class'> {}
 export interface ClassDeclarationTree extends TreeNode<'class_declaration'> {}
 export interface ClassHeritageTree extends TreeNode<'class_heritage'> {}
-export interface ClassHeritageForm0Tree extends TreeNode<'class_heritage'> {}
-export interface ClassHeritageForm1Tree extends TreeNode<'class_heritage'> {}
+export interface ClassHeritageUFormExtendsClauseTree extends TreeNode<'class_heritage'> {}
+export interface ClassHeritageUFormImplementsClauseTree extends TreeNode<'class_heritage'> {}
 export interface FunctionExpressionTree extends TreeNode<'function_expression'> {}
 export interface FunctionDeclarationTree extends TreeNode<'function_declaration'> {}
 export interface GeneratorFunctionTree extends TreeNode<'generator_function'> {}
@@ -2347,6 +2493,8 @@ export interface DefaultTypeTree extends TreeNode<'default_type'> {}
 export interface ConstraintTree extends TreeNode<'constraint'> {}
 export interface ConstructSignatureTree extends TreeNode<'construct_signature'> {}
 export interface IndexSignatureTree extends TreeNode<'index_signature'> {}
+export interface IndexSignatureUFormColonTree extends TreeNode<'index_signature'> {}
+export interface IndexSignatureUFormMappedTypeClauseTree extends TreeNode<'index_signature'> {}
 export interface ArrayTypeTree extends TreeNode<'array_type'> {}
 export interface TupleTypeTree extends TreeNode<'tuple_type'> {}
 export interface ReadonlyTypeTree extends TreeNode<'readonly_type'> {}
@@ -2354,9 +2502,27 @@ export interface UnionTypeTree extends TreeNode<'union_type'> {}
 export interface IntersectionTypeTree extends TreeNode<'intersection_type'> {}
 export interface FunctionTypeTree extends TreeNode<'function_type'> {}
 export interface _TypeIdentifierTree extends AnyTreeNode { readonly type: "_type_identifier"; }
+export interface _ClassHeritageExtendsClauseTree extends AnyTreeNode { readonly type: "_class_heritage_extends_clause"; }
+export interface _ClassHeritageImplementsClauseTree extends AnyTreeNode { readonly type: "_class_heritage_implements_clause"; }
+export interface _ImportClauseNamespaceImportTree extends AnyTreeNode { readonly type: "_import_clause_namespace_import"; }
+export interface _ImportClauseNamedImportsTree extends AnyTreeNode { readonly type: "_import_clause_named_imports"; }
+export interface _ImportClauseDefaultImportTree extends AnyTreeNode { readonly type: "_import_clause_default_import"; }
+export interface _IndexSignatureColonTree extends AnyTreeNode { readonly type: "_index_signature_colon"; }
+export interface _IndexSignatureMappedTypeClauseTree extends AnyTreeNode { readonly type: "_index_signature_mapped_type_clause"; }
+export interface _ImportSpecifierNameTree extends AnyTreeNode { readonly type: "_import_specifier_name"; }
+export interface _ImportSpecifierAsTree extends AnyTreeNode { readonly type: "_import_specifier_as"; }
+export interface ImportClauseNamespaceImportTree extends TreeNode<'import_clause_namespace_import'> {}
+export interface ImportClauseNamedImportsTree extends TreeNode<'import_clause_named_imports'> {}
+export interface ImportClauseDefaultImportTree extends TreeNode<'import_clause_default_import'> {}
+export interface ImportSpecifierNameTree extends TreeNode<'import_specifier_name'> {}
+export interface ImportSpecifierAsTree extends TreeNode<'import_specifier_as'> {}
 export interface ShorthandPropertyIdentifierTree extends TreeNode<'shorthand_property_identifier'> {}
 export interface ShorthandPropertyIdentifierPatternTree extends TreeNode<'shorthand_property_identifier_pattern'> {}
+export interface ClassHeritageExtendsClauseTree extends TreeNode<'class_heritage_extends_clause'> {}
+export interface ClassHeritageImplementsClauseTree extends TreeNode<'class_heritage_implements_clause'> {}
 export interface InterfaceBodyTree extends TreeNode<'interface_body'> {}
+export interface IndexSignatureColonTree extends TreeNode<'index_signature_colon'> {}
+export interface IndexSignatureMappedTypeClauseTree extends TreeNode<'index_signature_mapped_type_clause'> {}
 export interface HashBangLineTree extends TreeNode<'hash_bang_line'> {}
 export interface ImportTree extends AnyTreeNode { readonly type: "import"; }
 export interface HtmlCharacterReferenceTree extends TreeNode<'html_character_reference'> {}
@@ -2460,11 +2626,11 @@ export type LooseExportClause = FromInputOf<ExportClause, LeafScalarMap, LeafStr
 export type LooseExportSpecifier = FromInputOf<ExportSpecifier, LeafScalarMap, LeafStringMap>;
 export type LooseDeclaration = FromInputOf<Declaration, LeafScalarMap, LeafStringMap>;
 export type LooseImportStatement = FromInputOf<ImportStatement, LeafScalarMap, LeafStringMap>;
-export type LooseImportClause = FromInputOf<ImportClauseForm0, LeafScalarMap, LeafStringMap> | FromInputOf<ImportClauseForm1, LeafScalarMap, LeafStringMap> | FromInputOf<ImportClauseForm2, LeafScalarMap, LeafStringMap>;
+export type LooseImportClause = FromInputOf<ImportClauseUFormNamespaceImport, LeafScalarMap, LeafStringMap> | FromInputOf<ImportClauseUFormNamedImports, LeafScalarMap, LeafStringMap> | FromInputOf<ImportClauseUFormDefaultImport, LeafScalarMap, LeafStringMap>;
 export type LooseFromClause = FromInputOf<FromClause, LeafScalarMap, LeafStringMap>;
 export type LooseNamespaceImport = FromInputOf<NamespaceImport, LeafScalarMap, LeafStringMap>;
 export type LooseNamedImports = FromInputOf<NamedImports, LeafScalarMap, LeafStringMap>;
-export type LooseImportSpecifier = FromInputOf<ImportSpecifier, LeafScalarMap, LeafStringMap>;
+export type LooseImportSpecifier = FromInputOf<ImportSpecifierUFormName, LeafScalarMap, LeafStringMap> | FromInputOf<ImportSpecifierUFormAs, LeafScalarMap, LeafStringMap>;
 export type LooseImportAttribute = FromInputOf<ImportAttribute, LeafScalarMap, LeafStringMap>;
 export type LooseStatement = FromInputOf<Statement, LeafScalarMap, LeafStringMap>;
 export type LooseExpressionStatement = FromInputOf<ExpressionStatement, LeafScalarMap, LeafStringMap>;
@@ -2514,7 +2680,7 @@ export type LooseJsxAttribute = FromInputOf<JsxAttribute, LeafScalarMap, LeafStr
 export type LooseJsxString = FromInputOf<JsxString, LeafScalarMap, LeafStringMap>;
 export type LooseClass = FromInputOf<Class, LeafScalarMap, LeafStringMap>;
 export type LooseClassDeclaration = FromInputOf<ClassDeclaration, LeafScalarMap, LeafStringMap>;
-export type LooseClassHeritage = FromInputOf<ClassHeritageForm0, LeafScalarMap, LeafStringMap> | FromInputOf<ClassHeritageForm1, LeafScalarMap, LeafStringMap>;
+export type LooseClassHeritage = FromInputOf<ClassHeritageUFormExtendsClause, LeafScalarMap, LeafStringMap> | FromInputOf<ClassHeritageUFormImplementsClause, LeafScalarMap, LeafStringMap>;
 export type LooseFunctionExpression = FromInputOf<FunctionExpression, LeafScalarMap, LeafStringMap>;
 export type LooseFunctionDeclaration = FromInputOf<FunctionDeclaration, LeafScalarMap, LeafStringMap>;
 export type LooseGeneratorFunction = FromInputOf<GeneratorFunction, LeafScalarMap, LeafStringMap>;
@@ -2626,7 +2792,7 @@ export type LooseTypeParameter = FromInputOf<TypeParameter, LeafScalarMap, LeafS
 export type LooseDefaultType = FromInputOf<DefaultType, LeafScalarMap, LeafStringMap>;
 export type LooseConstraint = FromInputOf<Constraint, LeafScalarMap, LeafStringMap>;
 export type LooseConstructSignature = FromInputOf<ConstructSignature, LeafScalarMap, LeafStringMap>;
-export type LooseIndexSignature = FromInputOf<IndexSignature, LeafScalarMap, LeafStringMap>;
+export type LooseIndexSignature = FromInputOf<IndexSignatureUFormColon, LeafScalarMap, LeafStringMap> | FromInputOf<IndexSignatureUFormMappedTypeClause, LeafScalarMap, LeafStringMap>;
 export type LooseArrayType = FromInputOf<ArrayType, LeafScalarMap, LeafStringMap>;
 export type LooseTupleType = FromInputOf<TupleType, LeafScalarMap, LeafStringMap>;
 export type LooseReadonlyType = FromInputOf<ReadonlyType, LeafScalarMap, LeafStringMap>;
@@ -2634,9 +2800,27 @@ export type LooseUnionType = FromInputOf<UnionType, LeafScalarMap, LeafStringMap
 export type LooseIntersectionType = FromInputOf<IntersectionType, LeafScalarMap, LeafStringMap>;
 export type LooseFunctionType = FromInputOf<FunctionType, LeafScalarMap, LeafStringMap>;
 export type Loose_TypeIdentifier = FromInputOf<_TypeIdentifier, LeafScalarMap, LeafStringMap>;
+export type Loose_ClassHeritageExtendsClause = FromInputOf<_ClassHeritageExtendsClause, LeafScalarMap, LeafStringMap>;
+export type Loose_ClassHeritageImplementsClause = FromInputOf<_ClassHeritageImplementsClause, LeafScalarMap, LeafStringMap>;
+export type Loose_ImportClauseNamespaceImport = FromInputOf<_ImportClauseNamespaceImport, LeafScalarMap, LeafStringMap>;
+export type Loose_ImportClauseNamedImports = FromInputOf<_ImportClauseNamedImports, LeafScalarMap, LeafStringMap>;
+export type Loose_ImportClauseDefaultImport = FromInputOf<_ImportClauseDefaultImport, LeafScalarMap, LeafStringMap>;
+export type Loose_IndexSignatureColon = FromInputOf<_IndexSignatureColon, LeafScalarMap, LeafStringMap>;
+export type Loose_IndexSignatureMappedTypeClause = FromInputOf<_IndexSignatureMappedTypeClause, LeafScalarMap, LeafStringMap>;
+export type Loose_ImportSpecifierName = FromInputOf<_ImportSpecifierName, LeafScalarMap, LeafStringMap>;
+export type Loose_ImportSpecifierAs = FromInputOf<_ImportSpecifierAs, LeafScalarMap, LeafStringMap>;
+export type LooseImportClauseNamespaceImport = FromInputOf<ImportClauseNamespaceImport, LeafScalarMap, LeafStringMap>;
+export type LooseImportClauseNamedImports = FromInputOf<ImportClauseNamedImports, LeafScalarMap, LeafStringMap>;
+export type LooseImportClauseDefaultImport = FromInputOf<ImportClauseDefaultImport, LeafScalarMap, LeafStringMap>;
+export type LooseImportSpecifierName = FromInputOf<ImportSpecifierName, LeafScalarMap, LeafStringMap>;
+export type LooseImportSpecifierAs = FromInputOf<ImportSpecifierAs, LeafScalarMap, LeafStringMap>;
 export type LooseShorthandPropertyIdentifier = FromInputOf<ShorthandPropertyIdentifier, LeafScalarMap, LeafStringMap>;
 export type LooseShorthandPropertyIdentifierPattern = FromInputOf<ShorthandPropertyIdentifierPattern, LeafScalarMap, LeafStringMap>;
+export type LooseClassHeritageExtendsClause = FromInputOf<ClassHeritageExtendsClause, LeafScalarMap, LeafStringMap>;
+export type LooseClassHeritageImplementsClause = FromInputOf<ClassHeritageImplementsClause, LeafScalarMap, LeafStringMap>;
 export type LooseInterfaceBody = FromInputOf<InterfaceBody, LeafScalarMap, LeafStringMap>;
+export type LooseIndexSignatureColon = FromInputOf<IndexSignatureColon, LeafScalarMap, LeafStringMap>;
+export type LooseIndexSignatureMappedTypeClause = FromInputOf<IndexSignatureMappedTypeClause, LeafScalarMap, LeafStringMap>;
 
 // Supertype unions
 export type ModuleExportName =
@@ -3012,9 +3196,27 @@ export type TypescriptNode =
   | IntersectionType
   | FunctionType
   | _TypeIdentifier
+  | _ClassHeritageExtendsClause
+  | _ClassHeritageImplementsClause
+  | _ImportClauseNamespaceImport
+  | _ImportClauseNamedImports
+  | _ImportClauseDefaultImport
+  | _IndexSignatureColon
+  | _IndexSignatureMappedTypeClause
+  | _ImportSpecifierName
+  | _ImportSpecifierAs
+  | ImportClauseNamespaceImport
+  | ImportClauseNamedImports
+  | ImportClauseDefaultImport
+  | ImportSpecifierName
+  | ImportSpecifierAs
   | ShorthandPropertyIdentifier
   | ShorthandPropertyIdentifierPattern
+  | ClassHeritageExtendsClause
+  | ClassHeritageImplementsClause
   | InterfaceBody
+  | IndexSignatureColon
+  | IndexSignatureMappedTypeClause
 ;
 
 export interface KindMap {
@@ -3199,9 +3401,27 @@ export interface KindMap {
   'intersection_type': IntersectionType;
   'function_type': FunctionType;
   '_type_identifier': _TypeIdentifier;
+  '_class_heritage_extends_clause': _ClassHeritageExtendsClause;
+  '_class_heritage_implements_clause': _ClassHeritageImplementsClause;
+  '_import_clause_namespace_import': _ImportClauseNamespaceImport;
+  '_import_clause_named_imports': _ImportClauseNamedImports;
+  '_import_clause_default_import': _ImportClauseDefaultImport;
+  '_index_signature_colon': _IndexSignatureColon;
+  '_index_signature_mapped_type_clause': _IndexSignatureMappedTypeClause;
+  '_import_specifier_name': _ImportSpecifierName;
+  '_import_specifier_as': _ImportSpecifierAs;
+  'import_clause_namespace_import': ImportClauseNamespaceImport;
+  'import_clause_named_imports': ImportClauseNamedImports;
+  'import_clause_default_import': ImportClauseDefaultImport;
+  'import_specifier_name': ImportSpecifierName;
+  'import_specifier_as': ImportSpecifierAs;
   'shorthand_property_identifier': ShorthandPropertyIdentifier;
   'shorthand_property_identifier_pattern': ShorthandPropertyIdentifierPattern;
+  'class_heritage_extends_clause': ClassHeritageExtendsClause;
+  'class_heritage_implements_clause': ClassHeritageImplementsClause;
   'interface_body': InterfaceBody;
+  'index_signature_colon': IndexSignatureColon;
+  'index_signature_mapped_type_clause': IndexSignatureMappedTypeClause;
   'hash_bang_line': HashBangLine;
   'import': Import;
   'html_character_reference': HtmlCharacterReference;
@@ -3252,9 +3472,11 @@ export interface KindMap {
 
 export interface VariantMap {
   'export_statement': { form0: ExportStatementForm0; form1: ExportStatementForm1; form2: ExportStatementForm2; form3: ExportStatementForm3 };
-  'import_clause': { form0: ImportClauseForm0; form1: ImportClauseForm1; form2: ImportClauseForm2 };
-  'class_heritage': { form0: ClassHeritageForm0; form1: ClassHeritageForm1 };
+  'import_clause': { namespace_import: ImportClauseUFormNamespaceImport; named_imports: ImportClauseUFormNamedImports; default_import: ImportClauseUFormDefaultImport };
+  'import_specifier': { name: ImportSpecifierUFormName; as: ImportSpecifierUFormAs };
+  'class_heritage': { extends_clause: ClassHeritageUFormExtendsClause; implements_clause: ClassHeritageUFormImplementsClause };
   'call_expression': { form0: CallExpressionForm0; form1: CallExpressionForm1; form2: CallExpressionForm2 };
+  'index_signature': { colon: IndexSignatureUFormColon; mapped_type_clause: IndexSignatureUFormMappedTypeClause };
 }
 
 export interface ConfigMap {
@@ -3439,9 +3661,27 @@ export interface ConfigMap {
   'intersection_type': IntersectionTypeConfig;
   'function_type': FunctionTypeConfig;
   '_type_identifier': _TypeIdentifierConfig;
+  '_class_heritage_extends_clause': _ClassHeritageExtendsClauseConfig;
+  '_class_heritage_implements_clause': _ClassHeritageImplementsClauseConfig;
+  '_import_clause_namespace_import': _ImportClauseNamespaceImportConfig;
+  '_import_clause_named_imports': _ImportClauseNamedImportsConfig;
+  '_import_clause_default_import': _ImportClauseDefaultImportConfig;
+  '_index_signature_colon': _IndexSignatureColonConfig;
+  '_index_signature_mapped_type_clause': _IndexSignatureMappedTypeClauseConfig;
+  '_import_specifier_name': _ImportSpecifierNameConfig;
+  '_import_specifier_as': _ImportSpecifierAsConfig;
+  'import_clause_namespace_import': ImportClauseNamespaceImportConfig;
+  'import_clause_named_imports': ImportClauseNamedImportsConfig;
+  'import_clause_default_import': ImportClauseDefaultImportConfig;
+  'import_specifier_name': ImportSpecifierNameConfig;
+  'import_specifier_as': ImportSpecifierAsConfig;
   'shorthand_property_identifier': ShorthandPropertyIdentifierConfig;
   'shorthand_property_identifier_pattern': ShorthandPropertyIdentifierPatternConfig;
+  'class_heritage_extends_clause': ClassHeritageExtendsClauseConfig;
+  'class_heritage_implements_clause': ClassHeritageImplementsClauseConfig;
   'interface_body': InterfaceBodyConfig;
+  'index_signature_colon': IndexSignatureColonConfig;
+  'index_signature_mapped_type_clause': IndexSignatureMappedTypeClauseConfig;
 }
 
 export interface LooseMap {
@@ -3626,7 +3866,25 @@ export interface LooseMap {
   'intersection_type': LooseIntersectionType;
   'function_type': LooseFunctionType;
   '_type_identifier': Loose_TypeIdentifier;
+  '_class_heritage_extends_clause': Loose_ClassHeritageExtendsClause;
+  '_class_heritage_implements_clause': Loose_ClassHeritageImplementsClause;
+  '_import_clause_namespace_import': Loose_ImportClauseNamespaceImport;
+  '_import_clause_named_imports': Loose_ImportClauseNamedImports;
+  '_import_clause_default_import': Loose_ImportClauseDefaultImport;
+  '_index_signature_colon': Loose_IndexSignatureColon;
+  '_index_signature_mapped_type_clause': Loose_IndexSignatureMappedTypeClause;
+  '_import_specifier_name': Loose_ImportSpecifierName;
+  '_import_specifier_as': Loose_ImportSpecifierAs;
+  'import_clause_namespace_import': LooseImportClauseNamespaceImport;
+  'import_clause_named_imports': LooseImportClauseNamedImports;
+  'import_clause_default_import': LooseImportClauseDefaultImport;
+  'import_specifier_name': LooseImportSpecifierName;
+  'import_specifier_as': LooseImportSpecifierAs;
   'shorthand_property_identifier': LooseShorthandPropertyIdentifier;
   'shorthand_property_identifier_pattern': LooseShorthandPropertyIdentifierPattern;
+  'class_heritage_extends_clause': LooseClassHeritageExtendsClause;
+  'class_heritage_implements_clause': LooseClassHeritageImplementsClause;
   'interface_body': LooseInterfaceBody;
+  'index_signature_colon': LooseIndexSignatureColon;
+  'index_signature_mapped_type_clause': LooseIndexSignatureMappedTypeClause;
 }
