@@ -14,7 +14,6 @@
 import type {
     NodeMap, AssembledNode, AssembledField, AssembledForm, AssembledChild,
 } from '../compiler/rule.ts'
-import type { PolymorphVariant } from '../dsl/synthetic-rules.ts'
 import {
     AssembledBranch, AssembledContainer, AssembledPolymorph, AssembledGroup,
     AssembledSupertype,
@@ -737,51 +736,6 @@ function emitFormInterface(
 
     lines.push('}')
     lines.push('')
-}
-
-function emitNestedAliasConfig(
-    lines: string[],
-    parentNode: AssembledNode,
-    polymorphVariants: PolymorphVariant[],
-    nodeMap: NodeMap,
-): void {
-    const parentFields = fieldsOf(parentNode)
-    const configEntries: string[] = []
-    const seenProps = new Set<string>()
-
-    for (const f of parentFields) {
-        seenProps.add(f.propertyName)
-        const typeExpr = fieldTypeExpr(f, nodeMap)
-        configEntries.push(`${f.propertyName}${f.required ? '' : '?'}: ${typeExpr}`)
-    }
-
-    const variantFieldTypes = new Map<string, Set<string>>()
-    for (const pv of polymorphVariants) {
-        const fullName = `${pv.parent}_${pv.child}`
-        const vNode = nodeMap.nodes.get(fullName)
-        if (!vNode) continue
-        const vFields = fieldsOf(vNode)
-        for (const vf of vFields) {
-            if (seenProps.has(vf.propertyName)) continue
-            const typeExpr = fieldTypeExpr(vf, nodeMap)
-            const existing = variantFieldTypes.get(vf.propertyName)
-            if (existing) { existing.add(typeExpr) } else { variantFieldTypes.set(vf.propertyName, new Set([typeExpr])) }
-        }
-    }
-    for (const [prop, types] of variantFieldTypes) {
-        configEntries.push(`${prop}?: ${[...types].join(' | ')}`)
-    }
-
-    // Add variant discriminator field
-    const variantSuffixes = polymorphVariants.map(pv => pv.child)
-    const variantUnion = variantSuffixes.map(s => `'${s}'`).join(' | ')
-    configEntries.push(`variant?: ${variantUnion}`)
-
-    lines.push(`export interface ${parentNode.typeName}Config {`)
-    for (const entry of configEntries) {
-        lines.push(`  readonly ${entry};`)
-    }
-    lines.push('}')
 }
 
 function fieldTypeExpr(

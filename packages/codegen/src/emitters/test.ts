@@ -4,7 +4,6 @@
  */
 
 import type { NodeMap, AssembledNode, AssembledField } from '../compiler/rule.ts'
-import type { PolymorphVariant } from '../dsl/synthetic-rules.ts'
 
 export interface EmitTestsConfig {
     grammar: string
@@ -241,39 +240,3 @@ function dummyValue(field: AssembledField): string {
     return "'test' as any"
 }
 
-function emitNestedAliasTest(
-    lines: string[],
-    node: AssembledNode,
-    kind: string,
-    key: string,
-    polymorphVariants: PolymorphVariant[],
-    nodeMap: NodeMap,
-): void {
-    const parentFields = node.modelType === 'branch' ? node.fields : []
-    const lastVariant = polymorphVariants[polymorphVariants.length - 1]
-    const fallbackVariant = lastVariant ? `${lastVariant.parent}_${lastVariant.child}` : undefined
-    const fallbackNode = fallbackVariant ? nodeMap.nodes.get(fallbackVariant) : undefined
-    const fallbackFields = fallbackNode?.modelType === 'branch' ? fallbackNode.fields : []
-
-    const configParts: string[] = []
-    for (const f of parentFields) {
-        if (f.required) configParts.push(`${f.propertyName}: ${dummyValue(f)}`)
-    }
-    for (const f of fallbackFields) {
-        configParts.push(`${f.propertyName}: ${dummyValue(f)}`)
-    }
-
-    const configArg = configParts.length > 0 ? `{ ${configParts.join(', ')} }` : '{} as any'
-    lines.push(`describe('${kind}', () => {`)
-    lines.push(`  it('factory produces correct type', () => {`)
-    lines.push(`    const node = ir.${key}(${configArg});`)
-    lines.push(`    expect(node.type).toBe('${kind}');`)
-    lines.push('  });')
-    lines.push(`  it('render produces non-empty string', () => {`)
-    lines.push(`    const node = ir.${key}(${configArg});`)
-    lines.push('    const rendered = node.render();')
-    lines.push("    expect(rendered.length).toBeGreaterThan(0);")
-    lines.push('  });')
-    lines.push('});')
-    lines.push('')
-}

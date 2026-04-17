@@ -10,7 +10,6 @@
 import type {
     NodeMap, AssembledNode, AssembledField, AssembledChild, AssembledGroup,
 } from '../compiler/rule.ts'
-import type { PolymorphVariant } from '../dsl/synthetic-rules.ts'
 
 export interface EmitFactoriesConfig {
     grammar: string
@@ -664,121 +663,6 @@ function emitPolymorphFactory(node: PolymorphNode, nodeMap: NodeMap): string {
         parts.push(emitFieldCarryingFactory(form, form.fields, form.children, nodeMap))
     }
     return parts.join('\n')
-}
-
-// ---------------------------------------------------------------------------
-// Nested-alias polymorph factory
-// ---------------------------------------------------------------------------
-
-function emitNestedAliasFactory(
-    parentNode: AssembledNode,
-    polymorphVariants: PolymorphVariant[],
-    nodeMap: NodeMap,
-): string {
-    const fn = parentNode.rawFactoryName!
-    const parentFields = 'fields' in parentNode ? (parentNode as { fields: readonly AssembledField[] }).fields : []
-
-    interface VariantInfo {
-        name: string
-        suffix: string
-        node: AssembledNode
-        factoryName: string
-        fields: readonly AssembledField[]
-    }
-    const variants: VariantInfo[] = []
-    for (const pv of polymorphVariants) {
-        const fullName = `${pv.parent}_${pv.child}`
-        const vNode = nodeMap.nodes.get(fullName)
-        if (!vNode || !vNode.rawFactoryName) continue
-        const vFields = 'fields' in vNode ? (vNode as { fields: readonly AssembledField[] }).fields : []
-        variants.push({ name: fullName, suffix: pv.child, node: vNode, factoryName: vNode.rawFactoryName, fields: vFields })
-    }
-
-    if (variants.length === 0) {
-        return emitFieldCarryingFactory(
-            parentNode as any,
-            parentFields,
-            'children' in parentNode ? (parentNode as any).children ?? [] : [],
-            nodeMap,
-        )
-    }
-
-    // Variant suffix names for the literal union type
-    const variantSuffixes = variants.map(v => v.suffix)
-    const variantUnion = variantSuffixes.map(s => `'${s}'`).join(' | ')
-
-    const emitChildCall = (v: VariantInfo) => {
-        return `${v.factoryName}(config as T.${v.node.typeName}Config)`
-    }
-
-    const emitReturnBlock = (indent: string) => {
-        const rl: string[] = []
-        rl.push(`${indent}return {`)
-        rl.push(`${indent}  type: '${parentNode.kind}' as const,`)
-        rl.push(`${indent}  named: true as const,`)
-        rl.push(`${indent}  fields,`)
-        rl.push(`${indent}  children: [_child],`)
-        for (const f of parentFields) {
-            const method = f.propertyName === 'type' ? 'typeField' : f.propertyName
-            rl.push(`${indent}  ${method}() { return fields.${f.name}; },`)
-        }
-        const seenMethods = new Set(parentFields.map(f => f.propertyName === 'type' ? 'typeField' : f.propertyName))
-        for (const v of variants) {
-            for (const vf of v.fields) {
-                const method = vf.propertyName === 'type' ? 'typeField' : vf.propertyName
-                if (seenMethods.has(method)) continue
-                seenMethods.add(method)
-                rl.push(`${indent}  ${method}() { return (_child as any).fields?.${vf.name}; },`)
-            }
-        }
-        rl.push(`${indent}  getVariant() { return _child; },`)
-        rl.push(...factorySuffix(parentNode.treeTypeName).map(l => indent + l))
-        rl.push(`${indent}};`)
-        return rl
-    }
-
-    const lines: string[] = []
-    lines.push(`export function ${fn}(config: T.${parentNode.typeName}Config) {`)
-    lines.push('  const fields = {')
-    for (const f of parentFields) {
-        lines.push(`    ${f.name}: config?.${f.propertyName},`)
-    }
-    lines.push('  };')
-
-    // Dispatch by explicit variant name
-    lines.push(`  const v = (config as { variant?: ${variantUnion} }).variant;`)
-    for (let i = 0; i < variants.length; i++) {
-        const v = variants[i]!
-        const suffix = variantSuffixes[i]!
-        const cond = i === 0 ? 'if' : 'else if'
-        lines.push(`  ${cond} (v === '${suffix}') {`)
-        lines.push(`    const _child = ${emitChildCall(v)};`)
-        lines.push(...emitReturnBlock('    '))
-        lines.push('  }')
-    }
-
-    // Fallback: detect by field presence (most-specific first)
-    const sorted = [...variants].sort((a, b) => b.fields.length - a.fields.length)
-    const fallback = sorted[sorted.length - 1]!
-
-    for (const v of sorted) {
-        if (v === fallback && sorted.length > 1) continue
-        if (v.fields.length === 0) continue
-        const checks = v.fields.map(f => `config.${f.propertyName} !== undefined`).join(' && ')
-        lines.push(`  else if (${checks}) {`)
-        lines.push(`    const _child = ${emitChildCall(v)};`)
-        lines.push(...emitReturnBlock('    '))
-        lines.push('  }')
-    }
-
-    // Final fallback
-    lines.push('  else {')
-    lines.push(`    const _child = ${emitChildCall(fallback)};`)
-    lines.push(...emitReturnBlock('    '))
-    lines.push('  }')
-    lines.push('}')
-
-    return lines.join('\n')
 }
 
 // ---------------------------------------------------------------------------
