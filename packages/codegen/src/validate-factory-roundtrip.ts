@@ -165,13 +165,18 @@ export async function validateFactoryRoundTrip(
 	const { render } = createRenderer(config);
 	const kindToSupertypes = buildKindToSupertypes(rawEntries);
 
-	// Dynamically import the generated _factoryMap for this grammar
+	// Dynamically import the generated _factoryMap + _factoryShapes for
+	// this grammar. `_factoryShapes[kind]` tells us whether to call the
+	// factory as `factory(config)` or `factory(...children)` — produced
+	// at codegen time from the node's model type, not inferred at runtime.
 	const factoryModulePath = FACTORY_MODULE_PATHS[grammar];
 	let factoryMap: Record<string, (config?: any) => unknown> = {};
+	let factoryShapes: Record<string, 'config' | 'children' | 'text'> = {};
 	if (factoryModulePath) {
 		try {
 			const factoryModule = await import(new URL(factoryModulePath, import.meta.url).pathname);
 			factoryMap = factoryModule._factoryMap ?? {};
+			factoryShapes = factoryModule._factoryShapes ?? {};
 		} catch {
 			// If factory module can't be loaded, fall back to strip
 		}
@@ -230,17 +235,12 @@ export async function validateFactoryRoundTrip(
 				factoryData = readData;
 			} else if (factory) {
 				try {
-					// Distinguish config-shaped factories from children-only
-					// ones by the declared first-param name. Codegen emits
-					// `function fooBar(config: T.FooBarConfig)` for
-					// field-bearing rules and `function fooBar(child: ...)`
-					// / `function fooBar(...children: ...)` for pure-
-					// container rules. Wrong routing produces garbage:
-					// a children-only factory given a config object boxes
-					// the whole config into children[0]; a config factory
-					// given positional args silently ignores the rest.
-					const firstParam = (factory.toString().match(/^function[^(]*\(([^,:)\s]*)/) ?? [])[1] ?? '';
-					const isConfigFactory = firstParam === 'config';
+					// Route by the shape declared at codegen time, not by
+					// inspecting factory.toString() (which breaks under
+					// minification). `_factoryShapes[kind]` is emitted
+					// from the node's model type in factories.ts.
+					const shape = factoryShapes[kind] ?? 'config';
+					const isConfigFactory = shape === 'config';
 					const fieldsPresent = readData.fields && Object.keys(readData.fields).length > 0;
 					if (isConfigFactory) {
 						// Some rules have BOTH fields AND children —

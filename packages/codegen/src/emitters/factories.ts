@@ -185,6 +185,16 @@ export function emitFactories(config: EmitFactoriesConfig): string {
         factory: string
         typeName: string
         fluent: boolean
+        /**
+         * Factory signature shape — 'config' for factories that take a
+         * `config: T.XxxConfig` object (branches, polymorphs, enums with
+         * validation), 'children' for container factories that take
+         * `...children: ElementType[]` or `child?: ElementType`, 'text'
+         * for leaf / keyword factories that take a raw string. Consumers
+         * (validators, editors) route calls by this instead of inspecting
+         * `factory.toString()`.
+         */
+        shape: 'config' | 'children' | 'text'
     }
     const mapEntries: MapEntry[] = []
     for (const [kind, node] of nodeMap.nodes) {
@@ -194,7 +204,11 @@ export function emitFactories(config: EmitFactoriesConfig): string {
         const fluent = node.modelType === 'branch' ||
             node.modelType === 'container' ||
             node.modelType === 'polymorph'
-        mapEntries.push({ kind, factory: node.rawFactoryName, typeName: node.typeName, fluent })
+        let shape: 'config' | 'children' | 'text'
+        if (node.modelType === 'container') shape = 'children'
+        else if (node.modelType === 'leaf' || node.modelType === 'keyword' || node.modelType === 'token') shape = 'text'
+        else shape = 'config'
+        mapEntries.push({ kind, factory: node.rawFactoryName, typeName: node.typeName, fluent, shape })
     }
 
     // FluentKindMap — kind string → fluent factory output shape.
@@ -223,6 +237,19 @@ export function emitFactories(config: EmitFactoriesConfig): string {
     }
     lines.push('} as const;')
     lines.push('export type _FactoryMap = typeof _factoryMap;')
+    lines.push('')
+
+    // _factoryShapes — parallel dispatch hint for runtime routing.
+    // Consumers (validators, editors) use this to choose between
+    // calling `factory(config)` vs `factory(...children)` vs
+    // `factory(text)` without inspecting function.toString() at
+    // runtime (which breaks under minification / bundler renames).
+    lines.push('export const _factoryShapes = {')
+    for (const { kind, shape } of mapEntries) {
+        lines.push(`  ${JSON.stringify(kind)}: ${JSON.stringify(shape)},`)
+    }
+    lines.push(`} as const satisfies Record<string, 'config' | 'children' | 'text'>;`)
+    lines.push('export type _FactoryShapes = typeof _factoryShapes;')
     lines.push('')
 
     return lines.join('\n')
