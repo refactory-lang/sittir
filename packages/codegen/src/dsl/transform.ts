@@ -142,7 +142,22 @@ function tryHoistSiblingVariants(
     rule: RuntimeRule,
     variantEntries: ReadonlyArray<[string, VariantPlaceholder]>,
 ): { rule: RuntimeRule; consumed: Set<string> } | null {
-    const t = rule?.type
+    // Peel off any prec wrapper(s) at the rule root so we can reach
+    // the underlying seq. Tree-sitter-js grammars frequently wrap a
+    // polymorph in `prec.left(N, seq(...))` to resolve intra-rule
+    // ambiguities — parenthesized_expression, call_expression,
+    // export_statement all do this. We reapply the same prec to each
+    // hoisted variant's body below so the extracted rules inherit the
+    // parent's conflict-resolution context; otherwise tree-sitter's
+    // LR table sees unresolvable ambiguities at boundaries like
+    // `typeof expr <` (call_expression) or `( expr )` (parens).
+    const precStack: RuntimeRule[] = []
+    let core = rule
+    while (core && isPrecWrapper(core)) {
+        precStack.push(core)
+        core = contentOf(core)
+    }
+    const t = core?.type
     if (!t) return null
     if (t !== 'seq' && t !== 'SEQ') return null
     const parsed: Array<{ key: string; v: VariantPlaceholder; choicePos: number; altIdx: number }> = []
@@ -154,7 +169,7 @@ function tryHoistSiblingVariants(
     }
     const choicePos = parsed[0]!.choicePos
     if (parsed.some(p => p.choicePos !== choicePos)) return null
-    const seqMembers = [...membersOf(rule)]
+    const seqMembers = [...membersOf(core)]
     const resolvedPos = choicePos < 0 ? seqMembers.length + choicePos : choicePos
     const choice = seqMembers[resolvedPos]
     if (!choice || (choice.type !== 'choice' && choice.type !== 'CHOICE')) return null
@@ -164,19 +179,26 @@ function tryHoistSiblingVariants(
     const parentKind = getCurrentRuleKind()
     if (!parentKind) return null
     const refs: RuntimeRule[] = []
-    const isUpperCase = rule.type === rule.type.toUpperCase()
+    const isUpperCase = core.type === core.type.toUpperCase()
+    // Reapply the captured prec stack inner-first so the outer-most
+    // wrapper stays outermost — matches how path-descent reassembles
+    // prec in applyPath.
+    const wrapInPrecStack = (body: RuntimeRule): RuntimeRule => {
+        let wrapped = body
+        for (let i = precStack.length - 1; i >= 0; i--) {
+            wrapped = reconstructPrec(precStack[i]!, wrapped)
+        }
+        return wrapped
+    }
     for (const p of parsed) {
         const resolvedAlt = p.altIdx < 0 ? choiceMembers.length + p.altIdx : p.altIdx
         const altContent = choiceMembers[resolvedAlt]!
         const hoistedMembers = seqMembers.map((m, i) => i === resolvedPos ? altContent : m)
-        const hoistedBody = reconstructContainer(rule, hoistedMembers)
-        // Register as a VISIBLE rule (no underscore prefix). Each variant
-        // becomes its own top-level named rule with its own node kind.
-        // The parent rule becomes `choice($.parent_semi, $.parent_list)`
-        // — no alias node, no hidden rule. Tree-sitter's table generator
-        // sees N distinct visible rules with non-empty bodies (literals
-        // from the parent seq provide the scaffolding) and no structural
-        // collision with auto-generated _repeat1 helpers.
+        const hoistedSeq = reconstructContainer(core, hoistedMembers)
+        // Wrap each variant's body in the parent's prec context so
+        // tree-sitter's conflict resolver sees the same precedence /
+        // associativity the author declared on the parent rule.
+        const hoistedBody = wrapInPrecStack(hoistedSeq)
         const visibleName = `${parentKind}_${p.v.name}`
         registerPolymorphVariant(parentKind, p.v.name)
         registerSyntheticRule(visibleName, hoistedBody)

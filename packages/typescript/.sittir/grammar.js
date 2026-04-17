@@ -568,7 +568,13 @@ function applyPathPatches(original, patches) {
   return rule;
 }
 function tryHoistSiblingVariants(rule, variantEntries) {
-  const t = rule?.type;
+  const precStack = [];
+  let core = rule;
+  while (core && isPrecWrapper(core)) {
+    precStack.push(core);
+    core = contentOf2(core);
+  }
+  const t = core?.type;
   if (!t) return null;
   if (t !== "seq" && t !== "SEQ") return null;
   const parsed = [];
@@ -580,7 +586,7 @@ function tryHoistSiblingVariants(rule, variantEntries) {
   }
   const choicePos = parsed[0].choicePos;
   if (parsed.some((p) => p.choicePos !== choicePos)) return null;
-  const seqMembers = [...membersOf2(rule)];
+  const seqMembers = [...membersOf2(core)];
   const resolvedPos = choicePos < 0 ? seqMembers.length + choicePos : choicePos;
   const choice = seqMembers[resolvedPos];
   if (!choice || choice.type !== "choice" && choice.type !== "CHOICE") return null;
@@ -590,12 +596,20 @@ function tryHoistSiblingVariants(rule, variantEntries) {
   const parentKind = getCurrentRuleKind();
   if (!parentKind) return null;
   const refs = [];
-  const isUpperCase = rule.type === rule.type.toUpperCase();
+  const isUpperCase = core.type === core.type.toUpperCase();
+  const wrapInPrecStack2 = (body) => {
+    let wrapped = body;
+    for (let i = precStack.length - 1; i >= 0; i--) {
+      wrapped = reconstructPrec(precStack[i], wrapped);
+    }
+    return wrapped;
+  };
   for (const p of parsed) {
     const resolvedAlt = p.altIdx < 0 ? choiceMembers.length + p.altIdx : p.altIdx;
     const altContent = choiceMembers[resolvedAlt];
     const hoistedMembers = seqMembers.map((m, i) => i === resolvedPos ? altContent : m);
-    const hoistedBody = reconstructContainer(rule, hoistedMembers);
+    const hoistedSeq = reconstructContainer(core, hoistedMembers);
+    const hoistedBody = wrapInPrecStack2(hoistedSeq);
     const visibleName = `${parentKind}_${p.v.name}`;
     registerPolymorphVariant(parentKind, p.v.name);
     registerSyntheticRule(visibleName, hoistedBody);
@@ -1027,15 +1041,29 @@ var overrides_default = grammar(enrich(import_grammar.default), {
       "1/0": variant("name"),
       "1/1": variant("as")
     }),
-    // parenthesized_expression: held — adoption triggers an
-    // unresolvable LR conflict with sequence_expression that needs
-    // manual precedence tuning, not a variant() auto-fix.
-    // export_statement: held — `export` keyword collides with
-    // `primary_expression` alternative (soft keyword / identifier
-    // ambiguity), needs precedence tuning not a variant split.
-    // call_expression: held — variant split triggers unresolvable
-    // conflict with type_arguments lookahead on `typeof`, needs
-    // precedence tuning.
+    // parenthesized_expression: held. Base is plain `seq('(',
+    // _expressions, ')')` with no outer prec — my hoist's prec
+    // preservation captures OUTER wrappers, not per-alt prec. The
+    // real conflict is that sequence_expression has its OWN
+    // `prec.right(commaSep1(...))` that wins against a bare
+    // expression alt; splitting exposes this as an unresolvable
+    // tie. Fix would need the DSL to recognize per-alt prec inside
+    // the choice and lift it to the variant rule — another
+    // iteration.
+    // export_statement: held. Base has no prec wrapper so prec-
+    // preservation doesn't help. The conflict is deeper: `export`
+    // as a keyword overlaps with its use as an identifier in
+    // primary_expression, and tree-sitter resolves this via
+    // internal state in the unsplit grammar. Splitting forces
+    // the decision earlier, exposing the ambiguity.
+    // call_expression: held. Each alt has its own per-branch prec
+    // tag ('call'/'template_call'/'member') which prec-preservation
+    // captures correctly, but the split exposes the base grammar's
+    // call_expression vs binary_expression vs instantiation_
+    // expression ambiguity on `typeof expr <` that the unsplit
+    // rule resolves via LR state the base intentionally left
+    // ambiguous. Fix would need explicit conflicts entries with
+    // external rules — out of scope for variant() adoption.
     // arrow_function (T028b): polymorph split from suggested.ts.
     arrow_function: ($, original) => transform(original, {
       "1/0": variant("parameter"),

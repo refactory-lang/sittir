@@ -17,7 +17,7 @@
 // Field inferences:  9  (0 applied, 9 held)
 // Rule promotions:   48  (47 applied, 1 held)
 // Repeated shapes:   5  (advisory — suggested supertypes/groups)
-// Round-trip fails: 55  (43 parse errors, 12 AST mismatches; 20 render, 35 factory)
+// Round-trip fails: 56  (44 parse errors, 12 AST mismatches; 20 render, 36 factory)
 
 // ---------------------------------------------------------------
 // Round-trip failures — corpus cases that didn't survive
@@ -513,6 +513,15 @@ export const roundTripFailures: Array<{
     category: "parse-error",
     input:    "<Dog as Animal>",
     message: "No render rule for 'undefined'",
+  },
+  // --- raw_string_literal (1) ---
+  {
+    entry: "Raw string literals",
+    kind: "raw_string_literal",
+    source: "factory",
+    category: "parse-error",
+    input:    "r#\"abc\"#",
+    message: "Cannot read properties of undefined (reading 'text')",
   },
   // --- token_tree_pattern (1) ---
   {
