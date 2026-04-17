@@ -314,14 +314,6 @@ export interface RawGrammar {
     readonly word: string | null
     readonly references: SymbolRef[]
     /**
-     * Rule names explicitly defined in the grammar/override call
-     * (not inherited from a base grammar). Used by derive-overrides-json
-     * to identify full-replacement override rules whose fields don't
-     * carry `source: 'override'` (which `transform()` sets, but direct
-     * `field()` calls in full-replacement rules don't).
-     */
-    readonly overrideRuleNames?: string[]
-    /**
      * External-symbol → structural-whitespace role mapping. Populated
      * by the overrides extension via the `role()` DSL primitive —
      * e.g. `_indent: ($) => role('indent')` in python's overrides.ts.

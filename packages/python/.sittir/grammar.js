@@ -424,15 +424,6 @@ function installGrammarWrapper() {
     currentSyntheticRules = /* @__PURE__ */ new Map();
     const base2 = args.length > 1 ? args[0] : void 0;
     const opts = args.length > 1 ? args[1] : args[0];
-    if (opts) {
-      const userNames = Object.keys(opts.rules ?? {});
-      Object.defineProperty(opts, "__userOverrideRuleNames__", {
-        value: userNames,
-        enumerable: false,
-        configurable: true,
-        writable: false
-      });
-    }
     if (base2?.__enrichOverrides__ && opts) {
       if (!opts.rules) opts.rules = {};
       for (const [name, fn] of Object.entries(base2.__enrichOverrides__)) {

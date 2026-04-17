@@ -675,15 +675,6 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
         opts = options
     }
 
-    // Capture USER-AUTHORED override rule names. installGrammarWrapper
-    // stashes this on opts as a non-enumerable property BEFORE merging
-    // enrich-injected overrides. If absent (e.g., grammarFn called
-    // outside the installGrammarWrapper pipeline), fall back to the
-    // current opts.rules keys.
-    const userOverrideRuleNames =
-        (opts as unknown as { __userOverrideRuleNames__?: string[] }).__userOverrideRuleNames__
-        ?? Object.keys(opts.rules ?? {})
-
     // Merge enrich-generated override callbacks from the base grammar's
     // __enrichOverrides__ side-channel (set by enrich() in dsl/enrich.ts)
     // into opts.rules — mirrors what wrappedGrammar does under tree-
@@ -768,24 +759,6 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
         if (!opts.word && inherited.word) word = inherited.word
     }
 
-    // Expose which rule names the user MEANINGFULLY overrode in
-    // overrides.ts — used by derive-overrides-json to detect
-    // full-replacement override rules whose fields don't carry
-    // `source: 'override'` (set only by `transform()`).
-    //
-    // Filter out passthrough overrides (`($, original) => original`)
-    // by comparing the evaluated rule to the base. User often writes
-    // these as documentation for "intentionally not overriding this
-    // rule" — they shouldn't flag as full-replacement and keep base
-    // fields in the routing map. Compared via structural equality
-    // on the normalized shape.
-    const overrideRuleNames = userOverrideRuleNames.filter(name => {
-        const override = rules[name]
-        const base = baseRules[name]
-        if (!base) return true  // no base to compare against — user added a new rule
-        return JSON.stringify(override) !== JSON.stringify(base)
-    })
-
     const polymorphVariants = drainPolymorphVariants()
 
     return {
@@ -799,7 +772,6 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
             conflicts,
             word,
             references: refs,
-            overrideRuleNames,
             // Per-grammar role bindings collected from inline `role()`
             // calls inside externals/rules. Empty when the grammar
             // declares no roles.

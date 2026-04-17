@@ -92,7 +92,7 @@ describe('post-evaluate invariant', () => {
             // sittir-only payload that the pipeline doesn't expect.
             const ALLOWED = new Set([
                 'name', 'rules', 'extras', 'externals', 'supertypes', 'inline',
-                'conflicts', 'word', 'references', 'overrideRuleNames',
+                'conflicts', 'word', 'references',
                 // Documented sidecar — populated by role() accumulator.
                 'externalRoles',
                 // Nested-alias polymorph metadata — populated by alias() in transform.

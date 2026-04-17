@@ -142,12 +142,9 @@ export const isOptionalType = (t: unknown): boolean => typeEq(t, 'optional')
 export const isFieldType = (t: unknown): boolean => typeEq(t, 'field')
 export const isSymbolType = (t: unknown): boolean => typeEq(t, 'symbol')
 export const isStringType = (t: unknown): boolean => typeEq(t, 'string')
-export const isAliasType = (t: unknown): boolean => typeEq(t, 'alias')
 /** Plain repeat (zero-or-more). Excludes repeat1. Callers that need
  *  either should use {@link isRepeatType}. */
 export const isPlainRepeatType = (t: unknown): boolean => typeEq(t, 'repeat')
-/** Repeat1 (one-or-more) only. */
-export const isRepeat1Type = (t: unknown): boolean => typeEq(t, 'repeat1')
 /** Either repeat variant — true for both `repeat` and `repeat1`. */
 export const isRepeatType = (t: unknown): boolean => typeEq(t, 'repeat') || typeEq(t, 'repeat1')
 export const isBlankType = (t: unknown): boolean => typeEq(t, 'blank')
