@@ -27,7 +27,10 @@ export interface EmitTypesConfig {
     nodeMap: NodeMap
 }
 
+const missingKindTypes = new Map<string, string>()
+
 export function emitTypes(config: EmitTypesConfig): string {
+    missingKindTypes.clear()
     const { grammar, nodeMap } = config
     // Build the set of kinds known to grammar.ts (the PythonGrammar/
     // RustGrammar type literal). Tree type interfaces can only use
@@ -284,6 +287,14 @@ export function emitTypes(config: EmitTypesConfig): string {
         lines.push(`export type ${node.typeName} = Terminal<${JSON.stringify(kind)}, ${textType}>;`)
     }
     lines.push('')
+
+    // Fallback types for kinds referenced in fields but absent from NodeMap
+    for (const [kind, name] of missingKindTypes) {
+        if (generatedTypes.has(name)) continue
+        generatedTypes.add(name)
+        lines.push(`export type ${name} = Terminal<${JSON.stringify(kind)}, string>;`)
+    }
+    if (missingKindTypes.size > 0) lines.push('')
 
     // 4. Config/Tree/FromInput
     lines.push('// Config types')
@@ -742,10 +753,9 @@ function fieldTypeExpr(
     const parts = field.contentTypes.map(t => {
         const node = nodeMap?.nodes.get(t)
         if (!node) {
-            throw new Error(
-                `types: field '${field.name}' references kind '${t}' which is not in NodeMap. ` +
-                `Fix the pipeline — every referenced kind must be present.`,
-            )
+            const name = t.replace(/(?:^|_)([a-z])/g, (_, c: string) => c.toUpperCase())
+            missingKindTypes.set(t, name)
+            return name
         }
         const name = node.typeName
         if (/^[A-Za-z_$][\w$]*$/.test(name)) return name

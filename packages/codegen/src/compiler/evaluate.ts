@@ -13,6 +13,7 @@ import type {
     EnumRule, SymbolRef, RawGrammar, ExternalRole,
 } from './rule.ts'
 import { withRoleScope } from '../dsl/role.ts'
+import { withSyntheticRuleScope, setCurrentRuleKind, drainPolymorphVariants } from '../dsl/synthetic-rules.ts'
 
 // ---------------------------------------------------------------------------
 // Input type — anything the DSL functions accept
@@ -674,6 +675,19 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
         opts = options
     }
 
+    // Merge enrich-generated override callbacks from the base grammar's
+    // __enrichOverrides__ side-channel (set by enrich() in dsl/enrich.ts)
+    // into opts.rules — mirrors what wrappedGrammar does under tree-
+    // sitter CLI so both runtimes process enrich identically. User
+    // overrides (already in opts.rules) win on name collisions.
+    const enrichOverrides = (optionsOrBase as { __enrichOverrides__?: Record<string, (...a: any[]) => any> }).__enrichOverrides__
+    if (enrichOverrides && opts) {
+        if (!opts.rules) opts.rules = {} as Record<string, (...a: any[]) => any>
+        for (const [name, fn] of Object.entries(enrichOverrides)) {
+            if (!(name in opts.rules)) opts.rules[name] = fn
+        }
+    }
+
     // Seed the refs array with the base grammar's references so the
     // diagnostic derivations in Link can see the full reference graph,
     // not just the handful of refs introduced by override callbacks.
@@ -703,16 +717,23 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
     // withRoleScope guarantees nested grammar() calls (e.g. via
     // grammar(enrich(base), {...})) stay isolated.
     const { roles: collectedRoles } = withRoleScope(() => {
-        // Evaluate each rule function
-        for (const [name, ruleFn] of Object.entries(opts.rules)) {
-            const $ = createProxy(name, refs)
-            const baseRule = baseRules[name]
-            // tree-sitter passes ($, original) — original is the base rule for extensions.
-            // `baseRule` is typed as `Rule` from our map but the DSL callback's
-            // `previous` is `unknown` (tree-sitter permits arbitrary pass-through
-            // shapes). The call-site treats it as opaque.
-            const result = ruleFn.call($, $, baseRule)
-            rules[name] = normalize(result)
+        const { syntheticRules } = withSyntheticRuleScope(() => {
+            // Evaluate each rule function
+            for (const [name, ruleFn] of Object.entries(opts.rules)) {
+                const $ = createProxy(name, refs)
+                const baseRule = baseRules[name]
+                setCurrentRuleKind(name)
+                const result = ruleFn.call($, $, baseRule)
+                setCurrentRuleKind(null)
+                rules[name] = normalize(result)
+            }
+        })
+
+        // Inject synthetic rules created by alias() placeholders in
+        // transform patches. These are hidden variant rules for
+        // nested-alias polymorphs.
+        for (const [name, content] of syntheticRules) {
+            rules[name] = content as Rule
         }
 
         // The rest of the callbacks (extras, externals, supertypes,
@@ -738,11 +759,7 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
         if (!opts.word && inherited.word) word = inherited.word
     }
 
-    // Expose which rule names were explicitly defined in this grammar/
-    // override call — used by derive-overrides-json to detect full-
-    // replacement override rules whose fields don't carry
-    // `source: 'override'` (set only by `transform()`).
-    const overrideRuleNames = Object.keys(opts.rules ?? {})
+    const polymorphVariants = drainPolymorphVariants()
 
     return {
         grammar: {
@@ -755,11 +772,11 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
             conflicts,
             word,
             references: refs,
-            overrideRuleNames,
             // Per-grammar role bindings collected from inline `role()`
             // calls inside externals/rules. Empty when the grammar
             // declares no roles.
             externalRoles: collectedRoles.size > 0 ? collectedRoles : undefined,
+            polymorphVariants: polymorphVariants.length > 0 ? polymorphVariants : undefined,
         } satisfies RawGrammar,
     }
 }

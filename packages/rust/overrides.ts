@@ -9,7 +9,7 @@
 
 // @ts-nocheck — grammar.js is untyped; overrides use sittir DSL
 import base from '../../node_modules/.pnpm/tree-sitter-rust@0.24.0/node_modules/tree-sitter-rust/grammar.js'
-import { transform, enrich, field } from '../codegen/src/dsl/index.ts'
+import { transform, enrich, field, variant } from '../codegen/src/dsl/index.ts'
 
 export default grammar(enrich(base), {
     name: 'rust',
@@ -19,16 +19,15 @@ export default grammar(enrich(base), {
             1: field('type_parameters'), // type_parameters [struct=0]
         }),
 
-        // array_expression: pos 1 is the outer attribute_item repeat. Pos 2
-        // is a choice between `[expr; length]` and `[elem1, elem2, ...]`
-        // shapes. Wrapping pos 2 as a single `elements` field carries the
-        // list-shape joinBy but clobbers `field('length', ...)` in the
-        // semi form. Open gap: promotePolymorph would splice in both
-        // shapes but loses the list-form ',' separator from the repeat.
-        array_expression: ($, original) => transform(original, {
-            1: field('attributes'), // attribute_item
-            2: field('elements'), // _expression | attribute_item
-        }),
+        // array_expression: polymorph split — auto-hoist includes `[`/`]`
+        // in each alias body and uses INLINE alias (no new named hidden
+        // rule), so tree-sitter's state machine doesn't have to reconcile
+        // a new symbol against its auto-generated _repeat1 helpers.
+        array_expression: ($, original) => transform(original,
+            { 1: field('attributes') },
+            { '2/_expression': field('elements') },
+            { '2/0': variant('semi'), '2/1': variant('list') },
+        ),
 
         // associated_type: 1 field(s)
         associated_type: ($, original) => transform(original, {
@@ -113,6 +112,9 @@ export default grammar(enrich(base), {
         // Position 0 = optional('ref') [anonymous], position 1 = optional(mutable_specifier)
         field_pattern: ($, original) => transform(original, {
             1: field('mutable_specifier'), // mutable_specifier [struct=0]
+        }, {
+            '2/0': variant('shorthand'), // name only (shorthand)
+            '2/1': variant('named'),     // name: pattern
         }),
 
         // for_expression: 1 field(s)
@@ -202,10 +204,13 @@ export default grammar(enrich(base), {
             2: field('token_tree'), // token_tree [struct=0]
         }),
 
-        // mod_item: 1 field(s)
-        mod_item: ($, original) => transform(original, {
-            0: field('visibility_modifier'), // visibility_modifier [struct=0]
-        }),
+        // mod_item: two forms — `mod name;` (external) vs `mod name { ... }`
+        // (inline). Variant-split so each form's template emits the
+        // right terminator (trailing `;` vs `{...}` body).
+        mod_item: ($, original) => transform(original,
+            { 0: field('visibility_modifier') },
+            { '3/0': variant('external'), '3/1': variant('inline') },
+        ),
 
         // mut_pattern: 2 field(s)
         mut_pattern: ($, original) => transform(original, {
@@ -293,15 +298,15 @@ export default grammar(enrich(base), {
             2: field('mutable_specifier'), // mutable_specifier [struct=1]
         }),
 
-        // struct_item: position 0 is `choice(visibility_modifier, BLANK)`
-        // — wrap it as `field('visibility_modifier')` so readNode
-        // routes the modifier child onto the named slot. Position 4
-        // (the body/semi/unit polymorph choice) is intentionally NOT
-        // wrapped — that's what lets Link's promotePolymorph classify
-        // the body/semi/unit variants.
-        struct_item: ($, original) => transform(original, {
-            0: field('visibility_modifier'),
-        }),
+        // struct_item: three body shapes — brace (`{ ... }`), tuple
+        // (`(...)` + `;`), unit (`;`). Auto-hoist each into a visible
+        // variant so the trailing `;` on tuple/unit forms gets rendered
+        // (the flat template dropped it because `;` is an anonymous
+        // token not routed to any field).
+        struct_item: ($, original) => transform(original,
+            { 0: field('visibility_modifier') },
+            { '4/0': variant('brace'), '4/1': variant('tuple'), '4/2': variant('unit') },
+        ),
 
         // trait_item: position 0 is the same visibility_modifier
         // optional choice as struct_item. The where_clause at
@@ -321,12 +326,12 @@ export default grammar(enrich(base), {
             0: field('value'), // _expression [struct=0]
         }),
 
-        // tuple_expression: 4 field(s)
+        // tuple_expression: flat list of expressions comma-separated.
+        // Kind-match labels every `_expression` as `elements` without
+        // capturing the `,` separators (same pattern as array_expression).
         tuple_expression: ($, original) => transform(original, {
-            1: field('attributes'), // attribute_item [struct=0]
-            2: field('first'), // _expression [struct=1]
-            3: field('rest'), // _expression [struct=2]
-            4: field('trailing'), // _expression [struct=3]
+            1: field('attributes'),
+            '_expression': field('elements'),
         }),
 
         // type_item: 3 field(s)
@@ -382,11 +387,10 @@ export default grammar(enrich(base), {
         // closure_expression — label the three optional modifiers so readNode
         // can route `async`, `move`, `static` tokens to named fields instead
         // of leaving them as anonymous children.
-        closure_expression: ($, original) => transform(original, {
-            0: field('static'),  // optional 'static'
-            1: field('async'),   // optional 'async'
-            2: field('move'),    // optional 'move'
-        }),
+        closure_expression: ($, original) => transform(original,
+            { 0: field('static'), 1: field('async'), 2: field('move') },
+            { '4/0': variant('block'), '4/1': variant('expr') },
+        ),
 
         // function_modifiers — full replacement: label each choice alternative
         // so readNode can route `async`, `const`, `default`, `unsafe` tokens.
@@ -401,11 +405,10 @@ export default grammar(enrich(base), {
         // or_pattern — patches the BASE rule's prec.left(-2, ...)
         // structure to add field labels. Base shape:
         //   choice(seq(_pattern, '|', _pattern), seq('|', _pattern))
-        or_pattern: ($, original) => transform(original, {
-            '0/0': field('left'),
-            '0/2': field('right'),
-            '1/1': field('right'),
-        }),
+        or_pattern: ($, original) => transform(original,
+            { '0/0': field('left'), '0/2': field('right'), '1/1': field('right') },
+            { '0': variant('binary'), '1': variant('prefix') },
+        ),
 
         // range_expression — patches the BASE rule's choice alternatives
         // by position so the prec.left(1, ...) wrapper survives. The
@@ -417,15 +420,25 @@ export default grammar(enrich(base), {
         //     '..',                                       // alt 3 — bare
         //   )
         // Each {path,value} below labels one position in one alternative.
-        range_expression: ($, original) => transform(original, {
-            '0/0': field('start'),
-            '0/1': field('operator'),
-            '0/2': field('end'),
-            '1/0': field('start'),
-            '1/1': field('operator'),
-            '2/0': field('operator'),
-            '2/1': field('end'),
-            '3':   field('operator'),
+        range_expression: ($, original) => transform(original,
+            {
+                '0/0': field('start'), '0/1': field('operator'), '0/2': field('end'),
+                '1/0': field('start'), '1/1': field('operator'),
+                '2/0': field('operator'), '2/1': field('end'),
+                '3': field('operator'),
+            },
+            {
+                '0': variant('binary'), '1': variant('postfix'),
+                '2': variant('prefix'), '3': variant('bare'),
+            },
+        ),
+
+        // range_pattern — two variants: left-bounded (has field 'left') vs
+        // prefix form (just operator + right). Base grammar already carries
+        // 'left' and 'right' field labels.
+        range_pattern: ($, original) => transform(original, {
+            '0': variant('left'),    // seq(left, choice(seq(op,right), '..'))
+            '1': variant('prefix'),  // seq(op, right)
         }),
 
         // unary_expression — label both the operator token (pos 0) and

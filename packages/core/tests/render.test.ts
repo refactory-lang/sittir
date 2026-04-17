@@ -142,4 +142,67 @@ describe('render', () => {
 		const node = { type: 'function_item' } as AnyNodeData;
 		expect(() => render(node)).toThrow("has no 'fields'");
 	});
+
+	it('throws when a single-slot field is rendered from an empty array', () => {
+		// Optional fields should be ABSENT (undefined), not empty-array.
+		// An empty array reaching a single-slot `$NAME` is a signal of
+		// an upstream bug (factory / readNode / from produced a
+		// zero-length list where exactly one was expected). Silently
+		// emitting '' would corrupt output — e.g. a `binary_expression`
+		// with an empty `left` field renders as `  + 2` missing the
+		// operand. Throw with a message that names both the rule and
+		// field so callers can pinpoint the source.
+		const node: AnyNodeData = {
+			type: 'binary_expression',
+			fields: { left: [], operator: { type: 'op', text: '+' }, right: { type: 'literal', text: '2' } },
+		};
+		expect(() => render(node)).toThrow(/empty array/);
+		expect(() => render(node)).toThrow(/binary_expression/);
+		expect(() => render(node)).toThrow(/'left'/);
+	});
+});
+
+// The $TEXT template slot and its fallback path ship with the
+// external-scanner support. Covered here so a regression (either
+// dropping the slot handler or breaking the fallback) surfaces at
+// unit level, not only via the rust raw_string_literal corpus case.
+describe('render — $TEXT slot', () => {
+	const textConfig: RulesConfig = {
+		language: 'test',
+		extensions: ['test'],
+		expandoChar: null,
+		metadata: { grammarSha: 'test' },
+		rules: {
+			raw_string_literal: '$TEXT',
+		},
+	};
+	const { render: renderText } = createRenderer(textConfig);
+
+	it('emits node.text verbatim when present (parsed-tree path)', () => {
+		// Simulates readNode's output for a parsed raw_string_literal:
+		// span text captures the `r#"..."#` delimiters that the
+		// external scanner consumed.
+		const node: AnyNodeData = {
+			type: 'raw_string_literal',
+			text: 'r#"abc"#',
+			fields: {
+				string_content: { type: 'string_content', text: 'abc' },
+			},
+		};
+		expect(renderText(node)).toBe('r#"abc"#');
+	});
+
+	it('falls back to concatenating fields + children when text is absent (factory-built path)', () => {
+		// Factories don't set node.text — they only know the config
+		// values. $TEXT must degrade gracefully to a best-effort
+		// concatenation so test-suite factories still produce non-
+		// empty output (regression guard on the fix in 813b20c).
+		const node: AnyNodeData = {
+			type: 'raw_string_literal',
+			fields: {
+				string_content: { type: 'string_content', text: 'abc' },
+			},
+		};
+		expect(renderText(node)).toBe('abc');
+	});
 });

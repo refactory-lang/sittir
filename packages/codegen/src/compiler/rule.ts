@@ -13,6 +13,8 @@
  *              Those are derived from tree context at Assemble time.
  */
 
+import type { PolymorphVariant } from '../dsl/synthetic-rules.ts'
+
 // ---------------------------------------------------------------------------
 // Rule — the shared intermediate representation
 // ---------------------------------------------------------------------------
@@ -250,6 +252,39 @@ export interface TokenRule {
 }
 
 // ---------------------------------------------------------------------------
+// Per-variant type guards
+//
+// Prefer these over inline `r.type === 'seq'` checks in `.filter()`,
+// `.find()`, `.some()`, `.every()`, and standalone predicates — they
+// narrow the rule type through the callback (no `as SeqRule` casts
+// downstream). Inside a `switch (rule.type)` stay with literal case
+// arms so TS exhaustiveness checking catches missing variants when
+// new Rule types are added.
+// ---------------------------------------------------------------------------
+
+export const isSeq = (r: Rule): r is SeqRule => r.type === 'seq'
+export const isChoice = (r: Rule): r is ChoiceRule => r.type === 'choice'
+export const isOptional = (r: Rule): r is OptionalRule => r.type === 'optional'
+export const isRepeat = (r: Rule): r is RepeatRule => r.type === 'repeat'
+export const isRepeat1 = (r: Rule): r is Repeat1Rule => r.type === 'repeat1'
+export const isField = (r: Rule): r is FieldRule => r.type === 'field'
+export const isVariant = (r: Rule): r is VariantRule => r.type === 'variant'
+export const isClause = (r: Rule): r is ClauseRule => r.type === 'clause'
+export const isEnum = (r: Rule): r is EnumRule => r.type === 'enum'
+export const isSupertype = (r: Rule): r is SupertypeRule => r.type === 'supertype'
+export const isGroup = (r: Rule): r is GroupRule => r.type === 'group'
+export const isTerminal = (r: Rule): r is TerminalRule => r.type === 'terminal'
+export const isPolymorph = (r: Rule): r is PolymorphRule => r.type === 'polymorph'
+export const isString = (r: Rule): r is StringRule => r.type === 'string'
+export const isPattern = (r: Rule): r is PatternRule => r.type === 'pattern'
+export const isIndent = (r: Rule): r is IndentRule => r.type === 'indent'
+export const isDedent = (r: Rule): r is DedentRule => r.type === 'dedent'
+export const isNewline = (r: Rule): r is NewlineRule => r.type === 'newline'
+export const isSymbol = (r: Rule): r is SymbolRule => r.type === 'symbol'
+export const isAlias = (r: Rule): r is AliasRule => r.type === 'alias'
+export const isToken = (r: Rule): r is TokenRule => r.type === 'token'
+
+// ---------------------------------------------------------------------------
 // Reference graph
 // ---------------------------------------------------------------------------
 
@@ -279,14 +314,6 @@ export interface RawGrammar {
     readonly word: string | null
     readonly references: SymbolRef[]
     /**
-     * Rule names explicitly defined in the grammar/override call
-     * (not inherited from a base grammar). Used by derive-overrides-json
-     * to identify full-replacement override rules whose fields don't
-     * carry `source: 'override'` (which `transform()` sets, but direct
-     * `field()` calls in full-replacement rules don't).
-     */
-    readonly overrideRuleNames?: string[]
-    /**
      * External-symbol → structural-whitespace role mapping. Populated
      * by the overrides extension via the `role()` DSL primitive —
      * e.g. `_indent: ($) => role('indent')` in python's overrides.ts.
@@ -296,6 +323,13 @@ export interface RawGrammar {
      * match on external names.
      */
     readonly externalRoles?: Map<string, ExternalRole>
+    /**
+     * Nested-alias polymorph metadata: each entry pairs a parent kind
+     * with a short variant suffix. The full alias name is
+     * `${parent}_${child}`. Populated by alias() placeholders in
+     * transform patches during evaluate.
+     */
+    readonly polymorphVariants?: PolymorphVariant[]
 }
 
 export type ExternalRole = { role: 'indent' | 'dedent' | 'newline' }
@@ -393,6 +427,7 @@ export interface LinkedGrammar {
     readonly rules: Record<string, Rule>
     readonly supertypes: Set<string>
     readonly externalRoles: Map<string, ExternalRole>
+    readonly externals?: readonly string[]
     readonly word: string | null
     readonly references: SymbolRef[]
     readonly derivations: DerivationLog
@@ -408,6 +443,7 @@ export interface LinkedGrammar {
      * LinkedGrammar directly don't have to fill in an empty map.
      */
     readonly aliasedHiddenKinds?: Map<string, string>
+    readonly polymorphVariants?: PolymorphVariant[]
 }
 
 /**
@@ -440,7 +476,9 @@ export interface OptimizedGrammar {
     readonly simplifiedRules: Record<string, Rule>
     readonly supertypes: Set<string>
     readonly word: string | null
+    readonly externals?: readonly string[]
     readonly derivations: DerivationLog
+    readonly polymorphVariants?: PolymorphVariant[]
 }
 
 // ---------------------------------------------------------------------------
@@ -860,8 +898,8 @@ function isSyntheticFieldWrapper(content: Rule): boolean {
     if (content.type === 'repeat' || content.type === 'repeat1') {
         return isSyntheticFieldWrapper(content.content)
     }
-    if (content.type !== 'seq') return false
-    return content.members.some(m => m.type === 'field')
+    if (!isSeq(content)) return false
+    return content.members.some(isField)
 }
 
 /**
@@ -1131,7 +1169,16 @@ export class AssembledBranch extends AssembledNodeBase {
         return this.#children ??= deriveChildren(this.simplifiedRule)
     }
 
-    renderTemplate(rules?: Record<string, Rule>, wordMatcher?: RegExp): Record<string, unknown> {
+    renderTemplate(rules?: Record<string, Rule>, wordMatcher?: RegExp, externals?: ReadonlySet<string>): Record<string, unknown> {
+        // Rules whose structure depends on hidden external-scanner
+        // tokens (e.g. rust's raw_string_literal, whose `r#"` and `"#`
+        // are produced by `_raw_string_literal_start` and
+        // `_raw_string_literal_end`) can't be rendered slot-by-slot
+        // because the delimiters never appear as children. Render as
+        // `$TEXT` — emits the node's raw source span verbatim.
+        if (externals && hasHiddenExternalRef(this.rule, externals)) {
+            return { template: '$TEXT' }
+        }
         // Template walking stays on the RAW rule — templates need the
         // anonymous delimiters ('(', '{', ';', etc.) to surface as
         // template text. Only derivations use simplifiedRule.
@@ -1148,9 +1195,118 @@ export class AssembledBranch extends AssembledNodeBase {
         // reachable without navigating past literals.
         const sep = findRepeatSeparator(this.simplifiedRule)
         if (sep) entry.joinBy = sep
+        // `trailing: true` on the repeat → grammar permits a trailing
+        // separator. Render uses this to know it should look for a
+        // trailing anon-separator token in `$$$CHILDREN` and preserve
+        // it when present.
+        if (findRepeatFlag(this.simplifiedRule, 'trailing')) entry.joinByTrailing = true
+        if (findRepeatFlag(this.simplifiedRule, 'leading')) entry.joinByLeading = true
         if (Object.keys(joinByField).length > 0) entry.joinByField = joinByField
         return entry
     }
+}
+
+/**
+ * Should this rule fall back to `$TEXT` rendering? True only when the
+ * rule's structure is dominated by external-scanner tokens, so template
+ * walking can't reconstruct it slot-by-slot.
+ *
+ * Canonical shape: rust's `raw_string_literal = seq(_raw_string_literal_
+ * start, string_content, _raw_string_literal_end)` — the two hidden
+ * externals are scanner-generated delimiters that never appear as
+ * children, and the visible `string_content` is itself external.
+ * Template slots like `$RAW_STRING_LITERAL_START` resolve to empty at
+ * render time, leaving `node.text` as the only recoverable form.
+ *
+ * Classification (what counts as what):
+ *   - External member: a symbol in the grammar's `externals` list, OR
+ *     the Link-stub shape `field('<stripped_name>', pattern(''))` that
+ *     enrich produces for inlined external-token references. Wrappers
+ *     (alias/optional/variant/etc.) are transparent.
+ *   - Ignorable boundary: a top-level `optional($._external)` tacked
+ *     on as a boundary marker. Doesn't disqualify from $TEXT AND
+ *     doesn't count toward the "all external" tally — so javascript's
+ *     `statement_block = seq('{', repeat(statement), '}',
+ *     optional($._automatic_semicolon))` renders normally (the
+ *     automatic-semicolon tail is ignorable; the `{` `}` literals and
+ *     the statement repeat are walkable content).
+ *   - Disqualifying member: any non-external content — literals like
+ *     `{`/`}`/`;`, regular symbol refs, repeats of non-externals.
+ *
+ * Flips to $TEXT only when every non-ignorable member of the top-level
+ * seq classifies as external. Non-seq roots return false.
+ */
+function hasHiddenExternalRef(rule: Rule, externals: ReadonlySet<string>): boolean {
+    // Unwrap transparent wrappers to find the structural core.
+    let core = rule
+    while (
+        core.type === 'optional'
+        || core.type === 'variant'
+        || core.type === 'clause'
+        || core.type === 'group'
+        || core.type === 'alias'
+    ) {
+        core = (core as { content: Rule }).content
+    }
+    if (core.type !== 'seq') return false
+    // A member is "all external" if it's a symbol ref whose target is
+    // in the externals list, OR a wrapper (alias/optional/…) whose
+    // eventual symbol is external. String literals like `{` / `}` /
+    // `;` make the rule walkable via template text and disqualify the
+    // $TEXT fallback.
+    const isExternalMember = (r: Rule): boolean => {
+        switch (r.type) {
+            case 'symbol':
+                return externals.has((r as { name: string }).name)
+            // Link inlines external-token rule bodies as `pattern('')`
+            // stubs in place of symbol references; enrich then wraps
+            // those in `field('<stripped_name>', pattern(''))`
+            // (leading underscore stripped). A match requires BOTH
+            // conditions: (1) the unique Link stub shape — `content`
+            // is empty-value pattern — AND (2) the field name (or its
+            // `_`-prefixed form) is in the externals list. Either
+            // alone would misfire: a non-external rule could
+            // coincidentally have an empty-pattern child, and a field
+            // named after an external might legitimately carry real
+            // content. Otherwise fall through to walking the content.
+            case 'field': {
+                const f = r as { name: string; content: Rule }
+                if (
+                    f.content.type === 'pattern'
+                    && (f.content as { value: string }).value === ''
+                    && (externals.has(f.name) || externals.has('_' + f.name))
+                ) return true
+                return isExternalMember(f.content)
+            }
+            case 'alias':
+            case 'optional':
+            case 'variant':
+            case 'clause':
+            case 'group':
+            case 'token':
+            case 'terminal':
+                return isExternalMember((r as { content: Rule }).content)
+            default:
+                return false
+        }
+    }
+    // Also ignore pure-boundary optionals (e.g. the trailing
+    // `optional($._automatic_semicolon)` in javascript's
+    // `statement_block`) so they don't disqualify the rule from
+    // slot-by-slot rendering but also don't count toward the
+    // "all external" tally.
+    const isIgnorableBoundaryExternal = (r: Rule): boolean => {
+        if (r.type !== 'optional') return false
+        const inner = r.content
+        return inner.type === 'symbol' && externals.has((inner as { name: string }).name)
+    }
+    let hasContent = false
+    for (const m of core.members) {
+        if (isIgnorableBoundaryExternal(m)) continue
+        hasContent = true
+        if (!isExternalMember(m)) return false
+    }
+    return hasContent
 }
 
 export class AssembledContainer extends AssembledNodeBase {
@@ -1187,7 +1343,10 @@ export class AssembledContainer extends AssembledNodeBase {
         return undefined
     }
 
-    renderTemplate(rules?: Record<string, Rule>, wordMatcher?: RegExp): Record<string, unknown> {
+    renderTemplate(rules?: Record<string, Rule>, wordMatcher?: RegExp, externals?: ReadonlySet<string>): Record<string, unknown> {
+        if (externals && hasHiddenExternalRef(this.rule, externals)) {
+            return { template: '$TEXT' }
+        }
         // Template walking stays on RAW rule (needs literals); derivations
         // and separator discovery use simplifiedRule.
         const { template, clauses, joinByField } = renderRuleTemplate(this.rule, false, rules, wordMatcher)
@@ -1200,6 +1359,8 @@ export class AssembledContainer extends AssembledNodeBase {
         const entry: Record<string, unknown> = { template, ...clauses }
         const sep = this.separator ?? findRepeatSeparator(this.simplifiedRule)
         if (sep) entry.joinBy = sep
+        if (findRepeatFlag(this.simplifiedRule, 'trailing')) entry.joinByTrailing = true
+        if (findRepeatFlag(this.simplifiedRule, 'leading')) entry.joinByLeading = true
         if (Object.keys(joinByField).length > 0) entry.joinByField = joinByField
         return entry
     }
@@ -1209,13 +1370,26 @@ export class AssembledContainer extends AssembledNodeBase {
 export class AssembledPolymorph extends AssembledNodeBase {
     readonly modelType = 'polymorph' as const
     readonly #forms: AssembledGroup[]
+    readonly source: 'promoted' | 'override'
+    /**
+     * For source='override' polymorphs: the visible variant child kinds
+     * (e.g., ['assignment_eq', 'assignment_type', 'assignment_typed']).
+     * These are real kinds in the parse tree (created by the alias() in
+     * transform patches) and need to appear as the children union on
+     * the parent polymorph's interface. Empty for source='promoted'.
+     */
+    readonly variantChildKinds: readonly string[]
 
     constructor(init: {
         kind: string; typeName: string; factoryName?: string; irKey?: string
         forms: AssembledGroup[]
+        source?: 'promoted' | 'override'
+        variantChildKinds?: readonly string[]
     }) {
         super(init)
         this.#forms = init.forms
+        this.source = init.source ?? 'promoted'
+        this.variantChildKinds = init.variantChildKinds ?? []
     }
 
     /** A polymorph's forms are hidden groups synthesized from the choice branches. */
@@ -1371,7 +1545,10 @@ export class AssembledGroup extends AssembledNodeBase {
         return this.#children ??= deriveChildren(this.simplifiedRule)
     }
 
-    renderTemplate(rules?: Record<string, Rule>, wordMatcher?: RegExp): Record<string, unknown> {
+    renderTemplate(rules?: Record<string, Rule>, wordMatcher?: RegExp, externals?: ReadonlySet<string>): Record<string, unknown> {
+        if (externals && hasHiddenExternalRef(this.rule, externals)) {
+            return { template: '$TEXT' }
+        }
         // Template walking stays on RAW rule (needs literals); derivations
         // and separator discovery use simplifiedRule.
         const { template, clauses, joinByField } = renderRuleTemplate(this.rule, false, rules, wordMatcher)
@@ -1384,6 +1561,8 @@ export class AssembledGroup extends AssembledNodeBase {
         const entry: Record<string, unknown> = { template, ...clauses }
         const sep = findRepeatSeparator(this.simplifiedRule)
         if (sep) entry.joinBy = sep
+        if (findRepeatFlag(this.simplifiedRule, 'trailing')) entry.joinByTrailing = true
+        if (findRepeatFlag(this.simplifiedRule, 'leading')) entry.joinByLeading = true
         if (Object.keys(joinByField).length > 0) entry.joinByField = joinByField
         return entry
     }
@@ -1442,6 +1621,31 @@ export interface NodeMap {
      * round-trip back to the keyword and lose the kind.
      */
     readonly word?: string | null
+    readonly polymorphFormKinds: ReadonlySet<string>
+    /**
+     * External-token symbols declared by the grammar (`externals: $ =>
+     * [...]`). The template emitter uses this to detect rules whose
+     * structure depends on scanner-generated tokens (e.g. rust's
+     * `raw_string_literal` delimiters) — those rules can't be rendered
+     * slot-by-slot and fall back to `$TEXT` which emits the node's
+     * native text verbatim.
+     */
+    readonly externals?: ReadonlySet<string>
+}
+
+export function computePolymorphFormKinds(nodes: Map<string, AssembledNode>): Set<string> {
+    const result = new Set<string>()
+    for (const [, node] of nodes) {
+        if (node.modelType !== 'polymorph') continue
+        // All polymorph form kinds need to be skipped from direct kind
+        // iteration — both promoted (synthesized `${parent}_${variant}`)
+        // and override (disambiguated `${parent}__form_${variant}`).
+        // The variant child kinds for source='override' polymorphs are
+        // distinct from form kinds (after disambiguation) and remain
+        // in nodes Map for normal branch emission.
+        for (const form of node.forms) result.add(form.kind)
+    }
+    return result
 }
 
 // ---------------------------------------------------------------------------
@@ -1487,6 +1691,52 @@ export function renderRuleTemplate(
     return { template: parts.join(''), clauses, joinByField }
 }
 
+/**
+ * Does a field's content produce multi-valued entries at parse time?
+ * Looks for `repeat` / `repeat1` reachable without crossing another
+ * `field` boundary (sub-fields define their own scope). Unwraps
+ * transparent composition nodes — seq / choice / variant / group /
+ * clause / optional / alias — so a `choice(semiForm, repeat(...))` is
+ * detected. Hidden-symbol content is inlined at template time, so
+ * follow them too.
+ */
+function containsRepeat(
+    rule: Rule,
+    rules: Record<string, Rule> | undefined,
+    visiting: Set<string>,
+): boolean {
+    switch (rule.type) {
+        case 'repeat':
+        case 'repeat1':
+            return true
+        case 'seq':
+        case 'choice':
+            return rule.members.some(m => containsRepeat(m, rules, visiting))
+        case 'optional':
+        case 'variant':
+        case 'clause':
+        case 'group':
+        case 'token':
+        case 'alias':
+        case 'terminal':
+            return containsRepeat((rule as { content: Rule }).content, rules, visiting)
+        case 'symbol': {
+            const name = (rule as { name: string }).name
+            if (!name.startsWith('_') || !rules || visiting.has(name)) return false
+            const target = rules[name]
+            if (!target) return false
+            visiting.add(name)
+            const r = containsRepeat(target, rules, visiting)
+            visiting.delete(name)
+            return r
+        }
+        case 'polymorph':
+            return rule.forms.some(f => containsRepeat(f.content, rules, visiting))
+        default:
+            return false
+    }
+}
+
 function collectRepeatedFields(
     rule: Rule,
     inRepeat: boolean,
@@ -1513,7 +1763,14 @@ function collectRepeatedFields(
             collectRepeatedFields((rule as { content: Rule }).content, inRepeat, out, rules, visiting)
             return
         case 'field':
-            if (inRepeat) out.add(rule.name)
+            // A field is repeated if it sits inside a repeat (its content
+            // will be emitted multiple times at runtime) OR if its content
+            // is itself a repeat — e.g. rust's `field('elements',
+            // choice(semi, repeat(_expression, sep=',')))`. The latter
+            // shape produces a multi-valued field whose values live under
+            // the same fieldNameForChild across siblings; without the
+            // `$$$` marker the template emits only the first occurrence.
+            if (inRepeat || containsRepeat(rule.content, rules, new Set())) out.add(rule.name)
             collectRepeatedFields(rule.content, inRepeat, out, rules, visiting)
             return
         case 'symbol': {
@@ -1992,6 +2249,41 @@ export function findRepeatSeparator(rule: Rule): string | undefined {
             return findRepeatSeparator(rule.content)
         default:
             return undefined
+    }
+}
+
+/**
+ * Does `rule` contain a repeat/repeat1 that declares the given flag?
+ *
+ * `trailing: true` marks `sepBy` shapes where the final separator is
+ * optional (e.g. rust's `{ a, b, }`). `leading: true` marks the
+ * mirror shape `sep, x, (sep x)*` (rust's or_pattern `| a | b`, if
+ * written as a single repeat). Evaluate's `liftCommaSep` captures
+ * both from their canonical seq patterns. Render reads each flag via
+ * the `joinByTrailing` / `joinByLeading` template hints to know
+ * whether to probe for a flanking anon-separator token when emitting
+ * `$$$CHILDREN`.
+ *
+ * Walks the same transparent-wrapper set as `findRepeatSeparator`
+ * (seq / choice / optional / variant / clause / group / field).
+ */
+export function findRepeatFlag(rule: Rule, flag: 'trailing' | 'leading'): boolean {
+    switch (rule.type) {
+        case 'repeat':
+        case 'repeat1':
+            if (rule[flag]) return true
+            return findRepeatFlag(rule.content, flag)
+        case 'seq':
+        case 'choice':
+            return rule.members.some(m => findRepeatFlag(m, flag))
+        case 'optional':
+        case 'variant':
+        case 'clause':
+        case 'group':
+        case 'field':
+            return findRepeatFlag(rule.content, flag)
+        default:
+            return false
     }
 }
 

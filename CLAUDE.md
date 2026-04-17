@@ -74,6 +74,38 @@ npx tsx packages/codegen/src/cli.ts --grammar python --all --output packages/pyt
 - oxlint / oxfmt for linting / formatting
 - tsgo for type checking
 
+### Rule type discrimination
+
+The compiler pipeline's `Rule` union (`compiler/rule.ts`) is a discriminated
+union keyed by `type`. Prefer these patterns, in this order:
+
+1. **Switch on `rule.type`** — canonical narrowing. TS exhaustiveness
+   catches missing variants when a new `Rule` type is added. Use
+   `default: assertNever(rule)` to lock it in. Most compiler passes use
+   this form.
+
+2. **Per-variant type guards** (`isSeq`, `isChoice`, `isField`, `isSymbol`,
+   ... exported from `compiler/rule.ts`) for `.filter()`, `.find()`,
+   `.some()`, `.every()`, and standalone predicates. They narrow through
+   the callback — `.find(isField)` returns `FieldRule | undefined` with
+   no `as FieldRule` cast needed.
+
+3. **Inline `rule.type === 'seq'` checks** — fine inside a switch arm's
+   body or for one-off compound predicates that don't fit a guard. TS
+   discriminated-union narrowing already makes these type-safe; no enum
+   or const-string layer is needed (and doesn't catch any additional
+   errors over the union type itself).
+
+**Do not introduce:** enum / const mappings for type strings. The `Rule`
+union IS the single source of truth; misspellings are type errors.
+
+**DSL layer exception:** `packages/codegen/src/dsl/*` also accepts
+tree-sitter-CLI-shaped rules with uppercase discriminants (`'SEQ'`,
+`'CHOICE'`, ...). Dual-case predicates (`isSeqType`, `isChoiceType`, ...,
+plus `typeEq(t, lower)`) live in `dsl/runtime-shapes.ts` and must be used
+instead of inline `t === 'seq' || t === 'SEQ'` ladders. The case
+difference is a cross-pipeline-leak signal — don't normalize it away.
+
 ## Speckit Workflow
 
 Specs, plans, tasks under `specs/NNN-feature-name/`. Branch convention: `NNN-short-name`.
@@ -88,6 +120,8 @@ Specs, plans, tasks under `specs/NNN-feature-name/`. Branch convention: `NNN-sho
 - File system (grammar.js input, overrides.ts, generated .ts/.yaml output) (005-five-phase-compiler)
 - TypeScript (ESM, `.ts` extensions in imports), TypeScript 6.0.2 + `@sittir/core`, `@sittir/types`, `@sittir/codegen`; tree-sitter grammar packages (`tree-sitter-rust`, `tree-sitter-typescript`, `tree-sitter-python`); tree-sitter CLI for CI validation (006-override-dsl-enrich)
 - File system — `packages/<lang>/overrides.ts` (hand-authored source), `packages/<lang>/.sittir/grammar.js` (transpiled output, gitignored), generated `.ts`/`.yaml` artifacts (006-override-dsl-enrich)
+- TypeScript (ESM, `.ts` extensions in imports), TypeScript 6.0.2 + tree-sitter-cli ^0.26.7, web-tree-sitter ^0.26.7, esbuild (transpile bridge from spec 006), Emscripten (emsdk, for WASM compilation) (007-override-compiled-parser)
+- File system — `.sittir/` directory per grammar for transpiled grammar.js, compiled parser WASM, parser.c, node-types.json (007-override-compiled-parser)
 
 ## Recent Changes
 - 004-yaml-render-templates: Added TypeScript (ESM, `.ts` extensions in imports), TypeScript 6.0.2 + `@sittir/core`, `@sittir/types`, `@sittir/codegen`; tree-sitter grammars (grammar.json + node-types.json)

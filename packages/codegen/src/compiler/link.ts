@@ -17,8 +17,9 @@ import type {
     FieldRule, SupertypeRule, EnumRule, ClauseRule, GroupRule,
     SeqRule, ChoiceRule, VariantRule, PolymorphRule,
 } from './rule.ts'
-import { deriveFields, hasAnyField, hasAnyChild } from './rule.ts'
+import { deriveFields, hasAnyField, hasAnyChild, isField, isSeq, isChoice, isString, isVariant } from './rule.ts'
 import { isHiddenKind } from './evaluate.ts'
+import type { PolymorphVariant } from '../dsl/synthetic-rules.ts'
 
 // ---------------------------------------------------------------------------
 // link() — main entry point
@@ -38,7 +39,6 @@ export function link(raw: RawGrammar, include?: IncludeFilter): LinkedGrammar {
     // Explicit empty arrays mean "include nothing of this category".
     const includeRules = new Set(include?.rules ?? (['promoted'] as const))
     const includeFields = new Set(include?.fields ?? (['inferred', 'inlined'] as const))
-    const applyInferred = includeFields.has('inferred')
     const applyPromotedRules = includeRules.has('promoted')
 
     // Derivation log — populated unconditionally; each entry records
@@ -135,18 +135,17 @@ export function link(raw: RawGrammar, include?: IncludeFilter): LinkedGrammar {
         }
     }
 
-    // Field name inference — rewrite bare symbol refs into field(X, $.Y)
-    // wrappers tagged with source: 'inferred' when cross-parent usage
-    // shows high agreement. Runs BEFORE tagVariants so the new field()
-    // wrappers are visible to nested-symbol walks during variant tagging.
-    // Each inference is logged; the rule tree is mutated only when
-    // `include.fields` permits `inferred`.
+    // Field name inference — analysis only (suggestion surface).
+    // Previously this phase mutated rules by wrapping bare symbol refs
+    // as field(X, $.Y) wrappers. Spec 007 moved field coverage to the
+    // override-compiled parser: transform() patches in overrides.ts +
+    // enrich() mechanical passes now carry all field labels natively.
+    // The analysis is preserved for suggested-overrides.ts output.
     const inferredFieldNames = inferFieldNames(references)
     for (const [name, rule] of Object.entries(rules)) {
-        const { rule: rewritten, applied } = applyInferredFields(
-            rule, name, inferredFieldNames, applyInferred, derivations.inferredFields, applyInferred,
+        applyInferredFields(
+            rule, name, inferredFieldNames, false, derivations.inferredFields, false,
         )
-        if (applied) rules[name] = rewritten
     }
 
     // Keyword-prefix promotion moved to dsl/enrich.ts (spec 006).
@@ -165,19 +164,28 @@ export function link(raw: RawGrammar, include?: IncludeFilter): LinkedGrammar {
         rules[name] = tagVariants(rule, name, raw.inline)
     }
 
-    // Promote choice-of-variants with heterogeneous field shapes to
-    // PolymorphRule. Always logged; applied only when `include.rules`
-    // permits `promoted`.
+    // Polymorph detection — suggestion-only (spec 007).
+    // Previously mutated rules by wrapping heterogeneous-field choices
+    // in PolymorphRule. Now kept as analysis for suggested-overrides.ts.
+    // Nested-alias conversion will be a follow-up spec.
     for (const [name, rule] of Object.entries(rules)) {
         const result = promotePolymorph(rule)
         if (result !== rule) {
             derivations.promotedRules.push({
                 kind: name,
                 classification: 'polymorph',
-                applied: applyPromotedRules,
+                applied: false,
             })
-            if (applyPromotedRules) rules[name] = result
         }
+    }
+
+    // Override-source polymorph classification — variant() metadata.
+    // Per feedback (memory: feedback_polymorph_in_link): classification
+    // belongs in Link, not Optimize. variant() in transform patches
+    // produces PolymorphVariant entries during evaluate; here we wrap
+    // the parent rule as a PolymorphRule with `source: 'override'`.
+    if (raw.polymorphVariants?.length) {
+        applyOverridePolymorphs(rules, raw.polymorphVariants, derivations)
     }
 
     // Hoist `indent` markers into their sibling/target repeats as
@@ -211,10 +219,12 @@ export function link(raw: RawGrammar, include?: IncludeFilter): LinkedGrammar {
         rules,
         supertypes,
         externalRoles,
+        externals: raw.externals,
         word: raw.word,
         references,
         derivations,
         aliasedHiddenKinds,
+        polymorphVariants: raw.polymorphVariants,
     }
 }
 
@@ -462,7 +472,7 @@ export function promotePolymorph(rule: Rule): Rule {
     return { type: 'polymorph', forms, source: 'promoted' }
 }
 
-interface VariantChoiceLocation {
+export interface VariantChoiceLocation {
     choice: ChoiceRule
     /** Members of the outer seq that appear before the choice. */
     prefix: Rule[]
@@ -470,8 +480,93 @@ interface VariantChoiceLocation {
     suffix: Rule[]
 }
 
-function findVariantChoice(rule: Rule): VariantChoiceLocation | null {
-    if (rule.type === 'choice' && rule.members.some(m => m.type === 'variant')) {
+// ---------------------------------------------------------------------------
+// applyOverridePolymorphs — variant() metadata → PolymorphRule(source:'override')
+// ---------------------------------------------------------------------------
+//
+// variant() in transform patches registers (parent, child) entries during
+// evaluate. Here we look up the parent rule, find the choice with
+// alias-symbol members matching `${parentKind}_${child}`, and wrap as
+// PolymorphRule with `source: 'override'`.
+//
+// Form names use the SHORT child suffix from variant() — not the
+// tagVariants-derived names — so generated factories/types align with
+// what the user wrote. Mutates `rules` in place; logs to derivations.
+
+export function applyOverridePolymorphs(
+    rules: Record<string, Rule>,
+    variants: PolymorphVariant[],
+    derivations: DerivationLog,
+): void {
+    const parentToChildren = new Map<string, string[]>()
+    for (const pv of variants) {
+        const existing = parentToChildren.get(pv.parent) ?? []
+        existing.push(pv.child)
+        parentToChildren.set(pv.parent, existing)
+    }
+
+    for (const [parentKind, children] of parentToChildren) {
+        const rule = rules[parentKind]
+        if (!rule || rule.type === 'polymorph') continue
+
+        const found = findVariantChoice(rule)
+        if (!found) continue
+
+        // Collision detection (T032 follow-up; user feedback 2026-04-16):
+        // The variant() naming convention produces visible kinds named
+        // `${parentKind}_${child}` (the alias target tree-sitter creates).
+        // Emit each variant child as a derivation so the suggested.ts
+        // emitter can surface them — this gives users visibility into
+        // what tree-sitter's parse tree carries vs what sittir's typed
+        // surface presents. Without this, readNode would have to infer
+        // polymorph-internal shape from grammar-specific knowledge.
+        for (const child of children) {
+            const variantChildKind = `${parentKind}_${child}`
+            // Inform downstream that this kind exists in the parse tree
+            // as the variant child for the polymorph parent.
+            derivations.promotedRules.push({
+                kind: variantChildKind,
+                classification: 'polymorph',
+                applied: true,
+            })
+        }
+
+        const forms = children.map(child => {
+            const fullName = `${parentKind}_${child}`
+            const variantMember = found.choice.members.find(m => {
+                if (m.type === 'variant') {
+                    const sym = m.content
+                    return sym.type === 'symbol' && sym.name === fullName
+                }
+                return m.type === 'symbol' && m.name === fullName
+            })
+
+            const content = variantMember?.type === 'variant'
+                ? variantMember.content
+                : variantMember ?? ({ type: 'symbol', name: fullName } as Rule)
+            const fused = found.prefix.length > 0 || found.suffix.length > 0
+                ? { type: 'seq' as const, members: [...found.prefix, content, ...found.suffix] } as Rule
+                : content
+
+            return { name: child, content: fused }
+        })
+
+        rules[parentKind] = {
+            type: 'polymorph',
+            forms,
+            source: 'override',
+        } satisfies PolymorphRule
+
+        derivations.promotedRules.push({
+            kind: parentKind,
+            classification: 'polymorph',
+            applied: true,
+        })
+    }
+}
+
+export function findVariantChoice(rule: Rule): VariantChoiceLocation | null {
+    if (isChoice(rule) && rule.members.some(isVariant)) {
         return { choice: rule, prefix: [], suffix: [] }
     }
     // A seq containing exactly one variant-choice. The other members
@@ -758,12 +853,9 @@ function resolveRule(
             return resolveRule(rule.content, currentName, allRules, supertypes, externalRoles)
 
         case 'alias':
-            // TODO(alias): Named aliases rename the tree-sitter node
-            // kind at parse time (`alias($.original, $.renamed)`), but
-            // Link currently collapses to content. Downstream passes
-            // that need the runtime name use `aliasedHiddenKinds` (for
-            // rule-level top-level aliases) or the
-            // `collectAllAliasTargets` map (for inline aliases).
+            if (rule.named && rule.value && !rule.value.startsWith('_')) {
+                return { type: 'symbol', name: rule.value } as unknown as Rule
+            }
             return resolveRule(rule.content, currentName, allRules, supertypes, externalRoles)
 
         case 'symbol': {
@@ -881,8 +973,8 @@ function classifyHiddenRule(
     }
 
     // Seq with fields → group (fields promoted to parent)
-    if (rule.type === 'seq') {
-        const hasFields = rule.members.some(m => m.type === 'field')
+    if (isSeq(rule)) {
+        const hasFields = rule.members.some(isField)
         if (hasFields) {
             return {
                 type: 'group',
@@ -1219,12 +1311,12 @@ function walkForAliases(rule: Rule, rawRules: Record<string, Rule>, resolvedRule
 // ---------------------------------------------------------------------------
 
 function detectClause(content: Rule, currentName: string): Rule {
-    if (content.type === 'seq') {
-        const hasString = content.members.some(m => m.type === 'string')
-        const hasField = content.members.some(m => m.type === 'field')
+    if (isSeq(content)) {
+        const hasString = content.members.some(isString)
+        const hasField = content.members.some(isField)
         if (hasString && hasField) {
             // Name the clause from the first field
-            const firstField = content.members.find(m => m.type === 'field') as FieldRule | undefined
+            const firstField = content.members.find(isField)
             const clauseName = firstField?.name ?? currentName
             return {
                 type: 'clause',

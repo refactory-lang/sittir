@@ -22,14 +22,24 @@ export type LeafStringMap = {
   undefined: "undefined";
   accessibility_modifier: "public" | "private" | "protected";
   override_modifier: "override";
+  _kw_asserts: "asserts";
+  _kw_for: "for";
+  _kw_async: "async";
+  _kw_static: "static";
+  _kw_extends: "extends";
+  _kw_const: "const";
+  _kw_readonly: "readonly";
+  _kw_abstract: "abstract";
   this_type: "this";
+  export: "export";
+  default: "default";
   as: "as";
+  namespace: "namespace";
   from: "from";
   var: "var";
   else: "else";
   if: "if";
   switch: "switch";
-  for: "for";
   await: "await";
   while: "while";
   do: "do";
@@ -41,11 +51,9 @@ export type LeafStringMap = {
   return: "return";
   throw: "throw";
   case: "case";
-  default: "default";
   catch: "catch";
   finally: "finally";
   yield: "yield";
-  async: "async";
   function: "function";
   new: "new";
   using: "using";
@@ -53,22 +61,24 @@ export type LeafStringMap = {
   in: "in";
   static: "static";
   readonly: "readonly";
+  async: "async";
+  declare: "declare";
   abstract: "abstract";
+  accessor: "accessor";
   const: "const";
   satisfies: "satisfies";
   require: "require";
-  extends: "extends";
   implements: "implements";
-  declare: "declare";
   global: "global";
-  namespace: "namespace";
   interface: "interface";
   enum: "enum";
   override: "override";
   infer: "infer";
+  extends: "extends";
   is: "is";
   typeof: "typeof";
   keyof: "keyof";
+  for: "for";
 };
 
 export const enum SyntaxKind {
@@ -172,7 +182,6 @@ export const enum SyntaxKind {
   MethodDefinition = 'method_definition',
   Pair = 'pair',
   PairPattern = 'pair_pattern',
-  PropertyName = '_property_name',
   ComputedPropertyName = 'computed_property_name',
   PublicFieldDefinition = 'public_field_definition',
   JsxStartOpeningElement = '_jsx_start_opening_element',
@@ -254,9 +263,31 @@ export const enum SyntaxKind {
   IntersectionType = 'intersection_type',
   FunctionType = 'function_type',
   _TypeIdentifier = '_type_identifier',
+  _ClassHeritageExtendsClause = '_class_heritage_extends_clause',
+  _ClassHeritageImplementsClause = '_class_heritage_implements_clause',
+  _ImportClauseNamespaceImport = '_import_clause_namespace_import',
+  _ImportClauseNamedImports = '_import_clause_named_imports',
+  _ImportClauseDefaultImport = '_import_clause_default_import',
+  _IndexSignatureColon = '_index_signature_colon',
+  _IndexSignatureMappedTypeClause = '_index_signature_mapped_type_clause',
+  _ImportSpecifierName = '_import_specifier_name',
+  _ImportSpecifierAs = '_import_specifier_as',
+  _ArrowFunctionParameter = '_arrow_function_parameter',
+  _ArrowFunctionUCallSignature = '_arrow_function__call_signature',
+  ImportClauseNamespaceImport = 'import_clause_namespace_import',
+  ImportClauseNamedImports = 'import_clause_named_imports',
+  ImportClauseDefaultImport = 'import_clause_default_import',
+  ImportSpecifierName = 'import_specifier_name',
+  ImportSpecifierAs = 'import_specifier_as',
   ShorthandPropertyIdentifier = 'shorthand_property_identifier',
   ShorthandPropertyIdentifierPattern = 'shorthand_property_identifier_pattern',
+  ClassHeritageExtendsClause = 'class_heritage_extends_clause',
+  ClassHeritageImplementsClause = 'class_heritage_implements_clause',
+  ArrowFunctionParameter = 'arrow_function_parameter',
+  ArrowFunctionUCallSignature = 'arrow_function__call_signature',
   InterfaceBody = 'interface_body',
+  IndexSignatureColon = 'index_signature_colon',
+  IndexSignatureMappedTypeClause = 'index_signature_mapped_type_clause',
   HashBangLine = 'hash_bang_line',
   Import = 'import',
   HtmlCharacterReference = 'html_character_reference',
@@ -283,6 +314,14 @@ export const enum SyntaxKind {
   AccessibilityModifier = 'accessibility_modifier',
   OverrideModifier = 'override_modifier',
   PredefinedType = 'predefined_type',
+  KwAsserts = '_kw_asserts',
+  KwFor = '_kw_for',
+  KwAsync = '_kw_async',
+  KwStatic = '_kw_static',
+  KwExtends = '_kw_extends',
+  KwConst = '_kw_const',
+  KwReadonly = '_kw_readonly',
+  KwAbstract = '_kw_abstract',
   AutomaticSemicolon = '_automatic_semicolon',
   TemplateChars = '_template_chars',
   HtmlComment = 'html_comment',
@@ -295,13 +334,15 @@ export const enum SyntaxKind {
   StringFragment = 'string_fragment',
   ThisType = 'this_type',
   TypeIdentifier = 'type_identifier',
+  Export = 'export',
+  Default = 'default',
   As = 'as',
+  Namespace = 'namespace',
   From = 'from',
   Var = 'var',
   Else = 'else',
   If = 'if',
   Switch = 'switch',
-  For = 'for',
   Await = 'await',
   While = 'while',
   Do = 'do',
@@ -313,11 +354,9 @@ export const enum SyntaxKind {
   Return = 'return',
   Throw = 'throw',
   Case = 'case',
-  Default = 'default',
   Catch = 'catch',
   Finally = 'finally',
   Yield = 'yield',
-  Async = 'async',
   Function = 'function',
   New = 'new',
   Using = 'using',
@@ -325,22 +364,24 @@ export const enum SyntaxKind {
   In = 'in',
   Static = 'static',
   Readonly = 'readonly',
+  Async = 'async',
+  Declare = 'declare',
   Abstract = 'abstract',
+  Accessor = 'accessor',
   Const = 'const',
   Satisfies = 'satisfies',
   Require = 'require',
-  Extends = 'extends',
   Implements = 'implements',
-  Declare = 'declare',
   Global = 'global',
-  Namespace = 'namespace',
   Interface = 'interface',
   Enum = 'enum',
   Override = 'override',
   Infer = 'infer',
+  Extends = 'extends',
   Is = 'is',
   Typeof = 'typeof',
   Keyof = 'keyof',
+  For = 'for',
 }
 
 // Scoped enums per supertype
@@ -368,14 +409,12 @@ export const enum JsxChildKind {
 }
 
 export const enum JsxIdentifierKind {
-  JsxIdentifier = 'jsx_identifier',
   Identifier = 'identifier',
 }
 
 export const enum JsxElementNameKind {
-  JsxIdentifier = 'jsx_identifier',
   Identifier = 'identifier',
-  NestedIdentifier = 'nested_identifier',
+  MemberExpression = 'member_expression',
   JsxNamespaceName = 'jsx_namespace_name',
 }
 
@@ -385,13 +424,12 @@ export const enum JsxAttributeKind {
 }
 
 export const enum JsxAttributeNameKind {
-  JsxIdentifier = 'jsx_identifier',
-  Identifier = 'identifier',
+  PropertyIdentifier = 'property_identifier',
   JsxNamespaceName = 'jsx_namespace_name',
 }
 
 export const enum JsxAttributeValueKind {
-  JsxString = '_jsx_string',
+  String = 'string',
   JsxExpression = 'jsx_expression',
   JsxElement = 'jsx_element',
   JsxSelfClosingElement = 'jsx_self_closing_element',
@@ -412,6 +450,14 @@ export const enum IdentifierKind {
   Identifier = 'identifier',
 }
 
+export const enum PropertyNameKind {
+  PropertyIdentifier = 'property_identifier',
+  PrivatePropertyIdentifier = 'private_property_identifier',
+  String = 'string',
+  Number = 'number',
+  ComputedPropertyName = 'computed_property_name',
+}
+
 export const enum SemicolonKind {
   AutomaticSemicolon = '_automatic_semicolon',
 }
@@ -426,13 +472,13 @@ export const enum TypeKind {
   ReadonlyType = 'readonly_type',
   ConstructorType = 'constructor_type',
   InferType = 'infer_type',
-  TypeQueryMemberExpressionInTypeAnnotation = '_type_query_member_expression_in_type_annotation',
-  TypeQueryCallExpressionInTypeAnnotation = '_type_query_call_expression_in_type_annotation',
+  MemberExpression = 'member_expression',
+  CallExpression = 'call_expression',
 }
 
 export const enum TupleTypeMemberKind {
-  TupleParameter = 'tuple_parameter',
-  OptionalTupleParameter = 'optional_tuple_parameter',
+  RequiredParameter = 'required_parameter',
+  OptionalParameter = 'optional_parameter',
   OptionalType = 'optional_type',
   RestType = 'rest_type',
   Type = 'type',
@@ -450,7 +496,7 @@ export const enum PrimaryTypeKind {
   FlowMaybeType = 'flow_maybe_type',
   TypeQuery = 'type_query',
   IndexTypeQuery = 'index_type_query',
-  This = 'this',
+  ThisType = 'this_type',
   ExistentialType = 'existential_type',
   LiteralType = 'literal_type',
   LookupType = 'lookup_type',
@@ -462,15 +508,12 @@ export const enum PrimaryTypeKind {
 
 // Node types — concrete interfaces
 // Repeated field/child unions (T042k dedup)
-export type _union_8 = AddingTypeAnnotation | OmittingTypeAnnotation | OptingTypeAnnotation | TypeAnnotation;
+export type _union_5 = AddingTypeAnnotation | OmittingTypeAnnotation | OptingTypeAnnotation | TypeAnnotation;
 export type _union_CallSignature_ConstructSignature_ExportStatement = CallSignature | ConstructSignature | ExportStatement | IndexSignature | MethodSignature | PropertySignature | Semicolon;
-export type _union_DecoratorMemberExpression_Identifier = DecoratorMemberExpression | Identifier;
 export type _union_DestructuringPattern_Identifier = DestructuringPattern | Identifier;
-export type _union_Expression_Import_PrimaryExpression = Expression | Import | PrimaryExpression;
 export type _union_Expression_StatementBlock = Expression | StatementBlock;
+export type _union_Identifier_MemberExpression = Identifier | MemberExpression;
 export type _union_Identifier_NestedIdentifier = Identifier | NestedIdentifier;
-export type _union_Identifier_PrivatePropertyIdentifier = Identifier | PrivatePropertyIdentifier;
-export type _union_Identifier_ReservedIdentifier = Identifier | ReservedIdentifier;
 
 export interface Program {
   readonly type: 'program';
@@ -490,22 +533,22 @@ export interface ExportStatementForm0 {
   readonly children: readonly [FromClause | NamespaceExport | ExportClause | Semicolon];
 }
 
-export interface ExportStatementExport {
+export interface ExportStatementForm1 {
   readonly type: 'export_statement';
   readonly children: readonly [ExportClause | FromClause | Semicolon];
 }
 
-export interface ExportStatementExport2 {
+export interface ExportStatementForm2 {
   readonly type: 'export_statement';
   readonly children: readonly [Expression | Semicolon];
 }
 
-export interface ExportStatementExport3 {
+export interface ExportStatementForm3 {
   readonly type: 'export_statement';
   readonly children: readonly [Identifier | Semicolon];
 }
 
-export type ExportStatement = ExportStatementForm0 | ExportStatementExport | ExportStatementExport2 | ExportStatementExport3;
+export type ExportStatement = ExportStatementForm0 | ExportStatementForm1 | ExportStatementForm2 | ExportStatementForm3;
 export interface NamespaceExport {
   readonly type: 'namespace_export';
   readonly children: readonly [ModuleExportName];
@@ -539,25 +582,22 @@ export interface ImportStatement {
   };
 }
 
-export interface ImportClauseNamespaceImport {
+export interface ImportClauseUFormNamespaceImport {
   readonly type: 'import_clause';
-  readonly children: readonly [NamespaceImport];
+  readonly children: readonly [ImportClauseNamespaceImport];
 }
 
-export interface ImportClauseNamedImports {
+export interface ImportClauseUFormNamedImports {
   readonly type: 'import_clause';
-  readonly children: readonly [NamedImports];
+  readonly children: readonly [ImportClauseNamedImports];
 }
 
-export interface ImportClauseDefaultImport {
+export interface ImportClauseUFormDefaultImport {
   readonly type: 'import_clause';
-  readonly fields: {
-    readonly default_import: ImportIdentifier;
-    readonly named_imports?: NamespaceImport | NamedImports;
-  };
+  readonly children: readonly [ImportClauseDefaultImport];
 }
 
-export type ImportClause = ImportClauseNamespaceImport | ImportClauseNamedImports | ImportClauseDefaultImport;
+export type ImportClause = ImportClauseUFormNamespaceImport | ImportClauseUFormNamedImports | ImportClauseUFormDefaultImport;
 export interface FromClause {
   readonly type: '_from_clause';
 }
@@ -574,22 +614,17 @@ export interface NamedImports {
   readonly children: readonly (ImportSpecifier)[];
 }
 
-export interface ImportSpecifierName {
+export interface ImportSpecifierUFormName {
   readonly type: 'import_specifier';
-  readonly fields: {
-    readonly name: ImportIdentifier;
-  };
+  readonly children: readonly [ImportSpecifierName];
 }
 
-export interface ImportSpecifierAs {
+export interface ImportSpecifierUFormAs {
   readonly type: 'import_specifier';
-  readonly fields: {
-    readonly name: ModuleExportName;
-    readonly alias: ImportIdentifier;
-  };
+  readonly children: readonly [ImportSpecifierAs];
 }
 
-export type ImportSpecifier = ImportSpecifierName | ImportSpecifierAs;
+export type ImportSpecifier = ImportSpecifierUFormName | ImportSpecifierUFormAs;
 export interface ImportAttribute {
   readonly type: 'import_attribute';
   readonly fields: {
@@ -598,109 +633,11 @@ export interface ImportAttribute {
   readonly children: readonly [Object];
 }
 
-export interface StatementExportStatement {
+export interface Statement {
   readonly type: 'statement';
-  readonly children: readonly [ExportStatement];
+  readonly children: readonly [ExportStatement | ImportStatement | DebuggerStatement | ExpressionStatement | Declaration | StatementBlock | IfStatement | SwitchStatement | ForStatement | ForInStatement | WhileStatement | DoStatement | TryStatement | WithStatement | BreakStatement | ContinueStatement | ReturnStatement | ThrowStatement | EmptyStatement | LabeledStatement];
 }
 
-export interface StatementImportStatement {
-  readonly type: 'statement';
-  readonly children: readonly [ImportStatement];
-}
-
-export interface StatementDebuggerStatement {
-  readonly type: 'statement';
-  readonly children: readonly [DebuggerStatement];
-}
-
-export interface StatementExpressionStatement {
-  readonly type: 'statement';
-  readonly children: readonly [ExpressionStatement];
-}
-
-export interface StatementDeclaration {
-  readonly type: 'statement';
-  readonly children: readonly [Declaration];
-}
-
-export interface StatementBody {
-  readonly type: 'statement';
-  readonly fields: {
-    readonly body: StatementBlock;
-  };
-}
-
-export interface StatementIfStatement {
-  readonly type: 'statement';
-  readonly children: readonly [IfStatement];
-}
-
-export interface StatementSwitchStatement {
-  readonly type: 'statement';
-  readonly children: readonly [SwitchStatement];
-}
-
-export interface StatementForStatement {
-  readonly type: 'statement';
-  readonly children: readonly [ForStatement];
-}
-
-export interface StatementForInStatement {
-  readonly type: 'statement';
-  readonly children: readonly [ForInStatement];
-}
-
-export interface StatementWhileStatement {
-  readonly type: 'statement';
-  readonly children: readonly [WhileStatement];
-}
-
-export interface StatementDoStatement {
-  readonly type: 'statement';
-  readonly children: readonly [DoStatement];
-}
-
-export interface StatementTryStatement {
-  readonly type: 'statement';
-  readonly children: readonly [TryStatement];
-}
-
-export interface StatementWithStatement {
-  readonly type: 'statement';
-  readonly children: readonly [WithStatement];
-}
-
-export interface StatementBreakStatement {
-  readonly type: 'statement';
-  readonly children: readonly [BreakStatement];
-}
-
-export interface StatementContinueStatement {
-  readonly type: 'statement';
-  readonly children: readonly [ContinueStatement];
-}
-
-export interface StatementReturnStatement {
-  readonly type: 'statement';
-  readonly children: readonly [ReturnStatement];
-}
-
-export interface StatementThrowStatement {
-  readonly type: 'statement';
-  readonly children: readonly [ThrowStatement];
-}
-
-export interface StatementEmptyStatement {
-  readonly type: 'statement';
-  readonly children: readonly [EmptyStatement];
-}
-
-export interface StatementLabeledStatement {
-  readonly type: 'statement';
-  readonly children: readonly [LabeledStatement];
-}
-
-export type Statement = StatementExportStatement | StatementImportStatement | StatementDebuggerStatement | StatementExpressionStatement | StatementDeclaration | StatementBody | StatementIfStatement | StatementSwitchStatement | StatementForStatement | StatementForInStatement | StatementWhileStatement | StatementDoStatement | StatementTryStatement | StatementWithStatement | StatementBreakStatement | StatementContinueStatement | StatementReturnStatement | StatementThrowStatement | StatementEmptyStatement | StatementLabeledStatement;
 export interface ExpressionStatement {
   readonly type: 'expression_statement';
   readonly children: readonly [Expressions | Semicolon];
@@ -750,6 +687,7 @@ export interface ElseClause {
 export interface IfStatement {
   readonly type: 'if_statement';
   readonly fields: {
+    readonly if: "if";
     readonly condition: ParenthesizedExpression;
     readonly consequence: Statement;
     readonly alternative?: ElseClause;
@@ -759,6 +697,7 @@ export interface IfStatement {
 export interface SwitchStatement {
   readonly type: 'switch_statement';
   readonly fields: {
+    readonly switch: "switch";
     readonly value: ParenthesizedExpression;
     readonly body: SwitchBody;
   };
@@ -767,6 +706,7 @@ export interface SwitchStatement {
 export interface ForStatement {
   readonly type: 'for_statement';
   readonly fields: {
+    readonly for: KwFor;
     readonly initializer: LexicalDeclaration | VariableDeclaration;
     readonly condition: Expressions | EmptyStatement;
     readonly increment?: Expressions;
@@ -777,6 +717,7 @@ export interface ForStatement {
 export interface ForInStatement {
   readonly type: 'for_in_statement';
   readonly fields: {
+    readonly for: KwFor;
     readonly await?: "await";
     readonly body: Statement;
   };
@@ -791,6 +732,7 @@ export interface ForHeader {
 export interface WhileStatement {
   readonly type: 'while_statement';
   readonly fields: {
+    readonly while: "while";
     readonly condition: ParenthesizedExpression;
     readonly body: Statement;
   };
@@ -799,6 +741,7 @@ export interface WhileStatement {
 export interface DoStatement {
   readonly type: 'do_statement';
   readonly fields: {
+    readonly do: "do";
     readonly body: Statement;
     readonly condition: ParenthesizedExpression;
   };
@@ -808,6 +751,7 @@ export interface DoStatement {
 export interface TryStatement {
   readonly type: 'try_statement';
   readonly fields: {
+    readonly try: "try";
     readonly body: StatementBlock;
     readonly handler?: CatchClause;
     readonly finalizer?: FinallyClause;
@@ -817,6 +761,7 @@ export interface TryStatement {
 export interface WithStatement {
   readonly type: 'with_statement';
   readonly fields: {
+    readonly with: "with";
     readonly object: ParenthesizedExpression;
     readonly body: Statement;
   };
@@ -825,7 +770,8 @@ export interface WithStatement {
 export interface BreakStatement {
   readonly type: 'break_statement';
   readonly fields: {
-    readonly label?: Identifier;
+    readonly break: "break";
+    readonly label?: StatementIdentifier;
   };
   readonly children: readonly [Semicolon];
 }
@@ -833,30 +779,40 @@ export interface BreakStatement {
 export interface ContinueStatement {
   readonly type: 'continue_statement';
   readonly fields: {
-    readonly label?: Identifier;
+    readonly continue: "continue";
+    readonly label?: StatementIdentifier;
   };
   readonly children: readonly [Semicolon];
 }
 
 export interface DebuggerStatement {
   readonly type: 'debugger_statement';
+  readonly fields: {
+    readonly debugger: "debugger";
+  };
   readonly children: readonly [Semicolon];
 }
 
 export interface ReturnStatement {
   readonly type: 'return_statement';
+  readonly fields: {
+    readonly return: "return";
+  };
   readonly children: readonly [Expressions | Semicolon];
 }
 
 export interface ThrowStatement {
   readonly type: 'throw_statement';
+  readonly fields: {
+    readonly throw: "throw";
+  };
   readonly children: readonly [Expressions | Semicolon];
 }
 
 export interface LabeledStatement {
   readonly type: 'labeled_statement';
   readonly fields: {
-    readonly label: _union_Identifier_ReservedIdentifier;
+    readonly label: StatementIdentifier;
     readonly body: Statement;
   };
 }
@@ -869,6 +825,7 @@ export interface SwitchBody {
 export interface SwitchCase {
   readonly type: 'switch_case';
   readonly fields: {
+    readonly case: "case";
     readonly value: Expressions;
     readonly body: readonly (Statement)[];
   };
@@ -877,6 +834,7 @@ export interface SwitchCase {
 export interface SwitchDefault {
   readonly type: 'switch_default';
   readonly fields: {
+    readonly default: "default";
     readonly body: readonly (Statement)[];
   };
 }
@@ -884,6 +842,7 @@ export interface SwitchDefault {
 export interface CatchClause {
   readonly type: 'catch_clause';
   readonly fields: {
+    readonly catch: "catch";
     readonly parameter?: _union_DestructuringPattern_Identifier;
     readonly type?: TypeAnnotation;
     readonly body: StatementBlock;
@@ -893,24 +852,19 @@ export interface CatchClause {
 export interface FinallyClause {
   readonly type: 'finally_clause';
   readonly fields: {
+    readonly finally: "finally";
     readonly body: StatementBlock;
   };
 }
 
-export interface ParenthesizedExpressionExpression {
+export interface ParenthesizedExpression {
   readonly type: 'parenthesized_expression';
   readonly fields: {
     readonly type?: TypeAnnotation;
   };
-  readonly children: readonly [Expression];
+  readonly children: readonly [Expression | SequenceExpression];
 }
 
-export interface ParenthesizedExpressionSequenceExpression {
-  readonly type: 'parenthesized_expression';
-  readonly children: readonly [SequenceExpression];
-}
-
-export type ParenthesizedExpression = ParenthesizedExpressionExpression | ParenthesizedExpressionSequenceExpression;
 export interface Expression {
   readonly type: 'expression';
   readonly children: readonly [AsExpression | SatisfiesExpression | InstantiationExpression | InternalModule | PrimaryExpression | _JsxElement | AssignmentExpression | AugmentedAssignmentExpression | AwaitExpression | UnaryExpression | BinaryExpression | TernaryExpression | UpdateExpression | NewExpression | YieldExpression];
@@ -918,7 +872,7 @@ export interface Expression {
 
 export interface PrimaryExpression {
   readonly type: 'primary_expression';
-  readonly children: readonly [SubscriptExpression | MemberExpression | ParenthesizedExpression | _Identifier | ReservedIdentifier | This | Super | Number | String | TemplateString | Regex | True | False | Null | Object | Array | FunctionExpression | ArrowFunction | GeneratorFunction | Class | MetaProperty | CallExpression | NonNullExpression];
+  readonly children: readonly [SubscriptExpression | MemberExpression | ParenthesizedExpression | _Identifier | This | Super | Number | String | TemplateString | Regex | True | False | Null | Object | Array | FunctionExpression | ArrowFunction | GeneratorFunction | Class | MetaProperty | CallExpression | NonNullExpression];
 }
 
 export interface YieldExpression {
@@ -930,12 +884,12 @@ export interface YieldExpression {
 
 export interface Object {
   readonly type: 'object';
-  readonly children: readonly (Pair | SpreadElement | MethodDefinition | Identifier | ReservedIdentifier)[];
+  readonly children: readonly (Pair | SpreadElement | MethodDefinition | ShorthandPropertyIdentifier)[];
 }
 
 export interface ObjectPattern {
   readonly type: 'object_pattern';
-  readonly children: readonly (PairPattern | RestPattern | ObjectAssignmentPattern | Identifier | ReservedIdentifier)[];
+  readonly children: readonly (PairPattern | RestPattern | ObjectAssignmentPattern | ShorthandPropertyIdentifierPattern)[];
 }
 
 export interface AssignmentPattern {
@@ -949,7 +903,7 @@ export interface AssignmentPattern {
 export interface ObjectAssignmentPattern {
   readonly type: 'object_assignment_pattern';
   readonly fields: {
-    readonly left: ReservedIdentifier | Identifier | DestructuringPattern;
+    readonly left: ShorthandPropertyIdentifierPattern | DestructuringPattern;
     readonly right: Expression;
   };
 }
@@ -986,8 +940,8 @@ export interface JsxOpeningElement {
 export interface NestedIdentifier {
   readonly type: 'nested_identifier';
   readonly fields: {
-    readonly object: _union_Identifier_NestedIdentifier;
-    readonly property: Identifier;
+    readonly object: _union_Identifier_MemberExpression;
+    readonly property: PropertyIdentifier;
   };
 }
 
@@ -1015,7 +969,7 @@ export interface JsxAttribute {
 
 export interface JsxString {
   readonly type: '_jsx_string';
-  readonly children: readonly (UnescapedDoubleJsxStringFragment | HtmlCharacterReference | UnescapedSingleJsxStringFragment)[];
+  readonly children: readonly (StringFragment | HtmlCharacterReference)[];
 }
 
 export interface Class {
@@ -1041,24 +995,21 @@ export interface ClassDeclaration {
   };
 }
 
-export interface ClassHeritageExtendsClause {
+export interface ClassHeritageUFormExtendsClause {
   readonly type: 'class_heritage';
-  readonly fields: {
-    readonly extends_clause: ExtendsClause;
-    readonly implements_clause?: ImplementsClause;
-  };
+  readonly children: readonly [ClassHeritageExtendsClause];
 }
 
-export interface ClassHeritageImplementsClause {
+export interface ClassHeritageUFormImplementsClause {
   readonly type: 'class_heritage';
-  readonly children: readonly [ImplementsClause];
+  readonly children: readonly [ClassHeritageImplementsClause];
 }
 
-export type ClassHeritage = ClassHeritageExtendsClause | ClassHeritageImplementsClause;
+export type ClassHeritage = ClassHeritageUFormExtendsClause | ClassHeritageUFormImplementsClause;
 export interface FunctionExpression {
   readonly type: 'function_expression';
   readonly fields: {
-    readonly async?: "async";
+    readonly async?: KwAsync;
     readonly name?: Identifier;
     readonly body: StatementBlock;
   };
@@ -1068,7 +1019,7 @@ export interface FunctionExpression {
 export interface FunctionDeclaration {
   readonly type: 'function_declaration';
   readonly fields: {
-    readonly async?: "async";
+    readonly async?: KwAsync;
     readonly name: Identifier;
     readonly body: StatementBlock;
   };
@@ -1078,7 +1029,7 @@ export interface FunctionDeclaration {
 export interface GeneratorFunction {
   readonly type: 'generator_function';
   readonly fields: {
-    readonly async?: "async";
+    readonly async?: KwAsync;
     readonly name?: Identifier;
     readonly body: StatementBlock;
   };
@@ -1088,37 +1039,35 @@ export interface GeneratorFunction {
 export interface GeneratorFunctionDeclaration {
   readonly type: 'generator_function_declaration';
   readonly fields: {
-    readonly async?: "async";
+    readonly async?: KwAsync;
     readonly name: Identifier;
     readonly body: StatementBlock;
   };
   readonly children: readonly [_CallSignature | AutomaticSemicolon];
 }
 
-export interface ArrowFunctionParameter {
+export interface ArrowFunctionUFormParameter {
   readonly type: 'arrow_function';
   readonly fields: {
-    readonly async?: "async";
-    readonly parameter: _union_Identifier_ReservedIdentifier;
     readonly body: _union_Expression_StatementBlock;
   };
+  readonly children: readonly [ArrowFunctionParameter];
 }
 
-export interface ArrowFunctionUCallSignature {
+export interface ArrowFunctionUFormUCallSignature {
   readonly type: 'arrow_function';
   readonly fields: {
-    readonly async?: "async";
     readonly body: _union_Expression_StatementBlock;
   };
-  readonly children: readonly [_CallSignature];
+  readonly children: readonly [ArrowFunctionUCallSignature];
 }
 
-export type ArrowFunction = ArrowFunctionParameter | ArrowFunctionUCallSignature;
+export type ArrowFunction = ArrowFunctionUFormParameter | ArrowFunctionUFormUCallSignature;
 export interface _CallSignature {
   readonly type: '_call_signature';
 }
 
-export interface CallExpressionFunction {
+export interface CallExpressionForm0 {
   readonly type: 'call_expression';
   readonly fields: {
     readonly function: Expression | Import;
@@ -1127,7 +1076,7 @@ export interface CallExpressionFunction {
   };
 }
 
-export interface CallExpressionFunction2 {
+export interface CallExpressionForm1 {
   readonly type: 'call_expression';
   readonly fields: {
     readonly function: PrimaryExpression | NewExpression;
@@ -1135,7 +1084,7 @@ export interface CallExpressionFunction2 {
   };
 }
 
-export interface CallExpressionTokQDot {
+export interface CallExpressionForm2 {
   readonly type: 'call_expression';
   readonly fields: {
     readonly function: PrimaryExpression;
@@ -1144,10 +1093,11 @@ export interface CallExpressionTokQDot {
   };
 }
 
-export type CallExpression = CallExpressionFunction | CallExpressionFunction2 | CallExpressionTokQDot;
+export type CallExpression = CallExpressionForm0 | CallExpressionForm1 | CallExpressionForm2;
 export interface NewExpression {
   readonly type: 'new_expression';
   readonly fields: {
+    readonly new: "new";
     readonly constructor: PrimaryExpression;
     readonly type_arguments?: TypeArguments;
     readonly arguments?: Arguments;
@@ -1161,24 +1111,15 @@ export interface AwaitExpression {
   };
 }
 
-export interface MemberExpressionDot {
+export interface MemberExpression {
   readonly type: 'member_expression';
   readonly fields: {
-    readonly object: _union_Expression_Import_PrimaryExpression;
-    readonly property: _union_Identifier_PrivatePropertyIdentifier;
+    readonly object: Expression | PrimaryExpression | Import;
+    readonly optional_chain?: OptionalChain;
+    readonly property: PrivatePropertyIdentifier | PropertyIdentifier;
   };
 }
 
-export interface MemberExpressionOptionalChain {
-  readonly type: 'member_expression';
-  readonly fields: {
-    readonly object: _union_Expression_Import_PrimaryExpression;
-    readonly optional_chain: OptionalChain;
-    readonly property: _union_Identifier_PrivatePropertyIdentifier;
-  };
-}
-
-export type MemberExpression = MemberExpressionDot | MemberExpressionOptionalChain;
 export interface SubscriptExpression {
   readonly type: 'subscript_expression';
   readonly fields: {
@@ -1190,7 +1131,7 @@ export interface SubscriptExpression {
 
 export interface LhsExpression {
   readonly type: '_lhs_expression';
-  readonly children: readonly [MemberExpression | SubscriptExpression | _Identifier | ReservedIdentifier | DestructuringPattern | NonNullExpression];
+  readonly children: readonly [MemberExpression | SubscriptExpression | _Identifier | DestructuringPattern | NonNullExpression];
 }
 
 export interface AssignmentExpression {
@@ -1205,7 +1146,7 @@ export interface AssignmentExpression {
 export interface AugmentedAssignmentExpression {
   readonly type: 'augmented_assignment_expression';
   readonly fields: {
-    readonly left: MemberExpression | SubscriptExpression | ReservedIdentifier | Identifier | ParenthesizedExpression | NonNullExpression;
+    readonly left: MemberExpression | SubscriptExpression | Identifier | ParenthesizedExpression | NonNullExpression;
     readonly operator: "+=" | "-=" | "*=" | "/=" | "%=" | "^=" | "&=" | "|=" | ">>=" | ">>>=" | "<<=" | "**=" | "&&=" | "||=" | "??=";
     readonly right: Expression;
   };
@@ -1263,12 +1204,12 @@ export interface SequenceExpression {
 
 export interface String {
   readonly type: 'string';
-  readonly children: readonly (UnescapedDoubleStringFragment | EscapeSequence | UnescapedSingleStringFragment)[];
+  readonly children: readonly (StringFragment | EscapeSequence)[];
 }
 
 export interface TemplateString {
   readonly type: 'template_string';
-  readonly children: readonly (TemplateChars | EscapeSequence | TemplateSubstitution)[];
+  readonly children: readonly (StringFragment | EscapeSequence | TemplateSubstitution)[];
 }
 
 export interface TemplateSubstitution {
@@ -1291,21 +1232,21 @@ export interface Arguments {
 
 export interface Decorator {
   readonly type: 'decorator';
-  readonly children: readonly [Identifier | DecoratorMemberExpression | DecoratorCallExpression | DecoratorParenthesizedExpression];
+  readonly children: readonly [Identifier | MemberExpression | CallExpression | ParenthesizedExpression];
 }
 
 export interface DecoratorMemberExpression {
   readonly type: 'decorator_member_expression';
   readonly fields: {
-    readonly object: _union_DecoratorMemberExpression_Identifier;
-    readonly property: Identifier;
+    readonly object: _union_Identifier_MemberExpression;
+    readonly property: PropertyIdentifier;
   };
 }
 
 export interface DecoratorCallExpression {
   readonly type: 'decorator_call_expression';
   readonly fields: {
-    readonly function: _union_DecoratorMemberExpression_Identifier;
+    readonly function: _union_Identifier_MemberExpression;
     readonly type_arguments?: TypeArguments;
     readonly arguments: Arguments;
   };
@@ -1323,7 +1264,7 @@ export interface FieldDefinition {
   readonly type: 'field_definition';
   readonly fields: {
     readonly decorator: readonly (Decorator)[];
-    readonly static?: "static";
+    readonly static?: KwStatic;
     readonly property: PropertyName;
   };
   readonly children: readonly [Initializer];
@@ -1337,6 +1278,7 @@ export interface FormalParameters {
 export interface ClassStaticBlock {
   readonly type: 'class_static_block';
   readonly fields: {
+    readonly static: KwStatic;
     readonly body: StatementBlock;
   };
   readonly children: readonly [AutomaticSemicolon];
@@ -1357,8 +1299,6 @@ export interface MethodDefinition {
   readonly fields: {
     readonly accessibility_modifier?: AccessibilityModifier;
     readonly override_modifier?: "static";
-    readonly readonly?: "readonly";
-    readonly async?: "async";
     readonly name: PropertyName;
     readonly body: StatementBlock;
   };
@@ -1381,11 +1321,6 @@ export interface PairPattern {
   };
 }
 
-export interface PropertyName {
-  readonly type: '_property_name';
-  readonly children: readonly [Identifier | ReservedIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName];
-}
-
 export interface ComputedPropertyName {
   readonly type: 'computed_property_name';
   readonly fields: {
@@ -1393,57 +1328,16 @@ export interface ComputedPropertyName {
   };
 }
 
-export interface PublicFieldDefinitionForm0 {
+export interface PublicFieldDefinition {
   readonly type: 'public_field_definition';
   readonly fields: {
     readonly decorator: readonly (Decorator)[];
-    readonly declare?: "declare";
-    readonly static?: "static";
-    readonly readonly?: "readonly";
     readonly name: PropertyName;
     readonly type?: TypeAnnotation;
   };
   readonly children: readonly [AccessibilityModifier | OverrideModifier | Initializer];
 }
 
-export interface PublicFieldDefinitionForm1 {
-  readonly type: 'public_field_definition';
-  readonly fields: {
-    readonly decorator: readonly (Decorator)[];
-    readonly declare?: "declare";
-    readonly abstract?: "abstract";
-    readonly readonly?: "readonly";
-    readonly name: PropertyName;
-    readonly type?: TypeAnnotation;
-  };
-  readonly children: readonly [AccessibilityModifier | Initializer];
-}
-
-export interface PublicFieldDefinitionForm2 {
-  readonly type: 'public_field_definition';
-  readonly fields: {
-    readonly decorator: readonly (Decorator)[];
-    readonly declare?: "declare";
-    readonly readonly?: "readonly";
-    readonly abstract?: "abstract";
-    readonly name: PropertyName;
-    readonly type?: TypeAnnotation;
-  };
-  readonly children: readonly [AccessibilityModifier | Initializer];
-}
-
-export interface PublicFieldDefinitionForm3 {
-  readonly type: 'public_field_definition';
-  readonly fields: {
-    readonly decorator: readonly (Decorator)[];
-    readonly declare?: "declare";
-    readonly name: PropertyName;
-    readonly type?: TypeAnnotation;
-  };
-  readonly children: readonly [AccessibilityModifier | Initializer];
-}
-
-export type PublicFieldDefinition = PublicFieldDefinitionForm0 | PublicFieldDefinitionForm1 | PublicFieldDefinitionForm2 | PublicFieldDefinitionForm3;
 export interface JsxStartOpeningElement {
   readonly type: '_jsx_start_opening_element';
   readonly fields: {
@@ -1465,8 +1359,6 @@ export interface MethodSignature {
   readonly fields: {
     readonly accessibility_modifier?: AccessibilityModifier;
     readonly override_modifier?: "static";
-    readonly readonly?: "readonly";
-    readonly async?: "async";
     readonly name: PropertyName;
   };
   readonly children: readonly [OverrideModifier | _CallSignature];
@@ -1485,7 +1377,7 @@ export interface AbstractMethodSignature {
 export interface FunctionSignature {
   readonly type: 'function_signature';
   readonly fields: {
-    readonly async?: "async";
+    readonly async?: KwAsync;
     readonly name: Identifier;
   };
   readonly children: readonly [_CallSignature | Semicolon | FunctionSignatureAutomaticSemicolon];
@@ -1493,7 +1385,7 @@ export interface FunctionSignature {
 
 export interface DecoratorParenthesizedExpression {
   readonly type: 'decorator_parenthesized_expression';
-  readonly children: readonly [Identifier | DecoratorMemberExpression | DecoratorCallExpression];
+  readonly children: readonly [Identifier | MemberExpression | CallExpression];
 }
 
 export interface TypeAssertion {
@@ -1538,6 +1430,9 @@ export interface ImportRequireClause {
 
 export interface ExtendsClause {
   readonly type: 'extends_clause';
+  readonly fields: {
+    readonly extends: KwExtends;
+  };
   readonly children: NonEmptyArray<ExtendsClauseSingle>;
 }
 
@@ -1547,13 +1442,16 @@ export interface ExtendsClauseSingle {
 
 export interface ImplementsClause {
   readonly type: 'implements_clause';
+  readonly fields: {
+    readonly implements: "implements";
+  };
   readonly children: NonEmptyArray<Type>;
 }
 
 export interface AmbientDeclaration {
   readonly type: 'ambient_declaration';
   readonly fields: {
-    readonly declaration: Declaration | StatementBlock | Identifier | Type | Semicolon;
+    readonly declaration: Declaration | StatementBlock | PropertyIdentifier | Type | Semicolon;
   };
 }
 
@@ -1570,11 +1468,17 @@ export interface AbstractClassDeclaration {
 
 export interface Module {
   readonly type: 'module';
+  readonly fields: {
+    readonly module: "module";
+  };
   readonly children: readonly [_Module];
 }
 
 export interface InternalModule {
   readonly type: 'internal_module';
+  readonly fields: {
+    readonly namespace: "namespace";
+  };
   readonly children: readonly [_Module];
 }
 
@@ -1605,13 +1509,14 @@ export interface InterfaceDeclaration {
     readonly name: _TypeIdentifier;
     readonly type_parameters?: TypeParameters;
     readonly extends_type_clause?: ExtendsTypeClause;
-    readonly body: ObjectType;
+    readonly body: InterfaceBody;
   };
 }
 
 export interface ExtendsTypeClause {
   readonly type: 'extends_type_clause';
   readonly fields: {
+    readonly extends: KwExtends;
     readonly type: NonEmptyArray<_TypeIdentifier | NestedTypeIdentifier | GenericType>;
   };
 }
@@ -1619,7 +1524,7 @@ export interface ExtendsTypeClause {
 export interface EnumDeclaration {
   readonly type: 'enum_declaration';
   readonly fields: {
-    readonly const?: "const";
+    readonly const?: KwConst;
     readonly name: Identifier;
     readonly body: EnumBody;
   };
@@ -1643,6 +1548,7 @@ export interface EnumAssignment {
 export interface TypeAliasDeclaration {
   readonly type: 'type_alias_declaration';
   readonly fields: {
+    readonly type: "type";
     readonly name: _TypeIdentifier;
     readonly type_parameters?: TypeParameters;
     readonly value: Type;
@@ -1673,22 +1579,30 @@ export interface ParameterName {
 
 export interface OmittingTypeAnnotation {
   readonly type: 'omitting_type_annotation';
-  readonly children: readonly [Type];
+  readonly fields: {
+    readonly type: Type;
+  };
 }
 
 export interface AddingTypeAnnotation {
   readonly type: 'adding_type_annotation';
-  readonly children: readonly [Type];
+  readonly fields: {
+    readonly type: Type;
+  };
 }
 
 export interface OptingTypeAnnotation {
   readonly type: 'opting_type_annotation';
-  readonly children: readonly [Type];
+  readonly fields: {
+    readonly type: Type;
+  };
 }
 
 export interface TypeAnnotation {
   readonly type: 'type_annotation';
-  readonly children: readonly [Type];
+  readonly fields: {
+    readonly type: Type;
+  };
 }
 
 export interface TypeQueryMemberExpressionInTypeAnnotation {
@@ -1701,13 +1615,16 @@ export interface TypeQueryCallExpressionInTypeAnnotation {
 
 export interface Asserts {
   readonly type: 'asserts';
+  readonly fields: {
+    readonly asserts: KwAsserts;
+  };
   readonly children: readonly [TypePredicate | Identifier | This];
 }
 
 export interface AssertsAnnotation {
   readonly type: 'asserts_annotation';
   readonly fields: {
-    readonly asserts: ":";
+    readonly asserts: KwAsserts;
   };
   readonly children: readonly [Asserts];
 }
@@ -1730,18 +1647,22 @@ export interface OptionalTupleParameter {
 
 export interface OptionalType {
   readonly type: 'optional_type';
-  readonly children: readonly [Type];
+  readonly fields: {
+    readonly type: Type;
+  };
 }
 
 export interface RestType {
   readonly type: 'rest_type';
-  readonly children: readonly [Type];
+  readonly fields: {
+    readonly type: Type;
+  };
 }
 
 export interface ConstructorType {
   readonly type: 'constructor_type';
   readonly fields: {
-    readonly abstract?: "abstract";
+    readonly abstract?: KwAbstract;
     readonly type_parameters?: TypeParameters;
     readonly parameters: FormalParameters;
     readonly type: Type;
@@ -1755,7 +1676,7 @@ export interface TemplateType {
 
 export interface TemplateLiteralType {
   readonly type: 'template_literal_type';
-  readonly children: readonly (TemplateChars | TemplateType)[];
+  readonly children: readonly (StringFragment | TemplateType)[];
 }
 
 export interface InferType {
@@ -1787,7 +1708,7 @@ export interface GenericType {
 export interface TypePredicate {
   readonly type: 'type_predicate';
   readonly fields: {
-    readonly name: Identifier | This | PredefinedType;
+    readonly name: Identifier | This;
     readonly type: Type;
   };
 }
@@ -1818,7 +1739,10 @@ export interface TypeQueryInstantiationExpression {
 
 export interface TypeQuery {
   readonly type: 'type_query';
-  readonly children: readonly [TypeQuerySubscriptExpression | TypeQueryMemberExpression | TypeQueryCallExpression | TypeQueryInstantiationExpression | Identifier | This];
+  readonly fields: {
+    readonly typeof: "typeof";
+  };
+  readonly children: readonly [SubscriptExpression | MemberExpression | CallExpression | InstantiationExpression | Identifier | This];
 }
 
 export interface IndexTypeQuery {
@@ -1847,7 +1771,7 @@ export interface MappedTypeClause {
 
 export interface LiteralType {
   readonly type: 'literal_type';
-  readonly children: readonly [_Number | String | True | False | Null | Undefined];
+  readonly children: readonly [UnaryExpression | Number | String | True | False | Null | Undefined];
 }
 
 export interface _Number {
@@ -1863,7 +1787,9 @@ export interface FlowMaybeType {
 
 export interface ParenthesizedType {
   readonly type: 'parenthesized_type';
-  readonly children: readonly [Type];
+  readonly fields: {
+    readonly type: Type;
+  };
 }
 
 export interface TypeArguments {
@@ -1890,7 +1816,6 @@ export interface PropertySignature {
   readonly fields: {
     readonly accessibility_modifier?: AccessibilityModifier;
     readonly override_modifier?: "static";
-    readonly readonly?: "readonly";
     readonly name: PropertyName;
     readonly type?: TypeAnnotation;
   };
@@ -1905,7 +1830,7 @@ export interface TypeParameters {
 export interface TypeParameter {
   readonly type: 'type_parameter';
   readonly fields: {
-    readonly const?: "const";
+    readonly const?: KwConst;
     readonly name: _TypeIdentifier;
     readonly constraint?: Constraint;
     readonly value?: DefaultType;
@@ -1914,44 +1839,47 @@ export interface TypeParameter {
 
 export interface DefaultType {
   readonly type: 'default_type';
-  readonly children: readonly [Type];
+  readonly fields: {
+    readonly type: Type;
+  };
 }
 
 export interface Constraint {
   readonly type: 'constraint';
-  readonly children: readonly [Type];
+  readonly fields: {
+    readonly type: Type;
+  };
 }
 
 export interface ConstructSignature {
   readonly type: 'construct_signature';
   readonly fields: {
-    readonly abstract?: "abstract";
+    readonly abstract?: KwAbstract;
     readonly type_parameters?: TypeParameters;
     readonly parameters: FormalParameters;
     readonly type?: TypeAnnotation;
   };
 }
 
-export interface IndexSignatureColon {
+export interface IndexSignatureUFormColon {
   readonly type: 'index_signature';
   readonly fields: {
-    readonly mapped_type_clause: string;
-    readonly name: _union_Identifier_ReservedIdentifier;
-    readonly index_type: Type;
-    readonly type: _union_8;
+    readonly sign?: "-" | "+";
+    readonly type: _union_5;
   };
+  readonly children: readonly [IndexSignatureColon];
 }
 
-export interface IndexSignatureMappedTypeClause {
+export interface IndexSignatureUFormMappedTypeClause {
   readonly type: 'index_signature';
   readonly fields: {
-    readonly mapped_type_clause: string;
-    readonly type: _union_8;
+    readonly sign?: "-" | "+";
+    readonly type: _union_5;
   };
-  readonly children: readonly [MappedTypeClause];
+  readonly children: readonly [IndexSignatureMappedTypeClause];
 }
 
-export type IndexSignature = IndexSignatureColon | IndexSignatureMappedTypeClause;
+export type IndexSignature = IndexSignatureUFormColon | IndexSignatureUFormMappedTypeClause;
 export interface ArrayType {
   readonly type: 'array_type';
   readonly fields: {
@@ -1966,7 +1894,10 @@ export interface TupleType {
 
 export interface ReadonlyType {
   readonly type: 'readonly_type';
-  readonly children: readonly [Type];
+  readonly fields: {
+    readonly readonly: KwReadonly;
+    readonly type: Type;
+  };
 }
 
 export interface UnionType {
@@ -1996,17 +1927,126 @@ export interface FunctionType {
 
 export interface _TypeIdentifier {
   readonly type: '_type_identifier';
-  readonly children: readonly [Identifier];
+  readonly children: readonly [TypeIdentifier];
+}
+
+export interface _ClassHeritageExtendsClause {
+  readonly type: '_class_heritage_extends_clause';
+  readonly children: readonly [ExtendsClause | ImplementsClause];
+}
+
+export interface _ClassHeritageImplementsClause {
+  readonly type: '_class_heritage_implements_clause';
+  readonly children: readonly [ImplementsClause];
+}
+
+export interface _ImportClauseNamespaceImport {
+  readonly type: '_import_clause_namespace_import';
+  readonly children: readonly [NamespaceImport];
+}
+
+export interface _ImportClauseNamedImports {
+  readonly type: '_import_clause_named_imports';
+  readonly children: readonly [NamedImports];
+}
+
+export interface _ImportClauseDefaultImport {
+  readonly type: '_import_clause_default_import';
+  readonly children: readonly [ImportIdentifier | NamespaceImport | NamedImports];
+}
+
+export interface _IndexSignatureColon {
+  readonly type: '_index_signature_colon';
+}
+
+export interface _IndexSignatureMappedTypeClause {
+  readonly type: '_index_signature_mapped_type_clause';
+  readonly children: readonly [MappedTypeClause];
+}
+
+export interface _ImportSpecifierName {
+  readonly type: '_import_specifier_name';
+  readonly fields: {
+    readonly name: ImportIdentifier;
+  };
+}
+
+export interface _ImportSpecifierAs {
+  readonly type: '_import_specifier_as';
+}
+
+export interface _ArrowFunctionParameter {
+  readonly type: '_arrow_function_parameter';
+  readonly fields: {
+    readonly parameter: Identifier;
+  };
+}
+
+export interface _ArrowFunctionUCallSignature {
+  readonly type: '_arrow_function__call_signature';
+  readonly children: readonly [_CallSignature];
+}
+
+export interface ImportClauseNamespaceImport {
+  readonly type: 'import_clause_namespace_import';
+  readonly children: readonly [NamespaceImport];
+}
+
+export interface ImportClauseNamedImports {
+  readonly type: 'import_clause_named_imports';
+  readonly children: readonly [NamedImports];
+}
+
+export interface ImportClauseDefaultImport {
+  readonly type: 'import_clause_default_import';
+  readonly children: readonly [ImportIdentifier | NamespaceImport | NamedImports];
+}
+
+export interface ImportSpecifierName {
+  readonly type: 'import_specifier_name';
+  readonly fields: {
+    readonly name: ImportIdentifier;
+  };
+}
+
+export interface ImportSpecifierAs {
+  readonly type: 'import_specifier_as';
+  readonly fields: {
+    readonly name: ModuleExportName;
+    readonly alias: ImportIdentifier;
+  };
 }
 
 export interface ShorthandPropertyIdentifier {
   readonly type: 'shorthand_property_identifier';
-  readonly children: readonly [_union_Identifier_ReservedIdentifier];
+  readonly children: readonly [Identifier | ReservedIdentifier];
 }
 
 export interface ShorthandPropertyIdentifierPattern {
   readonly type: 'shorthand_property_identifier_pattern';
-  readonly children: readonly [_union_Identifier_ReservedIdentifier];
+  readonly children: readonly [Identifier | ReservedIdentifier];
+}
+
+export interface ClassHeritageExtendsClause {
+  readonly type: 'class_heritage_extends_clause';
+  readonly children: readonly [ExtendsClause | ImplementsClause];
+}
+
+export interface ClassHeritageImplementsClause {
+  readonly type: 'class_heritage_implements_clause';
+  readonly children: readonly [ImplementsClause];
+}
+
+export interface ArrowFunctionParameter {
+  readonly type: 'arrow_function_parameter';
+  readonly fields: {
+    readonly parameter: Identifier;
+  };
+}
+
+export interface ArrowFunctionUCallSignature {
+  readonly type: 'arrow_function__call_signature';
+  readonly children: readonly [_CallSignature];
 }
 
 export interface InterfaceBody {
@@ -2016,6 +2056,19 @@ export interface InterfaceBody {
     readonly members?: _union_CallSignature_ConstructSignature_ExportStatement;
     readonly closing: "}" | "|}";
   };
+}
+
+export interface IndexSignatureColon {
+  readonly type: 'index_signature_colon';
+  readonly fields: {
+    readonly name: Identifier;
+    readonly index_type: Type;
+  };
+}
+
+export interface IndexSignatureMappedTypeClause {
+  readonly type: 'index_signature_mapped_type_clause';
+  readonly children: readonly [MappedTypeClause];
 }
 
 
@@ -2046,6 +2099,14 @@ export type ReservedIdentifier = Terminal<"_reserved_identifier", string>;
 export type AccessibilityModifier = Terminal<"accessibility_modifier", "public" | "private" | "protected">;
 export type OverrideModifier = Terminal<"override_modifier", "override">;
 export type PredefinedType = Terminal<"predefined_type", string>;
+export type KwAsserts = Terminal<"_kw_asserts", "asserts">;
+export type KwFor = Terminal<"_kw_for", "for">;
+export type KwAsync = Terminal<"_kw_async", "async">;
+export type KwStatic = Terminal<"_kw_static", "static">;
+export type KwExtends = Terminal<"_kw_extends", "extends">;
+export type KwConst = Terminal<"_kw_const", "const">;
+export type KwReadonly = Terminal<"_kw_readonly", "readonly">;
+export type KwAbstract = Terminal<"_kw_abstract", "abstract">;
 export type AutomaticSemicolon = Terminal<"_automatic_semicolon", string>;
 export type TemplateChars = Terminal<"_template_chars", string>;
 export type HtmlComment = Terminal<"html_comment", string>;
@@ -2062,47 +2123,27 @@ export type TypeIdentifier = Terminal<"type_identifier", string>;
 // Config types
 export type ProgramConfig = ConfigOf<Program>;
 export type ExportStatementForm0Config = ConfigOf<ExportStatementForm0>;
-export type ExportStatementExportConfig = ConfigOf<ExportStatementExport>;
-export type ExportStatementExport2Config = ConfigOf<ExportStatementExport2>;
-export type ExportStatementExport3Config = ConfigOf<ExportStatementExport3>;
-export type ExportStatementConfig = ExportStatementForm0Config | ExportStatementExportConfig | ExportStatementExport2Config | ExportStatementExport3Config;
+export type ExportStatementForm1Config = ConfigOf<ExportStatementForm1>;
+export type ExportStatementForm2Config = ConfigOf<ExportStatementForm2>;
+export type ExportStatementForm3Config = ConfigOf<ExportStatementForm3>;
+export type ExportStatementConfig = ExportStatementForm0Config | ExportStatementForm1Config | ExportStatementForm2Config | ExportStatementForm3Config;
 export type NamespaceExportConfig = ConfigOf<NamespaceExport>;
 export type ExportClauseConfig = ConfigOf<ExportClause>;
 export type ExportSpecifierConfig = ConfigOf<ExportSpecifier>;
 export type DeclarationConfig = ConfigOf<Declaration>;
 export type ImportStatementConfig = ConfigOf<ImportStatement>;
-export type ImportClauseNamespaceImportConfig = ConfigOf<ImportClauseNamespaceImport>;
-export type ImportClauseNamedImportsConfig = ConfigOf<ImportClauseNamedImports>;
-export type ImportClauseDefaultImportConfig = ConfigOf<ImportClauseDefaultImport>;
-export type ImportClauseConfig = ImportClauseNamespaceImportConfig | ImportClauseNamedImportsConfig | ImportClauseDefaultImportConfig;
+export type ImportClauseUFormNamespaceImportConfig = ConfigOf<ImportClauseUFormNamespaceImport>;
+export type ImportClauseUFormNamedImportsConfig = ConfigOf<ImportClauseUFormNamedImports>;
+export type ImportClauseUFormDefaultImportConfig = ConfigOf<ImportClauseUFormDefaultImport>;
+export type ImportClauseConfig = ImportClauseUFormNamespaceImportConfig | ImportClauseUFormNamedImportsConfig | ImportClauseUFormDefaultImportConfig;
 export type FromClauseConfig = ConfigOf<FromClause>;
 export type NamespaceImportConfig = ConfigOf<NamespaceImport>;
 export type NamedImportsConfig = ConfigOf<NamedImports>;
-export type ImportSpecifierNameConfig = ConfigOf<ImportSpecifierName>;
-export type ImportSpecifierAsConfig = ConfigOf<ImportSpecifierAs>;
-export type ImportSpecifierConfig = ImportSpecifierNameConfig | ImportSpecifierAsConfig;
+export type ImportSpecifierUFormNameConfig = ConfigOf<ImportSpecifierUFormName>;
+export type ImportSpecifierUFormAsConfig = ConfigOf<ImportSpecifierUFormAs>;
+export type ImportSpecifierConfig = ImportSpecifierUFormNameConfig | ImportSpecifierUFormAsConfig;
 export type ImportAttributeConfig = ConfigOf<ImportAttribute>;
-export type StatementExportStatementConfig = ConfigOf<StatementExportStatement>;
-export type StatementImportStatementConfig = ConfigOf<StatementImportStatement>;
-export type StatementDebuggerStatementConfig = ConfigOf<StatementDebuggerStatement>;
-export type StatementExpressionStatementConfig = ConfigOf<StatementExpressionStatement>;
-export type StatementDeclarationConfig = ConfigOf<StatementDeclaration>;
-export type StatementBodyConfig = ConfigOf<StatementBody>;
-export type StatementIfStatementConfig = ConfigOf<StatementIfStatement>;
-export type StatementSwitchStatementConfig = ConfigOf<StatementSwitchStatement>;
-export type StatementForStatementConfig = ConfigOf<StatementForStatement>;
-export type StatementForInStatementConfig = ConfigOf<StatementForInStatement>;
-export type StatementWhileStatementConfig = ConfigOf<StatementWhileStatement>;
-export type StatementDoStatementConfig = ConfigOf<StatementDoStatement>;
-export type StatementTryStatementConfig = ConfigOf<StatementTryStatement>;
-export type StatementWithStatementConfig = ConfigOf<StatementWithStatement>;
-export type StatementBreakStatementConfig = ConfigOf<StatementBreakStatement>;
-export type StatementContinueStatementConfig = ConfigOf<StatementContinueStatement>;
-export type StatementReturnStatementConfig = ConfigOf<StatementReturnStatement>;
-export type StatementThrowStatementConfig = ConfigOf<StatementThrowStatement>;
-export type StatementEmptyStatementConfig = ConfigOf<StatementEmptyStatement>;
-export type StatementLabeledStatementConfig = ConfigOf<StatementLabeledStatement>;
-export type StatementConfig = StatementExportStatementConfig | StatementImportStatementConfig | StatementDebuggerStatementConfig | StatementExpressionStatementConfig | StatementDeclarationConfig | StatementBodyConfig | StatementIfStatementConfig | StatementSwitchStatementConfig | StatementForStatementConfig | StatementForInStatementConfig | StatementWhileStatementConfig | StatementDoStatementConfig | StatementTryStatementConfig | StatementWithStatementConfig | StatementBreakStatementConfig | StatementContinueStatementConfig | StatementReturnStatementConfig | StatementThrowStatementConfig | StatementEmptyStatementConfig | StatementLabeledStatementConfig;
+export type StatementConfig = ConfigOf<Statement>;
 export type ExpressionStatementConfig = ConfigOf<ExpressionStatement>;
 export type VariableDeclarationConfig = ConfigOf<VariableDeclaration>;
 export type LexicalDeclarationConfig = ConfigOf<LexicalDeclaration>;
@@ -2129,9 +2170,7 @@ export type SwitchCaseConfig = ConfigOf<SwitchCase>;
 export type SwitchDefaultConfig = ConfigOf<SwitchDefault>;
 export type CatchClauseConfig = ConfigOf<CatchClause>;
 export type FinallyClauseConfig = ConfigOf<FinallyClause>;
-export type ParenthesizedExpressionExpressionConfig = ConfigOf<ParenthesizedExpressionExpression>;
-export type ParenthesizedExpressionSequenceExpressionConfig = ConfigOf<ParenthesizedExpressionSequenceExpression>;
-export type ParenthesizedExpressionConfig = ParenthesizedExpressionExpressionConfig | ParenthesizedExpressionSequenceExpressionConfig;
+export type ParenthesizedExpressionConfig = ConfigOf<ParenthesizedExpression>;
 export type ExpressionConfig = ConfigOf<Expression>;
 export type PrimaryExpressionConfig = ConfigOf<PrimaryExpression>;
 export type YieldExpressionConfig = ConfigOf<YieldExpression>;
@@ -2152,26 +2191,24 @@ export type JsxAttributeConfig = ConfigOf<JsxAttribute>;
 export type JsxStringConfig = ConfigOf<JsxString>;
 export type ClassConfig = ConfigOf<Class>;
 export type ClassDeclarationConfig = ConfigOf<ClassDeclaration>;
-export type ClassHeritageExtendsClauseConfig = ConfigOf<ClassHeritageExtendsClause>;
-export type ClassHeritageImplementsClauseConfig = ConfigOf<ClassHeritageImplementsClause>;
-export type ClassHeritageConfig = ClassHeritageExtendsClauseConfig | ClassHeritageImplementsClauseConfig;
+export type ClassHeritageUFormExtendsClauseConfig = ConfigOf<ClassHeritageUFormExtendsClause>;
+export type ClassHeritageUFormImplementsClauseConfig = ConfigOf<ClassHeritageUFormImplementsClause>;
+export type ClassHeritageConfig = ClassHeritageUFormExtendsClauseConfig | ClassHeritageUFormImplementsClauseConfig;
 export type FunctionExpressionConfig = ConfigOf<FunctionExpression>;
 export type FunctionDeclarationConfig = ConfigOf<FunctionDeclaration>;
 export type GeneratorFunctionConfig = ConfigOf<GeneratorFunction>;
 export type GeneratorFunctionDeclarationConfig = ConfigOf<GeneratorFunctionDeclaration>;
-export type ArrowFunctionParameterConfig = ConfigOf<ArrowFunctionParameter>;
-export type ArrowFunctionUCallSignatureConfig = ConfigOf<ArrowFunctionUCallSignature>;
-export type ArrowFunctionConfig = ArrowFunctionParameterConfig | ArrowFunctionUCallSignatureConfig;
+export type ArrowFunctionUFormParameterConfig = ConfigOf<ArrowFunctionUFormParameter>;
+export type ArrowFunctionUFormUCallSignatureConfig = ConfigOf<ArrowFunctionUFormUCallSignature>;
+export type ArrowFunctionConfig = ArrowFunctionUFormParameterConfig | ArrowFunctionUFormUCallSignatureConfig;
 export type _CallSignatureConfig = ConfigOf<_CallSignature>;
-export type CallExpressionFunctionConfig = ConfigOf<CallExpressionFunction>;
-export type CallExpressionFunction2Config = ConfigOf<CallExpressionFunction2>;
-export type CallExpressionTokQDotConfig = ConfigOf<CallExpressionTokQDot>;
-export type CallExpressionConfig = CallExpressionFunctionConfig | CallExpressionFunction2Config | CallExpressionTokQDotConfig;
+export type CallExpressionForm0Config = ConfigOf<CallExpressionForm0>;
+export type CallExpressionForm1Config = ConfigOf<CallExpressionForm1>;
+export type CallExpressionForm2Config = ConfigOf<CallExpressionForm2>;
+export type CallExpressionConfig = CallExpressionForm0Config | CallExpressionForm1Config | CallExpressionForm2Config;
 export type NewExpressionConfig = ConfigOf<NewExpression>;
 export type AwaitExpressionConfig = ConfigOf<AwaitExpression>;
-export type MemberExpressionDotConfig = ConfigOf<MemberExpressionDot>;
-export type MemberExpressionOptionalChainConfig = ConfigOf<MemberExpressionOptionalChain>;
-export type MemberExpressionConfig = MemberExpressionDotConfig | MemberExpressionOptionalChainConfig;
+export type MemberExpressionConfig = ConfigOf<MemberExpression>;
 export type SubscriptExpressionConfig = ConfigOf<SubscriptExpression>;
 export type LhsExpressionConfig = ConfigOf<LhsExpression>;
 export type AssignmentExpressionConfig = ConfigOf<AssignmentExpression>;
@@ -2200,13 +2237,8 @@ export type RestPatternConfig = ConfigOf<RestPattern>;
 export type MethodDefinitionConfig = ConfigOf<MethodDefinition>;
 export type PairConfig = ConfigOf<Pair>;
 export type PairPatternConfig = ConfigOf<PairPattern>;
-export type PropertyNameConfig = ConfigOf<PropertyName>;
 export type ComputedPropertyNameConfig = ConfigOf<ComputedPropertyName>;
-export type PublicFieldDefinitionForm0Config = ConfigOf<PublicFieldDefinitionForm0>;
-export type PublicFieldDefinitionForm1Config = ConfigOf<PublicFieldDefinitionForm1>;
-export type PublicFieldDefinitionForm2Config = ConfigOf<PublicFieldDefinitionForm2>;
-export type PublicFieldDefinitionForm3Config = ConfigOf<PublicFieldDefinitionForm3>;
-export type PublicFieldDefinitionConfig = PublicFieldDefinitionForm0Config | PublicFieldDefinitionForm1Config | PublicFieldDefinitionForm2Config | PublicFieldDefinitionForm3Config;
+export type PublicFieldDefinitionConfig = ConfigOf<PublicFieldDefinition>;
 export type JsxStartOpeningElementConfig = ConfigOf<JsxStartOpeningElement>;
 export type NonNullExpressionConfig = ConfigOf<NonNullExpression>;
 export type MethodSignatureConfig = ConfigOf<MethodSignature>;
@@ -2278,9 +2310,9 @@ export type TypeParameterConfig = ConfigOf<TypeParameter>;
 export type DefaultTypeConfig = ConfigOf<DefaultType>;
 export type ConstraintConfig = ConfigOf<Constraint>;
 export type ConstructSignatureConfig = ConfigOf<ConstructSignature>;
-export type IndexSignatureColonConfig = ConfigOf<IndexSignatureColon>;
-export type IndexSignatureMappedTypeClauseConfig = ConfigOf<IndexSignatureMappedTypeClause>;
-export type IndexSignatureConfig = IndexSignatureColonConfig | IndexSignatureMappedTypeClauseConfig;
+export type IndexSignatureUFormColonConfig = ConfigOf<IndexSignatureUFormColon>;
+export type IndexSignatureUFormMappedTypeClauseConfig = ConfigOf<IndexSignatureUFormMappedTypeClause>;
+export type IndexSignatureConfig = IndexSignatureUFormColonConfig | IndexSignatureUFormMappedTypeClauseConfig;
 export type ArrayTypeConfig = ConfigOf<ArrayType>;
 export type TupleTypeConfig = ConfigOf<TupleType>;
 export type ReadonlyTypeConfig = ConfigOf<ReadonlyType>;
@@ -2288,54 +2320,56 @@ export type UnionTypeConfig = ConfigOf<UnionType>;
 export type IntersectionTypeConfig = ConfigOf<IntersectionType>;
 export type FunctionTypeConfig = ConfigOf<FunctionType>;
 export type _TypeIdentifierConfig = ConfigOf<_TypeIdentifier>;
+export type _ClassHeritageExtendsClauseConfig = ConfigOf<_ClassHeritageExtendsClause>;
+export type _ClassHeritageImplementsClauseConfig = ConfigOf<_ClassHeritageImplementsClause>;
+export type _ImportClauseNamespaceImportConfig = ConfigOf<_ImportClauseNamespaceImport>;
+export type _ImportClauseNamedImportsConfig = ConfigOf<_ImportClauseNamedImports>;
+export type _ImportClauseDefaultImportConfig = ConfigOf<_ImportClauseDefaultImport>;
+export type _IndexSignatureColonConfig = ConfigOf<_IndexSignatureColon>;
+export type _IndexSignatureMappedTypeClauseConfig = ConfigOf<_IndexSignatureMappedTypeClause>;
+export type _ImportSpecifierNameConfig = ConfigOf<_ImportSpecifierName>;
+export type _ImportSpecifierAsConfig = ConfigOf<_ImportSpecifierAs>;
+export type _ArrowFunctionParameterConfig = ConfigOf<_ArrowFunctionParameter>;
+export type _ArrowFunctionUCallSignatureConfig = ConfigOf<_ArrowFunctionUCallSignature>;
+export type ImportClauseNamespaceImportConfig = ConfigOf<ImportClauseNamespaceImport>;
+export type ImportClauseNamedImportsConfig = ConfigOf<ImportClauseNamedImports>;
+export type ImportClauseDefaultImportConfig = ConfigOf<ImportClauseDefaultImport>;
+export type ImportSpecifierNameConfig = ConfigOf<ImportSpecifierName>;
+export type ImportSpecifierAsConfig = ConfigOf<ImportSpecifierAs>;
 export type ShorthandPropertyIdentifierConfig = ConfigOf<ShorthandPropertyIdentifier>;
 export type ShorthandPropertyIdentifierPatternConfig = ConfigOf<ShorthandPropertyIdentifierPattern>;
+export type ClassHeritageExtendsClauseConfig = ConfigOf<ClassHeritageExtendsClause>;
+export type ClassHeritageImplementsClauseConfig = ConfigOf<ClassHeritageImplementsClause>;
+export type ArrowFunctionParameterConfig = ConfigOf<ArrowFunctionParameter>;
+export type ArrowFunctionUCallSignatureConfig = ConfigOf<ArrowFunctionUCallSignature>;
 export type InterfaceBodyConfig = ConfigOf<InterfaceBody>;
+export type IndexSignatureColonConfig = ConfigOf<IndexSignatureColon>;
+export type IndexSignatureMappedTypeClauseConfig = ConfigOf<IndexSignatureMappedTypeClause>;
 
 // Tree types
 export interface ProgramTree extends TreeNode<'program'> {}
 export interface ExportStatementTree extends TreeNode<'export_statement'> {}
 export interface ExportStatementForm0Tree extends TreeNode<'export_statement'> {}
-export interface ExportStatementExportTree extends TreeNode<'export_statement'> {}
-export interface ExportStatementExport2Tree extends TreeNode<'export_statement'> {}
-export interface ExportStatementExport3Tree extends TreeNode<'export_statement'> {}
+export interface ExportStatementForm1Tree extends TreeNode<'export_statement'> {}
+export interface ExportStatementForm2Tree extends TreeNode<'export_statement'> {}
+export interface ExportStatementForm3Tree extends TreeNode<'export_statement'> {}
 export interface NamespaceExportTree extends TreeNode<'namespace_export'> {}
 export interface ExportClauseTree extends TreeNode<'export_clause'> {}
 export interface ExportSpecifierTree extends TreeNode<'export_specifier'> {}
 export interface DeclarationTree extends TreeNode<'declaration'> {}
 export interface ImportStatementTree extends TreeNode<'import_statement'> {}
 export interface ImportClauseTree extends TreeNode<'import_clause'> {}
-export interface ImportClauseNamespaceImportTree extends TreeNode<'import_clause'> {}
-export interface ImportClauseNamedImportsTree extends TreeNode<'import_clause'> {}
-export interface ImportClauseDefaultImportTree extends TreeNode<'import_clause'> {}
+export interface ImportClauseUFormNamespaceImportTree extends TreeNode<'import_clause'> {}
+export interface ImportClauseUFormNamedImportsTree extends TreeNode<'import_clause'> {}
+export interface ImportClauseUFormDefaultImportTree extends TreeNode<'import_clause'> {}
 export interface FromClauseTree extends AnyTreeNode { readonly type: "_from_clause"; }
 export interface NamespaceImportTree extends TreeNode<'namespace_import'> {}
 export interface NamedImportsTree extends TreeNode<'named_imports'> {}
 export interface ImportSpecifierTree extends TreeNode<'import_specifier'> {}
-export interface ImportSpecifierNameTree extends TreeNode<'import_specifier'> {}
-export interface ImportSpecifierAsTree extends TreeNode<'import_specifier'> {}
+export interface ImportSpecifierUFormNameTree extends TreeNode<'import_specifier'> {}
+export interface ImportSpecifierUFormAsTree extends TreeNode<'import_specifier'> {}
 export interface ImportAttributeTree extends TreeNode<'import_attribute'> {}
 export interface StatementTree extends TreeNode<'statement'> {}
-export interface StatementExportStatementTree extends TreeNode<'statement'> {}
-export interface StatementImportStatementTree extends TreeNode<'statement'> {}
-export interface StatementDebuggerStatementTree extends TreeNode<'statement'> {}
-export interface StatementExpressionStatementTree extends TreeNode<'statement'> {}
-export interface StatementDeclarationTree extends TreeNode<'statement'> {}
-export interface StatementBodyTree extends TreeNode<'statement'> {}
-export interface StatementIfStatementTree extends TreeNode<'statement'> {}
-export interface StatementSwitchStatementTree extends TreeNode<'statement'> {}
-export interface StatementForStatementTree extends TreeNode<'statement'> {}
-export interface StatementForInStatementTree extends TreeNode<'statement'> {}
-export interface StatementWhileStatementTree extends TreeNode<'statement'> {}
-export interface StatementDoStatementTree extends TreeNode<'statement'> {}
-export interface StatementTryStatementTree extends TreeNode<'statement'> {}
-export interface StatementWithStatementTree extends TreeNode<'statement'> {}
-export interface StatementBreakStatementTree extends TreeNode<'statement'> {}
-export interface StatementContinueStatementTree extends TreeNode<'statement'> {}
-export interface StatementReturnStatementTree extends TreeNode<'statement'> {}
-export interface StatementThrowStatementTree extends TreeNode<'statement'> {}
-export interface StatementEmptyStatementTree extends TreeNode<'statement'> {}
-export interface StatementLabeledStatementTree extends TreeNode<'statement'> {}
 export interface ExpressionStatementTree extends TreeNode<'expression_statement'> {}
 export interface VariableDeclarationTree extends TreeNode<'variable_declaration'> {}
 export interface LexicalDeclarationTree extends TreeNode<'lexical_declaration'> {}
@@ -2363,8 +2397,6 @@ export interface SwitchDefaultTree extends TreeNode<'switch_default'> {}
 export interface CatchClauseTree extends TreeNode<'catch_clause'> {}
 export interface FinallyClauseTree extends TreeNode<'finally_clause'> {}
 export interface ParenthesizedExpressionTree extends TreeNode<'parenthesized_expression'> {}
-export interface ParenthesizedExpressionExpressionTree extends TreeNode<'parenthesized_expression'> {}
-export interface ParenthesizedExpressionSequenceExpressionTree extends TreeNode<'parenthesized_expression'> {}
 export interface ExpressionTree extends TreeNode<'expression'> {}
 export interface PrimaryExpressionTree extends TreeNode<'primary_expression'> {}
 export interface YieldExpressionTree extends TreeNode<'yield_expression'> {}
@@ -2374,37 +2406,35 @@ export interface AssignmentPatternTree extends TreeNode<'assignment_pattern'> {}
 export interface ObjectAssignmentPatternTree extends TreeNode<'object_assignment_pattern'> {}
 export interface ArrayTree extends TreeNode<'array'> {}
 export interface ArrayPatternTree extends TreeNode<'array_pattern'> {}
-export interface JsxElementTree extends AnyTreeNode { readonly type: "jsx_element"; }
-export interface JsxExpressionTree extends AnyTreeNode { readonly type: "jsx_expression"; }
-export interface JsxOpeningElementTree extends AnyTreeNode { readonly type: "jsx_opening_element"; }
+export interface JsxElementTree extends TreeNode<'jsx_element'> {}
+export interface JsxExpressionTree extends TreeNode<'jsx_expression'> {}
+export interface JsxOpeningElementTree extends TreeNode<'jsx_opening_element'> {}
 export interface NestedIdentifierTree extends TreeNode<'nested_identifier'> {}
-export interface JsxNamespaceNameTree extends AnyTreeNode { readonly type: "jsx_namespace_name"; }
-export interface JsxClosingElementTree extends AnyTreeNode { readonly type: "jsx_closing_element"; }
-export interface JsxSelfClosingElementTree extends AnyTreeNode { readonly type: "jsx_self_closing_element"; }
-export interface JsxAttributeTree extends AnyTreeNode { readonly type: "jsx_attribute"; }
+export interface JsxNamespaceNameTree extends TreeNode<'jsx_namespace_name'> {}
+export interface JsxClosingElementTree extends TreeNode<'jsx_closing_element'> {}
+export interface JsxSelfClosingElementTree extends TreeNode<'jsx_self_closing_element'> {}
+export interface JsxAttributeTree extends TreeNode<'jsx_attribute'> {}
 export interface JsxStringTree extends AnyTreeNode { readonly type: "_jsx_string"; }
 export interface ClassTree extends TreeNode<'class'> {}
 export interface ClassDeclarationTree extends TreeNode<'class_declaration'> {}
 export interface ClassHeritageTree extends TreeNode<'class_heritage'> {}
-export interface ClassHeritageExtendsClauseTree extends TreeNode<'class_heritage'> {}
-export interface ClassHeritageImplementsClauseTree extends TreeNode<'class_heritage'> {}
+export interface ClassHeritageUFormExtendsClauseTree extends TreeNode<'class_heritage'> {}
+export interface ClassHeritageUFormImplementsClauseTree extends TreeNode<'class_heritage'> {}
 export interface FunctionExpressionTree extends TreeNode<'function_expression'> {}
 export interface FunctionDeclarationTree extends TreeNode<'function_declaration'> {}
 export interface GeneratorFunctionTree extends TreeNode<'generator_function'> {}
 export interface GeneratorFunctionDeclarationTree extends TreeNode<'generator_function_declaration'> {}
 export interface ArrowFunctionTree extends TreeNode<'arrow_function'> {}
-export interface ArrowFunctionParameterTree extends TreeNode<'arrow_function'> {}
-export interface ArrowFunctionUCallSignatureTree extends TreeNode<'arrow_function'> {}
+export interface ArrowFunctionUFormParameterTree extends TreeNode<'arrow_function'> {}
+export interface ArrowFunctionUFormUCallSignatureTree extends TreeNode<'arrow_function'> {}
 export interface _CallSignatureTree extends AnyTreeNode { readonly type: "_call_signature"; }
 export interface CallExpressionTree extends TreeNode<'call_expression'> {}
-export interface CallExpressionFunctionTree extends TreeNode<'call_expression'> {}
-export interface CallExpressionFunction2Tree extends TreeNode<'call_expression'> {}
-export interface CallExpressionTokQDotTree extends TreeNode<'call_expression'> {}
+export interface CallExpressionForm0Tree extends TreeNode<'call_expression'> {}
+export interface CallExpressionForm1Tree extends TreeNode<'call_expression'> {}
+export interface CallExpressionForm2Tree extends TreeNode<'call_expression'> {}
 export interface NewExpressionTree extends TreeNode<'new_expression'> {}
 export interface AwaitExpressionTree extends TreeNode<'await_expression'> {}
 export interface MemberExpressionTree extends TreeNode<'member_expression'> {}
-export interface MemberExpressionDotTree extends TreeNode<'member_expression'> {}
-export interface MemberExpressionOptionalChainTree extends TreeNode<'member_expression'> {}
 export interface SubscriptExpressionTree extends TreeNode<'subscript_expression'> {}
 export interface LhsExpressionTree extends AnyTreeNode { readonly type: "_lhs_expression"; }
 export interface AssignmentExpressionTree extends TreeNode<'assignment_expression'> {}
@@ -2433,20 +2463,15 @@ export interface RestPatternTree extends TreeNode<'rest_pattern'> {}
 export interface MethodDefinitionTree extends TreeNode<'method_definition'> {}
 export interface PairTree extends TreeNode<'pair'> {}
 export interface PairPatternTree extends TreeNode<'pair_pattern'> {}
-export interface PropertyNameTree extends AnyTreeNode { readonly type: "_property_name"; }
 export interface ComputedPropertyNameTree extends TreeNode<'computed_property_name'> {}
 export interface PublicFieldDefinitionTree extends TreeNode<'public_field_definition'> {}
-export interface PublicFieldDefinitionForm0Tree extends TreeNode<'public_field_definition'> {}
-export interface PublicFieldDefinitionForm1Tree extends TreeNode<'public_field_definition'> {}
-export interface PublicFieldDefinitionForm2Tree extends TreeNode<'public_field_definition'> {}
-export interface PublicFieldDefinitionForm3Tree extends TreeNode<'public_field_definition'> {}
 export interface JsxStartOpeningElementTree extends AnyTreeNode { readonly type: "_jsx_start_opening_element"; }
 export interface NonNullExpressionTree extends TreeNode<'non_null_expression'> {}
 export interface MethodSignatureTree extends TreeNode<'method_signature'> {}
 export interface AbstractMethodSignatureTree extends TreeNode<'abstract_method_signature'> {}
 export interface FunctionSignatureTree extends TreeNode<'function_signature'> {}
 export interface DecoratorParenthesizedExpressionTree extends AnyTreeNode { readonly type: "decorator_parenthesized_expression"; }
-export interface TypeAssertionTree extends TreeNode<'type_assertion'> {}
+export interface TypeAssertionTree extends AnyTreeNode { readonly type: "type_assertion"; }
 export interface AsExpressionTree extends TreeNode<'as_expression'> {}
 export interface SatisfiesExpressionTree extends TreeNode<'satisfies_expression'> {}
 export interface InstantiationExpressionTree extends TreeNode<'instantiation_expression'> {}
@@ -2512,8 +2537,8 @@ export interface DefaultTypeTree extends TreeNode<'default_type'> {}
 export interface ConstraintTree extends TreeNode<'constraint'> {}
 export interface ConstructSignatureTree extends TreeNode<'construct_signature'> {}
 export interface IndexSignatureTree extends TreeNode<'index_signature'> {}
-export interface IndexSignatureColonTree extends TreeNode<'index_signature'> {}
-export interface IndexSignatureMappedTypeClauseTree extends TreeNode<'index_signature'> {}
+export interface IndexSignatureUFormColonTree extends TreeNode<'index_signature'> {}
+export interface IndexSignatureUFormMappedTypeClauseTree extends TreeNode<'index_signature'> {}
 export interface ArrayTypeTree extends TreeNode<'array_type'> {}
 export interface TupleTypeTree extends TreeNode<'tuple_type'> {}
 export interface ReadonlyTypeTree extends TreeNode<'readonly_type'> {}
@@ -2521,12 +2546,34 @@ export interface UnionTypeTree extends TreeNode<'union_type'> {}
 export interface IntersectionTypeTree extends TreeNode<'intersection_type'> {}
 export interface FunctionTypeTree extends TreeNode<'function_type'> {}
 export interface _TypeIdentifierTree extends AnyTreeNode { readonly type: "_type_identifier"; }
+export interface _ClassHeritageExtendsClauseTree extends AnyTreeNode { readonly type: "_class_heritage_extends_clause"; }
+export interface _ClassHeritageImplementsClauseTree extends AnyTreeNode { readonly type: "_class_heritage_implements_clause"; }
+export interface _ImportClauseNamespaceImportTree extends AnyTreeNode { readonly type: "_import_clause_namespace_import"; }
+export interface _ImportClauseNamedImportsTree extends AnyTreeNode { readonly type: "_import_clause_named_imports"; }
+export interface _ImportClauseDefaultImportTree extends AnyTreeNode { readonly type: "_import_clause_default_import"; }
+export interface _IndexSignatureColonTree extends AnyTreeNode { readonly type: "_index_signature_colon"; }
+export interface _IndexSignatureMappedTypeClauseTree extends AnyTreeNode { readonly type: "_index_signature_mapped_type_clause"; }
+export interface _ImportSpecifierNameTree extends AnyTreeNode { readonly type: "_import_specifier_name"; }
+export interface _ImportSpecifierAsTree extends AnyTreeNode { readonly type: "_import_specifier_as"; }
+export interface _ArrowFunctionParameterTree extends AnyTreeNode { readonly type: "_arrow_function_parameter"; }
+export interface _ArrowFunctionUCallSignatureTree extends AnyTreeNode { readonly type: "_arrow_function__call_signature"; }
+export interface ImportClauseNamespaceImportTree extends TreeNode<'import_clause_namespace_import'> {}
+export interface ImportClauseNamedImportsTree extends TreeNode<'import_clause_named_imports'> {}
+export interface ImportClauseDefaultImportTree extends TreeNode<'import_clause_default_import'> {}
+export interface ImportSpecifierNameTree extends TreeNode<'import_specifier_name'> {}
+export interface ImportSpecifierAsTree extends TreeNode<'import_specifier_as'> {}
 export interface ShorthandPropertyIdentifierTree extends TreeNode<'shorthand_property_identifier'> {}
 export interface ShorthandPropertyIdentifierPatternTree extends TreeNode<'shorthand_property_identifier_pattern'> {}
+export interface ClassHeritageExtendsClauseTree extends TreeNode<'class_heritage_extends_clause'> {}
+export interface ClassHeritageImplementsClauseTree extends TreeNode<'class_heritage_implements_clause'> {}
+export interface ArrowFunctionParameterTree extends TreeNode<'arrow_function_parameter'> {}
+export interface ArrowFunctionUCallSignatureTree extends TreeNode<'arrow_function__call_signature'> {}
 export interface InterfaceBodyTree extends TreeNode<'interface_body'> {}
+export interface IndexSignatureColonTree extends TreeNode<'index_signature_colon'> {}
+export interface IndexSignatureMappedTypeClauseTree extends TreeNode<'index_signature_mapped_type_clause'> {}
 export interface HashBangLineTree extends TreeNode<'hash_bang_line'> {}
 export interface ImportTree extends AnyTreeNode { readonly type: "import"; }
-export interface HtmlCharacterReferenceTree extends AnyTreeNode { readonly type: "html_character_reference"; }
+export interface HtmlCharacterReferenceTree extends TreeNode<'html_character_reference'> {}
 export interface JsxIdentifierTree extends AnyTreeNode { readonly type: "jsx_identifier"; }
 export interface UnescapedDoubleJsxStringFragmentTree extends AnyTreeNode { readonly type: "unescaped_double_jsx_string_fragment"; }
 export interface UnescapedSingleJsxStringFragmentTree extends AnyTreeNode { readonly type: "unescaped_single_jsx_string_fragment"; }
@@ -2550,11 +2597,19 @@ export interface ReservedIdentifierTree extends AnyTreeNode { readonly type: "_r
 export interface AccessibilityModifierTree extends TreeNode<'accessibility_modifier'> {}
 export interface OverrideModifierTree extends AnyTreeNode { readonly type: "override_modifier"; }
 export interface PredefinedTypeTree extends TreeNode<'predefined_type'> {}
+export interface KwAssertsTree extends AnyTreeNode { readonly type: "_kw_asserts"; }
+export interface KwForTree extends AnyTreeNode { readonly type: "_kw_for"; }
+export interface KwAsyncTree extends AnyTreeNode { readonly type: "_kw_async"; }
+export interface KwStaticTree extends AnyTreeNode { readonly type: "_kw_static"; }
+export interface KwExtendsTree extends AnyTreeNode { readonly type: "_kw_extends"; }
+export interface KwConstTree extends AnyTreeNode { readonly type: "_kw_const"; }
+export interface KwReadonlyTree extends AnyTreeNode { readonly type: "_kw_readonly"; }
+export interface KwAbstractTree extends AnyTreeNode { readonly type: "_kw_abstract"; }
 export interface AutomaticSemicolonTree extends AnyTreeNode { readonly type: "_automatic_semicolon"; }
 export interface TemplateCharsTree extends AnyTreeNode { readonly type: "_template_chars"; }
 export interface HtmlCommentTree extends TreeNode<'html_comment'> {}
 export interface OrorTree extends AnyTreeNode { readonly type: "||"; }
-export interface JsxTextTree extends AnyTreeNode { readonly type: "jsx_text"; }
+export interface JsxTextTree extends TreeNode<'jsx_text'> {}
 export interface FunctionSignatureAutomaticSemicolonTree extends AnyTreeNode { readonly type: "_function_signature_automatic_semicolon"; }
 export interface ErrorRecoveryTree extends AnyTreeNode { readonly type: "__error_recovery"; }
 export interface StatementIdentifierTree extends TreeNode<'statement_identifier'> {}
@@ -2562,13 +2617,15 @@ export interface PropertyIdentifierTree extends TreeNode<'property_identifier'> 
 export interface StringFragmentTree extends TreeNode<'string_fragment'> {}
 export interface ThisTypeTree extends AnyTreeNode { readonly type: "this_type"; }
 export interface TypeIdentifierTree extends TreeNode<'type_identifier'> {}
+export interface ExportTree extends AnyTreeNode { readonly type: "export"; }
+export interface DefaultTree extends AnyTreeNode { readonly type: "default"; }
 export interface AsTree extends AnyTreeNode { readonly type: "as"; }
+export interface NamespaceTree extends AnyTreeNode { readonly type: "namespace"; }
 export interface FromTree extends AnyTreeNode { readonly type: "from"; }
 export interface VarTree extends AnyTreeNode { readonly type: "var"; }
 export interface ElseTree extends AnyTreeNode { readonly type: "else"; }
 export interface IfTree extends AnyTreeNode { readonly type: "if"; }
 export interface SwitchTree extends AnyTreeNode { readonly type: "switch"; }
-export interface ForTree extends AnyTreeNode { readonly type: "for"; }
 export interface AwaitTree extends AnyTreeNode { readonly type: "await"; }
 export interface WhileTree extends AnyTreeNode { readonly type: "while"; }
 export interface DoTree extends AnyTreeNode { readonly type: "do"; }
@@ -2580,11 +2637,9 @@ export interface DebuggerTree extends AnyTreeNode { readonly type: "debugger"; }
 export interface ReturnTree extends AnyTreeNode { readonly type: "return"; }
 export interface ThrowTree extends AnyTreeNode { readonly type: "throw"; }
 export interface CaseTree extends AnyTreeNode { readonly type: "case"; }
-export interface DefaultTree extends AnyTreeNode { readonly type: "default"; }
 export interface CatchTree extends AnyTreeNode { readonly type: "catch"; }
 export interface FinallyTree extends AnyTreeNode { readonly type: "finally"; }
 export interface YieldTree extends AnyTreeNode { readonly type: "yield"; }
-export interface AsyncTree extends AnyTreeNode { readonly type: "async"; }
 export interface FunctionTree extends AnyTreeNode { readonly type: "function"; }
 export interface NewTree extends AnyTreeNode { readonly type: "new"; }
 export interface UsingTree extends AnyTreeNode { readonly type: "using"; }
@@ -2592,38 +2647,40 @@ export interface InstanceofTree extends AnyTreeNode { readonly type: "instanceof
 export interface InTree extends AnyTreeNode { readonly type: "in"; }
 export interface StaticTree extends AnyTreeNode { readonly type: "static"; }
 export interface ReadonlyTree extends AnyTreeNode { readonly type: "readonly"; }
+export interface AsyncTree extends AnyTreeNode { readonly type: "async"; }
+export interface DeclareTree extends AnyTreeNode { readonly type: "declare"; }
 export interface AbstractTree extends AnyTreeNode { readonly type: "abstract"; }
+export interface AccessorTree extends AnyTreeNode { readonly type: "accessor"; }
 export interface ConstTree extends AnyTreeNode { readonly type: "const"; }
 export interface SatisfiesTree extends AnyTreeNode { readonly type: "satisfies"; }
 export interface RequireTree extends AnyTreeNode { readonly type: "require"; }
-export interface ExtendsTree extends AnyTreeNode { readonly type: "extends"; }
 export interface ImplementsTree extends AnyTreeNode { readonly type: "implements"; }
-export interface DeclareTree extends AnyTreeNode { readonly type: "declare"; }
 export interface GlobalTree extends AnyTreeNode { readonly type: "global"; }
-export interface NamespaceTree extends AnyTreeNode { readonly type: "namespace"; }
 export interface InterfaceTree extends AnyTreeNode { readonly type: "interface"; }
 export interface EnumTree extends AnyTreeNode { readonly type: "enum"; }
 export interface OverrideTree extends AnyTreeNode { readonly type: "override"; }
 export interface InferTree extends AnyTreeNode { readonly type: "infer"; }
+export interface ExtendsTree extends AnyTreeNode { readonly type: "extends"; }
 export interface IsTree extends AnyTreeNode { readonly type: "is"; }
 export interface TypeofTree extends AnyTreeNode { readonly type: "typeof"; }
 export interface KeyofTree extends AnyTreeNode { readonly type: "keyof"; }
+export interface ForTree extends AnyTreeNode { readonly type: "for"; }
 
 // Loose-input type aliases (for from() construction)
 export type LooseProgram = FromInputOf<Program, LeafScalarMap, LeafStringMap>;
-export type LooseExportStatement = FromInputOf<ExportStatementForm0, LeafScalarMap, LeafStringMap> | FromInputOf<ExportStatementExport, LeafScalarMap, LeafStringMap> | FromInputOf<ExportStatementExport2, LeafScalarMap, LeafStringMap> | FromInputOf<ExportStatementExport3, LeafScalarMap, LeafStringMap>;
+export type LooseExportStatement = FromInputOf<ExportStatementForm0, LeafScalarMap, LeafStringMap> | FromInputOf<ExportStatementForm1, LeafScalarMap, LeafStringMap> | FromInputOf<ExportStatementForm2, LeafScalarMap, LeafStringMap> | FromInputOf<ExportStatementForm3, LeafScalarMap, LeafStringMap>;
 export type LooseNamespaceExport = FromInputOf<NamespaceExport, LeafScalarMap, LeafStringMap>;
 export type LooseExportClause = FromInputOf<ExportClause, LeafScalarMap, LeafStringMap>;
 export type LooseExportSpecifier = FromInputOf<ExportSpecifier, LeafScalarMap, LeafStringMap>;
 export type LooseDeclaration = FromInputOf<Declaration, LeafScalarMap, LeafStringMap>;
 export type LooseImportStatement = FromInputOf<ImportStatement, LeafScalarMap, LeafStringMap>;
-export type LooseImportClause = FromInputOf<ImportClauseNamespaceImport, LeafScalarMap, LeafStringMap> | FromInputOf<ImportClauseNamedImports, LeafScalarMap, LeafStringMap> | FromInputOf<ImportClauseDefaultImport, LeafScalarMap, LeafStringMap>;
+export type LooseImportClause = FromInputOf<ImportClauseUFormNamespaceImport, LeafScalarMap, LeafStringMap> | FromInputOf<ImportClauseUFormNamedImports, LeafScalarMap, LeafStringMap> | FromInputOf<ImportClauseUFormDefaultImport, LeafScalarMap, LeafStringMap>;
 export type LooseFromClause = FromInputOf<FromClause, LeafScalarMap, LeafStringMap>;
 export type LooseNamespaceImport = FromInputOf<NamespaceImport, LeafScalarMap, LeafStringMap>;
 export type LooseNamedImports = FromInputOf<NamedImports, LeafScalarMap, LeafStringMap>;
-export type LooseImportSpecifier = FromInputOf<ImportSpecifierName, LeafScalarMap, LeafStringMap> | FromInputOf<ImportSpecifierAs, LeafScalarMap, LeafStringMap>;
+export type LooseImportSpecifier = FromInputOf<ImportSpecifierUFormName, LeafScalarMap, LeafStringMap> | FromInputOf<ImportSpecifierUFormAs, LeafScalarMap, LeafStringMap>;
 export type LooseImportAttribute = FromInputOf<ImportAttribute, LeafScalarMap, LeafStringMap>;
-export type LooseStatement = FromInputOf<StatementExportStatement, LeafScalarMap, LeafStringMap> | FromInputOf<StatementImportStatement, LeafScalarMap, LeafStringMap> | FromInputOf<StatementDebuggerStatement, LeafScalarMap, LeafStringMap> | FromInputOf<StatementExpressionStatement, LeafScalarMap, LeafStringMap> | FromInputOf<StatementDeclaration, LeafScalarMap, LeafStringMap> | FromInputOf<StatementBody, LeafScalarMap, LeafStringMap> | FromInputOf<StatementIfStatement, LeafScalarMap, LeafStringMap> | FromInputOf<StatementSwitchStatement, LeafScalarMap, LeafStringMap> | FromInputOf<StatementForStatement, LeafScalarMap, LeafStringMap> | FromInputOf<StatementForInStatement, LeafScalarMap, LeafStringMap> | FromInputOf<StatementWhileStatement, LeafScalarMap, LeafStringMap> | FromInputOf<StatementDoStatement, LeafScalarMap, LeafStringMap> | FromInputOf<StatementTryStatement, LeafScalarMap, LeafStringMap> | FromInputOf<StatementWithStatement, LeafScalarMap, LeafStringMap> | FromInputOf<StatementBreakStatement, LeafScalarMap, LeafStringMap> | FromInputOf<StatementContinueStatement, LeafScalarMap, LeafStringMap> | FromInputOf<StatementReturnStatement, LeafScalarMap, LeafStringMap> | FromInputOf<StatementThrowStatement, LeafScalarMap, LeafStringMap> | FromInputOf<StatementEmptyStatement, LeafScalarMap, LeafStringMap> | FromInputOf<StatementLabeledStatement, LeafScalarMap, LeafStringMap>;
+export type LooseStatement = FromInputOf<Statement, LeafScalarMap, LeafStringMap>;
 export type LooseExpressionStatement = FromInputOf<ExpressionStatement, LeafScalarMap, LeafStringMap>;
 export type LooseVariableDeclaration = FromInputOf<VariableDeclaration, LeafScalarMap, LeafStringMap>;
 export type LooseLexicalDeclaration = FromInputOf<LexicalDeclaration, LeafScalarMap, LeafStringMap>;
@@ -2650,7 +2707,7 @@ export type LooseSwitchCase = FromInputOf<SwitchCase, LeafScalarMap, LeafStringM
 export type LooseSwitchDefault = FromInputOf<SwitchDefault, LeafScalarMap, LeafStringMap>;
 export type LooseCatchClause = FromInputOf<CatchClause, LeafScalarMap, LeafStringMap>;
 export type LooseFinallyClause = FromInputOf<FinallyClause, LeafScalarMap, LeafStringMap>;
-export type LooseParenthesizedExpression = FromInputOf<ParenthesizedExpressionExpression, LeafScalarMap, LeafStringMap> | FromInputOf<ParenthesizedExpressionSequenceExpression, LeafScalarMap, LeafStringMap>;
+export type LooseParenthesizedExpression = FromInputOf<ParenthesizedExpression, LeafScalarMap, LeafStringMap>;
 export type LooseExpression = FromInputOf<Expression, LeafScalarMap, LeafStringMap>;
 export type LoosePrimaryExpression = FromInputOf<PrimaryExpression, LeafScalarMap, LeafStringMap>;
 export type LooseYieldExpression = FromInputOf<YieldExpression, LeafScalarMap, LeafStringMap>;
@@ -2671,17 +2728,17 @@ export type LooseJsxAttribute = FromInputOf<JsxAttribute, LeafScalarMap, LeafStr
 export type LooseJsxString = FromInputOf<JsxString, LeafScalarMap, LeafStringMap>;
 export type LooseClass = FromInputOf<Class, LeafScalarMap, LeafStringMap>;
 export type LooseClassDeclaration = FromInputOf<ClassDeclaration, LeafScalarMap, LeafStringMap>;
-export type LooseClassHeritage = FromInputOf<ClassHeritageExtendsClause, LeafScalarMap, LeafStringMap> | FromInputOf<ClassHeritageImplementsClause, LeafScalarMap, LeafStringMap>;
+export type LooseClassHeritage = FromInputOf<ClassHeritageUFormExtendsClause, LeafScalarMap, LeafStringMap> | FromInputOf<ClassHeritageUFormImplementsClause, LeafScalarMap, LeafStringMap>;
 export type LooseFunctionExpression = FromInputOf<FunctionExpression, LeafScalarMap, LeafStringMap>;
 export type LooseFunctionDeclaration = FromInputOf<FunctionDeclaration, LeafScalarMap, LeafStringMap>;
 export type LooseGeneratorFunction = FromInputOf<GeneratorFunction, LeafScalarMap, LeafStringMap>;
 export type LooseGeneratorFunctionDeclaration = FromInputOf<GeneratorFunctionDeclaration, LeafScalarMap, LeafStringMap>;
-export type LooseArrowFunction = FromInputOf<ArrowFunctionParameter, LeafScalarMap, LeafStringMap> | FromInputOf<ArrowFunctionUCallSignature, LeafScalarMap, LeafStringMap>;
+export type LooseArrowFunction = FromInputOf<ArrowFunctionUFormParameter, LeafScalarMap, LeafStringMap> | FromInputOf<ArrowFunctionUFormUCallSignature, LeafScalarMap, LeafStringMap>;
 export type Loose_CallSignature = FromInputOf<_CallSignature, LeafScalarMap, LeafStringMap>;
-export type LooseCallExpression = FromInputOf<CallExpressionFunction, LeafScalarMap, LeafStringMap> | FromInputOf<CallExpressionFunction2, LeafScalarMap, LeafStringMap> | FromInputOf<CallExpressionTokQDot, LeafScalarMap, LeafStringMap>;
+export type LooseCallExpression = FromInputOf<CallExpressionForm0, LeafScalarMap, LeafStringMap> | FromInputOf<CallExpressionForm1, LeafScalarMap, LeafStringMap> | FromInputOf<CallExpressionForm2, LeafScalarMap, LeafStringMap>;
 export type LooseNewExpression = FromInputOf<NewExpression, LeafScalarMap, LeafStringMap>;
 export type LooseAwaitExpression = FromInputOf<AwaitExpression, LeafScalarMap, LeafStringMap>;
-export type LooseMemberExpression = FromInputOf<MemberExpressionDot, LeafScalarMap, LeafStringMap> | FromInputOf<MemberExpressionOptionalChain, LeafScalarMap, LeafStringMap>;
+export type LooseMemberExpression = FromInputOf<MemberExpression, LeafScalarMap, LeafStringMap>;
 export type LooseSubscriptExpression = FromInputOf<SubscriptExpression, LeafScalarMap, LeafStringMap>;
 export type LooseLhsExpression = FromInputOf<LhsExpression, LeafScalarMap, LeafStringMap>;
 export type LooseAssignmentExpression = FromInputOf<AssignmentExpression, LeafScalarMap, LeafStringMap>;
@@ -2710,9 +2767,8 @@ export type LooseRestPattern = FromInputOf<RestPattern, LeafScalarMap, LeafStrin
 export type LooseMethodDefinition = FromInputOf<MethodDefinition, LeafScalarMap, LeafStringMap>;
 export type LoosePair = FromInputOf<Pair, LeafScalarMap, LeafStringMap>;
 export type LoosePairPattern = FromInputOf<PairPattern, LeafScalarMap, LeafStringMap>;
-export type LoosePropertyName = FromInputOf<PropertyName, LeafScalarMap, LeafStringMap>;
 export type LooseComputedPropertyName = FromInputOf<ComputedPropertyName, LeafScalarMap, LeafStringMap>;
-export type LoosePublicFieldDefinition = FromInputOf<PublicFieldDefinitionForm0, LeafScalarMap, LeafStringMap> | FromInputOf<PublicFieldDefinitionForm1, LeafScalarMap, LeafStringMap> | FromInputOf<PublicFieldDefinitionForm2, LeafScalarMap, LeafStringMap> | FromInputOf<PublicFieldDefinitionForm3, LeafScalarMap, LeafStringMap>;
+export type LoosePublicFieldDefinition = FromInputOf<PublicFieldDefinition, LeafScalarMap, LeafStringMap>;
 export type LooseJsxStartOpeningElement = FromInputOf<JsxStartOpeningElement, LeafScalarMap, LeafStringMap>;
 export type LooseNonNullExpression = FromInputOf<NonNullExpression, LeafScalarMap, LeafStringMap>;
 export type LooseMethodSignature = FromInputOf<MethodSignature, LeafScalarMap, LeafStringMap>;
@@ -2784,7 +2840,7 @@ export type LooseTypeParameter = FromInputOf<TypeParameter, LeafScalarMap, LeafS
 export type LooseDefaultType = FromInputOf<DefaultType, LeafScalarMap, LeafStringMap>;
 export type LooseConstraint = FromInputOf<Constraint, LeafScalarMap, LeafStringMap>;
 export type LooseConstructSignature = FromInputOf<ConstructSignature, LeafScalarMap, LeafStringMap>;
-export type LooseIndexSignature = FromInputOf<IndexSignatureColon, LeafScalarMap, LeafStringMap> | FromInputOf<IndexSignatureMappedTypeClause, LeafScalarMap, LeafStringMap>;
+export type LooseIndexSignature = FromInputOf<IndexSignatureUFormColon, LeafScalarMap, LeafStringMap> | FromInputOf<IndexSignatureUFormMappedTypeClause, LeafScalarMap, LeafStringMap>;
 export type LooseArrayType = FromInputOf<ArrayType, LeafScalarMap, LeafStringMap>;
 export type LooseTupleType = FromInputOf<TupleType, LeafScalarMap, LeafStringMap>;
 export type LooseReadonlyType = FromInputOf<ReadonlyType, LeafScalarMap, LeafStringMap>;
@@ -2792,9 +2848,31 @@ export type LooseUnionType = FromInputOf<UnionType, LeafScalarMap, LeafStringMap
 export type LooseIntersectionType = FromInputOf<IntersectionType, LeafScalarMap, LeafStringMap>;
 export type LooseFunctionType = FromInputOf<FunctionType, LeafScalarMap, LeafStringMap>;
 export type Loose_TypeIdentifier = FromInputOf<_TypeIdentifier, LeafScalarMap, LeafStringMap>;
+export type Loose_ClassHeritageExtendsClause = FromInputOf<_ClassHeritageExtendsClause, LeafScalarMap, LeafStringMap>;
+export type Loose_ClassHeritageImplementsClause = FromInputOf<_ClassHeritageImplementsClause, LeafScalarMap, LeafStringMap>;
+export type Loose_ImportClauseNamespaceImport = FromInputOf<_ImportClauseNamespaceImport, LeafScalarMap, LeafStringMap>;
+export type Loose_ImportClauseNamedImports = FromInputOf<_ImportClauseNamedImports, LeafScalarMap, LeafStringMap>;
+export type Loose_ImportClauseDefaultImport = FromInputOf<_ImportClauseDefaultImport, LeafScalarMap, LeafStringMap>;
+export type Loose_IndexSignatureColon = FromInputOf<_IndexSignatureColon, LeafScalarMap, LeafStringMap>;
+export type Loose_IndexSignatureMappedTypeClause = FromInputOf<_IndexSignatureMappedTypeClause, LeafScalarMap, LeafStringMap>;
+export type Loose_ImportSpecifierName = FromInputOf<_ImportSpecifierName, LeafScalarMap, LeafStringMap>;
+export type Loose_ImportSpecifierAs = FromInputOf<_ImportSpecifierAs, LeafScalarMap, LeafStringMap>;
+export type Loose_ArrowFunctionParameter = FromInputOf<_ArrowFunctionParameter, LeafScalarMap, LeafStringMap>;
+export type Loose_ArrowFunctionUCallSignature = FromInputOf<_ArrowFunctionUCallSignature, LeafScalarMap, LeafStringMap>;
+export type LooseImportClauseNamespaceImport = FromInputOf<ImportClauseNamespaceImport, LeafScalarMap, LeafStringMap>;
+export type LooseImportClauseNamedImports = FromInputOf<ImportClauseNamedImports, LeafScalarMap, LeafStringMap>;
+export type LooseImportClauseDefaultImport = FromInputOf<ImportClauseDefaultImport, LeafScalarMap, LeafStringMap>;
+export type LooseImportSpecifierName = FromInputOf<ImportSpecifierName, LeafScalarMap, LeafStringMap>;
+export type LooseImportSpecifierAs = FromInputOf<ImportSpecifierAs, LeafScalarMap, LeafStringMap>;
 export type LooseShorthandPropertyIdentifier = FromInputOf<ShorthandPropertyIdentifier, LeafScalarMap, LeafStringMap>;
 export type LooseShorthandPropertyIdentifierPattern = FromInputOf<ShorthandPropertyIdentifierPattern, LeafScalarMap, LeafStringMap>;
+export type LooseClassHeritageExtendsClause = FromInputOf<ClassHeritageExtendsClause, LeafScalarMap, LeafStringMap>;
+export type LooseClassHeritageImplementsClause = FromInputOf<ClassHeritageImplementsClause, LeafScalarMap, LeafStringMap>;
+export type LooseArrowFunctionParameter = FromInputOf<ArrowFunctionParameter, LeafScalarMap, LeafStringMap>;
+export type LooseArrowFunctionUCallSignature = FromInputOf<ArrowFunctionUCallSignature, LeafScalarMap, LeafStringMap>;
 export type LooseInterfaceBody = FromInputOf<InterfaceBody, LeafScalarMap, LeafStringMap>;
+export type LooseIndexSignatureColon = FromInputOf<IndexSignatureColon, LeafScalarMap, LeafStringMap>;
+export type LooseIndexSignatureMappedTypeClause = FromInputOf<IndexSignatureMappedTypeClause, LeafScalarMap, LeafStringMap>;
 
 // Supertype unions
 export type ModuleExportName =
@@ -2837,22 +2915,20 @@ export type LooseJsxChild = LooseJsxElement | LooseJsxSelfClosingElement | Loose
 export type JsxChildTree = JsxTextTree | HtmlCharacterReferenceTree | JsxElementTree | JsxSelfClosingElementTree | JsxExpressionTree;
 
 export type _JsxIdentifier =
-  | JsxIdentifier
   | Identifier
 ;
 
-export type _JsxIdentifierTree = JsxIdentifierTree | IdentifierTree;
+export type _JsxIdentifierTree = IdentifierTree;
 
 export type JsxElementName =
-  | JsxIdentifier
   | Identifier
-  | NestedIdentifier
+  | MemberExpression
   | JsxNamespaceName
 ;
 
-export type JsxElementNameConfig = NestedIdentifierConfig | JsxNamespaceNameConfig;
-export type LooseJsxElementName = LooseNestedIdentifier | LooseJsxNamespaceName;
-export type JsxElementNameTree = JsxIdentifierTree | IdentifierTree | NestedIdentifierTree | JsxNamespaceNameTree;
+export type JsxElementNameConfig = MemberExpressionConfig | JsxNamespaceNameConfig;
+export type LooseJsxElementName = LooseMemberExpression | LooseJsxNamespaceName;
+export type JsxElementNameTree = IdentifierTree | MemberExpressionTree | JsxNamespaceNameTree;
 
 export type _JsxAttribute =
   | JsxAttribute
@@ -2864,25 +2940,24 @@ export type Loose_JsxAttribute = LooseJsxAttribute | LooseJsxExpression;
 export type _JsxAttributeTree = JsxAttributeTree | JsxExpressionTree;
 
 export type JsxAttributeName =
-  | JsxIdentifier
-  | Identifier
+  | PropertyIdentifier
   | JsxNamespaceName
 ;
 
 export type JsxAttributeNameConfig = JsxNamespaceNameConfig;
 export type LooseJsxAttributeName = LooseJsxNamespaceName;
-export type JsxAttributeNameTree = JsxIdentifierTree | IdentifierTree | JsxNamespaceNameTree;
+export type JsxAttributeNameTree = PropertyIdentifierTree | JsxNamespaceNameTree;
 
 export type JsxAttributeValue =
-  | JsxString
+  | String
   | JsxExpression
   | JsxElement
   | JsxSelfClosingElement
 ;
 
-export type JsxAttributeValueConfig = JsxStringConfig | JsxExpressionConfig | JsxElementConfig | JsxSelfClosingElementConfig;
-export type LooseJsxAttributeValue = LooseJsxString | LooseJsxExpression | LooseJsxElement | LooseJsxSelfClosingElement;
-export type JsxAttributeValueTree = JsxStringTree | JsxExpressionTree | JsxElementTree | JsxSelfClosingElementTree;
+export type JsxAttributeValueConfig = StringConfig | JsxExpressionConfig | JsxElementConfig | JsxSelfClosingElementConfig;
+export type LooseJsxAttributeValue = LooseString | LooseJsxExpression | LooseJsxElement | LooseJsxSelfClosingElement;
+export type JsxAttributeValueTree = StringTree | JsxExpressionTree | JsxElementTree | JsxSelfClosingElementTree;
 
 export type FormalParameter =
   | RequiredParameter
@@ -2909,6 +2984,18 @@ export type _Identifier =
 
 export type _IdentifierTree = UndefinedTree | IdentifierTree;
 
+export type PropertyName =
+  | PropertyIdentifier
+  | PrivatePropertyIdentifier
+  | String
+  | Number
+  | ComputedPropertyName
+;
+
+export type PropertyNameConfig = StringConfig | ComputedPropertyNameConfig;
+export type LoosePropertyName = LooseString | LooseComputedPropertyName;
+export type PropertyNameTree = PropertyIdentifierTree | PrivatePropertyIdentifierTree | StringTree | NumberTree | ComputedPropertyNameTree;
+
 export type Semicolon =
   | AutomaticSemicolon
 ;
@@ -2926,25 +3013,25 @@ export type Type =
   | ReadonlyType
   | ConstructorType
   | InferType
-  | TypeQueryMemberExpressionInTypeAnnotation
-  | TypeQueryCallExpressionInTypeAnnotation
+  | MemberExpression
+  | CallExpression
 ;
 
-export type TypeConfig = FunctionTypeConfig | ReadonlyTypeConfig | ConstructorTypeConfig | InferTypeConfig | TypeQueryMemberExpressionInTypeAnnotationConfig | TypeQueryCallExpressionInTypeAnnotationConfig;
-export type LooseType = LooseFunctionType | LooseReadonlyType | LooseConstructorType | LooseInferType | LooseTypeQueryMemberExpressionInTypeAnnotation | LooseTypeQueryCallExpressionInTypeAnnotation;
-export type TypeTree = PrimaryTypeTree | FunctionTypeTree | ReadonlyTypeTree | ConstructorTypeTree | InferTypeTree | TypeQueryMemberExpressionInTypeAnnotationTree | TypeQueryCallExpressionInTypeAnnotationTree;
+export type TypeConfig = FunctionTypeConfig | ReadonlyTypeConfig | ConstructorTypeConfig | InferTypeConfig | MemberExpressionConfig | CallExpressionConfig;
+export type LooseType = LooseFunctionType | LooseReadonlyType | LooseConstructorType | LooseInferType | LooseMemberExpression | LooseCallExpression;
+export type TypeTree = PrimaryTypeTree | FunctionTypeTree | ReadonlyTypeTree | ConstructorTypeTree | InferTypeTree | MemberExpressionTree | CallExpressionTree;
 
 export type TupleTypeMember =
-  | TupleParameter
-  | OptionalTupleParameter
+  | RequiredParameter
+  | OptionalParameter
   | OptionalType
   | RestType
   | Type
 ;
 
-export type TupleTypeMemberConfig = TupleParameterConfig | OptionalTupleParameterConfig | OptionalTypeConfig | RestTypeConfig;
-export type LooseTupleTypeMember = LooseTupleParameter | LooseOptionalTupleParameter | LooseOptionalType | LooseRestType;
-export type TupleTypeMemberTree = TupleParameterTree | OptionalTupleParameterTree | OptionalTypeTree | RestTypeTree | TypeTree;
+export type TupleTypeMemberConfig = RequiredParameterConfig | OptionalParameterConfig | OptionalTypeConfig | RestTypeConfig;
+export type LooseTupleTypeMember = LooseRequiredParameter | LooseOptionalParameter | LooseOptionalType | LooseRestType;
+export type TupleTypeMemberTree = RequiredParameterTree | OptionalParameterTree | OptionalTypeTree | RestTypeTree | TypeTree;
 
 export type PrimaryType =
   | ParenthesizedType
@@ -2958,7 +3045,7 @@ export type PrimaryType =
   | FlowMaybeType
   | TypeQuery
   | IndexTypeQuery
-  | This
+  | ThisType
   | LiteralType
   | LookupType
   | ConditionalType
@@ -2969,7 +3056,7 @@ export type PrimaryType =
 
 export type PrimaryTypeConfig = ParenthesizedTypeConfig | NestedTypeIdentifierConfig | GenericTypeConfig | ObjectTypeConfig | ArrayTypeConfig | TupleTypeConfig | FlowMaybeTypeConfig | TypeQueryConfig | IndexTypeQueryConfig | LiteralTypeConfig | LookupTypeConfig | ConditionalTypeConfig | TemplateLiteralTypeConfig | IntersectionTypeConfig | UnionTypeConfig;
 export type LoosePrimaryType = LooseParenthesizedType | LooseNestedTypeIdentifier | LooseGenericType | LooseObjectType | LooseArrayType | LooseTupleType | LooseFlowMaybeType | LooseTypeQuery | LooseIndexTypeQuery | LooseLiteralType | LooseLookupType | LooseConditionalType | LooseTemplateLiteralType | LooseIntersectionType | LooseUnionType;
-export type PrimaryTypeTree = ParenthesizedTypeTree | PredefinedTypeTree | TypeIdentifierTree | NestedTypeIdentifierTree | GenericTypeTree | ObjectTypeTree | ArrayTypeTree | TupleTypeTree | FlowMaybeTypeTree | TypeQueryTree | IndexTypeQueryTree | ThisTree | ExistentialTypeTree | LiteralTypeTree | LookupTypeTree | ConditionalTypeTree | TemplateLiteralTypeTree | IntersectionTypeTree | UnionTypeTree;
+export type PrimaryTypeTree = ParenthesizedTypeTree | PredefinedTypeTree | TypeIdentifierTree | NestedTypeIdentifierTree | GenericTypeTree | ObjectTypeTree | ArrayTypeTree | TupleTypeTree | FlowMaybeTypeTree | TypeQueryTree | IndexTypeQueryTree | ThisTypeTree | ExistentialTypeTree | LiteralTypeTree | LookupTypeTree | ConditionalTypeTree | TemplateLiteralTypeTree | IntersectionTypeTree | UnionTypeTree;
 
 // Token type aliases (only tokens referenced in field/child unions)
 export type EmptyStatement = Terminal<"empty_statement">;
@@ -3080,7 +3167,6 @@ export type TypescriptNode =
   | MethodDefinition
   | Pair
   | PairPattern
-  | PropertyName
   | ComputedPropertyName
   | PublicFieldDefinition
   | JsxStartOpeningElement
@@ -3162,9 +3248,31 @@ export type TypescriptNode =
   | IntersectionType
   | FunctionType
   | _TypeIdentifier
+  | _ClassHeritageExtendsClause
+  | _ClassHeritageImplementsClause
+  | _ImportClauseNamespaceImport
+  | _ImportClauseNamedImports
+  | _ImportClauseDefaultImport
+  | _IndexSignatureColon
+  | _IndexSignatureMappedTypeClause
+  | _ImportSpecifierName
+  | _ImportSpecifierAs
+  | _ArrowFunctionParameter
+  | _ArrowFunctionUCallSignature
+  | ImportClauseNamespaceImport
+  | ImportClauseNamedImports
+  | ImportClauseDefaultImport
+  | ImportSpecifierName
+  | ImportSpecifierAs
   | ShorthandPropertyIdentifier
   | ShorthandPropertyIdentifierPattern
+  | ClassHeritageExtendsClause
+  | ClassHeritageImplementsClause
+  | ArrowFunctionParameter
+  | ArrowFunctionUCallSignature
   | InterfaceBody
+  | IndexSignatureColon
+  | IndexSignatureMappedTypeClause
 ;
 
 export interface KindMap {
@@ -3268,7 +3376,6 @@ export interface KindMap {
   'method_definition': MethodDefinition;
   'pair': Pair;
   'pair_pattern': PairPattern;
-  '_property_name': PropertyName;
   'computed_property_name': ComputedPropertyName;
   'public_field_definition': PublicFieldDefinition;
   '_jsx_start_opening_element': JsxStartOpeningElement;
@@ -3350,9 +3457,31 @@ export interface KindMap {
   'intersection_type': IntersectionType;
   'function_type': FunctionType;
   '_type_identifier': _TypeIdentifier;
+  '_class_heritage_extends_clause': _ClassHeritageExtendsClause;
+  '_class_heritage_implements_clause': _ClassHeritageImplementsClause;
+  '_import_clause_namespace_import': _ImportClauseNamespaceImport;
+  '_import_clause_named_imports': _ImportClauseNamedImports;
+  '_import_clause_default_import': _ImportClauseDefaultImport;
+  '_index_signature_colon': _IndexSignatureColon;
+  '_index_signature_mapped_type_clause': _IndexSignatureMappedTypeClause;
+  '_import_specifier_name': _ImportSpecifierName;
+  '_import_specifier_as': _ImportSpecifierAs;
+  '_arrow_function_parameter': _ArrowFunctionParameter;
+  '_arrow_function__call_signature': _ArrowFunctionUCallSignature;
+  'import_clause_namespace_import': ImportClauseNamespaceImport;
+  'import_clause_named_imports': ImportClauseNamedImports;
+  'import_clause_default_import': ImportClauseDefaultImport;
+  'import_specifier_name': ImportSpecifierName;
+  'import_specifier_as': ImportSpecifierAs;
   'shorthand_property_identifier': ShorthandPropertyIdentifier;
   'shorthand_property_identifier_pattern': ShorthandPropertyIdentifierPattern;
+  'class_heritage_extends_clause': ClassHeritageExtendsClause;
+  'class_heritage_implements_clause': ClassHeritageImplementsClause;
+  'arrow_function_parameter': ArrowFunctionParameter;
+  'arrow_function__call_signature': ArrowFunctionUCallSignature;
   'interface_body': InterfaceBody;
+  'index_signature_colon': IndexSignatureColon;
+  'index_signature_mapped_type_clause': IndexSignatureMappedTypeClause;
   'hash_bang_line': HashBangLine;
   'import': Import;
   'html_character_reference': HtmlCharacterReference;
@@ -3379,6 +3508,14 @@ export interface KindMap {
   'accessibility_modifier': AccessibilityModifier;
   'override_modifier': OverrideModifier;
   'predefined_type': PredefinedType;
+  '_kw_asserts': KwAsserts;
+  '_kw_for': KwFor;
+  '_kw_async': KwAsync;
+  '_kw_static': KwStatic;
+  '_kw_extends': KwExtends;
+  '_kw_const': KwConst;
+  '_kw_readonly': KwReadonly;
+  '_kw_abstract': KwAbstract;
   '_automatic_semicolon': AutomaticSemicolon;
   '_template_chars': TemplateChars;
   'html_comment': HtmlComment;
@@ -3394,17 +3531,13 @@ export interface KindMap {
 }
 
 export interface VariantMap {
-  'export_statement': { form_0: ExportStatementForm0; export: ExportStatementExport; export2: ExportStatementExport2; export3: ExportStatementExport3 };
-  'import_clause': { namespace_import: ImportClauseNamespaceImport; named_imports: ImportClauseNamedImports; default_import: ImportClauseDefaultImport };
-  'import_specifier': { name: ImportSpecifierName; as: ImportSpecifierAs };
-  'statement': { export_statement: StatementExportStatement; import_statement: StatementImportStatement; debugger_statement: StatementDebuggerStatement; expression_statement: StatementExpressionStatement; declaration: StatementDeclaration; body: StatementBody; if_statement: StatementIfStatement; switch_statement: StatementSwitchStatement; for_statement: StatementForStatement; for_in_statement: StatementForInStatement; while_statement: StatementWhileStatement; do_statement: StatementDoStatement; try_statement: StatementTryStatement; with_statement: StatementWithStatement; break_statement: StatementBreakStatement; continue_statement: StatementContinueStatement; return_statement: StatementReturnStatement; throw_statement: StatementThrowStatement; empty_statement: StatementEmptyStatement; labeled_statement: StatementLabeledStatement };
-  'parenthesized_expression': { expression: ParenthesizedExpressionExpression; sequence_expression: ParenthesizedExpressionSequenceExpression };
-  'class_heritage': { extends_clause: ClassHeritageExtendsClause; implements_clause: ClassHeritageImplementsClause };
-  'arrow_function': { parameter: ArrowFunctionParameter; _call_signature: ArrowFunctionUCallSignature };
-  'call_expression': { function: CallExpressionFunction; function2: CallExpressionFunction2; tok_q_dot: CallExpressionTokQDot };
-  'member_expression': { dot: MemberExpressionDot; optional_chain: MemberExpressionOptionalChain };
-  'public_field_definition': { form_0: PublicFieldDefinitionForm0; form_1: PublicFieldDefinitionForm1; form_2: PublicFieldDefinitionForm2; form_3: PublicFieldDefinitionForm3 };
-  'index_signature': { colon: IndexSignatureColon; mapped_type_clause: IndexSignatureMappedTypeClause };
+  'export_statement': { form0: ExportStatementForm0; form1: ExportStatementForm1; form2: ExportStatementForm2; form3: ExportStatementForm3 };
+  'import_clause': { namespace_import: ImportClauseUFormNamespaceImport; named_imports: ImportClauseUFormNamedImports; default_import: ImportClauseUFormDefaultImport };
+  'import_specifier': { name: ImportSpecifierUFormName; as: ImportSpecifierUFormAs };
+  'class_heritage': { extends_clause: ClassHeritageUFormExtendsClause; implements_clause: ClassHeritageUFormImplementsClause };
+  'arrow_function': { parameter: ArrowFunctionUFormParameter; _call_signature: ArrowFunctionUFormUCallSignature };
+  'call_expression': { form0: CallExpressionForm0; form1: CallExpressionForm1; form2: CallExpressionForm2 };
+  'index_signature': { colon: IndexSignatureUFormColon; mapped_type_clause: IndexSignatureUFormMappedTypeClause };
 }
 
 export interface ConfigMap {
@@ -3508,7 +3641,6 @@ export interface ConfigMap {
   'method_definition': MethodDefinitionConfig;
   'pair': PairConfig;
   'pair_pattern': PairPatternConfig;
-  '_property_name': PropertyNameConfig;
   'computed_property_name': ComputedPropertyNameConfig;
   'public_field_definition': PublicFieldDefinitionConfig;
   '_jsx_start_opening_element': JsxStartOpeningElementConfig;
@@ -3590,9 +3722,31 @@ export interface ConfigMap {
   'intersection_type': IntersectionTypeConfig;
   'function_type': FunctionTypeConfig;
   '_type_identifier': _TypeIdentifierConfig;
+  '_class_heritage_extends_clause': _ClassHeritageExtendsClauseConfig;
+  '_class_heritage_implements_clause': _ClassHeritageImplementsClauseConfig;
+  '_import_clause_namespace_import': _ImportClauseNamespaceImportConfig;
+  '_import_clause_named_imports': _ImportClauseNamedImportsConfig;
+  '_import_clause_default_import': _ImportClauseDefaultImportConfig;
+  '_index_signature_colon': _IndexSignatureColonConfig;
+  '_index_signature_mapped_type_clause': _IndexSignatureMappedTypeClauseConfig;
+  '_import_specifier_name': _ImportSpecifierNameConfig;
+  '_import_specifier_as': _ImportSpecifierAsConfig;
+  '_arrow_function_parameter': _ArrowFunctionParameterConfig;
+  '_arrow_function__call_signature': _ArrowFunctionUCallSignatureConfig;
+  'import_clause_namespace_import': ImportClauseNamespaceImportConfig;
+  'import_clause_named_imports': ImportClauseNamedImportsConfig;
+  'import_clause_default_import': ImportClauseDefaultImportConfig;
+  'import_specifier_name': ImportSpecifierNameConfig;
+  'import_specifier_as': ImportSpecifierAsConfig;
   'shorthand_property_identifier': ShorthandPropertyIdentifierConfig;
   'shorthand_property_identifier_pattern': ShorthandPropertyIdentifierPatternConfig;
+  'class_heritage_extends_clause': ClassHeritageExtendsClauseConfig;
+  'class_heritage_implements_clause': ClassHeritageImplementsClauseConfig;
+  'arrow_function_parameter': ArrowFunctionParameterConfig;
+  'arrow_function__call_signature': ArrowFunctionUCallSignatureConfig;
   'interface_body': InterfaceBodyConfig;
+  'index_signature_colon': IndexSignatureColonConfig;
+  'index_signature_mapped_type_clause': IndexSignatureMappedTypeClauseConfig;
 }
 
 export interface LooseMap {
@@ -3696,7 +3850,6 @@ export interface LooseMap {
   'method_definition': LooseMethodDefinition;
   'pair': LoosePair;
   'pair_pattern': LoosePairPattern;
-  '_property_name': LoosePropertyName;
   'computed_property_name': LooseComputedPropertyName;
   'public_field_definition': LoosePublicFieldDefinition;
   '_jsx_start_opening_element': LooseJsxStartOpeningElement;
@@ -3778,7 +3931,29 @@ export interface LooseMap {
   'intersection_type': LooseIntersectionType;
   'function_type': LooseFunctionType;
   '_type_identifier': Loose_TypeIdentifier;
+  '_class_heritage_extends_clause': Loose_ClassHeritageExtendsClause;
+  '_class_heritage_implements_clause': Loose_ClassHeritageImplementsClause;
+  '_import_clause_namespace_import': Loose_ImportClauseNamespaceImport;
+  '_import_clause_named_imports': Loose_ImportClauseNamedImports;
+  '_import_clause_default_import': Loose_ImportClauseDefaultImport;
+  '_index_signature_colon': Loose_IndexSignatureColon;
+  '_index_signature_mapped_type_clause': Loose_IndexSignatureMappedTypeClause;
+  '_import_specifier_name': Loose_ImportSpecifierName;
+  '_import_specifier_as': Loose_ImportSpecifierAs;
+  '_arrow_function_parameter': Loose_ArrowFunctionParameter;
+  '_arrow_function__call_signature': Loose_ArrowFunctionUCallSignature;
+  'import_clause_namespace_import': LooseImportClauseNamespaceImport;
+  'import_clause_named_imports': LooseImportClauseNamedImports;
+  'import_clause_default_import': LooseImportClauseDefaultImport;
+  'import_specifier_name': LooseImportSpecifierName;
+  'import_specifier_as': LooseImportSpecifierAs;
   'shorthand_property_identifier': LooseShorthandPropertyIdentifier;
   'shorthand_property_identifier_pattern': LooseShorthandPropertyIdentifierPattern;
+  'class_heritage_extends_clause': LooseClassHeritageExtendsClause;
+  'class_heritage_implements_clause': LooseClassHeritageImplementsClause;
+  'arrow_function_parameter': LooseArrowFunctionParameter;
+  'arrow_function__call_signature': LooseArrowFunctionUCallSignature;
   'interface_body': LooseInterfaceBody;
+  'index_signature_colon': LooseIndexSignatureColon;
+  'index_signature_mapped_type_clause': LooseIndexSignatureMappedTypeClause;
 }

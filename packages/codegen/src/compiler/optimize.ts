@@ -15,7 +15,7 @@
 import type {
     Rule, LinkedGrammar, OptimizedGrammar,
 } from './rule.ts'
-import { promotePolymorph } from './link.ts'
+import { isChoice } from './rule.ts'
 import { simplifyRules, compileWordMatcher } from './simplify.ts'
 
 // ---------------------------------------------------------------------------
@@ -36,18 +36,13 @@ export function optimize(linked: LinkedGrammar): OptimizedGrammar {
     for (const name of Object.keys(rules)) {
         rules[name] = fanOutSeqChoices(rules[name]!)    // T060
     }
-    // Re-run polymorph promotion now that fan-out has lifted every
-    // inner choice to the top level of its enclosing rule. Link's
-    // earlier pass only catches choices that were already top-level;
-    // rules like rust's `struct_item` / `impl_item` / `function_type`
-    // had their choices buried inside a seq, and their terminal
-    // variants looked empty before fan-out distributed the prefix/
-    // suffix members into each branch. Running promotePolymorph here
-    // sees the canonical fanned-out shape where every branch carries
-    // its complete structural context.
-    for (const name of Object.keys(rules)) {
-        rules[name] = promotePolymorph(rules[name]!)
-    }
+    // Polymorph classification lives in Link (variant()-driven, with
+    // suggestion-only heuristic detection). Optimize is simplification
+    // only — it MUST NOT silently classify rules as polymorphs because
+    // tree-sitter's parser-generator doesn't see Optimize's mutations
+    // and the parse tree wouldn't match the typed surface. Heuristic
+    // candidates that need promotion are surfaced via suggested.ts;
+    // the user authors variant() in overrides.ts to make them explicit.
     for (const name of Object.keys(rules)) {
         rules[name] = factorChoiceBranches(rules[name]!)// T061
     }
@@ -82,8 +77,10 @@ export function optimize(linked: LinkedGrammar): OptimizedGrammar {
         simplifiedRules,
         supertypes: linked.supertypes,
         word: linked.word,
+        externals: linked.externals,
         derivations: linked.derivations,
         aliasedHiddenKinds: linked.aliasedHiddenKinds,
+        polymorphVariants: linked.polymorphVariants,
     }
 }
 
@@ -107,13 +104,14 @@ export function fanOutSeqChoices(rule: Rule): Rule {
     switch (rule.type) {
         case 'seq': {
             const members = rule.members.map(fanOutSeqChoices)
-            const choiceIdx = members.findIndex(m => m.type === 'choice')
+            const choiceIdx = members.findIndex(isChoice)
             if (choiceIdx < 0) return { ...rule, members }
             // Only fan out when there's exactly one inner choice.
-            if (members.filter(m => m.type === 'choice').length > 1) {
+            if (members.filter(isChoice).length > 1) {
                 return { ...rule, members }
             }
-            const choice = members[choiceIdx] as import('./rule.ts').ChoiceRule
+            const choice = members[choiceIdx]!
+            if (!isChoice(choice)) return { ...rule, members }
             const before = members.slice(0, choiceIdx)
             const after = members.slice(choiceIdx + 1)
             const branches: Rule[] = choice.members.map(branch => {

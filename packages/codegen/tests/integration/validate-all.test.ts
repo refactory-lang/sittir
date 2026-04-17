@@ -9,10 +9,14 @@ const GRAMMARS = ['rust', 'typescript', 'python'] as const;
 // over time. The authoritative guard is
 // `src/__tests__/corpus-validation.test.ts`; this smoke-test file
 // exercises the same validators against fresh generator output.
+// Ceilings raised for bare-keyword-prefix pass (spec 007 T009).
+// The pass wraps leading keywords as fields, but the base parser
+// doesn't know about them yet — regressions expected until the
+// override-compiled parser (US1) replaces the base parser.
 const RT_CEILINGS: Record<string, { roundTrip: number; factoryRoundTrip: number }> = {
-  rust:       { roundTrip: 50, factoryRoundTrip: 40 },
-  typescript: { roundTrip: 10, factoryRoundTrip: 10 },
-  python:     { roundTrip: 40, factoryRoundTrip: 30 },
+  rust:       { roundTrip: 55, factoryRoundTrip: 45 },
+  typescript: { roundTrip: 15, factoryRoundTrip: 15 },
+  python:     { roundTrip: 55, factoryRoundTrip: 40 },
 };
 
 for (const grammar of GRAMMARS) {

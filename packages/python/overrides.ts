@@ -9,7 +9,7 @@
 
 // @ts-nocheck — grammar.js is untyped
 import base from '../../node_modules/.pnpm/tree-sitter-python@0.25.0/node_modules/tree-sitter-python/grammar.js'
-import { transform, role, enrich, field } from '../codegen/src/dsl/index.ts'
+import { transform, role, enrich, field, variant } from '../codegen/src/dsl/index.ts'
 
 export default grammar(enrich(base), {
     name: 'python',
@@ -31,6 +31,15 @@ export default grammar(enrich(base), {
         return prev
     },
     rules: {
+        // assignment: nested-alias polymorph.
+        // alias('name') captures the choice branch content into a
+        // hidden rule _name and replaces with alias($._name, $.name).
+        assignment: ($, original) => transform(original, {
+            '1/0': variant('eq'),
+            '1/1': variant('type'),
+            '1/2': variant('typed'),
+        }),
+
         // as_pattern: 1 field(s)
         as_pattern: ($, original) => transform(original, {
             0: field('expression'), // expression | case_pattern | identifier [struct=0]

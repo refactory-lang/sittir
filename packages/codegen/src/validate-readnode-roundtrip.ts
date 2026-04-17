@@ -26,17 +26,13 @@
  * round-trip, from(), render) will be working on a corrupted view.
  */
 
-import { createRequire } from 'node:module'
 import { readFileSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 import { readNode } from '@sittir/core'
-import type { RoutingMap } from '@sittir/core'
 import type { AnyNodeData, AnyTreeNode } from '@sittir/types'
 import { loadRawEntries } from './validators/node-types.ts'
-import { loadWebTreeSitter } from './validators/common.ts'
-import { loadRouting } from './validators/load-routing.ts'
+import { loadLanguageForGrammar } from './validators/common.ts'
 
-const require = createRequire(import.meta.url)
 
 // ---------------------------------------------------------------------------
 // Minimal tree-sitter adapter — shared shape with the other validators
@@ -142,11 +138,6 @@ function parseCorpus(content: string): CorpusEntry[] {
     return entries
 }
 
-const WASM_PATHS: Record<string, string> = {
-    rust: 'tree-sitter-rust/tree-sitter-rust.wasm',
-    typescript: 'tree-sitter-typescript/tree-sitter-typescript.wasm',
-    python: 'tree-sitter-python/tree-sitter-python.wasm',
-}
 
 const FIXTURES_DIR = new URL('../fixtures', import.meta.url).pathname
 
@@ -175,23 +166,6 @@ function buildKindFieldMap(
         if (!entry.named) continue
         const fields = entry.fields ?? {}
         result.set(entry.type, new Set(Object.keys(fields)))
-    }
-    return result
-}
-
-/**
- * Build `kind → Set<overrideFieldName>` — field names the routing map
- * adds (virtual fields projected from children by kind matching).
- * Derived directly from the runtime RoutingMap so overrides.json is
- * out of the loop.
- */
-function buildKindOverrideMap(routing: RoutingMap): Map<string, Set<string>> {
-    const result = new Map<string, Set<string>>()
-    for (const [kind, maps] of routing) {
-        const names = new Set<string>()
-        for (const promo of maps.unambiguous.values()) names.add(promo.fieldName)
-        for (const [fname] of maps.ambiguousSlots) names.add(fname)
-        result.set(kind, names)
     }
     return result
 }
@@ -291,16 +265,12 @@ export interface ReadNodeRoundTripResult {
 export async function validateReadNodeRoundTrip(
     grammar: string,
 ): Promise<ReadNodeRoundTripResult> {
-    const { Parser, Language } = await loadWebTreeSitter()
-    const wasmPath = require.resolve(WASM_PATHS[grammar]!)
-    const lang = await Language.load(wasmPath)
+    const { Parser, lang } = await loadLanguageForGrammar(grammar)
     const parser = new Parser()
     parser.setLanguage(lang)
 
     const rawEntries = loadRawEntries(grammar)
-    const routing = await loadRouting(grammar)
     const kindFields = buildKindFieldMap(rawEntries)
-    const kindOverrides = buildKindOverrideMap(routing)
 
     const entries = loadCorpusEntries(grammar)
     const issues: NodeIssue[] = []
@@ -328,15 +298,14 @@ export async function validateReadNodeRoundTrip(
             const handle = treeHandle(tree)
             let data: AnyNodeData
             try {
-                data = readNode(handle, node.id, routing)
+                data = readNode(handle, node.id)
             } catch (e) {
                 issues.push({ kind, instance: entry.name, message: `readNode threw: ${(e as Error).message.slice(0, 80)}` })
                 continue
             }
 
             const expected = kindFields.get(kind) ?? new Set()
-            const over = kindOverrides.get(kind) ?? new Set()
-            const error = checkNodeData(kind, node, data, expected, over)
+            const error = checkNodeData(kind, node, data, expected, new Set())
             if (error) {
                 issues.push({ kind, instance: entry.name, message: error })
             } else {

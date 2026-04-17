@@ -25,6 +25,7 @@
 
 import type { Rule } from '../compiler/rule.ts'
 import type { FieldLike } from './runtime-shapes.ts'
+import { maybeKeywordSymbol } from './synthetic-rules.ts'
 
 type Input = string | RegExp | Rule
 
@@ -42,6 +43,13 @@ export function isFieldPlaceholder(v: unknown): v is FieldPlaceholder {
  * Two-arg form delegates to the runtime's native field. One-arg form
  * returns a placeholder for transform patches.
  *
+ * When the two-arg form is called with a bare STRING literal content
+ * (e.g. `field('async', 'async')`), the content is substituted with a
+ * synthesized SYMBOL reference to a hidden `_kw_<name>` rule. This
+ * mirrors transform.ts's placeholder path — tree-sitter's grammar
+ * normalizer strips FIELD wrappers around bare STRING, so we indirect
+ * through a SYMBOL to preserve the field in the parse tree.
+ *
  * Return type is a discriminated union: the one-arg placeholder has
  * a readable `__sittirPlaceholder` brand; the two-arg result matches
  * whatever shape the runtime-injected `field()` produces (sittir
@@ -55,5 +63,19 @@ export function field(name: string, content?: Input): FieldPlaceholder | FieldLi
     if (typeof native !== 'function') {
         throw new Error('field(): no global field() found — must be called inside a runtime that injects field() (sittir evaluate.ts or tree-sitter CLI)')
     }
-    return native(name, content) as FieldLike
+    // Call native field once to normalize whatever shape `content`
+    // arrives in (plain JS strings become STRING rules, etc.). If the
+    // normalized inner content is a bare STRING, swap for a SYMBOL
+    // reference to a synthesized hidden rule so tree-sitter preserves
+    // the FIELD wrapper. Always tag `source: 'override'` — user-authored
+    // field() calls are by definition override-sourced, and the tag
+    // lets derive-overrides-json skip them from the runtime routing map.
+    const initial = native(name, content) as FieldLike & { content?: unknown }
+    const inner = initial.content
+    const symbolized = maybeKeywordSymbol(name, inner)
+    if (symbolized !== inner) {
+        const reconstructed = native(name, symbolized as Input) as FieldLike
+        return { ...reconstructed, source: 'override' as const } as unknown as FieldLike
+    }
+    return { ...initial, source: 'override' as const } as unknown as FieldLike
 }

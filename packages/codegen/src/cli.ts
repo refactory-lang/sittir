@@ -13,8 +13,11 @@ import { validateFactoryRoundTrip, formatFactoryRoundTripReport } from './valida
 import { validateFrom, formatFromReport } from './validate-from.ts';
 import { validateRenderableFromNodeMap, formatRenderableReport } from './validate-renderable.ts';
 import { validateReadNodeRoundTrip, formatReadNodeRoundTripReport } from './validate-readnode-roundtrip.ts';
-import { join, dirname } from 'node:path';
+import { join, dirname, resolve } from 'node:path';
 import { generate } from './compiler/generate.ts';
+import { emitSuggested, type RoundTripDiagnostic } from './emitters/suggested.ts';
+import { compileParser } from './transpile/compile-parser.ts';
+import { transpileOverrides } from './transpile/transpile-overrides.ts';
 
 interface CodegenConfig {
 	grammar: string;
@@ -29,6 +32,8 @@ interface CliArgs {
 	all?: boolean;
 	testsDir?: string;
 	roundtrip?: boolean;
+	compileParser?: boolean;
+	transpile?: boolean;
 	help?: boolean;
 }
 
@@ -59,6 +64,12 @@ function parseArgs(argv: string[]): CliArgs {
 			case '--roundtrip':
 				args.roundtrip = true;
 				break;
+			case '--compile-parser':
+				args.compileParser = true;
+				break;
+			case '--transpile':
+				args.transpile = true;
+				break;
 			case '--help':
 			case '-h':
 				args.help = true;
@@ -85,13 +96,36 @@ Options:
   --all, -a        Generate for all branch node kinds
   --output, -o     Output directory for generated files
   --tests-dir      Output directory for test files (default: ../tests)
+  --transpile      Transpile overrides.ts to .sittir/grammar.js
+  --compile-parser Compile override grammar to .sittir/parser.wasm
   --help, -h       Show this help
 `);
 	process.exit(0);
 }
 
-if (!cliArgs.grammar || !cliArgs.outputDir) {
-	console.error('Missing required arguments: --grammar and --output. Use --help for usage.');
+if (!cliArgs.grammar) {
+	console.error('Missing required argument: --grammar. Use --help for usage.');
+	process.exit(1);
+}
+
+// Standalone transpile/compile — doesn't require --output
+if (cliArgs.transpile || cliArgs.compileParser) {
+	const grammarDir = resolve('packages', cliArgs.grammar);
+	if (cliArgs.transpile) {
+		console.log(`Transpiling ${cliArgs.grammar} overrides...`);
+		const tr = await transpileOverrides({ grammar: cliArgs.grammar });
+		console.log(`  → ${tr.outputPath} (${tr.outputBytes} bytes)`);
+	}
+	if (cliArgs.compileParser) {
+		console.log(`Compiling ${cliArgs.grammar} parser to WASM...`);
+		const wasmPath = await compileParser(grammarDir);
+		console.log(`  → ${wasmPath}`);
+	}
+	if (!cliArgs.outputDir) process.exit(0);
+}
+
+if (!cliArgs.outputDir) {
+	console.error('Missing required argument: --output. Use --help for usage.');
 	process.exit(1);
 }
 
@@ -179,6 +213,74 @@ if (cliArgs.roundtrip) {
 	// from() correctness (structural comparison: from() vs factory())
 	const fromResult = await validateFrom(config.grammar, result.templatesYaml);
 	console.log(formatFromReport(fromResult));
+
+	// Collect round-trip failures into a structured diagnostic list and
+	// re-emit overrides.suggested.ts with the new section. Gives the
+	// user a copy-pasteable record of input-vs-rendered for every
+	// corpus case that didn't survive the round-trip — useful for
+	// spotting missing joinBy / transform patches.
+	const parseFrag = (name: string): { entry: string; kind: string } => {
+		const m = name.match(/^(.+)\s+\[([^\]]+)\]$/);
+		return m ? { entry: m[1]!, kind: m[2]! } : { entry: name, kind: 'unknown' };
+	};
+	const diagnostics: RoundTripDiagnostic[] = [];
+	for (const e of rtResult.errors ?? []) {
+		const { entry, kind } = parseFrag(e.name);
+		diagnostics.push({
+			entry, kind,
+			source: 'render',
+			category: 'parse-error',
+			message: String(e.message),
+			rendered: e.rendered,
+			input: e.input,
+		});
+	}
+	for (const m of rtResult.astMismatches ?? []) {
+		const { entry, kind } = parseFrag(m.name);
+		diagnostics.push({
+			entry, kind,
+			source: 'render',
+			category: 'ast-mismatch',
+			message: String(m.message),
+			rendered: m.rendered,
+			input: m.input,
+		});
+	}
+	// Factory round-trip diagnostics — validator runs once per kind
+	// with entry/input/rendered captured from the corpus case. Surfaces
+	// factory-API gaps (missing fields, wrong defaults) that the weaker
+	// kind-found pass doesn't flag.
+	for (const e of frtResult.errors ?? []) {
+		diagnostics.push({
+			entry: e.entry ?? '(unknown)',
+			kind: e.kind,
+			source: 'factory',
+			category: 'parse-error',
+			message: String(e.message),
+			rendered: e.rendered,
+			input: e.input,
+		});
+	}
+	for (const m of frtResult.astMismatches ?? []) {
+		diagnostics.push({
+			entry: m.entry ?? '(unknown)',
+			kind: m.kind,
+			source: 'factory',
+			category: 'ast-mismatch',
+			message: String(m.message),
+			rendered: m.rendered,
+			input: m.input,
+		});
+	}
+	if (diagnostics.length > 0) {
+		const suggestedWithFailures = emitSuggested({
+			grammar: config.grammar,
+			nodeMap: result.nodeMap,
+			roundTripFailures: diagnostics,
+		});
+		writeFile(join(dirname(outDir), 'overrides.suggested.ts'), suggestedWithFailures);
+		console.log(`  → overrides.suggested.ts updated with ${diagnostics.length} round-trip diagnostic(s)`);
+	}
 
 	const totalFail = rtResult.fail + frtResult.fail + fromResult.fail;
 	if (totalFail > 0) {

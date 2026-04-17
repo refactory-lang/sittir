@@ -9,5 +9,7 @@ export default defineConfig({
     // files (plain `.js`, not emitted by tsgo) don't exist.
     include: ['src/**/*.test.ts', 'tests/**/*.test.ts'],
     exclude: ['**/node_modules/**', '**/dist/**'],
+    // Parser WASM compile runs from the root vitest.config.ts
+    // globalSetup (./vitest.setup.ts) — covers every workspace.
   },
 });

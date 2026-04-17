@@ -9,7 +9,7 @@
 
 // @ts-nocheck — grammar.js is untyped
 import base from '../../node_modules/.pnpm/tree-sitter-typescript@0.23.2/node_modules/tree-sitter-typescript/tsx/grammar.js'
-import { transform, enrich, field } from '../codegen/src/dsl/index.ts'
+import { transform, enrich, field, variant } from '../codegen/src/dsl/index.ts'
 
 export default grammar(enrich(base), {
     name: 'typescript',
@@ -66,13 +66,12 @@ export default grammar(enrich(base), {
             6: field('automatic_semicolon'),
         }),
 
-        // class_heritage: choice(seq(extends_clause, optional(implements_clause)), implements_clause).
-        // transform recurses into the choice; raw pos 0/1 in the first seq
-        // branch match the json's named-slot positions. The second branch
-        // (bare implements_clause) is not a seq and is unaffected.
+        // class_heritage (T028a): polymorph split — copy-pasted from
+        // overrides.suggested.ts. Each choice alternative becomes its
+        // own named rule via variant().
         class_heritage: ($, original) => transform(original, {
-            0: field('extends_clause'), // extends_clause | implements_clause [struct=0]
-            1: field('implements_clause'), // implements_clause [struct=1]
+            '0': variant('extends_clause'),
+            '1': variant('implements_clause'),
         }),
 
         // computed_property_name: 1 field(s)
@@ -107,14 +106,11 @@ export default grammar(enrich(base), {
             0: field('object'), // object [struct=0]
         }),
 
-        // import_clause: choice(namespace_import, named_imports,
-        //   seq(_import_identifier, optional(seq(',', choice(namespace_import, named_imports))))).
-        // transform recurses into the choice; raw pos 0/1 match the json's
-        // named-slot positions inside the third (seq) branch. The bare
-        // namespace_import/named_imports branches are unaffected.
+        // import_clause (T028a): polymorph split from suggested.ts.
         import_clause: ($, original) => transform(original, {
-            0: field('default_import'), // namespace_import | named_imports | _import_identifier | identifier [struct=0]
-            1: field('named_imports'), // namespace_import | named_imports | identifier [struct=1]
+            '0': variant('namespace_import'),
+            '1': variant('named_imports'),
+            '2': variant('default_import'),
         }),
 
         // import_require_clause: 1 field(s)
@@ -130,9 +126,48 @@ export default grammar(enrich(base), {
             4: field('semicolon'), //  [struct=3]
         }),
 
-        // index_signature: 1 field(s)
+        // index_signature (T028a): polymorph split from suggested.ts.
         index_signature: ($, original) => transform(original, {
-            0: field('mapped_type_clause'), // mapped_type_clause [struct=0]
+            '2/0': variant('colon'),
+            '2/1': variant('mapped_type_clause'),
+        }),
+
+        // import_specifier (T028a): polymorph split from suggested.ts.
+        import_specifier: ($, original) => transform(original, {
+            '1/0': variant('name'),
+            '1/1': variant('as'),
+        }),
+
+        // parenthesized_expression: held. Base is plain `seq('(',
+        // _expressions, ')')` with no outer prec — my hoist's prec
+        // preservation captures OUTER wrappers, not per-alt prec. The
+        // real conflict is that sequence_expression has its OWN
+        // `prec.right(commaSep1(...))` that wins against a bare
+        // expression alt; splitting exposes this as an unresolvable
+        // tie. Fix would need the DSL to recognize per-alt prec inside
+        // the choice and lift it to the variant rule — another
+        // iteration.
+
+        // export_statement: held. Base has no prec wrapper so prec-
+        // preservation doesn't help. The conflict is deeper: `export`
+        // as a keyword overlaps with its use as an identifier in
+        // primary_expression, and tree-sitter resolves this via
+        // internal state in the unsplit grammar. Splitting forces
+        // the decision earlier, exposing the ambiguity.
+
+        // call_expression: held. Each alt has its own per-branch prec
+        // tag ('call'/'template_call'/'member') which prec-preservation
+        // captures correctly, but the split exposes the base grammar's
+        // call_expression vs binary_expression vs instantiation_
+        // expression ambiguity on `typeof expr <` that the unsplit
+        // rule resolves via LR state the base intentionally left
+        // ambiguous. Fix would need explicit conflicts entries with
+        // external rules — out of scope for variant() adoption.
+
+        // arrow_function (T028b): polymorph split from suggested.ts.
+        arrow_function: ($, original) => transform(original, {
+            '1/0': variant('parameter'),
+            '1/1': variant('_call_signature'),
         }),
 
         // index_type_query: 1 field(s)

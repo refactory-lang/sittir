@@ -18,4 +18,9 @@ Thumbs.db
 .pnpm-debug.log*
 *.tsbuildinfo
 .claude/settings.local.json
+.claude/scheduled_tasks.lock
 packages/*/.sittir/
+
+
+# Stray tree-sitter build artifacts (parser.wasm should be in .sittir/)
+/tree-sitter-*.wasm

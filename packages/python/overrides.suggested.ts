@@ -14,9 +14,148 @@
 // ---------------------------------------------------------------
 // Summary
 // ---------------------------------------------------------------
-// Field inferences: 0  (0 applied, 0 held)
-// Rule promotions:  23  (23 applied, 0 held)
-// Repeated shapes:  0  (advisory — suggested supertypes/groups)
+// Field inferences:  0  (0 applied, 0 held)
+// Rule promotions:   24  (24 applied, 0 held)
+// Repeated shapes:   0  (advisory — suggested supertypes/groups)
+// Round-trip fails: 12  (10 parse errors, 2 AST mismatches; 7 render, 5 factory)
+
+// ---------------------------------------------------------------
+// Round-trip failures — corpus cases that didn't survive
+// parse → readNode → render → reparse. Each entry shows the
+// input and rendered text so you can spot what the renderer
+// dropped. Common causes:
+//   - Repeated slot missing a `joinBy` separator (renders only
+//     the first occurrence of a multi-valued field)
+//   - Missing `transform()` patch wrapping an anonymous token
+//     that should be a named field
+//   - Template gap — rule content has no renderable slot for
+//     some structural position
+// ---------------------------------------------------------------
+export const roundTripFailures: Array<{
+  readonly entry: string;
+  readonly kind: string;
+  readonly source: "render" | "factory";
+  readonly category: "parse-error" | "ast-mismatch";
+  readonly input?: string;
+  readonly rendered?: string;
+  readonly message: string;
+}> = [
+  // --- import_statement (2) ---
+  {
+    entry: "Import statements",
+    kind: "import_statement",
+    source: "render",
+    category: "parse-error",
+    input:    "import a, b",
+    rendered: "import a b",
+    message: "re-parse error: \"import a b\"",
+  },
+  {
+    entry: "Import statements",
+    kind: "import_statement",
+    source: "factory",
+    category: "parse-error",
+    input:    "import a, b",
+    rendered: "import",
+    message: "re-parse error: \"import\"",
+  },
+  // --- import_from_statement (2) ---
+  {
+    entry: "Import-from statements",
+    kind: "import_from_statement",
+    source: "render",
+    category: "parse-error",
+    input:    "from a import b",
+    rendered: "from a import",
+    message: "re-parse error: \"from a import\"",
+  },
+  {
+    entry: "Import-from statements",
+    kind: "import_from_statement",
+    source: "factory",
+    category: "parse-error",
+    input:    "from a import b",
+    rendered: "from a import",
+    message: "re-parse error: \"from a import\"",
+  },
+  // --- if_statement (2) ---
+  {
+    entry: "If else statements",
+    kind: "if_statement",
+    source: "render",
+    category: "parse-error",
+    input:    "if a:\n  b\nelif c:\n  d\nelse:\n  f",
+    rendered: "if a:\n  b\nelif c:\n  d else:\n  f",
+    message: "re-parse error: \"if a:\n  b\nelif c:\n  d else:\n  f\"",
+  },
+  {
+    entry: "Comments at different indentation levels",
+    kind: "if_statement",
+    source: "render",
+    category: "ast-mismatch",
+    input:    "if a:\n  # one\n# two\n    # three\n  b\n    # four\n  c",
+    rendered: "if a:\n  b\n      # four\n    c",
+    message: "if_statement: childCount 7 ≠ 4 [\"if\",identifier,\":\",comment,comment,comment,block] vs [\"if\",identifier,\":\",block]",
+  },
+  // --- decorated_definition (2) ---
+  {
+    entry: "Decorated definitions",
+    kind: "decorated_definition",
+    source: "render",
+    category: "parse-error",
+    input:    "@a.b\nclass C:\n  @d(1)\n  @e[2].f.g\n  def f():\n    g\n\n  @f()\n  async def f():\n    g",
+    rendered: "@a.b class C:\n  @d(1)\n  @e[2].f.g\n  def f():\n    g\n\n  @f()\n  async def f():\n    g",
+    message: "re-parse error: \"@a.b class C:\n  @d(1)\n  @e[2].f.g\n  def f():\n    g\n\n  @f()\n  async def f():\n    \"",
+  },
+  {
+    entry: "Decorated definitions",
+    kind: "decorated_definition",
+    source: "factory",
+    category: "parse-error",
+    input:    "@a.b\nclass C:\n  @d(1)\n  @e[2].f.g\n  def f():\n    g\n\n  @f()\n  async def f():\n    g",
+    rendered: "@a.b class C:\n  @d(1)\n  @e[2].f.g\n  def f():\n    g\n\n  @f()\n  async def f():\n    g",
+    message: "re-parse error: \"@a.b class C:\n  @d(1)\n  @e[2].f.g\n  def f():\n    g\n\n  @f()\n \"",
+  },
+  // --- exec_statement (2) ---
+  {
+    entry: "Exec statements",
+    kind: "exec_statement",
+    source: "render",
+    category: "parse-error",
+    input:    "exec '1+1'",
+    rendered: "exec '1+1' in",
+    message: "re-parse error: \"exec '1+1' in\"",
+  },
+  {
+    entry: "Exec statements",
+    kind: "exec_statement",
+    source: "factory",
+    category: "parse-error",
+    input:    "exec '1+1'",
+    rendered: "exec '1+1' in",
+    message: "re-parse error: \"exec '1+1' in\"",
+  },
+  // --- match_statement (1) ---
+  {
+    entry: "Case terminating in comma",
+    kind: "match_statement",
+    source: "render",
+    category: "ast-mismatch",
+    input:    "match x,:\n    case *x,:\n        y = 0",
+    rendered: "match x:\n    case *x,:\n        y = 0",
+    message: "match_statement: childCount 5 ≠ 4 [\"match\",identifier,\",\",\":\",block] vs [\"match\",identifier,\":\",block]",
+  },
+  // --- future_import_statement (1) ---
+  {
+    entry: "Future import statements",
+    kind: "future_import_statement",
+    source: "factory",
+    category: "parse-error",
+    input:    "from __future__ import print_statement",
+    rendered: "from __future__ import",
+    message: "re-parse error: \"from __future__ import\"",
+  },
+];
 
 // ---------------------------------------------------------------
 // suggestedRules — drop entries into your overrides.ts rules map.
@@ -47,13 +186,13 @@ export const suggestedRules = {
   "pattern": $ => choice($.identifier, $.keyword_identifier, $.subscript, $.attribute, $.list_splat_pattern, $.tuple_pattern, $.list_pattern),
 
   // [applied] promoted supertype
-  "_expression_within_for_in_clause": $ => choice($.expression, $.lambda_within_for_in_clause),
+  "_expression_within_for_in_clause": $ => choice($.expression, $.lambda),
 
   // [applied] promoted supertype
   "expression": $ => choice($.comparison_operator, $.not_operator, $.boolean_operator, $.lambda, $.primary_expression, $.conditional_expression, $.named_expression, $.as_pattern),
 
   // [applied] promoted supertype
-  "primary_expression": $ => choice($.await, $.binary_operator, $.identifier, $.keyword_identifier, $.string, $.concatenated_string, $.integer, $.float, $.true, $.false, $.none, $.unary_operator, $.attribute, $.subscript, $.call, $.list, $.list_comprehension, $.dictionary, $.dictionary_comprehension, $.set, $.set_comprehension, $.tuple, $.parenthesized_expression, $.generator_expression, $.ellipsis, $.list_splat_pattern),
+  "primary_expression": $ => choice($.await, $.binary_operator, $.identifier, $.keyword_identifier, $.string, $.concatenated_string, $.integer, $.float, $.true, $.false, $.none, $.unary_operator, $.attribute, $.subscript, $.call, $.list, $.list_comprehension, $.dictionary, $.dictionary_comprehension, $.set, $.set_comprehension, $.tuple, $.parenthesized_expression, $.generator_expression, $.ellipsis, $.list_splat),
 
   // [applied] promoted supertype
   "_left_hand_side": $ => choice($.pattern, $.pattern_list),
@@ -63,6 +202,9 @@ export const suggestedRules = {
 
   // [applied] promoted supertype
   "_f_expression": $ => choice($.expression, $.expression_list, $.pattern_list, $.yield),
+
+  // [applied] promoted supertype
+  "keyword_identifier": $ => choice($.identifier),
 
 };
 
@@ -85,19 +227,20 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "_simple_statement", classification: "supertype", applied: true },
   { kind: "_statement", classification: "supertype", applied: true },
   { kind: "expression", classification: "supertype", applied: true },
+  { kind: "keyword_identifier", classification: "supertype", applied: true },
   { kind: "parameter", classification: "supertype", applied: true },
   { kind: "pattern", classification: "supertype", applied: true },
   { kind: "primary_expression", classification: "supertype", applied: true },
-  { kind: "_is_not", classification: "terminal", applied: true },
-  { kind: "_not_in", classification: "terminal", applied: true },
   { kind: "comment", classification: "terminal", applied: true },
   { kind: "escape_sequence", classification: "terminal", applied: true },
   { kind: "float", classification: "terminal", applied: true },
   { kind: "import_prefix", classification: "terminal", applied: true },
   { kind: "integer", classification: "terminal", applied: true },
-  { kind: "keyword_identifier", classification: "terminal", applied: true },
   { kind: "line_continuation", classification: "terminal", applied: true },
   { kind: "assignment", classification: "polymorph", applied: true },
+  { kind: "assignment_eq", classification: "polymorph", applied: true },
+  { kind: "assignment_type", classification: "polymorph", applied: true },
+  { kind: "assignment_typed", classification: "polymorph", applied: true },
 ];
 
 export interface InferredField {

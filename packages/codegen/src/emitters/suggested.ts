@@ -19,6 +19,54 @@
 import type { NodeMap, DerivationLog, InferredFieldEntry, PromotedRuleEntry, RepeatedShapeEntry, Rule } from '../compiler/rule.ts'
 
 /**
+ * Locate the first CHOICE reachable from the rule root through the
+ * transparent composition wrappers that `variant()` can target — seq
+ * members + single-content wrappers. Returns the path to that choice
+ * (joinable with `/`) plus a suggested variant name per alternative.
+ * Names come from `tagVariants` when present (`variant.name` — "semi",
+ * "form_1", ...); fall back to `form_N` for untagged choices.
+ *
+ * Returns null if no choice is reachable — the rule isn't a polymorph
+ * candidate despite Link's suggestion (rare but possible when multiple
+ * passes run; defensive).
+ */
+function locateTopLevelChoice(
+    rule: Rule,
+): { choicePath: string; arms: string[] } | null {
+    function walk(node: Rule, path: string): { choicePath: string; arms: string[] } | null {
+        if (node.type === 'choice') {
+            // Disambiguate duplicate variant names — `tagVariants`
+            // assigns the same label to structurally-identical
+            // alternatives (e.g. export_statement has three "export"
+            // variants). Appending a 2/3/... suffix to collisions keeps
+            // them unique for `registerPolymorphVariant`'s uniqueness
+            // guard, which rejects same-parent duplicates at eval time.
+            const counts = new Map<string, number>()
+            const arms = node.members.map((m, i) => {
+                const base = m.type === 'variant' ? m.name : `form${i}`
+                const seen = counts.get(base) ?? 0
+                counts.set(base, seen + 1)
+                return seen === 0 ? base : `${base}${seen + 1}`
+            })
+            return { choicePath: path, arms }
+        }
+        if (node.type === 'seq') {
+            for (let i = 0; i < node.members.length; i++) {
+                const m = node.members[i]!
+                const sub = walk(m, path === '' ? `${i}` : `${path}/${i}`)
+                if (sub) return sub
+            }
+            return null
+        }
+        if (node.type === 'optional' || node.type === 'variant' || node.type === 'group' || node.type === 'clause') {
+            return walk(node.content, path === '' ? '0' : `${path}/0`)
+        }
+        return null
+    }
+    return walk(rule, '')
+}
+
+/**
  * Find the position index of `targetSymbol` within a top-level SEQ rule.
  * Matches both the bare symbol (held inference — pipeline didn't rewrite)
  * and the already-wrapped `field(fieldName, symbol(targetSymbol))` shape
@@ -57,13 +105,47 @@ function findSymbolPosition(
     return null
 }
 
+/**
+ * Round-trip diagnostic captured by corpus validation. One entry per
+ * corpus case that failed parse → readNode → render → reparse: we
+ * surface the offending rule kind plus an input/output diff so the
+ * user can spot the drop (typically a missing `joinBy` separator, a
+ * `transform()` patch that would wrap a repeated slot, or a render
+ * template gap). Emitted as a dedicated section at the top of
+ * overrides.suggested.ts.
+ */
+export interface RoundTripDiagnostic {
+    /** Corpus entry name (e.g., "Async / await used as identifiers"). */
+    readonly entry: string
+    /** Rule kind the validator was testing. */
+    readonly kind: string
+    /**
+     * Which validator raised the diagnostic:
+     *  - 'render' — `parse → readNode → render → reparse`
+     *    (template / routing / joinBy issues)
+     *  - 'factory' — `parse → readNode → factory() → render → reparse`
+     *    (factory API surface gaps: missing fields, wrong defaults)
+     */
+    readonly source: 'render' | 'factory'
+    /** What broke — 'parse-error' (rendered text unparseable) or 'ast-mismatch' (structural drift). */
+    readonly category: 'parse-error' | 'ast-mismatch'
+    /** Input source text. */
+    readonly input?: string
+    /** Rendered text (what the renderer emitted). Absent when parse-error occurs before render. */
+    readonly rendered?: string
+    /** Human-readable message from the validator. */
+    readonly message: string
+}
+
 export interface EmitSuggestedConfig {
     grammar: string
     nodeMap: NodeMap
+    /** Corpus round-trip diagnostics, collected by CLI --roundtrip. */
+    roundTripFailures?: readonly RoundTripDiagnostic[]
 }
 
 export function emitSuggested(config: EmitSuggestedConfig): string {
-    const { grammar, nodeMap } = config
+    const { grammar, nodeMap, roundTripFailures = [] } = config
     const log: DerivationLog = nodeMap.derivations
     const lines: string[] = []
 
@@ -92,10 +174,67 @@ export function emitSuggested(config: EmitSuggestedConfig): string {
     lines.push('// ---------------------------------------------------------------')
     lines.push('// Summary')
     lines.push('// ---------------------------------------------------------------')
-    lines.push(`// Field inferences: ${log.inferredFields.length}  (${inferredApplied} applied, ${inferredHeld} held)`)
-    lines.push(`// Rule promotions:  ${log.promotedRules.length}  (${promotedApplied} applied, ${promotedHeld} held)`)
-    lines.push(`// Repeated shapes:  ${log.repeatedShapes.length}  (advisory — suggested supertypes/groups)`)
+    lines.push(`// Field inferences:  ${log.inferredFields.length}  (${inferredApplied} applied, ${inferredHeld} held)`)
+    lines.push(`// Rule promotions:   ${log.promotedRules.length}  (${promotedApplied} applied, ${promotedHeld} held)`)
+    lines.push(`// Repeated shapes:   ${log.repeatedShapes.length}  (advisory — suggested supertypes/groups)`)
+    if (roundTripFailures.length > 0) {
+        const parseErrors = roundTripFailures.filter(f => f.category === 'parse-error').length
+        const astMismatches = roundTripFailures.filter(f => f.category === 'ast-mismatch').length
+        const renderFails = roundTripFailures.filter(f => f.source === 'render').length
+        const factoryFails = roundTripFailures.filter(f => f.source === 'factory').length
+        lines.push(`// Round-trip fails: ${roundTripFailures.length}  (${parseErrors} parse errors, ${astMismatches} AST mismatches; ${renderFails} render, ${factoryFails} factory)`)
+    }
     lines.push('')
+
+    // ---------------------------------------------------------------
+    // Round-trip failures (corpus diagnostics)
+    // ---------------------------------------------------------------
+    if (roundTripFailures.length > 0) {
+        lines.push('// ---------------------------------------------------------------')
+        lines.push('// Round-trip failures — corpus cases that didn\'t survive')
+        lines.push('// parse → readNode → render → reparse. Each entry shows the')
+        lines.push('// input and rendered text so you can spot what the renderer')
+        lines.push('// dropped. Common causes:')
+        lines.push('//   - Repeated slot missing a `joinBy` separator (renders only')
+        lines.push('//     the first occurrence of a multi-valued field)')
+        lines.push('//   - Missing `transform()` patch wrapping an anonymous token')
+        lines.push('//     that should be a named field')
+        lines.push('//   - Template gap — rule content has no renderable slot for')
+        lines.push('//     some structural position')
+        lines.push('// ---------------------------------------------------------------')
+        // Group by rule kind so related failures cluster.
+        const byKind = new Map<string, RoundTripDiagnostic[]>()
+        for (const f of roundTripFailures) {
+            const arr = byKind.get(f.kind) ?? []
+            arr.push(f)
+            byKind.set(f.kind, arr)
+        }
+        lines.push('export const roundTripFailures: Array<{')
+        lines.push('  readonly entry: string;')
+        lines.push('  readonly kind: string;')
+        lines.push('  readonly source: "render" | "factory";')
+        lines.push('  readonly category: "parse-error" | "ast-mismatch";')
+        lines.push('  readonly input?: string;')
+        lines.push('  readonly rendered?: string;')
+        lines.push('  readonly message: string;')
+        lines.push('}> = [')
+        for (const [kind, failures] of byKind) {
+            lines.push(`  // --- ${kind} (${failures.length}) ---`)
+            for (const f of failures) {
+                lines.push(`  {`)
+                lines.push(`    entry: ${JSON.stringify(f.entry)},`)
+                lines.push(`    kind: ${JSON.stringify(kind)},`)
+                lines.push(`    source: ${JSON.stringify(f.source)},`)
+                lines.push(`    category: ${JSON.stringify(f.category)},`)
+                if (f.input !== undefined) lines.push(`    input:    ${JSON.stringify(f.input)},`)
+                if (f.rendered !== undefined) lines.push(`    rendered: ${JSON.stringify(f.rendered)},`)
+                lines.push(`    message: ${JSON.stringify(f.message)},`)
+                lines.push(`  },`)
+            }
+        }
+        lines.push('];')
+        lines.push('')
+    }
 
     // ---------------------------------------------------------------
     // Copy-paste ready rules block
@@ -175,6 +314,47 @@ export function emitSuggested(config: EmitSuggestedConfig): string {
                     ` applyInferredFields pass (tree rewrite) rather than via overrides.ts.`,
                 )
             }
+            lines.push('')
+        })
+    }
+
+    // Polymorph suggestions — Link's `promotePolymorph` flagged these
+    // rules as "could be split into named forms" but left them alone
+    // (applied: false) because splitting only runs when the user writes
+    // `variant()` in their override. Emit a copy-pasteable snippet that
+    // wraps each choice alternative with `variant('<name>')`, so the
+    // author can drop it straight into overrides.ts.
+    const polymorphHolds = log.promotedRules.filter(
+        e => e.classification === 'polymorph' && !e.applied,
+    )
+    if (polymorphHolds.length > 0) {
+        lines.push('  // --- Polymorph candidates (wrap each choice arm in variant()) ---')
+    }
+    for (const entry of polymorphHolds) {
+        const rule = nodeMap.rules?.[entry.kind]
+        const located = rule ? locateTopLevelChoice(rule) : null
+        if (!located) {
+            // Link flagged this kind as a polymorph candidate but the
+            // emitter can't locate a reachable top-level choice via the
+            // supported wrapper set. Surface the skip as a comment so
+            // the Link/emitter disagreement is visible rather than
+            // silently dropping the suggestion.
+            emit(entry.kind, () => {
+                const topType = rule?.type ?? '(no rule)'
+                lines.push(`  // [held] polymorph — couldn't locate top-level choice under '${topType}'; emitter's wrapper set may need extending`)
+                lines.push('')
+            })
+            continue
+        }
+        const { choicePath, arms } = located
+        emit(entry.kind, () => {
+            lines.push(`  // [held] polymorph — ${arms.length} alternative(s)`)
+            lines.push(`  ${quoteKey(entry.kind)}: ($, original) => transform(original, {`)
+            arms.forEach((armName, i) => {
+                const key = choicePath === '' ? `${i}` : `${choicePath}/${i}`
+                lines.push(`    ${JSON.stringify(key)}: variant(${JSON.stringify(armName)}),`)
+            })
+            lines.push('  }),')
             lines.push('')
         })
     }

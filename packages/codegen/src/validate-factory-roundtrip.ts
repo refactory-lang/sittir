@@ -15,16 +15,14 @@ import { parse as parseYaml } from 'yaml';
 import { readNode, createRenderer } from '@sittir/core';
 import type { AnyNodeData, NodeFieldValue, RulesConfig } from '@sittir/types';
 import { loadRawEntries } from './validators/node-types.ts';
-import { loadRouting } from './validators/load-routing.ts';
 import {
 	loadCorpusEntries,
-	loadWebTreeSitter,
+	loadLanguageForGrammar,
 	treeHandle,
 	findFirst,
 	collectKinds,
 	buildKindToSupertypes,
 	wrapForReparse,
-	WASM_PATHS,
 	type TSNode,
 	type TSTree,
 } from './validators/common.ts';
@@ -147,47 +145,64 @@ export interface FactoryRoundTripResult {
 	 * missing field surface, dropped children slots, wrong defaults.
 	 */
 	astMatchPass: number;
-	errors: { kind: string; message: string }[];
-	astMismatches: { kind: string; message: string }[];
+	errors: { kind: string; entry?: string; message: string; input?: string; rendered?: string }[];
+	astMismatches: { kind: string; entry?: string; message: string; input?: string; rendered?: string }[];
 }
 
 export async function validateFactoryRoundTrip(
 	grammar: string,
 	templatesYaml: string,
 ): Promise<FactoryRoundTripResult> {
-	const { Parser, Language } = await loadWebTreeSitter();
-	const wasmPath = require.resolve(WASM_PATHS[grammar]!);
-	const lang = await Language.load(wasmPath);
+	const { Parser, lang } = await loadLanguageForGrammar(grammar);
 	const parser = new Parser();
 	parser.setLanguage(lang);
 
 	const config = parseYaml(templatesYaml) as RulesConfig;
 	const rawEntries = loadRawEntries(grammar);
-	const routing = await loadRouting(grammar);
 	const ruleKinds = new Set(Object.keys(config.rules));
 	const { render } = createRenderer(config);
 	const kindToSupertypes = buildKindToSupertypes(rawEntries);
 
-	// Dynamically import the generated _factoryMap for this grammar
+	// Dynamically import the generated _factoryMap + _factoryShapes for
+	// this grammar. `_factoryShapes[kind]` tells us whether to call the
+	// factory as `factory(config)` or `factory(...children)` — produced
+	// at codegen time from the node's model type, not inferred at runtime.
 	const factoryModulePath = FACTORY_MODULE_PATHS[grammar];
 	let factoryMap: Record<string, (config?: any) => unknown> = {};
-	if (factoryModulePath) {
+	let factoryShapes: Record<string, 'config' | 'children' | 'text'> = {};
+	const importFailure: { message: string } | null = await (async () => {
+		if (!factoryModulePath) return null;
 		try {
 			const factoryModule = await import(new URL(factoryModulePath, import.meta.url).pathname);
 			factoryMap = factoryModule._factoryMap ?? {};
-		} catch {
-			// If factory module can't be loaded, fall back to strip
+			factoryShapes = factoryModule._factoryShapes ?? {};
+			return null;
+		} catch (e) {
+			const message = `[validate-factory-roundtrip] failed to load ${factoryModulePath}: ${(e as Error)?.message ?? e}`;
+			console.error(message);
+			return { message };
 		}
-	}
+	})();
 
 	const entries = loadCorpusEntries(grammar);
-	const errors: { kind: string; message: string }[] = [];
-	const astMismatches: { kind: string; message: string }[] = [];
+	const errors: { kind: string; entry?: string; message: string; input?: string; rendered?: string }[] = [];
+	const astMismatches: { kind: string; entry?: string; message: string; input?: string; rendered?: string }[] = [];
 	const testedKinds = new Set<string>(); // one test per kind
 	let pass = 0;
 	let astMatchPass = 0;
 	let skip = 0;
 	let total = 0;
+
+	// Surface factory-module load failure in the error list. Without
+	// this row, an empty `factoryMap` silently routes every kind to
+	// `stripToFactory` and the reported "factory pass" count reflects
+	// the strip path, not the factory path — a false-green.
+	if (importFailure) {
+		errors.push({
+			kind: '(factory-module-load)',
+			message: importFailure.message,
+		});
+	}
 
 	for (const entry of entries) {
 		const tree1 = parser.parse(entry.source) as TSTree;
@@ -202,10 +217,11 @@ export async function validateFactoryRoundTrip(
 
 			const node1 = findFirst(tree1.rootNode, kind);
 			if (!node1) continue;
+			const inputSource = node1.text;
 
 			// readNode → direct factory call → render → re-parse
 			const handle = treeHandle(tree1);
-			const readData = readNode(handle, node1.id, routing);
+			const readData = readNode(handle, node1.id);
 
 			// Translate raw (snake_case) field keys to camelCase so the
 			// factory's ConfigOf properties match. readNode emits raw
@@ -232,24 +248,57 @@ export async function validateFactoryRoundTrip(
 				factoryData = readData;
 			} else if (factory) {
 				try {
-					// Children-only factories take positional rest-params;
-					// spread NAMED children only, otherwise the first
-					// anonymous delimiter binds the first positional slot.
-					// An empty `fields: {}` (not undefined) still means
-					// no field-shaped data — route through the
-					// children path so container factories receive
-					// their child args.
+					// Route by the shape declared at codegen time, not by
+					// inspecting factory.toString() (which breaks under
+					// minification). `_factoryShapes[kind]` is emitted
+					// from the node's model type in factories.ts.
+					const shape = factoryShapes[kind] ?? 'config';
+					const isConfigFactory = shape === 'config';
 					const fieldsPresent = readData.fields && Object.keys(readData.fields).length > 0;
-					if (!fieldsPresent && readData.children) {
+					if (isConfigFactory) {
+						// Some rules have BOTH fields AND children —
+						// e.g. python's `return_statement = seq('return',
+						// optional(_expressions))` where enrich's bare-
+						// keyword pass promotes `return` to a named
+						// field and the _expressions tail stays as an
+						// unrouted child. Include children in the config
+						// so factories that declare `children` in their
+						// ConfigOf merge it into the output.
+						const config = readData.children
+							? { ...camelFields, children: readData.children }
+							: camelFields ?? {};
+						factoryData = factory(config) as AnyNodeData;
+					} else {
+						// Children-only factory (shape !== 'config'): spread
+						// NAMED children as positional args. Anonymous fields
+						// on container nodes (promoted delimiters like `(`/`)`)
+						// are template-structural — the factory's arity doesn't
+						// cover them, and passing them as config would box the
+						// whole config into children[0] via the single-param
+						// signature (`tuple(child)`). Empty collections — e.g.
+						// python's `tuple` for source `()` — have `children =
+						// undefined` AND `fieldsPresent = true` (the `(`/`)`
+						// promotions), but must still dispatch as `factory()`
+						// with no args.
 						const namedChildren = (readData.children ?? []).filter(
 							(c: any) => c?.named !== false,
 						);
 						factoryData = (factory as (...args: unknown[]) => AnyNodeData)(...namedChildren);
-					} else {
-						factoryData = factory(camelFields ?? {}) as AnyNodeData;
 					}
-				} catch {
-					factoryData = stripToFactory(readData);
+				} catch (e) {
+					// A real factory throw (wrong argument shape,
+					// missing dependency, bug in the generated code)
+					// surfaces as a factory-RT error so it's visible in
+					// overrides.suggested.ts — silently falling back to
+					// stripToFactory would make the "factory pass" count
+					// fake. Record + skip this kind, don't continue the
+					// reparse loop.
+					errors.push({
+						kind, entry: entry.name,
+						message: `factory threw: ${(e as Error)?.message?.slice(0, 100) ?? String(e)}`,
+						input: inputSource,
+					});
+					continue;
 				}
 			} else {
 				factoryData = stripToFactory(readData);
@@ -269,7 +318,7 @@ export async function validateFactoryRoundTrip(
 
 				const tree2 = parser.parse(wrapped.text) as TSTree;
 				if (tree2.rootNode.hasError) {
-					errors.push({ kind, message: `re-parse error: "${rendered.slice(0, 60)}"` });
+					errors.push({ kind, entry: entry.name, message: `re-parse error: "${rendered.slice(0, 60)}"`, input: inputSource, rendered });
 					continue;
 				}
 
@@ -278,7 +327,7 @@ export async function validateFactoryRoundTrip(
 				// block/let/etc. of the same kind.
 				const node2 = findNodeAt(tree2.rootNode, kind, wrapped.offset) ?? findFirst(tree2.rootNode, kind);
 				if (!node2) {
-					errors.push({ kind, message: `kind not found in re-parse (rendered: "${rendered.slice(0, 60)}")` });
+					errors.push({ kind, entry: entry.name, message: `kind not found in re-parse (rendered: "${rendered.slice(0, 60)}")`, input: inputSource, rendered });
 					continue;
 				}
 
@@ -290,12 +339,12 @@ export async function validateFactoryRoundTrip(
 				// stays a stable floor; ast-match tightens it.
 				const diff = astStructuralDiff(node1, node2);
 				if (diff) {
-					astMismatches.push({ kind, message: diff.slice(0, 160) });
+					astMismatches.push({ kind, entry: entry.name, message: diff.slice(0, 160), input: inputSource, rendered });
 				} else {
 					astMatchPass++;
 				}
 			} catch (e) {
-				errors.push({ kind, message: `${(e as Error).message.slice(0, 80)}` });
+				errors.push({ kind, entry: entry.name, message: `${(e as Error).message.slice(0, 80)}`, input: inputSource });
 			}
 		}
 	}

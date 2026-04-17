@@ -17,7 +17,7 @@
  *   1. Unambiguous kind-to-name field wrapping — when a top-level seq
  *      member is a bare `$.kind` symbol reference that appears exactly
  *      once in its parent rule and does not collide with an existing
- *      field name, wraps it as `field('kind', $.kind, source: 'inferred')`.
+ *      field name, wraps it as `field('kind', $.kind, source: 'override')`.
  *
  *   2. Optional keyword-prefix field promotion — when an
  *      `optional(stringLiteral)` appears at any seq position (including
@@ -46,9 +46,18 @@
  *   - Bare leading string literals — see comment on pass 2 above.
  */
 
-import type {
-    Rule, SeqRule, SymbolRule, FieldRule, OptionalRule, StringRule, ChoiceRule,
-} from '../compiler/rule.ts'
+import type { Rule } from '../compiler/rule.ts'
+import { transform } from './transform.ts'
+import { field } from './field.ts'
+import {
+    isSeqType,
+    isStringType,
+    isSymbolType,
+    isFieldType,
+    isOptionalType,
+    isChoiceType,
+    isRepeatType,
+} from './runtime-shapes.ts'
 
 // Shape of the tree-sitter grammar result that our grammarFn produces.
 // The outer wrapper is `{ grammar: {...} }` because tree-sitter's
@@ -61,219 +70,278 @@ export interface GrammarResult {
     }
 }
 
-type Pass = (g: GrammarResult) => GrammarResult
-
-const PASSES: readonly Pass[] = [
-    kindToNamePass,
-    optionalKeywordPrefixPass,
-]
-
 export function enrich(base: GrammarResult): GrammarResult {
     if (!base || typeof base !== 'object') {
         throw new Error('enrich(): expected a grammar object, got ' + typeof base)
     }
 
-    // Tree-sitter CLI compatibility path: when this code runs inside
-    // tree-sitter's parser-generator runtime (loading the transpiled
-    // .sittir/grammar.js), `base` has tree-sitter's native shape —
-    // `{ name, rules, ... }` directly, with rules using uppercase
-    // types (`SEQ`, `SYMBOL`, etc.). Sittir's enrich passes are
-    // written for the sittir shape (`{ grammar: { rules } }` with
-    // lowercase types) so they can't apply here. Pass through
-    // unchanged — tree-sitter will compile the un-enriched grammar.
+    // Emit enrich as a set of OVERRIDE callbacks (one per base rule),
+    // matching how variant() is handled: each override runs at rule
+    // evaluation time, inspects `original`, and calls transform() with
+    // enrich-computed patches. Synthetic rules registered during
+    // transform.ts:resolvePatch land in the same scope as variant()'s
+    // synthetic rules — discovered by installGrammarWrapper's pass 1
+    // dry-run (tree-sitter CLI) or by withSyntheticRuleScope (sittir
+    // evaluate). No rule-function wrapping; same path in both runtimes.
     //
-    // Sittir's own pipeline still applies enrich properly because its
-    // evaluate.ts injects sittir's grammarFn before importing the
-    // override file, so `base` arrives in sittir's shape.
-    //
-    // The trade-off: the field wrappers enrich would add are present
-    // when sittir generates its consumer code, but absent in
-    // tree-sitter's compiled parser. Sittir's fidelity ceilings cover
-    // this gap; a future follow-up can make enrich shape-aware so the
-    // same transformations apply in both runtimes.
-    if (!('grammar' in base)) {
-        return base as GrammarResult
+    // Attach the generated overrides to the returned base via a
+    // sentinel property. grammar() (wrappedGrammar for tree-sitter CLI,
+    // grammarFn for sittir) merges them into opts.rules before
+    // evaluating — user overrides win on name collisions.
+    const rulesBag: Record<string, unknown> = ('grammar' in base ? base.grammar?.rules : (base as unknown as { rules?: unknown }).rules) as Record<string, unknown> ?? {}
+    const enrichOverrides: Record<string, (...args: unknown[]) => unknown> = {}
+    for (const name of Object.keys(rulesBag)) {
+        enrichOverrides[name] = function(this: unknown, _$: unknown, original: unknown): unknown {
+            return applyEnrichPasses(name, original as Rule)
+        }
     }
-
-    if (!base.grammar || typeof base.grammar.rules !== 'object') {
-        throw new Error('enrich(): grammar is missing a rules record')
-    }
-
-    let result = base
-    for (const pass of PASSES) {
-        result = pass(result)
-    }
-    return result
+    Object.defineProperty(base, '__enrichOverrides__', {
+        value: enrichOverrides,
+        enumerable: false,
+        configurable: true,
+        writable: false,
+    })
+    return base
 }
 
 // ---------------------------------------------------------------------------
-// Pass 1 — unambiguous kind-to-name field wrapping
+// Legacy mapRules-based passes deleted — the sittir-shape path now goes
+// through applyEnrichPasses (transform()-based) for bit-identical
+// behavior with the tree-sitter CLI wrapper path.
 // ---------------------------------------------------------------------------
 
-function kindToNamePass(g: GrammarResult): GrammarResult {
-    return mapRules(g, applyKindToName)
+// ---------------------------------------------------------------------------
+// applyEnrichPasses — unified pass pipeline via transform()
+// ---------------------------------------------------------------------------
+//
+// Detects positions each pass would wrap and batches them into a single
+// transform() call. transform.ts delegates one-arg field() placeholders
+// to the runtime's native field() in resolvePatch, so the same code
+// path works in both sittir's evaluator (lowercase rules) and
+// tree-sitter's CLI runtime (uppercase rules). The user's directive:
+// "Enrich should call the native methods… just like transform does".
+//
+// Pass order mirrors the original PASSES array: kind-to-name,
+// optional-keyword-prefix, bare-keyword-prefix. Each pass collects
+// flat-positional patches for `{ position: field('name') }`. transform()
+// reconstructs the rule in the runtime's native shape.
+
+function applyEnrichPasses(ruleName: string, rule: Rule): Rule {
+    let r = rule
+    r = applyKindToNameViaTransform(ruleName, r)
+    // bare + optional keyword passes use symbol-alias trick: register
+    // a hidden helper rule `_kw_<kw>: 'kw'` and emit FIELD(kw, SYM)
+    // instead of FIELD(kw, STRING). Tree-sitter preserves FIELD around
+    // SYMBOL, so these fields land in the parse tree natively.
+    r = applyBareKeywordViaTransform(ruleName, r)
+    r = applyOptionalKeywordViaTransform(ruleName, r)
+    return r
 }
 
-function applyKindToName(ruleName: string, rule: Rule): Rule {
-    if (rule.type !== 'seq') return rule
+// fieldOverKeywordSymbol — removed. Bare and optional keyword passes
+// now use the exact same pattern as kindToName: transform() with a
+// field() placeholder wrapping the original member. Tree-sitter
+// strips FIELD around bare STRING during grammar normalization, but
+// readNode's promoteAnonymousKeyword picks these up at runtime (the
+// anonymous token's type IS its text, so the promotion is direct).
 
-    // Count occurrences of each kind name at the top level — a kind
-    // that appears more than once is ambiguous ("which $.expression is
-    // THE expression?") and gets skipped silently.
+// Per-type guards imported from runtime-shapes.ts — single spot for
+// the sittir-lowercase / tree-sitter-uppercase dual-case handling.
+
+/**
+ * Normalize a rule member to a structured form. Tree-sitter's DSL lets
+ * rule functions pass BARE JS values (plain strings for STRING, plain
+ * regexes for PATTERN) as sequence members — they're interpreted when
+ * tree-sitter builds the grammar. Our walker operates on the OUTPUT of
+ * the rule function before tree-sitter's normalization, so we see the
+ * raw mixed shape. Normalize to a virtual `{type:'STRING', value}` /
+ * `{type:'PATTERN', value}` so downstream code can treat the member
+ * uniformly. For objects with a type, return as-is.
+ */
+function normalizeMember(m: unknown): { type: string; value?: string; content?: unknown; members?: unknown[]; name?: string } {
+    if (typeof m === 'string') return { type: 'STRING', value: m }
+    if (m instanceof RegExp) return { type: 'PATTERN', value: m.source }
+    return (m as { type: string }) ?? { type: 'UNKNOWN' }
+}
+
+/** Collect field names that already exist on the top-level seq. */
+function collectFieldNamesRuntime(rule: Rule): Set<string> {
+    const names = new Set<string>()
+    if (!isSeqType(rule.type)) return names
+    const members = (rule as unknown as { members: unknown[] }).members
+    for (const raw of members) {
+        const m = normalizeMember(raw)
+        if (isFieldType(m.type) && typeof m.name === 'string') {
+            names.add(m.name)
+            continue
+        }
+        // optional(field(...))
+        const peeled = peelOptional(m as unknown as Rule)
+        if (peeled.isOptional) {
+            const innerN = normalizeMember(peeled.inner)
+            if (isFieldType(innerN.type) && typeof innerN.name === 'string') {
+                names.add(innerN.name)
+            }
+        }
+    }
+    return names
+}
+
+function applyKindToNameViaTransform(ruleName: string, rule: Rule): Rule {
+    if (!isSeqType(rule.type)) return rule
+    const raw = (rule as unknown as { members: unknown[] }).members
+    const members = raw.map(normalizeMember)
+
+    // Count symbol occurrences — skip ambiguous kinds.
     const kindCounts = new Map<string, number>()
-    for (const m of rule.members) {
-        if (m.type === 'symbol') {
+    for (const m of members) {
+        if (isSymbolType(m.type) && typeof m.name === 'string') {
             kindCounts.set(m.name, (kindCounts.get(m.name) ?? 0) + 1)
         }
     }
-
-    const existingFields = collectFieldNames(rule)
-    let changed = false
-
-    const newMembers = rule.members.map((m): Rule => {
-        if (m.type !== 'symbol') return m
-        const sym = m as SymbolRule
-        const kindName = sym.name
-
-        // Hidden kinds are sittir's alias/supertype convention.
-        if (kindName.startsWith('_')) return m
-        // Ambiguous — multiple siblings of the same kind.
-        if ((kindCounts.get(kindName) ?? 0) > 1) return m
-        // Collision with an existing field on the same rule.
-        if (existingFields.has(kindName)) {
-            reportSkip('kind-to-name', ruleName, `field '${kindName}' already exists`)
-            return m
+    const existing = collectFieldNamesRuntime(rule)
+    const patches: Record<string, Parameters<typeof transform>[1][string]> = {}
+    for (let i = 0; i < members.length; i++) {
+        const m = members[i]!
+        if (!isSymbolType(m.type) || typeof m.name !== 'string') continue
+        const k = m.name
+        if (k.startsWith('_')) continue
+        if ((kindCounts.get(k) ?? 0) > 1) continue
+        if (existing.has(k)) {
+            reportSkip('kind-to-name', ruleName, `field '${k}' already exists`)
+            continue
         }
-
-        existingFields.add(kindName)
-        changed = true
-        return wrapAsField(kindName, sym)
-    })
-
-    if (!changed) return rule
-    return { type: 'seq', members: newMembers } satisfies SeqRule
+        existing.add(k)
+        patches[String(i)] = field(k) as Parameters<typeof transform>[1][string]
+    }
+    if (Object.keys(patches).length === 0) return rule
+    return transform(rule as unknown as Parameters<typeof transform>[0], patches) as Rule
 }
 
-// ---------------------------------------------------------------------------
-// Pass 2 — optional keyword-prefix field promotion
-//
-// 1:1 port of Link's promoteOptionalKeywordFields. Recursively walks
-// the rule tree; at every seq, looks for `optional(stringLiteral)`
-// members where the literal is identifier-shaped, and wraps the
-// literal as `field(kw, stringLiteral)`. The optional wrapper is
-// preserved so the field stays optional. Existing field names on
-// the same seq block the promotion (collision-aware).
-//
-// Why ONLY the optional variant? Wrapping bare leading string
-// literals (e.g. `seq('async', $.body)`) was tried and caused 99
-// round-trip regressions on rust + 58 on python — the cascading
-// effect on Link/Optimize/Assemble/Emit is non-trivial and the
-// resulting parse trees diverge from what tree-sitter's base parser
-// produces. The optional variant is the conservative subset that
-// matches Link's pre-existing behavior exactly.
-// ---------------------------------------------------------------------------
-
-function optionalKeywordPrefixPass(g: GrammarResult): GrammarResult {
-    return mapRules(g, (ruleName, rule) => walkOptionalKeyword(ruleName, rule))
+function applyOptionalKeywordViaTransform(ruleName: string, rule: Rule): Rule {
+    // Walk the tree collecting path-addressed patches for every
+    // `optional(stringLiteral-identifier)` position where the kw
+    // doesn't collide with an existing field on the same seq.
+    type Patch = Parameters<typeof transform>[1][string]
+    const patches: Record<string, Patch> = {}
+    collectOptionalKeywordPatches(ruleName, rule, '', patches)
+    if (Object.keys(patches).length === 0) return rule
+    return transform(rule as unknown as Parameters<typeof transform>[0], patches) as Rule
 }
 
-function walkOptionalKeyword(ruleName: string, rule: Rule): Rule {
-    switch (rule.type) {
-        case 'seq': {
-            const seq = rule as SeqRule
-            // First pass: collect names already claimed by existing
-            // field() wrappers so promotion doesn't clash.
-            const claimed = new Set<string>()
-            for (const m of seq.members) {
-                if (m.type === 'field') claimed.add(m.name)
+type TransformPatch = Parameters<typeof transform>[1][string]
+
+/**
+ * Detect `optional(content)` across both runtimes:
+ * - sittir shape: `{ type: 'optional', content }`
+ * - tree-sitter post-evaluation: `{ type: 'CHOICE', members: [content, {BLANK}] }`
+ *
+ * Returns the inner content + whether the rule is "optional-shaped".
+ */
+function peelOptional(rule: Rule): { inner: Rule; isOptional: boolean } {
+    if (isOptionalType(rule.type)) {
+        return { inner: (rule as unknown as { content: Rule }).content, isOptional: true }
+    }
+    if (isChoiceType(rule.type)) {
+        const members = (rule as unknown as { members: Array<{ type: string }> }).members
+        if (members.length === 2) {
+            const blankIdx = members.findIndex(m => m.type === 'BLANK' || m.type === 'blank')
+            if (blankIdx !== -1) {
+                const inner = members[1 - blankIdx] as unknown as Rule
+                return { inner, isOptional: true }
             }
-            const members = seq.members.map((m): Rule => {
-                // optional(stringLiteral) → optional(field(kw, stringLiteral))
-                if (m.type === 'optional') {
-                    const inner = (m as OptionalRule).content
-                    if (inner.type === 'string') {
-                        const kw = (inner as StringRule).value
-                        if (isIdentifierShaped(kw)) {
-                            if (claimed.has(kw)) {
-                                reportSkip('optional-keyword-prefix', ruleName, `field '${kw}' already exists`)
-                                return m
-                            }
-                            claimed.add(kw)
-                            return {
-                                type: 'optional',
-                                content: wrapAsField(kw, inner),
-                            } satisfies OptionalRule
+        }
+    }
+    return { inner: rule, isOptional: false }
+}
+
+function collectOptionalKeywordPatches(
+    ruleName: string,
+    rule: Rule,
+    prefix: string,
+    patches: Record<string, TransformPatch>,
+): void {
+    if (isSeqType(rule.type)) {
+        const raw = (rule as unknown as { members: unknown[] }).members
+        const claimed = collectFieldNamesRuntime(rule)
+        for (let i = 0; i < raw.length; i++) {
+            const m = normalizeMember(raw[i])
+            const peeled = peelOptional(m as unknown as Rule)
+            if (peeled.isOptional) {
+                const innerN = normalizeMember(peeled.inner)
+                if (isStringType(innerN.type)) {
+                    const kw = innerN.value
+                    if (typeof kw === 'string' && isIdentifierShaped(kw)) {
+                        if (claimed.has(kw)) {
+                            reportSkip('optional-keyword-prefix', ruleName, `field '${kw}' already exists`)
+                            continue
                         }
+                        claimed.add(kw)
+                        // Path to the inner string:
+                        //   sittir optional: `${i}/0` (content is child 0 of optional)
+                        //   tree-sitter CHOICE(content, BLANK) or (BLANK, content):
+                        //     use the member index where non-BLANK lives.
+                        let innerPath: string
+                        if (isOptionalType(m.type)) {
+                            innerPath = '0'
+                        } else {
+                            const cm = (m as unknown as { members: unknown[] }).members
+                            const strIdx = cm.findIndex(x => {
+                                const n = normalizeMember(x)
+                                return n.type !== 'BLANK' && n.type !== 'blank'
+                            })
+                            innerPath = String(strIdx)
+                        }
+                        const fullPath = prefix ? `${prefix}/${i}/${innerPath}` : `${i}/${innerPath}`
+                        patches[fullPath] = field(kw) as TransformPatch
+                        continue
                     }
                 }
-                return walkOptionalKeyword(ruleName, m)
-            })
-            return { type: 'seq', members } satisfies SeqRule
+            }
+            const childPrefix = prefix ? `${prefix}/${i}` : `${i}`
+            collectOptionalKeywordPatches(ruleName, m as unknown as Rule, childPrefix, patches)
         }
-        case 'choice': {
-            const ch = rule as ChoiceRule
-            return {
-                type: 'choice',
-                members: ch.members.map(m => walkOptionalKeyword(ruleName, m)),
-            } satisfies ChoiceRule
-        }
-        case 'optional':
-        case 'repeat':
-        case 'repeat1':
-        case 'field': {
-            const r = rule as { content: Rule }
-            return { ...rule, content: walkOptionalKeyword(ruleName, r.content) } as Rule
-        }
-        default:
-            return rule
+        return
     }
+    if (isChoiceType(rule.type)) {
+        const raw = (rule as unknown as { members: unknown[] }).members
+        for (let i = 0; i < raw.length; i++) {
+            const childPrefix = prefix ? `${prefix}/${i}` : `${i}`
+            const m = normalizeMember(raw[i])
+            collectOptionalKeywordPatches(ruleName, m as unknown as Rule, childPrefix, patches)
+        }
+        return
+    }
+    if (isOptionalType(rule.type) || isRepeatType(rule.type) || isFieldType(rule.type)) {
+        const inner = normalizeMember((rule as unknown as { content: unknown }).content)
+        const childPrefix = prefix ? `${prefix}/0` : `0`
+        collectOptionalKeywordPatches(ruleName, inner as unknown as Rule, childPrefix, patches)
+    }
+}
+
+function applyBareKeywordViaTransform(ruleName: string, rule: Rule): Rule {
+    if (!isSeqType(rule.type)) return rule
+    const raw = (rule as unknown as { members: unknown[] }).members
+    const first = raw[0]
+    if (first === undefined) return rule
+    const normFirst = normalizeMember(first)
+    if (!isStringType(normFirst.type)) return rule
+    const kw = normFirst.value
+    if (typeof kw !== 'string' || !isIdentifierShaped(kw)) return rule
+    const existing = collectFieldNamesRuntime(rule)
+    if (existing.has(kw)) {
+        reportSkip('bare-keyword-prefix', ruleName, `field '${kw}' already exists`)
+        return rule
+    }
+    return transform(
+        rule as unknown as Parameters<typeof transform>[0],
+        { 0: field(kw) as TransformPatch },
+    ) as Rule
 }
 
 // ---------------------------------------------------------------------------
 // Shared helpers
 // ---------------------------------------------------------------------------
-
-function mapRules(g: GrammarResult, fn: (ruleName: string, rule: Rule) => Rule): GrammarResult {
-    const newRules: Record<string, Rule> = {}
-    for (const [name, rule] of Object.entries(g.grammar.rules)) {
-        newRules[name] = fn(name, rule)
-    }
-    return {
-        ...g,
-        grammar: {
-            ...g.grammar,
-            rules: newRules,
-        },
-    }
-}
-
-function wrapAsField(name: string, content: Rule): FieldRule {
-    return {
-        type: 'field',
-        name,
-        content,
-        source: 'inferred',
-    }
-}
-
-/**
- * Collect field names already present at the top level of a seq rule.
- * Used for collision detection — mechanical-only promotion must skip
- * any kind that would collide with an authored or pre-existing field.
- * Also peeks inside `optional(field(...))`.
- */
-function collectFieldNames(rule: Rule): Set<string> {
-    const names = new Set<string>()
-    if (rule.type !== 'seq') return names
-    for (const m of rule.members) {
-        if (m.type === 'field') {
-            names.add(m.name)
-        } else if (m.type === 'optional' && (m as OptionalRule).content.type === 'field') {
-            names.add(((m as OptionalRule).content as FieldRule).name)
-        }
-    }
-    return names
-}
 
 /**
  * Check whether a string is identifier-shaped — starts with a letter

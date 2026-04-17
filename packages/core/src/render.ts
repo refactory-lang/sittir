@@ -110,6 +110,34 @@ function render(node: AnyNodeData, ctx: InternalRenderContext): string {
 		const fieldKey = name.toLowerCase();
 		const clauseKey = `${fieldKey}`;
 
+		// `$TEXT` — emit the node's native text. Used for rules whose
+		// tokens include external-scanner symbols (e.g. rust's
+		// `raw_string_literal`: `_raw_string_literal_start` and
+		// `_raw_string_literal_end` are scanner-generated and never
+		// appear as named children, so a field-by-field template
+		// can't reconstruct them).
+		if (fieldKey === 'text') {
+			// Parsed-tree path: readNode captured the full source span.
+			if (node.text !== undefined && node.text !== '') return node.text;
+			// Factory-built path: the node never saw a source span.
+			// Best-effort concatenate the fields + children so round-
+			// trip tests for `$TEXT` rules still produce non-empty
+			// output; better than silent ''.
+			const parts: string[] = [];
+			if (node.fields) {
+				for (const v of Object.values(node.fields)) {
+					const items = Array.isArray(v) ? v : [v];
+					for (const item of items) parts.push(renderValue(item as AnyNodeData | string | number, ctx));
+				}
+			}
+			if (node.children) {
+				for (const c of node.children) {
+					parts.push(renderValue(c as AnyNodeData | string | number, ctx));
+				}
+			}
+			return parts.join('');
+		}
+
 		// 1. Clause reference (e.g., $RETURN_TYPE_CLAUSE → return_type_clause key in rule)
 		// Exclude rule-object meta keys and require the value be a string template.
 		if (
@@ -134,7 +162,19 @@ function render(node: AnyNodeData, ctx: InternalRenderContext): string {
 				return items.map(item => renderValue(item as AnyNodeData | string | number, ctx)).join(sep);
 			}
 			if (Array.isArray(value)) {
-				return value.length > 0 ? renderValue(value[0] as AnyNodeData | string | number, ctx) : '';
+				// Empty array in a single-slot field position means
+				// upstream (factory / readNode / from.ts) produced a
+				// zero-length list where the template expects exactly
+				// one value. Emitting `''` silently produces malformed
+				// output (e.g. a binary expression with no operand) —
+				// same severity as the leaf "has no fields or children"
+				// guard, so throw with the same shape.
+				if (value.length === 0) {
+					throw new Error(
+						`Node '${node.type}' field '${fieldKey}' is an empty array but the template expects exactly one value — single-slot field was rendered from a zero-length array.`,
+					);
+				}
+				return renderValue(value[0] as AnyNodeData | string | number, ctx);
 			}
 			return renderValue(value as AnyNodeData | string | number, ctx);
 		}
@@ -149,7 +189,20 @@ function render(node: AnyNodeData, ctx: InternalRenderContext): string {
 				!consumed.has(i) && (c as AnyNodeData).named !== false
 			);
 			const sep = resolveJoinBy(ruleObj, name);
-			return remaining.map(c => renderValue(c as AnyNodeData | string | number, ctx)).join(sep);
+			const joined = remaining.map(c => renderValue(c as AnyNodeData | string | number, ctx)).join(sep);
+			if (!sep || sep.length === 0 || remaining.length === 0) return joined;
+			// Leading / trailing-separator fidelity: codegen emits
+			// `joinByLeading: true` / `joinByTrailing: true` when the
+			// repeat rule captured those markers at evaluate time
+			// (e.g. rust's or_pattern `| a | b`, struct_pattern
+			// `{ a, b, }`). For each marker, probe the parse-tree
+			// children for an anonymous separator token flanking the
+			// named-child run and emit it when present — preserves
+			// the original's with-or-without-flank state so ast-match
+			// stays stable.
+			const prefix = ruleObj?.['joinByLeading'] === true ? flankSep(node.children, 'leading', sep) : '';
+			const suffix = ruleObj?.['joinByTrailing'] === true ? flankSep(node.children, 'trailing', sep) : '';
+			return prefix + joined + suffix;
 		}
 
 		// 4. Named child by kind — consume first unconsumed named match
@@ -321,7 +374,17 @@ function renderClause(
 	return clauseTemplate.replace(varPattern, (_match: string, _pfx: string, name: string) => {
 		const fieldKey = name.toLowerCase();
 		if (node.fields?.[fieldKey] !== undefined) {
-			const value = node.fields[fieldKey] as AnyNodeData | string | number;
+			const raw = node.fields[fieldKey];
+			// Multi-valued fields (promoted anonymous tokens +
+			// repeated slots) arrive as arrays. renderValue(array)
+			// would treat it as a node with `.type === undefined`
+			// and throw; single-value clauses just want the first
+			// entry (same convention as the `$NAME` single-slot
+			// path above in resolveSlot).
+			const value = Array.isArray(raw)
+				? (raw.length > 0 ? raw[0] as AnyNodeData | string | number : '')
+				: raw as AnyNodeData | string | number;
+			if (value === '') return '';
 			return renderValue(value, ctx);
 		}
 		// Children by kind fallback
@@ -343,6 +406,26 @@ function renderClause(
  * when a single rule has multiple multi-valued slots with different
  * separators (e.g. rust tuple_expression: `attributes` joins with `\n`,
  * `rest` joins with `,`). */
+/**
+ * Probe a children array for an anonymous separator token immediately
+ * before (`leading`) or after (`trailing`) the run of named children.
+ * Returns the separator when one is found adjacent to the named-child
+ * boundary, `''` otherwise — caller uses the return value verbatim as
+ * the prefix/suffix to append to the joined slot output.
+ */
+function flankSep(children: readonly unknown[], side: 'leading' | 'trailing', sep: string): string {
+	const isNamed = (c: unknown): boolean =>
+		typeof c === 'object' && c !== null && (c as AnyNodeData).named !== false;
+	const namedIdx = side === 'leading'
+		? children.findIndex(isNamed)
+		: children.findLastIndex(isNamed);
+	if (namedIdx < 0) return '';
+	const neighborIdx = side === 'leading' ? namedIdx - 1 : namedIdx + 1;
+	if (neighborIdx < 0 || neighborIdx >= children.length) return '';
+	const neighbor = children[neighborIdx] as AnyNodeData | undefined;
+	return neighbor && neighbor.named === false && neighbor.text === sep ? sep : '';
+}
+
 function resolveJoinBy(ruleObj: Record<string, unknown> | undefined, varName: string): string {
 	if (!ruleObj) return ' ';
 	const joinByField = ruleObj['joinByField'] as Record<string, string> | undefined;

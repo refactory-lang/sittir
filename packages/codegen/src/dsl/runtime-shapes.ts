@@ -59,8 +59,26 @@ export type FieldLike = {
 export function isSymbolLike(v: unknown): v is SymbolLike {
     if (!v || typeof v !== 'object') return false
     const t = (v as { type?: unknown }).type
-    return (t === 'symbol' || t === 'SYMBOL')
-        && typeof (v as { name?: unknown }).name === 'string'
+    if ((t === 'symbol' || t === 'SYMBOL')
+        && typeof (v as { name?: unknown }).name === 'string') return true
+    return extractSymbolName(v) !== undefined
+}
+
+/**
+ * Extract the symbol name from a value that might be a symbol reference
+ * in any runtime shape. Tree-sitter CLI wraps `$` references as
+ * nested objects; this unwraps to the name string if possible.
+ */
+export function extractSymbolName(v: unknown): string | undefined {
+    if (!v || typeof v !== 'object') return undefined
+    const r = v as Record<string, unknown>
+    const t = r.type
+    if ((t === 'symbol' || t === 'SYMBOL') && typeof r.name === 'string') return r.name
+    // Tree-sitter CLI: $.name → { symbol: { type: 'SYMBOL', name: '...' } }
+    if (r.symbol && typeof r.symbol === 'object') {
+        return extractSymbolName(r.symbol)
+    }
+    return undefined
 }
 
 export function isFieldLike(v: unknown): v is FieldLike {
@@ -101,5 +119,32 @@ export function isWrapperType(t: string): boolean {
 export function isPrecWrapper(rule: { type: string }): boolean {
     const t = rule.type
     return t === 'prec' || t === 'PREC'
-        || t === 'PREC_LEFT' || t === 'PREC_RIGHT' || t === 'PREC_DYNAMIC'
+        || t === 'prec_left' || t === 'PREC_LEFT'
+        || t === 'prec_right' || t === 'PREC_RIGHT'
+        || t === 'prec_dynamic' || t === 'PREC_DYNAMIC'
 }
+
+// ---------------------------------------------------------------------------
+// Per-type discriminators — accept both sittir-lowercase and tree-sitter
+// uppercase shapes. Consolidated here so every caller goes through a
+// single predicate instead of scattering `typeEq(t, 'seq')` helpers or
+// inline `t === 'seq' || t === 'SEQ'` ladders across the codebase.
+// ---------------------------------------------------------------------------
+
+/** True if `t` equals `lower` or its uppercase form (`'seq'` or `'SEQ'`). */
+export function typeEq(t: unknown, lower: string): boolean {
+    return typeof t === 'string' && (t === lower || t === lower.toUpperCase())
+}
+
+export const isSeqType = (t: unknown): boolean => typeEq(t, 'seq')
+export const isChoiceType = (t: unknown): boolean => typeEq(t, 'choice')
+export const isOptionalType = (t: unknown): boolean => typeEq(t, 'optional')
+export const isFieldType = (t: unknown): boolean => typeEq(t, 'field')
+export const isSymbolType = (t: unknown): boolean => typeEq(t, 'symbol')
+export const isStringType = (t: unknown): boolean => typeEq(t, 'string')
+/** Plain repeat (zero-or-more). Excludes repeat1. Callers that need
+ *  either should use {@link isRepeatType}. */
+export const isPlainRepeatType = (t: unknown): boolean => typeEq(t, 'repeat')
+/** Either repeat variant — true for both `repeat` and `repeat1`. */
+export const isRepeatType = (t: unknown): boolean => typeEq(t, 'repeat') || typeEq(t, 'repeat1')
+export const isBlankType = (t: unknown): boolean => typeEq(t, 'blank')

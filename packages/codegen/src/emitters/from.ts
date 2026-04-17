@@ -10,6 +10,7 @@
 import type {
     NodeMap, AssembledNode, AssembledField, AssembledChild, AssembledGroup,
 } from '../compiler/rule.ts'
+import type { PolymorphVariant } from '../dsl/synthetic-rules.ts'
 
 /** Escape a string for safe inclusion inside a single-quoted TS string literal. */
 function escForSource(s: string): string {
@@ -148,8 +149,13 @@ export function emitFrom(config: EmitFromConfig): string {
     // passed down so every field resolver call registers its kind
     // list through the same dedup table.
     const perNodeBlocks: string[] = []
+    const polymorphFormKinds = new Set<string>()
+    for (const [, n] of nodeMap.nodes) {
+        if (n.modelType === 'polymorph') for (const f of n.forms) polymorphFormKinds.add(f.kind)
+    }
     for (const [kind, node] of nodeMap.nodes) {
         if (kind.startsWith('_')) continue
+        if (polymorphFormKinds.has(kind)) continue
         const source = renderFromForNode(node, nodeMap, internKinds)
         if (source === undefined) continue
         perNodeBlocks.push(source)
@@ -245,6 +251,49 @@ interface BranchLikeNode {
     readonly fromFunctionName?: string
     readonly fields: readonly AssembledField[]
     readonly children?: readonly AssembledChild[]
+}
+
+function emitVariantFrom(
+    node: AssembledNode,
+    polymorphVariants: PolymorphVariant[],
+    nodeMap: NodeMap,
+    intern: KindInterner,
+): string {
+    const fn = node.fromFunctionName!
+    const factory = node.rawFactoryName!
+    const typeName = node.typeName
+    const inputType = `T.${typeName} | T.${node.fromInputTypeName}`
+    const lines: string[] = []
+    lines.push(`export function ${fn}(input: ${inputType}): ReturnType<typeof ${factory}> {`)
+    lines.push(`  if ('render' in input) return input as T.${typeName} & ReturnType<typeof ${factory}>;`)
+
+    const parentFields = 'fields' in node ? (node as { fields: readonly AssembledField[] }).fields : []
+    const configParts: string[] = []
+    for (const f of parentFields) {
+        const call = resolveFieldFromTypedInput(f, nodeMap, typeName, intern, 'input', false)
+        configParts.push(`    ${f.propertyName}: ${call},`)
+    }
+
+    // Collect all variant field names for the config
+    const seenProps = new Set(parentFields.map(f => f.propertyName))
+    for (const pv of polymorphVariants) {
+        const fullName = `${pv.parent}_${pv.child}`
+        const vNode = nodeMap.nodes.get(fullName)
+        if (!vNode) continue
+        const vFields = 'fields' in vNode ? (vNode as { fields: readonly AssembledField[] }).fields : []
+        for (const vf of vFields) {
+            if (seenProps.has(vf.propertyName)) continue
+            seenProps.add(vf.propertyName)
+            const call = resolveFieldFromTypedInput(vf, nodeMap, typeName, intern, 'input', true)
+            configParts.push(`    ${vf.propertyName}: ${call},`)
+        }
+    }
+
+    lines.push(`  return ${factory}({`)
+    lines.push(...configParts)
+    lines.push('  });')
+    lines.push('}')
+    return lines.join('\n')
 }
 
 function emitBranchFrom(node: BranchLikeNode, nodeMap: NodeMap, intern: KindInterner): string {
@@ -361,7 +410,13 @@ function emitContainerFrom(node: ContainerFromNode): string {
             `export function ${fn}(...input: readonly (${elementType} | ${tName})[]) {`,
             `  if (input.length === 1 && isNodeData(input[0]) && input[0].type === '${node.kind}') {`,
             `    const data = input[0] as ${tName};`,
-            `    return ${factory}(...(data.children as ${childType}));`,
+            // `data.children` is undefined for empty collections that
+            // readNode represents without a children array (e.g. python
+            // `format_specifier` for `:2` — the colon gets promoted to a
+            // field, no children). Spreading `undefined` throws; guard
+            // with `?? []` so the rebuilt factory call matches the empty
+            // form.
+            `    return ${factory}(...((data.children ?? []) as ${childType}));`,
             `  }`,
             `  return ${factory}(...(input as ${childType}));`,
             '}',
@@ -376,7 +431,13 @@ function emitContainerFrom(node: ContainerFromNode): string {
         `export function ${fn}(input?: ${elementType} | ${tName}) {`,
         `  if (isNodeData(input) && input.type === '${node.kind}') {`,
         `    const data = input as ${tName};`,
-        `    return ${factory}((data.children as ${childType})[0] as ${elementType});`,
+        // Empty collections (e.g. python `()` / `[]`) have no named
+        // children — readNode promotes `(` / `)` / `[` / `]` into
+        // fields and produces no `children`. Calling `factory(undefined)`
+        // rebuilds the empty form; indexing children[0] in that case
+        // throws "Cannot read properties of undefined (reading '0')".
+        `    const child = data.children ? (data.children as ${childType})[0] : undefined;`,
+        `    return ${factory}(child as ${elementType});`,
         `  }`,
         `  return ${factory}(input as ${elementType});`,
         '}',

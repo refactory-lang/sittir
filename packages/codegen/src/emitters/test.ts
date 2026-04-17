@@ -32,6 +32,7 @@ export function emitTests(config: EmitTestsConfig): string {
         // via `ir.<key>(...)` syntax. The external externals-inheritance
         // pass surfaces new such kinds for grammars that declare them.
         if (!isValidIdent(key)) continue
+        if (nodeMap.polymorphFormKinds.has(kind)) continue
 
         switch (node.modelType) {
             case 'branch':
@@ -238,3 +239,4 @@ function dummyValue(field: AssembledField): string {
     }
     return "'test' as any"
 }
+

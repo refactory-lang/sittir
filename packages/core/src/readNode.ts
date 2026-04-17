@@ -5,15 +5,12 @@
  * delimiters, keywords). Every entry carries `nodeId` for O(1) drill-in via
  * `tree.nodeById()`.
  *
- * When a `RoutingMap` is provided, children whose kind matches an override
- * entry are promoted to `fields` under the override's field name — both
- * named and anonymous tokens. Two routing paths:
- *
- * 1. **Unambiguous** (~95%): direct kind → field lookup. Covers all kinds
- *    that appear in exactly one slot, including anonymous tokens.
- * 2. **Ambiguous** (~5%): position-based consumption for kinds that appear
- *    in multiple slots (e.g. `_expression` in `start` + `end`). Only named
- *    children reach this path — anonymous tokens are always unambiguous.
+ * Field placement comes from tree-sitter's own `fieldNameForChild(i)` —
+ * the grammar-author-declared field names. Anonymous identifier-shaped
+ * tokens get promoted to keyword fields via `promoteAnonymousKeyword`.
+ * No routing map: override-based kind-to-field routing is baked into
+ * the compiled grammar at codegen time (overrides.ts → .sittir/grammar.js
+ * → compiled parser), so tree-sitter itself surfaces those fields.
  *
  * No recursion — lazy getters in wrap.ts call readNode again when needed.
  */
@@ -32,158 +29,29 @@ export interface TreeHandle {
 }
 
 /**
- * Override field spec — matches overrides.json shape per field.
- */
-export interface OverrideFieldSpec {
-	types: readonly { type: string; named: boolean }[];
-	multiple: boolean;
-	required: boolean;
-	position: number;
-}
-
-/**
- * Per-node override config — maps field names to their specs.
- */
-export interface NodeOverrides {
-	fields: Record<string, OverrideFieldSpec>;
-}
-
-/**
- * Full overrides config — maps node kind to its override spec.
- * Loaded from overrides.json per language package.
- */
-export type OverridesConfig = Record<string, NodeOverrides>;
-
-// ---------------------------------------------------------------------------
-// Precomputed routing maps
-// ---------------------------------------------------------------------------
-
-interface FieldPromotion {
-	fieldName: string;
-	multiple: boolean;
-}
-
-interface NodeRoutingMaps {
-	/** Kind → field for kinds that appear in exactly one slot. */
-	unambiguous: ReadonlyMap<string, FieldPromotion>;
-	/** Kinds that appear in multiple slots — need position-based routing. */
-	ambiguousKinds: ReadonlySet<string>;
-	/** Position-ordered slots for ambiguous kinds: [fieldName, spec]. */
-	ambiguousSlots: readonly [string, OverrideFieldSpec][];
-}
-
-/**
- * Precomputed routing: nodeKind → NodeRoutingMaps.
- * Built once from OverridesConfig, used by every readNode call.
- */
-export type RoutingMap = ReadonlyMap<string, NodeRoutingMaps>;
-
-/** @deprecated Use RoutingMap instead */
-export type FieldPromotionMap = RoutingMap;
-
-/**
- * Expand a single type entry to the concrete kinds it represents at parse
- * time. If `type` is a supertype (declared in node-types.json with a
- * `subtypes` list), the expansion returns every concrete subtype. Plain
- * kinds return themselves.
- */
-function expandTypes(
-	types: readonly { type: string; named: boolean }[],
-	supertypes: ReadonlyMap<string, readonly string[]> | undefined,
-): { type: string; named: boolean }[] {
-	if (!supertypes) return [...types];
-	const out: { type: string; named: boolean }[] = [];
-	const seen = new Set<string>();
-	const queue = [...types];
-	while (queue.length > 0) {
-		const entry = queue.shift()!;
-		if (seen.has(entry.type)) continue;
-		seen.add(entry.type);
-		const subs = supertypes.get(entry.type);
-		if (subs && subs.length > 0) {
-			for (const s of subs) {
-				if (!seen.has(s)) queue.push({ type: s, named: true });
-			}
-		} else {
-			out.push(entry);
-		}
-	}
-	return out;
-}
-
-function buildNodeRoutingMaps(
-	nodeOverrides: NodeOverrides,
-	supertypes: ReadonlyMap<string, readonly string[]> | undefined,
-): NodeRoutingMaps {
-	const unambiguous = new Map<string, FieldPromotion>();
-	const ambiguousKinds = new Set<string>();
-	const ambiguousSlots: [string, OverrideFieldSpec][] = [];
-
-	// Expand supertypes in each field spec so routing uses concrete parse-tree
-	// kinds (e.g. `binary_operator`, `call`) rather than abstract names
-	// (`_expression`). An override field declared as "value: _expression"
-	// matches every concrete expression kind at runtime.
-	const expandedFields: Array<[string, OverrideFieldSpec]> = Object.entries(
-		nodeOverrides.fields,
-	).map(([name, spec]) => [
-		name,
-		{ ...spec, types: expandTypes(spec.types, supertypes) },
-	]);
-
-	// First pass: detect which kinds appear in multiple slots
-	const kindToSlots = new Map<string, string[]>();
-	for (const [fieldName, spec] of expandedFields) {
-		for (const t of spec.types) {
-			const existing = kindToSlots.get(t.type) ?? [];
-			existing.push(fieldName);
-			kindToSlots.set(t.type, existing);
-		}
-	}
-
-	for (const [kind, slots] of kindToSlots) {
-		if (slots.length > 1) ambiguousKinds.add(kind);
-	}
-
-	// Second pass: build maps
-	for (const [fieldName, spec] of expandedFields) {
-		const hasAmbiguous = spec.types.some(t => ambiguousKinds.has(t.type));
-		if (hasAmbiguous) {
-			ambiguousSlots.push([fieldName, spec]);
-		} else {
-			for (const t of spec.types) {
-				unambiguous.set(t.type, { fieldName, multiple: spec.multiple });
-			}
-		}
-	}
-
-	ambiguousSlots.sort(([, a], [, b]) => a.position - b.position);
-	return { unambiguous, ambiguousKinds, ambiguousSlots };
-}
-
-/**
- * Build a RoutingMap from an OverridesConfig. Optionally accepts a
- * supertype expansion map ({ '_expression': ['binary_operator', ...], … })
- * so override field type declarations like `types: [{type: '_expression'}]`
- * route every concrete subtype at parse time, not just a non-existent
- * `_expression` token.
+ * Promote any anonymous token to a field keyed by its text. Covers the
+ * mechanical cases that tree-sitter's grammar normalizer strips — FIELD
+ * wrappers around bare STRING literals and FIELDs inside CHOICE(X, BLANK).
+ * Mirrors enrich's bareKeyword / optionalKeyword passes, applied to the
+ * live parse tree without shape-checking — any anonymous child gets a
+ * field named after its text (keywords, operators, delimiters alike).
+ * Named children have their own kind and stay in the standard placement
+ * path; anonymous collisions with an already-claimed field are skipped.
  *
- * Call once at startup; pass the result to readNode.
+ * Returns true when the token was promoted.
  */
-export function buildRoutingMap(
-	overrides: OverridesConfig,
-	supertypes?: ReadonlyMap<string, readonly string[]>,
-): RoutingMap {
-	const map = new Map<string, NodeRoutingMaps>();
-	for (const [nodeKind, nodeSpec] of Object.entries(overrides)) {
-		if (Object.keys(nodeSpec.fields).length > 0) {
-			map.set(nodeKind, buildNodeRoutingMaps(nodeSpec, supertypes));
-		}
-	}
-	return map;
+function promoteAnonymousKeyword(
+	child: AnyTreeNode,
+	entry: AnyNodeData,
+	fields: Record<string, AnyNodeData | AnyNodeData[]>,
+): boolean {
+	if (child.isNamed()) return false;
+	const text = entry.text ?? '';
+	if (text.length === 0) return false;
+	if (fields[text] !== undefined) return false;
+	fields[text] = entry;
+	return true;
 }
-
-/** @deprecated Use buildRoutingMap instead */
-export const buildFieldPromotionMap = buildRoutingMap;
 
 /**
  * Read a single tree node one level deep.
@@ -191,20 +59,25 @@ export const buildFieldPromotionMap = buildRoutingMap;
  * - Returns ALL children (named + anonymous)
  * - Every child carries `nodeId` for lazy drill-in
  * - No recursion — wrap.ts provides lazy getters
- * - When `routing` is provided, promotes children to fields via overrides
+ * - Field placement uses tree-sitter's native `fieldNameForChild`
  *
  * @param tree - The tree handle for node lookup
  * @param nodeId - If provided, read this node; otherwise read the root
- * @param routing - Precomputed routing map (from buildRoutingMap)
  */
-export function readNode(tree: TreeHandle, nodeId?: number, routing?: RoutingMap): AnyNodeData {
+export function readNode(tree: TreeHandle, nodeId?: number): AnyNodeData {
 	const node = nodeId != null ? tree.nodeById(nodeId) : tree.rootNode;
 
-	const fields: Record<string, AnyNodeData | AnyNodeData[]> = {};
+	// `Object.create(null)` avoids prototype pollution on field names
+	// that shadow Object.prototype members — `constructor` is the
+	// concrete case (tree-sitter-typescript's `new_expression` has a
+	// `field('constructor', ...)`), where a plain `{}` starts with
+	// `fields.constructor === Object` and the multi-value detection
+	// at existing-defined treats the prototype function as a prior
+	// entry, corrupting the accumulated array with a null-serializing
+	// function object. Others that can bite the same way: `toString`,
+	// `hasOwnProperty`, `valueOf`, `__proto__`.
+	const fields: Record<string, AnyNodeData | AnyNodeData[]> = Object.create(null);
 	const children: AnyNodeData[] = [];
-
-	const maps = routing?.get(node.type);
-	const pendingAmbiguous: AnyNodeData[] = [];
 
 	const allChildren = node.children();
 	for (let i = 0; i < allChildren.length; i++) {
@@ -220,47 +93,29 @@ export function readNode(tree: TreeHandle, nodeId?: number, routing?: RoutingMap
 
 		const fname = node.fieldNameForChild?.(i);
 		if (fname) {
-			fields[fname] = entry;
-		} else if (maps?.unambiguous.has(child.type)) {
-			// Direct kind lookup — covers ~95% including anonymous tokens
-			const { fieldName, multiple } = maps.unambiguous.get(child.type)!;
-			if (multiple) {
-				const arr = (fields[fieldName] ?? []) as AnyNodeData[];
-				arr.push(entry);
-				fields[fieldName] = arr;
+			// Multi-valued fields (e.g. python's `argument` in
+			// `print a, b, c` where each expression has the same
+			// field name) must accumulate into an array instead of
+			// overwriting. But collisions with an anonymous-keyword
+			// placeholder (from promoteAnonymousKeyword earlier in
+			// the loop — e.g. rust's `type_item` has an anonymous
+			// `type` keyword child AND a named `type` field for the
+			// RHS) aren't multi-value: the real field replaces the
+			// placeholder. Accumulate only between genuine fname writes.
+			const existing = fields[fname];
+			if (existing === undefined) {
+				fields[fname] = entry;
+			} else if (!Array.isArray(existing) && existing.named === false) {
+				fields[fname] = entry;
+			} else if (Array.isArray(existing)) {
+				existing.push(entry);
 			} else {
-				fields[fieldName] = entry;
+				fields[fname] = [existing, entry];
 			}
-		} else if (maps?.ambiguousKinds.has(child.type)) {
-			pendingAmbiguous.push(entry);
+		} else if (promoteAnonymousKeyword(child, entry, fields)) {
+			// Promoted to a keyword field — no further placement needed.
 		} else {
 			children.push(entry);
-		}
-	}
-
-	// Position-based consumption for ambiguous kinds only.
-	// Only named children reach here — anonymous tokens are always unambiguous.
-	if (pendingAmbiguous.length > 0 && maps) {
-		let slotIdx = 0;
-		for (const entry of pendingAmbiguous) {
-			let placed = false;
-			for (let s = slotIdx; s < maps.ambiguousSlots.length; s++) {
-				const [fieldName, spec] = maps.ambiguousSlots[s]!;
-				if (spec.types.some(t => t.type === entry.type)) {
-					if (spec.multiple) {
-						const arr = (fields[fieldName] ?? []) as AnyNodeData[];
-						arr.push(entry);
-						fields[fieldName] = arr;
-					} else {
-						fields[fieldName] = entry;
-						slotIdx = s + 1;
-					}
-					placed = true;
-					break;
-				}
-				slotIdx = s + 1;
-			}
-			if (!placed) children.push(entry);
 		}
 	}
 

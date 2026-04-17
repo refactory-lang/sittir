@@ -13,16 +13,14 @@ import { parse as parseYaml } from 'yaml';
 import { readNode, createRenderer } from '@sittir/core';
 import type { RulesConfig } from '@sittir/types';
 import { loadRawEntries } from './validators/node-types.ts';
-import { loadRouting } from './validators/load-routing.ts';
 import {
 	loadCorpusEntries,
-	loadWebTreeSitter,
+	loadLanguageForGrammar,
 	treeHandle,
 	findFirst,
 	collectKinds,
 	buildKindToSupertypes,
 	wrapForReparse,
-	WASM_PATHS,
 	type TSNode,
 	type TSTree,
 } from './validators/common.ts';
@@ -121,9 +119,9 @@ export interface RoundTripResult {
 	 * because the token isn't routed to a named field.
 	 */
 	astMatchPass: number;
-	errors: { name: string; message: string }[];
+	errors: { name: string; message: string; input?: string; rendered?: string }[];
 	/** Structural mismatches — distinct from render / reparse errors. */
-	astMismatches: { name: string; message: string }[];
+	astMismatches: { name: string; message: string; input?: string; rendered?: string }[];
 }
 
 /**
@@ -133,22 +131,19 @@ export async function validateRoundTrip(
 	grammar: string,
 	templatesYaml: string,
 ): Promise<RoundTripResult> {
-	const { Parser, Language } = await loadWebTreeSitter();
-	const wasmPath = require.resolve(WASM_PATHS[grammar]!);
-	const lang = await Language.load(wasmPath);
+	const { Parser, lang } = await loadLanguageForGrammar(grammar);
 	const parser = new Parser();
 	parser.setLanguage(lang);
 
 	const config = parseYaml(templatesYaml) as RulesConfig;
 	const rawEntries = loadRawEntries(grammar);
-	const routing = await loadRouting(grammar);
 	const { render } = createRenderer(config);
 	const ruleKinds = new Set(Object.keys(config.rules));
 	const kindToSupertypes = buildKindToSupertypes(rawEntries);
 
 	const entries = loadCorpusEntries(grammar);
-	const errors: { name: string; message: string }[] = [];
-	const astMismatches: { name: string; message: string }[] = [];
+	const errors: { name: string; message: string; input?: string; rendered?: string }[] = [];
+	const astMismatches: { name: string; message: string; input?: string; rendered?: string }[] = [];
 	let pass = 0;
 	let astMatchPass = 0;
 	let skip = 0;
@@ -181,9 +176,10 @@ export async function validateRoundTrip(
 				if (!node1) continue;
 
 				const handle = treeHandle(tree1);
-				const data = readNode(handle, node1.id, routing);
+				const data = readNode(handle, node1.id);
 
 				try {
+					const inputSource = node1.text;
 					const rendered = render(data);
 
 					// Wrap for reparse using supertype context
@@ -193,7 +189,12 @@ export async function validateRoundTrip(
 					// Re-parse
 					const tree2 = parser.parse(wrapped.text) as TSTree;
 					if (tree2.rootNode.hasError) {
-						errors.push({ name: `${entry.name} [${kind}]`, message: `re-parse error: "${rendered.slice(0, 80)}"` });
+						errors.push({
+							name: `${entry.name} [${kind}]`,
+							message: `re-parse error: "${rendered.slice(0, 80)}"`,
+							input: inputSource,
+							rendered,
+						});
 						entryOk = false;
 						entryAstMatch = false;
 						break;
@@ -209,7 +210,12 @@ export async function validateRoundTrip(
 					// than the rendered one).
 					const node2 = findNodeAt(tree2.rootNode, kind, wrapped.offset);
 					if (!node2) {
-						errors.push({ name: `${entry.name} [${kind}]`, message: `kind not found at rendered offset ${wrapped.offset}` });
+						errors.push({
+							name: `${entry.name} [${kind}]`,
+							message: `kind not found at rendered offset ${wrapped.offset}`,
+							input: inputSource,
+							rendered,
+						});
 						entryOk = false;
 						entryAstMatch = false;
 						break;
@@ -227,6 +233,8 @@ export async function validateRoundTrip(
 						astMismatches.push({
 							name: `${entry.name} [${kind}]`,
 							message: diff.slice(0, 160),
+							input: inputSource,
+							rendered,
 						});
 						entryAstMatch = false;
 					}

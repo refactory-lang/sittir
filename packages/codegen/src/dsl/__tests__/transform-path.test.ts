@@ -53,9 +53,22 @@ describe('parsePath()', () => {
         expect(() => parsePath('0/')).toThrow(/leading\/trailing slash/)
     })
 
-    it('rejects non-numeric, non-wildcard segments', () => {
-        expect(() => parsePath('0/foo/1')).toThrow(/invalid segment 'foo'/)
-        expect(() => parsePath('0/-1')).toThrow(/invalid segment/)
+    it('accepts kind-name + negative-index segments (added post-T028)', () => {
+        // `foo` is a kind-match (recursively matches every $.foo occurrence).
+        // `-1` is a reverse index (last member).
+        expect(parsePath('0/foo/1')).toEqual([
+            { kind: 'index', value: 0 },
+            { kind: 'kind-match', name: 'foo' },
+            { kind: 'index', value: 1 },
+        ])
+        expect(parsePath('0/-1')).toEqual([
+            { kind: 'index', value: 0 },
+            { kind: 'index', value: -1 },
+        ])
+    })
+
+    it('rejects segments that match neither index/wildcard/kind-name', () => {
+        expect(() => parsePath('0/1a/1')).toThrow(/invalid segment '1a'/)
     })
 })
 
@@ -197,5 +210,63 @@ describe('transform() — object form (flat positional, backward-compat)', () =>
         })
         // Belt-and-suspenders: the inner content must not itself be a field.
         expect(r.members[0].content.type).not.toBe('field')
+    })
+})
+
+describe('applyPath() — kind-match + negative index', () => {
+    it('kind-match wraps every occurrence recursively', async () => {
+        const { field: oneArgField } = await import('../field.ts')
+        // seq(expr, ',', seq(expr, ',', expr)) — three _expression refs.
+        const rule = seq(
+            sym('_expression'),
+            str(','),
+            seq(sym('_expression'), str(','), sym('_expression')),
+        )
+        const result = transform(rule, { '_expression': oneArgField('elements') as Rule })
+        const r = result as any
+        expect(r.members[0]).toMatchObject({ type: 'field', name: 'elements' })
+        expect(r.members[2].members[0]).toMatchObject({ type: 'field', name: 'elements' })
+        expect(r.members[2].members[2]).toMatchObject({ type: 'field', name: 'elements' })
+        // The literal `,` tokens stay untouched.
+        expect(r.members[1]).toMatchObject({ type: 'string', value: ',' })
+    })
+
+    it('kind-match skips occurrences already inside a named field', async () => {
+        const { field: oneArgField } = await import('../field.ts')
+        // rust's array_expression `[x; N]` shape: first _expression is
+        // bare, second is inside `field('length', _expression)`. A
+        // kind-match on `_expression` must label the bare one as
+        // `elements` but leave the pre-fielded `length` intact.
+        const rule = seq(
+            sym('_expression'),
+            str(';'),
+            { type: 'field', name: 'length', content: sym('_expression') } as Rule,
+        )
+        const result = transform(rule, { '_expression': oneArgField('elements') as Rule })
+        const r = result as any
+        expect(r.members[0]).toMatchObject({ type: 'field', name: 'elements' })
+        // The pre-fielded `length` slot survives unchanged.
+        expect(r.members[2]).toMatchObject({
+            type: 'field',
+            name: 'length',
+            content: { type: 'symbol', name: '_expression' },
+        })
+    })
+
+    it('negative index resolves from the end (-1 = last member)', async () => {
+        const { field: oneArgField } = await import('../field.ts')
+        // Use a symbol (not a bare string) as the last member so the
+        // result isn't routed through maybeKeywordSymbol's bare-STRING
+        // synthesis path — we just want to verify the index resolution.
+        const rule = seq(str('struct'), sym('name'), sym('body'))
+        const result = transform(rule, { '-1': oneArgField('body_field') as Rule })
+        const r = result as any
+        expect(r.members[2]).toMatchObject({
+            type: 'field',
+            name: 'body_field',
+            content: { type: 'symbol', name: 'body' },
+        })
+        // Other positions untouched.
+        expect(r.members[0]).toMatchObject({ type: 'string', value: 'struct' })
     })
 })

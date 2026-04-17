@@ -14,9 +14,212 @@
 // ---------------------------------------------------------------
 // Summary
 // ---------------------------------------------------------------
-// Field inferences: 1  (1 applied, 0 held)
-// Rule promotions:  29  (29 applied, 0 held)
-// Repeated shapes:  3  (advisory — suggested supertypes/groups)
+// Field inferences:  9  (0 applied, 9 held)
+// Rule promotions:   51  (50 applied, 1 held)
+// Repeated shapes:   5  (advisory — suggested supertypes/groups)
+// Round-trip fails: 19  (11 parse errors, 8 AST mismatches; 15 render, 4 factory)
+
+// ---------------------------------------------------------------
+// Round-trip failures — corpus cases that didn't survive
+// parse → readNode → render → reparse. Each entry shows the
+// input and rendered text so you can spot what the renderer
+// dropped. Common causes:
+//   - Repeated slot missing a `joinBy` separator (renders only
+//     the first occurrence of a multi-valued field)
+//   - Missing `transform()` patch wrapping an anonymous token
+//     that should be a named field
+//   - Template gap — rule content has no renderable slot for
+//     some structural position
+// ---------------------------------------------------------------
+export const roundTripFailures: Array<{
+  readonly entry: string;
+  readonly kind: string;
+  readonly source: "render" | "factory";
+  readonly category: "parse-error" | "ast-mismatch";
+  readonly input?: string;
+  readonly rendered?: string;
+  readonly message: string;
+}> = [
+  // --- impl_item (2) ---
+  {
+    entry: "Trait impl signature",
+    kind: "impl_item",
+    source: "render",
+    category: "parse-error",
+    input:    "impl<K: Debug + Ord> Debug for OccupiedError<K>;",
+    rendered: "impl <K: Debug + Ord> Debug for OccupiedError<K>",
+    message: "re-parse error: \"impl <K: Debug + Ord> Debug for OccupiedError<K>\"",
+  },
+  {
+    entry: "Disable automatically derived trait impls",
+    kind: "impl_item",
+    source: "render",
+    category: "ast-mismatch",
+    input:    "impl !Send for Foo {}",
+    rendered: "impl Send for Foo {}",
+    message: "impl_item: childCount 6 ≠ 5 [\"impl\",\"!\",type_identifier,\"for\",type_identifier,declaration_list] vs [\"impl\",type_identifier,\"for\",type_identifier,declaration_lis",
+  },
+  // --- block (1) ---
+  {
+    entry: "Impls with default functions",
+    kind: "block",
+    source: "render",
+    category: "parse-error",
+    input:    "{\n    // Make 'default' still works as an identifier\n    default.bar();\n  }",
+    rendered: "{// Make 'default' still works as an identifier default.bar();}",
+    message: "re-parse error: \"{// Make 'default' still works as an identifier default.bar();}\"",
+  },
+  // --- mut_pattern (4) ---
+  {
+    entry: "Closures",
+    kind: "mut_pattern",
+    source: "render",
+    category: "parse-error",
+    input:    "mut e",
+    rendered: "mut e",
+    message: "kind not found at rendered offset 14",
+  },
+  {
+    entry: "Reference patterns",
+    kind: "mut_pattern",
+    source: "render",
+    category: "parse-error",
+    input:    "mut y",
+    rendered: "mut y",
+    message: "kind not found at rendered offset 14",
+  },
+  {
+    entry: "Or patterns",
+    kind: "mut_pattern",
+    source: "render",
+    category: "parse-error",
+    input:    "mut x @ (A | B | C)",
+    rendered: "mut x @ (A | B | C)",
+    message: "kind not found at rendered offset 14",
+  },
+  {
+    entry: "Closures",
+    kind: "mut_pattern",
+    source: "factory",
+    category: "parse-error",
+    input:    "mut e",
+    rendered: "mut e",
+    message: "kind not found in re-parse (rendered: \"mut e\")",
+  },
+  // --- macro_definition (2) ---
+  {
+    entry: "Macro definition",
+    kind: "macro_definition",
+    source: "render",
+    category: "parse-error",
+    input:    "macro_rules! say_hello {\n    () => (\n        println!(\"Hello!\");\n    )\n}",
+    rendered: "macro_rules!say_hello () => (\n        println!(\"Hello!\");\n    );}",
+    message: "re-parse error: \"macro_rules!say_hello () => (\n        println!(\"Hello!\");\n    );}\"",
+  },
+  {
+    entry: "Macro definition",
+    kind: "macro_definition",
+    source: "factory",
+    category: "parse-error",
+    input:    "macro_rules! say_hello {\n    () => (\n        println!(\"Hello!\");\n    )\n}",
+    rendered: "macro_rules!say_hello () => (\n        println!(\"Hello!\");\n    );}",
+    message: "re-parse error: \"macro_rules!say_hello () => (\n        println!(\"Hello!\");\n  \"",
+  },
+  // --- function_type (2) ---
+  {
+    entry: "Function types",
+    kind: "function_type",
+    source: "render",
+    category: "parse-error",
+    input:    "fn(i32)",
+    rendered: "(i32)",
+    message: "kind not found at rendered offset 10",
+  },
+  {
+    entry: "Unsafe and extern function types",
+    kind: "function_type",
+    source: "render",
+    category: "parse-error",
+    input:    "extern \"C\" fn(*mut c_void)",
+    rendered: "(*mut c_void)",
+    message: "kind not found at rendered offset 10",
+  },
+  // --- tuple_expression (3) ---
+  {
+    entry: "Attributes and Expressions",
+    kind: "tuple_expression",
+    source: "render",
+    category: "ast-mismatch",
+    input:    "(#[hello] 2, 7, 8)",
+    rendered: "(#[hello] 2,7,8,)",
+    message: "tuple_expression: childCount 8 ≠ 9 [\"(\",attribute_item,integer_literal,\",\",integer_literal,\",\",integer_literal,\")\"] vs [\"(\",attribute_item,integer_literal,\",\",i",
+  },
+  {
+    entry: "Struct patterns",
+    kind: "tuple_expression",
+    source: "render",
+    category: "ast-mismatch",
+    input:    "(\"toddler\", name)",
+    rendered: "( \"toddler\",name,)",
+    message: "tuple_expression: childCount 5 ≠ 6 [\"(\",string_literal,\",\",identifier,\")\"] vs [\"(\",string_literal,\",\",identifier,\",\",\")\"]",
+  },
+  {
+    entry: "Attributes and Expressions",
+    kind: "tuple_expression",
+    source: "factory",
+    category: "ast-mismatch",
+    input:    "(#[hello] 2, 7, 8)",
+    rendered: "(#[hello] 2,7,8,)",
+    message: "tuple_expression: childCount 8 ≠ 9 [\"(\",attribute_item,integer_literal,\",\",integer_literal,\",\",integer_literal,\")\"] vs [\"(\",attribute_item,integer_literal,\",\",i",
+  },
+  // --- generic_type (2) ---
+  {
+    entry: "Scoped functions",
+    kind: "generic_type",
+    source: "render",
+    category: "ast-mismatch",
+    input:    "C::<D>",
+    rendered: "C <D>",
+    message: "generic_type: childCount 3 ≠ 2 [type_identifier,\"::\",type_arguments] vs [type_identifier,type_arguments]",
+  },
+  {
+    entry: "Struct patterns",
+    kind: "generic_type",
+    source: "render",
+    category: "ast-mismatch",
+    input:    "Some::<isize>",
+    rendered: "Some <isize>",
+    message: "generic_type: childCount 3 ≠ 2 [type_identifier,\"::\",type_arguments] vs [type_identifier,type_arguments]",
+  },
+  // --- tuple_struct_pattern (2) ---
+  {
+    entry: "Struct patterns",
+    kind: "tuple_struct_pattern",
+    source: "render",
+    category: "ast-mismatch",
+    input:    "Bar::T1(_, Some::<isize>(x))",
+    rendered: "Bar::T1(Some::<isize>(x))",
+    message: "tuple_struct_pattern: childCount 6 ≠ 4 [scoped_identifier,\"(\",\"_\",\",\",tuple_struct_pattern,\")\"] vs [scoped_identifier,\"(\",tuple_struct_pattern,\")\"]",
+  },
+  {
+    entry: "Captured patterns",
+    kind: "tuple_struct_pattern",
+    source: "render",
+    category: "ast-mismatch",
+    input:    "A(_)",
+    rendered: "A()",
+    message: "tuple_struct_pattern: childCount 4 ≠ 3 [identifier,\"(\",\"_\",\")\"] vs [identifier,\"(\",\")\"]",
+  },
+  // --- raw_string_literal (1) ---
+  {
+    entry: "Raw string literals",
+    kind: "raw_string_literal",
+    source: "factory",
+    category: "parse-error",
+    input:    "r#\"abc\"#",
+    message: "Cannot read properties of undefined (reading 'text')",
+  },
+];
 
 // ---------------------------------------------------------------
 // suggestedRules — drop entries into your overrides.ts rules map.
@@ -24,8 +227,54 @@
 // that mirrors the shape you'd hand-write yourself.
 // ---------------------------------------------------------------
 export const suggestedRules = {
+  // _non_special_token: 1 inferred field(s)
+  // [held] "_non_special_token" field 'mutable_specifier' on $.mutable_specifier — 91% agreement, 11 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
+
+  // _struct_item_brace: 1 inferred field(s)
+  // [held] "_struct_item_brace" field 'where_clause' on $.where_clause — 86% agreement, 7 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
+
+  // _struct_item_tuple: 1 inferred field(s)
+  // [held] "_struct_item_tuple" field 'where_clause' on $.where_clause — 86% agreement, 7 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
+
+  // impl_item: 1 inferred field(s)
+  "impl_item": ($, original) => transform(original, {
+    // [held] 86% agreement, 7 parents
+    5: field("where_clause"),  // $.where_clause
+  }),
+
+  // static_item: 1 inferred field(s)
+  "static_item": ($, original) => transform(original, {
+    // [held] 91% agreement, 11 parents
+    3: field("mutable_specifier"),  // $.mutable_specifier
+  }),
+
+  // struct_item_brace: 1 inferred field(s)
+  "struct_item_brace": ($, original) => transform(original, {
+    // [held] 86% agreement, 7 parents
+    0: field("where_clause"),  // $.where_clause
+  }),
+
+  // struct_item_tuple: 1 inferred field(s)
+  "struct_item_tuple": ($, original) => transform(original, {
+    // [held] 86% agreement, 7 parents
+    1: field("where_clause"),  // $.where_clause
+  }),
+
+  // trait_item: 1 inferred field(s)
+  "trait_item": ($, original) => transform(original, {
+    // [held] 86% agreement, 7 parents
+    6: field("where_clause"),  // $.where_clause
+  }),
+
   // type_arguments: 1 inferred field(s)
-  // [applied] "type_arguments" field 'bounds' on $.trait_bounds — 100% agreement, 5 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
+  // [held] "type_arguments" field 'bounds' on $.trait_bounds — 100% agreement, 5 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
+
+  // --- Polymorph candidates (wrap each choice arm in variant()) ---
+  // [held] polymorph — 2 alternative(s)
+  "visibility_modifier": ($, original) => transform(original, {
+    "0": variant("crate"),
+    "1": variant("pub"),
+  }),
 
   // --- Promoted supertypes (add matching names to grammar.supertypes) ---
   // [applied] promoted supertype
@@ -35,16 +284,16 @@ export const suggestedRules = {
   "_declaration_statement": $ => choice($.const_item, $.macro_invocation, $.macro_definition, $.empty_statement, $.attribute_item, $.inner_attribute_item, $.mod_item, $.foreign_mod_item, $.struct_item, $.union_item, $.enum_item, $.type_item, $.function_item, $.function_signature_item, $.impl_item, $.trait_item, $.associated_type, $.let_declaration, $.use_declaration, $.extern_crate_declaration, $.static_item),
 
   // [applied] promoted supertype
-  "_token_pattern": $ => choice($.token_tree_pattern, $.token_repetition_pattern, $.token_binding_pattern, $.metavariable, $.string_literal, $.raw_string_literal, $.char_literal, $.boolean_literal, $.integer_literal, $.float_literal, $.identifier, $.mutable_specifier, $.self, $.super, $.crate),
+  "_token_pattern": $ => choice($.token_tree_pattern, $.token_repetition_pattern, $.token_binding_pattern, $.metavariable, $.string_literal, $.raw_string_literal, $.char_literal, $.boolean_literal, $.integer_literal, $.float_literal, $.identifier, $.mutable_specifier, $.self, $.super, $.crate, $.primitive_type),
 
   // [applied] promoted supertype
-  "_tokens": $ => choice($.token_tree, $.token_repetition, $.metavariable, $.string_literal, $.raw_string_literal, $.char_literal, $.boolean_literal, $.integer_literal, $.float_literal, $.identifier, $.mutable_specifier, $.self, $.super, $.crate),
+  "_tokens": $ => choice($.token_tree, $.token_repetition, $.metavariable, $.string_literal, $.raw_string_literal, $.char_literal, $.boolean_literal, $.integer_literal, $.float_literal, $.identifier, $.mutable_specifier, $.self, $.super, $.crate, $.primitive_type),
 
   // [applied] promoted supertype
-  "_use_clause": $ => choice($.self, $.metavariable, $.super, $.crate, $.identifier, $.scoped_identifier, $.use_as_clause, $.use_list, $.scoped_use_list, $.use_wildcard),
+  "_use_clause": $ => choice($.self, $.identifier, $.metavariable, $.super, $.crate, $.scoped_identifier, $.use_as_clause, $.use_list, $.scoped_use_list, $.use_wildcard),
 
   // [applied] promoted supertype
-  "_type": $ => choice($.abstract_type, $.reference_type, $.metavariable, $.pointer_type, $.generic_type, $.scoped_type_identifier, $.tuple_type, $.unit_type, $.array_type, $.function_type, $.type_identifier, $.macro_invocation, $.never_type, $.dynamic_type, $.bounded_type, $.removed_trait_bound),
+  "_type": $ => choice($.abstract_type, $.reference_type, $.metavariable, $.pointer_type, $.generic_type, $.scoped_type_identifier, $.tuple_type, $.unit_type, $.array_type, $.function_type, $.type_identifier, $.macro_invocation, $.never_type, $.dynamic_type, $.bounded_type, $.removed_trait_bound, $.primitive_type),
 
   // [applied] promoted supertype
   "_expression_except_range": $ => choice($.unary_expression, $.reference_expression, $.try_expression, $.binary_expression, $.assignment_expression, $.compound_assignment_expr, $.type_cast_expression, $.call_expression, $.return_expression, $.yield_expression, $.string_literal, $.raw_string_literal, $.char_literal, $.boolean_literal, $.integer_literal, $.float_literal, $.identifier, $.self, $.scoped_identifier, $.generic_function, $.await_expression, $.field_expression, $.array_expression, $.tuple_expression, $.macro_invocation, $.unit_expression, $.break_expression, $.continue_expression, $.index_expression, $.metavariable, $.closure_expression, $.parenthesized_expression, $.struct_expression, $.unsafe_block, $.async_block, $.gen_block, $.try_block, $.block, $.if_expression, $.match_expression, $.while_expression, $.loop_expression, $.for_expression, $.const_block),
@@ -56,13 +305,13 @@ export const suggestedRules = {
   "_expression_ending_with_block": $ => choice($.unsafe_block, $.async_block, $.gen_block, $.try_block, $.block, $.if_expression, $.match_expression, $.while_expression, $.loop_expression, $.for_expression, $.const_block),
 
   // [applied] promoted supertype
-  "_delim_tokens": $ => choice($.string_literal, $.raw_string_literal, $.char_literal, $.boolean_literal, $.integer_literal, $.float_literal, $.identifier, $.mutable_specifier, $.self, $.super, $.crate, $.delim_token_tree),
+  "_delim_tokens": $ => choice($.string_literal, $.raw_string_literal, $.char_literal, $.boolean_literal, $.integer_literal, $.float_literal, $.identifier, $.mutable_specifier, $.self, $.super, $.crate, $.primitive_type, $.token_tree),
 
   // [applied] promoted supertype
-  "_non_delim_token": $ => choice($.string_literal, $.raw_string_literal, $.char_literal, $.boolean_literal, $.integer_literal, $.float_literal, $.identifier, $.mutable_specifier, $.self, $.super, $.crate),
+  "_non_delim_token": $ => choice($.string_literal, $.raw_string_literal, $.char_literal, $.boolean_literal, $.integer_literal, $.float_literal, $.identifier, $.mutable_specifier, $.self, $.super, $.crate, $.primitive_type),
 
   // [applied] promoted supertype
-  "_condition": $ => choice($.unary_expression, $.reference_expression, $.try_expression, $.binary_expression, $.assignment_expression, $.compound_assignment_expr, $.type_cast_expression, $.call_expression, $.return_expression, $.yield_expression, $.string_literal, $.raw_string_literal, $.char_literal, $.boolean_literal, $.integer_literal, $.float_literal, $.identifier, $.self, $.scoped_identifier, $.generic_function, $.await_expression, $.field_expression, $.array_expression, $.tuple_expression, $.macro_invocation, $.unit_expression, $.break_expression, $.continue_expression, $.index_expression, $.metavariable, $.closure_expression, $.parenthesized_expression, $.struct_expression, $.unsafe_block, $.async_block, $.gen_block, $.try_block, $.block, $.if_expression, $.match_expression, $.while_expression, $.loop_expression, $.for_expression, $.const_block, $.range_expression, $.let_condition, $._let_chain),
+  "_condition": $ => choice($.unary_expression, $.reference_expression, $.try_expression, $.binary_expression, $.assignment_expression, $.compound_assignment_expr, $.type_cast_expression, $.call_expression, $.return_expression, $.yield_expression, $.string_literal, $.raw_string_literal, $.char_literal, $.boolean_literal, $.integer_literal, $.float_literal, $.identifier, $.self, $.scoped_identifier, $.generic_function, $.await_expression, $.field_expression, $.array_expression, $.tuple_expression, $.macro_invocation, $.unit_expression, $.break_expression, $.continue_expression, $.index_expression, $.metavariable, $.closure_expression, $.parenthesized_expression, $.struct_expression, $.unsafe_block, $.async_block, $.gen_block, $.try_block, $.block, $.if_expression, $.match_expression, $.while_expression, $.loop_expression, $.for_expression, $.const_block, $.range_expression, $.let_condition, $.let_chain),
 
   // [applied] promoted supertype
   "_pattern": $ => choice($.string_literal, $.raw_string_literal, $.char_literal, $.boolean_literal, $.integer_literal, $.float_literal, $.negative_literal, $.identifier, $.scoped_identifier, $.generic_pattern, $.tuple_pattern, $.tuple_struct_pattern, $.struct_pattern, $.ref_pattern, $.slice_pattern, $.captured_pattern, $.reference_pattern, $.remaining_field_pattern, $.mut_pattern, $.range_pattern, $.or_pattern, $.const_block, $.macro_invocation),
@@ -74,14 +323,17 @@ export const suggestedRules = {
   "_literal_pattern": $ => choice($.string_literal, $.raw_string_literal, $.char_literal, $.boolean_literal, $.integer_literal, $.float_literal, $.negative_literal),
 
   // [applied] promoted supertype
-  "_path": $ => choice($.self, $.metavariable, $.super, $.crate, $.identifier, $.scoped_identifier),
+  "_path": $ => choice($.self, $.identifier, $.metavariable, $.super, $.crate, $.scoped_identifier),
 
   // --- Repeated-shape candidates (reused across ≥2 parents) ---
-  // parents: function_item, function_signature_item
-  "_shared_2": $ => choice($.identifier, $.metavariable),
+  // parents: _range_pattern_left, _range_pattern_prefix, range_pattern_left, range_pattern_prefix
+  "_shared_2": $ => choice($._literal_pattern, $._path),
 
   // parents: function_type, struct_pattern
   "_type_identifier": $ => choice($._type_identifier, $.scoped_type_identifier),
+
+  // parents: scoped_identifier, scoped_type_identifier
+  "_shared_3": $ => choice($._path, $.bracketed_type, $.generic_type),
 
 };
 
@@ -117,12 +369,34 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "outer_doc_comment_marker", classification: "terminal", applied: true },
   { kind: "unit_expression", classification: "terminal", applied: true },
   { kind: "unit_type", classification: "terminal", applied: true },
+  { kind: "array_expression", classification: "polymorph", applied: true },
+  { kind: "array_expression_list", classification: "polymorph", applied: true },
+  { kind: "array_expression_semi", classification: "polymorph", applied: true },
   { kind: "closure_expression", classification: "polymorph", applied: true },
+  { kind: "closure_expression_block", classification: "polymorph", applied: true },
+  { kind: "closure_expression_expr", classification: "polymorph", applied: true },
   { kind: "field_pattern", classification: "polymorph", applied: true },
+  { kind: "field_pattern_named", classification: "polymorph", applied: true },
+  { kind: "field_pattern_shorthand", classification: "polymorph", applied: true },
+  { kind: "mod_item", classification: "polymorph", applied: true },
+  { kind: "mod_item_external", classification: "polymorph", applied: true },
+  { kind: "mod_item_inline", classification: "polymorph", applied: true },
   { kind: "or_pattern", classification: "polymorph", applied: true },
+  { kind: "or_pattern_binary", classification: "polymorph", applied: true },
+  { kind: "or_pattern_prefix", classification: "polymorph", applied: true },
   { kind: "range_expression", classification: "polymorph", applied: true },
+  { kind: "range_expression_bare", classification: "polymorph", applied: true },
+  { kind: "range_expression_binary", classification: "polymorph", applied: true },
+  { kind: "range_expression_postfix", classification: "polymorph", applied: true },
+  { kind: "range_expression_prefix", classification: "polymorph", applied: true },
   { kind: "range_pattern", classification: "polymorph", applied: true },
-  { kind: "visibility_modifier", classification: "polymorph", applied: true },
+  { kind: "range_pattern_left", classification: "polymorph", applied: true },
+  { kind: "range_pattern_prefix", classification: "polymorph", applied: true },
+  { kind: "struct_item", classification: "polymorph", applied: true },
+  { kind: "struct_item_brace", classification: "polymorph", applied: true },
+  { kind: "struct_item_tuple", classification: "polymorph", applied: true },
+  { kind: "struct_item_unit", classification: "polymorph", applied: true },
+  { kind: "visibility_modifier", classification: "polymorph", applied: false },
 ];
 
 export interface InferredField {
@@ -135,7 +409,15 @@ export interface InferredField {
   readonly applied: boolean;
 }
 export const inferredFields: readonly InferredField[] = [
-  { kind: "type_arguments", fieldName: "bounds", targetSymbol: "trait_bounds", confidence: "high", agreement: 1.000, sampleSize: 5, applied: true },
+  { kind: "_non_special_token", fieldName: "mutable_specifier", targetSymbol: "mutable_specifier", confidence: "medium", agreement: 0.909, sampleSize: 11, applied: false },
+  { kind: "static_item", fieldName: "mutable_specifier", targetSymbol: "mutable_specifier", confidence: "medium", agreement: 0.909, sampleSize: 11, applied: false },
+  { kind: "_struct_item_brace", fieldName: "where_clause", targetSymbol: "where_clause", confidence: "medium", agreement: 0.857, sampleSize: 7, applied: false },
+  { kind: "_struct_item_tuple", fieldName: "where_clause", targetSymbol: "where_clause", confidence: "medium", agreement: 0.857, sampleSize: 7, applied: false },
+  { kind: "impl_item", fieldName: "where_clause", targetSymbol: "where_clause", confidence: "medium", agreement: 0.857, sampleSize: 7, applied: false },
+  { kind: "struct_item_brace", fieldName: "where_clause", targetSymbol: "where_clause", confidence: "medium", agreement: 0.857, sampleSize: 7, applied: false },
+  { kind: "struct_item_tuple", fieldName: "where_clause", targetSymbol: "where_clause", confidence: "medium", agreement: 0.857, sampleSize: 7, applied: false },
+  { kind: "trait_item", fieldName: "where_clause", targetSymbol: "where_clause", confidence: "medium", agreement: 0.857, sampleSize: 7, applied: false },
+  { kind: "type_arguments", fieldName: "bounds", targetSymbol: "trait_bounds", confidence: "high", agreement: 1.000, sampleSize: 5, applied: false },
 ];
 
 export interface RepeatedShape {
@@ -145,7 +427,9 @@ export interface RepeatedShape {
   readonly shape: 'supertype' | 'group';
 }
 export const repeatedShapes: readonly RepeatedShape[] = [
+  { suggestedName: "_shared_2", kinds: ["_literal_pattern","_path"], parents: ["_range_pattern_left","_range_pattern_prefix","range_pattern_left","range_pattern_prefix"], shape: "supertype" },
   { suggestedName: "_shared_2", kinds: ["identifier","metavariable"], parents: ["function_item","function_signature_item"], shape: "supertype" },
   { suggestedName: "_type_identifier", kinds: ["_type_identifier","scoped_type_identifier"], parents: ["function_type","struct_pattern"], shape: "supertype" },
   { suggestedName: "_shared_2", kinds: ["_field_identifier","integer_literal"], parents: ["field_expression","field_initializer"], shape: "supertype" },
+  { suggestedName: "_shared_3", kinds: ["_path","bracketed_type","generic_type"], parents: ["scoped_identifier","scoped_type_identifier"], shape: "supertype" },
 ];

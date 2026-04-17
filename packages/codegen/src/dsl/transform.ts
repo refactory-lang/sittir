@@ -23,7 +23,10 @@
 
 import { parsePath, applyPath, reconstructWrapper, reconstructPrec, reconstructContainer } from './transform-path.ts'
 import { isFieldPlaceholder, type FieldPlaceholder } from './field.ts'
-import { isFieldLike, isPrecWrapper, isWrapperType, type RuntimeRule } from './runtime-shapes.ts'
+import { isAliasPlaceholder, type AliasPlaceholder } from './alias.ts'
+import { isVariantPlaceholder, type VariantPlaceholder } from './variant.ts'
+import { getCurrentRuleKind, registerPolymorphVariant, maybeKeywordSymbol, registerAliasedVariant, registerSyntheticRule, registerConflict, wrapInPrecStack, matchesEmpty } from './synthetic-rules.ts'
+import { isFieldLike, isPrecWrapper, isWrapperType, isSeqType, isChoiceType, type RuntimeRule } from './runtime-shapes.ts'
 
 /**
  * Apply patches to a rule. Patches are an object with path-string keys
@@ -55,27 +58,177 @@ import { isFieldLike, isPrecWrapper, isWrapperType, type RuntimeRule } from './r
  * field wrapper on the original is unwrapped before re-wrapping to
  * avoid nested fields.
  */
+type PatchSet = Record<number | string, RuntimeRule | FieldPlaceholder | AliasPlaceholder | VariantPlaceholder>
+
 export function transform(
     original: RuntimeRule,
-    patches: Record<number | string, RuntimeRule | FieldPlaceholder>,
+    ...patchSets: PatchSet[]
 ): RuntimeRule {
-    const usesPaths = Object.keys(patches).some(k => k.includes('/') || k.includes('*'))
-    if (usesPaths) {
-        return applyPathPatches(original, patches)
+    let rule = original
+    for (const patches of patchSets) {
+        // Path mode triggers whenever a key isn't a pure non-negative
+        // integer. Originally this predicate only checked for `/` or
+        // `*`; extending it to the full "not-a-non-neg-integer" gate
+        // is the behavior change that routes negative indices (`-1`)
+        // and kind-name segments (`_expression`) through parsePath +
+        // applyPath (they parsed as invalid in flat mode previously).
+        // Flat mode stays reserved for simple positional patching of
+        // seq members with plain `N: patch` entries.
+        const hasPathKeys = Object.keys(patches).some(k => !/^\d+$/.test(k))
+        const hasPlaceholderAlias = Object.values(patches).some(v => isAliasPlaceholder(v) || isVariantPlaceholder(v))
+        if (hasPathKeys || hasPlaceholderAlias) {
+            rule = applyPathPatches(rule, patches)
+        } else {
+            rule = applyFlatPatches(rule, patches as Record<number | string, RuntimeRule>)
+        }
     }
-    return applyFlatPatches(original, patches as Record<number | string, RuntimeRule>)
+    return rule
 }
 
 function applyPathPatches(
     original: RuntimeRule,
-    patches: Record<number | string, RuntimeRule | FieldPlaceholder>,
+    patches: Record<number | string, RuntimeRule | FieldPlaceholder | AliasPlaceholder | VariantPlaceholder>,
 ): RuntimeRule {
+    // Two-phase: apply non-variant patches first so field placements bake
+    // into the original structure, then handle variant patches. If any
+    // variant would extract an empty-matching body, hoist ALL sibling
+    // variants to the nearest enclosing scaffolding (literals move into
+    // each alias body so none match empty). Sequential per-patch
+    // application can't do this because hoisting the first patch
+    // restructures the rule so the second patch's path no longer resolves.
+    const variantEntries: Array<[string, VariantPlaceholder]> = []
+    const otherEntries: Array<[string, RuntimeRule | FieldPlaceholder | AliasPlaceholder | VariantPlaceholder]> = []
+    for (const entry of Object.entries(patches)) {
+        const v = entry[1]
+        if (isVariantPlaceholder(v)) variantEntries.push([entry[0], v])
+        else otherEntries.push(entry)
+    }
     let rule = original
-    for (const [key, value] of Object.entries(patches)) {
+    for (const [key, value] of otherEntries) {
         const segments = parsePath(String(key))
-        rule = applyPath(rule, segments, (member) => resolvePatch(value, member))
+        rule = applyPath(rule, segments, (member, precStack) => resolvePatch(value, member, precStack))
+    }
+    if (variantEntries.length > 0) {
+        const hoisted = tryHoistSiblingVariants(rule, variantEntries)
+        if (hoisted) {
+            rule = hoisted.rule
+            for (const [key, value] of variantEntries) {
+                if (hoisted.consumed.has(key)) continue
+                const segments = parsePath(key)
+                rule = applyPath(rule, segments, (member, precStack) => resolvePatch(value, member, precStack))
+            }
+        } else {
+            for (const [key, value] of variantEntries) {
+                const segments = parsePath(key)
+                rule = applyPath(rule, segments, (member, precStack) => resolvePatch(value, member, precStack))
+            }
+        }
     }
     return rule
+}
+
+/**
+ * Detect and apply "hoisted variant" restructuring when any variant()
+ * patch targets an empty-matching choice alternative. Without hoisting,
+ * tree-sitter rejects the extracted hidden rule (named syntactic rules
+ * can't match empty). With hoisting, the surrounding rule scaffolding
+ * (e.g. `[` and `]` literals around the choice) moves INTO each alias
+ * body — guarantees non-empty AND disambiguates from sibling rules with
+ * similar inner shapes.
+ *
+ * Only handles the common case: top-level seq containing a choice whose
+ * alternatives are the variant targets. Paths must all be `N/M` with
+ * the same `N` (the choice's position in the seq). For more complex
+ * nestings, the caller falls back to per-patch variant extraction.
+ */
+function tryHoistSiblingVariants(
+    rule: RuntimeRule,
+    variantEntries: ReadonlyArray<[string, VariantPlaceholder]>,
+): { rule: RuntimeRule; consumed: Set<string> } | null {
+    // Peel off any prec wrapper(s) at the rule root so we can reach
+    // the underlying seq. Grammars commonly wrap a polymorph in
+    // `prec.left(N, seq(...))` / `prec.right(N, ...)` / `prec(tag,
+    // ...)` to resolve intra-rule ambiguities. We reapply the same
+    // prec to each hoisted variant's body below so the extracted
+    // rules inherit the parent's conflict-resolution context;
+    // otherwise tree-sitter's LR table sees unresolvable ambiguities
+    // at the extracted-variant sites.
+    // Each guard below returns null, falling back to per-patch variant
+    // extraction. When SITTIR_DEBUG is set, log which guard failed so
+    // authors can see why their hoist didn't take effect — "rule looks
+    // right but only one form was split" is otherwise impossible to
+    // diagnose without stepping into transform.ts.
+    const dbg = typeof process !== 'undefined' && process?.env?.SITTIR_DEBUG
+    const kindFor = getCurrentRuleKind() ?? '(unknown)'
+    const bail = (reason: string): null => {
+        if (dbg) console.error(`[sittir] hoist skipped on '${kindFor}': ${reason}`)
+        return null
+    }
+    const precStack: RuntimeRule[] = []
+    let core = rule
+    while (core && isPrecWrapper(core)) {
+        precStack.push(core)
+        core = contentOf(core)
+    }
+    const t = core?.type
+    if (!t) return bail('core rule has no type after prec peeling')
+    if (!isSeqType(t)) return bail(`core rule type '${t}' is not seq/SEQ`)
+    const parsed: Array<{ key: string; v: VariantPlaceholder; choicePos: number; altIdx: number }> = []
+    for (const [key, v] of variantEntries) {
+        const segs = parsePath(key)
+        if (segs.length !== 2) return bail(`variant patch '${key}' has ${segs.length} segments (expected 2: N/M)`)
+        if (segs[0]!.kind !== 'index' || segs[1]!.kind !== 'index') return bail(`variant patch '${key}' uses non-index segments (kind-match / wildcard not supported for hoist)`)
+        parsed.push({ key, v, choicePos: segs[0]!.value, altIdx: segs[1]!.value })
+    }
+    const choicePos = parsed[0]!.choicePos
+    if (parsed.some(p => p.choicePos !== choicePos)) return bail(`variant patches target mixed choice positions (${parsed.map(p => p.choicePos).join(',')}) — hoist needs all siblings at one choice`)
+    const seqMembers = [...membersOf(core)]
+    const resolvedPos = choicePos < 0 ? seqMembers.length + choicePos : choicePos
+    const choice = seqMembers[resolvedPos]
+    if (!choice || !isChoiceType(choice.type)) return bail(`position ${resolvedPos} is '${choice?.type}', not choice/CHOICE`)
+    const choiceMembers = membersOf(choice)
+    const anyEmpty = parsed.some(p => matchesEmpty(choiceMembers[p.altIdx < 0 ? choiceMembers.length + p.altIdx : p.altIdx]!))
+    if (!anyEmpty) return null  // non-empty variants fall through to per-patch extraction — not an error, just not a hoist candidate
+    const parentKind = getCurrentRuleKind()
+    if (!parentKind) return bail('no current rule kind (variant()/transform() called outside rule callback?)')
+    const refs: RuntimeRule[] = []
+    const isUpperCase = core.type === core.type.toUpperCase()
+    for (const p of parsed) {
+        const resolvedAlt = p.altIdx < 0 ? choiceMembers.length + p.altIdx : p.altIdx
+        const altContent = choiceMembers[resolvedAlt]!
+        const hoistedMembers = seqMembers.map((m, i) => i === resolvedPos ? altContent : m)
+        const hoistedSeq = reconstructContainer(core, hoistedMembers)
+        // Wrap each variant's body in the parent's prec context so
+        // tree-sitter's conflict resolver sees the same precedence /
+        // associativity the author declared on the parent rule.
+        // `wrapInPrec` reapplies precStack inner-first so the outer-
+        // most wrapper stays outermost — matches path-descent's
+        // reassembly in applyPath.
+        const hoistedBody = wrapInPrec(hoistedSeq, precStack)
+        const visibleName = `${parentKind}_${p.v.name}`
+        registerPolymorphVariant(parentKind, p.v.name)
+        registerSyntheticRule(visibleName, hoistedBody)
+        refs.push({
+            type: isUpperCase ? 'SYMBOL' : 'symbol',
+            name: visibleName,
+        } as unknown as RuntimeRule)
+    }
+    // Hoisted variants inherit their parent seq's scaffolding, so they
+    // share a token prefix (e.g. `[` + attribute_item repeat) that
+    // defeats tree-sitter's LR(1) lookahead. Declare a conflict group
+    // across all variant names so the parser-generator emits a GLR
+    // state that forks on the prefix and picks the completing
+    // interpretation at parse time. Also declare each variant as a
+    // self-conflict — when the variant shares an internal repeat
+    // helper with sibling grammar rules (tree-sitter dedups identical
+    // repeat shapes across rules, producing a single `*_repeat1`),
+    // multiple reduction paths through the same shared helper still
+    // produce an unresolved state without the self-entry.
+    const variantNames = parsed.map(p => `${parentKind}_${p.v.name}`)
+    registerConflict(variantNames)
+    for (const n of variantNames) registerConflict([n])
+    const newChoice = reconstructContainer(choice, refs)
+    return { rule: newChoice, consumed: new Set(parsed.map(p => p.key)) }
 }
 
 // Local accessors for the container/wrapper field shapes RuntimeRule
@@ -95,7 +248,7 @@ function applyFlatPatches(
     // same transform call works in both runtimes. Reconstructed via
     // native dsl so the result has the runtime-correct rule shape.
     const t = original.type
-    if (t === 'seq' || t === 'SEQ') {
+    if (isSeqType(t)) {
         const members = [...membersOf(original)]
         for (const [key, patch] of Object.entries(patches)) {
             // Reject non-pure-numeric keys up front — `Number('foo')` is
@@ -123,7 +276,7 @@ function applyFlatPatches(
 
     // Choice: apply transform to each member recursively. Reconstruct
     // via native dsl so the choice keeps its runtime-correct shape.
-    if (t === 'choice' || t === 'CHOICE') {
+    if (isChoiceType(t)) {
         const newMembers = membersOf(original).map(m => applyFlatPatches(m, patches))
         return reconstructContainer(original, newMembers)
     }
@@ -148,9 +301,13 @@ function applyFlatPatches(
     return original
 }
 
+const wrapInPrec = (content: RuntimeRule, precStack?: readonly RuntimeRule[]): RuntimeRule =>
+    wrapInPrecStack(content, precStack, reconstructPrec)
+
 function resolvePatch(
-    patch: RuntimeRule | FieldPlaceholder,
+    patch: RuntimeRule | FieldPlaceholder | AliasPlaceholder | VariantPlaceholder,
     originalMember: RuntimeRule,
+    precStack?: readonly RuntimeRule[],
 ): RuntimeRule {
     // One-arg `field('name')` placeholder — wrap the original member
     // using the runtime's native field() so the resulting rule's type
@@ -162,6 +319,26 @@ function resolvePatch(
         let content: unknown = originalMember
         if (isFieldLike(content) && content.source === 'inferred') {
             content = content.content
+        }
+        // Bare STRING content: tree-sitter strips FIELD wrappers around
+        // anonymous string literals during grammar normalization (fields
+        // must label structural content, not bare tokens). `maybeKeywordSymbol`
+        // synthesizes a hidden `_kw_<name>` rule that produces the
+        // string and returns a SYMBOL reference — FIELD around SYMBOL
+        // survives the normalizer. The hidden rule's body is wrapped
+        // in high precedence so soft keywords (python `match`/`case`
+        // that are also valid identifiers) win the keyword interpretation
+        // at the position enrich promoted. Shared helper used by both
+        // this one-arg field() placeholder and dsl/field.ts's two-arg
+        // form; receives the prec stack so synthetic rules inherit
+        // the outer precedence context.
+        const maybeSymbolized = maybeKeywordSymbol(
+            patch.name,
+            content,
+            (body) => wrapInPrec(body, precStack),
+        )
+        if (maybeSymbolized !== content) {
+            content = maybeSymbolized
         }
         const native = (globalThis as { field?: (n: string, c: unknown) => unknown }).field
         if (typeof native !== 'function') {
@@ -175,6 +352,26 @@ function resolvePatch(
     // Two-arg field passed through directly — accept either case.
     if (isFieldLike(patch)) {
         return { ...patch, source: 'override' as const } as unknown as RuntimeRule
+    }
+    // Variant placeholder — variant('suffix'): auto-prefix with current
+    // rule kind → alias('parentKind_suffix'). Registers polymorph metadata.
+    if (isVariantPlaceholder(patch)) {
+        const parentKind = getCurrentRuleKind()
+        if (!parentKind) {
+            throw new Error(`variant('${patch.name}'): no current rule kind — variant() must be used inside a rule callback`)
+        }
+        registerPolymorphVariant(parentKind, patch.name)
+        const fullName = `${parentKind}_${patch.name}`
+        const hiddenName = '_' + fullName
+        return registerAliasedVariant(hiddenName, fullName, originalMember, body => wrapInPrec(body, precStack))
+    }
+    // Alias placeholder — alias('variant_name'): register a hidden
+    // rule with the original content and return alias($._hidden, $.visible).
+    // The hidden rule is picked up by evaluate.ts (sittir) or the
+    // grammar wrapper (tree-sitter CLI) after all callbacks run.
+    if (isAliasPlaceholder(patch)) {
+        const hiddenName = '_' + patch.name
+        return registerAliasedVariant(hiddenName, patch.name, originalMember, body => wrapInPrec(body, precStack))
     }
     return patch as RuntimeRule
 }
@@ -193,7 +390,7 @@ export function insert(
     wrapper: (content: RuntimeRule) => RuntimeRule,
 ): RuntimeRule {
     const t = original.type
-    if (t !== 'seq' && t !== 'SEQ') {
+    if (!isSeqType(t)) {
         throw new Error(`insert() expects a seq rule, got '${original.type}'`)
     }
 
@@ -220,7 +417,7 @@ export function replace(
     replacement: RuntimeRule | null,
 ): RuntimeRule {
     const t = original.type
-    if (t !== 'seq' && t !== 'SEQ') {
+    if (!isSeqType(t)) {
         throw new Error(`replace() expects a seq rule, got '${original.type}'`)
     }
 

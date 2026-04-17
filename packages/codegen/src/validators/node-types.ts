@@ -13,8 +13,11 @@
  */
 
 import { createRequire } from 'node:module'
+import { existsSync } from 'node:fs'
+import { join } from 'node:path'
 
 const require = createRequire(import.meta.url)
+const packagesDir = new URL('../../../', import.meta.url).pathname
 
 export interface RawFieldEntry {
     required: boolean
@@ -45,6 +48,10 @@ export function loadRawEntries(
     explicitPath?: string,
 ): RawNodeEntry[] {
     if (explicitPath) return require(explicitPath)
+
+    const overridePath = join(packagesDir, grammar, '.sittir', 'src', 'node-types.json')
+    if (existsSync(overridePath)) return require(overridePath)
+
     const modulePath = GRAMMAR_PATHS[grammar] ?? `tree-sitter-${grammar}/src/node-types.json`
     return require(require.resolve(modulePath))
 }

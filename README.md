@@ -1,12 +1,12 @@
 # sittir
 
-Generate typed factory functions and S-expression render templates from [tree-sitter](https://tree-sitter.github.io/) grammars.
+Generate typed factory functions and YAML render templates from [tree-sitter](https://tree-sitter.github.io/) grammars.
 
 Given any tree-sitter grammar, sittir generates:
 - **Typed factories** — one per node kind, producing `NodeData` plain objects with fluent getters/setters
-- **S-expression templates** — tree-sitter query syntax for rendering, parsed once and cached
+- **YAML render templates** — `$FIELD_NAME` placeholder syntax with `joinBy` separators and polymorph variants, stored in `templates.yaml`
 - **`.from()` resolution** — ergonomic input with string/number/object coercion, fully tree-shakeable
-- **`readNode()` hydration** — wraps tree-sitter parse trees into `NodeData` for round-trip editing
+- **`readNode()` round-trip** — reads tree-sitter parse trees into `NodeData` for codemod editing
 - **Const enums + navigation types** — `SyntaxKind`, operator/keyword maps, supertype unions
 - **Generated tests** — per-kind factory + render + round-trip validation
 
@@ -37,13 +37,14 @@ Given any tree-sitter grammar, sittir generates:
 import { ir } from '@sittir/rust'
 
 const node = ir.functionItem({
-  name: ir.identifier({ text: 'main' }),
-  parameters: ir.parameters({}),
-  body: ir.block({})
+  name: ir.identifier('main'),       // leaf factory takes text directly
+  parameters: ir.parameters(),       // rest-params (variadic children)
+  body: ir.block({ children: [] }),
 })
 
-console.log(node.type)        // 'function_item'
-console.log(node.name().text) // 'main' (fluent getter)
+console.log(node.type)               // 'function_item'
+console.log(node.name().text)        // 'main' (fluent getter, no-arg = get)
+const withBody = node.body(newBlock)  // with-arg = setter (returns new node)
 ```
 
 ### `.from()` API
@@ -52,10 +53,10 @@ console.log(node.name().text) // 'main' (fluent getter)
 import { ir } from '@sittir/typescript'
 
 const fn = ir.functionDeclaration.from({
-  name: 'greet',           // string auto-resolves to leaf node
-  parameters: ir.formalParameters.from({}),
-  returnType: 'void',
-  body: ir.statementBlock.from({})
+  name: 'greet',             // string → identifier leaf node
+  body: ir.statementBlock.from({
+    children: [ir.returnStatement.from({ children: [ir.identifier('hello')] })],
+  }),
 })
 ```
 
@@ -65,22 +66,35 @@ const fn = ir.functionDeclaration.from({
 import { render } from '@sittir/core'
 import { rules } from '@sittir/rust'
 
-const source = render(node, rules)  // S-expression template expansion
+const source = render(node, rules)  // YAML template expansion
 ```
 
-### Round-Trip (Codemods)
+### Codemod with ast-grep
+
+Find nodes with ast-grep, read into typed NodeData, modify with fluent setters, emit a text edit:
 
 ```ts
-import { wrap, edit } from '@sittir/rust'
+import { parse, Lang } from '@ast-grep/napi'
+import { replace } from '@sittir/core'
+import { ir, readTreeNode } from '@sittir/rust'
 
-// Hydrate a tree-sitter parse tree node into NodeData
-const nodeData = wrap(treeSitterNode)
+// 1. Find all function items using ast-grep
+const root = parse(Lang.Rust, source).root()
+const matches = root.findAll({ rule: { kind: 'function_item' } })
 
-// Create a text edit
-const patch = edit(treeSitterNode, (nd) => {
-  return nd.body(ir.block({}))
-})
-// patch = { startIndex, endIndex, newText }
+for (const match of matches) {
+  // 2. Read the parse tree node into typed NodeData
+  const fn = readTreeNode(match) as ReturnType<typeof ir.functionItem>
+
+  // 3. Modify — fluent setter returns a new node (immutable)
+  const updated = fn
+    .visibilityModifier(ir.visibilityModifier({ children: [] }))
+    .body(fn.body())
+
+  // 4. replace() renders the node and pairs it with the target's byte range
+  const edit = replace(match, updated)
+  // edit = { startPos, endPos, insertedText }
+}
 ```
 
 ## Architecture
@@ -117,17 +131,22 @@ const patch = edit(treeSitterNode, (nd) => {
 | **Evaluate** | `grammar.json` + `overrides.ts` | Raw grammar with resolved rules | Parse grammar, apply DSL transforms, collect roles |
 | **Link** | Raw grammar + `node-types.json` | Linked `NodeMap` with field specs | Resolve symbols, classify kinds, detect polymorphs |
 | **Optimize** | Linked NodeMap | Optimized NodeMap | Merge variants, collapse repeated shapes |
-| **Assemble** | Optimized NodeMap | Assembly with render templates | Walk rules → S-expression templates, join separators |
+| **Assemble** | Optimized NodeMap | Assembly with render templates | Walk rules → YAML templates with `$FIELD` placeholders, `joinBy` separators |
 | **Emit** | Assembly | Generated `.ts` + `.yaml` files | Produce types, factories, from, wrap, rules, consts |
 
 ### Data Flow
 
 ```
-Factory input (Config, camelCase) ──▶ Factory output (NodeData, raw fields)
+Factory input (Config, camelCase) ──▶ Factory output (NodeData + fluent getters/setters)
 From input (strings, numbers) ──────▶ Factory (via resolution) ──▶ NodeData
-readNode input (SgNode/TreeNode) ───▶ NodeData (direct field mapping)
-Render input (AnyNodeData) ─────────▶ Source text (template expansion)
+SgNode/TreeNode ──▶ readNode() ──▶ NodeData ──▶ readTreeNode() ──▶ NodeData + routing + lazy getters
+NodeData + target ──▶ replace(target, node) ──▶ Edit { startPos, endPos, insertedText }
+Render input (AnyNodeData) ─────────▶ Source text (YAML template expansion)
 ```
+
+- `readNode()` (core) maps parse tree fields to raw `NodeData`.
+- `readTreeNode()` (generated, per-grammar) adds override routing and lazy getters — the client entry point.
+- `replace(target, node)` (core) renders the replacement and pairs it with the target's byte range — one call to go from NodeData to a text edit.
 
 ## Override DSL
 
@@ -171,6 +190,7 @@ npx tsx packages/codegen/src/cli.ts --grammar typescript --all --output packages
 - **Override-compiled parser** (spec 007) — compile override grammars to WASM parsers so parse trees carry all field labels natively, eliminating runtime field-promotion heuristics
 - **Nested-alias polymorphs** — express polymorphic rules as nested aliases via `transform()`, enabling parse-tree-level variant discrimination
 - **Link cleanup** — delete `inferFieldNames` mutation and `promotePolymorph` from Link once the override-compiled parser carries all field information
+- **Rust engine port** — rewrite `@sittir/core` (render engine, readNode, validation) in Rust for native performance; expose via WASM and NAPI bindings. TypeScript types and codegen remain in TypeScript
 
 ## License
 

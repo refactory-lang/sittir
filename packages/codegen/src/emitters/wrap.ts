@@ -7,139 +7,23 @@
  * are read-only — there are no setters and no render/toEdit/replace
  * surface. To edit a wrapped node, clone it via `ir.${kind}({ ... })`.
  *
- * This emitter consumes NodeMap directly. It reconstructs the
- * OverridesConfig and supertype-expansion map from NodeMap so
- * `buildRoutingMap` can be called once at module load — readNode
- * then does override-field promotion itself, which is why this
- * emitter no longer needs the `promote*` preamble that v1 wrap.ts
- * required.
+ * Consumes NodeMap directly. No routing-map / override-field-promotion
+ * emission — the compiled override grammar bakes all field() placements
+ * into the tree-sitter parser, so tree-sitter's native
+ * `fieldNameForChild` is the single source of truth at runtime.
  */
 
 import type {
     NodeMap, AssembledField, AssembledChild, AssembledNode,
 } from '../compiler/rule.ts'
-import type { DerivedOverridesConfig } from '../compiler/derive-overrides-json.ts'
 
 export interface EmitWrapConfig {
     grammar: string
     nodeMap: NodeMap
-    /**
-     * Pre-derived runtime OverridesConfig (same shape as the legacy
-     * `overrides.json`) produced by `deriveOverridesConfig` against the
-     * post-Link rule tree. Inlined into the generated `_overrides` so
-     * `readNode` sees exactly the routing the compiler computed —
-     * including full-replacement override rules and kind-projected
-     * (`position: -1`) entries that the narrow `f.source === 'override'`
-     * filter would miss. Optional for back-compat; when absent the
-     * emitter falls back to the AssembledField-based extraction.
-     */
-    derivedOverrides?: DerivedOverridesConfig
-}
-
-/**
- * Emit `const NAME = { "key1": <value>, "key2": <value>, … }` with one
- * key per line so PR diffs only highlight the changed entry. The
- * value is JSON-stringified compactly — entries are typically routing
- * shape data, so per-key compaction is fine.
- */
-function emitObjectPerLine(
-    name: string,
-    obj: Record<string, unknown>,
-    suffix: string = '',
-): string[] {
-    const keys = Object.keys(obj)
-    if (keys.length === 0) return [`const ${name} = {}${suffix};`]
-    const lines: string[] = [`const ${name} = {`]
-    for (const key of keys) {
-        lines.push(`  ${JSON.stringify(key)}: ${JSON.stringify(obj[key])},`)
-    }
-    lines.push(`}${suffix};`)
-    return lines
-}
-
-/**
- * Same per-line layout for a `Map`-shaped const built via
- * `Object.entries({...})`.
- */
-function emitMapPerLine(name: string, obj: Record<string, unknown>): string[] {
-    const keys = Object.keys(obj)
-    if (keys.length === 0) {
-        return [`const ${name} = new Map<string, readonly string[]>();`]
-    }
-    const lines: string[] = [
-        `const ${name} = new Map<string, readonly string[]>(Object.entries({`,
-    ]
-    for (const key of keys) {
-        lines.push(`  ${JSON.stringify(key)}: ${JSON.stringify(obj[key])},`)
-    }
-    lines.push('}));')
-    return lines
 }
 
 export function emitWrap(config: EmitWrapConfig): string {
-    const { nodeMap, derivedOverrides } = config
-
-    // ------------------------------------------------------------------
-    // Reconstruct routing inputs from NodeMap
-    // ------------------------------------------------------------------
-    // Prefer the pre-derived OverridesConfig produced via the shared
-    // `deriveOverridesConfig` walker — it captures full-replacement
-    // override rules, kind-projected (position: -1) entries, and
-    // merged-across-variants field specs that the naive
-    // `f.source === 'override'` filter below cannot see. Fall back to
-    // the AssembledField extraction when no derived config is provided
-    // (older callers; direct unit tests).
-    const overrides: Record<string, { fields: Record<string, OverrideFieldSpec> }> = {}
-    if (derivedOverrides) {
-        for (const [kind, spec] of Object.entries(derivedOverrides)) {
-            const overrideFields: Record<string, OverrideFieldSpec> = {}
-            for (const [fieldName, fs] of Object.entries(spec.fields)) {
-                overrideFields[fieldName] = {
-                    types: [...fs.types],
-                    multiple: fs.multiple,
-                    required: fs.required,
-                    position: fs.position,
-                }
-            }
-            if (Object.keys(overrideFields).length > 0) {
-                overrides[kind] = { fields: overrideFields }
-            }
-        }
-    } else {
-        for (const [kind, node] of nodeMap.nodes) {
-            const fields = getNodeFields(node)
-            if (fields.length === 0) continue
-            const overrideFields: Record<string, OverrideFieldSpec> = {}
-            fields.forEach((f, idx) => {
-                if (f.source !== 'override') return
-                overrideFields[f.name] = {
-                    types: f.contentTypes.map(t => ({
-                        type: t,
-                        named: isNamedKind(t, nodeMap),
-                    })),
-                    multiple: f.multiple,
-                    required: f.required,
-                    position: idx,
-                }
-            })
-            if (Object.keys(overrideFields).length > 0) {
-                overrides[kind] = { fields: overrideFields }
-            }
-        }
-    }
-
-    // Supertype expansion from NodeMap. `assemble()` resolves hidden
-    // rule references (`_type_identifier` → `type_identifier`) and
-    // alias targets while building each supertype's subtype list, so
-    // the names recorded here already match what tree-sitter reports
-    // at parse time. No node-types.json needed.
-    const supertypeExpansion: Record<string, string[]> = {}
-    for (const [kind, node] of nodeMap.nodes) {
-        if (node.modelType !== 'supertype') continue
-        if (node.subtypes.length > 0) {
-            supertypeExpansion[kind] = [...node.subtypes]
-        }
-    }
+    const { nodeMap } = config
 
     // Collect type imports for `WrappedNode<T>` return annotations —
     // every kind that gets a `wrap${TypeName}` function contributes
@@ -180,29 +64,17 @@ export function emitWrap(config: EmitWrapConfig): string {
         "  readonly text?: string;",
         "  readonly nodeId?: number;",
         "}",
-        "import { readNode, buildRoutingMap, type TreeHandle } from '@sittir/core';",
+        "import { readNode, type TreeHandle } from '@sittir/core';",
         "import type { WrappedNode } from '@sittir/types';",
         ...(typeImportLine ? [typeImportLine] : []),
         '',
-        '// Routing data — overrides + supertype expansion reconstructed at',
-        '// codegen time from NodeMap, then handed to readNode at module load.',
-        '// Emitted one entry per line so PR diffs show only the changed kind.',
-        ...emitObjectPerLine('_overrides', overrides as Record<string, unknown>, ' as const'),
-        'export { _overrides };',
-        ...emitMapPerLine('_supertypeExpansion', supertypeExpansion as Record<string, unknown>),
-        'export { _supertypeExpansion };',
-        '// Exported so validators / runtime consumers can use the same',
-        '// routing the generated wrap/readNode path uses, instead of',
-        "// re-reading the legacy `overrides.json` file.",
-        'export const _routing = buildRoutingMap(_overrides, _supertypeExpansion);',
-        '',
-        '// Drill-in helpers — pass _routing to readNode so override field',
-        '// promotion happens during hydration, not as a wrap-time fix-up.',
+        '// Drill-in helpers — tree-sitter\'s native field placement does',
+        '// all the routing; readNode consumes the parse tree directly.',
         'function drillIn(entry: unknown, tree: TreeHandle): unknown {',
         '  if (!entry) return undefined;',
         '  const e = entry as _NodeData;',
         '  if (e.nodeId != null) {',
-        '    return wrapNode(readNode(tree, e.nodeId, _routing), tree);',
+        '    return wrapNode(readNode(tree, e.nodeId), tree);',
         '  }',
         '  return entry;',
         '}',
@@ -218,7 +90,7 @@ export function emitWrap(config: EmitWrapConfig): string {
     // Per-kind wrap functions — local dispatch on modelType.
     // ------------------------------------------------------------------
     for (const [, node] of nodeMap.nodes) {
-        const source = renderWrapForNode(node)
+        const source = renderWrapForNode(node, nodeMap)
         if (source === undefined) continue
         lines.push(source)
         lines.push('')
@@ -255,7 +127,7 @@ export function emitWrap(config: EmitWrapConfig): string {
     lines.push(' * One level deep — getters drill into subtrees on demand.')
     lines.push(' */')
     lines.push('export function readTreeNode(tree: TreeHandle, nodeId?: number): unknown {')
-    lines.push('  const data = readNode(tree, nodeId, _routing);')
+    lines.push('  const data = readNode(tree, nodeId);')
     lines.push('  return wrapNode(data, tree);')
     lines.push('}')
     lines.push('')
@@ -267,47 +139,13 @@ export function emitWrap(config: EmitWrapConfig): string {
 // Helpers
 // ---------------------------------------------------------------------------
 
-interface OverrideFieldSpec {
-    types: { type: string; named: boolean }[]
-    multiple: boolean
-    required: boolean
-    position: number
-}
-
-/** Extract the field list from any node that carries fields. */
-function getNodeFields(node: import('../compiler/rule.ts').AssembledNode): readonly AssembledField[] {
-    if (node.modelType === 'branch' || node.modelType === 'group') return node.fields
-    if (node.modelType === 'polymorph') {
-        // Union the fields across forms. First occurrence wins.
-        const seen = new Map<string, AssembledField>()
-        for (const form of node.forms) {
-            for (const f of form.fields) {
-                if (!seen.has(f.name)) seen.set(f.name, f)
-            }
-        }
-        return [...seen.values()]
-    }
-    return []
-}
-
-/**
- * Decide the `named` flag for an override-content kind reference.
- * Anonymous tokens (operator punctuation, hidden grammar tokens) are
- * unnamed; everything else (branches, leaves, keywords, enums,
- * supertypes) is named in tree-sitter's sense.
- */
-function isNamedKind(kind: string, nodeMap: NodeMap): boolean {
-    const n = nodeMap.nodes.get(kind)
-    if (!n) return true // unknown kind — assume named (will route by kind)
-    return n.modelType !== 'token'
-}
-
 // ---------------------------------------------------------------------------
 // Per-node wrap dispatch
 // ---------------------------------------------------------------------------
 
-function renderWrapForNode(node: AssembledNode): string | undefined {
+function renderWrapForNode(node: AssembledNode, nodeMap: NodeMap): string | undefined {
     if (!node.rawFactoryName) return undefined
+
     switch (node.modelType) {
         case 'branch':
             return emitFieldCarryingWrap(node, node.fields, node.children ?? [])

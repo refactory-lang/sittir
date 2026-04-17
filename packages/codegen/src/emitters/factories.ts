@@ -166,7 +166,7 @@ export function emitFactories(config: EmitFactoriesConfig): string {
     // dispatcher emits its forms inline.
     for (const [kind, node] of nodeMap.nodes) {
         if (kind.startsWith('_')) continue
-        if (node.modelType === 'group' && isPolymorphForm(kind, nodeMap)) continue
+        if (nodeMap.polymorphFormKinds.has(kind)) continue
         const source = renderFactoryForNode(node, strict, !!wordPattern, nodeMap, leafReConsts)
         if (source === undefined) continue
         lines.push(source)
@@ -184,16 +184,35 @@ export function emitFactories(config: EmitFactoriesConfig): string {
         factory: string
         typeName: string
         fluent: boolean
+        /**
+         * Factory signature shape — 'config' for factories that take a
+         * `config: T.XxxConfig` object (branches, polymorphs, enums with
+         * validation), 'children' for container factories that take
+         * `...children: ElementType[]` or `child?: ElementType`, 'text'
+         * for leaf / keyword factories that take a raw string. Consumers
+         * (validators, editors) route calls by this instead of inspecting
+         * `factory.toString()`.
+         */
+        shape: 'config' | 'children' | 'text'
     }
     const mapEntries: MapEntry[] = []
     for (const [kind, node] of nodeMap.nodes) {
         if (kind.startsWith('_')) continue
         if (!node.rawFactoryName) continue
-        if (isPolymorphForm(kind, nodeMap)) continue
+        if (nodeMap.polymorphFormKinds.has(kind)) continue
         const fluent = node.modelType === 'branch' ||
             node.modelType === 'container' ||
             node.modelType === 'polymorph'
-        mapEntries.push({ kind, factory: node.rawFactoryName, typeName: node.typeName, fluent })
+        let shape: 'config' | 'children' | 'text'
+        if (node.modelType === 'container') shape = 'children'
+        else if (
+            node.modelType === 'leaf'
+            || node.modelType === 'keyword'
+            || node.modelType === 'token'
+            || node.modelType === 'enum'
+        ) shape = 'text'
+        else shape = 'config'
+        mapEntries.push({ kind, factory: node.rawFactoryName, typeName: node.typeName, fluent, shape })
     }
 
     // FluentKindMap — kind string → fluent factory output shape.
@@ -222,6 +241,32 @@ export function emitFactories(config: EmitFactoriesConfig): string {
     }
     lines.push('} as const;')
     lines.push('export type _FactoryMap = typeof _factoryMap;')
+    lines.push('')
+
+    // _factoryShapes — parallel dispatch hint for runtime routing.
+    // Consumers (validators, editors) use this to choose between
+    // calling `factory(config)` vs `factory(...children)` vs
+    // `factory(text)` without inspecting function.toString() at
+    // runtime (which breaks under minification / bundler renames).
+    //
+    // An earlier attempt derived this type from `_FactoryMap` via a
+    // conditional-type mapper so each tag had to match the factory's
+    // first-param shape. It didn't work: function-parameter
+    // contravariance under TS strict-function-types made every
+    // non-'text' branch unreachable (a concrete `Config` interface
+    // doesn't extend the mapper's `object` probe), and the
+    // compensating `as` cast silently laundered mismatches. Shape is
+    // now a plain record; `as const satisfies` keeps the emitted
+    // string literals narrow and catches typos / accidental widening,
+    // which is the useful part that survives. Cross-checking tags
+    // against real factory signatures isn't expressible in TS today
+    // for the signature shapes we emit.
+    lines.push('export const _factoryShapes = {')
+    for (const { kind, shape } of mapEntries) {
+        lines.push(`  ${JSON.stringify(kind)}: ${JSON.stringify(shape)},`)
+    }
+    lines.push(`} as const satisfies Record<string, 'config' | 'children' | 'text'>;`)
+    lines.push('export type _FactoryShapes = typeof _factoryShapes;')
     lines.push('')
 
     return lines.join('\n')
@@ -353,7 +398,10 @@ function fieldElementType(f: AssembledField, nodeMap: NodeMap): string {
     if (f.contentTypes.length === 0) return 'string'
     const parts = f.contentTypes.map(t => {
         const node = nodeMap.nodes.get(t)
-        if (!node) return JSON.stringify(t)
+        if (!node) {
+            const fallback = t.replace(/(?:^|_)([a-z])/g, (_: string, c: string) => c.toUpperCase())
+            return `T.${fallback}`
+        }
         const name = node.typeName
         return /^[A-Za-z_$][\w$]*$/.test(name) ? `T.${name}` : JSON.stringify(t)
     })
@@ -536,6 +584,8 @@ interface PolymorphNode {
     readonly treeTypeName: string
     readonly rawFactoryName?: string
     readonly forms: AssembledGroup[]
+    readonly source?: 'promoted' | 'override'
+    readonly variantChildKinds?: readonly string[]
 }
 
 function emitPolymorphFactory(node: PolymorphNode, nodeMap: NodeMap): string {
@@ -562,28 +612,46 @@ function emitPolymorphFactory(node: PolymorphNode, nodeMap: NodeMap): string {
     const polyOpt = anyFormHasRequired ? '' : '?'
     lines.push(`export function ${fn}(config${polyOpt}: ${configUnion}) {`)
 
-    // Dispatch: most-specific form first (by field count). A form
-    // matches when all its fields are present in config. The smallest
-    // form is the fallback for empty or no-match cases. The call to
-    // the picked form factory is cast to that form's ConfigOf because
-    // the union type doesn't narrow across `in` checks well enough
-    // to pass structural assignability on its own.
+    // Dispatch:
+    // - source='override': forms share parent fields, so field-presence
+    //   doesn't discriminate. Use the variant child's type from
+    //   config.children[0].type, OR an explicit config.variant
+    //   discriminator (T032).
+    // - source='promoted': forms have heterogeneous field sets.
+    //   Discriminate by field-presence, most-specific first.
     if (forms.length > 1) {
-        const sorted = [...forms].sort((a, b) => b.fields.length - a.fields.length)
-        const fallback = sorted[sorted.length - 1]!
-        const seenFieldSets = new Set<string>()
-        for (const form of sorted) {
-            if (form === fallback) continue
-            if (form.fields.length === 0) continue
-            const key = [...form.fields.map(f => f.propertyName)].sort().join(',')
-            if (seenFieldSets.has(key)) continue
-            seenFieldSets.add(key)
-            const checks = form.fields
-                .map(f => `'${f.propertyName}' in config`)
-                .join(' && ')
-            lines.push(`  if (config && ${checks}) return ${form.rawFactoryName!}(config as T.${form.typeName}Config);`)
+        const isOverride = node.source === 'override'
+        if (isOverride) {
+            // Variant child kind discrimination first (most reliable —
+            // the kind on the variant child is the parse-tree truth).
+            for (const form of forms) {
+                const childKind = `${node.kind}_${form.name}`
+                lines.push(`  if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === '${childKind}') return ${form.rawFactoryName!}(config as T.${form.typeName}Config);`)
+            }
+            // Then explicit `variant` discriminator on config.
+            for (const form of forms) {
+                lines.push(`  if (config && (config as any).variant === '${form.name}') return ${form.rawFactoryName!}(config as T.${form.typeName}Config);`)
+            }
+            // Fallback to first form when nothing discriminates.
+            const fallback = forms[0]!
+            lines.push(`  return ${fallback.rawFactoryName!}(config as T.${fallback.typeName}Config);`)
+        } else {
+            const sorted = [...forms].sort((a, b) => b.fields.length - a.fields.length)
+            const fallback = sorted[sorted.length - 1]!
+            const seenFieldSets = new Set<string>()
+            for (const form of sorted) {
+                if (form === fallback) continue
+                if (form.fields.length === 0) continue
+                const key = [...form.fields.map(f => f.propertyName)].sort().join(',')
+                if (seenFieldSets.has(key)) continue
+                seenFieldSets.add(key)
+                const checks = form.fields
+                    .map(f => `'${f.propertyName}' in config`)
+                    .join(' && ')
+                lines.push(`  if (config && ${checks}) return ${form.rawFactoryName!}(config as T.${form.typeName}Config);`)
+            }
+            lines.push(`  return ${fallback.rawFactoryName!}(config as T.${fallback.typeName}Config);`)
         }
-        lines.push(`  return ${fallback.rawFactoryName!}(config as T.${fallback.typeName}Config);`)
     } else {
         lines.push(`  return ${forms[0]!.rawFactoryName!}(config);`)
     }
