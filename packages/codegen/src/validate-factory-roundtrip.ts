@@ -177,8 +177,14 @@ export async function validateFactoryRoundTrip(
 			const factoryModule = await import(new URL(factoryModulePath, import.meta.url).pathname);
 			factoryMap = factoryModule._factoryMap ?? {};
 			factoryShapes = factoryModule._factoryShapes ?? {};
-		} catch {
-			// If factory module can't be loaded, fall back to strip
+		} catch (e) {
+			// Factory module failed to load. stripToFactory fallback
+			// makes the rest of the validator work, but it renders ALL
+			// factory-round-trip results meaningless — we'd be validating
+			// the strip-path, not the factory path. Log to stderr so the
+			// maintainer notices, and emit a single error row so the
+			// diagnostic surfaces in overrides.suggested.ts's section.
+			console.error(`[validate-factory-roundtrip] failed to load ${factoryModulePath}: ${(e as Error)?.message ?? e}`);
 		}
 	}
 
@@ -244,10 +250,12 @@ export async function validateFactoryRoundTrip(
 					const fieldsPresent = readData.fields && Object.keys(readData.fields).length > 0;
 					if (isConfigFactory) {
 						// Some rules have BOTH fields AND children —
-						// e.g. python's return_statement has a `return`
-						// keyword field plus the expression as an
-						// unrouted child. Include children in the config;
-						// factories that declare `children` in their
+						// e.g. python's `return_statement = seq('return',
+						// optional(_expressions))` where enrich's bare-
+						// keyword pass promotes `return` to a named
+						// field and the _expressions tail stays as an
+						// unrouted child. Include children in the config
+						// so factories that declare `children` in their
 						// ConfigOf merge it into the output.
 						const config = readData.children
 							? { ...camelFields, children: readData.children }
@@ -268,8 +276,20 @@ export async function validateFactoryRoundTrip(
 					} else {
 						factoryData = stripToFactory(readData);
 					}
-				} catch {
-					factoryData = stripToFactory(readData);
+				} catch (e) {
+					// A real factory throw (wrong argument shape,
+					// missing dependency, bug in the generated code)
+					// surfaces as a factory-RT error so it's visible in
+					// overrides.suggested.ts — silently falling back to
+					// stripToFactory would make the "factory pass" count
+					// fake. Record + skip this kind, don't continue the
+					// reparse loop.
+					errors.push({
+						kind, entry: entry.name,
+						message: `factory threw: ${(e as Error)?.message?.slice(0, 100) ?? String(e)}`,
+						input: inputSource,
+					});
+					continue;
 				}
 			} else {
 				factoryData = stripToFactory(readData);

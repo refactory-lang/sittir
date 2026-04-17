@@ -285,6 +285,11 @@ function registerPolymorphVariant(parentKind, childSuffix) {
   }
   currentPolymorphVariants.push({ parent: parentKind, child: childSuffix });
 }
+function drainPolymorphVariants() {
+  const variants = currentPolymorphVariants;
+  currentPolymorphVariants = [];
+  return variants;
+}
 function drainSyntheticRules() {
   const rules = currentSyntheticRules ?? /* @__PURE__ */ new Map();
   currentSyntheticRules = null;
@@ -421,12 +426,18 @@ function installGrammarWrapper() {
           if (typeof baseFn === "function") {
             try {
               baseOriginal = baseFn.call(permissive, permissive, void 0);
-            } catch {
+            } catch (e) {
+              if (typeof process !== "undefined" && process?.env?.SITTIR_DEBUG) {
+                console.error(`[sittir] pass1 base '${name}' threw: ${e?.message?.slice(0, 120) ?? e}`);
+              }
             }
           }
           try {
             ruleFn.call(permissive, permissive, baseOriginal);
-          } catch {
+          } catch (e) {
+            if (typeof process !== "undefined" && process?.env?.SITTIR_DEBUG) {
+              console.error(`[sittir] pass1 override '${name}' threw: ${e?.message?.slice(0, 120) ?? e}`);
+            }
           } finally {
             currentRuleKind = null;
           }
@@ -461,7 +472,18 @@ function installGrammarWrapper() {
       currentOptsRules = opts.rules;
       currentBlankFn = g.blank ?? null;
     }
-    const result = nativeGrammar.apply(this, args);
+    let result;
+    try {
+      result = nativeGrammar.apply(this, args);
+    } catch (e) {
+      currentOptsRules = null;
+      currentBlankFn = null;
+      drainSyntheticRules();
+      drainConflicts();
+      drainPolymorphVariants();
+      currentRuleKind = null;
+      throw e;
+    }
     currentOptsRules = null;
     currentBlankFn = null;
     const allConflicts = [...pendingConflictsAfterGrammar, ...drainConflicts()];
@@ -568,6 +590,12 @@ function applyPathPatches(original, patches) {
   return rule;
 }
 function tryHoistSiblingVariants(rule, variantEntries) {
+  const dbg = typeof process !== "undefined" && process?.env?.SITTIR_DEBUG;
+  const kindFor = getCurrentRuleKind() ?? "(unknown)";
+  const bail = (reason) => {
+    if (dbg) console.error(`[sittir] hoist skipped on '${kindFor}': ${reason}`);
+    return null;
+  };
   const precStack = [];
   let core = rule;
   while (core && isPrecWrapper(core)) {
@@ -575,26 +603,26 @@ function tryHoistSiblingVariants(rule, variantEntries) {
     core = contentOf2(core);
   }
   const t = core?.type;
-  if (!t) return null;
-  if (t !== "seq" && t !== "SEQ") return null;
+  if (!t) return bail("core rule has no type after prec peeling");
+  if (t !== "seq" && t !== "SEQ") return bail(`core rule type '${t}' is not seq/SEQ`);
   const parsed = [];
   for (const [key, v] of variantEntries) {
     const segs = parsePath(key);
-    if (segs.length !== 2) return null;
-    if (segs[0].kind !== "index" || segs[1].kind !== "index") return null;
+    if (segs.length !== 2) return bail(`variant patch '${key}' has ${segs.length} segments (expected 2: N/M)`);
+    if (segs[0].kind !== "index" || segs[1].kind !== "index") return bail(`variant patch '${key}' uses non-index segments (kind-match / wildcard not supported for hoist)`);
     parsed.push({ key, v, choicePos: segs[0].value, altIdx: segs[1].value });
   }
   const choicePos = parsed[0].choicePos;
-  if (parsed.some((p) => p.choicePos !== choicePos)) return null;
+  if (parsed.some((p) => p.choicePos !== choicePos)) return bail(`variant patches target mixed choice positions (${parsed.map((p) => p.choicePos).join(",")}) \u2014 hoist needs all siblings at one choice`);
   const seqMembers = [...membersOf2(core)];
   const resolvedPos = choicePos < 0 ? seqMembers.length + choicePos : choicePos;
   const choice2 = seqMembers[resolvedPos];
-  if (!choice2 || choice2.type !== "choice" && choice2.type !== "CHOICE") return null;
+  if (!choice2 || choice2.type !== "choice" && choice2.type !== "CHOICE") return bail(`position ${resolvedPos} is '${choice2?.type}', not choice/CHOICE`);
   const choiceMembers = membersOf2(choice2);
   const anyEmpty = parsed.some((p) => matchesEmpty(choiceMembers[p.altIdx < 0 ? choiceMembers.length + p.altIdx : p.altIdx]));
   if (!anyEmpty) return null;
   const parentKind = getCurrentRuleKind();
-  if (!parentKind) return null;
+  if (!parentKind) return bail("no current rule kind (variant()/transform() called outside rule callback?)");
   const refs = [];
   const isUpperCase = core.type === core.type.toUpperCase();
   const wrapInPrecStack2 = (body) => {

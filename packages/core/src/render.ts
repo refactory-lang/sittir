@@ -161,7 +161,19 @@ function render(node: AnyNodeData, ctx: InternalRenderContext): string {
 				return items.map(item => renderValue(item as AnyNodeData | string | number, ctx)).join(sep);
 			}
 			if (Array.isArray(value)) {
-				return value.length > 0 ? renderValue(value[0] as AnyNodeData | string | number, ctx) : '';
+				// Empty array in a single-slot field position means
+				// upstream (factory / readNode / from.ts) produced a
+				// zero-length list where the template expects exactly
+				// one value. Emitting `''` silently produces malformed
+				// output (e.g. a binary expression with no operand) —
+				// same severity as the leaf "has no fields or children"
+				// guard, so throw with the same shape.
+				if (value.length === 0) {
+					throw new Error(
+						`Node '${node.type}' field '${fieldKey}' is an empty array but the template expects exactly one value — single-slot field was rendered from a zero-length array.`,
+					);
+				}
+				return renderValue(value[0] as AnyNodeData | string | number, ctx);
 			}
 			return renderValue(value as AnyNodeData | string | number, ctx);
 		}

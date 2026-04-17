@@ -333,7 +333,19 @@ export function emitSuggested(config: EmitSuggestedConfig): string {
     for (const entry of polymorphHolds) {
         const rule = nodeMap.rules?.[entry.kind]
         const located = rule ? locateTopLevelChoice(rule) : null
-        if (!located) continue
+        if (!located) {
+            // Link flagged this kind as a polymorph candidate but the
+            // emitter can't locate a reachable top-level choice via the
+            // supported wrapper set. Surface the skip as a comment so
+            // the Link/emitter disagreement is visible rather than
+            // silently dropping the suggestion.
+            emit(entry.kind, () => {
+                const topType = rule?.type ?? '(no rule)'
+                lines.push(`  // [held] polymorph — couldn't locate top-level choice under '${topType}'; emitter's wrapper set may need extending`)
+                lines.push('')
+            })
+            continue
+        }
         const { choicePath, arms } = located
         emit(entry.kind, () => {
             lines.push(`  // [held] polymorph — ${arms.length} alternative(s)`)

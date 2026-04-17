@@ -385,9 +385,39 @@ export function installGrammarWrapper(): void {
                     let baseOriginal: unknown = undefined
                     const baseFn = base?.rules?.[name]
                     if (typeof baseFn === 'function') {
-                        try { baseOriginal = baseFn.call(permissive, permissive, undefined) } catch { /* ignore */ }
+                        try { baseOriginal = baseFn.call(permissive, permissive, undefined) }
+                        catch (e) {
+                            // Pass 1 runs with a permissive proxy so most DSL
+                            // lookups succeed; a throw here means the base's
+                            // rule body calls a helper the permissive proxy
+                            // can't fake (common for grammars using custom
+                            // `sepBy` / `commaSep` closures). Safe to continue
+                            // — the override gets `undefined` for `original`,
+                            // so its transform() calls bail out of hoisting
+                            // paths. Surface for SITTIR_DEBUG only; a chatty
+                            // stderr on every run would drown real errors.
+                            if (typeof process !== 'undefined' && process?.env?.SITTIR_DEBUG) {
+                                console.error(`[sittir] pass1 base '${name}' threw: ${(e as Error)?.message?.slice(0, 120) ?? e}`)
+                            }
+                        }
                     }
-                    try { ruleFn.call(permissive, permissive, baseOriginal) } catch { /* ignore */ }
+                    try { ruleFn.call(permissive, permissive, baseOriginal) }
+                    catch (e) {
+                        // Override threw during pass 1. Possible causes:
+                        // (a) permissive proxy returned a symbol placeholder
+                        //     the override's transform() can't descend into;
+                        // (b) variant-name uniqueness guard hit (duplicate
+                        //     `variant('name')` in a single rule — the real
+                        //     pass 2 will re-throw this cleanly);
+                        // (c) a real bug in the override code.
+                        // (a) is expected and benign. (b) + (c) will resurface
+                        // in pass 2 with full context; here we just log under
+                        // SITTIR_DEBUG so silent swallowing doesn't hide (c)
+                        // during investigation.
+                        if (typeof process !== 'undefined' && process?.env?.SITTIR_DEBUG) {
+                            console.error(`[sittir] pass1 override '${name}' threw: ${(e as Error)?.message?.slice(0, 120) ?? e}`)
+                        }
+                    }
                     finally { currentRuleKind = null }
                 }
             }
@@ -447,7 +477,27 @@ export function installGrammarWrapper(): void {
             currentOptsRules = opts.rules as Record<string, unknown>
             currentBlankFn = g.blank ?? null
         }
-        const result = nativeGrammar.apply(this, args) as Record<string, unknown> | null
+        // try/catch is load-bearing: if nativeGrammar throws (e.g. a
+        // tree-sitter-level grammar error), the module-level state
+        // (`currentOptsRules`, `currentBlankFn`, `currentSyntheticRules`,
+        // `currentConflicts`) must reset so the next invocation doesn't
+        // inherit ghost registrations from the failed run. The SUCCESS
+        // path intentionally leaves `currentSyntheticRules` / conflicts
+        // populated — the code below this block drains them when
+        // building the result, and draining here would hide them from
+        // the post-nativeGrammar assembly.
+        let result: Record<string, unknown> | null
+        try {
+            result = nativeGrammar.apply(this, args) as Record<string, unknown> | null
+        } catch (e) {
+            currentOptsRules = null
+            currentBlankFn = null
+            drainSyntheticRules()
+            drainConflicts()
+            drainPolymorphVariants()
+            currentRuleKind = null
+            throw e
+        }
         currentOptsRules = null
         currentBlankFn = null
 

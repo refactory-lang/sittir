@@ -67,10 +67,13 @@ export function transform(
     let rule = original
     for (const patches of patchSets) {
         // Path mode triggers whenever a key isn't a pure non-negative
-        // integer: slashes (`0/1`), wildcards (`*`), negative indices
-        // (`-1`), or bare kind names (`_expression`) all route through
-        // parsePath + applyPath. Flat mode stays reserved for simple
-        // positional patching of seq members.
+        // integer. Originally this predicate only checked for `/` or
+        // `*`; extending it to the full "not-a-non-neg-integer" gate
+        // is the behavior change that routes negative indices (`-1`)
+        // and kind-name segments (`_expression`) through parsePath +
+        // applyPath (they parsed as invalid in flat mode previously).
+        // Flat mode stays reserved for simple positional patching of
+        // seq members with plain `N: patch` entries.
         const hasPathKeys = Object.keys(patches).some(k => !/^\d+$/.test(k))
         const hasPlaceholderAlias = Object.values(patches).some(v => isAliasPlaceholder(v) || isVariantPlaceholder(v))
         if (hasPathKeys || hasPlaceholderAlias) {
@@ -143,14 +146,24 @@ function tryHoistSiblingVariants(
     variantEntries: ReadonlyArray<[string, VariantPlaceholder]>,
 ): { rule: RuntimeRule; consumed: Set<string> } | null {
     // Peel off any prec wrapper(s) at the rule root so we can reach
-    // the underlying seq. Tree-sitter-js grammars frequently wrap a
-    // polymorph in `prec.left(N, seq(...))` to resolve intra-rule
-    // ambiguities — parenthesized_expression, call_expression,
-    // export_statement all do this. We reapply the same prec to each
-    // hoisted variant's body below so the extracted rules inherit the
-    // parent's conflict-resolution context; otherwise tree-sitter's
-    // LR table sees unresolvable ambiguities at boundaries like
-    // `typeof expr <` (call_expression) or `( expr )` (parens).
+    // the underlying seq. Grammars commonly wrap a polymorph in
+    // `prec.left(N, seq(...))` / `prec.right(N, ...)` / `prec(tag,
+    // ...)` to resolve intra-rule ambiguities. We reapply the same
+    // prec to each hoisted variant's body below so the extracted
+    // rules inherit the parent's conflict-resolution context;
+    // otherwise tree-sitter's LR table sees unresolvable ambiguities
+    // at the extracted-variant sites.
+    // Each guard below returns null, falling back to per-patch variant
+    // extraction. When SITTIR_DEBUG is set, log which guard failed so
+    // authors can see why their hoist didn't take effect — "rule looks
+    // right but only one form was split" is otherwise impossible to
+    // diagnose without stepping into transform.ts.
+    const dbg = typeof process !== 'undefined' && process?.env?.SITTIR_DEBUG
+    const kindFor = getCurrentRuleKind() ?? '(unknown)'
+    const bail = (reason: string): null => {
+        if (dbg) console.error(`[sittir] hoist skipped on '${kindFor}': ${reason}`)
+        return null
+    }
     const precStack: RuntimeRule[] = []
     let core = rule
     while (core && isPrecWrapper(core)) {
@@ -158,26 +171,26 @@ function tryHoistSiblingVariants(
         core = contentOf(core)
     }
     const t = core?.type
-    if (!t) return null
-    if (t !== 'seq' && t !== 'SEQ') return null
+    if (!t) return bail('core rule has no type after prec peeling')
+    if (t !== 'seq' && t !== 'SEQ') return bail(`core rule type '${t}' is not seq/SEQ`)
     const parsed: Array<{ key: string; v: VariantPlaceholder; choicePos: number; altIdx: number }> = []
     for (const [key, v] of variantEntries) {
         const segs = parsePath(key)
-        if (segs.length !== 2) return null
-        if (segs[0]!.kind !== 'index' || segs[1]!.kind !== 'index') return null
+        if (segs.length !== 2) return bail(`variant patch '${key}' has ${segs.length} segments (expected 2: N/M)`)
+        if (segs[0]!.kind !== 'index' || segs[1]!.kind !== 'index') return bail(`variant patch '${key}' uses non-index segments (kind-match / wildcard not supported for hoist)`)
         parsed.push({ key, v, choicePos: segs[0]!.value, altIdx: segs[1]!.value })
     }
     const choicePos = parsed[0]!.choicePos
-    if (parsed.some(p => p.choicePos !== choicePos)) return null
+    if (parsed.some(p => p.choicePos !== choicePos)) return bail(`variant patches target mixed choice positions (${parsed.map(p => p.choicePos).join(',')}) — hoist needs all siblings at one choice`)
     const seqMembers = [...membersOf(core)]
     const resolvedPos = choicePos < 0 ? seqMembers.length + choicePos : choicePos
     const choice = seqMembers[resolvedPos]
-    if (!choice || (choice.type !== 'choice' && choice.type !== 'CHOICE')) return null
+    if (!choice || (choice.type !== 'choice' && choice.type !== 'CHOICE')) return bail(`position ${resolvedPos} is '${choice?.type}', not choice/CHOICE`)
     const choiceMembers = membersOf(choice)
     const anyEmpty = parsed.some(p => matchesEmpty(choiceMembers[p.altIdx < 0 ? choiceMembers.length + p.altIdx : p.altIdx]!))
-    if (!anyEmpty) return null
+    if (!anyEmpty) return null  // non-empty variants fall through to per-patch extraction — not an error, just not a hoist candidate
     const parentKind = getCurrentRuleKind()
-    if (!parentKind) return null
+    if (!parentKind) return bail('no current rule kind (variant()/transform() called outside rule callback?)')
     const refs: RuntimeRule[] = []
     const isUpperCase = core.type === core.type.toUpperCase()
     // Reapply the captured prec stack inner-first so the outer-most

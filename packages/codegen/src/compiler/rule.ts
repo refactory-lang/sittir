@@ -1183,20 +1183,33 @@ export class AssembledBranch extends AssembledNodeBase {
 
 /**
  * Should this rule fall back to `$TEXT` rendering? True only when the
- * rule's structure is dominated by external-scanner tokens — e.g.
- * rust's `raw_string_literal` is `seq(_raw_start, string_content,
- * _raw_end)` where every member is either a hidden-external boundary
- * or a visible external whose body is also scanner-generated. In that
- * shape, template walking produces dead slots (`$RAW_STRING_LITERAL_
- * START` etc. that resolve to empty) and the node's raw text is the
- * only recoverable form.
+ * rule's structure is dominated by external-scanner tokens, so template
+ * walking can't reconstruct it slot-by-slot.
  *
- * Guards against over-aggressive flagging of rules that merely touch
- * an external (e.g. javascript's `statement_block` has an
- * `optional($._automatic_semicolon)` tacked on at the end — the rest
- * of the rule is a normal walkable `{ … }` block and should render
- * slot-by-slot as usual). We only flip to `$TEXT` when EVERY
- * content-bearing member of the top-level seq is external.
+ * Canonical shape: rust's `raw_string_literal = seq(_raw_string_literal_
+ * start, string_content, _raw_string_literal_end)` — the two hidden
+ * externals are scanner-generated delimiters that never appear as
+ * children, and the visible `string_content` is itself external.
+ * Template slots like `$RAW_STRING_LITERAL_START` resolve to empty at
+ * render time, leaving `node.text` as the only recoverable form.
+ *
+ * Classification (what counts as what):
+ *   - External member: a symbol in the grammar's `externals` list, OR
+ *     the Link-stub shape `field('<stripped_name>', pattern(''))` that
+ *     enrich produces for inlined external-token references. Wrappers
+ *     (alias/optional/variant/etc.) are transparent.
+ *   - Ignorable boundary: a top-level `optional($._external)` tacked
+ *     on as a boundary marker. Doesn't disqualify from $TEXT AND
+ *     doesn't count toward the "all external" tally — so javascript's
+ *     `statement_block = seq('{', repeat(statement), '}',
+ *     optional($._automatic_semicolon))` renders normally (the
+ *     automatic-semicolon tail is ignorable; the `{` `}` literals and
+ *     the statement repeat are walkable content).
+ *   - Disqualifying member: any non-external content — literals like
+ *     `{`/`}`/`;`, regular symbol refs, repeats of non-externals.
+ *
+ * Flips to $TEXT only when every non-ignorable member of the top-level
+ * seq classifies as external. Non-seq roots return false.
  */
 function hasHiddenExternalRef(rule: Rule, externals: ReadonlySet<string>): boolean {
     // Unwrap transparent wrappers to find the structural core.
@@ -1220,12 +1233,17 @@ function hasHiddenExternalRef(rule: Rule, externals: ReadonlySet<string>): boole
         switch (r.type) {
             case 'symbol':
                 return externals.has((r as { name: string }).name)
-            // Link inlines external-token rule bodies (`pattern('')`
-            // stubs) in place of symbol references, and enrich then
-            // wraps them as `field('<stripped_name>', pattern(''))`
-            // — enrich strips leading underscores from the field name,
-            // so the match is on `_<field.name>` + external-names, or
-            // an empty `pattern` content (the unique Link stub shape).
+            // Link inlines external-token rule bodies as `pattern('')`
+            // stubs in place of symbol references; enrich then wraps
+            // those in `field('<stripped_name>', pattern(''))`
+            // (leading underscore stripped). A match requires BOTH
+            // conditions: (1) the unique Link stub shape — `content`
+            // is empty-value pattern — AND (2) the field name (or its
+            // `_`-prefixed form) is in the externals list. Either
+            // alone would misfire: a non-external rule could
+            // coincidentally have an empty-pattern child, and a field
+            // named after an external might legitimately carry real
+            // content. Otherwise fall through to walking the content.
             case 'field': {
                 const f = r as { name: string; content: Rule }
                 if (
