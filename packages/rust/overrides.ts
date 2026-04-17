@@ -19,16 +19,15 @@ export default grammar(enrich(base), {
             1: field('type_parameters'), // type_parameters [struct=0]
         }),
 
-        // array_expression: pos 1 is the outer attribute_item repeat. Pos 2
-        // is a choice between `[expr; length]` and `[elem1, elem2, ...]`
-        // shapes. Wrapping pos 2 as a single `elements` field carries the
-        // list-shape joinBy but clobbers `field('length', ...)` in the
-        // semi form. Open gap: promotePolymorph would splice in both
-        // shapes but loses the list-form ',' separator from the repeat.
-        array_expression: ($, original) => transform(original, {
-            1: field('attributes'), // attribute_item
-            2: field('elements'), // _expression | attribute_item
-        }),
+        // array_expression: polymorph split — auto-hoist includes `[`/`]`
+        // in each alias body and uses INLINE alias (no new named hidden
+        // rule), so tree-sitter's state machine doesn't have to reconcile
+        // a new symbol against its auto-generated _repeat1 helpers.
+        array_expression: ($, original) => transform(original,
+            { 1: field('attributes') },
+            { '2/_expression': field('elements') },
+            { '2/0': variant('semi'), '2/1': variant('list') },
+        ),
 
         // associated_type: 1 field(s)
         associated_type: ($, original) => transform(original, {
@@ -296,15 +295,15 @@ export default grammar(enrich(base), {
             2: field('mutable_specifier'), // mutable_specifier [struct=1]
         }),
 
-        // struct_item: position 0 is `choice(visibility_modifier, BLANK)`
-        // — wrap it as `field('visibility_modifier')` so readNode
-        // routes the modifier child onto the named slot. Position 4
-        // (the body/semi/unit polymorph choice) is intentionally NOT
-        // wrapped — that's what lets Link's promotePolymorph classify
-        // the body/semi/unit variants.
-        struct_item: ($, original) => transform(original, {
-            0: field('visibility_modifier'),
-        }),
+        // struct_item: three body shapes — brace (`{ ... }`), tuple
+        // (`(...)` + `;`), unit (`;`). Auto-hoist each into a visible
+        // variant so the trailing `;` on tuple/unit forms gets rendered
+        // (the flat template dropped it because `;` is an anonymous
+        // token not routed to any field).
+        struct_item: ($, original) => transform(original,
+            { 0: field('visibility_modifier') },
+            { '4/0': variant('brace'), '4/1': variant('tuple'), '4/2': variant('unit') },
+        ),
 
         // trait_item: position 0 is the same visibility_modifier
         // optional choice as struct_item. The where_clause at
@@ -324,12 +323,12 @@ export default grammar(enrich(base), {
             0: field('value'), // _expression [struct=0]
         }),
 
-        // tuple_expression: 4 field(s)
+        // tuple_expression: flat list of expressions comma-separated.
+        // Kind-match labels every `_expression` as `elements` without
+        // capturing the `,` separators (same pattern as array_expression).
         tuple_expression: ($, original) => transform(original, {
-            1: field('attributes'), // attribute_item [struct=0]
-            2: field('first'), // _expression [struct=1]
-            3: field('rest'), // _expression [struct=2]
-            4: field('trailing'), // _expression [struct=3]
+            1: field('attributes'),
+            '_expression': field('elements'),
         }),
 
         // type_item: 3 field(s)
