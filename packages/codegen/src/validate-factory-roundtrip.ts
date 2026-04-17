@@ -15,7 +15,6 @@ import { parse as parseYaml } from 'yaml';
 import { readNode, createRenderer } from '@sittir/core';
 import type { AnyNodeData, NodeFieldValue, RulesConfig } from '@sittir/types';
 import { loadRawEntries } from './validators/node-types.ts';
-import { loadRouting } from './validators/load-routing.ts';
 import {
 	loadCorpusEntries,
 	loadLanguageForGrammar,
@@ -160,7 +159,6 @@ export async function validateFactoryRoundTrip(
 
 	const config = parseYaml(templatesYaml) as RulesConfig;
 	const rawEntries = loadRawEntries(grammar);
-	const routing = await loadRouting(grammar);
 	const ruleKinds = new Set(Object.keys(config.rules));
 	const { render } = createRenderer(config);
 	const kindToSupertypes = buildKindToSupertypes(rawEntries);
@@ -223,7 +221,7 @@ export async function validateFactoryRoundTrip(
 
 			// readNode → direct factory call → render → re-parse
 			const handle = treeHandle(tree1);
-			const readData = readNode(handle, node1.id, routing);
+			const readData = readNode(handle, node1.id);
 
 			// Translate raw (snake_case) field keys to camelCase so the
 			// factory's ConfigOf properties match. readNode emits raw

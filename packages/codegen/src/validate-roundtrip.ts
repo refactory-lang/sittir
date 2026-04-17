@@ -13,7 +13,6 @@ import { parse as parseYaml } from 'yaml';
 import { readNode, createRenderer } from '@sittir/core';
 import type { RulesConfig } from '@sittir/types';
 import { loadRawEntries } from './validators/node-types.ts';
-import { loadRouting } from './validators/load-routing.ts';
 import {
 	loadCorpusEntries,
 	loadLanguageForGrammar,
@@ -138,7 +137,6 @@ export async function validateRoundTrip(
 
 	const config = parseYaml(templatesYaml) as RulesConfig;
 	const rawEntries = loadRawEntries(grammar);
-	const routing = await loadRouting(grammar);
 	const { render } = createRenderer(config);
 	const ruleKinds = new Set(Object.keys(config.rules));
 	const kindToSupertypes = buildKindToSupertypes(rawEntries);
@@ -178,7 +176,7 @@ export async function validateRoundTrip(
 				if (!node1) continue;
 
 				const handle = treeHandle(tree1);
-				const data = readNode(handle, node1.id, routing);
+				const data = readNode(handle, node1.id);
 
 				try {
 					const inputSource = node1.text;

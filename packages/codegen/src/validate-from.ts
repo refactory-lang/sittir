@@ -12,7 +12,6 @@
 import { createRequire } from 'node:module';
 import { parse as parseYaml } from 'yaml';
 import { readNode } from '@sittir/core';
-import { loadRouting } from './validators/load-routing.ts';
 import type { AnyNodeData, RulesConfig } from '@sittir/types';
 import {
 	loadCorpusEntries,
@@ -122,7 +121,6 @@ export async function validateFrom(
 	parser.setLanguage(lang);
 
 	parseYaml(templatesYaml) as RulesConfig;
-	const routing = await loadRouting(grammar);
 
 	// Import from() and factory maps. from() expects either a fluent
 	// factory output or a camelCase bag; bare readNode NodeData is
@@ -164,7 +162,7 @@ export async function validateFrom(
 			if (!node1) continue;
 
 			const handle = treeHandle(tree1);
-			const readData = readNode(handle, node1.id, routing);
+			const readData = readNode(handle, node1.id);
 
 			try {
 				const fromResult = fromMap[kind]!(readData) as AnyNodeData;

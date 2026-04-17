@@ -16,7 +16,6 @@ import { emitTypes } from '../emitters/types.ts'
 import { emitTemplates } from '../emitters/templates.ts'
 import { emitFactories } from '../emitters/factories.ts'
 import { emitWrap } from '../emitters/wrap.ts'
-import { deriveOverridesConfig } from './derive-overrides-json.ts'
 import { emitFrom } from '../emitters/from.ts'
 import { emitClientUtils } from '../emitters/client-utils.ts'
 import { emitIr } from '../emitters/ir.ts'
@@ -122,13 +121,6 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
     // Phase 4: Assemble
     const nodeMap = assemble(optimized)
 
-    // Derive the runtime OverridesConfig from the post-Link rule tree.
-    // Used by wrap to inline `_overrides` + `_routing` matching
-    // what overrides.ts / grammar.js specify — the deprecation target
-    // for the legacy `overrides.json` file.
-    const overrideKinds = new Set(raw.overrideRuleNames ?? [])
-    const derivedOverrides = deriveOverridesConfig(linked.rules, overrideKinds, raw.rules)
-
     // Phase 5: Emit — every emitter consumes NodeMap directly. The
     // ir-namespace keys are populated on each AssembledNode during
     // assemble() (see resolveIrKeys), so emitters read node.irKey
@@ -138,7 +130,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
         types: emitTypes({ grammar: cfg.grammar, nodeMap }),
         templatesYaml: emitTemplates({ grammar: cfg.grammar, nodeMap }),
         factories: emitFactories({ grammar: cfg.grammar, nodeMap, strict: cfg.strict }),
-        wrap: emitWrap({ grammar: cfg.grammar, nodeMap, derivedOverrides }),
+        wrap: emitWrap({ grammar: cfg.grammar, nodeMap }),
         utils: emitClientUtils({ nodeMap }),
         from: emitFrom({ grammar: cfg.grammar, nodeMap }),
         irNamespace: emitIr({ grammar: cfg.grammar, nodeMap }),

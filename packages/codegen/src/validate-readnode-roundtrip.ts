@@ -29,11 +29,9 @@
 import { readFileSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 import { readNode } from '@sittir/core'
-import type { RoutingMap } from '@sittir/core'
 import type { AnyNodeData, AnyTreeNode } from '@sittir/types'
 import { loadRawEntries } from './validators/node-types.ts'
 import { loadLanguageForGrammar } from './validators/common.ts'
-import { loadRouting } from './validators/load-routing.ts'
 
 
 // ---------------------------------------------------------------------------
@@ -172,23 +170,6 @@ function buildKindFieldMap(
     return result
 }
 
-/**
- * Build `kind → Set<overrideFieldName>` — field names the routing map
- * adds (virtual fields projected from children by kind matching).
- * Derived directly from the runtime RoutingMap so overrides.json is
- * out of the loop.
- */
-function buildKindOverrideMap(routing: RoutingMap): Map<string, Set<string>> {
-    const result = new Map<string, Set<string>>()
-    for (const [kind, maps] of routing) {
-        const names = new Set<string>()
-        for (const promo of maps.unambiguous.values()) names.add(promo.fieldName)
-        for (const [fname] of maps.ambiguousSlots) names.add(fname)
-        result.set(kind, names)
-    }
-    return result
-}
-
 // ---------------------------------------------------------------------------
 // Per-instance structural check
 // ---------------------------------------------------------------------------
@@ -289,9 +270,7 @@ export async function validateReadNodeRoundTrip(
     parser.setLanguage(lang)
 
     const rawEntries = loadRawEntries(grammar)
-    const routing = await loadRouting(grammar)
     const kindFields = buildKindFieldMap(rawEntries)
-    const kindOverrides = buildKindOverrideMap(routing)
 
     const entries = loadCorpusEntries(grammar)
     const issues: NodeIssue[] = []
@@ -319,15 +298,14 @@ export async function validateReadNodeRoundTrip(
             const handle = treeHandle(tree)
             let data: AnyNodeData
             try {
-                data = readNode(handle, node.id, routing)
+                data = readNode(handle, node.id)
             } catch (e) {
                 issues.push({ kind, instance: entry.name, message: `readNode threw: ${(e as Error).message.slice(0, 80)}` })
                 continue
             }
 
             const expected = kindFields.get(kind) ?? new Set()
-            const over = kindOverrides.get(kind) ?? new Set()
-            const error = checkNodeData(kind, node, data, expected, over)
+            const error = checkNodeData(kind, node, data, expected, new Set())
             if (error) {
                 issues.push({ kind, instance: entry.name, message: error })
             } else {

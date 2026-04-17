@@ -11,7 +11,7 @@ interface _NodeData {
   readonly text?: string;
   readonly nodeId?: number;
 }
-import { readNode, buildRoutingMap, type TreeHandle } from '@sittir/core';
+import { readNode, type TreeHandle } from '@sittir/core';
 import type { WrappedNode } from '@sittir/types';
 import type {
   AbstractType,
@@ -183,42 +183,13 @@ import type {
   _TypeIdentifier,
 } from './types.js';
 
-// Routing data — overrides + supertype expansion reconstructed at
-// codegen time from NodeMap, then handed to readNode at module load.
-// Emitted one entry per line so PR diffs show only the changed kind.
-const _overrides = {} as const;
-export { _overrides };
-const _supertypeExpansion = new Map<string, readonly string[]>(Object.entries({
-  "_statement": ["expression_statement","const_item","macro_invocation","macro_definition","empty_statement","attribute_item","inner_attribute_item","mod_item","foreign_mod_item","struct_item","union_item","enum_item","type_item","function_item","function_signature_item","impl_item","trait_item","associated_type","let_declaration","use_declaration","extern_crate_declaration","static_item"],
-  "_declaration_statement": ["const_item","macro_invocation","macro_definition","empty_statement","attribute_item","inner_attribute_item","mod_item","foreign_mod_item","struct_item","union_item","enum_item","type_item","function_item","function_signature_item","impl_item","trait_item","associated_type","let_declaration","use_declaration","extern_crate_declaration","static_item"],
-  "_token_pattern": ["token_tree_pattern","token_repetition_pattern","token_binding_pattern","metavariable","string_literal","raw_string_literal","char_literal","boolean_literal","integer_literal","float_literal","identifier","mutable_specifier","self","super","crate","primitive_type"],
-  "_tokens": ["token_tree","token_repetition","metavariable","string_literal","raw_string_literal","char_literal","boolean_literal","integer_literal","float_literal","identifier","mutable_specifier","self","super","crate","primitive_type"],
-  "_use_clause": ["self","identifier","metavariable","super","crate","scoped_identifier","use_as_clause","use_list","scoped_use_list","use_wildcard"],
-  "_type": ["abstract_type","reference_type","metavariable","pointer_type","generic_type","scoped_type_identifier","tuple_type","unit_type","array_type","function_type","type_identifier","macro_invocation","never_type","dynamic_type","bounded_type","removed_trait_bound","primitive_type"],
-  "_expression_except_range": ["unary_expression","reference_expression","try_expression","binary_expression","assignment_expression","compound_assignment_expr","type_cast_expression","call_expression","return_expression","yield_expression","string_literal","raw_string_literal","char_literal","boolean_literal","integer_literal","float_literal","identifier","self","scoped_identifier","generic_function","await_expression","field_expression","array_expression","tuple_expression","macro_invocation","unit_expression","break_expression","continue_expression","index_expression","metavariable","closure_expression","parenthesized_expression","struct_expression","unsafe_block","async_block","gen_block","try_block","block","if_expression","match_expression","while_expression","loop_expression","for_expression","const_block"],
-  "_expression": ["unary_expression","reference_expression","try_expression","binary_expression","assignment_expression","compound_assignment_expr","type_cast_expression","call_expression","return_expression","yield_expression","string_literal","raw_string_literal","char_literal","boolean_literal","integer_literal","float_literal","identifier","self","scoped_identifier","generic_function","await_expression","field_expression","array_expression","tuple_expression","macro_invocation","unit_expression","break_expression","continue_expression","index_expression","metavariable","closure_expression","parenthesized_expression","struct_expression","unsafe_block","async_block","gen_block","try_block","block","if_expression","match_expression","while_expression","loop_expression","for_expression","const_block","range_expression"],
-  "_expression_ending_with_block": ["unsafe_block","async_block","gen_block","try_block","block","if_expression","match_expression","while_expression","loop_expression","for_expression","const_block"],
-  "_delim_tokens": ["string_literal","raw_string_literal","char_literal","boolean_literal","integer_literal","float_literal","identifier","mutable_specifier","self","super","crate","primitive_type","token_tree"],
-  "_non_delim_token": ["string_literal","raw_string_literal","char_literal","boolean_literal","integer_literal","float_literal","identifier","mutable_specifier","self","super","crate","primitive_type"],
-  "_condition": ["unary_expression","reference_expression","try_expression","binary_expression","assignment_expression","compound_assignment_expr","type_cast_expression","call_expression","return_expression","yield_expression","string_literal","raw_string_literal","char_literal","boolean_literal","integer_literal","float_literal","identifier","self","scoped_identifier","generic_function","await_expression","field_expression","array_expression","tuple_expression","macro_invocation","unit_expression","break_expression","continue_expression","index_expression","metavariable","closure_expression","parenthesized_expression","struct_expression","unsafe_block","async_block","gen_block","try_block","block","if_expression","match_expression","while_expression","loop_expression","for_expression","const_block","range_expression","let_condition","let_chain"],
-  "_pattern": ["string_literal","raw_string_literal","char_literal","boolean_literal","integer_literal","float_literal","negative_literal","identifier","scoped_identifier","generic_pattern","tuple_pattern","tuple_struct_pattern","struct_pattern","ref_pattern","slice_pattern","captured_pattern","reference_pattern","remaining_field_pattern","mut_pattern","range_pattern","or_pattern","const_block","macro_invocation"],
-  "_literal": ["string_literal","raw_string_literal","char_literal","boolean_literal","integer_literal","float_literal"],
-  "_literal_pattern": ["string_literal","raw_string_literal","char_literal","boolean_literal","integer_literal","float_literal","negative_literal"],
-  "_path": ["self","identifier","metavariable","super","crate","scoped_identifier"],
-}));
-export { _supertypeExpansion };
-// Exported so validators / runtime consumers can use the same
-// routing the generated wrap/readNode path uses, instead of
-// re-reading the legacy `overrides.json` file.
-export const _routing = buildRoutingMap(_overrides, _supertypeExpansion);
-
-// Drill-in helpers — pass _routing to readNode so override field
-// promotion happens during hydration, not as a wrap-time fix-up.
+// Drill-in helpers — tree-sitter's native field placement does
+// all the routing; readNode consumes the parse tree directly.
 function drillIn(entry: unknown, tree: TreeHandle): unknown {
   if (!entry) return undefined;
   const e = entry as _NodeData;
   if (e.nodeId != null) {
-    return wrapNode(readNode(tree, e.nodeId, _routing), tree);
+    return wrapNode(readNode(tree, e.nodeId), tree);
   }
   return entry;
 }
@@ -1900,6 +1871,6 @@ export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {
  * One level deep — getters drill into subtrees on demand.
  */
 export function readTreeNode(tree: TreeHandle, nodeId?: number): unknown {
-  const data = readNode(tree, nodeId, _routing);
+  const data = readNode(tree, nodeId);
   return wrapNode(data, tree);
 }

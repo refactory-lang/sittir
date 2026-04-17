@@ -11,7 +11,7 @@ interface _NodeData {
   readonly text?: string;
   readonly nodeId?: number;
 }
-import { readNode, buildRoutingMap, type TreeHandle } from '@sittir/core';
+import { readNode, type TreeHandle } from '@sittir/core';
 import type { WrappedNode } from '@sittir/types';
 import type {
   AliasedImport,
@@ -132,40 +132,13 @@ import type {
   _TuplePattern,
 } from './types.js';
 
-// Routing data — overrides + supertype expansion reconstructed at
-// codegen time from NodeMap, then handed to readNode at module load.
-// Emitted one entry per line so PR diffs show only the changed kind.
-const _overrides = {} as const;
-export { _overrides };
-const _supertypeExpansion = new Map<string, readonly string[]>(Object.entries({
-  "_statement": ["_simple_statements","if_statement","for_statement","while_statement","try_statement","with_statement","function_definition","class_definition","decorated_definition","match_statement"],
-  "_simple_statement": ["future_import_statement","import_statement","import_from_statement","print_statement","assert_statement","expression_statement","return_statement","delete_statement","raise_statement","pass_statement","break_statement","continue_statement","global_statement","nonlocal_statement","exec_statement","type_alias_statement"],
-  "_named_expression_lhs": ["identifier","keyword_identifier"],
-  "_expressions": ["expression","expression_list"],
-  "_compound_statement": ["if_statement","for_statement","while_statement","try_statement","with_statement","function_definition","class_definition","decorated_definition","match_statement"],
-  "parameter": ["identifier","typed_parameter","default_parameter","typed_default_parameter","list_splat_pattern","tuple_pattern","keyword_separator","positional_separator","dictionary_splat_pattern"],
-  "pattern": ["identifier","keyword_identifier","subscript","attribute","list_splat_pattern","tuple_pattern","list_pattern"],
-  "_expression_within_for_in_clause": ["expression","lambda"],
-  "expression": ["comparison_operator","not_operator","boolean_operator","lambda","primary_expression","conditional_expression","named_expression","as_pattern"],
-  "primary_expression": ["await","binary_operator","identifier","keyword_identifier","string","concatenated_string","integer","float","true","false","none","unary_operator","attribute","subscript","call","list","list_comprehension","dictionary","dictionary_comprehension","set","set_comprehension","tuple","parenthesized_expression","generator_expression","ellipsis","list_splat"],
-  "_left_hand_side": ["pattern","pattern_list"],
-  "_right_hand_side": ["expression","expression_list","assignment","augmented_assignment","pattern_list","yield"],
-  "_f_expression": ["expression","expression_list","pattern_list","yield"],
-  "keyword_identifier": ["identifier"],
-}));
-export { _supertypeExpansion };
-// Exported so validators / runtime consumers can use the same
-// routing the generated wrap/readNode path uses, instead of
-// re-reading the legacy `overrides.json` file.
-export const _routing = buildRoutingMap(_overrides, _supertypeExpansion);
-
-// Drill-in helpers — pass _routing to readNode so override field
-// promotion happens during hydration, not as a wrap-time fix-up.
+// Drill-in helpers — tree-sitter's native field placement does
+// all the routing; readNode consumes the parse tree directly.
 function drillIn(entry: unknown, tree: TreeHandle): unknown {
   if (!entry) return undefined;
   const e = entry as _NodeData;
   if (e.nodeId != null) {
-    return wrapNode(readNode(tree, e.nodeId, _routing), tree);
+    return wrapNode(readNode(tree, e.nodeId), tree);
   }
   return entry;
 }
@@ -1312,6 +1285,6 @@ export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {
  * One level deep — getters drill into subtrees on demand.
  */
 export function readTreeNode(tree: TreeHandle, nodeId?: number): unknown {
-  const data = readNode(tree, nodeId, _routing);
+  const data = readNode(tree, nodeId);
   return wrapNode(data, tree);
 }

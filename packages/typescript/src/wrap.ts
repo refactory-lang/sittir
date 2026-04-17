@@ -11,7 +11,7 @@ interface _NodeData {
   readonly text?: string;
   readonly nodeId?: number;
 }
-import { readNode, buildRoutingMap, type TreeHandle } from '@sittir/core';
+import { readNode, type TreeHandle } from '@sittir/core';
 import type { WrappedNode } from '@sittir/types';
 import type {
   AbstractClassDeclaration,
@@ -206,44 +206,13 @@ import type {
   _TypeIdentifier,
 } from './types.js';
 
-// Routing data — overrides + supertype expansion reconstructed at
-// codegen time from NodeMap, then handed to readNode at module load.
-// Emitted one entry per line so PR diffs show only the changed kind.
-const _overrides = {} as const;
-export { _overrides };
-const _supertypeExpansion = new Map<string, readonly string[]>(Object.entries({
-  "_module_export_name": ["identifier","string"],
-  "_expressions": ["expression","sequence_expression"],
-  "_jsx_element": ["jsx_element","jsx_self_closing_element"],
-  "_jsx_child": ["jsx_text","html_character_reference","jsx_element","jsx_self_closing_element","jsx_expression"],
-  "_jsx_identifier": ["identifier"],
-  "_jsx_element_name": ["identifier","member_expression","jsx_namespace_name"],
-  "_jsx_attribute": ["jsx_attribute","jsx_expression"],
-  "_jsx_attribute_name": ["property_identifier","jsx_namespace_name"],
-  "_jsx_attribute_value": ["string","jsx_expression","jsx_element","jsx_self_closing_element"],
-  "_formal_parameter": ["required_parameter","optional_parameter"],
-  "_destructuring_pattern": ["object_pattern","array_pattern"],
-  "_identifier": ["undefined","identifier"],
-  "_property_name": ["property_identifier","private_property_identifier","string","number","computed_property_name"],
-  "_semicolon": ["_automatic_semicolon"],
-  "_import_identifier": ["identifier"],
-  "type": ["primary_type","function_type","readonly_type","constructor_type","infer_type","member_expression","call_expression"],
-  "_tuple_type_member": ["required_parameter","optional_parameter","optional_type","rest_type","type"],
-  "primary_type": ["parenthesized_type","predefined_type","type_identifier","nested_type_identifier","generic_type","object_type","array_type","tuple_type","flow_maybe_type","type_query","index_type_query","this_type","existential_type","literal_type","lookup_type","conditional_type","template_literal_type","intersection_type","union_type"],
-}));
-export { _supertypeExpansion };
-// Exported so validators / runtime consumers can use the same
-// routing the generated wrap/readNode path uses, instead of
-// re-reading the legacy `overrides.json` file.
-export const _routing = buildRoutingMap(_overrides, _supertypeExpansion);
-
-// Drill-in helpers — pass _routing to readNode so override field
-// promotion happens during hydration, not as a wrap-time fix-up.
+// Drill-in helpers — tree-sitter's native field placement does
+// all the routing; readNode consumes the parse tree directly.
 function drillIn(entry: unknown, tree: TreeHandle): unknown {
   if (!entry) return undefined;
   const e = entry as _NodeData;
   if (e.nodeId != null) {
-    return wrapNode(readNode(tree, e.nodeId, _routing), tree);
+    return wrapNode(readNode(tree, e.nodeId), tree);
   }
   return entry;
 }
@@ -2126,6 +2095,6 @@ export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {
  * One level deep — getters drill into subtrees on demand.
  */
 export function readTreeNode(tree: TreeHandle, nodeId?: number): unknown {
-  const data = readNode(tree, nodeId, _routing);
+  const data = readNode(tree, nodeId);
   return wrapNode(data, tree);
 }
