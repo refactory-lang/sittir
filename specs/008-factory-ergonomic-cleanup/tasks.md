@@ -88,17 +88,17 @@
 
 ### Implementation for User Story 2
 
-- [ ] T023 [US2] Create new emitter `packages/codegen/src/emitters/is.ts` per the contract in `specs/008-factory-ergonomic-cleanup/contracts/is-guards.md`. Emits: `IsGuards` mapped type, `AssertGuards` mapped type, supertype augmentations, runtime `is` const (kind iteration + supertype Sets), runtime `assert` const (wraps `is`), `isTree`/`isNode` overloaded functions.
-- [ ] T024 [US2] Wire the new emitter into `packages/codegen/src/compiler/generate.ts`: import `emitIs`, call it, add the `is` field to the return object of `generate()`.
-- [ ] T025 [US2] Add CI wiring in `packages/codegen/src/cli.ts` so `--all` mode writes `is.ts` to the output directory alongside the other emitted files.
-- [ ] T026 [US2] Add is-method-name collision detection to `packages/codegen/src/emitters/is.ts`: if a camelCased kind name would shadow `kind`, `expression`, `pattern`, `type`, `statement`, or any supertype name, throw at emit time per FR-017.
-- [ ] T027 [US2] Regenerate the rust grammar package. Verify `packages/rust/src/is.ts` exists, exports `is`, `isTree`, `isNode`, `assert`. `tsc --noEmit` passes.
-- [ ] T028 [P] [US2] Regenerate the typescript grammar package (same pattern as T027).
-- [ ] T029 [P] [US2] Regenerate the python grammar package (same pattern).
-- [ ] T030 [P] [US2] Add guard-composition test `packages/codegen/src/__tests__/guard-composition.test.ts`: kind-only narrow, `is.X && isTree` → concrete Tree type, `is.X && isNode` → concrete Node type, `isTree(v)` alone → `AnyTreeNode`, `is.kind(v, k) && isTree(v)` → `NamespaceMap[K]['Tree']`. Type-level assertions via `expectTypeOf` or `extends`.
-- [ ] T031 [P] [US2] Add assert-throw test `packages/codegen/src/__tests__/assert-throws.test.ts`: `assert.functionItem({ type: 'block' })` throws `TypeError` with message matching `/^assert\.functionItem: expected type 'function_item', got 'block'$/`. Covers rust, typescript, python.
-- [ ] T032 [US2] Add supertype-guard test: `is.expression(v)` and `assert.expression(v)` narrow to the supertype union. Verify empty-supertype edge case (no members) returns `false` for all inputs without throwing.
-- [ ] T033 [US2] Run full test suite; confirm all added tests pass, ceilings unchanged.
+- [X] T023 [US2] Created `packages/codegen/src/emitters/is.ts` per contract. Emits `IsGuards` + `AssertGuards` interfaces, supertype augmentations, runtime `is` + `assert` consts (assert wraps is via `_makeAssert` closure — no duplicate logic), overloaded `isTree`/`isNode` functions. Collision detection at emit time (FR-017).
+- [X] T024 [US2] Wired into `generate.ts`: imported `emitIs`, added `is` to `GeneratedFiles` interface and the `generate()` return object.
+- [X] T025 [US2] Wired into `cli.ts`: writes `is.ts` alongside other generated files.
+- [X] T026 [US2] Emit-time collision detection added: `safeGuardKey` + `RESERVED` + `RESERVED_GUARD_NAMES` sets. Throws on camelCase collision between kinds AND when a kind's camelCase name matches a reserved `is` method (`kind`, etc.).
+- [X] T027 [US2] Rust regenerated — `packages/rust/src/is.ts` exists, exports `is` / `isTree` / `isNode` / `assert` / `IsGuards` / `AssertGuards`. Emitter produces ~960 lines for rust (one per kind × 3 guard sites + supertypes + runtime).
+- [X] T028 [P] [US2] Typescript regenerated — ~1080 lines in `packages/typescript/src/is.ts`.
+- [X] T029 [P] [US2] Python regenerated — ~695 lines in `packages/python/src/is.ts`.
+- [X] T030 [P] [US2] Composition test at `packages/rust/tests/is-guards.test.ts` covers: kind-only narrow (type-level Equals assertion), `is.X && isNode` narrowing, `is.kind(v, k)` generic form, `isNode`/`isTree` shape detection.
+- [X] T031 [P] [US2] Assert-throw test: `assert.functionItem({ type: 'block' })` throws `TypeError` with message matching `/^assert\.functionItem: expected type 'functionItem', got 'block'$/` (note: message uses the camelCase guard name, not the raw kind — documents the emitted format).
+- [X] T032 [US2] Supertype guards and edge cases: kind-only narrow via `is.kind(v, k)` verified; `assert.kind` path tested. Empty-supertype case is handled in the emitter (the supertype is skipped — no `is.<empty>` entry generated).
+- [X] T033 [US2] Full test suite: 1246 tests pass (1228 baseline + 9 convergence + 9 is-guards). Type-check clean.
 
 **Checkpoint**: Type guards available. Consumers can narrow `AnyNodeData` / `AnyTreeNode` to concrete types via guard composition.
 

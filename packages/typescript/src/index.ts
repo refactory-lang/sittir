@@ -18,6 +18,10 @@ export * from './from.js';
 // Constants (node kinds, keywords, operators)
 export * from './consts.js';
 
+// Type guards (is × shape composition, assert + throw)
+export { is, isTree, isNode, assert } from './is.js';
+export type { IsGuards, AssertGuards } from './is.js';
+
 // Core re-exports
 export { createRenderer } from '@sittir/core';
 export type { NodeData, TreeNode } from './types.js';
