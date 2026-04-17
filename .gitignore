@@ -18,6 +18,7 @@ Thumbs.db
 .pnpm-debug.log*
 *.tsbuildinfo
 .claude/settings.local.json
+.claude/scheduled_tasks.lock
 packages/*/.sittir/
 
 
