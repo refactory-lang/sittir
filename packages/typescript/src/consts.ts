@@ -2,6 +2,8 @@
 
 /** All branch (non-leaf) node kind strings. */
 export const NODE_KINDS = [
+  '_arrow_function__call_signature',
+  '_arrow_function_parameter',
   '_class_heritage_extends_clause',
   '_class_heritage_implements_clause',
   '_import_clause_default_import',
@@ -22,6 +24,8 @@ export const NODE_KINDS = [
   'array_pattern',
   'array_type',
   'arrow_function',
+  'arrow_function__call_signature',
+  'arrow_function_parameter',
   'as_expression',
   'asserts',
   'asserts_annotation',
@@ -427,6 +431,11 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   required: boolean;
   multiple: boolean;
 }>> = {
+  '_arrow_function__call_signature': [
+  ],
+  '_arrow_function_parameter': [
+    { name: 'parameter', required: true, multiple: false },
+  ],
   '_class_heritage_extends_clause': [
   ],
   '_class_heritage_implements_clause': [
@@ -481,9 +490,12 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'primaryType', required: true, multiple: false },
   ],
   'arrow_function': [
-    { name: 'async', required: false, multiple: false },
-    { name: 'parameter', required: false, multiple: false },
     { name: 'body', required: true, multiple: false },
+  ],
+  'arrow_function__call_signature': [
+  ],
+  'arrow_function_parameter': [
+    { name: 'parameter', required: true, multiple: false },
   ],
   'as_expression': [
     { name: 'expression', required: true, multiple: false },

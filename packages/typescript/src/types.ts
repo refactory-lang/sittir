@@ -272,6 +272,8 @@ export const enum SyntaxKind {
   _IndexSignatureMappedTypeClause = '_index_signature_mapped_type_clause',
   _ImportSpecifierName = '_import_specifier_name',
   _ImportSpecifierAs = '_import_specifier_as',
+  _ArrowFunctionParameter = '_arrow_function_parameter',
+  _ArrowFunctionUCallSignature = '_arrow_function__call_signature',
   ImportClauseNamespaceImport = 'import_clause_namespace_import',
   ImportClauseNamedImports = 'import_clause_named_imports',
   ImportClauseDefaultImport = 'import_clause_default_import',
@@ -281,6 +283,8 @@ export const enum SyntaxKind {
   ShorthandPropertyIdentifierPattern = 'shorthand_property_identifier_pattern',
   ClassHeritageExtendsClause = 'class_heritage_extends_clause',
   ClassHeritageImplementsClause = 'class_heritage_implements_clause',
+  ArrowFunctionParameter = 'arrow_function_parameter',
+  ArrowFunctionUCallSignature = 'arrow_function__call_signature',
   InterfaceBody = 'interface_body',
   IndexSignatureColon = 'index_signature_colon',
   IndexSignatureMappedTypeClause = 'index_signature_mapped_type_clause',
@@ -504,9 +508,10 @@ export const enum PrimaryTypeKind {
 
 // Node types — concrete interfaces
 // Repeated field/child unions (T042k dedup)
-export type _union_4 = AddingTypeAnnotation | OmittingTypeAnnotation | OptingTypeAnnotation | TypeAnnotation;
+export type _union_5 = AddingTypeAnnotation | OmittingTypeAnnotation | OptingTypeAnnotation | TypeAnnotation;
 export type _union_CallSignature_ConstructSignature_ExportStatement = CallSignature | ConstructSignature | ExportStatement | IndexSignature | MethodSignature | PropertySignature | Semicolon;
 export type _union_DestructuringPattern_Identifier = DestructuringPattern | Identifier;
+export type _union_Expression_StatementBlock = Expression | StatementBlock;
 export type _union_Identifier_MemberExpression = Identifier | MemberExpression;
 export type _union_Identifier_NestedIdentifier = Identifier | NestedIdentifier;
 
@@ -1041,16 +1046,23 @@ export interface GeneratorFunctionDeclaration {
   readonly children: readonly [_CallSignature | AutomaticSemicolon];
 }
 
-export interface ArrowFunction {
+export interface ArrowFunctionUFormParameter {
   readonly type: 'arrow_function';
   readonly fields: {
-    readonly async?: KwAsync;
-    readonly parameter?: Identifier;
-    readonly body: Expression | StatementBlock;
+    readonly body: _union_Expression_StatementBlock;
   };
-  readonly children: readonly [_CallSignature];
+  readonly children: readonly [ArrowFunctionParameter];
 }
 
+export interface ArrowFunctionUFormUCallSignature {
+  readonly type: 'arrow_function';
+  readonly fields: {
+    readonly body: _union_Expression_StatementBlock;
+  };
+  readonly children: readonly [ArrowFunctionUCallSignature];
+}
+
+export type ArrowFunction = ArrowFunctionUFormParameter | ArrowFunctionUFormUCallSignature;
 export interface _CallSignature {
   readonly type: '_call_signature';
 }
@@ -1853,7 +1865,7 @@ export interface IndexSignatureUFormColon {
   readonly type: 'index_signature';
   readonly fields: {
     readonly sign?: "-" | "+";
-    readonly type: _union_4;
+    readonly type: _union_5;
   };
   readonly children: readonly [IndexSignatureColon];
 }
@@ -1862,7 +1874,7 @@ export interface IndexSignatureUFormMappedTypeClause {
   readonly type: 'index_signature';
   readonly fields: {
     readonly sign?: "-" | "+";
-    readonly type: _union_4;
+    readonly type: _union_5;
   };
   readonly children: readonly [IndexSignatureMappedTypeClause];
 }
@@ -1963,6 +1975,18 @@ export interface _ImportSpecifierAs {
   readonly type: '_import_specifier_as';
 }
 
+export interface _ArrowFunctionParameter {
+  readonly type: '_arrow_function_parameter';
+  readonly fields: {
+    readonly parameter: Identifier;
+  };
+}
+
+export interface _ArrowFunctionUCallSignature {
+  readonly type: '_arrow_function__call_signature';
+  readonly children: readonly [_CallSignature];
+}
+
 export interface ImportClauseNamespaceImport {
   readonly type: 'import_clause_namespace_import';
   readonly children: readonly [NamespaceImport];
@@ -2011,6 +2035,18 @@ export interface ClassHeritageExtendsClause {
 export interface ClassHeritageImplementsClause {
   readonly type: 'class_heritage_implements_clause';
   readonly children: readonly [ImplementsClause];
+}
+
+export interface ArrowFunctionParameter {
+  readonly type: 'arrow_function_parameter';
+  readonly fields: {
+    readonly parameter: Identifier;
+  };
+}
+
+export interface ArrowFunctionUCallSignature {
+  readonly type: 'arrow_function__call_signature';
+  readonly children: readonly [_CallSignature];
 }
 
 export interface InterfaceBody {
@@ -2162,7 +2198,9 @@ export type FunctionExpressionConfig = ConfigOf<FunctionExpression>;
 export type FunctionDeclarationConfig = ConfigOf<FunctionDeclaration>;
 export type GeneratorFunctionConfig = ConfigOf<GeneratorFunction>;
 export type GeneratorFunctionDeclarationConfig = ConfigOf<GeneratorFunctionDeclaration>;
-export type ArrowFunctionConfig = ConfigOf<ArrowFunction>;
+export type ArrowFunctionUFormParameterConfig = ConfigOf<ArrowFunctionUFormParameter>;
+export type ArrowFunctionUFormUCallSignatureConfig = ConfigOf<ArrowFunctionUFormUCallSignature>;
+export type ArrowFunctionConfig = ArrowFunctionUFormParameterConfig | ArrowFunctionUFormUCallSignatureConfig;
 export type _CallSignatureConfig = ConfigOf<_CallSignature>;
 export type CallExpressionForm0Config = ConfigOf<CallExpressionForm0>;
 export type CallExpressionForm1Config = ConfigOf<CallExpressionForm1>;
@@ -2291,6 +2329,8 @@ export type _IndexSignatureColonConfig = ConfigOf<_IndexSignatureColon>;
 export type _IndexSignatureMappedTypeClauseConfig = ConfigOf<_IndexSignatureMappedTypeClause>;
 export type _ImportSpecifierNameConfig = ConfigOf<_ImportSpecifierName>;
 export type _ImportSpecifierAsConfig = ConfigOf<_ImportSpecifierAs>;
+export type _ArrowFunctionParameterConfig = ConfigOf<_ArrowFunctionParameter>;
+export type _ArrowFunctionUCallSignatureConfig = ConfigOf<_ArrowFunctionUCallSignature>;
 export type ImportClauseNamespaceImportConfig = ConfigOf<ImportClauseNamespaceImport>;
 export type ImportClauseNamedImportsConfig = ConfigOf<ImportClauseNamedImports>;
 export type ImportClauseDefaultImportConfig = ConfigOf<ImportClauseDefaultImport>;
@@ -2300,6 +2340,8 @@ export type ShorthandPropertyIdentifierConfig = ConfigOf<ShorthandPropertyIdenti
 export type ShorthandPropertyIdentifierPatternConfig = ConfigOf<ShorthandPropertyIdentifierPattern>;
 export type ClassHeritageExtendsClauseConfig = ConfigOf<ClassHeritageExtendsClause>;
 export type ClassHeritageImplementsClauseConfig = ConfigOf<ClassHeritageImplementsClause>;
+export type ArrowFunctionParameterConfig = ConfigOf<ArrowFunctionParameter>;
+export type ArrowFunctionUCallSignatureConfig = ConfigOf<ArrowFunctionUCallSignature>;
 export type InterfaceBodyConfig = ConfigOf<InterfaceBody>;
 export type IndexSignatureColonConfig = ConfigOf<IndexSignatureColon>;
 export type IndexSignatureMappedTypeClauseConfig = ConfigOf<IndexSignatureMappedTypeClause>;
@@ -2383,6 +2425,8 @@ export interface FunctionDeclarationTree extends TreeNode<'function_declaration'
 export interface GeneratorFunctionTree extends TreeNode<'generator_function'> {}
 export interface GeneratorFunctionDeclarationTree extends TreeNode<'generator_function_declaration'> {}
 export interface ArrowFunctionTree extends TreeNode<'arrow_function'> {}
+export interface ArrowFunctionUFormParameterTree extends TreeNode<'arrow_function'> {}
+export interface ArrowFunctionUFormUCallSignatureTree extends TreeNode<'arrow_function'> {}
 export interface _CallSignatureTree extends AnyTreeNode { readonly type: "_call_signature"; }
 export interface CallExpressionTree extends TreeNode<'call_expression'> {}
 export interface CallExpressionForm0Tree extends TreeNode<'call_expression'> {}
@@ -2511,6 +2555,8 @@ export interface _IndexSignatureColonTree extends AnyTreeNode { readonly type: "
 export interface _IndexSignatureMappedTypeClauseTree extends AnyTreeNode { readonly type: "_index_signature_mapped_type_clause"; }
 export interface _ImportSpecifierNameTree extends AnyTreeNode { readonly type: "_import_specifier_name"; }
 export interface _ImportSpecifierAsTree extends AnyTreeNode { readonly type: "_import_specifier_as"; }
+export interface _ArrowFunctionParameterTree extends AnyTreeNode { readonly type: "_arrow_function_parameter"; }
+export interface _ArrowFunctionUCallSignatureTree extends AnyTreeNode { readonly type: "_arrow_function__call_signature"; }
 export interface ImportClauseNamespaceImportTree extends TreeNode<'import_clause_namespace_import'> {}
 export interface ImportClauseNamedImportsTree extends TreeNode<'import_clause_named_imports'> {}
 export interface ImportClauseDefaultImportTree extends TreeNode<'import_clause_default_import'> {}
@@ -2520,6 +2566,8 @@ export interface ShorthandPropertyIdentifierTree extends TreeNode<'shorthand_pro
 export interface ShorthandPropertyIdentifierPatternTree extends TreeNode<'shorthand_property_identifier_pattern'> {}
 export interface ClassHeritageExtendsClauseTree extends TreeNode<'class_heritage_extends_clause'> {}
 export interface ClassHeritageImplementsClauseTree extends TreeNode<'class_heritage_implements_clause'> {}
+export interface ArrowFunctionParameterTree extends TreeNode<'arrow_function_parameter'> {}
+export interface ArrowFunctionUCallSignatureTree extends TreeNode<'arrow_function__call_signature'> {}
 export interface InterfaceBodyTree extends TreeNode<'interface_body'> {}
 export interface IndexSignatureColonTree extends TreeNode<'index_signature_colon'> {}
 export interface IndexSignatureMappedTypeClauseTree extends TreeNode<'index_signature_mapped_type_clause'> {}
@@ -2685,7 +2733,7 @@ export type LooseFunctionExpression = FromInputOf<FunctionExpression, LeafScalar
 export type LooseFunctionDeclaration = FromInputOf<FunctionDeclaration, LeafScalarMap, LeafStringMap>;
 export type LooseGeneratorFunction = FromInputOf<GeneratorFunction, LeafScalarMap, LeafStringMap>;
 export type LooseGeneratorFunctionDeclaration = FromInputOf<GeneratorFunctionDeclaration, LeafScalarMap, LeafStringMap>;
-export type LooseArrowFunction = FromInputOf<ArrowFunction, LeafScalarMap, LeafStringMap>;
+export type LooseArrowFunction = FromInputOf<ArrowFunctionUFormParameter, LeafScalarMap, LeafStringMap> | FromInputOf<ArrowFunctionUFormUCallSignature, LeafScalarMap, LeafStringMap>;
 export type Loose_CallSignature = FromInputOf<_CallSignature, LeafScalarMap, LeafStringMap>;
 export type LooseCallExpression = FromInputOf<CallExpressionForm0, LeafScalarMap, LeafStringMap> | FromInputOf<CallExpressionForm1, LeafScalarMap, LeafStringMap> | FromInputOf<CallExpressionForm2, LeafScalarMap, LeafStringMap>;
 export type LooseNewExpression = FromInputOf<NewExpression, LeafScalarMap, LeafStringMap>;
@@ -2809,6 +2857,8 @@ export type Loose_IndexSignatureColon = FromInputOf<_IndexSignatureColon, LeafSc
 export type Loose_IndexSignatureMappedTypeClause = FromInputOf<_IndexSignatureMappedTypeClause, LeafScalarMap, LeafStringMap>;
 export type Loose_ImportSpecifierName = FromInputOf<_ImportSpecifierName, LeafScalarMap, LeafStringMap>;
 export type Loose_ImportSpecifierAs = FromInputOf<_ImportSpecifierAs, LeafScalarMap, LeafStringMap>;
+export type Loose_ArrowFunctionParameter = FromInputOf<_ArrowFunctionParameter, LeafScalarMap, LeafStringMap>;
+export type Loose_ArrowFunctionUCallSignature = FromInputOf<_ArrowFunctionUCallSignature, LeafScalarMap, LeafStringMap>;
 export type LooseImportClauseNamespaceImport = FromInputOf<ImportClauseNamespaceImport, LeafScalarMap, LeafStringMap>;
 export type LooseImportClauseNamedImports = FromInputOf<ImportClauseNamedImports, LeafScalarMap, LeafStringMap>;
 export type LooseImportClauseDefaultImport = FromInputOf<ImportClauseDefaultImport, LeafScalarMap, LeafStringMap>;
@@ -2818,6 +2868,8 @@ export type LooseShorthandPropertyIdentifier = FromInputOf<ShorthandPropertyIden
 export type LooseShorthandPropertyIdentifierPattern = FromInputOf<ShorthandPropertyIdentifierPattern, LeafScalarMap, LeafStringMap>;
 export type LooseClassHeritageExtendsClause = FromInputOf<ClassHeritageExtendsClause, LeafScalarMap, LeafStringMap>;
 export type LooseClassHeritageImplementsClause = FromInputOf<ClassHeritageImplementsClause, LeafScalarMap, LeafStringMap>;
+export type LooseArrowFunctionParameter = FromInputOf<ArrowFunctionParameter, LeafScalarMap, LeafStringMap>;
+export type LooseArrowFunctionUCallSignature = FromInputOf<ArrowFunctionUCallSignature, LeafScalarMap, LeafStringMap>;
 export type LooseInterfaceBody = FromInputOf<InterfaceBody, LeafScalarMap, LeafStringMap>;
 export type LooseIndexSignatureColon = FromInputOf<IndexSignatureColon, LeafScalarMap, LeafStringMap>;
 export type LooseIndexSignatureMappedTypeClause = FromInputOf<IndexSignatureMappedTypeClause, LeafScalarMap, LeafStringMap>;
@@ -3205,6 +3257,8 @@ export type TypescriptNode =
   | _IndexSignatureMappedTypeClause
   | _ImportSpecifierName
   | _ImportSpecifierAs
+  | _ArrowFunctionParameter
+  | _ArrowFunctionUCallSignature
   | ImportClauseNamespaceImport
   | ImportClauseNamedImports
   | ImportClauseDefaultImport
@@ -3214,6 +3268,8 @@ export type TypescriptNode =
   | ShorthandPropertyIdentifierPattern
   | ClassHeritageExtendsClause
   | ClassHeritageImplementsClause
+  | ArrowFunctionParameter
+  | ArrowFunctionUCallSignature
   | InterfaceBody
   | IndexSignatureColon
   | IndexSignatureMappedTypeClause
@@ -3410,6 +3466,8 @@ export interface KindMap {
   '_index_signature_mapped_type_clause': _IndexSignatureMappedTypeClause;
   '_import_specifier_name': _ImportSpecifierName;
   '_import_specifier_as': _ImportSpecifierAs;
+  '_arrow_function_parameter': _ArrowFunctionParameter;
+  '_arrow_function__call_signature': _ArrowFunctionUCallSignature;
   'import_clause_namespace_import': ImportClauseNamespaceImport;
   'import_clause_named_imports': ImportClauseNamedImports;
   'import_clause_default_import': ImportClauseDefaultImport;
@@ -3419,6 +3477,8 @@ export interface KindMap {
   'shorthand_property_identifier_pattern': ShorthandPropertyIdentifierPattern;
   'class_heritage_extends_clause': ClassHeritageExtendsClause;
   'class_heritage_implements_clause': ClassHeritageImplementsClause;
+  'arrow_function_parameter': ArrowFunctionParameter;
+  'arrow_function__call_signature': ArrowFunctionUCallSignature;
   'interface_body': InterfaceBody;
   'index_signature_colon': IndexSignatureColon;
   'index_signature_mapped_type_clause': IndexSignatureMappedTypeClause;
@@ -3475,6 +3535,7 @@ export interface VariantMap {
   'import_clause': { namespace_import: ImportClauseUFormNamespaceImport; named_imports: ImportClauseUFormNamedImports; default_import: ImportClauseUFormDefaultImport };
   'import_specifier': { name: ImportSpecifierUFormName; as: ImportSpecifierUFormAs };
   'class_heritage': { extends_clause: ClassHeritageUFormExtendsClause; implements_clause: ClassHeritageUFormImplementsClause };
+  'arrow_function': { parameter: ArrowFunctionUFormParameter; _call_signature: ArrowFunctionUFormUCallSignature };
   'call_expression': { form0: CallExpressionForm0; form1: CallExpressionForm1; form2: CallExpressionForm2 };
   'index_signature': { colon: IndexSignatureUFormColon; mapped_type_clause: IndexSignatureUFormMappedTypeClause };
 }
@@ -3670,6 +3731,8 @@ export interface ConfigMap {
   '_index_signature_mapped_type_clause': _IndexSignatureMappedTypeClauseConfig;
   '_import_specifier_name': _ImportSpecifierNameConfig;
   '_import_specifier_as': _ImportSpecifierAsConfig;
+  '_arrow_function_parameter': _ArrowFunctionParameterConfig;
+  '_arrow_function__call_signature': _ArrowFunctionUCallSignatureConfig;
   'import_clause_namespace_import': ImportClauseNamespaceImportConfig;
   'import_clause_named_imports': ImportClauseNamedImportsConfig;
   'import_clause_default_import': ImportClauseDefaultImportConfig;
@@ -3679,6 +3742,8 @@ export interface ConfigMap {
   'shorthand_property_identifier_pattern': ShorthandPropertyIdentifierPatternConfig;
   'class_heritage_extends_clause': ClassHeritageExtendsClauseConfig;
   'class_heritage_implements_clause': ClassHeritageImplementsClauseConfig;
+  'arrow_function_parameter': ArrowFunctionParameterConfig;
+  'arrow_function__call_signature': ArrowFunctionUCallSignatureConfig;
   'interface_body': InterfaceBodyConfig;
   'index_signature_colon': IndexSignatureColonConfig;
   'index_signature_mapped_type_clause': IndexSignatureMappedTypeClauseConfig;
@@ -3875,6 +3940,8 @@ export interface LooseMap {
   '_index_signature_mapped_type_clause': Loose_IndexSignatureMappedTypeClause;
   '_import_specifier_name': Loose_ImportSpecifierName;
   '_import_specifier_as': Loose_ImportSpecifierAs;
+  '_arrow_function_parameter': Loose_ArrowFunctionParameter;
+  '_arrow_function__call_signature': Loose_ArrowFunctionUCallSignature;
   'import_clause_namespace_import': LooseImportClauseNamespaceImport;
   'import_clause_named_imports': LooseImportClauseNamedImports;
   'import_clause_default_import': LooseImportClauseDefaultImport;
@@ -3884,6 +3951,8 @@ export interface LooseMap {
   'shorthand_property_identifier_pattern': LooseShorthandPropertyIdentifierPattern;
   'class_heritage_extends_clause': LooseClassHeritageExtendsClause;
   'class_heritage_implements_clause': LooseClassHeritageImplementsClause;
+  'arrow_function_parameter': LooseArrowFunctionParameter;
+  'arrow_function__call_signature': LooseArrowFunctionUCallSignature;
   'interface_body': LooseInterfaceBody;
   'index_signature_colon': LooseIndexSignatureColon;
   'index_signature_mapped_type_clause': LooseIndexSignatureMappedTypeClause;

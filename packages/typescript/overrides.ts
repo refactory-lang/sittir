@@ -142,6 +142,20 @@ export default grammar(enrich(base), {
         // unresolvable LR conflict with sequence_expression that needs
         // manual precedence tuning, not a variant() auto-fix.
 
+        // export_statement: held — `export` keyword collides with
+        // `primary_expression` alternative (soft keyword / identifier
+        // ambiguity), needs precedence tuning not a variant split.
+
+        // call_expression: held — variant split triggers unresolvable
+        // conflict with type_arguments lookahead on `typeof`, needs
+        // precedence tuning.
+
+        // arrow_function (T028b): polymorph split from suggested.ts.
+        arrow_function: ($, original) => transform(original, {
+            '1/0': variant('parameter'),
+            '1/1': variant('_call_signature'),
+        }),
+
         // index_type_query: 1 field(s)
         index_type_query: ($, original) => transform(original, {
             1: field('primary_type'), // primary_type [struct=0]

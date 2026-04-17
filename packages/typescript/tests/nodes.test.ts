@@ -668,13 +668,13 @@ describe('generator_function_declaration', () => {
 });
 
 describe('arrow_function', () => {
-  it('factory produces correct type', () => {
-    const node = ir.arrowFunction({ body: { type: 'expression', text: 'test' } as any, children: [{ type: '_call_signature', text: 'test' } as any] as any });
+  it('parameter form produces correct type', () => {
+    const node = ir.arrowFunction.parameter({ body: { type: 'expression', text: 'test' } as any });
     expect(node.type).toBe('arrow_function');
   });
-  it('render produces non-empty string', () => {
-    const node = ir.arrowFunction({ body: { type: 'expression', text: 'test' } as any, children: [{ type: '_call_signature', text: 'test' } as any] as any });
-    expect(node.render().length).toBeGreaterThan(0);
+  it('_call_signature form produces correct type', () => {
+    const node = ir.arrowFunction._call_signature({ body: { type: 'expression', text: 'test' } as any });
+    expect(node.type).toBe('arrow_function');
   });
 });
 
@@ -1962,6 +1962,24 @@ describe('class_heritage_implements_clause', () => {
   it('factory produces correct type', () => {
     const node = ir.classHeritageImplementsClause({ type: "implements_clause" } as never);
     expect(node.type).toBe('class_heritage_implements_clause');
+  });
+});
+
+describe('arrow_function_parameter', () => {
+  it('factory produces correct type', () => {
+    const node = ir.arrowFunctionParameter({ parameter: { type: 'identifier', text: 'test' } as any });
+    expect(node.type).toBe('arrow_function_parameter');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.arrowFunctionParameter({ parameter: { type: 'identifier', text: 'test' } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('arrow_function__call_signature', () => {
+  it('factory produces correct type', () => {
+    const node = ir.arrowFunctionCallSignature({ type: "_call_signature" } as never);
+    expect(node.type).toBe('arrow_function__call_signature');
   });
 });
 

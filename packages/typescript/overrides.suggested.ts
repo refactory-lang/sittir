@@ -15,7 +15,7 @@
 // Summary
 // ---------------------------------------------------------------
 // Field inferences:  1  (0 applied, 1 held)
-// Rule promotions:   48  (44 applied, 4 held)
+// Rule promotions:   50  (47 applied, 3 held)
 // Repeated shapes:   7  (advisory — suggested supertypes/groups)
 // Round-trip fails: 20  (20 parse errors, 0 AST mismatches; 1 render, 19 factory)
 
@@ -234,8 +234,8 @@ export const suggestedRules = {
   "export_statement": ($, original) => transform(original, {
     "0": variant("form_0"),
     "1": variant("export"),
-    "2": variant("export"),
-    "3": variant("export"),
+    "2": variant("export2"),
+    "3": variant("export3"),
   }),
 
   // [held] polymorph — 2 alternative(s)
@@ -244,16 +244,10 @@ export const suggestedRules = {
     "1/1": variant("sequence_expression"),
   }),
 
-  // [held] polymorph — 2 alternative(s)
-  "arrow_function": ($, original) => transform(original, {
-    "1/0": variant("parameter"),
-    "1/1": variant("_call_signature"),
-  }),
-
   // [held] polymorph — 3 alternative(s)
   "call_expression": ($, original) => transform(original, {
     "0": variant("function"),
-    "1": variant("function"),
+    "1": variant("function2"),
     "2": variant("tok_q_dot"),
   }),
 
@@ -370,7 +364,9 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "statement_identifier", classification: "terminal", applied: true },
   { kind: "string_fragment", classification: "terminal", applied: true },
   { kind: "type_identifier", classification: "terminal", applied: true },
-  { kind: "arrow_function", classification: "polymorph", applied: false },
+  { kind: "arrow_function", classification: "polymorph", applied: true },
+  { kind: "arrow_function__call_signature", classification: "polymorph", applied: true },
+  { kind: "arrow_function_parameter", classification: "polymorph", applied: true },
   { kind: "call_expression", classification: "polymorph", applied: false },
   { kind: "class_heritage", classification: "polymorph", applied: true },
   { kind: "class_heritage_extends_clause", classification: "polymorph", applied: true },

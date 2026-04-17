@@ -119,7 +119,11 @@ rules:
   function_declaration: $ASYNC function $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $BODY $$$CHILDREN
   generator_function: $ASYNC function*$NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $BODY
   generator_function_declaration: $ASYNC function*$NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $BODY $$$CHILDREN
-  arrow_function: $ASYNC $PARAMETER$TYPE_PARAMETERS$PARAMETERS$RETURN_TYPE=>$BODY
+  arrow_function:
+    variants:
+      parameter: $ASYNC_CLAUSE $$$CHILDREN=>$BODY
+      _call_signature: $ASYNC_CLAUSE $$$CHILDREN=>$BODY
+    async_clause: $ASYNC
   call_expression:
     variants:
       form0: $FUNCTION $TYPE_ARGUMENTS $ARGUMENTS
@@ -276,6 +280,8 @@ rules:
   shorthand_property_identifier_pattern: $$$CHILDREN
   class_heritage_extends_clause: $$$CHILDREN
   class_heritage_implements_clause: $$$CHILDREN
+  arrow_function_parameter: $PARAMETER
+  arrow_function__call_signature: $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE
   interface_body: $OPENING $$$MEMBERS $CLOSING
   index_signature_colon: "$NAME:$INDEX_TYPE"
   index_signature_mapped_type_clause: $$$CHILDREN

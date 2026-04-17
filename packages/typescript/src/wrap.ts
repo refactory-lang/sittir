@@ -23,6 +23,8 @@ import type {
   ArrayPattern,
   ArrayType,
   ArrowFunction,
+  ArrowFunctionParameter,
+  ArrowFunctionUCallSignature,
   AsExpression,
   Asserts,
   AssertsAnnotation,
@@ -192,6 +194,8 @@ import type {
   WhileStatement,
   WithStatement,
   YieldExpression,
+  _ArrowFunctionParameter,
+  _ArrowFunctionUCallSignature,
   _ClassHeritageExtendsClause,
   _ClassHeritageImplementsClause,
   _ImportClauseDefaultImport,
@@ -805,8 +809,6 @@ export function wrapGeneratorFunctionDeclaration(data: _NodeData, tree: TreeHand
 export function wrapArrowFunction(data: _NodeData, tree: TreeHandle): WrappedNode<ArrowFunction> {
   return {
     ...data,
-    get async() { return drillIn(data.fields?.['async'], tree); },
-    get parameter() { return drillIn(data.fields?.['parameter'], tree); },
     get body() { return drillIn(data.fields?.['body'], tree); },
     get child() { return drillIn(data.children?.[0], tree); },
   } as unknown as WrappedNode<ArrowFunction>;
@@ -1751,6 +1753,21 @@ export function wrap_ImportSpecifierName(data: _NodeData, tree: TreeHandle): Wra
   } as unknown as WrappedNode<_ImportSpecifierName>;
 }
 
+export function wrap_ArrowFunctionParameter(data: _NodeData, tree: TreeHandle): WrappedNode<_ArrowFunctionParameter> {
+  return {
+    ...data,
+    get parameter() { return drillIn(data.fields?.['parameter'], tree); },
+    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<_ArrowFunctionParameter>;
+}
+
+export function wrap_ArrowFunctionUCallSignature(data: _NodeData, tree: TreeHandle): WrappedNode<_ArrowFunctionUCallSignature> {
+  return {
+    ...data,
+    get child() { return drillIn(data.children?.[0], tree); },
+  } as unknown as WrappedNode<_ArrowFunctionUCallSignature>;
+}
+
 export function wrapImportClauseNamespaceImport(data: _NodeData, tree: TreeHandle): WrappedNode<ImportClauseNamespaceImport> {
   return {
     ...data,
@@ -1815,6 +1832,21 @@ export function wrapClassHeritageImplementsClause(data: _NodeData, tree: TreeHan
     ...data,
     get child() { return drillIn(data.children?.[0], tree); },
   } as unknown as WrappedNode<ClassHeritageImplementsClause>;
+}
+
+export function wrapArrowFunctionParameter(data: _NodeData, tree: TreeHandle): WrappedNode<ArrowFunctionParameter> {
+  return {
+    ...data,
+    get parameter() { return drillIn(data.fields?.['parameter'], tree); },
+    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<ArrowFunctionParameter>;
+}
+
+export function wrapArrowFunctionUCallSignature(data: _NodeData, tree: TreeHandle): WrappedNode<ArrowFunctionUCallSignature> {
+  return {
+    ...data,
+    get child() { return drillIn(data.children?.[0], tree); },
+  } as unknown as WrappedNode<ArrowFunctionUCallSignature>;
 }
 
 export function wrapInterfaceBody(data: _NodeData, tree: TreeHandle): WrappedNode<InterfaceBody> {
@@ -2045,6 +2077,8 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_import_clause_default_import': (d, t) => wrap_ImportClauseDefaultImport(d, t),
   '_index_signature_mapped_type_clause': (d, t) => wrap_IndexSignatureMappedTypeClause(d, t),
   '_import_specifier_name': (d, t) => wrap_ImportSpecifierName(d, t),
+  '_arrow_function_parameter': (d, t) => wrap_ArrowFunctionParameter(d, t),
+  '_arrow_function__call_signature': (d, t) => wrap_ArrowFunctionUCallSignature(d, t),
   '_kw_for': (d) => d,
   '_kw_async': (d) => d,
   '_kw_static': (d) => d,
@@ -2071,6 +2105,8 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'string_fragment': (d) => d,
   'class_heritage_extends_clause': (d, t) => wrapClassHeritageExtendsClause(d, t),
   'class_heritage_implements_clause': (d, t) => wrapClassHeritageImplementsClause(d, t),
+  'arrow_function_parameter': (d, t) => wrapArrowFunctionParameter(d, t),
+  'arrow_function__call_signature': (d, t) => wrapArrowFunctionUCallSignature(d, t),
   'interface_body': (d, t) => wrapInterfaceBody(d, t),
   'this_type': (d) => d,
   'index_signature_colon': (d, t) => wrapIndexSignatureColon(d, t),

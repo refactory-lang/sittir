@@ -1584,29 +1584,55 @@ export function generatorFunctionDeclaration(config: T.GeneratorFunctionDeclarat
   };
 }
 
-export function arrowFunction(config: T.ArrowFunctionConfig) {
+export function arrowFunction(config: T.ArrowFunctionUFormParameterConfig | T.ArrowFunctionUFormUCallSignatureConfig) {
+  if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === 'arrow_function_parameter') return arrowFunctionUFormParameter(config as T.ArrowFunctionUFormParameterConfig);
+  if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === 'arrow_function__call_signature') return arrowFunctionUFormUCallSignature(config as T.ArrowFunctionUFormUCallSignatureConfig);
+  if (config && (config as any).variant === 'parameter') return arrowFunctionUFormParameter(config as T.ArrowFunctionUFormParameterConfig);
+  if (config && (config as any).variant === '_call_signature') return arrowFunctionUFormUCallSignature(config as T.ArrowFunctionUFormUCallSignatureConfig);
+  return arrowFunctionUFormParameter(config as T.ArrowFunctionUFormParameterConfig);
+}
+export function arrowFunctionUFormParameter(config: T.ArrowFunctionUFormParameterConfig) {
   const fields = {
-    async: config?.async,
-    parameter: config?.parameter,
     body: config?.body,
   };
   const children = config?.children ?? [];
   return {
     type: 'arrow_function' as const,
     named: true as const,
+    variant: '_form_parameter' as const,
     fields,
     children,
-    async(async_?: T.KwAsync | undefined) { return _fs(config, arrowFunction, 'async', async_, fields.async); },
-    parameter(parameter_?: T.Identifier | undefined) { return _fs(config, arrowFunction, 'parameter', parameter_, fields.parameter); },
-    body(body_?: T.Expression | T.StatementBlock) { return _fs(config, arrowFunction, 'body', body_, fields.body); },
+    body(body_?: T.Expression | T.StatementBlock) { return _fs(config, arrowFunctionUFormParameter, 'body', body_, fields.body); },
     getChild() { return children[0]; },
-    setChild(child: T._CallSignature) { return arrowFunction({ ...(config ?? {}), children: [child] }); },
+    setChild(child: T.ArrowFunctionParameter) { return arrowFunctionUFormParameter({ ...(config ?? {}), children: [child] }); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(target: T.ArrowFunctionTree) { const r = target.range(); return toEdit(this, r); },
+    replace(target: T.ArrowFunctionUFormParameterTree) { const r = target.range(); return toEdit(this, r); },
+  };
+}
+export function arrowFunctionUFormUCallSignature(config: T.ArrowFunctionUFormUCallSignatureConfig) {
+  const fields = {
+    body: config?.body,
+  };
+  const children = config?.children ?? [];
+  return {
+    type: 'arrow_function' as const,
+    named: true as const,
+    variant: '_form__call_signature' as const,
+    fields,
+    children,
+    body(body_?: T.Expression | T.StatementBlock) { return _fs(config, arrowFunctionUFormUCallSignature, 'body', body_, fields.body); },
+    getChild() { return children[0]; },
+    setChild(child: T.ArrowFunctionUCallSignature) { return arrowFunctionUFormUCallSignature({ ...(config ?? {}), children: [child] }); },
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.ArrowFunctionUFormUCallSignatureTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -4123,6 +4149,39 @@ export function classHeritageImplementsClause(child: T.ImplementsClause) {
   };
 }
 
+export function arrowFunctionParameter(config: T.ArrowFunctionParameterConfig) {
+  const fields = {
+    parameter: config?.parameter,
+  };
+  return {
+    type: 'arrow_function_parameter' as const,
+    named: true as const,
+    fields,
+    parameter(parameter_?: T.Identifier) { return _fs(config, arrowFunctionParameter, 'parameter', parameter_, fields.parameter); },
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.ArrowFunctionParameterTree) { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function arrowFunctionUCallSignature(child: T._CallSignature) {
+  const children = [child];
+  return {
+    type: 'arrow_function__call_signature' as const,
+    named: true as const,
+    children,
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.ArrowFunctionUCallSignatureTree) { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
 export function interfaceBody(config: T.InterfaceBodyConfig) {
   const fields = {
     opening: config?.opening,
@@ -4407,6 +4466,8 @@ export type FluentKindMap = {
   "string_fragment": T.StringFragment;
   "class_heritage_extends_clause": FluentNode<"class_heritage_extends_clause", T.ClassHeritageExtendsClauseConfig>;
   "class_heritage_implements_clause": FluentNode<"class_heritage_implements_clause", T.ClassHeritageImplementsClauseConfig>;
+  "arrow_function_parameter": FluentNode<"arrow_function_parameter", T.ArrowFunctionParameterConfig>;
+  "arrow_function__call_signature": FluentNode<"arrow_function__call_signature", T.ArrowFunctionUCallSignatureConfig>;
   "interface_body": FluentNode<"interface_body", T.InterfaceBodyConfig>;
   "this_type": T.ThisType;
   "index_signature_colon": FluentNode<"index_signature_colon", T.IndexSignatureColonConfig>;
@@ -4618,6 +4679,8 @@ export const _factoryMap = {
   "string_fragment": stringFragment,
   "class_heritage_extends_clause": classHeritageExtendsClause,
   "class_heritage_implements_clause": classHeritageImplementsClause,
+  "arrow_function_parameter": arrowFunctionParameter,
+  "arrow_function__call_signature": arrowFunctionUCallSignature,
   "interface_body": interfaceBody,
   "this_type": thisType,
   "index_signature_colon": indexSignatureColon,

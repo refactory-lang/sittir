@@ -35,9 +35,18 @@ function locateTopLevelChoice(
 ): { choicePath: string; arms: string[] } | null {
     function walk(node: Rule, path: string): { choicePath: string; arms: string[] } | null {
         if (node.type === 'choice') {
+            // Disambiguate duplicate variant names — `tagVariants`
+            // assigns the same label to structurally-identical
+            // alternatives (e.g. export_statement has three "export"
+            // variants). Appending a 2/3/... suffix to collisions keeps
+            // them unique for `registerPolymorphVariant`'s uniqueness
+            // guard, which rejects same-parent duplicates at eval time.
+            const counts = new Map<string, number>()
             const arms = node.members.map((m, i) => {
-                if (m.type === 'variant') return m.name
-                return `form${i}`
+                const base = m.type === 'variant' ? m.name : `form${i}`
+                const seen = counts.get(base) ?? 0
+                counts.set(base, seen + 1)
+                return seen === 0 ? base : `${base}${seen + 1}`
             })
             return { choicePath: path, arms }
         }
