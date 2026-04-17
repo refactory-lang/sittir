@@ -9,6 +9,5 @@
     "types": ["node"]
   },
   "include": ["src"],
-  "exclude": ["node_modules", "dist"],
-  "references": [{ "path": "../types" }]
+  "exclude": ["node_modules", "dist"]
 }
