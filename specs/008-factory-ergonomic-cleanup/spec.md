@@ -279,6 +279,14 @@ This story is behaviour-preserving — no consumer-visible change. The value is:
 - **SC-013**: After User Story 6 lands, `npx oxlint packages/{rust,typescript,python}/src` returns `Found 0 warnings and 0 errors`. Verifiable by direct command invocation; exact output string required.
 - **SC-014**: After User Story 6 lands, CI runs `oxlint` on the three generated package directories on every PR. A future emitter regression that reintroduces any lint warning causes CI to fail with the specific file + rule + line visible in the logs.
 
+## Design Principle: TreeNode as the unifying abstraction for parse-tree backends
+
+`AnyTreeNode` in `@sittir/types/core-types.ts` is the canonical minimal shape that both tree-sitter's `Node` (from `web-tree-sitter`) and ast-grep's `SgNode` can implement. It exists because the two backends have distinct runtime representations — neither is a free wrapper around the other.
+
+**Exception**: if a backend exposes a zero-cost path to the other's native type (e.g. `SgNode.treeSitterNode()` returning the encapsulated tree-sitter node without allocation), we should use that path directly rather than maintaining a separate adapter. Adapters that copy data are only justified when there's no zero-cost alternative.
+
+This is a **validation task deferred to tasks phase**: confirm whether ast-grep's published SgNode surface exposes its underlying tree-sitter node. If yes, `adaptNode` in `validators/common.ts` and any ast-grep-side adapter should unwrap instead of adapt. If no, the current `AnyTreeNode` adapter pattern stays.
+
 ## Design Principle: Don't recreate types you can import
 
 Several cleanups in this spec flow from one principle: **if a type is already published by a dependency, import it — don't redeclare it locally.** Applies to:

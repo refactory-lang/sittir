@@ -580,3 +580,36 @@ type WidenChildSlot<T, Scalars = {}, Strings = {}, Depth extends number[] = []> 
 			? WidenValue<E, Scalars, Strings, Depth>[] | WidenValue<E, Scalars, Strings, Depth>
 			: NonEmptyArray<WidenValue<E, Scalars, Strings, Depth>> | WidenValue<E, Scalars, Strings, Depth>
 		: WidenValue<T, Scalars, Strings, Depth>;
+
+// ---------------------------------------------------------------------------
+// NodeNs<T> — single computed base per-kind namespace
+// ---------------------------------------------------------------------------
+
+/**
+ * NodeNs<T, Scalars, Strings> — the full type family for a concrete node
+ * interface `T`, derived once via the existing transforms.
+ *
+ * Generated grammar packages emit a one-line `<Kind>Ns extends NodeNs<Kind,
+ * <Grammar>Scalars, <Grammar>Strings> {}` per kind, plus one `NamespaceMap`
+ * that indexes those namespace interfaces by kind string. All five member
+ * projections (`Node`, `Config`, `Fluent`, `Loose`, `Tree`, `Kind`) become
+ * available as `NamespaceMap[K][...]`, `ConfigFor<K>`-style generic accessors,
+ * and `<Kind>.Config`-style declaration-merged namespace sugar simultaneously —
+ * all three paths resolve to the same concrete type.
+ *
+ * `Scalars` and `Strings` are the per-grammar leaf-kind projections required
+ * by `FromInputOf`. Generated packages thread their own `<Grammar>Scalars` /
+ * `<Grammar>Strings` into `NodeNs` at the `<Kind>Ns` declaration site.
+ *
+ * @param T - A concrete node interface with a literal `type` discriminant.
+ * @param Scalars - Leaf-kind → scalar projection (e.g. `{ integer_literal: number }`).
+ * @param Strings - Leaf-kind → narrowed string projection (e.g. `{ boolean_literal: 'true' | 'false' }`).
+ */
+export interface NodeNs<T extends { readonly type: string }, Scalars = {}, Strings = {}> {
+	readonly Node: T;
+	readonly Config: ConfigOf<T>;
+	readonly Fluent: FluentNodeOf<T>;
+	readonly Loose: FromInputOf<T, Scalars, Strings>;
+	readonly Tree: TreeNodeOf<T>;
+	readonly Kind: KindOf<T>;
+}

@@ -44,11 +44,11 @@
 
 **⚠️ CRITICAL**: US1, US2, and US3 all depend on both primitives. No user story work begins until Phase 2 completes.
 
-- [ ] T005 Define `NodeNs<T extends { readonly type: string }>` interface in `packages/types/src/index.ts` per the contract in `specs/008-factory-ergonomic-cleanup/contracts/NodeNs.md` — six members (`Node`, `Config`, `Fluent`, `Loose`, `Tree`, `Kind`) derived from existing `ConfigOf<T>` / `FluentNodeOf<T>` / `FromInputOf<T, LeafScalarMap, LeafStringMap>` / `TreeNodeOf<T>` transforms
-- [ ] T006 [P] Export `NodeNs` from `packages/types/src/index.ts` top-level exports
-- [ ] T007 Add `isNodeData(v: unknown): v is AnyNodeData` function in a new file `packages/core/src/isNodeData.ts` per data-model.md Entity 8 shape; export from `packages/core/src/index.ts`
-- [ ] T008 [P] Add unit test `packages/core/tests/isNodeData.test.ts` covering: NodeData with fields returns true, NodeData with text returns true, NodeData with children returns true, plain camelCase bag returns false, null returns false, non-object returns false
-- [ ] T009 Run `pnpm -r run type-check` to confirm `@sittir/types` and `@sittir/core` compile with the new additions; ensure no unused-export warnings surface
+- [X] T005 Define `NodeNs<T extends { readonly type: string }, Scalars = {}, Strings = {}>` interface in `packages/types/src/index.ts` — six members (`Node`, `Config`, `Fluent`, `Loose`, `Tree`, `Kind`) derived from existing `ConfigOf<T>` / `FluentNodeOf<T>` / `FromInputOf<T, Scalars, Strings>` / `TreeNodeOf<T>` / `KindOf<T>` transforms. (Parameterized on `Scalars`/`Strings` because `FromInputOf` is grammar-specific; generated `<Kind>Ns` closes over the grammar's own leaf projections.)
+- [X] T006 [P] Export `NodeNs` from `packages/types/src/index.ts` — already exported via `export interface` declaration at top level.
+- [X] T007 Add `isNodeData(v: unknown): v is AnyNodeData` function in `packages/core/src/isNodeData.ts`; export from `packages/core/src/index.ts`. Structural detection: `type` string AND at least one of `fields`/`children`/`text`.
+- [X] T008 [P] Add unit test `packages/core/tests/isNodeData.test.ts` — 10 cases covering true/false across factory outputs, leaves, branches with children, loose bags, null, undefined, primitives, wrong-type `type`.
+- [X] T009 Run `pnpm -r run type-check` + `pnpm test`: 1238 tests pass (1228 baseline + 10 new isNodeData tests). No type errors, no unused-export warnings.
 
 **Checkpoint**: Foundation ready. `NodeNs<T>` and `isNodeData` are exported and tested. Any user story can now begin.
 
