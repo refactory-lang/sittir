@@ -8,4 +8,3 @@ export { replace, bindRange, replaceField } from './edit.ts';
 export { toCst } from './cst.ts';
 export { readNode } from './readNode.ts';
 export type { TreeHandle } from './readNode.ts';
-export { isNodeData } from './isNodeData.ts';

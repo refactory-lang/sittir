@@ -46,9 +46,9 @@
 
 - [X] T005 Define `NodeNs<T extends { readonly type: string }, Scalars = {}, Strings = {}>` interface in `packages/types/src/index.ts` — six members (`Node`, `Config`, `Fluent`, `Loose`, `Tree`, `Kind`) derived from existing `ConfigOf<T>` / `FluentNodeOf<T>` / `FromInputOf<T, Scalars, Strings>` / `TreeNodeOf<T>` / `KindOf<T>` transforms. (Parameterized on `Scalars`/`Strings` because `FromInputOf` is grammar-specific; generated `<Kind>Ns` closes over the grammar's own leaf projections.)
 - [X] T006 [P] Export `NodeNs` from `packages/types/src/index.ts` — already exported via `export interface` declaration at top level.
-- [X] T007 Add `isNodeData(v: unknown): v is AnyNodeData` function in `packages/core/src/isNodeData.ts`; export from `packages/core/src/index.ts`. Structural detection: `type` string AND at least one of `fields`/`children`/`text`.
-- [X] T008 [P] Add unit test `packages/core/tests/isNodeData.test.ts` — 10 cases covering true/false across factory outputs, leaves, branches with children, loose bags, null, undefined, primitives, wrong-type `type`.
-- [X] T009 Run `pnpm -r run type-check` + `pnpm test`: 1238 tests pass (1228 baseline + 10 new isNodeData tests). No type errors, no unused-export warnings.
+- [X] T007 REVISED (design correction): `isNodeData` does NOT belong in `@sittir/core` — core is the Rust-port surface, minimal runtime primitives only. The existing grammar-level `isNodeData` in generated `utils.ts` (emitted by `packages/codegen/src/emitters/client-utils.ts`) is the correct location. It already has the structural detection we want AND a kind-parameterized narrowing overload. US1 will refactor it to use `NamespaceMap` for type narrowing instead of `KindMap`/`LooseMap`. Reverted my addition to `@sittir/core`.
+- [X] T008 N/A — no core-level `isNodeData` to test. The grammar-level `isNodeData` is already tested via corpus-validation ceilings (it's used by every `.from()` resolver).
+- [X] T009 Run `pnpm -r run type-check` + `pnpm test`: 1228 tests pass (back to baseline after revert). No type errors.
 
 **Checkpoint**: Foundation ready. `NodeNs<T>` and `isNodeData` are exported and tested. Any user story can now begin.
 
@@ -113,7 +113,7 @@
 ### Implementation for User Story 3
 
 - [ ] T034 [US3] Update `packages/codegen/src/emitters/from.ts` to emit namespace imports (`import * as F from './factories.js';` and `import type * as T from './types.js';`) replacing the per-factory import wall.
-- [ ] T035 [US3] Update `packages/codegen/src/emitters/from.ts` to emit `import { isNodeData } from '@sittir/core';` at the top of every generated `from.ts`.
+- [ ] T035 [US3] Update `packages/codegen/src/emitters/from.ts` to emit `import { isNodeData } from './utils.js';` at the top of every generated `from.ts` — uses the grammar-level `isNodeData` (which US1 refactored to narrow via `NamespaceMap`). Keeps `@sittir/core` minimal for the future Rust port.
 - [ ] T036 [US3] Update `packages/codegen/src/emitters/from.ts` resolver-body template: the first line of every non-leaf resolver is `if (isNodeData(input)) return input as T.<Kind>.Fluent;` per the contract in `specs/008-factory-ergonomic-cleanup/contracts/from-resolver.md`.
 - [ ] T037 [US3] Update `packages/codegen/src/emitters/from.ts` field-read emission: every field read in the bag branch must be `input.<camelCaseName>` — NO `fields?.[snake]` path, NO `??` fallback, NO inline cast expressions. Emitter must enforce at generation (fail emission if any field would produce a dual-access cast).
 - [ ] T038 [US3] Update `packages/codegen/src/emitters/from.ts` resolver generic parameters: emit concrete union type names derived from `AssembledField.contentTypes` (e.g. `T.Identifier | T.Metavariable`) — NOT computed paths through Config.

@@ -279,6 +279,22 @@ This story is behaviour-preserving — no consumer-visible change. The value is:
 - **SC-013**: After User Story 6 lands, `npx oxlint packages/{rust,typescript,python}/src` returns `Found 0 warnings and 0 errors`. Verifiable by direct command invocation; exact output string required.
 - **SC-014**: After User Story 6 lands, CI runs `oxlint` on the three generated package directories on every PR. A future emitter regression that reintroduces any lint warning causes CI to fail with the specific file + rule + line visible in the logs.
 
+## Design Principle: `@sittir/core` stays minimal (Rust-port surface)
+
+`@sittir/core` is the runtime layer scheduled for a future port to Rust. Every addition to core becomes a Rust reimplementation burden. Keep core minimal:
+
+**Belongs in core**: `render()`, `readNode()`, `Edit` helpers, tree-walking primitives that have clear Rust analogues.
+
+**Does NOT belong in core**: per-grammar type guards, kind-parameterized narrowing helpers, anything that depends on `NamespaceMap` or other grammar-specific type projections. These belong in the generated `utils.ts` per grammar (already emitted by `@sittir/codegen/src/emitters/client-utils.ts`).
+
+**`isNodeData` placement**: stays in the generated `utils.ts` per grammar. The existing implementation there already has:
+- A kind-parameterized overload that narrows to `RuntimeNodeOf<KindMap[K]>` vs `LooseMap[K]` vs `TreeNodeOf<KindMap[K]>`.
+- A general overload `isNodeData(v: unknown): v is AnyNodeData`.
+
+US1 refactors this to use `NamespaceMap` for narrowing (`NamespaceMap[K]['Node']` / `['Loose']` / `['Tree']`) — same runtime behavior, cleaner type story. US3's `.from()` resolvers import `isNodeData` from the grammar's own `./utils.js` — no cross-package dependency.
+
+**Test for additions**: before adding a new primitive to `@sittir/core`, ask "would this port cleanly to Rust as runtime?" If the answer involves TypeScript-only type projections (`NamespaceMap`, `ConfigOf<T>`, etc.), the primitive belongs in the grammar package's generated utilities, not core.
+
 ## Design Principle: TreeNode as the unifying abstraction for parse-tree backends
 
 `AnyTreeNode` in `@sittir/types/core-types.ts` is the canonical minimal shape that both tree-sitter's `Node` (from `web-tree-sitter`) and ast-grep's `SgNode` can implement. It exists because the two backends have distinct runtime representations — neither is a free wrapper around the other.

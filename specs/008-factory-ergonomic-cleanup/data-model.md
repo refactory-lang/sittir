@@ -253,33 +253,42 @@ export const assert = Object.fromEntries(
 
 ---
 
-## Entity 8: `isNodeData` predicate (hand-written, in `@sittir/core`)
+## Entity 8: `isNodeData` predicate (generated, per-grammar `utils.ts`)
 
-**Purpose**: Structural guard. Returns true when input has the shape of a NodeData (has `type: string` and optionally `fields`/`children`/`text`).
+**Purpose**: Structural guard with both a generic overload (`v: unknown` → `v is AnyNodeData`) and a kind-parameterized overload that narrows to the concrete `NamespaceMap[K]['Node']` type.
 
-**Shape:**
+**Location**: `packages/<grammar>/src/utils.ts`, emitted by `packages/codegen/src/emitters/client-utils.ts`. NOT in `@sittir/core` — core is the Rust-port surface and must stay minimal. The predicate depends on `NamespaceMap` (a per-grammar type projection), so it belongs with the generated grammar package, not in core.
+
+**Shape (post-US1 refactor):**
 
 ```ts
+// Kind-parameterized: narrows through NamespaceMap
+export function isNodeData<K extends keyof NamespaceMap>(
+    v: NamespaceMap[K]['Node'] | NamespaceMap[K]['Loose'] | NamespaceMap[K]['Tree']
+): v is NamespaceMap[K]['Node'];
+
+// Generic fallback
+export function isNodeData(v: unknown): v is AnyNodeData;
+
+// Runtime (unchanged from pre-008):
 export function isNodeData(v: unknown): v is AnyNodeData {
-    return (
-        typeof v === 'object'
-        && v !== null
-        && typeof (v as { type?: unknown }).type === 'string'
-        && (
-            (v as { fields?: unknown }).fields !== undefined
-            || (v as { children?: unknown }).children !== undefined
-            || (v as { text?: unknown }).text !== undefined
-        )
-    );
+    if (v === null || typeof v !== 'object') return false;
+    const o = v as Record<string, unknown>;
+    if (typeof o['type'] !== 'string') return false;
+    return (o['fields'] !== null && typeof o['fields'] === 'object')
+        || typeof o['text'] === 'string';
 }
 ```
 
-**Lifecycle**: Stable. Exported from `@sittir/core` index. All generated `from.ts` files import this one predicate — no per-grammar copies.
+**Lifecycle**: Generated per-grammar. Every `.from()` resolver imports this via `import { isNodeData } from './utils.js';` — no cross-package dependency.
 
 **Invariants:**
 
 - Returns `false` for plain loose bags (camelCase properties without `type`).
-- Returns `true` for factory outputs, wrap outputs, and bare readNode outputs (all have `type` + `fields`/`children`/`text`).
+- Returns `true` for factory outputs, wrap outputs, and bare readNode outputs (all have `type` + `fields`/`text`).
+- Runtime implementation is identical across all three grammars — only the type signature differs (it uses that grammar's `NamespaceMap`).
+
+**Why not in core**: `@sittir/core` is the Rust-port surface. Per-grammar type narrowing requires `NamespaceMap`, which is TypeScript-only and grammar-specific. Adding `isNodeData` to core would create a second entry point consumers must learn AND create a Rust-port obligation for a utility that's grammar-specific. Generated `utils.ts` is the correct home.
 
 ---
 
