@@ -26,7 +26,7 @@ import { isFieldPlaceholder, type FieldPlaceholder } from './field.ts'
 import { isAliasPlaceholder, type AliasPlaceholder } from './alias.ts'
 import { isVariantPlaceholder, type VariantPlaceholder } from './variant.ts'
 import { getCurrentRuleKind, registerPolymorphVariant, maybeKeywordSymbol, registerAliasedVariant, registerSyntheticRule, registerConflict, wrapInPrecStack, matchesEmpty } from './synthetic-rules.ts'
-import { isFieldLike, isPrecWrapper, isWrapperType, type RuntimeRule } from './runtime-shapes.ts'
+import { isFieldLike, isPrecWrapper, isWrapperType, isSeqType, isChoiceType, type RuntimeRule } from './runtime-shapes.ts'
 
 /**
  * Apply patches to a rule. Patches are an object with path-string keys
@@ -172,7 +172,7 @@ function tryHoistSiblingVariants(
     }
     const t = core?.type
     if (!t) return bail('core rule has no type after prec peeling')
-    if (t !== 'seq' && t !== 'SEQ') return bail(`core rule type '${t}' is not seq/SEQ`)
+    if (!isSeqType(t)) return bail(`core rule type '${t}' is not seq/SEQ`)
     const parsed: Array<{ key: string; v: VariantPlaceholder; choicePos: number; altIdx: number }> = []
     for (const [key, v] of variantEntries) {
         const segs = parsePath(key)
@@ -185,7 +185,7 @@ function tryHoistSiblingVariants(
     const seqMembers = [...membersOf(core)]
     const resolvedPos = choicePos < 0 ? seqMembers.length + choicePos : choicePos
     const choice = seqMembers[resolvedPos]
-    if (!choice || (choice.type !== 'choice' && choice.type !== 'CHOICE')) return bail(`position ${resolvedPos} is '${choice?.type}', not choice/CHOICE`)
+    if (!choice || !isChoiceType(choice.type)) return bail(`position ${resolvedPos} is '${choice?.type}', not choice/CHOICE`)
     const choiceMembers = membersOf(choice)
     const anyEmpty = parsed.some(p => matchesEmpty(choiceMembers[p.altIdx < 0 ? choiceMembers.length + p.altIdx : p.altIdx]!))
     if (!anyEmpty) return null  // non-empty variants fall through to per-patch extraction — not an error, just not a hoist candidate
@@ -248,7 +248,7 @@ function applyFlatPatches(
     // same transform call works in both runtimes. Reconstructed via
     // native dsl so the result has the runtime-correct rule shape.
     const t = original.type
-    if (t === 'seq' || t === 'SEQ') {
+    if (isSeqType(t)) {
         const members = [...membersOf(original)]
         for (const [key, patch] of Object.entries(patches)) {
             // Reject non-pure-numeric keys up front — `Number('foo')` is
@@ -276,7 +276,7 @@ function applyFlatPatches(
 
     // Choice: apply transform to each member recursively. Reconstruct
     // via native dsl so the choice keeps its runtime-correct shape.
-    if (t === 'choice' || t === 'CHOICE') {
+    if (isChoiceType(t)) {
         const newMembers = membersOf(original).map(m => applyFlatPatches(m, patches))
         return reconstructContainer(original, newMembers)
     }
@@ -390,7 +390,7 @@ export function insert(
     wrapper: (content: RuntimeRule) => RuntimeRule,
 ): RuntimeRule {
     const t = original.type
-    if (t !== 'seq' && t !== 'SEQ') {
+    if (!isSeqType(t)) {
         throw new Error(`insert() expects a seq rule, got '${original.type}'`)
     }
 
@@ -417,7 +417,7 @@ export function replace(
     replacement: RuntimeRule | null,
 ): RuntimeRule {
     const t = original.type
-    if (t !== 'seq' && t !== 'SEQ') {
+    if (!isSeqType(t)) {
         throw new Error(`replace() expects a seq rule, got '${original.type}'`)
     }
 

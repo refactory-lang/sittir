@@ -10,7 +10,7 @@
  * callbacks have run. Same scoping pattern as `role()` in role.ts.
  */
 
-import type { RuntimeRule } from './runtime-shapes.ts'
+import { isChoiceType, isSeqType, isOptionalType, isStringType, isBlankType, isPlainRepeatType, type RuntimeRule } from './runtime-shapes.ts'
 
 let currentSyntheticRules: Map<string, RuntimeRule> | null = null
 let currentRuleKind: string | null = null
@@ -71,8 +71,7 @@ export function maybeKeywordSymbol(
 ): unknown {
     const c = content as { type?: string; value?: string }
     if (!c || typeof c.type !== 'string') return content
-    const isString = c.type === 'STRING' || c.type === 'string'
-    if (!isString) return content
+    if (!isStringType(c.type)) return content
     const isUpperCase = c.type === 'STRING'
     const hiddenName = `_kw_${fieldName}`
     const nativePrec = (globalThis as {
@@ -245,23 +244,23 @@ function extractNonEmpty(rule: RuntimeRule): { nonEmpty: unknown } | null {
     // repeat(X, ...) → repeat1(X, ...) — preserves sep / trailing /
     // leading metadata by direct spread (native repeat1() can't take
     // those as arguments).
-    if (t === 'repeat' || t === 'REPEAT') {
+    if (isPlainRepeatType(t)) {
         const r = rule as unknown as Record<string, unknown>
         const nonEmpty: Record<string, unknown> = { ...r, type: t === 'REPEAT' ? 'REPEAT1' : 'repeat1' }
         return { nonEmpty }
     }
-    if (t === 'optional') {
+    if (isOptionalType(t)) {
         const inner = (rule as unknown as { content: RuntimeRule }).content
         return matchesEmpty(inner) ? extractNonEmpty(inner) : { nonEmpty: inner }
     }
-    if (t === 'choice' || t === 'CHOICE') {
+    if (isChoiceType(t)) {
         const members = (rule as unknown as { members: RuntimeRule[] }).members
         const nonEmpty = members.filter(m => !matchesEmpty(m))
         if (nonEmpty.length === 0) return null
         if (nonEmpty.length === 1) return { nonEmpty: nonEmpty[0] }
         return { nonEmpty: { type: t, members: nonEmpty } }
     }
-    if (t === 'seq' || t === 'SEQ') {
+    if (isSeqType(t)) {
         // A SEQ matches empty only when EVERY member does. Replacing
         // any one member with its non-empty core makes the whole SEQ
         // non-empty; we rewrite members one at a time from the first
@@ -289,14 +288,14 @@ function extractNonEmpty(rule: RuntimeRule): { nonEmpty: unknown } | null {
  */
 export function matchesEmpty(rule: RuntimeRule): boolean {
     const t = rule.type
-    if (t === 'blank' || t === 'BLANK') return true
-    if (t === 'optional') return true
-    if (t === 'repeat' || t === 'REPEAT') return true
-    if (t === 'choice' || t === 'CHOICE') {
+    if (isBlankType(t)) return true
+    if (isOptionalType(t)) return true
+    if (isPlainRepeatType(t)) return true
+    if (isChoiceType(t)) {
         const members = (rule as unknown as { members: RuntimeRule[] }).members
         return members.some(m => matchesEmpty(m))
     }
-    if (t === 'seq' || t === 'SEQ') {
+    if (isSeqType(t)) {
         const members = (rule as unknown as { members: RuntimeRule[] }).members
         return members.every(m => matchesEmpty(m))
     }

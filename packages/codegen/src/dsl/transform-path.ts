@@ -17,7 +17,7 @@
  *   apply time (with the path + actual rule shape in the message).
  */
 
-import { isPrecWrapper as isPrecWrapperShape, isContainerType, isWrapperType, type RuntimeRule } from './runtime-shapes.ts'
+import { isPrecWrapper as isPrecWrapperShape, isContainerType, isWrapperType, isSeqType, isChoiceType, isFieldType, type RuntimeRule } from './runtime-shapes.ts'
 
 // ---------------------------------------------------------------------------
 // Native DSL accessors — we call the runtime-injected DSL functions
@@ -299,8 +299,8 @@ function walkKindMatch(
  */
 export function reconstructContainer(rule: RuntimeRule, members: RuntimeRule[]): RuntimeRule {
     const t = rule.type
-    if (t === 'seq' || t === 'SEQ') return nativeRequired('seq')(...members)
-    if (t === 'choice' || t === 'CHOICE') return nativeRequired('choice')(...members)
+    if (isSeqType(t)) return nativeRequired('seq')(...members)
+    if (isChoiceType(t)) return nativeRequired('choice')(...members)
     throw new Error(`reconstructContainer: unknown container type '${t}'`)
 }
 
@@ -336,7 +336,7 @@ export function reconstructWrapper(rule: RuntimeRule, newContent: RuntimeRule): 
         if (r.trailing !== undefined) baseNode.trailing = r.trailing
         return baseNode as unknown as RuntimeRule
     }
-    if (t === 'field' || t === 'FIELD') {
+    if (isFieldType(t)) {
         const name = (rule as unknown as { name: string }).name
         return nativeRequired('field')(name, newContent)
     }

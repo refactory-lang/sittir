@@ -76,7 +76,9 @@ var isOptionalType = (t) => typeEq(t, "optional");
 var isFieldType = (t) => typeEq(t, "field");
 var isSymbolType = (t) => typeEq(t, "symbol");
 var isStringType = (t) => typeEq(t, "string");
+var isPlainRepeatType = (t) => typeEq(t, "repeat");
 var isRepeatType = (t) => typeEq(t, "repeat") || typeEq(t, "repeat1");
+var isBlankType = (t) => typeEq(t, "blank");
 
 // packages/codegen/src/dsl/transform-path.ts
 function dsl() {
@@ -196,8 +198,8 @@ function walkKindMatch(rule, targetKind, rest, patch, precStack, insideNamedFiel
 }
 function reconstructContainer(rule, members) {
   const t = rule.type;
-  if (t === "seq" || t === "SEQ") return nativeRequired("seq")(...members);
-  if (t === "choice" || t === "CHOICE") return nativeRequired("choice")(...members);
+  if (isSeqType(t)) return nativeRequired("seq")(...members);
+  if (isChoiceType(t)) return nativeRequired("choice")(...members);
   throw new Error(`reconstructContainer: unknown container type '${t}'`);
 }
 function reconstructWrapper(rule, newContent) {
@@ -211,7 +213,7 @@ function reconstructWrapper(rule, newContent) {
     if (r.trailing !== void 0) baseNode.trailing = r.trailing;
     return baseNode;
   }
-  if (t === "field" || t === "FIELD") {
+  if (isFieldType(t)) {
     const name = rule.name;
     return nativeRequired("field")(name, newContent);
   }
@@ -289,8 +291,7 @@ function registerSyntheticRule(name, content) {
 function maybeKeywordSymbol(fieldName, content, wrapSyntheticBody) {
   const c = content;
   if (!c || typeof c.type !== "string") return content;
-  const isString = c.type === "STRING" || c.type === "string";
-  if (!isString) return content;
+  if (!isStringType(c.type)) return content;
   const isUpperCase = c.type === "STRING";
   const hiddenName = `_kw_${fieldName}`;
   const nativePrec = globalThis.prec;
@@ -371,23 +372,23 @@ function factorOutEmptiness(rule) {
 }
 function extractNonEmpty(rule) {
   const t = rule.type;
-  if (t === "repeat" || t === "REPEAT") {
+  if (isPlainRepeatType(t)) {
     const r = rule;
     const nonEmpty = { ...r, type: t === "REPEAT" ? "REPEAT1" : "repeat1" };
     return { nonEmpty };
   }
-  if (t === "optional") {
+  if (isOptionalType(t)) {
     const inner = rule.content;
     return matchesEmpty(inner) ? extractNonEmpty(inner) : { nonEmpty: inner };
   }
-  if (t === "choice" || t === "CHOICE") {
+  if (isChoiceType(t)) {
     const members = rule.members;
     const nonEmpty = members.filter((m) => !matchesEmpty(m));
     if (nonEmpty.length === 0) return null;
     if (nonEmpty.length === 1) return { nonEmpty: nonEmpty[0] };
     return { nonEmpty: { type: t, members: nonEmpty } };
   }
-  if (t === "seq" || t === "SEQ") {
+  if (isSeqType(t)) {
     const members = [...rule.members];
     for (let i = 0; i < members.length; i++) {
       const factored = extractNonEmpty(members[i]);
@@ -402,14 +403,14 @@ function extractNonEmpty(rule) {
 }
 function matchesEmpty(rule) {
   const t = rule.type;
-  if (t === "blank" || t === "BLANK") return true;
-  if (t === "optional") return true;
-  if (t === "repeat" || t === "REPEAT") return true;
-  if (t === "choice" || t === "CHOICE") {
+  if (isBlankType(t)) return true;
+  if (isOptionalType(t)) return true;
+  if (isPlainRepeatType(t)) return true;
+  if (isChoiceType(t)) {
     const members = rule.members;
     return members.some((m) => matchesEmpty(m));
   }
-  if (t === "seq" || t === "SEQ") {
+  if (isSeqType(t)) {
     const members = rule.members;
     return members.every((m) => matchesEmpty(m));
   }
@@ -637,7 +638,7 @@ function tryHoistSiblingVariants(rule, variantEntries) {
   }
   const t = core?.type;
   if (!t) return bail("core rule has no type after prec peeling");
-  if (t !== "seq" && t !== "SEQ") return bail(`core rule type '${t}' is not seq/SEQ`);
+  if (!isSeqType(t)) return bail(`core rule type '${t}' is not seq/SEQ`);
   const parsed = [];
   for (const [key, v] of variantEntries) {
     const segs = parsePath(key);
@@ -650,7 +651,7 @@ function tryHoistSiblingVariants(rule, variantEntries) {
   const seqMembers = [...membersOf2(core)];
   const resolvedPos = choicePos < 0 ? seqMembers.length + choicePos : choicePos;
   const choice = seqMembers[resolvedPos];
-  if (!choice || choice.type !== "choice" && choice.type !== "CHOICE") return bail(`position ${resolvedPos} is '${choice?.type}', not choice/CHOICE`);
+  if (!choice || !isChoiceType(choice.type)) return bail(`position ${resolvedPos} is '${choice?.type}', not choice/CHOICE`);
   const choiceMembers = membersOf2(choice);
   const anyEmpty = parsed.some((p) => matchesEmpty(choiceMembers[p.altIdx < 0 ? choiceMembers.length + p.altIdx : p.altIdx]));
   if (!anyEmpty) return null;
@@ -682,7 +683,7 @@ var membersOf2 = (r) => r.members;
 var contentOf2 = (r) => r.content;
 function applyFlatPatches(original, patches) {
   const t = original.type;
-  if (t === "seq" || t === "SEQ") {
+  if (isSeqType(t)) {
     const members = [...membersOf2(original)];
     for (const [key, patch] of Object.entries(patches)) {
       if (!/^\d+$/.test(key)) {
@@ -700,7 +701,7 @@ function applyFlatPatches(original, patches) {
     }
     return reconstructContainer(original, members);
   }
-  if (t === "choice" || t === "CHOICE") {
+  if (isChoiceType(t)) {
     const newMembers = membersOf2(original).map((m) => applyFlatPatches(m, patches));
     return reconstructContainer(original, newMembers);
   }
