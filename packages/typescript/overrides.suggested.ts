@@ -17,55 +17,6 @@
 // Field inferences:  1  (0 applied, 1 held)
 // Rule promotions:   50  (47 applied, 3 held)
 // Repeated shapes:   7  (advisory — suggested supertypes/groups)
-// Round-trip fails: 3  (3 parse errors, 0 AST mismatches; 1 render, 2 factory)
-
-// ---------------------------------------------------------------
-// Round-trip failures — corpus cases that didn't survive
-// parse → readNode → render → reparse. Each entry shows the
-// input and rendered text so you can spot what the renderer
-// dropped. Common causes:
-//   - Repeated slot missing a `joinBy` separator (renders only
-//     the first occurrence of a multi-valued field)
-//   - Missing `transform()` patch wrapping an anonymous token
-//     that should be a named field
-//   - Template gap — rule content has no renderable slot for
-//     some structural position
-// ---------------------------------------------------------------
-export const roundTripFailures: Array<{
-  readonly entry: string;
-  readonly kind: string;
-  readonly source: "render" | "factory";
-  readonly category: "parse-error" | "ast-mismatch";
-  readonly input?: string;
-  readonly rendered?: string;
-  readonly message: string;
-}> = [
-  // --- new_expression (2) ---
-  {
-    entry: "New object with type arguments",
-    kind: "new_expression",
-    source: "render",
-    category: "parse-error",
-    message: "render: Node 'undefined' has no 'fields' or 'children' — did you mean to set 'text' for a leaf node?",
-  },
-  {
-    entry: "New object with type arguments",
-    kind: "new_expression",
-    source: "factory",
-    category: "parse-error",
-    input:    "new Array<DiffLine>()",
-    message: "Node 'undefined' has no 'fields' or 'children' — did you mean to set 'text' for ",
-  },
-  // --- arguments (1) ---
-  {
-    entry: "Classes with decorator calls that have type arguments",
-    kind: "arguments",
-    source: "factory",
-    category: "parse-error",
-    input:    "()",
-    message: "Node 'undefined' has no 'fields' or 'children' — did you mean to set 'text' for ",
-  },
-];
 
 // ---------------------------------------------------------------
 // suggestedRules — drop entries into your overrides.ts rules map.

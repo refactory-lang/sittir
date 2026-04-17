@@ -244,12 +244,25 @@ export function emitFactories(config: EmitFactoriesConfig): string {
     // calling `factory(config)` vs `factory(...children)` vs
     // `factory(text)` without inspecting function.toString() at
     // runtime (which breaks under minification / bundler renames).
-    lines.push('export const _factoryShapes = {')
+    //
+    // The type `_FactoryShapes` is DERIVED from `_FactoryMap` via a
+    // conditional-type mapper: each factory's first-param shape picks
+    // its dispatch tag. The runtime literal below must `satisfies`
+    // that derived type, so any drift between the emitted string and
+    // the factory's actual call signature is a compile error — not a
+    // runtime surprise when the validator routes the wrong way.
+    lines.push('type _FactoryShapeOf<F> =')
+    lines.push(`  F extends (text: string) => unknown ? 'text'`)
+    lines.push(`  : F extends (config: object | undefined) => unknown ? 'config'`)
+    lines.push(`  : F extends (config: object) => unknown ? 'config'`)
+    lines.push(`  : F extends (...args: unknown[]) => unknown ? 'children'`)
+    lines.push(`  : never;`)
+    lines.push('export type _FactoryShapes = { [K in keyof _FactoryMap]: _FactoryShapeOf<_FactoryMap[K]> };')
+    lines.push('export const _factoryShapes: _FactoryShapes = {')
     for (const { kind, shape } of mapEntries) {
         lines.push(`  ${JSON.stringify(kind)}: ${JSON.stringify(shape)},`)
     }
-    lines.push(`} as const satisfies Record<string, 'config' | 'children' | 'text'>;`)
-    lines.push('export type _FactoryShapes = typeof _factoryShapes;')
+    lines.push(`} as _FactoryShapes;`)
     lines.push('')
 
     return lines.join('\n')

@@ -4209,7 +4209,14 @@ export const _factoryMap = {
 } as const;
 export type _FactoryMap = typeof _factoryMap;
 
-export const _factoryShapes = {
+type _FactoryShapeOf<F> =
+  F extends (text: string) => unknown ? 'text'
+  : F extends (config: object | undefined) => unknown ? 'config'
+  : F extends (config: object) => unknown ? 'config'
+  : F extends (...args: unknown[]) => unknown ? 'children'
+  : never;
+export type _FactoryShapes = { [K in keyof _FactoryMap]: _FactoryShapeOf<_FactoryMap[K]> };
+export const _factoryShapes: _FactoryShapes = {
   "source_file": "config",
   "expression_statement": "children",
   "macro_definition": "config",
@@ -4391,5 +4398,4 @@ export const _factoryShapes = {
   "type_identifier": "text",
   "field_identifier": "text",
   "shorthand_field_identifier": "text",
-} as const satisfies Record<string, 'config' | 'children' | 'text'>;
-export type _FactoryShapes = typeof _factoryShapes;
+} as _FactoryShapes;
