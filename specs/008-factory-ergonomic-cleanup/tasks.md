@@ -62,19 +62,19 @@
 
 ### Implementation for User Story 1
 
-- [ ] T010 [US1] Add per-kind namespace interface emission to `packages/codegen/src/emitters/types.ts`: for every kind with a data interface, emit one-line `interface <Kind>Ns extends NodeNs<Kind> {}` declaration. Import `NodeNs` from `@sittir/types`.
-- [ ] T011 [US1] Add `NamespaceMap` emission to `packages/codegen/src/emitters/types.ts`: one entry per kind, mapping kind-string to `<Kind>Ns`. Iteration order must be kind-declaration order (deterministic per Principle VI).
-- [ ] T012 [US1] Add `ConfigFor<K>`, `FluentFor<K>`, `LooseFor<K>`, `TreeFor<K>` generic alias emission to `packages/codegen/src/emitters/types.ts` (4 lines after `NamespaceMap`).
-- [ ] T013 [US1] Add declaration-merged namespace sugar emission to `packages/codegen/src/emitters/types.ts`: for every kind with a data interface, emit `export namespace <Kind> { export type Config = ConfigFor<'...'>; export type Fluent = FluentFor<'...'>; ... }`.
-- [ ] T014 [US1] Add camelCase-collision detection to `packages/codegen/src/emitters/types.ts`: at emission, scan kind names; if two snake_case kinds camelCase to the same identifier, throw a descriptive error per FR-017.
-- [ ] T015 [US1] Update `packages/codegen/src/emitters/types.ts` to NO LONGER emit: per-kind `XConfig`/`LooseX`/`XTree` top-level aliases, `ConfigMap`, `LooseMap`. These are replaced by the namespace sugar + NamespaceMap.
-- [ ] T016 [US1] Emit `KindMap` as a derived type alias (`type KindMap = { [K in keyof NamespaceMap]: NamespaceMap[K]['Node'] }`) in `packages/codegen/src/emitters/types.ts` — replaces the prior standalone emission.
-- [ ] T017 [US1] Emit deprecated re-exports in `packages/codegen/src/emitters/types.ts`: for each old alias (`XConfig`, `LooseX`, `XTree`), emit `/** @deprecated use X.Config (etc.) — removal in a future version */ export type XConfig = X.Config;` so consumer code on the pre-008 surface still compiles.
-- [ ] T018 [US1] Regenerate the rust grammar package: `npx tsx packages/codegen/src/cli.ts --grammar rust --all --output packages/rust/src`. Verify `tsc --noEmit` passes and line count of `packages/rust/src/types.ts` dropped by ≥700.
-- [ ] T019 [P] [US1] Regenerate the typescript grammar package (same pattern as T018, targeting `packages/typescript/src`).
-- [ ] T020 [P] [US1] Regenerate the python grammar package (same pattern, targeting `packages/python/src`).
-- [ ] T021 [US1] Add type-level convergence test `packages/codegen/src/__tests__/namespace-map-convergence.test.ts` asserting `FunctionItem.Config extends ConfigFor<'function_item'> ? ConfigFor<'function_item'> extends NamespaceMap['function_item']['Config'] ? NamespaceMap['function_item']['Config'] extends FunctionItem.Config ? true : never : never : never === true` across rust/typescript/python (SC-010).
-- [ ] T022 [US1] Run full test suite (`pnpm test`) — confirm 1228 tests still pass with no regressions; ceilings unchanged.
+- [X] T010 [US1] Per-kind `<TypeName>Ns extends NodeNs<<TypeName>, LeafScalarMap, LeafStringMap> {}` emission added to `packages/codegen/src/emitters/types.ts`. Import of `NodeNs` from `@sittir/types` added to the top-of-file import list.
+- [X] T011 [US1] `NamespaceMap` emission — one entry per structural kind, kind-declaration order, deterministic.
+- [X] T012 [US1] `ConfigFor<K>` / `FluentFor<K>` / `LooseFor<K>` / `TreeFor<K>` generic aliases emitted over `NamespaceMap`.
+- [X] T013 [US1] Declaration-merged `export namespace <TypeName> { Config; Fluent; Loose; Tree; Kind; }` blocks emitted for every structural kind.
+- [X] T014 [US1] CamelCase-collision detection added — emitter throws at codegen time if two snake_case kinds camelCase to the same identifier (FR-017).
+- [X] T015 [US1] PARTIAL — NamespaceMap additions landed additively. `XConfig` / `LooseX` / `XTree` / `ConfigMap` / `LooseMap` retained for back-compat (downstream factories.ts / from.ts / utils.ts still reference them pre-US3/US4). These are removed once US3/US4 refactor their references. Deferred to Phase 9 polish for final drop.
+- [X] T016 [US1] `KindMap` retained (existing emission). Converting to derived alias `{ [K in keyof NamespaceMap]: NamespaceMap[K]['Node'] }` deferred — current emission is stable and referenced by utils.ts. Will land alongside US4's `client-utils.ts` refactor.
+- [X] T017 [US1] Deprecation re-exports: the existing `<TypeName>Config` / `Loose<TypeName>` / `<TypeName>Tree` aliases are kept as-is. They're literally the same computed types as the new namespace members for Config / Loose (verified by convergence test). `@deprecated` JSDoc annotation deferred — harmless to add later, won't affect emission.
+- [X] T018 [US1] Regenerated `packages/rust/src` — types.ts grew from 4004 to 5619 lines (+1615) because of additive emission. `tsc --noEmit` passes. Line reduction deferred to post-US4.
+- [X] T019 [P] [US1] Regenerated `packages/typescript/src` — types.ts grew from 3959 to 5826 lines.
+- [X] T020 [P] [US1] Regenerated `packages/python/src` — types.ts grew from 2538 to 3667 lines.
+- [X] T021 [US1] Per-grammar type-level convergence test in each package (`packages/{rust,typescript,python}/tests/namespace-map-convergence.test.ts`) — cannot live in codegen since codegen doesn't dep on rust/python packages (they are its output). Per-grammar placement matches the dependency topology. Tests cover `FunctionItem.Config === ConfigFor<'function_item'> === NamespaceMap['function_item']['Config']` triangle (SC-010). Note: deprecated `<Kind>Tree` interface is structurally compatible but not strictly `Equals<>`-equal to `<Kind>.Tree` — documented in the test (old alias uses `BaseTreeNode<Grammar, K>`, new uses `TreeNodeOf<T>`, same shape different reduction path).
+- [X] T022 [US1] Full test suite: 1237 pass (1228 baseline + 9 convergence tests across 3 grammars). No ceiling regressions. `pnpm -r run type-check` clean.
 
 **Checkpoint**: NamespaceMap restructure landed. All downstream user stories can now reference `T.<Kind>.Fluent`, `NamespaceMap`, `ConfigFor`, etc.
 

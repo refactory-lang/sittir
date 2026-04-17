@@ -22,7 +22,7 @@ import {
 	buildKindToSupertypes,
 	wrapForReparse,
 	type TSNode,
-	type TSTree,
+	type TSTree
 } from './validators/common.ts';
 
 /**
