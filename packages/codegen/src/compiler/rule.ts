@@ -1174,8 +1174,8 @@ export class AssembledBranch extends AssembledNodeBase {
         // separator. Render uses this to know it should look for a
         // trailing anon-separator token in `$$$CHILDREN` and preserve
         // it when present.
-        if (findRepeatTrailing(this.simplifiedRule)) entry.joinByTrailing = true
-        if (findRepeatLeading(this.simplifiedRule)) entry.joinByLeading = true
+        if (findRepeatFlag(this.simplifiedRule, 'trailing')) entry.joinByTrailing = true
+        if (findRepeatFlag(this.simplifiedRule, 'leading')) entry.joinByLeading = true
         if (Object.keys(joinByField).length > 0) entry.joinByField = joinByField
         return entry
     }
@@ -1334,8 +1334,8 @@ export class AssembledContainer extends AssembledNodeBase {
         const entry: Record<string, unknown> = { template, ...clauses }
         const sep = this.separator ?? findRepeatSeparator(this.simplifiedRule)
         if (sep) entry.joinBy = sep
-        if (findRepeatTrailing(this.simplifiedRule)) entry.joinByTrailing = true
-        if (findRepeatLeading(this.simplifiedRule)) entry.joinByLeading = true
+        if (findRepeatFlag(this.simplifiedRule, 'trailing')) entry.joinByTrailing = true
+        if (findRepeatFlag(this.simplifiedRule, 'leading')) entry.joinByLeading = true
         if (Object.keys(joinByField).length > 0) entry.joinByField = joinByField
         return entry
     }
@@ -1536,8 +1536,8 @@ export class AssembledGroup extends AssembledNodeBase {
         const entry: Record<string, unknown> = { template, ...clauses }
         const sep = findRepeatSeparator(this.simplifiedRule)
         if (sep) entry.joinBy = sep
-        if (findRepeatTrailing(this.simplifiedRule)) entry.joinByTrailing = true
-        if (findRepeatLeading(this.simplifiedRule)) entry.joinByLeading = true
+        if (findRepeatFlag(this.simplifiedRule, 'trailing')) entry.joinByTrailing = true
+        if (findRepeatFlag(this.simplifiedRule, 'leading')) entry.joinByLeading = true
         if (Object.keys(joinByField).length > 0) entry.joinByField = joinByField
         return entry
     }
@@ -2228,54 +2228,35 @@ export function findRepeatSeparator(rule: Rule): string | undefined {
 }
 
 /**
- * Matches `findRepeatSeparator` but returns the `trailing: true`
- * metadata instead of the separator. Tree-sitter allows `sepBy` with
- * trailing separators (e.g. rust's `{ a, b, }` where the final `,`
- * is optional); Evaluate captures that in `repeat.trailing`. Render
- * uses this hint to know whether to look for a trailing separator
- * token in the parse tree when emitting `$$$CHILDREN`.
+ * Does `rule` contain a repeat/repeat1 that declares the given flag?
+ *
+ * `trailing: true` marks `sepBy` shapes where the final separator is
+ * optional (e.g. rust's `{ a, b, }`). `leading: true` marks the
+ * mirror shape `sep, x, (sep x)*` (rust's or_pattern `| a | b`, if
+ * written as a single repeat). Evaluate's `liftCommaSep` captures
+ * both from their canonical seq patterns. Render reads each flag via
+ * the `joinByTrailing` / `joinByLeading` template hints to know
+ * whether to probe for a flanking anon-separator token when emitting
+ * `$$$CHILDREN`.
+ *
+ * Walks the same transparent-wrapper set as `findRepeatSeparator`
+ * (seq / choice / optional / variant / clause / group / field).
  */
-export function findRepeatTrailing(rule: Rule): boolean {
+export function findRepeatFlag(rule: Rule, flag: 'trailing' | 'leading'): boolean {
     switch (rule.type) {
         case 'repeat':
         case 'repeat1':
-            if (rule.trailing) return true
-            return findRepeatTrailing(rule.content)
+            if (rule[flag]) return true
+            return findRepeatFlag(rule.content, flag)
         case 'seq':
         case 'choice':
-            return rule.members.some(m => findRepeatTrailing(m))
+            return rule.members.some(m => findRepeatFlag(m, flag))
         case 'optional':
         case 'variant':
         case 'clause':
         case 'group':
         case 'field':
-            return findRepeatTrailing(rule.content)
-        default:
-            return false
-    }
-}
-
-/**
- * Matches `findRepeatTrailing` but for the `leading: true` marker.
- * Leading-separator patterns are `sep, x, sep x*` — rust's or_pattern
- * (`| a | b`) and typescript union/intersection types are the canonical
- * examples. Evaluate's `liftCommaSep` captures this as `repeat.leading`.
- */
-export function findRepeatLeading(rule: Rule): boolean {
-    switch (rule.type) {
-        case 'repeat':
-        case 'repeat1':
-            if (rule.leading) return true
-            return findRepeatLeading(rule.content)
-        case 'seq':
-        case 'choice':
-            return rule.members.some(m => findRepeatLeading(m))
-        case 'optional':
-        case 'variant':
-        case 'clause':
-        case 'group':
-        case 'field':
-            return findRepeatLeading(rule.content)
+            return findRepeatFlag(rule.content, flag)
         default:
             return false
     }

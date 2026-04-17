@@ -193,16 +193,6 @@ function tryHoistSiblingVariants(
     if (!parentKind) return bail('no current rule kind (variant()/transform() called outside rule callback?)')
     const refs: RuntimeRule[] = []
     const isUpperCase = core.type === core.type.toUpperCase()
-    // Reapply the captured prec stack inner-first so the outer-most
-    // wrapper stays outermost — matches how path-descent reassembles
-    // prec in applyPath.
-    const wrapInPrecStack = (body: RuntimeRule): RuntimeRule => {
-        let wrapped = body
-        for (let i = precStack.length - 1; i >= 0; i--) {
-            wrapped = reconstructPrec(precStack[i]!, wrapped)
-        }
-        return wrapped
-    }
     for (const p of parsed) {
         const resolvedAlt = p.altIdx < 0 ? choiceMembers.length + p.altIdx : p.altIdx
         const altContent = choiceMembers[resolvedAlt]!
@@ -211,7 +201,10 @@ function tryHoistSiblingVariants(
         // Wrap each variant's body in the parent's prec context so
         // tree-sitter's conflict resolver sees the same precedence /
         // associativity the author declared on the parent rule.
-        const hoistedBody = wrapInPrecStack(hoistedSeq)
+        // `wrapInPrec` reapplies precStack inner-first so the outer-
+        // most wrapper stays outermost — matches path-descent's
+        // reassembly in applyPath.
+        const hoistedBody = wrapInPrec(hoistedSeq, precStack)
         const visibleName = `${parentKind}_${p.v.name}`
         registerPolymorphVariant(parentKind, p.v.name)
         registerSyntheticRule(visibleName, hoistedBody)
@@ -329,22 +322,16 @@ function resolvePatch(
         }
         // Bare STRING content: tree-sitter strips FIELD wrappers around
         // anonymous string literals during grammar normalization (fields
-        // must label structural content, not bare tokens). Mirror
-        // variant()'s pattern below: synthesize a hidden `_kw_<name>`
-        // rule that produces the string, register it, and wrap a SYMBOL
-        // reference instead. FIELD around SYMBOL survives the normalizer.
-        //
-        // Wrap the hidden rule's body with high precedence so soft
-        // keywords (e.g. python's `match`/`case`, which are also valid
-        // identifiers) don't create parser conflicts. The precedence
-        // tells tree-sitter to prefer the keyword interpretation when
-        // the lexer sees this token at the position enrich promoted.
-        // Bare STRING content: synthesize a hidden _kw_<name> rule and
-        // substitute a SYMBOL reference so tree-sitter's normalizer
-        // preserves the FIELD wrapper. Shared helper in synthetic-rules.ts
-        // — called from both here (field placeholder) and dsl/field.ts
-        // (two-arg field(name, 'literal')). Passes the prec stack so
-        // synthetic rules inherit the outer precedence context.
+        // must label structural content, not bare tokens). `maybeKeywordSymbol`
+        // synthesizes a hidden `_kw_<name>` rule that produces the
+        // string and returns a SYMBOL reference — FIELD around SYMBOL
+        // survives the normalizer. The hidden rule's body is wrapped
+        // in high precedence so soft keywords (python `match`/`case`
+        // that are also valid identifiers) win the keyword interpretation
+        // at the position enrich promoted. Shared helper used by both
+        // this one-arg field() placeholder and dsl/field.ts's two-arg
+        // form; receives the prec stack so synthetic rules inherit
+        // the outer precedence context.
         const maybeSymbolized = maybeKeywordSymbol(
             patch.name,
             content,

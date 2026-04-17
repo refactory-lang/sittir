@@ -501,36 +501,46 @@ export function installGrammarWrapper(): void {
         currentOptsRules = null
         currentBlankFn = null
 
-        // Append hoist-registered conflicts directly to the RESULT's
-        // conflicts array. tree-sitter has already resolved base.conflicts
-        // + opts.conflicts at this point into a concrete array; we
-        // push our own entries (as SYMBOL-ref objects, which the output
-        // JSON serializer emits identically to $-proxy results).
-        // Collect conflicts registered during pass 2 AS WELL — drain
-        // once more and combine.
-        const allConflicts = [...pendingConflictsAfterGrammar, ...drainConflicts()]
-        if (result && allConflicts.length > 0 && typeof result === 'object') {
-            const grammar = (result as { grammar?: Record<string, unknown> }).grammar ?? result
-            const current = Array.isArray(grammar.conflicts) ? grammar.conflicts as unknown[] : []
-            // tree-sitter's serialized conflicts use bare rule-name
-            // strings (not SYMBOL-shaped objects), so match that shape.
-            for (const group of allConflicts) {
-                current.push([...group])
+        // Append hoist-registered conflicts + swap blank synthetic-rule
+        // placeholders for real captured content. Wrapped in try/finally
+        // so a throw anywhere in this post-nativeGrammar assembly still
+        // drains accumulator state — without the finally, a throw here
+        // would leak `currentSyntheticRules` / `currentConflicts` /
+        // `currentPolymorphVariants` into the NEXT invocation's state,
+        // producing confusing "ghost registrations" downstream.
+        try {
+            const allConflicts = [...pendingConflictsAfterGrammar, ...drainConflicts()]
+            if (result && allConflicts.length > 0 && typeof result === 'object') {
+                const grammar = (result as { grammar?: Record<string, unknown> }).grammar ?? result
+                const current = Array.isArray(grammar.conflicts) ? grammar.conflicts as unknown[] : []
+                // tree-sitter's serialized conflicts use bare rule-name
+                // strings (not SYMBOL-shaped objects), so match that shape.
+                for (const group of allConflicts) {
+                    current.push([...group])
+                }
+                grammar.conflicts = current
             }
-            grammar.conflicts = current
-        }
 
-        // Replace blank entries with real captured content
-        const synthetic = drainSyntheticRules()
-        if (result && synthetic.size > 0 && typeof result === 'object') {
-            const grammar = (result as { grammar?: Record<string, unknown> }).grammar ?? result
-            if ('rules' in grammar) {
-                const rules = grammar.rules as Record<string, unknown>
-                for (const [name, content] of synthetic) {
-                    rules[name] = content
+            // Replace blank entries with real captured content
+            const synthetic = drainSyntheticRules()
+            if (result && synthetic.size > 0 && typeof result === 'object') {
+                const grammar = (result as { grammar?: Record<string, unknown> }).grammar ?? result
+                if ('rules' in grammar) {
+                    const rules = grammar.rules as Record<string, unknown>
+                    for (const [name, content] of synthetic) {
+                        rules[name] = content
+                    }
                 }
             }
+            return result
+        } finally {
+            // Belt-and-suspenders: the drains above already emptied
+            // these on the success path, but a throw mid-assembly would
+            // leak state. Unconditional drain here is idempotent.
+            drainSyntheticRules()
+            drainConflicts()
+            drainPolymorphVariants()
+            currentRuleKind = null
         }
-        return result
     }
 }

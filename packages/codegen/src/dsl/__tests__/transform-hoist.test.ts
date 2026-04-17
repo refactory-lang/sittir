@@ -69,9 +69,9 @@ describe('tryHoistSiblingVariants (via transform)', () => {
             const synth = drainSyntheticRules()
             expect(synth.has('demo_empty')).toBe(true)
             expect(synth.has('demo_list')).toBe(true)
-            const semiBody: any = synth.get('demo_empty')
-            expect(semiBody.type).toBe('prec_left')
-            expect(semiBody.value).toBe(2)
+            const emptyBody: any = synth.get('demo_empty')
+            expect(emptyBody.type).toBe('prec_left')
+            expect(emptyBody.value).toBe(2)
 
             // Conflicts: one group (all siblings) + one self-conflict per
             // sibling. Self-conflicts mirror the pattern the base
@@ -114,6 +114,40 @@ describe('tryHoistSiblingVariants (via transform)', () => {
             // Per-patch alias registrations don't register any conflicts,
             // so drainConflicts() is empty.
             expect(conflicts).toEqual([])
+        } finally {
+            setCurrentRuleKind(null)
+            drainAll()
+        }
+    })
+
+    it('bails on mixed choice positions (variants at different choicePos)', () => {
+        // Sibling variant patches must all target the SAME choice in
+        // the parent seq. Two patches at different positions have no
+        // shared choice, so tryHoistSiblingVariants bails to null and
+        // each variant runs per-patch. Uses non-empty alts so the
+        // per-patch fallback completes without triggering the empty-
+        // match error (unrelated to this bail path).
+        drainAll()
+        setCurrentRuleKind('mixed')
+        try {
+            const g = globalThis as any
+            const original = g.seq(
+                g.choice({ type: 'symbol', name: 'A' } as any, { type: 'symbol', name: 'B' } as any),
+                { type: 'string', value: '|' } as any,
+                g.choice({ type: 'symbol', name: 'C' } as any, { type: 'symbol', name: 'D' } as any),
+            )
+            transform(original, {
+                '0/0': variant('left_a'),
+                '2/0': variant('right_c'),
+            })
+            // Mixed-position bail means no cross-sibling conflict group
+            // (each variant lands as a plain per-patch alias instead).
+            const conflicts = drainConflicts()
+            expect(conflicts).toEqual([])
+            // Per-patch aliases DID run and DID register polymorph
+            // metadata — each alias.
+            const variants = drainPolymorphVariants()
+            expect(variants.map(v => v.child).sort()).toEqual(['left_a', 'right_c'])
         } finally {
             setCurrentRuleKind(null)
             drainAll()

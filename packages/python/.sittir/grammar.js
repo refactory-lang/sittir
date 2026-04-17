@@ -502,26 +502,33 @@ function installGrammarWrapper() {
     }
     currentOptsRules = null;
     currentBlankFn = null;
-    const allConflicts = [...pendingConflictsAfterGrammar, ...drainConflicts()];
-    if (result && allConflicts.length > 0 && typeof result === "object") {
-      const grammar2 = result.grammar ?? result;
-      const current = Array.isArray(grammar2.conflicts) ? grammar2.conflicts : [];
-      for (const group of allConflicts) {
-        current.push([...group]);
+    try {
+      const allConflicts = [...pendingConflictsAfterGrammar, ...drainConflicts()];
+      if (result && allConflicts.length > 0 && typeof result === "object") {
+        const grammar2 = result.grammar ?? result;
+        const current = Array.isArray(grammar2.conflicts) ? grammar2.conflicts : [];
+        for (const group of allConflicts) {
+          current.push([...group]);
+        }
+        grammar2.conflicts = current;
       }
-      grammar2.conflicts = current;
-    }
-    const synthetic = drainSyntheticRules();
-    if (result && synthetic.size > 0 && typeof result === "object") {
-      const grammar2 = result.grammar ?? result;
-      if ("rules" in grammar2) {
-        const rules = grammar2.rules;
-        for (const [name, content] of synthetic) {
-          rules[name] = content;
+      const synthetic = drainSyntheticRules();
+      if (result && synthetic.size > 0 && typeof result === "object") {
+        const grammar2 = result.grammar ?? result;
+        if ("rules" in grammar2) {
+          const rules = grammar2.rules;
+          for (const [name, content] of synthetic) {
+            rules[name] = content;
+          }
         }
       }
+      return result;
+    } finally {
+      drainSyntheticRules();
+      drainConflicts();
+      drainPolymorphVariants();
+      currentRuleKind = null;
     }
-    return result;
   };
 }
 
@@ -641,19 +648,12 @@ function tryHoistSiblingVariants(rule, variantEntries) {
   if (!parentKind) return bail("no current rule kind (variant()/transform() called outside rule callback?)");
   const refs = [];
   const isUpperCase = core.type === core.type.toUpperCase();
-  const wrapInPrecStack2 = (body) => {
-    let wrapped = body;
-    for (let i = precStack.length - 1; i >= 0; i--) {
-      wrapped = reconstructPrec(precStack[i], wrapped);
-    }
-    return wrapped;
-  };
   for (const p of parsed) {
     const resolvedAlt = p.altIdx < 0 ? choiceMembers.length + p.altIdx : p.altIdx;
     const altContent = choiceMembers[resolvedAlt];
     const hoistedMembers = seqMembers.map((m, i) => i === resolvedPos ? altContent : m);
     const hoistedSeq = reconstructContainer(core, hoistedMembers);
-    const hoistedBody = wrapInPrecStack2(hoistedSeq);
+    const hoistedBody = wrapInPrec(hoistedSeq, precStack);
     const visibleName = `${parentKind}_${p.v.name}`;
     registerPolymorphVariant(parentKind, p.v.name);
     registerSyntheticRule(visibleName, hoistedBody);

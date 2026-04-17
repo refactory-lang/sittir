@@ -2754,14 +2754,7 @@ export const _factoryMap = {
 } as const;
 export type _FactoryMap = typeof _factoryMap;
 
-type _FactoryShapeOf<F> =
-  F extends (text: string) => unknown ? 'text'
-  : F extends (config: object | undefined) => unknown ? 'config'
-  : F extends (config: object) => unknown ? 'config'
-  : F extends (...args: unknown[]) => unknown ? 'children'
-  : never;
-export type _FactoryShapes = { [K in keyof _FactoryMap]: _FactoryShapeOf<_FactoryMap[K]> };
-export const _factoryShapes: _FactoryShapes = {
+export const _factoryShapes = {
   "module": "children",
   "import_statement": "config",
   "import_prefix": "text",
@@ -2889,4 +2882,5 @@ export const _factoryShapes: _FactoryShapes = {
   "assignment_type": "config",
   "assignment_typed": "config",
   "format_expression": "config",
-} as _FactoryShapes;
+} as const satisfies Record<string, 'config' | 'children' | 'text'>;
+export type _FactoryShapes = typeof _factoryShapes;

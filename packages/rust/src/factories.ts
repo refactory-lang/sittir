@@ -4209,14 +4209,7 @@ export const _factoryMap = {
 } as const;
 export type _FactoryMap = typeof _factoryMap;
 
-type _FactoryShapeOf<F> =
-  F extends (text: string) => unknown ? 'text'
-  : F extends (config: object | undefined) => unknown ? 'config'
-  : F extends (config: object) => unknown ? 'config'
-  : F extends (...args: unknown[]) => unknown ? 'children'
-  : never;
-export type _FactoryShapes = { [K in keyof _FactoryMap]: _FactoryShapeOf<_FactoryMap[K]> };
-export const _factoryShapes: _FactoryShapes = {
+export const _factoryShapes = {
   "source_file": "config",
   "expression_statement": "children",
   "macro_definition": "config",
@@ -4224,7 +4217,7 @@ export const _factoryShapes: _FactoryShapes = {
   "token_tree_pattern": "children",
   "token_binding_pattern": "config",
   "token_repetition_pattern": "children",
-  "fragment_specifier": "config",
+  "fragment_specifier": "text",
   "token_tree": "children",
   "token_repetition": "children",
   "attribute_item": "config",
@@ -4361,7 +4354,7 @@ export const _factoryShapes: _FactoryShapes = {
   "raw_string_literal": "config",
   "char_literal": "text",
   "escape_sequence": "text",
-  "boolean_literal": "config",
+  "boolean_literal": "text",
   "comment": "children",
   "line_comment": "config",
   "block_comment": "config",
@@ -4376,7 +4369,7 @@ export const _factoryShapes: _FactoryShapes = {
   "string_content": "text",
   "raw_string_literal_content": "text",
   "float_literal": "text",
-  "primitive_type": "config",
+  "primitive_type": "text",
   "mod_item_inline": "config",
   "struct_item_brace": "config",
   "struct_item_tuple": "config",
@@ -4398,4 +4391,5 @@ export const _factoryShapes: _FactoryShapes = {
   "type_identifier": "text",
   "field_identifier": "text",
   "shorthand_field_identifier": "text",
-} as _FactoryShapes;
+} as const satisfies Record<string, 'config' | 'children' | 'text'>;
+export type _FactoryShapes = typeof _factoryShapes;

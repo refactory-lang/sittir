@@ -4689,14 +4689,7 @@ export const _factoryMap = {
 } as const;
 export type _FactoryMap = typeof _factoryMap;
 
-type _FactoryShapeOf<F> =
-  F extends (text: string) => unknown ? 'text'
-  : F extends (config: object | undefined) => unknown ? 'config'
-  : F extends (config: object) => unknown ? 'config'
-  : F extends (...args: unknown[]) => unknown ? 'children'
-  : never;
-export type _FactoryShapes = { [K in keyof _FactoryMap]: _FactoryShapeOf<_FactoryMap[K]> };
-export const _factoryShapes: _FactoryShapes = {
+export const _factoryShapes = {
   "program": "config",
   "hash_bang_line": "text",
   "export_statement": "config",
@@ -4839,7 +4832,7 @@ export const _factoryShapes: _FactoryShapes = {
   "enum_body": "config",
   "enum_assignment": "config",
   "type_alias_declaration": "config",
-  "accessibility_modifier": "config",
+  "accessibility_modifier": "text",
   "override_modifier": "text",
   "required_parameter": "config",
   "optional_parameter": "config",
@@ -4907,4 +4900,5 @@ export const _factoryShapes: _FactoryShapes = {
   "index_signature_colon": "config",
   "index_signature_mapped_type_clause": "children",
   "type_identifier": "text",
-} as _FactoryShapes;
+} as const satisfies Record<string, 'config' | 'children' | 'text'>;
+export type _FactoryShapes = typeof _factoryShapes;

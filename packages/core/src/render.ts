@@ -110,18 +110,19 @@ function render(node: AnyNodeData, ctx: InternalRenderContext): string {
 		const fieldKey = name.toLowerCase();
 		const clauseKey = `${fieldKey}`;
 
-		// `$TEXT` — emit the node's native text as captured by readNode.
-		// Used for rules whose tokens include external-scanner symbols
-		// (e.g. rust's `raw_string_literal`: `_raw_string_literal_start`
-		// and `_raw_string_literal_end` are scanner-generated and never
-		// appear as named children, so a field-by-field template can't
-		// reconstruct them). When node.text is absent (factory-built
-		// nodes don't carry a tree-sitter source span), fall back to
-		// joining all field + children values as a best-effort — lets
-		// round-trip tests for `$TEXT` rules still produce non-empty
-		// output.
+		// `$TEXT` — emit the node's native text. Used for rules whose
+		// tokens include external-scanner symbols (e.g. rust's
+		// `raw_string_literal`: `_raw_string_literal_start` and
+		// `_raw_string_literal_end` are scanner-generated and never
+		// appear as named children, so a field-by-field template
+		// can't reconstruct them).
 		if (fieldKey === 'text') {
+			// Parsed-tree path: readNode captured the full source span.
 			if (node.text !== undefined && node.text !== '') return node.text;
+			// Factory-built path: the node never saw a source span.
+			// Best-effort concatenate the fields + children so round-
+			// trip tests for `$TEXT` rules still produce non-empty
+			// output; better than silent ''.
 			const parts: string[] = [];
 			if (node.fields) {
 				for (const v of Object.values(node.fields)) {
@@ -199,26 +200,8 @@ function render(node: AnyNodeData, ctx: InternalRenderContext): string {
 			// named-child run and emit it when present — preserves
 			// the original's with-or-without-flank state so ast-match
 			// stays stable.
-			let prefix = '';
-			let suffix = '';
-			if (ruleObj?.['joinByLeading'] === true) {
-				const firstNamedIdx = node.children.findIndex(
-					(c) => (c as AnyNodeData).named !== false,
-				);
-				if (firstNamedIdx > 0) {
-					const leader = node.children[firstNamedIdx - 1] as AnyNodeData;
-					if (leader && leader.named === false && leader.text === sep) prefix = sep;
-				}
-			}
-			if (ruleObj?.['joinByTrailing'] === true) {
-				const lastNamedIdx = node.children.findLastIndex(
-					(c) => (c as AnyNodeData).named !== false,
-				);
-				if (lastNamedIdx >= 0 && lastNamedIdx < node.children.length - 1) {
-					const trailer = node.children[lastNamedIdx + 1] as AnyNodeData;
-					if (trailer && trailer.named === false && trailer.text === sep) suffix = sep;
-				}
-			}
+			const prefix = ruleObj?.['joinByLeading'] === true ? flankSep(node.children, 'leading', sep) : '';
+			const suffix = ruleObj?.['joinByTrailing'] === true ? flankSep(node.children, 'trailing', sep) : '';
 			return prefix + joined + suffix;
 		}
 
@@ -423,6 +406,26 @@ function renderClause(
  * when a single rule has multiple multi-valued slots with different
  * separators (e.g. rust tuple_expression: `attributes` joins with `\n`,
  * `rest` joins with `,`). */
+/**
+ * Probe a children array for an anonymous separator token immediately
+ * before (`leading`) or after (`trailing`) the run of named children.
+ * Returns the separator when one is found adjacent to the named-child
+ * boundary, `''` otherwise — caller uses the return value verbatim as
+ * the prefix/suffix to append to the joined slot output.
+ */
+function flankSep(children: readonly unknown[], side: 'leading' | 'trailing', sep: string): string {
+	const isNamed = (c: unknown): boolean =>
+		typeof c === 'object' && c !== null && (c as AnyNodeData).named !== false;
+	const namedIdx = side === 'leading'
+		? children.findIndex(isNamed)
+		: children.findLastIndex(isNamed);
+	if (namedIdx < 0) return '';
+	const neighborIdx = side === 'leading' ? namedIdx - 1 : namedIdx + 1;
+	if (neighborIdx < 0 || neighborIdx >= children.length) return '';
+	const neighbor = children[neighborIdx] as AnyNodeData | undefined;
+	return neighbor && neighbor.named === false && neighbor.text === sep ? sep : '';
+}
+
 function resolveJoinBy(ruleObj: Record<string, unknown> | undefined, varName: string): string {
 	if (!ruleObj) return ' ';
 	const joinByField = ruleObj['joinByField'] as Record<string, string> | undefined;

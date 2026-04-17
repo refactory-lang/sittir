@@ -142,6 +142,24 @@ describe('render', () => {
 		const node = { type: 'function_item' } as AnyNodeData;
 		expect(() => render(node)).toThrow("has no 'fields'");
 	});
+
+	it('throws when a single-slot field is rendered from an empty array', () => {
+		// Optional fields should be ABSENT (undefined), not empty-array.
+		// An empty array reaching a single-slot `$NAME` is a signal of
+		// an upstream bug (factory / readNode / from produced a
+		// zero-length list where exactly one was expected). Silently
+		// emitting '' would corrupt output — e.g. a `binary_expression`
+		// with an empty `left` field renders as `  + 2` missing the
+		// operand. Throw with a message that names both the rule and
+		// field so callers can pinpoint the source.
+		const node: AnyNodeData = {
+			type: 'binary_expression',
+			fields: { left: [], operator: { type: 'op', text: '+' }, right: { type: 'literal', text: '2' } },
+		};
+		expect(() => render(node)).toThrow(/empty array/);
+		expect(() => render(node)).toThrow(/binary_expression/);
+		expect(() => render(node)).toThrow(/'left'/);
+	});
 });
 
 // The $TEXT template slot and its fallback path ship with the

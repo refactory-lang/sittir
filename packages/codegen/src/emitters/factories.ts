@@ -206,7 +206,12 @@ export function emitFactories(config: EmitFactoriesConfig): string {
             node.modelType === 'polymorph'
         let shape: 'config' | 'children' | 'text'
         if (node.modelType === 'container') shape = 'children'
-        else if (node.modelType === 'leaf' || node.modelType === 'keyword' || node.modelType === 'token') shape = 'text'
+        else if (
+            node.modelType === 'leaf'
+            || node.modelType === 'keyword'
+            || node.modelType === 'token'
+            || node.modelType === 'enum'
+        ) shape = 'text'
         else shape = 'config'
         mapEntries.push({ kind, factory: node.rawFactoryName, typeName: node.typeName, fluent, shape })
     }
@@ -245,24 +250,24 @@ export function emitFactories(config: EmitFactoriesConfig): string {
     // `factory(text)` without inspecting function.toString() at
     // runtime (which breaks under minification / bundler renames).
     //
-    // The type `_FactoryShapes` is DERIVED from `_FactoryMap` via a
-    // conditional-type mapper: each factory's first-param shape picks
-    // its dispatch tag. The runtime literal below must `satisfies`
-    // that derived type, so any drift between the emitted string and
-    // the factory's actual call signature is a compile error — not a
-    // runtime surprise when the validator routes the wrong way.
-    lines.push('type _FactoryShapeOf<F> =')
-    lines.push(`  F extends (text: string) => unknown ? 'text'`)
-    lines.push(`  : F extends (config: object | undefined) => unknown ? 'config'`)
-    lines.push(`  : F extends (config: object) => unknown ? 'config'`)
-    lines.push(`  : F extends (...args: unknown[]) => unknown ? 'children'`)
-    lines.push(`  : never;`)
-    lines.push('export type _FactoryShapes = { [K in keyof _FactoryMap]: _FactoryShapeOf<_FactoryMap[K]> };')
-    lines.push('export const _factoryShapes: _FactoryShapes = {')
+    // An earlier attempt derived this type from `_FactoryMap` via a
+    // conditional-type mapper so each tag had to match the factory's
+    // first-param shape. It didn't work: function-parameter
+    // contravariance under TS strict-function-types made every
+    // non-'text' branch unreachable (a concrete `Config` interface
+    // doesn't extend the mapper's `object` probe), and the
+    // compensating `as` cast silently laundered mismatches. Shape is
+    // now a plain record; `as const satisfies` keeps the emitted
+    // string literals narrow and catches typos / accidental widening,
+    // which is the useful part that survives. Cross-checking tags
+    // against real factory signatures isn't expressible in TS today
+    // for the signature shapes we emit.
+    lines.push('export const _factoryShapes = {')
     for (const { kind, shape } of mapEntries) {
         lines.push(`  ${JSON.stringify(kind)}: ${JSON.stringify(shape)},`)
     }
-    lines.push(`} as _FactoryShapes;`)
+    lines.push(`} as const satisfies Record<string, 'config' | 'children' | 'text'>;`)
+    lines.push('export type _FactoryShapes = typeof _factoryShapes;')
     lines.push('')
 
     return lines.join('\n')

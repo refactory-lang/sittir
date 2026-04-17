@@ -172,21 +172,19 @@ export async function validateFactoryRoundTrip(
 	const factoryModulePath = FACTORY_MODULE_PATHS[grammar];
 	let factoryMap: Record<string, (config?: any) => unknown> = {};
 	let factoryShapes: Record<string, 'config' | 'children' | 'text'> = {};
-	if (factoryModulePath) {
+	const importFailure: { message: string } | null = await (async () => {
+		if (!factoryModulePath) return null;
 		try {
 			const factoryModule = await import(new URL(factoryModulePath, import.meta.url).pathname);
 			factoryMap = factoryModule._factoryMap ?? {};
 			factoryShapes = factoryModule._factoryShapes ?? {};
+			return null;
 		} catch (e) {
-			// Factory module failed to load. stripToFactory fallback
-			// makes the rest of the validator work, but it renders ALL
-			// factory-round-trip results meaningless — we'd be validating
-			// the strip-path, not the factory path. Log to stderr so the
-			// maintainer notices, and emit a single error row so the
-			// diagnostic surfaces in overrides.suggested.ts's section.
-			console.error(`[validate-factory-roundtrip] failed to load ${factoryModulePath}: ${(e as Error)?.message ?? e}`);
+			const message = `[validate-factory-roundtrip] failed to load ${factoryModulePath}: ${(e as Error)?.message ?? e}`;
+			console.error(message);
+			return { message };
 		}
-	}
+	})();
 
 	const entries = loadCorpusEntries(grammar);
 	const errors: { kind: string; entry?: string; message: string; input?: string; rendered?: string }[] = [];
@@ -196,6 +194,17 @@ export async function validateFactoryRoundTrip(
 	let astMatchPass = 0;
 	let skip = 0;
 	let total = 0;
+
+	// Surface factory-module load failure in the error list. Without
+	// this row, an empty `factoryMap` silently routes every kind to
+	// `stripToFactory` and the reported "factory pass" count reflects
+	// the strip path, not the factory path — a false-green.
+	if (importFailure) {
+		errors.push({
+			kind: '(factory-module-load)',
+			message: importFailure.message,
+		});
+	}
 
 	for (const entry of entries) {
 		const tree1 = parser.parse(entry.source) as TSTree;
