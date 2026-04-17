@@ -369,31 +369,91 @@ export function declarationList(...children: T.DeclarationStatement[]) {
   };
 }
 
-export function structItem(config: T.StructItemConfig) {
+export function structItem(config: T.StructItemUFormBraceConfig | T.StructItemUFormTupleConfig | T.StructItemUFormUnitConfig) {
+  if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === 'struct_item_brace') return structItemUFormBrace(config as T.StructItemUFormBraceConfig);
+  if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === 'struct_item_tuple') return structItemUFormTuple(config as T.StructItemUFormTupleConfig);
+  if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === 'struct_item_unit') return structItemUFormUnit(config as T.StructItemUFormUnitConfig);
+  if (config && (config as any).variant === 'brace') return structItemUFormBrace(config as T.StructItemUFormBraceConfig);
+  if (config && (config as any).variant === 'tuple') return structItemUFormTuple(config as T.StructItemUFormTupleConfig);
+  if (config && (config as any).variant === 'unit') return structItemUFormUnit(config as T.StructItemUFormUnitConfig);
+  return structItemUFormBrace(config as T.StructItemUFormBraceConfig);
+}
+export function structItemUFormBrace(config: T.StructItemUFormBraceConfig) {
   const fields = {
     visibility_modifier: config?.visibilityModifier,
     name: config?.name,
     type_parameters: config?.typeParameters,
-    body: config?.body,
   };
   const children = config?.children ?? [];
   return {
     type: 'struct_item' as const,
     named: true as const,
+    variant: '_form_brace' as const,
     fields,
     children,
-    visibilityModifier(visibilityModifier_?: T.VisibilityModifier | undefined) { return _fs(config, structItem, 'visibilityModifier', visibilityModifier_, fields.visibility_modifier); },
-    name(name_?: T._TypeIdentifier) { return _fs(config, structItem, 'name', name_, fields.name); },
-    typeParameters(typeParameters_?: T.TypeParameters | undefined) { return _fs(config, structItem, 'typeParameters', typeParameters_, fields.type_parameters); },
-    body(body_?: T.FieldDeclarationList | undefined) { return _fs(config, structItem, 'body', body_, fields.body); },
+    visibilityModifier(visibilityModifier_?: T.VisibilityModifier | undefined) { return _fs(config, structItemUFormBrace, 'visibilityModifier', visibilityModifier_, fields.visibility_modifier); },
+    name(name_?: T._TypeIdentifier) { return _fs(config, structItemUFormBrace, 'name', name_, fields.name); },
+    typeParameters(typeParameters_?: T.TypeParameters | undefined) { return _fs(config, structItemUFormBrace, 'typeParameters', typeParameters_, fields.type_parameters); },
     getChild() { return children[0]; },
-    setChild(child: T.WhereClause) { return structItem({ ...(config ?? {}), children: [child] }); },
+    setChild(child: T.StructItemBrace) { return structItemUFormBrace({ ...(config ?? {}), children: [child] }); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(target: T.StructItemTree) { const r = target.range(); return toEdit(this, r); },
+    replace(target: T.StructItemUFormBraceTree) { const r = target.range(); return toEdit(this, r); },
+  };
+}
+export function structItemUFormTuple(config: T.StructItemUFormTupleConfig) {
+  const fields = {
+    visibility_modifier: config?.visibilityModifier,
+    name: config?.name,
+    type_parameters: config?.typeParameters,
+  };
+  const children = config?.children ?? [];
+  return {
+    type: 'struct_item' as const,
+    named: true as const,
+    variant: '_form_tuple' as const,
+    fields,
+    children,
+    visibilityModifier(visibilityModifier_?: T.VisibilityModifier | undefined) { return _fs(config, structItemUFormTuple, 'visibilityModifier', visibilityModifier_, fields.visibility_modifier); },
+    name(name_?: T._TypeIdentifier) { return _fs(config, structItemUFormTuple, 'name', name_, fields.name); },
+    typeParameters(typeParameters_?: T.TypeParameters | undefined) { return _fs(config, structItemUFormTuple, 'typeParameters', typeParameters_, fields.type_parameters); },
+    getChild() { return children[0]; },
+    setChild(child: T.StructItemTuple) { return structItemUFormTuple({ ...(config ?? {}), children: [child] }); },
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.StructItemUFormTupleTree) { const r = target.range(); return toEdit(this, r); },
+  };
+}
+export function structItemUFormUnit(config: T.StructItemUFormUnitConfig) {
+  const fields = {
+    visibility_modifier: config?.visibilityModifier,
+    name: config?.name,
+    type_parameters: config?.typeParameters,
+  };
+  const children = config?.children ?? [];
+  return {
+    type: 'struct_item' as const,
+    named: true as const,
+    variant: '_form_unit' as const,
+    fields,
+    children,
+    visibilityModifier(visibilityModifier_?: T.VisibilityModifier | undefined) { return _fs(config, structItemUFormUnit, 'visibilityModifier', visibilityModifier_, fields.visibility_modifier); },
+    name(name_?: T._TypeIdentifier) { return _fs(config, structItemUFormUnit, 'name', name_, fields.name); },
+    typeParameters(typeParameters_?: T.TypeParameters | undefined) { return _fs(config, structItemUFormUnit, 'typeParameters', typeParameters_, fields.type_parameters); },
+    getChild() { return children[0]; },
+    setChild(child: T.StructItemUnit) { return structItemUFormUnit({ ...(config ?? {}), children: [child] }); },
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.StructItemUFormUnitTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2018,23 +2078,45 @@ export function arguments_(...children: (T.AttributeItem | T.Expression)[]) {
   };
 }
 
-export function arrayExpression(config: T.ArrayExpressionConfig) {
-  const fields = {
-    attributes: config?.attributes,
-    elements: config?.elements,
-  };
+export function arrayExpression(config: T.ArrayExpressionUFormSemiConfig | T.ArrayExpressionUFormListConfig) {
+  if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === 'array_expression_semi') return arrayExpressionUFormSemi(config as T.ArrayExpressionUFormSemiConfig);
+  if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === 'array_expression_list') return arrayExpressionUFormList(config as T.ArrayExpressionUFormListConfig);
+  if (config && (config as any).variant === 'semi') return arrayExpressionUFormSemi(config as T.ArrayExpressionUFormSemiConfig);
+  if (config && (config as any).variant === 'list') return arrayExpressionUFormList(config as T.ArrayExpressionUFormListConfig);
+  return arrayExpressionUFormSemi(config as T.ArrayExpressionUFormSemiConfig);
+}
+export function arrayExpressionUFormSemi(config: T.ArrayExpressionUFormSemiConfig) {
+  const children = config?.children ?? [];
   return {
     type: 'array_expression' as const,
     named: true as const,
-    fields,
-    attributes(...attributes_: T.AttributeItem[]) { return _fsm(config, arrayExpression, 'attributes', attributes_, fields.attributes); },
-    elements(elements_?: T.Expression | T.AttributeItem) { return _fs(config, arrayExpression, 'elements', elements_, fields.elements); },
+    variant: '_form_semi' as const,
+    children,
+    getChild() { return children[0]; },
+    setChild(child: T.ArrayExpressionSemi) { return arrayExpressionUFormSemi({ ...(config ?? {}), children: [child] }); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(target: T.ArrayExpressionTree) { const r = target.range(); return toEdit(this, r); },
+    replace(target: T.ArrayExpressionUFormSemiTree) { const r = target.range(); return toEdit(this, r); },
+  };
+}
+export function arrayExpressionUFormList(config: T.ArrayExpressionUFormListConfig) {
+  const children = config?.children ?? [];
+  return {
+    type: 'array_expression' as const,
+    named: true as const,
+    variant: '_form_list' as const,
+    children,
+    getChild() { return children[0]; },
+    setChild(child: T.ArrayExpressionList) { return arrayExpressionUFormList({ ...(config ?? {}), children: [child] }); },
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.ArrayExpressionUFormListTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2056,18 +2138,14 @@ export function parenthesizedExpression(child: T.Expression) {
 export function tupleExpression(config: T.TupleExpressionConfig) {
   const fields = {
     attributes: config?.attributes,
-    first: config?.first,
-    rest: config?.rest,
-    trailing: config?.trailing,
+    elements: config?.elements,
   };
   return {
     type: 'tuple_expression' as const,
     named: true as const,
     fields,
     attributes(...attributes_: T.AttributeItem[]) { return _fsm(config, tupleExpression, 'attributes', attributes_, fields.attributes); },
-    first(first_?: T.Expression) { return _fs(config, tupleExpression, 'first', first_, fields.first); },
-    rest(...rest_: T.Expression[]) { return _fsm(config, tupleExpression, 'rest', rest_, fields.rest); },
-    trailing(trailing_?: T.Expression | undefined) { return _fs(config, tupleExpression, 'trailing', trailing_, fields.trailing); },
+    elements(...elements_: T.Expression[]) { return _fsm(config, tupleExpression, 'elements', elements_, fields.elements); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -3266,6 +3344,52 @@ export function metavariable(text: string) {
   };
 }
 
+export function arrayExpressionSemi(config: T.ArrayExpressionSemiConfig) {
+  const fields = {
+    attributes: config?.attributes,
+    elements: config?.elements,
+    length: config?.length,
+  };
+  return {
+    type: 'array_expression_semi' as const,
+    named: true as const,
+    fields,
+    attributes(...attributes_: T.AttributeItem[]) { return _fsm(config, arrayExpressionSemi, 'attributes', attributes_, fields.attributes); },
+    elements(elements_?: T.Expression) { return _fs(config, arrayExpressionSemi, 'elements', elements_, fields.elements); },
+    length(length_?: T.Expression) { return _fs(config, arrayExpressionSemi, 'length', length_, fields.length); },
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.ArrayExpressionSemiTree) { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function arrayExpressionList(config: T.ArrayExpressionListConfig) {
+  const fields = {
+    attributes: config?.attributes,
+    elements: config?.elements,
+  };
+  const children = config?.children ?? [];
+  return {
+    type: 'array_expression_list' as const,
+    named: true as const,
+    fields,
+    children,
+    attributes(...attributes_: T.AttributeItem[]) { return _fsm(config, arrayExpressionList, 'attributes', attributes_, fields.attributes); },
+    elements(...elements_: T.Expression[]) { return _fsm(config, arrayExpressionList, 'elements', elements_, fields.elements); },
+    getChildren() { return children; },
+    setChildren(...items: T.AttributeItem[]) { return arrayExpressionList({ ...(config ?? {}), children: items }); },
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.ArrayExpressionListTree) { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
 export function stringContent(text: string) {
   if (text.length === 0) throw new Error(`string_content: text must be non-empty`); if (_wordRe.test(text) && RESERVED_KEYWORDS.has(text)) throw new Error(`string_content: text '${text}' is a reserved keyword`);
   return {
@@ -3310,6 +3434,50 @@ export function primitiveType(text: 'u8' | 'i8' | 'u16' | 'i16' | 'u32' | 'i32' 
     render: () => text,
     toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
     replace: (t: T.PrimitiveTypeTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
+  };
+}
+
+export function structItemBrace(config: T.StructItemBraceConfig) {
+  const fields = {
+    body: config?.body,
+  };
+  const children = config?.children ?? [];
+  return {
+    type: 'struct_item_brace' as const,
+    named: true as const,
+    fields,
+    children,
+    body(body_?: T.FieldDeclarationList) { return _fs(config, structItemBrace, 'body', body_, fields.body); },
+    getChild() { return children[0]; },
+    setChild(child: T.WhereClause) { return structItemBrace({ ...(config ?? {}), children: [child] }); },
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.StructItemBraceTree) { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function structItemTuple(config: T.StructItemTupleConfig) {
+  const fields = {
+    body: config?.body,
+  };
+  const children = config?.children ?? [];
+  return {
+    type: 'struct_item_tuple' as const,
+    named: true as const,
+    fields,
+    children,
+    body(body_?: T.OrderedFieldDeclarationList) { return _fs(config, structItemTuple, 'body', body_, fields.body); },
+    getChild() { return children[0]; },
+    setChild(child: T.WhereClause) { return structItemTuple({ ...(config ?? {}), children: [child] }); },
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.StructItemTupleTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -3775,10 +3943,14 @@ export type FluentKindMap = {
   "super": T.Super;
   "crate": T.Crate;
   "metavariable": T.Metavariable;
+  "array_expression_semi": FluentNode<"array_expression_semi", T.ArrayExpressionSemiConfig>;
+  "array_expression_list": FluentNode<"array_expression_list", T.ArrayExpressionListConfig>;
   "string_content": T.StringContent;
   "raw_string_literal_content": T.RawStringLiteralContent;
   "float_literal": T.FloatLiteral;
   "primitive_type": T.PrimitiveType;
+  "struct_item_brace": FluentNode<"struct_item_brace", T.StructItemBraceConfig>;
+  "struct_item_tuple": FluentNode<"struct_item_tuple", T.StructItemTupleConfig>;
   "range_expression_binary": FluentNode<"range_expression_binary", T.RangeExpressionBinaryConfig>;
   "range_expression_postfix": FluentNode<"range_expression_postfix", T.RangeExpressionPostfixConfig>;
   "range_expression_prefix": FluentNode<"range_expression_prefix", T.RangeExpressionPrefixConfig>;
@@ -3954,10 +4126,14 @@ export const _factoryMap = {
   "super": super_,
   "crate": crate,
   "metavariable": metavariable,
+  "array_expression_semi": arrayExpressionSemi,
+  "array_expression_list": arrayExpressionList,
   "string_content": stringContent,
   "raw_string_literal_content": rawStringLiteralContent,
   "float_literal": floatLiteral,
   "primitive_type": primitiveType,
+  "struct_item_brace": structItemBrace,
+  "struct_item_tuple": structItemTuple,
   "range_expression_binary": rangeExpressionBinary,
   "range_expression_postfix": rangeExpressionPostfix,
   "range_expression_prefix": rangeExpressionPrefix,

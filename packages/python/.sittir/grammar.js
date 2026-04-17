@@ -97,10 +97,12 @@ function parsePath(pathStr) {
   for (const part of parts) {
     if (part === "*") {
       segments.push({ kind: "wildcard" });
-    } else if (/^\d+$/.test(part)) {
+    } else if (/^-?\d+$/.test(part)) {
       segments.push({ kind: "index", value: Number(part) });
+    } else if (/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(part)) {
+      segments.push({ kind: "kind-match", name: part });
     } else {
-      throw new Error(`parsePath: invalid segment '${part}' in path '${pathStr}' \u2014 must be a numeric index or '*'`);
+      throw new Error(`parsePath: invalid segment '${part}' in path '${pathStr}' \u2014 must be a numeric index, '*', or a kind name ([a-zA-Z_][a-zA-Z0-9_]*)`);
     }
   }
   return segments;
@@ -118,19 +120,69 @@ function applyPath(rule, segments, patch, precStack) {
   }
   const [head, ...rest] = segments;
   const t = rule.type;
+  if (head.kind === "kind-match") {
+    return applyKindMatch(rule, head.name, rest, patch, precStack, false);
+  }
   if (isContainerType(t)) {
     return applyToMembers(rule, head, rest, patch, precStack);
   }
   if (isWrapperType(t)) {
-    if (head.kind === "wildcard" || head.kind === "index" && head.value === 0) {
+    const wrapperHit = head.kind === "wildcard" || head.kind === "index" && (head.value === 0 || head.value === -1);
+    if (wrapperHit) {
       const newContent = applyPath(contentOf(rule), rest, patch, precStack);
       return reconstructWrapper(rule, newContent);
     }
     throw new ApplyPathSkip(
-      `applyPath: index ${head.kind === "index" ? head.value : "*"} out of bounds \u2014 '${rule.type}' wraps a single content rule (only index 0 is valid)`
+      `applyPath: index ${head.kind === "index" ? head.value : "*"} out of bounds \u2014 '${rule.type}' wraps a single content rule (only index 0 / -1 is valid)`
     );
   }
   throw new ApplyPathSkip(`applyPath: cannot descend into '${rule.type}' rule (path has ${segments.length} segments left)`);
+}
+function applyKindMatch(rule, targetKind, rest, patch, precStack, insideNamedField) {
+  const result = walkKindMatch(rule, targetKind, rest, patch, precStack, insideNamedField);
+  if (!result.matched) {
+    throw new ApplyPathSkip(`applyPath: kind '${targetKind}' matched zero occurrences in this subtree`);
+  }
+  return result.rule;
+}
+function walkKindMatch(rule, targetKind, rest, patch, precStack, insideNamedField) {
+  if (rule === null || rule === void 0 || typeof rule !== "object" || typeof rule.type !== "string") {
+    return { rule, matched: false };
+  }
+  const t = rule.type;
+  if (isPrecWrapper(rule)) {
+    const stack = precStack ? [...precStack, rule] : [rule];
+    const inner = walkKindMatch(contentOf(rule), targetKind, rest, patch, stack, insideNamedField);
+    return { rule: inner.matched ? reconstructPrec(rule, inner.rule) : rule, matched: inner.matched };
+  }
+  if (t === "symbol" || t === "SYMBOL") {
+    const name = rule.name;
+    if (name !== targetKind) return { rule, matched: false };
+    if (insideNamedField) return { rule, matched: false };
+    const patched = rest.length === 0 ? typeof patch === "function" ? patch(rule, precStack) : patch : applyPath(rule, rest, patch, precStack);
+    return { rule: patched, matched: true };
+  }
+  if (t === "field" || t === "FIELD") {
+    const inner = walkKindMatch(contentOf(rule), targetKind, rest, patch, precStack, true);
+    return { rule: inner.matched ? reconstructWrapper(rule, inner.rule) : rule, matched: inner.matched };
+  }
+  if (isWrapperType(t)) {
+    const inner = walkKindMatch(contentOf(rule), targetKind, rest, patch, precStack, insideNamedField);
+    return { rule: inner.matched ? reconstructWrapper(rule, inner.rule) : rule, matched: inner.matched };
+  }
+  if (isContainerType(t)) {
+    const members = [...membersOf(rule)];
+    let anyMatched = false;
+    for (let i = 0; i < members.length; i++) {
+      const inner = walkKindMatch(members[i], targetKind, rest, patch, precStack, insideNamedField);
+      if (inner.matched) {
+        members[i] = inner.rule;
+        anyMatched = true;
+      }
+    }
+    return { rule: anyMatched ? reconstructContainer(rule, members) : rule, matched: anyMatched };
+  }
+  return { rule, matched: false };
 }
 function reconstructContainer(rule, members) {
   const t = rule.type;
@@ -143,12 +195,11 @@ function reconstructWrapper(rule, newContent) {
   if (t === "optional") return nativeRequired("optional")(newContent);
   if (t === "repeat" || t === "REPEAT" || t === "repeat1" || t === "REPEAT1") {
     const r = rule;
-    if (r.separator !== void 0 || r.leading !== void 0 || r.trailing !== void 0) {
-      throw new Error(
-        `reconstructWrapper: cannot path-address under a '${rule.type}' rule with separator/leading/trailing metadata \u2014 native repeat() can't round-trip those fields. Use flat positional transform or restructure the override.`
-      );
-    }
-    return nativeRequired(t === "repeat" || t === "REPEAT" ? "repeat" : "repeat1")(newContent);
+    const baseNode = nativeRequired(t === "repeat" || t === "REPEAT" ? "repeat" : "repeat1")(newContent);
+    if (r.separator !== void 0) baseNode.separator = r.separator;
+    if (r.leading !== void 0) baseNode.leading = r.leading;
+    if (r.trailing !== void 0) baseNode.trailing = r.trailing;
+    return baseNode;
   }
   if (t === "field" || t === "FIELD") {
     const name = rule.name;
@@ -178,12 +229,13 @@ function reconstructPrec(rule, newContent) {
 function applyToMembers(rule, head, rest, patch, precStack) {
   const members = [...membersOf(rule)];
   if (head.kind === "index") {
-    if (head.value < 0 || head.value >= members.length) {
+    const idx = head.value < 0 ? members.length + head.value : head.value;
+    if (idx < 0 || idx >= members.length) {
       throw new ApplyPathSkip(
         `applyPath: index ${head.value} out of bounds in ${rule.type} of length ${members.length}`
       );
     }
-    members[head.value] = applyPath(members[head.value], rest, patch, precStack);
+    members[idx] = applyPath(members[idx], rest, patch, precStack);
     return reconstructContainer(rule, members);
   }
   if (members.length === 0) {
@@ -208,6 +260,8 @@ function applyToMembers(rule, head, rest, patch, precStack) {
 // packages/codegen/src/dsl/synthetic-rules.ts
 var currentSyntheticRules = null;
 var currentRuleKind = null;
+var currentOptsRules = null;
+var currentBlankFn = null;
 var currentPolymorphVariants = [];
 function getCurrentRuleKind() {
   return currentRuleKind;
@@ -217,6 +271,10 @@ function registerSyntheticRule(name, content) {
     currentSyntheticRules = /* @__PURE__ */ new Map();
   }
   currentSyntheticRules.set(name, content);
+  if (currentOptsRules && !(name in currentOptsRules)) {
+    const blank = currentBlankFn;
+    currentOptsRules[name] = () => blank ? blank() : { type: "BLANK" };
+  }
 }
 function maybeKeywordSymbol(fieldName, content, wrapSyntheticBody) {
   const c = content;
@@ -247,6 +305,100 @@ function drainSyntheticRules() {
   const rules = currentSyntheticRules ?? /* @__PURE__ */ new Map();
   currentSyntheticRules = null;
   return rules;
+}
+var currentConflicts = [];
+function registerConflict(names) {
+  if (names.length === 0) return;
+  currentConflicts.push([...names]);
+}
+function drainConflicts() {
+  const conflicts = currentConflicts;
+  currentConflicts = [];
+  return conflicts;
+}
+function wrapInPrecStack(content, precStack, reconstructPrec2) {
+  if (!precStack?.length) return content;
+  let result = content;
+  for (let i = precStack.length - 1; i >= 0; i--) {
+    result = reconstructPrec2(precStack[i], result);
+  }
+  return result;
+}
+function registerAliasedVariant(hiddenName, aliasValue, originalMember, bodyWrapper) {
+  const isUpperCase = originalMember.type === originalMember.type.toUpperCase();
+  const wasEmpty = matchesEmpty(originalMember);
+  const factored = factorOutEmptiness(originalMember);
+  if (wasEmpty && !factored) {
+    throw new Error(
+      `variant()/alias(): can't extract '${hiddenName}' \u2014 its content matches the empty string and no non-empty core could be factored out. Tree-sitter rejects syntactic rules that match empty. Restructure the parent rule (e.g. lift the empty case outside the choice) before splitting.`
+    );
+  }
+  const body = factored ? factored.nonEmpty : originalMember;
+  registerSyntheticRule(hiddenName, bodyWrapper(body));
+  const aliasNode = {
+    type: isUpperCase ? "ALIAS" : "alias",
+    content: { type: isUpperCase ? "SYMBOL" : "symbol", name: hiddenName },
+    named: true,
+    value: aliasValue
+  };
+  if (factored) {
+    const optional = globalThis.optional;
+    if (typeof optional !== "function") {
+      throw new Error("synthetic-rules: no global optional() found \u2014 variant()/alias() on empty-matching content needs runtime optional()");
+    }
+    return optional(aliasNode);
+  }
+  return aliasNode;
+}
+function factorOutEmptiness(rule) {
+  if (!matchesEmpty(rule)) return null;
+  return extractNonEmpty(rule);
+}
+function extractNonEmpty(rule) {
+  const t = rule.type;
+  if (t === "repeat" || t === "REPEAT") {
+    const r = rule;
+    const nonEmpty = { ...r, type: t === "REPEAT" ? "REPEAT1" : "repeat1" };
+    return { nonEmpty };
+  }
+  if (t === "optional") {
+    const inner = rule.content;
+    return matchesEmpty(inner) ? extractNonEmpty(inner) : { nonEmpty: inner };
+  }
+  if (t === "choice" || t === "CHOICE") {
+    const members = rule.members;
+    const nonEmpty = members.filter((m) => !matchesEmpty(m));
+    if (nonEmpty.length === 0) return null;
+    if (nonEmpty.length === 1) return { nonEmpty: nonEmpty[0] };
+    return { nonEmpty: { type: t, members: nonEmpty } };
+  }
+  if (t === "seq" || t === "SEQ") {
+    const members = [...rule.members];
+    for (let i = 0; i < members.length; i++) {
+      const factored = extractNonEmpty(members[i]);
+      if (factored) {
+        members[i] = factored.nonEmpty;
+        return { nonEmpty: { type: t, members } };
+      }
+    }
+    return null;
+  }
+  return null;
+}
+function matchesEmpty(rule) {
+  const t = rule.type;
+  if (t === "blank" || t === "BLANK") return true;
+  if (t === "optional") return true;
+  if (t === "repeat" || t === "REPEAT") return true;
+  if (t === "choice" || t === "CHOICE") {
+    const members = rule.members;
+    return members.some((m) => matchesEmpty(m));
+  }
+  if (t === "seq" || t === "SEQ") {
+    const members = rule.members;
+    return members.every((m) => matchesEmpty(m));
+  }
+  return false;
 }
 function installGrammarWrapper() {
   const g = globalThis;
@@ -299,6 +451,7 @@ function installGrammarWrapper() {
     }
     const discoveredNames = new Map(currentSyntheticRules);
     currentSyntheticRules = /* @__PURE__ */ new Map();
+    const pendingConflictsAfterGrammar = drainConflicts();
     if (opts?.rules) {
       for (const [name, ruleFn] of Object.entries(opts.rules)) {
         if (typeof ruleFn !== "function") continue;
@@ -320,7 +473,22 @@ function installGrammarWrapper() {
         }
       }
     }
+    if (opts?.rules) {
+      currentOptsRules = opts.rules;
+      currentBlankFn = g.blank ?? null;
+    }
     const result = nativeGrammar.apply(this, args);
+    currentOptsRules = null;
+    currentBlankFn = null;
+    const allConflicts = [...pendingConflictsAfterGrammar, ...drainConflicts()];
+    if (result && allConflicts.length > 0 && typeof result === "object") {
+      const grammar2 = result.grammar ?? result;
+      const current = Array.isArray(grammar2.conflicts) ? grammar2.conflicts : [];
+      for (const group of allConflicts) {
+        current.push([...group]);
+      }
+      grammar2.conflicts = current;
+    }
     const synthetic = drainSyntheticRules();
     if (result && synthetic.size > 0 && typeof result === "object") {
       const grammar2 = result.grammar ?? result;
@@ -374,7 +542,7 @@ function variant(name) {
 function transform(original, ...patchSets) {
   let rule = original;
   for (const patches of patchSets) {
-    const hasPathKeys = Object.keys(patches).some((k) => k.includes("/") || k.includes("*"));
+    const hasPathKeys = Object.keys(patches).some((k) => !/^\d+$/.test(k));
     const hasPlaceholderAlias = Object.values(patches).some((v) => isAliasPlaceholder(v) || isVariantPlaceholder(v));
     if (hasPathKeys || hasPlaceholderAlias) {
       rule = applyPathPatches(rule, patches);
@@ -385,12 +553,78 @@ function transform(original, ...patchSets) {
   return rule;
 }
 function applyPathPatches(original, patches) {
+  const variantEntries = [];
+  const otherEntries = [];
+  for (const entry of Object.entries(patches)) {
+    const v = entry[1];
+    if (isVariantPlaceholder(v)) variantEntries.push([entry[0], v]);
+    else otherEntries.push(entry);
+  }
   let rule = original;
-  for (const [key, value] of Object.entries(patches)) {
+  for (const [key, value] of otherEntries) {
     const segments = parsePath(String(key));
     rule = applyPath(rule, segments, (member, precStack) => resolvePatch(value, member, precStack));
   }
+  if (variantEntries.length > 0) {
+    const hoisted = tryHoistSiblingVariants(rule, variantEntries);
+    if (hoisted) {
+      rule = hoisted.rule;
+      for (const [key, value] of variantEntries) {
+        if (hoisted.consumed.has(key)) continue;
+        const segments = parsePath(key);
+        rule = applyPath(rule, segments, (member, precStack) => resolvePatch(value, member, precStack));
+      }
+    } else {
+      for (const [key, value] of variantEntries) {
+        const segments = parsePath(key);
+        rule = applyPath(rule, segments, (member, precStack) => resolvePatch(value, member, precStack));
+      }
+    }
+  }
   return rule;
+}
+function tryHoistSiblingVariants(rule, variantEntries) {
+  const t = rule?.type;
+  if (!t) return null;
+  if (t !== "seq" && t !== "SEQ") return null;
+  const parsed = [];
+  for (const [key, v] of variantEntries) {
+    const segs = parsePath(key);
+    if (segs.length !== 2) return null;
+    if (segs[0].kind !== "index" || segs[1].kind !== "index") return null;
+    parsed.push({ key, v, choicePos: segs[0].value, altIdx: segs[1].value });
+  }
+  const choicePos = parsed[0].choicePos;
+  if (parsed.some((p) => p.choicePos !== choicePos)) return null;
+  const seqMembers = [...membersOf2(rule)];
+  const resolvedPos = choicePos < 0 ? seqMembers.length + choicePos : choicePos;
+  const choice = seqMembers[resolvedPos];
+  if (!choice || choice.type !== "choice" && choice.type !== "CHOICE") return null;
+  const choiceMembers = membersOf2(choice);
+  const anyEmpty = parsed.some((p) => matchesEmpty(choiceMembers[p.altIdx < 0 ? choiceMembers.length + p.altIdx : p.altIdx]));
+  if (!anyEmpty) return null;
+  const parentKind = getCurrentRuleKind();
+  if (!parentKind) return null;
+  const refs = [];
+  const isUpperCase = rule.type === rule.type.toUpperCase();
+  for (const p of parsed) {
+    const resolvedAlt = p.altIdx < 0 ? choiceMembers.length + p.altIdx : p.altIdx;
+    const altContent = choiceMembers[resolvedAlt];
+    const hoistedMembers = seqMembers.map((m, i) => i === resolvedPos ? altContent : m);
+    const hoistedBody = reconstructContainer(rule, hoistedMembers);
+    const visibleName = `${parentKind}_${p.v.name}`;
+    registerPolymorphVariant(parentKind, p.v.name);
+    registerSyntheticRule(visibleName, hoistedBody);
+    refs.push({
+      type: isUpperCase ? "SYMBOL" : "symbol",
+      name: visibleName
+    });
+  }
+  const variantNames = parsed.map((p) => `${parentKind}_${p.v.name}`);
+  registerConflict(variantNames);
+  for (const n of variantNames) registerConflict([n]);
+  const newChoice = reconstructContainer(choice, refs);
+  return { rule: newChoice, consumed: new Set(parsed.map((p) => p.key)) };
 }
 var membersOf2 = (r) => r.members;
 var contentOf2 = (r) => r.content;
@@ -428,14 +662,7 @@ function applyFlatPatches(original, patches) {
   }
   return original;
 }
-function wrapInPrec(content, precStack) {
-  if (!precStack?.length) return content;
-  let result = content;
-  for (let i = precStack.length - 1; i >= 0; i--) {
-    result = reconstructPrec(precStack[i], result);
-  }
-  return result;
-}
+var wrapInPrec = (content, precStack) => wrapInPrecStack(content, precStack, reconstructPrec);
 function resolvePatch(patch, originalMember, precStack) {
   if (isFieldPlaceholder(patch)) {
     let content = originalMember;
@@ -465,28 +692,14 @@ function resolvePatch(patch, originalMember, precStack) {
     if (!parentKind) {
       throw new Error(`variant('${patch.name}'): no current rule kind \u2014 variant() must be used inside a rule callback`);
     }
+    registerPolymorphVariant(parentKind, patch.name);
     const fullName = `${parentKind}_${patch.name}`;
     const hiddenName = "_" + fullName;
-    registerSyntheticRule(hiddenName, wrapInPrec(originalMember, precStack));
-    registerPolymorphVariant(parentKind, patch.name);
-    const isUpperCase = originalMember.type === originalMember.type.toUpperCase();
-    return {
-      type: isUpperCase ? "ALIAS" : "alias",
-      content: { type: isUpperCase ? "SYMBOL" : "symbol", name: hiddenName },
-      named: true,
-      value: fullName
-    };
+    return registerAliasedVariant(hiddenName, fullName, originalMember, (body) => wrapInPrec(body, precStack));
   }
   if (isAliasPlaceholder(patch)) {
     const hiddenName = "_" + patch.name;
-    registerSyntheticRule(hiddenName, wrapInPrec(originalMember, precStack));
-    const isUpperCase = originalMember.type === originalMember.type.toUpperCase();
-    return {
-      type: isUpperCase ? "ALIAS" : "alias",
-      content: { type: isUpperCase ? "SYMBOL" : "symbol", name: hiddenName },
-      named: true,
-      value: patch.name
-    };
+    return registerAliasedVariant(hiddenName, patch.name, originalMember, (body) => wrapInPrec(body, precStack));
   }
   return patch;
 }

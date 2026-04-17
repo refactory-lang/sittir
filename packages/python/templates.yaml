@@ -6,7 +6,7 @@ rules:
   import_statement: $IMPORT $$$NAME
   relative_import: $IMPORT_PREFIX $DOTTED_NAME
   future_import_statement: $FROM __future__ import $$$NAME$$$CHILDREN
-  import_from_statement: from $MODULE_NAME import $WILDCARD_IMPORT
+  import_from_statement: from $MODULE_NAME import $$$WILDCARD_IMPORT
   aliased_import: $NAME as $ALIAS
   print_statement:
     template: print $$$CHILDREN $$$ARGUMENT

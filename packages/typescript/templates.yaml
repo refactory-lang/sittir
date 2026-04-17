@@ -240,7 +240,7 @@ rules:
   type_arguments:
     template: <$$$CHILDREN>
     joinBy: ","
-  object_type: $OPENING $MEMBERS $CLOSING
+  object_type: $OPENING $$$MEMBERS $CLOSING
   call_signature: $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE
   property_signature:
     template: $ACCESSIBILITY_MODIFIER $OVERRIDE_MODIFIER $$$CHILDREN $READONLY_CLAUSE $NAME $TYPE
@@ -263,4 +263,4 @@ rules:
   function_type: $TYPE_PARAMETERS $PARAMETERS=>$RETURN_TYPE
   shorthand_property_identifier: $$$CHILDREN
   shorthand_property_identifier_pattern: $$$CHILDREN
-  interface_body: $OPENING $MEMBERS $CLOSING
+  interface_body: $OPENING $$$MEMBERS $CLOSING

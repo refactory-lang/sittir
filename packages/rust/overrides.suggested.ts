@@ -14,10 +14,10 @@
 // ---------------------------------------------------------------
 // Summary
 // ---------------------------------------------------------------
-// Field inferences:  15  (0 applied, 15 held)
-// Rule promotions:   41  (40 applied, 1 held)
+// Field inferences:  9  (0 applied, 9 held)
+// Rule promotions:   48  (47 applied, 1 held)
 // Repeated shapes:   5  (advisory — suggested supertypes/groups)
-// Round-trip fails: 33  (26 parse errors, 7 AST mismatches)
+// Round-trip fails: 55  (43 parse errors, 12 AST mismatches; 20 render, 35 factory)
 
 // ---------------------------------------------------------------
 // Round-trip failures — corpus cases that didn't survive
@@ -34,138 +34,33 @@
 export const roundTripFailures: Array<{
   readonly entry: string;
   readonly kind: string;
+  readonly source: "render" | "factory";
   readonly category: "parse-error" | "ast-mismatch";
   readonly input?: string;
   readonly rendered?: string;
   readonly message: string;
 }> = [
-  // --- if_expression (8) ---
+  // --- use_wildcard (2) ---
   {
-    entry: "Let declarations with if expressions as the value",
-    kind: "if_expression",
+    entry: "Use declarations",
+    kind: "use_wildcard",
+    source: "render",
     category: "parse-error",
-    input:    "if b {\n    c\n} else {\n    d\n}",
-    rendered: "b {\n    c\n} else {\n    d\n}",
-    message: "kind not found at rendered offset 18",
+    message: "render: Node 'undefined' has no 'fields' or 'children' — did you mean to set 'text' for a leaf node?",
   },
   {
-    entry: "If expressions",
-    kind: "if_expression",
+    entry: "Use declarations",
+    kind: "use_wildcard",
+    source: "factory",
     category: "parse-error",
-    input:    "if n == 1 {\n  } else if n == 2 {\n  } else {\n  }",
-    rendered: "n == 1 {\n  } else if n == 2 {\n  } else {\n  }",
-    message: "re-parse error: \"n == 1 {\n  } else if n == 2 {\n  } else {\n  }\"",
-  },
-  {
-    entry: "Basic if let expressions",
-    kind: "if_expression",
-    category: "parse-error",
-    input:    "if let Some(a) = b\n    && c\n    && d\n    && let Some(e) = f\n{\n}",
-    rendered: "let Some(a) = b\n     && c\n     && d\n     && let Some(e) = f {\n}",
-    message: "re-parse error: \"let Some(a) = b\n     && c\n     && d\n     && let Some(e) = f {\n}\"",
-  },
-  {
-    entry: "If let expressions",
-    kind: "if_expression",
-    category: "parse-error",
-    input:    "if let (\"Bacon\", b) = dish {\n}",
-    rendered: "let (\"Bacon\", b) = dish {\n}",
-    message: "kind not found at rendered offset 18",
-  },
-  {
-    entry: "Match expressions",
-    kind: "if_expression",
-    category: "parse-error",
-    input:    "if a {\n        \"200 (but this is not very stylish)\"\n      }",
-    rendered: "a {\n        \"200 (but this is not very stylish)\"\n      }",
-    message: "re-parse error: \"a {\n        \"200 (but this is not very stylish)\"\n      }\"",
-  },
-  {
-    entry: "For expressions",
-    kind: "if_expression",
-    category: "parse-error",
-    input:    "if x % 2 == 0 { continue 'outer; }",
-    rendered: "x % 2 == 0 { continue 'outer; }",
-    message: "re-parse error: \"x % 2 == 0 { continue 'outer; }\"",
-  },
-  {
-    entry: "Inline const or Const blocks as expression",
-    kind: "if_expression",
-    category: "parse-error",
-    input:    "if *x < 0 { const { &4i32.pow(4) } } else { x }",
-    rendered: "*x < 0 { const { &4i32.pow(4) } } else { x }",
-    message: "re-parse error: \"*x < 0 { const { &4i32.pow(4) } } else { x }\"",
-  },
-  {
-    entry: "Or patterns",
-    kind: "if_expression",
-    category: "parse-error",
-    input:    "if let A(x) | B(x) = expr {\n    do_stuff_with(x);\n}",
-    rendered: "let A(x) | B(x) = expr {\n    do_stuff_with(x);\n}",
-    message: "re-parse error: \"let A(x) | B(x) = expr {\n    do_stuff_with(x);\n}\"",
-  },
-  // --- struct_item (4) ---
-  {
-    entry: "Structs",
-    kind: "struct_item",
-    category: "parse-error",
-    input:    "struct Proton;",
-    rendered: "struct Proton",
-    message: "re-parse error: \"struct Proton\"",
-  },
-  {
-    entry: "Attributes",
-    kind: "struct_item",
-    category: "parse-error",
-    input:    "struct Baz;",
-    rendered: "struct Baz",
-    message: "re-parse error: \"struct Baz\"",
-  },
-  {
-    entry: "Crate visibility",
-    kind: "struct_item",
-    category: "parse-error",
-    input:    "crate struct Foo(crate crate::Bar);",
-    rendered: "crate struct Foo (crate crate::Bar)",
-    message: "re-parse error: \"crate struct Foo (crate crate::Bar)\"",
-  },
-  {
-    entry: "Const generics with default",
-    kind: "struct_item",
-    category: "parse-error",
-    input:    "pub struct Loaf<T: Sized, const N: usize = 1>([T; N]);",
-    rendered: "pub struct Loaf <T: Sized, const N: usize = 1> ([T; N])",
-    message: "re-parse error: \"pub struct Loaf <T: Sized, const N: usize = 1> ([T; N])\"",
-  },
-  // --- tuple_expression (3) ---
-  {
-    entry: "Attributes and Expressions",
-    kind: "tuple_expression",
-    category: "parse-error",
-    input:    "(#[hello] 2, 7, 8)",
-    rendered: "(#[hello] ,,, 8)",
-    message: "re-parse error: \"(#[hello] ,,, 8)\"",
-  },
-  {
-    entry: "Tuple expressions",
-    kind: "tuple_expression",
-    category: "parse-error",
-    input:    "(0,)",
-    rendered: "( ,, )",
-    message: "re-parse error: \"( ,, )\"",
-  },
-  {
-    entry: "Struct patterns",
-    kind: "tuple_expression",
-    category: "parse-error",
-    input:    "(\"toddler\", name)",
-    rendered: "( ,, name)",
-    message: "re-parse error: \"( ,, name)\"",
+    input:    "sayings::japanese::farewells::*",
+    message: "Node 'undefined' has no 'fields' or 'children' — did you mean to set 'text' for ",
   },
   // --- impl_item (2) ---
   {
     entry: "Trait impl signature",
     kind: "impl_item",
+    source: "render",
     category: "parse-error",
     input:    "impl<K: Debug + Ord> Debug for OccupiedError<K>;",
     rendered: "impl <K: Debug + Ord> Debug for OccupiedError<K>",
@@ -174,6 +69,7 @@ export const roundTripFailures: Array<{
   {
     entry: "Disable automatically derived trait impls",
     kind: "impl_item",
+    source: "render",
     category: "ast-mismatch",
     input:    "impl !Send for Foo {}",
     rendered: "impl Send for Foo {}",
@@ -183,24 +79,33 @@ export const roundTripFailures: Array<{
   {
     entry: "Impls with default functions",
     kind: "block",
+    source: "render",
     category: "parse-error",
     input:    "{\n    // Make 'default' still works as an identifier\n    default.bar();\n  }",
     rendered: "{// Make 'default' still works as an identifier default.bar();}",
     message: "re-parse error: \"{// Make 'default' still works as an identifier default.bar();}\"",
   },
-  // --- loop_expression (1) ---
+  // --- loop_expression (2) ---
   {
     entry: "Loop expressions",
     kind: "loop_expression",
+    source: "render",
+    category: "parse-error",
+    message: "render: Node 'undefined' has no 'fields' or 'children' — did you mean to set 'text' for a leaf node?",
+  },
+  {
+    entry: "Loop expressions",
+    kind: "loop_expression",
+    source: "factory",
     category: "parse-error",
     input:    "'outer: loop {\n  'inner: loop {\n    break 'outer;\n    break true;\n  }\n}",
-    rendered: ":: loop {\n  'inner: loop {\n    break 'outer;\n    break true;\n  }\n}",
-    message: "re-parse error: \":: loop {\n  'inner: loop {\n    break 'outer;\n    break true;\n  }\n}\"",
+    message: "Node 'undefined' has no 'fields' or 'children' — did you mean to set 'text' for ",
   },
-  // --- mut_pattern (2) ---
+  // --- mut_pattern (4) ---
   {
     entry: "Closures",
     kind: "mut_pattern",
+    source: "render",
     category: "parse-error",
     input:    "mut e",
     rendered: "mut e",
@@ -209,49 +114,54 @@ export const roundTripFailures: Array<{
   {
     entry: "Reference patterns",
     kind: "mut_pattern",
+    source: "render",
     category: "parse-error",
     input:    "mut y",
     rendered: "mut y",
     message: "kind not found at rendered offset 14",
   },
-  // --- raw_string_literal (3) ---
   {
-    entry: "Raw string literals",
-    kind: "raw_string_literal",
+    entry: "Or patterns",
+    kind: "mut_pattern",
+    source: "render",
     category: "parse-error",
-    input:    "r#\"abc\"#",
-    rendered: "abc",
-    message: "kind not found at rendered offset 18",
+    input:    "mut x @ (A | B | C)",
+    rendered: "mut x @ (A | B | C)",
+    message: "kind not found at rendered offset 14",
   },
   {
-    entry: "Raw byte string literals",
-    kind: "raw_string_literal",
+    entry: "Closures",
+    kind: "mut_pattern",
+    source: "factory",
     category: "parse-error",
-    input:    "br#\"abc\"#",
-    rendered: "abc",
-    message: "kind not found at rendered offset 18",
+    input:    "mut e",
+    rendered: "mut e",
+    message: "kind not found in re-parse (rendered: \"mut e\")",
   },
-  {
-    entry: "Raw C string literals",
-    kind: "raw_string_literal",
-    category: "parse-error",
-    input:    "cr#\"abc\"#",
-    rendered: "abc",
-    message: "kind not found at rendered offset 18",
-  },
-  // --- macro_definition (1) ---
+  // --- macro_definition (2) ---
   {
     entry: "Macro definition",
     kind: "macro_definition",
+    source: "render",
     category: "parse-error",
     input:    "macro_rules! say_hello {\n    () => (\n        println!(\"Hello!\");\n    )\n}",
-    rendered: "macro_rules!say_hello }",
-    message: "re-parse error: \"macro_rules!say_hello }\"",
+    rendered: "macro_rules!say_hello () => (\n        println!(\"Hello!\");\n    );}",
+    message: "re-parse error: \"macro_rules!say_hello () => (\n        println!(\"Hello!\");\n    );}\"",
+  },
+  {
+    entry: "Macro definition",
+    kind: "macro_definition",
+    source: "factory",
+    category: "parse-error",
+    input:    "macro_rules! say_hello {\n    () => (\n        println!(\"Hello!\");\n    )\n}",
+    rendered: "macro_rules!say_hello () => (\n        println!(\"Hello!\");\n    );}",
+    message: "re-parse error: \"macro_rules!say_hello () => (\n        println!(\"Hello!\");\n  \"",
   },
   // --- function_type (2) ---
   {
     entry: "Function types",
     kind: "function_type",
+    source: "render",
     category: "parse-error",
     input:    "fn(i32)",
     rendered: "(i32)",
@@ -260,63 +170,376 @@ export const roundTripFailures: Array<{
   {
     entry: "Unsafe and extern function types",
     kind: "function_type",
+    source: "render",
     category: "parse-error",
     input:    "extern \"C\" fn(*mut c_void)",
     rendered: "(*mut c_void)",
     message: "kind not found at rendered offset 10",
   },
-  // --- struct_pattern (1) ---
+  // --- struct_pattern (2) ---
   {
     entry: "Let-else Statements",
     kind: "struct_pattern",
+    source: "render",
     category: "ast-mismatch",
     input:    "Foo::Bar {\n    texts,\n    values,\n}",
     rendered: "Foo::Bar{texts,values}",
     message: "struct_pattern: childCount 7 ≠ 6 [scoped_type_identifier,\"{\",field_pattern,\",\",field_pattern,\",\",\"}\"] vs [scoped_type_identifier,\"{\",field_pattern,\",\",field_pat",
   },
-  // --- mod_item (1) ---
+  {
+    entry: "Let-else Statements",
+    kind: "struct_pattern",
+    source: "factory",
+    category: "ast-mismatch",
+    input:    "Foo::Bar {\n    texts,\n    values,\n}",
+    rendered: "Foo::Bar{texts,values}",
+    message: "struct_pattern: childCount 7 ≠ 6 [scoped_type_identifier,\"{\",field_pattern,\",\",field_pattern,\",\",\"}\"] vs [scoped_type_identifier,\"{\",field_pattern,\",\",field_pat",
+  },
+  // --- mod_item (2) ---
+  {
+    entry: "Attributes",
+    kind: "mod_item",
+    source: "render",
+    category: "ast-mismatch",
+    input:    "mod macos_only {}",
+    rendered: "mod macos_only;{}",
+    message: "mod_item[2]: named flag true ≠ false",
+  },
   {
     entry: "Inner attributes",
     kind: "mod_item",
+    source: "render",
     category: "ast-mismatch",
     input:    "mod macos_only {\n  #![cfg(target_os = \"macos\")]\n}",
     rendered: "mod macos_only;{\n  #![cfg(target_os = \"macos\")]\n}",
     message: "mod_item[2]: named flag true ≠ false",
   },
-  // --- array_expression (2) ---
+  // --- tuple_expression (3) ---
   {
     entry: "Attributes and Expressions",
-    kind: "array_expression",
+    kind: "tuple_expression",
+    source: "render",
     category: "ast-mismatch",
-    input:    "[#[hello] 2, 7, 8]",
-    rendered: "[#[hello] 8]",
-    message: "array_expression: childCount 8 ≠ 4 [\"[\",attribute_item,integer_literal,\",\",integer_literal,\",\",integer_literal,\"]\"] vs [\"[\",attribute_item,integer_literal,\"]\"]",
+    input:    "(#[hello] 2, 7, 8)",
+    rendered: "(#[hello] 2,7,8,)",
+    message: "tuple_expression: childCount 8 ≠ 9 [\"(\",attribute_item,integer_literal,\",\",integer_literal,\",\",integer_literal,\")\"] vs [\"(\",attribute_item,integer_literal,\",\",i",
   },
   {
-    entry: "Index expressions",
-    kind: "array_expression",
+    entry: "Struct patterns",
+    kind: "tuple_expression",
+    source: "render",
     category: "ast-mismatch",
-    input:    "[1, 2, 3, 4]",
-    rendered: "[ 4]",
-    message: "array_expression: childCount 9 ≠ 3 [\"[\",integer_literal,\",\",integer_literal,\",\",integer_literal,\",\",integer_literal,\"]\"] vs [\"[\",integer_literal,\"]\"]",
+    input:    "(\"toddler\", name)",
+    rendered: "( \"toddler\",name,)",
+    message: "tuple_expression: childCount 5 ≠ 6 [\"(\",string_literal,\",\",identifier,\")\"] vs [\"(\",string_literal,\",\",identifier,\",\",\")\"]",
   },
-  // --- generic_type (1) ---
+  {
+    entry: "Attributes and Expressions",
+    kind: "tuple_expression",
+    source: "factory",
+    category: "ast-mismatch",
+    input:    "(#[hello] 2, 7, 8)",
+    rendered: "(#[hello] 2,7,8,)",
+    message: "tuple_expression: childCount 8 ≠ 9 [\"(\",attribute_item,integer_literal,\",\",integer_literal,\",\",integer_literal,\")\"] vs [\"(\",attribute_item,integer_literal,\",\",i",
+  },
+  // --- generic_type (2) ---
   {
     entry: "Scoped functions",
     kind: "generic_type",
+    source: "render",
     category: "ast-mismatch",
     input:    "C::<D>",
     rendered: "C <D>",
     message: "generic_type: childCount 3 ≠ 2 [type_identifier,\"::\",type_arguments] vs [type_identifier,type_arguments]",
   },
-  // --- tuple_struct_pattern (1) ---
+  {
+    entry: "Struct patterns",
+    kind: "generic_type",
+    source: "render",
+    category: "ast-mismatch",
+    input:    "Some::<isize>",
+    rendered: "Some <isize>",
+    message: "generic_type: childCount 3 ≠ 2 [type_identifier,\"::\",type_arguments] vs [type_identifier,type_arguments]",
+  },
+  // --- tuple_struct_pattern (2) ---
+  {
+    entry: "Struct patterns",
+    kind: "tuple_struct_pattern",
+    source: "render",
+    category: "ast-mismatch",
+    input:    "Bar::T1(_, Some::<isize>(x))",
+    rendered: "Bar::T1(Some::<isize>(x))",
+    message: "tuple_struct_pattern: childCount 6 ≠ 4 [scoped_identifier,\"(\",\"_\",\",\",tuple_struct_pattern,\")\"] vs [scoped_identifier,\"(\",tuple_struct_pattern,\")\"]",
+  },
   {
     entry: "Captured patterns",
     kind: "tuple_struct_pattern",
+    source: "render",
     category: "ast-mismatch",
     input:    "A(_)",
     rendered: "A()",
     message: "tuple_struct_pattern: childCount 4 ≠ 3 [identifier,\"(\",\"_\",\")\"] vs [identifier,\"(\",\")\"]",
+  },
+  // --- parameters (1) ---
+  {
+    entry: "Async function",
+    kind: "parameters",
+    source: "factory",
+    category: "parse-error",
+    input:    "()",
+    message: "Node 'undefined' has no 'fields' or 'children' — did you mean to set 'text' for ",
+  },
+  // --- await_expression (1) ---
+  {
+    entry: "Async function",
+    kind: "await_expression",
+    source: "factory",
+    category: "parse-error",
+    input:    "futures.await",
+    message: "No render rule for 'undefined'",
+  },
+  // --- expression_statement (1) ---
+  {
+    entry: "Await expression",
+    kind: "expression_statement",
+    source: "factory",
+    category: "parse-error",
+    input:    "futures.await;",
+    message: "No render rule for 'undefined'",
+  },
+  // --- arguments (1) ---
+  {
+    entry: "Await expression",
+    kind: "arguments",
+    source: "factory",
+    category: "parse-error",
+    input:    "()",
+    message: "Node 'undefined' has no 'fields' or 'children' — did you mean to set 'text' for ",
+  },
+  // --- closure_parameters (1) ---
+  {
+    entry: "Async closure",
+    kind: "closure_parameters",
+    source: "factory",
+    category: "parse-error",
+    input:    "||",
+    message: "No render rule for 'undefined'",
+  },
+  // --- yield_expression (1) ---
+  {
+    entry: "Gen Block",
+    kind: "yield_expression",
+    source: "factory",
+    category: "parse-error",
+    input:    "yield ()",
+    message: "No render rule for 'undefined'",
+  },
+  // --- declaration_list (1) ---
+  {
+    entry: "Modules",
+    kind: "declaration_list",
+    source: "factory",
+    category: "parse-error",
+    input:    "{}",
+    message: "Node 'undefined' has no 'fields' or 'children' — did you mean to set 'text' for ",
+  },
+  // --- type_arguments (1) ---
+  {
+    entry: "Functions with abstract return types",
+    kind: "type_arguments",
+    source: "factory",
+    category: "parse-error",
+    input:    "<Item=(usize)>",
+    message: "No render rule for 'undefined'",
+  },
+  // --- tuple_type (1) ---
+  {
+    entry: "Functions with abstract return types",
+    kind: "tuple_type",
+    source: "factory",
+    category: "parse-error",
+    input:    "(usize)",
+    message: "No render rule for 'undefined'",
+  },
+  // --- type_parameters (1) ---
+  {
+    entry: "Impl with lifetimes first",
+    kind: "type_parameters",
+    source: "factory",
+    category: "parse-error",
+    input:    "<'a>",
+    message: "No render rule for 'undefined'",
+  },
+  // --- string_literal (1) ---
+  {
+    entry: "Extern function declarations",
+    kind: "string_literal",
+    source: "factory",
+    category: "parse-error",
+    input:    "\"C\"",
+    message: "No render rule for 'undefined'",
+  },
+  // --- use_list (1) ---
+  {
+    entry: "Use declarations",
+    kind: "use_list",
+    source: "factory",
+    category: "parse-error",
+    input:    "{greetings,farewells}",
+    message: "No render rule for 'undefined'",
+  },
+  // --- return_expression (1) ---
+  {
+    entry: "Let-else Statements",
+    kind: "return_expression",
+    source: "factory",
+    category: "parse-error",
+    input:    "return Err(index)",
+    message: "No render rule for 'undefined'",
+  },
+  // --- field_declaration_list (1) ---
+  {
+    entry: "Structs",
+    kind: "field_declaration_list",
+    source: "factory",
+    category: "parse-error",
+    input:    "{}",
+    message: "Node 'undefined' has no 'fields' or 'children' — did you mean to set 'text' for ",
+  },
+  // --- enum_variant_list (1) ---
+  {
+    entry: "Enums",
+    kind: "enum_variant_list",
+    source: "factory",
+    category: "parse-error",
+    input:    "{\n    None,\n    Some(T),\n}",
+    message: "No render rule for 'undefined'",
+  },
+  // --- trait_bounds (1) ---
+  {
+    entry: "Enums",
+    kind: "trait_bounds",
+    source: "factory",
+    category: "parse-error",
+    input:    ": Item",
+    message: "No render rule for 'undefined'",
+  },
+  // --- slice_pattern (1) ---
+  {
+    entry: "Functions with destructured parameters",
+    kind: "slice_pattern",
+    source: "factory",
+    category: "parse-error",
+    input:    "[x, y]",
+    message: "No render rule for 'undefined'",
+  },
+  // --- tuple_pattern (1) ---
+  {
+    entry: "Functions with destructured parameters",
+    kind: "tuple_pattern",
+    source: "factory",
+    category: "parse-error",
+    input:    "(x, y)",
+    message: "No render rule for 'undefined'",
+  },
+  // --- token_tree (1) ---
+  {
+    entry: "Attributes",
+    kind: "token_tree",
+    source: "factory",
+    category: "parse-error",
+    input:    "(Debug)",
+    message: "No render rule for 'undefined'",
+  },
+  // --- match_block (1) ---
+  {
+    entry: "Inner attributes",
+    kind: "match_block",
+    source: "factory",
+    category: "parse-error",
+    input:    "{\n    #![cfg_attr(all(test, exhaustive), deny(non_exhaustive_omitted_patterns))]\n    syn::Type::Array(ty) => self.visit_type(&ty.elem),\n}",
+    message: "No render rule for 'undefined'",
+  },
+  // --- removed_trait_bound (1) ---
+  {
+    entry: "Unsized types in trait bounds",
+    kind: "removed_trait_bound",
+    source: "factory",
+    category: "parse-error",
+    input:    "?Sized",
+    message: "No render rule for 'undefined'",
+  },
+  // --- parenthesized_expression (1) ---
+  {
+    entry: "Raw identifiers",
+    kind: "parenthesized_expression",
+    source: "factory",
+    category: "parse-error",
+    input:    "(r#abc as r#Def)",
+    message: "No render rule for 'undefined'",
+  },
+  // --- field_initializer_list (1) ---
+  {
+    entry: "Struct expressions",
+    kind: "field_initializer_list",
+    source: "factory",
+    category: "parse-error",
+    input:    "{}",
+    message: "Node 'undefined' has no 'fields' or 'children' — did you mean to set 'text' for ",
+  },
+  // --- base_field_initializer (1) ---
+  {
+    entry: "Struct expressions with update initializers",
+    kind: "base_field_initializer",
+    source: "factory",
+    category: "parse-error",
+    input:    "..current_user()",
+    message: "No render rule for 'undefined'",
+  },
+  // --- let_chain (1) ---
+  {
+    entry: "Basic if let expressions",
+    kind: "let_chain",
+    source: "factory",
+    category: "parse-error",
+    input:    "let Some(a) = b\n    && c\n    && d\n    && let Some(e) = f",
+    message: "No render rule for 'undefined'",
+  },
+  // --- bracketed_type (1) ---
+  {
+    entry: "Scoped functions with fully qualified syntax",
+    kind: "bracketed_type",
+    source: "factory",
+    category: "parse-error",
+    input:    "<Dog as Animal>",
+    message: "No render rule for 'undefined'",
+  },
+  // --- token_tree_pattern (1) ---
+  {
+    entry: "Macro definition",
+    kind: "token_tree_pattern",
+    source: "factory",
+    category: "parse-error",
+    input:    "()",
+    message: "Node 'undefined' has no 'fields' or 'children' — did you mean to set 'text' for ",
+  },
+  // --- token_repetition_pattern (1) ---
+  {
+    entry: "Macro definition",
+    kind: "token_repetition_pattern",
+    source: "factory",
+    category: "parse-error",
+    input:    "$($x:expr; [ $( $y:expr ),* ]);*",
+    message: "No render rule for 'undefined'",
+  },
+  // --- token_repetition (1) ---
+  {
+    entry: "Macro definition",
+    kind: "token_repetition",
+    source: "factory",
+    category: "parse-error",
+    input:    "$($($x + $e),*),*",
+    message: "No render rule for 'undefined'",
   },
 ];
 
@@ -329,17 +552,11 @@ export const suggestedRules = {
   // _non_special_token: 1 inferred field(s)
   // [held] "_non_special_token" field 'mutable_specifier' on $.mutable_specifier — 91% agreement, 11 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
 
-  // arguments: 1 inferred field(s)
-  // [held] "arguments" field 'attributes' on $.attribute_item — 80% agreement, 5 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
+  // _struct_item_brace: 1 inferred field(s)
+  // [held] "_struct_item_brace" field 'where_clause' on $.where_clause — 86% agreement, 7 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
 
-  // enum_variant_list: 1 inferred field(s)
-  // [held] "enum_variant_list" field 'attributes' on $.attribute_item — 80% agreement, 5 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
-
-  // field_declaration_list: 1 inferred field(s)
-  // [held] "field_declaration_list" field 'attributes' on $.attribute_item — 80% agreement, 5 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
-
-  // field_initializer: 1 inferred field(s)
-  // [held] "field_initializer" field 'attributes' on $.attribute_item — 80% agreement, 5 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
+  // _struct_item_tuple: 1 inferred field(s)
+  // [held] "_struct_item_tuple" field 'where_clause' on $.where_clause — 86% agreement, 7 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
 
   // impl_item: 1 inferred field(s)
   "impl_item": ($, original) => transform(original, {
@@ -347,24 +564,23 @@ export const suggestedRules = {
     5: field("where_clause"),  // $.where_clause
   }),
 
-  // last_match_arm: 1 inferred field(s)
-  // [held] "last_match_arm" field 'attributes' on $.attribute_item — 80% agreement, 5 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
-
-  // match_arm: 1 inferred field(s)
-  // [held] "match_arm" field 'attributes' on $.attribute_item — 80% agreement, 5 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
-
-  // parameters: 1 inferred field(s)
-  // [held] "parameters" field 'attributes' on $.attribute_item — 80% agreement, 5 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
-
   // static_item: 1 inferred field(s)
   "static_item": ($, original) => transform(original, {
     // [held] 91% agreement, 11 parents
     3: field("mutable_specifier"),  // $.mutable_specifier
   }),
 
-  // struct_item: 2 inferred field(s)
-  // [held] "struct_item" field 'where_clause' on $.where_clause — 86% agreement, 7 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
-  // [held] "struct_item" field 'where_clause' on $.where_clause — 86% agreement, 7 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
+  // struct_item_brace: 1 inferred field(s)
+  "struct_item_brace": ($, original) => transform(original, {
+    // [held] 86% agreement, 7 parents
+    0: field("where_clause"),  // $.where_clause
+  }),
+
+  // struct_item_tuple: 1 inferred field(s)
+  "struct_item_tuple": ($, original) => transform(original, {
+    // [held] 86% agreement, 7 parents
+    1: field("where_clause"),  // $.where_clause
+  }),
 
   // trait_item: 1 inferred field(s)
   "trait_item": ($, original) => transform(original, {
@@ -375,8 +591,12 @@ export const suggestedRules = {
   // type_arguments: 1 inferred field(s)
   // [held] "type_arguments" field 'bounds' on $.trait_bounds — 100% agreement, 5 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
 
-  // type_parameters: 1 inferred field(s)
-  // [held] "type_parameters" field 'attributes' on $.attribute_item — 80% agreement, 5 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
+  // --- Polymorph candidates (wrap each choice arm in variant()) ---
+  // [held] polymorph — 2 alternative(s)
+  "visibility_modifier": ($, original) => transform(original, {
+    "0": variant("crate"),
+    "1": variant("pub"),
+  }),
 
   // --- Promoted supertypes (add matching names to grammar.supertypes) ---
   // [applied] promoted supertype
@@ -471,6 +691,9 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "outer_doc_comment_marker", classification: "terminal", applied: true },
   { kind: "unit_expression", classification: "terminal", applied: true },
   { kind: "unit_type", classification: "terminal", applied: true },
+  { kind: "array_expression", classification: "polymorph", applied: true },
+  { kind: "array_expression_list", classification: "polymorph", applied: true },
+  { kind: "array_expression_semi", classification: "polymorph", applied: true },
   { kind: "closure_expression", classification: "polymorph", applied: true },
   { kind: "closure_expression_block", classification: "polymorph", applied: true },
   { kind: "closure_expression_expr", classification: "polymorph", applied: true },
@@ -488,6 +711,10 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "range_pattern", classification: "polymorph", applied: true },
   { kind: "range_pattern_left", classification: "polymorph", applied: true },
   { kind: "range_pattern_prefix", classification: "polymorph", applied: true },
+  { kind: "struct_item", classification: "polymorph", applied: true },
+  { kind: "struct_item_brace", classification: "polymorph", applied: true },
+  { kind: "struct_item_tuple", classification: "polymorph", applied: true },
+  { kind: "struct_item_unit", classification: "polymorph", applied: true },
   { kind: "visibility_modifier", classification: "polymorph", applied: false },
 ];
 
@@ -503,19 +730,13 @@ export interface InferredField {
 export const inferredFields: readonly InferredField[] = [
   { kind: "_non_special_token", fieldName: "mutable_specifier", targetSymbol: "mutable_specifier", confidence: "medium", agreement: 0.909, sampleSize: 11, applied: false },
   { kind: "static_item", fieldName: "mutable_specifier", targetSymbol: "mutable_specifier", confidence: "medium", agreement: 0.909, sampleSize: 11, applied: false },
+  { kind: "_struct_item_brace", fieldName: "where_clause", targetSymbol: "where_clause", confidence: "medium", agreement: 0.857, sampleSize: 7, applied: false },
+  { kind: "_struct_item_tuple", fieldName: "where_clause", targetSymbol: "where_clause", confidence: "medium", agreement: 0.857, sampleSize: 7, applied: false },
   { kind: "impl_item", fieldName: "where_clause", targetSymbol: "where_clause", confidence: "medium", agreement: 0.857, sampleSize: 7, applied: false },
-  { kind: "struct_item", fieldName: "where_clause", targetSymbol: "where_clause", confidence: "medium", agreement: 0.857, sampleSize: 7, applied: false },
-  { kind: "struct_item", fieldName: "where_clause", targetSymbol: "where_clause", confidence: "medium", agreement: 0.857, sampleSize: 7, applied: false },
+  { kind: "struct_item_brace", fieldName: "where_clause", targetSymbol: "where_clause", confidence: "medium", agreement: 0.857, sampleSize: 7, applied: false },
+  { kind: "struct_item_tuple", fieldName: "where_clause", targetSymbol: "where_clause", confidence: "medium", agreement: 0.857, sampleSize: 7, applied: false },
   { kind: "trait_item", fieldName: "where_clause", targetSymbol: "where_clause", confidence: "medium", agreement: 0.857, sampleSize: 7, applied: false },
   { kind: "type_arguments", fieldName: "bounds", targetSymbol: "trait_bounds", confidence: "high", agreement: 1.000, sampleSize: 5, applied: false },
-  { kind: "arguments", fieldName: "attributes", targetSymbol: "attribute_item", confidence: "low", agreement: 0.800, sampleSize: 5, applied: false },
-  { kind: "enum_variant_list", fieldName: "attributes", targetSymbol: "attribute_item", confidence: "low", agreement: 0.800, sampleSize: 5, applied: false },
-  { kind: "field_declaration_list", fieldName: "attributes", targetSymbol: "attribute_item", confidence: "low", agreement: 0.800, sampleSize: 5, applied: false },
-  { kind: "field_initializer", fieldName: "attributes", targetSymbol: "attribute_item", confidence: "low", agreement: 0.800, sampleSize: 5, applied: false },
-  { kind: "last_match_arm", fieldName: "attributes", targetSymbol: "attribute_item", confidence: "low", agreement: 0.800, sampleSize: 5, applied: false },
-  { kind: "match_arm", fieldName: "attributes", targetSymbol: "attribute_item", confidence: "low", agreement: 0.800, sampleSize: 5, applied: false },
-  { kind: "parameters", fieldName: "attributes", targetSymbol: "attribute_item", confidence: "low", agreement: 0.800, sampleSize: 5, applied: false },
-  { kind: "type_parameters", fieldName: "attributes", targetSymbol: "attribute_item", confidence: "low", agreement: 0.800, sampleSize: 5, applied: false },
 ];
 
 export interface RepeatedShape {

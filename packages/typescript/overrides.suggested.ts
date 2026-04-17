@@ -17,6 +17,199 @@
 // Field inferences:  1  (0 applied, 1 held)
 // Rule promotions:   39  (31 applied, 8 held)
 // Repeated shapes:   7  (advisory — suggested supertypes/groups)
+// Round-trip fails: 19  (19 parse errors, 0 AST mismatches; 1 render, 18 factory)
+
+// ---------------------------------------------------------------
+// Round-trip failures — corpus cases that didn't survive
+// parse → readNode → render → reparse. Each entry shows the
+// input and rendered text so you can spot what the renderer
+// dropped. Common causes:
+//   - Repeated slot missing a `joinBy` separator (renders only
+//     the first occurrence of a multi-valued field)
+//   - Missing `transform()` patch wrapping an anonymous token
+//     that should be a named field
+//   - Template gap — rule content has no renderable slot for
+//     some structural position
+// ---------------------------------------------------------------
+export const roundTripFailures: Array<{
+  readonly entry: string;
+  readonly kind: string;
+  readonly source: "render" | "factory";
+  readonly category: "parse-error" | "ast-mismatch";
+  readonly input?: string;
+  readonly rendered?: string;
+  readonly message: string;
+}> = [
+  // --- new_expression (2) ---
+  {
+    entry: "New object with type arguments",
+    kind: "new_expression",
+    source: "render",
+    category: "parse-error",
+    message: "render: Node 'undefined' has no 'fields' or 'children' — did you mean to set 'text' for a leaf node?",
+  },
+  {
+    entry: "New object with type arguments",
+    kind: "new_expression",
+    source: "factory",
+    category: "parse-error",
+    input:    "new Array<DiffLine>()",
+    message: "Node 'undefined' has no 'fields' or 'children' — did you mean to set 'text' for ",
+  },
+  // --- string (1) ---
+  {
+    entry: "Ambient declarations",
+    kind: "string",
+    source: "factory",
+    category: "parse-error",
+    input:    "\"baz\"",
+    message: "No render rule for 'undefined'",
+  },
+  // --- formal_parameters (1) ---
+  {
+    entry: "Ambient declarations",
+    kind: "formal_parameters",
+    source: "factory",
+    category: "parse-error",
+    input:    "(greeting: string)",
+    message: "No render rule for 'undefined'",
+  },
+  // --- expression_statement (1) ---
+  {
+    entry: "Ambient declarations",
+    kind: "expression_statement",
+    source: "factory",
+    category: "parse-error",
+    input:    "1;",
+    message: "No render rule for 'undefined'",
+  },
+  // --- switch_body (1) ---
+  {
+    entry: "Ambient declarations",
+    kind: "switch_body",
+    source: "factory",
+    category: "parse-error",
+    input:    "{\n      case 1:\n          break;\n      default:\n          break;\n  }",
+    message: "No render rule for 'undefined'",
+  },
+  // --- object (1) ---
+  {
+    entry: "Ambient exports",
+    kind: "object",
+    source: "factory",
+    category: "parse-error",
+    input:    "{ x, y }",
+    message: "No render rule for 'undefined'",
+  },
+  // --- type_arguments (1) ---
+  {
+    entry: "Ambient exports",
+    kind: "type_arguments",
+    source: "factory",
+    category: "parse-error",
+    input:    "<Buffer>",
+    message: "No render rule for 'undefined'",
+  },
+  // --- type_parameters (1) ---
+  {
+    entry: "Ambient module declarations",
+    kind: "type_parameters",
+    source: "factory",
+    category: "parse-error",
+    input:    "<R>",
+    message: "No render rule for 'undefined'",
+  },
+  // --- decorator (1) ---
+  {
+    entry: "Classes with decorator calls that have type arguments",
+    kind: "decorator",
+    source: "factory",
+    category: "parse-error",
+    input:    "@bar<T>()",
+    message: "No render rule for 'undefined'",
+  },
+  // --- arguments (1) ---
+  {
+    entry: "Classes with decorator calls that have type arguments",
+    kind: "arguments",
+    source: "factory",
+    category: "parse-error",
+    input:    "()",
+    message: "Node 'undefined' has no 'fields' or 'children' — did you mean to set 'text' for ",
+  },
+  // --- template_literal_type (1) ---
+  {
+    entry: "As expressions",
+    kind: "template_literal_type",
+    source: "factory",
+    category: "parse-error",
+    input:    "`hello`",
+    message: "No render rule for 'undefined'",
+  },
+  // --- array (1) ---
+  {
+    entry: "Array with empty elements",
+    kind: "array",
+    source: "factory",
+    category: "parse-error",
+    input:    "[, a, , b, , , , s, , , ]",
+    message: "No render rule for 'undefined'",
+  },
+  // --- tuple_type (1) ---
+  {
+    entry: "Function calls with array and tuple type arguments",
+    kind: "tuple_type",
+    source: "factory",
+    category: "parse-error",
+    input:    "[C]",
+    message: "No render rule for 'undefined'",
+  },
+  // --- object_pattern (1) ---
+  {
+    entry: "Functions with destructured parameters",
+    kind: "object_pattern",
+    source: "factory",
+    category: "parse-error",
+    input:    "{a}",
+    message: "No render rule for 'undefined'",
+  },
+  // --- named_imports (1) ---
+  {
+    entry: "Flow Import Types",
+    kind: "named_imports",
+    source: "factory",
+    category: "parse-error",
+    input:    "{UserID, User}",
+    message: "No render rule for 'undefined'",
+  },
+  // --- export_clause (1) ---
+  {
+    entry: "Type-only Export",
+    kind: "export_clause",
+    source: "factory",
+    category: "parse-error",
+    input:    "{ UserType }",
+    message: "No render rule for 'undefined'",
+  },
+  // --- rest_pattern (1) ---
+  {
+    entry: "Tuple types",
+    kind: "rest_pattern",
+    source: "factory",
+    category: "parse-error",
+    input:    "...c",
+    message: "No render rule for 'undefined'",
+  },
+  // --- template_type (1) ---
+  {
+    entry: "Template literal types",
+    kind: "template_type",
+    source: "factory",
+    category: "parse-error",
+    input:    "${B}",
+    message: "No render rule for 'undefined'",
+  },
+];
 
 // ---------------------------------------------------------------
 // suggestedRules — drop entries into your overrides.ts rules map.
@@ -26,6 +219,59 @@
 export const suggestedRules = {
   // statement: 1 inferred field(s)
   // [held] "statement" field 'body' on $.statement_block — 93% agreement, 14 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
+
+  // --- Polymorph candidates (wrap each choice arm in variant()) ---
+  // [held] polymorph — 4 alternative(s)
+  "export_statement": ($, original) => transform(original, {
+    "0": variant("form_0"),
+    "1": variant("export"),
+    "2": variant("export"),
+    "3": variant("export"),
+  }),
+
+  // [held] polymorph — 3 alternative(s)
+  "import_clause": ($, original) => transform(original, {
+    "0": variant("namespace_import"),
+    "1": variant("named_imports"),
+    "2": variant("default_import"),
+  }),
+
+  // [held] polymorph — 2 alternative(s)
+  "import_specifier": ($, original) => transform(original, {
+    "1/0": variant("name"),
+    "1/1": variant("as"),
+  }),
+
+  // [held] polymorph — 2 alternative(s)
+  "parenthesized_expression": ($, original) => transform(original, {
+    "1/0": variant("expression"),
+    "1/1": variant("sequence_expression"),
+  }),
+
+  // [held] polymorph — 2 alternative(s)
+  "class_heritage": ($, original) => transform(original, {
+    "0": variant("extends_clause"),
+    "1": variant("implements_clause"),
+  }),
+
+  // [held] polymorph — 2 alternative(s)
+  "arrow_function": ($, original) => transform(original, {
+    "1/0": variant("parameter"),
+    "1/1": variant("_call_signature"),
+  }),
+
+  // [held] polymorph — 3 alternative(s)
+  "call_expression": ($, original) => transform(original, {
+    "0": variant("function"),
+    "1": variant("function"),
+    "2": variant("tok_q_dot"),
+  }),
+
+  // [held] polymorph — 2 alternative(s)
+  "index_signature": ($, original) => transform(original, {
+    "2/0": variant("colon"),
+    "2/1": variant("mapped_type_clause"),
+  }),
 
   // --- Promoted supertypes (add matching names to grammar.supertypes) ---
   // [applied] promoted supertype

@@ -8,7 +8,7 @@ rules:
       statements: "\n"
   expression_statement: $$$CHILDREN;
   macro_definition:
-    template: macro_rules!$NAME $RULES
+    template: macro_rules!$NAME $$$RULES
     joinBy: ";"
   macro_rule: $LEFT=>$RIGHT
   token_tree_pattern: ($$$CHILDREN)
@@ -22,7 +22,11 @@ rules:
   mod_item: $VISIBILITY_MODIFIER mod $NAME;$BODY
   foreign_mod_item: $VISIBILITY_MODIFIER $EXTERN_MODIFIER;$BODY
   declaration_list: "{$$$CHILDREN}"
-  struct_item: $VISIBILITY_MODIFIER struct $NAME $TYPE_PARAMETERS $$$CHILDREN $BODY
+  struct_item:
+    variants:
+      brace: $VISIBILITY_MODIFIER struct $NAME $TYPE_PARAMETERS $$$CHILDREN
+      tuple: $VISIBILITY_MODIFIER struct $NAME $TYPE_PARAMETERS $$$CHILDREN
+      unit: $VISIBILITY_MODIFIER struct $NAME $TYPE_PARAMETERS $$$CHILDREN
   union_item: $VISIBILITY_MODIFIER union $NAME $TYPE_PARAMETERS $WHERE_CLAUSE $BODY
   enum_item: $VISIBILITY_MODIFIER enum $NAME $TYPE_PARAMETERS $WHERE_CLAUSE $BODY
   enum_variant_list:
@@ -165,17 +169,15 @@ rules:
     template: ($$$CHILDREN)
     joinBy: ","
   array_expression:
-    template: "[$$$ATTRIBUTES $ELEMENTS]"
-    joinBy: ","
-    joinByField:
-      attributes: "\n"
+    variants:
+      semi: $$$CHILDREN
+      list: $$$CHILDREN
   parenthesized_expression: ($$$CHILDREN)
   tuple_expression:
-    template: ($$$ATTRIBUTES $FIRST,$$$REST $TRAILING)
+    template: ($$$ATTRIBUTES $$$ELEMENTS,)
     joinBy: ","
     joinByField:
       attributes: "\n"
-      rest: ","
   struct_expression: $NAME $BODY
   field_initializer_list:
     template: "{$$$CHILDREN}"
@@ -262,10 +264,21 @@ rules:
       prefix: $$$CHILDREN
   negative_literal: "-$VALUE"
   string_literal: "\"$$$CHILDREN\""
-  raw_string_literal: $RAW_STRING_LITERAL_START $STRING_CONTENT $RAW_STRING_LITERAL_END
+  raw_string_literal: $TEXT
   comment: $$$CHILDREN
   line_comment: //$OUTER$INNER$DOC
   block_comment: /*$OUTER$INNER $DOC*/
+  array_expression_semi:
+    template: "[$$$ATTRIBUTES $ELEMENTS;$LENGTH]"
+    joinByField:
+      attributes: "\n"
+  array_expression_list:
+    template: "[$$$ATTRIBUTES $$$CHILDREN $$$ELEMENTS]"
+    joinBy: ","
+    joinByField:
+      attributes: "\n"
+  struct_item_brace: $$$CHILDREN $BODY
+  struct_item_tuple: $BODY $$$CHILDREN;
   range_expression_binary: $START $OPERATOR $END
   range_expression_postfix: $START $OPERATOR
   range_expression_prefix: $OPERATOR $END

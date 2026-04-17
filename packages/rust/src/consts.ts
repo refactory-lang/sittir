@@ -13,6 +13,8 @@ export const NODE_KINDS = [
   'abstract_type',
   'arguments',
   'array_expression',
+  'array_expression_list',
+  'array_expression_semi',
   'array_type',
   'assignment_expression',
   'associated_type',
@@ -129,6 +131,8 @@ export const NODE_KINDS = [
   'string_literal',
   'struct_expression',
   'struct_item',
+  'struct_item_brace',
+  'struct_item_tuple',
   'struct_pattern',
   'token_binding_pattern',
   'token_repetition',
@@ -254,6 +258,7 @@ export const KEYWORDS = [
   '_kw_operator',
   '_kw_unsafe',
   '_outer_line_doc_comment_marker',
+  '_struct_item_unit',
   'as',
   'async',
   'await',
@@ -289,6 +294,7 @@ export const KEYWORDS = [
   'self',
   'static',
   'struct',
+  'struct_item_unit',
   'super',
   'trait',
   'try',
@@ -381,8 +387,15 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'arguments': [
   ],
   'array_expression': [
+  ],
+  'array_expression_list': [
+    { name: 'attributes', required: true, multiple: true },
+    { name: 'elements', required: true, multiple: true },
+  ],
+  'array_expression_semi': [
     { name: 'attributes', required: true, multiple: true },
     { name: 'elements', required: true, multiple: false },
+    { name: 'length', required: true, multiple: false },
   ],
   'array_type': [
     { name: 'element', required: true, multiple: false },
@@ -840,7 +853,12 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'visibilityModifier', required: false, multiple: false },
     { name: 'name', required: true, multiple: false },
     { name: 'typeParameters', required: false, multiple: false },
-    { name: 'body', required: false, multiple: false },
+  ],
+  'struct_item_brace': [
+    { name: 'body', required: true, multiple: false },
+  ],
+  'struct_item_tuple': [
+    { name: 'body', required: true, multiple: false },
   ],
   'struct_pattern': [
     { name: 'type', required: true, multiple: false },
@@ -874,9 +892,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'tuple_expression': [
     { name: 'attributes', required: true, multiple: true },
-    { name: 'first', required: true, multiple: false },
-    { name: 'rest', required: true, multiple: true },
-    { name: 'trailing', required: false, multiple: false },
+    { name: 'elements', required: false, multiple: true },
   ],
   'tuple_pattern': [
   ],

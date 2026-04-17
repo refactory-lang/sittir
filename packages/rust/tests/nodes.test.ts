@@ -151,13 +151,17 @@ describe('declaration_list', () => {
 });
 
 describe('struct_item', () => {
-  it('factory produces correct type', () => {
-    const node = ir.struct({ name: { type: '_type_identifier', text: 'test' } as any, children: [{ type: 'where_clause', text: 'test' } as any] as any });
+  it('brace form produces correct type', () => {
+    const node = ir.struct.brace({ name: { type: '_type_identifier', text: 'test' } as any });
     expect(node.type).toBe('struct_item');
   });
-  it('render produces non-empty string', () => {
-    const node = ir.struct({ name: { type: '_type_identifier', text: 'test' } as any, children: [{ type: 'where_clause', text: 'test' } as any] as any });
-    expect(node.render().length).toBeGreaterThan(0);
+  it('tuple form produces correct type', () => {
+    const node = ir.struct.tuple({ name: { type: '_type_identifier', text: 'test' } as any });
+    expect(node.type).toBe('struct_item');
+  });
+  it('unit form produces correct type', () => {
+    const node = ir.struct.unit({ name: { type: '_type_identifier', text: 'test' } as any });
+    expect(node.type).toBe('struct_item');
   });
 });
 
@@ -933,13 +937,13 @@ describe('arguments', () => {
 });
 
 describe('array_expression', () => {
-  it('factory produces correct type', () => {
-    const node = ir.array({ attributes: [{ type: 'attribute_item', text: 'test' } as any], elements: { type: '_expression', text: 'test' } as any });
+  it('semi form produces correct type', () => {
+    const node = ir.array.semi({});
     expect(node.type).toBe('array_expression');
   });
-  it('render produces non-empty string', () => {
-    const node = ir.array({ attributes: [{ type: 'attribute_item', text: 'test' } as any], elements: { type: '_expression', text: 'test' } as any });
-    expect(node.render().length).toBeGreaterThan(0);
+  it('list form produces correct type', () => {
+    const node = ir.array.list({});
+    expect(node.type).toBe('array_expression');
   });
 });
 
@@ -952,11 +956,11 @@ describe('parenthesized_expression', () => {
 
 describe('tuple_expression', () => {
   it('factory produces correct type', () => {
-    const node = ir.tuple({ attributes: [{ type: 'attribute_item', text: 'test' } as any], first: { type: '_expression', text: 'test' } as any, rest: [{ type: '_expression', text: 'test' } as any] });
+    const node = ir.tuple({ attributes: [{ type: 'attribute_item', text: 'test' } as any] });
     expect(node.type).toBe('tuple_expression');
   });
   it('render produces non-empty string', () => {
-    const node = ir.tuple({ attributes: [{ type: 'attribute_item', text: 'test' } as any], first: { type: '_expression', text: 'test' } as any, rest: [{ type: '_expression', text: 'test' } as any] });
+    const node = ir.tuple({ attributes: [{ type: 'attribute_item', text: 'test' } as any] });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -1532,6 +1536,28 @@ describe('metavariable', () => {
   });
 });
 
+describe('array_expression_semi', () => {
+  it('factory produces correct type', () => {
+    const node = ir.arrayExpressionSemi({ attributes: [{ type: 'attribute_item', text: 'test' } as any], elements: { type: '_expression', text: 'test' } as any, length: { type: '_expression', text: 'test' } as any });
+    expect(node.type).toBe('array_expression_semi');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.arrayExpressionSemi({ attributes: [{ type: 'attribute_item', text: 'test' } as any], elements: { type: '_expression', text: 'test' } as any, length: { type: '_expression', text: 'test' } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('array_expression_list', () => {
+  it('factory produces correct type', () => {
+    const node = ir.arrayExpressionList({ attributes: [{ type: 'attribute_item', text: 'test' } as any], elements: [{ type: '_expression', text: 'test' } as any], children: [{ type: 'attribute_item', text: 'test' } as any] as any });
+    expect(node.type).toBe('array_expression_list');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.arrayExpressionList({ attributes: [{ type: 'attribute_item', text: 'test' } as any], elements: [{ type: '_expression', text: 'test' } as any], children: [{ type: 'attribute_item', text: 'test' } as any] as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
 describe('string_content', () => {
   it('factory produces correct type', () => {
     const node = ir.stringContent("test");
@@ -1560,6 +1586,28 @@ describe('primitive_type', () => {
   it('factory accepts valid value', () => {
     const node = ir.primitiveType('u8');
     expect(node.type).toBe('primitive_type');
+  });
+});
+
+describe('struct_item_brace', () => {
+  it('factory produces correct type', () => {
+    const node = ir.structItemBrace({ body: { type: 'field_declaration_list', text: 'test' } as any, children: [{ type: 'where_clause', text: 'test' } as any] as any });
+    expect(node.type).toBe('struct_item_brace');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.structItemBrace({ body: { type: 'field_declaration_list', text: 'test' } as any, children: [{ type: 'where_clause', text: 'test' } as any] as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('struct_item_tuple', () => {
+  it('factory produces correct type', () => {
+    const node = ir.structItemTuple({ body: { type: 'ordered_field_declaration_list', text: 'test' } as any, children: [{ type: 'where_clause', text: 'test' } as any] as any });
+    expect(node.type).toBe('struct_item_tuple');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.structItemTuple({ body: { type: 'ordered_field_declaration_list', text: 'test' } as any, children: [{ type: 'where_clause', text: 'test' } as any] as any });
+    expect(node.render().length).toBeGreaterThan(0);
   });
 });
 

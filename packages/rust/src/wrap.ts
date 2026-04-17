@@ -17,6 +17,8 @@ import type {
   AbstractType,
   Arguments,
   ArrayExpression,
+  ArrayExpressionList,
+  ArrayExpressionSemi,
   ArrayType,
   AssignmentExpression,
   AssociatedType,
@@ -135,6 +137,8 @@ import type {
   StringLiteral,
   StructExpression,
   StructItem,
+  StructItemBrace,
+  StructItemTuple,
   StructPattern,
   TokenBindingPattern,
   TokenRepetition,
@@ -358,7 +362,6 @@ export function wrapStructItem(data: _NodeData, tree: TreeHandle): WrappedNode<S
     get visibilityModifier() { return drillIn(data.fields?.['visibility_modifier'], tree); },
     get name() { return drillIn(data.fields?.['name'], tree); },
     get typeParameters() { return drillIn(data.fields?.['type_parameters'], tree); },
-    get body() { return drillIn(data.fields?.['body'], tree); },
     get child() { return drillIn(data.children?.[0], tree); },
   } as unknown as WrappedNode<StructItem>;
 }
@@ -1041,9 +1044,7 @@ export function wrapArguments(data: _NodeData, tree: TreeHandle): WrappedNode<Ar
 export function wrapArrayExpression(data: _NodeData, tree: TreeHandle): WrappedNode<ArrayExpression> {
   return {
     ...data,
-    get attributes() { return drillInAll(data.fields?.['attributes'], tree); },
-    get elements() { return drillIn(data.fields?.['elements'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get child() { return drillIn(data.children?.[0], tree); },
   } as unknown as WrappedNode<ArrayExpression>;
 }
 
@@ -1058,9 +1059,7 @@ export function wrapTupleExpression(data: _NodeData, tree: TreeHandle): WrappedN
   return {
     ...data,
     get attributes() { return drillInAll(data.fields?.['attributes'], tree); },
-    get first() { return drillIn(data.fields?.['first'], tree); },
-    get rest() { return drillInAll(data.fields?.['rest'], tree); },
-    get trailing() { return drillIn(data.fields?.['trailing'], tree); },
+    get elements() { return drillInAll(data.fields?.['elements'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<TupleExpression>;
 }
@@ -1500,6 +1499,25 @@ export function wrap_FieldIdentifier(data: _NodeData, tree: TreeHandle): Wrapped
   } as unknown as WrappedNode<_FieldIdentifier>;
 }
 
+export function wrapArrayExpressionSemi(data: _NodeData, tree: TreeHandle): WrappedNode<ArrayExpressionSemi> {
+  return {
+    ...data,
+    get attributes() { return drillInAll(data.fields?.['attributes'], tree); },
+    get elements() { return drillIn(data.fields?.['elements'], tree); },
+    get length() { return drillIn(data.fields?.['length'], tree); },
+    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<ArrayExpressionSemi>;
+}
+
+export function wrapArrayExpressionList(data: _NodeData, tree: TreeHandle): WrappedNode<ArrayExpressionList> {
+  return {
+    ...data,
+    get attributes() { return drillInAll(data.fields?.['attributes'], tree); },
+    get elements() { return drillInAll(data.fields?.['elements'], tree); },
+    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<ArrayExpressionList>;
+}
+
 export function wrap_FieldPatternShorthand(data: _NodeData, tree: TreeHandle): WrappedNode<_FieldPatternShorthand> {
   return {
     ...data,
@@ -1522,6 +1540,22 @@ export function wrap_RangeExpressionBare(data: _NodeData, tree: TreeHandle): Wra
     get operator() { return drillIn(data.fields?.['operator'], tree); },
     get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<_RangeExpressionBare>;
+}
+
+export function wrapStructItemBrace(data: _NodeData, tree: TreeHandle): WrappedNode<StructItemBrace> {
+  return {
+    ...data,
+    get body() { return drillIn(data.fields?.['body'], tree); },
+    get child() { return drillIn(data.children?.[0], tree); },
+  } as unknown as WrappedNode<StructItemBrace>;
+}
+
+export function wrapStructItemTuple(data: _NodeData, tree: TreeHandle): WrappedNode<StructItemTuple> {
+  return {
+    ...data,
+    get body() { return drillIn(data.fields?.['body'], tree); },
+    get child() { return drillIn(data.children?.[0], tree); },
+  } as unknown as WrappedNode<StructItemTuple>;
 }
 
 export function wrapRangeExpressionBinary(data: _NodeData, tree: TreeHandle): WrappedNode<RangeExpressionBinary> {
@@ -1799,6 +1833,8 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_kw_default': (d) => d,
   '_kw_const': (d) => d,
   '_kw_unsafe': (d) => d,
+  'array_expression_semi': (d, t) => wrapArrayExpressionSemi(d, t),
+  'array_expression_list': (d, t) => wrapArrayExpressionList(d, t),
   '_field_pattern_shorthand': (d, t) => wrap_FieldPatternShorthand(d, t),
   '_closure_expression_expr': (d, t) => wrap_ClosureExpressionExpr(d, t),
   '_range_expression_bare': (d, t) => wrap_RangeExpressionBare(d, t),
@@ -1811,6 +1847,8 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_line_doc_content': (d) => d,
   '_error_sentinel': (d) => d,
   'primitive_type': (d) => d,
+  'struct_item_brace': (d, t) => wrapStructItemBrace(d, t),
+  'struct_item_tuple': (d, t) => wrapStructItemTuple(d, t),
   'range_expression_binary': (d, t) => wrapRangeExpressionBinary(d, t),
   'range_expression_postfix': (d, t) => wrapRangeExpressionPostfix(d, t),
   'range_expression_prefix': (d, t) => wrapRangeExpressionPrefix(d, t),
