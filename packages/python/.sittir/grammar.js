@@ -67,6 +67,16 @@ function isPrecWrapper(rule) {
   const t = rule.type;
   return t === "prec" || t === "PREC" || t === "prec_left" || t === "PREC_LEFT" || t === "prec_right" || t === "PREC_RIGHT" || t === "prec_dynamic" || t === "PREC_DYNAMIC";
 }
+function typeEq(t, lower) {
+  return typeof t === "string" && (t === lower || t === lower.toUpperCase());
+}
+var isSeqType = (t) => typeEq(t, "seq");
+var isChoiceType = (t) => typeEq(t, "choice");
+var isOptionalType = (t) => typeEq(t, "optional");
+var isFieldType = (t) => typeEq(t, "field");
+var isSymbolType = (t) => typeEq(t, "symbol");
+var isStringType = (t) => typeEq(t, "string");
+var isRepeatType = (t) => typeEq(t, "repeat") || typeEq(t, "repeat1");
 
 // packages/codegen/src/dsl/transform-path.ts
 function dsl() {
@@ -792,30 +802,6 @@ function applyEnrichPasses(ruleName, rule) {
   r = applyBareKeywordViaTransform(ruleName, r);
   r = applyOptionalKeywordViaTransform(ruleName, r);
   return r;
-}
-function typeEq(t, lower) {
-  return typeof t === "string" && (t === lower || t === lower.toUpperCase());
-}
-function isSeqType(t) {
-  return typeEq(t, "seq");
-}
-function isStringType(t) {
-  return typeEq(t, "string");
-}
-function isSymbolType(t) {
-  return typeEq(t, "symbol");
-}
-function isFieldType(t) {
-  return typeEq(t, "field");
-}
-function isOptionalType(t) {
-  return typeEq(t, "optional");
-}
-function isChoiceType(t) {
-  return typeEq(t, "choice");
-}
-function isRepeatType(t) {
-  return typeEq(t, "repeat") || typeEq(t, "repeat1");
 }
 function normalizeMember(m) {
   if (typeof m === "string") return { type: "STRING", value: m };

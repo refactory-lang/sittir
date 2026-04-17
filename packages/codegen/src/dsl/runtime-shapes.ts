@@ -123,3 +123,25 @@ export function isPrecWrapper(rule: { type: string }): boolean {
         || t === 'prec_right' || t === 'PREC_RIGHT'
         || t === 'prec_dynamic' || t === 'PREC_DYNAMIC'
 }
+
+// ---------------------------------------------------------------------------
+// Per-type discriminators — accept both sittir-lowercase and tree-sitter
+// uppercase shapes. Consolidated here so every caller goes through a
+// single predicate instead of scattering `typeEq(t, 'seq')` helpers or
+// inline `t === 'seq' || t === 'SEQ'` ladders across the codebase.
+// ---------------------------------------------------------------------------
+
+/** True if `t` equals `lower` or its uppercase form (`'seq'` or `'SEQ'`). */
+export function typeEq(t: unknown, lower: string): boolean {
+    return typeof t === 'string' && (t === lower || t === lower.toUpperCase())
+}
+
+export const isSeqType = (t: unknown): boolean => typeEq(t, 'seq')
+export const isChoiceType = (t: unknown): boolean => typeEq(t, 'choice')
+export const isOptionalType = (t: unknown): boolean => typeEq(t, 'optional')
+export const isFieldType = (t: unknown): boolean => typeEq(t, 'field')
+export const isSymbolType = (t: unknown): boolean => typeEq(t, 'symbol')
+export const isStringType = (t: unknown): boolean => typeEq(t, 'string')
+export const isAliasType = (t: unknown): boolean => typeEq(t, 'alias')
+export const isRepeatType = (t: unknown): boolean => typeEq(t, 'repeat') || typeEq(t, 'repeat1')
+export const isBlankType = (t: unknown): boolean => typeEq(t, 'blank')

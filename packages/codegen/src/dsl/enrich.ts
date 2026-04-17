@@ -49,6 +49,15 @@
 import type { Rule } from '../compiler/rule.ts'
 import { transform } from './transform.ts'
 import { field } from './field.ts'
+import {
+    isSeqType,
+    isStringType,
+    isSymbolType,
+    isFieldType,
+    isOptionalType,
+    isChoiceType,
+    isRepeatType,
+} from './runtime-shapes.ts'
 
 // Shape of the tree-sitter grammar result that our grammarFn produces.
 // The outer wrapper is `{ grammar: {...} }` because tree-sitter's
@@ -136,17 +145,8 @@ function applyEnrichPasses(ruleName: string, rule: Rule): Rule {
 // readNode's promoteAnonymousKeyword picks these up at runtime (the
 // anonymous token's type IS its text, so the promotion is direct).
 
-/** Case-insensitive type checks — tree-sitter uses uppercase, sittir lowercase. */
-function typeEq(t: unknown, lower: string): boolean {
-    return typeof t === 'string' && (t === lower || t === lower.toUpperCase())
-}
-function isSeqType(t: unknown): boolean { return typeEq(t, 'seq') }
-function isStringType(t: unknown): boolean { return typeEq(t, 'string') }
-function isSymbolType(t: unknown): boolean { return typeEq(t, 'symbol') }
-function isFieldType(t: unknown): boolean { return typeEq(t, 'field') }
-function isOptionalType(t: unknown): boolean { return typeEq(t, 'optional') }
-function isChoiceType(t: unknown): boolean { return typeEq(t, 'choice') }
-function isRepeatType(t: unknown): boolean { return typeEq(t, 'repeat') || typeEq(t, 'repeat1') }
+// Per-type guards imported from runtime-shapes.ts — single spot for
+// the sittir-lowercase / tree-sitter-uppercase dual-case handling.
 
 /**
  * Normalize a rule member to a structured form. Tree-sitter's DSL lets
