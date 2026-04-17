@@ -107,10 +107,10 @@
 - [x] T026a [US3] Implement `alias('name')` sugar: AliasPlaceholder in alias.ts, resolvePatch wrapping in transform.ts, synthetic-rules.ts accumulator, withSyntheticRuleScope in evaluate.ts, two-pass grammar wrapper for tree-sitter CLI
 - [x] T026b [US3] Verify parse tree: `(assignment (assignment_eq left: ... right: ...))` — variant wrapper node with fields inside. 4 e2e tests in nested-alias-e2e.test.ts
 - [x] T027 [US3] Convert 5 rust polymorphs to nested-alias via `variant()` sugar: closure_expression, field_pattern, or_pattern, range_expression, range_pattern. Skipped visibility_modifier (full replacement). Fixed prec context propagation bug. Added `variant()` DSL + rest-parameter `transform()`. Corpus round-trip regressed — templates need update for variant child structure
-- [ ] T028a [P] [US3] Convert typescript polymorphs batch 1 (4 rules)
-- [ ] T028b [P] [US3] Convert typescript polymorphs batch 2 (5 rules)
-- [ ] T029 [US3] Recompile all three override grammars and verify compilation succeeds
-- [ ] T029a [US3] Add variant-name uniqueness validation
+- [ ] T028a [P] [US3] Convert typescript polymorphs batch 1 (4 rules) — deferred. Infrastructure (auto-hoist, conflict registration, suggested.ts emission) landed 2026-04-16. Typescript polymorph candidates (`import_specifier`, `parenthesized_expression`, `class_heritage`, `import_clause`) have a top-level `choice(...)` rule root (no outer seq), which doesn't match the current auto-hoist shape (top-level seq containing a choice at position N). Each needs per-rule analysis + potentially a different hoist path. Current field-based overrides are passing fidelity; adoption is ergonomic polish, not correctness
+- [ ] T028b [P] [US3] Convert typescript polymorphs batch 2 (5 rules) — deferred, same rationale as T028a. Also: `export_statement` / `call_expression` have duplicate variant-name suggestions (`export`/`export`/`export`, `function`/`function`) that would need the suggested emitter to auto-disambiguate before adoption is clean
+- [x] T029 [US3] Recompile all three override grammars and verify compilation succeeds — all three compile clean after auto-hoist + conflict registration work (session 2026-04-16)
+- [x] T029a [US3] Add variant-name uniqueness validation — `registerPolymorphVariant` throws on duplicate (parent, variant) pair in synthetic-rules.ts
 
 ### T050 [US3] — Polymorph factory ergonomics for nested-alias kinds
 
@@ -143,8 +143,8 @@ readNode produces `{ type: 'assignment', fields: { left }, children: [{ type: 'a
 - [x] T050e [US3] N/A — `_inferBranch` doesn't exist in the codebase. Nested-alias discrimination uses child node type natively via the parse tree
 - [x] T050f [US3] Update `packages/codegen/src/emitters/wrap.ts`: `emitNestedAliasWrap()` generates flat getters for parent fields + variant child fields. Variant getters drill into `data.children[0].fields`. Also exposes `variant` and `child` accessors
 - [x] T050g [US3] Integration tests in `nested-alias-factory.test.ts` + `nested-alias-factory-roundtrip.test.ts`: verify factory dispatches by field presence (typed→eq→type fallback), wrap has flat variant getters, variant factories exist standalone. 10 tests total
-- [ ] T030 [US3] Run full fidelity suite for all three grammars. Confirm ceilings hold
-- [ ] T032 [US3] Verify: factory discriminates by child type, not field-set heuristics
+- [x] T030 [US3] Run full fidelity suite for all three grammars. Confirm ceilings hold — rust 123/136 rt, 110/151 factory; ts 109/112 rt, 105/126 factory; python 109/115 rt, 82/103 factory (improved from baseline)
+- [x] T032 [US3] Verify: factory discriminates by child type, not field-set heuristics — `emitNestedAliasFactory` dispatches via `children[0].type` in generated factories, verified in nested-alias-factory.test.ts
 
 **Checkpoint**: Nested-alias polymorphs have ergonomic flat-field factories. Tree structure is correct internally. API surface is clean for consumers.
 
@@ -176,8 +176,8 @@ readNode produces `{ type: 'assignment', fields: { left }, children: [{ type: 'a
 
 - [x] T040 Run `pnpm test` across all packages — full green (1,133 tests passing)
 - [x] T041 Run `pnpm -r run type-check` across all packages — no type errors
-- [ ] T042 [P] Update `specs/007-override-compiled-parser/checklists/requirements.md` — verify all items pass
-- [ ] T043 [P] Run quickstart.md validation scenarios (4 scenarios from quickstart.md)
+- [x] T042 [P] Update `specs/007-override-compiled-parser/checklists/requirements.md` — verify all items pass. All 16 checklist items are marked [x]
+- [x] T043 [P] Run quickstart.md validation scenarios (4 scenarios from quickstart.md). Scenario 1: parser compiles + conditional_expression body/condition/alternative present. Scenario 2: enrich bare-keyword promotion active across all 3 grammars. Scenario 3: closure_expression nested-alias works (parent=closure_expression, child=closure_expression_expr). Scenario 4: link cleanup done (line count 1651; target <1427 unmet per T039's suggestion-only decision)
 - [x] T044 Verify edge case: grammar with no overrides.ts falls back to base parser without error (loadLanguageForGrammar falls back to base WASM; typescript has no .sittir/parser.wasm and works)
 - [x] T045 Verify edge case: parser compilation failure surfaces clear error with build output (compileParser throws with message when grammar.js missing — tested in compile-parser.test.ts)
 - [ ] T046 Verify edge case: overrides.ts without enrich(base) — deferred (all grammars use enrich)
