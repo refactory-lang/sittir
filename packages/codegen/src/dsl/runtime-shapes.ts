@@ -119,5 +119,7 @@ export function isWrapperType(t: string): boolean {
 export function isPrecWrapper(rule: { type: string }): boolean {
     const t = rule.type
     return t === 'prec' || t === 'PREC'
-        || t === 'PREC_LEFT' || t === 'PREC_RIGHT' || t === 'PREC_DYNAMIC'
+        || t === 'prec_left' || t === 'PREC_LEFT'
+        || t === 'prec_right' || t === 'PREC_RIGHT'
+        || t === 'prec_dynamic' || t === 'PREC_DYNAMIC'
 }

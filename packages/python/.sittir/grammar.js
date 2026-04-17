@@ -65,7 +65,7 @@ function isWrapperType(t) {
 }
 function isPrecWrapper(rule) {
   const t = rule.type;
-  return t === "prec" || t === "PREC" || t === "PREC_LEFT" || t === "PREC_RIGHT" || t === "PREC_DYNAMIC";
+  return t === "prec" || t === "PREC" || t === "prec_left" || t === "PREC_LEFT" || t === "prec_right" || t === "PREC_RIGHT" || t === "prec_dynamic" || t === "PREC_DYNAMIC";
 }
 
 // packages/codegen/src/dsl/transform-path.ts

@@ -143,3 +143,48 @@ describe('render', () => {
 		expect(() => render(node)).toThrow("has no 'fields'");
 	});
 });
+
+// The $TEXT template slot and its fallback path ship with the
+// external-scanner support. Covered here so a regression (either
+// dropping the slot handler or breaking the fallback) surfaces at
+// unit level, not only via the rust raw_string_literal corpus case.
+describe('render — $TEXT slot', () => {
+	const textConfig: RulesConfig = {
+		language: 'test',
+		extensions: ['test'],
+		expandoChar: null,
+		metadata: { grammarSha: 'test' },
+		rules: {
+			raw_string_literal: '$TEXT',
+		},
+	};
+	const { render: renderText } = createRenderer(textConfig);
+
+	it('emits node.text verbatim when present (parsed-tree path)', () => {
+		// Simulates readNode's output for a parsed raw_string_literal:
+		// span text captures the `r#"..."#` delimiters that the
+		// external scanner consumed.
+		const node: AnyNodeData = {
+			type: 'raw_string_literal',
+			text: 'r#"abc"#',
+			fields: {
+				string_content: { type: 'string_content', text: 'abc' },
+			},
+		};
+		expect(renderText(node)).toBe('r#"abc"#');
+	});
+
+	it('falls back to concatenating fields + children when text is absent (factory-built path)', () => {
+		// Factories don't set node.text — they only know the config
+		// values. $TEXT must degrade gracefully to a best-effort
+		// concatenation so test-suite factories still produce non-
+		// empty output (regression guard on the fix in 813b20c).
+		const node: AnyNodeData = {
+			type: 'raw_string_literal',
+			fields: {
+				string_content: { type: 'string_content', text: 'abc' },
+			},
+		};
+		expect(renderText(node)).toBe('abc');
+	});
+});
