@@ -123,15 +123,27 @@ function render(node: AnyNodeData, ctx: InternalRenderContext): string {
 			// Best-effort concatenate the fields + children so round-
 			// trip tests for `$TEXT` rules still produce non-empty
 			// output; better than silent ''.
+			// Iterate fields + children, skipping absent entries. Optional
+			// fields on a factory-built node come through as `undefined`
+			// in `$fields` (the factory preserves the key, stamps the
+			// value as the caller's `config?.fieldName`). Passing those
+			// to `renderValue` crashes inside `render()` reading `.$text`
+			// on undefined. The $TEXT fallback is a best-effort anyway —
+			// silently dropping absent entries is the right call.
 			const parts: string[] = [];
 			if (node.$fields) {
 				for (const v of Object.values(node.$fields)) {
+					if (v === undefined || v === null) continue;
 					const items = Array.isArray(v) ? v : [v];
-					for (const item of items) parts.push(renderValue(item as AnyNodeData | string | number, ctx));
+					for (const item of items) {
+						if (item === undefined || item === null) continue;
+						parts.push(renderValue(item as AnyNodeData | string | number, ctx));
+					}
 				}
 			}
 			if (node.$children) {
 				for (const c of node.$children) {
+					if (c === undefined || c === null) continue;
 					parts.push(renderValue(c as AnyNodeData | string | number, ctx));
 				}
 			}
@@ -441,6 +453,15 @@ function resolveJoinBy(ruleObj: Record<string, unknown> | undefined, varName: st
 function renderValue(value: AnyNodeData | string | number, ctx: InternalRenderContext): string {
 	if (typeof value === 'string') return value;
 	if (typeof value === 'number') return String(value);
+	// Guard against undefined / null reaching the NodeData branch. Callers
+	// that iterate a parent's fields can legitimately see an optional-field
+	// slot come through undefined; they should filter before calling here,
+	// but throwing with context is better than the raw
+	// `Cannot read properties of undefined (reading '$text')` from
+	// `render()`'s first line.
+	if (value === undefined || value === null) {
+		throw new Error(`renderValue: value is ${value === null ? 'null' : 'undefined'} — filter absent fields before calling`);
+	}
 	return render(value, ctx);
 }
 
