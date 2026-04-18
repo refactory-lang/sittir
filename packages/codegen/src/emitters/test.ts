@@ -4,6 +4,7 @@
  */
 
 import type { NodeMap, AssembledNode, AssembledField } from '../compiler/rule.ts'
+import { isValidIdent } from './shared.ts'
 
 export interface EmitTestsConfig {
     grammar: string
@@ -21,7 +22,6 @@ export function emitTests(config: EmitTestsConfig): string {
     ]
 
     // Branch/container/polymorph tests
-    const isValidIdent = (s: string) => /^[A-Za-z_$][\w$]*$/.test(s)
     for (const [kind, node] of nodeMap.nodes) {
         if (kind.startsWith('_')) continue
         if (!node.factoryName) continue

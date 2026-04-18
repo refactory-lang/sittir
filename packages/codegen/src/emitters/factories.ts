@@ -383,22 +383,6 @@ function renderFactoryForNode(
     }
 }
 
-/**
- * A group is a polymorph form iff another node in the map is an
- * AssembledPolymorph that references it by kind. Polymorph form
- * groups are emitted by their parent's dispatcher, not at the top
- * level — this check prevents duplicate emission.
- */
-function isPolymorphForm(kind: string, nodeMap: NodeMap): boolean {
-    for (const [, node] of nodeMap.nodes) {
-        if (node.modelType !== 'polymorph') continue
-        for (const form of node.forms) {
-            if (form.kind === kind) return true
-        }
-    }
-    return false
-}
-
 // ---------------------------------------------------------------------------
 // Field-carrying factory (branches, groups, polymorph forms)
 // ---------------------------------------------------------------------------

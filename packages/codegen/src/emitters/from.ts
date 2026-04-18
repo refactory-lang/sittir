@@ -120,8 +120,12 @@ export function emitFrom(config: EmitFromConfig): string {
     lines.push("  if (v === null || v === undefined || typeof v !== 'object') return false;")
     lines.push("  if (Array.isArray(v)) return false;")
     lines.push("  const o = v as { readonly $type?: unknown; readonly $fields?: unknown; readonly $text?: unknown };")
+    // `typeof null === 'object'` so guard $fields against null before
+    // accepting it — a malformed `{ $type: 'foo', $fields: null }` would
+    // otherwise pass and downstream `.fieldName` reads would TypeError
+    // far from the bad input.
     lines.push("  return typeof o.$type === 'string'")
-    lines.push("    && (typeof o.$fields === 'object' || typeof o.$text === 'string');")
+    lines.push("    && ((o.$fields !== null && typeof o.$fields === 'object') || typeof o.$text === 'string');")
     lines.push('}')
     lines.push('')
 
@@ -129,13 +133,9 @@ export function emitFrom(config: EmitFromConfig): string {
     // passed down so every field resolver call registers its kind
     // list through the same dedup table.
     const perNodeBlocks: string[] = []
-    const polymorphFormKinds = new Set<string>()
-    for (const [, n] of nodeMap.nodes) {
-        if (n.modelType === 'polymorph') for (const f of n.forms) polymorphFormKinds.add(f.kind)
-    }
     for (const [kind, node] of nodeMap.nodes) {
         if (kind.startsWith('_')) continue
-        if (polymorphFormKinds.has(kind)) continue
+        if (nodeMap.polymorphFormKinds.has(kind)) continue
         const source = renderFromForNode(node, nodeMap, internKinds)
         if (source === undefined) continue
         perNodeBlocks.push(source)

@@ -244,16 +244,20 @@ type ExpandNode<G, K extends NodeKind<G>, Visited extends string[]> = Readonly<{
  * A grammar-derived AST node. The single type for both construction
  * (factory output) and type-level projection.
  *
- * Branch nodes (have fields in grammar): `{ type, fields, text? }`
- * Leaf nodes (no fields): `{ type, text? }`
+ * Branch nodes (have fields in grammar): `{ $type, $fields, $children? }`
+ * Leaf nodes (no fields): `{ $type, $text }`
+ *
+ * Metadata keys are `$`-prefixed (spec 008 US7) so user-facing field
+ * names like `type` (python's `type_alias_statement`) don't collide
+ * with the kind discriminant.
  *
  * @example
  * ```ts
  * type FunctionItem = NodeData<RustGrammar, 'function_item'>;
- * // { readonly type: 'function_item', readonly fields: { name: ..., body?: ... } }
+ * // { readonly $type: 'function_item', readonly $fields: { name: ..., body?: ... } }
  *
  * type Identifier = NodeData<RustGrammar, 'identifier'>;
- * // { readonly type: 'identifier', readonly text: string }
+ * // { readonly $type: 'identifier', readonly $text: string }
  * ```
  */
 export type NodeData<
@@ -377,25 +381,23 @@ export type FluentNode<K extends string, C = unknown> =
 /**
  * RuntimeNodeOf<T> — the runtime shape produced by factory/from functions.
  *
- * Transforms the concrete interface to match what factories actually produce:
- * - `type` discriminant from T
- * - `named: true`
- * - `fields` with snake_case keys (runtime uses raw grammar names)
- * - child slots converted to arrays (runtime always uses arrays)
- * - Fluent setters derived from T's camelCase fields
- * - render/toEdit/replace methods
+ * Transforms the concrete interface to match what factories actually emit:
+ * - `$type` discriminant (lifted from T's `$type`)
+ * - `$source: 'factory'`
+ * - `$named: true`
+ * - `$fields` retained with its original shape (raw snake_case keys inside)
+ * - `$children` retained when T has it (spec 008 US7 — no singular-to-array
+ *   conversion; the concrete interface already encodes the grammar-declared
+ *   child shape)
+ * - render / toEdit / replace methods
  *
  * @example
  * ```ts
  * type FnNode = RuntimeNodeOf<FunctionItem>;
- * // = { type: 'function_item', named: true, fields: { name: ..., body: ... },
- * //     name(v?): ..., body(v?): ..., render(): string, ... }
+ * // = { $type: 'function_item', $source: 'factory', $named: true,
+ * //     $fields: { name: ..., body: ... },
+ * //     render(): string, toEdit(...): Edit, replace(target): Edit }
  * ```
- */
-/**
- * RuntimeNodeOf<T> — the runtime shape. Since the concrete interface now uses
- * snake_case field names (matching runtime), this is nearly identity:
- * just adds `named: true` and converts singular children to arrays.
  */
 export type RuntimeNodeOf<T> = T extends { readonly $type: infer K extends string }
 ? Simplify<{
@@ -525,7 +527,7 @@ export type TreeNodeOf<T> = T extends { readonly $type: infer K extends string }
  *   instantiation). When `{}` (default), falls back to recursive projection.
  */
 export type FromInputOf<T, Scalars = {}, Strings = {}, Depth extends number[] = [], NsMap = {}> = Simplify<
-	Depth['length'] extends 3 ? T
+	Depth['length'] extends MaxDepth ? T
 	: {
 		readonly [K in keyof FieldsOf<T> as K extends RequiredKeys<FieldsOf<T>> ? CamelCase<K> : never]:
 			WidenValue<FieldsOf<T>[K], Scalars, Strings, [...Depth, 0], NsMap>;
@@ -623,7 +625,7 @@ type TagEachArm<T, Scalars, Strings, Depth extends number[], NsMap> = T extends 
  * wanted — it intentionally walks each member.
  */
 type WidenValue<T, Scalars = {}, Strings = {}, Depth extends number[] = [], NsMap = {}> =
-	Depth['length'] extends 3 ? T
+	Depth['length'] extends MaxDepth ? T
 	: T extends readonly (infer E)[]
 		? [readonly []] extends [T]
 			? (WidenValue<E, Scalars, Strings, Depth, NsMap>)[] | WidenValue<E, Scalars, Strings, Depth, NsMap>

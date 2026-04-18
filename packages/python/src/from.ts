@@ -20,7 +20,7 @@ function isNodeData(v: unknown): v is AnyNodeData {
   if (Array.isArray(v)) return false;
   const o = v as { readonly $type?: unknown; readonly $fields?: unknown; readonly $text?: unknown };
   return typeof o.$type === 'string'
-    && (typeof o.$fields === 'object' || typeof o.$text === 'string');
+    && ((o.$fields !== null && typeof o.$fields === 'object') || typeof o.$text === 'string');
 }
 
 export const _fromMap = {

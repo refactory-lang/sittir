@@ -6,9 +6,11 @@
  *   1. const enum SyntaxKind
  *   2. Scoped const enums per supertype
  *   3. Concrete node interfaces
- *   4. Config/Tree/FromInput type aliases
+ *   4. Per-form Config/Tree aliases (polymorph forms only — base-kind
+ *      aliases were dropped in spec 008 Phase 9)
  *   5. Supertype unions
- *   6. Discriminated union + KindMap/ConfigMap/FromInputMap
+ *   6. Discriminated grammar union + KindMap + VariantMap
+ *   7. NamespaceMap + per-kind Ns interfaces + namespace sugar (spec 008 US1)
  */
 
 import type {
@@ -58,13 +60,6 @@ export function emitTypes(config: EmitTypesConfig): string {
     // field/child content-type unions referencing their typeName
     // resolve. Polymorph form groups are skipped here — their parent
     // polymorph emits the form interface inline.
-    const isPolymorphFormKind = (k: string): boolean => {
-        for (const [, n] of nodeMap.nodes) {
-            if (n.modelType !== 'polymorph') continue
-            for (const f of n.forms) if (f.kind === k) return true
-        }
-        return false
-    }
     for (const [kind, node] of nodeMap.nodes) {
         switch (node.modelType) {
             case 'branch':
@@ -73,7 +68,7 @@ export function emitTypes(config: EmitTypesConfig): string {
                 structNodes.push(node as StructuralNode)
                 break
             case 'group':
-                if (!isPolymorphFormKind(kind)) {
+                if (!nodeMap.polymorphFormKinds.has(kind)) {
                     // Standalone group — treat like a branch for type emission.
                     structNodes.push(node as unknown as StructuralNode)
                 }

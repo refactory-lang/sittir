@@ -16,6 +16,7 @@
 import type {
     NodeMap, AssembledField, AssembledChild, AssembledNode,
 } from '../compiler/rule.ts'
+import { isValidIdent } from './shared.ts'
 
 export interface EmitWrapConfig {
     grammar: string
@@ -28,7 +29,6 @@ export function emitWrap(config: EmitWrapConfig): string {
     // Collect type imports for `WrappedNode<T>` return annotations —
     // every kind that gets a `wrap${TypeName}` function contributes
     // its concrete interface.
-    const isValidIdent = (s: string) => /^[A-Za-z_$][\w$]*$/.test(s)
     const typeImports = new Set<string>()
     for (const [, node] of nodeMap.nodes) {
         if (!node.rawFactoryName) continue

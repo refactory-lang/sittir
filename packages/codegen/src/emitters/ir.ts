@@ -12,6 +12,7 @@
  */
 
 import type { NodeMap, AssembledNode, AssembledSupertype } from '../compiler/rule.ts'
+import { isValidIdent } from './shared.ts'
 
 export interface EmitIrConfig {
     grammar: string
@@ -153,10 +154,6 @@ export function emitIr(config: EmitIrConfig): string {
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
-
-function isValidIdent(s: string): boolean {
-    return /^[A-Za-z_$][\w$]*$/.test(s)
-}
 
 /**
  * Factory+from bundle expression, shared by flat and grouped emission.
