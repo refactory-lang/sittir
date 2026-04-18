@@ -16,7 +16,9 @@ import { existsSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-const packagesDir = new URL('../../../', import.meta.url).pathname
+// `new URL(...).pathname` is not portable on Windows and leaks URL-encoded
+// escape sequences; `fileURLToPath` produces a correct platform path.
+const packagesDir = fileURLToPath(new URL('../../../', import.meta.url))
 
 function loadJson(filePath: string): RawNodeEntry[] {
     return JSON.parse(readFileSync(filePath, 'utf8')) as RawNodeEntry[]

@@ -192,6 +192,10 @@ export function emitIs(config: EmitIsConfig): string {
     lines.push('')
 
     // The assert const — wraps each `is` entry with a throwing semantics.
+    // Kind-named asserts (e.g. `assert.functionItem`) use the method name
+    // as the expected-type label. The generic `assert.kind(v, k)` uses the
+    // second argument `k` as the expected-type label instead — otherwise
+    // the error message would say `expected 'kind'`, which is useless.
     lines.push('// assert — reuses `is` runtime logic via closure; TypeError on mismatch.')
     lines.push('type _AnyGuard = (...args: unknown[]) => boolean;')
     lines.push('function _makeAssert(name: string, guard: _AnyGuard) {')
@@ -203,6 +207,16 @@ export function emitIs(config: EmitIsConfig): string {
     lines.push('        }')
     lines.push('    };')
     lines.push('}')
+    lines.push('function _makeAssertKind(guard: _AnyGuard) {')
+    lines.push('    return (...args: unknown[]): void => {')
+    lines.push('        if (!guard(...args)) {')
+    lines.push(`            const v = args[0] as { $type?: unknown } | null;`)
+    lines.push(`            const expected = String(args[1] ?? '(unknown)');`)
+    lines.push(`            const actual = v?.$type ?? '(none)';`)
+    lines.push(`            throw new TypeError(\`assert.kind: expected type '\${expected}', got '\${String(actual)}'\`);`)
+    lines.push('        }')
+    lines.push('    };')
+    lines.push('}')
     lines.push('')
     lines.push('export const assert = {')
     // Build assert entries by wrapping each is entry. Keys must match
@@ -210,7 +224,7 @@ export function emitIs(config: EmitIsConfig): string {
     for (const s of structuralKinds) {
         lines.push(`    ${s.guardKey}: _makeAssert('${s.guardKey}', is.${s.guardKey} as _AnyGuard),`)
     }
-    lines.push(`    kind: _makeAssert('kind', is.kind as _AnyGuard),`)
+    lines.push(`    kind: _makeAssertKind(is.kind as _AnyGuard),`)
     for (const s of supertypes) {
         lines.push(`    ${s.guardKey}: _makeAssert('${s.guardKey}', is.${s.guardKey} as _AnyGuard),`)
     }
@@ -236,7 +250,9 @@ export function emitIs(config: EmitIsConfig): string {
     lines.push('export function isNode(v: { readonly $type: string }): v is AnyNodeData;')
     lines.push('export function isNode(v: { readonly $type: string }): boolean {')
     lines.push('    const o = v as { $fields?: unknown; $text?: unknown };')
-    lines.push(`    return (o.$fields !== undefined && typeof o.$fields === 'object') || typeof o.$text === 'string';`)
+    // `typeof null === 'object'` — explicitly exclude null before accepting
+    // the object-shape (matches the stricter isNodeData guard in from.ts).
+    lines.push(`    return (o.$fields !== undefined && o.$fields !== null && typeof o.$fields === 'object') || typeof o.$text === 'string';`)
     lines.push('}')
     lines.push('')
 

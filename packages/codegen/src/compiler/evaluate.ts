@@ -723,9 +723,16 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
                 const $ = createProxy(name, refs)
                 const baseRule = baseRules[name]
                 setCurrentRuleKind(name)
-                const result = ruleFn.call($, $, baseRule)
-                setCurrentRuleKind(null)
-                rules[name] = normalize(result)
+                try {
+                    const result = ruleFn.call($, $, baseRule)
+                    rules[name] = normalize(result)
+                } finally {
+                    // Clear the global current-rule context even if ruleFn
+                    // throws. Otherwise a throw would leak the current-rule
+                    // name into subsequent rule evaluations or error-handling
+                    // paths and corrupt polymorph-metadata registration.
+                    setCurrentRuleKind(null)
+                }
             }
         })
 

@@ -72,7 +72,7 @@ export function parseCorpus(content: string): CorpusEntry[] {
 // Fixtures directory + loader
 // ---------------------------------------------------------------------------
 
-const FIXTURES_DIR = new URL('../../fixtures', import.meta.url).pathname
+const FIXTURES_DIR = fileURLToPath(new URL('../../fixtures', import.meta.url))
 
 export function loadCorpusEntries(grammar: string): CorpusEntry[] {
     const entries: CorpusEntry[] = []
@@ -274,7 +274,7 @@ export async function loadLanguageForGrammar(grammar: string): Promise<{
 }> {
     const { Parser, Language } = await loadWebTreeSitter()
 
-    const thisDir = new URL('.', import.meta.url).pathname
+    const thisDir = fileURLToPath(new URL('.', import.meta.url))
     const overrideWasm = join(
         thisDir, '..', '..', '..', grammar, '.sittir', 'parser.wasm'
     )

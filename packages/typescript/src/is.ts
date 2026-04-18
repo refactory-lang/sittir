@@ -692,6 +692,16 @@ function _makeAssert(name: string, guard: _AnyGuard) {
         }
     };
 }
+function _makeAssertKind(guard: _AnyGuard) {
+    return (...args: unknown[]): void => {
+        if (!guard(...args)) {
+            const v = args[0] as { $type?: unknown } | null;
+            const expected = String(args[1] ?? '(unknown)');
+            const actual = v?.$type ?? '(none)';
+            throw new TypeError(`assert.kind: expected type '${expected}', got '${String(actual)}'`);
+        }
+    };
+}
 
 export const assert = {
     program: _makeAssert('program', is.program as _AnyGuard),
@@ -884,7 +894,7 @@ export const assert = {
     interfaceBody: _makeAssert('interfaceBody', is.interfaceBody as _AnyGuard),
     indexSignatureColon: _makeAssert('indexSignatureColon', is.indexSignatureColon as _AnyGuard),
     indexSignatureMappedTypeClause: _makeAssert('indexSignatureMappedTypeClause', is.indexSignatureMappedTypeClause as _AnyGuard),
-    kind: _makeAssert('kind', is.kind as _AnyGuard),
+    kind: _makeAssertKind(is.kind as _AnyGuard),
     moduleExportName: _makeAssert('moduleExportName', is.moduleExportName as _AnyGuard),
     expressions: _makeAssert('expressions', is.expressions as _AnyGuard),
     jsxChild: _makeAssert('jsxChild', is.jsxChild as _AnyGuard),
@@ -921,5 +931,5 @@ export function isNode<T extends { readonly $type: K }, K extends keyof Namespac
 export function isNode(v: { readonly $type: string }): v is AnyNodeData;
 export function isNode(v: { readonly $type: string }): boolean {
     const o = v as { $fields?: unknown; $text?: unknown };
-    return (o.$fields !== undefined && typeof o.$fields === 'object') || typeof o.$text === 'string';
+    return (o.$fields !== undefined && o.$fields !== null && typeof o.$fields === 'object') || typeof o.$text === 'string';
 }

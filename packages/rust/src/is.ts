@@ -623,6 +623,16 @@ function _makeAssert(name: string, guard: _AnyGuard) {
         }
     };
 }
+function _makeAssertKind(guard: _AnyGuard) {
+    return (...args: unknown[]): void => {
+        if (!guard(...args)) {
+            const v = args[0] as { $type?: unknown } | null;
+            const expected = String(args[1] ?? '(unknown)');
+            const actual = v?.$type ?? '(none)';
+            throw new TypeError(`assert.kind: expected type '${expected}', got '${String(actual)}'`);
+        }
+    };
+}
 
 export const assert = {
     sourceFile: _makeAssert('sourceFile', is.sourceFile as _AnyGuard),
@@ -792,7 +802,7 @@ export const assert = {
     rangePatternPrefix: _makeAssert('rangePatternPrefix', is.rangePatternPrefix as _AnyGuard),
     orPatternBinary: _makeAssert('orPatternBinary', is.orPatternBinary as _AnyGuard),
     orPatternPrefix: _makeAssert('orPatternPrefix', is.orPatternPrefix as _AnyGuard),
-    kind: _makeAssert('kind', is.kind as _AnyGuard),
+    kind: _makeAssertKind(is.kind as _AnyGuard),
     statement: _makeAssert('statement', is.statement as _AnyGuard),
     declarationStatement: _makeAssert('declarationStatement', is.declarationStatement as _AnyGuard),
     tokenPattern: _makeAssert('tokenPattern', is.tokenPattern as _AnyGuard),
@@ -829,5 +839,5 @@ export function isNode<T extends { readonly $type: K }, K extends keyof Namespac
 export function isNode(v: { readonly $type: string }): v is AnyNodeData;
 export function isNode(v: { readonly $type: string }): boolean {
     const o = v as { $fields?: unknown; $text?: unknown };
-    return (o.$fields !== undefined && typeof o.$fields === 'object') || typeof o.$text === 'string';
+    return (o.$fields !== undefined && o.$fields !== null && typeof o.$fields === 'object') || typeof o.$text === 'string';
 }

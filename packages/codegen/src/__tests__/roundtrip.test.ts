@@ -79,16 +79,26 @@ describe('NodeMap structure', () => {
             grammar: 'python',
             outputDir: '/tmp/sittir-rt-python/src',
         })
-        // Check the NodeMap contains group entries for polymorph forms
+        // Check the NodeMap contains group entries for polymorph forms.
+        // Python's only native polymorph (`assignment`) is now a nested-
+        // alias variant, so at least one polymorph-form GROUP node must
+        // exist in the map (e.g. `assignment_eq` / `assignment_type` /
+        // `assignment_typed`). The previous `>= 0` assertion was a no-op.
         let groupCount = 0
         let polymorphCount = 0
-        for (const [_kind, node] of result.nodeMap.nodes) {
-            if (node.modelType === 'group') groupCount++
+        const assignmentVariantKinds = new Set<string>()
+        for (const [kind, node] of result.nodeMap.nodes) {
+            if (node.modelType === 'group') {
+                groupCount++
+                if (kind.startsWith('assignment_')) assignmentVariantKinds.add(kind)
+            }
             if (node.modelType === 'polymorph') polymorphCount++
         }
-        // Python's only polymorph (assignment) is now a nested-alias.
-        // Polymorph count may be 0 when all polymorphs are converted.
-        expect(polymorphCount + groupCount).toBeGreaterThanOrEqual(0)
+        expect(groupCount).toBeGreaterThan(0)
+        expect(assignmentVariantKinds.size).toBeGreaterThanOrEqual(2)
+        // Polymorph count may be 0 after nested-alias conversion — don't
+        // assert on it, but record it in the map for future regression work.
+        expect(polymorphCount).toBeGreaterThanOrEqual(0)
     }, 30000)
 
     it('every branch node has a rule attached', async () => {
