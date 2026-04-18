@@ -471,11 +471,12 @@ function emitFieldCarryingFactory(
         ? node.kind.slice(node.parentKind.length + 1)
         : undefined
     lines.push('  return {')
-    lines.push(`    type: '${typeKind}' as const,`)
-    lines.push('    named: true as const,')
-    if (variantName) lines.push(`    variant: '${variantName}' as const,`)
-    if (hasFields) lines.push('    fields,')
-    if (hasChildren) lines.push('    children,')
+    lines.push(`    $type: '${typeKind}' as const,`)
+    lines.push(`    $source: 'factory' as const,`)
+    lines.push('    $named: true as const,')
+    if (variantName) lines.push(`    $variant: '${variantName}' as const,`)
+    if (hasFields) lines.push('    $fields: fields,')
+    if (hasChildren) lines.push('    $children: children,')
 
     // Fluent field getters/setters.
     // Fluent field setters / getters. Bodies delegate to `_fs` /
@@ -587,9 +588,10 @@ function emitContainerFactory(node: ContainerNode, nodeMap: NodeMap): string {
         )
     }
     lines.push('  return {')
-    lines.push(`    type: '${node.kind}' as const,`)
-    lines.push('    named: true as const,')
-    lines.push('    children,')
+    lines.push(`    $type: '${node.kind}' as const,`)
+    lines.push(`    $source: 'factory' as const,`)
+    lines.push('    $named: true as const,')
+    lines.push('    $children: children,')
     lines.push(...factorySuffix(node.treeTypeName))
     lines.push('  };')
     lines.push('}')
@@ -616,7 +618,7 @@ function emitPolymorphFactory(node: PolymorphNode, nodeMap: NodeMap): string {
 
     if (forms.length === 0) {
         // Defensive stub — shouldn't happen after classifier fix.
-        return `export function ${fn}(_config?: unknown) { return { type: '${node.kind}' as const, named: true as const, render() { return render(this); }, toEdit(s: number | ByteRange, e?: number) { return typeof s === 'number' ? toEdit(this, s, e!) : toEdit(this, s); }, replace(t: T.${node.treeTypeName}) { const r = t.range(); return toEdit(this, r); } }; }`
+        return `export function ${fn}(_config?: unknown) { return { $type: '${node.kind}' as const, $source: 'factory' as const, $named: true as const, render() { return render(this); }, toEdit(s: number | ByteRange, e?: number) { return typeof s === 'number' ? toEdit(this, s, e!) : toEdit(this, s); }, replace(t: T.${node.treeTypeName}) { const r = t.range(); return toEdit(this, r); } }; }`
     }
 
     const lines: string[] = []
@@ -711,9 +713,10 @@ function emitTextFactory(
     if (guard) body.push(`  ${guard}`)
     body.push(
         '  return {',
-        `    type: '${node.kind}' as const,`,
-        '    named: true as const,',
-        `    text: ${textExpr},`,
+        `    $type: '${node.kind}' as const,`,
+        `    $source: 'factory' as const,`,
+        '    $named: true as const,',
+        `    $text: ${textExpr},`,
         `    render: () => ${textExpr},`,
         `    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: ${textExpr} } : { startPos: s.start.index, endPos: s.end.index, insertedText: ${textExpr} },`,
         `    replace: (t: T.${node.treeTypeName}) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: ${textExpr} }; },`,

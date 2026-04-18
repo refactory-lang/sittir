@@ -119,9 +119,9 @@ function checkNodeData(
     expectedFields: Set<string>,
     overrideFields: Set<string>,
 ): string | null {
-    // 1. type must match
-    if (data.type !== kind) {
-        return `type mismatch: expected '${kind}', got '${data.type}'`
+    // 1. $type must match
+    if (data.$type !== kind) {
+        return `$type mismatch: expected '${kind}', got '${data.$type}'`
     }
 
     // 2. Every tree-sitter field the parse tree surfaces must show up in
@@ -134,7 +134,7 @@ function checkNodeData(
         if (fname) liveFieldNames.add(fname)
     }
 
-    const dataFields = new Set(Object.keys(data.fields ?? {}))
+    const dataFields = new Set(Object.keys(data.$fields ?? {}))
 
     for (const fname of liveFieldNames) {
         if (!dataFields.has(fname)) {
@@ -147,8 +147,8 @@ function checkNodeData(
     //    into an override field. Count INSTANCES, not distinct field
     //    keys: a multiple-valued field like `except_clauses: [e1, e2]`
     //    accounts for 2 children, not 1.
-    const dataChildrenCount = (data.children ?? []).filter(
-        (c: any) => c?.named !== false,
+    const dataChildrenCount = (data.$children ?? []).filter(
+        (c: any) => c?.$named !== false,
     ).length
 
     let expectedNamedUnfielded = 0
@@ -162,7 +162,7 @@ function checkNodeData(
     // Count children routed into each override field. A non-array value
     // = 1 child; an array value = array.length children.
     let promotedChildCount = 0
-    for (const [fname, value] of Object.entries(data.fields ?? {})) {
+    for (const [fname, value] of Object.entries(data.$fields ?? {})) {
         if (liveFieldNames.has(fname)) continue // tree-sitter field, not override
         if (!overrideFields.has(fname)) continue // neither override nor live
         if (Array.isArray(value)) promotedChildCount += value.length

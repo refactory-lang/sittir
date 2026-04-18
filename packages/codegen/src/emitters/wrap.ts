@@ -2,7 +2,7 @@
  * Emits wrap.ts — read-only lazy view layer over readNode output.
  *
  * Mirrors the factory emitter (factories.ts) one-for-one, except
- * each field accessor is a `get` returning `drillIn(data.fields[raw], tree)`
+ * each field accessor is a `get` returning `drillIn(data.$fields[raw], tree)`
  * instead of a fluent getter/setter method. Nodes returned from `wrap*`
  * are read-only — there are no setters and no render/toEdit/replace
  * surface. To edit a wrapped node, clone it via `ir.${kind}({ ... })`.
@@ -65,8 +65,8 @@ export function emitWrap(config: EmitWrapConfig): string {
         'function drillIn(entry: unknown, tree: TreeHandle): unknown {',
         '  if (!entry) return undefined;',
         '  const e = entry as _NodeData;',
-        '  if (e.nodeId != null) {',
-        '    return wrapNode(readNode(tree, e.nodeId), tree);',
+        '  if (e.$nodeId != null) {',
+        '    return wrapNode(readNode(tree, e.$nodeId), tree);',
         '  }',
         '  return entry;',
         '}',
@@ -109,7 +109,7 @@ export function emitWrap(config: EmitWrapConfig): string {
     // ------------------------------------------------------------------
     lines.push('/** Wrap a NodeData into its lazy read-only view. */')
     lines.push('export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {')
-    lines.push('  const fn = _wrapTable[data.type];')
+    lines.push('  const fn = _wrapTable[data.$type];')
     lines.push('  if (!fn) return data; // unknown kind — return as-is')
     lines.push('  return fn(data, tree);')
     lines.push('}')
@@ -186,7 +186,7 @@ function emitFieldCarryingWrap(
     const fn = `wrap${node.typeName}`
     const lines: string[] = []
     // `data` stays structurally typed (`_NodeData`) so the loose
-    // `data.fields?.['...']` / `data.children?.[0]` access patterns
+    // `data.$fields?.['...']` / `data.$children?.[0]` access patterns
     // inside the body still compile — polymorph forms union fields
     // that no single concrete interface carries. The RETURN type
     // narrows to `WrappedNode<T>` so consumers of the wrap function
@@ -199,9 +199,9 @@ function emitFieldCarryingWrap(
         // Avoid shadowing built-in property names on the returned view.
         const method = f.propertyName === 'type' ? 'typeField' : f.propertyName
         if (f.multiple) {
-            lines.push(`    get ${method}() { return drillInAll(data.fields?.['${f.name}'], tree); },`)
+            lines.push(`    get ${method}() { return drillInAll(data.$fields?.['${f.name}'], tree); },`)
         } else {
-            lines.push(`    get ${method}() { return drillIn(data.fields?.['${f.name}'], tree); },`)
+            lines.push(`    get ${method}() { return drillIn(data.$fields?.['${f.name}'], tree); },`)
         }
     }
 
@@ -212,15 +212,15 @@ function emitFieldCarryingWrap(
     if (children.length > 0) {
         const anyMultiple = children.some(c => c.multiple)
         if (anyMultiple) {
-            lines.push(`    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },`)
+            lines.push(`    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },`)
         } else {
-            lines.push(`    get child() { return drillIn(data.children?.[0], tree); },`)
+            lines.push(`    get child() { return drillIn(data.$children?.[0], tree); },`)
         }
     } else {
         // Even nodes without a declared child slot may receive
         // supertype-dispatched children from tree-sitter. Expose them
         // anyway so callers can walk the full tree.
-        lines.push(`    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },`)
+        lines.push(`    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },`)
     }
 
     // Double-cast workaround for drillIn returning NodeFieldValue | unknown.

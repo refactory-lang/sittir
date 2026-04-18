@@ -29,8 +29,8 @@ export function emitClientUtils(_config: EmitClientUtilsConfig): string {
     lines.push('export function isNodeData(v: unknown): v is AnyNodeData {')
     lines.push("  if (v === null || typeof v !== 'object') return false;")
     lines.push("  const o = v as Record<string, unknown>;")
-    lines.push("  if (typeof o['type'] !== 'string') return false;")
-    lines.push("  return (o['fields'] !== null && typeof o['fields'] === 'object') || typeof o['text'] === 'string';")
+    lines.push("  if (typeof o['$type'] !== 'string') return false;")
+    lines.push("  return (o['$fields'] !== null && typeof o['$fields'] === 'object') || typeof o['$text'] === 'string';")
     lines.push('}')
     lines.push('')
 
@@ -60,7 +60,7 @@ export function emitClientUtils(_config: EmitClientUtilsConfig): string {
     lines.push('  v: unknown,')
     lines.push('  kind: K,')
     lines.push('): v is KindMap[K] {')
-    lines.push("  return isNodeData(v) && v.type === kind;")
+    lines.push("  return isNodeData(v) && v.$type === kind;")
     lines.push('}')
     lines.push('')
 

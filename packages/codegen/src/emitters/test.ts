@@ -81,14 +81,14 @@ function emitBranchTest(lines: string[], node: AssembledNode, kind: string, key:
         // the first child slot as the dummy kind.
         const firstKind = node.children[0]?.contentTypes[0]
         const dummy = firstKind
-            ? `{ type: '${firstKind}', text: 'test' } as any`
+            ? `{ $type: '${firstKind}', $text: 'test' } as any`
             : `'test' as any`
         configParts.push(`children: [${dummy}] as any`)
     }
 
     const configArg = configParts.length > 0 ? `{ ${configParts.join(', ')} }` : '{}'
     lines.push(`    const node = ir.${key}(${configArg});`)
-    lines.push(`    expect(node.type).toBe('${kind}');`)
+    lines.push(`    expect(node.$type).toBe('${kind}');`)
     lines.push('  });')
 
     lines.push(`  it('render produces non-empty string', () => {`)
@@ -121,7 +121,7 @@ function emitContainerTest(lines: string[], node: AssembledNode, kind: string, k
     lines.push(`describe('${kind}', () => {`)
     lines.push(`  it('factory produces correct type', () => {`)
     lines.push(`    const node = ir.${key}(${placeholder});`)
-    lines.push(`    expect(node.type).toBe('${kind}');`)
+    lines.push(`    expect(node.$type).toBe('${kind}');`)
     lines.push('  });')
     lines.push('});')
     lines.push('')
@@ -138,7 +138,7 @@ function emitPolymorphTest(lines: string[], node: AssembledNode, kind: string, k
             .map(f => `${f.propertyName}: ${dummyValue(f)}`)
         const configArg = configParts.length > 0 ? `{ ${configParts.join(', ')} }` : '{}'
         lines.push(`    const node = ir.${key}.${form.name}(${configArg});`)
-        lines.push(`    expect(node.type).toBe('${kind}');`)
+        lines.push(`    expect(node.$type).toBe('${kind}');`)
         lines.push('  });')
     }
     lines.push('});')
@@ -164,8 +164,8 @@ function emitLeafTest(lines: string[], node: AssembledNode, kind: string, key: s
     lines.push(`describe('${kind}', () => {`)
     lines.push(`  it('factory produces correct type', () => {`)
     lines.push(`    const node = ir.${key}(${JSON.stringify(sample)});`)
-    lines.push(`    expect(node.type).toBe('${kind}');`)
-    lines.push(`    expect(node.text).toBe(${JSON.stringify(sample)});`)
+    lines.push(`    expect(node.$type).toBe('${kind}');`)
+    lines.push(`    expect(node.$text).toBe(${JSON.stringify(sample)});`)
     lines.push('  });')
     lines.push('});')
     lines.push('')
@@ -202,8 +202,8 @@ function emitKeywordTest(lines: string[], node: AssembledNode, kind: string, key
     lines.push(`describe(${JSON.stringify(kind)}, () => {`)
     lines.push(`  it('factory produces keyword', () => {`)
     lines.push(`    const node = ir.${key}();`)
-    lines.push(`    expect(node.type).toBe(${JSON.stringify(kind)});`)
-    lines.push(`    expect(node.text).toBe(${JSON.stringify(node.text)});`)
+    lines.push(`    expect(node.$type).toBe(${JSON.stringify(kind)});`)
+    lines.push(`    expect(node.$text).toBe(${JSON.stringify(node.text)});`)
     lines.push('  });')
     lines.push('});')
     lines.push('')
@@ -216,7 +216,7 @@ function emitEnumTest(lines: string[], node: AssembledNode, kind: string, key: s
     lines.push(`describe('${kind}', () => {`)
     lines.push(`  it('factory accepts valid value', () => {`)
     lines.push(`    const node = ir.${key}('${first.replace(/'/g, "\\'")}');`)
-    lines.push(`    expect(node.type).toBe('${kind}');`)
+    lines.push(`    expect(node.$type).toBe('${kind}');`)
     lines.push('  });')
     lines.push('});')
     lines.push('')
@@ -229,13 +229,13 @@ function dummyValue(field: AssembledField): string {
     // every required field is multiple.
     if (field.multiple) {
         if (field.contentTypes.length > 0) {
-            return `[{ type: '${field.contentTypes[0]}', text: 'test' } as any]`
+            return `[{ $type: '${field.contentTypes[0]}', $text: 'test' } as any]`
         }
         return `['test' as any]`
     }
     if (field.contentTypes.length > 0) {
         // Use first content type to generate a dummy
-        return `{ type: '${field.contentTypes[0]}', text: 'test' } as any`
+        return `{ $type: '${field.contentTypes[0]}', $text: 'test' } as any`
     }
     return "'test' as any"
 }

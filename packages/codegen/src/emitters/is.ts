@@ -138,11 +138,11 @@ export function emitIs(config: EmitIsConfig): string {
     lines.push('// IsGuards — per-kind + supertype type-narrowing guards.')
     lines.push('export interface IsGuards {')
     for (const s of structuralKinds) {
-        lines.push(`    ${s.guardKey}<T extends { readonly type: string }>(v: T): v is T & { readonly type: '${s.kind}' };`)
+        lines.push(`    ${s.guardKey}<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '${s.kind}' };`)
     }
-    lines.push(`    kind<K extends keyof NamespaceMap>(v: { readonly type: string }, kind: K): v is { readonly type: K & string };`)
+    lines.push(`    kind<K extends keyof NamespaceMap>(v: { readonly $type: string }, kind: K): v is { readonly $type: K & string };`)
     for (const s of supertypes) {
-        lines.push(`    ${s.guardKey}(v: { readonly type: string }): v is ${s.typeName};`)
+        lines.push(`    ${s.guardKey}(v: { readonly $type: string }): v is ${s.typeName};`)
     }
     lines.push('}')
     lines.push('')
@@ -151,11 +151,11 @@ export function emitIs(config: EmitIsConfig): string {
     lines.push('// AssertGuards — assertion form of IsGuards; throws TypeError on mismatch.')
     lines.push('export interface AssertGuards {')
     for (const s of structuralKinds) {
-        lines.push(`    ${s.guardKey}(v: { readonly type: string }): asserts v is { readonly type: '${s.kind}' };`)
+        lines.push(`    ${s.guardKey}(v: { readonly $type: string }): asserts v is { readonly $type: '${s.kind}' };`)
     }
-    lines.push(`    kind<K extends keyof NamespaceMap>(v: { readonly type: string }, kind: K): asserts v is { readonly type: K & string };`)
+    lines.push(`    kind<K extends keyof NamespaceMap>(v: { readonly $type: string }, kind: K): asserts v is { readonly $type: K & string };`)
     for (const s of supertypes) {
-        lines.push(`    ${s.guardKey}(v: { readonly type: string }): asserts v is ${s.typeName};`)
+        lines.push(`    ${s.guardKey}(v: { readonly $type: string }): asserts v is ${s.typeName};`)
     }
     lines.push('}')
     lines.push('')
@@ -163,11 +163,11 @@ export function emitIs(config: EmitIsConfig): string {
     // Runtime construction.
     lines.push('// Runtime: kind guards = string equality; supertype guards = Set.has.')
     lines.push('// Building from literal string arrays keeps the runtime footprint minimal.')
-    lines.push('function _g(k: string): (v: { readonly type: string }) => boolean {')
-    lines.push('    return (v) => v.type === k;')
+    lines.push('function _g(k: string): (v: { readonly $type: string }) => boolean {')
+    lines.push('    return (v) => v.$type === k;')
     lines.push('}')
-    lines.push('function _sg(ks: ReadonlySet<string>): (v: { readonly type: string }) => boolean {')
-    lines.push('    return (v) => ks.has(v.type);')
+    lines.push('function _sg(ks: ReadonlySet<string>): (v: { readonly $type: string }) => boolean {')
+    lines.push('    return (v) => ks.has(v.$type);')
     lines.push('}')
     lines.push('')
 
@@ -184,7 +184,7 @@ export function emitIs(config: EmitIsConfig): string {
     for (const s of structuralKinds) {
         lines.push(`    ${s.guardKey}: _g(${JSON.stringify(s.kind)}),`)
     }
-    lines.push(`    kind: (v: { readonly type: string }, k: string): boolean => v.type === k,`)
+    lines.push(`    kind: (v: { readonly $type: string }, k: string): boolean => v.$type === k,`)
     for (const s of supertypes) {
         lines.push(`    ${s.guardKey}: _sg(_supertype_${s.guardKey}),`)
     }
@@ -197,8 +197,8 @@ export function emitIs(config: EmitIsConfig): string {
     lines.push('function _makeAssert(name: string, guard: _AnyGuard) {')
     lines.push('    return (...args: unknown[]): void => {')
     lines.push('        if (!guard(...args)) {')
-    lines.push(`            const v = args[0] as { type?: unknown } | null;`)
-    lines.push(`            const actual = v?.type ?? '(none)';`)
+    lines.push(`            const v = args[0] as { $type?: unknown } | null;`)
+    lines.push(`            const actual = v?.$type ?? '(none)';`)
     lines.push(`            throw new TypeError(\`assert.\${name}: expected type '\${name}', got '\${String(actual)}'\`);`)
     lines.push('        }')
     lines.push('    };')
@@ -222,21 +222,21 @@ export function emitIs(config: EmitIsConfig): string {
     lines.push('// Overload 1: typed input whose type is a NamespaceMap key → narrow to Tree/Node projection.')
     lines.push('// Overload 2: generic unknown → fall back to AnyTreeNode / AnyNodeData.')
     lines.push('')
-    lines.push('export function isTree<T extends { readonly type: K }, K extends keyof NamespaceMap & string>(')
+    lines.push('export function isTree<T extends { readonly $type: K }, K extends keyof NamespaceMap & string>(')
     lines.push('    v: T,')
     lines.push(`): v is T & NamespaceMap[K]['Tree'];`)
-    lines.push('export function isTree(v: { readonly type: string }): v is AnyTreeNode;')
-    lines.push('export function isTree(v: { readonly type: string }): boolean {')
-    lines.push(`    return typeof (v as { range?: unknown }).range === 'function';`)
+    lines.push('export function isTree(v: unknown): v is AnyTreeNode;')
+    lines.push('export function isTree(v: unknown): boolean {')
+    lines.push(`    return typeof (v as { range?: unknown })?.range === 'function';`)
     lines.push('}')
     lines.push('')
-    lines.push('export function isNode<T extends { readonly type: K }, K extends keyof NamespaceMap & string>(')
+    lines.push('export function isNode<T extends { readonly $type: K }, K extends keyof NamespaceMap & string>(')
     lines.push('    v: T,')
     lines.push(`): v is T & NamespaceMap[K]['Node'];`)
-    lines.push('export function isNode(v: { readonly type: string }): v is AnyNodeData;')
-    lines.push('export function isNode(v: { readonly type: string }): boolean {')
-    lines.push('    const o = v as { fields?: unknown; text?: unknown };')
-    lines.push(`    return (o.fields !== undefined && typeof o.fields === 'object') || typeof o.text === 'string';`)
+    lines.push('export function isNode(v: { readonly $type: string }): v is AnyNodeData;')
+    lines.push('export function isNode(v: { readonly $type: string }): boolean {')
+    lines.push('    const o = v as { $fields?: unknown; $text?: unknown };')
+    lines.push(`    return (o.$fields !== undefined && typeof o.$fields === 'object') || typeof o.$text === 'string';`)
     lines.push('}')
     lines.push('')
 

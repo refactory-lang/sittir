@@ -20,7 +20,7 @@ describe('loose from() — string input for leaf-typed fields (T052d-i)', () => 
         // identifier nodes (that resolution lives in field-level
         // from()), so the test passes a constructed identifier.
         const result = ir.dottedName.from(ir.identifier('foo')) as any;
-        expect(result.type).toBe('dotted_name');
+        expect(result.$type).toBe('dotted_name');
     });
 
     it('aliased_import accepts string for both name and alias', () => {
@@ -30,7 +30,7 @@ describe('loose from() — string input for leaf-typed fields (T052d-i)', () => 
             name: 'os' as any,
             alias: 'system' as any,
         }) as any;
-        expect(result.type).toBe('aliased_import');
+        expect(result.$type).toBe('aliased_import');
     });
 });
 
@@ -41,9 +41,9 @@ describe('loose from() — kind-tagged object dispatch (T052d-ii)', () => {
         // variant child of type='assignment_eq'.
         const result = (ir.assignment as any).eq({
             left: 'x' as any,
-            children: [{ type: 'assignment_eq', fields: { right: { kind: 'integer', text: '42' } } }] as any,
+            children: [{ $type: 'assignment_eq', $fields: { right: { kind: 'integer', text: '42' } } }] as any,
         }) as any;
-        expect(result.type).toBe('assignment');
+        expect(result.$type).toBe('assignment');
     });
 });
 
@@ -55,16 +55,16 @@ describe('loose from() — supertype subtype (T052d-iii)', () => {
         const result = ir.expressionStatement(
             { kind: 'integer', text: '1' } as any,
         ) as any;
-        expect(result.type).toBe('expression_statement');
+        expect(result.$type).toBe('expression_statement');
     });
 });
 
 describe('loose from() — NodeData passthrough still works', () => {
     it('pre-built NodeData is passed through unchanged', () => {
         const nodeData = ir.integer('42') as any;
-        const child = { type: 'assignment_eq', fields: { right: nodeData } } as any;
+        const child = { $type: 'assignment_eq', $fields: { right: nodeData } } as any;
         // ir.assignment.eq → polymorph form factory (see T052d-ii test above).
         const result = (ir.assignment as any).eq({ left: 'x' as any, children: [child] }) as any;
-        expect(result.type).toBe('assignment');
+        expect(result.$type).toBe('assignment');
     });
 });

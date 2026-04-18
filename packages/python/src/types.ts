@@ -402,126 +402,126 @@ export const enum KeywordIdentifierKind {
 
 // Node types — concrete interfaces
 export interface Module {
-  readonly type: 'module';
-  readonly children: readonly (Statement)[];
+  readonly $type: 'module';
+  readonly $children: readonly (Statement)[];
 }
 
 export interface SimpleStatements {
-  readonly type: '_simple_statements';
-  readonly children: NonEmptyArray<SimpleStatement>;
+  readonly $type: '_simple_statements';
+  readonly $children: NonEmptyArray<SimpleStatement>;
 }
 
 export interface ImportStatement {
-  readonly type: 'import_statement';
-  readonly fields: {
+  readonly $type: 'import_statement';
+  readonly $fields: {
     readonly import: "import";
   };
-  readonly children: readonly [ImportList];
+  readonly $children: readonly [ImportList];
 }
 
 export interface RelativeImport {
-  readonly type: 'relative_import';
-  readonly fields: {
+  readonly $type: 'relative_import';
+  readonly $fields: {
     readonly import_prefix: ImportPrefix;
     readonly dotted_name?: DottedName;
   };
 }
 
 export interface FutureImportStatement {
-  readonly type: 'future_import_statement';
-  readonly fields: {
+  readonly $type: 'future_import_statement';
+  readonly $fields: {
     readonly from: "from";
   };
-  readonly children: readonly [ImportList];
+  readonly $children: readonly [ImportList];
 }
 
 export interface ImportFromStatement {
-  readonly type: 'import_from_statement';
-  readonly fields: {
+  readonly $type: 'import_from_statement';
+  readonly $fields: {
     readonly module_name: RelativeImport | DottedName;
     readonly wildcard_import: WildcardImport | ImportList;
   };
 }
 
 export interface ImportList {
-  readonly type: '_import_list';
-  readonly fields: {
+  readonly $type: '_import_list';
+  readonly $fields: {
     readonly name: NonEmptyArray<DottedName | AliasedImport>;
   };
 }
 
 export interface AliasedImport {
-  readonly type: 'aliased_import';
-  readonly fields: {
+  readonly $type: 'aliased_import';
+  readonly $fields: {
     readonly name: DottedName;
     readonly alias: Identifier;
   };
 }
 
 export interface PrintStatement {
-  readonly type: 'print_statement';
-  readonly fields: {
+  readonly $type: 'print_statement';
+  readonly $fields: {
     readonly argument: readonly (Expression)[];
   };
-  readonly children: readonly [Chevron];
+  readonly $children: readonly [Chevron];
 }
 
 export interface Chevron {
-  readonly type: 'chevron';
-  readonly fields: {
+  readonly $type: 'chevron';
+  readonly $fields: {
     readonly expression: Expression;
   };
 }
 
 export interface AssertStatement {
-  readonly type: 'assert_statement';
-  readonly fields: {
+  readonly $type: 'assert_statement';
+  readonly $fields: {
     readonly assert: "assert";
   };
-  readonly children: NonEmptyArray<Expression>;
+  readonly $children: NonEmptyArray<Expression>;
 }
 
 export interface ExpressionStatement {
-  readonly type: 'expression_statement';
-  readonly children: readonly [Expression | Assignment | AugmentedAssignment | Yield];
+  readonly $type: 'expression_statement';
+  readonly $children: readonly [Expression | Assignment | AugmentedAssignment | Yield];
 }
 
 export interface NamedExpression {
-  readonly type: 'named_expression';
-  readonly fields: {
+  readonly $type: 'named_expression';
+  readonly $fields: {
     readonly name: NamedExpressionLhs;
     readonly value: Expression;
   };
 }
 
 export interface ReturnStatement {
-  readonly type: 'return_statement';
-  readonly fields: {
+  readonly $type: 'return_statement';
+  readonly $fields: {
     readonly return: "return";
   };
-  readonly children: readonly [Expressions];
+  readonly $children: readonly [Expressions];
 }
 
 export interface DeleteStatement {
-  readonly type: 'delete_statement';
-  readonly fields: {
+  readonly $type: 'delete_statement';
+  readonly $fields: {
     readonly del: "del";
   };
-  readonly children: readonly [Expressions];
+  readonly $children: readonly [Expressions];
 }
 
 export interface RaiseStatement {
-  readonly type: 'raise_statement';
-  readonly fields: {
+  readonly $type: 'raise_statement';
+  readonly $fields: {
     readonly raise: "raise";
     readonly cause?: Expression;
   };
-  readonly children: readonly [Expressions];
+  readonly $children: readonly [Expressions];
 }
 
 export interface IfStatement {
-  readonly type: 'if_statement';
-  readonly fields: {
+  readonly $type: 'if_statement';
+  readonly $fields: {
     readonly if: "if";
     readonly condition: Expression;
     readonly consequence: Suite;
@@ -530,8 +530,8 @@ export interface IfStatement {
 }
 
 export interface ElifClause {
-  readonly type: 'elif_clause';
-  readonly fields: {
+  readonly $type: 'elif_clause';
+  readonly $fields: {
     readonly elif: "elif";
     readonly condition: Expression;
     readonly consequence: Suite;
@@ -539,16 +539,16 @@ export interface ElifClause {
 }
 
 export interface ElseClause {
-  readonly type: 'else_clause';
-  readonly fields: {
+  readonly $type: 'else_clause';
+  readonly $fields: {
     readonly else: "else";
     readonly body: Suite;
   };
 }
 
 export interface MatchStatement {
-  readonly type: 'match_statement';
-  readonly fields: {
+  readonly $type: 'match_statement';
+  readonly $fields: {
     readonly match: "match";
     readonly subject: NonEmptyArray<Expression>;
     readonly body: Block;
@@ -556,30 +556,30 @@ export interface MatchStatement {
 }
 
 export interface MatchBlockForm0 {
-  readonly type: '_match_block';
-  readonly fields: {
+  readonly $type: '_match_block';
+  readonly $fields: {
     readonly alternative: readonly (CaseClause)[];
   };
 }
 
 export interface MatchBlockForm1 {
-  readonly type: '_match_block';
+  readonly $type: '_match_block';
 }
 
 export type MatchBlock = MatchBlockForm0 | MatchBlockForm1;
 export interface CaseClause {
-  readonly type: 'case_clause';
-  readonly fields: {
+  readonly $type: 'case_clause';
+  readonly $fields: {
     readonly case: "case";
     readonly guard?: IfClause;
     readonly consequence: Suite;
   };
-  readonly children: NonEmptyArray<CasePattern>;
+  readonly $children: NonEmptyArray<CasePattern>;
 }
 
 export interface ForStatement {
-  readonly type: 'for_statement';
-  readonly fields: {
+  readonly $type: 'for_statement';
+  readonly $fields: {
     readonly async?: KwAsync;
     readonly left: LeftHandSide;
     readonly right: Expressions;
@@ -589,8 +589,8 @@ export interface ForStatement {
 }
 
 export interface WhileStatement {
-  readonly type: 'while_statement';
-  readonly fields: {
+  readonly $type: 'while_statement';
+  readonly $fields: {
     readonly while: "while";
     readonly condition: Expression;
     readonly body: Suite;
@@ -599,8 +599,8 @@ export interface WhileStatement {
 }
 
 export interface TryStatement {
-  readonly type: 'try_statement';
-  readonly fields: {
+  readonly $type: 'try_statement';
+  readonly $fields: {
     readonly body: Suite;
     readonly except_clauses: readonly (ExceptClause)[];
     readonly else_clause?: ElseClause;
@@ -609,25 +609,25 @@ export interface TryStatement {
 }
 
 export interface ExceptClause {
-  readonly type: 'except_clause';
-  readonly fields: {
+  readonly $type: 'except_clause';
+  readonly $fields: {
     readonly except: "except";
     readonly value?: Expression;
     readonly alias?: Expression;
   };
-  readonly children: readonly [Suite];
+  readonly $children: readonly [Suite];
 }
 
 export interface FinallyClause {
-  readonly type: 'finally_clause';
-  readonly fields: {
+  readonly $type: 'finally_clause';
+  readonly $fields: {
     readonly block: Suite;
   };
 }
 
 export interface WithStatement {
-  readonly type: 'with_statement';
-  readonly fields: {
+  readonly $type: 'with_statement';
+  readonly $fields: {
     readonly async?: KwAsync;
     readonly with_clause: WithClause;
     readonly body: Suite;
@@ -635,20 +635,20 @@ export interface WithStatement {
 }
 
 export interface WithClause {
-  readonly type: 'with_clause';
-  readonly children: NonEmptyArray<WithItem>;
+  readonly $type: 'with_clause';
+  readonly $children: NonEmptyArray<WithItem>;
 }
 
 export interface WithItem {
-  readonly type: 'with_item';
-  readonly fields: {
+  readonly $type: 'with_item';
+  readonly $fields: {
     readonly value: Expression;
   };
 }
 
 export interface FunctionDefinition {
-  readonly type: 'function_definition';
-  readonly fields: {
+  readonly $type: 'function_definition';
+  readonly $fields: {
     readonly async?: KwAsync;
     readonly name: Identifier;
     readonly type_parameters?: TypeParameter;
@@ -659,57 +659,57 @@ export interface FunctionDefinition {
 }
 
 export interface Parameters {
-  readonly type: 'parameters';
-  readonly children: readonly [_Parameters];
+  readonly $type: 'parameters';
+  readonly $children: readonly [_Parameters];
 }
 
 export interface LambdaParameters {
-  readonly type: 'lambda_parameters';
-  readonly children: readonly [_Parameters];
+  readonly $type: 'lambda_parameters';
+  readonly $children: readonly [_Parameters];
 }
 
 export interface ListSplat {
-  readonly type: 'list_splat';
-  readonly fields: {
+  readonly $type: 'list_splat';
+  readonly $fields: {
     readonly expression: Expression;
   };
 }
 
 export interface DictionarySplat {
-  readonly type: 'dictionary_splat';
-  readonly fields: {
+  readonly $type: 'dictionary_splat';
+  readonly $fields: {
     readonly expression: Expression;
   };
 }
 
 export interface GlobalStatement {
-  readonly type: 'global_statement';
-  readonly fields: {
+  readonly $type: 'global_statement';
+  readonly $fields: {
     readonly global: "global";
   };
-  readonly children: NonEmptyArray<Identifier>;
+  readonly $children: NonEmptyArray<Identifier>;
 }
 
 export interface NonlocalStatement {
-  readonly type: 'nonlocal_statement';
-  readonly fields: {
+  readonly $type: 'nonlocal_statement';
+  readonly $fields: {
     readonly nonlocal: "nonlocal";
   };
-  readonly children: NonEmptyArray<Identifier>;
+  readonly $children: NonEmptyArray<Identifier>;
 }
 
 export interface ExecStatement {
-  readonly type: 'exec_statement';
-  readonly fields: {
+  readonly $type: 'exec_statement';
+  readonly $fields: {
     readonly exec: "exec";
     readonly code: String | Identifier;
   };
-  readonly children: readonly (Expression)[];
+  readonly $children: readonly (Expression)[];
 }
 
 export interface TypeAliasStatement {
-  readonly type: 'type_alias_statement';
-  readonly fields: {
+  readonly $type: 'type_alias_statement';
+  readonly $fields: {
     readonly type: "type";
     readonly left: Type;
     readonly right: Type;
@@ -717,8 +717,8 @@ export interface TypeAliasStatement {
 }
 
 export interface ClassDefinition {
-  readonly type: 'class_definition';
-  readonly fields: {
+  readonly $type: 'class_definition';
+  readonly $fields: {
     readonly class: "class";
     readonly name: Identifier;
     readonly type_parameters?: TypeParameter;
@@ -728,161 +728,161 @@ export interface ClassDefinition {
 }
 
 export interface TypeParameter {
-  readonly type: 'type_parameter';
-  readonly children: NonEmptyArray<Type>;
+  readonly $type: 'type_parameter';
+  readonly $children: NonEmptyArray<Type>;
 }
 
 export interface ParenthesizedListSplat {
-  readonly type: 'parenthesized_list_splat';
-  readonly children: readonly [ParenthesizedExpression | ListSplat];
+  readonly $type: 'parenthesized_list_splat';
+  readonly $children: readonly [ParenthesizedExpression | ListSplat];
 }
 
 export interface ArgumentList {
-  readonly type: 'argument_list';
-  readonly children: readonly (Expression | ListSplat | DictionarySplat | ParenthesizedExpression | KeywordArgument)[];
+  readonly $type: 'argument_list';
+  readonly $children: readonly (Expression | ListSplat | DictionarySplat | ParenthesizedExpression | KeywordArgument)[];
 }
 
 export interface DecoratedDefinition {
-  readonly type: 'decorated_definition';
-  readonly fields: {
+  readonly $type: 'decorated_definition';
+  readonly $fields: {
     readonly definition: ClassDefinition | FunctionDefinition;
   };
-  readonly children: NonEmptyArray<Decorator>;
+  readonly $children: NonEmptyArray<Decorator>;
 }
 
 export interface Decorator {
-  readonly type: 'decorator';
-  readonly fields: {
+  readonly $type: 'decorator';
+  readonly $fields: {
     readonly expression: Expression;
     readonly newline: string;
   };
 }
 
 export interface Suite {
-  readonly type: '_suite';
-  readonly children: readonly [Block];
+  readonly $type: '_suite';
+  readonly $children: readonly [Block];
 }
 
 export interface Block {
-  readonly type: 'block';
-  readonly children: readonly (Statement)[];
+  readonly $type: 'block';
+  readonly $children: readonly (Statement)[];
 }
 
 export interface ExpressionList {
-  readonly type: 'expression_list';
-  readonly fields: {
+  readonly $type: 'expression_list';
+  readonly $fields: {
     readonly expression: Expression;
   };
-  readonly children: readonly (Expression)[];
+  readonly $children: readonly (Expression)[];
 }
 
 export interface DottedName {
-  readonly type: 'dotted_name';
-  readonly children: NonEmptyArray<Identifier>;
+  readonly $type: 'dotted_name';
+  readonly $children: NonEmptyArray<Identifier>;
 }
 
 export interface CasePattern {
-  readonly type: 'case_pattern';
-  readonly children: readonly [AsPattern | KeywordPattern | SimplePattern];
+  readonly $type: 'case_pattern';
+  readonly $children: readonly [AsPattern | KeywordPattern | SimplePattern];
 }
 
 export interface SimplePattern {
-  readonly type: '_simple_pattern';
-  readonly children: readonly [ClassPattern | SplatPattern | UnionPattern | ListPattern | TuplePattern | DictPattern | String | ConcatenatedString | True | False | None | Integer | Float | ComplexPattern | DottedName];
+  readonly $type: '_simple_pattern';
+  readonly $children: readonly [ClassPattern | SplatPattern | UnionPattern | ListPattern | TuplePattern | DictPattern | String | ConcatenatedString | True | False | None | Integer | Float | ComplexPattern | DottedName];
 }
 
 export interface _AsPattern {
-  readonly type: '_as_pattern';
+  readonly $type: '_as_pattern';
 }
 
 export interface UnionPattern {
-  readonly type: 'union_pattern';
-  readonly children: readonly (SimplePattern)[];
+  readonly $type: 'union_pattern';
+  readonly $children: readonly (SimplePattern)[];
 }
 
 export interface _ListPattern {
-  readonly type: '_list_pattern';
-  readonly children: readonly (CasePattern)[];
+  readonly $type: '_list_pattern';
+  readonly $children: readonly (CasePattern)[];
 }
 
 export interface _TuplePattern {
-  readonly type: '_tuple_pattern';
-  readonly children: readonly (CasePattern)[];
+  readonly $type: '_tuple_pattern';
+  readonly $children: readonly (CasePattern)[];
 }
 
 export interface DictPattern {
-  readonly type: 'dict_pattern';
-  readonly children: readonly (KeyValuePattern | SplatPattern)[];
+  readonly $type: 'dict_pattern';
+  readonly $children: readonly (KeyValuePattern | SplatPattern)[];
 }
 
 export interface KeyValuePattern {
-  readonly type: '_key_value_pattern';
+  readonly $type: '_key_value_pattern';
 }
 
 export interface KeywordPattern {
-  readonly type: 'keyword_pattern';
-  readonly fields: {
+  readonly $type: 'keyword_pattern';
+  readonly $fields: {
     readonly identifier: Identifier;
     readonly simple_pattern: SimplePattern;
   };
 }
 
 export interface SplatPattern {
-  readonly type: 'splat_pattern';
-  readonly fields: {
+  readonly $type: 'splat_pattern';
+  readonly $fields: {
     readonly identifier: "*" | "**";
   };
-  readonly children: readonly [Identifier];
+  readonly $children: readonly [Identifier];
 }
 
 export interface ClassPattern {
-  readonly type: 'class_pattern';
-  readonly fields: {
+  readonly $type: 'class_pattern';
+  readonly $fields: {
     readonly dotted_name: DottedName;
     readonly arguments?: readonly (string)[];
   };
 }
 
 export interface ComplexPattern {
-  readonly type: 'complex_pattern';
-  readonly fields: {
+  readonly $type: 'complex_pattern';
+  readonly $fields: {
     readonly real: string;
     readonly imaginary: Integer | Float;
   };
-  readonly children: readonly [Integer | Float];
+  readonly $children: readonly [Integer | Float];
 }
 
 export interface _Parameters {
-  readonly type: '_parameters';
-  readonly children: NonEmptyArray<Parameter>;
+  readonly $type: '_parameters';
+  readonly $children: NonEmptyArray<Parameter>;
 }
 
 export interface Patterns {
-  readonly type: '_patterns';
-  readonly children: NonEmptyArray<Pattern>;
+  readonly $type: '_patterns';
+  readonly $children: NonEmptyArray<Pattern>;
 }
 
 export interface TuplePattern {
-  readonly type: 'tuple_pattern';
-  readonly children: readonly [Patterns];
+  readonly $type: 'tuple_pattern';
+  readonly $children: readonly [Patterns];
 }
 
 export interface ListPattern {
-  readonly type: 'list_pattern';
-  readonly children: readonly [Patterns];
+  readonly $type: 'list_pattern';
+  readonly $children: readonly [Patterns];
 }
 
 export interface DefaultParameter {
-  readonly type: 'default_parameter';
-  readonly fields: {
+  readonly $type: 'default_parameter';
+  readonly $fields: {
     readonly name: Identifier | TuplePattern;
     readonly value: Expression;
   };
 }
 
 export interface TypedDefaultParameter {
-  readonly type: 'typed_default_parameter';
-  readonly fields: {
+  readonly $type: 'typed_default_parameter';
+  readonly $fields: {
     readonly name: Identifier;
     readonly type: Type;
     readonly value: Expression;
@@ -890,34 +890,34 @@ export interface TypedDefaultParameter {
 }
 
 export interface ListSplatPattern {
-  readonly type: 'list_splat_pattern';
-  readonly children: readonly [Identifier | KeywordIdentifier | Subscript | Attribute];
+  readonly $type: 'list_splat_pattern';
+  readonly $children: readonly [Identifier | KeywordIdentifier | Subscript | Attribute];
 }
 
 export interface DictionarySplatPattern {
-  readonly type: 'dictionary_splat_pattern';
-  readonly children: readonly [Identifier | KeywordIdentifier | Subscript | Attribute];
+  readonly $type: 'dictionary_splat_pattern';
+  readonly $children: readonly [Identifier | KeywordIdentifier | Subscript | Attribute];
 }
 
 export interface AsPattern {
-  readonly type: 'as_pattern';
-  readonly fields: {
+  readonly $type: 'as_pattern';
+  readonly $fields: {
     readonly expression: Expression;
     readonly alias: AsPatternTarget;
   };
 }
 
 export interface NotOperator {
-  readonly type: 'not_operator';
-  readonly fields: {
+  readonly $type: 'not_operator';
+  readonly $fields: {
     readonly not: KwNot;
     readonly argument: Expression;
   };
 }
 
 export interface BooleanOperator {
-  readonly type: 'boolean_operator';
-  readonly fields: {
+  readonly $type: 'boolean_operator';
+  readonly $fields: {
     readonly left: Expression;
     readonly operator: "and";
     readonly right: Expression;
@@ -925,8 +925,8 @@ export interface BooleanOperator {
 }
 
 export interface BinaryOperator {
-  readonly type: 'binary_operator';
-  readonly fields: {
+  readonly $type: 'binary_operator';
+  readonly $fields: {
     readonly left: PrimaryExpression;
     readonly operator: "+";
     readonly right: PrimaryExpression;
@@ -934,32 +934,32 @@ export interface BinaryOperator {
 }
 
 export interface UnaryOperator {
-  readonly type: 'unary_operator';
-  readonly fields: {
+  readonly $type: 'unary_operator';
+  readonly $fields: {
     readonly operator: "+" | "-" | "~";
     readonly argument: PrimaryExpression;
   };
 }
 
 export interface NotIn {
-  readonly type: '_not_in';
+  readonly $type: '_not_in';
 }
 
 export interface IsNot {
-  readonly type: '_is_not';
+  readonly $type: '_is_not';
 }
 
 export interface ComparisonOperator {
-  readonly type: 'comparison_operator';
-  readonly fields: {
+  readonly $type: 'comparison_operator';
+  readonly $fields: {
     readonly left: PrimaryExpression;
     readonly operators: NonEmptyArray<NotIn | IsNot>;
   };
 }
 
 export interface Lambda {
-  readonly type: 'lambda';
-  readonly fields: {
+  readonly $type: 'lambda';
+  readonly $fields: {
     readonly lambda: KwLambda;
     readonly parameters?: LambdaParameters;
     readonly body: Expression;
@@ -967,8 +967,8 @@ export interface Lambda {
 }
 
 export interface LambdaWithinForInClause {
-  readonly type: 'lambda_within_for_in_clause';
-  readonly fields: {
+  readonly $type: 'lambda_within_for_in_clause';
+  readonly $fields: {
     readonly lambda: KwLambda;
     readonly parameters?: LambdaParameters;
     readonly body: ExpressionWithinForInClause;
@@ -976,33 +976,33 @@ export interface LambdaWithinForInClause {
 }
 
 export interface AssignmentUFormEq {
-  readonly type: 'assignment';
-  readonly fields: {
+  readonly $type: 'assignment';
+  readonly $fields: {
     readonly left: LeftHandSide;
   };
-  readonly children: readonly [AssignmentEq];
+  readonly $children: readonly [AssignmentEq];
 }
 
 export interface AssignmentUFormType {
-  readonly type: 'assignment';
-  readonly fields: {
+  readonly $type: 'assignment';
+  readonly $fields: {
     readonly left: LeftHandSide;
   };
-  readonly children: readonly [AssignmentType];
+  readonly $children: readonly [AssignmentType];
 }
 
 export interface AssignmentUFormTyped {
-  readonly type: 'assignment';
-  readonly fields: {
+  readonly $type: 'assignment';
+  readonly $fields: {
     readonly left: LeftHandSide;
   };
-  readonly children: readonly [AssignmentTyped];
+  readonly $children: readonly [AssignmentTyped];
 }
 
 export type Assignment = AssignmentUFormEq | AssignmentUFormType | AssignmentUFormTyped;
 export interface AugmentedAssignment {
-  readonly type: 'augmented_assignment';
-  readonly fields: {
+  readonly $type: 'augmented_assignment';
+  readonly $fields: {
     readonly left: LeftHandSide;
     readonly operator: "+=" | "-=" | "*=" | "/=" | "@=" | "//=" | "%=" | "**=" | ">>=" | "<<=" | "&=" | "^=" | "|=";
     readonly right: RightHandSide;
@@ -1010,40 +1010,40 @@ export interface AugmentedAssignment {
 }
 
 export interface PatternList {
-  readonly type: 'pattern_list';
-  readonly fields: {
+  readonly $type: 'pattern_list';
+  readonly $fields: {
     readonly pattern: Pattern;
   };
-  readonly children: readonly (Pattern)[];
+  readonly $children: readonly (Pattern)[];
 }
 
 export interface Yield {
-  readonly type: 'yield';
-  readonly fields: {
+  readonly $type: 'yield';
+  readonly $fields: {
     readonly yield: "yield";
   };
-  readonly children: readonly [Expression | Expressions];
+  readonly $children: readonly [Expression | Expressions];
 }
 
 export interface Attribute {
-  readonly type: 'attribute';
-  readonly fields: {
+  readonly $type: 'attribute';
+  readonly $fields: {
     readonly object: PrimaryExpression;
     readonly attribute: Identifier;
   };
 }
 
 export interface Subscript {
-  readonly type: 'subscript';
-  readonly fields: {
+  readonly $type: 'subscript';
+  readonly $fields: {
     readonly value: PrimaryExpression;
     readonly subscript: NonEmptyArray<Expression | Slice>;
   };
 }
 
 export interface Slice {
-  readonly type: 'slice';
-  readonly fields: {
+  readonly $type: 'slice';
+  readonly $fields: {
     readonly start?: Expression;
     readonly stop?: Expression;
     readonly step?: Expression;
@@ -1051,152 +1051,152 @@ export interface Slice {
 }
 
 export interface Call {
-  readonly type: 'call';
-  readonly fields: {
+  readonly $type: 'call';
+  readonly $fields: {
     readonly function: PrimaryExpression;
     readonly arguments: GeneratorExpression | ArgumentList;
   };
 }
 
 export interface TypedParameter {
-  readonly type: 'typed_parameter';
-  readonly fields: {
+  readonly $type: 'typed_parameter';
+  readonly $fields: {
     readonly type: Type;
   };
-  readonly children: readonly [Identifier | ListSplatPattern | DictionarySplatPattern];
+  readonly $children: readonly [Identifier | ListSplatPattern | DictionarySplatPattern];
 }
 
 export interface Type {
-  readonly type: 'type';
-  readonly children: readonly [Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType];
+  readonly $type: 'type';
+  readonly $children: readonly [Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType];
 }
 
 export interface SplatType {
-  readonly type: 'splat_type';
-  readonly fields: {
+  readonly $type: 'splat_type';
+  readonly $fields: {
     readonly identifier: "*" | "**";
   };
-  readonly children: readonly [Identifier];
+  readonly $children: readonly [Identifier];
 }
 
 export interface GenericType {
-  readonly type: 'generic_type';
-  readonly fields: {
+  readonly $type: 'generic_type';
+  readonly $fields: {
     readonly identifier: Identifier;
     readonly type_parameter: TypeParameter;
   };
 }
 
 export interface UnionType {
-  readonly type: 'union_type';
-  readonly fields: {
+  readonly $type: 'union_type';
+  readonly $fields: {
     readonly left: Type;
     readonly right: Type;
   };
 }
 
 export interface ConstrainedType {
-  readonly type: 'constrained_type';
-  readonly fields: {
+  readonly $type: 'constrained_type';
+  readonly $fields: {
     readonly base_type: Type;
     readonly constraint: Type;
   };
 }
 
 export interface MemberType {
-  readonly type: 'member_type';
-  readonly fields: {
+  readonly $type: 'member_type';
+  readonly $fields: {
     readonly base_type: Type;
     readonly identifier: Identifier;
   };
 }
 
 export interface KeywordArgument {
-  readonly type: 'keyword_argument';
-  readonly fields: {
+  readonly $type: 'keyword_argument';
+  readonly $fields: {
     readonly name: Identifier | KeywordIdentifier;
     readonly value: Expression;
   };
 }
 
 export interface List {
-  readonly type: 'list';
-  readonly children: readonly [CollectionElements];
+  readonly $type: 'list';
+  readonly $children: readonly [CollectionElements];
 }
 
 export interface Set {
-  readonly type: 'set';
-  readonly children: readonly [CollectionElements];
+  readonly $type: 'set';
+  readonly $children: readonly [CollectionElements];
 }
 
 export interface Tuple {
-  readonly type: 'tuple';
-  readonly children: readonly [CollectionElements];
+  readonly $type: 'tuple';
+  readonly $children: readonly [CollectionElements];
 }
 
 export interface Dictionary {
-  readonly type: 'dictionary';
-  readonly children: readonly (Pair | DictionarySplat)[];
+  readonly $type: 'dictionary';
+  readonly $children: readonly (Pair | DictionarySplat)[];
 }
 
 export interface Pair {
-  readonly type: 'pair';
-  readonly fields: {
+  readonly $type: 'pair';
+  readonly $fields: {
     readonly key: Expression;
     readonly value: Expression;
   };
 }
 
 export interface ListComprehension {
-  readonly type: 'list_comprehension';
-  readonly fields: {
+  readonly $type: 'list_comprehension';
+  readonly $fields: {
     readonly body: Expression;
   };
-  readonly children: readonly [ComprehensionClauses];
+  readonly $children: readonly [ComprehensionClauses];
 }
 
 export interface DictionaryComprehension {
-  readonly type: 'dictionary_comprehension';
-  readonly fields: {
+  readonly $type: 'dictionary_comprehension';
+  readonly $fields: {
     readonly body: Pair;
   };
-  readonly children: readonly [ComprehensionClauses];
+  readonly $children: readonly [ComprehensionClauses];
 }
 
 export interface SetComprehension {
-  readonly type: 'set_comprehension';
-  readonly fields: {
+  readonly $type: 'set_comprehension';
+  readonly $fields: {
     readonly body: Expression;
   };
-  readonly children: readonly [ComprehensionClauses];
+  readonly $children: readonly [ComprehensionClauses];
 }
 
 export interface GeneratorExpression {
-  readonly type: 'generator_expression';
-  readonly fields: {
+  readonly $type: 'generator_expression';
+  readonly $fields: {
     readonly body: Expression;
   };
-  readonly children: readonly [ComprehensionClauses];
+  readonly $children: readonly [ComprehensionClauses];
 }
 
 export interface ComprehensionClauses {
-  readonly type: '_comprehension_clauses';
-  readonly children: readonly (ForInClause | IfClause)[];
+  readonly $type: '_comprehension_clauses';
+  readonly $children: readonly (ForInClause | IfClause)[];
 }
 
 export interface ParenthesizedExpression {
-  readonly type: 'parenthesized_expression';
-  readonly children: readonly [Expression | Yield];
+  readonly $type: 'parenthesized_expression';
+  readonly $children: readonly [Expression | Yield];
 }
 
 export interface CollectionElements {
-  readonly type: '_collection_elements';
-  readonly children: readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[];
+  readonly $type: '_collection_elements';
+  readonly $children: readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[];
 }
 
 export interface ForInClause {
-  readonly type: 'for_in_clause';
-  readonly fields: {
+  readonly $type: 'for_in_clause';
+  readonly $fields: {
     readonly async?: KwAsync;
     readonly left: LeftHandSide;
     readonly right: NonEmptyArray<string>;
@@ -1204,15 +1204,15 @@ export interface ForInClause {
 }
 
 export interface IfClause {
-  readonly type: 'if_clause';
-  readonly fields: {
+  readonly $type: 'if_clause';
+  readonly $fields: {
     readonly expression: Expression;
   };
 }
 
 export interface ConditionalExpression {
-  readonly type: 'conditional_expression';
-  readonly fields: {
+  readonly $type: 'conditional_expression';
+  readonly $fields: {
     readonly body: Expression;
     readonly condition: Expression;
     readonly alternative: Expression;
@@ -1220,16 +1220,16 @@ export interface ConditionalExpression {
 }
 
 export interface ConcatenatedString {
-  readonly type: 'concatenated_string';
-  readonly fields: {
+  readonly $type: 'concatenated_string';
+  readonly $fields: {
     readonly string: String;
   };
-  readonly children: NonEmptyArray<String>;
+  readonly $children: NonEmptyArray<String>;
 }
 
 export interface String {
-  readonly type: 'string';
-  readonly fields: {
+  readonly $type: 'string';
+  readonly $fields: {
     readonly string_start: StringStart;
     readonly content: readonly (Interpolation | StringContent)[];
     readonly string_end: StringEnd;
@@ -1237,13 +1237,13 @@ export interface String {
 }
 
 export interface StringContent {
-  readonly type: 'string_content';
-  readonly children: readonly (EscapeInterpolation | EscapeSequence | NotEscapeSequence | _StringContent)[];
+  readonly $type: 'string_content';
+  readonly $children: readonly (EscapeInterpolation | EscapeSequence | NotEscapeSequence | _StringContent)[];
 }
 
 export interface Interpolation {
-  readonly type: 'interpolation';
-  readonly fields: {
+  readonly $type: 'interpolation';
+  readonly $fields: {
     readonly expression: FExpression;
     readonly type_conversion?: TypeConversion;
     readonly format_specifier?: FormatSpecifier;
@@ -1251,59 +1251,59 @@ export interface Interpolation {
 }
 
 export interface FormatSpecifier {
-  readonly type: 'format_specifier';
-  readonly children: readonly (FormatExpression)[];
+  readonly $type: 'format_specifier';
+  readonly $children: readonly (FormatExpression)[];
 }
 
 export interface Await {
-  readonly type: 'await';
-  readonly fields: {
+  readonly $type: 'await';
+  readonly $fields: {
     readonly primary_expression: PrimaryExpression;
   };
 }
 
 export interface _AssignmentEq {
-  readonly type: '_assignment_eq';
+  readonly $type: '_assignment_eq';
 }
 
 export interface _AssignmentType {
-  readonly type: '_assignment_type';
+  readonly $type: '_assignment_type';
 }
 
 export interface _AssignmentTyped {
-  readonly type: '_assignment_typed';
+  readonly $type: '_assignment_typed';
 }
 
 export interface AsPatternTarget {
-  readonly type: 'as_pattern_target';
-  readonly children: readonly [ComparisonOperator | NotOperator | BooleanOperator | Lambda | PrimaryExpression | ConditionalExpression | NamedExpression | AsPattern];
+  readonly $type: 'as_pattern_target';
+  readonly $children: readonly [ComparisonOperator | NotOperator | BooleanOperator | Lambda | PrimaryExpression | ConditionalExpression | NamedExpression | AsPattern];
 }
 
 export interface AssignmentEq {
-  readonly type: 'assignment_eq';
-  readonly fields: {
+  readonly $type: 'assignment_eq';
+  readonly $fields: {
     readonly right: RightHandSide;
   };
 }
 
 export interface AssignmentType {
-  readonly type: 'assignment_type';
-  readonly fields: {
+  readonly $type: 'assignment_type';
+  readonly $fields: {
     readonly type: Type;
   };
 }
 
 export interface AssignmentTyped {
-  readonly type: 'assignment_typed';
-  readonly fields: {
+  readonly $type: 'assignment_typed';
+  readonly $fields: {
     readonly type: Type;
     readonly right: RightHandSide;
   };
 }
 
 export interface FormatExpression {
-  readonly type: 'format_expression';
-  readonly fields: {
+  readonly $type: 'format_expression';
+  readonly $fields: {
     readonly expression: FExpression;
     readonly type_conversion?: TypeConversion;
     readonly format_specifier?: FormatSpecifier;

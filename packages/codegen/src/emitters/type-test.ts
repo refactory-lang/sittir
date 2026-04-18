@@ -82,13 +82,13 @@ export function emitTypeTests(config: EmitTypeTestsConfig): string {
         if (seenType.has(s.typeName)) continue
         seenType.add(s.typeName)
         typeImports.add(s.typeName)
-        body.push(`export type _Type_${s.typeName} = _TypeAssert<_TypeExtends<${s.typeName}['type'], '${s.kind}'>>;`)
+        body.push(`export type _Type_${s.typeName} = _TypeAssert<_TypeExtends<${s.typeName}['$type'], '${s.kind}'>>;`)
     }
     for (const l of leafKinds) {
         if (seenType.has(l.typeName)) continue
         seenType.add(l.typeName)
         typeImports.add(l.typeName)
-        body.push(`export type _Type_${l.typeName} = _TypeAssert<_TypeExtends<${l.typeName}['type'], '${l.kind}'>>;`)
+        body.push(`export type _Type_${l.typeName} = _TypeAssert<_TypeExtends<${l.typeName}['$type'], '${l.kind}'>>;`)
     }
     body.push('')
 

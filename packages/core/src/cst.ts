@@ -21,21 +21,21 @@ export function toCst(
 ): CSTNode {
 	const text = renderer.render(node);
 
-	if (node.text !== undefined) {
+	if (node.$text !== undefined) {
 		return {
-			type: node.type,
-			text: node.text,
+			type: node.$type,
+			text: node.$text,
 			children: [],
 			isNamed: true,
 			startIndex: offset,
-			endIndex: offset + node.text.length,
+			endIndex: offset + node.$text.length,
 			startPosition: offsetToPosition(offset, text, offset),
-			endPosition: offsetToPosition(offset + node.text.length, text, offset),
+			endPosition: offsetToPosition(offset + node.$text.length, text, offset),
 		};
 	}
 
 	return {
-		type: node.type,
+		type: node.$type,
 		text,
 		children: [],
 		isNamed: true,

@@ -94,9 +94,10 @@ export function sourceFile(config: T.SourceFile.Config) {
     statements: config?.statements,
   };
   return {
-    type: 'source_file' as const,
-    named: true as const,
-    fields,
+    $type: 'source_file' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     shebang(value?: T.Shebang | undefined) { return _fs(config, sourceFile, 'shebang', value, fields.shebang); },
     statements(...values: T.Statement[]) { return _fsm(config, sourceFile, 'statements', values, fields.statements); },
     render() { return render(this); },
@@ -111,9 +112,10 @@ export function sourceFile(config: T.SourceFile.Config) {
 export function expressionStatement(child?: (T.Expression | T.ExpressionEndingWithBlock)) {
   const children = child != null ? [child] : [];
   return {
-    type: 'expression_statement' as const,
-    named: true as const,
-    children,
+    $type: 'expression_statement' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -129,9 +131,10 @@ export function macroDefinition(config: T.MacroDefinition.Config) {
     rules: config?.rules,
   };
   return {
-    type: 'macro_definition' as const,
-    named: true as const,
-    fields,
+    $type: 'macro_definition' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     name(value?: T.Identifier | T.ReservedIdentifier) { return _fs(config, macroDefinition, 'name', value, fields.name); },
     rules(value?: T.MacroRule) { return _fs(config, macroDefinition, 'rules', value, fields.rules); },
     render() { return render(this); },
@@ -149,9 +152,10 @@ export function macroRule(config: T.MacroRule.Config) {
     right: config?.right,
   };
   return {
-    type: 'macro_rule' as const,
-    named: true as const,
-    fields,
+    $type: 'macro_rule' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     left(value?: T.TokenTreePattern) { return _fs(config, macroRule, 'left', value, fields.left); },
     right(value?: T.TokenTree) { return _fs(config, macroRule, 'right', value, fields.right); },
     render() { return render(this); },
@@ -165,9 +169,10 @@ export function macroRule(config: T.MacroRule.Config) {
 
 export function tokenTreePattern(...children: T.TokenPattern[]) {
   return {
-    type: 'token_tree_pattern' as const,
-    named: true as const,
-    children,
+    $type: 'token_tree_pattern' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -183,9 +188,10 @@ export function tokenBindingPattern(config: T.TokenBindingPattern.Config) {
     type: config?.type,
   };
   return {
-    type: 'token_binding_pattern' as const,
-    named: true as const,
-    fields,
+    $type: 'token_binding_pattern' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     name(value?: T.Metavariable) { return _fs(config, tokenBindingPattern, 'name', value, fields.name); },
     typeField(value?: T.FragmentSpecifier) { return _fs(config, tokenBindingPattern, 'type', value, fields.type); },
     render() { return render(this); },
@@ -199,9 +205,10 @@ export function tokenBindingPattern(config: T.TokenBindingPattern.Config) {
 
 export function tokenRepetitionPattern(...children: T.TokenPattern[]) {
   return {
-    type: 'token_repetition_pattern' as const,
-    named: true as const,
-    children,
+    $type: 'token_repetition_pattern' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -213,9 +220,10 @@ export function tokenRepetitionPattern(...children: T.TokenPattern[]) {
 
 export function fragmentSpecifier(text: 'block' | 'expr' | 'expr_2021' | 'ident' | 'item' | 'lifetime' | 'literal' | 'meta' | 'pat' | 'pat_param' | 'path' | 'stmt' | 'tt' | 'ty' | 'vis') {
   return {
-    type: 'fragment_specifier' as const,
-    named: true as const,
-    text: text,
+    $type: 'fragment_specifier' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $text: text,
     render: () => text,
     toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
     replace: (t: T.FragmentSpecifierTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
@@ -224,9 +232,10 @@ export function fragmentSpecifier(text: 'block' | 'expr' | 'expr_2021' | 'ident'
 
 export function tokenTree(...children: T.Tokens[]) {
   return {
-    type: 'token_tree' as const,
-    named: true as const,
-    children,
+    $type: 'token_tree' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -238,9 +247,10 @@ export function tokenTree(...children: T.Tokens[]) {
 
 export function tokenRepetition(...children: T.Tokens[]) {
   return {
-    type: 'token_repetition' as const,
-    named: true as const,
-    children,
+    $type: 'token_repetition' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -255,9 +265,10 @@ export function attributeItem(config: T.AttributeItem.Config) {
     attribute: config?.attribute,
   };
   return {
-    type: 'attribute_item' as const,
-    named: true as const,
-    fields,
+    $type: 'attribute_item' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     attribute(value?: T.Attribute) { return _fs(config, attributeItem, 'attribute', value, fields.attribute); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -273,9 +284,10 @@ export function innerAttributeItem(config: T.InnerAttributeItem.Config) {
     attribute: config?.attribute,
   };
   return {
-    type: 'inner_attribute_item' as const,
-    named: true as const,
-    fields,
+    $type: 'inner_attribute_item' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     attribute(value?: T.Attribute) { return _fs(config, innerAttributeItem, 'attribute', value, fields.attribute); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -293,10 +305,11 @@ export function attribute(config: T.Attribute.Config) {
   };
   const children = config?.children ?? [];
   return {
-    type: 'attribute' as const,
-    named: true as const,
-    fields,
-    children,
+    $type: 'attribute' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    $children: children,
     value(value?: T.Expression | undefined) { return _fs(config, attribute, 'value', value, fields.value); },
     arguments(value?: T.TokenTree | undefined) { return _fs(config, attribute, 'arguments', value, fields.arguments); },
     getChild() { return children[0]; },
@@ -324,11 +337,12 @@ export function modItemUFormExternal(config: T.ModItemUFormExternalConfig) {
   };
   const children = config?.children ?? [];
   return {
-    type: 'mod_item' as const,
-    named: true as const,
-    variant: '_form_external' as const,
-    fields,
-    children,
+    $type: 'mod_item' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $variant: '_form_external' as const,
+    $fields: fields,
+    $children: children,
     visibilityModifier(value?: T.VisibilityModifier | undefined) { return _fs(config, modItemUFormExternal, 'visibilityModifier', value, fields.visibility_modifier); },
     name(value?: T.Identifier) { return _fs(config, modItemUFormExternal, 'name', value, fields.name); },
     getChild() { return children[0]; },
@@ -348,11 +362,12 @@ export function modItemUFormInline(config: T.ModItemUFormInlineConfig) {
   };
   const children = config?.children ?? [];
   return {
-    type: 'mod_item' as const,
-    named: true as const,
-    variant: '_form_inline' as const,
-    fields,
-    children,
+    $type: 'mod_item' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $variant: '_form_inline' as const,
+    $fields: fields,
+    $children: children,
     visibilityModifier(value?: T.VisibilityModifier | undefined) { return _fs(config, modItemUFormInline, 'visibilityModifier', value, fields.visibility_modifier); },
     name(value?: T.Identifier) { return _fs(config, modItemUFormInline, 'name', value, fields.name); },
     getChild() { return children[0]; },
@@ -373,9 +388,10 @@ export function foreignModItem(config: T.ForeignModItem.Config) {
     body: config?.body,
   };
   return {
-    type: 'foreign_mod_item' as const,
-    named: true as const,
-    fields,
+    $type: 'foreign_mod_item' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     visibilityModifier(value?: T.VisibilityModifier | undefined) { return _fs(config, foreignModItem, 'visibilityModifier', value, fields.visibility_modifier); },
     externModifier(value?: T.ExternModifier) { return _fs(config, foreignModItem, 'externModifier', value, fields.extern_modifier); },
     body(value?: T.DeclarationList | undefined) { return _fs(config, foreignModItem, 'body', value, fields.body); },
@@ -390,9 +406,10 @@ export function foreignModItem(config: T.ForeignModItem.Config) {
 
 export function declarationList(...children: T.DeclarationStatement[]) {
   return {
-    type: 'declaration_list' as const,
-    named: true as const,
-    children,
+    $type: 'declaration_list' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -419,11 +436,12 @@ export function structItemUFormBrace(config: T.StructItemUFormBraceConfig) {
   };
   const children = config?.children ?? [];
   return {
-    type: 'struct_item' as const,
-    named: true as const,
-    variant: '_form_brace' as const,
-    fields,
-    children,
+    $type: 'struct_item' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $variant: '_form_brace' as const,
+    $fields: fields,
+    $children: children,
     visibilityModifier(value?: T.VisibilityModifier | undefined) { return _fs(config, structItemUFormBrace, 'visibilityModifier', value, fields.visibility_modifier); },
     name(value?: T._TypeIdentifier) { return _fs(config, structItemUFormBrace, 'name', value, fields.name); },
     typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, structItemUFormBrace, 'typeParameters', value, fields.type_parameters); },
@@ -445,11 +463,12 @@ export function structItemUFormTuple(config: T.StructItemUFormTupleConfig) {
   };
   const children = config?.children ?? [];
   return {
-    type: 'struct_item' as const,
-    named: true as const,
-    variant: '_form_tuple' as const,
-    fields,
-    children,
+    $type: 'struct_item' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $variant: '_form_tuple' as const,
+    $fields: fields,
+    $children: children,
     visibilityModifier(value?: T.VisibilityModifier | undefined) { return _fs(config, structItemUFormTuple, 'visibilityModifier', value, fields.visibility_modifier); },
     name(value?: T._TypeIdentifier) { return _fs(config, structItemUFormTuple, 'name', value, fields.name); },
     typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, structItemUFormTuple, 'typeParameters', value, fields.type_parameters); },
@@ -471,11 +490,12 @@ export function structItemUFormUnit(config: T.StructItemUFormUnitConfig) {
   };
   const children = config?.children ?? [];
   return {
-    type: 'struct_item' as const,
-    named: true as const,
-    variant: '_form_unit' as const,
-    fields,
-    children,
+    $type: 'struct_item' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $variant: '_form_unit' as const,
+    $fields: fields,
+    $children: children,
     visibilityModifier(value?: T.VisibilityModifier | undefined) { return _fs(config, structItemUFormUnit, 'visibilityModifier', value, fields.visibility_modifier); },
     name(value?: T._TypeIdentifier) { return _fs(config, structItemUFormUnit, 'name', value, fields.name); },
     typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, structItemUFormUnit, 'typeParameters', value, fields.type_parameters); },
@@ -499,9 +519,10 @@ export function unionItem(config: T.UnionItem.Config) {
     body: config?.body,
   };
   return {
-    type: 'union_item' as const,
-    named: true as const,
-    fields,
+    $type: 'union_item' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     visibilityModifier(value?: T.VisibilityModifier | undefined) { return _fs(config, unionItem, 'visibilityModifier', value, fields.visibility_modifier); },
     name(value?: T._TypeIdentifier) { return _fs(config, unionItem, 'name', value, fields.name); },
     typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, unionItem, 'typeParameters', value, fields.type_parameters); },
@@ -525,9 +546,10 @@ export function enumItem(config: T.EnumItem.Config) {
     body: config?.body,
   };
   return {
-    type: 'enum_item' as const,
-    named: true as const,
-    fields,
+    $type: 'enum_item' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     visibilityModifier(value?: T.VisibilityModifier | undefined) { return _fs(config, enumItem, 'visibilityModifier', value, fields.visibility_modifier); },
     name(value?: T._TypeIdentifier) { return _fs(config, enumItem, 'name', value, fields.name); },
     typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, enumItem, 'typeParameters', value, fields.type_parameters); },
@@ -544,9 +566,10 @@ export function enumItem(config: T.EnumItem.Config) {
 
 export function enumVariantList(...children: (T.AttributeItem | T.EnumVariant)[]) {
   return {
-    type: 'enum_variant_list' as const,
-    named: true as const,
-    children,
+    $type: 'enum_variant_list' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -564,9 +587,10 @@ export function enumVariant(config: T.EnumVariant.Config) {
     value: config?.value,
   };
   return {
-    type: 'enum_variant' as const,
-    named: true as const,
-    fields,
+    $type: 'enum_variant' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     visibilityModifier(value?: T.VisibilityModifier | undefined) { return _fs(config, enumVariant, 'visibilityModifier', value, fields.visibility_modifier); },
     name(value?: T.Identifier) { return _fs(config, enumVariant, 'name', value, fields.name); },
     body(value?: T.FieldDeclarationList | T.OrderedFieldDeclarationList | undefined) { return _fs(config, enumVariant, 'body', value, fields.body); },
@@ -582,9 +606,10 @@ export function enumVariant(config: T.EnumVariant.Config) {
 
 export function fieldDeclarationList(...children: (T.AttributeItem | T.FieldDeclaration)[]) {
   return {
-    type: 'field_declaration_list' as const,
-    named: true as const,
-    children,
+    $type: 'field_declaration_list' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -601,9 +626,10 @@ export function fieldDeclaration(config: T.FieldDeclaration.Config) {
     type: config?.type,
   };
   return {
-    type: 'field_declaration' as const,
-    named: true as const,
-    fields,
+    $type: 'field_declaration' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     visibilityModifier(value?: T.VisibilityModifier | undefined) { return _fs(config, fieldDeclaration, 'visibilityModifier', value, fields.visibility_modifier); },
     name(value?: T._FieldIdentifier) { return _fs(config, fieldDeclaration, 'name', value, fields.name); },
     typeField(value?: T._Type) { return _fs(config, fieldDeclaration, 'type', value, fields.type); },
@@ -621,9 +647,10 @@ export function orderedFieldDeclarationList(config: T.OrderedFieldDeclarationLis
     type: config?.type,
   };
   return {
-    type: 'ordered_field_declaration_list' as const,
-    named: true as const,
-    fields,
+    $type: 'ordered_field_declaration_list' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     typeField(...values: T._Type[]) { return _fsm(config, orderedFieldDeclarationList, 'type', values, fields.type); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -642,9 +669,10 @@ export function externCrateDeclaration(config: T.ExternCrateDeclaration.Config) 
     alias: config?.alias,
   };
   return {
-    type: 'extern_crate_declaration' as const,
-    named: true as const,
-    fields,
+    $type: 'extern_crate_declaration' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     visibilityModifier(value?: T.VisibilityModifier | undefined) { return _fs(config, externCrateDeclaration, 'visibilityModifier', value, fields.visibility_modifier); },
     crate(value?: T.Crate) { return _fs(config, externCrateDeclaration, 'crate', value, fields.crate); },
     name(value?: T.Identifier) { return _fs(config, externCrateDeclaration, 'name', value, fields.name); },
@@ -666,9 +694,10 @@ export function constItem(config: T.ConstItem.Config) {
     value: config?.value,
   };
   return {
-    type: 'const_item' as const,
-    named: true as const,
-    fields,
+    $type: 'const_item' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     visibilityModifier(value?: T.VisibilityModifier | undefined) { return _fs(config, constItem, 'visibilityModifier', value, fields.visibility_modifier); },
     name(value?: T.Identifier) { return _fs(config, constItem, 'name', value, fields.name); },
     typeField(value?: T._Type) { return _fs(config, constItem, 'type', value, fields.type); },
@@ -692,10 +721,11 @@ export function staticItem(config: T.StaticItem.Config) {
   };
   const children = config?.children ?? [];
   return {
-    type: 'static_item' as const,
-    named: true as const,
-    fields,
-    children,
+    $type: 'static_item' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    $children: children,
     visibilityModifier(value?: T.VisibilityModifier | undefined) { return _fs(config, staticItem, 'visibilityModifier', value, fields.visibility_modifier); },
     mutableSpecifier(value?: "ref" | undefined) { return _fs(config, staticItem, 'mutableSpecifier', value, fields.mutable_specifier); },
     name(value?: T.Identifier) { return _fs(config, staticItem, 'name', value, fields.name); },
@@ -722,9 +752,10 @@ export function typeItem(config: T.TypeItem.Config) {
     trailing_where_clause: config?.trailingWhereClause,
   };
   return {
-    type: 'type_item' as const,
-    named: true as const,
-    fields,
+    $type: 'type_item' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     visibilityModifier(value?: T.VisibilityModifier | undefined) { return _fs(config, typeItem, 'visibilityModifier', value, fields.visibility_modifier); },
     name(value?: T._TypeIdentifier) { return _fs(config, typeItem, 'name', value, fields.name); },
     typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, typeItem, 'typeParameters', value, fields.type_parameters); },
@@ -752,9 +783,10 @@ export function functionItem(config: T.FunctionItem.Config) {
     body: config?.body,
   };
   return {
-    type: 'function_item' as const,
-    named: true as const,
-    fields,
+    $type: 'function_item' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     visibilityModifier(value?: T.VisibilityModifier | undefined) { return _fs(config, functionItem, 'visibilityModifier', value, fields.visibility_modifier); },
     functionModifiers(value?: T.FunctionModifiers | undefined) { return _fs(config, functionItem, 'functionModifiers', value, fields.function_modifiers); },
     name(value?: T.Identifier | T.Metavariable) { return _fs(config, functionItem, 'name', value, fields.name); },
@@ -783,9 +815,10 @@ export function functionSignatureItem(config: T.FunctionSignatureItem.Config) {
     where_clause: config?.whereClause,
   };
   return {
-    type: 'function_signature_item' as const,
-    named: true as const,
-    fields,
+    $type: 'function_signature_item' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     visibilityModifier(value?: T.VisibilityModifier | undefined) { return _fs(config, functionSignatureItem, 'visibilityModifier', value, fields.visibility_modifier); },
     functionModifiers(value?: T.FunctionModifiers | undefined) { return _fs(config, functionSignatureItem, 'functionModifiers', value, fields.function_modifiers); },
     name(value?: T.Identifier | T.Metavariable) { return _fs(config, functionSignatureItem, 'name', value, fields.name); },
@@ -811,10 +844,11 @@ export function functionModifiers(config?: T.FunctionModifiers.Config) {
   };
   const children = config?.children ?? [];
   return {
-    type: 'function_modifiers' as const,
-    named: true as const,
-    fields,
-    children,
+    $type: 'function_modifiers' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    $children: children,
     async(...values: T.KwAsync[]) { return _fsm(config, functionModifiers, 'async', values, fields.async); },
     default(...values: T.KwDefault[]) { return _fsm(config, functionModifiers, 'default', values, fields.default); },
     const(...values: T.KwConst[]) { return _fsm(config, functionModifiers, 'const', values, fields.const); },
@@ -836,10 +870,11 @@ export function whereClause(config: T.WhereClause.Config) {
   };
   const children = config?.children ?? [];
   return {
-    type: 'where_clause' as const,
-    named: true as const,
-    fields,
-    children,
+    $type: 'where_clause' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    $children: children,
     where(value?: "where") { return _fs(config, whereClause, 'where', value, fields.where); },
     getChildren() { return children; },
     setChildren(...items: T.WherePredicate[]) { return whereClause({ ...config, children: items }); },
@@ -858,9 +893,10 @@ export function wherePredicate(config: T.WherePredicate.Config) {
     bounds: config?.bounds,
   };
   return {
-    type: 'where_predicate' as const,
-    named: true as const,
-    fields,
+    $type: 'where_predicate' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     left(value?: T.Lifetime | T._TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType | T.ReferenceType | T.PointerType | T.TupleType | T.ArrayType | T.HigherRankedTraitBound | T.PrimitiveType) { return _fs(config, wherePredicate, 'left', value, fields.left); },
     bounds(value?: T.TraitBounds) { return _fs(config, wherePredicate, 'bounds', value, fields.bounds); },
     render() { return render(this); },
@@ -882,10 +918,11 @@ export function implItem(config: T.ImplItem.Config) {
   };
   const children = config?.children ?? [];
   return {
-    type: 'impl_item' as const,
-    named: true as const,
-    fields,
-    children,
+    $type: 'impl_item' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    $children: children,
     unsafe(value?: T.KwUnsafe | undefined) { return _fs(config, implItem, 'unsafe', value, fields.unsafe); },
     typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, implItem, 'typeParameters', value, fields.type_parameters); },
     trait(value?: T._TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType | undefined) { return _fs(config, implItem, 'trait', value, fields.trait); },
@@ -912,10 +949,11 @@ export function traitItem(config: T.TraitItem.Config) {
   };
   const children = config?.children ?? [];
   return {
-    type: 'trait_item' as const,
-    named: true as const,
-    fields,
-    children,
+    $type: 'trait_item' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    $children: children,
     visibilityModifier(value?: T.VisibilityModifier | undefined) { return _fs(config, traitItem, 'visibilityModifier', value, fields.visibility_modifier); },
     name(value?: T._TypeIdentifier) { return _fs(config, traitItem, 'name', value, fields.name); },
     typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, traitItem, 'typeParameters', value, fields.type_parameters); },
@@ -940,9 +978,10 @@ export function associatedType(config: T.AssociatedType.Config) {
     where_clause: config?.whereClause,
   };
   return {
-    type: 'associated_type' as const,
-    named: true as const,
-    fields,
+    $type: 'associated_type' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     name(value?: T._TypeIdentifier) { return _fs(config, associatedType, 'name', value, fields.name); },
     typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, associatedType, 'typeParameters', value, fields.type_parameters); },
     bounds(value?: T.TraitBounds | undefined) { return _fs(config, associatedType, 'bounds', value, fields.bounds); },
@@ -958,9 +997,10 @@ export function associatedType(config: T.AssociatedType.Config) {
 
 export function traitBounds(...children: (T._Type | T.Lifetime | T.HigherRankedTraitBound)[]) {
   return {
-    type: 'trait_bounds' as const,
-    named: true as const,
-    children,
+    $type: 'trait_bounds' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -977,9 +1017,10 @@ export function higherRankedTraitBound(config: T.HigherRankedTraitBound.Config) 
     type: config?.type,
   };
   return {
-    type: 'higher_ranked_trait_bound' as const,
-    named: true as const,
-    fields,
+    $type: 'higher_ranked_trait_bound' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     for(value?: T.KwFor) { return _fs(config, higherRankedTraitBound, 'for', value, fields.for); },
     typeParameters(value?: T.TypeParameters) { return _fs(config, higherRankedTraitBound, 'typeParameters', value, fields.type_parameters); },
     typeField(value?: T._Type) { return _fs(config, higherRankedTraitBound, 'type', value, fields.type); },
@@ -995,9 +1036,10 @@ export function higherRankedTraitBound(config: T.HigherRankedTraitBound.Config) 
 export function removedTraitBound(child: T._Type) {
   const children = [child];
   return {
-    type: 'removed_trait_bound' as const,
-    named: true as const,
-    children,
+    $type: 'removed_trait_bound' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1009,9 +1051,10 @@ export function removedTraitBound(child: T._Type) {
 
 export function typeParameters(...children: (T.AttributeItem | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter)[]) {
   return {
-    type: 'type_parameters' as const,
-    named: true as const,
-    children,
+    $type: 'type_parameters' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1029,9 +1072,10 @@ export function constParameter(config: T.ConstParameter.Config) {
     value: config?.value,
   };
   return {
-    type: 'const_parameter' as const,
-    named: true as const,
-    fields,
+    $type: 'const_parameter' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     const(value?: T.KwConst) { return _fs(config, constParameter, 'const', value, fields.const); },
     name(value?: T.Identifier) { return _fs(config, constParameter, 'name', value, fields.name); },
     typeField(value?: T._Type) { return _fs(config, constParameter, 'type', value, fields.type); },
@@ -1052,9 +1096,10 @@ export function typeParameter(config: T.TypeParameter.Config) {
     default_type: config?.defaultType,
   };
   return {
-    type: 'type_parameter' as const,
-    named: true as const,
-    fields,
+    $type: 'type_parameter' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     name(value?: T._TypeIdentifier) { return _fs(config, typeParameter, 'name', value, fields.name); },
     bounds(value?: T.TraitBounds | undefined) { return _fs(config, typeParameter, 'bounds', value, fields.bounds); },
     defaultType(value?: T._Type | undefined) { return _fs(config, typeParameter, 'defaultType', value, fields.default_type); },
@@ -1073,9 +1118,10 @@ export function lifetimeParameter(config: T.LifetimeParameter.Config) {
     bounds: config?.bounds,
   };
   return {
-    type: 'lifetime_parameter' as const,
-    named: true as const,
-    fields,
+    $type: 'lifetime_parameter' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     name(value?: T.Lifetime) { return _fs(config, lifetimeParameter, 'name', value, fields.name); },
     bounds(value?: T.TraitBounds | undefined) { return _fs(config, lifetimeParameter, 'bounds', value, fields.bounds); },
     render() { return render(this); },
@@ -1096,9 +1142,10 @@ export function letDeclaration(config: T.LetDeclaration.Config) {
     alternative: config?.alternative,
   };
   return {
-    type: 'let_declaration' as const,
-    named: true as const,
-    fields,
+    $type: 'let_declaration' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     mutableSpecifier(value?: T.MutableSpecifier | undefined) { return _fs(config, letDeclaration, 'mutableSpecifier', value, fields.mutable_specifier); },
     pattern(value?: T.Pattern) { return _fs(config, letDeclaration, 'pattern', value, fields.pattern); },
     typeField(value?: T._Type | undefined) { return _fs(config, letDeclaration, 'type', value, fields.type); },
@@ -1119,9 +1166,10 @@ export function useDeclaration(config: T.UseDeclaration.Config) {
     argument: config?.argument,
   };
   return {
-    type: 'use_declaration' as const,
-    named: true as const,
-    fields,
+    $type: 'use_declaration' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     visibilityModifier(value?: T.VisibilityModifier | undefined) { return _fs(config, useDeclaration, 'visibilityModifier', value, fields.visibility_modifier); },
     argument(value?: T.UseClause) { return _fs(config, useDeclaration, 'argument', value, fields.argument); },
     render() { return render(this); },
@@ -1139,9 +1187,10 @@ export function scopedUseList(config: T.ScopedUseList.Config) {
     list: config?.list,
   };
   return {
-    type: 'scoped_use_list' as const,
-    named: true as const,
-    fields,
+    $type: 'scoped_use_list' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     path(value?: T.Path | undefined) { return _fs(config, scopedUseList, 'path', value, fields.path); },
     list(value?: T.UseList) { return _fs(config, scopedUseList, 'list', value, fields.list); },
     render() { return render(this); },
@@ -1155,9 +1204,10 @@ export function scopedUseList(config: T.ScopedUseList.Config) {
 
 export function useList(...children: T.UseClause[]) {
   return {
-    type: 'use_list' as const,
-    named: true as const,
-    children,
+    $type: 'use_list' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1173,9 +1223,10 @@ export function useAsClause(config: T.UseAsClause.Config) {
     alias: config?.alias,
   };
   return {
-    type: 'use_as_clause' as const,
-    named: true as const,
-    fields,
+    $type: 'use_as_clause' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     path(value?: T.Path) { return _fs(config, useAsClause, 'path', value, fields.path); },
     alias(value?: T.Identifier) { return _fs(config, useAsClause, 'alias', value, fields.alias); },
     render() { return render(this); },
@@ -1192,9 +1243,10 @@ export function useWildcard(config?: T.UseWildcard.Config) {
     path: config?.path,
   };
   return {
-    type: 'use_wildcard' as const,
-    named: true as const,
-    fields,
+    $type: 'use_wildcard' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     path(value?: T.Path | undefined) { return _fs(config, useWildcard, 'path', value, fields.path); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -1207,9 +1259,10 @@ export function useWildcard(config?: T.UseWildcard.Config) {
 
 export function parameters(...children: (T.AttributeItem | T.Parameter | T.SelfParameter | T.VariadicParameter | T._Type)[]) {
   return {
-    type: 'parameters' as const,
-    named: true as const,
-    children,
+    $type: 'parameters' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1227,10 +1280,11 @@ export function selfParameter(config: T.SelfParameter.Config) {
   };
   const children = config?.children ?? [];
   return {
-    type: 'self_parameter' as const,
-    named: true as const,
-    fields,
-    children,
+    $type: 'self_parameter' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    $children: children,
     lifetime(value?: string) { return _fs(config, selfParameter, 'lifetime', value, fields.lifetime); },
     mutableSpecifier(value?: T.Lifetime | undefined) { return _fs(config, selfParameter, 'mutableSpecifier', value, fields.mutable_specifier); },
     self(value?: T.MutableSpecifier | undefined) { return _fs(config, selfParameter, 'self', value, fields.self); },
@@ -1251,9 +1305,10 @@ export function variadicParameter(config?: T.VariadicParameter.Config) {
     pattern: config?.pattern,
   };
   return {
-    type: 'variadic_parameter' as const,
-    named: true as const,
-    fields,
+    $type: 'variadic_parameter' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     mutableSpecifier(value?: T.MutableSpecifier | undefined) { return _fs(config, variadicParameter, 'mutableSpecifier', value, fields.mutable_specifier); },
     pattern(value?: T.Pattern | undefined) { return _fs(config, variadicParameter, 'pattern', value, fields.pattern); },
     render() { return render(this); },
@@ -1272,9 +1327,10 @@ export function parameter(config: T.Parameter.Config) {
     type: config?.type,
   };
   return {
-    type: 'parameter' as const,
-    named: true as const,
-    fields,
+    $type: 'parameter' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     mutableSpecifier(value?: T.MutableSpecifier | undefined) { return _fs(config, parameter, 'mutableSpecifier', value, fields.mutable_specifier); },
     pattern(value?: T.Pattern | T.Self) { return _fs(config, parameter, 'pattern', value, fields.pattern); },
     typeField(value?: T._Type) { return _fs(config, parameter, 'type', value, fields.type); },
@@ -1292,9 +1348,10 @@ export function externModifier(config?: T.ExternModifier.Config) {
     string_literal: config?.stringLiteral,
   };
   return {
-    type: 'extern_modifier' as const,
-    named: true as const,
-    fields,
+    $type: 'extern_modifier' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     stringLiteral(value?: T.StringLiteral | undefined) { return _fs(config, externModifier, 'stringLiteral', value, fields.string_literal); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -1312,10 +1369,11 @@ export function visibilityModifier(config: T.VisibilityModifierForm0Config | T.V
 export function visibilityModifierForm0(config: T.VisibilityModifierForm0Config) {
   const children = config?.children ?? [];
   return {
-    type: 'visibility_modifier' as const,
-    named: true as const,
-    variant: 'form0' as const,
-    children,
+    $type: 'visibility_modifier' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $variant: 'form0' as const,
+    $children: children,
     getChild() { return children[0]; },
     setChild(child: T.Crate) { return visibilityModifierForm0({ ...config, children: [child] }); },
     render() { return render(this); },
@@ -1333,11 +1391,12 @@ export function visibilityModifierForm1(config: T.VisibilityModifierForm1Config)
   };
   const children = config?.children ?? [];
   return {
-    type: 'visibility_modifier' as const,
-    named: true as const,
-    variant: 'form1' as const,
-    fields,
-    children,
+    $type: 'visibility_modifier' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $variant: 'form1' as const,
+    $fields: fields,
+    $children: children,
     pub(value?: "pub") { return _fs(config, visibilityModifierForm1, 'pub', value, fields.pub); },
     in(value?: "in" | undefined) { return _fs(config, visibilityModifierForm1, 'in', value, fields.in); },
     getChild() { return children[0]; },
@@ -1354,9 +1413,10 @@ export function visibilityModifierForm1(config: T.VisibilityModifierForm1Config)
 export function bracketedType(child?: (T._Type | T.QualifiedType)) {
   const children = child != null ? [child] : [];
   return {
-    type: 'bracketed_type' as const,
-    named: true as const,
-    children,
+    $type: 'bracketed_type' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1372,9 +1432,10 @@ export function qualifiedType(config: T.QualifiedType.Config) {
     alias: config?.alias,
   };
   return {
-    type: 'qualified_type' as const,
-    named: true as const,
-    fields,
+    $type: 'qualified_type' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     typeField(value?: T._Type) { return _fs(config, qualifiedType, 'type', value, fields.type); },
     alias(value?: T._Type) { return _fs(config, qualifiedType, 'alias', value, fields.alias); },
     render() { return render(this); },
@@ -1391,9 +1452,10 @@ export function lifetime(config: T.Lifetime.Config) {
     identifier: config?.identifier,
   };
   return {
-    type: 'lifetime' as const,
-    named: true as const,
-    fields,
+    $type: 'lifetime' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     identifier(value?: T.Identifier) { return _fs(config, lifetime, 'identifier', value, fields.identifier); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -1410,9 +1472,10 @@ export function arrayType(config: T.ArrayType.Config) {
     length: config?.length,
   };
   return {
-    type: 'array_type' as const,
-    named: true as const,
-    fields,
+    $type: 'array_type' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     element(value?: T._Type) { return _fs(config, arrayType, 'element', value, fields.element); },
     length(value?: T.Expression | undefined) { return _fs(config, arrayType, 'length', value, fields.length); },
     render() { return render(this); },
@@ -1430,10 +1493,11 @@ export function forLifetimes(config: T.ForLifetimes.Config) {
   };
   const children = config?.children ?? [];
   return {
-    type: 'for_lifetimes' as const,
-    named: true as const,
-    fields,
-    children,
+    $type: 'for_lifetimes' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    $children: children,
     for(value?: T.KwFor) { return _fs(config, forLifetimes, 'for', value, fields.for); },
     getChildren() { return children; },
     setChildren(...items: T.Lifetime[]) {
@@ -1457,9 +1521,10 @@ export function functionType(config: T.FunctionType.Config) {
     return_type: config?.returnType,
   };
   return {
-    type: 'function_type' as const,
-    named: true as const,
-    fields,
+    $type: 'function_type' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     forLifetimes(value?: T.ForLifetimes | undefined) { return _fs(config, functionType, 'forLifetimes', value, fields.for_lifetimes); },
     trait(value?: T._TypeIdentifier | T.ScopedTypeIdentifier | undefined) { return _fs(config, functionType, 'trait', value, fields.trait); },
     parameters(value?: T.Parameters) { return _fs(config, functionType, 'parameters', value, fields.parameters); },
@@ -1476,9 +1541,10 @@ export function functionType(config: T.FunctionType.Config) {
 export function tupleType(...children: T._Type[]) {
   _assertNonEmpty(children, 'tuple_type.children');
   return {
-    type: 'tuple_type' as const,
-    named: true as const,
-    children,
+    $type: 'tuple_type' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1491,9 +1557,10 @@ export function tupleType(...children: T._Type[]) {
 export function unitType(text: string) {
   if (text.length === 0) throw new Error(`unit_type: text must be non-empty`); if (_wordRe.test(text) && RESERVED_KEYWORDS.has(text)) throw new Error(`unit_type: text '${text}' is a reserved keyword`);
   return {
-    type: 'unit_type' as const,
-    named: true as const,
-    text: text,
+    $type: 'unit_type' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $text: text,
     render: () => text,
     toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
     replace: (t: T.UnitTypeTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
@@ -1506,9 +1573,10 @@ export function genericFunction(config: T.GenericFunction.Config) {
     type_arguments: config?.typeArguments,
   };
   return {
-    type: 'generic_function' as const,
-    named: true as const,
-    fields,
+    $type: 'generic_function' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     function(value?: T.Identifier | T.ScopedIdentifier | T.FieldExpression) { return _fs(config, genericFunction, 'function', value, fields.function); },
     typeArguments(value?: T.TypeArguments) { return _fs(config, genericFunction, 'typeArguments', value, fields.type_arguments); },
     render() { return render(this); },
@@ -1526,9 +1594,10 @@ export function genericType(config: T.GenericType.Config) {
     type_arguments: config?.typeArguments,
   };
   return {
-    type: 'generic_type' as const,
-    named: true as const,
-    fields,
+    $type: 'generic_type' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     typeField(value?: T._TypeIdentifier | T.ReservedIdentifier | T.ScopedTypeIdentifier) { return _fs(config, genericType, 'type', value, fields.type); },
     typeArguments(value?: T.TypeArguments) { return _fs(config, genericType, 'typeArguments', value, fields.type_arguments); },
     render() { return render(this); },
@@ -1546,9 +1615,10 @@ export function genericTypeWithTurbofish(config: T.GenericTypeWithTurbofish.Conf
     type_arguments: config?.typeArguments,
   };
   return {
-    type: 'generic_type_with_turbofish' as const,
-    named: true as const,
-    fields,
+    $type: 'generic_type_with_turbofish' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     typeField(value?: T._TypeIdentifier | T.ScopedIdentifier) { return _fs(config, genericTypeWithTurbofish, 'type', value, fields.type); },
     typeArguments(value?: T.TypeArguments) { return _fs(config, genericTypeWithTurbofish, 'typeArguments', value, fields.type_arguments); },
     render() { return render(this); },
@@ -1566,9 +1636,10 @@ export function boundedType(config: T.BoundedType.Config) {
     right: config?.right,
   };
   return {
-    type: 'bounded_type' as const,
-    named: true as const,
-    fields,
+    $type: 'bounded_type' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     left(value?: T.Lifetime | T._Type | T.UseBounds) { return _fs(config, boundedType, 'left', value, fields.left); },
     right(value?: T.Lifetime | T._Type | T.UseBounds) { return _fs(config, boundedType, 'right', value, fields.right); },
     render() { return render(this); },
@@ -1586,10 +1657,11 @@ export function useBounds(config: T.UseBounds.Config) {
   };
   const children = config?.children ?? [];
   return {
-    type: 'use_bounds' as const,
-    named: true as const,
-    fields,
-    children,
+    $type: 'use_bounds' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    $children: children,
     use(value?: "use") { return _fs(config, useBounds, 'use', value, fields.use); },
     getChildren() { return children; },
     setChildren(...items: (T.Lifetime | T._TypeIdentifier)[]) { return useBounds({ ...config, children: items }); },
@@ -1604,9 +1676,10 @@ export function useBounds(config: T.UseBounds.Config) {
 
 export function typeArguments(...children: (T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TraitBounds)[]) {
   return {
-    type: 'type_arguments' as const,
-    named: true as const,
-    children,
+    $type: 'type_arguments' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1623,9 +1696,10 @@ export function typeBinding(config: T.TypeBinding.Config) {
     type: config?.type,
   };
   return {
-    type: 'type_binding' as const,
-    named: true as const,
-    fields,
+    $type: 'type_binding' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     name(value?: T._TypeIdentifier) { return _fs(config, typeBinding, 'name', value, fields.name); },
     typeArguments(value?: T.TypeArguments | undefined) { return _fs(config, typeBinding, 'typeArguments', value, fields.type_arguments); },
     typeField(value?: T._Type) { return _fs(config, typeBinding, 'type', value, fields.type); },
@@ -1645,9 +1719,10 @@ export function referenceType(config: T.ReferenceType.Config) {
     type: config?.type,
   };
   return {
-    type: 'reference_type' as const,
-    named: true as const,
-    fields,
+    $type: 'reference_type' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     lifetime(value?: T.Lifetime | undefined) { return _fs(config, referenceType, 'lifetime', value, fields.lifetime); },
     mutableSpecifier(value?: T.MutableSpecifier | undefined) { return _fs(config, referenceType, 'mutableSpecifier', value, fields.mutable_specifier); },
     typeField(value?: T._Type) { return _fs(config, referenceType, 'type', value, fields.type); },
@@ -1666,9 +1741,10 @@ export function pointerType(config: T.PointerType.Config) {
     type: config?.type,
   };
   return {
-    type: 'pointer_type' as const,
-    named: true as const,
-    fields,
+    $type: 'pointer_type' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     mutableSpecifier(value?: T.MutableSpecifier) { return _fs(config, pointerType, 'mutableSpecifier', value, fields.mutable_specifier); },
     typeField(value?: T._Type) { return _fs(config, pointerType, 'type', value, fields.type); },
     render() { return render(this); },
@@ -1686,9 +1762,10 @@ export function abstractType(config: T.AbstractType.Config) {
     trait: config?.trait,
   };
   return {
-    type: 'abstract_type' as const,
-    named: true as const,
-    fields,
+    $type: 'abstract_type' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, abstractType, 'typeParameters', value, fields.type_parameters); },
     trait(value?: T._TypeIdentifier | T.ScopedTypeIdentifier | T.RemovedTraitBound | T.GenericType | T.FunctionType | T.TupleType | T.BoundedType) { return _fs(config, abstractType, 'trait', value, fields.trait); },
     render() { return render(this); },
@@ -1706,9 +1783,10 @@ export function dynamicType(config: T.DynamicType.Config) {
     trait: config?.trait,
   };
   return {
-    type: 'dynamic_type' as const,
-    named: true as const,
-    fields,
+    $type: 'dynamic_type' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     dyn(value?: "dyn") { return _fs(config, dynamicType, 'dyn', value, fields.dyn); },
     trait(value?: T.HigherRankedTraitBound | T._TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType | T.FunctionType | T.TupleType) { return _fs(config, dynamicType, 'trait', value, fields.trait); },
     render() { return render(this); },
@@ -1722,9 +1800,10 @@ export function dynamicType(config: T.DynamicType.Config) {
 
 export function mutableSpecifier() {
   return {
-    type: 'mutable_specifier' as const,
-    named: true as const,
-    text: 'mut' as const,
+    $type: 'mutable_specifier' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $text: 'mut' as const,
     render: () => 'mut' as const,
     toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: 'mut' as const } : { startPos: s.start.index, endPos: s.end.index, insertedText: 'mut' as const },
     replace: (t: T.MutableSpecifierTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: 'mut' as const }; },
@@ -1737,9 +1816,10 @@ export function macroInvocation(config: T.MacroInvocation.Config) {
     token_tree: config?.tokenTree,
   };
   return {
-    type: 'macro_invocation' as const,
-    named: true as const,
-    fields,
+    $type: 'macro_invocation' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     macro(value?: T.ScopedIdentifier | T.Identifier | T.ReservedIdentifier) { return _fs(config, macroInvocation, 'macro', value, fields.macro); },
     tokenTree(value?: T.TokenTree) { return _fs(config, macroInvocation, 'tokenTree', value, fields.token_tree); },
     render() { return render(this); },
@@ -1753,9 +1833,10 @@ export function macroInvocation(config: T.MacroInvocation.Config) {
 
 export function delimTokenTree(...children: T.DelimTokens[]) {
   return {
-    type: 'delim_token_tree' as const,
-    named: true as const,
-    children,
+    $type: 'delim_token_tree' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1771,9 +1852,10 @@ export function scopedIdentifier(config: T.ScopedIdentifier.Config) {
     name: config?.name,
   };
   return {
-    type: 'scoped_identifier' as const,
-    named: true as const,
-    fields,
+    $type: 'scoped_identifier' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     path(value?: T.Path | T.BracketedType | T.GenericType | undefined) { return _fs(config, scopedIdentifier, 'path', value, fields.path); },
     name(value?: T.Identifier | T.Super) { return _fs(config, scopedIdentifier, 'name', value, fields.name); },
     render() { return render(this); },
@@ -1791,9 +1873,10 @@ export function scopedTypeIdentifierInExpressionPosition(config: T.ScopedTypeIde
     name: config?.name,
   };
   return {
-    type: 'scoped_type_identifier_in_expression_position' as const,
-    named: true as const,
-    fields,
+    $type: 'scoped_type_identifier_in_expression_position' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     path(value?: T.Path | T.GenericType | undefined) { return _fs(config, scopedTypeIdentifierInExpressionPosition, 'path', value, fields.path); },
     name(value?: T._TypeIdentifier) { return _fs(config, scopedTypeIdentifierInExpressionPosition, 'name', value, fields.name); },
     render() { return render(this); },
@@ -1811,9 +1894,10 @@ export function scopedTypeIdentifier(config: T.ScopedTypeIdentifier.Config) {
     name: config?.name,
   };
   return {
-    type: 'scoped_type_identifier' as const,
-    named: true as const,
-    fields,
+    $type: 'scoped_type_identifier' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     path(value?: T.Path | T.GenericType | T.BracketedType | undefined) { return _fs(config, scopedTypeIdentifier, 'path', value, fields.path); },
     name(value?: T._TypeIdentifier) { return _fs(config, scopedTypeIdentifier, 'name', value, fields.name); },
     render() { return render(this); },
@@ -1839,10 +1923,11 @@ export function rangeExpression(config: T.RangeExpressionUFormBinaryConfig | T.R
 export function rangeExpressionUFormBinary(config: T.RangeExpressionUFormBinaryConfig) {
   const children = config?.children ?? [];
   return {
-    type: 'range_expression' as const,
-    named: true as const,
-    variant: '_form_binary' as const,
-    children,
+    $type: 'range_expression' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $variant: '_form_binary' as const,
+    $children: children,
     getChild() { return children[0]; },
     setChild(child: T.RangeExpressionBinary) { return rangeExpressionUFormBinary({ ...config, children: [child] }); },
     render() { return render(this); },
@@ -1856,10 +1941,11 @@ export function rangeExpressionUFormBinary(config: T.RangeExpressionUFormBinaryC
 export function rangeExpressionUFormPostfix(config: T.RangeExpressionUFormPostfixConfig) {
   const children = config?.children ?? [];
   return {
-    type: 'range_expression' as const,
-    named: true as const,
-    variant: '_form_postfix' as const,
-    children,
+    $type: 'range_expression' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $variant: '_form_postfix' as const,
+    $children: children,
     getChild() { return children[0]; },
     setChild(child: T.RangeExpressionPostfix) { return rangeExpressionUFormPostfix({ ...config, children: [child] }); },
     render() { return render(this); },
@@ -1873,10 +1959,11 @@ export function rangeExpressionUFormPostfix(config: T.RangeExpressionUFormPostfi
 export function rangeExpressionUFormPrefix(config: T.RangeExpressionUFormPrefixConfig) {
   const children = config?.children ?? [];
   return {
-    type: 'range_expression' as const,
-    named: true as const,
-    variant: '_form_prefix' as const,
-    children,
+    $type: 'range_expression' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $variant: '_form_prefix' as const,
+    $children: children,
     getChild() { return children[0]; },
     setChild(child: T.RangeExpressionPrefix) { return rangeExpressionUFormPrefix({ ...config, children: [child] }); },
     render() { return render(this); },
@@ -1890,10 +1977,11 @@ export function rangeExpressionUFormPrefix(config: T.RangeExpressionUFormPrefixC
 export function rangeExpressionUFormBare(config: T.RangeExpressionUFormBareConfig) {
   const children = config?.children ?? [];
   return {
-    type: 'range_expression' as const,
-    named: true as const,
-    variant: '_form_bare' as const,
-    children,
+    $type: 'range_expression' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $variant: '_form_bare' as const,
+    $children: children,
     getChild() { return children[0]; },
     setChild(child: T.RangeExpressionBare) { return rangeExpressionUFormBare({ ...config, children: [child] }); },
     render() { return render(this); },
@@ -1911,9 +1999,10 @@ export function unaryExpression(config: T.UnaryExpression.Config) {
     operand: config?.operand,
   };
   return {
-    type: 'unary_expression' as const,
-    named: true as const,
-    fields,
+    $type: 'unary_expression' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     operator(value?: "-" | "*" | "!") { return _fs(config, unaryExpression, 'operator', value, fields.operator); },
     operand(value?: T.Expression) { return _fs(config, unaryExpression, 'operand', value, fields.operand); },
     render() { return render(this); },
@@ -1930,9 +2019,10 @@ export function tryExpression(config: T.TryExpression.Config) {
     value: config?.value,
   };
   return {
-    type: 'try_expression' as const,
-    named: true as const,
-    fields,
+    $type: 'try_expression' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     value(value?: T.Expression) { return _fs(config, tryExpression, 'value', value, fields.value); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -1949,9 +2039,10 @@ export function referenceExpression(config: T.ReferenceExpression.Config) {
     value: config?.value,
   };
   return {
-    type: 'reference_expression' as const,
-    named: true as const,
-    fields,
+    $type: 'reference_expression' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     mutableSpecifier(value?: T.MutableSpecifier) { return _fs(config, referenceExpression, 'mutableSpecifier', value, fields.mutable_specifier); },
     value(value?: T.Expression) { return _fs(config, referenceExpression, 'value', value, fields.value); },
     render() { return render(this); },
@@ -1970,9 +2061,10 @@ export function binaryExpression(config: T.BinaryExpression.Config) {
     right: config?.right,
   };
   return {
-    type: 'binary_expression' as const,
-    named: true as const,
-    fields,
+    $type: 'binary_expression' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     left(value?: T.Expression) { return _fs(config, binaryExpression, 'left', value, fields.left); },
     operator(value?: "&&") { return _fs(config, binaryExpression, 'operator', value, fields.operator); },
     right(value?: T.Expression) { return _fs(config, binaryExpression, 'right', value, fields.right); },
@@ -1991,9 +2083,10 @@ export function assignmentExpression(config: T.AssignmentExpression.Config) {
     right: config?.right,
   };
   return {
-    type: 'assignment_expression' as const,
-    named: true as const,
-    fields,
+    $type: 'assignment_expression' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     left(value?: T.Expression) { return _fs(config, assignmentExpression, 'left', value, fields.left); },
     right(value?: T.Expression) { return _fs(config, assignmentExpression, 'right', value, fields.right); },
     render() { return render(this); },
@@ -2012,9 +2105,10 @@ export function compoundAssignmentExpr(config: T.CompoundAssignmentExpr.Config) 
     right: config?.right,
   };
   return {
-    type: 'compound_assignment_expr' as const,
-    named: true as const,
-    fields,
+    $type: 'compound_assignment_expr' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     left(value?: T.Expression) { return _fs(config, compoundAssignmentExpr, 'left', value, fields.left); },
     operator(value?: "+=" | "-=" | "*=" | "/=" | "%=" | "&=" | "|=" | "^=" | "<<=" | ">>=") { return _fs(config, compoundAssignmentExpr, 'operator', value, fields.operator); },
     right(value?: T.Expression) { return _fs(config, compoundAssignmentExpr, 'right', value, fields.right); },
@@ -2033,9 +2127,10 @@ export function typeCastExpression(config: T.TypeCastExpression.Config) {
     type: config?.type,
   };
   return {
-    type: 'type_cast_expression' as const,
-    named: true as const,
-    fields,
+    $type: 'type_cast_expression' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     value(value?: T.Expression) { return _fs(config, typeCastExpression, 'value', value, fields.value); },
     typeField(value?: T._Type) { return _fs(config, typeCastExpression, 'type', value, fields.type); },
     render() { return render(this); },
@@ -2050,9 +2145,10 @@ export function typeCastExpression(config: T.TypeCastExpression.Config) {
 export function returnExpression(child?: T.Expression) {
   const children = child != null ? [child] : [];
   return {
-    type: 'return_expression' as const,
-    named: true as const,
-    children,
+    $type: 'return_expression' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2065,9 +2161,10 @@ export function returnExpression(child?: T.Expression) {
 export function yieldExpression(child?: T.Expression) {
   const children = child != null ? [child] : [];
   return {
-    type: 'yield_expression' as const,
-    named: true as const,
-    children,
+    $type: 'yield_expression' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2083,9 +2180,10 @@ export function callExpression(config: T.CallExpression.Config) {
     arguments: config?.arguments,
   };
   return {
-    type: 'call_expression' as const,
-    named: true as const,
-    fields,
+    $type: 'call_expression' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     function(value?: T.ExpressionExceptRange) { return _fs(config, callExpression, 'function', value, fields.function); },
     arguments(value?: T.Arguments) { return _fs(config, callExpression, 'arguments', value, fields.arguments); },
     render() { return render(this); },
@@ -2099,9 +2197,10 @@ export function callExpression(config: T.CallExpression.Config) {
 
 export function arguments_(...children: (T.AttributeItem | T.Expression)[]) {
   return {
-    type: 'arguments' as const,
-    named: true as const,
-    children,
+    $type: 'arguments' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2121,10 +2220,11 @@ export function arrayExpression(config: T.ArrayExpressionUFormSemiConfig | T.Arr
 export function arrayExpressionUFormSemi(config: T.ArrayExpressionUFormSemiConfig) {
   const children = config?.children ?? [];
   return {
-    type: 'array_expression' as const,
-    named: true as const,
-    variant: '_form_semi' as const,
-    children,
+    $type: 'array_expression' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $variant: '_form_semi' as const,
+    $children: children,
     getChild() { return children[0]; },
     setChild(child: T.ArrayExpressionSemi) { return arrayExpressionUFormSemi({ ...config, children: [child] }); },
     render() { return render(this); },
@@ -2138,10 +2238,11 @@ export function arrayExpressionUFormSemi(config: T.ArrayExpressionUFormSemiConfi
 export function arrayExpressionUFormList(config: T.ArrayExpressionUFormListConfig) {
   const children = config?.children ?? [];
   return {
-    type: 'array_expression' as const,
-    named: true as const,
-    variant: '_form_list' as const,
-    children,
+    $type: 'array_expression' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $variant: '_form_list' as const,
+    $children: children,
     getChild() { return children[0]; },
     setChild(child: T.ArrayExpressionList) { return arrayExpressionUFormList({ ...config, children: [child] }); },
     render() { return render(this); },
@@ -2156,9 +2257,10 @@ export function arrayExpressionUFormList(config: T.ArrayExpressionUFormListConfi
 export function parenthesizedExpression(child: T.Expression) {
   const children = [child];
   return {
-    type: 'parenthesized_expression' as const,
-    named: true as const,
-    children,
+    $type: 'parenthesized_expression' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2174,9 +2276,10 @@ export function tupleExpression(config: T.TupleExpression.Config) {
     elements: config?.elements,
   };
   return {
-    type: 'tuple_expression' as const,
-    named: true as const,
-    fields,
+    $type: 'tuple_expression' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     attributes(...values: T.AttributeItem[]) { return _fsm(config, tupleExpression, 'attributes', values, fields.attributes); },
     elements(...values: T.Expression[]) { return _fsm(config, tupleExpression, 'elements', values, fields.elements); },
     render() { return render(this); },
@@ -2191,9 +2294,10 @@ export function tupleExpression(config: T.TupleExpression.Config) {
 export function unitExpression(text: string) {
   if (text.length === 0) throw new Error(`unit_expression: text must be non-empty`); if (_wordRe.test(text) && RESERVED_KEYWORDS.has(text)) throw new Error(`unit_expression: text '${text}' is a reserved keyword`);
   return {
-    type: 'unit_expression' as const,
-    named: true as const,
-    text: text,
+    $type: 'unit_expression' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $text: text,
     render: () => text,
     toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
     replace: (t: T.UnitExpressionTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
@@ -2206,9 +2310,10 @@ export function structExpression(config: T.StructExpression.Config) {
     body: config?.body,
   };
   return {
-    type: 'struct_expression' as const,
-    named: true as const,
-    fields,
+    $type: 'struct_expression' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     name(value?: T._TypeIdentifier | T.ScopedTypeIdentifier | T.GenericTypeWithTurbofish) { return _fs(config, structExpression, 'name', value, fields.name); },
     body(value?: T.FieldInitializerList) { return _fs(config, structExpression, 'body', value, fields.body); },
     render() { return render(this); },
@@ -2222,9 +2327,10 @@ export function structExpression(config: T.StructExpression.Config) {
 
 export function fieldInitializerList(...children: (T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer)[]) {
   return {
-    type: 'field_initializer_list' as const,
-    named: true as const,
-    children,
+    $type: 'field_initializer_list' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2240,9 +2346,10 @@ export function shorthandFieldInitializer(config: T.ShorthandFieldInitializer.Co
     identifier: config?.identifier,
   };
   return {
-    type: 'shorthand_field_initializer' as const,
-    named: true as const,
-    fields,
+    $type: 'shorthand_field_initializer' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     attributes(...values: T.AttributeItem[]) { return _fsm(config, shorthandFieldInitializer, 'attributes', values, fields.attributes); },
     identifier(value?: T.Identifier) { return _fs(config, shorthandFieldInitializer, 'identifier', value, fields.identifier); },
     render() { return render(this); },
@@ -2261,10 +2368,11 @@ export function fieldInitializer(config: T.FieldInitializer.Config) {
   };
   const children = config?.children ?? [];
   return {
-    type: 'field_initializer' as const,
-    named: true as const,
-    fields,
-    children,
+    $type: 'field_initializer' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    $children: children,
     field(value?: T._FieldIdentifier | T.IntegerLiteral) { return _fs(config, fieldInitializer, 'field', value, fields.field); },
     value(value?: T.Expression) { return _fs(config, fieldInitializer, 'value', value, fields.value); },
     getChildren() { return children; },
@@ -2281,9 +2389,10 @@ export function fieldInitializer(config: T.FieldInitializer.Config) {
 export function baseFieldInitializer(child: T.Expression) {
   const children = [child];
   return {
-    type: 'base_field_initializer' as const,
-    named: true as const,
-    children,
+    $type: 'base_field_initializer' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2301,9 +2410,10 @@ export function ifExpression(config: T.IfExpression.Config) {
     alternative: config?.alternative,
   };
   return {
-    type: 'if_expression' as const,
-    named: true as const,
-    fields,
+    $type: 'if_expression' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     if(value?: "if") { return _fs(config, ifExpression, 'if', value, fields.if); },
     condition(value?: T.Condition) { return _fs(config, ifExpression, 'condition', value, fields.condition); },
     consequence(value?: T.Block) { return _fs(config, ifExpression, 'consequence', value, fields.consequence); },
@@ -2324,9 +2434,10 @@ export function letCondition(config: T.LetCondition.Config) {
     value: config?.value,
   };
   return {
-    type: 'let_condition' as const,
-    named: true as const,
-    fields,
+    $type: 'let_condition' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     let(value?: "let") { return _fs(config, letCondition, 'let', value, fields.let); },
     pattern(value?: T.Pattern) { return _fs(config, letCondition, 'pattern', value, fields.pattern); },
     value(value?: T.Expression) { return _fs(config, letCondition, 'value', value, fields.value); },
@@ -2345,10 +2456,11 @@ export function elseClause(config: T.ElseClause.Config) {
   };
   const children = config?.children ?? [];
   return {
-    type: 'else_clause' as const,
-    named: true as const,
-    fields,
-    children,
+    $type: 'else_clause' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    $children: children,
     else(value?: "else") { return _fs(config, elseClause, 'else', value, fields.else); },
     getChild() { return children[0]; },
     setChild(child: (T.Block | T.IfExpression)) { return elseClause({ ...config, children: [child] }); },
@@ -2368,9 +2480,10 @@ export function matchExpression(config: T.MatchExpression.Config) {
     body: config?.body,
   };
   return {
-    type: 'match_expression' as const,
-    named: true as const,
-    fields,
+    $type: 'match_expression' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     match(value?: "match") { return _fs(config, matchExpression, 'match', value, fields.match); },
     value(value?: T.Expression) { return _fs(config, matchExpression, 'value', value, fields.value); },
     body(value?: T.MatchBlock) { return _fs(config, matchExpression, 'body', value, fields.body); },
@@ -2385,9 +2498,10 @@ export function matchExpression(config: T.MatchExpression.Config) {
 
 export function matchBlock(...children: T.MatchArm[]) {
   return {
-    type: 'match_block' as const,
-    named: true as const,
-    children,
+    $type: 'match_block' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2404,10 +2518,11 @@ export function matchArm(config: T.MatchArm.Config) {
   };
   const children = config?.children ?? [];
   return {
-    type: 'match_arm' as const,
-    named: true as const,
-    fields,
-    children,
+    $type: 'match_arm' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    $children: children,
     pattern(value?: T.MatchPattern) { return _fs(config, matchArm, 'pattern', value, fields.pattern); },
     value(value?: T.Expression) { return _fs(config, matchArm, 'value', value, fields.value); },
     getChildren() { return children; },
@@ -2428,10 +2543,11 @@ export function lastMatchArm(config: T.LastMatchArm.Config) {
   };
   const children = config?.children ?? [];
   return {
-    type: 'last_match_arm' as const,
-    named: true as const,
-    fields,
-    children,
+    $type: 'last_match_arm' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    $children: children,
     pattern(value?: T.MatchPattern) { return _fs(config, lastMatchArm, 'pattern', value, fields.pattern); },
     value(value?: T.Expression) { return _fs(config, lastMatchArm, 'value', value, fields.value); },
     getChildren() { return children; },
@@ -2451,10 +2567,11 @@ export function matchPattern(config: T.MatchPattern.Config) {
   };
   const children = config?.children ?? [];
   return {
-    type: 'match_pattern' as const,
-    named: true as const,
-    fields,
-    children,
+    $type: 'match_pattern' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    $children: children,
     condition(value?: T.Condition | undefined) { return _fs(config, matchPattern, 'condition', value, fields.condition); },
     getChild() { return children[0]; },
     setChild(child: T.Pattern) { return matchPattern({ ...config, children: [child] }); },
@@ -2474,9 +2591,10 @@ export function whileExpression(config: T.WhileExpression.Config) {
     body: config?.body,
   };
   return {
-    type: 'while_expression' as const,
-    named: true as const,
-    fields,
+    $type: 'while_expression' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     label(value?: T.Label | undefined) { return _fs(config, whileExpression, 'label', value, fields.label); },
     condition(value?: T.Condition) { return _fs(config, whileExpression, 'condition', value, fields.condition); },
     body(value?: T.Block) { return _fs(config, whileExpression, 'body', value, fields.body); },
@@ -2495,9 +2613,10 @@ export function loopExpression(config: T.LoopExpression.Config) {
     body: config?.body,
   };
   return {
-    type: 'loop_expression' as const,
-    named: true as const,
-    fields,
+    $type: 'loop_expression' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     label(value?: T.Label | undefined) { return _fs(config, loopExpression, 'label', value, fields.label); },
     body(value?: T.Block) { return _fs(config, loopExpression, 'body', value, fields.body); },
     render() { return render(this); },
@@ -2517,9 +2636,10 @@ export function forExpression(config: T.ForExpression.Config) {
     body: config?.body,
   };
   return {
-    type: 'for_expression' as const,
-    named: true as const,
-    fields,
+    $type: 'for_expression' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     label(value?: T.Label | undefined) { return _fs(config, forExpression, 'label', value, fields.label); },
     pattern(value?: T.Pattern) { return _fs(config, forExpression, 'pattern', value, fields.pattern); },
     value(value?: T.Expression) { return _fs(config, forExpression, 'value', value, fields.value); },
@@ -2539,9 +2659,10 @@ export function constBlock(config: T.ConstBlock.Config) {
     body: config?.body,
   };
   return {
-    type: 'const_block' as const,
-    named: true as const,
-    fields,
+    $type: 'const_block' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     const(value?: T.KwConst) { return _fs(config, constBlock, 'const', value, fields.const); },
     body(value?: T.Block) { return _fs(config, constBlock, 'body', value, fields.body); },
     render() { return render(this); },
@@ -2569,11 +2690,12 @@ export function closureExpressionUFormBlock(config: T.ClosureExpressionUFormBloc
   };
   const children = config?.children ?? [];
   return {
-    type: 'closure_expression' as const,
-    named: true as const,
-    variant: '_form_block' as const,
-    fields,
-    children,
+    $type: 'closure_expression' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $variant: '_form_block' as const,
+    $fields: fields,
+    $children: children,
     static(value?: "static" | undefined) { return _fs(config, closureExpressionUFormBlock, 'static', value, fields.static); },
     async(value?: "async" | undefined) { return _fs(config, closureExpressionUFormBlock, 'async', value, fields.async); },
     move(value?: "move" | undefined) { return _fs(config, closureExpressionUFormBlock, 'move', value, fields.move); },
@@ -2597,11 +2719,12 @@ export function closureExpressionUFormExpr(config: T.ClosureExpressionUFormExprC
   };
   const children = config?.children ?? [];
   return {
-    type: 'closure_expression' as const,
-    named: true as const,
-    variant: '_form_expr' as const,
-    fields,
-    children,
+    $type: 'closure_expression' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $variant: '_form_expr' as const,
+    $fields: fields,
+    $children: children,
     static(value?: "static" | undefined) { return _fs(config, closureExpressionUFormExpr, 'static', value, fields.static); },
     async(value?: "async" | undefined) { return _fs(config, closureExpressionUFormExpr, 'async', value, fields.async); },
     move(value?: "move" | undefined) { return _fs(config, closureExpressionUFormExpr, 'move', value, fields.move); },
@@ -2619,9 +2742,10 @@ export function closureExpressionUFormExpr(config: T.ClosureExpressionUFormExprC
 
 export function closureParameters(...children: (T.Pattern | T.Parameter)[]) {
   return {
-    type: 'closure_parameters' as const,
-    named: true as const,
-    children,
+    $type: 'closure_parameters' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2636,9 +2760,10 @@ export function label(config: T.Label.Config) {
     identifier: config?.identifier,
   };
   return {
-    type: 'label' as const,
-    named: true as const,
-    fields,
+    $type: 'label' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     identifier(value?: T.Identifier) { return _fs(config, label, 'identifier', value, fields.identifier); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -2655,9 +2780,10 @@ export function breakExpression(config?: T.BreakExpression.Config) {
     expression: config?.expression,
   };
   return {
-    type: 'break_expression' as const,
-    named: true as const,
-    fields,
+    $type: 'break_expression' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     label(value?: T.Label | undefined) { return _fs(config, breakExpression, 'label', value, fields.label); },
     expression(value?: T.Expression | undefined) { return _fs(config, breakExpression, 'expression', value, fields.expression); },
     render() { return render(this); },
@@ -2674,9 +2800,10 @@ export function continueExpression(config?: T.ContinueExpression.Config) {
     label: config?.label,
   };
   return {
-    type: 'continue_expression' as const,
-    named: true as const,
-    fields,
+    $type: 'continue_expression' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     label(value?: T.Label | undefined) { return _fs(config, continueExpression, 'label', value, fields.label); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -2693,9 +2820,10 @@ export function indexExpression(config: T.IndexExpression.Config) {
     index: config?.index,
   };
   return {
-    type: 'index_expression' as const,
-    named: true as const,
-    fields,
+    $type: 'index_expression' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     object(value?: T.Expression) { return _fs(config, indexExpression, 'object', value, fields.object); },
     index(value?: T.Expression) { return _fs(config, indexExpression, 'index', value, fields.index); },
     render() { return render(this); },
@@ -2710,9 +2838,10 @@ export function indexExpression(config: T.IndexExpression.Config) {
 export function awaitExpression(child: T.Expression) {
   const children = [child];
   return {
-    type: 'await_expression' as const,
-    named: true as const,
-    children,
+    $type: 'await_expression' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2728,9 +2857,10 @@ export function fieldExpression(config: T.FieldExpression.Config) {
     field: config?.field,
   };
   return {
-    type: 'field_expression' as const,
-    named: true as const,
-    fields,
+    $type: 'field_expression' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     value(value?: T.Expression) { return _fs(config, fieldExpression, 'value', value, fields.value); },
     field(value?: T._FieldIdentifier | T.IntegerLiteral) { return _fs(config, fieldExpression, 'field', value, fields.field); },
     render() { return render(this); },
@@ -2747,9 +2877,10 @@ export function unsafeBlock(config: T.UnsafeBlock.Config) {
     block: config?.block,
   };
   return {
-    type: 'unsafe_block' as const,
-    named: true as const,
-    fields,
+    $type: 'unsafe_block' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     block(value?: T.Block) { return _fs(config, unsafeBlock, 'block', value, fields.block); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -2765,9 +2896,10 @@ export function asyncBlock(config: T.AsyncBlock.Config) {
     block: config?.block,
   };
   return {
-    type: 'async_block' as const,
-    named: true as const,
-    fields,
+    $type: 'async_block' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     block(value?: T.Block) { return _fs(config, asyncBlock, 'block', value, fields.block); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -2783,9 +2915,10 @@ export function genBlock(config: T.GenBlock.Config) {
     block: config?.block,
   };
   return {
-    type: 'gen_block' as const,
-    named: true as const,
-    fields,
+    $type: 'gen_block' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     block(value?: T.Block) { return _fs(config, genBlock, 'block', value, fields.block); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -2801,9 +2934,10 @@ export function tryBlock(config: T.TryBlock.Config) {
     block: config?.block,
   };
   return {
-    type: 'try_block' as const,
-    named: true as const,
-    fields,
+    $type: 'try_block' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     block(value?: T.Block) { return _fs(config, tryBlock, 'block', value, fields.block); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -2820,10 +2954,11 @@ export function block(config: T.Block.Config) {
   };
   const children = config?.children ?? [];
   return {
-    type: 'block' as const,
-    named: true as const,
-    fields,
-    children,
+    $type: 'block' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    $children: children,
     label(value?: T.Label | undefined) { return _fs(config, block, 'label', value, fields.label); },
     getChildren() { return children; },
     setChildren(...items: (T.Statement | T.Expression)[]) { return block({ ...config, children: items }); },
@@ -2842,10 +2977,11 @@ export function genericPattern(config: T.GenericPattern.Config) {
   };
   const children = config?.children ?? [];
   return {
-    type: 'generic_pattern' as const,
-    named: true as const,
-    fields,
-    children,
+    $type: 'generic_pattern' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    $children: children,
     typeArguments(value?: T.TypeArguments) { return _fs(config, genericPattern, 'typeArguments', value, fields.type_arguments); },
     getChild() { return children[0]; },
     setChild(child: (T.Identifier | T.ScopedIdentifier)) { return genericPattern({ ...config, children: [child] }); },
@@ -2860,9 +2996,10 @@ export function genericPattern(config: T.GenericPattern.Config) {
 
 export function tuplePattern(...children: (T.Pattern | T.ClosureExpression)[]) {
   return {
-    type: 'tuple_pattern' as const,
-    named: true as const,
-    children,
+    $type: 'tuple_pattern' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2874,9 +3011,10 @@ export function tuplePattern(...children: (T.Pattern | T.ClosureExpression)[]) {
 
 export function slicePattern(...children: T.Pattern[]) {
   return {
-    type: 'slice_pattern' as const,
-    named: true as const,
-    children,
+    $type: 'slice_pattern' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2892,10 +3030,11 @@ export function tupleStructPattern(config: T.TupleStructPattern.Config) {
   };
   const children = config?.children ?? [];
   return {
-    type: 'tuple_struct_pattern' as const,
-    named: true as const,
-    fields,
-    children,
+    $type: 'tuple_struct_pattern' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    $children: children,
     typeField(value?: T.Identifier | T.ScopedIdentifier | T.GenericType) { return _fs(config, tupleStructPattern, 'type', value, fields.type); },
     getChildren() { return children; },
     setChildren(...items: T.Pattern[]) { return tupleStructPattern({ ...config, children: items }); },
@@ -2914,10 +3053,11 @@ export function structPattern(config: T.StructPattern.Config) {
   };
   const children = config?.children ?? [];
   return {
-    type: 'struct_pattern' as const,
-    named: true as const,
-    fields,
-    children,
+    $type: 'struct_pattern' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    $children: children,
     typeField(value?: T._TypeIdentifier | T.ScopedTypeIdentifier) { return _fs(config, structPattern, 'type', value, fields.type); },
     getChildren() { return children; },
     setChildren(...items: (T.FieldPattern | T.RemainingFieldPattern)[]) { return structPattern({ ...config, children: items }); },
@@ -2943,11 +3083,12 @@ export function fieldPatternUFormShorthand(config: T.FieldPatternUFormShorthandC
   };
   const children = config?.children ?? [];
   return {
-    type: 'field_pattern' as const,
-    named: true as const,
-    variant: '_form_shorthand' as const,
-    fields,
-    children,
+    $type: 'field_pattern' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $variant: '_form_shorthand' as const,
+    $fields: fields,
+    $children: children,
     mutableSpecifier(value?: T.MutableSpecifier | undefined) { return _fs(config, fieldPatternUFormShorthand, 'mutableSpecifier', value, fields.mutable_specifier); },
     getChild() { return children[0]; },
     setChild(child: T.FieldPatternShorthand) { return fieldPatternUFormShorthand({ ...config, children: [child] }); },
@@ -2965,11 +3106,12 @@ export function fieldPatternUFormNamed(config: T.FieldPatternUFormNamedConfig) {
   };
   const children = config?.children ?? [];
   return {
-    type: 'field_pattern' as const,
-    named: true as const,
-    variant: '_form_named' as const,
-    fields,
-    children,
+    $type: 'field_pattern' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $variant: '_form_named' as const,
+    $fields: fields,
+    $children: children,
     mutableSpecifier(value?: T.MutableSpecifier | undefined) { return _fs(config, fieldPatternUFormNamed, 'mutableSpecifier', value, fields.mutable_specifier); },
     getChild() { return children[0]; },
     setChild(child: T.FieldPatternNamed) { return fieldPatternUFormNamed({ ...config, children: [child] }); },
@@ -2988,9 +3130,10 @@ export function mutPattern(config: T.MutPattern.Config) {
     pattern: config?.pattern,
   };
   return {
-    type: 'mut_pattern' as const,
-    named: true as const,
-    fields,
+    $type: 'mut_pattern' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     mutableSpecifier(value?: T.MutableSpecifier) { return _fs(config, mutPattern, 'mutableSpecifier', value, fields.mutable_specifier); },
     pattern(value?: T.Pattern) { return _fs(config, mutPattern, 'pattern', value, fields.pattern); },
     render() { return render(this); },
@@ -3012,10 +3155,11 @@ export function rangePattern(config: T.RangePatternUFormLeftConfig | T.RangePatt
 export function rangePatternUFormLeft(config: T.RangePatternUFormLeftConfig) {
   const children = config?.children ?? [];
   return {
-    type: 'range_pattern' as const,
-    named: true as const,
-    variant: '_form_left' as const,
-    children,
+    $type: 'range_pattern' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $variant: '_form_left' as const,
+    $children: children,
     getChild() { return children[0]; },
     setChild(child: T.RangePatternLeft) { return rangePatternUFormLeft({ ...config, children: [child] }); },
     render() { return render(this); },
@@ -3029,10 +3173,11 @@ export function rangePatternUFormLeft(config: T.RangePatternUFormLeftConfig) {
 export function rangePatternUFormPrefix(config: T.RangePatternUFormPrefixConfig) {
   const children = config?.children ?? [];
   return {
-    type: 'range_pattern' as const,
-    named: true as const,
-    variant: '_form_prefix' as const,
-    children,
+    $type: 'range_pattern' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $variant: '_form_prefix' as const,
+    $children: children,
     getChild() { return children[0]; },
     setChild(child: T.RangePatternPrefix) { return rangePatternUFormPrefix({ ...config, children: [child] }); },
     render() { return render(this); },
@@ -3050,10 +3195,11 @@ export function refPattern(config: T.RefPattern.Config) {
   };
   const children = config?.children ?? [];
   return {
-    type: 'ref_pattern' as const,
-    named: true as const,
-    fields,
-    children,
+    $type: 'ref_pattern' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    $children: children,
     ref(value?: "ref") { return _fs(config, refPattern, 'ref', value, fields.ref); },
     getChild() { return children[0]; },
     setChild(child: T.Pattern) { return refPattern({ ...config, children: [child] }); },
@@ -3072,9 +3218,10 @@ export function capturedPattern(config: T.CapturedPattern.Config) {
     pattern: config?.pattern,
   };
   return {
-    type: 'captured_pattern' as const,
-    named: true as const,
-    fields,
+    $type: 'captured_pattern' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     identifier(value?: T.Identifier) { return _fs(config, capturedPattern, 'identifier', value, fields.identifier); },
     pattern(value?: T.Pattern) { return _fs(config, capturedPattern, 'pattern', value, fields.pattern); },
     render() { return render(this); },
@@ -3092,9 +3239,10 @@ export function referencePattern(config: T.ReferencePattern.Config) {
     pattern: config?.pattern,
   };
   return {
-    type: 'reference_pattern' as const,
-    named: true as const,
-    fields,
+    $type: 'reference_pattern' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     mutableSpecifier(value?: T.MutableSpecifier | undefined) { return _fs(config, referencePattern, 'mutableSpecifier', value, fields.mutable_specifier); },
     pattern(value?: T.Pattern) { return _fs(config, referencePattern, 'pattern', value, fields.pattern); },
     render() { return render(this); },
@@ -3116,10 +3264,11 @@ export function orPattern(config: T.OrPatternUFormBinaryConfig | T.OrPatternUFor
 export function orPatternUFormBinary(config: T.OrPatternUFormBinaryConfig) {
   const children = config?.children ?? [];
   return {
-    type: 'or_pattern' as const,
-    named: true as const,
-    variant: '_form_binary' as const,
-    children,
+    $type: 'or_pattern' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $variant: '_form_binary' as const,
+    $children: children,
     getChild() { return children[0]; },
     setChild(child: T.OrPatternBinary) { return orPatternUFormBinary({ ...config, children: [child] }); },
     render() { return render(this); },
@@ -3133,10 +3282,11 @@ export function orPatternUFormBinary(config: T.OrPatternUFormBinaryConfig) {
 export function orPatternUFormPrefix(config: T.OrPatternUFormPrefixConfig) {
   const children = config?.children ?? [];
   return {
-    type: 'or_pattern' as const,
-    named: true as const,
-    variant: '_form_prefix' as const,
-    children,
+    $type: 'or_pattern' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $variant: '_form_prefix' as const,
+    $children: children,
     getChild() { return children[0]; },
     setChild(child: T.OrPatternPrefix) { return orPatternUFormPrefix({ ...config, children: [child] }); },
     render() { return render(this); },
@@ -3153,9 +3303,10 @@ export function negativeLiteral(config: T.NegativeLiteral.Config) {
     value: config?.value,
   };
   return {
-    type: 'negative_literal' as const,
-    named: true as const,
-    fields,
+    $type: 'negative_literal' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     value(value?: T.IntegerLiteral | T.FloatLiteral) { return _fs(config, negativeLiteral, 'value', value, fields.value); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -3169,9 +3320,10 @@ export function negativeLiteral(config: T.NegativeLiteral.Config) {
 export function integerLiteral(text: string) {
   if (text.length === 0) throw new Error(`integer_literal: text must be non-empty`); if (_wordRe.test(text) && RESERVED_KEYWORDS.has(text)) throw new Error(`integer_literal: text '${text}' is a reserved keyword`);
   return {
-    type: 'integer_literal' as const,
-    named: true as const,
-    text: text,
+    $type: 'integer_literal' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $text: text,
     render: () => text,
     toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
     replace: (t: T.IntegerLiteralTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
@@ -3180,9 +3332,10 @@ export function integerLiteral(text: string) {
 
 export function stringLiteral(...children: (T.EscapeSequence | T.StringContent)[]) {
   return {
-    type: 'string_literal' as const,
-    named: true as const,
-    children,
+    $type: 'string_literal' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -3199,9 +3352,10 @@ export function rawStringLiteral(config: T.RawStringLiteral.Config) {
     raw_string_literal_end: config?.rawStringLiteralEnd,
   };
   return {
-    type: 'raw_string_literal' as const,
-    named: true as const,
-    fields,
+    $type: 'raw_string_literal' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     rawStringLiteralStart(value?: string) { return _fs(config, rawStringLiteral, 'rawStringLiteralStart', value, fields.raw_string_literal_start); },
     stringContent(value?: T.StringContent) { return _fs(config, rawStringLiteral, 'stringContent', value, fields.string_content); },
     rawStringLiteralEnd(value?: string) { return _fs(config, rawStringLiteral, 'rawStringLiteralEnd', value, fields.raw_string_literal_end); },
@@ -3217,9 +3371,10 @@ export function rawStringLiteral(config: T.RawStringLiteral.Config) {
 export function charLiteral(text: string) {
   if (text.length === 0) throw new Error(`char_literal: text must be non-empty`); if (_wordRe.test(text) && RESERVED_KEYWORDS.has(text)) throw new Error(`char_literal: text '${text}' is a reserved keyword`);
   return {
-    type: 'char_literal' as const,
-    named: true as const,
-    text: text,
+    $type: 'char_literal' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $text: text,
     render: () => text,
     toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
     replace: (t: T.CharLiteralTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
@@ -3229,9 +3384,10 @@ export function charLiteral(text: string) {
 export function escapeSequence(text: string) {
   if (text.length === 0) throw new Error(`escape_sequence: text must be non-empty`); if (_wordRe.test(text) && RESERVED_KEYWORDS.has(text)) throw new Error(`escape_sequence: text '${text}' is a reserved keyword`);
   return {
-    type: 'escape_sequence' as const,
-    named: true as const,
-    text: text,
+    $type: 'escape_sequence' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $text: text,
     render: () => text,
     toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
     replace: (t: T.EscapeSequenceTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
@@ -3240,9 +3396,10 @@ export function escapeSequence(text: string) {
 
 export function booleanLiteral(text: 'true' | 'false') {
   return {
-    type: 'boolean_literal' as const,
-    named: true as const,
-    text: text,
+    $type: 'boolean_literal' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $text: text,
     render: () => text,
     toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
     replace: (t: T.BooleanLiteralTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
@@ -3252,9 +3409,10 @@ export function booleanLiteral(text: 'true' | 'false') {
 export function comment(child?: (T.LineComment | T.BlockComment)) {
   const children = child != null ? [child] : [];
   return {
-    type: 'comment' as const,
-    named: true as const,
-    children,
+    $type: 'comment' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -3271,9 +3429,10 @@ export function lineComment(config?: T.LineComment.Config) {
     doc: config?.doc,
   };
   return {
-    type: 'line_comment' as const,
-    named: true as const,
-    fields,
+    $type: 'line_comment' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     outer(value?: T.OuterDocCommentMarker | undefined) { return _fs(config, lineComment, 'outer', value, fields.outer); },
     inner(value?: T.InnerDocCommentMarker | undefined) { return _fs(config, lineComment, 'inner', value, fields.inner); },
     doc(value?: T.DocComment | undefined) { return _fs(config, lineComment, 'doc', value, fields.doc); },
@@ -3293,9 +3452,10 @@ export function blockComment(config?: T.BlockComment.Config) {
     doc: config?.doc,
   };
   return {
-    type: 'block_comment' as const,
-    named: true as const,
-    fields,
+    $type: 'block_comment' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     outer(value?: T.OuterDocCommentMarker | undefined) { return _fs(config, blockComment, 'outer', value, fields.outer); },
     inner(value?: T.InnerDocCommentMarker | undefined) { return _fs(config, blockComment, 'inner', value, fields.inner); },
     doc(value?: T.DocComment | undefined) { return _fs(config, blockComment, 'doc', value, fields.doc); },
@@ -3311,9 +3471,10 @@ export function blockComment(config?: T.BlockComment.Config) {
 export function identifier(text: string) {
   if (text.length === 0) throw new Error(`identifier: text must be non-empty`); if (!_leafRe_identifier.test(text)) throw new Error(`identifier: text does not match pattern: ${text}`); if (_wordRe.test(text) && RESERVED_KEYWORDS.has(text)) throw new Error(`identifier: text '${text}' is a reserved keyword`);
   return {
-    type: 'identifier' as const,
-    named: true as const,
-    text: text,
+    $type: 'identifier' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $text: text,
     render: () => text,
     toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
     replace: (t: T.IdentifierTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
@@ -3323,9 +3484,10 @@ export function identifier(text: string) {
 export function shebang(text: string) {
   if (text.length === 0) throw new Error(`shebang: text must be non-empty`); if (!_leafRe_shebang.test(text)) throw new Error(`shebang: text does not match pattern: ${text}`); if (_wordRe.test(text) && RESERVED_KEYWORDS.has(text)) throw new Error(`shebang: text '${text}' is a reserved keyword`);
   return {
-    type: 'shebang' as const,
-    named: true as const,
-    text: text,
+    $type: 'shebang' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $text: text,
     render: () => text,
     toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
     replace: (t: T.ShebangTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
@@ -3334,9 +3496,10 @@ export function shebang(text: string) {
 
 export function self() {
   return {
-    type: 'self' as const,
-    named: true as const,
-    text: 'self' as const,
+    $type: 'self' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $text: 'self' as const,
     render: () => 'self' as const,
     toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: 'self' as const } : { startPos: s.start.index, endPos: s.end.index, insertedText: 'self' as const },
     replace: (t: T.SelfTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: 'self' as const }; },
@@ -3345,9 +3508,10 @@ export function self() {
 
 export function super_() {
   return {
-    type: 'super' as const,
-    named: true as const,
-    text: 'super' as const,
+    $type: 'super' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $text: 'super' as const,
     render: () => 'super' as const,
     toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: 'super' as const } : { startPos: s.start.index, endPos: s.end.index, insertedText: 'super' as const },
     replace: (t: T.SuperTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: 'super' as const }; },
@@ -3356,9 +3520,10 @@ export function super_() {
 
 export function crate() {
   return {
-    type: 'crate' as const,
-    named: true as const,
-    text: 'crate' as const,
+    $type: 'crate' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $text: 'crate' as const,
     render: () => 'crate' as const,
     toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: 'crate' as const } : { startPos: s.start.index, endPos: s.end.index, insertedText: 'crate' as const },
     replace: (t: T.CrateTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: 'crate' as const }; },
@@ -3368,9 +3533,10 @@ export function crate() {
 export function metavariable(text: string) {
   if (text.length === 0) throw new Error(`metavariable: text must be non-empty`); if (!_leafRe_metavariable.test(text)) throw new Error(`metavariable: text does not match pattern: ${text}`); if (_wordRe.test(text) && RESERVED_KEYWORDS.has(text)) throw new Error(`metavariable: text '${text}' is a reserved keyword`);
   return {
-    type: 'metavariable' as const,
-    named: true as const,
-    text: text,
+    $type: 'metavariable' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $text: text,
     render: () => text,
     toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
     replace: (t: T.MetavariableTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
@@ -3384,9 +3550,10 @@ export function arrayExpressionSemi(config: T.ArrayExpressionSemi.Config) {
     length: config?.length,
   };
   return {
-    type: 'array_expression_semi' as const,
-    named: true as const,
-    fields,
+    $type: 'array_expression_semi' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     attributes(...values: T.AttributeItem[]) { return _fsm(config, arrayExpressionSemi, 'attributes', values, fields.attributes); },
     elements(value?: T.Expression) { return _fs(config, arrayExpressionSemi, 'elements', value, fields.elements); },
     length(value?: T.Expression) { return _fs(config, arrayExpressionSemi, 'length', value, fields.length); },
@@ -3406,10 +3573,11 @@ export function arrayExpressionList(config: T.ArrayExpressionList.Config) {
   };
   const children = config?.children ?? [];
   return {
-    type: 'array_expression_list' as const,
-    named: true as const,
-    fields,
-    children,
+    $type: 'array_expression_list' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    $children: children,
     attributes(...values: T.AttributeItem[]) { return _fsm(config, arrayExpressionList, 'attributes', values, fields.attributes); },
     elements(...values: T.Expression[]) { return _fsm(config, arrayExpressionList, 'elements', values, fields.elements); },
     getChildren() { return children; },
@@ -3426,9 +3594,10 @@ export function arrayExpressionList(config: T.ArrayExpressionList.Config) {
 export function stringContent(text: string) {
   if (text.length === 0) throw new Error(`string_content: text must be non-empty`); if (_wordRe.test(text) && RESERVED_KEYWORDS.has(text)) throw new Error(`string_content: text '${text}' is a reserved keyword`);
   return {
-    type: 'string_content' as const,
-    named: true as const,
-    text: text,
+    $type: 'string_content' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $text: text,
     render: () => text,
     toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
     replace: (t: T.StringContentTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
@@ -3438,9 +3607,10 @@ export function stringContent(text: string) {
 export function rawStringLiteralContent(text: string) {
   if (text.length === 0) throw new Error(`raw_string_literal_content: text must be non-empty`); if (_wordRe.test(text) && RESERVED_KEYWORDS.has(text)) throw new Error(`raw_string_literal_content: text '${text}' is a reserved keyword`);
   return {
-    type: 'raw_string_literal_content' as const,
-    named: true as const,
-    text: text,
+    $type: 'raw_string_literal_content' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $text: text,
     render: () => text,
     toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
     replace: (t: T.RawStringLiteralContentTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
@@ -3450,9 +3620,10 @@ export function rawStringLiteralContent(text: string) {
 export function floatLiteral(text: string) {
   if (text.length === 0) throw new Error(`float_literal: text must be non-empty`); if (_wordRe.test(text) && RESERVED_KEYWORDS.has(text)) throw new Error(`float_literal: text '${text}' is a reserved keyword`);
   return {
-    type: 'float_literal' as const,
-    named: true as const,
-    text: text,
+    $type: 'float_literal' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $text: text,
     render: () => text,
     toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
     replace: (t: T.FloatLiteralTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
@@ -3461,9 +3632,10 @@ export function floatLiteral(text: string) {
 
 export function primitiveType(text: 'u8' | 'i8' | 'u16' | 'i16' | 'u32' | 'i32' | 'u64' | 'i64' | 'u128' | 'i128' | 'isize' | 'usize' | 'f32' | 'f64' | 'bool' | 'str' | 'char') {
   return {
-    type: 'primitive_type' as const,
-    named: true as const,
-    text: text,
+    $type: 'primitive_type' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $text: text,
     render: () => text,
     toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
     replace: (t: T.PrimitiveTypeTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
@@ -3475,9 +3647,10 @@ export function modItemInline(config: T.ModItemInline.Config) {
     body: config?.body,
   };
   return {
-    type: 'mod_item_inline' as const,
-    named: true as const,
-    fields,
+    $type: 'mod_item_inline' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     body(value?: T.DeclarationList) { return _fs(config, modItemInline, 'body', value, fields.body); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -3494,10 +3667,11 @@ export function structItemBrace(config: T.StructItemBrace.Config) {
   };
   const children = config?.children ?? [];
   return {
-    type: 'struct_item_brace' as const,
-    named: true as const,
-    fields,
-    children,
+    $type: 'struct_item_brace' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    $children: children,
     body(value?: T.FieldDeclarationList) { return _fs(config, structItemBrace, 'body', value, fields.body); },
     getChild() { return children[0]; },
     setChild(child: T.WhereClause) { return structItemBrace({ ...config, children: [child] }); },
@@ -3516,10 +3690,11 @@ export function structItemTuple(config: T.StructItemTuple.Config) {
   };
   const children = config?.children ?? [];
   return {
-    type: 'struct_item_tuple' as const,
-    named: true as const,
-    fields,
-    children,
+    $type: 'struct_item_tuple' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    $children: children,
     body(value?: T.OrderedFieldDeclarationList) { return _fs(config, structItemTuple, 'body', value, fields.body); },
     getChild() { return children[0]; },
     setChild(child: T.WhereClause) { return structItemTuple({ ...config, children: [child] }); },
@@ -3539,9 +3714,10 @@ export function rangeExpressionBinary(config: T.RangeExpressionBinary.Config) {
     end: config?.end,
   };
   return {
-    type: 'range_expression_binary' as const,
-    named: true as const,
-    fields,
+    $type: 'range_expression_binary' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     start(value?: T.Expression) { return _fs(config, rangeExpressionBinary, 'start', value, fields.start); },
     operator(value?: ".." | "..." | "..=") { return _fs(config, rangeExpressionBinary, 'operator', value, fields.operator); },
     end(value?: T.Expression) { return _fs(config, rangeExpressionBinary, 'end', value, fields.end); },
@@ -3560,9 +3736,10 @@ export function rangeExpressionPostfix(config: T.RangeExpressionPostfix.Config) 
     operator: config?.operator,
   };
   return {
-    type: 'range_expression_postfix' as const,
-    named: true as const,
-    fields,
+    $type: 'range_expression_postfix' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     start(value?: T.Expression) { return _fs(config, rangeExpressionPostfix, 'start', value, fields.start); },
     operator(value?: T.KwOperator) { return _fs(config, rangeExpressionPostfix, 'operator', value, fields.operator); },
     render() { return render(this); },
@@ -3580,9 +3757,10 @@ export function rangeExpressionPrefix(config: T.RangeExpressionPrefix.Config) {
     end: config?.end,
   };
   return {
-    type: 'range_expression_prefix' as const,
-    named: true as const,
-    fields,
+    $type: 'range_expression_prefix' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     operator(value?: T.KwOperator) { return _fs(config, rangeExpressionPrefix, 'operator', value, fields.operator); },
     end(value?: T.Expression) { return _fs(config, rangeExpressionPrefix, 'end', value, fields.end); },
     render() { return render(this); },
@@ -3599,9 +3777,10 @@ export function rangeExpressionBare(config: T.RangeExpressionBare.Config) {
     operator: config?.operator,
   };
   return {
-    type: 'range_expression_bare' as const,
-    named: true as const,
-    fields,
+    $type: 'range_expression_bare' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     operator(value?: T.KwOperator) { return _fs(config, rangeExpressionBare, 'operator', value, fields.operator); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -3615,9 +3794,10 @@ export function rangeExpressionBare(config: T.RangeExpressionBare.Config) {
 export function letChain(child?: (T._LetChain | T.LetCondition | T.Expression)) {
   const children = child != null ? [child] : [];
   return {
-    type: 'let_chain' as const,
-    named: true as const,
-    children,
+    $type: 'let_chain' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -3633,9 +3813,10 @@ export function closureExpressionBlock(config: T.ClosureExpressionBlock.Config) 
     body: config?.body,
   };
   return {
-    type: 'closure_expression_block' as const,
-    named: true as const,
-    fields,
+    $type: 'closure_expression_block' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     returnType(value?: T._Type | undefined) { return _fs(config, closureExpressionBlock, 'returnType', value, fields.return_type); },
     body(value?: T.Block) { return _fs(config, closureExpressionBlock, 'body', value, fields.body); },
     render() { return render(this); },
@@ -3652,9 +3833,10 @@ export function closureExpressionExpr(config: T.ClosureExpressionExpr.Config) {
     body: config?.body,
   };
   return {
-    type: 'closure_expression_expr' as const,
-    named: true as const,
-    fields,
+    $type: 'closure_expression_expr' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     body(value?: T.Expression) { return _fs(config, closureExpressionExpr, 'body', value, fields.body); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -3670,9 +3852,10 @@ export function fieldPatternShorthand(config: T.FieldPatternShorthand.Config) {
     name: config?.name,
   };
   return {
-    type: 'field_pattern_shorthand' as const,
-    named: true as const,
-    fields,
+    $type: 'field_pattern_shorthand' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     name(value?: string) { return _fs(config, fieldPatternShorthand, 'name', value, fields.name); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -3689,9 +3872,10 @@ export function fieldPatternNamed(config: T.FieldPatternNamed.Config) {
     pattern: config?.pattern,
   };
   return {
-    type: 'field_pattern_named' as const,
-    named: true as const,
-    fields,
+    $type: 'field_pattern_named' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     name(value?: T._FieldIdentifier) { return _fs(config, fieldPatternNamed, 'name', value, fields.name); },
     pattern(value?: T.Pattern) { return _fs(config, fieldPatternNamed, 'pattern', value, fields.pattern); },
     render() { return render(this); },
@@ -3709,9 +3893,10 @@ export function rangePatternLeft(config: T.RangePatternLeft.Config) {
     right: config?.right,
   };
   return {
-    type: 'range_pattern_left' as const,
-    named: true as const,
-    fields,
+    $type: 'range_pattern_left' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     left(value?: T.LiteralPattern | T.Path) { return _fs(config, rangePatternLeft, 'left', value, fields.left); },
     right(value?: T.LiteralPattern | T.Path | undefined) { return _fs(config, rangePatternLeft, 'right', value, fields.right); },
     render() { return render(this); },
@@ -3728,9 +3913,10 @@ export function rangePatternPrefix(config: T.RangePatternPrefix.Config) {
     right: config?.right,
   };
   return {
-    type: 'range_pattern_prefix' as const,
-    named: true as const,
-    fields,
+    $type: 'range_pattern_prefix' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     right(value?: T.LiteralPattern | T.Path) { return _fs(config, rangePatternPrefix, 'right', value, fields.right); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -3747,9 +3933,10 @@ export function orPatternBinary(config: T.OrPatternBinary.Config) {
     right: config?.right,
   };
   return {
-    type: 'or_pattern_binary' as const,
-    named: true as const,
-    fields,
+    $type: 'or_pattern_binary' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     left(value?: T.Pattern) { return _fs(config, orPatternBinary, 'left', value, fields.left); },
     right(value?: T.Pattern) { return _fs(config, orPatternBinary, 'right', value, fields.right); },
     render() { return render(this); },
@@ -3766,9 +3953,10 @@ export function orPatternPrefix(config: T.OrPatternPrefix.Config) {
     right: config?.right,
   };
   return {
-    type: 'or_pattern_prefix' as const,
-    named: true as const,
-    fields,
+    $type: 'or_pattern_prefix' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
     right(value?: T.Pattern) { return _fs(config, orPatternPrefix, 'right', value, fields.right); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -3782,9 +3970,10 @@ export function orPatternPrefix(config: T.OrPatternPrefix.Config) {
 export function outerDocCommentMarker(text: string) {
   if (text.length === 0) throw new Error(`outer_doc_comment_marker: text must be non-empty`); if (_wordRe.test(text) && RESERVED_KEYWORDS.has(text)) throw new Error(`outer_doc_comment_marker: text '${text}' is a reserved keyword`);
   return {
-    type: 'outer_doc_comment_marker' as const,
-    named: true as const,
-    text: text,
+    $type: 'outer_doc_comment_marker' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $text: text,
     render: () => text,
     toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
     replace: (t: T.OuterDocCommentMarkerTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
@@ -3794,9 +3983,10 @@ export function outerDocCommentMarker(text: string) {
 export function innerDocCommentMarker(text: string) {
   if (text.length === 0) throw new Error(`inner_doc_comment_marker: text must be non-empty`); if (_wordRe.test(text) && RESERVED_KEYWORDS.has(text)) throw new Error(`inner_doc_comment_marker: text '${text}' is a reserved keyword`);
   return {
-    type: 'inner_doc_comment_marker' as const,
-    named: true as const,
-    text: text,
+    $type: 'inner_doc_comment_marker' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $text: text,
     render: () => text,
     toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
     replace: (t: T.InnerDocCommentMarkerTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
@@ -3806,9 +3996,10 @@ export function innerDocCommentMarker(text: string) {
 export function typeIdentifier(text: string) {
   if (text.length === 0) throw new Error(`type_identifier: text must be non-empty`); if (!_leafRe_typeIdentifier.test(text)) throw new Error(`type_identifier: text does not match pattern: ${text}`); if (_wordRe.test(text) && RESERVED_KEYWORDS.has(text)) throw new Error(`type_identifier: text '${text}' is a reserved keyword`);
   return {
-    type: 'type_identifier' as const,
-    named: true as const,
-    text: text,
+    $type: 'type_identifier' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $text: text,
     render: () => text,
     toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
     replace: (t: T.TypeIdentifierTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
@@ -3818,9 +4009,10 @@ export function typeIdentifier(text: string) {
 export function fieldIdentifier(text: string) {
   if (text.length === 0) throw new Error(`field_identifier: text must be non-empty`); if (!_leafRe_fieldIdentifier.test(text)) throw new Error(`field_identifier: text does not match pattern: ${text}`); if (_wordRe.test(text) && RESERVED_KEYWORDS.has(text)) throw new Error(`field_identifier: text '${text}' is a reserved keyword`);
   return {
-    type: 'field_identifier' as const,
-    named: true as const,
-    text: text,
+    $type: 'field_identifier' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $text: text,
     render: () => text,
     toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
     replace: (t: T.FieldIdentifierTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
@@ -3830,9 +4022,10 @@ export function fieldIdentifier(text: string) {
 export function shorthandFieldIdentifier(text: string) {
   if (text.length === 0) throw new Error(`shorthand_field_identifier: text must be non-empty`); if (!_leafRe_shorthandFieldIdentifier.test(text)) throw new Error(`shorthand_field_identifier: text does not match pattern: ${text}`); if (_wordRe.test(text) && RESERVED_KEYWORDS.has(text)) throw new Error(`shorthand_field_identifier: text '${text}' is a reserved keyword`);
   return {
-    type: 'shorthand_field_identifier' as const,
-    named: true as const,
-    text: text,
+    $type: 'shorthand_field_identifier' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $text: text,
     render: () => text,
     toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
     replace: (t: T.ShorthandFieldIdentifierTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },

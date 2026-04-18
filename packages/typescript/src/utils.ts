@@ -14,8 +14,8 @@ export function isNodeData(v: unknown): v is AnyNodeData;
 export function isNodeData(v: unknown): v is AnyNodeData {
   if (v === null || typeof v !== 'object') return false;
   const o = v as Record<string, unknown>;
-  if (typeof o['type'] !== 'string') return false;
-  return (o['fields'] !== null && typeof o['fields'] === 'object') || typeof o['text'] === 'string';
+  if (typeof o['$type'] !== 'string') return false;
+  return (o['$fields'] !== null && typeof o['$fields'] === 'object') || typeof o['$text'] === 'string';
 }
 
 /**
@@ -39,7 +39,7 @@ export function isNodeOfKind<K extends keyof KindMap>(
   v: unknown,
   kind: K,
 ): v is KindMap[K] {
-  return isNodeData(v) && v.type === kind;
+  return isNodeData(v) && v.$type === kind;
 }
 
 export function hasKindOf<K extends keyof LooseMap>(

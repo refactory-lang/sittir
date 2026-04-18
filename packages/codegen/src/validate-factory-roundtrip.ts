@@ -91,14 +91,14 @@ const require = createRequire(import.meta.url);
  * metadata from tree-sitter, all children are named NodeData objects.
  */
 function stripToFactory(data: AnyNodeData): AnyNodeData {
-	const result: AnyNodeData = { type: data.type, named: true };
+	const result: AnyNodeData = { $type: data.$type, $source: 'factory', $named: true };
 
-	if (data.text !== undefined) result.text = data.text;
-	if (data.variant !== undefined) result.variant = data.variant;
+	if (data.$text !== undefined) result.$text = data.$text;
+	if (data.$variant !== undefined) result.$variant = data.$variant;
 
-	if (data.fields) {
+	if (data.$fields) {
 		const fields: { [key: string]: NodeFieldValue } = {};
-		for (const [key, value] of Object.entries(data.fields)) {
+		for (const [key, value] of Object.entries(data.$fields)) {
 			if (Array.isArray(value)) {
 				fields[key] = value.map(v => typeof v === 'object' && v !== null ? stripToFactory(v as AnyNodeData) : v) as readonly (AnyNodeData | string | number)[];
 			} else if (typeof value === 'object' && value !== null) {
@@ -107,13 +107,13 @@ function stripToFactory(data: AnyNodeData): AnyNodeData {
 				fields[key] = value as NodeFieldValue;
 			}
 		}
-		result.fields = fields;
+		result.$fields = fields;
 	}
 
-	if (data.children) {
+	if (data.$children) {
 		// Factory nodes only have named children — filter anonymous
-		result.children = (data.children as AnyNodeData[])
-			.filter(c => c.named !== false)
+		result.$children = (data.$children as AnyNodeData[])
+			.filter(c => c.$named !== false)
 			.map(c => typeof c === 'object' && c !== null ? stripToFactory(c as AnyNodeData) : c);
 	}
 
@@ -226,9 +226,9 @@ export async function validateFactoryRoundTrip(
 			// Translate raw (snake_case) field keys to camelCase so the
 			// factory's ConfigOf properties match. readNode emits raw
 			// names; factories take camelCase in their signature.
-			const camelFields = readData.fields
+			const camelFields = readData.$fields
 				? Object.fromEntries(
-					Object.entries(readData.fields).map(([k, v]) => [
+					Object.entries(readData.$fields).map(([k, v]) => [
 						k.replace(/_([a-z])/g, (_, c) => c.toUpperCase()),
 						v,
 					]),
@@ -236,52 +236,29 @@ export async function validateFactoryRoundTrip(
 				: undefined;
 
 			// Direct factory call with readNode fields — no from() resolver.
-			// If readData has neither fields nor children, the node is a
+			// If readData has neither $fields nor $children, the node is a
 			// pure text leaf at the tree-sitter level (e.g. identifier,
 			// shorthand_property_identifier). Don't round-trip through a
 			// factory at all — factories for container-shaped wrappers
 			// that tree-sitter surfaces as leaves would produce garbage.
 			const factory = factoryMap[kind];
 			let factoryData: AnyNodeData;
-			if (!readData.fields && !readData.children) {
+			if (!readData.$fields && !readData.$children) {
 				// Leaf — render its text directly by preserving the original.
 				factoryData = readData;
 			} else if (factory) {
 				try {
-					// Route by the shape declared at codegen time, not by
-					// inspecting factory.toString() (which breaks under
-					// minification). `_factoryShapes[kind]` is emitted
-					// from the node's model type in factories.ts.
 					const shape = factoryShapes[kind] ?? 'config';
 					const isConfigFactory = shape === 'config';
-					const fieldsPresent = readData.fields && Object.keys(readData.fields).length > 0;
+					const fieldsPresent = readData.$fields && Object.keys(readData.$fields).length > 0;
 					if (isConfigFactory) {
-						// Some rules have BOTH fields AND children —
-						// e.g. python's `return_statement = seq('return',
-						// optional(_expressions))` where enrich's bare-
-						// keyword pass promotes `return` to a named
-						// field and the _expressions tail stays as an
-						// unrouted child. Include children in the config
-						// so factories that declare `children` in their
-						// ConfigOf merge it into the output.
-						const config = readData.children
-							? { ...camelFields, children: readData.children }
+						const config = readData.$children
+							? { ...camelFields, children: readData.$children }
 							: camelFields ?? {};
 						factoryData = factory(config) as AnyNodeData;
 					} else {
-						// Children-only factory (shape !== 'config'): spread
-						// NAMED children as positional args. Anonymous fields
-						// on container nodes (promoted delimiters like `(`/`)`)
-						// are template-structural — the factory's arity doesn't
-						// cover them, and passing them as config would box the
-						// whole config into children[0] via the single-param
-						// signature (`tuple(child)`). Empty collections — e.g.
-						// python's `tuple` for source `()` — have `children =
-						// undefined` AND `fieldsPresent = true` (the `(`/`)`
-						// promotions), but must still dispatch as `factory()`
-						// with no args.
-						const namedChildren = (readData.children ?? []).filter(
-							(c: any) => c?.named !== false,
+						const namedChildren = (readData.$children ?? []).filter(
+							(c: any) => c?.$named !== false,
 						);
 						factoryData = (factory as (...args: unknown[]) => AnyNodeData)(...namedChildren);
 					}

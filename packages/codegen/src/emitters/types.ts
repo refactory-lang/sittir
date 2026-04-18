@@ -597,10 +597,10 @@ function emitInterface(
     const fields = fieldsOf(node)
     const children = childrenOf(node)
     lines.push(`export interface ${node.typeName} {`)
-    lines.push(`  readonly type: '${node.kind}';`)
+    lines.push(`  readonly $type: '${node.kind}';`)
 
     if (fields.length > 0) {
-        lines.push('  readonly fields: {')
+        lines.push('  readonly $fields: {')
         for (const f of fields) {
             const typeExpr = fieldTypeExpr(f, nodeMap, lookupUnion)
             const opt = f.required ? '' : '?'
@@ -636,12 +636,12 @@ function emitInterface(
                 // Same `repeat1` treatment for children slots — a
                 // non-empty children list gets a NonEmptyArray head.
                 if (anyNonEmpty) {
-                    lines.push(`  readonly children: NonEmptyArray<${union}>;`)
+                    lines.push(`  readonly $children: NonEmptyArray<${union}>;`)
                 } else {
-                    lines.push(`  readonly children: readonly (${union})[];`)
+                    lines.push(`  readonly $children: readonly (${union})[];`)
                 }
             } else {
-                lines.push(`  readonly children: readonly [${union}];`)
+                lines.push(`  readonly $children: readonly [${union}];`)
             }
         }
     }
@@ -727,10 +727,10 @@ function emitFormInterface(
     lookupUnion?: LookupUnion,
 ): void {
     lines.push(`export interface ${typeName} {`)
-    lines.push(`  readonly type: '${node.kind}';`)
+    lines.push(`  readonly $type: '${node.kind}';`)
 
     if (form.fields.length > 0) {
-        lines.push('  readonly fields: {')
+        lines.push('  readonly $fields: {')
         for (const f of form.fields) {
             const typeExpr = fieldTypeExpr(f, nodeMap, lookupUnion)
             const opt = f.required ? '' : '?'
@@ -761,9 +761,9 @@ function emitFormInterface(
         if (union) {
             const anyMultiple = form.children.some(c => c.multiple)
             if (anyMultiple) {
-                lines.push(`  readonly children: readonly (${union})[];`)
+                lines.push(`  readonly $children: readonly (${union})[];`)
             } else {
-                lines.push(`  readonly children: readonly [${union}];`)
+                lines.push(`  readonly $children: readonly [${union}];`)
             }
         }
     }

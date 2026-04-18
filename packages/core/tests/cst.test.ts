@@ -18,7 +18,7 @@ const renderer = createRenderer(config);
 
 describe('toCst', () => {
 	it('produces a CSTNode for a terminal node', () => {
-		const node: AnyNodeData = { type: 'identifier', text: 'main' };
+		const node: AnyNodeData = { $type: 'identifier', $text: 'main' };
 		const cst = toCst(node, renderer);
 		expect(cst.type).toBe('identifier');
 		expect(cst.text).toBe('main');
@@ -30,10 +30,10 @@ describe('toCst', () => {
 
 	it('produces a CSTNode for a branch node with correct text', () => {
 		const node: AnyNodeData = {
-			type: 'function_item',
-			fields: {
-				name: { type: 'identifier', text: 'main' },
-				body: { type: 'block', fields: {} },
+			$type: 'function_item',
+			$fields: {
+				name: { $type: 'identifier', $text: 'main' },
+				body: { $type: 'block', $fields: {} },
 			},
 		};
 		const cst = toCst(node, renderer);
@@ -45,7 +45,7 @@ describe('toCst', () => {
 	});
 
 	it('respects offset parameter', () => {
-		const node: AnyNodeData = { type: 'identifier', text: 'x' };
+		const node: AnyNodeData = { $type: 'identifier', $text: 'x' };
 		const cst = toCst(node, renderer, 100);
 		expect(cst.startIndex).toBe(100);
 		expect(cst.endIndex).toBe(101);

@@ -46,7 +46,7 @@ function promoteAnonymousKeyword(
 	fields: Record<string, AnyNodeData | AnyNodeData[]>,
 ): boolean {
 	if (child.isNamed()) return false;
-	const text = entry.text ?? '';
+	const text = entry.$text ?? '';
 	if (text.length === 0) return false;
 	if (fields[text] !== undefined) return false;
 	fields[text] = entry;
@@ -84,11 +84,12 @@ export function readNode(tree: TreeHandle, nodeId?: number): AnyNodeData {
 		const child = allChildren[i]!;
 
 		const entry: AnyNodeData = {
-			type: child.type,
-			text: child.text(),
-			span: { start: child.range().start.index, end: child.range().end.index },
-			nodeId: child.id(),
-			named: child.isNamed(),
+			$type: child.type,
+			$source: 'ts',
+			$text: child.text(),
+			$span: { start: child.range().start.index, end: child.range().end.index },
+			$nodeId: child.id(),
+			$named: child.isNamed(),
 		};
 
 		const fname = node.fieldNameForChild?.(i);
@@ -105,7 +106,7 @@ export function readNode(tree: TreeHandle, nodeId?: number): AnyNodeData {
 			const existing = fields[fname];
 			if (existing === undefined) {
 				fields[fname] = entry;
-			} else if (!Array.isArray(existing) && existing.named === false) {
+			} else if (!Array.isArray(existing) && existing.$named === false) {
 				fields[fname] = entry;
 			} else if (Array.isArray(existing)) {
 				existing.push(entry);
@@ -120,12 +121,13 @@ export function readNode(tree: TreeHandle, nodeId?: number): AnyNodeData {
 	}
 
 	return {
-		type: node.type,
-		text: node.text(),
-		fields: Object.keys(fields).length > 0 ? fields : undefined,
-		children: children.length > 0 ? children : undefined,
-		span: { start: node.range().start.index, end: node.range().end.index },
-		nodeId: node.id(),
-		named: node.isNamed(),
+		$type: node.type,
+		$source: 'ts',
+		$text: node.text(),
+		$fields: Object.keys(fields).length > 0 ? fields : undefined,
+		$children: children.length > 0 ? children : undefined,
+		$span: { start: node.range().start.index, end: node.range().end.index },
+		$nodeId: node.id(),
+		$named: node.isNamed(),
 	};
 }

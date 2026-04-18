@@ -129,8 +129,8 @@ import type {
 function drillIn(entry: unknown, tree: TreeHandle): unknown {
   if (!entry) return undefined;
   const e = entry as _NodeData;
-  if (e.nodeId != null) {
-    return wrapNode(readNode(tree, e.nodeId), tree);
+  if (e.$nodeId != null) {
+    return wrapNode(readNode(tree, e.$nodeId), tree);
   }
   return entry;
 }
@@ -143,978 +143,978 @@ function drillInAll(entries: unknown, tree: TreeHandle): unknown[] {
 export function wrapModule(data: _NodeData, tree: TreeHandle): WrappedNode<Module> {
   return {
     ...data,
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<Module>;
 }
 
 export function wrapSimpleStatements(data: _NodeData, tree: TreeHandle): WrappedNode<SimpleStatements> {
   return {
     ...data,
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<SimpleStatements>;
 }
 
 export function wrapImportStatement(data: _NodeData, tree: TreeHandle): WrappedNode<ImportStatement> {
   return {
     ...data,
-    get import() { return drillIn(data.fields?.['import'], tree); },
-    get child() { return drillIn(data.children?.[0], tree); },
+    get import() { return drillIn(data.$fields?.['import'], tree); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<ImportStatement>;
 }
 
 export function wrapRelativeImport(data: _NodeData, tree: TreeHandle): WrappedNode<RelativeImport> {
   return {
     ...data,
-    get importPrefix() { return drillIn(data.fields?.['import_prefix'], tree); },
-    get dottedName() { return drillIn(data.fields?.['dotted_name'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get importPrefix() { return drillIn(data.$fields?.['import_prefix'], tree); },
+    get dottedName() { return drillIn(data.$fields?.['dotted_name'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<RelativeImport>;
 }
 
 export function wrapFutureImportStatement(data: _NodeData, tree: TreeHandle): WrappedNode<FutureImportStatement> {
   return {
     ...data,
-    get from() { return drillIn(data.fields?.['from'], tree); },
-    get child() { return drillIn(data.children?.[0], tree); },
+    get from() { return drillIn(data.$fields?.['from'], tree); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<FutureImportStatement>;
 }
 
 export function wrapImportFromStatement(data: _NodeData, tree: TreeHandle): WrappedNode<ImportFromStatement> {
   return {
     ...data,
-    get moduleName() { return drillIn(data.fields?.['module_name'], tree); },
-    get wildcardImport() { return drillIn(data.fields?.['wildcard_import'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get moduleName() { return drillIn(data.$fields?.['module_name'], tree); },
+    get wildcardImport() { return drillIn(data.$fields?.['wildcard_import'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<ImportFromStatement>;
 }
 
 export function wrapImportList(data: _NodeData, tree: TreeHandle): WrappedNode<ImportList> {
   return {
     ...data,
-    get name() { return drillInAll(data.fields?.['name'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get name() { return drillInAll(data.$fields?.['name'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<ImportList>;
 }
 
 export function wrapAliasedImport(data: _NodeData, tree: TreeHandle): WrappedNode<AliasedImport> {
   return {
     ...data,
-    get name() { return drillIn(data.fields?.['name'], tree); },
-    get alias() { return drillIn(data.fields?.['alias'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get name() { return drillIn(data.$fields?.['name'], tree); },
+    get alias() { return drillIn(data.$fields?.['alias'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<AliasedImport>;
 }
 
 export function wrapPrintStatement(data: _NodeData, tree: TreeHandle): WrappedNode<PrintStatement> {
   return {
     ...data,
-    get argument() { return drillInAll(data.fields?.['argument'], tree); },
-    get child() { return drillIn(data.children?.[0], tree); },
+    get argument() { return drillInAll(data.$fields?.['argument'], tree); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<PrintStatement>;
 }
 
 export function wrapChevron(data: _NodeData, tree: TreeHandle): WrappedNode<Chevron> {
   return {
     ...data,
-    get expression() { return drillIn(data.fields?.['expression'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get expression() { return drillIn(data.$fields?.['expression'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<Chevron>;
 }
 
 export function wrapAssertStatement(data: _NodeData, tree: TreeHandle): WrappedNode<AssertStatement> {
   return {
     ...data,
-    get assert() { return drillIn(data.fields?.['assert'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get assert() { return drillIn(data.$fields?.['assert'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<AssertStatement>;
 }
 
 export function wrapExpressionStatement(data: _NodeData, tree: TreeHandle): WrappedNode<ExpressionStatement> {
   return {
     ...data,
-    get child() { return drillIn(data.children?.[0], tree); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<ExpressionStatement>;
 }
 
 export function wrapNamedExpression(data: _NodeData, tree: TreeHandle): WrappedNode<NamedExpression> {
   return {
     ...data,
-    get name() { return drillIn(data.fields?.['name'], tree); },
-    get value() { return drillIn(data.fields?.['value'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get name() { return drillIn(data.$fields?.['name'], tree); },
+    get value() { return drillIn(data.$fields?.['value'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<NamedExpression>;
 }
 
 export function wrapReturnStatement(data: _NodeData, tree: TreeHandle): WrappedNode<ReturnStatement> {
   return {
     ...data,
-    get return() { return drillIn(data.fields?.['return'], tree); },
-    get child() { return drillIn(data.children?.[0], tree); },
+    get return() { return drillIn(data.$fields?.['return'], tree); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<ReturnStatement>;
 }
 
 export function wrapDeleteStatement(data: _NodeData, tree: TreeHandle): WrappedNode<DeleteStatement> {
   return {
     ...data,
-    get del() { return drillIn(data.fields?.['del'], tree); },
-    get child() { return drillIn(data.children?.[0], tree); },
+    get del() { return drillIn(data.$fields?.['del'], tree); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<DeleteStatement>;
 }
 
 export function wrapRaiseStatement(data: _NodeData, tree: TreeHandle): WrappedNode<RaiseStatement> {
   return {
     ...data,
-    get raise() { return drillIn(data.fields?.['raise'], tree); },
-    get cause() { return drillIn(data.fields?.['cause'], tree); },
-    get child() { return drillIn(data.children?.[0], tree); },
+    get raise() { return drillIn(data.$fields?.['raise'], tree); },
+    get cause() { return drillIn(data.$fields?.['cause'], tree); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<RaiseStatement>;
 }
 
 export function wrapIfStatement(data: _NodeData, tree: TreeHandle): WrappedNode<IfStatement> {
   return {
     ...data,
-    get if() { return drillIn(data.fields?.['if'], tree); },
-    get condition() { return drillIn(data.fields?.['condition'], tree); },
-    get consequence() { return drillIn(data.fields?.['consequence'], tree); },
-    get alternative() { return drillInAll(data.fields?.['alternative'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get if() { return drillIn(data.$fields?.['if'], tree); },
+    get condition() { return drillIn(data.$fields?.['condition'], tree); },
+    get consequence() { return drillIn(data.$fields?.['consequence'], tree); },
+    get alternative() { return drillInAll(data.$fields?.['alternative'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<IfStatement>;
 }
 
 export function wrapElifClause(data: _NodeData, tree: TreeHandle): WrappedNode<ElifClause> {
   return {
     ...data,
-    get elif() { return drillIn(data.fields?.['elif'], tree); },
-    get condition() { return drillIn(data.fields?.['condition'], tree); },
-    get consequence() { return drillIn(data.fields?.['consequence'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get elif() { return drillIn(data.$fields?.['elif'], tree); },
+    get condition() { return drillIn(data.$fields?.['condition'], tree); },
+    get consequence() { return drillIn(data.$fields?.['consequence'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<ElifClause>;
 }
 
 export function wrapElseClause(data: _NodeData, tree: TreeHandle): WrappedNode<ElseClause> {
   return {
     ...data,
-    get else() { return drillIn(data.fields?.['else'], tree); },
-    get body() { return drillIn(data.fields?.['body'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get else() { return drillIn(data.$fields?.['else'], tree); },
+    get body() { return drillIn(data.$fields?.['body'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<ElseClause>;
 }
 
 export function wrapMatchStatement(data: _NodeData, tree: TreeHandle): WrappedNode<MatchStatement> {
   return {
     ...data,
-    get match() { return drillIn(data.fields?.['match'], tree); },
-    get subject() { return drillInAll(data.fields?.['subject'], tree); },
-    get body() { return drillIn(data.fields?.['body'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get match() { return drillIn(data.$fields?.['match'], tree); },
+    get subject() { return drillInAll(data.$fields?.['subject'], tree); },
+    get body() { return drillIn(data.$fields?.['body'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<MatchStatement>;
 }
 
 export function wrapMatchBlock(data: _NodeData, tree: TreeHandle): WrappedNode<MatchBlock> {
   return {
     ...data,
-    get alternative() { return drillInAll(data.fields?.['alternative'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get alternative() { return drillInAll(data.$fields?.['alternative'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<MatchBlock>;
 }
 
 export function wrapCaseClause(data: _NodeData, tree: TreeHandle): WrappedNode<CaseClause> {
   return {
     ...data,
-    get case() { return drillIn(data.fields?.['case'], tree); },
-    get guard() { return drillIn(data.fields?.['guard'], tree); },
-    get consequence() { return drillIn(data.fields?.['consequence'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get case() { return drillIn(data.$fields?.['case'], tree); },
+    get guard() { return drillIn(data.$fields?.['guard'], tree); },
+    get consequence() { return drillIn(data.$fields?.['consequence'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<CaseClause>;
 }
 
 export function wrapForStatement(data: _NodeData, tree: TreeHandle): WrappedNode<ForStatement> {
   return {
     ...data,
-    get async() { return drillIn(data.fields?.['async'], tree); },
-    get left() { return drillIn(data.fields?.['left'], tree); },
-    get right() { return drillIn(data.fields?.['right'], tree); },
-    get body() { return drillIn(data.fields?.['body'], tree); },
-    get alternative() { return drillIn(data.fields?.['alternative'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get async() { return drillIn(data.$fields?.['async'], tree); },
+    get left() { return drillIn(data.$fields?.['left'], tree); },
+    get right() { return drillIn(data.$fields?.['right'], tree); },
+    get body() { return drillIn(data.$fields?.['body'], tree); },
+    get alternative() { return drillIn(data.$fields?.['alternative'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<ForStatement>;
 }
 
 export function wrapWhileStatement(data: _NodeData, tree: TreeHandle): WrappedNode<WhileStatement> {
   return {
     ...data,
-    get while() { return drillIn(data.fields?.['while'], tree); },
-    get condition() { return drillIn(data.fields?.['condition'], tree); },
-    get body() { return drillIn(data.fields?.['body'], tree); },
-    get alternative() { return drillIn(data.fields?.['alternative'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get while() { return drillIn(data.$fields?.['while'], tree); },
+    get condition() { return drillIn(data.$fields?.['condition'], tree); },
+    get body() { return drillIn(data.$fields?.['body'], tree); },
+    get alternative() { return drillIn(data.$fields?.['alternative'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<WhileStatement>;
 }
 
 export function wrapTryStatement(data: _NodeData, tree: TreeHandle): WrappedNode<TryStatement> {
   return {
     ...data,
-    get body() { return drillIn(data.fields?.['body'], tree); },
-    get exceptClauses() { return drillInAll(data.fields?.['except_clauses'], tree); },
-    get elseClause() { return drillIn(data.fields?.['else_clause'], tree); },
-    get finallyClause() { return drillIn(data.fields?.['finally_clause'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get body() { return drillIn(data.$fields?.['body'], tree); },
+    get exceptClauses() { return drillInAll(data.$fields?.['except_clauses'], tree); },
+    get elseClause() { return drillIn(data.$fields?.['else_clause'], tree); },
+    get finallyClause() { return drillIn(data.$fields?.['finally_clause'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<TryStatement>;
 }
 
 export function wrapExceptClause(data: _NodeData, tree: TreeHandle): WrappedNode<ExceptClause> {
   return {
     ...data,
-    get except() { return drillIn(data.fields?.['except'], tree); },
-    get value() { return drillIn(data.fields?.['value'], tree); },
-    get alias() { return drillIn(data.fields?.['alias'], tree); },
-    get child() { return drillIn(data.children?.[0], tree); },
+    get except() { return drillIn(data.$fields?.['except'], tree); },
+    get value() { return drillIn(data.$fields?.['value'], tree); },
+    get alias() { return drillIn(data.$fields?.['alias'], tree); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<ExceptClause>;
 }
 
 export function wrapFinallyClause(data: _NodeData, tree: TreeHandle): WrappedNode<FinallyClause> {
   return {
     ...data,
-    get block() { return drillIn(data.fields?.['block'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get block() { return drillIn(data.$fields?.['block'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<FinallyClause>;
 }
 
 export function wrapWithStatement(data: _NodeData, tree: TreeHandle): WrappedNode<WithStatement> {
   return {
     ...data,
-    get async() { return drillIn(data.fields?.['async'], tree); },
-    get withClause() { return drillIn(data.fields?.['with_clause'], tree); },
-    get body() { return drillIn(data.fields?.['body'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get async() { return drillIn(data.$fields?.['async'], tree); },
+    get withClause() { return drillIn(data.$fields?.['with_clause'], tree); },
+    get body() { return drillIn(data.$fields?.['body'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<WithStatement>;
 }
 
 export function wrapWithClause(data: _NodeData, tree: TreeHandle): WrappedNode<WithClause> {
   return {
     ...data,
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<WithClause>;
 }
 
 export function wrapWithItem(data: _NodeData, tree: TreeHandle): WrappedNode<WithItem> {
   return {
     ...data,
-    get value() { return drillIn(data.fields?.['value'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get value() { return drillIn(data.$fields?.['value'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<WithItem>;
 }
 
 export function wrapFunctionDefinition(data: _NodeData, tree: TreeHandle): WrappedNode<FunctionDefinition> {
   return {
     ...data,
-    get async() { return drillIn(data.fields?.['async'], tree); },
-    get name() { return drillIn(data.fields?.['name'], tree); },
-    get typeParameters() { return drillIn(data.fields?.['type_parameters'], tree); },
-    get parameters() { return drillIn(data.fields?.['parameters'], tree); },
-    get returnType() { return drillIn(data.fields?.['return_type'], tree); },
-    get body() { return drillIn(data.fields?.['body'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get async() { return drillIn(data.$fields?.['async'], tree); },
+    get name() { return drillIn(data.$fields?.['name'], tree); },
+    get typeParameters() { return drillIn(data.$fields?.['type_parameters'], tree); },
+    get parameters() { return drillIn(data.$fields?.['parameters'], tree); },
+    get returnType() { return drillIn(data.$fields?.['return_type'], tree); },
+    get body() { return drillIn(data.$fields?.['body'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<FunctionDefinition>;
 }
 
 export function wrapParameters(data: _NodeData, tree: TreeHandle): WrappedNode<Parameters> {
   return {
     ...data,
-    get child() { return drillIn(data.children?.[0], tree); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<Parameters>;
 }
 
 export function wrapLambdaParameters(data: _NodeData, tree: TreeHandle): WrappedNode<LambdaParameters> {
   return {
     ...data,
-    get child() { return drillIn(data.children?.[0], tree); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<LambdaParameters>;
 }
 
 export function wrapListSplat(data: _NodeData, tree: TreeHandle): WrappedNode<ListSplat> {
   return {
     ...data,
-    get expression() { return drillIn(data.fields?.['expression'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get expression() { return drillIn(data.$fields?.['expression'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<ListSplat>;
 }
 
 export function wrapDictionarySplat(data: _NodeData, tree: TreeHandle): WrappedNode<DictionarySplat> {
   return {
     ...data,
-    get expression() { return drillIn(data.fields?.['expression'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get expression() { return drillIn(data.$fields?.['expression'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<DictionarySplat>;
 }
 
 export function wrapGlobalStatement(data: _NodeData, tree: TreeHandle): WrappedNode<GlobalStatement> {
   return {
     ...data,
-    get global() { return drillIn(data.fields?.['global'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get global() { return drillIn(data.$fields?.['global'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<GlobalStatement>;
 }
 
 export function wrapNonlocalStatement(data: _NodeData, tree: TreeHandle): WrappedNode<NonlocalStatement> {
   return {
     ...data,
-    get nonlocal() { return drillIn(data.fields?.['nonlocal'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get nonlocal() { return drillIn(data.$fields?.['nonlocal'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<NonlocalStatement>;
 }
 
 export function wrapExecStatement(data: _NodeData, tree: TreeHandle): WrappedNode<ExecStatement> {
   return {
     ...data,
-    get exec() { return drillIn(data.fields?.['exec'], tree); },
-    get code() { return drillIn(data.fields?.['code'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get exec() { return drillIn(data.$fields?.['exec'], tree); },
+    get code() { return drillIn(data.$fields?.['code'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<ExecStatement>;
 }
 
 export function wrapTypeAliasStatement(data: _NodeData, tree: TreeHandle): WrappedNode<TypeAliasStatement> {
   return {
     ...data,
-    get typeField() { return drillIn(data.fields?.['type'], tree); },
-    get left() { return drillIn(data.fields?.['left'], tree); },
-    get right() { return drillIn(data.fields?.['right'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get typeField() { return drillIn(data.$fields?.['type'], tree); },
+    get left() { return drillIn(data.$fields?.['left'], tree); },
+    get right() { return drillIn(data.$fields?.['right'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<TypeAliasStatement>;
 }
 
 export function wrapClassDefinition(data: _NodeData, tree: TreeHandle): WrappedNode<ClassDefinition> {
   return {
     ...data,
-    get class() { return drillIn(data.fields?.['class'], tree); },
-    get name() { return drillIn(data.fields?.['name'], tree); },
-    get typeParameters() { return drillIn(data.fields?.['type_parameters'], tree); },
-    get superclasses() { return drillIn(data.fields?.['superclasses'], tree); },
-    get body() { return drillIn(data.fields?.['body'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get class() { return drillIn(data.$fields?.['class'], tree); },
+    get name() { return drillIn(data.$fields?.['name'], tree); },
+    get typeParameters() { return drillIn(data.$fields?.['type_parameters'], tree); },
+    get superclasses() { return drillIn(data.$fields?.['superclasses'], tree); },
+    get body() { return drillIn(data.$fields?.['body'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<ClassDefinition>;
 }
 
 export function wrapTypeParameter(data: _NodeData, tree: TreeHandle): WrappedNode<TypeParameter> {
   return {
     ...data,
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<TypeParameter>;
 }
 
 export function wrapParenthesizedListSplat(data: _NodeData, tree: TreeHandle): WrappedNode<ParenthesizedListSplat> {
   return {
     ...data,
-    get child() { return drillIn(data.children?.[0], tree); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<ParenthesizedListSplat>;
 }
 
 export function wrapArgumentList(data: _NodeData, tree: TreeHandle): WrappedNode<ArgumentList> {
   return {
     ...data,
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<ArgumentList>;
 }
 
 export function wrapDecoratedDefinition(data: _NodeData, tree: TreeHandle): WrappedNode<DecoratedDefinition> {
   return {
     ...data,
-    get definition() { return drillIn(data.fields?.['definition'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get definition() { return drillIn(data.$fields?.['definition'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<DecoratedDefinition>;
 }
 
 export function wrapDecorator(data: _NodeData, tree: TreeHandle): WrappedNode<Decorator> {
   return {
     ...data,
-    get expression() { return drillIn(data.fields?.['expression'], tree); },
-    get newline() { return drillIn(data.fields?.['newline'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get expression() { return drillIn(data.$fields?.['expression'], tree); },
+    get newline() { return drillIn(data.$fields?.['newline'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<Decorator>;
 }
 
 export function wrapSuite(data: _NodeData, tree: TreeHandle): WrappedNode<Suite> {
   return {
     ...data,
-    get child() { return drillIn(data.children?.[0], tree); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<Suite>;
 }
 
 export function wrapBlock(data: _NodeData, tree: TreeHandle): WrappedNode<Block> {
   return {
     ...data,
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<Block>;
 }
 
 export function wrapExpressionList(data: _NodeData, tree: TreeHandle): WrappedNode<ExpressionList> {
   return {
     ...data,
-    get expression() { return drillIn(data.fields?.['expression'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get expression() { return drillIn(data.$fields?.['expression'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<ExpressionList>;
 }
 
 export function wrapDottedName(data: _NodeData, tree: TreeHandle): WrappedNode<DottedName> {
   return {
     ...data,
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<DottedName>;
 }
 
 export function wrapCasePattern(data: _NodeData, tree: TreeHandle): WrappedNode<CasePattern> {
   return {
     ...data,
-    get child() { return drillIn(data.children?.[0], tree); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<CasePattern>;
 }
 
 export function wrapSimplePattern(data: _NodeData, tree: TreeHandle): WrappedNode<SimplePattern> {
   return {
     ...data,
-    get child() { return drillIn(data.children?.[0], tree); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<SimplePattern>;
 }
 
 export function wrapUnionPattern(data: _NodeData, tree: TreeHandle): WrappedNode<UnionPattern> {
   return {
     ...data,
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<UnionPattern>;
 }
 
 export function wrap_ListPattern(data: _NodeData, tree: TreeHandle): WrappedNode<_ListPattern> {
   return {
     ...data,
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<_ListPattern>;
 }
 
 export function wrap_TuplePattern(data: _NodeData, tree: TreeHandle): WrappedNode<_TuplePattern> {
   return {
     ...data,
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<_TuplePattern>;
 }
 
 export function wrapDictPattern(data: _NodeData, tree: TreeHandle): WrappedNode<DictPattern> {
   return {
     ...data,
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<DictPattern>;
 }
 
 export function wrapKeywordPattern(data: _NodeData, tree: TreeHandle): WrappedNode<KeywordPattern> {
   return {
     ...data,
-    get identifier() { return drillIn(data.fields?.['identifier'], tree); },
-    get simplePattern() { return drillIn(data.fields?.['simple_pattern'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get identifier() { return drillIn(data.$fields?.['identifier'], tree); },
+    get simplePattern() { return drillIn(data.$fields?.['simple_pattern'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<KeywordPattern>;
 }
 
 export function wrapSplatPattern(data: _NodeData, tree: TreeHandle): WrappedNode<SplatPattern> {
   return {
     ...data,
-    get identifier() { return drillIn(data.fields?.['identifier'], tree); },
-    get child() { return drillIn(data.children?.[0], tree); },
+    get identifier() { return drillIn(data.$fields?.['identifier'], tree); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<SplatPattern>;
 }
 
 export function wrapClassPattern(data: _NodeData, tree: TreeHandle): WrappedNode<ClassPattern> {
   return {
     ...data,
-    get dottedName() { return drillIn(data.fields?.['dotted_name'], tree); },
-    get arguments() { return drillInAll(data.fields?.['arguments'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get dottedName() { return drillIn(data.$fields?.['dotted_name'], tree); },
+    get arguments() { return drillInAll(data.$fields?.['arguments'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<ClassPattern>;
 }
 
 export function wrapComplexPattern(data: _NodeData, tree: TreeHandle): WrappedNode<ComplexPattern> {
   return {
     ...data,
-    get real() { return drillIn(data.fields?.['real'], tree); },
-    get imaginary() { return drillIn(data.fields?.['imaginary'], tree); },
-    get child() { return drillIn(data.children?.[0], tree); },
+    get real() { return drillIn(data.$fields?.['real'], tree); },
+    get imaginary() { return drillIn(data.$fields?.['imaginary'], tree); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<ComplexPattern>;
 }
 
 export function wrap_Parameters(data: _NodeData, tree: TreeHandle): WrappedNode<_Parameters> {
   return {
     ...data,
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<_Parameters>;
 }
 
 export function wrapPatterns(data: _NodeData, tree: TreeHandle): WrappedNode<Patterns> {
   return {
     ...data,
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<Patterns>;
 }
 
 export function wrapTuplePattern(data: _NodeData, tree: TreeHandle): WrappedNode<TuplePattern> {
   return {
     ...data,
-    get child() { return drillIn(data.children?.[0], tree); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<TuplePattern>;
 }
 
 export function wrapListPattern(data: _NodeData, tree: TreeHandle): WrappedNode<ListPattern> {
   return {
     ...data,
-    get child() { return drillIn(data.children?.[0], tree); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<ListPattern>;
 }
 
 export function wrapDefaultParameter(data: _NodeData, tree: TreeHandle): WrappedNode<DefaultParameter> {
   return {
     ...data,
-    get name() { return drillIn(data.fields?.['name'], tree); },
-    get value() { return drillIn(data.fields?.['value'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get name() { return drillIn(data.$fields?.['name'], tree); },
+    get value() { return drillIn(data.$fields?.['value'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<DefaultParameter>;
 }
 
 export function wrapTypedDefaultParameter(data: _NodeData, tree: TreeHandle): WrappedNode<TypedDefaultParameter> {
   return {
     ...data,
-    get name() { return drillIn(data.fields?.['name'], tree); },
-    get typeField() { return drillIn(data.fields?.['type'], tree); },
-    get value() { return drillIn(data.fields?.['value'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get name() { return drillIn(data.$fields?.['name'], tree); },
+    get typeField() { return drillIn(data.$fields?.['type'], tree); },
+    get value() { return drillIn(data.$fields?.['value'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<TypedDefaultParameter>;
 }
 
 export function wrapListSplatPattern(data: _NodeData, tree: TreeHandle): WrappedNode<ListSplatPattern> {
   return {
     ...data,
-    get child() { return drillIn(data.children?.[0], tree); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<ListSplatPattern>;
 }
 
 export function wrapDictionarySplatPattern(data: _NodeData, tree: TreeHandle): WrappedNode<DictionarySplatPattern> {
   return {
     ...data,
-    get child() { return drillIn(data.children?.[0], tree); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<DictionarySplatPattern>;
 }
 
 export function wrapAsPattern(data: _NodeData, tree: TreeHandle): WrappedNode<AsPattern> {
   return {
     ...data,
-    get expression() { return drillIn(data.fields?.['expression'], tree); },
-    get alias() { return drillIn(data.fields?.['alias'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get expression() { return drillIn(data.$fields?.['expression'], tree); },
+    get alias() { return drillIn(data.$fields?.['alias'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<AsPattern>;
 }
 
 export function wrapNotOperator(data: _NodeData, tree: TreeHandle): WrappedNode<NotOperator> {
   return {
     ...data,
-    get not() { return drillIn(data.fields?.['not'], tree); },
-    get argument() { return drillIn(data.fields?.['argument'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get not() { return drillIn(data.$fields?.['not'], tree); },
+    get argument() { return drillIn(data.$fields?.['argument'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<NotOperator>;
 }
 
 export function wrapBooleanOperator(data: _NodeData, tree: TreeHandle): WrappedNode<BooleanOperator> {
   return {
     ...data,
-    get left() { return drillIn(data.fields?.['left'], tree); },
-    get operator() { return drillIn(data.fields?.['operator'], tree); },
-    get right() { return drillIn(data.fields?.['right'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get left() { return drillIn(data.$fields?.['left'], tree); },
+    get operator() { return drillIn(data.$fields?.['operator'], tree); },
+    get right() { return drillIn(data.$fields?.['right'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<BooleanOperator>;
 }
 
 export function wrapBinaryOperator(data: _NodeData, tree: TreeHandle): WrappedNode<BinaryOperator> {
   return {
     ...data,
-    get left() { return drillIn(data.fields?.['left'], tree); },
-    get operator() { return drillIn(data.fields?.['operator'], tree); },
-    get right() { return drillIn(data.fields?.['right'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get left() { return drillIn(data.$fields?.['left'], tree); },
+    get operator() { return drillIn(data.$fields?.['operator'], tree); },
+    get right() { return drillIn(data.$fields?.['right'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<BinaryOperator>;
 }
 
 export function wrapUnaryOperator(data: _NodeData, tree: TreeHandle): WrappedNode<UnaryOperator> {
   return {
     ...data,
-    get operator() { return drillIn(data.fields?.['operator'], tree); },
-    get argument() { return drillIn(data.fields?.['argument'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get operator() { return drillIn(data.$fields?.['operator'], tree); },
+    get argument() { return drillIn(data.$fields?.['argument'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<UnaryOperator>;
 }
 
 export function wrapComparisonOperator(data: _NodeData, tree: TreeHandle): WrappedNode<ComparisonOperator> {
   return {
     ...data,
-    get left() { return drillIn(data.fields?.['left'], tree); },
-    get operators() { return drillInAll(data.fields?.['operators'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get left() { return drillIn(data.$fields?.['left'], tree); },
+    get operators() { return drillInAll(data.$fields?.['operators'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<ComparisonOperator>;
 }
 
 export function wrapLambda(data: _NodeData, tree: TreeHandle): WrappedNode<Lambda> {
   return {
     ...data,
-    get lambda() { return drillIn(data.fields?.['lambda'], tree); },
-    get parameters() { return drillIn(data.fields?.['parameters'], tree); },
-    get body() { return drillIn(data.fields?.['body'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get lambda() { return drillIn(data.$fields?.['lambda'], tree); },
+    get parameters() { return drillIn(data.$fields?.['parameters'], tree); },
+    get body() { return drillIn(data.$fields?.['body'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<Lambda>;
 }
 
 export function wrapLambdaWithinForInClause(data: _NodeData, tree: TreeHandle): WrappedNode<LambdaWithinForInClause> {
   return {
     ...data,
-    get lambda() { return drillIn(data.fields?.['lambda'], tree); },
-    get parameters() { return drillIn(data.fields?.['parameters'], tree); },
-    get body() { return drillIn(data.fields?.['body'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get lambda() { return drillIn(data.$fields?.['lambda'], tree); },
+    get parameters() { return drillIn(data.$fields?.['parameters'], tree); },
+    get body() { return drillIn(data.$fields?.['body'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<LambdaWithinForInClause>;
 }
 
 export function wrapAssignment(data: _NodeData, tree: TreeHandle): WrappedNode<Assignment> {
   return {
     ...data,
-    get left() { return drillIn(data.fields?.['left'], tree); },
-    get child() { return drillIn(data.children?.[0], tree); },
+    get left() { return drillIn(data.$fields?.['left'], tree); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<Assignment>;
 }
 
 export function wrapAugmentedAssignment(data: _NodeData, tree: TreeHandle): WrappedNode<AugmentedAssignment> {
   return {
     ...data,
-    get left() { return drillIn(data.fields?.['left'], tree); },
-    get operator() { return drillIn(data.fields?.['operator'], tree); },
-    get right() { return drillIn(data.fields?.['right'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get left() { return drillIn(data.$fields?.['left'], tree); },
+    get operator() { return drillIn(data.$fields?.['operator'], tree); },
+    get right() { return drillIn(data.$fields?.['right'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<AugmentedAssignment>;
 }
 
 export function wrapPatternList(data: _NodeData, tree: TreeHandle): WrappedNode<PatternList> {
   return {
     ...data,
-    get pattern() { return drillIn(data.fields?.['pattern'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get pattern() { return drillIn(data.$fields?.['pattern'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<PatternList>;
 }
 
 export function wrapYield(data: _NodeData, tree: TreeHandle): WrappedNode<Yield> {
   return {
     ...data,
-    get yield() { return drillIn(data.fields?.['yield'], tree); },
-    get child() { return drillIn(data.children?.[0], tree); },
+    get yield() { return drillIn(data.$fields?.['yield'], tree); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<Yield>;
 }
 
 export function wrapAttribute(data: _NodeData, tree: TreeHandle): WrappedNode<Attribute> {
   return {
     ...data,
-    get object() { return drillIn(data.fields?.['object'], tree); },
-    get attribute() { return drillIn(data.fields?.['attribute'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get object() { return drillIn(data.$fields?.['object'], tree); },
+    get attribute() { return drillIn(data.$fields?.['attribute'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<Attribute>;
 }
 
 export function wrapSubscript(data: _NodeData, tree: TreeHandle): WrappedNode<Subscript> {
   return {
     ...data,
-    get value() { return drillIn(data.fields?.['value'], tree); },
-    get subscript() { return drillInAll(data.fields?.['subscript'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get value() { return drillIn(data.$fields?.['value'], tree); },
+    get subscript() { return drillInAll(data.$fields?.['subscript'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<Subscript>;
 }
 
 export function wrapSlice(data: _NodeData, tree: TreeHandle): WrappedNode<Slice> {
   return {
     ...data,
-    get start() { return drillIn(data.fields?.['start'], tree); },
-    get stop() { return drillIn(data.fields?.['stop'], tree); },
-    get step() { return drillIn(data.fields?.['step'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get start() { return drillIn(data.$fields?.['start'], tree); },
+    get stop() { return drillIn(data.$fields?.['stop'], tree); },
+    get step() { return drillIn(data.$fields?.['step'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<Slice>;
 }
 
 export function wrapCall(data: _NodeData, tree: TreeHandle): WrappedNode<Call> {
   return {
     ...data,
-    get function() { return drillIn(data.fields?.['function'], tree); },
-    get arguments() { return drillIn(data.fields?.['arguments'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get function() { return drillIn(data.$fields?.['function'], tree); },
+    get arguments() { return drillIn(data.$fields?.['arguments'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<Call>;
 }
 
 export function wrapTypedParameter(data: _NodeData, tree: TreeHandle): WrappedNode<TypedParameter> {
   return {
     ...data,
-    get typeField() { return drillIn(data.fields?.['type'], tree); },
-    get child() { return drillIn(data.children?.[0], tree); },
+    get typeField() { return drillIn(data.$fields?.['type'], tree); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<TypedParameter>;
 }
 
 export function wrapType(data: _NodeData, tree: TreeHandle): WrappedNode<Type> {
   return {
     ...data,
-    get child() { return drillIn(data.children?.[0], tree); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<Type>;
 }
 
 export function wrapSplatType(data: _NodeData, tree: TreeHandle): WrappedNode<SplatType> {
   return {
     ...data,
-    get identifier() { return drillIn(data.fields?.['identifier'], tree); },
-    get child() { return drillIn(data.children?.[0], tree); },
+    get identifier() { return drillIn(data.$fields?.['identifier'], tree); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<SplatType>;
 }
 
 export function wrapGenericType(data: _NodeData, tree: TreeHandle): WrappedNode<GenericType> {
   return {
     ...data,
-    get identifier() { return drillIn(data.fields?.['identifier'], tree); },
-    get typeParameter() { return drillIn(data.fields?.['type_parameter'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get identifier() { return drillIn(data.$fields?.['identifier'], tree); },
+    get typeParameter() { return drillIn(data.$fields?.['type_parameter'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<GenericType>;
 }
 
 export function wrapUnionType(data: _NodeData, tree: TreeHandle): WrappedNode<UnionType> {
   return {
     ...data,
-    get left() { return drillIn(data.fields?.['left'], tree); },
-    get right() { return drillIn(data.fields?.['right'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get left() { return drillIn(data.$fields?.['left'], tree); },
+    get right() { return drillIn(data.$fields?.['right'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<UnionType>;
 }
 
 export function wrapConstrainedType(data: _NodeData, tree: TreeHandle): WrappedNode<ConstrainedType> {
   return {
     ...data,
-    get baseType() { return drillIn(data.fields?.['base_type'], tree); },
-    get constraint() { return drillIn(data.fields?.['constraint'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get baseType() { return drillIn(data.$fields?.['base_type'], tree); },
+    get constraint() { return drillIn(data.$fields?.['constraint'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<ConstrainedType>;
 }
 
 export function wrapMemberType(data: _NodeData, tree: TreeHandle): WrappedNode<MemberType> {
   return {
     ...data,
-    get baseType() { return drillIn(data.fields?.['base_type'], tree); },
-    get identifier() { return drillIn(data.fields?.['identifier'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get baseType() { return drillIn(data.$fields?.['base_type'], tree); },
+    get identifier() { return drillIn(data.$fields?.['identifier'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<MemberType>;
 }
 
 export function wrapKeywordArgument(data: _NodeData, tree: TreeHandle): WrappedNode<KeywordArgument> {
   return {
     ...data,
-    get name() { return drillIn(data.fields?.['name'], tree); },
-    get value() { return drillIn(data.fields?.['value'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get name() { return drillIn(data.$fields?.['name'], tree); },
+    get value() { return drillIn(data.$fields?.['value'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<KeywordArgument>;
 }
 
 export function wrapList(data: _NodeData, tree: TreeHandle): WrappedNode<List> {
   return {
     ...data,
-    get child() { return drillIn(data.children?.[0], tree); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<List>;
 }
 
 export function wrapSet(data: _NodeData, tree: TreeHandle): WrappedNode<Set> {
   return {
     ...data,
-    get child() { return drillIn(data.children?.[0], tree); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<Set>;
 }
 
 export function wrapTuple(data: _NodeData, tree: TreeHandle): WrappedNode<Tuple> {
   return {
     ...data,
-    get child() { return drillIn(data.children?.[0], tree); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<Tuple>;
 }
 
 export function wrapDictionary(data: _NodeData, tree: TreeHandle): WrappedNode<Dictionary> {
   return {
     ...data,
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<Dictionary>;
 }
 
 export function wrapPair(data: _NodeData, tree: TreeHandle): WrappedNode<Pair> {
   return {
     ...data,
-    get key() { return drillIn(data.fields?.['key'], tree); },
-    get value() { return drillIn(data.fields?.['value'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get key() { return drillIn(data.$fields?.['key'], tree); },
+    get value() { return drillIn(data.$fields?.['value'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<Pair>;
 }
 
 export function wrapListComprehension(data: _NodeData, tree: TreeHandle): WrappedNode<ListComprehension> {
   return {
     ...data,
-    get body() { return drillIn(data.fields?.['body'], tree); },
-    get child() { return drillIn(data.children?.[0], tree); },
+    get body() { return drillIn(data.$fields?.['body'], tree); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<ListComprehension>;
 }
 
 export function wrapDictionaryComprehension(data: _NodeData, tree: TreeHandle): WrappedNode<DictionaryComprehension> {
   return {
     ...data,
-    get body() { return drillIn(data.fields?.['body'], tree); },
-    get child() { return drillIn(data.children?.[0], tree); },
+    get body() { return drillIn(data.$fields?.['body'], tree); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<DictionaryComprehension>;
 }
 
 export function wrapSetComprehension(data: _NodeData, tree: TreeHandle): WrappedNode<SetComprehension> {
   return {
     ...data,
-    get body() { return drillIn(data.fields?.['body'], tree); },
-    get child() { return drillIn(data.children?.[0], tree); },
+    get body() { return drillIn(data.$fields?.['body'], tree); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<SetComprehension>;
 }
 
 export function wrapGeneratorExpression(data: _NodeData, tree: TreeHandle): WrappedNode<GeneratorExpression> {
   return {
     ...data,
-    get body() { return drillIn(data.fields?.['body'], tree); },
-    get child() { return drillIn(data.children?.[0], tree); },
+    get body() { return drillIn(data.$fields?.['body'], tree); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<GeneratorExpression>;
 }
 
 export function wrapParenthesizedExpression(data: _NodeData, tree: TreeHandle): WrappedNode<ParenthesizedExpression> {
   return {
     ...data,
-    get child() { return drillIn(data.children?.[0], tree); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<ParenthesizedExpression>;
 }
 
 export function wrapCollectionElements(data: _NodeData, tree: TreeHandle): WrappedNode<CollectionElements> {
   return {
     ...data,
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<CollectionElements>;
 }
 
 export function wrapForInClause(data: _NodeData, tree: TreeHandle): WrappedNode<ForInClause> {
   return {
     ...data,
-    get async() { return drillIn(data.fields?.['async'], tree); },
-    get left() { return drillIn(data.fields?.['left'], tree); },
-    get right() { return drillInAll(data.fields?.['right'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get async() { return drillIn(data.$fields?.['async'], tree); },
+    get left() { return drillIn(data.$fields?.['left'], tree); },
+    get right() { return drillInAll(data.$fields?.['right'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<ForInClause>;
 }
 
 export function wrapIfClause(data: _NodeData, tree: TreeHandle): WrappedNode<IfClause> {
   return {
     ...data,
-    get expression() { return drillIn(data.fields?.['expression'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get expression() { return drillIn(data.$fields?.['expression'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<IfClause>;
 }
 
 export function wrapConditionalExpression(data: _NodeData, tree: TreeHandle): WrappedNode<ConditionalExpression> {
   return {
     ...data,
-    get body() { return drillIn(data.fields?.['body'], tree); },
-    get condition() { return drillIn(data.fields?.['condition'], tree); },
-    get alternative() { return drillIn(data.fields?.['alternative'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get body() { return drillIn(data.$fields?.['body'], tree); },
+    get condition() { return drillIn(data.$fields?.['condition'], tree); },
+    get alternative() { return drillIn(data.$fields?.['alternative'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<ConditionalExpression>;
 }
 
 export function wrapConcatenatedString(data: _NodeData, tree: TreeHandle): WrappedNode<ConcatenatedString> {
   return {
     ...data,
-    get string() { return drillIn(data.fields?.['string'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get string() { return drillIn(data.$fields?.['string'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<ConcatenatedString>;
 }
 
 export function wrapString(data: _NodeData, tree: TreeHandle): WrappedNode<String> {
   return {
     ...data,
-    get stringStart() { return drillIn(data.fields?.['string_start'], tree); },
-    get content() { return drillInAll(data.fields?.['content'], tree); },
-    get stringEnd() { return drillIn(data.fields?.['string_end'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get stringStart() { return drillIn(data.$fields?.['string_start'], tree); },
+    get content() { return drillInAll(data.$fields?.['content'], tree); },
+    get stringEnd() { return drillIn(data.$fields?.['string_end'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<String>;
 }
 
 export function wrapStringContent(data: _NodeData, tree: TreeHandle): WrappedNode<StringContent> {
   return {
     ...data,
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<StringContent>;
 }
 
 export function wrapInterpolation(data: _NodeData, tree: TreeHandle): WrappedNode<Interpolation> {
   return {
     ...data,
-    get expression() { return drillIn(data.fields?.['expression'], tree); },
-    get typeConversion() { return drillIn(data.fields?.['type_conversion'], tree); },
-    get formatSpecifier() { return drillIn(data.fields?.['format_specifier'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get expression() { return drillIn(data.$fields?.['expression'], tree); },
+    get typeConversion() { return drillIn(data.$fields?.['type_conversion'], tree); },
+    get formatSpecifier() { return drillIn(data.$fields?.['format_specifier'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<Interpolation>;
 }
 
 export function wrapFormatSpecifier(data: _NodeData, tree: TreeHandle): WrappedNode<FormatSpecifier> {
   return {
     ...data,
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<FormatSpecifier>;
 }
 
 export function wrapAwait(data: _NodeData, tree: TreeHandle): WrappedNode<Await> {
   return {
     ...data,
-    get primaryExpression() { return drillIn(data.fields?.['primary_expression'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get primaryExpression() { return drillIn(data.$fields?.['primary_expression'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<Await>;
 }
 
 export function wrapAsPatternTarget(data: _NodeData, tree: TreeHandle): WrappedNode<AsPatternTarget> {
   return {
     ...data,
-    get child() { return drillIn(data.children?.[0], tree); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<AsPatternTarget>;
 }
 
 export function wrapAssignmentEq(data: _NodeData, tree: TreeHandle): WrappedNode<AssignmentEq> {
   return {
     ...data,
-    get right() { return drillIn(data.fields?.['right'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get right() { return drillIn(data.$fields?.['right'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<AssignmentEq>;
 }
 
 export function wrapAssignmentType(data: _NodeData, tree: TreeHandle): WrappedNode<AssignmentType> {
   return {
     ...data,
-    get typeField() { return drillIn(data.fields?.['type'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get typeField() { return drillIn(data.$fields?.['type'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<AssignmentType>;
 }
 
 export function wrapAssignmentTyped(data: _NodeData, tree: TreeHandle): WrappedNode<AssignmentTyped> {
   return {
     ...data,
-    get typeField() { return drillIn(data.fields?.['type'], tree); },
-    get right() { return drillIn(data.fields?.['right'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get typeField() { return drillIn(data.$fields?.['type'], tree); },
+    get right() { return drillIn(data.$fields?.['right'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<AssignmentTyped>;
 }
 
 export function wrapFormatExpression(data: _NodeData, tree: TreeHandle): WrappedNode<FormatExpression> {
   return {
     ...data,
-    get expression() { return drillIn(data.fields?.['expression'], tree); },
-    get typeConversion() { return drillIn(data.fields?.['type_conversion'], tree); },
-    get formatSpecifier() { return drillIn(data.fields?.['format_specifier'], tree); },
-    get children() { return (data.children ?? []).map(c => drillIn(c, tree)); },
+    get expression() { return drillIn(data.$fields?.['expression'], tree); },
+    get typeConversion() { return drillIn(data.$fields?.['type_conversion'], tree); },
+    get formatSpecifier() { return drillIn(data.$fields?.['format_specifier'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<FormatExpression>;
 }
 
@@ -1267,7 +1267,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 
 /** Wrap a NodeData into its lazy read-only view. */
 export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {
-  const fn = _wrapTable[data.type];
+  const fn = _wrapTable[data.$type];
   if (!fn) return data; // unknown kind — return as-is
   return fn(data, tree);
 }

@@ -212,7 +212,7 @@
 
 ### Implementation for User Story 7
 
-- [ ] T083a [US7] Update `packages/types/src/core-types.ts` `AnyNodeData` interface: rename `type` → `$type`, `fields` → `$fields`, `children` → `$children`, `text` → `$text`, `named` → `$named`. Add `$source?: 'ts' | 'sg' | 'factory'`.
+- [X] T083a [US7] `packages/types/src/core-types.ts` `AnyNodeData` interface renamed: `$type` / `$source` / `$variant` / `$fields` / `$children` / `$text` / `$span` / `$nodeId` / `$named`. `$source` is `'ts' | 'sg' | 'factory'`.
 - [ ] T083b [US7] Update `@sittir/types` transform types (`ConfigOf<T>`, `FluentNodeOf<T>`, `FromInputOf<T>`, `RuntimeNodeOf<T>`, `TreeNodeOf<T>`) to reference the new discriminant names.
 - [ ] T083c [US7] Update `@sittir/core/readNode.ts`: emit `$type`, `$fields`, `$children`, `$text`, `$named` and set `$source: 'ts'`.
 - [ ] T083d [US7] Update `@sittir/core/render.ts`: template slot lookups shift from `node.fields[raw]` / `node.children` / `node.text` to the `$`-prefixed equivalents.
