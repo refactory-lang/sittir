@@ -125,10 +125,24 @@ export function emitFactories(config: EmitFactoriesConfig): string {
         const constName = `_leafRe_${fn}`
         const cleaned = stripUselessEscapes(node.pattern)
         const fullPattern = `^(?:${cleaned})$`
-        // Try to compile at codegen time to decide which flag to use.
+        // Compile at codegen time to pick the flag. If NEITHER flag
+        // compiles the grammar has a pattern we can't turn into a runtime
+        // regex — surface this loudly instead of silently dropping the
+        // validation guard (which would let the factory accept any string
+        // for this leaf kind, bypassing grammar constraints).
         let flag: 'u' | '' = 'u'
         try { new RegExp(fullPattern, 'u') }
-        catch { try { new RegExp(fullPattern); flag = '' } catch { continue } }
+        catch {
+            try { new RegExp(fullPattern); flag = '' }
+            catch (e) {
+                throw new Error(
+                    `factories emitter: leaf '${kind}' pattern does not compile as a JavaScript RegExp ` +
+                    `(tried 'u' flag and no-flag). Pattern: ${JSON.stringify(fullPattern)}. ` +
+                    `Cause: ${(e as Error).message}. ` +
+                    `Either fix the grammar or add the kind to an emitter exception list.`,
+                )
+            }
+        }
         // Prefer a regex literal when the pattern has no unescaped `/`
         // (which would break the literal delimiter). Escape `/` if present.
         const escapedForLiteral = cleaned.replace(/\//g, '\\/')
@@ -158,9 +172,21 @@ export function emitFactories(config: EmitFactoriesConfig): string {
 
         const cleanedWord = stripUselessEscapes(wordPattern)
         const fullWordPattern = `^(?:${cleanedWord})$`
+        // Same loud-failure policy as the leaf regex above — a word-kind
+        // pattern that doesn't compile means the generated `_wordRe`
+        // would crash at consumer load time.
         let wordFlag: 'u' | '' = 'u'
         try { new RegExp(fullWordPattern, 'u') }
-        catch { try { new RegExp(fullWordPattern); wordFlag = '' } catch { /* can't compile */ }  }
+        catch {
+            try { new RegExp(fullWordPattern); wordFlag = '' }
+            catch (e) {
+                throw new Error(
+                    `factories emitter: word-kind pattern does not compile ` +
+                    `(tried 'u' flag and no-flag). Pattern: ${JSON.stringify(fullWordPattern)}. ` +
+                    `Cause: ${(e as Error).message}.`,
+                )
+            }
+        }
         const escapedWord = cleanedWord.replace(/\//g, '\\/')
         const wordLiteral = wordFlag === 'u'
             ? `/${`^(?:${escapedWord})`}/u`
@@ -744,9 +770,13 @@ function escForSource(s: string): string {
  *   - `\-` at the end of a character class — a literal `-` after a prior
  *     character set needs no escape when it's the last char in the class.
  *
- * After stripping, the resulting regex is verified by attempting a
- * compile; if it fails or its match set differs from the original, we
- * fall back to the original pattern so semantics stay identical.
+ * The stripped pattern must still compile as a RegExp. If it doesn't
+ * (some grammar regex we didn't anticipate), fall back to the original
+ * pattern so semantics stay identical. Full set-equivalence cannot be
+ * checked at codegen time without running both regexes against a corpus
+ * — the two specific transformations above are provably safe by the
+ * JavaScript regex grammar, so compile-success is the strongest static
+ * check we can offer.
  */
 function stripUselessEscapes(pattern: string): string {
     let out = ''
@@ -781,16 +811,11 @@ function stripUselessEscapes(pattern: string): string {
         out += c
         i++
     }
-    // Verify semantics unchanged by roundtripping through RegExp.
-    try {
-        const a = new RegExp(pattern, 'u')
-        const b = new RegExp(out, 'u')
-        if (a.source !== b.source && a.flags === b.flags) {
-            // Compile succeeded on both — trust the stripped version.
-        }
-    } catch {
-        return pattern
-    }
+    // If the stripped pattern fails to compile, the transformation broke
+    // something — fall back to the original (which we know compiled;
+    // otherwise this function wouldn't have been called).
+    try { new RegExp(out, 'u') }
+    catch { return pattern }
     return out
 }
 

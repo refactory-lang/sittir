@@ -540,10 +540,22 @@ export type FromInputOf<T, Scalars = {}, Strings = {}, Depth extends number[] = 
 /** Keys of T that are required (not optional). */
 type RequiredKeys<T> = { [K in keyof T]-?: {} extends Pick<T, K> ? never : K }[keyof T];
 
-/** True when T is a single concrete type (literal `type`), false when a union. */
-type IsSingleType<T> = [T] extends [{ readonly $type: infer K }]
-	? string extends K ? false
-	: true
+/**
+ * IsUnion<T> — distributive self-reference trick. For each arm of T, check
+ * whether the full union `B` fits inside that single arm — it fits only when
+ * T is itself a singleton (so `B` is the same singleton). Returns `true` for
+ * multi-arm unions, `false` for singletons.
+ *
+ * The `[B] extends [T]` tuple-wrap blocks the outer distribution — we want
+ * B to stay as the whole union while T distributes.
+ */
+type IsUnion<T, B = T> = T extends unknown
+	? [B] extends [T] ? false : true
+	: never;
+
+/** True when T is a single concrete node type (literal `$type`), false when a union. */
+type IsSingleType<T> = [T] extends [{ readonly $type: string }]
+	? IsUnion<T> extends true ? false : true
 	: false;
 
 /**
@@ -553,32 +565,48 @@ type IsSingleType<T> = [T] extends [{ readonly $type: infer K }]
 type UnionToIntersection<U> =
 	(U extends unknown ? (k: U) => void : never) extends (k: infer I) => void ? I : never;
 
+/** Mutual-extends structural equality (set-theoretic ==). */
+type Equals<A, B> = [A] extends [B] ? [B] extends [A] ? true : false : false;
+
 /**
- * IsHomogeneous<T, NsMap> — true when every member of a union has the same
- * Loose projection. Lets WidenValue skip the `{ kind: K }` tag when arms are
- * structurally interchangeable (the runtime resolver picks any of them via
- * field-presence dispatch).
+ * UnionOfArmsLoose<T, NsMap> — distribute T per arm, look up `NsMap[K]['Loose']`
+ * for each arm's `$type` discriminant, then reassemble the union. The inner
+ * distribution is intentional here: we want the OUTPUT to be the full union
+ * of per-arm Loose projections, which is exactly what distributivity gives us.
+ */
+type UnionOfArmsLoose<T, NsMap> = T extends { readonly $type: infer K extends string }
+	? K extends keyof NsMap
+		? NsMap[K] extends { Loose: infer L } ? L : never
+		: never
+	: never;
+
+/**
+ * IsHomogeneous<T, NsMap> — true iff every arm of the union T has the same
+ * Loose projection (structural equality: `union == intersection`).
+ *
+ * The outer `[T] extends [...]` tuple-wrap blocks distribution on T so we
+ * compute one answer for the whole union. The per-arm projection happens
+ * inside `UnionOfArmsLoose`, which deliberately DOES distribute.
  *
  * Requires `NsMap` to be supplied — falls back to `false` (= heterogeneous,
  * use tagged form) when NsMap is the empty default.
  */
-type IsHomogeneous<T, NsMap> = [NsMap] extends [never] ? false
+type IsHomogeneous<T, NsMap> =
+	[NsMap] extends [never] ? false
 	: keyof NsMap extends never ? false
-	: T extends { readonly $type: infer K extends string }
-		? K extends keyof NsMap
-			? [LooseOf<K, NsMap>] extends [UnionToIntersection<LooseOf<K, NsMap>>]
-				? [UnionToIntersection<LooseOf<K, NsMap>>] extends [LooseOf<K, NsMap>]
-					? true
-					: false
-				: false
-			: false
+	: [T] extends [{ readonly $type: string }]
+		? Equals<UnionOfArmsLoose<T, NsMap>, UnionToIntersection<UnionOfArmsLoose<T, NsMap>>>
 		: false;
 
-/** Indexed Loose lookup — `NsMap[K]['Loose']` over each arm of K. */
-type LooseOf<K extends string, NsMap> =
-	K extends keyof NsMap
-		? NsMap[K] extends { Loose: infer L } ? L : never
-		: never;
+/**
+ * TagEachArm<T, ...> — distributive per-arm form for heterogeneous unions.
+ * Produces `U | ({kind: K} & FromInputOf<U>)` for each member of T.
+ */
+type TagEachArm<T, Scalars, Strings, Depth extends number[], NsMap> = T extends infer U
+	? U extends { readonly $type: infer K extends string }
+		? U | ({ kind: K } & FromInputOf<U, Scalars, Strings, Depth, NsMap>)
+		: never
+	: never;
 
 /**
  * Widen a value type for FromInput.
@@ -588,6 +616,11 @@ type LooseOf<K extends string, NsMap> =
  * - Multi-branch homogeneous (all arms' Loose types equal): bare, no kind tag
  * - Multi-branch heterogeneous: each member needs `{ kind: K } & FromInputOf<U>`
  * - Other: pass through unchanged (string literal unions, etc.)
+ *
+ * Branch dispatch is guarded by `[T] extends [{...}]` tuple-wraps so the
+ * single-vs-multi-vs-homogeneous decision is made ONCE for the whole union.
+ * The per-arm tag emission (`TagEachArm`) is where distribution is actually
+ * wanted — it intentionally walks each member.
  */
 type WidenValue<T, Scalars = {}, Strings = {}, Depth extends number[] = [], NsMap = {}> =
 	Depth['length'] extends 3 ? T
@@ -596,22 +629,21 @@ type WidenValue<T, Scalars = {}, Strings = {}, Depth extends number[] = [], NsMa
 			? (WidenValue<E, Scalars, Strings, Depth, NsMap>)[] | WidenValue<E, Scalars, Strings, Depth, NsMap>
 			: NonEmptyArray<WidenValue<E, Scalars, Strings, Depth, NsMap>> | WidenValue<E, Scalars, Strings, Depth, NsMap>
 	: T extends { readonly $type: infer K extends string; readonly $text: string }
+		// Leaf — distributes per leaf-kind arm to pick up each one's narrowed
+		// string / scalar. A union of leaves becomes a union of widenings.
 		? T | (K extends keyof Strings ? Strings[K] : string) | (K extends keyof Scalars ? Scalars[K] : never)
-	: T extends { readonly $type: string }
+	: [T] extends [{ readonly $type: string }]
+		// Branch(es) — decide single/homogeneous/heterogeneous ONCE for the
+		// whole union, then emit accordingly.
 		? IsSingleType<T> extends true
-			// Single branch → accept bare fields.
 			? T | FromInputOf<T, Scalars, Strings, Depth, NsMap>
 		: IsHomogeneous<T, NsMap> extends true
-			// Multi-branch but arms' Loose projections are structurally
-			// identical (via NsMap lookups). The runtime resolver picks
-			// any arm — no `kind` tag needed at the type level.
+			// Multi-branch, but every arm's Loose projection is identical
+			// (via NsMap lookups). Runtime resolver picks any arm by
+			// field-presence — no `kind` tag needed at the type level.
 			? T | FromInputOf<T, Scalars, Strings, Depth, NsMap>
 			// Heterogeneous multi-branch → tag each arm for discrimination.
-			: T extends infer U
-				? U extends { readonly $type: infer K extends string }
-					? U | ({ kind: K } & FromInputOf<U, Scalars, Strings, Depth, NsMap>)
-					: never
-				: never
+			: TagEachArm<T, Scalars, Strings, Depth, NsMap>
 	: T;
 
 /** Widen a child slot type for FromInput (applies WidenValue to arrays and single values). */
