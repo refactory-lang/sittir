@@ -139,16 +139,16 @@
 
 ### Implementation for User Story 4
 
-- [ ] T048 [US4] Update `packages/codegen/src/emitters/ir.ts` to emit `Object.assign(fn, { from: fnFrom })` directly at each factory-attachment site. Remove the `_attach` helper definition and all call sites per FR-025.
-- [ ] T049 [US4] Update `packages/codegen/src/emitters/types.ts` to inline field unions at the field site. Only emit a named alias when the union is referenced at ≥2 sites; when emitted, derive a semantic name from field context (e.g. `FunctionItem.Fields.Name`) — NEVER auto-generate `_union_Foo_Bar_Baz` per FR-007.
-- [ ] T050 [US4] Add pre-inline safety check to `packages/codegen/src/emitters/types.ts`: before inlining, verify the alias was not exported (`export` keyword) — the existing behaviour keeps them internal, but the check protects against future regressions.
-- [ ] T051 [US4] Update `packages/codegen/src/emitters/wrap.ts` to import `_NodeData` from `@sittir/types` alongside `WrappedNode`; remove the local `interface _NodeData` declaration per FR-026.
-- [ ] T052 [US4] Update `packages/codegen/src/emitters/wrap.ts` `drillIn` signature: tighten from its current `unknown`-returning form to a generic `drillIn<T>(entry: T | undefined, tree: TreeHandle): WrappedOf<T>` that threads types through. This is the structural fix that eliminates the need for `as unknown as` at the return site.
-- [ ] T053 [US4] Update `packages/codegen/src/emitters/wrap.ts` per-kind wrap function emission: the return expression is `{...}` with no final `as unknown as WrappedNode<K>`. Acceptable forms: no cast, or `satisfies WrappedNode<K>` per FR-027.
-- [ ] T054 [US4] Regenerate the rust grammar package. Verify all four SC queries for SC-002/SC-003/SC-004 return zero matches.
-- [ ] T055 [P] [US4] Regenerate the typescript grammar package (same pattern).
-- [ ] T056 [P] [US4] Regenerate the python grammar package (same pattern).
-- [ ] T057 [US4] Run full test suite; confirm ceilings unchanged.
+- [X] T048 [US4] REJECTED after investigation: `_attach` replaced with `Object.assign` breaks polymorph forms whose name is a Function-reserved property (e.g. typescript's `importSpecifier` has variant `name`). `Object.assign` uses `[[Set]]`, which respects `Function.name`'s read-only descriptor and throws. `_attach` uses `Object.defineProperty` with explicit `writable/configurable/enumerable` descriptors to override. Kept `_attach` with an inline comment at `packages/codegen/src/emitters/ir.ts` documenting the decision and its reason.
+- [X] T049 [US4] Inlined field unions at the field site. Removed the `T042k` dedup pre-pass (union counting + `_union_<name>` alias emission). The `lookupUnion` callback is now a no-op, preserved in signature so downstream emission paths keep working. SC-003 satisfied: zero `_union_` matches in generated `types.ts` across all three grammars.
+- [X] T050 [US4] N/A — no alias is exported. The `_union_*` machinery was fully removed, so the safety check has no regressions to protect against.
+- [X] T051 [US4] `packages/codegen/src/emitters/wrap.ts` now imports `AnyNodeData as _NodeData, WrappedNode` from `@sittir/types` instead of declaring a local `interface _NodeData`. SC verified: zero `interface _NodeData` matches in generated `wrap.ts`.
+- [ ] T052 [US4] DEFERRED to US7. `drillIn` generic threading requires the `$`-prefixed metadata rename (`$type`/`$fields`) to avoid ambiguity with user-facing field names named `type`. Marked in US7 scope; current `drillIn` stays `unknown`-returning.
+- [ ] T053 [US4] DEFERRED to US7 (same reason as T052). Wrap function return still uses `as unknown as WrappedNode<K>` with an inline comment pointing to US7. `satisfies` not usable without the generic threading fix (getter returns `unknown`, fails to satisfy typed accessor).
+- [X] T054 [US4] Regenerated rust package. `grep -c "_union_" packages/rust/src/types.ts` → 0. `grep -c "interface _NodeData" packages/rust/src/wrap.ts` → 0.
+- [X] T055 [P] [US4] Regenerated typescript package. Same SC verification → 0 matches.
+- [X] T056 [P] [US4] Regenerated python package. Same SC verification → 0 matches.
+- [X] T057 [US4] Full test suite green: 1246 tests passed across 42 files. Ceilings unchanged.
 
 **Checkpoint**: Four codegen-time cleanups landed. Generated output shows zero matches for the four target patterns.
 

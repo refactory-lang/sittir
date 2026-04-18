@@ -56,14 +56,15 @@ export function emitIr(config: EmitIrConfig): string {
     }
     lines.push('')
 
-    // Helper — attaches properties via defineProperty so reserved Function
-    // prototype names (name, length, arguments, caller) don't throw when
-    // a polymorph has a form named `name` or similar.
-    // `T extends (...args: never[]) => unknown` keeps the generic bound
-    // contravariant in its argument types, so concrete factory signatures
-    // like `(config: ConfigOf<X>) => {...}` still satisfy it. A stricter
-    // `(...args: unknown[])` bound erases the specific return type and
-    // makes every `ir.kind(...)` call type as `unknown`.
+    // _attach helper — uses defineProperty with writable/configurable/enumerable
+    // descriptors so Function's reserved read-only properties (name, length,
+    // arguments, caller) don't throw. This matters for polymorphs whose form
+    // name is a reserved word (e.g. typescript's importSpecifier has a
+    // variant form named `name`). Object.assign uses [[Set]] which respects
+    // the target's writable attribute, so it fails on these cases.
+    // Spec 008 US4 / FR-025 considered replacing this with Object.assign —
+    // rejected after discovering the Function-reserved-name collision at
+    // TypeScript regen time. `_attach` stays.
     lines.push('function _attach<T extends (...args: never[]) => unknown, P extends Record<string, unknown>>(fn: T, props: P): T & P {')
     lines.push('  for (const key of Object.keys(props)) {')
     lines.push('    Object.defineProperty(fn, key, { value: props[key], writable: true, configurable: true, enumerable: true });')

@@ -683,14 +683,6 @@ export const enum PathKind {
 }
 
 // Node types — concrete interfaces
-// Repeated field/child unions (T042k dedup)
-export type _union_BracketedType_GenericType_Path = BracketedType | GenericType | Path;
-export type _union_Identifier_Metavariable = Identifier | Metavariable;
-export type _union_IntegerLiteral__FieldIdentifier = IntegerLiteral | _FieldIdentifier;
-export type _union_Lifetime_UseBounds__Type = Lifetime | UseBounds | _Type;
-export type _union_LiteralPattern_Path = LiteralPattern | Path;
-export type _union_ScopedTypeIdentifier__TypeIdentifier = ScopedTypeIdentifier | _TypeIdentifier;
-
 export interface SourceFile {
   readonly type: 'source_file';
   readonly fields: {
@@ -947,7 +939,7 @@ export interface FunctionItem {
   readonly fields: {
     readonly visibility_modifier?: VisibilityModifier;
     readonly function_modifiers?: FunctionModifiers;
-    readonly name: _union_Identifier_Metavariable;
+    readonly name: Identifier | Metavariable;
     readonly type_parameters?: TypeParameters;
     readonly parameters: Parameters;
     readonly return_type?: _Type;
@@ -961,7 +953,7 @@ export interface FunctionSignatureItem {
   readonly fields: {
     readonly visibility_modifier?: VisibilityModifier;
     readonly function_modifiers?: FunctionModifiers;
-    readonly name: _union_Identifier_Metavariable;
+    readonly name: Identifier | Metavariable;
     readonly type_parameters?: TypeParameters;
     readonly parameters: Parameters;
     readonly return_type?: _Type;
@@ -1222,7 +1214,7 @@ export interface FunctionType {
   readonly type: 'function_type';
   readonly fields: {
     readonly for_lifetimes?: ForLifetimes;
-    readonly trait?: _union_ScopedTypeIdentifier__TypeIdentifier;
+    readonly trait?: _TypeIdentifier | ScopedTypeIdentifier;
     readonly parameters: Parameters;
     readonly return_type?: _Type;
   };
@@ -1260,8 +1252,8 @@ export interface GenericTypeWithTurbofish {
 export interface BoundedType {
   readonly type: 'bounded_type';
   readonly fields: {
-    readonly left: _union_Lifetime_UseBounds__Type;
-    readonly right: _union_Lifetime_UseBounds__Type;
+    readonly left: Lifetime | _Type | UseBounds;
+    readonly right: Lifetime | _Type | UseBounds;
   };
 }
 
@@ -1336,7 +1328,7 @@ export interface DelimTokenTree {
 export interface ScopedIdentifier {
   readonly type: 'scoped_identifier';
   readonly fields: {
-    readonly path?: _union_BracketedType_GenericType_Path;
+    readonly path?: Path | BracketedType | GenericType;
     readonly name: Identifier | Super;
   };
 }
@@ -1352,7 +1344,7 @@ export interface ScopedTypeIdentifierInExpressionPosition {
 export interface ScopedTypeIdentifier {
   readonly type: 'scoped_type_identifier';
   readonly fields: {
-    readonly path?: _union_BracketedType_GenericType_Path;
+    readonly path?: Path | GenericType | BracketedType;
     readonly name: _TypeIdentifier;
   };
 }
@@ -1506,7 +1498,7 @@ export interface ShorthandFieldInitializer {
 export interface FieldInitializer {
   readonly type: 'field_initializer';
   readonly fields: {
-    readonly field: _union_IntegerLiteral__FieldIdentifier;
+    readonly field: _FieldIdentifier | IntegerLiteral;
     readonly value: Expression;
   };
   readonly children: readonly (AttributeItem)[];
@@ -1691,7 +1683,7 @@ export interface FieldExpression {
   readonly type: 'field_expression';
   readonly fields: {
     readonly value: Expression;
-    readonly field: _union_IntegerLiteral__FieldIdentifier;
+    readonly field: _FieldIdentifier | IntegerLiteral;
   };
 }
 
@@ -1760,7 +1752,7 @@ export interface TupleStructPattern {
 export interface StructPattern {
   readonly type: 'struct_pattern';
   readonly fields: {
-    readonly type: _union_ScopedTypeIdentifier__TypeIdentifier;
+    readonly type: _TypeIdentifier | ScopedTypeIdentifier;
   };
   readonly children: readonly (FieldPattern | RemainingFieldPattern)[];
 }
@@ -2080,15 +2072,15 @@ export interface FieldPatternNamed {
 export interface RangePatternLeft {
   readonly type: 'range_pattern_left';
   readonly fields: {
-    readonly left: _union_LiteralPattern_Path;
-    readonly right?: _union_LiteralPattern_Path;
+    readonly left: LiteralPattern | Path;
+    readonly right?: LiteralPattern | Path;
   };
 }
 
 export interface RangePatternPrefix {
   readonly type: 'range_pattern_prefix';
   readonly fields: {
-    readonly right: _union_LiteralPattern_Path;
+    readonly right: LiteralPattern | Path;
   };
 }
 

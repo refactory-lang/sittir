@@ -507,14 +507,6 @@ export const enum PrimaryTypeKind {
 }
 
 // Node types — concrete interfaces
-// Repeated field/child unions (T042k dedup)
-export type _union_5 = AddingTypeAnnotation | OmittingTypeAnnotation | OptingTypeAnnotation | TypeAnnotation;
-export type _union_CallSignature_ConstructSignature_ExportStatement = CallSignature | ConstructSignature | ExportStatement | IndexSignature | MethodSignature | PropertySignature | Semicolon;
-export type _union_DestructuringPattern_Identifier = DestructuringPattern | Identifier;
-export type _union_Expression_StatementBlock = Expression | StatementBlock;
-export type _union_Identifier_MemberExpression = Identifier | MemberExpression;
-export type _union_Identifier_NestedIdentifier = Identifier | NestedIdentifier;
-
 export interface Program {
   readonly type: 'program';
   readonly fields: {
@@ -663,7 +655,7 @@ export interface LexicalDeclaration {
 export interface VariableDeclarator {
   readonly type: 'variable_declarator';
   readonly fields: {
-    readonly name: _union_DestructuringPattern_Identifier;
+    readonly name: Identifier | DestructuringPattern;
     readonly type?: TypeAnnotation;
   };
   readonly children: readonly [Initializer];
@@ -843,7 +835,7 @@ export interface CatchClause {
   readonly type: 'catch_clause';
   readonly fields: {
     readonly catch: "catch";
-    readonly parameter?: _union_DestructuringPattern_Identifier;
+    readonly parameter?: Identifier | DestructuringPattern;
     readonly type?: TypeAnnotation;
     readonly body: StatementBlock;
   };
@@ -940,7 +932,7 @@ export interface JsxOpeningElement {
 export interface NestedIdentifier {
   readonly type: 'nested_identifier';
   readonly fields: {
-    readonly object: _union_Identifier_MemberExpression;
+    readonly object: Identifier | MemberExpression;
     readonly property: PropertyIdentifier;
   };
 }
@@ -1049,7 +1041,7 @@ export interface GeneratorFunctionDeclaration {
 export interface ArrowFunctionUFormParameter {
   readonly type: 'arrow_function';
   readonly fields: {
-    readonly body: _union_Expression_StatementBlock;
+    readonly body: Expression | StatementBlock;
   };
   readonly children: readonly [ArrowFunctionParameter];
 }
@@ -1057,7 +1049,7 @@ export interface ArrowFunctionUFormParameter {
 export interface ArrowFunctionUFormUCallSignature {
   readonly type: 'arrow_function';
   readonly fields: {
-    readonly body: _union_Expression_StatementBlock;
+    readonly body: Expression | StatementBlock;
   };
   readonly children: readonly [ArrowFunctionUCallSignature];
 }
@@ -1238,7 +1230,7 @@ export interface Decorator {
 export interface DecoratorMemberExpression {
   readonly type: 'decorator_member_expression';
   readonly fields: {
-    readonly object: _union_Identifier_MemberExpression;
+    readonly object: Identifier | MemberExpression;
     readonly property: PropertyIdentifier;
   };
 }
@@ -1246,7 +1238,7 @@ export interface DecoratorMemberExpression {
 export interface DecoratorCallExpression {
   readonly type: 'decorator_call_expression';
   readonly fields: {
-    readonly function: _union_Identifier_MemberExpression;
+    readonly function: Identifier | MemberExpression;
     readonly type_arguments?: TypeArguments;
     readonly arguments: Arguments;
   };
@@ -1490,7 +1482,7 @@ export interface ImportAlias {
   readonly type: 'import_alias';
   readonly fields: {
     readonly name: Identifier;
-    readonly value: _union_Identifier_NestedIdentifier;
+    readonly value: Identifier | NestedIdentifier;
     readonly semicolon: Semicolon;
   };
 }
@@ -1498,7 +1490,7 @@ export interface ImportAlias {
 export interface NestedTypeIdentifier {
   readonly type: 'nested_type_identifier';
   readonly fields: {
-    readonly module: _union_Identifier_NestedIdentifier;
+    readonly module: Identifier | NestedIdentifier;
     readonly name: _TypeIdentifier;
   };
 }
@@ -1801,7 +1793,7 @@ export interface ObjectType {
   readonly type: 'object_type';
   readonly fields: {
     readonly opening: "{" | "{|";
-    readonly members?: _union_CallSignature_ConstructSignature_ExportStatement;
+    readonly members?: ExportStatement | Semicolon | PropertySignature | CallSignature | ConstructSignature | IndexSignature | MethodSignature;
     readonly closing: "}" | "|}";
   };
 }
@@ -1865,7 +1857,7 @@ export interface IndexSignatureUFormColon {
   readonly type: 'index_signature';
   readonly fields: {
     readonly sign?: "-" | "+";
-    readonly type: _union_5;
+    readonly type: TypeAnnotation | OmittingTypeAnnotation | AddingTypeAnnotation | OptingTypeAnnotation;
   };
   readonly children: readonly [IndexSignatureColon];
 }
@@ -1874,7 +1866,7 @@ export interface IndexSignatureUFormMappedTypeClause {
   readonly type: 'index_signature';
   readonly fields: {
     readonly sign?: "-" | "+";
-    readonly type: _union_5;
+    readonly type: TypeAnnotation | OmittingTypeAnnotation | AddingTypeAnnotation | OptingTypeAnnotation;
   };
   readonly children: readonly [IndexSignatureMappedTypeClause];
 }
@@ -2053,7 +2045,7 @@ export interface InterfaceBody {
   readonly type: 'interface_body';
   readonly fields: {
     readonly opening: "{" | "{|";
-    readonly members?: _union_CallSignature_ConstructSignature_ExportStatement;
+    readonly members?: ExportStatement | Semicolon | PropertySignature | CallSignature | ConstructSignature | IndexSignature | MethodSignature;
     readonly closing: "}" | "|}";
   };
 }

@@ -183,54 +183,11 @@ export function emitTypes(config: EmitTypesConfig): string {
     lines.push('// Node types — concrete interfaces')
     const polymorphTypeNames = new Map<string, string[]>()
 
-    // T042k: dedupe repeated multi-type unions into named aliases.
-    // Pre-pass — collect every field / child union expression that
-    // appears ≥2 times. Each repeated union gets hoisted to a
-    // `_union_<name>` alias at the top of the interfaces block,
-    // and the per-interface emission then references the alias.
-    const unionCounts = new Map<string, number>()
-    const countUnion = (parts: readonly string[]): void => {
-        if (parts.length < 2) return
-        const key = [...parts].sort().join('|')
-        unionCounts.set(key, (unionCounts.get(key) ?? 0) + 1)
-    }
-    for (const node of structNodes) {
-        if (node.modelType === 'polymorph' && node.forms.length > 1) {
-            for (const form of node.forms) {
-                for (const f of form.fields) countUnion(fieldTypeParts(f, nodeMap))
-            }
-        } else {
-            for (const f of fieldsOf(node)) countUnion(fieldTypeParts(f, nodeMap))
-            for (const c of childrenOf(node)) countUnion(childContentParts(c, nodeMap))
-        }
-    }
-    const unionAliases = new Map<string, string>()
-    let aliasCounter = 0
-    for (const [key, count] of unionCounts) {
-        if (count < 2) continue
-        // Build an alias name from the parts. First parts win;
-        // fallback to a numeric suffix if the name would explode.
-        const parts = key.split('|')
-        const hint = parts.slice(0, 3).map(p => p.replace(/[^\w]/g, '')).join('_')
-        const name = hint.length <= 60 ? `_union_${hint}` : `_union_${aliasCounter}`
-        aliasCounter++
-        unionAliases.set(key, name)
-    }
-    // Emit the alias declarations before any interface so downstream
-    // references resolve. Sort for stable output.
-    const aliasEntries = [...unionAliases.entries()].sort((a, b) => a[1].localeCompare(b[1]))
-    if (aliasEntries.length > 0) {
-        lines.push('// Repeated field/child unions (T042k dedup)')
-        for (const [key, name] of aliasEntries) {
-            lines.push(`export type ${name} = ${key.split('|').join(' | ')};`)
-        }
-        lines.push('')
-    }
-    const lookupUnion = (parts: readonly string[]): string | undefined => {
-        if (parts.length < 2) return undefined
-        const key = [...parts].sort().join('|')
-        return unionAliases.get(key)
-    }
+    // Spec 008 US4 / FR-007 — always inline field/child unions. The prior
+    // `_union_<name>` alias dedup pass saved only ~6 aliases per grammar
+    // and emitted ugly auto-generated names. Inlining removes the naming
+    // problem entirely and makes each field type self-describing.
+    const lookupUnion: LookupUnion = () => undefined
 
     for (const node of structNodes) {
         generatedTypes.add(node.typeName)
