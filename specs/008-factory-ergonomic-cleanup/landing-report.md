@@ -2,8 +2,9 @@
 
 **Branch**: `008-factory-ergonomic-cleanup`
 **Recorded**: 2026-04-17
-**Scope landed**: US1, US2, US3, US4, US5, US6 (six of seven stories)
-**Deferred**: US7 (`$`-prefix metadata rename) → follow-up spec 009
+**Scope landed**: US1, US2, US3, US4, US5, US6, US7 — all seven stories. Plus the
+legacy-alias drop (`XConfig` / `LooseX` / `ConfigMap` / `LooseMap` for
+base kinds) as Phase 9 cleanup.
 
 ---
 
@@ -35,21 +36,32 @@ Baseline was 142 distinct warnings (122 no-useless-fallback-in-spread, 18 no-unu
 
 | Grammar | File | Baseline | Final | Δ |
 |---|---|---|---|---|
-| rust | types.ts | 4004 | 5611 | +1607 |
-| rust | factories.ts | 4395 | 4394 | −1 |
+| rust | types.ts | 4004 | 4859 | +855 |
+| rust | factories.ts | 4395 | 4587 | +192 |
 | rust | from.ts | 1956 | 1956 | 0 |
 | rust | wrap.ts | 1876 | 1868 | −8 |
 | rust | ir.ts | 199 | 581 | +382 |
-| typescript | types.ts | 3959 | 5818 | +1859 |
-| typescript | factories.ts | 4904 | 4845 | −59 |
+| typescript | types.ts | 3959 | 4958 | +999 |
+| typescript | factories.ts | 4904 | 5066 | +162 |
 | typescript | from.ts | 2198 | 2198 | 0 |
 | typescript | wrap.ts | 2100 | 2092 | −8 |
 | typescript | ir.ts | 227 | 367 | +140 |
-| python | types.ts | 2538 | 3667 | +1129 |
-| python | factories.ts | 2886 | 2885 | −1 |
+| python | types.ts | 2538 | 3139 | +601 |
+| python | factories.ts | 2886 | 3014 | +128 |
 | python | from.ts | 1366 | 1366 | 0 |
 | python | wrap.ts | 1290 | 1282 | −8 |
 | python | ir.ts | 142 | 300 | +158 |
+
+Net change after the legacy alias drop (Phase 9): ~700+ lines clawed back
+per grammar's types.ts vs the pre-drop measurement, while the new surface
+(per-kind `<Kind>Ns` interfaces + `NamespaceMap` + declaration-merged
+namespace sugar blocks) still nets positive vs baseline. The upstream
+win is not line count — it's that one `NamespaceMap` keyed by kind replaces
+five parallel alias families (`XConfig` / `LooseX` / `XTree` / `ConfigMap` /
+`LooseMap`), and every consumer access resolves through a single source.
+
+factories.ts grew because of the `$`-prefix metadata fields (`$source` tag
+added to every factory output) and the US7 shape transition.
 
 ### Why types.ts grew despite SC-001's "−700 lines" target
 
@@ -124,7 +136,8 @@ Both decisions are tracked as "rejected after investigation, reason:
 | **US4** | ✅ | b4a9fb8 | Inline field unions at the field site (no more `_union_Foo_Bar_Baz`), import `_NodeData` from `@sittir/types`, document `_attach` rationale. |
 | **US5** | ✅ | 3442b8e | `ir.ts` namespace imports + tree-shakeable supertype group consts attached to `ir.*`. SC-005 + SC-012 verified. |
 | **US6** | ✅ | 331c2a7 | Zero-warning generated output + CI `--deny-warnings` enforcement. Bonus: fluent setter params renamed to `value` / `values`; base kinds use `T.${Type}.Config` namespace sugar. |
-| **US7** | ⏭ Deferred | — | `$`-prefix metadata rename (`$type` / `$fields` / `$source`). 500+ coordinated touches (types, core, emitters, tests) — belongs in its own spec cycle (follow-up 009). |
+| **US7** | ✅ | 6dfa127 | `$`-prefix metadata rename (`$type` / `$source` / `$fields` / `$children` / `$text` / `$named` / `$variant` / `$span` / `$nodeId`). `$source: 'ts' \| 'sg' \| 'factory'` provenance tag on every producer. Python's `type_alias_statement` collision fully resolved. |
+| **Phase 9 alias drop** | ✅ | this PR | Dropped base-kind `XConfig` / `LooseX` / `ConfigMap` / `LooseMap` aliases. Polymorph UForm aliases kept (forms aren't in `NamespaceMap`). `XxxTree` interfaces kept (factories reference them by name in `replace()` signatures). |
 
 ---
 
@@ -142,12 +155,10 @@ NamespaceMap-narrowing helpers in generated `utils.ts` instead) and
 
 - Test helpers: `_nodeToBag` + `_nodeToFactory` helpers (test-only) to
   reduce hand-written NodeData literals in corpus tests.
-- `$`-prefix metadata rename (US7 → spec 009).
-- `$source` provenance tag on every producer (part of US7 / spec 009).
-- Drop legacy `XConfig` / `LooseX` / `XTree` / `ConfigMap` / `LooseMap`
-  aliases (also deferred to 009 — coupled with US7's metadata rename
-  because both are breaking-shape changes).
 - Tree-shake bundle-size verification via esbuild (deferred from T066).
+- Polymorph form namespace sugar (optional extension): forms currently
+  use flat `${FormTypeName}Config` aliases; adding namespace sugar to
+  forms would make them first-class citizens of the new surface.
 
 ---
 

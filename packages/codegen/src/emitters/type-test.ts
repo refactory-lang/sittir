@@ -74,7 +74,6 @@ export function emitTypeTests(config: EmitTypeTestsConfig): string {
     // `_Config_X` / `_Tree_X` identifiers. The assertions are equivalent,
     // so keep the first occurrence and skip the rest.
     const seenType = new Set<string>()
-    const seenConfig = new Set<string>()
     const seenTree = new Set<string>()
 
     body.push('// --- Concrete interface `type` literal ---')
@@ -92,16 +91,10 @@ export function emitTypeTests(config: EmitTypeTestsConfig): string {
     }
     body.push('')
 
-    body.push('// --- ConfigOf<T> assignable to *Config ---')
-    for (const s of structuralKinds) {
-        if (s.hasVariants) continue
-        if (seenConfig.has(s.typeName)) continue
-        seenConfig.add(s.typeName)
-        typeImports.add(s.typeName)
-        typeImports.add(`${s.typeName}Config`)
-        body.push(`export type _Config_${s.typeName} = _TypeAssert<_TypeExtends<ConfigOf<${s.typeName}>, ${s.typeName}Config>>;`)
-    }
-    body.push('')
+    // Config assertion dropped — base-kind `${TypeName}Config` aliases are
+    // no longer emitted (spec 008 US7 landing). `X.Config` (namespace sugar)
+    // and `ConfigOf<X>` resolve to the same type by construction; the old
+    // test was a tautology.
 
     body.push('// --- TreeNode types have correct `type` ---')
     for (const s of structuralKinds) {
@@ -120,7 +113,6 @@ export function emitTypeTests(config: EmitTypeTestsConfig): string {
 
     // Imports — now emitted from the narrowed set.
     lines.push(`import type { ${[...typeImports].sort().join(', ')} } from './types.js';`)
-    lines.push("import type { ConfigOf } from '@sittir/types';")
     lines.push('')
     lines.push('type _TypeExtends<A, B> = A extends B ? true : false;')
     lines.push('type _TypeAssert<T extends true> = T;')

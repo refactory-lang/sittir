@@ -46,21 +46,21 @@ import type { AnyNodeData, AnyTreeNode } from '@sittir/types';
 
 declare const v: AnyNodeData | AnyTreeNode;
 
-// Kind only — narrows the type discriminant
+// Kind only — narrows the $type discriminant (post-US7)
 if (is.functionItem(v)) {
-    v.type; // narrowed to 'function_item'
+    v.$type; // narrowed to 'function_item'
     // shape still ambiguous here — could be Tree or Node
 }
 
 // Kind + shape — resolves to concrete type via NamespaceMap
 if (is.functionItem(v) && isTree(v)) {
-    v.field('name');    // ✓ FunctionItem.Tree — typed field access
+    v.field('name');    // ✓ FunctionItem.Tree — typed field access (tree-sitter API keeps .type / .text())
     v.range();          // ✓ tree-node method
 }
 
 if (is.functionItem(v) && isNode(v)) {
-    v.fields.name;      // ✓ FunctionItem.Node — typed data fields
-    v.fields.body;      // ✓
+    v.$fields.name;     // ✓ FunctionItem.Node — typed data fields
+    v.$fields.body;     // ✓
 }
 
 // Generic inverse form
@@ -71,25 +71,24 @@ if (is.kind(v, k) && isTree(v)) {
 
 // Supertype narrowing
 if (is.expression(v) && isTree(v)) {
-    v.type;             // narrowed to the Expression union
+    v.type;             // tree-sitter API — tree nodes keep `.type` (not `$type`)
     v.range();          // ✓ tree method
 }
 
 // Shape only — kind unknown, fallback overload
 if (isTree(v)) {
     v.range();          // ✓ AnyTreeNode
-    // v.type is still string — no kind narrowing
 }
 
 // Assert form — throws TypeError on mismatch, narrows via `asserts v is T`
 function processDecl(v: AnyNodeData) {
     assert.functionItem(v);
-    // Remainder of scope: v is narrowed to { type: 'function_item' }
-    v.fields.name;      // ✓ narrowed
+    // Remainder of scope: v is narrowed to { $type: 'function_item' }
+    v.$fields.name;     // ✓ narrowed
 }
 ```
 
-Acceptance: each composition narrows as described, verified by a type-level `expectTypeOf` or `extends` test (SC-006). `assert.functionItem({ type: 'block' })` throws `TypeError: assert.functionItem: expected type 'function_item', got 'block'` (SC-007).
+Acceptance: each composition narrows as described, verified by a type-level `expectTypeOf` or `extends` test (SC-006). `assert.functionItem({ $type: 'block' })` throws `TypeError: assert.functionItem: expected type 'functionItem', got 'block'` (SC-007).
 
 ---
 
@@ -115,7 +114,8 @@ const fromBag = ir.functionItem.from({
     body: { statements: [] },  // nested bag — resolver descends
 });
 console.assert(fromBag !== factoryOutput);      // ✓ different instance
-console.assert(fromBag.fields.name !== undefined);  // ✓ resolved
+console.assert(fromBag.$fields.name !== undefined);  // ✓ resolved (post-US7)
+console.assert(fromBag.$source === 'factory');       // ✓ provenance tag
 ```
 
 Acceptance: `===` holds for the NodeData input case (SC-005c); bag input produces a freshly-constructed fluent node.
@@ -127,20 +127,22 @@ Acceptance: `===` holds for the NodeData input case (SC-005c); bag input produce
 **After US5 lands.** Both access forms point at the same factory+resolver bundle:
 
 ```ts
-import { ir, decl, expr } from '@sittir/rust';
+import { ir, expression, pattern } from '@sittir/rust';
 
-const viaFlat    = ir.functionItem({ name: 'fib', body: ir.block({ statements: [] }) });
-const viaGrouped = decl.function_({ name: 'fib', body: expr.block({ statements: [] }) });
-// NOTE: 'function_' has the reserved-word suffix; 'block' lives under expr because
-//       it's a block-expression supertype member (grammar-dependent example).
+// ir.expression.* is attached to ir; `expression` is also exported
+// standalone for tree-shakeable access.
+const viaFlat    = ir.binaryExpression /* legacy-style camelCase */ ?? ir.binary;
+const viaGrouped = ir.expression.binary;
+// Both resolve to the same _attach bundle. The flat `ir.*` key is the
+// supertype-stripped short name (`binary` < `binary_expression`).
+console.assert(viaFlat === viaGrouped);  // ✓ SC-012
 
-// Structural equality — both paths produce the same node
-console.assert(
-    JSON.stringify(viaFlat) === JSON.stringify(viaGrouped),
-);  // ✓ SC-012
+// The standalone group export is also identity-equal:
+console.assert(ir.expression === expression);
 ```
 
-Acceptance: identical structural output from both namespaces (SC-012).
+Acceptance: identical `_attach` bundle from both paths (SC-012) — verified by
+`packages/rust/tests/ir-grouped-equivalence.test.ts`.
 
 ---
 
@@ -250,6 +252,36 @@ Acceptance: SC-013 (zero warnings + zero errors) and SC-014 (CI runs the check o
 
 ---
 
+## Scenario 10 — `$`-prefix metadata resolves `type` collisions
+
+**After US7 lands.** Python's `type_alias_statement` has a FIELD literally
+named `type`. Pre-008 this collided with the NodeData kind discriminant
+(`node.type === 'type_alias_statement'` vs `node.fields.type === 'type'`).
+Post-US7 the discriminant is `$type`, so the two are unambiguous:
+
+```ts
+import { ir } from '@sittir/python';
+
+const stmt = ir.typeAliasStatement({
+    type: 'type',           // the `type` keyword field (bag still uses bare `type` key)
+    left: ir.typeIdentifier('Foo'),
+    right: ir.typeIdentifier('u64'),
+});
+
+console.assert(stmt.$type === 'type_alias_statement');  // ✓ kind discriminant
+console.assert(stmt.$fields.type === 'type');           // ✓ keyword field
+console.assert(stmt.$source === 'factory');             // ✓ provenance
+```
+
+Acceptance: no cast workaround needed in generated `from.ts` — the
+`$type` vs `$fields.type` distinction is type-level unambiguous.
+
+Tree nodes (from `readTreeNode(tree)`) keep the tree-sitter `.type` API
+unchanged; only the data / factory surface uses `$`-prefix. `$source`
+lets `.from()` distinguish `'ts'` vs `'factory'` at a glance.
+
+---
+
 ## Migration notes (for consumers on a pre-008 version)
 
 Old alias → new form (deprecated re-exports preserve backward compat throughout 008; removal is a follow-up):
@@ -265,5 +297,10 @@ Old alias → new form (deprecated re-exports preserve backward compat throughou
 | Manual `v.type === 'function_item'` check | `is.functionItem(v)` |
 | Manual cast after kind check | `is.functionItem(v) && isTree(v)` or `is.functionItem(v) && isNode(v)` |
 | Manual `throw new TypeError(...)` on kind mismatch | `assert.functionItem(v)` |
+| `node.type` / `node.fields` / `node.text` / `node.children` (data read) | `node.$type` / `node.$fields` / `node.$text` / `node.$children` (post-US7) |
+| (no equivalent) | `node.$source: 'ts' \| 'factory'` for producer provenance |
 
-Each old form remains available during the 008 window with `@deprecated` JSDoc pointing to the new form.
+`XConfig` / `LooseX` / `XTree` / `ConfigMap` / `LooseMap` aliases remain
+emitted as back-compat re-exports during the 008 window. Tree-node types
+(from `AnyTreeNode`, `readTreeNode`, tree-sitter API) keep their unprefixed
+`.type` / `.text()` — only the data / factory surface uses `$`-prefix.
