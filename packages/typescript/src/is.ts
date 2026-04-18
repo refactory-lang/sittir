@@ -177,7 +177,6 @@ export interface IsGuards {
     parenthesizedType<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'parenthesized_type' };
     typeArguments<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'type_arguments' };
     objectType<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'object_type' };
-    callSignature<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'call_signature' };
     propertySignature<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'property_signature' };
     typeParameters<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'type_parameters' };
     typeParameter<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'type_parameter' };
@@ -200,7 +199,6 @@ export interface IsGuards {
     IndexSignatureMappedTypeClause<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_index_signature_mapped_type_clause' };
     ImportSpecifierName<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_import_specifier_name' };
     ArrowFunctionParameter<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_arrow_function_parameter' };
-    ArrowFunction_CallSignature<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_arrow_function__call_signature' };
     importClauseNamespaceImport<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'import_clause_namespace_import' };
     importClauseNamedImports<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'import_clause_named_imports' };
     importClauseDefaultImport<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'import_clause_default_import' };
@@ -211,7 +209,6 @@ export interface IsGuards {
     classHeritageExtendsClause<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'class_heritage_extends_clause' };
     classHeritageImplementsClause<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'class_heritage_implements_clause' };
     arrowFunctionParameter<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'arrow_function_parameter' };
-    arrowFunction_CallSignature<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'arrow_function__call_signature' };
     interfaceBody<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'interface_body' };
     indexSignatureColon<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'index_signature_colon' };
     indexSignatureMappedTypeClause<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'index_signature_mapped_type_clause' };
@@ -388,7 +385,6 @@ export interface AssertGuards {
     parenthesizedType(v: { readonly $type: string }): asserts v is { readonly $type: 'parenthesized_type' };
     typeArguments(v: { readonly $type: string }): asserts v is { readonly $type: 'type_arguments' };
     objectType(v: { readonly $type: string }): asserts v is { readonly $type: 'object_type' };
-    callSignature(v: { readonly $type: string }): asserts v is { readonly $type: 'call_signature' };
     propertySignature(v: { readonly $type: string }): asserts v is { readonly $type: 'property_signature' };
     typeParameters(v: { readonly $type: string }): asserts v is { readonly $type: 'type_parameters' };
     typeParameter(v: { readonly $type: string }): asserts v is { readonly $type: 'type_parameter' };
@@ -411,7 +407,6 @@ export interface AssertGuards {
     IndexSignatureMappedTypeClause(v: { readonly $type: string }): asserts v is { readonly $type: '_index_signature_mapped_type_clause' };
     ImportSpecifierName(v: { readonly $type: string }): asserts v is { readonly $type: '_import_specifier_name' };
     ArrowFunctionParameter(v: { readonly $type: string }): asserts v is { readonly $type: '_arrow_function_parameter' };
-    ArrowFunction_CallSignature(v: { readonly $type: string }): asserts v is { readonly $type: '_arrow_function__call_signature' };
     importClauseNamespaceImport(v: { readonly $type: string }): asserts v is { readonly $type: 'import_clause_namespace_import' };
     importClauseNamedImports(v: { readonly $type: string }): asserts v is { readonly $type: 'import_clause_named_imports' };
     importClauseDefaultImport(v: { readonly $type: string }): asserts v is { readonly $type: 'import_clause_default_import' };
@@ -422,7 +417,6 @@ export interface AssertGuards {
     classHeritageExtendsClause(v: { readonly $type: string }): asserts v is { readonly $type: 'class_heritage_extends_clause' };
     classHeritageImplementsClause(v: { readonly $type: string }): asserts v is { readonly $type: 'class_heritage_implements_clause' };
     arrowFunctionParameter(v: { readonly $type: string }): asserts v is { readonly $type: 'arrow_function_parameter' };
-    arrowFunction_CallSignature(v: { readonly $type: string }): asserts v is { readonly $type: 'arrow_function__call_signature' };
     interfaceBody(v: { readonly $type: string }): asserts v is { readonly $type: 'interface_body' };
     indexSignatureColon(v: { readonly $type: string }): asserts v is { readonly $type: 'index_signature_colon' };
     indexSignatureMappedTypeClause(v: { readonly $type: string }): asserts v is { readonly $type: 'index_signature_mapped_type_clause' };
@@ -624,7 +618,6 @@ export const is = {
     parenthesizedType: _g("parenthesized_type"),
     typeArguments: _g("type_arguments"),
     objectType: _g("object_type"),
-    callSignature: _g("call_signature"),
     propertySignature: _g("property_signature"),
     typeParameters: _g("type_parameters"),
     typeParameter: _g("type_parameter"),
@@ -647,7 +640,6 @@ export const is = {
     IndexSignatureMappedTypeClause: _g("_index_signature_mapped_type_clause"),
     ImportSpecifierName: _g("_import_specifier_name"),
     ArrowFunctionParameter: _g("_arrow_function_parameter"),
-    ArrowFunction_CallSignature: _g("_arrow_function__call_signature"),
     importClauseNamespaceImport: _g("import_clause_namespace_import"),
     importClauseNamedImports: _g("import_clause_named_imports"),
     importClauseDefaultImport: _g("import_clause_default_import"),
@@ -658,7 +650,6 @@ export const is = {
     classHeritageExtendsClause: _g("class_heritage_extends_clause"),
     classHeritageImplementsClause: _g("class_heritage_implements_clause"),
     arrowFunctionParameter: _g("arrow_function_parameter"),
-    arrowFunction_CallSignature: _g("arrow_function__call_signature"),
     interfaceBody: _g("interface_body"),
     indexSignatureColon: _g("index_signature_colon"),
     indexSignatureMappedTypeClause: _g("index_signature_mapped_type_clause"),
@@ -856,7 +847,6 @@ export const assert = {
     parenthesizedType: _makeAssert('parenthesizedType', is.parenthesizedType as _AnyGuard),
     typeArguments: _makeAssert('typeArguments', is.typeArguments as _AnyGuard),
     objectType: _makeAssert('objectType', is.objectType as _AnyGuard),
-    callSignature: _makeAssert('callSignature', is.callSignature as _AnyGuard),
     propertySignature: _makeAssert('propertySignature', is.propertySignature as _AnyGuard),
     typeParameters: _makeAssert('typeParameters', is.typeParameters as _AnyGuard),
     typeParameter: _makeAssert('typeParameter', is.typeParameter as _AnyGuard),
@@ -879,7 +869,6 @@ export const assert = {
     IndexSignatureMappedTypeClause: _makeAssert('IndexSignatureMappedTypeClause', is.IndexSignatureMappedTypeClause as _AnyGuard),
     ImportSpecifierName: _makeAssert('ImportSpecifierName', is.ImportSpecifierName as _AnyGuard),
     ArrowFunctionParameter: _makeAssert('ArrowFunctionParameter', is.ArrowFunctionParameter as _AnyGuard),
-    ArrowFunction_CallSignature: _makeAssert('ArrowFunction_CallSignature', is.ArrowFunction_CallSignature as _AnyGuard),
     importClauseNamespaceImport: _makeAssert('importClauseNamespaceImport', is.importClauseNamespaceImport as _AnyGuard),
     importClauseNamedImports: _makeAssert('importClauseNamedImports', is.importClauseNamedImports as _AnyGuard),
     importClauseDefaultImport: _makeAssert('importClauseDefaultImport', is.importClauseDefaultImport as _AnyGuard),
@@ -890,7 +879,6 @@ export const assert = {
     classHeritageExtendsClause: _makeAssert('classHeritageExtendsClause', is.classHeritageExtendsClause as _AnyGuard),
     classHeritageImplementsClause: _makeAssert('classHeritageImplementsClause', is.classHeritageImplementsClause as _AnyGuard),
     arrowFunctionParameter: _makeAssert('arrowFunctionParameter', is.arrowFunctionParameter as _AnyGuard),
-    arrowFunction_CallSignature: _makeAssert('arrowFunction_CallSignature', is.arrowFunction_CallSignature as _AnyGuard),
     interfaceBody: _makeAssert('interfaceBody', is.interfaceBody as _AnyGuard),
     indexSignatureColon: _makeAssert('indexSignatureColon', is.indexSignatureColon as _AnyGuard),
     indexSignatureMappedTypeClause: _makeAssert('indexSignatureMappedTypeClause', is.indexSignatureMappedTypeClause as _AnyGuard),

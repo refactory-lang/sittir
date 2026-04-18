@@ -58,7 +58,7 @@ rules:
   if_statement: $IF $CONDITION $CONSEQUENCE $ALTERNATIVE
   switch_statement: $SWITCH $VALUE $BODY
   for_statement: $FOR($INITIALIZER $CONDITION $INCREMENT)$BODY
-  for_in_statement: $FOR $AWAIT($LEFT$KIND$VALUE$$$CHILDREN $OPERATOR $RIGHT)$BODY
+  for_in_statement: $FOR $AWAIT($LEFT$KIND$VALUE $OPERATOR $RIGHT)$BODY
   while_statement: $WHILE $CONDITION $BODY
   do_statement: $DO $BODY while $CONDITION $$$CHILDREN
   try_statement: $TRY $BODY $HANDLER $FINALIZER
@@ -118,9 +118,9 @@ rules:
       extends_clause: $$$CHILDREN
       implements_clause: $$$CHILDREN
   function_expression: $ASYNC function $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $BODY
-  function_declaration: $ASYNC function $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $BODY $$$CHILDREN
+  function_declaration: $ASYNC function $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $BODY
   generator_function: $ASYNC function*$NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $BODY
-  generator_function_declaration: $ASYNC function*$NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $BODY $$$CHILDREN
+  generator_function_declaration: $ASYNC function*$NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $BODY
   arrow_function:
     variants:
       parameter: $ASYNC_CLAUSE $$$CHILDREN=>$BODY
@@ -161,7 +161,7 @@ rules:
     template: ($$$CHILDREN)
     joinBy: ","
     joinByTrailing: true
-  class_static_block: $STATIC $$$CHILDREN $BODY
+  class_static_block: $STATIC $BODY
   pattern: $$$CHILDREN
   rest_pattern: ...$$$CHILDREN
   method_definition:

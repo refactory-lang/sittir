@@ -421,11 +421,14 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'del', required: true, multiple: false },
   ],
   'dict_pattern': [
+    { name: 'key', required: false, multiple: true },
+    { name: 'value', required: false, multiple: true },
   ],
   'dictionary': [
   ],
   'dictionary_comprehension': [
     { name: 'body', required: true, multiple: false },
+    { name: 'forInClause', required: true, multiple: false },
   ],
   'dictionary_splat': [
     { name: 'expression', required: true, multiple: false },
@@ -489,9 +492,11 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'future_import_statement': [
     { name: 'from', required: true, multiple: false },
+    { name: 'name', required: true, multiple: true },
   ],
   'generator_expression': [
     { name: 'body', required: true, multiple: false },
+    { name: 'forInClause', required: true, multiple: false },
   ],
   'generic_type': [
     { name: 'identifier', required: true, multiple: false },
@@ -512,9 +517,11 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'import_from_statement': [
     { name: 'moduleName', required: true, multiple: false },
     { name: 'wildcardImport', required: true, multiple: false },
+    { name: 'name', required: false, multiple: true },
   ],
   'import_statement': [
     { name: 'import', required: true, multiple: false },
+    { name: 'name', required: true, multiple: true },
   ],
   'interpolation': [
     { name: 'expression', required: true, multiple: false },
@@ -545,6 +552,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'list_comprehension': [
     { name: 'body', required: true, multiple: false },
+    { name: 'forInClause', required: true, multiple: false },
   ],
   'list_pattern': [
   ],
@@ -606,6 +614,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'set_comprehension': [
     { name: 'body', required: true, multiple: false },
+    { name: 'forInClause', required: true, multiple: false },
   ],
   'slice': [
     { name: 'start', required: false, multiple: false },

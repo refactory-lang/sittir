@@ -2,7 +2,6 @@
 
 /** All branch (non-leaf) node kind strings. */
 export const NODE_KINDS = [
-  '_arrow_function__call_signature',
   '_arrow_function_parameter',
   '_class_heritage_extends_clause',
   '_class_heritage_implements_clause',
@@ -24,7 +23,6 @@ export const NODE_KINDS = [
   'array_pattern',
   'array_type',
   'arrow_function',
-  'arrow_function__call_signature',
   'arrow_function_parameter',
   'as_expression',
   'asserts',
@@ -36,7 +34,6 @@ export const NODE_KINDS = [
   'binary_expression',
   'break_statement',
   'call_expression',
-  'call_signature',
   'catch_clause',
   'class',
   'class_body',
@@ -431,8 +428,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   required: boolean;
   multiple: boolean;
 }>> = {
-  '_arrow_function__call_signature': [
-  ],
   '_arrow_function_parameter': [
     { name: 'parameter', required: true, multiple: false },
   ],
@@ -473,6 +468,9 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'accessibilityModifier', required: false, multiple: false },
     { name: 'overrideModifier', required: false, multiple: false },
     { name: 'name', required: true, multiple: false },
+    { name: 'typeParameters', required: false, multiple: false },
+    { name: 'parameters', required: true, multiple: false },
+    { name: 'returnType', required: false, multiple: false },
   ],
   'adding_type_annotation': [
     { name: 'type', required: true, multiple: false },
@@ -491,8 +489,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'arrow_function': [
     { name: 'body', required: true, multiple: false },
-  ],
-  'arrow_function__call_signature': [
   ],
   'arrow_function_parameter': [
     { name: 'parameter', required: true, multiple: false },
@@ -537,8 +533,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'function', required: true, multiple: false },
     { name: 'typeArguments', required: false, multiple: false },
     { name: 'arguments', required: true, multiple: false },
-  ],
-  'call_signature': [
   ],
   'catch_clause': [
     { name: 'catch', required: true, multiple: false },
@@ -633,6 +627,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'enum_assignment': [
     { name: 'name', required: true, multiple: false },
+    { name: 'value', required: true, multiple: false },
   ],
   'enum_body': [
     { name: 'opening', required: false, multiple: true },
@@ -659,6 +654,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'extends_clause': [
     { name: 'extends', required: true, multiple: false },
+    { name: 'value', required: true, multiple: true },
+    { name: 'typeArguments', required: false, multiple: true },
   ],
   'extends_type_clause': [
     { name: 'extends', required: true, multiple: false },
@@ -668,6 +665,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'decorator', required: true, multiple: true },
     { name: 'static', required: false, multiple: false },
     { name: 'property', required: true, multiple: false },
+    { name: 'value', required: false, multiple: false },
   ],
   'finally_clause': [
     { name: 'finally', required: true, multiple: false },
@@ -679,6 +677,11 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'for_in_statement': [
     { name: 'for', required: true, multiple: false },
     { name: 'await', required: false, multiple: false },
+    { name: 'left', required: true, multiple: false },
+    { name: 'kind', required: false, multiple: false },
+    { name: 'value', required: false, multiple: false },
+    { name: 'operator', required: true, multiple: false },
+    { name: 'right', required: true, multiple: false },
     { name: 'body', required: true, multiple: false },
   ],
   'for_statement': [
@@ -693,16 +696,25 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'function_declaration': [
     { name: 'async', required: false, multiple: false },
     { name: 'name', required: true, multiple: false },
+    { name: 'typeParameters', required: false, multiple: false },
+    { name: 'parameters', required: true, multiple: false },
+    { name: 'returnType', required: false, multiple: false },
     { name: 'body', required: true, multiple: false },
   ],
   'function_expression': [
     { name: 'async', required: false, multiple: false },
     { name: 'name', required: false, multiple: false },
+    { name: 'typeParameters', required: false, multiple: false },
+    { name: 'parameters', required: true, multiple: false },
+    { name: 'returnType', required: false, multiple: false },
     { name: 'body', required: true, multiple: false },
   ],
   'function_signature': [
     { name: 'async', required: false, multiple: false },
     { name: 'name', required: true, multiple: false },
+    { name: 'typeParameters', required: false, multiple: false },
+    { name: 'parameters', required: true, multiple: false },
+    { name: 'returnType', required: false, multiple: false },
   ],
   'function_type': [
     { name: 'typeParameters', required: false, multiple: false },
@@ -712,11 +724,17 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'generator_function': [
     { name: 'async', required: false, multiple: false },
     { name: 'name', required: false, multiple: false },
+    { name: 'typeParameters', required: false, multiple: false },
+    { name: 'parameters', required: true, multiple: false },
+    { name: 'returnType', required: false, multiple: false },
     { name: 'body', required: true, multiple: false },
   ],
   'generator_function_declaration': [
     { name: 'async', required: false, multiple: false },
     { name: 'name', required: true, multiple: false },
+    { name: 'typeParameters', required: false, multiple: false },
+    { name: 'parameters', required: true, multiple: false },
+    { name: 'returnType', required: false, multiple: false },
     { name: 'body', required: true, multiple: false },
   ],
   'generic_type': [
@@ -764,6 +782,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'import_statement': [
     { name: 'importClause', required: false, multiple: false },
     { name: 'fromClause', required: true, multiple: false },
+    { name: 'from', required: false, multiple: false },
     { name: 'source', required: false, multiple: false },
     { name: 'importAttribute', required: false, multiple: false },
     { name: 'semicolon', required: true, multiple: false },
@@ -802,6 +821,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'internal_module': [
     { name: 'namespace', required: true, multiple: false },
+    { name: 'name', required: true, multiple: false },
+    { name: 'body', required: false, multiple: false },
   ],
   'intersection_type': [
     { name: 'left', required: false, multiple: false },
@@ -821,8 +842,14 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'jsx_namespace_name': [
   ],
   'jsx_opening_element': [
+    { name: 'name', required: false, multiple: false },
+    { name: 'typeArguments', required: false, multiple: false },
+    { name: 'attribute', required: false, multiple: true },
   ],
   'jsx_self_closing_element': [
+    { name: 'name', required: false, multiple: false },
+    { name: 'typeArguments', required: false, multiple: false },
+    { name: 'attribute', required: false, multiple: true },
   ],
   'labeled_statement': [
     { name: 'label', required: true, multiple: false },
@@ -853,15 +880,23 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'accessibilityModifier', required: false, multiple: false },
     { name: 'overrideModifier', required: false, multiple: false },
     { name: 'name', required: true, multiple: false },
+    { name: 'typeParameters', required: false, multiple: false },
+    { name: 'parameters', required: true, multiple: false },
+    { name: 'returnType', required: false, multiple: false },
     { name: 'body', required: true, multiple: false },
   ],
   'method_signature': [
     { name: 'accessibilityModifier', required: false, multiple: false },
     { name: 'overrideModifier', required: false, multiple: false },
     { name: 'name', required: true, multiple: false },
+    { name: 'typeParameters', required: false, multiple: false },
+    { name: 'parameters', required: true, multiple: false },
+    { name: 'returnType', required: false, multiple: false },
   ],
   'module': [
     { name: 'module', required: true, multiple: false },
+    { name: 'name', required: true, multiple: false },
+    { name: 'body', required: false, multiple: false },
   ],
   'named_imports': [
   ],
@@ -907,7 +942,11 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'type', required: true, multiple: false },
   ],
   'optional_parameter': [
+    { name: 'decorator', required: true, multiple: true },
+    { name: 'readonly', required: false, multiple: false },
+    { name: 'pattern', required: true, multiple: false },
     { name: 'type', required: false, multiple: false },
+    { name: 'value', required: false, multiple: false },
   ],
   'optional_tuple_parameter': [
     { name: 'name', required: true, multiple: false },
@@ -948,6 +987,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'decorator', required: true, multiple: true },
     { name: 'name', required: true, multiple: false },
     { name: 'type', required: false, multiple: false },
+    { name: 'value', required: false, multiple: false },
   ],
   'readonly_type': [
     { name: 'readonly', required: true, multiple: false },
@@ -958,7 +998,11 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'flags', required: false, multiple: false },
   ],
   'required_parameter': [
+    { name: 'decorator', required: true, multiple: true },
+    { name: 'readonly', required: false, multiple: false },
+    { name: 'pattern', required: true, multiple: false },
     { name: 'type', required: false, multiple: false },
+    { name: 'value', required: false, multiple: false },
   ],
   'rest_pattern': [
   ],
@@ -1090,6 +1134,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'variable_declarator': [
     { name: 'name', required: true, multiple: false },
     { name: 'type', required: false, multiple: false },
+    { name: 'value', required: false, multiple: false },
   ],
   'while_statement': [
     { name: 'while', required: true, multiple: false },

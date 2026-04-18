@@ -28,24 +28,36 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
     const nodes = new Map<string, AssembledNode>()
 
     for (const [kind, rule] of Object.entries(optimized.rules)) {
-        const modelType = classifyNode(kind, rule)
+        // Inline hidden-rule symbol references BEFORE classification.
+        // Tree-sitter inlines hidden rules at parse time (fields from
+        // `_import_list` surface on `import_statement`), so the NodeMap
+        // must reflect parse-time shape rather than the grammar's
+        // lexical rule boundaries. Without this, field extraction sees
+        // `symbol('_import_list', hidden)` as an opaque child slot and
+        // the factory's Config excludes fields that are actually live
+        // at parse time. Hidden rules classified as supertypes are
+        // preserved — they're polymorph dispatch points, not structural
+        // helpers.
+        const inlinedRule = inlineHiddenRefs(rule, optimized.rules)
+        const modelType = classifyNode(kind, inlinedRule)
         const { typeName, factoryName, irKey } = nameNode(kind)
         // The `simplifiedRules` map is guaranteed to carry an entry
         // for every kind in `rules` — `optimize()` populates it via
         // `simplifyRules(rules)` at the end of its pass.
-        const simplifiedRule = optimized.simplifiedRules[kind]!
+        const rawSimplifiedRule = optimized.simplifiedRules[kind]!
+        const simplifiedRule = inlineHiddenRefs(rawSimplifiedRule, optimized.simplifiedRules)
 
         switch (modelType) {
             case 'branch': {
                 nodes.set(kind, new AssembledBranch({
-                    kind, typeName, factoryName, irKey, rule,
+                    kind, typeName, factoryName, irKey, rule: inlinedRule,
                     simplifiedRule,
                 }))
                 break
             }
             case 'container': {
                 nodes.set(kind, new AssembledContainer({
-                    kind, typeName, factoryName, irKey, rule,
+                    kind, typeName, factoryName, irKey, rule: inlinedRule,
                     simplifiedRule,
                 }))
                 break
@@ -637,6 +649,64 @@ function walkForFieldNames(rule: Rule, out: Set<string>): void {
         case 'clause':
             walkForFieldNames(rule.content, out)
             break
+    }
+}
+
+/**
+ * Inline hidden-rule symbol references by substituting each `symbol`
+ * node pointing to a hidden rule with that rule's content. Matches
+ * tree-sitter's parse-time behavior: hidden rules don't produce their
+ * own tree node, their fields/children surface on the referencer.
+ *
+ * Skipped:
+ *   - Supertypes (`SupertypeRule`) — these ARE polymorph dispatch
+ *     points. Their symbol reference represents "any subtype here",
+ *     and the child slot is what downstream consumers need.
+ *   - Non-hidden symbols — they produce their own parse-tree node
+ *     with a distinct `$type`, so preserving the reference is correct.
+ *   - Cycles — hidden rules that reference themselves (directly or
+ *     through another hidden rule) stop at the `visited` guard. The
+ *     cycling reference stays as an opaque symbol.
+ *
+ * Only one level deep by default? No — we recurse: `_foo` referencing
+ * `_bar` should surface `_bar`'s fields on `_foo`'s referencers. The
+ * visited set prevents infinite loops.
+ */
+function inlineHiddenRefs(
+    rule: Rule,
+    rules: Readonly<Record<string, Rule>>,
+    visited: ReadonlySet<string> = new Set(),
+): Rule {
+    const recurse = (r: Rule, v: ReadonlySet<string>): Rule => inlineHiddenRefs(r, rules, v)
+    switch (rule.type) {
+        case 'symbol': {
+            if (!rule.hidden) return rule
+            if (visited.has(rule.name)) return rule
+            const target = rules[rule.name]
+            if (!target) return rule
+            // Supertypes stay as references — they're dispatch points, not
+            // inline helpers.
+            if (target.type === 'supertype') return rule
+            // Recurse into the target with an extended visited set so a
+            // hidden rule referencing another hidden rule expands through.
+            const next = new Set(visited); next.add(rule.name)
+            return inlineHiddenRefs(target, rules, next)
+        }
+        case 'seq':
+            return { ...rule, members: rule.members.map(m => recurse(m, visited)) }
+        case 'choice':
+            return { ...rule, members: rule.members.map(m => recurse(m, visited)) }
+        case 'optional':
+        case 'repeat':
+        case 'repeat1':
+        case 'field':
+        case 'variant':
+        case 'clause':
+        case 'group':
+        case 'token':
+            return { ...rule, content: recurse((rule as { content: Rule }).content, visited) } as Rule
+        default:
+            return rule
     }
 }
 

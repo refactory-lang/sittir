@@ -135,7 +135,7 @@ export function macroDefinition(config: T.MacroDefinition.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    name(value?: T.Identifier | T.ReservedIdentifier) { return _fs(config, macroDefinition, 'name', value, fields.name); },
+    name(value?: T.Identifier) { return _fs(config, macroDefinition, 'name', value, fields.name); },
     rules(value?: T.MacroRule) { return _fs(config, macroDefinition, 'rules', value, fields.rules); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -524,7 +524,7 @@ export function unionItem(config: T.UnionItem.Config) {
     $named: true as const,
     $fields: fields,
     visibilityModifier(value?: T.VisibilityModifier | undefined) { return _fs(config, unionItem, 'visibilityModifier', value, fields.visibility_modifier); },
-    name(value?: T._TypeIdentifier) { return _fs(config, unionItem, 'name', value, fields.name); },
+    name(value?: T.TypeIdentifier) { return _fs(config, unionItem, 'name', value, fields.name); },
     typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, unionItem, 'typeParameters', value, fields.type_parameters); },
     whereClause(value?: T.WhereClause | undefined) { return _fs(config, unionItem, 'whereClause', value, fields.where_clause); },
     body(value?: T.FieldDeclarationList) { return _fs(config, unionItem, 'body', value, fields.body); },
@@ -551,7 +551,7 @@ export function enumItem(config: T.EnumItem.Config) {
     $named: true as const,
     $fields: fields,
     visibilityModifier(value?: T.VisibilityModifier | undefined) { return _fs(config, enumItem, 'visibilityModifier', value, fields.visibility_modifier); },
-    name(value?: T._TypeIdentifier) { return _fs(config, enumItem, 'name', value, fields.name); },
+    name(value?: T.TypeIdentifier) { return _fs(config, enumItem, 'name', value, fields.name); },
     typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, enumItem, 'typeParameters', value, fields.type_parameters); },
     whereClause(value?: T.WhereClause | undefined) { return _fs(config, enumItem, 'whereClause', value, fields.where_clause); },
     body(value?: T.EnumVariantList) { return _fs(config, enumItem, 'body', value, fields.body); },
@@ -631,7 +631,7 @@ export function fieldDeclaration(config: T.FieldDeclaration.Config) {
     $named: true as const,
     $fields: fields,
     visibilityModifier(value?: T.VisibilityModifier | undefined) { return _fs(config, fieldDeclaration, 'visibilityModifier', value, fields.visibility_modifier); },
-    name(value?: T._FieldIdentifier) { return _fs(config, fieldDeclaration, 'name', value, fields.name); },
+    name(value?: T.FieldIdentifier) { return _fs(config, fieldDeclaration, 'name', value, fields.name); },
     typeField(value?: T._Type) { return _fs(config, fieldDeclaration, 'type', value, fields.type); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -757,7 +757,7 @@ export function typeItem(config: T.TypeItem.Config) {
     $named: true as const,
     $fields: fields,
     visibilityModifier(value?: T.VisibilityModifier | undefined) { return _fs(config, typeItem, 'visibilityModifier', value, fields.visibility_modifier); },
-    name(value?: T._TypeIdentifier) { return _fs(config, typeItem, 'name', value, fields.name); },
+    name(value?: T.TypeIdentifier) { return _fs(config, typeItem, 'name', value, fields.name); },
     typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, typeItem, 'typeParameters', value, fields.type_parameters); },
     whereClause(value?: T.WhereClause | undefined) { return _fs(config, typeItem, 'whereClause', value, fields.where_clause); },
     typeField(value?: T._Type) { return _fs(config, typeItem, 'type', value, fields.type); },
@@ -897,7 +897,7 @@ export function wherePredicate(config: T.WherePredicate.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    left(value?: T.Lifetime | T._TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType | T.ReferenceType | T.PointerType | T.TupleType | T.ArrayType | T.HigherRankedTraitBound | T.PrimitiveType) { return _fs(config, wherePredicate, 'left', value, fields.left); },
+    left(value?: T.Lifetime | T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType | T.ReferenceType | T.PointerType | T.TupleType | T.ArrayType | T.HigherRankedTraitBound | T.PrimitiveType) { return _fs(config, wherePredicate, 'left', value, fields.left); },
     bounds(value?: T.TraitBounds) { return _fs(config, wherePredicate, 'bounds', value, fields.bounds); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -925,7 +925,7 @@ export function implItem(config: T.ImplItem.Config) {
     $children: children,
     unsafe(value?: T.KwUnsafe | undefined) { return _fs(config, implItem, 'unsafe', value, fields.unsafe); },
     typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, implItem, 'typeParameters', value, fields.type_parameters); },
-    trait(value?: T._TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType | undefined) { return _fs(config, implItem, 'trait', value, fields.trait); },
+    trait(value?: T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType | undefined) { return _fs(config, implItem, 'trait', value, fields.trait); },
     typeField(value?: T._Type) { return _fs(config, implItem, 'type', value, fields.type); },
     body(value?: T.DeclarationList | undefined) { return _fs(config, implItem, 'body', value, fields.body); },
     getChild() { return children[0]; },
@@ -955,7 +955,7 @@ export function traitItem(config: T.TraitItem.Config) {
     $fields: fields,
     $children: children,
     visibilityModifier(value?: T.VisibilityModifier | undefined) { return _fs(config, traitItem, 'visibilityModifier', value, fields.visibility_modifier); },
-    name(value?: T._TypeIdentifier) { return _fs(config, traitItem, 'name', value, fields.name); },
+    name(value?: T.TypeIdentifier) { return _fs(config, traitItem, 'name', value, fields.name); },
     typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, traitItem, 'typeParameters', value, fields.type_parameters); },
     bounds(value?: T.TraitBounds | undefined) { return _fs(config, traitItem, 'bounds', value, fields.bounds); },
     body(value?: T.DeclarationList) { return _fs(config, traitItem, 'body', value, fields.body); },
@@ -982,7 +982,7 @@ export function associatedType(config: T.AssociatedType.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    name(value?: T._TypeIdentifier) { return _fs(config, associatedType, 'name', value, fields.name); },
+    name(value?: T.TypeIdentifier) { return _fs(config, associatedType, 'name', value, fields.name); },
     typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, associatedType, 'typeParameters', value, fields.type_parameters); },
     bounds(value?: T.TraitBounds | undefined) { return _fs(config, associatedType, 'bounds', value, fields.bounds); },
     whereClause(value?: T.WhereClause | undefined) { return _fs(config, associatedType, 'whereClause', value, fields.where_clause); },
@@ -1100,7 +1100,7 @@ export function typeParameter(config: T.TypeParameter.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    name(value?: T._TypeIdentifier) { return _fs(config, typeParameter, 'name', value, fields.name); },
+    name(value?: T.TypeIdentifier) { return _fs(config, typeParameter, 'name', value, fields.name); },
     bounds(value?: T.TraitBounds | undefined) { return _fs(config, typeParameter, 'bounds', value, fields.bounds); },
     defaultType(value?: T._Type | undefined) { return _fs(config, typeParameter, 'defaultType', value, fields.default_type); },
     render() { return render(this); },
@@ -1528,7 +1528,7 @@ export function functionType(config: T.FunctionType.Config) {
     $fields: fields,
     $children: children,
     forLifetimes(value?: T.ForLifetimes | undefined) { return _fs(config, functionType, 'forLifetimes', value, fields.for_lifetimes); },
-    trait(value?: T._TypeIdentifier | T.ScopedTypeIdentifier | undefined) { return _fs(config, functionType, 'trait', value, fields.trait); },
+    trait(value?: T.TypeIdentifier | T.ScopedTypeIdentifier | undefined) { return _fs(config, functionType, 'trait', value, fields.trait); },
     parameters(value?: T.Parameters) { return _fs(config, functionType, 'parameters', value, fields.parameters); },
     returnType(value?: T._Type | undefined) { return _fs(config, functionType, 'returnType', value, fields.return_type); },
     getChild() { return children[0]; },
@@ -1602,7 +1602,7 @@ export function genericType(config: T.GenericType.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    typeField(value?: T._TypeIdentifier | T.ReservedIdentifier | T.ScopedTypeIdentifier) { return _fs(config, genericType, 'type', value, fields.type); },
+    typeField(value?: T.TypeIdentifier | T.Identifier | T.ScopedTypeIdentifier) { return _fs(config, genericType, 'type', value, fields.type); },
     typeArguments(value?: T.TypeArguments) { return _fs(config, genericType, 'typeArguments', value, fields.type_arguments); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -1623,7 +1623,7 @@ export function genericTypeWithTurbofish(config: T.GenericTypeWithTurbofish.Conf
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    typeField(value?: T._TypeIdentifier | T.ScopedIdentifier) { return _fs(config, genericTypeWithTurbofish, 'type', value, fields.type); },
+    typeField(value?: T.TypeIdentifier | T.ScopedIdentifier) { return _fs(config, genericTypeWithTurbofish, 'type', value, fields.type); },
     typeArguments(value?: T.TypeArguments) { return _fs(config, genericTypeWithTurbofish, 'typeArguments', value, fields.type_arguments); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -1668,7 +1668,7 @@ export function useBounds(config: T.UseBounds.Config) {
     $children: children,
     use(value?: "use") { return _fs(config, useBounds, 'use', value, fields.use); },
     getChildren() { return children; },
-    setChildren(...items: (T.Lifetime | T._TypeIdentifier)[]) { return useBounds({ ...config, children: items }); },
+    setChildren(...items: (T.Lifetime | T.TypeIdentifier)[]) { return useBounds({ ...config, children: items }); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1704,7 +1704,7 @@ export function typeBinding(config: T.TypeBinding.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    name(value?: T._TypeIdentifier) { return _fs(config, typeBinding, 'name', value, fields.name); },
+    name(value?: T.TypeIdentifier) { return _fs(config, typeBinding, 'name', value, fields.name); },
     typeArguments(value?: T.TypeArguments | undefined) { return _fs(config, typeBinding, 'typeArguments', value, fields.type_arguments); },
     typeField(value?: T._Type) { return _fs(config, typeBinding, 'type', value, fields.type); },
     render() { return render(this); },
@@ -1771,7 +1771,7 @@ export function abstractType(config: T.AbstractType.Config) {
     $named: true as const,
     $fields: fields,
     typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, abstractType, 'typeParameters', value, fields.type_parameters); },
-    trait(value?: T._TypeIdentifier | T.ScopedTypeIdentifier | T.RemovedTraitBound | T.GenericType | T.FunctionType | T.TupleType | T.BoundedType) { return _fs(config, abstractType, 'trait', value, fields.trait); },
+    trait(value?: T.TypeIdentifier | T.ScopedTypeIdentifier | T.RemovedTraitBound | T.GenericType | T.FunctionType | T.TupleType | T.BoundedType) { return _fs(config, abstractType, 'trait', value, fields.trait); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1792,7 +1792,7 @@ export function dynamicType(config: T.DynamicType.Config) {
     $named: true as const,
     $fields: fields,
     dyn(value?: "dyn") { return _fs(config, dynamicType, 'dyn', value, fields.dyn); },
-    trait(value?: T.HigherRankedTraitBound | T._TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType | T.FunctionType | T.TupleType) { return _fs(config, dynamicType, 'trait', value, fields.trait); },
+    trait(value?: T.HigherRankedTraitBound | T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType | T.FunctionType | T.TupleType) { return _fs(config, dynamicType, 'trait', value, fields.trait); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1824,7 +1824,7 @@ export function macroInvocation(config: T.MacroInvocation.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    macro(value?: T.ScopedIdentifier | T.Identifier | T.ReservedIdentifier) { return _fs(config, macroInvocation, 'macro', value, fields.macro); },
+    macro(value?: T.ScopedIdentifier | T.Identifier) { return _fs(config, macroInvocation, 'macro', value, fields.macro); },
     tokenTree(value?: T.TokenTree) { return _fs(config, macroInvocation, 'tokenTree', value, fields.token_tree); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -1882,7 +1882,7 @@ export function scopedTypeIdentifierInExpressionPosition(config: T.ScopedTypeIde
     $named: true as const,
     $fields: fields,
     path(value?: T.Path | T.GenericType | undefined) { return _fs(config, scopedTypeIdentifierInExpressionPosition, 'path', value, fields.path); },
-    name(value?: T._TypeIdentifier) { return _fs(config, scopedTypeIdentifierInExpressionPosition, 'name', value, fields.name); },
+    name(value?: T.TypeIdentifier) { return _fs(config, scopedTypeIdentifierInExpressionPosition, 'name', value, fields.name); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1903,7 +1903,7 @@ export function scopedTypeIdentifier(config: T.ScopedTypeIdentifier.Config) {
     $named: true as const,
     $fields: fields,
     path(value?: T.Path | T.GenericType | T.BracketedType | undefined) { return _fs(config, scopedTypeIdentifier, 'path', value, fields.path); },
-    name(value?: T._TypeIdentifier) { return _fs(config, scopedTypeIdentifier, 'name', value, fields.name); },
+    name(value?: T.TypeIdentifier) { return _fs(config, scopedTypeIdentifier, 'name', value, fields.name); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2318,7 +2318,7 @@ export function structExpression(config: T.StructExpression.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    name(value?: T._TypeIdentifier | T.ScopedTypeIdentifier | T.GenericTypeWithTurbofish) { return _fs(config, structExpression, 'name', value, fields.name); },
+    name(value?: T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericTypeWithTurbofish) { return _fs(config, structExpression, 'name', value, fields.name); },
     body(value?: T.FieldInitializerList) { return _fs(config, structExpression, 'body', value, fields.body); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -2377,7 +2377,7 @@ export function fieldInitializer(config: T.FieldInitializer.Config) {
     $named: true as const,
     $fields: fields,
     $children: children,
-    field(value?: T._FieldIdentifier | T.IntegerLiteral) { return _fs(config, fieldInitializer, 'field', value, fields.field); },
+    field(value?: T.FieldIdentifier | T.IntegerLiteral) { return _fs(config, fieldInitializer, 'field', value, fields.field); },
     value(value?: T.Expression) { return _fs(config, fieldInitializer, 'value', value, fields.value); },
     getChildren() { return children; },
     setChildren(...items: T.AttributeItem[]) { return fieldInitializer({ ...config, children: items }); },
@@ -2866,7 +2866,7 @@ export function fieldExpression(config: T.FieldExpression.Config) {
     $named: true as const,
     $fields: fields,
     value(value?: T.Expression) { return _fs(config, fieldExpression, 'value', value, fields.value); },
-    field(value?: T._FieldIdentifier | T.IntegerLiteral) { return _fs(config, fieldExpression, 'field', value, fields.field); },
+    field(value?: T.FieldIdentifier | T.IntegerLiteral) { return _fs(config, fieldExpression, 'field', value, fields.field); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -3062,7 +3062,7 @@ export function structPattern(config: T.StructPattern.Config) {
     $named: true as const,
     $fields: fields,
     $children: children,
-    typeField(value?: T._TypeIdentifier | T.ScopedTypeIdentifier) { return _fs(config, structPattern, 'type', value, fields.type); },
+    typeField(value?: T.TypeIdentifier | T.ScopedTypeIdentifier) { return _fs(config, structPattern, 'type', value, fields.type); },
     getChildren() { return children; },
     setChildren(...items: (T.FieldPattern | T.RemainingFieldPattern)[]) { return structPattern({ ...config, children: items }); },
     render() { return render(this); },
@@ -3880,7 +3880,7 @@ export function fieldPatternNamed(config: T.FieldPatternNamed.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    name(value?: T._FieldIdentifier) { return _fs(config, fieldPatternNamed, 'name', value, fields.name); },
+    name(value?: T.FieldIdentifier) { return _fs(config, fieldPatternNamed, 'name', value, fields.name); },
     pattern(value?: T.Pattern) { return _fs(config, fieldPatternNamed, 'pattern', value, fields.pattern); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {

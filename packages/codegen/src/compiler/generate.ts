@@ -10,6 +10,7 @@ import { link } from './link.ts'
 import { optimize } from './optimize.ts'
 import { assemble } from './assemble.ts'
 import { resolveGrammarJsPath, resolveOverridesPath } from './resolve-grammar.ts'
+import { tracePhaseRules, traceAssembleNodes } from './trace.ts'
 
 import { emitGrammar } from '../emitters/grammar.ts'
 import { emitTypes } from '../emitters/types.ts'
@@ -113,16 +114,21 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 
     // Phase 1: Evaluate
     const raw = await evaluate(entryPath)
+    tracePhaseRules('evaluate', raw.rules)
 
     // Phase 2: Link — pass the include filter so derivation passes
     // know whether to mutate the rule tree or only log to the sidecar.
     const linked = link(raw, cfg.include)
+    tracePhaseRules('link', linked.rules)
 
     // Phase 3: Optimize
     const optimized = optimize(linked)
+    tracePhaseRules('optimize', optimized.rules)
+    tracePhaseRules('simplify', optimized.simplifiedRules)
 
     // Phase 4: Assemble
     const nodeMap = assemble(optimized)
+    traceAssembleNodes('assemble', nodeMap.nodes as unknown as Map<string, never>)
 
     // Phase 5: Emit — every emitter consumes NodeMap directly. The
     // ir-namespace keys are populated on each AssembledNode during

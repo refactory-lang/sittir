@@ -5,15 +5,21 @@ rules:
   module: $$$CHILDREN
   import_statement:
     template: $IMPORT $$$NAME
+    joinBy: ","
+    joinByTrailing: true
     joinByField:
       name: ","
   relative_import: $IMPORT_PREFIX $DOTTED_NAME
   future_import_statement:
-    template: $FROM __future__ import $$$NAME$$$CHILDREN
+    template: $FROM __future__ import $$$NAME
+    joinBy: ","
+    joinByTrailing: true
     joinByField:
       name: ","
   import_from_statement:
     template: from $MODULE_NAME import $$$CHILDREN$$$NAME$$$WILDCARD_IMPORT
+    joinBy: ","
+    joinByTrailing: true
     joinByField:
       name: ","
   aliased_import: $NAME as $ALIAS
@@ -62,7 +68,7 @@ rules:
     joinBy: ","
     joinByField:
       value: ","
-  finally_clause: "finally:\n  $BLOCK\n"
+  finally_clause: "finally:\n  $$$CHILDREN$BLOCK\n"
   with_statement: "$ASYNC with $WITH_CLAUSE:\n  $BODY\n"
   with_clause:
     template: $$$CHILDREN
@@ -72,8 +78,14 @@ rules:
   function_definition:
     template: "$ASYNC def $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE_CLAUSE:\n  $BODY\n"
     return_type_clause: "->$RETURN_TYPE"
-  parameters: ($$$CHILDREN)
-  lambda_parameters: $$$CHILDREN
+  parameters:
+    template: ($$$CHILDREN)
+    joinBy: ","
+    joinByTrailing: true
+  lambda_parameters:
+    template: $$$CHILDREN
+    joinBy: ","
+    joinByTrailing: true
   list_splat: "*$EXPRESSION"
   dictionary_splat: "**$EXPRESSION"
   global_statement:
@@ -115,7 +127,7 @@ rules:
     template: "{$$$KEY $$$VALUE$$$CHILDREN}"
     joinBy: ","
     joinByTrailing: true
-  keyword_pattern: $IDENTIFIER=$SIMPLE_PATTERN
+  keyword_pattern: $IDENTIFIER=$$$CHILDREN$SIMPLE_PATTERN
   splat_pattern: $IDENTIFIER $$$CHILDREN
   class_pattern:
     template: $DOTTED_NAME($$$ARGUMENTS)
@@ -124,8 +136,14 @@ rules:
     joinByField:
       arguments: ","
   complex_pattern: $REAL $$$CHILDREN$IMAGINARY+
-  tuple_pattern: ($$$CHILDREN)
-  list_pattern: "[$$$CHILDREN]"
+  tuple_pattern:
+    template: ($$$CHILDREN)
+    joinBy: ","
+    joinByTrailing: true
+  list_pattern:
+    template: "[$$$CHILDREN]"
+    joinBy: ","
+    joinByTrailing: true
   default_parameter: $NAME=$VALUE
   typed_default_parameter: "$NAME:$TYPE=$VALUE"
   list_splat_pattern: "*$$$CHILDREN"
@@ -168,9 +186,18 @@ rules:
   constrained_type: "$BASE_TYPE:$CONSTRAINT"
   member_type: $BASE_TYPE.$IDENTIFIER
   keyword_argument: $NAME=$VALUE
-  list: "[$$$CHILDREN]"
-  set: "{$$$CHILDREN}"
-  tuple: ($$$CHILDREN)
+  list:
+    template: "[$$$CHILDREN]"
+    joinBy: ","
+    joinByTrailing: true
+  set:
+    template: "{$$$CHILDREN}"
+    joinBy: ","
+    joinByTrailing: true
+  tuple:
+    template: ($$$CHILDREN)
+    joinBy: ","
+    joinByTrailing: true
   dictionary:
     template: "{$$$CHILDREN}"
     joinBy: ","

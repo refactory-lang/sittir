@@ -158,7 +158,8 @@ export function wrapImportStatement(data: _NodeData, tree: TreeHandle): WrappedN
   return {
     ...data,
     get import() { return drillIn(data.$fields?.['import'], tree); },
-    get child() { return drillIn(data.$children?.[0], tree); },
+    get name() { return drillInAll(data.$fields?.['name'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<ImportStatement>;
 }
 
@@ -175,7 +176,8 @@ export function wrapFutureImportStatement(data: _NodeData, tree: TreeHandle): Wr
   return {
     ...data,
     get from() { return drillIn(data.$fields?.['from'], tree); },
-    get child() { return drillIn(data.$children?.[0], tree); },
+    get name() { return drillInAll(data.$fields?.['name'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<FutureImportStatement>;
 }
 
@@ -184,6 +186,7 @@ export function wrapImportFromStatement(data: _NodeData, tree: TreeHandle): Wrap
     ...data,
     get moduleName() { return drillIn(data.$fields?.['module_name'], tree); },
     get wildcardImport() { return drillIn(data.$fields?.['wildcard_import'], tree); },
+    get name() { return drillInAll(data.$fields?.['name'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<ImportFromStatement>;
 }
@@ -421,14 +424,14 @@ export function wrapFunctionDefinition(data: _NodeData, tree: TreeHandle): Wrapp
 export function wrapParameters(data: _NodeData, tree: TreeHandle): WrappedNode<Parameters> {
   return {
     ...data,
-    get child() { return drillIn(data.$children?.[0], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<Parameters>;
 }
 
 export function wrapLambdaParameters(data: _NodeData, tree: TreeHandle): WrappedNode<LambdaParameters> {
   return {
     ...data,
-    get child() { return drillIn(data.$children?.[0], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<LambdaParameters>;
 }
 
@@ -600,6 +603,8 @@ export function wrap_TuplePattern(data: _NodeData, tree: TreeHandle): WrappedNod
 export function wrapDictPattern(data: _NodeData, tree: TreeHandle): WrappedNode<DictPattern> {
   return {
     ...data,
+    get key() { return drillInAll(data.$fields?.['key'], tree); },
+    get value() { return drillInAll(data.$fields?.['value'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<DictPattern>;
 }
@@ -656,14 +661,14 @@ export function wrapPatterns(data: _NodeData, tree: TreeHandle): WrappedNode<Pat
 export function wrapTuplePattern(data: _NodeData, tree: TreeHandle): WrappedNode<TuplePattern> {
   return {
     ...data,
-    get child() { return drillIn(data.$children?.[0], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<TuplePattern>;
 }
 
 export function wrapListPattern(data: _NodeData, tree: TreeHandle): WrappedNode<ListPattern> {
   return {
     ...data,
-    get child() { return drillIn(data.$children?.[0], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<ListPattern>;
 }
 
@@ -918,21 +923,21 @@ export function wrapKeywordArgument(data: _NodeData, tree: TreeHandle): WrappedN
 export function wrapList(data: _NodeData, tree: TreeHandle): WrappedNode<List> {
   return {
     ...data,
-    get child() { return drillIn(data.$children?.[0], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<List>;
 }
 
 export function wrapSet(data: _NodeData, tree: TreeHandle): WrappedNode<Set> {
   return {
     ...data,
-    get child() { return drillIn(data.$children?.[0], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<Set>;
 }
 
 export function wrapTuple(data: _NodeData, tree: TreeHandle): WrappedNode<Tuple> {
   return {
     ...data,
-    get child() { return drillIn(data.$children?.[0], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<Tuple>;
 }
 
@@ -956,7 +961,8 @@ export function wrapListComprehension(data: _NodeData, tree: TreeHandle): Wrappe
   return {
     ...data,
     get body() { return drillIn(data.$fields?.['body'], tree); },
-    get child() { return drillIn(data.$children?.[0], tree); },
+    get forInClause() { return drillIn(data.$fields?.['for_in_clause'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<ListComprehension>;
 }
 
@@ -964,7 +970,8 @@ export function wrapDictionaryComprehension(data: _NodeData, tree: TreeHandle): 
   return {
     ...data,
     get body() { return drillIn(data.$fields?.['body'], tree); },
-    get child() { return drillIn(data.$children?.[0], tree); },
+    get forInClause() { return drillIn(data.$fields?.['for_in_clause'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<DictionaryComprehension>;
 }
 
@@ -972,7 +979,8 @@ export function wrapSetComprehension(data: _NodeData, tree: TreeHandle): Wrapped
   return {
     ...data,
     get body() { return drillIn(data.$fields?.['body'], tree); },
-    get child() { return drillIn(data.$children?.[0], tree); },
+    get forInClause() { return drillIn(data.$fields?.['for_in_clause'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<SetComprehension>;
 }
 
@@ -980,7 +988,8 @@ export function wrapGeneratorExpression(data: _NodeData, tree: TreeHandle): Wrap
   return {
     ...data,
     get body() { return drillIn(data.$fields?.['body'], tree); },
-    get child() { return drillIn(data.$children?.[0], tree); },
+    get forInClause() { return drillIn(data.$fields?.['for_in_clause'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<GeneratorExpression>;
 }
 
