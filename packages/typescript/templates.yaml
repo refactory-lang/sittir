@@ -21,7 +21,7 @@ rules:
     template: type $NAME $ALIAS_CLAUSE
     alias_clause: as $ALIAS
   declaration: $$$CHILDREN
-  import_statement: import $IMPORT_CLAUSE $FROM_CLAUSE $IMPORT_ATTRIBUTE $SEMICOLON
+  import_statement: import $IMPORT_CLAUSE $$$CHILDREN$FROM$SOURCE$FROM_CLAUSE $IMPORT_ATTRIBUTE $SEMICOLON
   import_clause:
     variants:
       namespace_import: $$$CHILDREN
@@ -85,7 +85,7 @@ rules:
   parenthesized_expression: ($$$CHILDREN $TYPE)
   expression: $$$CHILDREN
   primary_expression: $$$CHILDREN
-  yield_expression: yield $EXPRESSION
+  yield_expression: yield $$$CHILDREN$EXPRESSION
   object:
     template: "{$$$CHILDREN}"
     joinBy: ","
@@ -187,7 +187,7 @@ rules:
   function_signature: $ASYNC function $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $$$CHILDREN
   decorator_parenthesized_expression: ($$$CHILDREN)
   type_assertion: $TYPE_ARGUMENTS $EXPRESSION
-  as_expression: $EXPRESSION as $TYPE_ANNOTATION
+  as_expression: $EXPRESSION as $$$CHILDREN$TYPE_ANNOTATION
   satisfies_expression: $EXPRESSION satisfies $TYPE_ANNOTATION
   instantiation_expression: $EXPRESSION $TYPE_ARGUMENTS
   import_require_clause: $IDENTIFIER=require($SOURCE)
@@ -197,16 +197,18 @@ rules:
   implements_clause:
     template: $IMPLEMENTS $$$CHILDREN
     joinBy: ","
-  ambient_declaration: declare $DECLARATION
+  ambient_declaration: declare $$$CHILDREN$DECLARATION
   abstract_class_declaration: $$$DECORATOR abstract class $NAME $TYPE_PARAMETERS $CLASS_HERITAGE $BODY
   module: $MODULE $NAME $BODY
   internal_module: $NAMESPACE $NAME $BODY
-  import_alias: import $NAME=$VALUE $SEMICOLON
+  import_alias: import $NAME=$$$CHILDREN$VALUE $SEMICOLON
   nested_type_identifier: $MODULE.$NAME
   interface_declaration: interface $NAME $TYPE_PARAMETERS $EXTENDS_TYPE_CLAUSE $BODY
   extends_type_clause:
     template: $EXTENDS $$$TYPE
     joinBy: ","
+    joinByField:
+      type: ","
   enum_declaration: $CONST enum $NAME $BODY
   enum_body:
     template: "{$$$OPENING}"

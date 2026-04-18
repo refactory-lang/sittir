@@ -3,15 +3,26 @@ grammar: python
 grammarSha: ""
 rules:
   module: $$$CHILDREN
-  import_statement: $IMPORT $$$NAME
+  import_statement:
+    template: $IMPORT $$$NAME
+    joinByField:
+      name: ","
   relative_import: $IMPORT_PREFIX $DOTTED_NAME
-  future_import_statement: $FROM __future__ import $$$NAME$$$CHILDREN
-  import_from_statement: from $MODULE_NAME import $$$WILDCARD_IMPORT
+  future_import_statement:
+    template: $FROM __future__ import $$$NAME$$$CHILDREN
+    joinByField:
+      name: ","
+  import_from_statement:
+    template: from $MODULE_NAME import $$$CHILDREN$$$NAME$$$WILDCARD_IMPORT
+    joinByField:
+      name: ","
   aliased_import: $NAME as $ALIAS
   print_statement:
     template: print $$$CHILDREN $$$ARGUMENT
     joinBy: ","
     joinByTrailing: true
+    joinByField:
+      argument: ","
   chevron: ">>$EXPRESSION"
   assert_statement:
     template: $ASSERT $$$CHILDREN
@@ -33,6 +44,8 @@ rules:
     template: "$MATCH $$$SUBJECT:$BODY"
     joinBy: ","
     joinByTrailing: true
+    joinByField:
+      subject: ","
   case_clause:
     template: "$CASE $$$CHILDREN $GUARD:\n  $CONSEQUENCE\n"
     joinBy: ","
@@ -47,6 +60,8 @@ rules:
     template: "$EXCEPT $$$VALUE $ALIAS_CLAUSE:$$$CHILDREN"
     alias_clause: as $ALIAS
     joinBy: ","
+    joinByField:
+      value: ","
   finally_clause: "finally:\n  $BLOCK\n"
   with_statement: "$ASYNC with $WITH_CLAUSE:\n  $BODY\n"
   with_clause:
@@ -108,7 +123,7 @@ rules:
     joinByTrailing: true
     joinByField:
       arguments: ","
-  complex_pattern: $REAL $IMAGINARY+$$$CHILDREN
+  complex_pattern: $REAL $$$CHILDREN$IMAGINARY+
   tuple_pattern: ($$$CHILDREN)
   list_pattern: "[$$$CHILDREN]"
   default_parameter: $NAME=$VALUE
@@ -139,6 +154,8 @@ rules:
     template: "$VALUE[$$$SUBSCRIPT]"
     joinBy: ","
     joinByTrailing: true
+    joinByField:
+      subscript: ","
   slice:
     template: "$START:$STOP $STEP_CLAUSE"
     step_clause: ":$STEP"

@@ -15,7 +15,7 @@
 // Summary
 // ---------------------------------------------------------------
 // Field inferences:  0  (0 applied, 0 held)
-// Rule promotions:   24  (24 applied, 0 held)
+// Rule promotions:   31  (24 applied, 7 held)
 // Repeated shapes:   0  (advisory — suggested supertypes/groups)
 
 // ---------------------------------------------------------------
@@ -24,6 +24,56 @@
 // that mirrors the shape you'd hand-write yourself.
 // ---------------------------------------------------------------
 export const suggestedRules = {
+  // --- Polymorph candidates (wrap each choice arm in variant()) ---
+  // [held] polymorph — 1 choice position(s), 2 arm(s) total
+  "future_import_statement": ($, original) => transform(original, {
+    "3/0": variant("_import_list"),
+    "3/1": variant("paren"),
+  }),
+
+  // [held] polymorph — 1 choice position(s), 3 arm(s) total
+  // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: wildcard_import
+  "import_from_statement": ($, original) => transform(original, {
+    "3/0": variant("wildcard_import"),
+    "3/1": variant("_import_list"),
+    "3/2": variant("paren"),
+  }),
+
+  // [held] polymorph — 1 choice position(s), 5 arm(s) total
+  "expression_statement": ($, original) => transform(original, {
+    "0": variant("expression"),
+    "1": variant("form_1"),
+    "2": variant("assignment"),
+    "3": variant("augmented_assignment"),
+    "4": variant("yield"),
+  }),
+
+  // [held] polymorph — 1 choice position(s), 2 arm(s) total
+  "with_clause": ($, original) => transform(original, {
+    "0": variant("form_0"),
+    "1": variant("paren"),
+  }),
+
+  // [held] polymorph — 1 choice position(s), 3 arm(s) total
+  "_suite": ($, original) => transform(original, {
+    "0": variant("block"),
+    "1": variant("block2"),
+    "2": variant("block3"),
+  }),
+
+  // [held] polymorph — 1 choice position(s), 3 arm(s) total
+  "case_pattern": ($, original) => transform(original, {
+    "0": variant("as_pattern"),
+    "1": variant("keyword_pattern"),
+    "2": variant("_simple_pattern"),
+  }),
+
+  // [held] polymorph — 1 choice position(s), 2 arm(s) total
+  "yield": ($, original) => transform(original, {
+    "1/0": variant("from"),
+    "1/1": variant("form_1"),
+  }),
+
   // --- Promoted supertypes (add matching names to grammar.supertypes) ---
   // [applied] promoted supertype
   "_statement": $ => choice($._simple_statements, $.if_statement, $.for_statement, $.while_statement, $.try_statement, $.with_statement, $.function_definition, $.class_definition, $.decorated_definition, $.match_statement),
@@ -98,10 +148,17 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "import_prefix", classification: "terminal", applied: true },
   { kind: "integer", classification: "terminal", applied: true },
   { kind: "line_continuation", classification: "terminal", applied: true },
+  { kind: "_suite", classification: "polymorph", applied: false },
   { kind: "assignment", classification: "polymorph", applied: true },
   { kind: "assignment_eq", classification: "polymorph", applied: true },
   { kind: "assignment_type", classification: "polymorph", applied: true },
   { kind: "assignment_typed", classification: "polymorph", applied: true },
+  { kind: "case_pattern", classification: "polymorph", applied: false },
+  { kind: "expression_statement", classification: "polymorph", applied: false },
+  { kind: "future_import_statement", classification: "polymorph", applied: false },
+  { kind: "import_from_statement", classification: "polymorph", applied: false },
+  { kind: "with_clause", classification: "polymorph", applied: false },
+  { kind: "yield", classification: "polymorph", applied: false },
 ];
 
 export interface InferredField {

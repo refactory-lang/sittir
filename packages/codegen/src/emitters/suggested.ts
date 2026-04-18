@@ -17,6 +17,7 @@
  */
 
 import type { NodeMap, DerivationLog, InferredFieldEntry, PromotedRuleEntry, RepeatedShapeEntry, Rule } from '../compiler/rule.ts'
+import { findAllPolymorphCandidates, type PolymorphCandidateLocation } from '../compiler/link.ts'
 
 /**
  * Locate the first CHOICE reachable from the rule root through the
@@ -30,20 +31,81 @@ import type { NodeMap, DerivationLog, InferredFieldEntry, PromotedRuleEntry, Rep
  * candidate despite Link's suggestion (rare but possible when multiple
  * passes run; defensive).
  */
+/**
+ * Derive readable arm names for a polymorph candidate's choice. Priority:
+ * explicit variant() label (set by `tagVariants`) → named symbol target →
+ * leading string literal in a seq → `form${i}` fallback. Names collide-
+ * unique via a running count so `registerPolymorphVariant`'s uniqueness
+ * guard accepts the set.
+ */
+function armNamesFor(cand: PolymorphCandidateLocation): string[] {
+    const counts = new Map<string, number>()
+    return cand.choice.members.map((m, i) => {
+        let base: string
+        if (m.type === 'variant') {
+            base = m.name
+        } else if (m.type === 'symbol' || m.type === 'supertype') {
+            base = m.name
+        } else if (m.type === 'seq') {
+            const firstNamed = m.members.find(mm => mm.type === 'symbol' || mm.type === 'supertype')
+            if (firstNamed && (firstNamed.type === 'symbol' || firstNamed.type === 'supertype')) {
+                base = firstNamed.name
+            } else {
+                const firstLit = m.members.find(mm => mm.type === 'string')
+                if (firstLit && firstLit.type === 'string' && /^[a-zA-Z_][a-zA-Z0-9_]*$/.test(firstLit.value)) {
+                    base = firstLit.value
+                } else {
+                    base = `form${i}`
+                }
+            }
+        } else {
+            base = `form${i}`
+        }
+        const seen = counts.get(base) ?? 0
+        counts.set(base, seen + 1)
+        return seen === 0 ? base : `${base}${seen + 1}`
+    })
+}
+
 function locateTopLevelChoice(
     rule: Rule,
 ): { choicePath: string; arms: string[] } | null {
+    // Derive a short, readable name for an unnamed choice arm. Used when
+    // suggesting `variant(...)` for bare choices (no explicit variant()
+    // markers). Priority: symbol/supertype name → leading string literal
+    // → `form${i}`. The name is a suggestion the grammar author can
+    // refine — the important property is that distinct arms get distinct
+    // names so `registerPolymorphVariant`'s uniqueness guard accepts the
+    // set at eval time.
+    function armName(node: Rule, index: number): string {
+        if (node.type === 'variant') return node.name
+        if (node.type === 'symbol' || node.type === 'supertype') return node.name
+        if (node.type === 'seq' && node.members.length > 0) {
+            // Lead with the first literal ('(' → 'paren', '[' → 'bracket')
+            // or the first symbol name.
+            for (const m of node.members) {
+                if (m.type === 'symbol' || m.type === 'supertype') return m.name
+                if (m.type === 'string') {
+                    // Crude but serviceable — caller can rename.
+                    const s = m.value
+                    if (/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(s)) return s
+                }
+            }
+        }
+        return `form${index}`
+    }
+
     function walk(node: Rule, path: string): { choicePath: string; arms: string[] } | null {
         if (node.type === 'choice') {
-            // Disambiguate duplicate variant names — `tagVariants`
-            // assigns the same label to structurally-identical
-            // alternatives (e.g. export_statement has three "export"
-            // variants). Appending a 2/3/... suffix to collisions keeps
-            // them unique for `registerPolymorphVariant`'s uniqueness
-            // guard, which rejects same-parent duplicates at eval time.
+            // Disambiguate duplicate arm names — `tagVariants` assigns
+            // the same label to structurally-identical alternatives
+            // (e.g. export_statement has three "export" variants).
+            // Appending a 2/3/... suffix keeps them unique for
+            // `registerPolymorphVariant`'s uniqueness guard, which
+            // rejects same-parent duplicates at eval time.
             const counts = new Map<string, number>()
             const arms = node.members.map((m, i) => {
-                const base = m.type === 'variant' ? m.name : `form${i}`
+                const base = armName(m, i)
                 const seen = counts.get(base) ?? 0
                 counts.set(base, seen + 1)
                 return seen === 0 ? base : `${base}${seen + 1}`
@@ -57,6 +119,14 @@ function locateTopLevelChoice(
                 if (sub) return sub
             }
             return null
+        }
+        if (node.type === 'field') {
+            // Field wrappers around choices — the common pattern the
+            // promotePolymorph pass used to miss (e.g. python's
+            // `field('wildcard_import', choice(...))`). Descend; the
+            // emitted `variant()` overrides will replace the choice arms
+            // and the author can optionally drop the outer field wrapper.
+            return walk(node.content, path === '' ? '0' : `${path}/0`)
         }
         if (node.type === 'optional' || node.type === 'variant' || node.type === 'group' || node.type === 'clause') {
             return walk(node.content, path === '' ? '0' : `${path}/0`)
@@ -332,28 +402,44 @@ export function emitSuggested(config: EmitSuggestedConfig): string {
     }
     for (const entry of polymorphHolds) {
         const rule = nodeMap.rules?.[entry.kind]
-        const located = rule ? locateTopLevelChoice(rule) : null
-        if (!located) {
-            // Link flagged this kind as a polymorph candidate but the
-            // emitter can't locate a reachable top-level choice via the
-            // supported wrapper set. Surface the skip as a comment so
-            // the Link/emitter disagreement is visible rather than
-            // silently dropping the suggestion.
+        if (!rule) {
             emit(entry.kind, () => {
-                const topType = rule?.type ?? '(no rule)'
-                lines.push(`  // [held] polymorph — couldn't locate top-level choice under '${topType}'; emitter's wrapper set may need extending`)
+                lines.push(`  // [held] polymorph — rule '${entry.kind}' not found in NodeMap.rules`)
                 lines.push('')
             })
             continue
         }
-        const { choicePath, arms } = located
-        emit(entry.kind, () => {
-            lines.push(`  // [held] polymorph — ${arms.length} alternative(s)`)
-            lines.push(`  ${quoteKey(entry.kind)}: ($, original) => transform(original, {`)
-            arms.forEach((armName, i) => {
-                const key = choicePath === '' ? `${i}` : `${choicePath}/${i}`
-                lines.push(`    ${JSON.stringify(key)}: variant(${JSON.stringify(armName)}),`)
+        const candidates = findAllPolymorphCandidates(rule)
+        if (candidates.length === 0) {
+            // Link flagged this kind as a polymorph candidate but the
+            // emitter can't locate a reachable choice. Surface the skip
+            // as a comment so the Link/emitter disagreement is visible
+            // rather than silently dropping the suggestion.
+            emit(entry.kind, () => {
+                lines.push(`  // [held] polymorph — link flagged as candidate but findAllPolymorphCandidates found no qualifying choice (top-level: ${rule.type})`)
+                lines.push('')
             })
+            continue
+        }
+        // Emit one transform block with a variant() patch per choice
+        // position. Multiple candidates per rule combine — e.g. python's
+        // import_from_statement has both a module_name choice (relative
+        // vs dotted) and a wildcard_import choice (wildcard vs list).
+        emit(entry.kind, () => {
+            const total = candidates.reduce((s, c) => s + c.choice.members.length, 0)
+            lines.push(`  // [held] polymorph — ${candidates.length} choice position(s), ${total} arm(s) total`)
+            if (candidates.some(c => c.fieldWrapperName)) {
+                const wrapped = candidates.filter(c => c.fieldWrapperName).map(c => c.fieldWrapperName).join(', ')
+                lines.push(`  // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: ${wrapped}`)
+            }
+            lines.push(`  ${quoteKey(entry.kind)}: ($, original) => transform(original, {`)
+            for (const cand of candidates) {
+                const arms = armNamesFor(cand)
+                arms.forEach((armName, i) => {
+                    const key = cand.path === '' ? `${i}` : `${cand.path}/${i}`
+                    lines.push(`    ${JSON.stringify(key)}: variant(${JSON.stringify(armName)}),`)
+                })
+            }
             lines.push('  }),')
             lines.push('')
         })

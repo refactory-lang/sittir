@@ -171,7 +171,17 @@ function render(node: AnyNodeData, ctx: InternalRenderContext): string {
 			if (pfx.length === 3 || pfx === `${prefix}${prefix}${prefix}`) {
 				const items = Array.isArray(value) ? value : [value];
 				const sep = resolveJoinBy(ruleObj, name);
-				return items.map(item => renderValue(item as AnyNodeData | string | number, ctx)).join(sep);
+				// Filter anonymous tokens out of multi-valued field
+				// rendering — they're template-structural (commas,
+				// delimiters) and belong in the joinBy, not in the value
+				// list. Mirrors the rule for `$$$CHILDREN`. A lone
+				// anonymous token on a single-value field survives
+				// because the else-branch below skips this filter.
+				const named = items.filter(item => {
+					if (typeof item !== 'object' || item === null) return true;
+					return (item as AnyNodeData).$named !== false;
+				});
+				return named.map(item => renderValue(item as AnyNodeData | string | number, ctx)).join(sep);
 			}
 			if (Array.isArray(value)) {
 				// Empty array in a single-slot field position means

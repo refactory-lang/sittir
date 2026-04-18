@@ -249,6 +249,7 @@ export function importStatement(config: T.ImportStatement.Config) {
   const fields = {
     import_clause: config?.importClause,
     from_clause: config?.fromClause,
+    source: config?.source,
     import_attribute: config?.importAttribute,
     semicolon: config?.semicolon,
   };
@@ -259,6 +260,7 @@ export function importStatement(config: T.ImportStatement.Config) {
     $fields: fields,
     importClause(value?: "type" | "typeof" | undefined) { return _fs(config, importStatement, 'importClause', value, fields.import_clause); },
     fromClause(value?: T.ImportClause | T.FromClause | T.ImportRequireClause | T.String) { return _fs(config, importStatement, 'fromClause', value, fields.from_clause); },
+    source(value?: T.String | undefined) { return _fs(config, importStatement, 'source', value, fields.source); },
     importAttribute(value?: T.ImportAttribute | undefined) { return _fs(config, importStatement, 'importAttribute', value, fields.import_attribute); },
     semicolon(value?: T.Semicolon) { return _fs(config, importStatement, 'semicolon', value, fields.semicolon); },
     render() { return render(this); },

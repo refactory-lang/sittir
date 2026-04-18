@@ -569,6 +569,7 @@ export interface ImportStatement {
   readonly $fields: {
     readonly import_clause?: "type" | "typeof";
     readonly from_clause: ImportClause | FromClause | ImportRequireClause | String;
+    readonly source?: String;
     readonly import_attribute?: ImportAttribute;
     readonly semicolon: Semicolon;
   };

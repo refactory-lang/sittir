@@ -523,6 +523,7 @@ export function importStatementFrom(input: T.ImportStatement | T.ImportStatement
   return F.importStatement({
     importClause: _resolveOne<NonNullable<T.ImportStatement.Config['importClause']>>((input as T.ImportStatement.Loose).importClause, _K1, _K1),
     fromClause: _resolveOne<NonNullable<T.ImportStatement.Config['fromClause']>>((input as T.ImportStatement.Loose).fromClause, _K1, _K2),
+    source: _resolveOneBranch<NonNullable<T.ImportStatement.Config['source']>>((input as T.ImportStatement.Loose).source, "string"),
     importAttribute: _resolveOneBranch<NonNullable<T.ImportStatement.Config['importAttribute']>>((input as T.ImportStatement.Loose).importAttribute, "import_attribute"),
     semicolon: _resolveOneLeaf<NonNullable<T.ImportStatement.Config['semicolon']>>((input as T.ImportStatement.Loose).semicolon, "_automatic_semicolon"),
   });

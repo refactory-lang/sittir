@@ -15,7 +15,7 @@
 // Summary
 // ---------------------------------------------------------------
 // Field inferences:  9  (0 applied, 9 held)
-// Rule promotions:   51  (50 applied, 1 held)
+// Rule promotions:   73  (50 applied, 23 held)
 // Repeated shapes:   5  (advisory — suggested supertypes/groups)
 
 // ---------------------------------------------------------------
@@ -67,10 +67,183 @@ export const suggestedRules = {
   // [held] "type_arguments" field 'bounds' on $.trait_bounds — 100% agreement, 5 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
 
   // --- Polymorph candidates (wrap each choice arm in variant()) ---
-  // [held] polymorph — 2 alternative(s)
+  // [held] polymorph — 1 choice position(s), 2 arm(s) total
+  "expression_statement": ($, original) => transform(original, {
+    "0": variant("semi"),
+    "1": variant("_expression_ending_with_block"),
+  }),
+
+  // [held] polymorph — 2 choice position(s), 5 arm(s) total
+  // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: name, rules
+  "macro_definition": ($, original) => transform(original, {
+    "1/0": variant("identifier"),
+    "1/1": variant("_reserved_identifier"),
+    "2/0": variant("paren"),
+    "2/1": variant("bracket"),
+    "2/2": variant("brace"),
+  }),
+
+  // [held] polymorph — 1 choice position(s), 10 arm(s) total
+  // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: left
+  "where_predicate": ($, original) => transform(original, {
+    "0/0": variant("lifetime"),
+    "0/1": variant("_type_identifier"),
+    "0/2": variant("scoped_type_identifier"),
+    "0/3": variant("generic_type"),
+    "0/4": variant("reference_type"),
+    "0/5": variant("pointer_type"),
+    "0/6": variant("tuple_type"),
+    "0/7": variant("array_type"),
+    "0/8": variant("higher_ranked_trait_bound"),
+    "0/9": variant("primitive_type"),
+  }),
+
+  // [held] polymorph — 1 choice position(s), 2 arm(s) total
+  // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: pattern
+  "parameter": ($, original) => transform(original, {
+    "1/0": variant("_pattern"),
+    "1/1": variant("self"),
+  }),
+
+  // [held] polymorph — 1 choice position(s), 2 arm(s) total
   "visibility_modifier": ($, original) => transform(original, {
     "0": variant("crate"),
     "1": variant("pub"),
+  }),
+
+  // [held] polymorph — 1 choice position(s), 2 arm(s) total
+  "bracketed_type": ($, original) => transform(original, {
+    "1/0": variant("_type"),
+    "1/1": variant("qualified_type"),
+  }),
+
+  // [held] polymorph — 1 choice position(s), 3 arm(s) total
+  // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: type
+  "generic_type": ($, original) => transform(original, {
+    "0/0": variant("_type_identifier"),
+    "0/1": variant("_reserved_identifier"),
+    "0/2": variant("scoped_type_identifier"),
+  }),
+
+  // [held] polymorph — 1 choice position(s), 2 arm(s) total
+  // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: type
+  "generic_type_with_turbofish": ($, original) => transform(original, {
+    "0/0": variant("_type_identifier"),
+    "0/1": variant("scoped_identifier"),
+  }),
+
+  // [held] polymorph — 2 choice position(s), 6 arm(s) total
+  // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: left, right
+  "bounded_type": ($, original) => transform(original, {
+    "0/0": variant("lifetime"),
+    "0/1": variant("_type"),
+    "0/2": variant("use_bounds"),
+    "2/0": variant("lifetime"),
+    "2/1": variant("_type"),
+    "2/2": variant("use_bounds"),
+  }),
+
+  // [held] polymorph — 1 choice position(s), 7 arm(s) total
+  // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: trait
+  "abstract_type": ($, original) => transform(original, {
+    "2/0": variant("_type_identifier"),
+    "2/1": variant("scoped_type_identifier"),
+    "2/2": variant("removed_trait_bound"),
+    "2/3": variant("generic_type"),
+    "2/4": variant("function_type"),
+    "2/5": variant("tuple_type"),
+    "2/6": variant("bounded_type"),
+  }),
+
+  // [held] polymorph — 1 choice position(s), 6 arm(s) total
+  // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: trait
+  "dynamic_type": ($, original) => transform(original, {
+    "1/0": variant("higher_ranked_trait_bound"),
+    "1/1": variant("_type_identifier"),
+    "1/2": variant("scoped_type_identifier"),
+    "1/3": variant("generic_type"),
+    "1/4": variant("function_type"),
+    "1/5": variant("tuple_type"),
+  }),
+
+  // [held] polymorph — 1 choice position(s), 3 arm(s) total
+  // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: macro
+  "macro_invocation": ($, original) => transform(original, {
+    "0/0": variant("scoped_identifier"),
+    "0/1": variant("identifier"),
+    "0/2": variant("_reserved_identifier"),
+  }),
+
+  // [held] polymorph — 1 choice position(s), 2 arm(s) total
+  // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: mutable_specifier
+  "reference_expression": ($, original) => transform(original, {
+    "1/0": variant("raw"),
+    "1/1": variant("form_1"),
+  }),
+
+  // [held] polymorph — 1 choice position(s), 3 arm(s) total
+  // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: name
+  "struct_expression": ($, original) => transform(original, {
+    "0/0": variant("_type_identifier"),
+    "0/1": variant("scoped_type_identifier"),
+    "0/2": variant("generic_type_with_turbofish"),
+  }),
+
+  // [held] polymorph — 1 choice position(s), 2 arm(s) total
+  // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: field
+  "field_initializer": ($, original) => transform(original, {
+    "1/0": variant("_field_identifier"),
+    "1/1": variant("integer_literal"),
+  }),
+
+  // [held] polymorph — 1 choice position(s), 5 arm(s) total
+  "_let_chain": ($, original) => transform(original, {
+    "0": variant("_let_chain"),
+    "1": variant("_let_chain2"),
+    "2": variant("let_condition"),
+    "3": variant("let_condition2"),
+    "4": variant("_expression"),
+  }),
+
+  // [held] polymorph — 1 choice position(s), 2 arm(s) total
+  // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: field
+  "field_expression": ($, original) => transform(original, {
+    "2/0": variant("_field_identifier"),
+    "2/1": variant("integer_literal"),
+  }),
+
+  // [held] polymorph — 1 choice position(s), 2 arm(s) total
+  // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: type
+  "struct_pattern": ($, original) => transform(original, {
+    "0/0": variant("_type_identifier"),
+    "0/1": variant("scoped_type_identifier"),
+  }),
+
+  // [held] polymorph — rule '_line_doc_comment_marker' not found in NodeMap.rules
+
+  // [held] polymorph — rule '_block_doc_comment_marker' not found in NodeMap.rules
+
+  // [held] polymorph — 1 choice position(s), 5 arm(s) total
+  "let_chain": ($, original) => transform(original, {
+    "0": variant("andand"),
+    "1": variant("andand2"),
+    "2": variant("andand3"),
+    "3": variant("andand4"),
+    "4": variant("andand5"),
+  }),
+
+  // [held] polymorph — 1 choice position(s), 2 arm(s) total
+  // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: left
+  "range_pattern_left": ($, original) => transform(original, {
+    "0/0": variant("_literal_pattern"),
+    "0/1": variant("_path"),
+  }),
+
+  // [held] polymorph — 1 choice position(s), 2 arm(s) total
+  // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: right
+  "range_pattern_prefix": ($, original) => transform(original, {
+    "1/0": variant("_literal_pattern"),
+    "1/1": variant("_path"),
   }),
 
   // --- Promoted supertypes (add matching names to grammar.supertypes) ---
@@ -166,34 +339,56 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "outer_doc_comment_marker", classification: "terminal", applied: true },
   { kind: "unit_expression", classification: "terminal", applied: true },
   { kind: "unit_type", classification: "terminal", applied: true },
+  { kind: "_block_doc_comment_marker", classification: "polymorph", applied: false },
+  { kind: "_let_chain", classification: "polymorph", applied: false },
+  { kind: "_line_doc_comment_marker", classification: "polymorph", applied: false },
+  { kind: "abstract_type", classification: "polymorph", applied: false },
   { kind: "array_expression", classification: "polymorph", applied: true },
   { kind: "array_expression_list", classification: "polymorph", applied: true },
   { kind: "array_expression_semi", classification: "polymorph", applied: true },
+  { kind: "bounded_type", classification: "polymorph", applied: false },
+  { kind: "bracketed_type", classification: "polymorph", applied: false },
   { kind: "closure_expression", classification: "polymorph", applied: true },
   { kind: "closure_expression_block", classification: "polymorph", applied: true },
   { kind: "closure_expression_expr", classification: "polymorph", applied: true },
+  { kind: "dynamic_type", classification: "polymorph", applied: false },
+  { kind: "expression_statement", classification: "polymorph", applied: false },
+  { kind: "field_expression", classification: "polymorph", applied: false },
+  { kind: "field_initializer", classification: "polymorph", applied: false },
   { kind: "field_pattern", classification: "polymorph", applied: true },
   { kind: "field_pattern_named", classification: "polymorph", applied: true },
   { kind: "field_pattern_shorthand", classification: "polymorph", applied: true },
+  { kind: "generic_type", classification: "polymorph", applied: false },
+  { kind: "generic_type_with_turbofish", classification: "polymorph", applied: false },
+  { kind: "let_chain", classification: "polymorph", applied: false },
+  { kind: "macro_definition", classification: "polymorph", applied: false },
+  { kind: "macro_invocation", classification: "polymorph", applied: false },
   { kind: "mod_item", classification: "polymorph", applied: true },
   { kind: "mod_item_external", classification: "polymorph", applied: true },
   { kind: "mod_item_inline", classification: "polymorph", applied: true },
   { kind: "or_pattern", classification: "polymorph", applied: true },
   { kind: "or_pattern_binary", classification: "polymorph", applied: true },
   { kind: "or_pattern_prefix", classification: "polymorph", applied: true },
+  { kind: "parameter", classification: "polymorph", applied: false },
   { kind: "range_expression", classification: "polymorph", applied: true },
   { kind: "range_expression_bare", classification: "polymorph", applied: true },
   { kind: "range_expression_binary", classification: "polymorph", applied: true },
   { kind: "range_expression_postfix", classification: "polymorph", applied: true },
   { kind: "range_expression_prefix", classification: "polymorph", applied: true },
   { kind: "range_pattern", classification: "polymorph", applied: true },
+  { kind: "range_pattern_left", classification: "polymorph", applied: false },
   { kind: "range_pattern_left", classification: "polymorph", applied: true },
+  { kind: "range_pattern_prefix", classification: "polymorph", applied: false },
   { kind: "range_pattern_prefix", classification: "polymorph", applied: true },
+  { kind: "reference_expression", classification: "polymorph", applied: false },
+  { kind: "struct_expression", classification: "polymorph", applied: false },
   { kind: "struct_item", classification: "polymorph", applied: true },
   { kind: "struct_item_brace", classification: "polymorph", applied: true },
   { kind: "struct_item_tuple", classification: "polymorph", applied: true },
   { kind: "struct_item_unit", classification: "polymorph", applied: true },
+  { kind: "struct_pattern", classification: "polymorph", applied: false },
   { kind: "visibility_modifier", classification: "polymorph", applied: false },
+  { kind: "where_predicate", classification: "polymorph", applied: false },
 ];
 
 export interface InferredField {

@@ -639,7 +639,7 @@ function deriveFieldsRaw(
                 && !isOptional
                 && !innerShape.optional
                 && (isNonEmpty || innerShape.nonEmpty)
-            return [{
+            const outerField: AssembledField = {
                 name: rule.name,
                 propertyName,
                 paramName: safeParamName(propertyName),
@@ -650,7 +650,35 @@ function deriveFieldsRaw(
                 literalValues: literalValues.length > 0 ? literalValues : undefined,
                 source: rule.source ?? 'grammar',
                 projection: { typeName: '', kinds: contentTypes },
-            }]
+            }
+
+            // Override-wrapper fields wrapping a choice whose branches
+            // carry their own inner fields (e.g. Python's import_from_statement
+            // where `field('wildcard_import', choice(wildcard_import,
+            // _import_list, ...))` and `_import_list` expands to a commaSep1
+            // of `field('name', ...)`). Tree-sitter at parse time assigns
+            // whichever field the concrete branch declares, so BOTH the
+            // outer wrapper name AND any inner field names can appear in
+            // the live parse. The factory needs parameters for both so the
+            // generated Config surface / fluent setters match runtime
+            // reality. Descend into the choice and merge inner fields.
+            // Duplicate-name drops silently (outer wins) — a field name
+            // shared between inner and outer is the rare pathological case
+            // and the outer wrapper's declared shape is canonical.
+            if (rule.source === 'override' && rule.content.type === 'choice') {
+                const innerFields = deriveFieldsRaw(rule.content, true, isRepeated, false)
+                const seen = new Set([rule.name])
+                const extras: AssembledField[] = []
+                for (const f of innerFields) {
+                    if (seen.has(f.name)) continue
+                    seen.add(f.name)
+                    // Inner branches are alternatives, so inner fields are
+                    // structurally optional from the parent's perspective.
+                    extras.push({ ...f, required: false })
+                }
+                if (extras.length > 0) return [outerField, ...extras]
+            }
+            return [outerField]
         }
         case 'seq':
             return rule.members.flatMap(m => deriveFieldsRaw(m, isOptional, isRepeated, isNonEmpty))
@@ -1980,8 +2008,25 @@ function walkRuleForTemplate(
         }
 
         case 'repeat':
-        case 'repeat1':
-            return walkRuleForTemplate(rule.content, seen, true, clauses, rules, repeatedFields, undefined, wordMatcher)
+        case 'repeat1': {
+            // Propagate the repeat's separator as a per-slot joinBy when
+            // the content is a field. commaSep1 lifts `seq(X, repeat(seq(',',
+            // X)))` → `repeat1(X, separator=',')`. The field inside gets
+            // emitted as a multi-value slot via `inRepeat=true`, but
+            // without a per-slot joinBy capture it renders joined by the
+            // default `' '`.
+            if (rule.separator && joinByField) {
+                // Inline unwrap — the seq-case helper is scoped there.
+                const peel = (r: Rule): string | null => {
+                    if (r.type === 'field') return r.name
+                    if (r.type === 'optional' || r.type === 'variant' || r.type === 'clause' || r.type === 'group') return peel(r.content)
+                    return null
+                }
+                const fname = peel(rule.content)
+                if (fname && !(fname in joinByField)) joinByField[fname] = rule.separator
+            }
+            return walkRuleForTemplate(rule.content, seen, true, clauses, rules, repeatedFields, joinByField, wordMatcher)
+        }
 
         case 'field': {
             if (seen.has(rule.name)) return []
@@ -2054,6 +2099,49 @@ function walkRuleForTemplate(
             if (flank.leading) wrapped.push(flank.leading)
             wrapped.push(slot)
             if (flank.trailing) wrapped.push(flank.trailing)
+
+            // Override-wrapper fields (generated via `field('x')` one-arg
+            // placeholder) wrap the original member. If that original is a
+            // choice whose branches have their own inner fields, tree-sitter
+            // at parse time assigns the MOST SPECIFIC field (inner wins).
+            // Python's `import_from_statement` is the canonical case:
+            // `field('wildcard_import', choice(wildcard_import, _import_list,
+            // ...))` where `_import_list` expands to a commaSep1 of
+            // `field('name', ...)`. At runtime `from a import b` surfaces
+            // `name: b` (inner); `from a import b, c` surfaces `name: b`
+            // AND `wildcard_import: [',', 'c']` (the trailing comma-list
+            // attaches to the outer wrapper, the leading name to the inner
+            // field); `from a import *` surfaces only `wildcard_import: *`.
+            // Both slots must appear in the template so EITHER parse shape
+            // renders correctly. Inner placeholders come FIRST so the
+            // rendered order matches source order (inner-field position is
+            // always before the outer wrapper's trailing content). The
+            // render engine's resolveSlot returns `''` for absent slots,
+            // so the inactive one silently disappears at render time.
+            if (rule.source === 'override' && rule.content.type === 'choice') {
+                const innerSeen = new Set(seen)
+                const innerParts = walkRuleForTemplate(
+                    rule.content, innerSeen, inRepeat, clauses, rules, repeatedFields, joinByField, wordMatcher,
+                )
+                const innerPlaceholders: string[] = []
+                for (const p of innerParts) {
+                    if (p.startsWith('$') && !wrapped.includes(p)) {
+                        innerPlaceholders.push(p)
+                        // Also mark the inner field name as seen on the
+                        // outer scope so a sibling seq member doesn't emit
+                        // the placeholder a second time.
+                        const innerName = p.replace(/^\$+/, '').toLowerCase()
+                        seen.add(innerName)
+                    }
+                }
+                // Prepend inner placeholders — they surface the leading
+                // portion of the source (e.g. the first `name` before any
+                // wildcard_import separator list).
+                if (innerPlaceholders.length > 0) {
+                    wrapped.splice(0, 0, ...innerPlaceholders)
+                }
+            }
+
             return rule.blockBearer ? ['\n  ', ...wrapped, '\n'] : wrapped
         }
 

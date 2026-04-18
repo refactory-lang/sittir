@@ -268,6 +268,7 @@ export function wrapImportStatement(data: _NodeData, tree: TreeHandle): WrappedN
     ...data,
     get importClause() { return drillIn(data.$fields?.['import_clause'], tree); },
     get fromClause() { return drillIn(data.$fields?.['from_clause'], tree); },
+    get source() { return drillIn(data.$fields?.['source'], tree); },
     get importAttribute() { return drillIn(data.$fields?.['import_attribute'], tree); },
     get semicolon() { return drillIn(data.$fields?.['semicolon'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },

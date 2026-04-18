@@ -8,7 +8,7 @@ rules:
       statements: "\n"
   expression_statement: $$$CHILDREN;
   macro_definition:
-    template: macro_rules!$NAME $$$RULES
+    template: macro_rules!$NAME $$$CHILDREN$$$RULES
     joinBy: ";"
     joinByTrailing: true
   macro_rule: $LEFT=>$RIGHT
@@ -143,7 +143,7 @@ rules:
   generic_function: "$FUNCTION::$TYPE_ARGUMENTS"
   generic_type: $TYPE $TYPE_ARGUMENTS
   generic_type_with_turbofish: "$TYPE::$TYPE_ARGUMENTS"
-  bounded_type: $LEFT+$RIGHT
+  bounded_type: $$$CHILDREN$LEFT+$RIGHT
   use_bounds:
     template: $USE<$$$CHILDREN>
     joinBy: ","
@@ -154,7 +154,7 @@ rules:
     joinByTrailing: true
   type_binding: $NAME $TYPE_ARGUMENTS=$TYPE
   reference_type: "&$LIFETIME $MUTABLE_SPECIFIER $TYPE"
-  pointer_type: "*$MUTABLE_SPECIFIER $TYPE"
+  pointer_type: "*$$$CHILDREN$MUTABLE_SPECIFIER $TYPE"
   abstract_type:
     template: impl $TYPE_PARAMETERS_CLAUSE $TRAIT
     type_parameters_clause: for$TYPE_PARAMETERS
@@ -172,7 +172,7 @@ rules:
       bare: $$$CHILDREN
   unary_expression: $OPERATOR $OPERAND
   try_expression: $VALUE?
-  reference_expression: "&$MUTABLE_SPECIFIER $VALUE"
+  reference_expression: "&$$$CHILDREN$MUTABLE_SPECIFIER $VALUE"
   binary_expression: $LEFT $OPERATOR $RIGHT
   assignment_expression: $LEFT=$RIGHT
   compound_assignment_expr: $LEFT $OPERATOR $RIGHT
@@ -195,6 +195,7 @@ rules:
     joinByTrailing: true
     joinByField:
       attributes: "\n"
+      elements: ","
   struct_expression: $NAME $BODY
   field_initializer_list:
     template: "{$$$CHILDREN}"
@@ -284,7 +285,7 @@ rules:
     variants:
       binary: $$$CHILDREN
       prefix: $$$CHILDREN
-  negative_literal: "-$VALUE"
+  negative_literal: "-$$$CHILDREN$VALUE"
   string_literal: "\"$$$CHILDREN\""
   raw_string_literal: $TEXT
   comment: $$$CHILDREN

@@ -176,6 +176,21 @@ export function link(raw: RawGrammar, include?: IncludeFilter): LinkedGrammar {
                 classification: 'polymorph',
                 applied: false,
             })
+            continue
+        }
+        // Inferred polymorph candidate — a choice whose branches are
+        // structurally distinguishable (field sets differ OR branches
+        // reference distinct named kinds). Surface it so the suggester
+        // can emit a `variant()` snippet. `findPolymorphCandidate` runs
+        // its own `looksLikePolymorphCandidate` check; a return value
+        // here means the rule is genuinely a candidate.
+        const candidate = findPolymorphCandidate(rule)
+        if (candidate) {
+            derivations.promotedRules.push({
+                kind: name,
+                classification: 'polymorph',
+                applied: false,
+            })
         }
     }
 
@@ -445,10 +460,25 @@ export function promotePolymorph(rule: Rule): Rule {
     if (!found) return rule
     const { choice, prefix, suffix } = found
 
-    // Every variant must be structurally non-empty.
+    // Every variant must be DISTINGUISHABLE at the parse tree — runtime
+    // dispatch needs to tell the variants apart. A branch qualifies when
+    // any of:
+    //   - it carries inner fields,
+    //   - it has named children,
+    //   - it references a named grammar kind (bare symbol / supertype) —
+    //     tree-sitter surfaces those as a distinct `$type`, so the parse
+    //     tree alone identifies the variant.
+    // Previously the check only allowed (1) + (2), which mistakenly
+    // rejected `choice($.wildcard_import, $._import_list, seq('(', ...))`
+    // and similar — a named-symbol branch is legitimate polymorph content.
     const contents = choice.members.map(m => m.type === 'variant' ? m.content : m)
-    const anyTerminalVariant = contents.some(c => !hasAnyField(c) && !hasAnyChild(c))
-    if (anyTerminalVariant) return rule
+    const isDistinguishable = (c: Rule): boolean =>
+        hasAnyField(c)
+        || hasAnyChild(c)
+        || (c.type === 'symbol' && !c.hidden)
+        || c.type === 'supertype'
+    const anyIndistinguishable = contents.some(c => !isDistinguishable(c))
+    if (anyIndistinguishable) return rule
 
     // Compare field SETS across variants. Polymorph only applies when the
     // sets differ — homogeneous variants stay as a regular branch.
@@ -589,6 +619,167 @@ export function findVariantChoice(rule: Rule): VariantChoiceLocation | null {
         }
     }
     return null
+}
+
+/**
+ * Find a polymorph-candidate choice in a rule that does NOT already have
+ * `variant()` markers. Used to suggest NEW polymorphs where a grammar
+ * author could reasonably apply `variant()` to each arm. The candidate is
+ * strictly more permissive than `findVariantChoice` — it sees raw choices
+ * inside field wrappers too, because `field(X, choice(A, B, C))` with
+ * structurally-distinct branches is the textbook miss-case (e.g. python's
+ * `import_from_statement`).
+ *
+ * The returned `prefix` / `suffix` capture members from the enclosing seq
+ * that should travel with each form; the `fieldWrapper` (if set) is the
+ * outer `field(...)` node the choice is nested in — callers that rewrite
+ * the rule need to know to strip or repurpose that wrapper.
+ */
+export interface PolymorphCandidateLocation {
+    choice: ChoiceRule
+    prefix: Rule[]
+    suffix: Rule[]
+    /** When the choice is wrapped in `field(name, choice(...))`, the outer field name. */
+    fieldWrapperName?: string
+    /** Path from the rule root to the choice, expressed as seq-member indices. */
+    path: string
+}
+
+/**
+ * Does a bare choice look like a polymorph candidate? Criteria:
+ *   - at least 2 branches,
+ *   - every branch is structurally distinguishable at parse time
+ *     (has inner fields/children, OR references a named kind),
+ *   - branches' field sets differ (otherwise it's a homogeneous choice
+ *     that doesn't benefit from polymorph dispatch).
+ *
+ * Shared with `promotePolymorph` — same core predicate, different scope.
+ */
+export function looksLikePolymorphCandidate(choice: ChoiceRule): boolean {
+    if (choice.members.length < 2) return false
+    const contents = choice.members.map(m => m.type === 'variant' ? m.content : m)
+    // A branch is "distinguishable" when tree-sitter produces enough
+    // information to tell it apart from its siblings at parse time:
+    //   - inner fields or named children → explicit structural distinction
+    //   - named (visible) symbol reference → distinct `$type` in parse tree
+    //   - hidden symbol reference → expands in place, usually carrying
+    //     its own fields/children that surface on the parent
+    //   - supertype → dispatch-by-inner-kind
+    //   - seq wrapping any of the above → same distinction via descent
+    const isDistinguishable = (c: Rule): boolean => {
+        if (hasAnyField(c) || hasAnyChild(c)) return true
+        if (c.type === 'symbol' || c.type === 'supertype') return true
+        if (c.type === 'seq') return c.members.some(isDistinguishable)
+        if (c.type === 'optional' || c.type === 'group' || c.type === 'variant' || c.type === 'clause') return isDistinguishable(c.content)
+        if (c.type === 'repeat' || c.type === 'repeat1') return isDistinguishable(c.content)
+        return false
+    }
+    if (contents.some(c => !isDistinguishable(c))) return false
+
+    // Signature each branch — either its field set OR its top-level
+    // content-kind shape. Two bare-symbol branches with the SAME symbol
+    // name are indistinguishable (redundant choice). Two bare-symbol
+    // branches with DIFFERENT symbol names are a legitimate polymorph.
+    // Field sets alone can't tell them apart because symbols expose zero
+    // fields without cross-rule lookup.
+    const signature = (c: Rule): string => {
+        const fs = [...new Set(deriveFields(c).map(f => f.name))].sort().join(',')
+        if (fs) return `fields:${fs}`
+        if (c.type === 'symbol' || c.type === 'supertype') return `sym:${c.name}`
+        if (c.type === 'seq') return `seq:${c.members.map(signature).join('|')}`
+        return `shape:${c.type}`
+    }
+    const signatures = contents.map(signature)
+    const allSame = signatures.every(s => s === signatures[0])
+    return !allSame
+}
+
+/**
+ * Does this choice actually need `variant()` wrapping to be discriminable?
+ *
+ * An arm NEEDS variant() if parsing alone won't produce a distinct `$type`
+ * for it — i.e. hidden symbols (expand in place with no kind tag), anonymous
+ * seq/repeat/choice (no kind at all), literals, patterns. For those, variant()
+ * hoists the arm into its own aliased hidden rule so the parse tree carries
+ * a discriminating `$type`.
+ *
+ * An arm does NOT need variant() if it's a visible named symbol or supertype —
+ * tree-sitter already tags it with a distinct `$type`, and hoisting into
+ * `_parent_arm` is pure overhead (synthetic rule, extra factory noise, no
+ * render benefit).
+ *
+ * A choice needs variant() treatment iff AT LEAST ONE of its arms needs it —
+ * `tagVariants` wraps the whole choice uniformly, and the suggester mirrors
+ * that (all arms become variant() calls or none do). Choices where every arm
+ * is a visible named symbol are skipped entirely.
+ */
+export function choiceNeedsVariantWrapping(choice: ChoiceRule): boolean {
+    const armNeedsVariant = (c: Rule): boolean => {
+        // Visible named symbol — $type already discriminates.
+        if (c.type === 'symbol' && !c.hidden) return false
+        // Visible supertype — resolves to a visible symbol at parse time.
+        if (c.type === 'supertype') return false
+        // Transparent wrappers — look inside.
+        if (c.type === 'variant' || c.type === 'group' || c.type === 'clause' || c.type === 'optional') {
+            return armNeedsVariant(c.content)
+        }
+        // Everything else — hidden symbols, anonymous seqs, repeats, literals,
+        // patterns, nested choices — needs variant() to surface distinctly.
+        return true
+    }
+    const contents = choice.members.map(m => m.type === 'variant' ? m.content : m)
+    return contents.some(armNeedsVariant)
+}
+
+export function findPolymorphCandidate(rule: Rule): PolymorphCandidateLocation | null {
+    const all = findAllPolymorphCandidates(rule)
+    return all.length > 0 ? all[0]! : null
+}
+
+/**
+ * Find every polymorph candidate in a rule. A single rule can have
+ * multiple qualifying choices — e.g. python's `import_from_statement`
+ * has `module_name` (relative vs dotted) AND `wildcard_import` (wildcard
+ * vs list vs paren). The suggester emits one `variant()` snippet per
+ * candidate; the grammar author picks which ones to promote.
+ *
+ * Descends through `field(X, choice(...))` wrappers — the textbook miss
+ * case, since `tagVariants` auto-wraps choice members so the distinction
+ * "explicit variant() in override" vs "auto-tagged" can't be recovered
+ * by inspecting the choice alone.
+ */
+export function findAllPolymorphCandidates(rule: Rule): PolymorphCandidateLocation[] {
+    const qualifies = (c: ChoiceRule): boolean =>
+        looksLikePolymorphCandidate(c) && choiceNeedsVariantWrapping(c)
+
+    if (isChoice(rule)) {
+        return qualifies(rule)
+            ? [{ choice: rule, prefix: [], suffix: [], path: '' }]
+            : []
+    }
+    if (rule.type !== 'seq') return []
+
+    const out: PolymorphCandidateLocation[] = []
+    for (let i = 0; i < rule.members.length; i++) {
+        const m = rule.members[i]!
+        if (m.type === 'choice' && qualifies(m)) {
+            out.push({
+                choice: m,
+                prefix: rule.members.slice(0, i),
+                suffix: rule.members.slice(i + 1),
+                path: `${i}`,
+            })
+        } else if (m.type === 'field' && m.content.type === 'choice' && qualifies(m.content)) {
+            out.push({
+                choice: m.content,
+                prefix: rule.members.slice(0, i),
+                suffix: rule.members.slice(i + 1),
+                fieldWrapperName: m.name,
+                path: `${i}`,
+            })
+        }
+    }
+    return out
 }
 
 function setsEqual<T>(a: Set<T>, b: Set<T>): boolean {

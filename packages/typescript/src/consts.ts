@@ -764,6 +764,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'import_statement': [
     { name: 'importClause', required: false, multiple: false },
     { name: 'fromClause', required: true, multiple: false },
+    { name: 'source', required: false, multiple: false },
     { name: 'importAttribute', required: false, multiple: false },
     { name: 'semicolon', required: true, multiple: false },
   ],
