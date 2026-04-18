@@ -511,25 +511,30 @@ export type TreeNodeOf<T> = T extends { readonly $type: infer K extends string }
 	: never;
 
 /**
- * FromInputOf<T, Scalars, Strings, Depth> — widened input type derived from a concrete node interface.
- * Accepts NodeData passthroughs, strings for leaves, objects for branches.
- * Required fields stay required; optional fields stay optional.
+ * FromInputOf<T, Scalars, Strings, Depth, NsMap> — widened input type derived
+ * from a concrete node interface. Accepts NodeData passthroughs, strings for
+ * leaves, objects for branches. Required fields stay required; optional
+ * fields stay optional.
  *
  * @param Scalars - Map of leaf kind → scalar type (e.g. `{ integer_literal: number }`)
  * @param Strings - Map of leaf kind → narrowed string type (e.g. `{ boolean_literal: "true" | "false" }`)
  * @param Depth - Internal recursion counter — stops expanding at depth 3
+ * @param NsMap - Optional per-grammar NamespaceMap. When supplied, `WidenValue`
+ *   short-circuits multi-branch recursions to `NsMap[K]['Loose']` lookups (Layer
+ *   1 of spec 009 — cached indexed access instead of fresh `FromInputOf`
+ *   instantiation). When `{}` (default), falls back to recursive projection.
  */
-export type FromInputOf<T, Scalars = {}, Strings = {}, Depth extends number[] = []> = Simplify<
+export type FromInputOf<T, Scalars = {}, Strings = {}, Depth extends number[] = [], NsMap = {}> = Simplify<
 	Depth['length'] extends 3 ? T
 	: {
 		readonly [K in keyof FieldsOf<T> as K extends RequiredKeys<FieldsOf<T>> ? CamelCase<K> : never]:
-			WidenValue<FieldsOf<T>[K], Scalars, Strings, [...Depth, 0]>;
+			WidenValue<FieldsOf<T>[K], Scalars, Strings, [...Depth, 0], NsMap>;
 	} & {
 		readonly [K in keyof FieldsOf<T> as K extends RequiredKeys<FieldsOf<T>> ? never : CamelCase<K>]?:
-			WidenValue<FieldsOf<T>[K], Scalars, Strings, [...Depth, 0]>;
+			WidenValue<FieldsOf<T>[K], Scalars, Strings, [...Depth, 0], NsMap>;
 	} & {
 		readonly [K in keyof ChildSlotsOf<T>]?:
-			WidenChildSlot<ChildSlotsOf<T>[K], Scalars, Strings, [...Depth, 0]>;
+			WidenChildSlot<ChildSlotsOf<T>[K], Scalars, Strings, [...Depth, 0], NsMap>;
 	}>;
 
 /** Keys of T that are required (not optional). */
@@ -542,49 +547,80 @@ type IsSingleType<T> = [T] extends [{ readonly $type: infer K }]
 	: false;
 
 /**
+ * UnionToIntersection<U> — standard trick: distribute U over a contravariant
+ * position, then infer the intersection. Used by `IsHomogeneous`.
+ */
+type UnionToIntersection<U> =
+	(U extends unknown ? (k: U) => void : never) extends (k: infer I) => void ? I : never;
+
+/**
+ * IsHomogeneous<T, NsMap> — true when every member of a union has the same
+ * Loose projection. Lets WidenValue skip the `{ kind: K }` tag when arms are
+ * structurally interchangeable (the runtime resolver picks any of them via
+ * field-presence dispatch).
+ *
+ * Requires `NsMap` to be supplied — falls back to `false` (= heterogeneous,
+ * use tagged form) when NsMap is the empty default.
+ */
+type IsHomogeneous<T, NsMap> = [NsMap] extends [never] ? false
+	: keyof NsMap extends never ? false
+	: T extends { readonly $type: infer K extends string }
+		? K extends keyof NsMap
+			? [LooseOf<K, NsMap>] extends [UnionToIntersection<LooseOf<K, NsMap>>]
+				? [UnionToIntersection<LooseOf<K, NsMap>>] extends [LooseOf<K, NsMap>]
+					? true
+					: false
+				: false
+			: false
+		: false;
+
+/** Indexed Loose lookup — `NsMap[K]['Loose']` over each arm of K. */
+type LooseOf<K extends string, NsMap> =
+	K extends keyof NsMap
+		? NsMap[K] extends { Loose: infer L } ? L : never
+		: never;
+
+/**
  * Widen a value type for FromInput.
  * - Arrays: accept `Element[] | Element`
  * - Leaf nodes: accept `T | narrowed-string | scalar`
  * - Single branch: accept `T | FromInputOf<T>` (bare fields, no kind needed)
- * - Multi-branch union: each member needs `{ kind: K } & FromInputOf<U>`
+ * - Multi-branch homogeneous (all arms' Loose types equal): bare, no kind tag
+ * - Multi-branch heterogeneous: each member needs `{ kind: K } & FromInputOf<U>`
  * - Other: pass through unchanged (string literal unions, etc.)
- *
- * @param Strings - Maps leaf kind → narrowed string type. Falls back to `string` for unmapped kinds.
  */
-type WidenValue<T, Scalars = {}, Strings = {}, Depth extends number[] = []> =
+type WidenValue<T, Scalars = {}, Strings = {}, Depth extends number[] = [], NsMap = {}> =
 	Depth['length'] extends 3 ? T
 	: T extends readonly (infer E)[]
-		// Non-empty tuple check: `[readonly []] extends [T]` asks
-		// "can an empty array be assigned to T?". Plain arrays say
-		// yes; `NonEmptyArray<E>` says no. The square-bracket
-		// wrappers prevent distributive-conditional pitfalls over
-		// union element types.
 		? [readonly []] extends [T]
-			? (WidenValue<E, Scalars, Strings, Depth>)[] | WidenValue<E, Scalars, Strings, Depth>
-			: NonEmptyArray<WidenValue<E, Scalars, Strings, Depth>> | WidenValue<E, Scalars, Strings, Depth>
+			? (WidenValue<E, Scalars, Strings, Depth, NsMap>)[] | WidenValue<E, Scalars, Strings, Depth, NsMap>
+			: NonEmptyArray<WidenValue<E, Scalars, Strings, Depth, NsMap>> | WidenValue<E, Scalars, Strings, Depth, NsMap>
 	: T extends { readonly $type: infer K extends string; readonly $text: string }
-		// Leaf: accept node + narrowed string (or fallback to string) + matching scalar
 		? T | (K extends keyof Strings ? Strings[K] : string) | (K extends keyof Scalars ? Scalars[K] : never)
 	: T extends { readonly $type: string }
-		// Branch: check if T is a union of multiple branch types
 		? IsSingleType<T> extends true
-			// Single branch → accept bare fields (no { kind } needed)
-			? T | FromInputOf<T, Scalars, Strings, Depth>
-			// Multi branch → each member needs { kind } for discrimination
+			// Single branch → accept bare fields.
+			? T | FromInputOf<T, Scalars, Strings, Depth, NsMap>
+		: IsHomogeneous<T, NsMap> extends true
+			// Multi-branch but arms' Loose projections are structurally
+			// identical (via NsMap lookups). The runtime resolver picks
+			// any arm — no `kind` tag needed at the type level.
+			? T | FromInputOf<T, Scalars, Strings, Depth, NsMap>
+			// Heterogeneous multi-branch → tag each arm for discrimination.
 			: T extends infer U
 				? U extends { readonly $type: infer K extends string }
-					? U | ({ kind: K } & FromInputOf<U, Scalars, Strings, Depth>)
+					? U | ({ kind: K } & FromInputOf<U, Scalars, Strings, Depth, NsMap>)
 					: never
 				: never
 	: T;
 
 /** Widen a child slot type for FromInput (applies WidenValue to arrays and single values). */
-type WidenChildSlot<T, Scalars = {}, Strings = {}, Depth extends number[] = []> =
+type WidenChildSlot<T, Scalars = {}, Strings = {}, Depth extends number[] = [], NsMap = {}> =
 	T extends readonly (infer E)[]
 		? [readonly []] extends [T]
-			? WidenValue<E, Scalars, Strings, Depth>[] | WidenValue<E, Scalars, Strings, Depth>
-			: NonEmptyArray<WidenValue<E, Scalars, Strings, Depth>> | WidenValue<E, Scalars, Strings, Depth>
-		: WidenValue<T, Scalars, Strings, Depth>;
+			? WidenValue<E, Scalars, Strings, Depth, NsMap>[] | WidenValue<E, Scalars, Strings, Depth, NsMap>
+			: NonEmptyArray<WidenValue<E, Scalars, Strings, Depth, NsMap>> | WidenValue<E, Scalars, Strings, Depth, NsMap>
+		: WidenValue<T, Scalars, Strings, Depth, NsMap>;
 
 // ---------------------------------------------------------------------------
 // NodeNs<T> — single computed base per-kind namespace
@@ -610,11 +646,14 @@ type WidenChildSlot<T, Scalars = {}, Strings = {}, Depth extends number[] = []> 
  * @param Scalars - Leaf-kind → scalar projection (e.g. `{ integer_literal: number }`).
  * @param Strings - Leaf-kind → narrowed string projection (e.g. `{ boolean_literal: 'true' | 'false' }`).
  */
-export interface NodeNs<T extends { readonly $type: string }, Scalars = {}, Strings = {}> {
+export interface NodeNs<T extends { readonly $type: string }, Scalars = {}, Strings = {}, NsMap = {}> {
 	readonly Node: T;
 	readonly Config: ConfigOf<T>;
 	readonly Fluent: FluentNodeOf<T>;
-	readonly Loose: FromInputOf<T, Scalars, Strings>;
+	// Spec 009 Layer 1: `Loose` threads NsMap so WidenValue can short-circuit
+	// multi-branch recursions to `NsMap[K]['Loose']` instead of re-projecting
+	// `FromInputOf<U>` per arm.
+	readonly Loose: FromInputOf<T, Scalars, Strings, [], NsMap>;
 	readonly Tree: TreeNodeOf<T>;
 	readonly Kind: KindOf<T>;
 }
