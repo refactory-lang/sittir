@@ -25,12 +25,12 @@ describe('ir grouped sub-namespaces (SC-012)', () => {
     it('produces structurally identical output via flat vs grouped', () => {
         const flat = ir.binary({
             left: { type: 'integer_literal', text: '1' },
-            operator: '+',
+            operator: '&&',
             right: { type: 'integer_literal', text: '2' },
         })
         const grouped = ir.expression.binary({
             left: { type: 'integer_literal', text: '1' },
-            operator: '+',
+            operator: '&&',
             right: { type: 'integer_literal', text: '2' },
         })
         expect(JSON.stringify(grouped)).toBe(JSON.stringify(flat))

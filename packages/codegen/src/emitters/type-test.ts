@@ -61,26 +61,12 @@ export function emitTypeTests(config: EmitTypeTestsConfig): string {
         '',
     ]
 
-    // Imports
+    // Build the assertion body first, tracking which type names we
+    // actually reference. Then emit imports for exactly those names —
+    // nothing more. Avoids hundreds of `no-unused-vars` warnings from
+    // the prior "kitchen-sink" import list.
     const typeImports = new Set<string>()
-    for (const s of structuralKinds) {
-        typeImports.add(s.typeName)
-        typeImports.add(`${s.typeName}Config`)
-        typeImports.add(`${s.typeName}Tree`)
-        typeImports.add(`Loose${s.typeName}`)
-    }
-    for (const l of leafKinds) {
-        typeImports.add(l.typeName)
-        typeImports.add(`${l.typeName}Tree`)
-    }
-    lines.push(`import type { ${[...typeImports].sort().join(', ')} } from './types.js';`)
-    lines.push("import type { ConfigOf } from '@sittir/types';")
-    lines.push('')
-
-    // Helpers
-    lines.push('type _TypeExtends<A, B> = A extends B ? true : false;')
-    lines.push('type _TypeAssert<T extends true> = T;')
-    lines.push('')
+    const body: string[] = []
 
     // Dedup by typeName — two distinct kinds (e.g. python's `'True'` string
     // literal vs a supertype/keyword with the same PascalCase name) can
@@ -91,43 +77,55 @@ export function emitTypeTests(config: EmitTypeTestsConfig): string {
     const seenConfig = new Set<string>()
     const seenTree = new Set<string>()
 
-    // 1. type literal checks
-    lines.push('// --- Concrete interface `type` literal ---')
+    body.push('// --- Concrete interface `type` literal ---')
     for (const s of structuralKinds) {
         if (seenType.has(s.typeName)) continue
         seenType.add(s.typeName)
-        lines.push(`export type _Type_${s.typeName} = _TypeAssert<_TypeExtends<${s.typeName}['type'], '${s.kind}'>>;`)
+        typeImports.add(s.typeName)
+        body.push(`export type _Type_${s.typeName} = _TypeAssert<_TypeExtends<${s.typeName}['type'], '${s.kind}'>>;`)
     }
     for (const l of leafKinds) {
         if (seenType.has(l.typeName)) continue
         seenType.add(l.typeName)
-        lines.push(`export type _Type_${l.typeName} = _TypeAssert<_TypeExtends<${l.typeName}['type'], '${l.kind}'>>;`)
+        typeImports.add(l.typeName)
+        body.push(`export type _Type_${l.typeName} = _TypeAssert<_TypeExtends<${l.typeName}['type'], '${l.kind}'>>;`)
     }
-    lines.push('')
+    body.push('')
 
-    // 2. ConfigOf checks (skip polymorphs with variants)
-    lines.push('// --- ConfigOf<T> assignable to *Config ---')
+    body.push('// --- ConfigOf<T> assignable to *Config ---')
     for (const s of structuralKinds) {
         if (s.hasVariants) continue
         if (seenConfig.has(s.typeName)) continue
         seenConfig.add(s.typeName)
-        lines.push(`export type _Config_${s.typeName} = _TypeAssert<_TypeExtends<ConfigOf<${s.typeName}>, ${s.typeName}Config>>;`)
+        typeImports.add(s.typeName)
+        typeImports.add(`${s.typeName}Config`)
+        body.push(`export type _Config_${s.typeName} = _TypeAssert<_TypeExtends<ConfigOf<${s.typeName}>, ${s.typeName}Config>>;`)
     }
-    lines.push('')
+    body.push('')
 
-    // 3. TreeNode type literal checks
-    lines.push('// --- TreeNode types have correct `type` ---')
+    body.push('// --- TreeNode types have correct `type` ---')
     for (const s of structuralKinds) {
         if (seenTree.has(s.typeName)) continue
         seenTree.add(s.typeName)
-        lines.push(`export type _Tree_${s.typeName} = _TypeAssert<_TypeExtends<${s.typeName}Tree['type'], '${s.kind}'>>;`)
+        typeImports.add(`${s.typeName}Tree`)
+        body.push(`export type _Tree_${s.typeName} = _TypeAssert<_TypeExtends<${s.typeName}Tree['type'], '${s.kind}'>>;`)
     }
     for (const l of leafKinds) {
         if (seenTree.has(l.typeName)) continue
         seenTree.add(l.typeName)
-        lines.push(`export type _Tree_${l.typeName} = _TypeAssert<_TypeExtends<${l.typeName}Tree['type'], '${l.kind}'>>;`)
+        typeImports.add(`${l.typeName}Tree`)
+        body.push(`export type _Tree_${l.typeName} = _TypeAssert<_TypeExtends<${l.typeName}Tree['type'], '${l.kind}'>>;`)
     }
+    body.push('')
+
+    // Imports — now emitted from the narrowed set.
+    lines.push(`import type { ${[...typeImports].sort().join(', ')} } from './types.js';`)
+    lines.push("import type { ConfigOf } from '@sittir/types';")
     lines.push('')
+    lines.push('type _TypeExtends<A, B> = A extends B ? true : false;')
+    lines.push('type _TypeAssert<T extends true> = T;')
+    lines.push('')
+    lines.push(...body)
 
     return lines.join('\n')
 }

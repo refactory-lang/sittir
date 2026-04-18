@@ -108,9 +108,12 @@ export function emitIs(config: EmitIsConfig): string {
         supertypes.push({ kind, typeName, guardKey, memberKinds })
     }
 
-    // Type imports — every structural kind + supertype contributes.
+    // Type imports — only supertype typeNames are referenced at the type
+    // level (in `v is <SupertypeUnion>` return annotations). Per-kind
+    // guards narrow via string-literal type discriminants (e.g.
+    // `v is T & { readonly type: 'function_item' }`) and don't need
+    // the concrete interface imported.
     const typeImports = new Set<string>()
-    for (const s of structuralKinds) typeImports.add(s.typeName)
     for (const s of supertypes) typeImports.add(s.typeName)
 
     const lines: string[] = []

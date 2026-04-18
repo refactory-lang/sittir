@@ -836,7 +836,11 @@ function emitResolverHelpers(lines: string[], nodeMap: NodeMap): void {
     const hasBool = nodeMap.nodes.has('boolean_literal')
     const hasInt = nodeMap.nodes.has('integer_literal') || nodeMap.nodes.has('integer')
     const hasFloat = nodeMap.nodes.has('float_literal') || nodeMap.nodes.has('float')
-    lines.push('function _resolveScalar(v: boolean | number): AnyNodeData | undefined {')
+    // When the grammar declares no scalar leaf kinds the function body
+    // is empty — prefix the parameter with `_` so `oxlint` doesn't flag
+    // it. (Callers still pass arguments; the `_` is a lint convention.)
+    const scalarParam = hasBool || hasInt || hasFloat ? 'v' : '_v'
+    lines.push(`function _resolveScalar(${scalarParam}: boolean | number): AnyNodeData | undefined {`)
     if (hasBool) {
         lines.push('  if (typeof v === "boolean") {')
         lines.push('    const e = _leafRegistry["boolean_literal"];')

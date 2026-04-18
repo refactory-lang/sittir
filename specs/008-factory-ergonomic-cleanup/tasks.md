@@ -185,15 +185,20 @@
 
 ### Implementation for User Story 6
 
-- [ ] T068 [US6] Update `packages/codegen/src/emitters/factories.ts` `setChild` / `setX` body emission: stop emitting `{...(config ?? {}), children: [child]}`. Emit `{...config, children: [child]}` instead. Spread of `undefined` is safe; the `?? {}` is the visible noise. Fixes 122 `unicorn/no-useless-fallback-in-spread` warnings (FR-035).
-- [ ] T069 [US6] Audit dead-import emission across every emitter (`types.ts`, `factories.ts`, `from.ts`, `wrap.ts`, `ir.ts`, `is.ts`). Track which symbols are actually written into each output; emit imports only for those. Specifically remove: `ConfigMap`, `FluentNodeOf`, `FromInputOf`, `NodeFieldValue`, `Edit`, `NonEmptyArray`, `RESERVED_KEYWORDS` where unused (FR-036).
-- [ ] T070 [US6] Update every emitter to prefix unreferenced parameter names with `_` (e.g. `_v` instead of `v`) per FR-037. The factories emitter's `setChild` is the primary site; audit others.
-- [ ] T071 [US6] Audit regex literal emission (factory arg-validation site). Remove unnecessary escape characters so generated output parses under `no-useless-escape` per FR-038.
-- [ ] T072 [US6] Regenerate the rust grammar package. Verify `npx oxlint packages/rust/src` returns `Found 0 warnings and 0 errors`.
-- [ ] T073 [P] [US6] Regenerate the typescript grammar package; verify lint clean (same check as T072).
-- [ ] T074 [P] [US6] Regenerate the python grammar package; verify lint clean (same check as T072).
-- [ ] T075 [US6] Add CI step in `.github/workflows/ci.yml` between `type-check` and `test`: run `npx oxlint packages/rust/src packages/typescript/src packages/python/src` — exit non-zero on any warning per FR-039 and SC-014. Keep the existing `lint` step (which runs oxlint on non-generated sources) unchanged.
-- [ ] T076 [US6] Run full test suite and lint check locally: `pnpm test && pnpm -r run type-check && npx oxlint packages/{rust,typescript,python}/src` — all three must pass with zero errors and zero warnings.
+- [X] T068 [US6] `setChild`/`setChildren` now emit `{ ...config, children: [...] }` — no `(config ?? {})` fallback. Fixes 122 `unicorn/no-useless-fallback-in-spread` warnings.
+- [X] T069 [US6] Dead imports removed: `is.ts` no longer imports every structural kind (only supertype typeNames are referenced at the type level); `client-utils.ts` dropped `FluentNodeOf` / `ConfigMap`; `factories.ts` narrowed to `{ ByteRange, FluentNode }` + conditional `NonEmptyArray`; `type-test.ts` rebuilt to import only types actually referenced (was importing every `LooseX` / `XConfig` unused). Eliminates ~478 `no-unused-vars` warnings.
+- [X] T070 [US6] `_resolveScalar` in from.ts uses `_v` when the grammar declares no scalar leaf kinds (python, typescript). Parameter prefix convention applied.
+- [X] T071 [US6] New `stripUselessEscapes` helper in `factories.ts` removes ESLint-flagged `\[` and `\-` escapes inside character classes. Safe two-case strip with compile-roundtrip verification.
+- [X] T072 [US6] Rust: `npx oxlint packages/rust/src` → `Found 0 warnings and 0 errors`.
+- [X] T073 [P] [US6] TypeScript: same — 0 warnings.
+- [X] T074 [P] [US6] Python: same — 0 warnings.
+- [X] T075 [US6] CI step added to `.github/workflows/ci.yml` between `type-check` and `lint`: `npx oxlint --deny-warnings packages/rust/src packages/typescript/src packages/python/src`. Runs strictly (non-zero exit on any warning) while the broad `pnpm lint` step (non-generated sources) remains unchanged.
+- [X] T076 [US6] Full stack green: `pnpm -r run type-check && pnpm test && npx oxlint --deny-warnings packages/{rust,typescript,python}/src` — 1250 tests pass, 0 type errors, 0 lint warnings.
+
+### Bonus landing with US6
+
+- `factories.ts` fluent setter parameter renamed from `${field}_` (trailing-underscore disambiguation) to `value` for singular, `values` for rest-params. Uniform, unambiguous, clearer call-site ergonomics — no more `name_?: T.Identifier` in generated output.
+- Factory signatures for base kinds migrated from `T.${typeName}Config` to `T.${typeName}.Config` (namespace sugar). Polymorph form factories keep the flat alias because synthetic UForm kinds aren't in `NamespaceMap`. `FluentKindMap` entries also now use `.Config`.
 
 **Checkpoint**: Generated output lints clean. CI enforces the floor.
 

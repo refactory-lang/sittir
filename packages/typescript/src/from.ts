@@ -301,7 +301,7 @@ function _resolveByKind<K extends keyof _FromMap>(
   return (fn as (input?: _FromFieldInput) => ReturnType<_FromMap[K]>)(rest);
 }
 
-function _resolveScalar(v: boolean | number): AnyNodeData | undefined {
+function _resolveScalar(_v: boolean | number): AnyNodeData | undefined {
   return undefined;
 }
 
