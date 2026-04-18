@@ -158,6 +158,38 @@ This story is behaviour-preserving — no consumer-visible change. The value is:
 
 ---
 
+### User Story 7 - NodeData metadata rename (`$type` / `$fields` / `$source`) (Priority: P2)
+
+Adding `$`-prefixed NodeData discriminants eliminates the entire category of field-name collisions (Python's `type_alias_statement` has a field literally named `type` which shadows the NodeData discriminant — the US3 cast workarounds exist solely because of this). A provenance tag `$source: 'ts' | 'sg' | 'factory'` replaces the structural `'render' in input` / `isNodeData` probing with a clean discriminator.
+
+After this change, `AnyNodeData`'s shape becomes:
+```ts
+interface AnyNodeData {
+    readonly $type: string;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $fields?: Record<string, NodeFieldValue>;
+    readonly $children?: readonly NodeChildValue[];
+    readonly $text?: string;
+    readonly $named?: boolean;
+}
+```
+
+Grammar field names can freely collide with `type`, `fields`, `children`, `text`, `named` without shadowing metadata. Producers tag provenance at output time (`readNode` → `'ts'`, `wrapNode` → `'ts'`, ast-grep adapter → `'sg'`, factory output → `'factory'`). `.from()` resolvers dispatch cleanly on `$source` instead of structural probes.
+
+**Why this priority**: Confirmed 2026-04-17 that no external consumers yet — the "breaking change" concern is limited to internal code. P2 because it's independent of US4/US5/US6 (those are mechanical emitter refactors) but lands cleanest AFTER them so the metadata sweep touches a stable emitter surface once.
+
+**Independent Test**: Regenerate all three grammar packages after the sweep; confirm `tsc --noEmit` passes. Verify via `grep -rn '\.type\b' packages/*/src/*.ts` that every remaining `.type` reads is on non-NodeData objects (Rule IR, TS.Node, AssembledNode). Corpus-validation ceilings match pre-US7 values byte-for-byte.
+
+**Acceptance Scenarios**:
+
+1. **Given** a grammar with a field named `type` (e.g. Python's `type_alias_statement`), **When** regenerated, **Then** `node.fields.type` (camelCase-equivalent, actually `node.$fields.type` post-rename) refers to the field, and `node.$type` refers to the kind — no collision, no cast.
+2. **Given** a factory-built node, **When** a consumer inspects `node.$source`, **Then** they see `'factory'`.
+3. **Given** a node from `readTreeNode`, **When** the consumer inspects `node.$source`, **Then** they see `'ts'`.
+4. **Given** the `.from()` resolver post-US7, **When** the reader inspects its dispatch, **Then** it uses `input.$source === 'factory'` rather than structural probing.
+5. **Given** pre-US7 ceiling numbers, **When** the regenerated packages run corpus validation, **Then** every ceiling matches byte-for-byte.
+
+---
+
 ### Edge Cases
 
 - **Deprecation re-exports**: Old aliases (`FunctionItemConfig`, `LooseFunctionItem`, `FunctionItemTree`, `ConfigMap`, `LooseMap`) must remain available as deprecated re-exports during a transition window so consumer code doesn't break on upgrade. The spec defers removing them to a follow-up.

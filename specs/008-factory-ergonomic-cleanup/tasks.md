@@ -199,6 +199,35 @@
 
 ---
 
+## Phase 8.5: User Story 7 — NodeData metadata rename (`$`-prefix + `$source`) (Priority: P2)
+
+**Goal**: Rename NodeData discriminants to `$`-prefixed form (`$type`, `$fields`, `$children`, `$text`, `$named`) and add `$source: 'ts' | 'sg' | 'factory'` provenance tag on every producer. Eliminates field-name-vs-discriminant collisions and simplifies `.from()` dispatch to a clean `$source` check.
+
+**Independent Test**: `grep '\.type\b' packages/*/src/*.ts` shows only non-NodeData references (Rule IR, TS.Node, etc.). `grep '\.\\$type\b' packages/*/src/*.ts` shows every NodeData type-discriminant read. Corpus ceilings match pre-US7 values. `node.$source === 'factory'` for factory output.
+
+### Implementation for User Story 7
+
+- [ ] T083a [US7] Update `packages/types/src/core-types.ts` `AnyNodeData` interface: rename `type` → `$type`, `fields` → `$fields`, `children` → `$children`, `text` → `$text`, `named` → `$named`. Add `$source?: 'ts' | 'sg' | 'factory'`.
+- [ ] T083b [US7] Update `@sittir/types` transform types (`ConfigOf<T>`, `FluentNodeOf<T>`, `FromInputOf<T>`, `RuntimeNodeOf<T>`, `TreeNodeOf<T>`) to reference the new discriminant names.
+- [ ] T083c [US7] Update `@sittir/core/readNode.ts`: emit `$type`, `$fields`, `$children`, `$text`, `$named` and set `$source: 'ts'`.
+- [ ] T083d [US7] Update `@sittir/core/render.ts`: template slot lookups shift from `node.fields[raw]` / `node.children` / `node.text` to the `$`-prefixed equivalents.
+- [ ] T083e [US7] Update `@sittir/core/edit.ts` + `cst.ts` + `validate.ts` + every other core reader.
+- [ ] T083f [US7] Update `packages/codegen/src/emitters/factories.ts` to emit the `$`-prefixed metadata AND `$source: 'factory'` in factory output.
+- [ ] T083g [US7] Update `packages/codegen/src/emitters/wrap.ts`: drillIn + per-kind wrap functions use the new names; wrapNode output carries `$source: 'ts'`.
+- [ ] T083h [US7] Update `packages/codegen/src/emitters/from.ts`: `isNodeData` structural check reads `$type` / `$fields`. Dispatch in resolvers can additionally branch on `$source` when needed.
+- [ ] T083i [US7] Update `packages/codegen/src/emitters/types.ts`: data interfaces emit `$type: '<kind>'` discriminants.
+- [ ] T083j [US7] Update `packages/codegen/src/emitters/is.ts`: type guards inspect `$type`.
+- [ ] T083k [US7] Update `packages/codegen/src/emitters/client-utils.ts`: generated `isNodeData` and related helpers read `$type` / `$fields`.
+- [ ] T083l [US7] Update `packages/codegen/src/emitters/templates.ts` (render template emission) — YAML template keys shift to `$type` / `$fields` references where they appear in the query syntax.
+- [ ] T083m [US7] Update every test that constructs NodeData via object literal (`{ type: 'foo', fields: {...} }`) to use the new form. Audit via `grep -rn "type: '" packages/*/tests/ packages/*/src/__tests__/`.
+- [ ] T083n [US7] Update validators (`validate-roundtrip.ts`, `validate-from.ts`, `validate-factory-roundtrip.ts`, `validate-readnode-roundtrip.ts`) to read `$type` etc. Structural-diff comparisons align.
+- [ ] T083o [US7] Regenerate all three grammar packages. Verify `tsc --noEmit` passes and corpus-validation ceilings match pre-US7.
+- [ ] T083p [US7] `.from()` resolvers simplify: replace `isNodeData(input)` with `input.$source === 'factory' || input.$source === 'ts'`. Document in the emitter comment.
+
+**Checkpoint**: `$`-prefix discriminants + `$source` tag fully landed. No field-name-vs-discriminant collisions remain. `.from()` dispatch is clean.
+
+---
+
 ## Phase 9: Polish & Cross-Cutting Concerns
 
 **Purpose**: Final verification against all success criteria, documentation updates, and the quickstart acceptance walkthrough.
