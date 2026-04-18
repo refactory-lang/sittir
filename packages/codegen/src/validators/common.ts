@@ -198,6 +198,12 @@ const REPARSE_WRAPPERS: Record<string, Record<string, (r: string) => string>> = 
         '_declaration_statement': r => r,
         '_literal': r => `fn _f() { let _ = ${r}; }`,
         '_literal_pattern': r => `fn _f() { let ${r} = (); }`,
+        // Kind-specific: `mut_pattern` only appears inside match arms and
+        // if-let conditions — NOT in plain `let` statements (tree-sitter-rust
+        // flattens `let mut x = ..` into `let_declaration` with
+        // `mutable_specifier` + `identifier` siblings, no `mut_pattern` node).
+        // Using match-arm wrapper forces the parser to produce a mut_pattern.
+        'mut_pattern': r => `fn _f(x: i32) { match x { ${r} => () } }`,
     },
     typescript: {
         '_expression': r => `let _ = ${r};`,
@@ -228,22 +234,27 @@ export function wrapForReparse(
     grammar: string,
     kindToSupertypes: Map<string, string[]>,
 ): WrapForReparseResult | null {
-    const supertypes = kindToSupertypes.get(kind)
-    if (!supertypes || supertypes.length === 0) return null
     const wrappers = REPARSE_WRAPPERS[grammar]
     if (!wrappers) return null
-    for (const st of supertypes) {
-        const wrapper = wrappers[st]
-        if (!wrapper) continue
+    const applyWrapper = (wrapper: (r: string) => string): WrapForReparseResult => {
         const text = wrapper(rendered)
-        // Compute the insertion offset by wrapping a sentinel and
-        // locating it in the output. This is more robust than
-        // re-deriving the prefix from the template — some wrappers
-        // use helpers and we don't want to duplicate their logic.
         const SENTINEL = '\u0001SITTIR_SENTINEL\u0001'
         const sentinelText = wrapper(SENTINEL)
         const offset = sentinelText.indexOf(SENTINEL)
         return { text, offset: offset >= 0 ? offset : 0 }
+    }
+    // Kind-specific wrapper beats supertype wrapper — some kinds only
+    // appear in contexts their supertype's generic wrapper doesn't
+    // produce (e.g. rust `mut_pattern` surfaces in match/if-let but
+    // NOT in plain `let` statements, which flatten it away).
+    const direct = wrappers[kind]
+    if (direct) return applyWrapper(direct)
+    const supertypes = kindToSupertypes.get(kind)
+    if (!supertypes || supertypes.length === 0) return null
+    for (const st of supertypes) {
+        const wrapper = wrappers[st]
+        if (!wrapper) continue
+        return applyWrapper(wrapper)
     }
     return null
 }

@@ -134,7 +134,7 @@ rules:
     joinBy: ","
     joinByTrailing: true
   function_type:
-    template: $FOR_LIFETIMES $TRAIT$$$CHILDREN $PARAMETERS $RETURN_TYPE_CLAUSE
+    template: $FOR_LIFETIMES $TRAIT $PARAMETERS$$$CHILDREN $RETURN_TYPE_CLAUSE
     return_type_clause: "->$RETURN_TYPE"
   tuple_type:
     template: ($$$CHILDREN)

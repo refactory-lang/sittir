@@ -993,6 +993,7 @@ export function functionTypeFrom(input: T.FunctionType | T.FunctionType.Loose): 
     trait: _resolveOne<NonNullable<T.FunctionType.Config['trait']>>((input as T.FunctionType.Loose).trait, _K0, _K21),
     parameters: _resolveOneBranch<NonNullable<T.FunctionType.Config['parameters']>>((input as T.FunctionType.Loose).parameters, "parameters"),
     returnType: _resolveOne<NonNullable<T.FunctionType.Config['returnType']>>((input as T.FunctionType.Loose).returnType, _K9, _K10),
+    children: _resolveOneBranch<NonNullable<T.FunctionType.Config['children']>>((input as T.FunctionType.Loose).children, "function_modifiers"),
   });
 }
 

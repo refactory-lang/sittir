@@ -1218,6 +1218,7 @@ export interface FunctionType {
     readonly parameters: Parameters;
     readonly return_type?: _Type;
   };
+  readonly $children: readonly [FunctionModifiers];
 }
 
 export interface TupleType {

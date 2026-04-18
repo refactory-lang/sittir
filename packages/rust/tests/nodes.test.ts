@@ -672,12 +672,12 @@ describe('for_lifetimes', () => {
 
 describe('function_type', () => {
   it('factory produces correct type', () => {
-    const node = ir.functionType({ parameters: { $type: 'parameters', $text: 'test' } as any });
+    const node = ir.functionType({ parameters: { $type: 'parameters', $text: 'test' } as any, children: [{ $type: 'function_modifiers', $text: 'test' } as any] as any });
     expect(node.$type).toBe('function_type');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.functionType({ parameters: { $type: 'parameters', $text: 'test' } as any });
+    const node = ir.functionType({ parameters: { $type: 'parameters', $text: 'test' } as any, children: [{ $type: 'function_modifiers', $text: 'test' } as any] as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });

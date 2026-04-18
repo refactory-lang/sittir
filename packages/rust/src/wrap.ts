@@ -752,7 +752,7 @@ export function wrapFunctionType(data: _NodeData, tree: TreeHandle): WrappedNode
     get trait() { return drillIn(data.$fields?.['trait'], tree); },
     get parameters() { return drillIn(data.$fields?.['parameters'], tree); },
     get returnType() { return drillIn(data.$fields?.['return_type'], tree); },
-    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<FunctionType>;
 }
 

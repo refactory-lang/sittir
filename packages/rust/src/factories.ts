@@ -1520,15 +1520,19 @@ export function functionType(config: T.FunctionType.Config) {
     parameters: config?.parameters,
     return_type: config?.returnType,
   };
+  const children = config?.children ?? [];
   return {
     $type: 'function_type' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
+    $children: children,
     forLifetimes(value?: T.ForLifetimes | undefined) { return _fs(config, functionType, 'forLifetimes', value, fields.for_lifetimes); },
     trait(value?: T._TypeIdentifier | T.ScopedTypeIdentifier | undefined) { return _fs(config, functionType, 'trait', value, fields.trait); },
     parameters(value?: T.Parameters) { return _fs(config, functionType, 'parameters', value, fields.parameters); },
     returnType(value?: T._Type | undefined) { return _fs(config, functionType, 'returnType', value, fields.return_type); },
+    getChild() { return children[0]; },
+    setChild(child: T.FunctionModifiers) { return functionType({ ...config, children: [child] }); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
