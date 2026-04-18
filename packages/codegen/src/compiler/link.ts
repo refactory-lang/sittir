@@ -1163,10 +1163,15 @@ function classifyHiddenRule(
         return rule
     }
 
-    // Seq with fields → group (fields promoted to parent)
+    // Seq with fields → group (fields promoted to parent).
+    // Use `hasAnyField` so nested structures (repeat(field(...)),
+    // optional(field(...)), choice of fields) trigger classification,
+    // not just direct `field(...)` members. Python's `_import_list`
+    // is a textbook case: it's `seq(repeat1(field('name', ...)),
+    // optional(','))` — no direct field member, but the repeated
+    // field inside is exactly what groups are meant to capture.
     if (isSeq(rule)) {
-        const hasFields = rule.members.some(isField)
-        if (hasFields) {
+        if (hasAnyField(rule)) {
             return {
                 type: 'group',
                 name,

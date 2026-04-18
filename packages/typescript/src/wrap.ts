@@ -16,6 +16,7 @@ import type {
   ArrayType,
   ArrowFunction,
   ArrowFunctionParameter,
+  ArrowFunctionUCallSignature,
   AsExpression,
   Asserts,
   AssertsAnnotation,
@@ -26,6 +27,7 @@ import type {
   BinaryExpression,
   BreakStatement,
   CallExpression,
+  CallSignature,
   CatchClause,
   Class,
   ClassBody,
@@ -102,7 +104,6 @@ import type {
   JsxNamespaceName,
   JsxOpeningElement,
   JsxSelfClosingElement,
-  JsxStartOpeningElement,
   JsxString,
   LabeledStatement,
   LexicalDeclaration,
@@ -185,6 +186,7 @@ import type {
   WithStatement,
   YieldExpression,
   _ArrowFunctionParameter,
+  _ArrowFunctionUCallSignature,
   _ClassHeritageExtendsClause,
   _ClassHeritageImplementsClause,
   _ImportClauseDefaultImport,
@@ -348,8 +350,7 @@ export function wrapVariableDeclarator(data: _NodeData, tree: TreeHandle): Wrapp
     ...data,
     get name() { return drillIn(data.$fields?.['name'], tree); },
     get typeField() { return drillIn(data.$fields?.['type'], tree); },
-    get value() { return drillIn(data.$fields?.['value'], tree); },
-    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<VariableDeclarator>;
 }
 
@@ -414,7 +415,7 @@ export function wrapForInStatement(data: _NodeData, tree: TreeHandle): WrappedNo
     get operator() { return drillIn(data.$fields?.['operator'], tree); },
     get right() { return drillIn(data.$fields?.['right'], tree); },
     get body() { return drillIn(data.$fields?.['body'], tree); },
-    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<ForInStatement>;
 }
 
@@ -760,7 +761,7 @@ export function wrapFunctionDeclaration(data: _NodeData, tree: TreeHandle): Wrap
     get parameters() { return drillIn(data.$fields?.['parameters'], tree); },
     get returnType() { return drillIn(data.$fields?.['return_type'], tree); },
     get body() { return drillIn(data.$fields?.['body'], tree); },
-    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<FunctionDeclaration>;
 }
 
@@ -786,7 +787,7 @@ export function wrapGeneratorFunctionDeclaration(data: _NodeData, tree: TreeHand
     get parameters() { return drillIn(data.$fields?.['parameters'], tree); },
     get returnType() { return drillIn(data.$fields?.['return_type'], tree); },
     get body() { return drillIn(data.$fields?.['body'], tree); },
-    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<GeneratorFunctionDeclaration>;
 }
 
@@ -1021,7 +1022,7 @@ export function wrapClassStaticBlock(data: _NodeData, tree: TreeHandle): Wrapped
     ...data,
     get static() { return drillIn(data.$fields?.['static'], tree); },
     get body() { return drillIn(data.$fields?.['body'], tree); },
-    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<ClassStaticBlock>;
 }
 
@@ -1088,16 +1089,6 @@ export function wrapPublicFieldDefinition(data: _NodeData, tree: TreeHandle): Wr
     get value() { return drillIn(data.$fields?.['value'], tree); },
     get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<PublicFieldDefinition>;
-}
-
-export function wrapJsxStartOpeningElement(data: _NodeData, tree: TreeHandle): WrappedNode<JsxStartOpeningElement> {
-  return {
-    ...data,
-    get name() { return drillIn(data.$fields?.['name'], tree); },
-    get typeArguments() { return drillIn(data.$fields?.['type_arguments'], tree); },
-    get attribute() { return drillInAll(data.$fields?.['attribute'], tree); },
-    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
-  } as unknown as WrappedNode<JsxStartOpeningElement>;
 }
 
 export function wrapNonNullExpression(data: _NodeData, tree: TreeHandle): WrappedNode<NonNullExpression> {
@@ -1341,7 +1332,7 @@ export function wrapRequiredParameter(data: _NodeData, tree: TreeHandle): Wrappe
     get pattern() { return drillIn(data.$fields?.['pattern'], tree); },
     get typeField() { return drillIn(data.$fields?.['type'], tree); },
     get value() { return drillIn(data.$fields?.['value'], tree); },
-    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<RequiredParameter>;
 }
 
@@ -1353,7 +1344,7 @@ export function wrapOptionalParameter(data: _NodeData, tree: TreeHandle): Wrappe
     get pattern() { return drillIn(data.$fields?.['pattern'], tree); },
     get typeField() { return drillIn(data.$fields?.['type'], tree); },
     get value() { return drillIn(data.$fields?.['value'], tree); },
-    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<OptionalParameter>;
 }
 
@@ -1585,6 +1576,16 @@ export function wrapObjectType(data: _NodeData, tree: TreeHandle): WrappedNode<O
   } as unknown as WrappedNode<ObjectType>;
 }
 
+export function wrapCallSignature(data: _NodeData, tree: TreeHandle): WrappedNode<CallSignature> {
+  return {
+    ...data,
+    get typeParameters() { return drillIn(data.$fields?.['type_parameters'], tree); },
+    get parameters() { return drillIn(data.$fields?.['parameters'], tree); },
+    get returnType() { return drillIn(data.$fields?.['return_type'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<CallSignature>;
+}
+
 export function wrapPropertySignature(data: _NodeData, tree: TreeHandle): WrappedNode<PropertySignature> {
   return {
     ...data,
@@ -1767,6 +1768,16 @@ export function wrap_ArrowFunctionParameter(data: _NodeData, tree: TreeHandle): 
   } as unknown as WrappedNode<_ArrowFunctionParameter>;
 }
 
+export function wrap_ArrowFunctionUCallSignature(data: _NodeData, tree: TreeHandle): WrappedNode<_ArrowFunctionUCallSignature> {
+  return {
+    ...data,
+    get typeParameters() { return drillIn(data.$fields?.['type_parameters'], tree); },
+    get parameters() { return drillIn(data.$fields?.['parameters'], tree); },
+    get returnType() { return drillIn(data.$fields?.['return_type'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<_ArrowFunctionUCallSignature>;
+}
+
 export function wrapImportClauseNamespaceImport(data: _NodeData, tree: TreeHandle): WrappedNode<ImportClauseNamespaceImport> {
   return {
     ...data,
@@ -1839,6 +1850,16 @@ export function wrapArrowFunctionParameter(data: _NodeData, tree: TreeHandle): W
     get parameter() { return drillIn(data.$fields?.['parameter'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<ArrowFunctionParameter>;
+}
+
+export function wrapArrowFunctionUCallSignature(data: _NodeData, tree: TreeHandle): WrappedNode<ArrowFunctionUCallSignature> {
+  return {
+    ...data,
+    get typeParameters() { return drillIn(data.$fields?.['type_parameters'], tree); },
+    get parameters() { return drillIn(data.$fields?.['parameters'], tree); },
+    get returnType() { return drillIn(data.$fields?.['return_type'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<ArrowFunctionUCallSignature>;
 }
 
 export function wrapInterfaceBody(data: _NodeData, tree: TreeHandle): WrappedNode<InterfaceBody> {
@@ -1989,7 +2010,6 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'computed_property_name': (d, t) => wrapComputedPropertyName(d, t),
   '_reserved_identifier': (d) => d,
   'public_field_definition': (d, t) => wrapPublicFieldDefinition(d, t),
-  '_jsx_start_opening_element': (d, t) => wrapJsxStartOpeningElement(d, t),
   'non_null_expression': (d, t) => wrapNonNullExpression(d, t),
   'method_signature': (d, t) => wrapMethodSignature(d, t),
   'abstract_method_signature': (d, t) => wrapAbstractMethodSignature(d, t),
@@ -2046,6 +2066,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'predefined_type': (d) => d,
   'type_arguments': (d, t) => wrapTypeArguments(d, t),
   'object_type': (d, t) => wrapObjectType(d, t),
+  'call_signature': (d, t) => wrapCallSignature(d, t),
   'property_signature': (d, t) => wrapPropertySignature(d, t),
   'type_parameters': (d, t) => wrapTypeParameters(d, t),
   'type_parameter': (d, t) => wrapTypeParameter(d, t),
@@ -2069,6 +2090,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_index_signature_mapped_type_clause': (d, t) => wrap_IndexSignatureMappedTypeClause(d, t),
   '_import_specifier_name': (d, t) => wrap_ImportSpecifierName(d, t),
   '_arrow_function_parameter': (d, t) => wrap_ArrowFunctionParameter(d, t),
+  '_arrow_function__call_signature': (d, t) => wrap_ArrowFunctionUCallSignature(d, t),
   '_kw_for': (d) => d,
   '_kw_async': (d) => d,
   '_kw_static': (d) => d,
@@ -2096,6 +2118,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'class_heritage_extends_clause': (d, t) => wrapClassHeritageExtendsClause(d, t),
   'class_heritage_implements_clause': (d, t) => wrapClassHeritageImplementsClause(d, t),
   'arrow_function_parameter': (d, t) => wrapArrowFunctionParameter(d, t),
+  'arrow_function__call_signature': (d, t) => wrapArrowFunctionUCallSignature(d, t),
   'interface_body': (d, t) => wrapInterfaceBody(d, t),
   'this_type': (d) => d,
   'index_signature_colon': (d, t) => wrapIndexSignatureColon(d, t),

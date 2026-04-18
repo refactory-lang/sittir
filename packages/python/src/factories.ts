@@ -441,7 +441,7 @@ export function ifStatement(config: T.IfStatement.Config) {
     $fields: fields,
     if(value?: "if") { return _fs(config, ifStatement, 'if', value, fields.if); },
     condition(value?: T.Expression) { return _fs(config, ifStatement, 'condition', value, fields.condition); },
-    consequence(value?: T.Block) { return _fs(config, ifStatement, 'consequence', value, fields.consequence); },
+    consequence(value?: T.Suite) { return _fs(config, ifStatement, 'consequence', value, fields.consequence); },
     alternative(...values: (T.ElifClause | T.ElseClause)[]) { return _fsm(config, ifStatement, 'alternative', values, fields.alternative); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -465,7 +465,7 @@ export function elifClause(config: T.ElifClause.Config) {
     $fields: fields,
     elif(value?: "elif") { return _fs(config, elifClause, 'elif', value, fields.elif); },
     condition(value?: T.Expression) { return _fs(config, elifClause, 'condition', value, fields.condition); },
-    consequence(value?: T.Block) { return _fs(config, elifClause, 'consequence', value, fields.consequence); },
+    consequence(value?: T.Suite) { return _fs(config, elifClause, 'consequence', value, fields.consequence); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -486,7 +486,7 @@ export function elseClause(config: T.ElseClause.Config) {
     $named: true as const,
     $fields: fields,
     else(value?: "else") { return _fs(config, elseClause, 'else', value, fields.else); },
-    body(value?: T.Block) { return _fs(config, elseClause, 'body', value, fields.body); },
+    body(value?: T.Suite) { return _fs(config, elseClause, 'body', value, fields.body); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -534,7 +534,7 @@ export function caseClause(config: T.CaseClause.Config) {
     $children: children,
     case(value?: "case") { return _fs(config, caseClause, 'case', value, fields.case); },
     guard(value?: T.IfClause | undefined) { return _fs(config, caseClause, 'guard', value, fields.guard); },
-    consequence(value?: T.Block) { return _fs(config, caseClause, 'consequence', value, fields.consequence); },
+    consequence(value?: T.Suite) { return _fs(config, caseClause, 'consequence', value, fields.consequence); },
     getChildren() { return children; },
     setChildren(...items: T.CasePattern[]) {
       _assertNonEmpty(items, 'case_clause.children');
@@ -565,7 +565,7 @@ export function forStatement(config: T.ForStatement.Config) {
     async(value?: T.KwAsync | undefined) { return _fs(config, forStatement, 'async', value, fields.async); },
     left(value?: T.LeftHandSide) { return _fs(config, forStatement, 'left', value, fields.left); },
     right(value?: T.Expressions) { return _fs(config, forStatement, 'right', value, fields.right); },
-    body(value?: T.Block) { return _fs(config, forStatement, 'body', value, fields.body); },
+    body(value?: T.Suite) { return _fs(config, forStatement, 'body', value, fields.body); },
     alternative(value?: T.ElseClause | undefined) { return _fs(config, forStatement, 'alternative', value, fields.alternative); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -590,7 +590,7 @@ export function whileStatement(config: T.WhileStatement.Config) {
     $fields: fields,
     while(value?: "while") { return _fs(config, whileStatement, 'while', value, fields.while); },
     condition(value?: T.Expression) { return _fs(config, whileStatement, 'condition', value, fields.condition); },
-    body(value?: T.Block) { return _fs(config, whileStatement, 'body', value, fields.body); },
+    body(value?: T.Suite) { return _fs(config, whileStatement, 'body', value, fields.body); },
     alternative(value?: T.ElseClause | undefined) { return _fs(config, whileStatement, 'alternative', value, fields.alternative); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -613,7 +613,7 @@ export function tryStatement(config: T.TryStatement.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    body(value?: T.Block) { return _fs(config, tryStatement, 'body', value, fields.body); },
+    body(value?: T.Suite) { return _fs(config, tryStatement, 'body', value, fields.body); },
     exceptClauses(...values: T.ExceptClause[]) { return _fsm(config, tryStatement, 'exceptClauses', values, fields.except_clauses); },
     elseClause(value?: T.ElseClause | undefined) { return _fs(config, tryStatement, 'elseClause', value, fields.else_clause); },
     finallyClause(value?: T.FinallyClause | undefined) { return _fs(config, tryStatement, 'finallyClause', value, fields.finally_clause); },
@@ -643,7 +643,7 @@ export function exceptClause(config: T.ExceptClause.Config) {
     value(value?: T.Expression | undefined) { return _fs(config, exceptClause, 'value', value, fields.value); },
     alias(value?: T.Expression | undefined) { return _fs(config, exceptClause, 'alias', value, fields.alias); },
     getChild() { return children[0]; },
-    setChild(child: T.Block) { return exceptClause({ ...config, children: [child] }); },
+    setChild(child: T.Suite) { return exceptClause({ ...config, children: [child] }); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -662,7 +662,7 @@ export function finallyClause(config: T.FinallyClause.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    block(value?: T.Block) { return _fs(config, finallyClause, 'block', value, fields.block); },
+    block(value?: T.Suite) { return _fs(config, finallyClause, 'block', value, fields.block); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -685,7 +685,7 @@ export function withStatement(config: T.WithStatement.Config) {
     $fields: fields,
     async(value?: T.KwAsync | undefined) { return _fs(config, withStatement, 'async', value, fields.async); },
     withClause(value?: T.WithClause) { return _fs(config, withStatement, 'withClause', value, fields.with_clause); },
-    body(value?: T.Block) { return _fs(config, withStatement, 'body', value, fields.body); },
+    body(value?: T.Suite) { return _fs(config, withStatement, 'body', value, fields.body); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -749,7 +749,7 @@ export function functionDefinition(config: T.FunctionDefinition.Config) {
     typeParameters(value?: T.TypeParameter | undefined) { return _fs(config, functionDefinition, 'typeParameters', value, fields.type_parameters); },
     parameters(value?: T.Parameters) { return _fs(config, functionDefinition, 'parameters', value, fields.parameters); },
     returnType(value?: T.Type | undefined) { return _fs(config, functionDefinition, 'returnType', value, fields.return_type); },
-    body(value?: T.Block) { return _fs(config, functionDefinition, 'body', value, fields.body); },
+    body(value?: T.Suite) { return _fs(config, functionDefinition, 'body', value, fields.body); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -759,7 +759,8 @@ export function functionDefinition(config: T.FunctionDefinition.Config) {
   };
 }
 
-export function parameters(...children: T.Parameter[]) {
+export function parameters(child?: T._Parameters) {
+  const children = child != null ? [child] : [];
   return {
     $type: 'parameters' as const,
     $source: 'factory' as const,
@@ -774,8 +775,8 @@ export function parameters(...children: T.Parameter[]) {
   };
 }
 
-export function lambdaParameters(...children: T.Parameter[]) {
-  _assertNonEmpty(children, 'lambda_parameters.children');
+export function lambdaParameters(child: T._Parameters) {
+  const children = [child];
   return {
     $type: 'lambda_parameters' as const,
     $source: 'factory' as const,
@@ -945,7 +946,7 @@ export function classDefinition(config: T.ClassDefinition.Config) {
     name(value?: T.Identifier) { return _fs(config, classDefinition, 'name', value, fields.name); },
     typeParameters(value?: T.TypeParameter | undefined) { return _fs(config, classDefinition, 'typeParameters', value, fields.type_parameters); },
     superclasses(value?: T.ArgumentList | undefined) { return _fs(config, classDefinition, 'superclasses', value, fields.superclasses); },
-    body(value?: T.Block) { return _fs(config, classDefinition, 'body', value, fields.body); },
+    body(value?: T.Suite) { return _fs(config, classDefinition, 'body', value, fields.body); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1103,7 +1104,7 @@ export function dottedName(...children: T.Identifier[]) {
   };
 }
 
-export function casePattern(child?: (T.AsPattern | T.KeywordPattern | T.ClassPattern | T.SplatPattern | T.UnionPattern | T.ListPattern | T.TuplePattern | T.DictPattern | T.String | T.ConcatenatedString | T.True | T.False | T.None | T.Integer | T.Float | T.ComplexPattern | T.DottedName)) {
+export function casePattern(child?: (T.AsPattern | T.KeywordPattern | T.SimplePattern)) {
   const children = child != null ? [child] : [];
   return {
     $type: 'case_pattern' as const,
@@ -1119,7 +1120,7 @@ export function casePattern(child?: (T.AsPattern | T.KeywordPattern | T.ClassPat
   };
 }
 
-export function unionPattern(...children: (T.ClassPattern | T.SplatPattern | T.UnionPattern | T.ListPattern | T.TuplePattern | T.DictPattern | T.String | T.ConcatenatedString | T.True | T.False | T.None | T.Integer | T.Float | T.ComplexPattern | T.DottedName)[]) {
+export function unionPattern(...children: T.SimplePattern[]) {
   return {
     $type: 'union_pattern' as const,
     $source: 'factory' as const,
@@ -1146,7 +1147,7 @@ export function dictPattern(config?: T.DictPattern.Config) {
     $named: true as const,
     $fields: fields,
     $children: children,
-    key(...values: (T.ClassPattern | T.SplatPattern | T.UnionPattern | T.ListPattern | T.TuplePattern | T.DictPattern | T.String | T.ConcatenatedString | T.True | T.False | T.None | T.Integer | T.Float | T.ComplexPattern | T.DottedName)[]) { return _fsm(config, dictPattern, 'key', values, fields.key); },
+    key(...values: T.SimplePattern[]) { return _fsm(config, dictPattern, 'key', values, fields.key); },
     value(...values: T.CasePattern[]) { return _fsm(config, dictPattern, 'value', values, fields.value); },
     getChildren() { return children; },
     setChildren(...items: T.SplatPattern[]) { return dictPattern({ ...config, children: items }); },
@@ -1170,7 +1171,7 @@ export function keywordPattern(config: T.KeywordPattern.Config) {
     $named: true as const,
     $fields: fields,
     identifier(value?: T.Identifier) { return _fs(config, keywordPattern, 'identifier', value, fields.identifier); },
-    simplePattern(value?: T.ClassPattern | T.SplatPattern | T.UnionPattern | T.ListPattern | T.TuplePattern | T.DictPattern | T.String | T.ConcatenatedString | T.True | T.False | T.None | T.Integer | T.Float | T.ComplexPattern | T.DottedName) { return _fs(config, keywordPattern, 'simplePattern', value, fields.simple_pattern); },
+    simplePattern(value?: T.SimplePattern) { return _fs(config, keywordPattern, 'simplePattern', value, fields.simple_pattern); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1249,7 +1250,8 @@ export function complexPattern(config: T.ComplexPattern.Config) {
   };
 }
 
-export function tuplePattern(...children: T.Pattern[]) {
+export function tuplePattern(child?: T.Patterns) {
+  const children = child != null ? [child] : [];
   return {
     $type: 'tuple_pattern' as const,
     $source: 'factory' as const,
@@ -1264,7 +1266,8 @@ export function tuplePattern(...children: T.Pattern[]) {
   };
 }
 
-export function listPattern(...children: T.Pattern[]) {
+export function listPattern(child?: T.Patterns) {
+  const children = child != null ? [child] : [];
   return {
     $type: 'list_pattern' as const,
     $source: 'factory' as const,
@@ -1932,7 +1935,8 @@ export function keywordArgument(config: T.KeywordArgument.Config) {
   };
 }
 
-export function list(...children: (T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat)[]) {
+export function list(child?: T.CollectionElements) {
+  const children = child != null ? [child] : [];
   return {
     $type: 'list' as const,
     $source: 'factory' as const,
@@ -1947,7 +1951,8 @@ export function list(...children: (T.Expression | T.Yield | T.ListSplat | T.Pare
   };
 }
 
-export function set(...children: (T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat)[]) {
+export function set(child: T.CollectionElements) {
+  const children = [child];
   return {
     $type: 'set' as const,
     $source: 'factory' as const,
@@ -1962,7 +1967,8 @@ export function set(...children: (T.Expression | T.Yield | T.ListSplat | T.Paren
   };
 }
 
-export function tuple(...children: (T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat)[]) {
+export function tuple(child?: T.CollectionElements) {
+  const children = child != null ? [child] : [];
   return {
     $type: 'tuple' as const,
     $source: 'factory' as const,
@@ -2018,13 +2024,17 @@ export function listComprehension(config: T.ListComprehension.Config) {
     body: config?.body,
     for_in_clause: config?.forInClause,
   };
+  const children = config?.children ?? [];
   return {
     $type: 'list_comprehension' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
+    $children: children,
     body(value?: T.Expression) { return _fs(config, listComprehension, 'body', value, fields.body); },
     forInClause(value?: T.ForInClause) { return _fs(config, listComprehension, 'forInClause', value, fields.for_in_clause); },
+    getChildren() { return children; },
+    setChildren(...items: (T.ForInClause | T.IfClause)[]) { return listComprehension({ ...config, children: items }); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2039,13 +2049,17 @@ export function dictionaryComprehension(config: T.DictionaryComprehension.Config
     body: config?.body,
     for_in_clause: config?.forInClause,
   };
+  const children = config?.children ?? [];
   return {
     $type: 'dictionary_comprehension' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
+    $children: children,
     body(value?: T.Pair) { return _fs(config, dictionaryComprehension, 'body', value, fields.body); },
     forInClause(value?: T.ForInClause) { return _fs(config, dictionaryComprehension, 'forInClause', value, fields.for_in_clause); },
+    getChildren() { return children; },
+    setChildren(...items: (T.ForInClause | T.IfClause)[]) { return dictionaryComprehension({ ...config, children: items }); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2060,13 +2074,17 @@ export function setComprehension(config: T.SetComprehension.Config) {
     body: config?.body,
     for_in_clause: config?.forInClause,
   };
+  const children = config?.children ?? [];
   return {
     $type: 'set_comprehension' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
+    $children: children,
     body(value?: T.Expression) { return _fs(config, setComprehension, 'body', value, fields.body); },
     forInClause(value?: T.ForInClause) { return _fs(config, setComprehension, 'forInClause', value, fields.for_in_clause); },
+    getChildren() { return children; },
+    setChildren(...items: (T.ForInClause | T.IfClause)[]) { return setComprehension({ ...config, children: items }); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2081,13 +2099,17 @@ export function generatorExpression(config: T.GeneratorExpression.Config) {
     body: config?.body,
     for_in_clause: config?.forInClause,
   };
+  const children = config?.children ?? [];
   return {
     $type: 'generator_expression' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
+    $children: children,
     body(value?: T.Expression) { return _fs(config, generatorExpression, 'body', value, fields.body); },
     forInClause(value?: T.ForInClause) { return _fs(config, generatorExpression, 'forInClause', value, fields.for_in_clause); },
+    getChildren() { return children; },
+    setChildren(...items: (T.ForInClause | T.IfClause)[]) { return generatorExpression({ ...config, children: items }); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2227,7 +2249,7 @@ export function string(config: T.String.Config) {
   };
 }
 
-export function stringContent(...children: (T.EscapeInterpolation | T.EscapeSequence)[]) {
+export function stringContent(...children: (T.EscapeInterpolation | T.EscapeSequence | T.NotEscapeSequence | T._StringContent)[]) {
   return {
     $type: 'string_content' as const,
     $source: 'factory' as const,

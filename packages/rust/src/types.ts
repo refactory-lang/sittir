@@ -699,7 +699,7 @@ export interface ExpressionStatement {
 export interface MacroDefinition {
   readonly $type: 'macro_definition';
   readonly $fields: {
-    readonly name: Identifier;
+    readonly name: Identifier | ReservedIdentifier;
     readonly rules: MacroRule;
   };
 }
@@ -836,7 +836,7 @@ export interface UnionItem {
   readonly $type: 'union_item';
   readonly $fields: {
     readonly visibility_modifier?: VisibilityModifier;
-    readonly name: TypeIdentifier;
+    readonly name: _TypeIdentifier;
     readonly type_parameters?: TypeParameters;
     readonly where_clause?: WhereClause;
     readonly body: FieldDeclarationList;
@@ -847,7 +847,7 @@ export interface EnumItem {
   readonly $type: 'enum_item';
   readonly $fields: {
     readonly visibility_modifier?: VisibilityModifier;
-    readonly name: TypeIdentifier;
+    readonly name: _TypeIdentifier;
     readonly type_parameters?: TypeParameters;
     readonly where_clause?: WhereClause;
     readonly body: EnumVariantList;
@@ -878,7 +878,7 @@ export interface FieldDeclaration {
   readonly $type: 'field_declaration';
   readonly $fields: {
     readonly visibility_modifier?: VisibilityModifier;
-    readonly name: FieldIdentifier;
+    readonly name: _FieldIdentifier;
     readonly type: _Type;
   };
 }
@@ -926,7 +926,7 @@ export interface TypeItem {
   readonly $type: 'type_item';
   readonly $fields: {
     readonly visibility_modifier?: VisibilityModifier;
-    readonly name: TypeIdentifier;
+    readonly name: _TypeIdentifier;
     readonly type_parameters?: TypeParameters;
     readonly where_clause?: WhereClause;
     readonly type: _Type;
@@ -983,7 +983,7 @@ export interface WhereClause {
 export interface WherePredicate {
   readonly $type: 'where_predicate';
   readonly $fields: {
-    readonly left: Lifetime | TypeIdentifier | ScopedTypeIdentifier | GenericType | ReferenceType | PointerType | TupleType | ArrayType | HigherRankedTraitBound | PrimitiveType;
+    readonly left: Lifetime | _TypeIdentifier | ScopedTypeIdentifier | GenericType | ReferenceType | PointerType | TupleType | ArrayType | HigherRankedTraitBound | PrimitiveType;
     readonly bounds: TraitBounds;
   };
 }
@@ -993,7 +993,7 @@ export interface ImplItem {
   readonly $fields: {
     readonly unsafe?: KwUnsafe;
     readonly type_parameters?: TypeParameters;
-    readonly trait?: TypeIdentifier | ScopedTypeIdentifier | GenericType;
+    readonly trait?: _TypeIdentifier | ScopedTypeIdentifier | GenericType;
     readonly type: _Type;
     readonly body?: DeclarationList;
   };
@@ -1004,7 +1004,7 @@ export interface TraitItem {
   readonly $type: 'trait_item';
   readonly $fields: {
     readonly visibility_modifier?: VisibilityModifier;
-    readonly name: TypeIdentifier;
+    readonly name: _TypeIdentifier;
     readonly type_parameters?: TypeParameters;
     readonly bounds?: TraitBounds;
     readonly body: DeclarationList;
@@ -1015,7 +1015,7 @@ export interface TraitItem {
 export interface AssociatedType {
   readonly $type: 'associated_type';
   readonly $fields: {
-    readonly name: TypeIdentifier;
+    readonly name: _TypeIdentifier;
     readonly type_parameters?: TypeParameters;
     readonly bounds?: TraitBounds;
     readonly where_clause?: WhereClause;
@@ -1059,7 +1059,7 @@ export interface ConstParameter {
 export interface TypeParameter {
   readonly $type: 'type_parameter';
   readonly $fields: {
-    readonly name: TypeIdentifier;
+    readonly name: _TypeIdentifier;
     readonly bounds?: TraitBounds;
     readonly default_type?: _Type;
   };
@@ -1214,7 +1214,7 @@ export interface FunctionType {
   readonly $type: 'function_type';
   readonly $fields: {
     readonly for_lifetimes?: ForLifetimes;
-    readonly trait?: TypeIdentifier | ScopedTypeIdentifier;
+    readonly trait?: _TypeIdentifier | ScopedTypeIdentifier;
     readonly parameters: Parameters;
     readonly return_type?: _Type;
   };
@@ -1237,7 +1237,7 @@ export interface GenericFunction {
 export interface GenericType {
   readonly $type: 'generic_type';
   readonly $fields: {
-    readonly type: TypeIdentifier | Identifier | ScopedTypeIdentifier;
+    readonly type: _TypeIdentifier | ReservedIdentifier | ScopedTypeIdentifier;
     readonly type_arguments: TypeArguments;
   };
 }
@@ -1245,7 +1245,7 @@ export interface GenericType {
 export interface GenericTypeWithTurbofish {
   readonly $type: 'generic_type_with_turbofish';
   readonly $fields: {
-    readonly type: TypeIdentifier | ScopedIdentifier;
+    readonly type: _TypeIdentifier | ScopedIdentifier;
     readonly type_arguments: TypeArguments;
   };
 }
@@ -1263,7 +1263,7 @@ export interface UseBounds {
   readonly $fields: {
     readonly use: "use";
   };
-  readonly $children: readonly (Lifetime | TypeIdentifier)[];
+  readonly $children: readonly (Lifetime | _TypeIdentifier)[];
 }
 
 export interface TypeArguments {
@@ -1274,7 +1274,7 @@ export interface TypeArguments {
 export interface TypeBinding {
   readonly $type: 'type_binding';
   readonly $fields: {
-    readonly name: TypeIdentifier;
+    readonly name: _TypeIdentifier;
     readonly type_arguments?: TypeArguments;
     readonly type: _Type;
   };
@@ -1301,7 +1301,7 @@ export interface AbstractType {
   readonly $type: 'abstract_type';
   readonly $fields: {
     readonly type_parameters?: TypeParameters;
-    readonly trait: TypeIdentifier | ScopedTypeIdentifier | RemovedTraitBound | GenericType | FunctionType | TupleType | BoundedType;
+    readonly trait: _TypeIdentifier | ScopedTypeIdentifier | RemovedTraitBound | GenericType | FunctionType | TupleType | BoundedType;
   };
 }
 
@@ -1309,14 +1309,14 @@ export interface DynamicType {
   readonly $type: 'dynamic_type';
   readonly $fields: {
     readonly dyn: "dyn";
-    readonly trait: HigherRankedTraitBound | TypeIdentifier | ScopedTypeIdentifier | GenericType | FunctionType | TupleType;
+    readonly trait: HigherRankedTraitBound | _TypeIdentifier | ScopedTypeIdentifier | GenericType | FunctionType | TupleType;
   };
 }
 
 export interface MacroInvocation {
   readonly $type: 'macro_invocation';
   readonly $fields: {
-    readonly macro: ScopedIdentifier | Identifier;
+    readonly macro: ScopedIdentifier | Identifier | ReservedIdentifier;
     readonly token_tree: TokenTree;
   };
 }
@@ -1338,7 +1338,7 @@ export interface ScopedTypeIdentifierInExpressionPosition {
   readonly $type: 'scoped_type_identifier_in_expression_position';
   readonly $fields: {
     readonly path?: Path | GenericType;
-    readonly name: TypeIdentifier;
+    readonly name: _TypeIdentifier;
   };
 }
 
@@ -1346,7 +1346,7 @@ export interface ScopedTypeIdentifier {
   readonly $type: 'scoped_type_identifier';
   readonly $fields: {
     readonly path?: Path | GenericType | BracketedType;
-    readonly name: TypeIdentifier;
+    readonly name: _TypeIdentifier;
   };
 }
 
@@ -1478,7 +1478,7 @@ export interface TupleExpression {
 export interface StructExpression {
   readonly $type: 'struct_expression';
   readonly $fields: {
-    readonly name: TypeIdentifier | ScopedTypeIdentifier | GenericTypeWithTurbofish;
+    readonly name: _TypeIdentifier | ScopedTypeIdentifier | GenericTypeWithTurbofish;
     readonly body: FieldInitializerList;
   };
 }
@@ -1499,7 +1499,7 @@ export interface ShorthandFieldInitializer {
 export interface FieldInitializer {
   readonly $type: 'field_initializer';
   readonly $fields: {
-    readonly field: FieldIdentifier | IntegerLiteral;
+    readonly field: _FieldIdentifier | IntegerLiteral;
     readonly value: Expression;
   };
   readonly $children: readonly (AttributeItem)[];
@@ -1684,7 +1684,7 @@ export interface FieldExpression {
   readonly $type: 'field_expression';
   readonly $fields: {
     readonly value: Expression;
-    readonly field: FieldIdentifier | IntegerLiteral;
+    readonly field: _FieldIdentifier | IntegerLiteral;
   };
 }
 
@@ -1753,7 +1753,7 @@ export interface TupleStructPattern {
 export interface StructPattern {
   readonly $type: 'struct_pattern';
   readonly $fields: {
-    readonly type: TypeIdentifier | ScopedTypeIdentifier;
+    readonly type: _TypeIdentifier | ScopedTypeIdentifier;
   };
   readonly $children: readonly (FieldPattern | RemainingFieldPattern)[];
 }
@@ -2065,7 +2065,7 @@ export interface FieldPatternShorthand {
 export interface FieldPatternNamed {
   readonly $type: 'field_pattern_named';
   readonly $fields: {
-    readonly name: FieldIdentifier;
+    readonly name: _FieldIdentifier;
     readonly pattern: Pattern;
   };
 }

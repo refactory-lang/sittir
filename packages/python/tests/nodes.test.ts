@@ -200,36 +200,36 @@ describe("continue_statement", () => {
 
 describe('if_statement', () => {
   it('factory produces correct type', () => {
-    const node = ir.ifStatement({ if: 'test' as any, condition: { $type: 'expression', $text: 'test' } as any, consequence: { $type: 'block', $text: 'test' } as any });
+    const node = ir.ifStatement({ if: 'test' as any, condition: { $type: 'expression', $text: 'test' } as any, consequence: { $type: '_suite', $text: 'test' } as any });
     expect(node.$type).toBe('if_statement');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.ifStatement({ if: 'test' as any, condition: { $type: 'expression', $text: 'test' } as any, consequence: { $type: 'block', $text: 'test' } as any });
+    const node = ir.ifStatement({ if: 'test' as any, condition: { $type: 'expression', $text: 'test' } as any, consequence: { $type: '_suite', $text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
 describe('elif_clause', () => {
   it('factory produces correct type', () => {
-    const node = ir.elifClause({ elif: 'test' as any, condition: { $type: 'expression', $text: 'test' } as any, consequence: { $type: 'block', $text: 'test' } as any });
+    const node = ir.elifClause({ elif: 'test' as any, condition: { $type: 'expression', $text: 'test' } as any, consequence: { $type: '_suite', $text: 'test' } as any });
     expect(node.$type).toBe('elif_clause');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.elifClause({ elif: 'test' as any, condition: { $type: 'expression', $text: 'test' } as any, consequence: { $type: 'block', $text: 'test' } as any });
+    const node = ir.elifClause({ elif: 'test' as any, condition: { $type: 'expression', $text: 'test' } as any, consequence: { $type: '_suite', $text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
 describe('else_clause', () => {
   it('factory produces correct type', () => {
-    const node = ir.elseClause({ else: 'test' as any, body: { $type: 'block', $text: 'test' } as any });
+    const node = ir.elseClause({ else: 'test' as any, body: { $type: '_suite', $text: 'test' } as any });
     expect(node.$type).toBe('else_clause');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.elseClause({ else: 'test' as any, body: { $type: 'block', $text: 'test' } as any });
+    const node = ir.elseClause({ else: 'test' as any, body: { $type: '_suite', $text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -248,84 +248,84 @@ describe('match_statement', () => {
 
 describe('case_clause', () => {
   it('factory produces correct type', () => {
-    const node = ir.caseClause({ case: 'test' as any, consequence: { $type: 'block', $text: 'test' } as any, children: [{ $type: 'case_pattern', $text: 'test' } as any] as any });
+    const node = ir.caseClause({ case: 'test' as any, consequence: { $type: '_suite', $text: 'test' } as any, children: [{ $type: 'case_pattern', $text: 'test' } as any] as any });
     expect(node.$type).toBe('case_clause');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.caseClause({ case: 'test' as any, consequence: { $type: 'block', $text: 'test' } as any, children: [{ $type: 'case_pattern', $text: 'test' } as any] as any });
+    const node = ir.caseClause({ case: 'test' as any, consequence: { $type: '_suite', $text: 'test' } as any, children: [{ $type: 'case_pattern', $text: 'test' } as any] as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
 describe('for_statement', () => {
   it('factory produces correct type', () => {
-    const node = ir.forStatement({ left: { $type: '_left_hand_side', $text: 'test' } as any, right: { $type: '_expressions', $text: 'test' } as any, body: { $type: 'block', $text: 'test' } as any });
+    const node = ir.forStatement({ left: { $type: '_left_hand_side', $text: 'test' } as any, right: { $type: '_expressions', $text: 'test' } as any, body: { $type: '_suite', $text: 'test' } as any });
     expect(node.$type).toBe('for_statement');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.forStatement({ left: { $type: '_left_hand_side', $text: 'test' } as any, right: { $type: '_expressions', $text: 'test' } as any, body: { $type: 'block', $text: 'test' } as any });
+    const node = ir.forStatement({ left: { $type: '_left_hand_side', $text: 'test' } as any, right: { $type: '_expressions', $text: 'test' } as any, body: { $type: '_suite', $text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
 describe('while_statement', () => {
   it('factory produces correct type', () => {
-    const node = ir.whileStatement({ while: 'test' as any, condition: { $type: 'expression', $text: 'test' } as any, body: { $type: 'block', $text: 'test' } as any });
+    const node = ir.whileStatement({ while: 'test' as any, condition: { $type: 'expression', $text: 'test' } as any, body: { $type: '_suite', $text: 'test' } as any });
     expect(node.$type).toBe('while_statement');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.whileStatement({ while: 'test' as any, condition: { $type: 'expression', $text: 'test' } as any, body: { $type: 'block', $text: 'test' } as any });
+    const node = ir.whileStatement({ while: 'test' as any, condition: { $type: 'expression', $text: 'test' } as any, body: { $type: '_suite', $text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
 describe('try_statement', () => {
   it('factory produces correct type', () => {
-    const node = ir.tryStatement({ body: { $type: 'block', $text: 'test' } as any, exceptClauses: [{ $type: 'except_clause', $text: 'test' } as any] });
+    const node = ir.tryStatement({ body: { $type: '_suite', $text: 'test' } as any, exceptClauses: [{ $type: 'except_clause', $text: 'test' } as any] });
     expect(node.$type).toBe('try_statement');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.tryStatement({ body: { $type: 'block', $text: 'test' } as any, exceptClauses: [{ $type: 'except_clause', $text: 'test' } as any] });
+    const node = ir.tryStatement({ body: { $type: '_suite', $text: 'test' } as any, exceptClauses: [{ $type: 'except_clause', $text: 'test' } as any] });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
 describe('except_clause', () => {
   it('factory produces correct type', () => {
-    const node = ir.exceptClause({ except: 'test' as any, children: [{ $type: 'block', $text: 'test' } as any] as any });
+    const node = ir.exceptClause({ except: 'test' as any, children: [{ $type: '_suite', $text: 'test' } as any] as any });
     expect(node.$type).toBe('except_clause');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.exceptClause({ except: 'test' as any, children: [{ $type: 'block', $text: 'test' } as any] as any });
+    const node = ir.exceptClause({ except: 'test' as any, children: [{ $type: '_suite', $text: 'test' } as any] as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
 describe('finally_clause', () => {
   it('factory produces correct type', () => {
-    const node = ir.finallyClause({ block: { $type: 'block', $text: 'test' } as any });
+    const node = ir.finallyClause({ block: { $type: '_suite', $text: 'test' } as any });
     expect(node.$type).toBe('finally_clause');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.finallyClause({ block: { $type: 'block', $text: 'test' } as any });
+    const node = ir.finallyClause({ block: { $type: '_suite', $text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
 describe('with_statement', () => {
   it('factory produces correct type', () => {
-    const node = ir.withStatement({ withClause: { $type: 'with_clause', $text: 'test' } as any, body: { $type: 'block', $text: 'test' } as any });
+    const node = ir.withStatement({ withClause: { $type: 'with_clause', $text: 'test' } as any, body: { $type: '_suite', $text: 'test' } as any });
     expect(node.$type).toBe('with_statement');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.withStatement({ withClause: { $type: 'with_clause', $text: 'test' } as any, body: { $type: 'block', $text: 'test' } as any });
+    const node = ir.withStatement({ withClause: { $type: 'with_clause', $text: 'test' } as any, body: { $type: '_suite', $text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -352,12 +352,12 @@ describe('with_item', () => {
 
 describe('function_definition', () => {
   it('factory produces correct type', () => {
-    const node = ir.functionDefinition({ name: { $type: 'identifier', $text: 'test' } as any, parameters: { $type: 'parameters', $text: 'test' } as any, body: { $type: 'block', $text: 'test' } as any });
+    const node = ir.functionDefinition({ name: { $type: 'identifier', $text: 'test' } as any, parameters: { $type: 'parameters', $text: 'test' } as any, body: { $type: '_suite', $text: 'test' } as any });
     expect(node.$type).toBe('function_definition');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.functionDefinition({ name: { $type: 'identifier', $text: 'test' } as any, parameters: { $type: 'parameters', $text: 'test' } as any, body: { $type: 'block', $text: 'test' } as any });
+    const node = ir.functionDefinition({ name: { $type: 'identifier', $text: 'test' } as any, parameters: { $type: 'parameters', $text: 'test' } as any, body: { $type: '_suite', $text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -372,7 +372,7 @@ describe('parameters', () => {
 
 describe('lambda_parameters', () => {
   it('factory produces correct type', () => {
-    const node = ir.lambdaParameters({ type: "parameter" } as never);
+    const node = ir.lambdaParameters({ type: "_parameters" } as never);
     expect(node.$type).toBe('lambda_parameters');
     expect(node.$source).toBe('factory');
   });
@@ -452,12 +452,12 @@ describe('type_alias_statement', () => {
 
 describe('class_definition', () => {
   it('factory produces correct type', () => {
-    const node = ir.classDefinition({ class: 'test' as any, name: { $type: 'identifier', $text: 'test' } as any, body: { $type: 'block', $text: 'test' } as any });
+    const node = ir.classDefinition({ class: 'test' as any, name: { $type: 'identifier', $text: 'test' } as any, body: { $type: '_suite', $text: 'test' } as any });
     expect(node.$type).toBe('class_definition');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.classDefinition({ class: 'test' as any, name: { $type: 'identifier', $text: 'test' } as any, body: { $type: 'block', $text: 'test' } as any });
+    const node = ir.classDefinition({ class: 'test' as any, name: { $type: 'identifier', $text: 'test' } as any, body: { $type: '_suite', $text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -568,12 +568,12 @@ describe('dict_pattern', () => {
 
 describe('keyword_pattern', () => {
   it('factory produces correct type', () => {
-    const node = ir.keywordPattern({ identifier: { $type: 'identifier', $text: 'test' } as any, simplePattern: { $type: 'class_pattern', $text: 'test' } as any });
+    const node = ir.keywordPattern({ identifier: { $type: 'identifier', $text: 'test' } as any, simplePattern: { $type: '_simple_pattern', $text: 'test' } as any });
     expect(node.$type).toBe('keyword_pattern');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.keywordPattern({ identifier: { $type: 'identifier', $text: 'test' } as any, simplePattern: { $type: 'class_pattern', $text: 'test' } as any });
+    const node = ir.keywordPattern({ identifier: { $type: 'identifier', $text: 'test' } as any, simplePattern: { $type: '_simple_pattern', $text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -970,7 +970,7 @@ describe('list', () => {
 
 describe('set', () => {
   it('factory produces correct type', () => {
-    const node = ir.set();
+    const node = ir.set({ type: "_collection_elements" } as never);
     expect(node.$type).toBe('set');
     expect(node.$source).toBe('factory');
   });
@@ -1006,48 +1006,48 @@ describe('pair', () => {
 
 describe('list_comprehension', () => {
   it('factory produces correct type', () => {
-    const node = ir.listComprehension({ body: { $type: 'expression', $text: 'test' } as any, forInClause: { $type: 'for_in_clause', $text: 'test' } as any });
+    const node = ir.listComprehension({ body: { $type: 'expression', $text: 'test' } as any, forInClause: { $type: 'for_in_clause', $text: 'test' } as any, children: [{ $type: 'for_in_clause', $text: 'test' } as any] as any });
     expect(node.$type).toBe('list_comprehension');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.listComprehension({ body: { $type: 'expression', $text: 'test' } as any, forInClause: { $type: 'for_in_clause', $text: 'test' } as any });
+    const node = ir.listComprehension({ body: { $type: 'expression', $text: 'test' } as any, forInClause: { $type: 'for_in_clause', $text: 'test' } as any, children: [{ $type: 'for_in_clause', $text: 'test' } as any] as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
 describe('dictionary_comprehension', () => {
   it('factory produces correct type', () => {
-    const node = ir.dictionaryComprehension({ body: { $type: 'pair', $text: 'test' } as any, forInClause: { $type: 'for_in_clause', $text: 'test' } as any });
+    const node = ir.dictionaryComprehension({ body: { $type: 'pair', $text: 'test' } as any, forInClause: { $type: 'for_in_clause', $text: 'test' } as any, children: [{ $type: 'for_in_clause', $text: 'test' } as any] as any });
     expect(node.$type).toBe('dictionary_comprehension');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.dictionaryComprehension({ body: { $type: 'pair', $text: 'test' } as any, forInClause: { $type: 'for_in_clause', $text: 'test' } as any });
+    const node = ir.dictionaryComprehension({ body: { $type: 'pair', $text: 'test' } as any, forInClause: { $type: 'for_in_clause', $text: 'test' } as any, children: [{ $type: 'for_in_clause', $text: 'test' } as any] as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
 describe('set_comprehension', () => {
   it('factory produces correct type', () => {
-    const node = ir.setComprehension({ body: { $type: 'expression', $text: 'test' } as any, forInClause: { $type: 'for_in_clause', $text: 'test' } as any });
+    const node = ir.setComprehension({ body: { $type: 'expression', $text: 'test' } as any, forInClause: { $type: 'for_in_clause', $text: 'test' } as any, children: [{ $type: 'for_in_clause', $text: 'test' } as any] as any });
     expect(node.$type).toBe('set_comprehension');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.setComprehension({ body: { $type: 'expression', $text: 'test' } as any, forInClause: { $type: 'for_in_clause', $text: 'test' } as any });
+    const node = ir.setComprehension({ body: { $type: 'expression', $text: 'test' } as any, forInClause: { $type: 'for_in_clause', $text: 'test' } as any, children: [{ $type: 'for_in_clause', $text: 'test' } as any] as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
 describe('generator_expression', () => {
   it('factory produces correct type', () => {
-    const node = ir.generator({ body: { $type: 'expression', $text: 'test' } as any, forInClause: { $type: 'for_in_clause', $text: 'test' } as any });
+    const node = ir.generator({ body: { $type: 'expression', $text: 'test' } as any, forInClause: { $type: 'for_in_clause', $text: 'test' } as any, children: [{ $type: 'for_in_clause', $text: 'test' } as any] as any });
     expect(node.$type).toBe('generator_expression');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.generator({ body: { $type: 'expression', $text: 'test' } as any, forInClause: { $type: 'for_in_clause', $text: 'test' } as any });
+    const node = ir.generator({ body: { $type: 'expression', $text: 'test' } as any, forInClause: { $type: 'for_in_clause', $text: 'test' } as any, children: [{ $type: 'for_in_clause', $text: 'test' } as any] as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });

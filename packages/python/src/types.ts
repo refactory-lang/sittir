@@ -446,9 +446,6 @@ export interface ImportFromStatement {
 
 export interface ImportList {
   readonly $type: '_import_list';
-  readonly $fields: {
-    readonly name: NonEmptyArray<DottedName | AliasedImport>;
-  };
 }
 
 export interface AliasedImport {
@@ -525,7 +522,7 @@ export interface IfStatement {
   readonly $fields: {
     readonly if: "if";
     readonly condition: Expression;
-    readonly consequence: Block;
+    readonly consequence: Suite;
     readonly alternative?: readonly (ElifClause | ElseClause)[];
   };
 }
@@ -535,7 +532,7 @@ export interface ElifClause {
   readonly $fields: {
     readonly elif: "elif";
     readonly condition: Expression;
-    readonly consequence: Block;
+    readonly consequence: Suite;
   };
 }
 
@@ -543,7 +540,7 @@ export interface ElseClause {
   readonly $type: 'else_clause';
   readonly $fields: {
     readonly else: "else";
-    readonly body: Block;
+    readonly body: Suite;
   };
 }
 
@@ -573,7 +570,7 @@ export interface CaseClause {
   readonly $fields: {
     readonly case: "case";
     readonly guard?: IfClause;
-    readonly consequence: Block;
+    readonly consequence: Suite;
   };
   readonly $children: NonEmptyArray<CasePattern>;
 }
@@ -584,7 +581,7 @@ export interface ForStatement {
     readonly async?: KwAsync;
     readonly left: LeftHandSide;
     readonly right: Expressions;
-    readonly body: Block;
+    readonly body: Suite;
     readonly alternative?: ElseClause;
   };
 }
@@ -594,7 +591,7 @@ export interface WhileStatement {
   readonly $fields: {
     readonly while: "while";
     readonly condition: Expression;
-    readonly body: Block;
+    readonly body: Suite;
     readonly alternative?: ElseClause;
   };
 }
@@ -602,7 +599,7 @@ export interface WhileStatement {
 export interface TryStatement {
   readonly $type: 'try_statement';
   readonly $fields: {
-    readonly body: Block;
+    readonly body: Suite;
     readonly except_clauses: readonly (ExceptClause)[];
     readonly else_clause?: ElseClause;
     readonly finally_clause?: FinallyClause;
@@ -616,13 +613,13 @@ export interface ExceptClause {
     readonly value?: Expression;
     readonly alias?: Expression;
   };
-  readonly $children: readonly [Block];
+  readonly $children: readonly [Suite];
 }
 
 export interface FinallyClause {
   readonly $type: 'finally_clause';
   readonly $fields: {
-    readonly block: Block;
+    readonly block: Suite;
   };
 }
 
@@ -631,7 +628,7 @@ export interface WithStatement {
   readonly $fields: {
     readonly async?: KwAsync;
     readonly with_clause: WithClause;
-    readonly body: Block;
+    readonly body: Suite;
   };
 }
 
@@ -655,18 +652,18 @@ export interface FunctionDefinition {
     readonly type_parameters?: TypeParameter;
     readonly parameters: Parameters;
     readonly return_type?: Type;
-    readonly body: Block;
+    readonly body: Suite;
   };
 }
 
 export interface Parameters {
   readonly $type: 'parameters';
-  readonly $children: readonly (Parameter)[];
+  readonly $children: readonly [_Parameters];
 }
 
 export interface LambdaParameters {
   readonly $type: 'lambda_parameters';
-  readonly $children: NonEmptyArray<Parameter>;
+  readonly $children: readonly [_Parameters];
 }
 
 export interface ListSplat {
@@ -724,7 +721,7 @@ export interface ClassDefinition {
     readonly name: Identifier;
     readonly type_parameters?: TypeParameter;
     readonly superclasses?: ArgumentList;
-    readonly body: Block;
+    readonly body: Suite;
   };
 }
 
@@ -784,7 +781,7 @@ export interface DottedName {
 
 export interface CasePattern {
   readonly $type: 'case_pattern';
-  readonly $children: readonly [AsPattern | KeywordPattern | ClassPattern | SplatPattern | UnionPattern | ListPattern | TuplePattern | DictPattern | String | ConcatenatedString | True | False | None | Integer | Float | ComplexPattern | DottedName];
+  readonly $children: readonly [AsPattern | KeywordPattern | SimplePattern];
 }
 
 export interface SimplePattern {
@@ -798,7 +795,7 @@ export interface _AsPattern {
 
 export interface UnionPattern {
   readonly $type: 'union_pattern';
-  readonly $children: readonly (ClassPattern | SplatPattern | UnionPattern | ListPattern | TuplePattern | DictPattern | String | ConcatenatedString | True | False | None | Integer | Float | ComplexPattern | DottedName)[];
+  readonly $children: readonly (SimplePattern)[];
 }
 
 export interface _ListPattern {
@@ -814,7 +811,7 @@ export interface _TuplePattern {
 export interface DictPattern {
   readonly $type: 'dict_pattern';
   readonly $fields: {
-    readonly key?: readonly (ClassPattern | SplatPattern | UnionPattern | ListPattern | TuplePattern | DictPattern | String | ConcatenatedString | True | False | None | Integer | Float | ComplexPattern | DottedName)[];
+    readonly key?: readonly (SimplePattern)[];
     readonly value?: readonly (CasePattern)[];
   };
   readonly $children: readonly (SplatPattern)[];
@@ -828,7 +825,7 @@ export interface KeywordPattern {
   readonly $type: 'keyword_pattern';
   readonly $fields: {
     readonly identifier: Identifier;
-    readonly simple_pattern: ClassPattern | SplatPattern | UnionPattern | ListPattern | TuplePattern | DictPattern | String | ConcatenatedString | True | False | None | Integer | Float | ComplexPattern | DottedName;
+    readonly simple_pattern: SimplePattern;
   };
 }
 
@@ -869,12 +866,12 @@ export interface Patterns {
 
 export interface TuplePattern {
   readonly $type: 'tuple_pattern';
-  readonly $children: readonly (Pattern)[];
+  readonly $children: readonly [Patterns];
 }
 
 export interface ListPattern {
   readonly $type: 'list_pattern';
-  readonly $children: readonly (Pattern)[];
+  readonly $children: readonly [Patterns];
 }
 
 export interface DefaultParameter {
@@ -1126,17 +1123,17 @@ export interface KeywordArgument {
 
 export interface List {
   readonly $type: 'list';
-  readonly $children: readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[];
+  readonly $children: readonly [CollectionElements];
 }
 
 export interface Set {
   readonly $type: 'set';
-  readonly $children: readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[];
+  readonly $children: readonly [CollectionElements];
 }
 
 export interface Tuple {
   readonly $type: 'tuple';
-  readonly $children: readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[];
+  readonly $children: readonly [CollectionElements];
 }
 
 export interface Dictionary {
@@ -1158,6 +1155,7 @@ export interface ListComprehension {
     readonly body: Expression;
     readonly for_in_clause: ForInClause;
   };
+  readonly $children: readonly (ForInClause | IfClause)[];
 }
 
 export interface DictionaryComprehension {
@@ -1166,6 +1164,7 @@ export interface DictionaryComprehension {
     readonly body: Pair;
     readonly for_in_clause: ForInClause;
   };
+  readonly $children: readonly (ForInClause | IfClause)[];
 }
 
 export interface SetComprehension {
@@ -1174,6 +1173,7 @@ export interface SetComprehension {
     readonly body: Expression;
     readonly for_in_clause: ForInClause;
   };
+  readonly $children: readonly (ForInClause | IfClause)[];
 }
 
 export interface GeneratorExpression {
@@ -1182,6 +1182,7 @@ export interface GeneratorExpression {
     readonly body: Expression;
     readonly for_in_clause: ForInClause;
   };
+  readonly $children: readonly (ForInClause | IfClause)[];
 }
 
 export interface ComprehensionClauses {
@@ -1243,7 +1244,7 @@ export interface String {
 
 export interface StringContent {
   readonly $type: 'string_content';
-  readonly $children: readonly (EscapeInterpolation | EscapeSequence)[];
+  readonly $children: readonly (EscapeInterpolation | EscapeSequence | NotEscapeSequence | _StringContent)[];
 }
 
 export interface Interpolation {
@@ -1720,6 +1721,8 @@ export type WildcardImport = Terminal<"wildcard_import">;
 export interface WildcardImportTree extends AnyTreeNode { readonly type: "wildcard_import"; }
 export type Ellipsis2 = Terminal<"ellipsis">;
 export interface Ellipsis2Tree extends AnyTreeNode { readonly type: "ellipsis"; }
+export type NotEscapeSequence = Terminal<"_not_escape_sequence">;
+export interface NotEscapeSequenceTree extends AnyTreeNode { readonly type: "_not_escape_sequence"; }
 export type PositionalSeparator = Terminal<"positional_separator">;
 export interface PositionalSeparatorTree extends AnyTreeNode { readonly type: "positional_separator"; }
 export type KeywordSeparator = Terminal<"keyword_separator">;

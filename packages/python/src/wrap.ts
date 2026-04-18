@@ -62,7 +62,6 @@ import type {
   IfClause,
   IfStatement,
   ImportFromStatement,
-  ImportList,
   ImportStatement,
   Interpolation,
   KeywordArgument,
@@ -189,14 +188,6 @@ export function wrapImportFromStatement(data: _NodeData, tree: TreeHandle): Wrap
     get name() { return drillInAll(data.$fields?.['name'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<ImportFromStatement>;
-}
-
-export function wrapImportList(data: _NodeData, tree: TreeHandle): WrappedNode<ImportList> {
-  return {
-    ...data,
-    get name() { return drillInAll(data.$fields?.['name'], tree); },
-    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
-  } as unknown as WrappedNode<ImportList>;
 }
 
 export function wrapAliasedImport(data: _NodeData, tree: TreeHandle): WrappedNode<AliasedImport> {
@@ -424,14 +415,14 @@ export function wrapFunctionDefinition(data: _NodeData, tree: TreeHandle): Wrapp
 export function wrapParameters(data: _NodeData, tree: TreeHandle): WrappedNode<Parameters> {
   return {
     ...data,
-    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<Parameters>;
 }
 
 export function wrapLambdaParameters(data: _NodeData, tree: TreeHandle): WrappedNode<LambdaParameters> {
   return {
     ...data,
-    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<LambdaParameters>;
 }
 
@@ -661,14 +652,14 @@ export function wrapPatterns(data: _NodeData, tree: TreeHandle): WrappedNode<Pat
 export function wrapTuplePattern(data: _NodeData, tree: TreeHandle): WrappedNode<TuplePattern> {
   return {
     ...data,
-    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<TuplePattern>;
 }
 
 export function wrapListPattern(data: _NodeData, tree: TreeHandle): WrappedNode<ListPattern> {
   return {
     ...data,
-    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<ListPattern>;
 }
 
@@ -923,21 +914,21 @@ export function wrapKeywordArgument(data: _NodeData, tree: TreeHandle): WrappedN
 export function wrapList(data: _NodeData, tree: TreeHandle): WrappedNode<List> {
   return {
     ...data,
-    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<List>;
 }
 
 export function wrapSet(data: _NodeData, tree: TreeHandle): WrappedNode<Set> {
   return {
     ...data,
-    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<Set>;
 }
 
 export function wrapTuple(data: _NodeData, tree: TreeHandle): WrappedNode<Tuple> {
   return {
     ...data,
-    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<Tuple>;
 }
 
@@ -1135,7 +1126,6 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'relative_import': (d, t) => wrapRelativeImport(d, t),
   'future_import_statement': (d, t) => wrapFutureImportStatement(d, t),
   'import_from_statement': (d, t) => wrapImportFromStatement(d, t),
-  '_import_list': (d, t) => wrapImportList(d, t),
   'aliased_import': (d, t) => wrapAliasedImport(d, t),
   'print_statement': (d, t) => wrapPrintStatement(d, t),
   'chevron': (d, t) => wrapChevron(d, t),

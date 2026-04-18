@@ -2,6 +2,7 @@
 
 /** All branch (non-leaf) node kind strings. */
 export const NODE_KINDS = [
+  '_arrow_function__call_signature',
   '_arrow_function_parameter',
   '_class_heritage_extends_clause',
   '_class_heritage_implements_clause',
@@ -10,7 +11,6 @@ export const NODE_KINDS = [
   '_import_clause_namespace_import',
   '_import_specifier_name',
   '_index_signature_mapped_type_clause',
-  '_jsx_start_opening_element',
   '_jsx_string',
   '_lhs_expression',
   '_type_identifier',
@@ -23,6 +23,7 @@ export const NODE_KINDS = [
   'array_pattern',
   'array_type',
   'arrow_function',
+  'arrow_function__call_signature',
   'arrow_function_parameter',
   'as_expression',
   'asserts',
@@ -34,6 +35,7 @@ export const NODE_KINDS = [
   'binary_expression',
   'break_statement',
   'call_expression',
+  'call_signature',
   'catch_clause',
   'class',
   'class_body',
@@ -428,6 +430,11 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   required: boolean;
   multiple: boolean;
 }>> = {
+  '_arrow_function__call_signature': [
+    { name: 'typeParameters', required: false, multiple: false },
+    { name: 'parameters', required: true, multiple: false },
+    { name: 'returnType', required: false, multiple: false },
+  ],
   '_arrow_function_parameter': [
     { name: 'parameter', required: true, multiple: false },
   ],
@@ -445,11 +452,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'name', required: true, multiple: false },
   ],
   '_index_signature_mapped_type_clause': [
-  ],
-  '_jsx_start_opening_element': [
-    { name: 'name', required: false, multiple: false },
-    { name: 'typeArguments', required: false, multiple: false },
-    { name: 'attribute', required: false, multiple: true },
   ],
   '_jsx_string': [
   ],
@@ -489,6 +491,11 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'arrow_function': [
     { name: 'body', required: true, multiple: false },
+  ],
+  'arrow_function__call_signature': [
+    { name: 'typeParameters', required: false, multiple: false },
+    { name: 'parameters', required: true, multiple: false },
+    { name: 'returnType', required: false, multiple: false },
   ],
   'arrow_function_parameter': [
     { name: 'parameter', required: true, multiple: false },
@@ -533,6 +540,11 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'function', required: true, multiple: false },
     { name: 'typeArguments', required: false, multiple: false },
     { name: 'arguments', required: true, multiple: false },
+  ],
+  'call_signature': [
+    { name: 'typeParameters', required: false, multiple: false },
+    { name: 'parameters', required: true, multiple: false },
+    { name: 'returnType', required: false, multiple: false },
   ],
   'catch_clause': [
     { name: 'catch', required: true, multiple: false },
@@ -1134,7 +1146,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'variable_declarator': [
     { name: 'name', required: true, multiple: false },
     { name: 'type', required: false, multiple: false },
-    { name: 'value', required: false, multiple: false },
   ],
   'while_statement': [
     { name: 'while', required: true, multiple: false },

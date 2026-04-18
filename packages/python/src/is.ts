@@ -29,7 +29,6 @@ export interface IsGuards {
     relativeImport<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'relative_import' };
     futureImportStatement<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'future_import_statement' };
     importFromStatement<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'import_from_statement' };
-    ImportList<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_import_list' };
     aliasedImport<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'aliased_import' };
     printStatement<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'print_statement' };
     chevron<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'chevron' };
@@ -164,7 +163,6 @@ export interface AssertGuards {
     relativeImport(v: { readonly $type: string }): asserts v is { readonly $type: 'relative_import' };
     futureImportStatement(v: { readonly $type: string }): asserts v is { readonly $type: 'future_import_statement' };
     importFromStatement(v: { readonly $type: string }): asserts v is { readonly $type: 'import_from_statement' };
-    ImportList(v: { readonly $type: string }): asserts v is { readonly $type: '_import_list' };
     aliasedImport(v: { readonly $type: string }): asserts v is { readonly $type: 'aliased_import' };
     printStatement(v: { readonly $type: string }): asserts v is { readonly $type: 'print_statement' };
     chevron(v: { readonly $type: string }): asserts v is { readonly $type: 'chevron' };
@@ -322,7 +320,6 @@ export const is = {
     relativeImport: _g("relative_import"),
     futureImportStatement: _g("future_import_statement"),
     importFromStatement: _g("import_from_statement"),
-    ImportList: _g("_import_list"),
     aliasedImport: _g("aliased_import"),
     printStatement: _g("print_statement"),
     chevron: _g("chevron"),
@@ -478,7 +475,6 @@ export const assert = {
     relativeImport: _makeAssert('relativeImport', is.relativeImport as _AnyGuard),
     futureImportStatement: _makeAssert('futureImportStatement', is.futureImportStatement as _AnyGuard),
     importFromStatement: _makeAssert('importFromStatement', is.importFromStatement as _AnyGuard),
-    ImportList: _makeAssert('ImportList', is.ImportList as _AnyGuard),
     aliasedImport: _makeAssert('aliasedImport', is.aliasedImport as _AnyGuard),
     printStatement: _makeAssert('printStatement', is.printStatement as _AnyGuard),
     chevron: _makeAssert('chevron', is.chevron as _AnyGuard),

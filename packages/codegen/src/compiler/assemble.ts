@@ -38,14 +38,14 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
         // at parse time. Hidden rules classified as supertypes are
         // preserved — they're polymorph dispatch points, not structural
         // helpers.
-        const inlinedRule = inlineHiddenRefs(rule, optimized.rules)
+        const inlinedRule = inlineGroupRefs(rule, optimized.rules)
         const modelType = classifyNode(kind, inlinedRule)
         const { typeName, factoryName, irKey } = nameNode(kind)
         // The `simplifiedRules` map is guaranteed to carry an entry
         // for every kind in `rules` — `optimize()` populates it via
         // `simplifyRules(rules)` at the end of its pass.
         const rawSimplifiedRule = optimized.simplifiedRules[kind]!
-        const simplifiedRule = inlineHiddenRefs(rawSimplifiedRule, optimized.simplifiedRules)
+        const simplifiedRule = inlineGroupRefs(rawSimplifiedRule, optimized.simplifiedRules)
 
         switch (modelType) {
             case 'branch': {
@@ -653,44 +653,41 @@ function walkForFieldNames(rule: Rule, out: Set<string>): void {
 }
 
 /**
- * Inline hidden-rule symbol references by substituting each `symbol`
- * node pointing to a hidden rule with that rule's content. Matches
- * tree-sitter's parse-time behavior: hidden rules don't produce their
- * own tree node, their fields/children surface on the referencer.
+ * Inline symbol references to GROUP-classified hidden rules by
+ * substituting each `symbol` ref with the group's content. Matches
+ * tree-sitter's parse-time behavior: groups are "hidden seq with
+ * fields" helpers (e.g. python's `_import_list`) whose fields surface
+ * on the referencer's parse tree. Preserving the symbol reference
+ * would force the NodeMap to claim a child slot that tree-sitter
+ * never produces.
  *
- * Skipped:
- *   - Supertypes (`SupertypeRule`) — these ARE polymorph dispatch
- *     points. Their symbol reference represents "any subtype here",
- *     and the child slot is what downstream consumers need.
- *   - Non-hidden symbols — they produce their own parse-tree node
- *     with a distinct `$type`, so preserving the reference is correct.
- *   - Cycles — hidden rules that reference themselves (directly or
- *     through another hidden rule) stop at the `visited` guard. The
- *     cycling reference stays as an opaque symbol.
+ * Scope limited to GROUPS specifically (not all hidden rules):
+ *   - Supertypes — polymorph dispatch points; the reference IS the
+ *     structural child slot. Stay as-is.
+ *   - Other hidden rules (helpers that classify as branch/container
+ *     because they lack fields, or leaves/tokens) — no field data
+ *     to inline. Stay as-is.
+ *   - Visible symbols — distinct parse-tree nodes with their own
+ *     $type. Stay as-is.
  *
- * Only one level deep by default? No — we recurse: `_foo` referencing
- * `_bar` should surface `_bar`'s fields on `_foo`'s referencers. The
- * visited set prevents infinite loops.
+ * Cycles: visited set prevents infinite loops across chained groups.
  */
-function inlineHiddenRefs(
+function inlineGroupRefs(
     rule: Rule,
     rules: Readonly<Record<string, Rule>>,
     visited: ReadonlySet<string> = new Set(),
 ): Rule {
-    const recurse = (r: Rule, v: ReadonlySet<string>): Rule => inlineHiddenRefs(r, rules, v)
+    const recurse = (r: Rule, v: ReadonlySet<string>): Rule => inlineGroupRefs(r, rules, v)
     switch (rule.type) {
         case 'symbol': {
             if (!rule.hidden) return rule
             if (visited.has(rule.name)) return rule
             const target = rules[rule.name]
-            if (!target) return rule
-            // Supertypes stay as references — they're dispatch points, not
-            // inline helpers.
-            if (target.type === 'supertype') return rule
-            // Recurse into the target with an extended visited set so a
-            // hidden rule referencing another hidden rule expands through.
+            if (!target || target.type !== 'group') return rule
+            // Recurse into the group's content with an extended visited
+            // set so a group referencing another group expands through.
             const next = new Set(visited); next.add(rule.name)
-            return inlineHiddenRefs(target, rules, next)
+            return inlineGroupRefs(target.content, rules, next)
         }
         case 'seq':
             return { ...rule, members: rule.members.map(m => recurse(m, visited)) }

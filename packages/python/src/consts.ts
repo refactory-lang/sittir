@@ -3,7 +3,6 @@
 /** All branch (non-leaf) node kind strings. */
 export const NODE_KINDS = [
   '_collection_elements',
-  '_import_list',
   '_list_pattern',
   '_match_block',
   '_parameters',
@@ -288,9 +287,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   multiple: boolean;
 }>> = {
   '_collection_elements': [
-  ],
-  '_import_list': [
-    { name: 'name', required: true, multiple: true },
   ],
   '_list_pattern': [
   ],

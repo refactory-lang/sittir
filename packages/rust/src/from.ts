@@ -369,46 +369,49 @@ function _assertNonEmpty<T>(
 // Interned resolver kind lists (T042i dedup)
 const _K0: readonly string[] = [];
 const _K1: readonly string[] = ["expression_statement","const_item","macro_invocation","macro_definition","attribute_item","inner_attribute_item","mod_item","foreign_mod_item","struct_item","union_item","enum_item","type_item","function_item","function_signature_item","impl_item","trait_item","associated_type","let_declaration","use_declaration","extern_crate_declaration","static_item"];
-const _K2: readonly string[] = ["char_literal","boolean_literal","integer_literal","float_literal","identifier","self","unit_expression","metavariable"];
-const _K3: readonly string[] = ["unary_expression","reference_expression","try_expression","binary_expression","assignment_expression","compound_assignment_expr","type_cast_expression","call_expression","return_expression","yield_expression","string_literal","raw_string_literal","scoped_identifier","generic_function","await_expression","field_expression","array_expression","tuple_expression","macro_invocation","break_expression","continue_expression","index_expression","closure_expression","parenthesized_expression","struct_expression","unsafe_block","async_block","gen_block","try_block","block","if_expression","match_expression","while_expression","loop_expression","for_expression","const_block","range_expression"];
-const _K4: readonly string[] = ["self","identifier","metavariable","super","crate"];
-const _K5: readonly string[] = ["scoped_identifier"];
-const _K6: readonly string[] = ["field_declaration_list","ordered_field_declaration_list"];
-const _K7: readonly string[] = ["metavariable","unit_type","type_identifier","primitive_type"];
-const _K8: readonly string[] = ["abstract_type","reference_type","pointer_type","generic_type","scoped_type_identifier","tuple_type","array_type","function_type","macro_invocation","dynamic_type","bounded_type","removed_trait_bound"];
-const _K9: readonly string[] = ["identifier","metavariable"];
-const _K10: readonly string[] = ["type_identifier","primitive_type"];
-const _K11: readonly string[] = ["lifetime","scoped_type_identifier","generic_type","reference_type","pointer_type","tuple_type","array_type","higher_ranked_trait_bound"];
-const _K12: readonly string[] = ["type_identifier"];
-const _K13: readonly string[] = ["scoped_type_identifier","generic_type"];
-const _K14: readonly string[] = ["identifier","char_literal","boolean_literal","integer_literal","float_literal"];
-const _K15: readonly string[] = ["block","string_literal","raw_string_literal","negative_literal"];
-const _K16: readonly string[] = ["char_literal","boolean_literal","integer_literal","float_literal","identifier"];
-const _K17: readonly string[] = ["string_literal","raw_string_literal","negative_literal","scoped_identifier","generic_pattern","tuple_pattern","tuple_struct_pattern","struct_pattern","ref_pattern","slice_pattern","captured_pattern","reference_pattern","mut_pattern","range_pattern","or_pattern","const_block","macro_invocation"];
-const _K18: readonly string[] = ["scoped_identifier","use_as_clause","use_list","scoped_use_list","use_wildcard"];
-const _K19: readonly string[] = ["char_literal","boolean_literal","integer_literal","float_literal","identifier","self"];
-const _K20: readonly string[] = ["scoped_type_identifier"];
-const _K21: readonly string[] = ["identifier"];
+const _K2: readonly string[] = ["identifier"];
+const _K3: readonly string[] = ["_reserved_identifier"];
+const _K4: readonly string[] = ["char_literal","boolean_literal","integer_literal","float_literal","identifier","self","unit_expression","metavariable"];
+const _K5: readonly string[] = ["unary_expression","reference_expression","try_expression","binary_expression","assignment_expression","compound_assignment_expr","type_cast_expression","call_expression","return_expression","yield_expression","string_literal","raw_string_literal","scoped_identifier","generic_function","await_expression","field_expression","array_expression","tuple_expression","macro_invocation","break_expression","continue_expression","index_expression","closure_expression","parenthesized_expression","struct_expression","unsafe_block","async_block","gen_block","try_block","block","if_expression","match_expression","while_expression","loop_expression","for_expression","const_block","range_expression"];
+const _K6: readonly string[] = ["self","identifier","metavariable","super","crate"];
+const _K7: readonly string[] = ["scoped_identifier"];
+const _K8: readonly string[] = ["field_declaration_list","ordered_field_declaration_list"];
+const _K9: readonly string[] = ["metavariable","unit_type","type_identifier","primitive_type"];
+const _K10: readonly string[] = ["abstract_type","reference_type","pointer_type","generic_type","scoped_type_identifier","tuple_type","array_type","function_type","macro_invocation","dynamic_type","bounded_type","removed_trait_bound"];
+const _K11: readonly string[] = ["identifier","metavariable"];
+const _K12: readonly string[] = ["primitive_type"];
+const _K13: readonly string[] = ["lifetime","_type_identifier","scoped_type_identifier","generic_type","reference_type","pointer_type","tuple_type","array_type","higher_ranked_trait_bound"];
+const _K14: readonly string[] = ["_type_identifier","scoped_type_identifier","generic_type"];
+const _K15: readonly string[] = ["identifier","char_literal","boolean_literal","integer_literal","float_literal"];
+const _K16: readonly string[] = ["block","string_literal","raw_string_literal","negative_literal"];
+const _K17: readonly string[] = ["char_literal","boolean_literal","integer_literal","float_literal","identifier"];
+const _K18: readonly string[] = ["string_literal","raw_string_literal","negative_literal","scoped_identifier","generic_pattern","tuple_pattern","tuple_struct_pattern","struct_pattern","ref_pattern","slice_pattern","captured_pattern","reference_pattern","mut_pattern","range_pattern","or_pattern","const_block","macro_invocation"];
+const _K19: readonly string[] = ["scoped_identifier","use_as_clause","use_list","scoped_use_list","use_wildcard"];
+const _K20: readonly string[] = ["char_literal","boolean_literal","integer_literal","float_literal","identifier","self"];
+const _K21: readonly string[] = ["_type_identifier","scoped_type_identifier"];
 const _K22: readonly string[] = ["scoped_identifier","field_expression"];
-const _K23: readonly string[] = ["type_identifier","identifier"];
-const _K24: readonly string[] = ["lifetime","abstract_type","reference_type","pointer_type","generic_type","scoped_type_identifier","tuple_type","array_type","function_type","macro_invocation","dynamic_type","bounded_type","removed_trait_bound","use_bounds"];
-const _K25: readonly string[] = ["lifetime"];
-const _K26: readonly string[] = ["scoped_type_identifier","removed_trait_bound","generic_type","function_type","tuple_type","bounded_type"];
-const _K27: readonly string[] = ["higher_ranked_trait_bound","scoped_type_identifier","generic_type","function_type","tuple_type"];
-const _K28: readonly string[] = ["scoped_identifier","bracketed_type","generic_type"];
-const _K29: readonly string[] = ["identifier","super"];
-const _K30: readonly string[] = ["scoped_identifier","generic_type"];
-const _K31: readonly string[] = ["scoped_identifier","generic_type","bracketed_type"];
-const _K32: readonly string[] = ["unary_expression","reference_expression","try_expression","binary_expression","assignment_expression","compound_assignment_expr","type_cast_expression","call_expression","return_expression","yield_expression","string_literal","raw_string_literal","scoped_identifier","generic_function","await_expression","field_expression","array_expression","tuple_expression","macro_invocation","break_expression","continue_expression","index_expression","closure_expression","parenthesized_expression","struct_expression","unsafe_block","async_block","gen_block","try_block","block","if_expression","match_expression","while_expression","loop_expression","for_expression","const_block"];
-const _K33: readonly string[] = ["scoped_type_identifier","generic_type_with_turbofish"];
-const _K34: readonly string[] = ["field_identifier","integer_literal"];
-const _K35: readonly string[] = ["unary_expression","reference_expression","try_expression","binary_expression","assignment_expression","compound_assignment_expr","type_cast_expression","call_expression","return_expression","yield_expression","string_literal","raw_string_literal","scoped_identifier","generic_function","await_expression","field_expression","array_expression","tuple_expression","macro_invocation","break_expression","continue_expression","index_expression","closure_expression","parenthesized_expression","struct_expression","unsafe_block","async_block","gen_block","try_block","block","if_expression","match_expression","while_expression","loop_expression","for_expression","const_block","range_expression","let_condition","let_chain"];
-const _K36: readonly string[] = ["block","if_expression"];
-const _K37: readonly string[] = ["attribute_item","inner_attribute_item"];
-const _K38: readonly string[] = ["expression_statement","const_item","macro_invocation","macro_definition","attribute_item","inner_attribute_item","mod_item","foreign_mod_item","struct_item","union_item","enum_item","type_item","function_item","function_signature_item","impl_item","trait_item","associated_type","let_declaration","use_declaration","extern_crate_declaration","static_item","unary_expression","reference_expression","try_expression","binary_expression","assignment_expression","compound_assignment_expr","type_cast_expression","call_expression","return_expression","yield_expression","string_literal","raw_string_literal","scoped_identifier","generic_function","await_expression","field_expression","array_expression","tuple_expression","break_expression","continue_expression","index_expression","closure_expression","parenthesized_expression","struct_expression","unsafe_block","async_block","gen_block","try_block","block","if_expression","match_expression","while_expression","loop_expression","for_expression","const_block","range_expression"];
-const _K39: readonly string[] = ["integer_literal","float_literal"];
-const _K40: readonly string[] = ["char_literal","boolean_literal","integer_literal","float_literal","self","identifier","metavariable","super","crate"];
-const _K41: readonly string[] = ["string_literal","raw_string_literal","negative_literal","scoped_identifier"];
+const _K23: readonly string[] = ["_type_identifier","_reserved_identifier","scoped_type_identifier"];
+const _K24: readonly string[] = ["_type_identifier","scoped_identifier"];
+const _K25: readonly string[] = ["lifetime","abstract_type","reference_type","pointer_type","generic_type","scoped_type_identifier","tuple_type","array_type","function_type","macro_invocation","dynamic_type","bounded_type","removed_trait_bound","use_bounds"];
+const _K26: readonly string[] = ["lifetime","_type_identifier"];
+const _K27: readonly string[] = ["_type_identifier","scoped_type_identifier","removed_trait_bound","generic_type","function_type","tuple_type","bounded_type"];
+const _K28: readonly string[] = ["higher_ranked_trait_bound","_type_identifier","scoped_type_identifier","generic_type","function_type","tuple_type"];
+const _K29: readonly string[] = ["scoped_identifier","_reserved_identifier"];
+const _K30: readonly string[] = ["scoped_identifier","bracketed_type","generic_type"];
+const _K31: readonly string[] = ["identifier","super"];
+const _K32: readonly string[] = ["scoped_identifier","generic_type"];
+const _K33: readonly string[] = ["scoped_identifier","generic_type","bracketed_type"];
+const _K34: readonly string[] = ["unary_expression","reference_expression","try_expression","binary_expression","assignment_expression","compound_assignment_expr","type_cast_expression","call_expression","return_expression","yield_expression","string_literal","raw_string_literal","scoped_identifier","generic_function","await_expression","field_expression","array_expression","tuple_expression","macro_invocation","break_expression","continue_expression","index_expression","closure_expression","parenthesized_expression","struct_expression","unsafe_block","async_block","gen_block","try_block","block","if_expression","match_expression","while_expression","loop_expression","for_expression","const_block"];
+const _K35: readonly string[] = ["_type_identifier","scoped_type_identifier","generic_type_with_turbofish"];
+const _K36: readonly string[] = ["integer_literal"];
+const _K37: readonly string[] = ["_field_identifier"];
+const _K38: readonly string[] = ["unary_expression","reference_expression","try_expression","binary_expression","assignment_expression","compound_assignment_expr","type_cast_expression","call_expression","return_expression","yield_expression","string_literal","raw_string_literal","scoped_identifier","generic_function","await_expression","field_expression","array_expression","tuple_expression","macro_invocation","break_expression","continue_expression","index_expression","closure_expression","parenthesized_expression","struct_expression","unsafe_block","async_block","gen_block","try_block","block","if_expression","match_expression","while_expression","loop_expression","for_expression","const_block","range_expression","let_condition","let_chain"];
+const _K39: readonly string[] = ["block","if_expression"];
+const _K40: readonly string[] = ["attribute_item","inner_attribute_item"];
+const _K41: readonly string[] = ["expression_statement","const_item","macro_invocation","macro_definition","attribute_item","inner_attribute_item","mod_item","foreign_mod_item","struct_item","union_item","enum_item","type_item","function_item","function_signature_item","impl_item","trait_item","associated_type","let_declaration","use_declaration","extern_crate_declaration","static_item","unary_expression","reference_expression","try_expression","binary_expression","assignment_expression","compound_assignment_expr","type_cast_expression","call_expression","return_expression","yield_expression","string_literal","raw_string_literal","scoped_identifier","generic_function","await_expression","field_expression","array_expression","tuple_expression","break_expression","continue_expression","index_expression","closure_expression","parenthesized_expression","struct_expression","unsafe_block","async_block","gen_block","try_block","block","if_expression","match_expression","while_expression","loop_expression","for_expression","const_block","range_expression"];
+const _K42: readonly string[] = ["integer_literal","float_literal"];
+const _K43: readonly string[] = ["char_literal","boolean_literal","integer_literal","float_literal","self","identifier","metavariable","super","crate"];
+const _K44: readonly string[] = ["string_literal","raw_string_literal","negative_literal","scoped_identifier"];
 
 export function sourceFileFrom(input: T.SourceFile | T.SourceFile.Loose): ReturnType<typeof F.sourceFile> {
   if (isNodeData(input)) return input as ReturnType<typeof F.sourceFile>;
@@ -430,7 +433,7 @@ export function expressionStatementFrom(input?: NonNullable<T.ExpressionStatemen
 export function macroDefinitionFrom(input: T.MacroDefinition | T.MacroDefinition.Loose): ReturnType<typeof F.macroDefinition> {
   if (isNodeData(input)) return input as ReturnType<typeof F.macroDefinition>;
   return F.macroDefinition({
-    name: _resolveOneLeaf<NonNullable<T.MacroDefinition.Config['name']>>((input as T.MacroDefinition.Loose).name, "identifier"),
+    name: _resolveOne<NonNullable<T.MacroDefinition.Config['name']>>((input as T.MacroDefinition.Loose).name, _K2, _K3),
     rules: _resolveOneBranch<NonNullable<T.MacroDefinition.Config['rules']>>((input as T.MacroDefinition.Loose).rules, "macro_rule"),
   });
 }
@@ -505,9 +508,9 @@ export function innerAttributeItemFrom(input: T.InnerAttributeItem | T.InnerAttr
 export function attributeFrom(input: T.Attribute | T.Attribute.Loose): ReturnType<typeof F.attribute> {
   if (isNodeData(input)) return input as ReturnType<typeof F.attribute>;
   return F.attribute({
-    value: _resolveOne<NonNullable<T.Attribute.Config['value']>>((input as T.Attribute.Loose).value, _K2, _K3),
+    value: _resolveOne<NonNullable<T.Attribute.Config['value']>>((input as T.Attribute.Loose).value, _K4, _K5),
     arguments: _resolveOneBranch<NonNullable<T.Attribute.Config['arguments']>>((input as T.Attribute.Loose).arguments, "token_tree"),
-    children: _resolveOne<NonNullable<T.Attribute.Config['children']>>((input as T.Attribute.Loose).children, _K4, _K5),
+    children: _resolveOne<NonNullable<T.Attribute.Config['children']>>((input as T.Attribute.Loose).children, _K6, _K7),
   });
 }
 
@@ -580,7 +583,7 @@ export function unionItemFrom(input: T.UnionItem | T.UnionItem.Loose): ReturnTyp
   if (isNodeData(input)) return input as ReturnType<typeof F.unionItem>;
   return F.unionItem({
     visibilityModifier: _resolveOneBranch<NonNullable<T.UnionItem.Config['visibilityModifier']>>((input as T.UnionItem.Loose).visibilityModifier, "visibility_modifier"),
-    name: _resolveOneLeaf<NonNullable<T.UnionItem.Config['name']>>((input as T.UnionItem.Loose).name, "type_identifier"),
+    name: _resolveOneBranch<NonNullable<T.UnionItem.Config['name']>>((input as T.UnionItem.Loose).name, "_type_identifier"),
     typeParameters: _resolveOneBranch<NonNullable<T.UnionItem.Config['typeParameters']>>((input as T.UnionItem.Loose).typeParameters, "type_parameters"),
     whereClause: _resolveOneBranch<NonNullable<T.UnionItem.Config['whereClause']>>((input as T.UnionItem.Loose).whereClause, "where_clause"),
     body: _resolveOneBranch<NonNullable<T.UnionItem.Config['body']>>((input as T.UnionItem.Loose).body, "field_declaration_list"),
@@ -591,7 +594,7 @@ export function enumItemFrom(input: T.EnumItem | T.EnumItem.Loose): ReturnType<t
   if (isNodeData(input)) return input as ReturnType<typeof F.enumItem>;
   return F.enumItem({
     visibilityModifier: _resolveOneBranch<NonNullable<T.EnumItem.Config['visibilityModifier']>>((input as T.EnumItem.Loose).visibilityModifier, "visibility_modifier"),
-    name: _resolveOneLeaf<NonNullable<T.EnumItem.Config['name']>>((input as T.EnumItem.Loose).name, "type_identifier"),
+    name: _resolveOneBranch<NonNullable<T.EnumItem.Config['name']>>((input as T.EnumItem.Loose).name, "_type_identifier"),
     typeParameters: _resolveOneBranch<NonNullable<T.EnumItem.Config['typeParameters']>>((input as T.EnumItem.Loose).typeParameters, "type_parameters"),
     whereClause: _resolveOneBranch<NonNullable<T.EnumItem.Config['whereClause']>>((input as T.EnumItem.Loose).whereClause, "where_clause"),
     body: _resolveOneBranch<NonNullable<T.EnumItem.Config['body']>>((input as T.EnumItem.Loose).body, "enum_variant_list"),
@@ -611,8 +614,8 @@ export function enumVariantFrom(input: T.EnumVariant | T.EnumVariant.Loose): Ret
   return F.enumVariant({
     visibilityModifier: _resolveOneBranch<NonNullable<T.EnumVariant.Config['visibilityModifier']>>((input as T.EnumVariant.Loose).visibilityModifier, "visibility_modifier"),
     name: _resolveOneLeaf<NonNullable<T.EnumVariant.Config['name']>>((input as T.EnumVariant.Loose).name, "identifier"),
-    body: _resolveOne<NonNullable<T.EnumVariant.Config['body']>>((input as T.EnumVariant.Loose).body, _K0, _K6),
-    value: _resolveOne<NonNullable<T.EnumVariant.Config['value']>>((input as T.EnumVariant.Loose).value, _K2, _K3),
+    body: _resolveOne<NonNullable<T.EnumVariant.Config['body']>>((input as T.EnumVariant.Loose).body, _K0, _K8),
+    value: _resolveOne<NonNullable<T.EnumVariant.Config['value']>>((input as T.EnumVariant.Loose).value, _K4, _K5),
   });
 }
 
@@ -628,15 +631,15 @@ export function fieldDeclarationFrom(input: T.FieldDeclaration | T.FieldDeclarat
   if (isNodeData(input)) return input as ReturnType<typeof F.fieldDeclaration>;
   return F.fieldDeclaration({
     visibilityModifier: _resolveOneBranch<NonNullable<T.FieldDeclaration.Config['visibilityModifier']>>((input as T.FieldDeclaration.Loose).visibilityModifier, "visibility_modifier"),
-    name: _resolveOneLeaf<NonNullable<T.FieldDeclaration.Config['name']>>((input as T.FieldDeclaration.Loose).name, "field_identifier"),
-    type: _resolveOne<NonNullable<T.FieldDeclaration.Config['type']>>((input as T.FieldDeclaration.Loose).type, _K7, _K8),
+    name: _resolveOneBranch<NonNullable<T.FieldDeclaration.Config['name']>>((input as T.FieldDeclaration.Loose).name, "_field_identifier"),
+    type: _resolveOne<NonNullable<T.FieldDeclaration.Config['type']>>((input as T.FieldDeclaration.Loose).type, _K9, _K10),
   });
 }
 
 export function orderedFieldDeclarationListFrom(input: T.OrderedFieldDeclarationList | T.OrderedFieldDeclarationList.Loose): ReturnType<typeof F.orderedFieldDeclarationList> {
   if (isNodeData(input)) return input as ReturnType<typeof F.orderedFieldDeclarationList>;
   return F.orderedFieldDeclarationList({
-    type: _resolveMany<NonNullable<T.OrderedFieldDeclarationList.Config['type']>[number]>((input as T.OrderedFieldDeclarationList.Loose).type, _K7, _K8),
+    type: _resolveMany<NonNullable<T.OrderedFieldDeclarationList.Config['type']>[number]>((input as T.OrderedFieldDeclarationList.Loose).type, _K9, _K10),
   });
 }
 
@@ -655,8 +658,8 @@ export function constItemFrom(input: T.ConstItem | T.ConstItem.Loose): ReturnTyp
   return F.constItem({
     visibilityModifier: _resolveOneBranch<NonNullable<T.ConstItem.Config['visibilityModifier']>>((input as T.ConstItem.Loose).visibilityModifier, "visibility_modifier"),
     name: _resolveOneLeaf<NonNullable<T.ConstItem.Config['name']>>((input as T.ConstItem.Loose).name, "identifier"),
-    type: _resolveOne<NonNullable<T.ConstItem.Config['type']>>((input as T.ConstItem.Loose).type, _K7, _K8),
-    value: _resolveOne<NonNullable<T.ConstItem.Config['value']>>((input as T.ConstItem.Loose).value, _K2, _K3),
+    type: _resolveOne<NonNullable<T.ConstItem.Config['type']>>((input as T.ConstItem.Loose).type, _K9, _K10),
+    value: _resolveOne<NonNullable<T.ConstItem.Config['value']>>((input as T.ConstItem.Loose).value, _K4, _K5),
   });
 }
 
@@ -666,8 +669,8 @@ export function staticItemFrom(input: T.StaticItem | T.StaticItem.Loose): Return
     visibilityModifier: _resolveOneBranch<NonNullable<T.StaticItem.Config['visibilityModifier']>>((input as T.StaticItem.Loose).visibilityModifier, "visibility_modifier"),
     mutableSpecifier: _resolveOne<NonNullable<T.StaticItem.Config['mutableSpecifier']>>((input as T.StaticItem.Loose).mutableSpecifier, _K0, _K0),
     name: _resolveOneLeaf<NonNullable<T.StaticItem.Config['name']>>((input as T.StaticItem.Loose).name, "identifier"),
-    type: _resolveOne<NonNullable<T.StaticItem.Config['type']>>((input as T.StaticItem.Loose).type, _K7, _K8),
-    value: _resolveOne<NonNullable<T.StaticItem.Config['value']>>((input as T.StaticItem.Loose).value, _K2, _K3),
+    type: _resolveOne<NonNullable<T.StaticItem.Config['type']>>((input as T.StaticItem.Loose).type, _K9, _K10),
+    value: _resolveOne<NonNullable<T.StaticItem.Config['value']>>((input as T.StaticItem.Loose).value, _K4, _K5),
     children: _resolveOneLeaf<NonNullable<T.StaticItem.Config['children']>>((input as T.StaticItem.Loose).children, "mutable_specifier"),
   });
 }
@@ -676,10 +679,10 @@ export function typeItemFrom(input: T.TypeItem | T.TypeItem.Loose): ReturnType<t
   if (isNodeData(input)) return input as ReturnType<typeof F.typeItem>;
   return F.typeItem({
     visibilityModifier: _resolveOneBranch<NonNullable<T.TypeItem.Config['visibilityModifier']>>((input as T.TypeItem.Loose).visibilityModifier, "visibility_modifier"),
-    name: _resolveOneLeaf<NonNullable<T.TypeItem.Config['name']>>((input as T.TypeItem.Loose).name, "type_identifier"),
+    name: _resolveOneBranch<NonNullable<T.TypeItem.Config['name']>>((input as T.TypeItem.Loose).name, "_type_identifier"),
     typeParameters: _resolveOneBranch<NonNullable<T.TypeItem.Config['typeParameters']>>((input as T.TypeItem.Loose).typeParameters, "type_parameters"),
     whereClause: _resolveOneBranch<NonNullable<T.TypeItem.Config['whereClause']>>((input as T.TypeItem.Loose).whereClause, "where_clause"),
-    type: _resolveOne<NonNullable<T.TypeItem.Config['type']>>((input as T.TypeItem.Loose).type, _K7, _K8),
+    type: _resolveOne<NonNullable<T.TypeItem.Config['type']>>((input as T.TypeItem.Loose).type, _K9, _K10),
     trailingWhereClause: _resolveOneBranch<NonNullable<T.TypeItem.Config['trailingWhereClause']>>((input as T.TypeItem.Loose).trailingWhereClause, "where_clause"),
   });
 }
@@ -689,10 +692,10 @@ export function functionItemFrom(input: T.FunctionItem | T.FunctionItem.Loose): 
   return F.functionItem({
     visibilityModifier: _resolveOneBranch<NonNullable<T.FunctionItem.Config['visibilityModifier']>>((input as T.FunctionItem.Loose).visibilityModifier, "visibility_modifier"),
     functionModifiers: _resolveOneBranch<NonNullable<T.FunctionItem.Config['functionModifiers']>>((input as T.FunctionItem.Loose).functionModifiers, "function_modifiers"),
-    name: _resolveOne<NonNullable<T.FunctionItem.Config['name']>>((input as T.FunctionItem.Loose).name, _K9, _K0),
+    name: _resolveOne<NonNullable<T.FunctionItem.Config['name']>>((input as T.FunctionItem.Loose).name, _K11, _K0),
     typeParameters: _resolveOneBranch<NonNullable<T.FunctionItem.Config['typeParameters']>>((input as T.FunctionItem.Loose).typeParameters, "type_parameters"),
     parameters: _resolveOneBranch<NonNullable<T.FunctionItem.Config['parameters']>>((input as T.FunctionItem.Loose).parameters, "parameters"),
-    returnType: _resolveOne<NonNullable<T.FunctionItem.Config['returnType']>>((input as T.FunctionItem.Loose).returnType, _K7, _K8),
+    returnType: _resolveOne<NonNullable<T.FunctionItem.Config['returnType']>>((input as T.FunctionItem.Loose).returnType, _K9, _K10),
     whereClause: _resolveOneBranch<NonNullable<T.FunctionItem.Config['whereClause']>>((input as T.FunctionItem.Loose).whereClause, "where_clause"),
     body: _resolveOneBranch<NonNullable<T.FunctionItem.Config['body']>>((input as T.FunctionItem.Loose).body, "block"),
   });
@@ -703,10 +706,10 @@ export function functionSignatureItemFrom(input: T.FunctionSignatureItem | T.Fun
   return F.functionSignatureItem({
     visibilityModifier: _resolveOneBranch<NonNullable<T.FunctionSignatureItem.Config['visibilityModifier']>>((input as T.FunctionSignatureItem.Loose).visibilityModifier, "visibility_modifier"),
     functionModifiers: _resolveOneBranch<NonNullable<T.FunctionSignatureItem.Config['functionModifiers']>>((input as T.FunctionSignatureItem.Loose).functionModifiers, "function_modifiers"),
-    name: _resolveOne<NonNullable<T.FunctionSignatureItem.Config['name']>>((input as T.FunctionSignatureItem.Loose).name, _K9, _K0),
+    name: _resolveOne<NonNullable<T.FunctionSignatureItem.Config['name']>>((input as T.FunctionSignatureItem.Loose).name, _K11, _K0),
     typeParameters: _resolveOneBranch<NonNullable<T.FunctionSignatureItem.Config['typeParameters']>>((input as T.FunctionSignatureItem.Loose).typeParameters, "type_parameters"),
     parameters: _resolveOneBranch<NonNullable<T.FunctionSignatureItem.Config['parameters']>>((input as T.FunctionSignatureItem.Loose).parameters, "parameters"),
-    returnType: _resolveOne<NonNullable<T.FunctionSignatureItem.Config['returnType']>>((input as T.FunctionSignatureItem.Loose).returnType, _K7, _K8),
+    returnType: _resolveOne<NonNullable<T.FunctionSignatureItem.Config['returnType']>>((input as T.FunctionSignatureItem.Loose).returnType, _K9, _K10),
     whereClause: _resolveOneBranch<NonNullable<T.FunctionSignatureItem.Config['whereClause']>>((input as T.FunctionSignatureItem.Loose).whereClause, "where_clause"),
   });
 }
@@ -733,7 +736,7 @@ export function whereClauseFrom(input: T.WhereClause | T.WhereClause.Loose): Ret
 export function wherePredicateFrom(input: T.WherePredicate | T.WherePredicate.Loose): ReturnType<typeof F.wherePredicate> {
   if (isNodeData(input)) return input as ReturnType<typeof F.wherePredicate>;
   return F.wherePredicate({
-    left: _resolveOne<NonNullable<T.WherePredicate.Config['left']>>((input as T.WherePredicate.Loose).left, _K10, _K11),
+    left: _resolveOne<NonNullable<T.WherePredicate.Config['left']>>((input as T.WherePredicate.Loose).left, _K12, _K13),
     bounds: _resolveOneBranch<NonNullable<T.WherePredicate.Config['bounds']>>((input as T.WherePredicate.Loose).bounds, "trait_bounds"),
   });
 }
@@ -743,8 +746,8 @@ export function implItemFrom(input: T.ImplItem | T.ImplItem.Loose): ReturnType<t
   return F.implItem({
     unsafe: _resolveOneLeaf<NonNullable<T.ImplItem.Config['unsafe']>>((input as T.ImplItem.Loose).unsafe, "_kw_unsafe"),
     typeParameters: _resolveOneBranch<NonNullable<T.ImplItem.Config['typeParameters']>>((input as T.ImplItem.Loose).typeParameters, "type_parameters"),
-    trait: _resolveOne<NonNullable<T.ImplItem.Config['trait']>>((input as T.ImplItem.Loose).trait, _K12, _K13),
-    type: _resolveOne<NonNullable<T.ImplItem.Config['type']>>((input as T.ImplItem.Loose).type, _K7, _K8),
+    trait: _resolveOne<NonNullable<T.ImplItem.Config['trait']>>((input as T.ImplItem.Loose).trait, _K0, _K14),
+    type: _resolveOne<NonNullable<T.ImplItem.Config['type']>>((input as T.ImplItem.Loose).type, _K9, _K10),
     body: _resolveOneBranch<NonNullable<T.ImplItem.Config['body']>>((input as T.ImplItem.Loose).body, "declaration_list"),
     children: _resolveOneBranch<NonNullable<T.ImplItem.Config['children']>>((input as T.ImplItem.Loose).children, "where_clause"),
   });
@@ -754,7 +757,7 @@ export function traitItemFrom(input: T.TraitItem | T.TraitItem.Loose): ReturnTyp
   if (isNodeData(input)) return input as ReturnType<typeof F.traitItem>;
   return F.traitItem({
     visibilityModifier: _resolveOneBranch<NonNullable<T.TraitItem.Config['visibilityModifier']>>((input as T.TraitItem.Loose).visibilityModifier, "visibility_modifier"),
-    name: _resolveOneLeaf<NonNullable<T.TraitItem.Config['name']>>((input as T.TraitItem.Loose).name, "type_identifier"),
+    name: _resolveOneBranch<NonNullable<T.TraitItem.Config['name']>>((input as T.TraitItem.Loose).name, "_type_identifier"),
     typeParameters: _resolveOneBranch<NonNullable<T.TraitItem.Config['typeParameters']>>((input as T.TraitItem.Loose).typeParameters, "type_parameters"),
     bounds: _resolveOneBranch<NonNullable<T.TraitItem.Config['bounds']>>((input as T.TraitItem.Loose).bounds, "trait_bounds"),
     body: _resolveOneBranch<NonNullable<T.TraitItem.Config['body']>>((input as T.TraitItem.Loose).body, "declaration_list"),
@@ -765,7 +768,7 @@ export function traitItemFrom(input: T.TraitItem | T.TraitItem.Loose): ReturnTyp
 export function associatedTypeFrom(input: T.AssociatedType | T.AssociatedType.Loose): ReturnType<typeof F.associatedType> {
   if (isNodeData(input)) return input as ReturnType<typeof F.associatedType>;
   return F.associatedType({
-    name: _resolveOneLeaf<NonNullable<T.AssociatedType.Config['name']>>((input as T.AssociatedType.Loose).name, "type_identifier"),
+    name: _resolveOneBranch<NonNullable<T.AssociatedType.Config['name']>>((input as T.AssociatedType.Loose).name, "_type_identifier"),
     typeParameters: _resolveOneBranch<NonNullable<T.AssociatedType.Config['typeParameters']>>((input as T.AssociatedType.Loose).typeParameters, "type_parameters"),
     bounds: _resolveOneBranch<NonNullable<T.AssociatedType.Config['bounds']>>((input as T.AssociatedType.Loose).bounds, "trait_bounds"),
     whereClause: _resolveOneBranch<NonNullable<T.AssociatedType.Config['whereClause']>>((input as T.AssociatedType.Loose).whereClause, "where_clause"),
@@ -785,7 +788,7 @@ export function higherRankedTraitBoundFrom(input: T.HigherRankedTraitBound | T.H
   return F.higherRankedTraitBound({
     for: _resolveOneLeaf<NonNullable<T.HigherRankedTraitBound.Config['for']>>((input as T.HigherRankedTraitBound.Loose).for, "_kw_for"),
     typeParameters: _resolveOneBranch<NonNullable<T.HigherRankedTraitBound.Config['typeParameters']>>((input as T.HigherRankedTraitBound.Loose).typeParameters, "type_parameters"),
-    type: _resolveOne<NonNullable<T.HigherRankedTraitBound.Config['type']>>((input as T.HigherRankedTraitBound.Loose).type, _K7, _K8),
+    type: _resolveOne<NonNullable<T.HigherRankedTraitBound.Config['type']>>((input as T.HigherRankedTraitBound.Loose).type, _K9, _K10),
   });
 }
 
@@ -811,17 +814,17 @@ export function constParameterFrom(input: T.ConstParameter | T.ConstParameter.Lo
   return F.constParameter({
     const: _resolveOneLeaf<NonNullable<T.ConstParameter.Config['const']>>((input as T.ConstParameter.Loose).const, "_kw_const"),
     name: _resolveOneLeaf<NonNullable<T.ConstParameter.Config['name']>>((input as T.ConstParameter.Loose).name, "identifier"),
-    type: _resolveOne<NonNullable<T.ConstParameter.Config['type']>>((input as T.ConstParameter.Loose).type, _K7, _K8),
-    value: _resolveOne<NonNullable<T.ConstParameter.Config['value']>>((input as T.ConstParameter.Loose).value, _K14, _K15),
+    type: _resolveOne<NonNullable<T.ConstParameter.Config['type']>>((input as T.ConstParameter.Loose).type, _K9, _K10),
+    value: _resolveOne<NonNullable<T.ConstParameter.Config['value']>>((input as T.ConstParameter.Loose).value, _K15, _K16),
   });
 }
 
 export function typeParameterFrom(input: T.TypeParameter | T.TypeParameter.Loose): ReturnType<typeof F.typeParameter> {
   if (isNodeData(input)) return input as ReturnType<typeof F.typeParameter>;
   return F.typeParameter({
-    name: _resolveOneLeaf<NonNullable<T.TypeParameter.Config['name']>>((input as T.TypeParameter.Loose).name, "type_identifier"),
+    name: _resolveOneBranch<NonNullable<T.TypeParameter.Config['name']>>((input as T.TypeParameter.Loose).name, "_type_identifier"),
     bounds: _resolveOneBranch<NonNullable<T.TypeParameter.Config['bounds']>>((input as T.TypeParameter.Loose).bounds, "trait_bounds"),
-    defaultType: _resolveOne<NonNullable<T.TypeParameter.Config['defaultType']>>((input as T.TypeParameter.Loose).defaultType, _K7, _K8),
+    defaultType: _resolveOne<NonNullable<T.TypeParameter.Config['defaultType']>>((input as T.TypeParameter.Loose).defaultType, _K9, _K10),
   });
 }
 
@@ -837,9 +840,9 @@ export function letDeclarationFrom(input: T.LetDeclaration | T.LetDeclaration.Lo
   if (isNodeData(input)) return input as ReturnType<typeof F.letDeclaration>;
   return F.letDeclaration({
     mutableSpecifier: _resolveOneLeaf<NonNullable<T.LetDeclaration.Config['mutableSpecifier']>>((input as T.LetDeclaration.Loose).mutableSpecifier, "mutable_specifier"),
-    pattern: _resolveOne<NonNullable<T.LetDeclaration.Config['pattern']>>((input as T.LetDeclaration.Loose).pattern, _K16, _K17),
-    type: _resolveOne<NonNullable<T.LetDeclaration.Config['type']>>((input as T.LetDeclaration.Loose).type, _K7, _K8),
-    value: _resolveOne<NonNullable<T.LetDeclaration.Config['value']>>((input as T.LetDeclaration.Loose).value, _K2, _K3),
+    pattern: _resolveOne<NonNullable<T.LetDeclaration.Config['pattern']>>((input as T.LetDeclaration.Loose).pattern, _K17, _K18),
+    type: _resolveOne<NonNullable<T.LetDeclaration.Config['type']>>((input as T.LetDeclaration.Loose).type, _K9, _K10),
+    value: _resolveOne<NonNullable<T.LetDeclaration.Config['value']>>((input as T.LetDeclaration.Loose).value, _K4, _K5),
     alternative: _resolveOneBranch<NonNullable<T.LetDeclaration.Config['alternative']>>((input as T.LetDeclaration.Loose).alternative, "block"),
   });
 }
@@ -848,14 +851,14 @@ export function useDeclarationFrom(input: T.UseDeclaration | T.UseDeclaration.Lo
   if (isNodeData(input)) return input as ReturnType<typeof F.useDeclaration>;
   return F.useDeclaration({
     visibilityModifier: _resolveOneBranch<NonNullable<T.UseDeclaration.Config['visibilityModifier']>>((input as T.UseDeclaration.Loose).visibilityModifier, "visibility_modifier"),
-    argument: _resolveOne<NonNullable<T.UseDeclaration.Config['argument']>>((input as T.UseDeclaration.Loose).argument, _K4, _K18),
+    argument: _resolveOne<NonNullable<T.UseDeclaration.Config['argument']>>((input as T.UseDeclaration.Loose).argument, _K6, _K19),
   });
 }
 
 export function scopedUseListFrom(input: T.ScopedUseList | T.ScopedUseList.Loose): ReturnType<typeof F.scopedUseList> {
   if (isNodeData(input)) return input as ReturnType<typeof F.scopedUseList>;
   return F.scopedUseList({
-    path: _resolveOne<NonNullable<T.ScopedUseList.Config['path']>>((input as T.ScopedUseList.Loose).path, _K4, _K5),
+    path: _resolveOne<NonNullable<T.ScopedUseList.Config['path']>>((input as T.ScopedUseList.Loose).path, _K6, _K7),
     list: _resolveOneBranch<NonNullable<T.ScopedUseList.Config['list']>>((input as T.ScopedUseList.Loose).list, "use_list"),
   });
 }
@@ -871,7 +874,7 @@ export function useListFrom(...input: readonly (NonNullable<T.UseList.Config['ch
 export function useAsClauseFrom(input: T.UseAsClause | T.UseAsClause.Loose): ReturnType<typeof F.useAsClause> {
   if (isNodeData(input)) return input as ReturnType<typeof F.useAsClause>;
   return F.useAsClause({
-    path: _resolveOne<NonNullable<T.UseAsClause.Config['path']>>((input as T.UseAsClause.Loose).path, _K4, _K5),
+    path: _resolveOne<NonNullable<T.UseAsClause.Config['path']>>((input as T.UseAsClause.Loose).path, _K6, _K7),
     alias: _resolveOneLeaf<NonNullable<T.UseAsClause.Config['alias']>>((input as T.UseAsClause.Loose).alias, "identifier"),
   });
 }
@@ -879,7 +882,7 @@ export function useAsClauseFrom(input: T.UseAsClause | T.UseAsClause.Loose): Ret
 export function useWildcardFrom(input?: T.UseWildcard | T.UseWildcard.Loose): ReturnType<typeof F.useWildcard> {
   if (input !== undefined && isNodeData(input)) return input as ReturnType<typeof F.useWildcard>;
   return F.useWildcard({
-    path: _resolveOne<NonNullable<T.UseWildcard.Config['path']>>((input as T.UseWildcard.Loose)?.path, _K4, _K5),
+    path: _resolveOne<NonNullable<T.UseWildcard.Config['path']>>((input as T.UseWildcard.Loose)?.path, _K6, _K7),
   });
 }
 
@@ -905,7 +908,7 @@ export function variadicParameterFrom(input?: T.VariadicParameter | T.VariadicPa
   if (input !== undefined && isNodeData(input)) return input as ReturnType<typeof F.variadicParameter>;
   return F.variadicParameter({
     mutableSpecifier: _resolveOneLeaf<NonNullable<T.VariadicParameter.Config['mutableSpecifier']>>((input as T.VariadicParameter.Loose)?.mutableSpecifier, "mutable_specifier"),
-    pattern: _resolveOne<NonNullable<T.VariadicParameter.Config['pattern']>>((input as T.VariadicParameter.Loose)?.pattern, _K16, _K17),
+    pattern: _resolveOne<NonNullable<T.VariadicParameter.Config['pattern']>>((input as T.VariadicParameter.Loose)?.pattern, _K17, _K18),
   });
 }
 
@@ -913,8 +916,8 @@ export function parameterFrom(input: T.Parameter | T.Parameter.Loose): ReturnTyp
   if (isNodeData(input)) return input as ReturnType<typeof F.parameter>;
   return F.parameter({
     mutableSpecifier: _resolveOneLeaf<NonNullable<T.Parameter.Config['mutableSpecifier']>>((input as T.Parameter.Loose).mutableSpecifier, "mutable_specifier"),
-    pattern: _resolveOne<NonNullable<T.Parameter.Config['pattern']>>((input as T.Parameter.Loose).pattern, _K19, _K17),
-    type: _resolveOne<NonNullable<T.Parameter.Config['type']>>((input as T.Parameter.Loose).type, _K7, _K8),
+    pattern: _resolveOne<NonNullable<T.Parameter.Config['pattern']>>((input as T.Parameter.Loose).pattern, _K20, _K18),
+    type: _resolveOne<NonNullable<T.Parameter.Config['type']>>((input as T.Parameter.Loose).type, _K9, _K10),
   });
 }
 
@@ -953,8 +956,8 @@ export function bracketedTypeFrom(input?: NonNullable<T.BracketedType.Config['ch
 export function qualifiedTypeFrom(input: T.QualifiedType | T.QualifiedType.Loose): ReturnType<typeof F.qualifiedType> {
   if (isNodeData(input)) return input as ReturnType<typeof F.qualifiedType>;
   return F.qualifiedType({
-    type: _resolveOne<NonNullable<T.QualifiedType.Config['type']>>((input as T.QualifiedType.Loose).type, _K7, _K8),
-    alias: _resolveOne<NonNullable<T.QualifiedType.Config['alias']>>((input as T.QualifiedType.Loose).alias, _K7, _K8),
+    type: _resolveOne<NonNullable<T.QualifiedType.Config['type']>>((input as T.QualifiedType.Loose).type, _K9, _K10),
+    alias: _resolveOne<NonNullable<T.QualifiedType.Config['alias']>>((input as T.QualifiedType.Loose).alias, _K9, _K10),
   });
 }
 
@@ -968,8 +971,8 @@ export function lifetimeFrom(input: T.Lifetime | T.Lifetime.Loose): ReturnType<t
 export function arrayTypeFrom(input: T.ArrayType | T.ArrayType.Loose): ReturnType<typeof F.arrayType> {
   if (isNodeData(input)) return input as ReturnType<typeof F.arrayType>;
   return F.arrayType({
-    element: _resolveOne<NonNullable<T.ArrayType.Config['element']>>((input as T.ArrayType.Loose).element, _K7, _K8),
-    length: _resolveOne<NonNullable<T.ArrayType.Config['length']>>((input as T.ArrayType.Loose).length, _K2, _K3),
+    element: _resolveOne<NonNullable<T.ArrayType.Config['element']>>((input as T.ArrayType.Loose).element, _K9, _K10),
+    length: _resolveOne<NonNullable<T.ArrayType.Config['length']>>((input as T.ArrayType.Loose).length, _K4, _K5),
   });
 }
 
@@ -987,9 +990,9 @@ export function functionTypeFrom(input: T.FunctionType | T.FunctionType.Loose): 
   if (isNodeData(input)) return input as ReturnType<typeof F.functionType>;
   return F.functionType({
     forLifetimes: _resolveOneBranch<NonNullable<T.FunctionType.Config['forLifetimes']>>((input as T.FunctionType.Loose).forLifetimes, "for_lifetimes"),
-    trait: _resolveOne<NonNullable<T.FunctionType.Config['trait']>>((input as T.FunctionType.Loose).trait, _K12, _K20),
+    trait: _resolveOne<NonNullable<T.FunctionType.Config['trait']>>((input as T.FunctionType.Loose).trait, _K0, _K21),
     parameters: _resolveOneBranch<NonNullable<T.FunctionType.Config['parameters']>>((input as T.FunctionType.Loose).parameters, "parameters"),
-    returnType: _resolveOne<NonNullable<T.FunctionType.Config['returnType']>>((input as T.FunctionType.Loose).returnType, _K7, _K8),
+    returnType: _resolveOne<NonNullable<T.FunctionType.Config['returnType']>>((input as T.FunctionType.Loose).returnType, _K9, _K10),
     children: _resolveOneBranch<NonNullable<T.FunctionType.Config['children']>>((input as T.FunctionType.Loose).children, "function_modifiers"),
   });
 }
@@ -1010,7 +1013,7 @@ export function unitTypeFrom(input: string | T.UnitType) {
 export function genericFunctionFrom(input: T.GenericFunction | T.GenericFunction.Loose): ReturnType<typeof F.genericFunction> {
   if (isNodeData(input)) return input as ReturnType<typeof F.genericFunction>;
   return F.genericFunction({
-    function: _resolveOne<NonNullable<T.GenericFunction.Config['function']>>((input as T.GenericFunction.Loose).function, _K21, _K22),
+    function: _resolveOne<NonNullable<T.GenericFunction.Config['function']>>((input as T.GenericFunction.Loose).function, _K2, _K22),
     typeArguments: _resolveOneBranch<NonNullable<T.GenericFunction.Config['typeArguments']>>((input as T.GenericFunction.Loose).typeArguments, "type_arguments"),
   });
 }
@@ -1018,7 +1021,7 @@ export function genericFunctionFrom(input: T.GenericFunction | T.GenericFunction
 export function genericTypeFrom(input: T.GenericType | T.GenericType.Loose): ReturnType<typeof F.genericType> {
   if (isNodeData(input)) return input as ReturnType<typeof F.genericType>;
   return F.genericType({
-    type: _resolveOne<NonNullable<T.GenericType.Config['type']>>((input as T.GenericType.Loose).type, _K23, _K20),
+    type: _resolveOne<NonNullable<T.GenericType.Config['type']>>((input as T.GenericType.Loose).type, _K0, _K23),
     typeArguments: _resolveOneBranch<NonNullable<T.GenericType.Config['typeArguments']>>((input as T.GenericType.Loose).typeArguments, "type_arguments"),
   });
 }
@@ -1026,7 +1029,7 @@ export function genericTypeFrom(input: T.GenericType | T.GenericType.Loose): Ret
 export function genericTypeWithTurbofishFrom(input: T.GenericTypeWithTurbofish | T.GenericTypeWithTurbofish.Loose): ReturnType<typeof F.genericTypeWithTurbofish> {
   if (isNodeData(input)) return input as ReturnType<typeof F.genericTypeWithTurbofish>;
   return F.genericTypeWithTurbofish({
-    type: _resolveOne<NonNullable<T.GenericTypeWithTurbofish.Config['type']>>((input as T.GenericTypeWithTurbofish.Loose).type, _K12, _K5),
+    type: _resolveOne<NonNullable<T.GenericTypeWithTurbofish.Config['type']>>((input as T.GenericTypeWithTurbofish.Loose).type, _K0, _K24),
     typeArguments: _resolveOneBranch<NonNullable<T.GenericTypeWithTurbofish.Config['typeArguments']>>((input as T.GenericTypeWithTurbofish.Loose).typeArguments, "type_arguments"),
   });
 }
@@ -1034,8 +1037,8 @@ export function genericTypeWithTurbofishFrom(input: T.GenericTypeWithTurbofish |
 export function boundedTypeFrom(input: T.BoundedType | T.BoundedType.Loose): ReturnType<typeof F.boundedType> {
   if (isNodeData(input)) return input as ReturnType<typeof F.boundedType>;
   return F.boundedType({
-    left: _resolveOne<NonNullable<T.BoundedType.Config['left']>>((input as T.BoundedType.Loose).left, _K7, _K24),
-    right: _resolveOne<NonNullable<T.BoundedType.Config['right']>>((input as T.BoundedType.Loose).right, _K7, _K24),
+    left: _resolveOne<NonNullable<T.BoundedType.Config['left']>>((input as T.BoundedType.Loose).left, _K9, _K25),
+    right: _resolveOne<NonNullable<T.BoundedType.Config['right']>>((input as T.BoundedType.Loose).right, _K9, _K25),
   });
 }
 
@@ -1043,7 +1046,7 @@ export function useBoundsFrom(input: T.UseBounds | T.UseBounds.Loose): ReturnTyp
   if (isNodeData(input)) return input as ReturnType<typeof F.useBounds>;
   return F.useBounds({
     use: _resolveOne<NonNullable<T.UseBounds.Config['use']>>((input as T.UseBounds.Loose).use, _K0, _K0),
-    children: _resolveMany<NonNullable<T.UseBounds.Config['children']>[number]>((input as T.UseBounds.Loose).children, _K12, _K25),
+    children: _resolveMany<NonNullable<T.UseBounds.Config['children']>[number]>((input as T.UseBounds.Loose).children, _K0, _K26),
   });
 }
 
@@ -1058,9 +1061,9 @@ export function typeArgumentsFrom(...input: readonly (NonNullable<T.TypeArgument
 export function typeBindingFrom(input: T.TypeBinding | T.TypeBinding.Loose): ReturnType<typeof F.typeBinding> {
   if (isNodeData(input)) return input as ReturnType<typeof F.typeBinding>;
   return F.typeBinding({
-    name: _resolveOneLeaf<NonNullable<T.TypeBinding.Config['name']>>((input as T.TypeBinding.Loose).name, "type_identifier"),
+    name: _resolveOneBranch<NonNullable<T.TypeBinding.Config['name']>>((input as T.TypeBinding.Loose).name, "_type_identifier"),
     typeArguments: _resolveOneBranch<NonNullable<T.TypeBinding.Config['typeArguments']>>((input as T.TypeBinding.Loose).typeArguments, "type_arguments"),
-    type: _resolveOne<NonNullable<T.TypeBinding.Config['type']>>((input as T.TypeBinding.Loose).type, _K7, _K8),
+    type: _resolveOne<NonNullable<T.TypeBinding.Config['type']>>((input as T.TypeBinding.Loose).type, _K9, _K10),
   });
 }
 
@@ -1069,7 +1072,7 @@ export function referenceTypeFrom(input: T.ReferenceType | T.ReferenceType.Loose
   return F.referenceType({
     lifetime: _resolveOneBranch<NonNullable<T.ReferenceType.Config['lifetime']>>((input as T.ReferenceType.Loose).lifetime, "lifetime"),
     mutableSpecifier: _resolveOneLeaf<NonNullable<T.ReferenceType.Config['mutableSpecifier']>>((input as T.ReferenceType.Loose).mutableSpecifier, "mutable_specifier"),
-    type: _resolveOne<NonNullable<T.ReferenceType.Config['type']>>((input as T.ReferenceType.Loose).type, _K7, _K8),
+    type: _resolveOne<NonNullable<T.ReferenceType.Config['type']>>((input as T.ReferenceType.Loose).type, _K9, _K10),
   });
 }
 
@@ -1077,7 +1080,7 @@ export function pointerTypeFrom(input: T.PointerType | T.PointerType.Loose): Ret
   if (isNodeData(input)) return input as ReturnType<typeof F.pointerType>;
   return F.pointerType({
     mutableSpecifier: _resolveOneLeaf<NonNullable<T.PointerType.Config['mutableSpecifier']>>((input as T.PointerType.Loose).mutableSpecifier, "mutable_specifier"),
-    type: _resolveOne<NonNullable<T.PointerType.Config['type']>>((input as T.PointerType.Loose).type, _K7, _K8),
+    type: _resolveOne<NonNullable<T.PointerType.Config['type']>>((input as T.PointerType.Loose).type, _K9, _K10),
   });
 }
 
@@ -1085,7 +1088,7 @@ export function abstractTypeFrom(input: T.AbstractType | T.AbstractType.Loose): 
   if (isNodeData(input)) return input as ReturnType<typeof F.abstractType>;
   return F.abstractType({
     typeParameters: _resolveOneBranch<NonNullable<T.AbstractType.Config['typeParameters']>>((input as T.AbstractType.Loose).typeParameters, "type_parameters"),
-    trait: _resolveOne<NonNullable<T.AbstractType.Config['trait']>>((input as T.AbstractType.Loose).trait, _K12, _K26),
+    trait: _resolveOne<NonNullable<T.AbstractType.Config['trait']>>((input as T.AbstractType.Loose).trait, _K0, _K27),
   });
 }
 
@@ -1093,7 +1096,7 @@ export function dynamicTypeFrom(input: T.DynamicType | T.DynamicType.Loose): Ret
   if (isNodeData(input)) return input as ReturnType<typeof F.dynamicType>;
   return F.dynamicType({
     dyn: _resolveOne<NonNullable<T.DynamicType.Config['dyn']>>((input as T.DynamicType.Loose).dyn, _K0, _K0),
-    trait: _resolveOne<NonNullable<T.DynamicType.Config['trait']>>((input as T.DynamicType.Loose).trait, _K12, _K27),
+    trait: _resolveOne<NonNullable<T.DynamicType.Config['trait']>>((input as T.DynamicType.Loose).trait, _K0, _K28),
   });
 }
 
@@ -1105,7 +1108,7 @@ export function mutableSpecifierFrom(input?: T.MutableSpecifier) {
 export function macroInvocationFrom(input: T.MacroInvocation | T.MacroInvocation.Loose): ReturnType<typeof F.macroInvocation> {
   if (isNodeData(input)) return input as ReturnType<typeof F.macroInvocation>;
   return F.macroInvocation({
-    macro: _resolveOne<NonNullable<T.MacroInvocation.Config['macro']>>((input as T.MacroInvocation.Loose).macro, _K21, _K5),
+    macro: _resolveOne<NonNullable<T.MacroInvocation.Config['macro']>>((input as T.MacroInvocation.Loose).macro, _K2, _K29),
     tokenTree: _resolveOneBranch<NonNullable<T.MacroInvocation.Config['tokenTree']>>((input as T.MacroInvocation.Loose).tokenTree, "token_tree"),
   });
 }
@@ -1121,24 +1124,24 @@ export function delimTokenTreeFrom(...input: readonly (NonNullable<T.DelimTokenT
 export function scopedIdentifierFrom(input: T.ScopedIdentifier | T.ScopedIdentifier.Loose): ReturnType<typeof F.scopedIdentifier> {
   if (isNodeData(input)) return input as ReturnType<typeof F.scopedIdentifier>;
   return F.scopedIdentifier({
-    path: _resolveOne<NonNullable<T.ScopedIdentifier.Config['path']>>((input as T.ScopedIdentifier.Loose).path, _K4, _K28),
-    name: _resolveOne<NonNullable<T.ScopedIdentifier.Config['name']>>((input as T.ScopedIdentifier.Loose).name, _K29, _K0),
+    path: _resolveOne<NonNullable<T.ScopedIdentifier.Config['path']>>((input as T.ScopedIdentifier.Loose).path, _K6, _K30),
+    name: _resolveOne<NonNullable<T.ScopedIdentifier.Config['name']>>((input as T.ScopedIdentifier.Loose).name, _K31, _K0),
   });
 }
 
 export function scopedTypeIdentifierInExpressionPositionFrom(input: T.ScopedTypeIdentifierInExpressionPosition | T.ScopedTypeIdentifierInExpressionPosition.Loose): ReturnType<typeof F.scopedTypeIdentifierInExpressionPosition> {
   if (isNodeData(input)) return input as ReturnType<typeof F.scopedTypeIdentifierInExpressionPosition>;
   return F.scopedTypeIdentifierInExpressionPosition({
-    path: _resolveOne<NonNullable<T.ScopedTypeIdentifierInExpressionPosition.Config['path']>>((input as T.ScopedTypeIdentifierInExpressionPosition.Loose).path, _K4, _K30),
-    name: _resolveOneLeaf<NonNullable<T.ScopedTypeIdentifierInExpressionPosition.Config['name']>>((input as T.ScopedTypeIdentifierInExpressionPosition.Loose).name, "type_identifier"),
+    path: _resolveOne<NonNullable<T.ScopedTypeIdentifierInExpressionPosition.Config['path']>>((input as T.ScopedTypeIdentifierInExpressionPosition.Loose).path, _K6, _K32),
+    name: _resolveOneBranch<NonNullable<T.ScopedTypeIdentifierInExpressionPosition.Config['name']>>((input as T.ScopedTypeIdentifierInExpressionPosition.Loose).name, "_type_identifier"),
   });
 }
 
 export function scopedTypeIdentifierFrom(input: T.ScopedTypeIdentifier | T.ScopedTypeIdentifier.Loose): ReturnType<typeof F.scopedTypeIdentifier> {
   if (isNodeData(input)) return input as ReturnType<typeof F.scopedTypeIdentifier>;
   return F.scopedTypeIdentifier({
-    path: _resolveOne<NonNullable<T.ScopedTypeIdentifier.Config['path']>>((input as T.ScopedTypeIdentifier.Loose).path, _K4, _K31),
-    name: _resolveOneLeaf<NonNullable<T.ScopedTypeIdentifier.Config['name']>>((input as T.ScopedTypeIdentifier.Loose).name, "type_identifier"),
+    path: _resolveOne<NonNullable<T.ScopedTypeIdentifier.Config['path']>>((input as T.ScopedTypeIdentifier.Loose).path, _K6, _K33),
+    name: _resolveOneBranch<NonNullable<T.ScopedTypeIdentifier.Config['name']>>((input as T.ScopedTypeIdentifier.Loose).name, "_type_identifier"),
   });
 }
 
@@ -1167,14 +1170,14 @@ export function unaryExpressionFrom(input: T.UnaryExpression | T.UnaryExpression
   if (isNodeData(input)) return input as ReturnType<typeof F.unaryExpression>;
   return F.unaryExpression({
     operator: _resolveOne<NonNullable<T.UnaryExpression.Config['operator']>>((input as T.UnaryExpression.Loose).operator, _K0, _K0),
-    operand: _resolveOne<NonNullable<T.UnaryExpression.Config['operand']>>((input as T.UnaryExpression.Loose).operand, _K2, _K3),
+    operand: _resolveOne<NonNullable<T.UnaryExpression.Config['operand']>>((input as T.UnaryExpression.Loose).operand, _K4, _K5),
   });
 }
 
 export function tryExpressionFrom(input: T.TryExpression | T.TryExpression.Loose): ReturnType<typeof F.tryExpression> {
   if (isNodeData(input)) return input as ReturnType<typeof F.tryExpression>;
   return F.tryExpression({
-    value: _resolveOne<NonNullable<T.TryExpression.Config['value']>>((input as T.TryExpression.Loose).value, _K2, _K3),
+    value: _resolveOne<NonNullable<T.TryExpression.Config['value']>>((input as T.TryExpression.Loose).value, _K4, _K5),
   });
 }
 
@@ -1182,41 +1185,41 @@ export function referenceExpressionFrom(input: T.ReferenceExpression | T.Referen
   if (isNodeData(input)) return input as ReturnType<typeof F.referenceExpression>;
   return F.referenceExpression({
     mutableSpecifier: _resolveOneLeaf<NonNullable<T.ReferenceExpression.Config['mutableSpecifier']>>((input as T.ReferenceExpression.Loose).mutableSpecifier, "mutable_specifier"),
-    value: _resolveOne<NonNullable<T.ReferenceExpression.Config['value']>>((input as T.ReferenceExpression.Loose).value, _K2, _K3),
+    value: _resolveOne<NonNullable<T.ReferenceExpression.Config['value']>>((input as T.ReferenceExpression.Loose).value, _K4, _K5),
   });
 }
 
 export function binaryExpressionFrom(input: T.BinaryExpression | T.BinaryExpression.Loose): ReturnType<typeof F.binaryExpression> {
   if (isNodeData(input)) return input as ReturnType<typeof F.binaryExpression>;
   return F.binaryExpression({
-    left: _resolveOne<NonNullable<T.BinaryExpression.Config['left']>>((input as T.BinaryExpression.Loose).left, _K2, _K3),
+    left: _resolveOne<NonNullable<T.BinaryExpression.Config['left']>>((input as T.BinaryExpression.Loose).left, _K4, _K5),
     operator: _resolveOne<NonNullable<T.BinaryExpression.Config['operator']>>((input as T.BinaryExpression.Loose).operator, _K0, _K0),
-    right: _resolveOne<NonNullable<T.BinaryExpression.Config['right']>>((input as T.BinaryExpression.Loose).right, _K2, _K3),
+    right: _resolveOne<NonNullable<T.BinaryExpression.Config['right']>>((input as T.BinaryExpression.Loose).right, _K4, _K5),
   });
 }
 
 export function assignmentExpressionFrom(input: T.AssignmentExpression | T.AssignmentExpression.Loose): ReturnType<typeof F.assignmentExpression> {
   if (isNodeData(input)) return input as ReturnType<typeof F.assignmentExpression>;
   return F.assignmentExpression({
-    left: _resolveOne<NonNullable<T.AssignmentExpression.Config['left']>>((input as T.AssignmentExpression.Loose).left, _K2, _K3),
-    right: _resolveOne<NonNullable<T.AssignmentExpression.Config['right']>>((input as T.AssignmentExpression.Loose).right, _K2, _K3),
+    left: _resolveOne<NonNullable<T.AssignmentExpression.Config['left']>>((input as T.AssignmentExpression.Loose).left, _K4, _K5),
+    right: _resolveOne<NonNullable<T.AssignmentExpression.Config['right']>>((input as T.AssignmentExpression.Loose).right, _K4, _K5),
   });
 }
 
 export function compoundAssignmentExprFrom(input: T.CompoundAssignmentExpr | T.CompoundAssignmentExpr.Loose): ReturnType<typeof F.compoundAssignmentExpr> {
   if (isNodeData(input)) return input as ReturnType<typeof F.compoundAssignmentExpr>;
   return F.compoundAssignmentExpr({
-    left: _resolveOne<NonNullable<T.CompoundAssignmentExpr.Config['left']>>((input as T.CompoundAssignmentExpr.Loose).left, _K2, _K3),
+    left: _resolveOne<NonNullable<T.CompoundAssignmentExpr.Config['left']>>((input as T.CompoundAssignmentExpr.Loose).left, _K4, _K5),
     operator: _resolveOne<NonNullable<T.CompoundAssignmentExpr.Config['operator']>>((input as T.CompoundAssignmentExpr.Loose).operator, _K0, _K0),
-    right: _resolveOne<NonNullable<T.CompoundAssignmentExpr.Config['right']>>((input as T.CompoundAssignmentExpr.Loose).right, _K2, _K3),
+    right: _resolveOne<NonNullable<T.CompoundAssignmentExpr.Config['right']>>((input as T.CompoundAssignmentExpr.Loose).right, _K4, _K5),
   });
 }
 
 export function typeCastExpressionFrom(input: T.TypeCastExpression | T.TypeCastExpression.Loose): ReturnType<typeof F.typeCastExpression> {
   if (isNodeData(input)) return input as ReturnType<typeof F.typeCastExpression>;
   return F.typeCastExpression({
-    value: _resolveOne<NonNullable<T.TypeCastExpression.Config['value']>>((input as T.TypeCastExpression.Loose).value, _K2, _K3),
-    type: _resolveOne<NonNullable<T.TypeCastExpression.Config['type']>>((input as T.TypeCastExpression.Loose).type, _K7, _K8),
+    value: _resolveOne<NonNullable<T.TypeCastExpression.Config['value']>>((input as T.TypeCastExpression.Loose).value, _K4, _K5),
+    type: _resolveOne<NonNullable<T.TypeCastExpression.Config['type']>>((input as T.TypeCastExpression.Loose).type, _K9, _K10),
   });
 }
 
@@ -1241,7 +1244,7 @@ export function yieldExpressionFrom(input?: NonNullable<T.YieldExpression.Config
 export function callExpressionFrom(input: T.CallExpression | T.CallExpression.Loose): ReturnType<typeof F.callExpression> {
   if (isNodeData(input)) return input as ReturnType<typeof F.callExpression>;
   return F.callExpression({
-    function: _resolveOne<NonNullable<T.CallExpression.Config['function']>>((input as T.CallExpression.Loose).function, _K2, _K32),
+    function: _resolveOne<NonNullable<T.CallExpression.Config['function']>>((input as T.CallExpression.Loose).function, _K4, _K34),
     arguments: _resolveOneBranch<NonNullable<T.CallExpression.Config['arguments']>>((input as T.CallExpression.Loose).arguments, "arguments"),
   });
 }
@@ -1280,7 +1283,7 @@ export function tupleExpressionFrom(input: T.TupleExpression | T.TupleExpression
   if (isNodeData(input)) return input as ReturnType<typeof F.tupleExpression>;
   return F.tupleExpression({
     attributes: _resolveManyBranch<NonNullable<T.TupleExpression.Config['attributes']>[number]>((input as T.TupleExpression.Loose).attributes, "attribute_item"),
-    elements: _resolveMany<NonNullable<T.TupleExpression.Config['elements']>[number]>((input as T.TupleExpression.Loose).elements, _K2, _K3),
+    elements: _resolveMany<NonNullable<T.TupleExpression.Config['elements']>[number]>((input as T.TupleExpression.Loose).elements, _K4, _K5),
   });
 }
 
@@ -1292,7 +1295,7 @@ export function unitExpressionFrom(input: string | T.UnitExpression) {
 export function structExpressionFrom(input: T.StructExpression | T.StructExpression.Loose): ReturnType<typeof F.structExpression> {
   if (isNodeData(input)) return input as ReturnType<typeof F.structExpression>;
   return F.structExpression({
-    name: _resolveOne<NonNullable<T.StructExpression.Config['name']>>((input as T.StructExpression.Loose).name, _K12, _K33),
+    name: _resolveOne<NonNullable<T.StructExpression.Config['name']>>((input as T.StructExpression.Loose).name, _K0, _K35),
     body: _resolveOneBranch<NonNullable<T.StructExpression.Config['body']>>((input as T.StructExpression.Loose).body, "field_initializer_list"),
   });
 }
@@ -1316,8 +1319,8 @@ export function shorthandFieldInitializerFrom(input: T.ShorthandFieldInitializer
 export function fieldInitializerFrom(input: T.FieldInitializer | T.FieldInitializer.Loose): ReturnType<typeof F.fieldInitializer> {
   if (isNodeData(input)) return input as ReturnType<typeof F.fieldInitializer>;
   return F.fieldInitializer({
-    field: _resolveOne<NonNullable<T.FieldInitializer.Config['field']>>((input as T.FieldInitializer.Loose).field, _K34, _K0),
-    value: _resolveOne<NonNullable<T.FieldInitializer.Config['value']>>((input as T.FieldInitializer.Loose).value, _K2, _K3),
+    field: _resolveOne<NonNullable<T.FieldInitializer.Config['field']>>((input as T.FieldInitializer.Loose).field, _K36, _K37),
+    value: _resolveOne<NonNullable<T.FieldInitializer.Config['value']>>((input as T.FieldInitializer.Loose).value, _K4, _K5),
     children: _resolveManyBranch<NonNullable<T.FieldInitializer.Config['children']>[number]>((input as T.FieldInitializer.Loose).children, "attribute_item"),
   });
 }
@@ -1335,7 +1338,7 @@ export function ifExpressionFrom(input: T.IfExpression | T.IfExpression.Loose): 
   if (isNodeData(input)) return input as ReturnType<typeof F.ifExpression>;
   return F.ifExpression({
     if: _resolveOne<NonNullable<T.IfExpression.Config['if']>>((input as T.IfExpression.Loose).if, _K0, _K0),
-    condition: _resolveOne<NonNullable<T.IfExpression.Config['condition']>>((input as T.IfExpression.Loose).condition, _K2, _K35),
+    condition: _resolveOne<NonNullable<T.IfExpression.Config['condition']>>((input as T.IfExpression.Loose).condition, _K4, _K38),
     consequence: _resolveOneBranch<NonNullable<T.IfExpression.Config['consequence']>>((input as T.IfExpression.Loose).consequence, "block"),
     alternative: _resolveOneBranch<NonNullable<T.IfExpression.Config['alternative']>>((input as T.IfExpression.Loose).alternative, "else_clause"),
   });
@@ -1345,8 +1348,8 @@ export function letConditionFrom(input: T.LetCondition | T.LetCondition.Loose): 
   if (isNodeData(input)) return input as ReturnType<typeof F.letCondition>;
   return F.letCondition({
     let: _resolveOne<NonNullable<T.LetCondition.Config['let']>>((input as T.LetCondition.Loose).let, _K0, _K0),
-    pattern: _resolveOne<NonNullable<T.LetCondition.Config['pattern']>>((input as T.LetCondition.Loose).pattern, _K16, _K17),
-    value: _resolveOne<NonNullable<T.LetCondition.Config['value']>>((input as T.LetCondition.Loose).value, _K2, _K3),
+    pattern: _resolveOne<NonNullable<T.LetCondition.Config['pattern']>>((input as T.LetCondition.Loose).pattern, _K17, _K18),
+    value: _resolveOne<NonNullable<T.LetCondition.Config['value']>>((input as T.LetCondition.Loose).value, _K4, _K5),
   });
 }
 
@@ -1354,7 +1357,7 @@ export function elseClauseFrom(input: T.ElseClause | T.ElseClause.Loose): Return
   if (isNodeData(input)) return input as ReturnType<typeof F.elseClause>;
   return F.elseClause({
     else: _resolveOne<NonNullable<T.ElseClause.Config['else']>>((input as T.ElseClause.Loose).else, _K0, _K0),
-    children: _resolveOne<NonNullable<T.ElseClause.Config['children']>>((input as T.ElseClause.Loose).children, _K0, _K36),
+    children: _resolveOne<NonNullable<T.ElseClause.Config['children']>>((input as T.ElseClause.Loose).children, _K0, _K39),
   });
 }
 
@@ -1362,7 +1365,7 @@ export function matchExpressionFrom(input: T.MatchExpression | T.MatchExpression
   if (isNodeData(input)) return input as ReturnType<typeof F.matchExpression>;
   return F.matchExpression({
     match: _resolveOne<NonNullable<T.MatchExpression.Config['match']>>((input as T.MatchExpression.Loose).match, _K0, _K0),
-    value: _resolveOne<NonNullable<T.MatchExpression.Config['value']>>((input as T.MatchExpression.Loose).value, _K2, _K3),
+    value: _resolveOne<NonNullable<T.MatchExpression.Config['value']>>((input as T.MatchExpression.Loose).value, _K4, _K5),
     body: _resolveOneBranch<NonNullable<T.MatchExpression.Config['body']>>((input as T.MatchExpression.Loose).body, "match_block"),
   });
 }
@@ -1379,8 +1382,8 @@ export function matchArmFrom(input: T.MatchArm | T.MatchArm.Loose): ReturnType<t
   if (isNodeData(input)) return input as ReturnType<typeof F.matchArm>;
   return F.matchArm({
     pattern: _resolveOneBranch<NonNullable<T.MatchArm.Config['pattern']>>((input as T.MatchArm.Loose).pattern, "match_pattern"),
-    value: _resolveOne<NonNullable<T.MatchArm.Config['value']>>((input as T.MatchArm.Loose).value, _K2, _K3),
-    children: _resolveMany<NonNullable<T.MatchArm.Config['children']>[number]>((input as T.MatchArm.Loose).children, _K0, _K37),
+    value: _resolveOne<NonNullable<T.MatchArm.Config['value']>>((input as T.MatchArm.Loose).value, _K4, _K5),
+    children: _resolveMany<NonNullable<T.MatchArm.Config['children']>[number]>((input as T.MatchArm.Loose).children, _K0, _K40),
   });
 }
 
@@ -1388,16 +1391,16 @@ export function lastMatchArmFrom(input: T.LastMatchArm | T.LastMatchArm.Loose): 
   if (isNodeData(input)) return input as ReturnType<typeof F.lastMatchArm>;
   return F.lastMatchArm({
     pattern: _resolveOneBranch<NonNullable<T.LastMatchArm.Config['pattern']>>((input as T.LastMatchArm.Loose).pattern, "match_pattern"),
-    value: _resolveOne<NonNullable<T.LastMatchArm.Config['value']>>((input as T.LastMatchArm.Loose).value, _K2, _K3),
-    children: _resolveMany<NonNullable<T.LastMatchArm.Config['children']>[number]>((input as T.LastMatchArm.Loose).children, _K0, _K37),
+    value: _resolveOne<NonNullable<T.LastMatchArm.Config['value']>>((input as T.LastMatchArm.Loose).value, _K4, _K5),
+    children: _resolveMany<NonNullable<T.LastMatchArm.Config['children']>[number]>((input as T.LastMatchArm.Loose).children, _K0, _K40),
   });
 }
 
 export function matchPatternFrom(input: T.MatchPattern | T.MatchPattern.Loose): ReturnType<typeof F.matchPattern> {
   if (isNodeData(input)) return input as ReturnType<typeof F.matchPattern>;
   return F.matchPattern({
-    condition: _resolveOne<NonNullable<T.MatchPattern.Config['condition']>>((input as T.MatchPattern.Loose).condition, _K2, _K35),
-    children: _resolveOne<NonNullable<T.MatchPattern.Config['children']>>((input as T.MatchPattern.Loose).children, _K16, _K17),
+    condition: _resolveOne<NonNullable<T.MatchPattern.Config['condition']>>((input as T.MatchPattern.Loose).condition, _K4, _K38),
+    children: _resolveOne<NonNullable<T.MatchPattern.Config['children']>>((input as T.MatchPattern.Loose).children, _K17, _K18),
   });
 }
 
@@ -1405,7 +1408,7 @@ export function whileExpressionFrom(input: T.WhileExpression | T.WhileExpression
   if (isNodeData(input)) return input as ReturnType<typeof F.whileExpression>;
   return F.whileExpression({
     label: _resolveOneBranch<NonNullable<T.WhileExpression.Config['label']>>((input as T.WhileExpression.Loose).label, "label"),
-    condition: _resolveOne<NonNullable<T.WhileExpression.Config['condition']>>((input as T.WhileExpression.Loose).condition, _K2, _K35),
+    condition: _resolveOne<NonNullable<T.WhileExpression.Config['condition']>>((input as T.WhileExpression.Loose).condition, _K4, _K38),
     body: _resolveOneBranch<NonNullable<T.WhileExpression.Config['body']>>((input as T.WhileExpression.Loose).body, "block"),
   });
 }
@@ -1422,8 +1425,8 @@ export function forExpressionFrom(input: T.ForExpression | T.ForExpression.Loose
   if (isNodeData(input)) return input as ReturnType<typeof F.forExpression>;
   return F.forExpression({
     label: _resolveOneBranch<NonNullable<T.ForExpression.Config['label']>>((input as T.ForExpression.Loose).label, "label"),
-    pattern: _resolveOne<NonNullable<T.ForExpression.Config['pattern']>>((input as T.ForExpression.Loose).pattern, _K16, _K17),
-    value: _resolveOne<NonNullable<T.ForExpression.Config['value']>>((input as T.ForExpression.Loose).value, _K2, _K3),
+    pattern: _resolveOne<NonNullable<T.ForExpression.Config['pattern']>>((input as T.ForExpression.Loose).pattern, _K17, _K18),
+    value: _resolveOne<NonNullable<T.ForExpression.Config['value']>>((input as T.ForExpression.Loose).value, _K4, _K5),
     body: _resolveOneBranch<NonNullable<T.ForExpression.Config['body']>>((input as T.ForExpression.Loose).body, "block"),
   });
 }
@@ -1478,7 +1481,7 @@ export function breakExpressionFrom(input?: T.BreakExpression | T.BreakExpressio
   if (input !== undefined && isNodeData(input)) return input as ReturnType<typeof F.breakExpression>;
   return F.breakExpression({
     label: _resolveOneBranch<NonNullable<T.BreakExpression.Config['label']>>((input as T.BreakExpression.Loose)?.label, "label"),
-    expression: _resolveOne<NonNullable<T.BreakExpression.Config['expression']>>((input as T.BreakExpression.Loose)?.expression, _K2, _K3),
+    expression: _resolveOne<NonNullable<T.BreakExpression.Config['expression']>>((input as T.BreakExpression.Loose)?.expression, _K4, _K5),
   });
 }
 
@@ -1492,8 +1495,8 @@ export function continueExpressionFrom(input?: T.ContinueExpression | T.Continue
 export function indexExpressionFrom(input: T.IndexExpression | T.IndexExpression.Loose): ReturnType<typeof F.indexExpression> {
   if (isNodeData(input)) return input as ReturnType<typeof F.indexExpression>;
   return F.indexExpression({
-    object: _resolveOne<NonNullable<T.IndexExpression.Config['object']>>((input as T.IndexExpression.Loose).object, _K2, _K3),
-    index: _resolveOne<NonNullable<T.IndexExpression.Config['index']>>((input as T.IndexExpression.Loose).index, _K2, _K3),
+    object: _resolveOne<NonNullable<T.IndexExpression.Config['object']>>((input as T.IndexExpression.Loose).object, _K4, _K5),
+    index: _resolveOne<NonNullable<T.IndexExpression.Config['index']>>((input as T.IndexExpression.Loose).index, _K4, _K5),
   });
 }
 
@@ -1509,8 +1512,8 @@ export function awaitExpressionFrom(input?: NonNullable<T.AwaitExpression.Config
 export function fieldExpressionFrom(input: T.FieldExpression | T.FieldExpression.Loose): ReturnType<typeof F.fieldExpression> {
   if (isNodeData(input)) return input as ReturnType<typeof F.fieldExpression>;
   return F.fieldExpression({
-    value: _resolveOne<NonNullable<T.FieldExpression.Config['value']>>((input as T.FieldExpression.Loose).value, _K2, _K3),
-    field: _resolveOne<NonNullable<T.FieldExpression.Config['field']>>((input as T.FieldExpression.Loose).field, _K34, _K0),
+    value: _resolveOne<NonNullable<T.FieldExpression.Config['value']>>((input as T.FieldExpression.Loose).value, _K4, _K5),
+    field: _resolveOne<NonNullable<T.FieldExpression.Config['field']>>((input as T.FieldExpression.Loose).field, _K36, _K37),
   });
 }
 
@@ -1546,7 +1549,7 @@ export function blockFrom(input: T.Block | T.Block.Loose): ReturnType<typeof F.b
   if (isNodeData(input)) return input as ReturnType<typeof F.block>;
   return F.block({
     label: _resolveOneBranch<NonNullable<T.Block.Config['label']>>((input as T.Block.Loose).label, "label"),
-    children: _resolveMany<NonNullable<T.Block.Config['children']>[number]>((input as T.Block.Loose).children, _K2, _K38),
+    children: _resolveMany<NonNullable<T.Block.Config['children']>[number]>((input as T.Block.Loose).children, _K4, _K41),
   });
 }
 
@@ -1554,7 +1557,7 @@ export function genericPatternFrom(input: T.GenericPattern | T.GenericPattern.Lo
   if (isNodeData(input)) return input as ReturnType<typeof F.genericPattern>;
   return F.genericPattern({
     typeArguments: _resolveOneBranch<NonNullable<T.GenericPattern.Config['typeArguments']>>((input as T.GenericPattern.Loose).typeArguments, "type_arguments"),
-    children: _resolveOne<NonNullable<T.GenericPattern.Config['children']>>((input as T.GenericPattern.Loose).children, _K21, _K5),
+    children: _resolveOne<NonNullable<T.GenericPattern.Config['children']>>((input as T.GenericPattern.Loose).children, _K2, _K7),
   });
 }
 
@@ -1577,15 +1580,15 @@ export function slicePatternFrom(...input: readonly (NonNullable<T.SlicePattern.
 export function tupleStructPatternFrom(input: T.TupleStructPattern | T.TupleStructPattern.Loose): ReturnType<typeof F.tupleStructPattern> {
   if (isNodeData(input)) return input as ReturnType<typeof F.tupleStructPattern>;
   return F.tupleStructPattern({
-    type: _resolveOne<NonNullable<T.TupleStructPattern.Config['type']>>((input as T.TupleStructPattern.Loose).type, _K21, _K30),
-    children: _resolveMany<NonNullable<T.TupleStructPattern.Config['children']>[number]>((input as T.TupleStructPattern.Loose).children, _K16, _K17),
+    type: _resolveOne<NonNullable<T.TupleStructPattern.Config['type']>>((input as T.TupleStructPattern.Loose).type, _K2, _K32),
+    children: _resolveMany<NonNullable<T.TupleStructPattern.Config['children']>[number]>((input as T.TupleStructPattern.Loose).children, _K17, _K18),
   });
 }
 
 export function structPatternFrom(input: T.StructPattern | T.StructPattern.Loose): ReturnType<typeof F.structPattern> {
   if (isNodeData(input)) return input as ReturnType<typeof F.structPattern>;
   return F.structPattern({
-    type: _resolveOne<NonNullable<T.StructPattern.Config['type']>>((input as T.StructPattern.Loose).type, _K12, _K20),
+    type: _resolveOne<NonNullable<T.StructPattern.Config['type']>>((input as T.StructPattern.Loose).type, _K0, _K21),
     children: _resolveManyBranch<NonNullable<T.StructPattern.Config['children']>[number]>((input as T.StructPattern.Loose).children, "field_pattern"),
   });
 }
@@ -1611,7 +1614,7 @@ export function mutPatternFrom(input: T.MutPattern | T.MutPattern.Loose): Return
   if (isNodeData(input)) return input as ReturnType<typeof F.mutPattern>;
   return F.mutPattern({
     mutableSpecifier: _resolveOneLeaf<NonNullable<T.MutPattern.Config['mutableSpecifier']>>((input as T.MutPattern.Loose).mutableSpecifier, "mutable_specifier"),
-    pattern: _resolveOne<NonNullable<T.MutPattern.Config['pattern']>>((input as T.MutPattern.Loose).pattern, _K16, _K17),
+    pattern: _resolveOne<NonNullable<T.MutPattern.Config['pattern']>>((input as T.MutPattern.Loose).pattern, _K17, _K18),
   });
 }
 
@@ -1632,7 +1635,7 @@ export function refPatternFrom(input: T.RefPattern | T.RefPattern.Loose): Return
   if (isNodeData(input)) return input as ReturnType<typeof F.refPattern>;
   return F.refPattern({
     ref: _resolveOne<NonNullable<T.RefPattern.Config['ref']>>((input as T.RefPattern.Loose).ref, _K0, _K0),
-    children: _resolveOne<NonNullable<T.RefPattern.Config['children']>>((input as T.RefPattern.Loose).children, _K16, _K17),
+    children: _resolveOne<NonNullable<T.RefPattern.Config['children']>>((input as T.RefPattern.Loose).children, _K17, _K18),
   });
 }
 
@@ -1640,7 +1643,7 @@ export function capturedPatternFrom(input: T.CapturedPattern | T.CapturedPattern
   if (isNodeData(input)) return input as ReturnType<typeof F.capturedPattern>;
   return F.capturedPattern({
     identifier: _resolveOneLeaf<NonNullable<T.CapturedPattern.Config['identifier']>>((input as T.CapturedPattern.Loose).identifier, "identifier"),
-    pattern: _resolveOne<NonNullable<T.CapturedPattern.Config['pattern']>>((input as T.CapturedPattern.Loose).pattern, _K16, _K17),
+    pattern: _resolveOne<NonNullable<T.CapturedPattern.Config['pattern']>>((input as T.CapturedPattern.Loose).pattern, _K17, _K18),
   });
 }
 
@@ -1648,7 +1651,7 @@ export function referencePatternFrom(input: T.ReferencePattern | T.ReferencePatt
   if (isNodeData(input)) return input as ReturnType<typeof F.referencePattern>;
   return F.referencePattern({
     mutableSpecifier: _resolveOneLeaf<NonNullable<T.ReferencePattern.Config['mutableSpecifier']>>((input as T.ReferencePattern.Loose).mutableSpecifier, "mutable_specifier"),
-    pattern: _resolveOne<NonNullable<T.ReferencePattern.Config['pattern']>>((input as T.ReferencePattern.Loose).pattern, _K16, _K17),
+    pattern: _resolveOne<NonNullable<T.ReferencePattern.Config['pattern']>>((input as T.ReferencePattern.Loose).pattern, _K17, _K18),
   });
 }
 
@@ -1668,7 +1671,7 @@ export function orPatternUFormPrefixFrom(input: T.OrPatternUFormPrefixConfig) {
 export function negativeLiteralFrom(input: T.NegativeLiteral | T.NegativeLiteral.Loose): ReturnType<typeof F.negativeLiteral> {
   if (isNodeData(input)) return input as ReturnType<typeof F.negativeLiteral>;
   return F.negativeLiteral({
-    value: _resolveOne<NonNullable<T.NegativeLiteral.Config['value']>>((input as T.NegativeLiteral.Loose).value, _K39, _K0),
+    value: _resolveOne<NonNullable<T.NegativeLiteral.Config['value']>>((input as T.NegativeLiteral.Loose).value, _K42, _K0),
   });
 }
 
@@ -1770,8 +1773,8 @@ export function arrayExpressionSemiFrom(input: T.ArrayExpressionSemi | T.ArrayEx
   if (isNodeData(input)) return input as ReturnType<typeof F.arrayExpressionSemi>;
   return F.arrayExpressionSemi({
     attributes: _resolveManyBranch<NonNullable<T.ArrayExpressionSemi.Config['attributes']>[number]>((input as T.ArrayExpressionSemi.Loose).attributes, "attribute_item"),
-    elements: _resolveOne<NonNullable<T.ArrayExpressionSemi.Config['elements']>>((input as T.ArrayExpressionSemi.Loose).elements, _K2, _K3),
-    length: _resolveOne<NonNullable<T.ArrayExpressionSemi.Config['length']>>((input as T.ArrayExpressionSemi.Loose).length, _K2, _K3),
+    elements: _resolveOne<NonNullable<T.ArrayExpressionSemi.Config['elements']>>((input as T.ArrayExpressionSemi.Loose).elements, _K4, _K5),
+    length: _resolveOne<NonNullable<T.ArrayExpressionSemi.Config['length']>>((input as T.ArrayExpressionSemi.Loose).length, _K4, _K5),
   });
 }
 
@@ -1779,7 +1782,7 @@ export function arrayExpressionListFrom(input: T.ArrayExpressionList | T.ArrayEx
   if (isNodeData(input)) return input as ReturnType<typeof F.arrayExpressionList>;
   return F.arrayExpressionList({
     attributes: _resolveManyBranch<NonNullable<T.ArrayExpressionList.Config['attributes']>[number]>((input as T.ArrayExpressionList.Loose).attributes, "attribute_item"),
-    elements: _resolveMany<NonNullable<T.ArrayExpressionList.Config['elements']>[number]>((input as T.ArrayExpressionList.Loose).elements, _K2, _K3),
+    elements: _resolveMany<NonNullable<T.ArrayExpressionList.Config['elements']>[number]>((input as T.ArrayExpressionList.Loose).elements, _K4, _K5),
     children: _resolveManyBranch<NonNullable<T.ArrayExpressionList.Config['children']>[number]>((input as T.ArrayExpressionList.Loose).children, "attribute_item"),
   });
 }
@@ -1830,16 +1833,16 @@ export function structItemTupleFrom(input: T.StructItemTuple | T.StructItemTuple
 export function rangeExpressionBinaryFrom(input: T.RangeExpressionBinary | T.RangeExpressionBinary.Loose): ReturnType<typeof F.rangeExpressionBinary> {
   if (isNodeData(input)) return input as ReturnType<typeof F.rangeExpressionBinary>;
   return F.rangeExpressionBinary({
-    start: _resolveOne<NonNullable<T.RangeExpressionBinary.Config['start']>>((input as T.RangeExpressionBinary.Loose).start, _K2, _K3),
+    start: _resolveOne<NonNullable<T.RangeExpressionBinary.Config['start']>>((input as T.RangeExpressionBinary.Loose).start, _K4, _K5),
     operator: _resolveOne<NonNullable<T.RangeExpressionBinary.Config['operator']>>((input as T.RangeExpressionBinary.Loose).operator, _K0, _K0),
-    end: _resolveOne<NonNullable<T.RangeExpressionBinary.Config['end']>>((input as T.RangeExpressionBinary.Loose).end, _K2, _K3),
+    end: _resolveOne<NonNullable<T.RangeExpressionBinary.Config['end']>>((input as T.RangeExpressionBinary.Loose).end, _K4, _K5),
   });
 }
 
 export function rangeExpressionPostfixFrom(input: T.RangeExpressionPostfix | T.RangeExpressionPostfix.Loose): ReturnType<typeof F.rangeExpressionPostfix> {
   if (isNodeData(input)) return input as ReturnType<typeof F.rangeExpressionPostfix>;
   return F.rangeExpressionPostfix({
-    start: _resolveOne<NonNullable<T.RangeExpressionPostfix.Config['start']>>((input as T.RangeExpressionPostfix.Loose).start, _K2, _K3),
+    start: _resolveOne<NonNullable<T.RangeExpressionPostfix.Config['start']>>((input as T.RangeExpressionPostfix.Loose).start, _K4, _K5),
     operator: _resolveOne<NonNullable<T.RangeExpressionPostfix.Config['operator']>>((input as T.RangeExpressionPostfix.Loose).operator, _K0, _K0),
   });
 }
@@ -1848,7 +1851,7 @@ export function rangeExpressionPrefixFrom(input: T.RangeExpressionPrefix | T.Ran
   if (isNodeData(input)) return input as ReturnType<typeof F.rangeExpressionPrefix>;
   return F.rangeExpressionPrefix({
     operator: _resolveOne<NonNullable<T.RangeExpressionPrefix.Config['operator']>>((input as T.RangeExpressionPrefix.Loose).operator, _K0, _K0),
-    end: _resolveOne<NonNullable<T.RangeExpressionPrefix.Config['end']>>((input as T.RangeExpressionPrefix.Loose).end, _K2, _K3),
+    end: _resolveOne<NonNullable<T.RangeExpressionPrefix.Config['end']>>((input as T.RangeExpressionPrefix.Loose).end, _K4, _K5),
   });
 }
 
@@ -1871,7 +1874,7 @@ export function letChainFrom(input?: NonNullable<T.LetChain.Config['children']>[
 export function closureExpressionBlockFrom(input: T.ClosureExpressionBlock | T.ClosureExpressionBlock.Loose): ReturnType<typeof F.closureExpressionBlock> {
   if (isNodeData(input)) return input as ReturnType<typeof F.closureExpressionBlock>;
   return F.closureExpressionBlock({
-    returnType: _resolveOne<NonNullable<T.ClosureExpressionBlock.Config['returnType']>>((input as T.ClosureExpressionBlock.Loose).returnType, _K7, _K8),
+    returnType: _resolveOne<NonNullable<T.ClosureExpressionBlock.Config['returnType']>>((input as T.ClosureExpressionBlock.Loose).returnType, _K9, _K10),
     body: _resolveOneBranch<NonNullable<T.ClosureExpressionBlock.Config['body']>>((input as T.ClosureExpressionBlock.Loose).body, "block"),
   });
 }
@@ -1879,7 +1882,7 @@ export function closureExpressionBlockFrom(input: T.ClosureExpressionBlock | T.C
 export function closureExpressionExprFrom(input: T.ClosureExpressionExpr | T.ClosureExpressionExpr.Loose): ReturnType<typeof F.closureExpressionExpr> {
   if (isNodeData(input)) return input as ReturnType<typeof F.closureExpressionExpr>;
   return F.closureExpressionExpr({
-    body: _resolveOne<NonNullable<T.ClosureExpressionExpr.Config['body']>>((input as T.ClosureExpressionExpr.Loose).body, _K2, _K3),
+    body: _resolveOne<NonNullable<T.ClosureExpressionExpr.Config['body']>>((input as T.ClosureExpressionExpr.Loose).body, _K4, _K5),
   });
 }
 
@@ -1893,38 +1896,38 @@ export function fieldPatternShorthandFrom(input: T.FieldPatternShorthand | T.Fie
 export function fieldPatternNamedFrom(input: T.FieldPatternNamed | T.FieldPatternNamed.Loose): ReturnType<typeof F.fieldPatternNamed> {
   if (isNodeData(input)) return input as ReturnType<typeof F.fieldPatternNamed>;
   return F.fieldPatternNamed({
-    name: _resolveOneLeaf<NonNullable<T.FieldPatternNamed.Config['name']>>((input as T.FieldPatternNamed.Loose).name, "field_identifier"),
-    pattern: _resolveOne<NonNullable<T.FieldPatternNamed.Config['pattern']>>((input as T.FieldPatternNamed.Loose).pattern, _K16, _K17),
+    name: _resolveOneBranch<NonNullable<T.FieldPatternNamed.Config['name']>>((input as T.FieldPatternNamed.Loose).name, "_field_identifier"),
+    pattern: _resolveOne<NonNullable<T.FieldPatternNamed.Config['pattern']>>((input as T.FieldPatternNamed.Loose).pattern, _K17, _K18),
   });
 }
 
 export function rangePatternLeftFrom(input: T.RangePatternLeft | T.RangePatternLeft.Loose): ReturnType<typeof F.rangePatternLeft> {
   if (isNodeData(input)) return input as ReturnType<typeof F.rangePatternLeft>;
   return F.rangePatternLeft({
-    left: _resolveOne<NonNullable<T.RangePatternLeft.Config['left']>>((input as T.RangePatternLeft.Loose).left, _K40, _K41),
-    right: _resolveOne<NonNullable<T.RangePatternLeft.Config['right']>>((input as T.RangePatternLeft.Loose).right, _K40, _K41),
+    left: _resolveOne<NonNullable<T.RangePatternLeft.Config['left']>>((input as T.RangePatternLeft.Loose).left, _K43, _K44),
+    right: _resolveOne<NonNullable<T.RangePatternLeft.Config['right']>>((input as T.RangePatternLeft.Loose).right, _K43, _K44),
   });
 }
 
 export function rangePatternPrefixFrom(input: T.RangePatternPrefix | T.RangePatternPrefix.Loose): ReturnType<typeof F.rangePatternPrefix> {
   if (isNodeData(input)) return input as ReturnType<typeof F.rangePatternPrefix>;
   return F.rangePatternPrefix({
-    right: _resolveOne<NonNullable<T.RangePatternPrefix.Config['right']>>((input as T.RangePatternPrefix.Loose).right, _K40, _K41),
+    right: _resolveOne<NonNullable<T.RangePatternPrefix.Config['right']>>((input as T.RangePatternPrefix.Loose).right, _K43, _K44),
   });
 }
 
 export function orPatternBinaryFrom(input: T.OrPatternBinary | T.OrPatternBinary.Loose): ReturnType<typeof F.orPatternBinary> {
   if (isNodeData(input)) return input as ReturnType<typeof F.orPatternBinary>;
   return F.orPatternBinary({
-    left: _resolveOne<NonNullable<T.OrPatternBinary.Config['left']>>((input as T.OrPatternBinary.Loose).left, _K16, _K17),
-    right: _resolveOne<NonNullable<T.OrPatternBinary.Config['right']>>((input as T.OrPatternBinary.Loose).right, _K16, _K17),
+    left: _resolveOne<NonNullable<T.OrPatternBinary.Config['left']>>((input as T.OrPatternBinary.Loose).left, _K17, _K18),
+    right: _resolveOne<NonNullable<T.OrPatternBinary.Config['right']>>((input as T.OrPatternBinary.Loose).right, _K17, _K18),
   });
 }
 
 export function orPatternPrefixFrom(input: T.OrPatternPrefix | T.OrPatternPrefix.Loose): ReturnType<typeof F.orPatternPrefix> {
   if (isNodeData(input)) return input as ReturnType<typeof F.orPatternPrefix>;
   return F.orPatternPrefix({
-    right: _resolveOne<NonNullable<T.OrPatternPrefix.Config['right']>>((input as T.OrPatternPrefix.Loose).right, _K16, _K17),
+    right: _resolveOne<NonNullable<T.OrPatternPrefix.Config['right']>>((input as T.OrPatternPrefix.Loose).right, _K17, _K18),
   });
 }
 
