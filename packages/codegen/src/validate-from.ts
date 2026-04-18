@@ -36,6 +36,12 @@ const FACTORY_MODULE_PATHS: Record<string, string> = {
 	python: '../../python/src/factories.ts',
 };
 
+const WRAP_MODULE_PATHS: Record<string, string> = {
+	rust: '../../rust/src/wrap.ts',
+	typescript: '../../typescript/src/wrap.ts',
+	python: '../../python/src/wrap.ts',
+};
+
 // ---------------------------------------------------------------------------
 // Structural analysis
 // ---------------------------------------------------------------------------
@@ -70,17 +76,37 @@ function findUndefined(node: AnyNodeData, path = ''): string[] {
 	return results;
 }
 
-/** Shallow structural diff: compare type, field keys, children length. */
+/**
+ * Shallow structural diff: compare type, factory-declared field keys,
+ * named children count.
+ *
+ * The factory output `b` is the ground truth for "what fields this kind
+ * declares." Any field in `from()` output `a` that isn't in `b` is
+ * acceptable runtime metadata (promoted anonymous keywords like `fn`,
+ * `{`, `;` from `readNode.promoteAnonymousKeyword`, tree-sitter
+ * punctuation, etc.) — those don't count as divergence. Only mismatches
+ * on keys the factory actually declared are real bugs.
+ *
+ * Undefined-valued entries are dropped before comparison — property
+ * access can't distinguish `{a: undefined}` from `{}`, so the structural
+ * comparison shouldn't either.
+ */
 function structuralDiff(a: AnyNodeData, b: AnyNodeData): string[] {
 	const diffs: string[] = [];
 	if (a.type !== b.type) diffs.push(`type: ${a.type} vs ${b.type}`);
 
-	const aKeys = Object.keys(a.fields ?? {}).sort();
-	const bKeys = Object.keys(b.fields ?? {}).sort();
-	const missingInB = aKeys.filter(k => !bKeys.includes(k));
-	const missingInA = bKeys.filter(k => !aKeys.includes(k));
-	if (missingInB.length) diffs.push(`from() has extra fields: ${missingInB.join(', ')}`);
-	if (missingInA.length) diffs.push(`factory has extra fields: ${missingInA.join(', ')}`);
+	const definedKeys = (fields: Record<string, unknown> | undefined): string[] =>
+		Object.entries(fields ?? {})
+			.filter(([, v]) => v !== undefined)
+			.map(([k]) => k);
+
+	const bKeys = new Set(definedKeys(b.fields as Record<string, unknown> | undefined));
+	const aKeysMatchingB = definedKeys(a.fields as Record<string, unknown> | undefined)
+		.filter(k => bKeys.has(k));
+
+	// One-way check: fields factory declared that from() didn't fill in.
+	const missingInA = [...bKeys].filter(k => !aKeysMatchingB.includes(k)).sort();
+	if (missingInA.length) diffs.push(`from() missing declared fields: ${missingInA.join(', ')}`);
 
 	// Compare only named children — anonymous tokens (delimiters, separators)
 	// are reconstructed from templates, not carried in factory output
@@ -122,13 +148,15 @@ export async function validateFrom(
 
 	parseYaml(templatesYaml) as RulesConfig;
 
-	// Import from() and factory maps. from() expects either a fluent
-	// factory output or a camelCase bag; bare readNode NodeData is
-	// fed through `toCamelCaseAdapter` before being handed in so the
-	// typed field reads resolve.
+	// Import from() + factory + wrap modules. `.from()` expects a fluent
+	// NodeData (from factory output OR readTreeNode wrap) OR a camelCase
+	// loose bag — per spec 008 US3, bare `readNode` output isn't a
+	// supported input. readTreeNode wraps readNode output via the per-kind
+	// wrap function, producing a fluent NodeData that `.from()` accepts.
 	let fromMap: Record<string, (input: object) => unknown> = {};
 	let factoryMap: Record<string, (config?: any) => unknown> = {};
 	let factoryShapes: Record<string, 'config' | 'children' | 'text'> = {};
+	let readTreeNode: ((tree: unknown, nodeId?: number) => unknown) | undefined;
 	try {
 		const fromModule = await import(new URL(FROM_MODULE_PATHS[grammar]!, import.meta.url).pathname);
 		fromMap = fromModule._fromMap ?? {};
@@ -138,6 +166,10 @@ export async function validateFrom(
 		factoryMap = factoryModule._factoryMap ?? {};
 		factoryShapes = factoryModule._factoryShapes ?? {};
 	} catch { /* factory module unavailable */ }
+	try {
+		const wrapModule = await import(new URL(WRAP_MODULE_PATHS[grammar]!, import.meta.url).pathname);
+		readTreeNode = wrapModule.readTreeNode;
+	} catch { /* wrap module unavailable */ }
 
 	const entries = loadCorpusEntries(grammar);
 	const errors: FromValidationError[] = [];
@@ -162,7 +194,13 @@ export async function validateFrom(
 			if (!node1) continue;
 
 			const handle = treeHandle(tree1);
-			const readData = readNode(handle, node1.id);
+			// Use readTreeNode (wrapped via per-kind dispatch) when available,
+			// so `.from()` sees a fluent NodeData — the supported input shape
+			// per spec 008 US3. Fall back to raw readNode if the wrap module
+			// isn't loaded (bootstrap scenarios).
+			const readData = readTreeNode
+				? (readTreeNode(handle, node1.id) as AnyNodeData)
+				: readNode(handle, node1.id);
 
 			try {
 				const fromResult = fromMap[kind]!(readData) as AnyNodeData;
