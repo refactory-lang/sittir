@@ -432,15 +432,23 @@ export function emitSuggested(config: EmitSuggestedConfig): string {
                 const wrapped = candidates.filter(c => c.fieldWrapperName).map(c => c.fieldWrapperName).join(', ')
                 lines.push(`  // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: ${wrapped}`)
             }
-            lines.push(`  ${quoteKey(entry.kind)}: ($, original) => transform(original, {`)
-            for (const cand of candidates) {
+            // Each choice position becomes its own patch set.
+            // `tryHoistSiblingVariants` in transform.ts requires all variant
+            // patches in one set to target the same choice position; mixing
+            // positions causes it to bail and fall through to sequential
+            // application, which breaks because the first patch mutates the
+            // field-wrapped choice shape out from under subsequent patches.
+            lines.push(`  ${quoteKey(entry.kind)}: ($, original) => transform(original,`)
+            candidates.forEach((cand, ci) => {
                 const arms = armNamesFor(cand)
+                lines.push('    {')
                 arms.forEach((armName, i) => {
                     const key = cand.path === '' ? `${i}` : `${cand.path}/${i}`
-                    lines.push(`    ${JSON.stringify(key)}: variant(${JSON.stringify(armName)}),`)
+                    lines.push(`      ${JSON.stringify(key)}: variant(${JSON.stringify(armName)}),`)
                 })
-            }
-            lines.push('  }),')
+                lines.push(`    }${ci === candidates.length - 1 ? '' : ','}`)
+            })
+            lines.push('  ),')
             lines.push('')
         })
     }

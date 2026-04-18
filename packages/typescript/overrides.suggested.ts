@@ -29,147 +29,183 @@ export const suggestedRules = {
 
   // --- Polymorph candidates (wrap each choice arm in variant()) ---
   // [held] polymorph — 1 choice position(s), 4 arm(s) total
-  "export_statement": ($, original) => transform(original, {
-    "0": variant("form_0"),
-    "1": variant("export"),
-    "2": variant("export2"),
-    "3": variant("export3"),
-  }),
+  "export_statement": ($, original) => transform(original,
+    {
+      "0": variant("form_0"),
+      "1": variant("export"),
+      "2": variant("export2"),
+      "3": variant("export3"),
+    }
+  ),
 
   // [held] polymorph — 1 choice position(s), 10 arm(s) total
-  "declaration": ($, original) => transform(original, {
-    "0": variant("form_0"),
-    "1": variant("function_signature"),
-    "2": variant("abstract_class_declaration"),
-    "3": variant("module"),
-    "4": variant("internal_module"),
-    "5": variant("type_alias_declaration"),
-    "6": variant("enum_declaration"),
-    "7": variant("interface_declaration"),
-    "8": variant("import_alias"),
-    "9": variant("ambient_declaration"),
-  }),
+  "declaration": ($, original) => transform(original,
+    {
+      "0": variant("form_0"),
+      "1": variant("function_signature"),
+      "2": variant("abstract_class_declaration"),
+      "3": variant("module"),
+      "4": variant("internal_module"),
+      "5": variant("type_alias_declaration"),
+      "6": variant("enum_declaration"),
+      "7": variant("interface_declaration"),
+      "8": variant("import_alias"),
+      "9": variant("ambient_declaration"),
+    }
+  ),
 
   // [held] polymorph — 1 choice position(s), 3 arm(s) total
   // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: from_clause
-  "import_statement": ($, original) => transform(original, {
-    "2/0": variant("import_clause"),
-    "2/1": variant("import_require_clause"),
-    "2/2": variant("source"),
-  }),
+  "import_statement": ($, original) => transform(original,
+    {
+      "2/0": variant("import_clause"),
+      "2/1": variant("import_require_clause"),
+      "2/2": variant("source"),
+    }
+  ),
 
   // [held] polymorph — 1 choice position(s), 2 arm(s) total
   // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: condition
-  "for_statement": ($, original) => transform(original, {
-    "3/0": variant("semi"),
-    "3/1": variant("empty_statement"),
-  }),
+  "for_statement": ($, original) => transform(original,
+    {
+      "3/0": variant("semi"),
+      "3/1": variant("empty_statement"),
+    }
+  ),
 
   // [held] polymorph — 1 choice position(s), 2 arm(s) total
-  "parenthesized_expression": ($, original) => transform(original, {
-    "1/0": variant("expression"),
-    "1/1": variant("sequence_expression"),
-  }),
+  "parenthesized_expression": ($, original) => transform(original,
+    {
+      "1/0": variant("expression"),
+      "1/1": variant("sequence_expression"),
+    }
+  ),
 
   // [held] polymorph — 1 choice position(s), 15 arm(s) total
-  "expression": ($, original) => transform(original, {
-    "0": variant("as_expression"),
-    "1": variant("satisfies_expression"),
-    "2": variant("instantiation_expression"),
-    "3": variant("internal_module"),
-    "4": variant("primary_expression"),
-    "5": variant("_jsx_element"),
-    "6": variant("assignment_expression"),
-    "7": variant("augmented_assignment_expression"),
-    "8": variant("await_expression"),
-    "9": variant("unary_expression"),
-    "10": variant("binary_expression"),
-    "11": variant("ternary_expression"),
-    "12": variant("update_expression"),
-    "13": variant("new_expression"),
-    "14": variant("yield_expression"),
-  }),
+  "expression": ($, original) => transform(original,
+    {
+      "0": variant("as_expression"),
+      "1": variant("satisfies_expression"),
+      "2": variant("instantiation_expression"),
+      "3": variant("internal_module"),
+      "4": variant("primary_expression"),
+      "5": variant("_jsx_element"),
+      "6": variant("assignment_expression"),
+      "7": variant("augmented_assignment_expression"),
+      "8": variant("await_expression"),
+      "9": variant("unary_expression"),
+      "10": variant("binary_expression"),
+      "11": variant("ternary_expression"),
+      "12": variant("update_expression"),
+      "13": variant("new_expression"),
+      "14": variant("yield_expression"),
+    }
+  ),
 
   // [held] polymorph — 1 choice position(s), 2 arm(s) total
-  "primary_expression": ($, original) => transform(original, {
-    "0": variant("form_0"),
-    "1": variant("non_null_expression"),
-  }),
+  "primary_expression": ($, original) => transform(original,
+    {
+      "0": variant("form_0"),
+      "1": variant("non_null_expression"),
+    }
+  ),
 
   // [held] polymorph — 1 choice position(s), 2 arm(s) total
   // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: expression
-  "yield_expression": ($, original) => transform(original, {
-    "1/0": variant("star"),
-    "1/1": variant("form_1"),
-  }),
+  "yield_expression": ($, original) => transform(original,
+    {
+      "1/0": variant("star"),
+      "1/1": variant("form_1"),
+    }
+  ),
 
   // [held] polymorph — 1 choice position(s), 2 arm(s) total
   // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: left
-  "object_assignment_pattern": ($, original) => transform(original, {
-    "0/0": variant("shorthand_property_identifier_pattern"),
-    "0/1": variant("_destructuring_pattern"),
-  }),
+  "object_assignment_pattern": ($, original) => transform(original,
+    {
+      "0/0": variant("shorthand_property_identifier_pattern"),
+      "0/1": variant("_destructuring_pattern"),
+    }
+  ),
 
   // [held] polymorph — 1 choice position(s), 3 arm(s) total
-  "call_expression": ($, original) => transform(original, {
-    "0": variant("function"),
-    "1": variant("function2"),
-    "2": variant("tok_q_dot"),
-  }),
+  "call_expression": ($, original) => transform(original,
+    {
+      "0": variant("function"),
+      "1": variant("function2"),
+      "2": variant("tok_q_dot"),
+    }
+  ),
 
   // [held] polymorph — 1 choice position(s), 2 arm(s) total
-  "_lhs_expression": ($, original) => transform(original, {
-    "0": variant("form0"),
-    "1": variant("non_null_expression"),
-  }),
+  "_lhs_expression": ($, original) => transform(original,
+    {
+      "0": variant("form0"),
+      "1": variant("non_null_expression"),
+    }
+  ),
 
   // [held] polymorph — 1 choice position(s), 2 arm(s) total
   // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: left
-  "assignment_expression": ($, original) => transform(original, {
-    "1/0": variant("parenthesized_expression"),
-    "1/1": variant("_lhs_expression"),
-  }),
+  "assignment_expression": ($, original) => transform(original,
+    {
+      "1/0": variant("parenthesized_expression"),
+      "1/1": variant("_lhs_expression"),
+    }
+  ),
 
   // [held] polymorph — rule '_augmented_assignment_lhs' not found in NodeMap.rules
 
   // [held] polymorph — 1 choice position(s), 2 arm(s) total
-  "pattern": ($, original) => transform(original, {
-    "0": variant("_lhs_expression"),
-    "1": variant("rest_pattern"),
-  }),
+  "pattern": ($, original) => transform(original,
+    {
+      "0": variant("_lhs_expression"),
+      "1": variant("rest_pattern"),
+    }
+  ),
 
   // [held] polymorph — 1 choice position(s), 2 arm(s) total
-  "function_signature": ($, original) => transform(original, {
-    "4/0": variant("_semicolon"),
-    "4/1": variant("_function_signature_automatic_semicolon"),
-  }),
+  "function_signature": ($, original) => transform(original,
+    {
+      "4/0": variant("_semicolon"),
+      "4/1": variant("_function_signature_automatic_semicolon"),
+    }
+  ),
 
   // [held] polymorph — 1 choice position(s), 3 arm(s) total
   // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: declaration
-  "ambient_declaration": ($, original) => transform(original, {
-    "1/0": variant("declaration"),
-    "1/1": variant("global"),
-    "1/2": variant("module"),
-  }),
+  "ambient_declaration": ($, original) => transform(original,
+    {
+      "1/0": variant("declaration"),
+      "1/1": variant("global"),
+      "1/2": variant("module"),
+    }
+  ),
 
   // [held] polymorph — 1 choice position(s), 2 arm(s) total
   // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: name
-  "generic_type": ($, original) => transform(original, {
-    "0/0": variant("_type_identifier"),
-    "0/1": variant("nested_type_identifier"),
-  }),
+  "generic_type": ($, original) => transform(original,
+    {
+      "0/0": variant("_type_identifier"),
+      "0/1": variant("nested_type_identifier"),
+    }
+  ),
 
   // [held] polymorph — 1 choice position(s), 2 arm(s) total
-  "shorthand_property_identifier": ($, original) => transform(original, {
-    "0": variant("identifier"),
-    "1": variant("_reserved_identifier"),
-  }),
+  "shorthand_property_identifier": ($, original) => transform(original,
+    {
+      "0": variant("identifier"),
+      "1": variant("_reserved_identifier"),
+    }
+  ),
 
   // [held] polymorph — 1 choice position(s), 2 arm(s) total
-  "shorthand_property_identifier_pattern": ($, original) => transform(original, {
-    "0": variant("identifier"),
-    "1": variant("_reserved_identifier"),
-  }),
+  "shorthand_property_identifier_pattern": ($, original) => transform(original,
+    {
+      "0": variant("identifier"),
+      "1": variant("_reserved_identifier"),
+    }
+  ),
 
   // --- Promoted supertypes (add matching names to grammar.supertypes) ---
   // [applied] promoted supertype
