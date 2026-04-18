@@ -495,7 +495,11 @@ export function emitTypes(config: EmitTypesConfig): string {
     for (const kind of nodeKinds) {
         const node = nodeMap.nodes.get(kind)!
         if (!generatedTypes.has(node.typeName)) continue
-        lines.push(`export interface ${node.typeName}Ns extends NodeNs<${node.typeName}, LeafScalarMap, LeafStringMap> {}`)
+        // Spec 009 Layer 1: thread `NamespaceMap` through `NodeNs` so that
+        // `Loose` → `FromInputOf<T, Scalars, Strings, [], NamespaceMap>` can
+        // short-circuit multi-branch union recursions to `NamespaceMap[K]['Loose']`
+        // lookups instead of re-projecting per arm.
+        lines.push(`export interface ${node.typeName}Ns extends NodeNs<${node.typeName}, LeafScalarMap, LeafStringMap, NamespaceMap> {}`)
     }
     lines.push('')
 
