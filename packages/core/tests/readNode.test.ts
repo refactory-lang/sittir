@@ -72,13 +72,16 @@ describe('readNode — fname / anonymous-keyword collision', () => {
 			{ type: ';', text: ';', named: false, id: 5 },
 		]);
 		const data = readNode(handle);
-		expect(data.fields?.type).toBeDefined();
-		// fields.type is the NAMED RHS, not an array and not the anon.
-		const t = data.fields!.type as { type: string; text: string; named: boolean };
+		// Provenance tag — readNode output must carry $source: 'ts'
+		// so `.from()` can dispatch by equality rather than structural probing.
+		expect(data.$source).toBe('ts');
+		expect(data.$fields?.type).toBeDefined();
+		// $fields.type is the NAMED RHS, not an array and not the anon.
+		const t = data.$fields!.type as { $type: string; $text: string; $named: boolean };
 		expect(Array.isArray(t)).toBe(false);
-		expect(t.type).toBe('type_identifier');
-		expect(t.text).toBe('u64');
-		expect(t.named).toBe(true);
+		expect(t.$type).toBe('type_identifier');
+		expect(t.$text).toBe('u64');
+		expect(t.$named).toBe(true);
 	});
 
 	it('accumulates two named fname writes into an array (multi-valued field)', () => {
@@ -94,10 +97,10 @@ describe('readNode — fname / anonymous-keyword collision', () => {
 			{ type: 'integer', text: '3', named: true, fieldName: 'argument', id: 6 },
 		]);
 		const data = readNode(handle);
-		const args = data.fields?.argument;
+		const args = data.$fields?.argument;
 		expect(Array.isArray(args)).toBe(true);
-		const arr = args as Array<{ text: string }>;
+		const arr = args as Array<{ $text: string }>;
 		expect(arr).toHaveLength(3);
-		expect(arr.map(a => a.text)).toEqual(['1', '2', '3']);
+		expect(arr.map(a => a.$text)).toEqual(['1', '2', '3']);
 	});
 });

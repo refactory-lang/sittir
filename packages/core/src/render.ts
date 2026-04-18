@@ -40,7 +40,7 @@ function buildRenderContext(config: RulesConfig): InternalRenderContext {
  * - `string`: a single template, returned directly
  * - `{ template: string }`: the standard object form
  * - `{ variants: { <name>: template, … }, detect?: … }`: named variants,
- *   dispatched from `node.variant`, anonymous-token `detect` entries,
+ *   dispatched from `node.$variant`, anonymous-token `detect` entries,
  *   or a field-presence fallback across the variant values.
  */
 function resolveTemplate(rule: TemplateRule, node: AnyNodeData, varPattern: RegExp): string {
@@ -50,16 +50,16 @@ function resolveTemplate(rule: TemplateRule, node: AnyNodeData, varPattern: RegE
 
 	if (obj.variants) {
 		// 1. Explicit variant field (set by form factories)
-		if (node.variant && obj.variants[node.variant]) {
-			return obj.variants[node.variant]!;
+		if (node.$variant && obj.variants[node.$variant]) {
+			return obj.variants[node.$variant]!;
 		}
 		// 2. Detect from anonymous tokens in children
-		if (obj.detect && node.children) {
-			for (const child of node.children) {
+		if (obj.detect && node.$children) {
+			for (const child of node.$children) {
 				const c = child as AnyNodeData;
-				if (c.named === false) {
+				if (c.$named === false) {
 					for (const [subtype, token] of Object.entries(obj.detect)) {
-						if (c.text === token) return obj.variants[subtype]!;
+						if (c.$text === token) return obj.variants[subtype]!;
 					}
 				}
 			}
@@ -74,7 +74,7 @@ function resolveTemplate(rule: TemplateRule, node: AnyNodeData, varPattern: RegE
 	}
 
 	const tmpl = obj.template;
-	if (!tmpl) throw new Error(`Rule for '${node.type}' has neither template nor variants`);
+	if (!tmpl) throw new Error(`Rule for '${node.$type}' has neither template nor variants`);
 	return tmpl;
 }
 
@@ -83,14 +83,14 @@ function resolveTemplate(rule: TemplateRule, node: AnyNodeData, varPattern: RegE
 // ---------------------------------------------------------------------------
 
 function render(node: AnyNodeData, ctx: InternalRenderContext): string {
-	if (node.text !== undefined && !node.fields && !node.children) return node.text;
+	if (node.$text !== undefined && !node.$fields && !node.$children) return node.$text;
 
-	if (!node.fields && !node.children) {
-		throw new Error(`Node '${node.type}' has no 'fields' or 'children' — did you mean to set 'text' for a leaf node?`);
+	if (!node.$fields && !node.$children) {
+		throw new Error(`Node '${node.$type}' has no 'fields' or 'children' — did you mean to set 'text' for a leaf node?`);
 	}
 
-	const rule = ctx.config.rules[node.type];
-	if (!rule) throw new Error(`No render rule for '${node.type}'`);
+	const rule = ctx.config.rules[node.$type];
+	if (!rule) throw new Error(`No render rule for '${node.$type}'`);
 
 	const ruleObj = typeof rule === 'string' ? undefined : rule as unknown as Record<string, unknown>;
 
@@ -118,20 +118,20 @@ function render(node: AnyNodeData, ctx: InternalRenderContext): string {
 		// can't reconstruct them).
 		if (fieldKey === 'text') {
 			// Parsed-tree path: readNode captured the full source span.
-			if (node.text !== undefined && node.text !== '') return node.text;
+			if (node.$text !== undefined && node.$text !== '') return node.$text;
 			// Factory-built path: the node never saw a source span.
 			// Best-effort concatenate the fields + children so round-
 			// trip tests for `$TEXT` rules still produce non-empty
 			// output; better than silent ''.
 			const parts: string[] = [];
-			if (node.fields) {
-				for (const v of Object.values(node.fields)) {
+			if (node.$fields) {
+				for (const v of Object.values(node.$fields)) {
 					const items = Array.isArray(v) ? v : [v];
 					for (const item of items) parts.push(renderValue(item as AnyNodeData | string | number, ctx));
 				}
 			}
-			if (node.children) {
-				for (const c of node.children) {
+			if (node.$children) {
+				for (const c of node.$children) {
 					parts.push(renderValue(c as AnyNodeData | string | number, ctx));
 				}
 			}
@@ -154,8 +154,8 @@ function render(node: AnyNodeData, ctx: InternalRenderContext): string {
 		}
 
 		// 2. Fields (tree-sitter FIELDs + promoted overrides)
-		if (node.fields?.[fieldKey] !== undefined) {
-			const value = node.fields[fieldKey];
+		if (node.$fields?.[fieldKey] !== undefined) {
+			const value = node.$fields[fieldKey];
 			if (pfx.length === 3 || pfx === `${prefix}${prefix}${prefix}`) {
 				const items = Array.isArray(value) ? value : [value];
 				const sep = resolveJoinBy(ruleObj, name);
@@ -171,7 +171,7 @@ function render(node: AnyNodeData, ctx: InternalRenderContext): string {
 				// guard, so throw with the same shape.
 				if (value.length === 0) {
 					throw new Error(
-						`Node '${node.type}' field '${fieldKey}' is an empty array but the template expects exactly one value — single-slot field was rendered from a zero-length array.`,
+						`Node '${node.$type}' field '${fieldKey}' is an empty array but the template expects exactly one value — single-slot field was rendered from a zero-length array.`,
 					);
 				}
 				return renderValue(value[0] as AnyNodeData | string | number, ctx);
@@ -184,9 +184,9 @@ function render(node: AnyNodeData, ctx: InternalRenderContext): string {
 		// delimiters are in template text, separators are in joinBy, keywords are
 		// in override fields. Only named children carry user content.
 		if ((pfx.length === 3 || pfx === `${prefix}${prefix}${prefix}`) && fieldKey === 'children') {
-			if (!node.children) return '';
-			const remaining = node.children.filter((c, i) =>
-				!consumed.has(i) && (c as AnyNodeData).named !== false
+			if (!node.$children) return '';
+			const remaining = node.$children.filter((c, i) =>
+				!consumed.has(i) && (c as AnyNodeData).$named !== false
 			);
 			const sep = resolveJoinBy(ruleObj, name);
 			const joined = remaining.map(c => renderValue(c as AnyNodeData | string | number, ctx)).join(sep);
@@ -200,27 +200,27 @@ function render(node: AnyNodeData, ctx: InternalRenderContext): string {
 			// named-child run and emit it when present — preserves
 			// the original's with-or-without-flank state so ast-match
 			// stays stable.
-			const prefix = ruleObj?.['joinByLeading'] === true ? flankSep(node.children, 'leading', sep) : '';
-			const suffix = ruleObj?.['joinByTrailing'] === true ? flankSep(node.children, 'trailing', sep) : '';
+			const prefix = ruleObj?.['joinByLeading'] === true ? flankSep(node.$children, 'leading', sep) : '';
+			const suffix = ruleObj?.['joinByTrailing'] === true ? flankSep(node.$children, 'trailing', sep) : '';
 			return prefix + joined + suffix;
 		}
 
 		// 4. Named child by kind — consume first unconsumed named match
-		if (node.children && Array.isArray(node.children)) {
-			const idx = node.children.findIndex((c: any, i: number) =>
-				!consumed.has(i) && c?.type === fieldKey && (c as AnyNodeData).named !== false
+		if (node.$children && Array.isArray(node.$children)) {
+			const idx = node.$children.findIndex((c: any, i: number) =>
+				!consumed.has(i) && c?.$type === fieldKey && (c as AnyNodeData).$named !== false
 			);
 			if (idx >= 0) {
 				consumed.add(idx);
-				const child = node.children[idx];
+				const child = node.$children[idx];
 				if (pfx.length === 3 || pfx === `${prefix}${prefix}${prefix}`) {
 					// $$$ on a single matched child — collect all unconsumed named of this type
 					const items: unknown[] = [child];
-					for (let i = idx + 1; i < node.children.length; i++) {
-						const c = node.children[i] as AnyNodeData;
-						if (!consumed.has(i) && c?.type === fieldKey && c.named !== false) {
+					for (let i = idx + 1; i < node.$children.length; i++) {
+						const c = node.$children[i] as AnyNodeData;
+						if (!consumed.has(i) && c?.$type === fieldKey && c.$named !== false) {
 							consumed.add(i);
-							items.push(node.children[i]);
+							items.push(node.$children[i]);
 						}
 					}
 					const sep = resolveJoinBy(ruleObj, name);
@@ -231,10 +231,10 @@ function render(node: AnyNodeData, ctx: InternalRenderContext): string {
 		}
 
 		// 5. $CHILDREN (single) — first unconsumed named child
-		if (fieldKey === 'children' && node.children) {
-			for (let i = 0; i < node.children.length; i++) {
-				const c = node.children[i] as AnyNodeData;
-				if (!consumed.has(i) && c.named !== false) {
+		if (fieldKey === 'children' && node.$children) {
+			for (let i = 0; i < node.$children.length; i++) {
+				const c = node.$children[i] as AnyNodeData;
+				if (!consumed.has(i) && c.$named !== false) {
 					consumed.add(i);
 					return renderValue(c as AnyNodeData | string | number, ctx);
 				}
@@ -301,10 +301,10 @@ function pickTemplate(
 		tpl.replace(varPattern, (_match: string, _pfx: string, name: string) => {
 			const fieldKey = name.toLowerCase();
 			total++;
-			if (node.fields?.[fieldKey] !== undefined) { resolved++; return ''; }
-			if (fieldKey === 'children' && node.children && node.children.length > 0) { resolved++; return ''; }
-			if (node.children && Array.isArray(node.children)) {
-				if (node.children.some((c: any) => c?.type === fieldKey)) { resolved++; return ''; }
+			if (node.$fields?.[fieldKey] !== undefined) { resolved++; return ''; }
+			if (fieldKey === 'children' && node.$children && node.$children.length > 0) { resolved++; return ''; }
+			if (node.$children && Array.isArray(node.$children)) {
+				if (node.$children.some((c: any) => c?.$type === fieldKey)) { resolved++; return ''; }
 			}
 			return '';
 		});
@@ -339,9 +339,9 @@ function renderClause(
 	if (!varPattern.test(clauseTemplate)) {
 		// Reset stateful regex — .test() advances lastIndex when global.
 		varPattern.lastIndex = 0;
-		if (node.children && Array.isArray(node.children)) {
-			const idx = node.children.findIndex((c: any, i: number) =>
-				!consumed.has(i) && c?.type === clauseTemplate
+		if (node.$children && Array.isArray(node.$children)) {
+			const idx = node.$children.findIndex((c: any, i: number) =>
+				!consumed.has(i) && c?.$type === clauseTemplate
 			);
 			if (idx >= 0) {
 				consumed.add(idx);
@@ -356,11 +356,11 @@ function renderClause(
 	let allPresent = true;
 	clauseTemplate.replace(varPattern, (_match: string, _pfx: string, name: string) => {
 		const fieldKey = name.toLowerCase();
-		if (node.fields?.[fieldKey] !== undefined) return '';
+		if (node.$fields?.[fieldKey] !== undefined) return '';
 		// Also check children by kind
-		if (node.children && Array.isArray(node.children)) {
-			const idx = node.children.findIndex((c: any, i: number) =>
-				!consumed.has(i) && c?.type === fieldKey
+		if (node.$children && Array.isArray(node.$children)) {
+			const idx = node.$children.findIndex((c: any, i: number) =>
+				!consumed.has(i) && c?.$type === fieldKey
 			);
 			if (idx >= 0) return '';
 		}
@@ -373,8 +373,8 @@ function renderClause(
 	// Second pass: actually render (consuming children)
 	return clauseTemplate.replace(varPattern, (_match: string, _pfx: string, name: string) => {
 		const fieldKey = name.toLowerCase();
-		if (node.fields?.[fieldKey] !== undefined) {
-			const raw = node.fields[fieldKey];
+		if (node.$fields?.[fieldKey] !== undefined) {
+			const raw = node.$fields[fieldKey];
 			// Multi-valued fields (promoted anonymous tokens +
 			// repeated slots) arrive as arrays. renderValue(array)
 			// would treat it as a node with `.type === undefined`
@@ -388,13 +388,13 @@ function renderClause(
 			return renderValue(value, ctx);
 		}
 		// Children by kind fallback
-		if (node.children && Array.isArray(node.children)) {
-			const idx = node.children.findIndex((c: any, i: number) =>
-				!consumed.has(i) && c?.type === fieldKey
+		if (node.$children && Array.isArray(node.$children)) {
+			const idx = node.$children.findIndex((c: any, i: number) =>
+				!consumed.has(i) && c?.$type === fieldKey
 			);
 			if (idx >= 0) {
 				consumed.add(idx);
-				return renderValue(node.children[idx] as AnyNodeData | string | number, ctx);
+				return renderValue(node.$children[idx] as AnyNodeData | string | number, ctx);
 			}
 		}
 		return '';
@@ -415,7 +415,7 @@ function renderClause(
  */
 function flankSep(children: readonly unknown[], side: 'leading' | 'trailing', sep: string): string {
 	const isNamed = (c: unknown): boolean =>
-		typeof c === 'object' && c !== null && (c as AnyNodeData).named !== false;
+		typeof c === 'object' && c !== null && (c as AnyNodeData).$named !== false;
 	const namedIdx = side === 'leading'
 		? children.findIndex(isNamed)
 		: children.findLastIndex(isNamed);
@@ -423,7 +423,7 @@ function flankSep(children: readonly unknown[], side: 'leading' | 'trailing', se
 	const neighborIdx = side === 'leading' ? namedIdx - 1 : namedIdx + 1;
 	if (neighborIdx < 0 || neighborIdx >= children.length) return '';
 	const neighbor = children[neighborIdx] as AnyNodeData | undefined;
-	return neighbor && neighbor.named === false && neighbor.text === sep ? sep : '';
+	return neighbor && neighbor.$named === false && neighbor.$text === sep ? sep : '';
 }
 
 function resolveJoinBy(ruleObj: Record<string, unknown> | undefined, varName: string): string {

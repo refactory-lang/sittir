@@ -25,13 +25,51 @@ Generated packages (`@sittir/rust`, `@sittir/typescript`, `@sittir/python`) cont
 
 ## Key Design Decisions
 
-- **NodeData** — plain objects, not ES classes. Branches: `{ type, fields }`. Leaves: `{ type, text }`. Fields stored under **raw** (snake_case) names for zero-cost render pass-through.
-- **Concrete interfaces** — `interface FunctionItem { type: 'function_item'; fields: { ... }; visibilityModifier?: ... }` — the source of truth for each node's shape. Config/Tree/FromInput derived via type transformations.
+- **NodeData** — plain objects, not ES classes. Branches: `{ $type, $source, $named, $fields }`. Leaves: `{ $type, $source, $named, $text }`. Fields stored under **raw** (snake_case) names inside `$fields`. `$`-prefix on metadata (spec 008 US7) eliminates collisions with user-facing field names like `type` (python's `type_alias_statement`).
+- **`$source` provenance** — every NodeData carries `$source: 'ts' | 'sg' | 'factory'` at construction. `readTreeNode` sets `'ts'`; factories set `'factory'`. `.from()` dispatch can branch on it instead of structural probing.
+- **Concrete interfaces** — `interface FunctionItem { $type: 'function_item'; $fields: { ... }; $children?: [...] }` — the source of truth for each node's shape. Config/Tree/FromInput derived via type transformations. Consumer bags (Config, Loose) still use unprefixed `children` for the child-slot key.
+- **Tree-sitter nodes keep unprefixed API** — `AnyTreeNode`, `TreeNodeOf<T>`, `readTreeNode` output all use `.type` / `.text()` / `.children()` (tree-sitter convention). Only the data / factory surface uses `$`-prefix.
 - **S-expression templates** — tree-sitter query syntax for render rules. Field references use raw names.
 - **Grammar-aligned terminology** — kind, field, named, anonymous, supertype (tree-sitter/ast-grep terms)
 - **Supertype unions** — `_expression` → `Expression`, `ExpressionTree`
 - **Factories close over rules** — `node.render()`, `node.toEdit()`, `node.replace()` need no extra args
-- **Render guards** — branch nodes without `fields` throw; leaf nodes without `text` throw
+- **Render guards** — branch nodes without `$fields` throw; leaf nodes without `$text` throw
+
+### Public API surfaces (post-008)
+
+Three ways to reach the same per-kind type family — all resolve identically:
+
+```ts
+import type { FunctionItem, ConfigFor, NamespaceMap } from '@sittir/rust';
+
+FunctionItem.Config                            // namespace sugar (preferred)
+ConfigFor<'function_item'>                     // generic (kind-parametric code)
+NamespaceMap['function_item']['Config']        // direct map (meta-utilities)
+```
+
+Guards — narrow through kind × shape (spec 008 US2):
+
+```ts
+import { is, isTree, isNode, assert } from '@sittir/rust';
+
+if (is.functionItem(v) && isNode(v)) {         // kind + data-shape
+    v.$fields.name;                             // typed
+}
+if (is.expression(v) && isTree(v)) {           // supertype + tree-shape
+    v.field('name');                            // tree-sitter typed field
+}
+assert.functionItem(v);                        // throws TypeError on mismatch
+```
+
+IR namespace — flat + grouped (spec 008 US5), both tree-shakeable:
+
+```ts
+import { ir, expression } from '@sittir/rust';
+
+ir.binary(config);                             // flat camelCase (supertype-stripped short name)
+ir.expression.binary(config);                  // grouped (attached to ir)
+expression.binary(config);                     // standalone (tree-shakeable)
+```
 
 ### Data Flow & API Tiers
 
@@ -40,19 +78,19 @@ Seven surfaces, one common shape (`NodeData`):
 | Surface | Shape | Notes |
 |---------|-------|-------|
 | Factory input | `Config` (camelCase, named child slots) | Developer-facing ergonomic API |
-| Factory output | `NodeData` + fluent getters/setters + methods | Raw storage, camelCase accessors |
+| Factory output | `NodeData` + fluent getters/setters + methods | Raw `$`-prefix metadata, `$fields` snake_case, fluent methods camelCase |
 | From input | `FromInput` (loose: strings, numbers, objects) | Adds resolution on top of factory |
 | From output | Same as factory output | Calls factory internally |
-| readNode input | `SgNode` / `TreeNode` (raw field names) | **ast-grep owns this shape** |
-| readNode output | `NodeData` (raw) | Direct mapping, no translation |
-| Render input | `AnyNodeData` — reads `node.fields[rawName]` | Zero-cost from any producer |
+| readNode input | `SgNode` / `TreeNode` (raw field names) | **ast-grep / tree-sitter owns this shape** |
+| readNode output | `NodeData` with `$source: 'ts'` | Direct mapping, no translation |
+| Render input | `AnyNodeData` — reads `node.$fields[rawName]` | Zero-cost from any producer |
 
 Design targets per tier:
 
-- **Factory** — zero-cost translation + compile-time constraints + client-side validation of text inputs. Config uses camelCase keys; factory maps to raw `fields` internally. Fluent getters/setters provide camelCase access: no-arg = getter, with-arg = setter (returns new node).
+- **Factory** — zero-cost translation + compile-time constraints + client-side validation of text inputs. Config uses camelCase keys; factory maps to raw `$fields` internally and stamps `$source: 'factory'`. Fluent getters/setters provide camelCase access (setters named `value` / `values`): no-arg = getter, with-arg = setter (returns new node).
 - **FromInput** — adds resolution (string → leaf, object → branch inference, supertype expansion) on top of factory. Exposed getters/setters same as factory.
-- **Wrap / readNode** — strips all protections and translations. `readNode(target)` is the typed public entry point; per-kind `wrapXxx()` functions recursively hydrate from TreeNode to `NodeData`. Override field promotion heuristics are inlined.
-- **Render** — reads `node.fields[rawName]` and `node.fields['children']`. Zero-cost consumption from any producer.
+- **Wrap / readNode** — strips all protections and translations. `readTreeNode(target)` is the typed public entry point (dispatches to per-kind `wrapXxx()` via `_wrapTable[data.$type]`); `readNode(tree, id?)` is the grammar-agnostic raw reader that emits `$source: 'ts'`. Override field promotion heuristics are inlined.
+- **Render** — reads `node.$fields[rawName]` and `node.$children`. Zero-cost consumption from any producer.
 
 ## Commands
 
@@ -122,6 +160,8 @@ Specs, plans, tasks under `specs/NNN-feature-name/`. Branch convention: `NNN-sho
 - File system — `packages/<lang>/overrides.ts` (hand-authored source), `packages/<lang>/.sittir/grammar.js` (transpiled output, gitignored), generated `.ts`/`.yaml` artifacts (006-override-dsl-enrich)
 - TypeScript (ESM, `.ts` extensions in imports), TypeScript 6.0.2 + tree-sitter-cli ^0.26.7, web-tree-sitter ^0.26.7, esbuild (transpile bridge from spec 006), Emscripten (emsdk, for WASM compilation) (007-override-compiled-parser)
 - File system — `.sittir/` directory per grammar for transpiled grammar.js, compiled parser WASM, parser.c, node-types.json (007-override-compiled-parser)
+- TypeScript 6.0.2 (ESM, `.ts` extensions in imports) + `@sittir/core`, `@sittir/types`, `@sittir/codegen` (workspace packages — no new deps) (008-factory-ergonomic-cleanup)
+- File system — per-grammar generated output under `packages/{rust,typescript,python}/src/` (008-factory-ergonomic-cleanup)
 
 ## Recent Changes
 - 004-yaml-render-templates: Added TypeScript (ESM, `.ts` extensions in imports), TypeScript 6.0.2 + `@sittir/core`, `@sittir/types`, `@sittir/codegen`; tree-sitter grammars (grammar.json + node-types.json)

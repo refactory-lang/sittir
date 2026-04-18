@@ -45,12 +45,14 @@
     "yaml": "^2.8.3"
   },
   "devDependencies": {
+    "@ast-grep/wasm": "^0.42.1",
     "@sittir/typescript": "workspace:*",
-    "@types/node": "^25.5.0",
+    "@types/node": "^25.6.0",
     "esbuild": "^0.28.0",
     "tree-sitter-go": "^0.25.0",
     "tree-sitter-rust": "^0.24.0",
     "tree-sitter-typescript": "^0.23.2",
-    "type-fest": "^5.5.0"
+    "type-fest": "^5.6.0",
+    "web-tree-sitter": "^0.26.8"
   }
 }

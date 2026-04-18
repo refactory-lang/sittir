@@ -154,6 +154,7 @@ writeFile(join(outDir, 'utils.ts'), result.utils);
 writeFile(join(outDir, 'from.ts'), result.from);
 writeFile(join(outDir, 'ir.ts'), result.irNamespace);
 writeFile(join(outDir, 'consts.ts'), result.consts);
+writeFile(join(outDir, 'is.ts'), result.is);
 writeFile(join(outDir, 'index.ts'), result.index);
 
 // Write YAML templates to package root (one level up from src/)

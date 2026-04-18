@@ -36,6 +36,9 @@ jobs:
       - name: Type check
         run: pnpm run type-check
 
+      - name: Lint generated packages (strict — zero warnings)
+        run: npx oxlint --deny-warnings packages/rust/src packages/typescript/src packages/python/src
+
       - name: Lint
         run: pnpm run lint
 

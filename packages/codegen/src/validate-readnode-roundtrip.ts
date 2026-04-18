@@ -29,89 +29,21 @@
 import { readFileSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 import { readNode } from '@sittir/core'
-import type { AnyNodeData, AnyTreeNode } from '@sittir/types'
+import type { AnyNodeData } from '@sittir/types'
 import { loadRawEntries } from './validators/node-types.ts'
-import { loadLanguageForGrammar } from './validators/common.ts'
+import {
+    loadLanguageForGrammar,
+    treeHandle,
+    findFirst,
+    collectKinds,
+    type TSNode,
+    type TSTree,
+} from './validators/common.ts'
 
 
-// ---------------------------------------------------------------------------
-// Minimal tree-sitter adapter — shared shape with the other validators
-// ---------------------------------------------------------------------------
-
-interface TSNode {
-    type: string
-    text: string
-    startIndex: number
-    endIndex: number
-    isNamed: boolean
-    childCount: number
-    children: TSNode[]
-    child(i: number): TSNode | null
-    fieldNameForChild(i: number): string | null
-    childForFieldName(name: string): TSNode | null
-    id: number
-    hasError: boolean
-}
-
-interface TSTree {
-    rootNode: TSNode
-}
-
-function adaptNode(node: TSNode): AnyTreeNode {
-    return {
-        type: node.type,
-        id: () => node.id,
-        text: () => node.text,
-        isNamed: () => node.isNamed,
-        field: (name: string) => {
-            const c = node.childForFieldName(name)
-            return c ? adaptNode(c) : null
-        },
-        fieldChildren: (name: string) => {
-            const r: AnyTreeNode[] = []
-            for (let i = 0; i < node.childCount; i++) {
-                if (node.fieldNameForChild(i) === name) {
-                    const c = node.child(i)
-                    if (c) r.push(adaptNode(c))
-                }
-            }
-            return r
-        },
-        fieldNameForChild: (i: number) => node.fieldNameForChild(i),
-        children: () => node.children.map(adaptNode),
-        range: () => ({ start: { index: node.startIndex }, end: { index: node.endIndex } }),
-    }
-}
-
-function treeHandle(tree: TSTree) {
-    const m = new Map<number, TSNode>()
-    function collect(n: TSNode) { m.set(n.id, n); for (const c of n.children) collect(c) }
-    collect(tree.rootNode)
-    return {
-        rootNode: adaptNode(tree.rootNode),
-        nodeById: (id: number) => {
-            const n = m.get(id)
-            if (!n) throw new Error(`Node ${id} not found`)
-            return adaptNode(n)
-        },
-    }
-}
-
-function findFirst(node: TSNode, kind: string): TSNode | null {
-    if (node.type === kind) return node
-    for (const c of node.children) {
-        const f = findFirst(c, kind)
-        if (f) return f
-    }
-    return null
-}
-
-function collectKinds(node: TSNode): Set<string> {
-    const kinds = new Set<string>()
-    function walk(n: TSNode) { if (n.isNamed) kinds.add(n.type); for (const c of n.children) walk(c) }
-    walk(node)
-    return kinds
-}
+// Tree-sitter adapter + tree walkers imported from validators/common.ts.
+// See that file for the canonical TSNode/TSTree shapes (backed by web-tree-sitter's
+// published TS.Node / TS.Tree types).
 
 // ---------------------------------------------------------------------------
 // Corpus parser — shared shape
@@ -187,9 +119,9 @@ function checkNodeData(
     expectedFields: Set<string>,
     overrideFields: Set<string>,
 ): string | null {
-    // 1. type must match
-    if (data.type !== kind) {
-        return `type mismatch: expected '${kind}', got '${data.type}'`
+    // 1. $type must match
+    if (data.$type !== kind) {
+        return `$type mismatch: expected '${kind}', got '${data.$type}'`
     }
 
     // 2. Every tree-sitter field the parse tree surfaces must show up in
@@ -202,7 +134,7 @@ function checkNodeData(
         if (fname) liveFieldNames.add(fname)
     }
 
-    const dataFields = new Set(Object.keys(data.fields ?? {}))
+    const dataFields = new Set(Object.keys(data.$fields ?? {}))
 
     for (const fname of liveFieldNames) {
         if (!dataFields.has(fname)) {
@@ -215,8 +147,8 @@ function checkNodeData(
     //    into an override field. Count INSTANCES, not distinct field
     //    keys: a multiple-valued field like `except_clauses: [e1, e2]`
     //    accounts for 2 children, not 1.
-    const dataChildrenCount = (data.children ?? []).filter(
-        (c: any) => c?.named !== false,
+    const dataChildrenCount = (data.$children ?? []).filter(
+        (c: any) => c?.$named !== false,
     ).length
 
     let expectedNamedUnfielded = 0
@@ -230,7 +162,7 @@ function checkNodeData(
     // Count children routed into each override field. A non-array value
     // = 1 child; an array value = array.length children.
     let promotedChildCount = 0
-    for (const [fname, value] of Object.entries(data.fields ?? {})) {
+    for (const [fname, value] of Object.entries(data.$fields ?? {})) {
         if (liveFieldNames.has(fname)) continue // tree-sitter field, not override
         if (!overrideFields.has(fname)) continue // neither override nor live
         if (Array.isArray(value)) promotedChildCount += value.length

@@ -17,10 +17,10 @@ const { render, toEdit } = createRenderer(config);
 describe('toEdit (bound)', () => {
 	it('produces an Edit with correct byte offsets and rendered text', () => {
 		const node: AnyNodeData = {
-			type: 'macro_invocation',
-			fields: {
-				macro: { type: 'identifier', text: 'eprintln' },
-				arguments: { type: 'string_literal', text: '"hello"' },
+			$type: 'macro_invocation',
+			$fields: {
+				macro: { $type: 'identifier', $text: 'eprintln' },
+				arguments: { $type: 'string_literal', $text: '"hello"' },
 			},
 		};
 		const edit = toEdit(node, 42, 67);
@@ -31,9 +31,9 @@ describe('toEdit (bound)', () => {
 
 	it('insertedText matches render output', () => {
 		const node: AnyNodeData = {
-			type: 'macro_invocation',
-			fields: {
-				macro: { type: 'identifier', text: 'println' },
+			$type: 'macro_invocation',
+			$fields: {
+				macro: { $type: 'identifier', $text: 'println' },
 			},
 		};
 		const edit = toEdit(node, 0, 10);

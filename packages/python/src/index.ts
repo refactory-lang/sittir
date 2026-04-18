@@ -3,8 +3,8 @@
 // Types (grammar + construction types + navigation types + enums)
 export * from './types.js';
 
-// Factories (ir namespace with .from())
-export { ir } from './ir.js';
+// Factories (ir namespace with .from(), plus tree-shakeable supertype groups)
+export * from './ir.js';
 
 // Shared resolution utilities
 export * from './utils.js';
@@ -17,6 +17,10 @@ export * from './from.js';
 
 // Constants (node kinds, keywords, operators)
 export * from './consts.js';
+
+// Type guards (is × shape composition, assert + throw)
+export { is, isTree, isNode, assert } from './is.js';
+export type { IsGuards, AssertGuards } from './is.js';
 
 // Core re-exports
 export { createRenderer } from '@sittir/core';

@@ -78,33 +78,12 @@ export function emitFrom(config: EmitFromConfig): string {
         '',
     ]
 
-    // Collect factory imports — types come in through a single
-    // namespace-type import (`import type * as T from './types.js'`)
-    // below, so per-name type listing isn't needed. Every type
-    // reference in the emitted body is prefixed with `T.`.
-    const factoryImports = new Set<string>()
-
-    for (const [kind, node] of nodeMap.nodes) {
-        if (kind.startsWith('_')) continue
-        if (!node.factoryName) continue
-        if (node.modelType === 'branch' || node.modelType === 'container' || node.modelType === 'polymorph') {
-            factoryImports.add(node.rawFactoryName!)
-            if (node.modelType === 'polymorph') {
-                for (const form of node.forms) {
-                    factoryImports.add(form.rawFactoryName!)
-                }
-            }
-        }
-        if (node.modelType === 'leaf' || node.modelType === 'keyword' || node.modelType === 'enum') {
-            factoryImports.add(node.rawFactoryName!)
-        }
-    }
-
-    lines.push(`import { ${[...factoryImports].sort().join(', ')} } from './factories.js';`)
-    // Namespace import collapses hundreds of per-type lines into one.
-    // Every type reference in the emitted body uses the `T.` prefix.
+    // Namespace imports (spec 008 US3). Factories via `F.<name>`; types
+    // via `T.<Kind>.Config` / `.Loose` / `.Fluent`. Collapses the
+    // per-factory import wall (~3kB in rust) to a single line.
+    lines.push(`import * as F from './factories.js';`)
     lines.push(`import type * as T from './types.js';`)
-    lines.push("import type { AnyNodeData, FromInputOf, NodeFieldValue } from '@sittir/types';")
+    lines.push("import type { AnyNodeData } from '@sittir/types';")
     lines.push('')
 
     // ------------------------------------------------------------------
@@ -132,16 +111,21 @@ export function emitFrom(config: EmitFromConfig): string {
     lines.push("  | { readonly [key: string]: _FromFieldInput }")
     lines.push("  | readonly _FromFieldInput[];")
     lines.push("")
-    // Type guard — parameter is `unknown` by convention for a narrowing
-    // predicate. This isn't a cast *through* unknown (the rule we care
-    // about); it's the legitimate entry point for classifying arbitrary
-    // runtime values, same as every other `v is T` guard in the codebase.
+    // Structural predicate. Narrows to AnyNodeData — resolver bodies
+    // rely on Exclude<> to infer the loose-bag arm in the else branch.
+    // Kinds where a field name shadows a NodeData discriminant
+    // (`type`, `fields`, `text`, ...) need an explicit `T.<Parent>.Loose`
+    // cast at the read site — see resolveFieldFromTypedInput.
     lines.push("function isNodeData(v: unknown): v is AnyNodeData {")
     lines.push("  if (v === null || v === undefined || typeof v !== 'object') return false;")
     lines.push("  if (Array.isArray(v)) return false;")
-    lines.push("  const o = v as { readonly type?: unknown; readonly fields?: unknown; readonly text?: unknown };")
-    lines.push("  return typeof o.type === 'string'")
-    lines.push("    && (typeof o.fields === 'object' || typeof o.text === 'string');")
+    lines.push("  const o = v as { readonly $type?: unknown; readonly $fields?: unknown; readonly $text?: unknown };")
+    // `typeof null === 'object'` so guard $fields against null before
+    // accepting it — a malformed `{ $type: 'foo', $fields: null }` would
+    // otherwise pass and downstream `.fieldName` reads would TypeError
+    // far from the bad input.
+    lines.push("  return typeof o.$type === 'string'")
+    lines.push("    && ((o.$fields !== null && typeof o.$fields === 'object') || typeof o.$text === 'string');")
     lines.push('}')
     lines.push('')
 
@@ -149,13 +133,9 @@ export function emitFrom(config: EmitFromConfig): string {
     // passed down so every field resolver call registers its kind
     // list through the same dedup table.
     const perNodeBlocks: string[] = []
-    const polymorphFormKinds = new Set<string>()
-    for (const [, n] of nodeMap.nodes) {
-        if (n.modelType === 'polymorph') for (const f of n.forms) polymorphFormKinds.add(f.kind)
-    }
     for (const [kind, node] of nodeMap.nodes) {
         if (kind.startsWith('_')) continue
-        if (polymorphFormKinds.has(kind)) continue
+        if (nodeMap.polymorphFormKinds.has(kind)) continue
         const source = renderFromForNode(node, nodeMap, internKinds)
         if (source === undefined) continue
         perNodeBlocks.push(source)
@@ -260,12 +240,13 @@ function emitVariantFrom(
     intern: KindInterner,
 ): string {
     const fn = node.fromFunctionName!
-    const factory = node.rawFactoryName!
+    const factory = `F.${node.rawFactoryName!}`
     const typeName = node.typeName
-    const inputType = `T.${typeName} | T.${node.fromInputTypeName}`
+    const inputType = `T.${typeName} | T.${typeName}.Loose`
+    const returnType = `ReturnType<typeof ${factory}>`
     const lines: string[] = []
-    lines.push(`export function ${fn}(input: ${inputType}): ReturnType<typeof ${factory}> {`)
-    lines.push(`  if ('render' in input) return input as T.${typeName} & ReturnType<typeof ${factory}>;`)
+    lines.push(`export function ${fn}(input: ${inputType}): ${returnType} {`)
+    lines.push(`  if (isNodeData(input)) return input as ${returnType};`)
 
     const parentFields = 'fields' in node ? (node as { fields: readonly AssembledField[] }).fields : []
     const configParts: string[] = []
@@ -298,7 +279,7 @@ function emitVariantFrom(
 
 function emitBranchFrom(node: BranchLikeNode, nodeMap: NodeMap, intern: KindInterner): string {
     const fn = node.fromFunctionName!
-    const factory = node.rawFactoryName!
+    const factory = `F.${node.rawFactoryName!}`
     const fields = node.fields
     const childSlots = node.children ?? []
     const opt =
@@ -315,27 +296,23 @@ function emitBranchFrom(node: BranchLikeNode, nodeMap: NodeMap, intern: KindInte
     // `FromInputOf<T>` alias itself never includes the node arm —
     // only nested branch-slot values do via WidenValue — so we add
     // the union explicitly at the public signature.
-    const inputType = `T.${node.typeName} | T.${node.fromInputTypeName}`
-    // Explicit return type — tsgo's TS7056 "inferred type too large
-    // to serialize" fires on big fluent factory return shapes when
-    // the arrow isn't annotated. `ReturnType<typeof factory>` keeps
-    // the full method surface while collapsing the declaration.
-    lines.push(`export function ${fn}(input${opt}: ${inputType}): ReturnType<typeof ${factory}> {`)
+    // Namespace sugar surface per spec 008 US1 — T.<Kind>.Loose resolves
+    // via NamespaceMap[K]['Loose'] (same type as the pre-008 Loose alias).
+    // Return type stays `ReturnType<typeof F.<factory>>` — FluentNodeOf<T>
+    // (what .Fluent resolves to) and the factory's concrete return shape
+    // are structurally isomorphic but TS's strict function-parameter
+    // variance rejects the assignment at the value position.
+    const inputType = `T.${node.typeName} | T.${node.typeName}.Loose`
+    const returnType = `ReturnType<typeof ${factory}>`
+    lines.push(`export function ${fn}(input${opt}: ${inputType}): ${returnType} {`)
     if (fields.length > 0) {
-        // Fluent-node passthrough: catches factory outputs (which carry
-        // `render()`/`toEdit()`/`replace()` methods) and short-circuits
-        // the reconstruction. `'render' in input` is the runtime marker
-        // that distinguishes a fluent factory output from a bare
-        // readNode NodeData — both have `.fields`, but only factory
-        // outputs have the method accessors. Bare readNode output
-        // falls through so validators / parser-driven callers can
-        // rebuild it through the factory.
+        // Spec 008 US3 / FR-022 — identity quick-return on NodeData.
+        // Wrapped (fluent) NodeData IS the target type, so return it
+        // unchanged. Bare readNode output (without fluent methods) is
+        // an unsupported input path — callers should use readTreeNode
+        // (which wraps via per-kind dispatch) before handing to .from().
         const passGuard = inputOptional ? 'input !== undefined && ' : ''
-        // Passthrough cast: the fluent factory output (`ReturnType<typeof
-        // factory>`) is structurally identical to the `T.Foo` interface
-        // arm plus `render`, but TS can't collapse the two. Cast to the
-        // declared return type so the explicit annotation above compiles.
-        lines.push(`  if (${passGuard}'render' in input) return input as ReturnType<typeof ${factory}>;`)
+        lines.push(`  if (${passGuard}isNodeData(input)) return input as ${returnType};`)
         const neName = (f: AssembledField) => `_ne_${f.propertyName}`
         for (const f of fields) {
             if (f.nonEmpty && f.multiple) {
@@ -396,9 +373,9 @@ interface ContainerFromNode {
 
 function emitContainerFrom(node: ContainerFromNode): string {
     const fn = node.fromFunctionName!
-    const factory = node.rawFactoryName!
+    const factory = `F.${node.rawFactoryName!}`
     const tName = `T.${node.typeName}`
-    const childType = `NonNullable<T.${node.typeName}Config['children']>`
+    const childType = `NonNullable<T.${node.typeName}.Config['children']>`
     const elementType = `${childType}[number]`
     // Singular-child containers take one positional arg (`child?: T`);
     // repeated-child containers take `...children: T[]`. The from
@@ -408,15 +385,15 @@ function emitContainerFrom(node: ContainerFromNode): string {
     if (childrenMultiple) {
         return [
             `export function ${fn}(...input: readonly (${elementType} | ${tName})[]) {`,
-            `  if (input.length === 1 && isNodeData(input[0]) && input[0].type === '${node.kind}') {`,
+            `  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === '${node.kind}') {`,
             `    const data = input[0] as ${tName};`,
-            // `data.children` is undefined for empty collections that
+            // `data.$children` is undefined for empty collections that
             // readNode represents without a children array (e.g. python
             // `format_specifier` for `:2` — the colon gets promoted to a
             // field, no children). Spreading `undefined` throws; guard
             // with `?? []` so the rebuilt factory call matches the empty
             // form.
-            `    return ${factory}(...((data.children ?? []) as ${childType}));`,
+            `    return ${factory}(...((data.$children ?? []) as ${childType}));`,
             `  }`,
             `  return ${factory}(...(input as ${childType}));`,
             '}',
@@ -429,14 +406,14 @@ function emitContainerFrom(node: ContainerFromNode): string {
     // pushing casts downstream.
     return [
         `export function ${fn}(input?: ${elementType} | ${tName}) {`,
-        `  if (isNodeData(input) && input.type === '${node.kind}') {`,
+        `  if (isNodeData(input) && input.$type === '${node.kind}') {`,
         `    const data = input as ${tName};`,
         // Empty collections (e.g. python `()` / `[]`) have no named
         // children — readNode promotes `(` / `)` / `[` / `]` into
         // fields and produces no `children`. Calling `factory(undefined)`
         // rebuilds the empty form; indexing children[0] in that case
         // throws "Cannot read properties of undefined (reading '0')".
-        `    const child = data.children ? (data.children as ${childType})[0] : undefined;`,
+        `    const child = data.$children ? (data.$children as ${childType})[0] : undefined;`,
         `    return ${factory}(child as ${elementType});`,
         `  }`,
         `  return ${factory}(input as ${elementType});`,
@@ -459,7 +436,7 @@ interface PolymorphFromNode {
 
 function emitPolymorphFrom(node: PolymorphFromNode, nodeMap: NodeMap, intern: KindInterner): string {
     const fn = node.fromFunctionName!
-    const factory = node.rawFactoryName!
+    const factory = `F.${node.rawFactoryName!}`
     // The polymorph factory takes the strict config-union but `input`
     // is a FromInputOf (loose widening). The two types are structurally
     // incompatible at the type level, so the emitter declares an
@@ -470,26 +447,23 @@ function emitPolymorphFrom(node: PolymorphFromNode, nodeMap: NodeMap, intern: Ki
     // `ConfigOf<FormN> | ...` union rather than `Parameters<typeof fn>[0]`
     // because grammar kinds named `Parameters` would shadow TypeScript's
     // built-in `Parameters<T>`.
+    // Polymorph form configs use the legacy `<FormName>Config` alias —
+    // polymorph forms don't get namespace sugar (they're synthetic kinds
+    // that aren't in the top-level NamespaceMap; their data interface
+    // is emitted but not the per-kind namespace block).
     const configUnion = node.forms.map(f => `T.${f.typeName}Config`).join(' | ')
-    // Same NodeData-or-bag union as branches — polymorph forms are
-    // node interfaces with `fields`, so `'fields' in input` narrows
-    // to a pre-built form and short-circuits the factory dispatch.
-    // The config-union cast on the fall-through path is a direct `as`
-    // — no `unknown` bridge. We spell the union as the literal
-    // `ConfigOf<FormN> | ...` rather than `Parameters<typeof fn>[0]`
-    // because grammar kinds named `Parameters` would shadow
-    // TypeScript's built-in `Parameters<T>`.
-    const inputType = `T.${node.typeName} | T.${node.fromInputTypeName}`
+    const inputType = `T.${node.typeName} | T.${node.typeName}.Loose`
+    const returnType = `ReturnType<typeof ${factory}>`
     const dispatcher = [
-        `export function ${fn}(input?: ${inputType}) {`,
-        `  if (input !== undefined && 'render' in input) return input;`,
+        `export function ${fn}(input?: ${inputType}): ${returnType} {`,
+        `  if (input !== undefined && isNodeData(input)) return input as ${returnType};`,
         `  return ${factory}(input as ${configUnion});`,
         '}',
     ].join('\n')
     const parts = [dispatcher]
     for (const form of node.forms) {
         const formFn = `${form.typeName.charAt(0).toLowerCase()}${form.typeName.slice(1)}From`
-        const formFactory = form.rawFactoryName!
+        const formFactory = `F.${form.rawFactoryName!}`
         // Match the form factory's parameter optionality. The
         // factory declares `config:` when any field OR child slot
         // is required (T063 inlining can push a required child onto
@@ -507,7 +481,7 @@ function emitPolymorphFrom(node: PolymorphFromNode, nodeMap: NodeMap, intern: Ki
             // alias, every field property is already typed correctly.
             fLines.push(`  return ${formFactory}({`)
             for (const f of form.fields) {
-                fLines.push(`    ${f.propertyName}: ${resolveFieldFromTypedInput(f, nodeMap, form.typeName, intern, 'input', formInputOptional)},`)
+                fLines.push(`    ${f.propertyName}: ${resolveFieldFromTypedInput(f, nodeMap, form.typeName, intern, 'input', formInputOptional, /* isPolymorphForm */ true)},`)
             }
             fLines.push('  });')
         } else {
@@ -533,7 +507,7 @@ interface LeafFromNode {
 
 function emitStringLikeFrom(node: LeafFromNode): string {
     const fn = node.fromFunctionName!
-    const factory = node.rawFactoryName!
+    const factory = `F.${node.rawFactoryName!}`
     // Enum factories declare their parameter as a literal union;
     // plain leaves take `string`. Cast `input` to the right shape
     // before calling. The literal union is inlined here because
@@ -557,7 +531,7 @@ function emitStringLikeFrom(node: LeafFromNode): string {
 
 function emitKeywordFrom(node: LeafFromNode): string {
     const fn = node.fromFunctionName!
-    const factory = node.rawFactoryName!
+    const factory = `F.${node.rawFactoryName!}`
     return [
         `export function ${fn}(input?: T.${node.typeName}) {`,
         `  if (isNodeData(input)) return input;`,
@@ -588,25 +562,22 @@ function resolveFieldFromTypedInput(
     intern: KindInterner,
     sourceVar: string,
     inputOptional: boolean,
+    /** Polymorph forms use `<TypeName>Config` legacy alias. */
+    isPolymorphForm = false,
 ): string {
-    const slotType = `NonNullable<T.${parentTypeName}Config['${field.propertyName}']>`
+    const configPath = isPolymorphForm ? `T.${parentTypeName}Config` : `T.${parentTypeName}.Config`
+    const slotType = `NonNullable<${configPath}['${field.propertyName}']>`
     const typeParam = field.multiple ? `${slotType}[number]` : slotType
-    // The input union `T.Foo | T.LooseFoo` has two structurally
-    // distinct shapes: a NodeData with `.fields[rawName]` (snake_case)
-    // and a loose bag with `.camelName` at the top level. Every field
-    // read emits a dual-access that tries the NodeData path first,
-    // then falls back to the camelCase bag property — BUT only when
-    // the field name doesn't collide with `AnyNodeData` metadata
-    // (`type`, `named`, `fields`, `children`, `text`). A field named
-    // `type` would otherwise resolve `input.type` to the NodeData
-    // discriminator string on the Foo arm.
-    const nodeDataShadowed = new Set(['type', 'named', 'fields', 'children', 'text'])
+    // Spec 008 US3 / FR-023 — single-access camelCase read on the bag
+    // branch. After the isNodeData identity quick-return at resolver
+    // entry, the resolver body runs only for loose-bag input (camelCase
+    // top-level by construction). One cast per resolver keeps each
+    // field access precise without dual-path noise.
+    const loosePath = isPolymorphForm ? `T.${parentTypeName}Config` : `T.${parentTypeName}.Loose`
     const optChain = inputOptional ? '?' : ''
-    const rawAccess = `(${sourceVar} as { readonly fields?: { readonly [k: string]: _FromFieldInput } })${optChain}.fields?.['${field.name}']`
-    const camelAccess = `(${sourceVar} as { readonly ${field.propertyName}?: _FromFieldInput })${optChain}.${field.propertyName}`
-    const access = nodeDataShadowed.has(field.propertyName)
-        ? rawAccess
-        : `(${rawAccess} ?? ${camelAccess})`
+    const access = isPolymorphForm
+        ? `${sourceVar}${optChain}.${field.propertyName}`
+        : `(${sourceVar} as ${loosePath})${optChain}.${field.propertyName}`
     return resolveFieldCall(access, field, nodeMap, typeParam, intern)
 }
 
@@ -642,9 +613,64 @@ function resolveChildrenFromTypedInput(
     // passed AssembledField — construct a minimal shape that satisfies
     // that contract rather than wiring a parallel children-resolver.
     const pseudo = { contentTypes, multiple: anyMultiple } as unknown as AssembledField
-    const slotType = `NonNullable<T.${parentTypeName}Config['children']>`
+    const slotType = `NonNullable<T.${parentTypeName}.Config['children']>`
     const typeParam = anyMultiple ? `${slotType}[number]` : slotType
-    const access = inputOptional ? `${sourceVar}?.children` : `${sourceVar}.children`
+    // Single-cast bag access — same pattern as field reads.
+    const optChain = inputOptional ? '?' : ''
+    const access = `(${sourceVar} as T.${parentTypeName}.Loose)${optChain}.children`
+    return resolveFieldCall(access, pseudo, nodeMap, typeParam, intern)
+}
+
+/**
+ * NodeData-branch field reader — reads `input.$fields[rawName]` (post-US7
+ * metadata rename). Pushes through the same resolver helpers as the bag
+ * path; they accept raw NodeData + strings + nested bags uniformly, so
+ * the field-level shape mismatch is absorbed there.
+ */
+function resolveFieldFromNodeData(
+    field: AssembledField,
+    nodeMap: NodeMap,
+    parentTypeName: string,
+    intern: KindInterner,
+    sourceVar: string,
+    inputOptional: boolean,
+): string {
+    const slotType = `NonNullable<T.${parentTypeName}.Config['${field.propertyName}']>`
+    const typeParam = field.multiple ? `${slotType}[number]` : slotType
+    const optChain = inputOptional ? '?' : ''
+    // One cast per resolver to the known parent's data interface. Avoids
+    // the type-level union-narrowing complications. The runtime already
+    // knows it's T.<Parent> via the preceding isNodeData check.
+    const access = `(${sourceVar} as T.${parentTypeName}).$fields.${field.name}`
+    return resolveFieldCall(access, field, nodeMap, typeParam, intern)
+}
+
+function resolveChildrenFromNodeData(
+    childSlots: readonly AssembledChild[],
+    nodeMap: NodeMap,
+    parentTypeName: string,
+    intern: KindInterner,
+    sourceVar: string,
+    inputOptional: boolean,
+): string {
+    const seenTypes = new Set<string>()
+    const contentTypes: string[] = []
+    let anyMultiple = false
+    for (const c of childSlots) {
+        if (c.multiple) anyMultiple = true
+        for (const t of c.contentTypes) {
+            if (!seenTypes.has(t)) {
+                seenTypes.add(t)
+                contentTypes.push(t)
+            }
+        }
+    }
+    const pseudo = { contentTypes, multiple: anyMultiple } as unknown as AssembledField
+    const slotType = `NonNullable<T.${parentTypeName}.Config['children']>`
+    const typeParam = anyMultiple ? `${slotType}[number]` : slotType
+    const optChain = inputOptional ? '?' : ''
+    // Same cast pattern as NodeData field reads — one cast per resolver.
+    const access = `(${sourceVar} as T.${parentTypeName})${optChain}.$children`
     return resolveFieldCall(access, pseudo, nodeMap, typeParam, intern)
 }
 
@@ -751,7 +777,7 @@ function emitResolverHelpers(lines: string[], nodeMap: NodeMap): void {
     for (const [kind, node] of nodeMap.nodes) {
         if (kind.startsWith('_')) continue
         if (!node.rawFactoryName) continue
-        const factory = node.rawFactoryName
+        const factory = `F.${node.rawFactoryName}`
         if (node.modelType === 'enum') {
             const values = node.values.map(v => JSON.stringify(v)).join(', ')
             const literalUnion = node.values.map(v => `'${escForSource(v)}'`).join(' | ')
@@ -808,7 +834,11 @@ function emitResolverHelpers(lines: string[], nodeMap: NodeMap): void {
     const hasBool = nodeMap.nodes.has('boolean_literal')
     const hasInt = nodeMap.nodes.has('integer_literal') || nodeMap.nodes.has('integer')
     const hasFloat = nodeMap.nodes.has('float_literal') || nodeMap.nodes.has('float')
-    lines.push('function _resolveScalar(v: boolean | number): AnyNodeData | undefined {')
+    // When the grammar declares no scalar leaf kinds the function body
+    // is empty — prefix the parameter with `_` so `oxlint` doesn't flag
+    // it. (Callers still pass arguments; the `_` is a lint convention.)
+    const scalarParam = hasBool || hasInt || hasFloat ? 'v' : '_v'
+    lines.push(`function _resolveScalar(${scalarParam}: boolean | number): AnyNodeData | undefined {`)
     if (hasBool) {
         lines.push('  if (typeof v === "boolean") {')
         lines.push('    const e = _leafRegistry["boolean_literal"];')

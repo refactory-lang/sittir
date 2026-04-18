@@ -28,8 +28,10 @@ export function emitTemplates(config: EmitTemplatesConfig): string {
 
     const rules: Record<string, unknown> = {}
     for (const [kind, node] of nodeMap.nodes) {
-        // Hidden kinds (`_`-prefixed) don't appear as node.type at runtime
-        // in tree-sitter CSTs, so they don't need render templates.
+        // Hidden kinds (`_`-prefixed) don't appear in tree-sitter CSTs at
+        // runtime, so they don't need render templates. (Tree-sitter's own
+        // API reports the concrete kind; `$type` on NodeData carries the
+        // same value — hidden kinds simply never surface at either layer.)
         if (kind.startsWith('_')) continue
         // Polymorph forms are `AssembledGroup` nodes registered at the top
         // level so factories/types emitters can produce code for them, but

@@ -19,23 +19,15 @@ export function toCst(
 	renderer: BoundRenderer,
 	offset = 0,
 ): CSTNode {
-	const text = renderer.render(node);
-
-	if (node.text !== undefined) {
-		return {
-			type: node.type,
-			text: node.text,
-			children: [],
-			isNamed: true,
-			startIndex: offset,
-			endIndex: offset + node.text.length,
-			startPosition: offsetToPosition(offset, text, offset),
-			endPosition: offsetToPosition(offset + node.text.length, text, offset),
-		};
-	}
+	// When `$text` is set (leaf node) use it directly for both the
+	// returned `text` field AND the position-calc basis. Previously we
+	// rendered the node and used the rendered string for positions while
+	// returning `$text` verbatim, which misaligned whenever render output
+	// differed from $text (e.g. `$TEXT` slot templates vs plain leaves).
+	const text = node.$text !== undefined ? node.$text : renderer.render(node);
 
 	return {
-		type: node.type,
+		type: node.$type,
 		text,
 		children: [],
 		isNamed: true,

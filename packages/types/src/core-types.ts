@@ -40,24 +40,29 @@ export type NodeChildValue = AnyNodeData | string | number;
  * Runtime node shape — grammar-agnostic. Used by @sittir/core functions
  * that accept any node regardless of grammar.
  *
- * Consumers should use NodeData<G, K> from @sittir/types for grammar-derived typing.
- * AnyNodeData is the structural supertype that all NodeData<G, K> satisfy.
+ * Spec 008 US7: metadata keys are `$`-prefixed to eliminate the entire
+ * class of field-name-vs-discriminant collisions (e.g. Python's
+ * `type_alias_statement` has a field literally named `type`). The `$source`
+ * provenance tag lets `.from()` dispatch with a clean equality check
+ * instead of structural `isNodeData` probing.
  */
 export interface AnyNodeData {
-	type: string;
+	$type: string;
+	/** Which producer emitted this node. */
+	$source?: 'ts' | 'sg' | 'factory';
 	/** Variant subtype name — set by factory, absent on readNode output. */
-	variant?: string;
-	fields?: { readonly [key: string]: NodeFieldValue };
-	children?: readonly NodeChildValue[];
-	text?: string;
+	$variant?: string;
+	$fields?: { readonly [key: string]: NodeFieldValue };
+	$children?: readonly NodeChildValue[];
+	$text?: string;
 	/** Byte offset span in source. */
-	span?: { start: number; end: number };
+	$span?: { start: number; end: number };
 	/** Tree-sitter node id for O(1) drill-in via tree.nodeById(). */
-	nodeId?: number;
+	$nodeId?: number;
 	/** Whether this is a named (vs anonymous) node in the grammar.
 	 * Optional at the type level because generated kind interfaces
 	 * omit it by convention (factory output always sets it at runtime). */
-	named?: boolean;
+	$named?: boolean;
 }
 
 // ---------------------------------------------------------------------------

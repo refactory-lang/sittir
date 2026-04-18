@@ -25,6 +25,7 @@ import { emitConfig } from '../emitters/config.ts'
 import { emitConsts } from '../emitters/consts.ts'
 import { emitIndex } from '../emitters/index-file.ts'
 import { emitSuggested } from '../emitters/suggested.ts'
+import { emitIs } from '../emitters/is.ts'
 
 import type { NodeMap } from './rule.ts'
 
@@ -45,6 +46,8 @@ export interface GeneratedFiles {
     nodeModel: string
     /** overrides.suggested.ts — human-readable derivation log (T042f). */
     suggested: string
+    /** is.ts — per-grammar type guards (is/assert/isTree/isNode, spec 008 US2) */
+    is: string
     /** The intermediate NodeMap — available for inspection */
     nodeMap: NodeMap
 }
@@ -141,6 +144,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
         config: emitConfig({ grammar: cfg.grammar }),
         nodeModel: JSON.stringify({ name: nodeMap.name, nodeCount: nodeMap.nodes.size }, null, 2),
         suggested: emitSuggested({ grammar: cfg.grammar, nodeMap, roundTripFailures: cfg.roundTripFailures }),
+        is: emitIs({ grammar: cfg.grammar, nodeMap }),
         nodeMap,
     }
 }
