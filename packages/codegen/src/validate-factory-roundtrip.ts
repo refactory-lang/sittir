@@ -187,7 +187,14 @@ export async function validateFactoryRoundTrip(
 	const entries = loadCorpusEntries(grammar);
 	const errors: { kind: string; entry?: string; message: string; input?: string; rendered?: string }[] = [];
 	const astMismatches: { kind: string; entry?: string; message: string; input?: string; rendered?: string }[] = [];
-	const testedKinds = new Set<string>(); // one test per kind
+	// Dedupe on (kind, entry) pairs so each corpus entry that contains
+	// a kind gets exercised once — earlier behaviour (one test per kind
+	// period) hid real bugs: if the first corpus entry happened to
+	// exercise a shape that worked, subsequent entries testing buggy
+	// shapes (e.g. python `comparison_operator` with `not in` vs the
+	// chained `a < b`) never ran. The (kind, entry) granularity keeps
+	// runtime bounded while catching shape-specific bugs.
+	const testedPairs = new Set<string>();
 	let pass = 0;
 	let astMatchPass = 0;
 	let skip = 0;
@@ -211,8 +218,9 @@ export async function validateFactoryRoundTrip(
 		const kinds = collectKinds(tree1.rootNode);
 		for (const kind of kinds) {
 			if (!ruleKinds.has(kind)) continue;
-			if (testedKinds.has(kind)) continue; // one test per kind
-			testedKinds.add(kind);
+			const pairKey = `${kind}\0${entry.name}`;
+			if (testedPairs.has(pairKey)) continue;
+			testedPairs.add(pairKey);
 			total++;
 
 			const node1 = findFirst(tree1.rootNode, kind);
@@ -250,7 +258,6 @@ export async function validateFactoryRoundTrip(
 				try {
 					const shape = factoryShapes[kind] ?? 'config';
 					const isConfigFactory = shape === 'config';
-					const fieldsPresent = readData.$fields && Object.keys(readData.$fields).length > 0;
 					if (isConfigFactory) {
 						const config = readData.$children
 							? { ...camelFields, children: readData.$children }
