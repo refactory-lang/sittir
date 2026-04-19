@@ -975,6 +975,7 @@ export function implItem(config: T.ImplItemUFormBodyConfig | T.ImplItemUFormSemi
 }
 export function implItemUFormBody(config: T.ImplItemUFormBodyConfig) {
   const fields = {
+    unsafe: config?.unsafe,
     type_parameters: config?.typeParameters,
     trait: config?.trait,
     type: config?.type,
@@ -988,6 +989,7 @@ export function implItemUFormBody(config: T.ImplItemUFormBodyConfig) {
     $variant: '_form_body' as const,
     $fields: fields,
     $children: children,
+    unsafe(value?: T.KwUnsafe | undefined) { return _fs(config, implItemUFormBody, 'unsafe', value, fields.unsafe); },
     typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, implItemUFormBody, 'typeParameters', value, fields.type_parameters); },
     trait(value?: T._TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType | undefined) { return _fs(config, implItemUFormBody, 'trait', value, fields.trait); },
     typeField(value?: T._Type) { return _fs(config, implItemUFormBody, 'type', value, fields.type); },
@@ -1004,6 +1006,7 @@ export function implItemUFormBody(config: T.ImplItemUFormBodyConfig) {
 }
 export function implItemUFormSemi(config: T.ImplItemUFormSemiConfig) {
   const fields = {
+    unsafe: config?.unsafe,
     type_parameters: config?.typeParameters,
     trait: config?.trait,
     type: config?.type,
@@ -1017,6 +1020,7 @@ export function implItemUFormSemi(config: T.ImplItemUFormSemiConfig) {
     $variant: '_form_semi' as const,
     $fields: fields,
     $children: children,
+    unsafe(value?: T.KwUnsafe | undefined) { return _fs(config, implItemUFormSemi, 'unsafe', value, fields.unsafe); },
     typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, implItemUFormSemi, 'typeParameters', value, fields.type_parameters); },
     trait(value?: T._TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType | undefined) { return _fs(config, implItemUFormSemi, 'trait', value, fields.trait); },
     typeField(value?: T._Type) { return _fs(config, implItemUFormSemi, 'type', value, fields.type); },

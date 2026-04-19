@@ -770,6 +770,7 @@ export function implItemFrom(input?: T.ImplItem | T.ImplItem.Loose): ReturnType<
 
 export function implItemUFormBodyFrom(input: T.ImplItemUFormBodyConfig) {
   return F.implItemUFormBody({
+    unsafe: _resolveOneLeaf<NonNullable<T.ImplItemUFormBodyConfig['unsafe']>>(input.unsafe, "_kw_unsafe"),
     typeParameters: _resolveOneBranch<NonNullable<T.ImplItemUFormBodyConfig['typeParameters']>>(input.typeParameters, "type_parameters"),
     trait: _resolveOne<NonNullable<T.ImplItemUFormBodyConfig['trait']>>(input.trait, _K0, _K14),
     type: _resolveOne<NonNullable<T.ImplItemUFormBodyConfig['type']>>(input.type, _K9, _K10),
@@ -779,6 +780,7 @@ export function implItemUFormBodyFrom(input: T.ImplItemUFormBodyConfig) {
 
 export function implItemUFormSemiFrom(input: T.ImplItemUFormSemiConfig) {
   return F.implItemUFormSemi({
+    unsafe: _resolveOneLeaf<NonNullable<T.ImplItemUFormSemiConfig['unsafe']>>(input.unsafe, "_kw_unsafe"),
     typeParameters: _resolveOneBranch<NonNullable<T.ImplItemUFormSemiConfig['typeParameters']>>(input.typeParameters, "type_parameters"),
     trait: _resolveOne<NonNullable<T.ImplItemUFormSemiConfig['trait']>>(input.trait, _K0, _K14),
     type: _resolveOne<NonNullable<T.ImplItemUFormSemiConfig['type']>>(input.type, _K9, _K10),

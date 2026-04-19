@@ -172,7 +172,10 @@ export default grammar(enrich(base), {
         // the trait-signature form (no body), which the template walker
         // drops without a variant split.
         impl_item: ($, original) => transform(original,
-            { 5: field('where_clause') },
+            {
+                '0/0': field('unsafe'),  // optional('unsafe') → surface as field
+                5: field('where_clause'),
+            },
             { '6/0': variant('body'), '6/1': variant('semi') },
         ),
 

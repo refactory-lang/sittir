@@ -515,6 +515,7 @@ export function wrapWherePredicate(data: _NodeData, tree: TreeHandle): WrappedNo
 export function wrapImplItem(data: _NodeData, tree: TreeHandle): WrappedNode<ImplItem> {
   return {
     ...data,
+    get unsafe() { return drillIn(data.$fields?.['unsafe'], tree); },
     get typeParameters() { return drillIn(data.$fields?.['type_parameters'], tree); },
     get trait() { return drillIn(data.$fields?.['trait'], tree); },
     get typeField() { return drillIn(data.$fields?.['type'], tree); },

@@ -674,6 +674,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'alternative', required: false, multiple: false },
   ],
   'impl_item': [
+    { name: 'unsafe', required: false, multiple: false },
     { name: 'typeParameters', required: false, multiple: false },
     { name: 'trait', required: false, multiple: false },
     { name: 'type', required: true, multiple: false },

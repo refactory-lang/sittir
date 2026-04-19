@@ -1020,6 +1020,7 @@ export interface WherePredicate {
 export interface ImplItemUFormBody {
   readonly $type: 'impl_item';
   readonly $fields: {
+    readonly unsafe?: KwUnsafe;
     readonly type_parameters?: TypeParameters;
     readonly trait?: _TypeIdentifier | ScopedTypeIdentifier | GenericType;
     readonly type: _Type;
@@ -1031,6 +1032,7 @@ export interface ImplItemUFormBody {
 export interface ImplItemUFormSemi {
   readonly $type: 'impl_item';
   readonly $fields: {
+    readonly unsafe?: KwUnsafe;
     readonly type_parameters?: TypeParameters;
     readonly trait?: _TypeIdentifier | ScopedTypeIdentifier | GenericType;
     readonly type: _Type;
