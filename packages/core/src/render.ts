@@ -211,7 +211,27 @@ function render(node: AnyNodeData, ctx: InternalRenderContext): string {
 				!consumed.has(i) && (c as AnyNodeData).$named !== false
 			);
 			const sep = resolveJoinBy(ruleObj, name);
-			const joined = remaining.map(c => renderValue(c as AnyNodeData | string | number, ctx)).join(sep);
+			// Render each child, then join. A line_comment child forces
+			// a newline to follow (regardless of the configured sep),
+			// because `//` comments extend to end-of-line — joining them
+			// with ` ` to the next statement would fold that statement
+			// into the comment at reparse time. Grammar-agnostic: any
+			// node kind whose text starts with `//` or `#` and doesn't
+			// already end in `\n` gets a `\n` suffix.
+			const rendered = remaining.map(c => renderValue(c as AnyNodeData | string | number, ctx));
+			const endsLineComment = (s: string): boolean => {
+				const trimmed = s.trimEnd();
+				if (trimmed.endsWith('\n')) return false;
+				return /(?:^|\n)\s*(?:\/\/|#)[^\n]*$/.test(trimmed);
+			};
+			const pieces: string[] = [];
+			for (let i = 0; i < rendered.length; i++) {
+				pieces.push(rendered[i]!);
+				if (i < rendered.length - 1) {
+					pieces.push(endsLineComment(rendered[i]!) ? '\n' : sep);
+				}
+			}
+			const joined = pieces.join('');
 			if (!sep || sep.length === 0 || remaining.length === 0) return joined;
 			// Leading / trailing-separator fidelity: codegen emits
 			// `joinByLeading: true` / `joinByTrailing: true` when the
