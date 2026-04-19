@@ -420,6 +420,21 @@ export interface PromotedRuleEntry {
     readonly classification: 'enum' | 'supertype' | 'terminal' | 'polymorph'
     /** True if Link kept the promotion; false if held back by `include`. */
     readonly applied: boolean
+    /**
+     * For `polymorph` classifications: pre-Optimize candidates suitable
+     * for emitting a copy-pasteable `variant()` snippet. Computed at
+     * Link time because Optimize's `fanOutSeqChoices` pass flattens
+     * nested `seq(_, seq(choice, _))` shapes — post-Optimize the choice
+     * moves up a level, so paths computed then don't match what
+     * `transform()`'s `applyPath` sees at evaluate time on the base
+     * grammar. Captured here once, referenced by the suggester.
+     */
+    readonly polymorphCandidates?: readonly {
+        readonly choiceArmCount: number
+        readonly armNames: readonly string[]
+        readonly path: string
+        readonly fieldWrapperName?: string
+    }[]
 }
 
 export interface LinkedGrammar {
@@ -1639,6 +1654,18 @@ export interface NodeMap {
      * helpers whose fields get promoted onto the parent node.
      */
     readonly rules?: Record<string, Rule>
+    /**
+     * Pre-Optimize rules (from Link). The suggester needs these for
+     * polymorph-path computation: `findAllPolymorphCandidates` paths
+     * must match what the override author's `transform()` call would
+     * see at evaluate time — BEFORE `fanOutSeqChoices` flattens nested
+     * seq(choice) into top-level seq[choice]. Using post-Optimize
+     * rules collapses `seq(_, seq(choice, _))` into `seq(_, choice, _)`,
+     * shifting the choice's logical path from `1/0` to `1`, and the
+     * emitted `variant()` keys then fail when applied to the base
+     * grammar's prec-wrapped-seq-of-choice shape.
+     */
+    readonly linkedRules?: Record<string, Rule>
     /**
      * Grammar's `word` rule kind — the lexer's word-recognition
      * production. Tree-sitter uses this to disambiguate keywords

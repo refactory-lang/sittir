@@ -15,7 +15,7 @@
 // Summary
 // ---------------------------------------------------------------
 // Field inferences:  8  (0 applied, 8 held)
-// Rule promotions:   68  (57 applied, 11 held)
+// Rule promotions:   70  (57 applied, 13 held)
 // Repeated shapes:   5  (advisory — suggested supertypes/groups)
 
 // ---------------------------------------------------------------
@@ -77,13 +77,7 @@ export const suggestedRules = {
     }
   ),
 
-  // [held] polymorph — 1 choice position(s), 2 arm(s) total
-  "visibility_modifier": ($, original) => transform(original,
-    {
-      "0": variant("crate"),
-      "1": variant("pub"),
-    }
-  ),
+  // [held] polymorph — no candidates captured at Link time for 'visibility_modifier'
 
   // [held] polymorph — 1 choice position(s), 2 arm(s) total
   // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: mutable_specifier
@@ -107,7 +101,7 @@ export const suggestedRules = {
   "return_expression": ($, original) => transform(original,
     {
       "0": variant("return"),
-      "1": variant("return2"),
+      "1": variant("return"),
     }
   ),
 
@@ -115,18 +109,18 @@ export const suggestedRules = {
   "yield_expression": ($, original) => transform(original,
     {
       "0": variant("yield"),
-      "1": variant("yield2"),
+      "1": variant("yield"),
     }
   ),
 
   // [held] polymorph — 1 choice position(s), 5 arm(s) total
   "_let_chain": ($, original) => transform(original,
     {
-      "0": variant("_let_chain"),
-      "1": variant("_let_chain2"),
-      "2": variant("let_condition"),
-      "3": variant("let_condition2"),
-      "4": variant("_expression"),
+      "0": variant("form0"),
+      "1": variant("form1"),
+      "2": variant("form2"),
+      "3": variant("form3"),
+      "4": variant("form4"),
     }
   ),
 
@@ -139,14 +133,32 @@ export const suggestedRules = {
     }
   ),
 
+  // [held] polymorph — 1 choice position(s), 2 arm(s) total
+  // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: body
+  "_closure_expression_expr": ($, original) => transform(original,
+    {
+      "0": variant("form0"),
+      "1": variant("form1"),
+    }
+  ),
+
   // [held] polymorph — 1 choice position(s), 5 arm(s) total
   "let_chain": ($, original) => transform(original,
     {
       "0": variant("andand"),
-      "1": variant("andand2"),
-      "2": variant("andand3"),
-      "3": variant("andand4"),
-      "4": variant("andand5"),
+      "1": variant("andand"),
+      "2": variant("andand"),
+      "3": variant("andand"),
+      "4": variant("andand"),
+    }
+  ),
+
+  // [held] polymorph — 1 choice position(s), 2 arm(s) total
+  // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: body
+  "closure_expression_expr": ($, original) => transform(original,
+    {
+      "0": variant("_expression"),
+      "1": variant("_"),
     }
   ),
 
@@ -251,12 +263,14 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "outer_doc_comment_marker", classification: "terminal", applied: true },
   { kind: "unit_expression", classification: "terminal", applied: true },
   { kind: "unit_type", classification: "terminal", applied: true },
+  { kind: "_closure_expression_expr", classification: "polymorph", applied: false },
   { kind: "_let_chain", classification: "polymorph", applied: false },
   { kind: "array_expression", classification: "polymorph", applied: true },
   { kind: "array_expression_list", classification: "polymorph", applied: true },
   { kind: "array_expression_semi", classification: "polymorph", applied: true },
   { kind: "closure_expression", classification: "polymorph", applied: true },
   { kind: "closure_expression_block", classification: "polymorph", applied: true },
+  { kind: "closure_expression_expr", classification: "polymorph", applied: false },
   { kind: "closure_expression_expr", classification: "polymorph", applied: true },
   { kind: "expression_statement", classification: "polymorph", applied: false },
   { kind: "field_pattern", classification: "polymorph", applied: true },

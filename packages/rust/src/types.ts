@@ -2474,8 +2474,8 @@ export interface ModItemInlineTree extends TreeNode<'mod_item_inline'> {}
 export interface StructItemBraceTree extends TreeNode<'struct_item_brace'> {}
 export interface StructItemTupleTree extends TreeNode<'struct_item_tuple'> {}
 export interface ImplItemBodyTree extends TreeNode<'impl_item_body'> {}
-export interface FunctionTypeTraitFormTree extends AnyTreeNode { readonly type: "function_type_trait_form"; }
-export interface FunctionTypeFnFormTree extends AnyTreeNode { readonly type: "function_type_fn_form"; }
+export interface FunctionTypeTraitFormTree extends TreeNode<'function_type_trait_form'> {}
+export interface FunctionTypeFnFormTree extends TreeNode<'function_type_fn_form'> {}
 export interface RangeExpressionBinaryTree extends TreeNode<'range_expression_binary'> {}
 export interface RangeExpressionPostfixTree extends TreeNode<'range_expression_postfix'> {}
 export interface RangeExpressionPrefixTree extends TreeNode<'range_expression_prefix'> {}

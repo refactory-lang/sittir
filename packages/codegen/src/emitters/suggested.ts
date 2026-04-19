@@ -401,22 +401,16 @@ export function emitSuggested(config: EmitSuggestedConfig): string {
         lines.push('  // --- Polymorph candidates (wrap each choice arm in variant()) ---')
     }
     for (const entry of polymorphHolds) {
-        const rule = nodeMap.rules?.[entry.kind]
-        if (!rule) {
-            emit(entry.kind, () => {
-                lines.push(`  // [held] polymorph — rule '${entry.kind}' not found in NodeMap.rules`)
-                lines.push('')
-            })
-            continue
-        }
-        const candidates = findAllPolymorphCandidates(rule)
+        // Use the pre-Optimize candidates captured at Link time — paths
+        // there match what `transform()`'s applyPath sees at evaluate
+        // time on the base grammar. Computing from post-Optimize rules
+        // (nodeMap.rules) breaks for rules where `fanOutSeqChoices`
+        // flattens a nested `seq(_, seq(choice, _))` into
+        // `seq(_, choice, _)` — the choice shifts up a level.
+        const candidates = entry.polymorphCandidates ?? []
         if (candidates.length === 0) {
-            // Link flagged this kind as a polymorph candidate but the
-            // emitter can't locate a reachable choice. Surface the skip
-            // as a comment so the Link/emitter disagreement is visible
-            // rather than silently dropping the suggestion.
             emit(entry.kind, () => {
-                lines.push(`  // [held] polymorph — link flagged as candidate but findAllPolymorphCandidates found no qualifying choice (top-level: ${rule.type})`)
+                lines.push(`  // [held] polymorph — no candidates captured at Link time for '${entry.kind}'`)
                 lines.push('')
             })
             continue
@@ -439,7 +433,7 @@ export function emitSuggested(config: EmitSuggestedConfig): string {
             lines.push(`  // as an additional argument: \`transform(original, {/* fields */}, {/* variants below */})\`.`)
         }
         emitFn(() => {
-            const total = candidates.reduce((s, c) => s + c.choice.members.length, 0)
+            const total = candidates.reduce((s, c) => s + c.choiceArmCount, 0)
             lines.push(`  // [held] polymorph — ${candidates.length} choice position(s), ${total} arm(s) total`)
             if (candidates.some(c => c.fieldWrapperName)) {
                 const wrapped = candidates.filter(c => c.fieldWrapperName).map(c => c.fieldWrapperName).join(', ')
@@ -453,9 +447,8 @@ export function emitSuggested(config: EmitSuggestedConfig): string {
             // field-wrapped choice shape out from under subsequent patches.
             lines.push(`  ${quoteKey(entry.kind)}: ($, original) => transform(original,`)
             candidates.forEach((cand, ci) => {
-                const arms = armNamesFor(cand)
                 lines.push('    {')
-                arms.forEach((armName, i) => {
+                cand.armNames.forEach((armName, i) => {
                     const key = cand.path === '' ? `${i}` : `${cand.path}/${i}`
                     lines.push(`      ${JSON.stringify(key)}: variant(${JSON.stringify(armName)}),`)
                 })

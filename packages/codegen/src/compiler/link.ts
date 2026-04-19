@@ -184,12 +184,20 @@ export function link(raw: RawGrammar, include?: IncludeFilter): LinkedGrammar {
         // can emit a `variant()` snippet. `findPolymorphCandidate` runs
         // its own `looksLikePolymorphCandidate` check; a return value
         // here means the rule is genuinely a candidate.
-        const candidate = findPolymorphCandidate(rule)
-        if (candidate) {
+        const allCandidates = findAllPolymorphCandidates(rule)
+        if (allCandidates.length > 0) {
             derivations.promotedRules.push({
                 kind: name,
                 classification: 'polymorph',
                 applied: false,
+                polymorphCandidates: allCandidates.map(c => ({
+                    choiceArmCount: c.choice.members.length,
+                    armNames: c.choice.members.map((m, i) =>
+                        m.type === 'variant' ? m.name : `form${i}`
+                    ),
+                    path: c.path,
+                    fieldWrapperName: c.fieldWrapperName,
+                })),
             })
         }
     }
@@ -740,6 +748,13 @@ export function choiceNeedsVariantWrapping(choice: ChoiceRule): boolean {
         if (c.type === 'field' || c.type === 'variant' || c.type === 'group' || c.type === 'clause' || c.type === 'optional') {
             return armNeedsVariant(c.content)
         }
+        // Nested choice as an arm (e.g. `field('trait', choice(sym1,
+        // sym2))`) — the outer arm only needs variant() if at least one
+        // inner member does. All-symbol inner choices dispatch by $type
+        // just like bare symbol arms; no variant needed.
+        if (c.type === 'choice') {
+            return c.members.some(armNeedsVariant)
+        }
         // Anonymous content — seqs, repeats, literals, patterns, nested
         // choices. These have no $type to dispatch on. variant() is the
         // only way to give rendering a stable handle for the arm.
@@ -761,42 +776,64 @@ export function findPolymorphCandidate(rule: Rule): PolymorphCandidateLocation |
  * vs list vs paren). The suggester emits one `variant()` snippet per
  * candidate; the grammar author picks which ones to promote.
  *
- * Descends through `field(X, choice(...))` wrappers — the textbook miss
- * case, since `tagVariants` auto-wraps choice members so the distinction
- * "explicit variant() in override" vs "auto-tagged" can't be recovered
- * by inspecting the choice alone.
+ * Descends through:
+ *   - Nested `seq` — common after prec wrappers get stripped by
+ *     `evaluate.normalize`. Rust `function_type` is the textbook case:
+ *     the author writes `prec(PREC.call, seq(choice(...), field('parameters',
+ *     ...)))`, the prec is stripped, and the inner seq surfaces as a
+ *     member of the outer seq.
+ *   - `field(X, choice(...))` wrappers — since `tagVariants` auto-wraps
+ *     choice members, the distinction "explicit variant() in override"
+ *     vs "auto-tagged" can't be recovered by inspecting the choice alone.
+ *
+ * Path reflects how `applyPath` in transform-path.ts consumes segments:
+ * one per seq-member descent; field wrappers are consumed (their content
+ * takes the next segment); prec wrappers are transparent.
  */
 export function findAllPolymorphCandidates(rule: Rule): PolymorphCandidateLocation[] {
     const qualifies = (c: ChoiceRule): boolean =>
         looksLikePolymorphCandidate(c) && choiceNeedsVariantWrapping(c)
 
-    if (isChoice(rule)) {
-        return qualifies(rule)
-            ? [{ choice: rule, prefix: [], suffix: [], path: '' }]
-            : []
-    }
-    if (rule.type !== 'seq') return []
-
     const out: PolymorphCandidateLocation[] = []
-    for (let i = 0; i < rule.members.length; i++) {
-        const m = rule.members[i]!
-        if (m.type === 'choice' && qualifies(m)) {
-            out.push({
-                choice: m,
-                prefix: rule.members.slice(0, i),
-                suffix: rule.members.slice(i + 1),
-                path: `${i}`,
-            })
-        } else if (m.type === 'field' && m.content.type === 'choice' && qualifies(m.content)) {
-            out.push({
-                choice: m.content,
-                prefix: rule.members.slice(0, i),
-                suffix: rule.members.slice(i + 1),
-                fieldWrapperName: m.name,
-                path: `${i}`,
-            })
+
+    const pushCandidate = (
+        choice: ChoiceRule,
+        prefix: Rule[],
+        suffix: Rule[],
+        path: string,
+        fieldWrapperName?: string,
+    ): void => {
+        out.push({ choice, prefix, suffix, path, fieldWrapperName })
+    }
+
+    // Walk `rule`, building `path` as we descend. Invariants:
+    //   - `prefix` / `suffix` track the members of the IMMEDIATELY
+    //     enclosing seq (used by tryHoistSiblingVariants to preserve
+    //     the scaffolding around each hoisted variant body).
+    //   - `path` is what `applyPath` would consume to reach this rule.
+    const walk = (
+        r: Rule,
+        path: string,
+        prefix: Rule[],
+        suffix: Rule[],
+    ): void => {
+        if (isChoice(r) && qualifies(r)) {
+            pushCandidate(r, prefix, suffix, path)
+            return
+        }
+        if (r.type === 'field' && r.content.type === 'choice' && qualifies(r.content)) {
+            pushCandidate(r.content, prefix, suffix, path, r.name)
+            return
+        }
+        if (r.type !== 'seq') return
+        for (let i = 0; i < r.members.length; i++) {
+            const m = r.members[i]!
+            const childPath = path === '' ? `${i}` : `${path}/${i}`
+            walk(m, childPath, r.members.slice(0, i), r.members.slice(i + 1))
         }
     }
+
+    walk(rule, '', [], [])
     return out
 }
 
