@@ -5,6 +5,8 @@ export const NODE_KINDS = [
   '_closure_expression_expr',
   '_field_identifier',
   '_field_pattern_shorthand',
+  '_function_type_fn_form',
+  '_function_type_trait_form',
   '_impl_item_body',
   '_let_chain',
   '_macro_definition_brace',
@@ -71,6 +73,8 @@ export const NODE_KINDS = [
   'function_modifiers',
   'function_signature_item',
   'function_type',
+  'function_type_fn_form',
+  'function_type_trait_form',
   'gen_block',
   'generic_function',
   'generic_pattern',
@@ -382,6 +386,11 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   '_field_pattern_shorthand': [
     { name: 'name', required: true, multiple: false },
   ],
+  '_function_type_fn_form': [
+  ],
+  '_function_type_trait_form': [
+    { name: 'trait', required: true, multiple: false },
+  ],
   '_impl_item_body': [
     { name: 'body', required: true, multiple: false },
   ],
@@ -627,9 +636,13 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'function_type': [
     { name: 'forLifetimes', required: false, multiple: false },
-    { name: 'trait', required: false, multiple: false },
     { name: 'parameters', required: true, multiple: false },
     { name: 'returnType', required: false, multiple: false },
+  ],
+  'function_type_fn_form': [
+  ],
+  'function_type_trait_form': [
+    { name: 'trait', required: true, multiple: false },
   ],
   'gen_block': [
     { name: 'block', required: true, multiple: false },

@@ -62,6 +62,8 @@ import type {
   FunctionModifiers,
   FunctionSignatureItem,
   FunctionType,
+  FunctionTypeFnForm,
+  FunctionTypeTraitForm,
   GenBlock,
   GenericFunction,
   GenericPattern,
@@ -173,6 +175,8 @@ import type {
   _ClosureExpressionExpr,
   _FieldIdentifier,
   _FieldPatternShorthand,
+  _FunctionTypeFnForm,
+  _FunctionTypeTraitForm,
   _ImplItemBody,
   _LetChain,
   _MacroDefinitionBrace,
@@ -755,7 +759,6 @@ export function wrapFunctionType(data: _NodeData, tree: TreeHandle): WrappedNode
   return {
     ...data,
     get forLifetimes() { return drillIn(data.$fields?.['for_lifetimes'], tree); },
-    get trait() { return drillIn(data.$fields?.['trait'], tree); },
     get parameters() { return drillIn(data.$fields?.['parameters'], tree); },
     get returnType() { return drillIn(data.$fields?.['return_type'], tree); },
     get child() { return drillIn(data.$children?.[0], tree); },
@@ -1496,6 +1499,21 @@ export function wrap_FieldPatternShorthand(data: _NodeData, tree: TreeHandle): W
   } as unknown as WrappedNode<_FieldPatternShorthand>;
 }
 
+export function wrap_FunctionTypeTraitForm(data: _NodeData, tree: TreeHandle): WrappedNode<_FunctionTypeTraitForm> {
+  return {
+    ...data,
+    get trait() { return drillIn(data.$fields?.['trait'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<_FunctionTypeTraitForm>;
+}
+
+export function wrap_FunctionTypeFnForm(data: _NodeData, tree: TreeHandle): WrappedNode<_FunctionTypeFnForm> {
+  return {
+    ...data,
+    get child() { return drillIn(data.$children?.[0], tree); },
+  } as unknown as WrappedNode<_FunctionTypeFnForm>;
+}
+
 export function wrap_ImplItemBody(data: _NodeData, tree: TreeHandle): WrappedNode<_ImplItemBody> {
   return {
     ...data,
@@ -1600,6 +1618,21 @@ export function wrapImplItemBody(data: _NodeData, tree: TreeHandle): WrappedNode
     get body() { return drillIn(data.$fields?.['body'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<ImplItemBody>;
+}
+
+export function wrapFunctionTypeTraitForm(data: _NodeData, tree: TreeHandle): WrappedNode<FunctionTypeTraitForm> {
+  return {
+    ...data,
+    get trait() { return drillIn(data.$fields?.['trait'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<FunctionTypeTraitForm>;
+}
+
+export function wrapFunctionTypeFnForm(data: _NodeData, tree: TreeHandle): WrappedNode<FunctionTypeFnForm> {
+  return {
+    ...data,
+    get child() { return drillIn(data.$children?.[0], tree); },
+  } as unknown as WrappedNode<FunctionTypeFnForm>;
 }
 
 export function wrapRangeExpressionBinary(data: _NodeData, tree: TreeHandle): WrappedNode<RangeExpressionBinary> {
@@ -1880,6 +1913,8 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'array_expression_semi': (d, t) => wrapArrayExpressionSemi(d, t),
   'array_expression_list': (d, t) => wrapArrayExpressionList(d, t),
   '_field_pattern_shorthand': (d, t) => wrap_FieldPatternShorthand(d, t),
+  '_function_type_trait_form': (d, t) => wrap_FunctionTypeTraitForm(d, t),
+  '_function_type_fn_form': (d, t) => wrap_FunctionTypeFnForm(d, t),
   '_impl_item_body': (d, t) => wrap_ImplItemBody(d, t),
   '_macro_definition_paren': (d, t) => wrap_MacroDefinitionParen(d, t),
   '_macro_definition_bracket': (d, t) => wrap_MacroDefinitionBracket(d, t),
@@ -1903,6 +1938,8 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'struct_item_brace': (d, t) => wrapStructItemBrace(d, t),
   'struct_item_tuple': (d, t) => wrapStructItemTuple(d, t),
   'impl_item_body': (d, t) => wrapImplItemBody(d, t),
+  'function_type_trait_form': (d, t) => wrapFunctionTypeTraitForm(d, t),
+  'function_type_fn_form': (d, t) => wrapFunctionTypeFnForm(d, t),
   'range_expression_binary': (d, t) => wrapRangeExpressionBinary(d, t),
   'range_expression_postfix': (d, t) => wrapRangeExpressionPostfix(d, t),
   'range_expression_prefix': (d, t) => wrapRangeExpressionPrefix(d, t),

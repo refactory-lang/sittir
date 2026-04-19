@@ -1609,7 +1609,6 @@ export function forLifetimes(config: T.ForLifetimes.Config) {
 export function functionType(config: T.FunctionType.Config) {
   const fields = {
     for_lifetimes: config?.forLifetimes,
-    trait: config?.trait,
     parameters: config?.parameters,
     return_type: config?.returnType,
   };
@@ -1621,11 +1620,10 @@ export function functionType(config: T.FunctionType.Config) {
     $fields: fields,
     $children: children,
     forLifetimes(value?: T.ForLifetimes | undefined) { return _fs(config, functionType, 'forLifetimes', value, fields.for_lifetimes); },
-    trait(value?: T._TypeIdentifier | T.ScopedTypeIdentifier | undefined) { return _fs(config, functionType, 'trait', value, fields.trait); },
     parameters(value?: T.Parameters) { return _fs(config, functionType, 'parameters', value, fields.parameters); },
     returnType(value?: T._Type | undefined) { return _fs(config, functionType, 'returnType', value, fields.return_type); },
     getChild() { return children[0]; },
-    setChild(child: T.FunctionModifiers) { return functionType({ ...config, children: [child] }); },
+    setChild(child: (T.FunctionTypeTraitForm | T.FunctionTypeFnForm)) { return functionType({ ...config, children: [child] }); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -3857,6 +3855,41 @@ export function implItemBody(config: T.ImplItemBody.Config) {
   };
 }
 
+export function functionTypeTraitForm(config: T.FunctionTypeTraitForm.Config) {
+  const fields = {
+    trait: config?.trait,
+  };
+  return {
+    $type: 'function_type_trait_form' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    trait(value?: T._TypeIdentifier | T.ScopedTypeIdentifier) { return _fs(config, functionTypeTraitForm, 'trait', value, fields.trait); },
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.FunctionTypeTraitFormTree) { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function functionTypeFnForm(child?: T.FunctionModifiers) {
+  const children = child != null ? [child] : [];
+  return {
+    $type: 'function_type_fn_form' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.FunctionTypeFnFormTree) { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
 export function rangeExpressionBinary(config: T.RangeExpressionBinary.Config) {
   const fields = {
     start: config?.start,
@@ -4350,6 +4383,8 @@ export type FluentKindMap = {
   "struct_item_brace": FluentNode<"struct_item_brace", T.StructItemBrace.Config>;
   "struct_item_tuple": FluentNode<"struct_item_tuple", T.StructItemTuple.Config>;
   "impl_item_body": FluentNode<"impl_item_body", T.ImplItemBody.Config>;
+  "function_type_trait_form": FluentNode<"function_type_trait_form", T.FunctionTypeTraitForm.Config>;
+  "function_type_fn_form": FluentNode<"function_type_fn_form", T.FunctionTypeFnForm.Config>;
   "range_expression_binary": FluentNode<"range_expression_binary", T.RangeExpressionBinary.Config>;
   "range_expression_postfix": FluentNode<"range_expression_postfix", T.RangeExpressionPostfix.Config>;
   "range_expression_prefix": FluentNode<"range_expression_prefix", T.RangeExpressionPrefix.Config>;
@@ -4538,6 +4573,8 @@ export const _factoryMap = {
   "struct_item_brace": structItemBrace,
   "struct_item_tuple": structItemTuple,
   "impl_item_body": implItemBody,
+  "function_type_trait_form": functionTypeTraitForm,
+  "function_type_fn_form": functionTypeFnForm,
   "range_expression_binary": rangeExpressionBinary,
   "range_expression_postfix": rangeExpressionPostfix,
   "range_expression_prefix": rangeExpressionPrefix,
@@ -4727,6 +4764,8 @@ export const _factoryShapes = {
   "struct_item_brace": "config",
   "struct_item_tuple": "config",
   "impl_item_body": "config",
+  "function_type_trait_form": "config",
+  "function_type_fn_form": "children",
   "range_expression_binary": "config",
   "range_expression_postfix": "config",
   "range_expression_prefix": "config",

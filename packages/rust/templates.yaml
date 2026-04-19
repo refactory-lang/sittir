@@ -138,7 +138,7 @@ rules:
     joinBy: ","
     joinByTrailing: true
   function_type:
-    template: $FOR_LIFETIMES $TRAIT $PARAMETERS$$$CHILDREN $RETURN_TYPE_CLAUSE
+    template: $FOR_LIFETIMES $$$CHILDREN $PARAMETERS $RETURN_TYPE_CLAUSE
     return_type_clause: "->$RETURN_TYPE"
   tuple_type:
     template: ($$$CHILDREN)
@@ -321,6 +321,8 @@ rules:
   struct_item_brace: $$$CHILDREN $BODY
   struct_item_tuple: $BODY $$$CHILDREN;
   impl_item_body: $BODY
+  function_type_trait_form: $TRAIT
+  function_type_fn_form: $$$CHILDREN fn
   range_expression_binary: $START $OPERATOR $END
   range_expression_postfix: $START $OPERATOR
   range_expression_prefix: $OPERATOR $END

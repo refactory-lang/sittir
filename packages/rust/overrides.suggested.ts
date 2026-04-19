@@ -211,7 +211,7 @@ export const suggestedRules = {
   // parents: _range_pattern_left, _range_pattern_prefix, range_pattern_left, range_pattern_prefix
   "_shared_2": $ => choice($._literal_pattern, $._path),
 
-  // parents: function_type, struct_pattern
+  // parents: _function_type_trait_form, function_type_trait_form, struct_pattern
   "_type_identifier": $ => choice($._type_identifier, $.scoped_type_identifier),
 
   // parents: scoped_identifier, scoped_type_identifier
@@ -326,8 +326,8 @@ export interface RepeatedShape {
 }
 export const repeatedShapes: readonly RepeatedShape[] = [
   { suggestedName: "_shared_2", kinds: ["_literal_pattern","_path"], parents: ["_range_pattern_left","_range_pattern_prefix","range_pattern_left","range_pattern_prefix"], shape: "supertype" },
+  { suggestedName: "_type_identifier", kinds: ["_type_identifier","scoped_type_identifier"], parents: ["_function_type_trait_form","function_type_trait_form","struct_pattern"], shape: "supertype" },
   { suggestedName: "_shared_2", kinds: ["identifier","metavariable"], parents: ["function_item","function_signature_item"], shape: "supertype" },
-  { suggestedName: "_type_identifier", kinds: ["_type_identifier","scoped_type_identifier"], parents: ["function_type","struct_pattern"], shape: "supertype" },
   { suggestedName: "_shared_2", kinds: ["_field_identifier","integer_literal"], parents: ["field_expression","field_initializer"], shape: "supertype" },
   { suggestedName: "_shared_3", kinds: ["_path","bracketed_type","generic_type"], parents: ["scoped_identifier","scoped_type_identifier"], shape: "supertype" },
 ];

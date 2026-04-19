@@ -525,6 +525,8 @@ export const ir = {
   structItemBrace: _attach(F.structItemBrace, { from: FR.structItemBraceFrom }),
   structItemTuple: _attach(F.structItemTuple, { from: FR.structItemTupleFrom }),
   implItemBody: _attach(F.implItemBody, { from: FR.implItemBodyFrom }),
+  functionTypeTraitForm: _attach(F.functionTypeTraitForm, { from: FR.functionTypeTraitFormFrom }),
+  functionTypeFnForm: _attach(F.functionTypeFnForm, { from: FR.functionTypeFnFormFrom }),
   rangeExpressionBinary: _attach(F.rangeExpressionBinary, { from: FR.rangeExpressionBinaryFrom }),
   rangeExpressionPostfix: _attach(F.rangeExpressionPostfix, { from: FR.rangeExpressionPostfixFrom }),
   rangeExpressionPrefix: _attach(F.rangeExpressionPrefix, { from: FR.rangeExpressionPrefixFrom }),

@@ -146,17 +146,19 @@ export default grammar(enrich(base), {
             7: field('where_clause'), // where_clause
         }),
 
-        // function_type: base grammar has field('trait', ...),
-        // field('parameters', ...), field('return_type', ...). Only
-        // for_lifetimes at position 0 needs a field label (it's an
-        // optional symbol). Position 1 is prec(call, seq(choice(trait,
-        // seq(modifiers, 'fn')), parameters)) — auto-override mis-labeled
-        // the whole prec block as 'function_modifiers'; that clobber is
-        // dropped. Note: `fn` keyword still dropped by template walker
-        // when emerging from one branch of a choice — separate bug.
-        function_type: ($, original) => transform(original, {
-            0: field('for_lifetimes'),
-        }),
+        // function_type: top-level seq is
+        //   [for_lifetimes, prec(call, seq(choice(trait, fn_form), parameters)),
+        //    optional(->return_type)]
+        // The choice at position 1 inner-seq[0] chooses between trait form
+        // (bare type with field('trait', ...)) and fn form (seq with
+        // optional modifiers + 'fn' literal). Template walker drops the
+        // 'fn' literal because it's only in one arm. Variant split each
+        // arm. prec is transparent to path addressing, so path `1/0` is
+        // the choice inside.
+        function_type: ($, original) => transform(original,
+            { 0: field('for_lifetimes') },
+            { '1/0/0': variant('trait_form'), '1/0/1': variant('fn_form') },
+        ),
 
         // gen_block: same fix as async_block — the block symbol is
         // at position 2, position 1 is the optional `move` choice.

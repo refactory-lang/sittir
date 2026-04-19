@@ -216,6 +216,8 @@ export const enum SyntaxKind {
   ArrayExpressionList = 'array_expression_list',
   _FieldPatternShorthand = '_field_pattern_shorthand',
   _FieldPatternNamed = '_field_pattern_named',
+  _FunctionTypeTraitForm = '_function_type_trait_form',
+  _FunctionTypeFnForm = '_function_type_fn_form',
   _ImplItemBody = '_impl_item_body',
   _MacroDefinitionParen = '_macro_definition_paren',
   _MacroDefinitionBracket = '_macro_definition_bracket',
@@ -240,6 +242,8 @@ export const enum SyntaxKind {
   StructItemBrace = 'struct_item_brace',
   StructItemTuple = 'struct_item_tuple',
   ImplItemBody = 'impl_item_body',
+  FunctionTypeTraitForm = 'function_type_trait_form',
+  FunctionTypeFnForm = 'function_type_fn_form',
   RangeExpressionBinary = 'range_expression_binary',
   RangeExpressionPostfix = 'range_expression_postfix',
   RangeExpressionPrefix = 'range_expression_prefix',
@@ -1250,11 +1254,10 @@ export interface FunctionType {
   readonly $type: 'function_type';
   readonly $fields: {
     readonly for_lifetimes?: ForLifetimes;
-    readonly trait?: _TypeIdentifier | ScopedTypeIdentifier;
     readonly parameters: Parameters;
     readonly return_type?: _Type;
   };
-  readonly $children: readonly [FunctionModifiers];
+  readonly $children: readonly [FunctionTypeTraitForm | FunctionTypeFnForm];
 }
 
 export interface TupleType {
@@ -1953,6 +1956,18 @@ export interface _FieldPatternNamed {
   readonly $type: '_field_pattern_named';
 }
 
+export interface _FunctionTypeTraitForm {
+  readonly $type: '_function_type_trait_form';
+  readonly $fields: {
+    readonly trait: _TypeIdentifier | ScopedTypeIdentifier;
+  };
+}
+
+export interface _FunctionTypeFnForm {
+  readonly $type: '_function_type_fn_form';
+  readonly $children: readonly [FunctionModifiers];
+}
+
 export interface _ImplItemBody {
   readonly $type: '_impl_item_body';
   readonly $fields: {
@@ -2081,6 +2096,18 @@ export interface ImplItemBody {
   readonly $fields: {
     readonly body: DeclarationList;
   };
+}
+
+export interface FunctionTypeTraitForm {
+  readonly $type: 'function_type_trait_form';
+  readonly $fields: {
+    readonly trait: _TypeIdentifier | ScopedTypeIdentifier;
+  };
+}
+
+export interface FunctionTypeFnForm {
+  readonly $type: 'function_type_fn_form';
+  readonly $children: readonly [FunctionModifiers];
 }
 
 export interface RangeExpressionBinary {
@@ -2421,6 +2448,8 @@ export interface ArrayExpressionSemiTree extends TreeNode<'array_expression_semi
 export interface ArrayExpressionListTree extends TreeNode<'array_expression_list'> {}
 export interface _FieldPatternShorthandTree extends AnyTreeNode { readonly type: "_field_pattern_shorthand"; }
 export interface _FieldPatternNamedTree extends AnyTreeNode { readonly type: "_field_pattern_named"; }
+export interface _FunctionTypeTraitFormTree extends AnyTreeNode { readonly type: "_function_type_trait_form"; }
+export interface _FunctionTypeFnFormTree extends AnyTreeNode { readonly type: "_function_type_fn_form"; }
 export interface _ImplItemBodyTree extends AnyTreeNode { readonly type: "_impl_item_body"; }
 export interface _MacroDefinitionParenTree extends AnyTreeNode { readonly type: "_macro_definition_paren"; }
 export interface _MacroDefinitionBracketTree extends AnyTreeNode { readonly type: "_macro_definition_bracket"; }
@@ -2444,7 +2473,9 @@ export interface MacroDefinitionBraceTree extends TreeNode<'macro_definition_bra
 export interface ModItemInlineTree extends TreeNode<'mod_item_inline'> {}
 export interface StructItemBraceTree extends TreeNode<'struct_item_brace'> {}
 export interface StructItemTupleTree extends TreeNode<'struct_item_tuple'> {}
-export interface ImplItemBodyTree extends AnyTreeNode { readonly type: "impl_item_body"; }
+export interface ImplItemBodyTree extends TreeNode<'impl_item_body'> {}
+export interface FunctionTypeTraitFormTree extends AnyTreeNode { readonly type: "function_type_trait_form"; }
+export interface FunctionTypeFnFormTree extends AnyTreeNode { readonly type: "function_type_fn_form"; }
 export interface RangeExpressionBinaryTree extends TreeNode<'range_expression_binary'> {}
 export interface RangeExpressionPostfixTree extends TreeNode<'range_expression_postfix'> {}
 export interface RangeExpressionPrefixTree extends TreeNode<'range_expression_prefix'> {}
@@ -3088,6 +3119,8 @@ export type RustNode =
   | ArrayExpressionList
   | _FieldPatternShorthand
   | _FieldPatternNamed
+  | _FunctionTypeTraitForm
+  | _FunctionTypeFnForm
   | _ImplItemBody
   | _MacroDefinitionParen
   | _MacroDefinitionBracket
@@ -3112,6 +3145,8 @@ export type RustNode =
   | StructItemBrace
   | StructItemTuple
   | ImplItemBody
+  | FunctionTypeTraitForm
+  | FunctionTypeFnForm
   | RangeExpressionBinary
   | RangeExpressionPostfix
   | RangeExpressionPrefix
@@ -3277,6 +3312,8 @@ export interface KindMap {
   'array_expression_list': ArrayExpressionList;
   '_field_pattern_shorthand': _FieldPatternShorthand;
   '_field_pattern_named': _FieldPatternNamed;
+  '_function_type_trait_form': _FunctionTypeTraitForm;
+  '_function_type_fn_form': _FunctionTypeFnForm;
   '_impl_item_body': _ImplItemBody;
   '_macro_definition_paren': _MacroDefinitionParen;
   '_macro_definition_bracket': _MacroDefinitionBracket;
@@ -3301,6 +3338,8 @@ export interface KindMap {
   'struct_item_brace': StructItemBrace;
   'struct_item_tuple': StructItemTuple;
   'impl_item_body': ImplItemBody;
+  'function_type_trait_form': FunctionTypeTraitForm;
+  'function_type_fn_form': FunctionTypeFnForm;
   'range_expression_binary': RangeExpressionBinary;
   'range_expression_postfix': RangeExpressionPostfix;
   'range_expression_prefix': RangeExpressionPrefix;
@@ -3512,6 +3551,8 @@ export interface ArrayExpressionSemiNs extends NodeNs<ArrayExpressionSemi, LeafS
 export interface ArrayExpressionListNs extends NodeNs<ArrayExpressionList, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface _FieldPatternShorthandNs extends NodeNs<_FieldPatternShorthand, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface _FieldPatternNamedNs extends NodeNs<_FieldPatternNamed, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface _FunctionTypeTraitFormNs extends NodeNs<_FunctionTypeTraitForm, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface _FunctionTypeFnFormNs extends NodeNs<_FunctionTypeFnForm, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface _ImplItemBodyNs extends NodeNs<_ImplItemBody, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface _MacroDefinitionParenNs extends NodeNs<_MacroDefinitionParen, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface _MacroDefinitionBracketNs extends NodeNs<_MacroDefinitionBracket, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -3536,6 +3577,8 @@ export interface ModItemInlineNs extends NodeNs<ModItemInline, LeafScalarMap, Le
 export interface StructItemBraceNs extends NodeNs<StructItemBrace, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface StructItemTupleNs extends NodeNs<StructItemTuple, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ImplItemBodyNs extends NodeNs<ImplItemBody, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface FunctionTypeTraitFormNs extends NodeNs<FunctionTypeTraitForm, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface FunctionTypeFnFormNs extends NodeNs<FunctionTypeFnForm, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface RangeExpressionBinaryNs extends NodeNs<RangeExpressionBinary, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface RangeExpressionPostfixNs extends NodeNs<RangeExpressionPostfix, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface RangeExpressionPrefixNs extends NodeNs<RangeExpressionPrefix, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -3700,6 +3743,8 @@ export interface NamespaceMap {
   'array_expression_list': ArrayExpressionListNs;
   '_field_pattern_shorthand': _FieldPatternShorthandNs;
   '_field_pattern_named': _FieldPatternNamedNs;
+  '_function_type_trait_form': _FunctionTypeTraitFormNs;
+  '_function_type_fn_form': _FunctionTypeFnFormNs;
   '_impl_item_body': _ImplItemBodyNs;
   '_macro_definition_paren': _MacroDefinitionParenNs;
   '_macro_definition_bracket': _MacroDefinitionBracketNs;
@@ -3724,6 +3769,8 @@ export interface NamespaceMap {
   'struct_item_brace': StructItemBraceNs;
   'struct_item_tuple': StructItemTupleNs;
   'impl_item_body': ImplItemBodyNs;
+  'function_type_trait_form': FunctionTypeTraitFormNs;
+  'function_type_fn_form': FunctionTypeFnFormNs;
   'range_expression_binary': RangeExpressionBinaryNs;
   'range_expression_postfix': RangeExpressionPostfixNs;
   'range_expression_prefix': RangeExpressionPrefixNs;
@@ -4789,6 +4836,20 @@ export namespace _FieldPatternNamed {
   export type Tree = TreeFor<'_field_pattern_named'>;
   export type Kind = '_field_pattern_named';
 }
+export namespace _FunctionTypeTraitForm {
+  export type Config = ConfigFor<'_function_type_trait_form'>;
+  export type Fluent = FluentFor<'_function_type_trait_form'>;
+  export type Loose = LooseFor<'_function_type_trait_form'>;
+  export type Tree = TreeFor<'_function_type_trait_form'>;
+  export type Kind = '_function_type_trait_form';
+}
+export namespace _FunctionTypeFnForm {
+  export type Config = ConfigFor<'_function_type_fn_form'>;
+  export type Fluent = FluentFor<'_function_type_fn_form'>;
+  export type Loose = LooseFor<'_function_type_fn_form'>;
+  export type Tree = TreeFor<'_function_type_fn_form'>;
+  export type Kind = '_function_type_fn_form';
+}
 export namespace _ImplItemBody {
   export type Config = ConfigFor<'_impl_item_body'>;
   export type Fluent = FluentFor<'_impl_item_body'>;
@@ -4956,6 +5017,20 @@ export namespace ImplItemBody {
   export type Loose = LooseFor<'impl_item_body'>;
   export type Tree = TreeFor<'impl_item_body'>;
   export type Kind = 'impl_item_body';
+}
+export namespace FunctionTypeTraitForm {
+  export type Config = ConfigFor<'function_type_trait_form'>;
+  export type Fluent = FluentFor<'function_type_trait_form'>;
+  export type Loose = LooseFor<'function_type_trait_form'>;
+  export type Tree = TreeFor<'function_type_trait_form'>;
+  export type Kind = 'function_type_trait_form';
+}
+export namespace FunctionTypeFnForm {
+  export type Config = ConfigFor<'function_type_fn_form'>;
+  export type Fluent = FluentFor<'function_type_fn_form'>;
+  export type Loose = LooseFor<'function_type_fn_form'>;
+  export type Tree = TreeFor<'function_type_fn_form'>;
+  export type Kind = 'function_type_fn_form';
 }
 export namespace RangeExpressionBinary {
   export type Config = ConfigFor<'range_expression_binary'>;

@@ -679,12 +679,12 @@ describe('for_lifetimes', () => {
 
 describe('function_type', () => {
   it('factory produces correct type', () => {
-    const node = ir.functionType({ parameters: { $type: 'parameters', $text: 'test' } as any, children: [{ $type: 'function_modifiers', $text: 'test' } as any] as any });
+    const node = ir.functionType({ parameters: { $type: 'parameters', $text: 'test' } as any, children: [{ $type: 'function_type_trait_form', $text: 'test' } as any] as any });
     expect(node.$type).toBe('function_type');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.functionType({ parameters: { $type: 'parameters', $text: 'test' } as any, children: [{ $type: 'function_modifiers', $text: 'test' } as any] as any });
+    const node = ir.functionType({ parameters: { $type: 'parameters', $text: 'test' } as any, children: [{ $type: 'function_type_trait_form', $text: 'test' } as any] as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -1836,6 +1836,26 @@ describe('impl_item_body', () => {
   it('render produces non-empty string', () => {
     const node = ir.implItemBody({ body: { $type: 'declaration_list', $text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('function_type_trait_form', () => {
+  it('factory produces correct type', () => {
+    const node = ir.functionTypeTraitForm({ trait: { $type: '_type_identifier', $text: 'test' } as any });
+    expect(node.$type).toBe('function_type_trait_form');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.functionTypeTraitForm({ trait: { $type: '_type_identifier', $text: 'test' } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('function_type_fn_form', () => {
+  it('factory produces correct type', () => {
+    const node = ir.functionTypeFnForm();
+    expect(node.$type).toBe('function_type_fn_form');
+    expect(node.$source).toBe('factory');
   });
 });
 

@@ -173,6 +173,8 @@ export interface IsGuards {
     arrayExpressionSemi<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'array_expression_semi' };
     arrayExpressionList<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'array_expression_list' };
     FieldPatternShorthand<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_field_pattern_shorthand' };
+    FunctionTypeTraitForm<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_function_type_trait_form' };
+    FunctionTypeFnForm<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_function_type_fn_form' };
     ImplItemBody<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_impl_item_body' };
     MacroDefinitionParen<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_macro_definition_paren' };
     MacroDefinitionBracket<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_macro_definition_bracket' };
@@ -187,6 +189,8 @@ export interface IsGuards {
     structItemBrace<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'struct_item_brace' };
     structItemTuple<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'struct_item_tuple' };
     implItemBody<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'impl_item_body' };
+    functionTypeTraitForm<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'function_type_trait_form' };
+    functionTypeFnForm<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'function_type_fn_form' };
     rangeExpressionBinary<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'range_expression_binary' };
     rangeExpressionPostfix<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'range_expression_postfix' };
     rangeExpressionPrefix<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'range_expression_prefix' };
@@ -369,6 +373,8 @@ export interface AssertGuards {
     arrayExpressionSemi(v: { readonly $type: string }): asserts v is { readonly $type: 'array_expression_semi' };
     arrayExpressionList(v: { readonly $type: string }): asserts v is { readonly $type: 'array_expression_list' };
     FieldPatternShorthand(v: { readonly $type: string }): asserts v is { readonly $type: '_field_pattern_shorthand' };
+    FunctionTypeTraitForm(v: { readonly $type: string }): asserts v is { readonly $type: '_function_type_trait_form' };
+    FunctionTypeFnForm(v: { readonly $type: string }): asserts v is { readonly $type: '_function_type_fn_form' };
     ImplItemBody(v: { readonly $type: string }): asserts v is { readonly $type: '_impl_item_body' };
     MacroDefinitionParen(v: { readonly $type: string }): asserts v is { readonly $type: '_macro_definition_paren' };
     MacroDefinitionBracket(v: { readonly $type: string }): asserts v is { readonly $type: '_macro_definition_bracket' };
@@ -383,6 +389,8 @@ export interface AssertGuards {
     structItemBrace(v: { readonly $type: string }): asserts v is { readonly $type: 'struct_item_brace' };
     structItemTuple(v: { readonly $type: string }): asserts v is { readonly $type: 'struct_item_tuple' };
     implItemBody(v: { readonly $type: string }): asserts v is { readonly $type: 'impl_item_body' };
+    functionTypeTraitForm(v: { readonly $type: string }): asserts v is { readonly $type: 'function_type_trait_form' };
+    functionTypeFnForm(v: { readonly $type: string }): asserts v is { readonly $type: 'function_type_fn_form' };
     rangeExpressionBinary(v: { readonly $type: string }): asserts v is { readonly $type: 'range_expression_binary' };
     rangeExpressionPostfix(v: { readonly $type: string }): asserts v is { readonly $type: 'range_expression_postfix' };
     rangeExpressionPrefix(v: { readonly $type: string }): asserts v is { readonly $type: 'range_expression_prefix' };
@@ -590,6 +598,8 @@ export const is = {
     arrayExpressionSemi: _g("array_expression_semi"),
     arrayExpressionList: _g("array_expression_list"),
     FieldPatternShorthand: _g("_field_pattern_shorthand"),
+    FunctionTypeTraitForm: _g("_function_type_trait_form"),
+    FunctionTypeFnForm: _g("_function_type_fn_form"),
     ImplItemBody: _g("_impl_item_body"),
     MacroDefinitionParen: _g("_macro_definition_paren"),
     MacroDefinitionBracket: _g("_macro_definition_bracket"),
@@ -604,6 +614,8 @@ export const is = {
     structItemBrace: _g("struct_item_brace"),
     structItemTuple: _g("struct_item_tuple"),
     implItemBody: _g("impl_item_body"),
+    functionTypeTraitForm: _g("function_type_trait_form"),
+    functionTypeFnForm: _g("function_type_fn_form"),
     rangeExpressionBinary: _g("range_expression_binary"),
     rangeExpressionPostfix: _g("range_expression_postfix"),
     rangeExpressionPrefix: _g("range_expression_prefix"),
@@ -807,6 +819,8 @@ export const assert = {
     arrayExpressionSemi: _makeAssert('arrayExpressionSemi', is.arrayExpressionSemi as _AnyGuard),
     arrayExpressionList: _makeAssert('arrayExpressionList', is.arrayExpressionList as _AnyGuard),
     FieldPatternShorthand: _makeAssert('FieldPatternShorthand', is.FieldPatternShorthand as _AnyGuard),
+    FunctionTypeTraitForm: _makeAssert('FunctionTypeTraitForm', is.FunctionTypeTraitForm as _AnyGuard),
+    FunctionTypeFnForm: _makeAssert('FunctionTypeFnForm', is.FunctionTypeFnForm as _AnyGuard),
     ImplItemBody: _makeAssert('ImplItemBody', is.ImplItemBody as _AnyGuard),
     MacroDefinitionParen: _makeAssert('MacroDefinitionParen', is.MacroDefinitionParen as _AnyGuard),
     MacroDefinitionBracket: _makeAssert('MacroDefinitionBracket', is.MacroDefinitionBracket as _AnyGuard),
@@ -821,6 +835,8 @@ export const assert = {
     structItemBrace: _makeAssert('structItemBrace', is.structItemBrace as _AnyGuard),
     structItemTuple: _makeAssert('structItemTuple', is.structItemTuple as _AnyGuard),
     implItemBody: _makeAssert('implItemBody', is.implItemBody as _AnyGuard),
+    functionTypeTraitForm: _makeAssert('functionTypeTraitForm', is.functionTypeTraitForm as _AnyGuard),
+    functionTypeFnForm: _makeAssert('functionTypeFnForm', is.functionTypeFnForm as _AnyGuard),
     rangeExpressionBinary: _makeAssert('rangeExpressionBinary', is.rangeExpressionBinary as _AnyGuard),
     rangeExpressionPostfix: _makeAssert('rangeExpressionPostfix', is.rangeExpressionPostfix as _AnyGuard),
     rangeExpressionPrefix: _makeAssert('rangeExpressionPrefix', is.rangeExpressionPrefix as _AnyGuard),
