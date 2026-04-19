@@ -1996,12 +1996,38 @@ function walkRuleForTemplate(
                 if (r.type === 'optional' || r.type === 'variant' || r.type === 'clause' || r.type === 'group') return unwrapChildTarget(r.content)
                 return null
             }
+            // Recognize the "element + separator" sub-patterns used by
+            // rust-style trailing-comma lists:
+            //   seq(field('X'), SEP)                    — one element w/ trailing sep
+            //   repeat(seq(field('X'), SEP))            — zero-or-more same
+            //   repeat1(seq(field('X'), SEP))           — one-or-more same
+            // Returns the field name and the literal separator string when
+            // the member matches. The SEP string gets hoisted as `joinByField[X]`
+            // via the existing sibling-multi logic, and the inner literal is
+            // suppressed from the template so render emits via joinByTrailing
+            // without duplication.
+            const elementWithSep = (r: Rule): { name: string; sep: string } | null => {
+                let inner = r
+                if (inner.type === 'repeat' || inner.type === 'repeat1') inner = inner.content
+                if (inner.type !== 'seq' || inner.members.length !== 2) return null
+                const fname = unwrapField(inner.members[0]!)
+                const sepMember = inner.members[1]!
+                if (!fname || sepMember.type !== 'string') return null
+                return { name: fname, sep: sepMember.value }
+            }
             const fieldCounts = new Map<string, number>()
+            const fieldSeps = new Map<string, string>()
             const childTargetCounts = new Map<string, number>()
             for (const m of rule.members) {
                 const fn = unwrapField(m)
                 if (fn) {
                     fieldCounts.set(fn, (fieldCounts.get(fn) ?? 0) + 1)
+                    continue
+                }
+                const elemSep = elementWithSep(m)
+                if (elemSep) {
+                    fieldCounts.set(elemSep.name, (fieldCounts.get(elemSep.name) ?? 0) + 1)
+                    if (!fieldSeps.has(elemSep.name)) fieldSeps.set(elemSep.name, elemSep.sep)
                     continue
                 }
                 const tgt = unwrapChildTarget(m)
@@ -2030,16 +2056,23 @@ function walkRuleForTemplate(
                 if (!augmentedRepeatedFields) augmentedRepeatedFields = new Set<string>()
                 const set = augmentedRepeatedFields as Set<string>
                 if (!set.has(fname)) set.add(fname)
-                // Find the first non-field member between two occurrences
-                // of the field and capture it as the per-slot joinBy.
                 if (joinByField && !(fname in joinByField)) {
-                    let seenFirst = false
-                    for (const m of rule.members) {
-                        const mField = unwrapField(m)
-                        const isThisField = mField === fname
-                        if (isThisField && !seenFirst) { seenFirst = true; continue }
-                        if (seenFirst && m.type === 'string') { joinByField[fname] = m.value; break }
-                        if (isThisField && seenFirst) break
+                    // Prefer the separator captured from an
+                    // `elementWithSep` sub-pattern (e.g. the `,` inside
+                    // `seq(field('X'), ',')`). Falls back to finding the
+                    // first non-field string between occurrences.
+                    const capturedSep = fieldSeps.get(fname)
+                    if (capturedSep != null) {
+                        joinByField[fname] = capturedSep
+                    } else {
+                        let seenFirst = false
+                        for (const m of rule.members) {
+                            const mField = unwrapField(m)
+                            const isThisField = mField === fname
+                            if (isThisField && !seenFirst) { seenFirst = true; continue }
+                            if (seenFirst && m.type === 'string') { joinByField[fname] = m.value; break }
+                            if (isThisField && seenFirst) break
+                        }
                     }
                 }
             }
@@ -2053,10 +2086,27 @@ function walkRuleForTemplate(
                 }
                 if (hasChildDup && joinByField['children']) skipSeps.add(joinByField['children'])
             }
+            // For members matching the `seq(field('X'), SEP)` sub-pattern
+            // where X was counted as sibling-multi above, substitute the
+            // sub-seq with just the field. The SEP is now captured as
+            // joinByField[X] so render emits it via $$$X's join-logic;
+            // walking the full sub-seq would re-emit the SEP as a literal.
+            const substituteMember = (m: Rule): Rule => {
+                const es = elementWithSep(m)
+                if (!es) return m
+                const cnt = fieldCounts.get(es.name) ?? 0
+                if (cnt <= 1) return m
+                // Peel repeat wrapper if present, then extract the field.
+                let inner = m
+                if (inner.type === 'repeat' || inner.type === 'repeat1') inner = inner.content
+                if (inner.type === 'seq' && inner.members.length === 2) return inner.members[0]!
+                return m
+            }
             const out: string[] = []
             for (const m of rule.members) {
                 if (m.type === 'string' && skipSeps.has(m.value)) continue
-                const parts = walkRuleForTemplate(m, seen, inRepeat, clauses, rules, augmentedRepeatedFields, joinByField, wordMatcher)
+                const substituted = substituteMember(m)
+                const parts = walkRuleForTemplate(substituted, seen, inRepeat, clauses, rules, augmentedRepeatedFields, joinByField, wordMatcher)
                 // Drop a leading literal from `parts` that duplicates the
                 // trailing literal already in `out`. This collapses cases
                 // like rust line_comment where an outer `'//'` token is

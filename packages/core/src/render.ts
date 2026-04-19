@@ -181,7 +181,19 @@ function render(node: AnyNodeData, ctx: InternalRenderContext): string {
 					if (typeof item !== 'object' || item === null) return true;
 					return (item as AnyNodeData).$named !== false;
 				});
-				return named.map(item => renderValue(item as AnyNodeData | string | number, ctx)).join(sep);
+				const joined = named.map(item => renderValue(item as AnyNodeData | string | number, ctx)).join(sep);
+				// Apply joinByLeading / joinByTrailing to multi-valued
+				// fields too (not just $$$CHILDREN). Mandatory-separator
+				// patterns like rust's tuple_expression `seq(expr, ',')`
+				// produce a field (`elements`) containing the expressions
+				// AND an anon comma that gets promoted to $fields[','] or
+				// overflows to $children. flankSep probes $children for
+				// the trailing anon sep; when missing from $children it
+				// falls back to presence on $fields keyed by sep text.
+				if (!sep || sep.length === 0 || named.length === 0) return joined;
+				const prefix2 = ruleObj?.['joinByLeading'] === true ? flankSepForField(node, sep, 'leading') : '';
+				const suffix = ruleObj?.['joinByTrailing'] === true ? flankSepForField(node, sep, 'trailing') : '';
+				return prefix2 + joined + suffix;
 			}
 			if (Array.isArray(value)) {
 				// Empty array in a single-slot field position means
@@ -455,6 +467,60 @@ function renderClause(
  * boundary, `''` otherwise — caller uses the return value verbatim as
  * the prefix/suffix to append to the joined slot output.
  */
+/**
+ * Multi-valued field flank detector — companion to `flankSep` for the
+ * `$$$FIELD` render path. readNode scatters anon tokens between
+ * `$children` and `$fields[text]` depending on promotion order:
+ *   - First occurrence of each text → `$fields[text]`
+ *   - Subsequent occurrences → `$children`
+ * So the separator for a rule with the first-mandatory-comma pattern
+ * (rust `seq(expr, ',')`) can end up either place. We can't infer
+ * leading/trailing from membership alone.
+ *
+ * Use spans: a separator is "trailing" iff an anon `sep` token's span
+ * starts at-or-after the last named field-value's span.end. Symmetric
+ * for "leading" with span.end ≤ first value's span.start. Probes the
+ * separator-keyed $fields entry plus any anon in $children.
+ */
+function flankSepForField(node: AnyNodeData, sep: string, side: 'leading' | 'trailing'): string {
+	// Collect every NAMED field-value span to anchor the leading/trailing
+	// boundary. Anon-sep candidates whose span falls outside that boundary
+	// (before the earliest start for 'leading', at/after the latest end
+	// for 'trailing') are the real flankers.
+	const fieldSpans: { start: number; end: number }[] = [];
+	if (node.$fields) {
+		for (const v of Object.values(node.$fields)) {
+			const arr = Array.isArray(v) ? v : [v];
+			for (const item of arr) {
+				if (!item || typeof item !== 'object') continue;
+				const n = item as AnyNodeData;
+				if (n.$named === false) continue;
+				if (n.$span) fieldSpans.push(n.$span);
+			}
+		}
+	}
+	if (fieldSpans.length === 0) return '';
+	const boundary = side === 'leading'
+		? Math.min(...fieldSpans.map(s => s.start))
+		: Math.max(...fieldSpans.map(s => s.end));
+	// Collect candidate anon sep tokens from $fields[sep] and $children.
+	const candidates: AnyNodeData[] = [];
+	const sepEntry = node.$fields?.[sep];
+	if (sepEntry) {
+		const arr = Array.isArray(sepEntry) ? sepEntry : [sepEntry];
+		for (const x of arr) if (x && typeof x === 'object' && (x as AnyNodeData).$named === false) candidates.push(x as AnyNodeData);
+	}
+	if (node.$children) {
+		for (const c of node.$children) if (c && typeof c === 'object' && (c as AnyNodeData).$named === false && (c as AnyNodeData).$text === sep) candidates.push(c as AnyNodeData);
+	}
+	for (const c of candidates) {
+		if (!c.$span || c.$text !== sep) continue;
+		if (side === 'trailing' && c.$span.start >= boundary) return sep;
+		if (side === 'leading' && c.$span.end <= boundary) return sep;
+	}
+	return '';
+}
+
 function flankSep(children: readonly unknown[], side: 'leading' | 'trailing', sep: string): string {
 	const isNamed = (c: unknown): boolean =>
 		typeof c === 'object' && c !== null && (c as AnyNodeData).$named !== false;

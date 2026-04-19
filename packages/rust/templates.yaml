@@ -191,12 +191,12 @@ rules:
       list: $$$CHILDREN
   parenthesized_expression: ($$$CHILDREN)
   tuple_expression:
-    template: ($$$ATTRIBUTES $$$ELEMENTS,)
+    template: ($$$ATTRIBUTES $$$ELEMENTS)
     joinBy: ","
     joinByTrailing: true
     joinByField:
-      attributes: "\n"
       elements: ","
+      attributes: "\n"
   struct_expression: $NAME $BODY
   field_initializer_list:
     template: "{$$$CHILDREN}"
