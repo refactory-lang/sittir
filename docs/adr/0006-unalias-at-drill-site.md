@@ -61,3 +61,27 @@ We'd revisit this if:
 - A parse-shape appears where the alias source's declared shape disagrees with the actual aliased body tree-sitter emits — signals the source name doesn't uniquely determine shape and structural dispatch would be needed after all.
 - A consumer pattern emerges that holds a bare `$nodeId` for an aliased node and needs source-typed access without a parent field getter in scope. Would motivate a structural-unalias fallback at `wrapNode`.
 - Render or factory round-trip tests diverge between the source and target templates for the same parse text — source-as-canonical requires both templates produce identical output on equivalent input, and the source template should be the only one exercised post-decision.
+
+## Implementation notes (retrospective)
+
+Validator-side walker unalias (rendering via wrapped views so corpus
+tests dispatch through the source template) was prototyped and reverted.
+It renders correctly, but existing per-supertype reparse wrappers (e.g.
+rust's `'_type': r => 'type _X = ${r};'`) can't accept turbofish in
+bare type position — `C::<D>` requires being inside a `scoped_identifier`
+to parse. The validator's reparse step failed on correctly-rendered
+output that the wrapper couldn't reconstruct.
+
+Prerequisite for retiring per-kind render-layer overrides (like rust's
+`generic_type` pos-1 `optional(field('turbofish', '::'))` workaround)
+is **per-source reparse wrappers**: a source kind whose parse tree
+body is only valid inside a specific parent context needs a wrapper
+that recreates that context (e.g. `'generic_type_with_turbofish': r =>
+'type _X = ${r}::Item;'`). Until those land, both fixes coexist:
+drillAs for consumer typing, template override for validator-path
+rendering.
+
+Also helpful: `loadReadTreeNode(grammar)` and `walkWrappedTree(root,
+visit)` now live in `packages/codegen/src/validators/common.ts` —
+ready for when the reparse wrappers catch up and validators switch to
+walker-based iteration.

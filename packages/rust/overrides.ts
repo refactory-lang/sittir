@@ -181,11 +181,15 @@ export default grammar(enrich(base), {
         // generic_type: base rule is seq(field('type'), field('type_arguments')).
         // Dual path: (a) wrap layer — drillAs() at alias-declared field
         // sites rewrites $type to 'generic_type_with_turbofish' (ADR-0006),
-        // so consumers see source-typed views. (b) render layer — operates
-        // on raw readNode output which retains $type='generic_type'; the
-        // restructured pos-1 makes the `generic_type` template cover both
-        // shapes (with-and-without turbofish) natively. Both fixes live
-        // because the render path doesn't go through wrap.
+        // so consumers see source-typed views. (b) render layer — corpus
+        // validators operate on raw readNode output which retains
+        // $type='generic_type'; the restructured pos-1 makes the
+        // `generic_type` template cover both shapes (with-and-without
+        // turbofish) natively. Validator-level walker rewrite was tried
+        // (commit reverted) — it renders correctly but the existing
+        // reparse wrapper `type _X = \${r};` can't accept turbofish in
+        // bare type position. Per-source reparse wrappers are the
+        // follow-up before we can retire this override.
         generic_type: ($, original) => transform(original, {
             1: seq(optional(field('turbofish', '::')), field('type_arguments', $.type_arguments)),
         }),

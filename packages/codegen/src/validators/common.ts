@@ -22,6 +22,7 @@ import type { SgNode, Pos, Range } from '@ast-grep/wasm'
 
 
 import type { AnyTreeNode } from '@sittir/types'
+import type { TreeHandle } from '@sittir/core'
 
 // ---------------------------------------------------------------------------
 // Corpus parser — tree-sitter test corpus format
@@ -267,6 +268,71 @@ export const WASM_PATHS: Record<string, string> = {
     rust: 'tree-sitter-rust/tree-sitter-rust.wasm',
     typescript: 'tree-sitter-typescript/tree-sitter-typescript.wasm',
     python: 'tree-sitter-python/tree-sitter-python.wasm',
+}
+
+/** Relative path from codegen/src/validators to language package wrap.ts */
+export const WRAP_MODULE_PATHS: Record<string, string> = {
+    rust: '../../../rust/src/wrap.ts',
+    typescript: '../../../typescript/src/wrap.ts',
+    python: '../../../python/src/wrap.ts',
+}
+
+/**
+ * Dynamic import of a grammar's `readTreeNode` entry point. Used by
+ * validators to build source-typed wrapped views (ADR-0006) — the
+ * wrap layer's drillAs() rewrites `$type` at alias-declared field
+ * sites so validator render dispatches through the source template.
+ */
+export async function loadReadTreeNode(grammar: string): Promise<((handle: TreeHandle, nodeId?: number) => unknown) | null> {
+    const p = WRAP_MODULE_PATHS[grammar]
+    if (!p) return null
+    try {
+        const mod = await import(new URL(p, import.meta.url).pathname)
+        return mod.readTreeNode ?? null
+    } catch (e) {
+        console.error(`[validators] failed to load wrap module for ${grammar}: ${(e as Error).message}`)
+        return null
+    }
+}
+
+/**
+ * Walk a wrapped tree via declared getters, calling `visit` on each
+ * encountered wrapped node. Enumeration uses `Object.keys` + accessor
+ * invocation — accessors defined via `{get foo() {}}` appear as
+ * enumerable keys and fire on read, so drillAs() along the way rewrites
+ * $type from alias target to source at declared-field sites.
+ *
+ * `$`-prefixed keys are spread NodeData metadata (not child getters)
+ * and get skipped. Leaves short-circuit when accessing a getter that
+ * doesn't return a wrapped-shape value.
+ */
+export function walkWrappedTree(root: unknown, visit: (w: WrappedNodeData) => void): void {
+    const seen = new Set<number>()
+    const recurse = (w: unknown): void => {
+        if (!isWrappedNodeData(w)) return
+        const id = w.$nodeId
+        if (id != null) {
+            if (seen.has(id)) return
+            seen.add(id)
+        }
+        visit(w)
+        for (const k of Object.keys(w)) {
+            if (k.startsWith('$')) continue
+            const v = (w as unknown as Record<string, unknown>)[k]
+            if (isWrappedNodeData(v)) recurse(v)
+            else if (Array.isArray(v)) for (const x of v) if (isWrappedNodeData(x)) recurse(x)
+        }
+    }
+    recurse(root)
+}
+
+export interface WrappedNodeData {
+    readonly $type: string
+    readonly $nodeId?: number
+    readonly [k: string]: unknown
+}
+function isWrappedNodeData(v: unknown): v is WrappedNodeData {
+    return !!v && typeof v === 'object' && typeof (v as { $type?: unknown }).$type === 'string'
 }
 
 /**
