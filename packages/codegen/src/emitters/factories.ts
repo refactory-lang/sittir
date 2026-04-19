@@ -10,7 +10,7 @@
 import type {
     NodeMap, AssembledNode, AssembledField, AssembledChild, AssembledGroup,
 } from '../compiler/rule.ts'
-import { hasHiddenExternalRef } from '../compiler/rule.ts'
+import { hasHiddenExternalRef, isVerbatimTokenStream } from '../compiler/rule.ts'
 
 export interface EmitFactoriesConfig {
     grammar: string
@@ -241,9 +241,12 @@ export function emitFactories(config: EmitFactoriesConfig): string {
         let shape: 'config' | 'children' | 'text'
         const externals = nodeMap.externals
         const nodeRule = (node as { rule?: import('../compiler/rule.ts').Rule }).rule
-        const isTextTemplate = externals && externals.size > 0 && nodeRule
+        const isTextTemplate = nodeRule
             && (node.modelType === 'branch' || node.modelType === 'container')
-            && hasHiddenExternalRef(nodeRule, externals)
+            && (
+                (externals && externals.size > 0 && hasHiddenExternalRef(nodeRule, externals))
+                || isVerbatimTokenStream(nodeRule)
+            )
         if (isTextTemplate) shape = 'text'
         else if (node.modelType === 'container') shape = 'children'
         else if (
@@ -335,11 +338,12 @@ function renderFactoryForNode(
     // text-accepting factory so callers supply the full source text.
     const externals = nodeMap.externals
     const nodeRule = (node as { rule?: import('../compiler/rule.ts').Rule }).rule
-    const isTextTemplate = externals
-        && externals.size > 0
-        && nodeRule
+    const isTextTemplate = nodeRule
         && (node.modelType === 'branch' || node.modelType === 'container')
-        && hasHiddenExternalRef(nodeRule, externals)
+        && (
+            (externals && externals.size > 0 && hasHiddenExternalRef(nodeRule, externals))
+            || isVerbatimTokenStream(nodeRule)
+        )
     if (isTextTemplate) {
         return emitTextFactory(node as unknown as { kind: string; treeTypeName: string; rawFactoryName?: string }, '(text: string)', 'text')
     }

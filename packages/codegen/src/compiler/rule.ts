@@ -1288,6 +1288,18 @@ export class AssembledBranch extends AssembledNodeBase {
         if (externals && hasHiddenExternalRef(this.rule, externals)) {
             return { template: '$TEXT' }
         }
+        // Token-stream shape — choice of `seq(delim, repeat(hidden), delim)`
+        // variants. rust's token_tree / delim_token_tree are the canonical
+        // cases: children can be any mix of named symbols and anonymous
+        // punctuation (`=`, `=>`, `,`, etc.), and field-by-field rendering
+        // drops the anonymous ones because readNode's promoteAnonymousKeyword
+        // routes them through $fields keyed by text (not reachable from
+        // `$$$CHILDREN`). The whole content is authored to be verbatim —
+        // macro tokens are supposed to pass through — so emit `$TEXT`
+        // which preserves the source span.
+        if (isVerbatimTokenStream(this.rule)) {
+            return { template: '$TEXT' }
+        }
         // Template walking stays on the RAW rule — templates need the
         // anonymous delimiters ('(', '{', ';', etc.) to surface as
         // template text. Only derivations use simplifiedRule.
@@ -1345,6 +1357,39 @@ export class AssembledBranch extends AssembledNodeBase {
  * Flips to $TEXT only when every non-ignorable member of the top-level
  * seq classifies as external. Non-seq roots return false.
  */
+/**
+ * Detect "verbatim token stream" shape — a rule whose body is a choice
+ * of `seq(delim, repeat(hidden_symbol), delim)` variants. Canonical
+ * case: rust's `token_tree` / `delim_token_tree`, whose children are
+ * any mix of named and anonymous tokens (including punctuation like
+ * `=`, `=>`, `,` that readNode promotes into $fields rather than
+ * $children). Field-by-field rendering can't reassemble these losslessly
+ * — the anonymous tokens would drop out of `$$$CHILDREN`.
+ *
+ * Emitting `$TEXT` for these rules preserves the source span verbatim
+ * on readNode-derived data. Factory construction requires the kind to
+ * use the text-shape factory (receives a `text: string`), same path
+ * we already use for `$TEXT` kinds via `hasHiddenExternalRef`.
+ *
+ * Shape criteria: rule is a `choice` (possibly wrapped in `variant`
+ * markers from tagVariants). Every member has exactly three elements:
+ * string-literal, repeat/repeat1 of a hidden symbol, string-literal.
+ */
+export function isVerbatimTokenStream(rule: Rule): boolean {
+    if (rule.type !== 'choice') return false
+    if (rule.members.length === 0) return false
+    return rule.members.every(m => {
+        const core = m.type === 'variant' ? m.content : m
+        if (core.type !== 'seq' || core.members.length !== 3) return false
+        const [start, mid, end] = core.members
+        if (!start || !mid || !end) return false
+        if (start.type !== 'string' || end.type !== 'string') return false
+        if (mid.type !== 'repeat' && mid.type !== 'repeat1') return false
+        const inner = mid.content
+        return inner.type === 'symbol' && inner.hidden === true
+    })
+}
+
 export function hasHiddenExternalRef(rule: Rule, externals: ReadonlySet<string>): boolean {
     // Unwrap transparent wrappers to find the structural core.
     let core = rule
@@ -1454,6 +1499,9 @@ export class AssembledContainer extends AssembledNodeBase {
 
     renderTemplate(rules?: Record<string, Rule>, wordMatcher?: RegExp, externals?: ReadonlySet<string>): Record<string, unknown> {
         if (externals && hasHiddenExternalRef(this.rule, externals)) {
+            return { template: '$TEXT' }
+        }
+        if (isVerbatimTokenStream(this.rule)) {
             return { template: '$TEXT' }
         }
         // Template walking stays on RAW rule (needs literals); derivations

@@ -13,10 +13,10 @@ rules:
       bracket: macro_rules!$NAME $$$CHILDREN
       brace: macro_rules!$NAME $$$CHILDREN
   macro_rule: $LEFT=>$RIGHT
-  token_tree_pattern: ($$$CHILDREN)
+  token_tree_pattern: $TEXT
   token_binding_pattern: "$NAME:$TYPE"
   token_repetition_pattern: $($$$CHILDREN)+
-  token_tree: ($$$CHILDREN)
+  token_tree: $TEXT
   token_repetition: $($$$CHILDREN)+
   attribute_item: "#[$ATTRIBUTE]"
   inner_attribute_item: "#![$ATTRIBUTE]"
@@ -161,7 +161,7 @@ rules:
     type_parameters_clause: for$TYPE_PARAMETERS
   dynamic_type: $DYN $TRAIT
   macro_invocation: $MACRO!$TOKEN_TREE
-  delim_token_tree: ($$$CHILDREN)
+  delim_token_tree: $TEXT
   scoped_identifier: "$PATH::$NAME"
   scoped_type_identifier_in_expression_position: "$PATH::$NAME"
   scoped_type_identifier: "$PATH::$NAME"

@@ -225,18 +225,15 @@ export function macroRule(config: T.MacroRule.Config) {
   };
 }
 
-export function tokenTreePattern(...children: T.TokenPattern[]) {
+export function tokenTreePattern(text: string) {
   return {
     $type: 'token_tree_pattern' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $children: children,
-    render() { return render(this); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(target: T.TokenTreePatternTree) { const r = target.range(); return toEdit(this, r); },
+    $text: text,
+    render: () => text,
+    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
+    replace: (t: T.TokenTreePatternTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
   };
 }
 
@@ -288,18 +285,15 @@ export function fragmentSpecifier(text: 'block' | 'expr' | 'expr_2021' | 'ident'
   };
 }
 
-export function tokenTree(...children: T.Tokens[]) {
+export function tokenTree(text: string) {
   return {
     $type: 'token_tree' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $children: children,
-    render() { return render(this); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(target: T.TokenTreeTree) { const r = target.range(); return toEdit(this, r); },
+    $text: text,
+    render: () => text,
+    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
+    replace: (t: T.TokenTreeTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
   };
 }
 
@@ -1932,18 +1926,15 @@ export function macroInvocation(config: T.MacroInvocation.Config) {
   };
 }
 
-export function delimTokenTree(...children: T.DelimTokens[]) {
+export function delimTokenTree(text: string) {
   return {
     $type: 'delim_token_tree' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $children: children,
-    render() { return render(this); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(target: T.DelimTokenTreeTree) { const r = target.range(); return toEdit(this, r); },
+    $text: text,
+    render: () => text,
+    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
+    replace: (t: T.DelimTokenTreeTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
   };
 }
 
@@ -4611,11 +4602,11 @@ export const _factoryShapes = {
   "expression_statement": "children",
   "macro_definition": "config",
   "macro_rule": "config",
-  "token_tree_pattern": "children",
+  "token_tree_pattern": "text",
   "token_binding_pattern": "config",
   "token_repetition_pattern": "children",
   "fragment_specifier": "text",
-  "token_tree": "children",
+  "token_tree": "text",
   "token_repetition": "children",
   "attribute_item": "config",
   "inner_attribute_item": "config",
@@ -4683,7 +4674,7 @@ export const _factoryShapes = {
   "dynamic_type": "config",
   "mutable_specifier": "text",
   "macro_invocation": "config",
-  "delim_token_tree": "children",
+  "delim_token_tree": "text",
   "scoped_identifier": "config",
   "scoped_type_identifier_in_expression_position": "config",
   "scoped_type_identifier": "config",
