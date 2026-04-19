@@ -376,14 +376,15 @@ describe('where_predicate', () => {
 });
 
 describe('impl_item', () => {
-  it('factory produces correct type', () => {
-    const node = ir.impl({ type: { $type: '_type', $text: 'test' } as any, children: [{ $type: 'where_clause', $text: 'test' } as any] as any });
+  it('body form produces correct type', () => {
+    const node = ir.impl.body({ type: { $type: '_type', $text: 'test' } as any });
     expect(node.$type).toBe('impl_item');
     expect(node.$source).toBe('factory');
   });
-  it('render produces non-empty string', () => {
-    const node = ir.impl({ type: { $type: '_type', $text: 'test' } as any, children: [{ $type: 'where_clause', $text: 'test' } as any] as any });
-    expect(node.render().length).toBeGreaterThan(0);
+  it('semi form produces correct type', () => {
+    const node = ir.impl.semi({ type: { $type: '_type', $text: 'test' } as any });
+    expect(node.$type).toBe('impl_item');
+    expect(node.$source).toBe('factory');
   });
 });
 
@@ -1822,6 +1823,18 @@ describe('struct_item_tuple', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.structItemTuple({ body: { $type: 'ordered_field_declaration_list', $text: 'test' } as any, children: [{ $type: 'where_clause', $text: 'test' } as any] as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('impl_item_body', () => {
+  it('factory produces correct type', () => {
+    const node = ir.implItemBody({ body: { $type: 'declaration_list', $text: 'test' } as any });
+    expect(node.$type).toBe('impl_item_body');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.implItemBody({ body: { $type: 'declaration_list', $text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });

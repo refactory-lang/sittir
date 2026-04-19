@@ -5,6 +5,7 @@ export const NODE_KINDS = [
   '_closure_expression_expr',
   '_field_identifier',
   '_field_pattern_shorthand',
+  '_impl_item_body',
   '_let_chain',
   '_macro_definition_brace',
   '_macro_definition_bracket',
@@ -78,6 +79,7 @@ export const NODE_KINDS = [
   'higher_ranked_trait_bound',
   'if_expression',
   'impl_item',
+  'impl_item_body',
   'index_expression',
   'inner_attribute_item',
   'label',
@@ -258,6 +260,7 @@ export const ALL_KINDS = [...NODE_KINDS, ...LEAF_KINDS] as const;
 /** Language keywords (alphabetic anonymous tokens). */
 export const KEYWORDS = [
   '_',
+  '_impl_item_semi',
   '_inner_line_doc_comment_marker',
   '_kw_async',
   '_kw_const',
@@ -286,6 +289,7 @@ export const KEYWORDS = [
   'gen',
   'if',
   'impl',
+  'impl_item_semi',
   'in',
   'let',
   'loop',
@@ -377,6 +381,9 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   '_field_pattern_shorthand': [
     { name: 'name', required: true, multiple: false },
+  ],
+  '_impl_item_body': [
+    { name: 'body', required: true, multiple: false },
   ],
   '_let_chain': [
   ],
@@ -654,11 +661,13 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'alternative', required: false, multiple: false },
   ],
   'impl_item': [
-    { name: 'unsafe', required: false, multiple: false },
     { name: 'typeParameters', required: false, multiple: false },
     { name: 'trait', required: false, multiple: false },
     { name: 'type', required: true, multiple: false },
-    { name: 'body', required: false, multiple: false },
+    { name: 'whereClause', required: false, multiple: false },
+  ],
+  'impl_item_body': [
+    { name: 'body', required: true, multiple: false },
   ],
   'index_expression': [
     { name: 'object', required: true, multiple: false },

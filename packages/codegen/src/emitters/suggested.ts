@@ -421,11 +421,24 @@ export function emitSuggested(config: EmitSuggestedConfig): string {
             })
             continue
         }
-        // Emit one transform block with a variant() patch per choice
-        // position. Multiple candidates per rule combine — e.g. python's
-        // import_from_statement has both a module_name choice (relative
-        // vs dotted) and a wildcard_import choice (wildcard vs list).
-        emit(entry.kind, () => {
+        // A kind can have BOTH inferred fields and polymorph candidates
+        // (e.g. rust impl_item: inferred field at pos 5 + polymorph at
+        // pos 6). The shared `emit()` dedup would drop the polymorph
+        // entry as a collision. Bypass for this loop — emit a second
+        // block with a merge hint so authors know to combine with the
+        // field block above rather than replace it.
+        const alreadyEmitted = emittedKinds.has(entry.kind)
+        const forceEmit = (body: () => void) => {
+            emittedKinds.add(entry.kind)
+            body()
+        }
+        const emitFn = alreadyEmitted ? forceEmit : emit.bind(null, entry.kind)
+        if (alreadyEmitted) {
+            lines.push(`  // NOTE: \`${entry.kind}\` already has a field-inference block above.`)
+            lines.push(`  // Merge into a single transform() call by passing this patch set`)
+            lines.push(`  // as an additional argument: \`transform(original, {/* fields */}, {/* variants below */})\`.`)
+        }
+        emitFn(() => {
             const total = candidates.reduce((s, c) => s + c.choice.members.length, 0)
             lines.push(`  // [held] polymorph — ${candidates.length} choice position(s), ${total} arm(s) total`)
             if (candidates.some(c => c.fieldWrapperName)) {

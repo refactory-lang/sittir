@@ -190,6 +190,7 @@ export const _fromMap = {
   "mod_item_inline": modItemInlineFrom,
   "struct_item_brace": structItemBraceFrom,
   "struct_item_tuple": structItemTupleFrom,
+  "impl_item_body": implItemBodyFrom,
   "range_expression_binary": rangeExpressionBinaryFrom,
   "range_expression_postfix": rangeExpressionPostfixFrom,
   "range_expression_prefix": rangeExpressionPrefixFrom,
@@ -759,15 +760,26 @@ export function wherePredicateFrom(input: T.WherePredicate | T.WherePredicate.Lo
   });
 }
 
-export function implItemFrom(input: T.ImplItem | T.ImplItem.Loose): ReturnType<typeof F.implItem> {
-  if (isNodeData(input)) return input as ReturnType<typeof F.implItem>;
-  return F.implItem({
-    unsafe: _resolveOneLeaf<NonNullable<T.ImplItem.Config['unsafe']>>((input as T.ImplItem.Loose).unsafe, "_kw_unsafe"),
-    typeParameters: _resolveOneBranch<NonNullable<T.ImplItem.Config['typeParameters']>>((input as T.ImplItem.Loose).typeParameters, "type_parameters"),
-    trait: _resolveOne<NonNullable<T.ImplItem.Config['trait']>>((input as T.ImplItem.Loose).trait, _K0, _K14),
-    type: _resolveOne<NonNullable<T.ImplItem.Config['type']>>((input as T.ImplItem.Loose).type, _K9, _K10),
-    body: _resolveOneBranch<NonNullable<T.ImplItem.Config['body']>>((input as T.ImplItem.Loose).body, "declaration_list"),
-    children: _resolveOneBranch<NonNullable<T.ImplItem.Config['children']>>((input as T.ImplItem.Loose).children, "where_clause"),
+export function implItemFrom(input?: T.ImplItem | T.ImplItem.Loose): ReturnType<typeof F.implItem> {
+  if (input !== undefined && isNodeData(input)) return input as ReturnType<typeof F.implItem>;
+  return F.implItem(input as T.ImplItemUFormBodyConfig | T.ImplItemUFormSemiConfig);
+}
+
+export function implItemUFormBodyFrom(input: T.ImplItemUFormBodyConfig) {
+  return F.implItemUFormBody({
+    typeParameters: _resolveOneBranch<NonNullable<T.ImplItemUFormBodyConfig['typeParameters']>>(input.typeParameters, "type_parameters"),
+    trait: _resolveOne<NonNullable<T.ImplItemUFormBodyConfig['trait']>>(input.trait, _K0, _K14),
+    type: _resolveOne<NonNullable<T.ImplItemUFormBodyConfig['type']>>(input.type, _K9, _K10),
+    whereClause: _resolveOneBranch<NonNullable<T.ImplItemUFormBodyConfig['whereClause']>>(input.whereClause, "where_clause"),
+  });
+}
+
+export function implItemUFormSemiFrom(input: T.ImplItemUFormSemiConfig) {
+  return F.implItemUFormSemi({
+    typeParameters: _resolveOneBranch<NonNullable<T.ImplItemUFormSemiConfig['typeParameters']>>(input.typeParameters, "type_parameters"),
+    trait: _resolveOne<NonNullable<T.ImplItemUFormSemiConfig['trait']>>(input.trait, _K0, _K14),
+    type: _resolveOne<NonNullable<T.ImplItemUFormSemiConfig['type']>>(input.type, _K9, _K10),
+    whereClause: _resolveOneBranch<NonNullable<T.ImplItemUFormSemiConfig['whereClause']>>(input.whereClause, "where_clause"),
   });
 }
 
@@ -1869,6 +1881,13 @@ export function structItemTupleFrom(input: T.StructItemTuple | T.StructItemTuple
   return F.structItemTuple({
     body: _resolveOneBranch<NonNullable<T.StructItemTuple.Config['body']>>((input as T.StructItemTuple.Loose).body, "ordered_field_declaration_list"),
     children: _resolveOneBranch<NonNullable<T.StructItemTuple.Config['children']>>((input as T.StructItemTuple.Loose).children, "where_clause"),
+  });
+}
+
+export function implItemBodyFrom(input: T.ImplItemBody | T.ImplItemBody.Loose): ReturnType<typeof F.implItemBody> {
+  if (isNodeData(input)) return input as ReturnType<typeof F.implItemBody>;
+  return F.implItemBody({
+    body: _resolveOneBranch<NonNullable<T.ImplItemBody.Config['body']>>((input as T.ImplItemBody.Loose).body, "declaration_list"),
   });
 }
 

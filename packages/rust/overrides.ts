@@ -164,10 +164,15 @@ export default grammar(enrich(base), {
             2: field('block'),
         }),
 
-        // impl_item: override removed. Same autogen mistake as struct_item —
-        // position 0 was labeled `field('where_clause')` but it's the
-        // unsafe/impl header start, not a where_clause. The where_clause
-        // is buried deeper in the rule's seq.
+        // impl_item: field('where_clause') at pos 5 (inferred from 86%
+        // agreement across 7 parents), plus polymorph at pos 6 —
+        // choice(field('body', declaration_list), ';'). The ';' arm is
+        // the trait-signature form (no body), which the template walker
+        // drops without a variant split.
+        impl_item: ($, original) => transform(original,
+            { 5: field('where_clause') },
+            { '6/0': variant('body'), '6/1': variant('semi') },
+        ),
 
         // index_expression: 2 field(s)
         index_expression: ($, original) => transform(original, {

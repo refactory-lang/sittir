@@ -966,34 +966,69 @@ export function wherePredicate(config: T.WherePredicate.Config) {
   };
 }
 
-export function implItem(config: T.ImplItem.Config) {
+export function implItem(config: T.ImplItemUFormBodyConfig | T.ImplItemUFormSemiConfig) {
+  if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === 'impl_item_body') return implItemUFormBody(config as T.ImplItemUFormBodyConfig);
+  if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === 'impl_item_semi') return implItemUFormSemi(config as T.ImplItemUFormSemiConfig);
+  if (config && (config as any).variant === 'body') return implItemUFormBody(config as T.ImplItemUFormBodyConfig);
+  if (config && (config as any).variant === 'semi') return implItemUFormSemi(config as T.ImplItemUFormSemiConfig);
+  return implItemUFormBody(config as T.ImplItemUFormBodyConfig);
+}
+export function implItemUFormBody(config: T.ImplItemUFormBodyConfig) {
   const fields = {
-    unsafe: config?.unsafe,
     type_parameters: config?.typeParameters,
     trait: config?.trait,
     type: config?.type,
-    body: config?.body,
+    where_clause: config?.whereClause,
   };
   const children = config?.children ?? [];
   return {
     $type: 'impl_item' as const,
     $source: 'factory' as const,
     $named: true as const,
+    $variant: '_form_body' as const,
     $fields: fields,
     $children: children,
-    unsafe(value?: T.KwUnsafe | undefined) { return _fs(config, implItem, 'unsafe', value, fields.unsafe); },
-    typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, implItem, 'typeParameters', value, fields.type_parameters); },
-    trait(value?: T._TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType | undefined) { return _fs(config, implItem, 'trait', value, fields.trait); },
-    typeField(value?: T._Type) { return _fs(config, implItem, 'type', value, fields.type); },
-    body(value?: T.DeclarationList | undefined) { return _fs(config, implItem, 'body', value, fields.body); },
+    typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, implItemUFormBody, 'typeParameters', value, fields.type_parameters); },
+    trait(value?: T._TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType | undefined) { return _fs(config, implItemUFormBody, 'trait', value, fields.trait); },
+    typeField(value?: T._Type) { return _fs(config, implItemUFormBody, 'type', value, fields.type); },
+    whereClause(value?: T.WhereClause | undefined) { return _fs(config, implItemUFormBody, 'whereClause', value, fields.where_clause); },
     getChild() { return children[0]; },
-    setChild(child: T.WhereClause) { return implItem({ ...config, children: [child] }); },
+    setChild(child: T.ImplItemBody) { return implItemUFormBody({ ...config, children: [child] }); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(target: T.ImplItemTree) { const r = target.range(); return toEdit(this, r); },
+    replace(target: T.ImplItemUFormBodyTree) { const r = target.range(); return toEdit(this, r); },
+  };
+}
+export function implItemUFormSemi(config: T.ImplItemUFormSemiConfig) {
+  const fields = {
+    type_parameters: config?.typeParameters,
+    trait: config?.trait,
+    type: config?.type,
+    where_clause: config?.whereClause,
+  };
+  const children = config?.children ?? [];
+  return {
+    $type: 'impl_item' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $variant: '_form_semi' as const,
+    $fields: fields,
+    $children: children,
+    typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, implItemUFormSemi, 'typeParameters', value, fields.type_parameters); },
+    trait(value?: T._TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType | undefined) { return _fs(config, implItemUFormSemi, 'trait', value, fields.trait); },
+    typeField(value?: T._Type) { return _fs(config, implItemUFormSemi, 'type', value, fields.type); },
+    whereClause(value?: T.WhereClause | undefined) { return _fs(config, implItemUFormSemi, 'whereClause', value, fields.where_clause); },
+    getChild() { return children[0]; },
+    setChild(child: T.ImplItemSemi) { return implItemUFormSemi({ ...config, children: [child] }); },
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.ImplItemUFormSemiTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -3803,6 +3838,25 @@ export function structItemTuple(config: T.StructItemTuple.Config) {
   };
 }
 
+export function implItemBody(config: T.ImplItemBody.Config) {
+  const fields = {
+    body: config?.body,
+  };
+  return {
+    $type: 'impl_item_body' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    body(value?: T.DeclarationList) { return _fs(config, implItemBody, 'body', value, fields.body); },
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.ImplItemBodyTree) { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
 export function rangeExpressionBinary(config: T.RangeExpressionBinary.Config) {
   const fields = {
     start: config?.start,
@@ -4295,6 +4349,7 @@ export type FluentKindMap = {
   "mod_item_inline": FluentNode<"mod_item_inline", T.ModItemInline.Config>;
   "struct_item_brace": FluentNode<"struct_item_brace", T.StructItemBrace.Config>;
   "struct_item_tuple": FluentNode<"struct_item_tuple", T.StructItemTuple.Config>;
+  "impl_item_body": FluentNode<"impl_item_body", T.ImplItemBody.Config>;
   "range_expression_binary": FluentNode<"range_expression_binary", T.RangeExpressionBinary.Config>;
   "range_expression_postfix": FluentNode<"range_expression_postfix", T.RangeExpressionPostfix.Config>;
   "range_expression_prefix": FluentNode<"range_expression_prefix", T.RangeExpressionPrefix.Config>;
@@ -4482,6 +4537,7 @@ export const _factoryMap = {
   "mod_item_inline": modItemInline,
   "struct_item_brace": structItemBrace,
   "struct_item_tuple": structItemTuple,
+  "impl_item_body": implItemBody,
   "range_expression_binary": rangeExpressionBinary,
   "range_expression_postfix": rangeExpressionPostfix,
   "range_expression_prefix": rangeExpressionPrefix,
@@ -4670,6 +4726,7 @@ export const _factoryShapes = {
   "mod_item_inline": "config",
   "struct_item_brace": "config",
   "struct_item_tuple": "config",
+  "impl_item_body": "config",
   "range_expression_binary": "config",
   "range_expression_postfix": "config",
   "range_expression_prefix": "config",

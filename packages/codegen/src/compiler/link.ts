@@ -669,6 +669,13 @@ export function looksLikePolymorphCandidate(choice: ChoiceRule): boolean {
     const isDistinguishable = (c: Rule): boolean => {
         if (hasAnyField(c) || hasAnyChild(c)) return true
         if (c.type === 'symbol' || c.type === 'supertype') return true
+        // Bare literals (string/pattern) ARE distinguishable as arms —
+        // they differ from structural siblings by text content. They
+        // can't carry \$type until variant() hoists them, but that's
+        // exactly what the polymorph-promotion path is for. Previously
+        // rejecting these kept rust impl_item's `choice(field('body',
+        // decl_list), ';')` from being flagged as a polymorph at all.
+        if (c.type === 'string' || c.type === 'pattern') return true
         if (c.type === 'seq') return c.members.some(isDistinguishable)
         if (c.type === 'optional' || c.type === 'group' || c.type === 'variant' || c.type === 'clause') return isDistinguishable(c.content)
         if (c.type === 'repeat' || c.type === 'repeat1') return isDistinguishable(c.content)
@@ -726,8 +733,11 @@ export function choiceNeedsVariantWrapping(choice: ChoiceRule): boolean {
         // anonymous — handled when Assemble classifies the hidden rule
         // as a group and inlineGroupRefs expands it).
         if (c.type === 'symbol' || c.type === 'supertype') return false
-        // Transparent wrappers — look inside.
-        if (c.type === 'variant' || c.type === 'group' || c.type === 'clause' || c.type === 'optional') {
+        // Transparent wrappers — look inside. `field(name, content)` is
+        // included: if content is a symbol/supertype, render dispatches
+        // on the resolved $type just as for a bare symbol arm, so the
+        // field wrapper doesn't force variant() treatment.
+        if (c.type === 'field' || c.type === 'variant' || c.type === 'group' || c.type === 'clause' || c.type === 'optional') {
             return armNeedsVariant(c.content)
         }
         // Anonymous content — seqs, repeats, literals, patterns, nested

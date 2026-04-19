@@ -70,6 +70,7 @@ import type {
   HigherRankedTraitBound,
   IfExpression,
   ImplItem,
+  ImplItemBody,
   IndexExpression,
   InnerAttributeItem,
   Label,
@@ -172,6 +173,7 @@ import type {
   _ClosureExpressionExpr,
   _FieldIdentifier,
   _FieldPatternShorthand,
+  _ImplItemBody,
   _LetChain,
   _MacroDefinitionBrace,
   _MacroDefinitionBracket,
@@ -509,11 +511,10 @@ export function wrapWherePredicate(data: _NodeData, tree: TreeHandle): WrappedNo
 export function wrapImplItem(data: _NodeData, tree: TreeHandle): WrappedNode<ImplItem> {
   return {
     ...data,
-    get unsafe() { return drillIn(data.$fields?.['unsafe'], tree); },
     get typeParameters() { return drillIn(data.$fields?.['type_parameters'], tree); },
     get trait() { return drillIn(data.$fields?.['trait'], tree); },
     get typeField() { return drillIn(data.$fields?.['type'], tree); },
-    get body() { return drillIn(data.$fields?.['body'], tree); },
+    get whereClause() { return drillIn(data.$fields?.['where_clause'], tree); },
     get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<ImplItem>;
 }
@@ -1495,6 +1496,14 @@ export function wrap_FieldPatternShorthand(data: _NodeData, tree: TreeHandle): W
   } as unknown as WrappedNode<_FieldPatternShorthand>;
 }
 
+export function wrap_ImplItemBody(data: _NodeData, tree: TreeHandle): WrappedNode<_ImplItemBody> {
+  return {
+    ...data,
+    get body() { return drillIn(data.$fields?.['body'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<_ImplItemBody>;
+}
+
 export function wrap_MacroDefinitionParen(data: _NodeData, tree: TreeHandle): WrappedNode<_MacroDefinitionParen> {
   return {
     ...data,
@@ -1583,6 +1592,14 @@ export function wrapStructItemTuple(data: _NodeData, tree: TreeHandle): WrappedN
     get body() { return drillIn(data.$fields?.['body'], tree); },
     get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<StructItemTuple>;
+}
+
+export function wrapImplItemBody(data: _NodeData, tree: TreeHandle): WrappedNode<ImplItemBody> {
+  return {
+    ...data,
+    get body() { return drillIn(data.$fields?.['body'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<ImplItemBody>;
 }
 
 export function wrapRangeExpressionBinary(data: _NodeData, tree: TreeHandle): WrappedNode<RangeExpressionBinary> {
@@ -1863,6 +1880,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'array_expression_semi': (d, t) => wrapArrayExpressionSemi(d, t),
   'array_expression_list': (d, t) => wrapArrayExpressionList(d, t),
   '_field_pattern_shorthand': (d, t) => wrap_FieldPatternShorthand(d, t),
+  '_impl_item_body': (d, t) => wrap_ImplItemBody(d, t),
   '_macro_definition_paren': (d, t) => wrap_MacroDefinitionParen(d, t),
   '_macro_definition_bracket': (d, t) => wrap_MacroDefinitionBracket(d, t),
   '_macro_definition_brace': (d, t) => wrap_MacroDefinitionBrace(d, t),
@@ -1884,6 +1902,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'mod_item_inline': (d, t) => wrapModItemInline(d, t),
   'struct_item_brace': (d, t) => wrapStructItemBrace(d, t),
   'struct_item_tuple': (d, t) => wrapStructItemTuple(d, t),
+  'impl_item_body': (d, t) => wrapImplItemBody(d, t),
   'range_expression_binary': (d, t) => wrapRangeExpressionBinary(d, t),
   'range_expression_postfix': (d, t) => wrapRangeExpressionPostfix(d, t),
   'range_expression_prefix': (d, t) => wrapRangeExpressionPrefix(d, t),
