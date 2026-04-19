@@ -210,6 +210,18 @@ const REPARSE_WRAPPERS: Record<string, Record<string, (r: string) => string>> = 
         // scoped_type_identifier like `Bar::<X>::Item`. Bare type position
         // (`type _X = ${r};`) rejects it. Wrap as a scoped path element.
         'generic_type_with_turbofish': r => `type _X = ${r}::Item;`,
+        // `scoped_type_identifier_in_expression_position` (ADR-0006):
+        // aliased to `scoped_type_identifier` only inside struct_expression's
+        // name field. Needs struct-literal context to round-trip.
+        'scoped_type_identifier_in_expression_position': r => `fn _f() { let _ = ${r} { val: 1 }; }`,
+        // `delim_token_tree` wrapper NOT added: the walker picks up 12
+        // corpus cases whose rendered output loses anonymous tokens (e.g.
+        // `(target_os = "macos")` → `(target_os "macos")` — the `=` is
+        // dropped). Same rendering shape as `token_tree` (both use
+        // `($$$CHILDREN)` template which only emits named children).
+        // Surfacing the wrapper without fixing the template would add
+        // 12 visible failures. Deferred: fix the shared token_tree /
+        // delim_token_tree template to preserve anon tokens first.
     },
     typescript: {
         '_expression': r => `let _ = ${r};`,
