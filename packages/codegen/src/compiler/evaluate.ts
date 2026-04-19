@@ -680,6 +680,16 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
     // into opts.rules — mirrors what wrappedGrammar does under tree-
     // sitter CLI so both runtimes process enrich identically. User
     // overrides (already in opts.rules) win on name collisions.
+    //
+    // Known limitation: when a user override exists, enrich is skipped
+    // entirely for that rule. That means optional-keyword-prefix and
+    // bare-keyword-prefix passes don't auto-wrap tokens the user would
+    // otherwise need to add via field() overrides (see rust's
+    // impl_item/async_block unsafe/move overrides for the duplicated
+    // pattern). Straight composition (enrich first, then user) was
+    // tried and regressed several python rules — enrich's bare-keyword
+    // pass interferes with user field/variant paths. Proper fix needs
+    // path-aware composition; deferred.
     const enrichOverrides = (optionsOrBase as { __enrichOverrides__?: Record<string, (...a: any[]) => any> }).__enrichOverrides__
     if (enrichOverrides && opts) {
         if (!opts.rules) opts.rules = {} as Record<string, (...a: any[]) => any>
