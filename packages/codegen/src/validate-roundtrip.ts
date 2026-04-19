@@ -21,8 +21,11 @@ import {
 	collectKinds,
 	buildKindToSupertypes,
 	wrapForReparse,
+	loadReadTreeNode,
+	walkWrappedTree,
 	type TSNode,
-	type TSTree
+	type TSTree,
+	type WrappedNodeData,
 } from './validators/common.ts';
 
 /**
@@ -32,6 +35,20 @@ import {
  * inside an outer `fn_item`'s block, so plain `findFirst(tree, 'block')`
  * returns the wrapper's body rather than the rendered one.
  */
+/** Find a node anywhere in the tree by its numeric id. O(n); used when
+ * the wrap-walker discovered an alias-source kind at a specific nodeId
+ * and we need the matching TSNode to run reparse validation. */
+function findNodeById(node: TSNode, nodeId: number): TSNode | null {
+	if (node.id === nodeId) return node;
+	for (let i = 0; i < node.childCount; i++) {
+		const c = node.child(i);
+		if (!c) continue;
+		const hit = findNodeById(c, nodeId);
+		if (hit) return hit;
+	}
+	return null;
+}
+
 function findNodeAt(node: TSNode, kind: string, offset: number): TSNode | null {
 	if (node.type === kind && node.startIndex === offset) return node
 	for (let i = 0; i < node.childCount; i++) {
@@ -141,6 +158,14 @@ export async function validateRoundTrip(
 	const ruleKinds = new Set(Object.keys(config.rules));
 	const kindToSupertypes = buildKindToSupertypes(rawEntries);
 
+	// Walker-based alias source resolution (ADR-0006): when the grammar's
+	// wrap layer is available, walk each parsed tree upfront to discover
+	// nodes whose drillAs()-rewritten `$type` differs from tree-sitter's
+	// raw output. We can then test these kinds against the source template
+	// with a matching reparse wrapper, rather than relying on per-kind
+	// render-layer workarounds in the target's template.
+	const readTreeNodeFn = await loadReadTreeNode(grammar);
+
 	const entries = loadCorpusEntries(grammar);
 	const errors: { name: string; message: string; input?: string; rendered?: string }[] = [];
 	const astMismatches: { name: string; message: string; input?: string; rendered?: string }[] = [];
@@ -159,8 +184,20 @@ export async function validateRoundTrip(
 				continue; // Corpus entries with parse errors (intentional error tests)
 			}
 
-			// Find all node kinds that have render rules
-			const kinds = collectKinds(tree1.rootNode);
+			// Find all kinds that have render rules. When the wrap layer
+			// is available, walk the wrapped tree once to pick up alias-
+			// source kinds (via drillAs) that tree-sitter's raw output
+			// doesn't surface under their own name.
+			const handle = treeHandle(tree1);
+			const kinds = new Set(collectKinds(tree1.rootNode));
+			const nodeIdToEffectiveType = new Map<number, string>();
+			if (readTreeNodeFn) {
+				const wrappedRoot = readTreeNodeFn(handle);
+				walkWrappedTree(wrappedRoot, (w: WrappedNodeData) => {
+					if (w.$nodeId != null) nodeIdToEffectiveType.set(w.$nodeId, w.$type);
+					kinds.add(w.$type);
+				});
+			}
 			const testableKinds = [...kinds].filter(k => ruleKinds.has(k));
 
 			if (testableKinds.length === 0) {
@@ -172,25 +209,49 @@ export async function validateRoundTrip(
 			let entryOk = true;
 			let entryAstMatch = true;
 			for (const kind of testableKinds) {
-				const node1 = findFirst(tree1.rootNode, kind);
+				// For alias-source kinds that tree-sitter doesn't emit
+				// directly, look up a tree-sitter node whose walker-
+				// reported effective-type matches. Fall back to findFirst
+				// for plain kinds.
+				let node1: TSNode | null = null;
+				let renderedKind = kind;
+				for (const [nid, et] of nodeIdToEffectiveType) {
+					if (et === kind) {
+						node1 = findNodeById(tree1.rootNode, nid);
+						if (node1) break;
+					}
+				}
+				if (!node1) node1 = findFirst(tree1.rootNode, kind);
 				if (!node1) continue;
 
-				const handle = treeHandle(tree1);
-				const data = readNode(handle, node1.id);
+				const rawData = readNode(handle, node1.id);
+				const effective = nodeIdToEffectiveType.get(node1.id);
+				const data = effective && effective !== rawData.$type
+					? { ...rawData, $type: effective }
+					: rawData;
+				// Three distinct kind names after alias resolution:
+				//   renderedKind  — drives render-template + reparse-wrapper
+				//                   lookup (the source kind when rewritten)
+				//   targetKind    — tree-sitter's raw kind, used for
+				//                   post-reparse node location (reparse
+				//                   produces the target kind since the
+				//                   alias applies again)
+				renderedKind = data.$type;
+				const targetKind = rawData.$type;
 
 				try {
 					const inputSource = node1.text;
 					const rendered = render(data);
 
 					// Wrap for reparse using supertype context
-					const wrapped = wrapForReparse(rendered, kind, grammar, kindToSupertypes);
+					const wrapped = wrapForReparse(rendered, renderedKind, grammar, kindToSupertypes);
 					if (wrapped === null) continue; // no supertype → skip reparse
 
 					// Re-parse
 					const tree2 = parser.parse(wrapped.text) as TSTree;
 					if (tree2.rootNode.hasError) {
 						errors.push({
-							name: `${entry.name} [${kind}]`,
+							name: `${entry.name} [${renderedKind}]`,
 							message: `re-parse error: "${rendered.slice(0, 80)}"`,
 							input: inputSource,
 							rendered,
@@ -208,10 +269,10 @@ export async function validateRoundTrip(
 					// wraps an expression in an outer `block`, making
 					// the first `block` found the wrapper's body rather
 					// than the rendered one).
-					const node2 = findNodeAt(tree2.rootNode, kind, wrapped.offset);
+					const node2 = findNodeAt(tree2.rootNode, targetKind, wrapped.offset);
 					if (!node2) {
 						errors.push({
-							name: `${entry.name} [${kind}]`,
+							name: `${entry.name} [${renderedKind}]`,
 							message: `kind not found at rendered offset ${wrapped.offset}`,
 							input: inputSource,
 							rendered,
@@ -231,7 +292,7 @@ export async function validateRoundTrip(
 					const diff = astStructuralDiff(node1, node2);
 					if (diff) {
 						astMismatches.push({
-							name: `${entry.name} [${kind}]`,
+							name: `${entry.name} [${renderedKind}]`,
 							message: diff.slice(0, 160),
 							input: inputSource,
 							rendered,
@@ -239,7 +300,7 @@ export async function validateRoundTrip(
 						entryAstMatch = false;
 					}
 				} catch (e) {
-					errors.push({ name: `${entry.name} [${kind}]`, message: `render: ${(e as Error).message.slice(0, 100)}` });
+					errors.push({ name: `${entry.name} [${renderedKind}]`, message: `render: ${(e as Error).message.slice(0, 100)}` });
 					entryOk = false;
 					entryAstMatch = false;
 					break;

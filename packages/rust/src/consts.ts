@@ -273,7 +273,6 @@ export const KEYWORDS = [
   '_kw_for',
   '_kw_move',
   '_kw_operator',
-  '_kw_turbofish',
   '_kw_unsafe',
   '_mod_item_external',
   '_outer_line_doc_comment_marker',
@@ -661,7 +660,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'generic_type': [
     { name: 'type', required: true, multiple: false },
-    { name: 'turbofish', required: false, multiple: false },
     { name: 'typeArguments', required: true, multiple: false },
   ],
   'generic_type_with_turbofish': [

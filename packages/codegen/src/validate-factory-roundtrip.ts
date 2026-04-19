@@ -23,9 +23,26 @@ import {
 	collectKinds,
 	buildKindToSupertypes,
 	wrapForReparse,
+	loadReadTreeNode,
+	walkWrappedTree,
 	type TSNode,
 	type TSTree,
+	type WrappedNodeData,
 } from './validators/common.ts';
+
+/** Find a node anywhere in the tree by its numeric id. Used by the
+ * wrap-aware kind resolution path (ADR-0006) to recover a TSNode for
+ * an alias-source kind first encountered via the wrapped-tree walk. */
+function findNodeById(node: TSNode, nodeId: number): TSNode | null {
+	if (node.id === nodeId) return node;
+	for (let i = 0; i < node.childCount; i++) {
+		const c = node.child(i);
+		if (!c) continue;
+		const hit = findNodeById(c, nodeId);
+		if (hit) return hit;
+	}
+	return null;
+}
 
 /**
  * Strict AST structural equality — same shape as validate-roundtrip.
@@ -184,6 +201,12 @@ export async function validateFactoryRoundTrip(
 		}
 	})();
 
+	// Walker-based alias source resolution (ADR-0006): same infrastructure
+	// as validate-roundtrip.ts. When the wrap layer is available, walk
+	// the tree once per corpus entry to surface alias-source `$type`s,
+	// then test those kinds via their source templates + reparse wrappers.
+	const readTreeNodeFn = await loadReadTreeNode(grammar);
+
 	const entries = loadCorpusEntries(grammar);
 	const errors: { kind: string; entry?: string; message: string; input?: string; rendered?: string }[] = [];
 	const astMismatches: { kind: string; entry?: string; message: string; input?: string; rendered?: string }[] = [];
@@ -215,7 +238,16 @@ export async function validateFactoryRoundTrip(
 		const tree1 = parser.parse(entry.source) as TSTree;
 		if (tree1.rootNode.hasError) continue;
 
-		const kinds = collectKinds(tree1.rootNode);
+		const handle = treeHandle(tree1);
+		const kinds = new Set(collectKinds(tree1.rootNode));
+		const nodeIdToEffectiveType = new Map<number, string>();
+		if (readTreeNodeFn) {
+			const wrappedRoot = readTreeNodeFn(handle);
+			walkWrappedTree(wrappedRoot, (w: WrappedNodeData) => {
+				if (w.$nodeId != null) nodeIdToEffectiveType.set(w.$nodeId, w.$type);
+				kinds.add(w.$type);
+			});
+		}
 		for (const kind of kinds) {
 			if (!ruleKinds.has(kind)) continue;
 			const pairKey = `${kind}\0${entry.name}`;
@@ -223,13 +255,28 @@ export async function validateFactoryRoundTrip(
 			testedPairs.add(pairKey);
 			total++;
 
-			const node1 = findFirst(tree1.rootNode, kind);
+			// Resolve node: for alias-source kinds (not in tree-sitter's
+			// raw kinds), look up by nodeId from the walker. Plain kinds
+			// use findFirst.
+			let node1: TSNode | null = null;
+			for (const [nid, et] of nodeIdToEffectiveType) {
+				if (et === kind) {
+					node1 = findNodeById(tree1.rootNode, nid);
+					if (node1) break;
+				}
+			}
+			if (!node1) node1 = findFirst(tree1.rootNode, kind);
 			if (!node1) continue;
 			const inputSource = node1.text;
 
 			// readNode → direct factory call → render → re-parse
-			const handle = treeHandle(tree1);
-			const readData = readNode(handle, node1.id);
+			const rawReadData = readNode(handle, node1.id);
+			const effective = nodeIdToEffectiveType.get(node1.id);
+			const readData = effective && effective !== rawReadData.$type
+				? { ...rawReadData, $type: effective }
+				: rawReadData;
+			const renderedKind = readData.$type;
+			const targetKind = rawReadData.$type;
 
 			// Translate raw (snake_case) field keys to camelCase so the
 			// factory's ConfigOf properties match. readNode emits raw
@@ -249,14 +296,19 @@ export async function validateFactoryRoundTrip(
 			// shorthand_property_identifier). Don't round-trip through a
 			// factory at all — factories for container-shaped wrappers
 			// that tree-sitter surfaces as leaves would produce garbage.
-			const factory = factoryMap[kind];
+			// Factory lookup uses the walker-resolved kind (source when
+			// the node was drillAs-rewritten, target otherwise). Both
+			// alias source and target factories are registered; picking
+			// the source-shape factory produces output whose $type
+			// matches our declared interface.
+			const factory = factoryMap[renderedKind];
 			let factoryData: AnyNodeData;
 			if (!readData.$fields && !readData.$children) {
 				// Leaf — render its text directly by preserving the original.
 				factoryData = readData;
 			} else if (factory) {
 				try {
-					const shape = factoryShapes[kind] ?? 'config';
+					const shape = factoryShapes[renderedKind] ?? 'config';
 					if (shape === 'config') {
 						const config = readData.$children
 							? { ...camelFields, children: readData.$children }
@@ -285,7 +337,7 @@ export async function validateFactoryRoundTrip(
 					// fake. Record + skip this kind, don't continue the
 					// reparse loop.
 					errors.push({
-						kind, entry: entry.name,
+						kind: renderedKind, entry: entry.name,
 						message: `factory threw: ${(e as Error)?.message?.slice(0, 100) ?? String(e)}`,
 						input: inputSource,
 					});
@@ -299,8 +351,11 @@ export async function validateFactoryRoundTrip(
 				const rendered = render(factoryData);
 				if (!rendered.trim()) { skip++; continue; }
 
-				// Wrap for reparse using supertype context
-				const wrapped = wrapForReparse(rendered, kind, grammar, kindToSupertypes);
+				// Wrap for reparse using supertype context. `renderedKind`
+				// picks up source-kind-specific wrappers (e.g. rust's
+				// `generic_type_with_turbofish`) when the walker
+				// rewrote $type.
+				const wrapped = wrapForReparse(rendered, renderedKind, grammar, kindToSupertypes);
 				if (wrapped === null) {
 					pass++; // no supertype → can't determine context → skip reparse
 					astMatchPass++;
@@ -309,16 +364,18 @@ export async function validateFactoryRoundTrip(
 
 				const tree2 = parser.parse(wrapped.text) as TSTree;
 				if (tree2.rootNode.hasError) {
-					errors.push({ kind, entry: entry.name, message: `re-parse error: "${rendered.slice(0, 60)}"`, input: inputSource, rendered });
+					errors.push({ kind: renderedKind, entry: entry.name, message: `re-parse error: "${rendered.slice(0, 60)}"`, input: inputSource, rendered });
 					continue;
 				}
 
 				// Locate the rendered fragment at the exact wrapper
 				// offset — avoids matching a wrapper-emitted outer
-				// block/let/etc. of the same kind.
-				const node2 = findNodeAt(tree2.rootNode, kind, wrapped.offset) ?? findFirst(tree2.rootNode, kind);
+				// block/let/etc. of the same kind. `targetKind` (the
+				// tree-sitter alias target) is what the reparsed tree
+				// carries, since tree-sitter re-applies the alias.
+				const node2 = findNodeAt(tree2.rootNode, targetKind, wrapped.offset) ?? findFirst(tree2.rootNode, targetKind);
 				if (!node2) {
-					errors.push({ kind, entry: entry.name, message: `kind not found in re-parse (rendered: "${rendered.slice(0, 60)}")`, input: inputSource, rendered });
+					errors.push({ kind: renderedKind, entry: entry.name, message: `kind not found in re-parse (rendered: "${rendered.slice(0, 60)}")`, input: inputSource, rendered });
 					continue;
 				}
 
@@ -330,12 +387,12 @@ export async function validateFactoryRoundTrip(
 				// stays a stable floor; ast-match tightens it.
 				const diff = astStructuralDiff(node1, node2);
 				if (diff) {
-					astMismatches.push({ kind, entry: entry.name, message: diff.slice(0, 160), input: inputSource, rendered });
+					astMismatches.push({ kind: renderedKind, entry: entry.name, message: diff.slice(0, 160), input: inputSource, rendered });
 				} else {
 					astMatchPass++;
 				}
 			} catch (e) {
-				errors.push({ kind, entry: entry.name, message: `${(e as Error).message.slice(0, 80)}`, input: inputSource });
+				errors.push({ kind: renderedKind, entry: entry.name, message: `${(e as Error).message.slice(0, 80)}`, input: inputSource });
 			}
 		}
 	}

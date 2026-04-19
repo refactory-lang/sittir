@@ -1282,7 +1282,6 @@ export interface GenericType {
   readonly $type: 'generic_type';
   readonly $fields: {
     readonly type: _TypeIdentifier | ReservedIdentifier | ScopedTypeIdentifier;
-    readonly turbofish?: KwTurbofish;
     readonly type_arguments: TypeArguments;
   };
 }
@@ -1291,7 +1290,7 @@ export interface GenericTypeWithTurbofish {
   readonly $type: 'generic_type_with_turbofish';
   readonly $fields: {
     readonly type: _TypeIdentifier | ScopedIdentifier;
-    readonly turbofish: KwTurbofish;
+    readonly turbofish: "::";
     readonly type_arguments: TypeArguments;
   };
 }
@@ -2971,8 +2970,6 @@ export type NeverType = Terminal<"never_type">;
 export interface NeverTypeTree extends AnyTreeNode { readonly type: "never_type"; }
 export type RemainingFieldPattern = Terminal<"remaining_field_pattern">;
 export interface RemainingFieldPatternTree extends AnyTreeNode { readonly type: "remaining_field_pattern"; }
-export type KwTurbofish = Terminal<"_kw_turbofish">;
-export interface KwTurbofishTree extends AnyTreeNode { readonly type: "_kw_turbofish"; }
 export type ImplItemSemi = Terminal<"_impl_item_semi">;
 export interface ImplItemSemiTree extends AnyTreeNode { readonly type: "_impl_item_semi"; }
 export type ModItemExternal = Terminal<"_mod_item_external">;

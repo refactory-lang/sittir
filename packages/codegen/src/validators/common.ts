@@ -205,6 +205,11 @@ const REPARSE_WRAPPERS: Record<string, Record<string, (r: string) => string>> = 
         // `mutable_specifier` + `identifier` siblings, no `mut_pattern` node).
         // Using match-arm wrapper forces the parser to produce a mut_pattern.
         'mut_pattern': r => `fn _f(x: i32) { match x { ${r} => () } }`,
+        // `generic_type_with_turbofish` (ADR-0006 alias source): rendered
+        // form includes `::` (e.g. `Bar::<X>`), only valid inside a
+        // scoped_type_identifier like `Bar::<X>::Item`. Bare type position
+        // (`type _X = ${r};`) rejects it. Wrap as a scoped path element.
+        'generic_type_with_turbofish': r => `type _X = ${r}::Item;`,
     },
     typescript: {
         '_expression': r => `let _ = ${r};`,

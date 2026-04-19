@@ -142,7 +142,7 @@ rules:
     joinBy: ","
     joinByTrailing: true
   generic_function: "$FUNCTION::$TYPE_ARGUMENTS"
-  generic_type: $TYPE $TURBOFISH $TYPE_ARGUMENTS
+  generic_type: $TYPE $TYPE_ARGUMENTS
   generic_type_with_turbofish: $TYPE $TURBOFISH $TYPE_ARGUMENTS
   bounded_type: $$$CHILDREN$LEFT+$RIGHT
   use_bounds:
