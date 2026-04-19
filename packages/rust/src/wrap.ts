@@ -202,6 +202,28 @@ function drillInAll(entries: unknown, tree: TreeHandle): unknown[] {
   const arr = Array.isArray(entries) ? entries : [entries];
   return arr.map(e => drillIn(e, tree));
 }
+// drillAs — field-site unalias for grammar `alias($.source, $.target)`
+// declarations (ADR-0006). Reads the child node, rewrites $type from
+// tree-sitter's alias target back to the codegen-canonical source
+// name, then dispatches to wrapNode. The $type rewrite is conditional:
+// fields declared with a mixed union (e.g. Path | BracketedType |
+// GenericTypeWithTurbofish) only rewrite when the child arrived as
+// the alias target; other shapes pass through unchanged.
+function drillAs(entry: unknown, tree: TreeHandle, fromType: string, toType: string): unknown {
+  if (!entry) return undefined;
+  const e = entry as _NodeData;
+  if (e.$nodeId == null) return entry;
+  let data = readNode(tree, e.$nodeId);
+  if (data.$type === fromType) {
+    data = { ...data, $type: toType };
+  }
+  return wrapNode(data, tree);
+}
+function drillAsAll(entries: unknown, tree: TreeHandle, fromType: string, toType: string): unknown[] {
+  if (!entries) return [];
+  const arr = Array.isArray(entries) ? entries : [entries];
+  return arr.map(e => drillAs(e, tree, fromType, toType));
+}
 
 export function wrapSourceFile(data: _NodeData, tree: TreeHandle): WrappedNode<SourceFile> {
   return {
@@ -300,7 +322,7 @@ export function wrapAttribute(data: _NodeData, tree: TreeHandle): WrappedNode<At
   return {
     ...data,
     get value() { return drillIn(data.$fields?.['value'], tree); },
-    get arguments() { return drillIn(data.$fields?.['arguments'], tree); },
+    get arguments() { return drillAs(data.$fields?.['arguments'], tree, "token_tree", "delim_token_tree"); },
     get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<Attribute>;
 }
@@ -879,7 +901,7 @@ export function wrapMacroInvocation(data: _NodeData, tree: TreeHandle): WrappedN
   return {
     ...data,
     get macro() { return drillIn(data.$fields?.['macro'], tree); },
-    get tokenTree() { return drillIn(data.$fields?.['token_tree'], tree); },
+    get tokenTree() { return drillAs(data.$fields?.['token_tree'], tree, "token_tree", "delim_token_tree"); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<MacroInvocation>;
 }
@@ -894,7 +916,7 @@ export function wrapDelimTokenTree(data: _NodeData, tree: TreeHandle): WrappedNo
 export function wrapScopedIdentifier(data: _NodeData, tree: TreeHandle): WrappedNode<ScopedIdentifier> {
   return {
     ...data,
-    get path() { return drillIn(data.$fields?.['path'], tree); },
+    get path() { return drillAs(data.$fields?.['path'], tree, "generic_type", "generic_type_with_turbofish"); },
     get name() { return drillIn(data.$fields?.['name'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<ScopedIdentifier>;
@@ -903,7 +925,7 @@ export function wrapScopedIdentifier(data: _NodeData, tree: TreeHandle): Wrapped
 export function wrapScopedTypeIdentifierInExpressionPosition(data: _NodeData, tree: TreeHandle): WrappedNode<ScopedTypeIdentifierInExpressionPosition> {
   return {
     ...data,
-    get path() { return drillIn(data.$fields?.['path'], tree); },
+    get path() { return drillAs(data.$fields?.['path'], tree, "generic_type", "generic_type_with_turbofish"); },
     get name() { return drillIn(data.$fields?.['name'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<ScopedTypeIdentifierInExpressionPosition>;
@@ -912,7 +934,7 @@ export function wrapScopedTypeIdentifierInExpressionPosition(data: _NodeData, tr
 export function wrapScopedTypeIdentifier(data: _NodeData, tree: TreeHandle): WrappedNode<ScopedTypeIdentifier> {
   return {
     ...data,
-    get path() { return drillIn(data.$fields?.['path'], tree); },
+    get path() { return drillAs(data.$fields?.['path'], tree, "generic_type", "generic_type_with_turbofish"); },
     get name() { return drillIn(data.$fields?.['name'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<ScopedTypeIdentifier>;
@@ -1045,7 +1067,7 @@ export function wrapTupleExpression(data: _NodeData, tree: TreeHandle): WrappedN
 export function wrapStructExpression(data: _NodeData, tree: TreeHandle): WrappedNode<StructExpression> {
   return {
     ...data,
-    get name() { return drillIn(data.$fields?.['name'], tree); },
+    get name() { return drillAs(data.$fields?.['name'], tree, "scoped_type_identifier", "scoped_type_identifier_in_expression_position"); },
     get body() { return drillIn(data.$fields?.['body'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<StructExpression>;
@@ -1336,7 +1358,7 @@ export function wrapSlicePattern(data: _NodeData, tree: TreeHandle): WrappedNode
 export function wrapTupleStructPattern(data: _NodeData, tree: TreeHandle): WrappedNode<TupleStructPattern> {
   return {
     ...data,
-    get typeField() { return drillIn(data.$fields?.['type'], tree); },
+    get typeField() { return drillAs(data.$fields?.['type'], tree, "generic_type", "generic_type_with_turbofish"); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<TupleStructPattern>;
 }
@@ -1425,7 +1447,7 @@ export function wrapRawStringLiteral(data: _NodeData, tree: TreeHandle): Wrapped
   return {
     ...data,
     get rawStringLiteralStart() { return drillIn(data.$fields?.['raw_string_literal_start'], tree); },
-    get stringContent() { return drillIn(data.$fields?.['string_content'], tree); },
+    get stringContent() { return drillAs(data.$fields?.['string_content'], tree, "string_content", "raw_string_literal_content"); },
     get rawStringLiteralEnd() { return drillIn(data.$fields?.['raw_string_literal_end'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<RawStringLiteral>;
@@ -1501,7 +1523,7 @@ export function wrapArrayExpressionList(data: _NodeData, tree: TreeHandle): Wrap
 export function wrap_FieldPatternShorthand(data: _NodeData, tree: TreeHandle): WrappedNode<_FieldPatternShorthand> {
   return {
     ...data,
-    get name() { return drillIn(data.$fields?.['name'], tree); },
+    get name() { return drillAs(data.$fields?.['name'], tree, "shorthand_field_identifier", "identifier"); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<_FieldPatternShorthand>;
 }

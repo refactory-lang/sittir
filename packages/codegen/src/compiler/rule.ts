@@ -236,6 +236,15 @@ export interface SymbolRule {
     readonly name: string
     readonly hidden?: boolean
     readonly supertype?: boolean
+    /**
+     * Alias provenance: when this symbol was produced by resolving
+     * `alias($.aliasedFrom, $.name)`, `aliasedFrom` is the source kind
+     * whose shape the parse tree body follows (while tree-sitter emits
+     * the node with `$type === name`, the alias target). Preserved so
+     * the wrap emitter can rewrite \$type at drill-in via drillAs().
+     * See ADR-0006.
+     */
+    readonly aliasedFrom?: string
 }
 
 export interface AliasRule {
@@ -589,6 +598,9 @@ export function deriveFields(rule: Rule, isOptional = false, isRepeated = false)
             byName.set(f.name, { ...f })
             continue
         }
+        const mergedAliasSources = (existing.aliasSources || f.aliasSources)
+            ? { ...(existing.aliasSources ?? {}), ...(f.aliasSources ?? {}) }
+            : undefined
         const merged: AssembledField = {
             ...existing,
             required: existing.required && f.required,
@@ -599,6 +611,7 @@ export function deriveFields(rule: Rule, isOptional = false, isRepeated = false)
             // to plain repeat semantics.
             nonEmpty: Boolean(existing.nonEmpty) && Boolean(f.nonEmpty),
             contentTypes: Array.from(new Set([...existing.contentTypes, ...f.contentTypes])),
+            aliasSources: mergedAliasSources,
             literalValues: (existing.literalValues || f.literalValues)
                 ? Array.from(new Set([...(existing.literalValues ?? []), ...(f.literalValues ?? [])]))
                 : undefined,
@@ -637,6 +650,7 @@ function deriveFieldsRaw(
             // macro_rule across 6 variants; supertype expansions can
             // overlap with concrete sibling kinds).
             const contentTypes = [...new Set(deriveContentTypes(rule.content))]
+            const aliasSources = deriveAliasSources(rule.content)
             const literalValues = deriveLiteralValues(rule.content)
             const propertyName = snakeToCamel(rule.name)
             // A field wrapping a repeat/optional carries that shape on
@@ -662,6 +676,7 @@ function deriveFieldsRaw(
                 multiple,
                 nonEmpty: nonEmpty || undefined,
                 contentTypes,
+                aliasSources: Object.keys(aliasSources).length > 0 ? aliasSources : undefined,
                 literalValues: literalValues.length > 0 ? literalValues : undefined,
                 source: rule.source ?? 'grammar',
                 projection: { typeName: '', kinds: contentTypes },
@@ -875,6 +890,40 @@ function walkForChildren(
             walkForChildren(rule.content, out, true, isRepeated, isNonEmpty)
             break
     }
+}
+
+/**
+ * Walk a field's content and collect alias-source provenance: for each
+ * symbol reference that was resolved from `alias($.source, $.target)`
+ * (i.e. its `aliasedFrom` is set), record `{ [target]: source }`. The
+ * wrap emitter consumes this to emit `drillAs(entry, tree, target, source)`
+ * rewriting `$type` at drill-in per ADR-0006.
+ */
+function deriveAliasSources(rule: Rule): Record<string, string> {
+    const out: Record<string, string> = {}
+    const walk = (r: Rule): void => {
+        switch (r.type) {
+            case 'symbol':
+                if ((r as { aliasedFrom?: string }).aliasedFrom) {
+                    out[r.name] = (r as { aliasedFrom: string }).aliasedFrom
+                }
+                return
+            case 'choice':
+            case 'seq':
+                r.members.forEach(walk); return
+            case 'field':
+            case 'variant':
+            case 'optional':
+            case 'repeat':
+            case 'repeat1':
+            case 'clause':
+            case 'group':
+                walk(r.content); return
+            default: return
+        }
+    }
+    walk(rule)
+    return out
 }
 
 function deriveContentTypes(rule: Rule): string[] {
@@ -1146,6 +1195,23 @@ export interface AssembledField {
      */
     readonly nonEmpty?: boolean
     readonly contentTypes: string[]
+    /**
+     * Alias provenance per content type. When a content element was
+     * declared at the call site via `alias($.source, $.target)` —
+     * tree-sitter erases `source` at parse time, so the runtime $type
+     * is `target` even though the body follows `source`'s shape — we
+     * preserve that pairing so the wrap emitter can emit a drillAs()
+     * call that rewrites $type back to source at drill-in.
+     *
+     * Keyed by the runtime target kind-name; value is the declared
+     * source kind-name the codegen wants to present as the canonical
+     * `$type`. Multiple entries when the same target maps from several
+     * sources is theoretical — keep as a map for extensibility.
+     *
+     * Absent / empty when the field has no aliased content (the
+     * common case). See ADR-0006.
+     */
+    readonly aliasSources?: Readonly<Record<string, string>>
     /**
      * Literal values when the field's content is an inline enum
      * (choice-of-strings). Empty for normal fields. When populated,

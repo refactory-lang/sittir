@@ -278,6 +278,26 @@ function extractTopLevelAliasTarget(rule: Rule): string | undefined {
     return undefined
 }
 
+/**
+ * Given `alias($.X, $.Y)`'s content (the aliased-from body), extract
+ * the source kind-name `X` when the alias was specifically a rename of
+ * a named symbol. Returns undefined for alias-of-literal, alias-of-seq,
+ * alias-of-choice, and other non-symbol bodies where there's no single
+ * source kind to track.
+ *
+ * Walks through transparent wrappers (variant/group/clause/token/terminal)
+ * so patterns like `alias(token($.inner), $.target)` still resolve.
+ */
+function extractAliasedFromName(content: Rule): string | undefined {
+    if (content.type === 'symbol' && !content.hidden) return content.name
+    if (content.type === 'variant' || content.type === 'group' ||
+        content.type === 'clause' || content.type === 'token' ||
+        content.type === 'terminal') {
+        return extractAliasedFromName((content as { content: Rule }).content)
+    }
+    return undefined
+}
+
 // ---------------------------------------------------------------------------
 // tagVariants — wrap visible choice members in `variant` rules
 // ---------------------------------------------------------------------------
@@ -1100,7 +1120,15 @@ function resolveRule(
 
         case 'alias':
             if (rule.named && rule.value && !rule.value.startsWith('_')) {
-                return { type: 'symbol', name: rule.value } as unknown as Rule
+                // Preserve alias provenance: the content is typically a
+                // symbol referencing the original (aliased-from) kind;
+                // walk to find it so the wrap emitter can rewrite $type
+                // at drill-in via drillAs(). See ADR-0006.
+                const aliasedFrom = extractAliasedFromName(rule.content)
+                const sym: import('./rule.ts').SymbolRule = aliasedFrom
+                    ? { type: 'symbol', name: rule.value, aliasedFrom }
+                    : { type: 'symbol', name: rule.value }
+                return sym as unknown as Rule
             }
             return resolveRule(rule.content, currentName, allRules, supertypes, externalRoles)
 

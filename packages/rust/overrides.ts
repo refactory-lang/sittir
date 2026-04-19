@@ -179,12 +179,13 @@ export default grammar(enrich(base), {
         }),
 
         // generic_type: base rule is seq(field('type'), field('type_arguments')).
-        // Parse tree can ALSO surface `turbofish` field from the aliased
-        // generic_type_with_turbofish. Since the template walker only sees
-        // the base rule, it omits $TURBOFISH — rendering `C::<D>` as `C <D>`.
-        // Insert an optional field('turbofish', '::') at pos 1 (between type
-        // and type_arguments) so the template includes $TURBOFISH_CLAUSE
-        // and renders `::` when present.
+        // Dual path: (a) wrap layer — drillAs() at alias-declared field
+        // sites rewrites $type to 'generic_type_with_turbofish' (ADR-0006),
+        // so consumers see source-typed views. (b) render layer — operates
+        // on raw readNode output which retains $type='generic_type'; the
+        // restructured pos-1 makes the `generic_type` template cover both
+        // shapes (with-and-without turbofish) natively. Both fixes live
+        // because the render path doesn't go through wrap.
         generic_type: ($, original) => transform(original, {
             1: seq(optional(field('turbofish', '::')), field('type_arguments', $.type_arguments)),
         }),

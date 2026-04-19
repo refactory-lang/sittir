@@ -75,6 +75,28 @@ export function emitWrap(config: EmitWrapConfig): string {
         '  const arr = Array.isArray(entries) ? entries : [entries];',
         '  return arr.map(e => drillIn(e, tree));',
         '}',
+        '// drillAs — field-site unalias for grammar `alias($.source, $.target)`',
+        '// declarations (ADR-0006). Reads the child node, rewrites $type from',
+        '// tree-sitter\'s alias target back to the codegen-canonical source',
+        '// name, then dispatches to wrapNode. The $type rewrite is conditional:',
+        '// fields declared with a mixed union (e.g. Path | BracketedType |',
+        '// GenericTypeWithTurbofish) only rewrite when the child arrived as',
+        '// the alias target; other shapes pass through unchanged.',
+        'function drillAs(entry: unknown, tree: TreeHandle, fromType: string, toType: string): unknown {',
+        '  if (!entry) return undefined;',
+        '  const e = entry as _NodeData;',
+        '  if (e.$nodeId == null) return entry;',
+        '  let data = readNode(tree, e.$nodeId);',
+        '  if (data.$type === fromType) {',
+        '    data = { ...data, $type: toType };',
+        '  }',
+        '  return wrapNode(data, tree);',
+        '}',
+        'function drillAsAll(entries: unknown, tree: TreeHandle, fromType: string, toType: string): unknown[] {',
+        '  if (!entries) return [];',
+        '  const arr = Array.isArray(entries) ? entries : [entries];',
+        '  return arr.map(e => drillAs(e, tree, fromType, toType));',
+        '}',
         '',
     ]
 
@@ -198,7 +220,19 @@ function emitFieldCarryingWrap(
     for (const f of fields) {
         // Avoid shadowing built-in property names on the returned view.
         const method = f.propertyName === 'type' ? 'typeField' : f.propertyName
-        if (f.multiple) {
+        // Alias-site unalias (ADR-0006): when a content type was declared
+        // via `alias($.source, $.target)`, tree-sitter emits $type =
+        // target but codegen's interfaces/factories/templates treat
+        // source as canonical. Rewrite at drill-in so the wrapped view
+        // matches the declared type union. Current emission handles the
+        // common "one alias pair per field" case; multiple pairs would
+        // need chained drillAs calls (not yet seen in practice).
+        const aliasEntries = f.aliasSources ? Object.entries(f.aliasSources) : []
+        if (aliasEntries.length > 0) {
+            const [fromType, toType] = aliasEntries[0]!
+            const helper = f.multiple ? 'drillAsAll' : 'drillAs'
+            lines.push(`    get ${method}() { return ${helper}(data.$fields?.['${f.name}'], tree, ${JSON.stringify(fromType)}, ${JSON.stringify(toType)}); },`)
+        } else if (f.multiple) {
             lines.push(`    get ${method}() { return drillInAll(data.$fields?.['${f.name}'], tree); },`)
         } else {
             lines.push(`    get ${method}() { return drillIn(data.$fields?.['${f.name}'], tree); },`)
