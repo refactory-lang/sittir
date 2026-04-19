@@ -448,8 +448,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'alias', required: false, multiple: false },
   ],
   'exec_statement': [
-    { name: 'exec', required: true, multiple: false },
     { name: 'code', required: true, multiple: false },
+    { name: 'inClause', required: false, multiple: false },
   ],
   'expression_list': [
     { name: 'expression', required: true, multiple: false },

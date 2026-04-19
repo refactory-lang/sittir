@@ -461,8 +461,8 @@ export function wrapNonlocalStatement(data: _NodeData, tree: TreeHandle): Wrappe
 export function wrapExecStatement(data: _NodeData, tree: TreeHandle): WrappedNode<ExecStatement> {
   return {
     ...data,
-    get exec() { return drillIn(data.$fields?.['exec'], tree); },
     get code() { return drillIn(data.$fields?.['code'], tree); },
+    get inClause() { return drillIn(data.$fields?.['in_clause'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<ExecStatement>;
 }

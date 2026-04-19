@@ -168,6 +168,27 @@ export default grammar(enrich(base), {
             2: field('block'),
         }),
 
+        // generic_type_with_turbofish: aliased to `generic_type` at 4 call
+        // sites. Wrap `::` at pos 1 as a field('turbofish') so the aliased-
+        // shape generic_type surfaces it (confirmed: parse produces
+        // field=turbofish for `C::<D>`). The generic_type template itself
+        // still needs to reference $TURBOFISH — handled via its override
+        // below.
+        generic_type_with_turbofish: ($, original) => transform(original, {
+            1: field('turbofish'),
+        }),
+
+        // generic_type: base rule is seq(field('type'), field('type_arguments')).
+        // Parse tree can ALSO surface `turbofish` field from the aliased
+        // generic_type_with_turbofish. Since the template walker only sees
+        // the base rule, it omits $TURBOFISH — rendering `C::<D>` as `C <D>`.
+        // Insert an optional field('turbofish', '::') at pos 1 (between type
+        // and type_arguments) so the template includes $TURBOFISH_CLAUSE
+        // and renders `::` when present.
+        generic_type: ($, original) => transform(original, {
+            1: seq(optional(field('turbofish', '::')), field('type_arguments', $.type_arguments)),
+        }),
+
         // impl_item: field('where_clause') at pos 5 (inferred from 86%
         // agreement across 7 parents), plus polymorph at pos 6 —
         // choice(field('body', declaration_list), ';'). The ';' arm is

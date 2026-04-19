@@ -428,12 +428,12 @@ describe('nonlocal_statement', () => {
 
 describe('exec_statement', () => {
   it('factory produces correct type', () => {
-    const node = ir.exec({ exec: 'test' as any, code: { $type: 'string', $text: 'test' } as any, children: [{ $type: 'expression', $text: 'test' } as any] as any });
+    const node = ir.exec({ code: { $type: 'string', $text: 'test' } as any });
     expect(node.$type).toBe('exec_statement');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.exec({ exec: 'test' as any, code: { $type: 'string', $text: 'test' } as any, children: [{ $type: 'expression', $text: 'test' } as any] as any });
+    const node = ir.exec({ code: { $type: 'string', $text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });

@@ -788,6 +788,7 @@ export function wrapGenericType(data: _NodeData, tree: TreeHandle): WrappedNode<
   return {
     ...data,
     get typeField() { return drillIn(data.$fields?.['type'], tree); },
+    get turbofish() { return drillIn(data.$fields?.['turbofish'], tree); },
     get typeArguments() { return drillIn(data.$fields?.['type_arguments'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<GenericType>;
@@ -797,6 +798,7 @@ export function wrapGenericTypeWithTurbofish(data: _NodeData, tree: TreeHandle):
   return {
     ...data,
     get typeField() { return drillIn(data.$fields?.['type'], tree); },
+    get turbofish() { return drillIn(data.$fields?.['turbofish'], tree); },
     get typeArguments() { return drillIn(data.$fields?.['type_arguments'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<GenericTypeWithTurbofish>;

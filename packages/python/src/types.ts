@@ -699,10 +699,9 @@ export interface NonlocalStatement {
 export interface ExecStatement {
   readonly $type: 'exec_statement';
   readonly $fields: {
-    readonly exec: "exec";
     readonly code: String | Identifier;
+    readonly in_clause?: string;
   };
-  readonly $children: readonly (Expression)[];
 }
 
 export interface TypeAliasStatement {

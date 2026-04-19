@@ -1057,6 +1057,7 @@ export function genericTypeFrom(input: T.GenericType | T.GenericType.Loose): Ret
   if (isNodeData(input)) return input as ReturnType<typeof F.genericType>;
   return F.genericType({
     type: _resolveOne<NonNullable<T.GenericType.Config['type']>>((input as T.GenericType.Loose).type, _K0, _K23),
+    turbofish: _resolveOne<NonNullable<T.GenericType.Config['turbofish']>>((input as T.GenericType.Loose).turbofish, _K0, _K0),
     typeArguments: _resolveOneBranch<NonNullable<T.GenericType.Config['typeArguments']>>((input as T.GenericType.Loose).typeArguments, "type_arguments"),
   });
 }
@@ -1065,6 +1066,7 @@ export function genericTypeWithTurbofishFrom(input: T.GenericTypeWithTurbofish |
   if (isNodeData(input)) return input as ReturnType<typeof F.genericTypeWithTurbofish>;
   return F.genericTypeWithTurbofish({
     type: _resolveOne<NonNullable<T.GenericTypeWithTurbofish.Config['type']>>((input as T.GenericTypeWithTurbofish.Loose).type, _K0, _K24),
+    turbofish: _resolveOne<NonNullable<T.GenericTypeWithTurbofish.Config['turbofish']>>((input as T.GenericTypeWithTurbofish.Loose).turbofish, _K0, _K0),
     typeArguments: _resolveOneBranch<NonNullable<T.GenericTypeWithTurbofish.Config['typeArguments']>>((input as T.GenericTypeWithTurbofish.Loose).typeArguments, "type_arguments"),
   });
 }

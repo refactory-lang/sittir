@@ -89,7 +89,8 @@ rules:
     template: $NONLOCAL $$$CHILDREN
     joinBy: ","
   exec_statement:
-    template: $EXEC $CODE in $$$CHILDREN
+    template: exec $CODE $IN_CLAUSE_CLAUSE
+    in_clause_clause: in$$$IN_CLAUSE
     joinBy: ","
   type_alias_statement: $TYPE $LEFT=$RIGHT
   class_definition: "$CLASS $NAME $TYPE_PARAMETERS $SUPERCLASSES:\n  $BODY\n"

@@ -113,6 +113,15 @@ export default grammar(enrich(base), {
             1: field('expression'), // expression [struct=0]
         }),
 
+        // exec_statement: grammar is seq('exec', code, optional(seq('in', exprs)))
+        // Template walker emits the `in` keyword as a literal at top level,
+        // which surfaces in rendering even when the optional(seq(...))
+        // didn't match. Wrap the optional as field('in_clause') so the
+        // whole clause (`in` + exprs) renders only when present.
+        exec_statement: ($, original) => transform(original, {
+            2: field('in_clause'),
+        }),
+
         // import_from_statement: 1 field(s)
         import_from_statement: ($, original) => transform(original, {
             3: field('wildcard_import'), // wildcard_import [struct=0]

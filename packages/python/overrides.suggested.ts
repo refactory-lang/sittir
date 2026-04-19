@@ -15,7 +15,7 @@
 // Summary
 // ---------------------------------------------------------------
 // Field inferences:  0  (0 applied, 0 held)
-// Rule promotions:   31  (24 applied, 7 held)
+// Rule promotions:   34  (24 applied, 10 held)
 // Repeated shapes:   0  (advisory — suggested supertypes/groups)
 
 // ---------------------------------------------------------------
@@ -65,18 +65,54 @@ export const suggestedRules = {
   // [held] polymorph — 1 choice position(s), 3 arm(s) total
   "_suite": ($, original) => transform(original,
     {
-      "0": variant("block"),
-      "1": variant("block2"),
-      "2": variant("block3"),
+      "0": variant("form0"),
+      "1": variant("form1"),
+      "2": variant("form2"),
     }
   ),
 
-  // [held] polymorph — 1 choice position(s), 3 arm(s) total
-  "case_pattern": ($, original) => transform(original,
+  // [held] polymorph — 1 choice position(s), 2 arm(s) total
+  "expression_list": ($, original) => transform(original,
     {
-      "0": variant("as_pattern"),
-      "1": variant("keyword_pattern"),
-      "2": variant("_simple_pattern"),
+      "1/0": variant("comma"),
+      "1/1": variant("form_1"),
+    }
+  ),
+
+  // [held] polymorph — 1 choice position(s), 15 arm(s) total
+  "_simple_pattern": ($, original) => transform(original,
+    {
+      "0": variant("form0"),
+      "1": variant("form1"),
+      "2": variant("form2"),
+      "3": variant("form3"),
+      "4": variant("form4"),
+      "5": variant("form5"),
+      "6": variant("form6"),
+      "7": variant("form7"),
+      "8": variant("form8"),
+      "9": variant("form9"),
+      "10": variant("form10"),
+      "11": variant("form11"),
+      "12": variant("form12"),
+      "13": variant("form13"),
+      "14": variant("form14"),
+    }
+  ),
+
+  // [held] polymorph — 1 choice position(s), 2 arm(s) total
+  "splat_pattern": ($, original) => transform(original,
+    {
+      "1/0": variant("identifier"),
+      "1/1": variant("_"),
+    }
+  ),
+
+  // [held] polymorph — 1 choice position(s), 2 arm(s) total
+  "pattern_list": ($, original) => transform(original,
+    {
+      "1/0": variant("comma"),
+      "1/1": variant("form_1"),
     }
   ),
 
@@ -162,15 +198,18 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "import_prefix", classification: "terminal", applied: true },
   { kind: "integer", classification: "terminal", applied: true },
   { kind: "line_continuation", classification: "terminal", applied: true },
+  { kind: "_simple_pattern", classification: "polymorph", applied: false },
   { kind: "_suite", classification: "polymorph", applied: false },
   { kind: "assignment", classification: "polymorph", applied: true },
   { kind: "assignment_eq", classification: "polymorph", applied: true },
   { kind: "assignment_type", classification: "polymorph", applied: true },
   { kind: "assignment_typed", classification: "polymorph", applied: true },
-  { kind: "case_pattern", classification: "polymorph", applied: false },
+  { kind: "expression_list", classification: "polymorph", applied: false },
   { kind: "expression_statement", classification: "polymorph", applied: false },
   { kind: "future_import_statement", classification: "polymorph", applied: false },
   { kind: "import_from_statement", classification: "polymorph", applied: false },
+  { kind: "pattern_list", classification: "polymorph", applied: false },
+  { kind: "splat_pattern", classification: "polymorph", applied: false },
   { kind: "with_clause", classification: "polymorph", applied: false },
   { kind: "yield", classification: "polymorph", applied: false },
 ];

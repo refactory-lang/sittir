@@ -1690,6 +1690,7 @@ export function genericFunction(config: T.GenericFunction.Config) {
 export function genericType(config: T.GenericType.Config) {
   const fields = {
     type: config?.type,
+    turbofish: config?.turbofish,
     type_arguments: config?.typeArguments,
   };
   return {
@@ -1698,6 +1699,7 @@ export function genericType(config: T.GenericType.Config) {
     $named: true as const,
     $fields: fields,
     typeField(value?: T._TypeIdentifier | T.ReservedIdentifier | T.ScopedTypeIdentifier) { return _fs(config, genericType, 'type', value, fields.type); },
+    turbofish(value?: T.KwTurbofish | undefined) { return _fs(config, genericType, 'turbofish', value, fields.turbofish); },
     typeArguments(value?: T.TypeArguments) { return _fs(config, genericType, 'typeArguments', value, fields.type_arguments); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -1711,6 +1713,7 @@ export function genericType(config: T.GenericType.Config) {
 export function genericTypeWithTurbofish(config: T.GenericTypeWithTurbofish.Config) {
   const fields = {
     type: config?.type,
+    turbofish: config?.turbofish,
     type_arguments: config?.typeArguments,
   };
   return {
@@ -1719,6 +1722,7 @@ export function genericTypeWithTurbofish(config: T.GenericTypeWithTurbofish.Conf
     $named: true as const,
     $fields: fields,
     typeField(value?: T._TypeIdentifier | T.ScopedIdentifier) { return _fs(config, genericTypeWithTurbofish, 'type', value, fields.type); },
+    turbofish(value?: T.KwTurbofish) { return _fs(config, genericTypeWithTurbofish, 'turbofish', value, fields.turbofish); },
     typeArguments(value?: T.TypeArguments) { return _fs(config, genericTypeWithTurbofish, 'typeArguments', value, fields.type_arguments); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {

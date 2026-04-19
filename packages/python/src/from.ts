@@ -662,9 +662,8 @@ export function nonlocalStatementFrom(input: T.NonlocalStatement | T.NonlocalSta
 export function execStatementFrom(input: T.ExecStatement | T.ExecStatement.Loose): ReturnType<typeof F.execStatement> {
   if (isNodeData(input)) return input as ReturnType<typeof F.execStatement>;
   return F.execStatement({
-    exec: _resolveOne<NonNullable<T.ExecStatement.Config['exec']>>((input as T.ExecStatement.Loose).exec, _K0, _K0),
     code: _resolveOne<NonNullable<T.ExecStatement.Config['code']>>((input as T.ExecStatement.Loose).code, _super_keyword_identifier, _K5),
-    children: _resolveMany<NonNullable<T.ExecStatement.Config['children']>[number]>((input as T.ExecStatement.Loose).children, _K0, _super_expression),
+    inClause: _resolveOne<NonNullable<T.ExecStatement.Config['inClause']>>((input as T.ExecStatement.Loose).inClause, _K0, _K0),
   });
 }
 

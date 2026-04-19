@@ -883,20 +883,16 @@ export function nonlocalStatement(config: T.NonlocalStatement.Config) {
 
 export function execStatement(config: T.ExecStatement.Config) {
   const fields = {
-    exec: config?.exec,
     code: config?.code,
+    in_clause: config?.inClause,
   };
-  const children = config?.children ?? [];
   return {
     $type: 'exec_statement' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    $children: children,
-    exec(value?: "exec") { return _fs(config, execStatement, 'exec', value, fields.exec); },
     code(value?: T.String | T.Identifier) { return _fs(config, execStatement, 'code', value, fields.code); },
-    getChildren() { return children; },
-    setChildren(...items: T.Expression[]) { return execStatement({ ...config, children: items }); },
+    inClause(value?: string | undefined) { return _fs(config, execStatement, 'inClause', value, fields.in_clause); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
