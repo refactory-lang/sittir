@@ -27,7 +27,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 ));
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
-// ../python/overrides.ts
+// packages/python/overrides.ts
 var overrides_exports = {};
 __export(overrides_exports, {
   default: () => overrides_default
@@ -35,7 +35,7 @@ __export(overrides_exports, {
 module.exports = __toCommonJS(overrides_exports);
 var import_grammar = __toESM(require("tree-sitter-python/grammar.js"), 1);
 
-// src/dsl/runtime-shapes.ts
+// packages/codegen/src/dsl/runtime-shapes.ts
 function isSymbolLike(v) {
   if (!v || typeof v !== "object") return false;
   const t = v.type;
@@ -80,7 +80,7 @@ var isPlainRepeatType = (t) => typeEq(t, "repeat");
 var isRepeatType = (t) => typeEq(t, "repeat") || typeEq(t, "repeat1");
 var isBlankType = (t) => typeEq(t, "blank");
 
-// src/dsl/transform-path.ts
+// packages/codegen/src/dsl/transform-path.ts
 function dsl() {
   return globalThis;
 }
@@ -269,7 +269,7 @@ function applyToMembers(rule, head, rest, patch, precStack) {
   return reconstructContainer(rule, members);
 }
 
-// src/dsl/synthetic-rules.ts
+// packages/codegen/src/dsl/synthetic-rules.ts
 var currentSyntheticRules = null;
 var currentRuleKind = null;
 var currentOptsRules = null;
@@ -534,7 +534,7 @@ function installGrammarWrapper() {
   };
 }
 
-// src/dsl/field.ts
+// packages/codegen/src/dsl/field.ts
 function isFieldPlaceholder(v) {
   return !!v && typeof v === "object" && v.__sittirPlaceholder === "field";
 }
@@ -556,12 +556,12 @@ function field(name, content) {
   return { ...initial, source: "override" };
 }
 
-// src/dsl/alias.ts
+// packages/codegen/src/dsl/alias.ts
 function isAliasPlaceholder(v) {
   return !!v && typeof v === "object" && v.__sittirPlaceholder === "alias";
 }
 
-// src/dsl/variant.ts
+// packages/codegen/src/dsl/variant.ts
 function isVariantPlaceholder(v) {
   return !!v && typeof v === "object" && v.__sittirPlaceholder === "variant";
 }
@@ -569,7 +569,7 @@ function variant(name) {
   return { __sittirPlaceholder: "variant", name };
 }
 
-// src/dsl/transform.ts
+// packages/codegen/src/dsl/transform.ts
 function transform(original, ...patchSets) {
   let rule = original;
   for (const patches of patchSets) {
@@ -748,7 +748,7 @@ function resolvePatch(patch, originalMember, precStack) {
   return patch;
 }
 
-// src/dsl/role.ts
+// packages/codegen/src/dsl/role.ts
 var currentRoles = null;
 var VALID_ROLE_NAMES = /* @__PURE__ */ new Set(["indent", "dedent", "newline"]);
 function role(symbol, roleName) {
@@ -768,7 +768,7 @@ function role(symbol, roleName) {
   return symbol;
 }
 
-// src/dsl/enrich.ts
+// packages/codegen/src/dsl/enrich.ts
 function enrich(base2) {
   if (!base2 || typeof base2 !== "object") {
     throw new Error("enrich(): expected a grammar object, got " + typeof base2);
@@ -952,10 +952,10 @@ function reportSkip(pass, ruleName, reason) {
 `);
 }
 
-// src/dsl/index.ts
+// packages/codegen/src/dsl/index.ts
 installGrammarWrapper();
 
-// ../python/overrides.ts
+// packages/python/overrides.ts
 var overrides_default = grammar(enrich(import_grammar.default), {
   name: "python",
   // Structural-whitespace role bindings — declared inline in the
@@ -1058,6 +1058,14 @@ var overrides_default = grammar(enrich(import_grammar.default), {
     if_clause: ($, original) => transform(original, {
       1: field("expression")
       // expression [struct=0]
+    }),
+    // exec_statement: grammar is seq('exec', code, optional(seq('in', exprs)))
+    // Template walker emits the `in` keyword as a literal at top level,
+    // which surfaces in rendering even when the optional(seq(...))
+    // didn't match. Wrap the optional as field('in_clause') so the
+    // whole clause (`in` + exprs) renders only when present.
+    exec_statement: ($, original) => transform(original, {
+      2: field("in_clause")
     }),
     // import_from_statement: 1 field(s)
     import_from_statement: ($, original) => transform(original, {

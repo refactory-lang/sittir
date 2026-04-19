@@ -76,7 +76,8 @@ rules:
     variants:
       body: $UNSAFE impl $TYPE_PARAMETERS $TRAIT_CLAUSE $TYPE $WHERE_CLAUSE $$$CHILDREN
       semi: $UNSAFE impl $TYPE_PARAMETERS $TRAIT_CLAUSE $TYPE $WHERE_CLAUSE $$$CHILDREN
-    trait_clause: $TRAIT for
+    bang_clause: "!"
+    trait_clause: $BANG_CLAUSE$TRAIT for
   trait_item: $VISIBILITY_MODIFIER $UNSAFE trait $NAME $TYPE_PARAMETERS $BOUNDS $WHERE_CLAUSE $BODY
   associated_type: type $NAME $TYPE_PARAMETERS $BOUNDS $WHERE_CLAUSE;
   trait_bounds:

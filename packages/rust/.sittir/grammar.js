@@ -49,8 +49,20 @@ function isWrapperType(t) {
 }
 function isPrecWrapper(rule) {
   const t = rule.type;
-  return t === "prec" || t === "PREC" || t === "PREC_LEFT" || t === "PREC_RIGHT" || t === "PREC_DYNAMIC";
+  return t === "prec" || t === "PREC" || t === "prec_left" || t === "PREC_LEFT" || t === "prec_right" || t === "PREC_RIGHT" || t === "prec_dynamic" || t === "PREC_DYNAMIC";
 }
+function typeEq(t, lower) {
+  return typeof t === "string" && (t === lower || t === lower.toUpperCase());
+}
+var isSeqType = (t) => typeEq(t, "seq");
+var isChoiceType = (t) => typeEq(t, "choice");
+var isOptionalType = (t) => typeEq(t, "optional");
+var isFieldType = (t) => typeEq(t, "field");
+var isSymbolType = (t) => typeEq(t, "symbol");
+var isStringType = (t) => typeEq(t, "string");
+var isPlainRepeatType = (t) => typeEq(t, "repeat");
+var isRepeatType = (t) => typeEq(t, "repeat") || typeEq(t, "repeat1");
+var isBlankType = (t) => typeEq(t, "blank");
 
 // packages/codegen/src/dsl/transform-path.ts
 function dsl() {
@@ -170,8 +182,8 @@ function walkKindMatch(rule, targetKind, rest, patch, precStack, insideNamedFiel
 }
 function reconstructContainer(rule, members) {
   const t = rule.type;
-  if (t === "seq" || t === "SEQ") return nativeRequired("seq")(...members);
-  if (t === "choice" || t === "CHOICE") return nativeRequired("choice")(...members);
+  if (isSeqType(t)) return nativeRequired("seq")(...members);
+  if (isChoiceType(t)) return nativeRequired("choice")(...members);
   throw new Error(`reconstructContainer: unknown container type '${t}'`);
 }
 function reconstructWrapper(rule, newContent) {
@@ -185,7 +197,7 @@ function reconstructWrapper(rule, newContent) {
     if (r.trailing !== void 0) baseNode.trailing = r.trailing;
     return baseNode;
   }
-  if (t === "field" || t === "FIELD") {
+  if (isFieldType(t)) {
     const name = rule.name;
     return nativeRequired("field")(name, newContent);
   }
@@ -263,8 +275,7 @@ function registerSyntheticRule(name, content) {
 function maybeKeywordSymbol(fieldName, content, wrapSyntheticBody) {
   const c = content;
   if (!c || typeof c.type !== "string") return content;
-  const isString = c.type === "STRING" || c.type === "string";
-  if (!isString) return content;
+  if (!isStringType(c.type)) return content;
   const isUpperCase = c.type === "STRING";
   const hiddenName = `_kw_${fieldName}`;
   const nativePrec = globalThis.prec;
@@ -345,23 +356,23 @@ function factorOutEmptiness(rule) {
 }
 function extractNonEmpty(rule) {
   const t = rule.type;
-  if (t === "repeat" || t === "REPEAT") {
+  if (isPlainRepeatType(t)) {
     const r = rule;
     const nonEmpty = { ...r, type: t === "REPEAT" ? "REPEAT1" : "repeat1" };
     return { nonEmpty };
   }
-  if (t === "optional") {
+  if (isOptionalType(t)) {
     const inner = rule.content;
     return matchesEmpty(inner) ? extractNonEmpty(inner) : { nonEmpty: inner };
   }
-  if (t === "choice" || t === "CHOICE") {
+  if (isChoiceType(t)) {
     const members = rule.members;
     const nonEmpty = members.filter((m) => !matchesEmpty(m));
     if (nonEmpty.length === 0) return null;
     if (nonEmpty.length === 1) return { nonEmpty: nonEmpty[0] };
     return { nonEmpty: { type: t, members: nonEmpty } };
   }
-  if (t === "seq" || t === "SEQ") {
+  if (isSeqType(t)) {
     const members = [...rule.members];
     for (let i = 0; i < members.length; i++) {
       const factored = extractNonEmpty(members[i]);
@@ -376,14 +387,14 @@ function extractNonEmpty(rule) {
 }
 function matchesEmpty(rule) {
   const t = rule.type;
-  if (t === "blank" || t === "BLANK") return true;
-  if (t === "optional") return true;
-  if (t === "repeat" || t === "REPEAT") return true;
-  if (t === "choice" || t === "CHOICE") {
+  if (isBlankType(t)) return true;
+  if (isOptionalType(t)) return true;
+  if (isPlainRepeatType(t)) return true;
+  if (isChoiceType(t)) {
     const members = rule.members;
     return members.some((m) => matchesEmpty(m));
   }
-  if (t === "seq" || t === "SEQ") {
+  if (isSeqType(t)) {
     const members = rule.members;
     return members.every((m) => matchesEmpty(m));
   }
@@ -397,15 +408,6 @@ function installGrammarWrapper() {
     currentSyntheticRules = /* @__PURE__ */ new Map();
     const base2 = args.length > 1 ? args[0] : void 0;
     const opts = args.length > 1 ? args[1] : args[0];
-    if (opts) {
-      const userNames = Object.keys(opts.rules ?? {});
-      Object.defineProperty(opts, "__userOverrideRuleNames__", {
-        value: userNames,
-        enumerable: false,
-        configurable: true,
-        writable: false
-      });
-    }
     if (base2?.__enrichOverrides__ && opts) {
       if (!opts.rules) opts.rules = {};
       for (const [name, fn] of Object.entries(base2.__enrichOverrides__)) {
@@ -486,26 +488,33 @@ function installGrammarWrapper() {
     }
     currentOptsRules = null;
     currentBlankFn = null;
-    const allConflicts = [...pendingConflictsAfterGrammar, ...drainConflicts()];
-    if (result && allConflicts.length > 0 && typeof result === "object") {
-      const grammar2 = result.grammar ?? result;
-      const current = Array.isArray(grammar2.conflicts) ? grammar2.conflicts : [];
-      for (const group of allConflicts) {
-        current.push([...group]);
+    try {
+      const allConflicts = [...pendingConflictsAfterGrammar, ...drainConflicts()];
+      if (result && allConflicts.length > 0 && typeof result === "object") {
+        const grammar2 = result.grammar ?? result;
+        const current = Array.isArray(grammar2.conflicts) ? grammar2.conflicts : [];
+        for (const group of allConflicts) {
+          current.push([...group]);
+        }
+        grammar2.conflicts = current;
       }
-      grammar2.conflicts = current;
-    }
-    const synthetic = drainSyntheticRules();
-    if (result && synthetic.size > 0 && typeof result === "object") {
-      const grammar2 = result.grammar ?? result;
-      if ("rules" in grammar2) {
-        const rules = grammar2.rules;
-        for (const [name, content] of synthetic) {
-          rules[name] = content;
+      const synthetic = drainSyntheticRules();
+      if (result && synthetic.size > 0 && typeof result === "object") {
+        const grammar2 = result.grammar ?? result;
+        if ("rules" in grammar2) {
+          const rules = grammar2.rules;
+          for (const [name, content] of synthetic) {
+            rules[name] = content;
+          }
         }
       }
+      return result;
+    } finally {
+      drainSyntheticRules();
+      drainConflicts();
+      drainPolymorphVariants();
+      currentRuleKind = null;
     }
-    return result;
   };
 }
 
@@ -604,7 +613,7 @@ function tryHoistSiblingVariants(rule, variantEntries) {
   }
   const t = core?.type;
   if (!t) return bail("core rule has no type after prec peeling");
-  if (t !== "seq" && t !== "SEQ") return bail(`core rule type '${t}' is not seq/SEQ`);
+  if (!isSeqType(t)) return bail(`core rule type '${t}' is not seq/SEQ`);
   const parsed = [];
   for (const [key, v] of variantEntries) {
     const segs = parsePath(key);
@@ -617,7 +626,7 @@ function tryHoistSiblingVariants(rule, variantEntries) {
   const seqMembers = [...membersOf2(core)];
   const resolvedPos = choicePos < 0 ? seqMembers.length + choicePos : choicePos;
   const choice2 = seqMembers[resolvedPos];
-  if (!choice2 || choice2.type !== "choice" && choice2.type !== "CHOICE") return bail(`position ${resolvedPos} is '${choice2?.type}', not choice/CHOICE`);
+  if (!choice2 || !isChoiceType(choice2.type)) return bail(`position ${resolvedPos} is '${choice2?.type}', not choice/CHOICE`);
   const choiceMembers = membersOf2(choice2);
   const anyEmpty = parsed.some((p) => matchesEmpty(choiceMembers[p.altIdx < 0 ? choiceMembers.length + p.altIdx : p.altIdx]));
   if (!anyEmpty) return null;
@@ -625,19 +634,12 @@ function tryHoistSiblingVariants(rule, variantEntries) {
   if (!parentKind) return bail("no current rule kind (variant()/transform() called outside rule callback?)");
   const refs = [];
   const isUpperCase = core.type === core.type.toUpperCase();
-  const wrapInPrecStack2 = (body) => {
-    let wrapped = body;
-    for (let i = precStack.length - 1; i >= 0; i--) {
-      wrapped = reconstructPrec(precStack[i], wrapped);
-    }
-    return wrapped;
-  };
   for (const p of parsed) {
     const resolvedAlt = p.altIdx < 0 ? choiceMembers.length + p.altIdx : p.altIdx;
     const altContent = choiceMembers[resolvedAlt];
     const hoistedMembers = seqMembers.map((m, i) => i === resolvedPos ? altContent : m);
     const hoistedSeq = reconstructContainer(core, hoistedMembers);
-    const hoistedBody = wrapInPrecStack2(hoistedSeq);
+    const hoistedBody = wrapInPrec(hoistedSeq, precStack);
     const visibleName = `${parentKind}_${p.v.name}`;
     registerPolymorphVariant(parentKind, p.v.name);
     registerSyntheticRule(visibleName, hoistedBody);
@@ -656,7 +658,7 @@ var membersOf2 = (r) => r.members;
 var contentOf2 = (r) => r.content;
 function applyFlatPatches(original, patches) {
   const t = original.type;
-  if (t === "seq" || t === "SEQ") {
+  if (isSeqType(t)) {
     const members = [...membersOf2(original)];
     for (const [key, patch] of Object.entries(patches)) {
       if (!/^\d+$/.test(key)) {
@@ -674,7 +676,7 @@ function applyFlatPatches(original, patches) {
     }
     return reconstructContainer(original, members);
   }
-  if (t === "choice" || t === "CHOICE") {
+  if (isChoiceType(t)) {
     const newMembers = membersOf2(original).map((m) => applyFlatPatches(m, patches));
     return reconstructContainer(original, newMembers);
   }
@@ -756,30 +758,6 @@ function applyEnrichPasses(ruleName, rule) {
   r = applyBareKeywordViaTransform(ruleName, r);
   r = applyOptionalKeywordViaTransform(ruleName, r);
   return r;
-}
-function typeEq(t, lower) {
-  return typeof t === "string" && (t === lower || t === lower.toUpperCase());
-}
-function isSeqType(t) {
-  return typeEq(t, "seq");
-}
-function isStringType(t) {
-  return typeEq(t, "string");
-}
-function isSymbolType(t) {
-  return typeEq(t, "symbol");
-}
-function isFieldType(t) {
-  return typeEq(t, "field");
-}
-function isOptionalType(t) {
-  return typeEq(t, "optional");
-}
-function isChoiceType(t) {
-  return typeEq(t, "choice");
-}
-function isRepeatType(t) {
-  return typeEq(t, "repeat") || typeEq(t, "repeat1");
 }
 function normalizeMember(m) {
   if (typeof m === "string") return { type: "STRING", value: m };
@@ -970,6 +948,8 @@ var overrides_default = grammar(enrich(import_grammar.default), {
     // position 1, which wrapped the move choice and dropped the
     // block routing entirely.
     async_block: ($, original) => transform(original, {
+      "1/0": field("move"),
+      // optional('move') → surface as field
       2: field("block")
     }),
     // attribute_item: 1 field(s)
@@ -1088,22 +1068,56 @@ var overrides_default = grammar(enrich(import_grammar.default), {
       7: field("where_clause")
       // where_clause
     }),
-    // function_type: 2 field(s)
-    function_type: ($, original) => transform(original, {
-      0: field("for_lifetimes"),
-      // for_lifetimes [struct=0]
-      1: field("function_modifiers")
-      // function_modifiers [struct=1]
-    }),
+    // function_type: top-level seq is
+    //   [for_lifetimes, prec(call, seq(choice(trait, fn_form), parameters)),
+    //    optional(->return_type)]
+    // The choice at position 1 inner-seq[0] chooses between trait form
+    // (bare type with field('trait', ...)) and fn form (seq with
+    // optional modifiers + 'fn' literal). Template walker drops the
+    // 'fn' literal because it's only in one arm. Variant split each
+    // arm. prec is transparent to path addressing, so path `1/0` is
+    // the choice inside.
+    function_type: ($, original) => transform(
+      original,
+      { 0: field("for_lifetimes") },
+      { "1/0/0": variant("trait_form"), "1/0/1": variant("fn_form") }
+    ),
     // gen_block: same fix as async_block — the block symbol is
     // at position 2, position 1 is the optional `move` choice.
     gen_block: ($, original) => transform(original, {
+      "1/0": field("move"),
+      // optional('move') → surface as field
       2: field("block")
     }),
-    // impl_item: override removed. Same autogen mistake as struct_item —
-    // position 0 was labeled `field('where_clause')` but it's the
-    // unsafe/impl header start, not a where_clause. The where_clause
-    // is buried deeper in the rule's seq.
+    // generic_type_with_turbofish: aliased to `generic_type` at 4 call
+    // sites. Wrap `::` at pos 1 as a field('turbofish') so the aliased-
+    // shape generic_type surfaces it (confirmed: parse produces
+    // field=turbofish for `C::<D>`). The generic_type template itself
+    // still needs to reference $TURBOFISH — handled via its override
+    // below.
+    generic_type_with_turbofish: ($, original) => transform(original, {
+      1: field("turbofish")
+    }),
+    // generic_type: base rule unchanged. ADR-0006 dispatches via
+    // drillAs at alias-declared field sites so consumers see source-
+    // typed views (`generic_type_with_turbofish` with the turbofish
+    // template). Validators walk the wrapped tree, rewrite `$type`
+    // to source, and use the `generic_type_with_turbofish` reparse
+    // wrapper that accepts turbofish in a scoped-path context.
+    // impl_item: field('where_clause') at pos 5 (inferred from 86%
+    // agreement across 7 parents), plus polymorph at pos 6 —
+    // choice(field('body', declaration_list), ';'). The ';' arm is
+    // the trait-signature form (no body), which the template walker
+    // drops without a variant split.
+    impl_item: ($, original) => transform(
+      original,
+      {
+        "0/0": field("unsafe"),
+        // optional('unsafe')
+        5: field("where_clause")
+      },
+      { "6/0": variant("body"), "6/1": variant("semi") }
+    ),
     // index_expression: 2 field(s)
     index_expression: ($, original) => transform(original, {
       0: field("object"),
@@ -1136,10 +1150,11 @@ var overrides_default = grammar(enrich(import_grammar.default), {
       0: field("label")
       // label [struct=0]
     }),
-    // macro_definition: 1 field(s)
+    // macro_definition: position 2 polymorph (paren/bracket/brace delimiters).
     macro_definition: ($, original) => transform(original, {
-      2: field("rules")
-      // macro_rule [struct=0]
+      "2/0": variant("paren"),
+      "2/1": variant("bracket"),
+      "2/2": variant("brace")
     }),
     // macro_invocation: 1 field(s)
     macro_invocation: ($, original) => transform(original, {
@@ -1264,7 +1279,11 @@ var overrides_default = grammar(enrich(import_grammar.default), {
     // position 6 and the body field at position 7 stay as
     // declared in the base grammar.
     trait_item: ($, original) => transform(original, {
-      0: field("visibility_modifier")
+      0: field("visibility_modifier"),
+      "1/0": field("unsafe"),
+      // optional('unsafe')
+      6: field("where_clause")
+      // inferred 88% agreement across 8 parents
     }),
     // try_block: 1 field(s)
     try_block: ($, original) => transform(original, {

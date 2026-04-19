@@ -14,6 +14,10 @@
  */
 
 import type { PolymorphVariant } from '../dsl/synthetic-rules.ts'
+// tokenToName is defined locally below to avoid a circular import with
+// compiler/link.ts (which imports helpers from this file). A small map
+// covering the common non-word optionals (`!`, `?`) is enough; bail to
+// null for anything else and the caller falls back to existing behavior.
 
 // ---------------------------------------------------------------------------
 // Rule — the shared intermediate representation
@@ -2124,8 +2128,31 @@ function walkRuleForTemplate(
                     break
                 }
                 if (out.length > 0 && parts.length > 0) {
-                    const lastChar = out[out.length - 1]!.slice(-1)
-                    const firstChar = parts[0]!.charAt(0)
+                    // When the adjacent placeholder is a clause whose body is
+                    // a bare non-word-punctuation literal (e.g. `bang_clause: "!"`
+                    // emitted by the optional-punct walker), use the underlying
+                    // literal for spacing rather than the placeholder's own
+                    // identifier characters. Prevents `$BANG_CLAUSE $TRAIT` from
+                    // inserting a spurious space between `!` and the trait name
+                    // in `impl !Foo for Bar`.
+                    const effectiveLastChar = (s: string): string => {
+                        const m = s.match(/^\$([A-Z_][A-Z0-9_]*)_CLAUSE$/)
+                        if (m) {
+                            const body = clauses[`${m[1]!.toLowerCase()}_clause`]
+                            if (body && /^[^\w\s]+$/.test(body)) return body.slice(-1)
+                        }
+                        return s.slice(-1)
+                    }
+                    const effectiveFirstChar = (s: string): string => {
+                        const m = s.match(/^\$([A-Z_][A-Z0-9_]*)_CLAUSE$/)
+                        if (m) {
+                            const body = clauses[`${m[1]!.toLowerCase()}_clause`]
+                            if (body && /^[^\w\s]+$/.test(body)) return body.charAt(0)
+                        }
+                        return s.charAt(0)
+                    }
+                    const lastChar = effectiveLastChar(out[out.length - 1]!)
+                    const firstChar = effectiveFirstChar(parts[0]!)
                     if (needsSpace(lastChar, firstChar, wordMatcher)) out.push(' ')
                 }
                 out.push(...parts)
@@ -2188,6 +2215,34 @@ function walkRuleForTemplate(
                         clauses[clauseKey] = `$${kwString.toUpperCase()}`
                     }
                     return [`$${kwString.toUpperCase()}_CLAUSE`]
+                }
+                // Non-word punctuation that carries semantic meaning in a
+                // specific grammar position (e.g. rust `impl_item` trait
+                // negation `!`, `?` modifiers). Emit a bare-literal clause
+                // — renderClause's no-placeholder branch fires the clause
+                // only when readNode captured the anon token. The clause
+                // body is the literal itself so the renderer emits the
+                // exact text; the slot name derives from tokenToName so
+                // it's a legal template identifier.
+                //
+                // Gated to a safe allowlist — list-separator punctuation
+                // (`,`, `;`, `:`) is handled by the seq walker's
+                // joinByTrailing / skipSeps logic and would double-emit
+                // if intercepted here. Trailing-separator `optional(',')`
+                // inside list-shaped seqs is filtered earlier at the seq
+                // level, so this path only fires for standalone optionals
+                // that don't collide with separator detection.
+                const CLAUSE_PUNCT_NAMES: Record<string, string> = {
+                    '!': 'bang',
+                    '?': 'question',
+                }
+                const punctName = CLAUSE_PUNCT_NAMES[kwString]
+                if (punctName) {
+                    const clauseKey = `${punctName}_clause`
+                    if (!(clauseKey in clauses)) {
+                        clauses[clauseKey] = kwString
+                    }
+                    return [`$${punctName.toUpperCase()}_CLAUSE`]
                 }
             }
             // `optional(',')` and friends — pure punctuation in an optional

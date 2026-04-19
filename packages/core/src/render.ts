@@ -162,7 +162,7 @@ function render(node: AnyNodeData, ctx: InternalRenderContext): string {
 			&& typeof ruleObj[clauseKey] === 'string'
 		) {
 			const clauseTemplate = ruleObj[clauseKey] as string;
-			return renderClause(clauseTemplate, node, ctx, consumed);
+			return renderClause(clauseTemplate, node, ctx, consumed, ruleObj);
 		}
 
 		// 2. Fields (tree-sitter FIELDs + promoted overrides)
@@ -380,8 +380,19 @@ function renderClause(
 	node: AnyNodeData,
 	ctx: InternalRenderContext,
 	consumed: Set<number>,
+	ruleObj?: Record<string, unknown>,
 ): string {
 	const { varPattern } = ctx;
+	// Nested clause references inside a clause body (`$BANG_CLAUSE` inside
+	// `trait_clause`) resolve against the enclosing rule's clause map. They're
+	// optional by nature — a missing nested clause renders to empty, not to
+	// a dropped parent — so the allPresent check treats them as present.
+	const isNestedClauseRef = (name: string): boolean => {
+		if (!ruleObj) return false;
+		const k = name.toLowerCase();
+		const v = ruleObj[k];
+		return typeof v === 'string' && k !== 'template' && k !== 'joinBy';
+	};
 
 	// Bare-literal clauses (no `$VAR` placeholders) are anonymous-token
 	// presence checks. A walker that wants to round-trip an
@@ -402,6 +413,14 @@ function renderClause(
 				return clauseTemplate;
 			}
 		}
+		// readNode promotes anonymous tokens to $fields keyed by their
+		// text (see readNode.ts promoteAnonymousKeyword). So a bare-literal
+		// clause body like `!` resolves against $fields['!'] rather than
+		// $children. The walker emits these for non-word-punctuation
+		// optionals (rust `impl_item` trait negation, etc.).
+		if (node.$fields && node.$fields[clauseTemplate] !== undefined) {
+			return clauseTemplate;
+		}
 		return '';
 	}
 	varPattern.lastIndex = 0;
@@ -418,6 +437,7 @@ function renderClause(
 			);
 			if (idx >= 0) return '';
 		}
+		if (isNestedClauseRef(name)) return '';
 		allPresent = false;
 		return '';
 	});
@@ -427,6 +447,9 @@ function renderClause(
 	// Second pass: actually render (consuming children)
 	return clauseTemplate.replace(varPattern, (_match: string, _pfx: string, name: string) => {
 		const fieldKey = name.toLowerCase();
+		if (isNestedClauseRef(name)) {
+			return renderClause(ruleObj![fieldKey] as string, node, ctx, consumed, ruleObj);
+		}
 		if (node.$fields?.[fieldKey] !== undefined) {
 			const raw = node.$fields[fieldKey];
 			// Multi-valued fields (promoted anonymous tokens +
