@@ -3349,26 +3349,15 @@ export function stringLiteral(...children: (T.EscapeSequence | T.StringContent)[
   };
 }
 
-export function rawStringLiteral(config: T.RawStringLiteral.Config) {
-  const fields = {
-    raw_string_literal_start: config?.rawStringLiteralStart,
-    string_content: config?.stringContent,
-    raw_string_literal_end: config?.rawStringLiteralEnd,
-  };
+export function rawStringLiteral(text: string) {
   return {
     $type: 'raw_string_literal' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $fields: fields,
-    rawStringLiteralStart(value?: string) { return _fs(config, rawStringLiteral, 'rawStringLiteralStart', value, fields.raw_string_literal_start); },
-    stringContent(value?: T.StringContent) { return _fs(config, rawStringLiteral, 'stringContent', value, fields.string_content); },
-    rawStringLiteralEnd(value?: string) { return _fs(config, rawStringLiteral, 'rawStringLiteralEnd', value, fields.raw_string_literal_end); },
-    render() { return render(this); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(target: T.RawStringLiteralTree) { const r = target.range(); return toEdit(this, r); },
+    $text: text,
+    render: () => text,
+    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
+    replace: (t: T.RawStringLiteralTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
   };
 }
 
@@ -4547,7 +4536,7 @@ export const _factoryShapes = {
   "negative_literal": "config",
   "integer_literal": "text",
   "string_literal": "children",
-  "raw_string_literal": "config",
+  "raw_string_literal": "text",
   "char_literal": "text",
   "escape_sequence": "text",
   "boolean_literal": "text",

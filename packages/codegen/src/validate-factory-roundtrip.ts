@@ -257,13 +257,20 @@ export async function validateFactoryRoundTrip(
 			} else if (factory) {
 				try {
 					const shape = factoryShapes[kind] ?? 'config';
-					const isConfigFactory = shape === 'config';
-					if (isConfigFactory) {
+					if (shape === 'config') {
 						const config = readData.$children
 							? { ...camelFields, children: readData.$children }
 							: camelFields ?? {};
 						factoryData = factory(config) as AnyNodeData;
+					} else if (shape === 'text') {
+						// $TEXT-templated branch/container (e.g. rust
+						// raw_string_literal) — factory accepts the raw
+						// source span because external-scanner delimiters
+						// can't be reconstructed from children.
+						const text = (readData as { $text?: string }).$text ?? '';
+						factoryData = (factory as (text: string) => AnyNodeData)(text);
 					} else {
+						// shape === 'children' — container factory.
 						const namedChildren = (readData.$children ?? []).filter(
 							(c: any) => c?.$named !== false,
 						);

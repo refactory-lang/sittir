@@ -1264,7 +1264,7 @@ export class AssembledBranch extends AssembledNodeBase {
  * Flips to $TEXT only when every non-ignorable member of the top-level
  * seq classifies as external. Non-seq roots return false.
  */
-function hasHiddenExternalRef(rule: Rule, externals: ReadonlySet<string>): boolean {
+export function hasHiddenExternalRef(rule: Rule, externals: ReadonlySet<string>): boolean {
     // Unwrap transparent wrappers to find the structural core.
     let core = rule
     while (

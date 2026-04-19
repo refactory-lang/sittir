@@ -10,6 +10,7 @@
 import type {
     NodeMap, AssembledNode, AssembledField, AssembledChild, AssembledGroup,
 } from '../compiler/rule.ts'
+import { hasHiddenExternalRef } from '../compiler/rule.ts'
 
 export interface EmitFactoriesConfig {
     grammar: string
@@ -238,7 +239,13 @@ export function emitFactories(config: EmitFactoriesConfig): string {
             node.modelType === 'container' ||
             node.modelType === 'polymorph'
         let shape: 'config' | 'children' | 'text'
-        if (node.modelType === 'container') shape = 'children'
+        const externals = nodeMap.externals
+        const nodeRule = (node as { rule?: import('../compiler/rule.ts').Rule }).rule
+        const isTextTemplate = externals && externals.size > 0 && nodeRule
+            && (node.modelType === 'branch' || node.modelType === 'container')
+            && hasHiddenExternalRef(nodeRule, externals)
+        if (isTextTemplate) shape = 'text'
+        else if (node.modelType === 'container') shape = 'children'
         else if (
             node.modelType === 'leaf'
             || node.modelType === 'keyword'
@@ -321,6 +328,21 @@ function renderFactoryForNode(
     leafReConsts: Map<string, string>,
 ): string | undefined {
     if (!node.rawFactoryName) return undefined
+    // $TEXT-templated kinds (external-scanner delimiters like rust's
+    // raw_string_literal) can't be field-reconstructed — the external
+    // tokens never appear as named children. Field-carrying factory
+    // would expose phantom slots that nothing ever populates. Emit a
+    // text-accepting factory so callers supply the full source text.
+    const externals = nodeMap.externals
+    const nodeRule = (node as { rule?: import('../compiler/rule.ts').Rule }).rule
+    const isTextTemplate = externals
+        && externals.size > 0
+        && nodeRule
+        && (node.modelType === 'branch' || node.modelType === 'container')
+        && hasHiddenExternalRef(nodeRule, externals)
+    if (isTextTemplate) {
+        return emitTextFactory(node as unknown as { kind: string; treeTypeName: string; rawFactoryName?: string }, '(text: string)', 'text')
+    }
     switch (node.modelType) {
         case 'branch':
             return emitFieldCarryingFactory(node, node.fields, node.children ?? [], nodeMap)
