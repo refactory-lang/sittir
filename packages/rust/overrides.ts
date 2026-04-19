@@ -200,9 +200,11 @@ export default grammar(enrich(base), {
             0: field('label'), // label [struct=0]
         }),
 
-        // macro_definition: 1 field(s)
+        // macro_definition: position 2 polymorph (paren/bracket/brace delimiters).
         macro_definition: ($, original) => transform(original, {
-            2: field('rules'), // macro_rule [struct=0]
+            '2/0': variant('paren'),
+            '2/1': variant('bracket'),
+            '2/2': variant('brace'),
         }),
 
         // macro_invocation: 1 field(s)

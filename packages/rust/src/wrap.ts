@@ -82,6 +82,9 @@ import type {
   LineComment,
   LoopExpression,
   MacroDefinition,
+  MacroDefinitionBrace,
+  MacroDefinitionBracket,
+  MacroDefinitionParen,
   MacroInvocation,
   MacroRule,
   MatchArm,
@@ -170,6 +173,9 @@ import type {
   _FieldIdentifier,
   _FieldPatternShorthand,
   _LetChain,
+  _MacroDefinitionBrace,
+  _MacroDefinitionBracket,
+  _MacroDefinitionParen,
   _ModItemInline,
   _RangeExpressionBare,
   _TypeIdentifier,
@@ -211,8 +217,7 @@ export function wrapMacroDefinition(data: _NodeData, tree: TreeHandle): WrappedN
   return {
     ...data,
     get name() { return drillIn(data.$fields?.['name'], tree); },
-    get rules() { return drillIn(data.$fields?.['rules'], tree); },
-    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<MacroDefinition>;
 }
 
@@ -1490,6 +1495,27 @@ export function wrap_FieldPatternShorthand(data: _NodeData, tree: TreeHandle): W
   } as unknown as WrappedNode<_FieldPatternShorthand>;
 }
 
+export function wrap_MacroDefinitionParen(data: _NodeData, tree: TreeHandle): WrappedNode<_MacroDefinitionParen> {
+  return {
+    ...data,
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<_MacroDefinitionParen>;
+}
+
+export function wrap_MacroDefinitionBracket(data: _NodeData, tree: TreeHandle): WrappedNode<_MacroDefinitionBracket> {
+  return {
+    ...data,
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<_MacroDefinitionBracket>;
+}
+
+export function wrap_MacroDefinitionBrace(data: _NodeData, tree: TreeHandle): WrappedNode<_MacroDefinitionBrace> {
+  return {
+    ...data,
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<_MacroDefinitionBrace>;
+}
+
 export function wrap_ModItemInline(data: _NodeData, tree: TreeHandle): WrappedNode<_ModItemInline> {
   return {
     ...data,
@@ -1512,6 +1538,27 @@ export function wrap_RangeExpressionBare(data: _NodeData, tree: TreeHandle): Wra
     get operator() { return drillIn(data.$fields?.['operator'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<_RangeExpressionBare>;
+}
+
+export function wrapMacroDefinitionParen(data: _NodeData, tree: TreeHandle): WrappedNode<MacroDefinitionParen> {
+  return {
+    ...data,
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<MacroDefinitionParen>;
+}
+
+export function wrapMacroDefinitionBracket(data: _NodeData, tree: TreeHandle): WrappedNode<MacroDefinitionBracket> {
+  return {
+    ...data,
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<MacroDefinitionBracket>;
+}
+
+export function wrapMacroDefinitionBrace(data: _NodeData, tree: TreeHandle): WrappedNode<MacroDefinitionBrace> {
+  return {
+    ...data,
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<MacroDefinitionBrace>;
 }
 
 export function wrapModItemInline(data: _NodeData, tree: TreeHandle): WrappedNode<ModItemInline> {
@@ -1816,6 +1863,9 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'array_expression_semi': (d, t) => wrapArrayExpressionSemi(d, t),
   'array_expression_list': (d, t) => wrapArrayExpressionList(d, t),
   '_field_pattern_shorthand': (d, t) => wrap_FieldPatternShorthand(d, t),
+  '_macro_definition_paren': (d, t) => wrap_MacroDefinitionParen(d, t),
+  '_macro_definition_bracket': (d, t) => wrap_MacroDefinitionBracket(d, t),
+  '_macro_definition_brace': (d, t) => wrap_MacroDefinitionBrace(d, t),
   '_mod_item_inline': (d, t) => wrap_ModItemInline(d, t),
   '_closure_expression_expr': (d, t) => wrap_ClosureExpressionExpr(d, t),
   '_range_expression_bare': (d, t) => wrap_RangeExpressionBare(d, t),
@@ -1827,6 +1877,9 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_inner_block_doc_comment_marker': (d) => d,
   '_line_doc_content': (d) => d,
   '_error_sentinel': (d) => d,
+  'macro_definition_paren': (d, t) => wrapMacroDefinitionParen(d, t),
+  'macro_definition_bracket': (d, t) => wrapMacroDefinitionBracket(d, t),
+  'macro_definition_brace': (d, t) => wrapMacroDefinitionBrace(d, t),
   'primitive_type': (d) => d,
   'mod_item_inline': (d, t) => wrapModItemInline(d, t),
   'struct_item_brace': (d, t) => wrapStructItemBrace(d, t),

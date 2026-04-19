@@ -695,36 +695,44 @@ export function looksLikePolymorphCandidate(choice: ChoiceRule): boolean {
 }
 
 /**
- * Does this choice actually need `variant()` wrapping to be discriminable?
+ * Does this choice actually need `variant()` wrapping to make rendering
+ * discriminate between arms?
  *
- * An arm NEEDS variant() if parsing alone won't produce a distinct `$type`
- * for it — i.e. hidden symbols (expand in place with no kind tag), anonymous
- * seq/repeat/choice (no kind at all), literals, patterns. For those, variant()
- * hoists the arm into its own aliased hidden rule so the parse tree carries
- * a discriminating `$type`.
+ * Rendering dispatches on `$type` at every NodeData boundary. Any arm
+ * that resolves to a named parse-tree node — visible symbol, supertype,
+ * or hidden symbol (hidden rules either (a) alias to a visible kind so
+ * the $type surfaces, or (b) expand in place, in which case their own
+ * expansion's $types handle the dispatch) — is already discriminable.
+ * variant() on these arms produces synthetic `_parent_arm` rules that
+ * carry no render benefit.
  *
- * An arm does NOT need variant() if it's a visible named symbol or supertype —
- * tree-sitter already tags it with a distinct `$type`, and hoisting into
- * `_parent_arm` is pure overhead (synthetic rule, extra factory noise, no
- * render benefit).
+ * Arms that NEED variant() are the ones whose content is NOT a named
+ * rule: anonymous seq/choice/repeat, bare literals, patterns. These
+ * produce anonymous tokens in the parse tree; rendering can't dispatch
+ * on arm identity without hoisting them into their own aliased kinds.
  *
- * A choice needs variant() treatment iff AT LEAST ONE of its arms needs it —
- * `tagVariants` wraps the whole choice uniformly, and the suggester mirrors
- * that (all arms become variant() calls or none do). Choices where every arm
- * is a visible named symbol are skipped entirely.
+ * A choice needs variant() treatment iff AT LEAST ONE of its arms is
+ * anonymous — `tagVariants` wraps the whole choice uniformly, and the
+ * suggester mirrors that (all arms become variant() calls or none do).
+ * Choices where every arm is a symbol reference are skipped entirely.
  */
 export function choiceNeedsVariantWrapping(choice: ChoiceRule): boolean {
     const armNeedsVariant = (c: Rule): boolean => {
-        // Visible named symbol — $type already discriminates.
-        if (c.type === 'symbol' && !c.hidden) return false
-        // Visible supertype — resolves to a visible symbol at parse time.
-        if (c.type === 'supertype') return false
+        // Any symbol reference — render dispatches on the resolved
+        // NodeData's $type, not on which arm produced it. Hidden symbols
+        // that alias to a visible kind surface as that kind; hidden
+        // symbols that inline become their inner content's tokens
+        // (which would need variant ONLY if the inner content is itself
+        // anonymous — handled when Assemble classifies the hidden rule
+        // as a group and inlineGroupRefs expands it).
+        if (c.type === 'symbol' || c.type === 'supertype') return false
         // Transparent wrappers — look inside.
         if (c.type === 'variant' || c.type === 'group' || c.type === 'clause' || c.type === 'optional') {
             return armNeedsVariant(c.content)
         }
-        // Everything else — hidden symbols, anonymous seqs, repeats, literals,
-        // patterns, nested choices — needs variant() to surface distinctly.
+        // Anonymous content — seqs, repeats, literals, patterns, nested
+        // choices. These have no $type to dispatch on. variant() is the
+        // only way to give rendering a stable handle for the arm.
         return true
     }
     const contents = choice.members.map(m => m.type === 'variant' ? m.content : m)

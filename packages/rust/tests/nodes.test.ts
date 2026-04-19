@@ -23,14 +23,20 @@ describe('expression_statement', () => {
 });
 
 describe('macro_definition', () => {
-  it('factory produces correct type', () => {
-    const node = ir.macro({ name: { $type: 'identifier', $text: 'test' } as any, rules: { $type: 'macro_rule', $text: 'test' } as any });
+  it('paren form produces correct type', () => {
+    const node = ir.macro.paren({ name: { $type: 'identifier', $text: 'test' } as any });
     expect(node.$type).toBe('macro_definition');
     expect(node.$source).toBe('factory');
   });
-  it('render produces non-empty string', () => {
-    const node = ir.macro({ name: { $type: 'identifier', $text: 'test' } as any, rules: { $type: 'macro_rule', $text: 'test' } as any });
-    expect(node.render().length).toBeGreaterThan(0);
+  it('bracket form produces correct type', () => {
+    const node = ir.macro.bracket({ name: { $type: 'identifier', $text: 'test' } as any });
+    expect(node.$type).toBe('macro_definition');
+    expect(node.$source).toBe('factory');
+  });
+  it('brace form produces correct type', () => {
+    const node = ir.macro.brace({ name: { $type: 'identifier', $text: 'test' } as any });
+    expect(node.$type).toBe('macro_definition');
+    expect(node.$source).toBe('factory');
   });
 });
 
@@ -1749,6 +1755,30 @@ describe('float_literal', () => {
     expect(node.$type).toBe('float_literal');
     expect(node.$source).toBe('factory');
     expect(node.$text).toBe("test");
+  });
+});
+
+describe('macro_definition_paren', () => {
+  it('factory produces correct type', () => {
+    const node = ir.macroDefinitionParen();
+    expect(node.$type).toBe('macro_definition_paren');
+    expect(node.$source).toBe('factory');
+  });
+});
+
+describe('macro_definition_bracket', () => {
+  it('factory produces correct type', () => {
+    const node = ir.macroDefinitionBracket();
+    expect(node.$type).toBe('macro_definition_bracket');
+    expect(node.$source).toBe('factory');
+  });
+});
+
+describe('macro_definition_brace', () => {
+  it('factory produces correct type', () => {
+    const node = ir.macroDefinitionBrace();
+    expect(node.$type).toBe('macro_definition_brace');
+    expect(node.$source).toBe('factory');
   });
 });
 

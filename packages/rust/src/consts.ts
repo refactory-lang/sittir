@@ -6,6 +6,9 @@ export const NODE_KINDS = [
   '_field_identifier',
   '_field_pattern_shorthand',
   '_let_chain',
+  '_macro_definition_brace',
+  '_macro_definition_bracket',
+  '_macro_definition_paren',
   '_mod_item_inline',
   '_non_special_token',
   '_range_expression_bare',
@@ -87,6 +90,9 @@ export const NODE_KINDS = [
   'line_comment',
   'loop_expression',
   'macro_definition',
+  'macro_definition_brace',
+  'macro_definition_bracket',
+  'macro_definition_paren',
   'macro_invocation',
   'macro_rule',
   'match_arm',
@@ -346,7 +352,6 @@ export const OPERATORS = [
   "[",
   "]",
   "^",
-  "macro_rules!",
   "{",
   "|",
   "||",
@@ -374,6 +379,12 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'name', required: true, multiple: false },
   ],
   '_let_chain': [
+  ],
+  '_macro_definition_brace': [
+  ],
+  '_macro_definition_bracket': [
+  ],
+  '_macro_definition_paren': [
   ],
   '_mod_item_inline': [
     { name: 'body', required: true, multiple: false },
@@ -695,7 +706,12 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'macro_definition': [
     { name: 'name', required: true, multiple: false },
-    { name: 'rules', required: true, multiple: false },
+  ],
+  'macro_definition_brace': [
+  ],
+  'macro_definition_bracket': [
+  ],
+  'macro_definition_paren': [
   ],
   'macro_invocation': [
     { name: 'macro', required: true, multiple: false },

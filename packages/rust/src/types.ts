@@ -216,6 +216,9 @@ export const enum SyntaxKind {
   ArrayExpressionList = 'array_expression_list',
   _FieldPatternShorthand = '_field_pattern_shorthand',
   _FieldPatternNamed = '_field_pattern_named',
+  _MacroDefinitionParen = '_macro_definition_paren',
+  _MacroDefinitionBracket = '_macro_definition_bracket',
+  _MacroDefinitionBrace = '_macro_definition_brace',
   _ModItemInline = '_mod_item_inline',
   _StructItemBrace = '_struct_item_brace',
   _StructItemTuple = '_struct_item_tuple',
@@ -229,6 +232,9 @@ export const enum SyntaxKind {
   _RangeExpressionBare = '_range_expression_bare',
   _RangePatternLeft = '_range_pattern_left',
   _RangePatternPrefix = '_range_pattern_prefix',
+  MacroDefinitionParen = 'macro_definition_paren',
+  MacroDefinitionBracket = 'macro_definition_bracket',
+  MacroDefinitionBrace = 'macro_definition_brace',
   ModItemInline = 'mod_item_inline',
   StructItemBrace = 'struct_item_brace',
   StructItemTuple = 'struct_item_tuple',
@@ -696,14 +702,31 @@ export interface ExpressionStatement {
   readonly $children: readonly [Expression | ExpressionEndingWithBlock];
 }
 
-export interface MacroDefinition {
+export interface MacroDefinitionUFormParen {
   readonly $type: 'macro_definition';
   readonly $fields: {
     readonly name: Identifier | ReservedIdentifier;
-    readonly rules: MacroRule;
   };
+  readonly $children: readonly [MacroDefinitionParen];
 }
 
+export interface MacroDefinitionUFormBracket {
+  readonly $type: 'macro_definition';
+  readonly $fields: {
+    readonly name: Identifier | ReservedIdentifier;
+  };
+  readonly $children: readonly [MacroDefinitionBracket];
+}
+
+export interface MacroDefinitionUFormBrace {
+  readonly $type: 'macro_definition';
+  readonly $fields: {
+    readonly name: Identifier | ReservedIdentifier;
+  };
+  readonly $children: readonly [MacroDefinitionBrace];
+}
+
+export type MacroDefinition = MacroDefinitionUFormParen | MacroDefinitionUFormBracket | MacroDefinitionUFormBrace;
 export interface MacroRule {
   readonly $type: 'macro_rule';
   readonly $fields: {
@@ -1917,6 +1940,21 @@ export interface _FieldPatternNamed {
   readonly $type: '_field_pattern_named';
 }
 
+export interface _MacroDefinitionParen {
+  readonly $type: '_macro_definition_paren';
+  readonly $children: readonly (MacroRule)[];
+}
+
+export interface _MacroDefinitionBracket {
+  readonly $type: '_macro_definition_bracket';
+  readonly $children: readonly (MacroRule)[];
+}
+
+export interface _MacroDefinitionBrace {
+  readonly $type: '_macro_definition_brace';
+  readonly $children: readonly (MacroRule)[];
+}
+
 export interface _ModItemInline {
   readonly $type: '_mod_item_inline';
   readonly $fields: {
@@ -1978,6 +2016,21 @@ export interface _RangePatternLeft {
 
 export interface _RangePatternPrefix {
   readonly $type: '_range_pattern_prefix';
+}
+
+export interface MacroDefinitionParen {
+  readonly $type: 'macro_definition_paren';
+  readonly $children: readonly (MacroRule)[];
+}
+
+export interface MacroDefinitionBracket {
+  readonly $type: 'macro_definition_bracket';
+  readonly $children: readonly (MacroRule)[];
+}
+
+export interface MacroDefinitionBrace {
+  readonly $type: 'macro_definition_brace';
+  readonly $children: readonly (MacroRule)[];
 }
 
 export interface ModItemInline {
@@ -2138,6 +2191,9 @@ export type ShorthandFieldIdentifier = Terminal<"shorthand_field_identifier", st
 export type DocComment = Terminal<"doc_comment", string>;
 
 // Polymorph form Config/Tree aliases (forms have no namespace sugar)
+export type MacroDefinitionUFormParenConfig = ConfigOf<MacroDefinitionUFormParen>;
+export type MacroDefinitionUFormBracketConfig = ConfigOf<MacroDefinitionUFormBracket>;
+export type MacroDefinitionUFormBraceConfig = ConfigOf<MacroDefinitionUFormBrace>;
 export type ModItemUFormExternalConfig = ConfigOf<ModItemUFormExternal>;
 export type ModItemUFormInlineConfig = ConfigOf<ModItemUFormInline>;
 export type StructItemUFormBraceConfig = ConfigOf<StructItemUFormBrace>;
@@ -2164,6 +2220,9 @@ export type OrPatternUFormPrefixConfig = ConfigOf<OrPatternUFormPrefix>;
 export interface SourceFileTree extends TreeNode<'source_file'> {}
 export interface ExpressionStatementTree extends TreeNode<'expression_statement'> {}
 export interface MacroDefinitionTree extends TreeNode<'macro_definition'> {}
+export interface MacroDefinitionUFormParenTree extends TreeNode<'macro_definition'> {}
+export interface MacroDefinitionUFormBracketTree extends TreeNode<'macro_definition'> {}
+export interface MacroDefinitionUFormBraceTree extends TreeNode<'macro_definition'> {}
 export interface MacroRuleTree extends TreeNode<'macro_rule'> {}
 export interface TokenTreePatternTree extends TreeNode<'token_tree_pattern'> {}
 export interface TokenBindingPatternTree extends TreeNode<'token_binding_pattern'> {}
@@ -2331,6 +2390,9 @@ export interface ArrayExpressionSemiTree extends TreeNode<'array_expression_semi
 export interface ArrayExpressionListTree extends TreeNode<'array_expression_list'> {}
 export interface _FieldPatternShorthandTree extends AnyTreeNode { readonly type: "_field_pattern_shorthand"; }
 export interface _FieldPatternNamedTree extends AnyTreeNode { readonly type: "_field_pattern_named"; }
+export interface _MacroDefinitionParenTree extends AnyTreeNode { readonly type: "_macro_definition_paren"; }
+export interface _MacroDefinitionBracketTree extends AnyTreeNode { readonly type: "_macro_definition_bracket"; }
+export interface _MacroDefinitionBraceTree extends AnyTreeNode { readonly type: "_macro_definition_brace"; }
 export interface _ModItemInlineTree extends AnyTreeNode { readonly type: "_mod_item_inline"; }
 export interface _StructItemBraceTree extends AnyTreeNode { readonly type: "_struct_item_brace"; }
 export interface _StructItemTupleTree extends AnyTreeNode { readonly type: "_struct_item_tuple"; }
@@ -2344,6 +2406,9 @@ export interface _RangeExpressionPrefixTree extends AnyTreeNode { readonly type:
 export interface _RangeExpressionBareTree extends AnyTreeNode { readonly type: "_range_expression_bare"; }
 export interface _RangePatternLeftTree extends AnyTreeNode { readonly type: "_range_pattern_left"; }
 export interface _RangePatternPrefixTree extends AnyTreeNode { readonly type: "_range_pattern_prefix"; }
+export interface MacroDefinitionParenTree extends AnyTreeNode { readonly type: "macro_definition_paren"; }
+export interface MacroDefinitionBracketTree extends AnyTreeNode { readonly type: "macro_definition_bracket"; }
+export interface MacroDefinitionBraceTree extends AnyTreeNode { readonly type: "macro_definition_brace"; }
 export interface ModItemInlineTree extends TreeNode<'mod_item_inline'> {}
 export interface StructItemBraceTree extends TreeNode<'struct_item_brace'> {}
 export interface StructItemTupleTree extends TreeNode<'struct_item_tuple'> {}
@@ -2988,6 +3053,9 @@ export type RustNode =
   | ArrayExpressionList
   | _FieldPatternShorthand
   | _FieldPatternNamed
+  | _MacroDefinitionParen
+  | _MacroDefinitionBracket
+  | _MacroDefinitionBrace
   | _ModItemInline
   | _StructItemBrace
   | _StructItemTuple
@@ -3001,6 +3069,9 @@ export type RustNode =
   | _RangeExpressionBare
   | _RangePatternLeft
   | _RangePatternPrefix
+  | MacroDefinitionParen
+  | MacroDefinitionBracket
+  | MacroDefinitionBrace
   | ModItemInline
   | StructItemBrace
   | StructItemTuple
@@ -3169,6 +3240,9 @@ export interface KindMap {
   'array_expression_list': ArrayExpressionList;
   '_field_pattern_shorthand': _FieldPatternShorthand;
   '_field_pattern_named': _FieldPatternNamed;
+  '_macro_definition_paren': _MacroDefinitionParen;
+  '_macro_definition_bracket': _MacroDefinitionBracket;
+  '_macro_definition_brace': _MacroDefinitionBrace;
   '_mod_item_inline': _ModItemInline;
   '_struct_item_brace': _StructItemBrace;
   '_struct_item_tuple': _StructItemTuple;
@@ -3182,6 +3256,9 @@ export interface KindMap {
   '_range_expression_bare': _RangeExpressionBare;
   '_range_pattern_left': _RangePatternLeft;
   '_range_pattern_prefix': _RangePatternPrefix;
+  'macro_definition_paren': MacroDefinitionParen;
+  'macro_definition_bracket': MacroDefinitionBracket;
+  'macro_definition_brace': MacroDefinitionBrace;
   'mod_item_inline': ModItemInline;
   'struct_item_brace': StructItemBrace;
   'struct_item_tuple': StructItemTuple;
@@ -3233,6 +3310,7 @@ export interface KindMap {
 }
 
 export interface VariantMap {
+  'macro_definition': { paren: MacroDefinitionUFormParen; bracket: MacroDefinitionUFormBracket; brace: MacroDefinitionUFormBrace };
   'mod_item': { external: ModItemUFormExternal; inline: ModItemUFormInline };
   'struct_item': { brace: StructItemUFormBrace; tuple: StructItemUFormTuple; unit: StructItemUFormUnit };
   'visibility_modifier': { form0: VisibilityModifierForm0; form1: VisibilityModifierForm1 };
@@ -3394,6 +3472,9 @@ export interface ArrayExpressionSemiNs extends NodeNs<ArrayExpressionSemi, LeafS
 export interface ArrayExpressionListNs extends NodeNs<ArrayExpressionList, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface _FieldPatternShorthandNs extends NodeNs<_FieldPatternShorthand, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface _FieldPatternNamedNs extends NodeNs<_FieldPatternNamed, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface _MacroDefinitionParenNs extends NodeNs<_MacroDefinitionParen, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface _MacroDefinitionBracketNs extends NodeNs<_MacroDefinitionBracket, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface _MacroDefinitionBraceNs extends NodeNs<_MacroDefinitionBrace, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface _ModItemInlineNs extends NodeNs<_ModItemInline, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface _StructItemBraceNs extends NodeNs<_StructItemBrace, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface _StructItemTupleNs extends NodeNs<_StructItemTuple, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -3407,6 +3488,9 @@ export interface _RangeExpressionPrefixNs extends NodeNs<_RangeExpressionPrefix,
 export interface _RangeExpressionBareNs extends NodeNs<_RangeExpressionBare, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface _RangePatternLeftNs extends NodeNs<_RangePatternLeft, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface _RangePatternPrefixNs extends NodeNs<_RangePatternPrefix, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface MacroDefinitionParenNs extends NodeNs<MacroDefinitionParen, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface MacroDefinitionBracketNs extends NodeNs<MacroDefinitionBracket, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface MacroDefinitionBraceNs extends NodeNs<MacroDefinitionBrace, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ModItemInlineNs extends NodeNs<ModItemInline, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface StructItemBraceNs extends NodeNs<StructItemBrace, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface StructItemTupleNs extends NodeNs<StructItemTuple, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -3574,6 +3658,9 @@ export interface NamespaceMap {
   'array_expression_list': ArrayExpressionListNs;
   '_field_pattern_shorthand': _FieldPatternShorthandNs;
   '_field_pattern_named': _FieldPatternNamedNs;
+  '_macro_definition_paren': _MacroDefinitionParenNs;
+  '_macro_definition_bracket': _MacroDefinitionBracketNs;
+  '_macro_definition_brace': _MacroDefinitionBraceNs;
   '_mod_item_inline': _ModItemInlineNs;
   '_struct_item_brace': _StructItemBraceNs;
   '_struct_item_tuple': _StructItemTupleNs;
@@ -3587,6 +3674,9 @@ export interface NamespaceMap {
   '_range_expression_bare': _RangeExpressionBareNs;
   '_range_pattern_left': _RangePatternLeftNs;
   '_range_pattern_prefix': _RangePatternPrefixNs;
+  'macro_definition_paren': MacroDefinitionParenNs;
+  'macro_definition_bracket': MacroDefinitionBracketNs;
+  'macro_definition_brace': MacroDefinitionBraceNs;
   'mod_item_inline': ModItemInlineNs;
   'struct_item_brace': StructItemBraceNs;
   'struct_item_tuple': StructItemTupleNs;
@@ -4655,6 +4745,27 @@ export namespace _FieldPatternNamed {
   export type Tree = TreeFor<'_field_pattern_named'>;
   export type Kind = '_field_pattern_named';
 }
+export namespace _MacroDefinitionParen {
+  export type Config = ConfigFor<'_macro_definition_paren'>;
+  export type Fluent = FluentFor<'_macro_definition_paren'>;
+  export type Loose = LooseFor<'_macro_definition_paren'>;
+  export type Tree = TreeFor<'_macro_definition_paren'>;
+  export type Kind = '_macro_definition_paren';
+}
+export namespace _MacroDefinitionBracket {
+  export type Config = ConfigFor<'_macro_definition_bracket'>;
+  export type Fluent = FluentFor<'_macro_definition_bracket'>;
+  export type Loose = LooseFor<'_macro_definition_bracket'>;
+  export type Tree = TreeFor<'_macro_definition_bracket'>;
+  export type Kind = '_macro_definition_bracket';
+}
+export namespace _MacroDefinitionBrace {
+  export type Config = ConfigFor<'_macro_definition_brace'>;
+  export type Fluent = FluentFor<'_macro_definition_brace'>;
+  export type Loose = LooseFor<'_macro_definition_brace'>;
+  export type Tree = TreeFor<'_macro_definition_brace'>;
+  export type Kind = '_macro_definition_brace';
+}
 export namespace _ModItemInline {
   export type Config = ConfigFor<'_mod_item_inline'>;
   export type Fluent = FluentFor<'_mod_item_inline'>;
@@ -4745,6 +4856,27 @@ export namespace _RangePatternPrefix {
   export type Loose = LooseFor<'_range_pattern_prefix'>;
   export type Tree = TreeFor<'_range_pattern_prefix'>;
   export type Kind = '_range_pattern_prefix';
+}
+export namespace MacroDefinitionParen {
+  export type Config = ConfigFor<'macro_definition_paren'>;
+  export type Fluent = FluentFor<'macro_definition_paren'>;
+  export type Loose = LooseFor<'macro_definition_paren'>;
+  export type Tree = TreeFor<'macro_definition_paren'>;
+  export type Kind = 'macro_definition_paren';
+}
+export namespace MacroDefinitionBracket {
+  export type Config = ConfigFor<'macro_definition_bracket'>;
+  export type Fluent = FluentFor<'macro_definition_bracket'>;
+  export type Loose = LooseFor<'macro_definition_bracket'>;
+  export type Tree = TreeFor<'macro_definition_bracket'>;
+  export type Kind = 'macro_definition_bracket';
+}
+export namespace MacroDefinitionBrace {
+  export type Config = ConfigFor<'macro_definition_brace'>;
+  export type Fluent = FluentFor<'macro_definition_brace'>;
+  export type Loose = LooseFor<'macro_definition_brace'>;
+  export type Tree = TreeFor<'macro_definition_brace'>;
+  export type Kind = 'macro_definition_brace';
 }
 export namespace ModItemInline {
   export type Config = ConfigFor<'mod_item_inline'>;

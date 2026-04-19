@@ -173,9 +173,15 @@ export interface IsGuards {
     arrayExpressionSemi<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'array_expression_semi' };
     arrayExpressionList<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'array_expression_list' };
     FieldPatternShorthand<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_field_pattern_shorthand' };
+    MacroDefinitionParen<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_macro_definition_paren' };
+    MacroDefinitionBracket<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_macro_definition_bracket' };
+    MacroDefinitionBrace<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_macro_definition_brace' };
     ModItemInline<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_mod_item_inline' };
     ClosureExpressionExpr<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_closure_expression_expr' };
     RangeExpressionBare<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_range_expression_bare' };
+    macroDefinitionParen<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'macro_definition_paren' };
+    macroDefinitionBracket<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'macro_definition_bracket' };
+    macroDefinitionBrace<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'macro_definition_brace' };
     modItemInline<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'mod_item_inline' };
     structItemBrace<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'struct_item_brace' };
     structItemTuple<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'struct_item_tuple' };
@@ -361,9 +367,15 @@ export interface AssertGuards {
     arrayExpressionSemi(v: { readonly $type: string }): asserts v is { readonly $type: 'array_expression_semi' };
     arrayExpressionList(v: { readonly $type: string }): asserts v is { readonly $type: 'array_expression_list' };
     FieldPatternShorthand(v: { readonly $type: string }): asserts v is { readonly $type: '_field_pattern_shorthand' };
+    MacroDefinitionParen(v: { readonly $type: string }): asserts v is { readonly $type: '_macro_definition_paren' };
+    MacroDefinitionBracket(v: { readonly $type: string }): asserts v is { readonly $type: '_macro_definition_bracket' };
+    MacroDefinitionBrace(v: { readonly $type: string }): asserts v is { readonly $type: '_macro_definition_brace' };
     ModItemInline(v: { readonly $type: string }): asserts v is { readonly $type: '_mod_item_inline' };
     ClosureExpressionExpr(v: { readonly $type: string }): asserts v is { readonly $type: '_closure_expression_expr' };
     RangeExpressionBare(v: { readonly $type: string }): asserts v is { readonly $type: '_range_expression_bare' };
+    macroDefinitionParen(v: { readonly $type: string }): asserts v is { readonly $type: 'macro_definition_paren' };
+    macroDefinitionBracket(v: { readonly $type: string }): asserts v is { readonly $type: 'macro_definition_bracket' };
+    macroDefinitionBrace(v: { readonly $type: string }): asserts v is { readonly $type: 'macro_definition_brace' };
     modItemInline(v: { readonly $type: string }): asserts v is { readonly $type: 'mod_item_inline' };
     structItemBrace(v: { readonly $type: string }): asserts v is { readonly $type: 'struct_item_brace' };
     structItemTuple(v: { readonly $type: string }): asserts v is { readonly $type: 'struct_item_tuple' };
@@ -574,9 +586,15 @@ export const is = {
     arrayExpressionSemi: _g("array_expression_semi"),
     arrayExpressionList: _g("array_expression_list"),
     FieldPatternShorthand: _g("_field_pattern_shorthand"),
+    MacroDefinitionParen: _g("_macro_definition_paren"),
+    MacroDefinitionBracket: _g("_macro_definition_bracket"),
+    MacroDefinitionBrace: _g("_macro_definition_brace"),
     ModItemInline: _g("_mod_item_inline"),
     ClosureExpressionExpr: _g("_closure_expression_expr"),
     RangeExpressionBare: _g("_range_expression_bare"),
+    macroDefinitionParen: _g("macro_definition_paren"),
+    macroDefinitionBracket: _g("macro_definition_bracket"),
+    macroDefinitionBrace: _g("macro_definition_brace"),
     modItemInline: _g("mod_item_inline"),
     structItemBrace: _g("struct_item_brace"),
     structItemTuple: _g("struct_item_tuple"),
@@ -783,9 +801,15 @@ export const assert = {
     arrayExpressionSemi: _makeAssert('arrayExpressionSemi', is.arrayExpressionSemi as _AnyGuard),
     arrayExpressionList: _makeAssert('arrayExpressionList', is.arrayExpressionList as _AnyGuard),
     FieldPatternShorthand: _makeAssert('FieldPatternShorthand', is.FieldPatternShorthand as _AnyGuard),
+    MacroDefinitionParen: _makeAssert('MacroDefinitionParen', is.MacroDefinitionParen as _AnyGuard),
+    MacroDefinitionBracket: _makeAssert('MacroDefinitionBracket', is.MacroDefinitionBracket as _AnyGuard),
+    MacroDefinitionBrace: _makeAssert('MacroDefinitionBrace', is.MacroDefinitionBrace as _AnyGuard),
     ModItemInline: _makeAssert('ModItemInline', is.ModItemInline as _AnyGuard),
     ClosureExpressionExpr: _makeAssert('ClosureExpressionExpr', is.ClosureExpressionExpr as _AnyGuard),
     RangeExpressionBare: _makeAssert('RangeExpressionBare', is.RangeExpressionBare as _AnyGuard),
+    macroDefinitionParen: _makeAssert('macroDefinitionParen', is.macroDefinitionParen as _AnyGuard),
+    macroDefinitionBracket: _makeAssert('macroDefinitionBracket', is.macroDefinitionBracket as _AnyGuard),
+    macroDefinitionBrace: _makeAssert('macroDefinitionBrace', is.macroDefinitionBrace as _AnyGuard),
     modItemInline: _makeAssert('modItemInline', is.modItemInline as _AnyGuard),
     structItemBrace: _makeAssert('structItemBrace', is.structItemBrace as _AnyGuard),
     structItemTuple: _makeAssert('structItemTuple', is.structItemTuple as _AnyGuard),

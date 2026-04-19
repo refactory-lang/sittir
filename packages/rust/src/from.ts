@@ -183,6 +183,9 @@ export const _fromMap = {
   "string_content": stringContentFrom,
   "raw_string_literal_content": rawStringLiteralContentFrom,
   "float_literal": floatLiteralFrom,
+  "macro_definition_paren": macroDefinitionParenFrom,
+  "macro_definition_bracket": macroDefinitionBracketFrom,
+  "macro_definition_brace": macroDefinitionBraceFrom,
   "primitive_type": primitiveTypeFrom,
   "mod_item_inline": modItemInlineFrom,
   "struct_item_brace": structItemBraceFrom,
@@ -430,11 +433,26 @@ export function expressionStatementFrom(input?: NonNullable<T.ExpressionStatemen
   return F.expressionStatement(input as NonNullable<T.ExpressionStatement.Config['children']>[number]);
 }
 
-export function macroDefinitionFrom(input: T.MacroDefinition | T.MacroDefinition.Loose): ReturnType<typeof F.macroDefinition> {
-  if (isNodeData(input)) return input as ReturnType<typeof F.macroDefinition>;
-  return F.macroDefinition({
-    name: _resolveOne<NonNullable<T.MacroDefinition.Config['name']>>((input as T.MacroDefinition.Loose).name, _K2, _K3),
-    rules: _resolveOneBranch<NonNullable<T.MacroDefinition.Config['rules']>>((input as T.MacroDefinition.Loose).rules, "macro_rule"),
+export function macroDefinitionFrom(input?: T.MacroDefinition | T.MacroDefinition.Loose): ReturnType<typeof F.macroDefinition> {
+  if (input !== undefined && isNodeData(input)) return input as ReturnType<typeof F.macroDefinition>;
+  return F.macroDefinition(input as T.MacroDefinitionUFormParenConfig | T.MacroDefinitionUFormBracketConfig | T.MacroDefinitionUFormBraceConfig);
+}
+
+export function macroDefinitionUFormParenFrom(input: T.MacroDefinitionUFormParenConfig) {
+  return F.macroDefinitionUFormParen({
+    name: _resolveOne<NonNullable<T.MacroDefinitionUFormParenConfig['name']>>(input.name, _K2, _K3),
+  });
+}
+
+export function macroDefinitionUFormBracketFrom(input: T.MacroDefinitionUFormBracketConfig) {
+  return F.macroDefinitionUFormBracket({
+    name: _resolveOne<NonNullable<T.MacroDefinitionUFormBracketConfig['name']>>(input.name, _K2, _K3),
+  });
+}
+
+export function macroDefinitionUFormBraceFrom(input: T.MacroDefinitionUFormBraceConfig) {
+  return F.macroDefinitionUFormBrace({
+    name: _resolveOne<NonNullable<T.MacroDefinitionUFormBraceConfig['name']>>(input.name, _K2, _K3),
   });
 }
 
@@ -1800,6 +1818,30 @@ export function rawStringLiteralContentFrom(input: string | T.RawStringLiteralCo
 export function floatLiteralFrom(input: string | T.FloatLiteral) {
   if (isNodeData(input)) return input;
   return F.floatLiteral(input as string);
+}
+
+export function macroDefinitionParenFrom(...input: readonly (NonNullable<T.MacroDefinitionParen.Config['children']>[number] | T.MacroDefinitionParen)[]) {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'macro_definition_paren') {
+    const data = input[0] as T.MacroDefinitionParen;
+    return F.macroDefinitionParen(...((data.$children ?? []) as NonNullable<T.MacroDefinitionParen.Config['children']>));
+  }
+  return F.macroDefinitionParen(...(input as NonNullable<T.MacroDefinitionParen.Config['children']>));
+}
+
+export function macroDefinitionBracketFrom(...input: readonly (NonNullable<T.MacroDefinitionBracket.Config['children']>[number] | T.MacroDefinitionBracket)[]) {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'macro_definition_bracket') {
+    const data = input[0] as T.MacroDefinitionBracket;
+    return F.macroDefinitionBracket(...((data.$children ?? []) as NonNullable<T.MacroDefinitionBracket.Config['children']>));
+  }
+  return F.macroDefinitionBracket(...(input as NonNullable<T.MacroDefinitionBracket.Config['children']>));
+}
+
+export function macroDefinitionBraceFrom(...input: readonly (NonNullable<T.MacroDefinitionBrace.Config['children']>[number] | T.MacroDefinitionBrace)[]) {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'macro_definition_brace') {
+    const data = input[0] as T.MacroDefinitionBrace;
+    return F.macroDefinitionBrace(...((data.$children ?? []) as NonNullable<T.MacroDefinitionBrace.Config['children']>));
+  }
+  return F.macroDefinitionBrace(...(input as NonNullable<T.MacroDefinitionBrace.Config['children']>));
 }
 
 export function primitiveTypeFrom(input: string | T.PrimitiveType) {

@@ -378,7 +378,7 @@ export const ir = {
   // Node factories
   sourceFile: _attach(F.sourceFile, { from: FR.sourceFileFrom }),
   expressionStatement: _attach(F.expressionStatement, { from: FR.expressionStatementFrom }),
-  macro: _attach(F.macroDefinition, { from: FR.macroDefinitionFrom }),
+  macro: _attach(F.macroDefinition, { from: FR.macroDefinitionFrom, "paren": _attach(F.macroDefinitionUFormParen, { from: FR.macroDefinitionUFormParenFrom }), "bracket": _attach(F.macroDefinitionUFormBracket, { from: FR.macroDefinitionUFormBracketFrom }), "brace": _attach(F.macroDefinitionUFormBrace, { from: FR.macroDefinitionUFormBraceFrom }) }),
   macroRule: _attach(F.macroRule, { from: FR.macroRuleFrom }),
   tokenTreePattern: _attach(F.tokenTreePattern, { from: FR.tokenTreePatternFrom }),
   tokenBindingPattern: _attach(F.tokenBindingPattern, { from: FR.tokenBindingPatternFrom }),
@@ -518,6 +518,9 @@ export const ir = {
   blockComment: _attach(F.blockComment, { from: FR.blockCommentFrom }),
   arrayExpressionSemi: _attach(F.arrayExpressionSemi, { from: FR.arrayExpressionSemiFrom }),
   arrayExpressionList: _attach(F.arrayExpressionList, { from: FR.arrayExpressionListFrom }),
+  macroDefinitionParen: _attach(F.macroDefinitionParen, { from: FR.macroDefinitionParenFrom }),
+  macroDefinitionBracket: _attach(F.macroDefinitionBracket, { from: FR.macroDefinitionBracketFrom }),
+  macroDefinitionBrace: _attach(F.macroDefinitionBrace, { from: FR.macroDefinitionBraceFrom }),
   modItemInline: _attach(F.modItemInline, { from: FR.modItemInlineFrom }),
   structItemBrace: _attach(F.structItemBrace, { from: FR.structItemBraceFrom }),
   structItemTuple: _attach(F.structItemTuple, { from: FR.structItemTupleFrom }),

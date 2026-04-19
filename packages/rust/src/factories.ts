@@ -125,24 +125,82 @@ export function expressionStatement(child?: (T.Expression | T.ExpressionEndingWi
   };
 }
 
-export function macroDefinition(config: T.MacroDefinition.Config) {
+export function macroDefinition(config: T.MacroDefinitionUFormParenConfig | T.MacroDefinitionUFormBracketConfig | T.MacroDefinitionUFormBraceConfig) {
+  if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === 'macro_definition_paren') return macroDefinitionUFormParen(config as T.MacroDefinitionUFormParenConfig);
+  if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === 'macro_definition_bracket') return macroDefinitionUFormBracket(config as T.MacroDefinitionUFormBracketConfig);
+  if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === 'macro_definition_brace') return macroDefinitionUFormBrace(config as T.MacroDefinitionUFormBraceConfig);
+  if (config && (config as any).variant === 'paren') return macroDefinitionUFormParen(config as T.MacroDefinitionUFormParenConfig);
+  if (config && (config as any).variant === 'bracket') return macroDefinitionUFormBracket(config as T.MacroDefinitionUFormBracketConfig);
+  if (config && (config as any).variant === 'brace') return macroDefinitionUFormBrace(config as T.MacroDefinitionUFormBraceConfig);
+  return macroDefinitionUFormParen(config as T.MacroDefinitionUFormParenConfig);
+}
+export function macroDefinitionUFormParen(config: T.MacroDefinitionUFormParenConfig) {
   const fields = {
     name: config?.name,
-    rules: config?.rules,
   };
+  const children = config?.children ?? [];
   return {
     $type: 'macro_definition' as const,
     $source: 'factory' as const,
     $named: true as const,
+    $variant: '_form_paren' as const,
     $fields: fields,
-    name(value?: T.Identifier | T.ReservedIdentifier) { return _fs(config, macroDefinition, 'name', value, fields.name); },
-    rules(value?: T.MacroRule) { return _fs(config, macroDefinition, 'rules', value, fields.rules); },
+    $children: children,
+    name(value?: T.Identifier | T.ReservedIdentifier) { return _fs(config, macroDefinitionUFormParen, 'name', value, fields.name); },
+    getChild() { return children[0]; },
+    setChild(child: T.MacroDefinitionParen) { return macroDefinitionUFormParen({ ...config, children: [child] }); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(target: T.MacroDefinitionTree) { const r = target.range(); return toEdit(this, r); },
+    replace(target: T.MacroDefinitionUFormParenTree) { const r = target.range(); return toEdit(this, r); },
+  };
+}
+export function macroDefinitionUFormBracket(config: T.MacroDefinitionUFormBracketConfig) {
+  const fields = {
+    name: config?.name,
+  };
+  const children = config?.children ?? [];
+  return {
+    $type: 'macro_definition' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $variant: '_form_bracket' as const,
+    $fields: fields,
+    $children: children,
+    name(value?: T.Identifier | T.ReservedIdentifier) { return _fs(config, macroDefinitionUFormBracket, 'name', value, fields.name); },
+    getChild() { return children[0]; },
+    setChild(child: T.MacroDefinitionBracket) { return macroDefinitionUFormBracket({ ...config, children: [child] }); },
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.MacroDefinitionUFormBracketTree) { const r = target.range(); return toEdit(this, r); },
+  };
+}
+export function macroDefinitionUFormBrace(config: T.MacroDefinitionUFormBraceConfig) {
+  const fields = {
+    name: config?.name,
+  };
+  const children = config?.children ?? [];
+  return {
+    $type: 'macro_definition' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $variant: '_form_brace' as const,
+    $fields: fields,
+    $children: children,
+    name(value?: T.Identifier | T.ReservedIdentifier) { return _fs(config, macroDefinitionUFormBrace, 'name', value, fields.name); },
+    getChild() { return children[0]; },
+    setChild(child: T.MacroDefinitionBrace) { return macroDefinitionUFormBrace({ ...config, children: [child] }); },
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.MacroDefinitionUFormBraceTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -3623,6 +3681,51 @@ export function floatLiteral(text: string) {
   };
 }
 
+export function macroDefinitionParen(...children: T.MacroRule[]) {
+  return {
+    $type: 'macro_definition_paren' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.MacroDefinitionParenTree) { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function macroDefinitionBracket(...children: T.MacroRule[]) {
+  return {
+    $type: 'macro_definition_bracket' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.MacroDefinitionBracketTree) { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function macroDefinitionBrace(...children: T.MacroRule[]) {
+  return {
+    $type: 'macro_definition_brace' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.MacroDefinitionBraceTree) { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
 export function primitiveType(text: 'u8' | 'i8' | 'u16' | 'i16' | 'u32' | 'i32' | 'u64' | 'i64' | 'u128' | 'i128' | 'isize' | 'usize' | 'f32' | 'f64' | 'bool' | 'str' | 'char') {
   return {
     $type: 'primitive_type' as const,
@@ -4185,6 +4288,9 @@ export type FluentKindMap = {
   "string_content": T.StringContent;
   "raw_string_literal_content": T.RawStringLiteralContent;
   "float_literal": T.FloatLiteral;
+  "macro_definition_paren": FluentNode<"macro_definition_paren", T.MacroDefinitionParen.Config>;
+  "macro_definition_bracket": FluentNode<"macro_definition_bracket", T.MacroDefinitionBracket.Config>;
+  "macro_definition_brace": FluentNode<"macro_definition_brace", T.MacroDefinitionBrace.Config>;
   "primitive_type": T.PrimitiveType;
   "mod_item_inline": FluentNode<"mod_item_inline", T.ModItemInline.Config>;
   "struct_item_brace": FluentNode<"struct_item_brace", T.StructItemBrace.Config>;
@@ -4369,6 +4475,9 @@ export const _factoryMap = {
   "string_content": stringContent,
   "raw_string_literal_content": rawStringLiteralContent,
   "float_literal": floatLiteral,
+  "macro_definition_paren": macroDefinitionParen,
+  "macro_definition_bracket": macroDefinitionBracket,
+  "macro_definition_brace": macroDefinitionBrace,
   "primitive_type": primitiveType,
   "mod_item_inline": modItemInline,
   "struct_item_brace": structItemBrace,
@@ -4554,6 +4663,9 @@ export const _factoryShapes = {
   "string_content": "text",
   "raw_string_literal_content": "text",
   "float_literal": "text",
+  "macro_definition_paren": "children",
+  "macro_definition_bracket": "children",
+  "macro_definition_brace": "children",
   "primitive_type": "text",
   "mod_item_inline": "config",
   "struct_item_brace": "config",

@@ -8,9 +8,10 @@ rules:
       statements: "\n"
   expression_statement: $$$CHILDREN;
   macro_definition:
-    template: macro_rules!$NAME $$$CHILDREN$$$RULES
-    joinBy: ";"
-    joinByTrailing: true
+    variants:
+      paren: macro_rules!$NAME $$$CHILDREN
+      bracket: macro_rules!$NAME $$$CHILDREN
+      brace: macro_rules!$NAME $$$CHILDREN
   macro_rule: $LEFT=>$RIGHT
   token_tree_pattern: ($$$CHILDREN)
   token_binding_pattern: "$NAME:$TYPE"
@@ -301,6 +302,18 @@ rules:
     joinByTrailing: true
     joinByField:
       attributes: "\n"
+  macro_definition_paren:
+    template: ($$$CHILDREN);
+    joinBy: ";"
+    joinByTrailing: true
+  macro_definition_bracket:
+    template: "[$$$CHILDREN];"
+    joinBy: ";"
+    joinByTrailing: true
+  macro_definition_brace:
+    template: "{$$$CHILDREN}"
+    joinBy: ";"
+    joinByTrailing: true
   mod_item_inline: $BODY
   struct_item_brace: $$$CHILDREN $BODY
   struct_item_tuple: $BODY $$$CHILDREN;
