@@ -528,11 +528,13 @@ export function wrapTraitItem(data: _NodeData, tree: TreeHandle): WrappedNode<Tr
   return {
     ...data,
     get visibilityModifier() { return drillIn(data.$fields?.['visibility_modifier'], tree); },
+    get unsafe() { return drillIn(data.$fields?.['unsafe'], tree); },
     get name() { return drillIn(data.$fields?.['name'], tree); },
     get typeParameters() { return drillIn(data.$fields?.['type_parameters'], tree); },
     get bounds() { return drillIn(data.$fields?.['bounds'], tree); },
+    get whereClause() { return drillIn(data.$fields?.['where_clause'], tree); },
     get body() { return drillIn(data.$fields?.['body'], tree); },
-    get child() { return drillIn(data.$children?.[0], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<TraitItem>;
 }
 
@@ -1276,6 +1278,7 @@ export function wrapUnsafeBlock(data: _NodeData, tree: TreeHandle): WrappedNode<
 export function wrapAsyncBlock(data: _NodeData, tree: TreeHandle): WrappedNode<AsyncBlock> {
   return {
     ...data,
+    get move() { return drillIn(data.$fields?.['move'], tree); },
     get block() { return drillIn(data.$fields?.['block'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<AsyncBlock>;
@@ -1284,6 +1287,7 @@ export function wrapAsyncBlock(data: _NodeData, tree: TreeHandle): WrappedNode<A
 export function wrapGenBlock(data: _NodeData, tree: TreeHandle): WrappedNode<GenBlock> {
   return {
     ...data,
+    get move() { return drillIn(data.$fields?.['move'], tree); },
     get block() { return drillIn(data.$fields?.['block'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<GenBlock>;
@@ -1913,6 +1917,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_kw_unsafe': (d) => d,
   'array_expression_semi': (d, t) => wrapArrayExpressionSemi(d, t),
   'array_expression_list': (d, t) => wrapArrayExpressionList(d, t),
+  '_kw_move': (d) => d,
   '_field_pattern_shorthand': (d, t) => wrap_FieldPatternShorthand(d, t),
   '_function_type_trait_form': (d, t) => wrap_FunctionTypeTraitForm(d, t),
   '_function_type_fn_form': (d, t) => wrap_FunctionTypeFnForm(d, t),

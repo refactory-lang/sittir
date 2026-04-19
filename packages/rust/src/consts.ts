@@ -192,6 +192,7 @@ export const LEAF_KINDS = [
   '_kw_const',
   '_kw_default',
   '_kw_for',
+  '_kw_move',
   '_kw_unsafe',
   '_line_doc_content',
   '_outer_block_doc_comment_marker',
@@ -270,6 +271,7 @@ export const KEYWORDS = [
   '_kw_const',
   '_kw_default',
   '_kw_for',
+  '_kw_move',
   '_kw_operator',
   '_kw_unsafe',
   '_mod_item_external',
@@ -446,6 +448,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'whereClause', required: false, multiple: false },
   ],
   'async_block': [
+    { name: 'move', required: false, multiple: false },
     { name: 'block', required: true, multiple: false },
   ],
   'attribute': [
@@ -645,6 +648,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'trait', required: true, multiple: false },
   ],
   'gen_block': [
+    { name: 'move', required: false, multiple: false },
     { name: 'block', required: true, multiple: false },
   ],
   'generic_function': [
@@ -927,9 +931,11 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'trait_item': [
     { name: 'visibilityModifier', required: false, multiple: false },
+    { name: 'unsafe', required: false, multiple: false },
     { name: 'name', required: true, multiple: false },
     { name: 'typeParameters', required: false, multiple: false },
     { name: 'bounds', required: false, multiple: false },
+    { name: 'whereClause', required: false, multiple: false },
     { name: 'body', required: true, multiple: false },
   ],
   'try_block': [

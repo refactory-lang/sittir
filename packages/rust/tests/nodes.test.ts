@@ -390,12 +390,12 @@ describe('impl_item', () => {
 
 describe('trait_item', () => {
   it('factory produces correct type', () => {
-    const node = ir.trait({ name: { $type: '_type_identifier', $text: 'test' } as any, body: { $type: 'declaration_list', $text: 'test' } as any, children: [{ $type: 'where_clause', $text: 'test' } as any] as any });
+    const node = ir.trait({ name: { $type: '_type_identifier', $text: 'test' } as any, body: { $type: 'declaration_list', $text: 'test' } as any });
     expect(node.$type).toBe('trait_item');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.trait({ name: { $type: '_type_identifier', $text: 'test' } as any, body: { $type: 'declaration_list', $text: 'test' } as any, children: [{ $type: 'where_clause', $text: 'test' } as any] as any });
+    const node = ir.trait({ name: { $type: '_type_identifier', $text: 'test' } as any, body: { $type: 'declaration_list', $text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });

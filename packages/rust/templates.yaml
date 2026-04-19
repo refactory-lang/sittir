@@ -77,9 +77,7 @@ rules:
       body: $UNSAFE impl $TYPE_PARAMETERS $TRAIT_CLAUSE $TYPE $WHERE_CLAUSE $$$CHILDREN
       semi: $UNSAFE impl $TYPE_PARAMETERS $TRAIT_CLAUSE $TYPE $WHERE_CLAUSE $$$CHILDREN
     trait_clause: $TRAIT for
-  trait_item:
-    template: $VISIBILITY_MODIFIER $UNSAFE_CLAUSE trait $NAME $TYPE_PARAMETERS $BOUNDS $$$CHILDREN $BODY
-    unsafe_clause: $UNSAFE
+  trait_item: $VISIBILITY_MODIFIER $UNSAFE trait $NAME $TYPE_PARAMETERS $BOUNDS $WHERE_CLAUSE $BODY
   associated_type: type $NAME $TYPE_PARAMETERS $BOUNDS $WHERE_CLAUSE;
   trait_bounds:
     template: ":$$$CHILDREN"
@@ -244,12 +242,8 @@ rules:
   await_expression: $$$CHILDREN.await
   field_expression: $VALUE.$FIELD
   unsafe_block: unsafe $BLOCK
-  async_block:
-    template: async $MOVE_CLAUSE $BLOCK
-    move_clause: $MOVE
-  gen_block:
-    template: gen $MOVE_CLAUSE $BLOCK
-    move_clause: $MOVE
+  async_block: async $MOVE $BLOCK
+  gen_block: gen $MOVE $BLOCK
   try_block: try $BLOCK
   block:
     template: "$LABEL_CLAUSE{$$$CHILDREN}"

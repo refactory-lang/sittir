@@ -792,11 +792,12 @@ export function traitItemFrom(input: T.TraitItem | T.TraitItem.Loose): ReturnTyp
   if (isNodeData(input)) return input as ReturnType<typeof F.traitItem>;
   return F.traitItem({
     visibilityModifier: _resolveOneBranch<NonNullable<T.TraitItem.Config['visibilityModifier']>>((input as T.TraitItem.Loose).visibilityModifier, "visibility_modifier"),
+    unsafe: _resolveOneLeaf<NonNullable<T.TraitItem.Config['unsafe']>>((input as T.TraitItem.Loose).unsafe, "_kw_unsafe"),
     name: _resolveOneBranch<NonNullable<T.TraitItem.Config['name']>>((input as T.TraitItem.Loose).name, "_type_identifier"),
     typeParameters: _resolveOneBranch<NonNullable<T.TraitItem.Config['typeParameters']>>((input as T.TraitItem.Loose).typeParameters, "type_parameters"),
     bounds: _resolveOneBranch<NonNullable<T.TraitItem.Config['bounds']>>((input as T.TraitItem.Loose).bounds, "trait_bounds"),
+    whereClause: _resolveOneBranch<NonNullable<T.TraitItem.Config['whereClause']>>((input as T.TraitItem.Loose).whereClause, "where_clause"),
     body: _resolveOneBranch<NonNullable<T.TraitItem.Config['body']>>((input as T.TraitItem.Loose).body, "declaration_list"),
-    children: _resolveOneBranch<NonNullable<T.TraitItem.Config['children']>>((input as T.TraitItem.Loose).children, "where_clause"),
   });
 }
 
@@ -1561,6 +1562,7 @@ export function unsafeBlockFrom(input: T.UnsafeBlock | T.UnsafeBlock.Loose): Ret
 export function asyncBlockFrom(input: T.AsyncBlock | T.AsyncBlock.Loose): ReturnType<typeof F.asyncBlock> {
   if (isNodeData(input)) return input as ReturnType<typeof F.asyncBlock>;
   return F.asyncBlock({
+    move: _resolveOneLeaf<NonNullable<T.AsyncBlock.Config['move']>>((input as T.AsyncBlock.Loose).move, "_kw_move"),
     block: _resolveOneBranch<NonNullable<T.AsyncBlock.Config['block']>>((input as T.AsyncBlock.Loose).block, "block"),
   });
 }
@@ -1568,6 +1570,7 @@ export function asyncBlockFrom(input: T.AsyncBlock | T.AsyncBlock.Loose): Return
 export function genBlockFrom(input: T.GenBlock | T.GenBlock.Loose): ReturnType<typeof F.genBlock> {
   if (isNodeData(input)) return input as ReturnType<typeof F.genBlock>;
   return F.genBlock({
+    move: _resolveOneLeaf<NonNullable<T.GenBlock.Config['move']>>((input as T.GenBlock.Loose).move, "_kw_move"),
     block: _resolveOneBranch<NonNullable<T.GenBlock.Config['block']>>((input as T.GenBlock.Loose).block, "block"),
   });
 }

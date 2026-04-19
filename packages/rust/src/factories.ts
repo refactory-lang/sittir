@@ -1039,25 +1039,25 @@ export function implItemUFormSemi(config: T.ImplItemUFormSemiConfig) {
 export function traitItem(config: T.TraitItem.Config) {
   const fields = {
     visibility_modifier: config?.visibilityModifier,
+    unsafe: config?.unsafe,
     name: config?.name,
     type_parameters: config?.typeParameters,
     bounds: config?.bounds,
+    where_clause: config?.whereClause,
     body: config?.body,
   };
-  const children = config?.children ?? [];
   return {
     $type: 'trait_item' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    $children: children,
     visibilityModifier(value?: T.VisibilityModifier | undefined) { return _fs(config, traitItem, 'visibilityModifier', value, fields.visibility_modifier); },
+    unsafe(value?: T.KwUnsafe | undefined) { return _fs(config, traitItem, 'unsafe', value, fields.unsafe); },
     name(value?: T._TypeIdentifier) { return _fs(config, traitItem, 'name', value, fields.name); },
     typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, traitItem, 'typeParameters', value, fields.type_parameters); },
     bounds(value?: T.TraitBounds | undefined) { return _fs(config, traitItem, 'bounds', value, fields.bounds); },
+    whereClause(value?: T.WhereClause | undefined) { return _fs(config, traitItem, 'whereClause', value, fields.where_clause); },
     body(value?: T.DeclarationList) { return _fs(config, traitItem, 'body', value, fields.body); },
-    getChild() { return children[0]; },
-    setChild(child: T.WhereClause) { return traitItem({ ...config, children: [child] }); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2992,6 +2992,7 @@ export function unsafeBlock(config: T.UnsafeBlock.Config) {
 
 export function asyncBlock(config: T.AsyncBlock.Config) {
   const fields = {
+    move: config?.move,
     block: config?.block,
   };
   return {
@@ -2999,6 +3000,7 @@ export function asyncBlock(config: T.AsyncBlock.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
+    move(value?: T.KwMove | undefined) { return _fs(config, asyncBlock, 'move', value, fields.move); },
     block(value?: T.Block) { return _fs(config, asyncBlock, 'block', value, fields.block); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -3011,6 +3013,7 @@ export function asyncBlock(config: T.AsyncBlock.Config) {
 
 export function genBlock(config: T.GenBlock.Config) {
   const fields = {
+    move: config?.move,
     block: config?.block,
   };
   return {
@@ -3018,6 +3021,7 @@ export function genBlock(config: T.GenBlock.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
+    move(value?: T.KwMove | undefined) { return _fs(config, genBlock, 'move', value, fields.move); },
     block(value?: T.Block) { return _fs(config, genBlock, 'block', value, fields.block); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {

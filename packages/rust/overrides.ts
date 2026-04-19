@@ -39,6 +39,7 @@ export default grammar(enrich(base), {
         // position 1, which wrapped the move choice and dropped the
         // block routing entirely.
         async_block: ($, original) => transform(original, {
+            '1/0': field('move'),  // optional('move') → surface as field
             2: field('block'),
         }),
 
@@ -163,6 +164,7 @@ export default grammar(enrich(base), {
         // gen_block: same fix as async_block — the block symbol is
         // at position 2, position 1 is the optional `move` choice.
         gen_block: ($, original) => transform(original, {
+            '1/0': field('move'),  // optional('move') → surface as field
             2: field('block'),
         }),
 
@@ -332,6 +334,8 @@ export default grammar(enrich(base), {
         // declared in the base grammar.
         trait_item: ($, original) => transform(original, {
             0: field('visibility_modifier'),
+            '1/0': field('unsafe'),   // optional('unsafe')
+            6: field('where_clause'), // inferred 88% agreement across 8 parents
         }),
 
         // try_block: 1 field(s)

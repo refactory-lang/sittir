@@ -14,7 +14,7 @@
 // ---------------------------------------------------------------
 // Summary
 // ---------------------------------------------------------------
-// Field inferences:  8  (0 applied, 8 held)
+// Field inferences:  7  (0 applied, 7 held)
 // Rule promotions:   70  (57 applied, 13 held)
 // Repeated shapes:   5  (advisory — suggested supertypes/groups)
 
@@ -28,10 +28,10 @@ export const suggestedRules = {
   // [held] "_non_special_token" field 'mutable_specifier' on $.mutable_specifier — 91% agreement, 11 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
 
   // _struct_item_brace: 1 inferred field(s)
-  // [held] "_struct_item_brace" field 'where_clause' on $.where_clause — 88% agreement, 8 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
+  // [held] "_struct_item_brace" field 'where_clause' on $.where_clause — 89% agreement, 9 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
 
   // _struct_item_tuple: 1 inferred field(s)
-  // [held] "_struct_item_tuple" field 'where_clause' on $.where_clause — 88% agreement, 8 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
+  // [held] "_struct_item_tuple" field 'where_clause' on $.where_clause — 89% agreement, 9 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
 
   // static_item: 1 inferred field(s)
   "static_item": ($, original) => transform(original, {
@@ -41,20 +41,14 @@ export const suggestedRules = {
 
   // struct_item_brace: 1 inferred field(s)
   "struct_item_brace": ($, original) => transform(original, {
-    // [held] 88% agreement, 8 parents
+    // [held] 89% agreement, 9 parents
     0: field("where_clause"),  // $.where_clause
   }),
 
   // struct_item_tuple: 1 inferred field(s)
   "struct_item_tuple": ($, original) => transform(original, {
-    // [held] 88% agreement, 8 parents
+    // [held] 89% agreement, 9 parents
     1: field("where_clause"),  // $.where_clause
-  }),
-
-  // trait_item: 1 inferred field(s)
-  "trait_item": ($, original) => transform(original, {
-    // [held] 88% agreement, 8 parents
-    6: field("where_clause"),  // $.where_clause
   }),
 
   // type_arguments: 1 inferred field(s)
@@ -324,11 +318,10 @@ export interface InferredField {
 export const inferredFields: readonly InferredField[] = [
   { kind: "_non_special_token", fieldName: "mutable_specifier", targetSymbol: "mutable_specifier", confidence: "medium", agreement: 0.909, sampleSize: 11, applied: false },
   { kind: "static_item", fieldName: "mutable_specifier", targetSymbol: "mutable_specifier", confidence: "medium", agreement: 0.909, sampleSize: 11, applied: false },
-  { kind: "_struct_item_brace", fieldName: "where_clause", targetSymbol: "where_clause", confidence: "medium", agreement: 0.875, sampleSize: 8, applied: false },
-  { kind: "_struct_item_tuple", fieldName: "where_clause", targetSymbol: "where_clause", confidence: "medium", agreement: 0.875, sampleSize: 8, applied: false },
-  { kind: "struct_item_brace", fieldName: "where_clause", targetSymbol: "where_clause", confidence: "medium", agreement: 0.875, sampleSize: 8, applied: false },
-  { kind: "struct_item_tuple", fieldName: "where_clause", targetSymbol: "where_clause", confidence: "medium", agreement: 0.875, sampleSize: 8, applied: false },
-  { kind: "trait_item", fieldName: "where_clause", targetSymbol: "where_clause", confidence: "medium", agreement: 0.875, sampleSize: 8, applied: false },
+  { kind: "_struct_item_brace", fieldName: "where_clause", targetSymbol: "where_clause", confidence: "medium", agreement: 0.889, sampleSize: 9, applied: false },
+  { kind: "_struct_item_tuple", fieldName: "where_clause", targetSymbol: "where_clause", confidence: "medium", agreement: 0.889, sampleSize: 9, applied: false },
+  { kind: "struct_item_brace", fieldName: "where_clause", targetSymbol: "where_clause", confidence: "medium", agreement: 0.889, sampleSize: 9, applied: false },
+  { kind: "struct_item_tuple", fieldName: "where_clause", targetSymbol: "where_clause", confidence: "medium", agreement: 0.889, sampleSize: 9, applied: false },
   { kind: "type_arguments", fieldName: "bounds", targetSymbol: "trait_bounds", confidence: "high", agreement: 1.000, sampleSize: 5, applied: false },
 ];
 

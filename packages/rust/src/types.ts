@@ -23,6 +23,7 @@ export type LeafStringMap = {
   _kw_default: "default";
   _kw_const: "const";
   _kw_unsafe: "unsafe";
+  _kw_move: "move";
   _kw_for: "for";
   primitive_type: "u8" | "i8" | "u16" | "i16" | "u32" | "i32" | "u64" | "i64" | "u128" | "i128" | "isize" | "usize" | "f32" | "f64" | "bool" | "str" | "char";
   as: "as";
@@ -62,8 +63,8 @@ export type LeafStringMap = {
   mut: "mut";
   raw: "raw";
   yield: "yield";
-  move: "move";
   try: "try";
+  move: "move";
 };
 
 export const enum SyntaxKind {
@@ -275,6 +276,7 @@ export const enum SyntaxKind {
   KwDefault = '_kw_default',
   KwConst = '_kw_const',
   KwUnsafe = '_kw_unsafe',
+  KwMove = '_kw_move',
   KwFor = '_kw_for',
   StringContent = 'string_content',
   RawStringLiteralContent = 'raw_string_literal_content',
@@ -326,8 +328,8 @@ export const enum SyntaxKind {
   Mut = 'mut',
   Raw = 'raw',
   Yield = 'yield',
-  Move = 'move',
   Try = 'try',
+  Move = 'move',
 }
 
 // Scoped enums per supertype
@@ -1046,12 +1048,13 @@ export interface TraitItem {
   readonly $type: 'trait_item';
   readonly $fields: {
     readonly visibility_modifier?: VisibilityModifier;
+    readonly unsafe?: KwUnsafe;
     readonly name: _TypeIdentifier;
     readonly type_parameters?: TypeParameters;
     readonly bounds?: TraitBounds;
+    readonly where_clause?: WhereClause;
     readonly body: DeclarationList;
   };
-  readonly $children: readonly [WhereClause];
 }
 
 export interface AssociatedType {
@@ -1739,6 +1742,7 @@ export interface UnsafeBlock {
 export interface AsyncBlock {
   readonly $type: 'async_block';
   readonly $fields: {
+    readonly move?: KwMove;
     readonly block: Block;
   };
 }
@@ -1746,6 +1750,7 @@ export interface AsyncBlock {
 export interface GenBlock {
   readonly $type: 'gen_block';
   readonly $fields: {
+    readonly move?: KwMove;
     readonly block: Block;
   };
 }
@@ -2229,6 +2234,7 @@ export type KwAsync = Terminal<"_kw_async", "async">;
 export type KwDefault = Terminal<"_kw_default", "default">;
 export type KwConst = Terminal<"_kw_const", "const">;
 export type KwUnsafe = Terminal<"_kw_unsafe", "unsafe">;
+export type KwMove = Terminal<"_kw_move", "move">;
 export type KwFor = Terminal<"_kw_for", "for">;
 export type StringContent = Terminal<"string_content", string>;
 export type RawStringLiteralContent = Terminal<"raw_string_literal_content", string>;
@@ -2509,6 +2515,7 @@ export interface KwAsyncTree extends AnyTreeNode { readonly type: "_kw_async"; }
 export interface KwDefaultTree extends AnyTreeNode { readonly type: "_kw_default"; }
 export interface KwConstTree extends AnyTreeNode { readonly type: "_kw_const"; }
 export interface KwUnsafeTree extends AnyTreeNode { readonly type: "_kw_unsafe"; }
+export interface KwMoveTree extends AnyTreeNode { readonly type: "_kw_move"; }
 export interface KwForTree extends AnyTreeNode { readonly type: "_kw_for"; }
 export interface StringContentTree extends TreeNode<'string_content'> {}
 export interface RawStringLiteralContentTree extends AnyTreeNode { readonly type: "raw_string_literal_content"; }
@@ -2560,8 +2567,8 @@ export interface DynTree extends AnyTreeNode { readonly type: "dyn"; }
 export interface MutTree extends AnyTreeNode { readonly type: "mut"; }
 export interface RawTree extends AnyTreeNode { readonly type: "raw"; }
 export interface YieldTree extends AnyTreeNode { readonly type: "yield"; }
-export interface MoveTree extends AnyTreeNode { readonly type: "move"; }
 export interface TryTree extends AnyTreeNode { readonly type: "try"; }
+export interface MoveTree extends AnyTreeNode { readonly type: "move"; }
 
 // Supertype unions
 export type Statement =
@@ -3373,6 +3380,7 @@ export interface KindMap {
   '_kw_default': KwDefault;
   '_kw_const': KwConst;
   '_kw_unsafe': KwUnsafe;
+  '_kw_move': KwMove;
   '_kw_for': KwFor;
   'string_content': StringContent;
   'raw_string_literal_content': RawStringLiteralContent;
