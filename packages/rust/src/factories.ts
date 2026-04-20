@@ -3715,6 +3715,45 @@ export function floatLiteral(text: string) {
   };
 }
 
+export function outerBlockDocCommentMarker(text: string) {
+  if (text.length === 0) throw new Error(`_outer_block_doc_comment_marker: text must be non-empty`); if (_wordRe.test(text) && RESERVED_KEYWORDS.has(text)) throw new Error(`_outer_block_doc_comment_marker: text '${text}' is a reserved keyword`);
+  return {
+    $type: '_outer_block_doc_comment_marker' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $text: text,
+    render: () => text,
+    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
+    replace: (t: T.OuterBlockDocCommentMarkerTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
+  };
+}
+
+export function innerBlockDocCommentMarker(text: string) {
+  if (text.length === 0) throw new Error(`_inner_block_doc_comment_marker: text must be non-empty`); if (_wordRe.test(text) && RESERVED_KEYWORDS.has(text)) throw new Error(`_inner_block_doc_comment_marker: text '${text}' is a reserved keyword`);
+  return {
+    $type: '_inner_block_doc_comment_marker' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $text: text,
+    render: () => text,
+    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
+    replace: (t: T.InnerBlockDocCommentMarkerTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
+  };
+}
+
+export function lineDocContent(text: string) {
+  if (text.length === 0) throw new Error(`_line_doc_content: text must be non-empty`); if (_wordRe.test(text) && RESERVED_KEYWORDS.has(text)) throw new Error(`_line_doc_content: text '${text}' is a reserved keyword`);
+  return {
+    $type: '_line_doc_content' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $text: text,
+    render: () => text,
+    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
+    replace: (t: T.LineDocContentTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
+  };
+}
+
 export function macroDefinitionParen(...children: T.MacroRule[]) {
   return {
     $type: 'macro_definition_paren' as const,
@@ -4388,6 +4427,9 @@ export type FluentKindMap = {
   "string_content": T.StringContent;
   "raw_string_literal_content": T.RawStringLiteralContent;
   "float_literal": T.FloatLiteral;
+  "_outer_block_doc_comment_marker": T.OuterBlockDocCommentMarker;
+  "_inner_block_doc_comment_marker": T.InnerBlockDocCommentMarker;
+  "_line_doc_content": T.LineDocContent;
   "macro_definition_paren": FluentNode<"macro_definition_paren", T.MacroDefinitionParen.Config>;
   "macro_definition_bracket": FluentNode<"macro_definition_bracket", T.MacroDefinitionBracket.Config>;
   "macro_definition_brace": FluentNode<"macro_definition_brace", T.MacroDefinitionBrace.Config>;
@@ -4579,6 +4621,9 @@ export const _factoryMap = {
   "string_content": stringContent,
   "raw_string_literal_content": rawStringLiteralContent,
   "float_literal": floatLiteral,
+  "_outer_block_doc_comment_marker": outerBlockDocCommentMarker,
+  "_inner_block_doc_comment_marker": innerBlockDocCommentMarker,
+  "_line_doc_content": lineDocContent,
   "macro_definition_paren": macroDefinitionParen,
   "macro_definition_bracket": macroDefinitionBracket,
   "macro_definition_brace": macroDefinitionBrace,
@@ -4771,6 +4816,9 @@ export const _factoryShapes = {
   "string_content": "text",
   "raw_string_literal_content": "text",
   "float_literal": "text",
+  "_outer_block_doc_comment_marker": "text",
+  "_inner_block_doc_comment_marker": "text",
+  "_line_doc_content": "text",
   "macro_definition_paren": "children",
   "macro_definition_bracket": "children",
   "macro_definition_brace": "children",
@@ -4802,3 +4850,21 @@ export const _factoryShapes = {
   "shorthand_field_identifier": "text",
 } as const satisfies Record<string, 'config' | 'children' | 'text'>;
 export type _FactoryShapes = typeof _factoryShapes;
+
+export const _fieldAliasMap: Record<string, Record<string, string>> = {
+  "attribute.arguments": { "token_tree": "delim_token_tree" },
+  "macro_invocation.token_tree": { "token_tree": "delim_token_tree" },
+  "scoped_identifier.path": { "generic_type": "generic_type_with_turbofish" },
+  "scoped_type_identifier_in_expression_position.path": { "generic_type": "generic_type_with_turbofish" },
+  "scoped_type_identifier.path": { "generic_type": "generic_type_with_turbofish" },
+  "struct_expression.name": { "scoped_type_identifier": "scoped_type_identifier_in_expression_position" },
+  "tuple_struct_pattern.type": { "generic_type": "generic_type_with_turbofish" },
+  "raw_string_literal.string_content": { "string_content": "raw_string_literal_content" },
+  "line_comment.outer": { "outer_doc_comment_marker": "_outer_line_doc_comment_marker" },
+  "line_comment.inner": { "inner_doc_comment_marker": "_inner_line_doc_comment_marker" },
+  "line_comment.doc": { "doc_comment": "_line_doc_content" },
+  "block_comment.outer": { "outer_doc_comment_marker": "_outer_block_doc_comment_marker" },
+  "block_comment.inner": { "inner_doc_comment_marker": "_inner_block_doc_comment_marker" },
+  "block_comment.doc": { "doc_comment": "_block_comment_content" },
+  "_field_pattern_shorthand.name": { "shorthand_field_identifier": "identifier" },
+};

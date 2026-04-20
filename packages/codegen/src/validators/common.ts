@@ -413,6 +413,19 @@ export interface NodeToConfigOpts {
      * factories (e.g. python `argument_list`) because they'd interpret
      * the whole Config object as the single rest-param item. */
     readonly factoryShapes?: Record<string, 'config' | 'children' | 'text'>
+    /** Per-field alias-source map (from the generated `_fieldAliasMap`).
+     * Key format: `"parentKind.fieldName"`; value: the source kind the
+     * factory expects. When a child arrives at an alias-declared slot,
+     * its tree-sitter-emitted $type is the alias target; `resolveChild`
+     * consults this map to dispatch the matching source-kind factory
+     * instead. Without it, ADR-0006-aware fields silently dispatch the
+     * wrong factory (e.g. `block` factory on a `_match_block` body). */
+    readonly fieldAliasMap?: Record<string, Record<string, string>>
+    /** Internal — current parent kind during field recursion. Used with
+     * `fieldAliasMap` to form `${parentKind}.${fieldName}` lookups. */
+    readonly _parentKind?: string
+    /** Internal — current field name during field recursion. */
+    readonly _fieldName?: string
     /** Internal recursion guard — set by the helper, not the caller. */
     readonly _depth?: number
 }
@@ -447,7 +460,7 @@ function resolveChild(
     // bypasses those filters and double-emits (e.g. struct_pattern's
     // trailing `,` showed up twice in the rendered output).
     if (c.$named === false) return child
-    const { tree, factoryMap, factoryShapes, _depth = 0 } = opts
+    const { tree, factoryMap, factoryShapes, fieldAliasMap, _depth = 0, _parentKind, _fieldName } = opts
     // Depth cap — recursive construction shouldn't run away even on
     // pathologically nested corpus entries. 64 is well past real-world
     // AST depth and stops before Node's default call-stack.
@@ -462,8 +475,22 @@ function resolveChild(
             // back to the shallow entry we already have.
         }
     }
-    const kind = drilled.$type ?? c.$type
-    if (!kind) return drilled
+    const rawKind = drilled.$type ?? c.$type
+    if (!rawKind) return drilled
+    // Unalias the tree-sitter-emitted kind when the declaring slot has
+    // an alias-source registered. `fieldAliasMap` is keyed
+    // `parentKind.fieldName` → source kind. Example: python match_statement
+    // has `body: alias($._match_block, $.block)`, so
+    // `match_statement.body` maps to `_match_block`; a child with $type
+    // 'block' arriving at that slot dispatches to the `_match_block`
+    // factory (whose config accepts `alternative: CaseClause[]` rather
+    // than the plain block's `children: Statement[]`).
+    let kind = rawKind
+    if (fieldAliasMap && _parentKind && _fieldName) {
+        const key = `${_parentKind}.${_fieldName}`
+        const targetMap = fieldAliasMap[key]
+        if (targetMap && targetMap[rawKind]) kind = targetMap[rawKind]
+    }
     const factory = factoryMap[kind]
     if (!factory) return drilled  // hidden / unfactoryable kind — pass through
     const shape = factoryShapes?.[kind] ?? 'config'
@@ -486,6 +513,7 @@ export function nodeToConfig(
     opts: NodeToConfigOpts = {},
 ): Record<string, unknown> {
     const out: Record<string, unknown> = {}
+    const parentKind = data.$type
     if (data.$fields) {
         for (const [k, v] of Object.entries(data.$fields)) {
             if (v === undefined) continue
@@ -496,13 +524,18 @@ export function nodeToConfig(
             // pollutes the config without ever being read by the factory.
             if (!/^[a-zA-Z_][\w]*$/.test(k)) continue
             const camelKey = k.replace(/_([a-z])/g, (_m, c: string) => c.toUpperCase())
+            const childOpts: NodeToConfigOpts = { ...opts, _parentKind: parentKind, _fieldName: k }
             out[camelKey] = Array.isArray(v)
-                ? v.map(item => resolveChild(item, opts))
-                : resolveChild(v, opts)
+                ? v.map(item => resolveChild(item, childOpts))
+                : resolveChild(v, childOpts)
         }
     }
     if (data.$children) {
-        out.children = data.$children.map(c => resolveChild(c, opts))
+        // $children entries don't have a field name; alias resolution
+        // falls back to the raw $type (no parent.field lookup). Only
+        // the $fields iteration can trigger alias-source dispatch.
+        const childOpts: NodeToConfigOpts = { ...opts, _parentKind: undefined, _fieldName: undefined }
+        out.children = data.$children.map(c => resolveChild(c, childOpts))
     }
     return out
 }

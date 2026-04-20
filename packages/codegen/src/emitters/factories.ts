@@ -199,8 +199,24 @@ export function emitFactories(config: EmitFactoriesConfig): string {
     // Per-node factory emission. Dispatch on modelType — polymorph
     // form groups are skipped at the top level because the polymorph
     // dispatcher emits its forms inline.
+    //
+    // Hidden rules (prefix `_`) are normally skipped — they're grammar
+    // machinery, not user-facing kinds. The exception: hidden rules that
+    // appear as alias sources. `alias($._match_block, $.block)` means
+    // the body's canonical shape is `_match_block`; validators drilling
+    // into an aliased field need a factory that accepts the source kind
+    // so ADR-0006-symmetric dispatch works through the `_fieldAliasMap`.
+    const aliasSourceKinds = new Set<string>()
+    for (const [, n] of nodeMap.nodes) {
+        const fs = n.modelType === 'polymorph' ? n.forms.flatMap(f => f.fields)
+            : (n.modelType === 'branch' || n.modelType === 'group') ? n.fields : []
+        for (const f of fs) {
+            if (!f.aliasSources) continue
+            for (const source of Object.values(f.aliasSources)) aliasSourceKinds.add(source)
+        }
+    }
     for (const [kind, node] of nodeMap.nodes) {
-        if (kind.startsWith('_')) continue
+        if (kind.startsWith('_') && !aliasSourceKinds.has(kind)) continue
         if (nodeMap.polymorphFormKinds.has(kind)) continue
         const source = renderFactoryForNode(node, strict, !!wordPattern, nodeMap, leafReConsts)
         if (source === undefined) continue
@@ -232,7 +248,7 @@ export function emitFactories(config: EmitFactoriesConfig): string {
     }
     const mapEntries: MapEntry[] = []
     for (const [kind, node] of nodeMap.nodes) {
-        if (kind.startsWith('_')) continue
+        if (kind.startsWith('_') && !aliasSourceKinds.has(kind)) continue
         if (!node.rawFactoryName) continue
         if (nodeMap.polymorphFormKinds.has(kind)) continue
         const fluent = node.modelType === 'branch' ||
@@ -314,6 +330,39 @@ export function emitFactories(config: EmitFactoriesConfig): string {
     }
     lines.push(`} as const satisfies Record<string, 'config' | 'children' | 'text'>;`)
     lines.push('export type _FactoryShapes = typeof _factoryShapes;')
+    lines.push('')
+
+    // _fieldAliasMap — per-field alias provenance for runtime unalias.
+    //
+    // Grammar declarations like `alias($.source, $.target)` at a field
+    // position mean: tree-sitter emits a node of kind `target`, but the
+    // body follows `source`'s shape. The wrap layer rewrites $type at
+    // drill-in via drillAs(); validators that bypass the wrap layer (e.g.
+    // calling `readNode` directly) need the same information to dispatch
+    // the right factory. Key format: `"parentKind.fieldName"` → source
+    // kind. An entry is present only when the field's declared content
+    // includes an aliased-symbol reference whose source differs from the
+    // tree-sitter-emitted target.
+    //
+    // Global (flat) maps won't work — the same target kind (e.g. `block`)
+    // may appear both aliased (from `alias($._match_block, $.block)`) and
+    // plain (any indented statement body). Context is the `parentKind.
+    // fieldName` pair.
+    lines.push('export const _fieldAliasMap: Record<string, Record<string, string>> = {')
+    for (const [kind, node] of nodeMap.nodes) {
+        if (node.modelType !== 'branch' && node.modelType !== 'polymorph' && node.modelType !== 'group') continue
+        const fields = node.modelType === 'polymorph'
+            ? node.forms.flatMap(f => f.fields)
+            : node.fields
+        for (const f of fields) {
+            if (!f.aliasSources) continue
+            const pairs = Object.entries(f.aliasSources).filter(([t, s]) => t !== s)
+            if (pairs.length === 0) continue
+            const body = pairs.map(([t, s]) => `${JSON.stringify(t)}: ${JSON.stringify(s)}`).join(', ')
+            lines.push(`  ${JSON.stringify(`${kind}.${f.name}`)}: { ${body} },`)
+        }
+    }
+    lines.push(`};`)
     lines.push('')
 
     return lines.join('\n')

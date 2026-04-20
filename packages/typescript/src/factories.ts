@@ -2616,6 +2616,19 @@ export function computedPropertyName(config: T.ComputedPropertyName.Config) {
   };
 }
 
+export function reservedIdentifier(text: string) {
+  if (text.length === 0) throw new Error(`_reserved_identifier: text must be non-empty`);
+  return {
+    $type: '_reserved_identifier' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $text: text,
+    render: () => text,
+    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
+    replace: (t: T.ReservedIdentifierTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
+  };
+}
+
 export function publicFieldDefinition(config: T.PublicFieldDefinition.Config) {
   const fields = {
     decorator: config?.decorator,
@@ -4657,6 +4670,7 @@ export type FluentKindMap = {
   "pair": FluentNode<"pair", T.Pair.Config>;
   "pair_pattern": FluentNode<"pair_pattern", T.PairPattern.Config>;
   "computed_property_name": FluentNode<"computed_property_name", T.ComputedPropertyName.Config>;
+  "_reserved_identifier": T.ReservedIdentifier;
   "public_field_definition": FluentNode<"public_field_definition", T.PublicFieldDefinition.Config>;
   "non_null_expression": FluentNode<"non_null_expression", T.NonNullExpression.Config>;
   "method_signature": FluentNode<"method_signature", T.MethodSignature.Config>;
@@ -4870,6 +4884,7 @@ export const _factoryMap = {
   "pair": pair,
   "pair_pattern": pairPattern,
   "computed_property_name": computedPropertyName,
+  "_reserved_identifier": reservedIdentifier,
   "public_field_definition": publicFieldDefinition,
   "non_null_expression": nonNullExpression,
   "method_signature": methodSignature,
@@ -5084,6 +5099,7 @@ export const _factoryShapes = {
   "pair": "config",
   "pair_pattern": "config",
   "computed_property_name": "config",
+  "_reserved_identifier": "text",
   "public_field_definition": "config",
   "non_null_expression": "config",
   "method_signature": "config",
@@ -5179,3 +5195,27 @@ export const _factoryShapes = {
   "type_identifier": "text",
 } as const satisfies Record<string, 'config' | 'children' | 'text'>;
 export type _FactoryShapes = typeof _factoryShapes;
+
+export const _fieldAliasMap: Record<string, Record<string, string>> = {
+  "break_statement.label": { "statement_identifier": "identifier" },
+  "continue_statement.label": { "statement_identifier": "identifier" },
+  "nested_identifier.object": { "member_expression": "nested_identifier" },
+  "nested_identifier.property": { "property_identifier": "identifier" },
+  "member_expression.property": { "property_identifier": "identifier" },
+  "augmented_assignment_expression.left": { "identifier": "_reserved_identifier" },
+  "decorator_member_expression.object": { "member_expression": "decorator_member_expression" },
+  "decorator_member_expression.property": { "property_identifier": "identifier" },
+  "decorator_call_expression.function": { "member_expression": "decorator_member_expression" },
+  "ambient_declaration.declaration": { "property_identifier": "identifier" },
+  "interface_declaration.body": { "interface_body": "object_type" },
+  "_type_query_member_expression_in_type_annotation.object": { "member_expression": "_type_query_member_expression_in_type_annotation", "call_expression": "_type_query_call_expression_in_type_annotation" },
+  "_type_query_member_expression_in_type_annotation.property": { "property_identifier": "identifier" },
+  "_type_query_call_expression_in_type_annotation.function": { "member_expression": "_type_query_member_expression_in_type_annotation" },
+  "_type_query_member_expression.object": { "subscript_expression": "_type_query_subscript_expression", "member_expression": "_type_query_member_expression", "call_expression": "_type_query_call_expression" },
+  "_type_query_member_expression.property": { "property_identifier": "identifier" },
+  "_type_query_subscript_expression.object": { "subscript_expression": "_type_query_subscript_expression", "member_expression": "_type_query_member_expression", "call_expression": "_type_query_call_expression" },
+  "_type_query_call_expression.function": { "member_expression": "_type_query_member_expression", "subscript_expression": "_type_query_subscript_expression" },
+  "_type_query_instantiation_expression.function": { "member_expression": "_type_query_member_expression", "subscript_expression": "_type_query_subscript_expression" },
+  "_index_signature_colon.name": { "identifier": "_reserved_identifier" },
+  "_arrow_function_parameter.parameter": { "identifier": "_reserved_identifier" },
+};

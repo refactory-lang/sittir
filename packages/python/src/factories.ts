@@ -519,6 +519,44 @@ export function matchStatement(config: T.MatchStatement.Config) {
   };
 }
 
+export function matchBlock(config: T.MatchBlockForm0Config | T.MatchBlockForm1Config) {
+  if (config && 'alternative' in config) return matchBlockForm0(config as T.MatchBlockForm0Config);
+  return matchBlockForm1(config as T.MatchBlockForm1Config);
+}
+export function matchBlockForm0(config: T.MatchBlockForm0Config) {
+  const fields = {
+    alternative: config?.alternative,
+  };
+  return {
+    $type: '_match_block' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $variant: 'form0' as const,
+    $fields: fields,
+    alternative(...values: T.CaseClause[]) { return _fsm(config, matchBlockForm0, 'alternative', values, fields.alternative); },
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.MatchBlockForm0Tree) { const r = target.range(); return toEdit(this, r); },
+  };
+}
+export function matchBlockForm1(config?: T.MatchBlockForm1Config) {
+  return {
+    $type: '_match_block' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $variant: 'form1' as const,
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.MatchBlockForm1Tree) { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
 export function caseClause(config: T.CaseClause.Config) {
   const fields = {
     case: config?.case,
@@ -2656,6 +2694,7 @@ export type FluentKindMap = {
   "elif_clause": FluentNode<"elif_clause", T.ElifClause.Config>;
   "else_clause": FluentNode<"else_clause", T.ElseClause.Config>;
   "match_statement": FluentNode<"match_statement", T.MatchStatement.Config>;
+  "_match_block": FluentNode<"_match_block", T.MatchBlock.Config>;
   "case_clause": FluentNode<"case_clause", T.CaseClause.Config>;
   "for_statement": FluentNode<"for_statement", T.ForStatement.Config>;
   "while_statement": FluentNode<"while_statement", T.WhileStatement.Config>;
@@ -2786,6 +2825,7 @@ export const _factoryMap = {
   "elif_clause": elifClause,
   "else_clause": elseClause,
   "match_statement": matchStatement,
+  "_match_block": matchBlock,
   "case_clause": caseClause,
   "for_statement": forStatement,
   "while_statement": whileStatement,
@@ -2917,6 +2957,7 @@ export const _factoryShapes = {
   "elif_clause": "config",
   "else_clause": "config",
   "match_statement": "config",
+  "_match_block": "config",
   "case_clause": "config",
   "for_statement": "config",
   "while_statement": "config",
@@ -3024,3 +3065,7 @@ export const _factoryShapes = {
   "format_expression": "config",
 } as const satisfies Record<string, 'config' | 'children' | 'text'>;
 export type _FactoryShapes = typeof _factoryShapes;
+
+export const _fieldAliasMap: Record<string, Record<string, string>> = {
+  "match_statement.body": { "block": "_match_block" },
+};

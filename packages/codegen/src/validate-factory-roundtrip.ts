@@ -188,12 +188,14 @@ export async function validateFactoryRoundTrip(
 	const factoryModulePath = FACTORY_MODULE_PATHS[grammar];
 	let factoryMap: Record<string, (config?: any) => unknown> = {};
 	let factoryShapes: Record<string, 'config' | 'children' | 'text'> = {};
+	let fieldAliasMap: Record<string, Record<string, string>> = {};
 	const importFailure: { message: string } | null = await (async () => {
 		if (!factoryModulePath) return null;
 		try {
 			const factoryModule = await import(new URL(factoryModulePath, import.meta.url).pathname);
 			factoryMap = factoryModule._factoryMap ?? {};
 			factoryShapes = factoryModule._factoryShapes ?? {};
+			fieldAliasMap = factoryModule._fieldAliasMap ?? {};
 			return null;
 		} catch (e) {
 			const message = `[validate-factory-roundtrip] failed to load ${factoryModulePath}: ${(e as Error)?.message ?? e}`;
@@ -311,7 +313,7 @@ export async function validateFactoryRoundTrip(
 						// to audit them.
 						const recursive = process?.env?.SITTIR_VALIDATE_RECURSIVE === '1';
 						const config = recursive
-							? nodeToConfig(readData, { tree: handle, factoryMap, factoryShapes })
+							? nodeToConfig(readData, { tree: handle, factoryMap, factoryShapes, fieldAliasMap })
 							: nodeToConfig(readData);
 						factoryData = factory(config) as AnyNodeData;
 					} else if (shape === 'text') {
