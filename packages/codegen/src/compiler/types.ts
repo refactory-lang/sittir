@@ -1,23 +1,22 @@
 /**
- * compiler/phases.ts — phase-output container types.
+ * compiler/types.ts — compiler pipeline output contracts.
  *
- * Each phase of the compiler pipeline produces a typed container; this
- * file collects them in one place. The rule model itself (Rule union,
- * type guards, SymbolRef) stays in `rule.ts`; the Assembled node
- * hierarchy stays in `rule.ts` for now (splitting into `node-map.ts`
- * is a later refactor step). Keeping phase contracts here draws a
- * clean line between "this is what the pipeline operates on" and
- * "this is what the pipeline produces at each step."
+ * Each pipeline phase produces a typed container; this file collects
+ * them.
  *
- *   Evaluate  → `RawGrammar`
- *   Link      → `LinkedGrammar`
- *   Optimize  → `OptimizedGrammar`
- *   Assemble  → `NodeMap`
+ * - Evaluate  produces {@link RawGrammar}.
+ * - Link      produces {@link LinkedGrammar} plus a {@link DerivationLog}.
+ * - Optimize  produces {@link OptimizedGrammar}.
+ * - Assemble  produces {@link NodeMap}.
  *
- * Derivation / diagnostic types (`DerivationLog`, inferred-field /
- * repeated-shape / promoted-rule entries, `SuggestedOverride`) live
- * here too because they're produced by Link and consumed by the
- * suggester emitter, not by the rule tree.
+ * Diagnostic / suggester-input types live here too ({@link DerivationLog}
+ * and its entry types, {@link SuggestedOverride}, {@link IncludeFilter})
+ * because they flow between Link and the suggester emitter, not through
+ * the rule tree itself.
+ *
+ * The Rule model (Rule union + type guards + SymbolRef) stays in
+ * `./rule.ts`. The AssembledNode hierarchy currently stays in `rule.ts`
+ * too; splitting it into `./node-map.ts` is a later step.
  */
 
 import type { Rule, SymbolRef } from './rule.ts'

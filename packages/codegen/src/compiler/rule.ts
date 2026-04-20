@@ -13,7 +13,7 @@
  *              Those are derived from tree context at Assemble time.
  */
 
-import type { KindProjection } from './phases.ts'
+import type { KindProjection } from './types.ts'
 // tokenToName is defined locally below to avoid a circular import with
 // compiler/link.ts (which imports helpers from this file). A small map
 // covering the common non-word optionals (`!`, `?`) is enough; bail to
@@ -313,10 +313,9 @@ export interface SymbolRef {
 }
 
 // ---------------------------------------------------------------------------
-// Phase-output container types moved to ./phases.ts.
-// Re-exported here so existing `import type { RawGrammar, ... } from
-// './rule.ts'` call sites keep working during the migration. New code
-// should import directly from './phases.ts'.
+// Pipeline-output types live in ./types.ts. These re-exports keep
+// legacy `import from './rule.ts'` sites working; prefer importing
+// directly from './types.ts' in new code.
 // ---------------------------------------------------------------------------
 
 export type {
@@ -336,8 +335,8 @@ export type {
     SignaturePool,
     ProjectionContext,
     NodeMap,
-} from './phases.ts'
-export { computePolymorphFormKinds } from './phases.ts'
+} from './types.ts'
+export { computePolymorphFormKinds } from './types.ts'
 
 // ---------------------------------------------------------------------------
 // Derivation helpers — walk a Rule to produce fields, children, content types
