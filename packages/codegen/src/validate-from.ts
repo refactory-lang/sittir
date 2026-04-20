@@ -46,10 +46,15 @@ const WRAP_MODULE_PATHS: Record<string, string> = {
 // Structural analysis
 // ---------------------------------------------------------------------------
 
-/** Find paths to nodes with type 'undefined' in a NodeData tree. */
+/** Find paths to malformed nodes (missing $type) in a NodeData tree.
+ * Historically this checked `node.$type === 'undefined'`, which was a
+ * footgun in typescript — the grammar has a kind literally named
+ * `undefined` (the `undefined` keyword), and every valid Undefined
+ * node tripped the check. Narrow to the actual intent: a node whose
+ * `$type` is the JS undefined value (malformed construction). */
 function findUndefined(node: AnyNodeData, path = ''): string[] {
 	const results: string[] = [];
-	if (node.$type === 'undefined') results.push(path || 'root');
+	if (node.$type === undefined) results.push(path || 'root');
 
 	if (node.$fields) {
 		for (const [key, value] of Object.entries(node.$fields)) {
