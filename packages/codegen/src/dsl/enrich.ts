@@ -70,24 +70,27 @@ export interface GrammarResult {
     }
 }
 
-export function enrich(base: GrammarResult): GrammarResult {
-    if (!base || typeof base !== 'object') {
-        throw new Error('enrich(): expected a grammar object, got ' + typeof base)
-    }
-
-    // Emit enrich as a set of OVERRIDE callbacks (one per base rule),
-    // matching how variant() is handled: each override runs at rule
-    // evaluation time, inspects `original`, and calls transform() with
-    // enrich-computed patches. Synthetic rules registered during
-    // transform.ts:resolvePatch land in the same scope as variant()'s
-    // synthetic rules — discovered by installGrammarWrapper's pass 1
-    // dry-run (tree-sitter CLI) or by withSyntheticRuleScope (sittir
-    // evaluate). No rule-function wrapping; same path in both runtimes.
-    //
-    // Attach the generated overrides to the returned base via a
-    // sentinel property. grammar() (wrappedGrammar for tree-sitter CLI,
-    // grammarFn for sittir) merges them into opts.rules before
-    // evaluating — user overrides win on name collisions.
+/**
+ * Build per-rule override callbacks and attach them to the grammar base.
+ *
+ * @param base - The grammar result whose rules need enrich overrides.
+ * @returns A map of rule name → override callback, one entry per rule in `base`.
+ * @remarks
+ * Emits enrich as a set of OVERRIDE callbacks (one per base rule),
+ * matching how variant() is handled: each override runs at rule
+ * evaluation time, inspects `original`, and calls transform() with
+ * enrich-computed patches. Synthetic rules registered during
+ * transform.ts:resolvePatch land in the same scope as variant()'s
+ * synthetic rules — discovered by installGrammarWrapper's pass 1
+ * dry-run (tree-sitter CLI) or by withSyntheticRuleScope (sittir
+ * evaluate). No rule-function wrapping; same path in both runtimes.
+ *
+ * The generated overrides are attached to the returned base via a
+ * sentinel property. grammar() (wrappedGrammar for tree-sitter CLI,
+ * grammarFn for sittir) merges them into opts.rules before
+ * evaluating — user overrides win on name collisions.
+ */
+function buildEnrichOverrides(base: GrammarResult): Record<string, (...args: unknown[]) => unknown> {
     const rulesBag: Record<string, unknown> = ('grammar' in base ? base.grammar?.rules : (base as unknown as { rules?: unknown }).rules) as Record<string, unknown> ?? {}
     const enrichOverrides: Record<string, (...args: unknown[]) => unknown> = {}
     for (const name of Object.keys(rulesBag)) {
@@ -95,6 +98,15 @@ export function enrich(base: GrammarResult): GrammarResult {
             return applyEnrichPasses(name, original as Rule)
         }
     }
+    return enrichOverrides
+}
+
+export function enrich(base: GrammarResult): GrammarResult {
+    if (!base || typeof base !== 'object') {
+        throw new Error('enrich(): expected a grammar object, got ' + typeof base)
+    }
+
+    const enrichOverrides = buildEnrichOverrides(base)
     Object.defineProperty(base, '__enrichOverrides__', {
         value: enrichOverrides,
         enumerable: false,
@@ -126,15 +138,29 @@ export function enrich(base: GrammarResult): GrammarResult {
 // flat-positional patches for `{ position: field('name') }`. transform()
 // reconstructs the rule in the runtime's native shape.
 
+/**
+ * Apply all enrich passes sequentially to the bare-keyword and optional-keyword steps.
+ *
+ * @param ruleName - Name of the rule being processed (for skip diagnostics).
+ * @param rule - The rule after kindToName pass, before keyword passes.
+ * @returns The rule with bare-keyword and optional-keyword field wrapping applied.
+ * @remarks
+ * Bare and optional keyword passes use the symbol-alias trick: a hidden
+ * helper rule `_kw_<kw>: 'kw'` is registered and FIELD(kw, SYM) is emitted
+ * instead of FIELD(kw, STRING). Tree-sitter preserves FIELD around SYMBOL,
+ * so these fields land in the parse tree natively.
+ */
+function applyKeywordPasses(ruleName: string, rule: Rule): Rule {
+    let r = rule
+    r = applyBareKeywordViaTransform(ruleName, r)
+    r = applyOptionalKeywordViaTransform(ruleName, r)
+    return r
+}
+
 function applyEnrichPasses(ruleName: string, rule: Rule): Rule {
     let r = rule
     r = applyKindToNameViaTransform(ruleName, r)
-    // bare + optional keyword passes use symbol-alias trick: register
-    // a hidden helper rule `_kw_<kw>: 'kw'` and emit FIELD(kw, SYM)
-    // instead of FIELD(kw, STRING). Tree-sitter preserves FIELD around
-    // SYMBOL, so these fields land in the parse tree natively.
-    r = applyBareKeywordViaTransform(ruleName, r)
-    r = applyOptionalKeywordViaTransform(ruleName, r)
+    r = applyKeywordPasses(ruleName, r)
     return r
 }
 
@@ -218,13 +244,26 @@ function applyKindToNameViaTransform(ruleName: string, rule: Rule): Rule {
     return transform(rule as unknown as Parameters<typeof transform>[0], patches) as Rule
 }
 
-function applyOptionalKeywordViaTransform(ruleName: string, rule: Rule): Rule {
-    // Walk the tree collecting path-addressed patches for every
-    // `optional(stringLiteral-identifier)` position where the kw
-    // doesn't collide with an existing field on the same seq.
-    type Patch = Parameters<typeof transform>[1][string]
-    const patches: Record<string, Patch> = {}
+/**
+ * Collect path-addressed transform patches for every optional-keyword position.
+ *
+ * @param rule - The rule tree to walk for optional keyword promotions.
+ * @param ruleName - Name of the rule (for skip diagnostics).
+ * @param patches - Output map of transform-path → field patch.
+ * @returns The collected patches (for callers that skip when empty).
+ * @remarks
+ * Walks the rule tree collecting path-addressed patches for every
+ * `optional(stringLiteral-identifier)` position where the keyword
+ * does not collide with an existing field on the same seq.
+ */
+function collectOptionalKeywordPatchesFromRule(ruleName: string, rule: Rule): Record<string, TransformPatch> {
+    const patches: Record<string, TransformPatch> = {}
     collectOptionalKeywordPatches(ruleName, rule, '', patches)
+    return patches
+}
+
+function applyOptionalKeywordViaTransform(ruleName: string, rule: Rule): Rule {
+    const patches = collectOptionalKeywordPatchesFromRule(ruleName, rule)
     if (Object.keys(patches).length === 0) return rule
     return transform(rule as unknown as Parameters<typeof transform>[0], patches) as Rule
 }
@@ -255,6 +294,29 @@ function peelOptional(rule: Rule): { inner: Rule; isOptional: boolean } {
     return { inner: rule, isOptional: false }
 }
 
+/**
+ * Resolve the transform path to the inner string inside an optional wrapper.
+ *
+ * @param m - The normalized optional member (either sittir `optional` shape or tree-sitter `CHOICE` shape).
+ * @returns The path segment (e.g. `"0"` for sittir optional, or the non-BLANK member index for CHOICE).
+ * @remarks
+ * Path to the inner string differs by runtime shape:
+ * - sittir optional: `"0"` (content is child 0 of optional)
+ * - tree-sitter CHOICE(content, BLANK) or (BLANK, content):
+ *   use the member index where the non-BLANK member lives.
+ */
+function resolveInnerPathForOptionalMember(m: ReturnType<typeof normalizeMember>): string {
+    if (isOptionalType(m.type)) {
+        return '0'
+    }
+    const cm = (m as unknown as { members: unknown[] }).members
+    const strIdx = cm.findIndex(x => {
+        const n = normalizeMember(x)
+        return n.type !== 'BLANK' && n.type !== 'blank'
+    })
+    return String(strIdx)
+}
+
 function collectOptionalKeywordPatches(
     ruleName: string,
     rule: Rule,
@@ -277,21 +339,7 @@ function collectOptionalKeywordPatches(
                             continue
                         }
                         claimed.add(kw)
-                        // Path to the inner string:
-                        //   sittir optional: `${i}/0` (content is child 0 of optional)
-                        //   tree-sitter CHOICE(content, BLANK) or (BLANK, content):
-                        //     use the member index where non-BLANK lives.
-                        let innerPath: string
-                        if (isOptionalType(m.type)) {
-                            innerPath = '0'
-                        } else {
-                            const cm = (m as unknown as { members: unknown[] }).members
-                            const strIdx = cm.findIndex(x => {
-                                const n = normalizeMember(x)
-                                return n.type !== 'BLANK' && n.type !== 'blank'
-                            })
-                            innerPath = String(strIdx)
-                        }
+                        const innerPath = resolveInnerPathForOptionalMember(m)
                         const fullPath = prefix ? `${prefix}/${i}/${innerPath}` : `${i}/${innerPath}`
                         patches[fullPath] = field(kw) as TransformPatch
                         continue

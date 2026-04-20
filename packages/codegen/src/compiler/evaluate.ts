@@ -53,41 +53,33 @@ export function normalize(input: Input): Rule {
 // Structural grouping
 // ---------------------------------------------------------------------------
 
+/**
+ * Sequence combinator — matches all members in order.
+ *
+ * @remarks
+ * A single-member seq collapses to its sole member: the extra layer has
+ * the same parse semantics but confuses walkers that count seq members
+ * for positional hints.
+ *
+ * @remarks
+ * commaSep1 patterns — `seq(x, repeat(seq(sep, x)))` and variants — are
+ * lifted to a single `repeat1` node with a clean `separator` marker so
+ * downstream passes see a canonical shape instead of five to six nested rules.
+ *
+ * @remarks
+ * After liftCommaSep runs, trailing-sep optionals of the form
+ * `seq('(', repeat1(x, sep), optional(sep), ')')` are absorbed into the
+ * repeat1's `trailing: true` flag so no phantom `optional(',')` survives
+ * into simplifyRule.
+ */
 export function seq(...members: Input[]): Rule {
     const normalized = members.map(normalize)
 
-    // Single-member seq([x]) collapses to x — a one-element seq has
-    // the same parse semantics as its sole member but the extra layer
-    // confuses walkers that count seq members for positional hints.
     if (normalized.length === 1) return normalized[0]!
 
-    // commaSep1 patterns:
-    //
-    //   seq(x, repeat(seq(sep, x)))                     → repeat1 + sep
-    //   seq(x, repeat(seq(sep, x)), optional(sep))      → repeat1 + sep + trailing
-    //   seq(sep, x, repeat(seq(sep, x)))                → repeat1 + sep + leading
-    //
-    // The `repeat` form is the one `repeat()` already normalizes to
-    // `{content: x, separator: sep}`, so we look for an inner shape
-    // of `repeat(x, separator=sep)` whose element type matches the
-    // outer seq's first/last element. Collapsing here gives downstream
-    // passes a single `repeat1` node with a clean separator marker,
-    // instead of five to six nested rules they have to pattern-match.
     const lifted = liftCommaSep(normalized)
     if (lifted) return lifted
 
-    // Trailing-sep absorption for delimited commaSep patterns:
-    //
-    //   seq('(', sepBy1(sep, x), optional(sep), ')')
-    //       where sepBy1 has already been lifted to `repeat1(x, sep)`
-    //
-    // The liftCommaSep pass above refuses 4+ member seqs because it
-    // needs to match the canonical sepBy1 shape exactly. But once the
-    // inner lift has run, the outer seq is `[..., repeat1(x, sep),
-    // optional(sep), ...]` and the trailing-sep optional is redundant
-    // — tree-sitter's repeat1 with `trailing: true` accepts it. Fold
-    // the optional into the repeat1 node so the outer seq loses one
-    // member and no phantom `optional(',')` survives into simplifyRule.
     const absorbed = absorbTrailingSeparator(normalized)
     if (absorbed) return { type: 'seq', members: absorbed }
 
@@ -139,18 +131,12 @@ function absorbTrailingSeparator(members: Rule[]): Rule[] | null {
 function liftCommaSep(members: Rule[]): Rule | null {
     if (members.length < 2 || members.length > 3) return null
 
-    // Locate the repeat-with-separator member. It's the only
-    // repeat-node in the group; if we find zero or more than one,
-    // this isn't a commaSep shape.
-    const repeatIdx = members.findIndex(m => m.type === 'repeat' && m.separator !== undefined)
+    const repeatIdx = findRepeatWithSeparator(members)
     if (repeatIdx === -1) return null
     const repeatNode = members[repeatIdx] as RepeatRule
     const sep = repeatNode.separator!
     const elem = repeatNode.content
 
-    // Element agreement — the seq's leading/trailing element must
-    // match the repeat's content so the whole group really is "one or
-    // more `elem` separated by `sep`".
     const matchesElem = (r: Rule): boolean => rulesEqual(r, elem)
     const matchesOptionalSep = (r: Rule): boolean =>
         r.type === 'optional' && r.content.type === 'string' && r.content.value === sep
@@ -182,6 +168,19 @@ function liftCommaSep(members: Rule[]): Rule | null {
     }
 
     return null
+}
+
+/**
+ * Locate the unique repeat-with-separator member inside a seq's member list.
+ *
+ * @param members - Normalized rule array from the enclosing seq.
+ * @returns Index of the matching repeat node, or `-1` if none or more than one found.
+ * @remarks
+ * The commaSep1 shape has exactly one repeat node in the group; zero or
+ * more than one means this isn't a commaSep shape.
+ */
+function findRepeatWithSeparator(members: Rule[]): number {
+    return members.findIndex(m => m.type === 'repeat' && m.separator !== undefined)
 }
 
 /**
@@ -223,21 +222,29 @@ function rulesEqual(a: Rule, b: Rule): boolean {
     }
 }
 
+/**
+ * Choice combinator — matches exactly one of the members.
+ *
+ * @remarks
+ * A single-member choice collapses to its member — the wrapper has no
+ * parse semantics.
+ *
+ * @remarks
+ * `choice(x, blank())` is lowered to `optional(x)`. Tree-sitter encodes
+ * blank() as either an empty seq (historical) or an empty choice; both
+ * shapes mark "this branch matches nothing", so the outer choice is
+ * "x or nothing" = `optional(x)`. Collapsing at DSL time means walkers
+ * only ever see the optional shape.
+ *
+ * @remarks
+ * An all-string choice is compacted to an `EnumRule` for fast downstream
+ * handling.
+ */
 export function choice(...members: Input[]): Rule {
     const normalized = members.map(normalize)
 
-    // Single-member choice([x]) collapses to x for the same reason
-    // single-member seq does — the wrapper has no parse semantics.
     if (normalized.length === 1) return normalized[0]!
 
-    // Detect `choice(x, blank)` shape and lower to `optional(x)`.
-    // Tree-sitter grammars encode `blank()` two ways that both reach
-    // here: as an empty `seq` (historical form still used by some
-    // grammars) or as an empty `choice` (what our own `blank()`
-    // helper returns on line ~626). Either shape marks "this branch
-    // matches nothing", so the outer choice is really "x or nothing"
-    // = `optional(x)`. Collapsing at DSL time means walkers only
-    // ever see the optional shape, not both.
     const isBlank = (r: Rule): boolean =>
         (r.type === 'seq' && r.members.length === 0)
         || (r.type === 'choice' && r.members.length === 0)
@@ -258,89 +265,98 @@ export function choice(...members: Input[]): Rule {
         }
     }
 
-    // Detect all-field choice. Two sub-cases:
-    //
-    //   1. All branches wrap the SAME field name (e.g.
-    //      `choice(field('x', 'a'), field('x', 'z'))`) — factor the
-    //      field outward to `field('x', choice('a', 'z'))`. The choice
-    //      content may itself simplify to an enum when all inners are
-    //      strings.
-    //
-    //   2. All branches have DIFFERENT field names (e.g.
-    //      `choice(field('x', ...), field('y', ...))`) — retype each
-    //      field node as a variant node. `FieldRule` and `VariantRule`
-    //      share the same shape (`name` + `content`), so the rewrite
-    //      is purely a discriminator change; the content is reused
-    //      in place. This is the encoding overrides.ts uses for
-    //      polymorphs: the author writes
-    //      `choice(field('body', seq(...)), field('semi', seq(...)))`
-    //      and evaluate retypes it to
-    //      `choice(variant('body', seq(...)), variant('semi', seq(...)))`.
-    //      Link's `promotePolymorph` pass already recognizes that
-    //      shape at the top level and wraps the whole rule in a
-    //      `PolymorphRule`; nested placement stays a plain
-    //      choice-of-variants.
-    //
-    // Mixed branches (some fields, some not) fall through to the raw
-    // choice — no clean single interpretation.
     if (normalized.length >= 2 && normalized.every(m => m.type === 'field')) {
-        const fieldMembers = normalized as FieldRule[]
-        // Skip tagging when any branch wraps an alias directly —
-        // aliases are structural rename markers and downstream passes
-        // (Link, assemble) depend on the alias appearing inside a
-        // plain choice to route the synthetic kind into the NodeMap.
-        // Tagging as a variant shifts classification and leaves the
-        // alias target unregistered (observed on rust
-        // `_line_doc_comment_marker` / `_block_doc_comment_marker`).
-        const anyAlias = fieldMembers.some(f => f.content.type === 'alias')
-        if (anyAlias) {
-            return { type: 'choice', members: normalized }
-        }
-        const names = fieldMembers.map(f => f.name)
-        const allSameName = names.every(n => n === names[0])
-        if (allSameName) {
-            // Factor: choice(field(x, A), field(x, B)) → field(x, choice(A, B))
-            const inner = choice(...fieldMembers.map(f => f.content))
-            return {
-                type: 'field',
-                name: names[0]!,
-                content: inner,
-                source: 'grammar',
-            }
-        }
-        // Heterogeneous names → retype each field node as a variant
-        // node. Same `name`, same `content`, only the discriminator
-        // changes. Downstream (Link's `promotePolymorph`, walker,
-        // assemble) consumes variants as polymorph-form markers when
-        // they appear at the top level.
-        const retyped: Rule[] = fieldMembers.map(f => ({
-            type: 'variant' as const,
-            name: f.name,
-            content: f.content,
-        }))
-        return { type: 'choice', members: retyped }
+        return collapseAllFieldChoiceMembers(normalized as FieldRule[])
     }
 
     return { type: 'choice', members: normalized }
 }
 
+/**
+ * Collapse an all-field choice into a factored field or a choice-of-variants.
+ *
+ * @param fieldMembers - All members of the choice, already confirmed to be FieldRule.
+ * @returns A factored `FieldRule`, a `choice` of variants, or a raw `choice` when
+ *   any branch wraps an alias.
+ * @remarks
+ * Two sub-cases:
+ *
+ * 1. All branches wrap the SAME field name — factor the field outward to
+ *    `field('x', choice(A, B))`. The choice content may itself simplify
+ *    to an enum when all inners are strings.
+ *
+ * 2. All branches have DIFFERENT field names — retype each field node as
+ *    a variant node. `FieldRule` and `VariantRule` share the same shape
+ *    (`name` + `content`), so the rewrite is purely a discriminator
+ *    change. This is the encoding overrides.ts uses for polymorphs:
+ *    `choice(field('body', seq(...)), field('semi', seq(...)))` becomes
+ *    `choice(variant('body', seq(...)), variant('semi', seq(...)))`.
+ *    Link's `promotePolymorph` pass recognises that shape at the top
+ *    level and wraps the whole rule in a `PolymorphRule`.
+ *
+ * Mixed branches (some fields, some not) fall through to the raw
+ * choice — no clean single interpretation.
+ *
+ * @remarks
+ * Skip variant retyping when any branch wraps an alias directly.
+ * Aliases are structural rename markers; downstream passes (Link,
+ * assemble) depend on the alias appearing inside a plain choice to route
+ * the synthetic kind into the NodeMap. Tagging as a variant shifts
+ * classification and leaves the alias target unregistered (observed on
+ * rust `_line_doc_comment_marker` / `_block_doc_comment_marker`).
+ */
+function collapseAllFieldChoiceMembers(fieldMembers: FieldRule[]): Rule {
+    const anyAlias = fieldMembers.some(f => f.content.type === 'alias')
+    if (anyAlias) {
+        return { type: 'choice', members: fieldMembers }
+    }
+    const names = fieldMembers.map(f => f.name)
+    const allSameName = names.every(n => n === names[0])
+    if (allSameName) {
+        // Factor: choice(field(x, A), field(x, B)) → field(x, choice(A, B))
+        const inner = choice(...fieldMembers.map(f => f.content))
+        return {
+            type: 'field',
+            name: names[0]!,
+            content: inner,
+            source: 'grammar',
+        }
+    }
+    // Heterogeneous names → retype each field node as a variant node.
+    // Same `name`, same `content`, only the discriminator changes.
+    // Downstream (Link's `promotePolymorph`, walker, assemble) consumes
+    // variants as polymorph-form markers when they appear at the top level.
+    const retyped: Rule[] = fieldMembers.map(f => ({
+        type: 'variant' as const,
+        name: f.name,
+        content: f.content,
+    }))
+    return { type: 'choice', members: retyped }
+}
+
+/**
+ * Optional combinator — matches zero or one occurrence of the content.
+ *
+ * @remarks
+ * `optional(optional(x))` collapses to `optional(x)` — two layers of
+ * "zero or one" is the same as one layer.
+ *
+ * @remarks
+ * `optional(repeat(x))` returns `repeat(x)` unchanged. `repeat` is
+ * already optional in the config surface (`items?: T[]`, null-coalesced
+ * to `[]` in the factory), so the wrapper adds no information.
+ *
+ * @remarks
+ * `optional(repeat1(x))` is lowered to `repeat(x)`. The two are
+ * parse-identical: tree-sitter surfaces "optional didn't fire" and
+ * "repeat1 fired with zero items" identically (an empty children list).
+ * The non-empty guarantee a bare `repeat1` carries only holds when there
+ * is no `optional` wrapper to swallow the empty case.
+ */
 export function optional(content: Input): Rule {
     const resolved = normalize(content)
     walkRefs(resolved, ref => { ref.optional = true })
-    // optional(optional(x)) → optional(x) — two layers of "zero or
-    // one" is the same as one layer.
     if (resolved.type === 'optional') return resolved
-    // optional(repeat(x)) → repeat(x) and
-    // optional(repeat1(x)) → repeat(x). Canonical list rule:
-    //   - `repeat` is ALWAYS optional in the config surface
-    //     (`items?: T[]`, null-coalesced to `[]` in the factory)
-    //     so `optional(repeat(x))` adds no information.
-    //   - `optional(repeat1(x))` is parse-identical to `repeat(x)`
-    //     because tree-sitter surfaces "optional didn't fire" and
-    //     "repeat1 fired with zero items" the same way: an empty
-    //     children list under the parent. The non-empty guarantee
-    //     a bare `repeat1` carries only holds when there's no
-    //     `optional` wrapper to swallow the empty case.
     if (resolved.type === 'repeat') return resolved
     if (resolved.type === 'repeat1') {
         return {
@@ -375,25 +391,8 @@ function extractRepeatSeparator(
     if (second.type === 'string' && first.type !== 'string') {
         return { content: first, separator: second.value, trailing: true }
     }
-    // Choice-of-separators case: tree-sitter-typescript's `sepBy1(
-    // choice(',', $._semicolon), X)` expands to `seq(X,
-    // repeat(seq(choice(',', $._semicolon), X)))` — a `repeat` whose
-    // separator position is a `choice` of literals and an external
-    // symbol (`_semicolon` = automatic semicolon insertion). Pick the
-    // first string member as the canonical render-side separator. Parse
-    // still accepts either form; render emits one consistent choice.
-    const asSepChoice = (r: Rule): string | null => {
-        if (r.type !== 'choice') return null
-        const lit = r.members.find((m): m is import('./rule.ts').StringRule => m.type === 'string')
-        return lit ? lit.value : null
-    }
-    // The separator-choice check mirrors the single-literal branches
-    // above: a choice acts as the separator position when its sibling
-    // is non-string (could be a symbol or a choice of content symbols,
-    // as in typescript's object_type `sepBy1(choice(',', _semicolon),
-    // choice(property_signature, call_signature, …))`).
-    const firstSepChoice = first.type === 'choice' ? asSepChoice(first) : null
-    const secondSepChoice = second.type === 'choice' ? asSepChoice(second) : null
+    const firstSepChoice = first.type === 'choice' ? extractFirstStringFromChoice(first) : null
+    const secondSepChoice = second.type === 'choice' ? extractFirstStringFromChoice(second) : null
     if (firstSepChoice !== null && second.type !== 'string') {
         return { content: second, separator: firstSepChoice }
     }
@@ -403,15 +402,44 @@ function extractRepeatSeparator(
     return null
 }
 
+/**
+ * Extract the first string literal from a choice rule, if any.
+ *
+ * @param r - A choice rule whose members may include string literals.
+ * @returns The string value of the first string member, or `null` if none.
+ * @remarks
+ * Handles the choice-of-separators pattern used in tree-sitter-typescript's
+ * `sepBy1(choice(',', $._semicolon), X)`, which expands to a `repeat` whose
+ * separator position is a `choice` of literals and an external symbol
+ * (`_semicolon` = automatic semicolon insertion). The first string member
+ * is the canonical render-side separator; parse still accepts either form.
+ *
+ * The separator-choice check mirrors the single-literal branches in
+ * `extractRepeatSeparator`: a choice acts as the separator position when
+ * its sibling is non-string (e.g. typescript's object_type
+ * `sepBy1(choice(',', _semicolon), choice(property_signature, …))`).
+ */
+function extractFirstStringFromChoice(r: Rule): string | null {
+    if (r.type !== 'choice') return null
+    const lit = r.members.find((m): m is import('./rule.ts').StringRule => m.type === 'string')
+    return lit ? lit.value : null
+}
+
+/**
+ * Zero-or-more repetition combinator.
+ *
+ * @remarks
+ * `repeat(repeat(x))` collapses to `repeat(x)` when neither layer carries
+ * a distinct separator — the outer loop is redundant.
+ *
+ * @remarks
+ * `repeat(optional(x))` collapses to `repeat(x)` — repeat already handles
+ * zero occurrences, so the optional wrapper is redundant.
+ */
 export function repeat(content: Input): Rule {
     const resolved = normalize(content)
     walkRefs(resolved, ref => { ref.repeated = true })
-    // repeat(repeat(x)) → repeat(x) when neither layer carries a
-    // distinct separator. The outer loop is redundant when the inner
-    // already matches zero-or-more.
     if (resolved.type === 'repeat' && !resolved.separator) return resolved
-    // repeat(optional(x)) → repeat(x) — repeat already handles zero
-    // occurrences, so the optional is redundant.
     if (resolved.type === 'optional') {
         const inner = resolved.content
         walkRefs(inner, ref => { ref.repeated = true })
@@ -428,20 +456,24 @@ export function repeat(content: Input): Rule {
     return { type: 'repeat', content: resolved }
 }
 
+/**
+ * One-or-more repetition combinator.
+ *
+ * @remarks
+ * `repeat1(repeat1(x))` collapses to `repeat1(x)` — the outer "one or
+ * more" of "one or more" accepts the same strings as the inner.
+ *
+ * @remarks
+ * `repeat1(repeat(x))` is NOT collapsed to `repeat1(x)`. The inner
+ * `repeat(x)` can match empty, so `repeat1(repeat(x))` accepts
+ * zero-or-more `x` (one outer iteration of zero inner matches), which
+ * matches `repeat(x)`'s language — not `repeat1(x)`'s. The shape is
+ * left alone to preserve grammar author intent.
+ */
 export function repeat1(content: Input): Rule {
     const resolved = normalize(content)
     walkRefs(resolved, ref => { ref.repeated = true })
-    // repeat1(repeat1(x)) → repeat1(x) — the outer "one or more"
-    // of "one or more" accepts the same strings as the inner.
     if (resolved.type === 'repeat1' && !resolved.separator) return resolved
-    // NOTE: `repeat1(repeat(x))` is NOT equivalent to `repeat1(x)`.
-    // The inner `repeat(x)` can match empty, so `repeat1(repeat(x))`
-    // accepts zero-or-more `x` (one outer iteration of zero inner
-    // matches), which matches `repeat(x)`'s accepted language — but
-    // `repeat1(x)` requires at least one literal `x`. Leave the
-    // shape alone; if a grammar author wrote this, they probably
-    // intended something and we'd rather preserve it than silently
-    // change the accepted language.
     const sep = extractRepeatSeparator(resolved)
     if (sep) {
         return {
@@ -466,11 +498,10 @@ export function createProxy(currentRule: string, refs: SymbolRef[]): Record<stri
             return {
                 type: 'symbol' as const,
                 name,
-                // `hidden` on the symbol ref is a hint for downstream
-                // passes only — Link recomputes the authoritative
-                // visibility decision via `isHiddenKind()` below,
-                // consulting both the leading-underscore convention
-                // and tree-sitter's explicit `inline` list.
+                // `hidden` is a hint for downstream passes only — Link
+                // recomputes the authoritative visibility decision via
+                // `isHiddenKind()`, consulting both the leading-underscore
+                // convention and tree-sitter's explicit `inline` list.
                 hidden: name.startsWith('_'),
                 _ref: ref,
             }
@@ -544,43 +575,72 @@ function walkRefs(rule: Rule, visit: (ref: SymbolRef) => void): void {
 // Named patterns
 // ---------------------------------------------------------------------------
 
+/**
+ * Field combinator — attaches a named field to a rule.
+ *
+ * @param name - The field name (snake_case, raw grammar name).
+ * @param content - The rule occupying this field position. Omit to
+ *   create a placeholder for `resolvePatch` in transform() patches.
+ * @returns A FieldRule with the field name and resolved content.
+ * @remarks
+ * When `content` is omitted, a placeholder FieldRule is returned with
+ * `_needsContent: true`, which `resolvePatch` swaps out with the
+ * original member when applying transform() patches.
+ * @remarks
+ * Mirrors the bare `optional()` helper's canonical collapse:
+ * `field('x', optional(repeat(...)))` → `field('x', repeat(...))` and
+ * `field('x', optional(repeat1(...)))` → `field('x', repeat(...))`.
+ * Both are parse-identical to `repeat(x)` — tree-sitter surfaces any
+ * empty case as an empty children list. Collapsing both here keeps
+ * evaluate output canonical across all the equivalent list encodings
+ * grammar authors write.
+ * @remarks
+ * Propagates the field name to every nested symbol ref. Stops at inner
+ * field/alias boundaries — those own their own field name. Does not
+ * overwrite a field name already set by an inner wrapper.
+ */
 export function field(name: string, content?: Input): FieldRule {
     if (content === undefined) {
-        // No content — used in transform() patches where the content
-        // comes from the original member. `_needsContent` flags this
-        // placeholder for `resolvePatch` to swap out.
         return { type: 'field', name, content: { type: 'string', value: '' }, _needsContent: true }
     }
     let resolved = normalize(content)
-    // Mirror the bare `optional()` helper's canonical collapse:
-    //   field('x', optional(repeat(...)))  → field('x', repeat(...))
-    //   field('x', optional(repeat1(...))) → field('x', repeat(...))
-    // Both `optional(repeat(x))` and `optional(repeat1(x))` are
-    // parse-identical to `repeat(x)` — tree-sitter surfaces any
-    // empty case as an empty children list. Collapsing both here
-    // keeps evaluate output canonical across all the equivalent
-    // list encodings grammar authors write.
-    if (resolved.type === 'optional') {
-        const inner = resolved.content
-        if (inner.type === 'repeat') {
-            resolved = inner
-        } else if (inner.type === 'repeat1') {
-            resolved = {
-                type: 'repeat',
-                content: inner.content,
-                separator: inner.separator,
-                trailing: inner.trailing,
-                leading: inner.leading,
-            }
-        }
-    }
-    // Propagate the field name to every nested symbol ref. Stops at
-    // inner field/alias boundaries — those own their own field name.
-    // Don't overwrite a field name set by an inner wrapper.
+    resolved = collapseOptionalRepeatInField(resolved)
     walkRefs(resolved, ref => {
         if (ref.fieldName === undefined) ref.fieldName = name
     })
     return { type: 'field', name, content: resolved }
+}
+
+/**
+ * Collapse `optional(repeat(...))` and `optional(repeat1(...))` to
+ * `repeat(...)` inside a field's content.
+ *
+ * @param resolved - The already-normalized field content rule.
+ * @returns The canonicalized rule with the optional wrapper removed when
+ *   the inner content is a repeat variant.
+ * @remarks
+ * Both `optional(repeat(x))` and `optional(repeat1(x))` are
+ * parse-identical to `repeat(x)` — tree-sitter surfaces any empty case
+ * as an empty children list. Collapsing here keeps evaluate output
+ * canonical across all the equivalent list encodings grammar authors
+ * write.
+ */
+function collapseOptionalRepeatInField(resolved: Rule): Rule {
+    if (resolved.type !== 'optional') return resolved
+    const inner = resolved.content
+    if (inner.type === 'repeat') {
+        return inner
+    }
+    if (inner.type === 'repeat1') {
+        return {
+            type: 'repeat',
+            content: inner.content,
+            separator: inner.separator,
+            trailing: inner.trailing,
+            leading: inner.leading,
+        }
+    }
+    return resolved
 }
 
 // ---------------------------------------------------------------------------
@@ -701,36 +761,9 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
         opts = options
     }
 
-    // Merge enrich-generated override callbacks from the base grammar's
-    // __enrichOverrides__ side-channel (set by enrich() in dsl/enrich.ts)
-    // into opts.rules — mirrors what wrappedGrammar does under tree-
-    // sitter CLI so both runtimes process enrich identically. User
-    // overrides (already in opts.rules) win on name collisions.
-    //
-    // Known limitation: when a user override exists, enrich is skipped
-    // entirely for that rule. That means optional-keyword-prefix and
-    // bare-keyword-prefix passes don't auto-wrap tokens the user would
-    // otherwise need to add via field() overrides (see rust's
-    // impl_item/async_block unsafe/move overrides for the duplicated
-    // pattern). Straight composition (enrich first, then user) was
-    // tried and regressed several python rules — enrich's bare-keyword
-    // pass interferes with user field/variant paths. Proper fix needs
-    // path-aware composition; deferred.
-    const enrichOverrides = (optionsOrBase as { __enrichOverrides__?: Record<string, (...a: any[]) => any> }).__enrichOverrides__
-    if (enrichOverrides && opts) {
-        if (!opts.rules) opts.rules = {} as Record<string, (...a: any[]) => any>
-        for (const [name, fn] of Object.entries(enrichOverrides)) {
-            if (!(name in opts.rules)) opts.rules[name] = fn
-        }
-    }
+    mergeEnrichOverridesIntoOptions(optionsOrBase, opts)
 
-    // Seed the refs array with the base grammar's references so the
-    // diagnostic derivations in Link can see the full reference graph,
-    // not just the handful of refs introduced by override callbacks.
-    // Refs from rules the override REPLACES will be filtered below.
-    const refs: SymbolRef[] = baseGrammar?.references
-        ? [...baseGrammar.references]
-        : []
+    const refs: SymbolRef[] = seedRefsFromBaseGrammar(baseGrammar)
     const rules: Record<string, Rule> = { ...baseRules }
 
     // Extract metadata
@@ -741,37 +774,12 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
     const conflicts: string[][] = []
     let word: string | null = null
 
-    // Run the entire option-callback evaluation inside a fresh role
-    // accumulator scope so any `role()` calls inside externals/rules
-    // get attached to THIS grammar invocation. Save/restore in
-    // withRoleScope guarantees nested grammar() calls (e.g. via
-    // grammar(enrich(base), {...})) stay isolated.
     const { roles: collectedRoles } = withRoleScope(() => {
         const { syntheticRules } = withSyntheticRuleScope(() => {
-            // Evaluate each rule function
-            for (const [name, ruleFn] of Object.entries(opts.rules)) {
-                const $ = createProxy(name, refs)
-                const baseRule = baseRules[name]
-                setCurrentRuleKind(name)
-                try {
-                    const result = ruleFn.call($, $, baseRule)
-                    rules[name] = normalize(result)
-                } finally {
-                    // Clear the global current-rule context even if ruleFn
-                    // throws. Otherwise a throw would leak the current-rule
-                    // name into subsequent rule evaluations or error-handling
-                    // paths and corrupt polymorph-metadata registration.
-                    setCurrentRuleKind(null)
-                }
-            }
+            evaluateRuleFunctions(opts, baseRules, refs, rules)
         })
 
-        // Inject synthetic rules created by alias() placeholders in
-        // transform patches. These are hidden variant rules for
-        // nested-alias polymorphs.
-        for (const [name, content] of syntheticRules) {
-            rules[name] = content as Rule
-        }
+        injectSyntheticRules(syntheticRules, rules)
 
         // The rest of the callbacks (extras, externals, supertypes,
         // inline, conflicts, word) stay inside this same role scope so
@@ -781,20 +789,7 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
         }, (w) => { word = w })
     })
 
-    // Extension inheritance — when extending a base grammar, inherit
-    // metadata lists the override didn't explicitly re-declare. Tree-sitter
-    // itself inherits externals/extras/supertypes/inline/conflicts/word
-    // implicitly; we model the same behavior so downstream phases see the
-    // full declaration set instead of an empty list.
-    const inherited = baseGrammar?.grammar ?? baseGrammar
-    if (inherited) {
-        if (!opts.externals && Array.isArray(inherited.externals)) externals.push(...inherited.externals)
-        if (!opts.extras && Array.isArray(inherited.extras)) extras.push(...inherited.extras)
-        if (!opts.supertypes && Array.isArray(inherited.supertypes)) supertypes.push(...inherited.supertypes)
-        if (!opts.inline && Array.isArray(inherited.inline)) inline.push(...inherited.inline)
-        if (!opts.conflicts && Array.isArray(inherited.conflicts)) conflicts.push(...inherited.conflicts)
-        if (!opts.word && inherited.word) word = inherited.word
-    }
+    inheritBaseGrammarMetadata(opts, baseGrammar, { extras, externals, supertypes, inline, conflicts }, (w) => { word = w })
 
     const polymorphVariants = drainPolymorphVariants()
 
@@ -815,6 +810,158 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
             externalRoles: collectedRoles.size > 0 ? collectedRoles : undefined,
             polymorphVariants: polymorphVariants.length > 0 ? polymorphVariants : undefined,
         } satisfies RawGrammar,
+    }
+}
+
+/**
+ * Merge enrich-generated override callbacks from the base grammar's
+ * `__enrichOverrides__` side-channel into `opts.rules`.
+ *
+ * @param optionsOrBase - The first argument passed to `grammarFn`, which may
+ *   carry the `__enrichOverrides__` property when the base was produced by
+ *   `enrich()` in `dsl/enrich.ts`.
+ * @param opts - The resolved `GrammarOptions` for the current grammar. User
+ *   overrides already in `opts.rules` win on name collisions.
+ * @remarks
+ * Mirrors what `wrappedGrammar` does under tree-sitter CLI so both
+ * runtimes process enrich identically.
+ * @remarks
+ * Known limitation: when a user override exists for a rule, enrich is
+ * skipped entirely for that rule. The optional-keyword-prefix and
+ * bare-keyword-prefix passes therefore don't auto-wrap tokens the user
+ * would otherwise need to add via `field()` overrides (see rust's
+ * `impl_item`/`async_block` unsafe/move overrides for the duplicated
+ * pattern). Straight composition (enrich first, then user) was tried and
+ * regressed several python rules — enrich's bare-keyword pass interferes
+ * with user field/variant paths. Proper fix needs path-aware composition;
+ * deferred.
+ */
+function mergeEnrichOverridesIntoOptions(
+    optionsOrBase: GrammarOptions | { grammar: any },
+    opts: GrammarOptions,
+): void {
+    const enrichOverrides = (optionsOrBase as { __enrichOverrides__?: Record<string, (...a: any[]) => any> }).__enrichOverrides__
+    if (enrichOverrides && opts) {
+        if (!opts.rules) opts.rules = {} as Record<string, (...a: any[]) => any>
+        for (const [name, fn] of Object.entries(enrichOverrides)) {
+            if (!(name in opts.rules)) opts.rules[name] = fn
+        }
+    }
+}
+
+/**
+ * Seed the initial refs array from the base grammar's stored references.
+ *
+ * @param baseGrammar - The evaluated base grammar object, or `null` for a
+ *   fresh grammar with no base.
+ * @returns A new mutable array seeded with the base grammar's references, or
+ *   an empty array when there is no base.
+ * @remarks
+ * Seeding with the base references ensures the diagnostic derivations in
+ * Link can see the full reference graph, not just the handful of refs
+ * introduced by override callbacks. Refs from rules the override replaces
+ * are filtered by downstream passes.
+ */
+function seedRefsFromBaseGrammar(baseGrammar: any): SymbolRef[] {
+    return baseGrammar?.references ? [...baseGrammar.references] : []
+}
+
+/**
+ * Evaluate each rule function in `opts.rules` and write the normalised
+ * result into the shared `rules` map.
+ *
+ * @param opts - Grammar options containing the rule callbacks to evaluate.
+ * @param baseRules - The base grammar's already-evaluated rules, passed as
+ *   `previous` to each override callback.
+ * @param refs - Mutable symbol-reference accumulator shared across all rule
+ *   evaluations in this grammar invocation.
+ * @param rules - Mutable output map where evaluated rules are stored.
+ * @remarks
+ * Each rule callback receives a fresh `$` proxy and, as its second
+ * argument, the base grammar's version of that rule (if any).
+ * `setCurrentRuleKind` / `setCurrentRuleKind(null)` bracket each call
+ * so that polymorph-metadata registration is always scoped to the correct
+ * rule, even when a callback throws.
+ */
+function evaluateRuleFunctions(
+    opts: GrammarOptions,
+    baseRules: Record<string, Rule>,
+    refs: SymbolRef[],
+    rules: Record<string, Rule>,
+): void {
+    for (const [name, ruleFn] of Object.entries(opts.rules)) {
+        const $ = createProxy(name, refs)
+        const baseRule = baseRules[name]
+        setCurrentRuleKind(name)
+        try {
+            const result = ruleFn.call($, $, baseRule)
+            rules[name] = normalize(result)
+        } finally {
+            // Clear the global current-rule context even if ruleFn throws.
+            // A throw would otherwise leak the current-rule name into
+            // subsequent rule evaluations or error-handling paths and
+            // corrupt polymorph-metadata registration.
+            setCurrentRuleKind(null)
+        }
+    }
+}
+
+/**
+ * Inject synthetic rules created by alias() placeholders in transform patches
+ * into the shared rules map.
+ *
+ * @param syntheticRules - Map of synthetic rule name → rule content produced
+ *   by `withSyntheticRuleScope`.
+ * @param rules - Mutable output map to receive the synthetic rules.
+ * @remarks
+ * Synthetic rules are hidden variant rules for nested-alias polymorphs,
+ * created when transform patches use alias() placeholders.
+ */
+function injectSyntheticRules(
+    syntheticRules: Map<string, unknown>,
+    rules: Record<string, Rule>,
+): void {
+    for (const [name, content] of syntheticRules) {
+        rules[name] = content as Rule
+    }
+}
+
+/**
+ * Inherit metadata lists from the base grammar when the override did not
+ * explicitly re-declare them.
+ *
+ * @param opts - Grammar options for the current (override) grammar.
+ * @param baseGrammar - The evaluated base grammar object, or `null` for a
+ *   fresh grammar.
+ * @param sinks - Mutable accumulators for each metadata list.
+ * @param setWord - Callback to set the `word` rule name when inherited from
+ *   the base.
+ * @remarks
+ * Tree-sitter CLI inherits externals, extras, supertypes, inline,
+ * conflicts, and word implicitly when extending a base grammar. This
+ * function models the same behaviour so downstream phases see the full
+ * declaration set instead of an empty list.
+ */
+function inheritBaseGrammarMetadata(
+    opts: GrammarOptions,
+    baseGrammar: any,
+    sinks: {
+        extras: string[]
+        externals: string[]
+        supertypes: string[]
+        inline: string[]
+        conflicts: string[][]
+    },
+    setWord: (w: string) => void,
+): void {
+    const inherited = baseGrammar?.grammar ?? baseGrammar
+    if (inherited) {
+        if (!opts.externals && Array.isArray(inherited.externals)) sinks.externals.push(...inherited.externals)
+        if (!opts.extras && Array.isArray(inherited.extras)) sinks.extras.push(...inherited.extras)
+        if (!opts.supertypes && Array.isArray(inherited.supertypes)) sinks.supertypes.push(...inherited.supertypes)
+        if (!opts.inline && Array.isArray(inherited.inline)) sinks.inline.push(...inherited.inline)
+        if (!opts.conflicts && Array.isArray(inherited.conflicts)) sinks.conflicts.push(...inherited.conflicts)
+        if (!opts.word && inherited.word) setWord(inherited.word)
     }
 }
 
@@ -930,15 +1077,34 @@ function evaluateMetadataCallbacks(
  * Tree-sitter's grammar(base, { rules }) handles extension merging natively.
  */
 export async function evaluate(entryPath: string): Promise<RawGrammar> {
-    // Inject DSL functions into globalThis. `globalThis` is typed as
-    // `typeof globalThis`, which doesn't include our DSL props —
-    // `Record<string, unknown>` is the honest shape for the bag we
-    // mutate inside this scope.
     const g = globalThis as unknown as Record<string, unknown>
-    const savedGlobals: Record<string, unknown> = {}
-    // Only inject tree-sitter baseline DSL shadows as globals.
-    // Sittir extensions (transform/insert/replace/role/enrich) are
-    // explicitly imported from '@sittir/codegen/dsl' by override files.
+    const savedGlobals = saveAndInjectDslGlobals(g)
+
+    try {
+        return await importAndExtractGrammar(entryPath)
+    } finally {
+        restoreSavedGlobals(g, savedGlobals)
+    }
+}
+
+/**
+ * Build the tree-sitter baseline DSL function map, save any pre-existing
+ * globals under the same names, inject the DSL functions into `globalThis`,
+ * and return the saved values for later restoration.
+ *
+ * @param g - `globalThis` cast to a mutable string-keyed record.
+ * @returns A snapshot of the globals that were overwritten, keyed by name.
+ * @remarks
+ * Only tree-sitter baseline DSL shadows are injected as globals.
+ * Sittir extensions (transform/insert/replace/role/enrich) are explicitly
+ * imported from `@sittir/codegen/dsl` by override files and must not be
+ * injected here.
+ * @remarks
+ * `globalThis` is typed as `typeof globalThis`, which doesn't include
+ * our DSL props — `Record<string, unknown>` is the honest shape for the
+ * bag we mutate inside this scope.
+ */
+function saveAndInjectDslGlobals(g: Record<string, unknown>): Record<string, unknown> {
     const dslFunctions: Record<string, unknown> = {
         grammar: grammarFn,
         seq,
@@ -952,26 +1118,44 @@ export async function evaluate(entryPath: string): Promise<RawGrammar> {
         alias,
         blank,
     }
-
-    // Save existing globals and inject ours
+    const savedGlobals: Record<string, unknown> = {}
     for (const [name, fn] of Object.entries(dslFunctions)) {
         savedGlobals[name] = g[name]
         g[name] = fn
     }
+    return savedGlobals
+}
 
-    try {
-        // Import the grammar module
-        const mod = await import(entryPath) as { default?: unknown; grammar?: unknown }
-        const result = (mod.default ?? mod) as { grammar?: unknown }
-        const grammarObj = result.grammar ?? result
-        return grammarObj as RawGrammar
-    } finally {
-        for (const [name, original] of Object.entries(savedGlobals)) {
-            if (original === undefined) {
-                delete g[name]
-            } else {
-                g[name] = original
-            }
+/**
+ * Import the grammar module at the given path and extract the RawGrammar
+ * from its default or named export.
+ *
+ * @param entryPath - Absolute path to the grammar.js or overrides.ts file.
+ * @returns The RawGrammar produced by the module's top-level `grammar()` call.
+ */
+async function importAndExtractGrammar(entryPath: string): Promise<RawGrammar> {
+    const mod = await import(entryPath) as { default?: unknown; grammar?: unknown }
+    const result = (mod.default ?? mod) as { grammar?: unknown }
+    const grammarObj = result.grammar ?? result
+    return grammarObj as RawGrammar
+}
+
+/**
+ * Restore previously saved global values, deleting entries that were
+ * `undefined` before injection.
+ *
+ * @param g - `globalThis` cast to a mutable string-keyed record.
+ * @param savedGlobals - The snapshot returned by `saveAndInjectDslGlobals`.
+ */
+function restoreSavedGlobals(
+    g: Record<string, unknown>,
+    savedGlobals: Record<string, unknown>,
+): void {
+    for (const [name, original] of Object.entries(savedGlobals)) {
+        if (original === undefined) {
+            delete g[name]
+        } else {
+            g[name] = original
         }
     }
 }
