@@ -58,6 +58,99 @@ export function emitTemplates(config: EmitTemplatesConfig): string {
         }
     }
 
+    // Newline-terminating content inference.
+    //
+    // Grammars like python separate block-level statements via implicit
+    // indent/newline/dedent external tokens. The tokens never appear as
+    // literal strings in the rule body, so the walker can't capture
+    // `\n` as a sibling-multi separator. Result: a repeated clause
+    // field (e.g. `if_statement.alternative` = elif_clause | else_clause)
+    // defaults to joinBy ` ` and renders `elif c:\n  d else:\n  f` —
+    // the final `:` of the first clause and the `else` of the next
+    // collapse onto one line at reparse.
+    //
+    // The author's intent is encoded in the clause templates: each ends
+    // in `\n`. We detect this: a kind's raw template that ends with `\n`
+    // is a "block-terminating" clause. When every content kind of a
+    // multi-valued slot is block-terminating AND no explicit joinBy is
+    // set, install joinBy = `\n` so the clauses separate correctly.
+    //
+    // Limits intentionally: per-field slots (joinByField) are the narrow
+    // target — rule-level joinBy only fires when `$$$CHILDREN` with
+    // block-terminating child content and the rule has no joinBy set.
+    const terminatingKinds = new Set<string>()
+    for (const [kind, entry] of Object.entries(rules)) {
+        const tmpl = typeof entry === 'string'
+            ? entry
+            : (entry as { template?: string; variants?: Record<string, string> }).template
+        const variants = typeof entry === 'object' && entry !== null
+            ? (entry as { variants?: Record<string, string> }).variants
+            : undefined
+        // A kind is block-terminating if its PRIMARY template ends with
+        // `\n`, or (for polymorphs) every variant template does. The
+        // walker's raw output preserves that trailing newline; render
+        // strips it at the outer layer.
+        //
+        // `$NEWLINE` (role placeholder for external newline tokens — used
+        // in grammars like python whose termination is implicit) counts
+        // as equivalent: at render time it resolves to `\n`. Templates
+        // like `decorator: "@$EXPRESSION $NEWLINE"` are clause-level
+        // for joinBy-inference purposes even though the raw string
+        // doesn't end with the character.
+        const endsWithNewline = (s: string): boolean =>
+            s.endsWith('\n') || /\$NEWLINE\s*$/.test(s)
+        if (typeof tmpl === 'string' && endsWithNewline(tmpl)) {
+            terminatingKinds.add(kind)
+        } else if (variants && Object.values(variants).every(v => typeof v === 'string' && endsWithNewline(v))) {
+            terminatingKinds.add(kind)
+        }
+    }
+    const fieldIsBlockTerminating = (fieldName: string, parentNode: { modelType?: string; fields?: readonly { name: string; contentTypes: readonly string[] }[] }): boolean => {
+        const field = parentNode.fields?.find(f => f.name === fieldName)
+        if (!field || field.contentTypes.length === 0) return false
+        return field.contentTypes.every(t => terminatingKinds.has(t))
+    }
+    const childIsBlockTerminating = (parentNode: { children?: readonly { contentTypes: readonly string[] }[] }): boolean => {
+        const all = parentNode.children?.flatMap(c => c.contentTypes) ?? []
+        if (all.length === 0) return false
+        return all.every(t => terminatingKinds.has(t))
+    }
+    for (const [kind, node] of nodeMap.nodes) {
+        const raw = rules[kind]
+        if (raw === undefined) continue
+        // Collapsed bare-string entries (the common case when a rule has
+        // only a `template` key) need promotion back to object form before
+        // we can attach joinBy. We swap `rules[kind]` below only if we
+        // actually add metadata.
+        const e: Record<string, unknown> = typeof raw === 'string' ? { template: raw } : raw as Record<string, unknown>
+        const n = node as unknown as { modelType?: string; fields?: readonly { name: string; contentTypes: readonly string[] }[]; children?: readonly { contentTypes: readonly string[] }[] }
+        let mutated = false
+        if (typeof e.template === 'string') {
+            // Rule-level: `$$$CHILDREN` without joinBy, and all child
+            // content is block-terminating → joinBy = '\n'.
+            if (!('joinBy' in e) && e.template.includes('$$$CHILDREN') && childIsBlockTerminating(n)) {
+                e.joinBy = '\n'
+                mutated = true
+            }
+            // Per-field: scan `$$$FIELD` placeholders in template for
+            // block-terminating fields, add to joinByField.
+            const byField = (e.joinByField as Record<string, string> | undefined) ?? {}
+            const placeholderRe = /\$\$\$([A-Z_][A-Z0-9_]*)/g
+            let m: RegExpExecArray | null
+            while ((m = placeholderRe.exec(e.template)) !== null) {
+                const field = m[1]!.toLowerCase()
+                if (field === 'children') continue  // already handled above
+                if (byField[field] !== undefined) continue  // walker set it
+                if (fieldIsBlockTerminating(field, n)) {
+                    byField[field] = '\n'
+                    mutated = true
+                }
+            }
+            if (Object.keys(byField).length > 0) e.joinByField = byField
+        }
+        if (mutated) rules[kind] = e
+    }
+
     const output = {
         grammar,
         grammarSha: grammarSha ?? '',

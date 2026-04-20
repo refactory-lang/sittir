@@ -43,7 +43,10 @@ rules:
   raise_statement:
     template: $RAISE $$$CHILDREN $CAUSE_CLAUSE
     cause_clause: from $CAUSE
-  if_statement: "$IF $CONDITION:\n  $CONSEQUENCE\n$$$ALTERNATIVE"
+  if_statement:
+    template: "$IF $CONDITION:\n  $CONSEQUENCE\n$$$ALTERNATIVE"
+    joinByField:
+      alternative: "\n"
   elif_clause: "$ELIF $CONDITION:\n  $CONSEQUENCE\n"
   else_clause: "$ELSE:\n  $BODY\n"
   match_statement:
@@ -102,7 +105,9 @@ rules:
   argument_list:
     template: ($$$CHILDREN)
     joinBy: ","
-  decorated_definition: $$$CHILDREN $DEFINITION
+  decorated_definition:
+    template: $$$CHILDREN $DEFINITION
+    joinBy: "\n"
   decorator: "@$EXPRESSION $NEWLINE"
   block:
     template: "$$$CHILDREN\n"
