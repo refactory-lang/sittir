@@ -29,7 +29,8 @@
  *     import { role } from '@sittir/codegen/dsl'
  */
 
-import type { Rule, ExternalRole } from '../compiler/rule.ts'
+import type { Rule } from '../compiler/rule.ts'
+import type { ExternalRole } from '../compiler/types.ts'
 import { isSymbolLike } from './runtime-shapes.ts'
 
 // Module-local accumulator. Null when no `grammar(...)` call is on

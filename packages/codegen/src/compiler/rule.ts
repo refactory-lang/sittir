@@ -311,49 +311,4 @@ export interface SymbolRef {
     position?: number       // Link adds: index within parent's SEQ
 }
 
-// ---------------------------------------------------------------------------
-// Pipeline-output types live in ./types.ts. These re-exports keep
-// legacy `import from './rule.ts'` sites working; prefer importing
-// directly from './types.ts' in new code.
-// ---------------------------------------------------------------------------
-
-export type {
-    RawGrammar,
-    ExternalRole,
-    SuggestedOverride,
-    DerivationLog,
-    InferredFieldEntry,
-    RepeatedShapeEntry,
-    PromotedRuleEntry,
-    LinkedGrammar,
-    DerivedRuleSource,
-    DerivedFieldSource,
-    IncludeFilter,
-    OptimizedGrammar,
-    KindProjection,
-    SignaturePool,
-    ProjectionContext,
-    NodeMap,
-} from './types.ts'
-export { computePolymorphFormKinds } from './types.ts'
-
-// ---------------------------------------------------------------------------
-// AssembledNode class hierarchy + field/child derivation moved to
-// ./node-map.ts. Re-exported here for backward-compatible imports;
-// prefer the new path in new code.
-// ---------------------------------------------------------------------------
-
-export * from './node-map.ts'
-
-// ---------------------------------------------------------------------------
-// Template walker (renderRuleTemplate et al.) moved to
-// ../emitters/template-walker.ts. Re-exported here for
-// backward-compatible imports; prefer the new path in new code.
-// ---------------------------------------------------------------------------
-
-export {
-    renderRuleTemplate,
-    findRepeatSeparator,
-    findRepeatFlag,
-} from '../emitters/template-walker.ts'
 

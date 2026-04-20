@@ -20,7 +20,7 @@
  */
 
 import type { Rule, SymbolRef } from './rule.ts'
-import type { AssembledNode } from './rule.ts'
+import type { AssembledNode } from './node-map.ts'
 import type { PolymorphVariant } from '../dsl/synthetic-rules.ts'
 
 // ---------------------------------------------------------------------------

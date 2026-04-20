@@ -1,8 +1,10 @@
 import { describe, it, expect } from 'vitest'
 import { assemble, classifyNode, simplifyRule, nameNode, nameField } from '../compiler/assemble.ts'
 import { simplifyRules } from '../compiler/simplify.ts'
-import { deriveFields } from '../compiler/rule.ts'
-import type { Rule, OptimizedGrammar, NodeMap, AssembledNode } from '../compiler/rule.ts'
+import type { Rule } from '../compiler/rule.ts'
+import type { OptimizedGrammar, NodeMap } from '../compiler/types.ts'
+import { deriveFields } from '../compiler/node-map.ts'
+import type { AssembledNode } from '../compiler/node-map.ts'
 
 function makeOptimized(rules: Record<string, Rule>, overrides?: Partial<OptimizedGrammar>): OptimizedGrammar {
     return {

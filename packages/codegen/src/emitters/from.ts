@@ -7,9 +7,10 @@
  * _resolveMany, _resolveLeafString, _resolveByKind, _resolveScalar).
  */
 
+import type { NodeMap } from '../compiler/types.ts'
 import type {
-    NodeMap, AssembledNode, AssembledField, AssembledChild, AssembledGroup,
-} from '../compiler/rule.ts'
+    AssembledNode, AssembledField, AssembledChild, AssembledGroup,
+} from '../compiler/node-map.ts'
 import type { PolymorphVariant } from '../dsl/synthetic-rules.ts'
 
 /** Escape a string for safe inclusion inside a single-quoted TS string literal. */

@@ -7,10 +7,11 @@
  * `node.modelType` and calls model-specific helpers locally.
  */
 
+import type { NodeMap } from '../compiler/types.ts'
 import type {
-    NodeMap, AssembledNode, AssembledField, AssembledChild, AssembledGroup,
-} from '../compiler/rule.ts'
-import { hasHiddenExternalRef, isVerbatimTokenStream } from '../compiler/rule.ts'
+    AssembledNode, AssembledField, AssembledChild, AssembledGroup,
+} from '../compiler/node-map.ts'
+import { hasHiddenExternalRef, isVerbatimTokenStream } from '../compiler/node-map.ts'
 
 export interface EmitFactoriesConfig {
     grammar: string

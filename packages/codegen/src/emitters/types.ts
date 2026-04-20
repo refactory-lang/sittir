@@ -13,13 +13,14 @@
  *   7. NamespaceMap + per-kind Ns interfaces + namespace sugar (spec 008 US1)
  */
 
+import type { NodeMap } from '../compiler/types.ts'
 import type {
-    NodeMap, AssembledNode, AssembledField, AssembledForm, AssembledChild,
-} from '../compiler/rule.ts'
+    AssembledNode, AssembledField, AssembledForm, AssembledChild,
+} from '../compiler/node-map.ts'
 import {
     AssembledBranch, AssembledContainer, AssembledPolymorph, AssembledGroup,
     AssembledSupertype,
-} from '../compiler/rule.ts'
+} from '../compiler/node-map.ts'
 import { loadRawEntries } from '../validators/node-types.ts'
 
 type StructuralNode = AssembledBranch | AssembledContainer | AssembledPolymorph

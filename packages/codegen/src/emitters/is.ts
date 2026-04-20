@@ -20,7 +20,8 @@
  * for the full contract.
  */
 
-import type { NodeMap, AssembledSupertype } from '../compiler/rule.ts'
+import type { NodeMap } from '../compiler/types.ts'
+import type { AssembledSupertype } from '../compiler/node-map.ts'
 
 export interface EmitIsConfig {
     grammar: string

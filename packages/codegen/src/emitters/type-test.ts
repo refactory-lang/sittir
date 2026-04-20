@@ -3,7 +3,7 @@
  * Generates compile-time assertions verifying generated types are well-formed.
  */
 
-import type { NodeMap } from '../compiler/rule.ts'
+import type { NodeMap } from '../compiler/types.ts'
 
 export interface EmitTypeTestsConfig {
     nodeMap: NodeMap

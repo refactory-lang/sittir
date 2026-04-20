@@ -8,7 +8,8 @@ import {
     evaluate,
 } from '../compiler/evaluate.ts'
 import { transform, insert, replace } from '../dsl/transform.ts'
-import type { SymbolRef, RawGrammar } from '../compiler/rule.ts'
+import type { SymbolRef } from '../compiler/rule.ts'
+import type { RawGrammar } from '../compiler/types.ts'
 
 // Install sittir's lowercase DSL primitives as globals so transform()'s
 // native-dsl delegation paths can reach them when this test imports

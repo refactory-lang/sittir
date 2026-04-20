@@ -30,7 +30,7 @@
 import type {
     Rule, ChoiceRule,
 } from '../compiler/rule.ts'
-import { isSyntheticFieldWrapper } from '../compiler/rule.ts'
+import { isSyntheticFieldWrapper } from '../compiler/node-map.ts'
 
 /**
  * Extract anonymous-string literals flanking the main content of a field

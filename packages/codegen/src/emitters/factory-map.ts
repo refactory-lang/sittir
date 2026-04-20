@@ -15,8 +15,10 @@
  * round-trip through JSON.
  */
 
-import type { NodeMap, AssembledNode, AssembledGroup, Rule } from '../compiler/rule.ts'
-import { hasHiddenExternalRef, isVerbatimTokenStream } from '../compiler/rule.ts'
+import type { NodeMap } from '../compiler/types.ts'
+import type { AssembledNode, AssembledGroup } from '../compiler/node-map.ts'
+import { hasHiddenExternalRef, isVerbatimTokenStream } from '../compiler/node-map.ts'
+import type { Rule } from '../compiler/rule.ts'
 
 export interface EmitFactoryMapConfig {
     grammar: string

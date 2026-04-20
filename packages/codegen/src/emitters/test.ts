@@ -3,7 +3,8 @@
  * Generates per-kind tests: factory produces correct type, render returns non-empty.
  */
 
-import type { NodeMap, AssembledNode, AssembledField } from '../compiler/rule.ts'
+import type { NodeMap } from '../compiler/types.ts'
+import type { AssembledNode, AssembledField } from '../compiler/node-map.ts'
 import { isValidIdent } from './shared.ts'
 
 export interface EmitTestsConfig {

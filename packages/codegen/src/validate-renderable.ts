@@ -23,7 +23,7 @@
 import { loadRawEntries, type RawNodeEntry } from './validators/node-types.ts'
 import { parse as parseYaml } from 'yaml'
 import type { RulesConfig, TemplateRule } from '@sittir/types'
-import type { NodeMap } from './compiler/rule.ts'
+import type { NodeMap } from './compiler/types.ts'
 import { buildRuleLookup } from './validators/rule-lookup.ts'
 
 // ---------------------------------------------------------------------------

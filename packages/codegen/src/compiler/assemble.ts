@@ -6,17 +6,22 @@
  */
 
 import type {
-    Rule, OptimizedGrammar, NodeMap,
-    AssembledNode, AssembledField, AssembledChild,
-    KindProjection, SignaturePool, ProjectionContext,
-    FieldRule,
+    Rule, FieldRule,
 } from './rule.ts'
+import type {
+    OptimizedGrammar, NodeMap,
+    KindProjection, SignaturePool, ProjectionContext,
+} from './types.ts'
+import { computePolymorphFormKinds } from './types.ts'
+import type {
+    AssembledNode, AssembledField, AssembledChild,
+} from './node-map.ts'
 import {
     AssembledBranch, AssembledContainer, AssembledPolymorph,
     AssembledLeaf, AssembledKeyword, AssembledToken, AssembledEnum,
     AssembledSupertype, AssembledGroup, AssembledMulti,
-    hasAnyField, hasAnyChild, computePolymorphFormKinds,
-} from './rule.ts'
+    hasAnyField, hasAnyChild,
+} from './node-map.ts'
 import { tokenToName } from './optimize.ts'
 import { simplifyRule, compileWordMatcher } from './simplify.ts'
 

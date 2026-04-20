@@ -3,7 +3,7 @@
  * Consumes NodeMap directly. Static output — doesn't depend on node list.
  */
 
-import type { NodeMap } from '../compiler/rule.ts'
+import type { NodeMap } from '../compiler/types.ts'
 
 export interface EmitIndexConfig {
     grammar: string

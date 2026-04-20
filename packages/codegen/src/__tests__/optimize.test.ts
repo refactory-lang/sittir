@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { optimize, fanOutChoices, factorSeqChoice, rulesEqual, wrapVariants, deduplicateVariants, nameVariant, tokenToName, needsSpace, collapseWrappers, fanOutSeqChoices, factorChoiceBranches, dedupeSeqMembers } from '../compiler/optimize.ts'
-import type { Rule, LinkedGrammar, OptimizedGrammar, ExternalRole } from '../compiler/rule.ts'
+import type { Rule } from '../compiler/rule.ts'
+import type { LinkedGrammar, OptimizedGrammar, ExternalRole } from '../compiler/types.ts'
 
 function makeLinked(rules: Record<string, Rule>, overrides?: Partial<LinkedGrammar>): LinkedGrammar {
     return {

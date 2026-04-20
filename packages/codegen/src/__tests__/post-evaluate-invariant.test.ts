@@ -23,7 +23,8 @@
 import { describe, it, expect } from 'vitest'
 import { evaluate } from '../compiler/evaluate.ts'
 import { resolveOverridesPath } from '../compiler/resolve-grammar.ts'
-import type { Rule, RawGrammar } from '../compiler/rule.ts'
+import type { Rule } from '../compiler/rule.ts'
+import type { RawGrammar } from '../compiler/types.ts'
 
 const KNOWN_RULE_TYPES = new Set([
     // Structural grouping

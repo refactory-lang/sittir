@@ -8,7 +8,8 @@
  * compiler/rule.ts next to the class hierarchy that consumes it.
  */
 
-import { AssembledGroup, type NodeMap } from '../compiler/rule.ts'
+import type { NodeMap } from '../compiler/types.ts'
+import { AssembledGroup } from '../compiler/node-map.ts'
 import { compileWordMatcher } from '../compiler/simplify.ts'
 
 export interface EmitTemplatesConfig {

@@ -4,7 +4,8 @@
  * Consumes NodeMap directly. No imports from node-model.ts or naming.ts.
  */
 
-import type { NodeMap, AssembledNode, AssembledBranch, AssembledContainer } from '../compiler/rule.ts'
+import type { NodeMap } from '../compiler/types.ts'
+import type { AssembledNode, AssembledBranch, AssembledContainer } from '../compiler/node-map.ts'
 
 export interface EmitConstsConfig {
     grammar: string

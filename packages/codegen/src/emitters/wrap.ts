@@ -13,9 +13,10 @@
  * `fieldNameForChild` is the single source of truth at runtime.
  */
 
+import type { NodeMap } from '../compiler/types.ts'
 import type {
-    NodeMap, AssembledField, AssembledChild, AssembledNode,
-} from '../compiler/rule.ts'
+    AssembledField, AssembledChild, AssembledNode,
+} from '../compiler/node-map.ts'
 import { isValidIdent } from './shared.ts'
 
 export interface EmitWrapConfig {

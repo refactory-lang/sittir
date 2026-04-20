@@ -13,7 +13,7 @@
  * CLI behind a `--validate-node-types` flag.
  */
 
-import type { LinkedGrammar } from './rule.ts'
+import type { LinkedGrammar } from './types.ts'
 import { loadRawEntries, type RawNodeEntry } from '../validators/node-types.ts'
 
 export interface NodeTypesValidationResult {

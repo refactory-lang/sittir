@@ -9,8 +9,9 @@
 import type {
     Rule, SeqRule, ChoiceRule, OptionalRule, RepeatRule, Repeat1Rule,
     FieldRule, TokenRule, StringRule, PatternRule, SymbolRule, AliasRule,
-    EnumRule, SymbolRef, RawGrammar,
+    EnumRule, SymbolRef,
 } from './rule.ts'
+import type { RawGrammar } from './types.ts'
 import { withRoleScope } from '../dsl/role.ts'
 import { withSyntheticRuleScope, setCurrentRuleKind, drainPolymorphVariants } from '../dsl/synthetic-rules.ts'
 

@@ -11,7 +11,8 @@
  *     supertype-stripped short names; JS reserved words get a `_` suffix.
  */
 
-import type { NodeMap, AssembledNode, AssembledSupertype } from '../compiler/rule.ts'
+import type { NodeMap } from '../compiler/types.ts'
+import type { AssembledNode, AssembledSupertype } from '../compiler/node-map.ts'
 import { isValidIdent } from './shared.ts'
 
 export interface EmitIrConfig {

@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { link, enrichPositions, computeParentSets } from '../compiler/link.ts'
-import type { RawGrammar, Rule, LinkedGrammar, SymbolRef } from '../compiler/rule.ts'
+import type { Rule, SymbolRef } from '../compiler/rule.ts'
+import type { RawGrammar, LinkedGrammar } from '../compiler/types.ts'
 
 function makeRaw(rules: Record<string, Rule>, overrides?: Partial<RawGrammar>): RawGrammar {
     return {

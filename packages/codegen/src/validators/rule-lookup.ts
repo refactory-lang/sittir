@@ -10,7 +10,8 @@
  * authoritative output of Assemble.
  */
 
-import type { NodeMap, AssembledNode } from '../compiler/rule.ts'
+import type { NodeMap } from '../compiler/types.ts'
+import type { AssembledNode } from '../compiler/node-map.ts'
 
 /**
  * Classification of how a kind reaches a rendered output string.

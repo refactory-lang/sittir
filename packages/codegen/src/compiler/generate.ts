@@ -29,7 +29,7 @@ import { emitIndex } from '../emitters/index-file.ts'
 import { emitSuggested } from '../emitters/suggested.ts'
 import { emitIs } from '../emitters/is.ts'
 
-import type { NodeMap } from './rule.ts'
+import type { NodeMap } from './types.ts'
 
 export interface GeneratedFiles {
     grammar: string
@@ -83,7 +83,7 @@ export interface GenerateConfig {
      * // Default (permissive): everything applied.
      * { include: undefined }
      */
-    include?: import('./rule.ts').IncludeFilter
+    include?: import('./types.ts').IncludeFilter
     /**
      * Emit runtime validation in leaf factories (regex check against
      * the grammar's declared pattern). Default `false` — enum

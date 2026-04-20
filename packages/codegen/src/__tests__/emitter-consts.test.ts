@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { emitConsts } from '../emitters/consts.ts'
-import type { NodeMap, AssembledBranch, AssembledLeaf, AssembledKeyword, AssembledToken, AssembledEnum } from '../compiler/rule.ts'
+import type { NodeMap } from '../compiler/types.ts'
+import type { AssembledBranch, AssembledLeaf, AssembledKeyword, AssembledToken, AssembledEnum } from '../compiler/node-map.ts'
 
 function makeNodeMap(nodes: [string, any][]): NodeMap {
     return {

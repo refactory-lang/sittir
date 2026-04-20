@@ -11,13 +11,17 @@
  */
 
 import type {
-    Rule, RawGrammar, LinkedGrammar,
-    SymbolRef, ExternalRole, IncludeFilter, DerivationLog,
-    InferredFieldEntry, PromotedRuleEntry, RepeatedShapeEntry,
+    Rule, SymbolRef,
     FieldRule, SupertypeRule, EnumRule, ClauseRule, GroupRule,
     SeqRule, ChoiceRule, VariantRule, PolymorphRule,
 } from './rule.ts'
-import { deriveFields, hasAnyField, hasAnyChild, isField, isSeq, isChoice, isString, isVariant } from './rule.ts'
+import { isField, isSeq, isChoice, isString, isVariant } from './rule.ts'
+import type {
+    RawGrammar, LinkedGrammar,
+    ExternalRole, IncludeFilter, DerivationLog,
+    InferredFieldEntry, PromotedRuleEntry, RepeatedShapeEntry,
+} from './types.ts'
+import { deriveFields, hasAnyField, hasAnyChild } from './node-map.ts'
 import { isHiddenKind } from './evaluate.ts'
 import type { PolymorphVariant } from '../dsl/synthetic-rules.ts'
 

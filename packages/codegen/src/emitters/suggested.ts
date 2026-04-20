@@ -16,7 +16,8 @@
  * curator can import either, or pull specific entries out by hand.
  */
 
-import type { NodeMap, DerivationLog, InferredFieldEntry, PromotedRuleEntry, RepeatedShapeEntry, Rule } from '../compiler/rule.ts'
+import type { NodeMap, DerivationLog, InferredFieldEntry, PromotedRuleEntry, RepeatedShapeEntry } from '../compiler/types.ts'
+import type { Rule } from '../compiler/rule.ts'
 import { findAllPolymorphCandidates, type PolymorphCandidateLocation } from '../compiler/link.ts'
 
 /**

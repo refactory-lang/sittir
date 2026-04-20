@@ -12,10 +12,9 @@
  * re-collapse.
  */
 
-import type {
-    Rule, LinkedGrammar, OptimizedGrammar,
-} from './rule.ts'
+import type { Rule } from './rule.ts'
 import { isChoice } from './rule.ts'
+import type { LinkedGrammar, OptimizedGrammar } from './types.ts'
 import { simplifyRules, compileWordMatcher } from './simplify.ts'
 
 // ---------------------------------------------------------------------------
