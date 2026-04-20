@@ -28,11 +28,21 @@ export function emitTemplates(config: EmitTemplatesConfig): string {
 
     const rules: Record<string, unknown> = {}
     for (const [kind, node] of nodeMap.nodes) {
-        // Hidden kinds (`_`-prefixed) don't appear in tree-sitter CSTs at
-        // runtime, so they don't need render templates. (Tree-sitter's own
-        // API reports the concrete kind; `$type` on NodeData carries the
-        // same value — hidden kinds simply never surface at either layer.)
-        if (kind.startsWith('_')) continue
+        // Hidden kinds (`_`-prefixed) usually don't appear in tree-sitter
+        // CSTs at runtime — the parser reports the alias target, and
+        // readNode-sourced NodeData carries that target as $type.
+        //
+        // Exception: factories for alias sources (python `matchBlock` →
+        // $type='_match_block') stamp $type with the hidden source kind
+        // under ADR-0006 drillAs. Render then needs a template keyed by
+        // the source kind because the source's shape can differ from the
+        // target's (e.g. `_match_block` polymorph has a typed `alternative`
+        // field while `block` is plain `$$$CHILDREN`). Emit templates for
+        // hidden polymorphs so render resolves them directly; the
+        // target→source `_fieldAliasMap` handles factory dispatch
+        // upstream. Keep the skip for terminals/tokens/groups where no
+        // factory surfaces the hidden name.
+        if (kind.startsWith('_') && node.modelType !== 'polymorph') continue
         // Polymorph forms are `AssembledGroup` nodes registered at the top
         // level so factories/types emitters can produce code for them, but
         // their templates are already surfaced inside the parent polymorph's

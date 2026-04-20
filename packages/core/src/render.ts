@@ -90,7 +90,33 @@ function render(node: AnyNodeData, ctx: InternalRenderContext): string {
 	}
 
 	const rule = ctx.config.rules[node.$type];
-	if (!rule) throw new Error(`No render rule for '${node.$type}'`);
+	if (!rule) {
+		// Token-shaped named kinds — tree-sitter rules that resolve to a
+		// single string literal (rust `mod_item_external`/`never_type`,
+		// typescript `empty_statement`/`existential_type`, etc). Codegen
+		// classifies them as `AssembledToken`, which emits no template,
+		// because they aren't anonymous structural tokens (`(`, `+`) —
+		// they're named wrappers over a single terminator. readNode
+		// captures the terminator either as an anonymous $child or as an
+		// anonymous-keyword entry in $fields (via promoteAnonymousKeyword,
+		// keyed by the literal text). Either way: no named sub-structure,
+		// and the captured $text is already the full render.
+		//
+		// Narrow fallback so a real missing-rule bug (node with actual
+		// named fields or named children) still throws.
+		const isAnonEntry = (v: unknown): boolean => {
+			if (v == null || typeof v !== 'object') return false;
+			const n = v as AnyNodeData;
+			return n.$named === false;
+		};
+		const fieldsAllAnon = !node.$fields || Object.values(node.$fields).every(v =>
+			Array.isArray(v) ? v.every(isAnonEntry) : isAnonEntry(v),
+		);
+		const childrenAllAnon = !node.$children ||
+			(node.$children as readonly AnyNodeData[]).every(c => c.$named === false);
+		if (node.$text !== undefined && fieldsAllAnon && childrenAllAnon) return node.$text;
+		throw new Error(`No render rule for '${node.$type}'`);
+	}
 
 	const ruleObj = typeof rule === 'string' ? undefined : rule as unknown as Record<string, unknown>;
 
