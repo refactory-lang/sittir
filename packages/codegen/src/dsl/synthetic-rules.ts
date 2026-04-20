@@ -12,6 +12,13 @@
 
 import { isChoiceType, isSeqType, isOptionalType, isStringType, isBlankType, isPlainRepeatType, type RuntimeRule } from './runtime-shapes.ts'
 import type { PolymorphVariant } from '../compiler/types.ts'
+import {
+    getCurrentWireContext,
+    wireRegisterSyntheticRule,
+    wireRegisterPolymorphVariant,
+    wireRegisterConflict,
+    wireGetCurrentRuleKind,
+} from './wire.ts'
 
 let currentSyntheticRules: Map<string, RuntimeRule> | null = null
 let currentRuleKind: string | null = null
@@ -21,14 +28,25 @@ let currentBlankFn: (() => unknown) | null = null
 let currentPolymorphVariants: PolymorphVariant[] = []
 
 export function setCurrentRuleKind(kind: string | null): void {
+    // When a wire context is active, the rule-fn wrapper owns
+    // currentRuleKind — don't mutate module state. Legacy callers
+    // (installGrammarWrapper pass 2) still write to module state when
+    // wire is inactive.
+    if (getCurrentWireContext()) return
     currentRuleKind = kind
 }
 
 export function getCurrentRuleKind(): string | null {
+    const fromWire = wireGetCurrentRuleKind()
+    if (fromWire !== null) return fromWire
     return currentRuleKind
 }
 
 export function registerSyntheticRule(name: string, content: RuntimeRule): void {
+    // Route to the active wire context when one exists — its closure
+    // owns deposits for this grammar invocation.
+    if (wireRegisterSyntheticRule(name, content)) return
+
     if (!currentSyntheticRules) {
         currentSyntheticRules = new Map()
     }
@@ -86,6 +104,9 @@ export function maybeKeywordSymbol(
 }
 
 export function registerPolymorphVariant(parentKind: string, childSuffix: string): void {
+    // Route to the active wire context when present — wire owns its
+    // own polymorph-variant list and enforces the same uniqueness check.
+    if (wireRegisterPolymorphVariant(parentKind, childSuffix)) return
     // T029a — variant-name uniqueness within a parent. Two variant('eq')
     // calls on the same parent rule would produce duplicate alias
     // targets in the grammar and ambiguous form names downstream.
@@ -125,6 +146,8 @@ let currentConflicts: string[][] = []
  */
 export function registerConflict(names: readonly string[]): void {
     if (names.length === 0) return
+    // Route to the active wire context when one exists.
+    if (wireRegisterConflict(names)) return
     currentConflicts.push([...names])
 }
 

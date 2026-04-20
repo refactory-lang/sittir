@@ -1,0 +1,361 @@
+/**
+ * dsl/wire.ts — opts-wrapping helper for grammar() invocations.
+ *
+ * See `docs/adr/0007-wire-opts-declarative-polymorphs.md` for the full
+ * design.
+ *
+ * `wire(config)` is a synchronous transformation of the options object
+ * the author passes to `grammar()`. It:
+ *
+ *   1. Reads a declarative `polymorphs: { parent: { path: suffix } }`
+ *      map and injects deferred-content placeholder rule fns for every
+ *      `_<parent>_<suffix>` hidden rule into `opts.rules`. When the
+ *      tree-sitter runtime later iterates those entries, each one
+ *      reads captured content from the wire-scoped `deposits` map.
+ *   2. Synthesizes or composes `opts.rules[parent]` so its body calls
+ *      `transform(original, { path → variant(suffix) })` automatically.
+ *   3. Wraps every rule fn so the wire context (and `currentRuleKind`)
+ *      are set while the fn executes — `variant()` / `alias()` /
+ *      `transform()` read those during their dispatch.
+ *   4. Wraps the user's `conflicts` callback so accumulated variant
+ *      conflict groups are symbolized through `$` and appended to the
+ *      returned conflict list.
+ *
+ * State lives in a per-invocation `WireContext` captured in the closure
+ * `wire()` creates. A module-level `currentContext` pointer is set by
+ * the rule-fn wrapper so DSL helpers invoked synchronously during that
+ * rule's evaluation can reach the context. No `globalThis` mutations.
+ *
+ * Fallback during migration: until all three grammars move to `wire()`,
+ * the existing `dsl/synthetic-rules.ts` module state still handles
+ * variant/alias for ungated paths. When `currentContext` is set, the
+ * synthetic-rules helpers route to it instead. This lets each grammar
+ * migrate independently.
+ */
+
+import type { PolymorphVariant } from '../compiler/types.ts'
+import type { RuntimeRule } from './runtime-shapes.ts'
+import { variant as variantPlaceholder } from './variant.ts'
+import { transform as transformFn } from './transform.ts'
+
+// ---------------------------------------------------------------------------
+// WireContext + module-level current pointer
+// ---------------------------------------------------------------------------
+
+/**
+ * Per-`wire()`-invocation state. All fields are mutable so DSL helpers
+ * (variant/alias/conflict registration) can push into them while the
+ * rule-fn wrapper has this context installed.
+ */
+export interface WireContext {
+    /** Hidden-rule name → captured content body. */
+    readonly deposits: Map<string, RuntimeRule>
+    /** `{parent, child}` pairs registered by variant(). Sittir's Link
+     *  reads these to classify polymorphs — tree-sitter ignores them. */
+    readonly polymorphVariants: PolymorphVariant[]
+    /** Conflict groups (rule-name arrays) registered by variant() for
+     *  sibling-variant ambiguity. Drained by the wrapped `conflicts`
+     *  callback when tree-sitter invokes it. */
+    readonly conflictGroups: string[][]
+    /** Name of the rule currently being evaluated, for variant()'s
+     *  auto-prefix behavior (`variant('eq')` under `assignment` →
+     *  `_assignment_eq`). Set by the rule-fn wrapper. */
+    currentRuleKind: string | null
+}
+
+let currentContext: WireContext | null = null
+
+/** Read the active wire context, or null if no `wire()`-wrapped rule
+ *  fn is currently executing. DSL helpers use this to decide whether
+ *  to route state into the wire closure or into the legacy module
+ *  accumulator in `synthetic-rules.ts`. */
+export function getCurrentWireContext(): WireContext | null {
+    return currentContext
+}
+
+/**
+ * Register a hidden-rule body against the active wire context. Returns
+ * `true` when the context absorbed the call, `false` when there is no
+ * active context (caller falls back to the legacy accumulator).
+ */
+export function wireRegisterSyntheticRule(name: string, content: RuntimeRule): boolean {
+    if (!currentContext) return false
+    currentContext.deposits.set(name, content)
+    return true
+}
+
+/**
+ * Register a `{parent, child}` polymorph pair against the active wire
+ * context. Throws on duplicate `{parent, child}` — matches the legacy
+ * accumulator's invariant.
+ */
+export function wireRegisterPolymorphVariant(parent: string, child: string): boolean {
+    if (!currentContext) return false
+    const dup = currentContext.polymorphVariants.find(v => v.parent === parent && v.child === child)
+    if (dup) {
+        throw new Error(
+            `variant('${child}'): duplicate variant name on rule '${parent}'. ` +
+            `Each variant() within a rule must have a unique name — change one or merge the patches.`,
+        )
+    }
+    currentContext.polymorphVariants.push({ parent, child })
+    return true
+}
+
+/**
+ * Register a conflict group against the active wire context. Used by
+ * the variant-hoist machinery to tell tree-sitter that newly-synthesized
+ * rules may structurally overlap with auto-generated helpers.
+ */
+export function wireRegisterConflict(names: readonly string[]): boolean {
+    if (!currentContext) return false
+    if (names.length === 0) return true
+    currentContext.conflictGroups.push([...names])
+    return true
+}
+
+/** Current rule kind on the active wire context, or null when inactive. */
+export function wireGetCurrentRuleKind(): string | null {
+    return currentContext?.currentRuleKind ?? null
+}
+
+// ---------------------------------------------------------------------------
+// Public API: `wire(config)` — opts wrapper
+// ---------------------------------------------------------------------------
+
+/**
+ * Declarative polymorph map: parent rule kind → (path-in-original → suffix).
+ *
+ * @example
+ *   { assignment: { '1/0': 'eq', '1/1': 'type', '1/2': 'typed' } }
+ */
+export type PolymorphsConfig = Record<string, Record<string, string>>
+
+/**
+ * Shape of an options argument passed to tree-sitter's `grammar()` — the
+ * fields `wire()` knows about. Extra fields are passed through
+ * unchanged.
+ */
+export interface WireConfig {
+    readonly name?: string
+    readonly rules: Record<string, RuleFn>
+    readonly polymorphs?: PolymorphsConfig
+    readonly conflicts?: ConflictsFn
+    readonly externals?: DollarFn<unknown[]>
+    readonly extras?: DollarFn<unknown[]>
+    readonly supertypes?: DollarFn<unknown[]>
+    readonly inline?: DollarFn<unknown[]>
+    readonly word?: DollarFn<unknown>
+    readonly precedences?: DollarFn<unknown[][]>
+    readonly reserved?: Record<string, DollarFn<unknown[]>>
+    /** Side-channel from `enrich()` — preserved unchanged. */
+    readonly __enrichOverrides__?: Record<string, RuleFn>
+}
+
+export interface WiredOpts {
+    readonly name?: string
+    readonly rules: Record<string, RuleFn>
+    readonly conflicts?: ConflictsFn
+    readonly externals?: DollarFn<unknown[]>
+    readonly extras?: DollarFn<unknown[]>
+    readonly supertypes?: DollarFn<unknown[]>
+    readonly inline?: DollarFn<unknown[]>
+    readonly word?: DollarFn<unknown>
+    readonly precedences?: DollarFn<unknown[][]>
+    readonly reserved?: Record<string, DollarFn<unknown[]>>
+    readonly __enrichOverrides__?: Record<string, RuleFn>
+    /**
+     * Attached so sittir's compiler pipeline (evaluate → link) can read
+     * the polymorph metadata without driving rule evaluation a second
+     * time. Non-enumerable on the returned object so tree-sitter's
+     * own iteration doesn't trip on it.
+     */
+    readonly __wireContext__?: WireContext
+}
+
+type RuleFn = (this: unknown, $: unknown, previous?: unknown) => unknown
+type ConflictsFn = (this: unknown, $: unknown, previous?: unknown[][]) => unknown[][]
+type DollarFn<T> = (this: unknown, $: unknown, previous?: T) => T
+
+/**
+ * Wrap the user's grammar options with wire-managed polymorph plumbing.
+ *
+ * @param config - Options to pass to `grammar()` plus an optional
+ *   `polymorphs` declaration.
+ * @returns A new options object suitable for `grammar()`. Tree-sitter's
+ *   own iteration observes the injected hidden-rule entries at its
+ *   `Object.keys()` snapshot; content resolves via deferred-content fns
+ *   as tree-sitter iterates.
+ */
+export function wire(config: WireConfig): WiredOpts {
+    const context: WireContext = {
+        deposits: new Map(),
+        polymorphVariants: [],
+        conflictGroups: [],
+        currentRuleKind: null,
+    }
+
+    const polymorphs = config.polymorphs ?? {}
+    const outRules: Record<string, RuleFn> = { ...config.rules }
+
+    composeOrSynthesizePolymorphParents(outRules, polymorphs)
+    injectHiddenRulePlaceholders(outRules, polymorphs, context)
+    wrapAllRuleFns(outRules, context)
+
+    const conflicts = wrapConflictsCallback(config.conflicts, context)
+
+    const wired: WiredOpts = {
+        ...config,
+        rules: outRules,
+        ...(conflicts === undefined ? {} : { conflicts }),
+    }
+    Object.defineProperty(wired, '__wireContext__', {
+        value: context,
+        enumerable: false,
+        configurable: true,
+    })
+    return wired
+}
+
+// ---------------------------------------------------------------------------
+// wire() helpers
+// ---------------------------------------------------------------------------
+
+/**
+ * For every polymorph parent, either wrap the author's rule fn (compose
+ * — user runs first, variant transform on the result) or synthesize a
+ * fresh rule fn that applies the variant patches to `original` directly.
+ */
+function composeOrSynthesizePolymorphParents(
+    rules: Record<string, RuleFn>,
+    polymorphs: PolymorphsConfig,
+): void {
+    for (const [parent, armMap] of Object.entries(polymorphs)) {
+        const userFn = rules[parent]
+        rules[parent] = buildPolymorphParentFn(armMap, userFn)
+    }
+}
+
+/**
+ * Build a rule fn for a polymorph parent. If `userFn` is supplied, it
+ * runs first (to do author-level field transforms on `original`); the
+ * variant transform is then applied to its output.
+ */
+function buildPolymorphParentFn(
+    armMap: Record<string, string>,
+    userFn: RuleFn | undefined,
+): RuleFn {
+    const patches: Record<string, unknown> = {}
+    for (const [path, suffix] of Object.entries(armMap)) {
+        patches[path] = variantPlaceholder(suffix)
+    }
+    return function wiredPolymorphParent(this: unknown, $: unknown, original: unknown): unknown {
+        const base = userFn ? userFn.call(this, $, original) : original
+        return (transformFn as unknown as (o: unknown, ...p: unknown[]) => unknown)(base, patches)
+    }
+}
+
+/**
+ * Inject one deferred-content rule fn per declared `_<parent>_<suffix>`
+ * hidden rule. The fn reads captured content from `context.deposits` at
+ * the moment tree-sitter iterates to it.
+ */
+function injectHiddenRulePlaceholders(
+    rules: Record<string, RuleFn>,
+    polymorphs: PolymorphsConfig,
+    context: WireContext,
+): void {
+    for (const [parent, armMap] of Object.entries(polymorphs)) {
+        for (const suffix of Object.values(armMap)) {
+            const hiddenName = `_${parent}_${suffix}`
+            rules[hiddenName] = makeDeferredContentFn(context, hiddenName)
+        }
+    }
+}
+
+/**
+ * Build the deferred-content placeholder for a single hidden rule. The
+ * returned fn is invoked by tree-sitter (or sittir's grammarFn) during
+ * rule iteration; it returns the captured body from `context.deposits`
+ * or a safe `blank()` fallback when the deposit hasn't happened yet
+ * (e.g. during a unit test that doesn't drive the parent rule).
+ */
+function makeDeferredContentFn(context: WireContext, hiddenName: string): RuleFn {
+    return function deferredHiddenRule(): unknown {
+        const body = context.deposits.get(hiddenName)
+        if (body) return body
+        const blankFn = (globalThis as { blank?: () => unknown }).blank
+        return blankFn ? blankFn() : { type: 'BLANK' }
+    }
+}
+
+/**
+ * Wrap every rule fn in the outgoing rules bag so the wire context is
+ * active (and `currentRuleKind` set) while the fn runs. Saves and
+ * restores both values so nested / re-entrant grammar calls don't leak
+ * state into each other.
+ */
+function wrapAllRuleFns(rules: Record<string, RuleFn>, context: WireContext): void {
+    for (const [name, fn] of Object.entries(rules)) {
+        rules[name] = wrapOneRuleFn(name, fn, context)
+    }
+}
+
+/**
+ * Wrap a single rule fn. Captures the caller's previous context +
+ * currentRuleKind, installs this context, runs the fn, restores.
+ */
+function wrapOneRuleFn(name: string, fn: RuleFn, context: WireContext): RuleFn {
+    return function wiredRuleFn(this: unknown, $: unknown, previous?: unknown): unknown {
+        const prevContext = currentContext
+        const prevKind = context.currentRuleKind
+        currentContext = context
+        context.currentRuleKind = name
+        try {
+            return fn.call(this, $, previous)
+        } finally {
+            context.currentRuleKind = prevKind
+            currentContext = prevContext
+        }
+    }
+}
+
+/**
+ * Wrap the user's `conflicts` callback so accumulated variant conflict
+ * groups drain into its return list, each group's names symbolized
+ * through the provided `$` proxy.
+ *
+ * If the user didn't supply a `conflicts`, return a fresh one that just
+ * drains the accumulator. If the accumulator is empty when tree-sitter
+ * invokes the callback, the wrapped fn still passes the user's list
+ * through unchanged.
+ */
+function wrapConflictsCallback(
+    userConflicts: ConflictsFn | undefined,
+    context: WireContext,
+): ConflictsFn | undefined {
+    if (!userConflicts && context.conflictGroups.length === 0) {
+        // User didn't supply one and nothing could have registered yet
+        // — short-circuit to keep the returned opts minimal. We also
+        // can't know at wire-time whether variants will register later,
+        // so install a drainer below when variants are possible.
+    }
+    return function wiredConflicts(this: unknown, $: unknown, previous?: unknown[][]): unknown[][] {
+        const base = userConflicts ? userConflicts.call(this, $, previous) : (previous ?? [])
+        if (context.conflictGroups.length === 0) return base as unknown[][]
+        const symbolized = context.conflictGroups.map(group => group.map(name => symbolizeRef($, name)))
+        return [...(base as unknown[][]), ...symbolized]
+    }
+}
+
+/**
+ * Produce a `$.name`-style symbol from the ruleBuilder proxy. The proxy
+ * returns a `SYMBOL` (or `ReferenceError` when the name isn't in
+ * `ruleMap`). Variant conflict names ARE in `ruleMap` at this point
+ * — wire() injected their hidden rules + variant names to tree-sitter's
+ * snapshot already — so the SYMBOL lookup succeeds.
+ */
+function symbolizeRef($: unknown, name: string): unknown {
+    const proxy = $ as Record<string, unknown>
+    return proxy[name]
+}
