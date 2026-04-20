@@ -81,8 +81,6 @@ export interface IsGuards {
     splatPattern<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'splat_pattern' };
     classPattern<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'class_pattern' };
     complexPattern<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'complex_pattern' };
-    Parameters<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_parameters' };
-    Patterns<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_patterns' };
     tuplePattern<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'tuple_pattern' };
     listPattern<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'list_pattern' };
     defaultParameter<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'default_parameter' };
@@ -123,7 +121,6 @@ export interface IsGuards {
     setComprehension<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'set_comprehension' };
     generatorExpression<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'generator_expression' };
     parenthesizedExpression<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'parenthesized_expression' };
-    CollectionElements<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_collection_elements' };
     forInClause<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'for_in_clause' };
     ifClause<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'if_clause' };
     conditionalExpression<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'conditional_expression' };
@@ -215,8 +212,6 @@ export interface AssertGuards {
     splatPattern(v: { readonly $type: string }): asserts v is { readonly $type: 'splat_pattern' };
     classPattern(v: { readonly $type: string }): asserts v is { readonly $type: 'class_pattern' };
     complexPattern(v: { readonly $type: string }): asserts v is { readonly $type: 'complex_pattern' };
-    Parameters(v: { readonly $type: string }): asserts v is { readonly $type: '_parameters' };
-    Patterns(v: { readonly $type: string }): asserts v is { readonly $type: '_patterns' };
     tuplePattern(v: { readonly $type: string }): asserts v is { readonly $type: 'tuple_pattern' };
     listPattern(v: { readonly $type: string }): asserts v is { readonly $type: 'list_pattern' };
     defaultParameter(v: { readonly $type: string }): asserts v is { readonly $type: 'default_parameter' };
@@ -257,7 +252,6 @@ export interface AssertGuards {
     setComprehension(v: { readonly $type: string }): asserts v is { readonly $type: 'set_comprehension' };
     generatorExpression(v: { readonly $type: string }): asserts v is { readonly $type: 'generator_expression' };
     parenthesizedExpression(v: { readonly $type: string }): asserts v is { readonly $type: 'parenthesized_expression' };
-    CollectionElements(v: { readonly $type: string }): asserts v is { readonly $type: '_collection_elements' };
     forInClause(v: { readonly $type: string }): asserts v is { readonly $type: 'for_in_clause' };
     ifClause(v: { readonly $type: string }): asserts v is { readonly $type: 'if_clause' };
     conditionalExpression(v: { readonly $type: string }): asserts v is { readonly $type: 'conditional_expression' };
@@ -372,8 +366,6 @@ export const is = {
     splatPattern: _g("splat_pattern"),
     classPattern: _g("class_pattern"),
     complexPattern: _g("complex_pattern"),
-    Parameters: _g("_parameters"),
-    Patterns: _g("_patterns"),
     tuplePattern: _g("tuple_pattern"),
     listPattern: _g("list_pattern"),
     defaultParameter: _g("default_parameter"),
@@ -414,7 +406,6 @@ export const is = {
     setComprehension: _g("set_comprehension"),
     generatorExpression: _g("generator_expression"),
     parenthesizedExpression: _g("parenthesized_expression"),
-    CollectionElements: _g("_collection_elements"),
     forInClause: _g("for_in_clause"),
     ifClause: _g("if_clause"),
     conditionalExpression: _g("conditional_expression"),
@@ -527,8 +518,6 @@ export const assert = {
     splatPattern: _makeAssert('splatPattern', is.splatPattern as _AnyGuard),
     classPattern: _makeAssert('classPattern', is.classPattern as _AnyGuard),
     complexPattern: _makeAssert('complexPattern', is.complexPattern as _AnyGuard),
-    Parameters: _makeAssert('Parameters', is.Parameters as _AnyGuard),
-    Patterns: _makeAssert('Patterns', is.Patterns as _AnyGuard),
     tuplePattern: _makeAssert('tuplePattern', is.tuplePattern as _AnyGuard),
     listPattern: _makeAssert('listPattern', is.listPattern as _AnyGuard),
     defaultParameter: _makeAssert('defaultParameter', is.defaultParameter as _AnyGuard),
@@ -569,7 +558,6 @@ export const assert = {
     setComprehension: _makeAssert('setComprehension', is.setComprehension as _AnyGuard),
     generatorExpression: _makeAssert('generatorExpression', is.generatorExpression as _AnyGuard),
     parenthesizedExpression: _makeAssert('parenthesizedExpression', is.parenthesizedExpression as _AnyGuard),
-    CollectionElements: _makeAssert('CollectionElements', is.CollectionElements as _AnyGuard),
     forInClause: _makeAssert('forInClause', is.forInClause as _AnyGuard),
     ifClause: _makeAssert('ifClause', is.ifClause as _AnyGuard),
     conditionalExpression: _makeAssert('conditionalExpression', is.conditionalExpression as _AnyGuard),

@@ -607,22 +607,20 @@ export function functionDefinitionFrom(input: T.FunctionDefinition | T.FunctionD
   });
 }
 
-export function parametersFrom(input?: NonNullable<T.Parameters.Config['children']>[number] | T.Parameters) {
-  if (isNodeData(input) && input.$type === 'parameters') {
-    const data = input as T.Parameters;
-    const child = data.$children ? (data.$children as NonNullable<T.Parameters.Config['children']>)[0] : undefined;
-    return F.parameters(child as NonNullable<T.Parameters.Config['children']>[number]);
+export function parametersFrom(...input: readonly (NonNullable<T.Parameters.Config['children']>[number] | T.Parameters)[]) {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'parameters') {
+    const data = input[0] as T.Parameters;
+    return F.parameters(...((data.$children ?? []) as NonNullable<T.Parameters.Config['children']>));
   }
-  return F.parameters(input as NonNullable<T.Parameters.Config['children']>[number]);
+  return F.parameters(...(input as NonNullable<T.Parameters.Config['children']>));
 }
 
-export function lambdaParametersFrom(input?: NonNullable<T.LambdaParameters.Config['children']>[number] | T.LambdaParameters) {
-  if (isNodeData(input) && input.$type === 'lambda_parameters') {
-    const data = input as T.LambdaParameters;
-    const child = data.$children ? (data.$children as NonNullable<T.LambdaParameters.Config['children']>)[0] : undefined;
-    return F.lambdaParameters(child as NonNullable<T.LambdaParameters.Config['children']>[number]);
+export function lambdaParametersFrom(...input: readonly (NonNullable<T.LambdaParameters.Config['children']>[number] | T.LambdaParameters)[]) {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'lambda_parameters') {
+    const data = input[0] as T.LambdaParameters;
+    return F.lambdaParameters(...((data.$children ?? []) as NonNullable<T.LambdaParameters.Config['children']>));
   }
-  return F.lambdaParameters(input as NonNullable<T.LambdaParameters.Config['children']>[number]);
+  return F.lambdaParameters(...(input as NonNullable<T.LambdaParameters.Config['children']>));
 }
 
 export function listSplatFrom(input: T.ListSplat | T.ListSplat.Loose): ReturnType<typeof F.listSplat> {
@@ -813,22 +811,20 @@ export function complexPatternFrom(input: T.ComplexPattern | T.ComplexPattern.Lo
   });
 }
 
-export function tuplePatternFrom(input?: NonNullable<T.TuplePattern.Config['children']>[number] | T.TuplePattern) {
-  if (isNodeData(input) && input.$type === 'tuple_pattern') {
-    const data = input as T.TuplePattern;
-    const child = data.$children ? (data.$children as NonNullable<T.TuplePattern.Config['children']>)[0] : undefined;
-    return F.tuplePattern(child as NonNullable<T.TuplePattern.Config['children']>[number]);
+export function tuplePatternFrom(...input: readonly (NonNullable<T.TuplePattern.Config['children']>[number] | T.TuplePattern)[]) {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'tuple_pattern') {
+    const data = input[0] as T.TuplePattern;
+    return F.tuplePattern(...((data.$children ?? []) as NonNullable<T.TuplePattern.Config['children']>));
   }
-  return F.tuplePattern(input as NonNullable<T.TuplePattern.Config['children']>[number]);
+  return F.tuplePattern(...(input as NonNullable<T.TuplePattern.Config['children']>));
 }
 
-export function listPatternFrom(input?: NonNullable<T.ListPattern.Config['children']>[number] | T.ListPattern) {
-  if (isNodeData(input) && input.$type === 'list_pattern') {
-    const data = input as T.ListPattern;
-    const child = data.$children ? (data.$children as NonNullable<T.ListPattern.Config['children']>)[0] : undefined;
-    return F.listPattern(child as NonNullable<T.ListPattern.Config['children']>[number]);
+export function listPatternFrom(...input: readonly (NonNullable<T.ListPattern.Config['children']>[number] | T.ListPattern)[]) {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'list_pattern') {
+    const data = input[0] as T.ListPattern;
+    return F.listPattern(...((data.$children ?? []) as NonNullable<T.ListPattern.Config['children']>));
   }
-  return F.listPattern(input as NonNullable<T.ListPattern.Config['children']>[number]);
+  return F.listPattern(...(input as NonNullable<T.ListPattern.Config['children']>));
 }
 
 export function defaultParameterFrom(input: T.DefaultParameter | T.DefaultParameter.Loose): ReturnType<typeof F.defaultParameter> {
@@ -1084,31 +1080,28 @@ export function keywordArgumentFrom(input: T.KeywordArgument | T.KeywordArgument
   });
 }
 
-export function listFrom(input?: NonNullable<T.List.Config['children']>[number] | T.List) {
-  if (isNodeData(input) && input.$type === 'list') {
-    const data = input as T.List;
-    const child = data.$children ? (data.$children as NonNullable<T.List.Config['children']>)[0] : undefined;
-    return F.list(child as NonNullable<T.List.Config['children']>[number]);
+export function listFrom(...input: readonly (NonNullable<T.List.Config['children']>[number] | T.List)[]) {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'list') {
+    const data = input[0] as T.List;
+    return F.list(...((data.$children ?? []) as NonNullable<T.List.Config['children']>));
   }
-  return F.list(input as NonNullable<T.List.Config['children']>[number]);
+  return F.list(...(input as NonNullable<T.List.Config['children']>));
 }
 
-export function setFrom(input?: NonNullable<T.Set.Config['children']>[number] | T.Set) {
-  if (isNodeData(input) && input.$type === 'set') {
-    const data = input as T.Set;
-    const child = data.$children ? (data.$children as NonNullable<T.Set.Config['children']>)[0] : undefined;
-    return F.set(child as NonNullable<T.Set.Config['children']>[number]);
+export function setFrom(...input: readonly (NonNullable<T.Set.Config['children']>[number] | T.Set)[]) {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'set') {
+    const data = input[0] as T.Set;
+    return F.set(...((data.$children ?? []) as NonNullable<T.Set.Config['children']>));
   }
-  return F.set(input as NonNullable<T.Set.Config['children']>[number]);
+  return F.set(...(input as NonNullable<T.Set.Config['children']>));
 }
 
-export function tupleFrom(input?: NonNullable<T.Tuple.Config['children']>[number] | T.Tuple) {
-  if (isNodeData(input) && input.$type === 'tuple') {
-    const data = input as T.Tuple;
-    const child = data.$children ? (data.$children as NonNullable<T.Tuple.Config['children']>)[0] : undefined;
-    return F.tuple(child as NonNullable<T.Tuple.Config['children']>[number]);
+export function tupleFrom(...input: readonly (NonNullable<T.Tuple.Config['children']>[number] | T.Tuple)[]) {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'tuple') {
+    const data = input[0] as T.Tuple;
+    return F.tuple(...((data.$children ?? []) as NonNullable<T.Tuple.Config['children']>));
   }
-  return F.tuple(input as NonNullable<T.Tuple.Config['children']>[number]);
+  return F.tuple(...(input as NonNullable<T.Tuple.Config['children']>));
 }
 
 export function dictionaryFrom(...input: readonly (NonNullable<T.Dictionary.Config['children']>[number] | T.Dictionary)[]) {

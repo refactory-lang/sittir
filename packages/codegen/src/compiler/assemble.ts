@@ -14,7 +14,7 @@ import type {
 import {
     AssembledBranch, AssembledContainer, AssembledPolymorph,
     AssembledLeaf, AssembledKeyword, AssembledToken, AssembledEnum,
-    AssembledSupertype, AssembledGroup,
+    AssembledSupertype, AssembledGroup, AssembledMulti,
     hasAnyField, hasAnyChild, computePolymorphFormKinds,
 } from './rule.ts'
 import { tokenToName } from './optimize.ts'
@@ -202,6 +202,21 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
                 nodes.set(kind, new AssembledGroup({
                     kind, typeName, rule: groupRule,
                     simplifiedRule: groupSimplified,
+                }))
+                break
+            }
+            case 'multi': {
+                // Hidden repeat helper — see AssembledMulti doc comment.
+                // The rule body is `repeat` or `repeat1` (possibly wrapped
+                // in optional/variant). Peel to the repeat to extract
+                // the element union, and remember whether the source
+                // was `repeat1` (nonEmpty) or `repeat` (zero-or-more).
+                const { repeat, nonEmpty } = extractRepeatShape(inlinedRule)
+                nodes.set(kind, new AssembledMulti({
+                    kind, typeName, irKey,
+                    rule: inlinedRule,
+                    elementRule: repeat.content,
+                    nonEmpty,
                 }))
                 break
             }
@@ -683,11 +698,22 @@ function inlineGroupRefs(
             if (!rule.hidden) return rule
             if (visited.has(rule.name)) return rule
             const target = rules[rule.name]
-            if (!target || target.type !== 'group') return rule
-            // Recurse into the group's content with an extended visited
-            // set so a group referencing another group expands through.
+            if (!target) return rule
+            // Inline hidden GROUPS (seq-with-fields) so fields surface
+            // onto the referrer. Also inline hidden MULTI helpers —
+            // rules whose body unwraps to a `repeat` / `repeat1`
+            // (python `_collection_elements`, `_parameters`, `_patterns`)
+            // — so the walker sees the repeat at the referrer's level
+            // and marks the child slot as multi-valued.
+            const isGroup = target.type === 'group'
+            const isMulti = extractRepeatShape(target) !== null
+            if (!isGroup && !isMulti) return rule
             const next = new Set(visited); next.add(rule.name)
-            return inlineGroupRefs(target.content, rules, next)
+            // For groups, inline the group's `content`; for multi, inline
+            // the whole target rule so the `repeat`/`repeat1` wrapper
+            // survives (walkForChildren needs to see the repeat directly).
+            const inlineTarget = isGroup ? (target as { content: Rule }).content : target
+            return inlineGroupRefs(inlineTarget, rules, next)
         }
         case 'seq':
             return { ...rule, members: rule.members.map(m => recurse(m, visited)) }
@@ -743,6 +769,15 @@ export function classifyNode(kind: string, rule: Rule): ModelType {
     // branch with union-ed fields.
     if (rule.type === 'choice' && hasAnyField(rule) && !allVariantsHaveSameFieldSet(rule)) {
         return 'polymorph'
+    }
+
+    // Hidden repeat helpers — tree-sitter inlines these at parse time,
+    // so they never surface as concrete nodes. Classify as `multi` so
+    // downstream emitters skip the interface/factory/resolver and the
+    // walker inlines the repeat at referrers (rest-params factory,
+    // multi-valued child slot). See AssembledMulti doc.
+    if (kind.startsWith('_') && extractRepeatShape(rule) !== null) {
+        return 'multi'
     }
 
     // seq/choice/optional/repeat/field/... — distinguish branch from container.
@@ -867,6 +902,33 @@ export function nameField(fieldName: string): { propertyName: string; paramName:
     let paramName = propertyName
     if (TS_RESERVED_WORDS.has(paramName)) paramName = `${paramName}_`
     return { propertyName, paramName }
+}
+
+// ---------------------------------------------------------------------------
+// extractRepeatShape — peel optional/variant/clause/group/token wrappers to
+// see if the rule's structural body is a `repeat` / `repeat1`. Returns the
+// repeat node + a `nonEmpty` flag when the source was `repeat1`. Returns
+// null for rules whose body is not a pure repeat — even a `seq(...)` that
+// happens to contain a repeat inside won't match, because that means the
+// hidden rule carries additional structure (delimiters, flanks) and needs
+// the different "hidden structural seq" treatment (separate future work).
+// ---------------------------------------------------------------------------
+
+export function extractRepeatShape(rule: Rule): { repeat: import('./rule.ts').RepeatRule | import('./rule.ts').Repeat1Rule; nonEmpty: boolean } | null {
+    switch (rule.type) {
+        case 'repeat':
+            return { repeat: rule, nonEmpty: false }
+        case 'repeat1':
+            return { repeat: rule, nonEmpty: true }
+        case 'optional':
+        case 'variant':
+        case 'clause':
+        case 'group':
+        case 'token':
+            return extractRepeatShape((rule as { content: Rule }).content)
+        default:
+            return null
+    }
 }
 
 // ---------------------------------------------------------------------------

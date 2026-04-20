@@ -123,8 +123,6 @@ export const enum SyntaxKind {
   SplatPattern = 'splat_pattern',
   ClassPattern = 'class_pattern',
   ComplexPattern = 'complex_pattern',
-  _Parameters = '_parameters',
-  Patterns = '_patterns',
   TuplePattern = 'tuple_pattern',
   ListPattern = 'list_pattern',
   DefaultParameter = 'default_parameter',
@@ -168,7 +166,6 @@ export const enum SyntaxKind {
   GeneratorExpression = 'generator_expression',
   ComprehensionClauses = '_comprehension_clauses',
   ParenthesizedExpression = 'parenthesized_expression',
-  CollectionElements = '_collection_elements',
   ForInClause = 'for_in_clause',
   IfClause = 'if_clause',
   ConditionalExpression = 'conditional_expression',
@@ -658,12 +655,12 @@ export interface FunctionDefinition {
 
 export interface Parameters {
   readonly $type: 'parameters';
-  readonly $children: readonly [_Parameters];
+  readonly $children: readonly (Parameter)[];
 }
 
 export interface LambdaParameters {
   readonly $type: 'lambda_parameters';
-  readonly $children: readonly [_Parameters];
+  readonly $children: NonEmptyArray<Parameter>;
 }
 
 export interface ListSplat {
@@ -853,24 +850,14 @@ export interface ComplexPattern {
   readonly $children: readonly [Integer | Float];
 }
 
-export interface _Parameters {
-  readonly $type: '_parameters';
-  readonly $children: NonEmptyArray<Parameter>;
-}
-
-export interface Patterns {
-  readonly $type: '_patterns';
-  readonly $children: NonEmptyArray<Pattern>;
-}
-
 export interface TuplePattern {
   readonly $type: 'tuple_pattern';
-  readonly $children: readonly [Patterns];
+  readonly $children: readonly (Pattern)[];
 }
 
 export interface ListPattern {
   readonly $type: 'list_pattern';
-  readonly $children: readonly [Patterns];
+  readonly $children: readonly (Pattern)[];
 }
 
 export interface DefaultParameter {
@@ -1122,17 +1109,17 @@ export interface KeywordArgument {
 
 export interface List {
   readonly $type: 'list';
-  readonly $children: readonly [CollectionElements];
+  readonly $children: readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[];
 }
 
 export interface Set {
   readonly $type: 'set';
-  readonly $children: readonly [CollectionElements];
+  readonly $children: readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[];
 }
 
 export interface Tuple {
   readonly $type: 'tuple';
-  readonly $children: readonly [CollectionElements];
+  readonly $children: readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[];
 }
 
 export interface Dictionary {
@@ -1192,11 +1179,6 @@ export interface ComprehensionClauses {
 export interface ParenthesizedExpression {
   readonly $type: 'parenthesized_expression';
   readonly $children: readonly [Expression | Yield];
-}
-
-export interface CollectionElements {
-  readonly $type: '_collection_elements';
-  readonly $children: readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[];
 }
 
 export interface ForInClause {
@@ -1417,8 +1399,6 @@ export interface KeywordPatternTree extends TreeNode<'keyword_pattern'> {}
 export interface SplatPatternTree extends TreeNode<'splat_pattern'> {}
 export interface ClassPatternTree extends TreeNode<'class_pattern'> {}
 export interface ComplexPatternTree extends TreeNode<'complex_pattern'> {}
-export interface _ParametersTree extends AnyTreeNode { readonly type: "_parameters"; }
-export interface PatternsTree extends AnyTreeNode { readonly type: "_patterns"; }
 export interface TuplePatternTree extends TreeNode<'tuple_pattern'> {}
 export interface ListPatternTree extends TreeNode<'list_pattern'> {}
 export interface DefaultParameterTree extends TreeNode<'default_parameter'> {}
@@ -1465,7 +1445,6 @@ export interface SetComprehensionTree extends TreeNode<'set_comprehension'> {}
 export interface GeneratorExpressionTree extends TreeNode<'generator_expression'> {}
 export interface ComprehensionClausesTree extends AnyTreeNode { readonly type: "_comprehension_clauses"; }
 export interface ParenthesizedExpressionTree extends TreeNode<'parenthesized_expression'> {}
-export interface CollectionElementsTree extends AnyTreeNode { readonly type: "_collection_elements"; }
 export interface ForInClauseTree extends TreeNode<'for_in_clause'> {}
 export interface IfClauseTree extends TreeNode<'if_clause'> {}
 export interface ConditionalExpressionTree extends TreeNode<'conditional_expression'> {}
@@ -1789,8 +1768,6 @@ export type PythonNode =
   | SplatPattern
   | ClassPattern
   | ComplexPattern
-  | _Parameters
-  | Patterns
   | TuplePattern
   | ListPattern
   | DefaultParameter
@@ -1834,7 +1811,6 @@ export type PythonNode =
   | GeneratorExpression
   | ComprehensionClauses
   | ParenthesizedExpression
-  | CollectionElements
   | ForInClause
   | IfClause
   | ConditionalExpression
@@ -1916,8 +1892,6 @@ export interface KindMap {
   'splat_pattern': SplatPattern;
   'class_pattern': ClassPattern;
   'complex_pattern': ComplexPattern;
-  '_parameters': _Parameters;
-  '_patterns': Patterns;
   'tuple_pattern': TuplePattern;
   'list_pattern': ListPattern;
   'default_parameter': DefaultParameter;
@@ -1961,7 +1935,6 @@ export interface KindMap {
   'generator_expression': GeneratorExpression;
   '_comprehension_clauses': ComprehensionClauses;
   'parenthesized_expression': ParenthesizedExpression;
-  '_collection_elements': CollectionElements;
   'for_in_clause': ForInClause;
   'if_clause': IfClause;
   'conditional_expression': ConditionalExpression;
@@ -2076,8 +2049,6 @@ export interface KeywordPatternNs extends NodeNs<KeywordPattern, LeafScalarMap, 
 export interface SplatPatternNs extends NodeNs<SplatPattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ClassPatternNs extends NodeNs<ClassPattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ComplexPatternNs extends NodeNs<ComplexPattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface _ParametersNs extends NodeNs<_Parameters, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface PatternsNs extends NodeNs<Patterns, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface TuplePatternNs extends NodeNs<TuplePattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ListPatternNs extends NodeNs<ListPattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface DefaultParameterNs extends NodeNs<DefaultParameter, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -2121,7 +2092,6 @@ export interface SetComprehensionNs extends NodeNs<SetComprehension, LeafScalarM
 export interface GeneratorExpressionNs extends NodeNs<GeneratorExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ComprehensionClausesNs extends NodeNs<ComprehensionClauses, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ParenthesizedExpressionNs extends NodeNs<ParenthesizedExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface CollectionElementsNs extends NodeNs<CollectionElements, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ForInClauseNs extends NodeNs<ForInClause, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface IfClauseNs extends NodeNs<IfClause, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ConditionalExpressionNs extends NodeNs<ConditionalExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -2202,8 +2172,6 @@ export interface NamespaceMap {
   'splat_pattern': SplatPatternNs;
   'class_pattern': ClassPatternNs;
   'complex_pattern': ComplexPatternNs;
-  '_parameters': _ParametersNs;
-  '_patterns': PatternsNs;
   'tuple_pattern': TuplePatternNs;
   'list_pattern': ListPatternNs;
   'default_parameter': DefaultParameterNs;
@@ -2247,7 +2215,6 @@ export interface NamespaceMap {
   'generator_expression': GeneratorExpressionNs;
   '_comprehension_clauses': ComprehensionClausesNs;
   'parenthesized_expression': ParenthesizedExpressionNs;
-  '_collection_elements': CollectionElementsNs;
   'for_in_clause': ForInClauseNs;
   'if_clause': IfClauseNs;
   'conditional_expression': ConditionalExpressionNs;
@@ -2701,20 +2668,6 @@ export namespace ComplexPattern {
   export type Tree = TreeFor<'complex_pattern'>;
   export type Kind = 'complex_pattern';
 }
-export namespace _Parameters {
-  export type Config = ConfigFor<'_parameters'>;
-  export type Fluent = FluentFor<'_parameters'>;
-  export type Loose = LooseFor<'_parameters'>;
-  export type Tree = TreeFor<'_parameters'>;
-  export type Kind = '_parameters';
-}
-export namespace Patterns {
-  export type Config = ConfigFor<'_patterns'>;
-  export type Fluent = FluentFor<'_patterns'>;
-  export type Loose = LooseFor<'_patterns'>;
-  export type Tree = TreeFor<'_patterns'>;
-  export type Kind = '_patterns';
-}
 export namespace TuplePattern {
   export type Config = ConfigFor<'tuple_pattern'>;
   export type Fluent = FluentFor<'tuple_pattern'>;
@@ -3015,13 +2968,6 @@ export namespace ParenthesizedExpression {
   export type Loose = LooseFor<'parenthesized_expression'>;
   export type Tree = TreeFor<'parenthesized_expression'>;
   export type Kind = 'parenthesized_expression';
-}
-export namespace CollectionElements {
-  export type Config = ConfigFor<'_collection_elements'>;
-  export type Fluent = FluentFor<'_collection_elements'>;
-  export type Loose = LooseFor<'_collection_elements'>;
-  export type Tree = TreeFor<'_collection_elements'>;
-  export type Kind = '_collection_elements';
 }
 export namespace ForInClause {
   export type Config = ConfigFor<'for_in_clause'>;

@@ -27,7 +27,6 @@ import type {
   Chevron,
   ClassDefinition,
   ClassPattern,
-  CollectionElements,
   ComparisonOperator,
   ComplexPattern,
   ConcatenatedString,
@@ -86,7 +85,6 @@ import type {
   ParenthesizedExpression,
   ParenthesizedListSplat,
   PatternList,
-  Patterns,
   PrintStatement,
   RaiseStatement,
   RelativeImport,
@@ -119,7 +117,6 @@ import type {
   WithStatement,
   Yield,
   _ListPattern,
-  _Parameters,
   _TuplePattern,
 } from './types.js';
 
@@ -437,14 +434,14 @@ export function wrapFunctionDefinition(data: _NodeData, tree: TreeHandle): Wrapp
 export function wrapParameters(data: _NodeData, tree: TreeHandle): WrappedNode<Parameters> {
   return {
     ...data,
-    get child() { return drillIn(data.$children?.[0], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<Parameters>;
 }
 
 export function wrapLambdaParameters(data: _NodeData, tree: TreeHandle): WrappedNode<LambdaParameters> {
   return {
     ...data,
-    get child() { return drillIn(data.$children?.[0], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<LambdaParameters>;
 }
 
@@ -657,31 +654,17 @@ export function wrapComplexPattern(data: _NodeData, tree: TreeHandle): WrappedNo
   } as unknown as WrappedNode<ComplexPattern>;
 }
 
-export function wrap_Parameters(data: _NodeData, tree: TreeHandle): WrappedNode<_Parameters> {
-  return {
-    ...data,
-    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
-  } as unknown as WrappedNode<_Parameters>;
-}
-
-export function wrapPatterns(data: _NodeData, tree: TreeHandle): WrappedNode<Patterns> {
-  return {
-    ...data,
-    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
-  } as unknown as WrappedNode<Patterns>;
-}
-
 export function wrapTuplePattern(data: _NodeData, tree: TreeHandle): WrappedNode<TuplePattern> {
   return {
     ...data,
-    get child() { return drillIn(data.$children?.[0], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<TuplePattern>;
 }
 
 export function wrapListPattern(data: _NodeData, tree: TreeHandle): WrappedNode<ListPattern> {
   return {
     ...data,
-    get child() { return drillIn(data.$children?.[0], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<ListPattern>;
 }
 
@@ -936,21 +919,21 @@ export function wrapKeywordArgument(data: _NodeData, tree: TreeHandle): WrappedN
 export function wrapList(data: _NodeData, tree: TreeHandle): WrappedNode<List> {
   return {
     ...data,
-    get child() { return drillIn(data.$children?.[0], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<List>;
 }
 
 export function wrapSet(data: _NodeData, tree: TreeHandle): WrappedNode<Set> {
   return {
     ...data,
-    get child() { return drillIn(data.$children?.[0], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<Set>;
 }
 
 export function wrapTuple(data: _NodeData, tree: TreeHandle): WrappedNode<Tuple> {
   return {
     ...data,
-    get child() { return drillIn(data.$children?.[0], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<Tuple>;
 }
 
@@ -1011,13 +994,6 @@ export function wrapParenthesizedExpression(data: _NodeData, tree: TreeHandle): 
     ...data,
     get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<ParenthesizedExpression>;
-}
-
-export function wrapCollectionElements(data: _NodeData, tree: TreeHandle): WrappedNode<CollectionElements> {
-  return {
-    ...data,
-    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
-  } as unknown as WrappedNode<CollectionElements>;
 }
 
 export function wrapForInClause(data: _NodeData, tree: TreeHandle): WrappedNode<ForInClause> {
@@ -1203,8 +1179,6 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'splat_pattern': (d, t) => wrapSplatPattern(d, t),
   'class_pattern': (d, t) => wrapClassPattern(d, t),
   'complex_pattern': (d, t) => wrapComplexPattern(d, t),
-  '_parameters': (d, t) => wrap_Parameters(d, t),
-  '_patterns': (d, t) => wrapPatterns(d, t),
   'tuple_pattern': (d, t) => wrapTuplePattern(d, t),
   'list_pattern': (d, t) => wrapListPattern(d, t),
   'default_parameter': (d, t) => wrapDefaultParameter(d, t),
@@ -1245,7 +1219,6 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'set_comprehension': (d, t) => wrapSetComprehension(d, t),
   'generator_expression': (d, t) => wrapGeneratorExpression(d, t),
   'parenthesized_expression': (d, t) => wrapParenthesizedExpression(d, t),
-  '_collection_elements': (d, t) => wrapCollectionElements(d, t),
   'for_in_clause': (d, t) => wrapForInClause(d, t),
   'if_clause': (d, t) => wrapIfClause(d, t),
   'conditional_expression': (d, t) => wrapConditionalExpression(d, t),

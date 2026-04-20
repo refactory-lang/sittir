@@ -756,8 +756,7 @@ export function functionDefinition(config: T.FunctionDefinition.Config) {
   };
 }
 
-export function parameters(child?: T._Parameters) {
-  const children = child != null ? [child] : [];
+export function parameters(...children: T.Parameter[]) {
   return {
     $type: 'parameters' as const,
     $source: 'factory' as const,
@@ -772,8 +771,8 @@ export function parameters(child?: T._Parameters) {
   };
 }
 
-export function lambdaParameters(child: T._Parameters) {
-  const children = [child];
+export function lambdaParameters(...children: T.Parameter[]) {
+  _assertNonEmpty(children, 'lambda_parameters.children');
   return {
     $type: 'lambda_parameters' as const,
     $source: 'factory' as const,
@@ -1243,8 +1242,7 @@ export function complexPattern(config: T.ComplexPattern.Config) {
   };
 }
 
-export function tuplePattern(child?: T.Patterns) {
-  const children = child != null ? [child] : [];
+export function tuplePattern(...children: T.Pattern[]) {
   return {
     $type: 'tuple_pattern' as const,
     $source: 'factory' as const,
@@ -1259,8 +1257,7 @@ export function tuplePattern(child?: T.Patterns) {
   };
 }
 
-export function listPattern(child?: T.Patterns) {
-  const children = child != null ? [child] : [];
+export function listPattern(...children: T.Pattern[]) {
   return {
     $type: 'list_pattern' as const,
     $source: 'factory' as const,
@@ -1928,8 +1925,7 @@ export function keywordArgument(config: T.KeywordArgument.Config) {
   };
 }
 
-export function list(child?: T.CollectionElements) {
-  const children = child != null ? [child] : [];
+export function list(...children: (T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat)[]) {
   return {
     $type: 'list' as const,
     $source: 'factory' as const,
@@ -1944,8 +1940,7 @@ export function list(child?: T.CollectionElements) {
   };
 }
 
-export function set(child: T.CollectionElements) {
-  const children = [child];
+export function set(...children: (T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat)[]) {
   return {
     $type: 'set' as const,
     $source: 'factory' as const,
@@ -1960,8 +1955,7 @@ export function set(child: T.CollectionElements) {
   };
 }
 
-export function tuple(child?: T.CollectionElements) {
-  const children = child != null ? [child] : [];
+export function tuple(...children: (T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat)[]) {
   return {
     $type: 'tuple' as const,
     $source: 'factory' as const,

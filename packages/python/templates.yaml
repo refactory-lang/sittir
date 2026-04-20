@@ -95,8 +95,14 @@ rules:
     template: "$ASYNC_CLAUSE def $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE_CLAUSE:\n  $BODY\n"
     async_clause: $ASYNC
     return_type_clause: "->$RETURN_TYPE"
-  parameters: ($$$CHILDREN)
-  lambda_parameters: $$$CHILDREN
+  parameters:
+    template: ($$$CHILDREN)
+    joinBy: ","
+    joinByTrailing: true
+  lambda_parameters:
+    template: $$$CHILDREN
+    joinBy: ","
+    joinByTrailing: true
   list_splat: "*$EXPRESSION"
   dictionary_splat: "**$EXPRESSION"
   global_statement:
@@ -150,8 +156,14 @@ rules:
     joinByField:
       arguments: ","
   complex_pattern: $REAL $$$CHILDREN$IMAGINARY+
-  tuple_pattern: ($$$CHILDREN)
-  list_pattern: "[$$$CHILDREN]"
+  tuple_pattern:
+    template: ($$$CHILDREN)
+    joinBy: ","
+    joinByTrailing: true
+  list_pattern:
+    template: "[$$$CHILDREN]"
+    joinBy: ","
+    joinByTrailing: true
   default_parameter: $NAME=$VALUE
   typed_default_parameter: "$NAME:$TYPE=$VALUE"
   list_splat_pattern: "*$$$CHILDREN"
@@ -194,9 +206,18 @@ rules:
   constrained_type: "$BASE_TYPE:$CONSTRAINT"
   member_type: $BASE_TYPE.$IDENTIFIER
   keyword_argument: $NAME=$VALUE
-  list: "[$$$CHILDREN]"
-  set: "{$$$CHILDREN}"
-  tuple: ($$$CHILDREN)
+  list:
+    template: "[$$$CHILDREN]"
+    joinBy: ","
+    joinByTrailing: true
+  set:
+    template: "{$$$CHILDREN}"
+    joinBy: ","
+    joinByTrailing: true
+  tuple:
+    template: ($$$CHILDREN)
+    joinBy: ","
+    joinByTrailing: true
   dictionary:
     template: "{$$$CHILDREN}"
     joinBy: ","

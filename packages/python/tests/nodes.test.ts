@@ -372,7 +372,7 @@ describe('parameters', () => {
 
 describe('lambda_parameters', () => {
   it('factory produces correct type', () => {
-    const node = ir.lambdaParameters({ type: "_parameters" } as never);
+    const node = ir.lambdaParameters({ type: "parameter" } as never);
     expect(node.$type).toBe('lambda_parameters');
     expect(node.$source).toBe('factory');
   });
@@ -970,7 +970,7 @@ describe('list', () => {
 
 describe('set', () => {
   it('factory produces correct type', () => {
-    const node = ir.set({ type: "_collection_elements" } as never);
+    const node = ir.set();
     expect(node.$type).toBe('set');
     expect(node.$source).toBe('factory');
   });

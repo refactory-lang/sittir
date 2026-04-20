@@ -1662,6 +1662,57 @@ export class AssembledSupertype extends AssembledNodeBase {
     get subtypes(): string[] { return this.#subtypes }
 }
 
+/**
+ * AssembledMulti — hidden repeat helpers that tree-sitter inlines at
+ * parse time.
+ *
+ * Shape: a hidden rule whose top-level content is `repeat` or `repeat1`
+ * (possibly wrapped in `optional` / `variant`). Canonical case: python
+ *   `_collection_elements: repeat1(choice(expression, yield, list_splat, ...))`
+ * used inside `tuple`, `list`, `set`, etc.
+ *
+ * These never surface as parse-tree nodes — tree-sitter expands the
+ * repeat in-place at every referrer. Our codegen therefore:
+ *   - Emits NO interface / factory / from-resolver / wrap function /
+ *     render template for the helper itself.
+ *   - Emits a TYPE ALIAS naming the element union:
+ *       `export type CollectionElements = Expression | Yield | ListSplat | …`
+ *   - Inlines the repeat at every referrer (`inlineGroupRefs` extends
+ *     to cover `multi` alongside `group`), so the referrer's walker
+ *     sees `repeat1(...)` directly and sets `multiple: true` on the
+ *     child slot → rest-params factory.
+ *
+ * Mirrors the existing "hidden helper" story:
+ *   group    — hidden seq with fields  (inline fields)
+ *   supertype — hidden choice of symbols (dispatch to one subtype)
+ *   multi    — hidden repeat of union    (inline as multi child slot)
+ */
+export class AssembledMulti extends AssembledNodeBase {
+    readonly modelType = 'multi' as const
+    readonly rule: Rule
+    /** The repeat's inner content type — raw Rule, for downstream
+     * consumers that need the element union (types emitter maps this
+     * to a union of TypeNames, inlineGroupRefs hands the whole repeat
+     * back to referrers). */
+    readonly elementRule: Rule
+    /** `true` when the source rule is `repeat1` (at least one element);
+     * `false` for plain `repeat` (zero-or-more). Referrers thread this
+     * into AssembledChild.nonEmpty. */
+    readonly nonEmpty: boolean
+
+    constructor(init: {
+        kind: string; typeName: string; irKey?: string
+        rule: Rule
+        elementRule: Rule
+        nonEmpty: boolean
+    }) {
+        super(init)
+        this.rule = init.rule
+        this.elementRule = init.elementRule
+        this.nonEmpty = init.nonEmpty
+    }
+}
+
 export class AssembledGroup extends AssembledNodeBase {
     readonly modelType = 'group' as const
     readonly rule: Rule
@@ -1740,6 +1791,7 @@ export type AssembledNode =
     | AssembledEnum
     | AssembledSupertype
     | AssembledGroup
+    | AssembledMulti
 
 // ---------------------------------------------------------------------------
 // NodeMap — output of Assemble (Phase 4)
