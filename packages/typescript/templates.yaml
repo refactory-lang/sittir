@@ -58,13 +58,21 @@ rules:
     joinByField:
       statements: "\n"
   else_clause: else $STATEMENT
-  if_statement: $IF $CONDITION $CONSEQUENCE $ALTERNATIVE
+  if_statement:
+    template: $IF $CONDITION $CONSEQUENCE $ALTERNATIVE_CLAUSE
+    alternative_clause: $ALTERNATIVE
   switch_statement: $SWITCH $VALUE $BODY
   for_statement: $FOR($INITIALIZER $CONDITION $INCREMENT)$BODY
-  for_in_statement: $FOR $AWAIT($LEFT$KIND$VALUE$$$CHILDREN $OPERATOR $RIGHT)$BODY
+  for_in_statement:
+    template: $FOR $AWAIT_CLAUSE($LEFT$KIND$VALUE_CLAUSE$$$CHILDREN $OPERATOR $RIGHT)$BODY
+    await_clause: $AWAIT
+    value_clause: =$VALUE
   while_statement: $WHILE $CONDITION $BODY
   do_statement: $DO $BODY while $CONDITION $$$CHILDREN
-  try_statement: $TRY $BODY $HANDLER $FINALIZER
+  try_statement:
+    template: $TRY $BODY $HANDLER_CLAUSE $FINALIZER_CLAUSE
+    handler_clause: $HANDLER
+    finalizer_clause: $FINALIZER
   with_statement: $WITH $OBJECT $BODY
   break_statement: $BREAK $LABEL $$$CHILDREN
   continue_statement: $CONTINUE $LABEL $$$CHILDREN
@@ -83,7 +91,8 @@ rules:
       body: "\n"
   catch_clause:
     template: $CATCH $PARAMETER_CLAUSE $BODY
-    parameter_clause: ($PARAMETER $TYPE)
+    type_clause: $TYPE
+    parameter_clause: ($PARAMETER $TYPE_CLAUSE)
   finally_clause: $FINALLY $BODY
   parenthesized_expression: ($$$CHILDREN $TYPE)
   expression: $$$CHILDREN
@@ -111,7 +120,9 @@ rules:
     template: $$$CHILDREN
     joinByField:
       children: ":"
-  jsx_closing_element: </$NAME>
+  jsx_closing_element:
+    template: </$NAME_CLAUSE>
+    name_clause: $NAME
   jsx_self_closing_element: <$NAME$TYPE_ARGUMENTS $$$ATTRIBUTE/>
   jsx_attribute: $$$CHILDREN=
   class: $$$DECORATOR class $NAME $TYPE_PARAMETERS $CLASS_HERITAGE $BODY
@@ -120,10 +131,18 @@ rules:
     variants:
       extends_clause: $$$CHILDREN
       implements_clause: $$$CHILDREN
-  function_expression: $ASYNC function $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $BODY
-  function_declaration: $ASYNC function $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $BODY $$$CHILDREN
-  generator_function: $ASYNC function*$NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $BODY
-  generator_function_declaration: $ASYNC function*$NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $BODY $$$CHILDREN
+  function_expression:
+    template: $ASYNC_CLAUSE function $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $BODY
+    async_clause: $ASYNC
+  function_declaration:
+    template: $ASYNC_CLAUSE function $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $BODY $$$CHILDREN
+    async_clause: $ASYNC
+  generator_function:
+    template: $ASYNC_CLAUSE function*$NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $BODY
+    async_clause: $ASYNC
+  generator_function_declaration:
+    template: $ASYNC_CLAUSE function*$NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $BODY $$$CHILDREN
+    async_clause: $ASYNC
   arrow_function:
     variants:
       parameter: $ASYNC_CLAUSE $$$CHILDREN=>$BODY
@@ -137,8 +156,12 @@ rules:
   new_expression: $NEW $CONSTRUCTOR $TYPE_ARGUMENTS $ARGUMENTS
   await_expression: await $EXPRESSION
   member_expression: $OBJECT.$OPTIONAL_CHAIN $PROPERTY
-  subscript_expression: "$OBJECT $OPTIONAL_CHAIN[$INDEX]"
-  assignment_expression: $USING $LEFT=$RIGHT
+  subscript_expression:
+    template: "$OBJECT $OPTIONAL_CHAIN_CLAUSE[$INDEX]"
+    optional_chain_clause: $OPTIONAL_CHAIN
+  assignment_expression:
+    template: $USING_CLAUSE $LEFT=$RIGHT
+    using_clause: $USING
   augmented_assignment_expression: $LEFT $OPERATOR $RIGHT
   spread_element: ...$EXPRESSION
   ternary_expression: "$CONDITION $CONSEQUENCE:$ALTERNATIVE"
@@ -151,15 +174,22 @@ rules:
   string: "\"$$$CHILDREN\""
   template_string: "`$$$CHILDREN`"
   template_substitution: "${$$$CHILDREN}"
-  regex: /$PATTERN/$FLAGS
+  regex:
+    template: /$PATTERN/$FLAGS_CLAUSE
+    flags_clause: $FLAGS
   arguments:
     template: ($$$CHILDREN)
     joinBy: ","
   decorator: "@$$$CHILDREN"
   decorator_member_expression: $OBJECT.$PROPERTY
-  decorator_call_expression: $FUNCTION $TYPE_ARGUMENTS $ARGUMENTS
+  decorator_call_expression:
+    template: $FUNCTION $TYPE_ARGUMENTS_CLAUSE $ARGUMENTS
+    type_arguments_clause: $TYPE_ARGUMENTS
   class_body: "{$$$DECORATOR $$$CHILDREN}"
-  field_definition: $$$DECORATOR $STATIC $PROPERTY=$VALUE
+  field_definition:
+    template: $$$DECORATOR $STATIC_CLAUSE $PROPERTY $VALUE_CLAUSE
+    static_clause: $STATIC
+    value_clause: =$VALUE
   formal_parameters:
     template: ($$$CHILDREN)
     joinBy: ","
@@ -176,12 +206,13 @@ rules:
   pair_pattern: "$KEY:$VALUE"
   computed_property_name: "[$EXPRESSION]"
   public_field_definition:
-    template: $$$DECORATOR declare $$$CHILDREN$DECLARE_CLAUSE $STATIC_CLAUSE $READONLY_CLAUSE$ABSTRACT_CLAUSE$READONLY_CLAUSE$READONLY_CLAUSE$ABSTRACT_CLAUSE$ACCESSOR_CLAUSE $NAME?$TYPE=$VALUE
+    template: $$$DECORATOR declare $$$CHILDREN$DECLARE_CLAUSE $STATIC_CLAUSE $READONLY_CLAUSE$ABSTRACT_CLAUSE$READONLY_CLAUSE$READONLY_CLAUSE$ABSTRACT_CLAUSE$ACCESSOR_CLAUSE $NAME?$TYPE $VALUE_CLAUSE
     declare_clause: $DECLARE
     static_clause: $STATIC
     readonly_clause: $READONLY
     abstract_clause: $ABSTRACT
     accessor_clause: $ACCESSOR
+    value_clause: =$VALUE
   non_null_expression: $EXPRESSION!
   method_signature:
     template: $ACCESSIBILITY_MODIFIER $OVERRIDE_MODIFIER $$$CHILDREN $READONLY_CLAUSE $ASYNC_CLAUSE get $NAME$QUESTION_CLAUSE$TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE
@@ -191,7 +222,9 @@ rules:
   abstract_method_signature:
     template: $ACCESSIBILITY_MODIFIER abstract $OVERRIDE_MODIFIER get $NAME$QUESTION_CLAUSE$TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE
     question_clause: "?"
-  function_signature: $ASYNC function $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $$$CHILDREN
+  function_signature:
+    template: $ASYNC_CLAUSE function $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $$$CHILDREN
+    async_clause: $ASYNC
   decorator_parenthesized_expression: ($$$CHILDREN)
   type_assertion: $TYPE_ARGUMENTS $EXPRESSION
   as_expression: $EXPRESSION as $$$CHILDREN$TYPE_ANNOTATION
@@ -216,7 +249,9 @@ rules:
     joinBy: ","
     joinByField:
       type: ","
-  enum_declaration: $CONST enum $NAME $BODY
+  enum_declaration:
+    template: $CONST_CLAUSE enum $NAME $BODY
+    const_clause: $CONST
   enum_body:
     template: "{$$$OPENING}"
     joinBy: ","
@@ -225,8 +260,14 @@ rules:
       opening: ","
   enum_assignment: $NAME=$VALUE
   type_alias_declaration: $TYPE $NAME $TYPE_PARAMETERS=$VALUE $$$CHILDREN
-  required_parameter: $$$DECORATOR $$$CHILDREN $READONLY $PATTERN $TYPE=$VALUE
-  optional_parameter: $$$DECORATOR $$$CHILDREN $READONLY $PATTERN?$TYPE=$VALUE
+  required_parameter:
+    template: $$$DECORATOR $$$CHILDREN $READONLY_CLAUSE $PATTERN $TYPE $VALUE_CLAUSE
+    readonly_clause: $READONLY
+    value_clause: =$VALUE
+  optional_parameter:
+    template: $$$DECORATOR $$$CHILDREN $READONLY_CLAUSE $PATTERN?$TYPE $VALUE_CLAUSE
+    readonly_clause: $READONLY
+    value_clause: =$VALUE
   omitting_type_annotation: "-?:$TYPE"
   adding_type_annotation: "+?:$TYPE"
   opting_type_annotation: "?:$TYPE"
@@ -237,7 +278,9 @@ rules:
   optional_tuple_parameter: $NAME?$TYPE
   optional_type: $TYPE?
   rest_type: ...$TYPE
-  constructor_type: $ABSTRACT new $TYPE_PARAMETERS $PARAMETERS=>$TYPE
+  constructor_type:
+    template: $ABSTRACT_CLAUSE new $TYPE_PARAMETERS $PARAMETERS=>$TYPE
+    abstract_clause: $ABSTRACT
   template_type: "${$$$CHILDREN}"
   template_literal_type: "`$$$CHILDREN`"
   infer_type:
@@ -270,10 +313,14 @@ rules:
     template: <$$$CHILDREN>
     joinBy: ","
     joinByTrailing: true
-  type_parameter: $CONST $NAME $CONSTRAINT $VALUE
+  type_parameter:
+    template: $CONST_CLAUSE $NAME $CONSTRAINT $VALUE
+    const_clause: $CONST
   default_type: =$TYPE
   constraint: extends $TYPE
-  construct_signature: $ABSTRACT new $TYPE_PARAMETERS $PARAMETERS $TYPE
+  construct_signature:
+    template: $ABSTRACT_CLAUSE new $TYPE_PARAMETERS $PARAMETERS $TYPE
+    abstract_clause: $ABSTRACT
   index_signature:
     variants:
       colon: "$SIGN_CLAUSE[$$$CHILDREN]$TYPE"

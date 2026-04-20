@@ -2250,17 +2250,32 @@ function walkRuleForTemplate(
             // produces invalid output (python: `match X,:`). Skip the
             // whole optional when its content has no field/symbol ref.
             if (containsOnlyPunctuation(rule.content)) return []
-            // `optional(choice(seq('=', field('value')), field('arguments')))` —
-            // rust's `attribute` rule is the canonical case. Each choice
-            // branch is a field (possibly with flanking literals). Under
-            // the default path the choice walker takes the primary branch's
-            // full parts as literals, so `=$VALUE` renders unconditionally
-            // and a bare `#[name]` becomes `#[name=]`. Lift each branch
-            // into a clause keyed by its field name so the flanking literal
-            // is gated on field presence.
-            if (rule.content.type === 'choice') {
-                const lifted = liftChoiceBranchesToClauses(rule.content, clauses)
-                if (lifted !== null) return lifted
+            // Lift `optional(...)` contents that match one of these
+            // shapes into per-field clauses. The flanking literals move
+            // into the clause body so they render only when the field
+            // is populated:
+            //   * `optional(choice(seq(literal, field), field, ...))`
+            //     rust `attribute` — `=value` vs bare `#[name]`.
+            //   * `optional(seq(literal, field))` — e.g. javascript
+            //     `_initializer` inlined into `variable_declarator`:
+            //     `seq('=', field('value', ...))`. Without lifting, the
+            //     `=` renders unconditionally and `var x: T;` becomes
+            //     `var x: T=;`.
+            //   * `optional(field)` — handled by the walker's default
+            //     recursion already (field branch emits `$NAME`).
+            const toLift: Rule = rule.content.type === 'choice'
+                ? rule.content
+                : { type: 'choice', members: [rule.content] } as Rule
+            const lifted = liftChoiceBranchesToClauses(toLift as ChoiceRule, clauses, seen)
+            if (lifted !== null) {
+                // Mark the lifted fields as seen so sibling members
+                // inside the enclosing seq don't re-emit the same slot
+                // via the default walker path.
+                for (const p of lifted) {
+                    const m = p.match(/^\$([A-Za-z_][\w]*)_CLAUSE$/)
+                    if (m) seen.add(m[1]!.toLowerCase())
+                }
+                return lifted
             }
             return walkRuleForTemplate(rule.content, seen, inRepeat, clauses, rules, repeatedFields, joinByField, wordMatcher)
         }
@@ -2532,6 +2547,7 @@ function extractSingleKeywordString(rule: Rule): string | null {
 function liftChoiceBranchesToClauses(
     choice: ChoiceRule,
     clauses: Record<string, string>,
+    seen?: Set<string>,
 ): string[] | null {
     const placeholders: string[] = []
     // Each branch: unwrap variant/clause/group/terminal layers, then
@@ -2543,10 +2559,14 @@ function liftChoiceBranchesToClauses(
         const extracted = extractClauseBranch(stripped)
         if (extracted === null) return null
         const { fieldName, leading, trailing } = extracted
+        // Don't re-lift a field that's already emitted earlier in the
+        // rule (e.g. rust `tuple_expression`'s trailing
+        // `optional(field('elements', ...))` after the same field
+        // appeared inside a repeat earlier — the multi-valued slot
+        // already captures those values; a clause would double-count).
+        if (seen?.has(fieldName)) return null
         const clauseKey = `${fieldName}_clause`
         const placeholder = `$${fieldName.toUpperCase()}_CLAUSE`
-        // Only claim the clause slot once per name — if two branches
-        // share a field name (rare), reuse the first template.
         if (!(clauseKey in clauses)) {
             clauses[clauseKey] = `${leading}$${fieldName.toUpperCase()}${trailing}`
         }

@@ -77,11 +77,14 @@ rules:
   where_predicate: $LEFT $BOUNDS
   impl_item:
     variants:
-      body: $UNSAFE impl $TYPE_PARAMETERS $TRAIT_CLAUSE $TYPE $WHERE_CLAUSE $$$CHILDREN
-      semi: $UNSAFE impl $TYPE_PARAMETERS $TRAIT_CLAUSE $TYPE $WHERE_CLAUSE $$$CHILDREN
+      body: $UNSAFE_CLAUSE impl $TYPE_PARAMETERS $TRAIT_CLAUSE $TYPE $WHERE_CLAUSE $$$CHILDREN
+      semi: $UNSAFE_CLAUSE impl $TYPE_PARAMETERS $TRAIT_CLAUSE $TYPE $WHERE_CLAUSE $$$CHILDREN
+    unsafe_clause: $UNSAFE
     bang_clause: "!"
     trait_clause: $BANG_CLAUSE$TRAIT for
-  trait_item: $VISIBILITY_MODIFIER $UNSAFE trait $NAME $TYPE_PARAMETERS $BOUNDS $WHERE_CLAUSE $BODY
+  trait_item:
+    template: $VISIBILITY_MODIFIER $UNSAFE_CLAUSE trait $NAME $TYPE_PARAMETERS $BOUNDS $WHERE_CLAUSE $BODY
+    unsafe_clause: $UNSAFE
   associated_type: type $NAME $TYPE_PARAMETERS $BOUNDS $WHERE_CLAUSE;
   trait_bounds:
     template: ":$$$CHILDREN"
@@ -96,9 +99,12 @@ rules:
     template: "$CONST $NAME:$TYPE $VALUE_CLAUSE"
     value_clause: =$VALUE
   type_parameter:
-    template: $NAME $BOUNDS $DEFAULT_TYPE_CLAUSE
+    template: $NAME $BOUNDS_CLAUSE $DEFAULT_TYPE_CLAUSE
+    bounds_clause: $BOUNDS
     default_type_clause: =$DEFAULT_TYPE
-  lifetime_parameter: $NAME $BOUNDS
+  lifetime_parameter:
+    template: $NAME $BOUNDS_CLAUSE
+    bounds_clause: $BOUNDS
   let_declaration:
     template: let $MUTABLE_SPECIFIER $PATTERN $TYPE_CLAUSE $VALUE_CLAUSE $ALTERNATIVE_CLAUSE;
     type_clause: ":$TYPE"
@@ -212,7 +218,9 @@ rules:
       attributes: "\n"
   field_initializer: "$$$CHILDREN $FIELD:$VALUE"
   base_field_initializer: ..$$$CHILDREN
-  if_expression: $IF $CONDITION $CONSEQUENCE $ALTERNATIVE
+  if_expression:
+    template: $IF $CONDITION $CONSEQUENCE $ALTERNATIVE_CLAUSE
+    alternative_clause: $ALTERNATIVE
   let_condition: $LET $PATTERN=$VALUE
   else_clause: $ELSE $$$CHILDREN
   match_expression: $MATCH $VALUE $BODY
@@ -246,8 +254,12 @@ rules:
   await_expression: $$$CHILDREN.await
   field_expression: $VALUE.$FIELD
   unsafe_block: unsafe $BLOCK
-  async_block: async $MOVE $BLOCK
-  gen_block: gen $MOVE $BLOCK
+  async_block:
+    template: async $MOVE_CLAUSE $BLOCK
+    move_clause: $MOVE
+  gen_block:
+    template: gen $MOVE_CLAUSE $BLOCK
+    move_clause: $MOVE
   try_block: try $BLOCK
   block:
     template: "$LABEL_CLAUSE{$$$CHILDREN}"
@@ -291,7 +303,9 @@ rules:
   raw_string_literal: $TEXT
   comment: $$$CHILDREN
   line_comment: //$OUTER$INNER$DOC
-  block_comment: /*$OUTER$INNER $DOC*/
+  block_comment:
+    template: /*$OUTER$INNER $DOC_CLAUSE*/
+    doc_clause: $DOC
   array_expression_semi:
     template: "[$$$ATTRIBUTES $ELEMENTS;$LENGTH]"
     joinByField:
@@ -328,7 +342,9 @@ rules:
     template: $$$CHILDREN&&
     joinByField:
       children: "&&"
-  closure_expression_block: "->$RETURN_TYPE $BODY"
+  closure_expression_block:
+    template: $RETURN_TYPE_CLAUSE $BODY
+    return_type_clause: "->$RETURN_TYPE"
   closure_expression_expr: $BODY
   field_pattern_shorthand: $NAME
   field_pattern_named: "$NAME:$PATTERN"
