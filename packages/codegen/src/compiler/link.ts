@@ -288,12 +288,30 @@ function extractTopLevelAliasTarget(rule: Rule): string | undefined {
  * Walks through transparent wrappers (variant/group/clause/token/terminal)
  * so patterns like `alias(token($.inner), $.target)` still resolve.
  */
-function extractAliasedFromName(content: Rule): string | undefined {
-    if (content.type === 'symbol' && !content.hidden) return content.name
+function extractAliasedFromName(content: Rule, supertypes: Set<string>): string | undefined {
+    // Hidden symbols (`$._match_block`) are valid alias sources — they
+    // still have concrete shape interfaces emitted from Assemble and are
+    // the canonical type we want factories/types to surface. Tree-sitter
+    // itself emits `_match_block`'s body structure at the node labeled
+    // `block` per `alias($._match_block, $.block)`, and the drillAs
+    // layer rewrites $type at wrap time so downstream sees the source
+    // kind.
+    //
+    // Supertypes (`alias($.expression, $.as_pattern_target)`) are NOT valid
+    // alias sources: supertypes are abstract unions with no concrete shape
+    // of their own. Tree-sitter uses them here to mean "parse anything in
+    // the expression grammar at this slot, label the result
+    // `as_pattern_target`". The target is the thing with a real shape; the
+    // source is just a grammar-position tag. Using the supertype as
+    // canonical would strip the concrete kind the runtime actually produces.
+    if (content.type === 'symbol') {
+        if (supertypes.has(content.name)) return undefined
+        return content.name
+    }
     if (content.type === 'variant' || content.type === 'group' ||
         content.type === 'clause' || content.type === 'token' ||
         content.type === 'terminal') {
-        return extractAliasedFromName((content as { content: Rule }).content)
+        return extractAliasedFromName((content as { content: Rule }).content, supertypes)
     }
     return undefined
 }
@@ -1124,7 +1142,7 @@ function resolveRule(
                 // symbol referencing the original (aliased-from) kind;
                 // walk to find it so the wrap emitter can rewrite $type
                 // at drill-in via drillAs(). See ADR-0006.
-                const aliasedFrom = extractAliasedFromName(rule.content)
+                const aliasedFrom = extractAliasedFromName(rule.content, supertypes)
                 const sym: import('./rule.ts').SymbolRule = aliasedFrom
                     ? { type: 'symbol', name: rule.value, aliasedFrom }
                     : { type: 'symbol', name: rule.value }

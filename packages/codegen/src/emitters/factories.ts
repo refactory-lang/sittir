@@ -443,7 +443,18 @@ function fieldElementType(f: AssembledField, nodeMap: NodeMap): string {
         return f.literalValues.map(v => JSON.stringify(v)).join(' | ')
     }
     if (f.contentTypes.length === 0) return 'string'
-    const parts = f.contentTypes.map(t => {
+    // Alias-source projection (ADR-0006 extended to the factory surface):
+    // when a content type is the TARGET of `alias($.source, $.target)`, the
+    // body follows `source`'s shape. Factory config accepts the source type
+    // so callers construct nodes with the real structure (e.g. python
+    // `match_statement.body` takes a `MatchBlock` with CaseClause children,
+    // not a plain `Block` with Statement children).
+    const resolveAliased = (t: string): string => {
+        const source = f.aliasSources?.[t]
+        if (!source) return t
+        return nodeMap.nodes.get(source) ? source : t
+    }
+    const parts = f.contentTypes.map(resolveAliased).map(t => {
         const node = nodeMap.nodes.get(t)
         if (!node) {
             const fallback = t.replace(/(?:^|_)([a-z])/g, (_: string, c: string) => c.toUpperCase())

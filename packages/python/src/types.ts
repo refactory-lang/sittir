@@ -549,7 +549,7 @@ export interface MatchStatement {
   readonly $fields: {
     readonly match: "match";
     readonly subject: NonEmptyArray<Expression>;
-    readonly body: Block;
+    readonly body: MatchBlock;
   };
 }
 

@@ -779,7 +779,7 @@ export interface BreakStatement {
   readonly $type: 'break_statement';
   readonly $fields: {
     readonly break: "break";
-    readonly label?: StatementIdentifier;
+    readonly label?: Identifier;
   };
   readonly $children: readonly [Semicolon];
 }
@@ -788,7 +788,7 @@ export interface ContinueStatement {
   readonly $type: 'continue_statement';
   readonly $fields: {
     readonly continue: "continue";
-    readonly label?: StatementIdentifier;
+    readonly label?: Identifier;
   };
   readonly $children: readonly [Semicolon];
 }
@@ -952,8 +952,8 @@ export interface JsxOpeningElement {
 export interface NestedIdentifier {
   readonly $type: 'nested_identifier';
   readonly $fields: {
-    readonly object: Identifier | MemberExpression;
-    readonly property: PropertyIdentifier;
+    readonly object: Identifier | NestedIdentifier;
+    readonly property: Identifier;
   };
 }
 
@@ -1142,7 +1142,7 @@ export interface MemberExpression {
   readonly $fields: {
     readonly object: Expression | PrimaryExpression | Import;
     readonly optional_chain?: OptionalChain;
-    readonly property: PrivatePropertyIdentifier | PropertyIdentifier;
+    readonly property: PrivatePropertyIdentifier | Identifier;
   };
 }
 
@@ -1172,7 +1172,7 @@ export interface AssignmentExpression {
 export interface AugmentedAssignmentExpression {
   readonly $type: 'augmented_assignment_expression';
   readonly $fields: {
-    readonly left: MemberExpression | SubscriptExpression | Identifier | ParenthesizedExpression | NonNullExpression;
+    readonly left: MemberExpression | SubscriptExpression | ReservedIdentifier | ParenthesizedExpression | NonNullExpression;
     readonly operator: "+=" | "-=" | "*=" | "/=" | "%=" | "^=" | "&=" | "|=" | ">>=" | ">>>=" | "<<=" | "**=" | "&&=" | "||=" | "??=";
     readonly right: Expression;
   };
@@ -1264,15 +1264,15 @@ export interface Decorator {
 export interface DecoratorMemberExpression {
   readonly $type: 'decorator_member_expression';
   readonly $fields: {
-    readonly object: Identifier | MemberExpression;
-    readonly property: PropertyIdentifier;
+    readonly object: Identifier | DecoratorMemberExpression;
+    readonly property: Identifier;
   };
 }
 
 export interface DecoratorCallExpression {
   readonly $type: 'decorator_call_expression';
   readonly $fields: {
-    readonly function: Identifier | MemberExpression;
+    readonly function: Identifier | DecoratorMemberExpression;
     readonly type_arguments?: TypeArguments;
     readonly arguments: Arguments;
   };
@@ -1485,7 +1485,7 @@ export interface ImplementsClause {
 export interface AmbientDeclaration {
   readonly $type: 'ambient_declaration';
   readonly $fields: {
-    readonly declaration: Declaration | StatementBlock | PropertyIdentifier | Type | Semicolon;
+    readonly declaration: Declaration | StatementBlock | Identifier | Type | Semicolon;
   };
 }
 
@@ -1545,7 +1545,7 @@ export interface InterfaceDeclaration {
     readonly name: _TypeIdentifier;
     readonly type_parameters?: TypeParameters;
     readonly extends_type_clause?: ExtendsTypeClause;
-    readonly body: InterfaceBody;
+    readonly body: ObjectType;
   };
 }
 
@@ -2026,7 +2026,7 @@ export interface _ImportSpecifierAs {
 export interface _ArrowFunctionParameter {
   readonly $type: '_arrow_function_parameter';
   readonly $fields: {
-    readonly parameter: Identifier;
+    readonly parameter: ReservedIdentifier;
   };
 }
 

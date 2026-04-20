@@ -799,7 +799,7 @@ export interface Attribute {
   readonly $type: 'attribute';
   readonly $fields: {
     readonly value?: Expression;
-    readonly arguments?: TokenTree;
+    readonly arguments?: DelimTokenTree;
   };
   readonly $children: readonly [Path];
 }
@@ -1367,7 +1367,7 @@ export interface MacroInvocation {
   readonly $type: 'macro_invocation';
   readonly $fields: {
     readonly macro: ScopedIdentifier | Identifier | ReservedIdentifier;
-    readonly token_tree: TokenTree;
+    readonly token_tree: DelimTokenTree;
   };
 }
 
@@ -1379,7 +1379,7 @@ export interface DelimTokenTree {
 export interface ScopedIdentifier {
   readonly $type: 'scoped_identifier';
   readonly $fields: {
-    readonly path?: Path | BracketedType | GenericType;
+    readonly path?: Path | BracketedType | GenericTypeWithTurbofish;
     readonly name: Identifier | Super;
   };
 }
@@ -1387,7 +1387,7 @@ export interface ScopedIdentifier {
 export interface ScopedTypeIdentifierInExpressionPosition {
   readonly $type: 'scoped_type_identifier_in_expression_position';
   readonly $fields: {
-    readonly path?: Path | GenericType;
+    readonly path?: Path | GenericTypeWithTurbofish;
     readonly name: _TypeIdentifier;
   };
 }
@@ -1395,7 +1395,7 @@ export interface ScopedTypeIdentifierInExpressionPosition {
 export interface ScopedTypeIdentifier {
   readonly $type: 'scoped_type_identifier';
   readonly $fields: {
-    readonly path?: Path | GenericType | BracketedType;
+    readonly path?: Path | GenericTypeWithTurbofish | BracketedType;
     readonly name: _TypeIdentifier;
   };
 }
@@ -1528,7 +1528,7 @@ export interface TupleExpression {
 export interface StructExpression {
   readonly $type: 'struct_expression';
   readonly $fields: {
-    readonly name: _TypeIdentifier | ScopedTypeIdentifier | GenericTypeWithTurbofish;
+    readonly name: _TypeIdentifier | ScopedTypeIdentifierInExpressionPosition | GenericTypeWithTurbofish;
     readonly body: FieldInitializerList;
   };
 }
@@ -1797,7 +1797,7 @@ export interface SlicePattern {
 export interface TupleStructPattern {
   readonly $type: 'tuple_struct_pattern';
   readonly $fields: {
-    readonly type: Identifier | ScopedIdentifier | GenericType;
+    readonly type: Identifier | ScopedIdentifier | GenericTypeWithTurbofish;
   };
   readonly $children: readonly (Pattern)[];
 }
@@ -1897,7 +1897,7 @@ export interface RawStringLiteral {
   readonly $type: 'raw_string_literal';
   readonly $fields: {
     readonly raw_string_literal_start: string;
-    readonly string_content: StringContent;
+    readonly string_content: RawStringLiteralContent;
     readonly raw_string_literal_end: string;
   };
 }
@@ -1910,17 +1910,17 @@ export interface Comment {
 export interface LineComment {
   readonly $type: 'line_comment';
   readonly $fields: {
-    readonly outer?: OuterDocCommentMarker;
-    readonly inner?: InnerDocCommentMarker;
-    readonly doc?: DocComment;
+    readonly outer?: OuterLineDocCommentMarker;
+    readonly inner?: InnerLineDocCommentMarker;
+    readonly doc?: LineDocContent;
   };
 }
 
 export interface BlockComment {
   readonly $type: 'block_comment';
   readonly $fields: {
-    readonly outer?: OuterDocCommentMarker;
-    readonly inner?: InnerDocCommentMarker;
+    readonly outer?: OuterBlockDocCommentMarker;
+    readonly inner?: InnerBlockDocCommentMarker;
     readonly doc?: DocComment;
   };
 }
@@ -1961,7 +1961,7 @@ export interface ArrayExpressionList {
 export interface _FieldPatternShorthand {
   readonly $type: '_field_pattern_shorthand';
   readonly $fields: {
-    readonly name: ShorthandFieldIdentifier;
+    readonly name: Identifier;
   };
 }
 

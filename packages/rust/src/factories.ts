@@ -363,7 +363,7 @@ export function attribute(config: T.Attribute.Config) {
     $fields: fields,
     $children: children,
     value(value?: T.Expression | undefined) { return _fs(config, attribute, 'value', value, fields.value); },
-    arguments(value?: T.TokenTree | undefined) { return _fs(config, attribute, 'arguments', value, fields.arguments); },
+    arguments(value?: T.DelimTokenTree | undefined) { return _fs(config, attribute, 'arguments', value, fields.arguments); },
     getChild() { return children[0]; },
     setChild(child: T.Path) { return attribute({ ...config, children: [child] }); },
     render() { return render(this); },
@@ -1916,7 +1916,7 @@ export function macroInvocation(config: T.MacroInvocation.Config) {
     $named: true as const,
     $fields: fields,
     macro(value?: T.ScopedIdentifier | T.Identifier | T.ReservedIdentifier) { return _fs(config, macroInvocation, 'macro', value, fields.macro); },
-    tokenTree(value?: T.TokenTree) { return _fs(config, macroInvocation, 'tokenTree', value, fields.token_tree); },
+    tokenTree(value?: T.DelimTokenTree) { return _fs(config, macroInvocation, 'tokenTree', value, fields.token_tree); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1948,7 +1948,7 @@ export function scopedIdentifier(config: T.ScopedIdentifier.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    path(value?: T.Path | T.BracketedType | T.GenericType | undefined) { return _fs(config, scopedIdentifier, 'path', value, fields.path); },
+    path(value?: T.Path | T.BracketedType | T.GenericTypeWithTurbofish | undefined) { return _fs(config, scopedIdentifier, 'path', value, fields.path); },
     name(value?: T.Identifier | T.Super) { return _fs(config, scopedIdentifier, 'name', value, fields.name); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -1969,7 +1969,7 @@ export function scopedTypeIdentifierInExpressionPosition(config: T.ScopedTypeIde
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    path(value?: T.Path | T.GenericType | undefined) { return _fs(config, scopedTypeIdentifierInExpressionPosition, 'path', value, fields.path); },
+    path(value?: T.Path | T.GenericTypeWithTurbofish | undefined) { return _fs(config, scopedTypeIdentifierInExpressionPosition, 'path', value, fields.path); },
     name(value?: T._TypeIdentifier) { return _fs(config, scopedTypeIdentifierInExpressionPosition, 'name', value, fields.name); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -1990,7 +1990,7 @@ export function scopedTypeIdentifier(config: T.ScopedTypeIdentifier.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    path(value?: T.Path | T.GenericType | T.BracketedType | undefined) { return _fs(config, scopedTypeIdentifier, 'path', value, fields.path); },
+    path(value?: T.Path | T.GenericTypeWithTurbofish | T.BracketedType | undefined) { return _fs(config, scopedTypeIdentifier, 'path', value, fields.path); },
     name(value?: T._TypeIdentifier) { return _fs(config, scopedTypeIdentifier, 'name', value, fields.name); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -2406,7 +2406,7 @@ export function structExpression(config: T.StructExpression.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    name(value?: T._TypeIdentifier | T.ScopedTypeIdentifier | T.GenericTypeWithTurbofish) { return _fs(config, structExpression, 'name', value, fields.name); },
+    name(value?: T._TypeIdentifier | T.ScopedTypeIdentifierInExpressionPosition | T.GenericTypeWithTurbofish) { return _fs(config, structExpression, 'name', value, fields.name); },
     body(value?: T.FieldInitializerList) { return _fs(config, structExpression, 'body', value, fields.body); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -3131,7 +3131,7 @@ export function tupleStructPattern(config: T.TupleStructPattern.Config) {
     $named: true as const,
     $fields: fields,
     $children: children,
-    typeField(value?: T.Identifier | T.ScopedIdentifier | T.GenericType) { return _fs(config, tupleStructPattern, 'type', value, fields.type); },
+    typeField(value?: T.Identifier | T.ScopedIdentifier | T.GenericTypeWithTurbofish) { return _fs(config, tupleStructPattern, 'type', value, fields.type); },
     getChildren() { return children; },
     setChildren(...items: T.Pattern[]) { return tupleStructPattern({ ...config, children: items }); },
     render() { return render(this); },
@@ -3518,9 +3518,9 @@ export function lineComment(config?: T.LineComment.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    outer(value?: T.OuterDocCommentMarker | undefined) { return _fs(config, lineComment, 'outer', value, fields.outer); },
-    inner(value?: T.InnerDocCommentMarker | undefined) { return _fs(config, lineComment, 'inner', value, fields.inner); },
-    doc(value?: T.DocComment | undefined) { return _fs(config, lineComment, 'doc', value, fields.doc); },
+    outer(value?: T.OuterLineDocCommentMarker | undefined) { return _fs(config, lineComment, 'outer', value, fields.outer); },
+    inner(value?: T.InnerLineDocCommentMarker | undefined) { return _fs(config, lineComment, 'inner', value, fields.inner); },
+    doc(value?: T.LineDocContent | undefined) { return _fs(config, lineComment, 'doc', value, fields.doc); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -3541,8 +3541,8 @@ export function blockComment(config?: T.BlockComment.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    outer(value?: T.OuterDocCommentMarker | undefined) { return _fs(config, blockComment, 'outer', value, fields.outer); },
-    inner(value?: T.InnerDocCommentMarker | undefined) { return _fs(config, blockComment, 'inner', value, fields.inner); },
+    outer(value?: T.OuterBlockDocCommentMarker | undefined) { return _fs(config, blockComment, 'outer', value, fields.outer); },
+    inner(value?: T.InnerBlockDocCommentMarker | undefined) { return _fs(config, blockComment, 'inner', value, fields.inner); },
     doc(value?: T.DocComment | undefined) { return _fs(config, blockComment, 'doc', value, fields.doc); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {

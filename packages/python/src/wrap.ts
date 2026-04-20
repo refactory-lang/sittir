@@ -138,6 +138,28 @@ function drillInAll(entries: unknown, tree: TreeHandle): unknown[] {
   const arr = Array.isArray(entries) ? entries : [entries];
   return arr.map(e => drillIn(e, tree));
 }
+// drillAs — field-site unalias for grammar `alias($.source, $.target)`
+// declarations (ADR-0006). Reads the child node, rewrites $type from
+// tree-sitter's alias target back to the codegen-canonical source
+// name, then dispatches to wrapNode. The $type rewrite is conditional:
+// fields declared with a mixed union (e.g. Path | BracketedType |
+// GenericTypeWithTurbofish) only rewrite when the child arrived as
+// the alias target; other shapes pass through unchanged.
+function drillAs(entry: unknown, tree: TreeHandle, fromType: string, toType: string): unknown {
+  if (!entry) return undefined;
+  const e = entry as _NodeData;
+  if (e.$nodeId == null) return entry;
+  let data = readNode(tree, e.$nodeId);
+  if (data.$type === fromType) {
+    data = { ...data, $type: toType };
+  }
+  return wrapNode(data, tree);
+}
+function drillAsAll(entries: unknown, tree: TreeHandle, fromType: string, toType: string): unknown[] {
+  if (!entries) return [];
+  const arr = Array.isArray(entries) ? entries : [entries];
+  return arr.map(e => drillAs(e, tree, fromType, toType));
+}
 
 export function wrapModule(data: _NodeData, tree: TreeHandle): WrappedNode<Module> {
   return {
@@ -299,7 +321,7 @@ export function wrapMatchStatement(data: _NodeData, tree: TreeHandle): WrappedNo
     ...data,
     get match() { return drillIn(data.$fields?.['match'], tree); },
     get subject() { return drillInAll(data.$fields?.['subject'], tree); },
-    get body() { return drillIn(data.$fields?.['body'], tree); },
+    get body() { return drillAs(data.$fields?.['body'], tree, "block", "_match_block"); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<MatchStatement>;
 }

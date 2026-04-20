@@ -509,7 +509,7 @@ export function matchStatement(config: T.MatchStatement.Config) {
     $fields: fields,
     match(value?: "match") { return _fs(config, matchStatement, 'match', value, fields.match); },
     subject(...values: NonEmptyArray<T.Expression>) { return _fsm(config, matchStatement, 'subject', values, fields.subject); },
-    body(value?: T.Block) { return _fs(config, matchStatement, 'body', value, fields.body); },
+    body(value?: T.MatchBlock) { return _fs(config, matchStatement, 'body', value, fields.body); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);

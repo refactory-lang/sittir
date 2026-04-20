@@ -829,7 +829,7 @@ export function breakStatement(config: T.BreakStatement.Config) {
     $fields: fields,
     $children: children,
     break(value?: "break") { return _fs(config, breakStatement, 'break', value, fields.break); },
-    label(value?: T.StatementIdentifier | undefined) { return _fs(config, breakStatement, 'label', value, fields.label); },
+    label(value?: T.Identifier | undefined) { return _fs(config, breakStatement, 'label', value, fields.label); },
     getChild() { return children[0]; },
     setChild(child: T.Semicolon) { return breakStatement({ ...config, children: [child] }); },
     render() { return render(this); },
@@ -854,7 +854,7 @@ export function continueStatement(config: T.ContinueStatement.Config) {
     $fields: fields,
     $children: children,
     continue(value?: "continue") { return _fs(config, continueStatement, 'continue', value, fields.continue); },
-    label(value?: T.StatementIdentifier | undefined) { return _fs(config, continueStatement, 'label', value, fields.label); },
+    label(value?: T.Identifier | undefined) { return _fs(config, continueStatement, 'label', value, fields.label); },
     getChild() { return children[0]; },
     setChild(child: T.Semicolon) { return continueStatement({ ...config, children: [child] }); },
     render() { return render(this); },
@@ -1337,8 +1337,8 @@ export function nestedIdentifier(config: T.NestedIdentifier.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    object(value?: T.Identifier | T.MemberExpression) { return _fs(config, nestedIdentifier, 'object', value, fields.object); },
-    property(value?: T.PropertyIdentifier) { return _fs(config, nestedIdentifier, 'property', value, fields.property); },
+    object(value?: T.Identifier | T.NestedIdentifier) { return _fs(config, nestedIdentifier, 'object', value, fields.object); },
+    property(value?: T.Identifier) { return _fs(config, nestedIdentifier, 'property', value, fields.property); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1854,7 +1854,7 @@ export function memberExpression(config: T.MemberExpression.Config) {
     $fields: fields,
     object(value?: T.Expression | T.PrimaryExpression | T.Import) { return _fs(config, memberExpression, 'object', value, fields.object); },
     optionalChain(value?: T.OptionalChain | undefined) { return _fs(config, memberExpression, 'optionalChain', value, fields.optional_chain); },
-    property(value?: T.PrivatePropertyIdentifier | T.PropertyIdentifier) { return _fs(config, memberExpression, 'property', value, fields.property); },
+    property(value?: T.PrivatePropertyIdentifier | T.Identifier) { return _fs(config, memberExpression, 'property', value, fields.property); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1921,7 +1921,7 @@ export function augmentedAssignmentExpression(config: T.AugmentedAssignmentExpre
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    left(value?: T.MemberExpression | T.SubscriptExpression | T.Identifier | T.ParenthesizedExpression | T.NonNullExpression) { return _fs(config, augmentedAssignmentExpression, 'left', value, fields.left); },
+    left(value?: T.MemberExpression | T.SubscriptExpression | T.ReservedIdentifier | T.ParenthesizedExpression | T.NonNullExpression) { return _fs(config, augmentedAssignmentExpression, 'left', value, fields.left); },
     operator(value?: "+=" | "-=" | "*=" | "/=" | "%=" | "^=" | "&=" | "|=" | ">>=" | ">>>=" | "<<=" | "**=" | "&&=" | "||=" | "??=") { return _fs(config, augmentedAssignmentExpression, 'operator', value, fields.operator); },
     right(value?: T.Expression) { return _fs(config, augmentedAssignmentExpression, 'right', value, fields.right); },
     render() { return render(this); },
@@ -2366,8 +2366,8 @@ export function decoratorMemberExpression(config: T.DecoratorMemberExpression.Co
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    object(value?: T.Identifier | T.MemberExpression) { return _fs(config, decoratorMemberExpression, 'object', value, fields.object); },
-    property(value?: T.PropertyIdentifier) { return _fs(config, decoratorMemberExpression, 'property', value, fields.property); },
+    object(value?: T.Identifier | T.DecoratorMemberExpression) { return _fs(config, decoratorMemberExpression, 'object', value, fields.object); },
+    property(value?: T.Identifier) { return _fs(config, decoratorMemberExpression, 'property', value, fields.property); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2388,7 +2388,7 @@ export function decoratorCallExpression(config: T.DecoratorCallExpression.Config
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    function(value?: T.Identifier | T.MemberExpression) { return _fs(config, decoratorCallExpression, 'function', value, fields.function); },
+    function(value?: T.Identifier | T.DecoratorMemberExpression) { return _fs(config, decoratorCallExpression, 'function', value, fields.function); },
     typeArguments(value?: T.TypeArguments | undefined) { return _fs(config, decoratorCallExpression, 'typeArguments', value, fields.type_arguments); },
     arguments(value?: T.Arguments) { return _fs(config, decoratorCallExpression, 'arguments', value, fields.arguments); },
     render() { return render(this); },
@@ -2936,7 +2936,7 @@ export function ambientDeclaration(config: T.AmbientDeclaration.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    declaration(value?: T.Declaration | T.StatementBlock | T.PropertyIdentifier | T.Type | T.Semicolon) { return _fs(config, ambientDeclaration, 'declaration', value, fields.declaration); },
+    declaration(value?: T.Declaration | T.StatementBlock | T.Identifier | T.Type | T.Semicolon) { return _fs(config, ambientDeclaration, 'declaration', value, fields.declaration); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -3078,7 +3078,7 @@ export function interfaceDeclaration(config: T.InterfaceDeclaration.Config) {
     name(value?: T._TypeIdentifier) { return _fs(config, interfaceDeclaration, 'name', value, fields.name); },
     typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, interfaceDeclaration, 'typeParameters', value, fields.type_parameters); },
     extendsTypeClause(value?: T.ExtendsTypeClause | undefined) { return _fs(config, interfaceDeclaration, 'extendsTypeClause', value, fields.extends_type_clause); },
-    body(value?: T.InterfaceBody) { return _fs(config, interfaceDeclaration, 'body', value, fields.body); },
+    body(value?: T.ObjectType) { return _fs(config, interfaceDeclaration, 'body', value, fields.body); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);

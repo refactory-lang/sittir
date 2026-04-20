@@ -753,7 +753,20 @@ function fieldTypeExpr(
         return field.literalValues.map(v => JSON.stringify(v)).join(' | ')
     }
     if (field.contentTypes.length === 0) return 'string'
-    const parts = field.contentTypes.map(t => {
+    // Alias-source projection (ADR-0006 extended to the type surface):
+    // when a content type is the TARGET of a grammar-level
+    // `alias($.source, $.target)`, the parsed node's body follows
+    // `source`'s shape. Surface the source interface as the field type
+    // so the factory/config API reflects reality rather than the alias
+    // label. `field.aliasSources` maps target -> source.
+    const resolveAliased = (t: string): string => {
+        const source = field.aliasSources?.[t]
+        if (!source) return t
+        // Fall back to the original name if the source isn't in the NodeMap
+        // (shouldn't happen for declared grammar rules, but be defensive).
+        return nodeMap?.nodes.get(source) ? source : t
+    }
+    const parts = field.contentTypes.map(resolveAliased).map(t => {
         const node = nodeMap?.nodes.get(t)
         if (!node) {
             const name = t.replace(/(?:^|_)([a-z])/g, (_, c: string) => c.toUpperCase())
