@@ -14,6 +14,7 @@ import type {
 import type { RawGrammar } from './types.ts'
 import { withRoleScope } from '../dsl/role.ts'
 import { withSyntheticRuleScope, setCurrentRuleKind, drainPolymorphVariants } from '../dsl/synthetic-rules.ts'
+import type { WireContext } from '../dsl/wire.ts'
 
 // ---------------------------------------------------------------------------
 // Input type — anything the DSL functions accept
@@ -776,6 +777,13 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
     let word: string | null = null
 
     const { roles: collectedRoles } = withRoleScope(() => {
+        // `withSyntheticRuleScope` captures synthetic hidden rules
+        // (variant/alias placeholders) that the DSL registers during
+        // rule-fn evaluation. wire() also pre-registers polymorph
+        // hidden-rule entries in `opts.rules`, so rules pick up
+        // polymorph bodies during iteration too; the scope here
+        // captures the rest (non-polymorph alias placeholders like
+        // rust's `_wildcard_pattern`) that wire doesn't know about.
         const { syntheticRules } = withSyntheticRuleScope(() => {
             evaluateRuleFunctions(opts, baseRules, refs, rules)
         })
@@ -792,7 +800,7 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 
     inheritBaseGrammarMetadata(opts, baseGrammar, { extras, externals, supertypes, inline, conflicts }, (w) => { word = w })
 
-    const polymorphVariants = drainPolymorphVariants()
+    const polymorphVariants = drainPolymorphMetadata(opts)
 
     return {
         grammar: {
@@ -812,6 +820,31 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
             polymorphVariants: polymorphVariants.length > 0 ? polymorphVariants : undefined,
         } satisfies RawGrammar,
     }
+}
+
+/**
+ * Read the polymorph-variant metadata produced by the DSL during rule
+ * evaluation.
+ *
+ * @param opts - The options object passed to `grammar()`. When wrapped
+ *   by `wire()`, opts carries a non-enumerable `__wireContext__`
+ *   property whose `polymorphVariants` list is the canonical source.
+ * @returns Flat `PolymorphVariant[]` for `RawGrammar.polymorphVariants`.
+ * @remarks
+ * When wire is in play, its context holds the authoritative list
+ * (accumulated across rule-fn invocations, deduplicated). When wire
+ * isn't active — legacy path only — we fall back to the module-level
+ * `drainPolymorphVariants()` accumulator that `registerPolymorphVariant`
+ * dual-writes to. Once every grammar uses wire + installGrammarWrapper
+ * is deleted, the legacy branch disappears with it.
+ */
+function drainPolymorphMetadata(opts: GrammarOptions): ReturnType<typeof drainPolymorphVariants> {
+    const wireCtx = (opts as unknown as { __wireContext__?: WireContext }).__wireContext__
+    // Always drain the legacy accumulator so it starts empty for the
+    // next grammar invocation, regardless of which path wins.
+    const legacy = drainPolymorphVariants()
+    if (wireCtx) return [...wireCtx.polymorphVariants]
+    return legacy
 }
 
 /**
