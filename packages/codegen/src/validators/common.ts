@@ -278,19 +278,38 @@ export function wrapForReparse(
     // `primary_expression` itself is a subtype of `expression` which
     // IS mapped. BFS up through supertype chains so any mapped ancestor
     // produces a valid wrapping context.
+    //
+    // Priority order: expression > type > declaration > statement >
+    // pattern. Some kinds (python `attribute`, `subscript`) are subtypes
+    // of BOTH `primary_expression` → `expression` AND `pattern`. A
+    // pattern wrapper (`match _: case ${r}: pass`) reparses an
+    // expression-shaped rendering as `dotted_name` / other pattern
+    // kinds, not the original — so prefer the expression wrapper. The
+    // ordering matches how tree-sitter grammars overload syntax: a
+    // construct appears as an expression first, a pattern only in
+    // match-arm contexts, which is the more restricted interpretation.
+    const WRAPPER_PRIORITY = ['expression', 'type', 'declaration', 'statement', 'pattern',
+        '_expression', '_type', '_declaration_statement', '_literal', '_literal_pattern',
+        '_pattern', '_simple_statement', '_compound_statement']
+    const reachable = new Set<string>()
     const visited = new Set<string>([kind])
     const queue = [...(kindToSupertypes.get(kind) ?? [])]
     while (queue.length > 0) {
         const st = queue.shift()!
         if (visited.has(st)) continue
         visited.add(st)
-        const wrapper = wrappers[st]
-        if (wrapper) return applyWrapper(wrapper)
+        if (wrappers[st]) reachable.add(st)
         for (const parent of kindToSupertypes.get(st) ?? []) {
             if (!visited.has(parent)) queue.push(parent)
         }
     }
-    return null
+    if (reachable.size === 0) return null
+    for (const name of WRAPPER_PRIORITY) {
+        if (reachable.has(name)) return applyWrapper(wrappers[name]!)
+    }
+    // Reachable but not in priority list — take the first one.
+    const first = [...reachable][0]!
+    return applyWrapper(wrappers[first]!)
 }
 
 // ---------------------------------------------------------------------------
