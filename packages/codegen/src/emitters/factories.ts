@@ -103,14 +103,6 @@ export function emitFactories(config: EmitFactoriesConfig): string {
     lines.push('}')
     lines.push('')
 
-    // Collected here, emitted below — only when we know a leaf will
-    // actually call `RESERVED_KEYWORDS.has(text)`. Otherwise `oxlint`
-    // flags a dead const.
-    const keywordTexts = new Set<string>()
-    for (const [, node] of nodeMap.nodes) {
-        if (node.modelType === 'keyword') keywordTexts.add(node.text)
-    }
-
     // Leaf pattern RegExps — hoisted to module scope so they're compiled
     // once at load time rather than per-call. For each patterned leaf, we
     // try to compile with the Unicode flag ('u') first (needed for
@@ -154,47 +146,11 @@ export function emitFactories(config: EmitFactoriesConfig): string {
         lines.push(`const ${constName} = ${literal};`)
     }
 
-    // _wordRe — the grammar's word-rule pattern. Tree-sitter checks EVERY
-    // scanned token that matches the word pattern against the keyword list
-    // at parse time. Our factories mirror this: any leaf whose text matches
-    // the word pattern is also rejected if it's a reserved keyword.
-    const wordKind = nodeMap.word ?? null
-    const wordNode = wordKind ? nodeMap.nodes.get(wordKind) : null
-    const wordPattern = wordNode?.modelType === 'leaf' ? wordNode.pattern : undefined
-    if (wordPattern) {
-        // RESERVED_KEYWORDS is only useful when `_wordRe` is emitted —
-        // otherwise no leaf calls `RESERVED_KEYWORDS.has()`. Emit the
-        // set and the regex together so both or neither appear.
-        lines.push('const RESERVED_KEYWORDS: ReadonlySet<string> = new Set([')
-        for (const kw of [...keywordTexts].sort()) {
-            lines.push(`  '${kw.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}',`)
-        }
-        lines.push(']);')
-
-        const cleanedWord = stripUselessEscapes(wordPattern)
-        const fullWordPattern = `^(?:${cleanedWord})$`
-        // Same loud-failure policy as the leaf regex above — a word-kind
-        // pattern that doesn't compile means the generated `_wordRe`
-        // would crash at consumer load time.
-        let wordFlag: 'u' | '' = 'u'
-        try { new RegExp(fullWordPattern, 'u') }
-        catch {
-            try { new RegExp(fullWordPattern); wordFlag = '' }
-            catch (e) {
-                throw new Error(
-                    `factories emitter: word-kind pattern does not compile ` +
-                    `(tried 'u' flag and no-flag). Pattern: ${JSON.stringify(fullWordPattern)}. ` +
-                    `Cause: ${(e as Error).message}.`,
-                )
-            }
-        }
-        const escapedWord = cleanedWord.replace(/\//g, '\\/')
-        const wordLiteral = wordFlag === 'u'
-            ? `/${`^(?:${escapedWord})`}/u`
-            : `/${`^(?:${escapedWord})`}/`
-        lines.push(`const _wordRe = ${wordLiteral};`)
-    }
-    if (leafReConsts.size > 0 || wordPattern) lines.push('')
+    // (RESERVED_KEYWORDS / _wordRe removed — the word-pattern keyword
+    // rejection heuristic in leaf factories was too strict for
+    // soft-keyword grammars. See the "Reserved-keyword check" comment
+    // on leaf emission for details.)
+    if (leafReConsts.size > 0) lines.push('')
 
     // Per-node factory emission. Dispatch on modelType — polymorph
     // form groups are skipped at the top level because the polymorph
@@ -218,7 +174,7 @@ export function emitFactories(config: EmitFactoriesConfig): string {
     for (const [kind, node] of nodeMap.nodes) {
         if (kind.startsWith('_') && !aliasSourceKinds.has(kind)) continue
         if (nodeMap.polymorphFormKinds.has(kind)) continue
-        const source = renderFactoryForNode(node, strict, !!wordPattern, nodeMap, leafReConsts)
+        const source = renderFactoryForNode(node, strict, nodeMap, leafReConsts)
         if (source === undefined) continue
         lines.push(source)
         lines.push('')
@@ -375,7 +331,6 @@ export function emitFactories(config: EmitFactoriesConfig): string {
 function renderFactoryForNode(
     node: AssembledNode,
     _strict: boolean,
-    hasWordRe: boolean,
     nodeMap: NodeMap,
     leafReConsts: Map<string, string>,
 ): string | undefined {
@@ -423,15 +378,19 @@ function renderFactoryForNode(
                     `if (!${reConst}.test(text)) throw new Error(\`${node.kind}: text does not match pattern: \${text}\`);`,
                 )
             }
-            // Tree-sitter semantics: any token that matches the word
-            // pattern is checked against the keyword list at parse time.
-            // Apply the same rule here: if the grammar has a word pattern
-            // and this text matches it, reject reserved keywords.
-            if (hasWordRe) {
-                guards.push(
-                    `if (_wordRe.test(text) && RESERVED_KEYWORDS.has(text)) throw new Error(\`${node.kind}: text '\${text}' is a reserved keyword\`);`,
-                )
-            }
+            // Reserved-keyword check intentionally omitted. The earlier
+            // heuristic ("if text matches word-pattern AND is in the
+            // collected keyword set, reject") rejected legitimate
+            // constructions: rust `_` in `'_` elided-lifetime identifier,
+            // python `print`/`match`/`exec` in identifier contexts
+            // (permitted via the grammar's `keyword_identifier`
+            // alias-to-identifier). Tree-sitter resolves these by
+            // grammar context; the factory has no context and can't
+            // distinguish "this identifier slot permits the keyword"
+            // from "this one doesn't". The pattern check above still
+            // rejects non-identifier-shaped input; tree-sitter reparse
+            // in validators catches semantic misuse (user building
+            // `identifier({text: 'fn'})` that won't round-trip).
             // Every leaf gets a non-empty guard — a named terminal always
             // has at least one character of content in the parse tree, so
             // an empty string is always semantically invalid regardless of

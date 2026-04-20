@@ -38,14 +38,19 @@ describe('leaf factory guards', () => {
         expect(result.factories).not.toContain('.includes(text)')
     })
 
-    it('emits keyword exclusion on the word-kind leaf factory', async () => {
+    it('does not emit reserved-keyword runtime check on word-kind leaves', async () => {
         const result = await generate({
             grammar: 'rust',
             outputDir: '/tmp/rust-word-kind',
         })
-        // The grammar's `word` rule (rust: `identifier`) gets a
-        // `RESERVED_KEYWORDS.has(text)` check.
-        expect(result.factories).toContain('RESERVED_KEYWORDS')
-        expect(result.factories).toContain('is a reserved keyword')
+        // The earlier heuristic ("reject text if it matches the word
+        // pattern AND is in the collected keyword set") was too strict —
+        // it rejected legitimate constructions like rust `_` in `'_`
+        // elided lifetimes and python `print`/`match` used as
+        // identifiers via grammar-declared `alias(str, $.identifier)`
+        // soft-keyword mechanics. Factory leaves keep the pattern
+        // check; semantic misuse (building `identifier({text:'fn'})`)
+        // surfaces at tree-sitter reparse time instead.
+        expect(result.factories).not.toContain(`throw new Error(\`identifier: text '\${text}' is a reserved keyword\`)`)
     })
 })
