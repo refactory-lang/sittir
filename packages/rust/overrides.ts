@@ -9,10 +9,24 @@
 
 // @ts-nocheck — grammar.js is untyped; overrides use sittir DSL
 import base from '../../node_modules/.pnpm/tree-sitter-rust@0.24.0/node_modules/tree-sitter-rust/grammar.js'
-import { transform, enrich, field, variant, alias, wire } from '../codegen/src/dsl/index.ts'
+import { transform, enrich, field, alias, wire } from '../codegen/src/dsl/index.ts'
+
 
 export default grammar(enrich(base), wire({
     name: 'rust',
+    polymorphs: {
+        array_expression:    { '2/0': 'semi', '2/1': 'list' },
+        closure_expression:  { '4/0': 'block', '4/1': 'expr' },
+        field_pattern:       { '2/0': 'shorthand', '2/1': 'named' },
+        function_type:       { '1/0/0': 'trait_form', '1/0/1': 'fn_form' },
+        impl_item:           { '6/0': 'body', '6/1': 'semi' },
+        macro_definition:    { '2/0': 'paren', '2/1': 'bracket', '2/2': 'brace' },
+        mod_item:            { '3/0': 'external', '3/1': 'inline' },
+        or_pattern:          { '0': 'binary', '1': 'prefix' },
+        range_expression:    { '0': 'binary', '1': 'postfix', '2': 'prefix', '3': 'bare' },
+        range_pattern:       { '0': 'left', '1': 'prefix' },
+        struct_item:         { '4/0': 'brace', '4/1': 'tuple', '4/2': 'unit' },
+    },
     rules: {
         // abstract_type: 1 field(s)
         abstract_type: ($, original) => transform(original, {
@@ -26,7 +40,6 @@ export default grammar(enrich(base), wire({
         array_expression: ($, original) => transform(original,
             { 1: field('attributes') },
             { '2/_expression': field('elements') },
-            { '2/0': variant('semi'), '2/1': variant('list') },
         ),
 
         // associated_type: 1 field(s)
@@ -113,9 +126,6 @@ export default grammar(enrich(base), wire({
         // Position 0 = optional('ref') [anonymous], position 1 = optional(mutable_specifier)
         field_pattern: ($, original) => transform(original, {
             1: field('mutable_specifier'), // mutable_specifier [struct=0]
-        }, {
-            '2/0': variant('shorthand'), // name only (shorthand)
-            '2/1': variant('named'),     // name: pattern
         }),
 
         // for_expression: 1 field(s)
@@ -153,12 +163,11 @@ export default grammar(enrich(base), wire({
         // The choice at position 1 inner-seq[0] chooses between trait form
         // (bare type with field('trait', ...)) and fn form (seq with
         // optional modifiers + 'fn' literal). Template walker drops the
-        // 'fn' literal because it's only in one arm. Variant split each
+        // 'fn' literal because it's only in one arm. Polymorph-split each
         // arm. prec is transparent to path addressing, so path `1/0` is
         // the choice inside.
         function_type: ($, original) => transform(original,
             { 0: field('for_lifetimes') },
-            { '1/0/0': variant('trait_form'), '1/0/1': variant('fn_form') },
         ),
 
         // gen_block: same fix as async_block — the block symbol is
@@ -189,13 +198,12 @@ export default grammar(enrich(base), wire({
         // agreement across 7 parents), plus polymorph at pos 6 —
         // choice(field('body', declaration_list), ';'). The ';' arm is
         // the trait-signature form (no body), which the template walker
-        // drops without a variant split.
+        // drops without a polymorph split.
         impl_item: ($, original) => transform(original,
             {
                 '0/0': field('unsafe'),  // optional('unsafe') → surface as field
                 5: field('where_clause'),
             },
-            { '6/0': variant('body'), '6/1': variant('semi') },
         ),
 
         // index_expression: 2 field(s)
@@ -229,24 +237,16 @@ export default grammar(enrich(base), wire({
             0: field('label'), // label [struct=0]
         }),
 
-        // macro_definition: position 2 polymorph (paren/bracket/brace delimiters).
-        macro_definition: ($, original) => transform(original, {
-            '2/0': variant('paren'),
-            '2/1': variant('bracket'),
-            '2/2': variant('brace'),
-        }),
-
         // macro_invocation: 1 field(s)
         macro_invocation: ($, original) => transform(original, {
             2: field('token_tree'), // token_tree [struct=0]
         }),
 
         // mod_item: two forms — `mod name;` (external) vs `mod name { ... }`
-        // (inline). Variant-split so each form's template emits the
+        // (inline). Polymorph-split so each form's template emits the
         // right terminator (trailing `;` vs `{...}` body).
         mod_item: ($, original) => transform(original,
             { 0: field('visibility_modifier') },
-            { '3/0': variant('external'), '3/1': variant('inline') },
         ),
 
         // mut_pattern: 2 field(s)
@@ -336,13 +336,12 @@ export default grammar(enrich(base), wire({
         }),
 
         // struct_item: three body shapes — brace (`{ ... }`), tuple
-        // (`(...)` + `;`), unit (`;`). Auto-hoist each into a visible
+        // (`(...)` + `;`), unit (`;`). Polymorph-split each into a visible
         // variant so the trailing `;` on tuple/unit forms gets rendered
         // (the flat template dropped it because `;` is an anonymous
         // token not routed to any field).
         struct_item: ($, original) => transform(original,
             { 0: field('visibility_modifier') },
-            { '4/0': variant('brace'), '4/1': variant('tuple'), '4/2': variant('unit') },
         ),
 
         // trait_item: position 0 is the same visibility_modifier
@@ -428,7 +427,6 @@ export default grammar(enrich(base), wire({
         // of leaving them as anonymous children.
         closure_expression: ($, original) => transform(original,
             { 0: field('static'), 1: field('async'), 2: field('move') },
-            { '4/0': variant('block'), '4/1': variant('expr') },
         ),
 
         // function_modifiers — full replacement: label each choice alternative
@@ -446,7 +444,6 @@ export default grammar(enrich(base), wire({
         //   choice(seq(_pattern, '|', _pattern), seq('|', _pattern))
         or_pattern: ($, original) => transform(original,
             { '0/0': field('left'), '0/2': field('right'), '1/1': field('right') },
-            { '0': variant('binary'), '1': variant('prefix') },
         ),
 
         // _pattern — the wildcard `_` is a bare literal alternative
@@ -480,19 +477,7 @@ export default grammar(enrich(base), wire({
                 '2/0': field('operator'), '2/1': field('end'),
                 '3': field('operator'),
             },
-            {
-                '0': variant('binary'), '1': variant('postfix'),
-                '2': variant('prefix'), '3': variant('bare'),
-            },
         ),
-
-        // range_pattern — two variants: left-bounded (has field 'left') vs
-        // prefix form (just operator + right). Base grammar already carries
-        // 'left' and 'right' field labels.
-        range_pattern: ($, original) => transform(original, {
-            '0': variant('left'),    // seq(left, choice(seq(op,right), '..'))
-            '1': variant('prefix'),  // seq(op, right)
-        }),
 
         // unary_expression — label both the operator token (pos 0) and
         // the operand expression (pos 1). overrides.json promotes both

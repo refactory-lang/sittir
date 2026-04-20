@@ -14,10 +14,17 @@
 // non-JSX corpus but a latent mismatch: anything JSX-shaped would
 // reparse-fail. Pick one grammar and stick with it end-to-end.
 import base from '../../node_modules/.pnpm/tree-sitter-typescript@0.23.2/node_modules/tree-sitter-typescript/typescript/grammar.js'
-import { transform, enrich, field, variant, wire } from '../codegen/src/dsl/index.ts'
+import { transform, enrich, field, wire } from '../codegen/src/dsl/index.ts'
 
 export default grammar(enrich(base), wire({
     name: 'typescript',
+    polymorphs: {
+        arrow_function:  { '1/0': 'parameter',        '1/1': '_call_signature' },
+        class_heritage:  { '0':   'extends_clause',   '1':   'implements_clause' },
+        import_clause:   { '0':   'namespace_import', '1':   'named_imports',    '2': 'default_import' },
+        import_specifier: { '1/0': 'name',             '1/1': 'as' },
+        index_signature: { '2/0': 'colon',             '2/1': 'mapped_type_clause' },
+    },
     rules: {
         // abstract_class_declaration: wrap pos 5 (class_heritage choice).
         // pos 0 is REPEAT(field('decorator')) — don't touch it, it's a real
@@ -71,14 +78,6 @@ export default grammar(enrich(base), wire({
             6: field('automatic_semicolon'),
         }),
 
-        // class_heritage (T028a): polymorph split — copy-pasted from
-        // overrides.suggested.ts. Each choice alternative becomes its
-        // own named rule via variant().
-        class_heritage: ($, original) => transform(original, {
-            '0': variant('extends_clause'),
-            '1': variant('implements_clause'),
-        }),
-
         // computed_property_name: 1 field(s)
         computed_property_name: ($, original) => transform(original, {
             1: field('expression'), // expression [struct=0]
@@ -111,13 +110,6 @@ export default grammar(enrich(base), wire({
             0: field('object'), // object [struct=0]
         }),
 
-        // import_clause (T028a): polymorph split from suggested.ts.
-        import_clause: ($, original) => transform(original, {
-            '0': variant('namespace_import'),
-            '1': variant('named_imports'),
-            '2': variant('default_import'),
-        }),
-
         // import_require_clause: 1 field(s)
         import_require_clause: ($, original) => transform(original, {
             0: field('identifier'), // identifier [struct=0]
@@ -129,18 +121,6 @@ export default grammar(enrich(base), wire({
             2: field('from_clause'), //  [struct=1]
             3: field('import_attribute'), // import_attribute [struct=2]
             4: field('semicolon'), //  [struct=3]
-        }),
-
-        // index_signature (T028a): polymorph split from suggested.ts.
-        index_signature: ($, original) => transform(original, {
-            '2/0': variant('colon'),
-            '2/1': variant('mapped_type_clause'),
-        }),
-
-        // import_specifier (T028a): polymorph split from suggested.ts.
-        import_specifier: ($, original) => transform(original, {
-            '1/0': variant('name'),
-            '1/1': variant('as'),
         }),
 
         // parenthesized_expression: held. Base is plain `seq('(',
@@ -168,12 +148,6 @@ export default grammar(enrich(base), wire({
         // rule resolves via LR state the base intentionally left
         // ambiguous. Fix would need explicit conflicts entries with
         // external rules — out of scope for variant() adoption.
-
-        // arrow_function (T028b): polymorph split from suggested.ts.
-        arrow_function: ($, original) => transform(original, {
-            '1/0': variant('parameter'),
-            '1/1': variant('_call_signature'),
-        }),
 
         // index_type_query: 1 field(s)
         index_type_query: ($, original) => transform(original, {
