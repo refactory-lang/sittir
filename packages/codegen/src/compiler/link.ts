@@ -23,7 +23,7 @@ import type {
 } from './types.ts'
 import { deriveFields, hasAnyField, hasAnyChild } from './node-map.ts'
 import { isHiddenKind } from './evaluate.ts'
-import type { PolymorphVariant } from '../dsl/synthetic-rules.ts'
+import type { PolymorphVariant } from './types.ts'
 
 // ---------------------------------------------------------------------------
 // link() — main entry point

@@ -30,7 +30,7 @@ import { readFileSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 import { readNode } from '@sittir/core'
 import type { AnyNodeData } from '@sittir/types'
-import { loadRawEntries } from './validators/node-types.ts'
+import { loadRawEntries } from './compiler/node-types-loader.ts'
 import {
     loadLanguageForGrammar,
     treeHandle,

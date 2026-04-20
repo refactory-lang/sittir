@@ -11,7 +11,7 @@ import type { NodeMap } from '../compiler/types.ts'
 import type {
     AssembledNode, AssembledField, AssembledChild, AssembledGroup,
 } from '../compiler/node-map.ts'
-import type { PolymorphVariant } from '../dsl/synthetic-rules.ts'
+import type { PolymorphVariant } from '../compiler/types.ts'
 
 /** Escape a string for safe inclusion inside a single-quoted TS string literal. */
 function escForSource(s: string): string {

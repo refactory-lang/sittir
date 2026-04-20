@@ -23,7 +23,8 @@ import {
     hasAnyField, hasAnyChild,
 } from './node-map.ts'
 import { tokenToName } from './optimize.ts'
-import { simplifyRule, compileWordMatcher } from './simplify.ts'
+import { simplifyRule } from './simplify.ts'
+import { compileWordMatcher } from './common.ts'
 
 // ---------------------------------------------------------------------------
 // assemble() — main entry point

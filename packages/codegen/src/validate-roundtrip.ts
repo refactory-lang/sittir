@@ -12,7 +12,7 @@ import { createRequire } from 'node:module';
 import { parse as parseYaml } from 'yaml';
 import { readNode, createRenderer } from '@sittir/core';
 import type { RulesConfig } from '@sittir/types';
-import { loadRawEntries } from './validators/node-types.ts';
+import { loadRawEntries } from './compiler/node-types-loader.ts';
 import {
 	loadCorpusEntries,
 	loadLanguageForGrammar,

@@ -14,7 +14,7 @@
  */
 
 import type { LinkedGrammar } from './types.ts'
-import { loadRawEntries, type RawNodeEntry } from '../validators/node-types.ts'
+import { loadRawEntries, type RawNodeEntry } from './node-types-loader.ts'
 
 export interface NodeTypesValidationResult {
     readonly grammar: string

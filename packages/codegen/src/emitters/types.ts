@@ -21,7 +21,7 @@ import {
     AssembledBranch, AssembledContainer, AssembledPolymorph, AssembledGroup,
     AssembledSupertype,
 } from '../compiler/node-map.ts'
-import { loadRawEntries } from '../validators/node-types.ts'
+import { loadRawEntries } from '../compiler/node-types-loader.ts'
 
 type StructuralNode = AssembledBranch | AssembledContainer | AssembledPolymorph
 

@@ -20,7 +20,7 @@
  * want surfaced as a first-class validation error.
  */
 
-import { loadRawEntries, type RawNodeEntry } from './validators/node-types.ts'
+import { loadRawEntries, type RawNodeEntry } from './compiler/node-types-loader.ts'
 import { parse as parseYaml } from 'yaml'
 import type { RulesConfig, TemplateRule } from '@sittir/types'
 import type { NodeMap } from './compiler/types.ts'

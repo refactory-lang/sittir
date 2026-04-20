@@ -1,15 +1,17 @@
 /**
- * validators/node-types.ts — thin loader for tree-sitter node-types.json.
+ * compiler/node-types-loader.ts — thin loader for tree-sitter
+ * node-types.json.
  *
- * The pipeline only needs the raw entry array for validation (FR-010
- * permits node-types.json as a validation source, not a primary data
- * source). Consumers pass the
- * grammar name; the loader resolves to the npm package path and returns
- * the parsed array. No caches, no mutable state (FR-022).
+ * Consumed by both validators and emitters (grammar.ts, types.ts),
+ * so it lives at compiler/ rather than under any one consumer's
+ * directory. Takes a grammar name and returns the parsed raw entry
+ * array from that grammar's `node-types.json` file (or a
+ * `.sittir/src/node-types.json` override if present). No caches,
+ * no mutable state (FR-022).
  *
  * If a consumer needs to point at a non-standard file (e.g. test
- * fixtures), they pass the resolved path directly via the `explicitPath`
- * argument — there is no module-level path registry.
+ * fixtures), they pass the resolved path directly via the
+ * `explicitPath` argument — there is no module-level path registry.
  */
 
 import { existsSync, readFileSync } from 'node:fs'

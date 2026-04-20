@@ -11,15 +11,12 @@
  */
 
 import { isChoiceType, isSeqType, isOptionalType, isStringType, isBlankType, isPlainRepeatType, type RuntimeRule } from './runtime-shapes.ts'
+import type { PolymorphVariant } from '../compiler/types.ts'
 
 let currentSyntheticRules: Map<string, RuntimeRule> | null = null
 let currentRuleKind: string | null = null
 let currentOptsRules: Record<string, unknown> | null = null
 let currentBlankFn: (() => unknown) | null = null
-export interface PolymorphVariant {
-    readonly parent: string
-    readonly child: string
-}
 
 let currentPolymorphVariants: PolymorphVariant[] = []
 

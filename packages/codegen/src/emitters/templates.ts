@@ -10,7 +10,7 @@
 
 import type { NodeMap } from '../compiler/types.ts'
 import { AssembledGroup } from '../compiler/node-map.ts'
-import { compileWordMatcher } from '../compiler/simplify.ts'
+import { compileWordMatcher } from '../compiler/common.ts'
 
 export interface EmitTemplatesConfig {
     grammar: string

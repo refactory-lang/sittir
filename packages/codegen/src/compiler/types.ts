@@ -21,7 +21,23 @@
 
 import type { Rule, SymbolRef } from './rule.ts'
 import type { AssembledNode } from './node-map.ts'
-import type { PolymorphVariant } from '../dsl/synthetic-rules.ts'
+
+/**
+ * One entry in the {@link LinkedGrammar.polymorphVariants} /
+ * {@link OptimizedGrammar.polymorphVariants} /
+ * {@link NodeMap.polymorphVariants} lists — records that a `variant('x')`
+ * override inside rule `parent` produced a visible child kind
+ * `parent_x` in the parse tree.
+ *
+ * Emitted by the DSL (`dsl/synthetic-rules.ts::registerPolymorphVariant`)
+ * and propagated through the pipeline so Link, Assemble, and the
+ * factory/from emitters can expose `parent_x` as a discriminable
+ * variant form.
+ */
+export interface PolymorphVariant {
+    readonly parent: string
+    readonly child: string
+}
 
 // ---------------------------------------------------------------------------
 // External-scanner role binding
