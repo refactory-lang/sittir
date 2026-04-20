@@ -191,8 +191,8 @@ function render(node: AnyNodeData, ctx: InternalRenderContext): string {
 				// the trailing anon sep; when missing from $children it
 				// falls back to presence on $fields keyed by sep text.
 				if (!sep || sep.length === 0 || named.length === 0) return joined;
-				const prefix2 = ruleObj?.['joinByLeading'] === true ? flankSepForField(node, sep, 'leading') : '';
-				const suffix = ruleObj?.['joinByTrailing'] === true ? flankSepForField(node, sep, 'trailing') : '';
+				const prefix2 = ruleObj?.['joinByLeading'] === true ? flankSepForField(node, fieldKey, sep, 'leading') : '';
+				const suffix = ruleObj?.['joinByTrailing'] === true ? flankSepForField(node, fieldKey, sep, 'trailing') : '';
 				return prefix2 + joined + suffix;
 			}
 			if (Array.isArray(value)) {
@@ -505,21 +505,22 @@ function renderClause(
  * for "leading" with span.end ≤ first value's span.start. Probes the
  * separator-keyed $fields entry plus any anon in $children.
  */
-function flankSepForField(node: AnyNodeData, sep: string, side: 'leading' | 'trailing'): string {
-	// Collect every NAMED field-value span to anchor the leading/trailing
-	// boundary. Anon-sep candidates whose span falls outside that boundary
-	// (before the earliest start for 'leading', at/after the latest end
-	// for 'trailing') are the real flankers.
+function flankSepForField(node: AnyNodeData, fieldKey: string, sep: string, side: 'leading' | 'trailing'): string {
+	// Anchor the leading/trailing boundary on the spans of THIS specific
+	// multi-valued field's named entries. Anchoring on every named field
+	// in the node is wrong: rust `match_statement`'s `$$$SUBJECT` with a
+	// trailing `,` (before `:` and the body) would see the body's span
+	// as "latest end" and the comma (which is between subject and body)
+	// would fail the `start >= boundary` trailing check.
 	const fieldSpans: { start: number; end: number }[] = [];
-	if (node.$fields) {
-		for (const v of Object.values(node.$fields)) {
-			const arr = Array.isArray(v) ? v : [v];
-			for (const item of arr) {
-				if (!item || typeof item !== 'object') continue;
-				const n = item as AnyNodeData;
-				if (n.$named === false) continue;
-				if (n.$span) fieldSpans.push(n.$span);
-			}
+	const value = node.$fields?.[fieldKey];
+	if (value !== undefined) {
+		const arr = Array.isArray(value) ? value : [value];
+		for (const item of arr) {
+			if (!item || typeof item !== 'object') continue;
+			const n = item as AnyNodeData;
+			if (n.$named === false) continue;
+			if (n.$span) fieldSpans.push(n.$span);
 		}
 	}
 	if (fieldSpans.length === 0) return '';
