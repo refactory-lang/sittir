@@ -311,7 +311,7 @@ export async function validateFactoryRoundTrip(
 						// to audit them.
 						const recursive = process?.env?.SITTIR_VALIDATE_RECURSIVE === '1';
 						const config = recursive
-							? nodeToConfig(readData, { tree: handle, factoryMap })
+							? nodeToConfig(readData, { tree: handle, factoryMap, factoryShapes })
 							: nodeToConfig(readData);
 						factoryData = factory(config) as AnyNodeData;
 					} else if (shape === 'text') {

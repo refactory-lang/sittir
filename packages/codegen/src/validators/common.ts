@@ -405,7 +405,14 @@ export async function loadLanguageForGrammar(grammar: string): Promise<{
 // without the recursion cost.
 export interface NodeToConfigOpts {
     readonly tree?: { nodeById(id: number): unknown }
-    readonly factoryMap?: Record<string, (c: unknown) => unknown>
+    readonly factoryMap?: Record<string, (...args: unknown[]) => unknown>
+    /** Per-kind factory signature hint (from the generated `_factoryShapes`
+     * map). `'config'` expects a Config object; `'children'` is rest-
+     * params `(...children)`; `'text'` expects a bare string. Without
+     * this, recursion defaults to `'config'` which breaks children-shape
+     * factories (e.g. python `argument_list`) because they'd interpret
+     * the whole Config object as the single rest-param item. */
+    readonly factoryShapes?: Record<string, 'config' | 'children' | 'text'>
     /** Internal recursion guard — set by the helper, not the caller. */
     readonly _depth?: number
 }
@@ -440,7 +447,7 @@ function resolveChild(
     // bypasses those filters and double-emits (e.g. struct_pattern's
     // trailing `,` showed up twice in the rendered output).
     if (c.$named === false) return child
-    const { tree, factoryMap, _depth = 0 } = opts
+    const { tree, factoryMap, factoryShapes, _depth = 0 } = opts
     // Depth cap — recursive construction shouldn't run away even on
     // pathologically nested corpus entries. 64 is well past real-world
     // AST depth and stops before Node's default call-stack.
@@ -457,14 +464,20 @@ function resolveChild(
     }
     const kind = drilled.$type ?? c.$type
     if (!kind) return drilled
-    // Leaves: return just the text. Branch factories reject Config-shape
-    // for leaves but accept the bare string (shape === 'text').
-    if (!drilled.$fields && !drilled.$children && drilled.$text !== undefined) {
-        return drilled.$text
-    }
     const factory = factoryMap[kind]
     if (!factory) return drilled  // hidden / unfactoryable kind — pass through
+    const shape = factoryShapes?.[kind] ?? 'config'
+    // 'text' shape: leaf factory takes a bare string. `drilled.$text` is
+    // whatever tree-sitter captured for this span.
+    if (shape === 'text') {
+        return factory(drilled.$text ?? '')
+    }
     const childConfig = nodeToConfig(drilled, { ...opts, _depth: _depth + 1 })
+    // 'children' shape: rest-params signature — spread `children`.
+    if (shape === 'children') {
+        const kids = (childConfig.children ?? []) as unknown[]
+        return factory(...kids)
+    }
     return factory(childConfig)
 }
 
