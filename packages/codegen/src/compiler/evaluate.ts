@@ -6,11 +6,10 @@
  * extension mechanism — each rule fn receives ($, original).
  */
 
-import { readFileSync } from 'node:fs'
 import type {
     Rule, SeqRule, ChoiceRule, OptionalRule, RepeatRule, Repeat1Rule,
     FieldRule, TokenRule, StringRule, PatternRule, SymbolRule, AliasRule,
-    EnumRule, SymbolRef, RawGrammar, ExternalRole,
+    EnumRule, SymbolRef, RawGrammar,
 } from './rule.ts'
 import { withRoleScope } from '../dsl/role.ts'
 import { withSyntheticRuleScope, setCurrentRuleKind, drainPolymorphVariants } from '../dsl/synthetic-rules.ts'
@@ -733,12 +732,6 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
         ? [...baseGrammar.references]
         : []
     const rules: Record<string, Rule> = { ...baseRules }
-
-    // Build the rule name set for proxy validation
-    const ruleNames = new Set([
-        ...Object.keys(opts.rules || {}),
-        ...Object.keys(baseRules),
-    ])
 
     // Extract metadata
     const extras: string[] = []

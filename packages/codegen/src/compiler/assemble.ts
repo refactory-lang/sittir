@@ -206,17 +206,18 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
                 break
             }
             case 'multi': {
-                // Hidden repeat helper — see AssembledMulti doc comment.
-                // The rule body is `repeat` or `repeat1` (possibly wrapped
-                // in optional/variant). Peel to the repeat to extract
-                // the element union, and remember whether the source
-                // was `repeat1` (nonEmpty) or `repeat` (zero-or-more).
-                const { repeat, nonEmpty } = extractRepeatShape(inlinedRule)
+                const shape = extractRepeatShape(inlinedRule)
+                if (!shape) {
+                    throw new Error(
+                        `assemble: '${kind}' classified as 'multi' but extractRepeatShape ` +
+                        `returned null — classifier and extractor must agree on shape.`,
+                    )
+                }
                 nodes.set(kind, new AssembledMulti({
                     kind, typeName, irKey,
                     rule: inlinedRule,
-                    elementRule: repeat.content,
-                    nonEmpty,
+                    elementRule: shape.repeat.content,
+                    nonEmpty: shape.nonEmpty,
                 }))
                 break
             }
