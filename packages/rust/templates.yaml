@@ -20,7 +20,10 @@ rules:
   token_repetition: $($$$CHILDREN)+
   attribute_item: "#[$ATTRIBUTE]"
   inner_attribute_item: "#![$ATTRIBUTE]"
-  attribute: $$$CHILDREN=$VALUE$ARGUMENTS
+  attribute:
+    template: $$$CHILDREN $VALUE_CLAUSE$ARGUMENTS_CLAUSE
+    value_clause: =$VALUE
+    arguments_clause: $ARGUMENTS
   mod_item:
     variants:
       external: $VISIBILITY_MODIFIER mod $NAME $$$CHILDREN

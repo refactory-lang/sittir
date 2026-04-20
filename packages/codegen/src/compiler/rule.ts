@@ -2250,6 +2250,18 @@ function walkRuleForTemplate(
             // produces invalid output (python: `match X,:`). Skip the
             // whole optional when its content has no field/symbol ref.
             if (containsOnlyPunctuation(rule.content)) return []
+            // `optional(choice(seq('=', field('value')), field('arguments')))` —
+            // rust's `attribute` rule is the canonical case. Each choice
+            // branch is a field (possibly with flanking literals). Under
+            // the default path the choice walker takes the primary branch's
+            // full parts as literals, so `=$VALUE` renders unconditionally
+            // and a bare `#[name]` becomes `#[name=]`. Lift each branch
+            // into a clause keyed by its field name so the flanking literal
+            // is gated on field presence.
+            if (rule.content.type === 'choice') {
+                const lifted = liftChoiceBranchesToClauses(rule.content, clauses)
+                if (lifted !== null) return lifted
+            }
             return walkRuleForTemplate(rule.content, seen, inRepeat, clauses, rules, repeatedFields, joinByField, wordMatcher)
         }
 
@@ -2500,6 +2512,89 @@ function extractSingleKeywordString(rule: Rule): string | null {
         default:
             return null
     }
+}
+
+/**
+ * Lift each branch of `optional(choice(...))` into a clause keyed by
+ * its field name, so flanking literals render only when the field is
+ * present. Canonical case: rust `attribute = seq(_path, optional(
+ * choice(seq('=', field('value')), field('arguments'))))` — default
+ * walker emits `=$VALUE$ARGUMENTS`, which produces `#[name=]` for a
+ * bare attribute. With the lift, each branch becomes its own clause
+ * (`value_clause: "=$VALUE"`, `arguments_clause: "$ARGUMENTS"`) and
+ * the template reads `$$$CHILDREN$VALUE_CLAUSE$ARGUMENTS_CLAUSE` —
+ * each flank renders iff the slot is populated.
+ *
+ * Returns null if any branch doesn't match the single-field shape
+ * (string/pattern/symbol literals, punctuation-only branches, or
+ * branches with multiple named fields). Falls back to default walk.
+ */
+function liftChoiceBranchesToClauses(
+    choice: ChoiceRule,
+    clauses: Record<string, string>,
+): string[] | null {
+    const placeholders: string[] = []
+    // Each branch: unwrap variant/clause/group/terminal layers, then
+    // try to match one of:
+    //   - field(name, ...) directly                       → `$NAME`
+    //   - seq(literal*, field, literal*)                  → `<lit>$NAME<lit>`
+    for (const member of choice.members) {
+        const stripped = stripWrappers(member)
+        const extracted = extractClauseBranch(stripped)
+        if (extracted === null) return null
+        const { fieldName, leading, trailing } = extracted
+        const clauseKey = `${fieldName}_clause`
+        const placeholder = `$${fieldName.toUpperCase()}_CLAUSE`
+        // Only claim the clause slot once per name — if two branches
+        // share a field name (rare), reuse the first template.
+        if (!(clauseKey in clauses)) {
+            clauses[clauseKey] = `${leading}$${fieldName.toUpperCase()}${trailing}`
+        }
+        placeholders.push(placeholder)
+    }
+    return placeholders
+}
+
+function stripWrappers(rule: Rule): Rule {
+    switch (rule.type) {
+        case 'variant':
+        case 'clause':
+        case 'group':
+        case 'terminal':
+        case 'token':
+            return stripWrappers(rule.content)
+        default:
+            return rule
+    }
+}
+
+function extractClauseBranch(
+    rule: Rule,
+): { fieldName: string; leading: string; trailing: string } | null {
+    if (rule.type === 'field') {
+        return { fieldName: rule.name, leading: '', trailing: '' }
+    }
+    if (rule.type !== 'seq') return null
+    // Walk the seq collecting at most one field plus flanking literals.
+    let leading = ''
+    let trailing = ''
+    let fieldName: string | null = null
+    for (const m of rule.members) {
+        const stripped = stripWrappers(m)
+        if (stripped.type === 'field') {
+            if (fieldName !== null) return null // multi-field branch — too complex
+            fieldName = stripped.name
+            continue
+        }
+        if (stripped.type === 'string') {
+            if (fieldName === null) leading += stripped.value
+            else trailing += stripped.value
+            continue
+        }
+        return null // other shapes bail out
+    }
+    if (fieldName === null) return null
+    return { fieldName, leading, trailing }
 }
 
 /**
