@@ -33,7 +33,7 @@ __export(overrides_exports, {
   default: () => overrides_default
 });
 module.exports = __toCommonJS(overrides_exports);
-var import_grammar = __toESM(require("tree-sitter-typescript/tsx/grammar.js"), 1);
+var import_grammar = __toESM(require("tree-sitter-typescript/typescript/grammar.js"), 1);
 
 // packages/codegen/src/dsl/runtime-shapes.ts
 function isFieldLike(v) {
@@ -49,8 +49,20 @@ function isWrapperType(t) {
 }
 function isPrecWrapper(rule) {
   const t = rule.type;
-  return t === "prec" || t === "PREC" || t === "PREC_LEFT" || t === "PREC_RIGHT" || t === "PREC_DYNAMIC";
+  return t === "prec" || t === "PREC" || t === "prec_left" || t === "PREC_LEFT" || t === "prec_right" || t === "PREC_RIGHT" || t === "prec_dynamic" || t === "PREC_DYNAMIC";
 }
+function typeEq(t, lower) {
+  return typeof t === "string" && (t === lower || t === lower.toUpperCase());
+}
+var isSeqType = (t) => typeEq(t, "seq");
+var isChoiceType = (t) => typeEq(t, "choice");
+var isOptionalType = (t) => typeEq(t, "optional");
+var isFieldType = (t) => typeEq(t, "field");
+var isSymbolType = (t) => typeEq(t, "symbol");
+var isStringType = (t) => typeEq(t, "string");
+var isPlainRepeatType = (t) => typeEq(t, "repeat");
+var isRepeatType = (t) => typeEq(t, "repeat") || typeEq(t, "repeat1");
+var isBlankType = (t) => typeEq(t, "blank");
 
 // packages/codegen/src/dsl/transform-path.ts
 function dsl() {
@@ -170,8 +182,8 @@ function walkKindMatch(rule, targetKind, rest, patch, precStack, insideNamedFiel
 }
 function reconstructContainer(rule, members) {
   const t = rule.type;
-  if (t === "seq" || t === "SEQ") return nativeRequired("seq")(...members);
-  if (t === "choice" || t === "CHOICE") return nativeRequired("choice")(...members);
+  if (isSeqType(t)) return nativeRequired("seq")(...members);
+  if (isChoiceType(t)) return nativeRequired("choice")(...members);
   throw new Error(`reconstructContainer: unknown container type '${t}'`);
 }
 function reconstructWrapper(rule, newContent) {
@@ -185,7 +197,7 @@ function reconstructWrapper(rule, newContent) {
     if (r.trailing !== void 0) baseNode.trailing = r.trailing;
     return baseNode;
   }
-  if (t === "field" || t === "FIELD") {
+  if (isFieldType(t)) {
     const name = rule.name;
     return nativeRequired("field")(name, newContent);
   }
@@ -263,8 +275,7 @@ function registerSyntheticRule(name, content) {
 function maybeKeywordSymbol(fieldName, content, wrapSyntheticBody) {
   const c = content;
   if (!c || typeof c.type !== "string") return content;
-  const isString = c.type === "STRING" || c.type === "string";
-  if (!isString) return content;
+  if (!isStringType(c.type)) return content;
   const isUpperCase = c.type === "STRING";
   const hiddenName = `_kw_${fieldName}`;
   const nativePrec = globalThis.prec;
@@ -345,23 +356,23 @@ function factorOutEmptiness(rule) {
 }
 function extractNonEmpty(rule) {
   const t = rule.type;
-  if (t === "repeat" || t === "REPEAT") {
+  if (isPlainRepeatType(t)) {
     const r = rule;
     const nonEmpty = { ...r, type: t === "REPEAT" ? "REPEAT1" : "repeat1" };
     return { nonEmpty };
   }
-  if (t === "optional") {
+  if (isOptionalType(t)) {
     const inner = rule.content;
     return matchesEmpty(inner) ? extractNonEmpty(inner) : { nonEmpty: inner };
   }
-  if (t === "choice" || t === "CHOICE") {
+  if (isChoiceType(t)) {
     const members = rule.members;
     const nonEmpty = members.filter((m) => !matchesEmpty(m));
     if (nonEmpty.length === 0) return null;
     if (nonEmpty.length === 1) return { nonEmpty: nonEmpty[0] };
     return { nonEmpty: { type: t, members: nonEmpty } };
   }
-  if (t === "seq" || t === "SEQ") {
+  if (isSeqType(t)) {
     const members = [...rule.members];
     for (let i = 0; i < members.length; i++) {
       const factored = extractNonEmpty(members[i]);
@@ -376,14 +387,14 @@ function extractNonEmpty(rule) {
 }
 function matchesEmpty(rule) {
   const t = rule.type;
-  if (t === "blank" || t === "BLANK") return true;
-  if (t === "optional") return true;
-  if (t === "repeat" || t === "REPEAT") return true;
-  if (t === "choice" || t === "CHOICE") {
+  if (isBlankType(t)) return true;
+  if (isOptionalType(t)) return true;
+  if (isPlainRepeatType(t)) return true;
+  if (isChoiceType(t)) {
     const members = rule.members;
     return members.some((m) => matchesEmpty(m));
   }
-  if (t === "seq" || t === "SEQ") {
+  if (isSeqType(t)) {
     const members = rule.members;
     return members.every((m) => matchesEmpty(m));
   }
@@ -397,15 +408,6 @@ function installGrammarWrapper() {
     currentSyntheticRules = /* @__PURE__ */ new Map();
     const base2 = args.length > 1 ? args[0] : void 0;
     const opts = args.length > 1 ? args[1] : args[0];
-    if (opts) {
-      const userNames = Object.keys(opts.rules ?? {});
-      Object.defineProperty(opts, "__userOverrideRuleNames__", {
-        value: userNames,
-        enumerable: false,
-        configurable: true,
-        writable: false
-      });
-    }
     if (base2?.__enrichOverrides__ && opts) {
       if (!opts.rules) opts.rules = {};
       for (const [name, fn] of Object.entries(base2.__enrichOverrides__)) {
@@ -486,26 +488,33 @@ function installGrammarWrapper() {
     }
     currentOptsRules = null;
     currentBlankFn = null;
-    const allConflicts = [...pendingConflictsAfterGrammar, ...drainConflicts()];
-    if (result && allConflicts.length > 0 && typeof result === "object") {
-      const grammar2 = result.grammar ?? result;
-      const current = Array.isArray(grammar2.conflicts) ? grammar2.conflicts : [];
-      for (const group of allConflicts) {
-        current.push([...group]);
+    try {
+      const allConflicts = [...pendingConflictsAfterGrammar, ...drainConflicts()];
+      if (result && allConflicts.length > 0 && typeof result === "object") {
+        const grammar2 = result.grammar ?? result;
+        const current = Array.isArray(grammar2.conflicts) ? grammar2.conflicts : [];
+        for (const group of allConflicts) {
+          current.push([...group]);
+        }
+        grammar2.conflicts = current;
       }
-      grammar2.conflicts = current;
-    }
-    const synthetic = drainSyntheticRules();
-    if (result && synthetic.size > 0 && typeof result === "object") {
-      const grammar2 = result.grammar ?? result;
-      if ("rules" in grammar2) {
-        const rules = grammar2.rules;
-        for (const [name, content] of synthetic) {
-          rules[name] = content;
+      const synthetic = drainSyntheticRules();
+      if (result && synthetic.size > 0 && typeof result === "object") {
+        const grammar2 = result.grammar ?? result;
+        if ("rules" in grammar2) {
+          const rules = grammar2.rules;
+          for (const [name, content] of synthetic) {
+            rules[name] = content;
+          }
         }
       }
+      return result;
+    } finally {
+      drainSyntheticRules();
+      drainConflicts();
+      drainPolymorphVariants();
+      currentRuleKind = null;
     }
-    return result;
   };
 }
 
@@ -604,7 +613,7 @@ function tryHoistSiblingVariants(rule, variantEntries) {
   }
   const t = core?.type;
   if (!t) return bail("core rule has no type after prec peeling");
-  if (t !== "seq" && t !== "SEQ") return bail(`core rule type '${t}' is not seq/SEQ`);
+  if (!isSeqType(t)) return bail(`core rule type '${t}' is not seq/SEQ`);
   const parsed = [];
   for (const [key, v] of variantEntries) {
     const segs = parsePath(key);
@@ -617,7 +626,7 @@ function tryHoistSiblingVariants(rule, variantEntries) {
   const seqMembers = [...membersOf2(core)];
   const resolvedPos = choicePos < 0 ? seqMembers.length + choicePos : choicePos;
   const choice = seqMembers[resolvedPos];
-  if (!choice || choice.type !== "choice" && choice.type !== "CHOICE") return bail(`position ${resolvedPos} is '${choice?.type}', not choice/CHOICE`);
+  if (!choice || !isChoiceType(choice.type)) return bail(`position ${resolvedPos} is '${choice?.type}', not choice/CHOICE`);
   const choiceMembers = membersOf2(choice);
   const anyEmpty = parsed.some((p) => matchesEmpty(choiceMembers[p.altIdx < 0 ? choiceMembers.length + p.altIdx : p.altIdx]));
   if (!anyEmpty) return null;
@@ -625,19 +634,12 @@ function tryHoistSiblingVariants(rule, variantEntries) {
   if (!parentKind) return bail("no current rule kind (variant()/transform() called outside rule callback?)");
   const refs = [];
   const isUpperCase = core.type === core.type.toUpperCase();
-  const wrapInPrecStack2 = (body) => {
-    let wrapped = body;
-    for (let i = precStack.length - 1; i >= 0; i--) {
-      wrapped = reconstructPrec(precStack[i], wrapped);
-    }
-    return wrapped;
-  };
   for (const p of parsed) {
     const resolvedAlt = p.altIdx < 0 ? choiceMembers.length + p.altIdx : p.altIdx;
     const altContent = choiceMembers[resolvedAlt];
     const hoistedMembers = seqMembers.map((m, i) => i === resolvedPos ? altContent : m);
     const hoistedSeq = reconstructContainer(core, hoistedMembers);
-    const hoistedBody = wrapInPrecStack2(hoistedSeq);
+    const hoistedBody = wrapInPrec(hoistedSeq, precStack);
     const visibleName = `${parentKind}_${p.v.name}`;
     registerPolymorphVariant(parentKind, p.v.name);
     registerSyntheticRule(visibleName, hoistedBody);
@@ -656,7 +658,7 @@ var membersOf2 = (r) => r.members;
 var contentOf2 = (r) => r.content;
 function applyFlatPatches(original, patches) {
   const t = original.type;
-  if (t === "seq" || t === "SEQ") {
+  if (isSeqType(t)) {
     const members = [...membersOf2(original)];
     for (const [key, patch] of Object.entries(patches)) {
       if (!/^\d+$/.test(key)) {
@@ -674,7 +676,7 @@ function applyFlatPatches(original, patches) {
     }
     return reconstructContainer(original, members);
   }
-  if (t === "choice" || t === "CHOICE") {
+  if (isChoiceType(t)) {
     const newMembers = membersOf2(original).map((m) => applyFlatPatches(m, patches));
     return reconstructContainer(original, newMembers);
   }
@@ -756,30 +758,6 @@ function applyEnrichPasses(ruleName, rule) {
   r = applyBareKeywordViaTransform(ruleName, r);
   r = applyOptionalKeywordViaTransform(ruleName, r);
   return r;
-}
-function typeEq(t, lower) {
-  return typeof t === "string" && (t === lower || t === lower.toUpperCase());
-}
-function isSeqType(t) {
-  return typeEq(t, "seq");
-}
-function isStringType(t) {
-  return typeEq(t, "string");
-}
-function isSymbolType(t) {
-  return typeEq(t, "symbol");
-}
-function isFieldType(t) {
-  return typeEq(t, "field");
-}
-function isOptionalType(t) {
-  return typeEq(t, "optional");
-}
-function isChoiceType(t) {
-  return typeEq(t, "choice");
-}
-function isRepeatType(t) {
-  return typeEq(t, "repeat") || typeEq(t, "repeat1");
 }
 function normalizeMember(m) {
   if (typeof m === "string") return { type: "STRING", value: m };

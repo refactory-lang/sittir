@@ -8,7 +8,12 @@
  */
 
 // @ts-nocheck — grammar.js is untyped
-import base from '../../node_modules/.pnpm/tree-sitter-typescript@0.23.2/node_modules/tree-sitter-typescript/tsx/grammar.js'
+// Use the typescript (non-tsx) grammar so the codegen surface matches
+// the reparse target (`WASM_PATHS.typescript` loads the non-tsx wasm).
+// Previously imported `tsx/grammar.js` — harmless for the current
+// non-JSX corpus but a latent mismatch: anything JSX-shaped would
+// reparse-fail. Pick one grammar and stick with it end-to-end.
+import base from '../../node_modules/.pnpm/tree-sitter-typescript@0.23.2/node_modules/tree-sitter-typescript/typescript/grammar.js'
 import { transform, enrich, field, variant } from '../codegen/src/dsl/index.ts'
 
 export default grammar(enrich(base), {

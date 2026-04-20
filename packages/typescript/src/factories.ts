@@ -1084,7 +1084,7 @@ export function parenthesizedExpression(config?: T.ParenthesizedExpression.Confi
   };
 }
 
-export function expression(child?: (T.AsExpression | T.SatisfiesExpression | T.InstantiationExpression | T.InternalModule | T.PrimaryExpression | T._JsxElement | T.AssignmentExpression | T.AugmentedAssignmentExpression | T.AwaitExpression | T.UnaryExpression | T.BinaryExpression | T.TernaryExpression | T.UpdateExpression | T.NewExpression | T.YieldExpression)) {
+export function expression(child?: (T.AsExpression | T.SatisfiesExpression | T.InstantiationExpression | T.InternalModule | T.TypeAssertion | T.PrimaryExpression | T.AssignmentExpression | T.AugmentedAssignmentExpression | T.AwaitExpression | T.UnaryExpression | T.BinaryExpression | T.TernaryExpression | T.UpdateExpression | T.NewExpression | T.YieldExpression)) {
   const children = child != null ? [child] : [];
   return {
     $type: 'expression' as const,
