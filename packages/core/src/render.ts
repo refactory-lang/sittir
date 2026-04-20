@@ -295,6 +295,37 @@ function render(node: AnyNodeData, ctx: InternalRenderContext): string {
 			return prefix + joined + suffix;
 		}
 
+		// 4a. Field-to-child promotion when tree-sitter omitted the field
+		// label. Some parse paths surface the declared child without a
+		// field name (python `list_splat`: `(list_splat (identifier))`
+		// in expression-statement context but `(list_splat expression:
+		// (identifier))` in argument-list context — same rule, different
+		// GLR state). Gated to templates with NO `$$$CHILDREN` slot so
+		// kinds that legitimately forward children elsewhere (rust
+		// `impl_item`, `closure_expression`) don't steal unrelated
+		// content. Single-valued slot only (`$FIELD`, not `$$$FIELD`) —
+		// multi-valued slots fall through to existing logic.
+		if (
+			(pfx === prefix || pfx.length === 1)
+			&& node.$children
+			&& Array.isArray(node.$children)
+			&& !tmpl.includes(`${prefix}${prefix}${prefix}CHILDREN`)
+			&& !tmpl.includes(`${prefix}${prefix}${prefix}${fieldKey.toUpperCase()}`)
+		) {
+			const unconsumedNamed = node.$children.findIndex((c: any, i: number) =>
+				!consumed.has(i) && (c as AnyNodeData).$named !== false
+			);
+			if (unconsumedNamed >= 0) {
+				const onlyOne = node.$children
+					.filter((c: any, i: number) => !consumed.has(i) && (c as AnyNodeData).$named !== false)
+					.length === 1;
+				if (onlyOne) {
+					consumed.add(unconsumedNamed);
+					return renderValue(node.$children[unconsumedNamed] as AnyNodeData | string | number, ctx);
+				}
+			}
+		}
+
 		// 4. Named child by kind — consume first unconsumed named match
 		if (node.$children && Array.isArray(node.$children)) {
 			const idx = node.$children.findIndex((c: any, i: number) =>

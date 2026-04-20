@@ -145,6 +145,30 @@ const FACTORY_MODULE_PATHS: Record<string, string> = {
 	python: '../../python/src/factories.ts',
 };
 
+/** Relative path from codegen/src to language package factory-map.json5 */
+const FACTORY_MAP_PATHS: Record<string, string> = {
+	rust: '../../rust/factory-map.json5',
+	typescript: '../../typescript/factory-map.json5',
+	python: '../../python/factory-map.json5',
+};
+
+/** Load the JSON5 factory metadata file. Emitted by emitFactoryMap;
+ * pure data (no functions). Strips the leading comment block and
+ * JSON.parses the rest. */
+async function loadFactoryMap(grammar: string): Promise<{
+	factoryShapes: Record<string, 'config' | 'children' | 'text'>;
+	fieldAliasMap: Record<string, Record<string, string>>;
+	factoryFields: Record<string, readonly string[]>;
+}> {
+	const p = FACTORY_MAP_PATHS[grammar];
+	if (!p) return { factoryShapes: {}, fieldAliasMap: {}, factoryFields: {} };
+	const { readFileSync } = await import('node:fs');
+	const content = readFileSync(new URL(p, import.meta.url).pathname, 'utf-8');
+	// Strip `// ...` line comments so JSON.parse accepts the body.
+	const jsonOnly = content.replace(/^\s*\/\/.*$/gm, '').trim();
+	return JSON.parse(jsonOnly);
+}
+
 // ---------------------------------------------------------------------------
 // Validation
 // ---------------------------------------------------------------------------
@@ -189,13 +213,18 @@ export async function validateFactoryRoundTrip(
 	let factoryMap: Record<string, (config?: any) => unknown> = {};
 	let factoryShapes: Record<string, 'config' | 'children' | 'text'> = {};
 	let fieldAliasMap: Record<string, Record<string, string>> = {};
+	let factoryFields: Record<string, readonly string[]> = {};
 	const importFailure: { message: string } | null = await (async () => {
 		if (!factoryModulePath) return null;
 		try {
 			const factoryModule = await import(new URL(factoryModulePath, import.meta.url).pathname);
 			factoryMap = factoryModule._factoryMap ?? {};
-			factoryShapes = factoryModule._factoryShapes ?? {};
-			fieldAliasMap = factoryModule._fieldAliasMap ?? {};
+			// Validator-only metadata lives in factory-map.json5 — pure
+			// data, loaded separately from the factory functions.
+			const mapData = await loadFactoryMap(grammar);
+			factoryShapes = mapData.factoryShapes;
+			fieldAliasMap = mapData.fieldAliasMap;
+			factoryFields = mapData.factoryFields;
 			return null;
 		} catch (e) {
 			const message = `[validate-factory-roundtrip] failed to load ${factoryModulePath}: ${(e as Error)?.message ?? e}`;
@@ -313,7 +342,7 @@ export async function validateFactoryRoundTrip(
 						// to audit them.
 						const recursive = process?.env?.SITTIR_VALIDATE_RECURSIVE === '1';
 						const config = recursive
-							? nodeToConfig(readData, { tree: handle, factoryMap, factoryShapes, fieldAliasMap })
+							? nodeToConfig(readData, { tree: handle, factoryMap, factoryShapes, fieldAliasMap, factoryFields })
 							: nodeToConfig(readData);
 						factoryData = factory(config) as AnyNodeData;
 					} else if (shape === 'text') {

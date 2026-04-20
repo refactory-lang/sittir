@@ -262,64 +262,10 @@ export function emitFactories(config: EmitFactoriesConfig): string {
     lines.push('export type _FactoryMap = typeof _factoryMap;')
     lines.push('')
 
-    // _factoryShapes — parallel dispatch hint for runtime routing.
-    // Consumers (validators, editors) use this to choose between
-    // calling `factory(config)` vs `factory(...children)` vs
-    // `factory(text)` without inspecting function.toString() at
-    // runtime (which breaks under minification / bundler renames).
-    //
-    // An earlier attempt derived this type from `_FactoryMap` via a
-    // conditional-type mapper so each tag had to match the factory's
-    // first-param shape. It didn't work: function-parameter
-    // contravariance under TS strict-function-types made every
-    // non-'text' branch unreachable (a concrete `Config` interface
-    // doesn't extend the mapper's `object` probe), and the
-    // compensating `as` cast silently laundered mismatches. Shape is
-    // now a plain record; `as const satisfies` keeps the emitted
-    // string literals narrow and catches typos / accidental widening,
-    // which is the useful part that survives. Cross-checking tags
-    // against real factory signatures isn't expressible in TS today
-    // for the signature shapes we emit.
-    lines.push('export const _factoryShapes = {')
-    for (const { kind, shape } of mapEntries) {
-        lines.push(`  ${JSON.stringify(kind)}: ${JSON.stringify(shape)},`)
-    }
-    lines.push(`} as const satisfies Record<string, 'config' | 'children' | 'text'>;`)
-    lines.push('export type _FactoryShapes = typeof _factoryShapes;')
-    lines.push('')
-
-    // _fieldAliasMap — per-field alias provenance for runtime unalias.
-    //
-    // Grammar declarations like `alias($.source, $.target)` at a field
-    // position mean: tree-sitter emits a node of kind `target`, but the
-    // body follows `source`'s shape. The wrap layer rewrites $type at
-    // drill-in via drillAs(); validators that bypass the wrap layer (e.g.
-    // calling `readNode` directly) need the same information to dispatch
-    // the right factory. Key format: `"parentKind.fieldName"` → source
-    // kind. An entry is present only when the field's declared content
-    // includes an aliased-symbol reference whose source differs from the
-    // tree-sitter-emitted target.
-    //
-    // Global (flat) maps won't work — the same target kind (e.g. `block`)
-    // may appear both aliased (from `alias($._match_block, $.block)`) and
-    // plain (any indented statement body). Context is the `parentKind.
-    // fieldName` pair.
-    lines.push('export const _fieldAliasMap: Record<string, Record<string, string>> = {')
-    for (const [kind, node] of nodeMap.nodes) {
-        if (node.modelType !== 'branch' && node.modelType !== 'polymorph' && node.modelType !== 'group') continue
-        const fields = node.modelType === 'polymorph'
-            ? node.forms.flatMap(f => f.fields)
-            : node.fields
-        for (const f of fields) {
-            if (!f.aliasSources) continue
-            const pairs = Object.entries(f.aliasSources).filter(([t, s]) => t !== s)
-            if (pairs.length === 0) continue
-            const body = pairs.map(([t, s]) => `${JSON.stringify(t)}: ${JSON.stringify(s)}`).join(', ')
-            lines.push(`  ${JSON.stringify(`${kind}.${f.name}`)}: { ${body} },`)
-        }
-    }
-    lines.push(`};`)
-    lines.push('')
+    // _factoryShapes / _fieldAliasMap / _factoryFields — validator-only
+    // metadata. Emitted as a separate `factory-map.json5` alongside the
+    // templates so consumers that only need factories don't pay for
+    // that surface. See emitters/factory-map.ts.
 
     return lines.join('\n')
 }

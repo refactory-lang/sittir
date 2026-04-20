@@ -169,7 +169,15 @@ export async function validateFrom(
 	try {
 		const factoryModule = await import(new URL(FACTORY_MODULE_PATHS[grammar]!, import.meta.url).pathname);
 		factoryMap = factoryModule._factoryMap ?? {};
-		factoryShapes = factoryModule._factoryShapes ?? {};
+		// Validator-only metadata (shapes, field-alias, factoryFields)
+		// moved to factory-map.json5. See emitters/factory-map.ts.
+		try {
+			const mapPath = `../../${grammar}/factory-map.json5`;
+			const { readFileSync } = await import('node:fs');
+			const content = readFileSync(new URL(mapPath, import.meta.url).pathname, 'utf-8');
+			const jsonOnly = content.replace(/^\s*\/\/.*$/gm, '').trim();
+			factoryShapes = JSON.parse(jsonOnly).factoryShapes ?? {};
+		} catch { /* factory-map.json5 unavailable */ }
 	} catch { /* factory module unavailable */ }
 	try {
 		const wrapModule = await import(new URL(WRAP_MODULE_PATHS[grammar]!, import.meta.url).pathname);

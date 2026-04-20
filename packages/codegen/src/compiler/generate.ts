@@ -16,6 +16,7 @@ import { emitGrammar } from '../emitters/grammar.ts'
 import { emitTypes } from '../emitters/types.ts'
 import { emitTemplates } from '../emitters/templates.ts'
 import { emitFactories } from '../emitters/factories.ts'
+import { emitFactoryMap } from '../emitters/factory-map.ts'
 import { emitWrap } from '../emitters/wrap.ts'
 import { emitFrom } from '../emitters/from.ts'
 import { emitClientUtils } from '../emitters/client-utils.ts'
@@ -35,6 +36,9 @@ export interface GeneratedFiles {
     types: string
     templatesYaml: string
     factories: string
+    /** factory-map.json5 — validator-only factory metadata (shapes,
+     * alias map, field-only-factory list). See emitters/factory-map.ts. */
+    factoryMap: string
     wrap: string
     utils: string
     from: string
@@ -139,6 +143,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
         types: emitTypes({ grammar: cfg.grammar, nodeMap }),
         templatesYaml: emitTemplates({ grammar: cfg.grammar, nodeMap }),
         factories: emitFactories({ grammar: cfg.grammar, nodeMap, strict: cfg.strict }),
+        factoryMap: emitFactoryMap({ grammar: cfg.grammar, nodeMap }),
         wrap: emitWrap({ grammar: cfg.grammar, nodeMap }),
         utils: emitClientUtils({ nodeMap }),
         from: emitFrom({ grammar: cfg.grammar, nodeMap }),

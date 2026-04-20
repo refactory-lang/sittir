@@ -438,6 +438,13 @@ export interface NodeToConfigOpts {
      * instead. Without it, ADR-0006-aware fields silently dispatch the
      * wrong factory (e.g. `block` factory on a `_match_block` body). */
     readonly fieldAliasMap?: Record<string, Record<string, string>>
+    /** Per-kind list of declared factory Config field names (from the
+     * generated `_factoryFields`). Drives orphan-child promotion: when
+     * a read node has $children but the expected field is missing from
+     * $fields (tree-sitter elided the label — python `list_splat` at
+     * expression-statement position is the canonical case), route
+     * children into the declared fields by position. */
+    readonly factoryFields?: Record<string, readonly string[]>
     /** Internal — current parent kind during field recursion. Used with
      * `fieldAliasMap` to form `${parentKind}.${fieldName}` lookups. */
     readonly _parentKind?: string
@@ -548,11 +555,38 @@ export function nodeToConfig(
         }
     }
     if (data.$children) {
-        // $children entries don't have a field name; alias resolution
-        // falls back to the raw $type (no parent.field lookup). Only
-        // the $fields iteration can trigger alias-source dispatch.
+        // Orphan-child promotion: when the parent kind declares fields
+        // per `_factoryFields` but none of them appear in data.$fields,
+        // tree-sitter likely elided the field label for this GLR state
+        // (python `list_splat` at expression-statement position is the
+        // canonical case). Route the named children into the declared
+        // fields by position so the factory sees the expected slots
+        // instead of `children`. Fires only when no declared field is
+        // already populated — otherwise children genuinely belong in
+        // $$$CHILDREN (e.g. rust impl_item's body).
+        const declaredFields = parentKind ? opts.factoryFields?.[parentKind] : undefined
+        const noFieldMatched = !declaredFields || declaredFields.every(name => {
+            const camel = name.replace(/_([a-z])/g, (_m, c: string) => c.toUpperCase())
+            return out[camel] === undefined
+        })
+        const namedChildren = data.$children.filter(c =>
+            c != null && typeof c === 'object' && (c as { $named?: boolean }).$named !== false,
+        )
         const childOpts: NodeToConfigOpts = { ...opts, _parentKind: undefined, _fieldName: undefined }
-        out.children = data.$children.map(c => resolveChild(c, childOpts))
+        if (declaredFields && noFieldMatched && namedChildren.length > 0 && namedChildren.length <= declaredFields.length) {
+            // Assign by position: first N named children → first N declared fields.
+            namedChildren.forEach((child, i) => {
+                const name = declaredFields[i]!
+                const camel = name.replace(/_([a-z])/g, (_m, c: string) => c.toUpperCase())
+                const resolveOpts: NodeToConfigOpts = { ...opts, _parentKind: parentKind, _fieldName: name }
+                out[camel] = resolveChild(child, resolveOpts)
+            })
+        } else {
+            // $children entries don't have a field name; alias resolution
+            // falls back to the raw $type (no parent.field lookup). Only
+            // the $fields iteration can trigger alias-source dispatch.
+            out.children = data.$children.map(c => resolveChild(c, childOpts))
+        }
     }
     return out
 }

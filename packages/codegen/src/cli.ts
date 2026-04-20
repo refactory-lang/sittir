@@ -160,6 +160,9 @@ writeFile(join(outDir, 'index.ts'), result.index);
 // Write YAML templates to package root (one level up from src/)
 writeFile(join(dirname(outDir), 'templates.yaml'), result.templatesYaml);
 
+// Write validator-only factory metadata next to templates.yaml.
+writeFile(join(dirname(outDir), 'factory-map.json5'), result.factoryMap);
+
 // Write node model
 writeFile(join(outDir, 'node-model.json5'), result.nodeModel);
 
