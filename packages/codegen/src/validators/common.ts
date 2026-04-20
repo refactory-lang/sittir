@@ -16,6 +16,7 @@
 import { readFileSync, readdirSync, existsSync, type Mode } from 'node:fs'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { readNode as readNodeFn } from '@sittir/core'
 import { isChoiceType, isSeqType, isOptionalType, isStringType, isBlankType, isPlainRepeatType, type RuntimeRule } from '../dsl/runtime-shapes.ts'
 import type * as TS from 'web-tree-sitter';
 import type { SgNode, Pos, Range } from '@ast-grep/wasm'
@@ -385,29 +386,92 @@ export async function loadLanguageForGrammar(grammar: string): Promise<{
 // ---------------------------------------------------------------------------
 //
 // Validators read tree-sitter output via `readNode` (snake_case $fields
-// keys, $-prefixed metadata). The factory signatures take `ConfigOf<T>`
-// which is:
+// keys, $-prefixed metadata). The factory signatures take `ConfigOf<T>`:
 //   - top-level keys in camelCase (snake→camel on each $fields entry)
 //   - `children` in place of $children
-//   - nested values left as NodeData (the factory stores them verbatim
-//     on $fields so downstream render sees the original tree-sitter
-//     structure)
+//   - leaf values as bare strings (factory leaf signatures are `(text: string)`)
+//   - branch values as NodeData produced by THAT kind's factory — when
+//     `tree` + `factoryMap` are supplied, children are drilled via
+//     `readNode` and reconstructed through their own factory before
+//     being installed under the parent's config. This is what makes the
+//     factory layer actually exercise construction instead of passing
+//     data through verbatim; a declared-type mismatch (e.g. the
+//     pre-ADR-0006 match_statement.body typed as Block but carrying
+//     case_clauses) surfaces at construction time via the child
+//     factory's ConfigOf rejecting the shape it was given.
 //
-// This helper replaces the per-validator inline `Object.fromEntries`
-// camelCase dance so the shape rules live in one place.
-//
-// Why not recurse? Factory emission today is a bundler: it spreads
-// config onto $fields without invoking child factories. Passing
-// deeply-converted Config-shape (no $type / no $fields on nested
-// values) to a factory that spreads verbatim would replace NodeData
-// children with plain objects, crashing render. Real recursive
-// construction requires a coupled change to the factory emitter (see
-// `project_factory_validator_is_passthrough.md`); until that lands,
-// shallow conversion is what validators can safely feed in.
-export function nodeToConfig(data: {
+// Plain shallow mode (no tree/factoryMap) still works and matches the
+// older camelFields behavior so other validators can adopt this helper
+// without the recursion cost.
+export interface NodeToConfigOpts {
+    readonly tree?: { nodeById(id: number): unknown }
+    readonly factoryMap?: Record<string, (c: unknown) => unknown>
+    /** Internal recursion guard — set by the helper, not the caller. */
+    readonly _depth?: number
+}
+
+interface ReadNodeLike {
+    readonly $type?: string
+    readonly $text?: string
+    readonly $nodeId?: number
     readonly $fields?: Readonly<Record<string, unknown>>
     readonly $children?: readonly unknown[]
-}): Record<string, unknown> {
+    readonly $named?: boolean
+}
+
+/**
+ * Drill into a shallow child NodeData via the tree handle, then convert
+ * recursively and route through its kind's factory. Falls back to the
+ * passed-in shallow NodeData when `tree` isn't available OR the child
+ * lacks a $nodeId (factory-built children don't carry one).
+ */
+function resolveChild(
+    child: unknown,
+    opts: NodeToConfigOpts,
+): unknown {
+    if (child == null) return child
+    if (typeof child === 'string' || typeof child === 'number') return child
+    if (typeof child !== 'object') return child
+    const c = child as ReadNodeLike
+    // Anonymous tokens (separators, delimiters, keywords promoted to $fields
+    // by readNode) stay as NodeData — render's `$named !== false` filter
+    // drops them from `$$$CHILDREN`, and flankSep probes their span/text
+    // to reconstruct trailing separators. Converting them to bare strings
+    // bypasses those filters and double-emits (e.g. struct_pattern's
+    // trailing `,` showed up twice in the rendered output).
+    if (c.$named === false) return child
+    const { tree, factoryMap, _depth = 0 } = opts
+    // Depth cap — recursive construction shouldn't run away even on
+    // pathologically nested corpus entries. 64 is well past real-world
+    // AST depth and stops before Node's default call-stack.
+    if (_depth > 64 || !tree || !factoryMap) return child
+    // Drill into the child to materialize its own $fields/$children.
+    let drilled: ReadNodeLike = c
+    if (c.$nodeId != null) {
+        try {
+            drilled = readNodeFn(tree as Parameters<typeof readNodeFn>[0], c.$nodeId) as ReadNodeLike
+        } catch {
+            // Tree handle lacked the node (factory-built subtree?) — fall
+            // back to the shallow entry we already have.
+        }
+    }
+    const kind = drilled.$type ?? c.$type
+    if (!kind) return drilled
+    // Leaves: return just the text. Branch factories reject Config-shape
+    // for leaves but accept the bare string (shape === 'text').
+    if (!drilled.$fields && !drilled.$children && drilled.$text !== undefined) {
+        return drilled.$text
+    }
+    const factory = factoryMap[kind]
+    if (!factory) return drilled  // hidden / unfactoryable kind — pass through
+    const childConfig = nodeToConfig(drilled, { ...opts, _depth: _depth + 1 })
+    return factory(childConfig)
+}
+
+export function nodeToConfig(
+    data: ReadNodeLike,
+    opts: NodeToConfigOpts = {},
+): Record<string, unknown> {
     const out: Record<string, unknown> = {}
     if (data.$fields) {
         for (const [k, v] of Object.entries(data.$fields)) {
@@ -419,11 +483,13 @@ export function nodeToConfig(data: {
             // pollutes the config without ever being read by the factory.
             if (!/^[a-zA-Z_][\w]*$/.test(k)) continue
             const camelKey = k.replace(/_([a-z])/g, (_m, c: string) => c.toUpperCase())
-            out[camelKey] = v
+            out[camelKey] = Array.isArray(v)
+                ? v.map(item => resolveChild(item, opts))
+                : resolveChild(v, opts)
         }
     }
     if (data.$children) {
-        out.children = data.$children
+        out.children = data.$children.map(c => resolveChild(c, opts))
     }
     return out
 }

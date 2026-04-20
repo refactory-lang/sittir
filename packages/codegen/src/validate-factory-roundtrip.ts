@@ -299,12 +299,20 @@ export async function validateFactoryRoundTrip(
 				try {
 					const shape = factoryShapes[renderedKind] ?? 'config';
 					if (shape === 'config') {
-						// `nodeToConfig` handles the $fields snake→camel
-						// rename and the $children → `children` slot
-						// convention. Shared with future validator passes
-						// so ConfigOf's shape rules live in one helper
-						// rather than duplicated inline transforms.
-						const config = nodeToConfig(readData);
+						// `nodeToConfig` handles the $fields snake→camel rename
+						// and the $children → `children` slot convention.
+						// Shallow mode (no tree / factoryMap) keeps the same
+						// behavior as the prior inline transform. Recursive
+						// mode (opts in tree+factoryMap) drills each child
+						// through its own factory — exposes factory-vs-read
+						// shape mismatches at the cost of surfacing ~790
+						// spacing / anon-token divergences that accumulated
+						// unchecked for months; flip SITTIR_VALIDATE_RECURSIVE
+						// to audit them.
+						const recursive = process?.env?.SITTIR_VALIDATE_RECURSIVE === '1';
+						const config = recursive
+							? nodeToConfig(readData, { tree: handle, factoryMap })
+							: nodeToConfig(readData);
 						factoryData = factory(config) as AnyNodeData;
 					} else if (shape === 'text') {
 						// $TEXT-templated branch/container (e.g. rust
