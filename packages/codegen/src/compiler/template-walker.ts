@@ -1,11 +1,13 @@
 /**
- * emitters/template-walker.ts — turn a Rule subtree into a template
+ * compiler/template-walker.ts — turn a Rule subtree into a template
  * string plus any clause sub-templates.
  *
- * Consumed by the templates emitter (`./templates.ts`): for each
- * AssembledNode kind it dispatches to {@link renderRuleTemplate},
- * which produces a `{ template, clauses, joinByField }` triple the
- * emitter merges into the per-rule YAML entry.
+ * Consumed by both:
+ * - `compiler/node-map.ts` — `AssembledBranch.renderTemplate()` and
+ *   sibling helpers call {@link renderRuleTemplate} to produce the
+ *   `{ template, clauses, joinByField }` triple stored on the node model.
+ * - `emitters/templates.ts` — the YAML emitter reads the same triple
+ *   when serialising per-rule entries into `templates.yaml`.
  *
  * The walker only consumes the Rule model — it has no coupling to
  * AssembledNode. That keeps the template surface pure-rule-driven:
@@ -29,8 +31,8 @@
 
 import type {
     Rule, ChoiceRule,
-} from '../compiler/rule.ts'
-import { isSyntheticFieldWrapper } from '../compiler/node-map.ts'
+} from './rule.ts'
+import { isSyntheticFieldWrapper } from './node-map.ts'
 
 /**
  * Extract anonymous-string literals flanking the main content of a field

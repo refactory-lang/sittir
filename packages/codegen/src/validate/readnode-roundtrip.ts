@@ -30,7 +30,7 @@ import { readFileSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 import { readNode } from '@sittir/core'
 import type { AnyNodeData } from '@sittir/types'
-import { loadRawEntries } from './compiler/node-types-loader.ts'
+import { loadRawEntries } from './node-types-loader.ts'
 import {
     loadLanguageForGrammar,
     treeHandle,
@@ -38,10 +38,10 @@ import {
     collectKinds,
     type TSNode,
     type TSTree,
-} from './validators/common.ts'
+} from './common.ts'
 
 
-// Tree-sitter adapter + tree walkers imported from validators/common.ts.
+// Tree-sitter adapter + tree walkers imported from validate/common.ts.
 // See that file for the canonical TSNode/TSTree shapes (backed by web-tree-sitter's
 // published TS.Node / TS.Tree types).
 
@@ -71,7 +71,7 @@ function parseCorpus(content: string): CorpusEntry[] {
 }
 
 
-const FIXTURES_DIR = new URL('../fixtures', import.meta.url).pathname
+const FIXTURES_DIR = new URL('../../fixtures', import.meta.url).pathname
 
 function loadCorpusEntries(grammar: string): CorpusEntry[] {
     const entries: CorpusEntry[] = []

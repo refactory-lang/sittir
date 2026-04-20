@@ -20,26 +20,26 @@ import {
 	findFirst,
 	collectKinds,
 	type TSTree,
-} from './validators/common.ts';
+} from './common.ts';
 
 const require = createRequire(import.meta.url);
 
 const FROM_MODULE_PATHS: Record<string, string> = {
-	rust: '../../rust/src/from.ts',
-	typescript: '../../typescript/src/from.ts',
-	python: '../../python/src/from.ts',
+	rust: '../../../rust/src/from.ts',
+	typescript: '../../../typescript/src/from.ts',
+	python: '../../../python/src/from.ts',
 };
 
 const FACTORY_MODULE_PATHS: Record<string, string> = {
-	rust: '../../rust/src/factories.ts',
-	typescript: '../../typescript/src/factories.ts',
-	python: '../../python/src/factories.ts',
+	rust: '../../../rust/src/factories.ts',
+	typescript: '../../../typescript/src/factories.ts',
+	python: '../../../python/src/factories.ts',
 };
 
 const WRAP_MODULE_PATHS: Record<string, string> = {
-	rust: '../../rust/src/wrap.ts',
-	typescript: '../../typescript/src/wrap.ts',
-	python: '../../python/src/wrap.ts',
+	rust: '../../../rust/src/wrap.ts',
+	typescript: '../../../typescript/src/wrap.ts',
+	python: '../../../python/src/wrap.ts',
 };
 
 // ---------------------------------------------------------------------------
@@ -172,7 +172,7 @@ export async function validateFrom(
 		// Validator-only metadata (shapes, field-alias, factoryFields)
 		// moved to factory-map.json5. See emitters/factory-map.ts.
 		try {
-			const mapPath = `../../${grammar}/factory-map.json5`;
+			const mapPath = `../../../${grammar}/factory-map.json5`;
 			const { readFileSync } = await import('node:fs');
 			const content = readFileSync(new URL(mapPath, import.meta.url).pathname, 'utf-8');
 			const jsonOnly = content.replace(/^\s*\/\/.*$/gm, '').trim();

@@ -8,11 +8,11 @@
  */
 
 import { mkdirSync, writeFileSync } from 'node:fs';
-import { validateRoundTrip, formatRoundTripReport } from './validate-roundtrip.ts';
-import { validateFactoryRoundTrip, formatFactoryRoundTripReport } from './validate-factory-roundtrip.ts';
-import { validateFrom, formatFromReport } from './validate-from.ts';
-import { validateRenderableFromNodeMap, formatRenderableReport } from './validate-renderable.ts';
-import { validateReadNodeRoundTrip, formatReadNodeRoundTripReport } from './validate-readnode-roundtrip.ts';
+import { validateRoundTrip, formatRoundTripReport } from './validate/roundtrip.ts';
+import { validateFactoryRoundTrip, formatFactoryRoundTripReport } from './validate/factory-roundtrip.ts';
+import { validateFrom, formatFromReport } from './validate/from.ts';
+import { validateRenderableFromNodeMap, formatRenderableReport } from './validate/renderable.ts';
+import { validateReadNodeRoundTrip, formatReadNodeRoundTripReport } from './validate/readnode-roundtrip.ts';
 import { join, dirname, resolve } from 'node:path';
 import { generate } from './compiler/generate.ts';
 import { emitSuggested, type RoundTripDiagnostic } from './emitters/suggested.ts';

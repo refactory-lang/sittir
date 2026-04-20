@@ -1,9 +1,9 @@
 /**
- * compiler/node-types-loader.ts — thin loader for tree-sitter
+ * validate/node-types-loader.ts — thin loader for tree-sitter
  * node-types.json.
  *
  * Consumed by both validators and emitters (grammar.ts, types.ts),
- * so it lives at compiler/ rather than under any one consumer's
+ * so it lives at validate/ rather than under any one consumer's
  * directory. Takes a grammar name and returns the parsed raw entry
  * array from that grammar's `node-types.json` file (or a
  * `.sittir/src/node-types.json` override if present). No caches,

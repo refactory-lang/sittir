@@ -14,7 +14,7 @@ import { createRequire } from 'node:module';
 import { parse as parseYaml } from 'yaml';
 import { readNode, createRenderer } from '@sittir/core';
 import type { AnyNodeData, NodeFieldValue, RulesConfig } from '@sittir/types';
-import { loadRawEntries } from './compiler/node-types-loader.ts';
+import { loadRawEntries } from './node-types-loader.ts';
 import {
 	loadCorpusEntries,
 	loadLanguageForGrammar,
@@ -29,7 +29,7 @@ import {
 	type TSNode,
 	type TSTree,
 	type WrappedNodeData,
-} from './validators/common.ts';
+} from './common.ts';
 
 /** Find a node anywhere in the tree by its numeric id. Used by the
  * wrap-aware kind resolution path (ADR-0006) to recover a TSNode for
@@ -138,18 +138,18 @@ function stripToFactory(data: AnyNodeData): AnyNodeData {
 	return result;
 }
 
-/** Relative path from codegen/src to language package factories.ts */
+/** Relative path from codegen/src/validate to language package factories.ts */
 const FACTORY_MODULE_PATHS: Record<string, string> = {
-	rust: '../../rust/src/factories.ts',
-	typescript: '../../typescript/src/factories.ts',
-	python: '../../python/src/factories.ts',
+	rust: '../../../rust/src/factories.ts',
+	typescript: '../../../typescript/src/factories.ts',
+	python: '../../../python/src/factories.ts',
 };
 
-/** Relative path from codegen/src to language package factory-map.json5 */
+/** Relative path from codegen/src/validate to language package factory-map.json5 */
 const FACTORY_MAP_PATHS: Record<string, string> = {
-	rust: '../../rust/factory-map.json5',
-	typescript: '../../typescript/factory-map.json5',
-	python: '../../python/factory-map.json5',
+	rust: '../../../rust/factory-map.json5',
+	typescript: '../../../typescript/factory-map.json5',
+	python: '../../../python/factory-map.json5',
 };
 
 /** Load the JSON5 factory metadata file. Emitted by emitFactoryMap;

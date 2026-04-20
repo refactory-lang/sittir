@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { join } from 'node:path'
 import { existsSync } from 'node:fs'
-import { loadWebTreeSitter } from '../validators/common.ts'
+import { loadWebTreeSitter } from '../validate/common.ts'
 
 const pythonSittirDir = join(__dirname, '../../../python/.sittir')
 const wasmPath = join(pythonSittirDir, 'parser.wasm')

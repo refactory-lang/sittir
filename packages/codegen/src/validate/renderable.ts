@@ -20,11 +20,11 @@
  * want surfaced as a first-class validation error.
  */
 
-import { loadRawEntries, type RawNodeEntry } from './compiler/node-types-loader.ts'
+import { loadRawEntries, type RawNodeEntry } from './node-types-loader.ts'
 import { parse as parseYaml } from 'yaml'
 import type { RulesConfig, TemplateRule } from '@sittir/types'
-import type { NodeMap } from './compiler/types.ts'
-import { buildRuleLookup } from './validators/rule-lookup.ts'
+import type { NodeMap } from '../compiler/types.ts'
+import { buildRuleLookup } from './rule-lookup.ts'
 
 // ---------------------------------------------------------------------------
 // Result shape

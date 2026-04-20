@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { join } from 'node:path'
 import { existsSync } from 'node:fs'
-import { loadLanguageForGrammar } from '../validators/common.ts'
+import { loadLanguageForGrammar } from '../validate/common.ts'
 
 const wasmPath = join(__dirname, '../../../python/.sittir/parser.wasm')
 

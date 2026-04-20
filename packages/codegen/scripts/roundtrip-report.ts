@@ -2,7 +2,7 @@
 /**
  * Detailed round-trip failure report for all grammars.
  */
-import { validateRoundTrip } from '../src/validate-roundtrip.ts';
+import { validateRoundTrip } from '../src/validate/roundtrip.ts';
 import { readFileSync } from 'fs';
 
 async function main() {

@@ -26,7 +26,7 @@
  * its source.
  */
 
-import { loadRawEntries, type RawNodeEntry, type RawFieldEntry } from './compiler/node-types-loader.ts'
+import { loadRawEntries, type RawNodeEntry, type RawFieldEntry } from './node-types-loader.ts'
 import { parse as parseYaml } from 'yaml'
 import type { RulesConfig, TemplateRule, TemplateRuleObject } from '@sittir/types'
 

@@ -27,12 +27,12 @@ import { describe, it, expect } from 'vitest'
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { generate } from '../compiler/generate.ts'
-import { validateFactoryRoundTrip } from '../validate-factory-roundtrip.ts'
-import { validateFrom } from '../validate-from.ts'
-import { validateRenderable } from '../validate-renderable.ts'
-import { validateReadNodeRoundTrip } from '../validate-readnode-roundtrip.ts'
-import { validateRoundTrip } from '../validate-roundtrip.ts'
-import { validateTemplateCoverage } from '../validate-template-coverage.ts'
+import { validateFactoryRoundTrip } from '../validate/factory-roundtrip.ts'
+import { validateFrom } from '../validate/from.ts'
+import { validateRenderable } from '../validate/renderable.ts'
+import { validateReadNodeRoundTrip } from '../validate/readnode-roundtrip.ts'
+import { validateRoundTrip } from '../validate/roundtrip.ts'
+import { validateTemplateCoverage } from '../validate/template-coverage.ts'
 
 /**
  * Current floors — asserted. When a fix lands, raise these in the

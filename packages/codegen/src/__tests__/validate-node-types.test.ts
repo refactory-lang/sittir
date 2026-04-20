@@ -11,7 +11,7 @@
 import { describe, it, expect } from 'vitest'
 import { evaluate } from '../compiler/evaluate.ts'
 import { link } from '../compiler/link.ts'
-import { validateAgainstNodeTypes, formatNodeTypesValidationReport } from '../compiler/validate-node-types.ts'
+import { validateAgainstNodeTypes, formatNodeTypesValidationReport } from '../validate/node-types.ts'
 import { resolveGrammarJsPath, resolveOverridesPath } from '../compiler/resolve-grammar.ts'
 import { existsSync } from 'node:fs'
 

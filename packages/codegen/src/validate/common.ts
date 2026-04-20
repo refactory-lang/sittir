@@ -1,5 +1,5 @@
 /**
- * validators/common.ts — shared infrastructure across the three
+ * validate/common.ts — shared infrastructure across the three
  * corpus validators (`validate-roundtrip`, `validate-factory-roundtrip`,
  * `validate-from`). C15.
  *

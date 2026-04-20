@@ -3,7 +3,7 @@
  * derived from tree-sitter's node-types.json.
  */
 
-import { loadRawEntries } from '../compiler/node-types-loader.ts';
+import { loadRawEntries } from '../validate/node-types-loader.ts';
 
 function toGrammarTypeName(grammar: string): string {
   const camel = grammar.replace(/_([a-z])/g, (_, c: string) => c.toUpperCase());

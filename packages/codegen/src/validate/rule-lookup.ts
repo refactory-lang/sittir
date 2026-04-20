@@ -1,5 +1,5 @@
 /**
- * validators/rule-lookup.ts — shared rule-kind inventory (C12).
+ * validate/rule-lookup.ts — shared rule-kind inventory (C12).
  *
  * `validate-renderable` needs to answer "which kinds have a rule emit
  * path?" The old code parsed the generated YAML and walked its `rules:`

@@ -1,5 +1,5 @@
 /**
- * compiler/validate-node-types.ts — optional post-Link check (T021).
+ * validate/node-types.ts — optional post-Link check (T021).
  *
  * Compares the linked rule set against tree-sitter's `node-types.json`
  * for the grammar, reporting discrepancies without mutating anything.
@@ -13,7 +13,7 @@
  * CLI behind a `--validate-node-types` flag.
  */
 
-import type { LinkedGrammar } from './types.ts'
+import type { LinkedGrammar } from '../compiler/types.ts'
 import { loadRawEntries, type RawNodeEntry } from './node-types-loader.ts'
 
 export interface NodeTypesValidationResult {

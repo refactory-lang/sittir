@@ -12,7 +12,7 @@ import { createRequire } from 'node:module';
 import { parse as parseYaml } from 'yaml';
 import { readNode, createRenderer } from '@sittir/core';
 import type { RulesConfig } from '@sittir/types';
-import { loadRawEntries } from './compiler/node-types-loader.ts';
+import { loadRawEntries } from './node-types-loader.ts';
 import {
 	loadCorpusEntries,
 	loadLanguageForGrammar,
@@ -26,7 +26,7 @@ import {
 	type TSNode,
 	type TSTree,
 	type WrappedNodeData,
-} from './validators/common.ts';
+} from './common.ts';
 
 /**
  * Find the first node of `kind` whose `startIndex` equals `offset`.

@@ -32,7 +32,7 @@ import {
     renderRuleTemplate,
     findRepeatSeparator,
     findRepeatFlag,
-} from '../emitters/template-walker.ts'
+} from './template-walker.ts'
 
 // ---------------------------------------------------------------------------
 // Derivation helpers — walk a Rule to produce fields, children, content types

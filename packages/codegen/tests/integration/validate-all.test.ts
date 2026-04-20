@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import { generate } from '../../src/compiler/generate.ts';
-import { validateRoundTrip } from '../../src/validate-roundtrip.ts';
-import { validateFactoryRoundTrip } from '../../src/validate-factory-roundtrip.ts';
+import { validateRoundTrip } from '../../src/validate/roundtrip.ts';
+import { validateFactoryRoundTrip } from '../../src/validate/factory-roundtrip.ts';
 
 const GRAMMARS = ['rust', 'typescript', 'python'] as const;
 

@@ -16,7 +16,7 @@
 
 import { describe, it, expect } from 'vitest'
 import type { Rule } from '../compiler/rule.ts'
-import { renderRuleTemplate, findRepeatFlag } from '../emitters/template-walker.ts'
+import { renderRuleTemplate, findRepeatFlag } from '../compiler/template-walker.ts'
 
 // ---------------------------------------------------------------------------
 // Tiny Rule-tree builders — keep tests readable.
