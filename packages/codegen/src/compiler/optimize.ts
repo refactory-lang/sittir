@@ -22,55 +22,73 @@ import { compileWordMatcher } from './common.ts'
 // optimize() — currently a passthrough
 // ---------------------------------------------------------------------------
 
-export function optimize(linked: LinkedGrammar): OptimizedGrammar {
-    // Optimize is a pipeline of non-lossy normalizations. Each pass
-    // receives the full rule map, rewrites in place, and hands off.
-    // Order matters: collapse wrappers first (smallest trees →
-    // cleaner downstream), then fan-out (expose nested choices),
-    // then factor (pull common prefixes/suffixes), then dedupe
-    // adjacent duplicates, then inline single-use hidden helpers.
+/**
+ * Run the full ordered pipeline of non-lossy normalization passes over the
+ * raw rule map from the linked grammar.
+ *
+ * @param rawRules - The rule map produced by the Link phase.
+ * @returns A new rule map after all normalization passes have been applied.
+ * @remarks
+ * Order matters: collapse wrappers first (smallest trees → cleaner
+ * downstream), then fan-out (expose nested choices), then factor (pull
+ * common prefixes/suffixes), then dedupe adjacent duplicates, then inline
+ * single-use hidden helpers, then re-collapse to flatten any degenerate
+ * wrappers introduced by the previous passes.
+ *
+ * Polymorph classification lives in Link (variant()-driven, with
+ * suggestion-only heuristic detection). This pipeline is simplification
+ * only — it MUST NOT silently classify rules as polymorphs because
+ * tree-sitter's parser-generator doesn't see these mutations and the parse
+ * tree wouldn't match the typed surface. Heuristic candidates that need
+ * promotion are surfaced via suggested.ts; the user authors variant() in
+ * overrides.ts to make them explicit.
+ */
+function applyNormalizationPasses(rawRules: Record<string, Rule>): Record<string, Rule> {
     let rules: Record<string, Rule> = {}
-    for (const [name, rule] of Object.entries(linked.rules)) {
+    for (const [name, rule] of Object.entries(rawRules)) {
         rules[name] = collapseWrappers(rule)           // T062
     }
     for (const name of Object.keys(rules)) {
         rules[name] = fanOutSeqChoices(rules[name]!)    // T060
     }
-    // Polymorph classification lives in Link (variant()-driven, with
-    // suggestion-only heuristic detection). Optimize is simplification
-    // only — it MUST NOT silently classify rules as polymorphs because
-    // tree-sitter's parser-generator doesn't see Optimize's mutations
-    // and the parse tree wouldn't match the typed surface. Heuristic
-    // candidates that need promotion are surfaced via suggested.ts;
-    // the user authors variant() in overrides.ts to make them explicit.
     for (const name of Object.keys(rules)) {
         rules[name] = factorChoiceBranches(rules[name]!)// T061
     }
     for (const name of Object.keys(rules)) {
         rules[name] = dedupeSeqMembers(rules[name]!)    // T064
     }
-    // T063: inline single-use hidden rules so a helper like
-    // `_call_signature` that's referenced from only one parent
-    // rule collapses into that parent's tree. Runs after the
-    // structural rewrites above so referenced content is already
-    // in its normal form. The pass returns a new rule map; deleted
-    // hidden kinds no longer appear.
-    rules = inlineSingleUseHidden(rules)
-    // Re-collapse after the structural rewrites — fan-out / factor
-    // / inlining can produce single-element seqs or choices that
-    // should flatten.
+    rules = inlineSingleUseHidden(rules)                  // T063
     for (const name of Object.keys(rules)) {
         rules[name] = collapseWrappers(rules[name]!)
     }
-    // Final pass: compute the derivation-only view for every rule.
-    // Downstream (`assemble` → AssembledBranch/Container/Group) reads
-    // from `simplifiedRules` instead of re-running `simplifyRule` in
-    // every constructor. Template emission still reads raw `rules`.
-    // Pass the grammar's own word-rule pattern so keyword-shape
-    // detection uses tree-sitter's lexical convention rather than
-    // `/^\w+$/`.
-    const wordMatcher = compileWordMatcher(linked.word, rules)
-    const simplifiedRules = simplifyRules(rules, wordMatcher)
+    return rules
+}
+
+/**
+ * Compute the derivation-only simplified view of every rule in the map,
+ * using the grammar's own word-rule pattern for keyword-shape detection.
+ *
+ * @param rules - The fully normalized rule map (output of normalization passes).
+ * @param word - The grammar's word rule name, or null if absent (used to compile the word matcher).
+ * @returns A new map containing the simplified form of each rule.
+ * @remarks
+ * Downstream (`assemble` → AssembledBranch/Container/Group) reads from
+ * `simplifiedRules` instead of re-running `simplifyRule` in every
+ * constructor. Template emission still reads raw `rules`. Passing the
+ * grammar's own word-rule pattern means keyword-shape detection uses
+ * tree-sitter's lexical convention rather than `/^\w+$/`.
+ */
+function computeSimplifiedRules(
+    rules: Record<string, Rule>,
+    word: string | null,
+): ReturnType<typeof simplifyRules> {
+    const wordMatcher = compileWordMatcher(word, rules)
+    return simplifyRules(rules, wordMatcher)
+}
+
+export function optimize(linked: LinkedGrammar): OptimizedGrammar {
+    const rules = applyNormalizationPasses(linked.rules)
+    const simplifiedRules = computeSimplifiedRules(rules, linked.word)
     return {
         name: linked.name,
         rules,
@@ -150,6 +168,62 @@ export function fanOutSeqChoices(rule: Rule): Rule {
 // ---------------------------------------------------------------------------
 
 /**
+ * Check whether every unwrapped choice branch is a `seq`, a requirement for
+ * common prefix/suffix factoring to be applicable.
+ *
+ * @param unwrapped - Choice branch rules with variant wrappers already removed.
+ * @returns `true` when there are at least two branches and every branch is a seq.
+ * @remarks
+ * A single non-seq branch means no common prefix/suffix is extractable.
+ * Factoring over fewer than two branches is a no-op.
+ */
+function canFactorAllBranchesAsSeqs(unwrapped: Rule[]): boolean {
+    if (unwrapped.length < 2) return false
+    return unwrapped.every(b => b.type === 'seq')
+}
+
+/**
+ * Partition the bodies of factored choice branches by emptiness and build the
+ * shared prefix and suffix slices.
+ *
+ * @param members - The original choice branch rules (may include variant wrappers).
+ * @param seqs - Each branch's member list, already unwrapped from variant.
+ * @param prefixLen - Number of leading elements shared across all branches.
+ * @param suffixLen - Number of trailing elements shared across all branches.
+ * @returns The common prefix, suffix, non-empty body rules, and an emptiness flag.
+ * @remarks
+ * `choice(seq(a,b,c), seq(a,c))` factors prefix=[a], suffix=[c], bodies=[[b], []];
+ * the empty body means "no b" → the caller wraps the inner choice in `optional`.
+ * Variant labels on branches are preserved in the returned nonEmpty rules.
+ */
+function extractFactoredChoiceBody(
+    members: Rule[],
+    seqs: Rule[][],
+    prefixLen: number,
+    suffixLen: number,
+): { prefix: Rule[]; suffix: Rule[]; nonEmpty: Rule[]; hasEmpty: boolean } {
+    const prefix = seqs[0]!.slice(0, prefixLen)
+    const suffix = prefixLen < seqs[0]!.length
+        ? seqs[0]!.slice(seqs[0]!.length - suffixLen)
+        : []
+    let hasEmpty = false
+    const nonEmpty: Rule[] = []
+    for (const m of members) {
+        const inner = m.type === 'variant' ? m.content : m
+        const s = (inner as import('./rule.ts').SeqRule).members
+        const body = s.slice(prefixLen, s.length - suffixLen)
+        if (body.length === 0) { hasEmpty = true; continue }
+        const bodyRule: Rule = body.length === 1
+            ? body[0]!
+            : { type: 'seq', members: body }
+        nonEmpty.push(m.type === 'variant'
+            ? { type: 'variant', name: m.name, content: bodyRule }
+            : bodyRule)
+    }
+    return { prefix, suffix, nonEmpty, hasEmpty }
+}
+
+/**
  * Pull common prefixes / suffixes out of a choice of seqs:
  *
  *   choice(seq(a, b, x), seq(a, b, y), seq(a, b, z))
@@ -163,39 +237,13 @@ export function factorChoiceBranches(rule: Rule): Rule {
     switch (rule.type) {
         case 'choice': {
             const members = rule.members.map(factorChoiceBranches)
-            // Can only factor when every branch (unwrapping variants)
-            // is a seq. A single non-seq branch means no common
-            // prefix/suffix is extractable.
             const unwrapped = members.map(m => m.type === 'variant' ? m.content : m)
-            if (unwrapped.length < 2) return { ...rule, members }
-            if (!unwrapped.every(b => b.type === 'seq')) return { ...rule, members }
+            if (!canFactorAllBranchesAsSeqs(unwrapped)) return { ...rule, members }
             const seqs = unwrapped.map(b => (b as import('./rule.ts').SeqRule).members)
             const prefixLen = findCommonPrefix(seqs)
             const suffixLen = findCommonSuffix(seqs, prefixLen)
             if (prefixLen === 0 && suffixLen === 0) return { ...rule, members }
-            // Build the factored choice and wrap with the shared prefix/suffix.
-            const prefix = seqs[0]!.slice(0, prefixLen)
-            const suffix = prefixLen < seqs[0]!.length
-                ? seqs[0]!.slice(seqs[0]!.length - suffixLen)
-                : []
-            // Separate empty-body branches (which represent "this path is
-            // optional") from non-empty ones. `choice(seq(a,b,c), seq(a,c))`
-            // factors prefix=[a], suffix=[c], bodies=[[b], []]; the empty
-            // body means "no b" → wrap the inner in `optional`.
-            let hasEmpty = false
-            const nonEmpty: Rule[] = []
-            for (const m of members) {
-                const inner = m.type === 'variant' ? m.content : m
-                const s = (inner as import('./rule.ts').SeqRule).members
-                const body = s.slice(prefixLen, s.length - suffixLen)
-                if (body.length === 0) { hasEmpty = true; continue }
-                const bodyRule: Rule = body.length === 1
-                    ? body[0]!
-                    : { type: 'seq', members: body }
-                nonEmpty.push(m.type === 'variant'
-                    ? { type: 'variant', name: m.name, content: bodyRule }
-                    : bodyRule)
-            }
+            const { prefix, suffix, nonEmpty, hasEmpty } = extractFactoredChoiceBody(members, seqs, prefixLen, suffixLen)
             if (nonEmpty.length === 0) {
                 // Every branch was empty → prefix/suffix already cover it.
                 return outerFromParts(prefix, suffix)
@@ -295,41 +343,80 @@ export function dedupeSeqMembers(rule: Rule): Rule {
 export function inlineSingleUseHidden(rules: Record<string, Rule>): Record<string, Rule> {
     // Work on a shallow copy — we mutate entries and delete keys.
     const work: Record<string, Rule> = { ...rules }
+    iterateInliningToFixedPoint(work)
+    return work
+}
 
-    // One pass is usually enough; iterate a few times to catch
-    // cascading opportunities (parent inlined → new single-use
-    // child exposed).
+/**
+ * Repeatedly scan the rule map for single-use hidden rules and inline them
+ * into their one parent, iterating until no further inlining is possible.
+ *
+ * @param work - The mutable rule map to update in place.
+ * @remarks
+ * One pass is usually enough; up to four iterations catch cascading
+ * opportunities where a parent being inlined exposes a new single-use child.
+ * The loop breaks early when a full pass produces no changes.
+ */
+function iterateInliningToFixedPoint(work: Record<string, Rule>): void {
     for (let pass = 0; pass < 4; pass++) {
         const refCounts = countReferences(work)
         let changed = false
         for (const [name, rule] of Object.entries(work)) {
             // Only hidden helpers are candidates.
             if (!name.startsWith('_')) continue
-            // Don't inline structurally meaningful rule types —
-            // they carry explicit classification that downstream
-            // relies on.
-            if (rule.type === 'supertype' || rule.type === 'polymorph' ||
-                rule.type === 'enum' || rule.type === 'terminal' ||
-                rule.type === 'group') continue
+            if (isStructurallyMeaningfulHiddenRule(rule)) continue
             const uses = refCounts.get(name) ?? 0
             if (uses !== 1) continue
-            // Find the parent that references `name` and splice
-            // the hidden rule's body in place of the symbol ref.
-            for (const [parentName, parentRule] of Object.entries(work)) {
-                if (parentName === name) continue
-                const replaced = replaceSymbolRef(parentRule, name, rule)
-                if (replaced !== parentRule) {
-                    work[parentName] = replaced
-                    delete work[name]
-                    changed = true
-                    break
-                }
+            if (spliceHiddenRuleIntoSingleParent(work, name, rule)) {
+                changed = true
             }
         }
         if (!changed) break
     }
+}
 
-    return work
+/**
+ * Determine whether a hidden rule carries explicit structural classification
+ * that downstream phases rely on, making it ineligible for inlining.
+ *
+ * @param rule - The rule to test.
+ * @returns `true` when the rule must be preserved as its own map entry.
+ * @remarks
+ * Rules of type `supertype`, `polymorph`, `enum`, `terminal`, and `group`
+ * already have explicit structural meaning. Only raw `seq`, `choice`,
+ * `optional`, and `repeat` helpers get inlined.
+ */
+function isStructurallyMeaningfulHiddenRule(rule: Rule): boolean {
+    return rule.type === 'supertype' || rule.type === 'polymorph' ||
+        rule.type === 'enum' || rule.type === 'terminal' ||
+        rule.type === 'group'
+}
+
+/**
+ * Find the single parent that holds a symbol reference to a hidden rule,
+ * replace the symbol ref with the hidden rule's body, and delete the hidden
+ * entry from the map.
+ *
+ * @param work - The mutable rule map to update in place.
+ * @param name - The name of the hidden rule to inline.
+ * @param rule - The hidden rule's current content.
+ * @returns `true` when a parent was found and the inline succeeded.
+ */
+function spliceHiddenRuleIntoSingleParent(
+    work: Record<string, Rule>,
+    name: string,
+    rule: Rule,
+): boolean {
+    for (const [parentName, parentRule] of Object.entries(work)) {
+        if (parentName === name) continue
+        const replaced = replaceSymbolRef(parentRule, name, rule)
+        if (replaced !== parentRule) {
+            work[parentName] = replaced
+            delete work[name]
+            return true
+        }
+    }
+    return false
 }
 
 /**

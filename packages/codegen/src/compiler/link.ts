@@ -14,6 +14,7 @@ import type {
     Rule, SymbolRef,
     FieldRule, SupertypeRule, EnumRule, ClauseRule, GroupRule,
     SeqRule, ChoiceRule, VariantRule, PolymorphRule,
+    Repeat1Rule, SymbolRule, StringRule,
 } from './rule.ts'
 import { isField, isSeq, isChoice, isString, isVariant } from './rule.ts'
 import type {
@@ -31,12 +32,7 @@ import type { PolymorphVariant } from './types.ts'
 
 export function link(raw: RawGrammar, include?: IncludeFilter): LinkedGrammar {
     const supertypes = new Set(raw.supertypes)
-    // Seed from raw.externalRoles — populated by `evaluate.ts`'s
-    // grammarFn from `role()` calls inside the override file's
-    // externals/rules callbacks. Falls back to the legacy
-    // structural-detection path in `resolveRule` for grammars that
-    // still declare `_indent: ($) => role('indent')` style dummy rules.
-    const externalRoles = new Map<string, ExternalRole>(raw.externalRoles ?? [])
+    const externalRoles = buildExternalRolesMap(raw.externalRoles)
     const references = [...raw.references]
 
     // Resolve include defaults: undefined means "include everything".
@@ -59,25 +55,8 @@ export function link(raw: RawGrammar, include?: IncludeFilter): LinkedGrammar {
         rules[name] = resolveRule(rule, name, raw.rules, supertypes, externalRoles)
     }
 
-    // Role-annotated rules (`_indent: ($) => role('indent')`) have done
-    // their job: every `$._indent` reference in the rule tree was
-    // inlined to an `indent` node by `resolveRule`. Strip the top-level
-    // entries so Assemble doesn't try to classify them as real kinds.
-    for (const name of Object.keys(rules)) {
-        const r = rules[name]!
-        if (r.type === 'indent' || r.type === 'dedent' || r.type === 'newline') {
-            delete rules[name]
-        }
-    }
-
-    // Create synthetic rules for external tokens that have no grammar rule
-    // These are declared in grammar.externals but have no rule body
-    // Per design doc: externals are grammar-level declarations — Link creates leaf rules for them
-    for (const ext of raw.externals) {
-        if (!rules[ext]) {
-            rules[ext] = { type: 'pattern', value: '' } as Rule
-        }
-    }
+    stripResolvedRoleRules(rules)
+    createSyntheticExternalRules(rules, raw.externals)
 
     // Create synthetic rules for named aliases
     // alias($.x, $.y) creates a node with kind 'y' that mirrors 'x's structure
@@ -92,65 +71,9 @@ export function link(raw: RawGrammar, include?: IncludeFilter): LinkedGrammar {
     // (assemble) use this map to rewrite supertype subtype lists.
     const aliasedHiddenKinds = collectAliasedHiddenKinds(raw.rules)
 
-    // Classify hidden rules that weren't already resolved. Log every
-    // `promoted` classification (enum / supertype) so the suggested.ts
-    // emitter can surface it. Hold back the mutation if `include.rules`
-    // excludes `promoted`. A kind is "hidden" when its name starts
-    // with `_` OR appears in the grammar's `inline:` array — the
-    // latter catches grammars that don't follow the convention.
-    for (const [name, rule] of Object.entries(rules)) {
-        // Classify hidden kinds (underscore-prefixed / inlined) AND
-        // rules the grammar explicitly declares in its `supertypes:`
-        // list. Tree-sitter's supertype feature marks visible rules
-        // whose CST node never appears — the subtypes surface directly.
-        // Without this, a visible supertype like ts `primary_type` falls
-        // through to the polymorph promoter and gets a bogus 20-form
-        // variants map when it should be a single SupertypeRule.
-        if (isHiddenKind(name, raw.inline) || supertypes.has(name)) {
-            const classified = classifyHiddenRule(name, rule, supertypes, references)
-            if (classified !== rule
-                && (classified.type === 'enum' || classified.type === 'supertype')
-                && (classified.source === 'promoted' || classified.source === 'grammar')) {
-                derivations.promotedRules.push({
-                    kind: name,
-                    classification: classified.type,
-                    applied: applyPromotedRules,
-                })
-                if (applyPromotedRules) rules[name] = classified
-            } else {
-                rules[name] = classified
-            }
-        }
-    }
-
-    // Promote pure-terminal rules (no fields, no symbol references) to
-    // TerminalRule. Always logged; applied only when `include.rules`
-    // permits `promoted`.
-    for (const [name, rule] of Object.entries(rules)) {
-        if (isTerminalShape(rule)) {
-            derivations.promotedRules.push({
-                kind: name,
-                classification: 'terminal',
-                applied: applyPromotedRules,
-            })
-            if (applyPromotedRules) {
-                rules[name] = { type: 'terminal', content: rule, source: 'promoted' } as Rule
-            }
-        }
-    }
-
-    // Field name inference — analysis only (suggestion surface).
-    // Previously this phase mutated rules by wrapping bare symbol refs
-    // as field(X, $.Y) wrappers. Spec 007 moved field coverage to the
-    // override-compiled parser: transform() patches in overrides.ts +
-    // enrich() mechanical passes now carry all field labels natively.
-    // The analysis is preserved for suggested-overrides.ts output.
-    const inferredFieldNames = inferFieldNames(references)
-    for (const [name, rule] of Object.entries(rules)) {
-        applyInferredFields(
-            rule, name, inferredFieldNames, false, derivations.inferredFields, false,
-        )
-    }
+    classifyAndLogHiddenRules(rules, raw.inline, supertypes, references, derivations, applyPromotedRules)
+    promoteAndLogTerminalRules(rules, derivations, applyPromotedRules)
+    runFieldNameInferencePass(rules, references, derivations)
 
     // Keyword-prefix promotion moved to dsl/enrich.ts (spec 006).
     // Previously this phase wrapped `optional(keywordString)` seq
@@ -161,50 +84,8 @@ export function link(raw: RawGrammar, include?: IncludeFilter): LinkedGrammar {
     // files that wrap their base in `enrich(base)` get it automatically,
     // and the Link phase no longer mutates rules for this purpose.
 
-    // Tag visible choices with `variant` wrappers — names every branch
-    // and dedupes structurally identical ones. Hidden choices already
-    // resolved into supertype/enum/inline by `classifyHiddenRule`.
-    for (const [name, rule] of Object.entries(rules)) {
-        rules[name] = tagVariants(rule, name, raw.inline)
-    }
-
-    // Polymorph detection — suggestion-only (spec 007).
-    // Previously mutated rules by wrapping heterogeneous-field choices
-    // in PolymorphRule. Now kept as analysis for suggested-overrides.ts.
-    // Nested-alias conversion will be a follow-up spec.
-    for (const [name, rule] of Object.entries(rules)) {
-        const result = promotePolymorph(rule)
-        if (result !== rule) {
-            derivations.promotedRules.push({
-                kind: name,
-                classification: 'polymorph',
-                applied: false,
-            })
-            continue
-        }
-        // Inferred polymorph candidate — a choice whose branches are
-        // structurally distinguishable (field sets differ OR branches
-        // reference distinct named kinds). Surface it so the suggester
-        // can emit a `variant()` snippet. `findPolymorphCandidate` runs
-        // its own `looksLikePolymorphCandidate` check; a return value
-        // here means the rule is genuinely a candidate.
-        const allCandidates = findAllPolymorphCandidates(rule)
-        if (allCandidates.length > 0) {
-            derivations.promotedRules.push({
-                kind: name,
-                classification: 'polymorph',
-                applied: false,
-                polymorphCandidates: allCandidates.map(c => ({
-                    choiceArmCount: c.choice.members.length,
-                    armNames: c.choice.members.map((m, i) =>
-                        m.type === 'variant' ? m.name : `form${i}`
-                    ),
-                    path: c.path,
-                    fieldWrapperName: c.fieldWrapperName,
-                })),
-            })
-        }
-    }
+    tagAllRulesVariants(rules, raw.inline)
+    detectAndLogPolymorphs(rules, derivations)
 
     // Override-source polymorph classification — variant() metadata.
     // Per feedback (memory: feedback_polymorph_in_link): classification
@@ -255,6 +136,233 @@ export function link(raw: RawGrammar, include?: IncludeFilter): LinkedGrammar {
     }
 }
 
+// ---------------------------------------------------------------------------
+// link() sub-step helpers
+// ---------------------------------------------------------------------------
+
+/**
+ * Seed the external-roles map from pre-bound override declarations.
+ *
+ * @param rawExternalRoles - Map populated by `evaluate.ts`'s `grammarFn`
+ *   from `role()` calls inside the override file's `externals`/`rules` callbacks.
+ * @returns A mutable map used by `resolveRule` during symbol inlining. Falls
+ *   back to the legacy structural-detection path in `resolveRule` for grammars
+ *   that still declare `_indent: ($) => role('indent')` style dummy rules.
+ */
+function buildExternalRolesMap(
+    rawExternalRoles: Map<string, ExternalRole> | undefined,
+): Map<string, ExternalRole> {
+    return rawExternalRoles ? new Map<string, ExternalRole>(rawExternalRoles) : new Map<string, ExternalRole>()
+}
+
+/**
+ * Strip role-annotated rules from the resolved rules map.
+ *
+ * @param rules - Mutable resolved rules map; entries with a whitespace-role
+ *   type (`indent`, `dedent`, `newline`) are deleted in place.
+ * @remarks
+ *   Role-annotated rules (`_indent: ($) => role('indent')`) have done their
+ *   job after `resolveRule`: every `$._indent` reference in the rule tree was
+ *   inlined to an `indent` node. Strip the top-level entries so Assemble
+ *   doesn't try to classify them as real kinds.
+ */
+function stripResolvedRoleRules(rules: Record<string, Rule>): void {
+    for (const name of Object.keys(rules)) {
+        const r = rules[name]!
+        if (r.type === 'indent' || r.type === 'dedent' || r.type === 'newline') {
+            delete rules[name]
+        }
+    }
+}
+
+/**
+ * Create synthetic pattern rules for external tokens that have no grammar rule.
+ *
+ * @param rules - Mutable resolved rules map; missing entries are added in place.
+ * @param externals - External token names declared in `grammar.externals`.
+ * @remarks
+ *   External tokens are declared at the grammar level but have no rule body.
+ *   Per design: Link creates empty pattern leaf rules for them so downstream
+ *   phases (Assemble, codegen) see them as known leaf kinds.
+ */
+function createSyntheticExternalRules(rules: Record<string, Rule>, externals: readonly string[]): void {
+    for (const ext of externals) {
+        if (!rules[ext]) {
+            rules[ext] = { type: 'pattern', value: '' } as Rule
+        }
+    }
+}
+
+/**
+ * Classify every hidden or grammar-declared-supertype rule and record it in
+ * the derivation log.
+ *
+ * @param rules - Mutable resolved rules map; entries are replaced when
+ *   classification succeeds and `applyPromotedRules` is true.
+ * @param inline - Names listed in `grammar.inline`; they are hidden even
+ *   without an underscore prefix.
+ * @param supertypes - Set of kind names explicitly declared in `grammar.supertypes`.
+ * @param references - Symbol-reference list used by `classifyHiddenRule`.
+ * @param derivations - Derivation log; promoted classifications are appended.
+ * @param applyPromotedRules - When false, classifications are logged but the
+ *   rule map is NOT mutated.
+ * @remarks
+ *   A kind is "hidden" when its name starts with `_` OR appears in the
+ *   grammar's `inline:` array — the latter catches grammars that don't follow
+ *   the convention. Tree-sitter's supertype feature marks visible rules whose
+ *   CST node never appears — classifying them here prevents the polymorph
+ *   promoter from producing bogus variant maps for kinds like ts `primary_type`
+ *   that should be a single SupertypeRule.
+ */
+function classifyAndLogHiddenRules(
+    rules: Record<string, Rule>,
+    inline: readonly string[] | undefined,
+    supertypes: Set<string>,
+    references: SymbolRef[],
+    derivations: DerivationLog,
+    applyPromotedRules: boolean,
+): void {
+    for (const [name, rule] of Object.entries(rules)) {
+        if (isHiddenKind(name, inline) || supertypes.has(name)) {
+            const classified = classifyHiddenRule(name, rule, supertypes, references)
+            if (classified !== rule
+                && (classified.type === 'enum' || classified.type === 'supertype')
+                && (classified.source === 'promoted' || classified.source === 'grammar')) {
+                derivations.promotedRules.push({
+                    kind: name,
+                    classification: classified.type,
+                    applied: applyPromotedRules,
+                })
+                if (applyPromotedRules) rules[name] = classified
+            } else {
+                rules[name] = classified
+            }
+        }
+    }
+}
+
+/**
+ * Promote pure-terminal rules to `TerminalRule` and record each in the
+ * derivation log.
+ *
+ * @param rules - Mutable resolved rules map; terminal entries are wrapped in
+ *   place when `applyPromotedRules` is true.
+ * @param derivations - Derivation log; terminal classifications are appended.
+ * @param applyPromotedRules - When false, promotions are logged but the rule
+ *   map is NOT mutated.
+ * @remarks
+ *   A pure-terminal rule has no fields and no symbol references — tree-sitter
+ *   exposes such a kind as a plain text node at parse time. Always logged;
+ *   applied only when `include.rules` permits `promoted`.
+ */
+function promoteAndLogTerminalRules(
+    rules: Record<string, Rule>,
+    derivations: DerivationLog,
+    applyPromotedRules: boolean,
+): void {
+    for (const [name, rule] of Object.entries(rules)) {
+        if (isTerminalShape(rule)) {
+            derivations.promotedRules.push({
+                kind: name,
+                classification: 'terminal',
+                applied: applyPromotedRules,
+            })
+            if (applyPromotedRules) {
+                rules[name] = { type: 'terminal', content: rule, source: 'promoted' } as Rule
+            }
+        }
+    }
+}
+
+/**
+ * Run field-name inference analysis and record findings in the derivation log.
+ *
+ * @param rules - Resolved rules map; not mutated (analysis only).
+ * @param references - Symbol-reference list used to infer consistent field names.
+ * @param derivations - Derivation log; inferred-field entries are appended.
+ * @remarks
+ *   Previously this phase mutated rules by wrapping bare symbol refs as
+ *   `field(X, $.Y)` wrappers. Spec 007 moved field coverage to the
+ *   override-compiled parser: `transform()` patches in `overrides.ts` +
+ *   `enrich()` mechanical passes now carry all field labels natively.
+ *   The analysis is preserved for `suggested-overrides.ts` output.
+ */
+function runFieldNameInferencePass(
+    rules: Record<string, Rule>,
+    references: SymbolRef[],
+    derivations: DerivationLog,
+): void {
+    const inferredFieldNames = inferFieldNames(references)
+    for (const [name, rule] of Object.entries(rules)) {
+        applyInferredFields(
+            rule, name, inferredFieldNames, false, derivations.inferredFields, false,
+        )
+    }
+}
+
+/**
+ * Wrap visible choice members in `variant` nodes across every rule in the map.
+ *
+ * @param rules - Mutable resolved rules map; entries are replaced with
+ *   variant-tagged equivalents in place.
+ * @param inline - Names listed in `grammar.inline`; they are treated as hidden
+ *   and their choices are NOT variant-wrapped.
+ * @remarks
+ *   Hidden choices were already resolved into supertype/enum/inline by
+ *   `classifyHiddenRule`. Only visible choices receive variant wrappers that
+ *   name every branch and deduplicate structurally identical ones.
+ */
+function tagAllRulesVariants(rules: Record<string, Rule>, inline: readonly string[] | undefined): void {
+    for (const [name, rule] of Object.entries(rules)) {
+        rules[name] = tagVariants(rule, name, inline)
+    }
+}
+
+/**
+ * Run polymorph detection across all rules and record candidates in the
+ * derivation log.
+ *
+ * @param rules - Resolved rules map; not mutated (suggestion-only pass).
+ * @param derivations - Derivation log; polymorph candidates are appended.
+ * @remarks
+ *   Previously mutated rules by wrapping heterogeneous-field choices in
+ *   `PolymorphRule`. As of spec 007 this is analysis-only for
+ *   `suggested-overrides.ts`. For rules where `promotePolymorph` returns a
+ *   new rule the derivation is logged as `applied: false` (suggestion). For
+ *   others, `findAllPolymorphCandidates` surfaces structurally-distinguishable
+ *   choices that a grammar author could promote with an explicit `variant()`
+ *   override.
+ */
+function detectAndLogPolymorphs(rules: Record<string, Rule>, derivations: DerivationLog): void {
+    for (const [name, rule] of Object.entries(rules)) {
+        const result = promotePolymorph(rule)
+        if (result !== rule) {
+            derivations.promotedRules.push({
+                kind: name,
+                classification: 'polymorph',
+                applied: false,
+            })
+            continue
+        }
+        const allCandidates = findAllPolymorphCandidates(rule)
+        if (allCandidates.length > 0) {
+            derivations.promotedRules.push({
+                kind: name,
+                classification: 'polymorph',
+                applied: false,
+                polymorphCandidates: allCandidates.map(c => ({
+                    choiceArmCount: c.choice.members.length,
+                    armNames: c.choice.members.map((m, i) =>
+                        m.type === 'variant' ? m.name : `form${i}`
+                    ),
+                    path: c.path,
+                    fieldWrapperName: c.fieldWrapperName,
+                })),
+            })
+        }
+    }
+}
+
 /**
  * Walk the raw (pre-Link) rule tree and return a map of
  * `hiddenRuleName → aliasTargetName` for every rule whose body is a
@@ -291,23 +399,22 @@ function extractTopLevelAliasTarget(rule: Rule): string | undefined {
  *
  * Walks through transparent wrappers (variant/group/clause/token/terminal)
  * so patterns like `alias(token($.inner), $.target)` still resolve.
+ *
+ * @remarks
+ *   Hidden symbols (`$._match_block`) are valid alias sources — they still
+ *   have concrete shape interfaces emitted from Assemble and are the canonical
+ *   type factories/types surface. Tree-sitter emits `_match_block`'s body
+ *   structure at the node labeled `block` per `alias($._match_block, $.block)`,
+ *   and the drillAs layer rewrites `$type` at wrap time so downstream sees the
+ *   source kind.
+ *
+ *   Supertypes (`alias($.expression, $.as_pattern_target)`) are NOT valid alias
+ *   sources: supertypes are abstract unions with no concrete shape of their own.
+ *   Tree-sitter uses them to mean "parse anything in the expression grammar at
+ *   this slot, label the result `as_pattern_target`". Using the supertype as
+ *   canonical would strip the concrete kind the runtime actually produces.
  */
 function extractAliasedFromName(content: Rule, supertypes: Set<string>): string | undefined {
-    // Hidden symbols (`$._match_block`) are valid alias sources — they
-    // still have concrete shape interfaces emitted from Assemble and are
-    // the canonical type we want factories/types to surface. Tree-sitter
-    // itself emits `_match_block`'s body structure at the node labeled
-    // `block` per `alias($._match_block, $.block)`, and the drillAs
-    // layer rewrites $type at wrap time so downstream sees the source
-    // kind.
-    //
-    // Supertypes (`alias($.expression, $.as_pattern_target)`) are NOT valid
-    // alias sources: supertypes are abstract unions with no concrete shape
-    // of their own. Tree-sitter uses them here to mean "parse anything in
-    // the expression grammar at this slot, label the result
-    // `as_pattern_target`". The target is the thing with a real shape; the
-    // source is just a grammar-position tag. Using the supertype as
-    // canonical would strip the concrete kind the runtime actually produces.
     if (content.type === 'symbol') {
         if (supertypes.has(content.name)) return undefined
         return content.name
@@ -510,36 +617,73 @@ export function promotePolymorph(rule: Rule): Rule {
     if (!found) return rule
     const { choice, prefix, suffix } = found
 
-    // Every variant must be DISTINGUISHABLE at the parse tree — runtime
-    // dispatch needs to tell the variants apart. A branch qualifies when
-    // any of:
-    //   - it carries inner fields,
-    //   - it has named children,
-    //   - it references a named grammar kind (bare symbol / supertype) —
-    //     tree-sitter surfaces those as a distinct `$type`, so the parse
-    //     tree alone identifies the variant.
-    // Previously the check only allowed (1) + (2), which mistakenly
-    // rejected `choice($.wildcard_import, $._import_list, seq('(', ...))`
-    // and similar — a named-symbol branch is legitimate polymorph content.
     const contents = choice.members.map(m => m.type === 'variant' ? m.content : m)
+    if (!allVariantContentsAreDistinguishable(contents)) return rule
+    if (variantFieldSetsAreHomogeneous(contents)) return rule
+    return buildPolymorphFromFusedForms(choice, prefix, suffix)
+}
+
+/**
+ * Return true when every variant content rule is parse-tree distinguishable.
+ *
+ * @param contents - Unwrapped contents of each choice member (variant wrappers
+ *   already stripped).
+ * @returns `true` when every content can be told apart at parse time; `false`
+ *   when at least one arm is indistinguishable, which disqualifies polymorph
+ *   promotion.
+ * @remarks
+ *   A branch is distinguishable when any of:
+ *   - it carries inner fields,
+ *   - it has named children,
+ *   - it references a named grammar kind (bare visible symbol or supertype) —
+ *     tree-sitter surfaces those as a distinct `$type`, so the parse tree alone
+ *     identifies the variant.
+ *   Previously the check only allowed (1) + (2), which mistakenly rejected
+ *   `choice($.wildcard_import, $._import_list, seq('(', ...))` and similar —
+ *   a named-symbol branch is legitimate polymorph content.
+ */
+function allVariantContentsAreDistinguishable(contents: Rule[]): boolean {
     const isDistinguishable = (c: Rule): boolean =>
         hasAnyField(c)
         || hasAnyChild(c)
         || (c.type === 'symbol' && !c.hidden)
         || c.type === 'supertype'
-    const anyIndistinguishable = contents.some(c => !isDistinguishable(c))
-    if (anyIndistinguishable) return rule
+    return contents.every(isDistinguishable)
+}
 
-    // Compare field SETS across variants. Polymorph only applies when the
-    // sets differ — homogeneous variants stay as a regular branch.
+/**
+ * Return true when the field sets across all variant contents are identical.
+ *
+ * @param contents - Unwrapped contents of each choice member.
+ * @returns `true` when all variants share the same field-name set, meaning
+ *   polymorph promotion is unnecessary (homogeneous variants stay as a regular
+ *   branch). Returns `false` when at least one variant differs, qualifying the
+ *   choice for polymorph promotion.
+ */
+function variantFieldSetsAreHomogeneous(contents: Rule[]): boolean {
     const fieldSets = contents.map(c => new Set(deriveFields(c).map(f => f.name)))
-    const allSame = fieldSets.every(s => setsEqual(s, fieldSets[0]!))
-    if (allSame) return rule
+    return fieldSets.every(s => setsEqual(s, fieldSets[0]!))
+}
 
-    // Fuse non-variant prefix/suffix members (e.g. an outer `field('left')`
-    // that sits before a `seq(field('left'), choice(...))`) into each form's
-    // content so every form renders a complete shape. Without this, python's
-    // `assignment` polymorph drops $LEFT from all three variants.
+/**
+ * Build a `PolymorphRule` from the choice members, fusing prefix/suffix seq
+ * members into each form's content.
+ *
+ * @param choice - The variant-wrapped choice rule to promote.
+ * @param prefix - Seq members from the enclosing seq that precede the choice.
+ * @param suffix - Seq members from the enclosing seq that follow the choice.
+ * @returns A new `PolymorphRule` with `source: 'promoted'` whose forms each
+ *   include the fused prefix and suffix so every form renders a complete shape.
+ * @remarks
+ *   Without fusion, python's `assignment` polymorph would drop `$LEFT` from
+ *   all three variants because the `field('left', ...)` member sits before the
+ *   choice in the enclosing seq and would otherwise be omitted from each form.
+ */
+function buildPolymorphFromFusedForms(
+    choice: ChoiceRule,
+    prefix: Rule[],
+    suffix: Rule[],
+): PolymorphRule {
     const fuse = (inner: Rule): Rule => {
         if (prefix.length === 0 && suffix.length === 0) return inner
         const members = [...prefix, inner, ...suffix]
@@ -592,24 +736,7 @@ export function applyOverridePolymorphs(
         const found = findVariantChoice(rule)
         if (!found) continue
 
-        // Collision detection (T032 follow-up; user feedback 2026-04-16):
-        // The variant() naming convention produces visible kinds named
-        // `${parentKind}_${child}` (the alias target tree-sitter creates).
-        // Emit each variant child as a derivation so the suggested.ts
-        // emitter can surface them — this gives users visibility into
-        // what tree-sitter's parse tree carries vs what sittir's typed
-        // surface presents. Without this, readNode would have to infer
-        // polymorph-internal shape from grammar-specific knowledge.
-        for (const child of children) {
-            const variantChildKind = `${parentKind}_${child}`
-            // Inform downstream that this kind exists in the parse tree
-            // as the variant child for the polymorph parent.
-            derivations.promotedRules.push({
-                kind: variantChildKind,
-                classification: 'polymorph',
-                applied: true,
-            })
-        }
+        emitVariantChildDerivations(parentKind, children, derivations)
 
         const forms = children.map(child => {
             const fullName = `${parentKind}_${child}`
@@ -639,6 +766,36 @@ export function applyOverridePolymorphs(
 
         derivations.promotedRules.push({
             kind: parentKind,
+            classification: 'polymorph',
+            applied: true,
+        })
+    }
+}
+
+/**
+ * Emit derivation log entries for each variant child kind of a polymorph parent.
+ *
+ * @param parentKind - The grammar kind that owns the polymorph.
+ * @param children - Short child suffixes from `variant()` declarations; each
+ *   produces a visible kind named `${parentKind}_${child}` in the parse tree.
+ * @param derivations - Derivation log; one entry per child is appended.
+ * @remarks
+ *   The `variant()` naming convention produces visible kinds named
+ *   `${parentKind}_${child}` (the alias target tree-sitter creates). Emitting
+ *   each as a derivation gives `suggested.ts` visibility into what the parse
+ *   tree carries vs what sittir's typed surface presents. Without this,
+ *   `readNode` would have to infer polymorph-internal shape from
+ *   grammar-specific knowledge.
+ */
+function emitVariantChildDerivations(
+    parentKind: string,
+    children: string[],
+    derivations: DerivationLog,
+): void {
+    for (const child of children) {
+        const variantChildKind = `${parentKind}_${child}`
+        derivations.promotedRules.push({
+            kind: variantChildKind,
             classification: 'polymorph',
             applied: true,
         })
@@ -1119,16 +1276,7 @@ function resolveRule(
             }
 
         case 'repeat1':
-            // Preserve repeat1 through Link — downstream derivation
-            // reads the `repeat1` type to stamp `nonEmpty: true` on
-            // the resulting AssembledField / AssembledChild so the
-            // emitter can render non-empty tuple types for those
-            // slots. (Earlier builds collapsed repeat1 → repeat here
-            // unconditionally, which erased the non-empty signal.)
-            return {
-                ...rule,
-                content: resolveRule(rule.content, currentName, allRules, supertypes, externalRoles),
-            }
+            return resolveRepeat1PreservingNonEmpty(rule, currentName, allRules, supertypes, externalRoles)
 
         case 'field':
             return {
@@ -1142,41 +1290,12 @@ function resolveRule(
 
         case 'alias':
             if (rule.named && rule.value && !rule.value.startsWith('_')) {
-                // Preserve alias provenance: the content is typically a
-                // symbol referencing the original (aliased-from) kind;
-                // walk to find it so the wrap emitter can rewrite $type
-                // at drill-in via drillAs(). See ADR-0006.
-                const aliasedFrom = extractAliasedFromName(rule.content, supertypes)
-                const sym: import('./rule.ts').SymbolRule = aliasedFrom
-                    ? { type: 'symbol', name: rule.value, aliasedFrom }
-                    : { type: 'symbol', name: rule.value }
-                return sym as unknown as Rule
+                return resolveNamedAliasWithProvenance(rule.content, rule.value, supertypes)
             }
             return resolveRule(rule.content, currentName, allRules, supertypes, externalRoles)
 
-        case 'symbol': {
-            // Pre-bound role lookup: when the override declared the
-            // role inline via `role($._indent, 'indent')` in externals,
-            // raw.externalRoles seeded the map with the binding before
-            // resolveRule ran. Inline a role node so template emitters
-            // render real newlines/indents.
-            const preBound = externalRoles.get(rule.name)
-            if (preBound) {
-                return { type: preBound.role } as Rule
-            }
-            // Legacy structural detection: when a grammar declares a
-            // dummy rule like `_foo: ($) => role('indent')`, the rule
-            // body is a direct `indent`/`dedent`/`newline` node.
-            // Inline it and record the binding for downstream consumers.
-            const target = allRules[rule.name]
-            if (target && (target.type === 'indent' || target.type === 'dedent' || target.type === 'newline')) {
-                externalRoles.set(rule.name, { role: target.type })
-                return target
-            }
-            // Visible symbols stay as symbols (they're named children)
-            // Hidden symbols: check for inline/supertype/enum/group
-            return rule
-        }
+        case 'symbol':
+            return resolveSymbolRoleOrPass(rule, allRules, externalRoles)
 
         // These pass through unchanged
         case 'string':
@@ -1196,6 +1315,99 @@ function resolveRule(
     }
 }
 
+/**
+ * Resolve a `repeat1` rule while preserving the `repeat1` type through Link.
+ *
+ * @param rule - The `repeat1` rule to resolve.
+ * @param currentName - Name of the rule being resolved (for error context).
+ * @param allRules - Full grammar rule map.
+ * @param supertypes - Set of grammar-declared supertype names.
+ * @param externalRoles - Pre-bound external role map (mutated by role detection).
+ * @returns The resolved repeat1 rule with its content recursively resolved.
+ * @remarks
+ *   Downstream derivation reads the `repeat1` type to stamp `nonEmpty: true`
+ *   on the resulting `AssembledField` / `AssembledChild` so the emitter can
+ *   render non-empty tuple types for those slots. Earlier builds collapsed
+ *   `repeat1` → `repeat` here unconditionally, which erased the non-empty
+ *   signal.
+ */
+function resolveRepeat1PreservingNonEmpty(
+    rule: Repeat1Rule,
+    currentName: string,
+    allRules: Record<string, Rule>,
+    supertypes: Set<string>,
+    externalRoles: Map<string, ExternalRole>,
+): Rule {
+    return {
+        ...rule,
+        content: resolveRule(rule.content, currentName, allRules, supertypes, externalRoles),
+    }
+}
+
+/**
+ * Resolve a named alias to a symbol rule that carries aliased-from provenance.
+ *
+ * @param content - The body of the alias (typically a symbol referencing the
+ *   original kind).
+ * @param targetName - The alias target kind name (the visible kind produced in
+ *   the parse tree).
+ * @param supertypes - Set of supertype names; supertypes are not valid
+ *   aliased-from sources.
+ * @returns A `SymbolRule` for `targetName`, with `aliasedFrom` set when the
+ *   body resolves to a concrete non-supertype symbol.
+ * @remarks
+ *   Preserving alias provenance lets the wrap emitter rewrite `$type` at
+ *   drill-in via `drillAs()`. See ADR-0006.
+ */
+function resolveNamedAliasWithProvenance(
+    content: Rule,
+    targetName: string,
+    supertypes: Set<string>,
+): Rule {
+    const aliasedFrom = extractAliasedFromName(content, supertypes)
+    const sym: SymbolRule = aliasedFrom
+        ? { type: 'symbol', name: targetName, aliasedFrom }
+        : { type: 'symbol', name: targetName }
+    return sym as unknown as Rule
+}
+
+/**
+ * Resolve a symbol rule, inlining it when it references an external role token.
+ *
+ * @param rule - The symbol rule to resolve.
+ * @param allRules - Full grammar rule map used for legacy structural detection.
+ * @param externalRoles - Pre-bound external role map; entries are added when
+ *   a dummy role rule is detected (legacy path).
+ * @returns An inlined role rule (`indent`/`dedent`/`newline`) when the symbol
+ *   resolves to an external role; the original symbol rule otherwise.
+ * @remarks
+ *   Two resolution paths:
+ *   - Pre-bound: the override declared the role via `role($._indent, 'indent')`
+ *     in `externals`; `raw.externalRoles` seeded the map before `resolveRule`
+ *     ran. Inline a role node so template emitters render real newlines/indents.
+ *   - Legacy structural: the grammar declares a dummy rule like
+ *     `_foo: ($) => role('indent')` whose body is a direct
+ *     `indent`/`dedent`/`newline` node. Inline it and record the binding for
+ *     downstream consumers.
+ *   Visible symbols that don't match either path are returned unchanged.
+ */
+function resolveSymbolRoleOrPass(
+    rule: SymbolRule,
+    allRules: Record<string, Rule>,
+    externalRoles: Map<string, ExternalRole>,
+): Rule {
+    const preBound = externalRoles.get(rule.name)
+    if (preBound) {
+        return { type: preBound.role } as Rule
+    }
+    const target = allRules[rule.name]
+    if (target && (target.type === 'indent' || target.type === 'dedent' || target.type === 'newline')) {
+        externalRoles.set(rule.name, { role: target.type })
+        return target
+    }
+    return rule
+}
+
 // ---------------------------------------------------------------------------
 // classifyHiddenRule — determine what a hidden rule IS
 // ---------------------------------------------------------------------------
@@ -1211,81 +1423,101 @@ function classifyHiddenRule(
         return rule
     }
 
-    // Choice → classify per spec taxonomy:
-    //   all strings         → enum
-    //   all symbols         → supertype (or grammar-declared supertype)
-    //   mixed/structural    → leave as-is, Assemble classifies by shape
-    //
-    // The old rule was "any hidden choice → supertype, subtypes best-effort",
-    // which produced zero-subtype supertypes for hidden choices of
-    // structural members (_match_block, _line_doc_comment_marker,
-    // _jsx_string, …). Those are real alternatives with fields/seqs,
-    // not abstract kind unions.
     if (rule.type === 'choice') {
-        if (rule.members.every((m): m is import('./rule.ts').StringRule => m.type === 'string')) {
-            return {
-                type: 'enum',
-                values: rule.members.map(m => m.value),
-                source: 'promoted',
-            } satisfies EnumRule
-        }
-
-        // A choice member is "supertype-compatible" when it's either:
-        //   - a bare `symbol` ($.foo) — contributes `foo` as a subtype
-        //   - a named `alias(..., $.foo)` — contributes `foo`
-        //   - an `enum` / `string` — surfaces as text content under
-        //     the supertype umbrella, contributes no subtype name
-        //     but doesn't disqualify the choice (the enum is the
-        //     post-Link residue of an `alias(choice(strings),
-        //     $.foo)` whose alias wrapper got stripped — `foo` is
-        //     usually already in the subtype list as a bare symbol).
-        // Mixed structural members (seq with multiple parts, field,
-        // nested choice/optional/repeat) DO disqualify — those
-        // describe parse-time structure, not abstract dispatch.
-        const supertypeCompatible = (m: Rule): boolean =>
-            m.type === 'symbol'
-            || (m.type === 'alias' && m.named)
-            || m.type === 'enum'
-            || m.type === 'string'
-        const allCompatible = rule.members.every(supertypeCompatible)
-        if (allCompatible || supertypes.has(name)) {
-            const subtypes = collectSubtypeNames(rule)
-            // Only promote if we actually resolved subtype names. An empty
-            // subtypes list means the choice members aren't symbols and we
-            // can't project a union — fall through to leave-as-is.
-            if (subtypes.length > 0) {
-                return {
-                    type: 'supertype',
-                    name,
-                    subtypes,
-                    source: supertypes.has(name) ? 'grammar' : 'promoted',
-                } satisfies SupertypeRule
-            }
-        }
-
-        // Mixed/structural hidden choice — survive as-is. Assemble sees it
-        // as a polymorph/branch/container depending on its members.
-        return rule
+        return classifyHiddenChoiceRule(name, rule, supertypes)
     }
 
-    // Seq with fields → group (fields promoted to parent).
-    // Use `hasAnyField` so nested structures (repeat(field(...)),
-    // optional(field(...)), choice of fields) trigger classification,
-    // not just direct `field(...)` members. Python's `_import_list`
-    // is a textbook case: it's `seq(repeat1(field('name', ...)),
-    // optional(','))` — no direct field member, but the repeated
-    // field inside is exactly what groups are meant to capture.
     if (isSeq(rule)) {
-        if (hasAnyField(rule)) {
-            return {
-                type: 'group',
-                name,
-                content: rule,
-            } satisfies GroupRule
-        }
+        return classifyHiddenSeqRule(name, rule)
     }
 
     // Other hidden rules survive as-is — Assemble classifies by structure
+    return rule
+}
+
+/**
+ * Classify a hidden `choice` rule per the spec taxonomy.
+ *
+ * @param name - The grammar kind name (used to check the grammar's supertypes).
+ * @param rule - A `ChoiceRule` to classify.
+ * @param supertypes - Set of kind names explicitly declared in `grammar.supertypes`.
+ * @returns An `EnumRule`, `SupertypeRule`, or the original rule unchanged.
+ * @remarks
+ *   Classification:
+ *   - All-string members → `EnumRule` (promoted).
+ *   - Supertype-compatible members (symbols, named aliases, enums/strings) →
+ *     `SupertypeRule` when at least one concrete subtype name can be resolved.
+ *   - Mixed/structural members → rule unchanged; Assemble classifies by shape.
+ *
+ *   The old rule ("any hidden choice → supertype, subtypes best-effort")
+ *   produced zero-subtype supertypes for hidden choices of structural members
+ *   (`_match_block`, `_line_doc_comment_marker`, `_jsx_string`, …). Those are
+ *   real alternatives with fields/seqs, not abstract kind unions.
+ *
+ *   A choice member is "supertype-compatible" when it is: a bare `symbol`
+ *   ($.foo), a named `alias(..., $.foo)`, or an `enum`/`string`. Mixed
+ *   structural members (seq, field, nested choice/optional/repeat) disqualify.
+ */
+function classifyHiddenChoiceRule(
+    name: string,
+    rule: ChoiceRule,
+    supertypes: Set<string>,
+): Rule {
+    if (rule.members.every((m): m is StringRule => m.type === 'string')) {
+        return {
+            type: 'enum',
+            values: rule.members.map(m => m.value),
+            source: 'promoted',
+        } satisfies EnumRule
+    }
+
+    const supertypeCompatible = (m: Rule): boolean =>
+        m.type === 'symbol'
+        || (m.type === 'alias' && m.named)
+        || m.type === 'enum'
+        || m.type === 'string'
+    const allCompatible = rule.members.every(supertypeCompatible)
+    if (allCompatible || supertypes.has(name)) {
+        const subtypes = collectSubtypeNames(rule)
+        // Only promote if we actually resolved subtype names. An empty
+        // subtypes list means the choice members aren't symbols and we
+        // can't project a union — fall through to leave-as-is.
+        if (subtypes.length > 0) {
+            return {
+                type: 'supertype',
+                name,
+                subtypes,
+                source: supertypes.has(name) ? 'grammar' : 'promoted',
+            } satisfies SupertypeRule
+        }
+    }
+
+    // Mixed/structural hidden choice — survive as-is.
+    return rule
+}
+
+/**
+ * Classify a hidden `seq` rule as a `GroupRule` when it contains fields.
+ *
+ * @param name - The grammar kind name for the group.
+ * @param rule - A `SeqRule` to classify.
+ * @returns A `GroupRule` wrapping the seq when fields are present; the original
+ *   rule otherwise.
+ * @remarks
+ *   Uses `hasAnyField` so nested structures (`repeat(field(...))`,
+ *   `optional(field(...))`, choice of fields) trigger classification, not just
+ *   direct `field(...)` members. Python's `_import_list` is the textbook case:
+ *   `seq(repeat1(field('name', ...)), optional(','))` — no direct field member,
+ *   but the repeated field inside is exactly what groups capture.
+ */
+function classifyHiddenSeqRule(name: string, rule: SeqRule): Rule {
+    if (hasAnyField(rule)) {
+        return {
+            type: 'group',
+            name,
+            content: rule,
+        } satisfies GroupRule
+    }
     return rule
 }
 
@@ -1457,13 +1689,22 @@ function assignRepeatSeparator(
 // an `indent` Rule node. This pass computes the set of "block-bearer"
 // kinds by reachability and tags every matching field with `blockBearer: true`.
 
-function annotateBlockBearerFields(rules: Record<string, Rule>): void {
-    // Bearer = hidden rule whose content directly contains an `indent`
-    // node OR transitively references another bearer via symbols that
-    // only pass through hidden rules. Visible intermediate rules break
-    // the chain — e.g. `else_clause` transitively reaches indent through
-    // its body, but it's visible, so consumers of `else_clause` are
-    // NOT block-bearers themselves (the else_clause renders flush-left).
+/**
+ * Compute the set of hidden grammar kind names that are "block-bearers".
+ *
+ * @param rules - Full resolved rules map.
+ * @returns A set of kind names (all underscore-prefixed) whose rule trees
+ *   directly contain or transitively reference an `indent` node through
+ *   other hidden rules only.
+ * @remarks
+ *   A bearer is a hidden rule whose content directly contains an `indent`
+ *   node OR transitively references another bearer via symbols that only
+ *   pass through hidden rules. Visible intermediate rules break the chain —
+ *   e.g. `else_clause` transitively reaches indent through its body, but
+ *   it's visible, so consumers of `else_clause` are NOT block-bearers
+ *   themselves (the `else_clause` renders flush-left).
+ */
+function computeHiddenBearerSet(rules: Record<string, Rule>): Set<string> {
     const bearers = new Set<string>()
     for (const [name, rule] of Object.entries(rules)) {
         if (name.startsWith('_') && containsIndent(rule)) bearers.add(name)
@@ -1480,7 +1721,11 @@ function annotateBlockBearerFields(rules: Record<string, Rule>): void {
             }
         }
     }
+    return bearers
+}
 
+function annotateBlockBearerFields(rules: Record<string, Rule>): void {
+    const bearers = computeHiddenBearerSet(rules)
     // Mutate fields whose content reaches a bearer through hidden-only
     // intermediates. `markBlockBearerFields` recurses so nested visible
     // rules get their own fields inspected independently.
@@ -1745,29 +1990,11 @@ function applyInferredFields(
             return { rule, applied: false }
 
         case 'seq': {
-            // Skip inference for any symbol that appears more than once
-            // as a direct sibling in this seq — wrapping them in `field`
-            // would collide on the same inferred name, losing all but
-            // the first. These patterns (e.g. rust or_pattern's two
-            // `_pattern` refs separated by `|`) are tree-sitter's "multi
-            // children" shape and belong in the `$$$CHILDREN` slot, not
-            // as fields.
-            const symCounts = new Map<string, number>()
-            const unwrapSym = (r: Rule): string | null => {
-                if (r.type === 'symbol') return r.name
-                if (r.type === 'optional' || r.type === 'variant' || r.type === 'clause' || r.type === 'group') return unwrapSym(r.content)
-                return null
-            }
-            for (const m of rule.members) {
-                const sn = unwrapSym(m)
-                if (sn) symCounts.set(sn, (symCounts.get(sn) ?? 0) + 1)
-            }
-            const siblingDups = new Set<string>()
-            for (const [sn, cnt] of symCounts) if (cnt > 1) siblingDups.add(sn)
+            const siblingDups = collectSeqSiblingDuplicates(rule.members)
             const members: Rule[] = []
             let any = false
             for (const m of rule.members) {
-                const sn = unwrapSym(m)
+                const sn = unwrapSymRef(m)
                 if (sn && siblingDups.has(sn)) { members.push(m); continue }
                 const r = applyInferredFields(m, ruleName, inferred, apply, log, _apply, _insideField)
                 members.push(r.rule)
@@ -1803,6 +2030,44 @@ function applyInferredFields(
         default:
             return { rule, applied: false }
     }
+}
+
+/**
+ * Collect the set of symbol names that appear as direct seq siblings more than
+ * once, which are ineligible for field-name inference in that seq.
+ *
+ * @param members - The members of a `SeqRule`.
+ * @returns A set of symbol names that appear at least twice as direct siblings.
+ * @remarks
+ *   Wrapping duplicate-named siblings in `field` would collide on the same
+ *   inferred name, losing all but the first. Patterns like rust `or_pattern`'s
+ *   two `_pattern` refs separated by `|` are tree-sitter's "multi children"
+ *   shape and belong in the `$$$CHILDREN` slot, not as fields.
+ */
+function collectSeqSiblingDuplicates(members: Rule[]): Set<string> {
+    const symCounts = new Map<string, number>()
+    for (const m of members) {
+        const sn = unwrapSymRef(m)
+        if (sn) symCounts.set(sn, (symCounts.get(sn) ?? 0) + 1)
+    }
+    const dups = new Set<string>()
+    for (const [sn, cnt] of symCounts) if (cnt > 1) dups.add(sn)
+    return dups
+}
+
+/**
+ * Unwrap transparent rule wrappers to find the innermost symbol name.
+ *
+ * @param r - A rule to inspect.
+ * @returns The symbol name if `r` is a symbol or wraps one through
+ *   `optional`/`variant`/`clause`/`group`; `null` otherwise.
+ */
+function unwrapSymRef(r: Rule): string | null {
+    if (r.type === 'symbol') return r.name
+    if (r.type === 'optional' || r.type === 'variant' || r.type === 'clause' || r.type === 'group') {
+        return unwrapSymRef(r.content)
+    }
+    return null
 }
 
 // ---------------------------------------------------------------------------

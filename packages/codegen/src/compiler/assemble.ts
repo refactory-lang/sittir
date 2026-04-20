@@ -6,7 +6,7 @@
  */
 
 import type {
-    Rule, FieldRule,
+    Rule, FieldRule, PolymorphRule, SymbolRule,
 } from './rule.ts'
 import type {
     OptimizedGrammar, NodeMap,
@@ -34,22 +34,9 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
     const nodes = new Map<string, AssembledNode>()
 
     for (const [kind, rule] of Object.entries(optimized.rules)) {
-        // Inline hidden-rule symbol references BEFORE classification.
-        // Tree-sitter inlines hidden rules at parse time (fields from
-        // `_import_list` surface on `import_statement`), so the NodeMap
-        // must reflect parse-time shape rather than the grammar's
-        // lexical rule boundaries. Without this, field extraction sees
-        // `symbol('_import_list', hidden)` as an opaque child slot and
-        // the factory's Config excludes fields that are actually live
-        // at parse time. Hidden rules classified as supertypes are
-        // preserved — they're polymorph dispatch points, not structural
-        // helpers.
         const inlinedRule = inlineGroupRefs(rule, optimized.rules)
         const modelType = classifyNode(kind, inlinedRule)
         const { typeName, factoryName, irKey } = nameNode(kind)
-        // The `simplifiedRules` map is guaranteed to carry an entry
-        // for every kind in `rules` — `optimize()` populates it via
-        // `simplifyRules(rules)` at the end of its pass.
         const rawSimplifiedRule = optimized.simplifiedRules[kind]!
         const simplifiedRule = inlineGroupRefs(rawSimplifiedRule, optimized.simplifiedRules)
 
@@ -69,72 +56,11 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
                 break
             }
             case 'polymorph': {
-                // PolymorphRule is Link/Optimize's output — normally
-                // already has forms in declaration order. Under T065
-                // the classifier may tag a raw `choice` as polymorph
-                // when promotion was held back (strict debug mode) —
-                // in that case we synthesize forms from the choice
-                // members here so Assemble still produces a
-                // functional AssembledPolymorph. Synthetic forms get
-                // numerical names (`'0'`, `'1'`, …) rather than any
-                // variant label that might have been attached by
-                // `tagVariants`, so the form kinds stay collision-
-                // free and obviously-generated.
-                const polyForms: import('./rule.ts').PolymorphRule['forms'] =
-                    rule.type === 'polymorph'
-                        ? rule.forms
-                        : rule.type === 'choice'
-                            ? rule.members.map((m, i) => ({
-                                name: `form${i}`,
-                                content: m.type === 'variant' ? m.content : m,
-                            }))
-                            : (() => { throw new Error(
-                                `assemble: kind '${kind}' classified as polymorph but rule.type=${rule.type}. ` +
-                                `promotePolymorph in Optimize should have wrapped it.`,
-                            ) })()
+                const polyForms = derivePolymorphForms(kind, rule)
                 const polySource = rule.type === 'polymorph' ? (rule.source === 'override' ? 'override' : 'promoted') : 'promoted'
-                const nameCounts = new Map<string, number>()
-                const forms: AssembledGroup[] = polyForms.map((form) => {
-                    // Disambiguate duplicate form names (two `expression` variants
-                    // over different shapes — e.g. python's expression_statement).
-                    const seen = nameCounts.get(form.name) ?? 0
-                    nameCounts.set(form.name, seen + 1)
-                    const disambiguated = seen === 0 ? form.name : `${form.name}${seen + 1}`
-                    // For source='override' polymorphs, the form kind
-                    // `${kind}_${variant}` collides with the real visible
-                    // variant child kind (e.g., 'assignment_eq' is a real
-                    // node in the parse tree). Disambiguate the form's
-                    // symbolic names with a 'Form' suffix so factories.ts /
-                    // types.ts don't collide with the variant child interface.
-                    const formKind = polySource === 'override'
-                        ? `${kind}__form_${disambiguated}`
-                        : `${kind}_${disambiguated}`
-                    const formNames = nameNode(formKind)
-                    // Form content is a sub-rule synthesised by
-                    // Optimize's polymorph promotion — it isn't a
-                    // top-level kind in `optimized.rules`, so it has
-                    // no pre-computed simplified view. Compute on
-                    // the fly; forms are few per polymorph.
-                    return new AssembledGroup({
-                        kind: formKind,
-                        typeName: formNames.typeName,
-                        factoryName: formNames.factoryName,
-                        irKey: formNames.irKey,
-                        rule: form.content,
-                        simplifiedRule: simplifyRule(form.content),
-                        name: disambiguated,
-                        parentKind: kind,
-                    })
-                })
+                const forms = buildAssembledFormGroups(kind, polyForms, polySource)
                 for (const form of forms) nodes.set(form.kind, form)
-                // For source='override' polymorphs, extract the variant
-                // child kinds from form contents (each form's content has
-                // a $.variant_child_kind symbol reference inside the
-                // fused seq). These are the real visible kinds the
-                // children union on the parent polymorph references.
-                const variantChildKinds = polySource === 'override'
-                    ? polyForms.map(f => extractVariantChildSymbol(f.content)).filter((s): s is string => !!s)
-                    : []
+                const variantChildKinds = collectOverrideVariantChildKinds(polySource, polyForms)
                 nodes.set(kind, new AssembledPolymorph({
                     kind, typeName, factoryName, irKey, forms,
                     source: polySource,
@@ -169,42 +95,12 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
                 break
             }
             case 'supertype': {
-                // Extract subtypes: from SupertypeRule directly, or from choice members
-                let subtypes: string[]
-                if (rule.type === 'supertype') {
-                    subtypes = rule.subtypes
-                } else if (rule.type === 'choice') {
-                    subtypes = rule.members
-                        .map(m => m.type === 'variant' ? m.content : m)
-                        .filter((m): m is import('./rule.ts').SymbolRule => m.type === 'symbol')
-                        .map(m => m.name)
-                } else {
-                    subtypes = []
-                }
-                // Resolve hidden subtypes (`_foo`) to the concrete kinds
-                // tree-sitter actually surfaces at runtime. Hidden rules
-                // defined as `alias(x, y)` are looked up in the
-                // pre-Link alias map (Link collapses the alias wrapper);
-                // hidden rules defined as `choice(a, b, ...)` expand to
-                // their branches via the post-Link rule tree. Unresolved
-                // hidden symbols drop through as-is.
-                subtypes = resolveHiddenSubtypes(
-                    subtypes, optimized.rules, optimized.aliasedHiddenKinds ?? new Map(),
-                )
+                const subtypes = resolveSupertypeSubtypes(rule, optimized)
                 nodes.set(kind, new AssembledSupertype({ kind, typeName, subtypes }))
                 break
             }
             case 'group': {
-                // Unwrap GroupRule to its inner content (the seq-with-fields).
-                // When the rule is already a GroupRule the pre-computed
-                // `simplifiedRule` applies to the outer group; we want
-                // the inner content's simplified view to match what
-                // we're passing as `rule`. For the wrapper case
-                // simplify the unwrapped content directly.
-                const groupRule = rule.type === 'group' ? rule.content : rule
-                const groupSimplified = rule.type === 'group'
-                    ? simplifyRule(groupRule)
-                    : simplifiedRule
+                const { groupRule, groupSimplified } = unwrapGroupRuleAndSimplified(rule, simplifiedRule)
                 nodes.set(kind, new AssembledGroup({
                     kind, typeName, rule: groupRule,
                     simplifiedRule: groupSimplified,
@@ -230,26 +126,9 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
         }
     }
 
-    // Part A: Collect anonymous tokens/keywords from the rule tree.
-    // Tree-sitter promotes string literals to named node-types entries.
-    // The grammar's own `word` rule determines keyword-shape: any string
-    // whose text matches the word pattern lexes as a word at parse time
-    // and becomes an `AssembledKeyword`; non-word strings are
-    // `AssembledToken` (punctuation/operators).
     const wordMatcher = compileWordMatcher(optimized.word, optimized.rules)
     collectAnonymousNodes(optimized.rules, nodes, wordMatcher)
-
-    // Part B: Resolve typeName/factoryName collisions between hidden
-    // and visible kinds. `nameNode` drops the leading `_` (so users
-    // see `TypeIdentifier`, not `HiddenTypeIdentifier`) — this pass
-    // then re-adds a `Hidden` prefix only to hidden kinds that actually
-    // collide with a visible sibling. Warn on every rename so
-    // suggested.ts / logging can surface the list.
     resolveCollidingNames(nodes)
-
-    // Part C: Resolve ir-namespace keys after the NodeMap is complete so
-    // collision detection sees every node at once. Emitters read
-    // `node.irKey` rather than re-running shortening rules.
     resolveIrKeys(nodes)
 
     return {
@@ -266,38 +145,219 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
 }
 
 // ---------------------------------------------------------------------------
+// Polymorph assembly helpers
+// ---------------------------------------------------------------------------
+
+/**
+ * Derive the list of polymorph forms for the given kind and rule.
+ *
+ * @param kind - The kind name, used in error messages.
+ * @param rule - The rule as it appears in `optimized.rules` (pre-inlining).
+ * @returns The array of `{ name, content }` form descriptors from the
+ *   `PolymorphRule`, or synthesised entries when the rule is a raw `choice`
+ *   (T065 fallback path).
+ * @throws {Error} When the rule is neither a `polymorph` nor a `choice`.
+ * @remarks
+ *   `PolymorphRule` is Link/Optimize's output — normally already has forms in
+ *   declaration order. Under T065 the classifier may tag a raw `choice` as
+ *   `polymorph` when promotion was held back (strict debug mode). In that case
+ *   synthetic forms are created from the choice members with numerical names
+ *   (`'form0'`, `'form1'`, …) rather than any variant label that might have
+ *   been attached by `tagVariants`, so the form kinds stay collision-free and
+ *   obviously generated.
+ */
+function derivePolymorphForms(kind: string, rule: Rule): PolymorphRule['forms'] {
+    if (rule.type === 'polymorph') return rule.forms
+    if (rule.type === 'choice') {
+        return rule.members.map((m, i) => ({
+            name: `form${i}`,
+            content: m.type === 'variant' ? m.content : m,
+        }))
+    }
+    throw new Error(
+        `assemble: kind '${kind}' classified as polymorph but rule.type=${rule.type}. ` +
+        `promotePolymorph in Optimize should have wrapped it.`,
+    )
+}
+
+/**
+ * Build `AssembledGroup` instances for each form of a polymorph, registering
+ * disambiguated kind names and computing per-form simplified rules.
+ *
+ * @param parentKind - The kind string of the parent polymorph node.
+ * @param polyForms - The form list from {@link derivePolymorphForms}.
+ * @param polySource - Whether the polymorph was produced from a user override
+ *   or by Optimize's promotion pass.
+ * @returns One `AssembledGroup` per form, with unique kind names that never
+ *   collide with visible variant-child kinds.
+ * @remarks
+ *   Duplicate form names (two variants with the same name over different shapes
+ *   — e.g. python's `expression_statement`) are disambiguated with a numeric
+ *   suffix. For `source='override'` polymorphs the form kind is
+ *   `${parentKind}__form_${name}` to avoid colliding with the real visible
+ *   variant-child kinds that carry the same base name.
+ */
+function buildAssembledFormGroups(
+    parentKind: string,
+    polyForms: PolymorphRule['forms'],
+    polySource: 'override' | 'promoted',
+): AssembledGroup[] {
+    const nameCounts = new Map<string, number>()
+    return polyForms.map((form) => {
+        const seen = nameCounts.get(form.name) ?? 0
+        nameCounts.set(form.name, seen + 1)
+        const disambiguated = seen === 0 ? form.name : `${form.name}${seen + 1}`
+        const formKind = polySource === 'override'
+            ? `${parentKind}__form_${disambiguated}`
+            : `${parentKind}_${disambiguated}`
+        const formNames = nameNode(formKind)
+        return new AssembledGroup({
+            kind: formKind,
+            typeName: formNames.typeName,
+            factoryName: formNames.factoryName,
+            irKey: formNames.irKey,
+            rule: form.content,
+            simplifiedRule: simplifyRule(form.content),
+            name: disambiguated,
+            parentKind,
+        })
+    })
+}
+
+/**
+ * Collect the real visible variant-child kind names referenced inside each
+ * override-polymorph form's content.
+ *
+ * @param polySource - The origin of the polymorph; only `'override'` forms
+ *   carry fused symbol references to real child kinds.
+ * @param polyForms - The form list from {@link derivePolymorphForms}.
+ * @returns An array of kind names for real parse-tree nodes referenced by the
+ *   forms, or an empty array for promoted polymorphs.
+ * @remarks
+ *   For `source='override'` polymorphs each form's content is the fused
+ *   `seq(prefix…, $.variant_child_kind, suffix…)` (or just `$.variant_child_kind`
+ *   directly) produced by Link. These are the real visible kinds the children
+ *   union on the parent polymorph references.
+ */
+function collectOverrideVariantChildKinds(
+    polySource: 'override' | 'promoted',
+    polyForms: PolymorphRule['forms'],
+): string[] {
+    if (polySource !== 'override') return []
+    return polyForms
+        .map(f => extractVariantChildSymbol(f.content))
+        .filter((s): s is string => !!s)
+}
+
+// ---------------------------------------------------------------------------
+// Supertype + group assembly helpers
+// ---------------------------------------------------------------------------
+
+/**
+ * Resolve the subtype kind list for a supertype node from its rule.
+ *
+ * @param rule - The rule as it appears in `optimized.rules` (pre-inlining).
+ * @param optimized - The full optimized grammar, used for hidden-rule resolution.
+ * @returns The ordered list of concrete kind names that are members of this
+ *   supertype union after resolving any hidden-rule indirections.
+ * @remarks
+ *   Sources in priority order:
+ *   1. `SupertypeRule.subtypes` — Link's pre-computed list.
+ *   2. `choice` members — each `symbol` child's name (T065 fallback).
+ *   3. Empty list — for any other rule shape (best-effort).
+ *
+ *   Hidden names (`_foo`) are then resolved to the concrete kinds that
+ *   tree-sitter actually surfaces at runtime via {@link resolveHiddenSubtypes}.
+ */
+function resolveSupertypeSubtypes(rule: Rule, optimized: OptimizedGrammar): string[] {
+    let subtypes: string[]
+    if (rule.type === 'supertype') {
+        subtypes = rule.subtypes
+    } else if (rule.type === 'choice') {
+        subtypes = rule.members
+            .map(m => m.type === 'variant' ? m.content : m)
+            .filter((m): m is SymbolRule => m.type === 'symbol')
+            .map(m => m.name)
+    } else {
+        subtypes = []
+    }
+    return resolveHiddenSubtypes(
+        subtypes, optimized.rules, optimized.aliasedHiddenKinds ?? new Map(),
+    )
+}
+
+/**
+ * Unwrap a `GroupRule` to obtain the inner content rule and its simplified view.
+ *
+ * @param rule - The raw rule from `optimized.rules`.
+ * @param simplifiedRule - The pre-computed simplified rule for the same kind.
+ * @returns `groupRule` — the inner seq-with-fields content; `groupSimplified` —
+ *   the simplified view of that inner content.
+ * @remarks
+ *   When the rule is a `GroupRule` the pre-computed `simplifiedRule` applies to
+ *   the outer group wrapper; we want the inner content's simplified view to match
+ *   what we're passing as `rule`. For the wrapper case the inner content's
+ *   simplified view is computed on-the-fly. Non-group rules pass through as-is
+ *   (the T065 fallback path — groups that didn't get the GroupRule wrapper).
+ */
+function unwrapGroupRuleAndSimplified(
+    rule: Rule,
+    simplifiedRule: Rule,
+): { groupRule: Rule; groupSimplified: Rule } {
+    const groupRule = rule.type === 'group' ? rule.content : rule
+    const groupSimplified = rule.type === 'group'
+        ? simplifyRule(groupRule)
+        : simplifiedRule
+    return { groupRule, groupSimplified }
+}
+
+// ---------------------------------------------------------------------------
 // resolveIrKeys — dedupe-aware short-name pass over the whole NodeMap
 // ---------------------------------------------------------------------------
 
 /**
- * The ir namespace (`import { ir } from './ir.js'`) exposes each kind
- * under a short ergonomic key. Collisions on the short form fall back
- * to the full factoryName; JS reserved words get a `_` suffix. This
- * pass claims keys in nodeMap iteration order.
+ * Assign a deduplicated short ir-namespace key to every factory-bearing node.
+ *
+ * @param nodes - The full assembled node map; `irKey` on each node is mutated.
+ * @remarks
+ *   The ir namespace (`import { ir } from './ir.js'`) exposes each kind under a
+ *   short ergonomic key. Collisions on the short form fall back to the full
+ *   `factoryName`; JS reserved words get a `_` suffix. This pass claims keys in
+ *   nodeMap iteration order.
+ *
+ *   Two-phase algorithm: supertypes are pre-claimed first so they block suffix-
+ *   stripped collisions. Within each factory-bearing phase, hidden kinds sort
+ *   after non-hidden so visible kinds always claim the short key first.
  */
-/**
- * Find typeName collisions between hidden (`_`-prefixed) kinds and
- * their visible siblings, and disambiguate by re-prefixing the hidden
- * kind with `Hidden`. Non-colliding hidden kinds keep their clean
- * names. Emits a warning for every rename so the run log surfaces
- * which grammar rules are sharing names.
- */
+function resolveIrKeys(nodes: Map<string, AssembledNode>): void {
+    const claimed = new Set<string>()
+    preclaimSupertypeIrKeys(nodes, claimed)
+    const { phase1, phase2 } = partitionNodesIntoIrKeyPhases(nodes)
+    for (const node of phase1) assignIrKeyWithFallback(node, claimed)
+    for (const node of phase2) assignIrKeyWithFallback(node, claimed)
+}
+
 /**
  * Resolve hidden rule names (`_foo`) referenced as subtypes to the
- * concrete kinds that actually appear in the parse tree. Tree-sitter
- * inlines hidden rules at parse time — a `_type_identifier` defined as
- * `alias($.identifier, $.type_identifier)` shows up as `type_identifier`
- * at runtime, never as `_type_identifier`. Supertype expansion maps
- * built from raw rule-tree names would miss those kinds and the
- * runtime routing map would fail to promote them.
+ * concrete kinds that actually appear in the parse tree.
  *
- * Handled shapes:
- * - `alias(x, y)` → `y` (the alias label)
- * - `symbol(target)` → recurse on target (follow chains)
- * - `choice(a, b, …)` → flatten each branch
- * - everything else → keep the hidden name as-is (best-effort)
+ * @param names - Raw subtype names from the rule tree (may include `_`-prefixed hidden names).
+ * @param rules - The full optimized rule map, used to resolve hidden rule bodies.
+ * @param aliasedHiddenKinds - Pre-Link alias map from hidden kind to its aliased target.
+ * @returns The resolved list of concrete kind names, deduplicated and in visitation order.
+ * @remarks
+ *   Tree-sitter inlines hidden rules at parse time — a `_type_identifier` defined as
+ *   `alias($.identifier, $.type_identifier)` shows up as `type_identifier` at runtime,
+ *   never as `_type_identifier`. Supertype expansion maps built from raw rule-tree names
+ *   would miss those kinds and the runtime routing map would fail to promote them.
  *
- * Non-hidden names pass through unchanged.
+ *   Handled shapes:
+ *   - `alias(x, y)` → `y` (the alias label)
+ *   - `symbol(target)` → recurse on target (follow chains)
+ *   - `choice(a, b, …)` → flatten each branch
+ *   - everything else → keep the hidden name as-is (best-effort)
+ *
+ *   Non-hidden names pass through unchanged.
  */
 function resolveHiddenSubtypes(
     names: readonly string[],
@@ -310,9 +370,7 @@ function resolveHiddenSubtypes(
         if (seen.has(name)) return
         seen.add(name)
         if (!name.startsWith('_')) { out.push(name); return }
-        // Aliased hidden rule (`_foo: $ => alias($.bar, $.baz)`) — the
-        // parse tree surfaces `baz`, recorded by Link before the alias
-        // was collapsed.
+        // Aliased hidden rule: Link records the alias target before collapsing.
         const aliasTarget = aliasedHiddenKinds.get(name)
         if (aliasTarget) {
             if (!seen.has(aliasTarget)) { seen.add(aliasTarget); out.push(aliasTarget) }
@@ -371,6 +429,21 @@ function resolveHiddenRuleContent(
     }
 }
 
+/**
+ * Find `typeName` collisions between hidden (`_`-prefixed) kinds and their visible
+ * siblings, and disambiguate by renaming the hidden kinds.
+ *
+ * @param nodes - The full assembled node map; `typeName` and `factoryName` on
+ *   colliding hidden nodes are mutated.
+ * @remarks
+ *   Non-colliding hidden kinds keep their clean names. Emits a warning for every
+ *   rename so the run log surfaces which grammar rules are sharing names.
+ *
+ *   Three collision patterns are handled:
+ *   - `visible ≥ 1` AND `hidden ≥ 1` → rename hidden(s) via {@link renameCollidingHiddenKinds}
+ *   - `visible ≥ 2` → rename lower-priority visible(s) via {@link renameCollidingVisibleKinds}
+ *   - `hidden ≥ 2` → rename lower-priority hidden(s) via {@link renameCollidingHiddenOnlyKinds}
+ */
 function resolveCollidingNames(nodes: Map<string, AssembledNode>): void {
     // Group nodes by typeName. Preferred winner: the non-hidden kind.
     const byType = new Map<string, AssembledNode[]>()
@@ -384,88 +457,144 @@ function resolveCollidingNames(nodes: Map<string, AssembledNode>): void {
         const visible = group.filter(n => !n.kind.startsWith('_'))
         const hidden = group.filter(n => n.kind.startsWith('_'))
         if (visible.length >= 1 && hidden.length >= 1) {
-            // Only rename when a visible sibling actually gets an
-            // exported TypeScript declaration. Token nodes (`modelType
-            // === 'token'`) are anonymous structural delimiters that
-            // only appear as exported type aliases if they're referenced
-            // in a field/child union — many aren't. If ALL visible
-            // siblings are tokens, there's no actual TypeScript collision
-            // and we leave the hidden kind's name unchanged.
-            const hasNonTokenVisible = visible.some(n => n.modelType !== 'token')
-            if (!hasNonTokenVisible) continue
-            // Visible wins. Rename each hidden with `_` prefix to
-            // preserve the tree-sitter convention that hidden/internal
-            // kinds start with an underscore.
-            for (const h of hidden) {
-                const newType = `_${typeName}`
-                console.warn(
-                    `[assemble] typeName collision: kind '${h.kind}' renamed ` +
-                    `'${typeName}' → '${newType}' (visible sibling(s): ${visible.map(v => `'${v.kind}'`).join(', ')})`,
-                )
-                h.typeName = newType
-                if (h.factoryName !== undefined) {
-                    // _TypeName → _typeName (camelCase with leading _)
-                    h.factoryName = `_${typeName.charAt(0).toLowerCase()}${typeName.slice(1)}`
-                }
-            }
+            renameCollidingHiddenKinds(visible, hidden, typeName)
         } else if (visible.length >= 2) {
-            // Two visible kinds collapsed to the same typeName (e.g.
-            // python's `true` keyword + `True` named node). Keep the
-            // first (sorted by kind) and append a numeric disambiguator
-            // to the rest. Warn so the situation is visible.
-            const sorted = [...visible].sort((a, b) => a.kind.localeCompare(b.kind))
-            for (let i = 1; i < sorted.length; i++) {
-                const n = sorted[i]!
-                const newType = `${typeName}${i + 1}`
-                console.warn(
-                    `[assemble] typeName collision between visible kinds: '${n.kind}' renamed ` +
-                    `'${typeName}' → '${newType}' (siblings: ${sorted.slice(0, i).map(s => `'${s.kind}'`).join(', ')})`,
-                )
-                n.typeName = newType
-                if (n.factoryName !== undefined) {
-                    n.factoryName = newType.charAt(0).toLowerCase() + newType.slice(1)
-                }
-            }
+            renameCollidingVisibleKinds(visible, typeName)
         } else if (hidden.length >= 2) {
-            // Two hidden kinds both normalized to the same name. Give
-            // every one after the first a numeric suffix.
-            for (let i = 1; i < hidden.length; i++) {
-                const h = hidden[i]!
-                const newType = `${typeName}${i + 1}`
-                console.warn(
-                    `[assemble] typeName collision among hidden kinds: '${h.kind}' renamed '${typeName}' → '${newType}'`,
-                )
-                h.typeName = newType
-                if (h.factoryName !== undefined) {
-                    h.factoryName = newType.charAt(0).toLowerCase() + newType.slice(1)
-                }
-            }
+            renameCollidingHiddenOnlyKinds(hidden, typeName)
         }
     }
 }
 
-function resolveIrKeys(nodes: Map<string, AssembledNode>): void {
-    // Two-phase claim:
-    // Phase 1 — "short form is the full name". Any node whose short
-    //   irKey equals its own factoryName gets first dibs (it has nothing
-    //   to fall back to that wouldn't also collide). Examples: `expression`,
-    //   `as_pattern` (→ `asPattern`), `module` (→ `module`). This forces
-    //   suffix-stripped collisions (e.g. `expression_statement` → `expression`)
-    //   to lose to the genuinely-short kind.
-    // Phase 2 — "short form is a strip of the full name". These have a
-    //   distinct factoryName fallback (e.g. `expression_statement` →
-    //   `expressionStatement`).
-    // Within each phase, hidden (`_`-prefixed) kinds sort after non-hidden
-    // so visible kinds claim the short key and hidden ones get `hiddenX`.
-    const claimed = new Set<string>()
-    // Supertypes don't get factories but they DO occupy a name in the
-    // ir namespace (as a type alias). Pre-claim their short form so that
-    // a factoryless supertype like python `expression` still blocks
-    // `expression_statement` from collapsing its irKey onto `expression`.
+/**
+ * Rename hidden kinds that share a `typeName` with at least one non-token visible kind
+ * by adding a `_` prefix to their `typeName` and `factoryName`.
+ *
+ * @param visible - Nodes with non-hidden kinds that share the same `typeName`.
+ * @param hidden - Nodes with hidden (`_`-prefixed) kinds that share the same `typeName`.
+ * @param typeName - The shared `typeName` string before disambiguation.
+ * @remarks
+ *   Only renames when a visible sibling actually gets an exported TypeScript declaration.
+ *   Token nodes (`modelType === 'token'`) are anonymous structural delimiters that only
+ *   appear as exported type aliases if they are referenced in a field/child union — many
+ *   aren't. If ALL visible siblings are tokens, there is no actual TypeScript collision
+ *   and the hidden kind's name is left unchanged.
+ *
+ *   Visible wins. Hidden kinds are renamed with a `_` prefix to preserve the tree-sitter
+ *   convention that hidden/internal kinds start with an underscore.
+ */
+function renameCollidingHiddenKinds(
+    visible: AssembledNode[],
+    hidden: AssembledNode[],
+    typeName: string,
+): void {
+    const hasNonTokenVisible = visible.some(n => n.modelType !== 'token')
+    if (!hasNonTokenVisible) return
+    for (const h of hidden) {
+        const newType = `_${typeName}`
+        console.warn(
+            `[assemble] typeName collision: kind '${h.kind}' renamed ` +
+            `'${typeName}' → '${newType}' (visible sibling(s): ${visible.map(v => `'${v.kind}'`).join(', ')})`,
+        )
+        h.typeName = newType
+        if (h.factoryName !== undefined) {
+            // _TypeName → _typeName (camelCase with leading _)
+            h.factoryName = `_${typeName.charAt(0).toLowerCase()}${typeName.slice(1)}`
+        }
+    }
+}
+
+/**
+ * Rename all but the first (alphabetically) of multiple visible kinds that have
+ * collapsed to the same `typeName`, appending a numeric disambiguator to the rest.
+ *
+ * @param visible - Two or more visible (non-hidden) nodes that share the same `typeName`.
+ * @param typeName - The shared `typeName` string before disambiguation.
+ * @remarks
+ *   Two visible kinds collapse to the same typeName when grammar symbols differ only
+ *   in case (e.g. python's `true` keyword + `True` named node). The first kind (sorted
+ *   by kind string) keeps the original name; subsequent ones receive a numeric suffix.
+ *   A warning is emitted so the situation is visible in the run log.
+ */
+function renameCollidingVisibleKinds(visible: AssembledNode[], typeName: string): void {
+    const sorted = [...visible].sort((a, b) => a.kind.localeCompare(b.kind))
+    for (let i = 1; i < sorted.length; i++) {
+        const n = sorted[i]!
+        const newType = `${typeName}${i + 1}`
+        console.warn(
+            `[assemble] typeName collision between visible kinds: '${n.kind}' renamed ` +
+            `'${typeName}' → '${newType}' (siblings: ${sorted.slice(0, i).map(s => `'${s.kind}'`).join(', ')})`,
+        )
+        n.typeName = newType
+        if (n.factoryName !== undefined) {
+            n.factoryName = newType.charAt(0).toLowerCase() + newType.slice(1)
+        }
+    }
+}
+
+/**
+ * Rename all but the first of multiple hidden kinds that have normalised to the same
+ * `typeName`, appending a numeric suffix to each after the first.
+ *
+ * @param hidden - Two or more hidden (`_`-prefixed) nodes that share the same `typeName`.
+ * @param typeName - The shared `typeName` string before disambiguation.
+ * @remarks
+ *   Two hidden kinds both normalized to the same name receive numeric suffixes on every
+ *   node after the first. A warning is emitted for each rename.
+ */
+function renameCollidingHiddenOnlyKinds(hidden: AssembledNode[], typeName: string): void {
+    for (let i = 1; i < hidden.length; i++) {
+        const h = hidden[i]!
+        const newType = `${typeName}${i + 1}`
+        console.warn(
+            `[assemble] typeName collision among hidden kinds: '${h.kind}' renamed '${typeName}' → '${newType}'`,
+        )
+        h.typeName = newType
+        if (h.factoryName !== undefined) {
+            h.factoryName = newType.charAt(0).toLowerCase() + newType.slice(1)
+        }
+    }
+}
+
+/**
+ * Pre-claim the short ir-namespace key for every supertype node in the map.
+ *
+ * @param nodes - The full assembled node map.
+ * @param claimed - Mutable set of already-claimed ir keys; modified in place.
+ * @remarks
+ *   Supertypes don't get factories but they DO occupy a name in the ir namespace
+ *   (as a type alias). Pre-claiming their short form ensures that a factoryless
+ *   supertype like python `expression` still blocks `expression_statement` from
+ *   collapsing its irKey onto `expression`.
+ */
+function preclaimSupertypeIrKeys(nodes: Map<string, AssembledNode>, claimed: Set<string>): void {
     for (const node of nodes.values()) {
         if (node.modelType !== 'supertype') continue
         claimed.add(shortenIrKey(node.kind))
     }
+}
+
+/**
+ * Partition factory-bearing nodes into two priority phases for ir-key assignment.
+ *
+ * @param nodes - The full assembled node map.
+ * @returns Two arrays — `phase1` contains nodes whose short form equals their
+ *   factoryName (they have no distinct fallback), `phase2` contains nodes whose
+ *   short form is a suffix-stripped abbreviation of their factoryName (they have
+ *   a longer factoryName to fall back to on collision). Within each phase, hidden
+ *   kinds sort after non-hidden so visible kinds claim the short key first.
+ * @remarks
+ *   Phase 1 — "short form is the full name". Any node whose short irKey equals its
+ *   own factoryName gets first dibs (it has nothing to fall back to that wouldn't
+ *   also collide). Examples: `expression`, `as_pattern` (→ `asPattern`), `module`
+ *   (→ `module`). This forces suffix-stripped collisions (e.g. `expression_statement`
+ *   → `expression`) to lose to the genuinely-short kind.
+ *   Phase 2 — "short form is a strip of the full name". These have a distinct
+ *   factoryName fallback (e.g. `expression_statement` → `expressionStatement`).
+ */
+function partitionNodesIntoIrKeyPhases(
+    nodes: Map<string, AssembledNode>,
+): { phase1: AssembledNode[]; phase2: AssembledNode[] } {
     const phase1: AssembledNode[] = []
     const phase2: AssembledNode[] = []
     for (const node of nodes.values()) {
@@ -482,29 +611,36 @@ function resolveIrKeys(nodes: Map<string, AssembledNode>): void {
     }
     phase1.sort(hiddenSort)
     phase2.sort(hiddenSort)
+    return { phase1, phase2 }
+}
 
-    const assign = (node: AssembledNode) => {
-        const short = shortenIrKey(node.kind)
-        if (!claimed.has(short)) {
-            claimed.add(short)
-            node.irKey = short
-            return
-        }
-        // Collision — fall back to the full factory name. For hidden
-        // kinds this is `hiddenX`, distinct from the visible short form.
-        let full = node.factoryName!
-        // Extremely rare: even the full name collides (two kinds normalise
-        // to the same factoryName). Suffix with `_N` to guarantee uniqueness.
-        let candidate = full
-        let n = 2
-        while (claimed.has(candidate)) {
-            candidate = `${full}${n++}`
-        }
-        claimed.add(candidate)
-        node.irKey = candidate
+/**
+ * Assign an ir-namespace key to a single node, falling back to the full factory
+ * name (and then a numeric suffix) when the short form is already claimed.
+ *
+ * @param node - The node whose `irKey` property is assigned.
+ * @param claimed - Mutable set of already-claimed ir keys; modified in place.
+ * @remarks
+ *   On collision, falls back to the full factory name. For hidden kinds this is
+ *   `hiddenX`, distinct from the visible short form. In the extremely rare case
+ *   where even the full name collides (two kinds normalise to the same factoryName),
+ *   a numeric suffix is appended to guarantee uniqueness.
+ */
+function assignIrKeyWithFallback(node: AssembledNode, claimed: Set<string>): void {
+    const short = shortenIrKey(node.kind)
+    if (!claimed.has(short)) {
+        claimed.add(short)
+        node.irKey = short
+        return
     }
-    for (const node of phase1) assign(node)
-    for (const node of phase2) assign(node)
+    let full = node.factoryName!
+    let candidate = full
+    let n = 2
+    while (claimed.has(candidate)) {
+        candidate = `${full}${n++}`
+    }
+    claimed.add(candidate)
+    node.irKey = candidate
 }
 
 function shortenIrKey(kind: string): string {
@@ -538,6 +674,25 @@ const IR_KEY_RESERVED = new Set([
 // collectAnonymousNodes — extract string literals from rules as token/keyword entries
 // ---------------------------------------------------------------------------
 
+/**
+ * Test whether a grammar string literal has "keyword shape" — i.e., whether
+ * tree-sitter will lex it as a word token under the grammar's `word` rule.
+ *
+ * @param value - The literal text from the grammar (e.g., `"if"`, `"+"`, `"->"`).
+ * @param wordMatcher - The compiled word-rule pattern from {@link compileWordMatcher},
+ *   or `undefined` when the grammar has no `word` declaration.
+ * @returns `true` when `value` matches the word pattern (or `/^\w+$/` as fallback),
+ *   indicating the literal is an `AssembledKeyword`; `false` for punctuation /
+ *   operators that become `AssembledToken`.
+ * @remarks
+ *   Keyword-shape is "lexes as a word under the grammar's `word` rule". When the
+ *   grammar declares no `word` (or we can't extract its pattern), falls back to
+ *   the conservative `/^\w+$/` heuristic.
+ */
+function detectKeywordShape(value: string, wordMatcher: RegExp | undefined): boolean {
+    return wordMatcher ? wordMatcher.test(value) : /^\w+$/.test(value)
+}
+
 function collectAnonymousNodes(
     rules: Record<string, Rule>,
     nodes: Map<string, AssembledNode>,
@@ -553,10 +708,7 @@ function collectAnonymousNodes(
         if (nodes.has(value)) continue // Already classified as a named rule
         if (value === '' || /^\s+$/.test(value)) continue // Skip whitespace/empty
 
-        // Keyword-shape is "lexes as a word under the grammar's `word`
-        // rule". When the grammar declares no `word` (or we can't
-        // extract its pattern), fall back to `/^\w+$/`.
-        const isWordShape = wordMatcher ? wordMatcher.test(value) : /^\w+$/.test(value)
+        const isWordShape = detectKeywordShape(value, wordMatcher)
         const { typeName } = nameNode(value)
 
         if (isWordShape) {
@@ -572,16 +724,25 @@ function collectAnonymousNodes(
     }
 }
 
+/**
+ * Recursively collect all string literals from a rule tree into `out`.
+ *
+ * @param rule - The rule to walk.
+ * @param out - Mutable set that receives each string literal value.
+ * @remarks
+ *   `enum` rules are deliberately **not** descended. Enum values are the `text`
+ *   content of the parent kind, not distinct node kinds — the parser produces a
+ *   single node (e.g. `primitive_type` with text `"usize"`), never a `usize`
+ *   node, so collecting the enum member strings as anonymous token kinds would
+ *   be incorrect.
+ */
 function walkForStrings(rule: Rule, out: Set<string>): void {
     switch (rule.type) {
         case 'string':
             out.add(rule.value)
             break
         case 'enum':
-            // Enum values are the `text` content of the parent kind,
-            // not distinct node kinds. The parser produces a single
-            // node (e.g. `primitive_type` with text `"usize"`), never
-            // a `usize` node. Do NOT descend.
+            // Enum values are text content — do NOT descend (see JSDoc).
             break
         case 'seq':
             for (const m of rule.members) walkForStrings(m, out)
@@ -675,6 +836,33 @@ function walkForFieldNames(rule: Rule, out: Set<string>): void {
 }
 
 /**
+ * Return the rule to inline for a hidden symbol target, or `null` if the
+ * target should not be inlined.
+ *
+ * @param target - The resolved rule body of a hidden symbol reference.
+ * @returns The sub-rule to inline in place of the symbol reference, or `null`
+ *   when the target is neither a group nor a pure-repeat multi helper.
+ * @remarks
+ *   Two target shapes are inlined:
+ *   - Hidden GROUP rules (`target.type === 'group'`): inline the group's
+ *     `content` (the seq-with-fields) so the referrer's field walker sees the
+ *     fields directly.
+ *   - Hidden MULTI helpers (body unwraps to a `repeat`/`repeat1`): inline the
+ *     whole target rule so the `repeat`/`repeat1` wrapper survives and the
+ *     walker marks the child slot as multi-valued.
+ *
+ *   All other hidden rules (supertypes, branches, leaves, tokens) are NOT
+ *   inlined — they are distinct structural nodes or dispatch points.
+ */
+function resolveGroupOrMultiInlineTarget(target: Rule): Rule | null {
+    const isGroup = target.type === 'group'
+    const isMulti = extractRepeatShape(target) !== null
+    if (!isGroup && !isMulti) return null
+    // Groups: inline content; multi: inline whole rule (see JSDoc @remarks).
+    return isGroup ? (target as { content: Rule }).content : target
+}
+
+/**
  * Inline symbol references to GROUP-classified hidden rules by
  * substituting each `symbol` ref with the group's content. Matches
  * tree-sitter's parse-time behavior: groups are "hidden seq with
@@ -706,20 +894,9 @@ function inlineGroupRefs(
             if (visited.has(rule.name)) return rule
             const target = rules[rule.name]
             if (!target) return rule
-            // Inline hidden GROUPS (seq-with-fields) so fields surface
-            // onto the referrer. Also inline hidden MULTI helpers —
-            // rules whose body unwraps to a `repeat` / `repeat1`
-            // (python `_collection_elements`, `_parameters`, `_patterns`)
-            // — so the walker sees the repeat at the referrer's level
-            // and marks the child slot as multi-valued.
-            const isGroup = target.type === 'group'
-            const isMulti = extractRepeatShape(target) !== null
-            if (!isGroup && !isMulti) return rule
+            const inlineTarget = resolveGroupOrMultiInlineTarget(target)
+            if (!inlineTarget) return rule
             const next = new Set(visited); next.add(rule.name)
-            // For groups, inline the group's `content`; for multi, inline
-            // the whole target rule so the `repeat`/`repeat1` wrapper
-            // survives (walkForChildren needs to see the repeat directly).
-            const inlineTarget = isGroup ? (target as { content: Rule }).content : target
             return inlineGroupRefs(inlineTarget, rules, next)
         }
         case 'seq':
@@ -767,36 +944,79 @@ export function classifyNode(kind: string, rule: Rule): ModelType {
         case 'string':    return /^\w+$/.test(rule.value) ? 'keyword' : 'token'
     }
 
-    // T065 — polymorph shape fallback. Fires when `IncludeFilter.rules`
-    // held back `promoted`, leaving a raw `choice` whose variants
-    // carry heterogeneous field sets. Link's `promotePolymorph`
-    // would normally wrap this in a `PolymorphRule`; under strict
-    // debug mode we detect the shape here so the node still gets
-    // treated as a polymorph instead of collapsing into a flat
-    // branch with union-ed fields.
-    if (rule.type === 'choice' && hasAnyField(rule) && !allVariantsHaveSameFieldSet(rule)) {
-        return 'polymorph'
-    }
+    if (isT065UnpromotedPolymorphChoice(rule)) return 'polymorph'
+    if (isHiddenRepeatHelper(kind, rule)) return 'multi'
+    const branchOrContainer = classifyBranchOrContainer(rule)
+    if (branchOrContainer !== null) return branchOrContainer
+    return classifyT065TerminalFallback(kind, rule)
+}
 
-    // Hidden repeat helpers — tree-sitter inlines these at parse time,
-    // so they never surface as concrete nodes. Classify as `multi` so
-    // downstream emitters skip the interface/factory/resolver and the
-    // walker inlines the repeat at referrers (rest-params factory,
-    // multi-valued child slot). See AssembledMulti doc.
-    if (kind.startsWith('_') && extractRepeatShape(rule) !== null) {
-        return 'multi'
-    }
+/**
+ * Test whether a raw choice rule should be classified as a polymorph under the T065
+ * fallback path.
+ *
+ * @param rule - The rule to inspect.
+ * @returns `true` when the rule is a choice that carries fields and whose variant
+ *   members have heterogeneous field sets.
+ * @remarks
+ *   Fires when `IncludeFilter.rules` held back `promoted`, leaving a raw `choice`
+ *   whose variants carry heterogeneous field sets. Link's `promotePolymorph` would
+ *   normally wrap this in a `PolymorphRule`; under strict debug mode we detect the
+ *   shape here so the node still gets treated as a polymorph instead of collapsing
+ *   into a flat branch with union-ed fields.
+ */
+function isT065UnpromotedPolymorphChoice(rule: Rule): boolean {
+    return rule.type === 'choice' && hasAnyField(rule) && !allVariantsHaveSameFieldSet(rule)
+}
 
-    // seq/choice/optional/repeat/field/... — distinguish branch from container.
-    // Only need existence checks, not full extraction. The class getters
-    // (AssembledBranch.fields, AssembledContainer.children) do the full walk
-    // later, once.
+/**
+ * Test whether a kind should be classified as a hidden `multi` helper.
+ *
+ * @param kind - The rule kind name (snake_case, may start with `_`).
+ * @param rule - The rule body for that kind.
+ * @returns `true` when the kind is hidden and its body unwraps to a repeat.
+ * @remarks
+ *   Hidden repeat helpers are inlined by tree-sitter at parse time, so they never
+ *   surface as concrete nodes. Classifying them as `multi` lets downstream emitters
+ *   skip the interface/factory/resolver and the walker inlines the repeat at
+ *   referrers (rest-params factory, multi-valued child slot). See AssembledMulti doc.
+ */
+function isHiddenRepeatHelper(kind: string, rule: Rule): boolean {
+    return kind.startsWith('_') && extractRepeatShape(rule) !== null
+}
+
+/**
+ * Classify a rule as `branch` or `container` based on presence of fields or children,
+ * or return `null` when neither applies.
+ *
+ * @param rule - The rule to inspect.
+ * @returns `'branch'` if the rule has any named field, `'container'` if it has any
+ *   unnamed child, or `null` when the rule contains neither.
+ * @remarks
+ *   Only existence checks are performed — not full extraction. The class getters
+ *   (`AssembledBranch.fields`, `AssembledContainer.children`) do the full walk
+ *   later, once.
+ */
+function classifyBranchOrContainer(rule: Rule): ModelType | null {
     if (hasAnyField(rule)) return 'branch'
     if (hasAnyChild(rule)) return 'container'
+    return null
+}
 
-    // T065 — terminal fallback. All-text subtree → leaf; pure
-    // choice-of-strings → enum. Anything still unclassifiable after
-    // this is a real error and falls through to the throw.
+/**
+ * Apply the T065 terminal fallback classification after all structural checks
+ * have failed to assign a model type.
+ *
+ * @param kind - The rule kind name, used in the error message.
+ * @param rule - The rule body for that kind.
+ * @returns `'leaf'` for all-text subtrees, `'enum'` for pure choice-of-strings.
+ * @throws {Error} When the rule cannot be classified by any heuristic — indicates
+ *   that Link should have wrapped it as a `TerminalRule`.
+ * @remarks
+ *   All-text subtree → leaf; pure choice-of-strings → enum. Anything still
+ *   unclassifiable after this is a real pipeline error.
+ */
+function classifyT065TerminalFallback(kind: string, rule: Rule): ModelType {
     if (isAllTextShape(rule)) return 'leaf'
     if (rule.type === 'choice' && rule.members.every(m => m.type === 'string')) return 'enum'
     throw new Error(
@@ -868,16 +1088,7 @@ export function nameNode(kind: string): { typeName: string; factoryName: string;
     // Tokens/keywords can contain non-identifier chars (!=, #, %, ->, ==, etc.).
     // Route through tokenToName first so typeName is always a valid identifier.
     const normalized = /^[\w_]+$/.test(kind) ? kind : tokenToName(kind)
-    // Strip leading underscore (hidden-rule marker) and collapse internal
-    // double underscores into `_U_` so they survive PascalCase flattening.
-    //   `_type_identifier`  → `TypeIdentifier`  (same as visible sibling)
-    //   `type_identifier`   → `TypeIdentifier`
-    //   `literal_type__x`   → `LiteralTypeUX`
-    // Collisions between hidden/visible kinds are resolved post-hoc by
-    // `resolveCollidingNames()` in assemble() — at which point the whole
-    // NodeMap is visible and we can apply a disambiguator only where
-    // actually needed.
-    const marked = normalized.replace(/^_+/, '').replace(/__+/g, '_U_')
+    const marked = prepareKindForPascalCase(normalized)
     let typeName = marked
         .split('_')
         .filter(Boolean)
@@ -891,6 +1102,27 @@ export function nameNode(kind: string): { typeName: string; factoryName: string;
     if (FACTORY_NAME_RESERVED.has(factoryName)) factoryName = `${factoryName}_`
     const irKey = factoryName
     return { typeName, factoryName, irKey }
+}
+
+/**
+ * Strip the leading underscore (hidden-rule marker) from a normalized kind string
+ * and collapse internal double-underscores into `_U_` so they survive PascalCase
+ * flattening.
+ *
+ * @param normalized - A kind string that has already been through `tokenToName` (so it
+ *   contains only word characters and underscores).
+ * @returns The prepared string ready to be split on `_` and PascalCase-joined.
+ * @example
+ *   prepareKindForPascalCase('_type_identifier') // → 'type_identifier'
+ *   prepareKindForPascalCase('type_identifier')  // → 'type_identifier'
+ *   prepareKindForPascalCase('literal_type__x')  // → 'literal_type_U_x'
+ * @remarks
+ *   Collisions between hidden/visible kinds that end up with the same result are
+ *   resolved post-hoc by `resolveCollidingNames()` — at which point the whole NodeMap
+ *   is visible and a disambiguator is applied only where actually needed.
+ */
+function prepareKindForPascalCase(normalized: string): string {
+    return normalized.replace(/^_+/, '').replace(/__+/g, '_U_')
 }
 
 // Reserved words that cannot be used as parameter/method names in TypeScript.

@@ -21,18 +21,6 @@ import type { Rule } from '../compiler/rule.ts'
 import { findAllPolymorphCandidates, type PolymorphCandidateLocation } from '../compiler/link.ts'
 
 /**
- * Locate the first CHOICE reachable from the rule root through the
- * transparent composition wrappers that `variant()` can target — seq
- * members + single-content wrappers. Returns the path to that choice
- * (joinable with `/`) plus a suggested variant name per alternative.
- * Names come from `tagVariants` when present (`variant.name` — "semi",
- * "form_1", ...); fall back to `form_N` for untagged choices.
- *
- * Returns null if no choice is reachable — the rule isn't a polymorph
- * candidate despite Link's suggestion (rare but possible when multiple
- * passes run; defensive).
- */
-/**
  * Derive readable arm names for a polymorph candidate's choice. Priority:
  * explicit variant() label (set by `tagVariants`) → named symbol target →
  * leading string literal in a seq → `form${i}` fallback. Names collide-
@@ -68,49 +56,80 @@ function armNamesFor(cand: PolymorphCandidateLocation): string[] {
     })
 }
 
+/**
+ * Derive a short, readable label for a single unnamed choice arm.
+ *
+ * @param node - The rule for this choice arm.
+ * @param index - Zero-based position within the parent CHOICE, used as
+ *   a numeric fallback when no better name is available.
+ * @returns A suggested name string: the variant label, symbol name,
+ *   leading identifier-shaped string literal, or `form${index}`.
+ * @remarks Used when suggesting `variant(...)` for bare choices (no
+ *   explicit variant() markers). The name is a suggestion the grammar
+ *   author can refine — the important property is that distinct arms get
+ *   distinct names so `registerPolymorphVariant`'s uniqueness guard
+ *   accepts the set at eval time.
+ */
+function deriveArmNameFromRule(node: Rule, index: number): string {
+    if (node.type === 'variant') return node.name
+    if (node.type === 'symbol' || node.type === 'supertype') return node.name
+    if (node.type === 'seq' && node.members.length > 0) {
+        // Lead with the first literal ('(' → 'paren', '[' → 'bracket')
+        // or the first symbol name.
+        for (const m of node.members) {
+            if (m.type === 'symbol' || m.type === 'supertype') return m.name
+            if (m.type === 'string') {
+                // Crude but serviceable — caller can rename.
+                const s = m.value
+                if (/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(s)) return s
+            }
+        }
+    }
+    return `form${index}`
+}
+
+/**
+ * Assign collision-free names to all arms of a CHOICE node.
+ *
+ * @param members - The choice's arm rules, in order.
+ * @param nameFn - Per-arm name derivation function (receives rule + index).
+ * @returns An array of unique strings, one per arm. Duplicate base names
+ *   get a numeric suffix (2, 3, …) so `registerPolymorphVariant`'s
+ *   uniqueness guard accepts the full set.
+ * @remarks `tagVariants` assigns the same label to structurally-identical
+ *   alternatives (e.g. export_statement has three "export" variants).
+ *   Appending a 2/3/... suffix keeps them unique for
+ *   `registerPolymorphVariant`'s uniqueness guard, which rejects
+ *   same-parent duplicates at eval time.
+ */
+function deduplicateArmNames(members: Rule[], nameFn: (m: Rule, i: number) => string): string[] {
+    const counts = new Map<string, number>()
+    return members.map((m, i) => {
+        const base = nameFn(m, i)
+        const seen = counts.get(base) ?? 0
+        counts.set(base, seen + 1)
+        return seen === 0 ? base : `${base}${seen + 1}`
+    })
+}
+
+/**
+ * Locate the first CHOICE reachable from the rule root through the
+ * transparent composition wrappers that `variant()` can target — seq
+ * members + single-content wrappers. Returns the path to that choice
+ * (joinable with `/`) plus a suggested variant name per alternative.
+ * Names come from `tagVariants` when present (`variant.name` — "semi",
+ * "form_1", ...); fall back to `form_N` for untagged choices.
+ *
+ * Returns null if no choice is reachable — the rule isn't a polymorph
+ * candidate despite Link's suggestion (rare but possible when multiple
+ * passes run; defensive).
+ */
 function locateTopLevelChoice(
     rule: Rule,
 ): { choicePath: string; arms: string[] } | null {
-    // Derive a short, readable name for an unnamed choice arm. Used when
-    // suggesting `variant(...)` for bare choices (no explicit variant()
-    // markers). Priority: symbol/supertype name → leading string literal
-    // → `form${i}`. The name is a suggestion the grammar author can
-    // refine — the important property is that distinct arms get distinct
-    // names so `registerPolymorphVariant`'s uniqueness guard accepts the
-    // set at eval time.
-    function armName(node: Rule, index: number): string {
-        if (node.type === 'variant') return node.name
-        if (node.type === 'symbol' || node.type === 'supertype') return node.name
-        if (node.type === 'seq' && node.members.length > 0) {
-            // Lead with the first literal ('(' → 'paren', '[' → 'bracket')
-            // or the first symbol name.
-            for (const m of node.members) {
-                if (m.type === 'symbol' || m.type === 'supertype') return m.name
-                if (m.type === 'string') {
-                    // Crude but serviceable — caller can rename.
-                    const s = m.value
-                    if (/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(s)) return s
-                }
-            }
-        }
-        return `form${index}`
-    }
-
     function walk(node: Rule, path: string): { choicePath: string; arms: string[] } | null {
         if (node.type === 'choice') {
-            // Disambiguate duplicate arm names — `tagVariants` assigns
-            // the same label to structurally-identical alternatives
-            // (e.g. export_statement has three "export" variants).
-            // Appending a 2/3/... suffix keeps them unique for
-            // `registerPolymorphVariant`'s uniqueness guard, which
-            // rejects same-parent duplicates at eval time.
-            const counts = new Map<string, number>()
-            const arms = node.members.map((m, i) => {
-                const base = armName(m, i)
-                const seen = counts.get(base) ?? 0
-                counts.set(base, seen + 1)
-                return seen === 0 ? base : `${base}${seen + 1}`
-            })
+            const arms = deduplicateArmNames(node.members, deriveArmNameFromRule)
             return { choicePath: path, arms }
         }
         if (node.type === 'seq') {
@@ -317,34 +336,9 @@ export function emitSuggested(config: EmitSuggestedConfig): string {
     lines.push('// ---------------------------------------------------------------')
     lines.push('export const suggestedRules = {')
 
-    // Track every kind already emitted at this level. The three
-    // sections below (inferred / supertype / repeated shape) can each
-    // propose a rule under the same name; object-literal duplicate
-    // keys drop all but the last at runtime, so we keep the
-    // first-emitted and skip later collisions.
-    const emittedKinds = new Set<string>()
-    const emit = (key: string, body: () => void): boolean => {
-        if (emittedKinds.has(key)) return false
-        emittedKinds.add(key)
-        body()
-        return true
-    }
-    const quoteKey = (k: string): string => JSON.stringify(k)
+    const { emittedKinds, emit, quoteKey } = createDeduplicatingEmitter()
 
-    // Group field-inference entries by parent kind so each rule
-    // entry carries every inference Link would apply to it in one
-    // shot. Every entry's position is resolved from the post-Optimize
-    // rule tree so the emitted `transform(original, { POS: field(...) })`
-    // snippet is a straight copy-paste (no `N:` TODO stub). Entries
-    // on non-SEQ rules (e.g. ts `statement`, which is a CHOICE) don't
-    // have a positional slot — those are emitted as a comment-only
-    // block since `transform()` can't target a CHOICE arm.
-    const inferredByKind = new Map<string, InferredFieldEntry[]>()
-    for (const entry of log.inferredFields) {
-        const list = inferredByKind.get(entry.kind) ?? []
-        list.push(entry)
-        inferredByKind.set(entry.kind, list)
-    }
+    const inferredByKind = groupInferencesByKind(log.inferredFields)
     const sortedKinds = [...inferredByKind.keys()].sort()
     for (const kind of sortedKinds) {
         const entries = inferredByKind.get(kind)!
@@ -595,4 +589,48 @@ function sortedInferences(entries: readonly InferredFieldEntry[]): InferredField
         if (aScore !== bScore) return bScore - aScore
         return a.kind.localeCompare(b.kind)
     })
+}
+
+/**
+ * Build the rule-block emitter: a closure over a seen-set that dedups
+ * repeated kinds, plus a `quoteKey` helper so callers can render the
+ * same kind as either a bare identifier or a JSON-quoted property key.
+ *
+ * @returns `{ emittedKinds, emit, quoteKey }` — shared state + emit closure
+ * @remarks
+ *   Every call to `emit(kind, fn)` is a no-op after the first for a given
+ *   `kind`, so repeated entries in the source log collapse to one block.
+ */
+function createDeduplicatingEmitter(): {
+    emittedKinds: Set<string>
+    emit: (kind: string, fn: () => void) => void
+    quoteKey: (k: string) => string
+} {
+    const emittedKinds = new Set<string>()
+    const emit = (kind: string, fn: () => void): void => {
+        if (emittedKinds.has(kind)) return
+        emittedKinds.add(kind)
+        fn()
+    }
+    const quoteKey = (k: string): string =>
+        /^[a-zA-Z_$][\w$]*$/.test(k) ? k : JSON.stringify(k)
+    return { emittedKinds, emit, quoteKey }
+}
+
+/**
+ * Group inferred-field entries by their parent kind.
+ *
+ * @param entries - Inferred-field entries from the derivation log.
+ * @returns Map from kind string to the entries that inferred fields on it.
+ */
+function groupInferencesByKind(
+    entries: readonly InferredFieldEntry[],
+): Map<string, InferredFieldEntry[]> {
+    const byKind = new Map<string, InferredFieldEntry[]>()
+    for (const e of entries) {
+        const bucket = byKind.get(e.kind)
+        if (bucket) bucket.push(e)
+        else byKind.set(e.kind, [e])
+    }
+    return byKind
 }

@@ -147,25 +147,16 @@ export function applyPath(
         return typeof patch === 'function' ? patch(rule, precStack) : patch
     }
 
-    // Precedence wrappers are TRANSPARENT to path addressing. Sittir's
-    // pipeline strips them; tree-sitter's CLI preserves them. Path
-    // segments target the underlying structure, not the wrapper. We
-    // descend into the wrapper without consuming a segment, and
-    // reconstruct it on the way back so tree-sitter still sees the
-    // precedence info. Accumulated prec wrappers are passed to the
-    // patch callback so alias/variant hidden rules can inherit context.
     if (isPrecWrapperShape(rule)) {
-        const newStack = precStack ? [...precStack, rule] : [rule]
-        const newContent = applyPath(contentOf(rule), segments, patch, newStack)
-        return reconstructPrec(rule, newContent)
+        return descendThroughPrecWrapper(rule, segments, patch, precStack)
     }
 
     const [head, ...rest] = segments
     const t = rule.type
 
-    // Kind-match is scope-agnostic — find every occurrence of the
-    // target kind in the current subtree and apply the patch at each,
-    // skipping occurrences already inside a named field. Runs before
+    // Kind-match is scope-agnostic — find every occurrence of the target
+    // kind in the current subtree and apply the patch at each, skipping
+    // occurrences already inside a named field. Runs before
     // container/wrapper dispatch because kind matching works through
     // arbitrary composition (seq / choice / wrapper chains).
     if (head!.kind === 'kind-match') {
@@ -178,20 +169,71 @@ export function applyPath(
         return applyToMembers(rule, head!, rest, patch, precStack)
     }
     if (isWrapperType(t)) {
-        // For wrappers, position 0 is the wrapped content. Negative
-        // indices are clamped to 0 — a wrapper has exactly one slot.
-        const wrapperHit = head!.kind === 'wildcard'
-            || (head!.kind === 'index' && (head!.value === 0 || head!.value === -1))
-        if (wrapperHit) {
-            const newContent = applyPath(contentOf(rule), rest, patch, precStack)
-            return reconstructWrapper(rule, newContent)
-        }
-        throw new ApplyPathSkip(
-            `applyPath: index ${head!.kind === 'index' ? head!.value : '*'} out of bounds — '${rule.type}' wraps a single content rule (only index 0 / -1 is valid)`,
-        )
+        return descendThroughSingleWrapper(rule, head!, rest, patch, precStack)
     }
 
     throw new ApplyPathSkip(`applyPath: cannot descend into '${rule.type}' rule (path has ${segments.length} segments left)`)
+}
+
+/**
+ * Descend through a prec wrapper without consuming a path segment, then
+ * reconstruct the wrapper on the way back.
+ *
+ * @remarks
+ * Precedence wrappers are transparent to path addressing. Sittir's pipeline
+ * strips them; tree-sitter's CLI preserves them. Path segments target the
+ * underlying structure, not the wrapper. Accumulated prec wrappers are passed
+ * to the patch callback so alias/variant hidden rules can inherit context.
+ *
+ * @param rule - The prec wrapper to descend through.
+ * @param segments - Remaining path segments (not consumed by this descent).
+ * @param patch - Patch value or function to apply at the addressed position.
+ * @param precStack - Previously accumulated prec wrappers.
+ * @returns Reconstructed prec wrapper with the patched inner content.
+ */
+function descendThroughPrecWrapper(
+    rule: RuntimeRule,
+    segments: readonly PathSegment[],
+    patch: RuntimeRule | ((member: RuntimeRule, precStack?: readonly RuntimeRule[]) => RuntimeRule),
+    precStack: readonly RuntimeRule[] | undefined,
+): RuntimeRule {
+    const newStack = precStack ? [...precStack, rule] : [rule]
+    const newContent = applyPath(contentOf(rule), segments, patch, newStack)
+    return reconstructPrec(rule, newContent)
+}
+
+/**
+ * Descend through a single-content wrapper (optional/repeat/repeat1/field),
+ * treating position 0 (or -1) as the wrapped content.
+ *
+ * @remarks
+ * For wrappers, position 0 is the wrapped content. Negative indices are clamped
+ * to 0 — a wrapper has exactly one slot.
+ *
+ * @param rule - The wrapper rule to descend through.
+ * @param head - The current path segment (index or wildcard).
+ * @param rest - Remaining path segments after this descent.
+ * @param patch - Patch value or function to apply at the addressed position.
+ * @param precStack - Accumulated prec wrappers for the patch callback.
+ * @returns Reconstructed wrapper with the patched inner content.
+ * @throws {ApplyPathSkip} If the index is out of range for a single-slot wrapper.
+ */
+function descendThroughSingleWrapper(
+    rule: RuntimeRule,
+    head: PathSegment,
+    rest: readonly PathSegment[],
+    patch: RuntimeRule | ((member: RuntimeRule, precStack?: readonly RuntimeRule[]) => RuntimeRule),
+    precStack: readonly RuntimeRule[] | undefined,
+): RuntimeRule {
+    const wrapperHit = head.kind === 'wildcard'
+        || (head.kind === 'index' && (head.value === 0 || head.value === -1))
+    if (wrapperHit) {
+        const newContent = applyPath(contentOf(rule), rest, patch, precStack)
+        return reconstructWrapper(rule, newContent)
+    }
+    throw new ApplyPathSkip(
+        `applyPath: index ${head.kind === 'index' ? head.value : '*'} out of bounds — '${rule.type}' wraps a single content rule (only index 0 / -1 is valid)`,
+    )
 }
 
 /**
@@ -229,11 +271,7 @@ function walkKindMatch(
     precStack: readonly RuntimeRule[] | undefined,
     insideNamedField: boolean,
 ): { rule: RuntimeRule; matched: boolean } {
-    // Leaf guard: nodes like `BLANK` come through the tree-sitter CLI
-    // runtime without a `content` field, and some deeply nested
-    // positions hand back `undefined` / primitives. Either way, kind-
-    // match has nothing to descend into — treat as a leaf.
-    if (rule === null || rule === undefined || typeof rule !== 'object' || typeof (rule as { type?: unknown }).type !== 'string') {
+    if (!isWalkableNode(rule)) {
         return { rule, matched: false }
     }
     const t = rule.type
@@ -245,10 +283,9 @@ function walkKindMatch(
         return { rule: inner.matched ? reconstructPrec(rule, inner.rule) : rule, matched: inner.matched }
     }
 
-    // Symbol match — the terminal case. Apply the remaining path (if
-    // any) or the patch directly. Skip when we're inside a named
-    // field wrapper (except when the remaining path explicitly asks
-    // to descend into a field's content).
+    // Symbol match — the terminal case. Apply the remaining path (if any) or
+    // the patch directly. Skip when inside a named field wrapper (except when
+    // the remaining path explicitly asks to descend into a field's content).
     if (t === 'symbol' || t === 'SYMBOL') {
         const name = (rule as unknown as { name: string }).name
         if (name !== targetKind) return { rule, matched: false }
@@ -259,9 +296,9 @@ function walkKindMatch(
         return { rule: patched, matched: true }
     }
 
-    // Field: descend into content but mark insideNamedField=true so
-    // nested `_expression` references inside already-fielded symbols
-    // don't get re-wrapped.
+    // Field: descend into content but mark insideNamedField=true so nested
+    // `_expression` references inside already-fielded symbols don't get
+    // re-wrapped.
     if (t === 'field' || t === 'FIELD') {
         const inner = walkKindMatch(contentOf(rule), targetKind, rest, patch, precStack, true)
         return { rule: inner.matched ? reconstructWrapper(rule, inner.rule) : rule, matched: inner.matched }
@@ -289,6 +326,26 @@ function walkKindMatch(
 
     // Leaf types we don't descend into (string, pattern, blank, etc.).
     return { rule, matched: false }
+}
+
+/**
+ * Guard that rejects null, undefined, and non-object values before descent in
+ * walkKindMatch.
+ *
+ * @remarks
+ * Leaf nodes like `BLANK` come through the tree-sitter CLI runtime without a
+ * `content` field, and some deeply nested positions hand back `undefined` /
+ * primitives. Either way, kind-match has nothing to descend into — treat as a
+ * leaf.
+ *
+ * @param rule - The value to test.
+ * @returns `true` if `rule` is a non-null object with a string `type` property.
+ */
+function isWalkableNode(rule: unknown): rule is RuntimeRule {
+    return rule !== null
+        && rule !== undefined
+        && typeof rule === 'object'
+        && typeof (rule as { type?: unknown }).type === 'string'
 }
 
 /**
@@ -321,20 +378,7 @@ export function reconstructWrapper(rule: RuntimeRule, newContent: RuntimeRule): 
     const t = rule.type
     if (t === 'optional') return nativeRequired('optional')(newContent)
     if (t === 'repeat' || t === 'REPEAT' || t === 'repeat1' || t === 'REPEAT1') {
-        const r = rule as { separator?: unknown; leading?: unknown; trailing?: unknown }
-        // Sittir's `repeat()` helper collapses the common
-        // `seq(x, optional(sep))` pattern into a single repeat node
-        // with separator/leading/trailing metadata. The native runtime
-        // function doesn't accept those fields as parameters, so we
-        // preserve them by spreading onto the reconstructed node
-        // directly. Tree-sitter CLI never produces metadata-bearing
-        // repeats (it keeps the raw seq shape), so in that runtime
-        // the metadata branch is simply never taken.
-        const baseNode = nativeRequired(t === 'repeat' || t === 'REPEAT' ? 'repeat' : 'repeat1')(newContent) as Record<string, unknown>
-        if (r.separator !== undefined) baseNode.separator = r.separator
-        if (r.leading !== undefined) baseNode.leading = r.leading
-        if (r.trailing !== undefined) baseNode.trailing = r.trailing
-        return baseNode as unknown as RuntimeRule
+        return reconstructRepeatWithMetadata(rule, newContent)
     }
     if (isFieldType(t)) {
         const name = (rule as unknown as { name: string }).name
@@ -343,6 +387,33 @@ export function reconstructWrapper(rule: RuntimeRule, newContent: RuntimeRule): 
     throw new Error(
         `reconstructWrapper: no native dsl reconstruction for wrapper type '${rule.type}' — this is a bug in the path-descent logic.`,
     )
+}
+
+/**
+ * Reconstruct a repeat/repeat1 wrapper, preserving any sittir-specific
+ * separator/leading/trailing metadata that the native repeat() call cannot
+ * round-trip through its parameters.
+ *
+ * @remarks
+ * Sittir's `repeat()` helper collapses the common `seq(x, optional(sep))`
+ * pattern into a single repeat node with separator/leading/trailing metadata.
+ * The native runtime function doesn't accept those fields as parameters, so they
+ * are preserved by spreading onto the reconstructed node directly. Tree-sitter
+ * CLI never produces metadata-bearing repeats (it keeps the raw seq shape), so
+ * in that runtime the metadata branch is simply never taken.
+ *
+ * @param rule - The original repeat or repeat1 rule (may carry metadata).
+ * @param newContent - The replacement content for the repeat body.
+ * @returns Reconstructed repeat rule with metadata fields restored if present.
+ */
+function reconstructRepeatWithMetadata(rule: RuntimeRule, newContent: RuntimeRule): RuntimeRule {
+    const r = rule as { type: string; separator?: unknown; leading?: unknown; trailing?: unknown }
+    const t = r.type
+    const baseNode = nativeRequired(t === 'repeat' || t === 'REPEAT' ? 'repeat' : 'repeat1')(newContent) as Record<string, unknown>
+    if (r.separator !== undefined) baseNode.separator = r.separator
+    if (r.leading !== undefined) baseNode.leading = r.leading
+    if (r.trailing !== undefined) baseNode.trailing = r.trailing
+    return baseNode as unknown as RuntimeRule
 }
 
 /**
@@ -384,27 +455,73 @@ function applyToMembers(
     const members = [...membersOf(rule)]
 
     if (head.kind === 'index') {
-        // Negative indices count from the end: `-1` is the last member,
-        // `-2` the second-to-last. Handy for trailing structural tokens
-        // (e.g. a unit struct's `;`) whose position depends on optional
-        // earlier members.
-        const idx = head.value < 0 ? members.length + head.value : head.value
-        if (idx < 0 || idx >= members.length) {
-            throw new ApplyPathSkip(
-                `applyPath: index ${head.value} out of bounds in ${rule.type} of length ${members.length}`,
-            )
-        }
-        members[idx] = applyPath(members[idx]!, rest, patch, precStack)
-        return reconstructContainer(rule, members)
+        return applyToIndexedMember(rule, members, head.value, rest, patch, precStack)
     }
 
-    // Wildcard — apply to every member that can accept the remaining
-    // path. Members that can't descend throw `ApplyPathSkip` which we
-    // catch and skip; every OTHER exception (TypeError, missing-global
-    // error, bug in reconstruction, throw from user-supplied patch
-    // function) propagates so real bugs are never masked. Zero matches
-    // is itself an error — a wildcard that reaches nothing is a typo
-    // magnet.
+    return applyWildcardToMembers(rule, members, rest, patch, precStack)
+}
+
+/**
+ * Apply a patch to a single member of a container rule at a resolved index.
+ *
+ * @remarks
+ * Negative indices count from the end: `-1` is the last member, `-2` the
+ * second-to-last. Handy for trailing structural tokens (e.g. a unit struct's
+ * `;`) whose position depends on optional earlier members.
+ *
+ * @param rule - The container rule (for error messages and reconstruction).
+ * @param members - Mutable copy of the container's members.
+ * @param indexValue - The raw index value (may be negative).
+ * @param rest - Remaining path segments after this step.
+ * @param patch - Patch value or function.
+ * @param precStack - Accumulated prec wrappers.
+ * @returns Reconstructed container with the patched member.
+ * @throws {ApplyPathSkip} If the resolved index is out of bounds.
+ */
+function applyToIndexedMember(
+    rule: RuntimeRule,
+    members: RuntimeRule[],
+    indexValue: number,
+    rest: readonly PathSegment[],
+    patch: RuntimeRule | ((member: RuntimeRule, precStack?: readonly RuntimeRule[]) => RuntimeRule),
+    precStack: readonly RuntimeRule[] | undefined,
+): RuntimeRule {
+    const idx = indexValue < 0 ? members.length + indexValue : indexValue
+    if (idx < 0 || idx >= members.length) {
+        throw new ApplyPathSkip(
+            `applyPath: index ${indexValue} out of bounds in ${rule.type} of length ${members.length}`,
+        )
+    }
+    members[idx] = applyPath(members[idx]!, rest, patch, precStack)
+    return reconstructContainer(rule, members)
+}
+
+/**
+ * Apply a patch to every member of a container rule that can accept the
+ * remaining path, skipping members that throw ApplyPathSkip.
+ *
+ * @remarks
+ * Members that can't descend throw `ApplyPathSkip`, which is caught and skipped;
+ * every other exception (TypeError, missing-global error, bug in reconstruction,
+ * throw from user-supplied patch function) propagates so real bugs are never
+ * masked. Zero matches is itself an error — a wildcard that reaches nothing is a
+ * typo magnet.
+ *
+ * @param rule - The container rule (for error messages and reconstruction).
+ * @param members - Mutable copy of the container's members.
+ * @param rest - Remaining path segments after the wildcard step.
+ * @param patch - Patch value or function.
+ * @param precStack - Accumulated prec wrappers.
+ * @returns Reconstructed container with all matching members patched.
+ * @throws {ApplyPathSkip} If the container is empty or no member accepted the patch.
+ */
+function applyWildcardToMembers(
+    rule: RuntimeRule,
+    members: RuntimeRule[],
+    rest: readonly PathSegment[],
+    patch: RuntimeRule | ((member: RuntimeRule, precStack?: readonly RuntimeRule[]) => RuntimeRule),
+    precStack: readonly RuntimeRule[] | undefined,
+): RuntimeRule {
     if (members.length === 0) {
         throw new ApplyPathSkip(`applyPath: wildcard matched zero members in empty ${rule.type}`)
     }

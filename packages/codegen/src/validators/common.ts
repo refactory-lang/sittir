@@ -252,42 +252,58 @@ export interface WrapForReparseResult {
     readonly offset: number
 }
 
-export function wrapForReparse(
+/**
+ * Apply a wrapper template to `rendered` and compute the byte offset at which
+ * the rendered fragment begins inside the resulting string.
+ *
+ * @param rendered - The rendered fragment to splice into the wrapper.
+ * @param wrapper - A function that takes the fragment and returns a full
+ *   parse-valid program snippet.
+ * @returns A `WrapForReparseResult` with `text` (the spliced program) and
+ *   `offset` (byte position of `rendered` inside `text`).
+ */
+function applyWrapperTemplate(
     rendered: string,
+    wrapper: (r: string) => string,
+): WrapForReparseResult {
+    const text = wrapper(rendered)
+    const SENTINEL = '\u0001SITTIR_SENTINEL\u0001'
+    const sentinelText = wrapper(SENTINEL)
+    const offset = sentinelText.indexOf(SENTINEL)
+    return { text, offset: offset >= 0 ? offset : 0 }
+}
+
+/**
+ * Select the highest-priority wrapper reachable from `kind` via BFS over the
+ * supertype graph and apply it.
+ *
+ * @remarks
+ * Priority order: expression > type > declaration > statement > pattern (and
+ * their `_`-prefixed siblings). Some kinds (python `attribute`, `subscript`)
+ * are subtypes of BOTH `primary_expression` → `expression` AND `pattern`. A
+ * pattern wrapper reparses an expression-shaped rendering as `dotted_name` /
+ * other pattern kinds, not the original — so prefer the expression wrapper.
+ * The ordering matches how tree-sitter grammars overload syntax: a construct
+ * appears as an expression first, a pattern only in match-arm contexts, which
+ * is the more restricted interpretation.
+ *
+ * Python's `attribute` has supertype `primary_expression` which isn't in the
+ * wrapper map, but `primary_expression` itself is a subtype of `expression`
+ * which IS mapped. BFS up through supertype chains so any mapped ancestor
+ * produces a valid wrapping context.
+ *
+ * @param kind - The concrete grammar kind being wrapped.
+ * @param wrappers - The grammar's wrapper map.
+ * @param kindToSupertypes - BFS graph: kind → list of direct supertypes.
+ * @param rendered - The rendered fragment to splice.
+ * @returns A `WrapForReparseResult`, or `null` if no mapped ancestor exists.
+ */
+function selectAndApplySupertypeWrapper(
     kind: string,
-    grammar: string,
+    wrappers: Record<string, (r: string) => string>,
     kindToSupertypes: Map<string, string[]>,
+    rendered: string,
 ): WrapForReparseResult | null {
-    const wrappers = REPARSE_WRAPPERS[grammar]
-    if (!wrappers) return null
-    const applyWrapper = (wrapper: (r: string) => string): WrapForReparseResult => {
-        const text = wrapper(rendered)
-        const SENTINEL = '\u0001SITTIR_SENTINEL\u0001'
-        const sentinelText = wrapper(SENTINEL)
-        const offset = sentinelText.indexOf(SENTINEL)
-        return { text, offset: offset >= 0 ? offset : 0 }
-    }
-    // Kind-specific wrapper beats supertype wrapper — some kinds only
-    // appear in contexts their supertype's generic wrapper doesn't
-    // produce (e.g. rust `mut_pattern` surfaces in match/if-let but
-    // NOT in plain `let` statements, which flatten it away).
-    const direct = wrappers[kind]
-    if (direct) return applyWrapper(direct)
-    // Transitive supertype walk. Python's `attribute` has supertype
-    // `primary_expression` which isn't in the wrapper map, but
-    // `primary_expression` itself is a subtype of `expression` which
-    // IS mapped. BFS up through supertype chains so any mapped ancestor
-    // produces a valid wrapping context.
-    //
-    // Priority order: expression > type > declaration > statement >
-    // pattern. Some kinds (python `attribute`, `subscript`) are subtypes
-    // of BOTH `primary_expression` → `expression` AND `pattern`. A
-    // pattern wrapper (`match _: case ${r}: pass`) reparses an
-    // expression-shaped rendering as `dotted_name` / other pattern
-    // kinds, not the original — so prefer the expression wrapper. The
-    // ordering matches how tree-sitter grammars overload syntax: a
-    // construct appears as an expression first, a pattern only in
-    // match-arm contexts, which is the more restricted interpretation.
     const WRAPPER_PRIORITY = ['expression', 'type', 'declaration', 'statement', 'pattern',
         '_expression', '_type', '_declaration_statement', '_literal', '_literal_pattern',
         '_pattern', '_simple_statement', '_compound_statement']
@@ -305,11 +321,28 @@ export function wrapForReparse(
     }
     if (reachable.size === 0) return null
     for (const name of WRAPPER_PRIORITY) {
-        if (reachable.has(name)) return applyWrapper(wrappers[name]!)
+        if (reachable.has(name)) return applyWrapperTemplate(rendered, wrappers[name]!)
     }
     // Reachable but not in priority list — take the first one.
     const first = [...reachable][0]!
-    return applyWrapper(wrappers[first]!)
+    return applyWrapperTemplate(rendered, wrappers[first]!)
+}
+
+export function wrapForReparse(
+    rendered: string,
+    kind: string,
+    grammar: string,
+    kindToSupertypes: Map<string, string[]>,
+): WrapForReparseResult | null {
+    const wrappers = REPARSE_WRAPPERS[grammar]
+    if (!wrappers) return null
+    // Kind-specific wrapper beats supertype wrapper — some kinds only
+    // appear in contexts their supertype's generic wrapper doesn't
+    // produce (e.g. rust `mut_pattern` surfaces in match/if-let but
+    // NOT in plain `let` statements, which flatten it away).
+    const direct = wrappers[kind]
+    if (direct) return applyWrapperTemplate(rendered, direct)
+    return selectAndApplySupertypeWrapper(kind, wrappers, kindToSupertypes, rendered)
 }
 
 // ---------------------------------------------------------------------------
@@ -483,6 +516,80 @@ interface ReadNodeLike {
 }
 
 /**
+ * Determine whether an anonymous NodeData token should pass through
+ * `resolveChild` unchanged.
+ *
+ * @remarks
+ * Anonymous tokens (separators, delimiters, keywords promoted to $fields by
+ * readNode) must stay as NodeData. Render's `$named !== false` filter drops
+ * them from `$$$CHILDREN`, and flankSep probes their span/text to reconstruct
+ * trailing separators. Converting them to bare strings bypasses those filters
+ * and double-emits (e.g. struct_pattern's trailing `,` showed up twice in the
+ * rendered output).
+ *
+ * @param c - The candidate child NodeData.
+ * @returns `true` if the child is an anonymous token and should be returned as-is.
+ */
+function isAnonTokenPassthrough(c: ReadNodeLike): boolean {
+    return c.$named === false
+}
+
+/**
+ * Guard the recursion depth and availability of tree/factory context before
+ * drilling into a child node.
+ *
+ * @remarks
+ * Depth cap: recursive construction shouldn't run away even on pathologically
+ * nested corpus entries. 64 is well past real-world AST depth and stops before
+ * Node's default call-stack limit.
+ *
+ * @param depth - Current recursion depth.
+ * @param tree - Tree handle, if available.
+ * @param factoryMap - Factory map, if available.
+ * @returns `true` if recursion should be halted (cap exceeded or context absent).
+ */
+function shouldHaltRecursion(
+    depth: number,
+    tree: NodeToConfigOpts['tree'],
+    factoryMap: NodeToConfigOpts['factoryMap'],
+): boolean {
+    return depth > 64 || !tree || !factoryMap
+}
+
+/**
+ * Resolve the effective factory kind for a child, unaliasing the
+ * tree-sitter-emitted kind when the declaring slot has an alias-source
+ * registered in `fieldAliasMap`.
+ *
+ * @remarks
+ * `fieldAliasMap` is keyed `parentKind.fieldName` → `{ targetKind: sourceKind }`.
+ * Example: python `match_statement` has `body: alias($._match_block, $.block)`,
+ * so `match_statement.body` maps `'block'` → `'_match_block'`. A child with
+ * `$type 'block'` arriving at that slot dispatches to the `_match_block`
+ * factory (whose config accepts `alternative: CaseClause[]` rather than the
+ * plain block's `children: Statement[]`).
+ *
+ * @param rawKind - The kind as emitted by tree-sitter.
+ * @param parentKind - The kind of the parent node, if known.
+ * @param fieldName - The field name under which the child was found, if known.
+ * @param fieldAliasMap - Per-field alias-source map.
+ * @returns The source kind to dispatch, or `rawKind` when no alias applies.
+ */
+function resolveAliasedKind(
+    rawKind: string,
+    parentKind: string | undefined,
+    fieldName: string | undefined,
+    fieldAliasMap: NodeToConfigOpts['fieldAliasMap'],
+): string {
+    if (fieldAliasMap && parentKind && fieldName) {
+        const key = `${parentKind}.${fieldName}`
+        const targetMap = fieldAliasMap[key]
+        if (targetMap && targetMap[rawKind]) return targetMap[rawKind]!
+    }
+    return rawKind
+}
+
+/**
  * Drill into a shallow child NodeData via the tree handle, then convert
  * recursively and route through its kind's factory. Falls back to the
  * passed-in shallow NodeData when `tree` isn't available OR the child
@@ -496,18 +603,9 @@ function resolveChild(
     if (typeof child === 'string' || typeof child === 'number') return child
     if (typeof child !== 'object') return child
     const c = child as ReadNodeLike
-    // Anonymous tokens (separators, delimiters, keywords promoted to $fields
-    // by readNode) stay as NodeData — render's `$named !== false` filter
-    // drops them from `$$$CHILDREN`, and flankSep probes their span/text
-    // to reconstruct trailing separators. Converting them to bare strings
-    // bypasses those filters and double-emits (e.g. struct_pattern's
-    // trailing `,` showed up twice in the rendered output).
-    if (c.$named === false) return child
+    if (isAnonTokenPassthrough(c)) return child
     const { tree, factoryMap, factoryShapes, fieldAliasMap, _depth = 0, _parentKind, _fieldName } = opts
-    // Depth cap — recursive construction shouldn't run away even on
-    // pathologically nested corpus entries. 64 is well past real-world
-    // AST depth and stops before Node's default call-stack.
-    if (_depth > 64 || !tree || !factoryMap) return child
+    if (shouldHaltRecursion(_depth, tree, factoryMap)) return child
     // Drill into the child to materialize its own $fields/$children.
     let drilled: ReadNodeLike = c
     if (c.$nodeId != null) {
@@ -520,25 +618,11 @@ function resolveChild(
     }
     const rawKind = drilled.$type ?? c.$type
     if (!rawKind) return drilled
-    // Unalias the tree-sitter-emitted kind when the declaring slot has
-    // an alias-source registered. `fieldAliasMap` is keyed
-    // `parentKind.fieldName` → source kind. Example: python match_statement
-    // has `body: alias($._match_block, $.block)`, so
-    // `match_statement.body` maps to `_match_block`; a child with $type
-    // 'block' arriving at that slot dispatches to the `_match_block`
-    // factory (whose config accepts `alternative: CaseClause[]` rather
-    // than the plain block's `children: Statement[]`).
-    let kind = rawKind
-    if (fieldAliasMap && _parentKind && _fieldName) {
-        const key = `${_parentKind}.${_fieldName}`
-        const targetMap = fieldAliasMap[key]
-        if (targetMap && targetMap[rawKind]) kind = targetMap[rawKind]
-    }
-    const factory = factoryMap[kind]
+    const kind = resolveAliasedKind(rawKind, _parentKind, _fieldName, fieldAliasMap)
+    const factory = factoryMap![kind]
     if (!factory) return drilled  // hidden / unfactoryable kind — pass through
     const shape = factoryShapes?.[kind] ?? 'config'
-    // 'text' shape: leaf factory takes a bare string. `drilled.$text` is
-    // whatever tree-sitter captured for this span.
+    // 'text' shape: leaf factory takes a bare string.
     if (shape === 'text') {
         return factory(drilled.$text ?? '')
     }
@@ -551,6 +635,75 @@ function resolveChild(
     return factory(childConfig)
 }
 
+/**
+ * Test whether a `$fields` key is identifier-shaped and thus a valid factory
+ * Config slot.
+ *
+ * @remarks
+ * Promoted anonymous keyword / punctuation tokens use the token's raw text as
+ * the `$fields` key (e.g. `,`, `:`, `(`). Factory Config types only declare
+ * identifier-shaped slots; spreading punctuation keys pollutes the config
+ * without ever being read by the factory.
+ *
+ * @param key - A raw key from `$fields`.
+ * @returns `true` if the key matches `[a-zA-Z_]\w*` and should be included.
+ */
+function isIdentifierShapedFieldKey(key: string): boolean {
+    return /^[a-zA-Z_][\w]*$/.test(key)
+}
+
+/**
+ * Determine whether to promote orphan `$children` into declared factory fields
+ * by position instead of routing them to `children`.
+ *
+ * @remarks
+ * When the parent kind declares fields via `_factoryFields` but none of them
+ * appear in `data.$fields`, tree-sitter likely elided the field label for this
+ * GLR state (python `list_splat` at expression-statement position is the
+ * canonical case). Route the named children into the declared fields by
+ * position so the factory sees the expected slots instead of `children`. Fires
+ * only when no declared field is already populated — otherwise children
+ * genuinely belong in `$$$CHILDREN` (e.g. rust `impl_item`'s body).
+ *
+ * @param declaredFields - The factory's declared field names for the parent kind.
+ * @param populatedOut - The config object built so far (to check if any field is already set).
+ * @param namedChildren - The filtered list of named child nodes.
+ * @returns `true` if the orphan-promotion path should be taken.
+ */
+function shouldPromoteOrphanChildren(
+    declaredFields: readonly string[] | undefined,
+    populatedOut: Record<string, unknown>,
+    namedChildren: readonly unknown[],
+): boolean {
+    if (!declaredFields || namedChildren.length === 0) return false
+    if (namedChildren.length > declaredFields.length) return false
+    const noFieldMatched = declaredFields.every(name => {
+        const camel = name.replace(/_([a-z])/g, (_m, c: string) => c.toUpperCase())
+        return populatedOut[camel] === undefined
+    })
+    return noFieldMatched
+}
+
+/**
+ * Map `$children` entries directly to `out.children` without alias resolution.
+ *
+ * @remarks
+ * `$children` entries don't have a field name; alias resolution falls back to
+ * the raw `$type` (no parent.field lookup). Only the `$fields` iteration can
+ * trigger alias-source dispatch.
+ *
+ * @param children - The raw `$children` array from NodeData.
+ * @param childOpts - Options for `resolveChild` with parent/field context cleared.
+ * @param out - The config object to write `children` into.
+ */
+function assignChildrenToConfig(
+    children: readonly unknown[],
+    childOpts: NodeToConfigOpts,
+    out: Record<string, unknown>,
+): void {
+    out.children = children.map(c => resolveChild(c, childOpts))
+}
+
 export function nodeToConfig(
     data: ReadNodeLike,
     opts: NodeToConfigOpts = {},
@@ -560,12 +713,7 @@ export function nodeToConfig(
     if (data.$fields) {
         for (const [k, v] of Object.entries(data.$fields)) {
             if (v === undefined) continue
-            // Promoted anonymous keyword / punctuation tokens use the
-            // token's raw text as the $fields key (`,`, `:`, `(`). Skip
-            // non-identifier-shaped keys — factory Config types only
-            // declare identifier-shaped slots; spreading punctuation keys
-            // pollutes the config without ever being read by the factory.
-            if (!/^[a-zA-Z_][\w]*$/.test(k)) continue
+            if (!isIdentifierShapedFieldKey(k)) continue
             const camelKey = k.replace(/_([a-z])/g, (_m, c: string) => c.toUpperCase())
             const childOpts: NodeToConfigOpts = { ...opts, _parentKind: parentKind, _fieldName: k }
             out[camelKey] = Array.isArray(v)
@@ -574,37 +722,21 @@ export function nodeToConfig(
         }
     }
     if (data.$children) {
-        // Orphan-child promotion: when the parent kind declares fields
-        // per `_factoryFields` but none of them appear in data.$fields,
-        // tree-sitter likely elided the field label for this GLR state
-        // (python `list_splat` at expression-statement position is the
-        // canonical case). Route the named children into the declared
-        // fields by position so the factory sees the expected slots
-        // instead of `children`. Fires only when no declared field is
-        // already populated — otherwise children genuinely belong in
-        // $$$CHILDREN (e.g. rust impl_item's body).
         const declaredFields = parentKind ? opts.factoryFields?.[parentKind] : undefined
-        const noFieldMatched = !declaredFields || declaredFields.every(name => {
-            const camel = name.replace(/_([a-z])/g, (_m, c: string) => c.toUpperCase())
-            return out[camel] === undefined
-        })
         const namedChildren = data.$children.filter(c =>
             c != null && typeof c === 'object' && (c as { $named?: boolean }).$named !== false,
         )
         const childOpts: NodeToConfigOpts = { ...opts, _parentKind: undefined, _fieldName: undefined }
-        if (declaredFields && noFieldMatched && namedChildren.length > 0 && namedChildren.length <= declaredFields.length) {
+        if (shouldPromoteOrphanChildren(declaredFields, out, namedChildren)) {
             // Assign by position: first N named children → first N declared fields.
             namedChildren.forEach((child, i) => {
-                const name = declaredFields[i]!
+                const name = declaredFields![i]!
                 const camel = name.replace(/_([a-z])/g, (_m, c: string) => c.toUpperCase())
                 const resolveOpts: NodeToConfigOpts = { ...opts, _parentKind: parentKind, _fieldName: name }
                 out[camel] = resolveChild(child, resolveOpts)
             })
         } else {
-            // $children entries don't have a field name; alias resolution
-            // falls back to the raw $type (no parent.field lookup). Only
-            // the $fields iteration can trigger alias-source dispatch.
-            out.children = data.$children.map(c => resolveChild(c, childOpts))
+            assignChildrenToConfig(data.$children, childOpts, out)
         }
     }
     return out
