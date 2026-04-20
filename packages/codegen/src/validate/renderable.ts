@@ -64,10 +64,7 @@ export function validateRenderable(grammar: string, templatesYaml: string): Rend
     let total = 0
 
     for (const entry of rawEntries) {
-        // Skip anonymous tokens (tree-sitter's string literals aren't addressable
-        // by `render(node)` because their instances never appear as top-level nodes
-        // with their own render call — they're text content of their parent).
-        if (!entry.named) continue
+        if (!isNamedEntry(entry)) continue
         total++
 
         const path = classifyRenderability(entry, ruleKinds)
@@ -100,7 +97,7 @@ export function validateRenderableFromNodeMap(grammar: string, nodeMap: NodeMap)
     let total = 0
 
     for (const entry of rawEntries) {
-        if (!entry.named) continue
+        if (!isNamedEntry(entry)) continue
         total++
 
         if (lookup.renderable.has(entry.type)) {
@@ -116,6 +113,23 @@ export function validateRenderableFromNodeMap(grammar: string, nodeMap: NodeMap)
     }
 
     return { grammar, total, renderable, missing }
+}
+
+// ---------------------------------------------------------------------------
+// Entry filtering
+// ---------------------------------------------------------------------------
+
+/**
+ * Determine whether a node-types.json entry should be counted for renderability.
+ *
+ * @param entry A raw node-types.json entry.
+ * @returns `true` when the entry is a named (non-anonymous) token. Anonymous
+ *   tokens are tree-sitter string literals that are never addressable by
+ *   `render(node)` — they appear as text content inside their parent and have
+ *   no render call of their own.
+ */
+function isNamedEntry(entry: RawNodeEntry): boolean {
+    return entry.named
 }
 
 // ---------------------------------------------------------------------------
@@ -153,6 +167,27 @@ function reasonFor(entry: RawNodeEntry, ruleKinds: Set<string>): string {
 // ---------------------------------------------------------------------------
 
 /**
+ * Extract variant matcher kinds from a single rule entry and add them to the
+ * accumulator set.
+ *
+ * @param rule   A single entry from the `rules` map (may be any shape).
+ * @param kinds  Accumulator set to which discovered variant names are added.
+ * @remarks Variant-bearing rules list subtypes dispatched through the parent,
+ *   so each variant's `name` field also counts as renderable. Variant shape:
+ *   `{ variants: [{ name, template, ... }, ...] }`.
+ */
+function collectVariantKindsFromRule(rule: TemplateRule, kinds: Set<string>): void {
+    if (rule && typeof rule === 'object' && !Array.isArray(rule)) {
+        const variants = (rule as { variants?: Array<{ name?: string }> }).variants
+        if (Array.isArray(variants)) {
+            for (const v of variants) {
+                if (v?.name) kinds.add(v.name)
+            }
+        }
+    }
+}
+
+/**
  * Collect every kind addressable via the rules map: both top-level entries
  * and variant subtypes (a variant template selects based on child kind, so
  * the variant-subtype itself is renderable through the parent's rule).
@@ -163,17 +198,7 @@ function collectRuleKinds(config: RulesConfig): Set<string> {
     for (const [kind, rule] of Object.entries(rules)) {
         kinds.add(kind)
 
-        // Variant-bearing rules: extract each variant's matcher kind so
-        // that subtypes dispatched through the parent also count as
-        // renderable. Variant shape: { variants: [{ name, template, ... }, ...] }
-        if (rule && typeof rule === 'object' && !Array.isArray(rule)) {
-            const variants = (rule as { variants?: Array<{ name?: string }> }).variants
-            if (Array.isArray(variants)) {
-                for (const v of variants) {
-                    if (v?.name) kinds.add(v.name)
-                }
-            }
-        }
+        collectVariantKindsFromRule(rule, kinds)
     }
     return kinds
 }

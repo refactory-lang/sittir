@@ -191,6 +191,303 @@ export interface FactoryRoundTripResult {
 	astMismatches: { kind: string; entry?: string; message: string; input?: string; rendered?: string }[];
 }
 
+/**
+ * Dynamically import the generated `_factoryMap` and validator-only metadata
+ * for a grammar. `_factoryShapes[kind]` encodes the calling convention
+ * (`config` / `children` / `text`) produced at codegen time from the node
+ * model type — it is never inferred at runtime.
+ *
+ * @param grammar - Grammar name (rust / typescript / python).
+ * @returns Resolved factory artifacts and an `importFailure` record if loading
+ *   fails, or `null` for `importFailure` on success.
+ * @remarks Validator-only metadata lives in `factory-map.json5` and is loaded
+ *   separately from the factory functions so the pure-data file stays
+ *   tree-shakeable.
+ */
+async function loadFactoryModuleForGrammar(grammar: string): Promise<{
+	factoryMap: Record<string, (config?: any) => unknown>;
+	factoryShapes: Record<string, 'config' | 'children' | 'text'>;
+	fieldAliasMap: Record<string, Record<string, string>>;
+	factoryFields: Record<string, readonly string[]>;
+	importFailure: { message: string } | null;
+}> {
+	const factoryModulePath = FACTORY_MODULE_PATHS[grammar];
+	let factoryMap: Record<string, (config?: any) => unknown> = {};
+	let factoryShapes: Record<string, 'config' | 'children' | 'text'> = {};
+	let fieldAliasMap: Record<string, Record<string, string>> = {};
+	let factoryFields: Record<string, readonly string[]> = {};
+	if (!factoryModulePath) {
+		return { factoryMap, factoryShapes, fieldAliasMap, factoryFields, importFailure: null };
+	}
+	try {
+		const factoryModule = await import(new URL(factoryModulePath, import.meta.url).pathname);
+		factoryMap = factoryModule._factoryMap ?? {};
+		// Validator-only metadata lives in factory-map.json5 — pure
+		// data, loaded separately from the factory functions.
+		const mapData = await loadFactoryMap(grammar);
+		factoryShapes = mapData.factoryShapes;
+		fieldAliasMap = mapData.fieldAliasMap;
+		factoryFields = mapData.factoryFields;
+		return { factoryMap, factoryShapes, fieldAliasMap, factoryFields, importFailure: null };
+	} catch (e) {
+		const message = `[validate-factory-roundtrip] failed to load ${factoryModulePath}: ${(e as Error)?.message ?? e}`;
+		console.error(message);
+		return { factoryMap, factoryShapes, fieldAliasMap, factoryFields, importFailure: { message } };
+	}
+}
+
+/**
+ * Load the walker-based alias-source resolver for ADR-0006 wrap-aware kind
+ * resolution. When available, walking the wrapped tree once per corpus entry
+ * surfaces alias-source `$type`s so those kinds can be tested via their source
+ * templates and reparse wrappers — the same infrastructure used in
+ * validate-roundtrip.ts.
+ *
+ * @param grammar - Grammar name (rust / typescript / python).
+ * @returns The `readTreeNode` function bound to the grammar, or `null` if the
+ *   wrap layer is not available.
+ */
+async function loadWrapperBasedAliasResolver(
+	grammar: string,
+): Promise<((handle: any) => any) | null> {
+	return loadReadTreeNode(grammar);
+}
+
+/**
+ * Create a `Set` that deduplicates validation work on (kind, entry) pairs.
+ * Each corpus entry that contains a kind is exercised exactly once — the
+ * prior per-kind-only granularity hid real bugs: when the first corpus entry
+ * happened to exercise a working shape, subsequent entries testing buggy
+ * shapes (e.g. python `comparison_operator` with `not in` vs the chained
+ * `a < b`) never ran. The (kind, entry) granularity keeps runtime bounded
+ * while catching shape-specific bugs.
+ *
+ * @returns An empty Set keyed by `"${kind}\0${entryName}"` strings.
+ */
+function initKindEntryDeduplicator(): Set<string> {
+	return new Set<string>();
+}
+
+/**
+ * Record a factory-module load failure as a sentinel error entry. Without
+ * this entry, an empty `factoryMap` silently routes every kind to the
+ * `stripToFactory` fallback, making the reported "factory pass" count reflect
+ * the strip path rather than the real factory path — a false-green result.
+ *
+ * @param importFailure - The load-failure descriptor, or `null` if loading succeeded.
+ * @param errors - Mutable error list to append to.
+ */
+function recordFactoryModuleLoadFailure(
+	importFailure: { message: string } | null,
+	errors: { kind: string; entry?: string; message: string; input?: string; rendered?: string }[],
+): void {
+	if (importFailure) {
+		errors.push({
+			kind: '(factory-module-load)',
+			message: importFailure.message,
+		});
+	}
+}
+
+/**
+ * Resolve the concrete `TSNode` to test for a given `kind` within a parsed
+ * tree. For alias-source kinds (not present in tree-sitter's raw kind set),
+ * look up by `nodeId` from the walker-populated `nodeIdToEffectiveType` map.
+ * Plain kinds fall back to a breadth-first `findFirst` scan.
+ *
+ * @param kind - The effective (possibly alias-source) kind being tested.
+ * @param rootNode - Root of the parsed tree to search.
+ * @param nodeIdToEffectiveType - Map from tree-sitter node id to walker-resolved kind.
+ * @returns The first matching `TSNode`, or `null` if none is found.
+ */
+function resolveNodeForKind(
+	kind: string,
+	rootNode: TSNode,
+	nodeIdToEffectiveType: Map<number, string>,
+): TSNode | null {
+	let node1: TSNode | null = null;
+	for (const [nid, et] of nodeIdToEffectiveType) {
+		if (et === kind) {
+			node1 = findNodeById(rootNode, nid);
+			if (node1) break;
+		}
+	}
+	if (!node1) node1 = findFirst(rootNode, kind);
+	return node1;
+}
+
+/**
+ * Dispatch `readData` through the appropriate factory call convention and
+ * return the resulting `NodeData`. Pure text leaves (no `$fields` and no
+ * `$children`) are returned as-is — factories for container-shaped wrappers
+ * that tree-sitter surfaces as leaves would produce garbage. Factory lookup
+ * uses the walker-resolved kind so that alias-source factories are preferred
+ * over alias-target factories, keeping the output `$type` aligned with our
+ * declared interfaces. Errors thrown by the factory are pushed to `errors`
+ * and `null` is returned so the caller can skip the reparse step — silently
+ * falling back to `stripToFactory` on throw would make the "factory pass"
+ * count fake.
+ *
+ * @param readData - NodeData produced by `readNode`, possibly with `$type` overridden.
+ * @param renderedKind - The walker-resolved kind (used for factory + shape lookup).
+ * @param factoryMap - Map from kind to factory function.
+ * @param factoryShapes - Codegen-produced calling-convention map per kind.
+ * @param fieldAliasMap - Camel→snake alias map used by `nodeToConfig`.
+ * @param factoryFields - Declared field list per kind used by `nodeToConfig`.
+ * @param treeHandle - Tree handle forwarded to `nodeToConfig` in recursive mode.
+ * @param entryName - Corpus entry name, used when recording errors.
+ * @param inputSource - Original source text, used when recording errors.
+ * @param errors - Mutable error list to append to on factory throw.
+ * @returns The factory-produced (or stripped) `AnyNodeData`, or `null` if the
+ *   factory threw.
+ * @remarks In recursive mode (`SITTIR_VALIDATE_RECURSIVE=1`) each child is
+ *   drilled through its own factory, exposing factory-vs-read shape
+ *   mismatches at the cost of surfacing spacing / anon-token divergences
+ *   accumulated before the recursive path was added.
+ */
+function buildFactoryNodeData(
+	readData: AnyNodeData,
+	renderedKind: string,
+	factoryMap: Record<string, (config?: any) => unknown>,
+	factoryShapes: Record<string, 'config' | 'children' | 'text'>,
+	fieldAliasMap: Record<string, Record<string, string>>,
+	factoryFields: Record<string, readonly string[]>,
+	treeHandle: any,
+	entryName: string,
+	inputSource: string,
+	errors: { kind: string; entry?: string; message: string; input?: string; rendered?: string }[],
+): AnyNodeData | null {
+	if (!readData.$fields && !readData.$children) {
+		// Leaf — render its text directly by preserving the original.
+		return readData;
+	}
+	const factory = factoryMap[renderedKind];
+	if (!factory) {
+		return stripToFactory(readData);
+	}
+	try {
+		const shape = factoryShapes[renderedKind] ?? 'config';
+		if (shape === 'config') {
+			const recursive = process?.env?.SITTIR_VALIDATE_RECURSIVE === '1';
+			const config = recursive
+				? nodeToConfig(readData, { tree: treeHandle, factoryMap, factoryShapes, fieldAliasMap, factoryFields })
+				: nodeToConfig(readData);
+			return factory(config) as AnyNodeData;
+		} else if (shape === 'text') {
+			// $TEXT-templated branch/container (e.g. rust
+			// raw_string_literal) — factory accepts the raw
+			// source span because external-scanner delimiters
+			// can't be reconstructed from children.
+			const text = (readData as { $text?: string }).$text ?? '';
+			return (factory as (text: string) => AnyNodeData)(text);
+		} else {
+			// shape === 'children' — container factory.
+			const namedChildren = (readData.$children ?? []).filter(
+				(c: any) => c?.$named !== false,
+			);
+			return (factory as (...args: unknown[]) => AnyNodeData)(...namedChildren);
+		}
+	} catch (e) {
+		errors.push({
+			kind: renderedKind, entry: entryName,
+			message: `factory threw: ${(e as Error)?.message?.slice(0, 100) ?? String(e)}`,
+			input: inputSource,
+		});
+		return null;
+	}
+}
+
+/**
+ * Wrap the rendered text for re-parsing using the supertype-based wrapper
+ * registry, then re-parse it with the provided parser. Returns `null` for
+ * the `tree2` field when wrapping is impossible (no registered wrapper for
+ * this kind's supertype) — callers should count those cases as skips rather
+ * than passes or failures, since the validator cannot make a claim either
+ * way. Historically these were counted as passes, silently fake-passing every
+ * TypeScript kind because the wrapper map used hidden-prefixed supertype names
+ * that tree-sitter-typescript's unprefixed supertype names never matched.
+ *
+ * @param rendered - Rendered text to wrap.
+ * @param renderedKind - Walker-resolved kind (picks up source-kind wrappers).
+ * @param grammar - Grammar name passed to `wrapForReparse`.
+ * @param kindToSupertypes - Supertype map used by `wrapForReparse`.
+ * @param parser - Initialized tree-sitter parser used to re-parse.
+ * @returns `{ wrapped, tree2 }` on success, `{ wrapped: null, tree2: null }`
+ *   when no wrapper is registered (caller should skip), or `{ wrapped,
+ *   tree2: null }` when the re-parse itself produces an error tree.
+ */
+function wrapAndReparseRendered(
+	rendered: string,
+	renderedKind: string,
+	grammar: string,
+	kindToSupertypes: Map<string, string[]>,
+	parser: { parse(text: string): TSTree | null },
+): { wrapped: { text: string; offset: number } | null; tree2: TSTree | null } {
+	const wrapped = wrapForReparse(rendered, renderedKind, grammar, kindToSupertypes);
+	if (wrapped === null) {
+		return { wrapped: null, tree2: null };
+	}
+	const tree2 = parser.parse(wrapped.text) as TSTree | null;
+	if (!tree2 || tree2.rootNode.hasError) {
+		return { wrapped, tree2: null };
+	}
+	return { wrapped, tree2 };
+}
+
+/**
+ * Locate the rendered fragment node within the reparsed tree at the exact
+ * wrapper offset, falling back to a breadth-first search when the offset
+ * lookup fails. Using the wrapper offset avoids matching a wrapper-emitted
+ * outer block/let/etc. of the same kind. `targetKind` (the tree-sitter alias
+ * target, not the walker-resolved source kind) is what the reparsed tree
+ * carries because tree-sitter re-applies the alias on re-parse.
+ *
+ * @param tree2 - Reparsed tree.
+ * @param targetKind - The raw tree-sitter kind (`rawReadData.$type`).
+ * @param wrapped - Wrapper result carrying `.offset`.
+ * @returns The located node, or `null` if it cannot be found.
+ */
+function locateNodeInReparsedTree(
+	tree2: TSTree,
+	targetKind: string,
+	wrapped: { text: string; offset: number },
+): TSNode | null {
+	return findNodeAt(tree2.rootNode, targetKind, wrapped.offset) ?? findFirst(tree2.rootNode, targetKind);
+}
+
+/**
+ * Compare the original and reparsed nodes structurally, recording any
+ * mismatch in `astMismatches` and returning whether the trees matched exactly.
+ * Recorded separately so the existing kind-found count stays a stable floor;
+ * ast-match tightens it to catch factory API gaps where a field or children
+ * slot is missing.
+ *
+ * @param node1 - Original node from the corpus parse.
+ * @param node2 - Node located in the reparsed tree.
+ * @param renderedKind - Kind label for the mismatch record.
+ * @param entryName - Corpus entry name for the mismatch record.
+ * @param inputSource - Original source text for the mismatch record.
+ * @param rendered - Rendered text for the mismatch record.
+ * @param astMismatches - Mutable mismatch list to append to.
+ * @returns `true` if the two nodes are structurally identical, `false` otherwise.
+ */
+function recordAstStructuralComparison(
+	node1: TSNode,
+	node2: TSNode,
+	renderedKind: string,
+	entryName: string,
+	inputSource: string,
+	rendered: string,
+	astMismatches: { kind: string; entry?: string; message: string; input?: string; rendered?: string }[],
+): boolean {
+	const diff = astStructuralDiff(node1, node2);
+	if (diff) {
+		astMismatches.push({ kind: renderedKind, entry: entryName, message: diff.slice(0, 160), input: inputSource, rendered });
+		return false;
+	}
+	return true;
+}
+
 export async function validateFactoryRoundTrip(
 	grammar: string,
 	templatesYaml: string,
@@ -205,66 +502,21 @@ export async function validateFactoryRoundTrip(
 	const { render } = createRenderer(config);
 	const kindToSupertypes = buildKindToSupertypes(rawEntries);
 
-	// Dynamically import the generated _factoryMap + _factoryShapes for
-	// this grammar. `_factoryShapes[kind]` tells us whether to call the
-	// factory as `factory(config)` or `factory(...children)` — produced
-	// at codegen time from the node's model type, not inferred at runtime.
-	const factoryModulePath = FACTORY_MODULE_PATHS[grammar];
-	let factoryMap: Record<string, (config?: any) => unknown> = {};
-	let factoryShapes: Record<string, 'config' | 'children' | 'text'> = {};
-	let fieldAliasMap: Record<string, Record<string, string>> = {};
-	let factoryFields: Record<string, readonly string[]> = {};
-	const importFailure: { message: string } | null = await (async () => {
-		if (!factoryModulePath) return null;
-		try {
-			const factoryModule = await import(new URL(factoryModulePath, import.meta.url).pathname);
-			factoryMap = factoryModule._factoryMap ?? {};
-			// Validator-only metadata lives in factory-map.json5 — pure
-			// data, loaded separately from the factory functions.
-			const mapData = await loadFactoryMap(grammar);
-			factoryShapes = mapData.factoryShapes;
-			fieldAliasMap = mapData.fieldAliasMap;
-			factoryFields = mapData.factoryFields;
-			return null;
-		} catch (e) {
-			const message = `[validate-factory-roundtrip] failed to load ${factoryModulePath}: ${(e as Error)?.message ?? e}`;
-			console.error(message);
-			return { message };
-		}
-	})();
+	const { factoryMap, factoryShapes, fieldAliasMap, factoryFields, importFailure } =
+		await loadFactoryModuleForGrammar(grammar);
 
-	// Walker-based alias source resolution (ADR-0006): same infrastructure
-	// as validate-roundtrip.ts. When the wrap layer is available, walk
-	// the tree once per corpus entry to surface alias-source `$type`s,
-	// then test those kinds via their source templates + reparse wrappers.
-	const readTreeNodeFn = await loadReadTreeNode(grammar);
+	const readTreeNodeFn = await loadWrapperBasedAliasResolver(grammar);
 
 	const entries = loadCorpusEntries(grammar);
 	const errors: { kind: string; entry?: string; message: string; input?: string; rendered?: string }[] = [];
 	const astMismatches: { kind: string; entry?: string; message: string; input?: string; rendered?: string }[] = [];
-	// Dedupe on (kind, entry) pairs so each corpus entry that contains
-	// a kind gets exercised once — earlier behaviour (one test per kind
-	// period) hid real bugs: if the first corpus entry happened to
-	// exercise a shape that worked, subsequent entries testing buggy
-	// shapes (e.g. python `comparison_operator` with `not in` vs the
-	// chained `a < b`) never ran. The (kind, entry) granularity keeps
-	// runtime bounded while catching shape-specific bugs.
-	const testedPairs = new Set<string>();
+	const testedPairs = initKindEntryDeduplicator();
 	let pass = 0;
 	let astMatchPass = 0;
 	let skip = 0;
 	let total = 0;
 
-	// Surface factory-module load failure in the error list. Without
-	// this row, an empty `factoryMap` silently routes every kind to
-	// `stripToFactory` and the reported "factory pass" count reflects
-	// the strip path, not the factory path — a false-green.
-	if (importFailure) {
-		errors.push({
-			kind: '(factory-module-load)',
-			message: importFailure.message,
-		});
-	}
+	recordFactoryModuleLoadFailure(importFailure, errors);
 
 	for (const entry of entries) {
 		const tree1 = parser.parse(entry.source) as TSTree;
@@ -287,17 +539,7 @@ export async function validateFactoryRoundTrip(
 			testedPairs.add(pairKey);
 			total++;
 
-			// Resolve node: for alias-source kinds (not in tree-sitter's
-			// raw kinds), look up by nodeId from the walker. Plain kinds
-			// use findFirst.
-			let node1: TSNode | null = null;
-			for (const [nid, et] of nodeIdToEffectiveType) {
-				if (et === kind) {
-					node1 = findNodeById(tree1.rootNode, nid);
-					if (node1) break;
-				}
-			}
-			if (!node1) node1 = findFirst(tree1.rootNode, kind);
+			const node1 = resolveNodeForKind(kind, tree1.rootNode, nodeIdToEffectiveType);
 			if (!node1) continue;
 			const inputSource = node1.text;
 
@@ -310,107 +552,44 @@ export async function validateFactoryRoundTrip(
 			const renderedKind = readData.$type;
 			const targetKind = rawReadData.$type;
 
-			// Direct factory call with readNode fields — no from() resolver.
-			// If readData has neither $fields nor $children, the node is a
-			// pure text leaf at the tree-sitter level (e.g. identifier,
-			// shorthand_property_identifier). Don't round-trip through a
-			// factory at all — factories for container-shaped wrappers
-			// that tree-sitter surfaces as leaves would produce garbage.
-			// Factory lookup uses the walker-resolved kind (source when
-			// the node was drillAs-rewritten, target otherwise). Both
-			// alias source and target factories are registered; picking
-			// the source-shape factory produces output whose $type
-			// matches our declared interface.
-			const factory = factoryMap[renderedKind];
-			let factoryData: AnyNodeData;
-			if (!readData.$fields && !readData.$children) {
-				// Leaf — render its text directly by preserving the original.
-				factoryData = readData;
-			} else if (factory) {
-				try {
-					const shape = factoryShapes[renderedKind] ?? 'config';
-					if (shape === 'config') {
-						// `nodeToConfig` handles the $fields snake→camel rename
-						// and the $children → `children` slot convention.
-						// Shallow mode (no tree / factoryMap) keeps the same
-						// behavior as the prior inline transform. Recursive
-						// mode (opts in tree+factoryMap) drills each child
-						// through its own factory — exposes factory-vs-read
-						// shape mismatches at the cost of surfacing ~790
-						// spacing / anon-token divergences that accumulated
-						// unchecked for months; flip SITTIR_VALIDATE_RECURSIVE
-						// to audit them.
-						const recursive = process?.env?.SITTIR_VALIDATE_RECURSIVE === '1';
-						const config = recursive
-							? nodeToConfig(readData, { tree: handle, factoryMap, factoryShapes, fieldAliasMap, factoryFields })
-							: nodeToConfig(readData);
-						factoryData = factory(config) as AnyNodeData;
-					} else if (shape === 'text') {
-						// $TEXT-templated branch/container (e.g. rust
-						// raw_string_literal) — factory accepts the raw
-						// source span because external-scanner delimiters
-						// can't be reconstructed from children.
-						const text = (readData as { $text?: string }).$text ?? '';
-						factoryData = (factory as (text: string) => AnyNodeData)(text);
-					} else {
-						// shape === 'children' — container factory.
-						const namedChildren = (readData.$children ?? []).filter(
-							(c: any) => c?.$named !== false,
-						);
-						factoryData = (factory as (...args: unknown[]) => AnyNodeData)(...namedChildren);
-					}
-				} catch (e) {
-					// A real factory throw (wrong argument shape,
-					// missing dependency, bug in the generated code)
-					// surfaces as a factory-RT error so it's visible in
-					// overrides.suggested.ts — silently falling back to
-					// stripToFactory would make the "factory pass" count
-					// fake. Record + skip this kind, don't continue the
-					// reparse loop.
-					errors.push({
-						kind: renderedKind, entry: entry.name,
-						message: `factory threw: ${(e as Error)?.message?.slice(0, 100) ?? String(e)}`,
-						input: inputSource,
-					});
-					continue;
-				}
-			} else {
-				factoryData = stripToFactory(readData);
-			}
+			const factoryData = buildFactoryNodeData(
+				readData,
+				renderedKind,
+				factoryMap,
+				factoryShapes,
+				fieldAliasMap,
+				factoryFields,
+				handle,
+				entry.name,
+				inputSource,
+				errors,
+			);
+			if (factoryData === null) continue;
 
 			try {
 				const rendered = render(factoryData);
 				if (!rendered.trim()) { skip++; continue; }
 
-				// Wrap for reparse using supertype context. `renderedKind`
-				// picks up source-kind-specific wrappers (e.g. rust's
-				// `generic_type_with_turbofish`) when the walker
-				// rewrote $type.
-				const wrapped = wrapForReparse(rendered, renderedKind, grammar, kindToSupertypes);
+				const { wrapped, tree2 } = wrapAndReparseRendered(
+					rendered,
+					renderedKind,
+					grammar,
+					kindToSupertypes,
+					parser,
+				);
+
 				if (wrapped === null) {
-					// No wrapper registered for this kind's supertype (or the
-					// kind has no supertype). Historically counted as pass +
-					// astMatchPass, which silently fake-passed every TS kind
-					// (wrapper map used hidden-prefixed supertype names that
-					// don't match tree-sitter-typescript's unprefixed ones).
-					// Count as skip — the validator can't make a claim either
-					// way — so ceiling assertions reflect real evidence.
+					// No wrapper registered — validator can't make a claim.
 					skip++;
 					continue;
 				}
 
-				const tree2 = parser.parse(wrapped.text) as TSTree;
-				if (tree2.rootNode.hasError) {
+				if (tree2 === null) {
 					errors.push({ kind: renderedKind, entry: entry.name, message: `re-parse error: "${rendered.slice(0, 60)}"`, input: inputSource, rendered });
 					continue;
 				}
 
-				// Locate the rendered fragment at the exact wrapper
-				// offset — avoids matching a wrapper-emitted outer
-				// block/let/etc. of the same kind. `targetKind` (the
-				// tree-sitter alias target) is what the reparsed tree
-				// carries, since tree-sitter re-applies the alias.
-				const node2 = findNodeAt(tree2.rootNode, targetKind, wrapped.offset) ?? findFirst(tree2.rootNode, targetKind);
+				const node2 = locateNodeInReparsedTree(tree2, targetKind, wrapped);
 				if (!node2) {
 					errors.push({ kind: renderedKind, entry: entry.name, message: `kind not found in re-parse (rendered: "${rendered.slice(0, 60)}")`, input: inputSource, rendered });
 					continue;
@@ -418,14 +597,7 @@ export async function validateFactoryRoundTrip(
 
 				pass++;
 
-				// Strict AST structural check — catches factory API
-				// gaps where a field or children slot is missing.
-				// Recorded separately so the existing kind-found count
-				// stays a stable floor; ast-match tightens it.
-				const diff = astStructuralDiff(node1, node2);
-				if (diff) {
-					astMismatches.push({ kind: renderedKind, entry: entry.name, message: diff.slice(0, 160), input: inputSource, rendered });
-				} else {
+				if (recordAstStructuralComparison(node1, node2, renderedKind, entry.name, inputSource, rendered, astMismatches)) {
 					astMatchPass++;
 				}
 			} catch (e) {

@@ -112,6 +112,79 @@ interface NodeIssue {
     message: string
 }
 
+/**
+ * Collect the set of field names that the live parse tree assigns to children
+ * of `node`, by querying `fieldNameForChild` for every child index.
+ *
+ * @remarks
+ * We check against the ACTUAL node's field assignments, not the static
+ * node-types declaration, because many fields are optional and only populate
+ * on some parses.
+ *
+ * @param node - The tree-sitter parse node to inspect.
+ * @returns A set of field name strings present on this specific parse instance.
+ */
+function collectLiveFieldNames(node: TSNode): Set<string> {
+    const liveFieldNames = new Set<string>()
+    for (let i = 0; i < node.childCount; i++) {
+        const fname = node.fieldNameForChild(i)
+        if (fname) liveFieldNames.add(fname)
+    }
+    return liveFieldNames
+}
+
+/**
+ * Count how many named children of `node` are NOT assigned to any tree-sitter
+ * field, i.e. the un-fielded named children that must land in NodeData's
+ * `$children` array (or be promoted into an override field).
+ *
+ * @remarks
+ * Count INSTANCES, not distinct field keys: a multiple-valued field like
+ * `except_clauses: [e1, e2]` accounts for 2 children, not 1.
+ *
+ * @param node - The tree-sitter parse node to inspect.
+ * @returns The count of named children with no field assignment.
+ */
+function countUnfieldedNamedChildren(node: TSNode): number {
+    let count = 0
+    for (let i = 0; i < node.childCount; i++) {
+        const c = node.child(i)
+        if (!c || !c.isNamed) continue
+        if (node.fieldNameForChild(i)) continue
+        count++
+    }
+    return count
+}
+
+/**
+ * Count how many NodeData `$fields` entries represent children promoted into
+ * override fields rather than arriving via tree-sitter's own field routing.
+ *
+ * @remarks
+ * A non-array override value counts as 1 promoted child; an array value counts
+ * as `array.length` promoted children. Only entries that are NOT in the live
+ * tree-sitter field set AND ARE in the override field set are counted.
+ *
+ * @param data - The NodeData whose `$fields` to inspect.
+ * @param liveFieldNames - Field names that tree-sitter itself assigned (excluded from counting).
+ * @param overrideFields - Field names introduced by override routing (included in counting).
+ * @returns The total count of children routed into override fields.
+ */
+function countPromotedOverrideChildren(
+    data: AnyNodeData,
+    liveFieldNames: Set<string>,
+    overrideFields: Set<string>,
+): number {
+    let count = 0
+    for (const [fname, value] of Object.entries(data.$fields ?? {})) {
+        if (liveFieldNames.has(fname)) continue // tree-sitter field, not override
+        if (!overrideFields.has(fname)) continue // neither override nor live
+        if (Array.isArray(value)) count += value.length
+        else if (value && typeof value === 'object') count += 1
+    }
+    return count
+}
+
 function checkNodeData(
     kind: string,
     node: TSNode,
@@ -124,16 +197,7 @@ function checkNodeData(
         return `$type mismatch: expected '${kind}', got '${data.$type}'`
     }
 
-    // 2. Every tree-sitter field the parse tree surfaces must show up in
-    //    NodeData. We check against the ACTUAL node's field assignments,
-    //    not the static node-types declaration, because many fields are
-    //    optional and only populate on some parses.
-    const liveFieldNames = new Set<string>()
-    for (let i = 0; i < node.childCount; i++) {
-        const fname = node.fieldNameForChild(i)
-        if (fname) liveFieldNames.add(fname)
-    }
-
+    const liveFieldNames = collectLiveFieldNames(node)
     const dataFields = new Set(Object.keys(data.$fields ?? {}))
 
     for (const fname of liveFieldNames) {
@@ -142,32 +206,12 @@ function checkNodeData(
         }
     }
 
-    // 3. Named children NOT assigned to a field by tree-sitter must
-    //    land somewhere in NodeData — either data.children, or promoted
-    //    into an override field. Count INSTANCES, not distinct field
-    //    keys: a multiple-valued field like `except_clauses: [e1, e2]`
-    //    accounts for 2 children, not 1.
     const dataChildrenCount = (data.$children ?? []).filter(
         (c: any) => c?.$named !== false,
     ).length
 
-    let expectedNamedUnfielded = 0
-    for (let i = 0; i < node.childCount; i++) {
-        const c = node.child(i)
-        if (!c || !c.isNamed) continue
-        if (node.fieldNameForChild(i)) continue
-        expectedNamedUnfielded++
-    }
-
-    // Count children routed into each override field. A non-array value
-    // = 1 child; an array value = array.length children.
-    let promotedChildCount = 0
-    for (const [fname, value] of Object.entries(data.$fields ?? {})) {
-        if (liveFieldNames.has(fname)) continue // tree-sitter field, not override
-        if (!overrideFields.has(fname)) continue // neither override nor live
-        if (Array.isArray(value)) promotedChildCount += value.length
-        else if (value && typeof value === 'object') promotedChildCount += 1
-    }
+    const expectedNamedUnfielded = countUnfieldedNamedChildren(node)
+    const promotedChildCount = countPromotedOverrideChildren(data, liveFieldNames, overrideFields)
 
     if (dataChildrenCount + promotedChildCount < expectedNamedUnfielded) {
         return (

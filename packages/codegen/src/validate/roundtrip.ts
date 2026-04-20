@@ -11,6 +11,7 @@
 import { createRequire } from 'node:module';
 import { parse as parseYaml } from 'yaml';
 import { readNode, createRenderer } from '@sittir/core';
+import type { TreeHandle } from '@sittir/core';
 import type { RulesConfig } from '@sittir/types';
 import { loadRawEntries } from './node-types-loader.ts';
 import {
@@ -100,9 +101,7 @@ function astStructuralDiff(a: TSNode, b: TSNode, path: string = ''): string | nu
 			return `${path || a.type}[${i}]: named flag ${ac.isNamed} ≠ ${bc.isNamed}`;
 		}
 		if (!ac.isNamed) {
-			// Anonymous token — compare text directly. This is how we
-			// catch dropped `;` / `,` / operator tokens that the
-			// renderer silently omitted.
+			// Anonymous token — compare text directly.
 			if (ac.text !== bc.text) {
 				return `${path || a.type}[${i}]: anon ${JSON.stringify(ac.text)} ≠ ${JSON.stringify(bc.text)}`;
 			}
@@ -142,6 +141,118 @@ export interface RoundTripResult {
 }
 
 /**
+ * Discover alias-source kinds by walking the grammar's wrap layer over a parsed tree.
+ *
+ * @remarks
+ * When the grammar's wrap layer (readTreeNode) is available, walk each parsed
+ * tree upfront to discover nodes whose drillAs()-rewritten `$type` differs from
+ * tree-sitter's raw output. We can then test these kinds against the source
+ * template with a matching reparse wrapper, rather than relying on per-kind
+ * render-layer workarounds in the target's template (ADR-0006).
+ *
+ * @param readTreeNodeFn - The grammar-specific readTreeNode function, or null if unavailable.
+ * @param tree - The parsed tree-sitter tree to walk.
+ * @param kinds - Mutable set of kind names; alias-source kinds discovered during the walk are added here.
+ * @returns A map from tree-sitter node id to the effective (alias-rewritten) type string.
+ */
+function discoverAliasSourceKinds(
+	readTreeNodeFn: ((handle: TreeHandle, nodeId?: number) => unknown) | null,
+	tree: TSTree,
+	kinds: Set<string>,
+): Map<number, string> {
+	const nodeIdToEffectiveType = new Map<number, string>();
+	if (readTreeNodeFn) {
+		const handle = treeHandle(tree);
+		const wrappedRoot = readTreeNodeFn(handle) as WrappedNodeData;
+		walkWrappedTree(wrappedRoot, (w: WrappedNodeData) => {
+			if (w.$nodeId != null) nodeIdToEffectiveType.set(w.$nodeId, w.$type);
+			kinds.add(w.$type);
+		});
+	}
+	return nodeIdToEffectiveType;
+}
+
+/**
+ * Resolve the tree-sitter TSNode instance for a kind that may be an alias-source.
+ *
+ * @remarks
+ * For alias-source kinds that tree-sitter doesn't emit directly, look up a
+ * tree-sitter node whose walker-reported effective-type matches. Falls back to
+ * findFirst for plain kinds.
+ *
+ * @param kind - The effective kind name (potentially alias-rewritten).
+ * @param nodeIdToEffectiveType - Map from node id to alias-rewritten type, from the wrap-walk.
+ * @param tree - The parsed tree-sitter tree to search in.
+ * @returns The matching TSNode, or null if none found.
+ */
+function resolveNodeForKind(
+	kind: string,
+	nodeIdToEffectiveType: Map<number, string>,
+	tree: TSTree,
+): TSNode | null {
+	for (const [nid, et] of nodeIdToEffectiveType) {
+		if (et === kind) {
+			const node = findNodeById(tree.rootNode, nid);
+			if (node) return node;
+		}
+	}
+	return findFirst(tree.rootNode, kind);
+}
+
+/**
+ * Apply alias resolution to raw NodeData, overriding `$type` when the wrap
+ * layer reports a different effective type for the node's id.
+ *
+ * @remarks
+ * Three distinct kind names arise after alias resolution:
+ * - renderedKind: drives render-template + reparse-wrapper lookup (the source
+ *   kind when rewritten).
+ * - targetKind: tree-sitter's raw kind, used for post-reparse node location
+ *   (reparse produces the target kind since the alias applies again).
+ *
+ * @param rawData - The NodeData as returned by readNode (uses tree-sitter's raw $type).
+ * @param nodeId - The tree-sitter node id to look up in the effective-type map.
+ * @param nodeIdToEffectiveType - Map from node id to alias-rewritten type.
+ * @returns An object with `data` (possibly $type-overridden), `renderedKind`, and `targetKind`.
+ */
+function applyAliasResolution(
+	rawData: ReturnType<typeof readNode>,
+	nodeId: number,
+	nodeIdToEffectiveType: Map<number, string>,
+): { data: typeof rawData; renderedKind: string; targetKind: string } {
+	const effective = nodeIdToEffectiveType.get(nodeId);
+	const data = effective && effective !== rawData.$type
+		? { ...rawData, $type: effective }
+		: rawData;
+	const renderedKind = data.$type;
+	const targetKind = rawData.$type;
+	return { data, renderedKind, targetKind };
+}
+
+/**
+ * Locate the reparsed target node at the exact byte offset where the rendered
+ * fragment was spliced into the wrapper.
+ *
+ * @remarks
+ * Without offset-based lookup, `findFirst(tree2, kind)` matches the wrapper's
+ * own outer block / let / expression (e.g. rust's `fn _f() { let _ = ${r}; }`
+ * wraps an expression in an outer `block`, making the first `block` found the
+ * wrapper's body rather than the rendered fragment).
+ *
+ * @param tree2 - The reparsed tree-sitter tree after rendering.
+ * @param targetKind - The tree-sitter kind to search for (raw, pre-alias kind).
+ * @param wrapped - The wrap result carrying the splice offset.
+ * @returns The TSNode at the rendered offset, or null if not found.
+ */
+function findReparsedNodeAtOffset(
+	tree2: TSTree,
+	targetKind: string,
+	wrapped: { text: string; offset: number },
+): TSNode | null {
+	return findNodeAt(tree2.rootNode, targetKind, wrapped.offset);
+}
+
+/**
  * Run round-trip validation for a grammar using corpus fixtures.
  */
 export async function validateRoundTrip(
@@ -158,12 +269,6 @@ export async function validateRoundTrip(
 	const ruleKinds = new Set(Object.keys(config.rules));
 	const kindToSupertypes = buildKindToSupertypes(rawEntries);
 
-	// Walker-based alias source resolution (ADR-0006): when the grammar's
-	// wrap layer is available, walk each parsed tree upfront to discover
-	// nodes whose drillAs()-rewritten `$type` differs from tree-sitter's
-	// raw output. We can then test these kinds against the source template
-	// with a matching reparse wrapper, rather than relying on per-kind
-	// render-layer workarounds in the target's template.
 	const readTreeNodeFn = await loadReadTreeNode(grammar);
 
 	const entries = loadCorpusEntries(grammar);
@@ -184,20 +289,8 @@ export async function validateRoundTrip(
 				continue; // Corpus entries with parse errors (intentional error tests)
 			}
 
-			// Find all kinds that have render rules. When the wrap layer
-			// is available, walk the wrapped tree once to pick up alias-
-			// source kinds (via drillAs) that tree-sitter's raw output
-			// doesn't surface under their own name.
-			const handle = treeHandle(tree1);
 			const kinds = new Set(collectKinds(tree1.rootNode));
-			const nodeIdToEffectiveType = new Map<number, string>();
-			if (readTreeNodeFn) {
-				const wrappedRoot = readTreeNodeFn(handle);
-				walkWrappedTree(wrappedRoot, (w: WrappedNodeData) => {
-					if (w.$nodeId != null) nodeIdToEffectiveType.set(w.$nodeId, w.$type);
-					kinds.add(w.$type);
-				});
-			}
+			const nodeIdToEffectiveType = discoverAliasSourceKinds(readTreeNodeFn, tree1, kinds);
 			const testableKinds = [...kinds].filter(k => ruleKinds.has(k));
 
 			if (testableKinds.length === 0) {
@@ -209,35 +302,12 @@ export async function validateRoundTrip(
 			let entryOk = true;
 			let entryAstMatch = true;
 			for (const kind of testableKinds) {
-				// For alias-source kinds that tree-sitter doesn't emit
-				// directly, look up a tree-sitter node whose walker-
-				// reported effective-type matches. Fall back to findFirst
-				// for plain kinds.
-				let node1: TSNode | null = null;
-				let renderedKind = kind;
-				for (const [nid, et] of nodeIdToEffectiveType) {
-					if (et === kind) {
-						node1 = findNodeById(tree1.rootNode, nid);
-						if (node1) break;
-					}
-				}
-				if (!node1) node1 = findFirst(tree1.rootNode, kind);
+				const node1 = resolveNodeForKind(kind, nodeIdToEffectiveType, tree1);
 				if (!node1) continue;
 
+				const handle = treeHandle(tree1);
 				const rawData = readNode(handle, node1.id);
-				const effective = nodeIdToEffectiveType.get(node1.id);
-				const data = effective && effective !== rawData.$type
-					? { ...rawData, $type: effective }
-					: rawData;
-				// Three distinct kind names after alias resolution:
-				//   renderedKind  — drives render-template + reparse-wrapper
-				//                   lookup (the source kind when rewritten)
-				//   targetKind    — tree-sitter's raw kind, used for
-				//                   post-reparse node location (reparse
-				//                   produces the target kind since the
-				//                   alias applies again)
-				renderedKind = data.$type;
-				const targetKind = rawData.$type;
+				const { data, renderedKind, targetKind } = applyAliasResolution(rawData, node1.id, nodeIdToEffectiveType);
 
 				try {
 					const inputSource = node1.text;
@@ -261,15 +331,7 @@ export async function validateRoundTrip(
 						break;
 					}
 
-					// Find the reparsed node at the exact byte offset
-					// where the rendered fragment was spliced into the
-					// wrapper. Without this, `findFirst(tree2, kind)`
-					// matches the wrapper's own outer block / let /
-					// whatever (e.g. rust's `fn _f() { let _ = ${r}; }`
-					// wraps an expression in an outer `block`, making
-					// the first `block` found the wrapper's body rather
-					// than the rendered one).
-					const node2 = findNodeAt(tree2.rootNode, targetKind, wrapped.offset);
+					const node2 = findReparsedNodeAtOffset(tree2, targetKind, wrapped);
 					if (!node2) {
 						errors.push({
 							name: `${entry.name} [${renderedKind}]`,
@@ -282,13 +344,6 @@ export async function validateRoundTrip(
 						break;
 					}
 
-					// Strict AST structural check — anonymous tokens
-					// included. This catches silently dropped `;` / `,`
-					// / operator tokens that the renderer omits because
-					// they weren't routed to a named field. Recorded
-					// separately from `pass` so the existing kind-found
-					// assertion stays stable while we tighten the fidelity
-					// invariant.
 					const diff = astStructuralDiff(node1, node2);
 					if (diff) {
 						astMismatches.push({

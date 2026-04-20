@@ -96,6 +96,68 @@ export function validateTemplateCoverage(
 // Per-kind check
 // ---------------------------------------------------------------------------
 
+/**
+ * Compute the union of all placeholder names across every variant template
+ * and every clause template body for a rule.
+ *
+ * @remarks
+ * The coverage requirement is that the union of placeholders across every
+ * variant covers every declared field — not that each variant individually
+ * references every field. Clause bodies are part of the union because a field
+ * can be referenced inside a clause expansion rather than in the top-level
+ * template string.
+ *
+ * @param variants - The collected named template strings for the rule.
+ * @param clauseTemplates - The clause key → template body map for the rule.
+ * @returns A set of lowercased placeholder names found across all templates.
+ */
+function computeUnionPlaceholders(
+    variants: NamedTemplate[],
+    clauseTemplates: Record<string, string>,
+): Set<string> {
+    const unionPlaceholders = new Set<string>()
+    for (const { template } of variants) {
+        for (const p of extractPlaceholders(template)) unionPlaceholders.add(p)
+    }
+    for (const body of Object.values(clauseTemplates)) {
+        for (const p of extractPlaceholders(body)) unionPlaceholders.add(p)
+    }
+    return unionPlaceholders
+}
+
+/**
+ * Check each variant template for suspicious literal runs that indicate a
+ * walker concat bug.
+ *
+ * @remarks
+ * Runs of 4+ identical punctuation chars (e.g. `////`, `&&&&`) come from the
+ * walker recursing into both sides of a choice and concatenating. Each variant
+ * is checked independently, scoped to that template string rather than the
+ * union, so the issue is reported with its variant label.
+ *
+ * @param entry - The raw node entry (for `kind` in the issue message).
+ * @param variants - The named template variants to inspect.
+ * @returns An array of `literal-leak` CoverageIssues, one per offending variant.
+ */
+function checkVariantsForLiteralLeaks(
+    entry: RawNodeEntry,
+    variants: NamedTemplate[],
+): CoverageIssue[] {
+    const issues: CoverageIssue[] = []
+    for (const { label, template } of variants) {
+        const leak = /([/&|;+\-*=<>!?~^%])\1{3,}/.exec(template)
+        if (leak) {
+            const label_ = label ? ` (variant '${label}')` : ''
+            issues.push({
+                kind: entry.type,
+                type: 'literal-leak',
+                message: `template contains suspicious literal run ${JSON.stringify(leak[0])}${label_} — likely walker concat bug: ${JSON.stringify(template)}`,
+            })
+        }
+    }
+    return issues
+}
+
 function checkRule(entry: RawNodeEntry, rule: TemplateRule): CoverageIssue[] {
     const fields = entry.fields ?? {}
     const fieldNames = Object.keys(fields)
@@ -108,18 +170,7 @@ function checkRule(entry: RawNodeEntry, rule: TemplateRule): CoverageIssue[] {
     const clauseKeys = ruleObj ? collectClauseKeys(ruleObj) : new Set<string>()
     const clauseTemplates = ruleObj ? collectClauseTemplates(ruleObj) : {}
 
-    // Variants are the explicit "different field shapes per form" mechanism:
-    // variant A renders `left=right`, variant B renders `:type`. The coverage
-    // requirement is that the **union** of placeholders across every variant
-    // covers every declared field — not that each variant individually
-    // references every field. Clause bodies are part of the union.
-    const unionPlaceholders = new Set<string>()
-    for (const { template } of variants) {
-        for (const p of extractPlaceholders(template)) unionPlaceholders.add(p)
-    }
-    for (const body of Object.values(clauseTemplates)) {
-        for (const p of extractPlaceholders(body)) unionPlaceholders.add(p)
-    }
+    const unionPlaceholders = computeUnionPlaceholders(variants, clauseTemplates)
 
     for (const fname of fieldNames) {
         if (isFieldReferenced(fname, unionPlaceholders, clauseKeys, clauseTemplates)) continue
@@ -134,21 +185,7 @@ function checkRule(entry: RawNodeEntry, rule: TemplateRule): CoverageIssue[] {
         })
     }
 
-    // Literal-leak heuristic — runs of 4+ identical punctuation chars. These
-    // come from the walker recursing into both sides of a choice and
-    // concatenating. Check each variant independently (scoped to that
-    // template string, not the union).
-    for (const { label, template } of variants) {
-        const leak = /([/&|;+\-*=<>!?~^%])\1{3,}/.exec(template)
-        if (leak) {
-            const label_ = label ? ` (variant '${label}')` : ''
-            issues.push({
-                kind: entry.type,
-                type: 'literal-leak',
-                message: `template contains suspicious literal run ${JSON.stringify(leak[0])}${label_} — likely walker concat bug: ${JSON.stringify(template)}`,
-            })
-        }
-    }
+    issues.push(...checkVariantsForLiteralLeaks(entry, variants))
 
     return issues
 }
@@ -227,6 +264,52 @@ function extractPlaceholders(template: string): Set<string> {
     return names
 }
 
+/**
+ * Check whether a field is referenced via the `$FIELD_CLAUSE` placeholder
+ * pattern, where both the placeholder and its clause key are present.
+ *
+ * @remarks
+ * A clause reference is accepted even if the clause body just uses `$FIELD` —
+ * render.ts will emit nothing when the field is absent, but the field is still
+ * reachable in principle.
+ *
+ * @param fieldName - The snake_case field name to check.
+ * @param placeholders - The union set of placeholder names from the template.
+ * @param clauseKeys - The set of clause key names defined on the rule object.
+ * @returns True if the field is referenced via a `_clause` placeholder + key pair.
+ */
+function isReferencedViaClausePlaceholder(
+    fieldName: string,
+    placeholders: Set<string>,
+    clauseKeys: Set<string>,
+): boolean {
+    const clauseKey = `${fieldName}_clause`
+    return placeholders.has(clauseKey) && clauseKeys.has(clauseKey)
+}
+
+/**
+ * Check whether a field is referenced inside any clause body template,
+ * even without a matching `_clause`-named placeholder in the top-level template.
+ *
+ * @remarks
+ * A `value_clause: =$VALUE` on a kind with a `value` field counts as a
+ * reference even without a `$VALUE_CLAUSE` placeholder in the main template.
+ * Walk every clause template body and check for the field name as a placeholder.
+ *
+ * @param fieldName - The snake_case field name to check.
+ * @param clauseTemplates - Map of clause key → clause body template string.
+ * @returns True if any clause body template references the field.
+ */
+function isReferencedInClauseBody(
+    fieldName: string,
+    clauseTemplates: Record<string, string>,
+): boolean {
+    for (const body of Object.values(clauseTemplates)) {
+        if (extractPlaceholders(body).has(fieldName)) return true
+    }
+    return false
+}
+
 function isFieldReferenced(
     fieldName: string,
     placeholders: Set<string>,
@@ -236,20 +319,11 @@ function isFieldReferenced(
     // 1. Direct reference: `$FIELD` or `$$$FIELD`.
     if (placeholders.has(fieldName)) return true
 
-    // 2. Clause reference: template says `$FIELD_CLAUSE`, rule defines
-    //    a `field_clause` key whose expansion references the field.
-    //    We accept the reference even if the clause body just uses
-    //    `$FIELD` — render.ts will emit nothing when absent, but the
-    //    field is still reachable in principle.
-    const clauseKey = `${fieldName}_clause`
-    if (placeholders.has(clauseKey) && clauseKeys.has(clauseKey)) return true
+    // 2. Clause placeholder reference.
+    if (isReferencedViaClausePlaceholder(fieldName, placeholders, clauseKeys)) return true
 
-    // 3. Clause body references — a `value_clause: =$VALUE` on a kind
-    //    with a `value` field counts, even without a matching
-    //    `_clause`-named placeholder. Walk every clause template.
-    for (const body of Object.values(clauseTemplates)) {
-        if (extractPlaceholders(body).has(fieldName)) return true
-    }
+    // 3. Clause body reference.
+    if (isReferencedInClauseBody(fieldName, clauseTemplates)) return true
 
     return false
 }

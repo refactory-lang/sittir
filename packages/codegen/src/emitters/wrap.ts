@@ -15,7 +15,7 @@
 
 import type { NodeMap } from '../compiler/types.ts'
 import type {
-    AssembledField, AssembledChild, AssembledNode,
+    AssembledField, AssembledChild, AssembledNode, AssembledPolymorph,
 } from '../compiler/node-map.ts'
 import { isValidIdent } from './shared.ts'
 
@@ -27,18 +27,7 @@ export interface EmitWrapConfig {
 export function emitWrap(config: EmitWrapConfig): string {
     const { nodeMap } = config
 
-    // Collect type imports for `WrappedNode<T>` return annotations —
-    // every kind that gets a `wrap${TypeName}` function contributes
-    // its concrete interface.
-    const typeImports = new Set<string>()
-    for (const [, node] of nodeMap.nodes) {
-        if (!node.rawFactoryName) continue
-        if (node.modelType !== 'branch' &&
-            node.modelType !== 'container' &&
-            node.modelType !== 'polymorph') continue
-        if (!isValidIdent(node.typeName)) continue
-        typeImports.add(node.typeName)
-    }
+    const typeImports = collectTypeImports(nodeMap)
     // Multi-line import for readability — see factories.ts.
     const typeImportLine = typeImports.size > 0
         ? [
@@ -105,7 +94,7 @@ export function emitWrap(config: EmitWrapConfig): string {
     // Per-kind wrap functions — local dispatch on modelType.
     // ------------------------------------------------------------------
     for (const [, node] of nodeMap.nodes) {
-        const source = renderWrapForNode(node, nodeMap)
+        const source = renderWrapForNode(node)
         if (source === undefined) continue
         lines.push(source)
         lines.push('')
@@ -154,11 +143,32 @@ export function emitWrap(config: EmitWrapConfig): string {
 // Helpers
 // ---------------------------------------------------------------------------
 
+/**
+ * Collects the set of concrete interface type names that need to be imported
+ * for `WrappedNode<T>` return annotations.
+ *
+ * @param nodeMap - The fully assembled node map for the grammar.
+ * @returns A set of type names; every kind that gets a `wrap${TypeName}`
+ *   function contributes its concrete interface name.
+ */
+function collectTypeImports(nodeMap: NodeMap): Set<string> {
+    const typeImports = new Set<string>()
+    for (const [, node] of nodeMap.nodes) {
+        if (!node.rawFactoryName) continue
+        if (node.modelType !== 'branch' &&
+            node.modelType !== 'container' &&
+            node.modelType !== 'polymorph') continue
+        if (!isValidIdent(node.typeName)) continue
+        typeImports.add(node.typeName)
+    }
+    return typeImports
+}
+
 // ---------------------------------------------------------------------------
 // Per-node wrap dispatch
 // ---------------------------------------------------------------------------
 
-function renderWrapForNode(node: AssembledNode, nodeMap: NodeMap): string | undefined {
+function renderWrapForNode(node: AssembledNode): string | undefined {
     if (!node.rawFactoryName) return undefined
 
     switch (node.modelType) {
@@ -167,29 +177,48 @@ function renderWrapForNode(node: AssembledNode, nodeMap: NodeMap): string | unde
         case 'container':
             return emitFieldCarryingWrap(node, [], node.children)
         case 'polymorph': {
-            // Polymorph wraps under the parent kind — union every form's
-            // fields so the lazy view exposes any field that might be
-            // populated at runtime. First-occurrence wins on duplicate
-            // field names.
-            const allFields = new Map<string, AssembledField>()
-            for (const form of node.forms) {
-                for (const f of form.fields) {
-                    if (!allFields.has(f.name)) allFields.set(f.name, f)
-                }
-            }
-            const allChildren: AssembledChild[] = []
-            for (const form of node.forms) {
-                for (const c of form.children) {
-                    if (!allChildren.some(existing => existing.name === c.name)) {
-                        allChildren.push(c)
-                    }
-                }
-            }
-            return emitFieldCarryingWrap(node, [...allFields.values()], allChildren)
+            const { fields, children } = mergePolymorphFormsIntoFieldsAndChildren(node)
+            return emitFieldCarryingWrap(node, fields, children)
         }
         default:
             return undefined
     }
+}
+
+/**
+ * Merges all polymorph forms into a unified field list and child list so
+ * the lazy view exposes any field that might be populated at runtime.
+ *
+ * @remarks
+ * Polymorph wraps under the parent kind — unioning every form's fields
+ * ensures the view surface is a superset of all possible runtime shapes.
+ * First-occurrence wins on duplicate field names; same deduplication
+ * applies to named child slots.
+ *
+ * @param node - An assembled polymorph node whose `forms` array contains
+ *   the individual structural variants.
+ * @returns An object with the merged `fields` array and merged `children`
+ *   array, both deduplicated by name.
+ */
+function mergePolymorphFormsIntoFieldsAndChildren(node: AssembledPolymorph): {
+    fields: AssembledField[]
+    children: AssembledChild[]
+} {
+    const allFields = new Map<string, AssembledField>()
+    for (const form of node.forms) {
+        for (const f of form.fields) {
+            if (!allFields.has(f.name)) allFields.set(f.name, f)
+        }
+    }
+    const allChildren: AssembledChild[] = []
+    for (const form of node.forms) {
+        for (const c of form.children) {
+            if (!allChildren.some(existing => existing.name === c.name)) {
+                allChildren.push(c)
+            }
+        }
+    }
+    return { fields: [...allFields.values()], children: allChildren }
 }
 
 // ---------------------------------------------------------------------------
@@ -201,49 +230,71 @@ interface WrapNode {
     readonly typeName: string
 }
 
-function emitFieldCarryingWrap(
-    node: WrapNode,
-    fields: readonly AssembledField[],
-    children: readonly AssembledChild[],
-): string {
-    const fn = `wrap${node.typeName}`
-    const lines: string[] = []
-    // `data` stays structurally typed (`_NodeData`) so the loose
-    // `data.$fields?.['...']` / `data.$children?.[0]` access patterns
-    // inside the body still compile — polymorph forms union fields
-    // that no single concrete interface carries. The RETURN type
-    // narrows to `WrappedNode<T>` so consumers of the wrap function
-    // see the concrete camelCase field accessors.
-    lines.push(`export function ${fn}(data: _NodeData, tree: TreeHandle): WrappedNode<${node.typeName}> {`)
-    lines.push('  return {')
-    lines.push('    ...data,')
+/**
+ * Emits the function signature line for a per-kind wrap function.
+ *
+ * @remarks
+ * `data` stays structurally typed (`_NodeData`) so the loose
+ * `data.$fields?.['...']` / `data.$children?.[0]` access patterns
+ * inside the body still compile — polymorph forms union fields
+ * that no single concrete interface carries. The RETURN type
+ * narrows to `WrappedNode<T>` so consumers of the wrap function
+ * see the concrete camelCase field accessors.
+ *
+ * @param lines - The output lines array to append the signature line to.
+ * @param fn - The camelCase function name (e.g. `wrapFunctionItem`).
+ * @param typeName - The concrete interface name used in the return type.
+ */
+function emitWrapFunctionSignature(lines: string[], fn: string, typeName: string): void {
+    lines.push(`export function ${fn}(data: _NodeData, tree: TreeHandle): WrappedNode<${typeName}> {`)
+}
 
-    for (const f of fields) {
-        // Avoid shadowing built-in property names on the returned view.
-        const method = f.propertyName === 'type' ? 'typeField' : f.propertyName
-        // Alias-site unalias (ADR-0006): when a content type was declared
-        // via `alias($.source, $.target)`, tree-sitter emits $type =
-        // target but codegen's interfaces/factories/templates treat
-        // source as canonical. Rewrite at drill-in so the wrapped view
-        // matches the declared type union. Current emission handles the
-        // common "one alias pair per field" case; multiple pairs would
-        // need chained drillAs calls (not yet seen in practice).
-        const aliasEntries = f.aliasSources ? Object.entries(f.aliasSources) : []
-        if (aliasEntries.length > 0) {
-            const [fromType, toType] = aliasEntries[0]!
-            const helper = f.multiple ? 'drillAsAll' : 'drillAs'
-            lines.push(`    get ${method}() { return ${helper}(data.$fields?.['${f.name}'], tree, ${JSON.stringify(fromType)}, ${JSON.stringify(toType)}); },`)
-        } else if (f.multiple) {
-            lines.push(`    get ${method}() { return drillInAll(data.$fields?.['${f.name}'], tree); },`)
-        } else {
-            lines.push(`    get ${method}() { return drillIn(data.$fields?.['${f.name}'], tree); },`)
-        }
+/**
+ * Emits the getter line for a single field, applying alias-site unaliasing
+ * when the field carries `aliasSources` metadata.
+ *
+ * @remarks
+ * Alias-site unalias (ADR-0006): when a content type was declared via
+ * `alias($.source, $.target)`, tree-sitter emits `$type = target` but
+ * codegen's interfaces/factories/templates treat `source` as canonical.
+ * Rewriting at drill-in ensures the wrapped view matches the declared type
+ * union. Current emission handles the common "one alias pair per field"
+ * case; multiple pairs would need chained drillAs calls (not yet seen in
+ * practice).
+ *
+ * @param lines - The output lines array to append the getter line to.
+ * @param f - The assembled field descriptor, including `aliasSources` if any.
+ * @param method - The camelCase property name used on the returned view
+ *   (may differ from `f.propertyName` when shadowing built-ins).
+ */
+function emitFieldGetterLine(lines: string[], f: AssembledField, method: string): void {
+    const aliasEntries = f.aliasSources ? Object.entries(f.aliasSources) : []
+    if (aliasEntries.length > 0) {
+        const [fromType, toType] = aliasEntries[0]!
+        const helper = f.multiple ? 'drillAsAll' : 'drillAs'
+        lines.push(`    get ${method}() { return ${helper}(data.$fields?.['${f.name}'], tree, ${JSON.stringify(fromType)}, ${JSON.stringify(toType)}); },`)
+    } else if (f.multiple) {
+        lines.push(`    get ${method}() { return drillInAll(data.$fields?.['${f.name}'], tree); },`)
+    } else {
+        lines.push(`    get ${method}() { return drillIn(data.$fields?.['${f.name}'], tree); },`)
     }
+}
 
-    // Children slot — always project through drillIn so nested subtrees
-    // hydrate lazily. A node with a default children array always
-    // exposes `children`; specialised single-child containers expose
-    // `child`.
+/**
+ * Emits the children slot getter(s) for a wrap function body.
+ *
+ * @remarks
+ * Children are always projected through `drillIn` so nested subtrees
+ * hydrate lazily. A node with a declared multiple-child slot exposes
+ * `children`; a single-child container exposes `child`. Nodes without
+ * any declared child slot still expose `children` — they may receive
+ * supertype-dispatched children from tree-sitter and callers need to
+ * be able to walk the full tree.
+ *
+ * @param lines - The output lines array to append getter line(s) to.
+ * @param children - The declared child descriptors for the node; may be empty.
+ */
+function emitChildrenSlotGetters(lines: string[], children: readonly AssembledChild[]): void {
     if (children.length > 0) {
         const anyMultiple = children.some(c => c.multiple)
         if (anyMultiple) {
@@ -252,18 +303,46 @@ function emitFieldCarryingWrap(
             lines.push(`    get child() { return drillIn(data.$children?.[0], tree); },`)
         }
     } else {
-        // Even nodes without a declared child slot may receive
-        // supertype-dispatched children from tree-sitter. Expose them
-        // anyway so callers can walk the full tree.
         lines.push(`    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },`)
     }
+}
 
-    // Double-cast workaround for drillIn returning NodeFieldValue | unknown.
-    // Per-getter return-type annotations would eliminate this but require
-    // emitter-level access to each field's content type — deferred to US7
-    // (the $-prefix metadata rename simplifies the WrappedNode shape so
-    // the annotations can be threaded cleanly).
-    lines.push(`  } as unknown as WrappedNode<${node.typeName}>;`)
+/**
+ * Emits the closing cast and closing brace for a wrap function body.
+ *
+ * @remarks
+ * Double-cast workaround for `drillIn` returning `NodeFieldValue | unknown`.
+ * Per-getter return-type annotations would eliminate this but require
+ * emitter-level access to each field's content type — deferred to US7
+ * (the $-prefix metadata rename simplifies the WrappedNode shape so
+ * the annotations can be threaded cleanly).
+ *
+ * @param lines - The output lines array to append the cast and closing brace to.
+ * @param typeName - The concrete interface name used in the cast target.
+ */
+function emitWrappedNodeCast(lines: string[], typeName: string): void {
+    lines.push(`  } as unknown as WrappedNode<${typeName}>;`)
     lines.push('}')
+}
+
+function emitFieldCarryingWrap(
+    node: WrapNode,
+    fields: readonly AssembledField[],
+    children: readonly AssembledChild[],
+): string {
+    const fn = `wrap${node.typeName}`
+    const lines: string[] = []
+    emitWrapFunctionSignature(lines, fn, node.typeName)
+    lines.push('  return {')
+    lines.push('    ...data,')
+
+    for (const f of fields) {
+        // Avoid shadowing built-in property names on the returned view.
+        const method = f.propertyName === 'type' ? 'typeField' : f.propertyName
+        emitFieldGetterLine(lines, f, method)
+    }
+
+    emitChildrenSlotGetters(lines, children)
+    emitWrappedNodeCast(lines, node.typeName)
     return lines.join('\n')
 }
