@@ -544,6 +544,19 @@ function field(name, content) {
 function isAliasPlaceholder(v) {
   return !!v && typeof v === "object" && v.__sittirPlaceholder === "alias";
 }
+function alias(rule, value) {
+  if (typeof rule === "string" && value === void 0) {
+    return { __sittirPlaceholder: "alias", name: rule };
+  }
+  const native = globalThis.alias;
+  if (typeof native !== "function") {
+    throw new Error("alias(): no global alias() found \u2014 must be called inside a runtime that injects alias() (sittir evaluate.ts or tree-sitter CLI)");
+  }
+  if (value !== void 0) {
+    return native(rule, value);
+  }
+  return native(rule, rule);
+}
 
 // packages/codegen/src/dsl/variant.ts
 function isVariantPlaceholder(v) {
@@ -1113,7 +1126,7 @@ var overrides_default = grammar(enrich(import_grammar.default), {
       original,
       {
         "0/0": field("unsafe"),
-        // optional('unsafe')
+        // optional('unsafe') → surface as field
         5: field("where_clause")
       },
       { "6/0": variant("body"), "6/1": variant("semi") }
@@ -1378,6 +1391,19 @@ var overrides_default = grammar(enrich(import_grammar.default), {
       { "0/0": field("left"), "0/2": field("right"), "1/1": field("right") },
       { "0": variant("binary"), "1": variant("prefix") }
     ),
+    // _pattern — the wildcard `_` is a bare literal alternative
+    // (position 20) of the _pattern supertype choice. At multi-valued
+    // list positions (rust `sepBy(',', $._pattern)` used by
+    // tuple_struct_pattern, tuple_pattern, slice_pattern, closure
+    // parameters) tree-sitter surfaces `_` as an anonymous child,
+    // which readNode promotes to $fields['_'] and $$$CHILDREN's
+    // named-only filter subsequently drops. Aliasing `_` to a named
+    // `wildcard_pattern` kind gives it a proper node in the tree so
+    // every `_pattern` list position round-trips cleanly without any
+    // render-side heuristics.
+    _pattern: ($, original) => transform(original, {
+      "-1": alias("wildcard_pattern")
+    }),
     // range_expression — patches the BASE rule's choice alternatives
     // by position so the prec.left(1, ...) wrapper survives. The
     // base shape (after path addressing's prec-transparency) is:

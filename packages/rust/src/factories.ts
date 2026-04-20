@@ -4031,6 +4031,18 @@ export function closureExpressionExpr(config: T.ClosureExpressionExpr.Config) {
   };
 }
 
+export function wildcardPattern() {
+  return {
+    $type: 'wildcard_pattern' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $text: '_' as const,
+    render: () => '_' as const,
+    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: '_' as const } : { startPos: s.start.index, endPos: s.end.index, insertedText: '_' as const },
+    replace: (t: T.WildcardPatternTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: '_' as const }; },
+  };
+}
+
 export function fieldPatternShorthand(config: T.FieldPatternShorthand.Config) {
   const fields = {
     name: config?.name,
@@ -4393,6 +4405,7 @@ export type FluentKindMap = {
   "let_chain": FluentNode<"let_chain", T.LetChain.Config>;
   "closure_expression_block": FluentNode<"closure_expression_block", T.ClosureExpressionBlock.Config>;
   "closure_expression_expr": FluentNode<"closure_expression_expr", T.ClosureExpressionExpr.Config>;
+  "wildcard_pattern": T.WildcardPattern;
   "field_pattern_shorthand": FluentNode<"field_pattern_shorthand", T.FieldPatternShorthand.Config>;
   "field_pattern_named": FluentNode<"field_pattern_named", T.FieldPatternNamed.Config>;
   "range_pattern_left": FluentNode<"range_pattern_left", T.RangePatternLeft.Config>;
@@ -4583,6 +4596,7 @@ export const _factoryMap = {
   "let_chain": letChain,
   "closure_expression_block": closureExpressionBlock,
   "closure_expression_expr": closureExpressionExpr,
+  "wildcard_pattern": wildcardPattern,
   "field_pattern_shorthand": fieldPatternShorthand,
   "field_pattern_named": fieldPatternNamed,
   "range_pattern_left": rangePatternLeft,
@@ -4774,6 +4788,7 @@ export const _factoryShapes = {
   "let_chain": "children",
   "closure_expression_block": "config",
   "closure_expression_expr": "config",
+  "wildcard_pattern": "text",
   "field_pattern_shorthand": "config",
   "field_pattern_named": "config",
   "range_pattern_left": "config",

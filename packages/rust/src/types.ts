@@ -24,8 +24,10 @@ export type LeafStringMap = {
   _kw_const: "const";
   _kw_unsafe: "unsafe";
   _kw_move: "move";
+  _wildcard_pattern: "_";
   _kw_for: "for";
   primitive_type: "u8" | "i8" | "u16" | "i16" | "u32" | "i32" | "u64" | "i64" | "u128" | "i128" | "isize" | "usize" | "f32" | "f64" | "bool" | "str" | "char";
+  wildcard_pattern: "_";
   as: "as";
   async: "async";
   await: "await";
@@ -277,6 +279,7 @@ export const enum SyntaxKind {
   KwConst = '_kw_const',
   KwUnsafe = '_kw_unsafe',
   KwMove = '_kw_move',
+  _WildcardPattern = '_wildcard_pattern',
   KwFor = '_kw_for',
   StringContent = 'string_content',
   RawStringLiteralContent = 'raw_string_literal_content',
@@ -286,6 +289,7 @@ export const enum SyntaxKind {
   LineDocContent = '_line_doc_content',
   ErrorSentinel = '_error_sentinel',
   PrimitiveType = 'primitive_type',
+  WildcardPattern = 'wildcard_pattern',
   OuterDocCommentMarker = 'outer_doc_comment_marker',
   InnerDocCommentMarker = 'inner_doc_comment_marker',
   TypeIdentifier = 'type_identifier',
@@ -666,6 +670,7 @@ export const enum PatternKind {
   OrPattern = 'or_pattern',
   ConstBlock = 'const_block',
   MacroInvocation = 'macro_invocation',
+  WildcardPattern = 'wildcard_pattern',
 }
 
 export const enum LiteralKind {
@@ -2236,6 +2241,7 @@ export type KwDefault = Terminal<"_kw_default", "default">;
 export type KwConst = Terminal<"_kw_const", "const">;
 export type KwUnsafe = Terminal<"_kw_unsafe", "unsafe">;
 export type KwMove = Terminal<"_kw_move", "move">;
+export type _WildcardPattern = Terminal<"_wildcard_pattern", "_">;
 export type KwFor = Terminal<"_kw_for", "for">;
 export type StringContent = Terminal<"string_content", string>;
 export type RawStringLiteralContent = Terminal<"raw_string_literal_content", string>;
@@ -2245,6 +2251,7 @@ export type InnerBlockDocCommentMarker = Terminal<"_inner_block_doc_comment_mark
 export type LineDocContent = Terminal<"_line_doc_content", string>;
 export type ErrorSentinel = Terminal<"_error_sentinel", string>;
 export type PrimitiveType = Terminal<"primitive_type", "u8" | "i8" | "u16" | "i16" | "u32" | "i32" | "u64" | "i64" | "u128" | "i128" | "isize" | "usize" | "f32" | "f64" | "bool" | "str" | "char">;
+export type WildcardPattern = Terminal<"wildcard_pattern", "_">;
 export type OuterDocCommentMarker = Terminal<"outer_doc_comment_marker", string>;
 export type InnerDocCommentMarker = Terminal<"inner_doc_comment_marker", string>;
 export type TypeIdentifier = Terminal<"type_identifier", string>;
@@ -2517,6 +2524,7 @@ export interface KwDefaultTree extends AnyTreeNode { readonly type: "_kw_default
 export interface KwConstTree extends AnyTreeNode { readonly type: "_kw_const"; }
 export interface KwUnsafeTree extends AnyTreeNode { readonly type: "_kw_unsafe"; }
 export interface KwMoveTree extends AnyTreeNode { readonly type: "_kw_move"; }
+export interface _WildcardPatternTree extends AnyTreeNode { readonly type: "_wildcard_pattern"; }
 export interface KwForTree extends AnyTreeNode { readonly type: "_kw_for"; }
 export interface StringContentTree extends TreeNode<'string_content'> {}
 export interface RawStringLiteralContentTree extends AnyTreeNode { readonly type: "raw_string_literal_content"; }
@@ -2526,6 +2534,7 @@ export interface InnerBlockDocCommentMarkerTree extends AnyTreeNode { readonly t
 export interface LineDocContentTree extends AnyTreeNode { readonly type: "_line_doc_content"; }
 export interface ErrorSentinelTree extends AnyTreeNode { readonly type: "_error_sentinel"; }
 export interface PrimitiveTypeTree extends TreeNode<'primitive_type'> {}
+export interface WildcardPatternTree extends AnyTreeNode { readonly type: "wildcard_pattern"; }
 export interface OuterDocCommentMarkerTree extends TreeNode<'outer_doc_comment_marker'> {}
 export interface InnerDocCommentMarkerTree extends TreeNode<'inner_doc_comment_marker'> {}
 export interface TypeIdentifierTree extends TreeNode<'type_identifier'> {}
@@ -2925,9 +2934,10 @@ export type Pattern =
   | OrPattern
   | ConstBlock
   | MacroInvocation
+  | WildcardPattern
 ;
 
-export type PatternTree = StringLiteralTree | RawStringLiteralTree | CharLiteralTree | BooleanLiteralTree | IntegerLiteralTree | FloatLiteralTree | NegativeLiteralTree | IdentifierTree | ScopedIdentifierTree | GenericPatternTree | TuplePatternTree | TupleStructPatternTree | StructPatternTree | RefPatternTree | SlicePatternTree | CapturedPatternTree | ReferencePatternTree | RemainingFieldPatternTree | MutPatternTree | RangePatternTree | OrPatternTree | ConstBlockTree | MacroInvocationTree;
+export type PatternTree = StringLiteralTree | RawStringLiteralTree | CharLiteralTree | BooleanLiteralTree | IntegerLiteralTree | FloatLiteralTree | NegativeLiteralTree | IdentifierTree | ScopedIdentifierTree | GenericPatternTree | TuplePatternTree | TupleStructPatternTree | StructPatternTree | RefPatternTree | SlicePatternTree | CapturedPatternTree | ReferencePatternTree | RemainingFieldPatternTree | MutPatternTree | RangePatternTree | OrPatternTree | ConstBlockTree | MacroInvocationTree | WildcardPatternTree;
 
 export type Literal =
   | StringLiteral
@@ -3382,6 +3392,7 @@ export interface KindMap {
   '_kw_const': KwConst;
   '_kw_unsafe': KwUnsafe;
   '_kw_move': KwMove;
+  '_wildcard_pattern': _WildcardPattern;
   '_kw_for': KwFor;
   'string_content': StringContent;
   'raw_string_literal_content': RawStringLiteralContent;
@@ -3391,6 +3402,7 @@ export interface KindMap {
   '_line_doc_content': LineDocContent;
   '_error_sentinel': ErrorSentinel;
   'primitive_type': PrimitiveType;
+  'wildcard_pattern': WildcardPattern;
   'outer_doc_comment_marker': OuterDocCommentMarker;
   'inner_doc_comment_marker': InnerDocCommentMarker;
   'type_identifier': TypeIdentifier;

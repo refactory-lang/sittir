@@ -9,7 +9,7 @@
 
 // @ts-nocheck — grammar.js is untyped; overrides use sittir DSL
 import base from '../../node_modules/.pnpm/tree-sitter-rust@0.24.0/node_modules/tree-sitter-rust/grammar.js'
-import { transform, enrich, field, variant } from '../codegen/src/dsl/index.ts'
+import { transform, enrich, field, variant, alias } from '../codegen/src/dsl/index.ts'
 
 export default grammar(enrich(base), {
     name: 'rust',
@@ -448,6 +448,20 @@ export default grammar(enrich(base), {
             { '0/0': field('left'), '0/2': field('right'), '1/1': field('right') },
             { '0': variant('binary'), '1': variant('prefix') },
         ),
+
+        // _pattern — the wildcard `_` is a bare literal alternative
+        // (position 20) of the _pattern supertype choice. At multi-valued
+        // list positions (rust `sepBy(',', $._pattern)` used by
+        // tuple_struct_pattern, tuple_pattern, slice_pattern, closure
+        // parameters) tree-sitter surfaces `_` as an anonymous child,
+        // which readNode promotes to $fields['_'] and $$$CHILDREN's
+        // named-only filter subsequently drops. Aliasing `_` to a named
+        // `wildcard_pattern` kind gives it a proper node in the tree so
+        // every `_pattern` list position round-trips cleanly without any
+        // render-side heuristics.
+        _pattern: ($, original) => transform(original, {
+            '-1': alias('wildcard_pattern'),
+        }),
 
         // range_expression — patches the BASE rule's choice alternatives
         // by position so the prec.left(1, ...) wrapper survives. The

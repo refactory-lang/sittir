@@ -344,6 +344,7 @@ export const pattern = {
   or: _attach(F.orPattern, { from: FR.orPatternFrom, "binary": _attach(F.orPatternUFormBinary, { from: FR.orPatternUFormBinaryFrom }), "prefix": _attach(F.orPatternUFormPrefix, { from: FR.orPatternUFormPrefixFrom }) }),
   const_: _attach(F.constBlock, { from: FR.constBlockFrom }),
   macro: _attach(F.macroInvocation, { from: FR.macroInvocationFrom }),
+  wildcard: F.wildcardPattern,
 } as const;
 
 export const literal = {
@@ -546,6 +547,7 @@ export const ir = {
   self: F.self,
   super: F.super_,
   crate: F.crate,
+  wildcardPattern: F.wildcardPattern,
 
   // Leaf node factories
   fragmentSpecifier: F.fragmentSpecifier,

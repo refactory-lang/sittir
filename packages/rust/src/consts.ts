@@ -196,6 +196,7 @@ export const LEAF_KINDS = [
   '_kw_unsafe',
   '_line_doc_content',
   '_outer_block_doc_comment_marker',
+  '_wildcard_pattern',
   'as',
   'async',
   'await',
@@ -256,6 +257,7 @@ export const LEAF_KINDS = [
   'use',
   'where',
   'while',
+  'wildcard_pattern',
   'yield',
 ] as const;
 
@@ -277,6 +279,7 @@ export const KEYWORDS = [
   '_mod_item_external',
   '_outer_line_doc_comment_marker',
   '_struct_item_unit',
+  '_wildcard_pattern',
   'as',
   'async',
   'await',
@@ -324,6 +327,7 @@ export const KEYWORDS = [
   'use',
   'where',
   'while',
+  'wildcard_pattern',
   'yield',
 ] as const;
 

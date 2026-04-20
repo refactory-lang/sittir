@@ -200,6 +200,7 @@ export const _fromMap = {
   "let_chain": letChainFrom,
   "closure_expression_block": closureExpressionBlockFrom,
   "closure_expression_expr": closureExpressionExprFrom,
+  "wildcard_pattern": wildcardPatternFrom,
   "field_pattern_shorthand": fieldPatternShorthandFrom,
   "field_pattern_named": fieldPatternNamedFrom,
   "range_pattern_left": rangePatternLeftFrom,
@@ -239,6 +240,7 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
   "raw_string_literal_content": { factory: F.rawStringLiteralContent },
   "float_literal": { factory: F.floatLiteral },
   "primitive_type": { values: ["u8", "i8", "u16", "i16", "u32", "i32", "u64", "i64", "u128", "i128", "isize", "usize", "f32", "f64", "bool", "str", "char"], factory: (text: string) => F.primitiveType(text as 'u8' | 'i8' | 'u16' | 'i16' | 'u32' | 'i32' | 'u64' | 'i64' | 'u128' | 'i128' | 'isize' | 'usize' | 'f32' | 'f64' | 'bool' | 'str' | 'char') },
+  "wildcard_pattern": { values: ["_"], factory: () => F.wildcardPattern() },
   "outer_doc_comment_marker": { factory: F.outerDocCommentMarker },
   "inner_doc_comment_marker": { factory: F.innerDocCommentMarker },
   "type_identifier": { factory: F.typeIdentifier },
@@ -390,10 +392,10 @@ const _K13: readonly string[] = ["lifetime","_type_identifier","scoped_type_iden
 const _K14: readonly string[] = ["_type_identifier","scoped_type_identifier","generic_type"];
 const _K15: readonly string[] = ["identifier","char_literal","boolean_literal","integer_literal","float_literal"];
 const _K16: readonly string[] = ["block","string_literal","raw_string_literal","negative_literal"];
-const _K17: readonly string[] = ["char_literal","boolean_literal","integer_literal","float_literal","identifier"];
+const _K17: readonly string[] = ["char_literal","boolean_literal","integer_literal","float_literal","identifier","wildcard_pattern"];
 const _K18: readonly string[] = ["string_literal","raw_string_literal","negative_literal","scoped_identifier","generic_pattern","tuple_pattern","tuple_struct_pattern","struct_pattern","ref_pattern","slice_pattern","captured_pattern","reference_pattern","mut_pattern","range_pattern","or_pattern","const_block","macro_invocation"];
 const _K19: readonly string[] = ["scoped_identifier","use_as_clause","use_list","scoped_use_list","use_wildcard"];
-const _K20: readonly string[] = ["char_literal","boolean_literal","integer_literal","float_literal","identifier","self"];
+const _K20: readonly string[] = ["char_literal","boolean_literal","integer_literal","float_literal","identifier","wildcard_pattern","self"];
 const _K21: readonly string[] = ["function_type_trait_form","function_type_fn_form"];
 const _K22: readonly string[] = ["scoped_identifier","field_expression"];
 const _K23: readonly string[] = ["_type_identifier","_reserved_identifier","scoped_type_identifier"];
@@ -1969,6 +1971,11 @@ export function closureExpressionExprFrom(input: T.ClosureExpressionExpr | T.Clo
   return F.closureExpressionExpr({
     body: _resolveOne<NonNullable<T.ClosureExpressionExpr.Config['body']>>((input as T.ClosureExpressionExpr.Loose).body, _K4, _K5),
   });
+}
+
+export function wildcardPatternFrom(input?: T.WildcardPattern) {
+  if (isNodeData(input)) return input;
+  return F.wildcardPattern();
 }
 
 export function fieldPatternShorthandFrom(input: T.FieldPatternShorthand | T.FieldPatternShorthand.Loose): ReturnType<typeof F.fieldPatternShorthand> {

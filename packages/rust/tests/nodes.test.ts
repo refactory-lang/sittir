@@ -1939,6 +1939,15 @@ describe('closure_expression_expr', () => {
   });
 });
 
+describe("wildcard_pattern", () => {
+  it('factory produces keyword', () => {
+    const node = ir.wildcardPattern();
+    expect(node.$type).toBe("wildcard_pattern");
+    expect(node.$source).toBe('factory');
+    expect(node.$text).toBe("_");
+  });
+});
+
 describe('field_pattern_shorthand', () => {
   it('factory produces correct type', () => {
     const node = ir.fieldPatternShorthand({ name: 'test' as any });
