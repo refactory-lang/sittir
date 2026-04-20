@@ -37,6 +37,7 @@ export { enrich } from './enrich.ts'
 export { alias } from './alias.ts'
 export { variant } from './variant.ts'
 export { field } from './field.ts'
+export { wire } from './wire.ts'
 
 import { installGrammarWrapper } from './synthetic-rules.ts'
 installGrammarWrapper()

@@ -110,9 +110,7 @@ function applyPath(rule, segments, patch, precStack) {
     return typeof patch === "function" ? patch(rule, precStack) : patch;
   }
   if (isPrecWrapper(rule)) {
-    const newStack = precStack ? [...precStack, rule] : [rule];
-    const newContent = applyPath(contentOf(rule), segments, patch, newStack);
-    return reconstructPrec(rule, newContent);
+    return descendThroughPrecWrapper(rule, segments, patch, precStack);
   }
   const [head, ...rest] = segments;
   const t = rule.type;
@@ -123,16 +121,24 @@ function applyPath(rule, segments, patch, precStack) {
     return applyToMembers(rule, head, rest, patch, precStack);
   }
   if (isWrapperType(t)) {
-    const wrapperHit = head.kind === "wildcard" || head.kind === "index" && (head.value === 0 || head.value === -1);
-    if (wrapperHit) {
-      const newContent = applyPath(contentOf(rule), rest, patch, precStack);
-      return reconstructWrapper(rule, newContent);
-    }
-    throw new ApplyPathSkip(
-      `applyPath: index ${head.kind === "index" ? head.value : "*"} out of bounds \u2014 '${rule.type}' wraps a single content rule (only index 0 / -1 is valid)`
-    );
+    return descendThroughSingleWrapper(rule, head, rest, patch, precStack);
   }
   throw new ApplyPathSkip(`applyPath: cannot descend into '${rule.type}' rule (path has ${segments.length} segments left)`);
+}
+function descendThroughPrecWrapper(rule, segments, patch, precStack) {
+  const newStack = precStack ? [...precStack, rule] : [rule];
+  const newContent = applyPath(contentOf(rule), segments, patch, newStack);
+  return reconstructPrec(rule, newContent);
+}
+function descendThroughSingleWrapper(rule, head, rest, patch, precStack) {
+  const wrapperHit = head.kind === "wildcard" || head.kind === "index" && (head.value === 0 || head.value === -1);
+  if (wrapperHit) {
+    const newContent = applyPath(contentOf(rule), rest, patch, precStack);
+    return reconstructWrapper(rule, newContent);
+  }
+  throw new ApplyPathSkip(
+    `applyPath: index ${head.kind === "index" ? head.value : "*"} out of bounds \u2014 '${rule.type}' wraps a single content rule (only index 0 / -1 is valid)`
+  );
 }
 function applyKindMatch(rule, targetKind, rest, patch, precStack, insideNamedField) {
   const result = walkKindMatch(rule, targetKind, rest, patch, precStack, insideNamedField);
@@ -142,7 +148,7 @@ function applyKindMatch(rule, targetKind, rest, patch, precStack, insideNamedFie
   return result.rule;
 }
 function walkKindMatch(rule, targetKind, rest, patch, precStack, insideNamedField) {
-  if (rule === null || rule === void 0 || typeof rule !== "object" || typeof rule.type !== "string") {
+  if (!isWalkableNode(rule)) {
     return { rule, matched: false };
   }
   const t = rule.type;
@@ -180,6 +186,9 @@ function walkKindMatch(rule, targetKind, rest, patch, precStack, insideNamedFiel
   }
   return { rule, matched: false };
 }
+function isWalkableNode(rule) {
+  return rule !== null && rule !== void 0 && typeof rule === "object" && typeof rule.type === "string";
+}
 function reconstructContainer(rule, members) {
   const t = rule.type;
   if (isSeqType(t)) return nativeRequired("seq")(...members);
@@ -190,12 +199,7 @@ function reconstructWrapper(rule, newContent) {
   const t = rule.type;
   if (t === "optional") return nativeRequired("optional")(newContent);
   if (t === "repeat" || t === "REPEAT" || t === "repeat1" || t === "REPEAT1") {
-    const r = rule;
-    const baseNode = nativeRequired(t === "repeat" || t === "REPEAT" ? "repeat" : "repeat1")(newContent);
-    if (r.separator !== void 0) baseNode.separator = r.separator;
-    if (r.leading !== void 0) baseNode.leading = r.leading;
-    if (r.trailing !== void 0) baseNode.trailing = r.trailing;
-    return baseNode;
+    return reconstructRepeatWithMetadata(rule, newContent);
   }
   if (isFieldType(t)) {
     const name = rule.name;
@@ -204,6 +208,15 @@ function reconstructWrapper(rule, newContent) {
   throw new Error(
     `reconstructWrapper: no native dsl reconstruction for wrapper type '${rule.type}' \u2014 this is a bug in the path-descent logic.`
   );
+}
+function reconstructRepeatWithMetadata(rule, newContent) {
+  const r = rule;
+  const t = r.type;
+  const baseNode = nativeRequired(t === "repeat" || t === "REPEAT" ? "repeat" : "repeat1")(newContent);
+  if (r.separator !== void 0) baseNode.separator = r.separator;
+  if (r.leading !== void 0) baseNode.leading = r.leading;
+  if (r.trailing !== void 0) baseNode.trailing = r.trailing;
+  return baseNode;
 }
 var PREC_VARIANT_MAP = {
   prec_left: "left",
@@ -225,15 +238,21 @@ function reconstructPrec(rule, newContent) {
 function applyToMembers(rule, head, rest, patch, precStack) {
   const members = [...membersOf(rule)];
   if (head.kind === "index") {
-    const idx = head.value < 0 ? members.length + head.value : head.value;
-    if (idx < 0 || idx >= members.length) {
-      throw new ApplyPathSkip(
-        `applyPath: index ${head.value} out of bounds in ${rule.type} of length ${members.length}`
-      );
-    }
-    members[idx] = applyPath(members[idx], rest, patch, precStack);
-    return reconstructContainer(rule, members);
+    return applyToIndexedMember(rule, members, head.value, rest, patch, precStack);
   }
+  return applyWildcardToMembers(rule, members, rest, patch, precStack);
+}
+function applyToIndexedMember(rule, members, indexValue, rest, patch, precStack) {
+  const idx = indexValue < 0 ? members.length + indexValue : indexValue;
+  if (idx < 0 || idx >= members.length) {
+    throw new ApplyPathSkip(
+      `applyPath: index ${indexValue} out of bounds in ${rule.type} of length ${members.length}`
+    );
+  }
+  members[idx] = applyPath(members[idx], rest, patch, precStack);
+  return reconstructContainer(rule, members);
+}
+function applyWildcardToMembers(rule, members, rest, patch, precStack) {
   if (members.length === 0) {
     throw new ApplyPathSkip(`applyPath: wildcard matched zero members in empty ${rule.type}`);
   }
@@ -253,6 +272,133 @@ function applyToMembers(rule, head, rest, patch, precStack) {
   return reconstructContainer(rule, members);
 }
 
+// packages/codegen/src/dsl/variant.ts
+function isVariantPlaceholder(v) {
+  return !!v && typeof v === "object" && v.__sittirPlaceholder === "variant";
+}
+function variant(name) {
+  return { __sittirPlaceholder: "variant", name };
+}
+
+// packages/codegen/src/dsl/wire.ts
+var currentContext = null;
+function wireRegisterSyntheticRule(name, content) {
+  if (!currentContext) return false;
+  currentContext.deposits.set(name, content);
+  return true;
+}
+function wireRegisterPolymorphVariant(parent, child) {
+  if (!currentContext) return false;
+  const exists = currentContext.polymorphVariants.some((v) => v.parent === parent && v.child === child);
+  if (!exists) {
+    currentContext.polymorphVariants.push({ parent, child });
+  }
+  return true;
+}
+function wireRegisterConflict(names) {
+  if (!currentContext) return false;
+  if (names.length === 0) return true;
+  const key = names.join("\0");
+  const exists = currentContext.conflictGroups.some((g) => g.join("\0") === key);
+  if (!exists) {
+    currentContext.conflictGroups.push([...names]);
+  }
+  return true;
+}
+function wireGetCurrentRuleKind() {
+  return currentContext?.currentRuleKind ?? null;
+}
+function wire(config) {
+  const context = {
+    deposits: /* @__PURE__ */ new Map(),
+    polymorphVariants: [],
+    conflictGroups: [],
+    currentRuleKind: null
+  };
+  const polymorphs = config.polymorphs ?? {};
+  const outRules = { ...config.rules };
+  composeOrSynthesizePolymorphParents(outRules, polymorphs);
+  injectHiddenRulePlaceholders(outRules, polymorphs, context);
+  wrapAllRuleFns(outRules, context);
+  const conflicts = wrapConflictsCallback(config.conflicts, context);
+  const wired = {
+    ...config,
+    rules: outRules,
+    ...conflicts === void 0 ? {} : { conflicts }
+  };
+  Object.defineProperty(wired, "__wireContext__", {
+    value: context,
+    enumerable: false,
+    configurable: true
+  });
+  return wired;
+}
+function composeOrSynthesizePolymorphParents(rules, polymorphs) {
+  for (const [parent, armMap] of Object.entries(polymorphs)) {
+    const userFn = rules[parent];
+    rules[parent] = buildPolymorphParentFn(armMap, userFn);
+  }
+}
+function buildPolymorphParentFn(armMap, userFn) {
+  const patches = {};
+  for (const [path, suffix] of Object.entries(armMap)) {
+    patches[path] = variant(suffix);
+  }
+  return function wiredPolymorphParent($, original) {
+    const base2 = userFn ? userFn.call(this, $, original) : original;
+    return transform(base2, patches);
+  };
+}
+function injectHiddenRulePlaceholders(rules, polymorphs, context) {
+  for (const [parent, armMap] of Object.entries(polymorphs)) {
+    for (const suffix of Object.values(armMap)) {
+      const hiddenName = `_${parent}_${suffix}`;
+      rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
+    }
+  }
+}
+function makeDeferredContentFn(context, hiddenName) {
+  return function deferredHiddenRule() {
+    const body = context.deposits.get(hiddenName);
+    if (body) return body;
+    const blankFn = globalThis.blank;
+    return blankFn ? blankFn() : { type: "BLANK" };
+  };
+}
+function wrapAllRuleFns(rules, context) {
+  for (const [name, fn] of Object.entries(rules)) {
+    rules[name] = wrapOneRuleFn(name, fn, context);
+  }
+}
+function wrapOneRuleFn(name, fn, context) {
+  return function wiredRuleFn($, previous) {
+    const prevContext = currentContext;
+    const prevKind = context.currentRuleKind;
+    currentContext = context;
+    context.currentRuleKind = name;
+    forgetPolymorphVariantsFor(name);
+    try {
+      return fn.call(this, $, previous);
+    } finally {
+      context.currentRuleKind = prevKind;
+      currentContext = prevContext;
+    }
+  };
+}
+function wrapConflictsCallback(userConflicts, context) {
+  if (!userConflicts && context.conflictGroups.length === 0) {
+  }
+  return function wiredConflicts($, previous) {
+    const base2 = userConflicts ? userConflicts.call(this, $, previous) : previous ?? [];
+    if (context.conflictGroups.length === 0) return base2;
+    const symbolized = context.conflictGroups.map((group) => group.map((name) => symbolizeRef($, name)));
+    return [...base2, ...symbolized];
+  };
+}
+function symbolizeRef(_$, name) {
+  return { type: "SYMBOL", name };
+}
+
 // packages/codegen/src/dsl/synthetic-rules.ts
 var currentSyntheticRules = null;
 var currentRuleKind = null;
@@ -260,9 +406,12 @@ var currentOptsRules = null;
 var currentBlankFn = null;
 var currentPolymorphVariants = [];
 function getCurrentRuleKind() {
+  const fromWire = wireGetCurrentRuleKind();
+  if (fromWire !== null) return fromWire;
   return currentRuleKind;
 }
 function registerSyntheticRule(name, content) {
+  wireRegisterSyntheticRule(name, content);
   if (!currentSyntheticRules) {
     currentSyntheticRules = /* @__PURE__ */ new Map();
   }
@@ -288,6 +437,7 @@ function maybeKeywordSymbol(fieldName, content, wrapSyntheticBody) {
   };
 }
 function registerPolymorphVariant(parentKind, childSuffix) {
+  wireRegisterPolymorphVariant(parentKind, childSuffix);
   const dup = currentPolymorphVariants.find((v) => v.parent === parentKind && v.child === childSuffix);
   if (dup) {
     throw new Error(
@@ -301,6 +451,9 @@ function drainPolymorphVariants() {
   currentPolymorphVariants = [];
   return variants;
 }
+function forgetPolymorphVariantsFor(ruleKind) {
+  currentPolymorphVariants = currentPolymorphVariants.filter((v) => v.parent !== ruleKind);
+}
 function drainSyntheticRules() {
   const rules = currentSyntheticRules ?? /* @__PURE__ */ new Map();
   currentSyntheticRules = null;
@@ -309,7 +462,12 @@ function drainSyntheticRules() {
 var currentConflicts = [];
 function registerConflict(names) {
   if (names.length === 0) return;
-  currentConflicts.push([...names]);
+  wireRegisterConflict(names);
+  const key = names.join("\0");
+  const exists = currentConflicts.some((g) => g.join("\0") === key);
+  if (!exists) {
+    currentConflicts.push([...names]);
+  }
 }
 function drainConflicts() {
   const conflicts = currentConflicts;
@@ -449,6 +607,7 @@ function installGrammarWrapper() {
     const discoveredNames = new Map(currentSyntheticRules);
     currentSyntheticRules = /* @__PURE__ */ new Map();
     const pendingConflictsAfterGrammar = drainConflicts();
+    currentPolymorphVariants = [];
     if (opts?.rules) {
       for (const [name, ruleFn] of Object.entries(opts.rules)) {
         if (typeof ruleFn !== "function") continue;
@@ -558,19 +717,11 @@ function alias(rule, value) {
   return native(rule, rule);
 }
 
-// packages/codegen/src/dsl/variant.ts
-function isVariantPlaceholder(v) {
-  return !!v && typeof v === "object" && v.__sittirPlaceholder === "variant";
-}
-function variant(name) {
-  return { __sittirPlaceholder: "variant", name };
-}
-
 // packages/codegen/src/dsl/transform.ts
 function transform(original, ...patchSets) {
   let rule = original;
   for (const patches of patchSets) {
-    const hasPathKeys = Object.keys(patches).some((k) => !/^\d+$/.test(k));
+    const hasPathKeys = requiresPathMode(patches);
     const hasPlaceholderAlias = Object.values(patches).some((v) => isAliasPlaceholder(v) || isVariantPlaceholder(v));
     if (hasPathKeys || hasPlaceholderAlias) {
       rule = applyPathPatches(rule, patches);
@@ -580,7 +731,22 @@ function transform(original, ...patchSets) {
   }
   return rule;
 }
+function requiresPathMode(patches) {
+  return Object.keys(patches).some((k) => !/^\d+$/.test(k));
+}
 function applyPathPatches(original, patches) {
+  const { variantEntries, otherEntries } = partitionPatchesByVariant(patches);
+  let rule = original;
+  for (const [key, value] of otherEntries) {
+    const segments = parsePath(String(key));
+    rule = applyPath(rule, segments, (member, precStack) => resolvePatch(value, member, precStack));
+  }
+  if (variantEntries.length > 0) {
+    rule = applyVariantPatches(rule, variantEntries);
+  }
+  return rule;
+}
+function partitionPatchesByVariant(patches) {
   const variantEntries = [];
   const otherEntries = [];
   for (const entry of Object.entries(patches)) {
@@ -588,52 +754,33 @@ function applyPathPatches(original, patches) {
     if (isVariantPlaceholder(v)) variantEntries.push([entry[0], v]);
     else otherEntries.push(entry);
   }
-  let rule = original;
-  for (const [key, value] of otherEntries) {
-    const segments = parsePath(String(key));
-    rule = applyPath(rule, segments, (member, precStack) => resolvePatch(value, member, precStack));
-  }
-  if (variantEntries.length > 0) {
-    const hoisted = tryHoistSiblingVariants(rule, variantEntries);
-    if (hoisted) {
-      rule = hoisted.rule;
-      for (const [key, value] of variantEntries) {
-        if (hoisted.consumed.has(key)) continue;
-        const segments = parsePath(key);
-        rule = applyPath(rule, segments, (member, precStack) => resolvePatch(value, member, precStack));
-      }
-    } else {
-      for (const [key, value] of variantEntries) {
-        const segments = parsePath(key);
-        rule = applyPath(rule, segments, (member, precStack) => resolvePatch(value, member, precStack));
-      }
+  return { variantEntries, otherEntries };
+}
+function applyVariantPatches(rule, variantEntries) {
+  const hoisted = tryHoistSiblingVariants(rule, variantEntries);
+  if (hoisted) {
+    let result2 = hoisted.rule;
+    for (const [key, value] of variantEntries) {
+      if (hoisted.consumed.has(key)) continue;
+      const segments = parsePath(key);
+      result2 = applyPath(result2, segments, (member, precStack) => resolvePatch(value, member, precStack));
     }
+    return result2;
   }
-  return rule;
+  let result = rule;
+  for (const [key, value] of variantEntries) {
+    const segments = parsePath(key);
+    result = applyPath(result, segments, (member, precStack) => resolvePatch(value, member, precStack));
+  }
+  return result;
 }
 function tryHoistSiblingVariants(rule, variantEntries) {
-  const dbg = typeof process !== "undefined" && process?.env?.SITTIR_DEBUG;
-  const kindFor = getCurrentRuleKind() ?? "(unknown)";
-  const bail = (reason) => {
-    if (dbg) console.error(`[sittir] hoist skipped on '${kindFor}': ${reason}`);
-    return null;
-  };
-  const precStack = [];
-  let core = rule;
-  while (core && isPrecWrapper(core)) {
-    precStack.push(core);
-    core = contentOf2(core);
-  }
-  const t = core?.type;
+  const { bail, precStack, core } = peelPrecWrappersFromRule(rule);
+  const t = core.type;
   if (!t) return bail("core rule has no type after prec peeling");
   if (!isSeqType(t)) return bail(`core rule type '${t}' is not seq/SEQ`);
-  const parsed = [];
-  for (const [key, v] of variantEntries) {
-    const segs = parsePath(key);
-    if (segs.length !== 2) return bail(`variant patch '${key}' has ${segs.length} segments (expected 2: N/M)`);
-    if (segs[0].kind !== "index" || segs[1].kind !== "index") return bail(`variant patch '${key}' uses non-index segments (kind-match / wildcard not supported for hoist)`);
-    parsed.push({ key, v, choicePos: segs[0].value, altIdx: segs[1].value });
-  }
+  const parsed = parseVariantPathsForHoist(variantEntries, bail);
+  if (parsed === null) return null;
   const choicePos = parsed[0].choicePos;
   if (parsed.some((p) => p.choicePos !== choicePos)) return bail(`variant patches target mixed choice positions (${parsed.map((p) => p.choicePos).join(",")}) \u2014 hoist needs all siblings at one choice`);
   const seqMembers = [...membersOf2(core)];
@@ -645,6 +792,34 @@ function tryHoistSiblingVariants(rule, variantEntries) {
   if (!anyEmpty) return null;
   const parentKind = getCurrentRuleKind();
   if (!parentKind) return bail("no current rule kind (variant()/transform() called outside rule callback?)");
+  return buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choice2, parsed, parentKind, precStack);
+}
+function peelPrecWrappersFromRule(rule) {
+  const dbg = typeof process !== "undefined" ? process?.env?.SITTIR_DEBUG : void 0;
+  const kindFor = getCurrentRuleKind() ?? "(unknown)";
+  const bail = (reason) => {
+    if (dbg) console.error(`[sittir] hoist skipped on '${kindFor}': ${reason}`);
+    return null;
+  };
+  const precStack = [];
+  let core = rule;
+  while (core && isPrecWrapper(core)) {
+    precStack.push(core);
+    core = contentOf2(core);
+  }
+  return { bail, precStack, core };
+}
+function parseVariantPathsForHoist(variantEntries, bail) {
+  const parsed = [];
+  for (const [key, v] of variantEntries) {
+    const segs = parsePath(key);
+    if (segs.length !== 2) return bail(`variant patch '${key}' has ${segs.length} segments (expected 2: N/M)`);
+    if (segs[0].kind !== "index" || segs[1].kind !== "index") return bail(`variant patch '${key}' uses non-index segments (kind-match / wildcard not supported for hoist)`);
+    parsed.push({ key, v, choicePos: segs[0].value, altIdx: segs[1].value });
+  }
+  return parsed;
+}
+function buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choice2, parsed, parentKind, precStack) {
   const refs = [];
   const isUpperCase = core.type === core.type.toUpperCase();
   for (const p of parsed) {
@@ -661,33 +836,20 @@ function tryHoistSiblingVariants(rule, variantEntries) {
       name: visibleName
     });
   }
-  const variantNames = parsed.map((p) => `${parentKind}_${p.v.name}`);
-  registerConflict(variantNames);
-  for (const n of variantNames) registerConflict([n]);
+  registerHoistedVariantConflicts(parsed.map((p) => `${parentKind}_${p.v.name}`));
   const newChoice = reconstructContainer(choice2, refs);
   return { rule: newChoice, consumed: new Set(parsed.map((p) => p.key)) };
+}
+function registerHoistedVariantConflicts(variantNames) {
+  registerConflict(variantNames);
+  for (const n of variantNames) registerConflict([n]);
 }
 var membersOf2 = (r) => r.members;
 var contentOf2 = (r) => r.content;
 function applyFlatPatches(original, patches) {
   const t = original.type;
   if (isSeqType(t)) {
-    const members = [...membersOf2(original)];
-    for (const [key, patch] of Object.entries(patches)) {
-      if (!/^\d+$/.test(key)) {
-        throw new Error(
-          `transform: invalid flat-positional key '${key}' \u2014 keys must be non-negative integers. Use path syntax ('0/1', '*') for nested addressing.`
-        );
-      }
-      const index = Number(key);
-      if (index >= members.length) {
-        throw new Error(
-          `transform: index ${index} out of bounds in ${original.type} of length ${members.length}`
-        );
-      }
-      members[index] = resolvePatch(patch, members[index]);
-    }
-    return reconstructContainer(original, members);
+    return applyFlatPatchesToSeq(original, patches);
   }
   if (isChoiceType(t)) {
     const newMembers = membersOf2(original).map((m) => applyFlatPatches(m, patches));
@@ -703,27 +865,28 @@ function applyFlatPatches(original, patches) {
   }
   return original;
 }
+function applyFlatPatchesToSeq(original, patches) {
+  const members = [...membersOf2(original)];
+  for (const [key, patch] of Object.entries(patches)) {
+    if (!/^\d+$/.test(key)) {
+      throw new Error(
+        `transform: invalid flat-positional key '${key}' \u2014 keys must be non-negative integers. Use path syntax ('0/1', '*') for nested addressing.`
+      );
+    }
+    const index = Number(key);
+    if (index >= members.length) {
+      throw new Error(
+        `transform: index ${index} out of bounds in ${original.type} of length ${members.length}`
+      );
+    }
+    members[index] = resolvePatch(patch, members[index]);
+  }
+  return reconstructContainer(original, members);
+}
 var wrapInPrec = (content, precStack) => wrapInPrecStack(content, precStack, reconstructPrec);
 function resolvePatch(patch, originalMember, precStack) {
   if (isFieldPlaceholder(patch)) {
-    let content = originalMember;
-    if (isFieldLike(content) && content.source === "inferred") {
-      content = content.content;
-    }
-    const maybeSymbolized = maybeKeywordSymbol(
-      patch.name,
-      content,
-      (body) => wrapInPrec(body, precStack)
-    );
-    if (maybeSymbolized !== content) {
-      content = maybeSymbolized;
-    }
-    const native = globalThis.field;
-    if (typeof native !== "function") {
-      throw new Error("transform: no global field() found \u2014 patches that use the one-arg field() form require a runtime that injects field() (sittir evaluate.ts or tree-sitter CLI)");
-    }
-    const reconstructed = native(patch.name, content);
-    return { ...reconstructed, source: "override" };
+    return resolveFieldPlaceholder(patch, originalMember, precStack);
   }
   if (isFieldLike(patch)) {
     return { ...patch, source: "override" };
@@ -739,17 +902,37 @@ function resolvePatch(patch, originalMember, precStack) {
     return registerAliasedVariant(hiddenName, fullName, originalMember, (body) => wrapInPrec(body, precStack));
   }
   if (isAliasPlaceholder(patch)) {
-    const hiddenName = "_" + patch.name;
-    return registerAliasedVariant(hiddenName, patch.name, originalMember, (body) => wrapInPrec(body, precStack));
+    return resolveAliasPlaceholder(patch, originalMember, precStack);
   }
   return patch;
 }
+function resolveFieldPlaceholder(patch, originalMember, precStack) {
+  let content = originalMember;
+  if (isFieldLike(content) && content.source === "inferred") {
+    content = content.content;
+  }
+  const maybeSymbolized = maybeKeywordSymbol(
+    patch.name,
+    content,
+    (body) => wrapInPrec(body, precStack)
+  );
+  if (maybeSymbolized !== content) {
+    content = maybeSymbolized;
+  }
+  const native = globalThis.field;
+  if (typeof native !== "function") {
+    throw new Error("transform: no global field() found \u2014 patches that use the one-arg field() form require a runtime that injects field() (sittir evaluate.ts or tree-sitter CLI)");
+  }
+  const reconstructed = native(patch.name, content);
+  return { ...reconstructed, source: "override" };
+}
+function resolveAliasPlaceholder(patch, originalMember, precStack) {
+  const hiddenName = "_" + patch.name;
+  return registerAliasedVariant(hiddenName, patch.name, originalMember, (body) => wrapInPrec(body, precStack));
+}
 
 // packages/codegen/src/dsl/enrich.ts
-function enrich(base2) {
-  if (!base2 || typeof base2 !== "object") {
-    throw new Error("enrich(): expected a grammar object, got " + typeof base2);
-  }
+function buildEnrichOverrides(base2) {
   const rulesBag = ("grammar" in base2 ? base2.grammar?.rules : base2.rules) ?? {};
   const enrichOverrides = {};
   for (const name of Object.keys(rulesBag)) {
@@ -757,6 +940,13 @@ function enrich(base2) {
       return applyEnrichPasses(name, original);
     };
   }
+  return enrichOverrides;
+}
+function enrich(base2) {
+  if (!base2 || typeof base2 !== "object") {
+    throw new Error("enrich(): expected a grammar object, got " + typeof base2);
+  }
+  const enrichOverrides = buildEnrichOverrides(base2);
   Object.defineProperty(base2, "__enrichOverrides__", {
     value: enrichOverrides,
     enumerable: false,
@@ -765,11 +955,16 @@ function enrich(base2) {
   });
   return base2;
 }
+function applyKeywordPasses(ruleName, rule) {
+  let r = rule;
+  r = applyBareKeywordViaTransform(ruleName, r);
+  r = applyOptionalKeywordViaTransform(ruleName, r);
+  return r;
+}
 function applyEnrichPasses(ruleName, rule) {
   let r = rule;
   r = applyKindToNameViaTransform(ruleName, r);
-  r = applyBareKeywordViaTransform(ruleName, r);
-  r = applyOptionalKeywordViaTransform(ruleName, r);
+  r = applyKeywordPasses(ruleName, r);
   return r;
 }
 function normalizeMember(m) {
@@ -825,9 +1020,13 @@ function applyKindToNameViaTransform(ruleName, rule) {
   if (Object.keys(patches).length === 0) return rule;
   return transform(rule, patches);
 }
-function applyOptionalKeywordViaTransform(ruleName, rule) {
+function collectOptionalKeywordPatchesFromRule(ruleName, rule) {
   const patches = {};
   collectOptionalKeywordPatches(ruleName, rule, "", patches);
+  return patches;
+}
+function applyOptionalKeywordViaTransform(ruleName, rule) {
+  const patches = collectOptionalKeywordPatchesFromRule(ruleName, rule);
   if (Object.keys(patches).length === 0) return rule;
   return transform(rule, patches);
 }
@@ -847,6 +1046,17 @@ function peelOptional(rule) {
   }
   return { inner: rule, isOptional: false };
 }
+function resolveInnerPathForOptionalMember(m) {
+  if (isOptionalType(m.type)) {
+    return "0";
+  }
+  const cm = m.members;
+  const strIdx = cm.findIndex((x) => {
+    const n = normalizeMember(x);
+    return n.type !== "BLANK" && n.type !== "blank";
+  });
+  return String(strIdx);
+}
 function collectOptionalKeywordPatches(ruleName, rule, prefix, patches) {
   if (isSeqType(rule.type)) {
     const raw = rule.members;
@@ -864,17 +1074,7 @@ function collectOptionalKeywordPatches(ruleName, rule, prefix, patches) {
               continue;
             }
             claimed.add(kw);
-            let innerPath;
-            if (isOptionalType(m.type)) {
-              innerPath = "0";
-            } else {
-              const cm = m.members;
-              const strIdx = cm.findIndex((x) => {
-                const n = normalizeMember(x);
-                return n.type !== "BLANK" && n.type !== "blank";
-              });
-              innerPath = String(strIdx);
-            }
+            const innerPath = resolveInnerPathForOptionalMember(m);
             const fullPath = prefix ? `${prefix}/${i}/${innerPath}` : `${i}/${innerPath}`;
             patches[fullPath] = field(kw);
             continue;
@@ -933,7 +1133,7 @@ function reportSkip(pass, ruleName, reason) {
 installGrammarWrapper();
 
 // packages/rust/overrides.ts
-var overrides_default = grammar(enrich(import_grammar.default), {
+var overrides_default = grammar(enrich(import_grammar.default), wire({
   name: "rust",
   rules: {
     // abstract_type: 1 field(s)
@@ -1472,5 +1672,5 @@ var overrides_default = grammar(enrich(import_grammar.default), {
       )
     )
   }
-});
+}));
 if (module.exports && module.exports.default) module.exports = module.exports.default;

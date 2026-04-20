@@ -9,9 +9,9 @@
 
 // @ts-nocheck — grammar.js is untyped; overrides use sittir DSL
 import base from '../../node_modules/.pnpm/tree-sitter-rust@0.24.0/node_modules/tree-sitter-rust/grammar.js'
-import { transform, enrich, field, variant, alias } from '../codegen/src/dsl/index.ts'
+import { transform, enrich, field, variant, alias, wire } from '../codegen/src/dsl/index.ts'
 
-export default grammar(enrich(base), {
+export default grammar(enrich(base), wire({
     name: 'rust',
     rules: {
         // abstract_type: 1 field(s)
@@ -524,4 +524,4 @@ export default grammar(enrich(base), {
         ),
 
     },
-})
+}))

@@ -14,9 +14,9 @@
 // non-JSX corpus but a latent mismatch: anything JSX-shaped would
 // reparse-fail. Pick one grammar and stick with it end-to-end.
 import base from '../../node_modules/.pnpm/tree-sitter-typescript@0.23.2/node_modules/tree-sitter-typescript/typescript/grammar.js'
-import { transform, enrich, field, variant } from '../codegen/src/dsl/index.ts'
+import { transform, enrich, field, variant, wire } from '../codegen/src/dsl/index.ts'
 
-export default grammar(enrich(base), {
+export default grammar(enrich(base), wire({
     name: 'typescript',
     rules: {
         // abstract_class_declaration: wrap pos 5 (class_heritage choice).
@@ -322,4 +322,4 @@ export default grammar(enrich(base), {
         }),
 
     },
-})
+}))

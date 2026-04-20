@@ -37,6 +37,7 @@ import type { PolymorphVariant } from '../compiler/types.ts'
 import type { RuntimeRule } from './runtime-shapes.ts'
 import { variant as variantPlaceholder } from './variant.ts'
 import { transform as transformFn } from './transform.ts'
+import { forgetPolymorphVariantsFor } from './synthetic-rules.ts'
 
 // ---------------------------------------------------------------------------
 // WireContext + module-level current pointer
@@ -86,31 +87,40 @@ export function wireRegisterSyntheticRule(name: string, content: RuntimeRule): b
 
 /**
  * Register a `{parent, child}` polymorph pair against the active wire
- * context. Throws on duplicate `{parent, child}` — matches the legacy
- * accumulator's invariant.
+ * context. Idempotent — re-registering the same pair is a no-op.
+ *
+ * @remarks
+ * Idempotence matters because the rule callbacks can fire more than
+ * once per grammar invocation during migration (e.g. under the legacy
+ * `installGrammarWrapper`'s pass-1 dry-run + pass-2 real evaluation).
+ * Each call would register the same pair; rejecting duplicates would
+ * trip on benign retries. The semantic invariant "one parent never
+ * has two DIFFERENT arms with the same suffix" is still upheld by the
+ * declarative `polymorphs` config — the author can't write the same
+ * suffix twice for one parent without the second entry overwriting
+ * the first at JS object-literal level.
  */
 export function wireRegisterPolymorphVariant(parent: string, child: string): boolean {
     if (!currentContext) return false
-    const dup = currentContext.polymorphVariants.find(v => v.parent === parent && v.child === child)
-    if (dup) {
-        throw new Error(
-            `variant('${child}'): duplicate variant name on rule '${parent}'. ` +
-            `Each variant() within a rule must have a unique name — change one or merge the patches.`,
-        )
+    const exists = currentContext.polymorphVariants.some(v => v.parent === parent && v.child === child)
+    if (!exists) {
+        currentContext.polymorphVariants.push({ parent, child })
     }
-    currentContext.polymorphVariants.push({ parent, child })
     return true
 }
 
 /**
- * Register a conflict group against the active wire context. Used by
- * the variant-hoist machinery to tell tree-sitter that newly-synthesized
- * rules may structurally overlap with auto-generated helpers.
+ * Register a conflict group against the active wire context. Dedupes
+ * by exact group membership (same names in same order).
  */
 export function wireRegisterConflict(names: readonly string[]): boolean {
     if (!currentContext) return false
     if (names.length === 0) return true
-    currentContext.conflictGroups.push([...names])
+    const key = names.join('\u0000')
+    const exists = currentContext.conflictGroups.some(g => g.join('\u0000') === key)
+    if (!exists) {
+        currentContext.conflictGroups.push([...names])
+    }
     return true
 }
 
@@ -311,6 +321,13 @@ function wrapOneRuleFn(name: string, fn: RuleFn, context: WireContext): RuleFn {
         const prevKind = context.currentRuleKind
         currentContext = context
         context.currentRuleKind = name
+        // Clear the legacy accumulator's entries for this rule so that
+        // re-entry (wrapper pass-1 + pass-2, repeated test invocations,
+        // nested grammar extension evaluation) doesn't trip the hard
+        // duplicate-throw in `registerPolymorphVariant`. Wire's own
+        // polymorph list is idempotent and keeps accumulating across
+        // invocations for this wire context.
+        forgetPolymorphVariantsFor(name)
         try {
             return fn.call(this, $, previous)
         } finally {
@@ -349,13 +366,26 @@ function wrapConflictsCallback(
 }
 
 /**
- * Produce a `$.name`-style symbol from the ruleBuilder proxy. The proxy
- * returns a `SYMBOL` (or `ReferenceError` when the name isn't in
- * `ruleMap`). Variant conflict names ARE in `ruleMap` at this point
- * — wire() injected their hidden rules + variant names to tree-sitter's
- * snapshot already — so the SYMBOL lookup succeeds.
+ * Produce a symbol-shaped object for a variant-child kind name that
+ * isn't a declared tree-sitter rule.
+ *
+ * @remarks
+ * Variant conflict names (e.g. `array_expression_semi`) are parse-tree
+ * node kinds produced by `alias($._rule, $.kind)` — they never appear
+ * as declared rules in `opts.rules`, so tree-sitter's `RuleBuilder`
+ * proxy returns a `ReferenceError` when we try `$[name]`.
+ *
+ * We construct the SYMBOL object directly. Tree-sitter's `normalize()`
+ * accepts any object with a string `type` property (the default branch
+ * of its switch), so `{type: 'SYMBOL', name}` passes through and its
+ * `.name` is what gets stored in `grammar.conflicts`. This mirrors
+ * what the legacy `installGrammarWrapper` did by post-appending bare
+ * strings to the already-normalized conflicts array.
+ *
+ * `$` is unused but kept in the signature so any future caller that
+ * wants to fall back to the proxy lookup for real rule names can do so
+ * without changing the surface.
  */
-function symbolizeRef($: unknown, name: string): unknown {
-    const proxy = $ as Record<string, unknown>
-    return proxy[name]
+function symbolizeRef(_$: unknown, name: string): unknown {
+    return { type: 'SYMBOL', name }
 }

@@ -9,9 +9,9 @@
 
 // @ts-nocheck — grammar.js is untyped
 import base from '../../node_modules/.pnpm/tree-sitter-python@0.25.0/node_modules/tree-sitter-python/grammar.js'
-import { transform, role, enrich, field, variant } from '../codegen/src/dsl/index.ts'
+import { transform, role, enrich, field, variant, wire } from '../codegen/src/dsl/index.ts'
 
-export default grammar(enrich(base), {
+export default grammar(enrich(base), wire({
     name: 'python',
     // Structural-whitespace role bindings — declared inline in the
     // externals callback. `role(symbolRef, name)` returns the symbol
@@ -188,4 +188,4 @@ export default grammar(enrich(base), {
         }),
 
     },
-})
+}))

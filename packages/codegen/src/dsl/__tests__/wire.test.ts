@@ -215,6 +215,25 @@ describe('wire()', () => {
         expect(depositsB.has('_assignment_ne')).toBe(false)
     })
 
+    it('polymorph registration is idempotent — calling the parent rule twice does not duplicate', () => {
+        // Legacy installGrammarWrapper runs rule callbacks twice (pass-1
+        // + pass-2). wire's registrations must absorb that benignly.
+        const origSeq = { type: 'seq', members: [
+            { type: 'symbol', name: 'a' },
+            { type: 'symbol', name: 'b' },
+        ] }
+        const wired = wire({
+            name: 'test',
+            rules: {},
+            polymorphs: { assignment: { '0': 'eq', '1': 'type' } },
+        })
+        const assignmentFn = wired.rules.assignment!
+        assignmentFn.call({}, {}, origSeq)
+        assignmentFn.call({}, {}, origSeq)
+        const ctx = (wired as unknown as { __wireContext__: { polymorphVariants: unknown[] } }).__wireContext__
+        expect(ctx.polymorphVariants).toHaveLength(2)  // not 4
+    })
+
     it('polymorphVariants metadata accumulates on wire context', () => {
         const wired = wire({
             name: 'test',
