@@ -379,3 +379,51 @@ export async function loadLanguageForGrammar(grammar: string): Promise<{
     const lang = await Language.load(baseWasm)
     return { Parser, Language, lang, isOverride: false }
 }
+
+// ---------------------------------------------------------------------------
+// nodeToConfig — NodeData → factory Config-shape conversion
+// ---------------------------------------------------------------------------
+//
+// Validators read tree-sitter output via `readNode` (snake_case $fields
+// keys, $-prefixed metadata). The factory signatures take `ConfigOf<T>`
+// which is:
+//   - top-level keys in camelCase (snake→camel on each $fields entry)
+//   - `children` in place of $children
+//   - nested values left as NodeData (the factory stores them verbatim
+//     on $fields so downstream render sees the original tree-sitter
+//     structure)
+//
+// This helper replaces the per-validator inline `Object.fromEntries`
+// camelCase dance so the shape rules live in one place.
+//
+// Why not recurse? Factory emission today is a bundler: it spreads
+// config onto $fields without invoking child factories. Passing
+// deeply-converted Config-shape (no $type / no $fields on nested
+// values) to a factory that spreads verbatim would replace NodeData
+// children with plain objects, crashing render. Real recursive
+// construction requires a coupled change to the factory emitter (see
+// `project_factory_validator_is_passthrough.md`); until that lands,
+// shallow conversion is what validators can safely feed in.
+export function nodeToConfig(data: {
+    readonly $fields?: Readonly<Record<string, unknown>>
+    readonly $children?: readonly unknown[]
+}): Record<string, unknown> {
+    const out: Record<string, unknown> = {}
+    if (data.$fields) {
+        for (const [k, v] of Object.entries(data.$fields)) {
+            if (v === undefined) continue
+            // Promoted anonymous keyword / punctuation tokens use the
+            // token's raw text as the $fields key (`,`, `:`, `(`). Skip
+            // non-identifier-shaped keys — factory Config types only
+            // declare identifier-shaped slots; spreading punctuation keys
+            // pollutes the config without ever being read by the factory.
+            if (!/^[a-zA-Z_][\w]*$/.test(k)) continue
+            const camelKey = k.replace(/_([a-z])/g, (_m, c: string) => c.toUpperCase())
+            out[camelKey] = v
+        }
+    }
+    if (data.$children) {
+        out.children = data.$children
+    }
+    return out
+}

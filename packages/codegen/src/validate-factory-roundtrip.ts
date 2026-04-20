@@ -25,6 +25,7 @@ import {
 	wrapForReparse,
 	loadReadTreeNode,
 	walkWrappedTree,
+	nodeToConfig,
 	type TSNode,
 	type TSTree,
 	type WrappedNodeData,
@@ -278,18 +279,6 @@ export async function validateFactoryRoundTrip(
 			const renderedKind = readData.$type;
 			const targetKind = rawReadData.$type;
 
-			// Translate raw (snake_case) field keys to camelCase so the
-			// factory's ConfigOf properties match. readNode emits raw
-			// names; factories take camelCase in their signature.
-			const camelFields = readData.$fields
-				? Object.fromEntries(
-					Object.entries(readData.$fields).map(([k, v]) => [
-						k.replace(/_([a-z])/g, (_, c) => c.toUpperCase()),
-						v,
-					]),
-				)
-				: undefined;
-
 			// Direct factory call with readNode fields — no from() resolver.
 			// If readData has neither $fields nor $children, the node is a
 			// pure text leaf at the tree-sitter level (e.g. identifier,
@@ -310,9 +299,12 @@ export async function validateFactoryRoundTrip(
 				try {
 					const shape = factoryShapes[renderedKind] ?? 'config';
 					if (shape === 'config') {
-						const config = readData.$children
-							? { ...camelFields, children: readData.$children }
-							: camelFields ?? {};
+						// `nodeToConfig` handles the $fields snake→camel
+						// rename and the $children → `children` slot
+						// convention. Shared with future validator passes
+						// so ConfigOf's shape rules live in one helper
+						// rather than duplicated inline transforms.
+						const config = nodeToConfig(readData);
 						factoryData = factory(config) as AnyNodeData;
 					} else if (shape === 'text') {
 						// $TEXT-templated branch/container (e.g. rust
