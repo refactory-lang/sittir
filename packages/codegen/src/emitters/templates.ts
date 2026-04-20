@@ -147,6 +147,41 @@ export function emitTemplates(config: EmitTemplatesConfig): string {
                 }
             }
             if (Object.keys(byField).length > 0) e.joinByField = byField
+            // Spacing fix-up: a block-terminating placeholder followed
+            // by a space in the template produces `decorator\n class`
+            // output — the walker inserted ` ` between two `$X`
+            // placeholders without knowing the first resolves to a
+            // string ending in `\n`. Replace with literal `\n` so
+            // boundaries between block-level constructs round-trip
+            // correctly.
+            //
+            // Shallow render note: when readNode feeds render, child
+            // entries surface as leaves (their $text is the source span).
+            // So a decorator child renders as `@a.b` — not
+            // `@a.b\n`. The newline that separated decorator and class
+            // in the source lives in decorated_definition's span, and
+            // the template must put it back. Hence: insert `\n`
+            // (stronger than just stripping the space).
+            const replaceTrailingSpace = (tmpl: string): string => {
+                const isBlockTerminatingSlot = (name: string): boolean => {
+                    if (name === 'children') return childIsBlockTerminating(n)
+                    // `$X_CLAUSE` refers to a nested clause entry; skip
+                    // — clause bodies aren't block-level in practice.
+                    if (name.endsWith('_clause')) return false
+                    return fieldIsBlockTerminating(name, n)
+                }
+                return tmpl.replace(/(\$\$?\$?[A-Z_][A-Z0-9_]*) /g, (full, ph: string) => {
+                    const m2 = ph.match(/^\$\$?\$?([A-Z_][A-Z0-9_]*)$/)
+                    if (!m2) return full
+                    const name = m2[1]!.toLowerCase()
+                    return isBlockTerminatingSlot(name) ? `${ph}\n` : full
+                })
+            }
+            const replaced = replaceTrailingSpace(e.template)
+            if (replaced !== e.template) {
+                e.template = replaced
+                mutated = true
+            }
         }
         if (mutated) rules[kind] = e
     }

@@ -116,6 +116,16 @@ function render(node: AnyNodeData, ctx: InternalRenderContext): string {
 		// `_raw_string_literal_end` are scanner-generated and never
 		// appear as named children, so a field-by-field template
 		// can't reconstruct them).
+		// `$NEWLINE` / `$INDENT` / `$DEDENT` — structural-whitespace role
+		// placeholders emitted by the walker when a grammar uses external
+		// tokens (python / haskell-style indent-sensitive parsers) to
+		// delimit block structure. They always resolve to the literal
+		// character(s) because tree-sitter consumes the physical token
+		// as part of its layout engine without exposing it as a concrete
+		// child node — so a field/children lookup would never find it.
+		if (fieldKey === 'newline') return '\n';
+		if (fieldKey === 'indent') return '';  // render-time indent is handled by column tracking
+		if (fieldKey === 'dedent') return '';
 		if (fieldKey === 'text') {
 			// Parsed-tree path: readNode captured the full source span.
 			if (node.$text !== undefined && node.$text !== '') return node.$text;

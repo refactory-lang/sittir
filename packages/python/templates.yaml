@@ -106,7 +106,7 @@ rules:
     template: ($$$CHILDREN)
     joinBy: ","
   decorated_definition:
-    template: $$$CHILDREN $DEFINITION
+    template: "$$$CHILDREN\n$DEFINITION"
     joinBy: "\n"
   decorator: "@$EXPRESSION $NEWLINE"
   block:
