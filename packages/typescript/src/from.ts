@@ -440,9 +440,8 @@ const _K36: readonly string[] = ["_type_identifier","nested_type_identifier"];
 const _K37: readonly string[] = ["subscript_expression","member_expression","call_expression","instantiation_expression"];
 const _K38: readonly string[] = ["predefined_type","type_identifier","this_type"];
 const _K39: readonly string[] = ["parenthesized_type","nested_type_identifier","generic_type","object_type","array_type","tuple_type","flow_maybe_type","type_query","index_type_query","literal_type","lookup_type","conditional_type","template_literal_type","intersection_type","union_type"];
-const _K40: readonly string[] = ["export_statement","property_signature","call_signature","construct_signature","index_signature","method_signature"];
-const _K41: readonly string[] = ["type_annotation","omitting_type_annotation","adding_type_annotation","opting_type_annotation"];
-const _K42: readonly string[] = ["primary_type","function_type","readonly_type","constructor_type","infer_type","member_expression","call_expression","asserts","type_predicate"];
+const _K40: readonly string[] = ["type_annotation","omitting_type_annotation","adding_type_annotation","opting_type_annotation"];
+const _K41: readonly string[] = ["primary_type","function_type","readonly_type","constructor_type","infer_type","member_expression","call_expression","asserts","type_predicate"];
 
 export function programFrom(input: T.Program | T.Program.Loose): ReturnType<typeof F.program> {
   if (isNodeData(input)) return input as ReturnType<typeof F.program>;
@@ -1956,7 +1955,7 @@ export function objectTypeFrom(input: T.ObjectType | T.ObjectType.Loose): Return
   if (isNodeData(input)) return input as ReturnType<typeof F.objectType>;
   return F.objectType({
     opening: _resolveOne<NonNullable<T.ObjectType.Config['opening']>>((input as T.ObjectType.Loose).opening, _K1, _K1),
-    members: _resolveOne<NonNullable<T.ObjectType.Config['members']>>((input as T.ObjectType.Loose).members, _super_semicolon, _K40),
+    members: _resolveOneLeaf<NonNullable<T.ObjectType.Config['members']>>((input as T.ObjectType.Loose).members, "_automatic_semicolon"),
     closing: _resolveOne<NonNullable<T.ObjectType.Config['closing']>>((input as T.ObjectType.Loose).closing, _K1, _K1),
   });
 }
@@ -2031,14 +2030,14 @@ export function indexSignatureFrom(input?: T.IndexSignature | T.IndexSignature.L
 export function indexSignatureUFormColonFrom(input: T.IndexSignatureUFormColonConfig) {
   return F.indexSignatureUFormColon({
     sign: _resolveOne<NonNullable<T.IndexSignatureUFormColonConfig['sign']>>(input.sign, _K1, _K1),
-    type: _resolveOne<NonNullable<T.IndexSignatureUFormColonConfig['type']>>(input.type, _K1, _K41),
+    type: _resolveOne<NonNullable<T.IndexSignatureUFormColonConfig['type']>>(input.type, _K1, _K40),
   });
 }
 
 export function indexSignatureUFormMappedTypeClauseFrom(input: T.IndexSignatureUFormMappedTypeClauseConfig) {
   return F.indexSignatureUFormMappedTypeClause({
     sign: _resolveOne<NonNullable<T.IndexSignatureUFormMappedTypeClauseConfig['sign']>>(input.sign, _K1, _K1),
-    type: _resolveOne<NonNullable<T.IndexSignatureUFormMappedTypeClauseConfig['type']>>(input.type, _K1, _K41),
+    type: _resolveOne<NonNullable<T.IndexSignatureUFormMappedTypeClauseConfig['type']>>(input.type, _K1, _K40),
   });
 }
 
@@ -2086,7 +2085,7 @@ export function functionTypeFrom(input: T.FunctionType | T.FunctionType.Loose): 
   return F.functionType({
     typeParameters: _resolveOneBranch<NonNullable<T.FunctionType.Config['typeParameters']>>((input as T.FunctionType.Loose).typeParameters, "type_parameters"),
     parameters: _resolveOneBranch<NonNullable<T.FunctionType.Config['parameters']>>((input as T.FunctionType.Loose).parameters, "formal_parameters"),
-    returnType: _resolveOne<NonNullable<T.FunctionType.Config['returnType']>>((input as T.FunctionType.Loose).returnType, _K1, _K42),
+    returnType: _resolveOne<NonNullable<T.FunctionType.Config['returnType']>>((input as T.FunctionType.Loose).returnType, _K1, _K41),
   });
 }
 
@@ -2218,7 +2217,7 @@ export function interfaceBodyFrom(input: T.InterfaceBody | T.InterfaceBody.Loose
   if (isNodeData(input)) return input as ReturnType<typeof F.interfaceBody>;
   return F.interfaceBody({
     opening: _resolveOne<NonNullable<T.InterfaceBody.Config['opening']>>((input as T.InterfaceBody.Loose).opening, _K1, _K1),
-    members: _resolveOne<NonNullable<T.InterfaceBody.Config['members']>>((input as T.InterfaceBody.Loose).members, _super_semicolon, _K40),
+    members: _resolveOneLeaf<NonNullable<T.InterfaceBody.Config['members']>>((input as T.InterfaceBody.Loose).members, "_automatic_semicolon"),
     closing: _resolveOne<NonNullable<T.InterfaceBody.Config['closing']>>((input as T.InterfaceBody.Loose).closing, _K1, _K1),
   });
 }

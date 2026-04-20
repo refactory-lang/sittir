@@ -3850,7 +3850,7 @@ export function objectType(config: T.ObjectType.Config) {
     $named: true as const,
     $fields: fields,
     opening(value?: "{" | "{|") { return _fs(config, objectType, 'opening', value, fields.opening); },
-    members(value?: T.ExportStatement | T.Semicolon | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature | undefined) { return _fs(config, objectType, 'members', value, fields.members); },
+    members(value?: T.Semicolon | undefined) { return _fs(config, objectType, 'members', value, fields.members); },
     closing(value?: "}" | "|}") { return _fs(config, objectType, 'closing', value, fields.closing); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -4479,7 +4479,7 @@ export function interfaceBody(config: T.InterfaceBody.Config) {
     $named: true as const,
     $fields: fields,
     opening(value?: "{" | "{|") { return _fs(config, interfaceBody, 'opening', value, fields.opening); },
-    members(value?: T.ExportStatement | T.Semicolon | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature | undefined) { return _fs(config, interfaceBody, 'members', value, fields.members); },
+    members(value?: T.Semicolon | undefined) { return _fs(config, interfaceBody, 'members', value, fields.members); },
     closing(value?: "}" | "|}") { return _fs(config, interfaceBody, 'closing', value, fields.closing); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {

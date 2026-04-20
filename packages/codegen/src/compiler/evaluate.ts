@@ -368,11 +368,38 @@ function extractRepeatSeparator(
 ): { content: Rule; separator: string; trailing?: boolean } | null {
     if (resolved.type !== 'seq' || resolved.members.length !== 2) return null
     const [first, second] = resolved.members as [Rule, Rule]
+    // Canonical case: `repeat(seq(SEP, X))` or `repeat(seq(X, SEP))` with
+    // SEP a string literal.
     if (first.type === 'string' && second.type !== 'string') {
         return { content: second, separator: first.value }
     }
     if (second.type === 'string' && first.type !== 'string') {
         return { content: first, separator: second.value, trailing: true }
+    }
+    // Choice-of-separators case: tree-sitter-typescript's `sepBy1(
+    // choice(',', $._semicolon), X)` expands to `seq(X,
+    // repeat(seq(choice(',', $._semicolon), X)))` — a `repeat` whose
+    // separator position is a `choice` of literals and an external
+    // symbol (`_semicolon` = automatic semicolon insertion). Pick the
+    // first string member as the canonical render-side separator. Parse
+    // still accepts either form; render emits one consistent choice.
+    const asSepChoice = (r: Rule): string | null => {
+        if (r.type !== 'choice') return null
+        const lit = r.members.find((m): m is import('./rule.ts').StringRule => m.type === 'string')
+        return lit ? lit.value : null
+    }
+    // The separator-choice check mirrors the single-literal branches
+    // above: a choice acts as the separator position when its sibling
+    // is non-string (could be a symbol or a choice of content symbols,
+    // as in typescript's object_type `sepBy1(choice(',', _semicolon),
+    // choice(property_signature, call_signature, …))`).
+    const firstSepChoice = first.type === 'choice' ? asSepChoice(first) : null
+    const secondSepChoice = second.type === 'choice' ? asSepChoice(second) : null
+    if (firstSepChoice !== null && second.type !== 'string') {
+        return { content: second, separator: firstSepChoice }
+    }
+    if (secondSepChoice !== null && first.type !== 'string') {
+        return { content: first, separator: secondSepChoice, trailing: true }
     }
     return null
 }

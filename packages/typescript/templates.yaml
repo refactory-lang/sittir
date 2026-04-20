@@ -303,7 +303,9 @@ rules:
     template: <$$$CHILDREN>
     joinBy: ","
     joinByTrailing: true
-  object_type: $OPENING $$$MEMBERS $CLOSING
+  object_type:
+    template: $OPENING $$$MEMBERS $CLOSING
+    joinBy: ","
   call_signature: $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE
   property_signature:
     template: $ACCESSIBILITY_MODIFIER $OVERRIDE_MODIFIER $$$CHILDREN $READONLY_CLAUSE $NAME$QUESTION_CLAUSE$TYPE
@@ -346,6 +348,8 @@ rules:
   class_heritage_implements_clause: $$$CHILDREN
   arrow_function_parameter: $PARAMETER
   arrow_function__call_signature: $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE
-  interface_body: $OPENING $$$MEMBERS $CLOSING
+  interface_body:
+    template: $OPENING $$$MEMBERS $CLOSING
+    joinBy: ","
   index_signature_colon: "$NAME:$INDEX_TYPE"
   index_signature_mapped_type_clause: $$$CHILDREN

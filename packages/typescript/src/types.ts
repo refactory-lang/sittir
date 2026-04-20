@@ -1845,7 +1845,7 @@ export interface ObjectType {
   readonly $type: 'object_type';
   readonly $fields: {
     readonly opening: "{" | "{|";
-    readonly members?: ExportStatement | Semicolon | PropertySignature | CallSignature | ConstructSignature | IndexSignature | MethodSignature;
+    readonly members?: Semicolon;
     readonly closing: "}" | "|}";
   };
 }
@@ -2109,7 +2109,7 @@ export interface InterfaceBody {
   readonly $type: 'interface_body';
   readonly $fields: {
     readonly opening: "{" | "{|";
-    readonly members?: ExportStatement | Semicolon | PropertySignature | CallSignature | ConstructSignature | IndexSignature | MethodSignature;
+    readonly members?: Semicolon;
     readonly closing: "}" | "|}";
   };
 }
