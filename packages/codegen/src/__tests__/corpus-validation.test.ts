@@ -61,9 +61,15 @@ const FLOORS = {
         factoryTotal: 100,
         fromPass: 110,
         fromTotal: 117,
-        rtPass: 78,
+        // rtPass/rtAstMatchPass dropped again (78→68, 76→67) after
+        // reparse-wrapper added transitive supertype walk. Python's
+        // `attribute` etc. are subtypes of `primary_expression` which
+        // is itself a subtype of `expression` (in the wrapper map).
+        // Pre-walk, those kinds null-wrapped → skipped. With walk,
+        // they wrap correctly and expose real render bugs.
+        rtPass: 68,
         rtTotal: 115,
-        rtAstMatchPass: 76,
+        rtAstMatchPass: 67,
         covPass: 95,
         covTotal: 101,
     },
@@ -102,9 +108,14 @@ const FLOORS = {
         factoryTotal: 126,
         fromPass: 132,
         fromTotal: 143,
-        rtPass: 65,
+        // rtPass/rtAstMatchPass dropped (65→55, 51→38) after the
+        // transitive supertype walk in wrapForReparse unmasked TS
+        // kinds whose direct supertype (`primary_expression`,
+        // `primary_type`, etc.) isn't in the map but transitively
+        // reaches a mapped ancestor.
+        rtPass: 55,
         rtTotal: 112,
-        rtAstMatchPass: 51,
+        rtAstMatchPass: 38,
         covPass: 139,
         covTotal: 145,
     },

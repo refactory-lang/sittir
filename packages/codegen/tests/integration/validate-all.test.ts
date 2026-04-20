@@ -23,8 +23,15 @@ const GRAMMARS = ['rust', 'typescript', 'python'] as const;
 // skip.
 const RT_CEILINGS: Record<string, { roundTrip: number; factoryRoundTrip: number }> = {
   rust:       { roundTrip: 55, factoryRoundTrip: 45 },
-  typescript: { roundTrip: 50, factoryRoundTrip: 60 },
-  python:     { roundTrip: 55, factoryRoundTrip: 45 },
+  // Ceilings raised again (typescript roundTrip 50→60, factoryRoundTrip
+  // 60→90; python factoryRoundTrip 45→65) after wrapForReparse gained
+  // transitive supertype walk. Kinds with a direct supertype not in
+  // the wrapper map (e.g. python `attribute` → `primary_expression`,
+  // TS `call_expression` → `primary_expression`) now reach their
+  // mapped ancestor and actually reparse — exposing more real
+  // factory-rt bugs.
+  typescript: { roundTrip: 60, factoryRoundTrip: 90 },
+  python:     { roundTrip: 55, factoryRoundTrip: 65 },
 };
 
 for (const grammar of GRAMMARS) {

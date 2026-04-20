@@ -273,12 +273,22 @@ export function wrapForReparse(
     // NOT in plain `let` statements, which flatten it away).
     const direct = wrappers[kind]
     if (direct) return applyWrapper(direct)
-    const supertypes = kindToSupertypes.get(kind)
-    if (!supertypes || supertypes.length === 0) return null
-    for (const st of supertypes) {
+    // Transitive supertype walk. Python's `attribute` has supertype
+    // `primary_expression` which isn't in the wrapper map, but
+    // `primary_expression` itself is a subtype of `expression` which
+    // IS mapped. BFS up through supertype chains so any mapped ancestor
+    // produces a valid wrapping context.
+    const visited = new Set<string>([kind])
+    const queue = [...(kindToSupertypes.get(kind) ?? [])]
+    while (queue.length > 0) {
+        const st = queue.shift()!
+        if (visited.has(st)) continue
+        visited.add(st)
         const wrapper = wrappers[st]
-        if (!wrapper) continue
-        return applyWrapper(wrapper)
+        if (wrapper) return applyWrapper(wrapper)
+        for (const parent of kindToSupertypes.get(st) ?? []) {
+            if (!visited.has(parent)) queue.push(parent)
+        }
     }
     return null
 }
