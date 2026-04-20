@@ -223,18 +223,25 @@ const REPARSE_WRAPPERS: Record<string, Record<string, (r: string) => string>> = 
         'delim_token_tree': r => `fn _f() { mac! ${r} }`,
     },
     typescript: {
-        '_expression': r => `let _ = ${r};`,
-        '_type': r => `type _X = ${r};`,
-        '_pattern': r => `let ${r} = null;`,
-        '_declaration': r => r,
-        '_statement': r => r,
+        // Tree-sitter-typescript exposes supertypes unprefixed (no leading
+        // `_`): `declaration`, `expression`, `statement`, `type`, `pattern`.
+        // The hidden-prefix form ('_expression' etc.) existed pre-regen
+        // due to an older convention and silently null-wrapped every
+        // TS kind — counted as auto-pass without reparse, masking real
+        // factory-rt failures.
+        'expression': r => `let _ = ${r};`,
+        'type': r => `type _X = ${r};`,
+        'pattern': r => `let ${r} = null;`,
+        'declaration': r => r,
+        'statement': r => r,
     },
     python: {
-        '_expression': r => `_ = ${r}`,
-        '_type': r => `_: ${r} = None`,
-        '_pattern': r => `match _:\n  case ${r}: pass`,
-        '_simple_statement': r => r,
-        '_compound_statement': r => r,
+        // tree-sitter-python supertypes are also unprefixed.
+        'expression': r => `_ = ${r}`,
+        'type': r => `_: ${r} = None`,
+        'pattern': r => `match _:\n  case ${r}: pass`,
+        'simple_statement': r => r,
+        'compound_statement': r => r,
     },
 }
 

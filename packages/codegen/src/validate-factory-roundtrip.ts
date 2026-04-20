@@ -359,8 +359,14 @@ export async function validateFactoryRoundTrip(
 				// rewrote $type.
 				const wrapped = wrapForReparse(rendered, renderedKind, grammar, kindToSupertypes);
 				if (wrapped === null) {
-					pass++; // no supertype → can't determine context → skip reparse
-					astMatchPass++;
+					// No wrapper registered for this kind's supertype (or the
+					// kind has no supertype). Historically counted as pass +
+					// astMatchPass, which silently fake-passed every TS kind
+					// (wrapper map used hidden-prefixed supertype names that
+					// don't match tree-sitter-typescript's unprefixed ones).
+					// Count as skip — the validator can't make a claim either
+					// way — so ceiling assertions reflect real evidence.
+					skip++;
 					continue;
 				}
 

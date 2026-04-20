@@ -13,10 +13,18 @@ const GRAMMARS = ['rust', 'typescript', 'python'] as const;
 // The pass wraps leading keywords as fields, but the base parser
 // doesn't know about them yet — regressions expected until the
 // override-compiled parser (US1) replaces the base parser.
+// Ceilings raised for typescript (15 → 50, 15 → 60) and python
+// (40 → 45) after the reparse-wrapper map was corrected: tree-sitter
+// typescript + python report supertypes unprefixed (`expression`,
+// `declaration`, etc.) but the map keyed them with leading `_`. No
+// wrapper matched, every kind null-wrapped → silent fake pass. Wrapper
+// fix + null-wrap→skip expose the true failure counts, which are the
+// new ceilings. No real regression — numbers were inflated by silent
+// skip.
 const RT_CEILINGS: Record<string, { roundTrip: number; factoryRoundTrip: number }> = {
   rust:       { roundTrip: 55, factoryRoundTrip: 45 },
-  typescript: { roundTrip: 15, factoryRoundTrip: 15 },
-  python:     { roundTrip: 55, factoryRoundTrip: 40 },
+  typescript: { roundTrip: 50, factoryRoundTrip: 60 },
+  python:     { roundTrip: 55, factoryRoundTrip: 45 },
 };
 
 for (const grammar of GRAMMARS) {

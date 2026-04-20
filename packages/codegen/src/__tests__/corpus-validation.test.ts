@@ -45,24 +45,25 @@ const FLOORS = {
     // against the base parser — mismatches expected until T023 switches
     // node-types.json source to the override version.
     python: {
-        // Floors lowered by 2 (94→92, 89→87) after enabling enrich's
-        // tree-sitter CLI path (kindToName only). A small number of
-        // fidelity regressions around factory-built AST matching for
-        // print/return/raise statements — pipeline reconciliation needed.
-        factoryPass: 92,
-        factoryAstMatchPass: 87,
+        // Floors dropped (factoryPass 92→39, factoryAstMatchPass 87→28,
+        // rtPass 109→78, rtAstMatchPass 102→76) after two paired
+        // corrections: (1) reparse-wrapper map supertype names are
+        // unprefixed for python (`expression`, not `_expression`) — so
+        // `wrapForReparse` actually wraps kinds that previously
+        // returned null; (2) null-wrap now counts as skip, not fake
+        // pass. Previous numbers were inflated by kinds that silently
+        // skipped reparse. New numbers measure actual round-trip
+        // success. Gap vs LEGACY_BASELINE is the real outstanding
+        // debt — nothing in the pipeline regressed, we just stopped
+        // hiding the failures.
+        factoryPass: 39,
+        factoryAstMatchPass: 28,
         factoryTotal: 100,
         fromPass: 110,
         fromTotal: 117,
-        // rtAstMatchPass lowered 104→102 after enrich's symbol-alias
-        // trick: synthesized `_kw_<name>` hidden rules change AST
-        // shape in a handful of corpus cases. Parser now carries the
-        // keyword fields natively, which is the architectural win.
-        rtPass: 109,
+        rtPass: 78,
         rtTotal: 115,
-        rtAstMatchPass: 102,
-        // Template coverage: every declared field reachable in template.
-        // Structural check, independent of corpus contents.
+        rtAstMatchPass: 76,
         covPass: 95,
         covTotal: 101,
     },
@@ -85,14 +86,25 @@ const FLOORS = {
         covTotal: 137,
     },
     typescript: {
+        // Floors dropped (rtPass 110→65, rtAstMatchPass 110→51) after
+        // the reparse-wrapper map was corrected: tree-sitter-typescript
+        // reports supertypes unprefixed (`expression`, `declaration`,
+        // `statement`, `type`, `pattern`) but the map keyed them as
+        // `_expression` etc. NOTHING matched, every TS kind null-wrapped
+        // (counted as fake pass). Wrapper map fix + null-wrap→skip
+        // together expose the real numbers: about half of TS
+        // round-trips actually work. factoryPass/factoryAstMatchPass
+        // stayed high because those use a different path (structural
+        // diff, not reparse dependency). See commit message for
+        // details.
         factoryPass: 121,
         factoryAstMatchPass: 121,
         factoryTotal: 126,
         fromPass: 132,
         fromTotal: 143,
-        rtPass: 110,
+        rtPass: 65,
         rtTotal: 112,
-        rtAstMatchPass: 110,
+        rtAstMatchPass: 51,
         covPass: 139,
         covTotal: 145,
     },
