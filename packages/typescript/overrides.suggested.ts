@@ -15,7 +15,7 @@
 // Summary
 // ---------------------------------------------------------------
 // Field inferences:  1  (0 applied, 1 held)
-// Rule promotions:   66  (47 applied, 19 held)
+// Rule promotions:   57  (47 applied, 10 held)
 // Repeated shapes:   7  (advisory — suggested supertypes/groups)
 
 // ---------------------------------------------------------------
@@ -28,31 +28,7 @@ export const suggestedRules = {
   // [held] "statement" field 'body' on $.statement_block — 93% agreement, 14 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
 
   // --- Polymorph candidates (wrap each choice arm in variant()) ---
-  // [held] polymorph — 1 choice position(s), 4 arm(s) total
-  "export_statement": ($, original) => transform(original,
-    {
-      "0": variant("form_0"),
-      "1": variant("export"),
-      "2": variant("export2"),
-      "3": variant("export3"),
-    }
-  ),
-
-  // [held] polymorph — 1 choice position(s), 10 arm(s) total
-  "declaration": ($, original) => transform(original,
-    {
-      "0": variant("form_0"),
-      "1": variant("function_signature"),
-      "2": variant("abstract_class_declaration"),
-      "3": variant("module"),
-      "4": variant("internal_module"),
-      "5": variant("type_alias_declaration"),
-      "6": variant("enum_declaration"),
-      "7": variant("interface_declaration"),
-      "8": variant("import_alias"),
-      "9": variant("ambient_declaration"),
-    }
-  ),
+  // [held] polymorph — no candidates captured at Link time for 'export_statement'
 
   // [held] polymorph — 1 choice position(s), 3 arm(s) total
   // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: from_clause
@@ -73,42 +49,7 @@ export const suggestedRules = {
     }
   ),
 
-  // [held] polymorph — 1 choice position(s), 2 arm(s) total
-  "parenthesized_expression": ($, original) => transform(original,
-    {
-      "1/0": variant("expression"),
-      "1/1": variant("sequence_expression"),
-    }
-  ),
-
-  // [held] polymorph — 1 choice position(s), 15 arm(s) total
-  "expression": ($, original) => transform(original,
-    {
-      "0": variant("as_expression"),
-      "1": variant("satisfies_expression"),
-      "2": variant("instantiation_expression"),
-      "3": variant("internal_module"),
-      "4": variant("primary_expression"),
-      "5": variant("_jsx_element"),
-      "6": variant("assignment_expression"),
-      "7": variant("augmented_assignment_expression"),
-      "8": variant("await_expression"),
-      "9": variant("unary_expression"),
-      "10": variant("binary_expression"),
-      "11": variant("ternary_expression"),
-      "12": variant("update_expression"),
-      "13": variant("new_expression"),
-      "14": variant("yield_expression"),
-    }
-  ),
-
-  // [held] polymorph — 1 choice position(s), 2 arm(s) total
-  "primary_expression": ($, original) => transform(original,
-    {
-      "0": variant("form_0"),
-      "1": variant("non_null_expression"),
-    }
-  ),
+  // [held] polymorph — no candidates captured at Link time for 'parenthesized_expression'
 
   // [held] polymorph — 1 choice position(s), 2 arm(s) total
   // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: expression
@@ -119,56 +60,32 @@ export const suggestedRules = {
     }
   ),
 
+  // [held] polymorph — no candidates captured at Link time for 'call_expression'
+
   // [held] polymorph — 1 choice position(s), 2 arm(s) total
-  // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: left
-  "object_assignment_pattern": ($, original) => transform(original,
+  "member_expression": ($, original) => transform(original,
     {
-      "0/0": variant("shorthand_property_identifier_pattern"),
-      "0/1": variant("_destructuring_pattern"),
+      "1/0": variant("dot"),
+      "1/1": variant("optional_chain"),
     }
   ),
 
-  // [held] polymorph — 1 choice position(s), 3 arm(s) total
-  "call_expression": ($, original) => transform(original,
+  // [held] polymorph — 1 choice position(s), 4 arm(s) total
+  "public_field_definition": ($, original) => transform(original,
     {
-      "0": variant("function"),
-      "1": variant("function2"),
-      "2": variant("tok_q_dot"),
-    }
-  ),
-
-  // [held] polymorph — 1 choice position(s), 2 arm(s) total
-  "_lhs_expression": ($, original) => transform(original,
-    {
-      "0": variant("form0"),
-      "1": variant("non_null_expression"),
+      "2/0": variant("form_0"),
+      "2/1": variant("form_1"),
+      "2/2": variant("form_2"),
+      "2/3": variant("form_3"),
     }
   ),
 
   // [held] polymorph — 1 choice position(s), 2 arm(s) total
-  // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: left
-  "assignment_expression": ($, original) => transform(original,
+  // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: type_annotation
+  "as_expression": ($, original) => transform(original,
     {
-      "1/0": variant("parenthesized_expression"),
-      "1/1": variant("_lhs_expression"),
-    }
-  ),
-
-  // [held] polymorph — rule '_augmented_assignment_lhs' not found in NodeMap.rules
-
-  // [held] polymorph — 1 choice position(s), 2 arm(s) total
-  "pattern": ($, original) => transform(original,
-    {
-      "0": variant("_lhs_expression"),
-      "1": variant("rest_pattern"),
-    }
-  ),
-
-  // [held] polymorph — 1 choice position(s), 2 arm(s) total
-  "function_signature": ($, original) => transform(original,
-    {
-      "4/0": variant("_semicolon"),
-      "4/1": variant("_function_signature_automatic_semicolon"),
+      "2/0": variant("const"),
+      "2/1": variant("type"),
     }
   ),
 
@@ -179,31 +96,6 @@ export const suggestedRules = {
       "1/0": variant("declaration"),
       "1/1": variant("global"),
       "1/2": variant("module"),
-    }
-  ),
-
-  // [held] polymorph — 1 choice position(s), 2 arm(s) total
-  // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: name
-  "generic_type": ($, original) => transform(original,
-    {
-      "0/0": variant("_type_identifier"),
-      "0/1": variant("nested_type_identifier"),
-    }
-  ),
-
-  // [held] polymorph — 1 choice position(s), 2 arm(s) total
-  "shorthand_property_identifier": ($, original) => transform(original,
-    {
-      "0": variant("identifier"),
-      "1": variant("_reserved_identifier"),
-    }
-  ),
-
-  // [held] polymorph — 1 choice position(s), 2 arm(s) total
-  "shorthand_property_identifier_pattern": ($, original) => transform(original,
-    {
-      "0": variant("identifier"),
-      "1": variant("_reserved_identifier"),
     }
   ),
 
@@ -320,23 +212,17 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "statement_identifier", classification: "terminal", applied: true },
   { kind: "string_fragment", classification: "terminal", applied: true },
   { kind: "type_identifier", classification: "terminal", applied: true },
-  { kind: "_augmented_assignment_lhs", classification: "polymorph", applied: false },
-  { kind: "_lhs_expression", classification: "polymorph", applied: false },
   { kind: "ambient_declaration", classification: "polymorph", applied: false },
   { kind: "arrow_function", classification: "polymorph", applied: true },
   { kind: "arrow_function__call_signature", classification: "polymorph", applied: true },
   { kind: "arrow_function_parameter", classification: "polymorph", applied: true },
-  { kind: "assignment_expression", classification: "polymorph", applied: false },
+  { kind: "as_expression", classification: "polymorph", applied: false },
   { kind: "call_expression", classification: "polymorph", applied: false },
   { kind: "class_heritage", classification: "polymorph", applied: true },
   { kind: "class_heritage_extends_clause", classification: "polymorph", applied: true },
   { kind: "class_heritage_implements_clause", classification: "polymorph", applied: true },
-  { kind: "declaration", classification: "polymorph", applied: false },
   { kind: "export_statement", classification: "polymorph", applied: false },
-  { kind: "expression", classification: "polymorph", applied: false },
   { kind: "for_statement", classification: "polymorph", applied: false },
-  { kind: "function_signature", classification: "polymorph", applied: false },
-  { kind: "generic_type", classification: "polymorph", applied: false },
   { kind: "import_clause", classification: "polymorph", applied: true },
   { kind: "import_clause_default_import", classification: "polymorph", applied: true },
   { kind: "import_clause_named_imports", classification: "polymorph", applied: true },
@@ -348,12 +234,9 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "index_signature", classification: "polymorph", applied: true },
   { kind: "index_signature_colon", classification: "polymorph", applied: true },
   { kind: "index_signature_mapped_type_clause", classification: "polymorph", applied: true },
-  { kind: "object_assignment_pattern", classification: "polymorph", applied: false },
+  { kind: "member_expression", classification: "polymorph", applied: false },
   { kind: "parenthesized_expression", classification: "polymorph", applied: false },
-  { kind: "pattern", classification: "polymorph", applied: false },
-  { kind: "primary_expression", classification: "polymorph", applied: false },
-  { kind: "shorthand_property_identifier", classification: "polymorph", applied: false },
-  { kind: "shorthand_property_identifier_pattern", classification: "polymorph", applied: false },
+  { kind: "public_field_definition", classification: "polymorph", applied: false },
   { kind: "yield_expression", classification: "polymorph", applied: false },
 ];
 

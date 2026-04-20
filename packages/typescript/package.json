@@ -33,7 +33,7 @@
     "dist"
   ],
   "scripts": {
-    "generate": "rm -f src/factories.ts src/from.ts src/ir.ts src/utils.ts src/types.ts src/consts.ts src/index.ts templates.yaml tests/nodes.test.ts && node ../codegen/dist/cli.js --grammar typescript --all --output src/",
+    "generate": "rm -f src/factories.ts src/from.ts src/ir.ts src/utils.ts src/types.ts src/consts.ts src/index.ts templates.yaml tests/nodes.test.ts && node --experimental-strip-types ../codegen/src/cli.ts --grammar typescript --all --output src/",
     "generate:tsx": "node ../codegen/dist/cli.js --grammar tsx --all --output src/tsx/ --tests-dir tests/tsx --tests-import-path '../../src/tsx/builder.js'",
     "regenerate": "pnpm generate && pnpm build && pnpm test",
     "build": "tsgo -p tsconfig.build.json",

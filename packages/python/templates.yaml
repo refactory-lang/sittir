@@ -55,6 +55,12 @@ rules:
     joinByTrailing: true
     joinByField:
       subject: ","
+  _match_block:
+    variants:
+      form0: "\n  $$$ALTERNATIVE\n"
+      form1: "\n"
+    joinByField:
+      alternative: "\n"
   case_clause:
     template: "$CASE $$$CHILDREN $GUARD:\n  $CONSEQUENCE\n"
     joinBy: ","

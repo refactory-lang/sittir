@@ -168,9 +168,10 @@ rules:
   pattern: $$$CHILDREN
   rest_pattern: ...$$$CHILDREN
   method_definition:
-    template: $ACCESSIBILITY_MODIFIER $OVERRIDE_MODIFIER $$$CHILDREN $READONLY_CLAUSE $ASYNC_CLAUSE get $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $BODY
+    template: $ACCESSIBILITY_MODIFIER $OVERRIDE_MODIFIER $$$CHILDREN $READONLY_CLAUSE $ASYNC_CLAUSE get $NAME$QUESTION_CLAUSE$TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $BODY
     readonly_clause: $READONLY
     async_clause: $ASYNC
+    question_clause: "?"
   pair: "$KEY:$VALUE"
   pair_pattern: "$KEY:$VALUE"
   computed_property_name: "[$EXPRESSION]"
@@ -183,10 +184,13 @@ rules:
     accessor_clause: $ACCESSOR
   non_null_expression: $EXPRESSION!
   method_signature:
-    template: $ACCESSIBILITY_MODIFIER $OVERRIDE_MODIFIER $$$CHILDREN $READONLY_CLAUSE $ASYNC_CLAUSE get $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE
+    template: $ACCESSIBILITY_MODIFIER $OVERRIDE_MODIFIER $$$CHILDREN $READONLY_CLAUSE $ASYNC_CLAUSE get $NAME$QUESTION_CLAUSE$TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE
     readonly_clause: $READONLY
     async_clause: $ASYNC
-  abstract_method_signature: $ACCESSIBILITY_MODIFIER abstract $OVERRIDE_MODIFIER get $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE
+    question_clause: "?"
+  abstract_method_signature:
+    template: $ACCESSIBILITY_MODIFIER abstract $OVERRIDE_MODIFIER get $NAME$QUESTION_CLAUSE$TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE
+    question_clause: "?"
   function_signature: $ASYNC function $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $$$CHILDREN
   decorator_parenthesized_expression: ($$$CHILDREN)
   type_assertion: $TYPE_ARGUMENTS $EXPRESSION
@@ -259,8 +263,9 @@ rules:
   object_type: $OPENING $$$MEMBERS $CLOSING
   call_signature: $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE
   property_signature:
-    template: $ACCESSIBILITY_MODIFIER $OVERRIDE_MODIFIER $$$CHILDREN $READONLY_CLAUSE $NAME $TYPE
+    template: $ACCESSIBILITY_MODIFIER $OVERRIDE_MODIFIER $$$CHILDREN $READONLY_CLAUSE $NAME$QUESTION_CLAUSE$TYPE
     readonly_clause: $READONLY
+    question_clause: "?"
   type_parameters:
     template: <$$$CHILDREN>
     joinBy: ","

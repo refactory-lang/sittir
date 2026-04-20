@@ -42,51 +42,6 @@ const _leafRe_metavariable = /^(?:\$[a-zA-Z_]\w*)/u;
 const _leafRe_typeIdentifier = /^(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*)/u;
 const _leafRe_fieldIdentifier = /^(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*)/u;
 const _leafRe_shorthandFieldIdentifier = /^(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*)/u;
-const RESERVED_KEYWORDS: ReadonlySet<string> = new Set([
-  '_',
-  'as',
-  'async',
-  'await',
-  'break',
-  'const',
-  'continue',
-  'crate',
-  'default',
-  'dyn',
-  'else',
-  'enum',
-  'extern',
-  'fn',
-  'for',
-  'gen',
-  'if',
-  'impl',
-  'in',
-  'let',
-  'loop',
-  'match',
-  'mod',
-  'move',
-  'mut',
-  'pub',
-  'raw',
-  'ref',
-  'return',
-  'self',
-  'static',
-  'struct',
-  'super',
-  'trait',
-  'try',
-  'type',
-  'union',
-  'unsafe',
-  'use',
-  'where',
-  'while',
-  'yield',
-]);
-const _wordRe = /^(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*)/u;
 
 export function sourceFile(config: T.SourceFile.Config) {
   const fields = {
@@ -1648,7 +1603,7 @@ export function tupleType(...children: T._Type[]) {
 }
 
 export function unitType(text: string) {
-  if (text.length === 0) throw new Error(`unit_type: text must be non-empty`); if (_wordRe.test(text) && RESERVED_KEYWORDS.has(text)) throw new Error(`unit_type: text '${text}' is a reserved keyword`);
+  if (text.length === 0) throw new Error(`unit_type: text must be non-empty`);
   return {
     $type: 'unit_type' as const,
     $source: 'factory' as const,
@@ -2384,7 +2339,7 @@ export function tupleExpression(config: T.TupleExpression.Config) {
 }
 
 export function unitExpression(text: string) {
-  if (text.length === 0) throw new Error(`unit_expression: text must be non-empty`); if (_wordRe.test(text) && RESERVED_KEYWORDS.has(text)) throw new Error(`unit_expression: text '${text}' is a reserved keyword`);
+  if (text.length === 0) throw new Error(`unit_expression: text must be non-empty`);
   return {
     $type: 'unit_expression' as const,
     $source: 'factory' as const,
@@ -3414,7 +3369,7 @@ export function negativeLiteral(config: T.NegativeLiteral.Config) {
 }
 
 export function integerLiteral(text: string) {
-  if (text.length === 0) throw new Error(`integer_literal: text must be non-empty`); if (_wordRe.test(text) && RESERVED_KEYWORDS.has(text)) throw new Error(`integer_literal: text '${text}' is a reserved keyword`);
+  if (text.length === 0) throw new Error(`integer_literal: text must be non-empty`);
   return {
     $type: 'integer_literal' as const,
     $source: 'factory' as const,
@@ -3454,7 +3409,7 @@ export function rawStringLiteral(text: string) {
 }
 
 export function charLiteral(text: string) {
-  if (text.length === 0) throw new Error(`char_literal: text must be non-empty`); if (_wordRe.test(text) && RESERVED_KEYWORDS.has(text)) throw new Error(`char_literal: text '${text}' is a reserved keyword`);
+  if (text.length === 0) throw new Error(`char_literal: text must be non-empty`);
   return {
     $type: 'char_literal' as const,
     $source: 'factory' as const,
@@ -3467,7 +3422,7 @@ export function charLiteral(text: string) {
 }
 
 export function escapeSequence(text: string) {
-  if (text.length === 0) throw new Error(`escape_sequence: text must be non-empty`); if (_wordRe.test(text) && RESERVED_KEYWORDS.has(text)) throw new Error(`escape_sequence: text '${text}' is a reserved keyword`);
+  if (text.length === 0) throw new Error(`escape_sequence: text must be non-empty`);
   return {
     $type: 'escape_sequence' as const,
     $source: 'factory' as const,
@@ -3554,7 +3509,7 @@ export function blockComment(config?: T.BlockComment.Config) {
 }
 
 export function identifier(text: string) {
-  if (text.length === 0) throw new Error(`identifier: text must be non-empty`); if (!_leafRe_identifier.test(text)) throw new Error(`identifier: text does not match pattern: ${text}`); if (_wordRe.test(text) && RESERVED_KEYWORDS.has(text)) throw new Error(`identifier: text '${text}' is a reserved keyword`);
+  if (text.length === 0) throw new Error(`identifier: text must be non-empty`); if (!_leafRe_identifier.test(text)) throw new Error(`identifier: text does not match pattern: ${text}`);
   return {
     $type: 'identifier' as const,
     $source: 'factory' as const,
@@ -3567,7 +3522,7 @@ export function identifier(text: string) {
 }
 
 export function shebang(text: string) {
-  if (text.length === 0) throw new Error(`shebang: text must be non-empty`); if (!_leafRe_shebang.test(text)) throw new Error(`shebang: text does not match pattern: ${text}`); if (_wordRe.test(text) && RESERVED_KEYWORDS.has(text)) throw new Error(`shebang: text '${text}' is a reserved keyword`);
+  if (text.length === 0) throw new Error(`shebang: text must be non-empty`); if (!_leafRe_shebang.test(text)) throw new Error(`shebang: text does not match pattern: ${text}`);
   return {
     $type: 'shebang' as const,
     $source: 'factory' as const,
@@ -3616,7 +3571,7 @@ export function crate() {
 }
 
 export function metavariable(text: string) {
-  if (text.length === 0) throw new Error(`metavariable: text must be non-empty`); if (!_leafRe_metavariable.test(text)) throw new Error(`metavariable: text does not match pattern: ${text}`); if (_wordRe.test(text) && RESERVED_KEYWORDS.has(text)) throw new Error(`metavariable: text '${text}' is a reserved keyword`);
+  if (text.length === 0) throw new Error(`metavariable: text must be non-empty`); if (!_leafRe_metavariable.test(text)) throw new Error(`metavariable: text does not match pattern: ${text}`);
   return {
     $type: 'metavariable' as const,
     $source: 'factory' as const,
@@ -3677,7 +3632,7 @@ export function arrayExpressionList(config: T.ArrayExpressionList.Config) {
 }
 
 export function stringContent(text: string) {
-  if (text.length === 0) throw new Error(`string_content: text must be non-empty`); if (_wordRe.test(text) && RESERVED_KEYWORDS.has(text)) throw new Error(`string_content: text '${text}' is a reserved keyword`);
+  if (text.length === 0) throw new Error(`string_content: text must be non-empty`);
   return {
     $type: 'string_content' as const,
     $source: 'factory' as const,
@@ -3690,7 +3645,7 @@ export function stringContent(text: string) {
 }
 
 export function rawStringLiteralContent(text: string) {
-  if (text.length === 0) throw new Error(`raw_string_literal_content: text must be non-empty`); if (_wordRe.test(text) && RESERVED_KEYWORDS.has(text)) throw new Error(`raw_string_literal_content: text '${text}' is a reserved keyword`);
+  if (text.length === 0) throw new Error(`raw_string_literal_content: text must be non-empty`);
   return {
     $type: 'raw_string_literal_content' as const,
     $source: 'factory' as const,
@@ -3703,7 +3658,7 @@ export function rawStringLiteralContent(text: string) {
 }
 
 export function floatLiteral(text: string) {
-  if (text.length === 0) throw new Error(`float_literal: text must be non-empty`); if (_wordRe.test(text) && RESERVED_KEYWORDS.has(text)) throw new Error(`float_literal: text '${text}' is a reserved keyword`);
+  if (text.length === 0) throw new Error(`float_literal: text must be non-empty`);
   return {
     $type: 'float_literal' as const,
     $source: 'factory' as const,
@@ -3716,7 +3671,7 @@ export function floatLiteral(text: string) {
 }
 
 export function outerBlockDocCommentMarker(text: string) {
-  if (text.length === 0) throw new Error(`_outer_block_doc_comment_marker: text must be non-empty`); if (_wordRe.test(text) && RESERVED_KEYWORDS.has(text)) throw new Error(`_outer_block_doc_comment_marker: text '${text}' is a reserved keyword`);
+  if (text.length === 0) throw new Error(`_outer_block_doc_comment_marker: text must be non-empty`);
   return {
     $type: '_outer_block_doc_comment_marker' as const,
     $source: 'factory' as const,
@@ -3729,7 +3684,7 @@ export function outerBlockDocCommentMarker(text: string) {
 }
 
 export function innerBlockDocCommentMarker(text: string) {
-  if (text.length === 0) throw new Error(`_inner_block_doc_comment_marker: text must be non-empty`); if (_wordRe.test(text) && RESERVED_KEYWORDS.has(text)) throw new Error(`_inner_block_doc_comment_marker: text '${text}' is a reserved keyword`);
+  if (text.length === 0) throw new Error(`_inner_block_doc_comment_marker: text must be non-empty`);
   return {
     $type: '_inner_block_doc_comment_marker' as const,
     $source: 'factory' as const,
@@ -3742,7 +3697,7 @@ export function innerBlockDocCommentMarker(text: string) {
 }
 
 export function lineDocContent(text: string) {
-  if (text.length === 0) throw new Error(`_line_doc_content: text must be non-empty`); if (_wordRe.test(text) && RESERVED_KEYWORDS.has(text)) throw new Error(`_line_doc_content: text '${text}' is a reserved keyword`);
+  if (text.length === 0) throw new Error(`_line_doc_content: text must be non-empty`);
   return {
     $type: '_line_doc_content' as const,
     $source: 'factory' as const,
@@ -4203,7 +4158,7 @@ export function orPatternPrefix(config: T.OrPatternPrefix.Config) {
 }
 
 export function outerDocCommentMarker(text: string) {
-  if (text.length === 0) throw new Error(`outer_doc_comment_marker: text must be non-empty`); if (_wordRe.test(text) && RESERVED_KEYWORDS.has(text)) throw new Error(`outer_doc_comment_marker: text '${text}' is a reserved keyword`);
+  if (text.length === 0) throw new Error(`outer_doc_comment_marker: text must be non-empty`);
   return {
     $type: 'outer_doc_comment_marker' as const,
     $source: 'factory' as const,
@@ -4216,7 +4171,7 @@ export function outerDocCommentMarker(text: string) {
 }
 
 export function innerDocCommentMarker(text: string) {
-  if (text.length === 0) throw new Error(`inner_doc_comment_marker: text must be non-empty`); if (_wordRe.test(text) && RESERVED_KEYWORDS.has(text)) throw new Error(`inner_doc_comment_marker: text '${text}' is a reserved keyword`);
+  if (text.length === 0) throw new Error(`inner_doc_comment_marker: text must be non-empty`);
   return {
     $type: 'inner_doc_comment_marker' as const,
     $source: 'factory' as const,
@@ -4229,7 +4184,7 @@ export function innerDocCommentMarker(text: string) {
 }
 
 export function typeIdentifier(text: string) {
-  if (text.length === 0) throw new Error(`type_identifier: text must be non-empty`); if (!_leafRe_typeIdentifier.test(text)) throw new Error(`type_identifier: text does not match pattern: ${text}`); if (_wordRe.test(text) && RESERVED_KEYWORDS.has(text)) throw new Error(`type_identifier: text '${text}' is a reserved keyword`);
+  if (text.length === 0) throw new Error(`type_identifier: text must be non-empty`); if (!_leafRe_typeIdentifier.test(text)) throw new Error(`type_identifier: text does not match pattern: ${text}`);
   return {
     $type: 'type_identifier' as const,
     $source: 'factory' as const,
@@ -4242,7 +4197,7 @@ export function typeIdentifier(text: string) {
 }
 
 export function fieldIdentifier(text: string) {
-  if (text.length === 0) throw new Error(`field_identifier: text must be non-empty`); if (!_leafRe_fieldIdentifier.test(text)) throw new Error(`field_identifier: text does not match pattern: ${text}`); if (_wordRe.test(text) && RESERVED_KEYWORDS.has(text)) throw new Error(`field_identifier: text '${text}' is a reserved keyword`);
+  if (text.length === 0) throw new Error(`field_identifier: text must be non-empty`); if (!_leafRe_fieldIdentifier.test(text)) throw new Error(`field_identifier: text does not match pattern: ${text}`);
   return {
     $type: 'field_identifier' as const,
     $source: 'factory' as const,
@@ -4255,7 +4210,7 @@ export function fieldIdentifier(text: string) {
 }
 
 export function shorthandFieldIdentifier(text: string) {
-  if (text.length === 0) throw new Error(`shorthand_field_identifier: text must be non-empty`); if (!_leafRe_shorthandFieldIdentifier.test(text)) throw new Error(`shorthand_field_identifier: text does not match pattern: ${text}`); if (_wordRe.test(text) && RESERVED_KEYWORDS.has(text)) throw new Error(`shorthand_field_identifier: text '${text}' is a reserved keyword`);
+  if (text.length === 0) throw new Error(`shorthand_field_identifier: text must be non-empty`); if (!_leafRe_shorthandFieldIdentifier.test(text)) throw new Error(`shorthand_field_identifier: text does not match pattern: ${text}`);
   return {
     $type: 'shorthand_field_identifier' as const,
     $source: 'factory' as const,

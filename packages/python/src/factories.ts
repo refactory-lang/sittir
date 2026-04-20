@@ -38,47 +38,6 @@ function _assertNonEmpty<T>(
 
 const _leafRe_typeConversion = /^(?:![a-z])/u;
 const _leafRe_identifier = /^(?:[_\p{XID_Start}][_\p{XID_Continue}]*)/u;
-const RESERVED_KEYWORDS: ReadonlySet<string> = new Set([
-  'False',
-  'None',
-  'True',
-  '_',
-  '__future__',
-  'and',
-  'as',
-  'assert',
-  'async',
-  'break',
-  'case',
-  'class',
-  'continue',
-  'def',
-  'del',
-  'elif',
-  'else',
-  'exec',
-  'finally',
-  'for',
-  'from',
-  'global',
-  'if',
-  'import',
-  'in',
-  'is',
-  'lambda',
-  'match',
-  'nonlocal',
-  'not',
-  'or',
-  'pass',
-  'print',
-  'raise',
-  'return',
-  'try',
-  'while',
-  'with',
-]);
-const _wordRe = /^(?:[_\p{XID_Start}][_\p{XID_Continue}]*)/u;
 
 export function module(...children: T.Statement[]) {
   return {
@@ -117,7 +76,7 @@ export function importStatement(config: T.ImportStatement.Config) {
 }
 
 export function importPrefix(text: string) {
-  if (text.length === 0) throw new Error(`import_prefix: text must be non-empty`); if (_wordRe.test(text) && RESERVED_KEYWORDS.has(text)) throw new Error(`import_prefix: text '${text}' is a reserved keyword`);
+  if (text.length === 0) throw new Error(`import_prefix: text must be non-empty`);
   return {
     $type: 'import_prefix' as const,
     $source: 'factory' as const,
@@ -2322,7 +2281,7 @@ export function interpolation(config: T.Interpolation.Config) {
 }
 
 export function escapeSequence(text: string) {
-  if (text.length === 0) throw new Error(`escape_sequence: text must be non-empty`); if (_wordRe.test(text) && RESERVED_KEYWORDS.has(text)) throw new Error(`escape_sequence: text '${text}' is a reserved keyword`);
+  if (text.length === 0) throw new Error(`escape_sequence: text must be non-empty`);
   return {
     $type: 'escape_sequence' as const,
     $source: 'factory' as const,
@@ -2350,7 +2309,7 @@ export function formatSpecifier(...children: T.FormatExpression[]) {
 }
 
 export function typeConversion(text: string) {
-  if (text.length === 0) throw new Error(`type_conversion: text must be non-empty`); if (!_leafRe_typeConversion.test(text)) throw new Error(`type_conversion: text does not match pattern: ${text}`); if (_wordRe.test(text) && RESERVED_KEYWORDS.has(text)) throw new Error(`type_conversion: text '${text}' is a reserved keyword`);
+  if (text.length === 0) throw new Error(`type_conversion: text must be non-empty`); if (!_leafRe_typeConversion.test(text)) throw new Error(`type_conversion: text does not match pattern: ${text}`);
   return {
     $type: 'type_conversion' as const,
     $source: 'factory' as const,
@@ -2363,7 +2322,7 @@ export function typeConversion(text: string) {
 }
 
 export function integer(text: string) {
-  if (text.length === 0) throw new Error(`integer: text must be non-empty`); if (_wordRe.test(text) && RESERVED_KEYWORDS.has(text)) throw new Error(`integer: text '${text}' is a reserved keyword`);
+  if (text.length === 0) throw new Error(`integer: text must be non-empty`);
   return {
     $type: 'integer' as const,
     $source: 'factory' as const,
@@ -2376,7 +2335,7 @@ export function integer(text: string) {
 }
 
 export function float(text: string) {
-  if (text.length === 0) throw new Error(`float: text must be non-empty`); if (_wordRe.test(text) && RESERVED_KEYWORDS.has(text)) throw new Error(`float: text '${text}' is a reserved keyword`);
+  if (text.length === 0) throw new Error(`float: text must be non-empty`);
   return {
     $type: 'float' as const,
     $source: 'factory' as const,
@@ -2389,7 +2348,7 @@ export function float(text: string) {
 }
 
 export function identifier(text: string) {
-  if (text.length === 0) throw new Error(`identifier: text must be non-empty`); if (!_leafRe_identifier.test(text)) throw new Error(`identifier: text does not match pattern: ${text}`); if (_wordRe.test(text) && RESERVED_KEYWORDS.has(text)) throw new Error(`identifier: text '${text}' is a reserved keyword`);
+  if (text.length === 0) throw new Error(`identifier: text must be non-empty`); if (!_leafRe_identifier.test(text)) throw new Error(`identifier: text does not match pattern: ${text}`);
   return {
     $type: 'identifier' as const,
     $source: 'factory' as const,
@@ -2457,7 +2416,7 @@ export function await_(config: T.Await.Config) {
 }
 
 export function comment(text: string) {
-  if (text.length === 0) throw new Error(`comment: text must be non-empty`); if (_wordRe.test(text) && RESERVED_KEYWORDS.has(text)) throw new Error(`comment: text '${text}' is a reserved keyword`);
+  if (text.length === 0) throw new Error(`comment: text must be non-empty`);
   return {
     $type: 'comment' as const,
     $source: 'factory' as const,
@@ -2470,7 +2429,7 @@ export function comment(text: string) {
 }
 
 export function lineContinuation(text: string) {
-  if (text.length === 0) throw new Error(`line_continuation: text must be non-empty`); if (_wordRe.test(text) && RESERVED_KEYWORDS.has(text)) throw new Error(`line_continuation: text '${text}' is a reserved keyword`);
+  if (text.length === 0) throw new Error(`line_continuation: text must be non-empty`);
   return {
     $type: 'line_continuation' as const,
     $source: 'factory' as const,
@@ -2483,7 +2442,7 @@ export function lineContinuation(text: string) {
 }
 
 export function stringStart(text: string) {
-  if (text.length === 0) throw new Error(`string_start: text must be non-empty`); if (_wordRe.test(text) && RESERVED_KEYWORDS.has(text)) throw new Error(`string_start: text '${text}' is a reserved keyword`);
+  if (text.length === 0) throw new Error(`string_start: text must be non-empty`);
   return {
     $type: 'string_start' as const,
     $source: 'factory' as const,
@@ -2496,7 +2455,7 @@ export function stringStart(text: string) {
 }
 
 export function escapeInterpolation(text: string) {
-  if (text.length === 0) throw new Error(`escape_interpolation: text must be non-empty`); if (_wordRe.test(text) && RESERVED_KEYWORDS.has(text)) throw new Error(`escape_interpolation: text '${text}' is a reserved keyword`);
+  if (text.length === 0) throw new Error(`escape_interpolation: text must be non-empty`);
   return {
     $type: 'escape_interpolation' as const,
     $source: 'factory' as const,
@@ -2509,7 +2468,7 @@ export function escapeInterpolation(text: string) {
 }
 
 export function stringEnd(text: string) {
-  if (text.length === 0) throw new Error(`string_end: text must be non-empty`); if (_wordRe.test(text) && RESERVED_KEYWORDS.has(text)) throw new Error(`string_end: text '${text}' is a reserved keyword`);
+  if (text.length === 0) throw new Error(`string_end: text must be non-empty`);
   return {
     $type: 'string_end' as const,
     $source: 'factory' as const,
@@ -2522,7 +2481,7 @@ export function stringEnd(text: string) {
 }
 
 export function closeBracket(text: string) {
-  if (text.length === 0) throw new Error(`]: text must be non-empty`); if (_wordRe.test(text) && RESERVED_KEYWORDS.has(text)) throw new Error(`]: text '${text}' is a reserved keyword`);
+  if (text.length === 0) throw new Error(`]: text must be non-empty`);
   return {
     $type: ']' as const,
     $source: 'factory' as const,
@@ -2535,7 +2494,7 @@ export function closeBracket(text: string) {
 }
 
 export function closeParen(text: string) {
-  if (text.length === 0) throw new Error(`): text must be non-empty`); if (_wordRe.test(text) && RESERVED_KEYWORDS.has(text)) throw new Error(`): text '${text}' is a reserved keyword`);
+  if (text.length === 0) throw new Error(`): text must be non-empty`);
   return {
     $type: ')' as const,
     $source: 'factory' as const,
@@ -2548,7 +2507,7 @@ export function closeParen(text: string) {
 }
 
 export function closeBrace(text: string) {
-  if (text.length === 0) throw new Error(`}: text must be non-empty`); if (_wordRe.test(text) && RESERVED_KEYWORDS.has(text)) throw new Error(`}: text '${text}' is a reserved keyword`);
+  if (text.length === 0) throw new Error(`}: text must be non-empty`);
   return {
     $type: '}' as const,
     $source: 'factory' as const,
@@ -2561,7 +2520,7 @@ export function closeBrace(text: string) {
 }
 
 export function except(text: string) {
-  if (text.length === 0) throw new Error(`except: text must be non-empty`); if (_wordRe.test(text) && RESERVED_KEYWORDS.has(text)) throw new Error(`except: text '${text}' is a reserved keyword`);
+  if (text.length === 0) throw new Error(`except: text must be non-empty`);
   return {
     $type: 'except' as const,
     $source: 'factory' as const,
