@@ -99,6 +99,7 @@ export function optimize(linked: LinkedGrammar): OptimizedGrammar {
         derivations: linked.derivations,
         aliasedHiddenKinds: linked.aliasedHiddenKinds,
         polymorphVariants: linked.polymorphVariants,
+        refineForms: linked.refineForms,
     }
 }
 

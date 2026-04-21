@@ -134,6 +134,7 @@ export function link(raw: RawGrammar, include?: IncludeFilter): LinkedGrammar {
         derivations,
         aliasedHiddenKinds,
         polymorphVariants: raw.polymorphVariants,
+        refineForms: raw.refineForms,
     }
 }
 

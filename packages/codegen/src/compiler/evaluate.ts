@@ -784,6 +784,7 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
     inheritBaseGrammarMetadata(opts, baseGrammar, { extras, externals, supertypes, inline, conflicts }, (w) => { word = w })
 
     const polymorphVariants = drainPolymorphMetadata(opts)
+    const refineForms = drainRefineMetadata(opts)
 
     return {
         grammar: {
@@ -801,6 +802,7 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
             // declares no roles.
             externalRoles: collectedRoles.size > 0 ? collectedRoles : undefined,
             polymorphVariants: polymorphVariants.length > 0 ? polymorphVariants : undefined,
+            refineForms,
         } satisfies RawGrammar,
     }
 }
@@ -820,6 +822,18 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 function drainPolymorphMetadata(opts: GrammarOptions): PolymorphVariant[] {
     const wireCtx = (opts as unknown as { __wireContext__?: WireContext }).__wireContext__
     return wireCtx ? [...wireCtx.polymorphVariants] : []
+}
+
+/**
+ * Read the refine() form metadata produced by the DSL during rule
+ * evaluation. Returns `undefined` when no refine() calls fired (keeps
+ * the `RawGrammar.refineForms` field absent rather than an empty map
+ * for downstream consumers that check presence).
+ */
+function drainRefineMetadata(opts: GrammarOptions): Map<string, import('../dsl/wire/wire.ts').RefineForm[]> | undefined {
+    const wireCtx = (opts as unknown as { __wireContext__?: WireContext }).__wireContext__
+    if (!wireCtx || wireCtx.refineForms.size === 0) return undefined
+    return new Map(wireCtx.refineForms)
 }
 
 /**

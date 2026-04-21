@@ -148,6 +148,7 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
         word: optimized.word,
         externals: optimized.externals ? new Set(optimized.externals) : undefined,
         polymorphFormKinds: computePolymorphFormKinds(nodes),
+        refineForms: optimized.refineForms,
     }
 }
 

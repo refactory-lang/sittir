@@ -76,6 +76,23 @@ export interface RawGrammar {
      * transform patches during evaluate.
      */
     readonly polymorphVariants?: PolymorphVariant[]
+    /**
+     * Per-rule form declarations registered by `refine()` in the
+     * override layer — authoring-only metadata that codegen reads to
+     * emit per-form namespace-keyed factories with narrowed Configs.
+     * Structurally transparent: the rule tree is unchanged by refine().
+     * See ADR-0010 phase 2 for the full design.
+     */
+    readonly refineForms?: Map<string, RefineForm[]>
+}
+
+/**
+ * A single refine() form — duplicated from `dsl/wire/wire.ts::RefineForm`
+ * as a plain type so the compiler tier doesn't import the DSL layer.
+ */
+export interface RefineForm {
+    readonly name: string
+    readonly selections: Record<string, number | string>
 }
 
 // ---------------------------------------------------------------------------
@@ -211,6 +228,7 @@ export interface LinkedGrammar {
      */
     readonly aliasedHiddenKinds?: Map<string, string>
     readonly polymorphVariants?: PolymorphVariant[]
+    readonly refineForms?: Map<string, RefineForm[]>
 }
 
 /**
@@ -250,6 +268,7 @@ export interface OptimizedGrammar {
     readonly externals?: readonly string[]
     readonly derivations: DerivationLog
     readonly polymorphVariants?: PolymorphVariant[]
+    readonly refineForms?: Map<string, RefineForm[]>
 }
 
 // ---------------------------------------------------------------------------
@@ -320,6 +339,13 @@ export interface NodeMap {
      * native text verbatim.
      */
     readonly externals?: ReadonlySet<string>
+    /**
+     * Per-kind refine() form declarations, keyed by rule kind. Emitters
+     * read this to generate namespace-keyed factories and narrowed
+     * Config types — see ADR-0010 phase 2. Undefined when no refine()
+     * calls fired in this grammar's overrides.
+     */
+    readonly refineForms?: Map<string, RefineForm[]>
 }
 
 export function computePolymorphFormKinds(nodes: Map<string, AssembledNode>): Set<string> {
