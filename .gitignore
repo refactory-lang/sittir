@@ -25,3 +25,4 @@ packages/*/.sittir/
 # Stray tree-sitter build artifacts (parser.wasm should be in .sittir/)
 /tree-sitter-*.wasm
 .worktrees/
+scratch/
