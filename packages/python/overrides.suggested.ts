@@ -15,7 +15,7 @@
 // Summary
 // ---------------------------------------------------------------
 // Field inferences:  0  (0 applied, 0 held)
-// Rule promotions:   67  (57 applied, 10 held)
+// Rule promotions:   66  (56 applied, 10 held)
 // Repeated shapes:   0  (advisory — suggested supertypes/groups)
 
 // ---------------------------------------------------------------
@@ -213,7 +213,6 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "_kw_left", classification: "enum", applied: true },
   { kind: "_kw_newline", classification: "enum", applied: true },
   { kind: "_kw_primary_expression", classification: "enum", applied: true },
-  { kind: "_kw_real", classification: "enum", applied: true },
   { kind: "_kw_right", classification: "enum", applied: true },
   { kind: "_kw_simple_pattern", classification: "enum", applied: true },
   { kind: "_kw_start", classification: "enum", applied: true },

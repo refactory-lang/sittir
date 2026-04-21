@@ -26,15 +26,33 @@
 import type { Rule } from '../../compiler/rule.ts'
 import type { FieldLike } from '../runtime-shapes.ts'
 import { wireRegisterSyntheticRule } from '../wire/wire.ts'
-import { isStringType, type RuntimeRule } from '../runtime-shapes.ts'
+import { isStringType, isOptionalType, isChoiceType, type RuntimeRule } from '../runtime-shapes.ts'
 
 /**
- * Shared `FIELD(name, bare-STRING)` → `FIELD(name, SYMBOL(_kw_<name>))`
+ * Shared `FIELD(name, <shape-containing-STRING>)` →
+ * `FIELD(name, <shape with STRING replaced by SYMBOL(_kw_<name>)>)`
  * transformation. Synthesizes a hidden `_kw_<name>: prec.left(1, 'kw')`
- * rule via registerSyntheticRule and returns a SYMBOL reference
- * matching the runtime's case. Callers receive the symbol to pass as
- * the FIELD's content — tree-sitter's normalizer preserves FIELD
- * around SYMBOL (unlike FIELD around bare STRING).
+ * rule via registerSyntheticRule and rewrites the content so
+ * tree-sitter's normalizer preserves the FIELD wrapper.
+ *
+ * Tree-sitter strips FIELD wrappers around bare STRING nodes at grammar-
+ * normalization time. To keep the field label, we indirect every
+ * contained STRING through a hidden SYMBOL rule.
+ *
+ * Shapes handled:
+ *
+ *   - **Bare STRING** — direct `field('x', 'literal')` case. The STRING
+ *     is replaced by a SYMBOL reference to `_kw_<x>` (body:
+ *     `prec.left(1, 'literal')`).
+ *
+ *   - **OPTIONAL(STRING)** — grammar like `seq(optional('&'), ...)`
+ *     with an override `0: field('lifetime')` wraps position 0 as
+ *     `field('lifetime', optional('&'))`. Tree-sitter would strip the
+ *     FIELD if the inner were bare STRING reachable through the
+ *     optional; routing through a SYMBOL preserves the label. Both
+ *     the sittir lowercase `optional` shape and the tree-sitter
+ *     uppercase `CHOICE(STRING, BLANK)` representation of optional
+ *     are handled.
  *
  * Used by:
  *   - transform.ts resolvePatch (one-arg field() placeholder path)
@@ -43,7 +61,7 @@ import { isStringType, type RuntimeRule } from '../runtime-shapes.ts'
  * Optional `wrapSyntheticBody` lets callers apply an extra wrap
  * (e.g., transform's accumulated prec stack) around the synthetic
  * rule's body before registration. Returns the content unchanged
- * when it isn't a bare STRING.
+ * when no STRING is reachable through the recognized shapes.
  */
 export function maybeKeywordSymbol(
     fieldName: string,
@@ -52,7 +70,48 @@ export function maybeKeywordSymbol(
 ): unknown {
     const c = content as { type?: string; value?: string }
     if (!c || typeof c.type !== 'string') return content
-    if (!isStringType(c.type)) return content
+
+    // Bare STRING — synthesize the hidden rule and return a SYMBOL ref.
+    if (isStringType(c.type)) {
+        return synthesizeKwSymbol(fieldName, content, wrapSyntheticBody)
+    }
+
+    // OPTIONAL(STRING) — descend through the wrapper, recurse into
+    // content, and rebuild the optional around the new SYMBOL ref.
+    // Tree-sitter's FIELD(OPTIONAL(SYMBOL)) survives; FIELD(OPTIONAL(STRING))
+    // may not.
+    if (isOptionalType(c.type)) {
+        return descendOptional(fieldName, content, wrapSyntheticBody, 'optional')
+    }
+
+    // CHOICE(STRING, BLANK) is tree-sitter's normalized form for
+    // `optional(STRING)`. Detect the shape and treat as optional.
+    if (isChoiceType(c.type)) {
+        const members = (content as { members?: Array<{ type?: string }> }).members
+        if (Array.isArray(members) && members.length === 2) {
+            const blankIdx = members.findIndex(m => m?.type === 'BLANK' || m?.type === 'blank')
+            if (blankIdx !== -1) {
+                return descendOptional(fieldName, content, wrapSyntheticBody, 'choice-blank')
+            }
+        }
+        return content
+    }
+
+    return content
+}
+
+/**
+ * Create the `_kw_<fieldName>` hidden rule (body wrapped in
+ * `prec.left(1, ...)`) and return a SYMBOL reference to it, preserving
+ * the runtime's case convention (uppercase when the input STRING is
+ * uppercase, lowercase otherwise).
+ */
+function synthesizeKwSymbol(
+    fieldName: string,
+    content: unknown,
+    wrapSyntheticBody: ((body: RuntimeRule) => RuntimeRule) | undefined,
+): unknown {
+    const c = content as { type: string }
     const isUpperCase = c.type === 'STRING'
     const hiddenName = `_kw_${fieldName}`
     const nativePrec = (globalThis as {
@@ -69,6 +128,51 @@ export function maybeKeywordSymbol(
         type: isUpperCase ? 'SYMBOL' : 'symbol',
         name: hiddenName,
     }
+}
+
+/**
+ * Recurse into an optional-shaped wrapper's content. If the inner is a
+ * bare STRING that `maybeKeywordSymbol` would symbolize, rebuild the
+ * wrapper around the new SYMBOL ref so the original optional semantics
+ * are preserved while the inner STRING is routed through a hidden rule.
+ *
+ * `wrapperKind`:
+ *   - `'optional'` — sittir lowercase `{ type: 'optional', content }`
+ *     (or tree-sitter's uppercase `{ type: 'OPTIONAL', content }` —
+ *     both use a `content` field).
+ *   - `'choice-blank'` — tree-sitter's `CHOICE` of `[content, BLANK]`
+ *     normalized form of `optional(content)`.
+ *
+ * Returns the content unchanged if the inner isn't a symbolizable STRING.
+ */
+function descendOptional(
+    fieldName: string,
+    content: unknown,
+    wrapSyntheticBody: ((body: RuntimeRule) => RuntimeRule) | undefined,
+    wrapperKind: 'optional' | 'choice-blank',
+): unknown {
+    let inner: unknown
+    if (wrapperKind === 'optional') {
+        inner = (content as { content?: unknown }).content
+    } else {
+        const members = (content as { members: Array<{ type?: string }> }).members
+        const nonBlank = members.find(m => m.type !== 'BLANK' && m.type !== 'blank')
+        inner = nonBlank
+    }
+
+    const rewritten = maybeKeywordSymbol(fieldName, inner, wrapSyntheticBody)
+    if (rewritten === inner) return content
+
+    // Rebuild the wrapper around the rewritten inner.
+    if (wrapperKind === 'optional') {
+        const nativeOptional = (globalThis as { optional?: (c: unknown) => unknown }).optional
+        if (typeof nativeOptional !== 'function') return content
+        return nativeOptional(rewritten)
+    }
+    // choice-blank: reconstruct the CHOICE preserving the BLANK position.
+    const c = content as { type: string; members: Array<{ type?: string }> }
+    const newMembers = c.members.map(m => (m.type === 'BLANK' || m.type === 'blank') ? m : rewritten as typeof m)
+    return { ...c, members: newMembers }
 }
 
 type Input = string | RegExp | Rule

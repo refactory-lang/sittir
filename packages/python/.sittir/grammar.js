@@ -533,7 +533,26 @@ function symbolizeRef(_$, name) {
 function maybeKeywordSymbol(fieldName, content, wrapSyntheticBody) {
   const c = content;
   if (!c || typeof c.type !== "string") return content;
-  if (!isStringType(c.type)) return content;
+  if (isStringType(c.type)) {
+    return synthesizeKwSymbol(fieldName, content, wrapSyntheticBody);
+  }
+  if (isOptionalType(c.type)) {
+    return descendOptional(fieldName, content, wrapSyntheticBody, "optional");
+  }
+  if (isChoiceType(c.type)) {
+    const members = content.members;
+    if (Array.isArray(members) && members.length === 2) {
+      const blankIdx = members.findIndex((m) => m?.type === "BLANK" || m?.type === "blank");
+      if (blankIdx !== -1) {
+        return descendOptional(fieldName, content, wrapSyntheticBody, "choice-blank");
+      }
+    }
+    return content;
+  }
+  return content;
+}
+function synthesizeKwSymbol(fieldName, content, wrapSyntheticBody) {
+  const c = content;
   const isUpperCase = c.type === "STRING";
   const hiddenName = `_kw_${fieldName}`;
   const nativePrec = globalThis.prec;
@@ -546,6 +565,26 @@ function maybeKeywordSymbol(fieldName, content, wrapSyntheticBody) {
     type: isUpperCase ? "SYMBOL" : "symbol",
     name: hiddenName
   };
+}
+function descendOptional(fieldName, content, wrapSyntheticBody, wrapperKind) {
+  let inner;
+  if (wrapperKind === "optional") {
+    inner = content.content;
+  } else {
+    const members = content.members;
+    const nonBlank = members.find((m) => m.type !== "BLANK" && m.type !== "blank");
+    inner = nonBlank;
+  }
+  const rewritten = maybeKeywordSymbol(fieldName, inner, wrapSyntheticBody);
+  if (rewritten === inner) return content;
+  if (wrapperKind === "optional") {
+    const nativeOptional = globalThis.optional;
+    if (typeof nativeOptional !== "function") return content;
+    return nativeOptional(rewritten);
+  }
+  const c = content;
+  const newMembers = c.members.map((m) => m.type === "BLANK" || m.type === "blank" ? m : rewritten);
+  return { ...c, members: newMembers };
 }
 function isFieldPlaceholder(v) {
   return !!v && typeof v === "object" && v.__sittirPlaceholder === "field";

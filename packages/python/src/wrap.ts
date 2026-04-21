@@ -1227,7 +1227,6 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_kw_arguments': (d) => d,
   '_kw_left': (d) => d,
   '_kw_comparators': (d) => d,
-  '_kw_real': (d) => d,
   '_kw_imaginary': (d) => d,
   '_kw_body': (d) => d,
   '_kw_condition': (d) => d,

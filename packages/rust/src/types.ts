@@ -42,7 +42,6 @@ export type LeafScalarMap = {
   _kw_raw_string_literal_end: number;
   _kw_start: number;
   _kw_end: number;
-  _kw_lifetime: number;
   _kw_self: number;
   _kw_shebang: number;
   _kw_statements: number;
@@ -349,7 +348,6 @@ export const enum SyntaxKind {
   KwRawStringLiteralEnd = '_kw_raw_string_literal_end',
   KwStart = '_kw_start',
   KwEnd = '_kw_end',
-  KwLifetime = '_kw_lifetime',
   KwSelf = '_kw_self',
   KwShebang = '_kw_shebang',
   KwStatements = '_kw_statements',
@@ -2327,7 +2325,6 @@ export type KwStringContent = Terminal<"_kw_string_content", >;
 export type KwRawStringLiteralEnd = Terminal<"_kw_raw_string_literal_end", >;
 export type KwStart = Terminal<"_kw_start", >;
 export type KwEnd = Terminal<"_kw_end", >;
-export type KwLifetime = Terminal<"_kw_lifetime", >;
 export type KwSelf = Terminal<"_kw_self", >;
 export type KwShebang = Terminal<"_kw_shebang", >;
 export type KwStatements = Terminal<"_kw_statements", >;
@@ -2648,7 +2645,6 @@ export interface KwStringContentTree extends AnyTreeNode { readonly type: "_kw_s
 export interface KwRawStringLiteralEndTree extends AnyTreeNode { readonly type: "_kw_raw_string_literal_end"; }
 export interface KwStartTree extends AnyTreeNode { readonly type: "_kw_start"; }
 export interface KwEndTree extends AnyTreeNode { readonly type: "_kw_end"; }
-export interface KwLifetimeTree extends AnyTreeNode { readonly type: "_kw_lifetime"; }
 export interface KwSelfTree extends AnyTreeNode { readonly type: "_kw_self"; }
 export interface KwShebangTree extends AnyTreeNode { readonly type: "_kw_shebang"; }
 export interface KwStatementsTree extends AnyTreeNode { readonly type: "_kw_statements"; }
@@ -3553,7 +3549,6 @@ export interface KindMap {
   '_kw_raw_string_literal_end': KwRawStringLiteralEnd;
   '_kw_start': KwStart;
   '_kw_end': KwEnd;
-  '_kw_lifetime': KwLifetime;
   '_kw_self': KwSelf;
   '_kw_shebang': KwShebang;
   '_kw_statements': KwStatements;

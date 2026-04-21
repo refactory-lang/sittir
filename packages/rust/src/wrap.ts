@@ -1971,7 +1971,6 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_kw_raw_string_literal_end': (d) => d,
   '_kw_start': (d) => d,
   '_kw_end': (d) => d,
-  '_kw_lifetime': (d) => d,
   '_kw_self': (d) => d,
   '_kw_shebang': (d) => d,
   '_kw_statements': (d) => d,

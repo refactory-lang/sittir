@@ -207,7 +207,6 @@ export const LEAF_KINDS = [
   '_kw_index',
   '_kw_label',
   '_kw_left',
-  '_kw_lifetime',
   '_kw_move',
   '_kw_mutable_specifier',
   '_kw_object',
@@ -1143,11 +1142,6 @@ export type KwLabelValue = (typeof _KW_LABELS)[number];
 export const _KW_LEFTS = [
 ] as const;
 export type KwLeftValue = (typeof _KW_LEFTS)[number];
-
-/** Valid values for `_kw_lifetime` nodes. */
-export const _KW_LIFETIMES = [
-] as const;
-export type KwLifetimeValue = (typeof _KW_LIFETIMES)[number];
 
 /** Valid values for `_kw_move` nodes. */
 export const _KW_MOVES = [

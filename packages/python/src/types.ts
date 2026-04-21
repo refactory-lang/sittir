@@ -16,7 +16,6 @@ export type LeafScalarMap = {
   _kw_arguments: number;
   _kw_left: number;
   _kw_comparators: number;
-  _kw_real: number;
   _kw_imaginary: number;
   _kw_body: number;
   _kw_condition: number;
@@ -232,7 +231,6 @@ export const enum SyntaxKind {
   KwArguments = '_kw_arguments',
   KwLeft = '_kw_left',
   KwComparators = '_kw_comparators',
-  KwReal = '_kw_real',
   KwImaginary = '_kw_imaginary',
   KwBody = '_kw_body',
   KwCondition = '_kw_condition',
@@ -1337,7 +1335,6 @@ export type KwDottedName = Terminal<"_kw_dotted_name", >;
 export type KwArguments = Terminal<"_kw_arguments", >;
 export type KwLeft = Terminal<"_kw_left", >;
 export type KwComparators = Terminal<"_kw_comparators", >;
-export type KwReal = Terminal<"_kw_real", >;
 export type KwImaginary = Terminal<"_kw_imaginary", >;
 export type KwBody = Terminal<"_kw_body", >;
 export type KwCondition = Terminal<"_kw_condition", >;
@@ -1529,7 +1526,6 @@ export interface KwDottedNameTree extends AnyTreeNode { readonly type: "_kw_dott
 export interface KwArgumentsTree extends AnyTreeNode { readonly type: "_kw_arguments"; }
 export interface KwLeftTree extends AnyTreeNode { readonly type: "_kw_left"; }
 export interface KwComparatorsTree extends AnyTreeNode { readonly type: "_kw_comparators"; }
-export interface KwRealTree extends AnyTreeNode { readonly type: "_kw_real"; }
 export interface KwImaginaryTree extends AnyTreeNode { readonly type: "_kw_imaginary"; }
 export interface KwBodyTree extends AnyTreeNode { readonly type: "_kw_body"; }
 export interface KwConditionTree extends AnyTreeNode { readonly type: "_kw_condition"; }
@@ -2045,7 +2041,6 @@ export interface KindMap {
   '_kw_arguments': KwArguments;
   '_kw_left': KwLeft;
   '_kw_comparators': KwComparators;
-  '_kw_real': KwReal;
   '_kw_imaginary': KwImaginary;
   '_kw_body': KwBody;
   '_kw_condition': KwCondition;

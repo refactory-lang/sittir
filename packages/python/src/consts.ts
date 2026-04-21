@@ -150,7 +150,6 @@ export const LEAF_KINDS = [
   '_kw_left',
   '_kw_newline',
   '_kw_primary_expression',
-  '_kw_real',
   '_kw_right',
   '_kw_simple_pattern',
   '_kw_start',
@@ -794,11 +793,6 @@ export type KwNewlineValue = (typeof _KW_NEWLINES)[number];
 export const _KW_PRIMARY_EXPRESSIONS = [
 ] as const;
 export type KwPrimaryExpressionValue = (typeof _KW_PRIMARY_EXPRESSIONS)[number];
-
-/** Valid values for `_kw_real` nodes. */
-export const _KW_REALS = [
-] as const;
-export type KwRealValue = (typeof _KW_REALS)[number];
 
 /** Valid values for `_kw_right` nodes. */
 export const _KW_RIGHTS = [
