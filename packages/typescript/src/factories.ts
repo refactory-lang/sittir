@@ -35,6 +35,16 @@ function _assertNonEmpty<T>(
     throw new Error(`${label}: requires at least one element`);
   }
 }
+function _rebuildHoist(inner: any, patch: Record<string, unknown>): Record<string, unknown> {
+  const out: Record<string, unknown> = {};
+  const fields = (inner && inner.$fields) ?? {};
+  for (const k of Object.keys(fields)) {
+    const camel = k.replace(/_([a-z])/g, (_m, c) => c.toUpperCase());
+    out[camel] = fields[k];
+  }
+  for (const k of Object.keys(patch)) out[k] = patch[k];
+  return out;
+}
 
 const _leafRe_hashBangLine = /^(?:#!.*)/u;
 const _leafRe_htmlCharacterReference = /^(?:&(#([xX][0-9a-fA-F]{1,6}|[0-9]{1,5})|[A-Za-z]{1,30});)/u;
@@ -400,15 +410,21 @@ export function importSpecifier(config: T.ImportSpecifierUFormNameConfig | T.Imp
   return importSpecifierUFormName(config as T.ImportSpecifierUFormNameConfig);
 }
 export function importSpecifierUFormName(config: T.ImportSpecifierUFormNameConfig) {
-  const children = config.children ?? [];
+  const _cfg: any = config;
+  const inner = _cfg && Array.isArray(_cfg.children) && _cfg.children.length > 0
+    ? _cfg.children[0]
+    : importSpecifierName(_cfg);
+  const children = [inner] as const;
   return {
     $type: 'import_specifier' as const,
     $source: 'factory' as const,
     $named: true as const,
     $variant: 'name' as const,
     $children: children,
-    getChild() { return children[0]; },
-    setChild(child: T.ImportSpecifierName) { return importSpecifierUFormName({ ...config, children: [child] }); },
+    name(value?: T.ImportIdentifier) {
+      if (value === undefined) return (inner as any).$fields.name;
+      return importSpecifierUFormName(_rebuildHoist(inner, { name: value }) as T.ImportSpecifierUFormNameConfig);
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -418,15 +434,25 @@ export function importSpecifierUFormName(config: T.ImportSpecifierUFormNameConfi
   };
 }
 export function importSpecifierUFormAs(config: T.ImportSpecifierUFormAsConfig) {
-  const children = config.children ?? [];
+  const _cfg: any = config;
+  const inner = _cfg && Array.isArray(_cfg.children) && _cfg.children.length > 0
+    ? _cfg.children[0]
+    : importSpecifierAs(_cfg);
+  const children = [inner] as const;
   return {
     $type: 'import_specifier' as const,
     $source: 'factory' as const,
     $named: true as const,
     $variant: 'as' as const,
     $children: children,
-    getChild() { return children[0]; },
-    setChild(child: T.ImportSpecifierAs) { return importSpecifierUFormAs({ ...config, children: [child] }); },
+    name(value?: T.ModuleExportName) {
+      if (value === undefined) return (inner as any).$fields.name;
+      return importSpecifierUFormAs(_rebuildHoist(inner, { name: value }) as T.ImportSpecifierUFormAsConfig);
+    },
+    alias(value?: T.ImportIdentifier) {
+      if (value === undefined) return (inner as any).$fields.alias;
+      return importSpecifierUFormAs(_rebuildHoist(inner, { alias: value }) as T.ImportSpecifierUFormAsConfig);
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);

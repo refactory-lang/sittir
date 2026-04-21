@@ -22,7 +22,7 @@ import {
     AssembledSupertype,
 } from '../compiler/node-map.ts'
 import { loadRawEntries } from '../validate/node-types-loader.ts'
-import { isAutoStampField, isRequired, isMultiple, isNonEmpty, slotKindNames, slotLiteralValues, resolveHiddenKeywordLiteral } from './shared.ts'
+import { isAutoStampField, isRequired, isMultiple, isNonEmpty, slotKindNames, slotLiteralValues, resolveHiddenKeywordLiteral, resolveHoistedForm, isAutoStampSlot } from './shared.ts'
 
 type StructuralNode = AssembledBranch | AssembledContainer | AssembledPolymorph
 
@@ -145,7 +145,7 @@ export function emitTypes(config: EmitTypesConfig): string {
     if (missingKindTypes.size > 0) lines.push('')
 
     // 4. Per-form Config/Tree aliases (polymorph forms only)
-    emitPolymorphFormConfigAliases(lines, nodeKinds, polymorphTypeNames)
+    emitPolymorphFormConfigAliases(lines, nodeKinds, polymorphTypeNames, nodeMap)
 
     // Tree interfaces
     const treeEmitted = emitTreeInterfaceDeclarations(lines, nodeKinds, leafKinds, nodeMap, grammarKeys, polymorphTypeNames)
@@ -511,16 +511,63 @@ function emitPolymorphFormConfigAliases(
     lines: string[],
     nodeKinds: string[],
     polymorphTypeNames: Map<string, string[]>,
+    nodeMap: NodeMap,
 ): void {
     lines.push('// Polymorph form Config/Tree aliases (forms have no namespace sugar)')
     for (const kind of nodeKinds) {
         const ptn = polymorphTypeNames.get(kind)
         if (!ptn) continue
-        for (const ftn of ptn) {
-            lines.push(`export type ${ftn}Config = ConfigOf<${ftn}>;`)
+        const node = nodeMap.nodes.get(kind)
+        if (node?.modelType !== 'polymorph') {
+            // Defensive — emit the default ConfigOf<T> aliases.
+            for (const ftn of ptn) lines.push(`export type ${ftn}Config = ConfigOf<${ftn}>;`)
+            continue
+        }
+        for (const form of node.forms) {
+            const ftn = form.typeName
+            const hoist = resolveHoistedForm(form, nodeMap)
+            if (hoist) {
+                // Hoisted Config — inner child's fields inlined at top level.
+                // The form interface still carries `$children: [Inner]`, but
+                // callers construct with the inner fields directly; the factory
+                // builds the inner child at runtime.
+                emitHoistedFormConfigAlias(lines, ftn, hoist, nodeMap)
+            } else {
+                lines.push(`export type ${ftn}Config = ConfigOf<${ftn}>;`)
+            }
         }
     }
     lines.push('')
+}
+
+/**
+ * Emit a bespoke Config type alias for a polymorph form whose inner child
+ * has been hoisted up — the fields appear at the top level (camelCase keys),
+ * no `children` slot. The inner child's required fields stay required; its
+ * optional fields stay optional. Auto-stamp-eligible inner fields are
+ * omitted (the factory stamps them just like any other factory).
+ *
+ * @see {@link resolveHoistedForm}
+ */
+function emitHoistedFormConfigAlias(
+    lines: string[],
+    ftn: string,
+    hoist: import('./shared.ts').HoistedForm,
+    nodeMap: NodeMap,
+): void {
+    lines.push(`export type ${ftn}Config = {`)
+    for (const f of hoist.innerFields) {
+        // Auto-stamp fields are never in Config — the factory stamps them.
+        if (isAutoStampField(f, nodeMap)) continue
+        const typeExpr = fieldTypeExpr(f, nodeMap)
+        const opt = isRequired(f) ? '' : '?'
+        if (isMultiple(f)) {
+            lines.push(`  readonly ${f.propertyName}${opt}: readonly (${typeExpr})[];`)
+        } else {
+            lines.push(`  readonly ${f.propertyName}${opt}: ${typeExpr};`)
+        }
+    }
+    lines.push('};')
 }
 
 // ---------------------------------------------------------------------------
@@ -1059,12 +1106,18 @@ function fieldTypeExpr(
     nodeMap?: NodeMap,
     lookupUnion?: LookupUnion,
 ): string {
-    const inlineEnum = resolveInlineEnumTypeExpr(field)
-    if (inlineEnum !== null) return inlineEnum
     const fieldKinds = slotKindNames(field)
+    const litVals = slotLiteralValues(field)
+    const litParts = litVals.map(v => JSON.stringify(v))
+
+    // Pure-literal slot (no node refs) — emit as a string-literal union.
+    if (fieldKinds.length === 0 && litParts.length > 0) {
+        return [...new Set(litParts)].join(' | ')
+    }
     if (fieldKinds.length === 0) return 'string'
+
     const resolveAliased = buildAliasSourceResolver(field, nodeMap)
-    const parts = fieldKinds.map(resolveAliased).map(t => {
+    const nodeParts = fieldKinds.map(resolveAliased).map(t => {
         // Hidden `_kw_*` keywords inline as their literal string so the
         // field surface reads as the raw token (e.g. `"async"`) instead
         // of exposing the helper rule's wrapper type.
@@ -1082,6 +1135,11 @@ function fieldTypeExpr(
         if (/^[A-Za-z_$][\w$]*$/.test(name)) return name
         return JSON.stringify(t)
     })
+    // Mixed node-ref + terminal slot — merge both (e.g. rust's
+    // `closure_expression_expr.body = choice($._expression, '_')` yields
+    // `_Expression | "_"`). Without this merge the terminal arm was
+    // dropped when kinds were present and vice versa.
+    const parts = [...new Set([...nodeParts, ...litParts])]
     // Dedup repeated multi-type unions via the lookup (T042k).
     const alias = lookupUnion?.(parts)
     if (alias) return alias
@@ -1091,26 +1149,6 @@ function fieldTypeExpr(
 // ---------------------------------------------------------------------------
 // fieldTypeExpr helpers
 // ---------------------------------------------------------------------------
-
-/**
- * Resolve a field's type expression when it is an inline string-literal enum.
- *
- * @remarks
- * A field whose content is a choice-of-strings is emitted as a string-literal
- * union so consumers see the real alphabet (e.g. `operator: "==" | "!=" | "<"
- * | …`) instead of `string`.
- *
- * @param field - The assembled field to inspect.
- * @returns The joined literal-value union string, or `null` when the field is
- *   not an inline enum.
- */
-function resolveInlineEnumTypeExpr(field: AssembledField): string | null {
-    const litVals = slotLiteralValues(field)
-    if (litVals.length > 0) {
-        return litVals.map(v => JSON.stringify(v)).join(' | ')
-    }
-    return null
-}
 
 /**
  * Build a resolver function that maps each content-type kind to its

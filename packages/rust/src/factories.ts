@@ -35,6 +35,16 @@ function _assertNonEmpty<T>(
     throw new Error(`${label}: requires at least one element`);
   }
 }
+function _rebuildHoist(inner: any, patch: Record<string, unknown>): Record<string, unknown> {
+  const out: Record<string, unknown> = {};
+  const fields = (inner && inner.$fields) ?? {};
+  for (const k of Object.keys(fields)) {
+    const camel = k.replace(/_([a-z])/g, (_m, c) => c.toUpperCase());
+    out[camel] = fields[k];
+  }
+  for (const k of Object.keys(patch)) out[k] = patch[k];
+  return out;
+}
 
 const _leafRe_identifier = /^(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*)/u;
 const _leafRe_shebang = /^(?:#![\r\f\t\v ]*([^[\n].*)?\n)/u;
@@ -1971,15 +1981,29 @@ export function rangeExpression(config: T.RangeExpressionUFormBinaryConfig | T.R
   return rangeExpressionUFormBinary(config as T.RangeExpressionUFormBinaryConfig);
 }
 export function rangeExpressionUFormBinary(config: T.RangeExpressionUFormBinaryConfig) {
-  const children = config.children ?? [];
+  const _cfg: any = config;
+  const inner = _cfg && Array.isArray(_cfg.children) && _cfg.children.length > 0
+    ? _cfg.children[0]
+    : rangeExpressionBinary(_cfg);
+  const children = [inner] as const;
   return {
     $type: 'range_expression' as const,
     $source: 'factory' as const,
     $named: true as const,
     $variant: 'binary' as const,
     $children: children,
-    getChild() { return children[0]; },
-    setChild(child: T.RangeExpressionBinary) { return rangeExpressionUFormBinary({ ...config, children: [child] }); },
+    start(value?: T.Expression) {
+      if (value === undefined) return (inner as any).$fields.start;
+      return rangeExpressionUFormBinary(_rebuildHoist(inner, { start: value }) as T.RangeExpressionUFormBinaryConfig);
+    },
+    operator(value?: ".." | "..." | "..=") {
+      if (value === undefined) return (inner as any).$fields.operator;
+      return rangeExpressionUFormBinary(_rebuildHoist(inner, { operator: value }) as T.RangeExpressionUFormBinaryConfig);
+    },
+    end(value?: T.Expression) {
+      if (value === undefined) return (inner as any).$fields.end;
+      return rangeExpressionUFormBinary(_rebuildHoist(inner, { end: value }) as T.RangeExpressionUFormBinaryConfig);
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1989,15 +2013,25 @@ export function rangeExpressionUFormBinary(config: T.RangeExpressionUFormBinaryC
   };
 }
 export function rangeExpressionUFormPostfix(config: T.RangeExpressionUFormPostfixConfig) {
-  const children = config.children ?? [];
+  const _cfg: any = config;
+  const inner = _cfg && Array.isArray(_cfg.children) && _cfg.children.length > 0
+    ? _cfg.children[0]
+    : rangeExpressionPostfix(_cfg);
+  const children = [inner] as const;
   return {
     $type: 'range_expression' as const,
     $source: 'factory' as const,
     $named: true as const,
     $variant: 'postfix' as const,
     $children: children,
-    getChild() { return children[0]; },
-    setChild(child: T.RangeExpressionPostfix) { return rangeExpressionUFormPostfix({ ...config, children: [child] }); },
+    start(value?: T.Expression) {
+      if (value === undefined) return (inner as any).$fields.start;
+      return rangeExpressionUFormPostfix(_rebuildHoist(inner, { start: value }) as T.RangeExpressionUFormPostfixConfig);
+    },
+    operator(value?: "..") {
+      if (value === undefined) return (inner as any).$fields.operator;
+      return rangeExpressionUFormPostfix(_rebuildHoist(inner, { operator: value }) as T.RangeExpressionUFormPostfixConfig);
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2007,15 +2041,25 @@ export function rangeExpressionUFormPostfix(config: T.RangeExpressionUFormPostfi
   };
 }
 export function rangeExpressionUFormPrefix(config: T.RangeExpressionUFormPrefixConfig) {
-  const children = config.children ?? [];
+  const _cfg: any = config;
+  const inner = _cfg && Array.isArray(_cfg.children) && _cfg.children.length > 0
+    ? _cfg.children[0]
+    : rangeExpressionPrefix(_cfg);
+  const children = [inner] as const;
   return {
     $type: 'range_expression' as const,
     $source: 'factory' as const,
     $named: true as const,
     $variant: 'prefix' as const,
     $children: children,
-    getChild() { return children[0]; },
-    setChild(child: T.RangeExpressionPrefix) { return rangeExpressionUFormPrefix({ ...config, children: [child] }); },
+    operator(value?: "..") {
+      if (value === undefined) return (inner as any).$fields.operator;
+      return rangeExpressionUFormPrefix(_rebuildHoist(inner, { operator: value }) as T.RangeExpressionUFormPrefixConfig);
+    },
+    end(value?: T.Expression) {
+      if (value === undefined) return (inner as any).$fields.end;
+      return rangeExpressionUFormPrefix(_rebuildHoist(inner, { end: value }) as T.RangeExpressionUFormPrefixConfig);
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2025,15 +2069,21 @@ export function rangeExpressionUFormPrefix(config: T.RangeExpressionUFormPrefixC
   };
 }
 export function rangeExpressionUFormBare(config: T.RangeExpressionUFormBareConfig) {
-  const children = config.children ?? [];
+  const _cfg: any = config;
+  const inner = _cfg && Array.isArray(_cfg.children) && _cfg.children.length > 0
+    ? _cfg.children[0]
+    : rangeExpressionBare(_cfg);
+  const children = [inner] as const;
   return {
     $type: 'range_expression' as const,
     $source: 'factory' as const,
     $named: true as const,
     $variant: 'bare' as const,
     $children: children,
-    getChild() { return children[0]; },
-    setChild(child: T.RangeExpressionBare) { return rangeExpressionUFormBare({ ...config, children: [child] }); },
+    operator(value?: "..") {
+      if (value === undefined) return (inner as any).$fields.operator;
+      return rangeExpressionUFormBare(_rebuildHoist(inner, { operator: value }) as T.RangeExpressionUFormBareConfig);
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2273,15 +2323,26 @@ export function arrayExpression(config: T.ArrayExpressionUFormSemiConfig | T.Arr
   return arrayExpressionUFormSemi(config as T.ArrayExpressionUFormSemiConfig);
 }
 export function arrayExpressionUFormSemi(config: T.ArrayExpressionUFormSemiConfig) {
-  const children = config.children ?? [];
+  const _cfg: any = config;
+  const inner = _cfg && Array.isArray(_cfg.children) && _cfg.children.length > 0
+    ? _cfg.children[0]
+    : arrayExpressionSemi(_cfg);
+  const children = [inner] as const;
   return {
     $type: 'array_expression' as const,
     $source: 'factory' as const,
     $named: true as const,
     $variant: 'semi' as const,
     $children: children,
-    getChild() { return children[0]; },
-    setChild(child: T.ArrayExpressionSemi) { return arrayExpressionUFormSemi({ ...config, children: [child] }); },
+    attributes(...values: T.AttributeItem[]) { return arrayExpressionUFormSemi(_rebuildHoist(inner, { attributes: values }) as T.ArrayExpressionUFormSemiConfig); },
+    elements(value?: T.Expression) {
+      if (value === undefined) return (inner as any).$fields.elements;
+      return arrayExpressionUFormSemi(_rebuildHoist(inner, { elements: value }) as T.ArrayExpressionUFormSemiConfig);
+    },
+    length(value?: T.Expression) {
+      if (value === undefined) return (inner as any).$fields.length;
+      return arrayExpressionUFormSemi(_rebuildHoist(inner, { length: value }) as T.ArrayExpressionUFormSemiConfig);
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2291,15 +2352,19 @@ export function arrayExpressionUFormSemi(config: T.ArrayExpressionUFormSemiConfi
   };
 }
 export function arrayExpressionUFormList(config: T.ArrayExpressionUFormListConfig) {
-  const children = config.children ?? [];
+  const _cfg: any = config;
+  const inner = _cfg && Array.isArray(_cfg.children) && _cfg.children.length > 0
+    ? _cfg.children[0]
+    : arrayExpressionList(_cfg);
+  const children = [inner] as const;
   return {
     $type: 'array_expression' as const,
     $source: 'factory' as const,
     $named: true as const,
     $variant: 'list' as const,
     $children: children,
-    getChild() { return children[0]; },
-    setChild(child: T.ArrayExpressionList) { return arrayExpressionUFormList({ ...config, children: [child] }); },
+    attributes(...values: T.AttributeItem[]) { return arrayExpressionUFormList(_rebuildHoist(inner, { attributes: values }) as T.ArrayExpressionUFormListConfig); },
+    elements(...values: T.Expression[]) { return arrayExpressionUFormList(_rebuildHoist(inner, { elements: values }) as T.ArrayExpressionUFormListConfig); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -3216,15 +3281,25 @@ export function rangePattern(config: T.RangePatternUFormLeftConfig | T.RangePatt
   return rangePatternUFormLeft(config as T.RangePatternUFormLeftConfig);
 }
 export function rangePatternUFormLeft(config: T.RangePatternUFormLeftConfig) {
-  const children = config.children ?? [];
+  const _cfg: any = config;
+  const inner = _cfg && Array.isArray(_cfg.children) && _cfg.children.length > 0
+    ? _cfg.children[0]
+    : rangePatternLeft(_cfg);
+  const children = [inner] as const;
   return {
     $type: 'range_pattern' as const,
     $source: 'factory' as const,
     $named: true as const,
     $variant: 'left' as const,
     $children: children,
-    getChild() { return children[0]; },
-    setChild(child: T.RangePatternLeft) { return rangePatternUFormLeft({ ...config, children: [child] }); },
+    left(value?: T.LiteralPattern | T.Path) {
+      if (value === undefined) return (inner as any).$fields.left;
+      return rangePatternUFormLeft(_rebuildHoist(inner, { left: value }) as T.RangePatternUFormLeftConfig);
+    },
+    right(value?: T.LiteralPattern | T.Path | undefined) {
+      if (value === undefined) return (inner as any).$fields.right;
+      return rangePatternUFormLeft(_rebuildHoist(inner, { right: value }) as T.RangePatternUFormLeftConfig);
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -3234,15 +3309,21 @@ export function rangePatternUFormLeft(config: T.RangePatternUFormLeftConfig) {
   };
 }
 export function rangePatternUFormPrefix(config: T.RangePatternUFormPrefixConfig) {
-  const children = config.children ?? [];
+  const _cfg: any = config;
+  const inner = _cfg && Array.isArray(_cfg.children) && _cfg.children.length > 0
+    ? _cfg.children[0]
+    : rangePatternPrefix(_cfg);
+  const children = [inner] as const;
   return {
     $type: 'range_pattern' as const,
     $source: 'factory' as const,
     $named: true as const,
     $variant: 'prefix' as const,
     $children: children,
-    getChild() { return children[0]; },
-    setChild(child: T.RangePatternPrefix) { return rangePatternUFormPrefix({ ...config, children: [child] }); },
+    right(value?: T.LiteralPattern | T.Path) {
+      if (value === undefined) return (inner as any).$fields.right;
+      return rangePatternUFormPrefix(_rebuildHoist(inner, { right: value }) as T.RangePatternUFormPrefixConfig);
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -3323,15 +3404,25 @@ export function orPattern(config: T.OrPatternUFormBinaryConfig | T.OrPatternUFor
   return orPatternUFormBinary(config as T.OrPatternUFormBinaryConfig);
 }
 export function orPatternUFormBinary(config: T.OrPatternUFormBinaryConfig) {
-  const children = config.children ?? [];
+  const _cfg: any = config;
+  const inner = _cfg && Array.isArray(_cfg.children) && _cfg.children.length > 0
+    ? _cfg.children[0]
+    : orPatternBinary(_cfg);
+  const children = [inner] as const;
   return {
     $type: 'or_pattern' as const,
     $source: 'factory' as const,
     $named: true as const,
     $variant: 'binary' as const,
     $children: children,
-    getChild() { return children[0]; },
-    setChild(child: T.OrPatternBinary) { return orPatternUFormBinary({ ...config, children: [child] }); },
+    left(value?: T.Pattern) {
+      if (value === undefined) return (inner as any).$fields.left;
+      return orPatternUFormBinary(_rebuildHoist(inner, { left: value }) as T.OrPatternUFormBinaryConfig);
+    },
+    right(value?: T.Pattern) {
+      if (value === undefined) return (inner as any).$fields.right;
+      return orPatternUFormBinary(_rebuildHoist(inner, { right: value }) as T.OrPatternUFormBinaryConfig);
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -3341,15 +3432,21 @@ export function orPatternUFormBinary(config: T.OrPatternUFormBinaryConfig) {
   };
 }
 export function orPatternUFormPrefix(config: T.OrPatternUFormPrefixConfig) {
-  const children = config.children ?? [];
+  const _cfg: any = config;
+  const inner = _cfg && Array.isArray(_cfg.children) && _cfg.children.length > 0
+    ? _cfg.children[0]
+    : orPatternPrefix(_cfg);
+  const children = [inner] as const;
   return {
     $type: 'or_pattern' as const,
     $source: 'factory' as const,
     $named: true as const,
     $variant: 'prefix' as const,
     $children: children,
-    getChild() { return children[0]; },
-    setChild(child: T.OrPatternPrefix) { return orPatternUFormPrefix({ ...config, children: [child] }); },
+    right(value?: T.Pattern) {
+      if (value === undefined) return (inner as any).$fields.right;
+      return orPatternUFormPrefix(_rebuildHoist(inner, { right: value }) as T.OrPatternUFormPrefixConfig);
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);

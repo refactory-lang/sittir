@@ -566,7 +566,7 @@ export interface ImportStatement {
   readonly $type: 'import_statement';
   readonly $fields: {
     readonly import_clause?: "type" | "typeof";
-    readonly from_clause: "from";
+    readonly from_clause: ImportClause | String | ImportRequireClause | "from";
     readonly source?: String;
     readonly import_attribute?: ImportAttribute;
     readonly semicolon: Semicolon;
@@ -624,7 +624,7 @@ export type ImportSpecifier = ImportSpecifierUFormName | ImportSpecifierUFormAs;
 export interface ImportAttribute {
   readonly $type: 'import_attribute';
   readonly $fields: {
-    readonly object: "with" | "assert";
+    readonly object: Object | "with" | "assert";
   };
 }
 
@@ -866,7 +866,7 @@ export interface PrimaryExpression {
 export interface YieldExpression {
   readonly $type: 'yield_expression';
   readonly $fields: {
-    readonly expression?: Expression | Expression;
+    readonly expression?: Expression;
   };
 }
 
@@ -1429,7 +1429,7 @@ export interface AsExpression {
   readonly $type: 'as_expression';
   readonly $fields: {
     readonly expression: Expression;
-    readonly type_annotation: "const";
+    readonly type_annotation: Type | "const";
   };
 }
 
@@ -1477,7 +1477,7 @@ export interface ImplementsClause {
 export interface AmbientDeclaration {
   readonly $type: 'ambient_declaration';
   readonly $fields: {
-    readonly declaration: "global" | "module";
+    readonly declaration: Declaration | StatementBlock | Identifier | Type | Semicolon | "global" | "module";
   };
 }
 
@@ -1653,7 +1653,7 @@ export interface Asserts {
 export interface AssertsAnnotation {
   readonly $type: 'asserts_annotation';
   readonly $fields: {
-    readonly asserts: ":";
+    readonly asserts: Asserts | ":";
   };
 }
 
@@ -1711,7 +1711,7 @@ export interface InferType {
   readonly $type: 'infer_type';
   readonly $fields: {
     readonly type_identifier: _TypeIdentifier;
-    readonly constraint?: "extends";
+    readonly constraint?: Type | "extends";
   };
 }
 
@@ -1744,7 +1744,7 @@ export interface TypePredicate {
 export interface TypePredicateAnnotation {
   readonly $type: 'type_predicate_annotation';
   readonly $fields: {
-    readonly type_predicate: ":";
+    readonly type_predicate: TypePredicate | ":";
   };
 }
 
@@ -1825,7 +1825,7 @@ export interface ObjectType {
   readonly $type: 'object_type';
   readonly $fields: {
     readonly opening: "{" | "{|";
-    readonly members?: NonEmptyArray<"," | ";">;
+    readonly members?: NonEmptyArray<ExportStatement | PropertySignature | CallSignature | ConstructSignature | IndexSignature | MethodSignature | Semicolon | "," | ";">;
     readonly closing: "}" | "|}";
   };
 }
@@ -2091,7 +2091,7 @@ export interface InterfaceBody {
   readonly $type: 'interface_body';
   readonly $fields: {
     readonly opening: "{" | "{|";
-    readonly members?: NonEmptyArray<"," | ";">;
+    readonly members?: NonEmptyArray<ExportStatement | PropertySignature | CallSignature | ConstructSignature | IndexSignature | MethodSignature | Semicolon | "," | ";">;
     readonly closing: "}" | "|}";
   };
 }
@@ -2163,8 +2163,13 @@ export type ExportStatementForm3Config = ConfigOf<ExportStatementForm3>;
 export type ImportClauseUFormNamespaceImportConfig = ConfigOf<ImportClauseUFormNamespaceImport>;
 export type ImportClauseUFormNamedImportsConfig = ConfigOf<ImportClauseUFormNamedImports>;
 export type ImportClauseUFormDefaultImportConfig = ConfigOf<ImportClauseUFormDefaultImport>;
-export type ImportSpecifierUFormNameConfig = ConfigOf<ImportSpecifierUFormName>;
-export type ImportSpecifierUFormAsConfig = ConfigOf<ImportSpecifierUFormAs>;
+export type ImportSpecifierUFormNameConfig = {
+  readonly name: ImportIdentifier;
+};
+export type ImportSpecifierUFormAsConfig = {
+  readonly name: ModuleExportName;
+  readonly alias: ImportIdentifier;
+};
 export type VariableDeclaratorForm0Config = ConfigOf<VariableDeclaratorForm0>;
 export type VariableDeclaratorForm1Config = ConfigOf<VariableDeclaratorForm1>;
 export type ClassHeritageUFormExtendsClauseConfig = ConfigOf<ClassHeritageUFormExtendsClause>;

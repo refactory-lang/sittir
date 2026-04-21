@@ -1347,7 +1347,7 @@ export interface ReferenceType {
 export interface PointerType {
   readonly $type: 'pointer_type';
   readonly $fields: {
-    readonly mutable_specifier: "const";
+    readonly mutable_specifier: MutableSpecifier | "const";
     readonly type: _Type;
   };
 }
@@ -1355,7 +1355,7 @@ export interface PointerType {
 export interface AbstractType {
   readonly $type: 'abstract_type';
   readonly $fields: {
-    readonly type_parameters?: "for";
+    readonly type_parameters?: TypeParameters | "for";
     readonly trait: _TypeIdentifier | ScopedTypeIdentifier | RemovedTraitBound | GenericType | FunctionType | TupleType | BoundedType;
   };
 }
@@ -1447,7 +1447,7 @@ export interface TryExpression {
 export interface ReferenceExpression {
   readonly $type: 'reference_expression';
   readonly $fields: {
-    readonly mutable_specifier?: "raw" | "const";
+    readonly mutable_specifier?: MutableSpecifier | "raw" | "const";
     readonly value: Expression;
   };
 }
@@ -1531,7 +1531,7 @@ export interface TupleExpression {
   readonly $type: 'tuple_expression';
   readonly $fields: {
     readonly attributes: readonly (AttributeItem)[];
-    readonly elements?: readonly (Expression | Expression | Expression)[];
+    readonly elements?: readonly (Expression)[];
   };
 }
 
@@ -1966,7 +1966,7 @@ export interface _ClosureExpressionBlock {
 export interface _ClosureExpressionExpr {
   readonly $type: '_closure_expression_expr';
   readonly $fields: {
-    readonly body: "_";
+    readonly body: Expression | "_";
   };
 }
 
@@ -2190,7 +2190,7 @@ export interface ClosureExpressionBlock {
 export interface ClosureExpressionExpr {
   readonly $type: 'closure_expression_expr';
   readonly $fields: {
-    readonly body: "_";
+    readonly body: Expression | "_";
   };
 }
 
@@ -2293,20 +2293,49 @@ export type ImplItemUFormBodyConfig = ConfigOf<ImplItemUFormBody>;
 export type ImplItemUFormSemiConfig = ConfigOf<ImplItemUFormSemi>;
 export type VisibilityModifierForm0Config = ConfigOf<VisibilityModifierForm0>;
 export type VisibilityModifierForm1Config = ConfigOf<VisibilityModifierForm1>;
-export type RangeExpressionUFormBinaryConfig = ConfigOf<RangeExpressionUFormBinary>;
-export type RangeExpressionUFormPostfixConfig = ConfigOf<RangeExpressionUFormPostfix>;
-export type RangeExpressionUFormPrefixConfig = ConfigOf<RangeExpressionUFormPrefix>;
-export type RangeExpressionUFormBareConfig = ConfigOf<RangeExpressionUFormBare>;
-export type ArrayExpressionUFormSemiConfig = ConfigOf<ArrayExpressionUFormSemi>;
-export type ArrayExpressionUFormListConfig = ConfigOf<ArrayExpressionUFormList>;
+export type RangeExpressionUFormBinaryConfig = {
+  readonly start: Expression;
+  readonly operator: ".." | "..." | "..=";
+  readonly end: Expression;
+};
+export type RangeExpressionUFormPostfixConfig = {
+  readonly start: Expression;
+  readonly operator: "..";
+};
+export type RangeExpressionUFormPrefixConfig = {
+  readonly operator: "..";
+  readonly end: Expression;
+};
+export type RangeExpressionUFormBareConfig = {
+  readonly operator: "..";
+};
+export type ArrayExpressionUFormSemiConfig = {
+  readonly attributes: readonly (AttributeItem)[];
+  readonly elements: Expression;
+  readonly length: Expression;
+};
+export type ArrayExpressionUFormListConfig = {
+  readonly attributes: readonly (AttributeItem)[];
+  readonly elements: readonly (Expression)[];
+};
 export type ClosureExpressionUFormBlockConfig = ConfigOf<ClosureExpressionUFormBlock>;
 export type ClosureExpressionUFormExprConfig = ConfigOf<ClosureExpressionUFormExpr>;
 export type FieldPatternUFormShorthandConfig = ConfigOf<FieldPatternUFormShorthand>;
 export type FieldPatternUFormNamedConfig = ConfigOf<FieldPatternUFormNamed>;
-export type RangePatternUFormLeftConfig = ConfigOf<RangePatternUFormLeft>;
-export type RangePatternUFormPrefixConfig = ConfigOf<RangePatternUFormPrefix>;
-export type OrPatternUFormBinaryConfig = ConfigOf<OrPatternUFormBinary>;
-export type OrPatternUFormPrefixConfig = ConfigOf<OrPatternUFormPrefix>;
+export type RangePatternUFormLeftConfig = {
+  readonly left: LiteralPattern | Path;
+  readonly right?: LiteralPattern | Path;
+};
+export type RangePatternUFormPrefixConfig = {
+  readonly right: LiteralPattern | Path;
+};
+export type OrPatternUFormBinaryConfig = {
+  readonly left: Pattern;
+  readonly right: Pattern;
+};
+export type OrPatternUFormPrefixConfig = {
+  readonly right: Pattern;
+};
 
 // Tree types
 export interface SourceFileTree extends TreeNode<'source_file'> {}

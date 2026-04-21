@@ -4,9 +4,12 @@
  */
 
 import type { NodeMap } from '../compiler/types.ts'
-import type { AssembledField, AssembledChild, NodeOrTerminal } from '../compiler/node-map.ts'
+import type {
+    AssembledField, AssembledChild, NodeOrTerminal, AssembledNode,
+} from '../compiler/node-map.ts'
 import {
     AssembledKeyword, AssembledToken,
+    AssembledBranch, AssembledContainer, AssembledGroup,
     isNodeRef, isTerminalValue, isUnresolvedRef,
     isRequired, isMultiple, isNonEmpty,
 } from '../compiler/node-map.ts'
@@ -272,4 +275,103 @@ export function stampExpressionFor(slot: AssembledChild, nodeMap: NodeMap): stri
     }
 
     return undefined
+}
+
+// ---------------------------------------------------------------------------
+// Polymorph UForm Config hoisting
+// ---------------------------------------------------------------------------
+
+/**
+ * Describes a single-required-child polymorph form whose inner child's
+ * `$fields` should be hoisted up into the form's Config surface.
+ *
+ * @remarks
+ * Many polymorph forms (e.g. rust's `range_expression__form_binary`) have
+ * `$fields: []` at the form level and a single required structural child
+ * that itself carries the real fields (e.g. `RangeExpressionBinary` with
+ * `start / operator / end`). Forcing callers to construct the inner child
+ * manually (`rangeExpression({ $variant: 'binary', children: [rangeExpressionBinary({...})] })`)
+ * is clunky. Hoisting flattens the inner child's fields into the form's
+ * Config so callers can write
+ * `rangeExpression({ $variant: 'binary', start, operator, end })`.
+ *
+ * The NodeData output shape is unchanged — the factory reconstructs the
+ * inner child from the hoisted fields before emitting `$children: [inner]`.
+ */
+export interface HoistedForm {
+    readonly innerKind: string
+    readonly innerNode: AssembledNode
+    readonly innerTypeName: string
+    readonly innerFactoryName: string
+    readonly innerFields: readonly AssembledField[]
+}
+
+/**
+ * Determine whether a polymorph form qualifies for inner-child field
+ * hoisting into its Config surface.
+ *
+ * @param form - The polymorph form descriptor (AssembledGroup).
+ * @param nodeMap - Assembled node map (needed to resolve the inner child
+ *   kind to its AssembledNode for fields inspection).
+ * @returns A {@link HoistedForm} descriptor when the form qualifies,
+ *   `undefined` otherwise.
+ *
+ * @remarks
+ * Qualification criteria:
+ * - The form has `fields.length === 0` (otherwise there's nothing to hoist
+ *   onto, and mixing form-level + inner fields is ambiguous).
+ * - Exactly one child slot.
+ * - That slot is required AND not multiple.
+ * - That slot's `values` resolve to exactly one kind (no choice / union).
+ * - The inner kind resolves to a field-carrying node (AssembledBranch,
+ *   AssembledContainer, or AssembledGroup) whose `fields.length > 0`.
+ * - The inner node has a `rawFactoryName` (we need a factory call to
+ *   reconstruct the child).
+ *
+ * Forms that fail any criterion keep the existing `$children`-based Config
+ * shape.
+ */
+export function resolveHoistedForm(
+    form: AssembledGroup,
+    nodeMap: NodeMap,
+): HoistedForm | undefined {
+    // Only forms without their own fields — otherwise the merged surface
+    // is ambiguous and callers can't tell parent fields from inner ones.
+    if (form.fields.length > 0) return undefined
+
+    // Exactly one child slot.
+    const children = form.children
+    if (children.length !== 1) return undefined
+    const slot = children[0]!
+
+    // Required, non-repeated.
+    if (!isRequired(slot)) return undefined
+    if (isMultiple(slot)) return undefined
+
+    // Exactly one inner kind (no choice / union).
+    const kinds = slotKindNames(slot)
+    if (kinds.length !== 1) return undefined
+    const innerKind = kinds[0]!
+
+    // Resolve the inner kind to a field-carrying node.
+    const inner = nodeMap.nodes.get(innerKind)
+    if (!inner) return undefined
+
+    const isFieldCarrier = inner instanceof AssembledBranch
+        || inner instanceof AssembledContainer
+        || inner instanceof AssembledGroup
+    if (!isFieldCarrier) return undefined
+
+    const innerFields = (inner as AssembledBranch).fields ?? []
+    if (!innerFields || innerFields.length === 0) return undefined
+
+    if (!inner.rawFactoryName) return undefined
+
+    return {
+        innerKind,
+        innerNode: inner,
+        innerTypeName: inner.typeName,
+        innerFactoryName: inner.rawFactoryName,
+        innerFields,
+    }
 }
