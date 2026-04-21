@@ -5,7 +5,7 @@
 
 import type { NodeMap } from '../compiler/types.ts'
 import type { AssembledNode, AssembledField } from '../compiler/node-map.ts'
-import { isValidIdent, isAutoStampField, isAutoStampSlot, isRequired, isMultiple, isNonEmpty, slotKindNames } from './shared.ts'
+import { isValidIdent, isAutoStampField, isAutoStampSlot, isRequired, isMultiple, isNonEmpty, slotKindNames, resolveHoistedForm } from './shared.ts'
 
 export interface EmitTestsConfig {
     grammar: string
@@ -175,7 +175,14 @@ function emitPolymorphTest(lines: string[], node: AssembledNode, kind: string, k
     lines.push(`describe('${kind}', () => {`)
     for (const form of node.forms) {
         lines.push(`  it('${form.name} form produces correct type', () => {`)
-        const configParts = form.fields
+        // Hoisted forms surface the inner child's fields at the top level
+        // — use those when building the dummy config; otherwise fall back
+        // to the form's own fields (which for polymorphs forms is
+        // typically empty when hoisting applies, but non-empty for
+        // 'promoted'-source polymorphs).
+        const hoist = resolveHoistedForm(form, nodeMap)
+        const fieldsSource = hoist ? hoist.innerFields : form.fields
+        const configParts = fieldsSource
             .filter(f => isRequired(f) && !isAutoStampField(f, nodeMap))
             .map(f => `${f.propertyName}: ${dummyValue(f)}`)
         const configArg = configParts.length > 0 ? `{ ${configParts.join(', ')} }` : '{}'

@@ -19,7 +19,7 @@ import {
 import {
     resolveEffectiveLiteral, isAutoStampSlot, stampExpressionFor,
     isRequired, isMultiple, isNonEmpty, slotKindNames, slotLiteralValues,
-    resolveHiddenKeywordLiteral,
+    resolveHiddenKeywordLiteral, resolveHoistedForm, type HoistedForm,
 } from './shared.ts'
 
 export interface EmitFactoriesConfig {
@@ -51,6 +51,7 @@ export function emitFactories(config: EmitFactoriesConfig): string {
     lines.push('')
     lines.push(...emitFluentSetterHelpers())
     lines.push(...emitNonEmptyAssertHelper())
+    lines.push(...emitRebuildHoistHelper())
     lines.push('')
 
     const leafReConsts = buildLeafReConsts(nodeMap, lines)
@@ -164,6 +165,30 @@ function emitNonEmptyAssertHelper(): string[] {
         '  if (arr.length === 0) {',
         "    throw new Error(`${label}: requires at least one element`);",
         '  }',
+        '}',
+    ]
+}
+
+/**
+ * Emit the `_rebuildHoist` runtime helper used by hoisted polymorph form
+ * factories. Projects a NodeData's raw (snake_case) `$fields` back into a
+ * camelCase plain object, then applies `patch` (camelCase) on top. The
+ * result is a fresh hoisted Config suitable for re-invoking the form
+ * factory.
+ *
+ * @returns Array of source lines for the helper.
+ */
+function emitRebuildHoistHelper(): string[] {
+    return [
+        'function _rebuildHoist(inner: any, patch: Record<string, unknown>): Record<string, unknown> {',
+        '  const out: Record<string, unknown> = {};',
+        '  const fields = (inner && inner.$fields) ?? {};',
+        '  for (const k of Object.keys(fields)) {',
+        '    const camel = k.replace(/_([a-z])/g, (_m, c) => c.toUpperCase());',
+        '    out[camel] = fields[k];',
+        '  }',
+        '  for (const k of Object.keys(patch)) out[k] = patch[k];',
+        '  return out;',
         '}',
     ]
 }
@@ -891,9 +916,104 @@ function emitPolymorphFactory(node: PolymorphNode, nodeMap: NodeMap): string {
     // through the legacy flat alias instead of namespace sugar — synthetic
     // UForm kinds aren't in `NamespaceMap`.
     for (const form of forms) {
-        parts.push(emitFieldCarryingFactory(form, form.fields, form.children, nodeMap, true))
+        const hoist = resolveHoistedForm(form, nodeMap)
+        if (hoist) {
+            parts.push(emitHoistedPolymorphFormFactory(form, hoist, nodeMap))
+        } else {
+            parts.push(emitFieldCarryingFactory(form, form.fields, form.children, nodeMap, true))
+        }
     }
     return parts.join('\n')
+}
+
+/**
+ * Emit a polymorph form factory whose inner child's fields have been
+ * hoisted up into the Config surface.
+ *
+ * @remarks
+ * The emitted factory accepts the hoisted Config (flat camelCase fields from
+ * the inner child), constructs the inner child via its factory, then returns
+ * a NodeData object with `$children: [inner]`. Runtime shape matches the
+ * non-hoisted version — this is purely an input-side ergonomic.
+ *
+ * Fluent getter/setter surface is the inner child's field methods applied
+ * at the top level. No `getChild` / `setChild` is emitted — the child slot
+ * is hidden from consumers since they never construct it directly.
+ *
+ * @see {@link resolveHoistedForm}
+ */
+function emitHoistedPolymorphFormFactory(
+    form: AssembledGroup,
+    hoist: HoistedForm,
+    nodeMap: NodeMap,
+): string {
+    const fn = form.rawFactoryName!
+    const configType = `T.${form.typeName}Config`
+    const variantName = form.name
+    const parentKind = form.parentKind ?? form.kind
+
+    // Determine optionality — inner child's required, non-auto-stamp fields
+    // make the config required.
+    const anyRequired = hoist.innerFields.some(f => isRequired(f) && resolveEffectiveLiteral(f, nodeMap) === undefined)
+    const opt = anyRequired ? '' : '?'
+
+    const lines: string[] = []
+    lines.push(`export function ${fn}(config${opt}: ${configType}) {`)
+    // Accept both the hoisted-fields Config AND the legacy
+    // `{ children: [Inner] }` shape. The legacy shape reaches this factory
+    // when the dispatcher's back-compat branch routes readNode-derived
+    // NodeData (`$children: [Inner]`) in via `nodeToConfig` — that path
+    // produces `{ children: [...] }` not flat fields. When `children` is
+    // present, reuse the first element as the inner child directly; else
+    // construct the inner child from the hoisted fields.
+    lines.push(`  const _cfg: any = config;`)
+    lines.push(`  const inner = _cfg && Array.isArray(_cfg.children) && _cfg.children.length > 0`)
+    lines.push(`    ? _cfg.children[0]`)
+    lines.push(`    : ${hoist.innerFactoryName}(_cfg);`)
+    lines.push(`  const children = [inner] as const;`)
+    lines.push('  return {')
+    lines.push(`    $type: '${parentKind}' as const,`)
+    lines.push(`    $source: 'factory' as const,`)
+    lines.push('    $named: true as const,')
+    lines.push(`    $variant: '${variantName}' as const,`)
+    lines.push('    $children: children,')
+
+    // Fluent getter/setter surface — reuse the inner child's field methods at
+    // the top level, rebuilt via this factory so the caller stays on the form
+    // factory's result type. Setters project the inner node's current fields
+    // into a fresh hoisted Config (camelCase) with the override applied,
+    // regardless of whether the original config shape was hoisted or legacy
+    // `{ children: [...] }`. That keeps setters stable across both input
+    // shapes.
+    for (const f of hoist.innerFields) {
+        const stamp = autoStampExpression(f, nodeMap)
+        const method = f.propertyName === 'type' ? 'typeField' : f.propertyName
+        if (stamp !== undefined) {
+            // Auto-stamp field — getter-only, reads through the inner node.
+            lines.push(`    get ${method}() { return (inner as any).$fields.${f.name}; },`)
+            continue
+        }
+        const fMultiple = isMultiple(f)
+        const param = fMultiple ? 'values' : 'value'
+        if (fMultiple) {
+            const elemType = fieldElementType(f, nodeMap)
+            const elemForArray = elemType.includes(' | ') ? `(${elemType})` : elemType
+            const restType = isNonEmpty(f) ? `NonEmptyArray<${elemType}>` : `${elemForArray}[]`
+            lines.push(`    ${method}(...${param}: ${restType}) { return ${fn}(_rebuildHoist(inner, { ${f.propertyName}: ${param} }) as ${configType}); },`)
+        } else {
+            const elemType = fieldElementType(f, nodeMap)
+            const paramType = isRequired(f) ? elemType : `${elemType} | undefined`
+            lines.push(`    ${method}(${param}?: ${paramType}) {`)
+            lines.push(`      if (${param} === undefined) return (inner as any).$fields.${f.name};`)
+            lines.push(`      return ${fn}(_rebuildHoist(inner, { ${f.propertyName}: ${param} }) as ${configType});`)
+            lines.push(`    },`)
+        }
+    }
+
+    lines.push(...factorySuffix(form.treeTypeName))
+    lines.push('  };')
+    lines.push('}')
+    return lines.join('\n')
 }
 
 /**
