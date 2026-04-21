@@ -80,13 +80,19 @@ export function expressionStatement(child?: (T.Expression | T.ExpressionEndingWi
   };
 }
 
+export function macroDefinition(config: { readonly $variant: 'paren' } & T.MacroDefinitionUFormParenConfig): ReturnType<typeof macroDefinitionUFormParen>;
+export function macroDefinition(config: { readonly $variant: 'bracket' } & T.MacroDefinitionUFormBracketConfig): ReturnType<typeof macroDefinitionUFormBracket>;
+export function macroDefinition(config: { readonly $variant: 'brace' } & T.MacroDefinitionUFormBraceConfig): ReturnType<typeof macroDefinitionUFormBrace>;
+export function macroDefinition(config: T.MacroDefinitionUFormParenConfig | T.MacroDefinitionUFormBracketConfig | T.MacroDefinitionUFormBraceConfig): ReturnType<typeof macroDefinitionUFormParen> | ReturnType<typeof macroDefinitionUFormBracket> | ReturnType<typeof macroDefinitionUFormBrace>;
 export function macroDefinition(config: T.MacroDefinitionUFormParenConfig | T.MacroDefinitionUFormBracketConfig | T.MacroDefinitionUFormBraceConfig) {
+  switch ((config as { $variant?: string }).$variant) {
+    case 'paren': return macroDefinitionUFormParen(config as T.MacroDefinitionUFormParenConfig);
+    case 'bracket': return macroDefinitionUFormBracket(config as T.MacroDefinitionUFormBracketConfig);
+    case 'brace': return macroDefinitionUFormBrace(config as T.MacroDefinitionUFormBraceConfig);
+  }
   if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === 'macro_definition_paren') return macroDefinitionUFormParen(config as T.MacroDefinitionUFormParenConfig);
   if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === 'macro_definition_bracket') return macroDefinitionUFormBracket(config as T.MacroDefinitionUFormBracketConfig);
   if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === 'macro_definition_brace') return macroDefinitionUFormBrace(config as T.MacroDefinitionUFormBraceConfig);
-  if (config && (config as any).variant === 'paren') return macroDefinitionUFormParen(config as T.MacroDefinitionUFormParenConfig);
-  if (config && (config as any).variant === 'bracket') return macroDefinitionUFormBracket(config as T.MacroDefinitionUFormBracketConfig);
-  if (config && (config as any).variant === 'brace') return macroDefinitionUFormBrace(config as T.MacroDefinitionUFormBraceConfig);
   return macroDefinitionUFormParen(config as T.MacroDefinitionUFormParenConfig);
 }
 export function macroDefinitionUFormParen(config: T.MacroDefinitionUFormParenConfig) {
@@ -98,7 +104,7 @@ export function macroDefinitionUFormParen(config: T.MacroDefinitionUFormParenCon
     $type: 'macro_definition' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $variant: '_form_paren' as const,
+    $variant: 'paren' as const,
     $fields: fields,
     $children: children,
     name(value?: T.Identifier | T.ReservedIdentifier) { return _fs(config, macroDefinitionUFormParen, 'name', value, fields.name); },
@@ -121,7 +127,7 @@ export function macroDefinitionUFormBracket(config: T.MacroDefinitionUFormBracke
     $type: 'macro_definition' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $variant: '_form_bracket' as const,
+    $variant: 'bracket' as const,
     $fields: fields,
     $children: children,
     name(value?: T.Identifier | T.ReservedIdentifier) { return _fs(config, macroDefinitionUFormBracket, 'name', value, fields.name); },
@@ -144,7 +150,7 @@ export function macroDefinitionUFormBrace(config: T.MacroDefinitionUFormBraceCon
     $type: 'macro_definition' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $variant: '_form_brace' as const,
+    $variant: 'brace' as const,
     $fields: fields,
     $children: children,
     name(value?: T.Identifier | T.ReservedIdentifier) { return _fs(config, macroDefinitionUFormBrace, 'name', value, fields.name); },
@@ -330,11 +336,16 @@ export function attribute(config: T.Attribute.Config) {
   };
 }
 
+export function modItem(config: { readonly $variant: 'external' } & T.ModItemUFormExternalConfig): ReturnType<typeof modItemUFormExternal>;
+export function modItem(config: { readonly $variant: 'inline' } & T.ModItemUFormInlineConfig): ReturnType<typeof modItemUFormInline>;
+export function modItem(config: T.ModItemUFormExternalConfig | T.ModItemUFormInlineConfig): ReturnType<typeof modItemUFormExternal> | ReturnType<typeof modItemUFormInline>;
 export function modItem(config: T.ModItemUFormExternalConfig | T.ModItemUFormInlineConfig) {
+  switch ((config as { $variant?: string }).$variant) {
+    case 'external': return modItemUFormExternal(config as T.ModItemUFormExternalConfig);
+    case 'inline': return modItemUFormInline(config as T.ModItemUFormInlineConfig);
+  }
   if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === 'mod_item_external') return modItemUFormExternal(config as T.ModItemUFormExternalConfig);
   if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === 'mod_item_inline') return modItemUFormInline(config as T.ModItemUFormInlineConfig);
-  if (config && (config as any).variant === 'external') return modItemUFormExternal(config as T.ModItemUFormExternalConfig);
-  if (config && (config as any).variant === 'inline') return modItemUFormInline(config as T.ModItemUFormInlineConfig);
   return modItemUFormExternal(config as T.ModItemUFormExternalConfig);
 }
 export function modItemUFormExternal(config: T.ModItemUFormExternalConfig) {
@@ -347,7 +358,7 @@ export function modItemUFormExternal(config: T.ModItemUFormExternalConfig) {
     $type: 'mod_item' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $variant: '_form_external' as const,
+    $variant: 'external' as const,
     $fields: fields,
     $children: children,
     visibilityModifier(value?: T.VisibilityModifier | undefined) { return _fs(config, modItemUFormExternal, 'visibilityModifier', value, fields.visibility_modifier); },
@@ -372,7 +383,7 @@ export function modItemUFormInline(config: T.ModItemUFormInlineConfig) {
     $type: 'mod_item' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $variant: '_form_inline' as const,
+    $variant: 'inline' as const,
     $fields: fields,
     $children: children,
     visibilityModifier(value?: T.VisibilityModifier | undefined) { return _fs(config, modItemUFormInline, 'visibilityModifier', value, fields.visibility_modifier); },
@@ -426,13 +437,19 @@ export function declarationList(...children: T.DeclarationStatement[]) {
   };
 }
 
+export function structItem(config: { readonly $variant: 'brace' } & T.StructItemUFormBraceConfig): ReturnType<typeof structItemUFormBrace>;
+export function structItem(config: { readonly $variant: 'tuple' } & T.StructItemUFormTupleConfig): ReturnType<typeof structItemUFormTuple>;
+export function structItem(config: { readonly $variant: 'unit' } & T.StructItemUFormUnitConfig): ReturnType<typeof structItemUFormUnit>;
+export function structItem(config: T.StructItemUFormBraceConfig | T.StructItemUFormTupleConfig | T.StructItemUFormUnitConfig): ReturnType<typeof structItemUFormBrace> | ReturnType<typeof structItemUFormTuple> | ReturnType<typeof structItemUFormUnit>;
 export function structItem(config: T.StructItemUFormBraceConfig | T.StructItemUFormTupleConfig | T.StructItemUFormUnitConfig) {
+  switch ((config as { $variant?: string }).$variant) {
+    case 'brace': return structItemUFormBrace(config as T.StructItemUFormBraceConfig);
+    case 'tuple': return structItemUFormTuple(config as T.StructItemUFormTupleConfig);
+    case 'unit': return structItemUFormUnit(config as T.StructItemUFormUnitConfig);
+  }
   if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === 'struct_item_brace') return structItemUFormBrace(config as T.StructItemUFormBraceConfig);
   if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === 'struct_item_tuple') return structItemUFormTuple(config as T.StructItemUFormTupleConfig);
   if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === 'struct_item_unit') return structItemUFormUnit(config as T.StructItemUFormUnitConfig);
-  if (config && (config as any).variant === 'brace') return structItemUFormBrace(config as T.StructItemUFormBraceConfig);
-  if (config && (config as any).variant === 'tuple') return structItemUFormTuple(config as T.StructItemUFormTupleConfig);
-  if (config && (config as any).variant === 'unit') return structItemUFormUnit(config as T.StructItemUFormUnitConfig);
   return structItemUFormBrace(config as T.StructItemUFormBraceConfig);
 }
 export function structItemUFormBrace(config: T.StructItemUFormBraceConfig) {
@@ -446,7 +463,7 @@ export function structItemUFormBrace(config: T.StructItemUFormBraceConfig) {
     $type: 'struct_item' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $variant: '_form_brace' as const,
+    $variant: 'brace' as const,
     $fields: fields,
     $children: children,
     visibilityModifier(value?: T.VisibilityModifier | undefined) { return _fs(config, structItemUFormBrace, 'visibilityModifier', value, fields.visibility_modifier); },
@@ -473,7 +490,7 @@ export function structItemUFormTuple(config: T.StructItemUFormTupleConfig) {
     $type: 'struct_item' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $variant: '_form_tuple' as const,
+    $variant: 'tuple' as const,
     $fields: fields,
     $children: children,
     visibilityModifier(value?: T.VisibilityModifier | undefined) { return _fs(config, structItemUFormTuple, 'visibilityModifier', value, fields.visibility_modifier); },
@@ -500,7 +517,7 @@ export function structItemUFormUnit(config: T.StructItemUFormUnitConfig) {
     $type: 'struct_item' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $variant: '_form_unit' as const,
+    $variant: 'unit' as const,
     $fields: fields,
     $children: children,
     visibilityModifier(value?: T.VisibilityModifier | undefined) { return _fs(config, structItemUFormUnit, 'visibilityModifier', value, fields.visibility_modifier); },
@@ -908,11 +925,16 @@ export function wherePredicate(config: T.WherePredicate.Config) {
   };
 }
 
+export function implItem(config: { readonly $variant: 'body' } & T.ImplItemUFormBodyConfig): ReturnType<typeof implItemUFormBody>;
+export function implItem(config: { readonly $variant: 'semi' } & T.ImplItemUFormSemiConfig): ReturnType<typeof implItemUFormSemi>;
+export function implItem(config: T.ImplItemUFormBodyConfig | T.ImplItemUFormSemiConfig): ReturnType<typeof implItemUFormBody> | ReturnType<typeof implItemUFormSemi>;
 export function implItem(config: T.ImplItemUFormBodyConfig | T.ImplItemUFormSemiConfig) {
+  switch ((config as { $variant?: string }).$variant) {
+    case 'body': return implItemUFormBody(config as T.ImplItemUFormBodyConfig);
+    case 'semi': return implItemUFormSemi(config as T.ImplItemUFormSemiConfig);
+  }
   if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === 'impl_item_body') return implItemUFormBody(config as T.ImplItemUFormBodyConfig);
   if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === 'impl_item_semi') return implItemUFormSemi(config as T.ImplItemUFormSemiConfig);
-  if (config && (config as any).variant === 'body') return implItemUFormBody(config as T.ImplItemUFormBodyConfig);
-  if (config && (config as any).variant === 'semi') return implItemUFormSemi(config as T.ImplItemUFormSemiConfig);
   return implItemUFormBody(config as T.ImplItemUFormBodyConfig);
 }
 export function implItemUFormBody(config: T.ImplItemUFormBodyConfig) {
@@ -928,7 +950,7 @@ export function implItemUFormBody(config: T.ImplItemUFormBodyConfig) {
     $type: 'impl_item' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $variant: '_form_body' as const,
+    $variant: 'body' as const,
     $fields: fields,
     $children: children,
     unsafe(value?: "unsafe" | undefined) { return _fs(config, implItemUFormBody, 'unsafe', value, fields.unsafe); },
@@ -959,7 +981,7 @@ export function implItemUFormSemi(config: T.ImplItemUFormSemiConfig) {
     $type: 'impl_item' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $variant: '_form_semi' as const,
+    $variant: 'semi' as const,
     $fields: fields,
     $children: children,
     unsafe(value?: "unsafe" | undefined) { return _fs(config, implItemUFormSemi, 'unsafe', value, fields.unsafe); },
@@ -1395,7 +1417,14 @@ export function externModifier(config?: T.ExternModifier.Config) {
   };
 }
 
+export function visibilityModifier(config: { readonly $variant: 'form0' } & T.VisibilityModifierForm0Config): ReturnType<typeof visibilityModifierForm0>;
+export function visibilityModifier(config: { readonly $variant: 'form1' } & T.VisibilityModifierForm1Config): ReturnType<typeof visibilityModifierForm1>;
+export function visibilityModifier(config: T.VisibilityModifierForm0Config | T.VisibilityModifierForm1Config): ReturnType<typeof visibilityModifierForm0> | ReturnType<typeof visibilityModifierForm1>;
 export function visibilityModifier(config: T.VisibilityModifierForm0Config | T.VisibilityModifierForm1Config) {
+  switch ((config as { $variant?: string }).$variant) {
+    case 'form0': return visibilityModifierForm0(config as T.VisibilityModifierForm0Config);
+    case 'form1': return visibilityModifierForm1(config as T.VisibilityModifierForm1Config);
+  }
   if (config && 'pub' in config && 'in' in config) return visibilityModifierForm1(config as T.VisibilityModifierForm1Config);
   return visibilityModifierForm0(config as T.VisibilityModifierForm0Config);
 }
@@ -1923,15 +1952,22 @@ export function scopedTypeIdentifier(config: T.ScopedTypeIdentifier.Config) {
   };
 }
 
+export function rangeExpression(config: { readonly $variant: 'binary' } & T.RangeExpressionUFormBinaryConfig): ReturnType<typeof rangeExpressionUFormBinary>;
+export function rangeExpression(config: { readonly $variant: 'postfix' } & T.RangeExpressionUFormPostfixConfig): ReturnType<typeof rangeExpressionUFormPostfix>;
+export function rangeExpression(config: { readonly $variant: 'prefix' } & T.RangeExpressionUFormPrefixConfig): ReturnType<typeof rangeExpressionUFormPrefix>;
+export function rangeExpression(config: { readonly $variant: 'bare' } & T.RangeExpressionUFormBareConfig): ReturnType<typeof rangeExpressionUFormBare>;
+export function rangeExpression(config: T.RangeExpressionUFormBinaryConfig | T.RangeExpressionUFormPostfixConfig | T.RangeExpressionUFormPrefixConfig | T.RangeExpressionUFormBareConfig): ReturnType<typeof rangeExpressionUFormBinary> | ReturnType<typeof rangeExpressionUFormPostfix> | ReturnType<typeof rangeExpressionUFormPrefix> | ReturnType<typeof rangeExpressionUFormBare>;
 export function rangeExpression(config: T.RangeExpressionUFormBinaryConfig | T.RangeExpressionUFormPostfixConfig | T.RangeExpressionUFormPrefixConfig | T.RangeExpressionUFormBareConfig) {
+  switch ((config as { $variant?: string }).$variant) {
+    case 'binary': return rangeExpressionUFormBinary(config as T.RangeExpressionUFormBinaryConfig);
+    case 'postfix': return rangeExpressionUFormPostfix(config as T.RangeExpressionUFormPostfixConfig);
+    case 'prefix': return rangeExpressionUFormPrefix(config as T.RangeExpressionUFormPrefixConfig);
+    case 'bare': return rangeExpressionUFormBare(config as T.RangeExpressionUFormBareConfig);
+  }
   if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === 'range_expression_binary') return rangeExpressionUFormBinary(config as T.RangeExpressionUFormBinaryConfig);
   if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === 'range_expression_postfix') return rangeExpressionUFormPostfix(config as T.RangeExpressionUFormPostfixConfig);
   if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === 'range_expression_prefix') return rangeExpressionUFormPrefix(config as T.RangeExpressionUFormPrefixConfig);
   if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === 'range_expression_bare') return rangeExpressionUFormBare(config as T.RangeExpressionUFormBareConfig);
-  if (config && (config as any).variant === 'binary') return rangeExpressionUFormBinary(config as T.RangeExpressionUFormBinaryConfig);
-  if (config && (config as any).variant === 'postfix') return rangeExpressionUFormPostfix(config as T.RangeExpressionUFormPostfixConfig);
-  if (config && (config as any).variant === 'prefix') return rangeExpressionUFormPrefix(config as T.RangeExpressionUFormPrefixConfig);
-  if (config && (config as any).variant === 'bare') return rangeExpressionUFormBare(config as T.RangeExpressionUFormBareConfig);
   return rangeExpressionUFormBinary(config as T.RangeExpressionUFormBinaryConfig);
 }
 export function rangeExpressionUFormBinary(config: T.RangeExpressionUFormBinaryConfig) {
@@ -1940,7 +1976,7 @@ export function rangeExpressionUFormBinary(config: T.RangeExpressionUFormBinaryC
     $type: 'range_expression' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $variant: '_form_binary' as const,
+    $variant: 'binary' as const,
     $children: children,
     getChild() { return children[0]; },
     setChild(child: T.RangeExpressionBinary) { return rangeExpressionUFormBinary({ ...config, children: [child] }); },
@@ -1958,7 +1994,7 @@ export function rangeExpressionUFormPostfix(config: T.RangeExpressionUFormPostfi
     $type: 'range_expression' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $variant: '_form_postfix' as const,
+    $variant: 'postfix' as const,
     $children: children,
     getChild() { return children[0]; },
     setChild(child: T.RangeExpressionPostfix) { return rangeExpressionUFormPostfix({ ...config, children: [child] }); },
@@ -1976,7 +2012,7 @@ export function rangeExpressionUFormPrefix(config: T.RangeExpressionUFormPrefixC
     $type: 'range_expression' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $variant: '_form_prefix' as const,
+    $variant: 'prefix' as const,
     $children: children,
     getChild() { return children[0]; },
     setChild(child: T.RangeExpressionPrefix) { return rangeExpressionUFormPrefix({ ...config, children: [child] }); },
@@ -1994,7 +2030,7 @@ export function rangeExpressionUFormBare(config: T.RangeExpressionUFormBareConfi
     $type: 'range_expression' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $variant: '_form_bare' as const,
+    $variant: 'bare' as const,
     $children: children,
     getChild() { return children[0]; },
     setChild(child: T.RangeExpressionBare) { return rangeExpressionUFormBare({ ...config, children: [child] }); },
@@ -2224,11 +2260,16 @@ export function arguments_(...children: (T.AttributeItem | T.Expression)[]) {
   };
 }
 
+export function arrayExpression(config: { readonly $variant: 'semi' } & T.ArrayExpressionUFormSemiConfig): ReturnType<typeof arrayExpressionUFormSemi>;
+export function arrayExpression(config: { readonly $variant: 'list' } & T.ArrayExpressionUFormListConfig): ReturnType<typeof arrayExpressionUFormList>;
+export function arrayExpression(config: T.ArrayExpressionUFormSemiConfig | T.ArrayExpressionUFormListConfig): ReturnType<typeof arrayExpressionUFormSemi> | ReturnType<typeof arrayExpressionUFormList>;
 export function arrayExpression(config: T.ArrayExpressionUFormSemiConfig | T.ArrayExpressionUFormListConfig) {
+  switch ((config as { $variant?: string }).$variant) {
+    case 'semi': return arrayExpressionUFormSemi(config as T.ArrayExpressionUFormSemiConfig);
+    case 'list': return arrayExpressionUFormList(config as T.ArrayExpressionUFormListConfig);
+  }
   if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === 'array_expression_semi') return arrayExpressionUFormSemi(config as T.ArrayExpressionUFormSemiConfig);
   if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === 'array_expression_list') return arrayExpressionUFormList(config as T.ArrayExpressionUFormListConfig);
-  if (config && (config as any).variant === 'semi') return arrayExpressionUFormSemi(config as T.ArrayExpressionUFormSemiConfig);
-  if (config && (config as any).variant === 'list') return arrayExpressionUFormList(config as T.ArrayExpressionUFormListConfig);
   return arrayExpressionUFormSemi(config as T.ArrayExpressionUFormSemiConfig);
 }
 export function arrayExpressionUFormSemi(config: T.ArrayExpressionUFormSemiConfig) {
@@ -2237,7 +2278,7 @@ export function arrayExpressionUFormSemi(config: T.ArrayExpressionUFormSemiConfi
     $type: 'array_expression' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $variant: '_form_semi' as const,
+    $variant: 'semi' as const,
     $children: children,
     getChild() { return children[0]; },
     setChild(child: T.ArrayExpressionSemi) { return arrayExpressionUFormSemi({ ...config, children: [child] }); },
@@ -2255,7 +2296,7 @@ export function arrayExpressionUFormList(config: T.ArrayExpressionUFormListConfi
     $type: 'array_expression' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $variant: '_form_list' as const,
+    $variant: 'list' as const,
     $children: children,
     getChild() { return children[0]; },
     setChild(child: T.ArrayExpressionList) { return arrayExpressionUFormList({ ...config, children: [child] }); },
@@ -2673,11 +2714,16 @@ export function constBlock(config: T.ConstBlock.Config) {
   };
 }
 
+export function closureExpression(config: { readonly $variant: 'block' } & T.ClosureExpressionUFormBlockConfig): ReturnType<typeof closureExpressionUFormBlock>;
+export function closureExpression(config: { readonly $variant: 'expr' } & T.ClosureExpressionUFormExprConfig): ReturnType<typeof closureExpressionUFormExpr>;
+export function closureExpression(config: T.ClosureExpressionUFormBlockConfig | T.ClosureExpressionUFormExprConfig): ReturnType<typeof closureExpressionUFormBlock> | ReturnType<typeof closureExpressionUFormExpr>;
 export function closureExpression(config: T.ClosureExpressionUFormBlockConfig | T.ClosureExpressionUFormExprConfig) {
+  switch ((config as { $variant?: string }).$variant) {
+    case 'block': return closureExpressionUFormBlock(config as T.ClosureExpressionUFormBlockConfig);
+    case 'expr': return closureExpressionUFormExpr(config as T.ClosureExpressionUFormExprConfig);
+  }
   if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === 'closure_expression_block') return closureExpressionUFormBlock(config as T.ClosureExpressionUFormBlockConfig);
   if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === 'closure_expression_expr') return closureExpressionUFormExpr(config as T.ClosureExpressionUFormExprConfig);
-  if (config && (config as any).variant === 'block') return closureExpressionUFormBlock(config as T.ClosureExpressionUFormBlockConfig);
-  if (config && (config as any).variant === 'expr') return closureExpressionUFormExpr(config as T.ClosureExpressionUFormExprConfig);
   return closureExpressionUFormBlock(config as T.ClosureExpressionUFormBlockConfig);
 }
 export function closureExpressionUFormBlock(config: T.ClosureExpressionUFormBlockConfig) {
@@ -2692,7 +2738,7 @@ export function closureExpressionUFormBlock(config: T.ClosureExpressionUFormBloc
     $type: 'closure_expression' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $variant: '_form_block' as const,
+    $variant: 'block' as const,
     $fields: fields,
     $children: children,
     static(value?: "static" | undefined) { return _fs(config, closureExpressionUFormBlock, 'static', value, fields.static); },
@@ -2721,7 +2767,7 @@ export function closureExpressionUFormExpr(config: T.ClosureExpressionUFormExprC
     $type: 'closure_expression' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $variant: '_form_expr' as const,
+    $variant: 'expr' as const,
     $fields: fields,
     $children: children,
     static(value?: "static" | undefined) { return _fs(config, closureExpressionUFormExpr, 'static', value, fields.static); },
@@ -3073,11 +3119,16 @@ export function structPattern(config: T.StructPattern.Config) {
   };
 }
 
+export function fieldPattern(config: { readonly $variant: 'shorthand' } & T.FieldPatternUFormShorthandConfig): ReturnType<typeof fieldPatternUFormShorthand>;
+export function fieldPattern(config: { readonly $variant: 'named' } & T.FieldPatternUFormNamedConfig): ReturnType<typeof fieldPatternUFormNamed>;
+export function fieldPattern(config: T.FieldPatternUFormShorthandConfig | T.FieldPatternUFormNamedConfig): ReturnType<typeof fieldPatternUFormShorthand> | ReturnType<typeof fieldPatternUFormNamed>;
 export function fieldPattern(config: T.FieldPatternUFormShorthandConfig | T.FieldPatternUFormNamedConfig) {
+  switch ((config as { $variant?: string }).$variant) {
+    case 'shorthand': return fieldPatternUFormShorthand(config as T.FieldPatternUFormShorthandConfig);
+    case 'named': return fieldPatternUFormNamed(config as T.FieldPatternUFormNamedConfig);
+  }
   if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === 'field_pattern_shorthand') return fieldPatternUFormShorthand(config as T.FieldPatternUFormShorthandConfig);
   if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === 'field_pattern_named') return fieldPatternUFormNamed(config as T.FieldPatternUFormNamedConfig);
-  if (config && (config as any).variant === 'shorthand') return fieldPatternUFormShorthand(config as T.FieldPatternUFormShorthandConfig);
-  if (config && (config as any).variant === 'named') return fieldPatternUFormNamed(config as T.FieldPatternUFormNamedConfig);
   return fieldPatternUFormShorthand(config as T.FieldPatternUFormShorthandConfig);
 }
 export function fieldPatternUFormShorthand(config: T.FieldPatternUFormShorthandConfig) {
@@ -3090,7 +3141,7 @@ export function fieldPatternUFormShorthand(config: T.FieldPatternUFormShorthandC
     $type: 'field_pattern' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $variant: '_form_shorthand' as const,
+    $variant: 'shorthand' as const,
     $fields: fields,
     $children: children,
     ref(value?: "ref" | undefined) { return _fs(config, fieldPatternUFormShorthand, 'ref', value, fields.ref); },
@@ -3115,7 +3166,7 @@ export function fieldPatternUFormNamed(config: T.FieldPatternUFormNamedConfig) {
     $type: 'field_pattern' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $variant: '_form_named' as const,
+    $variant: 'named' as const,
     $fields: fields,
     $children: children,
     ref(value?: "ref" | undefined) { return _fs(config, fieldPatternUFormNamed, 'ref', value, fields.ref); },
@@ -3152,11 +3203,16 @@ export function mutPattern(config: T.MutPattern.Config) {
   };
 }
 
+export function rangePattern(config: { readonly $variant: 'left' } & T.RangePatternUFormLeftConfig): ReturnType<typeof rangePatternUFormLeft>;
+export function rangePattern(config: { readonly $variant: 'prefix' } & T.RangePatternUFormPrefixConfig): ReturnType<typeof rangePatternUFormPrefix>;
+export function rangePattern(config: T.RangePatternUFormLeftConfig | T.RangePatternUFormPrefixConfig): ReturnType<typeof rangePatternUFormLeft> | ReturnType<typeof rangePatternUFormPrefix>;
 export function rangePattern(config: T.RangePatternUFormLeftConfig | T.RangePatternUFormPrefixConfig) {
+  switch ((config as { $variant?: string }).$variant) {
+    case 'left': return rangePatternUFormLeft(config as T.RangePatternUFormLeftConfig);
+    case 'prefix': return rangePatternUFormPrefix(config as T.RangePatternUFormPrefixConfig);
+  }
   if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === 'range_pattern_left') return rangePatternUFormLeft(config as T.RangePatternUFormLeftConfig);
   if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === 'range_pattern_prefix') return rangePatternUFormPrefix(config as T.RangePatternUFormPrefixConfig);
-  if (config && (config as any).variant === 'left') return rangePatternUFormLeft(config as T.RangePatternUFormLeftConfig);
-  if (config && (config as any).variant === 'prefix') return rangePatternUFormPrefix(config as T.RangePatternUFormPrefixConfig);
   return rangePatternUFormLeft(config as T.RangePatternUFormLeftConfig);
 }
 export function rangePatternUFormLeft(config: T.RangePatternUFormLeftConfig) {
@@ -3165,7 +3221,7 @@ export function rangePatternUFormLeft(config: T.RangePatternUFormLeftConfig) {
     $type: 'range_pattern' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $variant: '_form_left' as const,
+    $variant: 'left' as const,
     $children: children,
     getChild() { return children[0]; },
     setChild(child: T.RangePatternLeft) { return rangePatternUFormLeft({ ...config, children: [child] }); },
@@ -3183,7 +3239,7 @@ export function rangePatternUFormPrefix(config: T.RangePatternUFormPrefixConfig)
     $type: 'range_pattern' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $variant: '_form_prefix' as const,
+    $variant: 'prefix' as const,
     $children: children,
     getChild() { return children[0]; },
     setChild(child: T.RangePatternPrefix) { return rangePatternUFormPrefix({ ...config, children: [child] }); },
@@ -3254,11 +3310,16 @@ export function referencePattern(config: T.ReferencePattern.Config) {
   };
 }
 
+export function orPattern(config: { readonly $variant: 'binary' } & T.OrPatternUFormBinaryConfig): ReturnType<typeof orPatternUFormBinary>;
+export function orPattern(config: { readonly $variant: 'prefix' } & T.OrPatternUFormPrefixConfig): ReturnType<typeof orPatternUFormPrefix>;
+export function orPattern(config: T.OrPatternUFormBinaryConfig | T.OrPatternUFormPrefixConfig): ReturnType<typeof orPatternUFormBinary> | ReturnType<typeof orPatternUFormPrefix>;
 export function orPattern(config: T.OrPatternUFormBinaryConfig | T.OrPatternUFormPrefixConfig) {
+  switch ((config as { $variant?: string }).$variant) {
+    case 'binary': return orPatternUFormBinary(config as T.OrPatternUFormBinaryConfig);
+    case 'prefix': return orPatternUFormPrefix(config as T.OrPatternUFormPrefixConfig);
+  }
   if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === 'or_pattern_binary') return orPatternUFormBinary(config as T.OrPatternUFormBinaryConfig);
   if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === 'or_pattern_prefix') return orPatternUFormPrefix(config as T.OrPatternUFormPrefixConfig);
-  if (config && (config as any).variant === 'binary') return orPatternUFormBinary(config as T.OrPatternUFormBinaryConfig);
-  if (config && (config as any).variant === 'prefix') return orPatternUFormPrefix(config as T.OrPatternUFormPrefixConfig);
   return orPatternUFormBinary(config as T.OrPatternUFormBinaryConfig);
 }
 export function orPatternUFormBinary(config: T.OrPatternUFormBinaryConfig) {
@@ -3267,7 +3328,7 @@ export function orPatternUFormBinary(config: T.OrPatternUFormBinaryConfig) {
     $type: 'or_pattern' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $variant: '_form_binary' as const,
+    $variant: 'binary' as const,
     $children: children,
     getChild() { return children[0]; },
     setChild(child: T.OrPatternBinary) { return orPatternUFormBinary({ ...config, children: [child] }); },
@@ -3285,7 +3346,7 @@ export function orPatternUFormPrefix(config: T.OrPatternUFormPrefixConfig) {
     $type: 'or_pattern' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $variant: '_form_prefix' as const,
+    $variant: 'prefix' as const,
     $children: children,
     getChild() { return children[0]; },
     setChild(child: T.OrPatternPrefix) { return orPatternUFormPrefix({ ...config, children: [child] }); },

@@ -721,6 +721,7 @@ export interface ExpressionStatement {
 
 export interface MacroDefinitionUFormParen {
   readonly $type: 'macro_definition';
+  readonly $variant: 'paren';
   readonly $fields: {
     readonly name: Identifier | ReservedIdentifier;
   };
@@ -729,6 +730,7 @@ export interface MacroDefinitionUFormParen {
 
 export interface MacroDefinitionUFormBracket {
   readonly $type: 'macro_definition';
+  readonly $variant: 'bracket';
   readonly $fields: {
     readonly name: Identifier | ReservedIdentifier;
   };
@@ -737,6 +739,7 @@ export interface MacroDefinitionUFormBracket {
 
 export interface MacroDefinitionUFormBrace {
   readonly $type: 'macro_definition';
+  readonly $variant: 'brace';
   readonly $fields: {
     readonly name: Identifier | ReservedIdentifier;
   };
@@ -810,6 +813,7 @@ export interface Attribute {
 
 export interface ModItemUFormExternal {
   readonly $type: 'mod_item';
+  readonly $variant: 'external';
   readonly $fields: {
     readonly visibility_modifier?: VisibilityModifier;
     readonly name: Identifier;
@@ -819,6 +823,7 @@ export interface ModItemUFormExternal {
 
 export interface ModItemUFormInline {
   readonly $type: 'mod_item';
+  readonly $variant: 'inline';
   readonly $fields: {
     readonly visibility_modifier?: VisibilityModifier;
     readonly name: Identifier;
@@ -843,6 +848,7 @@ export interface DeclarationList {
 
 export interface StructItemUFormBrace {
   readonly $type: 'struct_item';
+  readonly $variant: 'brace';
   readonly $fields: {
     readonly visibility_modifier?: VisibilityModifier;
     readonly name: _TypeIdentifier;
@@ -853,6 +859,7 @@ export interface StructItemUFormBrace {
 
 export interface StructItemUFormTuple {
   readonly $type: 'struct_item';
+  readonly $variant: 'tuple';
   readonly $fields: {
     readonly visibility_modifier?: VisibilityModifier;
     readonly name: _TypeIdentifier;
@@ -863,6 +870,7 @@ export interface StructItemUFormTuple {
 
 export interface StructItemUFormUnit {
   readonly $type: 'struct_item';
+  readonly $variant: 'unit';
   readonly $fields: {
     readonly visibility_modifier?: VisibilityModifier;
     readonly name: _TypeIdentifier;
@@ -1027,6 +1035,7 @@ export interface WherePredicate {
 
 export interface ImplItemUFormBody {
   readonly $type: 'impl_item';
+  readonly $variant: 'body';
   readonly $fields: {
     readonly unsafe?: "unsafe";
     readonly type_parameters?: TypeParameters;
@@ -1039,6 +1048,7 @@ export interface ImplItemUFormBody {
 
 export interface ImplItemUFormSemi {
   readonly $type: 'impl_item';
+  readonly $variant: 'semi';
   readonly $fields: {
     readonly unsafe?: "unsafe";
     readonly type_parameters?: TypeParameters;
@@ -1210,11 +1220,13 @@ export interface ExternModifier {
 
 export interface VisibilityModifierForm0 {
   readonly $type: 'visibility_modifier';
+  readonly $variant: 'form0';
   readonly $children: readonly [Crate];
 }
 
 export interface VisibilityModifierForm1 {
   readonly $type: 'visibility_modifier';
+  readonly $variant: 'form1';
   readonly $fields: {
     readonly pub: AutoStamp<"pub">;
     readonly in?: "in";
@@ -1394,21 +1406,25 @@ export interface ScopedTypeIdentifier {
 
 export interface RangeExpressionUFormBinary {
   readonly $type: 'range_expression';
+  readonly $variant: 'binary';
   readonly $children: readonly [RangeExpressionBinary];
 }
 
 export interface RangeExpressionUFormPostfix {
   readonly $type: 'range_expression';
+  readonly $variant: 'postfix';
   readonly $children: readonly [RangeExpressionPostfix];
 }
 
 export interface RangeExpressionUFormPrefix {
   readonly $type: 'range_expression';
+  readonly $variant: 'prefix';
   readonly $children: readonly [RangeExpressionPrefix];
 }
 
 export interface RangeExpressionUFormBare {
   readonly $type: 'range_expression';
+  readonly $variant: 'bare';
   readonly $children: readonly [RangeExpressionBare];
 }
 
@@ -1495,11 +1511,13 @@ export interface Arguments {
 
 export interface ArrayExpressionUFormSemi {
   readonly $type: 'array_expression';
+  readonly $variant: 'semi';
   readonly $children: readonly [ArrayExpressionSemi];
 }
 
 export interface ArrayExpressionUFormList {
   readonly $type: 'array_expression';
+  readonly $variant: 'list';
   readonly $children: readonly [ArrayExpressionList];
 }
 
@@ -1654,6 +1672,7 @@ export interface ConstBlock {
 
 export interface ClosureExpressionUFormBlock {
   readonly $type: 'closure_expression';
+  readonly $variant: 'block';
   readonly $fields: {
     readonly static?: "static";
     readonly async?: "async";
@@ -1665,6 +1684,7 @@ export interface ClosureExpressionUFormBlock {
 
 export interface ClosureExpressionUFormExpr {
   readonly $type: 'closure_expression';
+  readonly $variant: 'expr';
   readonly $fields: {
     readonly static?: "static";
     readonly async?: "async";
@@ -1797,6 +1817,7 @@ export interface StructPattern {
 
 export interface FieldPatternUFormShorthand {
   readonly $type: 'field_pattern';
+  readonly $variant: 'shorthand';
   readonly $fields: {
     readonly ref?: "ref";
     readonly mutable_specifier?: MutableSpecifier;
@@ -1806,6 +1827,7 @@ export interface FieldPatternUFormShorthand {
 
 export interface FieldPatternUFormNamed {
   readonly $type: 'field_pattern';
+  readonly $variant: 'named';
   readonly $fields: {
     readonly ref?: "ref";
     readonly mutable_specifier?: MutableSpecifier;
@@ -1824,11 +1846,13 @@ export interface MutPattern {
 
 export interface RangePatternUFormLeft {
   readonly $type: 'range_pattern';
+  readonly $variant: 'left';
   readonly $children: readonly [RangePatternLeft];
 }
 
 export interface RangePatternUFormPrefix {
   readonly $type: 'range_pattern';
+  readonly $variant: 'prefix';
   readonly $children: readonly [RangePatternPrefix];
 }
 
@@ -1856,11 +1880,13 @@ export interface ReferencePattern {
 
 export interface OrPatternUFormBinary {
   readonly $type: 'or_pattern';
+  readonly $variant: 'binary';
   readonly $children: readonly [OrPatternBinary];
 }
 
 export interface OrPatternUFormPrefix {
   readonly $type: 'or_pattern';
+  readonly $variant: 'prefix';
   readonly $children: readonly [OrPatternPrefix];
 }
 

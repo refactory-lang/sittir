@@ -530,6 +530,7 @@ export interface MatchStatement {
 
 export interface MatchBlockForm0 {
   readonly $type: '_match_block';
+  readonly $variant: 'form0';
   readonly $fields: {
     readonly alternative: readonly (CaseClause)[];
   };
@@ -537,6 +538,7 @@ export interface MatchBlockForm0 {
 
 export interface MatchBlockForm1 {
   readonly $type: '_match_block';
+  readonly $variant: 'form1';
 }
 
 export type MatchBlock = MatchBlockForm0 | MatchBlockForm1;
@@ -922,6 +924,7 @@ export interface LambdaWithinForInClause {
 
 export interface AssignmentUFormEq {
   readonly $type: 'assignment';
+  readonly $variant: 'eq';
   readonly $fields: {
     readonly left: LeftHandSide;
   };
@@ -930,6 +933,7 @@ export interface AssignmentUFormEq {
 
 export interface AssignmentUFormType {
   readonly $type: 'assignment';
+  readonly $variant: 'type';
   readonly $fields: {
     readonly left: LeftHandSide;
   };
@@ -938,6 +942,7 @@ export interface AssignmentUFormType {
 
 export interface AssignmentUFormTyped {
   readonly $type: 'assignment';
+  readonly $variant: 'typed';
   readonly $fields: {
     readonly left: LeftHandSide;
   };

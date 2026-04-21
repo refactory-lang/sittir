@@ -79,7 +79,18 @@ export function hashBangLine(text: string) {
   };
 }
 
+export function exportStatement(config: { readonly $variant: 'form0' } & T.ExportStatementForm0Config): ReturnType<typeof exportStatementForm0>;
+export function exportStatement(config: { readonly $variant: 'form1' } & T.ExportStatementForm1Config): ReturnType<typeof exportStatementForm1>;
+export function exportStatement(config: { readonly $variant: 'form2' } & T.ExportStatementForm2Config): ReturnType<typeof exportStatementForm2>;
+export function exportStatement(config: { readonly $variant: 'form3' } & T.ExportStatementForm3Config): ReturnType<typeof exportStatementForm3>;
+export function exportStatement(config: T.ExportStatementForm0Config | T.ExportStatementForm1Config | T.ExportStatementForm2Config | T.ExportStatementForm3Config): ReturnType<typeof exportStatementForm0> | ReturnType<typeof exportStatementForm1> | ReturnType<typeof exportStatementForm2> | ReturnType<typeof exportStatementForm3>;
 export function exportStatement(config: T.ExportStatementForm0Config | T.ExportStatementForm1Config | T.ExportStatementForm2Config | T.ExportStatementForm3Config) {
+  switch ((config as { $variant?: string }).$variant) {
+    case 'form0': return exportStatementForm0(config as T.ExportStatementForm0Config);
+    case 'form1': return exportStatementForm1(config as T.ExportStatementForm1Config);
+    case 'form2': return exportStatementForm2(config as T.ExportStatementForm2Config);
+    case 'form3': return exportStatementForm3(config as T.ExportStatementForm3Config);
+  }
   if (config && 'decorator' in config && 'declaration' in config && 'value' in config) return exportStatementForm0(config as T.ExportStatementForm0Config);
   return exportStatementForm3(config as T.ExportStatementForm3Config);
 }
@@ -272,13 +283,19 @@ export function importStatement(config: T.ImportStatement.Config) {
   };
 }
 
+export function importClause(config: { readonly $variant: 'namespace_import' } & T.ImportClauseUFormNamespaceImportConfig): ReturnType<typeof importClauseUFormNamespaceImport>;
+export function importClause(config: { readonly $variant: 'named_imports' } & T.ImportClauseUFormNamedImportsConfig): ReturnType<typeof importClauseUFormNamedImports>;
+export function importClause(config: { readonly $variant: 'default_import' } & T.ImportClauseUFormDefaultImportConfig): ReturnType<typeof importClauseUFormDefaultImport>;
+export function importClause(config: T.ImportClauseUFormNamespaceImportConfig | T.ImportClauseUFormNamedImportsConfig | T.ImportClauseUFormDefaultImportConfig): ReturnType<typeof importClauseUFormNamespaceImport> | ReturnType<typeof importClauseUFormNamedImports> | ReturnType<typeof importClauseUFormDefaultImport>;
 export function importClause(config: T.ImportClauseUFormNamespaceImportConfig | T.ImportClauseUFormNamedImportsConfig | T.ImportClauseUFormDefaultImportConfig) {
+  switch ((config as { $variant?: string }).$variant) {
+    case 'namespace_import': return importClauseUFormNamespaceImport(config as T.ImportClauseUFormNamespaceImportConfig);
+    case 'named_imports': return importClauseUFormNamedImports(config as T.ImportClauseUFormNamedImportsConfig);
+    case 'default_import': return importClauseUFormDefaultImport(config as T.ImportClauseUFormDefaultImportConfig);
+  }
   if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === 'import_clause_namespace_import') return importClauseUFormNamespaceImport(config as T.ImportClauseUFormNamespaceImportConfig);
   if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === 'import_clause_named_imports') return importClauseUFormNamedImports(config as T.ImportClauseUFormNamedImportsConfig);
   if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === 'import_clause_default_import') return importClauseUFormDefaultImport(config as T.ImportClauseUFormDefaultImportConfig);
-  if (config && (config as any).variant === 'namespace_import') return importClauseUFormNamespaceImport(config as T.ImportClauseUFormNamespaceImportConfig);
-  if (config && (config as any).variant === 'named_imports') return importClauseUFormNamedImports(config as T.ImportClauseUFormNamedImportsConfig);
-  if (config && (config as any).variant === 'default_import') return importClauseUFormDefaultImport(config as T.ImportClauseUFormDefaultImportConfig);
   return importClauseUFormNamespaceImport(config as T.ImportClauseUFormNamespaceImportConfig);
 }
 export function importClauseUFormNamespaceImport(config: T.ImportClauseUFormNamespaceImportConfig) {
@@ -287,7 +304,7 @@ export function importClauseUFormNamespaceImport(config: T.ImportClauseUFormName
     $type: 'import_clause' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $variant: '_form_namespace_import' as const,
+    $variant: 'namespace_import' as const,
     $children: children,
     getChild() { return children[0]; },
     setChild(child: T.ImportClauseNamespaceImport) { return importClauseUFormNamespaceImport({ ...config, children: [child] }); },
@@ -305,7 +322,7 @@ export function importClauseUFormNamedImports(config: T.ImportClauseUFormNamedIm
     $type: 'import_clause' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $variant: '_form_named_imports' as const,
+    $variant: 'named_imports' as const,
     $children: children,
     getChild() { return children[0]; },
     setChild(child: T.ImportClauseNamedImports) { return importClauseUFormNamedImports({ ...config, children: [child] }); },
@@ -323,7 +340,7 @@ export function importClauseUFormDefaultImport(config: T.ImportClauseUFormDefaul
     $type: 'import_clause' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $variant: '_form_default_import' as const,
+    $variant: 'default_import' as const,
     $children: children,
     getChild() { return children[0]; },
     setChild(child: T.ImportClauseDefaultImport) { return importClauseUFormDefaultImport({ ...config, children: [child] }); },
@@ -370,11 +387,16 @@ export function namedImports(...children: T.ImportSpecifier[]) {
   };
 }
 
+export function importSpecifier(config: { readonly $variant: 'name' } & T.ImportSpecifierUFormNameConfig): ReturnType<typeof importSpecifierUFormName>;
+export function importSpecifier(config: { readonly $variant: 'as' } & T.ImportSpecifierUFormAsConfig): ReturnType<typeof importSpecifierUFormAs>;
+export function importSpecifier(config: T.ImportSpecifierUFormNameConfig | T.ImportSpecifierUFormAsConfig): ReturnType<typeof importSpecifierUFormName> | ReturnType<typeof importSpecifierUFormAs>;
 export function importSpecifier(config: T.ImportSpecifierUFormNameConfig | T.ImportSpecifierUFormAsConfig) {
+  switch ((config as { $variant?: string }).$variant) {
+    case 'name': return importSpecifierUFormName(config as T.ImportSpecifierUFormNameConfig);
+    case 'as': return importSpecifierUFormAs(config as T.ImportSpecifierUFormAsConfig);
+  }
   if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === 'import_specifier_name') return importSpecifierUFormName(config as T.ImportSpecifierUFormNameConfig);
   if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === 'import_specifier_as') return importSpecifierUFormAs(config as T.ImportSpecifierUFormAsConfig);
-  if (config && (config as any).variant === 'name') return importSpecifierUFormName(config as T.ImportSpecifierUFormNameConfig);
-  if (config && (config as any).variant === 'as') return importSpecifierUFormAs(config as T.ImportSpecifierUFormAsConfig);
   return importSpecifierUFormName(config as T.ImportSpecifierUFormNameConfig);
 }
 export function importSpecifierUFormName(config: T.ImportSpecifierUFormNameConfig) {
@@ -383,7 +405,7 @@ export function importSpecifierUFormName(config: T.ImportSpecifierUFormNameConfi
     $type: 'import_specifier' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $variant: '_form_name' as const,
+    $variant: 'name' as const,
     $children: children,
     getChild() { return children[0]; },
     setChild(child: T.ImportSpecifierName) { return importSpecifierUFormName({ ...config, children: [child] }); },
@@ -401,7 +423,7 @@ export function importSpecifierUFormAs(config: T.ImportSpecifierUFormAsConfig) {
     $type: 'import_specifier' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $variant: '_form_as' as const,
+    $variant: 'as' as const,
     $children: children,
     getChild() { return children[0]; },
     setChild(child: T.ImportSpecifierAs) { return importSpecifierUFormAs({ ...config, children: [child] }); },
@@ -509,7 +531,14 @@ export function lexicalDeclaration(config: T.LexicalDeclaration.Config) {
   };
 }
 
+export function variableDeclarator(config: { readonly $variant: 'form0' } & T.VariableDeclaratorForm0Config): ReturnType<typeof variableDeclaratorForm0>;
+export function variableDeclarator(config: { readonly $variant: 'form1' } & T.VariableDeclaratorForm1Config): ReturnType<typeof variableDeclaratorForm1>;
+export function variableDeclarator(config: T.VariableDeclaratorForm0Config | T.VariableDeclaratorForm1Config): ReturnType<typeof variableDeclaratorForm0> | ReturnType<typeof variableDeclaratorForm1>;
 export function variableDeclarator(config: T.VariableDeclaratorForm0Config | T.VariableDeclaratorForm1Config) {
+  switch ((config as { $variant?: string }).$variant) {
+    case 'form0': return variableDeclaratorForm0(config as T.VariableDeclaratorForm0Config);
+    case 'form1': return variableDeclaratorForm1(config as T.VariableDeclaratorForm1Config);
+  }
   if (config && 'name' in config && 'type' in config) return variableDeclaratorForm0(config as T.VariableDeclaratorForm0Config);
   return variableDeclaratorForm1(config as T.VariableDeclaratorForm1Config);
 }
@@ -1448,11 +1477,16 @@ export function classDeclaration(config: T.ClassDeclaration.Config) {
   };
 }
 
+export function classHeritage(config: { readonly $variant: 'extends_clause' } & T.ClassHeritageUFormExtendsClauseConfig): ReturnType<typeof classHeritageUFormExtendsClause>;
+export function classHeritage(config: { readonly $variant: 'implements_clause' } & T.ClassHeritageUFormImplementsClauseConfig): ReturnType<typeof classHeritageUFormImplementsClause>;
+export function classHeritage(config: T.ClassHeritageUFormExtendsClauseConfig | T.ClassHeritageUFormImplementsClauseConfig): ReturnType<typeof classHeritageUFormExtendsClause> | ReturnType<typeof classHeritageUFormImplementsClause>;
 export function classHeritage(config: T.ClassHeritageUFormExtendsClauseConfig | T.ClassHeritageUFormImplementsClauseConfig) {
+  switch ((config as { $variant?: string }).$variant) {
+    case 'extends_clause': return classHeritageUFormExtendsClause(config as T.ClassHeritageUFormExtendsClauseConfig);
+    case 'implements_clause': return classHeritageUFormImplementsClause(config as T.ClassHeritageUFormImplementsClauseConfig);
+  }
   if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === 'class_heritage_extends_clause') return classHeritageUFormExtendsClause(config as T.ClassHeritageUFormExtendsClauseConfig);
   if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === 'class_heritage_implements_clause') return classHeritageUFormImplementsClause(config as T.ClassHeritageUFormImplementsClauseConfig);
-  if (config && (config as any).variant === 'extends_clause') return classHeritageUFormExtendsClause(config as T.ClassHeritageUFormExtendsClauseConfig);
-  if (config && (config as any).variant === 'implements_clause') return classHeritageUFormImplementsClause(config as T.ClassHeritageUFormImplementsClauseConfig);
   return classHeritageUFormExtendsClause(config as T.ClassHeritageUFormExtendsClauseConfig);
 }
 export function classHeritageUFormExtendsClause(config: T.ClassHeritageUFormExtendsClauseConfig) {
@@ -1461,7 +1495,7 @@ export function classHeritageUFormExtendsClause(config: T.ClassHeritageUFormExte
     $type: 'class_heritage' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $variant: '_form_extends_clause' as const,
+    $variant: 'extends_clause' as const,
     $children: children,
     getChild() { return children[0]; },
     setChild(child: T.ClassHeritageExtendsClause) { return classHeritageUFormExtendsClause({ ...config, children: [child] }); },
@@ -1479,7 +1513,7 @@ export function classHeritageUFormImplementsClause(config: T.ClassHeritageUFormI
     $type: 'class_heritage' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $variant: '_form_implements_clause' as const,
+    $variant: 'implements_clause' as const,
     $children: children,
     getChild() { return children[0]; },
     setChild(child: T.ClassHeritageImplementsClause) { return classHeritageUFormImplementsClause({ ...config, children: [child] }); },
@@ -1616,11 +1650,16 @@ export function generatorFunctionDeclaration(config: T.GeneratorFunctionDeclarat
   };
 }
 
+export function arrowFunction(config: { readonly $variant: 'parameter' } & T.ArrowFunctionUFormParameterConfig): ReturnType<typeof arrowFunctionUFormParameter>;
+export function arrowFunction(config: { readonly $variant: '_call_signature' } & T.ArrowFunctionUFormUCallSignatureConfig): ReturnType<typeof arrowFunctionUFormUCallSignature>;
+export function arrowFunction(config: T.ArrowFunctionUFormParameterConfig | T.ArrowFunctionUFormUCallSignatureConfig): ReturnType<typeof arrowFunctionUFormParameter> | ReturnType<typeof arrowFunctionUFormUCallSignature>;
 export function arrowFunction(config: T.ArrowFunctionUFormParameterConfig | T.ArrowFunctionUFormUCallSignatureConfig) {
+  switch ((config as { $variant?: string }).$variant) {
+    case 'parameter': return arrowFunctionUFormParameter(config as T.ArrowFunctionUFormParameterConfig);
+    case '_call_signature': return arrowFunctionUFormUCallSignature(config as T.ArrowFunctionUFormUCallSignatureConfig);
+  }
   if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === 'arrow_function_parameter') return arrowFunctionUFormParameter(config as T.ArrowFunctionUFormParameterConfig);
   if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === 'arrow_function__call_signature') return arrowFunctionUFormUCallSignature(config as T.ArrowFunctionUFormUCallSignatureConfig);
-  if (config && (config as any).variant === 'parameter') return arrowFunctionUFormParameter(config as T.ArrowFunctionUFormParameterConfig);
-  if (config && (config as any).variant === '_call_signature') return arrowFunctionUFormUCallSignature(config as T.ArrowFunctionUFormUCallSignatureConfig);
   return arrowFunctionUFormParameter(config as T.ArrowFunctionUFormParameterConfig);
 }
 export function arrowFunctionUFormParameter(config: T.ArrowFunctionUFormParameterConfig) {
@@ -1633,7 +1672,7 @@ export function arrowFunctionUFormParameter(config: T.ArrowFunctionUFormParamete
     $type: 'arrow_function' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $variant: '_form_parameter' as const,
+    $variant: 'parameter' as const,
     $fields: fields,
     $children: children,
     async(value?: "async" | undefined) { return _fs(config, arrowFunctionUFormParameter, 'async', value, fields.async); },
@@ -1658,7 +1697,7 @@ export function arrowFunctionUFormUCallSignature(config: T.ArrowFunctionUFormUCa
     $type: 'arrow_function' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $variant: '_form__call_signature' as const,
+    $variant: '_call_signature' as const,
     $fields: fields,
     $children: children,
     async(value?: "async" | undefined) { return _fs(config, arrowFunctionUFormUCallSignature, 'async', value, fields.async); },
@@ -1674,7 +1713,16 @@ export function arrowFunctionUFormUCallSignature(config: T.ArrowFunctionUFormUCa
   };
 }
 
+export function callExpression(config: { readonly $variant: 'form0' } & T.CallExpressionForm0Config): ReturnType<typeof callExpressionForm0>;
+export function callExpression(config: { readonly $variant: 'form1' } & T.CallExpressionForm1Config): ReturnType<typeof callExpressionForm1>;
+export function callExpression(config: { readonly $variant: 'form2' } & T.CallExpressionForm2Config): ReturnType<typeof callExpressionForm2>;
+export function callExpression(config: T.CallExpressionForm0Config | T.CallExpressionForm1Config | T.CallExpressionForm2Config): ReturnType<typeof callExpressionForm0> | ReturnType<typeof callExpressionForm1> | ReturnType<typeof callExpressionForm2>;
 export function callExpression(config: T.CallExpressionForm0Config | T.CallExpressionForm1Config | T.CallExpressionForm2Config) {
+  switch ((config as { $variant?: string }).$variant) {
+    case 'form0': return callExpressionForm0(config as T.CallExpressionForm0Config);
+    case 'form1': return callExpressionForm1(config as T.CallExpressionForm1Config);
+    case 'form2': return callExpressionForm2(config as T.CallExpressionForm2Config);
+  }
   if (config && 'function' in config && 'typeArguments' in config && 'arguments' in config) return callExpressionForm0(config as T.CallExpressionForm0Config);
   return callExpressionForm1(config as T.CallExpressionForm1Config);
 }
@@ -3941,11 +3989,16 @@ export function constructSignature(config: T.ConstructSignature.Config) {
   };
 }
 
+export function indexSignature(config: { readonly $variant: 'colon' } & T.IndexSignatureUFormColonConfig): ReturnType<typeof indexSignatureUFormColon>;
+export function indexSignature(config: { readonly $variant: 'mapped_type_clause' } & T.IndexSignatureUFormMappedTypeClauseConfig): ReturnType<typeof indexSignatureUFormMappedTypeClause>;
+export function indexSignature(config: T.IndexSignatureUFormColonConfig | T.IndexSignatureUFormMappedTypeClauseConfig): ReturnType<typeof indexSignatureUFormColon> | ReturnType<typeof indexSignatureUFormMappedTypeClause>;
 export function indexSignature(config: T.IndexSignatureUFormColonConfig | T.IndexSignatureUFormMappedTypeClauseConfig) {
+  switch ((config as { $variant?: string }).$variant) {
+    case 'colon': return indexSignatureUFormColon(config as T.IndexSignatureUFormColonConfig);
+    case 'mapped_type_clause': return indexSignatureUFormMappedTypeClause(config as T.IndexSignatureUFormMappedTypeClauseConfig);
+  }
   if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === 'index_signature_colon') return indexSignatureUFormColon(config as T.IndexSignatureUFormColonConfig);
   if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === 'index_signature_mapped_type_clause') return indexSignatureUFormMappedTypeClause(config as T.IndexSignatureUFormMappedTypeClauseConfig);
-  if (config && (config as any).variant === 'colon') return indexSignatureUFormColon(config as T.IndexSignatureUFormColonConfig);
-  if (config && (config as any).variant === 'mapped_type_clause') return indexSignatureUFormMappedTypeClause(config as T.IndexSignatureUFormMappedTypeClauseConfig);
   return indexSignatureUFormColon(config as T.IndexSignatureUFormColonConfig);
 }
 export function indexSignatureUFormColon(config: T.IndexSignatureUFormColonConfig) {
@@ -3958,7 +4011,7 @@ export function indexSignatureUFormColon(config: T.IndexSignatureUFormColonConfi
     $type: 'index_signature' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $variant: '_form_colon' as const,
+    $variant: 'colon' as const,
     $fields: fields,
     $children: children,
     sign(value?: "-" | "+" | undefined) { return _fs(config, indexSignatureUFormColon, 'sign', value, fields.sign); },
@@ -3983,7 +4036,7 @@ export function indexSignatureUFormMappedTypeClause(config: T.IndexSignatureUFor
     $type: 'index_signature' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $variant: '_form_mapped_type_clause' as const,
+    $variant: 'mapped_type_clause' as const,
     $fields: fields,
     $children: children,
     sign(value?: "-" | "+" | undefined) { return _fs(config, indexSignatureUFormMappedTypeClause, 'sign', value, fields.sign); },

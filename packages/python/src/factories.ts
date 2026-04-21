@@ -440,7 +440,14 @@ export function matchStatement(config: T.MatchStatement.Config) {
   };
 }
 
+export function matchBlock(config: { readonly $variant: 'form0' } & T.MatchBlockForm0Config): ReturnType<typeof matchBlockForm0>;
+export function matchBlock(config: { readonly $variant: 'form1' } & T.MatchBlockForm1Config): ReturnType<typeof matchBlockForm1>;
+export function matchBlock(config: T.MatchBlockForm0Config | T.MatchBlockForm1Config): ReturnType<typeof matchBlockForm0> | ReturnType<typeof matchBlockForm1>;
 export function matchBlock(config: T.MatchBlockForm0Config | T.MatchBlockForm1Config) {
+  switch ((config as { $variant?: string }).$variant) {
+    case 'form0': return matchBlockForm0(config as T.MatchBlockForm0Config);
+    case 'form1': return matchBlockForm1(config as T.MatchBlockForm1Config);
+  }
   if (config && 'alternative' in config) return matchBlockForm0(config as T.MatchBlockForm0Config);
   return matchBlockForm1(config as T.MatchBlockForm1Config);
 }
@@ -1456,13 +1463,19 @@ export function lambdaWithinForInClause(config: T.LambdaWithinForInClause.Config
   };
 }
 
+export function assignment(config: { readonly $variant: 'eq' } & T.AssignmentUFormEqConfig): ReturnType<typeof assignmentUFormEq>;
+export function assignment(config: { readonly $variant: 'type' } & T.AssignmentUFormTypeConfig): ReturnType<typeof assignmentUFormType>;
+export function assignment(config: { readonly $variant: 'typed' } & T.AssignmentUFormTypedConfig): ReturnType<typeof assignmentUFormTyped>;
+export function assignment(config: T.AssignmentUFormEqConfig | T.AssignmentUFormTypeConfig | T.AssignmentUFormTypedConfig): ReturnType<typeof assignmentUFormEq> | ReturnType<typeof assignmentUFormType> | ReturnType<typeof assignmentUFormTyped>;
 export function assignment(config: T.AssignmentUFormEqConfig | T.AssignmentUFormTypeConfig | T.AssignmentUFormTypedConfig) {
+  switch ((config as { $variant?: string }).$variant) {
+    case 'eq': return assignmentUFormEq(config as T.AssignmentUFormEqConfig);
+    case 'type': return assignmentUFormType(config as T.AssignmentUFormTypeConfig);
+    case 'typed': return assignmentUFormTyped(config as T.AssignmentUFormTypedConfig);
+  }
   if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === 'assignment_eq') return assignmentUFormEq(config as T.AssignmentUFormEqConfig);
   if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === 'assignment_type') return assignmentUFormType(config as T.AssignmentUFormTypeConfig);
   if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === 'assignment_typed') return assignmentUFormTyped(config as T.AssignmentUFormTypedConfig);
-  if (config && (config as any).variant === 'eq') return assignmentUFormEq(config as T.AssignmentUFormEqConfig);
-  if (config && (config as any).variant === 'type') return assignmentUFormType(config as T.AssignmentUFormTypeConfig);
-  if (config && (config as any).variant === 'typed') return assignmentUFormTyped(config as T.AssignmentUFormTypedConfig);
   return assignmentUFormEq(config as T.AssignmentUFormEqConfig);
 }
 export function assignmentUFormEq(config: T.AssignmentUFormEqConfig) {
@@ -1474,7 +1487,7 @@ export function assignmentUFormEq(config: T.AssignmentUFormEqConfig) {
     $type: 'assignment' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $variant: '_form_eq' as const,
+    $variant: 'eq' as const,
     $fields: fields,
     $children: children,
     left(value?: T.LeftHandSide) { return _fs(config, assignmentUFormEq, 'left', value, fields.left); },
@@ -1497,7 +1510,7 @@ export function assignmentUFormType(config: T.AssignmentUFormTypeConfig) {
     $type: 'assignment' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $variant: '_form_type' as const,
+    $variant: 'type' as const,
     $fields: fields,
     $children: children,
     left(value?: T.LeftHandSide) { return _fs(config, assignmentUFormType, 'left', value, fields.left); },
@@ -1520,7 +1533,7 @@ export function assignmentUFormTyped(config: T.AssignmentUFormTypedConfig) {
     $type: 'assignment' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $variant: '_form_typed' as const,
+    $variant: 'typed' as const,
     $fields: fields,
     $children: children,
     left(value?: T.LeftHandSide) { return _fs(config, assignmentUFormTyped, 'left', value, fields.left); },

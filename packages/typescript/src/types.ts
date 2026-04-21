@@ -511,6 +511,7 @@ export interface Program {
 
 export interface ExportStatementForm0 {
   readonly $type: 'export_statement';
+  readonly $variant: 'form0';
   readonly $fields: {
     readonly decorator: readonly (Decorator)[];
     readonly declaration?: Declaration;
@@ -521,16 +522,19 @@ export interface ExportStatementForm0 {
 
 export interface ExportStatementForm1 {
   readonly $type: 'export_statement';
+  readonly $variant: 'form1';
   readonly $children: readonly [ExportClause | FromClause | Semicolon];
 }
 
 export interface ExportStatementForm2 {
   readonly $type: 'export_statement';
+  readonly $variant: 'form2';
   readonly $children: readonly [Expression | Semicolon];
 }
 
 export interface ExportStatementForm3 {
   readonly $type: 'export_statement';
+  readonly $variant: 'form3';
   readonly $children: readonly [Identifier | Semicolon];
 }
 
@@ -571,16 +575,19 @@ export interface ImportStatement {
 
 export interface ImportClauseUFormNamespaceImport {
   readonly $type: 'import_clause';
+  readonly $variant: 'namespace_import';
   readonly $children: readonly [ImportClauseNamespaceImport];
 }
 
 export interface ImportClauseUFormNamedImports {
   readonly $type: 'import_clause';
+  readonly $variant: 'named_imports';
   readonly $children: readonly [ImportClauseNamedImports];
 }
 
 export interface ImportClauseUFormDefaultImport {
   readonly $type: 'import_clause';
+  readonly $variant: 'default_import';
   readonly $children: readonly [ImportClauseDefaultImport];
 }
 
@@ -603,11 +610,13 @@ export interface NamedImports {
 
 export interface ImportSpecifierUFormName {
   readonly $type: 'import_specifier';
+  readonly $variant: 'name';
   readonly $children: readonly [ImportSpecifierName];
 }
 
 export interface ImportSpecifierUFormAs {
   readonly $type: 'import_specifier';
+  readonly $variant: 'as';
   readonly $children: readonly [ImportSpecifierAs];
 }
 
@@ -648,6 +657,7 @@ export interface LexicalDeclaration {
 
 export interface VariableDeclaratorForm0 {
   readonly $type: 'variable_declarator';
+  readonly $variant: 'form0';
   readonly $fields: {
     readonly name: Identifier | DestructuringPattern;
     readonly type?: TypeAnnotation;
@@ -657,6 +667,7 @@ export interface VariableDeclaratorForm0 {
 
 export interface VariableDeclaratorForm1 {
   readonly $type: 'variable_declarator';
+  readonly $variant: 'form1';
   readonly $fields: {
     readonly name: Identifier;
     readonly type: TypeAnnotation;
@@ -982,11 +993,13 @@ export interface ClassDeclaration {
 
 export interface ClassHeritageUFormExtendsClause {
   readonly $type: 'class_heritage';
+  readonly $variant: 'extends_clause';
   readonly $children: readonly [ClassHeritageExtendsClause];
 }
 
 export interface ClassHeritageUFormImplementsClause {
   readonly $type: 'class_heritage';
+  readonly $variant: 'implements_clause';
   readonly $children: readonly [ClassHeritageImplementsClause];
 }
 
@@ -1043,6 +1056,7 @@ export interface GeneratorFunctionDeclaration {
 
 export interface ArrowFunctionUFormParameter {
   readonly $type: 'arrow_function';
+  readonly $variant: 'parameter';
   readonly $fields: {
     readonly async?: "async";
     readonly body: Expression | StatementBlock;
@@ -1052,6 +1066,7 @@ export interface ArrowFunctionUFormParameter {
 
 export interface ArrowFunctionUFormUCallSignature {
   readonly $type: 'arrow_function';
+  readonly $variant: '_call_signature';
   readonly $fields: {
     readonly async?: "async";
     readonly body: Expression | StatementBlock;
@@ -1066,6 +1081,7 @@ export interface _CallSignature {
 
 export interface CallExpressionForm0 {
   readonly $type: 'call_expression';
+  readonly $variant: 'form0';
   readonly $fields: {
     readonly function: Expression | Import;
     readonly type_arguments?: TypeArguments;
@@ -1075,6 +1091,7 @@ export interface CallExpressionForm0 {
 
 export interface CallExpressionForm1 {
   readonly $type: 'call_expression';
+  readonly $variant: 'form1';
   readonly $fields: {
     readonly function: PrimaryExpression | NewExpression;
     readonly arguments: TemplateString;
@@ -1083,6 +1100,7 @@ export interface CallExpressionForm1 {
 
 export interface CallExpressionForm2 {
   readonly $type: 'call_expression';
+  readonly $variant: 'form2';
   readonly $fields: {
     readonly function: PrimaryExpression;
     readonly type_arguments?: TypeArguments;
@@ -1874,6 +1892,7 @@ export interface ConstructSignature {
 
 export interface IndexSignatureUFormColon {
   readonly $type: 'index_signature';
+  readonly $variant: 'colon';
   readonly $fields: {
     readonly sign?: "-" | "+";
     readonly type: TypeAnnotation | OmittingTypeAnnotation | AddingTypeAnnotation | OptingTypeAnnotation;
@@ -1883,6 +1902,7 @@ export interface IndexSignatureUFormColon {
 
 export interface IndexSignatureUFormMappedTypeClause {
   readonly $type: 'index_signature';
+  readonly $variant: 'mapped_type_clause';
   readonly $fields: {
     readonly sign?: "-" | "+";
     readonly type: TypeAnnotation | OmittingTypeAnnotation | AddingTypeAnnotation | OptingTypeAnnotation;
