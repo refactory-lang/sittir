@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest'
-import { parsePath, applyPath } from '../transform-path.ts'
-import { transform } from '../transform.ts'
+import { parsePath, applyPath } from '../transform/transform-path.ts'
+import { transform } from '../transform/transform.ts'
 import type { Rule } from '../../compiler/rule.ts'
 import { installFakeDsl, restoreFakeDsl } from './_test-helpers.ts'
 
@@ -192,7 +192,7 @@ describe('transform() — object form (flat positional, backward-compat)', () =>
         // placeholder, resolvePatch must unwrap the inferred layer so
         // the result is `field('new', $.sym, source: 'override')`, NOT
         // `field('new', field('xxx', $.sym), source: 'override')`.
-        const { field: oneArgField } = await import('../field.ts')
+        const { field: oneArgField } = await import('../primitives/field.ts')
         const rule = seq(
             // Simulate enrich-inferred field wrapper on position 0.
             { type: 'field', name: 'inferred_name', content: sym('expr'), source: 'inferred' } as Rule,
@@ -215,7 +215,7 @@ describe('transform() — object form (flat positional, backward-compat)', () =>
 
 describe('applyPath() — kind-match + negative index', () => {
     it('kind-match wraps every occurrence recursively', async () => {
-        const { field: oneArgField } = await import('../field.ts')
+        const { field: oneArgField } = await import('../primitives/field.ts')
         // seq(expr, ',', seq(expr, ',', expr)) — three _expression refs.
         const rule = seq(
             sym('_expression'),
@@ -232,7 +232,7 @@ describe('applyPath() — kind-match + negative index', () => {
     })
 
     it('kind-match skips occurrences already inside a named field', async () => {
-        const { field: oneArgField } = await import('../field.ts')
+        const { field: oneArgField } = await import('../primitives/field.ts')
         // rust's array_expression `[x; N]` shape: first _expression is
         // bare, second is inside `field('length', _expression)`. A
         // kind-match on `_expression` must label the bare one as
@@ -254,7 +254,7 @@ describe('applyPath() — kind-match + negative index', () => {
     })
 
     it('negative index resolves from the end (-1 = last member)', async () => {
-        const { field: oneArgField } = await import('../field.ts')
+        const { field: oneArgField } = await import('../primitives/field.ts')
         // Use a symbol (not a bare string) as the last member so the
         // result isn't routed through maybeKeywordSymbol's bare-STRING
         // synthesis path — we just want to verify the index resolution.

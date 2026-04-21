@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest'
-import { alias } from '../alias.ts'
+import { alias } from '../primitives/alias.ts'
 import type { Rule } from '../../compiler/rule.ts'
 import { installFakeDsl, restoreFakeDsl } from './_test-helpers.ts'
 

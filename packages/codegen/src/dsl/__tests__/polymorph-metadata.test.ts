@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest'
-import { transform } from '../transform.ts'
-import { variant } from '../variant.ts'
-import { withWireContext } from '../wire.ts'
+import { transform } from '../transform/transform.ts'
+import { variant } from '../primitives/variant.ts'
+import { withWireContext } from '../wire/wire.ts'
 import type { Rule } from '../../compiler/rule.ts'
 import { installFakeDsl, restoreFakeDsl } from './_test-helpers.ts'
 

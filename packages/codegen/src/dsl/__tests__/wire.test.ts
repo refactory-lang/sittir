@@ -1,9 +1,9 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest'
-import { wire, getCurrentWireContext } from '../wire.ts'
-import { variant } from '../variant.ts'
-import { transform } from '../transform.ts'
-import { field } from '../field.ts'
-import { alias } from '../alias.ts'
+import { wire, getCurrentWireContext } from '../wire/wire.ts'
+import { variant } from '../primitives/variant.ts'
+import { transform } from '../transform/transform.ts'
+import { field } from '../primitives/field.ts'
+import { alias } from '../primitives/alias.ts'
 import { installFakeDsl, restoreFakeDsl } from './_test-helpers.ts'
 
 // ---------------------------------------------------------------------------

@@ -33,13 +33,13 @@
  * migrate independently.
  */
 
-import type { PolymorphVariant } from '../compiler/types.ts'
-import type { RuntimeRule } from './runtime-shapes.ts'
-import { variant as variantPlaceholder } from './variant.ts'
-import { transform as transformFn } from './transform.ts'
-import { isFieldPlaceholder } from './field.ts'
-import { isAliasPlaceholder } from './alias.ts'
-import { isVariantPlaceholder } from './variant.ts'
+import type { PolymorphVariant } from '../../compiler/types.ts'
+import type { RuntimeRule } from '../runtime-shapes.ts'
+import { variant as variantPlaceholder } from '../primitives/variant.ts'
+import { transform as transformFn } from '../transform/transform.ts'
+import { isFieldPlaceholder } from '../primitives/field.ts'
+import { isAliasPlaceholder } from '../primitives/alias.ts'
+import { isVariantPlaceholder } from '../primitives/variant.ts'
 
 // ---------------------------------------------------------------------------
 // WireContext + module-level current pointer

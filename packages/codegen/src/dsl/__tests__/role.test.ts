@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { role, withRoleScope } from '../role.ts'
+import { role, withRoleScope } from '../primitives/role.ts'
 import type { Rule } from '../../compiler/rule.ts'
 
 const sym = (name: string): Rule => ({ type: 'symbol', name } as Rule)

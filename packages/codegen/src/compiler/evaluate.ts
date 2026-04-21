@@ -12,8 +12,8 @@ import type {
     EnumRule, SymbolRef,
 } from './rule.ts'
 import type { RawGrammar } from './types.ts'
-import { withRoleScope } from '../dsl/role.ts'
-import type { WireContext } from '../dsl/wire.ts'
+import { withRoleScope } from '../dsl/primitives/role.ts'
+import type { WireContext } from '../dsl/wire/wire.ts'
 import type { PolymorphVariant } from './types.ts'
 
 // ---------------------------------------------------------------------------

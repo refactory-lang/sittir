@@ -7,7 +7,7 @@ import {
     createProxy,
     evaluate,
 } from '../compiler/evaluate.ts'
-import { transform, insert, replace } from '../dsl/transform.ts'
+import { transform, insert, replace } from '../dsl/transform/transform.ts'
 import type { SymbolRef } from '../compiler/rule.ts'
 import type { RawGrammar } from '../compiler/types.ts'
 

@@ -31,11 +31,11 @@
  * grammar.js files call `grammar(...)` without importing it.
  */
 
-export { transform, insert, replace } from './transform.ts'
-export { role } from './role.ts'
+export { transform, insert, replace } from './transform/transform.ts'
+export { role } from './primitives/role.ts'
 export { enrich } from './enrich.ts'
-export { alias } from './alias.ts'
-export { variant } from './variant.ts'
-export { field } from './field.ts'
-export { wire } from './wire.ts'
+export { alias } from './primitives/alias.ts'
+export { variant } from './primitives/variant.ts'
+export { field } from './primitives/field.ts'
+export { wire } from './wire/wire.ts'
 

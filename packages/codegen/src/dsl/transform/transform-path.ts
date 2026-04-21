@@ -17,7 +17,7 @@
  *   apply time (with the path + actual rule shape in the message).
  */
 
-import { isPrecWrapper as isPrecWrapperShape, isContainerType, isWrapperType, isSeqType, isChoiceType, isFieldType, type RuntimeRule } from './runtime-shapes.ts'
+import { isPrecWrapper as isPrecWrapperShape, isContainerType, isWrapperType, isSeqType, isChoiceType, isFieldType, type RuntimeRule } from '../runtime-shapes.ts'
 
 // ---------------------------------------------------------------------------
 // Native DSL accessors — we call the runtime-injected DSL functions
