@@ -476,13 +476,28 @@ export default grammar(enrich(base), wire({
 
         // function_modifiers — full replacement: label each choice alternative
         // so readNode can route `async`, `const`, `default`, `unsafe` tokens.
+        // Route the bare-keyword strings through `_kw_<name>` hidden rules
+        // (declared below) so FIELD survives tree-sitter normalization —
+        // FIELD around bare STRING gets stripped; FIELD around SYMBOL survives.
         function_modifiers: ($) => repeat1(choice(
-            field('async', 'async'),
-            field('default', 'default'),
-            field('const', 'const'),
-            field('unsafe', 'unsafe'),
+            field('async', $._kw_async),
+            field('default', $._kw_default),
+            field('const', $._kw_const),
+            field('unsafe', $._kw_unsafe),
             $.extern_modifier,
         )),
+
+        // Hand-authored `_kw_<name>` hidden rules. Required for
+        // function_modifiers and visibility_modifier to route bare
+        // keywords through SYMBOLs so FIELD wrappers survive. These
+        // could also live in a shared module if more grammars start
+        // needing the same keyword set; for now, rust is the only one.
+        _kw_async:   $ => 'async',
+        _kw_default: $ => 'default',
+        _kw_const:   $ => 'const',
+        _kw_unsafe:  $ => 'unsafe',
+        _kw_pub:     $ => 'pub',
+        _kw_in:      $ => 'in',
 
         // _pattern — the wildcard `_` is a bare literal alternative
         // (position 20) of the _pattern supertype choice. At multi-valued
@@ -510,14 +525,14 @@ export default grammar(enrich(base), wire({
         visibility_modifier: ($) => choice(
             $.crate,
             seq(
-                field('pub', 'pub'),
+                field('pub', $._kw_pub),
                 optional(seq(
                     '(',
                     choice(
                         $.self,
                         $.super,
                         $.crate,
-                        seq(field('in', 'in'), $._path),
+                        seq(field('in', $._kw_in), $._path),
                     ),
                     ')',
                 )),
