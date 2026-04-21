@@ -22,7 +22,8 @@ import type {
     ExternalRole, IncludeFilter, DerivationLog,
     InferredFieldEntry, PromotedRuleEntry, RepeatedShapeEntry,
 } from './types.ts'
-import { deriveFields, hasAnyField, hasAnyChild } from './node-map.ts'
+import { hasAnyField, hasAnyChild } from './node-map.ts'
+import { collectFieldNames } from './rule.ts'
 import { isHiddenKind } from './evaluate.ts'
 import type { PolymorphVariant } from './types.ts'
 
@@ -661,7 +662,7 @@ function allVariantContentsAreDistinguishable(contents: Rule[]): boolean {
  *   choice for polymorph promotion.
  */
 function variantFieldSetsAreHomogeneous(contents: Rule[]): boolean {
-    const fieldSets = contents.map(c => new Set(deriveFields(c).map(f => f.name)))
+    const fieldSets = contents.map(c => collectFieldNames(c))
     return fieldSets.every(s => setsEqual(s, fieldSets[0]!))
 }
 
@@ -897,7 +898,7 @@ export function looksLikePolymorphCandidate(choice: ChoiceRule): boolean {
     // Field sets alone can't tell them apart because symbols expose zero
     // fields without cross-rule lookup.
     const signature = (c: Rule): string => {
-        const fs = [...new Set(deriveFields(c).map(f => f.name))].sort().join(',')
+        const fs = [...collectFieldNames(c)].sort().join(',')
         if (fs) return `fields:${fs}`
         if (c.type === 'symbol' || c.type === 'supertype') return `sym:${c.name}`
         if (c.type === 'seq') return `seq:${c.members.map(signature).join('|')}`

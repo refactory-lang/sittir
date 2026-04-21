@@ -297,6 +297,47 @@ export const isAlias = (r: Rule): r is AliasRule => r.type === 'alias'
 export const isToken = (r: Rule): r is TokenRule => r.type === 'token'
 
 // ---------------------------------------------------------------------------
+// Tree walkers — pure Rule-tree projections, no AssembledNode concepts
+// ---------------------------------------------------------------------------
+
+/**
+ * Collect the set of field names referenced anywhere in a rule tree.
+ * Returns names only — cheap one-pass walker with no AssembledField
+ * allocation. Pre-assembly phases (classifier, link's polymorph-
+ * promotion heuristics) that only need field-set equality call this
+ * instead of constructing full AssembledField objects just to extract
+ * names.
+ */
+export function collectFieldNames(rule: Rule): Set<string> {
+    const names = new Set<string>()
+    walkFieldNames(rule, names)
+    return names
+}
+
+function walkFieldNames(rule: Rule, out: Set<string>): void {
+    switch (rule.type) {
+        case 'field':
+            out.add(rule.name)
+            walkFieldNames(rule.content, out)
+            return
+        case 'seq':
+        case 'choice':
+            for (const m of rule.members) walkFieldNames(m, out)
+            return
+        case 'optional':
+        case 'repeat':
+        case 'repeat1':
+        case 'variant':
+        case 'clause':
+        case 'group':
+            walkFieldNames(rule.content, out)
+            return
+        default:
+            return
+    }
+}
+
+// ---------------------------------------------------------------------------
 // Reference graph
 // ---------------------------------------------------------------------------
 
