@@ -224,12 +224,28 @@ function validateSelection(
         }
         return
     }
-    const stringValues = arms.filter(isString).map(s => s.value)
+    const stringValues = arms.map(unwrapToStringValue).filter((v): v is string => v !== undefined)
     if (!stringValues.includes(selection)) {
         throw new Error(
             `refine(${kind}) form '${formName}': path '${pathStr}' selection '${selection}' does not match any string branch of the choice (available: ${stringValues.map(v => `'${v}'`).join(', ') || '<none>'})`,
         )
     }
+}
+
+/**
+ * Unwrap a choice-arm rule to its string value, if any. Link wraps
+ * string literals inside choices in `variant(...)` rules for polymorph
+ * classification; this helper transparently descends through one
+ * `variant` wrapper to reach the underlying string. Non-string arms
+ * return `undefined`.
+ */
+function unwrapToStringValue(rule: Rule): string | undefined {
+    if (isString(rule)) return rule.value
+    if (rule.type === 'variant') {
+        const inner = (rule as { content: Rule }).content
+        if (isString(inner)) return inner.value
+    }
+    return undefined
 }
 
 /**
@@ -279,8 +295,8 @@ export function resolveSelectionLiteral(
 ): string | undefined {
     if (typeof selection === 'string') return selection
     const arm = choice.members[selection]
-    if (arm && isString(arm)) return arm.value
-    return undefined
+    if (!arm) return undefined
+    return unwrapToStringValue(arm)
 }
 
 // ---------------------------------------------------------------------------
