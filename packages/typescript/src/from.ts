@@ -259,7 +259,7 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
   "false": { values: ["false"], factory: () => F.false_() },
   "null": { values: ["null"], factory: () => F.null_() },
   "undefined": { values: ["undefined"], factory: () => F.undefined_() },
-  "accessibility_modifier": { values: ["public", "private", "protected"], factory: (text: string) => F.accessibilityModifier(text as 'public' | 'private' | 'protected') },
+  "accessibility_modifier": { values: ["public", "private", "protected"], factory: (text: string) => F.accessibilityModifier(text) },
   "override_modifier": { values: ["override"], factory: () => F.overrideModifier() },
   "predefined_type": { factory: F.predefinedType },
   "html_comment": { factory: F.htmlComment },
@@ -446,7 +446,7 @@ export function programFrom(input: T.Program | T.Program.Loose): ReturnType<type
 
 export function hashBangLineFrom(input: string | T.HashBangLine) {
   if (isNodeData(input)) return input;
-  return F.hashBangLine(input as string);
+  return F.hashBangLine(input);
 }
 
 export function exportStatementFrom(input?: T.ExportStatement | T.ExportStatement.Loose): ReturnType<typeof F.exportStatement> {
@@ -906,7 +906,7 @@ export function jsxElementFrom(input: T.JsxElement | T.JsxElement.Loose): Return
 
 export function htmlCharacterReferenceFrom(input: string | T.HtmlCharacterReference) {
   if (isNodeData(input)) return input;
-  return F.htmlCharacterReference(input as string);
+  return F.htmlCharacterReference(input);
 }
 
 export function jsxExpressionFrom(input?: NonNullable<T.JsxExpression.Config['children']>[number] | T.JsxExpression) {
@@ -929,7 +929,7 @@ export function jsxOpeningElementFrom(input: T.JsxOpeningElement | T.JsxOpeningE
 
 export function jsxIdentifierFrom(input: string | T.JsxIdentifier) {
   if (isNodeData(input)) return input;
-  return F.jsxIdentifier(input as string);
+  return F.jsxIdentifier(input);
 }
 
 export function nestedIdentifierFrom(input: T.NestedIdentifier | T.NestedIdentifier.Loose): ReturnType<typeof F.nestedIdentifier> {
@@ -975,12 +975,12 @@ export function jsxAttributeFrom(input?: NonNullable<T.JsxAttribute.Config['chil
 
 export function unescapedDoubleJsxStringFragmentFrom(input: string | T.UnescapedDoubleJsxStringFragment) {
   if (isNodeData(input)) return input;
-  return F.unescapedDoubleJsxStringFragment(input as string);
+  return F.unescapedDoubleJsxStringFragment(input);
 }
 
 export function unescapedSingleJsxStringFragmentFrom(input: string | T.UnescapedSingleJsxStringFragment) {
   if (isNodeData(input)) return input;
-  return F.unescapedSingleJsxStringFragment(input as string);
+  return F.unescapedSingleJsxStringFragment(input);
 }
 
 export function class_From(input: T.Class | T.Class.Loose): ReturnType<typeof F.class_> {
@@ -1226,22 +1226,22 @@ export function stringFrom(...input: readonly (NonNullable<T.String.Config['chil
 
 export function unescapedDoubleStringFragmentFrom(input: string | T.UnescapedDoubleStringFragment) {
   if (isNodeData(input)) return input;
-  return F.unescapedDoubleStringFragment(input as string);
+  return F.unescapedDoubleStringFragment(input);
 }
 
 export function unescapedSingleStringFragmentFrom(input: string | T.UnescapedSingleStringFragment) {
   if (isNodeData(input)) return input;
-  return F.unescapedSingleStringFragment(input as string);
+  return F.unescapedSingleStringFragment(input);
 }
 
 export function escapeSequenceFrom(input: string | T.EscapeSequence) {
   if (isNodeData(input)) return input;
-  return F.escapeSequence(input as string);
+  return F.escapeSequence(input);
 }
 
 export function commentFrom(input: string | T.Comment) {
   if (isNodeData(input)) return input;
-  return F.comment(input as string);
+  return F.comment(input);
 }
 
 export function templateStringFrom(...input: readonly (NonNullable<T.TemplateString.Config['children']>[number] | T.TemplateString)[]) {
@@ -1271,32 +1271,32 @@ export function regexFrom(input: T.Regex | T.Regex.Loose): ReturnType<typeof F.r
 
 export function regexPatternFrom(input: string | T.RegexPattern) {
   if (isNodeData(input)) return input;
-  return F.regexPattern(input as string);
+  return F.regexPattern(input);
 }
 
 export function regexFlagsFrom(input: string | T.RegexFlags) {
   if (isNodeData(input)) return input;
-  return F.regexFlags(input as string);
+  return F.regexFlags(input);
 }
 
 export function numberFrom(input: string | T.Number) {
   if (isNodeData(input)) return input;
-  return F.number(input as string);
+  return F.number(input);
 }
 
 export function identifierFrom(input: string | T.Identifier) {
   if (isNodeData(input)) return input;
-  return F.identifier(input as string);
+  return F.identifier(input);
 }
 
 export function privatePropertyIdentifierFrom(input: string | T.PrivatePropertyIdentifier) {
   if (isNodeData(input)) return input;
-  return F.privatePropertyIdentifier(input as string);
+  return F.privatePropertyIdentifier(input);
 }
 
 export function metaPropertyFrom(input: string | T.MetaProperty) {
   if (isNodeData(input)) return input;
-  return F.metaProperty(input as string);
+  return F.metaProperty(input);
 }
 
 export function thisFrom(input?: T.This) {
@@ -1691,7 +1691,7 @@ export function typeAliasDeclarationFrom(input: T.TypeAliasDeclaration | T.TypeA
 
 export function accessibilityModifierFrom(input: string | T.AccessibilityModifier) {
   if (isNodeData(input)) return input;
-  return F.accessibilityModifier(input as 'public' | 'private' | 'protected');
+  return F.accessibilityModifier(input);
 }
 
 export function overrideModifierFrom(input?: T.OverrideModifier) {
@@ -1923,7 +1923,7 @@ export function parenthesizedTypeFrom(input: T.ParenthesizedType | T.Parenthesiz
 
 export function predefinedTypeFrom(input: string | T.PredefinedType) {
   if (isNodeData(input)) return input;
-  return F.predefinedType(input as string);
+  return F.predefinedType(input);
 }
 
 export function typeArgumentsFrom(...input: readonly (NonNullable<T.TypeArguments.Config['children']>[number] | T.TypeArguments)[]) {
@@ -2076,17 +2076,17 @@ export function functionTypeFrom(input: T.FunctionType | T.FunctionType.Loose): 
 
 export function htmlCommentFrom(input: string | T.HtmlComment) {
   if (isNodeData(input)) return input;
-  return F.htmlComment(input as string);
+  return F.htmlComment(input);
 }
 
 export function ororFrom(input: string | T.Oror) {
   if (isNodeData(input)) return input;
-  return F.oror(input as string);
+  return F.oror(input);
 }
 
 export function jsxTextFrom(input: string | T.JsxText) {
   if (isNodeData(input)) return input;
-  return F.jsxText(input as string);
+  return F.jsxText(input);
 }
 
 export function importClauseNamespaceImportFrom(input?: NonNullable<T.ImportClauseNamespaceImport.Config['children']>[number] | T.ImportClauseNamespaceImport) {
@@ -2133,7 +2133,7 @@ export function importSpecifierAsFrom(input: T.ImportSpecifierAs | T.ImportSpeci
 
 export function statementIdentifierFrom(input: string | T.StatementIdentifier) {
   if (isNodeData(input)) return input;
-  return F.statementIdentifier(input as string);
+  return F.statementIdentifier(input);
 }
 
 export function shorthandPropertyIdentifierFrom(input?: NonNullable<T.ShorthandPropertyIdentifier.Config['children']>[number] | T.ShorthandPropertyIdentifier) {
@@ -2156,12 +2156,12 @@ export function shorthandPropertyIdentifierPatternFrom(input?: NonNullable<T.Sho
 
 export function propertyIdentifierFrom(input: string | T.PropertyIdentifier) {
   if (isNodeData(input)) return input;
-  return F.propertyIdentifier(input as string);
+  return F.propertyIdentifier(input);
 }
 
 export function stringFragmentFrom(input: string | T.StringFragment) {
   if (isNodeData(input)) return input;
-  return F.stringFragment(input as string);
+  return F.stringFragment(input);
 }
 
 export function classHeritageExtendsClauseFrom(input?: NonNullable<T.ClassHeritageExtendsClause.Config['children']>[number] | T.ClassHeritageExtendsClause) {
@@ -2233,5 +2233,5 @@ export function indexSignatureMappedTypeClauseFrom(input?: NonNullable<T.IndexSi
 
 export function typeIdentifierFrom(input: string | T.TypeIdentifier) {
   if (isNodeData(input)) return input;
-  return F.typeIdentifier(input as string);
+  return F.typeIdentifier(input);
 }

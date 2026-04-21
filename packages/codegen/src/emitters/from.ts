@@ -18,11 +18,6 @@ import {
 import { isNodeRef, isTerminalValue, isUnresolvedRef } from '../compiler/node-map.ts'
 import type { NodeOrTerminal } from '../compiler/node-map.ts'
 
-/** Escape a string for safe inclusion inside a single-quoted TS string literal. */
-function escForSource(s: string): string {
-    return s.replace(/\\/g, '\\\\').replace(/'/g, "\\'")
-}
-
 export interface EmitFromConfig {
     grammar: string
     nodeMap: NodeMap
@@ -784,33 +779,13 @@ interface LeafFromNode {
     readonly enumValues?: readonly string[]
 }
 
-/**
- * Builds the cast expression for a leaf or enum from() factory call.
- *
- * @remarks
- * Enum factories declare their parameter as a literal union (compile-time
- * validation) — the leaf from() must cast `input` to the right shape before
- * calling. The literal union is inlined here because `Parameters<typeof X>`
- * would collide with grammar kinds named `parameters` (rust has one) —
- * TypeScript's built-in `Parameters<T>` gets shadowed and emits TS2315.
- *
- * @param enumValues - Enum value list, or undefined/empty for plain leaf.
- * @returns The cast expression string, e.g. `input as 'a' | 'b'` or `input as string`.
- */
-function buildLeafFactoryCast(enumValues: readonly string[] | undefined): string {
-    return enumValues && enumValues.length > 0
-        ? `input as ${enumValues.map(v => `'${escForSource(v)}'`).join(' | ')}`
-        : `input as string`
-}
-
 function emitStringLikeFrom(node: LeafFromNode): string {
     const fn = node.fromFunctionName!
     const factory = `F.${node.rawFactoryName!}`
-    const cast = buildLeafFactoryCast(node.enumValues)
     return [
         `export function ${fn}(input: string | T.${node.typeName}) {`,
         `  if (isNodeData(input)) return input;`,
-        `  return ${factory}(${cast});`,
+        `  return ${factory}(input);`,
         '}',
     ].join('\n')
 }
@@ -1088,13 +1063,11 @@ function resolveFieldCall(
  * Builds the leaf registry entries from NodeMap leaves, keywords, and enums.
  *
  * @remarks
- * Enum factories now declare their parameter as a literal union (compile-time
- * validation) — the registry slot wants `(text: string) => unknown` so the
- * narrower function isn't assignable directly. Wraps the call in a thin
- * closure that accepts a wide string and casts to the enum's literal union
- * (inlined here because grammar kinds named `parameters` would shadow
- * TypeScript's built-in `Parameters<T>` utility). The factory's runtime
- * guard still catches invalid values.
+ * Enum factories declare their parameter as a literal union at the type
+ * level but the factory's runtime guard accepts any string and throws on
+ * invalid values. The registry slot declares the factory as `(text: string)`
+ * so the enum's narrower signature is exposed through a thin closure — no
+ * cast at the call site, runtime guard still catches invalid input.
  *
  * @param nodeMap - The assembled node map.
  * @returns Array of registry entry source strings to push into the `_leafRegistry` literal.
@@ -1107,8 +1080,7 @@ function buildLeafRegistryEntries(nodeMap: NodeMap): string[] {
         const factory = `F.${node.rawFactoryName}`
         if (node.modelType === 'enum') {
             const values = node.values.map(v => JSON.stringify(v)).join(', ')
-            const literalUnion = node.values.map(v => `'${escForSource(v)}'`).join(' | ')
-            registryEntries.push(`  ${JSON.stringify(kind)}: { values: [${values}], factory: (text: string) => ${factory}(text as ${literalUnion}) },`)
+            registryEntries.push(`  ${JSON.stringify(kind)}: { values: [${values}], factory: (text: string) => ${factory}(text) },`)
         } else if (node.modelType === 'keyword') {
             registryEntries.push(`  ${JSON.stringify(kind)}: { values: [${JSON.stringify(node.text)}], factory: () => ${factory}() },`)
         } else if (node.modelType === 'leaf') {

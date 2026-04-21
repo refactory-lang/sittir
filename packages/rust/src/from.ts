@@ -215,14 +215,14 @@ interface _LeafEntry {
   readonly factory: (text: string) => AnyNodeData;
 }
 const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
-  "fragment_specifier": { values: ["block", "expr", "expr_2021", "ident", "item", "lifetime", "literal", "meta", "pat", "pat_param", "path", "stmt", "tt", "ty", "vis"], factory: (text: string) => F.fragmentSpecifier(text as 'block' | 'expr' | 'expr_2021' | 'ident' | 'item' | 'lifetime' | 'literal' | 'meta' | 'pat' | 'pat_param' | 'path' | 'stmt' | 'tt' | 'ty' | 'vis') },
+  "fragment_specifier": { values: ["block", "expr", "expr_2021", "ident", "item", "lifetime", "literal", "meta", "pat", "pat_param", "path", "stmt", "tt", "ty", "vis"], factory: (text: string) => F.fragmentSpecifier(text) },
   "unit_type": { factory: F.unitType },
   "mutable_specifier": { values: ["mut"], factory: () => F.mutableSpecifier() },
   "unit_expression": { factory: F.unitExpression },
   "integer_literal": { factory: F.integerLiteral },
   "char_literal": { factory: F.charLiteral },
   "escape_sequence": { factory: F.escapeSequence },
-  "boolean_literal": { values: ["true", "false"], factory: (text: string) => F.booleanLiteral(text as 'true' | 'false') },
+  "boolean_literal": { values: ["true", "false"], factory: (text: string) => F.booleanLiteral(text) },
   "identifier": { factory: F.identifier },
   "shebang": { factory: F.shebang },
   "self": { values: ["self"], factory: () => F.self() },
@@ -232,7 +232,7 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
   "string_content": { factory: F.stringContent },
   "raw_string_literal_content": { factory: F.rawStringLiteralContent },
   "float_literal": { factory: F.floatLiteral },
-  "primitive_type": { values: ["u8", "i8", "u16", "i16", "u32", "i32", "u64", "i64", "u128", "i128", "isize", "usize", "f32", "f64", "bool", "str", "char"], factory: (text: string) => F.primitiveType(text as 'u8' | 'i8' | 'u16' | 'i16' | 'u32' | 'i32' | 'u64' | 'i64' | 'u128' | 'i128' | 'isize' | 'usize' | 'f32' | 'f64' | 'bool' | 'str' | 'char') },
+  "primitive_type": { values: ["u8", "i8", "u16", "i16", "u32", "i32", "u64", "i64", "u128", "i128", "isize", "usize", "f32", "f64", "bool", "str", "char"], factory: (text: string) => F.primitiveType(text) },
   "wildcard_pattern": { values: ["_"], factory: () => F.wildcardPattern() },
   "outer_doc_comment_marker": { factory: F.outerDocCommentMarker },
   "inner_doc_comment_marker": { factory: F.innerDocCommentMarker },
@@ -487,7 +487,7 @@ export function tokenRepetitionPatternFrom(...input: readonly (NonNullable<T.Tok
 
 export function fragmentSpecifierFrom(input: string | T.FragmentSpecifier) {
   if (isNodeData(input)) return input;
-  return F.fragmentSpecifier(input as 'block' | 'expr' | 'expr_2021' | 'ident' | 'item' | 'lifetime' | 'literal' | 'meta' | 'pat' | 'pat_param' | 'path' | 'stmt' | 'tt' | 'ty' | 'vis');
+  return F.fragmentSpecifier(input);
 }
 
 export function tokenTreeFrom(...input: readonly (NonNullable<T.TokenTree.Config['children']>[number] | T.TokenTree)[]) {
@@ -1030,7 +1030,7 @@ export function tupleTypeFrom(...input: readonly (NonNullable<T.TupleType.Config
 
 export function unitTypeFrom(input: string | T.UnitType) {
   if (isNodeData(input)) return input;
-  return F.unitType(input as string);
+  return F.unitType(input);
 }
 
 export function genericFunctionFrom(input: T.GenericFunction | T.GenericFunction.Loose): ReturnType<typeof F.genericFunction> {
@@ -1310,7 +1310,7 @@ export function tupleExpressionFrom(input: T.TupleExpression | T.TupleExpression
 
 export function unitExpressionFrom(input: string | T.UnitExpression) {
   if (isNodeData(input)) return input;
-  return F.unitExpression(input as string);
+  return F.unitExpression(input);
 }
 
 export function structExpressionFrom(input: T.StructExpression | T.StructExpression.Loose): ReturnType<typeof F.structExpression> {
@@ -1700,7 +1700,7 @@ export function negativeLiteralFrom(input: T.NegativeLiteral | T.NegativeLiteral
 
 export function integerLiteralFrom(input: string | T.IntegerLiteral) {
   if (isNodeData(input)) return input;
-  return F.integerLiteral(input as string);
+  return F.integerLiteral(input);
 }
 
 export function stringLiteralFrom(...input: readonly (NonNullable<T.StringLiteral.Config['children']>[number] | T.StringLiteral)[]) {
@@ -1722,17 +1722,17 @@ export function rawStringLiteralFrom(input: T.RawStringLiteral | T.RawStringLite
 
 export function charLiteralFrom(input: string | T.CharLiteral) {
   if (isNodeData(input)) return input;
-  return F.charLiteral(input as string);
+  return F.charLiteral(input);
 }
 
 export function escapeSequenceFrom(input: string | T.EscapeSequence) {
   if (isNodeData(input)) return input;
-  return F.escapeSequence(input as string);
+  return F.escapeSequence(input);
 }
 
 export function booleanLiteralFrom(input: string | T.BooleanLiteral) {
   if (isNodeData(input)) return input;
-  return F.booleanLiteral(input as 'true' | 'false');
+  return F.booleanLiteral(input);
 }
 
 export function commentFrom(input?: NonNullable<T.Comment.Config['children']>[number] | T.Comment) {
@@ -1764,12 +1764,12 @@ export function blockCommentFrom(input?: T.BlockComment | T.BlockComment.Loose):
 
 export function identifierFrom(input: string | T.Identifier) {
   if (isNodeData(input)) return input;
-  return F.identifier(input as string);
+  return F.identifier(input);
 }
 
 export function shebangFrom(input: string | T.Shebang) {
   if (isNodeData(input)) return input;
-  return F.shebang(input as string);
+  return F.shebang(input);
 }
 
 export function selfFrom(input?: T.Self) {
@@ -1789,22 +1789,22 @@ export function crateFrom(input?: T.Crate) {
 
 export function metavariableFrom(input: string | T.Metavariable) {
   if (isNodeData(input)) return input;
-  return F.metavariable(input as string);
+  return F.metavariable(input);
 }
 
 export function stringContentFrom(input: string | T.StringContent) {
   if (isNodeData(input)) return input;
-  return F.stringContent(input as string);
+  return F.stringContent(input);
 }
 
 export function rawStringLiteralContentFrom(input: string | T.RawStringLiteralContent) {
   if (isNodeData(input)) return input;
-  return F.rawStringLiteralContent(input as string);
+  return F.rawStringLiteralContent(input);
 }
 
 export function floatLiteralFrom(input: string | T.FloatLiteral) {
   if (isNodeData(input)) return input;
-  return F.floatLiteral(input as string);
+  return F.floatLiteral(input);
 }
 
 export function macroDefinitionParenFrom(...input: readonly (NonNullable<T.MacroDefinitionParen.Config['children']>[number] | T.MacroDefinitionParen)[]) {
@@ -1833,7 +1833,7 @@ export function macroDefinitionBraceFrom(...input: readonly (NonNullable<T.Macro
 
 export function primitiveTypeFrom(input: string | T.PrimitiveType) {
   if (isNodeData(input)) return input;
-  return F.primitiveType(input as 'u8' | 'i8' | 'u16' | 'i16' | 'u32' | 'i32' | 'u64' | 'i64' | 'u128' | 'i128' | 'isize' | 'usize' | 'f32' | 'f64' | 'bool' | 'str' | 'char');
+  return F.primitiveType(input);
 }
 
 export function modItemInlineFrom(input: T.ModItemInline | T.ModItemInline.Loose): ReturnType<typeof F.modItemInline> {
@@ -2008,25 +2008,25 @@ export function orPatternPrefixFrom(input: T.OrPatternPrefix | T.OrPatternPrefix
 
 export function outerDocCommentMarkerFrom(input: string | T.OuterDocCommentMarker) {
   if (isNodeData(input)) return input;
-  return F.outerDocCommentMarker(input as string);
+  return F.outerDocCommentMarker(input);
 }
 
 export function innerDocCommentMarkerFrom(input: string | T.InnerDocCommentMarker) {
   if (isNodeData(input)) return input;
-  return F.innerDocCommentMarker(input as string);
+  return F.innerDocCommentMarker(input);
 }
 
 export function typeIdentifierFrom(input: string | T.TypeIdentifier) {
   if (isNodeData(input)) return input;
-  return F.typeIdentifier(input as string);
+  return F.typeIdentifier(input);
 }
 
 export function fieldIdentifierFrom(input: string | T.FieldIdentifier) {
   if (isNodeData(input)) return input;
-  return F.fieldIdentifier(input as string);
+  return F.fieldIdentifier(input);
 }
 
 export function shorthandFieldIdentifierFrom(input: string | T.ShorthandFieldIdentifier) {
   if (isNodeData(input)) return input;
-  return F.shorthandFieldIdentifier(input as string);
+  return F.shorthandFieldIdentifier(input);
 }

@@ -345,7 +345,7 @@ export function importStatementFrom(input: T.ImportStatement | T.ImportStatement
 
 export function importPrefixFrom(input: string | T.ImportPrefix) {
   if (isNodeData(input)) return input;
-  return F.importPrefix(input as string);
+  return F.importPrefix(input);
 }
 
 export function relativeImportFrom(input: T.RelativeImport | T.RelativeImport.Loose): ReturnType<typeof F.relativeImport> {
@@ -1208,7 +1208,7 @@ export function interpolationFrom(input: T.Interpolation | T.Interpolation.Loose
 
 export function escapeSequenceFrom(input: string | T.EscapeSequence) {
   if (isNodeData(input)) return input;
-  return F.escapeSequence(input as string);
+  return F.escapeSequence(input);
 }
 
 export function formatSpecifierFrom(...input: readonly (NonNullable<T.FormatSpecifier.Config['children']>[number] | T.FormatSpecifier)[]) {
@@ -1221,22 +1221,22 @@ export function formatSpecifierFrom(...input: readonly (NonNullable<T.FormatSpec
 
 export function typeConversionFrom(input: string | T.TypeConversion) {
   if (isNodeData(input)) return input;
-  return F.typeConversion(input as string);
+  return F.typeConversion(input);
 }
 
 export function integerFrom(input: string | T.Integer) {
   if (isNodeData(input)) return input;
-  return F.integer(input as string);
+  return F.integer(input);
 }
 
 export function floatFrom(input: string | T.Float) {
   if (isNodeData(input)) return input;
-  return F.float(input as string);
+  return F.float(input);
 }
 
 export function identifierFrom(input: string | T.Identifier) {
   if (isNodeData(input)) return input;
-  return F.identifier(input as string);
+  return F.identifier(input);
 }
 
 export function true_From(input?: T.True) {
@@ -1263,47 +1263,47 @@ export function await_From(input: T.Await | T.Await.Loose): ReturnType<typeof F.
 
 export function commentFrom(input: string | T.Comment) {
   if (isNodeData(input)) return input;
-  return F.comment(input as string);
+  return F.comment(input);
 }
 
 export function lineContinuationFrom(input: string | T.LineContinuation) {
   if (isNodeData(input)) return input;
-  return F.lineContinuation(input as string);
+  return F.lineContinuation(input);
 }
 
 export function stringStartFrom(input: string | T.StringStart) {
   if (isNodeData(input)) return input;
-  return F.stringStart(input as string);
+  return F.stringStart(input);
 }
 
 export function escapeInterpolationFrom(input: string | T.EscapeInterpolation) {
   if (isNodeData(input)) return input;
-  return F.escapeInterpolation(input as string);
+  return F.escapeInterpolation(input);
 }
 
 export function stringEndFrom(input: string | T.StringEnd) {
   if (isNodeData(input)) return input;
-  return F.stringEnd(input as string);
+  return F.stringEnd(input);
 }
 
 export function closeBracketFrom(input: string | T.CloseBracket) {
   if (isNodeData(input)) return input;
-  return F.closeBracket(input as string);
+  return F.closeBracket(input);
 }
 
 export function closeParenFrom(input: string | T.CloseParen) {
   if (isNodeData(input)) return input;
-  return F.closeParen(input as string);
+  return F.closeParen(input);
 }
 
 export function closeBraceFrom(input: string | T.CloseBrace) {
   if (isNodeData(input)) return input;
-  return F.closeBrace(input as string);
+  return F.closeBrace(input);
 }
 
 export function exceptFrom(input: string | T.Except) {
   if (isNodeData(input)) return input;
-  return F.except(input as string);
+  return F.except(input);
 }
 
 export function asPatternTargetFrom(input?: NonNullable<T.AsPatternTarget.Config['children']>[number] | T.AsPatternTarget) {
