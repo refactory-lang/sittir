@@ -12,8 +12,14 @@ import {
     type AssembledNode, type AssembledField, type AssembledChild, AssembledGroup,
     type AssembledPolymorph,
 } from '../compiler/node-map.ts'
-import { hasHiddenExternalRef, isVerbatimTokenStream, AssembledKeyword } from '../compiler/node-map.ts'
-import { resolveEffectiveLiteral, isAutoStampSlot, stampExpressionFor } from './shared.ts'
+import {
+    hasHiddenExternalRef, isVerbatimTokenStream, AssembledKeyword,
+    isNodeRef, isTerminalValue, isUnresolvedRef,
+} from '../compiler/node-map.ts'
+import {
+    resolveEffectiveLiteral, isAutoStampSlot, stampExpressionFor,
+    isRequired, isMultiple, isNonEmpty, slotKindNames, slotLiteralValues,
+} from './shared.ts'
 
 export interface EmitFactoriesConfig {
     grammar: string
@@ -93,7 +99,7 @@ function collectUsesNonEmptyArray(nodeMap: NodeMap): boolean {
         const fs = n.modelType === 'branch' || n.modelType === 'polymorph'
             ? (n.modelType === 'polymorph' ? n.forms.flatMap(f => f.fields) : n.fields)
             : []
-        return fs.some(f => f.nonEmpty === true)
+        return fs.some(f => isNonEmpty(f))
     })
 }
 
@@ -499,7 +505,7 @@ type FieldCarryingNode = Extract<AssembledNode, { modelType: 'branch' | 'group' 
 function childElementType(node: { children: readonly AssembledChild[] }, nodeMap: NodeMap): string {
     const parts = new Set<string>()
     for (const c of node.children) {
-        for (const t of c.contentTypes) {
+        for (const t of slotKindNames(c)) {
             const ref = nodeMap.nodes.get(t)
             if (!ref) { parts.add(JSON.stringify(t)); continue }
             const name = ref.typeName
@@ -529,50 +535,30 @@ function childElementType(node: { children: readonly AssembledChild[] }, nodeMap
  * Returns `undefined` when the field is NOT auto-stamp-eligible.
  */
 function autoStampExpression(f: AssembledField, nodeMap: NodeMap): string | undefined {
-    // Only required fields: optional single-literal fields control presence/absence
-    // at call sites and must remain user-controllable (e.g. `mut` on let bindings).
-    if (!f.required) return undefined
-    // Repeated fields are never auto-stamped — they represent 0..N occurrences.
-    if (f.multiple) return undefined
-    // Source A: inline literal
-    if (f.literalValues?.length === 1) {
-        return `${JSON.stringify(f.literalValues[0])} as const`
-    }
-    // Source B: field references a single hidden keyword kind (`_kw_*` pattern).
-    // Restricted to hidden kinds (name starts with `_`) to avoid false-positives
-    // from visible keyword nodes that may appear inside mixed-choice overrides.
-    if (f.contentTypes.length === 1) {
-        const kindName = f.contentTypes[0]!
-        if (kindName.startsWith('_')) {
-            const ref = nodeMap.nodes.get(kindName)
-            if (ref instanceof AssembledKeyword) {
-                const kind = JSON.stringify(ref.kind)
-                const text = JSON.stringify(ref.text)
-                return `{ $type: ${kind} as const, $text: ${text} as const, $source: 'factory' as const, $named: true as const }`
-            }
-        }
-    }
-    return undefined
+    // Delegates to the shared stampExpressionFor which uses the new values model.
+    return stampExpressionFor(f, nodeMap)
 }
 
 /** Resolve an AssembledField's element type to a concrete TS type expression. */
 function fieldElementType(f: AssembledField, nodeMap: NodeMap): string {
-    if (f.literalValues && f.literalValues.length > 0) {
-        return f.literalValues.map(v => JSON.stringify(v)).join(' | ')
+    const literals = slotLiteralValues(f)
+    const kindNames = slotKindNames(f)
+
+    if (literals.length > 0 && kindNames.length === 0) {
+        return literals.map(v => JSON.stringify(v)).join(' | ')
     }
-    if (f.contentTypes.length === 0) return 'string'
+    if (kindNames.length === 0 && literals.length === 0) return 'string'
+
     // Alias-source projection (ADR-0006 extended to the factory surface):
     // when a content type is the TARGET of `alias($.source, $.target)`, the
     // body follows `source`'s shape. Factory config accepts the source type
-    // so callers construct nodes with the real structure (e.g. python
-    // `match_statement.body` takes a `MatchBlock` with CaseClause children,
-    // not a plain `Block` with Statement children).
+    // so callers construct nodes with the real structure.
     const resolveAliased = (t: string): string => {
         const source = f.aliasSources?.[t]
         if (!source) return t
         return nodeMap.nodes.get(source) ? source : t
     }
-    const parts = f.contentTypes.map(resolveAliased).map(t => {
+    const nodeParts = kindNames.map(resolveAliased).map(t => {
         const node = nodeMap.nodes.get(t)
         if (!node) {
             const fallback = t.replace(/(?:^|_)([a-z])/g, (_: string, c: string) => c.toUpperCase())
@@ -581,7 +567,8 @@ function fieldElementType(f: AssembledField, nodeMap: NodeMap): string {
         const name = node.typeName
         return /^[A-Za-z_$][\w$]*$/.test(name) ? `T.${name}` : JSON.stringify(t)
     })
-    return [...new Set(parts)].join(' | ')
+    const litParts = literals.map(v => JSON.stringify(v))
+    return [...new Set([...nodeParts, ...litParts])].join(' | ')
 }
 
 function emitFieldCarryingFactory(
@@ -621,7 +608,7 @@ function emitFieldCarryingFactory(
         // directly rather than reading from config. The stamp expression for
         // each required slot is a factory call or literal value. Optional
         // children contribute nothing (they default to absent in the array).
-        const requiredChildren = children.filter(c => c.required)
+        const requiredChildren = children.filter(c => isRequired(c))
         const allRequiredAutoStamp = requiredChildren.length > 0
             && requiredChildren.every(c => isAutoStampSlot(c, nodeMap))
         if (allRequiredAutoStamp) {
@@ -648,7 +635,7 @@ function emitFieldCarryingFactory(
         const childElem = childElementType({ children }, nodeMap)
         if (childrenMultiple) {
             lines.push('    getChildren() { return children; },')
-            const childrenNonEmpty = children.some(c => c.nonEmpty)
+            const childrenNonEmpty = children.some(c => isNonEmpty(c))
             if (childrenNonEmpty) {
                 lines.push(`    setChildren(...items: ${childElem}[]) {`)
                 lines.push(`      _assertNonEmpty(items, '${node.kind}.children');`)
@@ -679,7 +666,7 @@ function emitFieldCarryingFactory(
  *   flattens a choice of hidden helpers into a mixed list of single + repeated entries.
  */
 function resolveChildrenMultiple(children: readonly AssembledChild[]): boolean {
-    return children.some(c => c.multiple)
+    return children.some(c => isMultiple(c))
 }
 
 /**
@@ -704,8 +691,8 @@ function resolveConfigOptional(
     // they never appear in Config. Auto-stamp-eligible children are also
     // excluded: when all required children are parameterless, they are
     // stamped directly in the factory body rather than read from config.
-    const hasRequired = fields.some(f => f.required && autoStampExpression(f, nodeMap) === undefined)
-        || children.some(c => c.required && !isAutoStampSlot(c, nodeMap))
+    const hasRequired = fields.some(f => isRequired(f) && autoStampExpression(f, nodeMap) === undefined)
+        || children.some(c => isRequired(c) && !isAutoStampSlot(c, nodeMap))
     return hasRequired ? '' : '?'
 }
 
@@ -778,8 +765,9 @@ function emitFluentFieldMethods(
             lines.push(`    get ${method}() { return fields.${f.name}; },`)
             continue
         }
-        const param = f.multiple ? 'values' : 'value'
-        if (f.multiple) {
+        const fMultiple = isMultiple(f)
+        const param = fMultiple ? 'values' : 'value'
+        if (fMultiple) {
             const elemType = fieldElementType(f, nodeMap)
             // Rest params can't be `readonly T[]` (TS2370) so plain mutable arrays
             // are used. NonEmptyArray<T> is a tuple alias `readonly [T, ...(readonly T[])]`
@@ -787,11 +775,11 @@ function emitFluentFieldMethods(
             // When elemType is a union (`A | B`), wrap in parens to avoid
             // `A | B[]` being parsed as `A | (B[])`.
             const elemForArray = elemType.includes(' | ') ? `(${elemType})` : elemType
-            const restType = f.nonEmpty ? `NonEmptyArray<${elemType}>` : `${elemForArray}[]`
+            const restType = isNonEmpty(f) ? `NonEmptyArray<${elemType}>` : `${elemForArray}[]`
             lines.push(`    ${method}(...${param}: ${restType}) { return _fsm(config, ${fn}, '${f.propertyName}', ${param}, fields.${f.name}); },`)
         } else {
             const elemType = fieldElementType(f, nodeMap)
-            const paramType = f.required ? elemType : `${elemType} | undefined`
+            const paramType = isRequired(f) ? elemType : `${elemType} | undefined`
             lines.push(`    ${method}(${param}?: ${paramType}) { return _fs(config, ${fn}, '${f.propertyName}', ${param}, fields.${f.name}); },`)
         }
     }
@@ -814,7 +802,7 @@ function emitContainerFactory(node: ContainerNode, nodeMap: NodeMap): string {
     const fn = node.rawFactoryName!
     const lines: string[] = []
     const anyMultiple = resolveContainerMultiple(node)
-    const anyNonEmpty = node.children.some(c => c.nonEmpty)
+    const anyNonEmpty = node.children.some(c => isNonEmpty(c))
     const elementType = resolveContainerElementType(node, nodeMap)
     if (anyMultiple) {
         lines.push(`export function ${fn}(...children: ${elementType}[]) {`)
@@ -823,7 +811,7 @@ function emitContainerFactory(node: ContainerNode, nodeMap: NodeMap): string {
         }
     } else {
         const firstChild = node.children[0]
-        const required = firstChild?.required ?? false
+        const required = firstChild ? isRequired(firstChild) : false
         const optMark = required ? '' : '?'
         lines.push(`export function ${fn}(child${optMark}: ${elementType}) {`)
         // Required child: type guarantees non-null, wrap directly.
@@ -855,7 +843,7 @@ function emitContainerFactory(node: ContainerNode, nodeMap: NodeMap): string {
  *   repeated entries, so checking only `children[0]` misses the repeated signal.
  */
 function resolveContainerMultiple(node: ContainerNode): boolean {
-    return node.children.some(c => c.multiple)
+    return node.children.some(c => isMultiple(c))
 }
 
 /**
@@ -937,8 +925,8 @@ function buildPolymorphConfigUnion(forms: AssembledGroup[]): string {
  */
 function resolvePolymorphConfigOptional(forms: AssembledGroup[]): string {
     const anyFormHasRequired = forms.some(f =>
-        f.fields.some(fd => fd.required) ||
-        f.children.some(c => c.required),
+        f.fields.some(fd => isRequired(fd)) ||
+        f.children.some(c => isRequired(c)),
     )
     return anyFormHasRequired ? '' : '?'
 }

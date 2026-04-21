@@ -41,6 +41,101 @@ import {
 import { tokenToName } from './optimize.ts'
 
 // ---------------------------------------------------------------------------
+// NodeOrTerminal — unified slot-content type (ADR-0010 Task 1.6)
+// ---------------------------------------------------------------------------
+
+/**
+ * Per-value multiplicity tag. Each entry in a slot's `values` array carries
+ * its own multiplicity derived from the grammar rule that produced it.
+ *
+ * - `optional`      → `T | undefined`        (field: `readonly x?: T`)
+ * - `single`        → `T`                    (field: `readonly x: T`)
+ * - `array`         → `readonly T[]`          (field: `readonly x: readonly T[]`)
+ * - `nonEmptyArray` → `NonEmptyArray<T>`      (field: `readonly x: NonEmptyArray<T>`)
+ */
+export type Multiplicity = 'optional' | 'single' | 'array' | 'nonEmptyArray'
+
+/**
+ * Unresolved kind reference — used during derivation, before the
+ * `resolveSlotRefs` pass replaces it with the actual AssembledNode.
+ * Kept in the `NodeRef.node` union so diagnostic / serialization paths
+ * can surface dangling references as typed values.
+ */
+export interface UnresolvedRef {
+    readonly kind: 'unresolved-ref'
+    readonly name: string
+}
+
+/**
+ * A slot-content entry that references a grammar node kind. After
+ * `resolveSlotRefs` the `.node` field holds the resolved `AssembledNode`;
+ * before that pass (or for unresolvable dead-kind references) it holds
+ * an `UnresolvedRef`.
+ */
+export interface NodeRef<T extends AssembledNode = AssembledNode> {
+    readonly kind: 'node-ref'
+    readonly node: T | UnresolvedRef
+    readonly multiplicity: Multiplicity
+}
+
+/**
+ * A slot-content entry that is an inline string literal (e.g. `'const'`,
+ * `'pub'`, an enum member). The `value` is the exact grammar string.
+ */
+export interface TerminalValue {
+    readonly kind: 'terminal'
+    readonly value: string
+    readonly multiplicity: Multiplicity
+}
+
+/**
+ * Discriminated union of the two entry types inside a slot's `values` array.
+ */
+export type NodeOrTerminal = NodeRef | TerminalValue
+
+export function isNodeRef(v: NodeOrTerminal): v is NodeRef {
+    return v.kind === 'node-ref'
+}
+
+export function isTerminalValue(v: NodeOrTerminal): v is TerminalValue {
+    return v.kind === 'terminal'
+}
+
+export function isUnresolvedRef(v: NodeRef['node']): v is UnresolvedRef {
+    return typeof v === 'object' && (v as { kind?: unknown }).kind === 'unresolved-ref'
+}
+
+// ---------------------------------------------------------------------------
+// Derived slot-level helpers (DRY: one derivation, not stored flags)
+// ---------------------------------------------------------------------------
+
+/**
+ * True when EVERY value in the slot is `single`, `array`, or `nonEmptyArray`
+ * (none are `optional`). A slot with ANY optional value is itself optional
+ * at the slot level.
+ */
+export function isRequired(slot: { values: readonly NodeOrTerminal[] }): boolean {
+    return slot.values.length > 0 && slot.values.every(v => v.multiplicity !== 'optional')
+}
+
+/**
+ * True when ANY value has multiplicity `array` or `nonEmptyArray`.
+ */
+export function isMultiple(slot: { values: readonly NodeOrTerminal[] }): boolean {
+    return slot.values.some(v => v.multiplicity === 'array' || v.multiplicity === 'nonEmptyArray')
+}
+
+/**
+ * True when EVERY multi-valued value is `nonEmptyArray` (and there is at
+ * least one multi-valued value). A mixed `array` + `nonEmptyArray` slot
+ * returns `false` — the `array` form allows empty.
+ */
+export function isNonEmpty(slot: { values: readonly NodeOrTerminal[] }): boolean {
+    const multis = slot.values.filter(v => v.multiplicity === 'array' || v.multiplicity === 'nonEmptyArray')
+    return multis.length > 0 && multis.every(v => v.multiplicity === 'nonEmptyArray')
+}
+
+// ---------------------------------------------------------------------------
 // Derivation helpers — walk a Rule to produce fields, children, content types
 // ---------------------------------------------------------------------------
 
@@ -112,11 +207,11 @@ export function hasAnyChild(rule: Rule): boolean {
     }
 }
 
-export function deriveFields(rule: Rule, isOptional = false, isRepeated = false): AssembledField[] {
-    const raw = deriveFieldsRaw(rule, isOptional, isRepeated, false)
+export function deriveFields(rule: Rule): AssembledField[] {
+    const raw = deriveFieldsRaw(rule, 'single')
     // Deduplicate by field name. If the same name appears multiple times
-    // (e.g. once as single, once as repeat), merge into a multiple/optional
-    // field with the union of content types.
+    // (e.g. once as single, once as repeat, across choice arms), merge
+    // by combining their `values` arrays.
     const byName = new Map<string, AssembledField>()
     for (const f of raw) {
         const existing = byName.get(f.name)
@@ -129,18 +224,8 @@ export function deriveFields(rule: Rule, isOptional = false, isRepeated = false)
             : undefined
         const merged: AssembledField = {
             ...existing,
-            required: existing.required && f.required,
-            multiple: existing.multiple || f.multiple,
-            // nonEmpty survives only when every merged occurrence was
-            // itself non-empty AND the merged shape is still multi.
-            // A mixed "once as single, once as repeat1" field drops
-            // to plain repeat semantics.
-            nonEmpty: Boolean(existing.nonEmpty) && Boolean(f.nonEmpty),
-            contentTypes: Array.from(new Set([...existing.contentTypes, ...f.contentTypes])),
+            values: dedupeValues([...existing.values, ...f.values]),
             aliasSources: mergedAliasSources,
-            literalValues: (existing.literalValues || f.literalValues)
-                ? Array.from(new Set([...(existing.literalValues ?? []), ...(f.literalValues ?? [])]))
-                : undefined,
             projection: {
                 ...existing.projection,
                 kinds: Array.from(new Set([...existing.projection.kinds, ...f.projection.kinds])),
@@ -151,11 +236,14 @@ export function deriveFields(rule: Rule, isOptional = false, isRepeated = false)
     return Array.from(byName.values())
 }
 
+/**
+ * Raw field derivation — produces one AssembledField per `field()` encounter.
+ * Duplicates are merged by `deriveFields`. The `outerMultiplicity` threads
+ * down from repeat/optional wrappers above the field.
+ */
 function deriveFieldsRaw(
     rule: Rule,
-    isOptional: boolean,
-    isRepeated: boolean,
-    isNonEmpty: boolean,
+    outerMultiplicity: Multiplicity,
 ): AssembledField[] {
     switch (rule.type) {
         case 'field': {
@@ -167,45 +255,37 @@ function deriveFieldsRaw(
             // match so factories don't emit phantom parameters that the
             // template can't reference.
             if (isSyntheticFieldWrapper(rule.content)) {
-                return deriveFieldsRaw(rule.content, isOptional, isRepeated, isNonEmpty)
+                return deriveFieldsRaw(rule.content, outerMultiplicity)
             }
-            // Dedupe at the field boundary — inner walks via `flatMap`
-            // over seq/choice members can legitimately produce duplicate
-            // kind names when multiple variants reference the same
-            // target (macro_definition's `rules: $$$MACRO_RULE` repeats
-            // macro_rule across 6 variants; supertype expansions can
-            // overlap with concrete sibling kinds).
-            const contentTypes = [...new Set(deriveContentTypes(rule.content))]
+
             const aliasSources = deriveAliasSources(rule.content)
-            const literalValues = deriveLiteralValues(rule.content)
             const propertyName = snakeToCamel(rule.name)
-            // A field wrapping a repeat/optional carries that shape on
-            // itself — `field('statements', repeat($._statement))` means
-            // one field named `statements` whose value is many statements.
-            const innerShape = fieldInnerShape(rule.content)
-            const multiple = isRepeated || innerShape.repeated
-            // Non-empty survives only when there's no outer `optional`
-            // wrapper swallowing the empty case. `field('x',
-            // optional(repeat1(...)))` is collapsed to
-            // `field('x', repeat(...))` at evaluate anyway, so by the
-            // time we get here the optional+repeat1 mix shouldn't
-            // appear — but the guard keeps the derivation honest.
-            const nonEmpty = multiple
-                && !isOptional
-                && !innerShape.optional
-                && (isNonEmpty || innerShape.nonEmpty)
+
+            // Determine the multiplicity for this field's content. The
+            // field's own content rule (repeat/optional wrapper) takes
+            // precedence over any outer multiplicity from a surrounding
+            // repeat(field('x', ...)).
+            const innerMult = fieldContentMultiplicity(rule.content, outerMultiplicity)
+
+            // Derive values — each NodeOrTerminal entry carries its own multiplicity.
+            const rawValues = deriveValuesForRule(rule.content, innerMult)
+            const values = dedupeValues(rawValues)
+
+            // Compute projection.kinds from node-ref values only (for backwards-
+            // compat with emitters that call projection.kinds).
+            const kindNames = values
+                .filter(isNodeRef)
+                .map(v => isUnresolvedRef(v.node) ? (v.node as UnresolvedRef).name : (v.node as AssembledNode).kind)
+            const projectionKinds = [...new Set(kindNames)]
+
             const outerField: AssembledField = {
                 name: rule.name,
                 propertyName,
                 paramName: safeParamName(propertyName),
-                required: !isOptional && !innerShape.optional,
-                multiple,
-                nonEmpty: nonEmpty || undefined,
-                contentTypes,
+                values,
                 aliasSources: Object.keys(aliasSources).length > 0 ? aliasSources : undefined,
-                literalValues: literalValues.length > 0 ? literalValues : undefined,
                 source: rule.source ?? 'grammar',
-                projection: { typeName: '', kinds: contentTypes },
+                projection: { typeName: '', kinds: projectionKinds },
             }
 
             // Override-wrapper fields wrapping a choice whose branches
@@ -222,7 +302,7 @@ function deriveFieldsRaw(
             // shared between inner and outer is the rare pathological case
             // and the outer wrapper's declared shape is canonical.
             if (rule.source === 'override' && rule.content.type === 'choice') {
-                const innerFields = deriveFieldsRaw(rule.content, true, isRepeated, false)
+                const innerFields = deriveFieldsRaw(rule.content, 'optional')
                 const seen = new Set([rule.name])
                 const extras: AssembledField[] = []
                 for (const f of innerFields) {
@@ -230,32 +310,35 @@ function deriveFieldsRaw(
                     seen.add(f.name)
                     // Inner branches are alternatives, so inner fields are
                     // structurally optional from the parent's perspective.
-                    extras.push({ ...f, required: false })
+                    // Downgrade any 'single'/'nonEmptyArray' values to optional/array.
+                    const optValues = f.values.map(v => ({ ...v, multiplicity: toOptionalMultiplicity(v.multiplicity) }))
+                    extras.push({ ...f, values: optValues })
                 }
                 if (extras.length > 0) return [outerField, ...extras]
             }
             return [outerField]
         }
         case 'seq':
-            return rule.members.flatMap(m => deriveFieldsRaw(m, isOptional, isRepeated, isNonEmpty))
+            return rule.members.flatMap(m => deriveFieldsRaw(m, outerMultiplicity))
         case 'optional':
-            return deriveFieldsRaw(rule.content, true, isRepeated, isNonEmpty)
+            return deriveFieldsRaw(rule.content, 'optional')
         case 'repeat':
-            return deriveFieldsRaw(rule.content, isOptional, true, false)
+            return deriveFieldsRaw(rule.content, 'array')
         case 'repeat1':
-            return deriveFieldsRaw(rule.content, isOptional, true, true)
+            return deriveFieldsRaw(rule.content, 'nonEmptyArray')
         case 'choice': {
             // Walk each branch independently, then merge: a field is
             // required (and non-empty) only if it appears in EVERY
             // branch. Fields present in only some branches are
             // optional from the parent's perspective — another branch
-            // could be taken instead — so `required` / `nonEmpty` drop.
+            // could be taken instead — so values of absent-branch
+            // fields get their multiplicity downgraded to 'optional'.
             // This distinguishes `update_expression`-style choices
             // (every branch contributes the same fields, all required)
             // from `function_modifiers`-style choices (each branch
             // contributes a different field, each optional).
             const perBranch = rule.members.map(m =>
-                deriveFieldsRaw(m, isOptional, isRepeated, isNonEmpty),
+                deriveFieldsRaw(m, outerMultiplicity),
             )
             const inAll = (name: string) =>
                 perBranch.every(branch => branch.some(f => f.name === name))
@@ -268,27 +351,69 @@ function deriveFieldsRaw(
                     if (inAll(f.name)) {
                         result.push(f)
                     } else {
-                        result.push({ ...f, required: false, nonEmpty: undefined })
+                        // Not in all branches → optional slot: downgrade multiplicities
+                        const optValues = f.values.map(v => ({ ...v, multiplicity: toOptionalMultiplicity(v.multiplicity) }))
+                        result.push({ ...f, values: optValues })
                     }
                 }
             }
             return result
         }
         case 'clause':
-            return deriveFieldsRaw(rule.content, true, isRepeated, isNonEmpty)
+            return deriveFieldsRaw(rule.content, 'optional')
         case 'variant':
-            return deriveFieldsRaw(rule.content, isOptional, isRepeated, isNonEmpty)
         case 'group':
-            return deriveFieldsRaw(rule.content, isOptional, isRepeated, isNonEmpty)
+            return deriveFieldsRaw(rule.content, outerMultiplicity)
         default:
             return []
     }
 }
 
+/**
+ * Convert a non-optional multiplicity to its optional equivalent.
+ * Used when a field appears in only some choice branches.
+ *
+ * - `single` → `optional`
+ * - `nonEmptyArray` → `array` (can now be empty from parent's perspective)
+ * - `array` → `array` (already allows empty)
+ * - `optional` → `optional` (already optional)
+ */
+function toOptionalMultiplicity(m: Multiplicity): Multiplicity {
+    switch (m) {
+        case 'single': return 'optional'
+        case 'nonEmptyArray': return 'array'
+        default: return m
+    }
+}
+
+/**
+ * Determine the effective multiplicity for a field's content rule, threading
+ * any outer multiplicity through field-level wrappers (repeat/optional directly
+ * inside the field).
+ *
+ * `field('items', repeat($._item))` → content is `repeat` → `'array'`
+ * `field('items', repeat1($._item))` → content is `repeat1` → `'nonEmptyArray'`
+ * `field('x', optional($.foo))` → content is `optional` → `'optional'`
+ * `field('x', $.foo)` → content is `symbol`, outerMultiplicity is `single` → `'single'`
+ */
+function fieldContentMultiplicity(content: Rule, outerMultiplicity: Multiplicity): Multiplicity {
+    switch (content.type) {
+        case 'repeat': return 'array'
+        case 'repeat1': return 'nonEmptyArray'
+        case 'optional': {
+            const inner = fieldContentMultiplicity(content.content, outerMultiplicity)
+            // optional(repeat1(...)) → repeat (the optional makes nonEmpty drop)
+            if (inner === 'nonEmptyArray') return 'array'
+            return 'optional'
+        }
+        default: return outerMultiplicity
+    }
+}
+
 export function deriveChildren(rule: Rule): AssembledChild[] {
     const raw: AssembledChild[] = []
-    walkForChildren(rule, raw, false, false, false)
-    // Deduplicate by child name; merge single+multiple into multiple.
+    walkForChildren(rule, raw, 'single')
+    // Deduplicate by child name — merge values arrays.
     const byName = new Map<string, AssembledChild>()
     for (const c of raw) {
         const existing = byName.get(c.name)
@@ -298,10 +423,7 @@ export function deriveChildren(rule: Rule): AssembledChild[] {
         }
         byName.set(c.name, {
             ...existing,
-            required: existing.required && c.required,
-            multiple: existing.multiple || c.multiple,
-            nonEmpty: Boolean(existing.nonEmpty) && Boolean(c.nonEmpty),
-            contentTypes: Array.from(new Set([...existing.contentTypes, ...c.contentTypes])),
+            values: dedupeValues([...existing.values, ...c.values]),
         })
     }
     return Array.from(byName.values())
@@ -310,9 +432,7 @@ export function deriveChildren(rule: Rule): AssembledChild[] {
 function walkForChildren(
     rule: Rule,
     out: AssembledChild[],
-    isOptional: boolean,
-    isRepeated: boolean,
-    isNonEmpty: boolean,
+    multiplicity: Multiplicity,
 ): void {
     switch (rule.type) {
         case 'symbol':
@@ -327,30 +447,31 @@ function walkForChildren(
                 out.push({
                     name: cleanName,
                     propertyName: snakeToCamel(cleanName),
-                    required: !isOptional,
-                    multiple: isRepeated,
-                    nonEmpty: (isRepeated && !isOptional && isNonEmpty) || undefined,
-                    contentTypes: [rule.name],
+                    values: [{ kind: 'node-ref', node: { kind: 'unresolved-ref', name: rule.name }, multiplicity }],
                 })
             }
             break
         case 'supertype':
             // Resolved supertype reference — dispatches to any subtype at
             // runtime. Emit one slot with the supertype's name.
-            out.push({
-                name: rule.name.replace(/^_+/, '') || rule.name,
-                propertyName: snakeToCamel(rule.name.replace(/^_+/, '') || rule.name),
-                required: !isOptional,
-                multiple: isRepeated,
-                nonEmpty: (isRepeated && !isOptional && isNonEmpty) || undefined,
-                contentTypes: rule.subtypes,
-            })
+            {
+                const cleanName = rule.name.replace(/^_+/, '') || rule.name
+                out.push({
+                    name: cleanName,
+                    propertyName: snakeToCamel(cleanName),
+                    values: rule.subtypes.map(name => ({
+                        kind: 'node-ref' as const,
+                        node: { kind: 'unresolved-ref' as const, name },
+                        multiplicity,
+                    })),
+                })
+            }
             break
         case 'seq': {
             // Sibling-duplicate symbol/supertype refs with the same
             // target (rust or_pattern: two `_pattern` refs) represent
             // the multi-children shape. Mark those occurrences as
-            // multi so downstream merge keeps `multiple: true`.
+            // multi so downstream merge keeps multiplicity `array`.
             const targetCounts = new Map<string, number>()
             const childTarget = (r: Rule): string | null => {
                 if (r.type === 'symbol') return r.name
@@ -365,29 +486,29 @@ function walkForChildren(
             for (const m of rule.members) {
                 const t = childTarget(m)
                 const dup = t !== null && (targetCounts.get(t) ?? 0) > 1
-                walkForChildren(m, out, isOptional, isRepeated || dup, isNonEmpty)
+                // If this target is duplicated, force 'array' multiplicity.
+                const childMult: Multiplicity = dup ? 'array' : multiplicity
+                walkForChildren(m, out, childMult)
             }
             break
         }
         case 'optional':
-            walkForChildren(rule.content, out, true, isRepeated, isNonEmpty)
+            walkForChildren(rule.content, out, 'optional')
             break
         case 'repeat':
-            walkForChildren(rule.content, out, isOptional, true, false)
+            walkForChildren(rule.content, out, 'array')
             break
         case 'repeat1':
-            walkForChildren(rule.content, out, isOptional, true, true)
+            walkForChildren(rule.content, out, 'nonEmptyArray')
             break
         case 'choice': {
             // Walk each branch into a scratch bucket, then merge into
             // `out`: a child slot is only required / non-empty if it
             // appears in EVERY branch of the choice. Children in only
-            // some branches are optional (another branch could be
-            // taken) and lose their nonEmpty flag — matches how
-            // `deriveFieldsRaw` handles choice-bound fields.
+            // some branches get their multiplicity downgraded to optional.
             const perBranch: AssembledChild[][] = rule.members.map(m => {
                 const bucket: AssembledChild[] = []
-                walkForChildren(m, bucket, isOptional, isRepeated, isNonEmpty)
+                walkForChildren(m, bucket, multiplicity)
                 return bucket
             })
             const inAll = (name: string) =>
@@ -400,7 +521,9 @@ function walkForChildren(
                     if (inAll(c.name)) {
                         out.push(c)
                     } else {
-                        out.push({ ...c, required: false, nonEmpty: undefined })
+                        // Not in every branch → downgrade multiplicities to optional
+                        const optValues = c.values.map(v => ({ ...v, multiplicity: toOptionalMultiplicity(v.multiplicity) }))
+                        out.push({ ...c, values: optValues })
                     }
                 }
             }
@@ -410,10 +533,10 @@ function walkForChildren(
             // Fields are handled by deriveFields, not children
             break
         case 'variant':
-            walkForChildren(rule.content, out, isOptional, isRepeated, isNonEmpty)
+            walkForChildren(rule.content, out, multiplicity)
             break
         case 'clause':
-            walkForChildren(rule.content, out, true, isRepeated, isNonEmpty)
+            walkForChildren(rule.content, out, 'optional')
             break
     }
 }
@@ -452,46 +575,6 @@ function deriveAliasSources(rule: Rule): Record<string, string> {
     return out
 }
 
-function deriveContentTypes(rule: Rule): string[] {
-    switch (rule.type) {
-        case 'symbol': return [rule.name]
-        case 'choice': return rule.members.flatMap(m => deriveContentTypes(m))
-        // Enum values are `text` contents, not distinct node kinds. A
-        // field whose content is an inline enum should type as a
-        // string-literal union (see deriveLiteralValues) — the parser
-        // emits a single node whose `text` happens to match one of the
-        // enum values, never a node whose `type` is `"u8"`, `"usize"`.
-        case 'enum': return []
-        case 'supertype': return rule.subtypes
-        case 'field': return deriveContentTypes(rule.content)
-        case 'variant': return deriveContentTypes(rule.content)
-        case 'optional': return deriveContentTypes(rule.content)
-        case 'repeat': return deriveContentTypes(rule.content)
-        case 'seq': return rule.members.flatMap(m => deriveContentTypes(m))
-        case 'clause': return deriveContentTypes(rule.content)
-        case 'group': return deriveContentTypes(rule.content)
-        default: return []
-    }
-}
-
-/**
- * Inspect a field's inner content to infer optional/repeated flags.
- * Needed because overrides can wrap a `repeat(...)` or `optional(...)`
- * directly in a field — the outer `deriveFieldsRaw` walker only sees
- * the field wrapper and doesn't know its body's shape.
- */
-function fieldInnerShape(rule: Rule): { optional: boolean; repeated: boolean; nonEmpty: boolean } {
-    switch (rule.type) {
-        case 'repeat': return { optional: false, repeated: true, nonEmpty: false }
-        case 'repeat1': return { optional: false, repeated: true, nonEmpty: true }
-        case 'optional': {
-            const inner = fieldInnerShape(rule.content)
-            return { optional: true, repeated: inner.repeated, nonEmpty: inner.nonEmpty }
-        }
-        default: return { optional: false, repeated: false, nonEmpty: false }
-    }
-}
-
 /**
  * Detect an override-synthesized "outer field wrapper" that has no
  * corresponding runtime data. The autogen produced by v1's extractor
@@ -514,24 +597,96 @@ export function isSyntheticFieldWrapper(content: Rule): boolean {
     return content.members.some(isField)
 }
 
-function deriveLiteralValues(rule: Rule): string[] {
+/**
+ * Unified walker that produces `NodeOrTerminal[]` directly from a field's
+ * content rule. Each entry carries its own per-value `multiplicity` — this
+ * preserves information that the old parallel `deriveContentTypes` +
+ * `deriveLiteralValues` pair silently dropped (e.g. `choice('const',
+ * $.mutable_specifier)` previously produced `contentTypes=['mutable_specifier']`
+ * and `literalValues=[]` because the old bail-on-mixed logic gave up;
+ * now it produces `[TerminalValue('const','single'), NodeRef('mutable_specifier','single')]`).
+ *
+ * Multiplicity is threaded through the walker:
+ *   - outer `optional(...)` → entries from content get `optional` multiplicity
+ *   - outer `repeat(...)` → entries from content get `array` multiplicity
+ *   - outer `repeat1(...)` → entries from content get `nonEmptyArray` multiplicity
+ *   - no wrapper → entries get `single` multiplicity
+ *
+ * A `choice` produces MULTIPLE entries — one per arm (with deduplication).
+ */
+function deriveValuesForRule(
+    rule: Rule,
+    multiplicity: Multiplicity,
+): NodeOrTerminal[] {
     switch (rule.type) {
-        case 'enum': return rule.values
-        case 'string': return [rule.value]
-        case 'choice': {
-            const parts: string[] = []
-            for (const m of rule.members) {
-                const inner = m.type === 'variant' ? m.content : m
-                if (inner.type === 'string') parts.push(inner.value)
-                else return []  // not a pure string-choice — bail
-            }
-            return parts
-        }
-        case 'field': return deriveLiteralValues(rule.content)
-        case 'variant': return deriveLiteralValues(rule.content)
-        case 'optional': return deriveLiteralValues(rule.content)
-        default: return []
+        case 'symbol':
+            return [{ kind: 'node-ref', node: { kind: 'unresolved-ref', name: rule.name }, multiplicity }]
+        case 'supertype':
+            // Supertype refs expand to their subtype list — each subtype is a
+            // valid concrete kind the slot can hold.
+            return rule.subtypes.map(name => ({
+                kind: 'node-ref' as const,
+                node: { kind: 'unresolved-ref' as const, name },
+                multiplicity,
+            }))
+        case 'string':
+            return [{ kind: 'terminal', value: rule.value, multiplicity }]
+        case 'enum':
+            // Enum: each enum member is a TerminalValue
+            return rule.values.map(v => ({ kind: 'terminal' as const, value: v, multiplicity }))
+        case 'choice':
+            // Each arm is independent — union all entries. Arms may differ in
+            // their own multiplicity if they wrap repeat/optional differently.
+            return rule.members.flatMap(m => deriveValuesForRule(m, multiplicity))
+        case 'optional':
+            // Optional wrapper forces multiplicity to 'optional'. If the
+            // inner rule already produces multi entries (repeat inside optional),
+            // that case shouldn't arise after evaluate (optional(repeat) →
+            // repeat with trailing semantics), but handle gracefully.
+            return deriveValuesForRule(rule.content, 'optional')
+        case 'repeat':
+            return deriveValuesForRule(rule.content, 'array')
+        case 'repeat1':
+            return deriveValuesForRule(rule.content, 'nonEmptyArray')
+        case 'field':
+            // Nested field inside a choice — recurse into its content
+            return deriveValuesForRule(rule.content, multiplicity)
+        case 'variant':
+        case 'clause':
+        case 'group':
+            return deriveValuesForRule(rule.content, multiplicity)
+        case 'seq':
+            // Seq inside a choice arm — flatten all members (rare, but
+            // handles seq-of-symbols within choice arms).
+            return rule.members.flatMap(m => deriveValuesForRule(m, multiplicity))
+        default:
+            return []
     }
+}
+
+/**
+ * Compute the merged `values: NodeOrTerminal[]` for an AssembledChild or
+ * AssembledField. Deduplicates by (kind+name/value, multiplicity) pair so
+ * that two choice arms referencing the same kind with the same multiplicity
+ * produce a single entry.
+ *
+ * The merge strategy for name-conflicts: if the same node name appears with
+ * different multiplicities in different choice arms, keep BOTH entries — the
+ * per-value shape is the point.
+ */
+function dedupeValues(values: NodeOrTerminal[]): NodeOrTerminal[] {
+    const seen = new Set<string>()
+    const result: NodeOrTerminal[] = []
+    for (const v of values) {
+        const key = v.kind === 'node-ref'
+            ? `node-ref:${(v.node as UnresolvedRef).name ?? '?'}:${v.multiplicity}`
+            : `terminal:${v.value}:${v.multiplicity}`
+        if (!seen.has(key)) {
+            seen.add(key)
+            result.push(v)
+        }
+    }
+    return result
 }
 
 // ---------------------------------------------------------------------------
@@ -764,17 +919,15 @@ export abstract class AssembledNodeBase<R extends Rule = Rule> {
 export interface AssembledChild {
     readonly name: string
     readonly propertyName: string
-    readonly required: boolean
-    readonly multiple: boolean
     /**
-     * True when the slot originates from `repeat1(...)` — a list with a
-     * grammar-enforced `length >= 1` guarantee. Emitters render the field
-     * type as a non-empty tuple `readonly [T, ...(readonly T[])]` in
-     * interfaces/config, and `T | [T, ...T[]]` in from-input (single-value
-     * sugar). Only meaningful when `multiple` is true.
+     * Unified per-value content. Each entry carries its own `multiplicity`
+     * so that mixed-cardinality choices (e.g. `choice(optional($.foo),
+     * repeat($.bar))`) are represented faithfully.
+     *
+     * Use the derived helpers (`isRequired`, `isMultiple`, `isNonEmpty`)
+     * to compute slot-level booleans rather than reading flags directly.
      */
-    readonly nonEmpty?: boolean
-    readonly contentTypes: string[]
+    readonly values: readonly NodeOrTerminal[]
 }
 
 export interface AssembledField extends AssembledChild {
@@ -796,13 +949,6 @@ export interface AssembledField extends AssembledChild {
      * common case). See ADR-0006.
      */
     readonly aliasSources?: Readonly<Record<string, string>>
-    /**
-     * Literal values when the field's content is an inline enum
-     * (choice-of-strings). Empty for normal fields. When populated,
-     * types emits the field as a string-literal union instead of
-     * a kind-reference union.
-     */
-    readonly literalValues?: readonly string[]
     readonly source: 'grammar' | 'override' | 'inlined' | 'inferred'
     readonly projection: KindProjection
 }

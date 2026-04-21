@@ -17,7 +17,7 @@ import type { NodeMap } from '../compiler/types.ts'
 import type {
     AssembledField, AssembledChild, AssembledNode, AssembledPolymorph,
 } from '../compiler/node-map.ts'
-import { isValidIdent } from './shared.ts'
+import { isValidIdent, isMultiple } from './shared.ts'
 
 export interface EmitWrapConfig {
     grammar: string
@@ -271,9 +271,9 @@ function emitFieldGetterLine(lines: string[], f: AssembledField, method: string)
     const aliasEntries = f.aliasSources ? Object.entries(f.aliasSources) : []
     if (aliasEntries.length > 0) {
         const [fromType, toType] = aliasEntries[0]!
-        const helper = f.multiple ? 'drillAsAll' : 'drillAs'
+        const helper = isMultiple(f) ? 'drillAsAll' : 'drillAs'
         lines.push(`    get ${method}() { return ${helper}(data.$fields?.['${f.name}'], tree, ${JSON.stringify(fromType)}, ${JSON.stringify(toType)}); },`)
-    } else if (f.multiple) {
+    } else if (isMultiple(f)) {
         lines.push(`    get ${method}() { return drillInAll(data.$fields?.['${f.name}'], tree); },`)
     } else {
         lines.push(`    get ${method}() { return drillIn(data.$fields?.['${f.name}'], tree); },`)
@@ -296,7 +296,7 @@ function emitFieldGetterLine(lines: string[], f: AssembledField, method: string)
  */
 function emitChildrenSlotGetters(lines: string[], children: readonly AssembledChild[]): void {
     if (children.length > 0) {
-        const anyMultiple = children.some(c => c.multiple)
+        const anyMultiple = children.some(c => isMultiple(c))
         if (anyMultiple) {
             lines.push(`    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },`)
         } else {

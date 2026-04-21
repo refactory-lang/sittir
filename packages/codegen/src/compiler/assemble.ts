@@ -22,6 +22,7 @@ import {
     AssembledSupertype, AssembledGroup, AssembledMulti,
     hasAnyField, hasAnyChild,
     nameNode,
+    isRequired, isMultiple, isNodeRef, isTerminalValue, isUnresolvedRef,
 } from './node-map.ts'
 import { simplifyRule } from './simplify.ts'
 import { compileWordMatcher } from './common.ts'
@@ -347,26 +348,30 @@ function resolveIrKeys(nodes: Map<string, AssembledNode>): void {
  * Determine whether a single slot (field or child) is auto-stamp-eligible.
  *
  * A slot is eligible when:
- * - It is optional (`required: false`) — user can omit it; we treat it as a
- *   non-blocking empty slot.
+ * - It is optional (`isRequired(slot) === false`) — user can omit it; we
+ *   treat it as a non-blocking empty slot.
  * - It is required, non-repeated, and its value is fixed:
- *   (a) inline literal (`literalValues.length === 1`, from AssembledField)
- *   (b) single content-type that is itself parameterless (already marked)
+ *   (a) exactly one TerminalValue in values
+ *   (b) exactly one NodeRef pointing to a parameterless kind (already marked)
  *
- * Required repeated slots (`multiple: true`) are NOT eligible — they
- * represent a 0..N or 1..N collection whose cardinality is user-determined.
+ * Required repeated slots are NOT eligible — their cardinality is
+ * user-determined.
  */
 function isAutoStampSlot(slot: AssembledChild, nodes: Map<string, AssembledNode>): boolean {
-    if (!slot.required) return true  // optional slots never block parameterless
-    if (slot.multiple) return false  // required repeated slot needs user input
+    if (!isRequired(slot)) return true   // optional slots never block parameterless
+    if (isMultiple(slot)) return false   // required repeated slot needs user input
 
-    // Source A: inline literal on an AssembledField
-    const asField = slot as AssembledField
-    if (asField.literalValues?.length === 1) return true
+    // Must be single-value to auto-stamp
+    if (slot.values.length !== 1) return false
+    const v = slot.values[0]!
 
-    // Source B/C: single content-type that is itself parameterless
-    if (slot.contentTypes.length === 1) {
-        const ref = nodes.get(slot.contentTypes[0]!)
+    // Source A: inline literal
+    if (isTerminalValue(v)) return true
+
+    // Source B/C: single NodeRef whose target is parameterless
+    if (isNodeRef(v)) {
+        const kindName = isUnresolvedRef(v.node) ? v.node.name : v.node.kind
+        const ref = nodes.get(kindName)
         if (ref?.isParameterless) return true
     }
 
@@ -401,17 +406,19 @@ function getSlotsForParameterless(node: AssembledNode): { fields: readonly Assem
  * compounds).
  */
 function stampExpressionForSlot(slot: AssembledChild, nodes: Map<string, AssembledNode>): string | undefined {
-    if (!slot.required) return undefined  // optional — no stamp needed
+    if (!isRequired(slot)) return undefined  // optional — no stamp needed
+    if (slot.values.length !== 1) return undefined
+    const v = slot.values[0]!
 
     // Source A: inline literal
-    const asField = slot as AssembledField
-    if (asField.literalValues?.length === 1) {
-        return JSON.stringify(asField.literalValues[0])
+    if (isTerminalValue(v)) {
+        return JSON.stringify(v.value)
     }
 
     // Source B/C: single referenced parameterless kind
-    if (slot.contentTypes.length === 1) {
-        const ref = nodes.get(slot.contentTypes[0]!)
+    if (isNodeRef(v)) {
+        const kindName = isUnresolvedRef(v.node) ? v.node.name : v.node.kind
+        const ref = nodes.get(kindName)
         if (ref?.isParameterless && ref.stampExpression !== undefined) {
             return ref.stampExpression
         }
@@ -478,7 +485,7 @@ function markParameterlessKinds(nodes: Map<string, AssembledNode>): void {
             // their factory call produces an empty/arbitrary node rather than a
             // fixed one. Optional slots are permitted (they can be omitted at the
             // stamp site) as long as they're not the only content.
-            const requiredSlots = allSlots.filter(s => s.required)
+            const requiredSlots = allSlots.filter(s => isRequired(s))
             if (requiredSlots.length === 0) continue  // no determined content — not parameterless
 
             const allAutoStamp = allSlots.every(s => isAutoStampSlot(s, nodes))

@@ -5,7 +5,7 @@
 
 import type { NodeMap } from '../compiler/types.ts'
 import type { AssembledNode, AssembledField } from '../compiler/node-map.ts'
-import { isValidIdent, isAutoStampField, isAutoStampSlot } from './shared.ts'
+import { isValidIdent, isAutoStampField, isAutoStampSlot, isRequired, isMultiple, isNonEmpty, slotKindNames } from './shared.ts'
 
 export interface EmitTestsConfig {
     grammar: string
@@ -78,16 +78,16 @@ function emitBranchTest(lines: string[], node: AssembledNode, kind: string, key:
     // the type via `as any`.
     const typeConfigParts: string[] = []
     for (const f of node.fields) {
-        if (f.required && !isAutoStampField(f, nodeMap)) {
+        if (isRequired(f) && !isAutoStampField(f, nodeMap)) {
             typeConfigParts.push(`${f.propertyName}: ${dummyValue(f)}`)
         }
     }
     if (node.children && node.children.length > 0) {
         const hasNonAutoStampRequired = node.children.some(
-            c => c.required && !isAutoStampSlot(c, nodeMap),
+            c => isRequired(c) && !isAutoStampSlot(c, nodeMap),
         )
         if (hasNonAutoStampRequired) {
-            const firstKind = node.children[0]?.contentTypes[0]
+            const firstKind = slotKindNames(node.children[0]!)[0]
             const dummy = firstKind
                 ? `{ $type: '${firstKind}', $text: 'test' } as any`
                 : `'test' as any`
@@ -96,7 +96,7 @@ function emitBranchTest(lines: string[], node: AssembledNode, kind: string, key:
     }
     const renderConfigParts = [...typeConfigParts]
     if (node.children && node.children.length > 0 && !renderConfigParts.some(p => p.startsWith('children'))) {
-        const firstKind = node.children[0]?.contentTypes[0]
+        const firstKind = slotKindNames(node.children[0]!)[0]
         const dummy = firstKind
             ? `{ $type: '${firstKind}', $text: 'test' } as any`
             : `'test' as any`
@@ -131,10 +131,11 @@ function emitContainerTest(lines: string[], node: AssembledNode, kind: string, k
     //     input, so the no-arg form `ir.kind()` would fail at
     //     runtime even though it type-checks.
     const first = node.children[0]
-    const requiredSingular = first && !first.multiple && first.required
-    const anyNonEmpty = node.children.some(c => c.nonEmpty)
-    const placeholder = (requiredSingular || anyNonEmpty) && first?.contentTypes[0]
-        ? `{ type: ${JSON.stringify(first.contentTypes[0])} } as never`
+    const requiredSingular = first && !isMultiple(first) && isRequired(first)
+    const anyNonEmpty = node.children.some(c => isNonEmpty(c))
+    const firstKindName = first ? slotKindNames(first)[0] : undefined
+    const placeholder = (requiredSingular || anyNonEmpty) && firstKindName
+        ? `{ type: ${JSON.stringify(firstKindName)} } as never`
         : ''
 
     lines.push(`describe('${kind}', () => {`)
@@ -154,7 +155,7 @@ function emitPolymorphTest(lines: string[], node: AssembledNode, kind: string, k
     for (const form of node.forms) {
         lines.push(`  it('${form.name} form produces correct type', () => {`)
         const configParts = form.fields
-            .filter(f => f.required && !isAutoStampField(f, nodeMap))
+            .filter(f => isRequired(f) && !isAutoStampField(f, nodeMap))
             .map(f => `${f.propertyName}: ${dummyValue(f)}`)
         const configArg = configParts.length > 0 ? `{ ${configParts.join(', ')} }` : '{}'
         lines.push(`    const node = ir.${key}.${form.name}(${configArg});`)
@@ -251,15 +252,16 @@ function dummyValue(field: AssembledField): string {
     // `$FIELD`/`joinBy` produce non-empty output; otherwise the generated
     // `render produces non-empty string` test fails for kinds where
     // every required field is multiple.
-    if (field.multiple) {
-        if (field.contentTypes.length > 0) {
-            return `[{ $type: '${field.contentTypes[0]}', $text: 'test' } as any]`
+    const kinds = slotKindNames(field)
+    if (isMultiple(field)) {
+        if (kinds.length > 0) {
+            return `[{ $type: '${kinds[0]}', $text: 'test' } as any]`
         }
         return `['test' as any]`
     }
-    if (field.contentTypes.length > 0) {
+    if (kinds.length > 0) {
         // Use first content type to generate a dummy
-        return `{ $type: '${field.contentTypes[0]}', $text: 'test' } as any`
+        return `{ $type: '${kinds[0]}', $text: 'test' } as any`
     }
     return "'test' as any"
 }

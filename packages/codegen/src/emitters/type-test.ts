@@ -4,6 +4,7 @@
  */
 
 import type { NodeMap } from '../compiler/types.ts'
+import { slotKindNames } from './shared.ts'
 
 export interface EmitTypeTestsConfig {
     nodeMap: NodeMap
@@ -22,14 +23,14 @@ export function emitTypeTests(config: EmitTypeTestsConfig): string {
     const referenced = new Set<string>()
     for (const [, n] of nodeMap.nodes) {
         if (n.modelType === 'branch' || n.modelType === 'group') {
-            for (const f of n.fields) for (const t of f.contentTypes) referenced.add(t)
-            for (const c of (n.children ?? [])) for (const t of c.contentTypes) referenced.add(t)
+            for (const f of n.fields) for (const t of slotKindNames(f)) referenced.add(t)
+            for (const c of (n.children ?? [])) for (const t of slotKindNames(c)) referenced.add(t)
         } else if (n.modelType === 'container') {
-            for (const c of n.children) for (const t of c.contentTypes) referenced.add(t)
+            for (const c of n.children) for (const t of slotKindNames(c)) referenced.add(t)
         } else if (n.modelType === 'polymorph') {
             for (const form of n.forms) {
-                for (const f of form.fields) for (const t of f.contentTypes) referenced.add(t)
-                for (const c of form.children) for (const t of c.contentTypes) referenced.add(t)
+                for (const f of form.fields) for (const t of slotKindNames(f)) referenced.add(t)
+                for (const c of form.children) for (const t of slotKindNames(c)) referenced.add(t)
             }
         } else if (n.modelType === 'supertype') {
             for (const t of n.subtypes) referenced.add(t)

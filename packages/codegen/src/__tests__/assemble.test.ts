@@ -3,7 +3,7 @@ import { assemble, classifyNode, simplifyRule, nameNode, nameField } from '../co
 import { simplifyRules } from '../compiler/simplify.ts'
 import type { Rule } from '../compiler/rule.ts'
 import type { OptimizedGrammar, NodeMap } from '../compiler/types.ts'
-import { deriveFields } from '../compiler/node-map.ts'
+import { deriveFields, isRequired, isMultiple } from '../compiler/node-map.ts'
 import type { AssembledNode } from '../compiler/node-map.ts'
 
 function makeOptimized(rules: Record<string, Rule>, overrides?: Partial<OptimizedGrammar>): OptimizedGrammar {
@@ -198,7 +198,7 @@ describe('Rule — deriveFields', () => {
             ],
         }
         const fields = deriveFields(rule)
-        expect(fields[0]!.required).toBe(true)
+        expect(isRequired(fields[0]!)).toBe(true)
     })
 
     it('derives required=false for optional fields', () => {
@@ -207,7 +207,7 @@ describe('Rule — deriveFields', () => {
             content: { type: 'field', name: 'x', content: { type: 'symbol', name: 'y' } },
         }
         const fields = deriveFields(rule)
-        expect(fields[0]!.required).toBe(false)
+        expect(isRequired(fields[0]!)).toBe(false)
     })
 
     it('derives multiple=true for repeated fields', () => {
@@ -216,7 +216,7 @@ describe('Rule — deriveFields', () => {
             content: { type: 'field', name: 'items', content: { type: 'symbol', name: 'item' } },
         }
         const fields = deriveFields(rule)
-        expect(fields[0]!.multiple).toBe(true)
+        expect(isMultiple(fields[0]!)).toBe(true)
     })
 })
 

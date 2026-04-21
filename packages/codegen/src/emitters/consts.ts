@@ -6,6 +6,7 @@
 
 import type { NodeMap } from '../compiler/types.ts'
 import type { AssembledNode, AssembledBranch, AssembledContainer } from '../compiler/node-map.ts'
+import { isRequired, isMultiple } from './shared.ts'
 
 export interface EmitConstsConfig {
     grammar: string
@@ -117,7 +118,7 @@ export function emitConsts(config: EmitConstsConfig): string {
         lines.push(`  '${kind}': [`)
         const fields = getFields(node)
         for (const f of fields) {
-            lines.push(`    { name: '${f.propertyName}', required: ${f.required}, multiple: ${f.multiple} },`)
+            lines.push(`    { name: '${f.propertyName}', required: ${isRequired(f)}, multiple: ${isMultiple(f)} },`)
         }
         lines.push('  ],')
     }

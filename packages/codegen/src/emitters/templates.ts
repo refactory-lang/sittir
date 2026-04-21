@@ -9,8 +9,10 @@
  */
 
 import type { NodeMap } from '../compiler/types.ts'
+import type { AssembledChild } from '../compiler/node-map.ts'
 import { AssembledGroup } from '../compiler/node-map.ts'
 import { compileWordMatcher } from '../compiler/common.ts'
+import { slotKindNames } from './shared.ts'
 
 export interface EmitTemplatesConfig {
     grammar: string
@@ -116,13 +118,15 @@ export function emitTemplates(config: EmitTemplatesConfig): string {
             terminatingKinds.add(kind)
         }
     }
-    const fieldIsBlockTerminating = (fieldName: string, parentNode: { modelType?: string; fields?: readonly { name: string; contentTypes: readonly string[] }[] }): boolean => {
+    const fieldIsBlockTerminating = (fieldName: string, parentNode: { modelType?: string; fields?: readonly AssembledChild[] }): boolean => {
         const field = parentNode.fields?.find(f => f.name === fieldName)
-        if (!field || field.contentTypes.length === 0) return false
-        return field.contentTypes.every(t => terminatingKinds.has(t))
+        if (!field) return false
+        const kinds = slotKindNames(field)
+        if (kinds.length === 0) return false
+        return kinds.every(t => terminatingKinds.has(t))
     }
-    const childIsBlockTerminating = (parentNode: { children?: readonly { contentTypes: readonly string[] }[] }): boolean => {
-        const all = parentNode.children?.flatMap(c => c.contentTypes) ?? []
+    const childIsBlockTerminating = (parentNode: { children?: readonly AssembledChild[] }): boolean => {
+        const all = (parentNode.children ?? []).flatMap(c => slotKindNames(c))
         if (all.length === 0) return false
         return all.every(t => terminatingKinds.has(t))
     }
@@ -134,7 +138,7 @@ export function emitTemplates(config: EmitTemplatesConfig): string {
         // we can attach joinBy. We swap `rules[kind]` below only if we
         // actually add metadata.
         const e: Record<string, unknown> = typeof raw === 'string' ? { template: raw } : raw as Record<string, unknown>
-        const n = node as unknown as { modelType?: string; fields?: readonly { name: string; contentTypes: readonly string[] }[]; children?: readonly { contentTypes: readonly string[] }[] }
+        const n = node as unknown as { modelType?: string; fields?: readonly AssembledChild[]; children?: readonly AssembledChild[] }
         let mutated = false
         if (typeof e.template === 'string') {
             // Rule-level: `$$$CHILDREN` without joinBy, and all child

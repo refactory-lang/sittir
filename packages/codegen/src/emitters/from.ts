@@ -12,7 +12,11 @@ import type {
     AssembledNode, AssembledField, AssembledChild, AssembledGroup,
 } from '../compiler/node-map.ts'
 import type { PolymorphVariant } from '../compiler/types.ts'
-import { isAutoStampField, isAutoStampSlot } from './shared.ts'
+import {
+    isAutoStampField, isAutoStampSlot, isRequired, isMultiple, isNonEmpty, slotKindNames,
+} from './shared.ts'
+import { isNodeRef, isTerminalValue, isUnresolvedRef } from '../compiler/node-map.ts'
+import type { NodeOrTerminal } from '../compiler/node-map.ts'
 
 /** Escape a string for safe inclusion inside a single-quoted TS string literal. */
 function escForSource(s: string): string {
@@ -528,8 +532,8 @@ function emitBranchFrom(node: BranchLikeNode, nodeMap: NodeMap, intern: KindInte
     // parameterless sub-factories, so they don't force the input to be required.
     const nonStampFields = fields.filter(f => !isAutoStampField(f, nodeMap))
     const opt =
-        nonStampFields.some(f => f.required) ||
-        childSlots.some(c => c.required && !isAutoStampSlot(c, nodeMap)) ? '' : '?'
+        nonStampFields.some(f => isRequired(f)) ||
+        childSlots.some(c => isRequired(c) && !isAutoStampSlot(c, nodeMap)) ? '' : '?'
     const typeName = node.typeName
     const lines: string[] = []
     const { inputType, returnType, inputOptional } = buildBranchSignatureParts(node, factory, opt)
@@ -539,20 +543,20 @@ function emitBranchFrom(node: BranchLikeNode, nodeMap: NodeMap, intern: KindInte
         const neName = (f: AssembledField) => `_ne_${f.propertyName}`
         for (const f of fields) {
             if (isAutoStampField(f, nodeMap)) continue  // factory stamps these; no Config slot
-            if (f.nonEmpty && f.multiple) {
+            if (isNonEmpty(f) && isMultiple(f)) {
                 const call = resolveFieldFromTypedInput(f, nodeMap, typeName, intern, 'input', inputOptional)
                 lines.push(`  const ${neName(f)} = ${call};`)
                 lines.push(`  _assertNonEmpty(${neName(f)}, '${node.kind}.${f.propertyName}');`)
             }
         }
-        const childrenNonEmpty = childSlots.some(c => c.nonEmpty)
+        const childrenNonEmpty = childSlots.some(c => isNonEmpty(c))
         if (childSlots.length > 0 && childrenNonEmpty) {
             emitNonEmptyChildrenHoist(lines, childSlots, nodeMap, typeName, intern, inputOptional, node.kind)
         }
         lines.push(`  return ${factory}({`)
         for (const f of fields) {
             if (isAutoStampField(f, nodeMap)) continue  // factory stamps these; no Config slot
-            if (f.nonEmpty && f.multiple) {
+            if (isNonEmpty(f) && isMultiple(f)) {
                 lines.push(`    ${f.propertyName}: ${neName(f)},`)
             } else {
                 lines.push(`    ${f.propertyName}: ${resolveFieldFromTypedInput(f, nodeMap, typeName, intern, 'input', inputOptional)},`)
@@ -578,7 +582,7 @@ interface ContainerFromNode {
     readonly typeName: string
     readonly rawFactoryName?: string
     readonly fromFunctionName?: string
-    readonly children: readonly { readonly multiple: boolean }[]
+    readonly children: readonly { readonly values: readonly NodeOrTerminal[] }[]
 }
 
 /**
@@ -671,7 +675,7 @@ function emitContainerFrom(node: ContainerFromNode): string {
     const tName = `T.${node.typeName}`
     const childType = `NonNullable<T.${node.typeName}.Config['children']>`
     const elementType = `${childType}[number]`
-    const childrenMultiple = node.children.some(c => c.multiple)
+    const childrenMultiple = node.children.some(c => isMultiple(c))
     if (childrenMultiple) {
         return emitRepeatedContainerFrom(fn, factory, tName, childType, elementType, node.kind)
     }
@@ -764,8 +768,8 @@ function emitPolymorphFormFrom(
     // Auto-stamp-eligible children also excluded: factory stamps them directly.
     const formNonStampFields = form.fields.filter(fd => !isAutoStampField(fd, nodeMap))
     const formOpt =
-        formNonStampFields.some(fd => fd.required) ||
-        form.children.some(c => c.required && !isAutoStampSlot(c, nodeMap)) ? '' : '?'
+        formNonStampFields.some(fd => isRequired(fd)) ||
+        form.children.some(c => isRequired(c) && !isAutoStampSlot(c, nodeMap)) ? '' : '?'
     const fLines: string[] = []
     const formInputOptional = formOpt === '?'
     fLines.push(`export function ${formFn}(input${formOpt}: T.${form.typeName}Config) {`)
@@ -879,7 +883,7 @@ function resolveFieldFromTypedInput(
 ): string {
     const configPath = isPolymorphForm ? `T.${parentTypeName}Config` : `T.${parentTypeName}.Config`
     const slotType = `NonNullable<${configPath}['${field.propertyName}']>`
-    const typeParam = field.multiple ? `${slotType}[number]` : slotType
+    const typeParam = isMultiple(field) ? `${slotType}[number]` : slotType
     /**
      * Per spec 008 US3 / FR-023: single-access camelCase read on the bag
      * branch. After the isNodeData identity quick-return at resolver entry,
@@ -892,7 +896,7 @@ function resolveFieldFromTypedInput(
     const access = isPolymorphForm
         ? `${sourceVar}${optChain}.${field.propertyName}`
         : `(${sourceVar} as ${loosePath})${optChain}.${field.propertyName}`
-    return resolveFieldCall(access, field, nodeMap, typeParam, intern)
+    return resolveFieldCall(access, field, isMultiple(field), nodeMap, typeParam, intern)
 }
 
 /**
@@ -912,29 +916,31 @@ function resolveChildrenFromTypedInput(
     inputOptional: boolean,
 ): string {
     const seenTypes = new Set<string>()
-    const contentTypes: string[] = []
+    const mergedValues: NodeOrTerminal[] = []
     let anyMultiple = false
     for (const c of childSlots) {
-        if (c.multiple) anyMultiple = true
-        for (const t of c.contentTypes) {
-            if (!seenTypes.has(t)) {
-                seenTypes.add(t)
-                contentTypes.push(t)
+        if (isMultiple(c)) anyMultiple = true
+        for (const v of c.values) {
+            if (!isNodeRef(v)) continue
+            const kindName = isUnresolvedRef(v.node) ? v.node.name : v.node.kind
+            if (!seenTypes.has(kindName)) {
+                seenTypes.add(kindName)
+                mergedValues.push(v)
             }
         }
     }
     /**
-     * `resolveFieldCall` only reads `contentTypes` and `multiple` off the
-     * passed AssembledField — construct a minimal shape that satisfies that
+     * `resolveFieldCall` reads `values` and uses `isMultiple()` on the
+     * passed slot shape — construct a minimal shape that satisfies that
      * contract rather than wiring a parallel children-resolver.
      */
-    const pseudo = { contentTypes, multiple: anyMultiple } as unknown as AssembledField
+    const pseudo = { values: mergedValues } as { values: readonly NodeOrTerminal[] }
     const slotType = `NonNullable<T.${parentTypeName}.Config['children']>`
     const typeParam = anyMultiple ? `${slotType}[number]` : slotType
     // Single-cast bag access — same pattern as field reads.
     const optChain = inputOptional ? '?' : ''
     const access = `(${sourceVar} as T.${parentTypeName}.Loose)${optChain}.children`
-    return resolveFieldCall(access, pseudo, nodeMap, typeParam, intern)
+    return resolveFieldCall(access, pseudo, anyMultiple, nodeMap, typeParam, intern)
 }
 
 /**
@@ -952,7 +958,7 @@ function resolveFieldFromNodeData(
     inputOptional: boolean,
 ): string {
     const slotType = `NonNullable<T.${parentTypeName}.Config['${field.propertyName}']>`
-    const typeParam = field.multiple ? `${slotType}[number]` : slotType
+    const typeParam = isMultiple(field) ? `${slotType}[number]` : slotType
     const optChain = inputOptional ? '?' : ''
     /**
      * One cast per resolver to the known parent's data interface. Avoids
@@ -960,7 +966,7 @@ function resolveFieldFromNodeData(
      * knows it's T.<Parent> via the preceding isNodeData check.
      */
     const access = `(${sourceVar} as T.${parentTypeName}).$fields.${field.name}`
-    return resolveFieldCall(access, field, nodeMap, typeParam, intern)
+    return resolveFieldCall(access, field, isMultiple(field), nodeMap, typeParam, intern)
 }
 
 function resolveChildrenFromNodeData(
@@ -972,24 +978,26 @@ function resolveChildrenFromNodeData(
     inputOptional: boolean,
 ): string {
     const seenTypes = new Set<string>()
-    const contentTypes: string[] = []
+    const mergedValues: NodeOrTerminal[] = []
     let anyMultiple = false
     for (const c of childSlots) {
-        if (c.multiple) anyMultiple = true
-        for (const t of c.contentTypes) {
-            if (!seenTypes.has(t)) {
-                seenTypes.add(t)
-                contentTypes.push(t)
+        if (isMultiple(c)) anyMultiple = true
+        for (const v of c.values) {
+            if (!isNodeRef(v)) continue
+            const kindName = isUnresolvedRef(v.node) ? v.node.name : v.node.kind
+            if (!seenTypes.has(kindName)) {
+                seenTypes.add(kindName)
+                mergedValues.push(v)
             }
         }
     }
-    const pseudo = { contentTypes, multiple: anyMultiple } as unknown as AssembledField
+    const pseudo = { values: mergedValues } as { values: readonly NodeOrTerminal[] }
     const slotType = `NonNullable<T.${parentTypeName}.Config['children']>`
     const typeParam = anyMultiple ? `${slotType}[number]` : slotType
     const optChain = inputOptional ? '?' : ''
     // Same cast pattern as NodeData field reads — one cast per resolver.
     const access = `(${sourceVar} as T.${parentTypeName})${optChain}.$children`
-    return resolveFieldCall(access, pseudo, nodeMap, typeParam, intern)
+    return resolveFieldCall(access, pseudo, anyMultiple, nodeMap, typeParam, intern)
 }
 
 /**
@@ -1095,14 +1103,14 @@ function buildSingleKindFastPath(
     prop: string,
     leafKinds: string[],
     branchKinds: string[],
-    field: AssembledField,
+    fieldMultiple: boolean,
     typeParam: string | undefined,
 ): string | undefined {
     const total = leafKinds.length + branchKinds.length
     if (total !== 1) return undefined
     const kindName = leafKinds[0] ?? branchKinds[0]!
     const isLeaf = leafKinds.length === 1
-    const specialized = field.multiple
+    const specialized = fieldMultiple
         ? (isLeaf ? '_resolveManyLeaf' : '_resolveManyBranch')
         : (isLeaf ? '_resolveOneLeaf' : '_resolveOneBranch')
     const generic = typeParam ? `<${typeParam}>` : ''
@@ -1129,31 +1137,32 @@ function buildInternedArrayResolverCall(
     prop: string,
     leafKinds: string[],
     branchKinds: string[],
-    field: AssembledField,
+    fieldMultiple: boolean,
     typeParam: string | undefined,
     intern: KindInterner,
 ): string {
     const leafArr = intern(leafKinds)
     const branchArr = intern(branchKinds)
     const generic = typeParam ? `<${typeParam}>` : ''
-    const helper = field.multiple ? '_resolveMany' : '_resolveOne'
+    const helper = fieldMultiple ? '_resolveMany' : '_resolveOne'
     return `${helper}${generic}(${prop}, ${leafArr}, ${branchArr})`
 }
 
 function resolveFieldCall(
     prop: string,
-    field: AssembledField,
+    field: { values: readonly NodeOrTerminal[] },
+    fieldMultiple: boolean,
     nodeMap: NodeMap,
     typeParam: string | undefined,
     intern: KindInterner,
 ): string {
-    const expanded = expandAndDedupeContentTypes(field.contentTypes, nodeMap)
+    const expanded = expandAndDedupeContentTypes(slotKindNames(field), nodeMap)
     const { leafKinds, branchKinds } = classifyKindsForResolver(expanded, nodeMap)
 
-    const fastPath = buildSingleKindFastPath(prop, leafKinds, branchKinds, field, typeParam)
+    const fastPath = buildSingleKindFastPath(prop, leafKinds, branchKinds, fieldMultiple, typeParam)
     if (fastPath !== undefined) return fastPath
 
-    return buildInternedArrayResolverCall(prop, leafKinds, branchKinds, field, typeParam, intern)
+    return buildInternedArrayResolverCall(prop, leafKinds, branchKinds, fieldMultiple, typeParam, intern)
 }
 
 // ---------------------------------------------------------------------------

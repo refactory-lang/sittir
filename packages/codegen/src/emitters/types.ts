@@ -22,7 +22,7 @@ import {
     AssembledSupertype,
 } from '../compiler/node-map.ts'
 import { loadRawEntries } from '../validate/node-types-loader.ts'
-import { isAutoStampField } from './shared.ts'
+import { isAutoStampField, isRequired, isMultiple, isNonEmpty, slotKindNames, slotLiteralValues } from './shared.ts'
 
 type StructuralNode = AssembledBranch | AssembledContainer | AssembledPolymorph
 
@@ -702,14 +702,14 @@ function collectAndEmitTokenTypeAliases(
             if (ref?.modelType === 'token') referencedTokenTypeNames.add(ref.typeName)
         }
         if (n instanceof AssembledBranch || n instanceof AssembledGroup) {
-            for (const f of n.fields) f.contentTypes.forEach(checkKind)
-            for (const c of n.children ?? []) c.contentTypes.forEach(checkKind)
+            for (const f of n.fields) slotKindNames(f).forEach(checkKind)
+            for (const c of n.children ?? []) slotKindNames(c).forEach(checkKind)
         } else if (n instanceof AssembledContainer) {
-            for (const c of n.children) c.contentTypes.forEach(checkKind)
+            for (const c of n.children) slotKindNames(c).forEach(checkKind)
         } else if (n instanceof AssembledPolymorph) {
             for (const form of n.forms) {
-                for (const f of form.fields) f.contentTypes.forEach(checkKind)
-                for (const c of form.children) c.contentTypes.forEach(checkKind)
+                for (const f of form.fields) slotKindNames(f).forEach(checkKind)
+                for (const c of form.children) slotKindNames(c).forEach(checkKind)
             }
         } else if (n instanceof AssembledSupertype) {
             // Supertypes emit Tree union types referencing each subtype's
@@ -823,14 +823,14 @@ function emitInterface(
         lines.push('  readonly $fields: {')
         for (const f of fields) {
             const typeExpr = fieldTypeExpr(f, nodeMap, lookupUnion)
-            const opt = f.required ? '' : '?'
+            const opt = isRequired(f) ? '' : '?'
             // Auto-stamp fields are wrapped in AutoStamp<> so ConfigOf/FromInputOf
             // can exclude them from the input surface. The field is still present
             // in $fields so NodeData output shape and readNode round-trips are
             // unchanged.
             const wrappedType = isAutoStampField(f, nodeMap) ? `AutoStamp<${typeExpr}>` : typeExpr
-            if (f.multiple) {
-                emitFieldArrayDeclaration(lines, f.name, opt, wrappedType, f.nonEmpty)
+            if (isMultiple(f)) {
+                emitFieldArrayDeclaration(lines, f.name, opt, wrappedType, isNonEmpty(f))
             } else {
                 lines.push(`    readonly ${f.name}${opt}: ${wrappedType};`)
             }
@@ -845,8 +845,8 @@ function emitInterface(
         const childTypes = perChildParts.map(parts => parts.join(' | ')).filter(Boolean)
         if (childTypes.length > 0) {
             const union = aliased ?? childTypes.join(' | ')
-            const anyMultiple = children.some(c => c.multiple)
-            const anyNonEmpty = children.some(c => c.nonEmpty)
+            const anyMultiple = children.some(c => isMultiple(c))
+            const anyNonEmpty = children.some(c => isNonEmpty(c))
             if (anyMultiple) {
                 // Same `repeat1` treatment for children slots — a
                 // non-empty children list gets a NonEmptyArray head.
@@ -909,9 +909,11 @@ function emitFieldArrayDeclaration(
  * multi-type union.
  */
 function fieldTypeParts(field: AssembledField, nodeMap?: NodeMap): string[] {
-    if (field.literalValues && field.literalValues.length > 0) return []
-    if (field.contentTypes.length === 0) return []
-    return field.contentTypes.map(t => {
+    const litVals = slotLiteralValues(field)
+    if (litVals.length > 0) return []
+    const kinds = slotKindNames(field)
+    if (kinds.length === 0) return []
+    return kinds.map(t => {
         const node = nodeMap?.nodes.get(t)
         if (!node) return JSON.stringify(t)
         const name = node.typeName
@@ -930,18 +932,18 @@ function computeReferencedKinds(nodeMap: NodeMap): Set<string> {
     const referenced = new Set<string>()
     for (const [, node] of nodeMap.nodes) {
         if (node instanceof AssembledBranch) {
-            for (const f of node.fields) for (const t of f.contentTypes) referenced.add(t)
-            for (const c of (node.children ?? [])) for (const t of c.contentTypes) referenced.add(t)
+            for (const f of node.fields) for (const t of slotKindNames(f)) referenced.add(t)
+            for (const c of (node.children ?? [])) for (const t of slotKindNames(c)) referenced.add(t)
         } else if (node instanceof AssembledContainer) {
-            for (const c of node.children) for (const t of c.contentTypes) referenced.add(t)
+            for (const c of node.children) for (const t of slotKindNames(c)) referenced.add(t)
         } else if (node instanceof AssembledPolymorph) {
             for (const form of node.forms) {
-                for (const f of form.fields) for (const t of f.contentTypes) referenced.add(t)
-                for (const c of form.children) for (const t of c.contentTypes) referenced.add(t)
+                for (const f of form.fields) for (const t of slotKindNames(f)) referenced.add(t)
+                for (const c of form.children) for (const t of slotKindNames(c)) referenced.add(t)
             }
         } else if (node instanceof AssembledGroup) {
-            for (const f of node.fields) for (const t of f.contentTypes) referenced.add(t)
-            for (const c of node.children) for (const t of c.contentTypes) referenced.add(t)
+            for (const f of node.fields) for (const t of slotKindNames(f)) referenced.add(t)
+            for (const c of node.children) for (const t of slotKindNames(c)) referenced.add(t)
         } else if (node.modelType === 'supertype') {
             for (const t of node.subtypes) referenced.add(t)
         }
@@ -950,7 +952,7 @@ function computeReferencedKinds(nodeMap: NodeMap): Set<string> {
 }
 
 function childContentParts(child: AssembledChild, nodeMap: NodeMap): string[] {
-    return child.contentTypes.map(t => {
+    return slotKindNames(child).map(t => {
         const n = nodeMap.nodes.get(t)
         if (!n) {
             throw new Error(
@@ -984,9 +986,9 @@ function emitFormInterface(
         lines.push('  readonly $fields: {')
         for (const f of form.fields) {
             const typeExpr = fieldTypeExpr(f, nodeMap, lookupUnion)
-            const opt = f.required ? '' : '?'
+            const opt = isRequired(f) ? '' : '?'
             const wrappedType = isAutoStampField(f, nodeMap) ? `AutoStamp<${typeExpr}>` : typeExpr
-            if (f.multiple) {
+            if (isMultiple(f)) {
                 lines.push(`    readonly ${f.name}${opt}: readonly (${wrappedType})[];`)
             } else {
                 lines.push(`    readonly ${f.name}${opt}: ${wrappedType};`)
@@ -1028,7 +1030,7 @@ function emitFormChildrenSlot(
 ): void {
     if (!form.children || form.children.length === 0) return
     const parts = form.children
-        .map(c => c.contentTypes.map(t => {
+        .map(c => slotKindNames(c).map(t => {
             const n = nodeMap.nodes.get(t)
             if (!n) return JSON.stringify(t)
             const name = n.typeName
@@ -1038,7 +1040,7 @@ function emitFormChildrenSlot(
     const aliased = lookupUnion?.(flatParts)
     const union = aliased ?? parts.map(p => p.join(' | ')).filter(Boolean).join(' | ')
     if (union) {
-        const anyMultiple = form.children.some(c => c.multiple)
+        const anyMultiple = form.children.some(c => isMultiple(c))
         if (anyMultiple) {
             lines.push(`  readonly $children: readonly (${union})[];`)
         } else {
@@ -1054,9 +1056,10 @@ function fieldTypeExpr(
 ): string {
     const inlineEnum = resolveInlineEnumTypeExpr(field)
     if (inlineEnum !== null) return inlineEnum
-    if (field.contentTypes.length === 0) return 'string'
+    const fieldKinds = slotKindNames(field)
+    if (fieldKinds.length === 0) return 'string'
     const resolveAliased = buildAliasSourceResolver(field, nodeMap)
-    const parts = field.contentTypes.map(resolveAliased).map(t => {
+    const parts = fieldKinds.map(resolveAliased).map(t => {
         const node = nodeMap?.nodes.get(t)
         if (!node) {
             const name = t.replace(/(?:^|_)([a-z])/g, (_, c: string) => c.toUpperCase())
@@ -1090,8 +1093,9 @@ function fieldTypeExpr(
  *   not an inline enum.
  */
 function resolveInlineEnumTypeExpr(field: AssembledField): string | null {
-    if (field.literalValues && field.literalValues.length > 0) {
-        return field.literalValues.map(v => JSON.stringify(v)).join(' | ')
+    const litVals = slotLiteralValues(field)
+    if (litVals.length > 0) {
+        return litVals.map(v => JSON.stringify(v)).join(' | ')
     }
     return null
 }
