@@ -21,6 +21,11 @@ import {
     isRequired, isMultiple, isNonEmpty, slotKindNames, slotLiteralValues,
     resolveHoistedForm, type HoistedForm, fieldTypeComponents, isValidIdent,
 } from './shared.ts'
+import {
+    collectRefineKindInfos, refineFormTypeName, refineFormFactoryName,
+    camelCase as refineCamelCase,
+    type RefineKindInfo, type RefineFormInfo,
+} from './refine-emit.ts'
 
 export interface EmitFactoriesConfig {
     grammar: string
@@ -268,6 +273,9 @@ function emitPerNodeFactories(
     leafReConsts: Map<string, string>,
     lines: string[],
 ): void {
+    const refineInfos = collectRefineKindInfos(nodeMap)
+    const refineByKind = new Map<string, RefineKindInfo>()
+    for (const info of refineInfos ?? []) refineByKind.set(info.kind, info)
     for (const [kind, node] of nodeMap.nodes) {
         if (kind.startsWith('_') && !aliasSourceKinds.has(kind)) continue
         if (nodeMap.polymorphFormKinds.has(kind)) continue
@@ -275,6 +283,15 @@ function emitPerNodeFactories(
         if (source === undefined) continue
         lines.push(source)
         lines.push('')
+        const refineInfo = refineByKind.get(kind)
+        if (refineInfo) {
+            for (const form of refineInfo.forms) {
+                const formSource = emitRefineFormFactory(node, form, refineInfo, nodeMap)
+                if (formSource === undefined) continue
+                lines.push(formSource)
+                lines.push('')
+            }
+        }
     }
 }
 
@@ -650,6 +667,100 @@ function emitFieldCarryingFactory(
     lines.push('  };')
     lines.push('}')
     return lines.join('\n')
+}
+
+// ---------------------------------------------------------------------------
+// refine() per-form factory emission (ADR-0010 phase 2)
+// ---------------------------------------------------------------------------
+
+/**
+ * Emit a per-form factory for a refined kind.
+ *
+ * @remarks
+ * The per-form factory accepts the form's narrowed Config (base kind's
+ * Config minus the fields stamped by this form), stamps the form's
+ * selected literals directly into `$fields` alongside user-supplied
+ * fields, and returns a NodeData shape structurally identical to the
+ * base factory's output (and to what `readNode` produces from a parsed
+ * tree). No `$variant` tag — the selected literals live in `$fields`
+ * exactly as they do when parsed, so the round-trip contract is
+ * preserved.
+ *
+ * The fluent method suffix (render/toEdit/replace) mirrors the base
+ * factory so the output shape is interchangeable; callers switching
+ * between `ir.interfaceBody.curly(...)` and `readNode(...)` get the
+ * same surface.
+ */
+function emitRefineFormFactory(
+    node: AssembledNode,
+    form: RefineFormInfo,
+    info: RefineKindInfo,
+    nodeMap: NodeMap,
+): string | undefined {
+    if (node.modelType !== 'branch' && node.modelType !== 'group') return undefined
+    const baseFn = node.rawFactoryName
+    if (!baseFn) return undefined
+    const formFn = refineFormFactoryName(baseFn, form.name)
+    const narrowed = new Map<string, string>()
+    for (const n of form.narrowedFields) narrowed.set(n.fieldName, n.literal)
+    const fields = node.modelType === 'branch' ? node.fields : node.fields
+    const children = node.modelType === 'branch' ? (node.children ?? []) : node.children
+    const hasFields = fields.length > 0
+    const hasChildren = children.length > 0
+    const opt = resolveRefineFormConfigOptional(fields, children, nodeMap, narrowed)
+    const formTypeName = refineFormTypeName(info.typeName, form.name)
+    const lines: string[] = []
+    lines.push(`export function ${formFn}(config${opt}: T.${formTypeName}.Config) {`)
+    if (hasFields) {
+        lines.push('  const fields = {')
+        for (const f of fields) {
+            const narrowedLit = narrowed.get(f.name)
+            if (narrowedLit !== undefined) {
+                lines.push(`    ${f.name}: ${JSON.stringify(narrowedLit)} as const,`)
+                continue
+            }
+            const stamp = autoStampExpression(f, nodeMap)
+            if (stamp !== undefined) {
+                lines.push(`    ${f.name}: ${stamp},`)
+            } else {
+                lines.push(`    ${f.name}: config${opt}.${f.propertyName},`)
+            }
+        }
+        lines.push('  };')
+    }
+    if (hasChildren) {
+        lines.push(`  const children = config${opt}.children ?? [];`)
+    }
+    lines.push('  return {')
+    lines.push(`    $type: '${node.kind}' as const,`)
+    lines.push(`    $source: 'factory' as const,`)
+    lines.push('    $named: true as const,')
+    if (hasFields) lines.push('    $fields: fields,')
+    if (hasChildren) lines.push('    $children: children,')
+    lines.push(...factorySuffix(node.treeTypeName))
+    lines.push('  };')
+    lines.push('}')
+    return lines.join('\n')
+}
+
+/**
+ * Per-form equivalent of `resolveConfigOptional` — factors the narrowed
+ * fields out of the "required" check (those are stamped by this form and
+ * never come from Config input).
+ */
+function resolveRefineFormConfigOptional(
+    fields: readonly AssembledField[],
+    children: readonly AssembledChild[],
+    nodeMap: NodeMap,
+    narrowed: ReadonlyMap<string, string>,
+): string {
+    const hasRequired = fields.some(f =>
+        isRequired(f)
+        && autoStampExpression(f, nodeMap) === undefined
+        && !narrowed.has(f.name)
+    )
+        || children.some(c => isRequired(c) && !isAutoStampSlot(c, nodeMap))
+    return hasRequired ? '' : '?'
 }
 
 /**
