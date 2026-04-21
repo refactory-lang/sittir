@@ -293,7 +293,7 @@ describe('const_item', () => {
 
 describe('static_item', () => {
   it('factory produces correct type', () => {
-    const node = ir.staticItem({ name: { $type: 'identifier', $text: 'test' } as any, type: { $type: '_type', $text: 'test' } as any, children: [{ $type: 'mutable_specifier', $text: 'test' } as any] as any });
+    const node = ir.staticItem({ name: { $type: 'identifier', $text: 'test' } as any, type: { $type: '_type', $text: 'test' } as any });
     expect(node.$type).toBe('static_item');
     expect(node.$source).toBe('factory');
   });
@@ -341,7 +341,7 @@ describe('function_signature_item', () => {
 
 describe('function_modifiers', () => {
   it('factory produces correct type', () => {
-    const node = ir.functionModifiers({ children: [{ $type: 'extern_modifier', $text: 'test' } as any] as any });
+    const node = ir.functionModifiers({});
     expect(node.$type).toBe('function_modifiers');
     expect(node.$source).toBe('factory');
   });
@@ -611,7 +611,7 @@ describe('visibility_modifier', () => {
     expect(node.$source).toBe('factory');
   });
   it('form1 form produces correct type', () => {
-    const node = ir.visibilityModifier.form1({ pub: 'test' as any });
+    const node = ir.visibilityModifier.form1({});
     expect(node.$type).toBe('visibility_modifier');
     expect(node.$source).toBe('factory');
   });
@@ -671,7 +671,7 @@ describe('for_lifetimes', () => {
 
 describe('function_type', () => {
   it('factory produces correct type', () => {
-    const node = ir.functionType({ parameters: { $type: 'parameters', $text: 'test' } as any, children: [{ $type: 'function_type_trait_form', $text: 'test' } as any] as any });
+    const node = ir.functionType({ parameters: { $type: 'parameters', $text: 'test' } as any });
     expect(node.$type).toBe('function_type');
     expect(node.$source).toBe('factory');
   });
@@ -724,12 +724,12 @@ describe('generic_type', () => {
 
 describe('generic_type_with_turbofish', () => {
   it('factory produces correct type', () => {
-    const node = ir.genericTypeWithTurbofish({ type: { $type: '_type_identifier', $text: 'test' } as any, turbofish: 'test' as any, typeArguments: { $type: 'type_arguments', $text: 'test' } as any });
+    const node = ir.genericTypeWithTurbofish({ type: { $type: '_type_identifier', $text: 'test' } as any, typeArguments: { $type: 'type_arguments', $text: 'test' } as any });
     expect(node.$type).toBe('generic_type_with_turbofish');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.genericTypeWithTurbofish({ type: { $type: '_type_identifier', $text: 'test' } as any, turbofish: 'test' as any, typeArguments: { $type: 'type_arguments', $text: 'test' } as any });
+    const node = ir.genericTypeWithTurbofish({ type: { $type: '_type_identifier', $text: 'test' } as any, typeArguments: { $type: 'type_arguments', $text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -948,12 +948,12 @@ describe('reference_expression', () => {
 
 describe('binary_expression', () => {
   it('factory produces correct type', () => {
-    const node = ir.binary({ left: { $type: '_expression', $text: 'test' } as any, operator: 'test' as any, right: { $type: '_expression', $text: 'test' } as any });
+    const node = ir.binary({ left: { $type: '_expression', $text: 'test' } as any, right: { $type: '_expression', $text: 'test' } as any });
     expect(node.$type).toBe('binary_expression');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.binary({ left: { $type: '_expression', $text: 'test' } as any, operator: 'test' as any, right: { $type: '_expression', $text: 'test' } as any });
+    const node = ir.binary({ left: { $type: '_expression', $text: 'test' } as any, right: { $type: '_expression', $text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -1178,7 +1178,7 @@ describe('match_block', () => {
 
 describe('match_arm', () => {
   it('factory produces correct type', () => {
-    const node = ir.matchArm({ pattern: { $type: 'match_pattern', $text: 'test' } as any, value: { $type: '_expression', $text: 'test' } as any, children: [{ $type: 'attribute_item', $text: 'test' } as any] as any });
+    const node = ir.matchArm({ pattern: { $type: 'match_pattern', $text: 'test' } as any, value: { $type: '_expression', $text: 'test' } as any });
     expect(node.$type).toBe('match_arm');
     expect(node.$source).toBe('factory');
   });
@@ -1190,7 +1190,7 @@ describe('match_arm', () => {
 
 describe('last_match_arm', () => {
   it('factory produces correct type', () => {
-    const node = ir.lastMatchArm({ pattern: { $type: 'match_pattern', $text: 'test' } as any, value: { $type: '_expression', $text: 'test' } as any, children: [{ $type: 'attribute_item', $text: 'test' } as any] as any });
+    const node = ir.lastMatchArm({ pattern: { $type: 'match_pattern', $text: 'test' } as any, value: { $type: '_expression', $text: 'test' } as any });
     expect(node.$type).toBe('last_match_arm');
     expect(node.$source).toBe('factory');
   });
@@ -1411,7 +1411,7 @@ describe('block', () => {
 
 describe('generic_pattern', () => {
   it('factory produces correct type', () => {
-    const node = ir.genericPattern({ typeArguments: { $type: 'type_arguments', $text: 'test' } as any, children: [{ $type: 'identifier', $text: 'test' } as any] as any });
+    const node = ir.genericPattern({ typeArguments: { $type: 'type_arguments', $text: 'test' } as any });
     expect(node.$type).toBe('generic_pattern');
     expect(node.$source).toBe('factory');
   });
@@ -1451,7 +1451,7 @@ describe('tuple_struct_pattern', () => {
 
 describe('struct_pattern', () => {
   it('factory produces correct type', () => {
-    const node = ir.structPattern({ type: { $type: '_type_identifier', $text: 'test' } as any, children: [{ $type: 'field_pattern', $text: 'test' } as any] as any });
+    const node = ir.structPattern({ type: { $type: '_type_identifier', $text: 'test' } as any });
     expect(node.$type).toBe('struct_pattern');
     expect(node.$source).toBe('factory');
   });
@@ -1785,7 +1785,7 @@ describe('mod_item_inline', () => {
 
 describe('struct_item_brace', () => {
   it('factory produces correct type', () => {
-    const node = ir.structItemBrace({ body: { $type: 'field_declaration_list', $text: 'test' } as any, children: [{ $type: 'where_clause', $text: 'test' } as any] as any });
+    const node = ir.structItemBrace({ body: { $type: 'field_declaration_list', $text: 'test' } as any });
     expect(node.$type).toBe('struct_item_brace');
     expect(node.$source).toBe('factory');
   });
@@ -1797,7 +1797,7 @@ describe('struct_item_brace', () => {
 
 describe('struct_item_tuple', () => {
   it('factory produces correct type', () => {
-    const node = ir.structItemTuple({ body: { $type: 'ordered_field_declaration_list', $text: 'test' } as any, children: [{ $type: 'where_clause', $text: 'test' } as any] as any });
+    const node = ir.structItemTuple({ body: { $type: 'ordered_field_declaration_list', $text: 'test' } as any });
     expect(node.$type).toBe('struct_item_tuple');
     expect(node.$source).toBe('factory');
   });

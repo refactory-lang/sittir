@@ -967,7 +967,7 @@ export function visibilityModifierFrom(input?: T.VisibilityModifier | T.Visibili
   return F.visibilityModifier(input as T.VisibilityModifierForm0Config | T.VisibilityModifierForm1Config);
 }
 
-export function visibilityModifierForm0From(input: T.VisibilityModifierForm0Config) {
+export function visibilityModifierForm0From(input?: T.VisibilityModifierForm0Config) {
   return F.visibilityModifierForm0(input);
 }
 

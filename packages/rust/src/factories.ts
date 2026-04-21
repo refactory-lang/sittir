@@ -1396,8 +1396,8 @@ export function visibilityModifier(config: T.VisibilityModifierForm0Config | T.V
   if (config && 'pub' in config && 'in' in config) return visibilityModifierForm1(config as T.VisibilityModifierForm1Config);
   return visibilityModifierForm0(config as T.VisibilityModifierForm0Config);
 }
-export function visibilityModifierForm0(config: T.VisibilityModifierForm0Config) {
-  const children = config?.children ?? [];
+export function visibilityModifierForm0(config?: T.VisibilityModifierForm0Config) {
+  const children = config?.children ?? [{ $type: "crate" as const, $text: "crate" as const, $source: 'factory' as const, $named: true as const }];
   return {
     $type: 'visibility_modifier' as const,
     $source: 'factory' as const,

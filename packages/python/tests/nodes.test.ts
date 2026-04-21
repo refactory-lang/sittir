@@ -81,7 +81,7 @@ describe('aliased_import', () => {
 
 describe('print_statement', () => {
   it('factory produces correct type', () => {
-    const node = ir.print({ argument: [{ $type: 'expression', $text: 'test' } as any], children: [{ $type: 'chevron', $text: 'test' } as any] as any });
+    const node = ir.print({ argument: [{ $type: 'expression', $text: 'test' } as any] });
     expect(node.$type).toBe('print_statement');
     expect(node.$source).toBe('factory');
   });
@@ -149,7 +149,7 @@ describe('delete_statement', () => {
 
 describe('raise_statement', () => {
   it('factory produces correct type', () => {
-    const node = ir.raise({ children: [{ $type: '_expressions', $text: 'test' } as any] as any });
+    const node = ir.raise({});
     expect(node.$type).toBe('raise_statement');
     expect(node.$source).toBe('factory');
   });
@@ -500,7 +500,7 @@ describe('block', () => {
 
 describe('expression_list', () => {
   it('factory produces correct type', () => {
-    const node = ir.expressionList({ expression: { $type: 'expression', $text: 'test' } as any, children: [{ $type: 'expression', $text: 'test' } as any] as any });
+    const node = ir.expressionList({ expression: { $type: 'expression', $text: 'test' } as any });
     expect(node.$type).toBe('expression_list');
     expect(node.$source).toBe('factory');
   });
@@ -536,7 +536,7 @@ describe('union_pattern', () => {
 
 describe('dict_pattern', () => {
   it('factory produces correct type', () => {
-    const node = ir.dictPattern({ children: [{ $type: 'splat_pattern', $text: 'test' } as any] as any });
+    const node = ir.dictPattern({});
     expect(node.$type).toBe('dict_pattern');
     expect(node.$source).toBe('factory');
   });
@@ -560,7 +560,7 @@ describe('keyword_pattern', () => {
 
 describe('splat_pattern', () => {
   it('factory produces correct type', () => {
-    const node = ir.splatPattern({ identifier: 'test' as any, children: [{ $type: 'identifier', $text: 'test' } as any] as any });
+    const node = ir.splatPattern({ identifier: 'test' as any });
     expect(node.$type).toBe('splat_pattern');
     expect(node.$source).toBe('factory');
   });
@@ -584,7 +584,7 @@ describe('class_pattern', () => {
 
 describe('complex_pattern', () => {
   it('factory produces correct type', () => {
-    const node = ir.complexPattern({ real: 'test' as any, imaginary: { $type: 'integer', $text: 'test' } as any, children: [{ $type: 'integer', $text: 'test' } as any] as any });
+    const node = ir.complexPattern({ real: 'test' as any, imaginary: { $type: 'integer', $text: 'test' } as any });
     expect(node.$type).toBe('complex_pattern');
     expect(node.$source).toBe('factory');
   });
@@ -778,7 +778,7 @@ describe('augmented_assignment', () => {
 
 describe('pattern_list', () => {
   it('factory produces correct type', () => {
-    const node = ir.patternList({ pattern: { $type: 'pattern', $text: 'test' } as any, children: [{ $type: 'pattern', $text: 'test' } as any] as any });
+    const node = ir.patternList({ pattern: { $type: 'pattern', $text: 'test' } as any });
     expect(node.$type).toBe('pattern_list');
     expect(node.$source).toBe('factory');
   });
@@ -846,7 +846,7 @@ describe('call', () => {
 
 describe('typed_parameter', () => {
   it('factory produces correct type', () => {
-    const node = ir.typedParameter({ type: { $type: 'type', $text: 'test' } as any, children: [{ $type: 'identifier', $text: 'test' } as any] as any });
+    const node = ir.typedParameter({ type: { $type: 'type', $text: 'test' } as any });
     expect(node.$type).toBe('typed_parameter');
     expect(node.$source).toBe('factory');
   });
@@ -982,7 +982,7 @@ describe('pair', () => {
 
 describe('list_comprehension', () => {
   it('factory produces correct type', () => {
-    const node = ir.listComprehension({ body: { $type: 'expression', $text: 'test' } as any, forInClause: { $type: 'for_in_clause', $text: 'test' } as any, children: [{ $type: 'for_in_clause', $text: 'test' } as any] as any });
+    const node = ir.listComprehension({ body: { $type: 'expression', $text: 'test' } as any, forInClause: { $type: 'for_in_clause', $text: 'test' } as any });
     expect(node.$type).toBe('list_comprehension');
     expect(node.$source).toBe('factory');
   });
@@ -994,7 +994,7 @@ describe('list_comprehension', () => {
 
 describe('dictionary_comprehension', () => {
   it('factory produces correct type', () => {
-    const node = ir.dictionaryComprehension({ body: { $type: 'pair', $text: 'test' } as any, forInClause: { $type: 'for_in_clause', $text: 'test' } as any, children: [{ $type: 'for_in_clause', $text: 'test' } as any] as any });
+    const node = ir.dictionaryComprehension({ body: { $type: 'pair', $text: 'test' } as any, forInClause: { $type: 'for_in_clause', $text: 'test' } as any });
     expect(node.$type).toBe('dictionary_comprehension');
     expect(node.$source).toBe('factory');
   });
@@ -1006,7 +1006,7 @@ describe('dictionary_comprehension', () => {
 
 describe('set_comprehension', () => {
   it('factory produces correct type', () => {
-    const node = ir.setComprehension({ body: { $type: 'expression', $text: 'test' } as any, forInClause: { $type: 'for_in_clause', $text: 'test' } as any, children: [{ $type: 'for_in_clause', $text: 'test' } as any] as any });
+    const node = ir.setComprehension({ body: { $type: 'expression', $text: 'test' } as any, forInClause: { $type: 'for_in_clause', $text: 'test' } as any });
     expect(node.$type).toBe('set_comprehension');
     expect(node.$source).toBe('factory');
   });
@@ -1018,7 +1018,7 @@ describe('set_comprehension', () => {
 
 describe('generator_expression', () => {
   it('factory produces correct type', () => {
-    const node = ir.generator({ body: { $type: 'expression', $text: 'test' } as any, forInClause: { $type: 'for_in_clause', $text: 'test' } as any, children: [{ $type: 'for_in_clause', $text: 'test' } as any] as any });
+    const node = ir.generator({ body: { $type: 'expression', $text: 'test' } as any, forInClause: { $type: 'for_in_clause', $text: 'test' } as any });
     expect(node.$type).toBe('generator_expression');
     expect(node.$source).toBe('factory');
   });

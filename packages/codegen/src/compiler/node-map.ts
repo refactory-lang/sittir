@@ -577,6 +577,42 @@ export abstract class AssembledNodeBase<R extends Rule = Rule> {
      */
     readonly source?: RuleSource
     abstract readonly modelType: string
+
+    /**
+     * True when this kind requires NO user-supplied arguments to construct.
+     *
+     * Populated by the `markParameterlessKinds` fixpoint pass in
+     * `assemble.ts`. Two classes of parameterless kinds:
+     *
+     * - **Single-literal terminals** (`AssembledKeyword`): factory takes
+     *   `()` and emits a fixed `$text` value. Stamp via `stampExpression`.
+     * - **Parameterless compounds**: every required field/child slot
+     *   either auto-stamps (literal or referenced keyword) OR references
+     *   another parameterless kind. The whole compound can be constructed
+     *   by calling its factory with no arguments: `stampExpression` holds
+     *   the call expression string (e.g. `"breakExpression()"`).
+     *
+     * Emitters use this to decide whether a slot pointing at this kind
+     * can be auto-stamped in parent factories and omitted from parent
+     * Config types.
+     */
+    isParameterless?: boolean
+
+    /**
+     * Code-gen stamp expression for this parameterless kind.
+     *
+     * Defined iff `isParameterless` is true. Two shapes:
+     *
+     * - **Keyword / terminal**: JSON-encoded literal, e.g. `"'break'"`.
+     *   Parent factory stamps the field as the literal value.
+     * - **Parameterless compound**: factory-call string, e.g.
+     *   `"breakExpression()"`. Parent factory stamps the field by calling
+     *   the referenced kind's factory with no arguments, producing the
+     *   expected NodeData.
+     *
+     * Populated by `markParameterlessKinds` alongside `isParameterless`.
+     */
+    stampExpression?: string
     /**
      * The grammar rule that produced this assembled node. Set by concrete
      * subclasses that carry rule-level structure (branch, container, group,

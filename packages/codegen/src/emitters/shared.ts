@@ -4,7 +4,7 @@
  */
 
 import type { NodeMap } from '../compiler/types.ts'
-import type { AssembledField } from '../compiler/node-map.ts'
+import type { AssembledField, AssembledChild } from '../compiler/node-map.ts'
 import { AssembledKeyword } from '../compiler/node-map.ts'
 
 /** TypeScript identifier pattern — starts with letter/underscore/dollar,
@@ -92,4 +92,124 @@ export function resolveEffectiveLiteral(
  */
 export function isAutoStampField(field: AssembledField, nodeMap: NodeMap): boolean {
     return resolveEffectiveLiteral(field, nodeMap) !== undefined
+}
+
+// ---------------------------------------------------------------------------
+// Generic slot helpers (ADR-0010 Task 1.5) — work on AssembledChild (the base
+// shared by both AssembledField and the plain child slot descriptors).
+// ---------------------------------------------------------------------------
+
+/**
+ * Returns `true` when `slot` is auto-stamp-eligible.
+ *
+ * A slot is eligible when:
+ * - Optional (`required: false`) — user can omit it; it does not block
+ *   parameterless classification of the parent compound.
+ * - Required, non-repeated, and its content is fixed:
+ *   (a) Inline literal: `(slot as AssembledField).literalValues.length === 1`
+ *   (b) Single content-type that is itself marked `isParameterless` on its
+ *       `AssembledNode` (populated by the `markParameterlessKinds` pass in
+ *       `assemble.ts`). The legacy Source B (hidden-keyword kind check) is
+ *       superseded by this: keywords are the first nodes marked by the pass.
+ *
+ * Required repeated slots are never auto-stamp-eligible — their cardinality
+ * is user-determined.
+ *
+ * @remarks
+ * This function works on any `AssembledChild` (base type), meaning it
+ * applies equally to fields and children. The `isParameterless` property
+ * on `AssembledNodeBase` must already be populated before calling this.
+ */
+export function isAutoStampSlot(slot: AssembledChild, nodeMap: NodeMap): boolean {
+    if (!slot.required) return true     // optional → does not block
+    if (slot.multiple) return false    // required repeated → user must supply
+
+    // Source A: inline literal (AssembledField only, but safe to check on any slot)
+    const asField = slot as AssembledField
+    if (asField.literalValues?.length === 1) return true
+
+    // Source B/C: single content-type that is parameterless (set by fixpoint pass)
+    if (slot.contentTypes.length === 1) {
+        const ref = nodeMap.nodes.get(slot.contentTypes[0]!)
+        if (ref?.isParameterless) return true
+    }
+
+    // Legacy Source B fallback: hidden keyword kind (preserves pre-fixpoint behaviour
+    // for cases where the fixpoint was not yet run or the slot is a bare field reference
+    // to a hidden `_kw_*` kind that predates `isParameterless`).
+    if (slot.contentTypes.length === 1) {
+        const kindName = slot.contentTypes[0]!
+        if (kindName.startsWith('_')) {
+            const ref = nodeMap.nodes.get(kindName)
+            if (ref instanceof AssembledKeyword) return true
+        }
+    }
+
+    return false
+}
+
+/**
+ * Build the TypeScript stamp expression for an auto-stamp-eligible REQUIRED slot.
+ *
+ * Returns `undefined` when:
+ * - The slot is optional (no stamp needed — omit the key from the factory call).
+ * - The slot is not auto-stamp-eligible.
+ *
+ * Two expression shapes:
+ * - **Inline literal** (`literalValues.length === 1`): `JSON.stringify(value) + " as const"`
+ * - **Referenced keyword** (legacy Source B, `AssembledKeyword`): NodeData object literal
+ *   `{ $type: '...', $text: '...', $source: 'factory' as const, $named: true as const }`
+ * - **Referenced parameterless compound** (Source C): factory call expression from
+ *   `ref.stampExpression` — e.g. `"breakExpression()"`.
+ *
+ * @remarks
+ * This function replaces the field-only `autoStampExpression()` inside factories.ts
+ * for the general case. The factories.ts private function is kept as-is for backwards
+ * compat; this helper is the authoritative version for emitters that need to handle
+ * children slots too.
+ */
+export function stampExpressionFor(slot: AssembledChild, nodeMap: NodeMap): string | undefined {
+    if (!slot.required) return undefined  // optional — no stamp
+
+    if (slot.multiple) return undefined   // repeated — no stamp
+
+    // Source A: inline literal
+    const asField = slot as AssembledField
+    if (asField.literalValues?.length === 1) {
+        return `${JSON.stringify(asField.literalValues[0])} as const`
+    }
+
+    // Source B/C: single referenced kind
+    if (slot.contentTypes.length === 1) {
+        const kindName = slot.contentTypes[0]!
+        const ref = nodeMap.nodes.get(kindName)
+
+        // Source C: parameterless compound — use its stampExpression directly
+        if (ref?.isParameterless && ref.stampExpression !== undefined) {
+            // Compounds stamp as factory call; keywords stamp as NodeData literal
+            if (ref.modelType === 'keyword') {
+                // Keywords: emit NodeData object literal (same as legacy Source B)
+                const kind = JSON.stringify(ref.kind)
+                const text = JSON.stringify(ref.text)
+                return `{ $type: ${kind} as const, $text: ${text} as const, $source: 'factory' as const, $named: true as const }`
+            }
+            // Compound: the stampExpression is `factoryName()` — wrap in a factory import ref
+            // so the emitted code resolves correctly.
+            // We emit the factory call directly; the factory is imported via `import * as F from './factories.js'`
+            // but shared.ts doesn't know whether we're emitting from factories.ts or from.ts.
+            // Return the raw expression and let callers prefix `F.` if needed.
+            return ref.stampExpression
+        }
+
+        // Legacy Source B: hidden keyword kind (backwards compat for fields)
+        if (kindName.startsWith('_')) {
+            if (ref instanceof AssembledKeyword) {
+                const kind = JSON.stringify(ref.kind)
+                const text = JSON.stringify(ref.text)
+                return `{ $type: ${kind} as const, $text: ${text} as const, $source: 'factory' as const, $named: true as const }`
+            }
+        }
+    }
+
+    return undefined
 }

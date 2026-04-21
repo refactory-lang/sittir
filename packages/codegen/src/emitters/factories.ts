@@ -8,11 +8,12 @@
  */
 
 import type { NodeMap } from '../compiler/types.ts'
-import type {
-    AssembledNode, AssembledField, AssembledChild, AssembledGroup,
+import {
+    type AssembledNode, type AssembledField, type AssembledChild, AssembledGroup,
+    type AssembledPolymorph,
 } from '../compiler/node-map.ts'
 import { hasHiddenExternalRef, isVerbatimTokenStream, AssembledKeyword } from '../compiler/node-map.ts'
-import { resolveEffectiveLiteral } from './shared.ts'
+import { resolveEffectiveLiteral, isAutoStampSlot, stampExpressionFor } from './shared.ts'
 
 export interface EmitFactoriesConfig {
     grammar: string
@@ -236,7 +237,7 @@ function collectAliasSourceKinds(nodeMap: NodeMap): Set<string> {
             : (n.modelType === 'branch' || n.modelType === 'group') ? n.fields : []
         for (const f of fs) {
             if (!f.aliasSources) continue
-            for (const source of Object.values(f.aliasSources)) aliasSourceKinds.add(source)
+            for (const source of Object.values(f.aliasSources)) aliasSourceKinds.add(source as string)
         }
     }
     return aliasSourceKinds
@@ -492,13 +493,7 @@ function buildEnumLiteralUnion(node: { values: readonly string[] }): string {
 // Field-carrying factory (branches, groups, polymorph forms)
 // ---------------------------------------------------------------------------
 
-interface FieldCarryingNode {
-    readonly kind: string
-    readonly typeName: string
-    readonly treeTypeName: string
-    readonly rawFactoryName?: string
-    readonly parentKind?: string
-}
+type FieldCarryingNode = Extract<AssembledNode, { modelType: 'branch' | 'group' | 'polymorph' }>
 
 /** Resolve a container node's children element type to a concrete TS type expression. */
 function childElementType(node: { children: readonly AssembledChild[] }, nodeMap: NodeMap): string {
@@ -601,7 +596,7 @@ function emitFieldCarryingFactory(
     const hasChildren = children.length > 0
     const childrenMultiple = resolveChildrenMultiple(children)
     const opt = resolveConfigOptional(fields, children, nodeMap)
-    const typeKind = node.parentKind ?? node.kind
+    const typeKind = node.modelType === 'group' ? node.parentKind ?? node.kind : node.kind
     const configType = resolveConfigType(node, isPolymorphForm)
     const lines: string[] = []
     lines.push(`export function ${fn}(config${opt}: ${configType}) {`)
@@ -622,10 +617,23 @@ function emitFieldCarryingFactory(
         lines.push('  };')
     }
     if (hasChildren) {
-        lines.push(`  const children = config?.children ?? [];`)
+        // If every required child slot is auto-stamp-eligible, pre-stamp them
+        // directly rather than reading from config. The stamp expression for
+        // each required slot is a factory call or literal value. Optional
+        // children contribute nothing (they default to absent in the array).
+        const requiredChildren = children.filter(c => c.required)
+        const allRequiredAutoStamp = requiredChildren.length > 0
+            && requiredChildren.every(c => isAutoStampSlot(c, nodeMap))
+        if (allRequiredAutoStamp) {
+            // Build the pre-stamped children array literal.
+            const stampedItems = requiredChildren.map(c => stampExpressionFor(c, nodeMap) ?? 'undefined')
+            lines.push(`  const children = config?.children ?? [${stampedItems.join(', ')}];`)
+        } else {
+            lines.push(`  const children = config?.children ?? [];`)
+        }
     }
 
-    const variantName = resolvePolymorphFormVariantName(node)
+    const variantName = node.modelType == 'group' ? resolvePolymorphFormVariantName(node) : undefined
     lines.push('  return {')
     lines.push(`    $type: '${typeKind}' as const,`)
     lines.push(`    $source: 'factory' as const,`)
@@ -692,8 +700,12 @@ function resolveConfigOptional(
     children: readonly AssembledChild[],
     nodeMap: NodeMap,
 ): string {
+    // Auto-stamp-eligible fields are excluded from the "required" check —
+    // they never appear in Config. Auto-stamp-eligible children are also
+    // excluded: when all required children are parameterless, they are
+    // stamped directly in the factory body rather than read from config.
     const hasRequired = fields.some(f => f.required && autoStampExpression(f, nodeMap) === undefined)
-        || children.some(c => c.required)
+        || children.some(c => c.required && !isAutoStampSlot(c, nodeMap))
     return hasRequired ? '' : '?'
 }
 
@@ -727,7 +739,7 @@ function resolveConfigType(node: FieldCarryingNode, isPolymorphForm: boolean): s
  *   `$VARS`, differ by trailing `;`). The variant name is the form-kind suffix
  *   after the parent kind.
  */
-function resolvePolymorphFormVariantName(node: FieldCarryingNode): string | undefined {
+function resolvePolymorphFormVariantName(node: AssembledGroup): string | undefined {
     return node.parentKind && node.kind.startsWith(node.parentKind + '_')
         ? node.kind.slice(node.parentKind.length + 1)
         : undefined

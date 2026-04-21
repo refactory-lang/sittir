@@ -281,7 +281,7 @@ describe('for_statement', () => {
 
 describe('for_in_statement', () => {
   it('factory produces correct type', () => {
-    const node = ir.forIn({ left: { $type: '_lhs_expression', $text: 'test' } as any, operator: 'test' as any, right: { $type: '_expressions', $text: 'test' } as any, body: { $type: 'statement', $text: 'test' } as any, children: [{ $type: '_automatic_semicolon', $text: 'test' } as any] as any });
+    const node = ir.forIn({ left: { $type: '_lhs_expression', $text: 'test' } as any, operator: 'test' as any, right: { $type: '_expressions', $text: 'test' } as any, body: { $type: 'statement', $text: 'test' } as any });
     expect(node.$type).toBe('for_in_statement');
     expect(node.$source).toBe('factory');
   });
@@ -305,7 +305,7 @@ describe('while_statement', () => {
 
 describe('do_statement', () => {
   it('factory produces correct type', () => {
-    const node = ir.doStatement({ body: { $type: 'statement', $text: 'test' } as any, condition: { $type: 'parenthesized_expression', $text: 'test' } as any, children: [{ $type: '_semicolon', $text: 'test' } as any] as any });
+    const node = ir.doStatement({ body: { $type: 'statement', $text: 'test' } as any, condition: { $type: 'parenthesized_expression', $text: 'test' } as any });
     expect(node.$type).toBe('do_statement');
     expect(node.$source).toBe('factory');
   });
@@ -457,7 +457,7 @@ describe('finally_clause', () => {
 
 describe('parenthesized_expression', () => {
   it('factory produces correct type', () => {
-    const node = ir.parenthesized({ children: [{ $type: 'expression', $text: 'test' } as any] as any });
+    const node = ir.parenthesized({});
     expect(node.$type).toBe('parenthesized_expression');
     expect(node.$source).toBe('factory');
   });
@@ -704,7 +704,7 @@ describe('function_expression', () => {
 
 describe('function_declaration', () => {
   it('factory produces correct type', () => {
-    const node = ir.functionDeclaration({ name: { $type: 'identifier', $text: 'test' } as any, parameters: { $type: 'formal_parameters', $text: 'test' } as any, body: { $type: 'statement_block', $text: 'test' } as any, children: [{ $type: '_automatic_semicolon', $text: 'test' } as any] as any });
+    const node = ir.functionDeclaration({ name: { $type: 'identifier', $text: 'test' } as any, parameters: { $type: 'formal_parameters', $text: 'test' } as any, body: { $type: 'statement_block', $text: 'test' } as any });
     expect(node.$type).toBe('function_declaration');
     expect(node.$source).toBe('factory');
   });
@@ -728,7 +728,7 @@ describe('generator_function', () => {
 
 describe('generator_function_declaration', () => {
   it('factory produces correct type', () => {
-    const node = ir.generatorFunctionDeclaration({ name: { $type: 'identifier', $text: 'test' } as any, parameters: { $type: 'formal_parameters', $text: 'test' } as any, body: { $type: 'statement_block', $text: 'test' } as any, children: [{ $type: '_automatic_semicolon', $text: 'test' } as any] as any });
+    const node = ir.generatorFunctionDeclaration({ name: { $type: 'identifier', $text: 'test' } as any, parameters: { $type: 'formal_parameters', $text: 'test' } as any, body: { $type: 'statement_block', $text: 'test' } as any });
     expect(node.$type).toBe('generator_function_declaration');
     expect(node.$source).toBe('factory');
   });
@@ -867,12 +867,12 @@ describe('ternary_expression', () => {
 
 describe('binary_expression', () => {
   it('factory produces correct type', () => {
-    const node = ir.binary({ left: { $type: 'expression', $text: 'test' } as any, operator: 'test' as any, right: { $type: 'expression', $text: 'test' } as any });
+    const node = ir.binary({ left: { $type: 'expression', $text: 'test' } as any, right: { $type: 'expression', $text: 'test' } as any });
     expect(node.$type).toBe('binary_expression');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.binary({ left: { $type: 'expression', $text: 'test' } as any, operator: 'test' as any, right: { $type: 'expression', $text: 'test' } as any });
+    const node = ir.binary({ left: { $type: 'expression', $text: 'test' } as any, right: { $type: 'expression', $text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -1131,7 +1131,7 @@ describe('decorator_call_expression', () => {
 
 describe('class_body', () => {
   it('factory produces correct type', () => {
-    const node = ir.classBody({ children: [{ $type: 'method_definition', $text: 'test' } as any] as any });
+    const node = ir.classBody({});
     expect(node.$type).toBe('class_body');
     expect(node.$source).toBe('factory');
   });
@@ -1163,7 +1163,7 @@ describe('formal_parameters', () => {
 
 describe('class_static_block', () => {
   it('factory produces correct type', () => {
-    const node = ir.classStaticBlock({ body: { $type: 'statement_block', $text: 'test' } as any, children: [{ $type: '_automatic_semicolon', $text: 'test' } as any] as any });
+    const node = ir.classStaticBlock({ body: { $type: 'statement_block', $text: 'test' } as any });
     expect(node.$type).toBe('class_static_block');
     expect(node.$source).toBe('factory');
   });
@@ -1191,7 +1191,7 @@ describe('rest_pattern', () => {
 
 describe('method_definition', () => {
   it('factory produces correct type', () => {
-    const node = ir.method({ name: { $type: '_property_name', $text: 'test' } as any, parameters: { $type: 'formal_parameters', $text: 'test' } as any, body: { $type: 'statement_block', $text: 'test' } as any, children: [{ $type: 'override_modifier', $text: 'test' } as any] as any });
+    const node = ir.method({ name: { $type: '_property_name', $text: 'test' } as any, parameters: { $type: 'formal_parameters', $text: 'test' } as any, body: { $type: 'statement_block', $text: 'test' } as any });
     expect(node.$type).toBe('method_definition');
     expect(node.$source).toBe('factory');
   });
@@ -1239,7 +1239,7 @@ describe('computed_property_name', () => {
 
 describe('public_field_definition', () => {
   it('factory produces correct type', () => {
-    const node = ir.publicField({ decorator: [{ $type: 'decorator', $text: 'test' } as any], name: { $type: '_property_name', $text: 'test' } as any, children: [{ $type: 'accessibility_modifier', $text: 'test' } as any] as any });
+    const node = ir.publicField({ decorator: [{ $type: 'decorator', $text: 'test' } as any], name: { $type: '_property_name', $text: 'test' } as any });
     expect(node.$type).toBe('public_field_definition');
     expect(node.$source).toBe('factory');
   });
@@ -1263,7 +1263,7 @@ describe('non_null_expression', () => {
 
 describe('method_signature', () => {
   it('factory produces correct type', () => {
-    const node = ir.methodSignature({ name: { $type: '_property_name', $text: 'test' } as any, parameters: { $type: 'formal_parameters', $text: 'test' } as any, children: [{ $type: 'override_modifier', $text: 'test' } as any] as any });
+    const node = ir.methodSignature({ name: { $type: '_property_name', $text: 'test' } as any, parameters: { $type: 'formal_parameters', $text: 'test' } as any });
     expect(node.$type).toBe('method_signature');
     expect(node.$source).toBe('factory');
   });
@@ -1287,7 +1287,7 @@ describe('abstract_method_signature', () => {
 
 describe('function_signature', () => {
   it('factory produces correct type', () => {
-    const node = ir.functionSignature({ name: { $type: 'identifier', $text: 'test' } as any, parameters: { $type: 'formal_parameters', $text: 'test' } as any, children: [{ $type: '_semicolon', $text: 'test' } as any] as any });
+    const node = ir.functionSignature({ name: { $type: 'identifier', $text: 'test' } as any, parameters: { $type: 'formal_parameters', $text: 'test' } as any });
     expect(node.$type).toBe('function_signature');
     expect(node.$source).toBe('factory');
   });
@@ -1548,7 +1548,7 @@ describe("override_modifier", () => {
 
 describe('required_parameter', () => {
   it('factory produces correct type', () => {
-    const node = ir.requiredParameter({ decorator: [{ $type: 'decorator', $text: 'test' } as any], pattern: { $type: 'pattern', $text: 'test' } as any, children: [{ $type: 'accessibility_modifier', $text: 'test' } as any] as any });
+    const node = ir.requiredParameter({ decorator: [{ $type: 'decorator', $text: 'test' } as any], pattern: { $type: 'pattern', $text: 'test' } as any });
     expect(node.$type).toBe('required_parameter');
     expect(node.$source).toBe('factory');
   });
@@ -1560,7 +1560,7 @@ describe('required_parameter', () => {
 
 describe('optional_parameter', () => {
   it('factory produces correct type', () => {
-    const node = ir.optionalParameter({ decorator: [{ $type: 'decorator', $text: 'test' } as any], pattern: { $type: 'pattern', $text: 'test' } as any, children: [{ $type: 'accessibility_modifier', $text: 'test' } as any] as any });
+    const node = ir.optionalParameter({ decorator: [{ $type: 'decorator', $text: 'test' } as any], pattern: { $type: 'pattern', $text: 'test' } as any });
     expect(node.$type).toBe('optional_parameter');
     expect(node.$source).toBe('factory');
   });
@@ -1628,12 +1628,12 @@ describe('asserts', () => {
 
 describe('asserts_annotation', () => {
   it('factory produces correct type', () => {
-    const node = ir.assertsAnnotation({ asserts: { $type: 'asserts', $text: 'test' } as any });
+    const node = ir.assertsAnnotation({});
     expect(node.$type).toBe('asserts_annotation');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.assertsAnnotation({ asserts: { $type: 'asserts', $text: 'test' } as any });
+    const node = ir.assertsAnnotation({});
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -1764,12 +1764,12 @@ describe('type_predicate', () => {
 
 describe('type_predicate_annotation', () => {
   it('factory produces correct type', () => {
-    const node = ir.typePredicateAnnotation({ typePredicate: { $type: 'type_predicate', $text: 'test' } as any });
+    const node = ir.typePredicateAnnotation({});
     expect(node.$type).toBe('type_predicate_annotation');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.typePredicateAnnotation({ typePredicate: { $type: 'type_predicate', $text: 'test' } as any });
+    const node = ir.typePredicateAnnotation({});
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -1893,7 +1893,7 @@ describe('call_signature', () => {
 
 describe('property_signature', () => {
   it('factory produces correct type', () => {
-    const node = ir.propertySignature({ name: { $type: '_property_name', $text: 'test' } as any, children: [{ $type: 'override_modifier', $text: 'test' } as any] as any });
+    const node = ir.propertySignature({ name: { $type: '_property_name', $text: 'test' } as any });
     expect(node.$type).toBe('property_signature');
     expect(node.$source).toBe('factory');
   });

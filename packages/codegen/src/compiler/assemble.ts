@@ -130,6 +130,7 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
     collectAnonymousNodes(optimized.rules, nodes, wordMatcher)
     resolveCollidingNames(nodes)
     resolveIrKeys(nodes)
+    markParameterlessKinds(nodes)
 
     return {
         name: optimized.name,
@@ -335,6 +336,160 @@ function resolveIrKeys(nodes: Map<string, AssembledNode>): void {
     const { phase1, phase2 } = partitionNodesIntoIrKeyPhases(nodes)
     for (const node of phase1) assignIrKeyWithFallback(node, claimed)
     for (const node of phase2) assignIrKeyWithFallback(node, claimed)
+}
+
+// ---------------------------------------------------------------------------
+// markParameterlessKinds — fixpoint pass (ADR-0010 Task 1.5)
+// ---------------------------------------------------------------------------
+
+/**
+ * Determine whether a single slot (field or child) is auto-stamp-eligible.
+ *
+ * A slot is eligible when:
+ * - It is optional (`required: false`) — user can omit it; we treat it as a
+ *   non-blocking empty slot.
+ * - It is required, non-repeated, and its value is fixed:
+ *   (a) inline literal (`literalValues.length === 1`, from AssembledField)
+ *   (b) single content-type that is itself parameterless (already marked)
+ *
+ * Required repeated slots (`multiple: true`) are NOT eligible — they
+ * represent a 0..N or 1..N collection whose cardinality is user-determined.
+ */
+function isAutoStampSlot(slot: AssembledChild, nodes: Map<string, AssembledNode>): boolean {
+    if (!slot.required) return true  // optional slots never block parameterless
+    if (slot.multiple) return false  // required repeated slot needs user input
+
+    // Source A: inline literal on an AssembledField
+    const asField = slot as AssembledField
+    if (asField.literalValues?.length === 1) return true
+
+    // Source B/C: single content-type that is itself parameterless
+    if (slot.contentTypes.length === 1) {
+        const ref = nodes.get(slot.contentTypes[0]!)
+        if (ref?.isParameterless) return true
+    }
+
+    return false
+}
+
+/**
+ * Get all slots (fields + children) for compound-like nodes that support
+ * the parameterless fixpoint. Returns `undefined` for nodes that have no
+ * slot model (supertypes, tokens, multis — these are never parameterless
+ * compounds).
+ */
+function getSlotsForParameterless(node: AssembledNode): { fields: readonly AssembledField[]; children: readonly AssembledChild[] } | undefined {
+    switch (node.modelType) {
+        case 'branch':
+            return { fields: node.fields, children: node.children ?? [] }
+        case 'group':
+            return { fields: node.fields, children: node.children ?? [] }
+        case 'container':
+            // Containers have children but no fields
+            return { fields: [], children: node.children }
+        default:
+            return undefined
+    }
+}
+
+/**
+ * Compute the stamp expression for a single auto-stamp-eligible REQUIRED slot.
+ *
+ * Returns `undefined` when the slot is optional (optional slots produce no
+ * stamp — we simply omit them from the factory call for parameterless
+ * compounds).
+ */
+function stampExpressionForSlot(slot: AssembledChild, nodes: Map<string, AssembledNode>): string | undefined {
+    if (!slot.required) return undefined  // optional — no stamp needed
+
+    // Source A: inline literal
+    const asField = slot as AssembledField
+    if (asField.literalValues?.length === 1) {
+        return JSON.stringify(asField.literalValues[0])
+    }
+
+    // Source B/C: single referenced parameterless kind
+    if (slot.contentTypes.length === 1) {
+        const ref = nodes.get(slot.contentTypes[0]!)
+        if (ref?.isParameterless && ref.stampExpression !== undefined) {
+            return ref.stampExpression
+        }
+    }
+
+    return undefined
+}
+
+/**
+ * Mark a node as parameterless and set its stampExpression.
+ */
+function markNode(node: AssembledNode, stamp: string): void {
+    node.isParameterless = true
+    node.stampExpression = stamp
+}
+
+/**
+ * Fixpoint pass: propagate parameterless status from terminals up to compounds.
+ *
+ * Phase 1: mark AssembledKeyword nodes. These are the "roots" — a keyword
+ * factory already takes `()` and emits a fixed text. Their stamp expression
+ * (as seen by parent factories) is the JSON literal of their text.
+ *
+ * Phase 2 (fixpoint): iteratively mark any compound whose every required
+ * slot auto-stamps. Converges in ≤ O(depth) passes — for real grammars
+ * typically 2–3 passes. Safety cap at 20 iterations.
+ *
+ * After the pass: `node.isParameterless === true` iff the kind needs no
+ * user-supplied arguments. `node.stampExpression` is the code-gen string
+ * a parent factory emits to produce a value for a slot pointing at this kind.
+ */
+function markParameterlessKinds(nodes: Map<string, AssembledNode>): void {
+    // Phase 1: keywords — their text is the stamp literal.
+    for (const [, node] of nodes) {
+        if (node.modelType === 'keyword') {
+            markNode(node, JSON.stringify(node.text))
+        }
+    }
+
+    // Phase 2: fixpoint over compounds.
+    const MAX_ITERS = 20
+    let changed = true
+    let iters = 0
+    while (changed) {
+        if (iters++ >= MAX_ITERS) {
+            throw new Error(
+                `markParameterlessKinds: fixpoint did not converge after ${MAX_ITERS} iterations. ` +
+                `Possible circular dependency in auto-stamp slot resolution.`,
+            )
+        }
+        changed = false
+        for (const [kind, node] of nodes) {
+            if (node.isParameterless) continue  // already marked
+
+            const slots = getSlotsForParameterless(node)
+            if (!slots) continue  // not a compound with fields/children
+
+            const allSlots = [...slots.fields, ...slots.children]
+
+            // A compound is parameterless iff it has at least ONE required slot AND
+            // every required slot auto-stamps. Vacuous truth (no required slots at
+            // all, or only optional slots) does NOT qualify — such kinds are
+            // "callable without args" but not "structurally determined," so stamping
+            // their factory call produces an empty/arbitrary node rather than a
+            // fixed one. Optional slots are permitted (they can be omitted at the
+            // stamp site) as long as they're not the only content.
+            const requiredSlots = allSlots.filter(s => s.required)
+            if (requiredSlots.length === 0) continue  // no determined content — not parameterless
+
+            const allAutoStamp = allSlots.every(s => isAutoStampSlot(s, nodes))
+            if (!allAutoStamp) continue
+
+            const fn = node.rawFactoryName
+            if (!fn) continue  // hidden nodes have no factory; skip
+            markNode(node, `${fn}()`)
+            changed = true
+            void kind  // suppress unused warning
+        }
+    }
 }
 
 /**

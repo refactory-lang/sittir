@@ -5,7 +5,7 @@
 
 import type { NodeMap } from '../compiler/types.ts'
 import type { AssembledNode, AssembledField } from '../compiler/node-map.ts'
-import { isValidIdent } from './shared.ts'
+import { isValidIdent, isAutoStampField, isAutoStampSlot } from './shared.ts'
 
 export interface EmitTestsConfig {
     grammar: string
@@ -37,13 +37,13 @@ export function emitTests(config: EmitTestsConfig): string {
 
         switch (node.modelType) {
             case 'branch':
-                emitBranchTest(lines, node, kind, key)
+                emitBranchTest(lines, node, kind, key, nodeMap)
                 break
             case 'container':
                 emitContainerTest(lines, node, kind, key)
                 break
             case 'polymorph':
-                emitPolymorphTest(lines, node, kind, key)
+                emitPolymorphTest(lines, node, kind, key, nodeMap)
                 break
             case 'leaf':
                 emitLeafTest(lines, node, kind, key)
@@ -60,41 +60,58 @@ export function emitTests(config: EmitTestsConfig): string {
     return lines.join('\n')
 }
 
-function emitBranchTest(lines: string[], node: AssembledNode, kind: string, key: string): void {
+function emitBranchTest(lines: string[], node: AssembledNode, kind: string, key: string, nodeMap: NodeMap): void {
     if (node.modelType !== 'branch') return
 
     lines.push(`describe('${kind}', () => {`)
     lines.push(`  it('factory produces correct type', () => {`)
 
-    // Build minimal config — every required field and (if the interface
-    // has a children slot) an empty children array. The generated types
-    // require `children: readonly (T)[]` on branches that carry visible
-    // symbol refs so an empty object isn't assignable.
-    const configParts: string[] = []
+    // Build two configs. The type-check test uses the minimal config — only
+    // required, non-auto-stamp fields/children. Auto-stamp slots are excluded
+    // (the factory stamps them directly; supplying would be a type error).
+    //
+    // The render test needs NON-EMPTY output, which the minimal config can
+    // fail to produce for kinds whose children are all optional (repeat(...)
+    // with every alt optional — calling ir.k({}) produces an empty repeat
+    // that renders to ""). So the render test unconditionally injects a dummy
+    // children element when the kind has a children slot at all, escaping
+    // the type via `as any`.
+    const typeConfigParts: string[] = []
     for (const f of node.fields) {
-        if (f.required) {
-            configParts.push(`${f.propertyName}: ${dummyValue(f)}`)
+        if (f.required && !isAutoStampField(f, nodeMap)) {
+            typeConfigParts.push(`${f.propertyName}: ${dummyValue(f)}`)
         }
     }
     if (node.children && node.children.length > 0) {
-        // Non-empty dummy so branches with `$$$CHILDREN`-only templates
-        // render to a non-empty string. Use the first content type of
-        // the first child slot as the dummy kind.
+        const hasNonAutoStampRequired = node.children.some(
+            c => c.required && !isAutoStampSlot(c, nodeMap),
+        )
+        if (hasNonAutoStampRequired) {
+            const firstKind = node.children[0]?.contentTypes[0]
+            const dummy = firstKind
+                ? `{ $type: '${firstKind}', $text: 'test' } as any`
+                : `'test' as any`
+            typeConfigParts.push(`children: [${dummy}] as any`)
+        }
+    }
+    const renderConfigParts = [...typeConfigParts]
+    if (node.children && node.children.length > 0 && !renderConfigParts.some(p => p.startsWith('children'))) {
         const firstKind = node.children[0]?.contentTypes[0]
         const dummy = firstKind
             ? `{ $type: '${firstKind}', $text: 'test' } as any`
             : `'test' as any`
-        configParts.push(`children: [${dummy}] as any`)
+        renderConfigParts.push(`children: [${dummy}] as any`)
     }
 
-    const configArg = configParts.length > 0 ? `{ ${configParts.join(', ')} }` : '{}'
-    lines.push(`    const node = ir.${key}(${configArg});`)
+    const typeConfigArg = typeConfigParts.length > 0 ? `{ ${typeConfigParts.join(', ')} }` : '{}'
+    const renderConfigArg = renderConfigParts.length > 0 ? `{ ${renderConfigParts.join(', ')} }` : '{}'
+    lines.push(`    const node = ir.${key}(${typeConfigArg});`)
     lines.push(`    expect(node.$type).toBe('${kind}');`)
     lines.push(`    expect(node.$source).toBe('factory');`)
     lines.push('  });')
 
     lines.push(`  it('render produces non-empty string', () => {`)
-    lines.push(`    const node = ir.${key}(${configArg});`)
+    lines.push(`    const node = ir.${key}(${renderConfigArg});`)
     lines.push(`    expect(node.render().length).toBeGreaterThan(0);`)
     lines.push('  });')
 
@@ -130,14 +147,14 @@ function emitContainerTest(lines: string[], node: AssembledNode, kind: string, k
     lines.push('')
 }
 
-function emitPolymorphTest(lines: string[], node: AssembledNode, kind: string, key: string): void {
+function emitPolymorphTest(lines: string[], node: AssembledNode, kind: string, key: string, nodeMap: NodeMap): void {
     if (node.modelType !== 'polymorph') return
 
     lines.push(`describe('${kind}', () => {`)
     for (const form of node.forms) {
         lines.push(`  it('${form.name} form produces correct type', () => {`)
         const configParts = form.fields
-            .filter(f => f.required)
+            .filter(f => f.required && !isAutoStampField(f, nodeMap))
             .map(f => `${f.propertyName}: ${dummyValue(f)}`)
         const configArg = configParts.length > 0 ? `{ ${configParts.join(', ')} }` : '{}'
         lines.push(`    const node = ir.${key}.${form.name}(${configArg});`)

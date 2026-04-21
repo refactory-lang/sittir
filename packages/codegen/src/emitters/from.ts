@@ -12,7 +12,7 @@ import type {
     AssembledNode, AssembledField, AssembledChild, AssembledGroup,
 } from '../compiler/node-map.ts'
 import type { PolymorphVariant } from '../compiler/types.ts'
-import { isAutoStampField } from './shared.ts'
+import { isAutoStampField, isAutoStampSlot } from './shared.ts'
 
 /** Escape a string for safe inclusion inside a single-quoted TS string literal. */
 function escForSource(s: string): string {
@@ -524,9 +524,12 @@ function emitBranchFrom(node: BranchLikeNode, nodeMap: NodeMap, intern: KindInte
     const childSlots = node.children ?? []
     // Auto-stamp fields are always `required` but they have no slot in Config —
     // exclude them from the optionality check so the input `?` marker is correct.
+    // Auto-stamp-eligible children likewise: the factory stamps them directly from
+    // parameterless sub-factories, so they don't force the input to be required.
     const nonStampFields = fields.filter(f => !isAutoStampField(f, nodeMap))
     const opt =
-        nonStampFields.some(f => f.required) || childSlots.some(c => c.required) ? '' : '?'
+        nonStampFields.some(f => f.required) ||
+        childSlots.some(c => c.required && !isAutoStampSlot(c, nodeMap)) ? '' : '?'
     const typeName = node.typeName
     const lines: string[] = []
     const { inputType, returnType, inputOptional } = buildBranchSignatureParts(node, factory, opt)
@@ -758,10 +761,11 @@ function emitPolymorphFormFrom(
     const formFn = `${form.typeName.charAt(0).toLowerCase()}${form.typeName.slice(1)}From`
     const formFactory = `F.${form.rawFactoryName!}`
     // Auto-stamp fields are always `required` but have no Config slot — exclude them.
+    // Auto-stamp-eligible children also excluded: factory stamps them directly.
     const formNonStampFields = form.fields.filter(fd => !isAutoStampField(fd, nodeMap))
     const formOpt =
         formNonStampFields.some(fd => fd.required) ||
-        form.children.some(c => c.required) ? '' : '?'
+        form.children.some(c => c.required && !isAutoStampSlot(c, nodeMap)) ? '' : '?'
     const fLines: string[] = []
     const formInputOptional = formOpt === '?'
     fLines.push(`export function ${formFn}(input${formOpt}: T.${form.typeName}Config) {`)
