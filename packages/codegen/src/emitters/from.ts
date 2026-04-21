@@ -126,6 +126,7 @@ function emitNamespaceImports(lines: string[]): void {
     lines.push(`import * as F from './factories.js';`)
     lines.push(`import type * as T from './types.js';`)
     lines.push("import type { AnyNodeData } from '@sittir/types';")
+    lines.push("import { isNodeData } from './utils.js';")
     lines.push('')
 }
 
@@ -160,32 +161,6 @@ function emitFromFieldInputType(lines: string[]): void {
     lines.push("  | { readonly [key: string]: _FromFieldInput }")
     lines.push("  | readonly _FromFieldInput[];")
     lines.push("")
-}
-
-/**
- * Emits the `isNodeData` structural predicate function into generated from.ts.
- *
- * @remarks
- * Narrows to AnyNodeData — resolver bodies rely on `Exclude<>` to infer the
- * loose-bag arm in the else branch. Kinds where a field name shadows a
- * NodeData discriminant (`type`, `fields`, `text`, …) need an explicit
- * `T.<Parent>.Loose` cast at the read site — see resolveFieldFromTypedInput.
- *
- * Guards `$fields` against null before accepting it: `typeof null === 'object'`
- * so a malformed `{ $type: 'foo', $fields: null }` would otherwise pass and
- * downstream `.fieldName` reads would TypeError far from the bad input.
- *
- * @param lines - Output lines array to push into.
- */
-function emitIsNodeDataGuard(lines: string[]): void {
-    lines.push("function isNodeData(v: unknown): v is AnyNodeData {")
-    lines.push("  if (v === null || v === undefined || typeof v !== 'object') return false;")
-    lines.push("  if (Array.isArray(v)) return false;")
-    lines.push("  const o = v as { readonly $type?: unknown; readonly $fields?: unknown; readonly $text?: unknown };")
-    lines.push("  return typeof o.$type === 'string'")
-    lines.push("    && ((o.$fields !== null && typeof o.$fields === 'object') || typeof o.$text === 'string');")
-    lines.push('}')
-    lines.push('')
 }
 
 /**
@@ -289,10 +264,10 @@ export function emitFrom(config: EmitFromConfig): string {
     emitNamespaceImports(lines)
 
     // ------------------------------------------------------------------
-    // Shared input type + type guard for the resolver layer
+    // Shared input type for the resolver layer.
+    // `isNodeData` is imported from ./utils.js (canonical definition).
     // ------------------------------------------------------------------
     emitFromFieldInputType(lines)
-    emitIsNodeDataGuard(lines)
 
     const perNodeBlocks = collectPerNodeFromBlocks(nodeMap, internKinds)
 

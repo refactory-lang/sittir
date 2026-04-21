@@ -3,6 +3,7 @@
 import * as F from './factories.js';
 import type * as T from './types.js';
 import type { AnyNodeData } from '@sittir/types';
+import { isNodeData } from './utils.js';
 
 /** Closed union of every shape a loose-from() field value can hold. */
 type _FromFieldInput =
@@ -14,14 +15,6 @@ type _FromFieldInput =
   | undefined
   | { readonly [key: string]: _FromFieldInput }
   | readonly _FromFieldInput[];
-
-function isNodeData(v: unknown): v is AnyNodeData {
-  if (v === null || v === undefined || typeof v !== 'object') return false;
-  if (Array.isArray(v)) return false;
-  const o = v as { readonly $type?: unknown; readonly $fields?: unknown; readonly $text?: unknown };
-  return typeof o.$type === 'string'
-    && ((o.$fields !== null && typeof o.$fields === 'object') || typeof o.$text === 'string');
-}
 
 export const _fromMap = {
   "source_file": sourceFileFrom,
