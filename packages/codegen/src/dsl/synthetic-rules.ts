@@ -11,7 +11,7 @@
  * have been deleted (ADR-0009 phase 3).
  */
 
-import { isChoiceType, isSeqType, isOptionalType, isStringType, isBlankType, isPlainRepeatType, type RuntimeRule } from './runtime-shapes.ts'
+import { isChoiceType, isSeqType, isOptionalType, isBlankType, isPlainRepeatType, type RuntimeRule } from './runtime-shapes.ts'
 import {
     wireRegisterSyntheticRule,
     wireRegisterPolymorphVariant,
@@ -29,47 +29,6 @@ export function registerSyntheticRule(name: string, content: RuntimeRule): void 
             `registerSyntheticRule('${name}'): called outside a wire() context. ` +
             `Wrap your grammar() opts in wire({...}) so synthetic rules route through it.`,
         )
-    }
-}
-
-/**
- * Shared `FIELD(name, bare-STRING)` → `FIELD(name, SYMBOL(_kw_<name>))`
- * transformation. Synthesizes a hidden `_kw_<name>: prec.left(1, 'kw')`
- * rule via registerSyntheticRule and returns a SYMBOL reference
- * matching the runtime's case. Callers receive the symbol to pass as
- * the FIELD's content — tree-sitter's normalizer preserves FIELD
- * around SYMBOL (unlike FIELD around bare STRING).
- *
- * Used by:
- *   - transform.ts resolvePatch (one-arg field() placeholder path)
- *   - dsl/field.ts two-arg field(name, 'literal') path
- *
- * Optional `wrapSyntheticBody` lets callers apply an extra wrap
- * (e.g., transform's accumulated prec stack) around the synthetic
- * rule's body before registration. Returns the content unchanged
- * when it isn't a bare STRING.
- */
-export function maybeKeywordSymbol(
-    fieldName: string,
-    content: unknown,
-    wrapSyntheticBody?: (body: RuntimeRule) => RuntimeRule,
-): unknown {
-    const c = content as { type?: string; value?: string }
-    if (!c || typeof c.type !== 'string') return content
-    if (!isStringType(c.type)) return content
-    const isUpperCase = c.type === 'STRING'
-    const hiddenName = `_kw_${fieldName}`
-    const nativePrec = (globalThis as {
-        prec?: { left?: (v: number, c: unknown) => unknown }
-    }).prec
-    let precBody: RuntimeRule = (typeof nativePrec?.left === 'function'
-        ? nativePrec.left(1, content)
-        : content) as RuntimeRule
-    if (wrapSyntheticBody) precBody = wrapSyntheticBody(precBody)
-    registerSyntheticRule(hiddenName, precBody)
-    return {
-        type: isUpperCase ? 'SYMBOL' : 'symbol',
-        name: hiddenName,
     }
 }
 

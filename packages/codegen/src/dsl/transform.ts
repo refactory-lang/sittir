@@ -22,10 +22,10 @@
  */
 
 import { parsePath, applyPath, reconstructWrapper, reconstructPrec, reconstructContainer } from './transform-path.ts'
-import { isFieldPlaceholder, type FieldPlaceholder } from './field.ts'
+import { isFieldPlaceholder, maybeKeywordSymbol, type FieldPlaceholder } from './field.ts'
 import { isAliasPlaceholder, type AliasPlaceholder } from './alias.ts'
 import { isVariantPlaceholder, type VariantPlaceholder } from './variant.ts'
-import { getCurrentRuleKind, registerPolymorphVariant, maybeKeywordSymbol, registerAliasedVariant, registerSyntheticRule, registerConflict, wrapInPrecStack, matchesEmpty } from './synthetic-rules.ts'
+import { getCurrentRuleKind, registerPolymorphVariant, registerAliasedVariant, registerSyntheticRule, registerConflict, wrapInPrecStack, matchesEmpty } from './synthetic-rules.ts'
 import { isFieldLike, isPrecWrapper, isWrapperType, isSeqType, isChoiceType, type RuntimeRule } from './runtime-shapes.ts'
 
 /**

@@ -25,7 +25,49 @@
 
 import type { Rule } from '../compiler/rule.ts'
 import type { FieldLike } from './runtime-shapes.ts'
-import { maybeKeywordSymbol } from './synthetic-rules.ts'
+import { registerSyntheticRule } from './synthetic-rules.ts'
+import { isStringType, type RuntimeRule } from './runtime-shapes.ts'
+
+/**
+ * Shared `FIELD(name, bare-STRING)` → `FIELD(name, SYMBOL(_kw_<name>))`
+ * transformation. Synthesizes a hidden `_kw_<name>: prec.left(1, 'kw')`
+ * rule via registerSyntheticRule and returns a SYMBOL reference
+ * matching the runtime's case. Callers receive the symbol to pass as
+ * the FIELD's content — tree-sitter's normalizer preserves FIELD
+ * around SYMBOL (unlike FIELD around bare STRING).
+ *
+ * Used by:
+ *   - transform.ts resolvePatch (one-arg field() placeholder path)
+ *   - the two-arg field(name, 'literal') path below
+ *
+ * Optional `wrapSyntheticBody` lets callers apply an extra wrap
+ * (e.g., transform's accumulated prec stack) around the synthetic
+ * rule's body before registration. Returns the content unchanged
+ * when it isn't a bare STRING.
+ */
+export function maybeKeywordSymbol(
+    fieldName: string,
+    content: unknown,
+    wrapSyntheticBody?: (body: RuntimeRule) => RuntimeRule,
+): unknown {
+    const c = content as { type?: string; value?: string }
+    if (!c || typeof c.type !== 'string') return content
+    if (!isStringType(c.type)) return content
+    const isUpperCase = c.type === 'STRING'
+    const hiddenName = `_kw_${fieldName}`
+    const nativePrec = (globalThis as {
+        prec?: { left?: (v: number, c: unknown) => unknown }
+    }).prec
+    let precBody: RuntimeRule = (typeof nativePrec?.left === 'function'
+        ? nativePrec.left(1, content)
+        : content) as RuntimeRule
+    if (wrapSyntheticBody) precBody = wrapSyntheticBody(precBody)
+    registerSyntheticRule(hiddenName, precBody)
+    return {
+        type: isUpperCase ? 'SYMBOL' : 'symbol',
+        name: hiddenName,
+    }
+}
 
 type Input = string | RegExp | Rule
 
