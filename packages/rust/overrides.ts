@@ -480,6 +480,11 @@ export default grammar(enrich(base), wire({
         // render-side heuristics. The hidden `_wildcard_pattern` rule is
         // declared explicitly below so tree-sitter's `ruleMap` snapshot
         // picks it up — no runtime synthesis, no wrapper machinery.
+        //
+        // Why inline here instead of declarative `transforms:` — the
+        // patch value needs `$` (tree-sitter's symbol proxy) at call
+        // time. `transforms:` values are evaluated at config-object-
+        // literal time, before `$` exists. See ADR-0009 §Task-7.
         _pattern: ($, original) => transform(original, {
             '-1': alias($._wildcard_pattern, $.wildcard_pattern),
         }),
