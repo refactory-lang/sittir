@@ -25,7 +25,12 @@
  * file. New code should import from `./node-map.ts` directly.
  */
 
-import type { Rule, RuleSource } from './rule.ts'
+import type {
+    Rule, RuleSource,
+    SeqRule, ChoiceRule, RepeatRule, Repeat1Rule,
+    StringRule, PatternRule, TokenRule,
+    GroupRule, EnumRule, SupertypeRule, PolymorphRule,
+} from './rule.ts'
 import { isSeq, isField } from './rule.ts'
 import type { KindProjection } from './types.ts'
 import {
@@ -741,9 +746,11 @@ export type AssembledForm = AssembledGroup
 
 // --- Concrete classes per model type ---
 
-export class AssembledBranch extends AssembledNodeBase {
+export class AssembledBranch extends AssembledNodeBase<SeqRule | ChoiceRule> {
     readonly modelType = 'branch' as const
-    // rule: Rule — inherited from AssembledNodeBase<Rule>
+    // rule narrowed to SeqRule | ChoiceRule — branches classify from
+    // compositional rules that carry fields / ordered children; the
+    // classifier routes only these two shapes here.
     /**
      * Rule with anonymous tokens / structural wrappers stripped.
      * Computed once by assemble() via `simplifyRule(init.rule)` and
@@ -932,9 +939,11 @@ export function hasHiddenExternalRef(rule: Rule, externals: ReadonlySet<string>)
     return hasContent
 }
 
-export class AssembledContainer extends AssembledNodeBase {
+export class AssembledContainer extends AssembledNodeBase<SeqRule | ChoiceRule | RepeatRule | Repeat1Rule> {
     readonly modelType = 'container' as const
-    // rule: Rule — inherited from AssembledNodeBase<Rule>
+    // rule narrowed — containers hold ordered or repeated unnamed
+    // children (no fields). Classifier routes seq/choice/repeat/repeat1
+    // shapes here when the rule has children but no fields.
     /** See `AssembledBranch.simplifiedRule`. */
     readonly simplifiedRule: Rule
 
@@ -993,7 +1002,7 @@ export class AssembledContainer extends AssembledNodeBase {
 
 }
 
-export class AssembledPolymorph extends AssembledNodeBase {
+export class AssembledPolymorph extends AssembledNodeBase<PolymorphRule> {
     readonly modelType = 'polymorph' as const
     readonly #forms: AssembledGroup[]
     readonly source: 'promoted' | 'override'
@@ -1056,7 +1065,7 @@ export class AssembledPolymorph extends AssembledNodeBase {
 
 }
 
-export class AssembledLeaf extends AssembledNodeBase {
+export class AssembledLeaf extends AssembledNodeBase<PatternRule> {
     readonly modelType = 'leaf' as const
     readonly #pattern?: string
 
@@ -1071,7 +1080,7 @@ export class AssembledLeaf extends AssembledNodeBase {
     get pattern(): string | undefined { return this.#pattern }
 }
 
-export class AssembledKeyword extends AssembledNodeBase {
+export class AssembledKeyword extends AssembledNodeBase<StringRule> {
     readonly modelType = 'keyword' as const
     readonly #text: string
 
@@ -1086,7 +1095,7 @@ export class AssembledKeyword extends AssembledNodeBase {
     get text(): string { return this.#text }
 }
 
-export class AssembledToken extends AssembledNodeBase {
+export class AssembledToken extends AssembledNodeBase<TokenRule> {
     readonly modelType = 'token' as const
 
     constructor(init: {
@@ -1097,7 +1106,7 @@ export class AssembledToken extends AssembledNodeBase {
     // No emitFactory — tokens are hidden, no factoryName.
 }
 
-export class AssembledEnum extends AssembledNodeBase {
+export class AssembledEnum extends AssembledNodeBase<EnumRule> {
     readonly modelType = 'enum' as const
     readonly #values: string[]
 
@@ -1112,7 +1121,7 @@ export class AssembledEnum extends AssembledNodeBase {
     get values(): string[] { return this.#values }
 }
 
-export class AssembledSupertype extends AssembledNodeBase {
+export class AssembledSupertype extends AssembledNodeBase<SupertypeRule> {
     readonly modelType = 'supertype' as const
     readonly #subtypes: string[]
 
@@ -1152,9 +1161,11 @@ export class AssembledSupertype extends AssembledNodeBase {
  *   supertype — hidden choice of symbols (dispatch to one subtype)
  *   multi    — hidden repeat of union    (inline as multi child slot)
  */
-export class AssembledMulti extends AssembledNodeBase {
+export class AssembledMulti extends AssembledNodeBase<RepeatRule | Repeat1Rule> {
     readonly modelType = 'multi' as const
-    // rule: Rule — inherited from AssembledNodeBase<Rule>
+    // rule narrowed — multis are hidden repeat helpers. Classifier
+    // routes repeat / repeat1 shapes here when the hidden rule's
+    // top-level content is a repeat.
     /** The repeat's inner content type — raw Rule, for downstream
      * consumers that need the element union (types emitter maps this
      * to a union of TypeNames, inlineGroupRefs hands the whole repeat
@@ -1178,9 +1189,12 @@ export class AssembledMulti extends AssembledNodeBase {
     }
 }
 
-export class AssembledGroup extends AssembledNodeBase {
+export class AssembledGroup extends AssembledNodeBase<GroupRule | SeqRule | ChoiceRule> {
     readonly modelType = 'group' as const
-    // rule: Rule — inherited from AssembledNodeBase<Rule>
+    // rule narrowed — groups are hidden helper rules that carry named
+    // sub-structure. Source shapes: GroupRule (pre-unwrap), or a
+    // SeqRule/ChoiceRule after unwrapGroupRuleAndSimplified() extracts
+    // the content.
     /** See `AssembledBranch.simplifiedRule`. */
     readonly simplifiedRule: Rule
     readonly detectToken?: string
