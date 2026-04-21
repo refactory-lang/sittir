@@ -26,6 +26,7 @@ import { hasAnyField, hasAnyChild } from './node-map.ts'
 import { collectFieldNames } from './rule.ts'
 import { isHiddenKind } from './evaluate.ts'
 import type { PolymorphVariant } from './types.ts'
+import { validateRefineForms } from './link-refine.ts'
 
 // ---------------------------------------------------------------------------
 // link() — main entry point
@@ -122,6 +123,23 @@ export function link(raw: RawGrammar, include?: IncludeFilter): LinkedGrammar {
     // an entry per unique set to `derivations.repeatedShapes`; the
     // suggested.ts emitter surfaces it as a review candidate.
     collectRepeatedShapes(rules, derivations.repeatedShapes)
+
+    // refine() form validation — path + selection checks against the
+    // linked rule tree. Fails loud on any mismatch so an override's
+    // refine declaration that doesn't match the rule shape surfaces
+    // as a codegen error, not silent codegen drift. See ADR-0010
+    // phase 2 for the design.
+    if (raw.refineForms && raw.refineForms.size > 0) {
+        for (const [kind, forms] of raw.refineForms) {
+            const rule = rules[kind]
+            if (!rule) {
+                throw new Error(
+                    `refine(${kind}): no rule named '${kind}' found at link time — refine() target must be a top-level rule`,
+                )
+            }
+            validateRefineForms(kind, rule, forms)
+        }
+    }
 
     return {
         name: raw.name,
