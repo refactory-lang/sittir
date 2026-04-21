@@ -108,8 +108,10 @@ export function macroDefinitionUFormParen(config: T.MacroDefinitionUFormParenCon
     $fields: fields,
     $children: children,
     name(value?: T.Identifier | T.ReservedIdentifier) { return _fs(config, macroDefinitionUFormParen, 'name', value, fields.name); },
-    getChild() { return children[0]; },
-    setChild(child: T.MacroDefinitionParen) { return macroDefinitionUFormParen({ ...config, children: [child] }); },
+    child(value?: T.MacroDefinitionParen) {
+      if (value === undefined) return children[0];
+      return macroDefinitionUFormParen({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -131,8 +133,10 @@ export function macroDefinitionUFormBracket(config: T.MacroDefinitionUFormBracke
     $fields: fields,
     $children: children,
     name(value?: T.Identifier | T.ReservedIdentifier) { return _fs(config, macroDefinitionUFormBracket, 'name', value, fields.name); },
-    getChild() { return children[0]; },
-    setChild(child: T.MacroDefinitionBracket) { return macroDefinitionUFormBracket({ ...config, children: [child] }); },
+    child(value?: T.MacroDefinitionBracket) {
+      if (value === undefined) return children[0];
+      return macroDefinitionUFormBracket({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -154,8 +158,10 @@ export function macroDefinitionUFormBrace(config: T.MacroDefinitionUFormBraceCon
     $fields: fields,
     $children: children,
     name(value?: T.Identifier | T.ReservedIdentifier) { return _fs(config, macroDefinitionUFormBrace, 'name', value, fields.name); },
-    getChild() { return children[0]; },
-    setChild(child: T.MacroDefinitionBrace) { return macroDefinitionUFormBrace({ ...config, children: [child] }); },
+    child(value?: T.MacroDefinitionBrace) {
+      if (value === undefined) return children[0];
+      return macroDefinitionUFormBrace({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -325,8 +331,10 @@ export function attribute(config: T.Attribute.Config) {
     $children: children,
     value(value?: T.Expression | undefined) { return _fs(config, attribute, 'value', value, fields.value); },
     arguments(value?: T.DelimTokenTree | undefined) { return _fs(config, attribute, 'arguments', value, fields.arguments); },
-    getChild() { return children[0]; },
-    setChild(child: T.Path) { return attribute({ ...config, children: [child] }); },
+    child(value?: T.Path) {
+      if (value === undefined) return children[0];
+      return attribute({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -363,8 +371,10 @@ export function modItemUFormExternal(config: T.ModItemUFormExternalConfig) {
     $children: children,
     visibilityModifier(value?: T.VisibilityModifier | undefined) { return _fs(config, modItemUFormExternal, 'visibilityModifier', value, fields.visibility_modifier); },
     name(value?: T.Identifier) { return _fs(config, modItemUFormExternal, 'name', value, fields.name); },
-    getChild() { return children[0]; },
-    setChild(child: T.ModItemExternal) { return modItemUFormExternal({ ...config, children: [child] }); },
+    child(value?: T.ModItemExternal) {
+      if (value === undefined) return children[0];
+      return modItemUFormExternal({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -388,8 +398,10 @@ export function modItemUFormInline(config: T.ModItemUFormInlineConfig) {
     $children: children,
     visibilityModifier(value?: T.VisibilityModifier | undefined) { return _fs(config, modItemUFormInline, 'visibilityModifier', value, fields.visibility_modifier); },
     name(value?: T.Identifier) { return _fs(config, modItemUFormInline, 'name', value, fields.name); },
-    getChild() { return children[0]; },
-    setChild(child: T.ModItemInline) { return modItemUFormInline({ ...config, children: [child] }); },
+    child(value?: T.ModItemInline) {
+      if (value === undefined) return children[0];
+      return modItemUFormInline({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -469,8 +481,10 @@ export function structItemUFormBrace(config: T.StructItemUFormBraceConfig) {
     visibilityModifier(value?: T.VisibilityModifier | undefined) { return _fs(config, structItemUFormBrace, 'visibilityModifier', value, fields.visibility_modifier); },
     name(value?: T._TypeIdentifier) { return _fs(config, structItemUFormBrace, 'name', value, fields.name); },
     typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, structItemUFormBrace, 'typeParameters', value, fields.type_parameters); },
-    getChild() { return children[0]; },
-    setChild(child: T.StructItemBrace) { return structItemUFormBrace({ ...config, children: [child] }); },
+    child(value?: T.StructItemBrace) {
+      if (value === undefined) return children[0];
+      return structItemUFormBrace({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -496,8 +510,10 @@ export function structItemUFormTuple(config: T.StructItemUFormTupleConfig) {
     visibilityModifier(value?: T.VisibilityModifier | undefined) { return _fs(config, structItemUFormTuple, 'visibilityModifier', value, fields.visibility_modifier); },
     name(value?: T._TypeIdentifier) { return _fs(config, structItemUFormTuple, 'name', value, fields.name); },
     typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, structItemUFormTuple, 'typeParameters', value, fields.type_parameters); },
-    getChild() { return children[0]; },
-    setChild(child: T.StructItemTuple) { return structItemUFormTuple({ ...config, children: [child] }); },
+    child(value?: T.StructItemTuple) {
+      if (value === undefined) return children[0];
+      return structItemUFormTuple({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -523,8 +539,10 @@ export function structItemUFormUnit(config: T.StructItemUFormUnitConfig) {
     visibilityModifier(value?: T.VisibilityModifier | undefined) { return _fs(config, structItemUFormUnit, 'visibilityModifier', value, fields.visibility_modifier); },
     name(value?: T._TypeIdentifier) { return _fs(config, structItemUFormUnit, 'name', value, fields.name); },
     typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, structItemUFormUnit, 'typeParameters', value, fields.type_parameters); },
-    getChild() { return children[0]; },
-    setChild(child: T.StructItemUnit) { return structItemUFormUnit({ ...config, children: [child] }); },
+    child(value?: T.StructItemUnit) {
+      if (value === undefined) return children[0];
+      return structItemUFormUnit({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -755,8 +773,10 @@ export function staticItem(config: T.StaticItem.Config) {
     name(value?: T.Identifier) { return _fs(config, staticItem, 'name', value, fields.name); },
     typeField(value?: T._Type) { return _fs(config, staticItem, 'type', value, fields.type); },
     value(value?: T.Expression | undefined) { return _fs(config, staticItem, 'value', value, fields.value); },
-    getChild() { return children[0]; },
-    setChild(child: T.MutableSpecifier) { return staticItem({ ...config, children: [child] }); },
+    child(value?: T.MutableSpecifier) {
+      if (value === undefined) return children[0];
+      return staticItem({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -877,8 +897,10 @@ export function functionModifiers(config: T.FunctionModifiers.Config) {
     default(...values: "default"[]) { return _fsm(config, functionModifiers, 'default', values, fields.default); },
     const(...values: "const"[]) { return _fsm(config, functionModifiers, 'const', values, fields.const); },
     unsafe(...values: "unsafe"[]) { return _fsm(config, functionModifiers, 'unsafe', values, fields.unsafe); },
-    getChildren() { return children; },
-    setChildren(...items: T.ExternModifier[]) { return functionModifiers({ ...config, children: items }); },
+    children(...items: T.ExternModifier[]) {
+      if (items.length === 0) return children;
+      return functionModifiers({ ...config, children: items });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -958,8 +980,10 @@ export function implItemUFormBody(config: T.ImplItemUFormBodyConfig) {
     trait(value?: T._TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType | undefined) { return _fs(config, implItemUFormBody, 'trait', value, fields.trait); },
     typeField(value?: T._Type) { return _fs(config, implItemUFormBody, 'type', value, fields.type); },
     whereClause(value?: T.WhereClause | undefined) { return _fs(config, implItemUFormBody, 'whereClause', value, fields.where_clause); },
-    getChild() { return children[0]; },
-    setChild(child: T.ImplItemBody) { return implItemUFormBody({ ...config, children: [child] }); },
+    child(value?: T.ImplItemBody) {
+      if (value === undefined) return children[0];
+      return implItemUFormBody({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -989,8 +1013,10 @@ export function implItemUFormSemi(config: T.ImplItemUFormSemiConfig) {
     trait(value?: T._TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType | undefined) { return _fs(config, implItemUFormSemi, 'trait', value, fields.trait); },
     typeField(value?: T._Type) { return _fs(config, implItemUFormSemi, 'type', value, fields.type); },
     whereClause(value?: T.WhereClause | undefined) { return _fs(config, implItemUFormSemi, 'whereClause', value, fields.where_clause); },
-    getChild() { return children[0]; },
-    setChild(child: T.ImplItemSemi) { return implItemUFormSemi({ ...config, children: [child] }); },
+    child(value?: T.ImplItemSemi) {
+      if (value === undefined) return children[0];
+      return implItemUFormSemi({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1436,8 +1462,10 @@ export function visibilityModifierForm0(config?: T.VisibilityModifierForm0Config
     $named: true as const,
     $variant: 'form0' as const,
     $children: children,
-    getChild() { return children[0]; },
-    setChild(child: T.Crate) { return visibilityModifierForm0({ ...config, children: [child] }); },
+    child(value?: T.Crate) {
+      if (value === undefined) return children[0];
+      return visibilityModifierForm0({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1461,8 +1489,10 @@ export function visibilityModifierForm1(config?: T.VisibilityModifierForm1Config
     $children: children,
     get pub() { return fields.pub; },
     in(value?: "in" | undefined) { return _fs(config, visibilityModifierForm1, 'in', value, fields.in); },
-    getChild() { return children[0]; },
-    setChild(child: (T.Self | T.Super | T.Crate | T.Path)) { return visibilityModifierForm1({ ...config, children: [child] }); },
+    child(value?: (T.Self | T.Super | T.Crate | T.Path)) {
+      if (value === undefined) return children[0];
+      return visibilityModifierForm1({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1581,8 +1611,10 @@ export function functionType(config: T.FunctionType.Config) {
     forLifetimes(value?: T.ForLifetimes | undefined) { return _fs(config, functionType, 'forLifetimes', value, fields.for_lifetimes); },
     parameters(value?: T.Parameters) { return _fs(config, functionType, 'parameters', value, fields.parameters); },
     returnType(value?: T._Type | undefined) { return _fs(config, functionType, 'returnType', value, fields.return_type); },
-    getChild() { return children[0]; },
-    setChild(child: (T.FunctionTypeTraitForm | T.FunctionTypeFnForm)) { return functionType({ ...config, children: [child] }); },
+    child(value?: (T.FunctionTypeTraitForm | T.FunctionTypeFnForm)) {
+      if (value === undefined) return children[0];
+      return functionType({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2485,8 +2517,10 @@ export function fieldInitializer(config: T.FieldInitializer.Config) {
     $children: children,
     field(value?: T._FieldIdentifier | T.IntegerLiteral) { return _fs(config, fieldInitializer, 'field', value, fields.field); },
     value(value?: T.Expression) { return _fs(config, fieldInitializer, 'value', value, fields.value); },
-    getChildren() { return children; },
-    setChildren(...items: T.AttributeItem[]) { return fieldInitializer({ ...config, children: items }); },
+    children(...items: T.AttributeItem[]) {
+      if (items.length === 0) return children;
+      return fieldInitializer({ ...config, children: items });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2622,8 +2656,10 @@ export function matchArm(config: T.MatchArm.Config) {
     $children: children,
     pattern(value?: T.MatchPattern) { return _fs(config, matchArm, 'pattern', value, fields.pattern); },
     value(value?: T.Expression) { return _fs(config, matchArm, 'value', value, fields.value); },
-    getChildren() { return children; },
-    setChildren(...items: (T.AttributeItem | T.InnerAttributeItem)[]) { return matchArm({ ...config, children: items }); },
+    children(...items: (T.AttributeItem | T.InnerAttributeItem)[]) {
+      if (items.length === 0) return children;
+      return matchArm({ ...config, children: items });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2647,8 +2683,10 @@ export function lastMatchArm(config: T.LastMatchArm.Config) {
     $children: children,
     pattern(value?: T.MatchPattern) { return _fs(config, lastMatchArm, 'pattern', value, fields.pattern); },
     value(value?: T.Expression) { return _fs(config, lastMatchArm, 'value', value, fields.value); },
-    getChildren() { return children; },
-    setChildren(...items: (T.AttributeItem | T.InnerAttributeItem)[]) { return lastMatchArm({ ...config, children: items }); },
+    children(...items: (T.AttributeItem | T.InnerAttributeItem)[]) {
+      if (items.length === 0) return children;
+      return lastMatchArm({ ...config, children: items });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2670,8 +2708,10 @@ export function matchPattern(config: T.MatchPattern.Config) {
     $fields: fields,
     $children: children,
     condition(value?: T.Condition | undefined) { return _fs(config, matchPattern, 'condition', value, fields.condition); },
-    getChild() { return children[0]; },
-    setChild(child: T.Pattern) { return matchPattern({ ...config, children: [child] }); },
+    child(value?: T.Pattern) {
+      if (value === undefined) return children[0];
+      return matchPattern({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2800,8 +2840,10 @@ export function closureExpressionUFormBlock(config: T.ClosureExpressionUFormBloc
     async(value?: "async" | undefined) { return _fs(config, closureExpressionUFormBlock, 'async', value, fields.async); },
     move(value?: "move" | undefined) { return _fs(config, closureExpressionUFormBlock, 'move', value, fields.move); },
     parameters(value?: T.ClosureParameters) { return _fs(config, closureExpressionUFormBlock, 'parameters', value, fields.parameters); },
-    getChild() { return children[0]; },
-    setChild(child: T.ClosureExpressionBlock) { return closureExpressionUFormBlock({ ...config, children: [child] }); },
+    child(value?: T.ClosureExpressionBlock) {
+      if (value === undefined) return children[0];
+      return closureExpressionUFormBlock({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2829,8 +2871,10 @@ export function closureExpressionUFormExpr(config: T.ClosureExpressionUFormExprC
     async(value?: "async" | undefined) { return _fs(config, closureExpressionUFormExpr, 'async', value, fields.async); },
     move(value?: "move" | undefined) { return _fs(config, closureExpressionUFormExpr, 'move', value, fields.move); },
     parameters(value?: T.ClosureParameters) { return _fs(config, closureExpressionUFormExpr, 'parameters', value, fields.parameters); },
-    getChild() { return children[0]; },
-    setChild(child: T.ClosureExpressionExpr) { return closureExpressionUFormExpr({ ...config, children: [child] }); },
+    child(value?: T.ClosureExpressionExpr) {
+      if (value === undefined) return children[0];
+      return closureExpressionUFormExpr({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -3064,8 +3108,10 @@ export function block(config: T.Block.Config) {
     $fields: fields,
     $children: children,
     label(value?: T.Label | undefined) { return _fs(config, block, 'label', value, fields.label); },
-    getChildren() { return children; },
-    setChildren(...items: (T.Statement | T.Expression)[]) { return block({ ...config, children: items }); },
+    children(...items: (T.Statement | T.Expression)[]) {
+      if (items.length === 0) return children;
+      return block({ ...config, children: items });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -3087,8 +3133,10 @@ export function genericPattern(config: T.GenericPattern.Config) {
     $fields: fields,
     $children: children,
     typeArguments(value?: T.TypeArguments) { return _fs(config, genericPattern, 'typeArguments', value, fields.type_arguments); },
-    getChild() { return children[0]; },
-    setChild(child: (T.Identifier | T.ScopedIdentifier)) { return genericPattern({ ...config, children: [child] }); },
+    child(value?: (T.Identifier | T.ScopedIdentifier)) {
+      if (value === undefined) return children[0];
+      return genericPattern({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -3140,8 +3188,10 @@ export function tupleStructPattern(config: T.TupleStructPattern.Config) {
     $fields: fields,
     $children: children,
     typeField(value?: T.Identifier | T.ScopedIdentifier | T.GenericTypeWithTurbofish) { return _fs(config, tupleStructPattern, 'type', value, fields.type); },
-    getChildren() { return children; },
-    setChildren(...items: T.Pattern[]) { return tupleStructPattern({ ...config, children: items }); },
+    children(...items: T.Pattern[]) {
+      if (items.length === 0) return children;
+      return tupleStructPattern({ ...config, children: items });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -3163,8 +3213,10 @@ export function structPattern(config: T.StructPattern.Config) {
     $fields: fields,
     $children: children,
     typeField(value?: T._TypeIdentifier | T.ScopedTypeIdentifier) { return _fs(config, structPattern, 'type', value, fields.type); },
-    getChildren() { return children; },
-    setChildren(...items: (T.FieldPattern | T.RemainingFieldPattern)[]) { return structPattern({ ...config, children: items }); },
+    children(...items: (T.FieldPattern | T.RemainingFieldPattern)[]) {
+      if (items.length === 0) return children;
+      return structPattern({ ...config, children: items });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -3201,8 +3253,10 @@ export function fieldPatternUFormShorthand(config: T.FieldPatternUFormShorthandC
     $children: children,
     ref(value?: "ref" | undefined) { return _fs(config, fieldPatternUFormShorthand, 'ref', value, fields.ref); },
     mutableSpecifier(value?: T.MutableSpecifier | undefined) { return _fs(config, fieldPatternUFormShorthand, 'mutableSpecifier', value, fields.mutable_specifier); },
-    getChild() { return children[0]; },
-    setChild(child: T.FieldPatternShorthand) { return fieldPatternUFormShorthand({ ...config, children: [child] }); },
+    child(value?: T.FieldPatternShorthand) {
+      if (value === undefined) return children[0];
+      return fieldPatternUFormShorthand({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -3226,8 +3280,10 @@ export function fieldPatternUFormNamed(config: T.FieldPatternUFormNamedConfig) {
     $children: children,
     ref(value?: "ref" | undefined) { return _fs(config, fieldPatternUFormNamed, 'ref', value, fields.ref); },
     mutableSpecifier(value?: T.MutableSpecifier | undefined) { return _fs(config, fieldPatternUFormNamed, 'mutableSpecifier', value, fields.mutable_specifier); },
-    getChild() { return children[0]; },
-    setChild(child: T.FieldPatternNamed) { return fieldPatternUFormNamed({ ...config, children: [child] }); },
+    child(value?: T.FieldPatternNamed) {
+      if (value === undefined) return children[0];
+      return fieldPatternUFormNamed({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -3846,8 +3902,10 @@ export function structItemBrace(config: T.StructItemBrace.Config) {
     $fields: fields,
     $children: children,
     body(value?: T.FieldDeclarationList) { return _fs(config, structItemBrace, 'body', value, fields.body); },
-    getChild() { return children[0]; },
-    setChild(child: T.WhereClause) { return structItemBrace({ ...config, children: [child] }); },
+    child(value?: T.WhereClause) {
+      if (value === undefined) return children[0];
+      return structItemBrace({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -3869,8 +3927,10 @@ export function structItemTuple(config: T.StructItemTuple.Config) {
     $fields: fields,
     $children: children,
     body(value?: T.OrderedFieldDeclarationList) { return _fs(config, structItemTuple, 'body', value, fields.body); },
-    getChild() { return children[0]; },
-    setChild(child: T.WhereClause) { return structItemTuple({ ...config, children: [child] }); },
+    child(value?: T.WhereClause) {
+      if (value === undefined) return children[0];
+      return structItemTuple({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -4055,8 +4115,10 @@ export function arrayExpressionList(config: T.ArrayExpressionList.Config) {
     $children: children,
     attributes(...values: T.AttributeItem[]) { return _fsm(config, arrayExpressionList, 'attributes', values, fields.attributes); },
     elements(...values: T.Expression[]) { return _fsm(config, arrayExpressionList, 'elements', values, fields.elements); },
-    getChildren() { return children; },
-    setChildren(...items: T.AttributeItem[]) { return arrayExpressionList({ ...config, children: items }); },
+    children(...items: T.AttributeItem[]) {
+      if (items.length === 0) return children;
+      return arrayExpressionList({ ...config, children: items });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);

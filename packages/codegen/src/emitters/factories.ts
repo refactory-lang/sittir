@@ -626,19 +626,23 @@ function emitFieldCarryingFactory(
     if (hasChildren) {
         const childElem = childElementType({ children }, nodeMap)
         if (childrenMultiple) {
-            lines.push('    getChildren() { return children; },')
+            // Unified fluent `children()` — no-arg getter, varargs setter.
+            // `$`-prefix on NodeData metadata (`$children`) freed the bare
+            // `children` identifier on the factory surface, matching the
+            // existing `value()` / `values()` fluent pattern for fields.
             const childrenNonEmpty = children.some(c => isNonEmpty(c))
+            lines.push(`    children(...items: ${childElem}[]) {`)
+            lines.push('      if (items.length === 0) return children;')
             if (childrenNonEmpty) {
-                lines.push(`    setChildren(...items: ${childElem}[]) {`)
                 lines.push(`      _assertNonEmpty(items, '${node.kind}.children');`)
-                lines.push(`      return ${fn}({ ...config, children: items });`)
-                lines.push('    },')
-            } else {
-                lines.push(`    setChildren(...items: ${childElem}[]) { return ${fn}({ ...config, children: items }); },`)
             }
+            lines.push(`      return ${fn}({ ...config, children: items });`)
+            lines.push('    },')
         } else {
-            lines.push(`    getChild() { return children[0]; },`)
-            lines.push(`    setChild(child: ${childElem}) { return ${fn}({ ...config, children: [child] }); },`)
+            lines.push(`    child(value?: ${childElem}) {`)
+            lines.push('      if (value === undefined) return children[0];')
+            lines.push(`      return ${fn}({ ...config, children: [value] });`)
+            lines.push('    },')
         }
     }
 

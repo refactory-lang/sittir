@@ -111,8 +111,10 @@ export function exportStatementForm0(config: T.ExportStatementForm0Config) {
     decorator(...values: T.Decorator[]) { return _fsm(config, exportStatementForm0, 'decorator', values, fields.decorator); },
     declaration(value?: T.Declaration | undefined) { return _fs(config, exportStatementForm0, 'declaration', value, fields.declaration); },
     value(value?: T.Expression | undefined) { return _fs(config, exportStatementForm0, 'value', value, fields.value); },
-    getChild() { return children[0]; },
-    setChild(child: (T.FromClause | T.NamespaceExport | T.ExportClause | T.Semicolon)) { return exportStatementForm0({ ...config, children: [child] }); },
+    child(value?: (T.FromClause | T.NamespaceExport | T.ExportClause | T.Semicolon)) {
+      if (value === undefined) return children[0];
+      return exportStatementForm0({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -129,8 +131,10 @@ export function exportStatementForm1(config: T.ExportStatementForm1Config) {
     $named: true as const,
     $variant: 'form1' as const,
     $children: children,
-    getChild() { return children[0]; },
-    setChild(child: (T.ExportClause | T.FromClause | T.Semicolon)) { return exportStatementForm1({ ...config, children: [child] }); },
+    child(value?: (T.ExportClause | T.FromClause | T.Semicolon)) {
+      if (value === undefined) return children[0];
+      return exportStatementForm1({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -147,8 +151,10 @@ export function exportStatementForm2(config: T.ExportStatementForm2Config) {
     $named: true as const,
     $variant: 'form2' as const,
     $children: children,
-    getChild() { return children[0]; },
-    setChild(child: (T.Expression | T.Semicolon)) { return exportStatementForm2({ ...config, children: [child] }); },
+    child(value?: (T.Expression | T.Semicolon)) {
+      if (value === undefined) return children[0];
+      return exportStatementForm2({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -165,8 +171,10 @@ export function exportStatementForm3(config: T.ExportStatementForm3Config) {
     $named: true as const,
     $variant: 'form3' as const,
     $children: children,
-    getChild() { return children[0]; },
-    setChild(child: (T.Identifier | T.Semicolon)) { return exportStatementForm3({ ...config, children: [child] }); },
+    child(value?: (T.Identifier | T.Semicolon)) {
+      if (value === undefined) return children[0];
+      return exportStatementForm3({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -306,8 +314,10 @@ export function importClauseUFormNamespaceImport(config: T.ImportClauseUFormName
     $named: true as const,
     $variant: 'namespace_import' as const,
     $children: children,
-    getChild() { return children[0]; },
-    setChild(child: T.ImportClauseNamespaceImport) { return importClauseUFormNamespaceImport({ ...config, children: [child] }); },
+    child(value?: T.ImportClauseNamespaceImport) {
+      if (value === undefined) return children[0];
+      return importClauseUFormNamespaceImport({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -324,8 +334,10 @@ export function importClauseUFormNamedImports(config: T.ImportClauseUFormNamedIm
     $named: true as const,
     $variant: 'named_imports' as const,
     $children: children,
-    getChild() { return children[0]; },
-    setChild(child: T.ImportClauseNamedImports) { return importClauseUFormNamedImports({ ...config, children: [child] }); },
+    child(value?: T.ImportClauseNamedImports) {
+      if (value === undefined) return children[0];
+      return importClauseUFormNamedImports({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -342,8 +354,10 @@ export function importClauseUFormDefaultImport(config: T.ImportClauseUFormDefaul
     $named: true as const,
     $variant: 'default_import' as const,
     $children: children,
-    getChild() { return children[0]; },
-    setChild(child: T.ImportClauseDefaultImport) { return importClauseUFormDefaultImport({ ...config, children: [child] }); },
+    child(value?: T.ImportClauseDefaultImport) {
+      if (value === undefined) return children[0];
+      return importClauseUFormDefaultImport({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -573,8 +587,10 @@ export function variableDeclaratorForm0(config: T.VariableDeclaratorForm0Config)
     $children: children,
     name(value?: T.Identifier | T.DestructuringPattern) { return _fs(config, variableDeclaratorForm0, 'name', value, fields.name); },
     typeField(value?: T.TypeAnnotation | undefined) { return _fs(config, variableDeclaratorForm0, 'type', value, fields.type); },
-    getChild() { return children[0]; },
-    setChild(child: T.Initializer) { return variableDeclaratorForm0({ ...config, children: [child] }); },
+    child(value?: T.Initializer) {
+      if (value === undefined) return children[0];
+      return variableDeclaratorForm0({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -738,8 +754,10 @@ export function forInStatement(config: T.ForInStatement.Config) {
     operator(value?: "in" | "of") { return _fs(config, forInStatement, 'operator', value, fields.operator); },
     right(value?: T.Expressions) { return _fs(config, forInStatement, 'right', value, fields.right); },
     body(value?: T.Statement) { return _fs(config, forInStatement, 'body', value, fields.body); },
-    getChild() { return children[0]; },
-    setChild(child: T.AutomaticSemicolon) { return forInStatement({ ...config, children: [child] }); },
+    child(value?: T.AutomaticSemicolon) {
+      if (value === undefined) return children[0];
+      return forInStatement({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -784,8 +802,10 @@ export function doStatement(config: T.DoStatement.Config) {
     $children: children,
     body(value?: T.Statement) { return _fs(config, doStatement, 'body', value, fields.body); },
     condition(value?: T.ParenthesizedExpression) { return _fs(config, doStatement, 'condition', value, fields.condition); },
-    getChild() { return children[0]; },
-    setChild(child: T.Semicolon) { return doStatement({ ...config, children: [child] }); },
+    child(value?: T.Semicolon) {
+      if (value === undefined) return children[0];
+      return doStatement({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -851,8 +871,10 @@ export function breakStatement(config: T.BreakStatement.Config) {
     $fields: fields,
     $children: children,
     label(value?: T.Identifier | undefined) { return _fs(config, breakStatement, 'label', value, fields.label); },
-    getChild() { return children[0]; },
-    setChild(child: T.Semicolon) { return breakStatement({ ...config, children: [child] }); },
+    child(value?: T.Semicolon) {
+      if (value === undefined) return children[0];
+      return breakStatement({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -874,8 +896,10 @@ export function continueStatement(config: T.ContinueStatement.Config) {
     $fields: fields,
     $children: children,
     label(value?: T.Identifier | undefined) { return _fs(config, continueStatement, 'label', value, fields.label); },
-    getChild() { return children[0]; },
-    setChild(child: T.Semicolon) { return continueStatement({ ...config, children: [child] }); },
+    child(value?: T.Semicolon) {
+      if (value === undefined) return children[0];
+      return continueStatement({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1063,8 +1087,10 @@ export function parenthesizedExpression(config?: T.ParenthesizedExpression.Confi
     $fields: fields,
     $children: children,
     typeField(value?: T.TypeAnnotation | undefined) { return _fs(config, parenthesizedExpression, 'type', value, fields.type); },
-    getChild() { return children[0]; },
-    setChild(child: (T.Expression | T.SequenceExpression)) { return parenthesizedExpression({ ...config, children: [child] }); },
+    child(value?: (T.Expression | T.SequenceExpression)) {
+      if (value === undefined) return children[0];
+      return parenthesizedExpression({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1241,8 +1267,10 @@ export function jsxElement(config: T.JsxElement.Config) {
     $children: children,
     openTag(value?: T.JsxOpeningElement) { return _fs(config, jsxElement, 'openTag', value, fields.open_tag); },
     closeTag(value?: T.JsxClosingElement) { return _fs(config, jsxElement, 'closeTag', value, fields.close_tag); },
-    getChildren() { return children; },
-    setChildren(...items: T.JsxChild[]) { return jsxElement({ ...config, children: items }); },
+    children(...items: T.JsxChild[]) {
+      if (items.length === 0) return children;
+      return jsxElement({ ...config, children: items });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1513,8 +1541,10 @@ export function classHeritageUFormExtendsClause(config: T.ClassHeritageUFormExte
     $named: true as const,
     $variant: 'extends_clause' as const,
     $children: children,
-    getChild() { return children[0]; },
-    setChild(child: T.ClassHeritageExtendsClause) { return classHeritageUFormExtendsClause({ ...config, children: [child] }); },
+    child(value?: T.ClassHeritageExtendsClause) {
+      if (value === undefined) return children[0];
+      return classHeritageUFormExtendsClause({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1531,8 +1561,10 @@ export function classHeritageUFormImplementsClause(config: T.ClassHeritageUFormI
     $named: true as const,
     $variant: 'implements_clause' as const,
     $children: children,
-    getChild() { return children[0]; },
-    setChild(child: T.ClassHeritageImplementsClause) { return classHeritageUFormImplementsClause({ ...config, children: [child] }); },
+    child(value?: T.ClassHeritageImplementsClause) {
+      if (value === undefined) return children[0];
+      return classHeritageUFormImplementsClause({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1593,8 +1625,10 @@ export function functionDeclaration(config: T.FunctionDeclaration.Config) {
     parameters(value?: T.FormalParameters) { return _fs(config, functionDeclaration, 'parameters', value, fields.parameters); },
     returnType(value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined) { return _fs(config, functionDeclaration, 'returnType', value, fields.return_type); },
     body(value?: T.StatementBlock) { return _fs(config, functionDeclaration, 'body', value, fields.body); },
-    getChild() { return children[0]; },
-    setChild(child: T.AutomaticSemicolon) { return functionDeclaration({ ...config, children: [child] }); },
+    child(value?: T.AutomaticSemicolon) {
+      if (value === undefined) return children[0];
+      return functionDeclaration({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1655,8 +1689,10 @@ export function generatorFunctionDeclaration(config: T.GeneratorFunctionDeclarat
     parameters(value?: T.FormalParameters) { return _fs(config, generatorFunctionDeclaration, 'parameters', value, fields.parameters); },
     returnType(value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined) { return _fs(config, generatorFunctionDeclaration, 'returnType', value, fields.return_type); },
     body(value?: T.StatementBlock) { return _fs(config, generatorFunctionDeclaration, 'body', value, fields.body); },
-    getChild() { return children[0]; },
-    setChild(child: T.AutomaticSemicolon) { return generatorFunctionDeclaration({ ...config, children: [child] }); },
+    child(value?: T.AutomaticSemicolon) {
+      if (value === undefined) return children[0];
+      return generatorFunctionDeclaration({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1693,8 +1729,10 @@ export function arrowFunctionUFormParameter(config: T.ArrowFunctionUFormParamete
     $children: children,
     async(value?: "async" | undefined) { return _fs(config, arrowFunctionUFormParameter, 'async', value, fields.async); },
     body(value?: T.Expression | T.StatementBlock) { return _fs(config, arrowFunctionUFormParameter, 'body', value, fields.body); },
-    getChild() { return children[0]; },
-    setChild(child: T.ArrowFunctionParameter) { return arrowFunctionUFormParameter({ ...config, children: [child] }); },
+    child(value?: T.ArrowFunctionParameter) {
+      if (value === undefined) return children[0];
+      return arrowFunctionUFormParameter({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1718,8 +1756,10 @@ export function arrowFunctionUFormUCallSignature(config: T.ArrowFunctionUFormUCa
     $children: children,
     async(value?: "async" | undefined) { return _fs(config, arrowFunctionUFormUCallSignature, 'async', value, fields.async); },
     body(value?: T.Expression | T.StatementBlock) { return _fs(config, arrowFunctionUFormUCallSignature, 'body', value, fields.body); },
-    getChild() { return children[0]; },
-    setChild(child: T.ArrowFunctionUCallSignature) { return arrowFunctionUFormUCallSignature({ ...config, children: [child] }); },
+    child(value?: T.ArrowFunctionUCallSignature) {
+      if (value === undefined) return children[0];
+      return arrowFunctionUFormUCallSignature({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2423,8 +2463,10 @@ export function classBody(config: T.ClassBody.Config) {
     $fields: fields,
     $children: children,
     decorator(...values: T.Decorator[]) { return _fsm(config, classBody, 'decorator', values, fields.decorator); },
-    getChildren() { return children; },
-    setChildren(...items: (T.MethodDefinition | T.Semicolon | T.MethodSignature | T.FunctionSignatureAutomaticSemicolon | T.ClassStaticBlock | T.AbstractMethodSignature | T.IndexSignature | T.PublicFieldDefinition)[]) { return classBody({ ...config, children: items }); },
+    children(...items: (T.MethodDefinition | T.Semicolon | T.MethodSignature | T.FunctionSignatureAutomaticSemicolon | T.ClassStaticBlock | T.AbstractMethodSignature | T.IndexSignature | T.PublicFieldDefinition)[]) {
+      if (items.length === 0) return children;
+      return classBody({ ...config, children: items });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2487,8 +2529,10 @@ export function classStaticBlock(config: T.ClassStaticBlock.Config) {
     $fields: fields,
     $children: children,
     body(value?: T.StatementBlock) { return _fs(config, classStaticBlock, 'body', value, fields.body); },
-    getChild() { return children[0]; },
-    setChild(child: T.AutomaticSemicolon) { return classStaticBlock({ ...config, children: [child] }); },
+    child(value?: T.AutomaticSemicolon) {
+      if (value === undefined) return children[0];
+      return classStaticBlock({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2558,8 +2602,10 @@ export function methodDefinition(config: T.MethodDefinition.Config) {
     parameters(value?: T.FormalParameters) { return _fs(config, methodDefinition, 'parameters', value, fields.parameters); },
     returnType(value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined) { return _fs(config, methodDefinition, 'returnType', value, fields.return_type); },
     body(value?: T.StatementBlock) { return _fs(config, methodDefinition, 'body', value, fields.body); },
-    getChild() { return children[0]; },
-    setChild(child: T.OverrideModifier) { return methodDefinition({ ...config, children: [child] }); },
+    child(value?: T.OverrideModifier) {
+      if (value === undefined) return children[0];
+      return methodDefinition({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2671,8 +2717,10 @@ export function publicFieldDefinition(config: T.PublicFieldDefinition.Config) {
     name(value?: T.PropertyName) { return _fs(config, publicFieldDefinition, 'name', value, fields.name); },
     typeField(value?: T.TypeAnnotation | undefined) { return _fs(config, publicFieldDefinition, 'type', value, fields.type); },
     value(value?: T.Expression | undefined) { return _fs(config, publicFieldDefinition, 'value', value, fields.value); },
-    getChild() { return children[0]; },
-    setChild(child: (T.AccessibilityModifier | T.OverrideModifier)) { return publicFieldDefinition({ ...config, children: [child] }); },
+    child(value?: (T.AccessibilityModifier | T.OverrideModifier)) {
+      if (value === undefined) return children[0];
+      return publicFieldDefinition({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2727,8 +2775,10 @@ export function methodSignature(config: T.MethodSignature.Config) {
     typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, methodSignature, 'typeParameters', value, fields.type_parameters); },
     parameters(value?: T.FormalParameters) { return _fs(config, methodSignature, 'parameters', value, fields.parameters); },
     returnType(value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined) { return _fs(config, methodSignature, 'returnType', value, fields.return_type); },
-    getChild() { return children[0]; },
-    setChild(child: T.OverrideModifier) { return methodSignature({ ...config, children: [child] }); },
+    child(value?: T.OverrideModifier) {
+      if (value === undefined) return children[0];
+      return methodSignature({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2787,8 +2837,10 @@ export function functionSignature(config: T.FunctionSignature.Config) {
     typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, functionSignature, 'typeParameters', value, fields.type_parameters); },
     parameters(value?: T.FormalParameters) { return _fs(config, functionSignature, 'parameters', value, fields.parameters); },
     returnType(value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined) { return _fs(config, functionSignature, 'returnType', value, fields.return_type); },
-    getChild() { return children[0]; },
-    setChild(child: (T.Semicolon | T.FunctionSignatureAutomaticSemicolon)) { return functionSignature({ ...config, children: [child] }); },
+    child(value?: (T.Semicolon | T.FunctionSignatureAutomaticSemicolon)) {
+      if (value === undefined) return children[0];
+      return functionSignature({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -3211,8 +3263,10 @@ export function typeAliasDeclaration(config: T.TypeAliasDeclaration.Config) {
     name(value?: T._TypeIdentifier) { return _fs(config, typeAliasDeclaration, 'name', value, fields.name); },
     typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, typeAliasDeclaration, 'typeParameters', value, fields.type_parameters); },
     value(value?: T.Type) { return _fs(config, typeAliasDeclaration, 'value', value, fields.value); },
-    getChild() { return children[0]; },
-    setChild(child: T.Semicolon) { return typeAliasDeclaration({ ...config, children: [child] }); },
+    child(value?: T.Semicolon) {
+      if (value === undefined) return children[0];
+      return typeAliasDeclaration({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -3266,8 +3320,10 @@ export function requiredParameter(config: T.RequiredParameter.Config) {
     pattern(value?: T.Pattern | T.This) { return _fs(config, requiredParameter, 'pattern', value, fields.pattern); },
     typeField(value?: T.TypeAnnotation | undefined) { return _fs(config, requiredParameter, 'type', value, fields.type); },
     value(value?: T.Expression | undefined) { return _fs(config, requiredParameter, 'value', value, fields.value); },
-    getChild() { return children[0]; },
-    setChild(child: (T.AccessibilityModifier | T.OverrideModifier)) { return requiredParameter({ ...config, children: [child] }); },
+    child(value?: (T.AccessibilityModifier | T.OverrideModifier)) {
+      if (value === undefined) return children[0];
+      return requiredParameter({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -3297,8 +3353,10 @@ export function optionalParameter(config: T.OptionalParameter.Config) {
     pattern(value?: T.Pattern | T.This) { return _fs(config, optionalParameter, 'pattern', value, fields.pattern); },
     typeField(value?: T.TypeAnnotation | undefined) { return _fs(config, optionalParameter, 'type', value, fields.type); },
     value(value?: T.Expression | undefined) { return _fs(config, optionalParameter, 'value', value, fields.value); },
-    getChild() { return children[0]; },
-    setChild(child: (T.AccessibilityModifier | T.OverrideModifier)) { return optionalParameter({ ...config, children: [child] }); },
+    child(value?: (T.AccessibilityModifier | T.OverrideModifier)) {
+      if (value === undefined) return children[0];
+      return optionalParameter({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -3890,8 +3948,10 @@ export function propertySignature(config: T.PropertySignature.Config) {
     readonly(value?: "readonly" | undefined) { return _fs(config, propertySignature, 'readonly', value, fields.readonly); },
     name(value?: T.PropertyName) { return _fs(config, propertySignature, 'name', value, fields.name); },
     typeField(value?: T.TypeAnnotation | undefined) { return _fs(config, propertySignature, 'type', value, fields.type); },
-    getChild() { return children[0]; },
-    setChild(child: T.OverrideModifier) { return propertySignature({ ...config, children: [child] }); },
+    child(value?: T.OverrideModifier) {
+      if (value === undefined) return children[0];
+      return propertySignature({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -4032,8 +4092,10 @@ export function indexSignatureUFormColon(config: T.IndexSignatureUFormColonConfi
     $children: children,
     sign(value?: "-" | "+" | undefined) { return _fs(config, indexSignatureUFormColon, 'sign', value, fields.sign); },
     typeField(value?: T.TypeAnnotation | T.OmittingTypeAnnotation | T.AddingTypeAnnotation | T.OptingTypeAnnotation) { return _fs(config, indexSignatureUFormColon, 'type', value, fields.type); },
-    getChild() { return children[0]; },
-    setChild(child: T.IndexSignatureColon) { return indexSignatureUFormColon({ ...config, children: [child] }); },
+    child(value?: T.IndexSignatureColon) {
+      if (value === undefined) return children[0];
+      return indexSignatureUFormColon({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -4057,8 +4119,10 @@ export function indexSignatureUFormMappedTypeClause(config: T.IndexSignatureUFor
     $children: children,
     sign(value?: "-" | "+" | undefined) { return _fs(config, indexSignatureUFormMappedTypeClause, 'sign', value, fields.sign); },
     typeField(value?: T.TypeAnnotation | T.OmittingTypeAnnotation | T.AddingTypeAnnotation | T.OptingTypeAnnotation) { return _fs(config, indexSignatureUFormMappedTypeClause, 'type', value, fields.type); },
-    getChild() { return children[0]; },
-    setChild(child: T.IndexSignatureMappedTypeClause) { return indexSignatureUFormMappedTypeClause({ ...config, children: [child] }); },
+    child(value?: T.IndexSignatureMappedTypeClause) {
+      if (value === undefined) return children[0];
+      return indexSignatureUFormMappedTypeClause({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);

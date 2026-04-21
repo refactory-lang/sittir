@@ -182,8 +182,10 @@ export function printStatement(config: T.PrintStatement.Config) {
     $fields: fields,
     $children: children,
     argument(...values: T.Expression[]) { return _fsm(config, printStatement, 'argument', values, fields.argument); },
-    getChild() { return children[0]; },
-    setChild(child: T.Chevron) { return printStatement({ ...config, children: [child] }); },
+    child(value?: T.Chevron) {
+      if (value === undefined) return children[0];
+      return printStatement({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -309,8 +311,10 @@ export function raiseStatement(config?: T.RaiseStatement.Config) {
     $fields: fields,
     $children: children,
     cause(value?: T.Expression | undefined) { return _fs(config, raiseStatement, 'cause', value, fields.cause); },
-    getChild() { return children[0]; },
-    setChild(child: T.Expressions) { return raiseStatement({ ...config, children: [child] }); },
+    child(value?: T.Expressions) {
+      if (value === undefined) return children[0];
+      return raiseStatement({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -499,8 +503,8 @@ export function caseClause(config: T.CaseClause.Config) {
     $children: children,
     guard(value?: T.IfClause | undefined) { return _fs(config, caseClause, 'guard', value, fields.guard); },
     consequence(value?: T.Suite) { return _fs(config, caseClause, 'consequence', value, fields.consequence); },
-    getChildren() { return children; },
-    setChildren(...items: T.CasePattern[]) {
+    children(...items: T.CasePattern[]) {
+      if (items.length === 0) return children;
       _assertNonEmpty(items, 'case_clause.children');
       return caseClause({ ...config, children: items });
     },
@@ -602,8 +606,10 @@ export function exceptClause(config: T.ExceptClause.Config) {
     $children: children,
     value(value?: T.Expression | undefined) { return _fs(config, exceptClause, 'value', value, fields.value); },
     alias(value?: T.Expression | undefined) { return _fs(config, exceptClause, 'alias', value, fields.alias); },
-    getChild() { return children[0]; },
-    setChild(child: T.Suite) { return exceptClause({ ...config, children: [child] }); },
+    child(value?: T.Suite) {
+      if (value === undefined) return children[0];
+      return exceptClause({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -949,8 +955,8 @@ export function decoratedDefinition(config: T.DecoratedDefinition.Config) {
     $fields: fields,
     $children: children,
     definition(value?: T.ClassDefinition | T.FunctionDefinition) { return _fs(config, decoratedDefinition, 'definition', value, fields.definition); },
-    getChildren() { return children; },
-    setChildren(...items: T.Decorator[]) {
+    children(...items: T.Decorator[]) {
+      if (items.length === 0) return children;
       _assertNonEmpty(items, 'decorated_definition.children');
       return decoratedDefinition({ ...config, children: items });
     },
@@ -1011,8 +1017,10 @@ export function expressionList(config: T.ExpressionList.Config) {
     $fields: fields,
     $children: children,
     expression(value?: T.Expression) { return _fs(config, expressionList, 'expression', value, fields.expression); },
-    getChildren() { return children; },
-    setChildren(...items: T.Expression[]) { return expressionList({ ...config, children: items }); },
+    children(...items: T.Expression[]) {
+      if (items.length === 0) return children;
+      return expressionList({ ...config, children: items });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1084,8 +1092,10 @@ export function dictPattern(config: T.DictPattern.Config) {
     $children: children,
     key(...values: T.SimplePattern[]) { return _fsm(config, dictPattern, 'key', values, fields.key); },
     value(...values: T.CasePattern[]) { return _fsm(config, dictPattern, 'value', values, fields.value); },
-    getChildren() { return children; },
-    setChildren(...items: T.SplatPattern[]) { return dictPattern({ ...config, children: items }); },
+    children(...items: T.SplatPattern[]) {
+      if (items.length === 0) return children;
+      return dictPattern({ ...config, children: items });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1128,8 +1138,10 @@ export function splatPattern(config: T.SplatPattern.Config) {
     $fields: fields,
     $children: children,
     identifier(value?: "*" | "**") { return _fs(config, splatPattern, 'identifier', value, fields.identifier); },
-    getChild() { return children[0]; },
-    setChild(child: T.Identifier) { return splatPattern({ ...config, children: [child] }); },
+    child(value?: T.Identifier) {
+      if (value === undefined) return children[0];
+      return splatPattern({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1174,8 +1186,10 @@ export function complexPattern(config: T.ComplexPattern.Config) {
     $children: children,
     real(value?: "-" | undefined) { return _fs(config, complexPattern, 'real', value, fields.real); },
     imaginary(value?: T.Integer | T.Float) { return _fs(config, complexPattern, 'imaginary', value, fields.imaginary); },
-    getChild() { return children[0]; },
-    setChild(child: (T.Integer | T.Float)) { return complexPattern({ ...config, children: [child] }); },
+    child(value?: (T.Integer | T.Float)) {
+      if (value === undefined) return children[0];
+      return complexPattern({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1491,8 +1505,10 @@ export function assignmentUFormEq(config: T.AssignmentUFormEqConfig) {
     $fields: fields,
     $children: children,
     left(value?: T.LeftHandSide) { return _fs(config, assignmentUFormEq, 'left', value, fields.left); },
-    getChild() { return children[0]; },
-    setChild(child: T.AssignmentEq) { return assignmentUFormEq({ ...config, children: [child] }); },
+    child(value?: T.AssignmentEq) {
+      if (value === undefined) return children[0];
+      return assignmentUFormEq({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1514,8 +1530,10 @@ export function assignmentUFormType(config: T.AssignmentUFormTypeConfig) {
     $fields: fields,
     $children: children,
     left(value?: T.LeftHandSide) { return _fs(config, assignmentUFormType, 'left', value, fields.left); },
-    getChild() { return children[0]; },
-    setChild(child: T.AssignmentType) { return assignmentUFormType({ ...config, children: [child] }); },
+    child(value?: T.AssignmentType) {
+      if (value === undefined) return children[0];
+      return assignmentUFormType({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1537,8 +1555,10 @@ export function assignmentUFormTyped(config: T.AssignmentUFormTypedConfig) {
     $fields: fields,
     $children: children,
     left(value?: T.LeftHandSide) { return _fs(config, assignmentUFormTyped, 'left', value, fields.left); },
-    getChild() { return children[0]; },
-    setChild(child: T.AssignmentTyped) { return assignmentUFormTyped({ ...config, children: [child] }); },
+    child(value?: T.AssignmentTyped) {
+      if (value === undefined) return children[0];
+      return assignmentUFormTyped({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1583,8 +1603,10 @@ export function patternList(config: T.PatternList.Config) {
     $fields: fields,
     $children: children,
     pattern(value?: T.Pattern) { return _fs(config, patternList, 'pattern', value, fields.pattern); },
-    getChildren() { return children; },
-    setChildren(...items: T.Pattern[]) { return patternList({ ...config, children: items }); },
+    children(...items: T.Pattern[]) {
+      if (items.length === 0) return children;
+      return patternList({ ...config, children: items });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1708,8 +1730,10 @@ export function typedParameter(config: T.TypedParameter.Config) {
     $fields: fields,
     $children: children,
     typeField(value?: T.Type) { return _fs(config, typedParameter, 'type', value, fields.type); },
-    getChild() { return children[0]; },
-    setChild(child: (T.Identifier | T.ListSplatPattern | T.DictionarySplatPattern)) { return typedParameter({ ...config, children: [child] }); },
+    child(value?: (T.Identifier | T.ListSplatPattern | T.DictionarySplatPattern)) {
+      if (value === undefined) return children[0];
+      return typedParameter({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1954,8 +1978,10 @@ export function listComprehension(config: T.ListComprehension.Config) {
     $children: children,
     body(value?: T.Expression) { return _fs(config, listComprehension, 'body', value, fields.body); },
     forInClause(value?: T.ForInClause) { return _fs(config, listComprehension, 'forInClause', value, fields.for_in_clause); },
-    getChildren() { return children; },
-    setChildren(...items: (T.ForInClause | T.IfClause)[]) { return listComprehension({ ...config, children: items }); },
+    children(...items: (T.ForInClause | T.IfClause)[]) {
+      if (items.length === 0) return children;
+      return listComprehension({ ...config, children: items });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1979,8 +2005,10 @@ export function dictionaryComprehension(config: T.DictionaryComprehension.Config
     $children: children,
     body(value?: T.Pair) { return _fs(config, dictionaryComprehension, 'body', value, fields.body); },
     forInClause(value?: T.ForInClause) { return _fs(config, dictionaryComprehension, 'forInClause', value, fields.for_in_clause); },
-    getChildren() { return children; },
-    setChildren(...items: (T.ForInClause | T.IfClause)[]) { return dictionaryComprehension({ ...config, children: items }); },
+    children(...items: (T.ForInClause | T.IfClause)[]) {
+      if (items.length === 0) return children;
+      return dictionaryComprehension({ ...config, children: items });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2004,8 +2032,10 @@ export function setComprehension(config: T.SetComprehension.Config) {
     $children: children,
     body(value?: T.Expression) { return _fs(config, setComprehension, 'body', value, fields.body); },
     forInClause(value?: T.ForInClause) { return _fs(config, setComprehension, 'forInClause', value, fields.for_in_clause); },
-    getChildren() { return children; },
-    setChildren(...items: (T.ForInClause | T.IfClause)[]) { return setComprehension({ ...config, children: items }); },
+    children(...items: (T.ForInClause | T.IfClause)[]) {
+      if (items.length === 0) return children;
+      return setComprehension({ ...config, children: items });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2029,8 +2059,10 @@ export function generatorExpression(config: T.GeneratorExpression.Config) {
     $children: children,
     body(value?: T.Expression) { return _fs(config, generatorExpression, 'body', value, fields.body); },
     forInClause(value?: T.ForInClause) { return _fs(config, generatorExpression, 'forInClause', value, fields.for_in_clause); },
-    getChildren() { return children; },
-    setChildren(...items: (T.ForInClause | T.IfClause)[]) { return generatorExpression({ ...config, children: items }); },
+    children(...items: (T.ForInClause | T.IfClause)[]) {
+      if (items.length === 0) return children;
+      return generatorExpression({ ...config, children: items });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2133,8 +2165,8 @@ export function concatenatedString(config: T.ConcatenatedString.Config) {
     $fields: fields,
     $children: children,
     string(value?: T.String) { return _fs(config, concatenatedString, 'string', value, fields.string); },
-    getChildren() { return children; },
-    setChildren(...items: T.String[]) {
+    children(...items: T.String[]) {
+      if (items.length === 0) return children;
       _assertNonEmpty(items, 'concatenated_string.children');
       return concatenatedString({ ...config, children: items });
     },
