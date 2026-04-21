@@ -455,10 +455,17 @@ export default grammar(enrich(base), wire({
         // named-only filter subsequently drops. Aliasing `_` to a named
         // `wildcard_pattern` kind gives it a proper node in the tree so
         // every `_pattern` list position round-trips cleanly without any
-        // render-side heuristics.
+        // render-side heuristics. The hidden `_wildcard_pattern` rule is
+        // declared explicitly below so tree-sitter's `ruleMap` snapshot
+        // picks it up — no runtime synthesis, no wrapper machinery.
         _pattern: ($, original) => transform(original, {
-            '-1': alias('wildcard_pattern'),
+            '-1': alias($._wildcard_pattern, $.wildcard_pattern),
         }),
+
+        // The hidden rule `_wildcard_pattern` is just the `_` literal;
+        // the named alias on `_pattern` above promotes it to a proper
+        // `wildcard_pattern` kind at parse time.
+        _wildcard_pattern: $ => '_',
 
         // range_expression — patches the BASE rule's choice alternatives
         // by position so the prec.left(1, ...) wrapper survives. The
