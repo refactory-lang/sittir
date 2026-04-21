@@ -124,7 +124,7 @@ rules:
     template: ($$$CHILDREN)
     joinBy: ","
     joinByTrailing: true
-  self_parameter: $LIFETIME $MUTABLE_SPECIFIER $SELF
+  self_parameter: $LIFETIME $MUTABLE_SPECIFIER $$$SELF
   variadic_parameter:
     template: $MUTABLE_SPECIFIER $PATTERN_CLAUSE...
     pattern_clause: "$PATTERN:"
