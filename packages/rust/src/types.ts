@@ -16,6 +16,8 @@ export type LeafScalarMap = {
   _array_expression_list: number;
   _kw_type_parameters: number;
   _kw_where_clause: number;
+  _kw_attributes: number;
+  _kw_elements: number;
   _kw_block: number;
   _kw_attribute: number;
   _kw_label: number;
@@ -35,15 +37,15 @@ export type LeafScalarMap = {
   _kw_index: number;
   _kw_token_tree: number;
   _kw_value: number;
-  _kw_attributes: number;
   _kw_raw_string_literal_start: number;
   _kw_string_content: number;
   _kw_raw_string_literal_end: number;
+  _kw_start: number;
+  _kw_end: number;
   _kw_lifetime: number;
   _kw_self: number;
   _kw_shebang: number;
   _kw_statements: number;
-  _kw_elements: number;
   _kw_trailing_where_clause: number;
   _kw_operand: number;
   _kw_path: number;
@@ -321,6 +323,8 @@ export const enum SyntaxKind {
   _ArrayExpressionList = '_array_expression_list',
   KwTypeParameters = '_kw_type_parameters',
   KwWhereClause = '_kw_where_clause',
+  KwAttributes = '_kw_attributes',
+  KwElements = '_kw_elements',
   KwBlock = '_kw_block',
   KwAttribute = '_kw_attribute',
   KwLabel = '_kw_label',
@@ -340,15 +344,15 @@ export const enum SyntaxKind {
   KwIndex = '_kw_index',
   KwTokenTree = '_kw_token_tree',
   KwValue = '_kw_value',
-  KwAttributes = '_kw_attributes',
   KwRawStringLiteralStart = '_kw_raw_string_literal_start',
   KwStringContent = '_kw_string_content',
   KwRawStringLiteralEnd = '_kw_raw_string_literal_end',
+  KwStart = '_kw_start',
+  KwEnd = '_kw_end',
   KwLifetime = '_kw_lifetime',
   KwSelf = '_kw_self',
   KwShebang = '_kw_shebang',
   KwStatements = '_kw_statements',
-  KwElements = '_kw_elements',
   KwTrailingWhereClause = '_kw_trailing_where_clause',
   KwOperand = '_kw_operand',
   KwPath = '_kw_path',
@@ -2297,6 +2301,8 @@ export type _ArrayExpressionSemi = Terminal<"_array_expression_semi", >;
 export type _ArrayExpressionList = Terminal<"_array_expression_list", >;
 export type KwTypeParameters = Terminal<"_kw_type_parameters", >;
 export type KwWhereClause = Terminal<"_kw_where_clause", >;
+export type KwAttributes = Terminal<"_kw_attributes", >;
+export type KwElements = Terminal<"_kw_elements", >;
 export type KwBlock = Terminal<"_kw_block", >;
 export type KwAttribute = Terminal<"_kw_attribute", >;
 export type KwLabel = Terminal<"_kw_label", >;
@@ -2316,15 +2322,15 @@ export type KwObject = Terminal<"_kw_object", >;
 export type KwIndex = Terminal<"_kw_index", >;
 export type KwTokenTree = Terminal<"_kw_token_tree", >;
 export type KwValue = Terminal<"_kw_value", >;
-export type KwAttributes = Terminal<"_kw_attributes", >;
 export type KwRawStringLiteralStart = Terminal<"_kw_raw_string_literal_start", >;
 export type KwStringContent = Terminal<"_kw_string_content", >;
 export type KwRawStringLiteralEnd = Terminal<"_kw_raw_string_literal_end", >;
+export type KwStart = Terminal<"_kw_start", >;
+export type KwEnd = Terminal<"_kw_end", >;
 export type KwLifetime = Terminal<"_kw_lifetime", >;
 export type KwSelf = Terminal<"_kw_self", >;
 export type KwShebang = Terminal<"_kw_shebang", >;
 export type KwStatements = Terminal<"_kw_statements", >;
-export type KwElements = Terminal<"_kw_elements", >;
 export type KwTrailingWhereClause = Terminal<"_kw_trailing_where_clause", >;
 export type KwOperand = Terminal<"_kw_operand", >;
 export type KwPath = Terminal<"_kw_path", >;
@@ -2616,6 +2622,8 @@ export interface _ArrayExpressionSemiTree extends AnyTreeNode { readonly type: "
 export interface _ArrayExpressionListTree extends AnyTreeNode { readonly type: "_array_expression_list"; }
 export interface KwTypeParametersTree extends AnyTreeNode { readonly type: "_kw_type_parameters"; }
 export interface KwWhereClauseTree extends AnyTreeNode { readonly type: "_kw_where_clause"; }
+export interface KwAttributesTree extends AnyTreeNode { readonly type: "_kw_attributes"; }
+export interface KwElementsTree extends AnyTreeNode { readonly type: "_kw_elements"; }
 export interface KwBlockTree extends AnyTreeNode { readonly type: "_kw_block"; }
 export interface KwAttributeTree extends AnyTreeNode { readonly type: "_kw_attribute"; }
 export interface KwLabelTree extends AnyTreeNode { readonly type: "_kw_label"; }
@@ -2635,15 +2643,15 @@ export interface KwObjectTree extends AnyTreeNode { readonly type: "_kw_object";
 export interface KwIndexTree extends AnyTreeNode { readonly type: "_kw_index"; }
 export interface KwTokenTreeTree extends AnyTreeNode { readonly type: "_kw_token_tree"; }
 export interface KwValueTree extends AnyTreeNode { readonly type: "_kw_value"; }
-export interface KwAttributesTree extends AnyTreeNode { readonly type: "_kw_attributes"; }
 export interface KwRawStringLiteralStartTree extends AnyTreeNode { readonly type: "_kw_raw_string_literal_start"; }
 export interface KwStringContentTree extends AnyTreeNode { readonly type: "_kw_string_content"; }
 export interface KwRawStringLiteralEndTree extends AnyTreeNode { readonly type: "_kw_raw_string_literal_end"; }
+export interface KwStartTree extends AnyTreeNode { readonly type: "_kw_start"; }
+export interface KwEndTree extends AnyTreeNode { readonly type: "_kw_end"; }
 export interface KwLifetimeTree extends AnyTreeNode { readonly type: "_kw_lifetime"; }
 export interface KwSelfTree extends AnyTreeNode { readonly type: "_kw_self"; }
 export interface KwShebangTree extends AnyTreeNode { readonly type: "_kw_shebang"; }
 export interface KwStatementsTree extends AnyTreeNode { readonly type: "_kw_statements"; }
-export interface KwElementsTree extends AnyTreeNode { readonly type: "_kw_elements"; }
 export interface KwTrailingWhereClauseTree extends AnyTreeNode { readonly type: "_kw_trailing_where_clause"; }
 export interface KwOperandTree extends AnyTreeNode { readonly type: "_kw_operand"; }
 export interface KwPathTree extends AnyTreeNode { readonly type: "_kw_path"; }
@@ -3519,6 +3527,8 @@ export interface KindMap {
   '_array_expression_list': _ArrayExpressionList;
   '_kw_type_parameters': KwTypeParameters;
   '_kw_where_clause': KwWhereClause;
+  '_kw_attributes': KwAttributes;
+  '_kw_elements': KwElements;
   '_kw_block': KwBlock;
   '_kw_attribute': KwAttribute;
   '_kw_label': KwLabel;
@@ -3538,15 +3548,15 @@ export interface KindMap {
   '_kw_index': KwIndex;
   '_kw_token_tree': KwTokenTree;
   '_kw_value': KwValue;
-  '_kw_attributes': KwAttributes;
   '_kw_raw_string_literal_start': KwRawStringLiteralStart;
   '_kw_string_content': KwStringContent;
   '_kw_raw_string_literal_end': KwRawStringLiteralEnd;
+  '_kw_start': KwStart;
+  '_kw_end': KwEnd;
   '_kw_lifetime': KwLifetime;
   '_kw_self': KwSelf;
   '_kw_shebang': KwShebang;
   '_kw_statements': KwStatements;
-  '_kw_elements': KwElements;
   '_kw_trailing_where_clause': KwTrailingWhereClause;
   '_kw_operand': KwOperand;
   '_kw_path': KwPath;

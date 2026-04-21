@@ -15,7 +15,7 @@
 // Summary
 // ---------------------------------------------------------------
 // Field inferences:  7  (0 applied, 7 held)
-// Rule promotions:   107  (94 applied, 13 held)
+// Rule promotions:   109  (96 applied, 13 held)
 // Repeated shapes:   5  (advisory — suggested supertypes/groups)
 
 // ---------------------------------------------------------------
@@ -257,6 +257,7 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "_kw_block", classification: "enum", applied: true },
   { kind: "_kw_crate", classification: "enum", applied: true },
   { kind: "_kw_elements", classification: "enum", applied: true },
+  { kind: "_kw_end", classification: "enum", applied: true },
   { kind: "_kw_expression", classification: "enum", applied: true },
   { kind: "_kw_extern_modifier", classification: "enum", applied: true },
   { kind: "_kw_for_lifetimes", classification: "enum", applied: true },
@@ -277,6 +278,7 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "_kw_right", classification: "enum", applied: true },
   { kind: "_kw_self", classification: "enum", applied: true },
   { kind: "_kw_shebang", classification: "enum", applied: true },
+  { kind: "_kw_start", classification: "enum", applied: true },
   { kind: "_kw_statements", classification: "enum", applied: true },
   { kind: "_kw_static", classification: "enum", applied: true },
   { kind: "_kw_string_content", classification: "enum", applied: true },

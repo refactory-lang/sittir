@@ -198,6 +198,7 @@ export const LEAF_KINDS = [
   '_kw_crate',
   '_kw_default',
   '_kw_elements',
+  '_kw_end',
   '_kw_expression',
   '_kw_extern_modifier',
   '_kw_for_lifetimes',
@@ -219,6 +220,7 @@ export const LEAF_KINDS = [
   '_kw_right',
   '_kw_self',
   '_kw_shebang',
+  '_kw_start',
   '_kw_statements',
   '_kw_static',
   '_kw_string_content',
@@ -1097,6 +1099,11 @@ export const _KW_ELEMENTSS = [
 ] as const;
 export type KwElementsValue = (typeof _KW_ELEMENTSS)[number];
 
+/** Valid values for `_kw_end` nodes. */
+export const _KW_ENDS = [
+] as const;
+export type KwEndValue = (typeof _KW_ENDS)[number];
+
 /** Valid values for `_kw_expression` nodes. */
 export const _KW_EXPRESSIONS = [
 ] as const;
@@ -1196,6 +1203,11 @@ export type KwSelfValue = (typeof _KW_SELFS)[number];
 export const _KW_SHEBANGS = [
 ] as const;
 export type KwShebangValue = (typeof _KW_SHEBANGS)[number];
+
+/** Valid values for `_kw_start` nodes. */
+export const _KW_STARTS = [
+] as const;
+export type KwStartValue = (typeof _KW_STARTS)[number];
 
 /** Valid values for `_kw_statements` nodes. */
 export const _KW_STATEMENTSS = [

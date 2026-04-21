@@ -38,6 +38,15 @@ export default grammar(enrich(base), wire({
             4: field('where_clause'), // where_clause [struct=0]
         },
 
+        // array_expression polymorph splits '2/0' (semi) / '2/1' (list).
+        // These base-shape patches add field labels BEFORE polymorph
+        // aliasing — composition-order inversion in wire() lets this
+        // flow declaratively instead of inline in rules:.
+        array_expression: [
+            { 1: field('attributes') },
+            { '2/_expression': field('elements') },
+        ],
+
         // async_block: position 2 is the `block` symbol (position 1 is
         // the optional `move` choice). Autogen placed the override at
         // position 1, which wrapped the move choice and dropped the
@@ -270,6 +279,12 @@ export default grammar(enrich(base), wire({
             1: field('attributes'), // per-element group [struct=0]
         },
 
+        // or_pattern polymorph splits '0' (binary) / '1' (prefix).
+        // Field labels land on base-shape choice arms pre-alias.
+        or_pattern: {
+            '0/0': field('left'), '0/2': field('right'), '1/1': field('right'),
+        },
+
         // parameter: 1 field(s)
         parameter: {
             0: field('mutable_specifier'), // mutable_specifier [struct=0]
@@ -289,6 +304,15 @@ export default grammar(enrich(base), wire({
             0: field('raw_string_literal_start'), //  [struct=0]
             1: field('string_content'), // string_content [struct=1]
             2: field('raw_string_literal_end'), //  [struct=2]
+        },
+
+        // range_expression polymorph splits '0'..'3'. Field labels
+        // land on base-shape choice arms pre-alias.
+        range_expression: {
+            '0/0': field('start'), '0/1': field('operator'), '0/2': field('end'),
+            '1/0': field('start'), '1/1': field('operator'),
+            '2/0': field('operator'), '2/1': field('end'),
+            '3': field('operator'),
         },
 
         // reference_expression: 1 field(s)
@@ -419,61 +443,6 @@ export default grammar(enrich(base), wire({
         },
     },
     rules: {
-        // ---------------------------------------------------------------------------
-        // Polymorph-interleaved transforms: must run on raw `original` before
-        // polymorphs wrap the choice arms. In wire(), polymorphs run first (they
-        // compose as userFn in buildPolymorphParentFn), then the synthesized
-        // transform fn applies on top. Rules whose transforms navigate INTO the
-        // same paths that polymorphs replace (e.g. '0/2' after '0' → variant)
-        // must stay here so the polymorph wrapper calls them first.
-        // ---------------------------------------------------------------------------
-
-        // array_expression: polymorph split — auto-hoist includes `[`/`]`
-        // in each alias body and uses INLINE alias (no new named hidden
-        // rule), so tree-sitter's state machine doesn't have to reconcile
-        // a new symbol against its auto-generated _repeat1 helpers.
-        // Must stay in rules: — kind-match '2/_expression' fails after
-        // polymorph wraps 2/0 and 2/1 with aliases (kind-match finds no
-        // _expression occurrences in the alias-wrapped choice).
-        array_expression: ($, original) => transform(original,
-            { 1: field('attributes') },
-            { '2/_expression': field('elements') },
-        ),
-
-        // or_pattern — patches the BASE rule's prec.left(-2, ...)
-        // structure to add field labels. Base shape:
-        //   choice(seq(_pattern, '|', _pattern), seq('|', _pattern))
-        // Must stay in rules: — paths '0/0', '0/2', '1/1' navigate into
-        // choice arms that polymorphs replace with aliases at paths '0', '1'.
-        or_pattern: ($, original) => transform(original,
-            { '0/0': field('left'), '0/2': field('right'), '1/1': field('right') },
-        ),
-
-        // range_expression — patches the BASE rule's choice alternatives
-        // by position so the prec.left(1, ...) wrapper survives. The
-        // base shape (after path addressing's prec-transparency) is:
-        //   choice(
-        //     seq(expr, choice('..','...','..='), expr),  // alt 0 — binary
-        //     seq(expr, '..'),                            // alt 1 — postfix
-        //     seq('..', expr),                            // alt 2 — prefix
-        //     '..',                                       // alt 3 — bare
-        //   )
-        // Each {path,value} below labels one position in one alternative.
-        // Must stay in rules: — paths '0/0', '0/2', etc. navigate into
-        // choice arms that polymorphs replace with aliases at paths '0'–'3'.
-        range_expression: ($, original) => transform(original,
-            {
-                '0/0': field('start'), '0/1': field('operator'), '0/2': field('end'),
-                '1/0': field('start'), '1/1': field('operator'),
-                '2/0': field('operator'), '2/1': field('end'),
-                '3': field('operator'),
-            },
-        ),
-
-        // ---------------------------------------------------------------------------
-        // New overrides — expressing field routing previously only in overrides.json
-        // ---------------------------------------------------------------------------
-
         // function_modifiers — full replacement: label each choice alternative
         // so readNode can route `async`, `const`, `default`, `unsafe` tokens.
         // Route the bare-keyword strings through `_kw_<name>` hidden rules

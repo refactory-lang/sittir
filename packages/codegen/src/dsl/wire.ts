@@ -270,8 +270,14 @@ export function wire(config: WireConfig): WiredOpts {
     const transforms = config.transforms ?? {}
     const outRules: Record<string, RuleFn> = { ...config.rules }
 
-    composeOrSynthesizePolymorphParents(outRules, polymorphs)
+    // Transforms first, polymorphs second — transforms wrap the user
+    // fn innermost and see the base-shape rule tree; polymorphs wrap
+    // the transforms-wrapped fn outermost and split what remains.
+    // Reversing this (polymorphs first) made inline transforms that
+    // address base-shape paths (e.g. 'N/_expression' kind-match) break
+    // because the polymorph already aliased the choice arms.
     composeOrSynthesizeTransformParents(outRules, transforms)
+    composeOrSynthesizePolymorphParents(outRules, polymorphs)
     injectHiddenRulePlaceholders(outRules, polymorphs, context)
     injectTransformHiddenRulePlaceholders(outRules, transforms, context)
     wrapAllRuleFns(outRules, context)
