@@ -19,7 +19,7 @@ import type {
 } from '../compiler/node-map.ts'
 import {
     AssembledBranch, AssembledContainer, AssembledPolymorph, AssembledGroup,
-    AssembledSupertype,
+    AssembledSupertype, snakeToCamel,
 } from '../compiler/node-map.ts'
 import { loadRawEntries } from '../validate/node-types-loader.ts'
 import { isAutoStampField, isRequired, isMultiple, isNonEmpty, slotKindNames, slotLiteralValues, resolveHiddenKeywordLiteral, resolveHoistedForm, isAutoStampSlot, referencedKinds, fieldTypeComponents, isValidIdent } from './shared.ts'
@@ -788,7 +788,7 @@ function collectAndEmitTokenTypeAliases(
 function assertNoCamelCaseCollisions(nodeKinds: string[]): void {
     const camelNames = new Map<string, string>()
     for (const kind of nodeKinds) {
-        const camel = kind.replace(/_([a-z])/g, (_, c: string) => c.toUpperCase())
+        const camel = snakeToCamel(kind)
         const prev = camelNames.get(camel)
         if (prev !== undefined && prev !== kind) {
             throw new Error(

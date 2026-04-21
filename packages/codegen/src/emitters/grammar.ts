@@ -4,9 +4,10 @@
  */
 
 import { loadRawEntries } from '../validate/node-types-loader.ts';
+import { snakeToCamel } from '../compiler/node-map.ts';
 
 function toGrammarTypeName(grammar: string): string {
-  const camel = grammar.replace(/_([a-z])/g, (_, c: string) => c.toUpperCase());
+  const camel = snakeToCamel(grammar);
   return camel.charAt(0).toUpperCase() + camel.slice(1) + 'Types';
 }
 

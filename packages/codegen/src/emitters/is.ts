@@ -22,15 +22,14 @@
 
 import type { NodeMap } from '../compiler/types.ts'
 import type { AssembledSupertype } from '../compiler/node-map.ts'
+import { snakeToCamel } from '../compiler/node-map.ts'
 
 export interface EmitIsConfig {
     grammar: string
     nodeMap: NodeMap
 }
 
-function toCamelCase(kind: string): string {
-    return kind.replace(/_([a-z])/g, (_, c: string) => c.toUpperCase())
-}
+const toCamelCase = snakeToCamel
 
 /** JS reserved words that need a trailing `_` when used as a guard key. */
 const RESERVED = new Set([

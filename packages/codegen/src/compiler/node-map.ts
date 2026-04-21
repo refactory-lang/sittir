@@ -140,7 +140,13 @@ export function isNonEmpty(slot: { values: readonly NodeOrTerminal[] }): boolean
 // Derivation helpers — walk a Rule to produce fields, children, content types
 // ---------------------------------------------------------------------------
 
-function snakeToCamel(name: string): string {
+/**
+ * Convert a snake_case name to camelCase — the single source of truth for
+ * this transformation in the codegen pipeline. Used by field/child
+ * `propertyName` derivation here, and re-exported for emitters and
+ * validators that need the same canonical form.
+ */
+export function snakeToCamel(name: string): string {
     return name.replace(/_([a-z])/g, (_, c) => c.toUpperCase())
 }
 

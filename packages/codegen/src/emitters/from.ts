@@ -343,7 +343,7 @@ function emitVariantFrom(
     const returnType = `ReturnType<typeof ${factory}>`
     const lines: string[] = []
     lines.push(`export function ${fn}(input: ${inputType}): ${returnType} {`)
-    lines.push(`  if (isNodeData(input)) return input as ${returnType};`)
+    lines.push(`  if (isNodeData(input)) return input;`)
 
     const parentFields = 'fields' in node ? (node as { fields: readonly AssembledField[] }).fields : []
     const configParts: string[] = []
@@ -427,9 +427,9 @@ function buildBranchSignatureParts(
  * @param inputOptional - Whether the input parameter is optional.
  * @param returnType - The return type annotation string for the cast.
  */
-function emitBranchNodeDataPassthrough(lines: string[], inputOptional: boolean, returnType: string): void {
+function emitBranchNodeDataPassthrough(lines: string[], inputOptional: boolean, _returnType: string): void {
     const passGuard = inputOptional ? 'input !== undefined && ' : ''
-    lines.push(`  if (${passGuard}isNodeData(input)) return input as ${returnType};`)
+    lines.push(`  if (${passGuard}isNodeData(input)) return input;`)
 }
 
 /**
@@ -700,15 +700,14 @@ function emitPolymorphDispatcher(
     fn: string,
     factory: string,
     typeName: string,
-    forms: AssembledGroup[],
+    _forms: AssembledGroup[],
 ): string {
-    const configUnion = forms.map(f => `T.${f.typeName}Config`).join(' | ')
     const inputType = `T.${typeName} | T.${typeName}.Loose`
     const returnType = `ReturnType<typeof ${factory}>`
     return [
         `export function ${fn}(input?: ${inputType}): ${returnType} {`,
-        `  if (input !== undefined && isNodeData(input)) return input as ${returnType};`,
-        `  return ${factory}(input as ${configUnion});`,
+        `  if (input !== undefined && isNodeData(input)) return input;`,
+        `  return ${factory}(input);`,
         '}',
     ].join('\n')
 }
