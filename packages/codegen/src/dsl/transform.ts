@@ -21,12 +21,12 @@
  * Override files are `@ts-nocheck` so they're unaffected.
  */
 
-import { parsePath, applyPath, reconstructWrapper, reconstructPrec, reconstructContainer } from './transform-path.ts'
+import { parsePath, applyPath, reconstructWrapper, reconstructPrec, reconstructContainer, wrapInPrecStack } from './transform-path.ts'
 import { isFieldPlaceholder, maybeKeywordSymbol, type FieldPlaceholder } from './field.ts'
 import { isAliasPlaceholder, type AliasPlaceholder } from './alias.ts'
 import { isVariantPlaceholder, type VariantPlaceholder } from './variant.ts'
-import { getCurrentRuleKind, registerPolymorphVariant, registerAliasedVariant, registerSyntheticRule, registerConflict, wrapInPrecStack, matchesEmpty } from './synthetic-rules.ts'
-import { isFieldLike, isPrecWrapper, isWrapperType, isSeqType, isChoiceType, type RuntimeRule } from './runtime-shapes.ts'
+import { getCurrentRuleKind, registerPolymorphVariant, registerSyntheticRule, registerConflict } from './synthetic-rules.ts'
+import { isFieldLike, isPrecWrapper, isWrapperType, isSeqType, isChoiceType, isBlankType, isOptionalType, isPlainRepeatType, type RuntimeRule } from './runtime-shapes.ts'
 
 /**
  * Apply patches to a rule. Patches are an object with path-string keys
@@ -627,4 +627,134 @@ export function replace(
     }
 
     return reconstructContainer(original, members)
+}
+
+// ---------------------------------------------------------------------------
+// Aliased-variant synthesis — shared between variant() and alias()
+// placeholders. Handles the mechanics of "extract an arbitrary sub-rule
+// into a hidden named rule, return an alias node that points at it,
+// wrap in prec where needed, and factor out empty-matching content
+// tree-sitter won't accept as a syntactic rule."
+// ---------------------------------------------------------------------------
+
+/**
+ * Build the `alias($._hidden, $.visible)` node AND register the
+ * hidden rule's body. Shared between variant() and alias() placeholders
+ * because both need the same empty-match / prec handling.
+ *
+ * Tree-sitter refuses to compile a named syntactic rule whose body
+ * matches the empty string (it can't decide which copy-count to choose
+ * while parsing). A raw variant extraction can easily produce such a
+ * body — e.g. rust's `array_expression` list form is
+ * `repeat(elem, sep=',')` which matches zero or more, including zero.
+ *
+ * When the content is empty-matchable AND we can factor out a non-empty
+ * core, extract the core and wrap the call-site alias in `optional()`.
+ * The language is preserved (`optional(repeat1(X))` = `repeat(X)`) and
+ * the hidden rule is guaranteed non-empty so tree-sitter accepts it.
+ */
+export function registerAliasedVariant(
+    hiddenName: string,
+    aliasValue: string,
+    originalMember: RuntimeRule,
+    bodyWrapper: (body: RuntimeRule) => RuntimeRule,
+): RuntimeRule {
+    const isUpperCase = originalMember.type === originalMember.type.toUpperCase()
+    const wasEmpty = matchesEmpty(originalMember)
+    const factored = factorOutEmptiness(originalMember)
+    if (wasEmpty && !factored) {
+        throw new Error(
+            `variant()/alias(): can't extract '${hiddenName}' — its content matches the empty string and no non-empty core could be factored out. ` +
+            `Tree-sitter rejects syntactic rules that match empty. Restructure the parent rule (e.g. lift the empty case outside the choice) before splitting.`,
+        )
+    }
+    const body = factored ? factored.nonEmpty : originalMember
+    registerSyntheticRule(hiddenName, bodyWrapper(body as RuntimeRule))
+    const aliasNode = {
+        type: isUpperCase ? 'ALIAS' : 'alias',
+        content: { type: isUpperCase ? 'SYMBOL' : 'symbol', name: hiddenName },
+        named: true,
+        value: aliasValue,
+    } as unknown as RuntimeRule
+    if (factored) {
+        const optional = (globalThis as { optional?: (c: unknown) => unknown }).optional
+        if (typeof optional !== 'function') {
+            throw new Error('transform: no global optional() found — variant()/alias() on empty-matching content needs runtime optional()')
+        }
+        return optional(aliasNode) as RuntimeRule
+    }
+    return aliasNode
+}
+
+/**
+ * Conservative empty-match detector. Returns true when `rule` can
+ * produce a zero-length match. Used only to decide whether the
+ * factored non-empty core is actually non-empty — errs on the side of
+ * saying "true" for unknown shapes so callers don't wrongly claim a
+ * body is non-empty.
+ */
+export function matchesEmpty(rule: RuntimeRule): boolean {
+    const t = rule.type
+    if (isBlankType(t)) return true
+    if (isOptionalType(t)) return true
+    if (isPlainRepeatType(t)) return true
+    if (isChoiceType(t)) {
+        const members = (rule as unknown as { members: RuntimeRule[] }).members
+        return members.some(m => matchesEmpty(m))
+    }
+    if (isSeqType(t)) {
+        const members = (rule as unknown as { members: RuntimeRule[] }).members
+        return members.every(m => matchesEmpty(m))
+    }
+    return false
+}
+
+/**
+ * If `rule` matches the empty string but has a factorable non-empty
+ * core, return `{ nonEmpty }` — the caller wraps the call site in
+ * `optional()` so the language stays the same. Returns null when the
+ * rule is either non-empty already or can't be factored.
+ */
+function factorOutEmptiness(rule: RuntimeRule): { nonEmpty: unknown } | null {
+    if (!matchesEmpty(rule)) return null
+    return extractNonEmpty(rule)
+}
+
+/**
+ * Recursively strip empty-matching branches from transparent
+ * composition nodes (SEQ / CHOICE / OPTIONAL / REPEAT) until the
+ * result is guaranteed non-empty. Returns null when the whole rule
+ * is unconditionally empty or the shape is too pathological to
+ * factor cleanly — caller surfaces the limitation upstream.
+ */
+function extractNonEmpty(rule: RuntimeRule): { nonEmpty: unknown } | null {
+    const t = rule.type
+    if (isPlainRepeatType(t)) {
+        const r = rule as unknown as Record<string, unknown>
+        const nonEmpty: Record<string, unknown> = { ...r, type: t === 'REPEAT' ? 'REPEAT1' : 'repeat1' }
+        return { nonEmpty }
+    }
+    if (isOptionalType(t)) {
+        const inner = (rule as unknown as { content: RuntimeRule }).content
+        return matchesEmpty(inner) ? extractNonEmpty(inner) : { nonEmpty: inner }
+    }
+    if (isChoiceType(t)) {
+        const members = (rule as unknown as { members: RuntimeRule[] }).members
+        const nonEmpty = members.filter(m => !matchesEmpty(m))
+        if (nonEmpty.length === 0) return null
+        if (nonEmpty.length === 1) return { nonEmpty: nonEmpty[0] }
+        return { nonEmpty: { type: t, members: nonEmpty } }
+    }
+    if (isSeqType(t)) {
+        const members = [...(rule as unknown as { members: RuntimeRule[] }).members]
+        for (let i = 0; i < members.length; i++) {
+            const factored = extractNonEmpty(members[i]!)
+            if (factored) {
+                members[i] = factored.nonEmpty as RuntimeRule
+                return { nonEmpty: { type: t, members } }
+            }
+        }
+        return null
+    }
+    return null
 }

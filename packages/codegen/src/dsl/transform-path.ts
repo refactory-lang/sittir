@@ -441,6 +441,25 @@ export function reconstructPrec(rule: RuntimeRule, newContent: RuntimeRule): Run
     return prec(value, newContent)
 }
 
+/**
+ * Wrap `content` in the accumulated prec stack collected during path
+ * descent. Each entry in `precStack` is the original prec wrapper the
+ * path crossed; we reapply them inner-first so the outer-most prec is
+ * the outermost in the result.
+ */
+export function wrapInPrecStack(
+    content: RuntimeRule,
+    precStack: readonly RuntimeRule[] | undefined,
+    reconstructPrec: (wrapper: RuntimeRule, newContent: RuntimeRule) => RuntimeRule,
+): RuntimeRule {
+    if (!precStack?.length) return content
+    let result = content
+    for (let i = precStack.length - 1; i >= 0; i--) {
+        result = reconstructPrec(precStack[i]!, result)
+    }
+    return result
+}
+
 // Re-export so transform.ts's `applyFlatPatches` can reach the
 // shared predicates through the canonical path-related module.
 export { isContainerType, isWrapperType, isPrecWrapperShape as isPrecWrapper }

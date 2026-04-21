@@ -251,6 +251,14 @@ function reconstructPrec(rule, newContent) {
   }
   return prec(value, newContent);
 }
+function wrapInPrecStack(content, precStack, reconstructPrec2) {
+  if (!precStack?.length) return content;
+  let result = content;
+  for (let i = precStack.length - 1; i >= 0; i--) {
+    result = reconstructPrec2(precStack[i], result);
+  }
+  return result;
+}
 function applyToMembers(rule, head, rest, patch, precStack) {
   const members = [...membersOf(rule)];
   if (head.kind === "index") {
@@ -473,21 +481,6 @@ function registerSyntheticRule(name, content) {
     );
   }
 }
-function maybeKeywordSymbol(fieldName, content, wrapSyntheticBody) {
-  const c = content;
-  if (!c || typeof c.type !== "string") return content;
-  if (!isStringType(c.type)) return content;
-  const isUpperCase = c.type === "STRING";
-  const hiddenName = `_kw_${fieldName}`;
-  const nativePrec = globalThis.prec;
-  let precBody = typeof nativePrec?.left === "function" ? nativePrec.left(1, content) : content;
-  if (wrapSyntheticBody) precBody = wrapSyntheticBody(precBody);
-  registerSyntheticRule(hiddenName, precBody);
-  return {
-    type: isUpperCase ? "SYMBOL" : "symbol",
-    name: hiddenName
-  };
-}
 function registerPolymorphVariant(parentKind, childSuffix) {
   if (!wireRegisterPolymorphVariant(parentKind, childSuffix)) {
     throw new Error(
@@ -503,92 +496,23 @@ function registerConflict(names) {
     );
   }
 }
-function wrapInPrecStack(content, precStack, reconstructPrec2) {
-  if (!precStack?.length) return content;
-  let result = content;
-  for (let i = precStack.length - 1; i >= 0; i--) {
-    result = reconstructPrec2(precStack[i], result);
-  }
-  return result;
-}
-function registerAliasedVariant(hiddenName, aliasValue, originalMember, bodyWrapper) {
-  const isUpperCase = originalMember.type === originalMember.type.toUpperCase();
-  const wasEmpty = matchesEmpty(originalMember);
-  const factored = factorOutEmptiness(originalMember);
-  if (wasEmpty && !factored) {
-    throw new Error(
-      `variant()/alias(): can't extract '${hiddenName}' \u2014 its content matches the empty string and no non-empty core could be factored out. Tree-sitter rejects syntactic rules that match empty. Restructure the parent rule (e.g. lift the empty case outside the choice) before splitting.`
-    );
-  }
-  const body = factored ? factored.nonEmpty : originalMember;
-  registerSyntheticRule(hiddenName, bodyWrapper(body));
-  const aliasNode = {
-    type: isUpperCase ? "ALIAS" : "alias",
-    content: { type: isUpperCase ? "SYMBOL" : "symbol", name: hiddenName },
-    named: true,
-    value: aliasValue
-  };
-  if (factored) {
-    const optional = globalThis.optional;
-    if (typeof optional !== "function") {
-      throw new Error("synthetic-rules: no global optional() found \u2014 variant()/alias() on empty-matching content needs runtime optional()");
-    }
-    return optional(aliasNode);
-  }
-  return aliasNode;
-}
-function factorOutEmptiness(rule) {
-  if (!matchesEmpty(rule)) return null;
-  return extractNonEmpty(rule);
-}
-function extractNonEmpty(rule) {
-  const t = rule.type;
-  if (isPlainRepeatType(t)) {
-    const r = rule;
-    const nonEmpty = { ...r, type: t === "REPEAT" ? "REPEAT1" : "repeat1" };
-    return { nonEmpty };
-  }
-  if (isOptionalType(t)) {
-    const inner = rule.content;
-    return matchesEmpty(inner) ? extractNonEmpty(inner) : { nonEmpty: inner };
-  }
-  if (isChoiceType(t)) {
-    const members = rule.members;
-    const nonEmpty = members.filter((m) => !matchesEmpty(m));
-    if (nonEmpty.length === 0) return null;
-    if (nonEmpty.length === 1) return { nonEmpty: nonEmpty[0] };
-    return { nonEmpty: { type: t, members: nonEmpty } };
-  }
-  if (isSeqType(t)) {
-    const members = [...rule.members];
-    for (let i = 0; i < members.length; i++) {
-      const factored = extractNonEmpty(members[i]);
-      if (factored) {
-        members[i] = factored.nonEmpty;
-        return { nonEmpty: { type: t, members } };
-      }
-    }
-    return null;
-  }
-  return null;
-}
-function matchesEmpty(rule) {
-  const t = rule.type;
-  if (isBlankType(t)) return true;
-  if (isOptionalType(t)) return true;
-  if (isPlainRepeatType(t)) return true;
-  if (isChoiceType(t)) {
-    const members = rule.members;
-    return members.some((m) => matchesEmpty(m));
-  }
-  if (isSeqType(t)) {
-    const members = rule.members;
-    return members.every((m) => matchesEmpty(m));
-  }
-  return false;
-}
 
 // packages/codegen/src/dsl/field.ts
+function maybeKeywordSymbol(fieldName, content, wrapSyntheticBody) {
+  const c = content;
+  if (!c || typeof c.type !== "string") return content;
+  if (!isStringType(c.type)) return content;
+  const isUpperCase = c.type === "STRING";
+  const hiddenName = `_kw_${fieldName}`;
+  const nativePrec = globalThis.prec;
+  let precBody = typeof nativePrec?.left === "function" ? nativePrec.left(1, content) : content;
+  if (wrapSyntheticBody) precBody = wrapSyntheticBody(precBody);
+  registerSyntheticRule(hiddenName, precBody);
+  return {
+    type: isUpperCase ? "SYMBOL" : "symbol",
+    name: hiddenName
+  };
+}
 function isFieldPlaceholder(v) {
   return !!v && typeof v === "object" && v.__sittirPlaceholder === "field";
 }
@@ -822,6 +746,82 @@ function resolveFieldPlaceholder(patch, originalMember, precStack) {
 function resolveAliasPlaceholder(patch, originalMember, precStack) {
   const hiddenName = "_" + patch.name;
   return registerAliasedVariant(hiddenName, patch.name, originalMember, (body) => wrapInPrec(body, precStack));
+}
+function registerAliasedVariant(hiddenName, aliasValue, originalMember, bodyWrapper) {
+  const isUpperCase = originalMember.type === originalMember.type.toUpperCase();
+  const wasEmpty = matchesEmpty(originalMember);
+  const factored = factorOutEmptiness(originalMember);
+  if (wasEmpty && !factored) {
+    throw new Error(
+      `variant()/alias(): can't extract '${hiddenName}' \u2014 its content matches the empty string and no non-empty core could be factored out. Tree-sitter rejects syntactic rules that match empty. Restructure the parent rule (e.g. lift the empty case outside the choice) before splitting.`
+    );
+  }
+  const body = factored ? factored.nonEmpty : originalMember;
+  registerSyntheticRule(hiddenName, bodyWrapper(body));
+  const aliasNode = {
+    type: isUpperCase ? "ALIAS" : "alias",
+    content: { type: isUpperCase ? "SYMBOL" : "symbol", name: hiddenName },
+    named: true,
+    value: aliasValue
+  };
+  if (factored) {
+    const optional = globalThis.optional;
+    if (typeof optional !== "function") {
+      throw new Error("transform: no global optional() found \u2014 variant()/alias() on empty-matching content needs runtime optional()");
+    }
+    return optional(aliasNode);
+  }
+  return aliasNode;
+}
+function matchesEmpty(rule) {
+  const t = rule.type;
+  if (isBlankType(t)) return true;
+  if (isOptionalType(t)) return true;
+  if (isPlainRepeatType(t)) return true;
+  if (isChoiceType(t)) {
+    const members = rule.members;
+    return members.some((m) => matchesEmpty(m));
+  }
+  if (isSeqType(t)) {
+    const members = rule.members;
+    return members.every((m) => matchesEmpty(m));
+  }
+  return false;
+}
+function factorOutEmptiness(rule) {
+  if (!matchesEmpty(rule)) return null;
+  return extractNonEmpty(rule);
+}
+function extractNonEmpty(rule) {
+  const t = rule.type;
+  if (isPlainRepeatType(t)) {
+    const r = rule;
+    const nonEmpty = { ...r, type: t === "REPEAT" ? "REPEAT1" : "repeat1" };
+    return { nonEmpty };
+  }
+  if (isOptionalType(t)) {
+    const inner = rule.content;
+    return matchesEmpty(inner) ? extractNonEmpty(inner) : { nonEmpty: inner };
+  }
+  if (isChoiceType(t)) {
+    const members = rule.members;
+    const nonEmpty = members.filter((m) => !matchesEmpty(m));
+    if (nonEmpty.length === 0) return null;
+    if (nonEmpty.length === 1) return { nonEmpty: nonEmpty[0] };
+    return { nonEmpty: { type: t, members: nonEmpty } };
+  }
+  if (isSeqType(t)) {
+    const members = [...rule.members];
+    for (let i = 0; i < members.length; i++) {
+      const factored = extractNonEmpty(members[i]);
+      if (factored) {
+        members[i] = factored.nonEmpty;
+        return { nonEmpty: { type: t, members } };
+      }
+    }
+    return null;
+  }
+  return null;
 }
 
 // packages/codegen/src/dsl/role.ts
