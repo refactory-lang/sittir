@@ -199,13 +199,40 @@ export const LEAF_KINDS = [
   '_automatic_semicolon',
   '_function_signature_automatic_semicolon',
   '_kw_abstract',
-  '_kw_asserts',
+  '_kw_accessibility_modifier',
   '_kw_async',
+  '_kw_automatic_semicolon',
+  '_kw_class_heritage',
+  '_kw_closing',
   '_kw_const',
-  '_kw_extends',
-  '_kw_for',
+  '_kw_constraint',
+  '_kw_declaration',
+  '_kw_declarators',
+  '_kw_expression',
+  '_kw_extends_type_clause',
+  '_kw_from_clause',
+  '_kw_hash_bang_line',
+  '_kw_identifier',
+  '_kw_import_attribute',
+  '_kw_import_clause',
+  '_kw_index_type',
+  '_kw_left',
+  '_kw_members',
+  '_kw_name',
+  '_kw_object',
+  '_kw_opening',
+  '_kw_override_modifier',
+  '_kw_primary_type',
   '_kw_readonly',
+  '_kw_right',
+  '_kw_semicolon',
+  '_kw_statement',
+  '_kw_statements',
   '_kw_static',
+  '_kw_type_annotation',
+  '_kw_type_arguments',
+  '_kw_type_identifier',
+  '_kw_value',
   '_reserved_identifier',
   '_template_chars',
   'abstract',
@@ -297,11 +324,8 @@ export const ALL_KINDS = [...NODE_KINDS, ...LEAF_KINDS] as const;
 /** Language keywords (alphabetic anonymous tokens). */
 export const KEYWORDS = [
   '_kw_abstract',
-  '_kw_asserts',
   '_kw_async',
   '_kw_const',
-  '_kw_extends',
-  '_kw_for',
   '_kw_readonly',
   '_kw_static',
   'abstract',
@@ -490,6 +514,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'primaryType', required: true, multiple: false },
   ],
   'arrow_function': [
+    { name: 'async', required: false, multiple: false },
     { name: 'body', required: true, multiple: false },
   ],
   'arrow_function__call_signature': [
@@ -505,7 +530,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'typeAnnotation', required: true, multiple: false },
   ],
   'asserts': [
-    { name: 'asserts', required: true, multiple: false },
   ],
   'asserts_annotation': [
     { name: 'asserts', required: true, multiple: false },
@@ -533,7 +557,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'right', required: true, multiple: false },
   ],
   'break_statement': [
-    { name: 'break', required: true, multiple: false },
     { name: 'label', required: false, multiple: false },
   ],
   'call_expression': [
@@ -547,7 +570,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'returnType', required: false, multiple: false },
   ],
   'catch_clause': [
-    { name: 'catch', required: true, multiple: false },
     { name: 'parameter', required: false, multiple: false },
     { name: 'type', required: false, multiple: false },
     { name: 'body', required: true, multiple: false },
@@ -577,7 +599,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'class_heritage_implements_clause': [
   ],
   'class_static_block': [
-    { name: 'static', required: true, multiple: false },
     { name: 'body', required: true, multiple: false },
   ],
   'computed_property_name': [
@@ -605,11 +626,9 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'type', required: true, multiple: false },
   ],
   'continue_statement': [
-    { name: 'continue', required: true, multiple: false },
     { name: 'label', required: false, multiple: false },
   ],
   'debugger_statement': [
-    { name: 'debugger', required: true, multiple: false },
   ],
   'declaration': [
   ],
@@ -630,7 +649,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'type', required: true, multiple: false },
   ],
   'do_statement': [
-    { name: 'do', required: true, multiple: false },
     { name: 'body', required: true, multiple: false },
     { name: 'condition', required: true, multiple: false },
   ],
@@ -665,12 +683,10 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'expression_statement': [
   ],
   'extends_clause': [
-    { name: 'extends', required: true, multiple: false },
     { name: 'value', required: true, multiple: true },
     { name: 'typeArguments', required: false, multiple: true },
   ],
   'extends_type_clause': [
-    { name: 'extends', required: true, multiple: false },
     { name: 'type', required: true, multiple: true },
   ],
   'field_definition': [
@@ -680,14 +696,12 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'value', required: false, multiple: false },
   ],
   'finally_clause': [
-    { name: 'finally', required: true, multiple: false },
     { name: 'body', required: true, multiple: false },
   ],
   'flow_maybe_type': [
     { name: 'primaryType', required: true, multiple: false },
   ],
   'for_in_statement': [
-    { name: 'for', required: true, multiple: false },
     { name: 'await', required: false, multiple: false },
     { name: 'left', required: true, multiple: false },
     { name: 'kind', required: false, multiple: false },
@@ -697,7 +711,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'body', required: true, multiple: false },
   ],
   'for_statement': [
-    { name: 'for', required: true, multiple: false },
     { name: 'initializer', required: true, multiple: false },
     { name: 'condition', required: true, multiple: false },
     { name: 'increment', required: false, multiple: false },
@@ -754,13 +767,11 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'typeArguments', required: true, multiple: false },
   ],
   'if_statement': [
-    { name: 'if', required: true, multiple: false },
     { name: 'condition', required: true, multiple: false },
     { name: 'consequence', required: true, multiple: false },
     { name: 'alternative', required: false, multiple: false },
   ],
   'implements_clause': [
-    { name: 'implements', required: true, multiple: false },
   ],
   'import_alias': [
     { name: 'name', required: true, multiple: false },
@@ -794,7 +805,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'import_statement': [
     { name: 'importClause', required: false, multiple: false },
     { name: 'fromClause', required: true, multiple: false },
-    { name: 'from', required: false, multiple: false },
     { name: 'source', required: false, multiple: false },
     { name: 'importAttribute', required: false, multiple: false },
     { name: 'semicolon', required: true, multiple: false },
@@ -832,7 +842,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'body', required: true, multiple: false },
   ],
   'internal_module': [
-    { name: 'namespace', required: true, multiple: false },
     { name: 'name', required: true, multiple: false },
     { name: 'body', required: false, multiple: false },
   ],
@@ -891,6 +900,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'method_definition': [
     { name: 'accessibilityModifier', required: false, multiple: false },
     { name: 'overrideModifier', required: false, multiple: false },
+    { name: 'readonly', required: false, multiple: false },
+    { name: 'async', required: false, multiple: false },
     { name: 'name', required: true, multiple: false },
     { name: 'typeParameters', required: false, multiple: false },
     { name: 'parameters', required: true, multiple: false },
@@ -900,13 +911,14 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'method_signature': [
     { name: 'accessibilityModifier', required: false, multiple: false },
     { name: 'overrideModifier', required: false, multiple: false },
+    { name: 'readonly', required: false, multiple: false },
+    { name: 'async', required: false, multiple: false },
     { name: 'name', required: true, multiple: false },
     { name: 'typeParameters', required: false, multiple: false },
     { name: 'parameters', required: true, multiple: false },
     { name: 'returnType', required: false, multiple: false },
   ],
   'module': [
-    { name: 'module', required: true, multiple: false },
     { name: 'name', required: true, multiple: false },
     { name: 'body', required: false, multiple: false },
   ],
@@ -926,7 +938,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'name', required: true, multiple: false },
   ],
   'new_expression': [
-    { name: 'new', required: true, multiple: false },
     { name: 'constructor', required: true, multiple: false },
     { name: 'typeArguments', required: false, multiple: false },
     { name: 'arguments', required: false, multiple: false },
@@ -992,17 +1003,22 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'property_signature': [
     { name: 'accessibilityModifier', required: false, multiple: false },
     { name: 'overrideModifier', required: false, multiple: false },
+    { name: 'readonly', required: false, multiple: false },
     { name: 'name', required: true, multiple: false },
     { name: 'type', required: false, multiple: false },
   ],
   'public_field_definition': [
     { name: 'decorator', required: true, multiple: true },
+    { name: 'declare', required: false, multiple: false },
+    { name: 'static', required: false, multiple: false },
+    { name: 'readonly', required: false, multiple: false },
+    { name: 'abstract', required: false, multiple: false },
+    { name: 'accessor', required: false, multiple: false },
     { name: 'name', required: true, multiple: false },
     { name: 'type', required: false, multiple: false },
     { name: 'value', required: false, multiple: false },
   ],
   'readonly_type': [
-    { name: 'readonly', required: true, multiple: false },
     { name: 'type', required: true, multiple: false },
   ],
   'regex': [
@@ -1022,7 +1038,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'type', required: true, multiple: false },
   ],
   'return_statement': [
-    { name: 'return', required: true, multiple: false },
   ],
   'satisfies_expression': [
     { name: 'expression', required: true, multiple: false },
@@ -1053,16 +1068,13 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'switch_body': [
   ],
   'switch_case': [
-    { name: 'case', required: true, multiple: false },
     { name: 'value', required: true, multiple: false },
     { name: 'body', required: true, multiple: true },
   ],
   'switch_default': [
-    { name: 'default', required: true, multiple: false },
     { name: 'body', required: true, multiple: true },
   ],
   'switch_statement': [
-    { name: 'switch', required: true, multiple: false },
     { name: 'value', required: true, multiple: false },
     { name: 'body', required: true, multiple: false },
   ],
@@ -1080,10 +1092,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'alternative', required: true, multiple: false },
   ],
   'throw_statement': [
-    { name: 'throw', required: true, multiple: false },
   ],
   'try_statement': [
-    { name: 'try', required: true, multiple: false },
     { name: 'body', required: true, multiple: false },
     { name: 'handler', required: false, multiple: false },
     { name: 'finalizer', required: false, multiple: false },
@@ -1095,7 +1105,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'tuple_type': [
   ],
   'type_alias_declaration': [
-    { name: 'type', required: true, multiple: false },
     { name: 'name', required: true, multiple: false },
     { name: 'typeParameters', required: false, multiple: false },
     { name: 'value', required: true, multiple: false },
@@ -1125,7 +1134,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'typePredicate', required: true, multiple: false },
   ],
   'type_query': [
-    { name: 'typeof', required: true, multiple: false },
   ],
   'unary_expression': [
     { name: 'operator', required: true, multiple: false },
@@ -1148,12 +1156,10 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'type', required: false, multiple: false },
   ],
   'while_statement': [
-    { name: 'while', required: true, multiple: false },
     { name: 'condition', required: true, multiple: false },
     { name: 'body', required: true, multiple: false },
   ],
   'with_statement': [
-    { name: 'with', required: true, multiple: false },
     { name: 'object', required: true, multiple: false },
     { name: 'body', required: true, multiple: false },
   ],
@@ -1161,6 +1167,156 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'expression', required: true, multiple: false },
   ],
 };
+
+/** Valid values for `_kw_accessibility_modifier` nodes. */
+export const _KW_ACCESSIBILITY_MODIFIERS = [
+] as const;
+export type KwAccessibilityModifierValue = (typeof _KW_ACCESSIBILITY_MODIFIERS)[number];
+
+/** Valid values for `_kw_automatic_semicolon` nodes. */
+export const _KW_AUTOMATIC_SEMICOLONS = [
+] as const;
+export type KwAutomaticSemicolonValue = (typeof _KW_AUTOMATIC_SEMICOLONS)[number];
+
+/** Valid values for `_kw_class_heritage` nodes. */
+export const _KW_CLASS_HERITAGES = [
+] as const;
+export type KwClassHeritageValue = (typeof _KW_CLASS_HERITAGES)[number];
+
+/** Valid values for `_kw_closing` nodes. */
+export const _KW_CLOSINGS = [
+] as const;
+export type KwClosingValue = (typeof _KW_CLOSINGS)[number];
+
+/** Valid values for `_kw_constraint` nodes. */
+export const _KW_CONSTRAINTS = [
+] as const;
+export type KwConstraintValue = (typeof _KW_CONSTRAINTS)[number];
+
+/** Valid values for `_kw_declaration` nodes. */
+export const _KW_DECLARATIONS = [
+] as const;
+export type KwDeclarationValue = (typeof _KW_DECLARATIONS)[number];
+
+/** Valid values for `_kw_declarators` nodes. */
+export const _KW_DECLARATORSS = [
+] as const;
+export type KwDeclaratorsValue = (typeof _KW_DECLARATORSS)[number];
+
+/** Valid values for `_kw_expression` nodes. */
+export const _KW_EXPRESSIONS = [
+] as const;
+export type KwExpressionValue = (typeof _KW_EXPRESSIONS)[number];
+
+/** Valid values for `_kw_extends_type_clause` nodes. */
+export const _KW_EXTENDS_TYPE_CLAUSES = [
+] as const;
+export type KwExtendsTypeClauseValue = (typeof _KW_EXTENDS_TYPE_CLAUSES)[number];
+
+/** Valid values for `_kw_from_clause` nodes. */
+export const _KW_FROM_CLAUSES = [
+] as const;
+export type KwFromClauseValue = (typeof _KW_FROM_CLAUSES)[number];
+
+/** Valid values for `_kw_hash_bang_line` nodes. */
+export const _KW_HASH_BANG_LINES = [
+] as const;
+export type KwHashBangLineValue = (typeof _KW_HASH_BANG_LINES)[number];
+
+/** Valid values for `_kw_identifier` nodes. */
+export const _KW_IDENTIFIERS = [
+] as const;
+export type KwIdentifierValue = (typeof _KW_IDENTIFIERS)[number];
+
+/** Valid values for `_kw_import_attribute` nodes. */
+export const _KW_IMPORT_ATTRIBUTES = [
+] as const;
+export type KwImportAttributeValue = (typeof _KW_IMPORT_ATTRIBUTES)[number];
+
+/** Valid values for `_kw_import_clause` nodes. */
+export const _KW_IMPORT_CLAUSES = [
+] as const;
+export type KwImportClauseValue = (typeof _KW_IMPORT_CLAUSES)[number];
+
+/** Valid values for `_kw_index_type` nodes. */
+export const _KW_INDEX_TYPES = [
+] as const;
+export type KwIndexTypeValue = (typeof _KW_INDEX_TYPES)[number];
+
+/** Valid values for `_kw_left` nodes. */
+export const _KW_LEFTS = [
+] as const;
+export type KwLeftValue = (typeof _KW_LEFTS)[number];
+
+/** Valid values for `_kw_members` nodes. */
+export const _KW_MEMBERSS = [
+] as const;
+export type KwMembersValue = (typeof _KW_MEMBERSS)[number];
+
+/** Valid values for `_kw_name` nodes. */
+export const _KW_NAMES = [
+] as const;
+export type KwNameValue = (typeof _KW_NAMES)[number];
+
+/** Valid values for `_kw_object` nodes. */
+export const _KW_OBJECTS = [
+] as const;
+export type KwObjectValue = (typeof _KW_OBJECTS)[number];
+
+/** Valid values for `_kw_opening` nodes. */
+export const _KW_OPENINGS = [
+] as const;
+export type KwOpeningValue = (typeof _KW_OPENINGS)[number];
+
+/** Valid values for `_kw_override_modifier` nodes. */
+export const _KW_OVERRIDE_MODIFIERS = [
+] as const;
+export type KwOverrideModifierValue = (typeof _KW_OVERRIDE_MODIFIERS)[number];
+
+/** Valid values for `_kw_primary_type` nodes. */
+export const _KW_PRIMARY_TYPES = [
+] as const;
+export type KwPrimaryTypeValue = (typeof _KW_PRIMARY_TYPES)[number];
+
+/** Valid values for `_kw_right` nodes. */
+export const _KW_RIGHTS = [
+] as const;
+export type KwRightValue = (typeof _KW_RIGHTS)[number];
+
+/** Valid values for `_kw_semicolon` nodes. */
+export const _KW_SEMICOLONS = [
+] as const;
+export type KwSemicolonValue = (typeof _KW_SEMICOLONS)[number];
+
+/** Valid values for `_kw_statement` nodes. */
+export const _KW_STATEMENTS = [
+] as const;
+export type KwStatementValue = (typeof _KW_STATEMENTS)[number];
+
+/** Valid values for `_kw_statements` nodes. */
+export const _KW_STATEMENTSS = [
+] as const;
+export type KwStatementsValue = (typeof _KW_STATEMENTSS)[number];
+
+/** Valid values for `_kw_type_annotation` nodes. */
+export const _KW_TYPE_ANNOTATIONS = [
+] as const;
+export type KwTypeAnnotationValue = (typeof _KW_TYPE_ANNOTATIONS)[number];
+
+/** Valid values for `_kw_type_arguments` nodes. */
+export const _KW_TYPE_ARGUMENTSS = [
+] as const;
+export type KwTypeArgumentsValue = (typeof _KW_TYPE_ARGUMENTSS)[number];
+
+/** Valid values for `_kw_type_identifier` nodes. */
+export const _KW_TYPE_IDENTIFIERS = [
+] as const;
+export type KwTypeIdentifierValue = (typeof _KW_TYPE_IDENTIFIERS)[number];
+
+/** Valid values for `_kw_value` nodes. */
+export const _KW_VALUES = [
+] as const;
+export type KwValueValue = (typeof _KW_VALUES)[number];
 
 /** Valid values for `accessibility_modifier` nodes. */
 export const ACCESSIBILITY_MODIFIERS = [

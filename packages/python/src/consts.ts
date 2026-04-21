@@ -127,10 +127,41 @@ export const LEAF_KINDS = [
   '__future__',
   '_dedent',
   '_indent',
+  '_is_not',
+  '_kw_alternative',
+  '_kw_arguments',
   '_kw_async',
-  '_kw_lambda',
-  '_kw_not',
+  '_kw_base_type',
+  '_kw_block',
+  '_kw_body',
+  '_kw_comparators',
+  '_kw_condition',
+  '_kw_constraint',
+  '_kw_content',
+  '_kw_dotted_name',
+  '_kw_else_clause',
+  '_kw_except_clauses',
+  '_kw_expression',
+  '_kw_finally_clause',
+  '_kw_identifier',
+  '_kw_imaginary',
+  '_kw_import_prefix',
+  '_kw_in_clause',
+  '_kw_left',
+  '_kw_newline',
+  '_kw_primary_expression',
+  '_kw_real',
+  '_kw_right',
+  '_kw_simple_pattern',
+  '_kw_start',
+  '_kw_step',
+  '_kw_stop',
+  '_kw_string_end',
+  '_kw_string_start',
+  '_kw_type_parameter',
+  '_kw_wildcard_import',
   '_newline',
+  '_not_in',
   '_string_content',
   'and',
   'as',
@@ -163,7 +194,6 @@ export const LEAF_KINDS = [
   'import_prefix',
   'in',
   'integer',
-  'is',
   'line_continuation',
   'match',
   'none',
@@ -196,8 +226,6 @@ export const KEYWORDS = [
   '_',
   '__future__',
   '_kw_async',
-  '_kw_lambda',
-  '_kw_not',
   '_not_escape_sequence',
   'and',
   'as',
@@ -223,7 +251,6 @@ export const KEYWORDS = [
   'if',
   'import',
   'in',
-  'is',
   'keyword_separator',
   'match',
   'none',
@@ -309,7 +336,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'as_pattern_target': [
   ],
   'assert_statement': [
-    { name: 'assert', required: true, multiple: false },
   ],
   'assignment': [
     { name: 'left', required: true, multiple: false },
@@ -353,7 +379,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'arguments', required: true, multiple: false },
   ],
   'case_clause': [
-    { name: 'case', required: true, multiple: false },
     { name: 'guard', required: false, multiple: false },
     { name: 'consequence', required: true, multiple: false },
   ],
@@ -363,7 +388,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'expression', required: true, multiple: false },
   ],
   'class_definition': [
-    { name: 'class', required: true, multiple: false },
     { name: 'name', required: true, multiple: false },
     { name: 'typeParameters', required: false, multiple: false },
     { name: 'superclasses', required: false, multiple: false },
@@ -405,7 +429,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'value', required: true, multiple: false },
   ],
   'delete_statement': [
-    { name: 'del', required: true, multiple: false },
   ],
   'dict_pattern': [
     { name: 'key', required: false, multiple: true },
@@ -425,16 +448,13 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'dotted_name': [
   ],
   'elif_clause': [
-    { name: 'elif', required: true, multiple: false },
     { name: 'condition', required: true, multiple: false },
     { name: 'consequence', required: true, multiple: false },
   ],
   'else_clause': [
-    { name: 'else', required: true, multiple: false },
     { name: 'body', required: true, multiple: false },
   ],
   'except_clause': [
-    { name: 'except', required: true, multiple: false },
     { name: 'value', required: false, multiple: false },
     { name: 'alias', required: false, multiple: false },
   ],
@@ -478,7 +498,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'body', required: true, multiple: false },
   ],
   'future_import_statement': [
-    { name: 'from', required: true, multiple: false },
     { name: 'name', required: true, multiple: true },
   ],
   'generator_expression': [
@@ -490,13 +509,11 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'typeParameter', required: true, multiple: false },
   ],
   'global_statement': [
-    { name: 'global', required: true, multiple: false },
   ],
   'if_clause': [
     { name: 'expression', required: true, multiple: false },
   ],
   'if_statement': [
-    { name: 'if', required: true, multiple: false },
     { name: 'condition', required: true, multiple: false },
     { name: 'consequence', required: true, multiple: false },
     { name: 'alternative', required: false, multiple: true },
@@ -507,7 +524,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'name', required: false, multiple: true },
   ],
   'import_statement': [
-    { name: 'import', required: true, multiple: false },
     { name: 'name', required: true, multiple: true },
   ],
   'interpolation': [
@@ -524,14 +540,12 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'simplePattern', required: true, multiple: false },
   ],
   'lambda': [
-    { name: 'lambda', required: true, multiple: false },
     { name: 'parameters', required: false, multiple: false },
     { name: 'body', required: true, multiple: false },
   ],
   'lambda_parameters': [
   ],
   'lambda_within_for_in_clause': [
-    { name: 'lambda', required: true, multiple: false },
     { name: 'parameters', required: false, multiple: false },
     { name: 'body', required: true, multiple: false },
   ],
@@ -549,7 +563,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'list_splat_pattern': [
   ],
   'match_statement': [
-    { name: 'match', required: true, multiple: false },
     { name: 'subject', required: true, multiple: true },
     { name: 'body', required: true, multiple: false },
   ],
@@ -564,10 +577,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'value', required: true, multiple: false },
   ],
   'nonlocal_statement': [
-    { name: 'nonlocal', required: true, multiple: false },
   ],
   'not_operator': [
-    { name: 'not', required: true, multiple: false },
     { name: 'argument', required: true, multiple: false },
   ],
   'pair': [
@@ -587,7 +598,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'argument', required: true, multiple: true },
   ],
   'raise_statement': [
-    { name: 'raise', required: true, multiple: false },
     { name: 'cause', required: false, multiple: false },
   ],
   'relative_import': [
@@ -595,7 +605,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'dottedName', required: false, multiple: false },
   ],
   'return_statement': [
-    { name: 'return', required: true, multiple: false },
   ],
   'set': [
   ],
@@ -663,7 +672,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'right', required: true, multiple: false },
   ],
   'while_statement': [
-    { name: 'while', required: true, multiple: false },
     { name: 'condition', required: true, multiple: false },
     { name: 'body', required: true, multiple: false },
     { name: 'alternative', required: false, multiple: false },
@@ -679,6 +687,160 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'body', required: true, multiple: false },
   ],
   'yield': [
-    { name: 'yield', required: true, multiple: false },
   ],
 };
+
+/** Valid values for `_kw_alternative` nodes. */
+export const _KW_ALTERNATIVES = [
+] as const;
+export type KwAlternativeValue = (typeof _KW_ALTERNATIVES)[number];
+
+/** Valid values for `_kw_arguments` nodes. */
+export const _KW_ARGUMENTSS = [
+] as const;
+export type KwArgumentsValue = (typeof _KW_ARGUMENTSS)[number];
+
+/** Valid values for `_kw_base_type` nodes. */
+export const _KW_BASE_TYPES = [
+] as const;
+export type KwBaseTypeValue = (typeof _KW_BASE_TYPES)[number];
+
+/** Valid values for `_kw_block` nodes. */
+export const _KW_BLOCKS = [
+] as const;
+export type KwBlockValue = (typeof _KW_BLOCKS)[number];
+
+/** Valid values for `_kw_body` nodes. */
+export const _KW_BODYS = [
+] as const;
+export type KwBodyValue = (typeof _KW_BODYS)[number];
+
+/** Valid values for `_kw_comparators` nodes. */
+export const _KW_COMPARATORSS = [
+] as const;
+export type KwComparatorsValue = (typeof _KW_COMPARATORSS)[number];
+
+/** Valid values for `_kw_condition` nodes. */
+export const _KW_CONDITIONS = [
+] as const;
+export type KwConditionValue = (typeof _KW_CONDITIONS)[number];
+
+/** Valid values for `_kw_constraint` nodes. */
+export const _KW_CONSTRAINTS = [
+] as const;
+export type KwConstraintValue = (typeof _KW_CONSTRAINTS)[number];
+
+/** Valid values for `_kw_content` nodes. */
+export const _KW_CONTENTS = [
+] as const;
+export type KwContentValue = (typeof _KW_CONTENTS)[number];
+
+/** Valid values for `_kw_dotted_name` nodes. */
+export const _KW_DOTTED_NAMES = [
+] as const;
+export type KwDottedNameValue = (typeof _KW_DOTTED_NAMES)[number];
+
+/** Valid values for `_kw_else_clause` nodes. */
+export const _KW_ELSE_CLAUSES = [
+] as const;
+export type KwElseClauseValue = (typeof _KW_ELSE_CLAUSES)[number];
+
+/** Valid values for `_kw_except_clauses` nodes. */
+export const _KW_EXCEPT_CLAUSESS = [
+] as const;
+export type KwExceptClausesValue = (typeof _KW_EXCEPT_CLAUSESS)[number];
+
+/** Valid values for `_kw_expression` nodes. */
+export const _KW_EXPRESSIONS = [
+] as const;
+export type KwExpressionValue = (typeof _KW_EXPRESSIONS)[number];
+
+/** Valid values for `_kw_finally_clause` nodes. */
+export const _KW_FINALLY_CLAUSES = [
+] as const;
+export type KwFinallyClauseValue = (typeof _KW_FINALLY_CLAUSES)[number];
+
+/** Valid values for `_kw_identifier` nodes. */
+export const _KW_IDENTIFIERS = [
+] as const;
+export type KwIdentifierValue = (typeof _KW_IDENTIFIERS)[number];
+
+/** Valid values for `_kw_imaginary` nodes. */
+export const _KW_IMAGINARYS = [
+] as const;
+export type KwImaginaryValue = (typeof _KW_IMAGINARYS)[number];
+
+/** Valid values for `_kw_import_prefix` nodes. */
+export const _KW_IMPORT_PREFIXS = [
+] as const;
+export type KwImportPrefixValue = (typeof _KW_IMPORT_PREFIXS)[number];
+
+/** Valid values for `_kw_in_clause` nodes. */
+export const _KW_IN_CLAUSES = [
+] as const;
+export type KwInClauseValue = (typeof _KW_IN_CLAUSES)[number];
+
+/** Valid values for `_kw_left` nodes. */
+export const _KW_LEFTS = [
+] as const;
+export type KwLeftValue = (typeof _KW_LEFTS)[number];
+
+/** Valid values for `_kw_newline` nodes. */
+export const _KW_NEWLINES = [
+] as const;
+export type KwNewlineValue = (typeof _KW_NEWLINES)[number];
+
+/** Valid values for `_kw_primary_expression` nodes. */
+export const _KW_PRIMARY_EXPRESSIONS = [
+] as const;
+export type KwPrimaryExpressionValue = (typeof _KW_PRIMARY_EXPRESSIONS)[number];
+
+/** Valid values for `_kw_real` nodes. */
+export const _KW_REALS = [
+] as const;
+export type KwRealValue = (typeof _KW_REALS)[number];
+
+/** Valid values for `_kw_right` nodes. */
+export const _KW_RIGHTS = [
+] as const;
+export type KwRightValue = (typeof _KW_RIGHTS)[number];
+
+/** Valid values for `_kw_simple_pattern` nodes. */
+export const _KW_SIMPLE_PATTERNS = [
+] as const;
+export type KwSimplePatternValue = (typeof _KW_SIMPLE_PATTERNS)[number];
+
+/** Valid values for `_kw_start` nodes. */
+export const _KW_STARTS = [
+] as const;
+export type KwStartValue = (typeof _KW_STARTS)[number];
+
+/** Valid values for `_kw_step` nodes. */
+export const _KW_STEPS = [
+] as const;
+export type KwStepValue = (typeof _KW_STEPS)[number];
+
+/** Valid values for `_kw_stop` nodes. */
+export const _KW_STOPS = [
+] as const;
+export type KwStopValue = (typeof _KW_STOPS)[number];
+
+/** Valid values for `_kw_string_end` nodes. */
+export const _KW_STRING_ENDS = [
+] as const;
+export type KwStringEndValue = (typeof _KW_STRING_ENDS)[number];
+
+/** Valid values for `_kw_string_start` nodes. */
+export const _KW_STRING_STARTS = [
+] as const;
+export type KwStringStartValue = (typeof _KW_STRING_STARTS)[number];
+
+/** Valid values for `_kw_type_parameter` nodes. */
+export const _KW_TYPE_PARAMETERS = [
+] as const;
+export type KwTypeParameterValue = (typeof _KW_TYPE_PARAMETERS)[number];
+
+/** Valid values for `_kw_wildcard_import` nodes. */
+export const _KW_WILDCARD_IMPORTS = [
+] as const;
+export type KwWildcardImportValue = (typeof _KW_WILDCARD_IMPORTS)[number];

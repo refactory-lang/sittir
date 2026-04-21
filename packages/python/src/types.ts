@@ -10,6 +10,37 @@ export type NodeConfig<K extends NodeKind<PythonGrammar>> = BaseNodeConfig<Pytho
 export type TreeNode<K extends NodeKind<PythonGrammar>> = BaseTreeNode<PythonGrammar, K>;
 
 export type LeafScalarMap = {
+  _kw_expression: number;
+  _kw_primary_expression: number;
+  _kw_dotted_name: number;
+  _kw_arguments: number;
+  _kw_left: number;
+  _kw_comparators: number;
+  _kw_real: number;
+  _kw_imaginary: number;
+  _kw_body: number;
+  _kw_condition: number;
+  _kw_alternative: number;
+  _kw_base_type: number;
+  _kw_constraint: number;
+  _kw_newline: number;
+  _kw_in_clause: number;
+  _kw_block: number;
+  _kw_identifier: number;
+  _kw_type_parameter: number;
+  _kw_wildcard_import: number;
+  _kw_simple_pattern: number;
+  _kw_import_prefix: number;
+  _kw_start: number;
+  _kw_stop: number;
+  _kw_step: number;
+  _kw_string_start: number;
+  _kw_content: number;
+  _kw_string_end: number;
+  _kw_except_clauses: number;
+  _kw_else_clause: number;
+  _kw_finally_clause: number;
+  _kw_right: number;
 };
 
 export type LeafStringMap = {
@@ -20,8 +51,6 @@ export type LeafStringMap = {
   false: "False";
   none: "None";
   _kw_async: "async";
-  _kw_not: "not";
-  _kw_lambda: "lambda";
   import: "import";
   from: "from";
   __future__: "__future__";
@@ -51,10 +80,9 @@ export type LeafStringMap = {
   exec: "exec";
   class: "class";
   _: "_";
+  not: "not";
   and: "and";
   or: "or";
-  is: "is";
-  not: "not";
   True: "True";
   False: "False";
   None: "None";
@@ -134,8 +162,6 @@ export const enum SyntaxKind {
   BooleanOperator = 'boolean_operator',
   BinaryOperator = 'binary_operator',
   UnaryOperator = 'unary_operator',
-  NotIn = '_not_in',
-  IsNot = '_is_not',
   ComparisonOperator = 'comparison_operator',
   Lambda = 'lambda',
   LambdaWithinForInClause = 'lambda_within_for_in_clause',
@@ -187,6 +213,8 @@ export const enum SyntaxKind {
   PassStatement = 'pass_statement',
   BreakStatement = 'break_statement',
   ContinueStatement = 'continue_statement',
+  NotIn = '_not_in',
+  IsNot = '_is_not',
   EscapeSequence = 'escape_sequence',
   TypeConversion = 'type_conversion',
   Integer = 'integer',
@@ -198,8 +226,37 @@ export const enum SyntaxKind {
   Comment = 'comment',
   LineContinuation = 'line_continuation',
   KwAsync = '_kw_async',
-  KwNot = '_kw_not',
-  KwLambda = '_kw_lambda',
+  KwExpression = '_kw_expression',
+  KwPrimaryExpression = '_kw_primary_expression',
+  KwDottedName = '_kw_dotted_name',
+  KwArguments = '_kw_arguments',
+  KwLeft = '_kw_left',
+  KwComparators = '_kw_comparators',
+  KwReal = '_kw_real',
+  KwImaginary = '_kw_imaginary',
+  KwBody = '_kw_body',
+  KwCondition = '_kw_condition',
+  KwAlternative = '_kw_alternative',
+  KwBaseType = '_kw_base_type',
+  KwConstraint = '_kw_constraint',
+  KwNewline = '_kw_newline',
+  KwInClause = '_kw_in_clause',
+  KwBlock = '_kw_block',
+  KwIdentifier = '_kw_identifier',
+  KwTypeParameter = '_kw_type_parameter',
+  KwWildcardImport = '_kw_wildcard_import',
+  KwSimplePattern = '_kw_simple_pattern',
+  KwImportPrefix = '_kw_import_prefix',
+  KwStart = '_kw_start',
+  KwStop = '_kw_stop',
+  KwStep = '_kw_step',
+  KwStringStart = '_kw_string_start',
+  KwContent = '_kw_content',
+  KwStringEnd = '_kw_string_end',
+  KwExceptClauses = '_kw_except_clauses',
+  KwElseClause = '_kw_else_clause',
+  KwFinallyClause = '_kw_finally_clause',
+  KwRight = '_kw_right',
   Newline = '_newline',
   Indent = '_indent',
   Dedent = '_dedent',
@@ -240,10 +297,9 @@ export const enum SyntaxKind {
   Exec = 'exec',
   Class = 'class',
   Anonymous = '_',
+  Not = 'not',
   And = 'and',
   Or = 'or',
-  Is = 'is',
-  Not = 'not',
   True2 = 'True',
   False2 = 'False',
   None2 = 'None',
@@ -411,7 +467,6 @@ export interface SimpleStatements {
 export interface ImportStatement {
   readonly $type: 'import_statement';
   readonly $fields: {
-    readonly import: "import";
     readonly name: NonEmptyArray<DottedName | AliasedImport>;
   };
 }
@@ -427,7 +482,6 @@ export interface RelativeImport {
 export interface FutureImportStatement {
   readonly $type: 'future_import_statement';
   readonly $fields: {
-    readonly from: "from";
     readonly name: NonEmptyArray<DottedName | AliasedImport>;
   };
 }
@@ -470,9 +524,6 @@ export interface Chevron {
 
 export interface AssertStatement {
   readonly $type: 'assert_statement';
-  readonly $fields: {
-    readonly assert: "assert";
-  };
   readonly $children: NonEmptyArray<Expression>;
 }
 
@@ -491,24 +542,17 @@ export interface NamedExpression {
 
 export interface ReturnStatement {
   readonly $type: 'return_statement';
-  readonly $fields: {
-    readonly return: "return";
-  };
   readonly $children: readonly [Expressions];
 }
 
 export interface DeleteStatement {
   readonly $type: 'delete_statement';
-  readonly $fields: {
-    readonly del: "del";
-  };
   readonly $children: readonly [Expressions];
 }
 
 export interface RaiseStatement {
   readonly $type: 'raise_statement';
   readonly $fields: {
-    readonly raise: "raise";
     readonly cause?: Expression;
   };
   readonly $children: readonly [Expressions];
@@ -517,7 +561,6 @@ export interface RaiseStatement {
 export interface IfStatement {
   readonly $type: 'if_statement';
   readonly $fields: {
-    readonly if: "if";
     readonly condition: Expression;
     readonly consequence: Suite;
     readonly alternative?: readonly (ElifClause | ElseClause)[];
@@ -527,7 +570,6 @@ export interface IfStatement {
 export interface ElifClause {
   readonly $type: 'elif_clause';
   readonly $fields: {
-    readonly elif: "elif";
     readonly condition: Expression;
     readonly consequence: Suite;
   };
@@ -536,7 +578,6 @@ export interface ElifClause {
 export interface ElseClause {
   readonly $type: 'else_clause';
   readonly $fields: {
-    readonly else: "else";
     readonly body: Suite;
   };
 }
@@ -544,7 +585,6 @@ export interface ElseClause {
 export interface MatchStatement {
   readonly $type: 'match_statement';
   readonly $fields: {
-    readonly match: "match";
     readonly subject: NonEmptyArray<Expression>;
     readonly body: MatchBlock;
   };
@@ -565,7 +605,6 @@ export type MatchBlock = MatchBlockForm0 | MatchBlockForm1;
 export interface CaseClause {
   readonly $type: 'case_clause';
   readonly $fields: {
-    readonly case: "case";
     readonly guard?: IfClause;
     readonly consequence: Suite;
   };
@@ -586,7 +625,6 @@ export interface ForStatement {
 export interface WhileStatement {
   readonly $type: 'while_statement';
   readonly $fields: {
-    readonly while: "while";
     readonly condition: Expression;
     readonly body: Suite;
     readonly alternative?: ElseClause;
@@ -606,7 +644,6 @@ export interface TryStatement {
 export interface ExceptClause {
   readonly $type: 'except_clause';
   readonly $fields: {
-    readonly except: "except";
     readonly value?: Expression;
     readonly alias?: Expression;
   };
@@ -679,17 +716,11 @@ export interface DictionarySplat {
 
 export interface GlobalStatement {
   readonly $type: 'global_statement';
-  readonly $fields: {
-    readonly global: "global";
-  };
   readonly $children: NonEmptyArray<Identifier>;
 }
 
 export interface NonlocalStatement {
   readonly $type: 'nonlocal_statement';
-  readonly $fields: {
-    readonly nonlocal: "nonlocal";
-  };
   readonly $children: NonEmptyArray<Identifier>;
 }
 
@@ -713,7 +744,6 @@ export interface TypeAliasStatement {
 export interface ClassDefinition {
   readonly $type: 'class_definition';
   readonly $fields: {
-    readonly class: "class";
     readonly name: Identifier;
     readonly type_parameters?: TypeParameter;
     readonly superclasses?: ArgumentList;
@@ -898,7 +928,6 @@ export interface AsPattern {
 export interface NotOperator {
   readonly $type: 'not_operator';
   readonly $fields: {
-    readonly not: KwNot;
     readonly argument: Expression;
   };
 }
@@ -929,26 +958,17 @@ export interface UnaryOperator {
   };
 }
 
-export interface NotIn {
-  readonly $type: '_not_in';
-}
-
-export interface IsNot {
-  readonly $type: '_is_not';
-}
-
 export interface ComparisonOperator {
   readonly $type: 'comparison_operator';
   readonly $fields: {
     readonly left: PrimaryExpression;
-    readonly operators: NonEmptyArray<KwNot>;
+    readonly operators: NonEmptyArray<NotIn | IsNot>;
   };
 }
 
 export interface Lambda {
   readonly $type: 'lambda';
   readonly $fields: {
-    readonly lambda: KwLambda;
     readonly parameters?: LambdaParameters;
     readonly body: Expression;
   };
@@ -957,7 +977,6 @@ export interface Lambda {
 export interface LambdaWithinForInClause {
   readonly $type: 'lambda_within_for_in_clause';
   readonly $fields: {
-    readonly lambda: KwLambda;
     readonly parameters?: LambdaParameters;
     readonly body: ExpressionWithinForInClause;
   };
@@ -1007,9 +1026,6 @@ export interface PatternList {
 
 export interface Yield {
   readonly $type: 'yield';
-  readonly $fields: {
-    readonly yield: "yield";
-  };
   readonly $children: readonly [Expression | Expressions];
 }
 
@@ -1064,7 +1080,6 @@ export interface SplatType {
   readonly $fields: {
     readonly identifier: "*" | "**";
   };
-  readonly $children: readonly [Identifier];
 }
 
 export interface GenericType {
@@ -1303,6 +1318,8 @@ export type ImportPrefix = Terminal<"import_prefix", string>;
 export type PassStatement = Terminal<"pass_statement", "pass">;
 export type BreakStatement = Terminal<"break_statement", "break">;
 export type ContinueStatement = Terminal<"continue_statement", "continue">;
+export type NotIn = Terminal<"_not_in", string>;
+export type IsNot = Terminal<"_is_not", string>;
 export type EscapeSequence = Terminal<"escape_sequence", string>;
 export type TypeConversion = Terminal<"type_conversion", string>;
 export type Integer = Terminal<"integer", string>;
@@ -1314,8 +1331,37 @@ export type None = Terminal<"none", "None">;
 export type Comment = Terminal<"comment", string>;
 export type LineContinuation = Terminal<"line_continuation", string>;
 export type KwAsync = Terminal<"_kw_async", "async">;
-export type KwNot = Terminal<"_kw_not", "not">;
-export type KwLambda = Terminal<"_kw_lambda", "lambda">;
+export type KwExpression = Terminal<"_kw_expression", >;
+export type KwPrimaryExpression = Terminal<"_kw_primary_expression", >;
+export type KwDottedName = Terminal<"_kw_dotted_name", >;
+export type KwArguments = Terminal<"_kw_arguments", >;
+export type KwLeft = Terminal<"_kw_left", >;
+export type KwComparators = Terminal<"_kw_comparators", >;
+export type KwReal = Terminal<"_kw_real", >;
+export type KwImaginary = Terminal<"_kw_imaginary", >;
+export type KwBody = Terminal<"_kw_body", >;
+export type KwCondition = Terminal<"_kw_condition", >;
+export type KwAlternative = Terminal<"_kw_alternative", >;
+export type KwBaseType = Terminal<"_kw_base_type", >;
+export type KwConstraint = Terminal<"_kw_constraint", >;
+export type KwNewline = Terminal<"_kw_newline", >;
+export type KwInClause = Terminal<"_kw_in_clause", >;
+export type KwBlock = Terminal<"_kw_block", >;
+export type KwIdentifier = Terminal<"_kw_identifier", >;
+export type KwTypeParameter = Terminal<"_kw_type_parameter", >;
+export type KwWildcardImport = Terminal<"_kw_wildcard_import", >;
+export type KwSimplePattern = Terminal<"_kw_simple_pattern", >;
+export type KwImportPrefix = Terminal<"_kw_import_prefix", >;
+export type KwStart = Terminal<"_kw_start", >;
+export type KwStop = Terminal<"_kw_stop", >;
+export type KwStep = Terminal<"_kw_step", >;
+export type KwStringStart = Terminal<"_kw_string_start", >;
+export type KwContent = Terminal<"_kw_content", >;
+export type KwStringEnd = Terminal<"_kw_string_end", >;
+export type KwExceptClauses = Terminal<"_kw_except_clauses", >;
+export type KwElseClause = Terminal<"_kw_else_clause", >;
+export type KwFinallyClause = Terminal<"_kw_finally_clause", >;
+export type KwRight = Terminal<"_kw_right", >;
 export type Newline = Terminal<"_newline", string>;
 export type Indent = Terminal<"_indent", string>;
 export type Dedent = Terminal<"_dedent", string>;
@@ -1410,8 +1456,6 @@ export interface NotOperatorTree extends TreeNode<'not_operator'> {}
 export interface BooleanOperatorTree extends TreeNode<'boolean_operator'> {}
 export interface BinaryOperatorTree extends TreeNode<'binary_operator'> {}
 export interface UnaryOperatorTree extends TreeNode<'unary_operator'> {}
-export interface NotInTree extends AnyTreeNode { readonly type: "_not_in"; }
-export interface IsNotTree extends AnyTreeNode { readonly type: "_is_not"; }
 export interface ComparisonOperatorTree extends TreeNode<'comparison_operator'> {}
 export interface LambdaTree extends TreeNode<'lambda'> {}
 export interface LambdaWithinForInClauseTree extends AnyTreeNode { readonly type: "lambda_within_for_in_clause"; }
@@ -1466,6 +1510,8 @@ export interface ImportPrefixTree extends TreeNode<'import_prefix'> {}
 export interface PassStatementTree extends AnyTreeNode { readonly type: "pass_statement"; }
 export interface BreakStatementTree extends AnyTreeNode { readonly type: "break_statement"; }
 export interface ContinueStatementTree extends AnyTreeNode { readonly type: "continue_statement"; }
+export interface NotInTree extends AnyTreeNode { readonly type: "_not_in"; }
+export interface IsNotTree extends AnyTreeNode { readonly type: "_is_not"; }
 export interface EscapeSequenceTree extends TreeNode<'escape_sequence'> {}
 export interface TypeConversionTree extends TreeNode<'type_conversion'> {}
 export interface IntegerTree extends TreeNode<'integer'> {}
@@ -1477,8 +1523,37 @@ export interface NoneTree extends AnyTreeNode { readonly type: "none"; }
 export interface CommentTree extends TreeNode<'comment'> {}
 export interface LineContinuationTree extends TreeNode<'line_continuation'> {}
 export interface KwAsyncTree extends AnyTreeNode { readonly type: "_kw_async"; }
-export interface KwNotTree extends AnyTreeNode { readonly type: "_kw_not"; }
-export interface KwLambdaTree extends AnyTreeNode { readonly type: "_kw_lambda"; }
+export interface KwExpressionTree extends AnyTreeNode { readonly type: "_kw_expression"; }
+export interface KwPrimaryExpressionTree extends AnyTreeNode { readonly type: "_kw_primary_expression"; }
+export interface KwDottedNameTree extends AnyTreeNode { readonly type: "_kw_dotted_name"; }
+export interface KwArgumentsTree extends AnyTreeNode { readonly type: "_kw_arguments"; }
+export interface KwLeftTree extends AnyTreeNode { readonly type: "_kw_left"; }
+export interface KwComparatorsTree extends AnyTreeNode { readonly type: "_kw_comparators"; }
+export interface KwRealTree extends AnyTreeNode { readonly type: "_kw_real"; }
+export interface KwImaginaryTree extends AnyTreeNode { readonly type: "_kw_imaginary"; }
+export interface KwBodyTree extends AnyTreeNode { readonly type: "_kw_body"; }
+export interface KwConditionTree extends AnyTreeNode { readonly type: "_kw_condition"; }
+export interface KwAlternativeTree extends AnyTreeNode { readonly type: "_kw_alternative"; }
+export interface KwBaseTypeTree extends AnyTreeNode { readonly type: "_kw_base_type"; }
+export interface KwConstraintTree extends AnyTreeNode { readonly type: "_kw_constraint"; }
+export interface KwNewlineTree extends AnyTreeNode { readonly type: "_kw_newline"; }
+export interface KwInClauseTree extends AnyTreeNode { readonly type: "_kw_in_clause"; }
+export interface KwBlockTree extends AnyTreeNode { readonly type: "_kw_block"; }
+export interface KwIdentifierTree extends AnyTreeNode { readonly type: "_kw_identifier"; }
+export interface KwTypeParameterTree extends AnyTreeNode { readonly type: "_kw_type_parameter"; }
+export interface KwWildcardImportTree extends AnyTreeNode { readonly type: "_kw_wildcard_import"; }
+export interface KwSimplePatternTree extends AnyTreeNode { readonly type: "_kw_simple_pattern"; }
+export interface KwImportPrefixTree extends AnyTreeNode { readonly type: "_kw_import_prefix"; }
+export interface KwStartTree extends AnyTreeNode { readonly type: "_kw_start"; }
+export interface KwStopTree extends AnyTreeNode { readonly type: "_kw_stop"; }
+export interface KwStepTree extends AnyTreeNode { readonly type: "_kw_step"; }
+export interface KwStringStartTree extends AnyTreeNode { readonly type: "_kw_string_start"; }
+export interface KwContentTree extends AnyTreeNode { readonly type: "_kw_content"; }
+export interface KwStringEndTree extends AnyTreeNode { readonly type: "_kw_string_end"; }
+export interface KwExceptClausesTree extends AnyTreeNode { readonly type: "_kw_except_clauses"; }
+export interface KwElseClauseTree extends AnyTreeNode { readonly type: "_kw_else_clause"; }
+export interface KwFinallyClauseTree extends AnyTreeNode { readonly type: "_kw_finally_clause"; }
+export interface KwRightTree extends AnyTreeNode { readonly type: "_kw_right"; }
 export interface NewlineTree extends AnyTreeNode { readonly type: "_newline"; }
 export interface IndentTree extends AnyTreeNode { readonly type: "_indent"; }
 export interface DedentTree extends AnyTreeNode { readonly type: "_dedent"; }
@@ -1519,10 +1594,9 @@ export interface NonlocalTree extends AnyTreeNode { readonly type: "nonlocal"; }
 export interface ExecTree extends AnyTreeNode { readonly type: "exec"; }
 export interface ClassTree extends AnyTreeNode { readonly type: "class"; }
 export interface AnonymousTree extends AnyTreeNode { readonly type: "_"; }
+export interface NotTree extends AnyTreeNode { readonly type: "not"; }
 export interface AndTree extends AnyTreeNode { readonly type: "and"; }
 export interface OrTree extends AnyTreeNode { readonly type: "or"; }
-export interface IsTree extends AnyTreeNode { readonly type: "is"; }
-export interface NotTree extends AnyTreeNode { readonly type: "not"; }
 export interface True2Tree extends AnyTreeNode { readonly type: "True"; }
 export interface False2Tree extends AnyTreeNode { readonly type: "False"; }
 export interface None2Tree extends AnyTreeNode { readonly type: "None"; }
@@ -1779,8 +1853,6 @@ export type PythonNode =
   | BooleanOperator
   | BinaryOperator
   | UnaryOperator
-  | NotIn
-  | IsNot
   | ComparisonOperator
   | Lambda
   | LambdaWithinForInClause
@@ -1903,8 +1975,6 @@ export interface KindMap {
   'boolean_operator': BooleanOperator;
   'binary_operator': BinaryOperator;
   'unary_operator': UnaryOperator;
-  '_not_in': NotIn;
-  '_is_not': IsNot;
   'comparison_operator': ComparisonOperator;
   'lambda': Lambda;
   'lambda_within_for_in_clause': LambdaWithinForInClause;
@@ -1956,6 +2026,8 @@ export interface KindMap {
   'pass_statement': PassStatement;
   'break_statement': BreakStatement;
   'continue_statement': ContinueStatement;
+  '_not_in': NotIn;
+  '_is_not': IsNot;
   'escape_sequence': EscapeSequence;
   'type_conversion': TypeConversion;
   'integer': Integer;
@@ -1967,8 +2039,37 @@ export interface KindMap {
   'comment': Comment;
   'line_continuation': LineContinuation;
   '_kw_async': KwAsync;
-  '_kw_not': KwNot;
-  '_kw_lambda': KwLambda;
+  '_kw_expression': KwExpression;
+  '_kw_primary_expression': KwPrimaryExpression;
+  '_kw_dotted_name': KwDottedName;
+  '_kw_arguments': KwArguments;
+  '_kw_left': KwLeft;
+  '_kw_comparators': KwComparators;
+  '_kw_real': KwReal;
+  '_kw_imaginary': KwImaginary;
+  '_kw_body': KwBody;
+  '_kw_condition': KwCondition;
+  '_kw_alternative': KwAlternative;
+  '_kw_base_type': KwBaseType;
+  '_kw_constraint': KwConstraint;
+  '_kw_newline': KwNewline;
+  '_kw_in_clause': KwInClause;
+  '_kw_block': KwBlock;
+  '_kw_identifier': KwIdentifier;
+  '_kw_type_parameter': KwTypeParameter;
+  '_kw_wildcard_import': KwWildcardImport;
+  '_kw_simple_pattern': KwSimplePattern;
+  '_kw_import_prefix': KwImportPrefix;
+  '_kw_start': KwStart;
+  '_kw_stop': KwStop;
+  '_kw_step': KwStep;
+  '_kw_string_start': KwStringStart;
+  '_kw_content': KwContent;
+  '_kw_string_end': KwStringEnd;
+  '_kw_except_clauses': KwExceptClauses;
+  '_kw_else_clause': KwElseClause;
+  '_kw_finally_clause': KwFinallyClause;
+  '_kw_right': KwRight;
   '_newline': Newline;
   '_indent': Indent;
   '_dedent': Dedent;
@@ -2060,8 +2161,6 @@ export interface NotOperatorNs extends NodeNs<NotOperator, LeafScalarMap, LeafSt
 export interface BooleanOperatorNs extends NodeNs<BooleanOperator, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface BinaryOperatorNs extends NodeNs<BinaryOperator, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface UnaryOperatorNs extends NodeNs<UnaryOperator, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface NotInNs extends NodeNs<NotIn, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface IsNotNs extends NodeNs<IsNot, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ComparisonOperatorNs extends NodeNs<ComparisonOperator, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface LambdaNs extends NodeNs<Lambda, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface LambdaWithinForInClauseNs extends NodeNs<LambdaWithinForInClause, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -2183,8 +2282,6 @@ export interface NamespaceMap {
   'boolean_operator': BooleanOperatorNs;
   'binary_operator': BinaryOperatorNs;
   'unary_operator': UnaryOperatorNs;
-  '_not_in': NotInNs;
-  '_is_not': IsNotNs;
   'comparison_operator': ComparisonOperatorNs;
   'lambda': LambdaNs;
   'lambda_within_for_in_clause': LambdaWithinForInClauseNs;
@@ -2744,20 +2841,6 @@ export namespace UnaryOperator {
   export type Loose = LooseFor<'unary_operator'>;
   export type Tree = TreeFor<'unary_operator'>;
   export type Kind = 'unary_operator';
-}
-export namespace NotIn {
-  export type Config = ConfigFor<'_not_in'>;
-  export type Fluent = FluentFor<'_not_in'>;
-  export type Loose = LooseFor<'_not_in'>;
-  export type Tree = TreeFor<'_not_in'>;
-  export type Kind = '_not_in';
-}
-export namespace IsNot {
-  export type Config = ConfigFor<'_is_not'>;
-  export type Fluent = FluentFor<'_is_not'>;
-  export type Loose = LooseFor<'_is_not'>;
-  export type Tree = TreeFor<'_is_not'>;
-  export type Kind = '_is_not';
 }
 export namespace ComparisonOperator {
   export type Config = ConfigFor<'comparison_operator'>;

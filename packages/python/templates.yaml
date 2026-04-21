@@ -4,14 +4,14 @@ grammarSha: ""
 rules:
   module: $$$CHILDREN
   import_statement:
-    template: $IMPORT $$$NAME
+    template: import $$$NAME
     joinBy: ","
     joinByTrailing: true
     joinByField:
       name: ","
   relative_import: $IMPORT_PREFIX $DOTTED_NAME
   future_import_statement:
-    template: $FROM __future__ import $$$NAME
+    template: from __future__ import $$$NAME
     joinBy: ","
     joinByTrailing: true
     joinByField:
@@ -31,26 +31,26 @@ rules:
       argument: ","
   chevron: ">>$EXPRESSION"
   assert_statement:
-    template: $ASSERT $$$CHILDREN
+    template: assert $$$CHILDREN
     joinBy: ","
   expression_statement:
     template: $$$CHILDREN
     joinBy: ","
     joinByTrailing: true
   named_expression: "$NAME:=$VALUE"
-  return_statement: $RETURN $$$CHILDREN
-  delete_statement: $DEL $$$CHILDREN
+  return_statement: return $$$CHILDREN
+  delete_statement: del $$$CHILDREN
   raise_statement:
-    template: $RAISE $$$CHILDREN $CAUSE_CLAUSE
+    template: raise $$$CHILDREN $CAUSE_CLAUSE
     cause_clause: from $CAUSE
   if_statement:
-    template: "$IF $CONDITION:\n  $CONSEQUENCE\n$$$ALTERNATIVE"
+    template: "if $CONDITION:\n  $CONSEQUENCE\n$$$ALTERNATIVE"
     joinByField:
       alternative: "\n"
-  elif_clause: "$ELIF $CONDITION:\n  $CONSEQUENCE\n"
-  else_clause: "$ELSE:\n  $BODY\n"
+  elif_clause: "elif $CONDITION:\n  $CONSEQUENCE\n"
+  else_clause: "else:\n  $BODY\n"
   match_statement:
-    template: "$MATCH $$$SUBJECT:$BODY"
+    template: "match $$$SUBJECT:$BODY"
     joinBy: ","
     joinByTrailing: true
     joinByField:
@@ -62,7 +62,7 @@ rules:
     joinByField:
       alternative: "\n"
   case_clause:
-    template: "$CASE $$$CHILDREN $GUARD_CLAUSE:\n  $CONSEQUENCE\n"
+    template: "case $$$CHILDREN $GUARD_CLAUSE:\n  $CONSEQUENCE\n"
     guard_clause: $GUARD
     joinBy: ","
     joinByTrailing: true
@@ -70,14 +70,14 @@ rules:
     template: "$ASYNC_CLAUSE for $LEFT in $RIGHT:\n  $BODY\n$ALTERNATIVE"
     async_clause: $ASYNC
   while_statement:
-    template: "$WHILE $CONDITION:\n  $BODY\n$ALTERNATIVE_CLAUSE"
+    template: "while $CONDITION:\n  $BODY\n$ALTERNATIVE_CLAUSE"
     alternative_clause: $ALTERNATIVE
   try_statement:
     template: "try:\n  $BODY\n$$$EXCEPT_CLAUSES $ELSE_CLAUSE $FINALLY_CLAUSE"
     joinByField:
       except_clauses: "\n"
   except_clause:
-    template: "$EXCEPT $$$VALUE $ALIAS_CLAUSE:$$$CHILDREN"
+    template: "except $$$VALUE $ALIAS_CLAUSE:$$$CHILDREN"
     alias_clause: as $ALIAS
     joinBy: ","
     joinByField:
@@ -106,17 +106,17 @@ rules:
   list_splat: "*$EXPRESSION"
   dictionary_splat: "**$EXPRESSION"
   global_statement:
-    template: $GLOBAL $$$CHILDREN
+    template: global $$$CHILDREN
     joinBy: ","
   nonlocal_statement:
-    template: $NONLOCAL $$$CHILDREN
+    template: nonlocal $$$CHILDREN
     joinBy: ","
   exec_statement:
     template: exec $CODE $IN_CLAUSE_CLAUSE
     in_clause_clause: in$$$IN_CLAUSE
     joinBy: ","
   type_alias_statement: $TYPE $LEFT=$RIGHT
-  class_definition: "$CLASS $NAME $TYPE_PARAMETERS $SUPERCLASSES:\n  $BODY\n"
+  class_definition: "class $NAME $TYPE_PARAMETERS $SUPERCLASSES:\n  $BODY\n"
   type_parameter:
     template: "[$$$CHILDREN]"
     joinBy: ","
@@ -169,13 +169,13 @@ rules:
   list_splat_pattern: "*$$$CHILDREN"
   dictionary_splat_pattern: "**$$$CHILDREN"
   as_pattern: $EXPRESSION as $ALIAS
-  not_operator: $NOT $ARGUMENT
+  not_operator: not $ARGUMENT
   boolean_operator: $LEFT $OPERATOR $RIGHT
   binary_operator: $LEFT $OPERATOR $RIGHT
   unary_operator: $OPERATOR $ARGUMENT
   comparison_operator: $LEFT $$$OPERATORS $$$CHILDREN
-  lambda: "$LAMBDA $PARAMETERS:$BODY"
-  lambda_within_for_in_clause: "$LAMBDA $PARAMETERS:$BODY"
+  lambda: "lambda $PARAMETERS:$BODY"
+  lambda_within_for_in_clause: "lambda $PARAMETERS:$BODY"
   assignment:
     variants:
       eq: $LEFT $$$CHILDREN
@@ -186,7 +186,7 @@ rules:
     template: $PATTERN,$$$CHILDREN
     joinBy: ","
     joinByTrailing: true
-  yield: $YIELD from $$$CHILDREN
+  yield: yield from $$$CHILDREN
   attribute: $OBJECT.$ATTRIBUTE
   subscript:
     template: "$VALUE[$$$SUBSCRIPT]"
@@ -200,7 +200,7 @@ rules:
   call: $FUNCTION $ARGUMENTS
   typed_parameter: "$$$CHILDREN:$TYPE"
   type: $$$CHILDREN
-  splat_type: $IDENTIFIER $$$CHILDREN
+  splat_type: $$$IDENTIFIER
   generic_type: $IDENTIFIER $TYPE_PARAMETER
   union_type: $LEFT|$RIGHT
   constrained_type: "$BASE_TYPE:$CONSTRAINT"

@@ -13,11 +13,11 @@
     "aliased_import": "config",
     "print_statement": "config",
     "chevron": "config",
-    "assert_statement": "config",
+    "assert_statement": "children",
     "expression_statement": "children",
     "named_expression": "config",
-    "return_statement": "config",
-    "delete_statement": "config",
+    "return_statement": "children",
+    "delete_statement": "children",
     "raise_statement": "config",
     "pass_statement": "text",
     "break_statement": "text",
@@ -41,8 +41,8 @@
     "lambda_parameters": "children",
     "list_splat": "config",
     "dictionary_splat": "config",
-    "global_statement": "config",
-    "nonlocal_statement": "config",
+    "global_statement": "children",
+    "nonlocal_statement": "children",
     "exec_statement": "config",
     "type_alias_statement": "config",
     "class_definition": "config",
@@ -78,7 +78,7 @@
     "assignment": "config",
     "augmented_assignment": "config",
     "pattern_list": "config",
-    "yield": "config",
+    "yield": "children",
     "attribute": "config",
     "subscript": "config",
     "slice": "config",
@@ -159,10 +159,9 @@
     "nonlocal": "text",
     "exec": "text",
     "class": "text",
+    "not": "text",
     "and": "text",
     "or": "text",
-    "is": "text",
-    "not": "text",
     "True": "text",
     "False": "text",
     "None": "text",
@@ -175,7 +174,6 @@
   },
   "factoryFields": {
     "import_statement": [
-      "import",
       "name"
     ],
     "relative_import": [
@@ -183,7 +181,6 @@
       "dotted_name"
     ],
     "future_import_statement": [
-      "from",
       "name"
     ],
     "import_from_statement": [
@@ -203,22 +200,18 @@
       "value"
     ],
     "if_statement": [
-      "if",
       "condition",
       "consequence",
       "alternative"
     ],
     "elif_clause": [
-      "elif",
       "condition",
       "consequence"
     ],
     "else_clause": [
-      "else",
       "body"
     ],
     "match_statement": [
-      "match",
       "subject",
       "body"
     ],
@@ -233,7 +226,6 @@
       "alternative"
     ],
     "while_statement": [
-      "while",
       "condition",
       "body",
       "alternative"
@@ -279,7 +271,6 @@
       "right"
     ],
     "class_definition": [
-      "class",
       "name",
       "type_parameters",
       "superclasses",
@@ -311,7 +302,6 @@
       "alias"
     ],
     "not_operator": [
-      "not",
       "argument"
     ],
     "boolean_operator": [
@@ -333,12 +323,10 @@
       "operators"
     ],
     "lambda": [
-      "lambda",
       "parameters",
       "body"
     ],
     "lambda_within_for_in_clause": [
-      "lambda",
       "parameters",
       "body"
     ],
@@ -363,6 +351,9 @@
     "call": [
       "function",
       "arguments"
+    ],
+    "splat_type": [
+      "identifier"
     ],
     "generic_type": [
       "identifier",

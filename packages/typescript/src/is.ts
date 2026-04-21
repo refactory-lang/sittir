@@ -191,15 +191,15 @@ export interface IsGuards {
     intersectionType<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'intersection_type' };
     functionType<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'function_type' };
     TypeIdentifier<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_type_identifier' };
+    ArrowFunctionParameter<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_arrow_function_parameter' };
+    ArrowFunction_CallSignature<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_arrow_function__call_signature' };
     ClassHeritageExtendsClause<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_class_heritage_extends_clause' };
     ClassHeritageImplementsClause<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_class_heritage_implements_clause' };
     ImportClauseNamespaceImport<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_import_clause_namespace_import' };
     ImportClauseNamedImports<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_import_clause_named_imports' };
     ImportClauseDefaultImport<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_import_clause_default_import' };
-    IndexSignatureMappedTypeClause<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_index_signature_mapped_type_clause' };
     ImportSpecifierName<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_import_specifier_name' };
-    ArrowFunctionParameter<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_arrow_function_parameter' };
-    ArrowFunction_CallSignature<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_arrow_function__call_signature' };
+    IndexSignatureMappedTypeClause<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_index_signature_mapped_type_clause' };
     importClauseNamespaceImport<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'import_clause_namespace_import' };
     importClauseNamedImports<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'import_clause_named_imports' };
     importClauseDefaultImport<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'import_clause_default_import' };
@@ -401,15 +401,15 @@ export interface AssertGuards {
     intersectionType(v: { readonly $type: string }): asserts v is { readonly $type: 'intersection_type' };
     functionType(v: { readonly $type: string }): asserts v is { readonly $type: 'function_type' };
     TypeIdentifier(v: { readonly $type: string }): asserts v is { readonly $type: '_type_identifier' };
+    ArrowFunctionParameter(v: { readonly $type: string }): asserts v is { readonly $type: '_arrow_function_parameter' };
+    ArrowFunction_CallSignature(v: { readonly $type: string }): asserts v is { readonly $type: '_arrow_function__call_signature' };
     ClassHeritageExtendsClause(v: { readonly $type: string }): asserts v is { readonly $type: '_class_heritage_extends_clause' };
     ClassHeritageImplementsClause(v: { readonly $type: string }): asserts v is { readonly $type: '_class_heritage_implements_clause' };
     ImportClauseNamespaceImport(v: { readonly $type: string }): asserts v is { readonly $type: '_import_clause_namespace_import' };
     ImportClauseNamedImports(v: { readonly $type: string }): asserts v is { readonly $type: '_import_clause_named_imports' };
     ImportClauseDefaultImport(v: { readonly $type: string }): asserts v is { readonly $type: '_import_clause_default_import' };
-    IndexSignatureMappedTypeClause(v: { readonly $type: string }): asserts v is { readonly $type: '_index_signature_mapped_type_clause' };
     ImportSpecifierName(v: { readonly $type: string }): asserts v is { readonly $type: '_import_specifier_name' };
-    ArrowFunctionParameter(v: { readonly $type: string }): asserts v is { readonly $type: '_arrow_function_parameter' };
-    ArrowFunction_CallSignature(v: { readonly $type: string }): asserts v is { readonly $type: '_arrow_function__call_signature' };
+    IndexSignatureMappedTypeClause(v: { readonly $type: string }): asserts v is { readonly $type: '_index_signature_mapped_type_clause' };
     importClauseNamespaceImport(v: { readonly $type: string }): asserts v is { readonly $type: 'import_clause_namespace_import' };
     importClauseNamedImports(v: { readonly $type: string }): asserts v is { readonly $type: 'import_clause_named_imports' };
     importClauseDefaultImport(v: { readonly $type: string }): asserts v is { readonly $type: 'import_clause_default_import' };
@@ -636,15 +636,15 @@ export const is = {
     intersectionType: _g("intersection_type"),
     functionType: _g("function_type"),
     TypeIdentifier: _g("_type_identifier"),
+    ArrowFunctionParameter: _g("_arrow_function_parameter"),
+    ArrowFunction_CallSignature: _g("_arrow_function__call_signature"),
     ClassHeritageExtendsClause: _g("_class_heritage_extends_clause"),
     ClassHeritageImplementsClause: _g("_class_heritage_implements_clause"),
     ImportClauseNamespaceImport: _g("_import_clause_namespace_import"),
     ImportClauseNamedImports: _g("_import_clause_named_imports"),
     ImportClauseDefaultImport: _g("_import_clause_default_import"),
-    IndexSignatureMappedTypeClause: _g("_index_signature_mapped_type_clause"),
     ImportSpecifierName: _g("_import_specifier_name"),
-    ArrowFunctionParameter: _g("_arrow_function_parameter"),
-    ArrowFunction_CallSignature: _g("_arrow_function__call_signature"),
+    IndexSignatureMappedTypeClause: _g("_index_signature_mapped_type_clause"),
     importClauseNamespaceImport: _g("import_clause_namespace_import"),
     importClauseNamedImports: _g("import_clause_named_imports"),
     importClauseDefaultImport: _g("import_clause_default_import"),
@@ -867,15 +867,15 @@ export const assert = {
     intersectionType: _makeAssert('intersectionType', is.intersectionType as _AnyGuard),
     functionType: _makeAssert('functionType', is.functionType as _AnyGuard),
     TypeIdentifier: _makeAssert('TypeIdentifier', is.TypeIdentifier as _AnyGuard),
+    ArrowFunctionParameter: _makeAssert('ArrowFunctionParameter', is.ArrowFunctionParameter as _AnyGuard),
+    ArrowFunction_CallSignature: _makeAssert('ArrowFunction_CallSignature', is.ArrowFunction_CallSignature as _AnyGuard),
     ClassHeritageExtendsClause: _makeAssert('ClassHeritageExtendsClause', is.ClassHeritageExtendsClause as _AnyGuard),
     ClassHeritageImplementsClause: _makeAssert('ClassHeritageImplementsClause', is.ClassHeritageImplementsClause as _AnyGuard),
     ImportClauseNamespaceImport: _makeAssert('ImportClauseNamespaceImport', is.ImportClauseNamespaceImport as _AnyGuard),
     ImportClauseNamedImports: _makeAssert('ImportClauseNamedImports', is.ImportClauseNamedImports as _AnyGuard),
     ImportClauseDefaultImport: _makeAssert('ImportClauseDefaultImport', is.ImportClauseDefaultImport as _AnyGuard),
-    IndexSignatureMappedTypeClause: _makeAssert('IndexSignatureMappedTypeClause', is.IndexSignatureMappedTypeClause as _AnyGuard),
     ImportSpecifierName: _makeAssert('ImportSpecifierName', is.ImportSpecifierName as _AnyGuard),
-    ArrowFunctionParameter: _makeAssert('ArrowFunctionParameter', is.ArrowFunctionParameter as _AnyGuard),
-    ArrowFunction_CallSignature: _makeAssert('ArrowFunction_CallSignature', is.ArrowFunction_CallSignature as _AnyGuard),
+    IndexSignatureMappedTypeClause: _makeAssert('IndexSignatureMappedTypeClause', is.IndexSignatureMappedTypeClause as _AnyGuard),
     importClauseNamespaceImport: _makeAssert('importClauseNamespaceImport', is.importClauseNamespaceImport as _AnyGuard),
     importClauseNamedImports: _makeAssert('importClauseNamedImports', is.importClauseNamedImports as _AnyGuard),
     importClauseDefaultImport: _makeAssert('importClauseDefaultImport', is.importClauseDefaultImport as _AnyGuard),

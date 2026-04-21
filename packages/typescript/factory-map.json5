@@ -35,9 +35,9 @@
     "with_statement": "config",
     "break_statement": "config",
     "continue_statement": "config",
-    "debugger_statement": "config",
-    "return_statement": "config",
-    "throw_statement": "config",
+    "debugger_statement": "children",
+    "return_statement": "children",
+    "throw_statement": "children",
     "labeled_statement": "config",
     "switch_body": "children",
     "switch_case": "config",
@@ -134,7 +134,7 @@
     "instantiation_expression": "config",
     "import_require_clause": "config",
     "extends_clause": "config",
-    "implements_clause": "config",
+    "implements_clause": "children",
     "ambient_declaration": "config",
     "abstract_class_declaration": "config",
     "module": "config",
@@ -157,7 +157,7 @@
     "type_annotation": "config",
     "_type_query_member_expression_in_type_annotation": "config",
     "_type_query_call_expression_in_type_annotation": "config",
-    "asserts": "config",
+    "asserts": "children",
     "asserts_annotation": "config",
     "tuple_parameter": "config",
     "optional_tuple_parameter": "config",
@@ -174,7 +174,7 @@
     "_type_query_member_expression": "config",
     "_type_query_subscript_expression": "config",
     "_type_query_call_expression": "config",
-    "type_query": "config",
+    "type_query": "children",
     "index_type_query": "config",
     "lookup_type": "config",
     "mapped_type_clause": "config",
@@ -229,6 +229,7 @@
     "else": "text",
     "if": "text",
     "switch": "text",
+    "for": "text",
     "await": "text",
     "while": "text",
     "do": "text",
@@ -249,25 +250,24 @@
     "instanceof": "text",
     "in": "text",
     "static": "text",
-    "readonly": "text",
-    "async": "text",
     "declare": "text",
+    "readonly": "text",
     "abstract": "text",
     "accessor": "text",
     "const": "text",
     "satisfies": "text",
     "require": "text",
+    "extends": "text",
     "implements": "text",
     "global": "text",
     "interface": "text",
     "enum": "text",
     "override": "text",
     "infer": "text",
-    "extends": "text",
     "is": "text",
     "typeof": "text",
     "keyof": "text",
-    "for": "text"
+    "async": "text"
   },
   "fieldAliasMap": {
     "break_statement.label": {
@@ -334,10 +334,10 @@
       "member_expression": "_type_query_member_expression",
       "subscript_expression": "_type_query_subscript_expression"
     },
-    "_index_signature_colon.name": {
+    "_arrow_function_parameter.parameter": {
       "identifier": "_reserved_identifier"
     },
-    "_arrow_function_parameter.parameter": {
+    "_index_signature_colon.name": {
       "identifier": "_reserved_identifier"
     }
   },
@@ -353,13 +353,15 @@
     "import_statement": [
       "import_clause",
       "from_clause",
-      "from",
       "source",
       "import_attribute",
       "semicolon"
     ],
     "namespace_import": [
       "identifier"
+    ],
+    "import_attribute": [
+      "object"
     ],
     "variable_declaration": [
       "declarators",
@@ -382,36 +384,30 @@
       "statement"
     ],
     "if_statement": [
-      "if",
       "condition",
       "consequence",
       "alternative"
     ],
     "switch_statement": [
-      "switch",
       "value",
       "body"
     ],
     "for_statement": [
-      "for",
       "initializer",
       "condition",
       "increment",
       "body"
     ],
     "while_statement": [
-      "while",
       "condition",
       "body"
     ],
     "try_statement": [
-      "try",
       "body",
       "handler",
       "finalizer"
     ],
     "with_statement": [
-      "with",
       "object",
       "body"
     ],
@@ -420,22 +416,18 @@
       "body"
     ],
     "switch_case": [
-      "case",
       "value",
       "body"
     ],
     "switch_default": [
-      "default",
       "body"
     ],
     "catch_clause": [
-      "catch",
       "parameter",
       "type",
       "body"
     ],
     "finally_clause": [
-      "finally",
       "body"
     ],
     "yield_expression": [
@@ -517,7 +509,6 @@
       "arguments"
     ],
     "new_expression": [
-      "new",
       "constructor",
       "type_arguments",
       "arguments"
@@ -628,7 +619,6 @@
       "source"
     ],
     "extends_clause": [
-      "extends",
       "value",
       "type_arguments"
     ],
@@ -643,12 +633,10 @@
       "body"
     ],
     "module": [
-      "module",
       "name",
       "body"
     ],
     "internal_module": [
-      "namespace",
       "name",
       "body"
     ],
@@ -668,7 +656,6 @@
       "body"
     ],
     "extends_type_clause": [
-      "extends",
       "type"
     ],
     "enum_declaration": [
@@ -702,6 +689,9 @@
     "_type_query_call_expression_in_type_annotation": [
       "function",
       "arguments"
+    ],
+    "asserts_annotation": [
+      "asserts"
     ],
     "tuple_parameter": [
       "name",
@@ -740,6 +730,9 @@
     "type_predicate": [
       "name",
       "type"
+    ],
+    "type_predicate_annotation": [
+      "type_predicate"
     ],
     "_type_query_member_expression": [
       "object",
@@ -803,7 +796,6 @@
       "primary_type"
     ],
     "readonly_type": [
-      "readonly",
       "type"
     ],
     "union_type": [

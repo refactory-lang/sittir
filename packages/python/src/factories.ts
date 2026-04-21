@@ -56,7 +56,6 @@ export function module(...children: T.Statement[]) {
 
 export function importStatement(config: T.ImportStatement.Config) {
   const fields = {
-    import: config?.import,
     name: config?.name,
   };
   return {
@@ -64,7 +63,6 @@ export function importStatement(config: T.ImportStatement.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    import(value?: "import") { return _fs(config, importStatement, 'import', value, fields.import); },
     name(...values: NonEmptyArray<T.DottedName | T.AliasedImport>) { return _fsm(config, importStatement, 'name', values, fields.name); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -111,7 +109,6 @@ export function relativeImport(config: T.RelativeImport.Config) {
 
 export function futureImportStatement(config: T.FutureImportStatement.Config) {
   const fields = {
-    from: config?.from,
     name: config?.name,
   };
   return {
@@ -119,7 +116,6 @@ export function futureImportStatement(config: T.FutureImportStatement.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    from(value?: "from") { return _fs(config, futureImportStatement, 'from', value, fields.from); },
     name(...values: NonEmptyArray<T.DottedName | T.AliasedImport>) { return _fsm(config, futureImportStatement, 'name', values, fields.name); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -216,23 +212,13 @@ export function chevron(config: T.Chevron.Config) {
   };
 }
 
-export function assertStatement(config: T.AssertStatement.Config) {
-  const fields = {
-    assert: config?.assert,
-  };
-  const children = config?.children ?? [];
+export function assertStatement(...children: T.Expression[]) {
+  _assertNonEmpty(children, 'assert_statement.children');
   return {
     $type: 'assert_statement' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $fields: fields,
     $children: children,
-    assert(value?: "assert") { return _fs(config, assertStatement, 'assert', value, fields.assert); },
-    getChildren() { return children; },
-    setChildren(...items: T.Expression[]) {
-      _assertNonEmpty(items, 'assert_statement.children');
-      return assertStatement({ ...config, children: items });
-    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -279,20 +265,13 @@ export function namedExpression(config: T.NamedExpression.Config) {
   };
 }
 
-export function returnStatement(config: T.ReturnStatement.Config) {
-  const fields = {
-    return: config?.return,
-  };
-  const children = config?.children ?? [];
+export function returnStatement(child?: T.Expressions) {
+  const children = child != null ? [child] : [];
   return {
     $type: 'return_statement' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $fields: fields,
     $children: children,
-    return(value?: "return") { return _fs(config, returnStatement, 'return', value, fields.return); },
-    getChild() { return children[0]; },
-    setChild(child: T.Expressions) { return returnStatement({ ...config, children: [child] }); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -302,20 +281,13 @@ export function returnStatement(config: T.ReturnStatement.Config) {
   };
 }
 
-export function deleteStatement(config: T.DeleteStatement.Config) {
-  const fields = {
-    del: config?.del,
-  };
-  const children = config?.children ?? [];
+export function deleteStatement(child: T.Expressions) {
+  const children = [child];
   return {
     $type: 'delete_statement' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $fields: fields,
     $children: children,
-    del(value?: "del") { return _fs(config, deleteStatement, 'del', value, fields.del); },
-    getChild() { return children[0]; },
-    setChild(child: T.Expressions) { return deleteStatement({ ...config, children: [child] }); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -325,9 +297,8 @@ export function deleteStatement(config: T.DeleteStatement.Config) {
   };
 }
 
-export function raiseStatement(config: T.RaiseStatement.Config) {
+export function raiseStatement(config?: T.RaiseStatement.Config) {
   const fields = {
-    raise: config?.raise,
     cause: config?.cause,
   };
   const children = config?.children ?? [];
@@ -337,7 +308,6 @@ export function raiseStatement(config: T.RaiseStatement.Config) {
     $named: true as const,
     $fields: fields,
     $children: children,
-    raise(value?: "raise") { return _fs(config, raiseStatement, 'raise', value, fields.raise); },
     cause(value?: T.Expression | undefined) { return _fs(config, raiseStatement, 'cause', value, fields.cause); },
     getChild() { return children[0]; },
     setChild(child: T.Expressions) { return raiseStatement({ ...config, children: [child] }); },
@@ -388,7 +358,6 @@ export function continueStatement() {
 
 export function ifStatement(config: T.IfStatement.Config) {
   const fields = {
-    if: config?.if,
     condition: config?.condition,
     consequence: config?.consequence,
     alternative: config?.alternative,
@@ -398,7 +367,6 @@ export function ifStatement(config: T.IfStatement.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    if(value?: "if") { return _fs(config, ifStatement, 'if', value, fields.if); },
     condition(value?: T.Expression) { return _fs(config, ifStatement, 'condition', value, fields.condition); },
     consequence(value?: T.Suite) { return _fs(config, ifStatement, 'consequence', value, fields.consequence); },
     alternative(...values: (T.ElifClause | T.ElseClause)[]) { return _fsm(config, ifStatement, 'alternative', values, fields.alternative); },
@@ -413,7 +381,6 @@ export function ifStatement(config: T.IfStatement.Config) {
 
 export function elifClause(config: T.ElifClause.Config) {
   const fields = {
-    elif: config?.elif,
     condition: config?.condition,
     consequence: config?.consequence,
   };
@@ -422,7 +389,6 @@ export function elifClause(config: T.ElifClause.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    elif(value?: "elif") { return _fs(config, elifClause, 'elif', value, fields.elif); },
     condition(value?: T.Expression) { return _fs(config, elifClause, 'condition', value, fields.condition); },
     consequence(value?: T.Suite) { return _fs(config, elifClause, 'consequence', value, fields.consequence); },
     render() { return render(this); },
@@ -436,7 +402,6 @@ export function elifClause(config: T.ElifClause.Config) {
 
 export function elseClause(config: T.ElseClause.Config) {
   const fields = {
-    else: config?.else,
     body: config?.body,
   };
   return {
@@ -444,7 +409,6 @@ export function elseClause(config: T.ElseClause.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    else(value?: "else") { return _fs(config, elseClause, 'else', value, fields.else); },
     body(value?: T.Suite) { return _fs(config, elseClause, 'body', value, fields.body); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -457,7 +421,6 @@ export function elseClause(config: T.ElseClause.Config) {
 
 export function matchStatement(config: T.MatchStatement.Config) {
   const fields = {
-    match: config?.match,
     subject: config?.subject,
     body: config?.body,
   };
@@ -466,7 +429,6 @@ export function matchStatement(config: T.MatchStatement.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    match(value?: "match") { return _fs(config, matchStatement, 'match', value, fields.match); },
     subject(...values: NonEmptyArray<T.Expression>) { return _fsm(config, matchStatement, 'subject', values, fields.subject); },
     body(value?: T.MatchBlock) { return _fs(config, matchStatement, 'body', value, fields.body); },
     render() { return render(this); },
@@ -518,7 +480,6 @@ export function matchBlockForm1(config?: T.MatchBlockForm1Config) {
 
 export function caseClause(config: T.CaseClause.Config) {
   const fields = {
-    case: config?.case,
     guard: config?.guard,
     consequence: config?.consequence,
   };
@@ -529,7 +490,6 @@ export function caseClause(config: T.CaseClause.Config) {
     $named: true as const,
     $fields: fields,
     $children: children,
-    case(value?: "case") { return _fs(config, caseClause, 'case', value, fields.case); },
     guard(value?: T.IfClause | undefined) { return _fs(config, caseClause, 'guard', value, fields.guard); },
     consequence(value?: T.Suite) { return _fs(config, caseClause, 'consequence', value, fields.consequence); },
     getChildren() { return children; },
@@ -575,7 +535,6 @@ export function forStatement(config: T.ForStatement.Config) {
 
 export function whileStatement(config: T.WhileStatement.Config) {
   const fields = {
-    while: config?.while,
     condition: config?.condition,
     body: config?.body,
     alternative: config?.alternative,
@@ -585,7 +544,6 @@ export function whileStatement(config: T.WhileStatement.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    while(value?: "while") { return _fs(config, whileStatement, 'while', value, fields.while); },
     condition(value?: T.Expression) { return _fs(config, whileStatement, 'condition', value, fields.condition); },
     body(value?: T.Suite) { return _fs(config, whileStatement, 'body', value, fields.body); },
     alternative(value?: T.ElseClause | undefined) { return _fs(config, whileStatement, 'alternative', value, fields.alternative); },
@@ -625,7 +583,6 @@ export function tryStatement(config: T.TryStatement.Config) {
 
 export function exceptClause(config: T.ExceptClause.Config) {
   const fields = {
-    except: config?.except,
     value: config?.value,
     alias: config?.alias,
   };
@@ -636,7 +593,6 @@ export function exceptClause(config: T.ExceptClause.Config) {
     $named: true as const,
     $fields: fields,
     $children: children,
-    except(value?: "except") { return _fs(config, exceptClause, 'except', value, fields.except); },
     value(value?: T.Expression | undefined) { return _fs(config, exceptClause, 'value', value, fields.value); },
     alias(value?: T.Expression | undefined) { return _fs(config, exceptClause, 'alias', value, fields.alias); },
     getChild() { return children[0]; },
@@ -825,23 +781,13 @@ export function dictionarySplat(config: T.DictionarySplat.Config) {
   };
 }
 
-export function globalStatement(config: T.GlobalStatement.Config) {
-  const fields = {
-    global: config?.global,
-  };
-  const children = config?.children ?? [];
+export function globalStatement(...children: T.Identifier[]) {
+  _assertNonEmpty(children, 'global_statement.children');
   return {
     $type: 'global_statement' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $fields: fields,
     $children: children,
-    global(value?: "global") { return _fs(config, globalStatement, 'global', value, fields.global); },
-    getChildren() { return children; },
-    setChildren(...items: T.Identifier[]) {
-      _assertNonEmpty(items, 'global_statement.children');
-      return globalStatement({ ...config, children: items });
-    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -851,23 +797,13 @@ export function globalStatement(config: T.GlobalStatement.Config) {
   };
 }
 
-export function nonlocalStatement(config: T.NonlocalStatement.Config) {
-  const fields = {
-    nonlocal: config?.nonlocal,
-  };
-  const children = config?.children ?? [];
+export function nonlocalStatement(...children: T.Identifier[]) {
+  _assertNonEmpty(children, 'nonlocal_statement.children');
   return {
     $type: 'nonlocal_statement' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $fields: fields,
     $children: children,
-    nonlocal(value?: "nonlocal") { return _fs(config, nonlocalStatement, 'nonlocal', value, fields.nonlocal); },
-    getChildren() { return children; },
-    setChildren(...items: T.Identifier[]) {
-      _assertNonEmpty(items, 'nonlocal_statement.children');
-      return nonlocalStatement({ ...config, children: items });
-    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -923,7 +859,6 @@ export function typeAliasStatement(config: T.TypeAliasStatement.Config) {
 
 export function classDefinition(config: T.ClassDefinition.Config) {
   const fields = {
-    class: config?.class,
     name: config?.name,
     type_parameters: config?.typeParameters,
     superclasses: config?.superclasses,
@@ -934,7 +869,6 @@ export function classDefinition(config: T.ClassDefinition.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    class(value?: "class") { return _fs(config, classDefinition, 'class', value, fields.class); },
     name(value?: T.Identifier) { return _fs(config, classDefinition, 'name', value, fields.name); },
     typeParameters(value?: T.TypeParameter | undefined) { return _fs(config, classDefinition, 'typeParameters', value, fields.type_parameters); },
     superclasses(value?: T.ArgumentList | undefined) { return _fs(config, classDefinition, 'superclasses', value, fields.superclasses); },
@@ -1371,7 +1305,6 @@ export function asPattern(config: T.AsPattern.Config) {
 
 export function notOperator(config: T.NotOperator.Config) {
   const fields = {
-    not: config?.not,
     argument: config?.argument,
   };
   return {
@@ -1379,7 +1312,6 @@ export function notOperator(config: T.NotOperator.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    not(value?: T.KwNot) { return _fs(config, notOperator, 'not', value, fields.not); },
     argument(value?: T.Expression) { return _fs(config, notOperator, 'argument', value, fields.argument); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -1468,7 +1400,7 @@ export function comparisonOperator(config: T.ComparisonOperator.Config) {
     $named: true as const,
     $fields: fields,
     left(value?: T.PrimaryExpression) { return _fs(config, comparisonOperator, 'left', value, fields.left); },
-    operators(...values: NonEmptyArray<T.KwNot>) { return _fsm(config, comparisonOperator, 'operators', values, fields.operators); },
+    operators(...values: NonEmptyArray<T.NotIn | T.IsNot>) { return _fsm(config, comparisonOperator, 'operators', values, fields.operators); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1480,7 +1412,6 @@ export function comparisonOperator(config: T.ComparisonOperator.Config) {
 
 export function lambda(config: T.Lambda.Config) {
   const fields = {
-    lambda: config?.lambda,
     parameters: config?.parameters,
     body: config?.body,
   };
@@ -1489,7 +1420,6 @@ export function lambda(config: T.Lambda.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    lambda(value?: T.KwLambda) { return _fs(config, lambda, 'lambda', value, fields.lambda); },
     parameters(value?: T.LambdaParameters | undefined) { return _fs(config, lambda, 'parameters', value, fields.parameters); },
     body(value?: T.Expression) { return _fs(config, lambda, 'body', value, fields.body); },
     render() { return render(this); },
@@ -1503,7 +1433,6 @@ export function lambda(config: T.Lambda.Config) {
 
 export function lambdaWithinForInClause(config: T.LambdaWithinForInClause.Config) {
   const fields = {
-    lambda: config?.lambda,
     parameters: config?.parameters,
     body: config?.body,
   };
@@ -1512,7 +1441,6 @@ export function lambdaWithinForInClause(config: T.LambdaWithinForInClause.Config
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    lambda(value?: T.KwLambda) { return _fs(config, lambdaWithinForInClause, 'lambda', value, fields.lambda); },
     parameters(value?: T.LambdaParameters | undefined) { return _fs(config, lambdaWithinForInClause, 'parameters', value, fields.parameters); },
     body(value?: T.ExpressionWithinForInClause) { return _fs(config, lambdaWithinForInClause, 'body', value, fields.body); },
     render() { return render(this); },
@@ -1649,20 +1577,13 @@ export function patternList(config: T.PatternList.Config) {
   };
 }
 
-export function yield_(config: T.Yield.Config) {
-  const fields = {
-    yield: config?.yield,
-  };
-  const children = config?.children ?? [];
+export function yield_(child?: (T.Expression | T.Expressions)) {
+  const children = child != null ? [child] : [];
   return {
     $type: 'yield' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $fields: fields,
     $children: children,
-    yield(value?: "yield") { return _fs(config, yield_, 'yield', value, fields.yield); },
-    getChild() { return children[0]; },
-    setChild(child: (T.Expression | T.Expressions)) { return yield_({ ...config, children: [child] }); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1801,16 +1722,12 @@ export function splatType(config: T.SplatType.Config) {
   const fields = {
     identifier: config?.identifier,
   };
-  const children = config?.children ?? [];
   return {
     $type: 'splat_type' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    $children: children,
     identifier(value?: "*" | "**") { return _fs(config, splatType, 'identifier', value, fields.identifier); },
-    getChild() { return children[0]; },
-    setChild(child: T.Identifier) { return splatType({ ...config, children: [child] }); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);

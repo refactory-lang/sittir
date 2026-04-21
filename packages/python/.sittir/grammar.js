@@ -1373,6 +1373,16 @@ var overrides_default = grammar(enrich(import_grammar.default), wire({
       2: field("string_end")
       // string_end [struct=2]
     },
+    // type_alias_statement: wrap base position 0 (bare 'type' literal)
+    // as field('type') so $fields.type carries the keyword. Without
+    // this override, enrich's bare-leading-keyword pass (globally off
+    // — rust corpus regresses with it on) leaves the literal
+    // unwrapped, and $fields only has left/right. The spec-008-US7
+    // regression test (python type_alias_statement collision)
+    // assumes the wrapped form.
+    type_alias_statement: {
+      0: field("type")
+    },
     // try_statement: 3 field(s)
     try_statement: {
       3: field("except_clauses"),
