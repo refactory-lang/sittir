@@ -28,6 +28,7 @@ import { emitConsts } from '../emitters/consts.ts'
 import { emitIndex } from '../emitters/index-file.ts'
 import { emitSuggested } from '../emitters/suggested.ts'
 import { emitIs } from '../emitters/is.ts'
+import { emitNodeModel } from '../emitters/node-model.ts'
 
 import type { NodeMap } from './types.ts'
 
@@ -153,7 +154,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
         tests: emitTests({ grammar: cfg.grammar, nodeMap }),
         typeTests: emitTypeTests({ nodeMap }),
         config: emitConfig({ grammar: cfg.grammar }),
-        nodeModel: JSON.stringify({ name: nodeMap.name, nodeCount: nodeMap.nodes.size }, null, 2),
+        nodeModel: emitNodeModel({ grammar: cfg.grammar, nodeMap }),
         suggested: emitSuggested({ grammar: cfg.grammar, nodeMap, roundTripFailures: cfg.roundTripFailures }),
         is: emitIs({ grammar: cfg.grammar, nodeMap }),
         nodeMap,
