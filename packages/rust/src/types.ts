@@ -21,7 +21,9 @@ export type LeafStringMap = {
   crate: "crate";
   _kw_ref: "ref";
   _kw_unsafe: "unsafe";
+  _kw_static: "static";
   _kw_async: "async";
+  _kw_move: "move";
   _kw_default: "default";
   _kw_const: "const";
   _wildcard_pattern: "_";
@@ -65,6 +67,7 @@ export type LeafStringMap = {
   yield: "yield";
   try: "try";
   ref: "ref";
+  move: "move";
 };
 
 export const enum SyntaxKind {
@@ -276,7 +279,9 @@ export const enum SyntaxKind {
   Metavariable = 'metavariable',
   KwRef = '_kw_ref',
   KwUnsafe = '_kw_unsafe',
+  KwStatic = '_kw_static',
   KwAsync = '_kw_async',
+  KwMove = '_kw_move',
   KwDefault = '_kw_default',
   KwConst = '_kw_const',
   _WildcardPattern = '_wildcard_pattern',
@@ -332,6 +337,7 @@ export const enum SyntaxKind {
   Yield = 'yield',
   Try = 'try',
   Ref = 'ref',
+  Move = 'move',
 }
 
 // Scoped enums per supertype
@@ -1649,9 +1655,9 @@ export interface ConstBlock {
 export interface ClosureExpressionUFormBlock {
   readonly $type: 'closure_expression';
   readonly $fields: {
-    readonly static?: KwStatic;
+    readonly static?: "static";
     readonly async?: "async";
-    readonly move?: KwMove;
+    readonly move?: "move";
     readonly parameters: ClosureParameters;
   };
   readonly $children: readonly [ClosureExpressionBlock];
@@ -1660,9 +1666,9 @@ export interface ClosureExpressionUFormBlock {
 export interface ClosureExpressionUFormExpr {
   readonly $type: 'closure_expression';
   readonly $fields: {
-    readonly static?: KwStatic;
+    readonly static?: "static";
     readonly async?: "async";
-    readonly move?: KwMove;
+    readonly move?: "move";
     readonly parameters: ClosureParameters;
   };
   readonly $children: readonly [ClosureExpressionExpr];
@@ -1727,7 +1733,7 @@ export interface UnsafeBlock {
 export interface AsyncBlock {
   readonly $type: 'async_block';
   readonly $fields: {
-    readonly move?: KwMove;
+    readonly move?: "move";
     readonly block: Block;
   };
 }
@@ -1735,7 +1741,7 @@ export interface AsyncBlock {
 export interface GenBlock {
   readonly $type: 'gen_block';
   readonly $fields: {
-    readonly move?: KwMove;
+    readonly move?: "move";
     readonly block: Block;
   };
 }
@@ -2225,7 +2231,9 @@ export type Crate = Terminal<"crate", "crate">;
 export type Metavariable = Terminal<"metavariable", string>;
 export type KwRef = Terminal<"_kw_ref", "ref">;
 export type KwUnsafe = Terminal<"_kw_unsafe", "unsafe">;
+export type KwStatic = Terminal<"_kw_static", "static">;
 export type KwAsync = Terminal<"_kw_async", "async">;
+export type KwMove = Terminal<"_kw_move", "move">;
 export type KwDefault = Terminal<"_kw_default", "default">;
 export type KwConst = Terminal<"_kw_const", "const">;
 export type _WildcardPattern = Terminal<"_wildcard_pattern", "_">;
@@ -2244,8 +2252,6 @@ export type TypeIdentifier = Terminal<"type_identifier", string>;
 export type FieldIdentifier = Terminal<"field_identifier", string>;
 export type ShorthandFieldIdentifier = Terminal<"shorthand_field_identifier", string>;
 
-export type KwStatic = Terminal<"_kw_static", string>;
-export type KwMove = Terminal<"_kw_move", string>;
 export type DocComment = Terminal<"doc_comment", string>;
 
 // Polymorph form Config/Tree aliases (forms have no namespace sugar)
@@ -2511,7 +2517,9 @@ export interface CrateTree extends AnyTreeNode { readonly type: "crate"; }
 export interface MetavariableTree extends TreeNode<'metavariable'> {}
 export interface KwRefTree extends AnyTreeNode { readonly type: "_kw_ref"; }
 export interface KwUnsafeTree extends AnyTreeNode { readonly type: "_kw_unsafe"; }
+export interface KwStaticTree extends AnyTreeNode { readonly type: "_kw_static"; }
 export interface KwAsyncTree extends AnyTreeNode { readonly type: "_kw_async"; }
+export interface KwMoveTree extends AnyTreeNode { readonly type: "_kw_move"; }
 export interface KwDefaultTree extends AnyTreeNode { readonly type: "_kw_default"; }
 export interface KwConstTree extends AnyTreeNode { readonly type: "_kw_const"; }
 export interface _WildcardPatternTree extends AnyTreeNode { readonly type: "_wildcard_pattern"; }
@@ -2567,6 +2575,7 @@ export interface RawTree extends AnyTreeNode { readonly type: "raw"; }
 export interface YieldTree extends AnyTreeNode { readonly type: "yield"; }
 export interface TryTree extends AnyTreeNode { readonly type: "try"; }
 export interface RefTree extends AnyTreeNode { readonly type: "ref"; }
+export interface MoveTree extends AnyTreeNode { readonly type: "move"; }
 
 // Supertype unions
 export type Statement =
@@ -3381,7 +3390,9 @@ export interface KindMap {
   'metavariable': Metavariable;
   '_kw_ref': KwRef;
   '_kw_unsafe': KwUnsafe;
+  '_kw_static': KwStatic;
   '_kw_async': KwAsync;
+  '_kw_move': KwMove;
   '_kw_default': KwDefault;
   '_kw_const': KwConst;
   '_wildcard_pattern': _WildcardPattern;

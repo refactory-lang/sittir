@@ -453,16 +453,36 @@ function registerHiddenRuleForPlaceholder(
 }
 
 /**
- * Build the deferred-content placeholder for a single hidden rule. The
- * returned fn is invoked by tree-sitter (or sittir's grammarFn) during
- * rule iteration; it returns the captured body from `context.deposits`
- * or a safe `blank()` fallback when the deposit hasn't happened yet
- * (e.g. during a unit test that doesn't drive the parent rule).
+ * Build the deferred-content placeholder for a single hidden rule.
+ *
+ * @remarks
+ * The returned fn is invoked by tree-sitter (or sittir's grammarFn)
+ * during rule iteration. Resolution order — first match wins:
+ *
+ *   1. **Wire deposit** — content captured at `transform()` /
+ *      `variant()` / `alias()` resolve time via
+ *      `wireRegisterSyntheticRule`. This is the authoritative source
+ *      when a placeholder actually synthesizes.
+ *
+ *   2. **Pre-existing base rule (`previous`)** — when the hidden name
+ *      already exists in the base grammar (e.g. rust's `_kw_move`
+ *      registered by `dsl/enrich.ts` as `STRING('move')`, then
+ *      referenced via `$._kw_move` inside async_block / gen_block /
+ *      closure_expression). The deferred fn receives the pre-existing
+ *      base rule as its second argument — returning it preserves the
+ *      base body when no deposit overrides it. Without this fallback,
+ *      the deferred fn would overwrite enrich's good content with
+ *      `blank()`, breaking every rule that uses the hidden symbol.
+ *
+ *   3. **`blank()` fallback** — when neither source has content.
+ *      Normally consumed by `evaluate`'s `prunePlaceholderOrphans` so
+ *      BLANK orphans don't pollute the grammar.
  */
 function makeDeferredContentFn(context: WireContext, hiddenName: string): RuleFn {
-    return function deferredHiddenRule(): unknown {
+    return function deferredHiddenRule(this: unknown, _$: unknown, previous?: unknown): unknown {
         const body = context.deposits.get(hiddenName)
         if (body) return body
+        if (previous !== undefined) return previous
         const blankFn = (globalThis as { blank?: () => unknown }).blank
         return blankFn ? blankFn() : { type: 'BLANK' }
     }

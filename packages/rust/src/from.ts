@@ -1471,18 +1471,18 @@ export function closureExpressionFrom(input?: T.ClosureExpression | T.ClosureExp
 
 export function closureExpressionUFormBlockFrom(input: T.ClosureExpressionUFormBlockConfig) {
   return F.closureExpressionUFormBlock({
-    static: _resolveOneBranch<NonNullable<T.ClosureExpressionUFormBlockConfig['static']>>(input.static, "_kw_static"),
+    static: _resolveOneLeaf<NonNullable<T.ClosureExpressionUFormBlockConfig['static']>>(input.static, "_kw_static"),
     async: _resolveOneLeaf<NonNullable<T.ClosureExpressionUFormBlockConfig['async']>>(input.async, "_kw_async"),
-    move: _resolveOneBranch<NonNullable<T.ClosureExpressionUFormBlockConfig['move']>>(input.move, "_kw_move"),
+    move: _resolveOneLeaf<NonNullable<T.ClosureExpressionUFormBlockConfig['move']>>(input.move, "_kw_move"),
     parameters: _resolveOneBranch<NonNullable<T.ClosureExpressionUFormBlockConfig['parameters']>>(input.parameters, "closure_parameters"),
   });
 }
 
 export function closureExpressionUFormExprFrom(input: T.ClosureExpressionUFormExprConfig) {
   return F.closureExpressionUFormExpr({
-    static: _resolveOneBranch<NonNullable<T.ClosureExpressionUFormExprConfig['static']>>(input.static, "_kw_static"),
+    static: _resolveOneLeaf<NonNullable<T.ClosureExpressionUFormExprConfig['static']>>(input.static, "_kw_static"),
     async: _resolveOneLeaf<NonNullable<T.ClosureExpressionUFormExprConfig['async']>>(input.async, "_kw_async"),
-    move: _resolveOneBranch<NonNullable<T.ClosureExpressionUFormExprConfig['move']>>(input.move, "_kw_move"),
+    move: _resolveOneLeaf<NonNullable<T.ClosureExpressionUFormExprConfig['move']>>(input.move, "_kw_move"),
     parameters: _resolveOneBranch<NonNullable<T.ClosureExpressionUFormExprConfig['parameters']>>(input.parameters, "closure_parameters"),
   });
 }
@@ -1552,7 +1552,7 @@ export function unsafeBlockFrom(input: T.UnsafeBlock | T.UnsafeBlock.Loose): Ret
 export function asyncBlockFrom(input: T.AsyncBlock | T.AsyncBlock.Loose): ReturnType<typeof F.asyncBlock> {
   if (isNodeData(input)) return input as ReturnType<typeof F.asyncBlock>;
   return F.asyncBlock({
-    move: _resolveOneBranch<NonNullable<T.AsyncBlock.Config['move']>>((input as T.AsyncBlock.Loose).move, "_kw_move"),
+    move: _resolveOneLeaf<NonNullable<T.AsyncBlock.Config['move']>>((input as T.AsyncBlock.Loose).move, "_kw_move"),
     block: _resolveOneBranch<NonNullable<T.AsyncBlock.Config['block']>>((input as T.AsyncBlock.Loose).block, "block"),
   });
 }
@@ -1560,7 +1560,7 @@ export function asyncBlockFrom(input: T.AsyncBlock | T.AsyncBlock.Loose): Return
 export function genBlockFrom(input: T.GenBlock | T.GenBlock.Loose): ReturnType<typeof F.genBlock> {
   if (isNodeData(input)) return input as ReturnType<typeof F.genBlock>;
   return F.genBlock({
-    move: _resolveOneBranch<NonNullable<T.GenBlock.Config['move']>>((input as T.GenBlock.Loose).move, "_kw_move"),
+    move: _resolveOneLeaf<NonNullable<T.GenBlock.Config['move']>>((input as T.GenBlock.Loose).move, "_kw_move"),
     block: _resolveOneBranch<NonNullable<T.GenBlock.Config['block']>>((input as T.GenBlock.Loose).block, "block"),
   });
 }

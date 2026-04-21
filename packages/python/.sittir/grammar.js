@@ -488,9 +488,10 @@ function registerHiddenRuleForPlaceholder(value, parentKind, rules, context) {
   }
 }
 function makeDeferredContentFn(context, hiddenName) {
-  return function deferredHiddenRule() {
+  return function deferredHiddenRule(_$, previous) {
     const body = context.deposits.get(hiddenName);
     if (body) return body;
+    if (previous !== void 0) return previous;
     const blankFn = globalThis.blank;
     return blankFn ? blankFn() : { type: "BLANK" };
   };
