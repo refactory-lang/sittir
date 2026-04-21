@@ -23,6 +23,7 @@ import {
 } from '../compiler/node-map.ts'
 import { loadRawEntries } from '../validate/node-types-loader.ts'
 import { isAutoStampField, isRequired, isMultiple, isNonEmpty, slotKindNames, slotLiteralValues, resolveHiddenKeywordLiteral, resolveHoistedForm, isAutoStampSlot, referencedKinds, fieldTypeComponents, isValidIdent } from './shared.ts'
+import { refineFormTypeName, collectRefineKindInfos, type RefineKindInfo } from './refine-emit.ts'
 
 type StructuralNode = AssembledBranch | AssembledContainer | AssembledPolymorph
 
@@ -150,6 +151,15 @@ export function emitTypes(config: EmitTypesConfig): string {
     // Tree interfaces
     const treeEmitted = emitTreeInterfaceDeclarations(lines, nodeKinds, leafKinds, nodeMap, grammarKeys, polymorphTypeNames)
 
+    // refine() per-form Tree aliases — one per form per refined kind.
+    // Tree shape is identical across forms (refine narrows choice
+    // selections at the Config/factory surface, not the parse shape),
+    // so each alias just points at the base kind's Tree type. Emitting
+    // the alias lets method return types (e.g. `curly().methodFoo()`)
+    // name a form-specific Tree at compile time when needed.
+    const refineInfos = collectRefineKindInfos(nodeMap)
+    emitRefineFormTreeAliases(lines, refineInfos)
+
     // 5. Supertype unions
     emitSupertypeUnionDeclarations(lines, supertypes, nodeMap, generatedTypes)
 
@@ -243,18 +253,12 @@ export function emitTypes(config: EmitTypesConfig): string {
     // 4. Namespace sugar — declaration-merges with the data interface
     lines.push('// Namespace sugar — merges with each data interface so consumers can write')
     lines.push('// <TypeName>.Config / .Fluent / .Loose / .Tree alongside using <TypeName> as a type.')
+    const refineInfoByKind = new Map<string, RefineKindInfo>()
+    for (const info of refineInfos ?? []) refineInfoByKind.set(info.kind, info)
     for (const kind of nodeKinds) {
         const node = nodeMap.nodes.get(kind)!
         if (!generatedTypes.has(node.typeName)) continue
-        // Namespace name must match the interface name for declaration merging.
-        // The interface is emitted as `export interface <typeName>`; the namespace below merges.
-        lines.push(`export namespace ${node.typeName} {`)
-        lines.push(`  export type Config = ConfigFor<'${kind}'>;`)
-        lines.push(`  export type Fluent = FluentFor<'${kind}'>;`)
-        lines.push(`  export type Loose = LooseFor<'${kind}'>;`)
-        lines.push(`  export type Tree = TreeFor<'${kind}'>;`)
-        lines.push(`  export type Kind = '${kind}';`)
-        lines.push(`}`)
+        emitNamespaceSugarBlock(lines, kind, node, refineInfoByKind.get(kind))
     }
     lines.push('')
 
@@ -1122,4 +1126,107 @@ function toPascal(kind: string): string {
 /** Quote a type/object key if it is not a plain identifier. */
 function quoteKey(key: string): string {
     return /^[A-Za-z_$][\w$]*$/.test(key) ? key : JSON.stringify(key)
+}
+
+// ---------------------------------------------------------------------------
+// refine() per-form type emission (ADR-0010 phase 2)
+// ---------------------------------------------------------------------------
+
+/**
+ * Emit per-form Tree aliases for every refined kind.
+ *
+ * @remarks
+ * Refine narrows choice selections at the Config/factory surface, not
+ * the parse shape — the tree produced by tree-sitter is identical
+ * regardless of which form constructed the node. The per-form Tree
+ * alias therefore points at the base kind's Tree type; it exists so
+ * method return types (`curly().typeField(...)`) can name a form-
+ * specific Tree type at compile time without a structural duplicate.
+ */
+function emitRefineFormTreeAliases(
+    lines: string[],
+    refineInfos: readonly RefineKindInfo[] | undefined,
+): void {
+    if (!refineInfos || refineInfos.length === 0) return
+    lines.push('// refine() per-form Tree aliases — same shape as the base kind Tree.')
+    for (const info of refineInfos) {
+        for (const form of info.forms) {
+            const formType = refineFormTypeName(info.typeName, form.name)
+            lines.push(`export type ${formType}Tree = ${info.typeName}Tree;`)
+        }
+    }
+    lines.push('')
+}
+
+/**
+ * Emit the namespace sugar block for one kind — the declaration-merged
+ * `namespace <TypeName> { Config; Fluent; Loose; Tree; Kind; }` block,
+ * plus per-form sub-namespaces when refine() registered forms for this
+ * kind.
+ *
+ * For refined kinds:
+ *   - Each form gets its own sub-namespace `<TypeName>.<FormPascal>`
+ *     exposing `Config` (base Config minus the form's auto-stamped
+ *     fields) and `Tree` (alias to the base kind Tree).
+ *   - The top-level `<TypeName>.Config` shadows the generic
+ *     `ConfigFor<'kind'>` with the first-declared form's Config — so
+ *     bare-call sugar `ir.<kind>({...})` routes to the default form's
+ *     Config surface.
+ */
+function emitNamespaceSugarBlock(
+    lines: string[],
+    kind: string,
+    node: AssembledNode,
+    refineInfo: RefineKindInfo | undefined,
+): void {
+    lines.push(`export namespace ${node.typeName} {`)
+    if (refineInfo && refineInfo.forms.length > 0) {
+        emitRefineFormSubNamespaces(lines, node.typeName, kind, refineInfo)
+        const defaultForm = refineInfo.forms[0]!
+        const defaultShortName = refineFormTypeName(node.typeName, defaultForm.name)
+            .slice(node.typeName.length)
+        lines.push(`  /** Default form: '${defaultForm.name}' (first-declared). */`)
+        lines.push(`  export type Config = ${defaultShortName}.Config;`)
+    } else {
+        lines.push(`  export type Config = ConfigFor<'${kind}'>;`)
+    }
+    lines.push(`  export type Fluent = FluentFor<'${kind}'>;`)
+    lines.push(`  export type Loose = LooseFor<'${kind}'>;`)
+    lines.push(`  export type Tree = TreeFor<'${kind}'>;`)
+    lines.push(`  export type Kind = '${kind}';`)
+    lines.push('}')
+}
+
+/**
+ * Emit the per-form sub-namespace blocks for a refined kind.
+ *
+ * Each form gets:
+ *   - `Config` — `Omit<ConfigFor<'kind'>, 'field1' | 'field2'>` stripping
+ *     the form's narrowed fields (those selections map to a single
+ *     string literal, so phase-1 auto-stamp would otherwise need to be
+ *     reapplied on top of the main Config).
+ *   - `Tree`   — alias to the base Tree type (same parse shape).
+ */
+function emitRefineFormSubNamespaces(
+    lines: string[],
+    parentTypeName: string,
+    kind: string,
+    refineInfo: RefineKindInfo,
+): void {
+    for (const form of refineInfo.forms) {
+        const formType = refineFormTypeName(parentTypeName, form.name)
+        const shortName = formType.slice(parentTypeName.length)
+        lines.push(`  export namespace ${shortName} {`)
+        const narrowed = form.narrowedFields
+        if (narrowed.length > 0) {
+            const omitKeys = narrowed
+                .map(n => JSON.stringify(snakeToCamel(n.fieldName)))
+                .join(' | ')
+            lines.push(`    export type Config = Omit<ConfigFor<'${kind}'>, ${omitKeys}>;`)
+        } else {
+            lines.push(`    export type Config = ConfigFor<'${kind}'>;`)
+        }
+        lines.push(`    export type Tree = ${formType}Tree;`)
+        lines.push('  }')
+    }
 }
