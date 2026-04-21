@@ -3905,6 +3905,46 @@ export function objectType(config: T.ObjectType.Config) {
   };
 }
 
+export function objectTypeCurly(config?: T.ObjectTypeCurly.Config) {
+  const fields = {
+    opening: "{" as const,
+    members: config?.members,
+    closing: "}" as const,
+  };
+  return {
+    $type: 'object_type' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.ObjectTypeTree) { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function objectTypeFlow(config?: T.ObjectTypeFlow.Config) {
+  const fields = {
+    opening: "{|" as const,
+    members: config?.members,
+    closing: "|}" as const,
+  };
+  return {
+    $type: 'object_type' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.ObjectTypeTree) { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
 export function callSignature(config: T.CallSignature.Config) {
   const fields = {
     type_parameters: config.typeParameters,

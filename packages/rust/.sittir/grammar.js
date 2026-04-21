@@ -397,6 +397,7 @@ function wire(config) {
     deposits: /* @__PURE__ */ new Map(),
     polymorphVariants: [],
     conflictGroups: [],
+    refineForms: /* @__PURE__ */ new Map(),
     currentRuleKind: null
   };
   const polymorphs = config.polymorphs ?? {};

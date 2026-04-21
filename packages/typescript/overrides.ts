@@ -14,7 +14,7 @@
 // non-JSX corpus but a latent mismatch: anything JSX-shaped would
 // reparse-fail. Pick one grammar and stick with it end-to-end.
 import base from '../../node_modules/.pnpm/tree-sitter-typescript@0.23.2/node_modules/tree-sitter-typescript/typescript/grammar.js'
-import { transform, enrich, field, wire } from '../codegen/src/dsl/index.ts'
+import { transform, enrich, field, wire, refine } from '../codegen/src/dsl/index.ts'
 
 export default grammar(enrich(base), wire({
     name: 'typescript',
@@ -184,12 +184,7 @@ export default grammar(enrich(base), wire({
             0: field('expression'), // expression [struct=0]
         },
 
-        // object_type: 3 field(s)
-        object_type: {
-            0: field('opening'), // export_statement | property_signature | call_signature | construct_signature | index_signature | method_signature [struct=0]
-            1: field('members'), // export_statement | property_signature | call_signature | construct_signature | index_signature | method_signature [struct=1]
-            2: field('closing'), //  [struct=2]
-        },
+        // object_type: handled by refine() in rules: — see below.
 
         // program: 2 field(s)
         program: {
@@ -296,6 +291,37 @@ export default grammar(enrich(base), wire({
         // `?` — drop the synthetic `parameter_name` wrapper override and
         // let the walker inline the `_parameter_name` helper's fields.
         required_parameter: ($, original) => original,
+
+        // object_type / interface_body — correlated choice selection
+        // across non-adjacent positions: the opening and closing
+        // delimiters must agree (`{ }` pair is a curly object type;
+        // `{| |}` pair is a flow object type). Refine declares two
+        // named forms so factory callers can pick one and have both
+        // literals auto-stamped:
+        //   ir.objectType.curly({ members: [...] })  // {  }
+        //   ir.objectType.flow ({ members: [...] })  // {| |}
+        // The `transform(original, { ... })` inside adds the
+        // `opening`/`members`/`closing` field labels that refine()'s
+        // path segments (`'opening:'` / `'closing:'`) target. Both
+        // object_type (primary rule) and interface_body (alias target)
+        // share the same parse shape — both get the same treatment.
+        object_type: ($, original) => refine(
+            transform(original, {
+                0: field('opening'),
+                1: field('members'),
+                2: field('closing'),
+            }),
+            {
+                curly: { 'opening:': '{',  'closing:': '}'  },
+                flow:  { 'opening:': '{|', 'closing:': '|}' },
+            },
+        ),
+        // interface_body is a tree-sitter alias target of object_type —
+        // it has no base rule of its own, so there's nothing to refine
+        // via an override callback. It inherits the parse shape from
+        // object_type. If per-form factory support for `interface_body`
+        // is needed, a follow-up can add a codegen pass that mirrors
+        // `object_type`'s refineForms onto the alias-target kind.
 
     },
 }))

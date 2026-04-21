@@ -27,7 +27,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 ));
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
-// packages/python/overrides.ts
+// ../python/overrides.ts
 var overrides_exports = {};
 __export(overrides_exports, {
   default: () => overrides_default
@@ -35,7 +35,7 @@ __export(overrides_exports, {
 module.exports = __toCommonJS(overrides_exports);
 var import_grammar = __toESM(require("tree-sitter-python/grammar.js"), 1);
 
-// packages/codegen/src/dsl/runtime-shapes.ts
+// src/dsl/runtime-shapes.ts
 function isSymbolLike(v) {
   if (!v || typeof v !== "object") return false;
   const t = v.type;
@@ -80,7 +80,7 @@ var isPlainRepeatType = (t) => typeEq(t, "repeat");
 var isRepeatType = (t) => typeEq(t, "repeat") || typeEq(t, "repeat1");
 var isBlankType = (t) => typeEq(t, "blank");
 
-// packages/codegen/src/dsl/transform/transform-path.ts
+// src/dsl/transform/transform-path.ts
 function dsl() {
   return globalThis;
 }
@@ -354,7 +354,7 @@ function applyWildcardToMembers(rule, members, rest, patch, precStack) {
   return reconstructContainer(rule, members);
 }
 
-// packages/codegen/src/dsl/primitives/variant.ts
+// src/dsl/primitives/variant.ts
 function isVariantPlaceholder(v) {
   return !!v && typeof v === "object" && v.__sittirPlaceholder === "variant";
 }
@@ -362,12 +362,12 @@ function variant(name) {
   return { __sittirPlaceholder: "variant", name };
 }
 
-// packages/codegen/src/dsl/primitives/alias.ts
+// src/dsl/primitives/alias.ts
 function isAliasPlaceholder(v) {
   return !!v && typeof v === "object" && v.__sittirPlaceholder === "alias";
 }
 
-// packages/codegen/src/dsl/wire/wire.ts
+// src/dsl/wire/wire.ts
 var currentContext = null;
 function wireRegisterSyntheticRule(name, content) {
   if (!currentContext) return false;
@@ -400,6 +400,7 @@ function wire(config) {
     deposits: /* @__PURE__ */ new Map(),
     polymorphVariants: [],
     conflictGroups: [],
+    refineForms: /* @__PURE__ */ new Map(),
     currentRuleKind: null
   };
   const polymorphs = config.polymorphs ?? {};
@@ -530,7 +531,7 @@ function symbolizeRef(_$, name) {
   return { type: "SYMBOL", name };
 }
 
-// packages/codegen/src/dsl/primitives/field.ts
+// src/dsl/primitives/field.ts
 function maybeKeywordSymbol(fieldName, content, wrapSyntheticBody) {
   const c = content;
   if (!c || typeof c.type !== "string") return content;
@@ -611,7 +612,7 @@ function buildTwoArgFieldResult(native, name, content) {
   return { ...initial, source: "override" };
 }
 
-// packages/codegen/src/dsl/transform/transform.ts
+// src/dsl/transform/transform.ts
 function transform(original, ...patchSets) {
   let rule = original;
   for (const patches of patchSets) {
@@ -924,7 +925,7 @@ function extractNonEmpty(rule) {
   return null;
 }
 
-// packages/codegen/src/dsl/primitives/role.ts
+// src/dsl/primitives/role.ts
 var currentRoles = null;
 var VALID_ROLE_NAMES = /* @__PURE__ */ new Set(["indent", "dedent", "newline"]);
 function role(symbol, roleName) {
@@ -944,7 +945,7 @@ function role(symbol, roleName) {
   return symbol;
 }
 
-// packages/codegen/src/dsl/enrich.ts
+// src/dsl/enrich.ts
 function enrich(base2) {
   if (!base2 || typeof base2 !== "object") {
     throw new Error("enrich(): expected a grammar object, got " + typeof base2);
@@ -1143,7 +1144,7 @@ function rebuildOptional(optionalRule, newInner) {
   return { ...optionalRule, members: newMembers };
 }
 
-// packages/python/overrides.ts
+// ../python/overrides.ts
 var overrides_default = grammar(enrich(import_grammar.default), wire({
   name: "python",
   // Structural-whitespace role bindings — declared inline in the

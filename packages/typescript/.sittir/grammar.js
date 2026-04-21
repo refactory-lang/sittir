@@ -376,6 +376,11 @@ function wireRegisterConflict(names) {
   }
   return true;
 }
+function wireRegisterRefineForms(kind, forms) {
+  if (!currentContext) return false;
+  currentContext.refineForms.set(kind, forms);
+  return true;
+}
 function wireGetCurrentRuleKind() {
   return currentContext?.currentRuleKind ?? null;
 }
@@ -384,6 +389,7 @@ function wire(config) {
     deposits: /* @__PURE__ */ new Map(),
     polymorphVariants: [],
     conflictGroups: [],
+    refineForms: /* @__PURE__ */ new Map(),
     currentRuleKind: null
   };
   const polymorphs = config.polymorphs ?? {};
@@ -1107,6 +1113,27 @@ function rebuildOptional(optionalRule, newInner) {
   return { ...optionalRule, members: newMembers };
 }
 
+// packages/codegen/src/dsl/primitives/refine.ts
+function refine(original, forms) {
+  const kind = wireGetCurrentRuleKind();
+  if (!kind) {
+    throw new Error(
+      "refine(): no active wire context \u2014 refine() must run inside a rule callback under wire()"
+    );
+  }
+  const formList = [];
+  for (const [name, selections] of Object.entries(forms)) {
+    if (formList.some((f) => f.name === name)) {
+      throw new Error(`refine(): duplicate form name '${name}' on rule '${kind}'`);
+    }
+    formList.push({ name, selections: { ...selections } });
+  }
+  if (!wireRegisterRefineForms(kind, formList)) {
+    throw new Error("refine(): wire context rejected registration \u2014 unexpected");
+  }
+  return original;
+}
+
 // packages/typescript/overrides.ts
 var overrides_default = grammar(enrich(import_grammar.default), wire({
   name: "typescript",
@@ -1286,15 +1313,7 @@ var overrides_default = grammar(enrich(import_grammar.default), wire({
       0: field("expression")
       // expression [struct=0]
     },
-    // object_type: 3 field(s)
-    object_type: {
-      0: field("opening"),
-      // export_statement | property_signature | call_signature | construct_signature | index_signature | method_signature [struct=0]
-      1: field("members"),
-      // export_statement | property_signature | call_signature | construct_signature | index_signature | method_signature [struct=1]
-      2: field("closing")
-      //  [struct=2]
-    },
+    // object_type: handled by refine() in rules: — see below.
     // program: 2 field(s)
     program: {
       0: field("hash_bang_line"),
@@ -1401,7 +1420,37 @@ var overrides_default = grammar(enrich(import_grammar.default), wire({
     // required_parameter: same shape as optional_parameter modulo the
     // `?` — drop the synthetic `parameter_name` wrapper override and
     // let the walker inline the `_parameter_name` helper's fields.
-    required_parameter: ($, original) => original
+    required_parameter: ($, original) => original,
+    // object_type / interface_body — correlated choice selection
+    // across non-adjacent positions: the opening and closing
+    // delimiters must agree (`{ }` pair is a curly object type;
+    // `{| |}` pair is a flow object type). Refine declares two
+    // named forms so factory callers can pick one and have both
+    // literals auto-stamped:
+    //   ir.objectType.curly({ members: [...] })  // {  }
+    //   ir.objectType.flow ({ members: [...] })  // {| |}
+    // The `transform(original, { ... })` inside adds the
+    // `opening`/`members`/`closing` field labels that refine()'s
+    // path segments (`'opening:'` / `'closing:'`) target. Both
+    // object_type (primary rule) and interface_body (alias target)
+    // share the same parse shape — both get the same treatment.
+    object_type: ($, original) => refine(
+      transform(original, {
+        0: field("opening"),
+        1: field("members"),
+        2: field("closing")
+      }),
+      {
+        curly: { "opening:": "{", "closing:": "}" },
+        flow: { "opening:": "{|", "closing:": "|}" }
+      }
+    )
+    // interface_body is a tree-sitter alias target of object_type —
+    // it has no base rule of its own, so there's nothing to refine
+    // via an override callback. It inherits the parse shape from
+    // object_type. If per-form factory support for `interface_body`
+    // is needed, a follow-up can add a codegen pass that mirrors
+    // `object_type`'s refineForms onto the alias-target kind.
   }
 }));
 if (module.exports && module.exports.default) module.exports = module.exports.default;

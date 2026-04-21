@@ -16,8 +16,8 @@
  * See ADR-0010 phase 2 for the full design.
  */
 
-import type { Rule, ChoiceRule, FieldRule } from './rule.ts'
-import { isChoice, isField, isString, isSeq, isOptional, isRepeat, isRepeat1 } from './rule.ts'
+import type { Rule, ChoiceRule, FieldRule, EnumRule } from './rule.ts'
+import { isChoice, isEnum, isField, isString, isSeq, isOptional, isRepeat, isRepeat1 } from './rule.ts'
 import type { RefineForm } from './types.ts'
 import { parsePath, type PathSegment } from '../dsl/transform/transform-path.ts'
 
@@ -161,19 +161,35 @@ function stepPath(
 
 /**
  * Unwrap common single-content wrappers (optional, repeat, repeat1) to
- * reach an inner `choice`, returning `undefined` if the eventual node
- * isn't a choice. Refine's target is always a choice — the wrappers in
- * between are structurally transparent for selection purposes.
+ * reach an inner `choice` — or an `enum` (normalized choice-of-strings)
+ * which is promoted to a synthetic ChoiceRule for uniform downstream
+ * handling. Returns `undefined` if the eventual node is neither a choice
+ * nor an enum. Wrappers between the start and the terminal choice are
+ * structurally transparent for selection purposes.
  */
 function unwrapToChoice(rule: Rule): ChoiceRule | undefined {
     let cur = rule
     for (;;) {
         if (isChoice(cur)) return cur
+        if (isEnum(cur)) return enumToChoice(cur)
         if (isOptional(cur) || isRepeat(cur) || isRepeat1(cur)) {
             cur = cur.content
             continue
         }
         return undefined
+    }
+}
+
+/**
+ * Promote an `enum` (normalized choice-of-strings) to a synthetic
+ * `ChoiceRule` whose members are `StringRule`s. Refine's selection
+ * semantics are identical over both — "pick one branch" — so
+ * downstream validation and per-form narrowing treat them uniformly.
+ */
+function enumToChoice(rule: EnumRule): ChoiceRule {
+    return {
+        type: 'choice',
+        members: rule.values.map(v => ({ type: 'string' as const, value: v })),
     }
 }
 

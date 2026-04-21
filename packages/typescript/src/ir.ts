@@ -281,7 +281,7 @@ export const ir = {
   flowMaybeType: _attach(F.flowMaybeType, { from: FR.flowMaybeTypeFrom }),
   parenthesizedType: _attach(F.parenthesizedType, { from: FR.parenthesizedTypeFrom }),
   typeArguments: _attach(F.typeArguments, { from: FR.typeArgumentsFrom }),
-  objectType: _attach(F.objectType, { from: FR.objectTypeFrom }),
+  objectType: _attach(F.objectType, { from: FR.objectTypeFrom, curly: F.objectTypeCurly, flow: F.objectTypeFlow }),
   callSignature: _attach(F.callSignature, { from: FR.callSignatureFrom }),
   propertySignature: _attach(F.propertySignature, { from: FR.propertySignatureFrom }),
   typeParameters: _attach(F.typeParameters, { from: FR.typeParametersFrom }),

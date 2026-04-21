@@ -2491,6 +2491,10 @@ export interface TypeofTree extends AnyTreeNode { readonly type: "typeof"; }
 export interface KeyofTree extends AnyTreeNode { readonly type: "keyof"; }
 export interface AsyncTree extends AnyTreeNode { readonly type: "async"; }
 
+// refine() per-form Tree aliases — same shape as the base kind Tree.
+export type ObjectTypeCurlyTree = ObjectTypeTree;
+export type ObjectTypeFlowTree = ObjectTypeTree;
+
 // Supertype unions
 export type ModuleExportName =
   | Identifier
@@ -4702,7 +4706,16 @@ export namespace TypeArguments {
   export type Kind = 'type_arguments';
 }
 export namespace ObjectType {
-  export type Config = ConfigFor<'object_type'>;
+  export namespace Curly {
+    export type Config = Omit<ConfigFor<'object_type'>, "opening" | "closing">;
+    export type Tree = ObjectTypeCurlyTree;
+  }
+  export namespace Flow {
+    export type Config = Omit<ConfigFor<'object_type'>, "opening" | "closing">;
+    export type Tree = ObjectTypeFlowTree;
+  }
+  /** Default form: 'curly' (first-declared). */
+  export type Config = Curly.Config;
   export type Fluent = FluentFor<'object_type'>;
   export type Loose = LooseFor<'object_type'>;
   export type Tree = TreeFor<'object_type'>;
