@@ -666,8 +666,17 @@ export abstract class AssembledNodeBase<R extends Rule = Rule> {
      * this to the exact Rule subset each subclass accepts — the narrowing
      * is truthful at runtime (not just documentation) because every
      * subclass constructor stores its rule argument here.
+     *
+     * **Protected — no external consumer reaches in.** The project
+     * convention: only `renderTemplate()` methods (and other in-class
+     * behaviors) read `this.rule` directly. Outside consumers (emitters,
+     * assemble/link phases, tests) must go through the class's public
+     * getters (`members`, `content`, `separator`, `text`, `values`,
+     * `subtypes`, `forms`, `pattern`, `elementRule`, `isTextTemplate`,
+     * ...) — if a new use case needs raw rule access, add the
+     * corresponding getter here instead of widening this field.
      */
-    readonly rule: R
+    protected readonly rule: R
 
     constructor(kind: string, rule: R, opts?: { factoryName?: string; irKey?: string; source?: RuleSource; hidden?: boolean }) {
         this.kind = kind
@@ -1097,7 +1106,7 @@ export class AssembledPolymorph extends AssembledNodeBase<PolymorphRule> {
         const mergedClauses: Record<string, string> = {}
         const mergedJoinByField: Record<string, string> = {}
         for (const form of this.#forms) {
-            const { template, clauses, joinByField } = renderRuleTemplate(form.rule, false, rules, wordMatcher)
+            const { template, clauses, joinByField } = form.renderParts(rules, wordMatcher)
             if (!template) {
                 throw new Error(
                     `AssembledPolymorph.renderTemplate: '${this.kind}' form '${form.name}' ` +
@@ -1296,6 +1305,19 @@ export class AssembledGroup extends AssembledNodeBase<Rule> {
         if (findRepeatFlag(this.simplifiedRule, 'leading')) entry.joinByLeading = true
         if (Object.keys(joinByField).length > 0) entry.joinByField = joinByField
         return entry
+    }
+
+    /**
+     * Raw template walk — used by `AssembledPolymorph.renderTemplate` to
+     * collect per-form template/clauses/joinByField parts without the
+     * outer entry-packaging that `renderTemplate` adds.
+     *
+     * Returns the walker's raw output so the polymorph can merge multiple
+     * forms' clauses into a single parent entry. Keeps `this.rule`
+     * encapsulated — the sibling class doesn't reach in.
+     */
+    renderParts(rules?: Record<string, Rule>, wordMatcher?: RegExp): { template: string; clauses: Record<string, string>; joinByField: Record<string, string> } {
+        return renderRuleTemplate(this.rule, false, rules, wordMatcher)
     }
 
 }
