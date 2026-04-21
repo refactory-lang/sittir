@@ -60,10 +60,28 @@ export interface WireContext {
      *  sibling-variant ambiguity. Drained by the wrapped `conflicts`
      *  callback when tree-sitter invokes it. */
     readonly conflictGroups: string[][]
+    /** Per-rule form declarations registered by refine(). Ordered list
+     *  — the first form is the default the bare factory call routes to.
+     *  Emitters consume this to generate namespace-keyed factories
+     *  (`ir.interfaceBody.curly(...)`) with narrowed Configs. The rule
+     *  tree itself is unchanged by refine(); tree-sitter parses with
+     *  the original shape. */
+    readonly refineForms: Map<string, RefineForm[]>
     /** Name of the rule currently being evaluated, for variant()'s
      *  auto-prefix behavior (`variant('eq')` under `assignment` →
      *  `_assignment_eq`). Set by the rule-fn wrapper. */
     currentRuleKind: string | null
+}
+
+/**
+ * A single named form declared via `refine(original, { name: selections })`.
+ * `selections` maps a path (into `original`) to a chosen branch — either
+ * a numeric branch index or a literal string matching one of the choice
+ * arm's string values. See ADR-0010 phase 2 for the full design.
+ */
+export interface RefineForm {
+    readonly name: string
+    readonly selections: Record<string, number | string>
 }
 
 let currentContext: WireContext | null = null
@@ -126,6 +144,26 @@ export function wireRegisterConflict(names: readonly string[]): boolean {
     return true
 }
 
+/**
+ * Register per-rule form declarations against the active wire context.
+ *
+ * @remarks
+ * Invoked by `refine(original, forms)`. The forms list is stored
+ * as-is — validation (path resolves to a choice, selections are in
+ * range, etc.) happens at codegen time inside `link.ts` or the
+ * emitters, not here, because the rule tree may still be mid-transform
+ * at refine() call time (enrich not yet fired, transform patches not
+ * applied). Deferring validation avoids ordering hazards.
+ *
+ * Returns `true` when the context absorbed the call, `false` when
+ * there is no active context.
+ */
+export function wireRegisterRefineForms(kind: string, forms: RefineForm[]): boolean {
+    if (!currentContext) return false
+    currentContext.refineForms.set(kind, forms)
+    return true
+}
+
 /** Current rule kind on the active wire context, or null when inactive. */
 export function wireGetCurrentRuleKind(): string | null {
     return currentContext?.currentRuleKind ?? null
@@ -149,6 +187,7 @@ export function withWireContext<T>(
         deposits: new Map(),
         polymorphVariants: [],
         conflictGroups: [],
+        refineForms: new Map(),
         currentRuleKind: ruleKind,
     }
     const prev = currentContext
@@ -263,6 +302,7 @@ export function wire(config: WireConfig): WiredOpts {
         deposits: new Map(),
         polymorphVariants: [],
         conflictGroups: [],
+        refineForms: new Map(),
         currentRuleKind: null,
     }
 
