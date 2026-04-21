@@ -51,7 +51,6 @@ export function emitFactories(config: EmitFactoriesConfig): string {
     lines.push('')
     lines.push(...emitFluentSetterHelpers())
     lines.push(...emitNonEmptyAssertHelper())
-    lines.push(...emitRebuildHoistHelper())
     lines.push('')
 
     const leafReConsts = buildLeafReConsts(nodeMap, lines)
@@ -165,30 +164,6 @@ function emitNonEmptyAssertHelper(): string[] {
         '  if (arr.length === 0) {',
         "    throw new Error(`${label}: requires at least one element`);",
         '  }',
-        '}',
-    ]
-}
-
-/**
- * Emit the `_rebuildHoist` runtime helper used by hoisted polymorph form
- * factories. Projects a NodeData's raw (snake_case) `$fields` back into a
- * camelCase plain object, then applies `patch` (camelCase) on top. The
- * result is a fresh hoisted Config suitable for re-invoking the form
- * factory.
- *
- * @returns Array of source lines for the helper.
- */
-function emitRebuildHoistHelper(): string[] {
-    return [
-        'function _rebuildHoist(inner: any, patch: Record<string, unknown>): Record<string, unknown> {',
-        '  const out: Record<string, unknown> = {};',
-        '  const fields = (inner && inner.$fields) ?? {};',
-        '  for (const k of Object.keys(fields)) {',
-        '    const camel = k.replace(/_([a-z])/g, (_m, c) => c.toUpperCase());',
-        '    out[camel] = fields[k];',
-        '  }',
-        '  for (const k of Object.keys(patch)) out[k] = patch[k];',
-        '  return out;',
         '}',
     ]
 }
@@ -927,6 +902,43 @@ function emitPolymorphFactory(node: PolymorphNode, nodeMap: NodeMap): string {
 }
 
 /**
+ * Build the inline rebuild expression used by a hoisted polymorph form's
+ * fluent setter. Projects every hoisted inner field from `inner.$fields`
+ * (snake_case raw names) back into a camelCase Config literal, then
+ * overlays the patched key at the tail (so it takes precedence).
+ *
+ * Replaces the previous runtime `_rebuildHoist` helper — the field set is
+ * known at emit time, so the whole projection is a static object literal
+ * rather than a generic loop in the generated output. Fewer indirections
+ * in the factory, and the inner field inventory is visible in the generated
+ * source (not reconstructed at runtime from `Object.keys`).
+ *
+ * @param innerFields - Hoisted inner fields the form exposes at the top level.
+ * @param patchKey - The camelCase property name being overridden by the setter.
+ * @param patchVar - The setter parameter expression (e.g. `'value'`, `'values'`).
+ * @param configType - The form's `*Config` type name, used for the cast.
+ * @returns A string like
+ *   `{ left: (inner as any).$fields.left, right: (inner as any).$fields.right, operator: value } as T.FooConfig`.
+ */
+function buildHoistedRebuildExpr(
+    innerFields: readonly AssembledField[],
+    patchKey: string,
+    patchVar: string,
+    configType: string,
+): string {
+    const parts: string[] = []
+    for (const f of innerFields) {
+        // Skip the field being patched — avoids a duplicate-key in the emitted
+        // object literal. The patched key is appended below so the setter's
+        // new value is the authoritative one.
+        if (f.propertyName === patchKey) continue
+        parts.push(`${f.propertyName}: (inner as any).$fields.${f.name}`)
+    }
+    parts.push(`${patchKey}: ${patchVar}`)
+    return `{ ${parts.join(', ')} } as ${configType}`
+}
+
+/**
  * Emit a polymorph form factory whose inner child's fields have been
  * hoisted up into the Config surface.
  *
@@ -995,17 +1007,23 @@ function emitHoistedPolymorphFormFactory(
         }
         const fMultiple = isMultiple(f)
         const param = fMultiple ? 'values' : 'value'
+        // Inline-rebuild expression: project the inner node's snake_case $fields
+        // back into the hoisted camelCase Config, then overlay the patched
+        // property. `_rebuildHoist` is no longer emitted — the field set is
+        // known at emit time so we build the object literal directly. Overriding
+        // the patched key via `[propertyName]: value` keeps it at the tail.
+        const rebuild = buildHoistedRebuildExpr(hoist.innerFields, f.propertyName, param, configType)
         if (fMultiple) {
             const elemType = fieldElementType(f, nodeMap)
             const elemForArray = elemType.includes(' | ') ? `(${elemType})` : elemType
             const restType = isNonEmpty(f) ? `NonEmptyArray<${elemType}>` : `${elemForArray}[]`
-            lines.push(`    ${method}(...${param}: ${restType}) { return ${fn}(_rebuildHoist(inner, { ${f.propertyName}: ${param} }) as ${configType}); },`)
+            lines.push(`    ${method}(...${param}: ${restType}) { return ${fn}(${rebuild}); },`)
         } else {
             const elemType = fieldElementType(f, nodeMap)
             const paramType = isRequired(f) ? elemType : `${elemType} | undefined`
             lines.push(`    ${method}(${param}?: ${paramType}) {`)
             lines.push(`      if (${param} === undefined) return (inner as any).$fields.${f.name};`)
-            lines.push(`      return ${fn}(_rebuildHoist(inner, { ${f.propertyName}: ${param} }) as ${configType});`)
+            lines.push(`      return ${fn}(${rebuild});`)
             lines.push(`    },`)
         }
     }

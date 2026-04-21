@@ -35,16 +35,6 @@ function _assertNonEmpty<T>(
     throw new Error(`${label}: requires at least one element`);
   }
 }
-function _rebuildHoist(inner: any, patch: Record<string, unknown>): Record<string, unknown> {
-  const out: Record<string, unknown> = {};
-  const fields = (inner && inner.$fields) ?? {};
-  for (const k of Object.keys(fields)) {
-    const camel = k.replace(/_([a-z])/g, (_m, c) => c.toUpperCase());
-    out[camel] = fields[k];
-  }
-  for (const k of Object.keys(patch)) out[k] = patch[k];
-  return out;
-}
 
 const _leafRe_hashBangLine = /^(?:#!.*)/u;
 const _leafRe_htmlCharacterReference = /^(?:&(#([xX][0-9a-fA-F]{1,6}|[0-9]{1,5})|[A-Za-z]{1,30});)/u;
@@ -423,7 +413,7 @@ export function importSpecifierUFormName(config: T.ImportSpecifierUFormNameConfi
     $children: children,
     name(value?: T.ImportIdentifier) {
       if (value === undefined) return (inner as any).$fields.name;
-      return importSpecifierUFormName(_rebuildHoist(inner, { name: value }) as T.ImportSpecifierUFormNameConfig);
+      return importSpecifierUFormName({ name: value } as T.ImportSpecifierUFormNameConfig);
     },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -447,11 +437,11 @@ export function importSpecifierUFormAs(config: T.ImportSpecifierUFormAsConfig) {
     $children: children,
     name(value?: T.ModuleExportName) {
       if (value === undefined) return (inner as any).$fields.name;
-      return importSpecifierUFormAs(_rebuildHoist(inner, { name: value }) as T.ImportSpecifierUFormAsConfig);
+      return importSpecifierUFormAs({ alias: (inner as any).$fields.alias, name: value } as T.ImportSpecifierUFormAsConfig);
     },
     alias(value?: T.ImportIdentifier) {
       if (value === undefined) return (inner as any).$fields.alias;
-      return importSpecifierUFormAs(_rebuildHoist(inner, { alias: value }) as T.ImportSpecifierUFormAsConfig);
+      return importSpecifierUFormAs({ name: (inner as any).$fields.name, alias: value } as T.ImportSpecifierUFormAsConfig);
     },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {

@@ -35,16 +35,6 @@ function _assertNonEmpty<T>(
     throw new Error(`${label}: requires at least one element`);
   }
 }
-function _rebuildHoist(inner: any, patch: Record<string, unknown>): Record<string, unknown> {
-  const out: Record<string, unknown> = {};
-  const fields = (inner && inner.$fields) ?? {};
-  for (const k of Object.keys(fields)) {
-    const camel = k.replace(/_([a-z])/g, (_m, c) => c.toUpperCase());
-    out[camel] = fields[k];
-  }
-  for (const k of Object.keys(patch)) out[k] = patch[k];
-  return out;
-}
 
 const _leafRe_typeConversion = /^(?:![a-z])/u;
 const _leafRe_identifier = /^(?:[_\p{XID_Start}][_\p{XID_Continue}]*)/u;
