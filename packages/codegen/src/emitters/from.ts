@@ -586,17 +586,17 @@ function emitRepeatedContainerFrom(
     fn: string,
     factory: string,
     tName: string,
-    childType: string,
+    _childType: string,
     elementType: string,
     kind: string,
 ): string {
     return [
         `export function ${fn}(...input: readonly (${elementType} | ${tName})[]) {`,
         `  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === '${kind}') {`,
-        `    const data = input[0] as ${tName};`,
-        `    return ${factory}(...((data.$children ?? []) as ${childType}));`,
+        `    const data = input[0];`,
+        `    return ${factory}(...(data.$children ?? []));`,
         `  }`,
-        `  return ${factory}(...(input as ${childType}));`,
+        `  return ${factory}(...input);`,
         '}',
     ].join('\n')
 }
@@ -628,18 +628,18 @@ function emitSingularContainerFrom(
     fn: string,
     factory: string,
     tName: string,
-    childType: string,
+    _childType: string,
     elementType: string,
     kind: string,
 ): string {
     return [
         `export function ${fn}(input?: ${elementType} | ${tName}) {`,
         `  if (isNodeData(input) && input.$type === '${kind}') {`,
-        `    const data = input as ${tName};`,
-        `    const child = data.$children ? (data.$children as ${childType})[0] : undefined;`,
-        `    return ${factory}(child as ${elementType});`,
+        `    const data = input;`,
+        `    const child = data.$children ? data.$children[0] : undefined;`,
+        `    return ${factory}(child);`,
         `  }`,
-        `  return ${factory}(input as ${elementType});`,
+        `  return ${factory}(input);`,
         '}',
     ].join('\n')
 }
