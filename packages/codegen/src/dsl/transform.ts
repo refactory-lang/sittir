@@ -25,7 +25,12 @@ import { parsePath, applyPath, reconstructWrapper, reconstructPrec, reconstructC
 import { isFieldPlaceholder, maybeKeywordSymbol, type FieldPlaceholder } from './field.ts'
 import { isAliasPlaceholder, type AliasPlaceholder } from './alias.ts'
 import { isVariantPlaceholder, type VariantPlaceholder } from './variant.ts'
-import { getCurrentRuleKind, registerPolymorphVariant, registerSyntheticRule, registerConflict } from './synthetic-rules.ts'
+import {
+    wireRegisterSyntheticRule,
+    wireRegisterPolymorphVariant,
+    wireRegisterConflict,
+    wireGetCurrentRuleKind,
+} from './wire.ts'
 import { isFieldLike, isPrecWrapper, isWrapperType, isSeqType, isChoiceType, isBlankType, isOptionalType, isPlainRepeatType, type RuntimeRule } from './runtime-shapes.ts'
 
 /**
@@ -213,7 +218,7 @@ function tryHoistSiblingVariants(
     const choiceMembers = membersOf(choice)
     const anyEmpty = parsed.some(p => matchesEmpty(choiceMembers[p.altIdx < 0 ? choiceMembers.length + p.altIdx : p.altIdx]!))
     if (!anyEmpty) return null  // non-empty variants fall through to per-patch extraction — not an error, just not a hoist candidate
-    const parentKind = getCurrentRuleKind()
+    const parentKind = wireGetCurrentRuleKind()
     if (!parentKind) return bail('no current rule kind (variant()/transform() called outside rule callback?)')
     return buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choice, parsed, parentKind, precStack)
 }
@@ -243,7 +248,7 @@ function peelPrecWrappersFromRule(rule: RuntimeRule): {
     core: RuntimeRule
 } {
     const dbg = typeof process !== 'undefined' ? process?.env?.SITTIR_DEBUG : undefined
-    const kindFor = getCurrentRuleKind() ?? '(unknown)'
+    const kindFor = wireGetCurrentRuleKind() ?? '(unknown)'
     const bail = (reason: string): null => {
         if (dbg) console.error(`[sittir] hoist skipped on '${kindFor}': ${reason}`)
         return null
@@ -336,8 +341,12 @@ function buildHoistedVariants(
         // reassembly in applyPath.
         const hoistedBody = wrapInPrec(hoistedSeq, precStack)
         const visibleName = `${parentKind}_${p.v.name}`
-        registerPolymorphVariant(parentKind, p.v.name)
-        registerSyntheticRule(visibleName, hoistedBody)
+        if (!wireRegisterPolymorphVariant(parentKind, p.v.name)) {
+            throw new Error(`variant('${p.v.name}'): no active wire() context — variant() must run inside a rule callback under wire()`)
+        }
+        if (!wireRegisterSyntheticRule(visibleName, hoistedBody)) {
+            throw new Error(`registerSyntheticRule('${visibleName}'): no active wire() context`)
+        }
         refs.push({
             type: isUpperCase ? 'SYMBOL' : 'symbol',
             name: visibleName,
@@ -363,8 +372,14 @@ function buildHoistedVariants(
  * @param variantNames - Fully-qualified names of all hoisted variants.
  */
 function registerHoistedVariantConflicts(variantNames: string[]): void {
-    registerConflict(variantNames)
-    for (const n of variantNames) registerConflict([n])
+    if (variantNames.length > 0 && !wireRegisterConflict(variantNames)) {
+        throw new Error(`registerConflict: no active wire() context`)
+    }
+    for (const n of variantNames) {
+        if (!wireRegisterConflict([n])) {
+            throw new Error(`registerConflict: no active wire() context`)
+        }
+    }
 }
 
 // Local accessors for the container/wrapper field shapes RuntimeRule
@@ -475,11 +490,13 @@ function resolvePatch(
     // Variant placeholder — variant('suffix'): auto-prefix with current
     // rule kind → alias('parentKind_suffix'). Registers polymorph metadata.
     if (isVariantPlaceholder(patch)) {
-        const parentKind = getCurrentRuleKind()
+        const parentKind = wireGetCurrentRuleKind()
         if (!parentKind) {
             throw new Error(`variant('${patch.name}'): no current rule kind — variant() must be used inside a rule callback`)
         }
-        registerPolymorphVariant(parentKind, patch.name)
+        if (!wireRegisterPolymorphVariant(parentKind, patch.name)) {
+            throw new Error(`variant('${patch.name}'): no active wire() context — variant() must run inside a rule callback under wire()`)
+        }
         const fullName = `${parentKind}_${patch.name}`
         const hiddenName = '_' + fullName
         return registerAliasedVariant(hiddenName, fullName, originalMember, body => wrapInPrec(body, precStack))
@@ -669,7 +686,9 @@ export function registerAliasedVariant(
         )
     }
     const body = factored ? factored.nonEmpty : originalMember
-    registerSyntheticRule(hiddenName, bodyWrapper(body as RuntimeRule))
+    if (!wireRegisterSyntheticRule(hiddenName, bodyWrapper(body as RuntimeRule))) {
+        throw new Error(`registerSyntheticRule('${hiddenName}'): no active wire() context`)
+    }
     const aliasNode = {
         type: isUpperCase ? 'ALIAS' : 'alias',
         content: { type: isUpperCase ? 'SYMBOL' : 'symbol', name: hiddenName },

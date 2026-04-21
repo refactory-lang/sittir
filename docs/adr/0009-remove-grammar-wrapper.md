@@ -1,6 +1,6 @@
 # ADR 0009 — Remove `installGrammarWrapper`; wire() owns all synthesis
 
-**Status**: Proposed
+**Status**: Accepted (2026-04-21)
 **Date**: 2026-04-21
 **Related**: ADR-0002 (enrich mechanical-only), ADR-0007 (wire opts wrapper), ADR-0008 (declarative transforms)
 

@@ -25,7 +25,7 @@
 
 import type { Rule } from '../compiler/rule.ts'
 import type { FieldLike } from './runtime-shapes.ts'
-import { registerSyntheticRule } from './synthetic-rules.ts'
+import { wireRegisterSyntheticRule } from './wire.ts'
 import { isStringType, type RuntimeRule } from './runtime-shapes.ts'
 
 /**
@@ -62,7 +62,9 @@ export function maybeKeywordSymbol(
         ? nativePrec.left(1, content)
         : content) as RuntimeRule
     if (wrapSyntheticBody) precBody = wrapSyntheticBody(precBody)
-    registerSyntheticRule(hiddenName, precBody)
+    if (!wireRegisterSyntheticRule(hiddenName, precBody)) {
+        throw new Error(`field('${fieldName}', <STRING>): no active wire() context — call must occur inside a rule callback wrapped by wire()`)
+    }
     return {
         type: isUpperCase ? 'SYMBOL' : 'symbol',
         name: hiddenName,

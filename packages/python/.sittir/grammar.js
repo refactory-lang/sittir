@@ -470,33 +470,6 @@ function symbolizeRef(_$, name) {
   return { type: "SYMBOL", name };
 }
 
-// packages/codegen/src/dsl/synthetic-rules.ts
-function getCurrentRuleKind() {
-  return wireGetCurrentRuleKind();
-}
-function registerSyntheticRule(name, content) {
-  if (!wireRegisterSyntheticRule(name, content)) {
-    throw new Error(
-      `registerSyntheticRule('${name}'): called outside a wire() context. Wrap your grammar() opts in wire({...}) so synthetic rules route through it.`
-    );
-  }
-}
-function registerPolymorphVariant(parentKind, childSuffix) {
-  if (!wireRegisterPolymorphVariant(parentKind, childSuffix)) {
-    throw new Error(
-      `registerPolymorphVariant('${parentKind}'/'${childSuffix}'): called outside a wire() context. variant()/alias() must be resolved inside a rule callback that runs under wire().`
-    );
-  }
-}
-function registerConflict(names) {
-  if (names.length === 0) return;
-  if (!wireRegisterConflict(names)) {
-    throw new Error(
-      `registerConflict(${JSON.stringify(names)}): called outside a wire() context.`
-    );
-  }
-}
-
 // packages/codegen/src/dsl/field.ts
 function maybeKeywordSymbol(fieldName, content, wrapSyntheticBody) {
   const c = content;
@@ -507,7 +480,9 @@ function maybeKeywordSymbol(fieldName, content, wrapSyntheticBody) {
   const nativePrec = globalThis.prec;
   let precBody = typeof nativePrec?.left === "function" ? nativePrec.left(1, content) : content;
   if (wrapSyntheticBody) precBody = wrapSyntheticBody(precBody);
-  registerSyntheticRule(hiddenName, precBody);
+  if (!wireRegisterSyntheticRule(hiddenName, precBody)) {
+    throw new Error(`field('${fieldName}', <STRING>): no active wire() context \u2014 call must occur inside a rule callback wrapped by wire()`);
+  }
   return {
     type: isUpperCase ? "SYMBOL" : "symbol",
     name: hiddenName
@@ -607,13 +582,13 @@ function tryHoistSiblingVariants(rule, variantEntries) {
   const choiceMembers = membersOf2(choice);
   const anyEmpty = parsed.some((p) => matchesEmpty(choiceMembers[p.altIdx < 0 ? choiceMembers.length + p.altIdx : p.altIdx]));
   if (!anyEmpty) return null;
-  const parentKind = getCurrentRuleKind();
+  const parentKind = wireGetCurrentRuleKind();
   if (!parentKind) return bail("no current rule kind (variant()/transform() called outside rule callback?)");
   return buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choice, parsed, parentKind, precStack);
 }
 function peelPrecWrappersFromRule(rule) {
   const dbg = typeof process !== "undefined" ? process?.env?.SITTIR_DEBUG : void 0;
-  const kindFor = getCurrentRuleKind() ?? "(unknown)";
+  const kindFor = wireGetCurrentRuleKind() ?? "(unknown)";
   const bail = (reason) => {
     if (dbg) console.error(`[sittir] hoist skipped on '${kindFor}': ${reason}`);
     return null;
@@ -646,8 +621,12 @@ function buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choi
     const hoistedSeq = reconstructContainer(core, hoistedMembers);
     const hoistedBody = wrapInPrec(hoistedSeq, precStack);
     const visibleName = `${parentKind}_${p.v.name}`;
-    registerPolymorphVariant(parentKind, p.v.name);
-    registerSyntheticRule(visibleName, hoistedBody);
+    if (!wireRegisterPolymorphVariant(parentKind, p.v.name)) {
+      throw new Error(`variant('${p.v.name}'): no active wire() context \u2014 variant() must run inside a rule callback under wire()`);
+    }
+    if (!wireRegisterSyntheticRule(visibleName, hoistedBody)) {
+      throw new Error(`registerSyntheticRule('${visibleName}'): no active wire() context`);
+    }
     refs.push({
       type: isUpperCase ? "SYMBOL" : "symbol",
       name: visibleName
@@ -658,8 +637,14 @@ function buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choi
   return { rule: newChoice, consumed: new Set(parsed.map((p) => p.key)) };
 }
 function registerHoistedVariantConflicts(variantNames) {
-  registerConflict(variantNames);
-  for (const n of variantNames) registerConflict([n]);
+  if (variantNames.length > 0 && !wireRegisterConflict(variantNames)) {
+    throw new Error(`registerConflict: no active wire() context`);
+  }
+  for (const n of variantNames) {
+    if (!wireRegisterConflict([n])) {
+      throw new Error(`registerConflict: no active wire() context`);
+    }
+  }
 }
 var membersOf2 = (r) => r.members;
 var contentOf2 = (r) => r.content;
@@ -709,11 +694,13 @@ function resolvePatch(patch, originalMember, precStack) {
     return { ...patch, source: "override" };
   }
   if (isVariantPlaceholder(patch)) {
-    const parentKind = getCurrentRuleKind();
+    const parentKind = wireGetCurrentRuleKind();
     if (!parentKind) {
       throw new Error(`variant('${patch.name}'): no current rule kind \u2014 variant() must be used inside a rule callback`);
     }
-    registerPolymorphVariant(parentKind, patch.name);
+    if (!wireRegisterPolymorphVariant(parentKind, patch.name)) {
+      throw new Error(`variant('${patch.name}'): no active wire() context \u2014 variant() must run inside a rule callback under wire()`);
+    }
     const fullName = `${parentKind}_${patch.name}`;
     const hiddenName = "_" + fullName;
     return registerAliasedVariant(hiddenName, fullName, originalMember, (body) => wrapInPrec(body, precStack));
@@ -757,7 +744,9 @@ function registerAliasedVariant(hiddenName, aliasValue, originalMember, bodyWrap
     );
   }
   const body = factored ? factored.nonEmpty : originalMember;
-  registerSyntheticRule(hiddenName, bodyWrapper(body));
+  if (!wireRegisterSyntheticRule(hiddenName, bodyWrapper(body))) {
+    throw new Error(`registerSyntheticRule('${hiddenName}'): no active wire() context`);
+  }
   const aliasNode = {
     type: isUpperCase ? "ALIAS" : "alias",
     content: { type: isUpperCase ? "SYMBOL" : "symbol", name: hiddenName },
