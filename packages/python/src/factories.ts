@@ -1165,7 +1165,7 @@ export function complexPattern(config: T.ComplexPattern.Config) {
     $named: true as const,
     $fields: fields,
     $children: children,
-    real(value?: string | undefined) { return _fs(config, complexPattern, 'real', value, fields.real); },
+    real(value?: "-" | undefined) { return _fs(config, complexPattern, 'real', value, fields.real); },
     imaginary(value?: T.Integer | T.Float) { return _fs(config, complexPattern, 'imaginary', value, fields.imaginary); },
     getChild() { return children[0]; },
     setChild(child: (T.Integer | T.Float)) { return complexPattern({ ...config, children: [child] }); },

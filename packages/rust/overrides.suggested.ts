@@ -15,7 +15,7 @@
 // Summary
 // ---------------------------------------------------------------
 // Field inferences:  7  (0 applied, 7 held)
-// Rule promotions:   106  (93 applied, 13 held)
+// Rule promotions:   70  (57 applied, 13 held)
 // Repeated shapes:   5  (advisory — suggested supertypes/groups)
 
 // ---------------------------------------------------------------
@@ -250,42 +250,6 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "_tokens", classification: "supertype", applied: true },
   { kind: "_type", classification: "supertype", applied: true },
   { kind: "_use_clause", classification: "supertype", applied: true },
-  { kind: "_kw_attribute", classification: "enum", applied: true },
-  { kind: "_kw_attributes", classification: "enum", applied: true },
-  { kind: "_kw_block", classification: "enum", applied: true },
-  { kind: "_kw_crate", classification: "enum", applied: true },
-  { kind: "_kw_elements", classification: "enum", applied: true },
-  { kind: "_kw_end", classification: "enum", applied: true },
-  { kind: "_kw_expression", classification: "enum", applied: true },
-  { kind: "_kw_extern_modifier", classification: "enum", applied: true },
-  { kind: "_kw_for_lifetimes", classification: "enum", applied: true },
-  { kind: "_kw_function_modifiers", classification: "enum", applied: true },
-  { kind: "_kw_identifier", classification: "enum", applied: true },
-  { kind: "_kw_index", classification: "enum", applied: true },
-  { kind: "_kw_label", classification: "enum", applied: true },
-  { kind: "_kw_left", classification: "enum", applied: true },
-  { kind: "_kw_lifetime_name", classification: "enum", applied: true },
-  { kind: "_kw_move", classification: "enum", applied: true },
-  { kind: "_kw_mutable_specifier", classification: "enum", applied: true },
-  { kind: "_kw_object", classification: "enum", applied: true },
-  { kind: "_kw_operand", classification: "enum", applied: true },
-  { kind: "_kw_path", classification: "enum", applied: true },
-  { kind: "_kw_pattern", classification: "enum", applied: true },
-  { kind: "_kw_raw_string_literal_end", classification: "enum", applied: true },
-  { kind: "_kw_raw_string_literal_start", classification: "enum", applied: true },
-  { kind: "_kw_right", classification: "enum", applied: true },
-  { kind: "_kw_shebang", classification: "enum", applied: true },
-  { kind: "_kw_start", classification: "enum", applied: true },
-  { kind: "_kw_statements", classification: "enum", applied: true },
-  { kind: "_kw_static", classification: "enum", applied: true },
-  { kind: "_kw_string_content", classification: "enum", applied: true },
-  { kind: "_kw_string_literal", classification: "enum", applied: true },
-  { kind: "_kw_token_tree", classification: "enum", applied: true },
-  { kind: "_kw_trailing_where_clause", classification: "enum", applied: true },
-  { kind: "_kw_type_parameters", classification: "enum", applied: true },
-  { kind: "_kw_value", classification: "enum", applied: true },
-  { kind: "_kw_visibility_modifier", classification: "enum", applied: true },
-  { kind: "_kw_where_clause", classification: "enum", applied: true },
   { kind: "char_literal", classification: "terminal", applied: true },
   { kind: "escape_sequence", classification: "terminal", applied: true },
   { kind: "inner_doc_comment_marker", classification: "terminal", applied: true },

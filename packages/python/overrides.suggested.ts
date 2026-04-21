@@ -15,7 +15,7 @@
 // Summary
 // ---------------------------------------------------------------
 // Field inferences:  0  (0 applied, 0 held)
-// Rule promotions:   66  (56 applied, 10 held)
+// Rule promotions:   36  (26 applied, 10 held)
 // Repeated shapes:   0  (advisory — suggested supertypes/groups)
 
 // ---------------------------------------------------------------
@@ -192,36 +192,6 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "parameter", classification: "supertype", applied: true },
   { kind: "pattern", classification: "supertype", applied: true },
   { kind: "primary_expression", classification: "supertype", applied: true },
-  { kind: "_kw_alternative", classification: "enum", applied: true },
-  { kind: "_kw_arguments", classification: "enum", applied: true },
-  { kind: "_kw_base_type", classification: "enum", applied: true },
-  { kind: "_kw_block", classification: "enum", applied: true },
-  { kind: "_kw_body", classification: "enum", applied: true },
-  { kind: "_kw_comparators", classification: "enum", applied: true },
-  { kind: "_kw_condition", classification: "enum", applied: true },
-  { kind: "_kw_constraint", classification: "enum", applied: true },
-  { kind: "_kw_content", classification: "enum", applied: true },
-  { kind: "_kw_dotted_name", classification: "enum", applied: true },
-  { kind: "_kw_else_clause", classification: "enum", applied: true },
-  { kind: "_kw_except_clauses", classification: "enum", applied: true },
-  { kind: "_kw_expression", classification: "enum", applied: true },
-  { kind: "_kw_finally_clause", classification: "enum", applied: true },
-  { kind: "_kw_identifier", classification: "enum", applied: true },
-  { kind: "_kw_imaginary", classification: "enum", applied: true },
-  { kind: "_kw_import_prefix", classification: "enum", applied: true },
-  { kind: "_kw_in_clause", classification: "enum", applied: true },
-  { kind: "_kw_left", classification: "enum", applied: true },
-  { kind: "_kw_newline", classification: "enum", applied: true },
-  { kind: "_kw_primary_expression", classification: "enum", applied: true },
-  { kind: "_kw_right", classification: "enum", applied: true },
-  { kind: "_kw_simple_pattern", classification: "enum", applied: true },
-  { kind: "_kw_start", classification: "enum", applied: true },
-  { kind: "_kw_step", classification: "enum", applied: true },
-  { kind: "_kw_stop", classification: "enum", applied: true },
-  { kind: "_kw_string_end", classification: "enum", applied: true },
-  { kind: "_kw_string_start", classification: "enum", applied: true },
-  { kind: "_kw_type_parameter", classification: "enum", applied: true },
-  { kind: "_kw_wildcard_import", classification: "enum", applied: true },
   { kind: "_is_not", classification: "terminal", applied: true },
   { kind: "_not_in", classification: "terminal", applied: true },
   { kind: "comment", classification: "terminal", applied: true },

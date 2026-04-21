@@ -10,36 +10,6 @@ export type NodeConfig<K extends NodeKind<TypescriptGrammar>> = BaseNodeConfig<T
 export type TreeNode<K extends NodeKind<TypescriptGrammar>> = BaseTreeNode<TypescriptGrammar, K>;
 
 export type LeafScalarMap = {
-  _kw_class_heritage: number;
-  _kw_accessibility_modifier: number;
-  _kw_override_modifier: number;
-  _kw_declaration: number;
-  _kw_primary_type: number;
-  _kw_expression: number;
-  _kw_type_annotation: number;
-  _kw_automatic_semicolon: number;
-  _kw_statement: number;
-  _kw_opening: number;
-  _kw_name: number;
-  _kw_value: number;
-  _kw_semicolon: number;
-  _kw_object: number;
-  _kw_identifier: number;
-  _kw_import_clause: number;
-  _kw_from_clause: number;
-  _kw_import_attribute: number;
-  _kw_type_identifier: number;
-  _kw_constraint: number;
-  _kw_extends_type_clause: number;
-  _kw_left: number;
-  _kw_right: number;
-  _kw_declarators: number;
-  _kw_index_type: number;
-  _kw_members: number;
-  _kw_closing: number;
-  _kw_hash_bang_line: number;
-  _kw_statements: number;
-  _kw_type_arguments: number;
 };
 
 export type LeafStringMap = {
@@ -346,36 +316,6 @@ export const enum SyntaxKind {
   KwReadonly = '_kw_readonly',
   KwAbstract = '_kw_abstract',
   KwConst = '_kw_const',
-  KwClassHeritage = '_kw_class_heritage',
-  KwAccessibilityModifier = '_kw_accessibility_modifier',
-  KwOverrideModifier = '_kw_override_modifier',
-  KwDeclaration = '_kw_declaration',
-  KwPrimaryType = '_kw_primary_type',
-  KwExpression = '_kw_expression',
-  KwTypeAnnotation = '_kw_type_annotation',
-  KwAutomaticSemicolon = '_kw_automatic_semicolon',
-  KwStatement = '_kw_statement',
-  KwOpening = '_kw_opening',
-  KwName = '_kw_name',
-  KwValue = '_kw_value',
-  KwSemicolon = '_kw_semicolon',
-  KwObject = '_kw_object',
-  KwIdentifier = '_kw_identifier',
-  KwImportClause = '_kw_import_clause',
-  KwFromClause = '_kw_from_clause',
-  KwImportAttribute = '_kw_import_attribute',
-  KwTypeIdentifier = '_kw_type_identifier',
-  KwConstraint = '_kw_constraint',
-  KwExtendsTypeClause = '_kw_extends_type_clause',
-  KwLeft = '_kw_left',
-  KwRight = '_kw_right',
-  KwDeclarators = '_kw_declarators',
-  KwIndexType = '_kw_index_type',
-  KwMembers = '_kw_members',
-  KwClosing = '_kw_closing',
-  KwHashBangLine = '_kw_hash_bang_line',
-  KwStatements = '_kw_statements',
-  KwTypeArguments = '_kw_type_arguments',
   AutomaticSemicolon = '_automatic_semicolon',
   TemplateChars = '_template_chars',
   HtmlComment = 'html_comment',
@@ -2182,36 +2122,6 @@ export type KwStatic = Terminal<"_kw_static", "static">;
 export type KwReadonly = Terminal<"_kw_readonly", "readonly">;
 export type KwAbstract = Terminal<"_kw_abstract", "abstract">;
 export type KwConst = Terminal<"_kw_const", "const">;
-export type KwClassHeritage = Terminal<"_kw_class_heritage", >;
-export type KwAccessibilityModifier = Terminal<"_kw_accessibility_modifier", >;
-export type KwOverrideModifier = Terminal<"_kw_override_modifier", >;
-export type KwDeclaration = Terminal<"_kw_declaration", >;
-export type KwPrimaryType = Terminal<"_kw_primary_type", >;
-export type KwExpression = Terminal<"_kw_expression", >;
-export type KwTypeAnnotation = Terminal<"_kw_type_annotation", >;
-export type KwAutomaticSemicolon = Terminal<"_kw_automatic_semicolon", >;
-export type KwStatement = Terminal<"_kw_statement", >;
-export type KwOpening = Terminal<"_kw_opening", >;
-export type KwName = Terminal<"_kw_name", >;
-export type KwValue = Terminal<"_kw_value", >;
-export type KwSemicolon = Terminal<"_kw_semicolon", >;
-export type KwObject = Terminal<"_kw_object", >;
-export type KwIdentifier = Terminal<"_kw_identifier", >;
-export type KwImportClause = Terminal<"_kw_import_clause", >;
-export type KwFromClause = Terminal<"_kw_from_clause", >;
-export type KwImportAttribute = Terminal<"_kw_import_attribute", >;
-export type KwTypeIdentifier = Terminal<"_kw_type_identifier", >;
-export type KwConstraint = Terminal<"_kw_constraint", >;
-export type KwExtendsTypeClause = Terminal<"_kw_extends_type_clause", >;
-export type KwLeft = Terminal<"_kw_left", >;
-export type KwRight = Terminal<"_kw_right", >;
-export type KwDeclarators = Terminal<"_kw_declarators", >;
-export type KwIndexType = Terminal<"_kw_index_type", >;
-export type KwMembers = Terminal<"_kw_members", >;
-export type KwClosing = Terminal<"_kw_closing", >;
-export type KwHashBangLine = Terminal<"_kw_hash_bang_line", >;
-export type KwStatements = Terminal<"_kw_statements", >;
-export type KwTypeArguments = Terminal<"_kw_type_arguments", >;
 export type AutomaticSemicolon = Terminal<"_automatic_semicolon", string>;
 export type TemplateChars = Terminal<"_template_chars", string>;
 export type HtmlComment = Terminal<"html_comment", string>;
@@ -2505,36 +2415,6 @@ export interface KwStaticTree extends AnyTreeNode { readonly type: "_kw_static";
 export interface KwReadonlyTree extends AnyTreeNode { readonly type: "_kw_readonly"; }
 export interface KwAbstractTree extends AnyTreeNode { readonly type: "_kw_abstract"; }
 export interface KwConstTree extends AnyTreeNode { readonly type: "_kw_const"; }
-export interface KwClassHeritageTree extends AnyTreeNode { readonly type: "_kw_class_heritage"; }
-export interface KwAccessibilityModifierTree extends AnyTreeNode { readonly type: "_kw_accessibility_modifier"; }
-export interface KwOverrideModifierTree extends AnyTreeNode { readonly type: "_kw_override_modifier"; }
-export interface KwDeclarationTree extends AnyTreeNode { readonly type: "_kw_declaration"; }
-export interface KwPrimaryTypeTree extends AnyTreeNode { readonly type: "_kw_primary_type"; }
-export interface KwExpressionTree extends AnyTreeNode { readonly type: "_kw_expression"; }
-export interface KwTypeAnnotationTree extends AnyTreeNode { readonly type: "_kw_type_annotation"; }
-export interface KwAutomaticSemicolonTree extends AnyTreeNode { readonly type: "_kw_automatic_semicolon"; }
-export interface KwStatementTree extends AnyTreeNode { readonly type: "_kw_statement"; }
-export interface KwOpeningTree extends AnyTreeNode { readonly type: "_kw_opening"; }
-export interface KwNameTree extends AnyTreeNode { readonly type: "_kw_name"; }
-export interface KwValueTree extends AnyTreeNode { readonly type: "_kw_value"; }
-export interface KwSemicolonTree extends AnyTreeNode { readonly type: "_kw_semicolon"; }
-export interface KwObjectTree extends AnyTreeNode { readonly type: "_kw_object"; }
-export interface KwIdentifierTree extends AnyTreeNode { readonly type: "_kw_identifier"; }
-export interface KwImportClauseTree extends AnyTreeNode { readonly type: "_kw_import_clause"; }
-export interface KwFromClauseTree extends AnyTreeNode { readonly type: "_kw_from_clause"; }
-export interface KwImportAttributeTree extends AnyTreeNode { readonly type: "_kw_import_attribute"; }
-export interface KwTypeIdentifierTree extends AnyTreeNode { readonly type: "_kw_type_identifier"; }
-export interface KwConstraintTree extends AnyTreeNode { readonly type: "_kw_constraint"; }
-export interface KwExtendsTypeClauseTree extends AnyTreeNode { readonly type: "_kw_extends_type_clause"; }
-export interface KwLeftTree extends AnyTreeNode { readonly type: "_kw_left"; }
-export interface KwRightTree extends AnyTreeNode { readonly type: "_kw_right"; }
-export interface KwDeclaratorsTree extends AnyTreeNode { readonly type: "_kw_declarators"; }
-export interface KwIndexTypeTree extends AnyTreeNode { readonly type: "_kw_index_type"; }
-export interface KwMembersTree extends AnyTreeNode { readonly type: "_kw_members"; }
-export interface KwClosingTree extends AnyTreeNode { readonly type: "_kw_closing"; }
-export interface KwHashBangLineTree extends AnyTreeNode { readonly type: "_kw_hash_bang_line"; }
-export interface KwStatementsTree extends AnyTreeNode { readonly type: "_kw_statements"; }
-export interface KwTypeArgumentsTree extends AnyTreeNode { readonly type: "_kw_type_arguments"; }
 export interface AutomaticSemicolonTree extends AnyTreeNode { readonly type: "_automatic_semicolon"; }
 export interface TemplateCharsTree extends AnyTreeNode { readonly type: "_template_chars"; }
 export interface HtmlCommentTree extends TreeNode<'html_comment'> {}
@@ -3207,36 +3087,6 @@ export interface KindMap {
   '_kw_readonly': KwReadonly;
   '_kw_abstract': KwAbstract;
   '_kw_const': KwConst;
-  '_kw_class_heritage': KwClassHeritage;
-  '_kw_accessibility_modifier': KwAccessibilityModifier;
-  '_kw_override_modifier': KwOverrideModifier;
-  '_kw_declaration': KwDeclaration;
-  '_kw_primary_type': KwPrimaryType;
-  '_kw_expression': KwExpression;
-  '_kw_type_annotation': KwTypeAnnotation;
-  '_kw_automatic_semicolon': KwAutomaticSemicolon;
-  '_kw_statement': KwStatement;
-  '_kw_opening': KwOpening;
-  '_kw_name': KwName;
-  '_kw_value': KwValue;
-  '_kw_semicolon': KwSemicolon;
-  '_kw_object': KwObject;
-  '_kw_identifier': KwIdentifier;
-  '_kw_import_clause': KwImportClause;
-  '_kw_from_clause': KwFromClause;
-  '_kw_import_attribute': KwImportAttribute;
-  '_kw_type_identifier': KwTypeIdentifier;
-  '_kw_constraint': KwConstraint;
-  '_kw_extends_type_clause': KwExtendsTypeClause;
-  '_kw_left': KwLeft;
-  '_kw_right': KwRight;
-  '_kw_declarators': KwDeclarators;
-  '_kw_index_type': KwIndexType;
-  '_kw_members': KwMembers;
-  '_kw_closing': KwClosing;
-  '_kw_hash_bang_line': KwHashBangLine;
-  '_kw_statements': KwStatements;
-  '_kw_type_arguments': KwTypeArguments;
   '_automatic_semicolon': AutomaticSemicolon;
   '_template_chars': TemplateChars;
   'html_comment': HtmlComment;

@@ -10,36 +10,6 @@ export type NodeConfig<K extends NodeKind<PythonGrammar>> = BaseNodeConfig<Pytho
 export type TreeNode<K extends NodeKind<PythonGrammar>> = BaseTreeNode<PythonGrammar, K>;
 
 export type LeafScalarMap = {
-  _kw_expression: number;
-  _kw_primary_expression: number;
-  _kw_dotted_name: number;
-  _kw_arguments: number;
-  _kw_left: number;
-  _kw_comparators: number;
-  _kw_imaginary: number;
-  _kw_body: number;
-  _kw_condition: number;
-  _kw_alternative: number;
-  _kw_base_type: number;
-  _kw_constraint: number;
-  _kw_newline: number;
-  _kw_in_clause: number;
-  _kw_block: number;
-  _kw_identifier: number;
-  _kw_type_parameter: number;
-  _kw_wildcard_import: number;
-  _kw_simple_pattern: number;
-  _kw_import_prefix: number;
-  _kw_start: number;
-  _kw_stop: number;
-  _kw_step: number;
-  _kw_string_start: number;
-  _kw_content: number;
-  _kw_string_end: number;
-  _kw_except_clauses: number;
-  _kw_else_clause: number;
-  _kw_finally_clause: number;
-  _kw_right: number;
 };
 
 export type LeafStringMap = {
@@ -225,36 +195,6 @@ export const enum SyntaxKind {
   Comment = 'comment',
   LineContinuation = 'line_continuation',
   KwAsync = '_kw_async',
-  KwExpression = '_kw_expression',
-  KwPrimaryExpression = '_kw_primary_expression',
-  KwDottedName = '_kw_dotted_name',
-  KwArguments = '_kw_arguments',
-  KwLeft = '_kw_left',
-  KwComparators = '_kw_comparators',
-  KwImaginary = '_kw_imaginary',
-  KwBody = '_kw_body',
-  KwCondition = '_kw_condition',
-  KwAlternative = '_kw_alternative',
-  KwBaseType = '_kw_base_type',
-  KwConstraint = '_kw_constraint',
-  KwNewline = '_kw_newline',
-  KwInClause = '_kw_in_clause',
-  KwBlock = '_kw_block',
-  KwIdentifier = '_kw_identifier',
-  KwTypeParameter = '_kw_type_parameter',
-  KwWildcardImport = '_kw_wildcard_import',
-  KwSimplePattern = '_kw_simple_pattern',
-  KwImportPrefix = '_kw_import_prefix',
-  KwStart = '_kw_start',
-  KwStop = '_kw_stop',
-  KwStep = '_kw_step',
-  KwStringStart = '_kw_string_start',
-  KwContent = '_kw_content',
-  KwStringEnd = '_kw_string_end',
-  KwExceptClauses = '_kw_except_clauses',
-  KwElseClause = '_kw_else_clause',
-  KwFinallyClause = '_kw_finally_clause',
-  KwRight = '_kw_right',
   Newline = '_newline',
   Indent = '_indent',
   Dedent = '_dedent',
@@ -872,7 +812,7 @@ export interface ClassPattern {
 export interface ComplexPattern {
   readonly $type: 'complex_pattern';
   readonly $fields: {
-    readonly real?: string;
+    readonly real?: "-";
     readonly imaginary: Integer | Float;
   };
   readonly $children: readonly [Integer | Float];
@@ -1329,36 +1269,6 @@ export type None = Terminal<"none", "None">;
 export type Comment = Terminal<"comment", string>;
 export type LineContinuation = Terminal<"line_continuation", string>;
 export type KwAsync = Terminal<"_kw_async", "async">;
-export type KwExpression = Terminal<"_kw_expression", >;
-export type KwPrimaryExpression = Terminal<"_kw_primary_expression", >;
-export type KwDottedName = Terminal<"_kw_dotted_name", >;
-export type KwArguments = Terminal<"_kw_arguments", >;
-export type KwLeft = Terminal<"_kw_left", >;
-export type KwComparators = Terminal<"_kw_comparators", >;
-export type KwImaginary = Terminal<"_kw_imaginary", >;
-export type KwBody = Terminal<"_kw_body", >;
-export type KwCondition = Terminal<"_kw_condition", >;
-export type KwAlternative = Terminal<"_kw_alternative", >;
-export type KwBaseType = Terminal<"_kw_base_type", >;
-export type KwConstraint = Terminal<"_kw_constraint", >;
-export type KwNewline = Terminal<"_kw_newline", >;
-export type KwInClause = Terminal<"_kw_in_clause", >;
-export type KwBlock = Terminal<"_kw_block", >;
-export type KwIdentifier = Terminal<"_kw_identifier", >;
-export type KwTypeParameter = Terminal<"_kw_type_parameter", >;
-export type KwWildcardImport = Terminal<"_kw_wildcard_import", >;
-export type KwSimplePattern = Terminal<"_kw_simple_pattern", >;
-export type KwImportPrefix = Terminal<"_kw_import_prefix", >;
-export type KwStart = Terminal<"_kw_start", >;
-export type KwStop = Terminal<"_kw_stop", >;
-export type KwStep = Terminal<"_kw_step", >;
-export type KwStringStart = Terminal<"_kw_string_start", >;
-export type KwContent = Terminal<"_kw_content", >;
-export type KwStringEnd = Terminal<"_kw_string_end", >;
-export type KwExceptClauses = Terminal<"_kw_except_clauses", >;
-export type KwElseClause = Terminal<"_kw_else_clause", >;
-export type KwFinallyClause = Terminal<"_kw_finally_clause", >;
-export type KwRight = Terminal<"_kw_right", >;
 export type Newline = Terminal<"_newline", string>;
 export type Indent = Terminal<"_indent", string>;
 export type Dedent = Terminal<"_dedent", string>;
@@ -1520,36 +1430,6 @@ export interface NoneTree extends AnyTreeNode { readonly type: "none"; }
 export interface CommentTree extends TreeNode<'comment'> {}
 export interface LineContinuationTree extends TreeNode<'line_continuation'> {}
 export interface KwAsyncTree extends AnyTreeNode { readonly type: "_kw_async"; }
-export interface KwExpressionTree extends AnyTreeNode { readonly type: "_kw_expression"; }
-export interface KwPrimaryExpressionTree extends AnyTreeNode { readonly type: "_kw_primary_expression"; }
-export interface KwDottedNameTree extends AnyTreeNode { readonly type: "_kw_dotted_name"; }
-export interface KwArgumentsTree extends AnyTreeNode { readonly type: "_kw_arguments"; }
-export interface KwLeftTree extends AnyTreeNode { readonly type: "_kw_left"; }
-export interface KwComparatorsTree extends AnyTreeNode { readonly type: "_kw_comparators"; }
-export interface KwImaginaryTree extends AnyTreeNode { readonly type: "_kw_imaginary"; }
-export interface KwBodyTree extends AnyTreeNode { readonly type: "_kw_body"; }
-export interface KwConditionTree extends AnyTreeNode { readonly type: "_kw_condition"; }
-export interface KwAlternativeTree extends AnyTreeNode { readonly type: "_kw_alternative"; }
-export interface KwBaseTypeTree extends AnyTreeNode { readonly type: "_kw_base_type"; }
-export interface KwConstraintTree extends AnyTreeNode { readonly type: "_kw_constraint"; }
-export interface KwNewlineTree extends AnyTreeNode { readonly type: "_kw_newline"; }
-export interface KwInClauseTree extends AnyTreeNode { readonly type: "_kw_in_clause"; }
-export interface KwBlockTree extends AnyTreeNode { readonly type: "_kw_block"; }
-export interface KwIdentifierTree extends AnyTreeNode { readonly type: "_kw_identifier"; }
-export interface KwTypeParameterTree extends AnyTreeNode { readonly type: "_kw_type_parameter"; }
-export interface KwWildcardImportTree extends AnyTreeNode { readonly type: "_kw_wildcard_import"; }
-export interface KwSimplePatternTree extends AnyTreeNode { readonly type: "_kw_simple_pattern"; }
-export interface KwImportPrefixTree extends AnyTreeNode { readonly type: "_kw_import_prefix"; }
-export interface KwStartTree extends AnyTreeNode { readonly type: "_kw_start"; }
-export interface KwStopTree extends AnyTreeNode { readonly type: "_kw_stop"; }
-export interface KwStepTree extends AnyTreeNode { readonly type: "_kw_step"; }
-export interface KwStringStartTree extends AnyTreeNode { readonly type: "_kw_string_start"; }
-export interface KwContentTree extends AnyTreeNode { readonly type: "_kw_content"; }
-export interface KwStringEndTree extends AnyTreeNode { readonly type: "_kw_string_end"; }
-export interface KwExceptClausesTree extends AnyTreeNode { readonly type: "_kw_except_clauses"; }
-export interface KwElseClauseTree extends AnyTreeNode { readonly type: "_kw_else_clause"; }
-export interface KwFinallyClauseTree extends AnyTreeNode { readonly type: "_kw_finally_clause"; }
-export interface KwRightTree extends AnyTreeNode { readonly type: "_kw_right"; }
 export interface NewlineTree extends AnyTreeNode { readonly type: "_newline"; }
 export interface IndentTree extends AnyTreeNode { readonly type: "_indent"; }
 export interface DedentTree extends AnyTreeNode { readonly type: "_dedent"; }
@@ -2035,36 +1915,6 @@ export interface KindMap {
   'comment': Comment;
   'line_continuation': LineContinuation;
   '_kw_async': KwAsync;
-  '_kw_expression': KwExpression;
-  '_kw_primary_expression': KwPrimaryExpression;
-  '_kw_dotted_name': KwDottedName;
-  '_kw_arguments': KwArguments;
-  '_kw_left': KwLeft;
-  '_kw_comparators': KwComparators;
-  '_kw_imaginary': KwImaginary;
-  '_kw_body': KwBody;
-  '_kw_condition': KwCondition;
-  '_kw_alternative': KwAlternative;
-  '_kw_base_type': KwBaseType;
-  '_kw_constraint': KwConstraint;
-  '_kw_newline': KwNewline;
-  '_kw_in_clause': KwInClause;
-  '_kw_block': KwBlock;
-  '_kw_identifier': KwIdentifier;
-  '_kw_type_parameter': KwTypeParameter;
-  '_kw_wildcard_import': KwWildcardImport;
-  '_kw_simple_pattern': KwSimplePattern;
-  '_kw_import_prefix': KwImportPrefix;
-  '_kw_start': KwStart;
-  '_kw_stop': KwStop;
-  '_kw_step': KwStep;
-  '_kw_string_start': KwStringStart;
-  '_kw_content': KwContent;
-  '_kw_string_end': KwStringEnd;
-  '_kw_except_clauses': KwExceptClauses;
-  '_kw_else_clause': KwElseClause;
-  '_kw_finally_clause': KwFinallyClause;
-  '_kw_right': KwRight;
   '_newline': Newline;
   '_indent': Indent;
   '_dedent': Dedent;

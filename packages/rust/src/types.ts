@@ -10,42 +10,6 @@ export type NodeConfig<K extends NodeKind<RustGrammar>> = BaseNodeConfig<RustGra
 export type TreeNode<K extends NodeKind<RustGrammar>> = BaseTreeNode<RustGrammar, K>;
 
 export type LeafScalarMap = {
-  _kw_static: number;
-  _kw_move: number;
-  _kw_type_parameters: number;
-  _kw_where_clause: number;
-  _kw_attributes: number;
-  _kw_elements: number;
-  _kw_block: number;
-  _kw_attribute: number;
-  _kw_label: number;
-  _kw_left: number;
-  _kw_right: number;
-  _kw_expression: number;
-  _kw_identifier: number;
-  _kw_pattern: number;
-  _kw_visibility_modifier: number;
-  _kw_crate: number;
-  _kw_string_literal: number;
-  _kw_mutable_specifier: number;
-  _kw_extern_modifier: number;
-  _kw_function_modifiers: number;
-  _kw_for_lifetimes: number;
-  _kw_object: number;
-  _kw_index: number;
-  _kw_token_tree: number;
-  _kw_value: number;
-  _kw_raw_string_literal_start: number;
-  _kw_string_content: number;
-  _kw_raw_string_literal_end: number;
-  _kw_start: number;
-  _kw_end: number;
-  _kw_lifetime_name: number;
-  _kw_shebang: number;
-  _kw_statements: number;
-  _kw_trailing_where_clause: number;
-  _kw_operand: number;
-  _kw_path: number;
 };
 
 export type LeafStringMap = {
@@ -312,46 +276,10 @@ export const enum SyntaxKind {
   Metavariable = 'metavariable',
   KwRef = '_kw_ref',
   KwUnsafe = '_kw_unsafe',
-  KwStatic = '_kw_static',
   KwAsync = '_kw_async',
-  KwMove = '_kw_move',
   KwDefault = '_kw_default',
   KwConst = '_kw_const',
   _WildcardPattern = '_wildcard_pattern',
-  KwTypeParameters = '_kw_type_parameters',
-  KwWhereClause = '_kw_where_clause',
-  KwAttributes = '_kw_attributes',
-  KwElements = '_kw_elements',
-  KwBlock = '_kw_block',
-  KwAttribute = '_kw_attribute',
-  KwLabel = '_kw_label',
-  KwLeft = '_kw_left',
-  KwRight = '_kw_right',
-  KwExpression = '_kw_expression',
-  KwIdentifier = '_kw_identifier',
-  KwPattern = '_kw_pattern',
-  KwVisibilityModifier = '_kw_visibility_modifier',
-  KwCrate = '_kw_crate',
-  KwStringLiteral = '_kw_string_literal',
-  KwMutableSpecifier = '_kw_mutable_specifier',
-  KwExternModifier = '_kw_extern_modifier',
-  KwFunctionModifiers = '_kw_function_modifiers',
-  KwForLifetimes = '_kw_for_lifetimes',
-  KwObject = '_kw_object',
-  KwIndex = '_kw_index',
-  KwTokenTree = '_kw_token_tree',
-  KwValue = '_kw_value',
-  KwRawStringLiteralStart = '_kw_raw_string_literal_start',
-  KwStringContent = '_kw_string_content',
-  KwRawStringLiteralEnd = '_kw_raw_string_literal_end',
-  KwStart = '_kw_start',
-  KwEnd = '_kw_end',
-  KwLifetimeName = '_kw_lifetime_name',
-  KwShebang = '_kw_shebang',
-  KwStatements = '_kw_statements',
-  KwTrailingWhereClause = '_kw_trailing_where_clause',
-  KwOperand = '_kw_operand',
-  KwPath = '_kw_path',
   StringContent = 'string_content',
   RawStringLiteralContent = 'raw_string_literal_content',
   FloatLiteral = 'float_literal',
@@ -2297,46 +2225,10 @@ export type Crate = Terminal<"crate", "crate">;
 export type Metavariable = Terminal<"metavariable", string>;
 export type KwRef = Terminal<"_kw_ref", "ref">;
 export type KwUnsafe = Terminal<"_kw_unsafe", "unsafe">;
-export type KwStatic = Terminal<"_kw_static", >;
 export type KwAsync = Terminal<"_kw_async", "async">;
-export type KwMove = Terminal<"_kw_move", >;
 export type KwDefault = Terminal<"_kw_default", "default">;
 export type KwConst = Terminal<"_kw_const", "const">;
 export type _WildcardPattern = Terminal<"_wildcard_pattern", "_">;
-export type KwTypeParameters = Terminal<"_kw_type_parameters", >;
-export type KwWhereClause = Terminal<"_kw_where_clause", >;
-export type KwAttributes = Terminal<"_kw_attributes", >;
-export type KwElements = Terminal<"_kw_elements", >;
-export type KwBlock = Terminal<"_kw_block", >;
-export type KwAttribute = Terminal<"_kw_attribute", >;
-export type KwLabel = Terminal<"_kw_label", >;
-export type KwLeft = Terminal<"_kw_left", >;
-export type KwRight = Terminal<"_kw_right", >;
-export type KwExpression = Terminal<"_kw_expression", >;
-export type KwIdentifier = Terminal<"_kw_identifier", >;
-export type KwPattern = Terminal<"_kw_pattern", >;
-export type KwVisibilityModifier = Terminal<"_kw_visibility_modifier", >;
-export type KwCrate = Terminal<"_kw_crate", >;
-export type KwStringLiteral = Terminal<"_kw_string_literal", >;
-export type KwMutableSpecifier = Terminal<"_kw_mutable_specifier", >;
-export type KwExternModifier = Terminal<"_kw_extern_modifier", >;
-export type KwFunctionModifiers = Terminal<"_kw_function_modifiers", >;
-export type KwForLifetimes = Terminal<"_kw_for_lifetimes", >;
-export type KwObject = Terminal<"_kw_object", >;
-export type KwIndex = Terminal<"_kw_index", >;
-export type KwTokenTree = Terminal<"_kw_token_tree", >;
-export type KwValue = Terminal<"_kw_value", >;
-export type KwRawStringLiteralStart = Terminal<"_kw_raw_string_literal_start", >;
-export type KwStringContent = Terminal<"_kw_string_content", >;
-export type KwRawStringLiteralEnd = Terminal<"_kw_raw_string_literal_end", >;
-export type KwStart = Terminal<"_kw_start", >;
-export type KwEnd = Terminal<"_kw_end", >;
-export type KwLifetimeName = Terminal<"_kw_lifetime_name", >;
-export type KwShebang = Terminal<"_kw_shebang", >;
-export type KwStatements = Terminal<"_kw_statements", >;
-export type KwTrailingWhereClause = Terminal<"_kw_trailing_where_clause", >;
-export type KwOperand = Terminal<"_kw_operand", >;
-export type KwPath = Terminal<"_kw_path", >;
 export type StringContent = Terminal<"string_content", string>;
 export type RawStringLiteralContent = Terminal<"raw_string_literal_content", string>;
 export type FloatLiteral = Terminal<"float_literal", string>;
@@ -2352,6 +2244,8 @@ export type TypeIdentifier = Terminal<"type_identifier", string>;
 export type FieldIdentifier = Terminal<"field_identifier", string>;
 export type ShorthandFieldIdentifier = Terminal<"shorthand_field_identifier", string>;
 
+export type KwStatic = Terminal<"_kw_static", string>;
+export type KwMove = Terminal<"_kw_move", string>;
 export type DocComment = Terminal<"doc_comment", string>;
 
 // Polymorph form Config/Tree aliases (forms have no namespace sugar)
@@ -2617,46 +2511,10 @@ export interface CrateTree extends AnyTreeNode { readonly type: "crate"; }
 export interface MetavariableTree extends TreeNode<'metavariable'> {}
 export interface KwRefTree extends AnyTreeNode { readonly type: "_kw_ref"; }
 export interface KwUnsafeTree extends AnyTreeNode { readonly type: "_kw_unsafe"; }
-export interface KwStaticTree extends AnyTreeNode { readonly type: "_kw_static"; }
 export interface KwAsyncTree extends AnyTreeNode { readonly type: "_kw_async"; }
-export interface KwMoveTree extends AnyTreeNode { readonly type: "_kw_move"; }
 export interface KwDefaultTree extends AnyTreeNode { readonly type: "_kw_default"; }
 export interface KwConstTree extends AnyTreeNode { readonly type: "_kw_const"; }
 export interface _WildcardPatternTree extends AnyTreeNode { readonly type: "_wildcard_pattern"; }
-export interface KwTypeParametersTree extends AnyTreeNode { readonly type: "_kw_type_parameters"; }
-export interface KwWhereClauseTree extends AnyTreeNode { readonly type: "_kw_where_clause"; }
-export interface KwAttributesTree extends AnyTreeNode { readonly type: "_kw_attributes"; }
-export interface KwElementsTree extends AnyTreeNode { readonly type: "_kw_elements"; }
-export interface KwBlockTree extends AnyTreeNode { readonly type: "_kw_block"; }
-export interface KwAttributeTree extends AnyTreeNode { readonly type: "_kw_attribute"; }
-export interface KwLabelTree extends AnyTreeNode { readonly type: "_kw_label"; }
-export interface KwLeftTree extends AnyTreeNode { readonly type: "_kw_left"; }
-export interface KwRightTree extends AnyTreeNode { readonly type: "_kw_right"; }
-export interface KwExpressionTree extends AnyTreeNode { readonly type: "_kw_expression"; }
-export interface KwIdentifierTree extends AnyTreeNode { readonly type: "_kw_identifier"; }
-export interface KwPatternTree extends AnyTreeNode { readonly type: "_kw_pattern"; }
-export interface KwVisibilityModifierTree extends AnyTreeNode { readonly type: "_kw_visibility_modifier"; }
-export interface KwCrateTree extends AnyTreeNode { readonly type: "_kw_crate"; }
-export interface KwStringLiteralTree extends AnyTreeNode { readonly type: "_kw_string_literal"; }
-export interface KwMutableSpecifierTree extends AnyTreeNode { readonly type: "_kw_mutable_specifier"; }
-export interface KwExternModifierTree extends AnyTreeNode { readonly type: "_kw_extern_modifier"; }
-export interface KwFunctionModifiersTree extends AnyTreeNode { readonly type: "_kw_function_modifiers"; }
-export interface KwForLifetimesTree extends AnyTreeNode { readonly type: "_kw_for_lifetimes"; }
-export interface KwObjectTree extends AnyTreeNode { readonly type: "_kw_object"; }
-export interface KwIndexTree extends AnyTreeNode { readonly type: "_kw_index"; }
-export interface KwTokenTreeTree extends AnyTreeNode { readonly type: "_kw_token_tree"; }
-export interface KwValueTree extends AnyTreeNode { readonly type: "_kw_value"; }
-export interface KwRawStringLiteralStartTree extends AnyTreeNode { readonly type: "_kw_raw_string_literal_start"; }
-export interface KwStringContentTree extends AnyTreeNode { readonly type: "_kw_string_content"; }
-export interface KwRawStringLiteralEndTree extends AnyTreeNode { readonly type: "_kw_raw_string_literal_end"; }
-export interface KwStartTree extends AnyTreeNode { readonly type: "_kw_start"; }
-export interface KwEndTree extends AnyTreeNode { readonly type: "_kw_end"; }
-export interface KwLifetimeNameTree extends AnyTreeNode { readonly type: "_kw_lifetime_name"; }
-export interface KwShebangTree extends AnyTreeNode { readonly type: "_kw_shebang"; }
-export interface KwStatementsTree extends AnyTreeNode { readonly type: "_kw_statements"; }
-export interface KwTrailingWhereClauseTree extends AnyTreeNode { readonly type: "_kw_trailing_where_clause"; }
-export interface KwOperandTree extends AnyTreeNode { readonly type: "_kw_operand"; }
-export interface KwPathTree extends AnyTreeNode { readonly type: "_kw_path"; }
 export interface StringContentTree extends TreeNode<'string_content'> {}
 export interface RawStringLiteralContentTree extends AnyTreeNode { readonly type: "raw_string_literal_content"; }
 export interface FloatLiteralTree extends TreeNode<'float_literal'> {}
@@ -3523,46 +3381,10 @@ export interface KindMap {
   'metavariable': Metavariable;
   '_kw_ref': KwRef;
   '_kw_unsafe': KwUnsafe;
-  '_kw_static': KwStatic;
   '_kw_async': KwAsync;
-  '_kw_move': KwMove;
   '_kw_default': KwDefault;
   '_kw_const': KwConst;
   '_wildcard_pattern': _WildcardPattern;
-  '_kw_type_parameters': KwTypeParameters;
-  '_kw_where_clause': KwWhereClause;
-  '_kw_attributes': KwAttributes;
-  '_kw_elements': KwElements;
-  '_kw_block': KwBlock;
-  '_kw_attribute': KwAttribute;
-  '_kw_label': KwLabel;
-  '_kw_left': KwLeft;
-  '_kw_right': KwRight;
-  '_kw_expression': KwExpression;
-  '_kw_identifier': KwIdentifier;
-  '_kw_pattern': KwPattern;
-  '_kw_visibility_modifier': KwVisibilityModifier;
-  '_kw_crate': KwCrate;
-  '_kw_string_literal': KwStringLiteral;
-  '_kw_mutable_specifier': KwMutableSpecifier;
-  '_kw_extern_modifier': KwExternModifier;
-  '_kw_function_modifiers': KwFunctionModifiers;
-  '_kw_for_lifetimes': KwForLifetimes;
-  '_kw_object': KwObject;
-  '_kw_index': KwIndex;
-  '_kw_token_tree': KwTokenTree;
-  '_kw_value': KwValue;
-  '_kw_raw_string_literal_start': KwRawStringLiteralStart;
-  '_kw_string_content': KwStringContent;
-  '_kw_raw_string_literal_end': KwRawStringLiteralEnd;
-  '_kw_start': KwStart;
-  '_kw_end': KwEnd;
-  '_kw_lifetime_name': KwLifetimeName;
-  '_kw_shebang': KwShebang;
-  '_kw_statements': KwStatements;
-  '_kw_trailing_where_clause': KwTrailingWhereClause;
-  '_kw_operand': KwOperand;
-  '_kw_path': KwPath;
   'string_content': StringContent;
   'raw_string_literal_content': RawStringLiteralContent;
   'float_literal': FloatLiteral;

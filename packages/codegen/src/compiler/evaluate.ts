@@ -901,7 +901,56 @@ function evaluateRulesAndInjectSynthetics(
 ): void {
     evaluateRuleFunctions(opts, baseRules, refs, rules)
     const wireCtx = (opts as unknown as { __wireContext__?: WireContext }).__wireContext__
-    if (wireCtx) injectSyntheticRules(wireCtx.deposits, rules)
+    if (wireCtx) {
+        injectSyntheticRules(wireCtx.deposits, rules)
+        prunePlaceholderOrphans(wireCtx, rules)
+    }
+}
+
+/**
+ * Remove `_kw_*` / `_<parent>_<suffix>` placeholder rules that were
+ * pre-registered by wire() at setup time but never actually
+ * deposited-into at rule-evaluation time.
+ *
+ * @remarks
+ * `injectTransformHiddenRulePlaceholders` blindly registers a deferred
+ * rule fn for every `field()` / `alias()` / `variant()` placeholder it
+ * sees, even though only some placeholders will actually synthesize at
+ * resolve time (`field('x')` with non-string content, e.g. the rust
+ * `self_parameter.lifetime_name` field wrapping `optional($.lifetime)`,
+ * never feeds `maybeKeywordSymbol`). The pre-registration is required
+ * under tree-sitter's native `grammar()` because tree-sitter walks
+ * rules in dependency order and errors on any unknown SYMBOL the
+ * parent rule references — so the safe move at wire time is to register
+ * every potentially-used name. But when the placeholder never actually
+ * deposits, the registered deferred fn returns `blank()` and the
+ * resulting empty rule lingers in the grammar as orphan leaf noise.
+ * This pass deletes those orphans: for every `_`-prefixed rule whose
+ * body is the empty-choice sentinel `blank()` emits AND which has no
+ * matching deposit, drop the entry.
+ *
+ * Skips rules that DID receive a deposit (they're real synthesized
+ * content). Skips rules whose body is non-blank (author-declared hidden
+ * helpers are legitimate and can have any body).
+ */
+function prunePlaceholderOrphans(
+    ctx: WireContext,
+    rules: Record<string, Rule>,
+): void {
+    for (const name of Object.keys(rules)) {
+        if (!name.startsWith('_')) continue
+        if (ctx.deposits.has(name)) continue
+        const rule = rules[name]
+        if (!rule) continue
+        if (isBlankRule(rule)) delete rules[name]
+    }
+}
+
+/**
+ * True when `rule` is the empty-choice sentinel returned by `blank()`.
+ */
+function isBlankRule(rule: Rule): boolean {
+    return rule.type === 'choice' && rule.members.length === 0
 }
 
 /**
