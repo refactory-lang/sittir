@@ -632,7 +632,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'pattern', required: true, multiple: false },
   ],
   'field_pattern_shorthand': [
-    { name: 'name', required: true, multiple: false },
+    { name: 'name', required: false, multiple: false },
   ],
   'for_expression': [
     { name: 'label', required: false, multiple: false },
@@ -658,10 +658,10 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'body', required: true, multiple: false },
   ],
   'function_modifiers': [
-    { name: 'async', required: false, multiple: true },
-    { name: 'default', required: false, multiple: true },
-    { name: 'const', required: false, multiple: true },
-    { name: 'unsafe', required: false, multiple: true },
+    { name: 'async', required: true, multiple: true },
+    { name: 'default', required: true, multiple: true },
+    { name: 'const', required: true, multiple: true },
+    { name: 'unsafe', required: true, multiple: true },
   ],
   'function_signature_item': [
     { name: 'visibilityModifier', required: false, multiple: false },
@@ -865,14 +865,14 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'right', required: true, multiple: false },
   ],
   'raw_string_literal': [
-    { name: 'rawStringLiteralStart', required: true, multiple: false },
+    { name: 'rawStringLiteralStart', required: false, multiple: false },
     { name: 'stringContent', required: true, multiple: false },
-    { name: 'rawStringLiteralEnd', required: true, multiple: false },
+    { name: 'rawStringLiteralEnd', required: false, multiple: false },
   ],
   'ref_pattern': [
   ],
   'reference_expression': [
-    { name: 'mutableSpecifier', required: true, multiple: false },
+    { name: 'mutableSpecifier', required: false, multiple: false },
     { name: 'value', required: true, multiple: false },
   ],
   'reference_pattern': [
@@ -905,7 +905,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'list', required: true, multiple: false },
   ],
   'self_parameter': [
-    { name: 'lifetime', required: true, multiple: false },
+    { name: 'lifetime', required: false, multiple: false },
     { name: 'mutableSpecifier', required: false, multiple: false },
     { name: 'self', required: false, multiple: false },
   ],

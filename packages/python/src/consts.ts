@@ -395,14 +395,14 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'class_pattern': [
     { name: 'dottedName', required: true, multiple: false },
-    { name: 'arguments', required: false, multiple: true },
+    { name: 'arguments', required: true, multiple: true },
   ],
   'comparison_operator': [
     { name: 'left', required: true, multiple: false },
     { name: 'operators', required: true, multiple: true },
   ],
   'complex_pattern': [
-    { name: 'real', required: true, multiple: false },
+    { name: 'real', required: false, multiple: false },
     { name: 'imaginary', required: true, multiple: false },
   ],
   'concatenated_string': [
@@ -422,7 +422,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'decorator': [
     { name: 'expression', required: true, multiple: false },
-    { name: 'newline', required: true, multiple: false },
+    { name: 'newline', required: false, multiple: false },
   ],
   'default_parameter': [
     { name: 'name', required: true, multiple: false },
@@ -431,8 +431,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'delete_statement': [
   ],
   'dict_pattern': [
-    { name: 'key', required: false, multiple: true },
-    { name: 'value', required: false, multiple: true },
+    { name: 'key', required: true, multiple: true },
+    { name: 'value', required: true, multiple: true },
   ],
   'dictionary': [
   ],
@@ -460,7 +460,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'exec_statement': [
     { name: 'code', required: true, multiple: false },
-    { name: 'inClause', required: false, multiple: false },
+    { name: 'inClause', required: false, multiple: true },
   ],
   'expression_list': [
     { name: 'expression', required: true, multiple: false },
@@ -520,8 +520,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'import_from_statement': [
     { name: 'moduleName', required: true, multiple: false },
-    { name: 'wildcardImport', required: true, multiple: false },
-    { name: 'name', required: false, multiple: true },
+    { name: 'wildcardImport', required: true, multiple: true },
+    { name: 'name', required: true, multiple: true },
   ],
   'import_statement': [
     { name: 'name', required: true, multiple: true },

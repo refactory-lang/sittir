@@ -1074,17 +1074,17 @@ export interface FunctionSignatureItem {
 export interface FunctionModifiers {
   readonly $type: 'function_modifiers';
   readonly $fields: {
-    readonly async?: readonly (KwAsync)[];
-    readonly default?: readonly (KwDefault)[];
-    readonly const?: readonly (KwConst)[];
-    readonly unsafe?: readonly (KwUnsafe)[];
+    readonly async: readonly (KwAsync)[];
+    readonly default: readonly (KwDefault)[];
+    readonly const: readonly (KwConst)[];
+    readonly unsafe: readonly (KwUnsafe)[];
   };
   readonly $children: readonly (ExternModifier)[];
 }
 
 export interface WhereClause {
   readonly $type: 'where_clause';
-  readonly $children: readonly (WherePredicate)[];
+  readonly $children: NonEmptyArray<WherePredicate>;
 }
 
 export interface WherePredicate {
@@ -1247,7 +1247,7 @@ export interface Parameters {
 export interface SelfParameter {
   readonly $type: 'self_parameter';
   readonly $fields: {
-    readonly lifetime: string;
+    readonly lifetime?: string;
     readonly mutable_specifier?: Lifetime;
     readonly self?: MutableSpecifier | Self;
   };
@@ -1404,7 +1404,7 @@ export interface ReferenceType {
 export interface PointerType {
   readonly $type: 'pointer_type';
   readonly $fields: {
-    readonly mutable_specifier: MutableSpecifier;
+    readonly mutable_specifier: "const";
     readonly type: _Type;
   };
 }
@@ -1412,7 +1412,7 @@ export interface PointerType {
 export interface AbstractType {
   readonly $type: 'abstract_type';
   readonly $fields: {
-    readonly type_parameters?: TypeParameters;
+    readonly type_parameters?: "for";
     readonly trait: _TypeIdentifier | ScopedTypeIdentifier | RemovedTraitBound | GenericType | FunctionType | TupleType | BoundedType;
   };
 }
@@ -1500,7 +1500,7 @@ export interface TryExpression {
 export interface ReferenceExpression {
   readonly $type: 'reference_expression';
   readonly $fields: {
-    readonly mutable_specifier: MutableSpecifier;
+    readonly mutable_specifier?: "raw" | "const";
     readonly value: Expression;
   };
 }
@@ -1582,7 +1582,7 @@ export interface TupleExpression {
   readonly $type: 'tuple_expression';
   readonly $fields: {
     readonly attributes: readonly (AttributeItem)[];
-    readonly elements?: readonly (Expression)[];
+    readonly elements?: readonly (Expression | Expression | Expression)[];
   };
 }
 
@@ -1658,7 +1658,7 @@ export interface MatchExpression {
 
 export interface MatchBlock {
   readonly $type: 'match_block';
-  readonly $children: readonly (MatchArm)[];
+  readonly $children: readonly (MatchArm | MatchArm)[];
 }
 
 export interface MatchArm {
@@ -1949,9 +1949,9 @@ export interface StringLiteral {
 export interface RawStringLiteral {
   readonly $type: 'raw_string_literal';
   readonly $fields: {
-    readonly raw_string_literal_start: string;
+    readonly raw_string_literal_start?: string;
     readonly string_content: RawStringLiteralContent;
-    readonly raw_string_literal_end: string;
+    readonly raw_string_literal_end?: string;
   };
 }
 
@@ -2000,7 +2000,7 @@ export interface _ClosureExpressionBlock {
 export interface _ClosureExpressionExpr {
   readonly $type: '_closure_expression_expr';
   readonly $fields: {
-    readonly body: Expression;
+    readonly body: "_";
   };
 }
 
@@ -2036,17 +2036,17 @@ export interface _ImplItemBody {
 
 export interface _MacroDefinitionParen {
   readonly $type: '_macro_definition_paren';
-  readonly $children: readonly (MacroRule)[];
+  readonly $children: readonly (MacroRule | MacroRule)[];
 }
 
 export interface _MacroDefinitionBracket {
   readonly $type: '_macro_definition_bracket';
-  readonly $children: readonly (MacroRule)[];
+  readonly $children: readonly (MacroRule | MacroRule)[];
 }
 
 export interface _MacroDefinitionBrace {
   readonly $type: '_macro_definition_brace';
-  readonly $children: readonly (MacroRule)[];
+  readonly $children: readonly (MacroRule | MacroRule)[];
 }
 
 export interface _ModItemInline {
@@ -2121,17 +2121,17 @@ export interface ArrayExpressionList {
 
 export interface MacroDefinitionParen {
   readonly $type: 'macro_definition_paren';
-  readonly $children: readonly (MacroRule)[];
+  readonly $children: readonly (MacroRule | MacroRule)[];
 }
 
 export interface MacroDefinitionBracket {
   readonly $type: 'macro_definition_bracket';
-  readonly $children: readonly (MacroRule)[];
+  readonly $children: readonly (MacroRule | MacroRule)[];
 }
 
 export interface MacroDefinitionBrace {
   readonly $type: 'macro_definition_brace';
-  readonly $children: readonly (MacroRule)[];
+  readonly $children: readonly (MacroRule | MacroRule)[];
 }
 
 export interface ModItemInline {
@@ -2224,14 +2224,14 @@ export interface ClosureExpressionBlock {
 export interface ClosureExpressionExpr {
   readonly $type: 'closure_expression_expr';
   readonly $fields: {
-    readonly body: Expression;
+    readonly body: "_";
   };
 }
 
 export interface FieldPatternShorthand {
   readonly $type: 'field_pattern_shorthand';
   readonly $fields: {
-    readonly name: string;
+    readonly name?: string;
   };
 }
 

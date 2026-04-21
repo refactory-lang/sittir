@@ -110,10 +110,31 @@ function emitBranchTest(lines: string[], node: AssembledNode, kind: string, key:
     lines.push(`    expect(node.$source).toBe('factory');`)
     lines.push('  });')
 
-    lines.push(`  it('render produces non-empty string', () => {`)
-    lines.push(`    const node = ir.${key}(${renderConfigArg});`)
-    lines.push(`    expect(node.render().length).toBeGreaterThan(0);`)
-    lines.push('  });')
+    // Render test. Two variants depending on whether the minimal config
+    // produces renderable content:
+    //
+    // - If renderConfig has any injected content (required fields,
+    //   required children, or a dummy child for kinds with a children
+    //   slot), the render output is expected to be non-empty.
+    //
+    // - If renderConfig is `{}` (no required content and no children
+    //   slot — kinds whose fields are ALL optional, like self_parameter
+    //   or field_pattern_shorthand), rendering with no input legitimately
+    //   produces an empty string. We still invoke render() to catch
+    //   template-walker crashes, but don't assert non-empty — the empty
+    //   output is the correct behavior.
+    const hasRenderContent = renderConfigArg !== '{}'
+    if (hasRenderContent) {
+        lines.push(`  it('render produces non-empty string', () => {`)
+        lines.push(`    const node = ir.${key}(${renderConfigArg});`)
+        lines.push(`    expect(node.render().length).toBeGreaterThan(0);`)
+        lines.push('  });')
+    } else {
+        lines.push(`  it('render does not throw on minimal config', () => {`)
+        lines.push(`    const node = ir.${key}(${renderConfigArg});`)
+        lines.push(`    expect(() => node.render()).not.toThrow();`)
+        lines.push('  });')
+    }
 
     lines.push('});')
     lines.push('')

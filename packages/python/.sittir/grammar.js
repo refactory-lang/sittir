@@ -107,14 +107,20 @@ function parsePath(pathStr) {
   const parts = pathStr.split("/");
   const segments = [];
   for (const part of parts) {
-    if (part === "*") {
+    if (part === "_") {
       segments.push({ kind: "wildcard" });
     } else if (/^-?\d+$/.test(part)) {
       segments.push({ kind: "index", value: Number(part) });
-    } else if (/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(part)) {
-      segments.push({ kind: "kind-match", name: part });
+    } else if (/^\([A-Za-z_][A-Za-z0-9_]*\)$/.test(part)) {
+      segments.push({ kind: "kind-match", name: part.slice(1, -1) });
+    } else if (/^[A-Za-z_][A-Za-z0-9_]*:$/.test(part)) {
+      segments.push({ kind: "fieldName", name: part.slice(0, -1) });
+    } else if (part === "*") {
+      throw new Error(`parsePath: path segment '*' is no longer valid \u2014 use '_' for wildcard; see ADR-0010`);
+    } else if (/^[A-Za-z_][A-Za-z0-9_]*$/.test(part)) {
+      throw new Error(`parsePath: bare kind name '${part}' is no longer valid as a path segment \u2014 use '(${part})' instead; see ADR-0010`);
     } else {
-      throw new Error(`parsePath: invalid segment '${part}' in path '${pathStr}' \u2014 must be a numeric index, '*', or a kind name ([a-zA-Z_][a-zA-Z0-9_]*)`);
+      throw new Error(`parsePath: invalid segment '${part}' in path '${pathStr}' \u2014 must be a numeric index, '_' (wildcard), '(name)' (kind-match), or 'name:' (field traversal)`);
     }
   }
   return segments;
@@ -130,16 +136,26 @@ function applyPath(rule, segments, patch, precStack) {
   }
   const [head, ...rest] = segments;
   const t = rule.type;
-  if (head.kind === "kind-match") {
-    return dispatchKindMatch(rule, head.name, rest, patch, precStack);
+  switch (head.kind) {
+    case "kind-match":
+      return dispatchKindMatch(rule, head.name, rest, patch, precStack);
+    case "fieldName":
+      return descendThroughNamedField(rule, head.name, rest, patch, precStack);
+    case "index":
+    case "wildcard": {
+      if (isContainerType(t)) {
+        return applyToMembers(rule, head, rest, patch, precStack);
+      }
+      if (isWrapperType(t)) {
+        return descendThroughSingleWrapper(rule, head, rest, patch, precStack);
+      }
+      throw new ApplyPathSkip(`applyPath: cannot descend into '${rule.type}' rule (path has ${segments.length} segments left)`);
+    }
+    default: {
+      const _exhaustive = head;
+      throw new Error(`applyPath: unknown segment kind '${_exhaustive.kind}'`);
+    }
   }
-  if (isContainerType(t)) {
-    return applyToMembers(rule, head, rest, patch, precStack);
-  }
-  if (isWrapperType(t)) {
-    return descendThroughSingleWrapper(rule, head, rest, patch, precStack);
-  }
-  throw new ApplyPathSkip(`applyPath: cannot descend into '${rule.type}' rule (path has ${segments.length} segments left)`);
 }
 function descendThroughPrecWrapper(rule, segments, patch, precStack) {
   const newStack = precStack ? [...precStack, rule] : [rule];
@@ -147,14 +163,42 @@ function descendThroughPrecWrapper(rule, segments, patch, precStack) {
   return reconstructPrec(rule, newContent);
 }
 function descendThroughSingleWrapper(rule, head, rest, patch, precStack) {
-  const wrapperHit = head.kind === "wildcard" || head.kind === "index" && (head.value === 0 || head.value === -1);
-  if (wrapperHit) {
-    const newContent = applyPath(contentOf(rule), rest, patch, precStack);
-    return reconstructWrapper(rule, newContent);
+  switch (head.kind) {
+    case "wildcard": {
+      const newContent = applyPath(contentOf(rule), rest, patch, precStack);
+      return reconstructWrapper(rule, newContent);
+    }
+    case "index": {
+      if (head.value === 0 || head.value === -1) {
+        const newContent = applyPath(contentOf(rule), rest, patch, precStack);
+        return reconstructWrapper(rule, newContent);
+      }
+      throw new ApplyPathSkip(
+        `applyPath: index ${head.value} out of bounds \u2014 '${rule.type}' wraps a single content rule (only index 0 / -1 is valid)`
+      );
+    }
+    case "kind-match":
+    case "fieldName":
+    default: {
+      const _exhaustive = head;
+      throw new Error(`descendThroughSingleWrapper: unexpected segment kind '${_exhaustive.kind}' \u2014 this is a bug in applyPath dispatch`);
+    }
   }
-  throw new ApplyPathSkip(
-    `applyPath: index ${head.kind === "index" ? head.value : "*"} out of bounds \u2014 '${rule.type}' wraps a single content rule (only index 0 / -1 is valid)`
-  );
+}
+function descendThroughNamedField(rule, fieldName, rest, patch, precStack) {
+  if (!isFieldType(rule.type)) {
+    throw new Error(
+      `applyPath: path segment '${fieldName}:' at this level expects a field('${fieldName}', ...) wrapper; got type '${rule.type}'`
+    );
+  }
+  const actualName = rule.name;
+  if (actualName !== fieldName) {
+    throw new Error(
+      `applyPath: path segment '${fieldName}:' doesn't match field name '${actualName}' at this position`
+    );
+  }
+  const newContent = applyPath(contentOf(rule), rest, patch, precStack);
+  return reconstructWrapper(rule, newContent);
 }
 function dispatchKindMatch(rule, kindName, rest, patch, precStack) {
   return applyKindMatch(rule, kindName, rest, patch, precStack, false);
@@ -267,10 +311,18 @@ function wrapInPrecStack(content, precStack, reconstructPrec2) {
 }
 function applyToMembers(rule, head, rest, patch, precStack) {
   const members = [...membersOf(rule)];
-  if (head.kind === "index") {
-    return applyToIndexedMember(rule, members, head.value, rest, patch, precStack);
+  switch (head.kind) {
+    case "index":
+      return applyToIndexedMember(rule, members, head.value, rest, patch, precStack);
+    case "wildcard":
+      return applyWildcardToMembers(rule, members, rest, patch, precStack);
+    case "kind-match":
+    case "fieldName":
+    default: {
+      const _exhaustive = head;
+      throw new Error(`applyToMembers: unexpected segment kind '${_exhaustive.kind}' \u2014 this is a bug in applyPath dispatch`);
+    }
   }
-  return applyWildcardToMembers(rule, members, rest, patch, precStack);
 }
 function applyToIndexedMember(rule, members, indexValue, rest, patch, precStack) {
   const idx = indexValue < 0 ? members.length + indexValue : indexValue;

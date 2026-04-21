@@ -572,7 +572,7 @@ export interface Program {
 export interface ExportStatementForm0 {
   readonly $type: 'export_statement';
   readonly $fields: {
-    readonly decorator?: readonly (Decorator)[];
+    readonly decorator: readonly (Decorator)[];
     readonly declaration?: Declaration;
     readonly value?: Expression;
   };
@@ -622,7 +622,7 @@ export interface ImportStatement {
   readonly $type: 'import_statement';
   readonly $fields: {
     readonly import_clause?: "type" | "typeof";
-    readonly from_clause: ImportClause | String | ImportRequireClause;
+    readonly from_clause: "from";
     readonly source?: String;
     readonly import_attribute?: ImportAttribute;
     readonly semicolon: Semicolon;
@@ -692,7 +692,7 @@ export interface ExpressionStatement {
 export interface VariableDeclaration {
   readonly $type: 'variable_declaration';
   readonly $fields: {
-    readonly declarators: NonEmptyArray<string>;
+    readonly declarators: NonEmptyArray<VariableDeclarator>;
     readonly semicolon: Semicolon;
   };
 }
@@ -701,7 +701,7 @@ export interface LexicalDeclaration {
   readonly $type: 'lexical_declaration';
   readonly $fields: {
     readonly kind: "let" | "const";
-    readonly declarators: NonEmptyArray<string>;
+    readonly declarators: NonEmptyArray<VariableDeclarator>;
     readonly semicolon: Semicolon;
   };
 }
@@ -915,18 +915,18 @@ export interface PrimaryExpression {
 export interface YieldExpression {
   readonly $type: 'yield_expression';
   readonly $fields: {
-    readonly expression: Expression;
+    readonly expression?: Expression | Expression;
   };
 }
 
 export interface Object {
   readonly $type: 'object';
-  readonly $children: readonly (Pair | SpreadElement | MethodDefinition | ShorthandPropertyIdentifier)[];
+  readonly $children: readonly (Pair | Pair | SpreadElement | SpreadElement | MethodDefinition | MethodDefinition | ShorthandPropertyIdentifier | ShorthandPropertyIdentifier)[];
 }
 
 export interface ObjectPattern {
   readonly $type: 'object_pattern';
-  readonly $children: readonly (PairPattern | RestPattern | ObjectAssignmentPattern | ShorthandPropertyIdentifierPattern)[];
+  readonly $children: readonly (PairPattern | PairPattern | RestPattern | RestPattern | ObjectAssignmentPattern | ObjectAssignmentPattern | ShorthandPropertyIdentifierPattern | ShorthandPropertyIdentifierPattern)[];
 }
 
 export interface AssignmentPattern {
@@ -974,7 +974,7 @@ export interface JsxOpeningElement {
   readonly $fields: {
     readonly name?: _JsxIdentifier | JsxNamespaceName;
     readonly type_arguments?: TypeArguments;
-    readonly attribute?: readonly (_JsxAttribute)[];
+    readonly attribute: readonly (_JsxAttribute)[];
   };
 }
 
@@ -1003,7 +1003,7 @@ export interface JsxSelfClosingElement {
   readonly $fields: {
     readonly name?: _JsxIdentifier | JsxNamespaceName;
     readonly type_arguments?: TypeArguments;
-    readonly attribute?: readonly (_JsxAttribute)[];
+    readonly attribute: readonly (_JsxAttribute)[];
   };
 }
 
@@ -1311,7 +1311,7 @@ export interface DecoratorCallExpression {
 export interface ClassBody {
   readonly $type: 'class_body';
   readonly $fields: {
-    readonly decorator?: readonly (Decorator)[];
+    readonly decorator: readonly (Decorator)[];
   };
   readonly $children: readonly (MethodDefinition | Semicolon | MethodSignature | FunctionSignatureAutomaticSemicolon | ClassStaticBlock | AbstractMethodSignature | IndexSignature | PublicFieldDefinition)[];
 }
@@ -1328,7 +1328,7 @@ export interface FieldDefinition {
 
 export interface FormalParameters {
   readonly $type: 'formal_parameters';
-  readonly $children: readonly (FormalParameter)[];
+  readonly $children: NonEmptyArray<FormalParameter>;
 }
 
 export interface ClassStaticBlock {
@@ -1471,7 +1471,7 @@ export interface AsExpression {
   readonly $type: 'as_expression';
   readonly $fields: {
     readonly expression: Expression;
-    readonly type_annotation: Type;
+    readonly type_annotation: "const";
   };
 }
 
@@ -1503,7 +1503,7 @@ export interface ExtendsClause {
   readonly $type: 'extends_clause';
   readonly $fields: {
     readonly value: NonEmptyArray<Expression>;
-    readonly type_arguments?: readonly (TypeArguments)[];
+    readonly type_arguments?: TypeArguments;
   };
 }
 
@@ -1519,7 +1519,7 @@ export interface ImplementsClause {
 export interface AmbientDeclaration {
   readonly $type: 'ambient_declaration';
   readonly $fields: {
-    readonly declaration: Declaration | StatementBlock | Identifier | Type | Semicolon;
+    readonly declaration: "global" | "module";
   };
 }
 
@@ -1600,7 +1600,7 @@ export interface EnumDeclaration {
 export interface EnumBody {
   readonly $type: 'enum_body';
   readonly $fields: {
-    readonly opening?: readonly (string)[];
+    readonly opening: NonEmptyArray<PropertyName | EnumAssignment>;
   };
 }
 
@@ -1695,7 +1695,7 @@ export interface Asserts {
 export interface AssertsAnnotation {
   readonly $type: 'asserts_annotation';
   readonly $fields: {
-    readonly asserts: AutoStamp<":">;
+    readonly asserts: ":";
   };
 }
 
@@ -1753,7 +1753,7 @@ export interface InferType {
   readonly $type: 'infer_type';
   readonly $fields: {
     readonly type_identifier: _TypeIdentifier;
-    readonly constraint?: Type;
+    readonly constraint?: "extends";
   };
 }
 
@@ -1786,7 +1786,7 @@ export interface TypePredicate {
 export interface TypePredicateAnnotation {
   readonly $type: 'type_predicate_annotation';
   readonly $fields: {
-    readonly type_predicate: AutoStamp<":">;
+    readonly type_predicate: ":";
   };
 }
 
@@ -1867,7 +1867,7 @@ export interface ObjectType {
   readonly $type: 'object_type';
   readonly $fields: {
     readonly opening: "{" | "{|";
-    readonly members?: Semicolon;
+    readonly members?: NonEmptyArray<"," | ";">;
     readonly closing: "}" | "|}";
   };
 }
@@ -2131,7 +2131,7 @@ export interface InterfaceBody {
   readonly $type: 'interface_body';
   readonly $fields: {
     readonly opening: "{" | "{|";
-    readonly members?: Semicolon;
+    readonly members?: NonEmptyArray<"," | ";">;
     readonly closing: "}" | "|}";
   };
 }

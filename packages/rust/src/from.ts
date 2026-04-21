@@ -737,14 +737,14 @@ export function functionSignatureItemFrom(input: T.FunctionSignatureItem | T.Fun
   });
 }
 
-export function functionModifiersFrom(input?: T.FunctionModifiers | T.FunctionModifiers.Loose): ReturnType<typeof F.functionModifiers> {
-  if (input !== undefined && isNodeData(input)) return input as ReturnType<typeof F.functionModifiers>;
+export function functionModifiersFrom(input: T.FunctionModifiers | T.FunctionModifiers.Loose): ReturnType<typeof F.functionModifiers> {
+  if (isNodeData(input)) return input as ReturnType<typeof F.functionModifiers>;
   return F.functionModifiers({
-    async: _resolveManyLeaf<NonNullable<T.FunctionModifiers.Config['async']>[number]>((input as T.FunctionModifiers.Loose)?.async, "_kw_async"),
-    default: _resolveManyLeaf<NonNullable<T.FunctionModifiers.Config['default']>[number]>((input as T.FunctionModifiers.Loose)?.default, "_kw_default"),
-    const: _resolveManyLeaf<NonNullable<T.FunctionModifiers.Config['const']>[number]>((input as T.FunctionModifiers.Loose)?.const, "_kw_const"),
-    unsafe: _resolveManyLeaf<NonNullable<T.FunctionModifiers.Config['unsafe']>[number]>((input as T.FunctionModifiers.Loose)?.unsafe, "_kw_unsafe"),
-    children: _resolveManyBranch<NonNullable<T.FunctionModifiers.Config['children']>[number]>((input as T.FunctionModifiers.Loose)?.children, "extern_modifier"),
+    async: _resolveManyLeaf<NonNullable<T.FunctionModifiers.Config['async']>[number]>((input as T.FunctionModifiers.Loose).async, "_kw_async"),
+    default: _resolveManyLeaf<NonNullable<T.FunctionModifiers.Config['default']>[number]>((input as T.FunctionModifiers.Loose).default, "_kw_default"),
+    const: _resolveManyLeaf<NonNullable<T.FunctionModifiers.Config['const']>[number]>((input as T.FunctionModifiers.Loose).const, "_kw_const"),
+    unsafe: _resolveManyLeaf<NonNullable<T.FunctionModifiers.Config['unsafe']>[number]>((input as T.FunctionModifiers.Loose).unsafe, "_kw_unsafe"),
+    children: _resolveManyBranch<NonNullable<T.FunctionModifiers.Config['children']>[number]>((input as T.FunctionModifiers.Loose).children, "extern_modifier"),
   });
 }
 
@@ -929,12 +929,12 @@ export function parametersFrom(...input: readonly (NonNullable<T.Parameters.Conf
   return F.parameters(...(input as NonNullable<T.Parameters.Config['children']>));
 }
 
-export function selfParameterFrom(input: T.SelfParameter | T.SelfParameter.Loose): ReturnType<typeof F.selfParameter> {
-  if (isNodeData(input)) return input as ReturnType<typeof F.selfParameter>;
+export function selfParameterFrom(input?: T.SelfParameter | T.SelfParameter.Loose): ReturnType<typeof F.selfParameter> {
+  if (input !== undefined && isNodeData(input)) return input as ReturnType<typeof F.selfParameter>;
   return F.selfParameter({
-    lifetime: _resolveOne<NonNullable<T.SelfParameter.Config['lifetime']>>((input as T.SelfParameter.Loose).lifetime, _K0, _K0),
-    mutableSpecifier: _resolveOneBranch<NonNullable<T.SelfParameter.Config['mutableSpecifier']>>((input as T.SelfParameter.Loose).mutableSpecifier, "lifetime"),
-    self: _resolveOne<NonNullable<T.SelfParameter.Config['self']>>((input as T.SelfParameter.Loose).self, _K20, _K0),
+    lifetime: _resolveOne<NonNullable<T.SelfParameter.Config['lifetime']>>((input as T.SelfParameter.Loose)?.lifetime, _K0, _K0),
+    mutableSpecifier: _resolveOneBranch<NonNullable<T.SelfParameter.Config['mutableSpecifier']>>((input as T.SelfParameter.Loose)?.mutableSpecifier, "lifetime"),
+    self: _resolveOne<NonNullable<T.SelfParameter.Config['self']>>((input as T.SelfParameter.Loose)?.self, _K20, _K0),
   });
 }
 
@@ -1968,10 +1968,10 @@ export function wildcardPatternFrom(input?: T.WildcardPattern) {
   return F.wildcardPattern();
 }
 
-export function fieldPatternShorthandFrom(input: T.FieldPatternShorthand | T.FieldPatternShorthand.Loose): ReturnType<typeof F.fieldPatternShorthand> {
-  if (isNodeData(input)) return input as ReturnType<typeof F.fieldPatternShorthand>;
+export function fieldPatternShorthandFrom(input?: T.FieldPatternShorthand | T.FieldPatternShorthand.Loose): ReturnType<typeof F.fieldPatternShorthand> {
+  if (input !== undefined && isNodeData(input)) return input as ReturnType<typeof F.fieldPatternShorthand>;
   return F.fieldPatternShorthand({
-    name: _resolveOne<NonNullable<T.FieldPatternShorthand.Config['name']>>((input as T.FieldPatternShorthand.Loose).name, _K0, _K0),
+    name: _resolveOne<NonNullable<T.FieldPatternShorthand.Config['name']>>((input as T.FieldPatternShorthand.Loose)?.name, _K0, _K0),
   });
 }
 

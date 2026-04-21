@@ -1205,7 +1205,7 @@ export function wrapExtendsClause(data: _NodeData, tree: TreeHandle): WrappedNod
   return {
     ...data,
     get value() { return drillInAll(data.$fields?.['value'], tree); },
-    get typeArguments() { return drillInAll(data.$fields?.['type_arguments'], tree); },
+    get typeArguments() { return drillIn(data.$fields?.['type_arguments'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<ExtendsClause>;
 }
@@ -1574,7 +1574,7 @@ export function wrapObjectType(data: _NodeData, tree: TreeHandle): WrappedNode<O
   return {
     ...data,
     get opening() { return drillIn(data.$fields?.['opening'], tree); },
-    get members() { return drillIn(data.$fields?.['members'], tree); },
+    get members() { return drillInAll(data.$fields?.['members'], tree); },
     get closing() { return drillIn(data.$fields?.['closing'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<ObjectType>;
@@ -1870,7 +1870,7 @@ export function wrapInterfaceBody(data: _NodeData, tree: TreeHandle): WrappedNod
   return {
     ...data,
     get opening() { return drillIn(data.$fields?.['opening'], tree); },
-    get members() { return drillIn(data.$fields?.['members'], tree); },
+    get members() { return drillInAll(data.$fields?.['members'], tree); },
     get closing() { return drillIn(data.$fields?.['closing'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<InterfaceBody>;

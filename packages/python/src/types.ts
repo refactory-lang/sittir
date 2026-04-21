@@ -490,8 +490,8 @@ export interface ImportFromStatement {
   readonly $type: 'import_from_statement';
   readonly $fields: {
     readonly module_name: RelativeImport | DottedName;
-    readonly wildcard_import: WildcardImport;
-    readonly name?: readonly (DottedName | AliasedImport)[];
+    readonly wildcard_import: NonEmptyArray<WildcardImport | DottedName | AliasedImport>;
+    readonly name: readonly (DottedName | AliasedImport)[];
   };
 }
 
@@ -692,7 +692,7 @@ export interface FunctionDefinition {
 
 export interface Parameters {
   readonly $type: 'parameters';
-  readonly $children: readonly (Parameter)[];
+  readonly $children: NonEmptyArray<Parameter>;
 }
 
 export interface LambdaParameters {
@@ -728,7 +728,7 @@ export interface ExecStatement {
   readonly $type: 'exec_statement';
   readonly $fields: {
     readonly code: String | Identifier;
-    readonly in_clause?: string;
+    readonly in_clause?: NonEmptyArray<"in">;
   };
 }
 
@@ -763,7 +763,7 @@ export interface ParenthesizedListSplat {
 
 export interface ArgumentList {
   readonly $type: 'argument_list';
-  readonly $children: readonly (Expression | ListSplat | DictionarySplat | ParenthesizedExpression | KeywordArgument)[];
+  readonly $children: readonly (Expression | Expression | ListSplat | ListSplat | DictionarySplat | DictionarySplat | ParenthesizedExpression | ParenthesizedExpression | KeywordArgument | KeywordArgument)[];
 }
 
 export interface DecoratedDefinition {
@@ -778,7 +778,7 @@ export interface Decorator {
   readonly $type: 'decorator';
   readonly $fields: {
     readonly expression: Expression;
-    readonly newline: string;
+    readonly newline?: string;
   };
 }
 
@@ -821,24 +821,24 @@ export interface _AsPattern {
 
 export interface UnionPattern {
   readonly $type: 'union_pattern';
-  readonly $children: readonly (SimplePattern)[];
+  readonly $children: NonEmptyArray<SimplePattern | SimplePattern>;
 }
 
 export interface _ListPattern {
   readonly $type: '_list_pattern';
-  readonly $children: readonly (CasePattern)[];
+  readonly $children: NonEmptyArray<CasePattern>;
 }
 
 export interface _TuplePattern {
   readonly $type: '_tuple_pattern';
-  readonly $children: readonly (CasePattern)[];
+  readonly $children: NonEmptyArray<CasePattern>;
 }
 
 export interface DictPattern {
   readonly $type: 'dict_pattern';
   readonly $fields: {
-    readonly key?: readonly (SimplePattern)[];
-    readonly value?: readonly (CasePattern)[];
+    readonly key: readonly (SimplePattern)[];
+    readonly value: readonly (CasePattern)[];
   };
   readonly $children: readonly (SplatPattern)[];
 }
@@ -867,14 +867,14 @@ export interface ClassPattern {
   readonly $type: 'class_pattern';
   readonly $fields: {
     readonly dotted_name: DottedName;
-    readonly arguments?: readonly (string)[];
+    readonly arguments: NonEmptyArray<CasePattern>;
   };
 }
 
 export interface ComplexPattern {
   readonly $type: 'complex_pattern';
   readonly $fields: {
-    readonly real: string;
+    readonly real?: string;
     readonly imaginary: Integer | Float;
   };
   readonly $children: readonly [Integer | Float];
@@ -882,12 +882,12 @@ export interface ComplexPattern {
 
 export interface TuplePattern {
   readonly $type: 'tuple_pattern';
-  readonly $children: readonly (Pattern)[];
+  readonly $children: NonEmptyArray<Pattern>;
 }
 
 export interface ListPattern {
   readonly $type: 'list_pattern';
-  readonly $children: readonly (Pattern)[];
+  readonly $children: NonEmptyArray<Pattern>;
 }
 
 export interface DefaultParameter {
@@ -962,7 +962,7 @@ export interface ComparisonOperator {
   readonly $type: 'comparison_operator';
   readonly $fields: {
     readonly left: PrimaryExpression;
-    readonly operators: NonEmptyArray<NotIn | IsNot>;
+    readonly operators: NonEmptyArray<"<" | "<=" | "==" | "!=" | ">=" | ">" | "<>" | "in" | "is">;
   };
 }
 
@@ -1201,7 +1201,7 @@ export interface ForInClause {
   readonly $fields: {
     readonly async?: KwAsync;
     readonly left: LeftHandSide;
-    readonly right: NonEmptyArray<string>;
+    readonly right: NonEmptyArray<ExpressionWithinForInClause>;
   };
 }
 

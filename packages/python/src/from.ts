@@ -374,9 +374,11 @@ export function futureImportStatementFrom(input: T.FutureImportStatement | T.Fut
 
 export function importFromStatementFrom(input: T.ImportFromStatement | T.ImportFromStatement.Loose): ReturnType<typeof F.importFromStatement> {
   if (isNodeData(input)) return input as ReturnType<typeof F.importFromStatement>;
+  const _ne_wildcardImport = _resolveMany<NonNullable<T.ImportFromStatement.Config['wildcardImport']>[number]>((input as T.ImportFromStatement.Loose).wildcardImport, _K0, _K1);
+  _assertNonEmpty(_ne_wildcardImport, 'import_from_statement.wildcardImport');
   return F.importFromStatement({
     moduleName: _resolveOne<NonNullable<T.ImportFromStatement.Config['moduleName']>>((input as T.ImportFromStatement.Loose).moduleName, _K0, _K2),
-    wildcardImport: _resolveOne<NonNullable<T.ImportFromStatement.Config['wildcardImport']>>((input as T.ImportFromStatement.Loose).wildcardImport, _K0, _K0),
+    wildcardImport: _ne_wildcardImport,
     name: _resolveMany<NonNullable<T.ImportFromStatement.Config['name']>[number]>((input as T.ImportFromStatement.Loose).name, _K0, _K1),
   });
 }
@@ -645,9 +647,11 @@ export function nonlocalStatementFrom(...input: readonly (NonNullable<T.Nonlocal
 
 export function execStatementFrom(input: T.ExecStatement | T.ExecStatement.Loose): ReturnType<typeof F.execStatement> {
   if (isNodeData(input)) return input as ReturnType<typeof F.execStatement>;
+  const _ne_inClause = _resolveMany<NonNullable<T.ExecStatement.Config['inClause']>[number]>((input as T.ExecStatement.Loose).inClause, _K0, _super_expression);
+  _assertNonEmpty(_ne_inClause, 'exec_statement.inClause');
   return F.execStatement({
     code: _resolveOne<NonNullable<T.ExecStatement.Config['code']>>((input as T.ExecStatement.Loose).code, _super_keyword_identifier, _K5),
-    inClause: _resolveOne<NonNullable<T.ExecStatement.Config['inClause']>>((input as T.ExecStatement.Loose).inClause, _K0, _K0),
+    inClause: _ne_inClause,
   });
 }
 
@@ -753,12 +757,12 @@ export function unionPatternFrom(...input: readonly (NonNullable<T.UnionPattern.
   return F.unionPattern(...(input as NonNullable<T.UnionPattern.Config['children']>));
 }
 
-export function dictPatternFrom(input?: T.DictPattern | T.DictPattern.Loose): ReturnType<typeof F.dictPattern> {
-  if (input !== undefined && isNodeData(input)) return input as ReturnType<typeof F.dictPattern>;
+export function dictPatternFrom(input: T.DictPattern | T.DictPattern.Loose): ReturnType<typeof F.dictPattern> {
+  if (isNodeData(input)) return input as ReturnType<typeof F.dictPattern>;
   return F.dictPattern({
-    key: _resolveManyBranch<NonNullable<T.DictPattern.Config['key']>[number]>((input as T.DictPattern.Loose)?.key, "_simple_pattern"),
-    value: _resolveManyBranch<NonNullable<T.DictPattern.Config['value']>[number]>((input as T.DictPattern.Loose)?.value, "case_pattern"),
-    children: _resolveManyBranch<NonNullable<T.DictPattern.Config['children']>[number]>((input as T.DictPattern.Loose)?.children, "splat_pattern"),
+    key: _resolveManyBranch<NonNullable<T.DictPattern.Config['key']>[number]>((input as T.DictPattern.Loose).key, "_simple_pattern"),
+    value: _resolveManyBranch<NonNullable<T.DictPattern.Config['value']>[number]>((input as T.DictPattern.Loose).value, "case_pattern"),
+    children: _resolveManyBranch<NonNullable<T.DictPattern.Config['children']>[number]>((input as T.DictPattern.Loose).children, "splat_pattern"),
   });
 }
 
@@ -780,9 +784,11 @@ export function splatPatternFrom(input: T.SplatPattern | T.SplatPattern.Loose): 
 
 export function classPatternFrom(input: T.ClassPattern | T.ClassPattern.Loose): ReturnType<typeof F.classPattern> {
   if (isNodeData(input)) return input as ReturnType<typeof F.classPattern>;
+  const _ne_arguments = _resolveManyBranch<NonNullable<T.ClassPattern.Config['arguments']>[number]>((input as T.ClassPattern.Loose).arguments, "case_pattern");
+  _assertNonEmpty(_ne_arguments, 'class_pattern.arguments');
   return F.classPattern({
     dottedName: _resolveOneBranch<NonNullable<T.ClassPattern.Config['dottedName']>>((input as T.ClassPattern.Loose).dottedName, "dotted_name"),
-    arguments: _resolveMany<NonNullable<T.ClassPattern.Config['arguments']>[number]>((input as T.ClassPattern.Loose).arguments, _K0, _K0),
+    arguments: _ne_arguments,
   });
 }
 
@@ -1146,7 +1152,7 @@ export function parenthesizedExpressionFrom(input?: NonNullable<T.ParenthesizedE
 
 export function forInClauseFrom(input: T.ForInClause | T.ForInClause.Loose): ReturnType<typeof F.forInClause> {
   if (isNodeData(input)) return input as ReturnType<typeof F.forInClause>;
-  const _ne_right = _resolveMany<NonNullable<T.ForInClause.Config['right']>[number]>((input as T.ForInClause.Loose).right, _K0, _K0);
+  const _ne_right = _resolveMany<NonNullable<T.ForInClause.Config['right']>[number]>((input as T.ForInClause.Loose).right, _K0, _super_expression_within_for_in_clause);
   _assertNonEmpty(_ne_right, 'for_in_clause.right');
   return F.forInClause({
     async: _resolveOneLeaf<NonNullable<T.ForInClause.Config['async']>>((input as T.ForInClause.Loose).async, "_kw_async"),

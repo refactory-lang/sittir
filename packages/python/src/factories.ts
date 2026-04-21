@@ -138,7 +138,7 @@ export function importFromStatement(config: T.ImportFromStatement.Config) {
     $named: true as const,
     $fields: fields,
     moduleName(value?: T.RelativeImport | T.DottedName) { return _fs(config, importFromStatement, 'moduleName', value, fields.module_name); },
-    wildcardImport(value?: T.WildcardImport) { return _fs(config, importFromStatement, 'wildcardImport', value, fields.wildcard_import); },
+    wildcardImport(...values: NonEmptyArray<T.WildcardImport | T.DottedName | T.AliasedImport>) { return _fsm(config, importFromStatement, 'wildcardImport', values, fields.wildcard_import); },
     name(...values: (T.DottedName | T.AliasedImport)[]) { return _fsm(config, importFromStatement, 'name', values, fields.name); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -713,6 +713,7 @@ export function functionDefinition(config: T.FunctionDefinition.Config) {
 }
 
 export function parameters(...children: T.Parameter[]) {
+  _assertNonEmpty(children, 'parameters.children');
   return {
     $type: 'parameters' as const,
     $source: 'factory' as const,
@@ -824,7 +825,7 @@ export function execStatement(config: T.ExecStatement.Config) {
     $named: true as const,
     $fields: fields,
     code(value?: T.String | T.Identifier) { return _fs(config, execStatement, 'code', value, fields.code); },
-    inClause(value?: string | undefined) { return _fs(config, execStatement, 'inClause', value, fields.in_clause); },
+    inClause(...values: NonEmptyArray<T.Expression | "in">) { return _fsm(config, execStatement, 'inClause', values, fields.in_clause); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -966,7 +967,7 @@ export function decorator(config: T.Decorator.Config) {
     $named: true as const,
     $fields: fields,
     expression(value?: T.Expression) { return _fs(config, decorator, 'expression', value, fields.expression); },
-    newline(value?: string) { return _fs(config, decorator, 'newline', value, fields.newline); },
+    newline(value?: string | undefined) { return _fs(config, decorator, 'newline', value, fields.newline); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1047,6 +1048,7 @@ export function casePattern(child?: (T.AsPattern | T.KeywordPattern | T.SimplePa
 }
 
 export function unionPattern(...children: T.SimplePattern[]) {
+  _assertNonEmpty(children, 'union_pattern.children');
   return {
     $type: 'union_pattern' as const,
     $source: 'factory' as const,
@@ -1061,12 +1063,12 @@ export function unionPattern(...children: T.SimplePattern[]) {
   };
 }
 
-export function dictPattern(config?: T.DictPattern.Config) {
+export function dictPattern(config: T.DictPattern.Config) {
   const fields = {
-    key: config?.key,
-    value: config?.value,
+    key: config.key,
+    value: config.value,
   };
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     $type: 'dict_pattern' as const,
     $source: 'factory' as const,
@@ -1141,7 +1143,7 @@ export function classPattern(config: T.ClassPattern.Config) {
     $named: true as const,
     $fields: fields,
     dottedName(value?: T.DottedName) { return _fs(config, classPattern, 'dottedName', value, fields.dotted_name); },
-    arguments(...values: string[]) { return _fsm(config, classPattern, 'arguments', values, fields.arguments); },
+    arguments(...values: NonEmptyArray<T.CasePattern>) { return _fsm(config, classPattern, 'arguments', values, fields.arguments); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1163,7 +1165,7 @@ export function complexPattern(config: T.ComplexPattern.Config) {
     $named: true as const,
     $fields: fields,
     $children: children,
-    real(value?: string) { return _fs(config, complexPattern, 'real', value, fields.real); },
+    real(value?: string | undefined) { return _fs(config, complexPattern, 'real', value, fields.real); },
     imaginary(value?: T.Integer | T.Float) { return _fs(config, complexPattern, 'imaginary', value, fields.imaginary); },
     getChild() { return children[0]; },
     setChild(child: (T.Integer | T.Float)) { return complexPattern({ ...config, children: [child] }); },
@@ -1177,6 +1179,7 @@ export function complexPattern(config: T.ComplexPattern.Config) {
 }
 
 export function tuplePattern(...children: T.Pattern[]) {
+  _assertNonEmpty(children, 'tuple_pattern.children');
   return {
     $type: 'tuple_pattern' as const,
     $source: 'factory' as const,
@@ -1192,6 +1195,7 @@ export function tuplePattern(...children: T.Pattern[]) {
 }
 
 export function listPattern(...children: T.Pattern[]) {
+  _assertNonEmpty(children, 'list_pattern.children');
   return {
     $type: 'list_pattern' as const,
     $source: 'factory' as const,
@@ -1400,7 +1404,7 @@ export function comparisonOperator(config: T.ComparisonOperator.Config) {
     $named: true as const,
     $fields: fields,
     left(value?: T.PrimaryExpression) { return _fs(config, comparisonOperator, 'left', value, fields.left); },
-    operators(...values: NonEmptyArray<T.NotIn | T.IsNot>) { return _fsm(config, comparisonOperator, 'operators', values, fields.operators); },
+    operators(...values: NonEmptyArray<T.NotIn | T.IsNot | "<" | "<=" | "==" | "!=" | ">=" | ">" | "<>" | "in" | "is">) { return _fsm(config, comparisonOperator, 'operators', values, fields.operators); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1727,7 +1731,7 @@ export function splatType(config: T.SplatType.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    identifier(value?: "*" | "**") { return _fs(config, splatType, 'identifier', value, fields.identifier); },
+    identifier(value?: T.Identifier | "*" | "**") { return _fs(config, splatType, 'identifier', value, fields.identifier); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2052,7 +2056,7 @@ export function forInClause(config: T.ForInClause.Config) {
     $fields: fields,
     async(value?: T.KwAsync | undefined) { return _fs(config, forInClause, 'async', value, fields.async); },
     left(value?: T.LeftHandSide) { return _fs(config, forInClause, 'left', value, fields.left); },
-    right(...values: NonEmptyArray<string>) { return _fsm(config, forInClause, 'right', values, fields.right); },
+    right(...values: NonEmptyArray<T.ExpressionWithinForInClause>) { return _fsm(config, forInClause, 'right', values, fields.right); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);

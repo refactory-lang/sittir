@@ -582,7 +582,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'body', required: true, multiple: false },
   ],
   'class_body': [
-    { name: 'decorator', required: false, multiple: true },
+    { name: 'decorator', required: true, multiple: true },
   ],
   'class_declaration': [
     { name: 'decorator', required: true, multiple: true },
@@ -660,7 +660,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'value', required: true, multiple: false },
   ],
   'enum_body': [
-    { name: 'opening', required: false, multiple: true },
+    { name: 'opening', required: true, multiple: true },
   ],
   'enum_declaration': [
     { name: 'const', required: false, multiple: false },
@@ -674,7 +674,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'alias', required: false, multiple: false },
   ],
   'export_statement': [
-    { name: 'decorator', required: false, multiple: true },
+    { name: 'decorator', required: true, multiple: true },
     { name: 'declaration', required: false, multiple: false },
     { name: 'value', required: false, multiple: false },
   ],
@@ -684,7 +684,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'extends_clause': [
     { name: 'value', required: true, multiple: true },
-    { name: 'typeArguments', required: false, multiple: true },
+    { name: 'typeArguments', required: false, multiple: false },
   ],
   'extends_type_clause': [
     { name: 'type', required: true, multiple: true },
@@ -832,7 +832,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'interface_body': [
     { name: 'opening', required: true, multiple: false },
-    { name: 'members', required: false, multiple: false },
+    { name: 'members', required: false, multiple: true },
     { name: 'closing', required: true, multiple: false },
   ],
   'interface_declaration': [
@@ -865,12 +865,12 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'jsx_opening_element': [
     { name: 'name', required: false, multiple: false },
     { name: 'typeArguments', required: false, multiple: false },
-    { name: 'attribute', required: false, multiple: true },
+    { name: 'attribute', required: true, multiple: true },
   ],
   'jsx_self_closing_element': [
     { name: 'name', required: false, multiple: false },
     { name: 'typeArguments', required: false, multiple: false },
-    { name: 'attribute', required: false, multiple: true },
+    { name: 'attribute', required: true, multiple: true },
   ],
   'labeled_statement': [
     { name: 'label', required: true, multiple: false },
@@ -955,7 +955,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'object_type': [
     { name: 'opening', required: true, multiple: false },
-    { name: 'members', required: false, multiple: false },
+    { name: 'members', required: false, multiple: true },
     { name: 'closing', required: true, multiple: false },
   ],
   'omitting_type_annotation': [
@@ -1164,7 +1164,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'body', required: true, multiple: false },
   ],
   'yield_expression': [
-    { name: 'expression', required: true, multiple: false },
+    { name: 'expression', required: false, multiple: false },
   ],
 };
 

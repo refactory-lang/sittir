@@ -201,7 +201,7 @@ export function wrapImportFromStatement(data: _NodeData, tree: TreeHandle): Wrap
   return {
     ...data,
     get moduleName() { return drillIn(data.$fields?.['module_name'], tree); },
-    get wildcardImport() { return drillIn(data.$fields?.['wildcard_import'], tree); },
+    get wildcardImport() { return drillInAll(data.$fields?.['wildcard_import'], tree); },
     get name() { return drillInAll(data.$fields?.['name'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<ImportFromStatement>;
@@ -466,7 +466,7 @@ export function wrapExecStatement(data: _NodeData, tree: TreeHandle): WrappedNod
   return {
     ...data,
     get code() { return drillIn(data.$fields?.['code'], tree); },
-    get inClause() { return drillIn(data.$fields?.['in_clause'], tree); },
+    get inClause() { return drillInAll(data.$fields?.['in_clause'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<ExecStatement>;
 }
