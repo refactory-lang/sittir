@@ -520,7 +520,6 @@ export function wrapFunctionModifiers(data: _NodeData, tree: TreeHandle): Wrappe
 export function wrapWhereClause(data: _NodeData, tree: TreeHandle): WrappedNode<WhereClause> {
   return {
     ...data,
-    get where() { return drillIn(data.$fields?.['where'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<WhereClause>;
 }
@@ -581,7 +580,6 @@ export function wrapTraitBounds(data: _NodeData, tree: TreeHandle): WrappedNode<
 export function wrapHigherRankedTraitBound(data: _NodeData, tree: TreeHandle): WrappedNode<HigherRankedTraitBound> {
   return {
     ...data,
-    get for() { return drillIn(data.$fields?.['for'], tree); },
     get typeParameters() { return drillIn(data.$fields?.['type_parameters'], tree); },
     get typeField() { return drillIn(data.$fields?.['type'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
@@ -605,7 +603,6 @@ export function wrapTypeParameters(data: _NodeData, tree: TreeHandle): WrappedNo
 export function wrapConstParameter(data: _NodeData, tree: TreeHandle): WrappedNode<ConstParameter> {
   return {
     ...data,
-    get const() { return drillIn(data.$fields?.['const'], tree); },
     get name() { return drillIn(data.$fields?.['name'], tree); },
     get typeField() { return drillIn(data.$fields?.['type'], tree); },
     get value() { return drillIn(data.$fields?.['value'], tree); },
@@ -699,7 +696,7 @@ export function wrapSelfParameter(data: _NodeData, tree: TreeHandle): WrappedNod
     get lifetime() { return drillIn(data.$fields?.['lifetime'], tree); },
     get mutableSpecifier() { return drillIn(data.$fields?.['mutable_specifier'], tree); },
     get self() { return drillIn(data.$fields?.['self'], tree); },
-    get child() { return drillIn(data.$children?.[0], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<SelfParameter>;
 }
 
@@ -775,7 +772,6 @@ export function wrapArrayType(data: _NodeData, tree: TreeHandle): WrappedNode<Ar
 export function wrapForLifetimes(data: _NodeData, tree: TreeHandle): WrappedNode<ForLifetimes> {
   return {
     ...data,
-    get for() { return drillIn(data.$fields?.['for'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<ForLifetimes>;
 }
@@ -837,7 +833,6 @@ export function wrapBoundedType(data: _NodeData, tree: TreeHandle): WrappedNode<
 export function wrapUseBounds(data: _NodeData, tree: TreeHandle): WrappedNode<UseBounds> {
   return {
     ...data,
-    get use() { return drillIn(data.$fields?.['use'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<UseBounds>;
 }
@@ -890,7 +885,6 @@ export function wrapAbstractType(data: _NodeData, tree: TreeHandle): WrappedNode
 export function wrapDynamicType(data: _NodeData, tree: TreeHandle): WrappedNode<DynamicType> {
   return {
     ...data,
-    get dyn() { return drillIn(data.$fields?.['dyn'], tree); },
     get trait() { return drillIn(data.$fields?.['trait'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<DynamicType>;
@@ -1107,7 +1101,6 @@ export function wrapBaseFieldInitializer(data: _NodeData, tree: TreeHandle): Wra
 export function wrapIfExpression(data: _NodeData, tree: TreeHandle): WrappedNode<IfExpression> {
   return {
     ...data,
-    get if() { return drillIn(data.$fields?.['if'], tree); },
     get condition() { return drillIn(data.$fields?.['condition'], tree); },
     get consequence() { return drillIn(data.$fields?.['consequence'], tree); },
     get alternative() { return drillIn(data.$fields?.['alternative'], tree); },
@@ -1118,7 +1111,6 @@ export function wrapIfExpression(data: _NodeData, tree: TreeHandle): WrappedNode
 export function wrapLetCondition(data: _NodeData, tree: TreeHandle): WrappedNode<LetCondition> {
   return {
     ...data,
-    get let() { return drillIn(data.$fields?.['let'], tree); },
     get pattern() { return drillIn(data.$fields?.['pattern'], tree); },
     get value() { return drillIn(data.$fields?.['value'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
@@ -1135,7 +1127,6 @@ export function wrap_LetChain(data: _NodeData, tree: TreeHandle): WrappedNode<_L
 export function wrapElseClause(data: _NodeData, tree: TreeHandle): WrappedNode<ElseClause> {
   return {
     ...data,
-    get else() { return drillIn(data.$fields?.['else'], tree); },
     get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<ElseClause>;
 }
@@ -1143,7 +1134,6 @@ export function wrapElseClause(data: _NodeData, tree: TreeHandle): WrappedNode<E
 export function wrapMatchExpression(data: _NodeData, tree: TreeHandle): WrappedNode<MatchExpression> {
   return {
     ...data,
-    get match() { return drillIn(data.$fields?.['match'], tree); },
     get value() { return drillIn(data.$fields?.['value'], tree); },
     get body() { return drillIn(data.$fields?.['body'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
@@ -1216,7 +1206,6 @@ export function wrapForExpression(data: _NodeData, tree: TreeHandle): WrappedNod
 export function wrapConstBlock(data: _NodeData, tree: TreeHandle): WrappedNode<ConstBlock> {
   return {
     ...data,
-    get const() { return drillIn(data.$fields?.['const'], tree); },
     get body() { return drillIn(data.$fields?.['body'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<ConstBlock>;
@@ -1373,6 +1362,7 @@ export function wrapStructPattern(data: _NodeData, tree: TreeHandle): WrappedNod
 export function wrapFieldPattern(data: _NodeData, tree: TreeHandle): WrappedNode<FieldPattern> {
   return {
     ...data,
+    get ref() { return drillIn(data.$fields?.['ref'], tree); },
     get mutableSpecifier() { return drillIn(data.$fields?.['mutable_specifier'], tree); },
     get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<FieldPattern>;
@@ -1397,7 +1387,6 @@ export function wrapRangePattern(data: _NodeData, tree: TreeHandle): WrappedNode
 export function wrapRefPattern(data: _NodeData, tree: TreeHandle): WrappedNode<RefPattern> {
   return {
     ...data,
-    get ref() { return drillIn(data.$fields?.['ref'], tree); },
     get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<RefPattern>;
 }
@@ -1934,10 +1923,13 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'super': (d) => d,
   'crate': (d) => d,
   'metavariable': (d) => d,
+  '_kw_ref': (d) => d,
+  '_kw_unsafe': (d) => d,
+  '_kw_static': (d) => d,
   '_kw_async': (d) => d,
+  '_kw_move': (d) => d,
   '_kw_default': (d) => d,
   '_kw_const': (d) => d,
-  '_kw_unsafe': (d) => d,
   '_wildcard_pattern': (d) => d,
   '_array_expression_semi': (d) => d,
   '_array_expression_list': (d) => d,
@@ -1954,7 +1946,6 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_kw_type_parameters': (d) => d,
   '_kw_where_clause': (d) => d,
   '_kw_block': (d) => d,
-  '_kw_move': (d) => d,
   '_kw_attribute': (d) => d,
   '_kw_label': (d) => d,
   '_kw_left': (d) => d,
@@ -1962,7 +1953,6 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_kw_expression': (d) => d,
   '_kw_identifier': (d) => d,
   '_kw_pattern': (d) => d,
-  '_kw_static': (d) => d,
   '_kw_visibility_modifier': (d) => d,
   '_kw_crate': (d) => d,
   '_kw_string_literal': (d) => d,
@@ -1988,7 +1978,6 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_kw_path': (d) => d,
   'array_expression_semi': (d, t) => wrapArrayExpressionSemi(d, t),
   'array_expression_list': (d, t) => wrapArrayExpressionList(d, t),
-  '_kw_for': (d) => d,
   'string_content': (d) => d,
   'raw_string_literal_content': (d) => d,
   'float_literal': (d) => d,

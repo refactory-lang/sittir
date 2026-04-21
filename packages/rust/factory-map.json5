@@ -35,7 +35,7 @@
     "function_item": "config",
     "function_signature_item": "config",
     "function_modifiers": "config",
-    "where_clause": "config",
+    "where_clause": "children",
     "where_predicate": "config",
     "impl_item": "config",
     "trait_item": "config",
@@ -63,7 +63,7 @@
     "qualified_type": "config",
     "lifetime": "config",
     "array_type": "config",
-    "for_lifetimes": "config",
+    "for_lifetimes": "children",
     "function_type": "config",
     "tuple_type": "children",
     "unit_type": "text",
@@ -71,7 +71,7 @@
     "generic_type": "config",
     "generic_type_with_turbofish": "config",
     "bounded_type": "config",
-    "use_bounds": "config",
+    "use_bounds": "children",
     "type_arguments": "children",
     "type_binding": "config",
     "reference_type": "config",
@@ -107,7 +107,7 @@
     "base_field_initializer": "children",
     "if_expression": "config",
     "let_condition": "config",
-    "else_clause": "config",
+    "else_clause": "children",
     "match_expression": "config",
     "match_block": "children",
     "match_arm": "config",
@@ -138,7 +138,7 @@
     "field_pattern": "config",
     "mut_pattern": "config",
     "range_pattern": "config",
-    "ref_pattern": "config",
+    "ref_pattern": "children",
     "captured_pattern": "config",
     "reference_pattern": "config",
     "or_pattern": "config",
@@ -224,7 +224,6 @@
     "where": "text",
     "while": "text",
     "extern": "text",
-    "ref": "text",
     "else": "text",
     "in": "text",
     "dyn": "text",
@@ -232,7 +231,7 @@
     "raw": "text",
     "yield": "text",
     "try": "text",
-    "move": "text"
+    "ref": "text"
   },
   "fieldAliasMap": {
     "attribute.arguments": {
@@ -392,12 +391,10 @@
       "where_clause"
     ],
     "higher_ranked_trait_bound": [
-      "for",
       "type_parameters",
       "type"
     ],
     "const_parameter": [
-      "const",
       "name",
       "type",
       "value"
@@ -432,6 +429,11 @@
     ],
     "use_wildcard": [
       "path"
+    ],
+    "self_parameter": [
+      "lifetime",
+      "mutable_specifier",
+      "self"
     ],
     "variadic_parameter": [
       "mutable_specifier",
@@ -492,7 +494,6 @@
       "trait"
     ],
     "dynamic_type": [
-      "dyn",
       "trait"
     ],
     "macro_invocation": [
@@ -557,18 +558,15 @@
       "identifier"
     ],
     "if_expression": [
-      "if",
       "condition",
       "consequence",
       "alternative"
     ],
     "let_condition": [
-      "let",
       "pattern",
       "value"
     ],
     "match_expression": [
-      "match",
       "value",
       "body"
     ],
@@ -588,7 +586,6 @@
       "body"
     ],
     "const_block": [
-      "const",
       "body"
     ],
     "label": [

@@ -10,6 +10,8 @@ export type NodeConfig<K extends NodeKind<RustGrammar>> = BaseNodeConfig<RustGra
 export type TreeNode<K extends NodeKind<RustGrammar>> = BaseTreeNode<RustGrammar, K>;
 
 export type LeafScalarMap = {
+  _kw_static: number;
+  _kw_move: number;
   _array_expression_semi: number;
   _array_expression_list: number;
   _kw_type_parameters: number;
@@ -22,7 +24,6 @@ export type LeafScalarMap = {
   _kw_expression: number;
   _kw_identifier: number;
   _kw_pattern: number;
-  _kw_static: number;
   _kw_visibility_modifier: number;
   _kw_crate: number;
   _kw_string_literal: number;
@@ -55,13 +56,12 @@ export type LeafStringMap = {
   self: "self";
   super: "super";
   crate: "crate";
+  _kw_ref: "ref";
+  _kw_unsafe: "unsafe";
   _kw_async: "async";
   _kw_default: "default";
   _kw_const: "const";
-  _kw_unsafe: "unsafe";
   _wildcard_pattern: "_";
-  _kw_move: "move";
-  _kw_for: "for";
   primitive_type: "u8" | "i8" | "u16" | "i16" | "u32" | "i32" | "u64" | "i64" | "u128" | "i128" | "isize" | "usize" | "f32" | "f64" | "bool" | "str" | "char";
   wildcard_pattern: "_";
   as: "as";
@@ -93,7 +93,6 @@ export type LeafStringMap = {
   where: "where";
   while: "while";
   extern: "extern";
-  ref: "ref";
   else: "else";
   _: "_";
   in: "in";
@@ -102,7 +101,7 @@ export type LeafStringMap = {
   raw: "raw";
   yield: "yield";
   try: "try";
-  move: "move";
+  ref: "ref";
 };
 
 export const enum SyntaxKind {
@@ -310,17 +309,19 @@ export const enum SyntaxKind {
   Super = 'super',
   Crate = 'crate',
   Metavariable = 'metavariable',
+  KwRef = '_kw_ref',
+  KwUnsafe = '_kw_unsafe',
+  KwStatic = '_kw_static',
   KwAsync = '_kw_async',
+  KwMove = '_kw_move',
   KwDefault = '_kw_default',
   KwConst = '_kw_const',
-  KwUnsafe = '_kw_unsafe',
   _WildcardPattern = '_wildcard_pattern',
   _ArrayExpressionSemi = '_array_expression_semi',
   _ArrayExpressionList = '_array_expression_list',
   KwTypeParameters = '_kw_type_parameters',
   KwWhereClause = '_kw_where_clause',
   KwBlock = '_kw_block',
-  KwMove = '_kw_move',
   KwAttribute = '_kw_attribute',
   KwLabel = '_kw_label',
   KwLeft = '_kw_left',
@@ -328,7 +329,6 @@ export const enum SyntaxKind {
   KwExpression = '_kw_expression',
   KwIdentifier = '_kw_identifier',
   KwPattern = '_kw_pattern',
-  KwStatic = '_kw_static',
   KwVisibilityModifier = '_kw_visibility_modifier',
   KwCrate = '_kw_crate',
   KwStringLiteral = '_kw_string_literal',
@@ -352,7 +352,6 @@ export const enum SyntaxKind {
   KwTrailingWhereClause = '_kw_trailing_where_clause',
   KwOperand = '_kw_operand',
   KwPath = '_kw_path',
-  KwFor = '_kw_for',
   StringContent = 'string_content',
   RawStringLiteralContent = 'raw_string_literal_content',
   FloatLiteral = 'float_literal',
@@ -396,7 +395,6 @@ export const enum SyntaxKind {
   Where = 'where',
   While = 'while',
   Extern = 'extern',
-  Ref = 'ref',
   Else = 'else',
   Anonymous = '_',
   In = 'in',
@@ -405,7 +403,7 @@ export const enum SyntaxKind {
   Raw = 'raw',
   Yield = 'yield',
   Try = 'try',
-  Move = 'move',
+  Ref = 'ref',
 }
 
 // Scoped enums per supertype
@@ -1022,7 +1020,7 @@ export interface StaticItem {
   readonly $type: 'static_item';
   readonly $fields: {
     readonly visibility_modifier?: VisibilityModifier;
-    readonly mutable_specifier?: "ref";
+    readonly mutable_specifier?: KwRef;
     readonly name: Identifier;
     readonly type: _Type;
     readonly value?: Expression;
@@ -1082,9 +1080,6 @@ export interface FunctionModifiers {
 
 export interface WhereClause {
   readonly $type: 'where_clause';
-  readonly $fields: {
-    readonly where: "where";
-  };
   readonly $children: readonly (WherePredicate)[];
 }
 
@@ -1152,7 +1147,6 @@ export interface TraitBounds {
 export interface HigherRankedTraitBound {
   readonly $type: 'higher_ranked_trait_bound';
   readonly $fields: {
-    readonly for: KwFor;
     readonly type_parameters: TypeParameters;
     readonly type: _Type;
   };
@@ -1171,7 +1165,6 @@ export interface TypeParameters {
 export interface ConstParameter {
   readonly $type: 'const_parameter';
   readonly $fields: {
-    readonly const: KwConst;
     readonly name: Identifier;
     readonly type: _Type;
     readonly value?: Block | Identifier | Literal | NegativeLiteral;
@@ -1252,9 +1245,8 @@ export interface SelfParameter {
   readonly $fields: {
     readonly lifetime: string;
     readonly mutable_specifier?: Lifetime;
-    readonly self?: MutableSpecifier;
+    readonly self?: MutableSpecifier | Self;
   };
-  readonly $children: readonly [Self];
 }
 
 export interface VariadicParameter {
@@ -1326,9 +1318,6 @@ export interface ArrayType {
 
 export interface ForLifetimes {
   readonly $type: 'for_lifetimes';
-  readonly $fields: {
-    readonly for: KwFor;
-  };
   readonly $children: NonEmptyArray<Lifetime>;
 }
 
@@ -1382,9 +1371,6 @@ export interface BoundedType {
 
 export interface UseBounds {
   readonly $type: 'use_bounds';
-  readonly $fields: {
-    readonly use: "use";
-  };
   readonly $children: readonly (Lifetime | _TypeIdentifier)[];
 }
 
@@ -1430,7 +1416,6 @@ export interface AbstractType {
 export interface DynamicType {
   readonly $type: 'dynamic_type';
   readonly $fields: {
-    readonly dyn: "dyn";
     readonly trait: HigherRankedTraitBound | _TypeIdentifier | ScopedTypeIdentifier | GenericType | FunctionType | TupleType;
   };
 }
@@ -1635,7 +1620,6 @@ export interface BaseFieldInitializer {
 export interface IfExpression {
   readonly $type: 'if_expression';
   readonly $fields: {
-    readonly if: "if";
     readonly condition: Condition;
     readonly consequence: Block;
     readonly alternative?: ElseClause;
@@ -1645,7 +1629,6 @@ export interface IfExpression {
 export interface LetCondition {
   readonly $type: 'let_condition';
   readonly $fields: {
-    readonly let: "let";
     readonly pattern: Pattern;
     readonly value: Expression;
   };
@@ -1658,16 +1641,12 @@ export interface _LetChain {
 
 export interface ElseClause {
   readonly $type: 'else_clause';
-  readonly $fields: {
-    readonly else: "else";
-  };
   readonly $children: readonly [Block | IfExpression];
 }
 
 export interface MatchExpression {
   readonly $type: 'match_expression';
   readonly $fields: {
-    readonly match: "match";
     readonly value: Expression;
     readonly body: MatchBlock;
   };
@@ -1734,7 +1713,6 @@ export interface ForExpression {
 export interface ConstBlock {
   readonly $type: 'const_block';
   readonly $fields: {
-    readonly const: KwConst;
     readonly body: Block;
   };
 }
@@ -1742,9 +1720,9 @@ export interface ConstBlock {
 export interface ClosureExpressionUFormBlock {
   readonly $type: 'closure_expression';
   readonly $fields: {
-    readonly static?: "static";
-    readonly async?: "async";
-    readonly move?: "move";
+    readonly static?: KwStatic;
+    readonly async?: KwAsync;
+    readonly move?: KwMove;
     readonly parameters: ClosureParameters;
   };
   readonly $children: readonly [ClosureExpressionBlock];
@@ -1753,9 +1731,9 @@ export interface ClosureExpressionUFormBlock {
 export interface ClosureExpressionUFormExpr {
   readonly $type: 'closure_expression';
   readonly $fields: {
-    readonly static?: "static";
-    readonly async?: "async";
-    readonly move?: "move";
+    readonly static?: KwStatic;
+    readonly async?: KwAsync;
+    readonly move?: KwMove;
     readonly parameters: ClosureParameters;
   };
   readonly $children: readonly [ClosureExpressionExpr];
@@ -1885,6 +1863,7 @@ export interface StructPattern {
 export interface FieldPatternUFormShorthand {
   readonly $type: 'field_pattern';
   readonly $fields: {
+    readonly ref?: KwRef;
     readonly mutable_specifier?: MutableSpecifier;
   };
   readonly $children: readonly [FieldPatternShorthand];
@@ -1893,6 +1872,7 @@ export interface FieldPatternUFormShorthand {
 export interface FieldPatternUFormNamed {
   readonly $type: 'field_pattern';
   readonly $fields: {
+    readonly ref?: KwRef;
     readonly mutable_specifier?: MutableSpecifier;
   };
   readonly $children: readonly [FieldPatternNamed];
@@ -1920,9 +1900,6 @@ export interface RangePatternUFormPrefix {
 export type RangePattern = RangePatternUFormLeft | RangePatternUFormPrefix;
 export interface RefPattern {
   readonly $type: 'ref_pattern';
-  readonly $fields: {
-    readonly ref: "ref";
-  };
   readonly $children: readonly [Pattern];
 }
 
@@ -2308,17 +2285,19 @@ export type Self = Terminal<"self", "self">;
 export type Super = Terminal<"super", "super">;
 export type Crate = Terminal<"crate", "crate">;
 export type Metavariable = Terminal<"metavariable", string>;
+export type KwRef = Terminal<"_kw_ref", "ref">;
+export type KwUnsafe = Terminal<"_kw_unsafe", "unsafe">;
+export type KwStatic = Terminal<"_kw_static", >;
 export type KwAsync = Terminal<"_kw_async", "async">;
+export type KwMove = Terminal<"_kw_move", >;
 export type KwDefault = Terminal<"_kw_default", "default">;
 export type KwConst = Terminal<"_kw_const", "const">;
-export type KwUnsafe = Terminal<"_kw_unsafe", "unsafe">;
 export type _WildcardPattern = Terminal<"_wildcard_pattern", "_">;
 export type _ArrayExpressionSemi = Terminal<"_array_expression_semi", >;
 export type _ArrayExpressionList = Terminal<"_array_expression_list", >;
 export type KwTypeParameters = Terminal<"_kw_type_parameters", >;
 export type KwWhereClause = Terminal<"_kw_where_clause", >;
 export type KwBlock = Terminal<"_kw_block", >;
-export type KwMove = Terminal<"_kw_move", "move">;
 export type KwAttribute = Terminal<"_kw_attribute", >;
 export type KwLabel = Terminal<"_kw_label", >;
 export type KwLeft = Terminal<"_kw_left", >;
@@ -2326,7 +2305,6 @@ export type KwRight = Terminal<"_kw_right", >;
 export type KwExpression = Terminal<"_kw_expression", >;
 export type KwIdentifier = Terminal<"_kw_identifier", >;
 export type KwPattern = Terminal<"_kw_pattern", >;
-export type KwStatic = Terminal<"_kw_static", >;
 export type KwVisibilityModifier = Terminal<"_kw_visibility_modifier", >;
 export type KwCrate = Terminal<"_kw_crate", >;
 export type KwStringLiteral = Terminal<"_kw_string_literal", >;
@@ -2350,7 +2328,6 @@ export type KwElements = Terminal<"_kw_elements", >;
 export type KwTrailingWhereClause = Terminal<"_kw_trailing_where_clause", >;
 export type KwOperand = Terminal<"_kw_operand", >;
 export type KwPath = Terminal<"_kw_path", >;
-export type KwFor = Terminal<"_kw_for", "for">;
 export type StringContent = Terminal<"string_content", string>;
 export type RawStringLiteralContent = Terminal<"raw_string_literal_content", string>;
 export type FloatLiteral = Terminal<"float_literal", string>;
@@ -2627,17 +2604,19 @@ export interface SelfTree extends AnyTreeNode { readonly type: "self"; }
 export interface SuperTree extends AnyTreeNode { readonly type: "super"; }
 export interface CrateTree extends AnyTreeNode { readonly type: "crate"; }
 export interface MetavariableTree extends TreeNode<'metavariable'> {}
+export interface KwRefTree extends AnyTreeNode { readonly type: "_kw_ref"; }
+export interface KwUnsafeTree extends AnyTreeNode { readonly type: "_kw_unsafe"; }
+export interface KwStaticTree extends AnyTreeNode { readonly type: "_kw_static"; }
 export interface KwAsyncTree extends AnyTreeNode { readonly type: "_kw_async"; }
+export interface KwMoveTree extends AnyTreeNode { readonly type: "_kw_move"; }
 export interface KwDefaultTree extends AnyTreeNode { readonly type: "_kw_default"; }
 export interface KwConstTree extends AnyTreeNode { readonly type: "_kw_const"; }
-export interface KwUnsafeTree extends AnyTreeNode { readonly type: "_kw_unsafe"; }
 export interface _WildcardPatternTree extends AnyTreeNode { readonly type: "_wildcard_pattern"; }
 export interface _ArrayExpressionSemiTree extends AnyTreeNode { readonly type: "_array_expression_semi"; }
 export interface _ArrayExpressionListTree extends AnyTreeNode { readonly type: "_array_expression_list"; }
 export interface KwTypeParametersTree extends AnyTreeNode { readonly type: "_kw_type_parameters"; }
 export interface KwWhereClauseTree extends AnyTreeNode { readonly type: "_kw_where_clause"; }
 export interface KwBlockTree extends AnyTreeNode { readonly type: "_kw_block"; }
-export interface KwMoveTree extends AnyTreeNode { readonly type: "_kw_move"; }
 export interface KwAttributeTree extends AnyTreeNode { readonly type: "_kw_attribute"; }
 export interface KwLabelTree extends AnyTreeNode { readonly type: "_kw_label"; }
 export interface KwLeftTree extends AnyTreeNode { readonly type: "_kw_left"; }
@@ -2645,7 +2624,6 @@ export interface KwRightTree extends AnyTreeNode { readonly type: "_kw_right"; }
 export interface KwExpressionTree extends AnyTreeNode { readonly type: "_kw_expression"; }
 export interface KwIdentifierTree extends AnyTreeNode { readonly type: "_kw_identifier"; }
 export interface KwPatternTree extends AnyTreeNode { readonly type: "_kw_pattern"; }
-export interface KwStaticTree extends AnyTreeNode { readonly type: "_kw_static"; }
 export interface KwVisibilityModifierTree extends AnyTreeNode { readonly type: "_kw_visibility_modifier"; }
 export interface KwCrateTree extends AnyTreeNode { readonly type: "_kw_crate"; }
 export interface KwStringLiteralTree extends AnyTreeNode { readonly type: "_kw_string_literal"; }
@@ -2669,7 +2647,6 @@ export interface KwElementsTree extends AnyTreeNode { readonly type: "_kw_elemen
 export interface KwTrailingWhereClauseTree extends AnyTreeNode { readonly type: "_kw_trailing_where_clause"; }
 export interface KwOperandTree extends AnyTreeNode { readonly type: "_kw_operand"; }
 export interface KwPathTree extends AnyTreeNode { readonly type: "_kw_path"; }
-export interface KwForTree extends AnyTreeNode { readonly type: "_kw_for"; }
 export interface StringContentTree extends TreeNode<'string_content'> {}
 export interface RawStringLiteralContentTree extends AnyTreeNode { readonly type: "raw_string_literal_content"; }
 export interface FloatLiteralTree extends TreeNode<'float_literal'> {}
@@ -2713,7 +2690,6 @@ export interface UseTree extends AnyTreeNode { readonly type: "use"; }
 export interface WhereTree extends AnyTreeNode { readonly type: "where"; }
 export interface WhileTree extends AnyTreeNode { readonly type: "while"; }
 export interface ExternTree extends AnyTreeNode { readonly type: "extern"; }
-export interface RefTree extends AnyTreeNode { readonly type: "ref"; }
 export interface ElseTree extends AnyTreeNode { readonly type: "else"; }
 export interface AnonymousTree extends AnyTreeNode { readonly type: "_"; }
 export interface InTree extends AnyTreeNode { readonly type: "in"; }
@@ -2722,7 +2698,7 @@ export interface MutTree extends AnyTreeNode { readonly type: "mut"; }
 export interface RawTree extends AnyTreeNode { readonly type: "raw"; }
 export interface YieldTree extends AnyTreeNode { readonly type: "yield"; }
 export interface TryTree extends AnyTreeNode { readonly type: "try"; }
-export interface MoveTree extends AnyTreeNode { readonly type: "move"; }
+export interface RefTree extends AnyTreeNode { readonly type: "ref"; }
 
 // Supertype unions
 export type Statement =
@@ -3531,17 +3507,19 @@ export interface KindMap {
   'super': Super;
   'crate': Crate;
   'metavariable': Metavariable;
+  '_kw_ref': KwRef;
+  '_kw_unsafe': KwUnsafe;
+  '_kw_static': KwStatic;
   '_kw_async': KwAsync;
+  '_kw_move': KwMove;
   '_kw_default': KwDefault;
   '_kw_const': KwConst;
-  '_kw_unsafe': KwUnsafe;
   '_wildcard_pattern': _WildcardPattern;
   '_array_expression_semi': _ArrayExpressionSemi;
   '_array_expression_list': _ArrayExpressionList;
   '_kw_type_parameters': KwTypeParameters;
   '_kw_where_clause': KwWhereClause;
   '_kw_block': KwBlock;
-  '_kw_move': KwMove;
   '_kw_attribute': KwAttribute;
   '_kw_label': KwLabel;
   '_kw_left': KwLeft;
@@ -3549,7 +3527,6 @@ export interface KindMap {
   '_kw_expression': KwExpression;
   '_kw_identifier': KwIdentifier;
   '_kw_pattern': KwPattern;
-  '_kw_static': KwStatic;
   '_kw_visibility_modifier': KwVisibilityModifier;
   '_kw_crate': KwCrate;
   '_kw_string_literal': KwStringLiteral;
@@ -3573,7 +3550,6 @@ export interface KindMap {
   '_kw_trailing_where_clause': KwTrailingWhereClause;
   '_kw_operand': KwOperand;
   '_kw_path': KwPath;
-  '_kw_for': KwFor;
   'string_content': StringContent;
   'raw_string_literal_content': RawStringLiteralContent;
   'float_literal': FloatLiteral;

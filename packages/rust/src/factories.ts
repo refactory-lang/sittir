@@ -734,7 +734,7 @@ export function staticItem(config: T.StaticItem.Config) {
     $fields: fields,
     $children: children,
     visibilityModifier(value?: T.VisibilityModifier | undefined) { return _fs(config, staticItem, 'visibilityModifier', value, fields.visibility_modifier); },
-    mutableSpecifier(value?: "ref" | undefined) { return _fs(config, staticItem, 'mutableSpecifier', value, fields.mutable_specifier); },
+    mutableSpecifier(value?: T.KwRef | undefined) { return _fs(config, staticItem, 'mutableSpecifier', value, fields.mutable_specifier); },
     name(value?: T.Identifier) { return _fs(config, staticItem, 'name', value, fields.name); },
     typeField(value?: T._Type) { return _fs(config, staticItem, 'type', value, fields.type); },
     value(value?: T.Expression | undefined) { return _fs(config, staticItem, 'value', value, fields.value); },
@@ -871,20 +871,12 @@ export function functionModifiers(config?: T.FunctionModifiers.Config) {
   };
 }
 
-export function whereClause(config: T.WhereClause.Config) {
-  const fields = {
-    where: config?.where,
-  };
-  const children = config?.children ?? [];
+export function whereClause(...children: T.WherePredicate[]) {
   return {
     $type: 'where_clause' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $fields: fields,
     $children: children,
-    where(value?: "where") { return _fs(config, whereClause, 'where', value, fields.where); },
-    getChildren() { return children; },
-    setChildren(...items: T.WherePredicate[]) { return whereClause({ ...config, children: items }); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1058,7 +1050,6 @@ export function traitBounds(...children: (T._Type | T.Lifetime | T.HigherRankedT
 
 export function higherRankedTraitBound(config: T.HigherRankedTraitBound.Config) {
   const fields = {
-    for: config?.for,
     type_parameters: config?.typeParameters,
     type: config?.type,
   };
@@ -1067,7 +1058,6 @@ export function higherRankedTraitBound(config: T.HigherRankedTraitBound.Config) 
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    for(value?: T.KwFor) { return _fs(config, higherRankedTraitBound, 'for', value, fields.for); },
     typeParameters(value?: T.TypeParameters) { return _fs(config, higherRankedTraitBound, 'typeParameters', value, fields.type_parameters); },
     typeField(value?: T._Type) { return _fs(config, higherRankedTraitBound, 'type', value, fields.type); },
     render() { return render(this); },
@@ -1112,7 +1102,6 @@ export function typeParameters(...children: (T.AttributeItem | T.Metavariable | 
 
 export function constParameter(config: T.ConstParameter.Config) {
   const fields = {
-    const: config?.const,
     name: config?.name,
     type: config?.type,
     value: config?.value,
@@ -1122,7 +1111,6 @@ export function constParameter(config: T.ConstParameter.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    const(value?: T.KwConst) { return _fs(config, constParameter, 'const', value, fields.const); },
     name(value?: T.Identifier) { return _fs(config, constParameter, 'name', value, fields.name); },
     typeField(value?: T._Type) { return _fs(config, constParameter, 'type', value, fields.type); },
     value(value?: T.Block | T.Identifier | T.Literal | T.NegativeLiteral | undefined) { return _fs(config, constParameter, 'value', value, fields.value); },
@@ -1324,18 +1312,14 @@ export function selfParameter(config: T.SelfParameter.Config) {
     mutable_specifier: config?.mutableSpecifier,
     self: config?.self,
   };
-  const children = config?.children ?? [];
   return {
     $type: 'self_parameter' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    $children: children,
     lifetime(value?: string) { return _fs(config, selfParameter, 'lifetime', value, fields.lifetime); },
     mutableSpecifier(value?: T.Lifetime | undefined) { return _fs(config, selfParameter, 'mutableSpecifier', value, fields.mutable_specifier); },
-    self(value?: T.MutableSpecifier | undefined) { return _fs(config, selfParameter, 'self', value, fields.self); },
-    getChild() { return children[0]; },
-    setChild(child: T.Self) { return selfParameter({ ...config, children: [child] }); },
+    self(value?: T.MutableSpecifier | T.Self | undefined) { return _fs(config, selfParameter, 'self', value, fields.self); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1533,23 +1517,13 @@ export function arrayType(config: T.ArrayType.Config) {
   };
 }
 
-export function forLifetimes(config: T.ForLifetimes.Config) {
-  const fields = {
-    for: config?.for,
-  };
-  const children = config?.children ?? [];
+export function forLifetimes(...children: T.Lifetime[]) {
+  _assertNonEmpty(children, 'for_lifetimes.children');
   return {
     $type: 'for_lifetimes' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $fields: fields,
     $children: children,
-    for(value?: T.KwFor) { return _fs(config, forLifetimes, 'for', value, fields.for); },
-    getChildren() { return children; },
-    setChildren(...items: T.Lifetime[]) {
-      _assertNonEmpty(items, 'for_lifetimes.children');
-      return forLifetimes({ ...config, children: items });
-    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1701,20 +1675,12 @@ export function boundedType(config: T.BoundedType.Config) {
   };
 }
 
-export function useBounds(config: T.UseBounds.Config) {
-  const fields = {
-    use: config?.use,
-  };
-  const children = config?.children ?? [];
+export function useBounds(...children: (T.Lifetime | T._TypeIdentifier)[]) {
   return {
     $type: 'use_bounds' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $fields: fields,
     $children: children,
-    use(value?: "use") { return _fs(config, useBounds, 'use', value, fields.use); },
-    getChildren() { return children; },
-    setChildren(...items: (T.Lifetime | T._TypeIdentifier)[]) { return useBounds({ ...config, children: items }); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1829,7 +1795,6 @@ export function abstractType(config: T.AbstractType.Config) {
 
 export function dynamicType(config: T.DynamicType.Config) {
   const fields = {
-    dyn: config?.dyn,
     trait: config?.trait,
   };
   return {
@@ -1837,7 +1802,6 @@ export function dynamicType(config: T.DynamicType.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    dyn(value?: "dyn") { return _fs(config, dynamicType, 'dyn', value, fields.dyn); },
     trait(value?: T.HigherRankedTraitBound | T._TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType | T.FunctionType | T.TupleType) { return _fs(config, dynamicType, 'trait', value, fields.trait); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -2451,7 +2415,6 @@ export function baseFieldInitializer(child: T.Expression) {
 
 export function ifExpression(config: T.IfExpression.Config) {
   const fields = {
-    if: config?.if,
     condition: config?.condition,
     consequence: config?.consequence,
     alternative: config?.alternative,
@@ -2461,7 +2424,6 @@ export function ifExpression(config: T.IfExpression.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    if(value?: "if") { return _fs(config, ifExpression, 'if', value, fields.if); },
     condition(value?: T.Condition) { return _fs(config, ifExpression, 'condition', value, fields.condition); },
     consequence(value?: T.Block) { return _fs(config, ifExpression, 'consequence', value, fields.consequence); },
     alternative(value?: T.ElseClause | undefined) { return _fs(config, ifExpression, 'alternative', value, fields.alternative); },
@@ -2476,7 +2438,6 @@ export function ifExpression(config: T.IfExpression.Config) {
 
 export function letCondition(config: T.LetCondition.Config) {
   const fields = {
-    let: config?.let,
     pattern: config?.pattern,
     value: config?.value,
   };
@@ -2485,7 +2446,6 @@ export function letCondition(config: T.LetCondition.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    let(value?: "let") { return _fs(config, letCondition, 'let', value, fields.let); },
     pattern(value?: T.Pattern) { return _fs(config, letCondition, 'pattern', value, fields.pattern); },
     value(value?: T.Expression) { return _fs(config, letCondition, 'value', value, fields.value); },
     render() { return render(this); },
@@ -2497,20 +2457,13 @@ export function letCondition(config: T.LetCondition.Config) {
   };
 }
 
-export function elseClause(config: T.ElseClause.Config) {
-  const fields = {
-    else: config?.else,
-  };
-  const children = config?.children ?? [];
+export function elseClause(child?: (T.Block | T.IfExpression)) {
+  const children = child != null ? [child] : [];
   return {
     $type: 'else_clause' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $fields: fields,
     $children: children,
-    else(value?: "else") { return _fs(config, elseClause, 'else', value, fields.else); },
-    getChild() { return children[0]; },
-    setChild(child: (T.Block | T.IfExpression)) { return elseClause({ ...config, children: [child] }); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2522,7 +2475,6 @@ export function elseClause(config: T.ElseClause.Config) {
 
 export function matchExpression(config: T.MatchExpression.Config) {
   const fields = {
-    match: config?.match,
     value: config?.value,
     body: config?.body,
   };
@@ -2531,7 +2483,6 @@ export function matchExpression(config: T.MatchExpression.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    match(value?: "match") { return _fs(config, matchExpression, 'match', value, fields.match); },
     value(value?: T.Expression) { return _fs(config, matchExpression, 'value', value, fields.value); },
     body(value?: T.MatchBlock) { return _fs(config, matchExpression, 'body', value, fields.body); },
     render() { return render(this); },
@@ -2702,7 +2653,6 @@ export function forExpression(config: T.ForExpression.Config) {
 
 export function constBlock(config: T.ConstBlock.Config) {
   const fields = {
-    const: config?.const,
     body: config?.body,
   };
   return {
@@ -2710,7 +2660,6 @@ export function constBlock(config: T.ConstBlock.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    const(value?: T.KwConst) { return _fs(config, constBlock, 'const', value, fields.const); },
     body(value?: T.Block) { return _fs(config, constBlock, 'body', value, fields.body); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -2743,9 +2692,9 @@ export function closureExpressionUFormBlock(config: T.ClosureExpressionUFormBloc
     $variant: '_form_block' as const,
     $fields: fields,
     $children: children,
-    static(value?: "static" | undefined) { return _fs(config, closureExpressionUFormBlock, 'static', value, fields.static); },
-    async(value?: "async" | undefined) { return _fs(config, closureExpressionUFormBlock, 'async', value, fields.async); },
-    move(value?: "move" | undefined) { return _fs(config, closureExpressionUFormBlock, 'move', value, fields.move); },
+    static(value?: T.KwStatic | undefined) { return _fs(config, closureExpressionUFormBlock, 'static', value, fields.static); },
+    async(value?: T.KwAsync | undefined) { return _fs(config, closureExpressionUFormBlock, 'async', value, fields.async); },
+    move(value?: T.KwMove | undefined) { return _fs(config, closureExpressionUFormBlock, 'move', value, fields.move); },
     parameters(value?: T.ClosureParameters) { return _fs(config, closureExpressionUFormBlock, 'parameters', value, fields.parameters); },
     getChild() { return children[0]; },
     setChild(child: T.ClosureExpressionBlock) { return closureExpressionUFormBlock({ ...config, children: [child] }); },
@@ -2772,9 +2721,9 @@ export function closureExpressionUFormExpr(config: T.ClosureExpressionUFormExprC
     $variant: '_form_expr' as const,
     $fields: fields,
     $children: children,
-    static(value?: "static" | undefined) { return _fs(config, closureExpressionUFormExpr, 'static', value, fields.static); },
-    async(value?: "async" | undefined) { return _fs(config, closureExpressionUFormExpr, 'async', value, fields.async); },
-    move(value?: "move" | undefined) { return _fs(config, closureExpressionUFormExpr, 'move', value, fields.move); },
+    static(value?: T.KwStatic | undefined) { return _fs(config, closureExpressionUFormExpr, 'static', value, fields.static); },
+    async(value?: T.KwAsync | undefined) { return _fs(config, closureExpressionUFormExpr, 'async', value, fields.async); },
+    move(value?: T.KwMove | undefined) { return _fs(config, closureExpressionUFormExpr, 'move', value, fields.move); },
     parameters(value?: T.ClosureParameters) { return _fs(config, closureExpressionUFormExpr, 'parameters', value, fields.parameters); },
     getChild() { return children[0]; },
     setChild(child: T.ClosureExpressionExpr) { return closureExpressionUFormExpr({ ...config, children: [child] }); },
@@ -3130,6 +3079,7 @@ export function fieldPattern(config: T.FieldPatternUFormShorthandConfig | T.Fiel
 }
 export function fieldPatternUFormShorthand(config: T.FieldPatternUFormShorthandConfig) {
   const fields = {
+    ref: config?.ref,
     mutable_specifier: config?.mutableSpecifier,
   };
   const children = config?.children ?? [];
@@ -3140,6 +3090,7 @@ export function fieldPatternUFormShorthand(config: T.FieldPatternUFormShorthandC
     $variant: '_form_shorthand' as const,
     $fields: fields,
     $children: children,
+    ref(value?: T.KwRef | undefined) { return _fs(config, fieldPatternUFormShorthand, 'ref', value, fields.ref); },
     mutableSpecifier(value?: T.MutableSpecifier | undefined) { return _fs(config, fieldPatternUFormShorthand, 'mutableSpecifier', value, fields.mutable_specifier); },
     getChild() { return children[0]; },
     setChild(child: T.FieldPatternShorthand) { return fieldPatternUFormShorthand({ ...config, children: [child] }); },
@@ -3153,6 +3104,7 @@ export function fieldPatternUFormShorthand(config: T.FieldPatternUFormShorthandC
 }
 export function fieldPatternUFormNamed(config: T.FieldPatternUFormNamedConfig) {
   const fields = {
+    ref: config?.ref,
     mutable_specifier: config?.mutableSpecifier,
   };
   const children = config?.children ?? [];
@@ -3163,6 +3115,7 @@ export function fieldPatternUFormNamed(config: T.FieldPatternUFormNamedConfig) {
     $variant: '_form_named' as const,
     $fields: fields,
     $children: children,
+    ref(value?: T.KwRef | undefined) { return _fs(config, fieldPatternUFormNamed, 'ref', value, fields.ref); },
     mutableSpecifier(value?: T.MutableSpecifier | undefined) { return _fs(config, fieldPatternUFormNamed, 'mutableSpecifier', value, fields.mutable_specifier); },
     getChild() { return children[0]; },
     setChild(child: T.FieldPatternNamed) { return fieldPatternUFormNamed({ ...config, children: [child] }); },
@@ -3240,20 +3193,13 @@ export function rangePatternUFormPrefix(config: T.RangePatternUFormPrefixConfig)
   };
 }
 
-export function refPattern(config: T.RefPattern.Config) {
-  const fields = {
-    ref: config?.ref,
-  };
-  const children = config?.children ?? [];
+export function refPattern(child: T.Pattern) {
+  const children = [child];
   return {
     $type: 'ref_pattern' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $fields: fields,
     $children: children,
-    ref(value?: "ref") { return _fs(config, refPattern, 'ref', value, fields.ref); },
-    getChild() { return children[0]; },
-    setChild(child: T.Pattern) { return refPattern({ ...config, children: [child] }); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);

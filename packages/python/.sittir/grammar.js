@@ -518,11 +518,6 @@ function registerPolymorphVariant(parentKind, childSuffix) {
   }
   currentPolymorphVariants.push({ parent: parentKind, child: childSuffix });
 }
-function drainPolymorphVariants() {
-  const variants = currentPolymorphVariants;
-  currentPolymorphVariants = [];
-  return variants;
-}
 function forgetPolymorphVariantsFor(ruleKind) {
   currentPolymorphVariants = currentPolymorphVariants.filter((v) => v.parent !== ruleKind);
 }
@@ -540,11 +535,6 @@ function registerConflict(names) {
   if (!exists) {
     currentConflicts.push([...names]);
   }
-}
-function drainConflicts() {
-  const conflicts = currentConflicts;
-  currentConflicts = [];
-  return conflicts;
 }
 function wrapInPrecStack(content, precStack, reconstructPrec2) {
   if (!precStack?.length) return content;
@@ -629,124 +619,6 @@ function matchesEmpty(rule) {
     return members.every((m) => matchesEmpty(m));
   }
   return false;
-}
-function installGrammarWrapper() {
-  const g = globalThis;
-  const nativeGrammar = g.grammar;
-  if (typeof nativeGrammar !== "function") return;
-  g.grammar = function wrappedGrammar(...args) {
-    currentSyntheticRules = /* @__PURE__ */ new Map();
-    const base2 = args.length > 1 ? args[0] : void 0;
-    const opts = args.length > 1 ? args[1] : args[0];
-    if (base2?.__enrichOverrides__ && opts) {
-      if (!opts.rules) opts.rules = {};
-      for (const [name, fn] of Object.entries(base2.__enrichOverrides__)) {
-        if (!(name in opts.rules)) opts.rules[name] = fn;
-      }
-    }
-    if (opts?.rules) {
-      const permissive = new Proxy({}, {
-        get(_, name) {
-          return { type: "SYMBOL", name };
-        }
-      });
-      for (const [name, ruleFn] of Object.entries(opts.rules)) {
-        if (typeof ruleFn === "function") {
-          currentRuleKind = name;
-          let baseOriginal = void 0;
-          const baseFn = base2?.rules?.[name];
-          if (typeof baseFn === "function") {
-            try {
-              baseOriginal = baseFn.call(permissive, permissive, void 0);
-            } catch (e) {
-              if (typeof process !== "undefined" && process?.env?.SITTIR_DEBUG) {
-                console.error(`[sittir] pass1 base '${name}' threw: ${e?.message?.slice(0, 120) ?? e}`);
-              }
-            }
-          }
-          try {
-            ruleFn.call(permissive, permissive, baseOriginal);
-          } catch (e) {
-            if (typeof process !== "undefined" && process?.env?.SITTIR_DEBUG) {
-              console.error(`[sittir] pass1 override '${name}' threw: ${e?.message?.slice(0, 120) ?? e}`);
-            }
-          } finally {
-            currentRuleKind = null;
-          }
-        }
-      }
-    }
-    const discoveredNames = new Map(currentSyntheticRules);
-    currentSyntheticRules = /* @__PURE__ */ new Map();
-    const pendingConflictsAfterGrammar = drainConflicts();
-    currentPolymorphVariants = [];
-    if (opts?.rules) {
-      for (const [name, ruleFn] of Object.entries(opts.rules)) {
-        if (typeof ruleFn !== "function") continue;
-        opts.rules[name] = function(...a) {
-          currentRuleKind = name;
-          try {
-            return ruleFn.apply(this, a);
-          } finally {
-            currentRuleKind = null;
-          }
-        };
-      }
-    }
-    if (opts?.rules && discoveredNames.size > 0) {
-      const blank = g.blank;
-      for (const [name] of discoveredNames) {
-        if (!(name in opts.rules)) {
-          opts.rules[name] = () => blank ? blank() : { type: "BLANK" };
-        }
-      }
-    }
-    if (opts?.rules) {
-      currentOptsRules = opts.rules;
-      currentBlankFn = g.blank ?? null;
-    }
-    let result;
-    try {
-      result = nativeGrammar.apply(this, args);
-    } catch (e) {
-      currentOptsRules = null;
-      currentBlankFn = null;
-      drainSyntheticRules();
-      drainConflicts();
-      drainPolymorphVariants();
-      currentRuleKind = null;
-      throw e;
-    }
-    currentOptsRules = null;
-    currentBlankFn = null;
-    try {
-      const allConflicts = [...pendingConflictsAfterGrammar, ...drainConflicts()];
-      if (result && allConflicts.length > 0 && typeof result === "object") {
-        const grammar2 = result.grammar ?? result;
-        const current = Array.isArray(grammar2.conflicts) ? grammar2.conflicts : [];
-        for (const group of allConflicts) {
-          current.push([...group]);
-        }
-        grammar2.conflicts = current;
-      }
-      const synthetic = drainSyntheticRules();
-      if (result && synthetic.size > 0 && typeof result === "object") {
-        const grammar2 = result.grammar ?? result;
-        if ("rules" in grammar2) {
-          const rules = grammar2.rules;
-          for (const [name, content] of synthetic) {
-            rules[name] = content;
-          }
-        }
-      }
-      return result;
-    } finally {
-      drainSyntheticRules();
-      drainConflicts();
-      drainPolymorphVariants();
-      currentRuleKind = null;
-    }
-  };
 }
 
 // packages/codegen/src/dsl/field.ts
@@ -1203,9 +1075,6 @@ function rebuildOptional(optionalRule, newInner) {
   });
   return { ...optionalRule, members: newMembers };
 }
-
-// packages/codegen/src/dsl/index.ts
-installGrammarWrapper();
 
 // packages/python/overrides.ts
 var overrides_default = grammar(enrich(import_grammar.default), wire({

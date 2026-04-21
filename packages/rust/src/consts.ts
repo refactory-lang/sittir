@@ -200,7 +200,6 @@ export const LEAF_KINDS = [
   '_kw_elements',
   '_kw_expression',
   '_kw_extern_modifier',
-  '_kw_for',
   '_kw_for_lifetimes',
   '_kw_function_modifiers',
   '_kw_identifier',
@@ -216,6 +215,7 @@ export const LEAF_KINDS = [
   '_kw_pattern',
   '_kw_raw_string_literal_end',
   '_kw_raw_string_literal_start',
+  '_kw_ref',
   '_kw_right',
   '_kw_self',
   '_kw_shebang',
@@ -265,7 +265,6 @@ export const LEAF_KINDS = [
   'match',
   'metavariable',
   'mod',
-  'move',
   'mut',
   'mutable_specifier',
   'outer_doc_comment_marker',
@@ -308,9 +307,8 @@ export const KEYWORDS = [
   '_kw_async',
   '_kw_const',
   '_kw_default',
-  '_kw_for',
-  '_kw_move',
   '_kw_operator',
+  '_kw_ref',
   '_kw_unsafe',
   '_mod_item_external',
   '_outer_line_doc_comment_marker',
@@ -341,7 +339,6 @@ export const KEYWORDS = [
   'match',
   'mod',
   'mod_item_external',
-  'move',
   'mut',
   'mutable_specifier',
   'never_type',
@@ -556,7 +553,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'right', required: true, multiple: false },
   ],
   'const_block': [
-    { name: 'const', required: true, multiple: false },
     { name: 'body', required: true, multiple: false },
   ],
   'const_item': [
@@ -566,7 +562,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'value', required: false, multiple: false },
   ],
   'const_parameter': [
-    { name: 'const', required: true, multiple: false },
     { name: 'name', required: true, multiple: false },
     { name: 'type', required: true, multiple: false },
     { name: 'value', required: false, multiple: false },
@@ -579,11 +574,9 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'delim_token_tree': [
   ],
   'dynamic_type': [
-    { name: 'dyn', required: true, multiple: false },
     { name: 'trait', required: true, multiple: false },
   ],
   'else_clause': [
-    { name: 'else', required: true, multiple: false },
   ],
   'enum_item': [
     { name: 'visibilityModifier', required: false, multiple: false },
@@ -629,6 +622,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'field_initializer_list': [
   ],
   'field_pattern': [
+    { name: 'ref', required: false, multiple: false },
     { name: 'mutableSpecifier', required: false, multiple: false },
   ],
   'field_pattern_named': [
@@ -645,7 +639,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'body', required: true, multiple: false },
   ],
   'for_lifetimes': [
-    { name: 'for', required: true, multiple: false },
   ],
   'foreign_mod_item': [
     { name: 'visibilityModifier', required: false, multiple: false },
@@ -708,12 +701,10 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'typeArguments', required: true, multiple: false },
   ],
   'higher_ranked_trait_bound': [
-    { name: 'for', required: true, multiple: false },
     { name: 'typeParameters', required: true, multiple: false },
     { name: 'type', required: true, multiple: false },
   ],
   'if_expression': [
-    { name: 'if', required: true, multiple: false },
     { name: 'condition', required: true, multiple: false },
     { name: 'consequence', required: true, multiple: false },
     { name: 'alternative', required: false, multiple: false },
@@ -745,7 +736,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'let_chain': [
   ],
   'let_condition': [
-    { name: 'let', required: true, multiple: false },
     { name: 'pattern', required: true, multiple: false },
     { name: 'value', required: true, multiple: false },
   ],
@@ -796,7 +786,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'match_block': [
   ],
   'match_expression': [
-    { name: 'match', required: true, multiple: false },
     { name: 'value', required: true, multiple: false },
     { name: 'body', required: true, multiple: false },
   ],
@@ -879,7 +868,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'rawStringLiteralEnd', required: true, multiple: false },
   ],
   'ref_pattern': [
-    { name: 'ref', required: true, multiple: false },
   ],
   'reference_expression': [
     { name: 'mutableSpecifier', required: true, multiple: false },
@@ -1041,7 +1029,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'alias', required: true, multiple: false },
   ],
   'use_bounds': [
-    { name: 'use', required: true, multiple: false },
   ],
   'use_declaration': [
     { name: 'visibilityModifier', required: false, multiple: false },
@@ -1061,7 +1048,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'in', required: false, multiple: false },
   ],
   'where_clause': [
-    { name: 'where', required: true, multiple: false },
   ],
   'where_predicate': [
     { name: 'left', required: true, multiple: false },
@@ -1155,6 +1141,11 @@ export type KwLeftValue = (typeof _KW_LEFTS)[number];
 export const _KW_LIFETIMES = [
 ] as const;
 export type KwLifetimeValue = (typeof _KW_LIFETIMES)[number];
+
+/** Valid values for `_kw_move` nodes. */
+export const _KW_MOVES = [
+] as const;
+export type KwMoveValue = (typeof _KW_MOVES)[number];
 
 /** Valid values for `_kw_mutable_specifier` nodes. */
 export const _KW_MUTABLE_SPECIFIERS = [
