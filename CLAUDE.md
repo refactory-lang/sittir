@@ -152,11 +152,84 @@ Specs, plans, tasks under `specs/NNN-feature-name/`. Branch convention: `NNN-sho
 
 ## Work conventions
 
-These three rules are auto-checked by `.claude/hooks/quality-gate.sh`
-(Stop hook). Follow them during normal work, not just when the hook
-fires.
+The first rule (DRY — one source, one derivation) is the central
+correctness principle of the codegen pipeline — read it first. The
+three after it (fix-the-generator / no-type-escape-hatches /
+wave-decomposition) are auto-checked by `.claude/hooks/quality-gate.sh`
+(Stop hook).
+
+### DRY — one source, one derivation (read this first)
+
+This is the central correctness principle of the codegen pipeline.
+Every anti-pattern we've hit reduces to violating it. It supersedes
+every other rule below.
+
+> **Every fact about the program has exactly one source, and exactly
+> one definition of how to extract it.**
+
+Both clauses matter:
+
+- **One source.** A slot's content lives in ONE field, not split across
+  parallel arrays (`contentTypes: string[]` + `literalValues: string[]`,
+  for example). A kind's parameterless-ness lives in ONE property
+  (`isParameterless`), not re-computed per emitter. A rule reference
+  lives as ONE object ref (`AssembledNode`), not as a name-string that
+  consumers have to re-resolve via `kindMap.get(...)`. Two storage sites
+  **drift**.
+
+- **One derivation.** If you need facts from a Rule tree, there is ONE
+  walk that produces them — not three separate walkers each keeping
+  different subsets (`deriveContentTypes` / `deriveLiteralValues` /
+  `deriveAliasSources` was the poster child for this failure mode). Two
+  derivations **disagree**.
+
+Every variant of the anti-pattern we've caught is one of these:
+
+- **Ad-hoc tree walkers that collect partial projections** — each walker
+  is an alternative derivation of the same underlying facts. Silently
+  drops whatever it doesn't care about. Example:
+  `deriveContentTypes(choice('const', $.mutable_specifier))` returns
+  `['mutable_specifier']` — dropping the literal — while
+  `deriveLiteralValues` on the same tree drops the symbol. Both views
+  are incomplete; downstream code that combines them has to trust they
+  agree. They don't.
+
+- **String-name references instead of object references.** Storing
+  `contentTypes: string[]` is storing the fact twice: once as a lookup
+  token here, once as the actual assembled node there. Every call site
+  that does `kindMap.get(name)?` is a potential drift point.
+
+- **Silent `default:` branches.** `switch (rule.type) { ... default: return [] }`
+  declares "I don't cover every variant, and the fallback is to
+  contribute nothing." Adding a new Rule variant doesn't fail to
+  compile; it silently does the wrong thing. Every switch on a
+  discriminated union ends in `assertNever(x)` — full stop.
+
+- **Flattened flags that compress multi-valued facts.** `multiple: true`
+  on a slot whose choice contains mixed single + repeat positions is a
+  lossy collapse. The flag can't tell you WHICH position is repeated.
+  Anyone who needs the full fact re-derives it from the rule — a
+  second derivation, disagreeing with the first. The fact belongs on
+  the value, not the slot.
+
+**Practical rule for any new code:**
+
+> If you find yourself (a) storing a fact in more than one place, or
+> (b) writing a walker that extracts same-shaped information a
+> different walker already produces, **stop**. Consolidate first.
+> Storage duplication drifts; derivation duplication disagrees —
+> both produce silent wrong answers.
+
+When in doubt: put the projection as a method on the class that owns
+the data, not as an external walker. Bake the facts into the assembled
+representation at construction time so no downstream pass needs to
+re-walk. Use object references over names. End every discriminated-
+union switch with `assertNever(x)`.
 
 ### Fix the generator, not the generated output
+
+(A specific application of DRY — the generated files are a derivation
+of the source; hand-editing creates a second source that drifts.)
 
 Sittir generates a lot of TypeScript + YAML per grammar package. Never
 hand-edit generated output to work around a problem:
