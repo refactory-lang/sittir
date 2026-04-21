@@ -21,65 +21,35 @@ import type { Rule } from '../compiler/rule.ts'
 import { findAllPolymorphCandidates, type PolymorphCandidateLocation } from '../compiler/link.ts'
 
 /**
- * Derive readable arm names for a polymorph candidate's choice. Priority:
- * explicit variant() label (set by `tagVariants`) → named symbol target →
- * leading string literal in a seq → `form${i}` fallback. Names collide-
- * unique via a running count so `registerPolymorphVariant`'s uniqueness
- * guard accepts the set.
- */
-function armNamesFor(cand: PolymorphCandidateLocation): string[] {
-    const counts = new Map<string, number>()
-    return cand.choice.members.map((m, i) => {
-        let base: string
-        if (m.type === 'variant') {
-            base = m.name
-        } else if (m.type === 'symbol' || m.type === 'supertype') {
-            base = m.name
-        } else if (m.type === 'seq') {
-            const firstNamed = m.members.find(mm => mm.type === 'symbol' || mm.type === 'supertype')
-            if (firstNamed && (firstNamed.type === 'symbol' || firstNamed.type === 'supertype')) {
-                base = firstNamed.name
-            } else {
-                const firstLit = m.members.find(mm => mm.type === 'string')
-                if (firstLit && firstLit.type === 'string' && /^[a-zA-Z_][a-zA-Z0-9_]*$/.test(firstLit.value)) {
-                    base = firstLit.value
-                } else {
-                    base = `form${i}`
-                }
-            }
-        } else {
-            base = `form${i}`
-        }
-        const seen = counts.get(base) ?? 0
-        counts.set(base, seen + 1)
-        return seen === 0 ? base : `${base}${seen + 1}`
-    })
-}
-
-/**
- * Derive a short, readable label for a single unnamed choice arm.
+ * Derive a short, readable base label for a single choice arm.
+ *
+ * Priority: explicit `variant()` label (from `tagVariants`) → named
+ * symbol / supertype target → leading named member of a seq (symbol,
+ * supertype, or identifier-shaped string literal) → `form${index}`
+ * fallback.
  *
  * @param node - The rule for this choice arm.
- * @param index - Zero-based position within the parent CHOICE, used as
- *   a numeric fallback when no better name is available.
- * @returns A suggested name string: the variant label, symbol name,
- *   leading identifier-shaped string literal, or `form${index}`.
- * @remarks Used when suggesting `variant(...)` for bare choices (no
- *   explicit variant() markers). The name is a suggestion the grammar
- *   author can refine — the important property is that distinct arms get
- *   distinct names so `registerPolymorphVariant`'s uniqueness guard
- *   accepts the set at eval time.
+ * @param index - Zero-based position within the parent CHOICE.
+ * @returns A suggested name string (not yet deduplicated — use
+ *   {@link deduplicateArmNames} to collide-resolve a full arm list).
+ * @remarks Used when suggesting `variant(...)` for bare choices that
+ *   lack explicit variant() markers. The name is a suggestion the
+ *   grammar author can refine; the important property is that distinct
+ *   arms produce distinct base names where possible.
+ *
+ *   Previously duplicated as an inline ladder inside `armNamesFor`.
+ *   Both paths now share this base-name function.
  */
 function deriveArmNameFromRule(node: Rule, index: number): string {
     if (node.type === 'variant') return node.name
     if (node.type === 'symbol' || node.type === 'supertype') return node.name
     if (node.type === 'seq' && node.members.length > 0) {
-        // Lead with the first literal ('(' → 'paren', '[' → 'bracket')
-        // or the first symbol name.
+        // Lead with the first named member (symbol/supertype) or a
+        // leading identifier-shaped string literal ('(' → 'paren', etc.
+        // the caller can rename).
         for (const m of node.members) {
             if (m.type === 'symbol' || m.type === 'supertype') return m.name
             if (m.type === 'string') {
-                // Crude but serviceable — caller can rename.
                 const s = m.value
                 if (/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(s)) return s
             }
@@ -93,16 +63,12 @@ function deriveArmNameFromRule(node: Rule, index: number): string {
  *
  * @param members - The choice's arm rules, in order.
  * @param nameFn - Per-arm name derivation function (receives rule + index).
+ *   Defaults to {@link deriveArmNameFromRule}.
  * @returns An array of unique strings, one per arm. Duplicate base names
  *   get a numeric suffix (2, 3, …) so `registerPolymorphVariant`'s
  *   uniqueness guard accepts the full set.
- * @remarks `tagVariants` assigns the same label to structurally-identical
- *   alternatives (e.g. export_statement has three "export" variants).
- *   Appending a 2/3/... suffix keeps them unique for
- *   `registerPolymorphVariant`'s uniqueness guard, which rejects
- *   same-parent duplicates at eval time.
  */
-function deduplicateArmNames(members: Rule[], nameFn: (m: Rule, i: number) => string): string[] {
+function deduplicateArmNames(members: readonly Rule[], nameFn: (m: Rule, i: number) => string = deriveArmNameFromRule): string[] {
     const counts = new Map<string, number>()
     return members.map((m, i) => {
         const base = nameFn(m, i)
@@ -110,6 +76,20 @@ function deduplicateArmNames(members: Rule[], nameFn: (m: Rule, i: number) => st
         counts.set(base, seen + 1)
         return seen === 0 ? base : `${base}${seen + 1}`
     })
+}
+
+/**
+ * Derive unique arm names for a polymorph candidate's choice.
+ *
+ * Thin wrapper around {@link deduplicateArmNames} that preserves the
+ * previous entry point used by the findAllPolymorphCandidates code path.
+ * Both `armNamesFor(cand)` and the `locateTopLevelChoice` walker now go
+ * through the same base-naming function — the earlier duplication
+ * (inline ladder in `armNamesFor` vs `deriveArmNameFromRule`) was two
+ * derivations of the same facts that had to stay in sync.
+ */
+function armNamesFor(cand: PolymorphCandidateLocation): string[] {
+    return deduplicateArmNames(cand.choice.members)
 }
 
 /**
