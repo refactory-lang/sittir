@@ -196,7 +196,7 @@ function _resolveByKind<K extends keyof _FromMap>(
   rest: _FromFieldInput,
 ): ReturnType<_FromMap[K]> {
   const fn = _fromMap[kind];
-  return (fn as (input?: _FromFieldInput) => ReturnType<_FromMap[K]>)(rest);
+  return fn(rest);
 }
 
 function _resolveScalar(v: boolean | number): AnyNodeData | undefined {
@@ -216,25 +216,25 @@ function _resolveOne<T>(
   leafKinds: readonly string[],
   branchKinds: readonly string[],
 ): T {
-  if (v === undefined || v === null) return v as T;
-  if (isNodeData(v)) return v as T;
+  if (v === undefined || v === null) return v;
+  if (isNodeData(v)) return v;
   if (typeof v === "boolean" || typeof v === "number") {
     const scalar = _resolveScalar(v);
-    if (scalar !== undefined) return scalar as T;
+    if (scalar !== undefined) return scalar;
   }
   if (typeof v === "string" && leafKinds.length > 0) {
     const leaf = _resolveLeafString(v, leafKinds);
-    if (leaf !== undefined) return leaf as T;
+    if (leaf !== undefined) return leaf;
   }
   if (typeof v === "object" && !Array.isArray(v) && "kind" in v) {
     const { kind, ...rest } = v;
-    if (typeof kind === "string" && kind in _fromMap) return _resolveByKind(kind as keyof _FromMap, rest) as T;
+    if (typeof kind === "string" && kind in _fromMap) return _resolveByKind(kind, rest);
   }
   if (branchKinds.length === 1 && typeof v === "object" && !Array.isArray(v)) {
     const bk = branchKinds[0]!;
-    if (bk in _fromMap) return _resolveByKind(bk as keyof _FromMap, v) as T;
+    if (bk in _fromMap) return _resolveByKind(bk, v);
   }
-  return v as T;
+  return v;
 }
 
 function _resolveMany<T>(
@@ -248,34 +248,34 @@ function _resolveMany<T>(
 }
 
 function _resolveOneLeaf<T>(v: _FromFieldInput, kind: string): T {
-  if (v === undefined || v === null) return v as T;
-  if (isNodeData(v)) return v as T;
+  if (v === undefined || v === null) return v;
+  if (isNodeData(v)) return v;
   if (typeof v === "boolean" || typeof v === "number") {
     const scalar = _resolveScalar(v);
-    if (scalar !== undefined) return scalar as T;
+    if (scalar !== undefined) return scalar;
   }
   if (typeof v === "string") {
     const e = _leafRegistry[kind];
-    if (e !== undefined) return e.factory(v) as T;
+    if (e !== undefined) return e.factory(v);
   }
   if (typeof v === "object" && !Array.isArray(v) && "kind" in v) {
     const { kind: k, ...rest } = v;
-    if (typeof k === "string" && k in _fromMap) return _resolveByKind(k as keyof _FromMap, rest) as T;
+    if (typeof k === "string" && k in _fromMap) return _resolveByKind(k, rest);
   }
-  return v as T;
+  return v;
 }
 
 function _resolveOneBranch<T>(v: _FromFieldInput, kind: string): T {
-  if (v === undefined || v === null) return v as T;
-  if (isNodeData(v)) return v as T;
+  if (v === undefined || v === null) return v;
+  if (isNodeData(v)) return v;
   if (typeof v === "object" && !Array.isArray(v)) {
     if ("kind" in v) {
       const { kind: k, ...rest } = v;
-      if (typeof k === "string" && k in _fromMap) return _resolveByKind(k as keyof _FromMap, rest) as T;
+      if (typeof k === "string" && k in _fromMap) return _resolveByKind(k, rest);
     }
-    if (kind in _fromMap) return _resolveByKind(kind as keyof _FromMap, v) as T;
+    if (kind in _fromMap) return _resolveByKind(kind, v);
   }
-  return v as T;
+  return v;
 }
 
 function _resolveManyLeaf<T>(v: _FromFieldInput, kind: string): readonly T[] {
