@@ -830,9 +830,13 @@ function resolveFieldFromTypedInput(
     /** Polymorph forms use `<TypeName>Config` legacy alias. */
     isPolymorphForm = false,
 ): string {
-    const configPath = isPolymorphForm ? `T.${parentTypeName}Config` : `T.${parentTypeName}.Config`
-    const slotType = `NonNullable<${configPath}['${field.propertyName}']>`
-    const typeParam = isMultiple(field) ? `${slotType}[number]` : slotType
+    // parentTypeName / isPolymorphForm are retained for signature stability
+    // with callers; prior implementation used them to build an explicit
+    // `<NonNullable<T.X.Config['y']>>` type arg on the resolver call. Those
+    // type args were stripped in a follow-up to the from-cleanup pass —
+    // TS now infers the slot type from parameters / call context.
+    void parentTypeName
+    void isPolymorphForm
     /**
      * Per spec 008 US3 / FR-023: single-access camelCase read on the bag
      * branch. After the isNodeData identity quick-return at resolver entry,
@@ -843,7 +847,7 @@ function resolveFieldFromTypedInput(
      */
     const optChain = inputOptional ? '?' : ''
     const access = `${sourceVar}${optChain}.${field.propertyName}`
-    return resolveFieldCall(access, field, isMultiple(field), nodeMap, typeParam, intern)
+    return resolveFieldCall(access, field, isMultiple(field), nodeMap, intern)
 }
 
 /**
@@ -862,6 +866,11 @@ function resolveChildrenFromTypedInput(
     sourceVar: string,
     inputOptional: boolean,
 ): string {
+    // parentTypeName retained for signature stability with callers; prior
+    // implementation used it to build an explicit
+    // `<NonNullable<T.X.Config['children']>>` type arg on the resolver call.
+    // Call-site type args were stripped — TS infers from parameters.
+    void parentTypeName
     const seenTypes = new Set<string>()
     const mergedValues: NodeOrTerminal[] = []
     let anyMultiple = false
@@ -882,12 +891,10 @@ function resolveChildrenFromTypedInput(
      * contract rather than wiring a parallel children-resolver.
      */
     const pseudo = { values: mergedValues } as { values: readonly NodeOrTerminal[] }
-    const slotType = `NonNullable<T.${parentTypeName}.Config['children']>`
-    const typeParam = anyMultiple ? `${slotType}[number]` : slotType
     // Direct bag access — same pattern as field reads.
     const optChain = inputOptional ? '?' : ''
     const access = `${sourceVar}${optChain}.children`
-    return resolveFieldCall(access, pseudo, anyMultiple, nodeMap, typeParam, intern)
+    return resolveFieldCall(access, pseudo, anyMultiple, nodeMap, intern)
 }
 
 /**
@@ -982,11 +989,15 @@ function classifyKindsForResolver(
  * arrays) and emit a direct specialized call. Removes one function-call
  * layer + array-iteration dispatch per field read at runtime.
  *
+ * Call sites no longer carry an explicit `<T>` type argument — TS infers
+ * the slot type from the parameter type / return context at the assignment.
+ * The per-call-site `NonNullable<T.X.Config['y']>` ceremony was orphaned
+ * after the earlier from-cleanup pass removed the `as X` casts it paired with.
+ *
  * @param prop - The property access expression string.
  * @param leafKinds - Classified leaf kind names.
  * @param branchKinds - Classified branch kind names.
- * @param field - The field whose `multiple` flag selects single vs. many.
- * @param typeParam - Optional generic type parameter string.
+ * @param fieldMultiple - Whether the slot accepts multiple values.
  * @returns The fast-path call string, or `undefined` if there is more than one kind.
  */
 function buildSingleKindFastPath(
@@ -994,7 +1005,6 @@ function buildSingleKindFastPath(
     leafKinds: string[],
     branchKinds: string[],
     fieldMultiple: boolean,
-    typeParam: string | undefined,
 ): string | undefined {
     const total = leafKinds.length + branchKinds.length
     if (total !== 1) return undefined
@@ -1003,8 +1013,7 @@ function buildSingleKindFastPath(
     const specialized = fieldMultiple
         ? (isLeaf ? '_resolveManyLeaf' : '_resolveManyBranch')
         : (isLeaf ? '_resolveOneLeaf' : '_resolveOneBranch')
-    const generic = typeParam ? `<${typeParam}>` : ''
-    return `${specialized}${generic}(${prop}, ${JSON.stringify(kindName)})`
+    return `${specialized}(${prop}, ${JSON.stringify(kindName)})`
 }
 
 /**
@@ -1015,11 +1024,13 @@ function buildSingleKindFastPath(
  * Duplicated entries collapse to a single module-scoped `_KN = [...]` decl
  * or `_super_<name>` when the list matches a supertype exactly.
  *
+ * Call sites no longer carry an explicit `<T>` type argument — TS infers
+ * the slot type from the parameter type / return context at the assignment.
+ *
  * @param prop - The property access expression string.
  * @param leafKinds - Classified leaf kind names.
  * @param branchKinds - Classified branch kind names.
- * @param field - The field whose `multiple` flag selects single vs. many.
- * @param typeParam - Optional generic type parameter string.
+ * @param fieldMultiple - Whether the slot accepts multiple values.
  * @param intern - Kind-list interner.
  * @returns The resolver call string with interned array references.
  */
@@ -1028,14 +1039,12 @@ function buildInternedArrayResolverCall(
     leafKinds: string[],
     branchKinds: string[],
     fieldMultiple: boolean,
-    typeParam: string | undefined,
     intern: KindInterner,
 ): string {
     const leafArr = intern(leafKinds)
     const branchArr = intern(branchKinds)
-    const generic = typeParam ? `<${typeParam}>` : ''
     const helper = fieldMultiple ? '_resolveMany' : '_resolveOne'
-    return `${helper}${generic}(${prop}, ${leafArr}, ${branchArr})`
+    return `${helper}(${prop}, ${leafArr}, ${branchArr})`
 }
 
 function resolveFieldCall(
@@ -1043,16 +1052,15 @@ function resolveFieldCall(
     field: { values: readonly NodeOrTerminal[] },
     fieldMultiple: boolean,
     nodeMap: NodeMap,
-    typeParam: string | undefined,
     intern: KindInterner,
 ): string {
     const expanded = expandAndDedupeContentTypes(slotKindNames(field), nodeMap)
     const { leafKinds, branchKinds } = classifyKindsForResolver(expanded, nodeMap)
 
-    const fastPath = buildSingleKindFastPath(prop, leafKinds, branchKinds, fieldMultiple, typeParam)
+    const fastPath = buildSingleKindFastPath(prop, leafKinds, branchKinds, fieldMultiple)
     if (fastPath !== undefined) return fastPath
 
-    return buildInternedArrayResolverCall(prop, leafKinds, branchKinds, fieldMultiple, typeParam, intern)
+    return buildInternedArrayResolverCall(prop, leafKinds, branchKinds, fieldMultiple, intern)
 }
 
 // ---------------------------------------------------------------------------
