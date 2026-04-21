@@ -1925,7 +1925,7 @@ export function ternaryExpression(config: T.TernaryExpression.Config) {
 export function binaryExpression(config: T.BinaryExpression.Config) {
   const fields = {
     left: config?.left,
-    operator: config?.operator,
+    operator: "&&" as const,
     right: config?.right,
   };
   return {
@@ -1934,7 +1934,7 @@ export function binaryExpression(config: T.BinaryExpression.Config) {
     $named: true as const,
     $fields: fields,
     left(value?: T.Expression) { return _fs(config, binaryExpression, 'left', value, fields.left); },
-    operator(value?: "&&") { return _fs(config, binaryExpression, 'operator', value, fields.operator); },
+    get operator() { return fields.operator; },
     right(value?: T.Expression) { return _fs(config, binaryExpression, 'right', value, fields.right); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -3335,16 +3335,16 @@ export function asserts(child?: (T.TypePredicate | T.Identifier | T.This)) {
   };
 }
 
-export function assertsAnnotation(config: T.AssertsAnnotation.Config) {
+export function assertsAnnotation(config?: T.AssertsAnnotation.Config) {
   const fields = {
-    asserts: config?.asserts,
+    asserts: ":" as const,
   };
   return {
     $type: 'asserts_annotation' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    asserts(value?: ":") { return _fs(config, assertsAnnotation, 'asserts', value, fields.asserts); },
+    get asserts() { return fields.asserts; },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -3578,16 +3578,16 @@ export function typePredicate(config: T.TypePredicate.Config) {
   };
 }
 
-export function typePredicateAnnotation(config: T.TypePredicateAnnotation.Config) {
+export function typePredicateAnnotation(config?: T.TypePredicateAnnotation.Config) {
   const fields = {
-    type_predicate: config?.typePredicate,
+    type_predicate: ":" as const,
   };
   return {
     $type: 'type_predicate_annotation' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    typePredicate(value?: ":") { return _fs(config, typePredicateAnnotation, 'typePredicate', value, fields.type_predicate); },
+    get typePredicate() { return fields.type_predicate; },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);

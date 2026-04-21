@@ -971,10 +971,9 @@ export function visibilityModifierForm0From(input: T.VisibilityModifierForm0Conf
   return F.visibilityModifierForm0(input);
 }
 
-export function visibilityModifierForm1From(input: T.VisibilityModifierForm1Config) {
+export function visibilityModifierForm1From(input?: T.VisibilityModifierForm1Config) {
   return F.visibilityModifierForm1({
-    pub: _resolveOne<NonNullable<T.VisibilityModifierForm1Config['pub']>>(input.pub, _K0, _K0),
-    in: _resolveOne<NonNullable<T.VisibilityModifierForm1Config['in']>>(input.in, _K0, _K0),
+    in: _resolveOne<NonNullable<T.VisibilityModifierForm1Config['in']>>(input?.in, _K0, _K0),
   });
 }
 
@@ -1061,7 +1060,6 @@ export function genericTypeWithTurbofishFrom(input: T.GenericTypeWithTurbofish |
   if (isNodeData(input)) return input as ReturnType<typeof F.genericTypeWithTurbofish>;
   return F.genericTypeWithTurbofish({
     type: _resolveOne<NonNullable<T.GenericTypeWithTurbofish.Config['type']>>((input as T.GenericTypeWithTurbofish.Loose).type, _K0, _K25),
-    turbofish: _resolveOne<NonNullable<T.GenericTypeWithTurbofish.Config['turbofish']>>((input as T.GenericTypeWithTurbofish.Loose).turbofish, _K0, _K0),
     typeArguments: _resolveOneBranch<NonNullable<T.GenericTypeWithTurbofish.Config['typeArguments']>>((input as T.GenericTypeWithTurbofish.Loose).typeArguments, "type_arguments"),
   });
 }
@@ -1224,7 +1222,6 @@ export function binaryExpressionFrom(input: T.BinaryExpression | T.BinaryExpress
   if (isNodeData(input)) return input as ReturnType<typeof F.binaryExpression>;
   return F.binaryExpression({
     left: _resolveOne<NonNullable<T.BinaryExpression.Config['left']>>((input as T.BinaryExpression.Loose).left, _K4, _K5),
-    operator: _resolveOne<NonNullable<T.BinaryExpression.Config['operator']>>((input as T.BinaryExpression.Loose).operator, _K0, _K0),
     right: _resolveOne<NonNullable<T.BinaryExpression.Config['right']>>((input as T.BinaryExpression.Loose).right, _K4, _K5),
   });
 }

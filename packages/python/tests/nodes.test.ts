@@ -420,12 +420,12 @@ describe('exec_statement', () => {
 
 describe('type_alias_statement', () => {
   it('factory produces correct type', () => {
-    const node = ir.typeAlias({ type: 'test' as any, left: { $type: 'type', $text: 'test' } as any, right: { $type: 'type', $text: 'test' } as any });
+    const node = ir.typeAlias({ left: { $type: 'type', $text: 'test' } as any, right: { $type: 'type', $text: 'test' } as any });
     expect(node.$type).toBe('type_alias_statement');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.typeAlias({ type: 'test' as any, left: { $type: 'type', $text: 'test' } as any, right: { $type: 'type', $text: 'test' } as any });
+    const node = ir.typeAlias({ left: { $type: 'type', $text: 'test' } as any, right: { $type: 'type', $text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -676,24 +676,24 @@ describe('not_operator', () => {
 
 describe('boolean_operator', () => {
   it('factory produces correct type', () => {
-    const node = ir.booleanOperator({ left: { $type: 'expression', $text: 'test' } as any, operator: 'test' as any, right: { $type: 'expression', $text: 'test' } as any });
+    const node = ir.booleanOperator({ left: { $type: 'expression', $text: 'test' } as any, right: { $type: 'expression', $text: 'test' } as any });
     expect(node.$type).toBe('boolean_operator');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.booleanOperator({ left: { $type: 'expression', $text: 'test' } as any, operator: 'test' as any, right: { $type: 'expression', $text: 'test' } as any });
+    const node = ir.booleanOperator({ left: { $type: 'expression', $text: 'test' } as any, right: { $type: 'expression', $text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
 describe('binary_operator', () => {
   it('factory produces correct type', () => {
-    const node = ir.binaryOperator({ left: { $type: 'primary_expression', $text: 'test' } as any, operator: 'test' as any, right: { $type: 'primary_expression', $text: 'test' } as any });
+    const node = ir.binaryOperator({ left: { $type: 'primary_expression', $text: 'test' } as any, right: { $type: 'primary_expression', $text: 'test' } as any });
     expect(node.$type).toBe('binary_operator');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.binaryOperator({ left: { $type: 'primary_expression', $text: 'test' } as any, operator: 'test' as any, right: { $type: 'primary_expression', $text: 'test' } as any });
+    const node = ir.binaryOperator({ left: { $type: 'primary_expression', $text: 'test' } as any, right: { $type: 'primary_expression', $text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });

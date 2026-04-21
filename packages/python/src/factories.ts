@@ -836,7 +836,7 @@ export function execStatement(config: T.ExecStatement.Config) {
 
 export function typeAliasStatement(config: T.TypeAliasStatement.Config) {
   const fields = {
-    type: config?.type,
+    type: "type" as const,
     left: config?.left,
     right: config?.right,
   };
@@ -845,7 +845,7 @@ export function typeAliasStatement(config: T.TypeAliasStatement.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    typeField(value?: "type") { return _fs(config, typeAliasStatement, 'type', value, fields.type); },
+    get typeField() { return fields.type; },
     left(value?: T.Type) { return _fs(config, typeAliasStatement, 'left', value, fields.left); },
     right(value?: T.Type) { return _fs(config, typeAliasStatement, 'right', value, fields.right); },
     render() { return render(this); },
@@ -1325,7 +1325,7 @@ export function notOperator(config: T.NotOperator.Config) {
 export function booleanOperator(config: T.BooleanOperator.Config) {
   const fields = {
     left: config?.left,
-    operator: config?.operator,
+    operator: "and" as const,
     right: config?.right,
   };
   return {
@@ -1334,7 +1334,7 @@ export function booleanOperator(config: T.BooleanOperator.Config) {
     $named: true as const,
     $fields: fields,
     left(value?: T.Expression) { return _fs(config, booleanOperator, 'left', value, fields.left); },
-    operator(value?: "and") { return _fs(config, booleanOperator, 'operator', value, fields.operator); },
+    get operator() { return fields.operator; },
     right(value?: T.Expression) { return _fs(config, booleanOperator, 'right', value, fields.right); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -1348,7 +1348,7 @@ export function booleanOperator(config: T.BooleanOperator.Config) {
 export function binaryOperator(config: T.BinaryOperator.Config) {
   const fields = {
     left: config?.left,
-    operator: config?.operator,
+    operator: "+" as const,
     right: config?.right,
   };
   return {
@@ -1357,7 +1357,7 @@ export function binaryOperator(config: T.BinaryOperator.Config) {
     $named: true as const,
     $fields: fields,
     left(value?: T.PrimaryExpression) { return _fs(config, binaryOperator, 'left', value, fields.left); },
-    operator(value?: "+") { return _fs(config, binaryOperator, 'operator', value, fields.operator); },
+    get operator() { return fields.operator; },
     right(value?: T.PrimaryExpression) { return _fs(config, binaryOperator, 'right', value, fields.right); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {

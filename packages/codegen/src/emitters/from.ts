@@ -12,6 +12,7 @@ import type {
     AssembledNode, AssembledField, AssembledChild, AssembledGroup,
 } from '../compiler/node-map.ts'
 import type { PolymorphVariant } from '../compiler/types.ts'
+import { isAutoStampField } from './shared.ts'
 
 /** Escape a string for safe inclusion inside a single-quoted TS string literal. */
 function escForSource(s: string): string {
@@ -368,6 +369,7 @@ function emitVariantFrom(
     const parentFields = 'fields' in node ? (node as { fields: readonly AssembledField[] }).fields : []
     const configParts: string[] = []
     for (const f of parentFields) {
+        if (isAutoStampField(f, nodeMap)) continue  // factory stamps these; no Config slot
         const call = resolveFieldFromTypedInput(f, nodeMap, typeName, intern, 'input', false)
         configParts.push(`    ${f.propertyName}: ${call},`)
     }
@@ -382,6 +384,7 @@ function emitVariantFrom(
         for (const vf of vFields) {
             if (seenProps.has(vf.propertyName)) continue
             seenProps.add(vf.propertyName)
+            if (isAutoStampField(vf, nodeMap)) continue  // factory stamps these; no Config slot
             const call = resolveFieldFromTypedInput(vf, nodeMap, typeName, intern, 'input', true)
             configParts.push(`    ${vf.propertyName}: ${call},`)
         }
@@ -519,8 +522,11 @@ function emitBranchFrom(node: BranchLikeNode, nodeMap: NodeMap, intern: KindInte
     const factory = `F.${node.rawFactoryName!}`
     const fields = node.fields
     const childSlots = node.children ?? []
+    // Auto-stamp fields are always `required` but they have no slot in Config —
+    // exclude them from the optionality check so the input `?` marker is correct.
+    const nonStampFields = fields.filter(f => !isAutoStampField(f, nodeMap))
     const opt =
-        fields.some(f => f.required) || childSlots.some(c => c.required) ? '' : '?'
+        nonStampFields.some(f => f.required) || childSlots.some(c => c.required) ? '' : '?'
     const typeName = node.typeName
     const lines: string[] = []
     const { inputType, returnType, inputOptional } = buildBranchSignatureParts(node, factory, opt)
@@ -529,6 +535,7 @@ function emitBranchFrom(node: BranchLikeNode, nodeMap: NodeMap, intern: KindInte
         emitBranchNodeDataPassthrough(lines, inputOptional, returnType)
         const neName = (f: AssembledField) => `_ne_${f.propertyName}`
         for (const f of fields) {
+            if (isAutoStampField(f, nodeMap)) continue  // factory stamps these; no Config slot
             if (f.nonEmpty && f.multiple) {
                 const call = resolveFieldFromTypedInput(f, nodeMap, typeName, intern, 'input', inputOptional)
                 lines.push(`  const ${neName(f)} = ${call};`)
@@ -541,6 +548,7 @@ function emitBranchFrom(node: BranchLikeNode, nodeMap: NodeMap, intern: KindInte
         }
         lines.push(`  return ${factory}({`)
         for (const f of fields) {
+            if (isAutoStampField(f, nodeMap)) continue  // factory stamps these; no Config slot
             if (f.nonEmpty && f.multiple) {
                 lines.push(`    ${f.propertyName}: ${neName(f)},`)
             } else {
@@ -749,8 +757,10 @@ function emitPolymorphFormFrom(
 ): string {
     const formFn = `${form.typeName.charAt(0).toLowerCase()}${form.typeName.slice(1)}From`
     const formFactory = `F.${form.rawFactoryName!}`
+    // Auto-stamp fields are always `required` but have no Config slot — exclude them.
+    const formNonStampFields = form.fields.filter(fd => !isAutoStampField(fd, nodeMap))
     const formOpt =
-        form.fields.some(fd => fd.required) ||
+        formNonStampFields.some(fd => fd.required) ||
         form.children.some(c => c.required) ? '' : '?'
     const fLines: string[] = []
     const formInputOptional = formOpt === '?'
@@ -758,6 +768,7 @@ function emitPolymorphFormFrom(
     if (form.fields.length > 0) {
         fLines.push(`  return ${formFactory}({`)
         for (const f of form.fields) {
+            if (isAutoStampField(f, nodeMap)) continue  // factory stamps these; no Config slot
             fLines.push(`    ${f.propertyName}: ${resolveFieldFromTypedInput(f, nodeMap, form.typeName, intern, 'input', formInputOptional, /* isPolymorphForm */ true)},`)
         }
         fLines.push('  });')

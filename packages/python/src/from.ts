@@ -654,7 +654,6 @@ export function execStatementFrom(input: T.ExecStatement | T.ExecStatement.Loose
 export function typeAliasStatementFrom(input: T.TypeAliasStatement | T.TypeAliasStatement.Loose): ReturnType<typeof F.typeAliasStatement> {
   if (isNodeData(input)) return input as ReturnType<typeof F.typeAliasStatement>;
   return F.typeAliasStatement({
-    type: _resolveOne<NonNullable<T.TypeAliasStatement.Config['type']>>((input as T.TypeAliasStatement.Loose).type, _K0, _K0),
     left: _resolveOneBranch<NonNullable<T.TypeAliasStatement.Config['left']>>((input as T.TypeAliasStatement.Loose).left, "type"),
     right: _resolveOneBranch<NonNullable<T.TypeAliasStatement.Config['right']>>((input as T.TypeAliasStatement.Loose).right, "type"),
   });
@@ -866,7 +865,6 @@ export function booleanOperatorFrom(input: T.BooleanOperator | T.BooleanOperator
   if (isNodeData(input)) return input as ReturnType<typeof F.booleanOperator>;
   return F.booleanOperator({
     left: _resolveOne<NonNullable<T.BooleanOperator.Config['left']>>((input as T.BooleanOperator.Loose).left, _K0, _super_expression),
-    operator: _resolveOne<NonNullable<T.BooleanOperator.Config['operator']>>((input as T.BooleanOperator.Loose).operator, _K0, _K0),
     right: _resolveOne<NonNullable<T.BooleanOperator.Config['right']>>((input as T.BooleanOperator.Loose).right, _K0, _super_expression),
   });
 }
@@ -875,7 +873,6 @@ export function binaryOperatorFrom(input: T.BinaryOperator | T.BinaryOperator.Lo
   if (isNodeData(input)) return input as ReturnType<typeof F.binaryOperator>;
   return F.binaryOperator({
     left: _resolveOne<NonNullable<T.BinaryOperator.Config['left']>>((input as T.BinaryOperator.Loose).left, _K9, _K10),
-    operator: _resolveOne<NonNullable<T.BinaryOperator.Config['operator']>>((input as T.BinaryOperator.Loose).operator, _K0, _K0),
     right: _resolveOne<NonNullable<T.BinaryOperator.Config['right']>>((input as T.BinaryOperator.Loose).right, _K9, _K10),
   });
 }

@@ -66,6 +66,28 @@ export type Simplify<T> = { [K in keyof T]: T[K] } & {};
 export type NonEmptyArray<T> = readonly [T, ...(readonly T[])];
 
 /**
+ * AutoStamp<T> — brands a `$fields` entry as auto-stamped by the factory.
+ *
+ * The factory always writes a fixed constant for this field; the caller
+ * never supplies it. `ConfigOf` and `FromInputOf` filter out all
+ * `AutoStamp`-branded keys so the per-kind Config/Loose interfaces do not
+ * expose a slot for values the caller cannot meaningfully change.
+ *
+ * The structural intersection (`T & { readonly __autoStamp__?: never }`)
+ * means `AutoStamp<T>` is still assignable from `T` — NodeData round-trips
+ * that produce a real T value can be stored in an AutoStamp<T> field without
+ * a cast.
+ */
+export type AutoStamp<T> = T & { readonly __autoStamp__?: never };
+
+/**
+ * @internal — true when T carries the AutoStamp brand key.
+ * Relies on `keyof AutoStamp<X>` including `'__autoStamp__'` while
+ * plain types do not.
+ */
+type IsAutoStamp<T> = '__autoStamp__' extends keyof T ? true : false;
+
+/**
  * Terminal node shape — shared by every leaf, keyword, and enum.
  * `K` pins the `$type` discriminant; `V` narrows `$text` to a specific
  * literal or literal union (defaulting to `string` for open-valued leaves).
@@ -479,9 +501,12 @@ export type ChildOf<T> = T extends { readonly $children: infer C }
  * Child slots are wrapped in `Partial<>` so the factory can default missing
  * ones to `[]` at runtime — the caller is free to omit `children` on nodes
  * where the underlying grammar rule matches zero occurrences.
+ *
+ * Fields branded `AutoStamp<T>` are excluded — the factory stamps those
+ * automatically and callers should not (and cannot) supply them.
  */
 export type ConfigOf<T> = Simplify<
-	{ [K in keyof FieldsOf<T> as CamelCase<K & string>]: FieldsOf<T>[K] }
+	{ [K in keyof FieldsOf<T> as IsAutoStamp<FieldsOf<T>[K]> extends true ? never : CamelCase<K & string>]: FieldsOf<T>[K] }
 	& Partial<ChildSlotsOf<T>>
 >;
 
@@ -512,11 +537,25 @@ export type TreeNodeOf<T> = T extends { readonly $type: infer K extends string }
 	}
 	: never;
 
+/** @internal — non-auto-stamp required keys of T. */
+type RequiredNonAutoStampKeys<T> = {
+	[K in keyof T]-?: K extends RequiredKeys<T>
+		? IsAutoStamp<T[K]> extends true ? never : K
+		: never
+}[keyof T];
+
+/** @internal — non-auto-stamp optional keys of T. */
+type OptionalNonAutoStampKeys<T> = {
+	[K in keyof T]-?: K extends RequiredKeys<T>
+		? never
+		: IsAutoStamp<T[K]> extends true ? never : K
+}[keyof T];
+
 /**
  * FromInputOf<T, Scalars, Strings, Depth, NsMap> — widened input type derived
  * from a concrete node interface. Accepts NodeData passthroughs, strings for
  * leaves, objects for branches. Required fields stay required; optional
- * fields stay optional.
+ * fields stay optional. Auto-stamped fields are excluded (same as ConfigOf).
  *
  * @param Scalars - Map of leaf kind → scalar type (e.g. `{ integer_literal: number }`)
  * @param Strings - Map of leaf kind → narrowed string type (e.g. `{ boolean_literal: "true" | "false" }`)
@@ -529,10 +568,10 @@ export type TreeNodeOf<T> = T extends { readonly $type: infer K extends string }
 export type FromInputOf<T, Scalars = {}, Strings = {}, Depth extends number[] = [], NsMap = {}> = Simplify<
 	Depth['length'] extends MaxDepth ? T
 	: {
-		readonly [K in keyof FieldsOf<T> as K extends RequiredKeys<FieldsOf<T>> ? CamelCase<K> : never]:
+		readonly [K in keyof FieldsOf<T> as K extends RequiredNonAutoStampKeys<FieldsOf<T>> ? CamelCase<K> : never]:
 			WidenValue<FieldsOf<T>[K], Scalars, Strings, [...Depth, 0], NsMap>;
 	} & {
-		readonly [K in keyof FieldsOf<T> as K extends RequiredKeys<FieldsOf<T>> ? never : CamelCase<K>]?:
+		readonly [K in keyof FieldsOf<T> as K extends OptionalNonAutoStampKeys<FieldsOf<T>> ? CamelCase<K> : never]?:
 			WidenValue<FieldsOf<T>[K], Scalars, Strings, [...Depth, 0], NsMap>;
 	} & {
 		readonly [K in keyof ChildSlotsOf<T>]?:

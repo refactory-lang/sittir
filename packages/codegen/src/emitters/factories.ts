@@ -11,7 +11,8 @@ import type { NodeMap } from '../compiler/types.ts'
 import type {
     AssembledNode, AssembledField, AssembledChild, AssembledGroup,
 } from '../compiler/node-map.ts'
-import { hasHiddenExternalRef, isVerbatimTokenStream } from '../compiler/node-map.ts'
+import { hasHiddenExternalRef, isVerbatimTokenStream, AssembledKeyword } from '../compiler/node-map.ts'
+import { resolveEffectiveLiteral } from './shared.ts'
 
 export interface EmitFactoriesConfig {
     grammar: string
@@ -515,6 +516,50 @@ function childElementType(node: { children: readonly AssembledChild[] }, nodeMap
     return parts.size > 1 ? `(${union})` : union
 }
 
+/**
+ * Build the TypeScript stamp expression for an auto-stamp-eligible field.
+ *
+ * @remarks
+ * Two cases:
+ *
+ * - **Source A** (`field.literalValues.length === 1`): the field content is an
+ *   inline string literal. Stamp the string directly, e.g. `'pub' as const`.
+ *
+ * - **Source B** (`field.contentTypes.length === 1` and the referenced kind is
+ *   an `AssembledKeyword`): the field content is a hidden-rule terminal with a
+ *   single word-like text value (e.g. `_kw_async`). Stamp a minimal leaf
+ *   NodeData object whose shape matches `Terminal<kind, text>`:
+ *   `{ $type: '_kw_async', $text: 'async', $source: 'factory', $named: true }`.
+ *
+ * Returns `undefined` when the field is NOT auto-stamp-eligible.
+ */
+function autoStampExpression(f: AssembledField, nodeMap: NodeMap): string | undefined {
+    // Only required fields: optional single-literal fields control presence/absence
+    // at call sites and must remain user-controllable (e.g. `mut` on let bindings).
+    if (!f.required) return undefined
+    // Repeated fields are never auto-stamped — they represent 0..N occurrences.
+    if (f.multiple) return undefined
+    // Source A: inline literal
+    if (f.literalValues?.length === 1) {
+        return `${JSON.stringify(f.literalValues[0])} as const`
+    }
+    // Source B: field references a single hidden keyword kind (`_kw_*` pattern).
+    // Restricted to hidden kinds (name starts with `_`) to avoid false-positives
+    // from visible keyword nodes that may appear inside mixed-choice overrides.
+    if (f.contentTypes.length === 1) {
+        const kindName = f.contentTypes[0]!
+        if (kindName.startsWith('_')) {
+            const ref = nodeMap.nodes.get(kindName)
+            if (ref instanceof AssembledKeyword) {
+                const kind = JSON.stringify(ref.kind)
+                const text = JSON.stringify(ref.text)
+                return `{ $type: ${kind} as const, $text: ${text} as const, $source: 'factory' as const, $named: true as const }`
+            }
+        }
+    }
+    return undefined
+}
+
 /** Resolve an AssembledField's element type to a concrete TS type expression. */
 function fieldElementType(f: AssembledField, nodeMap: NodeMap): string {
     if (f.literalValues && f.literalValues.length > 0) {
@@ -555,7 +600,7 @@ function emitFieldCarryingFactory(
     const hasFields = fields.length > 0
     const hasChildren = children.length > 0
     const childrenMultiple = resolveChildrenMultiple(children)
-    const opt = resolveConfigOptional(fields, children)
+    const opt = resolveConfigOptional(fields, children, nodeMap)
     const typeKind = node.parentKind ?? node.kind
     const configType = resolveConfigType(node, isPolymorphForm)
     const lines: string[] = []
@@ -564,7 +609,15 @@ function emitFieldCarryingFactory(
     if (hasFields) {
         lines.push('  const fields = {')
         for (const f of fields) {
-            lines.push(`    ${f.name}: config?.${f.propertyName},`)
+            const stamp = autoStampExpression(f, nodeMap)
+            if (stamp !== undefined) {
+                // Auto-stamp: field has a single fixed literal value — stamp it
+                // directly without reading from config. The field is omitted from
+                // Config so the caller cannot (and need not) supply it.
+                lines.push(`    ${f.name}: ${stamp},`)
+            } else {
+                lines.push(`    ${f.name}: config?.${f.propertyName},`)
+            }
         }
         lines.push('  };')
     }
@@ -626,15 +679,21 @@ function resolveChildrenMultiple(children: readonly AssembledChild[]): boolean {
  *
  * @param fields - The assembled field descriptors for the node.
  * @param children - The assembled child descriptors for the node.
- * @returns The option marker — `'?'` when every field and child is optional, `''` otherwise.
+ * @param nodeMap - The assembled node map (used for auto-stamp detection).
+ * @returns The option marker — `'?'` when every non-auto-stamped field and
+ *   child is optional, `''` otherwise.
  * @remarks
- *   A required field or child means the caller must supply the argument.
+ *   Auto-stamp-eligible fields are excluded from the "required" check because
+ *   they are never present in Config — the factory stamps them directly.
+ *   Only fields that remain in Config can make config required.
  */
 function resolveConfigOptional(
     fields: readonly AssembledField[],
     children: readonly AssembledChild[],
+    nodeMap: NodeMap,
 ): string {
-    const hasRequired = fields.some(f => f.required) || children.some(c => c.required)
+    const hasRequired = fields.some(f => f.required && autoStampExpression(f, nodeMap) === undefined)
+        || children.some(c => c.required)
     return hasRequired ? '' : '?'
 }
 
@@ -700,6 +759,13 @@ function emitFluentFieldMethods(
     const lines: string[] = []
     for (const f of fields) {
         const method = f.propertyName === 'type' ? 'typeField' : f.propertyName
+        const stamp = autoStampExpression(f, nodeMap)
+        if (stamp !== undefined) {
+            // Auto-stamp: field value is a fixed constant — emit a getter-only
+            // method that returns the constant. No setter parameter.
+            lines.push(`    get ${method}() { return fields.${f.name}; },`)
+            continue
+        }
         const param = f.multiple ? 'values' : 'value'
         if (f.multiple) {
             const elemType = fieldElementType(f, nodeMap)

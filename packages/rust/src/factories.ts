@@ -1414,9 +1414,9 @@ export function visibilityModifierForm0(config: T.VisibilityModifierForm0Config)
     replace(target: T.VisibilityModifierForm0Tree) { const r = target.range(); return toEdit(this, r); },
   };
 }
-export function visibilityModifierForm1(config: T.VisibilityModifierForm1Config) {
+export function visibilityModifierForm1(config?: T.VisibilityModifierForm1Config) {
   const fields = {
-    pub: config?.pub,
+    pub: "pub" as const,
     in: config?.in,
   };
   const children = config?.children ?? [];
@@ -1427,7 +1427,7 @@ export function visibilityModifierForm1(config: T.VisibilityModifierForm1Config)
     $variant: 'form1' as const,
     $fields: fields,
     $children: children,
-    pub(value?: "pub") { return _fs(config, visibilityModifierForm1, 'pub', value, fields.pub); },
+    get pub() { return fields.pub; },
     in(value?: "in" | undefined) { return _fs(config, visibilityModifierForm1, 'in', value, fields.in); },
     getChild() { return children[0]; },
     setChild(child: (T.Self | T.Super | T.Crate | T.Path)) { return visibilityModifierForm1({ ...config, children: [child] }); },
@@ -1634,7 +1634,7 @@ export function genericType(config: T.GenericType.Config) {
 export function genericTypeWithTurbofish(config: T.GenericTypeWithTurbofish.Config) {
   const fields = {
     type: config?.type,
-    turbofish: config?.turbofish,
+    turbofish: "::" as const,
     type_arguments: config?.typeArguments,
   };
   return {
@@ -1643,7 +1643,7 @@ export function genericTypeWithTurbofish(config: T.GenericTypeWithTurbofish.Conf
     $named: true as const,
     $fields: fields,
     typeField(value?: T._TypeIdentifier | T.ScopedIdentifier) { return _fs(config, genericTypeWithTurbofish, 'type', value, fields.type); },
-    turbofish(value?: "::") { return _fs(config, genericTypeWithTurbofish, 'turbofish', value, fields.turbofish); },
+    get turbofish() { return fields.turbofish; },
     typeArguments(value?: T.TypeArguments) { return _fs(config, genericTypeWithTurbofish, 'typeArguments', value, fields.type_arguments); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -2068,7 +2068,7 @@ export function referenceExpression(config: T.ReferenceExpression.Config) {
 export function binaryExpression(config: T.BinaryExpression.Config) {
   const fields = {
     left: config?.left,
-    operator: config?.operator,
+    operator: "&&" as const,
     right: config?.right,
   };
   return {
@@ -2077,7 +2077,7 @@ export function binaryExpression(config: T.BinaryExpression.Config) {
     $named: true as const,
     $fields: fields,
     left(value?: T.Expression) { return _fs(config, binaryExpression, 'left', value, fields.left); },
-    operator(value?: "&&") { return _fs(config, binaryExpression, 'operator', value, fields.operator); },
+    get operator() { return fields.operator; },
     right(value?: T.Expression) { return _fs(config, binaryExpression, 'right', value, fields.right); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
