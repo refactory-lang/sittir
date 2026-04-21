@@ -37,7 +37,10 @@ import type { PolymorphVariant } from '../compiler/types.ts'
 import type { RuntimeRule } from './runtime-shapes.ts'
 import { variant as variantPlaceholder } from './variant.ts'
 import { transform as transformFn } from './transform.ts'
-import { forgetPolymorphVariantsFor } from './synthetic-rules.ts'
+import { isFieldPlaceholder } from './field.ts'
+import { isAliasPlaceholder } from './alias.ts'
+import { isVariantPlaceholder } from './variant.ts'
+import { forgetPolymorphVariantsFor, drainSyntheticRules } from './synthetic-rules.ts'
 
 // ---------------------------------------------------------------------------
 // WireContext + module-level current pointer
@@ -142,6 +145,34 @@ export function wireGetCurrentRuleKind(): string | null {
 export type PolymorphsConfig = Record<string, Record<string, string>>
 
 /**
+ * Declarative transforms map: each rule kind → a patch-map (or array
+ * of patch-maps for multi-patchset rules). Values inside each patch-
+ * map are DSL placeholders (`field`, `variant`, `alias`) or native
+ * rule objects.
+ *
+ * @example
+ *   {
+ *     async_block: { '1/0': field('move'), 2: field('block') },
+ *     array_expression: [
+ *       { 1: field('attributes') },
+ *       { '2/_expression': field('elements') },
+ *     ],
+ *   }
+ *
+ * wire() walks every patch value at config time, enumerates every
+ * placeholder, and pre-registers the corresponding hidden rule names
+ * (`_kw_<field>`, `_<parent>_<variant>`, `_<alias>`) in opts.rules as
+ * deferred-content fns. The synthesized rule fn calls
+ * `transform(original, ...patches)` at rule-fn-call time; placeholder
+ * resolution deposits captured content into wire's context; the
+ * deferred fns read deposits.
+ */
+export type TransformsConfig = Record<string, PatchMap | PatchMap[]>
+
+/** A single patch-map — path-in-original → patch value. */
+export type PatchMap = Record<string, unknown>
+
+/**
  * Shape of an options argument passed to tree-sitter's `grammar()` — the
  * fields `wire()` knows about. Extra fields are passed through
  * unchanged.
@@ -150,6 +181,7 @@ export interface WireConfig {
     readonly name?: string
     readonly rules: Record<string, RuleFn>
     readonly polymorphs?: PolymorphsConfig
+    readonly transforms?: TransformsConfig
     readonly conflicts?: ConflictsFn
     readonly externals?: DollarFn<unknown[]>
     readonly extras?: DollarFn<unknown[]>
@@ -206,10 +238,21 @@ export function wire(config: WireConfig): WiredOpts {
     }
 
     const polymorphs = config.polymorphs ?? {}
+    const transforms = config.transforms ?? {}
     const outRules: Record<string, RuleFn> = { ...config.rules }
 
+    // Drain the module-load-time synthetic rule accumulator first.
+    // Two-arg `field(name, 'literal')` calls inside the config object
+    // literal fire `maybeKeywordSymbol` → `registerSyntheticRule`
+    // during construction — before `wire()` even gets called. Their
+    // content is fully known (no runtime capture needed), so inject
+    // as static rule fns.
+    absorbModuleLoadSyntheticRules(outRules)
+
     composeOrSynthesizePolymorphParents(outRules, polymorphs)
+    composeOrSynthesizeTransformParents(outRules, transforms)
     injectHiddenRulePlaceholders(outRules, polymorphs, context)
+    injectTransformHiddenRulePlaceholders(outRules, transforms, context)
     wrapAllRuleFns(outRules, context)
 
     const conflicts = wrapConflictsCallback(config.conflicts, context)
@@ -280,6 +323,128 @@ function injectHiddenRulePlaceholders(
             const hiddenName = `_${parent}_${suffix}`
             rules[hiddenName] = makeDeferredContentFn(context, hiddenName)
         }
+    }
+}
+
+/**
+ * Drain every rule the DSL's `registerSyntheticRule` accumulated during
+ * construction of the `wire()` config object literal — two-arg
+ * `field(name, 'literal')` calls fire at module-load time via
+ * `maybeKeywordSymbol` and register `_kw_<name>` into the synthetic-
+ * rules module accumulator.
+ *
+ * Inject each accumulated entry as a static rule fn in `opts.rules`.
+ * Content is fully known (no runtime capture needed), so no deferred-
+ * content machinery is required for these. Tree-sitter's `ruleMap`
+ * snapshot sees every `_kw_*` name from this path at `grammar()` entry.
+ *
+ * If a name already exists in `opts.rules` (e.g. the author hand-
+ * declared `_kw_foo: $ => 'foo'`), the author's entry wins.
+ */
+function absorbModuleLoadSyntheticRules(rules: Record<string, RuleFn>): void {
+    const drained = drainSyntheticRules()
+    for (const [name, body] of drained) {
+        if (name in rules) continue
+        rules[name] = () => body
+    }
+}
+
+/**
+ * For each transforms entry, wrap (or synthesize) its rule fn to apply
+ * the declared patch-maps via `transform(original, ...patchSets)`. If
+ * the author already has a `rules:` entry for the same kind, compose:
+ * user fn runs first, transform patches apply on its output.
+ */
+function composeOrSynthesizeTransformParents(
+    rules: Record<string, RuleFn>,
+    transforms: TransformsConfig,
+): void {
+    for (const [kind, entry] of Object.entries(transforms)) {
+        const patchSets = Array.isArray(entry) ? entry : [entry]
+        const userFn = rules[kind]
+        rules[kind] = buildTransformParentFn(patchSets, userFn)
+    }
+}
+
+/**
+ * Build a rule fn for a transforms entry. Invokes the user-supplied
+ * fn first (if present), then applies each patch-map sequentially via
+ * `transform(original, ...patchSets)`. Matches `transform()`'s
+ * rest-parameter signature so multi-patch-set rules behave exactly as
+ * they did when the call was written inline in the rule body.
+ */
+function buildTransformParentFn(
+    patchSets: readonly PatchMap[],
+    userFn: RuleFn | undefined,
+): RuleFn {
+    return function wiredTransformParent(this: unknown, $: unknown, original: unknown): unknown {
+        const base = userFn ? userFn.call(this, $, original) : original
+        return (transformFn as unknown as (o: unknown, ...p: unknown[]) => unknown)(base, ...patchSets)
+    }
+}
+
+/**
+ * Walk every patch value in the transforms config at wire() time and
+ * pre-register the hidden-rule name each placeholder would generate
+ * at rule-fn-call time. Placeholders map to hidden names as follows:
+ *
+ * - `field('x')` (one-arg) → potentially `_kw_x` (only if captured
+ *   content is a bare string at runtime; pre-register regardless — an
+ *   unused deferred fn is harmless).
+ * - `variant('y')` under rule kind `K` → `_K_y` (plus polymorph
+ *   metadata captured at runtime via `registerPolymorphVariant`).
+ * - `alias('z')` (one-arg) → `_z`.
+ *
+ * Two-arg `field(name, content)` calls are already resolved to native
+ * rules at module-load time (by `field.ts::field`) and their
+ * `_kw_<name>` registrations are drained by
+ * `absorbModuleLoadSyntheticRules`. This function only needs to handle
+ * placeholder objects that remain unresolved until `transform()` fires.
+ */
+function injectTransformHiddenRulePlaceholders(
+    rules: Record<string, RuleFn>,
+    transforms: TransformsConfig,
+    context: WireContext,
+): void {
+    for (const [kind, entry] of Object.entries(transforms)) {
+        const patchSets = Array.isArray(entry) ? entry : [entry]
+        for (const patchMap of patchSets) {
+            for (const value of Object.values(patchMap)) {
+                registerHiddenRuleForPlaceholder(value, kind, rules, context)
+            }
+        }
+    }
+}
+
+/**
+ * Inspect a single patch value. If it's a recognised placeholder,
+ * compute the hidden rule name it would produce and inject a deferred-
+ * content fn in `rules` for that name. No-op for non-placeholder
+ * values (already-resolved native rules, two-arg field results, etc.).
+ *
+ * @param parentKind - For variant placeholders: the rule kind the
+ *   placeholder lives under, used for the auto-prefix `_<parent>_<suffix>`.
+ */
+function registerHiddenRuleForPlaceholder(
+    value: unknown,
+    parentKind: string,
+    rules: Record<string, RuleFn>,
+    context: WireContext,
+): void {
+    if (isFieldPlaceholder(value)) {
+        const hiddenName = `_kw_${value.name}`
+        if (!(hiddenName in rules)) rules[hiddenName] = makeDeferredContentFn(context, hiddenName)
+        return
+    }
+    if (isVariantPlaceholder(value)) {
+        const hiddenName = `_${parentKind}_${value.name}`
+        if (!(hiddenName in rules)) rules[hiddenName] = makeDeferredContentFn(context, hiddenName)
+        return
+    }
+    if (isAliasPlaceholder(value)) {
+        const hiddenName = `_${value.name}`
+        if (!(hiddenName in rules)) rules[hiddenName] = makeDeferredContentFn(context, hiddenName)
+        return
     }
 }
 

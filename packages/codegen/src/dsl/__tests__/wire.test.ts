@@ -2,6 +2,8 @@ import { describe, it, expect, beforeAll, afterAll } from 'vitest'
 import { wire, getCurrentWireContext } from '../wire.ts'
 import { variant } from '../variant.ts'
 import { transform } from '../transform.ts'
+import { field } from '../field.ts'
+import { alias } from '../alias.ts'
 import { installFakeDsl, restoreFakeDsl } from './_test-helpers.ts'
 
 // ---------------------------------------------------------------------------
@@ -284,8 +286,143 @@ describe('wire()', () => {
         expect(out[0]![0]).toMatchObject({ name: 'user_conflict_a' })
         expect(out[0]![1]).toMatchObject({ name: 'user_conflict_b' })
     })
+
+    // --------------------------------------------------------------------
+    // ADR-0008: declarative transforms
+    // --------------------------------------------------------------------
+
+    it('transforms: entry synthesizes a rule fn that applies the patch-map', () => {
+        // `async_block`-shaped original: seq(a, b, c) — user patches wrap
+        // positions 0 and 2 as fields.
+        const origSeq = { type: 'seq', members: [
+            { type: 'symbol', name: 'a' },
+            { type: 'symbol', name: 'b' },
+            { type: 'symbol', name: 'c' },
+        ] }
+        const wired = wire({
+            name: 'test',
+            rules: {},
+            transforms: {
+                async_block: {
+                    0: field('x'),
+                    2: field('z'),
+                },
+            },
+        })
+        // wire() synthesized `async_block`.
+        const fn = wired.rules.async_block!
+        const out = fn.call({}, {}, origSeq) as { type: string; members: Array<{ type: string; name?: string }> }
+        expect(out.type).toBe('seq')
+        // Position 0 now wrapped in field('x'); position 2 in field('z').
+        expect(out.members[0]).toMatchObject({ type: 'field', name: 'x' })
+        expect(out.members[2]).toMatchObject({ type: 'field', name: 'z' })
+    })
+
+    it('transforms: entry composes with an existing rules: entry on the same key', () => {
+        // User's rule fn wraps original in seq(original, sym(extra)); then
+        // wire's transform appends field('x') at path '0/0' — i.e. inside
+        // the user's output.
+        const origSeq = { type: 'seq', members: [
+            { type: 'symbol', name: 'a' },
+        ] }
+        const wired = wire({
+            name: 'test',
+            rules: {
+                r: ($, original) => ({ type: 'seq', members: [original, { type: 'symbol', name: 'extra' }] }),
+            },
+            transforms: {
+                r: {
+                    '0/0': field('wrapped'),
+                },
+            },
+        })
+        const fn = wired.rules.r!
+        const out = fn.call({}, {}, origSeq) as { members: unknown[] }
+        // Structure: seq(seq(field('wrapped', a)), symbol(extra))
+        const inner = out.members[0] as unknown as { members: Array<{ type: string; name?: string }> }
+        expect(inner.members[0]).toMatchObject({ type: 'field', name: 'wrapped' })
+        expect((out.members[1] as unknown as { name: string }).name).toBe('extra')
+    })
+
+    it('transforms: multi-patchset array form applies patches sequentially', () => {
+        const origSeq = { type: 'seq', members: [
+            { type: 'symbol', name: 'a' },
+            { type: 'symbol', name: 'b' },
+        ] }
+        const wired = wire({
+            name: 'test',
+            rules: {},
+            transforms: {
+                r: [
+                    { 0: field('first') },
+                    { 1: field('second') },
+                ],
+            },
+        })
+        const fn = wired.rules.r!
+        const out = fn.call({}, {}, origSeq) as { members: Array<{ type: string; name?: string }> }
+        expect(out.members[0]).toMatchObject({ type: 'field', name: 'first' })
+        expect(out.members[1]).toMatchObject({ type: 'field', name: 'second' })
+    })
+
+    it('transforms: pre-registers _kw_<fieldname> for each field() placeholder', () => {
+        const wired = wire({
+            name: 'test',
+            rules: {},
+            transforms: {
+                r: { 0: field('async'), 1: field('move') },
+            },
+        })
+        // Each field name produced a deferred `_kw_<name>` placeholder in opts.rules.
+        expect('_kw_async' in wired.rules).toBe(true)
+        expect('_kw_move' in wired.rules).toBe(true)
+        // The deferred fns return blank when no deposit happened.
+        const asyncFn = wired.rules._kw_async!
+        expect(asyncFn.call({}, {})).toEqual({ type: 'BLANK' })
+    })
+
+    it('transforms: pre-registers _<name> for alias() placeholders', () => {
+        const wired = wire({
+            name: 'test',
+            rules: {},
+            transforms: {
+                r: { 0: alias('wildcard_pattern') },
+            },
+        })
+        expect('_wildcard_pattern' in wired.rules).toBe(true)
+    })
+
+    it('transforms: pre-registers _<parent>_<suffix> for variant() placeholders in transforms', () => {
+        const wired = wire({
+            name: 'test',
+            rules: {},
+            transforms: {
+                r: { 0: variant('a'), 1: variant('b') },
+            },
+        })
+        expect('_r_a' in wired.rules).toBe(true)
+        expect('_r_b' in wired.rules).toBe(true)
+    })
+
+    it('author-declared _kw_* wins over wire auto-pre-registration', () => {
+        // User declares `_kw_async: $ => 'custom'` in rules. wire should
+        // leave that entry alone even if a transforms entry's field('async')
+        // would otherwise trigger a deferred _kw_async injection.
+        const userFn: RuleFn = () => ({ type: 'string', value: 'custom' })
+        const wired = wire({
+            name: 'test',
+            rules: { _kw_async: userFn },
+            transforms: {
+                r: { 0: field('async') },
+            },
+        })
+        // Author's fn is wrapped but its identity is preserved as the inner
+        // callee. Calling it produces 'custom', not a blank.
+        const fn = wired.rules._kw_async!
+        expect(fn.call({}, {})).toEqual({ type: 'string', value: 'custom' })
+    })
 })
 
 // Silence unused-import warnings if transform/variant aren't referenced
 // above — they're kept imported to prove wire.ts plays well with them.
-void transform; void variant
+void transform; void variant; void field; void alias
